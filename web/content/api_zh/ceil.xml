@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>ceil() 上限</name>
+
+<category>Math</category>
+
+<subcategory>Basic Function</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+float x = 8.22;  
+float a = ceil(x);  // Set "a" to 9.0
+</code>
+</example>
+
+<description>
+計算大於或等於此參數值的最近值。例如 <b>ceil(9.03)</b> 的回傳值為10.0。
+</description>
+
+<syntax>
+ceil(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>浮點數</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+floor()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

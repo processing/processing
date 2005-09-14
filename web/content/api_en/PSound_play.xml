@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>play()</name>
+
+<category>PSound</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PSound mySound;
+
+void setup() {
+  mySound = loadSound("arigato.wav");
+  mySound.play();
+}
+
+void draw() 
+{
+  // The blank draw() is necessary to let the sound play
+}
+</code>
+</example>
+
+<description>
+Starts the sound playback, plays the sound once, and stops.
+</description>
+
+<syntax>
+<c>sound</c>.play()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>PSound: any variable of type PSound</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

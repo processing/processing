@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>() (parentheses) 括號</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int a;
+a = (4 + 3) * 2;       // Grouping expressions
+if (a &gt; 10) {          // Containing expressions
+  line(a, 0, a, 100);  // Containing a list of parameters
+}
+</code>
+</example>
+
+<description>
+括號能容納和組合陳述和公式，它在函式和程式結構中有著不同的功能。括號可用於包含一列參數，以遞入函式和控制結構?；也用於組合不同的公式，以控制執行的先後次序。若函式沒有參數值，括號內的內容則留空白。
+</description>
+
+<syntax>
+<c>function</c>()
+<c>function</c>(<c>p1</c>, ..., <c>pN</c>)
+<c>structure</c>(<c>expression</c>)
+</syntax>
+
+<parameter>
+<label>function</label>
+<description>任何函式</description>
+</parameter>
+
+<parameter>
+<label>p1...pN</label>
+<description>該函式特定的一列參數</description>
+</parameter>
+
+<parameter>
+<label>structure</label>
+<description>控制結構，如 if(), for(), while()</description>
+</parameter>
+
+<parameter>
+<label>expressions</label>
+<description>任何有效的公式或公式組</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+, (comma)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

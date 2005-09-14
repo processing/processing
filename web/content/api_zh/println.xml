@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>println() 輸出字句</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Output</subcategory>
+
+<usage>IDE 製作環境</usage>
+
+<example>
+<image></image>
+<code>
+println("begin");
+float f = 0.3;
+println("f is equal to " + f + " and i is equal to " + 1024);
+String s = "end";
+println(s);
+
+// The above code prints the following lines:
+// begin
+// f is equal to 0.3 and i is equal to 1024
+// end
+</code>
+</example>
+
+<description>
+將資料寫入 Processing 環境的文字區。此方法可有助於檢視程式所產生的數據。每次召喚此函式會輸出新的字句。個別的組成部分可用引號（""）分隔，及以加號（+）連合。
+</description>
+
+<syntax>
+println(<c>text</c>)
+</syntax>
+
+<parameter>
+<label>text</label>
+<description>任何原始或複合的數據類型</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+print()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

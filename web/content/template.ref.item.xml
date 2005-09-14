@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+    <name></name>
+    <category></category>
+    <subcategory></subcategory>
+    <usage></usage>
+    
+    <example>
+        <image></image>
+        <code>
+        
+        </code>
+    </example>
+    
+    <description></description>
+    <syntax></syntax>
+    
+    <parameter>
+        <label></label>
+        <description></description>
+    </parameter>
+    
+    <field>
+        <fname></fname>
+        <fdescription></fdescription>
+    </field>
+    
+    <method>
+        <mname></mname>
+        <mdescription></mdescription>
+    </method>
+    
+    <cparameter>
+        <clabel></clabel>
+        <cdescription></cdescription>
+    </cparameter>
+    
+    <returns></returns>
+    <related></related>
+    <availability></availability>
+    <partof></partof>
+    <level></level>
+</root>

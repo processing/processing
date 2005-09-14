@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="big5" standalone="yes"?>
+
+<!-- 
+
+Note: The file parser is fussy, there must not be spaces
+between the left margin and the entries, and each entry
+must be contained between the <></> anchors without a line
+break.
+
+-->
+
+
+<core>
+
+<language>�y��</language>
+<environment>���</environment>
+<libraries>�{���w</libraries>
+<comparison>���</comparison>
+<technotes>�޳N�`��</technotes>
+
+</core>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>noTint() 不上色</name>
+
+<category>Image</category>
+
+<subcategory>Loading and Displaying</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>noTint_.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+tint(0, 153, 204); // Tint blue
+image(b, 0, 0);
+noTint(); // Disable tint
+image(b, 50, 0);
+</code>
+</example>
+
+<description>
+將現在的填色值取消，讓螢幕上的圖形回覆到其原本的色彩。
+</description>
+
+<syntax>
+noTint()
+</syntax>
+
+<returns>無</returns>
+
+<related>
+tint()
+image()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

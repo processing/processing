@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>endShape()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>endShape_.gif</image>
+<code>
+beginShape(LINE_STRIP);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<description>
+<b>endShape()</b> <b>beginShape()</b>in yoldaşıdır ve sadece sonrasında çağrılabilir. <b>endShape()</b> çağrıldığında, önceki <b>beginShape()</b> çağrımına kadar tanımlanan tüm resim verisi resim arabellegine yazılır.
+</description>
+
+<syntax>
+beginShape()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+beginShape()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

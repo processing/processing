@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>textSize() 文字大小</name>
+
+<category>Typography</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>textSize_.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully 
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold);
+textSize(44); 
+text("word", 15, 50); 
+textSize(24); 
+text("word", 15, 70); 
+</code>
+</example>
+
+<description>
+設定字體的大小。字體大小將應用於隨後的 <b>text()</b> 函式。字體大小的量位是像素(pixel)。
+</description>
+
+<syntax>
+textSize(<c>size</c>)
+</syntax>
+
+<parameter>
+<label>size</label>
+<description>整數或浮點數：字的大小，以像素為單位．</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+loadFont() 
+BFont 
+text()
+textFont() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

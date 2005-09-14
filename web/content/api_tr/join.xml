@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>join()</name>
+
+<category>Veri</category>
+
+<subcategory>Ayrıştırma</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+// works identically with float[] and String[]
+int list[] = new list[3];
+list[0] = 8;
+list[1] = 67;
+list[2] = 5;
+String formatted = join(list, ", ");
+// formatted now contains "8, 67, 5"
+
+// to format the number of digits used
+// the '3' means to pad with zeroes up to 3 digits
+String withzeroes = join(list, " ", 3);
+// withzeros now contains "008 067 005"
+
+// for floats, formatting is more complicated because 
+// there are also digits after the decimal point.
+float f[] = new float[3];
+f[0] = 1.3;
+f[1] = 92.8;
+f[2] = 0.7;
+// 3 digits on the left of the decimal point
+// 2 digits to the right of the decimal point
+String zerofloats = join(f, " ", 3, 2);
+// zerofloats now contains "001.30 092.80 007.70"
+
+// or if you don't want to pad the left-hand side
+// a zero will say to ignore and don't pad
+String lesspadding = join(f, " ", 0, 2);
+// lesspadding now contains "1.30 92.80 7.70"
+
+</code>
+</example>
+
+<description>
+Bir dizi öğeyi bir String'e birleştirir.
+</description>
+
+<syntax>
+join(<c>herhangibirDizi</c>, <c>ayraç</c>)
+join(<c>intDizi</c>, <c>ayraç</c>, <c>basamak</c>)
+join(<c>floatDizi</c>, <c>ayraç</c>, <c>sol</c>, <c>sağ</c>)
+</syntax>
+
+<parameter>
+<label>dizi</label>
+<description>bir dizi string, int, veya float</description>
+</parameter>
+
+<parameter>
+<label>intDizi</label>
+<description>int dizisi</description>
+</parameter>
+
+<parameter>
+<label>floatDizi</label>
+<description>float dizisi</description>
+</parameter>
+
+<parameter>
+<label>ayraç</label>
+<description>String: her öğenin arasına yerleştirilecek string</description>
+</parameter>
+
+<parameter>
+<label>basamak</label>
+<description>int: sıfırlarla doldurulacak basamak sayısı</description>
+</parameter>
+
+<parameter>
+<label>sol</label>
+<description>int: ondalık ayracının solundaki basamak sayısı</description>
+</parameter>
+
+<parameter>
+<label>sağ</label>
+<description>int: ondalık ayracının sağındaki basamak sayısı</description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+splitInts()
+splitFloats()
+splitStrings()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>vertex()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Application &amp; Web</usage>
+
+<example>
+<image>vertex_.gif</image>
+<code>
+beginShape(POINTS);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<description>
+Bütün şekiller bir dizi verteksin bağlanmasıyla yapılır. <b>vertex()</b> noktalar, üçgenler, dörtgenler, ve çokgenler için verteks koordinatlarını belirler, ve yanlızca <b>beginShape()</b> ve <b>endShape()</b> fonksiyonları arasında kullanılır.
+</description>
+
+<syntax>
+vertex(<c>x</c>, <c>y</c>); 
+vertex(<c>x</c>, <c>y</c>, <c>z</c>); 
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int veya float: verteksin x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int veya float: verteksin y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>int veya float: verteksin z koordinatı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+beginShape()
+endShape()
+bezierVertex()
+curveVertex()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

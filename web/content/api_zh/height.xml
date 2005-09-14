@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>height 高度</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>height.gif</image>
+<code>
+noStroke();
+background(0);
+rect(40, 0, 20, height);
+rect(60, 0, 20, height/2);
+</code>
+</example>
+
+<description>
+顯示視窗高度的系統變數。 <b>size()</b> 函式的第二個參數將設定此數值。 例如，函式指令 <b>size(320, 240)</b> 值設定 <b>height</b> 變數值為320。
+</description>
+
+<syntax>
+height
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+width
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

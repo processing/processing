@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>colorMode() 色彩模式</name>
+
+<category>Color</category>
+
+<subcategory></subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>colorMode_.jpg</image>
+<code>
+noStroke();
+colorMode(RGB, 100);
+for(int i=0; i&lt;100; i++) {
+  for(int j=0; j&lt;100; j++) {
+    stroke(i, j, 0);
+    point(i, j);
+  }
+}
+</code>
+</example>
+
+<example>
+<image>colorMode_2.jpg</image>
+<code>
+noStroke();
+colorMode(HSB, 100);
+for(int i=0; i&lt;100; i++) {
+  for(int j=0; j&lt;100; j++) {
+    stroke(i, j, 100);
+    point(i, j);
+  }
+}
+</code>
+</example>
+
+<description>
+改變 Processing色彩資料型態的讀取。系統內建為以0 到 255 表示的 RGB模式，影響 <b>fill()</b>，<b>stroke()</b> 和 <b>background()</b> 等函式。以colorMode( ) 函式轉換色彩模式，或改變數字範圍來指定顏色。舉例來說，呼叫 <b>colorMode(RGB, 1.0)</b>，可限定所有值皆介於於0與1之間。色彩指定的範圍將隨著range1, range2, 和range 3 三個參數的設定而改變。
+</description>
+
+<syntax>
+colorMode(<c>mode</c>);
+colorMode(<c>mode</c>, <c>range</c>);
+colorMode(<c>mode</c>, <c>range1</c>, <c>range2</c>, <c>range3</c>);
+</syntax>
+
+<parameter>
+<label>mode</label>
+<description>RGB(紅/綠/藍) 或 HSB (彩度/飽和度/明亮度)擇一</description>
+</parameter>
+
+<parameter>
+<label>range</label>
+<description>整數或浮點數: 代表所有色彩元素的範圍</description>
+</parameter>
+
+<parameter>
+<label>range1</label>
+<description>整數或浮點數: 依據現行之色彩模式，代表紅色或彩度的範圍</description>
+</parameter>
+
+<parameter>
+<label>range2</label>
+<description>整數或浮點數: 依據現行之色彩模式，代表綠色或飽和度的範圍</description>
+</parameter>
+
+<parameter>
+<label>range3</label>
+<description>整數或浮點數: 依據現行之色彩模式，代表藍色或明亮度的範圍</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+background()
+fill()
+stroke()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

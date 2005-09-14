@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>sphere()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 3 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>sphere_.gif</image>
+<code>
+noStroke();
+lights();
+translate(58, 48, 0);
+sphere(28);
+</code>
+</example>
+
+<description>
+Küre üçgenlerden mozaik şeklinde oluşan oyuk bir toptur.
+</description>
+
+<syntax>
+sphere(<c>yarıçap</c>)
+</syntax>
+
+<parameter>
+<label>yarıçap</label>
+<description>int veya float: kürenin yarıçapı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+sphereDetail()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

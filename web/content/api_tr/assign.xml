@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>= (atama)</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a;
+a = 30;  // Assigns for value 30 to the variable "a"
+a = a + 40;  // Assigns the value 70 to the variable "a"
+</code>
+</example>
+
+<description>
+Bir değeri bir değişkene atar. "=" işareti "eşittir" anlamına gelmez, ama değişkene veri yerleştirmek için kullanılır. "=" işareti biçimsel olarak atama operatorü olarak adlandırılır. Çok farklı türlerde değişkenler vardır(int, float, string, v.s.) ve atama operatörü atadığı değişkenle aynı türde olan değerleri atayabilir. Mesela değişken <b>int</b> türündeyse değer de <b>int</b> olmalıdır.
+</description>
+
+<syntax>
+<c>var</c> = <c>değer</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>herhangi bir değişken ismi</description>
+</parameter>
+
+<parameter>
+<label>değer</label>
+<description>aynı tür değişkenin herhangi bir değeri. Mesela değişken int türündeyse değer de int olmalıdır.</description>
+</parameter>
+
+<returns></returns>
+
+<related>
++= (ekleme ata)
+-= (çıkarma ata)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

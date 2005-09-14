@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>noise()</name>
+
+<category>Matematik</category>
+
+<subcategory>Rasgele</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>noise_.jar</image>
+<code>
+float xoff = 0.0;
+void loop() 
+{
+  background(204);
+  xoff = xoff + .01;
+  float n = noise(xoff) * width;
+  line(n, 0, n, height);
+}
+</code>
+</example>
+
+<example>
+<image>noise_2.jar</image>
+<code>
+float noiseScale=0.02;
+void loop() {
+  background(0);
+  for(int x=0; x&lt;width; x++) {
+    float noiseVal = noise((mouseX+x)*noiseScale, 
+                            mouseY*noiseScale);
+    stroke(noiseVal*255);
+    line(x, mouseY+noiseVal*80, x, height);
+  }
+}
+</code>
+</example>
+
+<description>
+Belirli koordinatlarda Perlin gürültüsü döndürür. Perlin gürültüsü standart <b>random()</b> fonksiyonuna göre daha doğal dizimli ve ahenkli rasgele birbirini izleyen diziler üretir. 1980'de Ken Perlin tarafından icat edilmiştir ve grafik uygulamalarda doku, doğal hareket, şekiller ve arazi v.s. üretmek için kullanılmaktadır.<br/><br/><b>random()</b> fonksiyonundan ana farkı Perlin gürültüsünün her koordinatı sabitleşmiş (programın ömrü kadar sabit) kismi rasgele değerlere bağlı sonsuz n boyutlu bir boşlukta tanımlanmasıdır. Sonuç değer her zaman 0.0 ile 1.0 arasındadır. Processing verilen koordinat sayısına göre tek boyutlu, iki boyutlu ve üç boyutlu gürültü hesaplayabilir. Gürültü değeri yukardaki örnekte gösterildiği gibi gürültü uzamında hareket ettirilerek anime edilebilir. İkinci ve üçüncü boyut zaman olarak da yorumlanabilir.<br/><br/>Asıl gürültü fonksiyonun frekans kullanımıyla iligli olarak ses sinyali gibi yapılandırılmıştır. Perlin gürültüsü fizikteki harmonilere benzer bir şekilde çeşitli oktavlar üzerinden hesaplanıp birbirine eklenerek sonuç yaratır.<br/><br/>Sonuç dizinin karakterini ayarlamanın başka bir yolu da giren koordınarların boyutlarıdır. Fonksiyon sonsuz boşlukta calıştığı için koordinat değerleri önemsizdir, sadece koordinatlar arası uzaklık önemlidir(örneğin <b>noise()</b> fonksiyonunu bir döngü içinde kullanırken). Genel bir kural olarak, koordinatlar arasındaki fark küçük oldukça sonuç gürültü dizisi daha yumuşak olacaktır. 0.005-0.03 adımları bir çok uygulama için en iyi sonucu verir, ama bu kullanıma göre değişir.
+</description>
+
+<syntax>
+noise(<c>x</c>)
+noise(<c>x</c>, <c>y</c>)
+noise(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>float: gürültü uzayında x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>float: gürültü uzayında y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>float: gürültü uzayında z koordinatı</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+random()
+noiseDetail()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

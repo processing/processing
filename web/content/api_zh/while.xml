@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>while() 迴圈</name>
+
+<category>Control</category>
+
+<subcategory>Iteration</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>while_.gif</image>
+<code>
+int i=0;
+while(i&lt;80) {
+  line(30, i, 80, i);
+  i = i + 5;
+} 
+</code>
+</example>
+
+<description>
+控制重覆的次序。如果當<b>expression (表詞)</b> 是<b>true (真確)</b> 的話，<b>while</b> 結構將不間斷地執行一系列的陳述。表詞必須在重覆中被更新，否則程式將無法離開<b>while()</b>迴圈。
+</description>
+
+<syntax>
+while(<c>expression</c>) {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>expression</label>
+<description>有效的表詞</description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description>單句或多句的陳述</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+for()
+</related>
+
+<availability>1.0</availability>
+
+<type>Structure</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

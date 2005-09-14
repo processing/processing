@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>% (modulo) 餘數</name>
+
+<category>Math</category>
+
+<subcategory>Operator</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a = point(30, 20%100);   // Sets a to 20%100 = 20
+int b = point(85, 520%100);  // Sets b to 520%100 = 20
+int c = point(85, 75%100);   // Sets c to 75%100 = 75
+int d = point(30, 275%100);  // Sets d to 275%100 = 75
+</code>
+</example>
+
+<description>
+計算某值被另一值除後的餘數。適用於把數字限制在指定的範圍中，例如把形狀限制在螢幕的象限內。
+</description>
+
+<syntax>
+<c>value1</c>%<c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+/ (divide)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

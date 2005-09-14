@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>textSize()</name>
+
+<category>Tipografi</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>textSize_.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully 
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold);
+textSize(44); 
+text("word", 15, 50); 
+textSize(24); 
+text("word", 15, 70); 
+</code>
+</example>
+
+<description>
+Mevcut fontun boyutunu kurar. Bu font ve boyutu sonra gelen bütün <b>text()</b> fonksiyonlarında kullanılacaktır. Font boyutu piksel biriminde ölçülür.
+</description>
+
+<syntax>
+textSize(<c>boyut</c>)
+</syntax>
+
+<parameter>
+<label>size</label>
+<description>int veya float: harflerin piksel biriminde boyutu</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+loadFont() 
+BFont 
+text()
+textFont() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>sphere()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 3 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>sphereDetail_.jar</image>
+<code>
+void loop() { 
+  background(200); 
+  stroke(255,50); 
+  translate(50,50,0); 
+  rotateX(mouseY*0.05); 
+  rotateY(mouseX*0.05); 
+  fill(mouseX*2,0,160); 
+  sphereDetail(mouseX/4); 
+  sphere(40); 
+}
+</code>
+</example>
+
+<description>
+Küresel ağ verteks sayısını belirleyerek kürenin oluşmasını sağlayan detayı kontrol eder. Varsayılan çözünürlük 30, her 360/30 = 12 derecede bulunan vertekselerle oldukça detaylı bir küre tanımlar. Eğer görüntü başına çok fazla sayıda küre kullanacaksanız, detay düzeyini düşürmeniz tavsiye edilir. <b>sphereDetail()</b> yeni bir parametreyle tekrar çağrılana kadar kurulum aktif kalır, bu yüzden, farklı kurulumlarda küre kullanmak istemedikçe (örneğin daha küçük veya kameradan daha uzakta görünen küreler için daha az detay gibi), <b>sphereDetail()</b> her <b>sphere()</b> ifadesinden sonra kullanılmamalıdır. 
+</description>
+
+<syntax>
+sphereDetail(<c>n</c>)
+</syntax>
+
+<parameter>
+<label>n</label>
+<description>int: tüm çember devrimi için kullanılan parça sayısı (en az 3)</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+sphere()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

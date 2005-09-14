@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>random()</name>
+
+<category>Matematik</category>
+
+<subcategory>Rasgele</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>random_.jar</image>
+<code>
+for(int i=0; i&lt;100; i++) {
+  float r = random(50);
+  stroke(r*5);
+  line(50, i, 50+r, i);
+}
+</code>
+</example>
+
+<example>
+<image>random_2.jar</image>
+<code>
+for(int i=0; i&lt;100; i++) {
+  float r = random(-50, 50);
+  stroke(abs(r*5));
+  line(50, i, 50+r, i);
+}
+</code>
+</example>
+
+<description>
+rasgele sayılar üretir. Her <b>random()</b> fonksiyonu çağrıldığında, tanımlanmış aralıkta beklenmedik birsayı döndürür. Eğer fonksiyona bir parametre geçirilmişse 0 ile geçirilen değer arasında <b>float</b> bir değer döndürür. <b>random(5)</b> çağrımı 0 ile 5 arasında değerler döndürür. Eğer iki paramatre geçirilmişse, parametreler arasında yine <b>float</b> bir değer döndürür. <b>random(-5, 10.2)</b> fonksiyonu -5 ile 10.2 arasında değerler döndürür. Bir <b>float</b> değeri tamsayıya çevirmek için <b>int()</b> fonksiyonu kullanılır.
+</description>
+
+<syntax>
+random(<c>değer1</c>);
+random(<c>değer1</c>, <c>değer2</c>);
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+noise()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

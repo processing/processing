@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>color 顏色值</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>color.gif</image>
+<code>
+color c1 = color(204, 153, 0);
+color c2 = #FFCC00;
+noStroke();
+fill(c1);
+rect(0, 0, 25, 100);
+fill(c2);
+rect(25, 0, 25, 100);
+color c3 = get(10, 50);
+fill(c3);
+rect(50, 0, 50, 100);
+</code>
+</example>
+
+<description>
+儲存顏色值的資料型態。顏色可藉由 <b>get</b> 和 <b>color()</b> 函式指定，或是直接以十六進位(hexadecimal) 標記法來表示色彩 ，例如 <b>#FFCC00</b>。32位元的顏色中，其資料排序為AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB。A代表透明度，R代表紅色或彩度，G代表綠色或飽和度，B代表藍色或明亮度。Color是Processing的專屬資料型態。
+</description>
+
+<syntax>
+color <c>var</c>
+color <c>var</c> = <c>colorvalue</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>代表某一值的變數名稱</description>
+</parameter>
+
+<parameter>
+<label>colorvalue</label>
+<description>任何色彩的值</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+colorMode()
+color()
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

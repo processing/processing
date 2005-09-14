@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>curveVertex() 曲線頂點</name>
+
+<category>Shape</category>
+
+<subcategory>Vertex</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>curveVertex_.gif</image>
+<code>
+beginShape(LINE_STRIP);
+curveVertex(84,  91);
+curveVertex(84,  91);
+curveVertex(68,  19);
+curveVertex(21,  17);
+curveVertex(32, 100);
+curveVertex(32, 100);
+endShape();
+</code>
+</example>
+
+<description>
+指定弧線的頂點座標。本函式只能出現在 <b>beginShape()</b> 和 <b>endShape()</b> 之間。 <b>curveVertex()</b> 函式是利用Catmull-Rom splines的概念發展而來。
+</description>
+
+<syntax>
+curveVertex(<c>x</c>, <c>y</c>) 
+curveVertex(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>頂點的x座標, 為浮點數或整數</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>頂點的y座標, 為浮點數或整數</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>頂點的z座標, 為浮點數或整數</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+beginShape()
+endShape()
+vertex()
+bezierVertex()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

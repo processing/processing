@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>angleMode()</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+angleMode(DEGREES);
+float deg = 45;
+float da = cos(deg);
+angleMode(RADIANS);
+float rad = PI/4; 
+float ra = cos(rad);
+// Prints "Cosine of PI/4 radians: 0.70710677"
+println("Cosine of PI/4 radians: " + ra); 
+// Prints "Cosine of 45 degress: 0.70710677"
+println("Cosine of 45 degrees: " + da); 
+</code>
+</example>
+
+<description>
+Sets the argument type for trigonometic functions such as <b>sin()</b> and the rotation transformations such as <b>rotate()</b>. The default mode is <b>angleMode(RADIANS)</b> and the other option is <b>angleMode(DEGREES)</b>. Degrees are the angles of a circle in terms of 0 to 360 and radians are the angles of a circle in terms of 0 to PI*2 (6.28). The parameter must be written in "ALL CAPS" because Processing is a case sensitive language. 
+</description>
+
+<syntax>
+angleMode(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>either RADIANS or DEGREES</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+degrees()
+radians()
+sin()
+cos()
+tan()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

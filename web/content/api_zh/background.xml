@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>background() 背景</name>
+
+<category>Color</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>background_.gif</image>
+<code>
+background(51); 
+</code>
+</example>
+
+<example>
+<image>background_2.gif</image>
+<code>
+background(255, 204, 0);
+</code>
+</example>
+
+<example>
+<image>background_4.jar</image>
+<code>
+void loop() {
+  background(255, 204, 0);
+  line(0, 0, mouseX, mouseY);
+  line(100, 0, mouseX, mouseY);
+  line(100, 100, mouseX, mouseY);
+  line(0, 100, mouseX, mouseY);
+}
+</code>
+</example>
+
+<example>
+<image>background_3.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+background(b); 
+</code>
+</example>
+
+<description>
+<b>background()</b> 函式設定作品視窗的背景顏色，系統本身設定的顏色為淡灰。background() 函式位於 <b>loop()</b> 函式之後的波狀括號裡，在影格播放中不斷更新。另外，也可以載入一個和視窗大小相同的JPG 或GIF影像當作背景，此影像必須先儲存在 data 檔案夾中才可以被載入。
+</description>
+
+<syntax>
+background(<c>value1</c>)
+background(<c>value1</c>, <c>value2</c>, <c>value3</c>)
+background(<c>image</c>)
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數: 紅色或彩度 (依據目前的色彩模式而定)</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數: 綠色或飽和度 (依據目前的色彩模式而定)</description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description>整數或浮點數: 藍色或明亮度 (依據目前的色彩模式而定)</description>
+</parameter>
+
+<parameter>
+<label>image</label>
+<description>Bimage: BImage的檔名，大小和作品視窗相同</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

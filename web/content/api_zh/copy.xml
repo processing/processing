@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>copy() 抄錄</name>
+
+<category>Image</category>
+
+<subcategory>Pixels</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>copy_.gif</image>
+<code>
+BImage cp;
+noStroke();
+rect(40, 10, 20, 80);
+rect(10, 40, 80, 20);
+cp = copy();
+image(cp, 0, 0, 50, 50);
+</code>
+</example>
+
+<description>
+將顯示視窗的內容抄錄至另一 BImage 影像中。
+</description>
+
+<syntax>
+copy()
+</syntax>
+
+<returns>BImage</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

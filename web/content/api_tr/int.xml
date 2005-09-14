@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>int</name>
+
+<category>Veri</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a;          // Declare variable "a" of type int
+a = 23;         // Assign "a" the value 23
+int b = -256;   // Declare variable "b" and assign it the value -256
+int c = a + b;  // Declare variable "c" and assign it the sum of "a" and "b"
+</code> 
+</example>
+
+<description>
+Tamsayılar ve ondalık hane noktası olmayan sayılar için veri türü. Tamsayılar 2,147,483,647 kadar büyük ve -2,147,483,648 kadar küçük olabilir. 32 bit bilgi olarak depolanırlar.
+</description>
+
+<syntax>
+int <c>var</c>
+int <c>var</c> = <c>değer</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>değeri kaynak gösteren değişken</description>
+</parameter>
+
+<parameter>
+<label>değer</label>
+<description>herhangi bir tamsayı değer</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+splitInts()
+float
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

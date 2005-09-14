@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>color()</name>
+
+<category>Renk</category>
+
+<subcategory>Yaratma</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>color_.gif</image>
+<code>
+color c1 = color(102, 102, 0);
+fill(c1);
+noStroke();
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+<b>color</b> veri türünde tutulabilecek renkler yaratır. Mevcut <b>colorMode()</b>a göre renkler RGB veya HSB olarak yorumlanır. Varsayılan biçim 255 ile 0 aralığı ve RGB renk değerleridir, dolayısıyla <b>color(255, 204, 0)</b> parlak sarı bir renk yaratacaktır. <b>color()</b> fonksiyonu bilgi girdisini 32 bit sayı olarak AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB sırasında paketler. Burda R kırmızı(Red)/Hue, G yeşil(Green)/Saturation, B mavi(Blue)/Parlaklık ifade eder.
+</description>
+
+<syntax>
+color(<c>değer1</c>, <c>değer2</c>, <c>değer3</c>)
+color(<c>değer1</c>, <c>değer2</c>, <c>değer3</c>, <c>alpha</c>)
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float: kırmızı veya hue değerleri mevcut renk aralığına bağlıdır</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float: yeşil veya saturation değerleri mevcut renk aralığına bağlıdır</description>
+</parameter>
+
+<parameter>
+<label>değer3</label>
+<description>int veya float: mavi veya parlaklık değerleri mevcut renk aralığına bağlıdır</description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description>int veya float: mevcut renk aralığına bağlıdır</description>
+</parameter>
+
+<returns>color</returns>
+
+<related>
+color
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

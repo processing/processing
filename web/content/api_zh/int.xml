@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>int 整數</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a;          // Declare variable "a" of type int
+a = 23;         // Assign "a" the value 23
+int b = -256;   // Declare variable "b" and assign it the value -256
+int c = a + b;  // Declare variable "c" and assign it the sum of "a" and "b"
+</code> 
+</example>
+
+<description>
+整數的資料形態。不含小數點的數字。整數最大可至2,147,483,647，最小可至-2,147,483,648。其資訊儲存於32位元組中。
+</description>
+
+<syntax>int <c>var</c>int <c>var</c> = <c>value</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>代表值的變數名稱</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>任何整數值
+</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+splitInts()
+float
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

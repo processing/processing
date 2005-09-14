@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>splitInts()</name>
+
+<category>Veri</category>
+
+<subcategory>Ayrıştırma</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+String numbers = "8 67 5 309";
+int list[] = splitInts(numbers);
+// list[0] is now 8, list[1] is now 67, ...
+
+// or if the separator is not a space
+
+String numbers = "8,67,5,309";
+int list[] = splitInts(numbers, ',');
+
+// if tabs are in-between (common for data files) use:
+// splitInts(numbers, '\t');
+</code>
+</example>
+
+<description>
+String'e gömülü bir grup "int"i ayırıp int türü bir diziye aktarmaya yardımcı fonksiyon. Eger bölme karakteri kullanılmamışsa, boşluk ayırma karakteri olarak kullanılır.
+</description>
+
+<syntax>
+splitInts(string)
+splitInts(string, char)
+</syntax>
+
+<parameter>
+<label>string</label>
+<description>parçalara bölüncek string</description>
+</parameter>
+
+<parameter>
+<label>char</label>
+<description>değerleri bölmek içim kullanılacak karakter</description>
+</parameter>
+
+<returns>int[]</returns>
+
+<related>
+splitFloats()
+splitStrings()
+join()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

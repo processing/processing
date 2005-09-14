@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>stroke() 線和外框</name>
+
+<category>Color</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>stroke_.gif</image>
+<code>
+stroke(153);
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<example>
+<image>stroke_2.gif</image>
+<code>
+stroke(204, 102, 0);
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+設定線條和形狀外框的顏色。此色彩值可用 <b>colorMode()</b>函式設定至 RGB（紅綠藍）或 HSB（色調、飽和度、明亮度）模式。預設的色彩模式是 RGB，而其參數預設的上下限數值是 0 至 255。
+<b>stroke()</b> 函式有三種參數模式：一個參數用以設定灰色，三個參數用以設定顏色，或四個參數用以設定設定顏色和透明度。<i>注意：gray（灰色）的參數值不能超過 <b>colorMode()</b>現行設定的上限值。預設的上限值為 255。</i>
+</description>
+
+<syntax>
+stroke(<c>gray</c>)
+stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>);
+stroke(<c>color</c>);
+</syntax>
+
+<parameter>
+<label>gray</label>
+<description>整數或浮點數：設定黑色和白色之間的一個灰色度</description>
+</parameter>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數：紅色或色調數值（據現行的色彩模式（color mode）而定)</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數：綠色或飽和度數值（據現行的色彩模式（color mode）而定)</description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description>整數或浮點數：藍色或明亮度數值（據現行的色彩模式（color mode）而定)</description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description>color（顏色）: 屬 color 數據類型的任何數值</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+noStroke()
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

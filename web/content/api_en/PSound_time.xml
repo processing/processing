@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>time()</name>
+
+<category>PSound</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PSound mySound;
+
+void setup() {
+  mySound = loadSound("arigato.wav");
+  mySound.play();
+}
+
+void draw() {
+  println(mySound.time());
+}
+</code>
+</example>
+
+<description>
+Returns the current position of sound playback in seconds. For example, if a sound is 20 seconds in duration and it is half-way through its playback, the value returned by <b>time()</b> will be 10.0.
+</description>
+
+<syntax>
+<c>sound</c>.duration()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>PSound: any variable of type PSound</description>
+</parameter>
+
+<returns>Float</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

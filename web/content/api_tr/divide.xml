@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>/ (böl)</name>
+
+<category>Matematik</category>
+
+<subcategory>Operatör</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int g = 50 / 5;  // Sets g 10
+int h = g / 5;   // Sets h 2
+</code>
+</example>
+
+<description>
+İlk değeri ikinci değere böler. 20/4 icin sonuç 5dir. 20 sayısı 4 tane 5 sayısının toplamıdır. Eşdeger olarak 4 + 4 + 4 + 4 + 4 = 20 olur.
+</description>
+
+<syntax>
+<c>değer1</c> / <c>değer2</c>
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float, ama sıfır değil (bir sayıyı 0 ile bölmek mümkün değildir)</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+* (multiply)
+% (modulo)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

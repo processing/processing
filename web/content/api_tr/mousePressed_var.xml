@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>mousePressed</name>
+
+<category>Girdi/Çikti</category>
+
+<subcategory>Fare</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>mousePressed.jar</image>
+<code>
+// Click within the image to change 
+// the value of the rectangle
+void loop() {
+  if (mousePressed == true) {
+    fill(0);
+  } else {
+    fill(255);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+Processing fare düğmesinin otomatik olarak basılıp basılmadığını takip eder (birden fazla düğmeli fare kullanırken sadece sol düğme çalışır). Eğer düğme basılıysa <b>mousepressed</b> sistem değişkeninin değeri doğru(true), basılı değilse yanlıştır(false).
+</description>
+
+<syntax>
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+mouseX
+mouseY
+pmouseX
+pmouseY
+mousePressed()
+mouseReleased()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

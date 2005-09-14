@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>noTint()</name>
+
+<category>Resim</category>
+
+<subcategory>Yükleme ve Gösterme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>noTint_.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+tint(0, 153, 204); // Tint blue
+image(b, 0, 0);
+noTint(); // Disable tint
+image(b, 50, 0);
+</code>
+</example>
+
+<description>
+Resimleri dolduran mevcut tonlamayı kaldırır ve resimleri asıl HUEları ile gösterir.
+</description>
+
+<syntax>
+noTint()
+</syntax>
+
+<returns>Yok</returns>
+
+<related>
+tint()
+image()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

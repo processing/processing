@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>+ (topla)</name>
+
+<category>Matematik</category>
+
+<subcategory>Operatörler</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a = 50 + 5;  // Sets a to 55
+int b = a + 5;   // Sets b to 60
+</code>
+</example>
+
+<description>
+İki değerin toplamını hesaplar.
+</description>
+
+<syntax>
+<c>değer1</c> + <c>değer2</c>
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+++ (arttır)
++= (ekleme ata)
+- (çıkar)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>bezier()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>bezier_.gif</image>
+<code>
+stroke(255, 102, 0);
+line(85, 20, 10, 10);
+line(90, 90, 15, 80);
+stroke(0, 0, 0);
+bezier(85, 20, 10, 10, 90, 90, 15, 80);
+</code>
+</example>
+
+<example>
+<image>bezier_2.gif</image>
+<code>
+stroke(255, 102, 0);
+line(30, 20, 80, 5);
+line(80, 75, 30, 75);
+stroke(0, 0, 0);
+bezier(30, 20,  80, 5,  80, 75,  30, 75);
+</code>
+</example>
+
+<description>
+Bezier eğrileri için vertex koordinatlarını belirler. Bu fonksiyon <b>beginShape()</b> ve <b>endShape()</b> arasında kullanılabilir. Bu eğriler bir dizi bağlantı ve kontrol noktaları tarafından belirlenmiştir. Bezier eğrileri Fransız mühendis Pierre Bezier tarafından geliştirilmiştir.
+</description>
+
+<syntax>
+bezier(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</c>, <c>y4</c>);
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>int veya float: ilk bağlantı noktasının x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>int veya float: ilk bağlantı noktasının y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>int veya float: ilk kontrol noktasının x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>int veya float: ilk bağlantı noktasının y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x3</label>
+<description>int veya float: ikinci kontrol noktasının x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y3</label>
+<description>int veya float: ikinci kontrol noktasının y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x4</label>
+<description>int veya float: ikinci bağlantı noktasının x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y4</label>
+<description>int veya float: ikinci bağlantı noktasının y koordinatı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+bezierVertex()
+curve()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

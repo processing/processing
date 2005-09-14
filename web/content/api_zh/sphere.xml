@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>sphere() 球體</name>
+
+<category>Shape</category>
+
+<subcategory>3D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>sphere_.gif</image>
+<code>
+noStroke();
+lights();
+translate(58, 48, 0);
+sphere(28);
+</code>
+</example>
+
+<description>
+球體是一個由鑲嵌式三角形（tessellated triangles）編成的空心球。
+</description>
+
+<syntax>
+sphere(<c>radius</c>)
+</syntax>
+
+<parameter>
+<label>radius</label>
+<description>整數或浮點數： 球體的半徑</description>
+</parameter>
+
+<returns>無</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

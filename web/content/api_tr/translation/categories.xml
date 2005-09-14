@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+
+<!-- 
+
+Note: The file parser is fussy, there must not be spaces
+between the left margin and the entries, and each entry
+must be contained between the <></> anchors without a line
+break.
+
+-->
+
+<core>
+
+<class>Sınıf</class>
+<name>İsim</name>
+<category>Kategori</category>
+<subcategory>Alt kategori</subcategory>
+<usage>Kullanım</usage>
+<examples>Örnekler</examples>
+<description>Tanım</description>
+<syntax>Sözdizim</syntax>
+<fields>Alanlar</fields>
+<methods>Yöntemler</methods>
+<constructors>Yapıcılar</constructors>
+<parameters>Parametereler</parameters>
+<returns>Dönenler</returns>
+<related>İlgili</related>
+<availability>1.0</availability>
+<type>Function</type>
+
+</core>

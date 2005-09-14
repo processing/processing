@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>beginShape()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>beginShape_.gif</image>
+<code>
+beginShape(POINTS);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_2.gif</image>
+<code>
+beginShape(LINES);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_3.gif</image>
+<code>
+beginShape(LINE_STRIP);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_4.gif</image>
+<code>
+beginShape(LINE_LOOP);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_5.gif</image>
+<code>
+beginShape(TRIANGLES);
+vertex(30, 75);
+vertex(40, 20);
+vertex(50, 75);
+vertex(60, 20);
+vertex(70, 75);
+vertex(80, 20);
+vertex(90, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_6.gif</image>
+<code>
+beginShape(TRIANGLE_STRIP);
+vertex(30, 75);
+vertex(40, 20);
+vertex(50, 75);
+vertex(60, 20);
+vertex(70, 75);
+vertex(80, 20);
+vertex(90, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_7.gif</image>
+<code>
+beginShape(QUADS);
+vertex(30, 20);
+vertex(30, 75);
+vertex(50, 75);
+vertex(50, 20);
+vertex(65, 20);
+vertex(65, 75);
+vertex(85, 75);
+vertex(85, 20);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_8.gif</image>
+<code>
+beginShape(QUAD_STRIP);
+vertex(30, 20);
+vertex(30, 75);
+vertex(50, 75);
+vertex(50, 20);
+vertex(65, 20);
+vertex(65, 75);
+vertex(85, 75);
+vertex(85, 20);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_9.gif</image>
+<code>
+beginShape(POLYGON);
+vertex(20, 20);
+vertex(40, 20);
+vertex(40, 40);
+vertex(60, 40);
+vertex(60, 60);
+vertex(20, 60);
+endShape();
+</code>
+</example>
+
+<description>
+<b>beginShape()</b> ve <b>endShape()</b> fonksiyonlarını kullanmak daha karmaşık biçimler yaratılmasını sağlar. <b>beginShape()</b> bir şekil için vertexleri kaydetmeye başlar ve <b>endShape()</b> kaydı bitirir. <b>beginShape()</b> fonksiyonunun sağlanan vertexlerden hangi tür şeklin yaratılacağını belirtecek parametreye ihtiyacı vardır. Bu parametreler LINES, LINE_STRIP, LINE_LOOP, TRIANGLES, TRIANGLE_STRIP, QUADS, QUAD_STRIP, ve POLYGONdur. <b>beginShape()</b> fonksiyonu çagrıldıktan sonra bir dizi <b>vertex()</b> komutu takip etmelidir. Çizimi durdurmak için, <b>endShape()</b> çağrılır. İki parametreli <b>vertex()</b> fonksiyonu 2 boyutta, üç parametreli <b>vertex()</b> 3 boyutta konum belirler. Her şekil hali hazırdaki "stroke" rengi ile çerçevelenir ve "fill" rengiyle doldurulur. <b>translate()</b>, <b>rotate()</b>, ve <b>scale()</b> dönüştürmeleri <b>beginShape()</b> içinde çalışmaz.
+</description>
+
+<syntax>
+beginShape(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>LINES, LINE_STRIP, LINE_LOOP, TRIANGLES, TRIANGLE_STRIP, QUADS, QUAD_STRIP, POLYGON</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+endShape()
+vertex()
+curveVertex()
+bezierVertex()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

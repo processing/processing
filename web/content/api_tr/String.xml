@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>String</name>
+
+<category>Veri</category>
+
+<subcategory>Birleşik</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+String s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+</code>
+</example>
+
+<description>
+Bir dizi karakter.
+</description>
+
+<syntax>
+String <c>var</c> = "<c>metin</c>";
+<c>var</c>.length()
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>herhangi bir geçerli isim</description>
+</parameter>
+
+<parameter>
+<label>metin</label>
+<description>bir dizi karakter</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+char
+splitStrings()
+splitInts()
+splitFloats()
+text()
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

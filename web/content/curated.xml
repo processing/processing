@@ -1,0 +1,596 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<curated>
+
+	<software name="Manifest" by="Michael Chang" scroll="yes" resize="yes" width="725" height="650">
+	<image>images/manifest.gif</image>
+	  <description>
+	         Drawing program where different gestures create varying organisms animated through procedural animation and physics simulations.
+	  </description>
+	  <location>http://users.design.ucla.edu/~mflux/manifest/</location>
+	  <link href="http://users.design.ucla.edu/~mflux/">mflux @ ucla</link>
+	</software>
+
+	<software name="VJ" by="Robert Hodgin" scroll="yes" resize="yes" width="815" height="900">
+	<image>images/vj.jpg</image>
+	  <description>
+                  Live visuals for Bit Shifter performance at the Bridge, Toronto. Software controlled with a custom interface utilizing Griffin Powermates.
+	  </description>
+	  <location>http://flight404.com/vj/exhibit.html</location>
+	  <link href="http://www.flight404.com">Flight404</link>
+	  <link href="http://www.bitshifter.cc">Bit Shifter</link>
+	</software>
+
+	<software name="Metropop Denim" by="Clayton Cubitt and Tom Carden" scroll="yes" resize="yes" width="1000" height="700">
+	<image>images/metropop.gif</image>
+	  <description>
+                  Fashion photography meets print resolution physics-inspired generative artwork.
+	  </description>
+	  <location>metropop/index.html</location>
+	  <link href="http://www.claytoncubitt.com">Clayton Cubitt</link>
+	  <link href="http://www.tom-carden.co.uk">Tom Carden</link>
+	</software>
+
+
+	<software name="ElectroPlastique 1" by="Marius Watz" scroll="yes" resize="yes" width="1000" height="700">
+	<image>images/electro.jpg</image>
+	  <description>
+	         4-screen temporal composition for the Territoires Electroniques festival in Aix-en-Provence inspired by Victor Vasarely. Sound by James Welburn.
+	  </description>
+	  <location>http://www.unlekker.net/proj/electroplastique/</location>
+	  <source></source>
+	  <link href="http://www.unlekker.net/">Unlekker</link>
+	</software>
+
+	<software name="Thinking Machine 4" by="Martin Wattenberg" scroll="yes" resize="yes" width="1000" height="700">
+	<image>images/thinking.jpg</image>
+	  <description>
+		 Explores the invisible, elusive nature of thought. Play chess against a transparent intelligence, its evolving thought process visible on the board before you.
+	  </description>
+	  <location>http://www.turbulence.org/spotlight/thinking/</location>
+	  <source></source>
+	  <link href="http://www.bewitched.com/">Bewitched</link>
+	</software>
+
+	<software name="Haohao" by="Ichitaro Masuda" scroll="yes" resize="yes" width="900" height="900">
+	<image>images/haohao.jpg</image>
+	  <description>
+		Drawing elements with behaviors generate active images.
+	  </description>
+	  <location>http://www.iamas.ac.jp/~madman03/haohao/</location>
+	  <source>haohao/haohao.pde</source>
+	</software>
+	
+	<software name="Structural Collider" by="Allan William Martin" scroll="yes" resize="yes" width="900" height="700">
+	<image>images/collider.jpg</image>
+	  <description>
+		An abstraction of architectural organization and structure. Spatial prototypes interact by seeking support within a bubble diagram.
+	  </description>
+	  <location>http://pantheon.yale.edu/~awm9/structures/final/</location>
+	  <source>collider/collider.pde</source>
+	  <link href="http://pantheon.yale.edu/~awm9">awm</link>
+	</software>
+	
+	<software name="Timescape" by="Ji-Hoon Byun & E.J. Gone" scroll="yes" resize="yes" width="900" height="570">
+	<image>images/timescape.jpg</image>
+	  <description>
+		Photographs made from a continious 1 pixel lines captured by a camera.
+	  </description>
+	  <location>http://www.phantasian.com/timescape/timescape.htm</location>
+	  <source>timescape/timescape.pde</source>
+	  <link href="http://www.phantasian.com">Phantasian</link>
+	  <link href="http://php.chol.com/~atwork/index.htm">Gone</link>
+	</software>
+	
+	<software name="Ortho-type" by="Enrico Bravi, Mikkel Crone Koser & Paolo Palma" scroll="yes" resize="yes" width="850" height="500">
+	<image>images/ortho.gif</image>
+	  <description>
+		An experiment in dimensional typography.
+	  </description>
+	  <location>http://www.ortho-type.it/beta033/</location>
+	  <source>ortho/orthotype.pde</source>
+	  <link href="http://www.ortho-type.it">Ortho-type</link>
+	</software>
+	
+	<software name="Acoustic Cartography" by="Daniel Rothaug" scroll="yes" resize="yes" width="710" height="600">
+	<image>images/acoustic.jpg</image>
+	  <description>
+		Experiment in mapping sonic events into a concrete visual language.
+	  </description>
+	  <location>http://www.acoustic-cartography.com/processing/</location>
+	  <source>acoustic/acoustic.pde</source>
+	  <link href="http://www.acoustic-cartography.com">Acoustic Cartography</link>
+	  <link href="http://www.zumkuckuck.com/">Zum Kuckuck</link>
+	</software>
+	
+	<software name="min_mod" by="Limiteazero" scroll="yes" resize="yes" width="700" height="400">
+	<image>images/min_mod.gif</image>
+	  <description>
+		A sound phenomenon represented through a spatial distribution of minimal elements, creating a sensitive environment influenced by the sounds generated in the surrounding space. 
+	  </description>
+	  <location>http://www.limiteazero.com/min_mod/</location>
+	  <source>min_mod/min_mod.pde</source>
+	  <link href="http://www.limiteazero.com/">Limiteazero</link>
+	</software>
+	
+	<software name="Life vs. Life" by="Justin Bakse & Eric Williams" scroll="yes" resize="yes" width="600" height="400">
+	<image>images/lifevslife.gif</image>
+	  <description>
+		A two player adaptation of by John Conway's mathematical game of Life. 
+	  </description>
+	  <location>http://www.lifevslife.com/</location>
+	  <source>lifevslife/lifevslife.pde</source>
+	  <link href="http://www.volcanokit.com">volcanokit</link>
+	  <link href="http://www.helveticore.com">helveticore</link>
+	</software>
+	
+	<software name="Chronodraw" by="Andreas Gysin" scroll="yes" resize="yes" width="980" height="680">
+	<image>images/chronodraw.gif</image>
+	  <description>
+		Draw on multiple frames in time.
+	  </description>
+	  <location>http://www.ertdfgcvb.ch/p1/chronodraw/</location>
+	  <source>chronodraw/chronodraw.txt</source>
+	  <link href="http://www.ertdfgcvb.ch">www.ertdfgcvb.ch</link>
+	</software>
+	
+	<software name="Getting Away with Murder" by="Gabriel Dunne" scroll="yes" resize="yes" width="600" height="500">
+	<image>images/papa.jpg</image>
+	  <description>
+		Software for Papa Roach's "Getting Away with Murder" music video by Motion Theory 
+	  </description>
+	  <location>papa/index.html</location>
+	  <source>papa/ticker_applet.txt</source>
+	  <link href="http://www.quilime.com">Quilime</link>
+	  <link href="http://www.motiontheory.com">Motion Theory</link>
+	</software>
+	
+	<software name="Liquid Liquid" by="v3ga" scroll="no" resize="no" width="300" height="300">
+	<image>images/liquidliquid.gif</image>
+	  <description>
+		 Give pixels the opportunity to express their strength in a scalar field and to mix with liquid metaballs. Use mouse and keyboard to interact.
+	  </description>
+	  <location>liquidliquid/index.html</location>
+	  <source>liquidliquid/LiquidLiquid.pde</source>
+	  <link href="http://processing.v3ga.net">processing.v3ga.net</link>
+	  <link href="http://www.2roqsmuseum.net">2roqsmuseum</link>
+	</software>
+	
+	<software name="Ecstasy of Communication" by="Lucas Kuzma" scroll="yes" resize="yes" width="1024" height="768">
+	<image>images/ecstasy.gif</image>
+	  <description>
+		 Simulation developed to model the expected behavior of a physical sound installation. Both potential and actual     network connections are shown.
+	  </description>
+	  <location>ecstasy/index.html</location>
+	  <source>ecstasy/n_e_13.pde</source>
+	  <link href="http://machinatus.net/">Machinatus</link>
+	</software>
+	
+	<software name="D5LV" by="Frederik Vanhoutte" scroll="yes" resize="yes" width="550" height="800">
+	<image>images/d5lv.jpg</image>
+	  <description>
+		Exploring volume and emotional texture with simple generative geometry. 
+		Interaction and randomness modify the structure.
+	  </description>
+	  <location>d5lv/index.html</location>
+	  <source>d5lv/D5LV.pde</source>
+	  <link href="http://www.wmute.org/">W:Mute</link>
+	</software>
+	
+	<software name="Presidential Discombobulator" by="Justin Manor" scroll="no" resize="no" width="330" height="368">
+	<image>images/discom.jpg</image>
+	  <description>
+		Admire Bush's tough stance on gay marriage, but just can't
+		get enough of John Edwards' pouty lips? Curious about what
+		a long-facer like Kerry can bring to the table, but just
+		know you'll miss Cheney's fangs if there's a democratic upset?
+	  </description>
+	  <location>discom/index.html</location>
+	  <source>discom/discom.pde</source>
+	  <link href="http://www.justinmanor.com/">Justin Manor</link>
+	  <link href="http://www.sosolimited.com/">SOSOlimited</link>
+	</software>
+	
+	<software name="Friendster Pachinko" by="Krister Olsson with sound by Yoshi Sodeoka" scroll="yes" resize="no" width="416" height="640">
+	<image>images/pachinko.jpg</image>
+	  <description>
+		Gambling with Friendsters! A variation on Pachinko, with friends instead of shiny metal balls.
+	  </description>
+	  <location>http://www.tree-axis.com/072904/browsercheck.php</location>
+	  <source>pachinko/pachinko.pde</source>
+	  <link href="http://www.tree-axis.com/">Tree Axis</link>
+	  <link href="http://www.c505.com/">c505</link>
+	  <link href="http://www.pretendster.com/">Pretendster</link>
+	</software>
+	
+	<software name="Tokyo" by="David Crawford" scroll="no" resize="no" width="640" height="480">
+	<image>images/tokyo.jpg</image>
+	  <description>
+		Framerate and alpha values are stepped up and down. (Takes a long time to load, please be patient)
+	  </description>
+	  <location>tokyo/index.html</location>
+	  <source>tokyo/Tokyo.pde</source>
+	  <link href="http://www.stopmotionstudies.net/">SMS</link>
+	</software>
+	
+	<software name="Portrait in Landscape" by="Katya Moorman" scroll="no" resize="no" width="640" height="384">
+	<image>images/katya.jpg</image>
+	  <description>
+		Playing with the idea of the 'portrait' or snapshot. How can motion add to the viewer's perception of the person?
+	  </description>
+	  <location>katya/index.html</location>
+	  <source>katya/katya.pde</source>
+	  <link href="http://www.lab5769.com/">lab5769</link>
+	  <link href="http://www.lab5769.com/portraits.html">lab5769 portraits</link>
+	</software>
+	
+	<software name="TTC" by="Ariel Malka" scroll="no" resize="no" width="402" height="402">
+	<image>images/ttc.gif</image>
+	  <description>
+		 Writing on a modular medium with recording & replaying capabilities. Give your fingers a few minutes on the keyboard to get warm.
+	  </description>
+	  <location>http://www.chronotext.org/devices/ttc/main.htm</location>
+	  <source>ttc/ttc.java</source>
+	  <link href="http://www.chronotext.org">Chronotext</link>
+	  <link href="http://www.chronotext.org/devices/ttc/">Chronotext Devices</link>
+	</software>
+	
+	<software name="Burning Liquid Sky" by="Mario Klingemann" scroll="no" resize="no" width="200" height="500">
+	<image>images/liquid.jpg</image>
+	  <description>
+		 Playing with particles is fun. Give this one a few seconds to get warm.
+	  </description>
+	  <location>liquid/index.html</location>
+	  <source>liquid/liquidsky.pde</source>
+	  <link href="http://incubator.quasimondo.com/">Quasimondo Incubator</link>
+	  <link href="http://www.quasimondo.com/">Quasimondo</link>
+	</software>
+	
+	<software name="Relations Environment" by="Alessandro Capozzo" scroll="no" resize="no" width="400" height="400">
+	<image>images/relations.gif</image>
+	  <description>
+		Each flocking creature connects with others by an ephemeral net of relations.
+	  </description>
+	  <location>relations/index.html</location>
+	  <source>relations/relations_enviroment.pde</source>
+	  <link href="http://www.abstract-codex.net">Abstract-Codex</link>
+	  <link href="http://www.ghostagency.net">Ghost Agency</link>
+	</software>
+	
+	<software name="NudemenGarden" by="Francis Lam, Henry Chu" scroll="yes" resize="yes" width="400" height="600">
+	<image>images/nudemengarden.gif</image>
+	  <description>
+		 When the nude men come, the flowers blossom. Software for real-time video tracking and animation.
+	  </description>
+	  <location>http://db-db.com/nudemengarden/</location>
+	  <source>nudemengarden/nudemengarden.pde</source>
+	  <link href="http://db-db.com/">db-db</link>
+	  <link href="http://www.exvis.net">Experimental Vision</link>
+	</software>
+	
+	<software name="Star Nursery" by="Ryan Alexander" scroll="yes" resize="no" width="615" height="680">
+	<image>images/starnursery.jpg</image>
+	  <description>
+		Software for the R.E.M. video Animal. (Requires QuickTime)
+	  </description>
+	  <location>starnursery/index.html</location>
+	  <source>starnursery/Star_Nursery_Yeah.pde</source>
+	  <link href="http://elfman.vendetta.com/ryan/">Ryan Alexander</link>
+	  <link href="http://motiontheory.com">Motion Theory</link>
+	</software>
+	
+	<software name="Tech Support" by="Jonah Brucker-Cohen" scroll="yes" resize="yes" width="700" height="650">
+	<image>images/techsupport.gif</image>
+	  <description>
+		The year is 2020. The future of computing is a battle between two opposing forces...
+	  </description>
+	  <location>techsupport/index.html</location>
+	  <source>techsupport/tech_support.pde</source>
+	  <link href="http://coin-operated.com">Coin-Operated</link>
+	</software>
+	
+	<software name="Base26" by="Toxi" scroll="yes" resize="yes" width="550" height="680">
+	<image>images/base26.gif</image>
+	  <description>
+		A spatial overview of four letter words in the English language.
+	  </description>
+	  <location>base26/index.html</location>
+	  <source>base26/base26.pde</source>
+	  <link href="http://www.toxi.co.uk">Toxi homepage</link>
+	  <link href="http://www.toxi.co.uk/p5/">Toxi processing work</link>
+	  <link href="http://www.toxi.co.uk/blog/">Toxi blog</link>
+	</software>
+	
+	<software name="Superhero" by="Mikkel Koser" scroll="no" resize="no" width="600" height="680">
+	<image>images/superhero.gif</image>
+	  <description>
+		"To the rescue!" "I'll save you!" "You'll be safe!" "Don't worry!"
+	  </description>
+	  <location>superhero/index.html</location>
+	  <source>superhero/applet/superhero_7.pde</source>
+	  <link href="http://www.beyondthree.com">Beyond Three</link>
+	  <link href="http://proce55ing.beyondthree.com">Processing @ Beyond Three</link>
+	</software>
+	
+	<software name="Cinema Redux" by="Brendan Dawes" scroll="yes" resize="yes" width="600" height="800">
+	<image>images/redux.jpg</image>
+	  <description>
+		Compressing an entire film into a single image to reveal the editing rhythms and tone. Compare Vertigo, Taxi Driver, Deliverance, and more.
+	  </description>
+	  <location>redux/index.html</location>
+	  <source>redux/moviemap3.pde</source>
+	  <link href="http://www.brendandawes.com">Brendan Dawes</link>
+	</software>
+	
+	<software name="Version B" by="Matthew Jogan" scroll="no" resize="no" width="750" height="500">
+	<image>images/872a_jogan.gif</image>
+	  <description>
+		An undulating spatial construction. Click and drag the mouse to change view. Press keys 1 through 6 to change the visualization.
+	  </description>
+	  <location>versionb/index.html</location>
+	  <source>versionb/mmj_project_FINALd.pde</source>
+	</software>
+	
+	<software name="Bees" by="Julia Stanat" scroll="no" resize="no" width="1024" height="512">
+	<image>images/872a_stanat.gif</image>
+	  <description>
+		Particle collisions generate a familiar structure.
+	  </description>
+	  <location>bees/index.html</location>
+	  <source>bees/bees6.pde</source>
+	</software>
+	
+	<software name="Fluidtime Applets" by="Victor Zambrano" scroll="yes" resize="yes" width="830" height="650">
+	<image>images/fluidtime.jpg</image>
+	  <description>
+		Visualizing bus information by dynamically querying the Turin transportation server.
+	  </description>
+	  <location>http://www.fluidtime.net/applets/?page=ptt</location>
+	  <source>fluidtime/fluidtime.pde</source>
+	  <link href="http://www.fluidtime.net">Fluidtime</link>
+	  <link href="http://www.00forward.com">00Forward</link>
+	</software>
+	
+	<software name="Moovl Prototype" by="Ed Burton" scroll="yes" resize="yes" width="700" height="650">
+	<image>images/moovl.gif</image>
+	  <description>
+		Drawing environment including simulated dynamics and programmable behaviors. A constructionist play environment based on the Sodaconstructor.
+	  </description>
+	  <location>http://www.moovl.com/moovl2003/</location>
+	  <source>none</source>
+	  <link href="http://www.moovl.com">moovl</link>
+	  <link href="http://www.soda.co.uk">soda</link>
+	</software>
+	
+	<software name="Bubble Chamber" by="Jared Tarbell" scroll="no" resize="no" width="435" height="460">
+	<image>images/chamber.gif</image>
+	  <description>
+		A generative painting system of colliding particles. Oddly familiar patterns are transcribed as a discrete universe of four particle types.
+	  </description>
+	  <location>chamber/index.html</location>
+	  <source>chamber/chamberMedium.pde</source>
+	  <link href="http://www.levitated.net/p5/chamber">Bubble Chamber</link>
+	  <link href="http://www.levitated.net/">Levitated.net</link>
+	</software>
+	
+	<software name="Jack O Lantern" by="Elise Co" scroll="no" resize="no" width="400" height="400">
+	<image>images/jackolantern.jpg</image>
+	  <description>
+		Pumpkin-feeding candy game using an off-the-shelf serial LCD module.
+	  </description>
+	  <location>jackolantern/index.html</location>
+	  <source>jackolantern/jackolantern.pde</source>
+	  <link href="http://www.seetron.com/slcds.htm">LCD modules</link>
+	</software>
+	
+	<software name="Sonic Wire Sculptor" by="Amit Pitaru" scroll="no" resize="no" width="600" height="450">
+	<image>images/sonicwire.gif</image>
+	  <description>
+		Draw sonic sculptures with this 'rotating-table' instrument.
+	  </description>
+	  <location>http://www.pitaru.com/sonicWireSculptor/framed/</location>
+	  <source>http://www.pitaru.com/sonicWireSculptor/tutorial/</source>
+	  <link href="http://pitaru.com/">Pitaru.com</link>
+	  <link href="http://insertsilence.com/">InsertSilence</link>
+	</software>
+	
+	<software name="Tracking" by="Robert Hodgin" scroll="no" resize="no" width="800" height="564">
+	<image>images/tracking.jpg</image>
+	  <description>
+		Video footage of webcam interaction based on real-time tracking of light sources.
+	  </description>
+	  <location>tracking/index.html</location>
+	  <source>tracking/tracking.pde</source>
+	  <link href="http://www.flight404.com/">Flight404</link>
+	</software>
+	
+	<software name="The Unbearable Lightness of Being a Pixel" by="Juha Huuskonen" scroll="no" resize="no" width="300" height="320">
+	<image>images/juhuu.gif</image>
+	  <description>
+		Stir the pixel soup with your mouse. For additional flavors, press A, S, M.
+	  </description>
+	  <location>juhuu/index.html</location>
+	  <source>juhuu/juhuu.pde</source>
+	  <link href="http://www.juhuu.nu/">Juhuu.nu</link>
+	</software>
+	
+	<software name="Ricochet" by="Josh Nimoy, Mark Napier" scroll="no" resize="no" width="640" height="300">
+	<image>images/ricochet.gif</image>
+	  <description>
+		Springy text collides with the edge of the image to jumble the forms. Press keys on your keyboard to generate new letters.
+	  </description>
+	  <location>ricochet/index.html</location>
+	  <source>ricochet/ricochet.pde</source>
+	  <link href="http://www.jtnimoy.com/">JTNimoy</link>
+	  <link href="http://www.potatoland.org/">Potatoland</link>
+	</software>
+	
+	<software name="Skyline" by="Mike Davis" scroll="no" resize="no" width="300" height="200">
+	<image>images/skyline.gif</image>
+	  <description>
+		An elegant cellular automata. An elusive structure is continually emerging and dispersing.
+	  </description>
+	  <location>skyline/index.html</location>
+	  <source>skyline/skyline.pde</source>
+	  <link href="http://www.lightcycle.org/">Lightcycle</link>
+	</software>
+	
+	<software name="Wiggle" by="Manny Tan" scroll="no" resize="no" width="400" height="400">
+	<image>images/wiggle.gif</image>
+	  <description>
+		An expanding, contracting, and twisting responsive organ.
+	  </description>
+	  <location>wiggle/index.html</location>
+	  <source>wiggle/wiggle.pde</source>
+	  <link href="http://www.uncontrol.com/">Uncontrol</link>
+	</software>
+	
+	<software name="withoutTitle" by="Lia" scroll="no" resize="no" width="640" height="480">
+	<image>images/withouttitle.jpg</image>
+	  <description>
+		A software machine exploring the boundaries of control.
+	  </description>
+	  <location>withouttitle/index.html</location>
+	  <source>withouttitle/withouttitle.pde</source>
+	  <link href="http://www.re-move.org/">Re-Move</link>
+	  <link href="http://www.wofbot.org">Wofbot</link>
+	</software>
+	
+	<software name="Articulate" by="GroupC" scroll="no" resize="no" width="600" height="650">
+	<image>images/articulate.gif</image>
+	  <description>
+		Structure emerges through the interactions of autonomous elements.
+	  </description>
+	  <location>articulate/index.html</location>
+	  <source>articulate/articulate.pde</source>
+	  <link href="http://www.groupc.net">GroupC</link>
+	</software>
+	
+	<software name="SodaProcessing" by="Ed Burton" scroll="no" resize="no" width="280" height="255">
+	<image>images/sodaprocessing.gif</image>
+	  <description>
+		Simplified version of the renowned Soda Constructor implemented in Processing.
+	  </description>
+	  <location>sodaprocessing/index.html</location>
+	  <source>sodaprocessing/sodaprocessing.pde</source>
+	  <link href="http://www.soda.co.uk">Soda</link>
+	  <link href="http://sodaplay.com">SodaPlay</link>
+	</software>
+	
+	<software name="C_Drawer" by="Marius Watz" scroll="no" resize="no" width="600" height="440">
+	<image>images/c_drawer.jpg</image>
+	  <description>
+		Like drawing with a bunch of crayons in one hand. 
+	Simple and messy, but fun.
+	  </description>
+	  <location>cdrawer/index.html</location>
+	  <source>cdrawer/cdrawer.pde</source>
+	  <link href="http://www.evolutionzone.com/">Evolution Zone</link>
+	</software>
+	
+	<software name="Inequality" by="Josh On" scroll="no" resize="no" width="200" height="232">
+	<image>images/inequality.gif</image>
+	  <description>
+		In 2001 US CEOs were paid 411 times more than the average worker...
+	  </description>
+	  <location>inequality/index.html</location>
+	  <source>inequality/inequality.pde</source>
+	  <link href="http://www.theyrule.net">They Rule</link>
+	  <link href="http://www.futurefarmers.com">Future Farmers</link>
+	</software>
+	
+	<software name="Pond" by="William Ngan" scroll="no" resize="no" width="600" height="400">
+	  <image>images/pond.gif</image>
+	  <description>
+		Autonomous bezier fish swarm around their liquid environment. Press keys 0-3 to hide and reveal predator fish.
+	  </description>
+	  <location>pond/index.html</location>
+	  <source>pond/pond.pde</source>
+	  <link href="http://www.metaphorical.net">Metaphorical</link>
+	  <link href="http://www.interaction.rca.ac.uk/alumni/99-01/william/">Royal College of Art</link>
+	</software>
+	
+	<software name="Hin_und_Her" by="Boris Müller" scroll="no" resize="no" width="729" height="570">
+	  <image>images/hinundher.gif</image>
+	  <description>
+		An interpretation of the poem 'Der und Die' by Ernst Jandl
+	  </description>
+	  <location>hinundher/index.html</location>
+	  <source>hinundher/hinundher.pde</source>
+	  <link href="http://www.esono.com">Esono</link>
+	</software>
+	
+	<software name="Yellowtail" by="Golan Levin" scroll="no" resize="no" width="488" height="288">
+	<image>images/yellowtail.gif</image>
+	  <description>
+		An interactive software system for the gestural creation and performance of real-time abstract animation.
+	  </description>
+	  <location>yellowtail/index.html</location>
+	  <source>yellowtail/yellowtail.pde</source>
+	  <link href="http://www.flong.com/yellowtail/">Yellowtail</link>
+	  <link href="http://www.flong.com">Flong</link>
+	</software>
+	
+	<software name="Alphabot" by="Nikita Pashenkov" scroll="no" resize="no" width="400" height="400">
+	<image>images/004.gif</image>
+	  <description>
+		Alphabot is a virtual robot that is able to take the shape of any letter in the English alphabet as you type them on a keyboard.
+	  </description>
+	  <location>004/index.html</location>
+	  <source>004/code.html</source>
+	  <link href="http://acg.media.mit.edu/people/nik/projects/alphabot/">Alphabot</link>
+	  <link href="http://acg.media.mit.edu/">ACG</link>
+	</software>
+	
+	<software name="Europa" by="Glen Murphy" scroll="no" resize="no" width="301" height="401">
+	<image>images/europa.gif</image>
+	  <description>
+		Creating a simulation from summery dreams of the one I love.
+	  </description>
+	  <location>europa/index.html</location>
+	  <source>europa/europa.pde</source>
+	  <link href="http://www.glenmurphy.com/">Glen Murphy</link>
+	  <link href="http://www.bodytag.org">Body Tag</link>
+	</software>
+	
+	<software name="Matchboxes" by="Schoenerwissen" scroll="no" resize="no" width="640" height="480">
+	<image>images/003.gif</image>
+	  <description>
+		Reassembling a movieclip database by using the properties of the collected information to generate a new visual data matrix.
+	  </description>
+	  <location>003/index.html</location>
+	  <source>003/code.html</source>
+	  <link href="http://www.schoenerwissen.com/">Schoenerwissen</link>
+	  <link href="http://www.minitasking.com">Minitasking</link>
+	</software>
+	
+	<software name="Internet_Age" by="Reed Kram" scroll="no" resize="no" width="300" height="300">
+	<image>images/002.gif</image>
+	  <description>
+	  </description>
+	  <location>002/index.html</location>
+	  <source>002/code.html</source>
+	  <link href="http://www.kramdesign.com/">kramdesign</link>
+	</software>
+	
+	<software name="Valence" by="Ben Fry" scroll="no" resize="no" width="640" height="480">
+	<image>images/001.gif</image>
+	  <description>
+		An exploration into building representations for structures and relationships inside large sets of information.
+	  </description>
+	  <location>001/index.html</location>
+	  <source>none</source>
+	  <link href="http://acg.media.mit.edu/people/fry">Genomic Cartography</link>
+	  <link href="http://acg.media.mit.edu/">ACG</link>
+	</software>
+	
+	<software name="Tissue" by="Casey Reas" scroll="no" resize="no" width="600" height="250">
+	  <image>images/000.gif</image>
+	  <description>
+		Exposing the movements of hundreds of synthetic systems. An understanding of the total system emerges from the subtle relations between the stimulus and response.
+	  </description>
+	  <location>000/index.html</location>
+	  <source>000/code.html</source>
+	  <link href="http://www.groupc.net">Group C</link>
+	</software>
+	
+</curated>

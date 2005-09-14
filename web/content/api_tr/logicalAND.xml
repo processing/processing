@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>&amp;&amp; (mantıksal VE)</name>
+
+<category>Control</category>
+
+<subcategory>Logical Operators</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>logicalAND.gif</image>
+<code>
+for(int i=5; i&lt;=95; i+=5) {
+  if((i &gt; 35) &amp;&amp; (i &lt; 60)) {
+    stroke(0);    //Set color to black
+  } else {
+    stroke(255);  //Set color to white
+  }
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<description>
+İki ifadeyi karşılaştırır ve yanlızca her ikisi de doğru (<b>true</b>) ise doğru olarak değerlendirir. Bir veya ikisi yanlış (<b>false</b>) ise yanlış olarak değerlendirir. Aşağıdaki liste muhtemel birleşimleri gösteriyor:<br/><br/><tt>true && false   // İkincisi yanlış olduğu icin yanlış olarak değerlendirilir<br/>false && true   // Birincisi yanlış olduğu icin yanlış olarak değerlendirilir <br/>true && true    // Her ikisi de doğru olduğu icin doğru olarak değerlendirilir<br/>false && false  // Her ikisi de yanlış olduğu icin yanlış olarak değerlendirilir</tt>
+</description>
+
+<syntax>
+<c>ifade1</c> &amp;&amp; <c>ifade2</c>
+</syntax>
+
+<parameter>
+<label>ifade1</label>
+<description>herhangi bir geçerli ifade</description>
+</parameter>
+
+<parameter>
+<label>ifade2</label>
+<description>herhangi bir geçerli ifade</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+|| (logical OR)
+! (logical NOT)
+if()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

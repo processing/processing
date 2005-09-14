@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>ceil()</name>
+
+<category>Matematik</category>
+
+<subcategory>Temel Fonksiyonlar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+float x = 8.22;  
+float a = ceil(x);  // Set "a" to 9.0
+</code>
+</example>
+
+<description>
+Bir parametrenin değerinden daha büyük veya bu dğere eşit en yakın değeri hesaplar. Örneğin, <b>ceil(9.03)</b> 10.0 döndürür.
+</description>
+
+<syntax>
+ceil(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>float</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+floor()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

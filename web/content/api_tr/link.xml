@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>link()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Ağ</subcategory>
+
+<usage>Web</usage>
+
+<example>
+<image></image>
+<code>
+void loop() {
+  rect(20, 20, 60, 60);
+}
+
+void mousePressed() {
+  link("http://www.groupc.net");
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+void loop() {
+  rect(20, 20, 60, 60);
+}
+
+void mousePressed() {
+  link("http://www.groupc.net", "_new");
+}
+</code>
+</example>
+
+<description>
+Başka bir URLye bağlanır. Tüm URL tanımlanmalıdır. Bu fonksiyon sadece Web tarayıcıda çalışacaktır.
+</description>
+
+<syntax>
+link(url)
+link(url, hedef)
+</syntax>
+
+<parameter>
+<label>url</label>
+<description>String: çift tırnak içinde karakter dizisi olarak tüm url</description>
+</parameter>
+
+<parameter>
+<label>hedef</label>
+<description>String: URLyi çift tırnak içinde karakter dizisi olarak yükleyecek pencerenin adı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Bagel</partof>
+
+</root>

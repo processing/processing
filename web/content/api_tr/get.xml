@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>get()</name>
+
+<category>Resim</category>
+
+<subcategory>Pikseller</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>get_.jar</image>
+<code>
+void loop() {
+  for(int i=0; i&lt;height; i++) {
+    stroke(i*2);
+    line(0, i, 50, i);
+  }
+  color c = get(mouseX, mouseY);
+  noStroke();
+  fill(c);
+  rect(50, 0, 50, 100);
+}
+</code>
+</example>
+
+<description>
+Herhangi bir pikselin rengini okumaya yarar. Dönen sayılar mevcut renk aralıklarına göre oranlanır, ancak dönen sayılar her zaman RGB değerleridir. <b>colorMode(HSB)</b> ile bir şekil çizilmiş olsa bile dönen değerler RGB değerleridir. Eğer istenen piksel gösterim penceresinin dışında ise zemin rengi döndürülür. Gösterim penceresinin bir kısmını almak genişlik (<b>width</b>) ve yükseklik(<b>height</b>) parametreleri tanımlayarak mümkündür.
+</description>
+
+<syntax>
+get(<c>x</c>, <c>y</c>)
+get(<c>x</c>, <c>y</c>, <c>genişlik</c>, <c>yükseklik</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int: pikselin x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int: pikselin y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>genişlik</label>
+<description>int: alınacak piksel alanın genişliği</description>
+</parameter>
+
+<parameter>
+<label>yükseklik</label>
+<description>int: alınacak piksel alanın yüksekliği</description>
+</parameter>
+
+<returns>color veya BImage</returns>
+
+<related>
+set()
+pixels[]
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

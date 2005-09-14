@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>pmouseY 先前滑鼠的Y座標</name>
+
+<category>Input/Output</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>pmouseY.jar</image>
+<code>
+// Move the mouse quickly to see the difference
+// between the current and previous position
+void loop()
+{
+  background(204);
+  line(20, mouseY, 80, pmouseY);
+}
+</code>
+</example>
+
+<description>
+系統變數 <b>pmouseY</b> 記存了滑鼠游標先前的 y 坐標。這是指游標在上一個影格時直向的位置。
+</description>
+
+<syntax>
+pmouseY
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+mouseX
+mouseY
+pmouseX
+mousePressed
+mousePressed()
+mouseReleased()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

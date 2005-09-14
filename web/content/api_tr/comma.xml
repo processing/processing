@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>, (virgül)</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<applet></applet>
+<code>
+// Comma used to separate a list of variable declarations
+int a=20, b=30, c=80;
+
+// Comma used to separate a list of values assigned to an array
+int[] d = { 20, 60, 80 };
+
+// Comma used to separate a list of parameters passed to a function
+line(a, b, c, b);
+line(d[0], d[1], d[2], d[1]);
+</code>
+</example>
+
+<description>
+Fonksiyon çağrımlarındaki parametereleri ve öğeleri ayırır.
+</description>
+
+<syntax>
+değer1, ..., değerN
+</syntax>
+
+<parameter>
+<label>değer1, ..., değerN</label>
+<description>herhangi bir int, float, byte, boolean, color, char, String</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

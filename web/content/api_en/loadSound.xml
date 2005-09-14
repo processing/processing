@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loadSound()</name>
+
+<category>Sound</category>
+
+<subcategory>Loading</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PSound soundA; 
+ 
+void setup() { 
+  soundA = loadSound("clong.wav"); 
+  soundA.loop(); 
+} 
+ 
+void draw() { 
+  // The blank draw() is necessary to let the sound play
+} 
+</code>
+</example>
+
+<description>
+Loads a sound into a variable of type <b>PSound</b>. Only .wav sound files may be loaded. To load correctly, sound files must be located in the data directory of the current sketch.
+</description>
+
+<syntax>
+loadSound(<c>filename</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>String: name of file to load, must be .wav</description>
+</parameter>
+
+<returns>PSound</returns>
+
+<related>
+PSound
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

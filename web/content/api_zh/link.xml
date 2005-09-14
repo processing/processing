@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>link()連結</name>
+
+<category>Input/Output</category>
+
+<subcategory>Network</subcategory>
+
+<usage>網路</usage>
+
+<example>
+<image></image>
+<code>
+void loop() {
+  rect(20, 20, 60, 60);
+}
+
+void mousePressed() {
+  link("http://www.groupc.net");
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+void loop() {
+  rect(20, 20, 60, 60);
+}
+
+void mousePressed() {
+  link("http://www.groupc.net", "_new");
+}
+</code>
+</example>
+
+<description>
+連結不同網址。請註明網址的全名。本函式只能於網路遊覽器中作用。
+</description>
+
+<syntax>
+link(url)
+link(url, target)
+</syntax>
+
+<parameter>
+<label>url</label>
+<description>字串:在引號中註明網址的全名</description>
+</parameter>
+
+<parameter>
+<label>target</label>
+<description>字串:下載引號中網址的視窗名稱</description>
+</parameter>
+
+<returns>None</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Bagel</partof>
+
+</root>

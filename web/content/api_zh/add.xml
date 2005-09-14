@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>+ (加號)</name>
+
+<category>Math</category>
+
+<subcategory>Operator</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a = 50 + 5;  // Sets a to 55
+int b = a + 5;   // Sets b to 60
+</code>
+</example>
+
+<description>
+計算兩個值的和。
+</description>
+
+<syntax>
+<c>value1</c> + <c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+++ (increment)
++= (add assign)
+- (subtract)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

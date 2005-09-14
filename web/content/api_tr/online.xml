@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>online()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Ağ</subcategory>
+
+<usage>Web</usage>
+
+<example>
+<image></image>
+<code>
+boolean connected = online();
+if(connected) {
+  ellipse(25, 25, 50, 50);
+} else {
+  line(0, 0, 100, 100);
+  line(100, 0, 0, 100);
+}
+</code>
+</example>
+
+<description>
+Processing programının bir web tarayıcı içinde çalıştıgını doğrular. Eğer web tarayıcıdaysa "doğru" değilse "yanlış" sonuç verir.
+</description>
+
+<syntax>
+online()
+</syntax>
+
+<returns>Boolean</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Bagel</partof>
+
+</root>

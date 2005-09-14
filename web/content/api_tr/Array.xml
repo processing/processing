@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+
+<name>Array</name>
+
+<category>Veri</category>
+
+<subcategory>Birleşik</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int[] numbers = new int[3];
+numbers[0] = 90;
+numbers[1] = 150;
+numbers[2] = 30;
+int a = numbers[0] + numbers[1]; // Sets variable a to 240
+int b = numbers[1] + numbers[2]; // Sets variable b to 180 
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+int[] numbers = { 90, 150, 30 };
+int a = numbers[0] + numbers[1]; // Sets variable a to 240
+int b = numbers[1] + numbers[2]; // Sets variable b to 180
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+int degrees = 360;
+float[] cos_vals = new float[degrees];
+for(int i=0; i &amp;lt; degrees; i++) {
+  cos_vals[i] = cos(TWO_PI/degrees * i);
+}
+</code>
+</example>
+
+<description>
+Dizi bir veri listesidir. Herhangi bir tür verinin dizisi olabilir. Dizi içindeki her parça veri yerini tanımlayan bir indeks sayısı tarafından tanımlanır. Dizinin ilk öğesi [0], ikinci öğesi [1] şeklinde ilerler. Diziler nesnelere benzer, o yüzden <b>new</b> ile yaratılmalıdır. Her dizinin tam sayı olan <b>length</b> değeri dizideki toplam öğe sayısını belirler. 
+</description>
+
+<syntax>
+<c>datatype</c>[] <c>var</c>
+<c>var</c>[<c>öğe</c>] = <c>değer</c>
+<c>var</c>.length
+</syntax>
+
+<parameter>
+<label>datatype</label>
+<description>kullanıcı tarafından tanımlanmış classları da içeren herhangi bir basit veya birleşik veri türü</description>
+</parameter>
+
+<parameter>
+<label>var</label>
+<description>herhangi bir geçerli değişken adı</description>
+</parameter>
+
+<parameter>
+<label>öğe</label>
+<description>int: dizinin boyutunu geçmemelidir</description>
+</parameter>
+
+<parameter>
+<label>değer</label>
+<description>diziye atanmış veri, dizi ile aynı veri türünde olmalıdır</description>
+
+</parameter>
+
+<method>
+<label></label>
+<description></description>
+</method>
+
+<returns>Yok</returns>
+
+<related>Yok</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+
+
+</root>

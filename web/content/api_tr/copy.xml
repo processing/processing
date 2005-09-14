@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>copy()</name>
+
+<category>Resim</category>
+
+<subcategory>Pikseller</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>copy_.gif</image>
+<code>
+BImage cp;
+noStroke();
+rect(40, 10, 20, 80);
+rect(10, 40, 80, 20);
+cp = copy();
+image(cp, 0, 0, 50, 50);
+</code>
+</example>
+
+<description>
+Bir gösterim penceresinin içerigini başka bir BImage nesnesine kopyalar.
+</description>
+
+<syntax>
+copy()
+</syntax>
+
+<returns>BImage</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

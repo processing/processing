@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>fill() 填滿顏色</name>
+
+<category>Color</category>
+
+<subcategory></subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>fill_.gif</image>
+<code>
+fill(153);
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<example>
+<image>fill_2.gif</image>
+<code>
+fill(204, 102, 0);
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+設定顏色以填滿形狀。舉例來說，呼叫<b>fill(204, 102, 0)</b>並畫一個長方形，將出現一個橘色的長方形。依照指定的<b>colorMode()</b>色彩模式，有RGB 或 HSB 種選擇。系統本身設定為值由0 到 255 的RGB 色彩模式。若是<b>fill()</b> 函式只有一個參數，其結果將為一灰階值。若是fill() 函式有3個參數，其結果為一色彩。若是fill() 函式有4個參數，其結果為一具有透明度值(alpha value)的色彩。<i>請注意，灰階參數的值必須小於或等於色彩模式(<b>colorMode()</b>)的設定值，系統設定值為255。</i> 
+</description>
+
+<syntax>
+fill(<c>gray</c>)
+fill(<c>gray</c>, <c>alpha</c>)
+fill(<c>value1</c>, <c>value2</c>, <c>value3</c>)
+fill(<c>color</c>)
+fill(<c>color</c>, <c>alpha</c>)
+fill(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
+</syntax>
+
+<parameter>
+<label>gray</label>
+<description>整數或浮點數: 本數字代表介於白色和黑色之間的任一特定值</description>
+</parameter>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數: 紅色或彩度</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數: 綠色或飽和度</description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description>整數或浮點數: 籃色或明亮度</description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description>整數或浮點數: 填色的透明度</description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description>顏色: 屬於色彩資料型態的任一特定值</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+noFill()
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

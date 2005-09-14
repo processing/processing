@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>* (çarp)</name>
+
+<category>Matematik</category>
+
+<subcategory>Operatör</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int e = 50 * 5;  // Sets e to 250
+int f = e * 5;   // Sets f to 1250
+</code>
+</example>
+
+<description>
+İki değeri çarpar. Çarpma birbiri ardına dizili toplamaya eşdeğerdir. Örneğin, 5*4 = 5 + 5 + 5 + 5.
+</description>
+
+<syntax>
+<c>değer1</c> * <c>değer2</c>
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int, float, byte, veya char</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int, float, byte, veya char</description>
+</parameter>
+
+<returns></returns>
+
+<related>
++ (add)
+/ (divide)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

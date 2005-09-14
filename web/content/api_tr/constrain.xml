@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>constrain()</name>
+
+<category>Matematik</category>
+
+<subcategory>Temel Fonksiyonlar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>constrain_.jar</image>
+<code>
+void loop() 
+{ 
+  background(204);
+  float mx = constrain(mouseX, 30, 70);
+  rect(mx-10, 40, 20, 20);
+}
+</code>
+</example>
+
+<description>
+Bir değeri belirlenen en büyük ve en küçük değerleri aşmamaya zorlar.
+</description>
+
+<syntax>
+constrain(<c>değer</c>, <c>min</c>, <c>max</c>)
+</syntax>
+
+<parameter>
+<label>değer</label>
+<description>int veya float: sınırlanacak değer</description>
+</parameter>
+
+<parameter>
+<label>min</label>
+<description>int veya float: en küçük sınır</description>
+</parameter>
+
+<parameter>
+<label>max</label>
+<description>int veya float: en büyük sınır</description>
+</parameter>
+
+<returns>float veya int (girdilere bağlı olarak)</returns>
+
+<related>
+max()
+min()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>pop() 丟棄</name>
+
+<category>Transform</category>
+
+<subcategory>Basic</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>pop_.gif</image>
+<code>
+rect(0, 0, 50, 50);   //White rectangle
+push();
+translate(30, 20);
+fill(0);  
+rect(0, 0, 50, 50);   //Black rectangle
+pop();
+fill(102);  
+rect(15, 10, 50, 50); //Gray rectangle
+</code>
+</example>
+
+<description>
+在矩陣堆疊（matrix stack）之上，丟棄現行的變動矩陣。認識矩陣堆疊﹝matrix stack）的概念，便能了解儲存（push）和丟棄（pop）的用法。 <b>push()</b> 函式儲存現行的方位系統至堆疊之上，而 <b>pop()</b> 函式回復早前的方位系統。 <b>push()</b> 和 <b>pop()</b> 函式可與其他變動函式相連使用，也能結合使用以控制變動的範圍。
+</description>
+
+<syntax>
+pop()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+push()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

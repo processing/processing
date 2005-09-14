@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>text() 輸入文字</name>
+
+<category>Typography</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>text_.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+顯示<b>data</b> 參數中指定的資訊在電腦屏幕上，而<b>x</b> 和 <b>y</b> 參數則設定顯示資訊的方位。必須先以 <b>textFont()</b> 函式設定字型後，才能使用 <b>text()</b> 函式。
+</description>
+
+<syntax>
+text(<c>data</c>, <c>x</c>, <c>y</c>)
+</syntax>
+
+<parameter>
+<label>data</label>
+<description>字串，字元，整數，或浮點數：要顯示的字數(alphanumeric)符號．</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>整數或浮點數：字的x方位．</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數或浮點數：字的y方位．</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+loadFont() 
+BFont 
+textFont() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

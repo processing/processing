@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>loadBytes() 載入位元組</name>
+
+<category>Input/Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+// open a file and read its binary data
+byte b[] = loadBytes("something.dat");
+
+// print each value, from 0 to 255
+for (int i = 0; i &lt; b.length; i++) {
+  // every tenth number, start a new line
+  if ((i % 10) == 0) {
+    println();
+  }
+
+  // bytes are from -128 to 127, this converts to 0 to 255
+  int a = b[i] &amp; 0xff;
+  print(a + " ");
+}
+// print a blank line at the end
+println();
+
+</code>
+</example>
+
+<description>
+讀取檔案或網路資源位置(url)的內容，並產生位元組陣列。如讀取的內容來自檔案，必須先將該檔案置放於作品的data 資料夾中。
+</description>
+
+<syntax>
+loadBytes(<c>filename</c>);
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>字串: 被載入之檔案或網路資源位置(url)的名稱</description>
+</parameter>
+
+<returns>byte[]</returns>
+
+<related>
+loadStream()
+loadStrings()
+saveStrings()
+saveBytes() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

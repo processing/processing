@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>!= (eşit değildir)</name>
+
+<category>Kontrol</category>
+
+<subcategory>İlişkisel Operatörler</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a = 22;
+int b = 23;
+if(a != b) {
+  println("variable a is not equal to variable b");
+}
+</code>
+</example>
+
+<description>
+Bir değerin diğer değere eşit olup olmadığına karar verir.
+</description>
+
+<syntax>
+<c>değer1</c> != <c>değer2</c>
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int, float, char, byte, boolean, String</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int, float, char, byte, boolean, String</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+&gt; (greater than)
+&lt; (less than)
+&gt;= (greater than or equal to)
+&lt;= (less than or equal to)
+== (equality)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+
+</root>

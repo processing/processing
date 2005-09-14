@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>mouseMoved() 移動滑鼠</name>
+
+<category>Input/Output</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>mouseMoved_.jar</image>
+<code>
+// Move the mouse across the image
+// to change its value
+
+int value = 0;
+
+void loop() {
+  fill(value);
+  rect(25, 25, 50, 50);
+}
+
+void mouseMoved() 
+{
+  value = value + 5;
+  if (value &gt; 255) {
+    value = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+每當滑鼠移動而且按鍵沒有被按壓， <b>mouseMoved()</b>函式就會自動被呼叫。
+</description>
+
+<syntax>
+mouseMoved()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+mouseX
+mouseY
+pmouseX
+pmouseY
+mousePressed
+mousePressed()
+mouseReleased()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

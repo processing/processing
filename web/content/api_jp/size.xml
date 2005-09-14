@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>size()</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+ size(320, 240);
+ background(153);
+}
+
+void loop() {
+ line(0, 0, width, height);
+}
+</code>
+</example>
+
+<description>
+Defines the dimension of the display window in units of pixels. The <b>size()</b> function must be the first line in <b>setup()</b>. If <b>size()</b> is not called, the default size of the window is 100x100 pixels. The system variables <b>width</b> and <b>height</b> are set based on the parameters passed to the <b>size()</b> function.
+</description>
+
+<syntax>
+size(<c>width</c>, <c>height</c>)
+</syntax>
+
+<parameter>
+<label>width</label>
+<description>int: width of the display window in units of pixels</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>int: height of the display window in units of pixels</description>
+</parameter>
+
+<returns>None</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

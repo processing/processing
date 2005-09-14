@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>max() 最大值</name>
+
+<category>Math</category>
+
+<subcategory>Basic Functions</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a = max(5, 9);            // Sets "a" to 9
+int b = max(-4, -12);         // Sets "b" to -4
+float c = max(12.3, 230.24);  // Sets "c" to 230.24
+</code>
+</example>
+
+<description>
+決定一系列數字中的最大值。
+</description>
+
+<syntax>
+max(<c>value1</c>, <c>value2</c>)
+max(<c>value1</c>, <c>value2</c>, <c>value 3</c>)
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns>整數或浮點數(以輸入值為準)</returns>
+
+<related>
+min()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

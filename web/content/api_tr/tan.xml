@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>tan()</name>
+
+<category>Matematik</category>
+
+<subcategory>Trigonometri</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>tan_.gif</image>
+<code>
+float a = 0.0;
+float inc = TWO_PI/50.0;
+
+for(int i=0; i&lt;100; i=i+2) {
+  line(i, 50, i, 50+tan(a)*2.0);
+  a = a + inc;
+}
+</code>
+</example>
+
+<description>
+Bir açının tanjant değerini hesaplar. <b>tan()</b> fonksiyonu parametreleri radyan değerinde alır. Değerler <b>sonsuz</b> ile <b>-sonsuz</b> arasında döner.
+</description>
+
+<syntax>
+tan(<c>açı</c>)
+</syntax>
+
+<parameter>
+<label>açı</label>
+<description>float: radyan olarak ölçülmüş bir açı</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+atan2()
+cos()
+sin()
+radians()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

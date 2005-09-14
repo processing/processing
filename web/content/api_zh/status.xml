@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>status() 狀態</name>
+
+<category>Input/Output</category>
+
+<subcategory>Network</subcategory>
+
+<usage>網路</usage>
+
+<example>
+<image>status_.jar</image>
+<code>
+// Move mouse left and right and see the text
+// change in the lower-left corner of your browser
+void loop() {
+  if(mouseX &lt; 50) {
+    status("left");
+  } else {
+    status("right");
+  }
+}
+</code>
+</example>
+
+<description>
+顯示訊息於瀏覽器的狀態欄（status）。狀態欄是瀏覽器左下格的文字欄。只有當 Processing 的程式運行於瀏覽器內時，<b>status()</b> 函式才能執行其功能。
+</description>
+
+<syntax>
+status(<c>text</c>)
+</syntax>
+
+<parameter>
+<label>text</label>
+<description>字串: 任何有效的字串</description>
+</parameter>
+
+<returns>無</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Bagel</partof>
+
+</root>

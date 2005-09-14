@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>imageMode()</name>
+
+<category>Resim</category>
+
+<subcategory>Yükleme ve Gösterme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>imageMode_.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense_crop.jpg");
+imageMode(CENTER_DIAMETER);
+image(b, 35, 35);
+imageMode(CORNER);
+image(b, 35, 35);
+</code>
+</example>
+
+<description>
+Resmin uzamsal kökünü(origin) değiştirir. Varsayılan resim durumu yer olarak sol üst koşeyi belirten <b>imageMode(CORNER)</b>dır. <b>imageMode(CENTER_DIAMETER)</b> fonksiyonu şekilleri orta noktalarına göre çizer. <b>imageMode()</b> için kullanılan parametereler Processing büyük küçük harfe duyarlı olduğundan "BUYUK HARFLE" yazılmalıdır.
+</description>
+
+<syntax>
+imageMode(MODE)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>Either CENTER_DIAMETER, CENTER_RADIUS, veya CORNER</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+loadImage() 
+BImage 
+image() 
+imageMode() 
+backgroundImage() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>hour() 小時</name>
+
+<category>Input/Output</category>
+
+<subcategory>Time &amp; Date</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>hour_.jar</image>
+<code>
+void loop() {
+  background(204);
+  int s = second();  // Values from 0 - 59
+  int m = minute();  // Values from 0 - 59
+  int h = hour();    // Values from 0 - 23
+  line(s, 0, s, 33);
+  line(m, 33, m, 66);
+  line(h, 66, h, 100);
+}
+</code>
+</example>
+
+<description>
+Processing 可連結電腦中的時鐘； <b>hour()</b> 函式傳回現有時間的小時，以0 至 23 之間的任一值表示。
+</description>
+
+<syntax>
+hour()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>整數</returns>
+
+<related>
+millis() 
+second()
+minute()
+day()
+month()
+year()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+</root>

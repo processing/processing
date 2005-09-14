@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>get() 取得</name>
+
+<category>Image</category>
+
+<subcategory>Getting &amp; Setting Pixels</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>get_.jar</image>
+<code>
+void loop() {
+  for(int i=0; i&lt;height; i++) {
+    stroke(i*2);
+    line(0, i, 50, i);
+  }
+  color c = get(mouseX, mouseY);
+  noStroke();
+  fill(c);
+  rect(50, 0, 50, 100);
+}
+</code>
+</example>
+
+<description>
+此函式用於讀取像素或像素組的色彩值，回傳的數值是 RGB 色彩值，其數值會根據現行的顏色範圍按比例增減。儘管你可用 <b>colorMode(HSB)</b> 以繪畫圖形，但其回傳的色彩值必為 RGB。如果要求的像素超出了影像視窗，回傳的色彩值會是背景顏色的數值。設定函式的 <b>width</b> 和 <b>height</b> 參數則可取得視窗某部份的數值。
+</description>
+
+<syntax>
+get(<c>x</c>, <c>y</c>)
+get(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>整數：像素的 x 座標</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數：像素的 y 座標</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>整數：欲讀取的像素區域的寬長</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>整數：欲讀取的像素區域的高度</description>
+</parameter>
+
+<returns>color 顏色資訊類型，或 BImage 物件</returns>
+
+<related>
+set()
+pixels[]
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

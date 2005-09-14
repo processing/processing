@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>line() 線</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>line_.gif</image>
+<code>
+line(30, 20, 85, 75);
+</code>
+</example>
+
+<example>
+<image>line_2.gif</image>
+<code>
+line(30, 20, 85, 20);
+stroke(126);
+line(85, 20, 85, 75);
+stroke(255);
+line(85, 75, 30, 75);
+</code>
+</example>
+
+<description>
+線為兩點之間的直接路徑。 函式<b>line()</b>有2種版本。第一種版本附有2個參數，可以在 Z=0 的XY平面上繪製線條。 第二種版本附有3個參數，線條的位置可以任意設定於XYZ空間中。想將線條著色，請使用<b>stroke()</b>函式。線條不可被填色，所以<b>fill()</b>函式對線條沒有作用。繪製線條的寬度為1像素。 
+</description>
+
+<syntax>
+line(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>); 
+line(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>); 
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>整數或浮點數: 第1點的x座標</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>整數或浮點數: 第1點的y座標</description>
+</parameter>
+
+<parameter>
+<label>z1</label>
+<description>整數或浮點數: 第1點的z座標</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>整數或浮點數: 第2點的x座標</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>整數或浮點數: 第2點的y座標</description>
+</parameter>
+
+<parameter>
+<label>z2</label>
+<description>整數或浮點數: 第2點的z座標</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+beginShape()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

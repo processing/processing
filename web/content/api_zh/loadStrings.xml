@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>loadStrings() 載入字串</name>
+
+<category>Input/Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+String lines[] = loadStrings("list.txt");
+println("there are " + lines.length + " lines");
+for (int i=0; i &lt; lines.length; i++) {
+  println(lines[i]);
+}
+</code>
+</example>
+
+<description>
+讀取檔案或網路資源位置 (url) 的內容，並根據各自敘述，產生字串陣列。如讀取的內容來自檔案，必須先將該檔案置放於作品的data 資料夾中。
+</description>
+
+<syntax>
+loadStrings(<c>filename</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>字串: 被載入之檔案或網路資源位置(url)的名稱</description>
+</parameter>
+
+<returns>String[]字串陣列</returns>
+
+<related>
+loadStream()
+loadBytes() 
+saveStrings()
+saveBytes()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

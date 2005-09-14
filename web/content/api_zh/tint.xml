@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>tint() 上色</name>
+
+<category>Image</category>
+
+<subcategory>Loading and Displaying</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>tint_.jpg</image>
+<code>
+BImage b; 
+b = loadImage("laDefense.jpg"); 
+image(b, 0, 0); 
+// Tint blue
+tint(0, 153, 204); 
+image(b, 50, 0); 
+</code>
+</example>
+
+<example>
+<image>tint_2.jpg</image>
+<code>
+BImage b; 
+b = loadImage("laDefense.jpg"); 
+image(b, 0, 0); 
+// Tint blue and set transparency
+tint(0, 153, 204, 126); 
+image(b, 50, 0); 
+</code>
+</example>
+
+<description>
+設定填色度予顯示中的圖像。圖像可以染上特定的色彩，或設定其透明度。
+</description>
+
+<syntax>
+tint(<c>gray</c>)
+tint(<c>gray</c>, <c>alpha</c>)
+tint(<c>value1</c>, <c>value2</c>, <c>value3</c>)
+tint(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
+tint(<c>color</c>)
+</syntax>
+
+<parameter>
+<label>gray</label>
+<description>整數或浮點數：任何有效的灰度值</description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description>整數或浮點數：圖像的透明度</description>
+</parameter>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數：紅色或彩度 </description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數：綠色或飽和度</description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description>整數或浮點數：藍色或明亮度</description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description>顏色：任何color數據類別的數值</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+noTint()
+image()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

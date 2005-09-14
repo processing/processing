@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>shorten()</name>
+
+<category>Data</category>
+
+<subcategory>Array Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+String sa1[] = { "OH ", "NY ", "CA "}; 
+String sa2[] = shorten(sa1); 
+print(sa1);  // Prints "OH NY " 
+println();
+sa2 = shorten(sa2); 
+print(sa2);  // Prints "OH " 
+</code>
+</example>
+
+<description>
+Decreases an array by one element and returns the shortened array.
+</description>
+
+<syntax>
+shorten(<c>array</c>)
+</syntax>
+
+<parameter>
+<label>array</label>
+<description>boolean[], byte[], char[], int[], float[], or String[]</description>
+</parameter>
+
+<returns>Array (the same datatype as the input)</returns>
+
+<related>
+append()
+expand()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+</root>

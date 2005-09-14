@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>cos() 餘弦</name>
+
+<category>Math</category>
+
+<subcategory>Trigonometry</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>cos_.gif</image>
+<code>
+float a = 0.0;
+float inc = TWO_PI/25.0;
+
+for(int i=0; i&lt;100; i=i+4) {
+  line(i, 50, i, 50+cos(a)*40.0);
+  a = a + inc;
+}
+</code>
+</example>
+
+<description>
+計算角的餘弦值 (cosine)。 <b>cos()</b> 函式要求其參數為弧度角 (其值從0到6.28不等)。 cos() 函式的值介於 -1到1之間。
+</description>
+
+<syntax>
+cos(<c>angle</c>)
+</syntax>
+
+<parameter>
+<label>angle</label>
+<description>浮點數: 某一角的弧度角 (介於0到6.28之間)</description>
+</parameter>
+
+<returns>作為參數之角 <c>angle</c> 的餘弦值 (其值介於 -1到1之間)。</returns>
+
+<related>
+sin()
+tan()
+atan2()
+radians()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

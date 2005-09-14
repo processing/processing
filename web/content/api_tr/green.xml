@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>green()</name>
+
+<category>Renk</category>
+
+<subcategory>Okuma</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>green_.gif</image>
+<code>
+noStroke();
+color c = color(0, 126, 255);
+fill(c);
+rect(15, 20, 35, 60);
+float value = green(c);  // Sets "value" to "126"
+fill(value);
+rect(50, 20, 35, 60);
+</code>
+</example>
+
+<description>
+Bir renkten yeşil değeri çıkarır.
+</description>
+
+<syntax>
+green(<c>renk</c>)
+</syntax>
+
+<parameter>
+<label>renk</label>
+<description>renk veri türünde herhangi bir değer</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+red() 
+blue() 
+hue() 
+saturation() 
+brightness() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+</root>

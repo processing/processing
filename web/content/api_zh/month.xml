@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>month() 月</name>
+
+<category>Input/Output</category>
+
+<subcategory>Time &amp; Date</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>month_.jar</image>
+<code>
+void setup() {
+  BFont metaBold;
+  metaBold = loadFont("fonts/Meta-Bold.vlw.gz"); 
+  setFont(metaBold, 44); 
+  hint(SMOOTH_IMAGES); 
+}
+
+void loop() {
+  int d = day();    // Values from 1 - 31
+  int m = month();  // Values from 1 - 12
+  int y = year();   // 2003, 2004, 2005, etc.
+  String s = String.valueOf(d);
+  text(s, 10, 28);
+  s = String.valueOf(m);
+  text(s, 10, 56); 
+  s = String.valueOf(y);
+  text(s, 10, 84);
+}
+</code>
+</example>
+
+<description>
+Processing 可於電腦中的時鐘連結，<b>month()</b>函式傳回現有時間的月份，以1 至 12 之間的任一值表示。
+</description>
+
+<syntax>
+month()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>整數</returns>
+
+<related>
+millis() 
+second()
+minute()
+hour()
+day()
+month()
+year()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

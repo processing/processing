@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>modelZ()</name>
+
+<category>Lights &amp; Camera</category>
+
+<subcategory>Coordinates</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+Coming soon...
+
+</code>
+</example>
+
+<description>
+Coming soon...
+</description>
+
+<syntax>
+modelZ(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int or float:</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int or float:</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>int or float:</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+modelX()
+modelY()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

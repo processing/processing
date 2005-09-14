@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>box()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 3 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>box_.gif</image>
+<code>
+translate(58, 48, 0); 
+rotateY(0.5);
+box(40);
+</code>
+</example>
+
+<example>
+<image>box_2.gif</image>
+<code>
+translate(58, 48, 0); 
+rotateY(0.5);
+box(40, 20, 50);
+</code>
+</example>
+
+<description>
+Kutu bir dikdörtgenin çıkarılmış(extrude) halidir. Eşit boyutları olan bir kutu küptür.
+</description>
+
+<syntax>
+box(<c>boyut</c>);
+box(<c>genişlik</c>, <c>yükseklik</c>, <c>derinlik</c>);
+</syntax>
+
+<parameter>
+<label>size</label>
+<description>int veya float: kutunun tum yönlerde boyutu, küp oluşturur</description>
+</parameter>
+
+<parameter>
+<label>genişlik</label>
+<description>int veya float: kutunun x yönünde boyutu</description>
+</parameter>
+
+<parameter>
+<label>yükseklik</label>
+<description>int veya float: kutunun y yönünde boyutu</description>
+</parameter>
+
+<parameter>
+<label>derinlik</label>
+<description>int veya float: kutunun z yönünde boyutu</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+sphere()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

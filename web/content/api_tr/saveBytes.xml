@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>saveBytes()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Dosyalar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+byte[] nums = { 0, 34, 5, 127, 52};
+
+// now write the bytes to a file
+saveBytes("numbers.txt", nums);
+</code>
+</example>
+
+<description>
+<b>loadBytes()</b>ın tersi, bütün byte dizisini dosyaya yazar. Dosyalar ana Processing dizininde yaratılır (exe dosyası ile aynı dizin).
+</description>
+
+<syntax>
+saveBytes(<c>dosyaadı</c>, <c>bytes</c>)
+</syntax>
+
+<parameter>
+<label>dosyaadı</label>
+<description>yazılacak dosya adı</description>
+</parameter>
+
+<parameter>
+<label>bytes</label>
+<description>yazılacak byte dizisi</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+loadStream()
+loadStrings()
+loadBytes() 
+saveStrings()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

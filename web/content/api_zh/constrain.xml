@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>constrain() 限定</name>
+
+<category>Math</category>
+
+<subcategory>Basic Functions</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>constrain_.jar</image>
+<code>
+void loop() 
+{ 
+  background(204);
+  float mx = constrain(mouseX, 30, 70);
+  rect(mx-10, 40, 20, 20);
+}
+</code>
+</example>
+
+<description>
+限制某一值之最大值及最小值的幅度。
+</description>
+
+<syntax>
+constrain(<c>value</c>, <c>min</c>, <c>max</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>整數或浮點數:受限之值</description>
+</parameter>
+
+<parameter>
+<label>min</label>
+<description>整數或浮點數:最小幅度</description>
+</parameter>
+
+<parameter>
+<label>max</label>
+<description>整數或浮點數:最大幅度</description>
+</parameter>
+
+<returns>整數或浮點數(以輸入值為準)</returns>
+
+<related>
+max()
+min()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

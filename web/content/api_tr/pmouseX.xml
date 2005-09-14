@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>pmouseX</name>
+
+<category>Girdi/Çikti</category>
+
+<subcategory>Fare</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>pmouseX.jar</image>
+<code>
+// Move the mouse quickly to see the difference
+// between the current and previous position
+void loop()
+{
+  background(204);
+  line(mouseX, 20, pmouseX, 80);
+}
+</code>
+</example>
+
+<description>
+<b>pmouseX</b> sistem değişkeni her zaman farenin o önceki yatay koordinat değerini içerir. Bu farenin o anki bulunduğu kareden(frame) bir önceki kareye ait yatay koordinatıdır.
+</description>
+
+<syntax>
+pmouseX
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+mouseX
+mouseY
+pmouseY
+mousePressed
+mousePressed()
+mouseReleased()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

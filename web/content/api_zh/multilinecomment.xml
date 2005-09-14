@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>/* */ (multiline comment) 多行註解</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+/* 
+   Draws two lines which divides the window 
+   into four quadrants. First draws a horizonal
+   line and then the vertical line 
+*/ 
+line(0, 50, 100, 50);
+line(50, 0, 50, 100);
+</code>
+</example>
+
+<description>
+插入程式碼中的解釋性說明 可用來提醒自己或別人程式的功能 多行註解適合長篇的程式描述 或是在除錯時 用來讓某部份的程式碼無效 程式編譯器不會執行註解的部份
+</description>
+
+<syntax>
+/*
+  <c>comment</c>
+*/
+</syntax>
+
+<parameter>
+<label>comment</label>
+<description>任何字元序列</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+// (Comment)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

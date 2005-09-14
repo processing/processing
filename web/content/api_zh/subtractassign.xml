@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>-= (以本身相減)</name>
+
+<category>Math</category>
+
+<subcategory>Operators</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a = 50;
+int b = 23;
+a -= b; // sets "a" to 27
+</code>
+</example>
+
+<description>
+將原數值減以另一數值。公式<b>a -= b</b> 與<b>a = a - b</b>是相等的。
+</description>
+
+<syntax>
+<c>value1</c> -= <c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數</description>
+</parameter>
+<returns></returns>
+
+<related>
+-= (subtract assign)
+- (subtract)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

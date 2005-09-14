@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>, (逗點)</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<applet></applet>
+<code>
+// Comma used to separate a list of variable declarations
+int a=20, b=30, c=80;
+
+// Comma used to separate a list of values assigned to an array
+int[] d = { 20, 60, 80 };
+
+// Comma used to separate a list of parameters passed to a function
+line(a, b, c, b);
+line(d[0], d[1], d[2], d[1]);
+</code>
+</example>
+
+<description>
+在函式呼叫裡用來隔開不同的參數。或是在指定時，用來隔開不同的元素。
+</description>
+
+<syntax>
+value1, ..., valueN
+</syntax>
+
+<parameter>
+<label>value1, ..., valueN</label>
+<description>任何整數, 浮點數, 字元, 位元組, 布林值, 或色彩</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

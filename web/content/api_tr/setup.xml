@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>setup()</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+  size(200, 200);
+  background(0);
+  noStroke();
+  fill(102);
+}
+
+int a = 0;
+
+void loop() {
+  rect(a++%width, 10, 2, 80); 
+}
+</code>
+</example>
+
+<description>
+Program çalışmaya başladığı zaman bir defa çağrılan fonksiyon. <b>loop()</b> başlamadan önce ekran boyutu, arkaplan rengi, resim yükleme gibi başlangıç ortam özelliklerini tanımlamak için kullanılır. <b>setup()</b> içinde belirlenen değişkenlere <b>loop()</b> içinden erişilemez.
+</description>
+
+<syntax>
+void setup() {
+  <c>anlatımlar</c>
+}
+</syntax>
+
+<parameter>
+<label>anlatımlar</label>
+<description>herhangi bir geçerli anlatım</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+loop()
+size()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

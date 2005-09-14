@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>Object 物件</name>
+
+<category>Data</category>
+
+<subcategory>Composite</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+// Declare and contruct two objects (h1, h2) from the class HLine
+HLine h1 = new HLine(20, 1.0);
+HLine h2 = new HLine(50, 5.0); 
+ 
+void setup() { 
+  size(200, 200); 
+} 
+ 
+void loop() {
+  if(h2.speed &gt; 1.0) {
+    h2.speed -= 0.01;
+  } 
+  h1.update(); 
+  h2.update();  
+} 
+ 
+class HLine { 
+  float ypos, speed; 
+  HLine (float y, float s) {  
+    ypos = y; 
+    speed = s; 
+  } 
+  void update() { 
+    ypos += speed; 
+    if (ypos &gt; width) { 
+      ypos = 0; 
+    } 
+    line(0, ypos, width, ypos); 
+  } 
+} 
+</code>
+</example>
+
+<description>
+物件是程式類別（class）的產件（instance）。程式類別是指一個規範，組合了一些相關的函式和數據（變數和常數）。 
+</description>
+
+<syntax>
+<c>class</c> <c>instance</c>
+</syntax>
+
+<parameter>
+<label>class</label>
+<description>用以製造物件（object）的程式類別（class）</description>
+</parameter>
+
+<parameter>
+<label>instance</label>
+<description>任何變數的名稱</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

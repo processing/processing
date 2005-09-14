@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<updates>
+    <item>
+        <date>7 May 2005</date>
+        <description>New software from Martin Wattenberg added to the <a href="exhibition/">exhibition</a>.</description>
+    </item>
+    <item>
+        <date>7 May 2005</date>
+        <description><em>Obsessive Camera Direction</em> <a href="reference/libraries/">library</a> contributed by Kristian Linn Damkjer. <em>MySQL</em> <a href="reference/libraries/">library</a> contributed by Florian Jenett. <em>Oscillator</em> <a href="reference/libraries/">library</a> contributed by Taka.</description>
+    </item>
+    <item>
+        <date>8 May 2005</date>
+        <description>Processing (BETA) 88, 89 released, fixing additional nice bugs found in the original (BETA) release.</description>
+    </item>
+    <item>
+        <date>9 May 2005</date>
+        <description>Processing (BETA) 90 released.</description>
+    </item>
+    <item>
+        <date>9 May 2005</date>
+        <description><em>Ess</em> sound <a href="reference/libraries/">library</a> contributed by Krister Olsson.</description>
+    </item>
+    <item>
+        <date>6 June 2005</date>
+        <description>Processing (BETA) 91 released.</description>
+    </item>
+    <item>
+        <date>24 June 2005</date>
+        <description>New software from Tom Carden, Clayton Cubitt, and Marius Watz added to the <a href="exhibition/">exhibition</a>.</description>
+    </item>
+    <item>
+        <date>11 July 2005</date>
+        <description>Many new examples from Dan Shiffman added to <a href="learning/">Learning</a>.</description>
+    </item>
+    <item>
+        <date>11 July 2005</date>
+        <description>New software from Robert Hodgin added to the <a href="exhibition/">exhibition</a>.</description>
+    </item>
+    <item>
+        <date>15 July 2005</date>
+        <description><a href="reference/libraries/net/">Net Library reference</a> augmented with examples from Tom Igoe.</description>
+    </item>
+    <item>
+        <date>19 July 2005</date>
+        <description>New software from Michael Chang added to the <a href="exhibition/">exhibition</a></description>
+    </item>
+</updates>

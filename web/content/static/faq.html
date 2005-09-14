@@ -1,0 +1,360 @@
+<img src="images/header_faq.gif" width="675" height="68" alt="Frequently Asked Questions. There are many questions surrounding the enigmatic and youthful Processing project and we don't have all the answers, but we have many."><br />
+    Select a topic from the pulldown:
+<form>
+    <select name="nav" size="1" class="inputnav" onChange="javascript:gogo(this)">
+        <option value="index.html" selected>General Information </option>
+        <option value="bugs.html">Setup, Troubleshooting, and Bugs</option>
+        <option value="platforms.html">Platforms (Mac OS, Windows and Linux)</option>
+        <option value="changes.html">Changes Between Releases</option>
+        <option value="people.html">People, Contact, Affiliations </option>
+    </select> 
+</form>  
+
+<p>
+    <a href="#download">When can I download Processing and how much does it cost?</a> <br />
+    <a href="#start">How do I get started?</a> <br />
+    <a href="#learn">How do I learn to use Processing?</a> <br />
+    <a href="#platforms">On which platforms does Processing run?</a><br />
+    <a href="#opensource">Is Processing open source?</a> <br />
+    <a href="#attribution">Do I have to cite Processing or share my code? Can I distribute my sketches?</a> <br />
+    <a href="#versions">What's with the version numbers?</a> <br />
+    <a href="#naming">Why is it called &ldquo;Processing&rdquo;?</a> <br />
+    <a href="#sketchbook">What is the sketchbook? What do you mean by sketches?</a> <br />
+    <a href="#whyjava">Why Java? Or why such a Java-esque programming language?</a> <br />
+    <a href="#flash">Dude, Where's the Timeline? This Sucks&hellip; / Awesome! A Flash Killer!</a> <br />
+    <a href="#update">Why Is Processing Connecting to the Network?</a> <br />
+    <a href="#typeface">What is that fantastic typeface used for the page headers?</a><br />
+</p>
+
+
+<div class="faq">
+    <a name="download"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+
+    <h3>When can I download Processing and how much does it cost?</h3>
+    
+    <p>The software is free to download.
+If you are interested in testing the BETA version of the software, 
+visit the <a href="http://processing.org/download/">download</a> 
+page and follow the instructions.</p>
+
+    <p>We think it's important to have Processing freely available, rather
+than selling it for a million dollars under some godawful yearly
+contract update scheme. To that end, we encourage people to spread
+the word and refer them to the <a href="http://processing.org">processing.org</a> site.</p>
+
+</div>
+
+<div class="faq">
+    <a name="start"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+    
+    <h3>How do I get started?</h3>
+
+    <p>Double click the 'Processing' application, and select something from
+the examples menu: File &rarr; Open &rarr; Examples. Hit the 'run' button
+(which looks like the play button on a vcr or tape deck).</p>
+
+    <p>Lather, rinse, repeat as necessary.</p>
+    
+    <p>More information on using Processing itself is can be found in the 
+<a href="http://processing.org/reference/environment/index.html">environment</a>
+section of the reference.</p>
+
+    <p>If you're having trouble getting Processing to start, check 
+<a href="bugs.html#nostart">here</a> for possible solutions.</p>
+
+</div>
+
+<div class="faq">
+    <a name="learn"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+
+    <h3>How do I learn to use Processing?</h3>
+
+    <p>To learn the Processing language, we recommend you try a few of the examples, 
+read some of the <a href="">tutorials</a> and check out the 
+<a href="">reference</a>. </p>
+
+    <p>When using the examples (or trying someone else's code), 
+if you run across a function that you're not familiar with, 
+highlight the word, right-click (ctrl-click on the mac), 
+and select "Find in Reference" to open the reference page
+for that keyword. This can be helpful for understanding how
+programs work.</p>
+
+</div>
+
+<div class="faq">
+    <a name="platforms"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+
+    <h3>On what platforms can I run Processing?</h3>
+
+    <p>We release versions for Windows, Mac OS X, and Linux. 
+We test extensively on Mac and Windows platforms, but not much on Linux.</p>
+
+    <p>More detailed information for the specific platforms can be found 
+in the <a href="platforms.html">Platforms</a> section of this FAQ,
+which also includes information about running the Processing
+Development Environment on <a href="platforms.html#other">other
+platforms</a>.</p>
+
+</div>
+
+<div class="faq">
+    <a name="opensource"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+    
+    <h3>Is Processing Open Source?</h3>
+
+    <p>The Processing development environment is released as open source
+under the GPL. The export libraries (also known as 'core') are
+released under an LGPL license, which means they can be used 
+as a library and included in your project without you having to open up 
+your code (though we encourage people to share anyway). But if
+you make changes to core, you have to submit back to us. 
+More information about the GNU Public License can be found at <a
+href="http://www.gnu.org/copyleft/gpl.html">www.gnu.org/copyleft/gpl.html</a>.</p>
+
+    <p>Processing also relies on other open projects, namely:</p>
+    
+<ul>
+    <li>the older <a href="http://www.savarese.org/oro/">ORO Matcher</a>, 
+distributed under a BSD-style license as part of the 
+<a href="http://jakarta.apache.org/">Apache Jakarta</a> project</li>
+
+    <li>the <a href="http://sourceforge.net/projects/jikes/">Jikes</a>
+compiler, which is covered by the <a href="http://www.ibm.com/developerworks/library/os-ipl.html">
+IBM Public License</a>.</li>
+
+    <li>the <a href="http://syntax.jedit.org">jEdit Syntax</a> package,
+which is public domain</li>
+
+    <li>com.ice.jni.registry from the <a href="http://www.gjt.org/">Giant
+Java Tree</a> (GPL license) </li>
+
+    <li>perhaps others but that's all I can think of right now while we're
+cramming for the beta release</li>
+</ul>
+
+    <p>The source code is stored on our <a
+href="http://dev.processing.org/">developer site</a>, and more
+information about its use can be found over there.</p>
+
+    <p>We need help! Having shared all the code and made it available for
+free, doesn't it just make you want to pitch in? We have too much work
+to do and can't keep up with things. We love to see bug fixes, new
+libraries, etc. If you're interested, contact us via the <a
+href="http://processing.org/discourse">discourse</a> section of the
+site.</p>
+
+</div>
+
+<div class="faq">
+    <a name="attribution"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+
+    <h3>Do I have to cite Processing? Do I have to share my code? 
+Can I distribute my sketches?</h3>
+
+    <p>We like it when people include a "Built with Processing" note with a
+link back to the site, since it helps create interest and brings in
+more people to the project. We don't/can't/shouldn't require it, but
+it makes us happy because the project is free and this is one way you
+can help give back to us.</p>
+
+    <p>You can also remove the source code from web pages that you export,
+but in the spirit of the Processing project overall, we include it by
+default so as to encourage sharing and learning from one another.</p>
+
+    <p>You can distribute your sketches all you want, and commercial projects should 
+be just fine too, however we place no warranty on the software (see the 
+download page for the license shenanigans). </p>
+
+</div>
+
+<div class="faq">
+    <a name="versions"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+
+    <h3>What's with the version numbers?</h3>
+
+    <p>This is not 1.0 software.. It's buggy and may kill people. That's part
+of why we used to make everyone sign up to download, so that we know that you 
+care enough to bother and have more of an inkling of what you're 
+getting into.</p>
+
+    <p>At least until the final 1.0 version, we'll be using four digit
+numbers for the release. Revision 0085 was the first "beta" release, 
+which means that all the features are in, but not all the bugs
+are out. There remain several known issues with the beta release 
+that will need to be sorted out before we're comfortable calling 
+a release an actual final 1.0.</p>
+
+    <p>The numbered releases aren't always heavily tested, so don't be surprised 
+if/when something breaks. Check the <a href="http://processing.org/bugs/">bugs</a> 
+section of the site and report the problem if it's new, and in the meantime, 
+you can go back to the previous numbered release until there's a fix. </p>
+
+</div>
+
+<div class="faq">
+    <a name="naming"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+    
+    <h3>Why is it called &ldquo;Processing&rdquo;?</h3>
+    
+    <p>At their core, computers are processing machines. They modify, move, and 
+combine symbols at a low level to construct higher level representations. 
+Our software allows people to control these actions and representations 
+through writing their own programs. The project also focuses on
+the &ldquo;process&rdquo; of creation rather than end results. The design of the software supports 
+and encourages sketching and the website presents fragments of projects 
+and exposes the concepts behind finished software. </p>
+
+    <p>&ldquo;Proce55ing&rdquo; is the spelling we originally used for the url. Even 
+though it's a combination of numbers and letters, it was simply
+pronounced &ldquo;processing.&rdquo; We saved our pennies and had a can
+drive so now we've since acquired the processing.org domain name. 
+As a result we are no longer using the name &ldquo;Proce55ing.&rdquo;</p>
+
+    <p>When we see it with the 55's it annoys us and we want to punch people 
+in the face. Or punch ourselves in the face for using it 
+in the first place. Actually, we try not to be that emotional about it
+but we're trying to kill off the previous naming. However, to
+make it more confusing, we sometimes still use &ldquo;p5&rdquo;
+(not p55) as a shortened version of the name. </p>
+
+</div>
+
+<div class="faq">
+    <a name="sketchbook"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+    
+    <h3>What is the sketchbook? What do you mean by sketches?</h3>
+    
+    <p>We think most &ldquo;integrated development environments&rdquo; 
+(Microsoft Visual Studio, Codewarrior, Eclipse, etc.) tend to be
+overkill for the type of audience we're targeting with Processing. For
+this reason, we've introduced the 'sketchbook' which is a more lightweight 
+way to organize projects. As trained designers, we'd like the process 
+of coding to be a lot more like sketching. The sketchbook setup, and
+the idea of just sitting down and writing code (without having
+to write two pages to set up a graphics context, thread, etc) is
+a small step towards that goal. </p>
+
+    <p>The idea of just writing a short piece of code that runs very easily
+(via a little run button) is a direct descendant of John Maeda's work
+in <a href="http://dbn.media.mit.edu">Design By Numbers</a>, and 
+our experiences maintaining it. (Yes, other languages and environments have done this first,
+but in our case, the concept is drawn from DBN).</p>
+
+</div>
+
+<div class="faq">
+    <a name="whyjava"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+
+    <h3>Why Java? Or why such a Java-esque programming language?</h3>
+    
+    <p>We didn't set out to make the ultimate language for visual
+programming, we set out to make something that was:</p>
+
+    <ol>
+        <li> a sketchbook for our own work, simplifying the majority 
+    of tasks that we undertake, </li>
+        <li> a teaching environment for that kind of process, and </li>
+        <li> a point of transition to more complicated or difficult 
+    languages like full-blown Java or C++ (a gateway drug to 
+    more geekier and more difficult things)</li>
+    </ol>
+
+    <p>At the intersection of these points is a tradeoff between speed and
+simplicity of use. i.e. if we didn't care about speed, Python, Ruby
+or many other scripting languages would make far more sense
+(especially for the simplicity and education aspect of it). 
+If we didn't care about transition to more advanced languages, 
+we'd get rid of the crummy C-style (well, algol, really) syntax. 
+etc etc.</p>
+
+    <p>Java makes a nice starting point for a sketching language because it's
+far more forgiving than C++ and also allows users to export sketches for
+distribution via the web. </p>
+
+    <p>Processing is not intended as the ultimate environment/language (in
+fact, the language is just Java, but with a new graphics and 
+utility API along with some simplifications). Fundamentally, 
+Processing just assembles our experience in building things, 
+and trying to simplifies the parts that we felt should be easier. </p>
+
+</div>
+
+<div class="faq">
+    <a name="flash"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+
+    <h3>Dude, Where's the Timeline? This Sucks&hellip; / Awesome! A Flash Killer! </h3>
+
+    <p>We're not targeting Flash. If we wanted to make a Flash killer, we'd
+have set out to do that and our stated purpose would have been more
+specific (and we'd have more on the site about "Processing vs. Flash"
+in the competitive shootout sense... right now we just have
+information about how the syntax differs so that people can make the
+transition).</p>
+
+    <p>We could have saved a lot of time if we just wanted to build a better
+Flash. And in the end, as two people, do you really think we can or
+should bother competing with a company as large as Macromedia?
+Macrodobe? Does anyone really want a better Flash? </p>
+
+    <p>There are things that are always going to be better in Flash,
+and other types of work that will always be better in Processing. But
+fundamentally (and this cannot be emphasized enough), there is no
+all-or-nothing game&hellip; We're talking about tools. Do people refuse
+to use pencils because pens exist? No, you just use them for different
+things, and for specific reasons. If Processing works for you, then
+use it. If not, don't. It's easy! It's free! You're not being forced
+to do anything.</p>
+
+    <p>As we have heard, Flash 8 will be better at doing some of the pixel
+editing/image stuff you can do in Processing, but there are still lots
+of things we're covering that's not focused on moving pixels (OpenGL
+acceleration, easy serial port access, video input) and other things
+that are incomplete in beta but just around the corner ("Export to
+Application" and more).</p>
+
+</div>
+
+<div class="faq">
+    <a name="update"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+
+    <h3>Why Is Processing Connecting to the Network?</h3>
+    
+    <p>After you double-click Processing, it will check the site for
+updates. This is helpful so that we can keep people
+aware of the frequent updates to Processing. </p>
+
+    <p>In so doing, it also sends a random number that identifies yours as a
+unique machine (but sends no personal information to us). 
+This really helps us get a general idea of how many people are using the
+software, which is really important for things like
+writing grants so that we can keep Processing free.</p>
+
+    <p>If the network connection causes you trouble, it can be shut off
+inside the Preferences window.</p>
+
+</div>
+
+<div class="faq">
+    <a name="typeface"></a> 
+    <a href="#top" class="up"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a>
+    
+    <h3>What is that fantastic typeface used for the page headers?</h3>
+    
+    <p>The typeface &ldquo;PS&rdquo; was developed specifically for Processing by 
+Mike Cina of <a href="http://www.weworkforthem.com">WeWorkForThem</a>. Other 
+typefaces designed by Mike are available at <a href="http://www.youworkforthem.com">YouWorkForThem</a>.</p>
+
+</div>

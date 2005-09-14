@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>fill()</name>
+
+<category>Renk</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>fill_.gif</image>
+<code>
+fill(153);
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<example>
+<image>fill_2.gif</image>
+<code>
+fill(204, 102, 0);
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+Şekilleri doldurmak için renk belirler. Örneğin, eğer <b>fill(204, 102, 0)</b> çağırıp bir dikdörtgen çizersen bu turuncu renkte olur. Bu renk o anki <b>colorMode()</b>a göre RGB veya HSB olarak tanımlanabilir. Varsayılan renk alanı RGB 0 ile 255 arasında değerler alır. <b>fill()</b> fonksiyonunun tek parametreli uyarlaması gri değerler tanımlar, üç parametreli uyarlaması renk tanımlar, dört parametreli uyarlaması alfa değerli bir renk tanımlar. <i>Not: "gri" parametresi için değer <b>colorMode()</b> tarafından tanımlanmışsa mevcut en yüksek değere eşit veya bundan daha az olmalıdır.</i> Varsayılan değer 255dir.
+</description>
+
+<syntax>
+fill(<c>gri</c>)
+fill(<c>gri</c>, <c>alpha</c>)
+fill(<c>değer1</c>, <c>değer2</c>, <c>değer3</c>)
+fill(<c>renk</c>)
+fill(<c>renk</c>, <c>alpha</c>)
+fill(<c>değer1</c>, <c>değer2</c>, <c>değer3</c>, <c>alpha</c>)
+</syntax>
+
+<parameter>
+<label>gri</label>
+<description>int veya float: beyaz ile siyah arasında değer belirleyen bir sayı</description>
+</parameter>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float: kırmızı veya hue değeri</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float: yeşil veya saturation değeri</description>
+</parameter>
+
+<parameter>
+<label>değer3</label>
+<description>int veya float: mavi veya parlaklık değeri</description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description>int veya float: doldurmanın opaklığı</description>
+</parameter>
+
+<parameter>
+<label>renk</label>
+<description>color: renk veri türünde herhangi bir değer</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+noFill()
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>noLights() 終止打光</name>
+
+<category>Lights &amp; Camera</category>
+
+<subcategory>Lights</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>noLights_.gif</image>
+<code>
+noLights();
+noStroke();
+background(153, 0, 0);
+translate(58, 48, 0); 
+rotateY(0.5);
+box(40);
+</code>
+</example>
+
+<description>
+終止打光。把燈關上。系統本身設定是不打光的，<b>lights()</b> 函式?把燈打開。
+</description>
+
+<syntax>
+noLights()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+lights()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

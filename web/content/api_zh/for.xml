@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>for() for迴圈</name>
+
+<category>Control</category>
+
+<subcategory>Iteration</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>for_.gif</image>
+<applet></applet>
+<code>
+for(int i=0; i&lt;40; i=i+1) {
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<example>
+<image>for_2.gif</image>
+<applet></applet>
+<code>
+for(int i=0; i&lt;80; i=i+5) {
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<example>
+<image>for_3.gif</image>
+<applet></applet>
+<code>
+for(int i=40; i&lt;80; i=i+5) {
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<example>
+<image>for_4.gif</image>
+<applet></applet>
+<code>
+for(int i=30; i&lt;80; i=i+5) {
+  for(int j=0; j&lt;80; j=j+5) {
+    point(i, j);
+  }
+}
+</code>
+</example>
+
+<description>
+執行連續的反覆指令。<b>for()</b>函式的架構包括3個部份: 初始設定(<b>init</b>)，範圍測試(<b>test</b>) 和巡迴更新(<b>update</b>)， 使用"分號" (;) 隔開彼此。此迴圈會不斷重複執行，直到範圍測試的結果被推翻(<b>false</b>)為止。<b>for()</b>函式的架構包括以下各個連續事件:<br />1. 執行初始設定。<br />2. 評估範圍測試，判斷結果成立與否。<br />3. 範圍測試的結果若成立，執行步驟4。範圍測試的結果若不成立，執行步驟6。<br />4. 執行其組成部份的的指令宣告。<br />5. 執行巡迴更新指令，並跳至步驟2。<br />6. 退出迴圈。
+</description>
+
+<syntax>
+for(<c>init</c>; <c>test</c>; <c>update</c>) { 
+  <c>statements</c>
+} 
+</syntax>
+
+<parameter>
+<label>init</label>
+<description>迴圈起始時，執行一次的指令宣告。</description>
+</parameter>
+
+<parameter>
+<label>test</label>
+<description>範圍測試的結果若成立( <b>true</b>)，執行此指令宣告。</description>
+</parameter>
+
+<parameter>
+<label>update</label>
+<description>於迭代式結尾時執行。</description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description>迴圈執行中的一系列指令宣告。</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+while()
+</related>
+
+<availability>1.0</availability>
+
+<type>Structure</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

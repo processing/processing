@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>radians() 弧度角</name>
+
+<category>Math</category>
+
+<subcategory>Trigonometry</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+float deg = 45.0;
+float rad = radians(deg);
+println(deg + " degrees is " + rad + " radians");
+</code>
+</example>
+
+<description>
+轉換一個角度（degrees）的量度至相符的弧度角（radians）。弧度角和角度是兩種量度的方式。圓形有 360 度角或 2*PI 弧度角。例如：90&#186 = PI/2 = 1.5707964。 在 Processing 程式中，所有三角函式的參數均必須以弧度角設定。
+</description>
+
+<syntax>
+radians(<c>angle</c>)
+</syntax>
+
+<parameter>
+<label>angle</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+degrees()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

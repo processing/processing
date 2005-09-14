@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>; (noktalıvirgül)</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a;         // Declaration statement
+a = 30;        // Assignment statement
+println(i);  // Function statement
+</code>
+</example>
+
+<description>
+Programın ögelerini ayıran bir anlatım sonlandırıcısıdır. Bildiri bilgisayar için tüm bir talimattır, noktalı virgül bu talimatları ayırmak için kullanılır. (İngilizcedeki cümle sonuna konunlan nokta "." gibidir). Noktalı virgüller <b>for()</b> yapısındaki öğeleri ayırmak için de kullanılır.
+</description>
+
+<syntax>
+<c>anlatım</c>;
+</syntax>
+
+<parameter>
+<label>anlatım</label>
+<description>yürütme için bir anlatım</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+for()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>() (parentezler)</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a;
+a = (4 + 3) * 2;       // Grouping expressions
+if (a &gt; 10) {          // Containing expressions
+  line(a, 0, a, 100);  // Containing a list of parameters
+}
+</code>
+</example>
+
+<description>
+Anlatımları ve parametreleri guruplar ve içerir. Parantezlerin işlevlerine ve yapılarına göre çoklu işlevleri vardır. Fonksiyonlara ve kontrol yapılarına iletilen paramterleler listesini içermek ve yürütme düzenini kontrol eden anlatımları gruplamak için kullanılır. Bazz fonksiyonların parametresi yoktur, bu durumda parantezler arasındaki kısım boşluktur.
+</description>
+
+<syntax>
+<c>function</c>()
+<c>function</c>(<c>p1</c>, ..., <c>pN</c>)
+<c>structure</c>(<c>ifade</c>)
+</syntax>
+
+<parameter>
+<label>function</label>
+<description>herhangi bir fonksiyon</description>
+</parameter>
+
+<parameter>
+<label>p1...pN</label>
+<description>fonksiyona özel parametreler listesi</description>
+</parameter>
+
+<parameter>
+<label>yapı</label>
+<description>if(), for(), while() gibi kontrol yapıları</description>
+</parameter>
+
+<parameter>
+<label>ifadeler</label>
+<description>herhangi bir geçerli ifade veya ifade grupları</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+, (comma)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

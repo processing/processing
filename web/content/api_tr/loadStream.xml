@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loadStream()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+InputStream input = loadStream("sometextfile.txt");
+InputStreamReader isr = new InputStreamReader(input);
+BufferedReader reader = new BufferedReader(isr);
+
+String line;
+while ((line = reader.readLine()) != null) {
+  println("next line is: " + line);
+}
+</code>
+</example>
+
+<description>
+Loads a file as a Java InputStream. Reads through a file sequentially as it is downloading or if the file is too large to read at once. The file must be located in the "data" directory or specified by a URL. The file can also be gzip compressed and if its name has a .gz extension it will automatically be decompressed while reading.
+</description>
+
+<syntax>
+loadStream(<c>filename</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>String: name of the file or url to load</description>
+</parameter>
+
+<returns>InputStream</returns>
+
+<related>
+loadStrings()
+loadBytes() 
+saveStrings()
+saveBytes()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

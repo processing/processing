@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>open()</name>
+
+<category>Input</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+  size(200, 200);
+}
+
+void draw() { 
+
+}
+
+void mousePressed() {
+  println("Opening Process_4");
+  open("Process_4.exe");
+}
+
+</code>
+</example>
+
+<description>
+Attempts to open a file or process using the platform's shell. The <b>file</b> parameter is a String specifying the file name and location. When running sketches from the Processing environment the default location for files is the same location as Processing.exe. It's also possible to use a file's absolute path. Be sure to make the file executable before attempting to open it (chmod +x). The <b>args</b> parameter is a String array which is passed to the command line. 
+</description>
+
+<syntax>
+open(<c>file</c>)
+open(<c>args</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>String: name of the file</description>
+</parameter>
+
+<parameter>
+<label>args</label>
+<description>String[]: list of commands passed to the command line</description>
+</parameter>
+
+<returns>None or Process</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+</root>

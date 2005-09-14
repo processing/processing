@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>beginShape() 形狀開始</name>
+
+<category>Shape</category>
+
+<subcategory>Vertex</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>beginShape_.gif</image>
+<code>
+beginShape(POINTS);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_2.gif</image>
+<code>
+beginShape(LINES);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_3.gif</image>
+<code>
+beginShape(LINE_STRIP);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_4.gif</image>
+<code>
+beginShape(LINE_LOOP);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_5.gif</image>
+<code>
+beginShape(TRIANGLES);
+vertex(30, 75);
+vertex(40, 20);
+vertex(50, 75);
+vertex(60, 20);
+vertex(70, 75);
+vertex(80, 20);
+vertex(90, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_6.gif</image>
+<code>
+beginShape(TRIANGLE_STRIP);
+vertex(30, 75);
+vertex(40, 20);
+vertex(50, 75);
+vertex(60, 20);
+vertex(70, 75);
+vertex(80, 20);
+vertex(90, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_7.gif</image>
+<code>
+beginShape(QUADS);
+vertex(30, 20);
+vertex(30, 75);
+vertex(50, 75);
+vertex(50, 20);
+vertex(65, 20);
+vertex(65, 75);
+vertex(85, 75);
+vertex(85, 20);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_8.gif</image>
+<code>
+beginShape(QUAD_STRIP);
+vertex(30, 20);
+vertex(30, 75);
+vertex(50, 75);
+vertex(50, 20);
+vertex(65, 20);
+vertex(65, 75);
+vertex(85, 75);
+vertex(85, 20);
+endShape();
+</code>
+</example>
+
+<example>
+<image>beginShape_9.gif</image>
+<code>
+beginShape(POLYGON);
+vertex(20, 20);
+vertex(40, 20);
+vertex(40, 40);
+vertex(60, 40);
+vertex(60, 60);
+vertex(20, 60);
+endShape();
+</code>
+</example>
+
+<description>
+利用 <b>beginShape()</b> 和 <b>endShape()</b> 函式，繪製更複雜的形狀。從 <b>beginShape()</b> 開始紀錄該形狀的各個頂點，以 <b>endShape()</b> 結束紀錄。beginShape() 函式還需要一個參數，來指定何種形狀將被接下來的頂點構成，這些參數包括LINES(線) ，LINE_STRIP(線_帶狀)，LINE_LOOP(線_密合)，TRIANGLES(三角形), TRIANGLE_STRIP(三角形_帶狀)，QUADS(四方形)，QUAD_STRIP(四方形_帶狀)，以及POLYGON(多角形)。 呼叫 <b>beginShape()</b> 函式之後要繼續呼叫一系列的頂點函式 <b>vertex()</b>，在形狀繪製結束後，呼叫 <b>endShape()</b>。<b>vertex()</b> 函式以2個參數代表2D平面上的位置，以3個變數代表3D立體空間中的位置。 
+形狀的外框線會以目前設定的線條顏色標示，並以設定的填充色填滿。各種轉動函式例如 <b>translate()</b>，<b>rotate()</b>，和 <b>scale()</b> 在 <b>beginShape()</b> 函式內無法使用。
+</description>
+
+<syntax>
+beginShape(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>由LINES(線) ，LINE_STRIP(線_帶狀)，LINE_LOOP(線_密合)，TRIANGLES(三角形), TRIANGLE_STRIP(三角形_帶狀)，QUADS(四方形)，QUAD_STRIP(四方形_帶狀)，以及POLYGON(多角形)等擇一。</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+endShape()
+vertex()
+curveVertex()
+bezierVertex()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

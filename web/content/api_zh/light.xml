@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>light()</name>
+
+<category>Lights &amp; Camera</category>
+
+<subcategory>Lights</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+...
+</code>
+</example>
+
+<description>
+Add a new light source. Each light has a location, color, and type as specified by the parameters passed into the function. 
+</description>
+
+<syntax>
+light(x, y, z, v1, v2, v3, type)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int or float: x-position of light source</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int or float: y-position of light source</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>int or float: z-position of light source</description>
+</parameter>
+
+<parameter>
+<label>v1</label>
+<description>int or float: red (or hue) value for the light's color</description>
+</parameter>
+
+<parameter>
+<label>v2</label>
+<description>int or float: green (or saturation) value for the light's color</description>
+</parameter>
+
+<parameter>
+<label>v3</label>
+<description>int for float: blue (or brightness) value for the light's color</description>
+</parameter>
+
+<parameter>
+<label>type</label>
+<description>Either AMBIENT, DIFFUSE, or SPECULAR</description>
+</parameter>
+
+<returns>none</returns>
+
+<related>
+lights()
+noLight()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

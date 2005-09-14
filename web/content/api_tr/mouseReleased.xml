@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>mouseReleased()</name>
+
+<category>Girdi/Çikti</category>
+
+<subcategory>Fare</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>mouseReleased_.jar</image>
+<code>
+// Click within the image to change 
+// the value of the rectangle
+
+int value = 0;
+
+void loop() {
+  fill(value);
+  rect(25, 25, 50, 50);
+}
+
+void mouseReleased() 
+{
+  if(value == 0) {
+    value = 255;
+  } else {
+    value = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+<b>mouseReleased()</b> fonksiyonu her fare düğmesi bırakıldığında çağrılır. Birden fazla düğmeli fare kullanırken sadece sol düğme çalışır.
+</description>
+
+<syntax>
+mouseReleased()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+mouseX
+mouseY
+pmouseX
+pmouseY
+mousePressed
+mousePressed()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

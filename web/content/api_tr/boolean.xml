@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>boolean</name>
+
+<category>Veri</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>boolean.gif</image>
+<code>
+boolean a = false; 
+if (!a) { 
+  rect(30, 20, 50, 50); 
+} 
+a = true; 
+if (a) { 
+  line(20, 10, 90, 80); 
+  line(20, 80, 90, 10); 
+} 
+</code>
+</example>
+
+<description>
+Doğru(true) ve yanlış(false) Boolean değerleri için veri türü. <b>boolean</b> değerleri genelde kontrol ifadelerinde programın akışına karar vermek için kullanılır.
+</description>
+
+<syntax>
+boolean <c>var</c>
+boolean <c>var</c> = <c>booleandeğeri</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>değeri kaynak gösteren değişken</description>
+</parameter>
+
+<parameter>
+<label>booleandeğeri</label>
+<description>true veya false</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

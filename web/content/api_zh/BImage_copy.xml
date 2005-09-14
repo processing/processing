@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>copy() 抄錄</name>
+
+<category>BImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>BImage_copy.jpg</image>
+<code>
+BImage img = loadImage("tower.jpg");
+BImage cpy;
+cpy = img.copy();
+background(img);
+image(cpy, 0, 0, 50, 50);
+</code>
+</example>
+
+<description>
+將此影像的內容抄錄至另一 BImage 影像中。
+</description>
+
+<syntax>
+img.copy()
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>BImage 物件：任何 BImage 物件類型的變數</description>
+</parameter>
+
+<returns>BImage 物件</returns>
+
+<related>
+get()
+replicate()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

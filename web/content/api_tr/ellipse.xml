@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>ellipse()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>ellipse_.gif</image>
+<code>
+ellipse(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+Gösterim penceresine bir elips çizer. Eşit genişliği ve yüksekliği olan elips bir çemberdir. İlk iki parametre konumunu, üçüncüsü genişliği, dördüncüsü yüksekliği belirler. Orjin noktası <b>ellipseMode()</b> fonksiyonu ile değiştirilir.
+</description>
+
+<syntax>
+ellipse(<c>x</c>, <c>y</c>, <c>genişlik</c>, <c>yükseklik</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int veya float: elipsin x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int veya float: elipsin y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>genişlik</label>
+<description>int veya float: elipsin genişliği</description>
+</parameter>
+
+<parameter>
+<label>yükseklik</label>
+<description>int veya float: elipsin yüksekliği</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+ellipseMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

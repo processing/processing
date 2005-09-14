@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>/* */ (çok satırlı açıklama)</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+/* 
+   Draws two lines which divides the window 
+   into four quadrants. First draws a horizonal
+   line and then the vertical line 
+*/ 
+line(0, 50, 100, 50);
+line(50, 0, 50, 100);
+</code>
+</example>
+
+<description>
+Koda gömülmüş açıklayıcı notlar. Açıklamalar kendinize hatırlatmak ve başkalarını programın işlevi konsunda bilgilendirmek için kullanılır. Çok satır açıklamalar uzun tanımlamalar veya onarma sırasında büyük parçaları kod dışına çıkarmak için kullanılır. Açıklamalar derleyici tarafından ihmal edilir.
+</description>
+
+<syntax>
+/*
+  <c>açıklama</c>
+*/
+</syntax>
+
+<parameter>
+<label>açıklama</label>
+<description>herhangi bir karakter dizisi</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+// (Comment)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

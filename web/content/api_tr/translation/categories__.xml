@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!-- 
+
+Note: The file parser is fussy, there must not be spaces
+between the left margin and the entries, and each entry
+must be contained between the <></> anchors without a line
+break.
+
+-->
+
+<core>
+
+<class>Class</class>
+<name>Name</name>
+<category>Category</category>
+<subcategory>Subcategory</subcategory>
+<usage>Usage</usage>
+<examples>Examples</examples>
+<description>Description</description>
+<syntax>Syntax</syntax>
+<fields>Fields</fields>
+<methods>Methods</methods>
+<constructors>Constructors</constructors>
+<parameters>Parameters</parameters>
+<returns>Returns</returns>
+<related>Related</related>
+<availability>Availability</availability>
+<type>Type</type>
+
+</core>

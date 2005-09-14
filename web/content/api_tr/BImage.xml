@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>BImage</name>
+
+<category>Resim</category>
+
+<subcategory>Yükleme ve Gösterme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>BImage.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+<description>
+Resimleri tutan veri türü. Processing <b>.gif</b> ve <b>.jpg</b> dosya türlerinin gösterilmesine izin verir. Görseller iki boyutlu veya üç boyutlu ortamda gösterilebilir. Bir resim kullanılmadan önce <b>loadimage()</b> fonksiyonu ile yüklenmelidir. <b>BImage</b> nesnesi bir resmin hem genişlik(<b>width</b>) ve yükseklik(<b>height</b>) bilgilerini, hem de <b>pixels[]</b> denilen bir dizi içinde her bir pikselin değerini tutar. Aşağıda belirtilen bir grup yöntem resimlerin piksellerine / alfa kanallarına erişimi sağlar ve işlemleri kolaylaştırır.
+</description>
+
+<syntax>
+BImage <c>isim</c> 
+<c>isim</c>.pixels[]
+<c>isim</c>.width
+<c>isim</c>.height
+</syntax>
+
+<parameter>
+<label>isim</label>
+<description>herhangi bir geçerli değişken ismi</description>
+</parameter>
+
+<property>
+<label>pixels[]</label>
+<description>resimdeki her bir pikseli barındıran tek boyutlu dizi</description>
+</property>
+
+<property>
+<label>width</label>
+<description>resmin piksel biriminde genişliği</description>
+</property>
+
+<property>
+<label>height</label>
+<description>resmin piksel biriminde yüksekliği</description>
+</property>
+
+<returns></returns>
+
+<related>
+loadImage()
+imageMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>textFont()</name>
+
+<category>Tipografi</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>textFont_.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.vlw.gz");
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+Mevcut fontu kurar. Font <b>loadFont()</b> fonksiyonu ile yüklenmiş olmalıdır. Bu font ve boyutu sonra gelen bütün <b>text()</b> fonksiyonlarında kullanılacaktır.
+</description>
+
+<syntax>
+textFont(<c>font</c>)
+textFont(<c>font</c>, <c>boyut</c>)
+</syntax>
+
+<parameter>
+<label>font</label>
+<description>BFont: BFont türünde herhangi bir değişken</description>
+</parameter>
+
+<parameter>
+<label>boyut</label>
+<description>int veya float: harflerin piksel biriminde boyutu</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+loadFont() 
+BFont 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

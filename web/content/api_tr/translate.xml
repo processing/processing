@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>translate()</name>
+
+<category>Dönüştürme</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>translate_.gif</image>
+<code>
+translate(30, 20);
+rect(0, 0, 55, 55);
+</code>
+</example>
+
+<example>
+<image>translate_2.gif</image>
+<code>
+translate(30, 20, -50);
+rect(0, 0, 55, 55);
+</code>
+</example>
+
+<example>
+<image>translate_3.gif</image>
+<code>
+translate(30, 20);
+rect(0, 0, 55, 55);
+translate(14, 14);
+rect(0, 0, 55, 55);
+</code>
+</example>
+
+<description>
+Nesnelerin boşlukta hareket etme miktarlarını belirler. <b>x</b> parametresi sol/sağ ötelemesini, <b>y</b> parametresi yukarı/aşağı ötelemesini, ve <b>z</b> parametresi ekrandan ileri/geri ötelemesini belirler. Teknik olarak <b>translate()</b> mevcut dönüşüm matriksini öteleme matriksi ile çarpar.
+</description>
+
+<syntax>
+translate(<c>x</c>, <c>y</c>);
+translate(<c>x</c>, <c>y</c>, <c>z</c>);
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int veya float: sol/sağ öteleme</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int veya float: yukarı/aşağı öteleme</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>int veya float: ileri/geri öteleme</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+rotate() 
+rotateX() 
+rotateY() 
+rotateZ() 
+scale() 
+push() 
+pop() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

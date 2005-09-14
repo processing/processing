@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>keyCode</name>
+
+<category>Input</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+color fillVal = color(126);
+
+void draw() {
+  fill(fillVal);
+  rect(25, 25, 50, 50);
+}
+
+void keyPressed() {
+  if(key == CODED) {
+    if (keyCode == UP) {
+      fillVal = 255;
+    } else if (keyCode == DOWN) {
+      fillVal = 0;
+    } 
+  } else {
+    fillVal = 126;
+  }
+}
+</code>
+</example>
+
+<description>
+The system variable <b>keyCode</b> is used to detect special keys such as the UP, DOWN, LEFT, or RIGHT keys on the keyboard. Other special key constants are ALT, CONTROL, SHIFT, BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE. Before testin which coded key is pressed it's necessary to test and see if the key is coded at all. This is done with the conditional "if(key == CODED) {}" as shown in the above example.
+</description>
+
+<syntax>
+keyCode
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+key
+keyPressed 
+keyPressed() 
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>bezierVertex()</name>
+
+<category>Shape</category>
+
+<subcategory>Vertex</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>bezierVertex_.gif</image>
+<code>
+beginShape(LINE_STRIP);
+bezierVertex(30, 20);
+bezierVertex(80, 0);
+bezierVertex(80, 75);
+bezierVertex(30, 75);
+endShape();
+</code>
+</example>
+
+<description>
+Specifies vertex coordinates for Bezier curves. This function must be used between <b>beginShape()</b> and <b>endShape()</b>. These curves are defined by a series of anchor and control points. Bezier curves were developed by French engineer Pierre Bezier.
+</description>
+
+<syntax>
+bezierVertex(<c>x</c>, <c>y</c>)
+bezierVertex(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>The x-coordinate of the vertex, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>The y-coordinate of the vertex, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>The z-coordinate of the vertex, either a float or int</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+curveVertex()
+vertex()
+bezier()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

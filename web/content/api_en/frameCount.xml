@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>frameCount</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+  framerate(30);
+}
+
+void draw() {
+  line(0, 0, width, height);
+  println(frameCount);
+}
+</code>
+</example>
+
+<description>
+The system variable <b>frameCount</b> contains the number of frames displayed since the program started. Inside <b>setup()</b> the value is 0 and and after the first iteration of draw it is 1, etc.
+</description>
+
+<syntax>
+framerate
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+frameRate()
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

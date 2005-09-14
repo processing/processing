@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>height</name>
+
+<category>Ortam</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>height.gif</image>
+<code>
+noStroke();
+background(0);
+rect(40, 0, 20, height);
+rect(60, 0, 20, height/2);
+</code>
+</example>
+
+<description>
+Gösterim penceresinin yüksekliğini barındıran sistem değişkeni. Bu değer <b>size()</b> fonksiyonunun ilk parametresi tarafından belirlenir. Örneğin, <b>size(320, 240)</b> fonksiyonu çağrıldığında <b>height</b> değişkeninin değerini 240 yapar.
+</description>
+
+<syntax>
+height
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+width
+BImage
+BVideo
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>blue() 藍色</name>
+
+<category>Color</category>
+
+<subcategory>Reading</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>blue_.gif</image>
+<code>
+noStroke();
+color c = color(0, 126, 255);
+fill(c);
+rect(15, 20, 35, 60);
+float value = blue(c);  // Sets "value" to "255"
+fill(value);
+rect(50, 20, 35, 60);
+</code>
+</example>
+
+<description>
+從一個色彩中擷取藍色的元素。
+</description>
+
+<syntax>
+blue(<c>color</c>)
+</syntax>
+
+<parameter>
+<label>color</label>
+<description>屬於色彩資料型態的任何值</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+red() 
+green() 
+hue() 
+saturation() 
+brightness() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+</root>

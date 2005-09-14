@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>point()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>point_.gif</image>
+<code>
+point(30, 20);
+point(85, 20);
+point(85, 75);
+point(30, 75);
+</code>
+</example>
+
+<description>
+Nokta boşlukta bir koordinattır. Processing'de noktaların bir piksel boyutu vardır. İlk parametre noktanın yatay değeri, ikincisi noktanın dikey dğgeri, ve isteğe bağlı üçüncü değer de derinlik değeridir.
+</description>
+
+<syntax>
+point(<c>x1</c>, <c>y1</c>); 
+point(<c>x1</c>, <c>y1</c>, <c>z1</c>); 
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>int veya float: noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>int veya float: noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z1</label>
+<description>int veya float: noktanın z koordinatı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+beginShape()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

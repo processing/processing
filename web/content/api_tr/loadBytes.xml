@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>loadBytes()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Dosyalar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+// open a file and read its binary data
+byte b[] = loadBytes("something.dat");
+
+// print each value, from 0 to 255
+for (int i = 0; i &lt; b.length; i++) {
+  // every tenth number, start a new line
+  if ((i % 10) == 0) {
+    println();
+  }
+
+  // bytes are from -128 to 127, this converts to 0 to 255
+  int a = b[i] &amp; 0xff;
+  print(a + " ");
+}
+// print a blank line at the end
+println();
+
+</code>
+</example>
+
+<description>
+Bir dosyanın veya URLnin içeriğini okur ve bir Byte dizisi yaratır. Eğer bir dosya tanımlanmışsa, bu dosya taslağın veri ("data") dizininde bulunmalıdır.
+</description>
+
+<syntax>
+loadBytes(<c>dosyaadı</c>);
+</syntax>
+
+<parameter>
+<label>dosyaadı</label>
+<description>String: yüklenicek dosya veya URLnin adı</description>
+</parameter>
+
+<returns>byte[]</returns>
+
+<related>
+loadStream()
+loadStrings()
+saveStrings()
+saveBytes() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

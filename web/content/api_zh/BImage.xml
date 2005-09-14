@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>BImage</name>
+
+<category>Image</category>
+
+<subcategory>Loading and Displaying</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>BImage.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+<description>
+儲存影像的資料型態。Processing可接受 <b>.gif</b> 和 <b>.jpg</b> 影像格式，影像可被放置於平面或立體空間中，但必須先以 <b>loadImage()</b> 函式先行將影像載入。<b>BImage</b> 物件的性質(property) 包含: 影像的 <b>width</b>(寬度)和 <b>height</b>(長度)，還有名為 <b>pixels[]</b> 的像素陣列，儲存了影像中每一個像素的值。以下列出一些方法，可以對影像的像素/遮色頻 (alpha channel) 作處理，以簡化影像合成的步驟。
+</description>
+
+<syntax>
+</syntax>
+
+<parameters>
+</parameters>
+
+<field>
+<fname>width</fname>
+<fdescription>影像寬度</fdescription>
+</field>
+<field>
+<fname>height</fname>
+<fdescription>影像高度</fdescription>
+</field>
+<field>
+<fname>pixels[]</fname>
+<fdescription>包含了影像的所有像素的陣列</fdescription>
+</field>
+
+<method>
+<mname>get()</mname>
+<mdescription>讀取單一像素的色彩值，或取得某個像素區域</mdescription>
+</method>
+<method>
+<mname>set()</mname>
+<mdescription>指定色彩予某一像素，或將一個影像寫入另一個影像?堙C</mdescription>
+</method>
+<method>
+<mname>copy()</mname>
+<mdescription>抄錄整個影像</mdescription>
+</method>
+<method>
+<mname>alpha()</mname>
+<mdescription>設定透明度（alpha channel 遮色頻）</mdescription>
+</method>
+<method>
+<mname>replicate()</mname>
+<mdescription>複製單一像素或像素區域</mdescription>
+</method>
+<method>
+<mname>blend()</mname>
+<mdescription>以不同的混色模式，複製像素或像素區域</mdescription>
+</method>
+
+<constructor>
+BImage()
+BImage(<c>width</c>, <c>height</c>)
+BImage(<c>pixels[]</c>, <c>width</c>, <c>height</c>, <c>format</c>)
+BImage(<c>img</c>)
+</constructor>
+
+<cparameter>
+<clabel>width</clabel>
+<cdescription>整數：影像寬度</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>height</clabel>
+<cdescription>整數：影像高度</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>pixels[]</clabel>
+<cdescription>int[] 或 color[]：整數陣列或色彩陣列，陣列的空間必須等同影像的長寬相乘（width*height）之值。</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>format</clabel>
+<cdescription>RGB（紅綠藍），RGBA（紅綠藍和遮色頻），ALPHA（灰階之遮色頻）三者擇一。</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>img</clabel>
+<cdescription>java.awt.Image 影像物件：假設 MediaTracker 已將資料完整地載入，和影像物件是有效的話，才能使用。</cdescription>
+</cparameter>
+
+
+<returns></returns>
+
+<related>
+loadImage()
+imageMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Bagel</partof>
+
+
+</root>

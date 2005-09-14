@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+
+<!-- 
+
+Note: The file parser is fussy, there must not be spaces
+between the left margin and the entries, and each entry
+must be contained between the anchors without a line break.
+
+-->
+
+<core>
+
+<index>Index</index>
+
+<!-- A credit for you and/or you and your partner(s) in translation!!! -->
+<!-- Such as "Translated from English to Russian by Olga Pashenkov" -->
+<translators>&#304;ngilizce'den Türkçe'ye Burak Arikan taraf&#305;ndan çevrilmi&#351;tir.</translators>
+
+<!-- Information for bottom of the page -->
+<updated>Son güncelleme:</updated>
+<caseyreas>Casey Reas</caseyreas>
+<benfry>Ben Fry</benfry>
+<and>and</and>
+<mit>Massachusetts Institute of Technology</mit>
+<ivrea>Interaction Design Institute Ivrea</ivrea>
+<open>Processing is an open project intiated by</open>
+
+<!-- Disclaimer and contract information -->
+<!-- If this is a translation, Casey is probably not a good contact -->
+<disclaimer>Processing 1.0 ba&#351;vuru kayna&#287;&#305; henüz geli&#351;mektedir.</disclaimer>
+<contact>E&#287;er herhangi bir hata görürseniz veya yorum yazmak isterseniz, lütfen barikan at ucantekme.com adresine yaz&#305;n.</contact>
+
+</core>

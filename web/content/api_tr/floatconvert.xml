@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>float()</name>
+
+<category>Veri</category>
+
+<subcategory>Dönüştürme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+float f = float(true);
+</code>
+</example>
+
+<description>
+Basit bir veri türünü kayan noktalı sayı (float) gösterimine çevirir.
+</description>
+
+<syntax>
+float(<c>değer</c>)
+</syntax>
+
+<parameter>
+<label>değer</label>
+<description>int, float, char, byte, boolean, veya color</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+float
+int()
+char()
+byte()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+
+
+
+
+
+
+
+</root>

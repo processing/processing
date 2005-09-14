@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>box() 立方體</name>
+
+<category>Shape</category>
+
+<subcategory>3D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>box_.gif</image>
+<code>
+translate(58, 48, 0); 
+rotateY(0.5);
+box(40);
+</code>
+</example>
+
+<example>
+<image>box_2.gif</image>
+<code>
+translate(58, 48, 0); 
+rotateY(0.5);
+box(40, 20, 50);
+</code>
+</example>
+
+<description>
+立方體是長方形的突出延伸。每一邊都等長的立方體稱為正立方體。
+</description>
+
+<syntax>
+box(<c>size</c>);
+box(<c>width</c>, <c>height</c>, <c>depth</c>);
+</syntax>
+
+<parameter>
+<label>size</label>
+<description>整數或浮點數: 立方體各邊的尺寸。結果將產生一個正立方體</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>整數或浮點數: 立方體在x象限的尺寸</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>整數或浮點數: 立方體在y象限的尺寸</description>
+</parameter>
+
+<parameter>
+<label>depth</label>
+<description>整數或浮點數: 立方體在z象限的尺寸</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+sphere()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

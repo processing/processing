@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>sort()</name>
+
+<category>Data</category>
+
+<subcategory>Array Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+float a[] = { 3.4, 3.6, 2, 0, 7.1 };
+a = sort(a);
+for (int i = 0; i &lt; a.length; i++) {
+  println(a[i]);
+}
+
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+String s[] = { "deer", "elephant", "bear", "aardvark", "cat" };
+s = sort(s);
+print(s);  // Prints "aardvark bear cat deer elephant"
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+String s[] = { "deer", "elephant", "bear", "aardvark", "cat" };
+s = sort(s, 3);
+print(s);  // Prints "bear dear elephant"
+
+</code>
+</example>
+
+<description>
+Sorts an array of numbers from smallest to largest and puts an array of words in alphabetical order. The original array is not modified and the re-ordered array is returned. The <b>count</b> parameter states the number of elements to sort. For example if there are 12 elements in an array and if count is the value 5, only the first five elements on the array will be sorted.
+</description>
+
+<syntax>
+sort(<c>dataArray</c>)
+sort(<c>dataArray</c>, <c>count</c>)
+</syntax>
+
+<parameter>
+<label>dataArray</label>
+<description>String[], int[], or float[]</description>
+</parameter>
+
+<parameter>
+<label>count</label>
+<description>int: </description>
+</parameter>
+
+<returns>Array (same datatype as the input)</returns>
+
+<related>
+reverse()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

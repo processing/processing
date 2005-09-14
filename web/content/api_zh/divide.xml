@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>/ (除號)</name>
+
+<category>Math</category>
+
+<subcategory>Operator</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int g = 50 / 5;  // Sets g 10
+int h = g / 5;   // Sets h 2
+</code>
+</example>
+
+<description>
+以第二個參數的值來除第一個參數的值。 方程式20 / 4 的答案為5。20是4個5的和，如同以下的方程式4 + 4 + 4 + 4 + 4 = 20。
+</description>
+
+<syntax>
+<c>value1</c> / <c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數，但不可為0，0不可作為除數。</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+* (multiply)
+% (modulo)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>BFont</name>
+
+<category>Typography</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>BFont.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully 
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+Bfont 是Processing 的內建字型類別。<b>loadFont()</b> 函式建構新字型，<b>textFont()</b> 函式使此字型開始作用，<b>width()</b> 函式則負責設定字型中字元的寬度。
+</description>
+
+<syntax>
+BFont <c>var</c>
+<c>var</c>.width(<c>let</c>)
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>任何適用之變數名稱</description>
+</parameter>
+
+<parameter>
+<label>let</label>
+<description>字元或字串: 任何單一字元，或由多個字元構成的字串。</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+loadFont() 
+textFont() 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

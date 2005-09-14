@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>rectMode() 長方形模式</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>rectMode_.gif</image>
+<code>
+rectMode(CENTER);
+rect(35, 35, 50, 50);
+rectMode(CORNER);
+fill(102);
+rect(35, 35, 50, 50);
+</code>
+</example>
+
+<description>
+改變長方形的起始位置。系統的預設值為 <b>rectMode(CORNER)</b>；此函式設定起始位置為左上角，長方形的長度和寬度則由 <b>rect()</b> 函式中的第三及第四參數設定。<br/><br/>函式 <b>rectMode(CORNERS)</b> 以<b>rect()</b>函式中的第一及第二參數設定長方形一個角的位置，及以第三及第四參數設定其對角的位置。<br/><br/>函式<b>rectMode(CENTER)</b>設定長方形的起始位置為其中心點，長方形的長度和寬度則由<b>rect()</b>函式中的第三及第四參數設定。<br/><br/><b>rectMode()</b>函式的參數一定要全部以大寫字母表示。在Processing語言中，大小寫是有分別的。
+</description>
+
+<syntax>
+rectMode(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>CORNER（左上角），CORNERS（對角），或 CENTER（中心點）三者擇一</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+rect()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

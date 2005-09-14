@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>online()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Network</subcategory>
+
+<usage>網路</usage>
+
+<example>
+<image></image>
+<code>
+boolean connected = online();
+if(connected) {
+  ellipse(25, 25, 50, 50);
+} else {
+  line(0, 0, 100, 100);
+  line(100, 0, 0, 100);
+}
+</code>
+</example>
+
+<description>
+確定 Processing 程式是否正運行於網路瀏覽器內；若程式運行於網路瀏覽器內，函式會回傳 "true"，否則回傳 "false"。
+</description>
+
+<syntax>
+online()
+</syntax>
+
+<returns>布林值（Boolean）</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Bagel</partof>
+
+</root>

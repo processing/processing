@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>noCursor()</name>
+
+<category>Ortam</category>
+
+<subcategory></subcategory>
+
+<usage>Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+// Press the mouse to hide the cursor
+void loop() 
+{
+  if(mousePressed == true) {
+    noCursor();
+  } else {
+    cursor(HAND);
+  }
+}
+</code>
+</example>
+
+<description>
+İmleçi saklar. Program bir web tarayıcısında calışıyorsa bu fonksiyon çalışmaz.
+</description>
+
+<syntax>
+noCursor()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+cursor()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

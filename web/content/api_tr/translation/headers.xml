@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+
+<!-- 
+
+Note: The file parser is fussy, there must not be spaces
+between the left margin and the entries, and each entry
+must be contained between the <></> anchors without a line
+break.
+
+-->
+
+
+<core>
+
+<language>Dil</language>
+<environment>Ortam</environment>
+<libraries>Kütüphaneler</libraries>
+<comparison>Kar&#351;&#305;la&#351;t&#305;rma</comparison>
+<technotes>TechNotes</technotes>
+
+</core>

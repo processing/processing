@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>void 無回傳值</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+  size(200, 200);
+}
+
+void loop() {
+  line(10, 100, 190, 100);
+}
+</code>
+</example>
+
+<description>
+此關鍵詞用於標示一個不會回傳數值的函式。每個函式必須回傳數值，或使用關鍵詞<b>void </b>以標示此函式沒有回傳值。
+</description>
+
+<syntax>
+void <c>function</c> {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>function</label>
+<description>任何已定義或施行的函式</description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description>任何有效的陳述</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

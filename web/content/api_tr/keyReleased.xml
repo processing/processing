@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>keyReleased()</name>
+
+<category>Girdi/Çikti</category>
+
+<subcategory>Klavye</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>keyReleased_.jar</image>
+<code>
+// Click on the image to give it focus,
+// and then press any key
+
+int value = 0;
+
+void loop() {
+  fill(value);
+  rect(25, 25, 50, 50);
+}
+
+void keyReleased() 
+{
+  if(value == 0) {
+    value = 255;
+  } else {
+    value = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+<b>keyReleased()</b> fonksiyonu klavyede her tuş bırakıldığında çağrılır. Genel bir kural olarak, <b>keyReleased()</b> fonksiyonu içinde hiçbirşey çizilmemelidir.
+</description>
+
+<syntax>
+void keyReleased() { 
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+keyPressed 
+key 
+keyCode
+keyPressed() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>saveStrings()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Dosyalar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+String words = "apple bear cat dog";
+String list[] = splitStrings(words);
+
+// now write the strings to a file, each on a separate line
+saveStrings("nouns.txt", list);
+</code>
+</example>
+
+<description>
+Karakter dizisini(String) her satıra bir dizi gelecek şekilde dosyaya yazar. Dosyalar ana Processing dizininde yaratılır (exe dosyası ile aynı dizin).
+</description>
+
+<syntax>
+saveStrings(<c>dosyaadı</c>, <c>strings</c>)
+</syntax>
+
+<parameter>
+<label>dosyaadı</label>
+<description>çıktı için dosya adı</description>
+</parameter>
+
+<parameter>
+<label>strings</label>
+<description>yazılacak karakter dizisi</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+loadStream()
+loadStrings()
+loadBytes() 
+saveBytes()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

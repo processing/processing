@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>mouseReleased() 放開滑鼠按鈕</name>
+
+<category>Input/Output</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>mouseReleased_.jar</image>
+<code>
+// Click within the image to change 
+// the value of the rectangle
+
+int value = 0;
+
+void loop() {
+  fill(value);
+  rect(25, 25, 50, 50);
+}
+
+void mouseReleased() 
+{
+  if(value == 0) {
+    value = 255;
+  } else {
+    value = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+每當滑鼠按鍵在按壓後被釋放，<b>mouseReleased()</b>函式就會自動被呼叫。如果您的滑鼠有超過一個按鍵，本函式只適用於左鍵。
+</description>
+
+<syntax>
+mouseReleased()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+mouseX
+mouseY
+pmouseX
+pmouseY
+mousePressed
+mousePressed()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

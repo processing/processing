@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>PFont</name>
+
+<category>Typography</category>
+
+<subcategory>PFont</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PFont.gif</image>
+<code>
+PFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully 
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+PFont is the font class for Processing. The <b>loadFont()</b> function constructs a new font and the <b>textFont()</b> function makes this font active. The method <b>width()</b> is used to determine the width of each individual character in the font. 
+</description>
+
+<syntax>
+PFont <c>var</c>
+<c>var</c>.width(<c>let</c>)
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>any legal variable name</description>
+</parameter>
+
+<parameter>
+<label>let</label>
+<description>char or String: any single character or String of characters</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+loadFont() 
+textFont() 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

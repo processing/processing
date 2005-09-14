@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!-- 
+
+Note: The file parser is fussy, there must not be spaces
+between the left margin and the entries, and each entry
+must be contained between the <></> anchors without a line
+break.
+
+-->
+
+<core>
+
+<class>物類</class>
+<name>名稱</name>
+<category>主分類</category>
+<subcategory>細分類</subcategory>
+<usage>用途</usage>
+<examples>例子</examples>
+<description>描述</description>
+<syntax>語法</syntax>
+<fields>Fields</fields>
+<methods>函式</methods>
+<constructors>建構子</constructors>
+<parameters>參數</parameters>
+<returns>回傳</returns>
+<related>相關</related>
+<availability>相容</availability>
+<type>類別</type>
+
+</core>

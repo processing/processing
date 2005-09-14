@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+
+<name>Array 陣列</name>
+
+<category>Data</category>
+
+<subcategory>Composite</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int[] numbers = new int[3];
+numbers[0] = 90;
+numbers[1] = 150;
+numbers[2] = 30;
+int a = numbers[0] + numbers[1]; // Sets variable a to 240
+int b = numbers[1] + numbers[2]; // Sets variable b to 180 
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+int[] numbers = { 90, 150, 30 };
+int a = numbers[0] + numbers[1]; // Sets variable a to 240
+int b = numbers[1] + numbers[2]; // Sets variable b to 180
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+int degrees = 360;
+float[] cos_vals = new float[degrees];
+for(int i=0; i &amp;lt; degrees; i++) {
+  cos_vals[i] = cos(TWO_PI/degrees * i);
+}
+</code>
+</example>
+
+<description>
+陣列是由許多資料構成的，數據的種類不限，並以其在陣列中位置的索引號碼表示，第一個數據以 <b>[0]</b> 表示， 第二個是 <b>[1]</b>，以此類推，陣列一如物件在創造新陣列時， 必須使用關鍵字 <b>new</b>，每一個陣列都有一個稱為 <b>length</b> 的變數，length 為一整數， 表示該陣列中包含資料的數量。
+</description>
+
+<syntax>
+<c>datatype</c>[] <c>var</c>
+<c>var</c>[<c>element</c>] = <c>value</c>
+<c>var</c>.length
+</syntax>
+
+<parameter>
+<label>datatype</label>
+<description>任何原始或合成之資料形態，也包含使用者自訂的類別。</description>
+</parameter>
+
+<parameter>
+<label>var</label>
+<description>任何適用的變數名稱。</description>
+</parameter>
+
+<parameter>
+<label>element</label>
+<description>正整數，其值不可超過陣列長度減 1的值。</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>指定給陣列中元素的數據，其資料形態必須與陣列中已有的相同。</description>
+</parameter>
+
+<method>
+<label></label>
+<description></description>
+</method>
+
+<returns>無</returns>
+
+<related>無</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+
+
+</root>

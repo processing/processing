@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>abs() 絕對值</name>
+
+<category>Math</category>
+
+<subcategory>Basic Functions</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a = abs(153);      // Sets a to 153
+int b = abs(-15);      // Sets b to 15
+float c = abs(12.234); // Sets c to 12.234
+float d = abs(-9.23);  // Sets d to 9.23 
+</code>
+</example>
+
+<description>
+計算數字的絕對值(幅度) 。絕對值永遠是正數。 
+</description>
+
+<syntax>
+abs(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>浮點數或整數</description>
+</parameter>
+
+<returns>浮點數或整數(以輸入值為準)</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

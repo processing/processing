@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>point() 點</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>point_.gif</image>
+<code>
+point(30, 20);
+point(85, 20);
+point(85, 75);
+point(30, 75);
+</code>
+</example>
+
+<description>
+點，是空間中的一個坐標。在 Processing ?，點的大小為一個像素。 函式的首個參數指定點的橫向坐標，而次參數則指定其直向坐標；也可以選擇性地加上第三個參數，以指定其深度。
+</description>
+
+<syntax>
+point(<c>x1</c>, <c>y1</c>); 
+point(<c>x1</c>, <c>y1</c>, <c>z1</c>); 
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>整數或浮點數：點的 x 坐標</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>整數或浮點數：點的 y 坐標</description>
+</parameter>
+
+<parameter>
+<label>z1</label>
+<description>整數或浮點數：點的 z 坐標</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+beginShape()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

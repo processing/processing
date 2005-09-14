@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>byte 位元組</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code> 
+byte a;         // Declare variable "a" of type byte
+a = 23;         // Assign "a" the value 23
+byte b = -128;  // Declare variable "b" and assign it the value -128
+byte c = a + b; // Declare variable "c" and assign it the sum of "a" and "b"
+</code>
+</example>
+
+<description>
+屬於位元組的一種資料型態。8位元的資訊可儲存127 到 –128 之間的數字值。位元組 (Byte) 這種資料型態適用於序列埠之間的數值收發，也是一種比 <b>char</b>(字元) 更簡單來代表字母的方法。
+</description>
+
+<syntax>
+byte <c>var</c>
+byte <c>var</c> = <c>value</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>代表某一值的變數名稱</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>介於127 到 –128 的數字</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+int
+float
+boolean
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>strokeMode()</name>
+
+<category>Shape</category>
+
+<subcategory>Stroke attributes</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+// Set line width to be thick because
+// strokeMode() is not noticeable on thin lines
+strokeWidth(4);
+
+// Choose an endcap and a join and connect them with | (or)
+// This creates square edges
+strokeMode(SQUARE_ENDCAP | MITERED_JOIN);
+beginShape(LINE_STRIP);
+vertex(20, 50);
+vertex(50, 10);
+vertex(80, 50);
+endShape();
+
+// Create rounded edges
+strokeMode(ROUND_ENDCAP | ROUND_JOIN);
+beginShape(LINE_STRIP);
+vertex(20, 80);
+vertex(50, 40);
+vertex(80, 80);
+endShape();
+
+</code>
+</example>
+
+<description>
+Sets attributes for the stroke. The endcap determines the shape of the "caps" on either end of the line, and the "join" determines how continuous lines are connected together. endcap is one of SQUARE_ENDCAP, ROUND_ENDCAP, PROJECTED_ENDCAP. the join is one of MITERED_JOIN, ROUND_JOIN, BEVELED_JOIN. These correspond to the type of lines found in Postscript and Adobe Illustrator.
+</description>
+
+<syntax>
+strokeMode(mode)
+</syntax>
+
+<parameter>
+<label>mode</label>
+<description>an endcap and a join propery or'ed together</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+stroke()
+strokeWidth()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+</root>

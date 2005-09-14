@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>[] (陣列括號)</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int[] numbers = new int[3]; 
+numbers[0] = 90; 
+numbers[1] = 150; 
+numbers[2] = 30; 
+int a = numbers[0] + numbers[1]; // Sets variable a to 240 
+int b = numbers[1] + numbers[2]; // Sets variable b to 180 
+</code>
+</example>
+
+<description>
+陣列專用的中括號，表示陣列中某一特定位置。此位置上的資料可以 <b>array[element] = value</b> 或 <b>value = array[element]</b>兩種句法代表。
+</description>
+
+<syntax>
+<c>datatype</c>[]
+<c>array</c>[<c>element</c>]
+</syntax>
+
+<parameter>
+<label>datatype</label>
+<description>任何原始或合成之資料形態，也包含使用者自訂的類別。</description>
+</parameter>
+
+<parameter>
+<label>array</label>
+<description>任何適用的變數名稱。</description>
+</parameter>
+
+<parameter>
+<label>element</label>
+<description>正整數: 其值不可超過陣列長度減 1的值。</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+Array
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

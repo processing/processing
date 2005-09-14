@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>print()</name>
+
+<category>Girdi/Ç&#305;kt&#305;</category>
+
+<subcategory>Metin Yazd&#305;rma</subcategory>
+
+<usage>IDE</usage>
+
+<example>
+<image></image>
+<code>
+print("begin: ");
+float f = 0.3;
+int i = 1024;
+print("f is " + f + " and i is " + 1024);
+String s = " :end";
+println(s);
+
+// The above code prints the following line:
+// begin: f is 0.3 and i is 1024 :end
+
+</code>
+</example>
+
+<description>
+Processing ortam&#305;n&#305;n metin alan&#305;na yazar. Ço&#287;u zaman bir program&#305;n üretti&#287;i verileri görmek için kullan&#305;l&#305;r. E&#351; fonksiyon <b>println()</b> <b>print()</b> gibi çal&#305;&#351;&#305;r ama her fonksiyon ça&#287;r&#305;ld&#305;&#287;&#305;nda yeni bir sat&#305;rda yazar. Ö&#287;eler t&#305;rnak i&#351;aretleriyle ("") ayr&#305;labilir ve art&#305;(+) i&#351;aretiyle birle&#351;tirilebilir.
+</description>
+
+<syntax>
+print(<c>metin</c>)
+</syntax>
+
+<parameter>
+<label>metin</label>
+<description>herhangi bir basit veya birle&#351;ik veri türü</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+println()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

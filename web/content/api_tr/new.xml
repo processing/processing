@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>new</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+HLine h1 = new HLine();
+float[] speeds = new float[3];
+float ypos;
+
+void setup() { 
+  size(200, 200);
+  speeds[0] = 0.1; 
+  speeds[1] = 2.0;
+  speeds[2] = 0.5;
+} 
+ 
+void loop() {
+  ypos += speeds[int(random(3))]; 
+  if (ypos &gt; width) { 
+    ypos = 0; 
+  } 
+  h1.update(ypos); 
+} 
+ 
+class HLine { 
+  void update(float y) { 
+    line(0, y, width, y); 
+  } 
+} 
+</code>
+</example>
+
+<description>
+Dinamik olarak nesne yaratır.
+</description>
+
+<syntax>
+new 
+</syntax>
+
+<parameter>
+<label></label>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

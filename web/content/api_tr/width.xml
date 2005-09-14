@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>width</name>
+
+<category>Ortam</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>width.gif</image>
+<code>
+noStroke();
+background(0);
+rect(0, 40, width, 20);
+rect(0, 60, width/2, 20);
+</code>
+</example>
+
+<description>
+Gösterim penceresinin genişliğini barındıran sistem değişkeni. Bu değer <b>size()</b> fonksiyonunun ilk parametresi tarafından belirlenir. Örneğin, <b>size(320, 240)</b> fonksiyonu çağrıldığında <b>width</b> değişkeninin değerini 320 yapar.
+</description>
+
+<syntax>
+width
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+height
+BImage
+BVideo
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

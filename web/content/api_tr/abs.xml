@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>abs()</name>
+
+<category>Math</category>
+
+<subcategory>Temel Fonksiyonlar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a = abs(153);      // Sets a to 153
+int b = abs(-15);      // Sets b to 15
+float c = abs(12.234); // Sets c to 12.234
+float d = abs(-9.23);  // Sets d to 9.23 
+</code>
+</example>
+
+<description>
+Bir sayının mutlak değerini hesaplar. Bir sayının mutlak değeri her zaman pozitifdir.
+</description>
+
+<syntax>
+abs(<c>değer</c>)
+</syntax>
+
+<parameter>
+<label>değer</label>
+<description>float veya int</description>
+</parameter>
+
+<returns>float veya int (girdi değerlerine bağlı)</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>delay()</name>
+
+<category>Ortam</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>delay_.jar</image>
+<code>
+int pos = 0;
+void loop() {
+  background(204);
+  pos++;
+  line(pos, 20, pos, 80);
+  if(pos &gt; width) {
+    pos = 0;
+  }
+  delay(250);  // Stops the program for 250 milliseconds
+}
+</code>
+</example>
+
+<description>
+Programın belirlenen süre boyunca donmasını sağlar. Gecikme süresi saniyenin binde biriyle belirlenir. <b>delay(3000)</b> fonksiyonu programı üç saniye durdurur.
+</description>
+
+<syntax>
+delay(<c>millisaniye</c>)
+</syntax>
+
+<parameter>
+<label>millisaniye</label>
+<description>int: milisaniye olarak belirlenir (bir saniye içinde 1000 milisaniye vardır)</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

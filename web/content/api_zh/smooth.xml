@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>smooth() 平滑邊緣</name>
+
+<category></category>
+
+<subcategory></subcategory>
+
+<usage></usage>
+
+<example>
+<image>smooth_.gif</image>
+<code>
+background(0);
+noSmooth();
+ellipse(12, 30, 36, 36);
+smooth();
+ellipse(53, 30, 36, 36);
+</code>
+</example>
+
+<description>
+以平滑（anti-aliased）邊緣繪畫幾何圖形。這功能會減慢影格速度，但能加強影像的細緻感。
+</description>
+
+<syntax>
+smooth()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>noSmooth()</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof></partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>- (çıkar)</name>
+
+<category>Matematik</category>
+
+<subcategory>Operatör</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int c = 50 - 5;  // Sets c to 45
+int d = c - 5;   // Sets d to 40
+int e = d - 60;  // Sets e to -20
+</code>
+</example>
+
+<description>
+İkinci değeri birinci değerden çıkartır.
+</description>
+
+<syntax>
+<c>değer1</c> - <c>değer2</c>
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+-- (decrement)
+-= (subtract assign)
++ (add)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

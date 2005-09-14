@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>millis() 千分之一秒</name>
+
+<category>Input/Output</category>
+
+<subcategory>Time &amp; Date</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>millis_.jar</image>
+<code>
+void loop() {
+  float m = millis();
+  fill(m % 255);
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+自applet執行起始，傳回千分之一秒(millisecond)的數目，本資訊可用於連續動畫的計時 。
+</description>
+
+<syntax>
+millis()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>整數</returns>
+
+<related>
+millis() 
+second()
+minute()
+hour()
+day()
+month()
+year()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

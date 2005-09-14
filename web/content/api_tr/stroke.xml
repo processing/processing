@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>stroke()</name>
+
+<category>Renk</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>stroke_.gif</image>
+<code>
+stroke(153);
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<example>
+<image>stroke_2.gif</image>
+<code>
+stroke(204, 102, 0);
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+Çizgiler ve şekillerin kenarları için çizgi rengini belirler. Bu renk o anki <b>colorMode()</b>a göre RGB veya HSB olarak tanımlanabilir. Varsayılan renk alanı RGB 0 ile 255 arasında değerler alır. <b>stroke()</b> fonksiyonunun tek parametreli uyarlaması gri değerler tanımlar, üç parametreli uyarlaması renk tanımlar, dört parametreli uyarlaması alfa değerli bir renk tanımlar. <i>Not: "gri" parametresi için değer <b>colorMode()</b> tarafından tanımlanmışsa mevcut en yüksek değere eşit veya bundan daha az olmalıdır.</i>
+</description>
+
+<syntax>
+stroke(<c>gri</c>)
+stroke(<c>değer1</c>, <c>değer2</c>, <c>değer3</c>);
+stroke(<c>renk</c>);
+</syntax>
+
+<parameter>
+<label>gri</label>
+<description>int veya float: beyaz ile siyah arasında bir değer belirler</description>
+</parameter>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float: kırmızı veya hue değeri(mevcut renk durumuna bağlı olarak)</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float: yeşil veya saturation değeri (mevcut renk durumuna bağlı olarak)</description>
+</parameter>
+
+<parameter>
+<label>değer3</label>
+<description>int veya float: mavi veya parlaklık değeri (mevcut renk durumuna bağlı olarak)</description>
+</parameter>
+
+<parameter>
+<label>renk</label>
+<description>color: renk veri türünde herhangi bir değer</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+noStroke()
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

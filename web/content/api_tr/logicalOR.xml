@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>|| (mantıksal VEYA)</name>
+
+<category>Kontrol</category>
+
+<subcategory>Mantıksal Operatörler</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>logicalOR.gif</image>
+<code>
+for(int i=5 ; i&lt;=95; i+=5) {
+  if((i &lt; 35) || (i &gt; 60)) {
+    line(30, i, 80, i);
+  }
+}
+</code>
+</example>
+
+<description>
+İki ifadeyi karşılaştırır ve biri veya ikisi doğru (<b>true</b>) ise doğru olarak değerlendirir. Yanlızca iki ifade de yanlış (<b>false</b>) ise yanlış olarak değerlendirir. Aşağidaki liste muhtemel birleşimleri gösteriyor:<br/><br/><tt>true || false   // İlki doğru olduğu icin doğru olarak değerlendirilir<br/>false || true   // İkincisi doğru olduğu icin doğru olarak değerlendirilir<br/>true || true    // Her ikisi de doğru olduğu icin doğru olarak değerlendirilir<br/>false || false  // Her ikisi de yanlış olduğu icin yanlış olarak değerlendirilir</tt> 
+</description>
+
+<syntax>
+<c>ifade1</c> || <c>ifade2</c>
+</syntax>
+
+<parameter>
+<label>ifade1</label>
+<description>herhangi bir geçerli ifade</description>
+</parameter>
+
+<parameter>
+<label>ifade2</label>
+<description>herhangi bir geçerli ifade</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+&amp;&amp; (logical AND)
+! (logical NOT)
+if()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

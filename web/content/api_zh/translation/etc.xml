@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="big5" standalone="yes"?>
+
+<!-- 
+
+Note: The file parser is fussy, there must not be spaces
+between the left margin and the entries, and each entry
+must be contained between the anchors without a line
+break.
+
+-->
+
+<core>
+
+<index>主目錄</index>
+
+<!-- A credit for you and/or you and your partner(s) in translation!!! -->
+<!-- Such as "Translated to from English to Russian by Olga Pashenkov" -->
+<translators></translators>
+
+<!-- Information for bottom of the page -->
+<updated>更新:</updated>
+<caseyreas>Casey Reas</caseyreas>
+<benfry>Ben Fry</benfry>
+<and>和</and>
+<mit>Massachusetts Institute of Technology (麻省理工學院)</mit>
+<ivrea>Interaction Design Institute Ivrea (依菲亞互動設計學院)</ivrea>
+<open>Processing 是一個公開計劃，始創人是</open>
+
+<!-- Disclaimer and contract information -->
+<!-- If this is a translation, Casey is probably not a good contact -->
+<disclaimer>Processing 1.0 中文參考頁尚在製作中。</disclaimer>
+<contact>若你發現任何錯漏或有其他意見，請與 ngan @ metaphorical.net 聯絡。</contact>
+
+</core>

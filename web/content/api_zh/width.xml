@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>width 寬</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>width.gif</image>
+<code>
+noStroke();
+background(0);
+rect(0, 40, width, 20);
+rect(0, 60, width/2, 20);
+</code>
+</example>
+
+<description>
+顯示視窗寬度的系統變式。<b>size()</b> 函數的首個參數將設定此數值。例如，函式指令<b>size(320, 240)</b> 設定<b>width</b> 變數值為320。
+</description>
+
+<syntax>
+width
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+height
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

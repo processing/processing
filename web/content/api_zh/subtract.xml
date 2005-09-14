@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>- (減號)</name>
+
+<category>Math</category>
+
+<subcategory>Operator</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int c = 50 - 5;  // Sets c to 45
+int d = c - 5;   // Sets d to 40
+int e = d - 60;  // Sets e to -20
+</code>
+</example>
+
+<description>
+將第一個數值減以第二個數值。
+</description>
+
+<syntax>
+<c>value1</c> - <c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+-- (decrement)
+-= (subtract assign)
++ (add)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

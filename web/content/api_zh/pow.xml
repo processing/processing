@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>pow() 指數</name>
+
+<category>Math</category>
+
+<subcategory>Basic Functions</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+float a = pow( 1, 3);  // Sets "a" to 1*1*1 = 1
+float b = pow( 3, 5);  // Sets "b" to 3*3*3*3*3 = 243
+float c = pow( 3,-5);  // Sets "c" to 1 / 3*3*3*3*3 = 1 / 243 = .0041
+float d = pow(-3, 5);  // Sets "d" to -3*-3*-3*-3*-3 = -243
+</code>
+</example>
+
+<description>
+提供指數式功能的 <b>pow()</b> 函式，能有效地把數值反覆乘以自身（或其相應的數值）。例如：<b>pow(3, 5)</b> 即相當於 3*3*3*3*3 公式，而 <b>pow(3, -5)</b> 亦等同於 1 / 3*3*3*3*3 公式。
+</description>
+
+<syntax>
+pow(<c>base</c>, <c>exponent</c>)
+</syntax>
+
+<parameter>
+<label>base</label>
+<description>整數或浮點數：指數式的底數</description>
+</parameter>
+
+<parameter>
+<label>exponent</label>
+<description>整數或浮點數：指數次方</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+sqrt()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

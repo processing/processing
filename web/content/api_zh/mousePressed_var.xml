@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>mousePressed 按下滑鼠按鈕</name>
+
+<category>Input/Output</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>mousePressed.jar</image>
+<code>
+// Click within the image to change 
+// the value of the rectangle
+void loop() {
+  if (mousePressed == true) {
+    fill(0);
+  } else {
+    fill(255);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+Processing 自動追蹤滑鼠按鍵是否被按壓，如果您的滑鼠有超過一個按鍵，以左鍵為準。在按壓的狀況下，系統變數 <b>mousePressed</b>的值為成立，在沒有按壓的狀況下，其值為不成立。
+</description>
+
+<syntax>
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+mouseX
+mouseY
+pmouseX
+pmouseY
+mousePressed()
+mouseReleased()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

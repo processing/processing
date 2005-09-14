@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>splitStrings()</name>
+
+<category>Veri</category>
+
+<subcategory>Ayrıştırma</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+String words = "apple bear cat dog";
+String list[] = splitStrings(words);
+// list[0] is now "apple", list[1] is now "bear", ...
+
+// or if the separator is not a space
+
+String words = "apple,bear,cat,dog";
+String list[] = splitStrings(words, ',');
+
+// if tabs are in-between (common for data files) use:
+// splitStrings(words, '\t');
+</code>
+</example>
+
+<description>
+Daha uzun bir "string"e gömülü bir grup "string"i ayırıp string türü bir diziye aktarmaya yardımcı fonksiyon. Eger bölme karakteri kullanılmamışsa, boşluk ayırma karakteri olarak kullanılır.
+</description>
+
+<syntax>
+splitStrings(string)
+splitStrings(string, char)
+</syntax>
+
+<parameter>
+<label>string</label>
+<description>parçalara bölüncek string</description>
+</parameter>
+
+<parameter>
+<label>char</label>
+<description>değerleri bölmek içim kullanılacak karakter</description>
+</parameter>
+
+<returns>String[]</returns>
+
+<related>
+String
+splitInts()
+splitFloats()
+join()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

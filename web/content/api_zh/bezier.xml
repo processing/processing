@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>bezier() 貝茲弧線</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>bezier_.gif</image>
+<code>
+stroke(255, 102, 0);
+line(85, 20, 10, 10);
+line(90, 90, 15, 80);
+stroke(0, 0, 0);
+bezier(85, 20, 10, 10, 90, 90, 15, 80);
+</code>
+</example>
+
+<example>
+<image>bezier_2.gif</image>
+<code>
+stroke(255, 102, 0);
+line(30, 20, 80, 5);
+line(80, 75, 30, 75);
+stroke(0, 0, 0);
+bezier(30, 20,  80, 5,  80, 75,  30, 75);
+</code>
+</example>
+
+<description>
+在螢幕上繪製貝茲弧線。以一連串的錨點及控制點設定弧線。最前面2個參數指定第1個錨點， 最後2個參數指定另一個錨點。中間的參數則代表設定弧線形狀的控制點。貝茲弧線由法國工程師Pierre Bezier研發。
+</description>
+
+<syntax>
+bezier(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</c>, <c>y4</c>);
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>整數或浮點數: 第一個錨點的x座標</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>整數或浮點數: 第一個錨點的y座標</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>整數或浮點數: 第二個控制點的x座標</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>整數或浮點數: 第二個控制點的y座標</description>
+</parameter>
+
+<parameter>
+<label>x3</label>
+<description>整數或浮點數: 第三個控制點的x座標</description>
+</parameter>
+
+<parameter>
+<label>y3</label>
+<description>整數或浮點數: 第三個控制點的y座標</description>
+</parameter>
+
+<parameter>
+<label>x4</label>
+<description>整數或浮點數: 第二個錨點的x座標</description>
+</parameter>
+
+<parameter>
+<label>y4</label>
+<description>整數或浮點數: 第二個錨點的y座標</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+bezierVertex()
+curve()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

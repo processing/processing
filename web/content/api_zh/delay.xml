@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>delay() 暫停</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>delay_.jar</image>
+<code>
+int pos = 0;
+void loop() {
+  background(204);
+  pos++;
+  line(pos, 20, pos, 80);
+  if(pos &gt; width) {
+    pos = 0;
+  }
+  delay(250);  // Stops the program for 250 milliseconds
+}
+</code>
+</example>
+
+<description>
+使程式暫停運行一段時間，並以千分之一秒為單位去指定暫停的時間。例如，<b>delay(3000)</b> 函式將使程式暫停三秒鐘。
+</description>
+
+<syntax>
+delay(<c>milliseconds</c>)
+</syntax>
+
+<parameter>
+<label>milliseconds</label>
+<description>整數：指定的時間 (以千分之一秒為單位)</description>
+</parameter>
+
+<returns>無</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>HALF_PI (1.57079...) 半倍圓週率</name>
+
+<category>Constants</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>HALF_PI.gif</image>
+<code>
+float f = 0.0;
+beginShape(POLYGON);
+while(f &lt; HALF_PI) {
+  vertex(width/2 + cos(f)*40, height/2 + sin(f)*40);
+  f += PI/12.0;
+}
+endShape();
+</code>
+</example>
+
+<description>
+HALF_PI 是個數學常數(Constant)，其值為 1.57079632679489661923。它是圓形的圓周和直徑比率的一半，可配合 <b>sin()</b> 和 <b>cos()</b> 函式一起使用。
+</description>
+
+<syntax>
+HALF_PI
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+PI
+TWO_PI
+</related>
+
+<availability>1.0</availability>
+
+<type>Constant</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

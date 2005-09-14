@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>while()</name>
+
+<category>Kontrol</category>
+
+<subcategory>Tekrarlama</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>while_.gif</image>
+<code>
+int i=0;
+while(i&lt;80) {
+  line(30, i, 80, i);
+  i = i + 5;
+} 
+</code>
+</example>
+
+<description>
+Bir sıra tekrarı kontrol eder. <b>While</b> yapısı bir seri bildiriyi <b>ifade</b> doğru(<b>true</b>) iken yürütür. Ifade tekrarlar sırasrnda guncellenmelidir yoksa program <b>while()</b>dan hiçbir zaman "çıkamaz".
+</description>
+
+<syntax>
+while(<c>ifade</c>) {
+  <c>anlatımlar</c>
+}
+</syntax>
+
+<parameter>
+<label>ifade</label>
+<description>geçerli bir ifade</description>
+</parameter>
+
+<parameter>
+<label>anlatımlar</label>
+<description>bir veya daha fazla anlatım</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+for()
+</related>
+
+<availability>1.0</availability>
+
+<type>Structure</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

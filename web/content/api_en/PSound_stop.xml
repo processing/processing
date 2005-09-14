@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>stop()</name>
+
+<category>PSound</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PSound mySound;
+
+void setup() {
+  mySound = loadSound("arigato.wav");
+  mySound.loop();
+}
+
+void draw() {
+  // The blank draw() is necessary to let the sound play
+}
+
+void mousePressed() {
+  mySound.stop();
+}
+</code>
+</example>
+
+<description>
+Stops the sound playback.
+</description>
+
+<syntax>
+<c>sound</c>.stop()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>PSound: any variable of type PSound</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

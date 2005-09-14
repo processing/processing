@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>text()</name>
+
+<category>Tipografi</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>text_.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+<b>data</b> parametresinde belirtilen bilgiyi x ve y  parametrelerine göre ekranda gösterir. <b>text()</b> çağrılmadan önce <b>textFont()</b> fonksiyonuyla bir font tanımlanması gerekir.
+</description>
+
+<syntax>
+text(<c>veri</c>, <c>x</c>, <c>y</c>)
+</syntax>
+
+<parameter>
+<label>veri</label>
+<description>String, char, int, veya float: gösterilecek alfanumerik semboller</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>int veya float: metnin x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int veya float: metnin y koordinatı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+loadFont() 
+BFont 
+textFont() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

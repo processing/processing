@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>degrees()</name>
+
+<category>Matematik</category>
+
+<subcategory>Trigonometri</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+float rad = PI/4;
+float deg = degrees(rad);
+println(rad + " radians is " + deg + " degrees");
+</code>
+</example>
+
+<description>
+Bir radyan ölçümünü dereceye çevirir. Radyan ve derece birşey ölçmenin iki yoludur. Bir daire içinde 360 derece ve 2*PI radyan vardır. Örneğin, 90° = PI/2 = 1.5707964. Processing'de bütün trigonemtrik yöntemler parametrelerin radyan olarak tanımlanmasını gerektirir.
+</description>
+
+<syntax>
+degrees(<c>açı</c>)
+</syntax>
+
+<parameter>
+<label>açı</label>
+<description>int veya float</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+radians()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

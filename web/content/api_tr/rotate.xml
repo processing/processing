@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>rotate()</name>
+
+<category>Dönüştürme</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>rotate_.gif</image>
+<code>
+translate(width/2, height/2);
+rotate(PI/3.0);
+rect(-26, -26, 52, 52);
+</code>
+</example>
+
+<description>
+Bir nesneyi açı değişkenine atanan değer kadar döndürür. Nesneler her zaman orjine bağlı pozisyonları etrafında döndürülür. Pozitif sayılar nesneleri saat yönünde döndürür. Teknik olarak, <b>rotate()</b> mevcut dönüşüm matriksini öteleme matriksi ile çarpar.
+</description>
+
+<syntax>
+rotate(<c>açı</c>); 
+</syntax>
+
+<parameter>
+<label>açı</label>
+<description>float: radyan cinsinden dönme açısı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+rotateX() 
+rotateY() 
+rotateZ() 
+translate() 
+scale() 
+push() 
+pop() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

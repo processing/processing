@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>dist() 距離</name>
+
+<category>Math</category>
+
+<subcategory>Basic Functions</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>dist_.jar</image>
+<code>
+// Sets the background gray value based on
+// the distance of the mouse from the center
+void loop() {
+  float d = dist(50, 50, mouseX, mouseY);
+  fill(d*4);
+  rect(0, 0, 99, 99);
+}
+</code>
+</example>
+
+<description>
+計算 2 點間的距離。
+</description>
+
+<syntax>
+dist(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>);
+dist(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>);
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>整數或浮點數: 第1點的x座標</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>整數或浮點數: 第1點的y座標</description>
+</parameter>
+
+<parameter>
+<label>z1</label>
+<description>整數或浮點數: 第1點的z座標</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>整數或浮點數: 第2點的x座標</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>整數或浮點數: 第2點的y座標</description>
+</parameter>
+
+<parameter>
+<label>z2</label>
+<description>整數或浮點數: 第2點的z座標</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>scale()</name>
+
+<category>Dönüştürme</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>scale_.gif</image>
+<code>
+rect(30, 20, 50, 50);
+scale(0.5);
+rect(30, 20, 50, 50);
+</code>
+</example>
+
+<example>
+<image>scale_2.gif</image>
+<code>
+rect(30, 20, 50, 50);
+scale(0.5, 1.3);
+rect(30, 20, 50, 50);
+</code>
+</example>
+
+<description>
+Bir nesnenin vertekslerini genişleterek ve büzerek boyutunu arttır ve azaltır. Ölçek değerleri kesirli oranlarla tanımlanır. <b>scale(2.0)</b> çağrımı bir şeklin boyutlarını yüzde ikiyüz oranında arttırır. Nesneler her zaman koordinat sistemine bağlı orjinlerinden ölçek değiştirir.
+</description>
+
+<syntax>
+scale(<c>boyut</c>);
+scale(<c>x</c>, <c>y</c>);
+scale(<c>x</c>, <c>y</c>, <c>z</c>);
+</syntax>
+
+<parameter>
+<label>boyut</label>
+<description>float: nesnenin ölçeğini değiştirecek yüzde</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>float: nesnenin ölçeğini "X" ekseninde değiştirecek yüzde</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>float: nesnenin ölçeğini "Y" ekseninde değiştirecek yüzde</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>float: nesnenin ölçeğini "Z" ekseninde değiştirecek yüzde</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+translate() 
+rotate() 
+rotateX() 
+rotateY() 
+rotateZ() 
+scale() 
+push() 
+pop() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>duration()</name>
+
+<category>PSound</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PSound mySound;
+
+void setup() {
+  mySound = loadSound("arigato.wav");
+  mySound.play();
+  // Displays the length of the sound
+  // in the text area of the Processing
+  // environment
+  println(mySound.duration());
+}
+
+void draw() 
+{
+  // The blank draw() is necessary to let the sound play
+}
+</code>
+</example>
+
+<description>
+Returns the length of the sound in seconds.
+</description>
+
+<syntax>
+<c>sound</c>.duration()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>PSound: any variable of type PSound</description>
+</parameter>
+
+<returns>Float</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

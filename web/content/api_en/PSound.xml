@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>PSound</name>
+
+<category>Sound</category>
+
+<subcategory>PSound</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PSound soundA;
+
+void setup() {
+  soundA = loadSound("clong.wav");
+  soundA.loop();
+  framerate(24);
+}
+
+void draw() {
+  println(soundA.time());
+}
+
+</code>
+</example>
+
+<description>
+Class for storing and playing sounds of the .wav format.
+</description>
+
+<syntax>
+</syntax>
+
+<parameters>
+</parameters>
+
+<method>
+<mname>play()</mname>
+<mdescription>Plays the sound once</mdescription>
+</method>
+
+<method>
+<mname>loop()</mname>
+<mdescription>Plays the sound continuously</mdescription>
+</method>
+
+<method>
+<mname>noLoop()</mname>
+<mdescription>Stops the sound from looping</mdescription>
+</method>
+
+<method>
+<mname>pause()</mname>
+<mdescription>Pauses the sound playback</mdescription>
+</method>
+
+<method>
+<mname>stop()</mname>
+<mdescription>Stops the sound playback</mdescription>
+</method>
+
+<method>
+<mname>volume()</mname>
+<mdescription>Sets the volume of the sound playback</mdescription>
+</method>
+
+<method>
+<mname>duration()</mname>
+<mdescription>Returns the total length of the sound in seconds</mdescription>
+</method>
+
+<method>
+<mname>time()</mname>
+<mdescription>Returns the current position of sound playback in seconds</mdescription>
+</method>
+
+
+<constructor>
+PSound(<c>file</c>)
+</constructor>
+
+<cparameter>
+<clabel>file</clabel>
+<cdescription>String: name of the image file to load</cdescription>
+</cparameter>
+
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Core</partof>
+
+
+</root>

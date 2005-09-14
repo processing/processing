@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>day() 日</name>
+
+<category>Input/Output</category>
+
+<subcategory>Time &amp; Date</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>day_.jar</image>
+<code>
+void setup() {
+  BFont metaBold;
+  metaBold = loadFont("fonts/Meta-Bold.vlw.gz"); 
+  setFont(metaBold, 44); 
+  hint(SMOOTH_IMAGES); 
+}
+
+void loop() {
+  int d = day();    // Values from 1 - 31
+  int m = month();  // Values from 1 - 12
+  int y = year();   // 2003, 2004, 2005, etc.
+  String s = String.valueOf(d);
+  text(s, 10, 28);
+  s = String.valueOf(m);
+  text(s, 10, 56); 
+  s = String.valueOf(y);
+  text(s, 10, 84);
+}
+</code>
+</example>
+
+<description>
+Processing 能和電腦裡的時鐘溝通。<b>day()</b> 函式傳回今天的日期，也就是一個介於1 和 31之間的值。
+</description>
+
+<syntax>
+day()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>整數</returns>
+
+<related>
+millis() 
+second()
+minute()
+hour()
+day()
+month()
+year()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

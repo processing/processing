@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>shininess()</name>
+
+<category>Lights &amp; Camera</category>
+
+<subcategory>Material Properties</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>shininess_.jpg</image>
+<code>
+size(100, 100, P3D); 
+background(0); 
+noStroke(); 
+background(0); 
+fill(0, 51, 102); 
+ambientLight(102, 102, 102);
+lightSpecular(204, 204, 204); 
+directionalLight(102, 102, 102, 0, 0, -1); 
+specular(255, 255, 255); 
+translate(30, 50, 0); 
+shininess(1.0); 
+sphere(20); 
+translate(40, 0, 0); 
+shininess(5.0); 
+sphere(20); 
+
+</code>
+</example>
+
+<description>
+Sets the amount of gloss in the surface of shapes. Used in combination with <b>ambient</b>, <b>specular()</b>, and <b>emissive()</b> in setting the materal properties of shapes. The parameter <b>shine</b> ranges from 0.0 to 1.0 to set the shininess of the current material.
+</description>
+
+<syntax>
+emissive(<c>shine</c>)
+</syntax>
+
+
+<parameter>
+<label>shine</label>
+<description>float: degree of shininess from 0.0 and 1.0</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+ambient()
+specular()
+emissive()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>

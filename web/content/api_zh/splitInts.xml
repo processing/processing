@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>splitInts() 分解出整數</name>
+
+<category>Data</category>
+
+<subcategory>Parsing</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+String numbers = "8 67 5 309";
+int list[] = splitInts(numbers);
+// list[0] is now 8, list[1] is now 67, ...
+
+// or if the separator is not a space
+
+String numbers = "8,67,5,309";
+int list[] = splitInts(numbers, ',');
+
+// if tabs are in-between (common for data files) use:
+// splitInts(numbers, '\t');
+</code>
+</example>
+
+<description>
+此功能函式將一行字串內的一組整數分解成整數陣列。如果沒有指定的分隔字元，預設的分隔字元是「空白」字元（space）。
+</description>
+
+<syntax>
+splitInts(string)
+splitInts(string, char)
+</syntax>
+
+<parameter>
+<label>string</label>
+<description>要分解的字串</description>
+</parameter>
+
+<parameter>
+<label>char</label>
+<description>用以分隔字串中一組數值的分隔字元</description>
+</parameter>
+
+<returns>int[] （整數陣列）</returns>
+
+<related>
+splitFloats()
+splitStrings()
+join()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

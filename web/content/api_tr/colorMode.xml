@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>colorMode()</name>
+
+<category>Renk</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>colorMode_.jpg</image>
+<code>
+noStroke();
+colorMode(RGB, 100);
+for(int i=0; i&lt;100; i++) {
+  for(int j=0; j&lt;100; j++) {
+    stroke(i, j, 0);
+    point(i, j);
+  }
+}
+</code>
+</example>
+
+<example>
+<image>colorMode_2.jpg</image>
+<code>
+noStroke();
+colorMode(HSB, 100);
+for(int i=0; i&lt;100; i++) {
+  for(int j=0; j&lt;100; j++) {
+    stroke(i, j, 100);
+    point(i, j);
+  }
+}
+</code>
+</example>
+
+<description>
+Processing'in renk verisini yorumlamasını değiştirir. <b>fill()</b>, <b>stroke()</b> ve <b>background()</b>un varsayılan değerleri RGB renk modelinde 0 ile 255 arasında değerler alır. Bu sayısal aralığı ve renk modelini değiştirmek mümkündür. Örneğin, <b>colorMode(RGB, 1.0)</b> çağrıldığında aralığı 0 ile 1 arası olarak belirler. Renk tanımlamada sınırlar aralık1, aralık2, aralık3 kullanarak değiştirilebilir.
+</description>
+
+<syntax>
+colorMode(<c>durum</c>);
+colorMode(<c>durum</c>, <c>aralık</c>);
+colorMode(<c>durum</c>, <c>aralık1</c>, <c>aralık2</c>, <c>aralık3</c>);
+</syntax>
+
+<parameter>
+<label>durum</label>
+<description>Red/Green/Blue ve Hue/Saturation/Brightness'a uygun olarak RGB veya HSB</description>
+</parameter>
+
+<parameter>
+<label>aralık</label>
+<description>int veya float: bütün renk öğeleri için aralık</description>
+</parameter>
+
+<parameter>
+<label>aralık1</label>
+<description>int veya float: mevcut renk durumuna bağlı olarak kırmızı veya hue aralığı</description>
+</parameter>
+
+<parameter>
+<label>aralık2</label>
+<description>int veya float: mevcut renk durumuna bağlı olarak yeşil veya saturation aralığı</description>
+</parameter>
+
+<parameter>
+<label>aralık3</label>
+<description>int veya float: mevcut renk durumuna bağlı olarak mavi veya parlaklık aralığı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+background()
+fill()
+stroke()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

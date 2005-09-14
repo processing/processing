@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>mouseY 滑鼠的Y座標</name>
+
+<category>Input/Output</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>mouseY.jar</image>
+<code>
+void loop()
+{
+  background(204);
+  line(20, mouseY, 80, mouseY);
+}
+</code>
+</example>
+
+<description>
+系統變數<b>mouseY</b>存有目前滑鼠位置的垂直座標。
+</description>
+
+<syntax>
+mouseY
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+mouseX
+pmouseX
+pmouseY
+mousePressed
+mousePressed()
+mouseReleased()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

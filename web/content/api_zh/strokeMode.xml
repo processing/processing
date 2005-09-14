@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>strokeMode() 線的性質</name>
+
+<category>Shape</category>
+
+<subcategory>Stroke attributes</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+// Set line width to be thick because
+// strokeMode() is not noticeable on thin lines
+strokeWidth(4);
+
+// Choose an endcap and a join and connect them with | (or)
+// This creates square edges
+strokeMode(SQUARE_ENDCAP | MITERED_JOIN);
+beginShape(LINE_STRIP);
+vertex(20, 50);
+vertex(50, 10);
+vertex(80, 50);
+endShape();
+
+// Create rounded edges
+strokeMode(ROUND_ENDCAP | ROUND_JOIN);
+beginShape(LINE_STRIP);
+vertex(20, 80);
+vertex(50, 40);
+vertex(80, 80);
+endShape();
+
+</code>
+</example>
+
+<description>
+設定線的性質。”endcap” 設定線條兩個末點的形狀，而 ”join” 則設定線條相連接口的性質。endcap的設定值可為SQUARE_ENDCAP（方形末點）, ROUND_ENDCAP（圓形末點）, 或PROJECTED_ENDCAP（伸延式末點）。
+join 的設定值可為MITERED_JOIN（斜接口）, ROUND_JOIN（圓接口）, BEVELED_JOIN（斜角接口）。這些特性相符於Postscript 和 Adobe Illustrator程式中的線條特性。
+</description>
+
+<syntax>
+strokeMode(mode)
+</syntax>
+
+<parameter>
+<label>mode</label>
+<description>endcap和join設定值相連以「邏輯的或」．</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+stroke()
+strokeWidth()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+</root>

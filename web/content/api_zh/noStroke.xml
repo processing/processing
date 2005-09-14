@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>noStroke() 無外框線</name>
+
+<category>Color</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>noStroke_.gif</image>
+<code>
+noStroke();
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+取消外框線的繪製。如果同時呼叫<b>noStroke()</b>和 <b>noFill()</b>函式，螢幕上將不會出現任何圖像。
+</description>
+
+<syntax>
+noStroke()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+stroke()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

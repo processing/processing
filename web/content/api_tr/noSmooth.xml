@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>noSmooth()</name>
+
+<category>Ortam</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>noSmooth_.gif</image>
+<code>
+background(0);
+noSmooth();
+ellipse(12, 30, 36, 36);
+smooth();
+ellipse(53, 30, 36, 36);
+</code>
+</example>
+
+<description>
+Tüm geometriyi çentikli(aliased) köşelerle çizer.
+</description>
+
+<syntax>
+noSmooth()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+smooth()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

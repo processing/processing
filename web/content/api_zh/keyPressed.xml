@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>keyPressed() 按壓鍵</name>
+
+<category>Input/Output</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>keyPressed_.jar</image>
+<code>
+// Click on the image to give it focus,
+// and then press any key
+
+int value = 0;
+
+void loop() {
+  fill(value);
+  rect(25, 25, 50, 50);
+}
+
+void keyPressed() 
+{
+  if(value == 0) {
+    value = 255;
+  } else {
+    value = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+函式<b>keyPressed()</b>於每次按下鍵盤按鍵時呼叫。根據一般規則，函式<b>keyPressed()</b>之後的組成部份?，不應該有繪圖產生。
+</description>
+
+<syntax>
+void keyPressed() { 
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+keyPressed 
+key 
+keyCode
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

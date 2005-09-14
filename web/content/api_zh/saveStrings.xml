@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>saveStrings() 儲存字串</name>
+
+<category>Input/Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+String words = "apple bear cat dog";
+String list[] = splitStrings(words);
+
+// now write the strings to a file, each on a separate line
+saveStrings("nouns.txt", list);
+</code>
+</example>
+
+<description>
+將一陣列的字串寫入檔案中，並以每字串作一行。寫成的檔案會存於 Processing 的主目錄裡（即與 Processing 執行檔相同的目錄中）。
+</description>
+
+<syntax>
+saveStrings(<c>filename</c>, <c>strings</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>欲輸出的檔案名稱</description>
+</parameter>
+
+<parameter>
+<label>strings</label>
+<description>欲寫入的字串陣列</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+loadStream()
+loadStrings()
+loadBytes() 
+saveBytes()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>sq()</name>
+
+<category>Matematik</category>
+
+<subcategory>Temel Fonksiyonlar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>sq_.gif</image>
+<code>
+noStroke();
+float a = sq(1);   // Sets a to 1
+float b = sq(-5);  // Sets b to 25
+float c = sq(9);   // Sets c to 81
+rect(0, 25, a, 10);
+rect(0, 45, b, 10);
+rect(0, 65, c, 10);
+</code>
+</example>
+
+<description>
+Bir sayının karesini hesaplar(bir sayıyı kendisiyle çarpar). İki negatif sayının çarpımı pozitif olduğundan, sonuç her zaman pozitif bir sayıdır. Örneğin, -1*-1=1 olur.
+</description>
+
+<syntax>
+sq(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>int veya float</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+sqrt()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

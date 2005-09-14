@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>!= (inequality) 不等於</name>
+
+<category>Control</category>
+
+<subcategory>Relational Operators</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a = 22;
+int b = 23;
+if(a != b) {
+  println("variable a is not equal to variable b");
+}
+</code>
+</example>
+
+<description>
+決定某表述和另一表述是否相同。
+</description>
+
+<syntax>
+<c>value1</c> != <c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數,浮點數,字元,位元組,布林值,字串</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數,浮點數,字元,位元組,布林值,字串</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+&gt; (greater than)
+&lt; (less than)
+&gt;= (greater than or equal to)
+&lt;= (less than or equal to)
+== (equality)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+
+</root>

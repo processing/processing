@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>noiseDetail() 雜訊細節</name>
+<category>Math</category>
+<subcategory>Random</subcategory>
+<usage>網路與應用程式</usage>
+<example>
+<image>noiseDetail_.jar</image>
+<code>
+float noiseVal;
+float noiseScale=0.02;
+void loop() {
+  for(int y=0; y&lt;height; y++) {
+    for(int x=0; x&lt;width/2; x++) {
+      noiseDetail(3,0.5);
+      noiseVal=noise(
+        (mouseX+x)*noiseScale,
+        (mouseY+y)*noiseScale
+      );
+      stroke(noiseVal*255);
+      point(x,y);
+      noiseDetail(8,0.65);
+      noiseVal=noise(
+        (mouseX+x+width/2)*noiseScale,
+        (mouseY+y)*noiseScale
+      );
+      stroke(noiseVal*255);
+      point(x+width/2,y);
+    }
+  }
+}
+</code>
+</example>
+
+
+<description>
+調整培林亂數函式的性質和細節。與物理學的諧波類似。亂數的計算橫跨數個八度（octave），較低的八度對其輸出結果影響較大，因而決定了整個亂數的強度。較高的八度則能產生質地更細緻的亂數序列。系統預設是，亂數的計算橫跨4個八度，首個八度以50%的強度開始，其後八度的強度為前一個八度的一半。每一個八度以前一個八度的一半來計算。自第一個八度之後，以其50% 遞減下去。這個遞減的值也可以藉由函式參數來改變，例如遞減值0.75代表每一個八度具有前一個較低八度75%的強度。<br /><br />任何0.0 與1.0之間的值都有效，但請注意大於0.5的參數值可能會使函式<b>noise()</b>的回傳值大於 1.0。
+</description>
+
+<syntax>
+noiseDetail(<c>octaves</c>)
+noiseDetail(<c>octaves</c>, <c>falloff</c>)
+</syntax>
+
+<parameter>
+<label>octaves</label>
+<description>整數: <b>noise()</b> 函式能計算的八度的數目 </description>
+</parameter>
+
+<parameter>
+<label>falloff</label>
+<description>浮點數: 每一個八度的遞減值</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+noise()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+</root>

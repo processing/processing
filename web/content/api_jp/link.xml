@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>link()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Web</subcategory>
+
+<usage>Web</usage>
+
+<example>
+<image></image>
+<code>
+void loop() {
+  rect(20, 20, 60, 60);
+}
+
+void mousePressed() {
+  link("http://www.groupc.net");
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+void loop() {
+  rect(20, 20, 60, 60);
+}
+
+void mousePressed() {
+  link("http://www.groupc.net", "_new");
+}
+</code>
+</example>
+
+<description>
+Links to a different URL. The complete URL must be specified. This function will only work within a Web browser.
+</description>
+
+<syntax>
+link(url)
+link(url, target)
+</syntax>
+
+<parameter>
+<label>url</label>
+<description>String: complete url as a String in quotes</description>
+</parameter>
+
+<parameter>
+<label>target</label>
+<description>String: name of the window to load the URL as a string in quotes</description>
+</parameter>
+
+<returns>None</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+</root>

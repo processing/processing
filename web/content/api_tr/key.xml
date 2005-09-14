@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>key</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Klavye</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>key.jar</image>
+<code>
+// Click on the window to give it focus
+// and press the 'B' key
+
+void loop() {
+  if(keyPressed) {
+    if (key == 'b' || key == 'B') {
+      fill(0);
+    }
+  } else {
+    fill(255);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<example>
+<image>key2.jar</image>
+<code>
+// Click on the window to give it focus
+// and press the up and down arrow keys
+
+void loop() {
+  if(keyPressed) {
+    if (key == UP) {
+      fill(255);
+    } else if (key == DOWN) {
+      fill(0);
+    }
+  } else {
+    fill(126);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+Sistem değişkeni <b>key</b> her zaman klavyede son basılmış tuş değerini içerir. Ok tuşlarını saptamak için <b>key</b> değişkeni UP, DOWN, LEFT veya RIGHT olarak kullanılabilir. Diğer özel tuş sabitleri ALT, CONTROL, ve SHIFTdir.
+</description>
+
+<syntax>
+key
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+keyPressed 
+keyCode
+keyPressed() 
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

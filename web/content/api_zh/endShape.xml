@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>endShape() 形狀結束</name>
+
+<category>Shape</category>
+
+<subcategory>Vertex</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>endShape_.gif</image>
+<code>
+beginShape(LINE_STRIP);
+vertex(30, 20);
+vertex(85, 20);
+vertex(85, 75);
+vertex(30, 75);
+endShape();
+</code>
+</example>
+
+<description>
+<b>endShape()</b>函式配合<b>beginShape()</b>函式使用，且只有在後者出現後，才可以被呼叫。呼叫<b>endshape()</b> 時，其和之前呼叫的<b>beginShape()</b>之間的影像資料，都會被寫入影像緩衝區(image buffer)中。
+</description>
+
+<syntax>
+beginShape()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+beginShape()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

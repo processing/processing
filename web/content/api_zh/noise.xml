@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>noise() 亂數</name>
+
+<category>Math</category>
+
+<subcategory>Random</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>noise_.jar</image>
+<code>
+float xoff = 0.0;
+void loop() 
+{
+  background(204);
+  xoff = xoff + .01;
+  float n = noise(xoff) * width;
+  line(n, 0, n, height);
+}
+</code>
+</example>
+
+<example>
+<image>noise_2.jar</image>
+<code>
+float noiseScale=0.02;
+void loop() {
+  background(0);
+  for(int x=0; x&lt;width; x++) {
+    float noiseVal = noise((mouseX+x)*noiseScale, 
+                            mouseY*noiseScale);
+    stroke(noiseVal*255);
+    line(x, mouseY+noiseVal*80, x, height);
+  }
+}
+</code>
+</example>
+
+<description>
+此函式傳回培林亂數於特定座標之下的數值。培林亂數能產生隨機的數字序列，其數字的排列比函式<b>random()</b> 所產生的數字更自然和諧。培林亂數由Ken Perlin在80年代發明，之後就被用在各種圖像應用中，製作程序性材質(procedural textures)，自然運動，形狀和地形等等。<br /><br />培林亂數和函式 <b>random()</b> 的主要差別，在於培林亂數定義的空間中，象限(dimension)可無止盡延伸，而其中每一對座標對應於一個近似隨機的固定值（其值在程式開始時定立，在程式結束前不會改變）。本函式結果的回傳值介於0.0 和 1.0 之間。以設定的座標為準，Processing 可以計算1D, 2D 和 3D 的亂數。如上面的例子可見，在亂數空間中的移動，可以改變亂數的值。 第2和3象限也可被詮釋成時間。<br /><br />就本函式對頻率的應用而言，實際上亂數的結構與聲音信號類似。培林亂數與物理學中的諧波類似，能綜合數個八度（octave）以計算出結果。 <br /><br />改變輸入座標的幅度也能改變亂數序列的性質；因為本函式作用於無限的空間中，所以相連座標之間的數值差距，比每個座標單獨的數值更為重要；（例如在迴圈中反覆執行函式<b>noise()</b>的時候。）一般的規則是，座標之間的差距越小，亂數序列就越和緩；在座標之間的差距為0.005 到0.03數值之間，程式會有最佳的效果，不過還是要看情況和用途。
+</description>
+
+<syntax>
+noise(<c>x</c>)
+noise(<c>x</c>, <c>y</c>)
+noise(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>浮點數:亂數空間裡的x座標</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>浮點數:亂數空間裡的y座標</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>浮點數:亂數空間裡的z座標</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+random()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

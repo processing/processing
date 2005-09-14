@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>noFill()</name>
+
+<category>Renk</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>noFill_.gif</image>
+<code>
+rect(15, 10, 55, 55);
+noFill();
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+Doldurma geometrisini kaldırır. Eğer hem <b>noStroke()</b> hem <b>noFill()</b> çağrılırsa ekrana hiçbir şey çizilmez.
+</description>
+
+<syntax>
+noFill()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+fill()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+</root>

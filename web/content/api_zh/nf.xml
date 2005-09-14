@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>nf() 轉換數字成字串</name>
+
+<category>Data</category>
+
+<subcategory>Formatting</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a=200, b=40, c=90;
+String sa = nf(a, 10);
+println(sa); // prints "0000000200"
+String sb = nf(b, 5);
+println(sb); // prints "00040"
+String sc = nf(c, 3);
+println(sc); // prints "090"
+
+float d = 200.94, e = 40.2, f = 9.012;
+String sd = nf(d, 10, 4);
+println(sd);  // prints "0000000200.9400"
+String se = nf(e, 5, 3);
+println(se);  // prints "00040.200"
+String sf = nf(f, 3, 5);
+println(sf);  // prints "090.01200"
+</code>
+</example>
+
+<description>
+實用性 (Utility) 函式，將數字轉換成字串(<b>Strings</b>)。有兩種形式，一種將浮點數轉換成字串，一種將整數轉換成字串。參數<b>digits</b>, <b>left</b>, 和 <b>right</b> 的值都必須是正整數。
+</description>
+
+<syntax>
+nf(intValue, digits)
+nf(floatValue, left, right)
+</syntax>
+
+<parameter>
+<label>intValue</label>
+<description>整數: 要格式化的數字</description>
+</parameter>
+
+<parameter>
+<label>digits</label>
+<description>int: number of digits to pad with zeroes</description>
+</parameter>
+
+<parameter>
+<label>floatValue</label>
+<description>浮點數: 要格式化的數字</description>
+</parameter>
+
+<parameter>
+<label>left</label>
+<description>int: number of digits to the left of the decimal point</description>
+</parameter>
+
+<parameter>
+<label>right</label>
+<description>int: number of digits to the right of the decimal point</description>
+</parameter>
+
+<returns>字串</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

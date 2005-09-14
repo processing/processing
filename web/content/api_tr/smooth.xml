@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>smooth()</name>
+
+<category>Ortam</category>
+
+<subcategory></subcategory>
+
+<usage></usage>
+
+<example>
+<image>smooth_.gif</image>
+<code>
+background(0);
+noSmooth();
+ellipse(12, 30, 36, 36);
+smooth();
+ellipse(53, 30, 36, 36);
+</code>
+</example>
+
+<description>
+Tüm geometriyi yumuşak (anti-aliased) köşelerle çizer. Bu uygulamanın saniyedeki gösterim oranını düşürür, ancak görsel iyiligini geliştirir.
+</description>
+
+<syntax>
+smooth()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>noSmooth()</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof></partof>
+
+
+
+
+
+
+
+
+</root>

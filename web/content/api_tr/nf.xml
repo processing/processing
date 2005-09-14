@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>nf()</name>
+
+<category>Veri</category>
+
+<subcategory>Biçimlendirme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a=200, b=40, c=90;
+String sa = nf(a, 10);
+println(sa); // prints "0000000200"
+String sb = nf(b, 5);
+println(sb); // prints "00040"
+String sc = nf(c, 3);
+println(sc); // prints "090"
+
+float d = 200.94, e = 40.2, f = 9.012;
+String sd = nf(d, 10, 4);
+println(sd);  // prints "0000000200.9400"
+String se = nf(e, 5, 3);
+println(se);  // prints "00040.200"
+String sf = nf(f, 3, 5);
+println(sf);  // prints "090.01200"
+</code>
+</example>
+
+<description>
+Sayıları <b>String</b>lere biçimleyen yardımcı fonksiyon. Float'ları ve int'leri biçimlemek üzere iki ayrı sürümü vardır. <b>basamak</b>, <b>sol</b>, ve <b>sağ</b> parametrelerinin değerleri herzaman pozitif olmak zorundadır.
+</description>
+
+<syntax>
+nf(intDeğer, basmak)
+nf(floatDeğer, sol, sağ)
+</syntax>
+
+<parameter>
+<label>intDeğer</label>
+<description>int:  biçimlenecek sayı</description>
+</parameter>
+
+<parameter>
+<label>basamak</label>
+<description>int: sıfırlarla doldurulacak basamak sayısı</description>
+</parameter>
+
+<parameter>
+<label>floatDeğer</label>
+<description>float: biçimlenecek sayı</description>
+</parameter>
+
+<parameter>
+<label>sol</label>
+<description>int: ondalık ayracının solundaki basamak sayısı</description>
+</parameter>
+
+<parameter>
+<label>sağ</label>
+<description>int: ondalık ayracının sağındaki basamak sayısı</description>
+</parameter>
+
+<returns>String</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>noSmooth() 不平滑邊緣</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>noSmooth_.gif</image>
+<code>
+background(0);
+noSmooth();
+ellipse(12, 30, 36, 36);
+smooth();
+ellipse(53, 30, 36, 36);
+</code>
+</example>
+
+<description>
+以參差不齊 (aliased) 的線條繪製幾何圖形。
+</description>
+
+<syntax>
+noSmooth()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+smooth()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

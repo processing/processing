@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loadPixels()</name>
+
+<category>Image</category>
+
+<subcategory>Pixels</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>loadPixels_.jpg</image>
+<code>
+int halfImage = width*height/2;
+PImage myImage = loadImage("topanga.jpg");
+image(myImage, 0, 0);
+
+loadPixels();
+for(int i=0; i<halfImage; i++) {
+  pixels[i+halfImage] = pixels[i];
+}
+updatePixels();
+</code>
+</example>
+
+<description>
+Loads the pixel data for the display window into the <b>pixels[]</b> array. This function must always be called before reading or writing to <b>pixels[]</b>.
+</description>
+
+<syntax>
+loadPixels()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+pixels[]
+updatePixels()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

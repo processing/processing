@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>loadStrings()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Dosyalar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+String lines[] = loadStrings("list.txt");
+println("there are " + lines.length + " lines");
+for (int i=0; i &lt; lines.length; i++) {
+  println(lines[i]);
+}
+</code>
+</example>
+
+<description>
+Bir dosyanın veya URLnin içeriğini okur ve herbir satırından bir String dizisi yaratır. Eğer bir dosya tanımlanmışsa, bu dosya taslağın veri ("data") dizininde bulunmalıdır.
+</description>
+
+<syntax>
+loadStrings(<c>dosyaadı</c>)
+</syntax>
+
+<parameter>
+<label>dosyaadı</label>
+<description>String: yüklenicek dosya veya URLnin adı</description>
+</parameter>
+
+<returns>String[]</returns>
+
+<related>
+loadStream()
+loadBytes() 
+saveStrings()
+saveBytes()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

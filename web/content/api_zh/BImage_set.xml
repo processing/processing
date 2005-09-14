@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>set() 設定</name>
+
+<category>BImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>BImage_set.jpg</image>
+<code>
+BImage img = loadImage("tower.jpg");
+color black = color(0, 0, 0);
+img.set(30, 20, black); 
+img.set(85, 20, black); 
+img.set(85, 75, black); 
+img.set(30, 75, black); 
+image(img, 0, 0);
+</code>
+</example>
+
+<example>
+<image>BImage_set2.jpg</image>
+<code>
+BImage img = loadImage("tower.jpg");
+BImage arm = loadImage("armani.jpg");
+img.set(52, 10, arm); 
+image(img, 0, 0);
+</code>
+</example>
+
+<description>
+用於改變任何像素的顏色或將圖像寫入顯示視窗中。其參數 <b>x</b> 和 <b>y</b> 指定要改變的像素或影像的左上角，而 <b>color</b> 參數則設定顏色值。設定 <b>image</b> 參數可將其他影像直接寫入此影像?。
+</description>
+
+<syntax>
+img.set(<c>x</c>, <c>y</c>, <c>color</c>)
+img.set(<c>x</c>, <c>y</c>, <c>image</c>)
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>BImage: any variable of type BImage</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>整數：像素的 x 座標，或影像的左上角</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數：像素的 y 座標，或影像的左上角</description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description>color: 屬 color 數據類型的任何數值</description>
+</parameter>
+
+<parameter>
+<label>image</label>
+<description>BImage 物件：任何 BImage 物件類型的變數</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+get()
+pixels[]
+replicate[]
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

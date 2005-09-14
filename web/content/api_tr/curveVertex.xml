@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>curveVertex()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Application &amp; Web</usage>
+
+<example>
+<image>curveVertex_.gif</image>
+<code>
+beginShape(LINE_STRIP);
+curveVertex(84,  91);
+curveVertex(84,  91);
+curveVertex(68,  19);
+curveVertex(21,  17);
+curveVertex(32, 100);
+curveVertex(32, 100);
+endShape();
+</code>
+</example>
+
+<description>
+Eğriler için verteks koordinatları belirler. Bu fonksiyon sadece <b>beginShape()</b> ve <b>endShape()</b> arasında çağrılabilir. <b>curveVertex()</b> fonksiyonu Catmull-Rom splinelari uygulamasıdır.
+</description>
+
+<syntax>
+curveVertex(<c>x</c>, <c>y</c>) 
+curveVertex(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int veya float: verteksin x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int veya float: verteksin y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>int veya float: verteksin z koordinatı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+beginShape()
+endShape()
+vertex()
+bezierVertex()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

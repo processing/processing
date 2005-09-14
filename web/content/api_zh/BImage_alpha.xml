@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+
+<name>alpha() 透明度</name>
+
+<category>BImage</category>
+
+<subcategory>Pixels</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>alpha_.jpg</image>
+<code>
+BImage img = loadImage("test.jpg");
+BImage alphaImg = loadImage("mask.jpg");
+img.alpha(alphaImg);
+image(img, 0, 0);
+image(img, 25, 0);
+</code>
+</example>
+
+<description>
+設定影像的遮色頻。因為 Processing 只能載入不支援透明度的 GIF 和 JPEG 圖像，故此影像的遮色頻必須以另一影像載入，而該遮色頻影像必須是灰階；遮色頻會是該影像的藍色頻，其數值的範圍是 0 至 255。遮色頻影像的大小必須與原來的影像相同。<br />除了使用遮色頻影像，你也可直接設定一組遮色頻資料的整數陣列。相樣地，該陣列的大小必須與影像的像素陣列相同，而其數值的範圍為灰階值 0 至 255。使用陣列的方式可以創造多變的遮色頻。
+</description>
+
+<syntax>
+<c>img</c>.alpha(<c>alphaImg</c>)
+<c>img</c>.alpha(<c>alphaArray</c>)
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>任何 BImage 物件類型的變數</description>
+</parameter>
+<parameter>
+
+<label>alphaImg</label>
+<description>BImage 物件： 任何用作 img 影像遮色頻的 BImage 物件；其大小必須與 img 相同。</description>
+</parameter>
+<parameter>
+
+<label>alphaArray</label>
+<description>int[]：任何用作色頻的整數陣列；其大小必須與影像的像素陣列相同。</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Bagel</partof>
+
+
+</root>

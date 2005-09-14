@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>translate() 移動</name>
+
+<category>Transform</category>
+
+<subcategory>Basic</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>translate_.gif</image>
+<code>
+translate(30, 20);
+rect(0, 0, 55, 55);
+</code>
+</example>
+
+<example>
+<image>translate_2.gif</image>
+<code>
+translate(30, 20, -50);
+rect(0, 0, 55, 55);
+</code>
+</example>
+
+<example>
+<image>translate_3.gif</image>
+<code>
+translate(30, 20);
+rect(0, 0, 55, 55);
+translate(14, 14);
+rect(0, 0, 55, 55);
+</code>
+</example>
+
+<description>
+指定物件在空間中移動的值。<b>x</b> 參數(parameter)指定左右移動，<b>y</b> 參數指定上下移動，而<b>z</b> 參數指定（以螢幕為準的）遠近移動。技術上而言，<b>translate()</b> 計算現行方位之矩陣，與指定之移動矩陣相乘後的積。
+</description>
+
+<syntax>
+translate(<c>x</c>, <c>y</c>);
+translate(<c>x</c>, <c>y</c>, <c>z</c>);
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>整數或浮點數：左右移動</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數或浮點數：上下移動</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>整數或浮點數：遠近移動</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+rotate() 
+rotateX() 
+rotateY() 
+rotateZ() 
+scale() 
+push() 
+pop() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

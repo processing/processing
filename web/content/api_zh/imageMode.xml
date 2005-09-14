@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>imageMode() 影像模式</name>
+
+<category>Image</category>
+
+<subcategory>Loading and Displaying</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>imageMode_.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense_crop.jpg");
+imageMode(CENTER);
+image(b, 35, 35);
+imageMode(CORNER);
+image(b, 35, 35);
+</code>
+</example>
+
+<description>
+改變影像的起始位置。系統的預設值為 <b>imageMode(CORNER)</b>；此函式設定起始位置為左上角，影像的長度和寬度則由 <b>image()</b> 函式中的第四及第五參數設定。<br/><br/>函式 <b>imageMode(CORNERS)</b> 以 <b>image()</b> 函式中的第二及第三參數設定影像一個角的位置，及以第四及第五參數設定其對角的位置。<br/><br/>函式<b>imageMode(CENTER)</b> 設定影像的起始位置為其中心點，影像的長度和寬度則由 <b>image()</b> 函式中的第四及第五參數設定。<br/><br/><b>imageMode()</b>的參數一定要全部以大寫字母表示。在Processing語言中，大小寫是有分別的。
+</description>
+
+<syntax>
+imageMode(MODE)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>CORNER（左上角），CORNERS（對角），或 CENTER（中心點）三者擇一</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+loadImage() 
+PImage 
+image() 
+imageMode() 
+background() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

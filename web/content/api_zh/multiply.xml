@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>* (multiply) 乘號</name>
+
+<category>Math</category>
+
+<subcategory>Operator</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int e = 50 * 5;  // Sets e to 250
+int f = e * 5;   // Sets f to 1250
+</code>
+</example>
+
+<description>
+將兩個參數的值相乘 乘法相當於一連串的加法 例如5 * 4 和 5 + 5 + 5 + 5是一樣的
+</description>
+
+<syntax>
+<c>value1</c> * <c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數, 浮點數, 位元組, 或 字元</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數, 浮點數, 位元組, 或 字元</description>
+</parameter>
+
+<returns></returns>
+
+<related>
++ (add)
+/ (divide)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

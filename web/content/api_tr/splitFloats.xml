@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>splitFloats()</name>
+
+<category>Veri</category>
+
+<subcategory>Ayrıştırma</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+String numbers = "8.67 5.309 1.334";
+float list[] = splitFloats(numbers);
+// list[0] is now 8.67, list[1] is now 5.309, ...
+
+// or if the separator is not a space
+
+String numbers = "8.67,5.309,1.334";
+float list[] = splitFloats(numbers, ',');
+
+// if tabs are in-between (common for data files) use:
+// splitFloats(numbers, '\t');
+</code>
+</example>
+
+<description>
+String'e gömülü bir grup "float"u ayırıp float türü bir diziye aktarmaya yardımcı fonksiyon. Eger bölme karakteri kullanılmamışsa, boşluk ayırma karakteri olarak kullanılır.
+</description>
+
+<syntax>
+splitFloats(string)
+splitFloats(string, char)
+</syntax>
+
+<parameter>
+<label>string</label>
+<description>parçalara bölüncek string</description>
+</parameter>
+
+<parameter>
+<label>char</label>
+<description>değerleri bölmek içim kullanılacak karakter</description>
+</parameter>
+
+<returns>float[]</returns>
+
+<related>
+float
+splitInts()
+splitStrings()
+join()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

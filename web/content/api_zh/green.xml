@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>green()</name>
+
+<category>Color</category>
+
+<subcategory>Reading</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>green_.gif</image>
+<code>
+noStroke();
+color c = color(0, 126, 255);
+fill(c);
+rect(15, 20, 35, 60);
+float value = green(c);  // Sets "value" to "126"
+fill(value);
+rect(50, 20, 35, 60);
+</code>
+</example>
+
+<description>
+從顏色中取出綠色的數值。
+</description>
+
+<syntax>
+green(<c>color</c>)
+</syntax>
+
+<parameter>
+<label>color</label>
+<description>任何 color 類型的數值</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+red() 
+blue() 
+hue() 
+saturation() 
+brightness() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+</root>

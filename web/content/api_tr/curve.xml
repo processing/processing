@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>curve()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>curve_.gif</image>
+<code>
+curve(10, 26, 83, 24, 83, 61, 25, 65);
+</code>
+</example>
+
+<description>
+Ekrana kavisli çizgi çizer. İlk ve ikinci parametre eğrinin ilk noktasını çizer ve son iki parametre eğrinin ikinci noktasını belirler. Ortadaki parametreler eğrinin şeklini veren noktaları belirler. İlave bir <b>curveMode()</b> fonksiyonu eğrinin görsel niteliği için kontrol sağlar. <b>curve()</b> fonksiyonu Catmull-Rom splineları uygulamasıdır.
+</description>
+
+<syntax>
+curve(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</c>, <c>y4</c>);
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>int veya float: ilk noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>int veya float: ilk noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>int veya float: ikinci noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>int veya float: ikinci noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x3</label>
+<description>int veya float: üçüncü noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y3</label>
+<description>int veya float: üçüncü noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x4</label>
+<description>int veya float: dördüncü noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y4</label>
+<description>int veya float: dördüncü noktanın y koordinatı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+curveVertex()
+bezier()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

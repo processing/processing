@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>. (nokta)</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+// Declare and contruct two objects (h1, h2) from the class HLine
+HLine h1 = new HLine(20, 1.0);
+HLine h2 = new HLine(50, 5.0); 
+ 
+void setup() { 
+  size(200, 200); 
+} 
+ 
+void loop() {
+  if(h2.speed &gt; 1.0) {
+    h2.speed -= 0.01;
+  } 
+  h1.update(); 
+  h2.update();  
+} 
+ 
+class HLine { 
+  float ypos, speed; 
+  HLine (float y, float s) {  
+    ypos = y; 
+    speed = s; 
+  } 
+  void update() { 
+    ypos += speed; 
+    if (ypos &gt; width) { 
+      ypos = 0; 
+    } 
+    line(0, ypos, width, ypos); 
+  } 
+} 
+</code>
+</example>
+
+<description>
+Bir nesnenin yöntemlerine ve verilerine erişim sağlar. Bir nesne bir sınıfın örneğidir, ve yöntem grupları (nesne fonksiyonlar) ve veriler içerir. Nokta operatörü programı nesne içindeki bilgiye yönlendirir.
+</description>
+
+<syntax>
+<c>nesne</c>.<c>yontem()</c>
+<c>nesne</c>.<c>veri</c>
+</syntax>
+
+<parameter>
+<label>nesne</label>
+<description>ulaşmak istediğiniz nesne</description>
+</parameter>
+
+<parameter>
+<label>yontem()</label>
+<description>nesne içinde sarmalanmış yöntem</description>
+</parameter>
+
+<parameter>
+<label>veri</label>
+<description>nesne içinde sarmalanmış değişken veya sabit</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+Object
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

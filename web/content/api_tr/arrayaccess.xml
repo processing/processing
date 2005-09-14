@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>[] (dizi erişimi)</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int[] numbers = new int[3]; 
+numbers[0] = 90; 
+numbers[1] = 150; 
+numbers[2] = 30; 
+int a = numbers[0] + numbers[1]; // Sets variable a to 240 
+int b = numbers[1] + numbers[2]; // Sets variable b to 180 
+</code>
+</example>
+
+<description>
+Dizi erişim operatörü bir dizi içinde yer belirlemek için kullanılır. Bu yerdeki veri <b>array[öğe]  = değer</b>  veya <b>değer = array[öğe]</b> sözdizimi ile tanımlanabilir.
+</description>
+
+<syntax>
+<c>datatype</c>[]
+<c>array</c>[<c>öğe</c>]
+</syntax>
+
+<parameter>
+<label>datatype</label>
+<description>kullanicı tarafından belirlenmiş sınıflar dahil, herhangi bir basit veya bileşik veri türü</description>
+</parameter>
+
+<parameter>
+<label>array</label>
+<description>herhangi bir geçerli değişken</description>
+</parameter>
+
+<parameter>
+<label>öğe</label>
+<description>int: dizinin boyu - 1'i geçmemelidir</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+Array
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

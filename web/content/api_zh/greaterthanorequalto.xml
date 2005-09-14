@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>&gt;= (大於或等於)</name>
+
+<category>Control</category>
+
+<subcategory>網路及應用程式</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int a = 23;
+int b = 23;
+if(a &gt;= b) {
+  println("variable a is greater or equal to variable b ")
+}
+</code>
+</example>
+
+<description>
+測試左方的數值是否大於或等於右方的數值。
+</description>
+
+<syntax>
+<c>value1</c> &gt;= <c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+&gt; (greater than)
+&lt; (less than)
+&lt;= (less than or equal to)
+== (equality)
+!= (inequality)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

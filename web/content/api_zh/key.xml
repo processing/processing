@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>key 鍵</name>
+
+<category>Input/Output</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>key.jar</image>
+<code>
+// Click on the window to give it focus
+// and press the 'B' key
+
+void loop() {
+  if(keyPressed) {
+    if (key == 'b' || key == 'B') {
+      fill(0);
+    }
+  } else {
+    fill(255);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<example>
+<image>key2.jar</image>
+<code>
+// Click on the window to give it focus
+// and press the up and down arrow keys
+
+void loop() {
+  if(keyPressed) {
+    if (key == UP) {
+      fill(255);
+    } else if (key == DOWN) {
+      fill(0);
+    }
+  } else {
+    fill(126);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+系統變數<b>key</b>中存有最後按下之鍵盤按鍵的值。以箭頭鍵來說，變數<b>key</b>可被設定為上下左右(UP, DOWN, LEFT, RIGHT) 擇一。其他的特殊鍵常數(constant) 包括ALT, CONTROL和SHIFT. 。
+</description>
+
+<syntax>
+key
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+keyPressed 
+keyCode
+keyPressed() 
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

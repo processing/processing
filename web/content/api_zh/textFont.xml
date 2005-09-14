@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>textFont() 字型</name>
+
+<category>Typography</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>textFont_.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.vlw.gz");
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+設定字型。字型必須先以<b>loadFont()</b> 函式載入後，才能使用。此字型和其大小將被用於隨後的 <b>text()</b> 函式。
+</description>
+
+<syntax>
+textFont(<c>font</c>)
+textFont(<c>font</c>, <c>size</c>)
+</syntax>
+
+<parameter>
+<label>font</label>
+<description>BFont: 任何BFont類別的變數．</description>
+</parameter>
+
+<parameter>
+<label>size</label>
+<description>整數或浮點數：字的大小，以像素為單位．</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+loadFont() 
+BFont 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

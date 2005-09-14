@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>int()</name>
+
+<category>Veri</category>
+
+<subcategory>Dönüştürme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int i = int(245.456);
+</code>
+</example>
+
+<description>
+Basit bir veri türünü tam sayı gösterimine çevirir.
+</description>
+
+<syntax>
+int(<c>değer</c>)
+</syntax>
+
+<parameter>
+<label>değer</label>
+<description>int, float, char, byte, boolean, color</description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+int
+float()
+char()
+byte()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+
+
+
+
+
+
+
+</root>

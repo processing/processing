@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>- (negation) 負號</name>
+
+<category>Math</category>
+
+<subcategory>Operator</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a = 5;         // Sets "a" to 5
+int b = -a;        // Sets "b" to -5
+int c = -(5 + 3);  // Sets "c" to -8
+</code>
+</example>
+
+<description>
+倒反某一值的記號。與以-1相成的效果一樣 例如-5就是 5 * -1 。
+</description>
+
+<syntax>
+-<c>value</c>
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+- (subtract)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>blend()</name>
+
+<category>PImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PImage_blend_add.jpg</image>
+<code>
+PImage img = loadImage("rockies.jpg");
+PImage img2 = loadImage("degaul.jpg"); 
+img.blend(img2, 0, 0, 33, 100, 67, 0, 100, 100, ADD); 
+image(img, 0, 0);
+image(img2, 0, 0);
+</code>
+</example>
+
+<example>
+<image>PImage_blend_subtract.jpg</image>
+<code>
+PImage img = loadImage("rockies.jpg");
+PImage img2 = loadImage("degaul.jpg"); 
+img.blend(img2, 0, 0, 33, 100, 67, 0, 100, 100, SUBTRACT); 
+image(img, 0, 0);
+image(img2, 0, 0);
+</code>
+</example>
+
+<example>
+<image>PImage_blend_darkest.jpg</image>
+<code>
+PImage img = loadImage("rockies.jpg");
+PImage img2 = loadImage("degaul.jpg"); 
+img.blend(img2, 0, 0, 33, 100, 67, 0, 100, 100, DARKEST); 
+image(img, 0, 0);
+image(img2, 0, 0);
+</code>
+</example>
+
+<example>
+<image>PImage_blend_lightest.jpg</image>
+<code>
+PImage img = loadImage("rockies.jpg");
+PImage img2 = loadImage("degaul.jpg"); 
+img.blend(img2, 0, 0, 33, 100, 67, 0, 100, 100, LIGHTEST); 
+image(img, 0, 0);
+image(img2, 0, 0);
+</code>
+</example>
+
+<description>
+Copies a single pixel or region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br /><br />BLEND - linear interpolation of colors: C = A*factor + B<br /><br />ADD - additive blending with white clip: C = min(A*factor + B, 255)<br /><br />SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br /><br />DARKEST - only the darkest color succeeds: C = min(A*factor, B)<br /><br />LIGHTEST - only the lightest color succeeds: C = max(A*factor, B)<br /><br />All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.
+</description>
+
+<syntax>
+<c>img</c>.blend(<c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>, <c>mode</c>);
+<c>img</c>.blend(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>, <c>mode</c>);
+<c>img</c>.blend(<c>sx1</c>, <c>sy1</c>, <c>sx2</c>, <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>, <c>mode</c>);
+<c>img</c>.blend(<c>srcImg</c>, <c>sx1</c>, <c>sy1</c>, <c>sx2</c>, <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>, <c>mode</c>);
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>PImage: any variable of type PImage</description>
+</parameter>
+
+<parameter>
+<label>sx</label>
+<description>int: X coordinate of the pixel in source image</description>
+</parameter>
+
+<parameter>
+<label>sy</label>
+<description>int: Y coordinate of the pixel in source image</description>
+</parameter>
+
+<parameter>
+<label>dx</label>
+<description>int: X coordinate of the pixel in destination image</description>
+</parameter>
+
+<parameter>
+<label>dy</label>
+<description>int: Y coordinate of the pixel in destination image</description>
+</parameter>
+
+<parameter>
+<label>mode</label>
+<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST</description>
+</parameter>
+
+<parameter>
+<label>srcImg</label>
+<description>PImage: a image variable referring to the source image<description>
+</parameter>
+
+<parameter>
+<label>sx1</label>
+<description>int: X coordinate of the source's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>sy1</label>
+<description>int: Y coordinate of the source's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>sx2</label>
+<description>int: X coordinate of the source's lower right corner</description>
+</parameter>
+
+<parameter>
+<label>sy2</label>
+<description>int: Y coordinate of the source's lower right corner</description>
+</parameter>
+
+<parameter>
+<label>dx1</label>
+<description>int: X coordinate of the destination's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>dy1</label>
+<description>int: Y coordinate of the destination's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>dx2</label>
+<description>int: X coordinate of the destination's lower right corner</description>
+</parameter>
+
+<parameter>
+<label>dy2</label>
+<description>int: Y coordinate of the destination's lower right corner</description>
+</parameter>
+
+
+<returns>None</returns>
+
+<related>
+alpha()
+copy()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

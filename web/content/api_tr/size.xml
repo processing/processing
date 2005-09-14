@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>size()</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+ size(320, 240);
+ background(153);
+}
+
+void loop() {
+ line(0, 0, width, height);
+}
+</code>
+</example>
+
+<description>
+Görüntü penceresinin pixel olarak boyutlarını belirler. <b>size()</b> fonksiyonu <b>setup()</b> içinde ilk fonksiyon olmalı. Eğer <b>size()</b> çagırılmamışsa, pencerenin varsayılan boyutu 100x100 pixeldir. Sistem degişkenleri width ve height <b>size()</b>'dan gelen parametrelere göre belirlenirler.
+</description>
+
+<syntax>
+size(<c>genişlik</c>, <c>yükseklik</c>)
+</syntax>
+
+<parameter>
+<label>genişlik</label>
+<description>int: görüntü penceresinin pixel olarak genişliği</description>
+</parameter>
+
+<parameter>
+<label>yükseklik</label>
+<description>int: görüntü penceresinin pixel olarak yüksekliği</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>framerate() 影格速度</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>framerate_.jar</image>
+<code>
+void setup() {
+  framerate(4);
+}
+int pos = 0;
+void loop() {
+  background(204);
+  pos++;
+  line(pos, 20, pos, 80);
+  if(pos &gt; width) {
+    pos = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+指定每秒中的影格數目。如果處理器的速度不夠維持這個數目，影格將無法如期呈現。呼叫函式<b>framerate(30)</b>，將告訴電腦每秒鐘更新影格30次。
+</description>
+
+<syntax>
+framerate(<c>fps</c>)
+</syntax>
+
+<parameter>
+<label>fps</label>
+<description>整數:每秒中的影格數目</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+delay()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

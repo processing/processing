@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>width 寬度</name>
+
+<category>BImage</category>
+
+<subcategory>field</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>BImage_width.jpg</image>
+<code>
+BImage img = loadImage("armani.jpg");
+image(img, 20, 10);
+rect(55, 10, img.width, img.height);
+</code>
+</example>
+
+<description>
+影像的寬度，以像素為單位。
+</description>
+
+<syntax>
+<c>img</c>.width
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>BImage 物件：任何 BImage 物件類型的變數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+height
+</related>
+
+<availability>1.0</availability>
+
+<type>Field</type>
+
+<partof>Bagel</partof>
+
+</root>

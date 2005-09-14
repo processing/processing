@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>loop()</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<applet></applet>
+<code>
+void setup() {
+  size(200, 200);
+  noStroke();
+}
+
+int a = 0;
+
+void loop() {
+  fill(a);
+  a = a + 1;
+  if (a &gt; width) {
+    a = 0;
+  }
+  rect(a, 0, 2, 200); 
+}
+</code>
+</example>
+
+<description>
+Program durdurulana kadar içindeki kodları çalıştırmaya devam eder. <b>loop()</b> fonksiyonu <b>setup()</b> ile birlikte kullanılır. <b>loop()</b>un bir saniye içindeki çalışma sayısı <b>delay()</b> ve <b>framerate()</b> fonskiyonları ile kontrol edilebilir.
+</description>
+
+<syntax>
+loop() {
+  <c>anlatımlar</c>
+}
+</syntax>
+
+<parameter>
+<label>anlatımlar</label>
+<description>tekrar tekrar yürütülen anlatım dizileri</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+setup()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>sort()</name>
+
+<category>Veri</category>
+
+<subcategory>Ayrıştırma</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+float a[] = { 3.4, 3.6, 2, 0, 7.1 };
+sort(a);
+for (int i = 0; i &lt; a.length; i++) {
+  println(a[i]);
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+String s[] = { "deer", "elephant", "bear", "apple", "car" };
+sort(s);
+for (int i = 0; i &lt; s.length; i++) {
+  println(s[i]);
+}
+</code>
+</example>
+
+<description>
+Bir dizi sayıyı küçükten büyüğe sıralar ve bir dizi kelimeyi alfebetik sıraya koyar.
+</description>
+
+<syntax>
+sort(<c>dizi</c>)
+</syntax>
+
+<parameter>
+<label>dizi</label>
+<description>bir dizi string, int, veya float</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

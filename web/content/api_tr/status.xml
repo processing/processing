@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>status()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Ağ</subcategory>
+
+<usage>Web</usage>
+
+<example>
+<image>status_.jar</image>
+<code>
+// Move mouse left and right and see the text
+// change in the lower-left corner of your browser
+void loop() {
+  if(mouseX &lt; 50) {
+    status("left");
+  } else {
+    status("right");
+  }
+}
+</code>
+</example>
+
+<description>
+Tarayıcının mesaj alanında mesajlari gösterir. Bu alan tarayıcının sol alt köşesidir. <b>status()</b> fonksiyonu sadece Web tarayıcıda çalışacaktır.
+</description>
+
+<syntax>
+status(<c>metin</c>)
+</syntax>
+
+<parameter>
+<label>metin</label>
+<description>String: herhangi bir geçerli String</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Bagel</partof>
+
+</root>

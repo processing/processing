@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>pixels[] 像素矩陣</name>
+
+<category>BImage</category>
+
+<subcategory>Field</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>BImage_pixels.jpg</image>
+<code>
+BImage img = loadImage("tower.jpg");
+int dimension = (img.width*img.height);
+for (int i=0; i&lt;dimension; i+=2) { 
+  img.pixels[i] = color(0, 0, 0); 
+} 
+image(img, 0, 0);
+</code>
+</example>
+
+<description>
+pixels 是一個矩陣，記存了顯示影像中所有像素的數值，而其數值是屬於 color 數據類型。矩陣代表了影像的面積大小，例如：若影像大小為 100x100 像素, 矩陣將有 10000 個數值；或若影像大小為 200x300 像素，矩陣將有 60000 個數值。索引值 <b>index</b> 指定矩陣之中某個位置內的數值，例如：陳述句 <b>color b = img.pixels[230]</b> 將在矩陣特定的位置內的數值，設定為 <b>b</b> 變數的數值。
+</description>
+
+<syntax>
+<c>img</c>.pixels[<c>index</c>]
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>BImage 物件：任何 BImage 物件類型的變數</description>
+</parameter>
+
+<parameter>
+<label>index</label>
+<description>整數：索引值不能超過矩陣的大小</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+get()
+set()
+replicate()
+blend()
+copy()
+</related>
+
+<availability>1.0</availability>
+
+<type>Field</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

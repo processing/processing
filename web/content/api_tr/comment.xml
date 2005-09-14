@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>// (açıklama)</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+// Draws two lines which divides the window
+// into four quadrants
+line(0, 50, 100, 50);  // Draw the horizontal line
+line(50, 0, 50, 100);  // Draw the vertical line
+</code>
+</example>
+
+<description>
+Koda gömülmüş açıklayıcı notlar. Açıklamalar kendinize hatırlatmak ve başkalarını programın işlevi konsunda bilgilendirmek için kullanılır. Tek satır açıklamalar <b>//</b> karakterleri ile gösterilir. Açıklamalar derleyici tarafından ihmal edilir.
+</description>
+
+<syntax>
+// <c>açıklama</c>
+</syntax>
+
+<parameter>
+<label>açıklama</label>
+<description>herhangi bir karakter dizisi</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+/* */ (multiline comment)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

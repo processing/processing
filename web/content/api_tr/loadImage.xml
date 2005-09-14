@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>loadImage()</name>
+
+<category>Resim</category>
+
+<subcategory>Yükleme ve Gösterme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>loadImage_.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+<description>
+<b>BImage</b> türünde bir resim yükler. Hem <b>.gif</b> hem de <b>.jpg</b> resim yüklenebilir. Doğru yüklemek için, resimler ilgili taslağın veri ("data") dizininde bulunmalıdır.
+</description>
+
+<syntax>
+loadImage(<c>dosyaadı</c>)
+</syntax>
+
+<parameter>
+<label>dosyaadı</label>
+<description>string: yüklenecek dosya ismi, .gif veya .jpg olmalıdır</description>
+</parameter>
+
+<returns>BImage</returns>
+
+<related>
+BImage 
+image() 
+imageMode() 
+backgroundImage() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

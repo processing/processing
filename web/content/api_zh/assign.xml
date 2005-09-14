@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>= (指定運算子)</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a;
+a = 30;  // Assigns for value 30 to the variable "a"
+a = a + 40;  // Assigns the value 70 to the variable "a"
+</code>
+</example>
+
+<description>
+指定變數的值。符號 "=" 並不代表 "等於"，而是用來在變數中存放資料。"=" 的正式名稱為 "指定運算子"。變數的類型不一，包括整數，浮點數，字串等。指定運算子必須依據變數的類型，指定同類的值予該變數。譬如變數為 <b>整數</b>，其值也必須為一<b>整數</b>。
+</description>
+
+<syntax>
+<c>var</c> = <c>value</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>任何適用的變數名稱。</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>與變數類型相同的值。譬如變數的類型為整數，其值也必須為一整數。</description>
+</parameter>
+
+<returns></returns>
+
+<related>
++= (add assign)
+-= (subtract assign)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

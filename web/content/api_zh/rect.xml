@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>rect() 長方形</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>rect_.gif</image>
+<code>
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+在屏幕中繪畫一個長方形。長方形是一個四邊形，其所有的角度均為九十度。函式的首兩個參數設定形狀的方位，第三個參數設定寬度，第四個參數則設定高度。長方形的原點（origin）能以 <b>rectMode()</b> 函式作修改。 
+</description>
+
+<syntax>
+rect(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>);
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>整數或浮點數：長方形的 x 坐標</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數或浮點數：長方形的 y 坐標</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>整數或浮點數：長方形的寬度</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>整數或浮點數：長方形的高度</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+rectMode()
+quad()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

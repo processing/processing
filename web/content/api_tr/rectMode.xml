@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>rectMode()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>rectMode_.gif</image>
+<code>
+rectMode(CENTER_DIAMETER);
+rect(35, 35, 50, 50);
+rectMode(CORNER);
+fill(102);
+rect(35, 35, 50, 50);
+</code>
+</example>
+
+<description>
+Dikdörtgenin kaynak noktası <b>rectMode()</b> fonksiyonu ile belirlenir. Varsayılan durum orjinin konumunu sol üst köşe olarak belirleyen <b>rectMode(CORNER)</b>dır. <b>rectMode(CENTER_DIAMETER)</b> fonksiyonu şekli merkezine göre çizer. Parametrelerin "TÜMÜ BÜYÜK HARFLERLE" yazılmalıdır, çünkü Processing büyük / küçük harfe duyarlı bir dildir.
+</description>
+
+<syntax>
+rectMode(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>CORNER, CORNERS, CENTER_DIAMETER</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+rect()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

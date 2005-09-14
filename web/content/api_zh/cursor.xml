@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>cursor() 滑鼠游標</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>cursor_.jar</image>
+<code>
+// Move the mouse left and right across the image
+// to see the cursor change from a cross to a hand
+
+void loop() 
+{
+  if(mouseX &lt; 50) {
+    cursor(CROSS);
+  } else {
+    cursor(HAND);
+  }
+}
+</code>
+</example>
+
+<description>
+指定滑鼠游標為某現成的符號或影像。如果游標是在隱藏的模式下，本函式會讓它顯現。將影像指定為游標時，建議以16x16或32x32平方像素為準。但是當程式輸出至網路上展示時，影像不可被指定為游標。<b>x</b> 和 <b>y</b> 兩參數的值必須小於影像本身的長與寬。
+</description>
+
+<syntax>
+cursor()
+cursor(<c>MODE</c>)
+cursor(<c>image</c>, <c>x</c>, <c>y</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>箭頭(ARROW), 十字(CROSS), 手(HAND), 移動(MOVE) , 文字(TEXT), 等待(WAIT) 等模式擇一</description>
+</parameter>
+
+<parameter>
+<label>image</label>
+<description>BImage: 任何Bimage型態的變數</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>整數: 動態游標的水平點</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數: 動態游標的垂直點</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+noCursor()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

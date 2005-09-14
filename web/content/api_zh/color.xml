@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>color() 色彩</name>
+
+<category>Color</category>
+
+<subcategory>Creating</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>color_.gif</image>
+<code>
+color c1 = color(102, 102, 0);
+fill(c1);
+noStroke();
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+創造顏色，將其儲存至資料型態為 <b>color</b> 的變數中。依照函式 <b>colorMode()</b> 的設定，其參數可為RGB 或 HSB模式。系統原本的設定為從0 到 255的RGB模式。若呼叫函式 <b>color(255, 204, 0)</b>，螢幕上會產生明亮的黃色。<b>color()</b> 函式藉由參數其將色彩資訊置於一個32位元的數字中，其排序為AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB， A代表透明度， R代表紅色或彩度，G代表綠色或飽和度，B代表藍色或明亮度。
+</description>
+
+<syntax>
+color(<c>value1</c>, <c>value2</c>, <c>value3</c>)
+color(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數:必須與現行色彩模式相關的紅色或彩度</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數: 必須與現行色彩模式相關的綠色或飽和度</description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description>整數或浮點數: 必須與現行色彩模式相關的藍色或明亮度</description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description>整數或浮點數: 必須與現行色彩模式相關</description>
+</parameter>
+
+<returns>色彩</returns>
+
+<related>
+color
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

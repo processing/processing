@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>println()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Output</subcategory>
+
+<usage>IDE</usage>
+
+<example>
+<image></image>
+<code>
+println("begin");
+float f = 0.3;
+println("f is equal to " + f + " and i is equal to " + 1024);
+String s = "end";
+println(s);
+
+// The above code prints the following lines:
+// begin
+// f is equal to 0.3 and i is equal to 1024
+// end
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+float[] f = { 0.3, 0.4, 0.5 };
+println(f);
+
+// The above code prints:
+// 0.3
+// 0.4
+// 0.5
+</code>
+</example>
+
+<description>
+Writes to the text area of the Processing environment's console. This is often helpful for looking at the data a program is producing. Each call to this function creates a new line of output. Individual elements can be separated with quotes ("") and joined with the string concatenation operator (+) except when printing array data.
+</description>
+
+<syntax>
+println(<c>data</c>)
+</syntax>
+
+<parameter>
+<label>data</label>
+<description>boolean, byte, char, color, int, float, String, boolean[], byte[], char[], color[], int[], float[], or String[]</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+print()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

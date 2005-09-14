@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>pixels[]</name>
+
+<category>Image</category>
+
+<subcategory>Getting and Setting Pixels</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>pixels.gif</image>
+<code>
+color pink = color(255, 102, 204);
+for (int i=0; i&lt;(width*height/2)-width/2; i++) {
+  pixels[i] = pink;
+}
+</code>
+</example>
+
+<description>
+pixels 是一個矩陣，記存了顯示視窗中所有像素的數值，而其數值是屬於 color 數據類型。矩陣代表了視窗的面積大小，例如：若影像大小為 100x100 像素, 矩陣將有 10000 個數值；或若視窗大小為 200x300 像素，矩陣將有 60000 個數值。索引值 <b>index</b> 指定矩陣之中某個位置內的數值，例如：陳述句 <b>color b = pixels[230]</b> 將在矩陣特定的位置內的數值，設定為 <b>b</b> 變數的數值。
+</description>
+
+<syntax>
+pixels[<c>index</c>]
+</syntax>
+
+<parameter>
+<label>index</label>
+<description>整數：索引值不能超過矩陣的大小</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+get()
+set()
+BImage
+</related>
+
+<availability>1.0</availability>
+
+<type>Array</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

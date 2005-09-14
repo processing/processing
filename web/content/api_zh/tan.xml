@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>tan() 正切</name>
+
+<category>Math</category>
+
+<subcategory>Trigonometry</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>tan_.gif</image>
+<code>
+float a = 0.0;
+float inc = TWO_PI/50.0;
+
+for(int i=0; i&lt;100; i=i+2) {
+  line(i, 50, i, 50+tan(a)*2.0);
+  a = a + inc;
+}
+</code>
+</example>
+
+<description>
+計算角度的正切(tangent)值。<b>tan()</b> 函式的參數值以弧度角（radians）為準。一個角度的正切(tangent)即是其正弦（sine）與餘弦的比例。數值的上下限是由<b>infinity</b> （正無限）至 <b>-infinity</b>（負無限）。
+</description>
+
+<syntax>
+tan(<c>angle</c>)
+</syntax>
+
+<parameter>
+<label>angle</label>
+<description>浮點數：角度的弧度角（radians）值</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+atan2()
+cos()
+sin()
+radians()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

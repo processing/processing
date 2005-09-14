@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>mouseX</name>
+
+<category>Girdi/Çikti</category>
+
+<subcategory>Fare</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>mouseX.jar</image>
+<code>
+void loop()
+{
+  background(204);
+  line(mouseX, 20, mouseX, 80);
+}
+</code>
+</example>
+
+<description>
+<b>mouseX</b> sistem değişkeni her zaman farenin o anki yatay koordinat değerini içerir.
+</description>
+
+<syntax>
+mouseX
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+mouseY
+pmouseX
+pmouseY
+mousePressed
+mousePressed()
+mouseReleased()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

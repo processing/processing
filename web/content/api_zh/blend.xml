@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>blend() 混色</name>
+<category>Image</category>
+<subcategory>Pixels</subcategory>
+<usage>網路及應用程式</usage>
+
+<example>
+<image>blend_add.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0);
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, ADD); 
+</code>
+</example>
+
+<example>
+<image>blend_subtract.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0);
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, SUBSTRACT); 
+</code>
+</example>
+
+<example>
+<image>blend_darkest.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0);
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, DARKEST); 
+</code>
+</example>
+
+<example>
+<image>blend_lightest.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0);
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, LIGHTEST); 
+</code>
+</example>
+
+<description>
+從影像中複製單一或某區域像素至另一影像(或至自己本身) 。附有完整的遮色頻(alpha channel)支援，並可選擇以下各種模式，來處理原初像素 (A) 和目標像素 (B) 的色彩混合。:<br /><br />BLEND 模式 - 線形插植法：C = A*factor + B<br /><br />ADD 模式 - 加法混色（additive blending），止於白色：C = min(A*factor + B, 255)<br /><br />SUBSTRACT 模式 - 減法混色（subtractive blending），止於黑色：C = max(B - A*factor, 0)<br /><br />DARKEST 模式 - 篩選最深的顏色：C = min(A*factor, B)<br /><br />LIGHTEST 模式 - 篩選最淺的顏色：C = max(A*factor, B)<br /><br />以上所有模式都使用原初像素的色頻資訊 (以最高位元為準) 為混色系數 (blending factor) 。如果原初影像和目標影像的大小不一，原初影像會自動調整至目標影像的尺寸。如果 <b>srcImg</b> (原初影像)函式之參數不明，則以展示視窗作為原初影像。請注意 SUBSTRACT 拼法錯誤，新版中將會更正為 SUBTRACT。
+</description>
+
+<syntax>
+blend(<c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>, <c>mode</c>);
+blend(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>, <c>mode</c>);
+blend(<c>sx1</c>, <c>sy1</c>, <c>sx2</c>, <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>, <c>mode</c>);
+blend(<c>srcImg</c>, <c>sx1</c>, <c>sy1</c>, <c>sx2</c>, <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>, <c>mode</c>);
+</syntax>
+
+<parameter>
+<label>sx</label>
+<description>整數：原初影像中像素的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>sy</label>
+<description>整數：原初影像中像素的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>dx</label>
+<description>整數：目標影像中像素的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>dy</label>
+<description>整數：目標影像中像素的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>mode</label>
+<description>BLEND、ADD、SUBSTRACT、LIGHTEST、DARKEST 混色模式任選其一</description>
+</parameter>
+
+<parameter>
+<label>srcImg</label>
+<description>BImage 物件：代表原初影像之影像變數</description>
+</parameter>
+
+<parameter>
+<label>sx1</label>
+<description>整數：原初影像之左上角的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>sy1</label>
+<description>整數：原初影像之左上角的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>sx2</label>
+<description>整數:原初影像之右下角的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>sy2</label>
+<description>整數:原初影像之右下角的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>dx1</label>
+<description>整數：目標影像之左上角的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>dy1</label>
+<description>整數：目標影像之左上角的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>dx2</label>
+<description>整數：目標影像之右下角的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>dy2</label>
+<description>整數：目標影像之右下角的 Y 座標</description>
+</parameter>
+
+
+<returns>無</returns>
+
+<related>
+replicate()
+</related>
+
+<availability>1.0</availability>
+<type>Function</type>
+<partof>Bagel</partof>
+</root>

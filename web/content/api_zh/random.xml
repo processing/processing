@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>random() 隨機數</name>
+
+<category>Math</category>
+
+<subcategory>Random</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>random_.jar</image>
+<code>
+for(int i=0; i&lt;100; i++) {
+  float r = random(50);
+  stroke(r*5);
+  line(50, i, 50+r, i);
+}
+</code>
+</example>
+
+<example>
+<image>random_2.jar</image>
+<code>
+for(int i=0; i&lt;100; i++) {
+  float r = random(-50, 50);
+  stroke(abs(r*5));
+  line(50, i, 50+r, i);
+}
+</code>
+</example>
+
+<description>
+產生隨機數。召喚 <b>random()</b> 函式後，函式會回傳一個在特定限量內的隨機數值。如果遞入一個參數於函式中，函式則會回傳一個由零至該參數數值的 <b>float</b>（浮點數）；召喚 <b>random(5)</b> 函式將回傳由 0 至 5 之間的數值。如果遞入二個參數於函式中，函式則會回傳該兩個數值之間的 <b>float</b>（浮點數）；召喚 <b>random(-5, 10.2)</b> 函式將回傳由 -5 至 10.2 之間的數值。如要轉換浮點數至整數，可使用 <b>int()</b> 函式。
+</description>
+
+<syntax>
+random(<c>value1</c>);
+random(<c>value1</c>, <c>value2</c>);
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+noise()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

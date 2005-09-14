@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>rotateY() 以Y軸旋轉</name>
+
+<category>Transform</category>
+
+<subcategory>Basic</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>rotateY_.gif</image>
+<code>
+translate(width/2, height/2);
+rotateY(PI/3.0);
+rect(-26, -26, 52, 52);
+</code>
+</example>
+
+<description>
+以 <c>Y</c>軸轉動一件物件，轉動的角度值由 <c>angle</c>參數設定。物件會以相對於原點（origin）的方位作轉動。正數的角度數值會令物件以逆時針方向轉動。技術上而言， <b>rotateY()</b> 將現行的方位矩陣乘以一個旋轉矩陣。
+</description>
+
+<syntax>
+rotateY(<c>angle</c>)
+</syntax>
+
+<parameter>
+<label>angle</label>
+<description>浮點數：轉動的角度，以弧度角（radian）為單位</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+rotateX() 
+rotateZ() 
+translate() 
+rotate() 
+scale() 
+push() 
+pop() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

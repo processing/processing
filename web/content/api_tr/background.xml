@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>background()</name>
+
+<category>Color</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>background_.gif</image>
+<code>
+background(51); 
+</code>
+</example>
+
+<example>
+<image>background_2.gif</image>
+<code>
+background(255, 204, 0);
+</code>
+</example>
+
+<example>
+<image>background_4.jar</image>
+<code>
+void loop() {
+  background(255, 204, 0);
+  line(0, 0, mouseX, mouseY);
+  line(100, 0, mouseX, mouseY);
+  line(100, 100, mouseX, mouseY);
+  line(0, 100, mouseX, mouseY);
+}
+</code>
+</example>
+
+<example>
+<image>background_3.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+background(b); 
+</code>
+</example>
+
+<description>
+<b>background()</b> fonksiyonu Processing penceresinin zemin rengini verir. Varsayılan zemin rengi açık gridir. Zemin rengi, <b>loop()</b> fonksiyonu içinde gösterim penceresinin çerçeveler arası yenilenmesi için kullanılır. Zemin olarak gösterim pencersiyle aynı boyutta JPG ve GIF görseller yüklemek mümkündür. Yükleme için görsel veri dizininde bulunmalıdır. 
+</description>
+
+<syntax>
+background(<c>değer1</c>)
+background(<c>değer1</c>, <c>değer2</c>, <c>değer3</c>)
+background(<c>görsel</c>)
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float: kırmızı veya hue değeri (mevcut renk biçimine bağlı olarak)</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float: yeşil veya doygunluk(saturation) değeri (mevcut renk biçimine bağlı olarake)</description>
+</parameter>
+
+<parameter>
+<label>değer3</label>
+<description>int veya float: mavi veya parlaklık(brightness) değeri (mevcut renk biçimine bağlı olarak)</description>
+</parameter>
+
+<parameter>
+<label>görsel</label>
+<description>BImage: gösterim penceresiyle aynı boyutta bir BImage ismi</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+colorMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

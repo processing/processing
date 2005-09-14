@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>quad() 四角形</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>quad_.gif</image>
+<code>
+quad(38, 31, 86, 20, 69, 63, 30, 76);
+</code>
+</example>
+
+<description>
+quad 是四角形∕四邊形﹝quadrilateral﹞。它是與長方形相似的形狀，但其四個角的角度不必限定為九十度的直角。
+</description>
+
+<syntax>
+quad(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</c>, <c>y4</c>);
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>整數或浮點數：第一個角的 x 坐標</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>整數或浮點數：第一個角的 y 坐標</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>整數或浮點數：第二個角的 x 坐標</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>整數或浮點數：第二個角的 y 坐標</description>
+</parameter>
+
+<parameter>
+<label>x3</label>
+<description>整數或浮點數：第三個角的 x 坐標</description>
+</parameter>
+
+<parameter>
+<label>y3</label>
+<description>整數或浮點數：第三個角的 y 坐標</description>
+</parameter>
+
+<parameter>
+<label>x4</label>
+<description>整數或浮點數：第四個角的 x 坐標</description>
+</parameter>
+
+<parameter>
+<label>y4</label>
+<description>整數或浮點數：第四個角的 y 坐標</description>
+</parameter>
+
+<returns>無</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>copy()</name>
+<category>Image</category>
+<subcategory>Pixels</subcategory>
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>copy_.jpg</image>
+<code>
+PImage img = loadImage("armani_1.jpg");
+image(img, 0, 0);
+copy(15, 25, 25, 35, 35, 25, 85, 75);
+noFill();
+// Rectangle shows area being replicated
+rect(15, 25, 10, 10);
+</code>
+</example>
+
+<description>
+Copies a region of pixels from an image into the display window. If the source and destination regions aren't the same size, it will automatically resize source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well. If the <b>srcImg</b> parameter is not used, the diplay window is used as the source image.
+</description>
+
+<syntax>
+copy(<c>sx1</c>, <c>sy1</c>, <c>sx2</c>, <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>);
+copy(<c>srcImg</c>, <c>sx1</c>, <c>sy1</c>, <c>sx2</c>,  <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>);
+</syntax>
+
+<parameter>
+<label>sx1</label>
+<description>int: X coordinate of the source's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>sy1</label>
+<description>int: Y coordinate of the source's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>sx2</label>
+<description>int: X coordinate of the source's lower right corner</description>
+</parameter>
+
+<parameter>
+<label>sy2</label>
+<description>int: Y coordinate of the source's lower right corner</description>
+</parameter>
+
+<parameter>
+<label>dx1</label>
+<description>int: X coordinate of the destination's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>dy1</label>
+<description>int: Y coordinate of the destination's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>dx2</label>
+<description>int: X coordinate of the destination's lower right corner</description>
+</parameter>
+
+<parameter>
+<label>dy2</label>
+<description>int: Y coordinate of the destination's lower right corner</description>
+</parameter>
+
+<parameter>
+<label>srcImg</label>
+<description>PImage: a image variable referring to the source image.</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+blend()
+</related>
+
+<availability>1.0</availability>
+<type>Function</type>
+<partof>Core</partof>
+</root>

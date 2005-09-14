@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>save() 儲存</name>
+
+<category>Image</category>
+
+<subcategory>Documentation</subcategory>
+
+<usage>應用程式</usage>
+
+<example>
+<image></image>
+<code>
+line(20, 20, 80, 80);
+// Saves a TIFF file named "diagonal.tif"
+save("diagonal.tif");
+// Saves a TARGA file named "cross.tga"
+line(80, 20, 20, 80);
+save("cross.tga");
+</code>
+</example>
+
+<description>
+將顯示視窗的內容製成圖像檔。圖像檔的儲存格式是 TIFF 或 TARGA，依 <b>filename</b> 參數中的伸延檔名而定。如果 filename 參數不包含伸延檔名，圖像檔將以 TIFF 格式儲存，並在檔案名稱加上伸延檔名 <b>.tif</b>。網路瀏覽器內執行的程式不能使用<b>save()</b> 函式。
+</description>
+
+<syntax>
+save(<c>filename</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>字串：任何相連的文字和數字</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+saveFrame()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

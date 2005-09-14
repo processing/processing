@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>-- (azalt)</name>
+
+<category>Matematik</category>
+
+<subcategory>Operatör</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a = 5;    // Sets "a" to 5 
+int b = a--;  // Sets "b" to 5, then decrements "a" to 4 
+int c = a;    // Sets "c" to 4 
+</code>
+</example>
+
+<description>
+Bir tam sayı değişkenini birer azaltır. <b>i = i - 1</b> işlemine eşdegerdir. Eğer <b>i</b> değişkeni beş ise, <b>i--</b> ifadesi <b>i</b> değerini dört yapar.
+</description>
+
+<syntax>
+<c>var</c>--
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>int</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+- (subtract)
+-= (subtract assign)
+++ (increment)
+</related>
+
+<availability>1.0</availability>
+
+<type>Math</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

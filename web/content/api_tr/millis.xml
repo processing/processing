@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>millis()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Zaman &amp; Tarih</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>millis_.jar</image>
+<code>
+void loop() {
+  float m = millis();
+  fill(m % 255);
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+Applet calışmaya başladığından itibaren geçen milisaniye(saniyenin binde biri) sayısını gösterir. Bu bilgi sık sık animasyon zamanlamaları için kullanılır.
+</description>
+
+<syntax>
+millis()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+millis() 
+second()
+minute()
+hour()
+day()
+month()
+year()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

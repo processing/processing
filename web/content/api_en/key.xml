@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>key</name>
+
+<category>Input</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+// Click on the window to give it focus
+// and press the 'B' key
+
+void draw() {
+  if(keyPressed) {
+    if (key == 'b' || key == 'B') {
+      fill(0);
+    }
+  } else {
+    fill(255);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+The system variable <b>key</b> always contains the value of the most recently pressed key on the keyboard. For detecting the arrow keys, the <b>keyCode</b> variable is set to either UP, DOWN, LEFT, or RIGHT.
+</description>
+
+<syntax>
+key
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+keyPressed 
+keyCode
+keyPressed() 
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Core</partof>
+
+</root>

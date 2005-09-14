@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>blend()</name>
+
+<category>Resim</category>
+
+<subcategory>Pikseller</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>blend_add.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0); 
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, ADD); 
+</code>
+</example>
+
+<example>
+<image>blend_add.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0); 
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, ADD); 
+</code>
+</example>
+
+<example>
+<image>blend_subtract.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0); 
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, SUBSTRACT); 
+</code>
+</example>
+
+<example>
+<image>blend_darkest.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0); 
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, DARKEST);
+</code>
+</example>
+
+<example>
+<image>blend_lightest.jpg</image>
+<code>
+background(loadImage("rockies.jpg")); 
+BImage img = loadImage("degaul.jpg"); 
+image(img, 0, 0); 
+blend(img, 0, 0, 33, 100, 67, 0, 100, 100, LIGHTEST);  
+</code>
+</example>
+
+<description>
+Bir pikseli veya piksel bölgesini bir resimden diğerine (veya kendi üstüne) tüm alfa kanalı desteğiyle kopyalar. Aşağıdaki durumlar kaynak pikseller(A) ile hedef piksellerin(B) renklerinin karışmalarını sağlar.<br/><br/>BLEND - renklerin doğrusal ara değer kestirimi : C = A*factor + B<br/><br/>ADD - beyaz kliple katkılı karıştırma: C = min(A*factor + B, 255)<br/><br/>SUBSTRACT - siyah klipli eksiltmeli karıştırma: C = max(B - A*factor, 0)<br/><br/>DARKEST - sadece koyu renk başarılı: C = min(A*factor, B)<br/><br/>LIGHTEST - sadece açık renk başarılı: C = max(A*factor, B)<br/><br/>Bütün durumlar harmanlama faktörü olarak kaynak resim piksellerinin alfa bilgisini (en yüksek byte) kullanır. Eğer kaynak ve hedef alanlar farklı boyutlardaysa, resim otomatik olarak hedef boyutlara uyacak şekilde boyut değiştirir. Eğer <b>srcImg</b> parametresi kullanılmamışsa, kaynak resim olarak gösterim penceresi kullanılır. Not: SUBSTRACT kelimesi hatadır, sonraki sürümde SUBTRACT kullanılacaktır.
+</description>
+
+<syntax>
+blend(<c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>, <c>DURUM</c>);
+blend(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>, <c>DURUM</c>);
+blend(<c>sx1</c>, <c>sy1</c>, <c>sx2</c>, <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>, <c>DURUM</c>);
+blend(<c>srcImg</c>, <c>sx1</c>, <c>sy1</c>, <c>sx2</c>, <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>, <c>DURUM</c>);
+</syntax>
+
+<parameter>
+<label>sx</label>
+<description>int: kaynak resimdeki pikselin X koordinatı</description>
+</parameter>
+
+<parameter>
+<label>sy</label>
+<description>int: kaynak resimdeki pikselin Y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>dx</label>
+<description>int: hedef resimdeki pikselin X koordinatı</description>
+</parameter>
+
+<parameter>
+<label>dy</label>
+<description>int: hedef resimdeki pikselin Y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>DURUM</label>
+<description>BLEND, ADD, SUBSTRACT, LIGHTEST, DARKEST</description>
+</parameter>
+
+<parameter>
+<label>srcImage</label>
+<description>BImage: a image variable referring to the source image</description>
+</parameter>
+
+<parameter>
+<label>sx1</label>
+<description>int: kaynağın sol üst köşesinin X koordinatı</description>
+</parameter>
+
+<parameter>
+<label>sy1</label>
+<description>int: kaynağın sol üst köşesinin Y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>sx2</label>
+<description>int: kaynağın sağ alt köşesinin X koordinatı</description>
+</parameter>
+
+<parameter>
+<label>sy2</label>
+<description>int: kaynağın sağ alt köşesinin Y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>dx1</label>
+<description>int: hedefin sol üst köşesinin X koordinatı</description>
+</parameter>
+
+<parameter>
+<label>dy1</label>
+<description>int: hedefin sol üst köşesinin Y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>dx2</label>
+<description>int: hedefin sağ alt köşesinin X koordinatı</description>
+</parameter>
+
+<parameter>
+<label>dy2</label>
+<description>int: hedefin sağ alt köşesinin Y koordinatı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+replicate()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

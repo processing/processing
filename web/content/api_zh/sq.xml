@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>sq() 平方</name>
+
+<category>Math</category>
+
+<subcategory>Basic Functions</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>sq_.gif</image>
+<code>
+noStroke();
+float a = sq(1);   // Sets a to 1
+float b = sq(-5);  // Sets b to 25
+float c = sq(9);   // Sets c to 81
+rect(0, 25, a, 10);
+rect(0, 45, b, 10);
+rect(0, 65, c, 10);
+</code>
+</example>
+
+<description>
+將一個數值「平方」(將數值乘以本身）。平方的結果必然為正數，因為兩個負數相乘之積仍是正數。例如： -1 * -1 = 1．
+</description>
+
+<syntax>
+sq(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>整數或浮點數：</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+sqrt()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

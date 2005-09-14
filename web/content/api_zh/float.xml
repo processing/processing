@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>float浮點數</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+float a;          // Declare variable "a" of type float
+a = 1.5387;       // Assign "a" the value 1.5387
+float b = -2.984; // Declare variable "b" and assign it the value -2.984
+float c = a + b;  // Declare variable "c" and assign it the sum of "a" and "b"
+</code>
+</example>
+
+<description>
+屬於浮點數的資料形態。附有小數點的數。通常以浮點數表示類比及連續的值，因其能比整數更明晰地貼近實際。浮點數最大可至3.40282347E+38，最小可至 -3.40282347E+38。浮點數儲存32位元的資訊。
+</description>
+
+<syntax>
+float <c>var</c>
+float <c>var</c> = <c>value</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>代表浮點數的變數名稱</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>任何浮點數的值</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+splitFloats()
+int
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

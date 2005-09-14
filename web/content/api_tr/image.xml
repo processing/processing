@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>image()</name>
+
+<category>Resim</category>
+
+<subcategory>Yükleme ve Gösterme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>image_.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+
+<example>
+<image>image_2.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+image(b, 0, 0, width/2, height/2);
+</code>
+</example>
+
+
+<description>
+JPEG ve GIF resimleri ekranda gösterir. Resimler ilgili taslağın veri ("data") dizininde bulunmalıdır. "Sketch" menüsunden "Add file..."i seçerek resim eklenir. Resmin rengi <b>tint()</b> fonksiyonu ile değiştirilebilir. Eğer GIF dosyasının saydamlığı varsa Processing'de saydam olarak gözükür. <b>img</b> parametresi resmi göstermek için kullanılır. <b>x</b> ve <b>y</b> resmin yerini belirler. Resim genişlik (<b>width</b>) ve yükseklik (<b>height</b>) değerleri verilmedikçe asıl boyutlarında gösterilir. Görselin uzamsal orjini <b>imageMode()</b> fonksiyonu ile değiştirilebilir.
+</description>
+
+<syntax>
+image(<c>img</c>, <c>x</c>, <c>y</c>)
+image(<c>img</c>, <c>x</c>, <c>y</c>, <c>genişlik</c>, <c>yükseklik</c>)
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>BImage: the image to display</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>int veya float: resmin x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int veya float: resmin y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>genişlik</label>
+<description>int veya float: resmi gösterme genişliği</description>
+</parameter>
+
+<parameter>
+<label>yükseklik</label>
+<description>int veya float: resmi gösterme yüksekliği</description>
+</parameter>
+
+<returns>
+loadImage() 
+BImage 
+image() 
+imageMode() 
+backgroundImage() 
+</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

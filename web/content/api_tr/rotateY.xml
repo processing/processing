@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>rotateY()</name>
+
+<category>Dönüştürme</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>rotateY_.gif</image>
+<code>
+translate(width/2, height/2);
+rotateY(PI/3.0);
+rect(-26, -26, 52, 52);
+</code>
+</example>
+
+<description>
+Bir nesneyi <b>Y</b> ekseni etrafında <b>açı</b> değişkenine atanan değer kadar döndürür. Nesneler her zaman orjine bağlı pozisyonları etrafında döndürülür. Pozitif sayılar nesneleri saat yönünde döndürür. Teknik olarak, <b>rotateY()</b> mevcut öteleme matriksini dönüşüm matriksi ile çarpar.
+</description>
+
+<syntax>
+rotateY(<c>açı</c>)
+</syntax>
+
+<parameter>
+<label>açı</label>
+<description>float: radyan cinsinden dönme açısı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+rotateX() 
+rotateZ() 
+translate() 
+rotate() 
+scale() 
+push() 
+pop() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

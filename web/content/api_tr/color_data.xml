@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>color</name>
+
+<category>Veri</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>color.gif</image>
+<code>
+color c1 = color(204, 153, 0);
+color c2 = #FFCC00;
+noStroke();
+fill(c1);
+rect(0, 0, 25, 100);
+fill(c2);
+rect(25, 0, 25, 100);
+color c3 = get(10, 50);
+fill(c3);
+rect(50, 0, 50, 100);
+</code>
+</example>
+
+<description>
+Renk değerlerini barındıran veri türü. Renkler <b>get</b> ve <b>color()</b> fonksiyonları ile atanabilir veya <b>#FFCC00</b> gibi heksadesimal(onaltılı gösterim) yazımla doğrudan belirtilebilir. Renkler AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB olarak düzenlenmiş 32 bit bilgidir. A’lar alfa, R’ler kırmızı/ton(hue), G’ler yeşil/doyma(saturation), B’ler de mavi/parlaklık(brightness) değerlerini içerirler. Color Processing’e özgü bir veri türüdür.
+</description>
+
+<syntax>
+color <c>var</c>
+color <c>var</c> = <c>renkdeğeri</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>değeri kaynak gösteren değişken</description>
+</parameter>
+
+<parameter>
+<label>renkdeğeri</label>
+<description>herhangi bir renk değeri</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+colorMode()
+color()
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

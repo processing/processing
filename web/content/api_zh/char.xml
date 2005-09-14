@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>char 字元</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+char m;      // Declare variable "m" of type char
+m = 'A';     // Assign "m" the value "A"
+int n = '&amp;'; // Declare variable "n" and assign it the value "&amp;"
+</code>
+</example>
+
+<description>
+字元的資料型態。包括各種字型符號，例如A, d 和 $ 等。<b>char</b> 以萬國碼 (Unicode ) 的形式儲存字母和符號，萬國碼是專門為了世界各種語系開發的符碼系統。每一個 <b>char</b> 在長度上為兩個位元組，也就是16 個位元(bits)， 以單引號標示以免混淆。脫離字元 (Character escapes) 也可以以 <b>char</b> 儲存， 例如以 '\377' 表示消去鍵(delete) 。
+</description>
+
+<syntax>
+char <c>var</c>
+char <c>var</c> = <c>value</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>代表值的變數名稱</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>任何字元</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+String
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

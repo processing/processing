@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>! (logical NOT) 邏輯的否定</name>
+
+<category>Control</category>
+
+<subcategory>Logical Operators</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>logicalNOT.gif</image>
+<code>
+boolean a = false;
+if (!a) {
+  rect(30, 20, 50, 50);
+}
+a = true;
+if (a) {
+  line(20, 10, 90, 80);
+  line(20, 80, 90, 10);
+}
+</code>
+</example>
+
+<description>
+轉換某個表述的布林值。如果回傳成立(<b>true</b>)，?表述不成立(<b>false</b>)。如果回傳不成立(<b>false</b>)，?表述成立( <b>true</b>)。例如評估表述<b>(a&gt;b)</b>為成立， 那麼<b>!(a&gt;b)</b>不成立。
+</description>
+
+<syntax>
+!<c>expression</c>
+</syntax>
+
+<parameter>
+<label>expression</label>
+<description>任何有效的表述</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+|| (logical OR)
+&amp;&amp; (logical AND)
+if()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

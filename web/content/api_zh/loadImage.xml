@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>loadImage() 載入影像</name>
+
+<category>Image</category>
+
+<subcategory>Loading and Displaying</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>loadImage_.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+<description>
+將影像載入型態為<b>BImage</b>的變數中。影像格式可為<b>.gif</b>或 <b>.jpg</b>。必須先將影像置放於data 資料夾中，才可成功載入。
+</description>
+
+<syntax>
+loadImage(<c>filename</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>字串: 載入檔案的檔名，影像格式必須為 .gif 或 .jpg </description>
+</parameter>
+
+<returns>BImage影像</returns>
+
+<related>
+BImage 
+image() 
+imageMode() 
+backgroundImage() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

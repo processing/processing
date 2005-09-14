@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>++ (increment) 以1相加</name>
+
+<category>Math</category>
+
+<subcategory>Operator</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a = 0;    // Sets "a" to 0
+int b = a++;  // Sets "b" to 1
+int c = b++;  // Sets "c" to 2
+</code>
+</example>
+
+<description>
+使某整數變數的值加1。如同方程式<b>i = i + 1</b>。如果變數<b>i</b>的值為5，?<b>i++</b> 的表述將使<b>i</b> 的值增為6。
+</description>
+
+<syntax>
+value++
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>整數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
++ (add)
++= (add asign)
+-- (decrement)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

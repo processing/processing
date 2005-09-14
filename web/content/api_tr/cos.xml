@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>cos()</name>
+
+<category>Matematik</category>
+
+<subcategory>Trigonometri</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>cos_.gif</image>
+<code>
+float a = 0.0;
+float inc = TWO_PI/25.0;
+
+for(int i=0; i&lt;100; i=i+4) {
+  line(i, 50, i, 50+cos(a)*40.0);
+  a = a + inc;
+}
+</code>
+</example>
+
+<description>
+Bir açının kosinus değerini hesaplar. <b>cos()</b> fonksiyonu parametreleri radyan(0 ile 6.28 arası değerler) olarak alır. Değerler -1 ile 1 arasında döner.
+</description>
+
+<syntax>
+cos(<c>açı</c>)
+</syntax>
+
+<parameter>
+<label>açı</label>
+<description>float: radyan olarak ölçülmüş bir açı (PI ile -PI arası)</description>
+</parameter>
+
+<returns><c>açı</c> parametresi tarafından tanımlanmış bir açının kosinüsü(-1.0 ile 1.0 arası bir değer)</returns>
+
+<related>
+sin()
+tan()
+atan2()
+radians()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

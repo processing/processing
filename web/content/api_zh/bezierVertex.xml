@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>bezierVertex() 貝茲弧線頂點</name>
+
+<category>Shape</category>
+
+<subcategory>Vertex</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>bezierVertex_.gif</image>
+<code>
+beginShape(LINE_STRIP);
+bezierVertex(30, 20);
+bezierVertex(80, 0);
+bezierVertex(80, 75);
+bezierVertex(30, 75);
+endShape();
+</code>
+</example>
+
+<description>
+設定貝茲弧線的頂點座標。本函式必須出現在 <b>beginShape()</b> 和 <b>endShape()</b> 兩函式中間。弧線由一系列的錨點及控制點操控。貝茲弧線由法國工程師 Pierre Bezier 發展。
+</description>
+
+<syntax>
+bezierVertex(<c>x</c>, <c>y</c>)
+bezierVertex(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>頂點的x座標。整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>頂點的y座標。整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>頂點的x座標。整數或浮點數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+curveVertex()
+vertex()
+bezier()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

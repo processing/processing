@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>BFont</name>
+
+<category>Tipografi</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>BFont.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully 
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+Processing font sınıfıdır. <b>loadFont()</b> fonksiyonu yeni bir font yapar ve <b>textFont()</b> fonksiyonu bu fontu etkin hale getirir. <b>width()</b> yöntemi her bir karakterin genişliğini belirler.
+</description>
+
+<syntax>
+BFont <c>var</c>
+<c>var</c>.width(<c>let</c>)
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>herhangi bir geçerli değişken ismi</description>
+</parameter>
+
+<parameter>
+<label>let</label>
+<description>char or String: herhangi bir tekil karakter veya karakter dizisi</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+loadFont() 
+textFont() 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

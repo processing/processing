@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>filter()</name>
+
+<category>PImage</category>
+
+<subcategory>Pixels</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>filter_.jpg</image>
+<code>
+PImage a;
+a = loadImage("archcrop.jpg");
+image(a, 0, 0);
+a.filter(GRAYSCALE);
+image(a, 50, 0);
+</code>
+</example>
+
+<example>
+<image>filter_2.gif</image>
+<code>
+PImage a, b;
+a = loadImage("archcrop.jpg");
+b = loadImage("archcrop.jpg");
+a.filter(BLACK_WHITE, .6);
+image(a, 0, 0);
+b.filter(BLACK_WHITE, .4);
+image(b, 50, 0);
+</code>
+</example>
+
+<description>
+Filters an image. The filter is specified by the <b>MODE</b> parameter and there are currently two options: GRAYSCALE and  BLACK_WHITE. When using BLACK_WHITE, the <b>param</b> is in the range from 0 to 1 and determines the threshold value from which a pixel should be black or white. When using GRAYSCALE, the <b>param</b> has no effect. 
+</description>
+
+<syntax>
+<c>img</c>.filter(<c>MODE</c>)
+<c>img</c>.filter(<c>MODE</c>, <c>param</c>)
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>any variable of type PImage</description>
+</parameter>
+<parameter>
+
+<parameter>
+<label>MODE</label>
+<description>either GRAYSCALE, BLACK_WHITE</description>
+</parameter>
+<parameter>
+
+<parameter>
+<label>param</label>
+<description>int or float: </description>
+</parameter>
+<parameter>
+
+
+<returns>None</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

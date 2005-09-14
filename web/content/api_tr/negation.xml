@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>- (karşıtla)</name>
+
+<category>Matematik</category>
+
+<subcategory>Operatör</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a = 5;         // Sets "a" to 5
+int b = -a;        // Sets "b" to -5
+int c = -(5 + 3);  // Sets "c" to -8
+</code>
+</example>
+
+<description>
+Bir değerin işaretini değiştirir. -1 ile çarpmaya eşittir. Örnegin, -5 değeri -1*5 ile eşittir.
+</description>
+
+<syntax>
+-<c>değer</c>
+</syntax>
+
+<parameter>
+<label>değer</label>
+<description>int veya float</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+- (subtract)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

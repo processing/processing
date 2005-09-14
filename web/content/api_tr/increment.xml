@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>++ (arttır)</name>
+
+<category>Matematik</category>
+
+<subcategory>Operatör</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a = 0;    // Sets "a" to 0
+int b = a++;  // Sets "b" to 1
+int c = b++;  // Sets "c" to 2
+</code>
+</example>
+
+<description>
+Bir tam sayı değişkenini birer arttırır. <b>i = i + 1</b> işlemine eşdegerdir. Eğer <b>i</b> değişkeni beş ise, <b>i++</b> ifadesi <b>i</b> değerini altı yapar.
+</description>
+
+<syntax>
+value++
+</syntax>
+
+<parameter>
+<label>değer</label>
+<description>int</description>
+</parameter>
+
+<returns></returns>
+
+<related>
++ (add)
++= (add asign)
+-- (decrement)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

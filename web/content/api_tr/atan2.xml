@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>atan2()</name>
+
+<category>Math</category>
+
+<subcategory>Trigonometri</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>atan2_.jar</image>
+<code>
+void loop() {
+  background(204);
+  translate(width/2, height/2);
+  float a = atan2(mouseY-height/2, mouseX-width/2);
+  rotate(a);
+  rect(-12, -5, 24, 10);
+}
+</code>
+</example>
+
+<description>
+Calculates the angle (in radians) from a specified point to the coordinate origin as measured from the positive x-axis. Values are returned as a <b>float</b> in the range from <b>PI</b> to <b>-PI</b>. The <b>atan2()</b> function is most often used for orienting geometry to the position of the cursor.  Note the y-coordinate of the point is the first parameter and the x-coordinate is the second due the the structure of calculating the tangent.
+Belirlenmiş bir noktadan koordinasyon merkezine olan açıyı pozitif x eksenine göre hesaplar. Değerler <b>float</b> olarak <b>PI</b> ile <b>-PI</b> arası döner. <b>atan2</b> fonksiyonu pek cok zaman geometriyi imlecin yerine yönlendirmek için kullanılır. Tanjant hesabının yapısı gereği bu fonksiyonda bir noktanın y koordinati ilk parametre, x koordinati ikinci parametredir.
+</description>
+
+<syntax>
+atan2(<c>y</c>, <c>x</c>); 
+</syntax>
+
+<parameter>
+<label>y</label>
+<description>int veya float: noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>int veya float: noktanın x koordinatı</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+tan()
+</related>
+
+<availability>1.0</availability>
+
+<type>Fuction</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

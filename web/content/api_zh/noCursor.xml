@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>noCursor() 隱藏滑鼠游標</name>
+
+<category>Environment</category>
+
+<subcategory></subcategory>
+
+<usage>應用程式</usage>
+
+<example>
+<image></image>
+<code>
+// Press the mouse to hide the cursor
+void loop() 
+{
+  if(mousePressed == true) {
+    noCursor();
+  } else {
+    cursor(HAND);
+  }
+}
+</code>
+</example>
+
+<description>
+隱藏滑鼠游標。當程式於網路遊覽器中播放時，此函式不能作用。
+</description>
+
+<syntax>
+noCursor()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+cursor()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

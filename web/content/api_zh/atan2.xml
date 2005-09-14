@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>atan2() 反正切</name>
+
+<category>Math</category>
+
+<subcategory>Trigonometry</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>atan2_.jar</image>
+<code>
+void loop() {
+  background(204);
+  translate(width/2, height/2);
+  float a = atan2(mouseY-height/2, mouseX-width/2);
+  rotate(a);
+  rect(-12, -5, 24, 10);
+}
+</code>
+</example>
+
+<description>
+以正向的x軸為準，計算某特定點到座標原點的弧度角，其值為一介於 <b>PI</b> 與<b>-PI</b> 之間的一個<b>浮點數</b>，<b>atan2()</b>函式大多用於定位幾何圖形，使其隨著滑鼠游標轉動。請注意，依據正切值的計算模式 ，atan2() 涵式的第一個參數為y 座標，第二個參數為x 座標。 
+</description>
+
+<syntax>
+atan2(<c>y</c>, <c>x</c>); 
+</syntax>
+
+<parameter>
+<label>y</label>
+<description>整數或浮點數: 該點的y座標</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>整數或浮點數: 該點的x座標</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+tan()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

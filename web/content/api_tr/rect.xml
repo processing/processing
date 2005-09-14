@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>rect()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>rect_.gif</image>
+<code>
+rect(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+Ekrana bir dikdörtgen çizer. Dikdortgen dört köşeli ve her açısı doksan derece olan bir şekildir. İlk iki parametre konumunu belirler, üçüncü genişliğini, dördüncü de yüksekliğini belirler. Kaynak noktası <b>rectMode()</b> fonkisyonuyla değiştirilir.
+</description>
+
+<syntax>
+rect(<c>x</c>, <c>y</c>, <c>genişlik</c>, <c>yükseklik</c>);
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int veya float: dikdörtgenin x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int veya float: dikdörtgenin y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>genişlik</label>
+<description>int veya float: dikdörtgenin genişliği</description>
+</parameter>
+
+<parameter>
+<label>yükseklik</label>
+<description>int veya float: dikdörtgenin yüksekliği</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+rectMode()
+quad()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

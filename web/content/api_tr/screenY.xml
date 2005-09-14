@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>screenY()</name>
+
+<category>Işık &amp; Kamera</category>
+
+<subcategory>Basit Kamera</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>screenY_.jar</image>
+<code>
+void loop() {
+  float x = mouseX;
+  float y = mouseY;
+  float z = -100;
+
+  // temporary kludge to kick P5 into 3D drawing
+  translate(0, 0, 0);
+  
+  stroke(0);
+  float theY = screenY(x, y, z);
+  // Draw 2D line to match 3D position
+  line(0, theY, width, theY);    
+  
+  stroke(255);
+  // Draw line in 3D
+  line(x-10, y, z, x+10, y, z);  
+ 
+  // Draw line in 2D as comparison
+  line(0, y, width, y);    
+}  
+</code>
+</example>
+
+<description>
+Üç boyutlu X, Y, Z pozisyonlarını alır ve ekranda(iki boyutlu) gözükecek Y degerini döndürür.
+</description>
+
+<syntax>
+<c>var</c> = screenY(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>float: herhangi bir geçerli değişken adı</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>int veya float: eşlenicek 3 boyutlu x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int veya float: eşlenicek 3 boyutlu y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>int veya float: eşlenicek 3 boyutlu z koordinatı</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+screenX()
+screenZ()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

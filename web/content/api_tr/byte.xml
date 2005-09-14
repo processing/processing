@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>byte</name>
+
+<category>Veri</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code> 
+byte a;         // Declare variable "a" of type byte
+a = 23;         // Assign "a" the value 23
+byte b = -128;  // Declare variable "b" and assign it the value -128
+byte c = a + b; // Declare variable "c" and assign it the sum of "a" and "b"
+</code>
+</example>
+
+<description>
+Baytlar için veri türü, 127den –127ye kadar sayısal değer barındırdan 8 bitlik bilgi. Baytlar seri portlardan bilgi almak, göndermek, ve <b>char</b> veri türünden daha basit biçimde harfleri göstermek için uygun veri türleridirler.
+</description>
+
+<syntax>
+byte <c>var</c>
+byte <c>var</c> = <c>değer</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>değeri kaynak gösteren değişken</description>
+</parameter>
+
+<parameter>
+<label>değer</label>
+<description>127 ile -128 arasında bir sayı</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+int
+float
+boolean
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

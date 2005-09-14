@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>pause()</name>
+
+<category>PSound</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PSound mySound;
+
+void setup() {
+  mySound = loadSound("arigato.wav");
+  mySound.loop();
+}
+
+void draw() {
+  // The blank draw() is necessary to let the sound play
+}
+
+void mousePressed() {
+  mySound.pause();
+}
+
+void mouseReleased() {
+  mySound.loop();
+}
+</code>
+</example>
+
+<description>
+Pauses the sound playback. If the sound is started again, it will continue to play from the position where it was paused.
+</description>
+
+<syntax>
+<c>sound</c>.pause()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>PSound: any variable of type PSound</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

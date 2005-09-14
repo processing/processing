@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>param()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Ağ</subcategory>
+
+<usage>Web</usage>
+
+<example>
+<image></image>
+<code>
+// Read the value "51" from the following text embedded in an HTML page:
+// &lt;applet code="param_" archive="param_.jar" width=100 height=100&gt;
+// &lt;param name="back" VALUE="51"&gt;  
+// &lt;/applet&gt;
+
+String bs= param("back");
+int bi = Integer.parseInt(bs);
+background(bi);
+</code>
+</example>
+
+<description>
+Bir parametrenin değerini okur. Değerler her zaman String olarak okunur, eğer tamsayı veya başka bir veri tipi olması istenirse dönüştürülmesi gerekir. <b>param()</b> fonksiyonu sadece Web tarayıcıda çalışacaktır.
+</description>
+
+<syntax>
+param(<c>s</c>)
+</syntax>
+
+<parameter>
+<label>s</label>
+<description>String: okunacak parametre adı</description>
+</parameter>
+
+<returns>String</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>function</type>
+
+<partof>Bagel</partof>
+
+</root>

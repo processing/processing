@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>floor()</name>
+
+<category>Matematik</category>
+
+<subcategory>Temel Fonksiyonlar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+float x = 2.88;  
+float a = floor(x);  // Set "a" to 2.0
+</code>
+</example>
+
+<description>
+Bir parametrenin değerinden daha küçük veya bu değere eşit en yakın değeri hesaplar.
+</description>
+
+<syntax>
+floor(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>float</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+ceil()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

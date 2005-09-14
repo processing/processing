@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>line()</name>
+
+<category>Şekil</category>
+
+<subcategory>Basit 2 Boyut</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>line_.gif</image>
+<code>
+line(30, 20, 85, 75);
+</code>
+</example>
+
+<example>
+<image>line_2.gif</image>
+<code>
+line(30, 20, 85, 20);
+stroke(126);
+line(85, 20, 85, 75);
+stroke(255);
+line(85, 75, 30, 75);
+</code>
+</example>
+
+<description>
+Doğru iki nokta arasındaki en kısa yoldur. Dört parametreli <b>line()</b> sürümü z=0 da XY düzlemine çizgi çizer. Altı parametreli surum çizginin XYZ uzayında yerleşmesini sağlar. Bir doğruyu renklendirmek için <b>stroke()</b> fonksiyonu kullanılır. Bir doğru doldurulamaz, yani <b>fill()</b> yöntemi çizginin rengini etkilemez. Doğrular bir piksel genişliğinde çizilir.
+</description>
+
+<syntax>
+line(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>); 
+line(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>); 
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>int veya float: ilk noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>int veya float: ilk noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z1</label>
+<description>int veya float: ilk noktanın z koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>int veya float: ikinci noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>int veya float: ikinci noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z2</label>
+<description>int veya float: ikinci noktanın z koordinatı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+beginShape()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

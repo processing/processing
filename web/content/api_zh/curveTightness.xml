@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5" standalone="yes"?>
+<root>
+<name>curveTightness() 弧線收縮</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>curveTightness_.gif</image>
+<code>
+// White curve
+stroke(255);
+curve(10, 26, 83, 24, 83, 61, 25, 65);
+
+// Gray curve
+stroke(126);
+curveTightness(3.5);
+curve(10, 26, 83, 24, 83, 61, 25, 65);
+
+// Black curve
+stroke(0);
+curveTightness(-2.5);
+curve(10, 26, 83, 24, 83, 61, 25, 65);
+</code>
+</example>
+
+<description>
+調整由 <b>curve()</b> 和 <b>curveVertex()</b> 函式創造的弧線性質。參數 <b>squishy</b> 決定弧線如何與其頂點契合。<b>squishy</b>的系統設定值為0.0，此時弧線為 Catmull-Rom splines。當設定值為1.0 時，各頂點之間的連結變為直線。若設定值介於-5.0 和 5.0 之間，弧線的形狀會有變化但仍可辨識。隨著值的幅度增加，弧線隨之變形。
+</description>
+
+<syntax>
+curveTightness(squishy)
+</syntax>
+
+<parameter>
+<label>squishy</label>
+<description>浮點數或整數: 自原本頂點形變的量</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+curve()
+curveVertex()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

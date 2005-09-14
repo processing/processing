@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>sin() 正弦</name>
+
+<category>Math</category>
+
+<subcategory>Trigonometry</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>sin_.gif</image>
+<code>
+float a = 0.0;
+float inc = TWO_PI/25.0;
+
+for(int i=0; i&lt;100; i=i+4) {
+  line(i, 50, i, 50+sin(a)*40.0);
+  a = a + inc;
+}
+</code>
+</example>
+
+<description>
+計算一個角度的正弦。  <b>sin()</b> 函式要求其參數值以弧度角（radian，由０至 6.28 之間的數值）為單位。函式將回傳由 -1 至 1 之間的數值。
+</description>
+
+<syntax>
+sin(<c>rad</c>)
+</syntax>
+
+<parameter>
+<label>rad</label>
+<description>浮點數：一個以弧度角量度的角度。</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+cos()
+tan()
+atan2()
+radians()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

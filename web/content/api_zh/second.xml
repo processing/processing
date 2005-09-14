@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>second() 秒</name>
+
+<category>Input/Output</category>
+
+<subcategory>Time &amp; Date</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>second_.jar</image>
+<code>
+void loop() {
+  background(204);
+  int s = second();  // Values from 0 - 59
+  int m = minute();  // Values from 0 - 59
+  int h = hour();    // Values from 0 - 23
+  line(s, 0, s, 33);
+  line(m, 33, m, 66);
+  line(h, 66, h, 100);
+}
+</code>
+</example>
+
+<description>
+Processing 可傳達電腦系統上的時間。  <b>second()</b> 函式回傳現時的秒數，以數值 0 至 59 標示。
+</description>
+
+<syntax>
+second
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>整數</returns>
+
+<related>
+millis() 
+second()
+minute()
+hour()
+day()
+month()
+year()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

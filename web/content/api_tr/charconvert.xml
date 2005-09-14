@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>char()</name>
+
+<category>Veri</category>
+
+<subcategory>Dönüştürme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+char c = char(126);
+</code>
+</example>
+
+<description>
+Basit bir veri türünü sayısal karakter gösterimine çevirir.
+</description>
+
+<syntax>
+char(<c>val</c>)
+</syntax>
+
+<parameter>
+<label>val</label>
+<description>int, float, char, byte, boolean, veya color</description>
+</parameter>
+
+<returns>char</returns>
+
+<related>
+char
+int()
+float()
+byte()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+
+
+
+
+
+
+
+</root>

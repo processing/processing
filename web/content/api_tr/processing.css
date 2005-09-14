@@ -1,0 +1,19 @@
+A:link        { text-decoration: underline; FONT-WEIGHT: normal; COLOR #CC6600; }
+A:visited     { text-decoration: underline;  FONT-WEIGHT: normal; COLOR: #CC6600;}
+A:hover       { text-decoration: underline; FONT-WEIGHT: normal; COLOR: #660000; }
+
+td { FONT-FAMILY: Verdana, Geneva, Arial, Helvetica, sans-serif; FONT-SIZE: 11px; FONT-WEIGHT: normal; COLOR: #666633; line-height: normal}
+ 
+h3 { COLOR: #999966; FONT-FAMILY: Verdana, Geneva, Arial, Helvetica, sans-serif; FONT-SIZE: 19px; FONT-WEIGHT: normal; LINE-WEIGHT: normal; line-height: normal}
+
+pre { FONT-FAMILY: "Courier New", Courier, mono; FONT-SIZE: 11px; LINE-HEIGHT: normal; COLOR: #000000}
+
+.inputnav { FONT-FAMILY:Verdana, Geneva, Arial, Helvetica, sans-serif; FONT-SIZE: 11px; FONT-WEIGHT: normal; COLOR: #333333; }
+
+.titles {  FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: 19px; FONT-WEIGHT: normal; COLOR: #CC9900}
+
+.subtitles { COLOR: #666633; FONT-STYLE: italic; }
+
+.caption {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; font-style: normal; font-weight: normal}
+
+.comment { COLOR: #999966; }

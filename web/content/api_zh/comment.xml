@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>// (單行註解說明)</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+// Draws two lines which divides the window
+// into four quadrants
+line(0, 50, 100, 50);  // Draw the horizontal line
+line(50, 0, 50, 100);  // Draw the vertical line
+</code>
+</example>
+
+<description>
+寫在程式碼中的解釋性說明。註解可用來提醒自己及他人程式中的功能。單行註解以 <b>//</b> 表示，程式編譯器會自動跳過註解的部份。
+</description>
+
+<syntax>
+// <c>comment</c>
+</syntax>
+
+<parameter>
+<label>comment</label>
+<description>任何字元序列</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+/* */ (multiline comment)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

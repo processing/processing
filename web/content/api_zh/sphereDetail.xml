@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>sphereDetail() 球體細緻度</name>
+
+<category>Shape</category>
+
+<subcategory>3D Primitives</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>sphereDetail_.jar</image>
+<code>
+void loop() {
+  background(200);
+  stroke(255,50);
+  translate(50,50,0);
+  rotateX(mouseY*0.05);
+  rotateY(mouseX*0.05);
+  fill(mouseX*2,0,160);
+  sphereDetail(mouseX/4);
+  sphere(40);
+}
+</code>
+</example>
+
+<description>
+藉調整球體網紋結構?的頂點數目，以控制繪畫球體的細緻度。預設的細緻度是 30，即每隔 360/30 = 12 度有一個頂點，製作出一個頗細緻的球形。若你將在一影格中繪畫大量球形，應當使用此函式去減低其細緻度。召喚 <b>sphereDetail()</b>後，細緻度的設定將一直適用，是故你<i>不必</i> 在每次召喚 <b>sphere()</b> 之前召喚 sphereDetail()；除非你欲改變細緻度的設定－－例如減低距離鏡頭較遠的球體的細緻度。
+</description>
+
+<syntax>
+sphereDetail(n);
+</syntax>
+
+<parameter>
+<label>n</label>
+<description>整數：圓弦的數目（最少為 3） </description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+sphere()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+</root>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>boolean 布林值</name>
+
+<category>Data</category>
+
+<subcategory>Primitive</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>boolean.gif</image>
+<code>
+boolean a = false; 
+if (!a) { 
+  rect(30, 20, 50, 50); 
+} 
+a = true; 
+if (a) { 
+  line(20, 10, 90, 80); 
+  line(20, 80, 90, 10); 
+} 
+</code>
+</example>
+
+<description>
+屬於布林值的資料型態，布林值可以成立或不成立。以 <b>booleans</b> 的成立與否和宣告(statement) 的控制，來決定程式的進程。
+</description>
+
+<syntax>
+boolean <c>var</c>
+boolean <c>var</c> = <c>booleanvalue</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>代表某一值的變數名稱</description>
+</parameter>
+
+<parameter>
+<label>booleanvalue</label>
+<description>成立或不成立</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>set()</name>
+
+<category>Resim</category>
+
+<subcategory>Pikseller</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>set_.gif</image>
+<code>
+color black = color(0, 0, 0);
+set(30, 20, black);
+set(85, 20, black);
+set(85, 75, black);
+set(30, 75, black);
+</code>
+</example>
+
+<example>
+<image>set_2.jpg</image>
+<code>
+for (int i=30; i&lt;(width-15); i++) {
+  for(int j=20; j&lt;(height-25); j++) {
+    color c = color(204-j, 153-i, 0);
+    set(i, j, c);
+  }
+}
+</code>
+</example>
+
+<description>
+Herhangi bir pikselin rengini değiştirmeye veya bir resmi doğrudan gösterim penceresine yazmaya yarar. <b>x</b> ve <b>y</b> parametreleri pikseli tanımlar ve <b>color</b> parametresi renk değerini değiştirir. Varsayılan durum 255 ile 0 aralığı ve RGB renk değerleridir. Resimler doğrudan gösterim penceresine <b>image</b> parametresi kullanılarak yazılabilir.
+</description>
+
+<syntax>
+set(<c>x</c>, <c>y</c>, <c>renk</c>)
+set(<c>x</c>, <c>y</c>, <c>resim</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int: pikselin x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int: pikselin y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>renk</label>
+<description>color: renk veri türünde herhangi bir değer</description>
+</parameter>
+
+<parameter>
+<label>resim</label>
+<description>BImage: herhangi bir geçerli BImage</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+get()
+pixels[]
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

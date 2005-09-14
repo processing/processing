@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>else else條件式</name>
+
+<category>Control</category>
+
+<subcategory>Conditionals</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>else.gif</image>
+<code>
+for(int i = 5; i &lt; 95; i += 5) {
+  if(i &lt; 35) {
+    line( 30, i, 80, i );
+  } else {
+    line( 20, i, 90, i );
+  }
+}
+</code>
+</example>
+
+<example>
+<image>else2.gif</image>
+<code>
+for(int i = 5; i &lt; 95; i += 5) {
+  if(i &lt; 35) {
+    line( 30, i, 80, i );
+  } else if (i &lt; 65) {
+    line( 20, i, 90, i );
+  } else {
+    line( 0, i, 100, i ); 
+  }
+}
+</code>
+</example>
+
+<description>
+延伸 <b>if()</b>架構，讓程式能有2個以上的組成部分，以供選擇。在<b>if()</b>不成立，也就是<b>false</b>的情況下，本函式將引導程式執行其後的程式碼。 
+</description>
+
+<syntax>
+if(<c>expression</c>) { 
+  <c>statements</c> 
+} else { 
+  <c>statements</c> 
+} 
+
+if(<c>expression</c>) { 
+  <c>statements</c> 
+} else if(<c>expression</c>) { 
+  <c>statements</c> 
+} else { 
+  <c>statements</c> 
+}
+</syntax>
+
+<parameter>
+<label>expression</label>
+<description>成立或不成立的有效表述</description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description>一個或多個待被執行的宣告</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+if()
+</related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

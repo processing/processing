@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>push()</name>
+
+<category>Dönüştürme</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>push_.gif</image>
+<code>
+rect(0, 0, 50, 50);   //White rectangle 
+push(); 
+translate(30, 20); 
+fill(0);  
+rect(0, 0, 50, 50);   //Black rectangle 
+pop(); 
+fill(102);  
+rect(15, 10, 50, 50); //Gray rectangle 
+</code>
+</example>
+
+<description>
+Mevcut dönüşüm matriksini matriks yığınına iter. <b>push()</b> ve <b>pop()</b>u anlamak matriks yığın (stack) kavramını anlamayı gerektirir. <b>push()</b> fonksiyonu mevcut koordinat sistemini yığına kaydeder ve <b>pop()</b> fonksiyonu önceki koordinat sistemini geri çağırır. <b>push()</b> ve <b>pop()</b> diğer dönüşüm yöntemleri ile ve dönüştürme kapsamının kontrolü için kullanılır.
+</description>
+
+<syntax>
+push()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+pop()
+translate()
+rotate()
+rotateX() 
+rotateY() 
+rotateZ() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

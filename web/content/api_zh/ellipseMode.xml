@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>ellipseMode() 橢圓模式</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>ellipseMode_.gif</image>
+<code>
+ellipseMode(CENTER_DIAMETER);
+ellipse(35, 35, 50, 50);
+ellipseMode(CORNER);
+fill(102);
+ellipse(35, 35, 50, 50);
+</code>
+</example>
+
+<description>
+使用<b>ellipseMode()</b>函式改變橢圓的起始定點。系統內定模式為<b>ellipseMode(CORNER)</b>，設定橢圓的起始定點為左上角之矩形選擇框(bounding box) 的拉出點。 函式<b>ellipseMode(CENTER_DIAMETER)</b> 則代表橢圓的起始定點為其中心點。所有參數都必須以大寫英文字母表示，Processing 的語言裡，大小寫是有分別的。
+</description>
+
+<syntax>
+ellipseMode(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>CORNER, CORNERS, CENTER_DIAMETER 或 CENTER_RADIUS 擇一</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+ellipse()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>saveFrame() 儲存影格</name>
+
+<category>Image</category>
+
+<subcategory>Documentation</subcategory>
+
+<usage>應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int x = 0;
+void loop()
+{
+  background(204);
+  if(x &lt; 100) {
+    line(x, 0, x, 100);
+    // Saves each frame as screen-0000.tif, screen-0001, etc.
+    saveFrame(); 
+    x = x + 1;
+  }
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+int x = 0;
+void loop()
+{
+  background(204);
+  if(x &lt; 100) {
+    line(x, 0, x, 100);
+    // Saves each frame as line-0000.tif, line-0001, etc.
+    saveFrame("line-####.tif"); 
+    x = x + 1;
+  }
+}
+</code>
+</example>
+
+<description>
+儲存以數字順序排列的圖像檔序列。如果 <b>saveFrame()</b> 函式沒有參數，它將以 screen-0000.tif, screen-0001.tif, 如此類推作為檔案名稱。加入參數 <b>filename</b> 可指定圖像序列的名稱， 而加入參數 <b>ext</b> 則可選擇 TIFF 或 TARGA 作為儲存的格式。圖像序列可以被 Apple Quicktime 等程式載入並製成影片。
+</description>
+
+<syntax>
+saveFrame()
+saveFrame("<c>filename</c>-####.<c>ext</c>")
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>字串：任何相連的文字和數字</description>
+</parameter>
+
+<parameter>
+<label>ext</label>
+<description>"tif" 或 "tga"</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+save()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

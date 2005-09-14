@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>mouseDragged() 拖曳滑鼠</name>
+
+<category>Input/Output</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>mouseDragged_.jar</image>
+<code>
+// Drag (click and hold) your mouse across the 
+// image to change the value of the rectangle
+
+int value = 0;
+
+void loop() {
+  fill(value);
+  rect(25, 25, 50, 50);
+}
+
+void mouseDragged() 
+{
+  value = value + 5;
+  if (value &gt; 255) {
+    value = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+每當滑鼠移動而且按鍵被按壓，本函式就會自動被呼叫。如果您的滑鼠有超過一個按鍵，本函式只適用於左鍵。
+</description>
+
+<syntax>
+mouseDragged
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+mouseX
+mouseY
+pmouseX
+pmouseY
+mousePressed
+mousePressed()
+mouseReleased()
+mouseMoved()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

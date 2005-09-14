@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>lights() 打光</name>
+
+<category>Lights &amp; Camera</category>
+
+<subcategory>Lights</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>lights_.gif</image>
+<code>
+lights();
+noStroke();
+background(153, 0, 0);
+translate(58, 48, 0); 
+rotateY(0.5);
+box(40);
+</code>
+</example>
+
+<description>
+啟動燈光。使用 <b>lights()</b>函式附有之打光參數，進一步操控打光效果。 <b>noLights()</b>函式則終止打光。 
+</description>
+
+<syntax>
+lights()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+noLights()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

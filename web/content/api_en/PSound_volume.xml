@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>volume()</name>
+
+<category>PSound</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PSound mySound;
+
+void setup() {
+  mySound = loadSound("arigato.wav");
+  mySound.loop();
+}
+
+void draw() {
+  // Sets the volume to 0.0 (silent) when the 
+  // mouse is on the left edge of the window
+  // and to 1.0 (maximum) when the mouse is on
+  // the right edge of the window.
+  mySound.volume(float(mouseX)/width);
+}
+</code>
+</example>
+
+<description>
+Sets the volume of the sound playback where setting the parameter to 1.0 is the sound's actual loudness with descending numbers decreasing the volume until the parameter reaches 0.0, which is the smallest valid value.
+</description>
+
+<syntax>
+<c>sound</c>.volume(<c>amp</c>)
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>PSound: any variable of type PSound</description>
+</parameter>
+
+<parameter>
+<label>amp</label>
+<description>float: value between 0.0 and 1.0</description>
+</parameter>
+
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

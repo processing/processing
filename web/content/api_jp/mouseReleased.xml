@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>mouseReleased()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Mouse</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>mouseReleased_.jar</image>
+<code>
+// Click within the image to change 
+// the value of the rectangle
+
+int value = 0;
+
+void loop() {
+  fill(value);
+  rect(25, 25, 50, 50);
+}
+
+void mouseReleased() 
+{
+  if(value == 0) {
+    value = 255;
+  } else {
+    value = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+The <b>mouseReleased()</b> function is called every time the mouse button is released. When using a mouse with more than one button, only the left button is detected.
+</description>
+
+<syntax>
+mouseReleased()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+mouseX
+mouseY
+pmouseX
+pmouseY
+mousePressed
+mousePressed()
+mouseMoved()
+mouseDragged()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

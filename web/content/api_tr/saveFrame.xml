@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>saveFrame()</name>
+
+<category>Resim</category>
+
+<subcategory>Belgeleme</subcategory>
+
+<usage>Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int x = 0;
+void loop()
+{
+  background(204);
+  if(x &lt; 100) {
+    line(x, 0, x, 100);
+    // Saves each frame as screen-0000.tif, screen-0001, etc.
+    saveFrame(); 
+    x = x + 1;
+  }
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+int x = 0;
+void loop()
+{
+  background(204);
+  if(x &lt; 100) {
+    line(x, 0, x, 100);
+    // Saves each frame as line-0000.tif, line-0001, etc.
+    saveFrame("line-####.tif"); 
+    x = x + 1;
+  }
+}
+</code>
+</example>
+
+<description>
+Bir dizi numaralanmış resim kaydeder. Eğer <b>saveFrame()</b> parametresiz çağrılmışsa, dosyalar screen-0000.tif, screen-0001.tif v.s. şeklinde kaydedilecektir. Bir diziyi <b>dosyaadı</b> parametresiyle isimlendirmek, ve <b>ext</b> parametresiyle TIFF veya TARGA olarak kaydetmek mümkündür. Bu dizi resimler Apple Quicktime gibi progrmalara yüklenip film haline getirilebilir.
+</description>
+
+<syntax>
+saveFrame()
+saveFrame("<c>dosyaadı</c>-####.<c>ext</c>")
+</syntax>
+
+<parameter>
+<label>dosyaadı</label>
+<description>String: herhangi bir harf ve rakam dizisi</description>
+</parameter>
+
+<parameter>
+<label>ext</label>
+<description>"tif" veya "tga"</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+save()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

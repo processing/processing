@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>tint()</name>
+
+<category>Resim</category>
+
+<subcategory>Yükleme ve Gösterme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>tint_.jpg</image>
+<code>
+BImage b; 
+b = loadImage("laDefense.jpg"); 
+image(b, 0, 0); 
+// Tint blue
+tint(0, 153, 204); 
+image(b, 50, 0); 
+</code>
+</example>
+
+<example>
+<image>tint_2.jpg</image>
+<code>
+BImage b; 
+b = loadImage("laDefense.jpg"); 
+image(b, 0, 0); 
+// Tint blue and set transparency
+tint(0, 153, 204, 126); 
+image(b, 50, 0); 
+</code>
+</example>
+
+<description>
+Resimleri göstermek için doldurma değerini belirler. Resimler belirli renklerle tonlanabilir veya alfa değerleri ile saydam yapilabilir.
+</description>
+
+<syntax>
+tint(<c>gri</c>)
+tint(<c>gri</c>, <c>alpha</c>)
+tint(<c>değer1</c>, <c>değer2</c>, <c>değer3</c>)
+tint(<c>değer1</c>, <c>değer2</c>, <c>değer3</c>, <c>alpha</c>)
+tint(<c>renk</c>)
+</syntax>
+
+<parameter>
+<label>gri</label>
+<description>int veya float: herhangi bir geçerli sayı</description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description>int veya float: resmin opaklığı</description>
+</parameter>
+
+<parameter>
+<label>değer1</label>
+<description>int veya float: kırmızı veya hue değeri</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int veya float: yeşil veya saturation değeri</description>
+</parameter>
+
+<parameter>
+<label>değer3</label>
+<description>int veya float: mavi veya parlaklık değeri</description>
+</parameter>
+
+<parameter>
+<label>renk</label>
+<description>color: renk veri türünde herhangi bir değer</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+noTint()
+image()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

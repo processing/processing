@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>size()</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+ size(320, 240);
+ background(153);
+}
+
+void loop() {
+ line(0, 0, width, height);
+}
+</code>
+</example>
+
+<description>
+設定播放視窗的面積，以像素（pixel）為單位。 <b>size()</b> 函式必須設定於 <b>setup()</b> 函式內的第一行. 如果 <b>size()</b> 沒有被召喚，視窗的預設大小是 100x100 像素。系統變數 <b>width</b>（寬）和 <b>height</b>（高） 亦是根據 <b>size()</b> 函式中的參數而定。
+</description>
+
+<syntax>
+size(<c>width</c>, <c>height</c>)
+</syntax>
+
+<parameter>
+<label>width</label>
+<description>整數：播放視窗的寬度，以像素為單位。</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>整數：播放視窗的高度，以像素為單位。</description>
+</parameter>
+
+<returns>無</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

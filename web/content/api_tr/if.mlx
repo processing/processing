@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>if()</name>
+
+<category>Kontrol</category>
+
+<subcategory>Koşullama</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>if_.gif</image>
+<code>
+for(int i=5; i&lt;height; i+=5) {
+  stroke(255);  //Set the color to white
+  if(i &lt; 35) {  //When "i" is less than "35"...
+    stroke(0);  //...set the color to black
+  }
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<description>
+Bir programın hangi kodu yürüteceğine karar vermesini sağlar. Eger <b>ifade</b> dogru (<b>true</b>) olarak değerlendirilirse, blok içinde yer alan bildiriler yürütülür, eğer ifade yanlış (</b>false</b>) olarak değerlendirilrse bildiriler yürütülmez.
+</description>
+
+<syntax>
+if(<c>ifade</c>) { 
+  <c>anlatımlar</c> 
+} 
+</syntax>
+
+<parameter>
+<label>ifade</label>
+<description>doğru veya yanlış olarak değerlendirilen herhangi bir geçerli ifade</description>
+</parameter>
+
+<parameter>
+<label>anlatımlar</label>
+<description>yürütülecek bir veya daha fazla anlatım</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+else
+</related>
+
+<availability>1.0</availability>
+
+<type>Conditionals</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

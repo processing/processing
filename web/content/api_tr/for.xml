@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>for()</name>
+
+<category>Kontrol</category>
+
+<subcategory>Tekrarlama</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>for_.gif</image>
+<applet></applet>
+<code>
+for(int i=0; i&lt;40; i=i+1) {
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<example>
+<image>for_2.gif</image>
+<applet></applet>
+<code>
+for(int i=0; i&lt;80; i=i+5) {
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<example>
+<image>for_3.gif</image>
+<applet></applet>
+<code>
+for(int i=40; i&lt;80; i=i+5) {
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<example>
+<image>for_4.gif</image>
+<applet></applet>
+<code>
+for(int i=30; i&lt;80; i=i+5) {
+  for(int j=0; j&lt;80; j=j+5) {
+    point(i, j);
+  }
+}
+</code>
+</example>
+
+<description>
+Bir sıra tekrarı kontrol eder. Bir <b>for()</b> yapısının üç bölümü vardır: başlatma, test, ve güncelleme. Her bölüm noktalı virgül ";" ile ayrılmalıdır. Döngü test yanlış (<b>false</b>) olarak değerlendirilene kadar sürer. Bir <b>for()</b> yapısı yürütüldüğünde, aşağıdaki olaylar meydana gelir:
+<br/>1. Başlatma bildirisi yürütülür<br/>2. Test yanlış veya doğru olacak şekilde degerlendirilir<br/>3. Eğer test doğruysa, 4üncü adıma atla. Eger test yanlışsa, 6ıncı adıma atla<br/>4. Blok içinde bildiriyi yürüt<br/>5. Güncelleme bildirisini yürüt ve 2inci adıma atla<br/>6. Döngüden çık<br/>
+</description>
+
+<syntax>
+for(<c>başlat</c>; <c>testet</c>; <c>güncelle</c>) { 
+  <c>anlatımlar</c>
+} 
+</syntax>
+
+<parameter>
+<label>başlat</label>
+<description>döngüye başlarken bir kere yürütülen bildiri</description>
+</parameter>
+
+<parameter>
+<label>testet</label>
+<description>Eger test doğru (<b>true</b>) olarak değerlendirilirse, bildiri yürütülür</description>
+</parameter>
+
+<parameter>
+<label>güncelle</label>
+<description>her yineleme sonunda yürütülür</description>
+</parameter>
+
+<parameter>
+<label>statements</label>
+<description>her seferinde döngü boyunca yürütülen bildiriler</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+while()
+</related>
+
+<availability>1.0</availability>
+
+<type>Structure</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

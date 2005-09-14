@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>float() 轉換至浮點數</name>
+
+<category>Data</category>
+
+<subcategory>Conversion</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+float f = float(true);
+</code>
+</example>
+
+<description>
+將一原始資料形態轉換成浮點數的再現。
+</description>
+
+<syntax>
+float(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>整數, 浮點數, 字元, 位元, 布林值, 或色彩</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+float
+int()
+char()
+byte()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+
+
+
+
+
+
+
+</root>

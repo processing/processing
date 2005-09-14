@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>ellipse() 橢圓</name>
+
+<category>Shape</category>
+
+<subcategory>2D Primitives</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image>ellipse_.gif</image>
+<code>
+ellipse(30, 20, 55, 55);
+</code>
+</example>
+
+<description>
+在展示介面上畫一橢圓。橢圓的<b>長</b>與<b>寬</b>相同時，稱為圓。前2個參數為代表位置，第3個代表寬度，第4個代表長度。如要改變起始定點，請使用<b>ellipseMode()</b>函式。
+</description>
+
+<syntax>
+ellipse(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>整數或浮點數: 橢圓的x座標</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數或浮點數: 橢圓的y座標</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>整數或浮點數: 橢圓的寬</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>整數或浮點數: 橢圓的長</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+ellipseMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

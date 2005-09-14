@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>dist()</name>
+
+<category>Matematik</category>
+
+<subcategory>Temel Fonksiyonlar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>dist_.jar</image>
+<code>
+// Sets the background gray value based on
+// the distance of the mouse from the center
+void loop() {
+  float d = dist(50, 50, mouseX, mouseY);
+  fill(d*4);
+  rect(0, 0, 99, 99);
+}
+</code>
+</example>
+
+<description>
+İki nokta arasındaki uzaklığı hesaplar.
+</description>
+
+<syntax>
+dist(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>);
+dist(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>);
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>int veya float: ilk noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>int veya float: ilk noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z1</label>
+<description>int veya float: ilk noktanın z koordinatı</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>int veya float: ikinci noktanın x koordinatı</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>int veya float: ikinci noktanın y koordinatı</description>
+</parameter>
+
+<parameter>
+<label>z2</label>
+<description>int veya float: ikinci noktanın z koordinatı</description>
+</parameter>
+
+<returns>float</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

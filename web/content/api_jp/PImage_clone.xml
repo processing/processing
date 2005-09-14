@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>clone()</name>
+
+<category>PImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PImage_copy.jpg</image>
+<code>
+PImage img = loadImage("tower.jpg");
+PImage cpy;
+cpy = img.copy();
+background(img);
+image(cpy, 0, 0, 50, 50);
+</code>
+</example>
+
+<description>
+Copies the contents of this image into another PImage.
+</description>
+
+<syntax>
+img.clone()
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>PImage: any variable of type PImage</description>
+</parameter>
+
+<returns>PImage</returns>
+
+<related>
+get()
+copy()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Core</partof>
+
+
+</root>

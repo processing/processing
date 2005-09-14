@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>&amp;&amp; (logical AND)邏輯的和</name>
+
+<category>Control</category>
+
+<subcategory>Logical Operators</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>logicalAND.gif</image>
+<code>
+for(int i=5; i&lt;=95; i+=5) {
+  if((i &gt; 35) &amp;&amp; (i &lt; 60)) {
+    stroke(0);    //Set color to black
+  } else {
+    stroke(255);  //Set color to white
+  }
+  line(30, i, 80, i);
+}
+</code>
+</example>
+
+<description>
+比較2個表述，只有當兩個值皆成立(<b>true</b> )時，回傳成立( <b>true</b>)。如果其中一個或兩個的值為不成立(<b>false</b>)，回傳不成立(<b>false</b>)。以下列出所有的可能:<br /><br /><tt>true &amp;&amp; false   // 不成立 因為第一個值不成立<br />false &amp;&amp; true   // 不成立 因為第二個值不成立<br />true &amp;&amp; true    // 成立 因為兩個值都成立<br />false &amp;&amp; false  // 不成立 因為兩個值都不成立</tt>
+</description>
+
+<syntax>
+<c>expression1</c> &amp;&amp; <c>expression2</c>
+</syntax>
+
+<parameter>
+<label>expression1</label>
+<description>任何有效的表述</description>
+</parameter>
+
+<parameter>
+<label>expression2</label>
+<description>任何有效的表述</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+|| (logical OR)
+! (logical NOT)
+if()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

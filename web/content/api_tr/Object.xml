@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>Object</name>
+
+<category>Veri</category>
+
+<subcategory>Birleşik</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+// Declare and contruct two objects (h1, h2) from the class HLine
+HLine h1 = new HLine(20, 1.0);
+HLine h2 = new HLine(50, 5.0); 
+ 
+void setup() { 
+  size(200, 200); 
+} 
+ 
+void loop() {
+  if(h2.speed &gt; 1.0) {
+    h2.speed -= 0.01;
+  } 
+  h1.update(); 
+  h2.update();  
+} 
+ 
+class HLine { 
+  float ypos, speed; 
+  HLine (float y, float s) {  
+    ypos = y; 
+    speed = s; 
+  } 
+  void update() { 
+    ypos += speed; 
+    if (ypos &gt; width) { 
+      ypos = 0; 
+    } 
+    line(0, ypos, width, ypos); 
+  } 
+} 
+</code>
+</example>
+
+<description>
+Nesneler sınıfların(class) örnekleridir. Bir sınıf ilgili yöntemlerin(fonksiyonlar) ve verilerin(sabitler ve değişkenler) gruplanması için bir tanımlamadir.
+</description>
+
+<syntax>
+<c>class</c> <c>örnek</c>
+</syntax>
+
+<parameter>
+<label>class</label>
+<description>nesnenin yaratıldığı sınıf</description>
+</parameter>
+
+<parameter>
+<label>örnek</label>
+<description>herhangi bir değişken ismi</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

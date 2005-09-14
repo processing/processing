@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>screenZ() Z軸至平面</name>
+
+<category>Lights &amp; Camera</category>
+
+<subcategory>Basic Camera</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+...
+</code>
+</example>
+
+<description>
+取出三元空間 X, Y, Z 位置的 Z 軸，回傳該數值在（平面）視窗中顯示的位置。
+</description>
+
+<syntax>
+<c>var</c> = screenZ(<c>x</c>, <c>y</c>, <c>z</c>)
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>任何有效的變數名稱</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>整數或浮點數：三元空間 x 軸至平面的數值</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數或浮點數：三元空間 y 軸至平面的數值</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>整數或浮點數：三元空間 z 軸至平面的數值</description>
+</parameter>
+
+<returns>浮點數</returns>
+
+<related>
+screenX()
+screenY()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

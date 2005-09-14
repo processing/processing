@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>framerate()</name>
+
+<category>Ortam</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>framerate_.jar</image>
+<code>
+void setup() {
+  framerate(4);
+}
+int pos = 0;
+void loop() {
+  background(204);
+  pos++;
+  line(pos, 20, pos, 80);
+  if(pos &gt; width) {
+    pos = 0;
+  }
+}
+</code>
+</example>
+
+<description>
+Her saniyede gösterilecek görüntü sayısını belirler. Eğer işlemci bu oranı gösterecek kadar hızlı değilse, görüntü belirlenen oranda gösterilmez. <b>framrate(30)</b> ekranı saniyede 30 defa yenilemeye çalışacaktır.
+</description>
+
+<syntax>
+framerate(<c>fps</c>)
+</syntax>
+
+<parameter>
+<label>fps</label>
+<description>int: saniyedeki görüntü sayısı</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+delay()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

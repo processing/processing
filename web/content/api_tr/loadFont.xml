@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>loadFont()</name>
+
+<category>Tipografi</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>loadFont_.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold, 44); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+<b>BFont</b> türünde bir font yükler. Doğru yüklemek için fontlar ilgili taslağın veri dizininde bulunmalıdır.
+</description>
+
+<syntax>
+loadFont(<c>fontadı</c>)
+</syntax>
+
+<parameter>
+<label>fontadı</label>
+<description>string: yüklenecek fontun adı</description>
+</parameter>
+
+<returns>BFont</returns>
+
+<related>
+BFont 
+textFont() 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

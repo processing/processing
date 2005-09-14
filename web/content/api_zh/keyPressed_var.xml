@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>keyPressed 按鍵</name>
+
+<category>Input/Output</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>keyPressed.jar</image>
+<code>
+// Click on the image to give it focus
+// and press any key
+void loop() {
+  if (keyPressed == true) {
+    fill(0);
+  } else {
+    fill(255);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+布林值系統變數<b>keyPressed</b>。當任一鍵盤按鍵被按下時，其值為成立(<b>true</b>)，反之其值為不成立()，反之其值為不成立(<b>false</b>)。
+</description>
+
+<syntax>
+keyPressed
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+key 
+keyCode
+keyPressed() 
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

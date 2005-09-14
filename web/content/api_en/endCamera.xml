@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>endCamera()</name>
+
+<category>Lights &amp; Camera</category>
+
+<subcategory>Camera</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>beginCamera_.gif</image>
+<code>
+size(100, 100, P3D);
+noFill();
+beginCamera();
+resetMatrix();
+lookat(0, height/2, 180, width/2, height/2, 0, 0, 1, 0);
+endCamera();
+translate(50, 50, 0);
+rotateX(-PI/6);
+rotateY(PI/3);
+box(45);
+</code>
+</example>
+
+<description>
+The <b>beginCamera()</b> and <b>endCamera()</b> functions allow customizing the camera space through calls to transformations such as <b>lookat()</b> etc. This function sets the matrix mode to the camera matrix so calls to applyMatrix() and resetMatrix() affect the camera. <b>beginCamera()</b> should always be used with a following <b>endCamera()</b> and pairs of <b>beginCamera()</b> and <b>endCamera()</b> can not be nested. 
+</description>
+
+<syntax>
+endCamera()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+camera()
+beginCamera()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+</root>

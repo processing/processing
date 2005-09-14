@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>min() 最小值</name>
+
+<category>Math</category>
+
+<subcategory>Basic Functions</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int d = min(5, 9);            // Sets "d" to 5
+int e = min(-4, -12);         // Sets "e" to -12
+float f = min(12.3, 230.24);  // Sets "f" to 12.3
+</code>
+</example>
+
+<description>
+決定一系列數字中的最小值。
+</description>
+
+<syntax>
+min(<c>value1</c>, <c>value2</c>)
+min(<c>value1</c>, <c>value2</c>, <c>value 3</c>)
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value3</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns>整數或浮點數 (以輸入值為準)</returns>
+
+<related>
+max()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>void</name>
+
+<category>Yapı</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+void setup() {
+  size(200, 200);
+}
+
+void loop() {
+  line(10, 100, 190, 100);
+}
+</code>
+</example>
+
+<description>
+Hiç değer döndürmeyen fonksiyonu belirten kilit kelime. Her fonksiyon belirli bir veri türü veya hiçbir şey döndürmeyen <b>void</b> kullanmalıdır.
+</description>
+
+<syntax>
+void <c>fonksiyon</c> {
+  <c>anlatım</c>
+}
+</syntax>
+
+<parameter>
+<label>fonksiyon</label>
+<description>herhangi bir tanımlı veya uygulanmış fonksiyon</description>
+</parameter>
+
+<parameter>
+<label>anlatım</label>
+<description>herhangi bir geçerli anlatım</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

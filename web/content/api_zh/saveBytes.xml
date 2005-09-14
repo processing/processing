@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>saveBytes() 儲存位元</name>
+
+<category>Input/Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+byte[] nums = { 0, 34, 5, 127, 52};
+
+// now write the bytes to a file
+saveBytes("numbers.txt", nums);
+</code>
+</example>
+
+<description>
+<b>loadBytes()</b> 的相對函式，可將一陣列的位元寫入檔案中。 寫成的檔案會存於 Processing 的主目錄裡（即與 Processing 執行檔相同的目錄中）。
+</description>
+
+<syntax>
+saveBytes(<c>filename</c>, <c>bytes</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>欲輸出的檔案名稱</description>
+</parameter>
+
+<parameter>
+<label>bytes</label>
+<description>欲寫入的位元陣列</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+loadStream()
+loadStrings()
+loadBytes() 
+saveStrings()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

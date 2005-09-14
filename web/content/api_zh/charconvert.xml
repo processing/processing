@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>char() 字元</name>
+
+<category>Data</category>
+
+<subcategory>Conversion</subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+char c = char(126);
+</code>
+</example>
+
+<description>
+將一原始資料型態轉換成字元表現。
+</description>
+
+<syntax>
+char(<c>val</c>)
+</syntax>
+
+<parameter>
+<label>val</label>
+<description>整數, 浮點數, 字元, 位元組, 布林值, 或色彩</description>
+</parameter>
+
+<returns>字元</returns>
+
+<related>
+char
+int()
+float()
+byte()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+
+
+
+
+
+
+
+</root>

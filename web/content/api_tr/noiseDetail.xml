@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>noiseDetail()</name>
+
+<category>Matematik</category>
+
+<subcategory>Rasgele</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>noiseDetail_.jar</image>
+<code>
+float noiseVal; 
+float noiseScale=0.02; 
+void loop() { 
+  for(int y=0; y &lt; height; y++) { 
+    for(int x=0; x &lt; width/2; x++) { 
+      noiseDetail(3,0.5); 
+      noiseVal=noise( 
+        (mouseX+x)*noiseScale, 
+        (mouseY+y)*noiseScale 
+      ); 
+      stroke(noiseVal*255); 
+      point(x,y); 
+      noiseDetail(8,0.65); 
+      noiseVal=noise( 
+        (mouseX+x+width/2)*noiseScale, 
+        (mouseY+y)*noiseScale 
+      ); 
+      stroke(noiseVal*255); 
+      point(x+width/2,y); 
+    } 
+  } 
+} 
+</code>
+</example>
+
+<description>
+Perlin gürültü fonksiyonunun karakterini ve detay düzeyini ayarlar. Fizikteki harmoniye benzer bir şekilde gürültü çeşitli oktavlar üzerinden hesaplanır. Düşük oktavlar daha çok çıktı sinyaline katkıda bulunup gürültünün toplam yoğunluğunu belirlerken, yüksek oktavlar daha taneli detaylı gürültü dizileri oluştururlar. Varsayılan kullanımda, gürültu 4 oktav üzerinden hesaplanır, ve ilk oktavdan %50 güçlü başlayarak her oktav bir öncekinin yarısı kadar katkıda bulunur. Bu azalma miktarı fonksiyona bir parametre ekleyerek değiştirilebilir. Örneğin, 0.75 düşme değeri her oktavın önceki oktava 75%(25% daha az) etkisi var demektir. 0.0 ile 1.0 arasındaki herhangi bir değer geçerlidir, ancak <b>noise()</b> fonksiyonunda 0.5ten büyük olan değerler 1.0 değerinden daha büyük sonuçlanabilir. <br/><br/>Bu parametreleri değiştirerek, <b>noise()</b> fonksiyonunun yarattığı sinyal çok özel ihtiyaçları ve karakteristikleri karşılayabilir.
+</description>
+
+<syntax>
+noiseDetail(<c>oktavlar</c>)
+noiseDetail(<c>oktavlar</c>, <c>dusme</c>)
+</syntax>
+
+<parameter>
+<label>oktavlar</label>
+<description>int: noise() fonksiyonu tarafından kullanılan oktav sayısı</description>
+</parameter>
+
+<parameter>
+<label>dusme</label>
+<description>float: her oktavın düşme etkeni</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+noise()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>save()</name>
+
+<category>Resim</category>
+
+<subcategory>Belgeleme</subcategory>
+
+<usage>Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+line(20, 20, 80, 80);
+// Saves a TIFF file named "diagonal.tif"
+save("diagonal.tif");
+// Saves a TARGA file named "cross.tga"
+line(80, 20, 20, 80);
+save("cross.tga");
+</code>
+</example>
+
+<description>
+Görüntü penceresinden bir resim yapar. <b>dosyaadı</b> parametresine bağlı olarka resimler TIFF veya TARGA biçiminde kaydedilir. Eğer dosya adında herhangi bir uzantı yoksa resim TIFF olarak kaydedilir ve isme <b>.tif</b> uzantısı eklenir. Program bir web tarayıcısında calışıyorsa <b>save()</b> fonksiyonu çalışmaz.
+</description>
+
+<syntax>
+save(<c>dosyaadı</c>)
+</syntax>
+
+<parameter>
+<label>dosyaadı</label>
+<description>String: herhangi bir harf ve rakam dizisi</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+saveFrame()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

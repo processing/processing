@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>textMode()</name>
+
+<category>Tipografi</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>textMode_.gif</image>
+<code>
+BFont metaBold;
+// The font "Meta-Bold.vlw.gz" must be located in the 
+// current sketch's "data" directory to load successfully 
+metaBold = loadFont("Meta-Bold.vlw.gz"); 
+textFont(metaBold, 24);
+textMode(ALIGN_RIGHT);
+text("word", 50, 30); 
+textMode(ALIGN_CENTER);
+text("word", 50, 50); 
+textMode(ALIGN_LEFT);
+text("word", 50, 70); 
+</code>
+</example>
+
+<description>
+Metin göstermek için mevcut hizayı kurar. ALIGN_LEFT, ALIGN_CENTER ve ALIGN_RIGHT parametreleri harflerin <b>text()</b> fonksiyonundaki <b>x</b> ve <b>y</b> parametreleriyle ilişkin bir biçimde gösterilmesini sağlar.
+</description>
+
+<syntax>
+textMode(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>font</label>
+<description>MODE: ALIGN_LEFT, ALIGN_CENTER, veya ALIGN_RIGHT</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+loadFont() 
+BFont 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

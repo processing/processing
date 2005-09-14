@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>keyPressed</name>
+
+<category>Girdi/Çikti</category>
+
+<subcategory>Klavye</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>keyPressed.jar</image>
+<code>
+// Click on the image to give it focus
+// and press any key
+void loop() {
+  if (keyPressed == true) {
+    fill(0);
+  } else {
+    fill(255);
+  }
+  rect(25, 25, 50, 50);
+}
+</code>
+</example>
+
+<description>
+Boolean sistem değişkeni <b>keyPressed</b> klavyede herhangi bir tuş basılmışsa doğru (<b>true</b>) basılmamışsa yanlış (<b>false</b>) değerini alır.
+</description>
+
+<syntax>
+keyPressed
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+key 
+keyCode
+keyPressed() 
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+
+<name>replicate() 複製</name>
+
+<category>BImage</category>
+
+<subcategory>Method</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>BImage_replicate.jpg</image>
+<code>
+BImage img = loadImage("tower.jpg");
+img.replicate(50, 0, 100, 100, 0, 0, 50, 100); 
+image(img, 0, 0);
+</code>
+</example>
+
+<description>
+複製某一影像的像素或像素區域至另一影像；如果原初區域和目標區域的大小不一，原初區域將被縮放至目標區域的大小。此功能並不使用遮色頻資料，但若原初區域具有遮色頻，其資料也會被複製。如果沒有設定 <b>srcImg</b> 參數，顯示視窗的內容會作為原初影像。
+</description>
+
+<syntax>
+replicate(<c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>);
+replicate(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>);
+replicate(<c>sx1</c>, <c>sy1</c>, <c>sx2</c>, <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>);
+replicate(<c>srcImg</c>, <c>sx1</c>, <c>sy1</c>, <c>sx2</c>,  <c>sy2</c>, <c>dx1</c>, <c>dy1</c>, <c>dx2</c>, <c>dy2</c>);
+</syntax>
+
+<parameter>
+<label>sx</label>
+<description>整數：原初影像的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>sy</label>
+<description>整數：原初影像的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>dx</label>
+<description>整數：目標影像的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>dy</label>
+<description>整數：目標影像的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>srcImg</label>
+<description>BImage 物件：代表原初影像之影像變數</description>
+</parameter>
+
+<parameter>
+<label>sx1</label>
+<description>整數：原初影像之左上角的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>sy1</label>
+<description>整數：原初影像之左上角的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>sx2</label>
+<description>整數:原初影像之右下角的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>sy2</label>
+<description>整數:原初影像之右下角的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>dx1</label>
+<description>整數：目標影像之左上角的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>dy1</label>
+<description>整數：目標影像之左上角的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>dx2</label>
+<description>整數：目標影像之右下角的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>dy2</label>
+<description>整數：目標影像之右下角的 Y 座標</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+alpha()
+blend()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Bagel</partof>
+
+
+</root>

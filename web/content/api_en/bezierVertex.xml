@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>bezierVertex()</name>
+
+<category>Shape</category>
+
+<subcategory>Vertex</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>bezierVertex_.gif</image>
+<code>
+beginShape(LINE_STRIP);
+vertex(30, 20);
+bezierVertex(80, 0, 80, 75, 30, 75);
+endShape();
+</code>
+</example>
+
+<example>
+<image>bezierVertex_2.gif</image>
+<code>
+beginShape(POLYGON);
+vertex(30, 20);
+bezierVertex(80, 0, 80, 75, 30, 75);
+bezierVertex(50, 80, 60, 25, 30, 20);
+endShape();
+</code>
+</example>
+
+<description>
+Specifies vertex coordinates for Bezier curves. Each call to bezierVertex() defines the position of two control points and one anchor point of a Bezier curve, adding a new segment to a line or shape. The first time bezierVertex() is used within a beginShape() call, it must be prefaced with a call to vertex() to set the first anchor point. This function must be used between beginShape() and endShape() can only be used with the drawing types POLYGON, LINE_LOOP, and LINE_STRIP. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
+</description>
+
+<syntax>
+bezierVertex(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>)
+bezierVertex(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>, <c>x3</c>, <c>y3</c>, <c>z3</c>)
+</syntax>
+
+<parameter>
+<label>x1</label>
+<description>The x-coordinate of 1st control point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>y1</label>
+<description>The y-coordinate of 1st control point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>z1</label>
+<description>The z-coordinate of 1st control point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>x2</label>
+<description>The x-coordinate of 2nd control point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>y2</label>
+<description>The y-coordinate of 2nd control point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>z2</label>
+<description>The z-coordinate of 2nd control point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>x3</label>
+<description>The x-coordinate of anchor point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>y3</label>
+<description>The y-coordinate of anchor point, either a float or int</description>
+</parameter>
+
+<parameter>
+<label>z3</label>
+<description>The z-coordinate of anchor point, either a float or int</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+curveVertex()
+vertex()
+bezier()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

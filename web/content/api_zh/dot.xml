@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>. (點)</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路與應用程式</usage>
+
+<example>
+<image></image>
+<code>
+// Declare and contruct two objects (h1, h2) from the class HLine
+HLine h1 = new HLine(20, 1.0);
+HLine h2 = new HLine(50, 5.0); 
+ 
+void setup() { 
+  size(200, 200); 
+} 
+ 
+void loop() {
+  if(h2.speed &gt; 1.0) {
+    h2.speed -= 0.01;
+  } 
+  h1.update(); 
+  h2.update();  
+} 
+ 
+class HLine { 
+  float ypos, speed; 
+  HLine (float y, float s) {  
+    ypos = y; 
+    speed = s; 
+  } 
+  void update() { 
+    ypos += speed; 
+    if (ypos &gt; width) { 
+      ypos = 0; 
+    } 
+    line(0, ypos, width, ypos); 
+  } 
+} 
+</code>
+</example>
+
+<description>
+提供途徑以處理物件中包含之函式及資料。物件為類別中的一個實例，包含一群函式 (object functions) 和資料 (物件變數與常數) 。點 (為一運算子)可引導程式進入包含在物件內部的資訊。
+</description>
+
+<syntax>
+<c>object</c>.<c>method()</c>
+<c>object</c>.<c>data</c>
+</syntax>
+
+<parameter>
+<label>object</label>
+<description>您想處理的物件</description>
+</parameter>
+
+<parameter>
+<label>method()</label>
+<description>物件內包含的函式</description>
+</parameter>
+
+<parameter>
+<label>data</label>
+<description>物件內包含的變數或常數(constant)</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+Object
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>else</name>
+
+<category>Kontrol</category>
+
+<subcategory>Koşullama</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>else.gif</image>
+<code>
+for(int i = 5; i &lt; 95; i += 5) {
+  if(i &lt; 35) {
+    line( 30, i, 80, i );
+  } else {
+    line( 20, i, 90, i );
+  }
+}
+</code>
+</example>
+
+<example>
+<image>else2.gif</image>
+<code>
+for(int i = 5; i &lt; 95; i += 5) {
+  if(i &lt; 35) {
+    line( 30, i, 80, i );
+  } else if (i &lt; 65) {
+    line( 20, i, 90, i );
+  } else {
+    line( 0, i, 100, i ); 
+  }
+}
+</code>
+</example>
+
+<description>
+<b>if()</b> yapısını bir veya daha fazla blok kod arasında karar vermesini sağlamak için genişletir. <b>if()</b> yapısındaki ifade yanlış (<b>false</b>) iken yürütülmek üzere bir blok kod belirtir.
+</description>
+
+<syntax>
+if(<c>ifade</c>) { 
+  <c>anlatımlar</c> 
+} else { 
+  <c>anlatımlar</c> 
+} 
+
+if(<c>ifade</c>) { 
+  <c>anlatımlar</c> 
+} else if(<c>ifade</c>) { 
+  <c>anlatımlar</c> 
+} else { 
+  <c>anlatımlar</c> 
+}
+</syntax>
+
+<parameter>
+<label>ifade</label>
+<description>doğru veya yanlış olarak değerlendirilen herhangi bir geçerli ifade</description>
+</parameter>
+
+<parameter>
+<label>anlatımlar</label>
+<description>yürütülecek bir veya daha fazla anlatım</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+if()
+</related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

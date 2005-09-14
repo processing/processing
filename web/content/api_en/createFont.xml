@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>createFont()</name>
+
+<category>Typography</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+PFont myFont;
+
+void setup() {
+  size(200, 200);
+  // Uncomment the following two lines to see the available fonts 
+  //String[] fontList = PFont.list();
+  //println(fontList);
+  myFont = createFont("FFScala", 32);
+  textFont(myFont);
+  text("!@#$%", 10, 50);
+}
+
+</code>
+</example>
+
+<description>
+Dynamically converts a font to the format used by Processing from either a font name that's installed on the computer, or from a .ttf or .otf inside the data folder of the sketch. Use the <b>PFont.list()</b> method to first determine the names for the fonts recognized by the computer. If you're going to be sharing the program with other people or posting it on the web, it's important to include a .ttf or .otf version of your font the the data directory of the sketch because other people might not have the font installed on their computer. <br /><br />Use the <b>PFont.list()</b> method to first determine the names for the fonts recognized by the computer. The <b>size</b> parameter states the font size you want to generate. The <b>charset</b> parameter is an array of chars which specifies the characters to generate and the <b>smooth</b> parameter specifies if the font should be antialiased or not. Processing displays fonts using the .vlw font format, which uses images for each letter, rather than defining them through vector data.
+</description>
+
+<syntax>
+createFont(<c>name</c>, <c>size</c>)
+createFont(<c>name</c>, <c>size</c>, <c>charset</c>)
+createFont(<c>name</c>, <c>size</c>, <c>smooth</c>)
+createFont(<c>name</c>, <c>size</c>, <c>charset</c>, <c>smooth</c>)
+</syntax>
+
+<parameter>
+<label>name</label>
+<description>String: name of the font to load</description>
+</parameter>
+
+<parameter>
+<label>size</label>
+<description>float: point size of the font</description>
+</parameter>
+
+<parameter>
+<label>charset</label>
+<description>char[]: array containing characters to be generated</description>
+</parameter>
+
+<parameter>
+<label>smooth</label>
+<description>boolean: true for an antialiased font, false for aliased</description>
+</parameter>
+
+<returns>PFont</returns>
+
+<related>
+PFont 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+<level>Extended</level>
+
+
+
+</root>

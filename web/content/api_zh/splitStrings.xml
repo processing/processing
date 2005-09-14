@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>splitStrings() 分解出字串</name>
+
+<category>Data</category>
+
+<subcategory>Parsing</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+String words = "apple bear cat dog";
+String list[] = splitStrings(words);
+// list[0] is now "apple", list[1] is now "bear", ...
+
+// or if the separator is not a space
+
+String words = "apple,bear,cat,dog";
+String list[] = splitStrings(words, ',');
+
+// if tabs are in-between (common for data files) use:
+// splitStrings(words, '\t');
+</code>
+</example>
+
+<description>
+此功能函式將一行字串內的字串組分解成字串陣列。如果沒有指定的分隔字元，預設的分隔字元是「空白」字元（space）。
+</description>
+
+<syntax>
+splitStrings(string)
+splitStrings(string, char)
+</syntax>
+
+<parameter>
+<label>string</label>
+<description>要分解的字串</description>
+</parameter>
+
+<parameter>
+<label>char</label>
+<description>用以分隔字串組的分隔字元</description>
+</parameter>
+
+<returns>String[] （字串陣列）</returns>
+
+<related>
+String
+splitInts()
+splitFloats()
+join()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

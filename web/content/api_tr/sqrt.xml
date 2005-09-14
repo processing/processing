@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>sqrt()</name>
+
+<category>Matematik</category>
+
+<subcategory>Temel Fonksiyonlar</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>sqrt_.gif</image>
+<code>
+noStroke();
+float a = sqrt(6561);  // Sets a to 81
+float b = sqrt(625);   // Sets b to 25
+float c = sqrt(1);     // Sets c to 1
+rect(0, 25, a, 10);
+rect(0, 45, b, 10);
+rect(0, 65, c, 10);
+</code>
+</example>
+
+<description>
+Bir sayının karekökünü hesaplar. Negatif bir kök de olsa bir sayının karekökü her zaman pozitifdir. <b>a</b> sayisinin karekök <b>s</b>'si s*s=a olur. Bir sayının karesini almanın tersidir.
+</description>
+
+<syntax>
+sqrt(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>value</label>
+<description>int veya float: negatif olmayan bir sayı</description>
+</parameter>
+
+<returns>float</returns>
+
+<related>
+pow()
+sq()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

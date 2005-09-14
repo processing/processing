@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>draw()</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<applet></applet>
+<code>
+void setup() {
+  size(200, 200);
+  noStroke();
+}
+
+void draw() {
+  rect(50, 40, 100, 50); 
+  rect(50, 110, 100, 50); 
+}
+</code>
+</example>
+
+<description>
+Executes the lines of code contained inside its block one time. The <b>draw()</b> function is used in conjunction with <b>setup()</b>. When the program is run, <b>setup()</b> is called and then <b>draw()</b> is called. This function is typically used when you're writing a complicated program requiring additional functions or objects, but you want to generate a static image. It should not be used in the same program as <b>loop()</b>.
+</description>
+
+<syntax>
+draw() {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>statements</label>
+<description>sequence of statements</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+setup()
+loop()
+</related>
+
+<availability>1.0</availability>
+
+<type>Processing Function</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

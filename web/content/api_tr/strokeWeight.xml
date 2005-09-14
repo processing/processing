@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>strokeWeight()</name>
+
+<category>Şekil</category>
+
+<subcategory>Stroke nitelikleri</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+strokeWeight(1);   // Default
+line(20, 20, 80, 20);
+
+strokeWeight(4);   // Thicker
+line(20, 40, 80, 40);
+
+strokeWeight(10);  // Beastly
+line(20, 70, 80, 70);
+</code>
+</example>
+
+<description>
+Doğrular veya bir şeklin kenarları için kullanılan çizgi kalınlığı. Bütün kalınlıklar piksel birimindedir. 
+</description>
+
+<syntax>
+strokeWeight(kalinlik)
+</syntax>
+
+<parameter>
+<label>kalinlik</label>
+<description>int veya float: stroke kalınlığı (piksel biriminde)</description>
+</parameter>
+
+<returns>Yok</returns>
+
+<related>
+stroke()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+</root>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>scale() 大小比例</name>
+
+<category>Transform</category>
+
+<subcategory>Basic</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>scale_.gif</image>
+<code>
+rect(30, 20, 50, 50);
+scale(0.5);
+rect(30, 20, 50, 50);
+</code>
+</example>
+
+<example>
+<image>scale_2.gif</image>
+<code>
+rect(30, 20, 50, 50);
+scale(0.5, 1.3);
+rect(30, 20, 50, 50);
+</code>
+</example>
+
+<description>
+縮放頂點以增減物件的大小，大小比例的數值是以百分比點數（decimal percentages）作標示。<b>scale(2.0)</b> 函式會將一個形狀的面積增大百分之二百。物件會以相對於坐標系統的中心點作縮小或放大。
+</description>
+
+<syntax>
+scale(<c>size</c>);
+scale(<c>x</c>, <c>y</c>);
+scale(<c>x</c>, <c>y</c>, <c>z</c>);
+</syntax>
+
+<parameter>
+<label>size</label>
+<description>浮點數：改變物件大小比例的百分比點數</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>浮點數：以 x 軸改變物件大小比例的百分比點數
+</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>浮點數：以 y 軸改變物件大小比例的百分比點數
+</description>
+</parameter>
+
+<parameter>
+<label>z</label>
+<description>浮點數：以 z 軸改變物件大小比例的百分比點數
+</description>
+</parameter>
+
+<returns>無</returns>
+
+<related>
+translate() 
+rotate() 
+rotateX() 
+rotateY() 
+rotateZ() 
+scale() 
+push() 
+pop() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>&lt;= (less than or equal to) 小於等於</name>
+
+<category>Control</category>
+
+<subcategory>Relational Operators</subcategory>
+
+<usage></usage>
+
+<example>
+<image></image>
+<code>
+int a = 22;
+int b = 23;
+if(a &lt;= b) {
+  println("variable a is less or equal to variable b ");
+}
+</code>
+</example>
+
+<description>
+測試運算子左邊的值是否小於右邊的值，或是兩邊的值相等。 
+</description>
+
+<syntax>
+<c>value1</c> &lt;= <c>value2</c>
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>整數或浮點數</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+&gt; (greater than)
+&lt; (less than)
+&gt;= (greater than or equal to)
+== (equality)
+!= (inequality)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>sort() 排列整理</name>
+
+<category>Data</category>
+
+<subcategory>Parsing</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+float a[] = { 3.4, 3.6, 2, 0, 7.1 };
+sort(a);
+for (int i = 0; i &lt; a.length; i++) {
+  println(a[i]);
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+String s[] = { "deer", "elephant", "bear", "apple", "car" };
+sort(s);
+for (int i = 0; i &lt; s.length; i++) {
+  println(s[i]);
+}
+</code>
+</example>
+
+<description>
+將數字陣列中的數字由小至大排列，和將文字陣列中的文字依英文字母次序整理。
+</description>
+
+<syntax>
+sort(<c>array</c>)
+</syntax>
+
+<parameter>
+<label>array</label>
+<description>字串、整數、或浮點數的陣列</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

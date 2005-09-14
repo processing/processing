@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>image() 影像</name>
+
+<category>Image</category>
+
+<subcategory>Loading and Displaying</subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image>image_.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+
+<example>
+<image>image_2.jpg</image>
+<code>
+BImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+image(b, 0, 0, width/2, height/2);
+</code>
+</example>
+
+
+<description>
+於螢幕上展示 JPEG 或 GIF 格式的影像，影像必須先存於名為data的資料夾中，以載入作品中。從介面上Sketch選單中選擇 "Add file..."（增加檔案）來載入影像。影像的顏色可以函式<b>tint()</b>影像的顏色可以函式tint() 來控制，如果GIF檔案有色彩透明的部份，在 Processing 中也會呈現透明。參數<b>img</b>則指定展示的影像，參數<b>x</b>和 <b>y</b>除非另行指定參數寬度（<b>width</b>） 和長度（<b>height</b> ），以原影像尺寸為準。如要改變影像在空間上的起始點，請使用函式 <b>imageMode()</b>。
+</description>
+
+<syntax>
+image(<c>img</c>, <c>x</c>, <c>y</c>)
+image(<c>img</c>, <c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>BImage:展示影像</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>整數或浮點數:影像的 X 座標</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>整數或浮點數:影像的 Y 座標</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>整數或浮點數:影像展示的寬度</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>整數或浮點數:影像展示的長度</description>
+</parameter>
+
+<returns>
+loadImage() 
+BImage 
+image() 
+imageMode() 
+backgroundImage() 
+</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

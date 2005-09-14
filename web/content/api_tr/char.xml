@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>char</name>
+
+<category>Veri</category>
+
+<subcategory>Basit</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+char m;      // Declare variable "m" of type char
+m = 'A';     // Assign "m" the value "A"
+int n = '&amp;'; // Declare variable "n" and assign it the value "&amp;"
+</code>
+</example>
+
+<description>
+Karakterler için veri türü, A, d, ve $ gibi tipografik sembollerdir. Bir <b>char</b> harfleri ve sembolleri Unicode biçiminde depolar. Unicode çesitli dünya dillerini desteklemek için geliştirilen kodlama sistemidir. Her <b>char</b> iki byte (16 bits) uzunluğundadır ve çevresindeki çift tırnak işaretleriyle ayrılır. Karakter kaçışları da <b>char</b> olarak depolanabilir. Örneğin, "delete"(sil) tuşunun gösterimi '\377'dir.
+Datatype for characters, typographic symbols such as A, d, and $. A <b>char</b> stores letters and symbols in the Unicode format, a coding system developed to support a variety of world languages. Each <b>char</b> is two bytes (16 bits) in length and is distinguished by surrounding it with single quotes. Character escapes may also stored as a <b>char</b>. For example, the representation for the "delete" key is '\377'. 
+</description>
+
+<syntax>
+char <c>var</c>
+char <c>var</c> = <c>değer</c>
+</syntax>
+
+<parameter>
+<label>var</label>
+<description>değeri kaynak gösteren değişken</description>
+</parameter>
+
+<parameter>
+<label>değer</label>
+<description>herhangi bir karakter</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+String
+</related>
+
+<availability>1.0</availability>
+
+<type>Datatype</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

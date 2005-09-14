@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>byte()</name>
+
+<category>Veri</category>
+
+<subcategory>Dönüştürme</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+byte b = byte(260); 
+</code>
+</example>
+
+<description>
+Basit bir veri türünü byte gösterimine çevirir.
+</description>
+
+<syntax>
+byte(<c>val</c>)
+</syntax>
+
+<parameter>
+<label>val</label>
+<description>int, float, char, byte, boolean, veya color</description>
+</parameter>
+
+<returns>byte</returns>
+
+<related>
+byte
+int()
+float()
+char()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>IDE</partof>
+
+
+
+
+
+
+
+
+</root>

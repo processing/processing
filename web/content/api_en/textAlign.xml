@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>textAlign()</name>
+
+<category>Typography</category>
+
+<subcategory>Attributes</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>textAlign_.gif</image>
+<code>
+PFont font;
+// The font must be located in the current sketch's 
+// "data" directory to load successfully 
+font = loadFont("EurekaMonoCond-Bold-20.vlw"); 
+textFont(font, 20);
+textAlign(RIGHT);
+text("word", 50, 30); 
+textAlign(CENTER);
+text("word", 50, 50); 
+textAlign(LEFT);
+text("word", 50, 70); 
+</code>
+</example>
+
+<description>
+Sets the current alignment for drawing text. The parameters LEFT, CENTER, and RIGHT set the display characteristics of the letters in relation to the values for the <b>x</b> and <b>y</b> parameters of the <b>text()</b> function.
+</description>
+
+<syntax>
+textAlign(<c>MODE</c>)
+</syntax>
+
+<parameter>
+<label>MODE</label>
+<description>Either LEFT, CENTER, or RIGHT</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+loadFont() 
+PFont 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

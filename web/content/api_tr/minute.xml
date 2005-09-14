@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>minute()</name>
+
+<category>Girdi/Çıktı</category>
+
+<subcategory>Zaman &amp; Tarih</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image>minute_.jar</image>
+<code>
+void loop() {
+  background(204);
+  int s = second();  // Values from 0 - 59
+  int m = minute();  // Values from 0 - 59
+  int h = hour();    // Values from 0 - 23
+  line(s, 0, s, 33);
+  line(m, 33, m, 66);
+  line(h, 66, h, 100);
+}
+</code>
+</example>
+
+<description>
+Processing bilgisayarınızdaki saat ile iletişim kurar. <b>minute()</b> fonksiyonu o anki dakika değerini 0 ile 59 arasında gösterir.
+</description>
+
+<syntax>
+minute()
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+millis() 
+second()
+minute()
+hour()
+day()
+month()
+year()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Bagel</partof>
+
+
+
+
+
+
+
+
+</root>

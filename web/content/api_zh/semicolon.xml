@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="big5"?>
+<root>
+<name>; (分號)</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>網路及應用程式</usage>
+
+<example>
+<image></image>
+<code>
+int a;         // Declaration statement
+a = 30;        // Assignment statement
+println(i);  // Function statement
+</code>
+</example>
+
+<description>
+陳述的結束符號，分隔程式中的要素。一項陳述是給予電腦的一段完整指令，而分號則是分隔不同指令的符號。（就像英文中的「句號」一樣） 分號也用於分隔 <b>for()</b> 函式結構裡的參數。
+</description>
+
+<syntax>
+<c>statement</c>;
+</syntax>
+
+<parameter>
+<label>statement</label>
+<description>要執行的一項陳述</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+for()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

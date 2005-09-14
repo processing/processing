@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-9" standalone="yes"?>
+<root>
+<name>% (kalan)</name>
+
+<category>Matematik</category>
+
+<subcategory>Operatör</subcategory>
+
+<usage>Web &amp; Uygulama</usage>
+
+<example>
+<image></image>
+<code>
+int a = point(30, 20%100);   // Sets a to 20%100 = 20
+int b = point(85, 520%100);  // Sets b to 520%100 = 20
+int c = point(85, 75%100);   // Sets c to 75%100 = 75
+int d = point(30, 275%100);  // Sets d to 275%100 = 75
+</code>
+</example>
+
+<description>
+Bir sayı başka bir sayıya bölündüğünde kalan değeri verir. Bir şekli ekranda tutmak gibi sayıları belli bir sınırda tutmak icin çok faydalıdır.
+</description>
+
+<syntax>
+<c>değer1</c>%<c>değer2</c>
+</syntax>
+
+<parameter>
+<label>değer1</label>
+<description>int</description>
+</parameter>
+
+<parameter>
+<label>değer2</label>
+<description>int</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+/ (divide)
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>
