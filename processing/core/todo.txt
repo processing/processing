@@ -13,6 +13,8 @@ X error message saying that strokeCap and strokeJoin don't work in P3D
 X textMode(SHAPE) throws ex when drawing and font not installed
 X fix a bug with filename capitalization error throwing
 X add NO_DEPTH_TEST to PGraphics3
+X java 1.4 code snuck into PApplet, causing problems on the mac
+X   http://dev.processing.org/bugs/show_bug.cgi?id=146
 
 nixed or fixed in previous releases
 X textMode(SCREEN) having issues on Mac OS X
@@ -22,6 +24,11 @@ X move zbuffer et al into PGraphics so that people don't have to cast to P3
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1116978834
 o noLoop() is behaving strangely
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116002432;start=0
+
+_ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
+_   use the SW from vertex instead.. why set stroke in triangle vars at all?
+_   currently truncating to an int inside add_line_no_clip
+_   need to clean all this crap up
 
 _ how to handle gluTessVertex calls
 _   need to re-map through the regular "vertex" command, 
@@ -65,6 +72,8 @@ _   new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
 _     they're drawn as transparent and don't have their high bits set
 _ why aren't background() / defaults() being called for opengl?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
+_ some optimizations from zach
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
 
 _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues
@@ -558,6 +567,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ images are memory leaking pretty badly 
+_   texture re-allocated on each frame
+_   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ point() doesn't work with some graphics card setups
 _   http://dev.processing.org/bugs/show_bug.cgi?id=121
 _ blend(), get(), set(), loadPixels, updatePixels() are broken in opengl
