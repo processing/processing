@@ -867,18 +867,20 @@ public class PApplet extends Applet
       outgoing = (PGraphics) constructor.newInstance(constructorValues);
 
     } catch (InvocationTargetException ite) {
-      //Throwable target = ((InvocationTargetException) t).getTargetException();
-      throw new RuntimeException(ite.getTargetException());
-      //ite.getTargetException().printStackTrace();
+      Throwable target = ite.getTargetException();
+      target.printStackTrace();
+      throw new RuntimeException(target.getMessage());
+      //throw new RuntimeException(ite.getTargetException());  // java 1.4
 
     } catch (ClassNotFoundException cnfe) {
       throw new RuntimeException("You need to use \"Import Library\" " +
                                  "to add " + renderer + " to your sketch.");
 
     } catch (Exception e) {
-      throw new RuntimeException(e);
-      //e.printStackTrace();
-      //die("Could not start because of a problem with size()", e);
+      //throw new RuntimeException(e);  // java 1.4
+      e.printStackTrace();
+      throw new RuntimeException("Could not start because of a " +
+                                 "problem inside size()");
     }
 
     // clear things out to get started
