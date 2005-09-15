@@ -73,36 +73,24 @@ a:link:visited {
 }
 
 .navBar { font-size: 11px; 
-
 	height: 20px; 
-
 	padding: 5px 0 0 55px; 
-
 }
 
 .navBar a { color: #fff; }
-
 .navBar a:visited {color: #fff; }
 
 #mainnav { background: #333323; }
-
 #mainnav_noSub { background: #5a5a46; margin-bottom: 40px; }
-
 #mainnav, #mainnav_noSub { position: relative; color: #ccccbe !important; }
 
 #subNav { margin-left: 220px; 
-
 	background: #5a5a46 url(../img/nav_bottomarrow.gif) no-repeat; 
-
 	padding-left: 33px;
-
 	margin-bottom: 20px;
-
-	}
+}
 #subNav.learning { margin-left: 157px; }
-
 .active { color: #ccccbe !important; }
-
 .faq { position: absolute; right: 10px; }
 
 /* ================ CONTENT ================== */
@@ -197,48 +185,34 @@ code {
 
 /* ================== PAGE SPECIFIC CSS =============== */
 
-/******************************************************************* Cover ***/
+/**************************************************************** Cover ***/
 
 #Cover .rightcol { 
     float: right;
     width: 380px;
     margin-right: 20px;
 }
-
 #Cover .leftcol { width: 250px; }
-
-
 
 #Cover h3 { margin: 40px 0 0 0; }
 .exhibition-small { padding: 0; margin: 0; }
-
 .exhibition-small h3 { margin-top: 0px !important; }
 
-
-
 dl { margin: 0; }
-
 dt { font-style: italic; }
-
 dd { margin: 0 0 1em 0; }
-
-
 
 .happenings { margin-bottom: 30px; }
 
-
-
 .courses-small dl { margin-top: -1em; }
-
 .courses-small dt { font-style: normal; margin-top: 1em; }
-
 .courses-small dd { margin: 0; }
 
 td img { margin: 0; display: block; }
 
 
 
-/******************************************************************* Exhibition ***/
+/**************************************************************** Exhibition ***/
 
 #Exhibition .colone { width: 460px; float: left; margin-right: 40px; }
 
@@ -278,7 +252,7 @@ p.exhibition-nav { margin-top: 0; }
 
 
 
-/******************************************************************* Reference ***/
+/**************************************************************** Reference ***/
 
 #reference-nav { position: relative; height: 2em; padding-top: .5em; }
 
@@ -332,7 +306,7 @@ div.ref-col { width: 30%;
 .ref-col h3+h5 { margin-top: 0; }
 .category { margin-bottom: 30px; }
 
-/******************************************************************* updates, courses, happenings ***/
+/**************************************************************** updates, courses, happenings ***/
 #Courses .content, #Updates .content, #Happenings .content {
     width: 595px; 
      }
@@ -343,3 +317,16 @@ div.ref-col { width: 30%;
 .course-desc p.date { margin: 0; }
 .course-desc h3 { margin: 0; font-size: 1.2em; font-weight: bold; }
 .course-desc { margin-bottom: 2em; }
+
+/**************************************************************** download ***/
+
+#Download .leftcol { margin-right: 250px; }
+.download-ver { color: black; font-size: 1em; font-weight: bold; margin-top: 2em; }
+.download-ver span { color: #5a5a46; }
+
+#Download .rightcol { position: absolute; 
+    top: 55px; 
+    right: 10px; 
+    width: 175px; 
+}
+#Download .rightcol h5 { font-size: 1em; margin-bottom: 1em; }
