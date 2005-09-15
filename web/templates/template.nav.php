@@ -43,8 +43,8 @@ function navigation($section = '')
         $html .= "\t\t\t\t" . '<div class="navBar" id="subNav">' . "\n";
         
         $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " \\\n";
-        $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \\\n";
         $html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
+        $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \\\n";
         $html .= "\t\t\t\t\t" . l('Comparison', $section == 'Comparison') . "\n";
         
         $html .= "\t\t\t\t</div>\n";
@@ -74,8 +74,8 @@ function short_nav($section)
     
     $html .= "\t\t\t\t\t<a href=\"http://processing.org/index.php\"" . ($section == 'Cover' ? ' class="active"' : '') . ">Cover</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">Langauge</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"/reference/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">Libraries</a> \\ \n";
+    $html .= "\t\t\t\t\t<a href=\"/reference/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/compare/index.html\"" . ($section == 'Comparison' ? 'class="active"' : '') . ">Comparison</a>\n";
     
     $html .= "\t\t\t\t</div>\n";
@@ -95,8 +95,8 @@ function navigation_tr($section)
     
     $html .= "\t\t\t\t\t<a href=\"/index.php\"" . ($section == 'Cover' ? ' class="active"' : '') . ">$tr[cover]</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/$lang/index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">$tr[language]</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"/reference/$lang/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">$tr[environment]</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/$lang/libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">$tr[libraries]</a> \\ \n";
+    $html .= "\t\t\t\t\t<a href=\"/reference/$lang/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">$tr[environment]</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/$lang/compare/index.html\"" . ($section == 'Comparison' ? 'class="active"' : '') . ">$tr[comparison]</a>\n";
     
     $html .= "\t\t\t\t</div>\n";
