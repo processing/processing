@@ -64,7 +64,7 @@ function navigation($section = '')
 function l($s, $c)
 {
     global $pages;
-    return "<a href=\"{$pages[$s][0]}\"" . ($c ? ' class="active"' : '') . "\">$s</a>";
+    return "<a href=\"{$pages[$s][0]}\"" . ($c ? ' class="active"' : '') . ">$s</a>";
 }
 
 function short_nav($section)
