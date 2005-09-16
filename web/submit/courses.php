@@ -14,7 +14,7 @@ if (!$_POST['preview'] && test_input()) { // valid input
     // let's first check back if he / she just added something and
 	// politely ask to come back a little later ...
 
-	$ip_date = @file('courses.txt');
+	$ip_date = @file('courses.txt');/*
 	foreach ($ip_date as $line) {
 		if (strpos($line, $_SERVER['REMOTE_ADDR']) !== FALSE) {
 			$tuple = 	explode( "\t", $line );
@@ -26,7 +26,7 @@ if (!$_POST['preview'] && test_input()) { // valid input
 				exit;
 			}
 		}
-	}
+	}*/
 	
 	unset( $ip_date[0] );
 		
