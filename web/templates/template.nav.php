@@ -128,7 +128,7 @@ function language_nav($current)
     global $LANGUAGES;
     if (count($LANGUAGES) < 2) { return ''; }
     
-    $html = "\t".'<select name="nav" size="1" class="refnav" onChange="javascript:gogo(this)">'."\n";
+    $html = "\t".'Language: <select name="nav" size="1" class="refnav" onChange="javascript:gogo(this)">'."\n";
     foreach ($LANGUAGES as $short => $array) {
         if ($array[3] != '' ) {
             $sel = ($current == $short) ? ' selected="selected"' : '';
