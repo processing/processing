@@ -11,7 +11,7 @@ require 'header.inc.php';
 </div>
 <div class="column">
     <br>
-    Processing Mobile allows software written using the Processing programming 
+    Mobile Processing allows software written using the Processing programming 
     language and development environment to run on Java Powered mobile devices.
 </div>
 <?php
