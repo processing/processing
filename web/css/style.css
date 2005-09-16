@@ -17,6 +17,7 @@ body {
 	
 	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
 	font-size			: 100%; 
+    font-size           : 0.7em;
 	font-weight			: normal;
 	line-height			: normal;
 	color				: #333333;
@@ -97,14 +98,12 @@ a:link:visited {
 
 .content {
 	margin-left    : 55px;
-	font-size      : 0.7em;
 	position: relative;
 }
 
 /* ================ FOOTER ================== */
 
 #footer {
-    font-size: .7em;
 	clear: both;
 	padding-top: 100px;
 
