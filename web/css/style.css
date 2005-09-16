@@ -334,7 +334,7 @@ div.ref-col { width: 30%;
 /************************************************************** contribute ***/
 
 #Contribute h1 { margin-bottom: 0; }
-#Contribute .message { margin-top: 0; color: #5a5a46; margin-right: 40px; }
+#Contribute .message { margin-top: 0; margin-right: 40px; }
 #Contribute .threecol { float: left; width: 210px; margin-right: 20px; }
 #Contribute .threecol p { margin-bottom: 2em; }
 

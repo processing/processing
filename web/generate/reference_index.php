@@ -96,6 +96,7 @@ $page->language($lang);
 writeFile($path.'index_alpha_ext.html', $page->out());
 
 // copy images directory from content folder to public folder
+if (!is_dir(REFERENCEDIR.($lang != 'en' ? "$lang/" : '').'images')) { mkdir(REFERENCEDIR.($lang != 'en' ? "$lang/" : '').'images', '0757'); }
 copydirr(CONTENTDIR."api_$lang/images", REFERENCEDIR.($lang != 'en' ? "$lang/" : '').'images');
 
 $benchmark_end = microtime_float();
