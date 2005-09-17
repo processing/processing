@@ -22,16 +22,15 @@ may want to implement the dispose() call, which is called as the
 applet is closed. Many libraries, especially those with native code, 
 need this to properly shut down. 
 
-It is not recommended that you try to build libraries from within 
-Processing itself. The PDE is built with the sole purpose of creating
-short sketches that are part of PApplet that have a few files at most.
-We don't plan to extend the PDE to also support developing libraries 
-(or tools, once those are enabled) because then it simply becomes like
-any other IDE that is quickly too general for our target audience. 
-Users who are advanced enough in their programming skills to build 
-libraries should almost always be skilled enough to use another IDE
-like Eclipse or something else (if they aren't already) to build 
-their library.
+It is not possible to build libraries from within Processing itself. 
+The PDE is built with the sole purpose of creating short sketches that 
+are part of PApplet that have a few files at most. We don't plan to 
+extend the PDE to also support developing libraries (or "tools," once 
+those are enabled) because then it simply becomes like any other IDE 
+that is quickly too general for our target audience. Users who are 
+advanced enough in their programming skills to build libraries will 
+almost always be skilled enough to use another IDE like Eclipse or 
+something else (if they aren't already) to build their library.
 
 
 //////////////////////////////////////////////////////////////
