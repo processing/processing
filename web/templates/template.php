@@ -131,6 +131,46 @@ class ReferencePage
     }   
 }
 
+class LibReferencePage extends ReferencePage
+{
+    function LibReferencePage(&$ref, $lib, $translation, $lang = 'en')
+    {
+        global $LANGUAGES;
+        
+        $this->filepath = 'reference/' . ($lang == 'en' ? '' : "$lang/") . "libraries/$lib/" . $ref->name();
+        $title = $ref->title() . ($lang == 'en' ? '' : " \ {$LANGUAGES[$lang][0]}") .' \ Language (API) \ Processing 1.0 (BETA)';
+        
+        $xhtml = new xhtml_page(TEMPLATEDIR.'template.translation.html');
+        $xhtml->set('header', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
+        $xhtml->set('title', $title);
+        $xhtml->set('bodyid', 'Libraries');
+        if ($lang == 'en') {
+            $xhtml->set('navigation', navigation('Language'));
+        } else {
+            $xhtml->set('navigation', navigation_tr('Language'));
+        }
+        
+        $piece = new xhtml_piece(TEMPLATEDIR.'template.reference.item.html');
+        $xhtml->set('content_for_layout', $piece->out());
+        
+        $xhtml->set('reference_nav', library_nav($libraries, $lib));
+        $xhtml->set('language_nav', language_nav($lang));
+        
+        $xhtml->set('content', $ref->display());
+        
+        foreach ($translation->attributes as $key => $value) {
+            $xhtml->set($key, $value);
+        }
+        
+        foreach ($translation->meta as $key => $value) {
+            $xhtml->set($key, $value);
+        }
+        
+        $this->xhtml = $xhtml;
+        $this->language($lang);
+    }
+}
+
 class LocalPage extends Page
 {
     var $xhtml;

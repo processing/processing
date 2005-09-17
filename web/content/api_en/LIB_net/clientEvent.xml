@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>clientEvent()</name>
+
+<category>Net</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+Coming soon...
+
+</code>
+</example>
+
+<description>
+Coming soon...
+</description>
+
+<syntax>
+void clientEvent() {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>statements</label>
+<description>any valid statements</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+Server
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>core</partof>
+
+
+
+
+
+
+
+
+</root>

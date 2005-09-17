@@ -139,6 +139,14 @@ function language_nav($current)
     return $html;
 }
 
+function library_nav($libraries, $current)
+{
+    $html = "\n\t<span class=\"lib-nav\">\n";
+    $html .= "\t\t<a href=\"index.html\">$current</a>\n";
+    $html .= "\t</span>\n";
+    return $html;
+}
+
 
 /** test **
 ?>

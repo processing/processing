@@ -232,6 +232,27 @@ function getRefFiles($lang)
     return $files;
 }
 
+function getXMLFiles($dir)
+{
+    // open directory pointer
+    if ($dp = @opendir($dir)) {
+        // iterate through file pointers
+        while ($fp = readdir($dp)) {
+            // points to relative paths
+            if ($fp == '.' || $fp == '..') { continue; }
+            // point to another directory
+            if (is_dir($dir .'/'. $fp)) { continue; }
+            // add file pointer to array 
+            if (strstr($fp, '.xml') && $fp != 'blank.xml') {
+                $files[] = $fp;
+            }
+        }
+    } else {
+        return false;
+    }
+    return $files;
+}
+
 /****************************************************************
 Write a file
 *****************************************************************/ 
