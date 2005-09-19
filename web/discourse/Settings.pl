@@ -27,7 +27,7 @@ $maintenance = 0;                                                     # Set to 1
 $guestaccess = 1;                                                     # Set to 0 to disallow guests from doing anything but login or register
 
 $language = "english.lng";                                            # Change to language pack you wish to use
-$mbname = q^Processing Mobile » Discourse^;                           # The name of your YaBB forum
+$mbname = q^Mobile Processing » Discourse^;                           # The name of your YaBB forum
 $boardurl = "http://mobile.proce55ing.net/discourse";                 # URL of your board's folder (without trailing '/')
 
 $Cookie_Length = 360;                                                 # Default minutes to set login cookies to stay for

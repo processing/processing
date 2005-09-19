@@ -2,7 +2,7 @@
 
 
 
-$PAGE_TITLE = "Processing Mobile &raquo; Language (API)";
+$PAGE_TITLE = "Mobile Processing &raquo; Language (API)";
 $PAGE_SHOWBACKINDEX = true;
 
 require '../header.inc.php';
