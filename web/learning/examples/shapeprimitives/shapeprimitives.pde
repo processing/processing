@@ -1,5 +1,13 @@
 // Shape Primitives 
 // by REAS <http://reas.com> 
+//
+// The basic shape primitive functions are triangle(), rect(), quad(), 
+// and ellipse(). Squares are made with rect() and circles are made 
+// with ellise(). Each of these functions requires a number of parameters
+// which determines their position and size.
+//
+// Created 19 January 2003 
+
 background(0); 
 noStroke(); 
 fill(226); 

@@ -5,10 +5,11 @@ require '../header.inc.php';
 ?>
 <img src="images/header.png"><br>
 <br>
-Coming soon...
-<!--
+<br>
+<div class="column">
+<img src="images/form.png"><br>
+<br>
 <a href="example.php?name=shapeprimitives">Shape Primitives</a>
--->
 <?php
  require '../footer.inc.php';
 ?>
