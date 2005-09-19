@@ -1,5 +1,5 @@
 <?php
-$PAGE_TITLE = "Processing Mobile";
+$PAGE_TITLE = "Mobile Processing";
 
 require 'header.inc.php';
 ?>

@@ -16,7 +16,7 @@ if (preg_match('/\/\/ *([^\n]*)/', $pde, $matches) != 0) {
     $title = $matches[1];
 }
 
-$PAGE_TITLE = $title .' &raquo; Examples &raquo; Processing Mobile';
+$PAGE_TITLE = $title .' &raquo; Examples &raquo; Mobile Processing';
 require '../header.inc.php';
 ?>
 <?php echo $title ?><br>
