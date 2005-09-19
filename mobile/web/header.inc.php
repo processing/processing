@@ -72,7 +72,7 @@ if (!(@include 'subnavigation.inc.php')) {
 }
 ?>
 <?php if ($PAGE_SHOWBACKINDEX) { ?>
-<div id="backnavigation">
+<div class="backnavigation">
   <table border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td align="right" width="50">
@@ -89,4 +89,4 @@ if (!(@include 'subnavigation.inc.php')) {
   </table>
 </div>
 <?php } ?>
-<div id="content">
+<div class="content">
