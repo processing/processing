@@ -51,7 +51,7 @@ public class Editor extends JFrame
              MRJOpenDocumentHandler //, MRJOpenApplicationHandler
 {
   // yeah
-  static final String WINDOW_TITLE = "Processing Mobile ALPHA" + " - " + Base.VERSION_NAME;
+  static final String WINDOW_TITLE = "Mobile Processing ALPHA" + " - " + Base.VERSION_NAME;
 
   // p5 icon for the window
   Image icon;

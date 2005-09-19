@@ -2166,11 +2166,22 @@ public class Sketch {
                             "Please specify the location of the WTK in your preferences.txt file. Example:\n\n" +
                             "wtk.path=C:\\WTK22", null);
     }
+    //// cldc version
+    String   cldc        = Preferences.get("wtk.cldc");
+    if (cldc == null) {
+        //// default 1.0
+        cldc = "10";
+    }
+    String   midp        = Preferences.get("wtk.midp");
+    if (midp == null) { 
+        //// default 1.0
+        midp = "10";
+    }
     String   wtkLibPath  = wtkPath + File.separator + "lib" + File.separator;
     String   baseClass   = "PMIDlet";
     String[] baseImports = {};
-    String   bootClassPath = wtkLibPath + "cldcapi11.jar" + File.pathSeparator +
-                             wtkLibPath + "midpapi20.jar";
+    String   bootClassPath = wtkLibPath + "cldcapi" + cldc + ".jar" + File.pathSeparator +
+                             wtkLibPath + "midpapi" + midp + ".jar";
     //// this is just to satisfy Jikes which wants java.io.Serializable and java.lang.Cloneable to be reachable...
     //System.out.println(System.getProperty ("java.home"));
     //bootClassPath += File.pathSeparator + System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
