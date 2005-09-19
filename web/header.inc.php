@@ -53,6 +53,13 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 <?php } ?>
 
     <span class="backslash">\</span>
+<?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'faq/') === false) { ?>
+    <a href="<?php echo SITE_ROOT ?>faq/index.php">FAQ</a>
+<?php } else { ?>
+    FAQ
+<?php } ?>
+
+    <span class="backslash">\</span>
 <?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'discourse/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>discourse/index.php">Discourse</a>
 <?php } else { ?>
