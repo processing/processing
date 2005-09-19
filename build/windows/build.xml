@@ -52,8 +52,22 @@
         <copy todir="processing/app" overwrite="true">
             <fileset dir="mobile/app">
                 <include name="**/*.java"/>
+            </fileset>            
+        </copy>
+        <!-- copy icons for application -->
+        <copy todir="processing/build/shared/lib" overwrite="true">
+            <fileset dir="mobile/build/shared/lib">
+                <include name="**/*.gif"/>
             </fileset>
         </copy>
+        <!-- copy icon for windows executable -->
+        <copy todir="processing/build/windows/launcher" overwrite="true">
+            <fileset dir="mobile/build/windows/launcher">
+                <include name="**/*.ico"/>
+            </fileset>
+        </copy>
+        <!-- delete windows executable to ensure it gets rebuilt with icon -->
+        <delete file="processing/build/windows/launcher/processing.exe"/>
     </target>
 
     <target name="make" depends="init, copyappsrc">        
