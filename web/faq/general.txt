@@ -1,0 +1,6 @@
+platforms
+On which platforms does Mobile Processing run?
+Mobile Processing is currently available for the Windows platform. If you would like to assist in making Mobile Processing available for other platforms, please post in the Open Source discussion boards in the <a href="../discourse/">Discourse</a> section.
+handsets
+Will sketches from Mobile Processing run on my handset?
+Sketches created using Mobile Processing will run on Java Powered handsets, also known as Java 2 Micro Edition (J2ME) handsets. Mobile Processing sketches are mobile applications, called MIDlets, that are currently compatible with the CLDC 1.0, MIDP 1.0 release of the J2ME platform.
