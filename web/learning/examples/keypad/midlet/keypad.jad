@@ -1,0 +1,8 @@
+MIDlet-1: keypad, ,keypad
+MIDlet-Name: keypad
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: Processing Mobile 74alpha
+MicroEdition-Profile: MIDP-1.0
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Jar-URL: keypad.jar
+MIDlet-Jar-Size: 15527

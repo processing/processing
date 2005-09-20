@@ -29,12 +29,12 @@ require '../header.inc.php';
 <applet code="com.barteo.emulator.applet.Main"
         width="260" height="509"
         archive="../me-applet.jar,../large.jar,examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jar">
-    <param name="midlet" value="shapeprimitives">
+    <param name="midlet" value="<?php echo $name ?>">
     <param name="device" value="net.barteo.me.device.large.LargeDevice">
 </applet>
     </td>
     <td valign="top">
-<pre><?php echo $pde ?></pre>
+<pre><?php echo htmlentities($pde) ?></pre>
     </td>
   </tr>
 </table>
