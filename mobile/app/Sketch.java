@@ -2185,7 +2185,7 @@ public class Sketch {
     //// this is just to satisfy Jikes which wants java.io.Serializable and java.lang.Cloneable to be reachable...
     //System.out.println(System.getProperty ("java.home"));
     //bootClassPath += File.pathSeparator + System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
-    String   additionalClassPath = "lib" + File.separator + "mobile.jar";
+    String   additionalClassPath = "lib" + File.separator + "mobile.jar" + File.pathSeparator + Sketchbook.librariesClassPath;
     String foundName = build(midletDir.getPath(), name, baseClass, baseImports, 
                              bootClassPath, additionalClassPath);
     

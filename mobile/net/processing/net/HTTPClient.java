@@ -1,4 +1,4 @@
-package processing.core;
+package processing.net;
 
 import java.io.*;
 import javax.microedition.io.*;
