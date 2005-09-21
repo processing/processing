@@ -25,11 +25,6 @@ A string is a sequence of characters. The class <b>String</b> includes methods f
 
 <syntax></syntax>
 
-<parameter>
-<label></label>
-<description></description>
-</parameter>
-
 <field>
 <fname></fname>
 <fdescription></fdescription>
