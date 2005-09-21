@@ -1,10 +1,13 @@
 <?php
-$section = 0;
-if (stristr($_SERVER['PHP_SELF'], SITE_ROOT .'reference/environment') !== 
-    false) {
+$section = -1;
+if (stristr($_SERVER['PHP_SELF'], 
+            SITE_ROOT .'reference/index.php') !== false) {
+    $section = 0;
+} else if (stristr($_SERVER['PHP_SELF'], 
+                   SITE_ROOT .'reference/environment/index.php') !== false) {
     $section = 1;
-} else if (stristr($_SERVER['PHP_SELF'], SITE_ROOT .'reference/libraries') !== 
-    false) {
+} else if (stristr($_SERVER['PHP_SELF'], 
+                   SITE_ROOT .'reference/libraries/index.php') !== false) {
     $section = 2;
 }
 ?>

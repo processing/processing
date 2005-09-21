@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>HTTPClient</name>
+
+<example>
+<image></image>
+<code>
+</code>
+</example>
+
+<description>
+A client connects to a server and sends data back and forth.
+</description>
+
+<syntax></syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<field>
+<fname></fname>
+<fdescription></fdescription>
+</field>
+
+<method>
+<mname>GET()</mname>
+<mdescription>Makes a GET request to the server to retrieve specified content.</mdescription>
+</method>
+
+<constructor>
+HTTPClient(<c>server</c>)
+HTTPClient(<c>server</c>, <c>port</c>)
+</constructor>
+
+<cparameter>
+<clabel>server</clabel>
+<cdescription>String: name of server to connect to (i.e. "processing.org")</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>port</clabel>
+<cdescription>int: port on which to connect to, defaults to 80</cdescription>
+</cparameter>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Net</partof>
+
+
+
+
+
+
+
+
+</root>

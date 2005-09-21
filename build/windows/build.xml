@@ -109,15 +109,21 @@
         <antcall target="copycore">
             <param name="target" value="${svn.tag.processing}"/>
         </antcall>
+        <antcall target="copylibs">
+            <param name="target" value="${svn.tag.processing}"/>
+        </antcall>
+        <!-- copy into expert release -->
+        <antcall target="copycore">
+            <param name="target" value="${svn.tag.processing}-expert"/>
+        </antcall>        
+        <antcall target="copylibs">
+            <param name="target" value="${svn.tag.processing}-expert"/>
+        </antcall>
         <!-- zip up standard release -->
 <!--        
         <zip destfile="processing/build/windows/${svn.tag.processing}.zip" 
              basedir="processing/build/windows/${svn.tag.processing}"/>
 -->             
-        <!-- copy into expert release -->
-        <antcall target="copycore">
-            <param name="target" value="${svn.tag.processing}-expert"/>
-        </antcall>        
         <!-- zip up expert release -->
 <!--        
         <zip destfile="processing/build/windows/${svn.tag.processing}-expert.zip" 
