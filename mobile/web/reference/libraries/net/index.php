@@ -14,7 +14,7 @@ The Net library allows Mobile Processing sketches to send and receive data via t
 The client class is used to create client Objects which connect to a server to exchange data.<br>
 <br>
 <a href="reference.php?name=HTTPClient">HTTPClient()</a><br>
-<a href="reference.php?name=GET">GET()</a>
+<a href="reference.php?name=HTTPClient_GET">GET()</a>
 </div>
 <?php
 require '../../../footer.inc.php';

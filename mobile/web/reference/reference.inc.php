@@ -11,7 +11,8 @@ $child = $root->first_child();
 
 while ($child) {
     $tag = $child->node_name();
-    if (($tag == 'example') || ($tag == 'parameter')) {
+    if (($tag == 'example') || ($tag == 'parameter') ||
+        ($tag == 'method') || ($tag == 'cparameter')) {
         if (!isset($value[$tag])) {
             $value[$tag] = array();
         }
@@ -101,20 +102,62 @@ while ($child) {
       <table border="0" cellspacing="0" cellpadding="0">
        <?php foreach ($value['parameter'] as $p) { ?>
                  <tr>
-                   <td width="70"><?php echo $p['label'] ?></td>
+                   <td valign="top" width="70"><?php echo $p['label'] ?></td>
                    <td width="20">&nbsp;</td>
-                   <td><?php echo $p['description'] ?></td>
+                   <td valign="top"><?php echo $p['description'] ?><br><br></td>
                  </tr>
        <?php } ?>
       </table>
     </td>
   </tr>
 <?php } ?>
-<?php if (isset($value['usage'])) { ?>
+<?php if (isset($value['returns'])) { ?>
   <tr>
-    <td class="reffieldheader">Usage</td>
+    <td class="reffieldheader">Returns</td>
+    <td class="reffield"><?php echo $value['returns'] ?></td>
+  </tr>
+<?php } ?>
+<?php if (isset($value['method'])) { ?>
+  <tr>
+    <td class="reffieldheader">Methods</td>
     <td class="reffield">
-      <?php echo $value['usage'] ?>
+      <table border="0" cellspacing="0" cellpadding="0">
+       <?php foreach ($value['method'] as $m) { ?>
+                 <tr>
+                   <td valign="top" width="70">
+                     <a href="reference.php?name=<?php echo $_GET['name'] ?>_<?php echo rtrim($m['mname'], "() ") ?>"><?php echo $m['mname'] ?></a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td><?php echo $m['mdescription'] ?><br><br></td>
+                 </tr>
+       <?php } ?>
+      </table>
+    </td>
+  </tr>
+<?php } ?>
+<?php if (isset($value['constructor'])) { ?>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre><?php echo $value['constructor'] ?></pre>
+    </td>
+  </tr>
+<?php } ?>
+<?php if (isset($value['cparameter'])) { ?>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+       <?php foreach ($value['cparameter'] as $p) { ?>
+                 <tr>
+                   <td valign="top" width="70"><?php echo $p['clabel'] ?></td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     <?php echo $p['cdescription'] ?><br><br>
+                   </td>
+                 </tr>
+       <?php } ?>
+      </table>
     </td>
   </tr>
 <?php } ?>

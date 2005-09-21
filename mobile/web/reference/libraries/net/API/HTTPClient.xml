@@ -2,27 +2,9 @@
 <root>
 <name>HTTPClient</name>
 
-<example>
-<image></image>
-<code>
-</code>
-</example>
-
 <description>
 A client connects to a server and sends data back and forth.
 </description>
-
-<syntax></syntax>
-
-<parameter>
-<label></label>
-<description></description>
-</parameter>
-
-<field>
-<fname></fname>
-<fdescription></fdescription>
-</field>
 
 <method>
 <mname>GET()</mname>
