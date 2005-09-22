@@ -28,7 +28,7 @@ $guestaccess = 1;                                                     # Set to 0
 
 $language = "english.lng";                                            # Change to language pack you wish to use
 $mbname = q^Mobile Processing » Discourse^;                           # The name of your YaBB forum
-$boardurl = "http://mobile.proce55ing.net/discourse";                 # URL of your board's folder (without trailing '/')
+$boardurl = "http://mobile.processing.org/discourse";                 # URL of your board's folder (without trailing '/')
 
 $Cookie_Length = 360;                                                 # Default minutes to set login cookies to stay for
 $cookieusername = "Processing_username";                              # Name of the username cookie
@@ -57,10 +57,10 @@ $vardir = "./Variables";                                              # Director
 $facesdir = "http://processing.org/discourse/public_html/YaBBImages/avatars";
                                                                       # The server path to your avatars (userpics) folder
 $facesurl = "http://your_url.com/yabb/images/avatars";                # URL to your avatars folder
-$imagesdir = "http://mobile.proce55ing.net/discourse/images";         # URL to your images folder
-$ubbcjspath = "http://mobile.proce55ing.net/discourse/ubbc.js";       # URL to your 'ubbc.js' (REQUIRED for post/modify to work properly)
-$faderpath = "http://mobile.proce55ing.net/discourse/fader.js";       # URL to your 'fader.js'
-$helpfile = "http://mobile.proce55ing.net/discourse/help/index.html";
+$imagesdir = "http://mobile.processing.org/discourse/images";         # URL to your images folder
+$ubbcjspath = "http://mobile.processing.org/discourse/ubbc.js";       # URL to your 'ubbc.js' (REQUIRED for post/modify to work properly)
+$faderpath = "http://mobile.processing.org/discourse/fader.js";       # URL to your 'fader.js'
+$helpfile = "http://mobile.processing.org/discourse/help/index.html";
                                                                       # URL to your help file
 
 
