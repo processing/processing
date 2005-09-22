@@ -81,13 +81,13 @@ Addition and subtraction of fixed point values are the same as with normal integ
 <pre>
 int m1_fp = itofp(4);
 int m2_fp = (int) (3.4f * ONE);
-int m_fp = m1_fp + m2_fp;
+int mass_fp = m1_fp + m2_fp;
 </pre>
 There are functions for multiplication and division that handle the adjustments described previously:<br>
 <br>
 <pre>
-int f_fp = mul(m_fp, gravity_fp);
-int m3_fp = div(force_fp, gravity_fp); // = force/gravity
+int f_fp = mul(mass_fp, gravity_fp);      // = mass*gravity
+int m3_fp = div(force_fp, gravity_fp);    // = force/gravity
 </pre>
 <?php
 require '../../../footer.inc.php';
