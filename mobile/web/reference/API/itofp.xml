@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>itofp()</name>
+
+<category>Math</category>
+
+<subcategory>Fixed Point - Conversion</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int var1 = 50;
+int var1_fp = itofp(var1);             // Sets var1_fp to 50.0
+int var2_fp = (int) (0.5f * ONE);      // Sets var2_fp to 0.5
+
+int result_fp = mul(var1_fp, var2_fp); // Sets result_fp to 25.0
+
+int result = fptoi(result_fp);         // Sets result to 25
+</code>
+</example>
+
+<description>
+Returns the fixed point representation of the specified integer value.
+</description>
+
+<syntax>
+itofp(<c>value1</c>)
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>int</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+fptoi()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

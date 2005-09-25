@@ -51,7 +51,8 @@ $dir = opendir('API');
 $filename = readdir($dir);
 while ($filename !== false) {
     $filename = readdir($dir);
-    if (strstr($filename, '.xml') !== false) {
+    if ((strstr($filename, '.xml') !== false) &&
+        (strstr($filename, '.xml~') === false)) {
         $dom = domxml_open_file($fullpath ."/API/".$filename);
 
         $shortname = substr($filename, 0, strlen($filename) - 4);

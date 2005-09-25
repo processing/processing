@@ -4,34 +4,17 @@
 
 <category>Math</category>
 
-<subcategory>Trigonometry</subcategory>
+<subcategory>Fixed Point - Trigonometry</subcategory>
 
 <usage>Web &amp; Application</usage>
 
 <example>
 <image></image>
-<code>
-float a = PI/3;
-float t = tan(a);
-float at = atan(t);
-// Prints "1.0471976 : 1.7320509 : 1.0471976"
-println(a + " : " + t + " : " +  at);
-</code>
-</example>
-
-<example>
-<image></image>
-<code>
-float a = PI + PI/3.0;
-float t = tan(a);
-float at = atan(t);
-// Prints "4.1887903 : 1.7320513 : 1.0471977"
-println(a + " : " + t + " : " +  at);
-</code>
+<code></code>
 </example>
 
 <description>
-The inverse of <b>tan()</b>, returns the arc tangent of a value. This function expects the values in the range of -Infinity to Infinity (exclusive) and values are returned in the range <b>-PI/2</b> to <b>PI/2 </b>.
+Returns the arc tangent of a value. This function expects the values as fixed point values in the range of -Infinity to Infinity (exclusive) and values are returned as fixed point values in the range <b>-PI/2</b> to <b>PI/2 </b>.
 </description>
 
 <syntax>
@@ -40,10 +23,10 @@ atan(<c>value</c>)
 
 <parameter>
 <label>value</label>
-<description>float: -Infinity to Infinity (exclusive)</description>
+<description>int fixed point values: -Infinity to Infinity (exclusive)</description>
 </parameter>
 
-<returns>float</returns>
+<returns>int fixed point value</returns>
 
 <related>
 tan()

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>div()</name>
+
+<category>Math</category>
+
+<subcategory>Fixed Point - Calculation</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int g_fp = div(itofp(50), itofp(5));  // Sets g_fp to 10.0
+int h_fp = div(g_fp, itofp(5));       // Sets h_fp to 2.0
+int h = fptoi(h_fp);                  // Sets h to 2
+</code>
+</example>
+
+<description>
+Divides the value of the second fixed point parameter by the value of the first fixed point parameter.
+</description>
+
+<syntax>
+div(<c>value1</c>, <c>value2</c>)
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>int fixed point value</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>int fixed point value, but not zero (it is not possible  divide by zero)</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+mul()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -4,25 +4,25 @@
 
 <category>Math</category>
 
-<subcategory>Trigonometry</subcategory>
+<subcategory>Fixed Point - Trigonometry</subcategory>
 
 <usage>Web &amp; Application</usage>
 
 <example>
 <image>sin_.gif</image>
 <code>
-float a = 0.0;
-float inc = TWO_PI/25.0;
-
-for(int i=0; i&lt;100; i=i+4) {
-  line(i, 50, i, 50+sin(a)*40.0);
-  a = a + inc;
+int a_fp = 0; 
+int inc_fp = TWO_PI/25; 
+ 
+for(int i=0; i&lt;100; i=i+4) { 
+  line(i, 50, i, 50+fptoi(sin(a_fp)*40)); 
+  a_fp = a_fp + inc_fp; 
 }
 </code>
 </example>
 
 <description>
-Calculates the sine of an angle. This function expects the values of the <b>angle</b> parameter to be provided in radians (values from 0 to 6.28). Values are returned in the range -1 to 1.
+Calculates the sine of an angle. This function expects the values of the <b>angle</b> parameter to be provided in radian fixed point values (values from 0 to 6.28). Values are returned as fixed point values in the range -1 to 1.
 </description>
 
 <syntax>
@@ -31,10 +31,10 @@ sin(<c>rad</c>)
 
 <parameter>
 <label>rad</label>
-<description>float: an angle in radians</description>
+<description>int fixed point value: an angle in radians</description>
 </parameter>
 
-<returns>float</returns>
+<returns>int fixed point value</returns>
 
 <related>
 cos()

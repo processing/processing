@@ -36,9 +36,6 @@ while ($child) {
     $tag = $child->node_name();
     if (($tag == 'example') || ($tag == 'parameter') ||
         ($tag == 'method') || ($tag == 'cparameter')) {
-        if (!isset($value[$tag])) {
-            $value[$tag] = array();
-        }
         $subvalue = array();
         $gchild = $child->first_child();
         while ($gchild) {
@@ -50,7 +47,9 @@ while ($child) {
 
             $gchild = $gchild->next_sibling();
         }
-        $value[$tag][] = $subvalue;
+	if (count($subvalue) > 0) {
+            $value[$tag][] = $subvalue;
+        }
     } else if ($tag[0] == '#') {
         //// skip
     } else {

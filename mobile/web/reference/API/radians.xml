@@ -4,21 +4,24 @@
 
 <category>Math</category>
 
-<subcategory>Trigonometry</subcategory>
+<subcategory>Fixed Point - Trigonometry</subcategory>
 
 <usage>Web &amp; Application</usage>
 
 <example>
 <image></image>
 <code>
-float deg = 45.0;
-float rad = radians(deg);
-println(deg + " degrees is " + rad + " radians");
+int deg_fp = (int) (90.0f * ONE);
+int rad_fp = radians(deg_fp);
+
+int value_fp = sin(rad_fp);
+
+println("sin of " + fptoi(deg_fp) + " degrees is " + fptoi(value_fp));
 </code>
 </example>
 
 <description>
-Converts a degree measurement to its corresponding value in radians. Radians and degrees are two ways of measuring the same thing. There are 360 degrees in a circle and 2*PI radians in a circle. For example, 90&#176; = PI/2 = 1.5707964. All trigonometric methods in Processing require their parameters to be specified in radians.
+Converts a degree fixed point value measurement to its corresponding fixed point value in radians. Radians and degrees are two ways of measuring the same thing. There are 360 degrees in a circle and 2*PI radians in a circle. For example, 90&#176; = PI/2 = 1.5707964. All trigonometric methods in Processing require their parameters to be specified in radian fixed point values.
 </description>
 
 <syntax>
@@ -27,10 +30,10 @@ radians(<c>angle</c>)
 
 <parameter>
 <label>angle</label>
-<description>int or float</description>
+<description>int fixed point value</description>
 </parameter>
 
-<returns>float</returns>
+<returns>int fixed point value</returns>
 
 <related>
 degrees()

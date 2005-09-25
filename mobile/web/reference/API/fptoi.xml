@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>fptoi()</name>
+
+<category>Math</category>
+
+<subcategory>Fixed Point - Conversion</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int var1 = 50;
+int var1_fp = itofp(var1);             // Sets var1_fp to 50.0
+int var2_fp = (int) (0.5f * ONE);      // Sets var2_fp to 0.5
+
+int result_fp = mul(var1_fp, var2_fp); // Sets result_fp to 25.0
+
+int result = fptoi(result_fp);         // Sets result to 25
+</code>
+</example>
+
+<description>
+Returns the largest integer less than or equal to the specified fixed point value. Use this function to convert a fixed point value into a normal integer for use in other functions, such as drawing functions.
+</description>
+
+<syntax>
+fptoi(<c>value1</c>)
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>int fixed point value</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+itofp()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>mul()</name>
+
+<category>Math</category>
+
+<subcategory>Fixed Point - Calculation</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int e_fp = mul(itofp(50), itofp(5)); // Sets e_fp to 250.0
+int f_fp = mul(e_fp, itofp(5));      // Sets f_fp to 1250.0
+int f = fptoi(f_fp);                 // Sets f to 1250
+</code>
+</example>
+
+<description>
+Multiplies two fixed point values and returns a fixed point value.
+</description>
+
+<syntax>
+mul(<c>value1</c>, <c>value2</c>)
+</syntax>
+
+<parameter>
+<label>value1</label>
+<description>int fixed point value</description>
+</parameter>
+
+<parameter>
+<label>value2</label>
+<description>int fixed point value</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+div()
+</related>
+
+<availability>1.0</availability>
+
+<type>Operator</type>
+
+<partof>PDE</partof>
+
+
+
+
+
+
+
+
+</root>
