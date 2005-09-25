@@ -9,9 +9,9 @@
 <usage>Web &amp; Application</usage>
 
 <description>
-FP_PRECISION is the number of bits reserved for the fractional part of a number in fixed point calculations. Currently, this constant has the value 8. To convert an integer to its fixed point representation, you can use either <b>itofp()</b> or simply shift the integer left by this value:<br>
-<br>
-<pre>int value_fp = 25 << FP_PRECISION; // the fixed point representation of the number 25</pre>
+FP_PRECISION is the number of bits reserved for the fractional part of a number in fixed point calculations. Currently, this constant has the value 8. To convert an integer to its fixed point representation, you can use either <b>itofp()</b> or simply shift the integer left by this value:<br />
+<br />
+<pre>int value_fp = 25 &lt;&lt; FP_PRECISION; // the fixed point representation of the number 25</pre>
 </description>
 
 <syntax>
