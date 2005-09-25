@@ -1,5 +1,28 @@
 <?php
 
+function GetContentAsString($node) {   
+    $st = "";
+    foreach ($node->child_nodes() as $cnode)
+        if ($cnode->node_type()==XML_TEXT_NODE)
+            $st .= $cnode->node_value();
+        else if ($cnode->node_type()==XML_ELEMENT_NODE) {
+            $st .= "<" . $cnode->node_name();
+            if ($attribnodes=$cnode->attributes()) {
+                $st .= " ";
+                foreach ($attribnodes as $anode)
+                    $st .= $anode->node_name() . "='" .
+                        $anode-node_value() . "'";
+            }   
+            $nodeText = GetContentAsString($cnode);
+            if (empty($nodeText) && !$attribnodes)
+                $st .= " />";        // unary
+            else
+                $st .= ">" . $nodeText . "</" .
+                    $cnode->node_name() . ">";
+        }
+    return $st;
+}
+
 if (is_null($fullpath)) {
     $fullpath = dirname(__FILE__);
 }
@@ -31,7 +54,7 @@ while ($child) {
     } else if ($tag[0] == '#') {
         //// skip
     } else {
-        $content = trim($child->get_content());
+        $content = trim(GetContentAsString($child));
         if ($content != "") {
             $value[$tag] = $content;
         }

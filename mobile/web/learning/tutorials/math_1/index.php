@@ -89,6 +89,20 @@ There are functions for multiplication and division that handle the adjustments 
 int f_fp = mul(mass_fp, gravity_fp);      // = mass*gravity
 int m3_fp = div(force_fp, gravity_fp);    // = force/gravity
 </pre>
+Multiplication and division by whole numbers can be made directly, as described above:<br>
+<br>
+<pre>
+force_fp = 2 * f_fp;
+mass_fp = mass_fp / 4;
+</pre>
+The drawing functions of Mobile Processing require normal integer values for their coordinates. Fixed point values need to be converted to normal integers, dropping the fractional part. Use the fptoi() function to do so:<br>
+<br>
+<pre>
+int x = fptoi(x_fp);
+int y = fptoi(y_fp);
+point(x, y);
+</pre>
+
 <?php
 require '../../../footer.inc.php';
 ?>
