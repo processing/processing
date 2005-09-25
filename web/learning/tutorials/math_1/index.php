@@ -102,7 +102,7 @@ int x = fptoi(x_fp);
 int y = fptoi(y_fp);
 point(x, y);
 </pre>
-
+For more examples, see the Language reference for the various Fixed Point functions, including Trigonometry function such as sin() and cos().
 <?php
 require '../../../footer.inc.php';
 ?>
