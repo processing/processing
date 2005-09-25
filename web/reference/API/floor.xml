@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>ceil()</name>
+<name>floor()</name>
 
 <category>Math</category>
 
@@ -11,18 +11,18 @@
 <example>
 <image></image>
 <code>
-int x_fp = (int) (8.22f * ONE);
-int a_fp = ceil(x_fp);  // Set "a_fp" to 9.0
-int a = fptoi(a_fp);    // Set "a" to 9
+int x_fp = (int) (2.88f * ONE);  
+int a_fp = floor(x_fp);  // Set "a_fp" to 2.0
+int a = fptoi(a_fp);     // Set "a" to 2
 </code>
 </example>
 
 <description>
-Calculates the closest int fixed point value that is greater than or equal to the fixed point value of the parameter. For example, <b>ceil(9.03)</b> returns the value 10.0.
+Calculates the closest int fixed point value that is less than or equal to the fixed point value of the parameter.
 </description>
 
 <syntax>
-ceil(<c>value</c>)
+floor(<c>value</c>)
 </syntax>
 
 <parameter>
@@ -33,7 +33,7 @@ ceil(<c>value</c>)
 <returns>int fixed point value</returns>
 
 <related>
-floor()
+ceil()
 round()
 </related>
 

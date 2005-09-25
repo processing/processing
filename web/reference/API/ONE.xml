@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>ONE (1.0)</name>
+
+<category>Constants</category>
+
+<subcategory>Fixed Point</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<description>
+ONE is the fixed point representation of the value of 1.0. It is useful for comparison and for specifying fractional constants in code like this:<br />
+<br />
+<pre>
+int gravity_fp = (int) (-9.8f * ONE);  // stores the fixed point representation
+                                       // of -9.8 in the integer variable gravity_fp
+</pre>
+</description>
+
+<syntax>
+ONE
+</syntax>
+
+<availability>1.0</availability>
+
+<type>Constant</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

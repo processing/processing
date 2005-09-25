@@ -4,18 +4,19 @@
 
 <category>Constants</category>
 
-<subcategory></subcategory>
+<subcategory>Fixed Point</subcategory>
 
 <usage>Web &amp; Application</usage>
 
 <example>
 <image>PI.gif</image>
 <code>
-float f = 0.0;
+int f_fp = 0;
 beginShape(POLYGON);
-while(f &lt; PI) {
-  vertex(width/2 + cos(f)*40, height/2 + sin(f)*40);
-  f += PI/12.0;
+while(f_fp &lt;= PI) {
+  vertex(width/2 + fptoi(cos(f_fp)*40), 
+         height/2 + fptoi(sin(f_fp)*40));
+  f_fp += PI/12;
 }
 endShape();
 </code>

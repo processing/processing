@@ -5,27 +5,29 @@
 
 <category>Math</category>
 
-<subcategory>Calculation</subcategory>
+<subcategory>Fixed Point - Calculation</subcategory>
 
 <usage>Web &amp; Application</usage>
 
 <example>
 <image></image>
 <code>
-float x = 9.2;  
-int rx = round(x);  // Sets rx to 9
+int x_fp = (int) (9.2f * ONE);  
+int rx_fp = round(x_fp);  // Sets rx_fp to 9.0
+int rx = fptoi(rx_fp);    // Sets rx to 9
 
-float y = 9.5;
-int ry = round(y);  // Sets ry to 10
+int y_fp = (int) (9.5f * ONE);
+int ry_fp = round(y_fp);  // Sets ry_fp to 10.0
+int ry = fptoi(ry_fp);    // Sets ry to 10
 
-float z = 9.9;
-int rz = round(z);  // Sets rz to 10
-
+int z_fp = (int) (9.9f * ONE);
+int rz_fp = round(z_fp);  // Sets rz_fp to 10.0
+int rz = fptoi(rz_fp);    // Sets rz to 10
 </code>
 </example>
 
 <description>
-Calculates the integer closest to the <b>value</b> parameter. For example, <b>round(9.2)</b> returns the value 9.
+Calculates the integer fixed point value closest to the fixed point <b>value</b> parameter. For example, <b>round(9.2)</b> returns the value 9.0.
 </description>
 
 <syntax>
@@ -34,10 +36,10 @@ round(<c>value</c>)
 
 <parameter>
 <label>value</label>
-<description>float</description>
+<description>int fixed point value</description>
 </parameter>
 
-<returns>int</returns>
+<returns>int fixed point value</returns>
 
 <related>
 floor()
