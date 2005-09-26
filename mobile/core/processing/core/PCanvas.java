@@ -190,7 +190,7 @@ public class PCanvas extends Canvas {
     }
     
     public void rectMode(int MODE) {
-        if ((MODE >= PMIDlet.CORNER) && (MODE <= PMIDlet.CENTER)) {
+        if ((MODE >= PMIDlet.CENTER) && (MODE <= PMIDlet.CORNER)) {
             rectMode = MODE;
         }
     }
