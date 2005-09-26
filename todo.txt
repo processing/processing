@@ -28,6 +28,7 @@ X     go through methods to properly flush the cache
 X     can also just change the name
 X make a note in the library howto about using something besides p5
 X add the faq to the help menu
+X patch from mellis to make dist.sh properly grab version numbers w/o fink
 
 fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
@@ -84,6 +85,13 @@ forum bugs
 X when replying, all the replies so far are listed twice
 o fonts are wrong all over the place (use windows to debug)
 
+
+_ save code before export, otherwise .pde exported is empty
+_   ask user ok or cancel to save code before exporting
+_   http://dev.processing.org/bugs/show_bug.cgi?id=157
+
+_ when run externally without a draw, applets will exit immediately
+_   when run internally (no code folder or .java files) will just wait
 
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
