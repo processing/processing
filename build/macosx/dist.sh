@@ -1,28 +1,15 @@
 #!/bin/sh
 
 
-# prefers that fink is intalled, but not required
-if test -f /sw/bin/head
+SHORT_REVISION=`head -1 ../../todo.txt | cut -c 3-4`
+REVISION=`head -1 ../../todo.txt | cut -c 1-4`
+
+VERSIONED=`cat ../../app/Base.java | grep $REVISION`
+if [ -z "$VERSIONED" ]
 then
-  # old 4 char version.. osx only uses the two chars
-  #REVISION=`head -c 4 ../../todo.txt`
-  # a more useful version of head than what's included with osx
-  SHORT_REVISION=`/sw/bin/head -c 4 ../../todo.txt | tail -c 2`
-  REVISION=`/sw/bin/head -c 4 ../../todo.txt`
-
-  VERSIONED=`cat ../../app/Base.java | grep $REVISION`
-  if [ -z "$VERSIONED" ]
-  then
-    echo Fix the revision number in Base.java
-    exit
-  fi
-
-else
-  # can't get four bytes of head (osx doesn't support -c)
-  SHORT_REVISION=00
-  REVISION=0000
+  echo Fix the revision number in Base.java
+  exit
 fi
-
 
 ./make.sh
 
@@ -59,7 +46,7 @@ cd ..
 cp dist/DS_Store processing/.DS_Store
 
 # get package from the dist dir
-cp -a dist/Processing.app processing/
+cp -pR dist/Processing.app processing/
 chmod +x processing/Processing.app/Contents/MacOS/JavaApplicationStub
 
 # put jar files into the resource dir, leave the rest in lib

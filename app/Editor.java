@@ -246,6 +246,56 @@ public class Editor extends JFrame
         }
       });
     */
+
+    /*
+    //System.out.println("adding droptarget");
+    DropTarget dt = new DropTarget(this, new DropTargetListener() {
+
+        public void dragEnter(DropTargetDragEvent event) {
+          // debug messages for diagnostics
+          System.out.println("dragEnter " + event);
+          event.acceptDrag(DnDConstants.ACTION_COPY);
+        }
+
+        public void dragExit (DropTargetEvent event) {
+          System.out.println("dragExit " + event);
+
+        }
+
+        public void dragOver (DropTargetDragEvent event) {
+          System.out.println("dragOver " + event);
+          //event.acceptDrag(DnDConstants.ACTION_COPY);
+        }
+
+        public void drop(DropTargetDropEvent event) {
+          System.out.println("drop " + event);
+
+          event.acceptDrop(DnDConstants.ACTION_MOVE);
+
+          Transferable transferable = event.getTransferable();
+          DataFlavor flavors[] = transferable.getTransferDataFlavors();
+          for (int i = 0; i < flavors.length; i++) {
+            try {
+              System.out.println(flavors[i]);
+              System.out.println(transferable.getTransferData(flavors[i]));
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        }
+
+        public void dropActionChanged(DropTargetDragEvent event) {
+          System.out.println("dropActionChanged " + event);
+        }
+      });
+
+    try {
+      dt.addDropTargetListener(this);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    */
   }
 
 
