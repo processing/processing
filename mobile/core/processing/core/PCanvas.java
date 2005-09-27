@@ -613,6 +613,10 @@ public class PCanvas extends Canvas {
         bufferg.fillRect(0, 0, width, height);
     }
     
+    public void background(PImage img) {
+        image(img, (width - img.width) >> 1, (height - img.height) >> 1);
+    }
+    
     public void image(PImage img, int x, int y) {
         bufferg.drawImage(img.getPeer(), x, y, Graphics.TOP | Graphics.LEFT);
     }

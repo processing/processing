@@ -280,6 +280,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         canvas.background(value1, value2, value3);
     }
     
+    public final void background(PImage img) {
+        canvas.background(img);
+    }
+    
     public final void colorMode(int mode) {
         canvas.colorMode(mode);
     }
