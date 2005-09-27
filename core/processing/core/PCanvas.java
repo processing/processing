@@ -33,6 +33,7 @@ public class PCanvas extends Canvas {
     
     private int         rectMode;
     private int         ellipseMode;
+    private int         imageMode;
     
     private int         shapeMode;
     private int[]       vertex;
@@ -610,6 +611,10 @@ public class PCanvas extends Canvas {
     public void background(int value1, int value2, int value3) {
         bufferg.setColor(value1, value2, value3);
         bufferg.fillRect(0, 0, width, height);
+    }
+    
+    public void image(PImage img, int x, int y) {
+        bufferg.drawImage(img.getPeer(), x, y, Graphics.TOP | Graphics.LEFT);
     }
     
     public void colorMode(int mode) {

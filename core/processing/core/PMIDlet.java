@@ -343,7 +343,20 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final void textMode(int MODE) {
         canvas.textMode(MODE);
     }
-    
+        
+    public final PImage loadImage(String filename) {
+        try {
+            Image peer = Image.createImage("/" + filename);
+            return new PImage(peer);
+        } catch(Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public final void image(PImage img, int x, int y) {
+        canvas.image(img,x,y);
+    }
+        
     public final int millis() {
         return (int) (System.currentTimeMillis() - startTime);
     }
