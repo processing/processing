@@ -3,7 +3,7 @@
 <name>GET</name>
 
 <description>
-Makes a GET request to the server to retreive specified content. This is equivalent to typing a url into a desktop web browser and retreiving the contents of the web page. Here, the contents is returned in a String. Note that you can pass parameters to the server if the file you are requesting is a script that will be executed.
+Makes a GET request to the server to retreive specified content. This is equivalent to typing a url into a desktop web browser and retreiving the contents of the web page. Here, the content is returned in a String. Note that you can pass parameters to the server if the file you are requesting is a script that will be executed.
 </description>
 
 <syntax>
