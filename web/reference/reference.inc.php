@@ -56,6 +56,7 @@ while ($child) {
         $content = trim(GetContentAsString($child));
         if ($content != "") {
             $value[$tag] = $content;
+            echo $tag ." type is: ". $child->node_type();
         }
     }
 
