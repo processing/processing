@@ -47,7 +47,7 @@ while ($child) {
 
             $gchild = $gchild->next_sibling();
         }
-	if (count($subvalue) > 0) {
+        if (count($subvalue) > 0) {
             $value[$tag][] = $subvalue;
         }
     } else if ($tag[0] == '#') {
@@ -56,7 +56,6 @@ while ($child) {
         $content = trim(GetContentAsString($child));
         if ($content != "") {
             $value[$tag] = $content;
-            echo $tag ." type is: ". $child->node_type();
         }
     }
 
