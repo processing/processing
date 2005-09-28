@@ -773,7 +773,12 @@ public class PCanvas extends Canvas {
     }
     
     public void stroke(int gray) {
-        stroke(gray, gray, gray);
+        if (((gray & 0xff000000) == 0) && (gray <= colorMaxX)) {
+            stroke(gray, gray, gray);
+        } else {
+            stroke = true;
+            strokeColor = gray;
+        }
     }
     
     public void stroke(int value1, int value2, int value3) {
@@ -786,7 +791,7 @@ public class PCanvas extends Canvas {
     }
     
     public void fill(int gray) {
-        if ((gray & 0xff000000) == 0) {
+        if (((gray & 0xff000000) == 0) && (gray <= colorMaxX)) {
             fill(gray, gray, gray);
         } else {
             fill = true;
