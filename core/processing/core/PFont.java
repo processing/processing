@@ -16,7 +16,7 @@ public class PFont {
 
     protected int   ascii[];        // quick lookup for the ascii chars
     
-    public PFont(InputStream is) {
+    public PFont(InputStream is, int color, int bgcolor) {
         try {
             DataInputStream dis = new DataInputStream(is);
 
@@ -56,6 +56,29 @@ public class PFont {
                 pngSize = dis.readInt();
                 pngData = new byte[pngSize];
                 dis.readFully(pngData);
+                if ((color != 0) || (bgcolor != 0xffffff)) {
+                    //// modify palette before decoding
+                    final int offset = 8 /* png signature */ + 25 /* IHDR chunk */ + 8 /* PLTE chunk header */;
+                    //// calculate a gradient from bgcolor to color
+                    int r = (bgcolor & 0xff0000) >> 16;
+                    int g = (bgcolor & 0xff00) >> 8;
+                    int b = bgcolor & 0xff;
+                    int dr = ((color & 0xff0000) >> 16) - r;
+                    int dg = ((color & 0xff00) >> 8) - g;
+                    int db = (color & 0xff) - b;
+                    int index = offset;
+                    for (int j = 0; j < 256; j++) {
+                        pngData[index++] = (byte) (r + j * dr / 255);
+                        pngData[index++] = (byte) (g + j * dg / 255);
+                        pngData[index++] = (byte) (b + j * db / 255);
+                    }
+                    //// recalculate crc
+                    int crc = PMIDlet.crc(pngData, offset - 4, (768 + 4));
+                    pngData[offset + 768] = (byte) ((crc & 0xff000000) >> 24);
+                    pngData[offset + 769] = (byte) ((crc & 0xff0000) >> 16);
+                    pngData[offset + 770] = (byte) ((crc & 0xff00) >> 8);
+                    pngData[offset + 771] = (byte) (crc & 0xff);
+                }
                 images[i] = new PImage(pngData);
             }            
         } catch (Exception e) {
