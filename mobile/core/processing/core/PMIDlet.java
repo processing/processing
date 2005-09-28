@@ -353,12 +353,20 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         canvas.image(img,x,y);
     }
     
-    public final PFont loadFont(String fontname) {
+    public final PFont loadFont(String fontname, int color, int bgcolor) {
         try {
-            return new PFont(getClass().getResourceAsStream("/" + fontname));
+            return new PFont(getClass().getResourceAsStream("/" + fontname), color, bgcolor);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+    
+    public final PFont loadFont(String fontname, int color) {
+        return loadFont(fontname, color, 0xffffff);
+    }
+    
+    public final PFont loadFont(String fontname) {
+        return loadFont(fontname, 0);
     }
     
     public final void textFont(PFont font) {
@@ -1454,4 +1462,47 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         (int) (-0.0348994967025008f * ONE),
         (int) (-0.0174524064372844f * ONE),
     };
+    
+    /** Table of CRCs of all 8-bit messages. */
+    private static int crc_table[];
+   
+    /** Make the table for a fast CRC. */
+    private static void make_crc_table() {
+        crc_table = new int[256];
+        int c;
+        int n, k;
+   
+        for (n = 0; n < 256; n++) {
+            c = n;
+            for (k = 0; k < 8; k++) {
+                if ((c & 1) > 0)
+                    c = 0xedb88320 ^ (c >> 1);
+                else
+                    c = c >> 1;
+            }
+            crc_table[n] = c;
+        }
+    }
+   
+    /** Update a running CRC with the bytes buf[0..len-1]--the CRC
+     * should be initialized to all 1's, and the transmitted value
+     * is the 1's complement of the final running CRC (see the
+     * crc() routine below)). */
+    private static int update_crc(int crc, byte[] buf, int offset, int len) {
+        int c = crc;
+        int n, end;
+   
+        if (crc_table == null)
+            make_crc_table();
+        
+        for (n = offset, end = offset + len; n < end; n++) {
+            c = crc_table[(c ^ buf[n]) & 0xff] ^ (c >> 8);
+        }
+        return c;
+    }
+   
+    /** Return the CRC of the bytes buf[0..len-1]. */
+    public static int crc(byte[] buf, int offset, int len) {
+        return update_crc(0xffffffff, buf, offset, len) ^ 0xffffffff;
+    }
 }

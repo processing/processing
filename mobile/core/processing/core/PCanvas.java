@@ -869,47 +869,4 @@ public class PCanvas extends Canvas {
     private static final int EDGE_X2            = 5;
     private static final int EDGE_Y2            = 6;
     private static final int EDGE_ARRAY_SIZE    = 7;
-    
-    /** Table of CRCs of all 8-bit messages. */
-    private int crc_table[];
-   
-    /** Make the table for a fast CRC. */
-    private void make_crc_table() {
-        crc_table = new int[256];
-        int c;
-        int n, k;
-   
-        for (n = 0; n < 256; n++) {
-            c = n;
-            for (k = 0; k < 8; k++) {
-                if ((c & 1) > 0)
-                    c = 0xedb88320 ^ (c >> 1);
-                else
-                    c = c >> 1;
-            }
-            crc_table[n] = c;
-        }
-    }
-   
-    /** Update a running CRC with the bytes buf[0..len-1]--the CRC
-     * should be initialized to all 1's, and the transmitted value
-     * is the 1's complement of the final running CRC (see the
-     * crc() routine below)). */
-    private int update_crc(int crc, byte[] buf, int len) {
-        int c = crc;
-        int n;
-   
-        if (crc_table == null)
-            make_crc_table();
-        
-        for (n = 0; n < len; n++) {
-            c = crc_table[(c ^ buf[n]) & 0xff] ^ (c >> 8);
-        }
-        return c;
-    }
-   
-    /** Return the CRC of the bytes buf[0..len-1]. */
-    private int crc(byte[] buf, int len) {
-        return update_crc(0xffffffff, buf, len) ^ 0xffffffff;
-    }
 }
