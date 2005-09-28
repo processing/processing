@@ -339,14 +339,6 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final void noFill() {
         canvas.noFill();
     }
-    
-    public final void text(String data, int x, int y) {
-        canvas.text(data, x, y);
-    }
-    
-    public final void textMode(int MODE) {
-        canvas.textMode(MODE);
-    }
         
     public final PImage loadImage(String filename) {
         try {
@@ -359,6 +351,30 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
 
     public final void image(PImage img, int x, int y) {
         canvas.image(img,x,y);
+    }
+    
+    public final PFont loadFont(String fontname) {
+        try {
+            return new PFont(getClass().getResourceAsStream("/" + fontname));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+    public final void textFont(PFont font) {
+        canvas.textFont(font);
+    }
+    
+    public final void textAlign(int MODE) {
+        canvas.textAlign(MODE);
+    }
+    
+    public final void text(String data, int x, int y) {
+        canvas.text(data, x, y);
+    }
+    
+    public final int textWidth(String data) {
+        return canvas.textWidth(data);
     }
         
     public final int millis() {

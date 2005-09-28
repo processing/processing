@@ -60,6 +60,11 @@
                 <include name="**/*.java"/>
             </fileset>            
         </copy>
+        <copy todir="processing/core" overwrite="true">
+            <fileset dir="mobile/appcore">
+                <include name="**/*.java"/>
+            </fileset>            
+        </copy>
     </target>
     
     <!-- if processing not built for the first time yet, copy files to update launcher executable -->
