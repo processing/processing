@@ -11,7 +11,7 @@ public class PImage {
     /**
     * The native image.
     */
-    private Image peer;
+    protected Image peer;
     /**
     * A constant with the image width.
     */
@@ -33,6 +33,10 @@ public class PImage {
         height = peer.getHeight();
     }
     
+    public PImage(byte[] png) {
+        this(png, 0, png.length);
+    }
+    
     public PImage(byte[] png, int offset, int length) {
         try {
             peer = Image.createImage(png, offset, length);
@@ -41,16 +45,5 @@ public class PImage {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    /**
-    * Returns the peer image.
-    *
-    * @return The peer image.
-    */
-
-    protected Image getPeer()
-    {
-        return peer;
     }
 }

@@ -46,7 +46,8 @@ public class PCanvas extends Canvas {
     private int         translateX;
     private int         translateY;
     
-    private int         textMode;
+    private PFont       textFont;
+    private int         textAlign;
     
     /** Creates a new instance of PCanvas */
     public PCanvas(PMIDlet midlet) {
@@ -81,7 +82,7 @@ public class PCanvas extends Canvas {
         
         stack = new int[4];
         
-        textMode = Graphics.TOP | Graphics.LEFT;
+        textAlign = PMIDlet.LEFT;
         
         background(200);
     }
@@ -618,7 +619,11 @@ public class PCanvas extends Canvas {
     }
     
     public void image(PImage img, int x, int y) {
-        bufferg.drawImage(img.getPeer(), x, y, Graphics.TOP | Graphics.LEFT);
+        bufferg.drawImage(img.peer, x, y, Graphics.TOP | Graphics.LEFT);
+    }
+    
+    public void textFont(PFont font) {
+        textFont = font;
     }
     
     public void colorMode(int mode) {
@@ -799,22 +804,56 @@ public class PCanvas extends Canvas {
     }
     
     public void text(String data, int x, int y) {
-        bufferg.setColor(0);
-        bufferg.drawString(data, x, y, textMode);
+        if (textFont == null) {
+            throw new RuntimeException("The current font has not yet been set with textFont()");
+        }
+        if (textAlign != PMIDlet.LEFT) {
+            int width = textWidth(data);
+            if (textAlign == PMIDlet.CENTER) {
+                x -= width >> 1;
+            } else if (textAlign == PMIDlet.RIGHT) {
+                x -= width;
+            }
+        }
+        char c;
+        int index;
+        for (int i = 0, length = data.length(); i < length; i++) {
+            c = data.charAt(i);
+            index = textFont.getIndex(c);
+            if (index >= 0) {
+                bufferg.drawImage(textFont.images[index].peer, x + textFont.leftExtent[index], y - textFont.topExtent[index], Graphics.TOP | Graphics.LEFT);
+                x += textFont.setWidth[index];
+            } else {
+                x += textFont.setWidth[textFont.ascii['i']];
+            }
+        }
     }
     
-    public void textMode(int MODE) {
-        switch (MODE) {
-            case PMIDlet.LEFT:
-                textMode = Graphics.TOP | Graphics.LEFT;
-                break;
-            case PMIDlet.RIGHT:
-                textMode = Graphics.TOP | Graphics.RIGHT;
-                break;
-            case PMIDlet.CENTER:
-                textMode = Graphics.TOP | Graphics.HCENTER;
-                break;
+    public int textWidth(String data) {
+        if (textFont == null) {
+            throw new RuntimeException("The current font has not yet been set with textFont()");
         }
+        char c;
+        int index;
+        int width = 0;
+        for (int i = 0, length = data.length(); i < length; i++) {
+            c = data.charAt(i);
+            index = textFont.getIndex(c);
+            if (index >= 0) {
+                width += textFont.setWidth[index];
+            } else {
+                width += textFont.setWidth[textFont.ascii['i']];
+            }
+        }
+        
+        return width;
+    }
+    
+    public void textAlign(int MODE) {
+        if ((MODE != PMIDlet.LEFT) && (MODE != PMIDlet.CENTER) && (MODE != PMIDlet.RIGHT)) {
+            throw new IllegalArgumentException("Invalid textAlign MODE value");
+        }
+        textAlign = MODE;
     }
     
     private static final int EDGE_X             = 0;
