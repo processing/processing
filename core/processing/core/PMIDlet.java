@@ -469,6 +469,32 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return min + Math.abs((random.nextInt() % range));
     }
     
+    public final byte[] loadBytes(String filename) {
+        InputStream is = null;
+        try {
+            is = getClass().getResourceAsStream(filename);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            
+            byte[] buffer = new byte[1024];
+            int bytesRead = is.read(buffer);
+            while (bytesRead >= 0) {
+                baos.write(buffer, 0, bytesRead);
+                bytesRead = is.read(buffer);
+            }
+            
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ioe) {                    
+                }
+            }
+        }
+    }
+    
     public final String[] loadStrings(String filename) {
         Vector v = new Vector();
         InputStream is = null;
@@ -499,13 +525,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 input = r.read();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         } finally {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ioe) {
-                    
+                } catch (IOException ioe) {                    
                 }
             }
         }
@@ -689,6 +714,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         System.arraycopy(old, 0, array, 0, length);
         array[length] = element;
         return array;        
+    }
+    
+    public final void arraycopy(Object src, int srcPos, Object dest, int destPos, int length) {
+        System.arraycopy(src, srcPos, dest, destPos, length);
     }
     
     public final String[] concat(String[] array1, String[] array2) {
@@ -1057,6 +1086,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final int sin(int rad) {
         //// convert to degrees
         int index = rad * 180 / PI % 360;
+        if (index < 0) {
+            index += 360;
+        }
         return sin[index];
     }
     
@@ -1064,6 +1096,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final int cos(int rad) {
         //// convert to degrees
         int index = (rad * 180 / PI + 90) % 360;
+        if (index < 0) {
+            index += 360;
+        }
         return sin[index];
     }
     
@@ -1469,18 +1504,18 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     /** Make the table for a fast CRC. */
     private static void make_crc_table() {
         crc_table = new int[256];
-        int c;
+        long c;
         int n, k;
    
         for (n = 0; n < 256; n++) {
             c = n;
             for (k = 0; k < 8; k++) {
-                if ((c & 1) > 0)
-                    c = 0xedb88320 ^ (c >> 1);
+                if ((c & 1) != 0)
+                    c = 0xedb88320L ^ (c >> 1);
                 else
                     c = c >> 1;
             }
-            crc_table[n] = c;
+            crc_table[n] = (int) c;
         }
     }
    
@@ -1488,21 +1523,21 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
      * should be initialized to all 1's, and the transmitted value
      * is the 1's complement of the final running CRC (see the
      * crc() routine below)). */
-    private static int update_crc(int crc, byte[] buf, int offset, int len) {
-        int c = crc;
+    private static int update_crc(long crc, byte[] buf, int offset, int len) {
+        long c = crc;
         int n, end;
    
         if (crc_table == null)
             make_crc_table();
         
         for (n = offset, end = offset + len; n < end; n++) {
-            c = crc_table[(c ^ buf[n]) & 0xff] ^ (c >> 8);
+            c = (((long) crc_table[(int) ((c ^ buf[n]) & 0xff)]) & 0xffffffffL) ^ (c >> 8);
         }
-        return c;
+        return (int) c;
     }
    
     /** Return the CRC of the bytes buf[0..len-1]. */
     public static int crc(byte[] buf, int offset, int len) {
-        return update_crc(0xffffffff, buf, offset, len) ^ 0xffffffff;
+        return update_crc(0xffffffffL, buf, offset, len) ^ 0xffffffff;
     }
 }
