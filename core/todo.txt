@@ -25,6 +25,9 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpen
 o noLoop() is behaving strangely
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116002432;start=0
 
+_ check to see noLoop() breakage is fixed in 92 vs 91
+_   http://dev.processing.org/bugs/show_bug.cgi?id=164
+
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
 _   currently truncating to an int inside add_line_no_clip
@@ -62,6 +65,9 @@ _ when using things like PGraphicsPDF, need to not resize window
 _   if it doesn't display to the screen, needs to never show a window
 _   basically if the main gfx context isn't viewable, close the window
 _   since it may have already been opened at 100x100
+
+_ clipboard implementation as example or as part of api
+_   http://dev.processing.org/bugs/show_bug.cgi?id=167
 
 _ get creating new PGraphics/2/3 working again
 _   http://dev.processing.org/bugs/show_bug.cgi?id=92
@@ -171,8 +177,6 @@ _ don't cache stuff from loadStrings and others
 _   mac java vm won't give up old version of file
 _   or use setUseCaches(false)
 _ 404 error because first searches applet directory on zipdecode
-_ should image i/o and sound i/o be moved into PImage and PSound?
-_   how to load external encoders/decoders
 _ placement of 100x100 items is odd
 _   happens with P3D and maybe also P2D?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=128
@@ -463,7 +467,10 @@ _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ dynamically load code for png and others on loadImage/saveFrame?
 _ updated png encoder
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
+_ should image i/o and sound i/o be moved into PImage and PSound?
+_   how to load external encoders/decoders
 _ more image file i/o.. more advanced in newer java
+_   http://dev.processing.org/bugs/show_bug.cgi?id=165
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1120174647
 _   read uncompressed tiff, read uncompressed tga files.
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
