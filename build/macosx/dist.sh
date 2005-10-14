@@ -83,6 +83,7 @@ find processing -name "Thumbs.db" -exec rm -f {} ';'
 # clean out the cvs entries
 find processing -name "CVS" -exec rm -rf {} ';' 2> /dev/null
 find processing -name ".cvsignore" -exec rm -rf {} ';'
+find processing -name ".svn" -exec rm -rf {} ';'
 
 mv processing/Processing.app "processing/Processing $SHORT_REVISION.app"
 mv processing processing-$REVISION
