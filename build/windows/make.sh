@@ -183,18 +183,21 @@ rm -rf processing
 mkdir -p $LIBRARIES/net/library/
 cp library/net.jar $LIBRARIES/net/library/
 
-
 # VIDEO LIBRARY
 echo Building video library...
-QTJAVA="$WINDIR\\system32\\QTJava.zip"
 if test -f "${QTJAVA}"
-then
-  echo "Found Quicktime at $QTJAVA"
-else 
-  echo "could not find qtjava.zip in"
-  echo "${WINDIR}\\system32\\qtjava.zip"
-  echo "quicktime for java must be installed before building."
-  exit 1;
+then 
+  echo "Found Quicktime 7 installation"
+else
+  QTJAVA="$WINDIR\\system32\\QTJava.zip"
+  if test -f "${QTJAVA}"
+  then
+    echo "Found Quicktime 6 at $QTJAVA"
+  else 
+    echo "Could not find QuickTime for Java,"
+    echo "you'll need to install it before building."
+    exit 1;
+  fi
 fi
 cd ../video
 $JIKES -target 1.1 +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 

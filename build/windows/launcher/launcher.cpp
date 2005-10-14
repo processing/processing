@@ -100,11 +100,20 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   char *qtjava_path = (char *)malloc(16384 * sizeof(char));
   qtjava_path[0] = 0;
 
-  if (getenv("WINDIR") == NULL) {
+  if (getenv("QTJAVA") != NULL) {
+    strcpy(qtjava_path, getenv("QTJAVA"));
+    FILE *fp = fopen(qtjava_path, "rb");
+    if (fp != NULL) {
+      fclose(fp);  // found it, all set
+      strcat(qtjava_path, ";"); // add path separator
+    }
+  }
+  if (qtjava_path[0] == 0) {  // not set yet
+    //if (getenv("WINDIR") == NULL) {
     // uh-oh.. serious problem.. gonna have to report this
     // but hopefully WINDIR is set on win98 too
+    //} else {
 
-  } else {
     strcpy(qtjava_path, getenv("WINDIR"));
     strcat(qtjava_path, "\\SYSTEM32\\QTJava.zip");
 
