@@ -93,6 +93,7 @@ find processing -name "*.html" -exec chmod +x {} ';'
 # clean out the cvs entries
 find processing -name "CVS" -exec rm -rf {} ';' 2> /dev/null
 find processing -name ".cvsignore" -exec rm -rf {} ';'
+find processing -name ".svn" -exec rm -rf {} ';' 2> /dev/null
 
 # zip it all up for release
 echo Packaging standard release...

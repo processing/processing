@@ -58,7 +58,8 @@ find processing -name "Thumbs.db" -exec rm -f {} ';'
 
 # clean out the cvs entries
 find processing -name "CVS" -exec rm -rf {} ';' 2> /dev/null
-#find processing -name "CVS" -exec echo {} ';'
+find processing -name ".cvsignore" -exec rm -rf {} ';'
+find processing -name ".svn" -exec rm -rf {} ';'
 
 # zip it all up for release
 echo Creating tarball and finishing...
