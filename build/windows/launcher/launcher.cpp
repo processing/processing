@@ -129,7 +129,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
       }
     }
   }
-  
+
   // NO! put quotes around contents of cp, because %s might have spaces in it.
   // don't put quotes in it, because it's setting the environment variable
   // for CLASSPATH, not being included on the command line. so setting the
@@ -181,7 +181,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
   // need to add the local jre to the path for 'java mode' in the env
   if (local_jre_installed) {
-    
     char *env_path = (char *)malloc(strlen(getenv("PATH")) * sizeof(char));
     strcpy(env_path, getenv("PATH"));
     char *paf = (char *)malloc((strlen(env_path) + strlen(loaddir) + 32) * sizeof(char));
