@@ -7,7 +7,11 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0093 - XX september 2005
+ABOUT REV 0093 - 14 October 2005
+
+First release in a while with lots of bug fixes for the video library
+(QuickTime 7), OpenGL, and Jikes on Linux.
+
 
 [ big fixes ] 
 
@@ -20,14 +24,43 @@ ABOUT REV 0093 - XX september 2005
   saveFrame() were in a sketch folder. this has been fixed. 
   http://dev.processing.org/bugs/show_bug.cgi?id=84
 
+- some Java 1.4 code snuck into the core library, breaking applets
+  whenever Java 1.3 was in use (Firefox or IE on the Mac, for
+  instance). this is now fixed. 
+
 - new version of jikes for linux which should prevent the library 
   issues: http://dev.processing.org/bugs/show_bug.cgi?id=47
+
+- basic support for QuickTime 7 is now included, if you have problems,
+  please report them to the bugs database:
+  Mac OS X: http://dev.processing.org/bugs/show_bug.cgi?id=172
+  Windows: http://dev.processing.org/bugs/show_bug.cgi?id=171
+
+- applications that use OpenGL should run better due to an update of
+  the JOGL library. 
+
 
 [ other bits ] 
 
 - lots of additions to the FAQ and updates to dev.processing.org
 
 - lots of help from fjen on improving the bugs database
+
+- added a link to the FAQ from the Help menu
+
+- added menu shortcut for "show sketch folder" 
+
+- faster blur code contributed by toxi, along with filter(ERODE) 
+  and filter(DILATE). thanks toxi!
+
+- initial support for textMode(SHAPE), which will render fonts as
+  triangulated vectors that will eventually allow for exporting vector
+  text from OpenGL applications.
+
+- PGraphics.save() no longer inserts the prefix to the applet folder,
+  allowing it to be used for absolute paths. (use saveFrame() or the
+  savePath() function if you want to save frames to the sketch
+  folder). 
 
 
 

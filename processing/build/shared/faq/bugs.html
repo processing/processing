@@ -611,10 +611,26 @@ we're such a small group!)
       <b>
 Problems with Video (Quicktime for Java)
 </b> <br> <br>
-The QuickTime 7 upgrade released April 29, 2005 has not been tested with the video library. If you're working on a critical project that uses video, you should avoid this update, as some previous QuickTime updates have broken compatability with QuickTime for Java. On Mac OS X, Apple has provided a QuickTime 6.5.2 <a href="http://www.apple.com/support/downloads/quicktime652reinstallerformac.html">reinstaller</a> that you can use to return to your previous configuration. 
+The QuickTime 7 upgrade released April 29, 2005 (and now included with
+iTunes 6) has not been tested extensively with the video library. If
+you're using QuickTime 7, you'll need to use release 93 of Processing,
+which added some basic support for it. <B>If you're working on a
+critical project that uses video, do not install QuickTime 7 (or
+iTunes 6, which will install QuickTime 7), as there are likely
+problems with QuickTime for Java</B>. On Mac OS X, Apple has provided a
+QuickTime 6.5.2 <a
+href="http://www.apple.com/support/downloads/quicktime652reinstallerformac.html">reinstaller</a>
+that you can use to return to your previous configuration. 
+<br> <br>
+Follow-ups on issues related to problems with QuickTime 7 should
+happen in the bugs database, see the separate entries for <A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=172">Mac OS X</A>
+and <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=171">Windows</A>
 <br> <br>
 Windows
 <UL>
+
+<!--
 <LI>You must make sure that "QuickTime for Java" is installed. To
 install it, you need to download it from <a
 href="http://www.apple.com/quicktime/download/">apple.com/quicktime/download</A>. If you install the version "with iTunes", there's a second
@@ -627,6 +643,7 @@ href="http://www.apple.com/quicktime/download/">apple.com/quicktime/download</A>
   QuickTime, and did not use the "Custom" or "Full" install.
 
 <LI>Tt appears that QuickTime 7 breaks Processing video because Apple has decided to move the location of some files (specifically qtjava.zip). Stick with Quicktime 6.5.2.
+-->
 
 <LI>In order for camera input to work, you'll need to install a
 QuickTime-compatible video digitizer (VDIG). Unfortunately, most
