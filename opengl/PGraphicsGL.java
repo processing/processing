@@ -66,6 +66,7 @@ public class PGraphicsGL extends PGraphics3 {
   public GLCanvas canvas;
 
   //public Illustrator ai;
+  public PGraphics shapeListener;
 
   protected float[] projectionFloats;
 
@@ -581,20 +582,22 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
-        /*
-        if (ai != null) {
-          ai.fillColorRGBA((ar + br + cr) / 3.0f,
-                           (ag + bg + cg) / 3.0f,
-                           (ab + bb + cb) / 3.0f,
-                           (a[A] + b[A] + c[A]) / 3.0f);
-          ai.moveto(a[VX], a[VY]);
-          ai.lineto(b[VX], b[VY]);
-          ai.lineto(c[VX], c[VY]);
-          ai.lineto(a[VX], a[VY]);
-          ai.fillPath();
+        if (shapeListener != null) {
+          shapeListener.colorMode(RGB, 1);
+          shapeListener.noStroke();
+          float alpha = (a[A] + b[A] + c[A]) / 3.0f;
+          if (alpha > EPSILON) {
+            shapeListener.fill((ar + br + cr) / 3.0f,
+                               (ag + bg + cg) / 3.0f,
+                               (ab + bb + cb) / 3.0f,
+                               alpha);
+            shapeListener.beginShape(TRIANGLES);
+            shapeListener.vertex(a[VX], a[VY]);
+            shapeListener.vertex(b[VX], b[VY]);
+            shapeListener.vertex(c[VX], c[VY]);
+            shapeListener.endShape();
+          }
         }
-        */
-
         gl.glEnd();
       }
     }
@@ -618,12 +621,9 @@ public class PGraphicsGL extends PGraphics3 {
       //report("render_lines 2 " + lines[i][STROKE_WEIGHT]);
       gl.glBegin(GL.GL_LINE_STRIP);
 
-      /*
-      if (ai != null) {
-        //ai.strokeWeight(lines[i][STROKE_WEIGHT]);
-        ai.strokeWeight(sw);
+      if (shapeListener != null) {
+        shapeListener.strokeWeight(sw);
       }
-      */
 
       // always draw a first point
       float a[] = vertices[lines[i][VERTEX1]];
@@ -631,15 +631,14 @@ public class PGraphicsGL extends PGraphics3 {
       gl.glVertex3f(a[VX], a[VY], a[VZ]);
       //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
 
-      /*
-      if (ai != null) {
-        ai.strokeColorRGBA(a[SR], a[SG], a[SB], a[SA]);
-        //ai.strokeColorRGB(a[SR], a[SG], a[SB]); //, a[SA]);
-        ai.moveto(a[VX], a[VY]);
-        //ai.moveto(screenX(a[VX], a[VY], a[VZ]),
-        //        screenY(a[VX], a[VY], a[VZ]));
+      if (shapeListener != null) {
+        if (a[SA] > EPSILON) {  // don't draw if transparent
+          shapeListener.colorMode(RGB, 1);
+          shapeListener.stroke(a[SR], a[SG], a[SB], a[SA]);
+          shapeListener.beginShape(LINE_STRIP);
+          shapeListener.vertex(a[VX], a[VY]);
+        }
       }
-      */
 
       // on this and subsequent lines, only draw the second point
       //System.out.println(pathLength[j]);
@@ -648,24 +647,14 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
-        /*
-        if (ai != null) {
-          ai.lineto(b[VX], b[VY]);
-          //ai.lineto(screenX(b[VX], b[VY], b[VZ]),
-          //        screenY(b[VX], b[VY], b[VZ]));
+        if (shapeListener != null) {
+          shapeListener.vertex(b[VX], b[VY]);
         }
-        */
-
-        //System.out.println("  point: " + b[VX] +", "+ b[VY] +", "+ b[VZ]);
-        //System.out.println();
         i++;
-        //report("render_lines path out " + pathLength[j]);
       }
-      /*
-      if (ai != null) {
-        ai.endPath();
+      if (shapeListener != null) {
+        shapeListener.endShape();
       }
-      */
       gl.glEnd();
     }
     report("render_lines out");
@@ -972,7 +961,7 @@ public class PGraphicsGL extends PGraphics3 {
     FontRenderContext frc = graphics.getFontRenderContext();
     GlyphVector gv = textFontNative.createGlyphVector(frc, textArray);
     Shape shp = gv.getOutline();
-    PathIterator iter = shp.getPathIterator(null);
+    PathIterator iter = shp.getPathIterator(null, 0.05);
 
     glu.gluTessBeginPolygon(tobj, null);
     // second param to gluTessVertex is for a user defined object that contains
