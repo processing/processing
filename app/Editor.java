@@ -624,7 +624,7 @@ public class Editor extends JFrame
     if (Base.isWindows() || Base.isMacOS()) {
       // no way to do an 'open in file browser' on other platforms
       // since there isn't any sort of standard
-      item = new JMenuItem("Show Sketch Folder");
+      item = newJMenuItem("Show Sketch Folder", 'K', false);
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           //Base.openFolder(sketchDir);
