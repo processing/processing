@@ -1,5 +1,7 @@
 0094 pde
 
+_ don't write stdout.txt to the processing folder (write it to build dir?)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1129066571
 
 _ external apps should inherit memory settings from p5 itself
 _   too confusing to set the memory in two places
@@ -23,6 +25,7 @@ _ explanation of what the areas are
 _ be sure to look at the reference, especially the extended reference
 
 other faq
+_ change bugs.html to issues.html
 _ fastest machine possible
 _   turn off hyperthreading in the bios
 _   nice gfx card only helps opengl

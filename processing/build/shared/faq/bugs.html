@@ -212,6 +212,7 @@ out what's going on. Useful things when reporting:
 </b> <br> <br>
 Windows
 <UL>
+<LI>If you're using the "without Java" download, try downloading the version that includes Java. Chances are, your machine has Java 1.5 installed, which is <A HREF="platforms#java">not supported</A> and causes lots of headaches. For instance, it won't play nice with some graphics cards and causes the Processing window to come up mostly blank.
 <LI> Processing seems to have trouble starting when run from a user 
 account that contains non-ascii characters. For instance, if your name 
 contains Japanese characters or umlauts, it's likely to have trouble. 
@@ -239,7 +240,6 @@ desktop, or somewhere inside that folder. The fix
   HREF="http://dev.processing.org/bugs/show_bug.cgi?id=112">Bug 112</A>.
 <LI>You might also try using run.bat to start processing. Lots
   of people seem to have a better time with this method.
-<LI>If you're using the "without Java" download, try downloading the version that includes Java. Chances are, your machine has Java 1.5 installed, which is <A HREF="platforms#java">not supported</A> and causes lots of headaches. For instance, it won't play nice with some graphics cards and causes the Processing window to come up mostly blank.
 <LI>If you're still having trouble, try disabling any overly
   protective virus scanning software. It might be holding things up,
   especially when libraries have been imported.
@@ -618,9 +618,15 @@ which added some basic support for it. <B>If you're working on a
 critical project that uses video, do not install QuickTime 7 (or
 iTunes 6, which will install QuickTime 7), as there are likely
 problems with QuickTime for Java</B>. On Mac OS X, Apple has provided a
-QuickTime 6.5.2 <a
-href="http://www.apple.com/support/downloads/quicktime652reinstallerformac.html">reinstaller</a>
-that you can use to return to your previous configuration. 
+QuickTime 6.5.2 reinstallers for <a
+href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime701.html">QuickTime
+7.0.1</a> and <a
+href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime70.html">QuickTime
+7.0</A> that you can use to return to your previous configuration. If
+you're using QuickTime 7.0.2 or 7.0.3 (iTunes 6), or Windows, check
+the Apple <A
+HREF="http://www.apple.com/support/downloads/">downloads</A> area to
+see if there's a reinstaller that supports your platform.
 <br> <br>
 Follow-ups on issues related to problems with QuickTime 7 should
 happen in the bugs database, see the separate entries for <A
@@ -868,13 +874,20 @@ direction. This means an image that's 40x190 pixels will be stored as
 a 64x256 pixel x 4 bytes per pixel array (along with the original
 image storage being width x height x 4). This is probably something we
 can optimize in the future, however no attempt will be made until the
-surrounding code is debugged.
+surrounding code is debugged. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=150">Bug 150</A>)
 
 <LI>OpenGL sketches cannot be exported to run in a browser. The export
 probably won't give an error, but they won't run properly. It's not
 clear whether this is something that we can fix for the future.
 
 <LI>OpenGL requires Java 1.4 or later. 
+
+<LI>If you're getting a blank screen or strange graphics on Windows, 
+try messing with your graphics card settings (or even with a different
+graphics card). There are lots of options that can cause trouble (if
+you run into such a situation, please post to the board on how you got
+it fixed).
 
 <LI>If you're getting this error on Windows: 
 <tt>"net.java.games.jogl.GLException: Unable to enumerate pixel formats 
