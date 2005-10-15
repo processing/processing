@@ -885,20 +885,21 @@ public class PGraphicsGL extends PGraphics3 {
     // can't cancel on textMode(SHAPE) because textMode() must happen
     // after textFont() and textFont() calls textSize()
     //if ((textMode != SHAPE) || (textFontNative == null)) {
-    if (textFontNative == null) {
-      super.textSize(size);
-      return;
+
+    // call this anyway to set the base variables for cases
+    // where textMode(SHAPE) will not be used
+    super.textSize(size);
+
+    // derive the font just in case the user is gonna call
+    // textMode(SHAPE) afterwards
+    if (textFontNative != null) {
+      textFontNative = textFontNative.deriveFont(size);
+      Graphics2D graphics = (Graphics2D) canvas.getGraphics();
+      graphics.setFont(textFontNative);
+
+      // get the metrics info
+      textFontNativeMetrics = graphics.getFontMetrics(textFontNative);
     }
-    //System.out.println("PGraphicsGL.textSize()");
-
-    textFontNative = textFontNative.deriveFont(size);
-    Graphics2D graphics = (Graphics2D) canvas.getGraphics();
-    //g2.setFont(textFontNative);
-    graphics.setFont(textFontNative);
-
-    // get the metrics info
-    //textFontNativeMetrics = g2.getFontMetrics(textFontNative);
-    textFontNativeMetrics = graphics.getFontMetrics(textFontNative);
   }
 
 

@@ -1,33 +1,4 @@
-0093 core
-X upgrade jogl to a newer rev to fix osx "cannot lock" issues
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118603714
-X   http://192.18.37.44/forums/index.php?topic=1596.msg79680#msg79680
-X faster blur code contributed by toxi
-X filter(ERODE) and filter(DILATE) contributed by toxi
-o textAscent() should probably be g.textAscent instead
-o   more like textLeading() etc
-X   nope, because it requires grabbing the font metrics and other calculations
-X bezierDetail, curveDetail made public
-X added textMode(SHAPE) for OPENGL
-X error message saying that strokeCap and strokeJoin don't work in P3D
-X textMode(SHAPE) throws ex when drawing and font not installed
-X fix a bug with filename capitalization error throwing
-X add NO_DEPTH_TEST to PGraphics3
-X java 1.4 code snuck into PApplet, causing problems on the mac
-X   http://dev.processing.org/bugs/show_bug.cgi?id=146
-X prevent PGraphics.save() from inserting a file prefix
-X   so that people can use absolute paths
-X   or add a version that takes a file object
-
-nixed or fixed in previous releases
-X textMode(SCREEN) having issues on Mac OS X
-X   seem to be problems with updatePixels() on the mac
-X   appears to run asynchronously
-X move zbuffer et al into PGraphics so that people don't have to cast to P3
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1116978834
-o noLoop() is behaving strangely
-o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116002432;start=0
-
+0094 core
 
 _ update to latest 1.4.2 java vm
 _ add auto-install of cab file inside applet.html
