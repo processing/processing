@@ -1707,7 +1707,8 @@ public class PGraphics extends PImage implements PConstants {
       throw new RuntimeException("use textFont() before textAscent()");
     }
 
-    return textFont.ascent() * textSize;
+    return textFont.ascent() *
+      ((textMode == SCREEN) ? textFont.size : textSize);
   }
 
 
@@ -1718,7 +1719,8 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textDescent() {
     if (textFont != null) {
-      return textFont.descent() * textSize;
+      return textFont.descent() *
+        ((textMode == SCREEN) ? textFont.size : textSize);
 
     } else {
       throw new RuntimeException("use textFont() before textDescent()");
@@ -1734,8 +1736,8 @@ public class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
+      textSize(which.size);
       textFontNative = which.font;
-      textSize(textFont.size);
 
     } else {
       throw new RuntimeException("a null PFont was passed to textFont()");
@@ -1780,18 +1782,18 @@ public class PGraphics extends PImage implements PConstants {
                                  "are available with this renderer.");
     }
 
-    if (textFont != null) {
-      textMode = mode;
+    //if (textFont != null) {
+    textMode = mode;
 
-      // reset the font to its natural size
-      // (helps with width calculations and all that)
-      if (textMode == SCREEN) {
-        textSize(textFont.size);
-      }
+    // reset the font to its natural size
+    // (helps with width calculations and all that)
+    //if (textMode == SCREEN) {
+    //textSize(textFont.size);
+    //}
 
-    } else {
-      throw new RuntimeException("use textFont() before textMode()");
-    }
+    //} else {
+    //throw new RuntimeException("use textFont() before textMode()");
+    //}
   }
 
 

@@ -2749,11 +2749,12 @@ public class PApplet extends Applet
     byte[] buffer = loadBytes(filename);
 
     // check if it's a TGA and has 8bits/colour channel
-    if (buffer[2] == 2 && buffer[17] == 8) {
+    //if (buffer[2] == 2 && buffer[17] == 8) {
+    // [toxi20050929] changed format validation
+    // only number of bits/pixel are checked now...
+    if (buffer[2] == 2 && (buffer[16] == 24 || buffer[16]==32 )) {
       // get image dimensions
-      //int w=(b2i(buffer[13])<<8) + b2i(buffer[12]);
       int w = ((buffer[13] & 0xff) << 8) + (buffer[12] & 0xff);
-      //int h=(b2i(buffer[15])<<8) + b2i(buffer[14]);
       int h = ((buffer[15] & 0xff) << 8) + (buffer[14] & 0xff);
       // check if image has alpha
       boolean hasAlpha=(buffer[16] == 32);
