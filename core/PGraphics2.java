@@ -679,10 +679,11 @@ public class PGraphics2 extends PGraphics {
    * will get recorded properly.
    */
   public void textSize(float size) {
-    if (textFontNative == null) {
-      super.textSize(size);
-      return;
-    }
+    // take care of setting the textSize and textLeading vars
+    //if (textFontNative == null) {
+    super.textSize(size);
+    //return;
+    //}
     textFontNative = textFontNative.deriveFont(size);
     g2.setFont(textFontNative);
 

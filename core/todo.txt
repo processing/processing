@@ -1,6 +1,10 @@
 0094 core
+X fix bug that was causing font sizes not to be set on opengl
+X   http://dev.processing.org/bugs/show_bug.cgi?id=174
+X apply fix from toxi to make targa files less picky
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1127999630
 
-_ update to latest 1.4.2 java vm
+_ update to java 1.4.2_09
 _ add auto-install of cab file inside applet.html
 http://java.sun.com/update/1.4.2/jinstall-1_4_2_09-windows-i586.cab
 for the 1.5 versions:
@@ -568,12 +572,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _ gl points not working again
 _ polygon z-order with alpha in opengl
 _   at least add it to the faq, or this would be a test case w/ the sorting
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115222332
+_   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _ invocationtargetexception in gl with aioobe:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
-_ don't let users no java < 1.4 load OPENGL
+_ don't let users with java < 1.4 load OPENGL
 _ noLoop() broken on opengl
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
+_   http://dev.processing.org/bugs/show_bug.cgi?id=164
 _ fix non-bound textures from mangling everything else
 _ fix enable/disable textures for some objects
 _ fix endian ordering issues so that things work properly
