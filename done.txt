@@ -1,3 +1,93 @@
+0093 pde
+X println() can hose the app for the first 20-30 frames
+X   incorporate fix posted by mellis
+X   need to figure out threading etc
+X   problem with it launching a new thread for every single update!
+X   http://processing.org/bugs/show_bug.cgi?id=19
+X make a note that video doesn't currently work in applets in the faq
+X scanning sketchbook folder may be extremely slow 
+X   when lots of frames saved out, takes forever to scan the folder
+X   some dumb sorting code was responsible
+X   and each file was being treated as a directory. oops.
+X   http://dev.processing.org/bugs/show_bug.cgi?id=84
+o rebuild jikes with --enable-static --disable-shared
+X   http://dev.processing.org/bugs/show_bug.cgi?id=47
+X   switched to use the version from the rpm on the sf.net site
+X with fix of bug #47, svn binaries are no longer liabilities on linux
+X   http://dev.processing.org/bugs/show_bug.cgi?id=48
+o auto-run the javadoc in dist.sh
+o   doctor a copy of the css file to use p5 defaults
+o   and re-copy the css in after generating the doc each time
+X timing fix introduce regression on linux 
+X   extra (NUL?) chars are added
+X   i.e. on first run, the ten blank lines each have a li'l box 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=118
+X faq: "my applet doesn't work on export"... where to check for errors
+X   very common: cached version is being used
+X     go through methods to properly flush the cache
+X     can also just change the name
+X make a note in the library howto about using something besides p5
+X add the faq to the help menu
+X patch from mellis to make dist.sh properly grab version numbers w/o fink
+X fix to enable quicktime 7 to run properly on windows
+
+fixed in previous releases
+X closing window w/o first hitting stop() causes freak out
+X   opengl gives an OutOfMemoryError
+X   java2d just goes into a lock
+X   could also be code that's in an infinite loop (i.e. text error) 
+X     which then causes a full lock
+X something really bad happened with println() in this release
+X   perhaps only without a code folder and/or running in java2d mode?
+X   this may also be what's hosing 
+X external apps don't stop at all when 'stop' is hit
+X   worker thread is halting the app ala code folder bug
+X   could this be dealt with by using nio? 
+X     host environment will be running 1.4 so...
+o make note that changing screen config requires restart of processing
+o   static { checkScreens(); }
+o   static void PApplet.checkScreens() { } 
+o   to run explicitly later
+o   this seems too complicated.. just make people restart
+o convert spaces to underscores and vice versa for sketch/tab names
+o   underscoring everything is kinda nasty
+o   only needs to be underscored when passed off to java
+o   although then if people *want* underscores, there's gonna be trouble
+o   http://dev.processing.org/bugs/show_bug.cgi?id=76
+o if in full java mode
+o   if extends PApplet.. or rather, put PApplet cast into a 
+o   try/catch block.. if it doesn't work, try applet. if that
+o   doesn't work, try using the class' main() to run it
+X   not gonna do this, p5 is not a java editor
+o if a .pde isn't contained in a properly named folder
+o   offer to rename the parent folder, rather than placing in a new folder
+X add command key for "show sketch folder"
+
+bugzilla problems (fixed by fjen)
+X localconfig has been modified, need to update for everything
+X "back to bug #110" should be on one line
+X text fields on "post bug" won't let me click
+X   (i.e. "Reassign bug to" and "duplicate of bug #")
+X   continually de-select themselves so i can't paste or type text
+X remove "platform" and "severity".. set them to "all" and "normal"
+X buglist.cgi
+X   replace the platform column with the os column (uses icons for os)
+X   sorting based on any of the headings gives an error
+X   "102 bugs found. 102 bugs found."
+X   remove the severity column 
+X     it's normal or enhanced, and enhanced is already gray
+X make os into: Mac OS, Windows, Linux, Other 
+X   while other categories might exist, it's too confusing for minimal benefit
+o   make things that are P5 into "enhancement" 
+o   unless a P6 can be added? or something called "enhancement"?
+X is there a way to list "all" bugs (especially sorted by priority?)
+X   or at least the first 20 listed by priority?
+
+forum bugs
+X when replying, all the replies so far are listed twice
+o fonts are wrong all over the place (use windows to debug)
+
+
 0092 pde
 X more info in the todo about event handling
 
