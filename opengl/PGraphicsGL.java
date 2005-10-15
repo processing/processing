@@ -939,8 +939,9 @@ public class PGraphicsGL extends PGraphics3 {
    */
   protected void textCharImpl(char ch, float x, float y) {
     if ((textMode == SHAPE) && (textFontNative == null)) {
-      System.err.println("textMode(SHAPE) is disabled because the font " +
-                         "\"" + textFont.name + "\" is not available.");
+      throw new RuntimeException("textMode(SHAPE) is disabled " +
+                                 "because the font \"" + textFont.name +
+                                 "\" is not available.");
     }
     if ((textMode != SHAPE) || (textFontNative == null)) {
       super.textCharImpl(ch, x, y);
