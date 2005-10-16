@@ -301,26 +301,39 @@ public class Base {
   }
 
 
-  static public File getBuildFolder() {
-    String buildPath = Preferences.get("build.path");
-    if (buildPath != null) return new File(buildPath);
+  static File buildFolder;
 
-    File folder = new File(getTempFolder(), "build");
-    if (!folder.exists()) folder.mkdirs();
-    return folder;
+  static public File getBuildFolder() {
+    if (buildFolder == null) {
+      String buildPath = Preferences.get("build.path");
+      if (buildPath != null) {
+        buildFolder = new File(buildPath);
+
+      } else {
+        //File folder = new File(getTempFolder(), "build");
+        //if (!folder.exists()) folder.mkdirs();
+        buildFolder = getTempFolder("build");
+      }
+    }
+    return buildFolder;
   }
 
 
   /**
    * Get the path to the platform's temporary folder, by creating
    * a temporary temporary file and getting its parent folder.
+   * <br/>
+   * Modified for revision 0094 to actually make the folder randomized
+   * to avoid conflicts in multi-user environments. (Bug 177)
    */
-  static public File getTempFolder() {
+  static public File getTempFolder(String name) {
     try {
-      File ignored = File.createTempFile("ignored", null);
-      String tempPath = ignored.getParent();
-      ignored.delete();
-      return new File(tempPath);
+      File folder = File.createTempFile(name, null);
+      //String tempPath = ignored.getParent();
+      //return new File(tempPath);
+      folder.delete();
+      folder.mkdirs();
+      return folder;
 
     } catch (Exception e) {
       e.printStackTrace();
