@@ -4,14 +4,33 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=174
 X apply fix from toxi to make targa files less picky
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1127999630
 
+_ add a e2mouseX and e2mouseY 
+_   so that the prev mouse location is still good on mouseReleased
+_   http://dev.processing.org/bugs/show_bug.cgi?id=170
+
 _ update to java 1.4.2_09
 _ add auto-install of cab file inside applet.html
-http://java.sun.com/update/1.4.2/jinstall-1_4_2_09-windows-i586.cab
+_   http://dev.processing.org/bugs/show_bug.cgi?id=181
+_   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/using_tags.html
+_   http://java.sun.com/j2se/1.5.0/docs/guide/javaws/developersguide/launch.html#creating
+_   http://java.sun.com/update/1.4.2/jinstall-1_4_2_09-windows-i586.cab
 for the 1.5 versions:
-http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
+_   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
 
-_ check to see noLoop() breakage is fixed in 92 vs 91
-_   http://dev.processing.org/bugs/show_bug.cgi?id=164
+_ related to the fill bugs: when fill is identical, no fill applied
+_   http://dev.processing.org/bugs/show_bug.cgi?id=169
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   tint() honoring alpha but not colored tint
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
+_   check with the a_Displaying example and tint(255, 0, 0, 100);
+_   http://dev.processing.org/bugs/show_bug.cgi?id=90
+_ is fill() not coloring textures properly?
+_   don't need to apply tint() to textures, supposed to use fill color
+
+_ update run.bat for new quicktime
+_   unfortunately this is messy because qtjava sometimes has quotes
+_   and qtsystem might be somewhere besides c:\progra~1
 
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
@@ -412,14 +431,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 _ simon reports borders on P3D and OPENGL if background() not called
 _ clipping not yet completely implemented
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
-_ fix tint() for PGraphics3 (what could be wrong?)
-_   tint() honoring alpha but not colored tint
-_   maybe not setting fill color when drawing textures
-_   guessing it's an implementation issue in sami's renderer
-_   check with the a_Displaying example and tint(255, 0, 0, 100);
-_   http://dev.processing.org/bugs/show_bug.cgi?id=90
-_ is fill() not coloring textures properly?
-_   don't need to apply tint() to textures, supposed to use fill color
 _ Stroking a rect() leaves off the upper right pixel
 _ PPolygon no longer in use and PLine is a mess
 _   make a version of PGraphics3 that uses it for more accurate rendering?
@@ -561,6 +572,10 @@ _   texture re-allocated on each frame
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ point() doesn't work with some graphics card setups
 _   http://dev.processing.org/bugs/show_bug.cgi?id=121
+_ opengl + noLoop() causes InterruptedException
+_   http://dev.processing.org/bugs/show_bug.cgi?id=164
+X   check to see noLoop() breakage is fixed in 92 vs 91
+X     checked, not fixed
 _ blend(), get(), set(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
