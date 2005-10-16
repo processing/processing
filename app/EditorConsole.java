@@ -119,12 +119,14 @@ public class EditorConsole extends JScrollPane {
       try {
         String outFileName = Preferences.get("console.output.file");
         if (outFileName != null) {
-          stdoutFile = new FileOutputStream(outFileName);
+          File outFile = new File(Base.getBuildFolder(), outFileName);
+          stdoutFile = new FileOutputStream(outFile);
         }
 
         String errFileName = Preferences.get("console.error.file");
         if (errFileName != null) {
-          stderrFile = new FileOutputStream(outFileName);
+          File errFile = new File(Base.getBuildFolder(), errFileName);
+          stderrFile = new FileOutputStream(errFile);
         }
       } catch (IOException e) {
         Base.showWarning("Console Error",
@@ -157,10 +159,13 @@ public class EditorConsole extends JScrollPane {
     // should the interval come from the preferences file?
     new javax.swing.Timer(250, new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        consoleDoc.insertAll();
-
-        // always move to the end of the text as it's added
-        consoleTextPane.setCaretPosition(consoleDoc.getLength());
+        // only if new text has been added
+        if (consoleDoc.hasAppendage) {
+          // insert the text that's been added in the meantime
+          consoleDoc.insertAll();
+          // always move to the end of the text as it's added
+          consoleTextPane.setCaretPosition(consoleDoc.getLength());
+        }
       }
     }).start();
   }
@@ -306,6 +311,7 @@ class BufferedStyledDocument extends DefaultStyledDocument {
   int maxLineLength, maxLineCount;
   int currentLineLength = 0;
   boolean needLineBreak = false;
+  boolean hasAppendage = false;
 
   public BufferedStyledDocument(int maxLineLength, int maxLineCount) {
     this.maxLineLength = maxLineLength;
@@ -314,6 +320,10 @@ class BufferedStyledDocument extends DefaultStyledDocument {
 
   /** buffer a string for insertion at the end of the DefaultStyledDocument */
   public synchronized void appendString(String str, AttributeSet a) {
+    // do this so that it's only updated when needed (otherwise console
+    // updates every 250 ms when an app isn't even running.. see bug 180)
+    hasAppendage = true;
+
     // process each line of the string
     while (str.length() > 0) {
       // newlines within an element have (almost) no effect, so we need to
@@ -323,7 +333,7 @@ class BufferedStyledDocument extends DefaultStyledDocument {
         elements.add(new ElementSpec(a, ElementSpec.StartTagType));
         currentLineLength = 0;
       }
-      
+
       if (str.indexOf('\n') == -1) {
         elements.add(new ElementSpec(a, ElementSpec.ContentType,
           str.toCharArray(), 0, str.length()));
@@ -368,5 +378,6 @@ class BufferedStyledDocument extends DefaultStyledDocument {
       // maybe not a good idea in the long run?
     }
     elements.clear();
+    hasAppendage = false;
   }
 }

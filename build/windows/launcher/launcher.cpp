@@ -101,13 +101,24 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   qtjava_path[0] = 0;
 
   if (getenv("QTJAVA") != NULL) {
-    strcpy(qtjava_path, getenv("QTJAVA"));
+    char *qtjava_temp = (char *)malloc(16384 * sizeof(char));
+    strcpy(qtjava_temp, getenv("QTJAVA"));
+    if (qtjava_temp[0] == '\"') {  // has quotes
+      // remove quotes by subsetting string by two
+      strncpy(qtjava_path, &qtjava_temp[1], strlen(qtjava_temp) - 2);
+    } else {
+      strcpy(qtjava_path, getenv("QTJAVA"));
+    }
     FILE *fp = fopen(qtjava_path, "rb");
     if (fp != NULL) {
       fclose(fp);  // found it, all set
       strcat(qtjava_path, ";"); // add path separator
+      //MessageBox(NULL, "found 1", "msg", MB_OK);
+    } else {
+      qtjava_path[0] = 0; // not a valid path
     }
   }
+
   if (qtjava_path[0] == 0) {  // not set yet
     //if (getenv("WINDIR") == NULL) {
     // uh-oh.. serious problem.. gonna have to report this
@@ -121,23 +132,31 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     if (fp != NULL) {
       fclose(fp);  // found it, all set
       strcat(qtjava_path, ";"); // add path separator
-
+      //MessageBox(NULL, "found 2", "msg", MB_OK);
     } else {
-      strcpy(qtjava_path, getenv("WINDIR"));
-      strcat(qtjava_path, "\\SYSTEM\\QTJava.zip");
-
-      fp = fopen(qtjava_path, "rb");
-      if (fp != NULL) {
-        fclose(fp);  // found it, all set
-        strcat(qtjava_path, ";"); // add path separator
-
-      } else {
-        // doesn't seem to be installed, which is a problem.
-        // but the error will be reported by the pde
-        qtjava_path[0] = 0;
-      }
+      qtjava_path[0] = 0; // not a valid path      
     }
   }
+
+  if (qtjava_path[0] == 0) {
+    strcpy(qtjava_path, getenv("WINDIR"));
+    strcat(qtjava_path, "\\SYSTEM\\QTJava.zip");
+    
+    fp = fopen(qtjava_path, "rb");
+    if (fp != NULL) {
+      fclose(fp);  // found it, all set
+      strcat(qtjava_path, ";"); // add path separator
+      //MessageBox(NULL, "found 3", "msg", MB_OK);
+    } else {
+      // doesn't seem to be installed, which is a problem.
+      // but the error will be reported by the pde
+      qtjava_path[0] = 0;
+    }
+  }
+
+  //if (qtjava_path[0] == 0) {
+  //MessageBox(NULL, "not found", "msg", MB_OK);
+  //}
 
   // NO! put quotes around contents of cp, because %s might have spaces in it.
   // don't put quotes in it, because it's setting the environment variable
