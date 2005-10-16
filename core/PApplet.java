@@ -181,11 +181,16 @@ public class PApplet extends Applet
   /** current y position of the mouse */
   public int mouseY;
 
-  /** previous x position of the mouse */
-  public int pmouseX;
-
-  /** previous y position of the mouse */
-  public int pmouseY;
+  /**
+   * Previous x/y position of the mouse. This will be a different value
+   * when inside a mouse handler (like the mouseMoved() method) versus
+   * when inside draw(). Inside draw(), pmouseX is updated once each
+   * frame, but inside mousePressed() and friends, it's updated each time
+   * an event comes through. Be sure to use only one or the other type of
+   * means for tracking pmouseX and pmouseY within your sketch, otherwise
+   * you're gonna run into trouble.
+   */
+  public int pmouseX, pmouseY;
 
   /**
    * previous mouseX/Y for the draw loop, separated out because this is
@@ -1289,6 +1294,7 @@ public class PApplet extends Applet
 
     mouseX = event.getX();
     mouseY = event.getY();
+
     mouseEvent = event;
 
     int modifiers = event.getModifiers();
@@ -1307,13 +1313,6 @@ public class PApplet extends Applet
     }
 
     mouseEventMethods.handle(new Object[] { event });
-    /*
-    for (int i = 0; i < libraryCount; i++) {
-      if (libraryCalls[i][PLibrary.MOUSE]) {
-        libraries[i].mouse(event);  // endNet/endSerial etc
-      }
-    }
-    */
 
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
@@ -1325,7 +1324,8 @@ public class PApplet extends Applet
       firstMouse = false;
     }
 
-    switch (event.getID()) {
+    int id = event.getID();
+    switch (id) {
     case MouseEvent.MOUSE_PRESSED:
       mousePressed = true;
       mousePressed();
@@ -1344,8 +1344,14 @@ public class PApplet extends Applet
       mouseMoved();
       break;
     }
+    // an attempt to solve bug 170
+    // http://dev.processing.org/bugs/show_bug.cgi?id=170
+    //if ((id == MouseEvent.MOUSE_DRAGGED) ||
+    //  (id == MouseEvent.MOUSE_MOVED)) {
+    //println(emouseX + " " + emouseY + "  " + mouseX + " " + mouseY);
     emouseX = mouseX;
     emouseY = mouseY;
+    //}
   }
 
 
