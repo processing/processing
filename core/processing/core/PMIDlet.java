@@ -48,10 +48,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     protected int       framerate;
     protected int       frameCount;
     
-    private Display     display;
-    private PCanvas     canvas;
-    private Command     cmdExit;
-    private Command     cmdCustom;
+    protected PCanvas   canvas;    
+    protected Display   display;
+    protected Command   cmdExit;
+    protected Command   cmdCustom;
     
     private Thread      thread;
     private boolean     running;

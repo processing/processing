@@ -11,7 +11,7 @@ public class PImage {
     /**
     * The native image.
     */
-    protected Image peer;
+    public Image image;
     /**
     * A constant with the image width.
     */
@@ -22,15 +22,15 @@ public class PImage {
     public final int height;
     
     /**
-    * Creates a image with the peer specified.
+    * Creates a image with the image specified.
     *
     * @param img The image.
     */
     public PImage(Image img)
     {
-        peer = img;
-        width = peer.getWidth();
-        height = peer.getHeight();
+        image = img;
+        width = image.getWidth();
+        height = image.getHeight();
     }
     
     public PImage(byte[] png) {
@@ -39,9 +39,9 @@ public class PImage {
     
     public PImage(byte[] png, int offset, int length) {
         try {
-            peer = Image.createImage(png, offset, length);
-            width = peer.getWidth();
-            height = peer.getHeight();
+            image = Image.createImage(png, offset, length);
+            width = image.getWidth();
+            height = image.getHeight();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

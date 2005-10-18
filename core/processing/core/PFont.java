@@ -16,6 +16,12 @@ public class PFont {
 
     protected int   ascii[];        // quick lookup for the ascii chars
     
+    public Font     font;
+    
+    public PFont(Font font) {
+        this.font = font;
+    }
+    
     public PFont(InputStream is, int color, int bgcolor) {
         try {
             DataInputStream dis = new DataInputStream(is);
