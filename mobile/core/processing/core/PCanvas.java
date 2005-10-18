@@ -112,6 +112,9 @@ public class PCanvas extends Canvas {
                 default:
                     midlet.key = 0xffff;
                     midlet.keyCode = getGameAction(keyCode);
+                    if (midlet.keyCode == 0) {
+                        midlet.keyCode = keyCode;
+                    }
             }
         }
         midlet.keyPressed();
@@ -230,7 +233,7 @@ public class PCanvas extends Canvas {
     }
     
     public void ellipseMode(int MODE) {
-        if ((MODE >= PMIDlet.CORNER) && (MODE <= PMIDlet.CENTER_RADIUS)) {
+        if ((MODE >= PMIDlet.CENTER) && (MODE <= PMIDlet.CORNERS)) {
             ellipseMode = MODE;
         }
     }
@@ -606,11 +609,16 @@ public class PCanvas extends Canvas {
     }
     
     public void background(int gray) {
-        background(gray, gray, gray);
+        if (((gray & 0xff000000) == 0) && (gray <= colorMaxX)) {
+            background(gray, gray, gray);
+        } else {
+            bufferg.setColor(gray);
+            bufferg.fillRect(0, 0, width, height);
+        }    
     }
     
     public void background(int value1, int value2, int value3) {
-        bufferg.setColor(value1, value2, value3);
+        bufferg.setColor(color(value1, value2, value3));
         bufferg.fillRect(0, 0, width, height);
     }
     
@@ -619,7 +627,7 @@ public class PCanvas extends Canvas {
     }
     
     public void image(PImage img, int x, int y) {
-        bufferg.drawImage(img.peer, x, y, Graphics.TOP | Graphics.LEFT);
+        bufferg.drawImage(img.image, x, y, Graphics.TOP | Graphics.LEFT);
     }
     
     public void textFont(PFont font) {
@@ -812,24 +820,39 @@ public class PCanvas extends Canvas {
         if (textFont == null) {
             throw new RuntimeException("The current font has not yet been set with textFont()");
         }
-        if (textAlign != PMIDlet.LEFT) {
-            int width = textWidth(data);
+        if (textFont.font != null) {
+            //// system font
+            bufferg.setColor(fillColor);
+            bufferg.setFont(textFont.font);
+            int align = Graphics.TOP;
             if (textAlign == PMIDlet.CENTER) {
-                x -= width >> 1;
+                align |= Graphics.HCENTER;
             } else if (textAlign == PMIDlet.RIGHT) {
-                x -= width;
-            }
-        }
-        char c;
-        int index;
-        for (int i = 0, length = data.length(); i < length; i++) {
-            c = data.charAt(i);
-            index = textFont.getIndex(c);
-            if (index >= 0) {
-                bufferg.drawImage(textFont.images[index].peer, x + textFont.leftExtent[index], y - textFont.topExtent[index], Graphics.TOP | Graphics.LEFT);
-                x += textFont.setWidth[index];
+                align |= Graphics.RIGHT;
             } else {
-                x += textFont.setWidth[textFont.ascii['i']];
+                align |= Graphics.LEFT;
+            }
+            bufferg.drawString(data, x, y, align);
+        } else {
+            if (textAlign != PMIDlet.LEFT) {
+                int width = textWidth(data);
+                if (textAlign == PMIDlet.CENTER) {
+                    x -= width >> 1;
+                } else if (textAlign == PMIDlet.RIGHT) {
+                    x -= width;
+                }
+            }
+            char c;
+            int index;
+            for (int i = 0, length = data.length(); i < length; i++) {
+                c = data.charAt(i);
+                index = textFont.getIndex(c);
+                if (index >= 0) {
+                    bufferg.drawImage(textFont.images[index].image, x + textFont.leftExtent[index], y - textFont.topExtent[index], Graphics.TOP | Graphics.LEFT);
+                    x += textFont.setWidth[index];
+                } else {
+                    x += textFont.setWidth[textFont.ascii['i']];
+                }
             }
         }
     }
@@ -859,6 +882,14 @@ public class PCanvas extends Canvas {
             throw new IllegalArgumentException("Invalid textAlign MODE value");
         }
         textAlign = MODE;
+    }
+    
+    protected void sizeChanged(int width, int height) {        
+        midlet.width = width;
+        midlet.height = height;
+        
+        buffer = Image.createImage(width, height);
+        bufferg = buffer.getGraphics();        
     }
     
     private static final int EDGE_X             = 0;
