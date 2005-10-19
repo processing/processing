@@ -680,15 +680,14 @@ public class PGraphics2 extends PGraphics {
    */
   public void textSize(float size) {
     // take care of setting the textSize and textLeading vars
-    //if (textFontNative == null) {
     super.textSize(size);
-    //return;
-    //}
-    textFontNative = textFontNative.deriveFont(size);
-    g2.setFont(textFontNative);
 
-    // get the metrics info
-    textFontNativeMetrics = g2.getFontMetrics(textFontNative);
+    // if a native version available, subset this font
+    if (textFontNative != null) {
+      textFontNative = textFontNative.deriveFont(size);
+      g2.setFont(textFontNative);
+      textFontNativeMetrics = g2.getFontMetrics(textFontNative);
+    }
   }
 
 
