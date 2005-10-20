@@ -1736,8 +1736,9 @@ public class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      textSize(which.size);
       textFontNative = which.font;
+      textFontNativeMetrics = null;
+      textSize(which.size);
 
     } else {
       throw new RuntimeException("a null PFont was passed to textFont()");

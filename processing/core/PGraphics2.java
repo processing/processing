@@ -679,20 +679,23 @@ public class PGraphics2 extends PGraphics {
    * will get recorded properly.
    */
   public void textSize(float size) {
-    // take care of setting the textSize and textLeading vars
-    super.textSize(size);
-
     // if a native version available, subset this font
     if (textFontNative != null) {
       textFontNative = textFontNative.deriveFont(size);
       g2.setFont(textFontNative);
       textFontNativeMetrics = g2.getFontMetrics(textFontNative);
     }
+
+    // take care of setting the textSize and textLeading vars
+    // this has to happen second, because it calls textAscent()
+    // (which requires the native font metrics to be set)
+    super.textSize(size);
   }
 
 
   protected float textWidthImpl(char buffer[], int start, int stop) {
     if (textFontNative == null) {
+      //System.out.println("native is null");
       return super.textWidthImpl(buffer, start, stop);
     }
     // maybe should use one of the newer/fancier functions for this?

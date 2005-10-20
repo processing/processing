@@ -54,7 +54,10 @@ _   and i don't want an additional "pathVertex()" function
 
 _ "this file is named" errors don't like subdirectories
 _   need to strip off past the file separator or something
+
 _ stop() not getting called
+_   http://dev.processing.org/bugs/show_bug.cgi?id=183
+_   major problem for libraries
 _   and start() is supposedly called by the applet viewer
 _   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
 _   need to track this stuff down a bit
