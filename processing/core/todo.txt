@@ -4,6 +4,16 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=174
 X apply fix from toxi to make targa files less picky
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1127999630
 
+X tweak to only exit from ESC on keyPressed
+_   probably should just make this a hint() instead
+
+_ keypressed ref: repeating keys
+_   also remove "no drawing inside keypressed"
+
+_ savePath should maybe be appletPath or sketchPath
+_   because can be used for opening files too 
+_   (i.e. if needing a File object)
+
 _ add a e2mouseX and e2mouseY 
 _   so that the prev mouse location is still good on mouseReleased
 _   http://dev.processing.org/bugs/show_bug.cgi?id=170
