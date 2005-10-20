@@ -197,7 +197,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
           loaddir, loaddir, loaddir, loaddir, 
           env_classpath);
 
-  //MessageBox(NULL, cp, "it's twoo! it's twoo!", MB_OK);
+  //MessageBox(NULL, qtjava_path, "qtjava", MB_OK);
+  //MessageBox(NULL, cp, "cp outgoing", MB_OK);
 
   if (!SetEnvironmentVariable("CLASSPATH", cp)) {
     MessageBox(NULL, "Could not set CLASSPATH environment variable",
