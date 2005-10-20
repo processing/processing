@@ -1495,7 +1495,8 @@ public class PApplet extends Applet
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the ESC).
-    if (key == KeyEvent.VK_ESCAPE) {
+    if ((event.getID() == KeyEvent.KEY_PRESSED) &&
+        (key == KeyEvent.VK_ESCAPE)) {
       exit();
     }
   }
