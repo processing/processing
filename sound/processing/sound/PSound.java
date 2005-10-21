@@ -10,7 +10,7 @@ import javax.microedition.media.control.*;
 public class PSound implements PlayerListener {
     private final Player    player;
     
-    public PSound(String file) {
+    public PSound(String file, String type) {
         try {
             String[] protocols = Manager.getSupportedProtocols(null);
             boolean specified = false;
@@ -21,12 +21,13 @@ public class PSound implements PlayerListener {
                 }
             }
             if (!specified) {
-                String type = null;
-                String lower = file.toLowerCase();
-                if (lower.endsWith(".mid")) {
-                    type = "audio/midi";
-                } else if (lower.endsWith(".wav")) {
-                    type = "audio/x-wav";
+                if (type == null) {
+                    String lower = file.toLowerCase();
+                    if (lower.endsWith(".mid")) {
+                        type = "audio/midi";
+                    } else if (lower.endsWith(".wav")) {
+                        type = "audio/x-wav";
+                    }
                 }
                 if (!file.startsWith("/")) {
                     file = "/" + file;
@@ -43,18 +44,8 @@ public class PSound implements PlayerListener {
         }
     }
     
-    public PSound(String file, String type) {
-        try {
-            if (!file.startsWith("/")) {
-                file = "/" + file;
-            }
-            player = Manager.createPlayer(getClass().getResourceAsStream(file), type);
-            player.addPlayerListener(this);
-            player.realize();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
+    public PSound(String file) {
+        this(file, null);
     }
     
     public void play() {
