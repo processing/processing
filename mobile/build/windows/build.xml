@@ -182,34 +182,85 @@
         <copy file="mobile/build/shared/lib/proguard.jar" todir="processing/build/windows/${target}/lib"/>
         <copy file="mobile/build/shared/lib/proguard.pro" todir="processing/build/windows/${target}/lib"/>        
     </target>
-    
-    <!-- makes core libraries -->
-    <target name="makelibs" depends="init">
-        <!-- first, net library -->
-        <mkdir dir="mobile/build/windows/classes/net"/>
-        <javac srcdir="mobile/net/processing/net"
-               destdir="mobile/build/windows/classes/net"
-               bootclasspath="${wtk.bootClassPath}"
+
+    <target name="compile">
+        <mkdir dir="${dest}"/>
+        <javac srcdir="${src}"
+               destdir="${dest}"
+               bootclasspath="${bootClassPath}"
+               classpath="${classPath}"
                source="1.3"
                target="1.1"/>
-        <!-- preverify compiled classes into another temporary directory -->
-        <mkdir dir="mobile/build/windows/preverified/net"/>
+    </target>
+    
+    <target name="preverify">
+        <mkdir dir="${dest}"/>
         <exec executable="${wtk.dir}/bin/preverify.exe">
             <arg value="-classpath"/>
-            <arg path="${wtk.bootClassPath}"/>
+            <arg path="${bootClassPath};${classPath}"/>
             <arg value="-target"/>
-            <arg value="CLDC1.0"/>
+            <arg value="${cldc}"/>
             <arg value="-d"/>
-            <arg path="mobile/build/windows/preverified/net"/>
-            <arg path="mobile/build/windows/classes/net"/>
+            <arg path="${dest}"/>
+            <arg path="${src}"/>
         </exec>
-        <!-- pack preverified classes into jar -->
-        <mkdir dir="mobile/net/library"/>
-        <jar destfile="mobile/net/library/net.jar" basedir="mobile/build/windows/preverified/net">
+    </target>
+    
+    <target name="jar">
+        <mkdir dir="${dest}"/>
+        <jar destfile="${dest}/${jarname}" basedir="${src}">
             <include name="**/*.class"/>
         </jar>
     </target>
     
+    <target name="makelib">
+        <antcall target="compile">
+            <param name="src" value="mobile/${libname}/processing/${libname}"/>
+            <param name="dest" value="mobile/build/windows/classes/${libname}"/>
+            <param name="bootClassPath" value="${bootClassPath}"/>
+            <param name="classPath" value="${classPath}"/>
+        </antcall>
+        <!-- preverify compiled classes into another temporary directory -->
+        <antcall target="preverify">
+            <param name="src" value="mobile/build/windows/classes/${libname}"/>
+            <param name="dest" value="mobile/build/windows/preverified/${libname}"/>
+            <param name="bootClassPath" value="${bootClassPath}"/>
+            <param name="classPath" value="${classPath}"/>
+            <param name="cldc" value="${cldc}"/>
+        </antcall>
+        <!-- pack preverified classes into jar -->
+        <antcall target="jar">
+            <param name="src" value="mobile/build/windows/preverified/${libname}"/>
+            <param name="dest" value="mobile/${libname}/library"/>
+            <param name="jarname" value="${libname}.jar"/>
+        </antcall>
+    </target>
+        
+    <!-- makes core libraries -->
+    <target name="makelibs" depends="init">
+        <!-- first, net library -->
+        <antcall target="makelib">
+            <param name="libname" value="net"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value=""/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+        <!-- next, sound library -->
+        <antcall target="makelib">
+            <param name="libname" value="sound"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="${wtk.dir}/lib/mmapi.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+    </target>
+
+    <target name="copylib">
+        <mkdir dir="processing/build/windows/${target}/libraries/${libname}"/>
+        <copy todir="processing/build/windows/${target}/libraries/${libname}">
+            <fileset dir="mobile/${libname}"/>
+        </copy>
+    </target>
+        
     <!-- copies core libraries over to processing build -->
     <target name="copylibs" depends="makelibs">
         <!-- default target is work folder, can be overridden by call -->
@@ -219,9 +270,11 @@
             <fileset defaultexcludes="no" dir="processing/build/windows/${target}/libraries" includes="**/*" excludes="howto.txt"/>
         </delete>
         <!-- copy net library -->
-        <mkdir dir="processing/build/windows/${target}/libraries/net"/>
-        <copy todir="processing/build/windows/${target}/libraries/net">
-            <fileset dir="mobile/net"/>
-        </copy>
+        <antcall target="copylib">
+            <param name="libname" value="net"/>
+        </antcall>
+        <antcall target="copylib">
+            <param name="libname" value="sound"/>
+        </antcall>
     </target>
 </project>
