@@ -2,12 +2,12 @@ package processing.app;
 
 import java.io.*;
 
-public class Preverifier implements MessageConsumer {
+public class Obfuscator implements MessageConsumer {
   
-  public Preverifier() {    
+  public Obfuscator() {    
   }
   
-  public boolean preverify(File source, File output) {
+  public boolean obfuscate(File source, File output) {
     String wtkPath = Preferences.get("wtk.path");
     String wtkBinPath = wtkPath + File.separator + "bin" + File.separator;
     String wtkLibPath = wtkPath + File.separator + "lib" + File.separator;
@@ -25,27 +25,25 @@ public class Preverifier implements MessageConsumer {
     }
     
     StringBuffer command = new StringBuffer();
-    command.append(wtkBinPath);
-    command.append("preverify.exe -target CLDC");
-    command.append(cldc.charAt(0));
-    command.append(".");
-    command.append(cldc.charAt(1));
-    command.append(" -classpath ");
+    command.append("java -jar lib");
+    command.append(File.separator);
+    command.append("proguard.jar -libraryjars ");
     command.append(wtkLibPath);
     command.append("cldcapi");
     command.append(cldc);
-    command.append(".jar;");
+    command.append(".jar");
+    command.append(File.pathSeparator);
     command.append(wtkLibPath);
     command.append("midpapi");
     command.append(midp);
-    command.append(".jar;lib");
-    command.append(File.separator);
-    command.append("mobile.jar");
-    command.append(" -d \"");
-    command.append(output.getPath());
-    command.append("\" \"");
+    command.append(".jar");
+    command.append(" -injars \"");
     command.append(source.getPath());
-    command.append("\"");
+    command.append("\" -outjar \"");
+    command.append(output.getPath());
+    command.append("\" @lib");
+    command.append(File.separator);
+    command.append("proguard.pro");
     //System.out.println(command.toString());
     try {
       Process p = Runtime.getRuntime().exec(command.toString());
