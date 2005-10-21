@@ -2321,6 +2321,7 @@ public class Sketch {
         // don't export hidden files
         // skipping dot prefix removes all: . .. .DS_Store
         if (dataFiles[i].charAt(0) == '.') continue;
+        if ((new File(dataFolder, dataFiles[i])).isDirectory()) continue;
 
         entry = new ZipEntry(dataFiles[i]);
         zos.putNextEntry(entry);

@@ -178,6 +178,9 @@
         <!-- copy jar and jad/manifest template into processing build -->
         <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/windows/${target}/lib"/>
         <copy file="mobile/build/windows/mobile.jar" todir="processing/build/windows/${target}/lib"/>
+        <!-- copy proguard jar and its configuration file into processing lib -->
+        <copy file="mobile/build/shared/lib/proguard.jar" todir="processing/build/windows/${target}/lib"/>
+        <copy file="mobile/build/shared/lib/proguard.pro" todir="processing/build/windows/${target}/lib"/>        
     </target>
     
     <!-- makes core libraries -->
