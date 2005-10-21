@@ -1,0 +1,13 @@
+- Integrate proguard obfuscation step
+- Change name of executable to mobile.exe
+- Change version numbers to start from 0001
+- Sound library
+- Vibration library
+- Revise net library
+- Integrate bluetooth, video library contributions
+- Text input screen, multi-tap input buffer
+- freeMemory, totalMemory wrappers
+- number of colors constant
+- Mac OS X build
+- Allow user to select wtk folder in dialog
+- Emulator profile selection, screen size modifications
