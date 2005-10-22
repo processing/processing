@@ -7,10 +7,10 @@ import javax.microedition.media.control.*;
  *
  * @author Francis Li
  */
-public class PSound implements PlayerListener {
+public class Sound implements PlayerListener {
     private final Player    player;
     
-    public PSound(String file, String type) {
+    public Sound(String file, String type) {
         try {
             String[] protocols = Manager.getSupportedProtocols(null);
             boolean specified = false;
@@ -44,7 +44,7 @@ public class PSound implements PlayerListener {
         }
     }
     
-    public PSound(String file) {
+    public Sound(String file) {
         this(file, null);
     }
     
