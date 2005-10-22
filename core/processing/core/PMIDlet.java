@@ -53,6 +53,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     protected Command   cmdExit;
     protected Command   cmdCustom;
     
+    private Runtime     runtime;
     private Thread      thread;
     private boolean     running;
     private boolean     redraw;
@@ -66,6 +67,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     /** Creates a new instance of PMIDlet */
     public PMIDlet() {
         display = Display.getDisplay(this);
+        runtime = Runtime.getRuntime();
     }
     
     public final void commandAction(Command c, Displayable d) {
@@ -136,6 +138,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             if (redraw || (elapsed >= msPerFrame)) {
                 canvas.resetMatrix();
                 draw();
+                runtime.gc();
                 canvas.repaint();
                 canvas.serviceRepaints();
                 lastFrameTime = currentTime;
@@ -190,6 +193,22 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         if (msPerFrame <= 0) {
             msPerFrame = 1;
         }
+    }
+    
+    public final int freeMemory() {
+        return (int) runtime.freeMemory();
+    }
+    
+    public final int totalMemory() {
+        return (int) runtime.totalMemory();
+    }
+    
+    public final boolean isColor() {
+        return display.isColor();
+    }
+    
+    public final int numColors() {
+        return display.numColors();
     }
     
     public final void point(int x1, int y1) {
