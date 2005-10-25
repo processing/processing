@@ -11,3 +11,7 @@ X number of colors constant
 - Mac OS X build
 - Allow user to select wtk folder in dialog
 - Emulator profile selection, screen size modifications
+- Export to web option
+- Change preferences to be separate from Processing
+- Change default sketch directory
+
