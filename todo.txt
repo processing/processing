@@ -3,7 +3,7 @@
 - Change version numbers to start from 0001
 X Sound library
 X Vibration library
-- Revise net library
+X Revise net library
 - Integrate bluetooth, video library contributions
 - Text input screen, multi-tap input buffer
 X freeMemory, totalMemory wrappers
