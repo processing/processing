@@ -6,6 +6,24 @@ import javax.microedition.lcdui.*;
 import javax.microedition.midlet.*;
 
 /**
+ * Part of the Mobile Processing project - http://mobile.processing.org
+ *
+ * Copyright (c) 2004-05 Francis Li
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General
+ * Public License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ * Boston, MA  02111-1307  USA
  *
  * @author  Francis Li
  */
@@ -44,6 +62,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     protected char      key;
     protected int       keyCode;
     protected boolean   keyPressed;
+    
+    protected char[]    multitapBuffer;
+    protected int       multitapBufferIndex;
+    protected int       multitapBufferLength;
+    protected int       multitapLastEdit;
+    protected int       multitapEditDuration;
     
     protected int       framerate;
     protected int       frameCount;
@@ -121,6 +145,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             
             startTime = System.currentTimeMillis();
             msPerFrame = 1;
+        
+            multitapBuffer = new char[64];
+            multitapEditDuration = 1000;
             
             setup();
             
@@ -192,6 +219,94 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         msPerFrame = 1000 / fps;
         if (msPerFrame <= 0) {
             msPerFrame = 1;
+        }
+    }
+    
+    public final void multitap() {
+        canvas.multitap();
+    }
+    
+    public final void noMultitap() {
+        canvas.noMultitap();
+    }
+    
+    protected final void multitapKeyPressed(int keyCode) {
+        boolean editing = (keyCode == this.keyCode) && ((millis() - multitapLastEdit) <= multitapEditDuration);
+        char newChar = 0;
+        if (editing) {
+            newChar = multitapBuffer[multitapBufferIndex - 1];
+            if (Character.isUpperCase(newChar)) {
+                newChar = Character.toLowerCase(newChar);
+            }
+        }
+        char startChar = 0, endChar = 0, otherChar = 0;
+        switch (keyCode) {
+            case Canvas.KEY_NUM0:
+                break;
+            case Canvas.KEY_NUM1:
+                break;
+            case Canvas.KEY_NUM2:
+                startChar = 'a'; endChar = 'c'; otherChar = '2';
+                break;
+            case Canvas.KEY_NUM3:
+                startChar = 'd'; endChar = 'f'; otherChar = '3';
+                break;
+            case Canvas.KEY_NUM4:
+                startChar = 'g'; endChar = 'i'; otherChar = '4';
+                break;
+            case Canvas.KEY_NUM5:
+                startChar = 'j'; endChar = 'l'; otherChar = '5';
+                break;
+            case Canvas.KEY_NUM6:
+                startChar = 'm'; endChar = 'o'; otherChar = '6';
+                break;
+            case Canvas.KEY_NUM7:
+                startChar = 'p'; endChar = 's'; otherChar = '7';
+                break;
+            case Canvas.KEY_NUM8:
+                startChar = 't'; endChar = 'v'; otherChar = '8';
+                break;
+            case Canvas.KEY_NUM9:
+                startChar = 'w'; endChar = 'z'; otherChar = '9';
+                break;
+            default:
+                int action = canvas.getGameAction(keyCode);
+                switch (action) {
+                    case Canvas.LEFT:
+                        break;
+                    case Canvas.RIGHT:
+                        break;
+                }
+        }
+        if (startChar > 0) {
+            if (editing) {
+                newChar++;
+            } else {
+                newChar = startChar;
+            }
+            if (newChar == (otherChar + 1)) {
+                newChar = startChar;
+            } else if (newChar > endChar) {
+                newChar = otherChar;
+            }
+        }
+        if (newChar >= 0) {
+            if (editing) {
+                if (multitapBuffer[multitapBufferIndex - 1] != newChar) {
+                    multitapBuffer[multitapBufferIndex - 1] = newChar;
+                    multitapLastEdit = millis();
+                }
+            } else {
+                multitapBufferLength++;
+                if (multitapBufferLength > multitapBuffer.length) {
+                    
+                } else {
+                    System.arraycopy(multitapBuffer, multitapBufferIndex, multitapBuffer, multitapBufferIndex + 1, multitapBufferLength - multitapBufferIndex);
+                    multitapBuffer[multitapBufferIndex] = newChar;
+                    multitapBufferIndex++;
+                }
+                multitapLastEdit = millis();
+            }
         }
     }
     
