@@ -63,11 +63,18 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     protected int       keyCode;
     protected boolean   keyPressed;
     
+    public static final int     MULTITAP_KEY_SPACE      = 0;
+    public static final int     MULTITAP_KEY_UPPER      = 1;
+    public static final String  MULTITAP_PUNCTUATION    = ".,?!'\"-_:;/()@&#$%*+<=>^";
+    
+    protected char[]    multitapKeySettings;
     protected char[]    multitapBuffer;
     protected int       multitapBufferIndex;
     protected int       multitapBufferLength;
     protected int       multitapLastEdit;
     protected int       multitapEditDuration;
+    protected boolean   multitapIsUpperCase;
+    protected String    multitapPunctuation;
     
     protected int       framerate;
     protected int       frameCount;
@@ -132,7 +139,6 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     protected final void startApp() throws MIDletStateChangeException {
-        running = true;
         if (canvas == null) {
             cmdExit = new Command("Exit", Command.EXIT, 1);
             
@@ -147,12 +153,18 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             msPerFrame = 1;
         
             multitapBuffer = new char[64];
+            multitapKeySettings = new char[] { '#', '*' };
+            multitapPunctuation = MULTITAP_PUNCTUATION;
             multitapEditDuration = 1000;
+            
+            running = true;
             
             setup();
             
             lastFrameTime = startTime - msPerFrame;
         }
+        redraw = true;
+        
         display.setCurrent(canvas);        
         thread = new Thread(this);
         thread.start();
@@ -162,7 +174,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         do {
             long currentTime = System.currentTimeMillis();
             int elapsed = (int) (currentTime - lastFrameTime);
-            if (redraw || (elapsed >= msPerFrame)) {
+            if (redraw || (running && (elapsed >= msPerFrame))) {
                 canvas.resetMatrix();
                 draw();
                 runtime.gc();
@@ -174,6 +186,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 
                 redraw = false;
             }
+            Thread.yield();
         } while (running);
         thread = null;
     }
@@ -230,6 +243,25 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         canvas.noMultitap();
     }
     
+    private final char multitapUpperKeyPressed(boolean editing, char newChar) {
+        multitapIsUpperCase = !multitapIsUpperCase;
+        if (editing) {
+            if (newChar == multitapKeySettings[MULTITAP_KEY_UPPER]) {
+                //// delete the char
+                System.arraycopy(multitapBuffer, multitapBufferIndex, multitapBuffer, multitapBufferIndex - 1, multitapBufferLength - multitapBufferIndex);
+                multitapBufferLength--;
+                multitapBufferIndex--;
+                multitapLastEdit = millis();
+                newChar = 0;
+            } else {
+                newChar = multitapKeySettings[MULTITAP_KEY_UPPER];
+            }
+        } else {
+            multitapLastEdit = millis();
+        }
+        return newChar;
+    }
+    
     protected final void multitapKeyPressed(int keyCode) {
         boolean editing = (keyCode == this.keyCode) && ((millis() - multitapLastEdit) <= multitapEditDuration);
         char newChar = 0;
@@ -241,9 +273,56 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
         char startChar = 0, endChar = 0, otherChar = 0;
         switch (keyCode) {
-            case Canvas.KEY_NUM0:
+            case -8: //// Sun WTK 2.2 emulator
+                if (multitapBufferIndex > 0) {
+                    System.arraycopy(multitapBuffer, multitapBufferIndex, multitapBuffer, multitapBufferIndex - 1, multitapBufferLength - multitapBufferIndex);
+                    multitapBufferLength--;
+                    multitapBufferIndex--;
+                    multitapLastEdit = 0;
+                }
                 break;
-            case Canvas.KEY_NUM1:
+            case Canvas.KEY_STAR:
+                if (multitapKeySettings[MULTITAP_KEY_SPACE] == '*') {
+                    startChar = ' '; endChar = ' '; otherChar = '*';
+                } else if (multitapKeySettings[MULTITAP_KEY_UPPER] == '*') {
+                    newChar = multitapUpperKeyPressed(editing, newChar);
+                    editing = (newChar == 0);
+                } else {
+                    startChar = '*'; endChar = '*'; otherChar = '*';
+                    editing = false;
+                }
+                break;
+            case Canvas.KEY_POUND:
+                if (multitapKeySettings[MULTITAP_KEY_SPACE] == '#') {
+                    startChar = ' '; endChar = ' '; otherChar = '#';
+                } else if (multitapKeySettings[MULTITAP_KEY_UPPER] == '#') {
+                    newChar = multitapUpperKeyPressed(editing, newChar);
+                    editing = (newChar == 0);
+                } else {
+                    startChar = '#'; endChar = '#'; otherChar = '#';
+                    editing = false;
+                }
+                break;
+            case Canvas.KEY_NUM0:
+                if (multitapKeySettings[MULTITAP_KEY_SPACE] == '0') {
+                    startChar = ' '; endChar = ' '; otherChar = '0';
+                } else if (multitapKeySettings[MULTITAP_KEY_UPPER] == '0') {
+                    newChar = multitapUpperKeyPressed(editing, newChar);
+                    editing = (newChar == 0);
+                } else {
+                    startChar = '0'; endChar = '0'; otherChar = '0';
+                    editing = false;
+                }
+                break;
+            case Canvas.KEY_NUM1:                
+                int index = 0;
+                if (editing) {
+                    index = multitapPunctuation.indexOf(newChar) + 1;
+                    if (index == multitapPunctuation.length()) {
+                        index = 0;
+                    }
+                }
+                newChar = multitapPunctuation.charAt(index);
                 break;
             case Canvas.KEY_NUM2:
                 startChar = 'a'; endChar = 'c'; otherChar = '2';
@@ -273,8 +352,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 int action = canvas.getGameAction(keyCode);
                 switch (action) {
                     case Canvas.LEFT:
+                        multitapLastEdit = 0;
+                        multitapBufferIndex = Math.max(0, multitapBufferIndex - 1);
                         break;
                     case Canvas.RIGHT:
+                        multitapLastEdit = 0;
+                        multitapBufferIndex = Math.min(multitapBufferLength, multitapBufferIndex + 1);
                         break;
                 }
         }
@@ -290,7 +373,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 newChar = otherChar;
             }
         }
-        if (newChar >= 0) {
+        if (newChar > 0) {
+            if (multitapIsUpperCase) {
+                newChar = Character.toUpperCase(newChar);
+            }
             if (editing) {
                 if (multitapBuffer[multitapBufferIndex - 1] != newChar) {
                     multitapBuffer[multitapBufferIndex - 1] = newChar;
@@ -298,13 +384,16 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 }
             } else {
                 multitapBufferLength++;
-                if (multitapBufferLength > multitapBuffer.length) {
-                    
+                if (multitapBufferLength == multitapBuffer.length) {
+                    char[] oldBuffer = multitapBuffer;
+                    multitapBuffer = new char[oldBuffer.length * 2];
+                    System.arraycopy(oldBuffer, 0, multitapBuffer, 0, multitapBufferIndex);
+                    System.arraycopy(oldBuffer, multitapBufferIndex, multitapBuffer, multitapBufferIndex + 1, multitapBufferLength - multitapBufferIndex);
                 } else {
                     System.arraycopy(multitapBuffer, multitapBufferIndex, multitapBuffer, multitapBufferIndex + 1, multitapBufferLength - multitapBufferIndex);
-                    multitapBuffer[multitapBufferIndex] = newChar;
-                    multitapBufferIndex++;
                 }
+                multitapBuffer[multitapBufferIndex] = newChar;
+                multitapBufferIndex++;
                 multitapLastEdit = millis();
             }
         }
