@@ -5,6 +5,24 @@ import javax.microedition.lcdui.*;
 import java.util.*;
 
 /**
+ * Part of the Mobile Processing project - http://mobile.processing.org
+ *
+ * Copyright (c) 2004-05 Francis Li
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General
+ * Public License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ * Boston, MA  02111-1307  USA
  *
  * @author  Francis Li
  */
@@ -49,6 +67,8 @@ public class PCanvas extends Canvas {
     private PFont       textFont;
     private int         textAlign;
     
+    private boolean     multitap;
+        
     /** Creates a new instance of PCanvas */
     public PCanvas(PMIDlet midlet) {
         this.midlet = midlet;
@@ -91,8 +111,20 @@ public class PCanvas extends Canvas {
         g.drawImage(buffer, 0, 0, Graphics.LEFT | Graphics.TOP);
     }
     
+    protected void multitap() {        
+        multitap = true;
+    }
+    
+    protected void noMultitap() {
+        multitap = false;
+    }
+    
     protected void keyPressed(int keyCode) {
-        midlet.keyPressed = true;
+        midlet.keyPressed = true;        
+        
+        if (multitap) {
+            midlet.multitapKeyPressed(keyCode);
+        }
         
         //// MIDP 1.0 says the KEY_ values map to ASCII values, but I've seen it
         //// different on some foreign (i.e. Korean) handsets
