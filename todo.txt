@@ -5,7 +5,7 @@ X Sound library
 X Vibration library
 X Revise net library
 - Integrate bluetooth, video library contributions
-- Text input screen, multi-tap input buffer
+X Text input screen, multi-tap input buffer
 X freeMemory, totalMemory wrappers
 X number of colors funcion
 - Mac OS X build
@@ -18,4 +18,6 @@ X number of colors funcion
 - Change (or temporarily disable) auto-update check to check Mobile Processing
 - Update copyright, license information in all source files
 - Add Exhibition to website, solicit examples from community members
+- Mobile vs. Processing FAQ update
+
 
