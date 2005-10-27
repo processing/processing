@@ -66,8 +66,6 @@ public class PCanvas extends Canvas {
     
     private PFont       textFont;
     private int         textAlign;
-    
-    private boolean     multitap;
         
     /** Creates a new instance of PCanvas */
     public PCanvas(PMIDlet midlet) {
@@ -111,50 +109,12 @@ public class PCanvas extends Canvas {
         g.drawImage(buffer, 0, 0, Graphics.LEFT | Graphics.TOP);
     }
     
-    protected void multitap() {        
-        multitap = true;
-    }
-    
-    protected void noMultitap() {
-        multitap = false;
-    }
-    
     protected void keyPressed(int keyCode) {
-        midlet.keyPressed = true;        
-        
-        if (multitap) {
-            midlet.multitapKeyPressed(keyCode);
-        }
-        
-        //// MIDP 1.0 says the KEY_ values map to ASCII values, but I've seen it
-        //// different on some foreign (i.e. Korean) handsets
-        if ((keyCode >= Canvas.KEY_NUM0) && (keyCode <= Canvas.KEY_NUM9)) {
-            midlet.key = (char) ('0' + (keyCode - Canvas.KEY_NUM0));
-            midlet.keyCode = (int) midlet.key;
-        } else {
-            switch (keyCode) {
-                case Canvas.KEY_POUND:
-                    midlet.key = '#';
-                    midlet.keyCode = (int) midlet.key;
-                    break;
-                case Canvas.KEY_STAR:
-                    midlet.key = '*';
-                    midlet.keyCode = (int) midlet.key;
-                    break;
-                default:
-                    midlet.key = 0xffff;
-                    midlet.keyCode = getGameAction(keyCode);
-                    if (midlet.keyCode == 0) {
-                        midlet.keyCode = keyCode;
-                    }
-            }
-        }
-        midlet.keyPressed();
+        midlet.enqueueEvent(PMIDlet.EVENT_KEY_PRESSED, keyCode);
     }
     
     protected void keyReleased(int keyCode) {
-        midlet.keyPressed = false;
-        midlet.keyReleased();
+        midlet.enqueueEvent(PMIDlet.EVENT_KEY_RELEASED, keyCode);
     }
     
     public void point(int x1, int y1) {

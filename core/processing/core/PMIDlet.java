@@ -66,7 +66,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public static final int     MULTITAP_KEY_SPACE      = 0;
     public static final int     MULTITAP_KEY_UPPER      = 1;
     public static final String  MULTITAP_PUNCTUATION    = ".,?!'\"-_:;/()@&#$%*+<=>^";
-    
+        
+    protected boolean   multitap;
     protected char[]    multitapKeySettings;
     protected char[]    multitapBuffer;
     protected int       multitapBufferIndex;
@@ -94,6 +95,15 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     private Calendar    calendar;
     private Random      random;
+        
+    public static final byte    EVENT_KEY_PRESSED   = 1;
+    public static final byte    EVENT_KEY_RELEASED  = 2;
+    
+    private byte[]      events;
+    private byte[]      eventsClone;
+    private int         eventsLength;
+    private int[]       eventValues;
+    private int[]       eventValuesClone;
     
     /** Creates a new instance of PMIDlet */
     public PMIDlet() {
@@ -157,6 +167,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             multitapPunctuation = MULTITAP_PUNCTUATION;
             multitapEditDuration = 1000;
             
+            events = new byte[8];
+            eventsClone = new byte[8];
+            eventValues = new int[8];
+            eventValuesClone = new int[8];
+            
             running = true;
             
             setup();
@@ -173,7 +188,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final void run() {
         do {
             long currentTime = System.currentTimeMillis();
-            int elapsed = (int) (currentTime - lastFrameTime);
+            int elapsed = Math.max(1, (int) (currentTime - lastFrameTime));
+            dequeueEvents();
             if (redraw || (running && (elapsed >= msPerFrame))) {
                 canvas.resetMatrix();
                 draw();
@@ -187,7 +203,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 redraw = false;
             }
             Thread.yield();
-        } while (running);
+        } while (running || (eventsLength > 0));
         thread = null;
     }
     
@@ -195,6 +211,94 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public void draw() {      
+    }
+    
+    protected final void enqueueEvent(byte event, int value) {
+        synchronized (this) {
+            eventsLength++;
+            if (eventsLength > events.length) {
+                byte[] oldEvents = events;
+                int[] oldEventValues = eventValues;
+                events = new byte[oldEvents.length * 2];
+                eventValues = new int[events.length];
+                System.arraycopy(oldEvents, 0, events, 0, eventsLength - 1);
+                System.arraycopy(oldEventValues, 0, eventValues, 0, eventsLength - 1);
+            }            
+            events[eventsLength - 1] = event;
+            eventValues[eventsLength - 1] = value;
+        }        
+        if (thread == null) {
+            thread = new Thread(this);
+            thread.start();
+        }
+    }
+    
+    protected final void dequeueEvents() {
+        int length;
+        synchronized (this) {
+            length = eventsLength;
+            eventsLength = 0;
+            if (eventsClone.length < length) {
+                eventsClone = new byte[events.length];
+                eventValuesClone = new int[events.length];
+            }
+            System.arraycopy(events, 0, eventsClone, 0, length);
+            System.arraycopy(eventValues, 0, eventValuesClone, 0, length);
+        }
+        for (int i = 0; i < length; i++) {
+            switch (events[i]) {
+                case EVENT_KEY_PRESSED:
+                    keyPressed(eventValues[i]);
+                    break;
+                case EVENT_KEY_RELEASED:
+                    keyReleased(eventValues[i]);
+                    break;
+            }
+        }
+    }
+    
+    private void key(int keyCode) {        
+        //// MIDP 1.0 says the KEY_ values map to ASCII values, but I've seen it
+        //// different on some foreign (i.e. Korean) handsets
+        if ((keyCode >= Canvas.KEY_NUM0) && (keyCode <= Canvas.KEY_NUM9)) {
+            key = (char) ('0' + (keyCode - Canvas.KEY_NUM0));
+            this.keyCode = (int) key;
+        } else {
+            switch (keyCode) {
+                case Canvas.KEY_POUND:
+                    key = '#';
+                    this.keyCode = (int) key;
+                    break;
+                case Canvas.KEY_STAR:
+                    key = '*';
+                    this.keyCode = (int) key;
+                    break;
+                default:
+                    key = 0xffff;
+                    this.keyCode = canvas.getGameAction(keyCode);
+                    if (keyCode == 0) {
+                        this.keyCode = keyCode;
+                    }
+            }
+        }        
+    }
+    
+    private void keyPressed(int keyCode) {
+        keyPressed = true;        
+        
+        if (multitap) {
+            multitapKeyPressed(keyCode);
+        }
+        
+        key(keyCode);
+        keyPressed();
+    }
+    
+    private void keyReleased(int keyCode) {
+        keyPressed = false;
+        
+        key(keyCode);
+        keyReleased();        
     }
 
     public void keyPressed() {
@@ -236,11 +340,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final void multitap() {
-        canvas.multitap();
+        multitap = true;
     }
     
     public final void noMultitap() {
-        canvas.noMultitap();
+        multitap = false;
     }
     
     private final char multitapUpperKeyPressed(boolean editing, char newChar) {
