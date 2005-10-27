@@ -233,7 +233,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
-    protected final void dequeueEvents() {
+    private void dequeueEvents() {
         int length;
         synchronized (this) {
             length = eventsLength;
