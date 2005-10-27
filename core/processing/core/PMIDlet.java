@@ -96,8 +96,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     private Calendar    calendar;
     private Random      random;
         
-    public static final byte    EVENT_KEY_PRESSED   = 1;
-    public static final byte    EVENT_KEY_RELEASED  = 2;
+    public static final byte    EVENT_KEY_PRESSED       = 1;
+    public static final byte    EVENT_KEY_RELEASED      = 2;
+    public static final byte    EVENT_SOFTKEY_PRESSED   = 3;
     
     private byte[]      events;
     private byte[]      eventsClone;
@@ -115,7 +116,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         if (c == cmdExit) {
             exit();
         } else if (c == cmdCustom) {
-            softkeyPressed(c.getLabel());
+            enqueueEvent(EVENT_SOFTKEY_PRESSED, 0);
         }
     }
     
@@ -253,6 +254,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 case EVENT_KEY_RELEASED:
                     keyReleased(eventValues[i]);
                     break;
+                case EVENT_SOFTKEY_PRESSED:
+                    softkeyPressed(cmdCustom.getLabel());
+                    break;
             }
         }
     }
@@ -329,6 +333,25 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         if (msPerFrame <= 0) {
             msPerFrame = 1;
         }
+    }
+    
+    public final String textInput() {
+        return textInput("Text Input", null, 256);
+    }
+    
+    public final String textInput(String title, String text, int max) {
+        TextInputForm form = new TextInputForm(this, title, text, max, TextField.ANY);
+        
+        synchronized (this) {
+            display.setCurrent(form);
+            try {
+                wait();
+            } catch (InterruptedException ie) {                
+            }
+        }
+        display.setCurrent(canvas);
+        
+        return form.getString();
     }
     
     public final void multitap() {
@@ -1865,5 +1888,32 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     /** Return the CRC of the bytes buf[0..len-1]. */
     public static int crc(byte[] buf, int offset, int len) {
         return update_crc(0xffffffffL, buf, offset, len) ^ 0xffffffff;
+    }
+    
+    private static class TextInputForm extends TextBox implements CommandListener {
+        private PMIDlet midlet;
+        private String  text;
+        private Command cmdOk;
+        private Command cmdCancel;
+        
+        public TextInputForm(PMIDlet midlet, String title, String text, int max, int constraints) {
+            super(title, text, max, constraints);
+            this.midlet = midlet;
+            this.text = text;
+            cmdOk = new Command("OK", Command.OK, 1);
+            cmdCancel = new Command("Cancel", Command.CANCEL, 2);
+            addCommand(cmdOk);
+            addCommand(cmdCancel);
+            setCommandListener(this);
+        }
+                
+        public void commandAction(Command c, Displayable d) {
+            if (c == cmdCancel) {
+                setString(text);
+            }
+            synchronized (midlet) {
+                midlet.notifyAll();
+            }
+        }
     }
 }
