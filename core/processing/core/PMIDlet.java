@@ -276,7 +276,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 default:
                     key = 0xffff;
                     this.keyCode = canvas.getGameAction(keyCode);
-                    if (keyCode == 0) {
+                    if (this.keyCode == 0) {
                         this.keyCode = keyCode;
                     }
             }
@@ -311,18 +311,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final void redraw() {
         redraw = true;
-        if (thread == null) {
-            thread = new Thread(this);
-            thread.start();
-        }
     }
     
     public final void loop() {
         running = true;
-        if (thread == null) {
-            thread = new Thread(this);
-            thread.start();
-        }
     }
     
     public final void noLoop() {
@@ -347,14 +339,26 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         multitap = false;
     }
     
-    private final char multitapUpperKeyPressed(boolean editing, char newChar) {
+    public final void multitapClear() {
+        multitapBufferIndex = 0;
+        multitapBufferLength = 0;
+    }
+    
+    public final void multitapDeleteChar() {
+        if (multitapBufferIndex > 0) {
+            System.arraycopy(multitapBuffer, multitapBufferIndex, multitapBuffer, multitapBufferIndex - 1, multitapBufferLength - multitapBufferIndex);
+            multitapBufferLength--;
+            multitapBufferIndex--;
+            multitapLastEdit = 0;
+        }        
+    }
+    
+    private char multitapUpperKeyPressed(boolean editing, char newChar) {
         multitapIsUpperCase = !multitapIsUpperCase;
         if (editing) {
             if (newChar == multitapKeySettings[MULTITAP_KEY_UPPER]) {
                 //// delete the char
-                System.arraycopy(multitapBuffer, multitapBufferIndex, multitapBuffer, multitapBufferIndex - 1, multitapBufferLength - multitapBufferIndex);
-                multitapBufferLength--;
-                multitapBufferIndex--;
+                multitapDeleteChar();
                 multitapLastEdit = millis();
                 newChar = 0;
             } else {
@@ -378,12 +382,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         char startChar = 0, endChar = 0, otherChar = 0;
         switch (keyCode) {
             case -8: //// Sun WTK 2.2 emulator
-                if (multitapBufferIndex > 0) {
-                    System.arraycopy(multitapBuffer, multitapBufferIndex, multitapBuffer, multitapBufferIndex - 1, multitapBufferLength - multitapBufferIndex);
-                    multitapBufferLength--;
-                    multitapBufferIndex--;
-                    multitapLastEdit = 0;
-                }
+                multitapDeleteChar();
                 break;
             case Canvas.KEY_STAR:
                 if (multitapKeySettings[MULTITAP_KEY_SPACE] == '*') {
