@@ -259,6 +259,13 @@
             <param name="classPath" value=""/>
             <param name="cldc" value="CLDC1.0"/>
         </antcall>
+        <!-- next, video library -->
+        <antcall target="makelib">
+            <param name="libname" value="video"/>
+            <param name="bootClassPath" value="${wtk.dir}/lib/cldcapi10.jar;${wtk.dir}/lib/midpapi10.jar"/>
+            <param name="classPath" value="${wtk.dir}/lib/mmapi.jar;mobile/build/windows/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
     </target>
 
     <target name="copylib">
@@ -287,6 +294,10 @@
         <!-- copy handset library -->
         <antcall target="copylib">
             <param name="libname" value="handset"/>
+        </antcall>
+        <!-- copy video library -->
+        <antcall target="copylib">
+            <param name="libname" value="video"/>
         </antcall>
     </target>
 </project>
