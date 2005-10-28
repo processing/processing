@@ -112,6 +112,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         runtime = Runtime.getRuntime();
     }
     
+    public final Canvas getCanvas() {
+        return canvas;
+    }
+    
     public final void commandAction(Command c, Displayable d) {
         if (c == cmdExit) {
             exit();
