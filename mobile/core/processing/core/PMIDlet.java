@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import javax.microedition.lcdui.*;
 import javax.microedition.midlet.*;
+import javax.microedition.rms.*;
 
 /**
  * Part of the Mobile Processing project - http://mobile.processing.org
@@ -823,6 +824,24 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final byte[] loadBytes(String filename) {
+        try {
+            RecordStore store = null;
+            try {
+                String name = filename;
+                if (name.length() > 32) {
+                    name = name.substring(0, 32);
+                }
+                store = RecordStore.openRecordStore(name, false);
+                return store.getRecord(1);
+            } catch (RecordStoreNotFoundException rsnfe) {         
+            } finally {                
+                if (store != null) {
+                    store.closeRecordStore();
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(filename);
@@ -837,6 +856,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             
             return baos.toByteArray();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         } finally {
             if (is != null) {
@@ -849,6 +869,29 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final String[] loadStrings(String filename) {
+        try {
+            RecordStore store = null;
+            try {
+                String name = filename;
+                if (name.length() > 32) {
+                    name = name.substring(0, 32);
+                }
+                store = RecordStore.openRecordStore(name, false);
+                int numRecords = store.getNumRecords();
+                String[] strings = new String[numRecords];
+                for (int i = 0; i < numRecords; i++) {
+                    strings[i] = new String(store.getRecord(i + 1));
+                }
+                return strings;
+            } catch (RecordStoreNotFoundException rsnfe) {                
+            } finally {                
+                if (store != null) {
+                    store.closeRecordStore();
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
         Vector v = new Vector();
         InputStream is = null;
         try {
@@ -891,6 +934,51 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         v.copyInto(strings);
         
         return strings;
+    }
+    
+    public final void saveBytes(String filename, byte[] data) {
+        //// max 32 char names on recordstores
+        if (filename.length() > 32) {
+            throw new RuntimeException("filename must be 32 characters or less");
+        }
+        try {            
+            //// delete recordstore, if it exists
+            try {
+                RecordStore.deleteRecordStore(filename);
+            } catch (RecordStoreNotFoundException rsnfe) {                
+            }
+            //// create new recordstore
+            RecordStore store = RecordStore.openRecordStore(filename, true);
+            store.addRecord(data, 0, data.length);
+            store.closeRecordStore();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+    public final void saveStrings(String filename, String[] strings) {
+        //// max 32 char names on recordstores
+        if (filename.length() > 32) {
+            throw new RuntimeException("filename must be 32 characters or less");
+        }
+        try {            
+            //// delete recordstore, if it exists
+            try {
+                RecordStore.deleteRecordStore(filename);
+            } catch (RecordStoreNotFoundException rsnfe) {                
+            }
+            //// create new recordstore
+            RecordStore store = RecordStore.openRecordStore(filename, true);
+            //// add each string as a record
+            byte[] data;
+            for (int i = 0, length = strings.length; i < length; i++) {
+                data = strings[i].getBytes();
+                store.addRecord(data, 0, data.length);
+            }
+            store.closeRecordStore();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
     
     public final void print(String data) {
