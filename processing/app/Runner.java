@@ -227,7 +227,8 @@ public class Runner implements MessageConsumer {
     window.pack(); // to get a peer, size set later, need for insets
 
     applet.leechErr = leechErr;
-    applet.folder = sketch.folder.getAbsolutePath();
+    //applet.folder = sketch.folder.getAbsolutePath();
+    applet.path = sketch.folder.getAbsolutePath();
     applet.frame = (Frame) window;
 
     applet.init();

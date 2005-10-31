@@ -23,8 +23,6 @@
 
 package processing.app;
 
-//import processing.core.PApplet;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;

@@ -65,9 +65,6 @@ public class PGraphicsGL extends PGraphics3 {
   public GLU glu;
   public GLCanvas canvas;
 
-  //public Illustrator ai;
-  public PGraphics shapeListener;
-
   protected float[] projectionFloats;
 
   GLUtesselator tobj;
@@ -84,8 +81,8 @@ public class PGraphicsGL extends PGraphics3 {
   /**
    * Create a new PGraphicsGL at the specified size.
    * <P/>
-   * Unlike unlike other PGraphics objects, the PApplet object passed in
-   * cannot be null for this renderer because OpenGL uses a special canvas
+   * Unlike other PGraphics objects, the PApplet object passed in cannot
+   * be null for this renderer because OpenGL uses a special Canvas
    * object that must be added to a component (the host PApplet, in this case)
    * that is visible on screen in order to work properly.
    * @param applet the host applet
@@ -430,6 +427,12 @@ public class PGraphicsGL extends PGraphics3 {
       float cb = min(1, triangleColors[i][2][TRI_DIFFUSE_B] +
                      triangleColors[i][2][TRI_SPECULAR_B]);
 
+      if (rawShapeRecorder != null) {
+        rawShapeRecorder.colorMode(RGB, 1);
+        rawShapeRecorder.noStroke();
+        rawShapeRecorder.beginShape(TRIANGLES);
+      }
+
       int textureIndex = triangles[i][TEXTURE_INDEX];
       if (textureIndex != -1) {
         //System.out.println("texture drawing");
@@ -563,6 +566,16 @@ public class PGraphicsGL extends PGraphics3 {
 
         gl.glDisable(GL.GL_TEXTURE_2D);
 
+        if (rawShapeRecorder != null) {
+          rawShapeRecorder.texture(texture);
+          rawShapeRecorder.fill(ar, ag, ab, a[A]);
+          rawShapeRecorder.vertex(a[VX], a[VY], a[U] * uscale, a[V] * vscale);
+          rawShapeRecorder.fill(br, bg, bb, b[A]);
+          rawShapeRecorder.vertex(b[VX], b[VY], b[U] * uscale, b[V] * vscale);
+          rawShapeRecorder.fill(cr, cg, cb, c[A]);
+          rawShapeRecorder.vertex(c[VX], c[VY], c[U] * uscale, c[V] * vscale);
+        }
+
       } else {
         gl.glBegin(GL.GL_TRIANGLES);
 
@@ -582,24 +595,19 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
-        if (shapeListener != null) {
-          shapeListener.colorMode(RGB, 1);
-          shapeListener.noStroke();
-          float alpha = (a[A] + b[A] + c[A]) / 3.0f;
-          if (alpha > EPSILON) {
-            shapeListener.fill((ar + br + cr) / 3.0f,
-                               (ag + bg + cg) / 3.0f,
-                               (ab + bb + cb) / 3.0f,
-                               alpha);
-            shapeListener.beginShape(TRIANGLES);
-            shapeListener.vertex(a[VX], a[VY]);
-            shapeListener.vertex(b[VX], b[VY]);
-            shapeListener.vertex(c[VX], c[VY]);
-            shapeListener.endShape();
-          }
+        if (rawShapeRecorder != null) {
+          rawShapeRecorder.fill(ar, ag, ab, a[A]);
+          rawShapeRecorder.vertex(a[VX], a[VY]);
+          rawShapeRecorder.fill(br, bg, bb, b[A]);
+          rawShapeRecorder.vertex(b[VX], b[VY]);
+          rawShapeRecorder.fill(cr, cg, cb, c[A]);
+          rawShapeRecorder.vertex(c[VX], c[VY]);
         }
         gl.glEnd();
       }
+    }
+    if (rawShapeRecorder != null) {
+      rawShapeRecorder.endShape();
     }
     report("out of triangles");
   }
@@ -621,8 +629,8 @@ public class PGraphicsGL extends PGraphics3 {
       //report("render_lines 2 " + lines[i][STROKE_WEIGHT]);
       gl.glBegin(GL.GL_LINE_STRIP);
 
-      if (shapeListener != null) {
-        shapeListener.strokeWeight(sw);
+      if (rawShapeRecorder != null) {
+        rawShapeRecorder.strokeWeight(sw);
       }
 
       // always draw a first point
@@ -631,12 +639,12 @@ public class PGraphicsGL extends PGraphics3 {
       gl.glVertex3f(a[VX], a[VY], a[VZ]);
       //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
 
-      if (shapeListener != null) {
+      if (rawShapeRecorder != null) {
         if (a[SA] > EPSILON) {  // don't draw if transparent
-          shapeListener.colorMode(RGB, 1);
-          shapeListener.stroke(a[SR], a[SG], a[SB], a[SA]);
-          shapeListener.beginShape(LINE_STRIP);
-          shapeListener.vertex(a[VX], a[VY]);
+          rawShapeRecorder.colorMode(RGB, 1);
+          rawShapeRecorder.beginShape(LINE_STRIP);
+          rawShapeRecorder.stroke(a[SR], a[SG], a[SB], a[SA]);
+          rawShapeRecorder.vertex(a[VX], a[VY]);
         }
       }
 
@@ -647,13 +655,14 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
-        if (shapeListener != null) {
-          shapeListener.vertex(b[VX], b[VY]);
+        if (rawShapeRecorder != null) {
+          rawShapeRecorder.stroke(b[SR], b[SG], b[SB], b[SA]);
+          rawShapeRecorder.vertex(b[VX], b[VY]);
         }
         i++;
       }
-      if (shapeListener != null) {
-        shapeListener.endShape();
+      if (rawShapeRecorder != null) {
+        rawShapeRecorder.endShape();
       }
       gl.glEnd();
     }
