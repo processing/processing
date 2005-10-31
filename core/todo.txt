@@ -10,6 +10,8 @@ X   because can be used for opening files too
 X   (i.e. if needing a File object)
 X width, height set to zero in static mode
 X   probably only set when resize() is called, and it's not happening
+X g.smooth is always false in opengl
+X   http://dev.processing.org/bugs/show_bug.cgi?id=192
 
 _ when using PGraphics, must call beginFrame() and endFrame()
 _   also need to be able to turn off MemoryImageSource on endFrame
