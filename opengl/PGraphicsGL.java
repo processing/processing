@@ -1593,6 +1593,7 @@ public class PGraphicsGL extends PGraphics3 {
     gl.glEnable(GL.GL_POINT_SMOOTH);
     gl.glEnable(GL.GL_LINE_SMOOTH);
     gl.glEnable(GL.GL_POLYGON_SMOOTH);
+    smooth = true;
   }
 
 
@@ -1600,6 +1601,7 @@ public class PGraphicsGL extends PGraphics3 {
     gl.glDisable(GL.GL_POINT_SMOOTH);
     gl.glDisable(GL.GL_LINE_SMOOTH);
     gl.glDisable(GL.GL_POLYGON_SMOOTH);
+    smooth = false;
   }
 
 
