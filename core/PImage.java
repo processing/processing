@@ -290,7 +290,9 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Mark the pixels in this region as needing an update.
    * <P>
-   * This doesn't take into account
+   * This is not currently used by any of the renderers, however the api
+   * is structured this way in the hope of being able to use this to
+   * speed things up in the future.
    * <P>
    * Note that when using imageMode(CORNERS),
    * the x2 and y2 positions are non-inclusive.

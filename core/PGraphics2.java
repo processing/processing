@@ -120,6 +120,10 @@ public class PGraphics2 extends PGraphics {
   public void endFrame() {
     // moving this back here (post-68) because of macosx thread problem
     //mis.newPixels(pixels, cm, 0, width);
+
+    // need to mark pixels as needing an update, without calling
+    // its own updatePixels, since that's crazy slow
+    //updatePixels();
   }
 
 

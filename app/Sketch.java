@@ -942,10 +942,8 @@ public class Sketch {
 
 
   /**
-   * Prompt the user for a new file to the sketch.
-   * This could be .class or .jar files for the code folder,
-   * .pde or .java files for the project,
-   * or .dll, .jnilib, or .so files for the code folder
+   * Prompt the user for a new file to the sketch, then call the
+   * other addFile() function to actually add it.
    */
   public void addFile() {
     // make sure the user didn't hide the sketch folder
@@ -976,6 +974,26 @@ public class Sketch {
     // it move instead of copy, they can do it by hand
     File sourceFile = new File(directory, filename);
 
+    // now do the work of adding the file
+    addFile(sourceFile);
+  }
+
+
+  /**
+   * Add a file to the sketch.
+   * <p/>
+   * .pde or .java files will be added to the sketch folder. <br/>
+   * .jar, .class, .dll, .jnilib, and .so files will all
+   * be added to the "code" folder. <br/>
+   * All other files will be added to the "data" folder.
+   * <p/>
+   * If they don't exist already, the "code" or "data" folder
+   * will be created.
+   * <p/>
+   * @return true if successful.
+   */
+  public boolean addFile(File sourceFile) {
+    String filename = sourceFile.getName();
     File destFile = null;
     boolean addingCode = false;
 
@@ -986,7 +1004,7 @@ public class Sketch {
         filename.toLowerCase().endsWith(".dll") ||
         filename.toLowerCase().endsWith(".jnilib") ||
         filename.toLowerCase().endsWith(".so")) {
-      //File codeFolder = new File(this.folder, "code");
+
       if (!codeFolder.exists()) codeFolder.mkdirs();
       destFile = new File(codeFolder, filename);
 
@@ -1004,10 +1022,10 @@ public class Sketch {
     // make sure they aren't the same file
     if (!addingCode && sourceFile.equals(destFile)) {
       Base.showWarning("You can't fool me",
-                          "This file has already been copied to the\n" +
-                          "location where you're trying to add it.\n" +
-                          "I ain't not doin nuthin'.", null);
-      return;
+                       "This file has already been copied to the\n" +
+                       "location where you're trying to add it.\n" +
+                       "I ain't not doin nuthin'.", null);
+      return false;
     }
 
     // in case the user is "adding" the code in an attempt
@@ -1015,10 +1033,11 @@ public class Sketch {
     if (!sourceFile.equals(destFile)) {
       try {
         Base.copyFile(sourceFile, destFile);
+
       } catch (IOException e) {
         Base.showWarning("Error adding file",
-                            "Could not add '" + filename +
-                            "' to the sketch.", e);
+                         "Could not add '" + filename + "' to the sketch.", e);
+        return false;
       }
     }
 
@@ -1041,6 +1060,7 @@ public class Sketch {
       setCurrent(newName);
       editor.header.repaint();
     }
+    return true;
   }
 
 
@@ -1843,7 +1863,6 @@ public class Sketch {
     zos.flush();
     zos.close();
 
-    Base.openFolder(appletFolder);
     return true;
   }
 

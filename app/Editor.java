@@ -28,6 +28,8 @@ import processing.app.syntax.*;
 import processing.app.tools.*;
 
 import java.awt.*;
+import java.awt.datatransfer.*;
+import java.awt.dnd.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -247,62 +249,87 @@ public class Editor extends JFrame
       });
     */
 
-    /*
-    //System.out.println("adding droptarget");
     DropTarget dt = new DropTarget(this, new DropTargetListener() {
 
         public void dragEnter(DropTargetDragEvent event) {
           // debug messages for diagnostics
-          System.out.println("dragEnter " + event);
+          //System.out.println("dragEnter " + event);
           event.acceptDrag(DnDConstants.ACTION_COPY);
         }
 
-        public void dragExit (DropTargetEvent event) {
-          System.out.println("dragExit " + event);
-
+        public void dragExit(DropTargetEvent event) {
+          //System.out.println("dragExit " + event);
         }
 
-        public void dragOver (DropTargetDragEvent event) {
-          System.out.println("dragOver " + event);
-          //event.acceptDrag(DnDConstants.ACTION_COPY);
+        public void dragOver(DropTargetDragEvent event) {
+          //System.out.println("dragOver " + event);
+          event.acceptDrag(DnDConstants.ACTION_COPY);
+        }
+
+        public void dropActionChanged(DropTargetDragEvent event) {
+          //System.out.println("dropActionChanged " + event);
         }
 
         public void drop(DropTargetDropEvent event) {
-          System.out.println("drop " + event);
-
-          event.acceptDrop(DnDConstants.ACTION_MOVE);
+          //System.out.println("drop " + event);
+          event.acceptDrop(DnDConstants.ACTION_COPY);
 
           Transferable transferable = event.getTransferable();
           DataFlavor flavors[] = transferable.getTransferDataFlavors();
+          int successful = 0;
+
           for (int i = 0; i < flavors.length; i++) {
             try {
-              System.out.println(flavors[i]);
-              System.out.println(transferable.getTransferData(flavors[i]));
+              //System.out.println(flavors[i]);
+              //System.out.println(transferable.getTransferData(flavors[i]));
+              java.util.List list =
+                (java.util.List) transferable.getTransferData(flavors[i]);
+              for (int j = 0; j < list.size(); j++) {
+                Object item = list.get(j);
+                if (item instanceof File) {
+                  File file = (File) item;
+
+                  // see if this is a .pde file to be opened
+                  String filename = file.getName();
+                  if (filename.endsWith(".pde")) {
+                    String name = filename.substring(0, filename.length() - 4);
+                    File parent = file.getParentFile();
+                    if (name.equals(parent.getName())) {
+                      handleOpenFile(file);
+                      return;
+                    }
+                  }
+
+                  if (sketch.addFile(file)) {
+                    successful++;
+                  }
+                }
+              }
+
             } catch (Exception e) {
               e.printStackTrace();
             }
           }
-        }
 
-        public void dropActionChanged(DropTargetDragEvent event) {
-          System.out.println("dropActionChanged " + event);
+          if (successful == 0) {
+            error("No files were added to the sketch.");
+
+          } else if (successful == 1) {
+            message("One file added to the sketch.");
+
+          } else {
+            message(successful + " files added to the sketch.");
+          }
         }
       });
-
-    try {
-      dt.addDropTargetListener(this);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    */
   }
 
 
   /**
-   * Hack for #@#)$(* Mac OS X.
-   * This appears to only be required on OS X 10.2, and this code
-   * isn't even being hit on OS X 10.3 or Windows.
+   * Hack for #@#)$(* Mac OS X 10.2.
+   * <p/>
+   * This appears to only be required on OS X 10.2, and is not
+   * even being called on later versions of OS X or Windows.
    */
   public Dimension getMinimumSize() {
     //System.out.println("getting minimum size");
@@ -485,15 +512,16 @@ public class Editor extends JFrame
         });
     */
 
-    if (!Preferences.getBoolean("export.library")) {
-      item = newJMenuItem("New", 'N');
-      item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            handleNew(false);
-          }
-        });
-      menu.add(item);
+    //if (!Preferences.getBoolean("export.library")) {
+    item = newJMenuItem("New", 'N');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleNew(false);
+        }
+      });
+    menu.add(item);
 
+    /*
     } else {
       item = newJMenuItem("New Sketch", 'N');
       item.addActionListener(new ActionListener() {
@@ -511,6 +539,7 @@ public class Editor extends JFrame
         });
       menu.add(item);
     }
+    */
     menu.add(sketchbook.getOpenMenu());
 
     saveMenuItem = newJMenuItem("Save", 'S');
@@ -669,6 +698,14 @@ public class Editor extends JFrame
           //Archiver archiver = new Archiver();
           //archiver.setup(Editor.this);
           //archiver.show();
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Export Multiple...");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          new ExportMultiple(Editor.this).show();
         }
       });
     menu.add(item);
@@ -1609,19 +1646,20 @@ public class Editor extends JFrame
   synchronized public void handleExport() {
     //String what = sketch.isLibrary() ? "Applet" : "Library";
     //message("Exporting " + what + "...");
-    message("Exporting applet...");
+    //message("Exporting applet...");
     try {
       //boolean success = sketch.isLibrary() ?
       //sketch.exportLibrary() : sketch.exportApplet();
       boolean success = sketch.exportApplet();
       if (success) {
+        File appletFolder = new File(sketch.folder, "applet");
+        Base.openFolder(appletFolder);
         message("Done exporting.");
       } else {
         // error message will already be visible
       }
     } catch (Exception e) {
-      message("Error during export.");
-      e.printStackTrace();
+      error(e);
     }
     buttons.clear();
   }
@@ -1724,6 +1762,14 @@ public class Editor extends JFrame
   // ...................................................................
 
 
+  /**
+   * Show an error int the status bar.
+   */
+  public void error(String what) {
+    status.error(what);
+  }
+
+
   public void error(Exception e) {
     if (e == null) {
       System.err.println("Editor.error() was passed a null exception.");
@@ -1742,7 +1788,7 @@ public class Editor extends JFrame
       if (mess.indexOf(javaLang) == 0) {
         mess = mess.substring(javaLang.length());
       }
-      status.error(mess);
+      error(mess);
     }
     e.printStackTrace();
   }
@@ -1765,7 +1811,7 @@ public class Editor extends JFrame
     if (mess.indexOf(javaLang) == 0) {
       mess = mess.substring(javaLang.length());
     }
-    status.error(mess);
+    error(mess);
 
     buttons.clearRun();
   }

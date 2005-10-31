@@ -7,6 +7,42 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0094 - 30 October 2005
+
+
+[ additions ] 
+
+- drag and drop! you can now drag and drop a file to the editor 
+  window to add it to the sketch. if you drag and drop a sketch file 
+  (a .pde file whose parent folder is named the same thing), 
+  that sketch will be opened.
+  http://dev.processing.org/bugs/show_bug.cgi?id=21
+
+
+[ bug fixes ] 
+
+- stdout.txt and stderr.txt are no longer written to the processing
+  folder, which will prevent errors for lab users. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=177
+
+- console text selection no longer immediately de-selects
+  http://dev.processing.org/bugs/show_bug.cgi?id=180
+
+- removing quotes from QTJAVA path if they exist (this may have fixed
+  some issues?)
+
+
+[ semi-obscure api tweaks ]
+
+- in PApplet, "folder" has been renamed to "path" to match savePath().
+
+- added dataPath(String filename) to return the full path to the
+  give filename within the data folder
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0093 - 14 October 2005
 
 First release in a while with lots of bug fixes for the video library
