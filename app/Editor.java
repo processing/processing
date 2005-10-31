@@ -702,10 +702,10 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
-    item = new JMenuItem("Export Multiple...");
+    item = new JMenuItem("Export Folder...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new ExportMultiple(Editor.this).show();
+          new ExportFolder(Editor.this).show();
         }
       });
     menu.add(item);
