@@ -153,13 +153,19 @@ public class PApplet extends Applet
   public String args[];
 
   /** Path to sketch folder */
-  public String folder;
+  public String path; //folder;
 
   /** When debugging headaches */
   static final boolean THREAD_DEBUG = false;
 
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
+
+  /**
+   * true if no size() command has been executed. This is used to wait until
+   * a size has been set before placing in the window and showing it.
+   */
+  protected boolean defaultSize;
 
   /**
    * Pixel buffer from this applet's PGraphics.
@@ -365,7 +371,7 @@ public class PApplet extends Applet
    * Used by PdeEditor to pass in the location where saveFrame()
    * and all that stuff should write things.
    */
-  static public final String ARGS_SKETCH_FOLDER = "--sketch-folder";
+  static public final String ARGS_SKETCH_FOLDER = "--sketch-path";
 
   /**
    * Message from parent editor (when run as external) to quit.
@@ -442,8 +448,10 @@ public class PApplet extends Applet
     // create a dummy graphics context
     size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     //size(INITIAL_WIDTH, INITIAL_HEIGHT);
-    width = 0;  // use this to flag whether the width/height are valid
-    height = 0;
+    //width = 0;  // use this to flag whether the width/height are valid
+    //height = 0;
+    // need to set width/height otherwise they won't work for static mode apps
+    defaultSize = true;
 
     // this is automatically called in applets
     // though it's here for applications anyway
@@ -748,7 +756,8 @@ public class PApplet extends Applet
           // time around, g is the proper size and the proper class, so
           // all that needs to be done is to set the defaults (clear the
           // background, set default strokeWeight, etc).
-          g.defaults();
+          //g.defaults();
+
           // this will happen when P3D or OPENGL are used with size()
           // inside of setup. it's also safe to call defaults() now,
           // because it's happening inside setup, which is just frame 0,
@@ -1096,6 +1105,9 @@ public class PApplet extends Applet
         if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                   " 1b draw");
 
+        boolean shapeRecorderNull = true;
+        boolean rawShapeRecorderNull = true;
+
         if (frameCount == 0) {
           try {
             //System.out.println("attempting setup");
@@ -1179,6 +1191,13 @@ public class PApplet extends Applet
           //}
           //}
 
+          // set a flag regarding whether the recorders were non-null
+          // as of draw().. this will prevent the recorder from being
+          // reset if recordShape() is called in an event method, such
+          // as mousePressed()
+          shapeRecorderNull = (recorder == null);
+          rawShapeRecorderNull = (g.rawShapeRecorder == null);
+
           // dmouseX/Y is updated only once per frame
           dmouseX = mouseX;
           dmouseY = mouseY;
@@ -1203,9 +1222,17 @@ public class PApplet extends Applet
         }
 
         g.endFrame();
-        if (recorder != null) {
-          recorder.endFrame();
-          recorder = null;
+        if (!shapeRecorderNull) {
+          if (recorder != null) {
+            recorder.endFrame();
+            recorder = null;
+          }
+        }
+        if (!rawShapeRecorderNull) {
+          if (g.rawShapeRecorder != null) {
+            g.rawShapeRecorder.endFrame();
+            g.rawShapeRecorder = null;
+          }
         }
 
         //}  // older end sync
@@ -3175,22 +3202,23 @@ public class PApplet extends Applet
     if (!online) {
       try {
         // first see if it's in a data folder
-        File file = new File(folder + File.separator + "data", filename);
+        //File file = new File(path + File.separator + "data", filename);
+        File file = new File(dataPath(filename));
         if (!file.exists()) {
           // next see if it's just in this folder
-          file = new File(folder, filename);
+          file = new File(path, filename);
         }
         if (file.exists()) {
           try {
-            String path = file.getCanonicalPath();
-            String filenameActual = new File(path).getName();
+            String filePath = file.getCanonicalPath();
+            String filenameActual = new File(filePath).getName();
+            // make sure there isn't a subfolder prepended to the name
+            String filenameShort = new File(filename).getName();
             // if the actual filename is the same, but capitalized
-            // differently, warn the user. unfortunately this won't
-            // work in subdirectories because getName() on a relative
-            // path will return just the name, while 'filename' may
-            // contain part of a relative path.
-            if (filenameActual.equalsIgnoreCase(filename) &&
-                !filenameActual.equals(filename)) {
+            // differently, warn the user.
+            //if (filenameActual.equalsIgnoreCase(filenameShort) &&
+            //!filenameActual.equals(filenameShort)) {
+            if (!filenameActual.equals(filenameShort)) {
               throw new RuntimeException("This file is named " +
                                          filenameActual + " not " +
                                          filename + ".");
@@ -3215,21 +3243,22 @@ public class PApplet extends Applet
       if (stream != null) return stream;
 
       // hm, check the data subfolder
-      stream = getClass().getResourceAsStream("data/" + filename);
+      stream = getClass().getResourceAsStream(dataPath(filename));
       if (stream != null) return stream;
 
       // attempt to load from a local file, used when running as
       // an application, or as a signed applet
       try {  // first try to catch any security exceptions
         try {
-          File file = new File(folder, filename);
+          File file = new File(path, filename);
           stream = new FileInputStream(file);
           if (stream != null) return stream;
 
         } catch (Exception e) { }  // ignored
 
         try {
-          stream = new FileInputStream(new File("data", filename));
+          //stream = new FileInputStream(new File("data", filename));
+          stream = new FileInputStream(dataPath(filename));
           if (stream != null) return stream;
         } catch (IOException e2) { }
 
@@ -3432,13 +3461,24 @@ public class PApplet extends Applet
   /**
    * Prepend the path to the sketch folder to the filename or
    * path that is passed in. Can be used by applets or external
-   * libraries to save to the sketch folder. Also creates any
-   * in-between folders so that things save properly.
+   * libraries to save to the sketch folder.
+   * <p/>
+   * This is different from simply using the "folder" variable
+   * because it also creates any in-between folders so that
+   * things save properly.
    */
   public String savePath(String where) {
-    String filename = folder + File.separator + where;
+    String filename = path + File.separator + where;
     createPath(filename);
     return filename;
+  }
+
+
+  /**
+   * Return a full path to an item in the data folder.
+   */
+  public String dataPath(String where) {
+    return path + File.separator + "data" + where;
   }
 
 
@@ -5320,7 +5360,7 @@ v              PApplet.this.stop();
    *
    * --bgcolor=#xxxxxx     background color of the window
    *
-   * --sketch-folder       location of where to save files from functions
+   * --sketch-path         location of where to save files from functions
    *                       like saveStrings() or saveFrame(). defaults to
    *                       the folder that the java application was
    *                       launched from, which means if this isn't set by
@@ -5445,14 +5485,15 @@ v              PApplet.this.stop();
 
       // these are needed before init/start
       applet.frame = frame;
-      applet.folder = folder;
+      applet.path = folder;
       applet.args = PApplet.subset(args, 1);
 
       applet.init();
 
       // wait until the applet has figured out its width
       // hoping that this won't hang if the applet has an exception
-      while ((applet.width == 0) && !applet.finished) {
+      //while ((applet.width == 0) && !applet.finished) {
+      while (applet.defaultSize && !applet.finished) {
         try {
           Thread.sleep(5);
 
@@ -5593,12 +5634,23 @@ v              PApplet.this.stop();
   //////////////////////////////////////////////////////////////
 
 
-  public void recordFrame(PGraphics recorder) {
-    recordFrame(recorder, "frame-" + nf(frameCount, 4));
+
+  public void recordShapes(PGraphics recorder) {
+    this.recorder = recorder;
+    recorder.beginFrame();
   }
 
 
-  public void recordFrame(PGraphics recorder, String filename) {
+  //public void recordShapesRaw(PGraphics raw) {
+  //g.rawShapeRecorder = raw;
+  //raw.beginFrame();
+  //}
+
+
+  /*
+  //recordShapes(recorder, "frame-" + nf(frameCount, 4));
+
+  public void recordShapes(PGraphics recorder, String filename) {
     int first = filename.indexOf('#');
     int last = filename.lastIndexOf('#');
 
@@ -5608,15 +5660,16 @@ v              PApplet.this.stop();
       String suffix = filename.substring(last + 1);
       filename = prefix + nf(frameCount, count) + suffix;
     }
-    recordFrame(recorder, savePath(filename));
+    recordShapes(recorder, savePath(filename));
   }
 
 
-  public void recordFrame(PGraphics recorder, File file) {
+  public void recordShapes(PGraphics recorder, File file) {
     this.recorder = recorder;
     //recorder.record(frameCount, file);
     recorder.beginFrame(); //frameCount, file);
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -6767,5 +6820,11 @@ v              PApplet.this.stop();
 
   public final float brightness(int what) {
     return g.brightness(what);
+  }
+
+
+  public void recordShapesRaw(PGraphics rawShapeRecorder) {
+    if (recorder != null) recorder.recordShapesRaw(rawShapeRecorder);
+    g.recordShapesRaw(rawShapeRecorder);
   }
 }

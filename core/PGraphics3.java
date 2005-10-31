@@ -174,6 +174,11 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  public PGraphics3(int iwidth, int iheight) {
+    this(iwidth, iheight, null);
+  }
+
+
   /**
    * Constructor for the PGraphics3 object. Use this to ensure that
    * the defaults get set properly. In a subclass, use this(w, h)
@@ -329,6 +334,12 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  /**
+   * See notes in PGraphics.
+   * If z-sorting has been turned on, then the triangles will
+   * all be quicksorted here (to make alpha work more properly)
+   * and then blit to the screen.
+   */
   public void endFrame() {
     // no need to z order and render
     // shapes were already rendered in endShape();
@@ -1312,6 +1323,12 @@ public class PGraphics3 extends PGraphics {
   protected void render_triangles() {
     //System.out.println("rendering " + triangleCount + " triangles");
 
+    if (rawShapeRecorder != null) {
+      rawShapeRecorder.colorMode(RGB, 1);
+      rawShapeRecorder.noStroke();
+      rawShapeRecorder.beginShape(TRIANGLES);
+    }
+
     for (int i = 0; i < triangleCount; i ++) {
       float a[] = vertices[triangles[i][VERTEX1]];
       float b[] = vertices[triangles[i][VERTEX2]];
@@ -1357,10 +1374,24 @@ public class PGraphics3 extends PGraphics {
 
       triangle.setIndex(index);
       triangle.render();
+
+      if (rawShapeRecorder != null) {
+        rawShapeRecorder.fill(ar, ag, ab, a[A]);
+        rawShapeRecorder.vertex(a[X], a[Y]);  // a[X] and not a[VX] ?
+        rawShapeRecorder.fill(br, bg, bb, b[A]);
+        rawShapeRecorder.vertex(b[X], b[Y]);
+        rawShapeRecorder.fill(cr, cg, cb, c[A]);
+        rawShapeRecorder.vertex(c[X], c[Y]);
+      }
+    }
+
+    if (rawShapeRecorder != null) {
+      rawShapeRecorder.endShape();
     }
   }
 
 
+  /*
   public void triangleCallback(float x1, float y1, float z1,
                                float r1, float g1, float b1, float a1,
                                float u1, float v1, boolean e1,
@@ -1380,6 +1411,7 @@ public class PGraphics3 extends PGraphics {
                            float r2, float g2, float b2, float a2,
                            float weight, int cap, int join) {
   }
+  */
 
 
   protected void depth_sort_lines() {
@@ -3759,6 +3791,18 @@ public class PGraphics3 extends PGraphics {
   public void noSmooth() {
     String msg = "noSmooth() not available with P3D";
     throw new RuntimeException(msg);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // RAW SHAPE RECORDING
+
+
+  public void recordShapesRaw(PGraphics rawShapeRecorder) {
+    this.rawShapeRecorder = rawShapeRecorder;
+    rawShapeRecorder.beginFrame();
   }
 
 
