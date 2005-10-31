@@ -3,16 +3,50 @@ X fix bug that was causing font sizes not to be set on opengl
 X   http://dev.processing.org/bugs/show_bug.cgi?id=174
 X apply fix from toxi to make targa files less picky
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1127999630
+X "folder" has been renamed to "path" to match savePath().
+X added "dataPath" to return the full path to something in the data folder
+X savePath should maybe be appletPath or sketchPath
+X   because can be used for opening files too 
+X   (i.e. if needing a File object)
+X width, height set to zero in static mode
+X   probably only set when resize() is called, and it's not happening
+
+_ when using PGraphics, must call beginFrame() and endFrame()
+_   also need to be able to turn off MemoryImageSource on endFrame
+_   call defaults() in beginFrame()
+
+o triangleColors are different because they're per-triangle
+o   as opposed to per-vertex, because it's based on the facet of the tri
+X make vertexCount etc properly accessible in PGraphics3
+X   so that people can do things like the dxf renderer
+X also have a simple way to hook in triangle leeches to PGraphics3
+X   this exists, but needs to be documented, or have accessors
+
+test this
+_ "this file is named" errors don't like subdirectories
+_   need to strip off past the file separator or something
+
+_ add texture support to recordShapesRaw (this might be pretty obscure...)
+
+_ should PGraphics be a base class with implementations and variables?
+_   then PGraphics2D and PGraphics3D that subclass it?
+_   (or even just PGraphics2 and PGraphics3)
+_   also rename PGraphics2 to PGraphicsJava
+_   it's goofy to have the naming so different
+
+_ calling recordFrame() from mousePressed is important
+_   dangerous tho because mouse fxn called just before endFrame
+
+_ tag release 93 (francis thinks it's rev 1666)
+
+_ text block wrap problem with manual break character (\n)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=188
 
 X tweak to only exit from ESC on keyPressed
 _   probably should just make this a hint() instead
 
 _ keypressed ref: repeating keys
 _   also remove "no drawing inside keypressed"
-
-_ savePath should maybe be appletPath or sketchPath
-_   because can be used for opening files too 
-_   (i.e. if needing a File object)
 
 _ add a e2mouseX and e2mouseY 
 _   so that the prev mouse location is still good on mouseReleased
@@ -47,27 +81,12 @@ _   use the SW from vertex instead.. why set stroke in triangle vars at all?
 _   currently truncating to an int inside add_line_no_clip
 _   need to clean all this crap up
 
-_ how to handle gluTessVertex calls
-_   need to re-map through the regular "vertex" command, 
-_   but that makes things messy because the glu calls make calls to vertex()
-_   and i don't want an additional "pathVertex()" function
-
-_ "this file is named" errors don't like subdirectories
-_   need to strip off past the file separator or something
-
 _ stop() not getting called
 _   http://dev.processing.org/bugs/show_bug.cgi?id=183
 _   major problem for libraries
 _   and start() is supposedly called by the applet viewer
 _   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
 _   need to track this stuff down a bit
-
-_ triangleColors are different because they're per-triangle
-_   as opposed to per-vertex, because it's based on the facet of the tri
-_ make vertexCount etc properly accessible in PGraphics3
-_   so that people can do things like the dxf renderer
-_ also have a simple way to hook in triangle leeches to PGraphics3
-_   this exists, but needs to be documented, or have accessors
 
 _ recordFrame() and beginFile()/endFile()
 _   finalize api with more work on multi-page pdf
@@ -638,6 +657,10 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpen
 _ grabbing sun.cpu.endian throws a security exception with gl applets
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
 _ strokeWeight() doesn't work in opengl or p3d
+_ how to handle gluTessVertex calls
+_   need to re-map through the regular "vertex" command, 
+_   but that makes things messy because the glu calls make calls to vertex()
+_   and i don't want an additional "pathVertex()" function
 
 
 PGraphicsAI

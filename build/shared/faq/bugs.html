@@ -627,9 +627,8 @@ QuickTime 6.5.2 reinstallers for <a
 href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime701.html">QuickTime
 7.0.1</a> and <a
 href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime70.html">QuickTime
-7.0</A> that you can use to return to your previous configuration. If
-you're using QuickTime 7.0.2 or 7.0.3 (iTunes 6), or Windows, check
-the Apple <A
+7.0</A> that you can use to return to your previous configuration. If you're using QuickTime 7.0.3, use this <A HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime703.html">QuickTime 7.0.1 reinstaller</A> and then run the QuickTime 6.5.2 reinstaller for QuickTime 7.0.1. If
+you're on Windows (or another version), check the Apple <A
 HREF="http://www.apple.com/support/downloads/">downloads</A> area to
 see if there's a reinstaller that supports your platform.
 <br> <br>
@@ -697,7 +696,7 @@ of that scenario. Blame Apple. Blame Canada.
 
 All Platforms 
 <UL>
-<LI>Video performance is not particularly great. The library is simply not built (and Java is not currently capable) of moving around 640x480 video on most machines, much less doing analysis on the video. The library was intended as a way to get pixels and manipulate them (either small pixel buffers interactively, or large ones for non real-time use). There are better tools for real-time, large screen analysis. It is my estimate that a 2x performance increase can probably be obtained by making better use of the QuickTime for Java library, but this still won't be enough to do analysis of 640x480 pixels at 30 frames per second, so it remains a lower priority. As always <A HREF="http://dev.processing.org/">contributions are welcome</A>, in case you're a video hacker who wants to help improve the library.
+<LI>Video performance is not particularly great. The library is simply not built (and Java is not currently capable) of moving around 640x480 video on most machines, much less doing analysis on the video. The library was intended as a way to get pixels and manipulate them (either small pixel buffers interactively, or large ones for non real-time use). There are better tools for real-time, large screen analysis. It is my estimate that a 2x performance increase can probably be obtained by making better use of the QuickTime for Java library, but this still won't be enough to do analysis of 640x480 pixels at 30 frames per second, so it remains a lower priority. As always <A HREF="http://dev.processing.org/">contributions are welcome</A>, in case you're a video hacker who wants to help improve the library. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=40">Bug 40</A>)
 <LI>Projects that use video cannot (currently?) be exported to the
 web. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=44">Bug 44</A>)
 </UL>
@@ -759,16 +758,16 @@ need to be changed).
 use by another application" it's possible that you haven't run this
 script. On my machine, I installed the keyspan driver for my
 usb-serial converter, ran the script, and then rebooted in order for
-things to work (a reboot does the body good). In the past, i've used a
+things to work (a reboot does the body good). In the past, I've used a
 keyspan 28X dual port adapter, and Serial.list() returns things like
 <tt>/dev/cu.USA28X21P1.1</tt>. You'll probably have something
 similar. Don't mind the frightening names.
 <LI>Tom Igoe was kind enough to note that you'll be in a world of hurt
 if you disconnect your serial adapter while a sketch is
 running&mdash;it'll prolly freeze the machine and require a forced
-reboot. This scenario may seem unlikely,(while this may seem nutty, you might run into it if
-your adapter is plugged into your usb keyboard, and you have the
-keyboard plugged into a monitor/keyboard switcher).
+reboot. This scenario may seem unlikely, but you might run into it if
+your adapter is plugged into a USB keyboard, and you have the
+keyboard plugged into a monitor/keyboard switcher.
 <LI>The OS X 10.4 (Tiger) installer wipes out your permissions and groups
 on /var/spool/uucp, so you'll have to run the setup command
 again. However, running it returns:

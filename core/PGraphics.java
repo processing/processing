@@ -39,6 +39,12 @@ import java.io.*;
  */
 public class PGraphics extends PImage implements PConstants {
 
+  /***
+   * Parent applet as passed in by the constructor. If null, then
+   * no MemoryImageSource will be used or updated, saving memory.
+   */
+  PApplet parent;
+
   /// width minus one (useful for many calculations)
   public int width1;
 
@@ -48,12 +54,20 @@ public class PGraphics extends PImage implements PConstants {
   /// width * height (useful for many calculations)
   public int pixelCount;
 
+  /// true if defaults() has been called a first time
+  boolean defaultsInited;
+
   // ........................................................
 
   // specifics for java memoryimagesource
   DirectColorModel cm;
   MemoryImageSource mis;
   public Image image;
+
+  // ........................................................
+
+  // used by recordShapesRaw()
+  public PGraphics rawShapeRecorder;
 
   // ........................................................
 
@@ -453,17 +467,10 @@ public class PGraphics extends PImage implements PConstants {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  //public PGraphics(int iwidth, int iheight) {
-  //resize(iwidth, iheight);
-
-    // init color/stroke/fill
-    // called instead just before setup on first frame
-    //defaults();
-
-    // clear geometry for loading later
-    //circleX = null;  // so that bagel knows to init these
-    //sphereX = null;  // diff from cpp b/c mem in cpp is preallocated
-  //}
+  public PGraphics(int iwidth, int iheight) {
+    this(iwidth, iheight, null);
+    //resize(iwidth, iheight);
+  }
 
 
   /**
@@ -476,12 +483,10 @@ public class PGraphics extends PImage implements PConstants {
    * @param iheight viewport height
    */
   public PGraphics(int iwidth, int iheight, PApplet applet) {
-    if (applet != null) applet.addListeners();
-    //applet.addMouseListener(applet);
-    //applet.addMouseMotionListener(applet);
-    //applet.addKeyListener(applet);
-    //applet.addFocusListener(applet);
-    //}
+    if (applet != null) {
+      this.parent = applet;
+      applet.addListeners();
+    }
     resize(iwidth, iheight);
   }
 
@@ -528,11 +533,13 @@ public class PGraphics extends PImage implements PConstants {
     for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
     //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
 
-    cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
-    mis = new MemoryImageSource(width, height, pixels, 0, width);
-    mis.setFullBufferUpdates(true);
-    mis.setAnimated(true);
-    image = Toolkit.getDefaultToolkit().createImage(mis);
+    if (parent != null) {
+      cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
+      mis = new MemoryImageSource(width, height, pixels, 0, width);
+      mis.setFullBufferUpdates(true);
+      mis.setAnimated(true);
+      image = Toolkit.getDefaultToolkit().createImage(mis);
+    }
   }
 
 
@@ -543,10 +550,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Initializes engine before drawing a new frame.
-   * Called by PApplet, no need to call this.
+   * Prepares the PGraphics for drawing.
+   * <p/>
+   * When creating your own PGraphics, you should call this before
+   * drawing anything.
    */
   public void beginFrame() {  // ignore
+    // need to call defaults(), but can only be done when it's ok
+    // to draw (i.e. for opengl, no drawing can be done outside
+    // beginFrame/endFrame).
+    if (!defaultsInited) defaults();
+
     resetMatrix(); // reset model matrix
 
     // reset vertices
@@ -555,16 +569,19 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Indicates a completed frame.
-   * Finishes rendering and swaps the buffer to the screen.
-   *
-   * If z-sorting has been turned on, then the triangles will
-   * all be quicksorted here (to make alpha work more properly)
-   * and then blit to the screen.
+   * This will finalize rendering so that it can be shown on-screen.
+   * <p/>
+   * When creating your own PGraphics, you should call this when
+   * you're finished drawing.
    */
   public void endFrame() {  // ignore
     // moving this back here (post-68) because of macosx thread problem
-    mis.newPixels(pixels, cm, 0, width);
+    if (mis != null) {
+      mis.newPixels(pixels, cm, 0, width);
+    }
+    // mark pixels as having been updated, so that they'll work properly
+    // when this PGraphics is drawn using image().
+    updatePixels();
   }
 
 
@@ -607,6 +624,8 @@ public class PGraphics extends PImage implements PConstants {
     textLeading = 14;
     textAlign = LEFT;
     textMode = MODEL;
+
+    defaultsInited = true;
   }
 
 
@@ -3474,5 +3493,14 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void mask(PImage alpha) {  // ignore
     super.mask(alpha);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void recordShapesRaw(PGraphics rawShapeRecorder) {
+    throw new RuntimeException("recordShapesRaw() not supported " +
+                               "by this renderer.");
   }
 }

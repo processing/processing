@@ -133,7 +133,8 @@ public class Movie extends PImage
     try {
       try {
         // look inside the sketch folder (if set)
-        String location = parent.folder + File.separator + "data";
+        //String location = parent.path + File.separator + "data";
+        String location = parent.dataPath("data");
         File file = new File(location, filename);
         if (file.exists()) {
           movie = fromDataRef(new DataRef(new QTFile(file)));
