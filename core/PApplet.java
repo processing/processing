@@ -3478,7 +3478,7 @@ public class PApplet extends Applet
    * Return a full path to an item in the data folder.
    */
   public String dataPath(String where) {
-    return path + File.separator + "data" + where;
+    return path + File.separator + "data" + File.separator + where;
   }
 
 
