@@ -200,7 +200,7 @@ public class Compiler implements MessageConsumer {
 
     // success would mean that 'result' is set to zero
     //// MOBILE: jikes returns result 1 with wierd errors even though files compile ok
-    return firstErrorFound;//(result == 0); // ? true : false;
+    return !firstErrorFound;//(result == 0); // ? true : false;
   }
 
 

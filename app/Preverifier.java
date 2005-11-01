@@ -25,28 +25,48 @@ public class Preverifier implements MessageConsumer {
     }
     
     StringBuffer command = new StringBuffer();
-    command.append(wtkBinPath);
-    command.append("preverify.exe -target CLDC");
-    command.append(cldc.charAt(0));
-    command.append(".");
-    command.append(cldc.charAt(1));
-    command.append(" -classpath ");
-    command.append(wtkLibPath);
-    command.append("cldcapi");
-    command.append(cldc);
-    command.append(".jar;");
-    command.append(wtkLibPath);
-    command.append("midpapi");
-    command.append(midp);
-    command.append(".jar;lib");
+    if (Base.isMacOS()) {
+        command.append(wtkPath);        
+        command.append("/osx/preverify/preverify -classpath ");
+        command.append(wtkPath);
+        command.append("/cldc.jar:");
+        command.append(wtkPath);
+        command.append("/midp.jar:");
+        command.append("/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar:lib");
+    } else {
+        command.append(wtkBinPath);
+        command.append("preverify.exe -target CLDC");
+        command.append(cldc.charAt(0));
+        command.append(".");
+        command.append(cldc.charAt(1));
+        command.append(" -classpath ");
+        command.append(wtkLibPath);
+        command.append("cldcapi");
+        command.append(cldc);
+        command.append(".jar");
+        command.append(File.pathSeparator);
+        command.append(wtkLibPath);
+        command.append("midpapi");
+        command.append(midp);
+        command.append(".jar");
+        command.append(File.pathSeparator);
+        command.append("lib");
+    }
     command.append(File.separator);
     command.append("mobile.jar");
-    command.append(" -d \"");
-    command.append(output.getPath());
-    command.append("\" \"");
-    command.append(source.getPath());
-    command.append("\"");
-    //System.out.println(command.toString());
+    if (Base.isWindows()) {
+        command.append(" -d \"");
+        command.append(output.getPath());
+        command.append("\" \"");
+        command.append(source.getPath());
+        command.append("\"");
+    } else {
+        command.append(" -d ");
+        command.append(output.getPath());
+        command.append(" ");
+        command.append(source.getPath());
+    }
+
     try {
       Process p = Runtime.getRuntime().exec(command.toString());
       boolean running = true;
