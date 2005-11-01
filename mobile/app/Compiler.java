@@ -285,8 +285,9 @@ public class Compiler implements MessageConsumer {
           return;
         }
 
+        //// MOBILE: moving this flag set to end with the exception thrown
         // if executing at this point, this is *at least* the first error
-        firstErrorFound = true;
+        //firstErrorFound = true;
 
         //err += "error:".length();
         String description = s1.substring(err + "Error:".length());
@@ -342,6 +343,9 @@ public class Compiler implements MessageConsumer {
         
         //// MOBILE: moving to end due to wierd jikes output
         System.err.println(s);    
+        
+        // if executing at this point, this is *at least* the first error
+        firstErrorFound = true;
         
         //System.out.println("description = " + description);
         //System.out.println("creating exception " + exception);
