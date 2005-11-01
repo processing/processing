@@ -7,7 +7,7 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0094 - 30 October 2005
+ABOUT REV 0094 - 31 October 2005
 
 
 [ additions ] 
@@ -17,6 +17,12 @@ ABOUT REV 0094 - 30 October 2005
   (a .pde file whose parent folder is named the same thing), 
   that sketch will be opened.
   http://dev.processing.org/bugs/show_bug.cgi?id=21
+
+- item added to the tools menu that allows building all sketches
+  underneath a particular subfolder. this won't be part of the base
+  tools once the tool api is done (meaning that it won't be in the 
+  menu by default), but it's there for now. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=117
 
 
 [ bug fixes ] 
@@ -31,6 +37,16 @@ ABOUT REV 0094 - 30 October 2005
 - removing quotes from QTJAVA path if they exist (this may have fixed
   some issues?)
 
+- fix bug that was causing font sizes not to be set on opengl
+  http://dev.processing.org/bugs/show_bug.cgi?id=174
+
+- apply fix from toxi to make targa file i/o less picky
+
+- width/height now properly set in "static" mode apps
+
+- g.smooth no longer always false in opengl
+  http://dev.processing.org/bugs/show_bug.cgi?id=192
+
 
 [ semi-obscure api tweaks ]
 
@@ -38,6 +54,9 @@ ABOUT REV 0094 - 30 October 2005
 
 - added dataPath(String filename) to return the full path to the
   give filename within the data folder
+
+- new api is in the process of being added for shape recording.. 
+  more on this in future releases.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
