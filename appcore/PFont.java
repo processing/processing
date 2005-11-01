@@ -278,7 +278,7 @@ public class PFont implements PConstants {
     for (int i = 0; i < charCount; i++) {
       //// output as png data
       if (imgs[i] != null) {
-        javax.imageio.ImageIO.write(imgs[i], "png", new File("char" + i + ".png"));
+        //javax.imageio.ImageIO.write(imgs[i], "png", new File("char" + i + ".png"));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         javax.imageio.ImageIO.write(imgs[i], "png", baos);
         byte[] png = baos.toByteArray();
