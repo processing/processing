@@ -30,7 +30,7 @@
         <exec executable="${cygwin.dir}/bin/bash.exe">
             <arg value="--login"/>
             <arg value="-c"/>
-            <arg value="cd ${parent.dir}; svn checkout svn://processing.org/tags/${svn.tag.processing} ."/>
+            <arg value="cd ${parent.dir}; svn checkout svn://processing.org/tags/${svn.tag.processing} processing"/>
         </exec>
     </target>
     
