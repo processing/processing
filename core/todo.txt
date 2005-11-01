@@ -13,16 +13,17 @@ X   probably only set when resize() is called, and it's not happening
 X g.smooth is always false in opengl
 X   http://dev.processing.org/bugs/show_bug.cgi?id=192
 
-_ when using PGraphics, must call beginFrame() and endFrame()
-_   also need to be able to turn off MemoryImageSource on endFrame
-_   call defaults() in beginFrame()
-
 o triangleColors are different because they're per-triangle
 o   as opposed to per-vertex, because it's based on the facet of the tri
 X make vertexCount etc properly accessible in PGraphics3
 X   so that people can do things like the dxf renderer
 X also have a simple way to hook in triangle leeches to PGraphics3
 X   this exists, but needs to be documented, or have accessors
+
+
+_ when using PGraphics, must call beginFrame() and endFrame()
+_   also need to be able to turn off MemoryImageSource on endFrame
+_   call defaults() in beginFrame()
 
 test this
 _ "this file is named" errors don't like subdirectories
@@ -601,6 +602,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ implement hint(NO_DEPTH_TEST) for opengl
 _ images are memory leaking pretty badly 
 _   texture re-allocated on each frame
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
