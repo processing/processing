@@ -1,27 +1,4 @@
-0094 pde
-X don't write stdout.txt/stderr.txt to the build folder
-X   writing to the p5 folder was causing security problems
-X   http://dev.processing.org/bugs/show_bug.cgi?id=177
-X bug in console that was causing stderr and stdout
-X   to be written over one another.. oops
-X console text selection immediately de-selects
-X   suspect console is updated every 250 ms even when the app isn't running
-X   simplest to just not update the console if nothing is waiting in buffer
-X   http://dev.processing.org/bugs/show_bug.cgi?id=180
-X problem with using qtjava is probably the quotes.. 
-X   remove them because they're matching quotes elsewhere
-X drag & drop implementation to add files to sketch
-X   http://dev.processing.org/bugs/show_bug.cgi?id=21
-X   test drag and drop on windows
-o   also test on linux
-X make simple tool for casey to rebuild all the examples at once
-X   first select a folder, then will open each sketch in turn, and export
-X   just make it easier to go to the next sketch
-X   need to rebuild with this release because of 1.3/1.4 issues
-X   http://dev.processing.org/bugs/show_bug.cgi?id=117
-o   or add tool to hit 'next' to go through examples
-o     just make it "next file in folder" since examples are all over
-o     also need to copy examples locally
+0095 pde
 
 _ add "reference" and "examples" categories to bugzilla
 
