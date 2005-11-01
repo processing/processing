@@ -100,12 +100,15 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public static final byte    EVENT_KEY_PRESSED       = 1;
     public static final byte    EVENT_KEY_RELEASED      = 2;
     public static final byte    EVENT_SOFTKEY_PRESSED   = 3;
+    public static final byte    EVENT_LIBRARY           = 4;
     
     private byte[]      events;
     private byte[]      eventsClone;
     private int         eventsLength;
     private int[]       eventValues;
     private int[]       eventValuesClone;
+    private Object[]    eventData;
+    private Object[]    eventDataClone;
     
     /** Creates a new instance of PMIDlet */
     public PMIDlet() {
@@ -121,7 +124,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         if (c == cmdExit) {
             exit();
         } else if (c == cmdCustom) {
-            enqueueEvent(EVENT_SOFTKEY_PRESSED, 0);
+            enqueueEvent(EVENT_SOFTKEY_PRESSED, 0, cmdCustom.getLabel());
         }
     }
     
@@ -177,6 +180,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             eventsClone = new byte[8];
             eventValues = new int[8];
             eventValuesClone = new int[8];
+            eventData = new Object[8];
+            eventDataClone = new Object[8];
             
             running = true;
             
@@ -219,19 +224,31 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public void draw() {      
     }
     
-    protected final void enqueueEvent(byte event, int value) {
+    public void libraryEvent(Object library, int event, Object data) {
+        
+    }
+    
+    public final void enqueueLibraryEvent(Object library, int event, Object data) {
+        enqueueEvent(EVENT_LIBRARY, event, new Object[] { library, data });
+    }
+    
+    public final void enqueueEvent(byte event, int value, Object data) {
         synchronized (this) {
             eventsLength++;
             if (eventsLength > events.length) {
                 byte[] oldEvents = events;
                 int[] oldEventValues = eventValues;
+                Object[] oldEventData = eventData;
                 events = new byte[oldEvents.length * 2];
                 eventValues = new int[events.length];
+                eventData = new Object[events.length];
                 System.arraycopy(oldEvents, 0, events, 0, eventsLength - 1);
                 System.arraycopy(oldEventValues, 0, eventValues, 0, eventsLength - 1);
+                System.arraycopy(oldEventData, 0, eventData, 0, eventsLength - 1);
             }            
             events[eventsLength - 1] = event;
             eventValues[eventsLength - 1] = value;
+            eventData[eventsLength - 1] = data;
         }        
         if (thread == null) {
             thread = new Thread(this);
@@ -247,22 +264,32 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             if (eventsClone.length < length) {
                 eventsClone = new byte[events.length];
                 eventValuesClone = new int[events.length];
+                eventDataClone = new Object[events.length];
             }
             System.arraycopy(events, 0, eventsClone, 0, length);
             System.arraycopy(eventValues, 0, eventValuesClone, 0, length);
+            System.arraycopy(eventData, 0, eventDataClone, 0, length);
+            for (int i = length - 1; i >= 0; i--) {
+                eventData[i] = null;
+            }
         }
         for (int i = 0; i < length; i++) {
-            switch (events[i]) {
+            switch (eventsClone[i]) {
                 case EVENT_KEY_PRESSED:
-                    keyPressed(eventValues[i]);
+                    keyPressed(eventValuesClone[i]);
                     break;
                 case EVENT_KEY_RELEASED:
-                    keyReleased(eventValues[i]);
+                    keyReleased(eventValuesClone[i]);
                     break;
                 case EVENT_SOFTKEY_PRESSED:
-                    softkeyPressed(cmdCustom.getLabel());
+                    softkeyPressed((String) eventDataClone[i]);
+                    break;
+                case EVENT_LIBRARY:
+                    Object[] objs = (Object[]) eventDataClone[i];
+                    libraryEvent(objs[0], eventValuesClone[i], objs[1]);
                     break;
             }
+            eventDataClone[i] = null;
         }
     }
     

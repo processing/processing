@@ -259,6 +259,13 @@
             <param name="classPath" value=""/>
             <param name="cldc" value="CLDC1.0"/>
         </antcall>
+        <!-- bluetooth library -->
+        <antcall target="makelib">
+            <param name="libname" value="bluetooth"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="${wtk.dir}/lib/jsr082.jar;mobile/build/windows/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
         <!-- next, video library -->
         <antcall target="makelib">
             <param name="libname" value="video"/>
@@ -294,6 +301,10 @@
         <!-- copy handset library -->
         <antcall target="copylib">
             <param name="libname" value="handset"/>
+        </antcall>
+        <!-- copy bluetooth library -->
+        <antcall target="copylib">
+            <param name="libname" value="bluetooth"/>
         </antcall>
         <!-- copy video library -->
         <antcall target="copylib">

@@ -110,11 +110,11 @@ public class PCanvas extends Canvas {
     }
     
     protected void keyPressed(int keyCode) {
-        midlet.enqueueEvent(PMIDlet.EVENT_KEY_PRESSED, keyCode);
+        midlet.enqueueEvent(PMIDlet.EVENT_KEY_PRESSED, keyCode, null);
     }
     
     protected void keyReleased(int keyCode) {
-        midlet.enqueueEvent(PMIDlet.EVENT_KEY_RELEASED, keyCode);
+        midlet.enqueueEvent(PMIDlet.EVENT_KEY_RELEASED, keyCode, null);
     }
     
     public void point(int x1, int y1) {
