@@ -1,0 +1,1 @@
+midlet=bluetooth.jar

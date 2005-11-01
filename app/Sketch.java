@@ -2182,10 +2182,8 @@ public class Sketch {
     String[] baseImports = {};
     String   bootClassPath = wtkLibPath + "cldcapi" + cldc + ".jar" + File.pathSeparator +
                              wtkLibPath + "midpapi" + midp + ".jar";
-    //// this is just to satisfy Jikes which wants java.io.Serializable and java.lang.Cloneable to be reachable...
-    //System.out.println(System.getProperty ("java.home"));
-    //bootClassPath += File.pathSeparator + System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
-    String   additionalClassPath = "lib" + File.separator + "mobile.jar" + File.pathSeparator + Sketchbook.librariesClassPath;
+    String   corePath = "lib" + File.separator + "mobile.jar";
+    String   additionalClassPath = corePath + File.pathSeparator + Sketchbook.librariesClassPath;
     String foundName = build(midletDir.getPath(), name, baseClass, baseImports, 
                              bootClassPath, additionalClassPath);
     
@@ -2269,14 +2267,14 @@ public class Sketch {
       // in the list is a File object that points the
       // library sketch's "library" folder
       File libraryFolder = (File)en.nextElement();
-      //System.out.println("exporting files from " + libFolder);
+      //System.out.println("exporting files from " + libraryFolder);
       File exportSettings = new File(libraryFolder, "export.txt");
       String exportList[] = null;
       if (exportSettings.exists()) {
         //exportList = PApplet.loadStrings(exportSettings);
         String info[] = PApplet.loadStrings(exportSettings);
         for (int i = 0; i < info.length; i++) {
-          if (info[i].startsWith("applet")) {
+          if (info[i].startsWith("midlet")) {
             int idx = info[i].indexOf('=');  // get applet= or applet =
             String commas = info[i].substring(idx+1).trim();
             exportList = PApplet.split(commas, ", ");
@@ -2291,6 +2289,8 @@ public class Sketch {
 
         exportList[i] = PApplet.trim(exportList[i]);
         if (exportList[i].equals("")) continue;
+        
+        //System.out.println("exportList[" + i + "]=" + exportList[i]);
 
         File exportFile = new File(libraryFolder, exportList[i]);
         if (!exportFile.exists()) {
@@ -2311,7 +2311,7 @@ public class Sketch {
     }
 
     //// add the mobile core
-    packClassPathIntoZipFile(additionalClassPath, zos);
+    packClassPathIntoZipFile(corePath, zos);
 
     // files to include from data directory
     //if ((dataDir != null) && (dataDir.exists())) {
