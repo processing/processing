@@ -1,3 +1,26 @@
+0094 core
+X fix bug that was causing font sizes not to be set on opengl
+X   http://dev.processing.org/bugs/show_bug.cgi?id=174
+X apply fix from toxi to make targa files less picky
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1127999630
+X "folder" has been renamed to "path" to match savePath().
+X added "dataPath" to return the full path to something in the data folder
+X savePath should maybe be appletPath or sketchPath
+X   because can be used for opening files too 
+X   (i.e. if needing a File object)
+X width, height set to zero in static mode
+X   probably only set when resize() is called, and it's not happening
+X g.smooth is always false in opengl
+X   http://dev.processing.org/bugs/show_bug.cgi?id=192
+
+o triangleColors are different because they're per-triangle
+o   as opposed to per-vertex, because it's based on the facet of the tri
+X make vertexCount etc properly accessible in PGraphics3
+X   so that people can do things like the dxf renderer
+X also have a simple way to hook in triangle leeches to PGraphics3
+X   this exists, but needs to be documented, or have accessors
+
+
 0093 core
 X upgrade jogl to a newer rev to fix osx "cannot lock" issues
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1118603714
