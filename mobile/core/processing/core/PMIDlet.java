@@ -197,24 +197,32 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final void run() {
-        do {
-            long currentTime = System.currentTimeMillis();
-            int elapsed = Math.max(1, (int) (currentTime - lastFrameTime));
-            dequeueEvents();
-            if (redraw || (running && (elapsed >= msPerFrame))) {
-                canvas.resetMatrix();
-                draw();
-                runtime.gc();
-                canvas.repaint();
-                canvas.serviceRepaints();
-                lastFrameTime = currentTime;
-                framerate = 1000 / elapsed;
-                frameCount++;
-                
-                redraw = false;
-            }
-            Thread.yield();
-        } while (running || (eventsLength > 0));
+        try {
+            do {
+                long currentTime = System.currentTimeMillis();
+                int elapsed = Math.max(1, (int) (currentTime - lastFrameTime));
+                dequeueEvents();
+                if (redraw || (running && (elapsed >= msPerFrame))) {
+                    canvas.resetMatrix();
+                    draw();
+                    runtime.gc();
+                    canvas.repaint();
+                    canvas.serviceRepaints();
+                    lastFrameTime = currentTime;
+                    framerate = 1000 / elapsed;
+                    frameCount++;
+
+                    redraw = false;
+                }
+                Thread.yield();
+            } while (running || (eventsLength > 0));
+        } catch (Exception e) {
+            Form form = new Form("Exception");
+            form.append(e.getMessage());
+            form.setCommandListener(this);
+            form.addCommand(cmdExit);
+            display.setCurrent(form);
+        }
         thread = null;
     }
     

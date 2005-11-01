@@ -109,7 +109,7 @@ public class Client {
         }
     }
 
-    public void writeBoolean(boolean v) throws IOException {
+    public void writeBoolean(boolean v) {
         try {
             os.writeBoolean(v);
         } catch (IOException ioe) {
@@ -117,7 +117,7 @@ public class Client {
         }
     }
 
-    public void writeBytes(String s) throws IOException {
+    public void writeBytes(String s) {
         try {
             os.write(s.getBytes());
         } catch (IOException ioe) {
@@ -125,7 +125,7 @@ public class Client {
         }
     }
 
-    public void writeChar(int v) throws IOException {
+    public void writeChar(int v) {
         try {
             os.writeChar(v);
         } catch (IOException ioe) {
@@ -133,7 +133,7 @@ public class Client {
         }
     }
     
-    public void writeInt(int v) throws IOException {
+    public void writeInt(int v) {
         try {
             os.writeInt(v);
         } catch (IOException ioe) {
@@ -141,7 +141,7 @@ public class Client {
         }
     }
     
-    public void writeUTF(String s) throws IOException {
+    public void writeUTF(String s) {
         try {
             os.writeUTF(s);
         } catch (IOException ioe) {

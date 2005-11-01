@@ -1,5 +1,7 @@
 package processing.bluetooth;
 
+import java.io.*;
+import javax.microedition.io.*;
 import javax.bluetooth.*;
 
 /**
@@ -60,5 +62,15 @@ public class Service {
             provider = (String) element.getValue();
         }
         return provider;
+    }
+    
+    public Client connect() {
+        try {
+            StreamConnection con = (StreamConnection) Connector.open(record.getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false));
+            Client c = new Client(con);
+            return c;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

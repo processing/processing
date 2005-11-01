@@ -71,12 +71,18 @@ public class Bluetooth implements DiscoveryListener, Runnable {
     }
     
     public void start(String name) {
-        if (thread != null) {
+        if (thread == null) {
             thread = new Thread(this);
             try {
+                local.setDiscoverable(DiscoveryAgent.GIAC);
                 UUID uuid = new UUID(UUID_DEFAULT, false);
                 String url = "btspp://localhost:" + uuid.toString() + ";name=" + name;
-                server = (StreamConnectionNotifier) Connector.open(url);                
+                server = (StreamConnectionNotifier) Connector.open(url);             
+                ServiceRecord record = local.getRecord(server);
+                //// set availability to fully available
+                record.setAttributeValue( 0x0008, new DataElement( DataElement.U_INT_1, 0xFF ) );
+                //// set device class to telephony
+                record.setDeviceServiceClasses( 0x400000  );                
                 thread.start();
             } catch (Exception e) {
                 thread = null;
