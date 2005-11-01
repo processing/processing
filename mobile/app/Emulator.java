@@ -16,18 +16,32 @@ public class Emulator extends Runner {
   
   public void start(Point windowLocation) throws RunnerException {
     try{
-      String wtkBinPath = Preferences.get("wtk.path") + File.separator + "bin";
+      String wtkPath = Preferences.get("wtk.path");
+      String wtkBinPath = wtkPath + File.separator + "bin";
       
       StringBuffer command = new StringBuffer();
-      command.append(wtkBinPath);
-      command.append(File.separator);
-      command.append("emulator.exe -Xdescriptor:\"");
+      if (Base.isMacOS()) {
+        wtkBinPath = wtkPath;
+        command.append("java -jar ");
+        command.append(wtkPath);
+        command.append("/player.jar ");
+      } else {
+        command.append(wtkBinPath);
+        command.append(File.separator);
+        command.append("emulator.exe -Xdescriptor:");
+        if (Base.isWindows()) {
+            command.append("\"");
+        };          
+      }
       command.append(sketch.folder.getPath());
       command.append(File.separator);
       command.append("midlet");
       command.append(File.separator);
       command.append(sketch.name);
-      command.append(".jad\"");
+      command.append(".jad");
+      if (Base.isWindows()) {
+          command.append("\"");
+      }
       
       process = Runtime.getRuntime().exec(command.toString(), null, new File(wtkBinPath));
       processInput = new SystemOutSiphon(process.getInputStream());

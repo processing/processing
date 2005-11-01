@@ -2182,11 +2182,15 @@ public class Sketch {
     String[] baseImports = {};
     String   bootClassPath = wtkLibPath + "cldcapi" + cldc + ".jar" + File.pathSeparator +
                              wtkLibPath + "midpapi" + midp + ".jar";
+    if (Base.isMacOS()) {
+        bootClassPath = wtkPath + "/cldc.jar:" + wtkPath + "/midp.jar:" +
+                        "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar";
+    }
     String   corePath = "lib" + File.separator + "mobile.jar";
     String   additionalClassPath = corePath + File.pathSeparator + Sketchbook.librariesClassPath;
     String foundName = build(midletDir.getPath(), name, baseClass, baseImports, 
                              bootClassPath, additionalClassPath);
-    
+
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
 
@@ -2198,7 +2202,7 @@ public class Sketch {
                           "name in the code was " + foundName, null);
       return false;
     }
-    
+
     //// preverify class files into temporary directory
     Preverifier preverifier = new Preverifier();
     File tmpDir = new File(folder, "tmp");
