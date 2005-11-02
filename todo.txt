@@ -13,6 +13,7 @@ _ check into bug where applet crashing if image not available
 _   probably need to add a hint() to make things not halt
 _ hack the image exporting stuff into p5
 _ check into loadImage() with jars bug, very frustrating
+_   when using loadImage() on a jar, turn off "no cache" option?
 _ threading bug with sonia and rev 91
 
 _ file a feature request for command line support
@@ -57,6 +58,8 @@ _   questions like 'how do i do x' are often solved by looking at the api
 _   for instance, to get the framerate, use framerate()
 
 other faq
+_ how to change presentation mode background color
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130781367;start=2#2
 _ why adding .0001 to a float doesn't work
 _   and how they're imprecise in general (use nf)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130877990

@@ -165,7 +165,7 @@ public class PApplet extends Applet
    * true if no size() command has been executed. This is used to wait until
    * a size has been set before placing in the window and showing it.
    */
-  protected boolean defaultSize;
+  //protected boolean defaultSize;
 
   /**
    * Pixel buffer from this applet's PGraphics.
@@ -448,10 +448,10 @@ public class PApplet extends Applet
     // create a dummy graphics context
     size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     //size(INITIAL_WIDTH, INITIAL_HEIGHT);
-    //width = 0;  // use this to flag whether the width/height are valid
-    //height = 0;
+    width = 0;  // use this to flag whether the width/height are valid
+    height = 0;
     // need to set width/height otherwise they won't work for static mode apps
-    defaultSize = true;
+    //defaultSize = true;
 
     // this is automatically called in applets
     // though it's here for applications anyway
@@ -795,7 +795,7 @@ public class PApplet extends Applet
 
       this.width = iwidth;
       this.height = iheight;
-      defaultSize = false;
+      //defaultSize = false;
 
       // make the applet itself larger.. it's a subclass of Component,
       // so this is important for when it's embedded inside another app.
@@ -5494,8 +5494,8 @@ v              PApplet.this.stop();
 
       // wait until the applet has figured out its width
       // hoping that this won't hang if the applet has an exception
-      //while ((applet.width == 0) && !applet.finished) {
-      while (applet.defaultSize && !applet.finished) {
+      while ((applet.width == 0) && !applet.finished) {
+      //while (applet.defaultSize && !applet.finished) {
         try {
           Thread.sleep(5);
 
