@@ -1,7 +1,11 @@
 0095 core
-_ sketches won't run in some cases
-_   http://dev.processing.org/bugs/show_bug.cgi?id=195
+X undo the fix that causes the width/height to be properly set 
 
+_ width, height set to zero in static mode
+_   probably only set when resize() is called, and it's not happening
+_   be careful when fixing this, bugs 195/197 were a result
+_   http://dev.processing.org/bugs/show_bug.cgi?id=195
+_   http://dev.processing.org/bugs/show_bug.cgi?id=197
 
 _ when using PGraphics, must call beginFrame() and endFrame()
 _   also need to be able to turn off MemoryImageSource on endFrame

@@ -7,6 +7,23 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0095 - 2 November 2005
+
+single tweak to undo a failed bug fix in 0094.
+
+
+[ bug un-fixes ]
+
+- width, height are set to zero in static mode apps. there was an
+  attempt to fix this for rev 0094, but that backfired and broke more
+  things than it fixed, so the change has been removed and i'm
+  re-releasing as 0095. the bug has now been filed for a later release:
+  http://dev.processing.org/bugs/show_bug.cgi?id=198
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0094 - 31 October 2005
 
 
