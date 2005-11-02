@@ -719,6 +719,7 @@ public class PApplet extends Applet
       size(iwidth, iheight, g.getClass().getName());
 
     } else {
+      // create a JAVA2D renderer (the current default)
       if (PApplet.javaVersion >= 1.3f) {
         try {
           Class c = Class.forName(JAVA2D);
@@ -794,6 +795,7 @@ public class PApplet extends Applet
 
       this.width = iwidth;
       this.height = iheight;
+      defaultSize = false;
 
       // make the applet itself larger.. it's a subclass of Component,
       // so this is important for when it's embedded inside another app.

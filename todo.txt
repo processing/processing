@@ -1,5 +1,24 @@
 0095 pde
 
+o separate processing editor/compiler
+o   can this be done without too much trouble?
+o   gets messy because of how the classpath et al is handled
+o   maybe just split out the preproc?
+o     could avoid doing things like the packages etc
+
+_ hex colors < 6 chars produce bizarre error:
+_   http://dev.processing.org/bugs/show_bug.cgi?id=196
+
+_ check into bug where applet crashing if image not available
+_   probably need to add a hint() to make things not halt
+_ hack the image exporting stuff into p5
+_ check into loadImage() with jars bug, very frustrating
+_ threading bug with sonia and rev 91
+
+_ file a feature request for command line support
+_   would still require awt, but would take a sketch on cmd line
+_   build it and then exit
+
 _ add "reference" and "examples" categories to bugzilla
 
 the biggies
@@ -38,6 +57,9 @@ _   questions like 'how do i do x' are often solved by looking at the api
 _   for instance, to get the framerate, use framerate()
 
 other faq
+_ why adding .0001 to a float doesn't work
+_   and how they're imprecise in general (use nf)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130877990
 _ why strong typing? (link also to language thing on main page)
 _ we cannot commit to any sort of timeframe on releases
 _ under the hood - basic
