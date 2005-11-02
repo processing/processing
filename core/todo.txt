@@ -1,4 +1,6 @@
 0095 core
+_ sketches won't run in some cases
+_   http://dev.processing.org/bugs/show_bug.cgi?id=195
 
 
 _ when using PGraphics, must call beginFrame() and endFrame()
@@ -432,6 +434,7 @@ _ concave polygons having trouble if points come back to meet
 _   tesselator/triangulator gets confused when points doubled up
 _   might need to avoid previous vertex hitting itself
 _   http://dev.processing.org/bugs/show_bug.cgi?id=97
+_   graphics gems 5 has more about tessellation
 _ P3D not doing bilinear interpolation in text and images 
 _   because smooth() has to be set (and smooth throws an error in P3D)
 _   how should this be handled? a hint? allowing smooth()?
