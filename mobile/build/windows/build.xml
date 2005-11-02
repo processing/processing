@@ -73,6 +73,7 @@
         <copy todir="processing/build/shared/lib" overwrite="true">
             <fileset dir="mobile/build/shared/lib">
                 <include name="**/*.gif"/>
+                <include name="**/*.jpg"/>
             </fileset>
         </copy>
         <!-- copy icon for windows executable -->
@@ -124,6 +125,16 @@
         <antcall target="copylibs">
             <param name="target" value="${svn.tag.processing}-expert"/>
         </antcall>
+        <!-- rename executable -->
+        <move file="processing/build/windows/${svn.tag.processing}/processing.exe" tofile="processing/build/windows/${svn.tag.processing}/mobile.exe"/>
+        <move file="processing/build/windows/${svn.tag.processing}-expert/processing.exe" tofile="processing/build/windows/${svn.tag.processing}-expert/mobile.exe"/>
+        <!-- rename directories -->
+        <move todir="processing/build/windows/mobile-${mobile.version}">
+            <fileset dir="processing/build/windows/${svn.tag.processing}"/>
+        </move>
+        <move todir="processing/build/windows/mobile-${mobile.version}-expert">
+            <fileset dir="processing/build/windows/${svn.tag.processing}-expert"/>
+        </move>
         <!-- zip up standard release -->
 <!--        
         <zip destfile="processing/build/windows/${svn.tag.processing}.zip" 

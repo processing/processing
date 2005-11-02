@@ -2161,10 +2161,10 @@ public class Sketch {
 
     // build the sketch
     String   wtkPath     = Preferences.get("wtk.path");
-    if (wtkPath == null) {
-        Base.showWarning("Sun Wireless Toolkit (WTK) not found",
-                            "Please specify the location of the WTK in your preferences.txt file. Example:\n\n" +
-                            "wtk.path=C:\\WTK22", null);
+    if ((wtkPath == null) || (wtkPath.trim().equals(""))) {
+        Base.showWarning("Wireless Toolkit (WTK) not found",
+                         "Please specify the location of your Wireless Toolkit installation in Preferences.", null);
+        return false;
     }
     //// cldc version
     String   cldc        = Preferences.get("wtk.cldc");

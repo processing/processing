@@ -744,10 +744,10 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
-    item = newJMenuItem("Visit Processing.org", '5');
+    item = newJMenuItem("Visit Mobile.processing.org", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://processing.org/");
+          Base.openURL("http://mobile.processing.org/");
         }
       });
     menu.add(item);
@@ -755,7 +755,7 @@ public class Editor extends JFrame
     // macosx already has its own about menu
     if (!Base.isMacOS()) {
       menu.addSeparator();
-      item = new JMenuItem("About Processing");
+      item = new JMenuItem("About Mobile Processing");
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleAbout();

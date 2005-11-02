@@ -1,6 +1,7 @@
+0001
 - Integrate proguard obfuscation step
-- Change name of executable to mobile.exe
-- Change version numbers to start from 0001
+X Change name of executable to mobile.exe
+X Change version numbers to start from 0001
 X Sound library
 X Vibration library
 X Revise net library
@@ -9,14 +10,14 @@ X Text input screen, multi-tap input buffer
 X freeMemory, totalMemory wrappers
 X number of colors funcion
 - Mac OS X build
-- Allow user to select wtk folder in dialog
+X Allow user to select wtk folder in dialog
 - Emulator profile selection, screen size modifications
 - Export to web option, using microemulator applet
 - New phone skin for microemulator applet
-- Change preferences to be separate from Processing
-- Change default sketch directory to be separate from Processing
-- Change (or temporarily disable) auto-update check to check Mobile Processing
-- Update copyright, license information in all source files
+X Change preferences to be separate from Processing
+X Change default sketch directory to be separate from Processing
+X Change (or temporarily disable) auto-update check to check Mobile Processing
+X Update copyright, license information in all source files
 - Add Exhibition to website, solicit examples from community members
 - Mobile vs. Processing FAQ update
 
