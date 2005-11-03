@@ -1,0 +1,21 @@
+ABOUT REV 0001 - 02 November 2005
+
+I'm calling this release 0001 since the first was really just a quick hack.  As
+of this release, Mobile Processing is now a completely separate application
+from Processing- it no longer shares its preferences and sketch directory with
+its parent application, its directories and filenames have been appropriately
+renamed.  It also has a bunch of improvements and additions:
+
+- New Preferences dialog includes Mobile tab for setting Wireless Toolkit
+  directory.  No more editing preferences.txt!
+
+- Export Applet item in File Menu will build the MIDlet and also create a
+  webpage with the open source Microemulator applet for previewing it in
+  a browser.  Let the code sharing begin!
+
+- Mac OS X support for the Mpowerplayer SDK.  This is a MIDP 2.0 compliant
+  toolkit for building MIDlets on the Mac.
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
