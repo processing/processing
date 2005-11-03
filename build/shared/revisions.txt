@@ -16,6 +16,4 @@ renamed.  It also has a bunch of improvements and additions:
 - Mac OS X support for the Mpowerplayer SDK.  This is a MIDP 2.0 compliant
   toolkit for building MIDlets on the Mac.
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
