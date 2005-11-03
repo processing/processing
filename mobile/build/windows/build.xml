@@ -76,6 +76,13 @@
                 <include name="**/*.jpg"/>
             </fileset>
         </copy>
+        <!-- copy proguard jar and its configuration file into processing lib -->
+        <copy file="mobile/build/shared/lib/proguard.jar" todir="processing/build/shared/lib"/>
+        <copy file="mobile/build/shared/lib/proguard.pro" todir="processing/build/shared/lib"/>        
+        <!-- copy applet emulator jars into processing lib -->
+        <copy file="mobile/build/shared/lib/me-applet.jar" todir="processing/build/shared/lib"/>
+        <copy file="mobile/build/shared/lib/large.jar" todir="processing/build/shared/lib"/>        
+        <copy file="mobile/build/shared/lib/applet.html" todir="processing/build/shared/lib"/>        
         <!-- copy icon for windows executable -->
         <copy todir="processing/build/windows/launcher" overwrite="true">
             <fileset dir="mobile/build/windows/launcher">
@@ -189,9 +196,6 @@
         <!-- copy jar and jad/manifest template into processing build -->
         <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/windows/${target}/lib"/>
         <copy file="mobile/build/windows/mobile.jar" todir="processing/build/windows/${target}/lib"/>
-        <!-- copy proguard jar and its configuration file into processing lib -->
-        <copy file="mobile/build/shared/lib/proguard.jar" todir="processing/build/windows/${target}/lib"/>
-        <copy file="mobile/build/shared/lib/proguard.pro" todir="processing/build/windows/${target}/lib"/>        
     </target>
 
     <target name="compile">
