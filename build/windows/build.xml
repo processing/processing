@@ -125,11 +125,17 @@
         <antcall target="copylibs">
             <param name="target" value="${svn.tag.processing}"/>
         </antcall>
+        <antcall target="copydocs">
+            <param name="target" value="${svn.tag.processing}"/>
+        </antcall>
         <!-- copy into expert release -->
         <antcall target="copycore">
             <param name="target" value="${svn.tag.processing}-expert"/>
         </antcall>        
         <antcall target="copylibs">
+            <param name="target" value="${svn.tag.processing}-expert"/>
+        </antcall>
+        <antcall target="copydocs">
             <param name="target" value="${svn.tag.processing}-expert"/>
         </antcall>
         <!-- rename executable -->
@@ -152,6 +158,41 @@
         <zip destfile="processing/build/windows/${svn.tag.processing}-expert.zip" 
              basedir="processing/build/windows/${svn.tag.processing}-expert"/>
 -->             
+    </target>
+    
+    <target name="copydocs" depends="init">
+        <!-- default target is work folder, can be overridden by call -->
+        <property name="target" value="work"/>
+        <!-- delete contents of examples folder -->
+        <delete includeemptydirs="true">
+            <fileset defaultexcludes="no" dir="processing/build/windows/${target}/examples" includes="**/*"/>
+        </delete>
+        <!-- copy mobile examples -->
+        <copy todir="processing/build/windows/${target}/examples" overwrite="true">
+            <fileset dir="mobile/docs/examples">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- delete contents of faq folder -->
+        <delete includeemptydirs="true">
+            <fileset defaultexcludes="no" dir="processing/build/windows/${target}/faq" includes="**/*"/>
+        </delete>
+        <!-- copy mobile faq -->
+        <copy todir="processing/build/windows/${target}/faq" overwrite="true">
+            <fileset dir="mobile/docs/faq">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- delete contents of reference folder -->
+        <delete includeemptydirs="true">
+            <fileset defaultexcludes="no" dir="processing/build/windows/${target}/reference" includes="**/*"/>
+        </delete>
+        <!-- copy mobile reference -->
+        <copy todir="processing/build/windows/${target}/reference" overwrite="true">
+            <fileset dir="mobile/docs/reference">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
     </target>
     
     <target name="run" depends="init">
