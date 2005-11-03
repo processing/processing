@@ -1,4 +1,3 @@
-0001
 - Integrate proguard obfuscation step
 X Change name of executable to mobile.exe
 X Change version numbers to start from 0001
@@ -12,7 +11,7 @@ X number of colors funcion
 - Mac OS X build
 X Allow user to select wtk folder in dialog
 - Emulator profile selection, screen size modifications
-- Export to web option, using microemulator applet
+X Export to web option, using microemulator applet
 - New phone skin for microemulator applet
 X Change preferences to be separate from Processing
 X Change default sketch directory to be separate from Processing
