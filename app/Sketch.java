@@ -1579,6 +1579,10 @@ public class Sketch {
    * </PRE>
    */
   public boolean exportApplet() throws Exception {
+    if (!exportMIDlet()) {
+        return false;
+    }
+/*      
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -1643,7 +1647,12 @@ public class Sketch {
         Base.showWarning("Could not find applet size", message, null);
       }
     }  // else no size() command found
-
+*/
+    // nuke the old applet folder because it can cause trouble
+    File appletFolder = new File(folder, "applet");
+    Base.removeDir(appletFolder);
+    appletFolder.mkdirs();
+    
     // originally tried to grab this with a regexp matcher,
     // but it wouldn't span over multiple lines for the match.
     // this could prolly be forced, but since that's the case
@@ -1717,6 +1726,7 @@ public class Sketch {
           sb.replace(index, index + "@@archive@@".length(),
                      name + ".jar");
         }
+/*        
         while ((index = sb.indexOf("@@width@@")) != -1) {
           sb.replace(index, index + "@@width@@".length(),
                      String.valueOf(wide));
@@ -1725,6 +1735,7 @@ public class Sketch {
           sb.replace(index, index + "@@height@@".length(),
                      String.valueOf(high));
         }
+ */
         while ((index = sb.indexOf("@@description@@")) != -1) {
           sb.replace(index, index + "@@description@@".length(),
                      description);
@@ -1756,7 +1767,11 @@ public class Sketch {
         e.printStackTrace();
       }
     }
-
+    
+    //// copy the applet emulator jars into the applet folder
+    Base.copyFile(new File("lib", "me-applet.jar"), new File(appletFolder, "me-applet.jar"));
+    Base.copyFile(new File("lib", "large.jar"), new File(appletFolder, "large.jar"));
+/*
     // create new .jar file
     FileOutputStream zipOutputFile =
       new FileOutputStream(new File(appletFolder, name + ".jar"));
@@ -1874,7 +1889,7 @@ public class Sketch {
     // close up the jar file
     zos.flush();
     zos.close();
-
+*/
     Base.openFolder(appletFolder);
     return true;
   }

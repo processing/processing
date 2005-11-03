@@ -556,6 +556,15 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);    
+//// mobile: export MIDlet with Applet menu option        
+    item = new JMenuItem("Export Applet");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleExport();
+        }
+      });
+    menu.add(item);
+
 
     menu.addSeparator();
 
@@ -744,7 +753,7 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
-    item = newJMenuItem("Visit Mobile.processing.org", '5');
+    item = newJMenuItem("Visit Mobile.Processing.org", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Base.openURL("http://mobile.processing.org/");

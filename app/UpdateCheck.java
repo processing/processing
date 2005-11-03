@@ -106,8 +106,8 @@ public class UpdateCheck implements Runnable {
       Preferences.set("update.last", String.valueOf(now));
 
       String prompt =
-        "A new version of Processing is available,\n" +
-        "would you like to visit the Processing download page?";
+        "A new version of Mobile Processing is available,\n" +
+        "would you like to visit the Mobile Processing download page?";
 
       if (latest > Base.VERSION) {
         Object[] options = { "Yes", "No" };
