@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readChar()</name>
+
+<description>
+Reads one byte of data from the server, and returns the ASCII character equivalent. This must be preceeded by a <b>GET()</b> or <b>POST()</b> that returns successfully.
+</description>
+
+<syntax>
+readChar()
+</syntax>
+
+<returns>char</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>

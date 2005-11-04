@@ -74,6 +74,16 @@ if (!(@include 'subnavigation.inc.php')) {
 }
 ?>
 <?php if ($PAGE_SHOWBACKINDEX) { 
+    if (strstr($_SERVER['PHP_SELF'], 'reference.php') !== false) {
+        $pos = strpos($_GET['name'], "_");
+        if ($pos !== false) {
+            $parent = substr($_GET['name'], 0, $pos);
+            if (file_exists('API/'. $parent .'.xml')) {
+                $PAGE_BACK_LINK = 'reference.php?name='. $parent;
+                $PAGE_BACK_NAME = 'Back';
+            }
+        }
+    }
     if (is_null($PAGE_BACK_LINK)) {
         $PAGE_BACK_LINK = 'index.php';
     }

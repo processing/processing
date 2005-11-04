@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readBytes()</name>
+
+<description>
+Reads the response from the server as an array of bytes. This must be preceeded by a <b>GET()</b> or <b>POST()</b> that returns successfully. This method can either fill a byte array that you provide, or create a byte array and return it. It is more memory efficient to create a byte array and provide it to <b>readBytes()</b>, as you can re-use the same byte array.  If you provide your own byte array, the method will return the number of bytes filled in the array.
+</description>
+
+<syntax>
+readBytes()
+readBytes(<c>buffer</c>)
+</syntax>
+
+<parameter>
+<label>buffer</label>
+<description>byte[]: array of bytes to fill</description>
+</parameter>
+
+<returns>byte[] or int</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>GET</name>
+<name>GET()</name>
 
 <description>
-Makes a GET request to the server to retreive specified content. This is equivalent to typing a url into a desktop web browser and retreiving the contents of the web page. Here, the content is returned in a String. Note that you can pass parameters to the server if the file you are requesting is a script that will be executed.
+Makes a GET request to the server to retreive specified content. This is equivalent to typing a url into a desktop web browser and retreiving the contents of the web page. Note that you can pass parameters to the server if the file you are requesting is a script that will be executed. If the request is successful, the method will return <b>true</b> and the content can be retreived using the <b>read()</b> methods.
 </description>
 
 <syntax>
@@ -26,7 +26,7 @@ GET(<c>file</c>, <c>params</c>, <c>values</c>)
 <description>String[]: array of values corresponding to the names in the params array</description>
 </parameter>
 
-<returns>String</returns>
+<returns>boolean</returns>
 
 <related>
 </related>

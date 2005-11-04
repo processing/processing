@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readString()</name>
+
+<description>
+Reads the response from the server as String. This must be preceeded by a <b>GET()</b> or <b>POST()</b> that returns successfully.
+</description>
+
+<syntax>
+readBytes()
+</syntax>
+
+<returns>String</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>

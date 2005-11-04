@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>POST()</name>
+
+<description>
+Makes a POST request to the server. This is equivalent to submitting the contents of a form on a desktop web browser. You can submit String values or a mix of String and byte[] values. If the request is successful, the method will return <b>true</b> and the reply can be retreived using the <b>read()</b> methods.
+</description>
+
+<syntax>
+POST(<c>file</c>, <c>params</c>, <c>values</c>)
+POST(<c>file</c>, <c>params</c>, <c>data</c>)
+</syntax>
+
+<parameter>
+<label>file</label>
+<description>String: name of file on server to post to</description>
+</parameter>
+
+<parameter>
+<label>params</label>
+<description>String[]: array of parameter names to pass to server</description>
+</parameter>
+
+<parameter>
+<label>values</label>
+<description>String[]: array of values corresponding to the names in the params array</description>
+</parameter>
+
+<parameter>
+<label>values</label>
+<description>Object[]: array of data corresponding to the names in the params array, elements can be either String or byte[]</description>
+</parameter>
+
+<returns>boolean</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>
