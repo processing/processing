@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>HTTPClient</name>
+<name>Client</name>
 
 <description>
 A client connects to a server and sends data back and forth.
@@ -11,9 +11,34 @@ A client connects to a server and sends data back and forth.
 <mdescription>Makes a GET request to the server to retrieve specified content.</mdescription>
 </method>
 
+<method>
+<mname>POST()</mname>
+<mdescription>Makes a POST request to the server.</mdescription>
+</method>
+
+<method>
+<mname>read()</mname>
+<mdescription>Reads one byte from the server.</mdescription>
+</method>
+
+<method>
+<mname>readChar()</mname>
+<mdescription>Reads one byte from the server and returns its character equivalent.</mdescription>
+</method>
+
+<method>
+<mname>readBytes()</mname>
+<mdescription>Returns the response from the server in a byte array.</mdescription>
+</method>
+
+<method>
+<mname>readString()</mname>
+<mdescription>Returns the response from the server as a String.</mdescription>
+</method>
+
 <constructor>
-HTTPClient(<c>server</c>)
-HTTPClient(<c>server</c>, <c>port</c>)
+Client(<c>server</c>)
+Client(<c>server</c>, <c>port</c>)
 </constructor>
 
 <cparameter>
