@@ -75,12 +75,21 @@
                 <include name="**/*.icns"/>
             </fileset>
         </copy>
+        <copy overwrite="true" file="mobile/build/macosx/dist/Processing.app/Contents/Info.plist" tofile="processing/build/macosx/dist/Processing.app/Contents/Info.plist" />
         <!-- copy icons for application -->
         <copy todir="processing/build/shared/lib" overwrite="true">
             <fileset dir="mobile/build/shared/lib">
                 <include name="**/*.gif"/>
+                <include name="**/*.jpg"/>
             </fileset>
         </copy>
+        <!-- copy proguard jar and its configuration file into processing lib -->
+        <copy overwrite="true" file="mobile/build/shared/lib/proguard.jar" todir="processing/build/shared/lib"/>
+        <copy overwrite="true" file="mobile/build/shared/lib/proguard.pro" todir="processing/build/shared/lib"/>        
+        <!-- copy applet emulator jars into processing lib -->
+        <copy overwrite="true" file="mobile/build/shared/lib/me-applet.jar" todir="processing/build/shared/lib"/>
+        <copy overwrite="true" file="mobile/build/shared/lib/large.jar" todir="processing/build/shared/lib"/>        
+        <copy overwrite="true" file="mobile/build/shared/lib/applet.html" todir="processing/build/shared/lib"/>        
     </target>
 
     <target name="make" depends="init, copyappsrc, copylaunchersrc">        
@@ -93,11 +102,9 @@
         <antcall target="copycore">
             <param name="target" value="work"/>
         </antcall>
-<!--        
         <antcall target="copylibs">
             <param name="target" value="work"/>
         </antcall>
--->
     </target>
 
     <target name="dist" depends="init, copyappsrc, copylaunchersrc">        
@@ -116,6 +123,17 @@
         <antcall target="copylibs">
             <param name="target" value="${svn.tag.processing}"/>
         </antcall>
+        <antcall target="copydocs">
+            <param name="target" value="${svn.tag.processing}"/>
+        </antcall>
+        <!-- rename executable -->
+        <move todir="processing/build/macosx/${svn.tag.processing}/Mobile.app">
+            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}.app"/>
+        </move>
+        <!-- rename directories -->
+        <move todir="processing/build/macosx/mobile-${mobile.version}">
+            <fileset dir="processing/build/macosx/${svn.tag.processing}"/>
+        </move>
     </target>
     
     <target name="run" depends="init">
@@ -266,5 +284,42 @@
         <antcall target="copylib">
             <param name="libname" value="handset"/>
         </antcall>
+    </target>
+    
+    <target name="copydocs" depends="init">
+        <!-- default target is work folder, can be overridden by call -->
+        <property name="target" value="work"/>
+        <!-- delete contents of examples folder -->
+        <delete includeemptydirs="true">
+            <fileset defaultexcludes="no" dir="processing/build/macosx/${target}/examples" includes="**/*"/>
+        </delete>
+        <!-- copy mobile examples -->
+        <copy todir="processing/build/macosx/${target}/examples" overwrite="true">
+            <fileset dir="mobile/docs/examples">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- delete contents of faq folder -->
+        <delete includeemptydirs="true">
+            <fileset defaultexcludes="no" dir="processing/build/macosx/${target}/faq" includes="**/*"/>
+        </delete>
+        <!-- copy mobile faq -->
+        <copy todir="processing/build/macosx/${target}/faq" overwrite="true">
+            <fileset dir="mobile/docs/faq">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- delete contents of reference folder -->
+        <delete includeemptydirs="true">
+            <fileset defaultexcludes="no" dir="processing/build/macosx/${target}/reference" includes="**/*"/>
+        </delete>
+        <!-- copy mobile reference -->
+        <copy todir="processing/build/macosx/${target}/reference" overwrite="true">
+            <fileset dir="mobile/docs/reference">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- copy revisions list -->
+        <copy overwrite="true" file="mobile/build/shared/revisions.txt" tofile="processing/build/macosx/${target}/revisions.txt"/>
     </target>
 </project>
