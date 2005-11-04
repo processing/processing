@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>multitap()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Input</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>multitap</b> function will turn on multitap text input. When enabled, each key press will be interpreted according to the multitap input method and stored in an array of characters called <b>multitapBuffer</b>.<br /><br />
+The multitap input method interprets each key press based on the letters associated with the key as seen on a typical phone key pad. For example, the 2 key is associated with the letters 'a', 'b', and 'c'. If the user presses the 2 key once, it is interpreted as the first letter associated with the key, which is 'a'. If the user presses the 2 key three times quickly, this will be interpreted as the letter 'c', which is the third letter associated with the key. A fourth press will be interpreted as the number 2, and subsequent presses will cycle through the same characters.<br /><br />
+The <b>multitapBuffer</b> array contains the characters interpreted by the multitap input method. This array will automatically grow in size depending upon the number of characters entered. The variable <b>multitapBufferLength</b> represents the actual number of characters stored in the array.<br /><br />
+The <b>multitapBufferIndex</b> variable represents the location of the editing "cursor" in the buffer. If the user presses the left or right directional keys, this cursor will be moved in the buffer.
+</description>
+
+<syntax>
+multitap()
+</syntax>
+
+<returns>None</returns>
+
+<related>
+noMultitap()
+multitapClear()
+multitapDeleteChar()
+multitapBuffer
+multitapBufferIndex
+multitapBufferLength
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

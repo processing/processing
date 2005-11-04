@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>multitapClear()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Input</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>multitapClear</b> function will clear the multitap input buffer. Any characters that have been buffered from interpreting key presses will be lost.
+</description>
+
+<syntax>
+multitapClear()
+</syntax>
+
+<returns>None</returns>
+
+<related>
+multitap()
+noMultitap()
+multitapDeleteChar()
+multitapBuffer
+multitapBufferIndex
+multitapBufferLength
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>multitapBuffer</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Input</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>multitapBuffer</b> variable is an array of characters representing text as interpreted from key presses.
+</description>
+
+<syntax>
+multitapBuffer
+</syntax>
+
+<returns>None</returns>
+
+<related>
+multitap()
+noMultitap()
+multitapClear()
+multitapDeleteChar()
+multitapBufferIndex
+multitapBufferLength
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+</root>

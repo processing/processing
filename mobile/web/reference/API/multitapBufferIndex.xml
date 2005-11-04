@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>multitapBufferIndex</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Input</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>multitapBufferIndex</b> variable is an index into the <b>multitapBuffer</b> array. It represents the current editing position in the text buffer.
+</description>
+
+<syntax>
+multitapBufferIndex
+</syntax>
+
+<returns>None</returns>
+
+<related>
+multitap()
+noMultitap()
+multitapClear()
+multitapDeleteChar()
+multitapBuffer
+multitapBufferLength
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+</root>

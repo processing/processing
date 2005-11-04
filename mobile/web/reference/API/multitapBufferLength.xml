@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>multitapBufferLength</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Input</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>multitapBufferLength</b> variable represents the number of characters currently in the multitapBuffer array.
+</description>
+
+<syntax>
+multitapBufferLength
+</syntax>
+
+<returns>None</returns>
+
+<related>
+multitap()
+noMultitap()
+multitapClear()
+multitapDeleteChar()
+multitapBuffer
+multitapBufferIndex
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+</root>

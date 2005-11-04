@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>multitapDeleteChar()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Input</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>multitapDeleteChar</b> function will delete one character from the multitap buffer at the current index.
+</description>
+
+<syntax>
+multitapDeleteChar()
+</syntax>
+
+<returns>None</returns>
+
+<related>
+multitap()
+noMultitap()
+multitapClear()
+multitapBuffer
+multitapBufferIndex
+multitapBufferLength
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+</root>

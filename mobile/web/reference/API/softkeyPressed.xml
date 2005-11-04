@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>softkeyPressed()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>softkeyPressed()</b> function is called when the user presses a custom labelled softkey. A softkey is labelled using the <b>softkey()</b> function. The custom label is passed to the function as a parameter.
+</description>
+
+<syntax>
+void softkeyPressed(String label) { 
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+softkey()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>
