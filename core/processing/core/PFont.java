@@ -30,7 +30,7 @@ public class PFont {
     
     public PImage   images[];
     public char     value[];        // char code
-    public byte     height[];       // height of the bitmap data
+    public byte     heights[];       // height of the bitmap data
     public byte     width[];        // width of bitmap data
     public byte     setWidth[];     // width displaced by the char
     public byte     topExtent[];    // offset for the top
@@ -38,10 +38,15 @@ public class PFont {
 
     protected int   ascii[];        // quick lookup for the ascii chars
     
+    public final int    baseline;
+    public final int    height;
+    
     public Font     font;
     
     public PFont(Font font) {
         this.font = font;
+        height = font.getHeight();
+        baseline = font.getBaselinePosition();
     }
     
     public PFont(InputStream is, int color, int bgcolor) {
@@ -55,7 +60,7 @@ public class PFont {
 
             // allocate enough space for the character info
             value       = new char[charCount];
-            height      = new byte[charCount];
+            heights     = new byte[charCount];
             width       = new byte[charCount];
             setWidth    = new byte[charCount];
             topExtent   = new byte[charCount];
@@ -64,10 +69,12 @@ public class PFont {
             ascii = new int[128];
             for (int i = 0; i < 128; i++) ascii[i] = -1;
 
+            int baseline = 0;
+            int height = 0;            
             // read the information about the individual characters
             for (int i = 0; i < charCount; i++) {
               value[i]      = dis.readChar();
-              height[i]     = dis.readByte();
+              heights[i]    = dis.readByte();
               width[i]      = dis.readByte();
               setWidth[i]   = dis.readByte();
               topExtent[i]  = dis.readByte();
@@ -75,7 +82,13 @@ public class PFont {
 
               // cache locations of the ascii charset
               if (value[i] < 128) ascii[value[i]] = i;
+              
+              //// get height and baseline
+              baseline = Math.max(baseline, topExtent[i]);
+              height = Math.max(height, baseline + heights[i] - topExtent[i]);
             }
+            this.baseline = baseline;
+            this.height = height;
 
             images = new PImage[charCount];
             int pngSize;

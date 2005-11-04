@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loadImage()</name>
+
+<category>Image</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>loadImage_.jpg</image>
+<code>
+PImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+<example>
+<image>loadImage_.jpg</image>
+<code>
+PImage b;
+
+void setup() {
+  b = loadImage("laDefense.jpg");
+  noLoop();
+}
+
+void draw() {
+  image(b, 0, 0);
+}
+</code>
+</example>
+
+<description>
+Loads an image into a variable of type <b>PImage</b>. Only <b>.png</b> images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them when the program starts. Loading images in <b>draw()</b> can dramatically reduce the speed of a program.
+</description>
+
+<syntax>
+loadImage(<c>filename</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>string: name of file to load, must be .png</description>
+</parameter>
+
+<returns>PImage</returns>
+
+<related>
+PImage 
+image() 
+imageMode() 
+background() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

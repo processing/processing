@@ -53,6 +53,19 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public static final int GAME_B          = Canvas.GAME_B;
     public static final int GAME_C          = Canvas.GAME_C;
     public static final int GAME_D          = Canvas.GAME_D;
+    
+    public static final int FACE_SYSTEM         = Font.FACE_SYSTEM;
+    public static final int FACE_MONOSPACE      = Font.FACE_MONOSPACE;
+    public static final int FACE_PROPORTIONAL   = Font.FACE_PROPORTIONAL;
+    
+    public static final int STYLE_PLAIN         = Font.STYLE_PLAIN;
+    public static final int STYLE_BOLD          = Font.STYLE_BOLD;
+    public static final int STYLE_ITALIC        = Font.STYLE_ITALIC;
+    public static final int STYLE_UNDERLINED    = Font.STYLE_UNDERLINED;
+    
+    public static final int SIZE_SMALL          = Font.SIZE_SMALL;
+    public static final int SIZE_MEDIUM         = Font.SIZE_MEDIUM;
+    public static final int SIZE_LARGE          = Font.SIZE_LARGE;
 
     public static final int RGB             = 0;
     public static final int HSB             = 1;
@@ -739,7 +752,15 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
 
     public final void image(PImage img, int x, int y) {
-        canvas.image(img,x,y);
+        canvas.image(img, x, y);
+    }
+
+    public final void image(PImage img, int sx, int sy, int swidth, int sheight, int dx, int dy) {
+        canvas.image(img, sx, sy, swidth, sheight, dx, dy);
+    }
+    
+    public final void imageMode(int mode) {
+        canvas.imageMode(mode);
     }
     
     public final PFont loadFont(String fontname, int color, int bgcolor) {
@@ -756,6 +777,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final PFont loadFont(String fontname) {
         return loadFont(fontname, 0);
+    }
+    
+    public final PFont loadFont(int face, int style, int size) {
+        return new PFont(Font.getFont(face, style, size));
     }
     
     public final void textFont(PFont font) {

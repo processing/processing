@@ -73,18 +73,25 @@ if (!(@include 'subnavigation.inc.php')) {
     }
 }
 ?>
-<?php if ($PAGE_SHOWBACKINDEX) { ?>
+<?php if ($PAGE_SHOWBACKINDEX) { 
+    if (is_null($PAGE_BACK_LINK)) {
+        $PAGE_BACK_LINK = 'index.php';
+    }
+    if (is_null($PAGE_BACK_NAME)) {
+        $PAGE_BACK_NAME = 'Index';
+    }
+?>
 <div class="backnavigation">
   <table border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td align="right" width="50">
-        <a href="index.php">
+        <a href="<?php echo $PAGE_BACK_LINK ?>">
           <img src="<?php echo SITE_ROOT?>images/back_off.png" border="0" align="middle">
         </a>
       </td>
       <td valign="middle">
-        <a href="index.php">
-          Index
+        <a href="<?php echo $PAGE_BACK_LINK ?>">
+          <?php echo $PAGE_BACK_NAME ?>
         </a>
       </td>
     </tr>

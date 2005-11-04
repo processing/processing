@@ -35,7 +35,8 @@ $child = $root->first_child();
 while ($child) {
     $tag = $child->node_name();
     if (($tag == 'example') || ($tag == 'parameter') ||
-        ($tag == 'method') || ($tag == 'cparameter')) {
+        ($tag == 'method') || ($tag == 'cparameter') ||
+        ($tag == 'field')) {
         $subvalue = array();
         $gchild = $child->first_child();
         while ($gchild) {
@@ -50,6 +51,16 @@ while ($child) {
         if (count($subvalue) > 0) {
             $value[$tag][] = $subvalue;
         }
+    } else if ($tag == 'related') {
+        $content = trim(GetContentAsString($child));
+        if ($content != "") {
+            $content = split("\n", $content);
+            foreach ($content as $c) {
+                if (file_exists('API/'. rtrim($c, "() ") .'.xml')) {
+                    $value[$tag][] = trim($c);
+                }
+            }
+        }        
     } else if ($tag[0] == '#') {
         //// skip
     } else {
@@ -139,6 +150,24 @@ while ($child) {
     <td class="reffield"><?php echo $value['returns'] ?></td>
   </tr>
 <?php } ?>
+<?php if (isset($value['field'])) { ?>
+  <tr>
+    <td class="reffieldheader">Fields</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+       <?php foreach ($value['field'] as $f) { ?>
+                 <tr>
+                   <td valign="top" width="70">
+                     <a href="reference.php?name=<?php echo $_GET['name'] ?>_<?php echo rtrim($f['fname'], "() ") ?>"><?php echo $f['fname'] ?></a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td><?php echo $f['fdescription'] ?><br><br></td>
+                 </tr>
+       <?php } ?>
+      </table>
+    </td>
+  </tr>
+<?php } ?>
 <?php if (isset($value['method'])) { ?>
   <tr>
     <td class="reffieldheader">Methods</td>
@@ -180,6 +209,16 @@ while ($child) {
                  </tr>
        <?php } ?>
       </table>
+    </td>
+  </tr>
+<?php } ?>
+<?php if (isset($value['related'])) { ?>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+       <?php foreach ($value['related'] as $f) { ?>
+         <a href="reference.php?name=<?php echo rtrim($f, "() ") ?>"><?php echo $f ?></a><br>
+       <?php } ?>
     </td>
   </tr>
 <?php } ?>

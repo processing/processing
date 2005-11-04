@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>PFont</name>
+
+<category>Typography</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PFont.gif</image>
+<code>
+PFont font;
+// The font must be located in the sketch's 
+// "data" directory to load successfully
+font = loadFont("FFScala-32.mvlw"); 
+textFont(font); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+PFont is the font class for Processing. The <b>loadFont()</b> function constructs a new font and <b>textFont()</b> makes a font active.
+</description>
+
+<field>
+<fname>height</fname>
+<fdescription>height of font</fdescription>
+</field>
+<field>
+<fname>baseline</fname>
+<fdescription>baseline height of font</fdescription>
+</field>
+
+<returns></returns>
+
+<related>
+loadFont() 
+textFont() 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

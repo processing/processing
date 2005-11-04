@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>text()</name>
+
+<category>Typography</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>textFont_.gif</image>
+<code>
+PFont metaBold;
+// The font "Meta-Bold.mvlw" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.mvlw");
+textFont(metaBold); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+Draws text to the screen. Displays the information specified in the <b>stringdata</b> parameter on the screen in the position specified by the <b>x</b> and <b>y</b> parameters. A font must be set with the <b>textFont()</b> function before <b>text()</b> may be called. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. If the font was loaded from the mobile phone (not a bitmap font created with Mobile Processing), you can change the color of the text with the <b>fill()</b> function. To change the color of a bitmap font, you must reload it with the color specified in <b>loadFont()</b>.
+</description>
+
+<syntax>
+text(<c>stringdata</c>, <c>x</c>, <c>y</c>)
+</syntax>
+
+<parameter>
+<label>x</label>
+<description>int: x-coordinate of text</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int: y-coordinate of text</description>
+</parameter>
+
+<parameter>
+<label>stringdata</label>
+<description>String: letters to be displayed</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+textAlign()
+textMode()
+loadFont() 
+PFont 
+textFont() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>
