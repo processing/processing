@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>width</name>
+<name>isColor()</name>
 
 <category>Environment</category>
 
@@ -9,37 +9,25 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>width.gif</image>
-<code>
-noStroke();
-background(0);
-rect(0, 40, width, 20);
-rect(0, 60, width/2, 20);
-</code>
 </example>
 
 <description>
-System variable which stores the width of the display window.
+Returns if the display supports color output.
 </description>
 
 <syntax>
-width
+isColor()
 </syntax>
 
-<parameter>
-<label></label>
-<description></description>
-</parameter>
-
-<returns></returns>
+<returns>boolean</returns>
 
 <related>
-height
+numColors()
 </related>
 
 <availability>1.0</availability>
 
-<type>System variable</type>
+<type>Function</type>
 
 <partof>Core</partof>
 

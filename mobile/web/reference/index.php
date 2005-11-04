@@ -80,15 +80,9 @@ while ($filename !== false) {
 
 ?>
 <img src="images/header.png"><br>
-&nbsp;
+<br>
+<br>
 <div class="column">
-      <table width="180" border="0" cellspacing="0" cellpadding="0">
-        <tr> 
-          <td><font color="#666633">This reference is a work in progress. The descriptions have been copied from the Processing project and have not yet been updated to reflect the additional constraints of Processing Mobile.</font></td>
-        </tr>
-      </table>
-      <br>
-      <br>
 <?php $counter = 0; ?>
 <?php foreach ($categories as $cat => $entry) { ?>
           <img src="images/<?php echo strtolower(str_replace('/', '', $cat)) ?>.gif"><br>
