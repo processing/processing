@@ -399,10 +399,11 @@ public class Preferences { //extends JComponent {
       });
 
     frame.pack();
-
+    
+    Dimension size = frame.getSize();
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    frame.setLocation((screen.width - wide) / 2,
-                      (screen.height - high) / 2);
+    frame.setLocation((screen.width - size.width) / 2,
+                      (screen.height - size.height) / 2);
 
 
     // handle window closing commands for ctrl/cmd-W or hitting ESC.
