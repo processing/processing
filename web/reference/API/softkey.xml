@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>softkey()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>softkey()</b> function sets up a custom labelled softkey. The label will be displayed on the screen above the physical key.
+</description>
+
+<syntax>
+softkey(<c>label</c>)
+</syntax>
+
+<parameter>
+<label>label</label>
+<description>The label for the key on the screen</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+softkeyPressed()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

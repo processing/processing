@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>textInput()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Input</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>textInput</b> function will open a new screen in which the user can input text using the native text input methods of the mobile phone (i.e. T9). Execution of the sketch will be paused until the text input screen is dismissed by the user. The text will be returned as a string.
+</description>
+
+<syntax>
+textInput()
+textInput(title, text, max)
+</syntax>
+
+<parameter>
+<label>title</label>
+<description>string: title of the text input screen</description>
+</parameter>
+
+<parameter>
+<label>text</label>
+<description>string: text to be edited</description>
+</parameter>
+
+<parameter>
+<label>max</label>
+<description>int: maximum number of characters that can be input</description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+multitap()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

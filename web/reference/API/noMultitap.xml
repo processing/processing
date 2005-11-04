@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>noMultitap()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Text Input</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The <b>noMultitap</b> function will turn off multitap text input.
+</description>
+
+<syntax>
+noMultitap()
+</syntax>
+
+<returns>None</returns>
+
+<related>
+multitap()
+multitapClear()
+multitapDeleteChar()
+multitapBuffer
+multitapBufferIndex
+multitapBufferLength
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>
