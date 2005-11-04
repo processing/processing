@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loadBytes()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+// open a file and read its binary data 
+byte b[] = loadBytes("something.dat"); 
+ 
+// print each value, from 0 to 255 
+for (int i = 0; i &lt; b.length; i++) { 
+  // every tenth number, start a new line 
+  if ((i % 10) == 0) { 
+    println(); 
+  } 
+ 
+  // bytes are from -128 to 127, this converts to 0 to 255 
+  int a = b[i] &amp; 0xff; 
+  print(a + " "); 
+} 
+// print a blank line at the end 
+println(); 
+
+</code>
+</example>
+
+<description>
+Reads the contents of a file and places it in a byte array. The file must be located in the sketch's "data" directory/folder or have been previously saved with <b>saveBytes()</b>.
+</description>
+
+<syntax>
+loadBytes(<c>filename</c>);
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>String: name of a file in the data folder or persistent store.</description>
+</parameter>
+
+<returns>byte[]</returns>
+
+<related>
+loadStrings()
+saveStrings()
+saveBytes() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+</root>

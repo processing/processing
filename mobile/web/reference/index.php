@@ -41,10 +41,10 @@ $categories = array(
     'Constants' => array()
 );
 
+$columns = array('Shape', 'Image');
+
 $PAGE_TITLE = "Mobile Processing &raquo; Language (API)";
 require '../header.inc.php';
-
-$total = 0;
 
 $fullpath = dirname(__FILE__);
 
@@ -74,8 +74,6 @@ while ($filename !== false) {
         $subcat = trim($subcat[0]->get_content());
 
         $categories[$cat][$subcat][] = $shortname."\n".$name;
-
-        $total++;
     }
 }
 
@@ -84,8 +82,11 @@ while ($filename !== false) {
 <br>
 <br>
 <div class="column">
-<?php $counter = 0; ?>
 <?php foreach ($categories as $cat => $entry) { ?>
+<?php     if (array_search($cat, $columns) !== false) { ?>
+              </div>
+              <div class="column">
+<?php     } ?>
           <img src="images/<?php echo strtolower(str_replace('/', '', $cat)) ?>.gif"><br>
 <br>
 <?php     foreach ($entry as $subcat => $e) { ?>
@@ -95,7 +96,6 @@ while ($filename !== false) {
                       <i><?php echo $subcat ?></i><br>
 <?php             } ?>
 <?php             foreach ($e as $se) { ?>
-<?php                 $counter++; ?>
                       <a href="reference.php?name=<?php echo strtok($se, "\n") ?>"><?php echo strtok("\n") ?></a><br>
 <?php             } ?>
                   <br>
@@ -103,13 +103,8 @@ while ($filename !== false) {
 <?php     } ?>
           <br>
           <br>
-<?php     if ($counter > ($total / 3)) { ?>
-<?php         $counter = 0; ?>
-              </div>
-              <div class="column">
-<?php     } ?>
 <?php } ?>
 </div>
 <?php
- require '../footer.inc.php';
+require '../footer.inc.php';
 ?>
