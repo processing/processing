@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loadFont()</name>
+
+<category>Typography</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>loadFont_.gif</image>
+<code>
+PFont font;
+// The font must be located in the sketch's 
+// "data" directory to load successfully
+font = loadFont("FFScala-32.mvlw"); 
+textFont(font); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+Loads a font into a variable of type <b>PFont</b>. Bitmap fonts can be created by selecting <b>Create Font...</b> from the <b>Sketch</b> menu. To load correctly, bitmap fonts must be located in the data directory of the current sketch. Note that bitmap fonts created with Mobile Processing are not compatible with bitmap fonts created with Processing and vice versa.<br /><br />
+Bitmap fonts can consume a large amount of memory. Mobile Processing also allows you to load system fonts from the mobile phone. Use the FACE, STYLE, and SIZE constants to specify a system font. Not all phones support all combinations of FACE, STYLE, and SIZE, but will return the closest matching font.
+</description>
+
+<syntax>
+loadFont(<c>fontname</c>)
+loadFont(<c>fontname</c>, <c>color</c>)
+loadFont(<c>fontname</c>, <c>color</c>, <c>bgcolor</c>)
+loadFont(<c>face</c>, <c>style</c>, <c>size</c>)
+</syntax>
+
+<parameter>
+<label>fontname</label>
+<description>string: name of the font to load</description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description>color: color of the font</description>
+</parameter>
+
+<parameter>
+<label>bgcolor</label>
+<description>color: background color to anti-alias font with</description>
+</parameter>
+ 
+<parameter>
+<label>face</label>
+<description>int: one of FACE_SYSTEM, FACE_MONOSPACE, or FACE_PROPORTIONAL</description>
+</parameter>
+ 
+<parameter>
+<label>style</label>
+<description>int: one of STYLE_PLAIN, STYLE_BOLD, STYLE_ITALIC, or STYLE_UNDERLINED</description>
+</parameter>
+ 
+<parameter>
+<label>size</label>
+<description>int: one of SIZE_SMALL, SIZE_MEDIUM, or SIZE_LARGE</description>
+</parameter>
+
+<returns>PFont</returns>
+
+<related>
+PFont 
+textFont() 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

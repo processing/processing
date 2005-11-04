@@ -43,6 +43,13 @@ public class PImage {
         mutable = true;
     }
     
+    public PImage(int width, int height, int color) {
+        this(width, height);
+        Graphics g = image.getGraphics();
+        g.setColor(color);
+        g.fillRect(0, 0, width, height);
+    }
+    
     public PImage(Image img) {
         image = img;
         width = image.getWidth();
@@ -65,26 +72,47 @@ public class PImage {
         }
     }
     
+    public void copy(int sx, int sy, int swidth, int sheight, int dx, int dy, int dwidth, int dheight) {
+        if (PCanvas.imageMode == PMIDlet.CORNERS) {
+            swidth = swidth - sx;
+            sheight = sheight - sy;
+        }
+        Image image = Image.createImage(swidth, sheight);
+        Graphics g = image.getGraphics();
+        g.drawImage(this.image, -sx, -sy, Graphics.TOP | Graphics.LEFT);
+        copy(image, 0, 0, swidth, sheight, dx, dy, dwidth, dheight);
+    }
+    
     public void copy(PImage source, int sx, int sy, int swidth, int sheight, int dx, int dy, int dwidth, int dheight) {
+        copy(source.image, sx, sy, swidth, sheight, dx, dy, dwidth, dheight);
+    }
+    
+    private void copy(Image source, int sx, int sy, int swidth, int sheight, int dx, int dy, int dwidth, int dheight) {
         if (!mutable) {
             throw new RuntimeException("this image cannot be overwritten");
+        }
+        if (PCanvas.imageMode == PMIDlet.CORNERS) {
+            swidth = swidth - sx;
+            sheight = sheight - sy;
+            dwidth = dwidth - dx;
+            dheight = dheight - dy;
         }
         Graphics g = image.getGraphics();
         if ((dwidth == swidth) && (dheight == sheight)) {
             g.setClip(dx, dy, dwidth, dheight);
-            g.drawImage(source.image, dx - sx, dy - sy, Graphics.TOP | Graphics.LEFT);
+            g.drawImage(source, dx - sx, dy - sy, Graphics.TOP | Graphics.LEFT);
         } else if (dwidth == swidth) {
             int scaleY = dy - sy;
             for (int y = 0; y < dheight; y++) {
                 g.setClip(dx, dy + y, dwidth, 1);
-                g.drawImage(source.image, dx - sx, scaleY, Graphics.TOP | Graphics.LEFT);
+                g.drawImage(source, dx - sx, scaleY, Graphics.TOP | Graphics.LEFT);
                 scaleY = dy - sy - y * sheight / dheight + y;
             }
         } else if (dheight == sheight) {
             int scaleX = dx - sx;
             for (int x = 0; x < dwidth; x++) {
                 g.setClip(dx + x, dy, 1, dheight);
-                g.drawImage(source.image, scaleX, dy - sy, Graphics.TOP | Graphics.LEFT);
+                g.drawImage(source, scaleX, dy - sy, Graphics.TOP | Graphics.LEFT);
                 scaleX = dx - sx - x * swidth / dwidth + x;
             }
         } else {
@@ -93,7 +121,7 @@ public class PImage {
                 int scaleX = dx - sx;
                 for (int x = 0; x < dwidth; x++) {
                     g.setClip(dx + x, dy + y, 1, 1);
-                    g.drawImage(source.image, scaleX, scaleY, Graphics.TOP | Graphics.LEFT);
+                    g.drawImage(source, scaleX, scaleY, Graphics.TOP | Graphics.LEFT);
                     scaleX = dx - sx - x * swidth / dwidth + x;
                 }
                 scaleY = dy - sy - y * sheight / dheight + y;

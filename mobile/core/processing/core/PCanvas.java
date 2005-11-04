@@ -51,7 +51,9 @@ public class PCanvas extends Canvas {
     
     private int         rectMode;
     private int         ellipseMode;
-    private int         imageMode;
+    
+    //// imageMode static, permissions relaxed so PImage can access without an object reference
+    protected static int    imageMode;
     
     private int         shapeMode;
     private int[]       vertex;
@@ -90,6 +92,7 @@ public class PCanvas extends Canvas {
         
         rectMode = PMIDlet.CORNER;
         ellipseMode = PMIDlet.CENTER;
+        imageMode = PMIDlet.CORNER;
         
         shapeMode = -1;
         vertex = new int[16];
@@ -622,6 +625,23 @@ public class PCanvas extends Canvas {
         bufferg.drawImage(img.image, x, y, Graphics.TOP | Graphics.LEFT);
     }
     
+    public void image(PImage img, int sx, int sy, int swidth, int sheight, int dx, int dy) {
+        if (imageMode == PMIDlet.CORNERS) {
+            swidth = swidth - sx;
+            sheight = sheight - sy;
+        }
+        bufferg.setClip(dx, dy, swidth, sheight);
+        bufferg.drawImage(img.image, dx - sx, dy - sy, Graphics.TOP | Graphics.LEFT);
+        bufferg.setClip(0, 0, width, height);
+    }
+    
+    public void imageMode(int mode) {
+        if ((mode != PMIDlet.CORNER) && (mode != PMIDlet.CORNERS)) {
+            throw new RuntimeException("Invalid imageMode");
+        }
+        imageMode = mode;
+    }
+    
     public void textFont(PFont font) {
         textFont = font;
     }
@@ -824,7 +844,7 @@ public class PCanvas extends Canvas {
             } else {
                 align |= Graphics.LEFT;
             }
-            bufferg.drawString(data, x, y, align);
+            bufferg.drawString(data, x, y - textFont.font.getBaselinePosition(), align);
         } else {
             if (textAlign != PMIDlet.LEFT) {
                 int width = textWidth(data);
@@ -847,6 +867,10 @@ public class PCanvas extends Canvas {
                 }
             }
         }
+    }
+    
+    public int textWidth(char data) {
+        return textWidth(String.valueOf(data));
     }
     
     public int textWidth(String data) {

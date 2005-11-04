@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>height</name>
+
+<category>PFont</category>
+
+<subcategory>field</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+</example>
+
+<description>
+The height of the font, from the tallest ascender to the lowest descender, in pixels.
+</description>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>int</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

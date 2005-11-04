@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>textFont()</name>
+
+<category>Typography</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>textFont_.gif</image>
+<code>
+PFont metaBold;
+// The font "Meta-Bold.mvlw" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.mvlw");
+textFont(metaBold); 
+text("word", 15, 50); 
+</code>
+</example>
+
+<description>
+Sets the current font. The font must be loaded with <b>loadFont()</b> before it can be used. This font will be used in all subsequent calls to the <b>text()</b> function.
+</description>
+
+<syntax>
+textFont(<c>font</c>)
+</syntax>
+
+<parameter>
+<label>font</label>
+<description>PFont: any variable of the type PFont</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+loadFont() 
+PFont 
+text() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

@@ -23,12 +23,13 @@ background(255, 204, 0);
 </example>
 
 <description>
-The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to refresh the display window between frames.
+The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to refresh the display window between frames. If an image is specified, the image will be drawn centered in the display area.
 </description>
 
 <syntax>
 background(<c>value1</c>)
 background(<c>value1</c>, <c>value2</c>, <c>value3</c>)
+background(<c>img</c>)
 </syntax>
 
 <parameter>
@@ -44,6 +45,11 @@ background(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 <parameter>
 <label>value3</label>
 <description>int: blue or brightness value (depending on the current color mode)</description>
+</parameter>
+
+<parameter>
+<label>img</label>
+<description>PImage: image to draw for the background</description>
 </parameter>
 
 <returns>None</returns>

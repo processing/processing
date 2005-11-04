@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>image()</name>
+
+<category>Image</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>image_.jpg</image>
+<code>
+PImage b;
+// Images must be in the "data" directory to load correctly
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+
+<description>
+Diplays images to the screen. The images must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the image. Mobile Processing currently works with <b>.png</b> images. If an image has transparency, it will maintain its transparency. However, support for alpha depends upon the target device. The <b>img</b> parameter specifies the image to display and the <b>x</b> and <b>y</b> parameters define the location of the image from its upper-left corner.<br /><br />To display only a sub-area of the image, specify the upper-left corner and dimensions of the sub-area. The <b>imageMode()</b> function changes the way the parameters work. For example, a call to <b>imageMode(CORNERS)</b> will change the width and height parameters to define the x and y values of the opposite corner of the image.
+</description>
+
+<syntax>
+image(<c>img</c>, <c>x</c>, <c>y</c>)
+image(<c>img</c>, <c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>x</c>, <c>y</c>)
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>PImage: the image to display</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>int: destination x-coordinate of the image</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int: destination y-coordinate of the image</description>
+</parameter>
+
+<parameter>
+<label>sx</label>
+<description>int: x-coordinate of the sub-area in the image</description>
+</parameter>
+
+<parameter>
+<label>sy</label>
+<description>int: y-coordinate of the sub-area in the image</description>
+</parameter>
+
+<parameter>
+<label>swidth</label>
+<description>int: width of the sub-area in the image</description>
+</parameter>
+
+<parameter>
+<label>sheight</label>
+<description>int: height of the sub-area in the image</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+loadImage() 
+PImage  
+imageMode()
+tint() 
+background() 
+alpha()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

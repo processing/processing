@@ -24,20 +24,20 @@ $categories = array(
                             'Text Output' => array(),
                             'Files' => array(),
                             'Web' => array()),
+    'Transform' => array(),
     'Color' => array('Setting' => array(),
                      'Creating & Reading' => array()),
-    /*
-    'Image' => array('PImage' => array(),
+    'Image' => array('' => array(),
                      'Loading & Displaying' => array(),
                      'Pixels' => array()),
-    'Typography' => array('PFont' => array(),
+    'Typography' => array('' => array(),
                           'Loading & Displaying' => array()),
-    */
     'Math' => array('Operators' => array(),
                     'Bitwise Operators' => array(),
                     'Calculation' => array(),
                     'Trigonometry' => array(),
                     'Random' => array()),
+    'Constants' => array()
 );
 
 $PAGE_TITLE = "Mobile Processing &raquo; Language (API)";
@@ -53,6 +53,12 @@ while ($filename !== false) {
     $filename = readdir($dir);
     if ((strstr($filename, '.xml') !== false) &&
         (strstr($filename, '.xml~') === false)) {
+        $pos = strpos($filename, "_");
+        if ($pos !== false) {
+            if (file_exists('API/'. substr($filename, 0, $pos) .'.xml')) {
+                continue;
+            }
+        }
         $dom = domxml_open_file($fullpath ."/API/".$filename);
 
         $shortname = substr($filename, 0, strlen($filename) - 4);
@@ -95,16 +101,14 @@ while ($filename !== false) {
 <?php             } ?>
 <?php             foreach ($e as $se) { ?>
 <?php                 $counter++; ?>
-                      <a href="reference.php?name=<?php echo strtok($se, "\n") ?>">
-                          <?php echo strtok("\n") ?>
-                      </a><br>
+                      <a href="reference.php?name=<?php echo strtok($se, "\n") ?>"><?php echo strtok("\n") ?></a><br>
 <?php             } ?>
                   <br>
 <?php         } ?>
 <?php     } ?>
           <br>
           <br>
-<?php     if ($counter > ($total / 4)) { ?>
+<?php     if ($counter > ($total / 3)) { ?>
 <?php         $counter = 0; ?>
               </div>
               <div class="column">

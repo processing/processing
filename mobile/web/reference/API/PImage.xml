@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>PImage</name>
+
+<category>Image</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>PImage.jpg</image>
+<code>
+PImage b;
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);
+</code>
+</example>
+
+<description>
+Datatype for storing images. Mobile Processing allows display of <b>.png</b> images. The <b>PImage</b> object contains properties for the <b>width</b> and <b>height</b> of the image.<br /><br />Mobile Processing has additional constraints due to the way images are handled on the mobile phone. A PImage object loaded from a <b>.png</b> file can have transparent pixels, but cannot be modified with the <b>copy()</b> method. A PImage object created in memory using <b>new PImage(width, height)</b> cannot have transparent pixels, but can be modified with the <b>copy()</b> method.
+</description>
+
+<syntax>
+</syntax>
+
+<parameters>
+</parameters>
+
+<field>
+<fname>width</fname>
+<fdescription>image width</fdescription>
+</field>
+<field>
+<fname>height</fname>
+<fdescription>image height</fdescription>
+</field>
+
+<method>
+<mname>copy()</mname>
+<mdescription>Copies into the image</mdescription>
+</method>
+
+<constructor>
+PImage(<c>width</c>, <c>height</c>)
+PImage(<c>width</c>, <c>height</c>, <c>color</c>)
+PImage(<c>data[]</c>)
+PImage(<c>data[]</c>, <c>offset</c>, <c>length</c>)
+PImage(<c>img</c>)
+</constructor>
+
+<cparameter>
+<clabel>width</clabel>
+<cdescription>int: image width</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>height</clabel>
+<cdescription>int: image height</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>color</clabel>
+<cdescription>color: background color of image</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>data[]</clabel>
+<cdescription>byte[]: array of image data in .png format</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>offset</clabel>
+<cdescription>int: index into data array where image data starts</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>length</clabel>
+<cdescription>int: number of bytes of image data</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>img</clabel>
+<cdescription>javax.microedition.lcdui.Image: an Image object</cdescription>
+</cparameter>
+
+
+<returns></returns>
+
+<related>
+loadImage()
+imageMode()
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Core</partof>
+
+
+</root>
