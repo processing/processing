@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>saveBytes()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+byte[] nums = { 0, 34, 5, 127, 52};
+
+// now write the bytes to a file
+saveBytes("numbers.txt", nums);
+</code>
+</example>
+
+<description>
+Opposite of <b>loadBytes()</b>, will write an entire array of bytes to a file. This file is saved to the persistent storage memory of the mobile phone. Filenames must be 32 characters or less.
+</description>
+
+<syntax>
+saveBytes(<c>filename</c>, <c>bytes</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>name of file to write to</description>
+</parameter>
+
+<parameter>
+<label>bytes</label>
+<description>array of bytes to be written</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+loadStrings()
+loadBytes() 
+saveStrings()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>
