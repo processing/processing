@@ -40,7 +40,6 @@ int <c>var</c> = <c>value</c>
 <returns></returns>
 
 <related>
-splitInts()
 float
 </related>
 
