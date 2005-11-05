@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Bluetooth</name>
+
+<description>
+This class provides the primary interface for discovering and establishing a Bluetooth network connection.
+</description>
+
+<field>
+<fname>EVENT_DISCOVER_DEVICE</fname>
+<fdescription>Reported when a nearby device is discovered.</fdescription>
+</field>
+
+<field>
+<fname>EVENT_DISCOVER_DEVICE_COMPLETED</fname>
+<fdescription>Reported when the device discover process has completed.</fdescription>
+</field>
+
+<field>
+<fname>EVENT_DISCOVER_SERVICE</fname>
+<fdescription>Reported when a service is discovered on a device.</fdescription>
+</field>
+
+<field>
+<fname>EVENT_DISCOVER_SERVICE_COMPLETED</fname>
+<fdescription>Reported when the service discover process has completed.</fdescription>
+</field>
+
+<field>
+<fname>EVENT_CLIENT_CONNECTED</fname>
+<fdescription>Reported when a device has connected to this service.</fdescription>
+</field>
+
+<method>
+<mname>cancel()</mname>
+<mdescription>Cancels a search for devices.</mdescription>
+</method>
+
+<method>
+<mname>discover()</mname>
+<mdescription>Searches for nearby Bluetooth devices.</mdescription>
+</method>
+
+<method>
+<mname>start()</mname>
+<mdescription>Starts a Bluetooth service that other devices can connect to.</mdescription>
+</method>
+
+<method>
+<mname>stop()</mname>
+<mdescription>Stops sharing a Bluetooth service.</mdescription>
+</method>
+
+<returns></returns>
+
+<constructor>
+Bluetooth(<c>parent</c>)
+</constructor>
+
+<cparameter>
+<clabel>parent</clabel>
+<cdescription>PMIDlet: typically use "this"</cdescription>
+</cparameter>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Bluetooth</partof>
+
+</root>

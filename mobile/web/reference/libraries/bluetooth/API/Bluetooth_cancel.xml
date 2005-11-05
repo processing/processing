@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>cancel()</name>
+
+<description>
+Cancels a search for devices started with <b>discover()</b>.
+</description>
+
+<syntax>
+bt.cancel()
+</syntax>
+
+<parameter>
+<label>bt</label>
+<description>Bluetooth: any variable of type Bluetooth</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

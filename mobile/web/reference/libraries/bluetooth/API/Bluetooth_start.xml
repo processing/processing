@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>start()</name>
+
+<description>
+Starts sharing a serial port connection that other Bluetooth devices can discover. When another device connects, it will be reported in the <b>libraryEvent</b> method.
+</description>
+
+<syntax>
+bt.start(name)
+</syntax>
+
+<parameter>
+<label>bt</label>
+<description>Bluetooth: any variable of type Bluetooth</description>
+</parameter>
+
+<parameter>
+<label>name</label>
+<description>String: a name for this service</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

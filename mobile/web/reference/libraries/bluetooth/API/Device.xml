@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Device</name>
+
+<description>
+Objects of this class represent nearby devices discovered on the Bluetooth network.
+</description>
+
+<method>
+<mname>address()</mname>
+<mdescription>Returns a string uniquely identifying the device on the network.</mdescription>
+</method>
+
+<method>
+<mname>cancel()</mname>
+<mdescription>Cancels a search for services.</mdescription>
+</method>
+
+<method>
+<mname>discover()</mname>
+<mdescription>Searches for services on the device.</mdescription>
+</method>
+
+<method>
+<mname>name()</mname>
+<mdescription>Returns the name of the device.</mdescription>
+</method>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Bluetooth</partof>
+
+</root>

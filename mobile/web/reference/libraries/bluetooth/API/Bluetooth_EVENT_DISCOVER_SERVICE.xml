@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>EVENT_DISCOVER_SERVICE</name>
+
+<example>
+<code>
+Bluetooth bt;
+
+void setup() {
+  bt = new Bluetooth(this);
+  bt.discover();
+  noLoop();
+}
+
+void libraryEvent(Object library, int event, Object data) {
+  if (library == bt) {
+    switch (event) {
+      case Bluetooth.EVENT_DISCOVER_DEVICE:
+        Device device = (Device) data;
+        println(device.name() + " discovered.");
+        break;
+      case Bluetooth.EVENT_DISCOVER_DEVICE_COMPLETED:
+        Device[] devices = (Device[]) data;
+        println(devices.length + " devices discovered.");
+		if (devices.length > 0) {
+          devices[0].discover();
+        }
+        break;
+      case Bluetooth.EVENT_DISCOVER_SERVICE:
+        Service[] services = (Service[]) data;
+        println(services.length + " services discovered.");
+        break;
+      case Bluetooth.EVENT_DISCOVER_SERVICE_COMPLETED:
+        println("Service discovery complete.");
+        break;
+    }
+  }
+}
+</code>
+</example>
+
+<description>
+This constant value is reported in <b>libraryEvent</b> when when a service has been discovered during a search started by Device.<b>discover()</b>. The data is an array of Service objects representing the services discovered in the process.</description>
+
+<syntax>
+Bluetooth.EVENT_DISCOVER_SERVICE
+</syntax>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>int</type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

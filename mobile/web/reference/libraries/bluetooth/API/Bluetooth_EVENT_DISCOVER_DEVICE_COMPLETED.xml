@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>EVENT_DISCOVER_DEVICE_COMPLETED</name>
+
+<example>
+<code>
+Bluetooth bt;
+
+void setup() {
+  bt = new Bluetooth(this);
+  bt.discover();
+  noLoop();
+}
+
+void libraryEvent(Object library, int event, Object data) {
+  if (library == bt) {
+    switch (event) {
+      case Bluetooth.EVENT_DISCOVER_DEVICE:
+        Device device = (Device) data;
+        println(device.name() + " discovered.");
+        break;
+      case Bluetooth.EVENT_DISCOVER_DEVICE_COMPLETED:
+        Device[] devices = (Device[]) data;
+        println(device.length + " devices discovered.");
+        break;
+    }
+  }
+}
+</code>
+</example>
+
+<description>
+This constant value is reported in <b>libraryEvent</b> when the device search started by <b>discover()</b> has completed. The data is an array of Device objects representing each device discovered in the process.
+</description>
+
+<syntax>
+Bluetooth.EVENT_DISCOVER_DEVICE_COMPLETED
+</syntax>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>int</type>
+
+<partof>Bluetooth</partof>
+
+
+</root>
