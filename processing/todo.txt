@@ -42,6 +42,11 @@ _   that way people don't have to adjust the memory settings for p5 itself
 _   perhaps the memory setting should be enabled/disabled
 _     that way if it's enabled, will always run externally
 
+
+_ make a web page that describes how to use the bugs db
+_   don't change the bug subject/summary text
+_   don't mess with priorities (i will)
+
 board faq
 _ how to put [code] around blocks of code
 _   also mention contributed plugin for formatting
