@@ -448,8 +448,6 @@ _   seems to be mapping to 0, 0 - width/2, height/2
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
 _ odd error with some pixels from images not drawing properly
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
-_ when turning smoothing on, internal lines of shapes are visible
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115487475
 _ simon reports borders on P3D and OPENGL if background() not called
 _ clipping not yet completely implemented
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
@@ -602,6 +600,9 @@ X     checked, not fixed
 _ blend(), get(), set(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
+_ when turning smoothing on, internal lines of shapes are visible
+_   need to turn off smoothing for the interior of shapes
+_   http://dev.processing.org/bugs/show_bug.cgi?id=200
 _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
