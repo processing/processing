@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>discover()</name>
+
+<description>
+Searches for nearby Bluetooth devices sharing a serial port connection. This can include other mobile phones running a Mobile Processing sketch or peripherals such as GPS receivers. This method returns immediately and reports its results in the <b>libraryEvent</b> method.
+</description>
+
+<syntax>
+bt.discover()
+</syntax>
+
+<parameter>
+<label>bt</label>
+<description>Bluetooth: any variable of type Bluetooth</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

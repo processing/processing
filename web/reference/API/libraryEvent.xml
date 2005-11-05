@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>libraryEvent()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Libraries</subcategory>
+
+<description>
+The <b>libraryEvent()</b> method is implemented by the sketch to receive notifications from libraries. It is implemented in a similar way as <b>keyPressed()</b> and other callback methods.<br />
+<br />
+All libraries use the same <b>libraryEvent()</b> method to report back to the sketch. You must check the <b>library</b> object to know where the event is coming from.
+</description>
+
+<syntax>
+void libraryEvent(Object library, int event, Object data) {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>library</label>
+<description>Object: the library sending the event</description>
+</parameter>
+
+<parameter>
+<label>event</label>
+<description>int: a number representing the type of event, depends upon the library</description>
+</parameter>
+
+<parameter>
+<label>data</label>
+<description>Object: additional data for the event</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

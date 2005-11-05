@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>EVENT_CLIENT_CONNECTED</name>
+
+<example>
+<code>
+Bluetooth bt;
+
+void setup() {
+  bt = new Bluetooth(this);
+  bt.start("My service");
+  noLoop();
+}
+
+void libraryEvent(Object library, int event, Object data) {
+  if (library == bt) {
+    switch (event) {
+      case Bluetooth.EVENT_CLIENT_CONNECTED:
+        Client client = (Client) data;
+        client.writeUTF("Saying hello!");
+        client.close();
+        break;
+    }
+  }
+}
+</code>
+</example>
+
+<description>
+This constant value is reported in <b>libraryEvent</b> when when a client has connected to the Bluetooth service started by this sketch. The data is a Client object that can be used to communicate with the client.</description>
+
+<syntax>
+Bluetooth.EVENT_CLIENT_CONNECTED
+</syntax>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>int</type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

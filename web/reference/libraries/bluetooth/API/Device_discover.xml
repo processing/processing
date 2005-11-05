@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>discover()</name>
+
+<description>
+Searches for services that the sketch can connect to on this device. This method returns immediately, and reports its result in <b>libraryEvent</b>.
+</description>
+
+<syntax>
+device.discover()
+</syntax>
+
+<parameter>
+<label>device</label>
+<description>Device: any variable of type Device</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>
