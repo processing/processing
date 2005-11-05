@@ -12,12 +12,14 @@ require '../../header.inc.php';
 <b><a href="net/index.php">Net</a></b><br>
 Sending and receiving data via the Internet.<br>
 <br>
+<br>
 <b><a href="handset/index.php">Handset</a></b><br>
 Vibration and backlight control.
 </div>
 <div class="column">
 <b><a href="sound/index.php">Sound</a></b><br>
 Sound playback and recording.<br>
+<br>
 <br>
 <b><a href="bluetooth/index.php">Bluetooth</a></b><br>
 Sending and receiving data via Bluetooth wireless connections.

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>pause()</name>
+
+<description>
+Pauses playback of this sound. This does not release the sound hardware, so playback can resume immediately with <b>play()</b>. If you wish to play a different sound, use <b>stop</b> to stop playback and release the sound hardware.
+</description>
+
+<syntax>
+sound.pause()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>Sound: any variable of type Sound</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Sound</partof>
+
+
+</root>

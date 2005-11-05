@@ -8,7 +8,7 @@ $PAGE_BACK_LINK = '../index.php';
 require '../../../header.inc.php';
 ?>
 <div class="column">
-<img src="images/header.png"><br>
+<h3>Net</h3><br>
 <br>
 The Net library allows Mobile Processing sketches to send and receive data via the Internet. Mobile sketches are allowed to connect to web servers in the same way as desktop web browsers.
 </div>
@@ -16,7 +16,7 @@ The Net library allows Mobile Processing sketches to send and receive data via t
 <b>Client</b><br>
 The client class is used to create client Objects which connect to a server to exchange data.<br>
 <br>
-<a href="reference.php?name=Client">Client()</a><br>
+<a href="reference.php?name=Client">Client</a><br>
 <a href="reference.php?name=Client_GET">GET()</a><br>
 <a href="reference.php?name=Client_POST">POST()</a><br>
 <a href="reference.php?name=Client_read">read()</a><br>
