@@ -14,12 +14,12 @@
 byte[] nums = { 0, 34, 5, 127, 52};
 
 // now write the bytes to a file
-saveBytes("numbers.txt", nums);
+saveBytes("numbers.dat", nums);
 </code>
 </example>
 
 <description>
-Opposite of <b>loadBytes()</b>, will write an entire array of bytes to a file. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
+Opposite of <b>loadBytes()</b>, will write an entire array of bytes to a file. The data is saved in binary format. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
 </description>
 
 <syntax>
