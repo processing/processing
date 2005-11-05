@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loop()</name>
+
+<description>
+Plays this sound in a repeating loop.
+</description>
+
+<syntax>
+sound.loop()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>Sound: any variable of type Sound</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>sound</partof>
+
+
+</root>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Sound</name>
+
+<description>
+This class is used to create sound objects for playback.
+</description>
+
+<method>
+<mname>duration()</mname>
+<mdescription>Returns the duration of the sound, in milliseconds.</mdescription>
+</method>
+
+<method>
+<mname>loop()</mname>
+<mdescription>Plays the sound in a repeating loop.</mdescription>
+</method>
+
+<method>
+<mname>pause()</mname>
+<mdescription>Pauses playback of the sound.</mdescription>
+</method>
+
+<method>
+<mname>play()</mname>
+<mdescription>Plays the sound once.</mdescription>
+</method>
+
+<method>
+<mname>playTone()</mname>
+<mdescription>Plays a synthesized tone.</mdescription>
+</method>
+
+<method>
+<mname>stop()</mname>
+<mdescription>Stops playback of the sound.</mdescription>
+</method>
+
+<method>
+<mname>time()</mname>
+<mdescription>Returns the current position in the sound, in milliseconds.</mdescription>
+</method>
+
+<method>
+<mname>volume()</mname>
+<mdescription>Sets the volume of playback.</mdescription>
+</method>
+
+<returns></returns>
+
+<constructor>
+Sound(<c>file</c>)
+Sound(<c>file</c>, <c>type</c>)
+</constructor>
+
+<cparameter>
+<clabel>file</clabel>
+<cdescription>String: file or url name of sound to play</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>type</clabel>
+<cdescription>String: mime type of sound file</cdescription>
+</cparameter>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Sound</partof>
+
+</root>

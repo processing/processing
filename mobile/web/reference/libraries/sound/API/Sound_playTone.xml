@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>playTone()</name>
+
+<description>
+Plays a synthesized tone. The tone is specified by an integer note value between 0 and 127, corresponding to MIDI note values, and a duration and volume. Note that you do not need to create a new Sound object to use this method, you can call it directly on the class (see syntax).
+</description>
+
+<syntax>
+Sound.playTone(<c>note</c>, <c>duration</c>, <c>volume</c>)
+</syntax>
+
+<parameter>
+<label>note</label>
+<description>int: MIDI note to play</description>
+</parameter>
+
+<parameter>
+<label>duration</label>
+<description>int: duration of tone, in milliseconds</description>
+</parameter>
+
+<parameter>
+<label>volumn</label>
+<description>int: volume of the tone, between 0 and 100</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Sound</partof>
+
+
+</root>

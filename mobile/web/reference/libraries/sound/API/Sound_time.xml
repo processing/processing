@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>time()</name>
+
+<description>
+Returns the current position of playback in the sound, in milliseconds.
+</description>
+
+<syntax>
+sound.time()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>Sound: any variable of type Sound</description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Sound</partof>
+
+
+</root>

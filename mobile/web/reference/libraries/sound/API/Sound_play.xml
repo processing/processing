@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>play()</name>
+
+<description>
+Begins playback of this sound. Playback will end when it reaches the end of the sound file.
+</description>
+
+<syntax>
+sound.play()
+</syntax>
+
+<parameter>
+<label>sound</label>
+<description>Sound: any variable of type Sound</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>sound</partof>
+
+
+</root>
