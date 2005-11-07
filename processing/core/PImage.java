@@ -1990,7 +1990,7 @@ public class PImage implements PConstants, Cloneable {
    * Save this image to disk. This method will save to the "current"
    * folder, which when running inside the PDE will be the location
    * of the Processing application, not the sketch folder. To save
-   * inside the sketch folder, use the variable savePath from PApplet,
+   * inside the sketch folder, use the function savePath from PApplet,
    * or use saveFrame() instead.
    */
   public void save(String filename) {

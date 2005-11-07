@@ -1,3 +1,7 @@
+0095 core
+X undo the fix that causes the width/height to be properly set 
+
+
 0094 core
 X fix bug that was causing font sizes not to be set on opengl
 X   http://dev.processing.org/bugs/show_bug.cgi?id=174
