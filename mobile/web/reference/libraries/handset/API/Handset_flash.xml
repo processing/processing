@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>flash()</name>
+
+<description>
+Flashes the backlight of the display for the specified duration. Returns <b>true</b> if backlight control is available. Backlight control is not available on all mobile phones.
+</description>
+
+<syntax>
+hs.flash(<c>duration</c>)
+</syntax>
+
+<parameter>
+<label>hs</label>
+<description>Handset: any variable of type Handset</description>
+</parameter>
+
+<parameter>
+<label>duration</label>
+<description>int: duration of flashing, in milliseconds, or 0 to turn off the flashing</description>
+</parameter>
+
+<returns>boolean</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>

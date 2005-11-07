@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>vibrate()</name>
+
+<description>
+Activates the vibrator of the mobile phone for the specified duration. Returns <b>true</b> if vibration control is available. Vibration control is not available on all mobile phones.
+</description>
+
+<syntax>
+hs.vibrate(<c>duration</c>)
+</syntax>
+
+<parameter>
+<label>hs</label>
+<description>Handset: any variable of type Handset</description>
+</parameter>
+
+<parameter>
+<label>duration</label>
+<description>int: duration of vibration, in milliseconds, or 0 to turn off the vibrator</description>
+</parameter>
+
+<returns>boolean</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>
