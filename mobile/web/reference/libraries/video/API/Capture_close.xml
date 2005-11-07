@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>close()</name>
+
+<description>
+Closes the camera and releases the video hardware. The object cannot be used again after being closed.
+</description>
+
+<syntax>
+cap.close()
+</syntax>
+
+<parameter>
+<label>cap</label>
+<description>Capture: any variable of type Capture</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Video</partof>
+
+</root>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>read()</name>
+
+<description>
+Captures a frame from the live video feed. The frame is returned as an array of bytes containing the image data for the frame. The image data is in the <b>.png</b> file format and can be displayed by using <b>loadImage()</b> to create a PImage object.
+</description>
+
+<syntax>
+cap.read()
+</syntax>
+
+<parameter>
+<label>cap</label>
+<description>Capture: any variable of type Capture</description>
+</parameter>
+
+<returns>byte[]</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Video</partof>
+
+</root>
