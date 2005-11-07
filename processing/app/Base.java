@@ -881,6 +881,46 @@ public class Base {
 
 
   /**
+   * Gets a list of all files within the specified folder,
+   * and returns a list of their relative paths.
+   * Ignores any files/folders prefixed with a dot.
+   */
+  static public String[] listFiles(String path, boolean relative) {
+    return listFiles(new File(path), relative);
+  }
+
+  static public String[] listFiles(File folder, boolean relative) {
+    String path = folder.getAbsolutePath();
+    Vector vector = new Vector();
+    listFiles(relative ? (path + File.separator) : "", path, vector);
+    String outgoing[] = new String[vector.size()];
+    vector.copyInto(outgoing);
+    return outgoing;
+  }
+
+  static protected void listFiles(String basePath,
+                                  String path, Vector vector) {
+    File folder = new File(path);
+    String list[] = folder.list();
+    if (list == null) return;
+
+    for (int i = 0; i < list.length; i++) {
+      if (list[i].charAt(0) == '.') continue;
+
+      File file = new File(path, list[i]);
+      String newPath = file.getAbsolutePath();
+      if (newPath.startsWith(basePath)) {
+        newPath = newPath.substring(basePath.length());
+      }
+      vector.add(newPath);
+      if (file.isDirectory()) {
+        listFiles(basePath, newPath, vector);
+      }
+    }
+  }
+
+
+  /**
    * Equivalent to the one in PApplet, but static (die() is removed)
    */
   static public String[] loadStrings(File file) {

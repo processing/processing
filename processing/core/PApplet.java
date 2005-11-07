@@ -3197,14 +3197,14 @@ public class PApplet extends Applet
     // (not the data folder) so check there first.
     // the slash as a prefix means that it'll load from the root of
     // the jar, rather than trying to dig into the package location
-    stream = getClass().getResourceAsStream("/" + filename);
+    //stream = getClass().getResourceAsStream("/" + filename);
     //stream = getClass().getResourceAsStream(filename);
-    if (stream != null) return stream;
-
-    // check the data subfolder (used when bundling separately,
-    // probably should be the default for sketches)
-    //stream = getClass().getResourceAsStream("data/" + filename);
     //if (stream != null) return stream;
+
+    // for rev 0096, the "data" folder will be exported intact
+    // (including folders to be processed recursively)
+    stream = getClass().getResourceAsStream("data/" + filename);
+    if (stream != null) return stream;
 
     try {
       URL url = new URL(filename);
