@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Handset</name>
+
+<description>
+This class provides access to the handset methods.
+</description>
+
+<method>
+<mname>vibrate()</mname>
+<mdescription>Activates the vibrator.</mdescription>
+</method>
+
+<method>
+<mname>flash()</mname>
+<mdescription>Flashes the backlight of the display.</mdescription>
+</method>
+
+<constructor>
+Handset(<c>parent</c>)
+</constructor>
+
+<cparameter>
+<clabel>parent</clabel>
+<cdescription>PMIDlet: typically use "this"</cdescription>
+</cparameter>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Net</partof>
+
+
+
+
+
+
+
+
+</root>
