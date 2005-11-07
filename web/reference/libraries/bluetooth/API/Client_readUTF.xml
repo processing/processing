@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readUTF()</name>
+
+<description>
+Reads a String from data in UTF format. UTF is a string format that makes it easy to reconstruct a string from raw byte data.  UTF also supports non-ASCII characters in a standard way. A String can be transmitted in UTF format by using <b>writeUTF()</b>.
+</description>
+
+<syntax>
+client.readUTF()
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

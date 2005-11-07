@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readBytes()</name>
+
+<description>
+Reads data into an array of bytes. Returns the number of bytes read and stored in the array.
+</description>
+
+<syntax>
+client.readBoolean(<c>buffer</c>)
+client.readBoolean(<c>buffer</c>, <c>offset</c>, <c>length</c>)
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<parameter>
+<label>buffer</label>
+<description>byte[]: array of bytes to hold data</description>
+</parameter>
+
+<parameter>
+<label>offset</label>
+<description>int: index into buffer where to start storing data</description>
+</parameter>
+
+<parameter>
+<label>length</label>
+<description>int: maximum number of bytes to store</description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

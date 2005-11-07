@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>write()</name>
+
+<description>
+Writes data as bytes.
+</description>
+
+<syntax>
+client.write(<c>value</c>)
+client.write(<c>buffer</c>)
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>int: integer value to write as a single byte (0 - 255)</description>
+</parameter>
+
+<parameter>
+<label>buffer</label>
+<description>byte[]: array of bytes to write</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

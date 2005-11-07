@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>writeInt()</name>
+
+<description>
+Writes an int as four bytes of data. The bytes can be reconstructed into an int using <b>readInt()</b>.
+</description>
+
+<syntax>
+client.writeInt(<c>value</c>)
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<parameter>
+<label>value</label>
+<description>int: int value to write</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

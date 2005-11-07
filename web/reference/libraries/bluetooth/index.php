@@ -44,7 +44,7 @@ Objects of this class represent nearby devices discovered on the Bluetooth netwo
 <br>
 <br>
 <b>Service</b><br>
-Objects of this class represent services running on devices that can be connected to via the Bluetooth network.<br>
+Objects of this class represent software running on devices that can be connected to via the Bluetooth network.<br>
 <br>
 <a href="reference.php?name=Service">Service</a><br>
 <a href="reference.php?name=Service_connect">connect()</a><br>
@@ -67,7 +67,6 @@ Client objects are used to communicate with other devices and services.<br>
 <a href="reference.php?name=Client_stop">stop()</a><br>
 <a href="reference.php?name=Client_write">write()</a><br>
 <a href="reference.php?name=Client_writeBoolean">writeBoolean()</a><br>
-<a href="reference.php?name=Client_writeBytes">writeBytes()</a><br>
 <a href="reference.php?name=Client_writeChar">writeChar()</a><br>
 <a href="reference.php?name=Client_writeInt">writeInt()</a><br>
 <a href="reference.php?name=Client_writeUTF">writeUTF()</a><br>

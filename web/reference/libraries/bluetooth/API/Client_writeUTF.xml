@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>writeUTF()</name>
+
+<description>
+Writes a String in UTF format. UTF is a string format that makes it easy to reconstruct a string from raw byte data.  UTF also supports non-ASCII characters in a standard way. A String can be reconstructed from data in UTF format by using <b>readUTF()</b>.
+</description>
+
+<syntax>
+client.writeUTF(<b>string</b>)
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<parameter>
+<label>string</label>
+<description>String: string data to write</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

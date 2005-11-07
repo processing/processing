@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>skipBytes()</name>
+
+<description>
+Reads and discards bytes.
+</description>
+
+<syntax>
+client.skipBytes(<c>numbytes</c>);
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<parameter>
+<label>numbytes</label>
+<description>int: the number of bytes to read and discard</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>
