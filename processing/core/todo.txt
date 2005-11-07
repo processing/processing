@@ -1,5 +1,6 @@
 0096 core
 X set applet.path to user.dir if init() is reached and it's not set
+X add NO_DEPTH_TEST to PGraphics3
 
 _ "not available in P3D" should read "OPENGL" in opengl lib
 
