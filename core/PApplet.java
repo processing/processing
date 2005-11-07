@@ -3201,6 +3201,11 @@ public class PApplet extends Applet
     //stream = getClass().getResourceAsStream(filename);
     if (stream != null) return stream;
 
+    // check the data subfolder (used when bundling separately,
+    // probably should be the default for sketches)
+    //stream = getClass().getResourceAsStream("data/" + filename);
+    //if (stream != null) return stream;
+
     try {
       URL url = new URL(filename);
       stream = url.openStream();
@@ -3257,10 +3262,6 @@ public class PApplet extends Applet
     }
 
     try {
-      // hm, check the data subfolder
-      //stream = getClass().getResourceAsStream("data/" + filename);
-      //if (stream != null) return stream;
-
       // attempt to load from a local file, used when running as
       // an application, or as a signed applet
       try {  // first try to catch any security exceptions
