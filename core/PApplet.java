@@ -445,6 +445,12 @@ public class PApplet extends Applet
       // stop method register list)
     }
 
+    try {
+      if (path == null) {
+        System.getProperty("user.dir");
+      }
+    } catch (Exception e) { }  // may be a security problem
+
     // create a dummy graphics context
     size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     //size(INITIAL_WIDTH, INITIAL_HEIGHT);
@@ -3174,15 +3180,26 @@ public class PApplet extends Applet
    * but want an InputStream object so that you can use other Java
    * methods to take more control of how the stream is read.
    * <P>
+   * If the requested item doesn't exist, null is returned.
+   * (Prior to 0096, die() would be called, killing the applet)
+   * <P>
    * The filename passed in can be:
    * <UL>
    * <LI>A URL, for instance openStream("http://processing.org/");
    * <LI>A file in the sketch's data folder
-   * <LI>Another file opened locally
+   * <LI>Another file to be opened locally
    * </UL>
    */
   public InputStream openStream(String filename) {
     InputStream stream = null;
+
+    // by default, data files are exported to the root path of the jar.
+    // (not the data folder) so check there first.
+    // the slash as a prefix means that it'll load from the root of
+    // the jar, rather than trying to dig into the package location
+    stream = getClass().getResourceAsStream("/" + filename);
+    //stream = getClass().getResourceAsStream(filename);
+    if (stream != null) return stream;
 
     try {
       URL url = new URL(filename);
@@ -3223,7 +3240,8 @@ public class PApplet extends Applet
             if (!filenameActual.equals(filenameShort)) {
               throw new RuntimeException("This file is named " +
                                          filenameActual + " not " +
-                                         filename + ".");
+                                         filename + ". Re-name it " +
+                                         "or change your code.");
             }
           } catch (IOException e) { }
         }
@@ -3239,30 +3257,23 @@ public class PApplet extends Applet
     }
 
     try {
-      // by default, data files are exported to the root path of the jar.
-      // (not the data folder) so check there first.
-      stream = getClass().getResourceAsStream(filename);
-      if (stream != null) return stream;
-
       // hm, check the data subfolder
-      stream = getClass().getResourceAsStream(dataPath(filename));
-      if (stream != null) return stream;
+      //stream = getClass().getResourceAsStream("data/" + filename);
+      //if (stream != null) return stream;
 
       // attempt to load from a local file, used when running as
       // an application, or as a signed applet
       try {  // first try to catch any security exceptions
         try {
-          File file = new File(path, filename);
-          stream = new FileInputStream(file);
-          if (stream != null) return stream;
-
-        } catch (Exception e) { }  // ignored
-
-        try {
-          //stream = new FileInputStream(new File("data", filename));
           stream = new FileInputStream(dataPath(filename));
           if (stream != null) return stream;
         } catch (IOException e2) { }
+
+        try {
+          File file = new File(path, filename);
+          stream = new FileInputStream(file);
+          if (stream != null) return stream;
+        } catch (Exception e) { }  // ignored
 
         try {
           stream = new FileInputStream(filename);
@@ -3271,11 +3282,12 @@ public class PApplet extends Applet
 
       } catch (SecurityException se) { }  // online, whups
 
-      if (stream == null) {
-        throw new IOException("openStream() could not open " + filename);
-      }
+      //if (stream == null) {
+      //throw new IOException("openStream() could not open " + filename);
+      //}
     } catch (Exception e) {
-      die(e.getMessage(), e);
+      //die(e.getMessage(), e);
+      e.printStackTrace();
     }
     return null;  // #$(*@ compiler
   }
@@ -3480,6 +3492,9 @@ public class PApplet extends Applet
    * Return a full path to an item in the data folder.
    */
   public String dataPath(String where) {
+    if (path == null) {
+      return "data" + File.separator + where;
+    }
     return path + File.separator + "data" + File.separator + where;
   }
 
@@ -5358,9 +5373,9 @@ v              PApplet.this.stop();
    *                       the default is to center on the main screen.
    *
    * --present             put the applet into full screen presentation
-   *                       mode. requires java 1.4.
+   *                       mode. requires java 1.4 or later.
    *
-   * --bgcolor=#xxxxxx     background color of the window
+   * --bgcolor=#xxxxxx     background color of the window.
    *
    * --sketch-path         location of where to save files from functions
    *                       like saveStrings() or saveFrame(). defaults to
