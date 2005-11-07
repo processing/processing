@@ -82,6 +82,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public static final String  MULTITAP_PUNCTUATION    = ".,?!'\"-_:;/()@&#$%*+<=>^";
         
     protected boolean   multitap;
+    protected String    multitapText;
     protected char[]    multitapKeySettings;
     protected char[]    multitapBuffer;
     protected int       multitapBufferIndex;
@@ -185,6 +186,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             msPerFrame = 1;
         
             multitapBuffer = new char[64];
+            multitapText = "";
             multitapKeySettings = new char[] { '#', '*' };
             multitapPunctuation = MULTITAP_PUNCTUATION;
             multitapEditDuration = 1000;
@@ -418,6 +420,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final void multitapClear() {
         multitapBufferIndex = 0;
         multitapBufferLength = 0;
+        multitapText = "";
     }
     
     public final void multitapDeleteChar() {
@@ -427,6 +430,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             multitapBufferIndex--;
             multitapLastEdit = 0;
         }        
+        multitapText = new String(multitapBuffer, 0, multitapBufferLength);
     }
     
     private char multitapUpperKeyPressed(boolean editing, char newChar) {
@@ -575,6 +579,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 multitapBufferIndex++;
                 multitapLastEdit = millis();
             }
+            multitapText = new String(multitapBuffer, 0, multitapBufferLength);
         }
     }
     
@@ -777,6 +782,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final PFont loadFont(String fontname) {
         return loadFont(fontname, 0);
+    }
+    
+    public final PFont loadFont() {
+        return new PFont(Font.getDefaultFont());
     }
     
     public final PFont loadFont(int face, int style, int size) {
