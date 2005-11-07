@@ -1,6 +1,13 @@
 0096 core
 X set applet.path to user.dir if init() is reached and it's not set
 X add NO_DEPTH_TEST to PGraphics3
+_   need to document this somewhere
+
+_ check into bug where applet crashing if image not available
+_   probably need to add a hint() to make things not halt
+_ hack the image exporting stuff into p5
+_ check into loadImage() with jars bug, very frustrating
+_   when using loadImage() on a jar, turn off "no cache" option?
 
 _ "not available in P3D" should read "OPENGL" in opengl lib
 

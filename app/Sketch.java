@@ -1805,7 +1805,7 @@ public class Sketch {
 
         } else {  // just copy the file over.. prolly a .dll or something
           Base.copyFile(exportFile,
-                           new File(appletFolder, exportFile.getName()));
+                        new File(appletFolder, exportFile.getName()));
         }
       }
     }
@@ -1813,18 +1813,23 @@ public class Sketch {
     String bagelJar = "lib/core.jar";
     packClassPathIntoZipFile(bagelJar, zos);
 
-    // files to include from data directory
-    // TODO this needs to be recursive
     if (dataFolder.exists()) {
-      String dataFiles[] = dataFolder.list();
+      //String dataFiles[] = dataFolder.list();
+      String dataFiles[] = Base.listFiles(dataFolder, false);
+      int offset = folder.getAbsolutePath().length() + 1;
       for (int i = 0; i < dataFiles.length; i++) {
+        File dataFile = new File(dataFiles[i]);
+        if (dataFile.isDirectory()) continue;
+
         // don't export hidden files
         // skipping dot prefix removes all: . .. .DS_Store
-        if (dataFiles[i].charAt(0) == '.') continue;
+        //if (dataFiles[i].charAt(0) == '.') continue;
+        if (dataFile.getName().charAt(0) == '.') continue;
 
-        entry = new ZipEntry(dataFiles[i]);
+        entry = new ZipEntry(dataFiles[i].substring(offset));
         zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
+        //zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
+        zos.write(Base.grabFile(dataFile)); //new File(folder, dataFiles[i])));
         zos.closeEntry();
       }
     }

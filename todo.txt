@@ -5,17 +5,16 @@ X     not really, but a command line that still uses awt might not be bad
 o   gets messy because of how the classpath et al is handled
 o   maybe just split out the preproc?
 o     could avoid doing things like the packages etc
+X subfolders in the 'data' directory don't work
+X   http://dev.processing.org/bugs/show_bug.cgi?id=65
 
 _ hex colors < 6 chars produce bizarre error:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=196
 
-_ check into bug where applet crashing if image not available
-_   probably need to add a hint() to make things not halt
-_ hack the image exporting stuff into p5
-_ check into loadImage() with jars bug, very frustrating
-_   when using loadImage() on a jar, turn off "no cache" option?
 _ threading bug with sonia and rev 91
+
 _ make .pde files double-clickable from windows
+_   on drag, are these already passed to argv[]?
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
 
 _ file a feature request for command line support
@@ -23,6 +22,9 @@ _   would still require awt, but would take a sketch on cmd line
 _   build it and then exit
 
 _ add "reference" and "examples" categories to bugzilla
+_ do something about the summary field to not make it editable
+_   maybe just move it away from its current location?
+_   call it "bug title" instead of "summary"?
 
 the biggies
 _ bring back P2D with proper stuff 
@@ -387,8 +389,6 @@ _ if size() not found in export/compile, ask the user
 _   have size(myWidth, myHeight) set a static var in PGraphics
 _   for the last size that was used, use as default for fill-in field
 _   http://dev.processing.org/bugs/show_bug.cgi?id=64
-_ subfolders in the 'data' directory don't work
-_   http://dev.processing.org/bugs/show_bug.cgi?id=65
 _ make export put a timestamp in the html code (hidden or visible)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=66
 
