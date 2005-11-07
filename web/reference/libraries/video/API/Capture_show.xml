@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>show()</name>
+
+<description>
+Displays the output of live video from the camera. This output will overlay on top of the sketch.
+</description>
+
+<syntax>
+cap.show(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
+</syntax>
+
+<parameter>
+<label>cap</label>
+<description>Capture: any variable of type Capture</description>
+</parameter>
+
+<parameter>
+<label>x</label>
+<description>int: x coordinate of upper left corner of output</description>
+</parameter>
+
+<parameter>
+<label>y</label>
+<description>int: y coordinate of upper left corner of output</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>int: width of output</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>int: height of output</description>
+</parameter>
+
+<returns>void</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Video</partof>
+
+</root>

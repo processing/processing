@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>hide()</name>
+
+<description>
+Hides the output of live video displayed using <b>show()</b>.
+</description>
+
+<syntax>
+cap.hide()
+</syntax>
+
+<parameter>
+<label>cap</label>
+<description>Capture: any variable of type Capture</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Video</partof>
+
+</root>

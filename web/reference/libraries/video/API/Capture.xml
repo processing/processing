@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Capture</name>
+
+<description>
+The capture class allows live video output and frame capture.
+</description>
+
+<method>
+<mname>close()</mname>
+<mdescription>Closes the camera and releases the video hardware.</mdescription>
+</method>
+
+<method>
+<mname>hide()</mname>
+<mdescription>Hides the output of live video from the camera.</mdescription>
+</method>
+
+<method>
+<mname>read()</mname>
+<mdescription>Captures a frame from the live video feed</mdescription>
+</method>
+
+<method>
+<mname>show()</mname>
+<mdescription>Displays the output of live video from the camera.</mdescription>
+</method>
+
+<returns></returns>
+
+<constructor>
+Capture(<c>parent</c>, <c>width</c>, <c>height</c>)
+</constructor>
+
+<cparameter>
+<clabel>parent</clabel>
+<cdescription>PMIDlet: typically use "this"</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>width</clabel>
+<cdescription>int: width of captured video frames</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>height</clabel>
+<cdescription>int: height of captured video frames</cdescription>
+</cparameter>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Video</partof>
+
+</root>
