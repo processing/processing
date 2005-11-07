@@ -138,4 +138,8 @@ public class Sound implements PlayerListener {
             throw new RuntimeException(me.getMessage());
         }
     }
+    
+    public static String[] supportedTypes() {
+        return Manager.getSupportedContentTypes(null);
+    }
 }
