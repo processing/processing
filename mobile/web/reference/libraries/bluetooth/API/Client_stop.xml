@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>stop()</name>
+
+<description>
+Closes the connection to end communication.
+</description>
+
+<syntax>
+client.stop();
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

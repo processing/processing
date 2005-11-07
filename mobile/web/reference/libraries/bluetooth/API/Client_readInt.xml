@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readInt()</name>
+
+<description>
+Reads four bytes of data and returns them as an int. The bytes are in the order as written by <b>writeInt()</b>.
+</description>
+
+<syntax>
+client.readInt()
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

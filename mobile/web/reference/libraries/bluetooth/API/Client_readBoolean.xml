@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readBoolean()</name>
+
+<description>
+Reads one byte of data, as a boolean value.
+</description>
+
+<syntax>
+client.readBoolean()
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

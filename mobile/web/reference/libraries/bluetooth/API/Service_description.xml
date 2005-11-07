@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>description()</name>
+
+<description>
+Returns a description of the service.
+</description>
+
+<syntax>
+serv.description()
+</syntax>
+
+<parameter>
+<label>serv</label>
+<description>Service: any variable of type Service</description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

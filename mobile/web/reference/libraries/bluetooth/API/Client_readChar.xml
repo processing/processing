@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readChar()</name>
+
+<description>
+Reads two byte of data and returns them as a char. The two bytes represent the upper and then the lower 8-bits of a 16-bit char, as written by <b>writeChar()</b>.
+</description>
+
+<syntax>
+client.readChar()
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>Client: any variable of type Client</description>
+</parameter>
+
+<returns>char</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

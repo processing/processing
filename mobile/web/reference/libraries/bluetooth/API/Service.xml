@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Service</name>
+
+<description>
+Objects of this class represent software running on devices that can be connected to on the Bluetooth network.
+</description>
+
+<method>
+<mname>connect()</mname>
+<mdescription>Connects to the service.</mdescription>
+</method>
+
+<method>
+<mname>description()</mname>
+<mdescription>Returns a description of the service.</mdescription>
+</method>
+
+<method>
+<mname>name()</mname>
+<mdescription>Returns the name of the service.</mdescription>
+</method>
+
+<method>
+<mname>provider()</mname>
+<mdescription>Returns the name of the provider of the service.</mdescription>
+</method>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Bluetooth</partof>
+
+</root>

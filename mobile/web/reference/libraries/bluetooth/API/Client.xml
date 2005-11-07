@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Client</name>
+
+<description>
+Client objects are used to communicate with other Bluetooth devices and services.
+</description>
+
+<method>
+<mname>read()</mname>
+<mdescription>Reads one byte.</mdescription>
+</method>
+
+<method>
+<mname>readBoolean()</mname>
+<mdescription>Reads a byte as a boolean.</mdescription>
+</method>
+
+<method>
+<mname>readBytes()</mname>
+<mdescription>Reads data into a byte array.</mdescription>
+</method>
+
+<method>
+<mname>readChar()</mname>
+<mdescription>Reads two bytes and returns it as a char.</mdescription>
+</method>
+
+<method>
+<mname>readInt()</mname>
+<mdescription>Reads four bytes and returns it as an int.</mdescription>
+</method>
+
+<method>
+<mname>readUTF()</mname>
+<mdescription>Reads data as a String.</mdescription>
+</method>
+
+<method>
+<mname>skipBytes()</mname>
+<mdescription>Reads and discards bytes.</mdescription>
+</method>
+
+<method>
+<mname>stop()</mname>
+<mdescription>Closes the connection to end communication.</mdescription>
+</method>
+
+<method>
+<mname>write()</mname>
+<mdescription>Writes one byte.</mdescription>
+</method>
+
+<method>
+<mname>writeBoolean()</mname>
+<mdescription>Writes a boolean as a byte of data.</mdescription>
+</method>
+
+<method>
+<mname>writeChar()</mname>
+<mdescription>Writes a char variable.</mdescription>
+</method>
+
+<method>
+<mname>writeInt()</mname>
+<mdescription>Writes an int.</mdescription>
+</method>
+
+<method>
+<mname>writeUTF()</mname>
+<mdescription>Writes a String.</mdescription>
+</method>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Bluetooth</partof>
+
+</root>
