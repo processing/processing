@@ -2,12 +2,61 @@
 X set applet.path to user.dir if init() is reached and it's not set
 X add NO_DEPTH_TEST to PGraphics3
 _   need to document this somewhere
+X access logs are being spammed because openStream() gets a 404
+X   the default should be to check the .jar file
+
+_ applet shouldn't be resizing itself
+_   opens at correct size, then makes itself small, then large again
+
+_ loadBytes() and openStream() et al need to return null
+_   loadImage() can too, but print an error to the console
 
 _ check into bug where applet crashing if image not available
 _   probably need to add a hint() to make things not halt
 _ hack the image exporting stuff into p5
 _ check into loadImage() with jars bug, very frustrating
 _   when using loadImage() on a jar, turn off "no cache" option?
+_ image no load halts the program (rather than returning null)
+_ note in the reference: png images work with java 1.3+
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1125968697
+_   http://java.sun.com/j2se/1.3/docs/guide/2d/new_features.html
+_ loadImage() seems to be caching everything from the jar
+_   http://java.sun.com/developer/technicalArticles/Media/imagestrategies/index.html
+_   make a note of how to disable this
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078795681
+_ bizarre image loading error with c_Rollover.zip
+_ figure out how to handle cached images, multiple images
+_   write a simple example for threaded image loading "load several" 
+_     include it as part of the javadoc
+_   MediaTracker blocking is prolly making jar download really slow
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
+_ dynamically load code for png and others on loadImage/saveFrame?
+_   how to load external encoders/decoders
+_ updated png encoder
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
+_ should image i/o and sound i/o be moved into PImage and PSound?
+_ more image file i/o.. more advanced in newer java
+_   http://dev.processing.org/bugs/show_bug.cgi?id=165
+_   http://java.sun.com/products/java-media/jai/index.jsp
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1120174647
+_   read uncompressed tiff, read uncompressed tga files.
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994
+_ get loadImage() to work properly with data folder
+_   should probably use the code from loadStream
+_   and the url stuff should be an alternate method altogether
+_ expose function to write tiff header in PImage (advanced)
+_   helps with writing enormous images
+_ loadImage must be used inside or after setup
+_   either document this and/or provide a better error message
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468
+_ figure out why tiff images won't open with after effects
+_   http://dev.processing.org/bugs/show_bug.cgi?id=153
+_   open with photoshop, resave, see which tags change
+_   particularly of those that are included in the original image
+_   perhaps something gets corrected? 
+_ loadImage() using spaces in the name
+_   if loadImage() with spaces when online(), throw an error
 
 _ "not available in P3D" should read "OPENGL" in opengl lib
 
@@ -494,51 +543,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=103
 
 
 CORE / PImage
-
-_ access logs are being spammed because openStream() gets a 404
-_   the default should be to check the .jar file
-_ image no load halts the program (rather than returning null)
-_ note in the reference: png images work with java 1.3+
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1125968697
-_   http://java.sun.com/j2se/1.3/docs/guide/2d/new_features.html
-_ loadImage() seems to be caching everything from the jar
-_   http://java.sun.com/developer/technicalArticles/Media/imagestrategies/index.html
-_   make a note of how to disable this
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078795681
-_ bizarre image loading error with c_Rollover.zip
-_ figure out how to handle cached images, multiple images
-_   write a simple example for threaded image loading "load several" 
-_     include it as part of the javadoc
-_   MediaTracker blocking is prolly making jar download really slow
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
-_ dynamically load code for png and others on loadImage/saveFrame?
-_   how to load external encoders/decoders
-_ updated png encoder
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
-_ should image i/o and sound i/o be moved into PImage and PSound?
-_ more image file i/o.. more advanced in newer java
-_   http://dev.processing.org/bugs/show_bug.cgi?id=165
-_   http://java.sun.com/products/java-media/jai/index.jsp
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1120174647
-_   read uncompressed tiff, read uncompressed tga files.
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994
-_ get loadImage() to work properly with data folder
-_   should probably use the code from loadStream
-_   and the url stuff should be an alternate method altogether
-_ expose function to write tiff header in PImage (advanced)
-_   helps with writing enormous images
-_ loadImage must be used inside or after setup
-_   either document this and/or provide a better error message
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468
-_ figure out why tiff images won't open with after effects
-_   http://dev.processing.org/bugs/show_bug.cgi?id=153
-_   open with photoshop, resave, see which tags change
-_   particularly of those that are included in the original image
-_   perhaps something gets corrected? 
-_ loadImage() using spaces in the name
-_   if loadImage() with spaces when online(), throw an error
-
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
