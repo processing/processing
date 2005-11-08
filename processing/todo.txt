@@ -1,4 +1,4 @@
-0095 pde
+0096 pde
 o separate processing editor/compiler
 o   can this be done without too much trouble?
 X     not really, but a command line that still uses awt might not be bad
@@ -7,6 +7,8 @@ o   maybe just split out the preproc?
 o     could avoid doing things like the packages etc
 X subfolders in the 'data' directory don't work
 X   http://dev.processing.org/bugs/show_bug.cgi?id=65
+X package macosx with a dmg
+X   http://dev.processing.org/bugs/show_bug.cgi?id=116
 
 _ hex colors < 6 chars produce bizarre error:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=196
@@ -14,8 +16,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=196
 _ threading bug with sonia and rev 91
 
 _ make .pde files double-clickable from windows
-_   on drag, are these already passed to argv[]?
+X   on drag, are these already passed to argv[]?
+_   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
+_   http://groups.google.com/group/comp.os.ms-windows.programmer.misc/browse_thread/thread/4095cb6fc807863/ecdb3b35b0787116%23ecdb3b35b0787116?sa=X&oi=groupsr&start=0&num=3
 
 _ file a feature request for command line support
 _   would still require awt, but would take a sketch on cmd line
@@ -700,8 +704,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 DIST / Mac OS X
 
-_ package macosx with a dmg
-_   http://dev.processing.org/bugs/show_bug.cgi?id=116
 _ set nice background for disk image on macosx
 _ test more to see if runtime exceptions are coming through
 _ track down error in PdeCompiler for message parsing
