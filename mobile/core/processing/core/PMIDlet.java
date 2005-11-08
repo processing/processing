@@ -755,6 +755,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             throw new RuntimeException(e.getMessage());
         }
     }
+    
+    public final PImage loadImage(byte[] data) {
+        return new PImage(data);
+    }
 
     public final void image(PImage img, int x, int y) {
         canvas.image(img, x, y);

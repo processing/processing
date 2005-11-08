@@ -39,11 +39,17 @@ Loads an image into a variable of type <b>PImage</b>. Only <b>.png</b> images ma
 
 <syntax>
 loadImage(<c>filename</c>)
+loadImage(<c>data</c>)
 </syntax>
 
 <parameter>
 <label>filename</label>
 <description>string: name of file to load, must be .png</description>
+</parameter>
+
+<parameter>
+<label>data</label>
+<description>byte[]: array of bytes of image data in .png format</description>
 </parameter>
 
 <returns>PImage</returns>
