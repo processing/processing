@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>supportedTypes()</name>
+
+<description>
+Returns an array of Strings representing the types of sound that can be played. The types are in the Internet MIME format. Note that you do not need to create a new object to call this method, you can call it directly on the class itself (see syntax).
+</description>
+
+<syntax>
+Sound.supportedTypes()
+</syntax>
+
+<returns>String[]</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Sound</partof>
+
+
+</root>
