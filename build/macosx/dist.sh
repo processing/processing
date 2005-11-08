@@ -86,18 +86,25 @@ find processing -name ".cvsignore" -exec rm -rf {} ';'
 find processing -name ".svn" -exec rm -rf {} ';'
 
 mv processing/Processing.app "processing/Processing $SHORT_REVISION.app"
-mv processing processing-$REVISION
+#mv processing processing-$REVISION
+#mv processing "Processing $SHORT_REVISION"
 
 # don't have deluxe on my laptop right now
 #stuff -f sitx processing-$REVISION
 
-# zip it all up for release
 #NICE_FOLDER="Processing $SHORT_REVISION"
-#DMG_NAME="processing-$REVISION"
 #mv processing "$NICE_FOLDER"
-#chmod +x mkdmg
-#./mkdmg "$NICE_FOLDER" "Processing"
-#mv "$NICE_FOLDER.dmg" "$DMG_NAME.dmg"
+#chmod +x mkdmg2
+#./mkdmg2 "$NICE_FOLDER"
+
+NICE_FOLDER="Processing $SHORT_REVISION"
+mv processing "$NICE_FOLDER"
+mkdir processing-$REVISION
+mv "$NICE_FOLDER" processing-$REVISION/
+
+chmod +x mkdmg
+./mkdmg processing-$REVISION
+rm -rf processing-$REVISION
 
 # actually, could probably use:
 # open processing-uncomp.dmg
