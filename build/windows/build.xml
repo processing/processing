@@ -149,15 +149,11 @@
             <fileset dir="processing/build/windows/${svn.tag.processing}-expert"/>
         </move>
         <!-- zip up standard release -->
-<!--        
-        <zip destfile="processing/build/windows/${svn.tag.processing}.zip" 
-             basedir="processing/build/windows/${svn.tag.processing}"/>
--->             
+        <zip destfile="processing/build/windows/mobile-${mobile.version}.zip" 
+             basedir="processing/build/windows/mobile-${mobile.version}"/>
         <!-- zip up expert release -->
-<!--        
-        <zip destfile="processing/build/windows/${svn.tag.processing}-expert.zip" 
-             basedir="processing/build/windows/${svn.tag.processing}-expert"/>
--->             
+        <zip destfile="processing/build/windows/mobile-${mobile.version}-expert.zip" 
+             basedir="processing/build/windows/mobile-${mobile.version}-expert"/>
     </target>
     
     <target name="copydocs" depends="init">
