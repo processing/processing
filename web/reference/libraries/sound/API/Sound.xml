@@ -37,6 +37,11 @@ This class is used to create sound objects for playback.
 </method>
 
 <method>
+<mname>supportedTypes()</mname>
+<mdescription>Returns the types of sound that can be played.</mdescription>
+</method>
+
+<method>
 <mname>time()</mname>
 <mdescription>Returns the current position in the sound, in milliseconds.</mdescription>
 </method>

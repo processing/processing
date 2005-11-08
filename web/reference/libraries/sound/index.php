@@ -10,7 +10,7 @@ require '../../../header.inc.php';
 <div class="column">
 <h3>Sound</h3><br>
 <br>
-The Sound library allows Mobile Processing sketches to play and record sounds on supported mobile phones.
+The Sound library allows Mobile Processing sketches to play sounds on supported mobile phones.
 </div>
 <div class="column" style="padding-left: 40px">
 <b>Sound</b><br>
@@ -23,6 +23,7 @@ This class is used to create sound objects for playback.<br>
 <a href="reference.php?name=Sound_play">play()</a><br>
 <a href="reference.php?name=Sound_playTone">playTone()</a><br>
 <a href="reference.php?name=Sound_stop">stop()</a><br>
+<a href="reference.php?name=Sound_supportedTypes">supportedTypes()</a><br>
 <a href="reference.php?name=Sound_time">time()</a><br>
 <a href="reference.php?name=Sound_volume">volume()</a>
 </div>

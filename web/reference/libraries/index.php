@@ -18,7 +18,7 @@ Vibration and backlight control.
 </div>
 <div class="column">
 <b><a href="sound/index.php">Sound</a></b><br>
-Sound playback and recording.<br>
+Sound playback.<br>
 <br>
 <br>
 <b><a href="bluetooth/index.php">Bluetooth</a></b><br>
