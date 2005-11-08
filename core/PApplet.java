@@ -2823,7 +2823,7 @@ public class PApplet extends Applet
       }
       return img;
     }
-    die("loadImage(): bad targa image format");
+    System.err.println("loadImage(): bad targa image format");
     return null;
   }
 
@@ -3201,8 +3201,11 @@ public class PApplet extends Applet
     //stream = getClass().getResourceAsStream(filename);
     //if (stream != null) return stream;
 
-    // for rev 0096, the "data" folder will be exported intact
-    // (including folders to be processed recursively)
+    //println(getClass().getResource("data/" + filename));
+
+    // for 0096, the "data" folder will be exported intact with subfolders
+    //println("loading " + "data/" + filename);
+    //println(getClass().getName());
     stream = getClass().getResourceAsStream("data/" + filename);
     if (stream != null) return stream;
 
@@ -3271,8 +3274,7 @@ public class PApplet extends Applet
         } catch (IOException e2) { }
 
         try {
-          File file = new File(path, filename);
-          stream = new FileInputStream(file);
+          stream = new FileInputStream(new File(path, filename));
           if (stream != null) return stream;
         } catch (Exception e) { }  // ignored
 
@@ -3282,7 +3284,6 @@ public class PApplet extends Applet
         } catch (IOException e1) { }
 
       } catch (SecurityException se) { }  // online, whups
-
       //if (stream == null) {
       //throw new IOException("openStream() could not open " + filename);
       //}
@@ -3295,7 +3296,11 @@ public class PApplet extends Applet
 
 
   public byte[] loadBytes(String filename) {
-    return loadBytes(openStream(filename));
+    InputStream is = openStream(filename);
+    if (is != null) return loadBytes(is);
+
+    System.err.println(filename + " is missing or inaccessible.");
+    return null;
   }
 
 
@@ -3313,9 +3318,9 @@ public class PApplet extends Applet
 
     } catch (IOException e) {
       e.printStackTrace();
-      throw new RuntimeException("Couldn't load bytes from stream");
+      //throw new RuntimeException("Couldn't load bytes from stream");
     }
-    //return null;
+    return null;
   }
 
 
@@ -3330,7 +3335,7 @@ public class PApplet extends Applet
     InputStream is = openStream(filename);
     if (is != null) return loadStrings(is);
 
-    die("Couldn't open " + filename);
+    System.err.println(filename + " is missing or inaccessible.");
     return null;
   }
 
@@ -3364,9 +3369,9 @@ public class PApplet extends Applet
 
     } catch (IOException e) {
       e.printStackTrace();
-      throw new RuntimeException("Error inside loadStrings()");
+      //throw new RuntimeException("Error inside loadStrings()");
     }
-    //return null;
+    return null;
   }
 
 
