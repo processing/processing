@@ -57,7 +57,7 @@ users through hosting a descriptive website.
 
 If you'd like to have your library posted on the Processing website
 (http://processing.org/reference/libraries) please email
-reas@processing.org and we'll make a decision about its inclusion.
+reas at processing.org and we'll make a decision about its inclusion.
 We hope moving forward to have more of a dialog with the folks working 
 on libraries.
 
