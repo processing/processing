@@ -12,7 +12,7 @@ require '../header.inc.php';
 <b>Mac OS X</b>: Mpowerplayer SDK<br>
 <a href="http://www.mpowerplayer.com/products-sdk.php">http://www.mpowerplayer.com/products-sdk.php</a><br>&nbsp;</li>
   <li>Download and install Mobile Processing.<br><br>
-0001 ALPHA&nbsp;&nbsp|&nbsp;&nbsp;08 11 2005&nbsp;&nbsp;Windows <a href="mobile-0001.zip">Standard</a> or <a href="mobile-0001-expert.zip">without Java</a>&nbsp;&nbsp;|&nbsp;&nbsp;Mac OS X<br><br>
+0001 ALPHA&nbsp;&nbsp|&nbsp;&nbsp;08 11 2005&nbsp;&nbsp;Windows <a href="mobile-0001.zip">Standard</a> or <a href="mobile-0001-expert.zip">without Java</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="mobile-0001.dmg">Mac OS X</a><br><br>
   </li>
   <li>Run Mobile Processing. Choose <b>Preferences</b> from the main drop-down menu. In the <b>Preferences</b> dialog box in the Mobile Processing IDE, go to the <b>Mobile</b> tab, and enter the location of the WTK.<br>
 <br>
