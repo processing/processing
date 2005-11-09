@@ -354,9 +354,15 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     private void keyReleased(int keyCode) {
-        keyPressed = false;
-        
+        char oldKey = key;
+        int oldKeyCode = this.keyCode;        
         key(keyCode);
+        if ((this.key == oldKey) && (this.keyCode == oldKeyCode)) {       
+            keyPressed = false;
+        } else {
+            this.key = oldKey;
+            this.keyCode = oldKeyCode;
+        }
         keyReleased();        
     }
 
