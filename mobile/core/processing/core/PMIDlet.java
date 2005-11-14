@@ -310,6 +310,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 case EVENT_LIBRARY:
                     Object[] objs = (Object[]) eventDataClone[i];
                     libraryEvent(objs[0], eventValuesClone[i], objs[1]);
+                    synchronized (objs[0]) {
+                        objs[0].notifyAll();
+                    }
                     break;
             }
             eventDataClone[i] = null;
