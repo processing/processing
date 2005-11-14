@@ -39,7 +39,7 @@ public class Preverifier implements MessageConsumer {
         command.append(cldc.charAt(0));
         command.append(".");
         command.append(cldc.charAt(1));
-        command.append(" -classpath ");
+        command.append(" -classpath \"");
         command.append(wtkLibPath);
         command.append("cldcapi");
         command.append(cldc);
@@ -57,7 +57,7 @@ public class Preverifier implements MessageConsumer {
     command.append(File.pathSeparator);
     command.append(Sketchbook.librariesClassPath);
     if (Base.isWindows()) {
-        command.append(" -d \"");
+        command.append("\" -d \"");
         command.append(output.getPath());
         command.append("\" \"");
         command.append(source.getPath());
