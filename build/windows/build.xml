@@ -327,6 +327,13 @@
             <param name="classPath" value="${wtk.dir}/lib/mmapi.jar;mobile/build/windows/mobile.jar"/>
             <param name="cldc" value="CLDC1.0"/>
         </antcall>
+        <!-- next, xml library -->
+        <antcall target="makelib">
+            <param name="libname" value="xml"/>
+            <param name="bootClassPath" value="${wtk.dir}/lib/cldcapi10.jar;${wtk.dir}/lib/midpapi10.jar"/>
+            <param name="classPath" value="mobile/xml/library/kxml.jar;mobile/build/windows/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
     </target>
 
     <target name="copylib">
@@ -363,6 +370,10 @@
         <!-- copy video library -->
         <antcall target="copylib">
             <param name="libname" value="video"/>
+        </antcall>
+        <!-- copy xml library -->
+        <antcall target="copylib">
+            <param name="libname" value="xml"/>
         </antcall>
     </target>
 </project>
