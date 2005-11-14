@@ -25,7 +25,7 @@ import javax.microedition.io.*;
  *
  * @author  Francis Li
  */
-public class Client {
+public class Client extends InputStream {
     private String          server;
     private int             port;
     
@@ -266,7 +266,7 @@ public class Client {
         return result;
     }
     
-    private void close() {
+    public void close() {
         if (is != null) {
             try {
                 is.close();

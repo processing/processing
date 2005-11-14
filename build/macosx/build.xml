@@ -269,6 +269,13 @@
             <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/bluetooth/library/jsr082.jar"/>
             <param name="cldc" value="CLDC1.0"/>
         </antcall>
+        <!-- xml library -->
+        <antcall target="makelib">
+            <param name="libname" value="xml"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/xml/library/kxml.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
     </target>
 
     <target name="copylib">
@@ -305,6 +312,10 @@
         <!-- copy bluetooth library -->
         <antcall target="copylib">
             <param name="libname" value="bluetooth"/>
+        </antcall>
+        <!-- copy bluetooth library -->
+        <antcall target="copylib">
+            <param name="libname" value="xml"/>
         </antcall>
     </target>
     
