@@ -758,8 +758,15 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         
     public final PImage loadImage(String filename) {
         try {
-            Image peer = Image.createImage("/" + filename);
-            return new PImage(peer);
+            if (filename.startsWith("http")) {
+                PClient client = new PClient();
+                client.GET_URL(filename);
+                byte[] data = client.readBytes();
+                return new PImage(data);
+            } else {
+                Image peer = Image.createImage("/" + filename);
+                return new PImage(peer);
+            }
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -2066,24 +2073,33 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     private static class TextInputForm extends TextBox implements CommandListener {
         private PMIDlet midlet;
-        private String  text;
         private Command cmdOk;
         private Command cmdCancel;
+        private boolean cancelled;
         
         public TextInputForm(PMIDlet midlet, String title, String text, int max, int constraints) {
             super(title, text, max, constraints);
             this.midlet = midlet;
-            this.text = text;
             cmdOk = new Command("OK", Command.OK, 1);
             cmdCancel = new Command("Cancel", Command.CANCEL, 2);
             addCommand(cmdOk);
             addCommand(cmdCancel);
             setCommandListener(this);
         }
+        
+        public String getString() {
+            String result;
+            if (cancelled) {
+                result = null;
+            } else {
+                result = super.getString();
+            }
+            return result;
+        }
                 
         public void commandAction(Command c, Displayable d) {
             if (c == cmdCancel) {
-                setString(text);
+                cancelled = true;
             }
             synchronized (midlet) {
                 midlet.notifyAll();
