@@ -877,16 +877,20 @@ public class PCanvas extends Canvas {
         if (textFont == null) {
             throw new RuntimeException("The current font has not yet been set with textFont()");
         }
-        char c;
-        int index;
         int width = 0;
-        for (int i = 0, length = data.length(); i < length; i++) {
-            c = data.charAt(i);
-            index = textFont.getIndex(c);
-            if (index >= 0) {
-                width += textFont.setWidth[index];
-            } else {
-                width += textFont.setWidth[textFont.ascii['i']];
+        if (textFont.font != null) {
+            width = textFont.font.stringWidth(data);
+        } else {
+            char c;
+            int index;
+            for (int i = 0, length = data.length(); i < length; i++) {
+                c = data.charAt(i);
+                index = textFont.getIndex(c);
+                if (index >= 0) {
+                    width += textFont.setWidth[index];
+                } else {
+                    width += textFont.setWidth[textFont.ascii['i']];
+                }
             }
         }
         
