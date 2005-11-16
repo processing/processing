@@ -41,4 +41,16 @@ public class Handset {
     public boolean flash(int duration) {
         return display.flashBacklight(duration);
     }
+    
+    public boolean call(String number) {
+        return launch("tel:" + number);
+    }
+    
+    public boolean launch(String url) {
+        try {
+            return midlet.platformRequest(url);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }
