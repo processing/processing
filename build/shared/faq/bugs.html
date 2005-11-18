@@ -618,8 +618,9 @@ and is fixed in the version of QuickTime that is included with iTunes
 <br> <br>
 The QuickTime 7 upgrade released April 29, 2005 (and now included with
 iTunes 6) has not been tested extensively with the video library. If
-you're using QuickTime 7, you'll need to use release 93 of Processing,
-which added some basic support for it. <B>If you're working on a
+you're using QuickTime 7, you'll need to use release 93 (or later) of 
+Processing, which fixed some issues related to QT7. 
+<B>If you're working on a
 critical project that uses video, do not install QuickTime 7 (or
 iTunes 6, which will install QuickTime 7), as there are likely
 problems with QuickTime for Java</B>. On Mac OS X, Apple has provided a
@@ -694,7 +695,12 @@ of sync with the Apple's Java updates, and this is one of the leftovers
 of that scenario. Blame Apple. Blame Canada.
 </UL>
 
-All Platforms 
+Linux (or any other platform)
+<UL>
+<LI>The video library is only supported on Windows and Mac OS, because it relies on QuickTime for Java. There has been discussion of using other libraries (such as JMF) to bring support to Linux, search <A HREF="http://processing.org/discourse">discourse</A> for more information.
+</UL>
+
+Windows and Mac OS
 <UL>
 <LI>Video performance is not particularly great. The library is simply not built (and Java is not currently capable) of moving around 640x480 video on most machines, much less doing analysis on the video. The library was intended as a way to get pixels and manipulate them (either small pixel buffers interactively, or large ones for non real-time use). There are better tools for real-time, large screen analysis. It is my estimate that a 2x performance increase can probably be obtained by making better use of the QuickTime for Java library, but this still won't be enough to do analysis of 640x480 pixels at 30 frames per second, so it remains a lower priority. As always <A HREF="http://dev.processing.org/">contributions are welcome</A>, in case you're a video hacker who wants to help improve the library. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=40">Bug 40</A>)
 <LI>Projects that use video cannot (currently?) be exported to the
