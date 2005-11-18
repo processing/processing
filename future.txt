@@ -37,6 +37,7 @@ b X 7 day search on discourse board
 
 2 _ colorMode(CMYK)
 2 _   just does 1-r/1-g/1-b inside 
+2 _   http://en.wikipedia.org/wiki/CMYK_color_model#Converting_between_RGB_and_CMYK
 2 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1082055374;start=0
 
 

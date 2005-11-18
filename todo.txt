@@ -9,6 +9,7 @@ X subfolders in the 'data' directory don't work
 X   http://dev.processing.org/bugs/show_bug.cgi?id=65
 X package macosx with a dmg
 X   http://dev.processing.org/bugs/show_bug.cgi?id=116
+X add "reference" and "examples" categories to bugzilla
 
 _ hex colors < 6 chars produce bizarre error:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=196
@@ -25,7 +26,6 @@ _ file a feature request for command line support
 _   would still require awt, but would take a sketch on cmd line
 _   build it and then exit
 
-_ add "reference" and "examples" categories to bugzilla
 _ do something about the summary field to not make it editable
 _   maybe just move it away from its current location?
 _   call it "bug title" instead of "summary"?
@@ -246,6 +246,8 @@ _ if 'void' left out before loop or setup, cryptic message about
 _   'constructor loop must be named Temporary_23498_2343'
 _   add a better handler for this specific thing?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=18
+_ using a keyword as a variable name gives unhelpful error message
+_   http://dev.processing.org/bugs/show_bug.cgi?id=212
 
 
 PDE / Editor
@@ -355,6 +357,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
+_ add mayscript tag to html when javascript lib is in use
+_   http://dev.processing.org/bugs/show_bug.cgi?id=211
 _ errors during export don't show up properly (no red status bar)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=194
 _ write export-to-application
@@ -575,7 +579,7 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 LIBRARIES / Video
 
 _ reading movie is really really slow (2-3 fps)
-_   new methods exist, but may be flickery
+_   possible improvement from qtjava list added
 _   http://dev.processing.org/bugs/show_bug.cgi?id=40
 _ Movie needs the crop() functions ala Capture
 _ tearing and incomplete updates on capture?
