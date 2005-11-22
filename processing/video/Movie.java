@@ -4,7 +4,7 @@
   PMovie - reading from video files
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004 Ben Fry
+  Copyright (c) 2004-05 Ben Fry
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -40,8 +40,7 @@ import quicktime.std.movies.media.DataRef;
 import quicktime.util.RawEncodedImage;
 
 
-public class Movie extends PImage
-  implements /*StdQTConstants, StdQTConstants4,*/ PConstants, Runnable {
+public class Movie extends PImage implements PConstants, Runnable {
   PApplet parent;
   Method movieEventMethod;
   String filename;
@@ -53,7 +52,6 @@ public class Movie extends PImage
   boolean play;
   boolean repeat;
   boolean available;
-  //float rate;
   int fps;
 
   /** The movie object, made public in case anyone wants to play with it. */
@@ -88,8 +86,6 @@ public class Movie extends PImage
 
 
   public Movie(PApplet parent, String filename, int ifps) {
-    //this(parent, parent.getClass().getResource("data/" + filename), ifps);
-
     // this creates a fake image so that the first time this
     // attempts to draw, something happens that's not an exception
     super.init(1, 1, RGB);
@@ -102,9 +98,6 @@ public class Movie extends PImage
         url = new URL(filename);
         DataRef urlRef = new DataRef(url.toExternalForm());
         movie = fromDataRef(urlRef);
-        //movie = quicktime.std.movies.Movie.fromDataRef(urlRef,
-        //StdQTConstants4.newMovieAsyncOK |
-        //StdQTConstants.newMovieActive);
         init(parent, movie, ifps);
         return;
 
@@ -118,13 +111,9 @@ public class Movie extends PImage
       }
     }
 
-    url = getClass().getResource(filename);
-    if (url != null) {
-      init(parent, url, ifps);
-      return;
-    }
-
-    url = getClass().getResource("data/" + filename);
+    // updated for new loading style of 0096
+    ClassLoader cl = parent.getClass().getClassLoader();
+    url = cl.getResource("data/" + filename);
     if (url != null) {
       init(parent, url, ifps);
       return;
@@ -132,27 +121,18 @@ public class Movie extends PImage
 
     try {
       try {
-        // look inside the sketch folder (if set)
-        //String location = parent.path + File.separator + "data";
-        String location = parent.dataPath("data");
-        File file = new File(location, filename);
+        File file = new File(parent.dataPath(filename));
         if (file.exists()) {
           movie = fromDataRef(new DataRef(new QTFile(file)));
-          //movie = quicktime.std.movies.Movie.fromDataRef(new DataRef(new QTFile(file)),
-          //StdQTConstants4.newMovieAsyncOK |
-          //StdQTConstants.newMovieActive);
           init(parent, movie, ifps);
           return;
         }
-      } catch (QTException e) { }  // ignored
+      } catch (Exception e) { }  // ignored
 
       try {
         File file = new File("data", filename);
         if (file.exists()) {
           movie = fromDataRef(new DataRef(new QTFile(file)));
-          //movie = quicktime.std.movies.Movie.fromDataRef(new DataRef(new QTFile(file)),
-          //StdQTConstants4.newMovieAsyncOK |
-          //StdQTConstants.newMovieActive);
           init(parent, movie, ifps);
           return;
         }
@@ -162,9 +142,6 @@ public class Movie extends PImage
         File file = new File(filename);
         if (file.exists()) {
           movie = fromDataRef(new DataRef(new QTFile(file)));
-          //movie = quicktime.std.movies.Movie.fromDataRef(new DataRef(new QTFile(file)),
-          //StdQTConstants4.newMovieAsyncOK |
-          //StdQTConstants.newMovieActive);
           init(parent, movie, ifps);
           return;
         }
