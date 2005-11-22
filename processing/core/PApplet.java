@@ -2741,18 +2741,22 @@ public class PApplet extends Applet
   // IMAGE I/O
 
 
+  /**
+   * Load an image from the data folder or a local directory.
+   * Supports .gif (including transparency), .tga, and .jpg images.
+   * In Java 1.2 or later, .png images are also supported.
+   * <p/>
+   * As of 0096, returns null if no image of that name is found.
+   */
   public PImage loadImage(String filename) {
     if (filename.toLowerCase().endsWith(".tga")) {
       return loadImageTGA(filename);
     }
-    return loadImage(filename, true);
-  }
 
+    byte bytes[] = loadBytes(filename);
+    if (bytes == null) return null;
 
-  // returns null if no image of that name is found
-  public PImage loadImage(String filename, boolean force) {
-    Image awtImage =
-      Toolkit.getDefaultToolkit().createImage(loadBytes(filename));
+    Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
 
     MediaTracker tracker = new MediaTracker(this);
     tracker.addImage(awtImage, 0);
@@ -2767,12 +2771,14 @@ public class PApplet extends Applet
     PImage image = new PImage(awtImage);
 
     // if it's a .gif image, test to see if it has transparency
-    if (filename.toLowerCase().endsWith(".gif")) {
+    if ((filename.toLowerCase().endsWith(".gif")) ||
+        (filename.toLowerCase().endsWith(".png"))) {
       for (int i = 0; i < image.pixels.length; i++) {
         // since transparency is often at corners, hopefully this
         // will find a non-transparent pixel quickly and exit
         if ((image.pixels[i] & 0xff000000) != 0xff000000) {
           image.format = ARGB;
+          break;
         }
       }
     }
@@ -2789,6 +2795,7 @@ public class PApplet extends Applet
   protected PImage loadImageTGA(String filename) {
     // load image file as byte array
     byte[] buffer = loadBytes(filename);
+    if (buffer == null) return null;
 
     // check if it's a TGA and has 8bits/colour channel
     //if (buffer[2] == 2 && buffer[17] == 8) {
@@ -3183,6 +3190,9 @@ public class PApplet extends Applet
    * If the requested item doesn't exist, null is returned.
    * (Prior to 0096, die() would be called, killing the applet)
    * <P>
+   * for 0096, the "data" folder is exported intact with subfolders
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=218">Bug 218</A>
+   * <P>
    * The filename passed in can be:
    * <UL>
    * <LI>A URL, for instance openStream("http://processing.org/");
@@ -3195,18 +3205,11 @@ public class PApplet extends Applet
 
     // by default, data files are exported to the root path of the jar.
     // (not the data folder) so check there first.
-    // the slash as a prefix means that it'll load from the root of
+    // a slash as a prefix means that it'll load from the root of
     // the jar, rather than trying to dig into the package location
-    //stream = getClass().getResourceAsStream("/" + filename);
-    //stream = getClass().getResourceAsStream(filename);
-    //if (stream != null) return stream;
-
-    //println(getClass().getResource("data/" + filename));
-
-    // for 0096, the "data" folder will be exported intact with subfolders
-    //println("loading " + "data/" + filename);
-    //println(getClass().getName());
-    stream = getClass().getResourceAsStream("data/" + filename);
+    // couldn't get subfolders to work on windows (bug 218)
+    ClassLoader cl = getClass().getClassLoader();
+    stream = cl.getResourceAsStream("data/" + filename);
     if (stream != null) return stream;
 
     try {
@@ -3299,7 +3302,8 @@ public class PApplet extends Applet
     InputStream is = openStream(filename);
     if (is != null) return loadBytes(is);
 
-    System.err.println(filename + " is missing or inaccessible.");
+    System.err.println(filename + " is missing or inaccessible, make sure " +
+                       "the it's been added to your sketch and is readable.");
     return null;
   }
 

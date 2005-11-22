@@ -1817,7 +1817,11 @@ public class Sketch {
       //String dataFiles[] = dataFolder.list();
       String dataFiles[] = Base.listFiles(dataFolder, false);
       int offset = folder.getAbsolutePath().length() + 1;
+      //int offset = dataFolder.getAbsolutePath().length() + 1;
       for (int i = 0; i < dataFiles.length; i++) {
+        if (PApplet.platform == PApplet.WINDOWS) {
+          dataFiles[i] = dataFiles[i].replace('\\', '/');
+        }
         File dataFile = new File(dataFiles[i]);
         if (dataFile.isDirectory()) continue;
 
@@ -1826,10 +1830,20 @@ public class Sketch {
         //if (dataFiles[i].charAt(0) == '.') continue;
         if (dataFile.getName().charAt(0) == '.') continue;
 
+        //System.out.println("placing " + dataFiles[i].substring(offset));
+        //if (dataFile.isDirectory()) {
+        //entry = new ZipEntry(dataFiles[i].substring(offset) + "/");
+        //} else {
         entry = new ZipEntry(dataFiles[i].substring(offset));
+        //}
+        //if (entry.isDirectory()) {
+        //System.out.println(entry + " is a dir");
+        //}
         zos.putNextEntry(entry);
         //zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
-        zos.write(Base.grabFile(dataFile)); //new File(folder, dataFiles[i])));
+        //if (!dataFile.isDirectory()) {
+        zos.write(Base.grabFile(dataFile));
+        //}
         zos.closeEntry();
       }
     }
