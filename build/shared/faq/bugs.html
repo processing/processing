@@ -402,6 +402,15 @@ something like:
 This will increase the amount of RAM to 128 megabytes of stack, and
 1024 megabytes of heap (the latter being effectively usable RAM).
 <br> <br>
+Depending on your OS and available RAM, there are limits on how much
+memory you can ask for. On Windows with 1G of RAM, it seems to be in
+the neighborhood of 1.5 GB. Mac OS X seems to be somewhat similar, but
+you mileage will vary with different versions of Java (1.3, 1.4,
+1.5). Unfortunately this does place an upper bound on things that is
+outside our control. You might look into the contributed Illustrator
+or SVG vector export libraries that can be found on the libraries page
+as another alternative for creating large format images.
+<br> <br>
 The preferences.txt file is stored in different locations on each
 platform:
 <UL>
