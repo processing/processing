@@ -4,6 +4,13 @@ X add NO_DEPTH_TEST to PGraphics3
 _   need to document this somewhere
 X access logs are being spammed because openStream() gets a 404
 X   the default should be to check the .jar file
+X openStream() doesn't work with subfolders
+X   http://dev.processing.org/bugs/show_bug.cgi?id=218
+
+_ make path thing into getPath() or something
+
+_ screwed up movie loading paths (quick fix)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=216
 
 _ NullPointerException when no draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=210
@@ -19,6 +26,14 @@ _   opens at correct size, then makes itself small, then large again
 
 _ loadBytes() and openStream() et al need to return null
 _   loadImage() can too, but print an error to the console
+
+_ possible leads re: rendering stuff
+_   http://people.csail.mit.edu/bmcutler/
+_   http://people.csail.mit.edu/fredo/
+
+_ debug NumberFormat InterruptedException on dual proc machine
+_   use notify() instead of interrupt()? 
+_   or Thread.currentThread() should be checked first?
 
 _ check into bug where applet crashing if image not available
 _   probably need to add a hint() to make things not halt
