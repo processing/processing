@@ -153,7 +153,7 @@ public class PApplet extends Applet
   public String args[];
 
   /** Path to sketch folder */
-  public String path; //folder;
+  public String sketchPath; //folder;
 
   /** When debugging headaches */
   static final boolean THREAD_DEBUG = false;
@@ -395,6 +395,9 @@ public class PApplet extends Applet
 
 
   public void init() {
+    // first get placed size in case it's non-zero
+    Dimension initialSize = getSize();
+
     // send tab keys through to the PApplet
     try {
       if (javaVersion >= 1.4f) {
@@ -446,18 +449,22 @@ public class PApplet extends Applet
     }
 
     try {
-      if (path == null) {
+      if (sketchPath == null) {
         System.getProperty("user.dir");
       }
     } catch (Exception e) { }  // may be a security problem
 
     // create a dummy graphics context
-    size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    //size(INITIAL_WIDTH, INITIAL_HEIGHT);
-    width = 0;  // use this to flag whether the width/height are valid
-    height = 0;
-    // need to set width/height otherwise they won't work for static mode apps
-    //defaultSize = true;
+    if ((initialSize.width != 0) && (initialSize.height != 0)) {
+      size(initialSize.width, initialSize.height);
+    } else {
+      size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      width = 0;  // use this to flag whether the width/height are valid
+      height = 0;
+      // need to set width/height otherwise
+      // they won't work for static mode apps
+      //defaultSize = true;
+    }
 
     // this is automatically called in applets
     // though it's here for applications anyway
@@ -1888,7 +1895,6 @@ public class PApplet extends Applet
 
 
 
-
   //////////////////////////////////////////////////////////////
 
 
@@ -1921,9 +1927,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Explicitly exit the applet. Inserted as a call for static
-   * mode apps, but is generally necessary because apps no longer
-   * have draw/loop separation.
+   * Call to safely exit the sketch when finished. For instance,
+   * to render a single frame, save it, and quit.
    */
   public void exit() {
     stop();
@@ -3205,9 +3210,10 @@ public class PApplet extends Applet
 
     // by default, data files are exported to the root path of the jar.
     // (not the data folder) so check there first.
-    // a slash as a prefix means that it'll load from the root of
-    // the jar, rather than trying to dig into the package location
-    // couldn't get subfolders to work on windows (bug 218)
+    // using getClassLoader() prevents java from converting dots
+    // to slashes or requiring a slash at the beginning.
+    // (a slash as a prefix means that it'll load from the root of
+    // the jar, rather than trying to dig into the package location)
     ClassLoader cl = getClass().getClassLoader();
     stream = cl.getResourceAsStream("data/" + filename);
     if (stream != null) return stream;
@@ -3232,11 +3238,10 @@ public class PApplet extends Applet
     if (!online) {
       try {
         // first see if it's in a data folder
-        //File file = new File(path + File.separator + "data", filename);
         File file = new File(dataPath(filename));
         if (!file.exists()) {
           // next see if it's just in this folder
-          file = new File(path, filename);
+          file = new File(sketchPath, filename);
         }
         if (file.exists()) {
           try {
@@ -3277,7 +3282,7 @@ public class PApplet extends Applet
         } catch (IOException e2) { }
 
         try {
-          stream = new FileInputStream(new File(path, filename));
+          stream = new FileInputStream(new File(sketchPath, filename));
           if (stream != null) return stream;
         } catch (Exception e) { }  // ignored
 
@@ -3479,20 +3484,26 @@ public class PApplet extends Applet
   }
 
 
-  //
+  //////////////////////////////////////////////////////////////
 
 
   /**
    * Prepend the path to the sketch folder to the filename or
    * path that is passed in. Can be used by applets or external
    * libraries to save to the sketch folder.
-   * <p/>
-   * This is different from simply using the "folder" variable
-   * because it also creates any in-between folders so that
-   * things save properly.
+   */
+  public String sketchPath(String where) {
+    return sketchPath + File.separator + where;
+  }
+
+
+  /**
+   * Returns a path inside the applet folder to save to,
+   * just like sketchPath(), but also creates any in-between
+   * folders so that things save properly.
    */
   public String savePath(String where) {
-    String filename = path + File.separator + where;
+    String filename = sketchPath(where);
     createPath(filename);
     return filename;
   }
@@ -3502,15 +3513,17 @@ public class PApplet extends Applet
    * Return a full path to an item in the data folder.
    */
   public String dataPath(String where) {
-    if (path == null) {
-      return "data" + File.separator + where;
-    }
-    return path + File.separator + "data" + File.separator + where;
+    //if (sketchPath == null) {  // can't be, set by init()
+    //return "data" + File.separator + where;
+    //}
+    return sketchPath + File.separator + "data" + File.separator + where;
   }
 
 
   /**
-   * Creates in-between folders if they don't already exist.
+   * Takes a path and creates any in-between folders if they don't
+   * already exist. Useful when trying to save to a subfolder that
+   * may not actually exist.
    */
   static public void createPath(String filename) {
     File file = new File(filename);
@@ -5512,7 +5525,7 @@ v              PApplet.this.stop();
 
       // these are needed before init/start
       applet.frame = frame;
-      applet.path = folder;
+      applet.sketchPath = folder;
       applet.args = PApplet.subset(args, 1);
 
       applet.init();

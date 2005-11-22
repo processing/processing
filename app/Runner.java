@@ -228,7 +228,7 @@ public class Runner implements MessageConsumer {
 
     applet.leechErr = leechErr;
     //applet.folder = sketch.folder.getAbsolutePath();
-    applet.path = sketch.folder.getAbsolutePath();
+    applet.sketchPath = sketch.folder.getAbsolutePath();
     applet.frame = (Frame) window;
 
     applet.init();
