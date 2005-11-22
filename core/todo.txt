@@ -6,12 +6,21 @@ X access logs are being spammed because openStream() gets a 404
 X   the default should be to check the .jar file
 X openStream() doesn't work with subfolders
 X   http://dev.processing.org/bugs/show_bug.cgi?id=218
+X screwed up movie loading paths (quick fix)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=216
+X additional cleanup in the Movie class
+X make path thing into getPath() or something?
+X   sketchPath(), dataPath(), savePath(), createPath()
+X applet shouldn't be resizing itself
+X   opens at correct size, then makes itself small, then large again
+X setup() mode apps often don't open at the correct placement
+X   because of their resizing
+X check into bug where applet crashing if image not available
+X   probably need to add a hint() to make things not halt
 
-_ make path thing into getPath() or something
-
-_ screwed up movie loading paths (quick fix)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=216
-
+_ shouldn't quit draw mode apps immediately
+_   otherwise something gets drawn then the applet exits
+_   should instead use exit() when they need to exit
 _ NullPointerException when no draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=210
 _ window closing immediately with library imports
@@ -20,9 +29,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=204
 _ display() as a function name is problematic
 _   causes nothing to show up.. either rename or mark it final
 _   http://dev.processing.org/bugs/show_bug.cgi?id=213
-
-_ applet shouldn't be resizing itself
-_   opens at correct size, then makes itself small, then large again
 
 _ loadBytes() and openStream() et al need to return null
 _   loadImage() can too, but print an error to the console
@@ -35,8 +41,6 @@ _ debug NumberFormat InterruptedException on dual proc machine
 _   use notify() instead of interrupt()? 
 _   or Thread.currentThread() should be checked first?
 
-_ check into bug where applet crashing if image not available
-_   probably need to add a hint() to make things not halt
 _ hack the image exporting stuff into p5
 _ check into loadImage() with jars bug, very frustrating
 _   when using loadImage() on a jar, turn off "no cache" option?
