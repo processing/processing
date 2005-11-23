@@ -7,6 +7,80 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0096 - 23 November 2005
+
+bug and api fix release. mostly minor things but useful to avoid
+several quirks that showed up in rev 0095.
+
+
+[ api ] 
+
+- hint(DISABLE_DEPTH_TEST) will disable the zbuffer in P3D or OPENGL.
+
+- added methods for libraries to be able to get sketch folder paths.
+  the variable 'folder', which was changed to 'path' for rev 0094 is
+  now called 'sketchPath', and won't change again. see the javadoc 
+  reference on dev.processing.org for more details on this and the
+  additional functions:
+  + sketchPath() returns the path to a file in the sketch folder.
+  + dataPath() returns the path to a file inside the data folder.
+  + createPath() will take any path and make sure that the 
+    interstitial folders exist. this is used by saveFrame() and 
+    savePath() to make sure that the parent folders exist. 
+    for instance, saveFrame("image/blah.tif") will use createPath() 
+    to ensure that the folder "image" exists inside the sketch folder.
+  + savePath() is like sketchPath() but uses createPath() to make 
+    sure that it's save to save there.
+
+
+[ fixes ]
+
+- fixed a bug that prevented movies from opening properly in 0095. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=216
+
+- lots of tweaks to openStream(), and all the loadXxxx() functions. 
+  + web server logs should no longer be spammed with quite so many 404s
+    from p5 applets looking for files in their data folders.
+  + the open and load functions now handle subfolders inside the data 
+    folder. subfolders in the data folder are now included on export. 
+    http://dev.processing.org/bugs/show_bug.cgi?id=218
+    http://dev.processing.org/bugs/show_bug.cgi?id=65
+  + instead of halting the applet, a missing file (i.e. with loadImage()
+    or loadStrings()) will return null and print an error to the console. 
+    this is better for people who know how to deal with null values, 
+    but hopefully the others will actually read the console to see the
+    error otherwise, because the end result will be a NullPointerException.
+
+- deal with some issues where applets weren't running or were closing
+  immediately in revision 0094/0095.
+  http://dev.processing.org/bugs/show_bug.cgi?id=210
+  http://dev.processing.org/bugs/show_bug.cgi?id=204
+
+- when loading a PNG image, set the image to ARGB if it has an alpha 
+  channel. also fix a bug in the GIF image alpha channel checking.
+
+- fixed a text block wrap problem when a manual break character (\n)
+  was used: http://dev.processing.org/bugs/show_bug.cgi?id=188
+
+- remove some unnecessary applet resizing that was happening whenever
+  an applet was loaded. this would sometimes cause the wrong window
+  size to be used by appletviewer, or cause applets to start at their
+  correct size, then resize to 100x100, and then resize to their correct
+  location once setup() was complete.
+
+
+[ misc ] 
+
+- macosx release is now packaged with as a .dmg instead of a .sitx
+  http://dev.processing.org/bugs/show_bug.cgi?id=116
+
+- added reference category to the bugs db so that reference issues
+  can be handled there as well.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0095 - 2 November 2005
 
 single tweak to undo a failed bug fix in 0094.

@@ -43,6 +43,7 @@ public interface PConstants {
   static final String P3D    = "processing.core.PGraphics3";
   static final String JAVA2D = "processing.core.PGraphics2";
   static final String OPENGL = "processing.opengl.PGraphicsGL";
+  static final String PDF    = "processing.pdf.PGraphicsPDF";
 
 
   // platform IDs for PApplet.platform
@@ -217,7 +218,7 @@ public interface PConstants {
    * <EM>after</EM> calling textFont().
    * <p/>
    * Currently, textMode(SHAPE) is only supported by OPENGL mode.
-   * It also requires Java 1.2 or higher.
+   * It also requires Java 1.2 or higher (OPENGL requires 1.4 anyway)
    */
   static final int SHAPE = 5;
 
@@ -284,11 +285,11 @@ public interface PConstants {
 
   // hints
 
-  static final int SCALE_STROKE_WIDTH      = 0;
-  static final int LIGHTING_AFFECTS_STROKE = 1;
+  //static final int SCALE_STROKE_WIDTH      = 0;
+  //static final int LIGHTING_AFFECTS_STROKE = 1;
   static final int DISABLE_TEXT_SMOOTH     = 3;
-  static final int DISABLE_SMOOTH_HACK     = 4;
-  static final int NO_DEPTH_TEST           = 5;
+  //static final int DISABLE_SMOOTH_HACK     = 4;
+  static final int DISABLE_DEPTH_TEST      = 5;
   static final int NO_FLYING_POO           = 6;
   static final int DEPTH_SORT              = 7;
 

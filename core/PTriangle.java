@@ -232,7 +232,7 @@ public class PTriangle implements PConstants
     m_stencil = parent.stencil;
     m_zbuffer = parent.zbuffer;
 
-    noDepthTest = parent.hints[NO_DEPTH_TEST];
+    noDepthTest = parent.hints[DISABLE_DEPTH_TEST];
 
     // other things to reset
 

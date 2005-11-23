@@ -46,20 +46,21 @@ Until we find a committed "librarian", this is what we can manage
 from our end. 
 
 It's very possible that contributed libraries might make their way 
-into the core libraries if they are well built, exceedingly useful, 
-and if this makes sense for all people involved. After the 1.0 release, 
-we'll re-evaluate which libraries should be made a part of the standard 
-distribution.
+into the regular distribution if it makes sense for all involved. 
+After the 1.0 release, we'll re-evaluate if some libraries should be 
+made a part of the standard distribution. For the time being, we
+don't have the people resources to support this, because it would
+require taking on the responsibility to debug the libraries with 
+each release. 
 
-We put a strong focus on the importance of clear, documentation, so 
-please put a strong effort into communicating your library to potential 
-users through hosting a descriptive website.
+We try to place a strong focus on the importance of clear documentation 
+for the Processing project, so please attempt similar effort into 
+communicating your library's features to potential users through hosting 
+a descriptive web site.
 
 If you'd like to have your library posted on the Processing website
 (http://processing.org/reference/libraries) please email
 reas at processing.org and we'll make a decision about its inclusion.
-We hope moving forward to have more of a dialog with the folks working 
-on libraries.
 
 The contributed libraries are one of the most important aspects of 
 the Processing project and have an enormous impact on how people 
@@ -67,8 +68,6 @@ understand Processing. Libraries have been designed into the larger
 Processing plan to enable simple extensions of the core API in new, 
 innovative, and unexpected directions. The libraries are the future 
 of the project. We don't plan to grow the core library extensively.
-
-(added 19 April 2005 by REAS)
 
 
 //////////////////////////////////////////////////////////////
@@ -92,6 +91,12 @@ public class BoringLibrary {
     // shut down a thread used by this library.
   }
 }
+
+
+Usually you'll need to pass "this" to a library's constructor so that
+the library can access functions from PApplet, i.e graphics methods
+like line() and stroke() or loadImage(). See later in the document for
+information about reading and writing files.
 
 
 //////////////////////////////////////////////////////////////
@@ -205,6 +210,8 @@ application=sonia.jar,JSynClasses.jar,JSynV142.dll,libJSynV142.jnilib
 
 This will include sonia.jar for applets, because in a web browser, the
 DLL files must be installed separately along with JSynClasses.jar. 
+The # sign in front of a line means that the line is a comment, 
+and it'll be ignored by the PDE.
 
 
 //////////////////////////////////////////////////////////////
@@ -380,6 +387,22 @@ public class FancyLibrary {
 //////////////////////////////////////////////////////////////
 
 
+Accessing files from inside a library
+
+These functions were finalized in revision 0096, apologies for the 
+API changes along the way.
+
+The functions sketchPath(), savePath(), dataPath(), and createPath()
+all facilitate reading and writing files relative to the sketch 
+folder. They should be used to ensure that file I/O works consistently
+between your library and functions like loadImage() or loadStrings().
+Their documentation can be seen in the online javadoc reference found
+on dev.processing.org.
+
+
+//////////////////////////////////////////////////////////////
+
+
 Library Naming Rules
 
 Libraries, or classes inside them, should not be prefixed with "P" 
@@ -388,8 +411,8 @@ It's tempting to prefix everything that way to identify it with
 Processing, but we'd like to reserve that naming for "official" 
 things that are inside processing.core and other associated classes.
 
-Same goes for using "Processing" or "P5" just like "P", or whether
-it's a prefix or a suffix. 
+Same goes for using "Processing", "Pro", or "P5" just like "P", 
+or whether it's a prefix or a suffix. 
 
 Similarly, please don't using processing.* as the prefix for your
 library. We'd like to keep that name space clear for official 
@@ -399,4 +422,4 @@ things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 14 August 2005
+Ben Fry, Last updated 23 November 2005

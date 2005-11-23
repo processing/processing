@@ -2166,6 +2166,7 @@ public class PGraphics extends PImage implements PConstants {
         }
         lineStart = index + 1;
         wordStart = lineStart;
+        runningX = x1;  // fix for bug 188
         currentY += textLeading;
         //if (currentY > boxY2) return;  // box is now full
         if (currentY > y2) return;  // box is now full
