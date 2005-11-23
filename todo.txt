@@ -11,9 +11,6 @@ X package macosx with a dmg
 X   http://dev.processing.org/bugs/show_bug.cgi?id=116
 X add "reference" and "examples" categories to bugzilla
 
-_ hex colors < 6 chars produce bizarre error:
-_   http://dev.processing.org/bugs/show_bug.cgi?id=196
-
 _ threading bug with sonia and rev 91
 
 _ make .pde files double-clickable from windows
@@ -21,10 +18,6 @@ X   on drag, are these already passed to argv[]?
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
 _   http://groups.google.com/group/comp.os.ms-windows.programmer.misc/browse_thread/thread/4095cb6fc807863/ecdb3b35b0787116%23ecdb3b35b0787116?sa=X&oi=groupsr&start=0&num=3
-
-_ file a feature request for command line support
-_   would still require awt, but would take a sketch on cmd line
-_   build it and then exit
 
 _ do something about the summary field to not make it editable
 _   maybe just move it away from its current location?
@@ -38,8 +31,6 @@ _ autoformat deleting code
 _ use javac?
 _   ask japanese students about whether jikes is working ok
 
-_ simple method for having a clickable region or sprite with rollover
-
 o external apps should inherit memory settings from p5 itself
 _   too confusing to set the memory in two places
 _   or perhaps, have a setting in the ide for it
@@ -48,12 +39,12 @@ _   that way people don't have to adjust the memory settings for p5 itself
 _   perhaps the memory setting should be enabled/disabled
 _     that way if it's enabled, will always run externally
 
-
 _ make a web page that describes how to use the bugs db
 _   don't change the bug subject/summary text
 _   don't mess with priorities (i will)
 
 board faq
+_ someone wrote up an initial version of this
 _ how to put [code] around blocks of code
 _   also mention contributed plugin for formatting
 _   also the reference page on the bb commands
@@ -103,9 +94,6 @@ _     but making more threads is often more work than is useful
 _ save code before export, otherwise .pde exported is empty
 _   ask user ok or cancel to save code before exporting
 _   http://dev.processing.org/bugs/show_bug.cgi?id=157
-
-_ when run externally without a draw, applets will exit immediately
-_   when run internally (no code folder or .java files) will just wait
 
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
@@ -175,6 +163,11 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 _ example for using mediatracker to load images 
 _   (rather than blocking on each)
 _   maybe add a loadImages(String files[]) function?
+_ simple method for having a clickable region or sprite with rollover
+_ write a simple example for threaded image loading "load several" 
+_   MediaTracker blocking is prolly making jar download really slow
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
+_ scripts: how to make a long setup() sleep so that things don't lock way up
 
 
 
@@ -187,6 +180,10 @@ PDE - Processing Development Environment
 
 PDE / Base
 
+_ command line support
+_   http://dev.processing.org/bugs/show_bug.cgi?id=219
+_   would still require awt, but would take a sketch on cmd line
+_   build it and then exit
 _ settings.path.fallback not being used
 _   need to check the mkdirs() to make sure it's not going too deep
 _   really important for intl versions that are having trouble
@@ -199,6 +196,8 @@ _   http://processing.org/bugs/show_bug.cgi?id=3
 
 PDE / Compiler & Preprocessor
 
+_ hex colors < 6 chars produce bizarre error:
+_   http://dev.processing.org/bugs/show_bug.cgi?id=196
 _ synchronized (something) { } is horking up the preproc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=136
 _ casting problems in the parser
