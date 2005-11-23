@@ -318,6 +318,12 @@ public class PApplet extends Applet
    */
   public boolean finished;
 
+  /**
+   * true if exit() has been called so that things shut down
+   * once the main thread kicks off.
+   */
+  protected boolean exit;
+
   Thread thread;
 
   /**
@@ -1088,12 +1094,20 @@ public class PApplet extends Applet
 
     // this may not be safe? this will get triggered with exit()
     // but need to see if this is it
-    if ((leechErr == null) && !online) {
-      System.exit(0);
-    }
+    //if ((leechErr == null) && !online) {
+    //System.exit(0);
+    //}
 
     //System.out.println("exiting run " + finished);
     stop();  // call to shutdown libs?
+
+    if (exit) {  // user called exit() function
+      if ((leechErr == null) && !online) {
+        // don't want to call System.exit() when an applet,
+        // or running inside the PDE (would kill the PDE)
+        System.exit(0);
+      }
+    }
   }
 
 
@@ -1567,6 +1581,9 @@ public class PApplet extends Applet
 
   /**
    * Called each time a single key on the keyboard is pressed.
+   * Because of how operating systems handle key repeats, holding
+   * down a key will cause multiple calls to keyPressed(), because
+   * the OS repeat takes over.
    * <P>
    * Examples for key handling:
    * (Tested on Windows XP, please notify if different on other
@@ -1716,7 +1733,10 @@ public class PApplet extends Applet
 
 
   /**
-   * I'm not sure if this is even helpful anymore.
+   * Delay for some amount of time. I'm not sure if this is even
+   * helpful anymore, as the screen isn't updated before or after the
+   * delay, meaning which means it just makes the app lock up
+   * temporarily.
    */
   public void delay(int napTime) {
     if (frameCount == 0) return;
@@ -1931,8 +1951,19 @@ public class PApplet extends Applet
    * to render a single frame, save it, and quit.
    */
   public void exit() {
-    stop();
-    finished = true;
+    if (thread == null) {
+      // exit immediately, stop() has already been called,
+      // meaning that the main thread has long since exited
+      if ((leechErr == null) && !online) {
+        // don't want to call System.exit() when an applet,
+        // or running inside the PDE (would kill the PDE)
+        System.exit(0);
+      }
+    } else {
+      finished = true;  // stop() will be called as the thread exits
+      //stop();
+      exit = true;
+    }
   }
 
 
@@ -2749,8 +2780,14 @@ public class PApplet extends Applet
   /**
    * Load an image from the data folder or a local directory.
    * Supports .gif (including transparency), .tga, and .jpg images.
-   * In Java 1.2 or later, .png images are also supported.
-   * <p/>
+   * In Java 1.3 or later, .png images are also supported.
+   * http://java.sun.com/j2se/1.3/docs/guide/2d/new_features.html
+   * <P>
+   * Generally this should only be used during setup, re-loading
+   * images inside draw() is likely to cause a significant delay
+   * while memory is allocated and the thread blocks while waiting
+   * for the image to load because loading is not asynchronous.
+   * <P>
    * As of 0096, returns null if no image of that name is found.
    */
   public PImage loadImage(String filename) {
@@ -3195,14 +3232,24 @@ public class PApplet extends Applet
    * If the requested item doesn't exist, null is returned.
    * (Prior to 0096, die() would be called, killing the applet)
    * <P>
-   * for 0096, the "data" folder is exported intact with subfolders
-   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=218">Bug 218</A>
+   * For 0096, the "data" folder is exported intact with subfolders,
+   * and openStream() properly handles subdirectories from the data folder
+   * <P>
+   * If not online, this will also check to see if the user is asking
+   * for a file whose name isn't properly capitalized. This helps prevent
+   * issues when a sketch is exported to the web, where case sensitivity
+   * matters, as opposed to Windows and the Mac OS default where
+   * case sensitivity is preserved but ignored.
+   * <P>
+   * It is strongly recommended that libraries use this method to open
+   * data files, so that the loading sequence is handled in the same way
+   * as functions like loadBytes(), loadImage(), etc.
    * <P>
    * The filename passed in can be:
    * <UL>
    * <LI>A URL, for instance openStream("http://processing.org/");
    * <LI>A file in the sketch's data folder
-   * <LI>Another file to be opened locally
+   * <LI>Another file to be opened locally (when running as an application)
    * </UL>
    */
   public InputStream openStream(String filename) {
@@ -3230,11 +3277,7 @@ public class PApplet extends Applet
       throw new RuntimeException("Error downloading from URL " + filename);
     }
 
-    // if not online, check to see if the user is asking for a file
-    // whose name isn't properly capitalized. this helps prevent issues
-    // when a sketch is exported to the web, where case sensitivity
-    // matters, as opposed to windows and the mac os default where
-    // case sensitivity does not.
+    // handle case sensitivity check
     if (!online) {
       try {
         // first see if it's in a data folder
@@ -3292,14 +3335,12 @@ public class PApplet extends Applet
         } catch (IOException e1) { }
 
       } catch (SecurityException se) { }  // online, whups
-      //if (stream == null) {
-      //throw new IOException("openStream() could not open " + filename);
-      //}
+
     } catch (Exception e) {
       //die(e.getMessage(), e);
       e.printStackTrace();
     }
-    return null;  // #$(*@ compiler
+    return null;
   }
 
 
