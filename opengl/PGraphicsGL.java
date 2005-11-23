@@ -334,7 +334,11 @@ public class PGraphicsGL extends PGraphics3 {
     gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
     // this is necessary for 3D drawing
-    gl.glEnable(GL.GL_DEPTH_TEST);
+    if (hints[DISABLE_DEPTH_TEST]) {
+      gl.glDisable(GL.GL_DEPTH_TEST);
+    } else {
+      gl.glEnable(GL.GL_DEPTH_TEST);
+    }
     // use <= since that's what processing.core does
     gl.glDepthFunc(GL.GL_LEQUAL);
 
@@ -1460,6 +1464,21 @@ public class PGraphicsGL extends PGraphics3 {
   public void glLightSpotConcentration(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
                 GL.GL_SPOT_EXPONENT, lightsSpotConcentration[num]);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void strokeJoin(int join) {
+    String msg = "strokeJoin() not available with OPENGL";
+    throw new RuntimeException(msg);
+  }
+
+
+  public void strokeCap(int cap) {
+    String msg = "strokeCap() not available with OPENGL";
+    throw new RuntimeException(msg);
   }
 
 
