@@ -7,30 +7,10 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0096 - 23 November 2005
+ABOUT REV 0096 - 26 November 2005
 
 bug and api fix release. mostly minor things but useful to avoid
 several quirks that showed up in rev 0095.
-
-
-[ api ] 
-
-- hint(DISABLE_DEPTH_TEST) will disable the zbuffer in P3D or OPENGL.
-
-- added methods for libraries to be able to get sketch folder paths.
-  the variable 'folder', which was changed to 'path' for rev 0094 is
-  now called 'sketchPath', and won't change again. see the javadoc 
-  reference on dev.processing.org for more details on this and the
-  additional functions:
-  + sketchPath() returns the path to a file in the sketch folder.
-  + dataPath() returns the path to a file inside the data folder.
-  + createPath() will take any path and make sure that the 
-    interstitial folders exist. this is used by saveFrame() and 
-    savePath() to make sure that the parent folders exist. 
-    for instance, saveFrame("image/blah.tif") will use createPath() 
-    to ensure that the folder "image" exists inside the sketch folder.
-  + savePath() is like sketchPath() but uses createPath() to make 
-    sure that it's save to save there.
 
 
 [ fixes ]
@@ -58,6 +38,7 @@ several quirks that showed up in rev 0095.
 
 - when loading a PNG image, set the image to ARGB if it has an alpha 
   channel. also fix a bug in the GIF image alpha channel checking.
+  http://dev.processing.org/bugs/show_bug.cgi?id=217
 
 - fixed a text block wrap problem when a manual break character (\n)
   was used: http://dev.processing.org/bugs/show_bug.cgi?id=188
@@ -69,6 +50,33 @@ several quirks that showed up in rev 0095.
   location once setup() was complete.
 
 
+[ api ] 
+
+- hint(DISABLE_DEPTH_TEST) will disable the zbuffer in P3D or OPENGL.
+  re-enable with noHint(DISABLE_DEPTH_TEST);
+
+- added methods for libraries to be able to get sketch folder paths.
+  the variable 'folder', which was changed to 'path' for rev 0094 is
+  now called 'sketchPath', and won't change again. see the javadoc 
+  reference on dev.processing.org for more details on this and the
+  additional functions:
+  + sketchPath() returns the path to a file in the sketch folder.
+  + dataPath() returns the path to a file inside the data folder.
+  + createPath() will take any path and make sure that the 
+    interstitial folders exist. this is used by saveFrame() and 
+    savePath() to make sure that the parent folders exist. 
+    for instance, saveFrame("image/blah.tif") will use createPath() 
+    to ensure that the folder "image" exists inside the sketch folder.
+  + savePath() is like sketchPath() but uses createPath() to make 
+    sure that it's save to save there.
+  this will probably break the libraries again, but hopefully with 
+  this change, they should stop breaking going forward.
+
+- changed unhint() to noHint() to match the rest of the api.
+  i don't think anyone was using this so hopefully it won't affect 
+  anything.
+
+
 [ misc ] 
 
 - macosx release is now packaged with as a .dmg instead of a .sitx
@@ -76,6 +84,9 @@ several quirks that showed up in rev 0095.
 
 - added reference category to the bugs db so that reference issues
   can be handled there as well.
+
+- added MAYSCRIPT="true" to default applet html (for javascript)
+  http://dev.processing.org/bugs/show_bug.cgi?id=211
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
