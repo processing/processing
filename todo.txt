@@ -10,6 +10,15 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=65
 X package macosx with a dmg
 X   http://dev.processing.org/bugs/show_bug.cgi?id=116
 X add "reference" and "examples" categories to bugzilla
+X add mayscript tag to html when javascript lib is in use
+X   http://dev.processing.org/bugs/show_bug.cgi?id=211
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+_ make available the background colors for present mode, stop button color
+_   http://dev.processing.org/bugs/show_bug.cgi?id=75
 
 _ threading bug with sonia and rev 91
 
@@ -196,6 +205,8 @@ _   http://processing.org/bugs/show_bug.cgi?id=3
 
 PDE / Compiler & Preprocessor
 
+_ using a processing keyword as a variable name gives unhelpful error message
+_   http://dev.processing.org/bugs/show_bug.cgi?id=213
 _ hex colors < 6 chars produce bizarre error:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=196
 _ synchronized (something) { } is horking up the preproc
@@ -356,8 +367,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
-_ add mayscript tag to html when javascript lib is in use
-_   http://dev.processing.org/bugs/show_bug.cgi?id=211
 _ errors during export don't show up properly (no red status bar)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=194
 _ write export-to-application
@@ -451,8 +460,6 @@ _ preferences window has been hit with the ugly stick
 _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
 _   http://dev.processing.org/bugs/show_bug.cgi?id=73
-_ make available the background colors for present mode, stop button color
-_   http://dev.processing.org/bugs/show_bug.cgi?id=75
 
 
 PDE / Runner 
