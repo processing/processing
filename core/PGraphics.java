@@ -640,20 +640,32 @@ public class PGraphics extends PImage implements PConstants {
 
   // HINTS
 
-  // for the most part, hints are temporary api quirks,
-  // for which a proper api hasn't been properly worked out.
-  // for instance SMOOTH_IMAGES existed because smooth()
-  // wasn't yet implemented, but it will soon go away.
-
-  // they also exist for obscure features in the graphics
-  // engine, like enabling/disabling single pixel lines
-  // that ignore the zbuffer, the way they do in alphabot.
-
+  /**
+   * Enable a hint option.
+   * <P>
+   * For the most part, hints are temporary api quirks,
+   * for which a proper api hasn't been properly worked out.
+   * for instance SMOOTH_IMAGES existed because smooth()
+   * wasn't yet implemented, but it will soon go away.
+   * <P>
+   * They also exist for obscure features in the graphics
+   * engine, like enabling/disabling single pixel lines
+   * that ignore the zbuffer, the way they do in alphabot.
+   * <P>
+   * Current hint options:
+   * <UL>
+   * <LI><TT>DISABLE_DEPTH_TEST</TT> -
+   * turns off the z-buffer in the P3D or OPENGL renderers.
+   * </UL>
+   */
   public void hint(int which) {
     hints[which] = true;
   }
 
-  public void unhint(int which) {
+  /**
+   * Disable a hint.
+   */
+  public void noHint(int which) {
     hints[which] = false;
   }
 
