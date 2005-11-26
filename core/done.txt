@@ -1,3 +1,82 @@
+0096 core
+X set applet.path to user.dir if init() is reached and it's not set
+X add DISABLE_DEPTH_TEST to PGraphics3
+X   need to document this somewhere
+X   also need to add to PGraphicsGL
+X access logs are being spammed because openStream() gets a 404
+X   the default should be to check the .jar file
+X openStream() doesn't work with subfolders
+X   http://dev.processing.org/bugs/show_bug.cgi?id=218
+X screwed up movie loading paths (quick fix)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=216
+X additional cleanup in the Movie class
+X make path thing into getPath() or something?
+X   sketchPath(), dataPath(), savePath(), createPath()
+X applet shouldn't be resizing itself
+X   opens at correct size, then makes itself small, then large again
+X setup() mode apps often don't open at the correct placement
+X   because of their resizing
+X check into bug where applet crashing if image not available
+X   probably need to add a hint() to make things not halt
+X loadBytes() and openStream() et al need to return null
+X   loadImage() can too, but print an error to the console
+X "not available in P3D" should read "OPENGL" in opengl lib
+X keypressed ref: repeating keys
+X   also remove "no drawing inside keypressed"
+X text block wrap problem with manual break character (\n)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=188
+
+draw mode issues
+X when run externally without a draw, applets will exit immediately
+X   when run internally (no code folder or .java files) will just wait
+X shouldn't quit draw mode apps immediately
+X   otherwise something gets drawn then the applet exits
+X   should instead use exit() when they need to exit
+X NullPointerException when no draw()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=210
+X window closing immediately with library imports
+X   http://dev.processing.org/bugs/show_bug.cgi?id=204
+X check into loadImage() with jars bug, very frustrating
+o   when using loadImage() on a jar, turn off "no cache" option?
+X image no load halts the program (rather than returning null)
+X note in the reference: png images work with java 1.3+
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1125968697
+X   add bug re: gif image break missing to revisions.txt
+X   http://dev.processing.org/bugs/show_bug.cgi?id=217
+
+image pile
+X get loadImage() to work properly with data folder
+X   should probably use the code from loadStream
+X   and the url stuff should be an alternate method altogether
+o loadImage() seems to be caching everything from the jar
+X   http://java.sun.com/developer/technicalArticles/Media/imagestrategies/index.html
+o   make a note of how to disable this
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1078795681
+o bizarre image loading error with c_Rollover.zip
+X   couldn't find/replicate this
+o   read uncompressed tiff
+X   read uncompressed tga files.
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1081190619
+X     http://processing.org/discourse/yabb/YaBB.cgi?board=Tools;action=display;num=1066742994
+o updated png encoder
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083792994
+
+older stuff, no longer an issue
+o don't cache stuff from loadStrings and others
+o   mac java vm won't give up old version of file
+o   or use setUseCaches(false)
+o too many push() will silently stop the applet inside a loop
+X allow save(), saveFrame() et al to properly pass in absolute paths
+X   (so that it doesn't always save to the applet folder)
+X   could require that save() takes an absolute path?
+X loadImage must be used inside or after setup
+X   either document this and/or provide a better error message
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1060879468
+X expose function to write tiff header in PImage (advanced)
+X   helps with writing enormous images
+X tag release 93 (francis thinks it's rev 1666)
+
+
 0095 core
 X undo the fix that causes the width/height to be properly set 
 
