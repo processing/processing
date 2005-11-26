@@ -1,7 +1,7 @@
 0096 core
 X set applet.path to user.dir if init() is reached and it's not set
 X add DISABLE_DEPTH_TEST to PGraphics3
-_   need to document this somewhere
+X   need to document this somewhere
 X   also need to add to PGraphicsGL
 X access logs are being spammed because openStream() gets a 404
 X   the default should be to check the .jar file
@@ -21,8 +21,8 @@ X   probably need to add a hint() to make things not halt
 X loadBytes() and openStream() et al need to return null
 X   loadImage() can too, but print an error to the console
 X "not available in P3D" should read "OPENGL" in opengl lib
-_ keypressed ref: repeating keys
-_   also remove "no drawing inside keypressed"
+X keypressed ref: repeating keys
+X   also remove "no drawing inside keypressed"
 X text block wrap problem with manual break character (\n)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=188
 
@@ -33,15 +33,16 @@ X shouldn't quit draw mode apps immediately
 X   otherwise something gets drawn then the applet exits
 X   should instead use exit() when they need to exit
 X NullPointerException when no draw()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=210
+X   http://dev.processing.org/bugs/show_bug.cgi?id=210
 X window closing immediately with library imports
-_   http://dev.processing.org/bugs/show_bug.cgi?id=204
+X   http://dev.processing.org/bugs/show_bug.cgi?id=204
 X check into loadImage() with jars bug, very frustrating
 o   when using loadImage() on a jar, turn off "no cache" option?
 X image no load halts the program (rather than returning null)
-_ note in the reference: png images work with java 1.3+
+X note in the reference: png images work with java 1.3+
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs;action=display;num=1125968697
-_   add bug re: gif image break missing to revisions.txt
+X   add bug re: gif image break missing to revisions.txt
+X   http://dev.processing.org/bugs/show_bug.cgi?id=217
 
 image pile
 X get loadImage() to work properly with data folder
@@ -75,21 +76,23 @@ X expose function to write tiff header in PImage (advanced)
 X   helps with writing enormous images
 X tag release 93 (francis thinks it's rev 1666)
 
-this should be fixed, test
-_ 404 error because first searches applet directory on zipdecode
-_ and isometricblocks
-_ "this file is named" errors don't like subdirectories
-_   need to strip off past the file separator or something
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+
 0097 and later
 
+this should be fixed, test
+_ 404 error because first searches applet directory in isometricblocks
+_ "this file is named" errors don't like subdirectories
+_   need to strip off past the file separator or something
 
 _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues
 _   http://dev.processing.org/bugs/show_bug.cgi?id=46
+
+_ tint() and noTint() switching problem in P2D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=222
 
 _ display() as a function name is problematic
 _   causes nothing to show up.. either rename or mark it final
@@ -587,6 +590,8 @@ _   if loadImage() with spaces when online(), throw an error
 
 CORE / PSound
 
+_ PSound.play() won't play the sound a 2nd time
+_   http://dev.processing.org/bugs/show_bug.cgi?id=209
 _ duration as an internal param, not a function
 _ When a sound is finished playing, 
 _   it should return to 0 so it can play again
