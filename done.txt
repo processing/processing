@@ -1,3 +1,19 @@
+0096 pde
+o separate processing editor/compiler
+o   can this be done without too much trouble?
+X     not really, but a command line that still uses awt might not be bad
+o   gets messy because of how the classpath et al is handled
+o   maybe just split out the preproc?
+o     could avoid doing things like the packages etc
+X subfolders in the 'data' directory don't work
+X   http://dev.processing.org/bugs/show_bug.cgi?id=65
+X package macosx with a dmg
+X   http://dev.processing.org/bugs/show_bug.cgi?id=116
+X add "reference" and "examples" categories to bugzilla
+X add mayscript tag to html when javascript lib is in use
+X   http://dev.processing.org/bugs/show_bug.cgi?id=211
+
+
 0095 pde
 X no changes
 
