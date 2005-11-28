@@ -684,8 +684,25 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Start a new shape.
-   *
-   * @param kind indicates shape type
+   * <P>
+   * <B>Differences between beginShape() and line() and point() methods.</B>
+   * <P>
+   * beginShape() is intended to be more flexible at the expense of being
+   * a little more complicated to use. it handles more complicated shapes
+   * that can consist of many connected lines (so you get joins) or lines
+   * mixed with curves.
+   * <P>
+   * The line() and point() command are for the far more common cases
+   * (particularly for our audience) that simply need to draw a line
+   * or a point on the screen.
+   * <P>
+   * From the code side of things, line() may or may not call beginShape()
+   * to do the drawing. In the beta code, they do, but in the alpha code,
+   * they did not. they might be implemented one way or the other depending
+   * on tradeoffs of runtime efficiency vs. implementation efficiency &mdash
+   * meaning the speed that things run at vs. the speed it takes me to write
+   * the code and maintain it. for beta, the latter is most important so
+   * that's how things are implemented.
    */
   public void beginShape(int kind) {
     shape = kind;
