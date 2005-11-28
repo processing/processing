@@ -503,16 +503,6 @@ public class Editor extends JFrame
     JMenuItem item;
     JMenu menu = new JMenu("File");
 
-    /*
-    menu.add(item = new JMenuItem("do the editor thing"));
-    item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-          textarea.getPainter().setFont(new Font("Courier", Font.PLAIN, 36));
-          }
-        });
-    */
-
-    //if (!Preferences.getBoolean("export.library")) {
     item = newJMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -520,26 +510,6 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);
-
-    /*
-    } else {
-      item = newJMenuItem("New Sketch", 'N');
-      item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            handleNew(false);
-          }
-        });
-      menu.add(item);
-
-      item = new JMenuItem("New Library");
-      item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            handleNewLibrary();
-          }
-        });
-      menu.add(item);
-    }
-    */
     menu.add(sketchbook.getOpenMenu());
 
     saveMenuItem = newJMenuItem("Save", 'S');
@@ -1577,7 +1547,7 @@ public class Editor extends JFrame
 
       sketch = new Sketch(this, path);
       // TODO re-enable this once export application works
-      exportAppItem.setEnabled(false);
+      //exportAppItem.setEnabled(false);
       //exportAppItem.setEnabled(false && !sketch.isLibrary());
       //buttons.disableRun(sketch.isLibrary());
       header.rebuild();
