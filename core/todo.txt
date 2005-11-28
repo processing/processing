@@ -1,5 +1,7 @@
 0097 core
+_ make dxf writer that'll work with recordShapesRaw()
 
+_ change recordShapes() to just record() and recordRaw()
 
 this should be fixed, test
 _ 404 error because first searches applet directory in isometricblocks
