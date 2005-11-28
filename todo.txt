@@ -1,11 +1,28 @@
 0097 pde
+_ write export-to-application
+_   http://dev.processing.org/bugs/show_bug.cgi?id=60
+o   problem with packages.. currently mainClassName is preproc name
+o     and "name" is the sketch name, w/o package
+o     but if a package were in use, then would be trouble
+X     not allowing packages for main classes
+_   lock feature for present mode (part of export to application?)
+_   application can still do serial (qt, other stuff?) 
+X   add manifest.mf to exported applets so that applications will work
+X   include main class info for executable jar file with jdk > 1.2
+X     was already done before
+_   wrapper that invokes the applet using a copy of the jre
+_   main() method needs to set layout manager if jexegen is to be used
+_     (msft vm defaults to null layout manager)
+_   also make sure pack() is happening
+_   PApplet.main(new String[] { "TheClass" });
+_     this will need to detect whether the user has their own main()
+_     or even PApplet.main(new String[] { getClass().getName() });
+_     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
+_     main sticking point will be serial/qtjava in exports
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-
-_ make available the background colors for present mode, stop button color
-_   http://dev.processing.org/bugs/show_bug.cgi?id=75
 
 _ threading bug with sonia and rev 91
 
@@ -56,8 +73,6 @@ _   questions like 'how do i do x' are often solved by looking at the api
 _   for instance, to get the framerate, use framerate()
 
 other faq
-_ how to change presentation mode background color
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130781367;start=2#2
 _ why adding .0001 to a float doesn't work
 _   and how they're imprecise in general (use nf)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130877990
@@ -74,18 +89,20 @@ _   if you need a particular name, add it with "extends PApplet"
 _   all code from tabs is joined to one sketch
 _   if you want it separate, then you have to make .java files
 _     in doing so, you'll lose access to 'g'
+_   add main() to your app to make it run on its own
 _ performance 
 _   video stinks.. java2d stinks.. macs stink
 _   note in the 'drawing in 2d' section of faq
-_ is there a way to do xxx?
-_   advanced users who are outgrowing the basic reference: 
-_   be sure to check the "complete" reference
-_ change bugs.html to issues.html
 _ fastest machine possible
 _   turn off hyperthreading in the bios
 _   nice gfx card only helps opengl
 _   dual processor not particularly useful, unless you make more threads
 _     but making more threads is often more work than is useful
+_ is there a way to do xxx?
+_   advanced users who are outgrowing the basic reference: 
+_   be sure to check the "complete" reference
+_ change bugs.html to issues.html
+_   and add a redirect in httpd.conf
 
 _ save code before export, otherwise .pde exported is empty
 _   ask user ok or cancel to save code before exporting
@@ -180,6 +197,7 @@ _ command line support
 _   http://dev.processing.org/bugs/show_bug.cgi?id=219
 _   would still require awt, but would take a sketch on cmd line
 _   build it and then exit
+_   also an option to launch p5, load a sketch and run it
 _ settings.path.fallback not being used
 _   need to check the mkdirs() to make sure it's not going too deep
 _   really important for intl versions that are having trouble
@@ -194,8 +212,9 @@ PDE / Compiler & Preprocessor
 
 _ using a processing keyword as a variable name gives unhelpful error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=213
-_ hex colors < 6 chars produce bizarre error:
+_ web colors < 6 chars produce bizarre error:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=196
+_   http://dev.processing.org/bugs/show_bug.cgi?id=228
 _ synchronized (something) { } is horking up the preproc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=136
 _ casting problems in the parser
@@ -356,26 +375,6 @@ PDE / Export
 
 _ errors during export don't show up properly (no red status bar)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=194
-_ write export-to-application
-_   http://dev.processing.org/bugs/show_bug.cgi?id=60
-_   problem with packages.. currently mainClassName is preproc name
-_     and "name" is the sketch name, w/o package
-_     but if a package were in use, then would be trouble
-_   lock feature for present mode (part of export to application?)
-_   application can still do serial (qt, other stuff?) 
-_   applet runs in browser, though applet on cbagel is everything..
-_   include main class info for executable jar file with jdk > 1.2
-_   not difficult to do, just some tweaking once applet export works
-_   wrapper that invokes the applet using a copy of the jre
-_   main() method needs to set layout manager if jexegen is to be used
-_     (msft vm defaults to null layout manager)
-_   also make sure pack() is happening
-_   add manifest.mf to exported applets so that applications will work
-_   PApplet.main(new String[] { "TheClass" });
-_     this will need to detect whether the user has their own main()
-_     or even PApplet.main(new String[] { getClass().getName() });
-_     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
-_     main sticking point will be serial/qtjava in exports
 _ include a note that 'applet' folder will get emptied/rewritten
 _   or rename the old applet folder to something else? (too messy)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=61
@@ -447,6 +446,10 @@ _ preferences window has been hit with the ugly stick
 _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
 _   http://dev.processing.org/bugs/show_bug.cgi?id=73
+_ make available the background colors for present mode, stop button color
+_   http://dev.processing.org/bugs/show_bug.cgi?id=75
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130781367;start=2#2
+_ add ability to set the display where present mode makes things start
 
 
 PDE / Runner 
