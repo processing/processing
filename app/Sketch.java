@@ -1942,7 +1942,8 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    int exportPlatform = PApplet.platform; //PConstants.MACOSX;
+    //int exportPlatform = PApplet.platform; //PConstants.MACOSX;
+    int exportPlatform = PConstants.LINUX;
 
     // nuke the old folder because it can cause trouble
     File destFolder = new File(folder, "application");
@@ -1962,19 +1963,6 @@ public class Sketch {
                        "Sketch name is " + name + " but the sketch\n" +
                        "name in the code was " + foundName, null);
       return false;
-    }
-
-    //
-
-    // copy the source files to the target, since we like
-    // to encourage people to share their code
-    for (int i = 0; i < codeCount; i++) {
-      try {
-        Base.copyFile(code[i].file,
-                      new File(destFolder, code[i].file.getName()));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
     }
 
 
@@ -2202,7 +2190,8 @@ public class Sketch {
           }
           lines[i] = sb.toString();
         }
-        ps.println(lines[i]);
+        // explicit newlines to avoid Windows CRLF
+        ps.print(lines[i] + "\n");
       }
       ps.flush();
       ps.close();
@@ -2217,6 +2206,46 @@ public class Sketch {
 
       ps.flush();
       ps.close();
+
+    } else {
+      File shellScript = new File(destFolder, this.name);
+      PrintStream ps = new PrintStream(new FileOutputStream(shellScript));
+
+      // do the newlines explicitly so that windows CRLF
+      // isn't used when exporting for unix
+      ps.print("#!/bin/sh\n\n");
+      ps.print("java " + Preferences.get("run.options") +
+               " -cp " + exportClassPath +
+               " " + this.name + "\n");
+
+      ps.flush();
+      ps.close();
+
+      String shellPath = shellScript.getAbsolutePath();
+      // will work on osx or *nix, but just dies on windows, oh well..
+      Runtime.getRuntime().exec(new String[] { "chmod", "+x", shellPath });
+    }
+
+
+    /// copy the source files to the target
+    /// (we like to encourage people to share their code)
+
+    File sourceFolder = new File(destFolder, "source");
+    sourceFolder.mkdirs();
+
+    for (int i = 0; i < codeCount; i++) {
+      try {
+        Base.copyFile(code[i].file,
+                      new File(sourceFolder, code[i].file.getName()));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    // move the .java file from the preproc there too
+    String preprocFilename = this.name + ".java";
+    File preprocFile = new File(destFolder, preprocFilename);
+    if (preprocFile.exists()) {
+      preprocFile.renameTo(new File(sourceFolder, preprocFilename));
     }
 
 

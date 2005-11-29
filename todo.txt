@@ -23,8 +23,8 @@ X   ask user ok or cancel to save code before exporting
 X   http://dev.processing.org/bugs/show_bug.cgi?id=157
 X can macosx jnilib files be placed in the resources dir?
 X shift-export should export as application
+X write support for linux export
 
-_ write support for linux export
 _ need per-platform settings for exports
 _   opengl needs to export .jnilib for macosx, but no dll and so files
 _   if nothing available for that platform, uses "application" setting
