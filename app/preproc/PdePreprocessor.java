@@ -153,7 +153,8 @@ public class PdePreprocessor {
   static public final int ACTIVE = 1;  // formerly INTERMEDIATE
   static public final int JAVA   = 2;  // formerly ADVANCED
   // static to make it easier for the antlr preproc to get at it
-  static public int programType = -1;
+  static public int programType;
+  static public boolean foundMain;
 
   Reader programReader;
   String buildPath;
@@ -191,6 +192,9 @@ public class PdePreprocessor {
   public String write(String program, String buildPath,
                       String name, String codeFolderPackages[])
     throws java.lang.Exception {
+    // need to reset whether or not this has a main()
+    foundMain = false;
+
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
     if ((program.length() > 0) &&
@@ -362,7 +366,7 @@ public class PdePreprocessor {
     emitter.setOut(stream);
     emitter.print(rootNode);
 
-    writeFooter(stream);
+    writeFooter(stream, name);
     stream.close();
 
     // if desired, serialize the parse tree to an XML file.  can
@@ -432,13 +436,7 @@ public class PdePreprocessor {
 
     if (programType < JAVA) {
       // open the class definition
-      out.print("public class " + className + " extends ");
-      //if (opengl) {
-      //out.print("PAppletGL");
-      //} else {
-      out.print("PApplet");
-      //}
-      out.print(" {");
+      out.print("public class " + className + " extends PApplet {");
 
       if (programType == STATIC) {
         // now that size() and background() can go inside of draw()
@@ -456,12 +454,20 @@ public class PdePreprocessor {
    *
    * @param out         PrintStream to write it to.
    */
-  void writeFooter(PrintStream out) {
+  void writeFooter(PrintStream out, String className) {
 
     if (programType == STATIC) {
       // close off draw() definition
       out.print("noLoop(); ");
-      out.print("}");
+      out.print("} ");
+    }
+
+    if ((programType == STATIC) || (programType < JAVA)) {
+      if (!PdePreprocessor.foundMain) {
+        out.print("static public void main(String args[]) { ");
+        out.print("  PApplet.main(new String[] { \"" + className + "\" });");
+        out.print("}");
+      }
     }
 
     if (programType < JAVA) {

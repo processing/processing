@@ -15,10 +15,17 @@ X   just need to override the key events
 o   main() method needs to set layout manager if jexegen is to be used
 o     (msft vm defaults to null layout manager)
 o   also make sure pack() is happening
-
-_ PApplet.main(new String[] { "TheClass" });
-_   this will need to detect whether the user has their own main()
+X PApplet.main(new String[] { "TheClass" });
+X   this will need to detect whether the user has their own main()
 o   or even PApplet.main(new String[] { getClass().getName() });
+
+_ save code before export, otherwise .pde exported is empty
+_   ask user ok or cancel to save code before exporting
+_   http://dev.processing.org/bugs/show_bug.cgi?id=157
+
+_ documentation
+_   people using "java" mode must create their own main
+_   another function named main() is a no-no.. it'll confuse the preproc
 _ how to handle qtjava in exports?
 _ need per-platform settings for exports
 _   opengl needs to export .jnilib for macosx, but no dll and so files
@@ -107,10 +114,6 @@ _   advanced users who are outgrowing the basic reference:
 _   be sure to check the "complete" reference
 _ change bugs.html to issues.html
 _   and add a redirect in httpd.conf
-
-_ save code before export, otherwise .pde exported is empty
-_   ask user ok or cancel to save code before exporting
-_   http://dev.processing.org/bugs/show_bug.cgi?id=157
 
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
