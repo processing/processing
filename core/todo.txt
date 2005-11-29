@@ -1,4 +1,7 @@
 0097 core
+X no changes, only export to application stuff
+
+
 _ make dxf writer that'll work with recordShapesRaw()
 
 _ change recordShapes() to just record() and recordRaw()

@@ -213,6 +213,18 @@ DLL files must be installed separately along with JSynClasses.jar.
 The # sign in front of a line means that the line is a comment, 
 and it'll be ignored by the PDE.
 
+As of revision 0097, you can also specify what to export for other
+platforms as well (at least Mac OS X, Windows, Linux). For the example
+above, the application line could instead be changed to:
+
+application.macox=sonia.jar,JSynClasses.jar,libJSynV142.jnilib
+application.windows=sonia.jar,JSynClasses.jar,JSynV142.dll
+
+Platform-specific exports will be checked first, and if they don't
+exist, the "application" will be used. If neither exist (or export.txt
+doesn't exist), the entire contents of the library folder will be
+copied.
+
 
 //////////////////////////////////////////////////////////////
 
@@ -422,4 +434,4 @@ things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 23 November 2005
+Ben Fry, Last updated 29 November 2005
