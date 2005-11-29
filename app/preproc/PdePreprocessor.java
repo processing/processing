@@ -275,26 +275,6 @@ public class PdePreprocessor {
     extraImports = new String[imports.size()];
     imports.copyInto(extraImports);
 
-    // if using opengl, add it to the special imports
-    /*
-    if (Preferences.get("renderer").equals("opengl")) {
-      extraImports = new String[imports.size() + 1];
-      imports.copyInto(extraImports);
-      extraImports[extraImports.length - 1] = "processing.opengl.*";
-    }
-    */
-
-    /*
-    if (codeFolderPackages != null) {
-      extraImports = new String[importsCount + codeFolderPackages.length];
-      imports.copyInto(extraImports);
-      for (int i = 0; i < codeFolderPackages.length; i++) {
-        extraImports[importsCount + i] = codeFolderPackages[i] + ".*";
-      }
-      codeFolderImports = null;
-    }
-    */
-
     if (codeFolderPackages != null) {
       codeFolderImports = new String[codeFolderPackages.length];
       for (int i = 0; i < codeFolderPackages.length; i++) {

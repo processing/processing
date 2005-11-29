@@ -1,24 +1,28 @@
 0097 pde
-_ write export-to-application
-_   http://dev.processing.org/bugs/show_bug.cgi?id=60
-o   problem with packages.. currently mainClassName is preproc name
-o     and "name" is the sketch name, w/o package
-o     but if a package were in use, then would be trouble
-X     not allowing packages for main classes
-_   lock feature for present mode (part of export to application?)
-_   application can still do serial (qt, other stuff?) 
-X   add manifest.mf to exported applets so that applications will work
+
+export-to-application
+_ http://dev.processing.org/bugs/show_bug.cgi?id=60
+X add manifest.mf to exported applets so that applications will work
 X   include main class info for executable jar file with jdk > 1.2
-X     was already done before
-_   wrapper that invokes the applet using a copy of the jre
-_   main() method needs to set layout manager if jexegen is to be used
-_     (msft vm defaults to null layout manager)
-_   also make sure pack() is happening
-_   PApplet.main(new String[] { "TheClass" });
-_     this will need to detect whether the user has their own main()
-_     or even PApplet.main(new String[] { getClass().getName() });
-_     META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
-_     main sticking point will be serial/qtjava in exports
+X   was already done before
+X   META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
+o problem with packages.. currently mainClassName is preproc name
+o   and "name" is the sketch name, w/o package
+o   but if a package were in use, then would be trouble
+X   not allowing packages for main classes
+o lock feature for present mode (part of export to application?)
+X   just need to override the key events
+o   main() method needs to set layout manager if jexegen is to be used
+o     (msft vm defaults to null layout manager)
+o   also make sure pack() is happening
+
+_ PApplet.main(new String[] { "TheClass" });
+_   this will need to detect whether the user has their own main()
+o   or even PApplet.main(new String[] { getClass().getName() });
+_ how to handle qtjava in exports?
+_ need per-platform settings for exports
+_   opengl needs to export .jnilib for macosx, but no dll and so files
+_ can macosx jnilib files be placed in the resources dir?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
