@@ -461,6 +461,11 @@ public class PdeEmitter implements PdeTokenTypes
 
       // to output, use print(child) on each of the four
 
+      String methodName = methodNameChild.getText();
+      if (methodName.equals("main")) {
+        PdePreprocessor.foundMain = true;
+      }
+
       /*
       // 1. figure out if this is setup, draw, or loop
       String methodName = methodNameChild.getText();
