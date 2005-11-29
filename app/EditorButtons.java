@@ -332,10 +332,25 @@ public class EditorButtons extends JComponent implements MouseInputListener {
         }
         break;
 
-      case OPEN:   setState(OPEN, INACTIVE, true); break;
-      case NEW:    editor.handleNew(e.isShiftDown()); break;
-      case SAVE:   editor.handleSave(); break;
-      case EXPORT: editor.handleExport(); break;
+      case OPEN:
+        setState(OPEN, INACTIVE, true);
+        break;
+
+      case NEW:
+        editor.handleNew(e.isShiftDown());
+        break;
+
+      case SAVE:
+        editor.handleSave();
+        break;
+
+      case EXPORT:
+        if (e.isShiftDown()) {
+          editor.handleExportApplication();
+        } else {
+          editor.handleExport();
+        }
+        break;
     }
     currentSelection = -1;
   }
