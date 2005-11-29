@@ -2124,6 +2124,11 @@ public class Sketch {
           Base.copyFile(exportFile, new File(jarFolder, exportList[i]));
           jarListVector.add(exportList[i]);
 
+        } else if ((exportPlatform == PConstants.MACOSX) &&
+                   (exportFile.getName().toLowerCase().endsWith(".jnilib"))) {
+          // jnilib files can be placed in Contents/Resources/Java
+          Base.copyFile(exportFile, new File(jarFolder, exportList[i]));
+
         } else {
           // copy the file to the main directory.. prolly a .dll or something
           Base.copyFile(exportFile,
