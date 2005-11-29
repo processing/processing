@@ -539,7 +539,7 @@ public class Editor extends JFrame
     exportAppItem = newJMenuItem("Export Application", 'E', true);
     exportAppItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleExportApp();
+          handleExportApplication();
         }
       });
     menu.add(exportAppItem);
@@ -1632,7 +1632,7 @@ public class Editor extends JFrame
   }
 
 
-  synchronized public void handleExportApp() {
+  synchronized public void handleExportApplication() {
     if (!handleExportCheckModified()) return;
 
     message("Exporting application...");
