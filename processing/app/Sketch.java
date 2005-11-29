@@ -2135,6 +2135,8 @@ public class Sketch {
       if (commaList == null) {
         // otherwise just dump the whole folder
         exportList = libraryFolder.list();
+      } else {
+        exportList = PApplet.split(commaList, ", ");
       }
 
       // add each item from the library folder / export list to the output
@@ -2255,7 +2257,9 @@ public class Sketch {
 
       String shellPath = shellScript.getAbsolutePath();
       // will work on osx or *nix, but just dies on windows, oh well..
-      Runtime.getRuntime().exec(new String[] { "chmod", "+x", shellPath });
+      if (PApplet.platform != PConstants.WINDOWS) {
+        Runtime.getRuntime().exec(new String[] { "chmod", "+x", shellPath });
+      }
     }
 
 
