@@ -165,6 +165,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     protected final void destroyApp(boolean unconditional) throws MIDletStateChangeException {
         running = false;
+        destroy();
     }
     
     protected final void pauseApp() {
@@ -244,11 +245,13 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public void setup() {
     }
     
+    public void destroy() {        
+    }
+    
     public void draw() {      
     }
     
     public void libraryEvent(Object library, int event, Object data) {
-        
     }
     
     public final void enqueueLibraryEvent(Object library, int event, Object data) {
