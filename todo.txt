@@ -18,10 +18,9 @@ o   also make sure pack() is happening
 X PApplet.main(new String[] { "TheClass" });
 X   this will need to detect whether the user has their own main()
 o   or even PApplet.main(new String[] { getClass().getName() });
-
-_ save code before export, otherwise .pde exported is empty
-_   ask user ok or cancel to save code before exporting
-_   http://dev.processing.org/bugs/show_bug.cgi?id=157
+X save code before export, otherwise .pde exported is empty
+X   ask user ok or cancel to save code before exporting
+X   http://dev.processing.org/bugs/show_bug.cgi?id=157
 
 _ documentation
 _   people using "java" mode must create their own main
