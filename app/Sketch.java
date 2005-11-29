@@ -1997,6 +1997,7 @@ public class Sketch {
       File stubFile =
         new File(dotAppFolder, "Contents/MacOS/JavaApplicationStub");
       String stubPath = stubFile.getAbsolutePath();
+      // will work on osx or *nix, but just dies on windows, oh well..
       Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
 
       // set the jar folder to a different location than windows/linux
