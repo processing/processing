@@ -1,19 +1,24 @@
 // -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-
 
-// launcher.cpp : Defines the class behaviors for the application.
-//
+// if this code looks shitty, that's because it is. people are likely to have
+// the durndest things in their CLASSPATH and QTJAVA environment variables. 
+// mostly because installers often mangle them without the user knowing. 
+// so who knows where and when the quotes will show up. the code below is 
+// based on a couple years of trial and error with processing releases.
 
 // The size of all of the strings was made sort of ambiguously large, since
 // 1) nothing is hurt by allocating an extra few bytes temporarily and
 // 2) if the user has a long path, and it gets copied five times over for the
 // classpath, the program runs the risk of crashing. Bad bad.
 
-#define JAVA_ARGS "-Xms128m -Xmx128m "
-#define JAVA_MAIN_CLASS "processing.app.Base"
+#define ARGS_FILE_PATH "\\lib\\args.txt"
 
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+
+void removeLineEndings(char *what);
 
 int STDCALL
 WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
@@ -24,12 +29,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   char *incoming_cmdline = (char *)malloc(strlen(lpCmd) * sizeof(char));
   strcpy (incoming_cmdline, lpCmd);
 
-  // what gets put together to pass to jre
-  char *outgoing_cmdline = (char *)malloc(16384 * sizeof(char));
-        
-  // prepend the args for -mx and -ms
-  strcpy(outgoing_cmdline, JAVA_ARGS);
-
   // append the classpath and launcher.Application
   char *loaddir = (char *)malloc(MAX_PATH * sizeof(char));
   *loaddir = 0;
@@ -38,18 +37,65 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // remove the application name
   *(strrchr(loaddir, '\\')) = '\0';
 
-  char *cp = (char *)malloc(8 * strlen(loaddir) + 4096);
+  //
 
+  // open the file that contains the main class name and java args
 
-  // if this code looks shitty, that's because it is. people are 
-  // likely to have the durndest things in their CLASSPATH and QTJAVA 
-  // environment variables. mostly because installers often mangle 
-  // them without the user knowing. so who knows where and when the
-  // quotes will show up. this is a guess at dealing with the things, 
-  // without spending a whole day to make it overly robust. [fry]
+  char *argsfilepath = (char*) 
+    malloc(strlen(loaddir) * sizeof(char) + 
+           strlen(ARGS_FILE_PATH) * sizeof(char) + 1);
+  strcpy(argsfilepath, loaddir);
+  strcat(argsfilepath, ARGS_FILE_PATH);
 
-  
-  
+  char javaArgs[512];
+  char javaMainClass[512];
+  char jarList[512];
+  char *app_classpath = (char *)malloc(10 * strlen(loaddir) + 4096);
+
+  FILE *argsfile = fopen(argsfilepath, "r");
+  if (argsfile == NULL) {  // won't exist for processing.exe
+    strcpy(javaArgs, "-Xms128m -Xmx128m");
+    strcpy(javaMainClass, "processing.app.Base");
+    sprintf(app_classpath, 
+            "%s\\lib;"
+            "%s\\lib\\build;"
+            "%s\\lib\\pde.jar;"
+            "%s\\lib\\core.jar;"
+            "%s\\lib\\mrj.jar;"
+            "%s\\lib\\oro.jar;"
+            "%s\\lib\\registry.jar;"
+            "%s\\lib\\antlr.jar;",
+            loaddir, loaddir, loaddir, loaddir, 
+            loaddir, loaddir, loaddir, loaddir);
+  } else {
+    fgets(javaArgs, 511, argsfile);
+    removeLineEndings(javaArgs);
+    fgets(javaMainClass, 511, argsfile);
+    removeLineEndings(javaMainClass);
+    fgets(jarList, 511, argsfile);
+    removeLineEndings(jarList);
+
+    //MessageBox(NULL, javaArgs, "args",  MB_OK);
+    //MessageBox(NULL, javaMainClass, "class", MB_OK);
+    //MessageBox(NULL, jarList, "jarlist", MB_OK);
+
+    app_classpath[0] = 0;
+    char *jar = (char*) strtok(jarList, ",");
+    while (jar != NULL) {
+      //MessageBox(NULL, jar, "entry 1", MB_OK);      
+      char entry[1024];
+      sprintf(entry, "%s\\lib\\%s;", loaddir, jar);
+      //MessageBox(NULL, entry, "entry 2", MB_OK);      
+      strcat(app_classpath, entry);
+      jar = (char*) strtok(NULL, ",");
+    }
+    //MessageBox(NULL, app_classpath, "app cp", MB_OK);
+    fclose(argsfile);
+  }
+
+  //  
+
+  char *cp = (char *)malloc(10 * strlen(loaddir) + 4096);
 
   // test to see if running with a java runtime nearby or not
   char *testpath = (char *)malloc(MAX_PATH * sizeof(char));
@@ -60,11 +106,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   int local_jre_installed = (fp != NULL);
   //char *rt_jar = (fp == NULL) ? "" : "java\\lib\\rt.jar;";
   if (fp != NULL) fclose(fp); // argh! this was probably causing trouble
-  
-
-  //MessageBox(NULL, local_jre_installed ? 
-  //         "local jre installed" : "couldn't find jre", "p5", MB_OK);
-
 
   //const char *envClasspath = getenv("CLASSPATH");
   char *env_classpath = (char *)malloc(16384 * sizeof(char));
@@ -154,51 +195,20 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     }
   }
 
-  //if (qtjava_path[0] == 0) {
-  //MessageBox(NULL, "not found", "msg", MB_OK);
-  //}
+  // don't put quotes around contents of cp, even though %s might have 
+  // spaces in it. don't put quotes in it, because it's setting the 
+  // environment variable for CLASSPATH, not being included on the 
+  // command line. so setting the env var it's ok to have spaces, 
+  // and the quotes prevent javax.comm.properties from being found.
 
-  // NO! put quotes around contents of cp, because %s might have spaces in it.
-  // don't put quotes in it, because it's setting the environment variable
-  // for CLASSPATH, not being included on the command line. so setting the
-  // env var it's ok to have spaces, and the quotes prevent 
-  // javax.comm.properties from being found.
-  sprintf(cp,	
-          //"\""   // begin quote
-          //"'"
-
-          "%s"  // local jre or blank
-          "%s"  // qtjava path
-
-          "%s\\lib;"
-          "%s\\lib\\build;"
-          "%s\\lib\\pde.jar;"
-          "%s\\lib\\core.jar;"
-          "%s\\lib\\mrj.jar;"
-          "%s\\lib\\oro.jar;"
-          "%s\\lib\\registry.jar;"
-          "%s\\lib\\antlr.jar;"
-          
-          "%s",  // original CLASSPATH
-          
-
-          //"C:\\WINNT\\system32\\QTJava.zip;"  // worthless
-          //"C:\\WINDOWS\\system32\\QTJava.zip;"
-
-          //"\"",   // end quote
-          //"'",
-          //,
-
-          // the first three %s args
-          //local_jre_installed ? "java\\lib\\rt.jar;java\\lib\\jaws.jar;" : "", 
-          local_jre_installed ? "java\\lib\\rt.jar;" : "", 
-          qtjava_path,
-          loaddir, loaddir, loaddir, loaddir, 
-          loaddir, loaddir, loaddir, loaddir, 
-          env_classpath);
-
-  //MessageBox(NULL, qtjava_path, "qtjava", MB_OK);
-  //MessageBox(NULL, cp, "cp outgoing", MB_OK);
+  strcpy(cp, app_classpath);
+  if (local_jre_installed) {
+    char localjre[512];
+    printf(localjre, "%s\\java\\lib\\rt.jar;", loaddir);
+    strcat(cp, localjre);
+  }
+  strcat(cp, qtjava_path);
+  strcat(cp, env_classpath);
 
   if (!SetEnvironmentVariable("CLASSPATH", cp)) {
     MessageBox(NULL, "Could not set CLASSPATH environment variable",
@@ -206,8 +216,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     return 0;
   }
   
-  
-
   // need to add the local jre to the path for 'java mode' in the env
   if (local_jre_installed) {
     char *env_path = (char *)malloc(strlen(getenv("PATH")) * sizeof(char));
@@ -220,17 +228,23 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
                  "Processing Error", MB_OK);
       return 0;
     }
-    
-	
   }
 
-  //MessageBox(NULL, cp, "whaadddup", MB_OK);
+  // what gets put together to pass to jre
+  char *outgoing_cmdline = (char *)malloc(16384 * sizeof(char));
+
+  // prepend the args for -mx and -ms
+  strcpy(outgoing_cmdline, javaArgs);
+  strcat(outgoing_cmdline, " ");
 
   // add the name of the class to execute and a space before the next arg
-  strcat(outgoing_cmdline, JAVA_MAIN_CLASS " ");
+  strcat(outgoing_cmdline, javaMainClass);
+  strcat(outgoing_cmdline, " ");
 
   // append additional incoming stuff (document names), if any
   strcat(outgoing_cmdline, incoming_cmdline);
+
+  //MessageBox(NULL, outgoing_cmdline, "cmdline", MB_OK);
 
   char *executable = (char *)malloc((strlen(loaddir) + 256) * sizeof(char));
   // loaddir is the name path to the current application
@@ -289,4 +303,17 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   }
 
   return 0;
+}
+
+
+void removeLineEndings(char *what) {
+  int index = strlen(what) - 1;
+  while (index >= 0) {
+    if ((what[index] == 10) || (what[index] == 13)) {
+      what[index] = 0;
+      --index;
+    } else {
+      return;
+    }
+  }
 }

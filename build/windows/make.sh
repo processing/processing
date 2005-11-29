@@ -58,7 +58,7 @@ else
 
   echo Compiling processing.exe
   cd launcher
-  make && cp processing.exe ../work/
+  ./make.sh # && cp processing.exe ../work/
   cd ..
 
   # get jikes and depedencies
