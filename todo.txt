@@ -2,7 +2,7 @@
 
 export-to-application
 X http://dev.processing.org/bugs/show_bug.cgi?id=60
-_   make a note in the faq that it's implemented
+X   make a note in the faq that it's implemented
 X add manifest.mf to exported applets so that applications will work
 X   include main class info for executable jar file with jdk > 1.2
 X   was already done before
