@@ -1638,7 +1638,10 @@ public class Editor extends JFrame
   synchronized public void handleExportApp() {
     message("Exporting application...");
     try {
-      if (sketch.exportApplication()) {
+      boolean success = sketch.exportApplication();
+      if (success) {
+        File destFolder = new File(sketch.folder, "application");
+        Base.openFolder(destFolder);
         message("Done exporting.");
       } else {
         // error message will already be visible
