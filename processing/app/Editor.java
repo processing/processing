@@ -26,6 +26,7 @@ package processing.app;
 
 import processing.app.syntax.*;
 import processing.app.tools.*;
+import processing.core.PConstants;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -1637,10 +1638,10 @@ public class Editor extends JFrame
 
     message("Exporting application...");
     try {
-      boolean success = sketch.exportApplication();
-      if (success) {
-        File destFolder = new File(sketch.folder, "application");
-        Base.openFolder(destFolder);
+      if (sketch.exportApplication(PConstants.WINDOWS) &&
+          sketch.exportApplication(PConstants.MACOSX) &&
+          sketch.exportApplication(PConstants.LINUX)) {
+        Base.openFolder(sketch.folder);
         message("Done exporting.");
       } else {
         // error message will already be visible
