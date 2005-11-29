@@ -87,6 +87,7 @@ function gogo(dropdown) {
 <a href="#wontstart">Processing won't start! 
     Nothing happens when I click &ldquo;Run&rdquo;!</a> <br>
 <a href="#applet">Export and Browser Troubles</a> <br>
+<a href="#application">Issues with "Export to Application"</a> <br>
 <a href="#memory">Out Of Memory Errors</a> <br>
 <a href="#strings">Why don't these Strings equal?</a> <br>
 <a href="#integers">Why does 2 / 5 = 0 instead of 0.4?</a> <br>
@@ -372,6 +373,93 @@ web
   </tr>
 </table>
 
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="application"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+Issues with "Export to Application"
+</b> <br> <br>
+The "Export to Application" is implemented as of release 0097 but has
+not been heavily tested. If you find problems, 
+<A HREF="http://dev.processing.org/bugs/">file a bug</A>.
+<UL>
+<LI>Just like when exporting as an applet, the "application.xxxx"
+folders will be removed completely on export.
+<LI>It is important that you don't have a method named main() in your
+sketch, unless you know what you're doing (writing your own
+main). Otherwise this will fool the preprocessor into thinking you
+have a clue, when in fact you don't.
+<LI>If running in "Java" mode, where your code starts "public class
+blah extends PApplet", you'll need to write your own main() method in
+order for Export to Application to work. It should look something like this:
+<PRE>
+static public void main(String args[]) {
+  PApplet.main(new String[] { "YourClassName" });
+}
+</PRE>
+Not doing this, or using your own main can cause problems internally
+with variables not being properly set up. If you opt not to use
+PApplet.main(), make sure you read the source code for it so that you
+understand how it works, and don't whine if it breaks.
+<LI>The "Movie" example does not yet work properly, this will be fixed
+shortly. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=230">Bug 230</A>)
+<LI>Exporting sketches that use QuickTime movies may be broken, it's
+not clear the extent of this issue (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=231">Bug
+231</A>), but it will be repaired for a future release. 
+<LI>Export to Application will create sketches for Windows, Mac OS X,
+and Linux. Someday we might implement a dialog box that lets you
+select which one you actually want, but for now, enjoy the bounty.
+<LI>When exporting for Mac OS X from Windows, be sure to read through
+the readme.txt file in the application.macosx folder&mdash;your
+application likely won't work on Mac OS X without modification.
+<LI>Windows is a shell .exe that calls the code and requires the "lib"
+folder along with it be kept intact. Someday we might make Windows be
+a nice single .exe file, but this requires more time to implement, and
+more specifically, make work consistently with the libraries. If
+you're finicky about this, use a Java EXE generator such as <A
+HREF="http://jsmooth.sourceforge.net/">JSmooth</A> or <A
+HREF="http://launch4j.sourceforge.net/">launch4j</A>.
+<LI>Linux is just a shell script, which can probably be used on most
+Unix platforms (there's almost nothing to it). 
+<LI>When distributing your application, the "source" folder can be
+removed from the export if you'd like, but other files (such as the
+lib folder and any .dll files or whatever) should be left intact
+otherwise the application may not work properly.
+<LI>If you just want an executable jar file, export as an
+applet. Executable jar files will most likely not work with
+libraries because the path information will not be properly set, and
+the additional library jars won't be referenced. 
+<LI>Library writers can now specify what files to export for each
+platform, see the update libraries/howto.txt for more information.
+<LI>Your current memory settings will be exported with the
+application. If you've set outrageous memory requirements, you might
+want to undo that before exporting for others, or edit the exported
+files by hand (Contents/Resources/Info.plist on Mac OS X and
+lib/args.txt on Windows).
+<LI>Someday we'll also add features like icon files and whatnot. 
+Or at least a default icon for the exported stuff. Or maybe even a
+splash screen while the VM is loading. Again, if you want more
+control, use your own application generator (see above for Windows, or
+use the Java package maker whatchamacallit on Mac OS X).
+</UL>
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
 
 
 <table width="750" border="0" 
