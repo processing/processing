@@ -1777,16 +1777,11 @@ public class Sketch {
       // library sketch's "library" folder
       File libraryFolder = (File)en.nextElement();
       File exportSettings = new File(libraryFolder, "export.txt");
+      Hashtable exportTable = readSettings(exportSettings);
+      String appletList = (String) exportTable.get("applet");
       String exportList[] = null;
-      if (exportSettings.exists()) {
-        String info[] = PApplet.loadStrings(exportSettings);
-        for (int i = 0; i < info.length; i++) {
-          if (info[i].startsWith("applet")) {
-            int idx = info[i].indexOf('=');  // get applet= or applet =
-            String commas = info[i].substring(idx+1).trim();
-            exportList = PApplet.split(commas, ", ");
-          }
-        }
+      if (appletList != null) {
+        exportList = PApplet.split(appletList, ", ");
       } else {
         exportList = libraryFolder.list();
       }
@@ -1938,15 +1933,29 @@ public class Sketch {
    * +-------------------------------------------------------+
    * </PRE>
    */
-  public boolean exportApplication() throws Exception {
+  public boolean exportApplication(int exportPlatform) throws Exception {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
     //int exportPlatform = PApplet.platform; //PConstants.MACOSX;
-    int exportPlatform = PConstants.LINUX;
+    String exportPlatformStr = null;
+    if (exportPlatform == PConstants.WINDOWS) {
+      exportPlatformStr = "windows";
+    } else if (exportPlatform == PConstants.MACOSX) {
+      exportPlatformStr = "macosx";
+    } else if (exportPlatform == PConstants.LINUX) {
+      exportPlatformStr = "linux";
+    } else {
+      exportPlatform = -1;
+    }
+
+    String folderName = "application";
+    if (exportPlatform != -1) {
+      folderName += "." + exportPlatformStr;
+    }
 
     // nuke the old folder because it can cause trouble
-    File destFolder = new File(folder, "application");
+    File destFolder = new File(folder, folderName);
     Base.removeDir(destFolder);
     destFolder.mkdirs();
 
@@ -1981,12 +1990,28 @@ public class Sketch {
       File dotAppSkeleton = new File("lib/export/" + APP_SKELETON);
       Base.copyDir(dotAppSkeleton, dotAppFolder);
 
+      String stubName = "Contents/MacOS/JavaApplicationStub";
       // need to set the stub to executable
-      File stubFile =
-        new File(dotAppFolder, "Contents/MacOS/JavaApplicationStub");
-      String stubPath = stubFile.getAbsolutePath();
       // will work on osx or *nix, but just dies on windows, oh well..
-      Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
+      if (PApplet.platform == PConstants.WINDOWS) {
+        File warningFile = new File(destFolder, "readme.txt");
+        PrintStream ps = new PrintStream(new FileOutputStream(warningFile));
+        ps.println("This application was created on Windows, which doesn't");
+        ps.println("properly support setting files as \"executable\",");
+        ps.println("a necessity for applications on Mac OS X.");
+        ps.println();
+        ps.println("To fix this, use the Terminal on Mac OS X, and from this");
+        ps.println("directory, type the following:");
+        ps.println();
+        ps.println("chmod +x " + dotAppFolder.getName() + "/" + stubName);
+        ps.flush();
+        ps.close();
+
+      } else {
+        File stubFile = new File(dotAppFolder, stubName);
+        String stubPath = stubFile.getAbsolutePath();
+        Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
+      }
 
       // set the jar folder to a different location than windows/linux
       jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
@@ -2091,17 +2116,21 @@ public class Sketch {
       // in the list is a File object that points the
       // library sketch's "library" folder
       File exportSettings = new File(libraryFolder, "export.txt");
+      Hashtable exportTable = readSettings(exportSettings);
+      String commaList = null;
       String exportList[] = null;
-      if (exportSettings.exists()) {
-        String info[] = PApplet.loadStrings(exportSettings);
-        for (int i = 0; i < info.length; i++) {
-          if (info[i].startsWith("application")) {
-            int idx = info[i].indexOf('=');
-            String commas = info[i].substring(idx+1).trim();
-            exportList = PApplet.split(commas, ", ");
-          }
-        }
-      } else {
+
+      if (exportPlatform != -1) {
+        // first check to see if there's something like application.macosx
+        commaList = (String)
+          exportTable.get("application." + exportPlatformStr);
+      }
+      if (commaList == null) {
+        // next check to see if something for 'application' is specified
+        commaList = (String) exportTable.get("application");
+      }
+      if (commaList == null) {
+        // otherwise just dump the whole folder
         exportList = libraryFolder.list();
       }
 
@@ -2278,16 +2307,35 @@ public class Sketch {
       "Main-Class: " + name + "\n";  // TODO not package friendly
     zos.write(contents.getBytes());
     zos.closeEntry();
+  }
 
-    /*
-      for (int i = 0; i < bagelClasses.length; i++) {
-        if (!bagelClasses[i].endsWith(".class")) continue;
-        entry = new ZipEntry(bagelClasses[i]);
-        zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(exportDir + bagelClasses[i])));
-        zos.closeEntry();
+
+  /**
+   * Read from a file with a bunch of attribute/value pairs
+   * that are separated by = and ignore comments with #.
+   */
+  protected Hashtable readSettings(File inputFile) {
+    Hashtable outgoing = new Hashtable();
+    if (!inputFile.exists()) return outgoing;  // return empty hash
+
+    String lines[] = PApplet.loadStrings(inputFile);
+    for (int i = 0; i < lines.length; i++) {
+      int hash = lines[i].indexOf('#');
+      String line = (hash == -1) ?
+        lines[i].trim() : lines[i].substring(hash).trim();
+      if (line.length() == 0) continue;
+
+      int equals = line.indexOf('=');
+      if (equals == -1) {
+        System.err.println("ignoring illegal line in " + inputFile);
+        System.err.println("  " + line);
+        continue;
       }
-    */
+      String attr = line.substring(0, equals).trim();
+      String valu = line.substring(equals + 1).trim();
+      outgoing.put(attr, valu);
+    }
+    return outgoing;
   }
 
 
