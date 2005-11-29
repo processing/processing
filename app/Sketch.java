@@ -1273,6 +1273,9 @@ public class Sketch {
       javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
     }
 
+    //PApplet.println(PApplet.split(Sketchbook.librariesClassPath, ';'));
+    //PApplet.println(PApplet.split(buildPath, ';'));
+    //PApplet.println(PApplet.split(javaClassPath, ';'));
     classPath = buildPath +
       File.pathSeparator + Sketchbook.librariesClassPath +
       File.pathSeparator + javaClassPath;

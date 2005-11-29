@@ -31,16 +31,22 @@ X   if nothing available for that platform, uses "application" setting
 X   if no application setting or export.txt file, then export everything
 o write code for selecting the output platform
 X   just export for all platforms
-_ documentation
-_   people using "java" mode must create their own main
-_   another function named main() is a no-no.. it'll confuse the preproc
-_ how to handle qtjava in exports?
-_   problem because on export, the qtjava import happens before the lib import
-_   why is this different between compiling and exporting?
+X documentation
+X   people using "java" mode must create their own main
+X   another function named main() is a no-no.. it'll confuse the preproc
+X   add these items to the faq
+X how to handle qtjava in exports?
+X   problem because on export, the qtjava import happens before lib import
+X   why is this different between compiling and exporting?
+X     was a problem because example was named "Movie"
+X     http://dev.processing.org/bugs/show_bug.cgi?id=230
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+
+_ exported movies seem to have trouble
+_   http://dev.processing.org/bugs/show_bug.cgi?id=231
 
 _ threading bug with sonia and rev 91
 
