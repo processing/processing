@@ -21,14 +21,21 @@ o   or even PApplet.main(new String[] { getClass().getName() });
 X save code before export, otherwise .pde exported is empty
 X   ask user ok or cancel to save code before exporting
 X   http://dev.processing.org/bugs/show_bug.cgi?id=157
+X can macosx jnilib files be placed in the resources dir?
+X shift-export should export as application
 
+_ write support for linux export
+_ need per-platform settings for exports
+_   opengl needs to export .jnilib for macosx, but no dll and so files
+_   if nothing available for that platform, uses "application" setting
+_   if no application setting or export.txt file, then export everything
 _ documentation
 _   people using "java" mode must create their own main
 _   another function named main() is a no-no.. it'll confuse the preproc
 _ how to handle qtjava in exports?
-_ need per-platform settings for exports
-_   opengl needs to export .jnilib for macosx, but no dll and so files
-_ can macosx jnilib files be placed in the resources dir?
+_   problem because on export, the qtjava import happens before the lib import
+_   why is this different between compiling and exporting?
+_ write code for selecting the output platform
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
