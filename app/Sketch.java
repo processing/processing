@@ -1942,7 +1942,7 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    int exportPlatform = PConstants.MACOSX;
+    int exportPlatform = PApplet.platform; //PConstants.MACOSX;
 
     // nuke the old folder because it can cause trouble
     File destFolder = new File(folder, "application");
@@ -2002,6 +2002,19 @@ public class Sketch {
 
       // set the jar folder to a different location than windows/linux
       jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
+    }
+
+
+    /// make the jar folder (windows and linux)
+
+    if (!jarFolder.exists()) jarFolder.mkdirs();
+
+
+    /// on windows, copy the exe file
+
+    if (exportPlatform == PConstants.WINDOWS) {
+      Base.copyFile(new File("lib/export/application.exe"),
+                    new File(destFolder, this.name + ".exe"));
     }
 
 
@@ -2150,6 +2163,16 @@ public class Sketch {
         if (i != 0) exportClassPath.append(":");
         exportClassPath.append("$JAVAROOT/" + jarList[i]);
       }
+    } else if (exportPlatform == PConstants.WINDOWS) {
+      for (int i = 0; i < jarList.length; i++) {
+        if (i != 0) exportClassPath.append(",");
+        exportClassPath.append(jarList[i]);
+      }
+    } else {
+      for (int i = 0; i < jarList.length; i++) {
+        if (i != 0) exportClassPath.append(":");
+        exportClassPath.append("lib/" + jarList[i]);
+      }
     }
 
 
@@ -2181,6 +2204,17 @@ public class Sketch {
         }
         ps.println(lines[i]);
       }
+      ps.flush();
+      ps.close();
+
+    } else if (exportPlatform == PConstants.WINDOWS) {
+      File argsFile = new File(destFolder + "/lib/args.txt");
+      PrintStream ps = new PrintStream(new FileOutputStream(argsFile));
+
+      ps.println(Preferences.get("run.options"));
+      ps.println(this.name);
+      ps.println(exportClassPath);
+
       ps.flush();
       ps.close();
     }
