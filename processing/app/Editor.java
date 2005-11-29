@@ -1614,12 +1614,9 @@ public class Editor extends JFrame
    * hitting export twice, quickly, and horking things up.
    */
   synchronized public void handleExport() {
-    //String what = sketch.isLibrary() ? "Applet" : "Library";
-    //message("Exporting " + what + "...");
-    //message("Exporting applet...");
+    if (!handleExportCheckModified()) return;
+
     try {
-      //boolean success = sketch.isLibrary() ?
-      //sketch.exportLibrary() : sketch.exportApplet();
       boolean success = sketch.exportApplet();
       if (success) {
         File appletFolder = new File(sketch.folder, "applet");
@@ -1636,6 +1633,8 @@ public class Editor extends JFrame
 
 
   synchronized public void handleExportApp() {
+    if (!handleExportCheckModified()) return;
+
     message("Exporting application...");
     try {
       boolean success = sketch.exportApplication();
@@ -1651,6 +1650,33 @@ public class Editor extends JFrame
       e.printStackTrace();
     }
     buttons.clear();
+  }
+
+
+  public boolean handleExportCheckModified() {
+    if (!sketch.modified) return true;
+
+    Object[] options = { "OK", "Cancel" };
+    int result = JOptionPane.showOptionDialog(this,
+                                              "Save changes before export?",
+                                              "Save",
+                                              JOptionPane.OK_CANCEL_OPTION,
+                                              JOptionPane.QUESTION_MESSAGE,
+                                              null,
+                                              options,
+                                              options[0]);
+    if (result == JOptionPane.OK_OPTION) {
+      handleSave();
+
+    } else {
+      // why it's not CANCEL_OPTION is beyond me (at least on the mac)
+      // but f-- it.. let's get this shite done..
+      //} else if (result == JOptionPane.CANCEL_OPTION) {
+      message("Export canceled, changes must first be saved.");
+      buttons.clear();
+      return false;
+    }
+    return true;
   }
 
 
