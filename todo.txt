@@ -1,7 +1,8 @@
 0097 pde
 
 export-to-application
-_ http://dev.processing.org/bugs/show_bug.cgi?id=60
+X http://dev.processing.org/bugs/show_bug.cgi?id=60
+_   make a note in the faq that it's implemented
 X add manifest.mf to exported applets so that applications will work
 X   include main class info for executable jar file with jdk > 1.2
 X   was already done before
@@ -24,18 +25,18 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=157
 X can macosx jnilib files be placed in the resources dir?
 X shift-export should export as application
 X write support for linux export
-
-_ need per-platform settings for exports
-_   opengl needs to export .jnilib for macosx, but no dll and so files
-_   if nothing available for that platform, uses "application" setting
-_   if no application setting or export.txt file, then export everything
+X need per-platform settings for exports
+X   opengl needs to export .jnilib for macosx, but no dll and so files
+X   if nothing available for that platform, uses "application" setting
+X   if no application setting or export.txt file, then export everything
+o write code for selecting the output platform
+X   just export for all platforms
 _ documentation
 _   people using "java" mode must create their own main
 _   another function named main() is a no-no.. it'll confuse the preproc
 _ how to handle qtjava in exports?
 _   problem because on export, the qtjava import happens before the lib import
 _   why is this different between compiling and exporting?
-_ write code for selecting the output platform
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
