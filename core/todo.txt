@@ -1,6 +1,11 @@
 0097 core
 X no changes, only export to application stuff
 
+_ PSound.play() won't play the sound a 2nd time
+_   (have to call stop() first)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=209
+
+
 
 _ make dxf writer that'll work with recordShapesRaw()
 
@@ -514,8 +519,6 @@ _   if loadImage() with spaces when online(), throw an error
 
 CORE / PSound
 
-_ PSound.play() won't play the sound a 2nd time
-_   http://dev.processing.org/bugs/show_bug.cgi?id=209
 _ duration as an internal param, not a function
 _ When a sound is finished playing, 
 _   it should return to 0 so it can play again
