@@ -449,7 +449,8 @@ public class Sketchbook {
           list[i].equals("CVS")) continue;
 
       File subfolder = new File(folder, list[i]);
-      //File lib = new File(subfolder, "library");
+      if (!subfolder.isDirectory()) continue;
+
       File entry = new File(subfolder, list[i] + ".pde");
       // if a .pde file of the same prefix as the folder exists..
       if (entry.exists()) {
@@ -471,8 +472,8 @@ public class Sketchbook {
         menu.add(item);
         ifound = true;
 
-      } else if (subfolder.isDirectory()) {  // only follow if a dir
-        // get recursive
+      } else {
+        // not a sketch folder, but maybe a subfolder containing sketches
         JMenu submenu = new JMenu(list[i]);
         // needs to be separate var
         // otherwise would set ifound to false
@@ -512,6 +513,8 @@ public class Sketchbook {
           list[i].equals("CVS")) continue;
 
       File subfolder = new File(folder, list[i]);
+      if (!subfolder.isDirectory()) continue;
+
       File exported = new File(subfolder, "library");
       File entry = new File(exported, list[i] + ".jar");
       // if a .jar file of the same prefix as the folder exists
@@ -547,11 +550,10 @@ public class Sketchbook {
         menu.add(item);
         ifound = true;
 
-      } else if (subfolder.isDirectory()) {
+      } else {  // not a library, but is still a folder, so recurse
         JMenu submenu = new JMenu(list[i]);
-        // needs to be separate var
-        // otherwise would set ifound to false
-        boolean found = addLibraries(submenu, subfolder); //, false);
+        // needs to be separate var, otherwise would set ifound to false
+        boolean found = addLibraries(submenu, subfolder);
         if (found) {
           menu.add(submenu);
           ifound = true;
