@@ -165,7 +165,7 @@ public class PApplet extends Applet
    * true if no size() command has been executed. This is used to wait until
    * a size has been set before placing in the window and showing it.
    */
-  //protected boolean defaultSize;
+  public boolean defaultSize;
 
   /**
    * Pixel buffer from this applet's PGraphics.
@@ -464,9 +464,12 @@ public class PApplet extends Applet
     if ((initialSize.width != 0) && (initialSize.height != 0)) {
       size(initialSize.width, initialSize.height);
     } else {
+      //System.out.println("setting default");
       size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-      width = 0;  // use this to flag whether the width/height are valid
-      height = 0;
+      this.defaultSize = true;
+      //System.out.println("zeroing");
+      //this.width = 0;  // use this to flag whether the width/height are valid
+      //this.height = 0;
       // need to set width/height otherwise
       // they won't work for static mode apps
       //defaultSize = true;
@@ -814,7 +817,7 @@ public class PApplet extends Applet
 
       this.width = iwidth;
       this.height = iheight;
-      //defaultSize = false;
+      defaultSize = false;
 
       // make the applet itself larger.. it's a subclass of Component,
       // so this is important for when it's embedded inside another app.
@@ -1171,6 +1174,7 @@ public class PApplet extends Applet
           // now for certain that we've got a valid size
           this.width = g.width;
           this.height = g.height;
+          this.defaultSize = false;
 
         } else {  // frameCount > 0, meaning an actual draw()
           // update the current framerate
@@ -5573,8 +5577,8 @@ v              PApplet.this.stop();
 
       // wait until the applet has figured out its width
       // hoping that this won't hang if the applet has an exception
-      while ((applet.width == 0) && !applet.finished) {
-      //while (applet.defaultSize && !applet.finished) {
+      //while ((applet.width == 0) && !applet.finished) {
+      while (applet.defaultSize && !applet.finished) {
         try {
           Thread.sleep(5);
 
