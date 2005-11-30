@@ -1323,10 +1323,10 @@ public class PGraphics3 extends PGraphics {
   protected void render_triangles() {
     //System.out.println("rendering " + triangleCount + " triangles");
 
-    if (rawShapeRecorder != null) {
-      rawShapeRecorder.colorMode(RGB, 1);
-      rawShapeRecorder.noStroke();
-      rawShapeRecorder.beginShape(TRIANGLES);
+    if (recorderRaw != null) {
+      recorderRaw.colorMode(RGB, 1);
+      recorderRaw.noStroke();
+      recorderRaw.beginShape(TRIANGLES);
     }
 
     for (int i = 0; i < triangleCount; i ++) {
@@ -1375,18 +1375,18 @@ public class PGraphics3 extends PGraphics {
       triangle.setIndex(index);
       triangle.render();
 
-      if (rawShapeRecorder != null) {
-        rawShapeRecorder.fill(ar, ag, ab, a[A]);
-        rawShapeRecorder.vertex(a[X], a[Y]);  // a[X] and not a[VX] ?
-        rawShapeRecorder.fill(br, bg, bb, b[A]);
-        rawShapeRecorder.vertex(b[X], b[Y]);
-        rawShapeRecorder.fill(cr, cg, cb, c[A]);
-        rawShapeRecorder.vertex(c[X], c[Y]);
+      if (recorderRaw != null) {
+        recorderRaw.fill(ar, ag, ab, a[A]);
+        recorderRaw.vertex(a[X], a[Y]);  // a[X] and not a[VX] ?
+        recorderRaw.fill(br, bg, bb, b[A]);
+        recorderRaw.vertex(b[X], b[Y]);
+        recorderRaw.fill(cr, cg, cb, c[A]);
+        recorderRaw.vertex(c[X], c[Y]);
       }
     }
 
-    if (rawShapeRecorder != null) {
-      rawShapeRecorder.endShape();
+    if (recorderRaw != null) {
+      recorderRaw.endShape();
     }
   }
 
@@ -3800,9 +3800,9 @@ public class PGraphics3 extends PGraphics {
   // RAW SHAPE RECORDING
 
 
-  public void recordShapesRaw(PGraphics rawShapeRecorder) {
-    this.rawShapeRecorder = rawShapeRecorder;
-    rawShapeRecorder.beginFrame();
+  public void recordRaw(PGraphics recorderRaw) {
+    this.recorderRaw = recorderRaw;
+    recorderRaw.beginFrame();
   }
 
 

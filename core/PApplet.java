@@ -1134,8 +1134,8 @@ public class PApplet extends Applet
         if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                   " 1b draw");
 
-        boolean shapeRecorderNull = true;
-        boolean rawShapeRecorderNull = true;
+        boolean recorderNull = true;
+        boolean recorderRawNull = true;
 
         if (frameCount == 0) {
           try {
@@ -1224,8 +1224,8 @@ public class PApplet extends Applet
           // as of draw().. this will prevent the recorder from being
           // reset if recordShape() is called in an event method, such
           // as mousePressed()
-          shapeRecorderNull = (recorder == null);
-          rawShapeRecorderNull = (g.rawShapeRecorder == null);
+          recorderNull = (recorder == null);
+          recorderRawNull = (g.recorderRaw == null);
 
           // dmouseX/Y is updated only once per frame
           dmouseX = mouseX;
@@ -1251,16 +1251,16 @@ public class PApplet extends Applet
         }
 
         g.endFrame();
-        if (!shapeRecorderNull) {
+        if (!recorderNull) {
           if (recorder != null) {
             recorder.endFrame();
             recorder = null;
           }
         }
-        if (!rawShapeRecorderNull) {
-          if (g.rawShapeRecorder != null) {
-            g.rawShapeRecorder.endFrame();
-            g.rawShapeRecorder = null;
+        if (!recorderRawNull) {
+          if (g.recorderRaw != null) {
+            g.recorderRaw.endFrame();
+            g.recorderRaw = null;
           }
         }
 
@@ -5715,42 +5715,10 @@ v              PApplet.this.stop();
   //////////////////////////////////////////////////////////////
 
 
-
-  public void recordShapes(PGraphics recorder) {
+  public void record(PGraphics recorder) {
     this.recorder = recorder;
     recorder.beginFrame();
   }
-
-
-  //public void recordShapesRaw(PGraphics raw) {
-  //g.rawShapeRecorder = raw;
-  //raw.beginFrame();
-  //}
-
-
-  /*
-  //recordShapes(recorder, "frame-" + nf(frameCount, 4));
-
-  public void recordShapes(PGraphics recorder, String filename) {
-    int first = filename.indexOf('#');
-    int last = filename.lastIndexOf('#');
-
-    if (first != -1) {
-      String prefix = filename.substring(0, first);
-      int count = last - first + 1;
-      String suffix = filename.substring(last + 1);
-      filename = prefix + nf(frameCount, count) + suffix;
-    }
-    recordShapes(recorder, savePath(filename));
-  }
-
-
-  public void recordShapes(PGraphics recorder, File file) {
-    this.recorder = recorder;
-    //recorder.record(frameCount, file);
-    recorder.beginFrame(); //frameCount, file);
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
@@ -5760,17 +5728,6 @@ v              PApplet.this.stop();
     g.loadPixels();
     pixels = g.pixels;
   }
-
-
-  //public void updatePixels() {
-    // anything special here?
-    //g.updatePixels();
-  //}
-
-
-  //public void updatePixels(int x1, int y1, int x2, int y2) {
-  //g.updatePixels(x1, y1, x2, y2);
-  //}
 
 
   //////////////////////////////////////////////////////////////
@@ -6904,8 +6861,8 @@ v              PApplet.this.stop();
   }
 
 
-  public void recordShapesRaw(PGraphics rawShapeRecorder) {
-    if (recorder != null) recorder.recordShapesRaw(rawShapeRecorder);
-    g.recordShapesRaw(rawShapeRecorder);
+  public void recordRaw(PGraphics recorderRaw) {
+    if (recorder != null) recorder.recordRaw(recorderRaw);
+    g.recordRaw(recorderRaw);
   }
 }

@@ -1,4 +1,5 @@
 0098 core
+X change recordShapes() to just record() and recordRaw()
 
 _ width, height set to zero in static mode
 _   probably only set when resize() is called, and it's not happening
@@ -10,8 +11,7 @@ _ PSound.play() won't play the sound a 2nd time
 _   (have to call stop() first)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=209
 
-_ change recordShapes() to just record() and recordRaw()
-_ make dxf writer that'll work with recordShapesRaw()
+_ make dxf writer that'll work with recordRaw()
 _ enable PGraphicsPDF for inclusion
 _   write documentation on images (they suck) and fonts (use ttf)
 
@@ -25,9 +25,15 @@ _   need to strip off past the file separator or something
 
 0099 or later
 
+threading issues
+_ sketches often freeze when stop is hit on an HT machine
+_   http://dev.processing.org/bugs/show_bug.cgi?id=232
 _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues
 _   http://dev.processing.org/bugs/show_bug.cgi?id=46
+_ debug NumberFormat InterruptedException on dual proc machine
+_   use notify() instead of interrupt()? 
+_   or Thread.currentThread() should be checked first?
 
 _ tint() and noTint() switching problem in P2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=222
@@ -35,10 +41,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=222
 _ display() as a function name is problematic
 _   causes nothing to show up.. either rename or mark it final
 _   http://dev.processing.org/bugs/show_bug.cgi?id=213
-
-_ debug NumberFormat InterruptedException on dual proc machine
-_   use notify() instead of interrupt()? 
-_   or Thread.currentThread() should be checked first?
 
 _ more image file i/o in java 1.4
 _   add dynamic loading of the jpeg, png, and gif(?) encoder classes
