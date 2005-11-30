@@ -70,15 +70,16 @@ who have a slow internet connection.
 
 3. INSTALL QUICKTIME FOR JAVA (Windows users only)
 
-* you'll also need to install quicktime for java. grab a quicktime
-  installer from: http://www.apple.com/quicktime/download/
-  don't try to be sly & use the itunes installer. we all love itunes
-  but it doesn't include quicktime for java by default. or if you were
-  sly, you might need to read the point below about using the updater:
+* You'll also need to install QuickTime for Java. Grab the QuickTime
+  (and iTunes) installer from: http://www.apple.com/quicktime/download/
+  or a version that doesn't include iTunes from here:
+  http://www.apple.com/quicktime/download/standalone.html
+  As of QuickTime 7 (iTunes 6), QuickTime for Java is mercifully
+  included by default. 
 
-* if you already have quicktime installed, just make sure that
-  quicktime for java has already been installed, use the quicktime
-  updater (Program Files -> QuickTime -> QuickTime Updater) hit the
+* If you're already using QuickTime 6, just make sure that
+  QuickTime for Java has already been installed, use the QuickTime
+  Updater (Program Files -> QuickTime -> QuickTime Updater) hit the
   'Details' button in the updater, and if it lists "Not installed" 
   for "QuickTime for Java", well, take care of that.
 
@@ -165,4 +166,4 @@ http://dev.processing.org/bugs/show_bug.cgi?id=151
 ////////////////////////////////////////////////////////////////////
 
 
-Ben Fry - Updated 13 September 2005
+Ben Fry - Updated 30 November 2005
