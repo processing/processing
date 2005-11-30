@@ -10,7 +10,7 @@ releases will be super crusty.
 ABOUT REV 0097 - 29 November 2005
 
 "Export to Application" is here! See the FAQ for more details:
-http://processing.org/faq/bugs.html?application
+http://processing.org/faq/bugs.html#application
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
