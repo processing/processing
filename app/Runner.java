@@ -234,7 +234,8 @@ public class Runner implements MessageConsumer {
     applet.init();
     //applet.start();
 
-    while ((applet.width == 0) && !applet.finished) {
+    //while ((applet.width == 0) && !applet.finished) {
+    while ((applet.defaultSize) && !applet.finished) {
       try {
         if (applet.exception != null) {
           throw new RunnerException(applet.exception.getMessage());
