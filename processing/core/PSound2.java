@@ -41,8 +41,9 @@ import javax.sound.sampled.*;
  * Java Alamanac</A>
  */
 public class PSound2 extends PSound {
-  Clip clip;
+  public Clip clip;
   FloatControl gainControl;
+  boolean stopCalled;
 
 
   public PSound2(PApplet iparent, InputStream input) {
@@ -111,6 +112,22 @@ public class PSound2 extends PSound {
         clip.addLineListener(new LineListener() {
             public void update(LineEvent event) {
               if (event.getType() == LineEvent.Type.STOP) {
+                if (!stopCalled) {
+                  // if the stop() method was called, then the clip
+                  // is already being stopped, and stopping it here will
+                  // may pre-empt it from being immediately restarted.
+                  // i.e. with the code sound.stop(); sound.play();
+                  if (playing()) {
+                    // when playing, needs to shut everything off
+                    clip.stop();
+                    clip.setFramePosition(0);
+                  } else {
+                    // if not playing, just needs to reset things
+                    clip.stop();
+                  }
+                }
+                stopCalled = false;
+
                 try {
                   soundEventMethod.invoke(parent,
                                           new Object[] { PSound2.this });
@@ -135,6 +152,11 @@ public class PSound2 extends PSound {
 
   public void play() {
     clip.start();
+  }
+
+
+  public boolean playing() {
+    return clip.isActive();
   }
 
 
@@ -170,11 +192,13 @@ public class PSound2 extends PSound {
    * Stops the audio and rewinds to the beginning.
    */
   public void stop() {
+    //System.out.println("method stop");
     // clip may become null in the midst of this method
     //if (clip != null) clip.stop();
     //if (clip != null) clip.setFramePosition(0);
     clip.stop();
     clip.setFramePosition(0);
+    stopCalled = true;
   }
 
 
