@@ -426,6 +426,7 @@ select which one you actually want, but for now, enjoy the bounty.
 <LI>When exporting for Mac OS X from Windows, be sure to read through
 the readme.txt file in the application.macosx folder&mdash;your
 application likely won't work on Mac OS X without modification.
+<LI>The Mac OS X export is a nice .app bundle like a regular OS X application. You can change the icon or edit its settings by using "Show Package Contents" and editing Info.plist or replacing sketch.icns with something more exciting.
 <LI>Windows is a shell .exe that calls the code and requires the "lib"
 folder along with it be kept intact. Someday we might make Windows be
 a nice single .exe file, but this requires more time to implement, and
@@ -450,6 +451,8 @@ application. If you've set outrageous memory requirements, you might
 want to undo that before exporting for others, or edit the exported
 files by hand (Contents/Resources/Info.plist on Mac OS X and
 lib/args.txt on Windows).
+<LI>Holding down shift while clicking "Export" on the toolbar will export
+to application instead of an applet.
 <LI>Someday we'll also add features like icon files and whatnot. 
 Or at least a default icon for the exported stuff. Or maybe even a
 splash screen while the VM is loading. Again, if you want more
