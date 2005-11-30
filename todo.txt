@@ -1,11 +1,14 @@
 0098 pde
+X update to java 1.4.2_10 on windows
 
-_ update to java 1.4.2_09 on windows
-_ update to java 1.4.2_09 on linux
+_ update to java 1.4.2_10 on linux
 _ don't allow subfolders forever inside the sketchbook folder
 _   once a sketch is found, don't recurse deeper
 _   same for libraries, cuz this makes a mess
 _   (do this right after rev 91 release... could break things)
+
+_ sketches often freeze when stop is hit on an HT machine
+_   http://dev.processing.org/bugs/show_bug.cgi?id=232
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
