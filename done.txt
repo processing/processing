@@ -1,3 +1,46 @@
+0097 pde
+export-to-application
+X http://dev.processing.org/bugs/show_bug.cgi?id=60
+X   make a note in the faq that it's implemented
+X add manifest.mf to exported applets so that applications will work
+X   include main class info for executable jar file with jdk > 1.2
+X   was already done before
+X   META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
+o problem with packages.. currently mainClassName is preproc name
+o   and "name" is the sketch name, w/o package
+o   but if a package were in use, then would be trouble
+X   not allowing packages for main classes
+o lock feature for present mode (part of export to application?)
+X   just need to override the key events
+o   main() method needs to set layout manager if jexegen is to be used
+o     (msft vm defaults to null layout manager)
+o   also make sure pack() is happening
+X PApplet.main(new String[] { "TheClass" });
+X   this will need to detect whether the user has their own main()
+o   or even PApplet.main(new String[] { getClass().getName() });
+X save code before export, otherwise .pde exported is empty
+X   ask user ok or cancel to save code before exporting
+X   http://dev.processing.org/bugs/show_bug.cgi?id=157
+X can macosx jnilib files be placed in the resources dir?
+X shift-export should export as application
+X write support for linux export
+X need per-platform settings for exports
+X   opengl needs to export .jnilib for macosx, but no dll and so files
+X   if nothing available for that platform, uses "application" setting
+X   if no application setting or export.txt file, then export everything
+o write code for selecting the output platform
+X   just export for all platforms
+X documentation
+X   people using "java" mode must create their own main
+X   another function named main() is a no-no.. it'll confuse the preproc
+X   add these items to the faq
+X how to handle qtjava in exports?
+X   problem because on export, the qtjava import happens before lib import
+X   why is this different between compiling and exporting?
+X     was a problem because example was named "Movie"
+X     http://dev.processing.org/bugs/show_bug.cgi?id=230
+
+
 0096 pde
 o separate processing editor/compiler
 o   can this be done without too much trouble?

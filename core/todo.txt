@@ -1,20 +1,29 @@
-0097 core
-X no changes, only export to application stuff
+0098 core
+
+_ width, height set to zero in static mode
+_   probably only set when resize() is called, and it's not happening
+_   be careful when fixing this, bugs 195/197 were a result
+_   http://dev.processing.org/bugs/show_bug.cgi?id=195
+_   http://dev.processing.org/bugs/show_bug.cgi?id=197
 
 _ PSound.play() won't play the sound a 2nd time
 _   (have to call stop() first)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=209
 
-
-
-_ make dxf writer that'll work with recordShapesRaw()
-
 _ change recordShapes() to just record() and recordRaw()
+_ make dxf writer that'll work with recordShapesRaw()
+_ enable PGraphicsPDF for inclusion
+_   write documentation on images (they suck) and fonts (use ttf)
 
 this should be fixed, test
 _ 404 error because first searches applet directory in isometricblocks
 _ "this file is named" errors don't like subdirectories
 _   need to strip off past the file separator or something
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+0099 or later
 
 _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues
@@ -36,12 +45,6 @@ _   add dynamic loading of the jpeg, png, and gif(?) encoder classes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=165
 _   http://java.sun.com/products/java-media/jai/index.jsp
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1120174647
-
-_ width, height set to zero in static mode
-_   probably only set when resize() is called, and it's not happening
-_   be careful when fixing this, bugs 195/197 were a result
-_   http://dev.processing.org/bugs/show_bug.cgi?id=195
-_   http://dev.processing.org/bugs/show_bug.cgi?id=197
 
 _ when using PGraphics, must call beginFrame() and endFrame()
 _   also need to be able to turn off MemoryImageSource on endFrame

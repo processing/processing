@@ -1,45 +1,11 @@
-0097 pde
+0098 pde
 
-export-to-application
-X http://dev.processing.org/bugs/show_bug.cgi?id=60
-X   make a note in the faq that it's implemented
-X add manifest.mf to exported applets so that applications will work
-X   include main class info for executable jar file with jdk > 1.2
-X   was already done before
-X   META-INF/MANIFEST.MF contains just "Main-Class: ClassName"
-o problem with packages.. currently mainClassName is preproc name
-o   and "name" is the sketch name, w/o package
-o   but if a package were in use, then would be trouble
-X   not allowing packages for main classes
-o lock feature for present mode (part of export to application?)
-X   just need to override the key events
-o   main() method needs to set layout manager if jexegen is to be used
-o     (msft vm defaults to null layout manager)
-o   also make sure pack() is happening
-X PApplet.main(new String[] { "TheClass" });
-X   this will need to detect whether the user has their own main()
-o   or even PApplet.main(new String[] { getClass().getName() });
-X save code before export, otherwise .pde exported is empty
-X   ask user ok or cancel to save code before exporting
-X   http://dev.processing.org/bugs/show_bug.cgi?id=157
-X can macosx jnilib files be placed in the resources dir?
-X shift-export should export as application
-X write support for linux export
-X need per-platform settings for exports
-X   opengl needs to export .jnilib for macosx, but no dll and so files
-X   if nothing available for that platform, uses "application" setting
-X   if no application setting or export.txt file, then export everything
-o write code for selecting the output platform
-X   just export for all platforms
-X documentation
-X   people using "java" mode must create their own main
-X   another function named main() is a no-no.. it'll confuse the preproc
-X   add these items to the faq
-X how to handle qtjava in exports?
-X   problem because on export, the qtjava import happens before lib import
-X   why is this different between compiling and exporting?
-X     was a problem because example was named "Movie"
-X     http://dev.processing.org/bugs/show_bug.cgi?id=230
+_ update to java 1.4.2_09 on windows
+_ update to java 1.4.2_09 on linux
+_ don't allow subfolders forever inside the sketchbook folder
+_   once a sketch is found, don't recurse deeper
+_   same for libraries, cuz this makes a mess
+_   (do this right after rev 91 release... could break things)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -48,22 +14,15 @@ X     http://dev.processing.org/bugs/show_bug.cgi?id=230
 _ exported movies seem to have trouble
 _   http://dev.processing.org/bugs/show_bug.cgi?id=231
 
-_ threading bug with sonia and rev 91
-
 _ make .pde files double-clickable from windows
 X   on drag, are these already passed to argv[]?
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
 _   http://groups.google.com/group/comp.os.ms-windows.programmer.misc/browse_thread/thread/4095cb6fc807863/ecdb3b35b0787116%23ecdb3b35b0787116?sa=X&oi=groupsr&start=0&num=3
 
-_ do something about the summary field to not make it editable
-_   maybe just move it away from its current location?
-_   call it "bug title" instead of "summary"?
-
 the biggies
 _ bring back P2D with proper stuff 
 _   it's something we had and we lost
-_ export to application
 _ autoformat deleting code
 _ use javac?
 _   ask japanese students about whether jikes is working ok
@@ -75,10 +34,6 @@ _   and allow a checkbox for "always run externally"
 _   that way people don't have to adjust the memory settings for p5 itself
 _   perhaps the memory setting should be enabled/disabled
 _     that way if it's enabled, will always run externally
-
-_ make a web page that describes how to use the bugs db
-_   don't change the bug subject/summary text
-_   don't mess with priorities (i will)
 
 board faq
 _ someone wrote up an initial version of this
@@ -128,16 +83,19 @@ _   be sure to check the "complete" reference
 _ change bugs.html to issues.html
 _   and add a redirect in httpd.conf
 
+bugs faq
+_ make a web page that describes how to use the bugs db
+_   don't change the bug subject/summary text
+_   don't mess with priorities (i will)
+_ do something about the bug summary field to not make it editable
+_   maybe just move it away from its current location?
+_   call it "bug title" instead of "summary"?
+
 _ properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
 _   perhaps the get around this by building into sketch folder
 _     when non-ascii chars in use, just launch everything externally
-
-_ don't allow subfolders forever inside the sketchbook folder
-_   once a sketch is found, don't recurse deeper
-_   same for libraries, cuz this makes a mess
-_   (do this right after rev 91 release... could break things)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

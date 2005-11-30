@@ -1,3 +1,7 @@
+0097 core
+X no changes, only export to application stuff
+
+
 0096 core
 X set applet.path to user.dir if init() is reached and it's not set
 X add DISABLE_DEPTH_TEST to PGraphics3
