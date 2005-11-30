@@ -431,10 +431,10 @@ public class PGraphicsGL extends PGraphics3 {
       float cb = min(1, triangleColors[i][2][TRI_DIFFUSE_B] +
                      triangleColors[i][2][TRI_SPECULAR_B]);
 
-      if (rawShapeRecorder != null) {
-        rawShapeRecorder.colorMode(RGB, 1);
-        rawShapeRecorder.noStroke();
-        rawShapeRecorder.beginShape(TRIANGLES);
+      if (recorderRaw != null) {
+        recorderRaw.colorMode(RGB, 1);
+        recorderRaw.noStroke();
+        recorderRaw.beginShape(TRIANGLES);
       }
 
       int textureIndex = triangles[i][TEXTURE_INDEX];
@@ -570,14 +570,14 @@ public class PGraphicsGL extends PGraphics3 {
 
         gl.glDisable(GL.GL_TEXTURE_2D);
 
-        if (rawShapeRecorder != null) {
-          rawShapeRecorder.texture(texture);
-          rawShapeRecorder.fill(ar, ag, ab, a[A]);
-          rawShapeRecorder.vertex(a[VX], a[VY], a[U] * uscale, a[V] * vscale);
-          rawShapeRecorder.fill(br, bg, bb, b[A]);
-          rawShapeRecorder.vertex(b[VX], b[VY], b[U] * uscale, b[V] * vscale);
-          rawShapeRecorder.fill(cr, cg, cb, c[A]);
-          rawShapeRecorder.vertex(c[VX], c[VY], c[U] * uscale, c[V] * vscale);
+        if (recorderRaw != null) {
+          recorderRaw.texture(texture);
+          recorderRaw.fill(ar, ag, ab, a[A]);
+          recorderRaw.vertex(a[VX], a[VY], a[U] * uscale, a[V] * vscale);
+          recorderRaw.fill(br, bg, bb, b[A]);
+          recorderRaw.vertex(b[VX], b[VY], b[U] * uscale, b[V] * vscale);
+          recorderRaw.fill(cr, cg, cb, c[A]);
+          recorderRaw.vertex(c[VX], c[VY], c[U] * uscale, c[V] * vscale);
         }
 
       } else {
@@ -599,19 +599,19 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
-        if (rawShapeRecorder != null) {
-          rawShapeRecorder.fill(ar, ag, ab, a[A]);
-          rawShapeRecorder.vertex(a[VX], a[VY]);
-          rawShapeRecorder.fill(br, bg, bb, b[A]);
-          rawShapeRecorder.vertex(b[VX], b[VY]);
-          rawShapeRecorder.fill(cr, cg, cb, c[A]);
-          rawShapeRecorder.vertex(c[VX], c[VY]);
+        if (recorderRaw != null) {
+          recorderRaw.fill(ar, ag, ab, a[A]);
+          recorderRaw.vertex(a[VX], a[VY]);
+          recorderRaw.fill(br, bg, bb, b[A]);
+          recorderRaw.vertex(b[VX], b[VY]);
+          recorderRaw.fill(cr, cg, cb, c[A]);
+          recorderRaw.vertex(c[VX], c[VY]);
         }
         gl.glEnd();
       }
     }
-    if (rawShapeRecorder != null) {
-      rawShapeRecorder.endShape();
+    if (recorderRaw != null) {
+      recorderRaw.endShape();
     }
     report("out of triangles");
   }
@@ -633,8 +633,8 @@ public class PGraphicsGL extends PGraphics3 {
       //report("render_lines 2 " + lines[i][STROKE_WEIGHT]);
       gl.glBegin(GL.GL_LINE_STRIP);
 
-      if (rawShapeRecorder != null) {
-        rawShapeRecorder.strokeWeight(sw);
+      if (recorderRaw != null) {
+        recorderRaw.strokeWeight(sw);
       }
 
       // always draw a first point
@@ -643,12 +643,12 @@ public class PGraphicsGL extends PGraphics3 {
       gl.glVertex3f(a[VX], a[VY], a[VZ]);
       //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
 
-      if (rawShapeRecorder != null) {
+      if (recorderRaw != null) {
         if (a[SA] > EPSILON) {  // don't draw if transparent
-          rawShapeRecorder.colorMode(RGB, 1);
-          rawShapeRecorder.beginShape(LINE_STRIP);
-          rawShapeRecorder.stroke(a[SR], a[SG], a[SB], a[SA]);
-          rawShapeRecorder.vertex(a[VX], a[VY]);
+          recorderRaw.colorMode(RGB, 1);
+          recorderRaw.beginShape(LINE_STRIP);
+          recorderRaw.stroke(a[SR], a[SG], a[SB], a[SA]);
+          recorderRaw.vertex(a[VX], a[VY]);
         }
       }
 
@@ -659,14 +659,14 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
-        if (rawShapeRecorder != null) {
-          rawShapeRecorder.stroke(b[SR], b[SG], b[SB], b[SA]);
-          rawShapeRecorder.vertex(b[VX], b[VY]);
+        if (recorderRaw != null) {
+          recorderRaw.stroke(b[SR], b[SG], b[SB], b[SA]);
+          recorderRaw.vertex(b[VX], b[VY]);
         }
         i++;
       }
-      if (rawShapeRecorder != null) {
-        rawShapeRecorder.endShape();
+      if (recorderRaw != null) {
+        recorderRaw.endShape();
       }
       gl.glEnd();
     }

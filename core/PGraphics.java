@@ -66,8 +66,8 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // used by recordShapesRaw()
-  public PGraphics rawShapeRecorder;
+  // used by recordRaw()
+  public PGraphics recorderRaw;
 
   // ........................................................
 
@@ -3529,8 +3529,8 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  public void recordShapesRaw(PGraphics rawShapeRecorder) {
-    throw new RuntimeException("recordShapesRaw() not supported " +
+  public void recordRaw(PGraphics recorderRaw) {
+    throw new RuntimeException("recordRaw() not supported " +
                                "by this renderer.");
   }
 }
