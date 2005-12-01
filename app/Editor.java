@@ -633,7 +633,7 @@ public class Editor extends JFrame
 
     item = newJMenuItem("Auto Format", 'T', false);
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        synchronized public void actionPerformed(ActionEvent e) {
           new AutoFormat(Editor.this).show();
           //handleBeautify();
         }
