@@ -9,6 +9,12 @@ X javadoc - make notes about preproc
 X   move the readme stuff for each file into the files themselves
 X   also put a general rundown of the preproc into Preprocessor.java
 X   subclasses need to use "public void keyPressed" not "void keyPressed"
+X tweak linux version shell script to properly set directory name
+X   http://dev.processing.org/bugs/show_bug.cgi?id=234
+
+_ bugs in auto-format
+_   if an error occurs during format, report it and don't change text
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117081646
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -17,7 +23,6 @@ X   subclasses need to use "public void keyPressed" not "void keyPressed"
 the biggies (from casey)
 _ bring back P2D with proper stuff 
 _   it's something we had and we lost
-_ autoformat deleting code
 _ use javac?
 _   ask japanese students about whether jikes is working ok
 
@@ -422,6 +427,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=75
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130781367;start=2#2
 _ add ability to set the display where present mode makes things start
 _ add pref item for setting the memory properly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=233
 o   external apps should inherit memory settings from p5 itself
 _   too confusing to set the memory in two places
 _   or perhaps, have a setting in the ide for it
@@ -433,8 +439,8 @@ _     that way if it's enabled, will always run externally
 
 PDE / Runner 
 
-_ stop() not working very well
-_   doesn't seem to actually be stopping things
+_ stop() not working very well 
+_   as a result, dispose() methods aren't being called on libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=77
 _ NullPointerException inside setup() comes up weird
 _   because NullPointerException is a RuntimeException
@@ -519,13 +525,10 @@ _ tool to run in appletviewer? sun.applet.Main is appletviewer
 
 TOOLS / Auto Format
 
-_ if an error occurs during format, report it and don't change text
 _ do a better job of maintaining cursor during beautify 
 _ only auto format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
-_ bugs in auto-format
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117081646
 
 
 TOOLS / Create Font
