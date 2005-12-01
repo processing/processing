@@ -16,7 +16,10 @@ ABOUT REV 0098 - (unreleased) December 2005
 
 + more edits are now a compound edit, so hitting "Undo" after "Auto
   Format" will undo to the previous state, instead of first going to a
-  blank screen and requiring a second "Undo."
+  blank screen and requiring a second "Undo." this is particularly
+  noticeable when bugs in Auto Format cause code to be mangled, and
+  hitting undo would "delete" the code entirely (a second undo would
+  fix things, but not everyone figured that out). 
   http://dev.processing.org/bugs/show_bug.cgi?id=139
 
 + several fixes to "Auto Format", however many more bugs uncovered in
@@ -27,9 +30,15 @@ ABOUT REV 0098 - (unreleased) December 2005
   http://dev.processing.org/bugs/show_bug.cgi?id=235
   http://dev.processing.org/bugs/show_bug.cgi?id=236
 
++ better bug handling with auto format. if an exception occurs, 
+  auto format should return without mangling your code.
+
 + once again fixed a bug where width and height were set to zero in
   static mode apps. hopefully fixed properly this time:
   http://dev.processing.org/bugs/show_bug.cgi?id=198
+
++ fixed a bug where play() wouldn't play a sound the second time
+  unless stop() had been called on it.
 
 
 [ changes ] 
