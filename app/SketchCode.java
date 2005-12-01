@@ -46,7 +46,11 @@ public class SketchCode {
   /** Document object for this tab */
   public SyntaxDocument document;
 
-  /** Undo Manager for this tab, each tab keeps track of their own */
+  /**
+   * Undo Manager for this tab, each tab keeps track of their own
+   * Editor.undo will be set to this object when this code is the tab
+   * that's currently the front.
+   */
   public UndoManager undo; // = new UndoManager();
 
   // saved positions from last time this tab was used

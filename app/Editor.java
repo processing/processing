@@ -116,6 +116,9 @@ public class Editor extends JFrame
   protected UndoAction undoAction;
   protected RedoAction redoAction;
   UndoManager undo;
+  // used internally, and only briefly
+  CompoundEdit compoundEdit;
+
   //static public UndoManager undo = new UndoManager(); // editor needs this guy
 
   //
@@ -233,22 +236,6 @@ public class Editor extends JFrame
     // (har har har.. that was wishful thinking)
     listener = new EditorListener(this, textarea);
     pain.add(box);
-
-    /*
-    // set the undo stuff for this feller
-    Document document = textarea.getDocument();
-    //document.addUndoableEditListener(new PdeUndoableEditListener());
-    document.addUndoableEditListener(new UndoableEditListener() {
-        public void undoableEditHappened(UndoableEditEvent e) {
-          if (undo != null) {
-            //System.out.println(e.getEdit());
-            undo.addEdit(e.getEdit());
-            undoAction.updateUndoState();
-            redoAction.updateRedoState();
-          }
-        }
-      });
-    */
 
     DropTarget dt = new DropTarget(this, new DropTargetListener() {
 
@@ -998,60 +985,13 @@ public class Editor extends JFrame
    * Called to update the text but not switch to a different
    * set of code (which would affect the undo manager).
    */
-  //public void setText(String what) { //, boolean discardUndo) {
-  //setText(what, 0, 0);
-  //}
-
-
-  /**
-   * Called to update the text but not switch to a different
-   * set of code (which would affect the undo manager).
-   */
   public void setText(String what, int selectionStart, int selectionEnd) {
+    beginCompoundEdit();
     textarea.setText(what);
+    endCompoundEdit();
     textarea.select(selectionStart, selectionEnd);
     textarea.requestFocus();  // get the caret blinking
   }
-
-
-  /**
-   * Called by Sketch when the tab is changed or a new set of files are opened.
-   */
-  /*
-  public void setText(String currentProgram,
-                      int selectionStart, int selectionEnd,
-                      UndoManager currentUndo) {
-    //System.out.println("setting text, changing undo");
-    this.undo = null;
-
-    //if (discardUndo) undo.discardAllEdits();
-
-    // don't set the undo object yet otherwise gets hokey
-    textarea.setText(currentProgram);
-    textarea.select(selectionStart, selectionEnd);
-    textarea.requestFocus();  // get the caret blinking
-
-    this.undo = currentUndo;
-    undoAction.updateUndoState();
-    redoAction.updateRedoState();
-  }
-  */
-
-  /*
-  public void setDocument(SyntaxDocument document,
-                          int selectionStart, int selectionStop,
-                          int scrollPosition, UndoManager undo) {
-
-    textarea.setDocument(document, selectionStart, selectionStop,
-                         scrollPosition);
-
-    textarea.requestFocus();  // get the caret blinking
-
-    this.undo = undo;
-    undoAction.updateUndoState();
-    redoAction.updateRedoState();
-  }
-  */
 
 
   /**
@@ -1078,7 +1018,10 @@ public class Editor extends JFrame
       // connect the undo listener to the editor
       code.document.addUndoableEditListener(new UndoableEditListener() {
           public void undoableEditHappened(UndoableEditEvent e) {
-            if (undo != null) {
+            if (compoundEdit != null) {
+              compoundEdit.addEdit(e.getEdit());
+
+            } else if (undo != null) {
               undo.addEdit(e.getEdit());
               undoAction.updateUndoState();
               redoAction.updateRedoState();
@@ -1097,6 +1040,18 @@ public class Editor extends JFrame
     this.undo = code.undo;
     undoAction.updateUndoState();
     redoAction.updateRedoState();
+  }
+
+  public void beginCompoundEdit() {
+    compoundEdit = new CompoundEdit();
+  }
+
+  public void endCompoundEdit() {
+    compoundEdit.end();
+    undo.addEdit(compoundEdit);
+    undoAction.updateUndoState();
+    redoAction.updateRedoState();
+    compoundEdit = null;
   }
 
 
