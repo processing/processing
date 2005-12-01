@@ -1,24 +1,4 @@
-0098 pde
-X update to java 1.4.2_10 on windows
-X update to java 1.4.2_10 on linux
-X don't allow subfolders forever inside the sketchbook folder
-X   once a sketch is found, don't recurse deeper
-X   same for libraries, cuz this makes a mess
-X   made a fix to check only whether something was a dir and move on
-X javadoc - make notes about preproc
-X   move the readme stuff for each file into the files themselves
-X   also put a general rundown of the preproc into Preprocessor.java
-X   subclasses need to use "public void keyPressed" not "void keyPressed"
-X tweak linux version shell script to properly set directory name
-X   http://dev.processing.org/bugs/show_bug.cgi?id=234
-
-bugs in auto-format
-X tools need to use a compound edit
-X   http://dev.processing.org/bugs/show_bug.cgi?id=139
-X ArrayIndexOutOfBoundsException when trying to Auto Format
-X    http://dev.processing.org/bugs/show_bug.cgi?id=110
-X if an error occurs during format, report it and don't change text
-X   this should already be happening anyway
+0099 pde
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

@@ -1,3 +1,16 @@
+0098 core
+X change recordShapes() to just record() and recordRaw()
+X width, height set to zero in static mode
+X   http://dev.processing.org/bugs/show_bug.cgi?id=198
+X   probably only set when resize() is called, and it's not happening
+X   be careful when fixing this, bugs 195/197 were a result:
+X   http://dev.processing.org/bugs/show_bug.cgi?id=195
+X   http://dev.processing.org/bugs/show_bug.cgi?id=197
+X PSound.play() won't play the sound a 2nd time
+X   (have to call stop() first)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=208
+
+
 0097 core
 X no changes, only export to application stuff
 
