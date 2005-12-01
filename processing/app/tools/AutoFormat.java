@@ -88,7 +88,7 @@ public class AutoFormat {
   }
 
 
-  public void comment() {
+  public void comment() throws IOException {
     int save_s_flg;
     save_s_flg = s_flg;
 
@@ -118,7 +118,7 @@ public class AutoFormat {
   }
 
 
-  public char get_string() {
+  public char get_string() throws IOException {
     char ch;
     ch = '*';
     while (true) {
@@ -234,7 +234,7 @@ public class AutoFormat {
     }
   }
 
-  public void cpp_comment()
+  public void cpp_comment() throws IOException
   {
     c = getchr();
     while(c != '\n' && c != '\r' && j<133)
@@ -264,7 +264,7 @@ public class AutoFormat {
   }
 
 
-  public char getchr()
+  public char getchr() throws IOException
   {
     if((peek < 0) && (last_char != ' ') && (last_char != '\t'))
     {
@@ -284,8 +284,8 @@ public class AutoFormat {
         for (int ib=0; ib<nBytesRead; ib++) bArray[ib] = '\0';
 
         lineLength = nBytesRead = 0;
-        try /* to get the next block */
-        {
+        //try /* to get the next block */
+        //{
           if (bin.available() > 0)
           {
             nBytesRead = bin.read(bArray);
@@ -302,11 +302,11 @@ public class AutoFormat {
             EOF = 1;
             peekc  = '\0';
           }
-        }
-        catch(IOException ioe)
-        {
-          System.out.println(ioe.toString());
-        }
+          //}
+          //catch(IOException ioe)
+          //{
+          //System.out.println(ioe.toString());
+          //}
       }
       else
       {
@@ -332,7 +332,7 @@ public class AutoFormat {
   }
 
   /* read to new_line */
-  public int getnl()
+  public int getnl() throws IOException
   {
     int save_s_flg;
     save_s_flg = tabs;
@@ -470,7 +470,12 @@ public class AutoFormat {
     w_jdoc = new String ("/**");
     line_feed = new String ("\n");
 
-    try {   // opening input string
+    // read as long as there is something to read
+    EOF = 0;  // = 1 set in getchr when EOF
+
+    bArray = new byte[BLOCK_MAXLEN];
+    string = new char[BLOCK_MAXLEN];
+    try {  // the whole process
       // open for input
       ByteArrayInputStream in =
         new ByteArrayInputStream(originalText.getBytes());
@@ -478,16 +483,6 @@ public class AutoFormat {
       // add buffering to that InputStream
       bin = new BufferedInputStream(in);
 
-    } catch(Exception e) {
-      System.out.println(e.toString());
-    }
-
-    // read as long as there is something to read
-    EOF = 0;  // = 1 set in getchr when EOF
-
-    bArray = new byte[BLOCK_MAXLEN];
-    string = new char[BLOCK_MAXLEN];
-    try {  // the whole process
       for (int ib = 0; ib < BLOCK_MAXLEN; ib++) bArray[ib] = '\0';
 
       lineLength = nBytesRead = 0;
