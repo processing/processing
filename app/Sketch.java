@@ -2193,7 +2193,7 @@ public class Sketch {
     } else {
       for (int i = 0; i < jarList.length; i++) {
         if (i != 0) exportClassPath.append(":");
-        exportClassPath.append("lib/" + jarList[i]);
+        exportClassPath.append("$APPDIR/lib/" + jarList[i]);
       }
     }
 
@@ -2248,6 +2248,8 @@ public class Sketch {
       // do the newlines explicitly so that windows CRLF
       // isn't used when exporting for unix
       ps.print("#!/bin/sh\n\n");
+      ps.print("APPDIR=`dirname $0`\n");
+      ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
       ps.print("java " + Preferences.get("run.options") +
                " -cp " + exportClassPath +
                " " + this.name + "\n");
