@@ -883,26 +883,25 @@ public class JEditTextArea extends JComponent
       }
   }
 
+
   /**
    * Sets the entire text of this text area.
    */
   public void setText(String text)
   {
-    try
-      {
-        document.beginCompoundEdit();
-        document.remove(0,document.getLength());
-        document.insertString(0,text,null);
-      }
-    catch(BadLocationException bl)
-      {
-        bl.printStackTrace();
-      }
-    finally
-      {
-        document.endCompoundEdit();
-      }
+    try {
+      document.beginCompoundEdit();
+      document.remove(0,document.getLength());
+      document.insertString(0,text,null);
+
+    } catch (BadLocationException bl) {
+      bl.printStackTrace();
+
+    } finally {
+      document.endCompoundEdit();
+    }
   }
+
 
   /**
    * Returns the specified substring of the document.

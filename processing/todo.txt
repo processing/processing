@@ -13,6 +13,8 @@ X tweak linux version shell script to properly set directory name
 X   http://dev.processing.org/bugs/show_bug.cgi?id=234
 
 bugs in auto-format
+X tools need to use a compound edit
+X   http://dev.processing.org/bugs/show_bug.cgi?id=139
 X ArrayIndexOutOfBoundsException when trying to Auto Format
 X    http://dev.processing.org/bugs/show_bug.cgi?id=110
 _ autoformat mangling code
@@ -506,8 +508,6 @@ _     getDefaultShortcut() -> returns the default shortcut this tools wants
 _     needs to be able to get current sketch code
 o     getMenu() -> return non-null the tool is a submenu
 o       no, bad idea.. don't want a zillion submenus on things
-_ tools need to use a compound edit
-_   http://dev.processing.org/bugs/show_bug.cgi?id=139
 _ need a proper means to handle command keys for tools
 _   http://dev.processing.org/bugs/show_bug.cgi?id=140
 _ make some kind of internal color picker
