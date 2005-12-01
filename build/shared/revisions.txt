@@ -7,6 +7,54 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0098 - (unreleased) December 2005
+
+
+[ bug fixes ] 
+
++ fixes for linux shell script for "export to application" 
+
++ more edits are now a compound edit, so hitting "Undo" after "Auto
+  Format" will undo to the previous state, instead of first going to a
+  blank screen and requiring a second "Undo."
+  http://dev.processing.org/bugs/show_bug.cgi?id=139
+
++ several fixes to "Auto Format", however many more bugs uncovered in
+  the process. unfortunately the code was contributed and then
+  abandoned by its original author, making it difficult to maintain.
+  http://dev.processing.org/bugs/show_bug.cgi?id=109
+  http://dev.processing.org/bugs/show_bug.cgi?id=110
+  http://dev.processing.org/bugs/show_bug.cgi?id=235
+  http://dev.processing.org/bugs/show_bug.cgi?id=236
+
++ once again fixed a bug where width and height were set to zero in
+  static mode apps. hopefully fixed properly this time:
+  http://dev.processing.org/bugs/show_bug.cgi?id=198
+
+
+[ changes ] 
+
++ updated to java 1.4.2_10 on windows and linux. the former version
+  was 1.4.2_08, though _10 will be out of sync with macosx which is 
+  currently at 1.4.2_09. 
+
++ updated notes in the javadoc about how the preprocessor works.
+
++ made auto format more verbal in reporting errors and differences to
+  the editor. won't change anything unless actual changes occur, and
+  if an misbalanced parenthesis situation occurs, it's reported as an
+  error.
+
+
+[ api changes ] 
+
++ recordShapes() and recordShapesRaw() will be record() and
+  recordRaw(), though they remain mostly unimplemented.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0097 - 29 November 2005
 
 "Export to Application" is here! See the FAQ for more details:
