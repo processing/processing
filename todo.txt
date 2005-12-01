@@ -19,10 +19,6 @@ X ArrayIndexOutOfBoundsException when trying to Auto Format
 X    http://dev.processing.org/bugs/show_bug.cgi?id=110
 o if an error occurs during format, report it and don't change text
 X   this should already be happening anyway
-_ autoformat mangling code
-_   http://dev.processing.org/bugs/show_bug.cgi?id=109
-_   no newline at end makes a mess (repeated letter)
-_   related? an extra } brace deleting everything after it
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -535,6 +531,12 @@ _ do a better job of maintaining cursor during beautify
 _ only auto format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
+_ autoformat mangling code
+_   http://dev.processing.org/bugs/show_bug.cgi?id=109
+_   http://dev.processing.org/bugs/show_bug.cgi?id=235
+_   http://dev.processing.org/bugs/show_bug.cgi?id=236
+_   no newline at end makes a mess (repeated letter)
+_   related? an extra } brace deleting everything after it
 
 
 TOOLS / Create Font
