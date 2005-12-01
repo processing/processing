@@ -37,18 +37,14 @@ import java.util.StringTokenizer;
 public class AutoFormat {
   Editor editor;
 
-
-  public AutoFormat(Editor editor) {
-    this.editor = editor;
-  }
-
+  static final int BLOCK_MAXLEN = 1024;
 
   StringBuffer strOut;
-  String formattedText;
+  //String formattedText;
   int indentValue;
   String indentChar;
   //String uhOh = null;
-  String theStuff;
+  //String theStuff;
   int EOF;
   BufferedInputStream bin = null;
   int nBytesRead, indexBlock, lineLength, lineNumber;
@@ -69,7 +65,6 @@ public class AutoFormat {
   int s_tabs[][];
   String w_if_, w_else, w_for, w_ds, w_case, w_cpp_comment, w_jdoc;
   int jdoc, j;
-  int BLOCK_MAXLEN;
   char string[];
   byte bstring[];
   byte bblank;
@@ -85,7 +80,12 @@ public class AutoFormat {
 
   String line_feed;
 
-  static int outfil;  // temporary
+  //static int outfil;  // temporary
+
+
+  public AutoFormat(Editor editor) {
+    this.editor = editor;
+  }
 
 
   public void comment() {
@@ -177,7 +177,8 @@ public class AutoFormat {
   }
 
 
-  public void fprintf(int outfil, String out_string) {
+  //public void fprintf(int outfil, String out_string) {
+  public void fprintf(String out_string) {
     //int out_len = out_string.length();
     String j_string = new String(string);
     strOut.append(out_string);
@@ -210,19 +211,23 @@ public class AutoFormat {
       {
         if ((last_char != ';') && (sav_s_flg==1) )
         {
-          fprintf(outfil, strBuffer.substring(i,j));
+          //fprintf(outfil, strBuffer.substring(i,j));
+          fprintf(strBuffer.substring(i,j));
         }
         else
         {
-          fprintf(outfil, strBuffer);
+          //fprintf(outfil, strBuffer);
+          fprintf(strBuffer);
         }
       }
       else
       {
         if (string[i]=='*' || jdoc == 0)
-          fprintf (outfil, " "+strBuffer.substring(i,j));
+          //fprintf (outfil, " "+strBuffer.substring(i,j));
+          fprintf (" "+strBuffer.substring(i,j));
         else
-          fprintf (outfil, " * "+strBuffer.substring(i,j));
+          //fprintf (outfil, " * "+strBuffer.substring(i,j));
+          fprintf (" * "+strBuffer.substring(i,j));
       }
       j = 0;
       string[0] = '\0';
@@ -331,8 +336,9 @@ public class AutoFormat {
     int save_s_flg;
     save_s_flg = tabs;
     peekc = getchr();
-    while(peekc == '\t' || peekc == ' ')
-    {
+    //while ((peekc == '\t' || peekc == ' ') &&
+    //     (j < string.length)) {
+    while (peekc == '\t' || peekc == ' ') {
       string[j++] = peekc;
       peek = -1;
       peekc = '`';
@@ -430,13 +436,13 @@ public class AutoFormat {
   public void show() {
     StringBuffer onechar;
 
-    theStuff = editor.textarea.getText();
+    String originalText = editor.textarea.getText();
     strOut = new StringBuffer();
     indentValue = Preferences.getInteger("editor.tabs.size");
     indentChar = new String(" ");
 
     lineNumber = 0;
-    BLOCK_MAXLEN = 256;
+    //BLOCK_MAXLEN = 256;
     c_level = if_lev = level = e_flg = paren = 0;
     a_flg = q_flg = j = b_flg = tabs = 0;
     if_flg = peek = -1;
@@ -466,7 +472,7 @@ public class AutoFormat {
     try {   // opening input string
       // open for input
       ByteArrayInputStream in =
-        new ByteArrayInputStream(theStuff.getBytes());
+        new ByteArrayInputStream(originalText.getBytes());
 
       // add buffering to that InputStream
       bin = new BufferedInputStream(in);
@@ -539,7 +545,8 @@ public class AutoFormat {
           }
 
           indent_puts();
-          fprintf(outfil, line_feed);
+          //fprintf(outfil, line_feed);
+          fprintf(line_feed);
           s_flg = 1;
           if(e_flg == 1)
           {
@@ -568,7 +575,8 @@ public class AutoFormat {
           indent_puts();
           getnl() ;
           indent_puts();
-          fprintf(outfil,"\n");
+          //fprintf(outfil,"\n");
+          fprintf("\n");
           tabs++;
           s_flg = 1;
           if(p_flg[level] > 0)
@@ -599,7 +607,8 @@ public class AutoFormat {
             onechar = new StringBuffer();
             onechar.append(c);   //  }
             onechar.append(';');
-            fprintf(outfil, onechar.toString());
+            //fprintf(outfil, onechar.toString());
+            fprintf(onechar.toString());
             peek = -1;
             peekc = '`';
           }
@@ -607,12 +616,14 @@ public class AutoFormat {
           {
             onechar = new StringBuffer();
             onechar.append(c);
-            fprintf(outfil, onechar.toString());
+            //fprintf(outfil, onechar.toString());
+            fprintf(onechar.toString());
             peek = 1;
           }
           getnl();
           indent_puts();
-          fprintf(outfil,"\n");
+          //fprintf(outfil,"\n");
+          fprintf("\n");
           s_flg = 1;
           if(c_level < s_level[level])
             if(level > 0) level--;
@@ -664,7 +675,8 @@ public class AutoFormat {
           }
           getnl();
           indent_puts();
-          fprintf(outfil,"\n");
+          //fprintf(outfil,"\n");
+          fprintf("\n");
           s_flg = 1;
           if(if_lev > 0)
             if(if_flg == 1)
@@ -688,7 +700,8 @@ public class AutoFormat {
           if(peekc == ':')
           {
             indent_puts();
-            fprintf (outfil,":");
+            //fprintf (outfil,":");
+            fprintf(":");
             peek = -1;
             peekc = '`';
             break;
@@ -718,7 +731,8 @@ public class AutoFormat {
           peekc = getchr();
           if(peekc == ';')
           {
-            fprintf(outfil,";");
+            //fprintf(outfil,";");
+            fprintf(";");
             peek = -1;
             peekc = '`';
           }
@@ -728,7 +742,8 @@ public class AutoFormat {
           }
           getnl();
           indent_puts();
-          fprintf(outfil,"\n");
+          //fprintf(outfil,"\n");
+          fprintf("\n");
           s_flg = 1;
           break;
 
@@ -743,7 +758,8 @@ public class AutoFormat {
             peekc = '`';
             peek = -1;
             cpp_comment();
-            fprintf(outfil,"\n");
+            //fprintf(outfil,"\n");
+            fprintf("\n");
             break;
           }
           else
@@ -853,6 +869,8 @@ public class AutoFormat {
           }
         } // end switch
 
+        //System.out.println("string len is " + string.length);
+        //System.out.println(string);
         String j_string = new String(string);
 
       } // end while not EOF
@@ -865,28 +883,35 @@ public class AutoFormat {
         selectionEnd = strOut.length() - 1;
       }
 
-      // replace with new bootiful text
-      // selectionEnd hopefully at least in the neighborhood
-      editor.setText(strOut.toString(), selectionEnd, selectionEnd);
-
-      editor.sketch.setModified();
-
       bin.close(); // close buff
+
+      String formattedText = strOut.toString();
+      if (formattedText.equals(originalText)) {
+        editor.message("No changes necessary for Auto Format.");
+
+      } else {
+        // replace with new bootiful text
+        // selectionEnd hopefully at least in the neighborhood
+        editor.setText(formattedText, selectionEnd, selectionEnd);
+        editor.sketch.setModified();
+
+        // warn user if there are too many parens in either direction
+        if (paren != 0) {
+          editor.error("Warning: Too many " +
+                       ((paren < 0) ? "right" : "left") +
+                       " parentheses.");
+
+        } else if (c_level != 0) {  // check braces only if parens are ok
+          editor.error("Warning: Too many " +
+                       ((c_level < 0) ? "right" : "left") +
+                       " curly braces.");
+        } else {
+          editor.message("Auto Format finished.");
+        }
+      }
 
     } catch (Exception e) {
       editor.error(e);
-    }
-
-    // warn user if there are too many parens in either direction
-    if (paren != 0) {
-      System.err.println("Warning: Too many " +
-                         ((paren < 0) ? "right" : "left") +
-                         " parentheses.");
-
-    } else if (c_level != 0) {  // check braces only if parens are ok
-      System.err.println("Warning: Too many " +
-                         ((c_level < 0) ? "right" : "left") +
-                         " curly braces.");
     }
   }
 }
