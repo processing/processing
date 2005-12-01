@@ -298,6 +298,7 @@ public class AutoFormat {
           }
           else
           {
+            //System.out.println("eof a");
             EOF = 1;
             peekc  = '\0';
           }
@@ -498,7 +499,7 @@ public class AutoFormat {
       lineNumber  = 1;
       indexBlock = -1;
       j = 0;
-      while(EOF == 0)
+      while (EOF == 0)
       {
         c = getchr();
         switch(c)
@@ -592,11 +593,13 @@ public class AutoFormat {
           if (c_level < 0)
           {
             EOF = 1;
+            //System.out.println("eof b");
             string[j++] = c;
             indent_puts();
             break;
           }
-          if((if_lev = s_if_lev[c_level]-1) < 0)if_lev = 0;
+          if ((if_lev = s_if_lev[c_level]-1) < 0)
+            if_lev = 0;
           if_flg = s_if_flg[c_level];
           indent_puts();
           tabs--;
@@ -605,7 +608,7 @@ public class AutoFormat {
           if( peekc == ';')
           {
             onechar = new StringBuffer();
-            onechar.append(c);   //  }
+            onechar.append(c);   // the }
             onechar.append(';');
             //fprintf(outfil, onechar.toString());
             fprintf(onechar.toString());
@@ -665,6 +668,7 @@ public class AutoFormat {
             peekc = '\n';
           }
           break;
+
         case ';':
           string[j++] = c;
           indent_puts();
@@ -686,14 +690,17 @@ public class AutoFormat {
             }
             else if_lev = 0;
           break;
+
         case '\\':
           string[j++] = c;
           string[j++] = getchr();
           break;
+
         case '?':
           q_flg = 1;
           string[j++] = c;
           break;
+
         case ':':
           string[j++] = c;
           peekc = getchr();
@@ -781,6 +788,7 @@ public class AutoFormat {
             comment();
             break;
           }
+
         case '#':
           string[j++] = c;
           cc = getchr();
@@ -794,11 +802,13 @@ public class AutoFormat {
           indent_puts();
           s_flg = 1;
           break;
+
         case ')':
           paren--;
           if (paren < 0)
           {
             EOF = 1;
+            //System.out.println("eof c");
           }
           string[j++] = c;
           indent_puts();
@@ -818,6 +828,7 @@ public class AutoFormat {
             }
           }
           break;
+
         case '(':
           string[j++] = c;
           paren++;
@@ -845,6 +856,7 @@ public class AutoFormat {
             if (paren < 0)
             {
               EOF = 1;
+              //System.out.println("eof d");
             }
             indent_puts();
             if(getnl() == 1)
@@ -870,10 +882,29 @@ public class AutoFormat {
         } // end switch
 
         //System.out.println("string len is " + string.length);
-        //System.out.println(string);
+        //if (EOF == 1) System.out.println(string);
         String j_string = new String(string);
 
       } // end while not EOF
+
+      /*
+      int bad;
+      while ((bad = bin.read()) != -1) {
+        System.out.print((char) bad);
+      }
+      */
+      /*
+      char bad;
+      //while ((bad = getchr()) != 0) {
+      while (true) {
+        getchr();
+        if (peek != -1) {
+          System.out.print(last_char);
+        } else {
+          break;
+        }
+      }
+      */
 
       // save current (rough) selection point
       int selectionEnd = editor.textarea.getSelectionEnd();
