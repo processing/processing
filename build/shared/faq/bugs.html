@@ -422,8 +422,8 @@ static public void main(String args[]) {
 </PRE>
 Other advanced options can be read in the 
 <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PApplet.html#main(java.lang.String[])">developer's reference</A> for main(). In a future release, this will be part of an export options dialog.
-<LI>The "Movie" example does not yet work properly, this will be fixed
-shortly. (<A
+<LI>The "Movie" and "Capture" examples do not yet work properly, this
+will be fixed shortly. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=230">Bug 230</A>)
 <LI>Exporting sketches that use the video library may be broken, it's
 not clear the extent of this issue (<A
@@ -434,8 +434,12 @@ and Linux. Someday we might implement a dialog box that lets you
 select which one you actually want, but for now, enjoy the bounty.
 <LI>When exporting for Mac OS X from Windows, be sure to read through
 the readme.txt file in the application.macosx folder&mdash;your
-application likely won't work on Mac OS X without modification.
-<LI>The Mac OS X export is a nice .app bundle like a regular OS X application. You can change the icon or edit its settings by using "Show Package Contents" and editing Info.plist or replacing sketch.icns with something more exciting.
+application likely won't work on Mac OS X without a minor
+modification.
+<LI>The Mac OS X export is a nice .app bundle like a regular OS X
+application. You can change the icon or edit its settings by using
+"Show Package Contents" and editing Info.plist or replacing
+sketch.icns with something more exciting.
 <LI>Windows is a shell .exe that calls the code and requires the "lib"
 folder along with it be kept intact. Someday we might make Windows be
 a nice single .exe file, but this requires more time to implement, and
@@ -443,6 +447,15 @@ more specifically, make work consistently with the libraries. If
 you're finicky about this, use a Java EXE generator such as <A
 HREF="http://jsmooth.sourceforge.net/">JSmooth</A> or <A
 HREF="http://launch4j.sourceforge.net/">launch4j</A>.
+<LI>To set the icon used on the title bar for Windows, use the
+following code: (submitted by dxtx)
+<PRE>
+ImageIcon titlebaricon = new ImageIcon(loadBytes("myicon.gif"));
+frame.setIconImage(titlebaricon.getImage());
+</PRE>
+Note that within the PDE, the icon will only show up when a code 
+folder is in use or a library has been imported. However, it should
+show up on all occasions when exported to an application.
 <LI>Linux is just a shell script, which can probably be used on most
 Unix platforms (there's almost nothing to it). 
 <LI>When distributing your application, the "source" folder can be
@@ -460,19 +473,25 @@ application. If you've set outrageous memory requirements, you might
 want to undo that before exporting for others, or edit the exported
 files by hand (Contents/Resources/Info.plist on Mac OS X and
 lib/args.txt on Windows).
-<LI>Holding down shift while clicking "Export" on the toolbar will export
-to application instead of an applet.
-<LI>Users must still have Java installed to use your exported application. 
-You can also copy the "java" folder from Processing to the same folder as
-your app so that users needn't install their own Java (this is
-the same as the "standard" version of processing), or you want to ensure
-that a certain version of the VM is used. For the time being, the error 
-message when Java is installed may be nonexistant or cryptic. 
-<LI>Someday we'll also add features like icon files and whatnot. 
-Or at least a default icon for the exported stuff. Or maybe even a
-splash screen while the VM is loading. Again, if you want more
-control, use your own application generator (see above for Windows, or
-use the Java package maker whatchamacallit on Mac OS X).
+<LI>If you want to replace (or add) titlebar text, just do this in
+setup():
+<PRE>
+frame.setTitle("This is in the titlebar!"); </PRE>
+(thanks dxtx for pointing this out)
+<LI>Holding down shift while clicking "Export" on the toolbar will
+export to application instead of an applet.
+<LI>Users must still have Java installed to use your exported
+application. You can also copy the "java" folder from Processing to
+the same folder as your app so that users needn't install their own
+Java (this is the same as the "standard" version of processing), or
+you want to ensure that a certain version of the VM is used. For the
+time being, the error message when Java is installed may be
+nonexistant or cryptic. 
+<LI>Someday we'll also add features like icon files and whatnot. Or at
+least a default icon for the exported stuff. Or maybe even a splash
+screen while the VM is loading. Again, if you want more control, use
+your own application generator (see above for Windows, or use the Java
+package maker whatchamacallit on Mac OS X).
 </UL>
       </td>
     <td width="50">&nbsp;</td>
@@ -507,6 +526,9 @@ something like:
 <PRE>-Xms128m -Xmx1024m</PRE>
 This will increase the amount of RAM to 128 megabytes of stack, and
 1024 megabytes of heap (the latter being effectively usable RAM).
+This will eventually be a setting that's added to the preferences
+window (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=233">Bug 233</A>).
 <br> <br>
 Depending on your OS and available RAM, there are limits on how much
 memory you can ask for. On Windows with 1G of RAM, it seems to be in
