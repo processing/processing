@@ -194,7 +194,7 @@ public class AutoFormat {
     c = string[j++] = getchr(); // extra char
     while (done == 0) {
       c = string[j++] = getchr();
-      while(c != '/') {
+      while ((c != '/') && (j < string.length)) {
         if(c == '\n' || c == '\r') {
           lineNumber++;
           putcoms();
