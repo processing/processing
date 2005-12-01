@@ -7,12 +7,23 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0098 - (unreleased) December 2005
+ABOUT REV 0098 - 1 December 2005
+
+Not heavily tested, a release primarily for Casey to fix some issues
+he was running into with while writing the book. A handful of bug
+fixes I figured I'd post for the more adventurous, before adding
+anything more complex to it.
+
+Not as necesary a release as the others but has some useful fixes and
+I'll need to know whether or not there are any regressions before the
+next "big" release.
 
 
 [ bug fixes ] 
 
 + fixes for linux shell script for "export to application" 
+  http://dev.processing.org/bugs/show_bug.cgi?id=234
+  thanks to x771771 at fixless.com for the report and fix.
 
 + more edits are now a compound edit, so hitting "Undo" after "Auto
   Format" will undo to the previous state, instead of first going to a
