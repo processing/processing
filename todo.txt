@@ -17,7 +17,7 @@ X tools need to use a compound edit
 X   http://dev.processing.org/bugs/show_bug.cgi?id=139
 X ArrayIndexOutOfBoundsException when trying to Auto Format
 X    http://dev.processing.org/bugs/show_bug.cgi?id=110
-o if an error occurs during format, report it and don't change text
+X if an error occurs during format, report it and don't change text
 X   this should already be happening anyway
 
 
