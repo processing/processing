@@ -18,7 +18,7 @@ image(b, 0, 0);
 </example>
 
 <description>
-Datatype for storing images. Processing allows display of <b>.gif</b> and <b>.jpg</b> images. Images may be displayed in 2D and 3D space. Before an image is used, it must be loaded with the <b>loadImage()</b> function. The <b>PImage</b> object contains properties for the <b>width</b> and <b>height</b> of the image, as well as an array called <b>pixels[]</b> which contains the values for every pixel in the image. A group of methods, described below, allow easy access to the image's pixels / alpha channel and simplify the process of compositing. 
+Datatype for storing images. Processing can display of <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be displayed in 2D and 3D space. Before an image is used, it must be loaded with the <b>loadImage()</b> function. The <b>PImage</b> object contains fields for the <b>width</b> and <b>height</b> of the image, as well as an array called <b>pixels[]</b> which contains the values for every pixel in the image. A group of methods, described below, allow easy access to the image's pixels and alpha channel and simplify the process of compositing. 
 </description>
 
 <syntax>
@@ -89,7 +89,7 @@ PImage(<c>img</c>)
 
 <cparameter>
 <clabel>format</clabel>
-<cdescription>Either RGB, RGBA, ALPHA (grayscale alpha channel)</cdescription>
+<cdescription>Either RGB, ARGB, ALPHA (grayscale alpha channel)</cdescription>
 </cparameter>
 
 <cparameter>

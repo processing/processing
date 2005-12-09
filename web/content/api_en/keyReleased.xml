@@ -33,7 +33,7 @@ void keyReleased()
 </example>
 
 <description>
-The <b>keyReleased()</b> function is called once every time a key is released. As a general rule, nothing should be draw within the <b>keyReleased()</b> block.
+The <b>keyReleased()</b> function is called once every time a key is released.
 </description>
 
 <syntax>

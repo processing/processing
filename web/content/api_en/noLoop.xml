@@ -53,13 +53,11 @@ void mouseReleased() {
 </example>
 
 <description>
-Stops Processing from continuously executing the code within <b>draw()</b>. If <b>loop()</b> is called, the code in <b>draw()</b> is executed continuously.
+Stops Processing from continuously executing the code within <b>draw()</b>. If <b>loop()</b> is called, the code in <b>draw()</b> is executed continuously. If using <b>noLoop()</b> in <b>setup()</b>, it should be the last line inside the block.
 </description>
 
 <syntax>
 noLoop()
-redraw()
-draw()
 </syntax>
 
 <parameter>
@@ -71,6 +69,8 @@ draw()
 
 <related>
 loop()
+redraw()
+draw()
 </related>
 
 <availability>1.0</availability>

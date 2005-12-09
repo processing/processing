@@ -12,7 +12,6 @@
 <image>bezierTangent_.gif</image>
 <code>
 bezier(85, 20, 10, 10, 90, 90, 15, 80);
-ellipseMode(CENTER_DIAMETER);
 int steps = 6;
 for (int i = 0; i <= steps; i++) {
   float t = i / float(steps);
@@ -55,7 +54,7 @@ for (int i = 0; i <= steps; i++) {
 </example>
 
 <description>
-Calcuates the tangent of a point on a Bezier curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+Calculates the tangent of a point on a Bezier curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
 </description>
 
 <syntax>

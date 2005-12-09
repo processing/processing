@@ -83,7 +83,7 @@ PSound(<c>file</c>)
 
 <cparameter>
 <clabel>file</clabel>
-<cdescription>String: name of the image file to load</cdescription>
+<cdescription>String: name of the sound file to load</cdescription>
 </cparameter>
 
 

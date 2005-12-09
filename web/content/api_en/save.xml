@@ -21,7 +21,7 @@ save("cross.tga");
 </example>
 
 <description>
-Makes an image from the display window. Images are saved in TIFF or TARGA format depending on the extension of the parameter <b>filename</b>. If no extention is included in the filename, the image will save as TIFF and <b>.tif</b> will be added to the name. This file is saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu. It is not possible to use <b>save()</b> while running the program in a web browser.
+Saves an image from the display window. Images are saved in TIFF or TARGA format depending on the extension of the <b>filename</b> parameter. If no extension is included in the filename, the image will save in TIFF format and <b>.tif</b> will be added to the name. Images are saved to to the "current" folder. For example, when running your sketch from the Processing application, the image will be saved to the location of the Processing application. To save inside the current sketch's folder, use <b>saveFrame()</b>. It is not possible to use <b>save()</b> while running the program in a web browser.
 </description>
 
 <syntax>
@@ -37,6 +37,7 @@ save(<c>filename</c>)
 
 <related>
 saveFrame()
+savePath()
 </related>
 
 <availability>1.0</availability>

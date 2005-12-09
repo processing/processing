@@ -33,7 +33,7 @@ void keyPressed()
 </example>
 
 <description>
-The <b>keyPressed()</b> function is called once every time a key is pressed. As a general rule, nothing should be draw within the <b>keyPressed()</b> block.
+The <b>keyPressed()</b> function is called once every time a key is pressed. Because of how operating systems handle key repeats, holding down a key will cause multiple calls to keyPressed(), the rate is set by the operating system and how each computer is configured.
 </description>
 
 <syntax>

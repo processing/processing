@@ -55,7 +55,7 @@ sort(<c>dataArray</c>, <c>count</c>)
 
 <parameter>
 <label>count</label>
-<description>int: </description>
+<description>int </description>
 </parameter>
 
 <returns>Array (same datatype as the input)</returns>
