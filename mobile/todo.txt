@@ -19,5 +19,14 @@ X Change (or temporarily disable) auto-update check to check Mobile Processing
 X Update copyright, license information in all source files
 - Add Exhibition to website, solicit examples from community members
 - Mobile vs. Processing FAQ update
-
-
+- Improve/fix error reporting and handling in PDE
+- Add touchscreen input support to core
+- Rename handset library to phone
+- Document xml library
+- Add xml element type and output
+- Post examples- bluescan, yahoosonar, sunclock
+- Link contributed libraries
+- System property api
+- Phone spec/API test app
+- Web database for phone specs and API compat
+- More control over characters exported with fonts
