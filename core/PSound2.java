@@ -31,14 +31,22 @@ import javax.sound.sampled.*;
 /**
  * Java 1.3 audio loader and player.
  * <P/>
- * This will eventually be merged back into PSound, so you shouldn't
+ * This will eventually be merged back into PSound, so you should *not*
  * create new PSound2 objects from scratch, only open them directly
  * from a PApplet using loadSound().
  * <P/>
  * Most of the useful info about how to do all the things
  * in this class was munged together from the
  * <A HREF="http://javaalmanac.com/egs/javax.sound.sampled/pkg.html">
- * Java Alamanac</A>
+ * Java Alamanac</A>.
+ * <P/>
+ * If you want your sketch to be notified when the sound has completed,
+ * use the following code:
+ * <PRE>
+ * public void soundEvent(PSound which) {
+ *   // do something because the sound 'which' is no longer playing
+ * }
+ * </PRE>
  */
 public class PSound2 extends PSound {
   public Clip clip;
@@ -117,7 +125,8 @@ public class PSound2 extends PSound {
                   // is already being stopped, and stopping it here will
                   // may pre-empt it from being immediately restarted.
                   // i.e. with the code sound.stop(); sound.play();
-                  if (playing()) {
+                  //if (playing()) {
+                  if (clip.isActive()) {
                     // when playing, needs to shut everything off
                     clip.stop();
                     clip.setFramePosition(0);
@@ -151,13 +160,14 @@ public class PSound2 extends PSound {
 
 
   public void play() {
+    stop();
     clip.start();
   }
 
 
-  public boolean playing() {
-    return clip.isActive();
-  }
+  //public boolean playing() {
+  //return clip.isActive();
+  //}
 
 
   /**

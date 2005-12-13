@@ -1,4 +1,18 @@
 0099 core
+X PSound.play() won't play the sound a 2nd time (reopened)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=208
+_   removed playing() method
+
+_ ComponentListener is probably what's needed for resize() 
+_   make sure that components can be resized properly via size()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=209
+_   or that it properly responds to a setBounds() call
+
+_ noLoop() at end of setup is prolly b/c of interruptedex
+_   need to not call Thread.interrupt()
+
+_ dataFolder() might be flawed b/c it's referring to contents of jar file
+_   for input, better to use openStream
 
 _ make dxf writer that'll work with recordRaw()
 _ enable PGraphicsPDF for inclusion
@@ -16,6 +30,7 @@ _   need to strip off past the file separator or something
 
 threading issues
 _ sketches often freeze when stop is hit on an HT machine
+_   need to test the examples cited on pardis' machine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=232
 _ sonia is locking up on load in rev 91
 _   prolly something w/ the threading issues
@@ -172,10 +187,6 @@ _ check for what else inside PApplet should be static
 _   maybe catch RuntimeExceptions in the called sub-functions
 _   that way more stuff can be static w/o losing useful error handling
 _   (emitting errors when closest to source.. i.e. w/ the filename)
-_ ComponentListener is probably what's needed for resize() 
-_   make sure that components can be resized properly via size()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=209
-_   or that it properly responds to a setBounds() call
 _ size() inside draw is missing a new call to cameraMode, etc
 _ fix param() to use a sketch.properties file when run as an app
 _   make this also be used in generating the html file
@@ -460,6 +471,8 @@ g2.draw(gp);
 
 CORE / PGraphics3
 
+_ rect() changes size as it changes position
+_   http://dev.processing.org/bugs/show_bug.cgi?id=95
 _ polygons perpendicular to axis not drawing
 _   is this a clipping error?
 _   probably a triangulation error, because triangles work ok
