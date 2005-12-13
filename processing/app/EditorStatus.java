@@ -373,18 +373,23 @@ public class EditorStatus extends JPanel implements ActionListener {
     int noLeft     = cancelLeft - eachButton;
     int yesLeft    = noLeft     - eachButton;
 
-    System.out.println("setting button height to " + Preferences.BUTTON_HEIGHT);
     yesButton.setLocation(yesLeft, top);
     noButton.setLocation(noLeft, top);
     cancelButton.setLocation(cancelLeft, top);
-    editField.setLocation(yesLeft - Preferences.BUTTON_WIDTH, top);
     okButton.setLocation(noLeft, top);
 
-    yesButton.setSize(   Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-    noButton.setSize(    Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    yesButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    noButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
     cancelButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-    okButton.setSize(    Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-    editField.setSize( 2*Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    okButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+
+    // edit field height is awkward, and very different between mac and pc,
+    // so use at least the preferred height for now.
+    int editWidth = 2*Preferences.BUTTON_WIDTH;
+    int editHeight = editField.getPreferredSize().height;
+    int editTop = (1 + sizeH - editHeight) / 2;  // add 1 for ceil
+    editField.setBounds(yesLeft - Preferences.BUTTON_WIDTH, editTop,
+                        editWidth, editHeight);
   }
 
 

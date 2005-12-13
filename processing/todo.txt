@@ -1,4 +1,6 @@
 0099 pde
+X make buttons for editor status taller on macosx
+X   also fix the editor text field placement a bit
 
 _ deal with "could not delete stderr.txt" messages
 _   probably screwed up the temp folder stuff 

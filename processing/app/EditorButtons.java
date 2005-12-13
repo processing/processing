@@ -41,9 +41,11 @@ public class EditorButtons extends JComponent implements MouseInputListener {
   };
 
   static final int BUTTON_COUNT  = title.length;
-  static final int BUTTON_WIDTH  = 27; //Preferences.GRID_SIZE;
-  static final int BUTTON_HEIGHT = 32; //Preferences.GRID_SIZE;
-  static final int BUTTON_GAP = 15; //BUTTON_WIDTH / 2;
+  /// height, width of the toolbar buttons
+  static final int BUTTON_WIDTH  = 27;
+  static final int BUTTON_HEIGHT = 32;
+  /// amount of space between groups of buttons on the toolbar
+  static final int BUTTON_GAP = 15;
 
   static final int RUN      = 0;
   static final int STOP     = 1;
