@@ -72,8 +72,9 @@ public class Preferences extends JComponent {
   static final String PROMPT_BROWSE  = "Browse";
 
   // mac needs it to be 70, windows needs 66, linux needs 76
-
   static int BUTTON_WIDTH  = 76;
+
+  //
   static int BUTTON_HEIGHT = 24;
 
   // value for the size bars, buttons, etc
@@ -374,6 +375,7 @@ public class Preferences extends JComponent {
     pain.add(button);
     d2 = button.getPreferredSize();
     BUTTON_HEIGHT = d2.height;
+    System.out.println("changing button height to " + BUTTON_HEIGHT);
 
     // smoosh up to the line before
     //top -= BUTTON_HEIGHT;

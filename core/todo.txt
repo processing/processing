@@ -1,7 +1,19 @@
 0099 core
 X PSound.play() won't play the sound a 2nd time (reopened)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=208
-_   removed playing() method
+X   removed playing() method
+
+_ calling size() elsewhere in the app doesn't quite work
+_   A second call to size almost works. 
+_   The buffer apparently gets allocated and saveFrame saves the 
+_   new size but drawing appears to be disabled.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=243
+
+_ don't block on loadImage()
+_   use a MediaTracker that's shared, so that while an image is still
+_   loading, other calls to loadImage might be able to add things to the
+_   queue. or maybe beginImage() and endImage()? or a mode that lets 
+_   you wait for the images to download (size is zero until they're ready)
 
 _ ComponentListener is probably what's needed for resize() 
 _   make sure that components can be resized properly via size()
