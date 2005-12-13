@@ -821,7 +821,9 @@ public class Base {
   static public void removeDir(File dir) {
     if (dir.exists()) {
       removeDescendants(dir);
-      dir.delete();
+      if (!dir.delete()) {
+        System.err.println("Could not delete " + dir);
+      }
     }
   }
 
@@ -843,7 +845,7 @@ public class Base {
         if (!Preferences.getBoolean("compiler.save_build_files")) {
           if (!dead.delete()) {
             // temporarily disabled
-            //System.err.println("couldn't delete " + dead);
+            System.err.println("Could not delete " + dead);
           }
         }
       } else {

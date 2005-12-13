@@ -373,6 +373,7 @@ public class EditorStatus extends JPanel implements ActionListener {
     int noLeft     = cancelLeft - eachButton;
     int yesLeft    = noLeft     - eachButton;
 
+    System.out.println("setting button height to " + Preferences.BUTTON_HEIGHT);
     yesButton.setLocation(yesLeft, top);
     noButton.setLocation(noLeft, top);
     cancelButton.setLocation(cancelLeft, top);
