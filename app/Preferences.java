@@ -71,11 +71,23 @@ public class Preferences extends JComponent {
   static final String PROMPT_OK      = "OK";
   static final String PROMPT_BROWSE  = "Browse";
 
-  // mac needs it to be 70, windows needs 66, linux needs 76
+  /**
+   * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
+   * Windows XP needs 66, and Linux needs 76, so 76 seems proper.
+   */
   static int BUTTON_WIDTH  = 76;
 
-  //
+  /**
+   * Standardized button height. Mac OS X 10.3 (Java 1.4) wants 29,
+   * presumably because it now includes the blue border, where it didn't
+   * in Java 1.3. Windows XP only wants 23 (not sure what default Linux
+   * would be). Because of the disparity, on Mac OS X, it will be set
+   * inside a static block.
+   */
   static int BUTTON_HEIGHT = 24;
+  static {
+    if (Base.isMacOS()) BUTTON_HEIGHT = 29;
+  }
 
   // value for the size bars, buttons, etc
 
@@ -375,7 +387,7 @@ public class Preferences extends JComponent {
     pain.add(button);
     d2 = button.getPreferredSize();
     BUTTON_HEIGHT = d2.height;
-    System.out.println("changing button height to " + BUTTON_HEIGHT);
+    //System.out.println("changing button height to " + BUTTON_HEIGHT);
 
     // smoosh up to the line before
     //top -= BUTTON_HEIGHT;
