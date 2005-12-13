@@ -819,6 +819,9 @@ public class PApplet extends Applet
       this.height = iheight;
       defaultSize = false;
 
+      println("size()");
+      println("  iwidth, iheight = " + iwidth + ", " + iheight);
+      println("  setting size to " + width + ", " + height);
       // make the applet itself larger.. it's a subclass of Component,
       // so this is important for when it's embedded inside another app.
       setSize(width, height);
@@ -1308,6 +1311,32 @@ public class PApplet extends Applet
       addMouseMotionListener(this);
       addKeyListener(this);
       addFocusListener(this);
+
+      addComponentListener(new ComponentAdapter() {
+          public void componentResized(ComponentEvent e) {
+            Component c = e.getComponent();
+            Rectangle bounds = c.getBounds();
+            System.out.println("componentResized()");
+            System.out.println("  " + e);
+            System.out.println("  bounds: " + bounds);
+            int newWidth = bounds.width - bounds.x * 2;
+            int newHeight = bounds.height - (bounds.y + bounds.x);
+            System.out.println("  new: " + newWidth + " " + newHeight);
+            //size(newWidth, newHeight);
+
+            //if (c == PApplet.this) {
+            //Container con = (Container) c;
+            //Dimension newSize = getSize();
+            //System.out.println("resizing to " + newSize + " ");
+            //System.out.println(c.getBounds());
+            //System.out.println(e);
+            //System.out.println(c);
+            //System.out.println("insets " + con.getInsets());
+            //size(newSize.width, newSize.height);
+            //}
+          }
+        });
+
       listenersAdded = true;
     }
   }
@@ -3416,7 +3445,7 @@ public class PApplet extends Applet
         return lines;
       }
 
-      // resize array to appropraite amount for these lines
+      // resize array to appropriate amount for these lines
       String output[] = new String[lineCount];
       System.arraycopy(lines, 0, output, 0, lineCount);
       return output;
@@ -5233,6 +5262,17 @@ public class PApplet extends Applet
     synchronized void clear() { thread = null; }
   }
 
+  /**
+   * Class to help external communication run as a separate class.
+   * <p/>
+   * From a software engineering standpoint, using the stderr stream
+   * is highly problematic because of its tendency to die or act
+   * funny, especially on Windows. Threading issues can cause the
+   * buffers to get full or the applet to not run properly.
+   * Formerly known as the "code folder bug", this has been fixed
+   * through the use of this class, however it remains a tenuous
+   * situation that could perhaps break in a future JDK release.
+   */
   class Worker {
     private Object value;
     private WorkerVar workerVar;
@@ -5250,14 +5290,10 @@ public class PApplet extends Applet
         int anything = System.in.read();
         if (anything == EXTERNAL_STOP) {
 
-          //System.out.println("got external stop");
-
           // adding this for 0073.. need to stop libraries
           // when the stop button is hit.
           PApplet.this.stop();
           finished = true;
-          //} else {
-          //print((char) anything);
         }
       } catch (IOException e) {
         finished = true;
@@ -5325,81 +5361,15 @@ public class PApplet extends Applet
   }
 
 
-  public void setupExternal(Frame parentFrame) {
-    //externalRuntime = true;
-
-    /*
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          //while ((Thread.currentThread() == this) && !finished) {
-          try {
-            // is this what's causing all the trouble?
-            int anything = System.in.read();
-            if (anything == EXTERNAL_STOP) {
-              //System.out.println("********** STOPPING");
-
-              // adding this for 0073.. need to stop libraries
-              // when the stop button is hit.
-v              PApplet.this.stop();
-
-              //System.out.println("********** REALLY");
-              finished = true;
-            }
-          } catch (IOException e) {
-            // not tested (needed?) but seems correct
-            //stop();
-            finished = true;
-            //thread = null;
-          }
-          try {
-            Thread.sleep(250);
-            //Thread.sleep(100);  // kick up latency for 0075?
-          } catch (InterruptedException e) { }
-        }
-      });
-    */
-
-    /*
-    Thread ethread = new Thread() {  //new Runnable() {
-        public void run() {
-          // this fixes the "code folder hanging bug" (mostly)
-          setPriority(Thread.MIN_PRIORITY);
-    */
+  /**
+   * Set this sketch to communicate its state back to the PDE.
+   * <p/>
+   * This uses the stderr stream to write positions of the window
+   * (so that it will be saved by the PDE for the next run) and
+   * notify on quit. See more notes in the Worker class.
+   */
+  public void setupExternalMessages(Frame parentFrame) {
     final Worker worker = new Worker();
-    //worker.start();
-
-    /*
-    final SwingWorker worker = new SwingWorker() {
-        public Object construct() {
-          //while ((Thread.currentThread() == this) && !finished) {
-          try {
-            // is this what's causing all the trouble?
-            int anything = System.in.read();
-            if (anything == EXTERNAL_STOP) {
-              //System.out.println("********** STOPPING");
-
-              // adding this for 0073.. need to stop libraries
-              // when the stop button is hit.
-              PApplet.this.stop();
-
-              //System.out.println("********** REALLY");
-              finished = true;
-            }
-          } catch (IOException e) {
-            // not tested (needed?) but seems correct
-            //stop();
-            finished = true;
-            //thread = null;
-          }
-          try {
-            Thread.sleep(250);
-            //Thread.sleep(100);  // kick up latency for 0075?
-          } catch (InterruptedException e) { }
-          return null;
-        }
-      };
-    //ethread.start();
-    */
 
     parentFrame.addComponentListener(new ComponentAdapter() {
         public void componentMoved(ComponentEvent e) {
@@ -5476,6 +5446,7 @@ v              PApplet.this.stop();
     }
 
     try {
+      // true if this sketch is being run by the PDE
       boolean external = false;
       int location[] = null;
       int editorLocation[] = null;
@@ -5563,7 +5534,10 @@ v              PApplet.this.stop();
 
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
-      frame.setResizable(false);  // remove the grow box
+      // remove the grow box by default
+      // users who want it back can call frame.setResizable(true)
+      frame.setResizable(false);
+      // can't do pack() here otherwise it'll ruin present mode
       //frame.pack();  // get insets. get more.
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
@@ -5577,7 +5551,6 @@ v              PApplet.this.stop();
 
       // wait until the applet has figured out its width
       // hoping that this won't hang if the applet has an exception
-      //while ((applet.width == 0) && !applet.finished) {
       while (applet.defaultSize && !applet.finished) {
         try {
           Thread.sleep(5);
@@ -5595,19 +5568,6 @@ v              PApplet.this.stop();
         applet.setBounds((fullscreen.width - applet.width) / 2,
                          (fullscreen.height - applet.height) / 2,
                          applet.width, applet.height);
-
-        // doesn't help for gl, since it has its own canvas
-        /*
-        applet.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-              System.out.println(e);
-              if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                //System.out.println("escape!");
-                System.exit(0);
-              }
-            }
-          });
-        */
 
         Label label = new Label("stop");
         label.setForeground(stopColor);
@@ -5627,7 +5587,7 @@ v              PApplet.this.stop();
 
         // not always running externally when in present mode
         if (external) {
-          applet.setupExternal(frame);
+          applet.setupExternalMessages(frame);
         }
 
       } else {  // if not presenting
@@ -5687,10 +5647,11 @@ v              PApplet.this.stop();
         int usableWindowH = windowH - insets.top - insets.bottom;
         applet.setBounds((windowW - applet.width)/2,
                          insets.top + (usableWindowH - applet.height)/2,
-                         windowW, windowH);
+                         applet.width, applet.height);
+                         //windowW, windowH);
 
         if (external) {
-          applet.setupExternal(frame);
+          applet.setupExternalMessages(frame);
 
         } else {  // !external
           frame.addWindowListener(new WindowAdapter() {

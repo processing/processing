@@ -297,7 +297,8 @@ public class Runner implements MessageConsumer {
     int usableH = windowH - insets.top - insets.bottom;
     applet.setBounds((windowW - applet.width)/2,
                      insets.top + (usableH - applet.height) / 2,
-                     windowW, windowH);
+                     applet.width, applet.height);
+                     //windowW, windowH);
 
     applet.setVisible(true);  // no effect
     if (windowLocation != null) {

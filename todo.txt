@@ -1,5 +1,13 @@
 0099 pde
 
+_ deal with "could not delete stderr.txt" messages
+_   probably screwed up the temp folder stuff 
+_   build folder is randomized, being recreated on each build
+
+_ make editor save button highlight on ctrl-s
+_   same goes for the other editor buttons
+_   http://dev.processing.org/bugs/show_bug.cgi?id=242
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
