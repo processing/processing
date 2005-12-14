@@ -2,16 +2,26 @@
 X PSound.play() won't play the sound a 2nd time (reopened)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=208
 X   removed playing() method
+X ComponentListener is probably what's needed for resize() 
+X   make sure that components can be resized properly via size()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=209
+X   or that it properly responds to a setBounds() call
+X calling size() elsewhere in the app doesn't quite work
+X   A second call to size almost works. 
+X   The buffer apparently gets allocated and saveFrame saves the 
+X   new size but drawing appears to be disabled.
+X   http://dev.processing.org/bugs/show_bug.cgi?id=243
 
-_ ComponentListener is probably what's needed for resize() 
-_   make sure that components can be resized properly via size()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=209
-_   or that it properly responds to a setBounds() call
-_ calling size() elsewhere in the app doesn't quite work
-_   A second call to size almost works. 
-_   The buffer apparently gets allocated and saveFrame saves the 
-_   new size but drawing appears to be disabled.
-_   http://dev.processing.org/bugs/show_bug.cgi?id=243
+_ fix the flicker in java2d mode
+_   http://dev.processing.org/bugs/show_bug.cgi?id=122
+_   framerate(30) is still flickery and jumpy..
+_   not clear what's happening here
+_   appears to be much worse (unfinished drawing) on macosx
+_     try turning off hw accel on the mac to see if that's the problem
+_ framerate that's reported is out of joint with actual
+_   seems to be aliasing effect of low resolution on millis()
+_   so rates coming out double or half of their actual
+_   probably need to integrate over a rolling array of 10 frames or so
 
 _ don't block on loadImage()
 _   use a MediaTracker that's shared, so that while an image is still
@@ -460,12 +470,6 @@ _ set(x, y, image)
 _   x, y not setting with processing
 _ don't let users on < 1.3 load JAVA2D
 _ set upper bound on framerate so as not to completely hose things?
-_ fix the flicker in java2d mode
-_   http://dev.processing.org/bugs/show_bug.cgi?id=122
-_   framerate(30) is still flickery and jumpy..
-_   not clear what's happening here
-_   appears to be much worse (unfinished drawing) on macosx
-_     try turning off hw accel on the mac to see if that's the problem
 _ textSpace(SCREEN_SPACE) needs to be faster
 _   need flat image implementation that takes no transforms
 _   along with 90, 180 and 270 versions of it as well
