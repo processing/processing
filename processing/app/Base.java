@@ -499,6 +499,55 @@ public class Base {
   // .................................................................
 
 
+  // someone needs to be slapped
+  //static KeyStroke closeWindowKeyStroke;
+
+  /**
+   * Return true if the key event was a Ctrl-W or an ESC,
+   * both indicators to close the window.
+   * Use as part of a keyPressed() event handler for frames.
+   */
+  /*
+  static public boolean isCloseWindowEvent(KeyEvent e) {
+    if (closeWindowKeyStroke == null) {
+      int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+      closeWindowKeyStroke = KeyStroke.getKeyStroke('W', modifiers);
+    }
+    return ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
+            KeyStroke.getKeyStrokeForEvent(e).equals(closeWindowKeyStroke));
+  }
+  */
+
+
+  /**
+   * Registers key events for a Ctrl-W and ESC with an ActionListener
+   * that will take care of disposing the window.
+   */
+  static public void registerWindowCloseKeys(JRootPane root, //Window window,
+                                             ActionListener disposer) {
+    /*
+    JRootPane root = null;
+    if (window instanceof JFrame) {
+      root = ((JFrame)window).getRootPane();
+    } else if (window instanceof JDialog) {
+      root = ((JDialog)window).getRootPane();
+    }
+    */
+
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+    root.registerKeyboardAction(disposer, stroke,
+                                JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    stroke = KeyStroke.getKeyStroke('W', modifiers);
+    root.registerKeyboardAction(disposer, stroke,
+                                JComponent.WHEN_IN_FOCUSED_WINDOW);
+  }
+
+
+  // .................................................................
+
+
   /**
    * Given the reference filename from the keywords list,
    * builds a URL and passes it to openURL.
@@ -920,44 +969,4 @@ public class Base {
       }
     }
   }
-
-
-  /**
-   * Equivalent to the one in PApplet, but static (die() is removed)
-   */
-  /*
-  static public String[] loadStrings(File file) {
-    try {
-      FileInputStream input = new FileInputStream(file);
-      BufferedReader reader =
-        new BufferedReader(new InputStreamReader(input));
-
-      String lines[] = new String[100];
-      int lineCount = 0;
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        if (lineCount == lines.length) {
-          String temp[] = new String[lineCount << 1];
-          System.arraycopy(lines, 0, temp, 0, lineCount);
-          lines = temp;
-        }
-        lines[lineCount++] = line;
-      }
-      reader.close();
-
-      if (lineCount == lines.length) {
-        return lines;
-      }
-
-      // resize array to appropraite amount for these lines
-      String output[] = new String[lineCount];
-      System.arraycopy(lines, 0, output, 0, lineCount);
-      return output;
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-  */
 }
