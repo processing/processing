@@ -21,6 +21,7 @@
 /*** FILE FUNCTIONS ***
 * getRefFiles()
 * writeFile()
+* make_necessary_directories()
 * copydirr()
 **/
 
@@ -258,9 +259,20 @@ Write a file
 *****************************************************************/ 
 function writeFile($filename, $content)
 {
+    make_necessary_directories(BASEDIR.$filename);
     $fp = fopen(BASEDIR.$filename, 'w');
     fwrite($fp, $content);
     fclose($fp);
+}
+
+function make_necessary_directories($filepath)
+{	
+	foreach(split('/',dirname($filepath)) as $dirPart) {
+		if (!is_dir("$newDir$dirPart/") && !is_file("$newDir$dirPart/")) {
+			@mkdir("$newDir$dirPart/", 0777);
+		}
+		$newDir="$newDir$dirPart/";
+	}
 }
 
 /****************************************************************
@@ -295,7 +307,7 @@ if (!empty($errors))
    return false;
    }
 //*/
-$exceptions=array('.','..');
+$exceptions=array('.','..','.svn');
 //* Processing
 $handle=opendir($fromDir);
 while (false!==($item=readdir($handle)))

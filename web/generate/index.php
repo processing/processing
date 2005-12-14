@@ -8,66 +8,75 @@
  	<title>Processing.org Generator</title>
     <script language="javascript" type="text/javascript" src="/javascript/prototype.js"></script>
     <script language="javascript" type="text/javascript">
-    
+
+function remote_link(href, params)
+{
+    return new Ajax.Updater('status', href, {asynchronous: true, onLoading: showloading, parameters: params});
+}
+
 function showloading()
 {
+    $('status-container').style.display = 'block';
     $('status').innerHTML = 'Loading...';
 }
     </script>
     
     <style>
+body { margin: 0; font: small Helvetica, Arial, sans-serif; }
+
+h1 { margin: 0; width: 750px; background: #000; }
+
+#body { margin-left: 60px; width: 690px; }
+
+ul, li { margin: 0; padding: 0; list-style: none; }
+li { margin-bottom: 1em; }
+
+#status-container { display: none; background: #efefff; border: 1px solid #c8c8ff; padding: 5px; width: 95%; overflow-x: hidden; }
+#status-container h3 { margin: 0; }
 #status { font-size: .7em; }
     </style>
 </head>
 
 <body>
+<h1><img src="img/processing_beta_cover.gif" alt="Processing (BETA)" /></h1>
 
+<div id="body">
+
+<h2>Generate Site Files</h2>
 <ul>
-    <li><a href="#"
-        onclick="new Ajax.Updater('status', 'cover.php', {asynchronous:true,
-                onLoading:showloading}); return false;">Generate Cover</a>
-    </li>
+    <li>Generate <a href="#" onclick="remote_link('cover.php');return false;">Cover</a></li>
     <li>Generate Reference:<br />
-        <a href="#"
-        onclick="new Ajax.Updater('status', 'reference.php', {asynchronous:true, parameters:'lang=en', 
-                onLoading:showloading}); return false;">English</a>, 
-        <a href="#"
-        onclick="new Ajax.Updater('status', 'reference.php', {asynchronous:true, parameters:'lang=tr', 
-                onLoading:showloading}); return false;">Turkish</a>, 
-        <a href="#"
-        onclick="new Ajax.Updater('status', 'reference.php', {asynchronous:true, parameters:'lang=zh', 
-                onLoading:showloading}); return false;">Chinese Traditional</a>
+        <a href="#" onclick="remote_link('reference.php', 'lang=en');return false;">English</a>, 
+        <a href="#" onclick="remote_link('reference.php', 'lang=tr'); return false;">Turkish</a>, 
+        <a href="#" onclick="remote_link('reference.php', 'lang=zh'); return false;">Chinese Traditional</a>
     </li>
-    <li><a href="#"
-        onclick="new Ajax.Updater('status', 'reference_media.php', {asynchronous:true,
-                onLoading:showloading}); return false;">Copy Reference Media files to public directory</a>
+    <li>Generate Reference Indices:<br />
+        <a href="#" onclick="remote_link('reference_index.php', 'lang=en'); return false;">English</a>, 
+        <a href="#" onclick="remote_link('reference_index.php', 'lang=tr'); return false;">Turkish</a>, 
+        <a href="#" onclick="remote_link('reference_index.php', 'lang=zh'); return false;">Chinese Traditional</a>
     </li>
-    <li><a href="#"
-        onclick="new Ajax.Updater('status', 'exhibition.php', {asynchronous:true,
-                onLoading:showloading}); return false;">Generate Exhibition and archives</a>
-    </li>
-    <li><a href="#"
-        onclick="new Ajax.Updater('status', 'courses.php', {asynchronous:true,
-                onLoading:showloading}); return false;">Generate Courses.html</a>
-    </li>
-    <li><a href="#"
-        onclick="new Ajax.Updater('status', 'happenings.php', {asynchronous:true,
-                onLoading:showloading}); return false;">Generate Happenings.html</a>
-    </li>
-    <li><a href="#"
-        onclick="new Ajax.Updater('status', 'updates.php', {asynchronous:true,
-                onLoading:showloading}); return false;">Generate Updates.html</a>
+    <li>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></li>
+    <li>Generate <a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a></li>
+    <li>Generate <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a>
+                <a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
+                <a href="#" onclick="remote_link('updated.php'); return false;">Updates.html</a>
     </li>
 </ul>
 
-<form method="post" onsubmit="new Ajax.Updater('status', 'template.php', { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
+<h2>Generate Template</h2>
+<form method="post" onsubmit="new Ajax.Updater('status', 'template.php', 
+    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
     <label>Title: <input type="text" name="title" size="50" /></label><br />
     <label>Section: <input type="text" name="section" size="30" /></label><br />
     <input type="submit" value="Generate" />
 </form>
 
-<h3>Status</h3>
-<div id="status"></div>
+<div id="status-container">
+    <h3>Status</h3>
+    <div id="status"></div>
+</div>
+
+</div>
 
 </body>
 </html>

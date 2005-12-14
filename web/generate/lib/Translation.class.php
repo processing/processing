@@ -32,9 +32,9 @@ class Translation
         $cats = $xml->getElementsByTagName('categories');
         $cats = $cats->item(0);
         foreach ($cats->childNodes as $c) {
-            $name = $c->getAttribute('name');
+            $name = htmlspecialchars($c->getAttribute('name'));
             $this->categories[$name] = array('' => array());
-            $this->cat_tr[$name] = trim($c->firstChild->nodeValue);
+            $this->cat_tr[$name] = htmlspecialchars(trim($c->firstChild->nodeValue));
             
             if ($c->childCount > 0) {
                 foreach ($c->childNodes as $s) {
