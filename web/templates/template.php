@@ -137,13 +137,17 @@ class LibReferencePage extends ReferencePage
     {
         global $LANGUAGES;
         
-        $this->filepath = 'reference/' . ($lang == 'en' ? '' : "$lang/") . "libraries/$lib/" . $ref->name();
+        $this->langdir = 'reference/' . ($lang == 'en' ? '' : "$lang");
+        $this->libsdir = $this->langdir . '/libraries';
+        $this->libdir = $this->libsdir . "/$lib";
+        $this->filepath = $this->libdir . '/' . $ref->name();
+        
         $title = $ref->title() . ($lang == 'en' ? '' : " \ {$LANGUAGES[$lang][0]}") .' \ Language (API) \ Processing 1.0 (BETA)';
         
         $xhtml = new xhtml_page(TEMPLATEDIR.'template.translation.html');
         $xhtml->set('header', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
         $xhtml->set('title', $title);
-        $xhtml->set('bodyid', 'Libraries');
+        $xhtml->set('bodyid', 'Library-ref');
         if ($lang == 'en') {
             $xhtml->set('navigation', navigation('Language'));
         } else {
