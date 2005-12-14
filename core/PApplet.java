@@ -158,8 +158,19 @@ public class PApplet extends Applet
   /** When debugging headaches */
   static final boolean THREAD_DEBUG = false;
 
+  /** Default width and height for applet when not specified */
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
+
+  /**
+   * Minimum dimensions for the window holding an applet.
+   * This varies between platforms, Mac OS X 10.3 can do any height
+   * but requires at least 128 pixels width. Windows XP has another
+   * set of limitations. And for all I know, Linux probably lets you
+   * make windows with negative sizes.
+   */
+  static public final int MIN_WINDOW_WIDTH = 128;
+  static public final int MIN_WINDOW_HEIGHT = 128;
 
   /**
    * true if no size() command has been executed. This is used to wait until
@@ -1317,11 +1328,14 @@ public class PApplet extends Applet
             Component c = e.getComponent();
             Rectangle bounds = c.getBounds();
             System.out.println("componentResized()");
+            //System.out.println("  " + c.getClass().getName());
+            println("  visible " + isVisible());
             System.out.println("  " + e);
             System.out.println("  bounds: " + bounds);
-            int newWidth = bounds.width - bounds.x * 2;
-            int newHeight = bounds.height - (bounds.y + bounds.x);
-            System.out.println("  new: " + newWidth + " " + newHeight);
+            //int newWidth = bounds.width - bounds.x * 2;
+            //int newHeight = bounds.height - (bounds.y + bounds.x);
+            //System.out.println("  new: " + newWidth + " " + newHeight);
+            size(bounds.width, bounds.height);
             //size(newWidth, newHeight);
 
             //if (c == PApplet.this) {
@@ -5537,8 +5551,7 @@ public class PApplet extends Applet
       // remove the grow box by default
       // users who want it back can call frame.setResizable(true)
       frame.setResizable(false);
-      // can't do pack() here otherwise it'll ruin present mode
-      //frame.pack();  // get insets. get more.
+
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
 
@@ -5592,13 +5605,14 @@ public class PApplet extends Applet
 
       } else {  // if not presenting
         // can't do pack earlier cuz present mode don't like it
-        frame.pack();
+        // (can't go full screen with a frame after calling pack)
+        frame.pack();  // get insets. get more.
         Insets insets = frame.getInsets();
 
-        int windowW =
-          Math.max(applet.width, 120) + insets.left + insets.right;
-        int windowH =
-          Math.max(applet.height, 120) + insets.top + insets.bottom;
+        int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
+          insets.left + insets.right;
+        int windowH = Math.max(applet.height, MIN_WINDOW_HEIGHT) +
+          insets.top + insets.bottom;
 
         frame.setSize(windowW, windowH);
 
