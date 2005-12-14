@@ -302,7 +302,9 @@ public class Runner implements MessageConsumer {
     applet.setBounds((windowW - applet.width)/2,
                      insets.top + (usableH - applet.height) / 2,
                      applet.width, applet.height);
-                     //windowW, windowH);
+
+    // handle frame resizing events
+    applet.setupFrameResizeListener();
 
     applet.setVisible(true);  // no effect
     if (windowLocation != null) {
