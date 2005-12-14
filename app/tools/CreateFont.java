@@ -45,7 +45,7 @@ public class CreateFont extends JFrame {
   Dimension windowSize;
 
   JList fontSelector;
-  JComboBox styleSelector;
+  //JComboBox styleSelector;
   JTextField sizeSelector;
   JCheckBox allBox;
   JCheckBox smoothBox;
@@ -62,9 +62,12 @@ public class CreateFont extends JFrame {
   String list[];
   int selection = -1;
 
-  static final String styles[] = {
-    "Plain", "Bold", "Italic", "Bold Italic"
-  };
+  static {
+    System.out.println("yep yep yep");
+  }
+  //static final String styles[] = {
+  //"Plain", "Bold", "Italic", "Bold Italic"
+  //};
 
 
   public CreateFont(Editor editor) {
@@ -75,12 +78,7 @@ public class CreateFont extends JFrame {
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));
 
-    //Dimension d = new Dimension(5, 5);
-    //paine.add(new Box.Filler(d, d, d), BorderLayout.WEST);
-
     JPanel pain = new JPanel();
-    //pain.setBorder(BorderFactory.createLineBorder(Color.black));
-    //pain.setBorder(new EmptyBorder(10, 20, 20, 20));
     pain.setBorder(new EmptyBorder(13, 13, 13, 13));
     paine.add(pain, BorderLayout.CENTER);
 
@@ -91,7 +89,6 @@ public class CreateFont extends JFrame {
       "Select a font and size, and click 'OK' to generate the font.\n" +
       "It will be added to the data folder of the current sketch.";
 
-    //JLabel label = new JLabel(labelText);
     JTextArea textarea = new JTextArea(labelText);
     textarea.setBorder(new EmptyBorder(10, 10, 20, 10));
     textarea.setBackground(null);
@@ -99,28 +96,6 @@ public class CreateFont extends JFrame {
     textarea.setHighlighter(null);
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
     pain.add(textarea);
-    //pain.add(label);
-
-    //JPanel panel = new JPanel();
-    //panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-
-    /*
-      // save this as an alternative implementation
-    GraphicsEnvironment ge =
-      GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-    Font fonts[] = ge.getAllFonts();
-    String families[] = ge.getAvailableFontFamilyNames();
-    */
-
-    /*
-    for (int i = 0; i < fonts.length; i++) {
-      //System.out.println(fonts[i]);
-      if (fonts[i].getFontName().indexOf(fonts[i].getFamily()) != 0) {
-        System.out.println(fonts[i]);
-      }
-    }
-    */
 
     // don't care about families starting with . or #
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
@@ -130,26 +105,9 @@ public class CreateFont extends JFrame {
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
     Font fonts[] = ge.getAllFonts();
-    //PApplet.printarr(fonts);
     String flist[] = new String[fonts.length];
     table = new Hashtable();
 
-    //String flist[] = ge.getAvailableFontFamilyNames();
-    //fontSelector = new JComboBox();
-    // old jdk11 version
-    //String flist[] = Toolkit.getDefaultToolkit().getFontList();
-
-    /*
-    for (int i = 0; i < flist.length; i++) {
-      if ((flist[i].indexOf('.') == 0) || (flist[i].indexOf('#') == 0) ||
-          (flist[i].equals("Dialog")) || (flist[i].equals("DialogInput")) ||
-          (flist[i].equals("Serif")) || (flist[i].equals("SansSerif")) ||
-          (flist[i].equals("Monospaced"))) continue;
-      //flist[index++] = flist[i];
-      Font f = new Font(flist[i], Font.PLAIN, 1);
-      flist[index++] = f.getPSName();
-    }
-    */
     int index = 0;
     for (int i = 0; i < fonts.length; i++) {
       String psname = fonts[i].getPSName();
@@ -162,36 +120,13 @@ public class CreateFont extends JFrame {
     list = new String[index];
     System.arraycopy(flist, 0, list, 0, index);
 
-    fontSelector = new JList(list); //families);
+    fontSelector = new JList(list);
     fontSelector.addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
           if (e.getValueIsAdjusting() == false) {
-            //System.out.println(e);
-            //System.out.println(e.getFirstIndex());
-            //selection = e.getFirstIndex();
             selection = fontSelector.getSelectedIndex();
             okButton.setEnabled(true);
             update();
-
-            /*
-            int fontsize = 0;
-            try {
-              fontsize = Integer.parseInt(sizeSelector.getText().trim());
-              //System.out.println("'" + sizeSelector.getText() + "'");
-            } catch (NumberFormatException e2) { }
-
-            // if a deselect occurred, selection will be -1
-            if ((fontsize != 0) && (selection != -1)) {
-              font = new Font(list[selection], Font.PLAIN, fontsize);
-              //System.out.println("setting font to " + font);
-              sample.setFont(font);
-
-              String filenameSuggestion = list[selection].replace(' ', '_');
-              filenameField.setText(filenameSuggestion);
-            }
-            */
-            //filenameField.paintComponent(filenameField.getGraphics());
-            //getContentPane().repaint();
           }
         }
       });
@@ -200,17 +135,8 @@ public class CreateFont extends JFrame {
     fontSelector.setVisibleRowCount(12);
     JScrollPane fontScroller = new JScrollPane(fontSelector);
     pain.add(fontScroller);
-    //fontSelector.setFont(new Font("SansSerif", Font.PLAIN, 10));
-    /*
-    fontSelector.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          fontName = e.getActionCommand();
-        }
-      });
-    */
 
     Dimension d1 = new Dimension(13, 13);
-    //paine.add(new Box.Filler(d, d, d), BorderLayout.WEST);
     pain.add(new Box.Filler(d1, d1, d1));
 
     // see http://rinkworks.com/words/pangrams.shtml
@@ -229,35 +155,6 @@ public class CreateFont extends JFrame {
 
     pain.add(sample);
 
-    //for (int i = 0; i < list.length; i++) {
-    /*
-    for (int i = 0; i < families.length; i++) {
-      //fontSelector.addItem(list[i]);
-      fontSelector.addItem(families[i]);
-    }
-    panel.add(fontSelector);
-    */
-
-    /*
-    styleSelector = new JComboBox();
-    for (int i = 0; i < styles.length; i++) {
-      styleSelector.addItem(styles[i]);
-    }
-    styleSelector.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          String command = e.getActionCommand();
-          int style = Font.PLAIN;
-          if (command.indexOf("Bold") != -1) {
-            style |= Font.BOLD;
-          }
-          if (command.indexOf("Italic") != -1) {
-            style |= Font.ITALIC;
-          }
-        }
-      });
-    panel.add(styleSelector);
-    */
-
     Dimension d2 = new Dimension(6, 6);
     pain.add(new Box.Filler(d2, d2, d2));
 
@@ -270,14 +167,6 @@ public class CreateFont extends JFrame {
         public void changedUpdate(DocumentEvent e) { }
       });
     panel.add(sizeSelector);
-
-    /*
-    JLabel rec = new JLabel("(Recommended size for 3D use is 48 points)");
-    if (Base.platform == Base.MACOSX) {
-      rec.setFont(new Font("Dialog", Font.PLAIN, 10));
-    }
-    panel.add(rec);
-    */
 
     smoothBox = new JCheckBox("Smooth");
     smoothBox.addActionListener(new ActionListener() {
@@ -325,17 +214,21 @@ public class CreateFont extends JFrame {
     buttons.add(okButton);
     pain.add(buttons);
 
-    getRootPane().setDefaultButton(okButton);
+    JRootPane root = getRootPane();
+    root.setDefaultButton(okButton);
+    ActionListener disposer = new ActionListener() {
+        public void actionPerformed(ActionEvent actionEvent) {
+          hide();
+        }
+      };
+    Base.registerWindowCloseKeys(root, disposer);
 
-    //setResizable(false);
     pack();
 
     // do this after pack so it doesn't affect layout
     sample.setFont(new Font(list[0], Font.PLAIN, 48));
 
     fontSelector.setSelectedIndex(0);
-    //selection = 0;
-    //update(); // ??
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     windowSize = getSize();

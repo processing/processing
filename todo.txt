@@ -1,6 +1,19 @@
 0099 pde
 X make buttons for editor status taller on macosx
 X   also fix the editor text field placement a bit
+X hack to fix find/replace issues on macosx
+X   http://dev.processing.org/bugs/show_bug.cgi?id=70
+X   right now, typing works, but no caret, no blue highlight
+X   and on second find run, should instead select all the find string
+X     so that typing will replace it directly
+X close/hide "Create Font" window on 'ESC'
+X properly handle ENTER, Ctrl-W and ESC on all dialogs
+X   there must be a proper "swing" way of doing this that doesn't
+X   involve adding key listeners to every friggin component
+X   ESC should fake a cancel button press
+X   ENTER should do the default option
+X   (might be a matter of setting the default action for the window?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=34
 
 _ deal with "could not delete stderr.txt" messages
 _   probably screwed up the temp folder stuff 
@@ -9,6 +22,10 @@ _   build folder is randomized, being recreated on each build
 _ make editor save button highlight on ctrl-s
 _   same goes for the other editor buttons
 _   http://dev.processing.org/bugs/show_bug.cgi?id=242
+
+_ we're breaking some mac human interface guidelines
+_   should be using a menu factory to create menus for all sub-windows
+_   http://developer.apple.com/technotes/tn/tn2042.html
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -279,13 +296,6 @@ _   macosx handleQuit seems to force termination (at least on 1.3)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=32
 _ dim edit menus as appropriate during selection/no selection/etc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=33
-_ properly handle ENTER, Ctrl-W and ESC on all dialogs
-_   there must be a proper "swing" way of doing this that doesn't
-_   involve adding key listeners to every friggin component
-_   ESC should fake a cancel button press
-_   ENTER should do the default option
-_   (might be a matter of setting the default action for the window?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=34
 _ Ctrl-Z will undo, but not scroll to where the undo happens. 
 _   so user thinks nothing is happening and overundo. 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=35
@@ -376,12 +386,9 @@ _   placing "replace" next to "find" ... (hitting "replace all" by accident)
 _   have a button "replace & find next"
 _ allowing to find & replace over multiple tabs 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=69
-_ fix find/replace focus issue on osx
-_   http://dev.processing.org/bugs/show_bug.cgi?id=70
+_ better fix for find/replace focus issue on osx
+_   http://dev.processing.org/bugs/show_bug.cgi?id=244
 _   give that field focus explicitly, rather than just for typing
-_   right now, typing works, but no caret, no blue highlight
-_   and on second find run, should instead select all the find string
-_     so that typing will replace it directly
 
 
 PDE / History
@@ -531,13 +538,15 @@ _   related? an extra } brace deleting everything after it
 
 TOOLS / Create Font
 
-_ create the tool object on startup, then use thread to getAllFonts()
-_ close/hide window on 'ESC'
 _ loading is very slow on the first time (getting all font names)
+_   create the tool object on startup, then use thread to getAllFonts()
 _   show a progress/status bar while it's happening?
 _   (would be useful to at least tell user that system not locked up)
 _ create font with user-specified charsets
 _   may help solve: http://dev.processing.org/bugs/show_bug.cgi?id=98
+_ when resizing window, only resize the text display area
+_   just a matter of moving around the panels and BorderLayout
+_ remember previous font selection when returning to the window
 
 
 
