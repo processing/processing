@@ -3,6 +3,10 @@ X PSound.play() won't play the sound a 2nd time (reopened)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=208
 X   removed playing() method
 
+_ ComponentListener is probably what's needed for resize() 
+_   make sure that components can be resized properly via size()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=209
+_   or that it properly responds to a setBounds() call
 _ calling size() elsewhere in the app doesn't quite work
 _   A second call to size almost works. 
 _   The buffer apparently gets allocated and saveFrame saves the 
@@ -14,11 +18,6 @@ _   use a MediaTracker that's shared, so that while an image is still
 _   loading, other calls to loadImage might be able to add things to the
 _   queue. or maybe beginImage() and endImage()? or a mode that lets 
 _   you wait for the images to download (size is zero until they're ready)
-
-_ ComponentListener is probably what's needed for resize() 
-_   make sure that components can be resized properly via size()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=209
-_   or that it properly responds to a setBounds() call
 
 _ noLoop() at end of setup is prolly b/c of interruptedex
 _   need to not call Thread.interrupt()
@@ -37,6 +36,7 @@ _   need to strip off past the file separator or something
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 
 0099 or later
 
@@ -243,28 +243,33 @@ _ files not in the data folder (works in env, not in sketch)
 
 CORE / PApplet - main()
 
+_ refactor PApplet.main() and Runner.startInternal() to remove duplication
+_   http://dev.processing.org/bugs/show_bug.cgi?id=245
 _ present mode is flakey.. applet doesn't always come up
 _   seems like hitting stop helps shut it down?
 _   is full screen window not being taken down properly?
+_   has this fixed itself, or is it an issue with launching externally?
 _ implement full screen mode.. this takes over the screen as best it can
 _   size(screen.width, screen.height, OPENGL);
 _   if size is screen.width and screen.height, does its best
 _   needs to get the size of the main screen
+_   this probably works but just needs to be tested
+_   exceptions in full screen mode will quit the app completely
+_     can't keep window open because things are hosed
+_   default is that full screen app doesn't cover multiple displays
+_     this is fine since opengl can't usually go across both
+_     but include an example for how to use full in gl 
 _ ability to select monitor via preferences panel
 _   this applies to any applet that's run externally currently (verify)
 _   make it also work with anything that's run inside of p5 itself
 _     this means changing the frame creation code inside Runner
-_ check current present code with multiple monitors
-_ first pass on full screen
-_   exceptions in full screen mode will quit the app completely
-_   (can't keep window open because things are hosed)
-_   default is that full screen app doesn't cover multiple displays
-_     this is fine since opengl can't usually go across both
-_     but include an example for how to use full in gl 
-_     (use toolkit.getscreensize)
-_ cmd-q when running externally causes trouble because it quits
-_   but when running internally it quits p5
-_   how to shut off the cmd-q when running externally on osx?
+_   check current present code with multiple monitors
+_ hitting cmd-q when an applet is running quits p5 (on macosx)
+_   but cmd-q when running externally is ok because it just quits
+_   is there a way to catch cmd-q when running a sketch? 
+_     so that it could avoid quitting if the sketch hasn't been stopped
+_     or if the sketch window is foremost
+_     maybe a hack where a new menubar is added? 
 
 
 CORE / PFont and text()
