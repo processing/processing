@@ -1,0 +1,46 @@
+<div>
+    <h2><img src="images/header.gif" width="205" height="20" alt="OpenGL" /></h2>
+    
+    <p>OpenGL (Open Graphics Library) is a cross-platform graphics interface for 
+      3D and 2D graphics. This library allows Processing programs to utilize the 
+      speed of an OpenGL accelerated graphics card. This expands the potential 
+      for drawing more to the screen and creating larger windows. Processing interfaces 
+      with OpenGL through JOGL, an initiative from the Game Technology Group at 
+      Sun. You need to have an OpenGL accelerated graphics card installed on your 
+      computer to fully utilize this library. For more information, please visit 
+      the <a href="http://www.opengl.org/" target="_new">OpenGL</a> and <a href="https://jogl.dev.java.net/" target="_new">JOGL</a> websites.</p>
+      
+    <p>There are no additional methods or fields for this library. It uses the 
+        Processing language, but exports the geometry differently. Programs must 
+        import the library using the line <em>import processing.opengl.*</em> and 
+        the OpenGL renderer must be specified as the third parameter to the size() 
+        function. The example below shows how to use the Processing OpenGL library.</p>
+        
+    <p><em>Note: Software using this library may appear different on varying graphics 
+          cards as some cards support OpenGL better than others.</em></p>
+          
+    <pre>import processing.opengl.*;
+
+void setup() 
+{
+    size(800, 600, OPENGL);
+    noStroke();
+}
+
+void draw() 
+{
+    float x = mouseX - width/2;
+    background(255);
+    fill(0, 102, 153, 26);
+    for(int i=0; i&lt;height; i+=10) {
+        for(int j=0; j&lt;width; j+=10) {
+            beginShape(QUADS);
+            vertex(x+j,   i,    0);
+            vertex(x+j, i+5,    0);
+            vertex(j-x, i+5, -400);
+            vertex(j-x,   i, -400);
+            endShape();
+        }
+    }
+}</pre>
+</div>
