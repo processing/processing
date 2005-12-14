@@ -551,6 +551,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * This returns the last width and height specified by the user
+   * via the size() command.
+   */
   public Dimension getPreferredSize() {
     return new Dimension(width, height);
   }
@@ -830,9 +834,6 @@ public class PApplet extends Applet
       this.height = iheight;
       defaultSize = false;
 
-      println("size()");
-      println("  iwidth, iheight = " + iwidth + ", " + iheight);
-      println("  setting size to " + width + ", " + height);
       // make the applet itself larger.. it's a subclass of Component,
       // so this is important for when it's embedded inside another app.
       setSize(width, height);
@@ -1327,11 +1328,11 @@ public class PApplet extends Applet
           public void componentResized(ComponentEvent e) {
             Component c = e.getComponent();
             Rectangle bounds = c.getBounds();
-            System.out.println("componentResized()");
+            //System.out.println("componentResized()");
             //System.out.println("  " + c.getClass().getName());
-            println("  visible " + isVisible());
-            System.out.println("  " + e);
-            System.out.println("  bounds: " + bounds);
+            //println("  visible " + isVisible());
+            //System.out.println("  " + e);
+            //System.out.println("  bounds: " + bounds);
             //int newWidth = bounds.width - bounds.x * 2;
             //int newHeight = bounds.height - (bounds.y + bounds.x);
             //System.out.println("  new: " + newWidth + " " + newHeight);
@@ -5382,10 +5383,11 @@ public class PApplet extends Applet
    * (so that it will be saved by the PDE for the next run) and
    * notify on quit. See more notes in the Worker class.
    */
-  public void setupExternalMessages(Frame parentFrame) {
+  public void setupExternalMessages() {  //Frame parentFrame) {
     final Worker worker = new Worker();
 
-    parentFrame.addComponentListener(new ComponentAdapter() {
+    //parentFrame.addComponentListener(new ComponentAdapter() {
+    frame.addComponentListener(new ComponentAdapter() {
         public void componentMoved(ComponentEvent e) {
           Point where = ((Frame) e.getSource()).getLocation();
           System.err.println(PApplet.EXTERNAL_MOVE + " " +
@@ -5394,11 +5396,38 @@ public class PApplet extends Applet
         }
       });
 
-    parentFrame.addWindowListener(new WindowAdapter() {
+    //parentFrame.addWindowListener(new WindowAdapter() {
+    frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           System.err.println(PApplet.EXTERNAL_QUIT);
           System.err.flush();  // important
           System.exit(0);
+        }
+      });
+  }
+
+
+  /**
+   * Set up a listener that will fire proper component resize events
+   * in cases where frame.setResizable(true) is called.
+   */
+  public void setupFrameResizeListener() {
+    frame.addComponentListener(new ComponentAdapter() {
+
+        public void componentResized(ComponentEvent e) {
+          // might be multiple resize calls before visible (i.e. first
+          // when pack() is called, then when it's resized for use).
+          // ignore them because it's not the user resizing things.
+          Frame farm = (Frame) e.getComponent();
+          if (farm.isVisible()) {
+            Insets insets = farm.getInsets();
+            Dimension windowSize = farm.getSize();
+            int usableW = windowSize.width - insets.left - insets.right;
+            int usableH = windowSize.height - insets.top - insets.bottom;
+
+            // the ComponentListener in PApplet will handle calling size()
+            setBounds(insets.left, insets.top, usableW, usableH);
+          }
         }
       });
   }
@@ -5600,7 +5629,7 @@ public class PApplet extends Applet
 
         // not always running externally when in present mode
         if (external) {
-          applet.setupExternalMessages(frame);
+          applet.setupExternalMessages();
         }
 
       } else {  // if not presenting
@@ -5662,10 +5691,9 @@ public class PApplet extends Applet
         applet.setBounds((windowW - applet.width)/2,
                          insets.top + (usableWindowH - applet.height)/2,
                          applet.width, applet.height);
-                         //windowW, windowH);
 
         if (external) {
-          applet.setupExternalMessages(frame);
+          applet.setupExternalMessages();
 
         } else {  // !external
           frame.addWindowListener(new WindowAdapter() {
@@ -5674,6 +5702,9 @@ public class PApplet extends Applet
               }
             });
         }
+
+        // handle frame resizing events
+        applet.setupFrameResizeListener();
 
         // all set for rockin
         frame.show();
