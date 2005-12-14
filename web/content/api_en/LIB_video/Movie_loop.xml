@@ -44,7 +44,6 @@ Plays a movie continuously, restarting it when it is over.
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

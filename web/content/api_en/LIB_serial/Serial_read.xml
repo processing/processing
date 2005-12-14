@@ -28,7 +28,7 @@ void setup() {
 }
 
 void draw() {
-  while (myPort.available() > 0) {
+  while (myPort.available() &gt; 0) {
     int inByte = myPort.read();
     println(inByte);
   }
@@ -49,7 +49,6 @@ Returns a number between 0 and 255 for the next byte that's waiting in the buffe
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 

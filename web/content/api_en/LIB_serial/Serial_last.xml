@@ -28,7 +28,7 @@ void setup() {
 }
 
 void draw() {
-  while (myPort.available() > 0) {
+  while (myPort.available() &gt; 0) {
     int lastIn = myPort.last();
     println(lastIn);
   }
@@ -49,7 +49,6 @@ Returns last byte received.
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 

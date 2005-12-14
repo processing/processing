@@ -32,7 +32,7 @@ void draw() {
   // when the movie half-finished
   float md = myMovie.duration();
   float mt = myMovie.time();
-  if(mt > md/2.0) {
+  if(mt &gt; md/2.0) {
     line(0, 0, width, height);
   }
 }
@@ -52,7 +52,6 @@ Returns the location of the playback head in seconds. For example, if the movie 
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <returns>float</returns>
 

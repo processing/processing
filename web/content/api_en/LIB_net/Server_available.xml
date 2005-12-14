@@ -54,7 +54,6 @@ Returns the next client in line with a new message.
 <label>server</label>
 <description>any variable of type Server</description>
 </parameter>
-<parameter>
 
 <returns>Client</returns>
 

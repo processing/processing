@@ -63,13 +63,11 @@ Sets the number of bytes to buffer before calling serialEvent()
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>count</label>
-<description>int: number of bytes to buffer<description>
+<description>int: number of bytes to buffer</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 
@@ -80,6 +78,5 @@ Sets the number of bytes to buffer before calling serialEvent()
 <type>Method</type>
 
 <partof>Library</partof>
-
 
 </root>

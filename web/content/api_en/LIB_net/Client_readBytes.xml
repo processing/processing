@@ -30,11 +30,11 @@ void setup() {
 } 
 
 void draw() { 
-  if (myClient.available() > 0) { 
+  if (myClient.available() &gt; 0) { 
     background(0);
     // Read in the bytes
     int byteCount = myClient.readBytes(byteBuffer); 
-    if (byteCount > 0 ) {
+    if (byteCount &gt; 0 ) {
       // Convert the byte array to a String
       String myString = new String(byteBuffer);
       // Show it text area
@@ -59,13 +59,11 @@ Reads a group of bytes from the buffer. The version with no parameters returns a
 <label>client</label>
 <description>any variable of type Client</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>bytebuffer</label>
 <description>byte[]: passed in byte array to be altered</description>
 </parameter>
-<parameter>
 
 <returns>byte[] or int</returns>
 

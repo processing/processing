@@ -54,7 +54,6 @@ Pauses a movie during playback. If a movie is started again with play(), it will
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

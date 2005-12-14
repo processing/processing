@@ -28,7 +28,7 @@ void setup() {
 } 
 
 void draw() { 
-  if (myClient.available() > 0) { 
+  if (myClient.available() &gt; 0) { 
     background(0); 
     inString = myClient.readString(); 
     println(inString); 
@@ -50,7 +50,6 @@ Returns the all the data from the buffer as a String. This method assumes the in
 <label>mov</label>
 <description>any variable of type Client</description>
 </parameter>
-<parameter>
 
 <returns>String</returns>
 

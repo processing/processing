@@ -59,13 +59,11 @@ Sets a specific byte to buffer until before calling serialEvent().
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>what</label>
 <description>int: the value to buffer until</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 

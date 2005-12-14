@@ -45,7 +45,6 @@ Returns "true" when a new video frame is available to read.
 <label>mov</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

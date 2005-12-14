@@ -30,7 +30,7 @@ void setup() {
 }
 
 void draw() {
-  while (myPort.available() > 0) {
+  while (myPort.available() &gt; 0) {
     char inByte = myPort.readChar();
     println(inByte);
   }
@@ -51,7 +51,6 @@ Returns the next byte in the buffer as a char. Returns -1 or 0xffff if nothing i
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 

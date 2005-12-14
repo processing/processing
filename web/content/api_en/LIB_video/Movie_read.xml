@@ -46,7 +46,6 @@ Reads the current frame of the movie.
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

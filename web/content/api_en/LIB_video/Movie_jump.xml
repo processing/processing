@@ -48,13 +48,11 @@ Jumps to a specific location within a movie. The parameter <b>where</b> is in te
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>where</label>
 <description>float: position to jump to specified in seconds</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

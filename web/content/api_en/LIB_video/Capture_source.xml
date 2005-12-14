@@ -29,13 +29,11 @@ Selects the capture input source. It's necessary to preface the source name with
 <label>cam</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>MODE</label>
 <description>either TUNER, COMPOSITE, SVIDEO, or COMPONENT</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

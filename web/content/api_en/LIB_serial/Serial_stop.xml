@@ -31,9 +31,9 @@ void setup() {
 
 void draw() {
   // Read until we have 10 bytes, then close the port
-  if (myPort.available() > 0) {
-    if (i >= 10) {
-      // Clear the buffer, or available() will still be > 0
+  if (myPort.available() &gt; 0) {
+    if (i &gt;= 10) {
+      // Clear the buffer, or available() will still be &gt; 0
       myPort.clear();
       // Close the port
       myPort.stop();
@@ -61,7 +61,6 @@ Stops data communication on this port. Use to shut the connection when you're fi
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 

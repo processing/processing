@@ -32,7 +32,7 @@ void setup() {
 } 
 
 void draw() { 
-  if (myClient.available() > 0) { 
+  if (myClient.available() &gt; 0) { 
     background(0);
     // Read until we get a linefeed
     int byteCount = myClient.readBytesUntil(interesting, byteBuffer); 
@@ -59,19 +59,16 @@ Reads from the port into a buffer of bytes up to and including a particular char
 <label>client</label>
 <description>any variable of type Client</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>interesting</label>
 <description>byte: character designated to mark the end of the data</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>byteBuffer</label>
 <description>byte[]: passed in byte array to be altered</description>
 </parameter>
-<parameter>
 
 <returns>byte[] or int</returns>
 

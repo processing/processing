@@ -39,7 +39,6 @@ Opens the capture settings dialog box.
 <label>cam</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

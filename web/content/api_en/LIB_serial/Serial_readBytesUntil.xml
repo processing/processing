@@ -30,7 +30,7 @@ void setup() {
 }
 
 void draw() {
-  while (myPort.available() > 0) {
+  while (myPort.available() &gt; 0) {
     int lf = 10;
     //Expand array size to the number of bytes you expect:
     byte[] inBuffer = new byte[7];
@@ -58,19 +58,16 @@ Reads from the port into a buffer of bytes up to and including a particular char
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>interesting</label>
 <description>byte: character designated to mark the end of the data</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>byteBuffer</label>
 <description>byte[]: passed in byte array to be altered</description>
 </parameter>
-<parameter>
 
 <returns>byte[] or int</returns>
 

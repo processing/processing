@@ -31,7 +31,7 @@ void setup() {
 } 
 
 void draw() { 
-  if (myClient.available() > 0) { 
+  if (myClient.available() &gt; 0) { 
     background(0); 
     // Read input until we get a byte of value 10 (ASCII linefeed):
     inString = myClient.readStringUntil(interesting); 

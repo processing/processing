@@ -44,7 +44,6 @@ Plays a movie one time and stops at the last frame.
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

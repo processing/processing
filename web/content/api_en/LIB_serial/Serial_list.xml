@@ -37,7 +37,6 @@ Gets a list of all available serial ports. Use <b>println()</b> to write the inf
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

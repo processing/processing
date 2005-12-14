@@ -29,7 +29,7 @@ void setup() {
 }
 
 void draw() {
-  while (myPort.available() > 0) {
+  while (myPort.available() &gt; 0) {
     String inBuffer = myPort.readString();   
     if (inBuffer != null) {
       println(inBuffer);
@@ -52,7 +52,6 @@ Returns all the data from the buffer as a String. This method assumes the incomi
 <label>mov</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <returns>String</returns>
 

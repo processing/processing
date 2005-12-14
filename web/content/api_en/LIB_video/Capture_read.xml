@@ -44,7 +44,6 @@ Reads the current video frame.
 <label>cam</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

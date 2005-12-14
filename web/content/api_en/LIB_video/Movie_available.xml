@@ -44,8 +44,6 @@ Returns "true" when a new movie frame is available to read.
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
-
 <returns></returns>
 
 <related></related>

@@ -48,7 +48,6 @@ Stops capturing frames from an attached device.
 <label>cam</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

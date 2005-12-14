@@ -45,13 +45,11 @@ Sets the relative playback speed of the movie. The <b>rate</b> parameters sets t
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>rate</label>
 <description>float: speed multiplier for movie playback</description>
 </parameter>
-<parameter>
 
 <returns>None</returns>
 

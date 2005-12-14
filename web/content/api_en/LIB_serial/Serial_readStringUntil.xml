@@ -35,7 +35,7 @@ void setup() {
 }
 
 void draw() {
-  while (myPort.available() > 0) {
+  while (myPort.available() &gt; 0) {
     myString = myPort.readStringUntil(lf);
     if (myString != null) {
       println(myString);
@@ -59,13 +59,11 @@ Combination of <b>readBytesUntil()</b> and <b>readString()</b>. Returns <b>null<
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>serial</label>
 <description>byte: character designated to mark the end of the data</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 

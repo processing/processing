@@ -71,7 +71,6 @@ Disconnects all clients and stops the server.
 <label>server</label>
 <description>any variable of type Server</description>
 </parameter>
-<parameter>
 
 <returns>None</returns>
 

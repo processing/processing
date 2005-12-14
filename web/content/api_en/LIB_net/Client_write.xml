@@ -60,13 +60,11 @@ Writes data to a server specified when constructing the client.
 <label>client</label>
 <description>any variable of type Client</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>data</label>
 <description>bytes, chars, ints, bytes[], Strings: data to write</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 

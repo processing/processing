@@ -45,13 +45,11 @@ Writes bytes, chars, ints, bytes[], Strings to the serial port
 <label>serial</label>
 <description>any variable of type Serial</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>data</label>
 <description>byte, char, int, bytes[], String: data to write</description>
 </parameter>
-<parameter>
 
 <returns>int</returns>
 

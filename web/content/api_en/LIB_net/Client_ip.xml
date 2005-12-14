@@ -41,7 +41,6 @@ Returns the IP address of the computer to which the Client is attached.
 <label>client</label>
 <description>any variable of type Client</description>
 </parameter>
-<parameter>
 
 <returns>String</returns>
 

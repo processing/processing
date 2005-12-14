@@ -50,7 +50,6 @@ Removed the cropping set by the <b>crop()</b> function.
 <label>cam</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

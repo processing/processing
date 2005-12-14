@@ -47,31 +47,26 @@ Crops the frame coming in from the camera. It seems common for cameras add lines
 <label>cam</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>x</label>
 <description>int or float: x-coordinate of the image</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>y</label>
 <description>int or float: y-coordinate of the image</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>width</label>
 <description>int or float: width to display the image</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>height</label>
 <description>int or float: width to display the image</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

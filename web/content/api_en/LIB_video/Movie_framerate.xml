@@ -45,13 +45,11 @@ Sets how often frames are read from the movie. Setting the <b>fps</b> parameter 
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>fps</label>
 <description>float: speed of the movie in frames per second</description>
 </parameter>
-<parameter>
 
 <returns>None</returns>
 

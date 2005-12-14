@@ -46,8 +46,6 @@ Returns the length of the movie in seconds. If the movie is 1 minute and 20 seco
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
-
 <returns>float</returns>
 
 <related></related>

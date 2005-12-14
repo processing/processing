@@ -34,7 +34,6 @@ Gets a list of all available capture devices such as a camera. Use <b>print()</b
 <label>cam</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <returns>String[]</returns>
 

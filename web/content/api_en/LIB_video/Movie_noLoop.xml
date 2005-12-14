@@ -48,7 +48,6 @@ If a movie is looping, calling noLoop() will cause it to play until the end and 
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

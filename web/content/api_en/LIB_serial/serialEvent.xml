@@ -47,7 +47,7 @@ void serialEvent(Serial p) {
 </example>
 
 <description>
-Called when data is available. Use the <b>read()</b> method to capture this data. The <b>serialEvent()</b> can be set with </b>buffer()</b> to only trigger after a certain number of data elements are read and can be set with <b>bufferUntil()</b> to only trigger after a specific character is read. The <b>which</b> parameter contains the name of the port where new data is available, but is only useful when there is more than one serial connection open and it's necessary to distinguish between the two</b>. 
+Called when data is available. Use the <b>read()</b> method to capture this data. The <b>serialEvent()</b> can be set with <b>buffer()</b> to only trigger after a certain number of data elements are read and can be set with <b>bufferUntil()</b> to only trigger after a specific character is read. The <b>which</b> parameter contains the name of the port where new data is available, but is only useful when there is more than one serial connection open and it's necessary to distinguish between the two. 
 </description>
 
 <syntax>
@@ -77,12 +77,5 @@ Serial
 <type>Function</type>
 
 <partof>core</partof>
-
-
-
-
-
-
-
 
 </root>

@@ -57,13 +57,11 @@ Disconnect a particular client.
 <label>server</label>
 <description>any variable of type Server</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>client</label>
 <description>Client: the client to disconnect</description>
 </parameter>
-<parameter>
 
 <returns>None</returns>
 

@@ -51,7 +51,6 @@ Stops a movie from continuing. The playback returns to the beginning so when a m
 <label>mov</label>
 <description>any variable of type Movie</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 

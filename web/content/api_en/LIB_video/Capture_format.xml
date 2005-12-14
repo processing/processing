@@ -29,13 +29,11 @@ Sets the video format standard to use for the video digitizer. It's necessary to
 <label>cam</label>
 <description>any variable of type Capture</description>
 </parameter>
-<parameter>
 
 <parameter>
 <label>MODE</label>
 <description>either NTSC, PAL, or SECAM</description>
 </parameter>
-<parameter>
 
 <returns></returns>
 
