@@ -182,6 +182,9 @@ code {
 
 .error { color: #f00; margin: 0; }
 
+/* ================== RANDOM CLASSES =============== */
+.clear { clear: both; }
+
 /* ================== PAGE SPECIFIC CSS =============== */
 
 /**************************************************************** Cover ***/
@@ -254,13 +257,9 @@ p.exhibition-nav { margin-top: 0; }
 /**************************************************************** Reference ***/
 
 #reference-nav { position: relative; height: 2em; padding-top: .5em; }
-
 #reference-nav p { position: absolute; right: 10px; top: 0; margin: 0; }
 
-
-
 .ref-notice { margin: 2.5em 0 2.5em 0; color: #006699; clear: both; }
-
 
 .ref-item { margin-bottom: 60px; }
 .ref-item th { width: 100px; font-weight: normal; text-align: left; vertical-align: top; }
@@ -294,13 +293,9 @@ div.ref-col { width: 30%;
 
 .ref-col h3 { margin: 0; }
 .ref-col h5 { margin: 1.5em 0 0 0; 
-
 	font-size: 1em; 
-
 	font-weight: normal; 
-
 	font-style: italic; 
-
 }
 .ref-col h3+h5 { margin-top: 0; }
 .category { margin-bottom: 30px; }
@@ -339,3 +334,23 @@ div.ref-col { width: 30%;
 
 #Copyright p { margin-right: 20px; }
 
+/************************************************************** library indices ***/
+#Library-index .colone {
+	width: 330px;
+	float: left;
+	margin-right: 20px;
+}
+
+#Library-index .twocol {
+	width: 330px;
+	float: left; 
+}
+
+#Libraries h2 { margin-top: 2em; }
+#Libraries h5 { font-size: 1em; margin: 0; font-weight: bold; }
+#Libraries h5 a { font-weight: bold; }
+#Libraries h3 { clear: both; margin-bottom: 0; }
+#Libraries h4 { font-size: 1em; margin-bottom: .5em; }
+
+#Libraries .threecol { float: left; width: 210px; margin-right: 20px; }
+#Libraries .threecol p { margin-top: 0; margin-bottom: 2em; }
