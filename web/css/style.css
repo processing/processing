@@ -263,33 +263,24 @@ p.exhibition-nav { margin-top: 0; }
 
 .ref-item { margin-bottom: 60px; }
 .ref-item th { width: 100px; font-weight: normal; text-align: left; vertical-align: top; }
-
 .ref-item td { vertical-align: top; padding-bottom: 2em; }
-
 .ref-item td h3 { margin: 0; }
 pre { margin: 0; }
 tr.name-row { height: 80px; }
 
+td p { margin-top: 0; }
 
-
-.example img { float: left; margin-right: 15px; margin-bottom: 15px;}
-
+.example img { float: left; margin-right: 15px; margin-bottom: 15px;}\
 .example { clear: both; margin-bottom: 15px;}
 .example pre.margin { margin-left: 115px; }
 
-
-
 /*** ref index ***/
-
-
 .abridged-notice { margin: 0 50px 30px 0; }
-
 
 div.ref-col { width: 30%; 
     margin-right: 2%; 
     float: left; 
 }
-
 
 .ref-col h3 { margin: 0; }
 .ref-col h5 { margin: 1.5em 0 0 0; 
@@ -336,15 +327,18 @@ div.ref-col { width: 30%;
 
 /************************************************************** library indices ***/
 #Library-index .colone {
-	width: 330px;
+	width: 300px;
 	float: left;
-	margin-right: 20px;
+	margin-right: 40px;
 }
 
 #Library-index .twocol {
 	width: 330px;
 	float: left; 
 }
+
+#Library-index h5 { margin-bottom: 0; font-size: 1em; }
+#Library-index .twocol p { margin-top: 0; }
 
 #Libraries h2 { margin-top: 2em; }
 #Libraries h5 { font-size: 1em; margin: 0; font-weight: bold; }
