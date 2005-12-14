@@ -208,6 +208,12 @@ public class Runner implements MessageConsumer {
   }
 
 
+  /**
+   * Begin running this sketch internally to the editor.
+   * This code needs to be refactored with the semi-identical code
+   * in PApplet.main() as outlined in
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=245">Bug 245</A>
+   */
   public void startInternal(Point windowLocation) throws Exception {
     Point editorLocation = editor.getLocation();
     //Insets editorInsets = editor.getInsets();
@@ -268,12 +274,10 @@ public class Runner implements MessageConsumer {
     window.setLayout(null);
     Insets insets = window.getInsets();
 
-    int minW = Preferences.getInteger("run.window.width.minimum");
-    int minH = Preferences.getInteger("run.window.height.minimum");
-    int windowW =
-      Math.max(applet.width, minW) + insets.left + insets.right;
-    int windowH =
-      Math.max(applet.height, minH) + insets.top + insets.bottom;
+    int windowW = Math.max(applet.width, PApplet.MIN_WINDOW_WIDTH) +
+      insets.left + insets.right;
+    int windowH = Math.max(applet.height, PApplet.MIN_WINDOW_HEIGHT) +
+      insets.top + insets.bottom;
 
     if (windowX - windowW > 10) {  // if it fits to the left of the window
       window.setBounds(windowX - windowW, windowY, windowW, windowH);
