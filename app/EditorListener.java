@@ -41,7 +41,7 @@ public class EditorListener {
   JEditTextArea textarea;
 
   boolean externalEditor;
-  boolean expandTabs;
+  boolean tabsExpand;
   int tabSize;
   String tabString;
   boolean autoIndent;
@@ -62,7 +62,8 @@ public class EditorListener {
 
 
   public void applyPreferences() {
-    expandTabs = Preferences.getBoolean("editor.tabs.expand");
+    tabsExpand = Preferences.getBoolean("editor.tabs.expand");
+    //tabsIndent = Preferences.getBoolean("editor.tabs.indent");
     tabSize = Preferences.getInteger("editor.tabs.size");
     tabString = Editor.EMPTY.substring(0, tabSize);
     autoIndent = Preferences.getBoolean("editor.indent");
@@ -102,14 +103,45 @@ public class EditorListener {
 
     switch ((int) c) {
 
-    case 9:  // expand tabs
-      if (expandTabs) {
-        //tc.replaceSelection(tabString);
+    case 9:
+      tabsExpand = false;
+      if (tabsExpand) {  // expand tabs
         textarea.setSelectedText(tabString);
         event.consume();
         return true;
+
+      } else {  // tabs indent instead
+        // if this brace is the only thing on the line, outdent
+        char contents[] = textarea.getText().toCharArray();
+        // index to the character to the left of the caret
+        int prevCharIndex = textarea.getCaretPosition() - 1;
+
+        // now find the start of this line
+        int lineStart = calcLineStart(prevCharIndex, contents);
+
+        int indent = calcBraceIndent(lineStart, contents); //, 0);
+        if (indent == -1) {
+          // no braces to speak of, do nothing
+          //System.out.println("no indent");
+          indent = 0;
+        } else {
+          //System.out.println("indent found at " + indent);
+          indent += tabSize;
+        }
+
+        // and the number of spaces it has
+        int spaceCount = calcSpaceCount(prevCharIndex, contents);
+
+        System.out.println(indent + " " + lineStart + " " + spaceCount);
+
+        textarea.setSelectionStart(lineStart);
+        textarea.setSelectionEnd(lineStart + spaceCount);
+        textarea.setSelectedText(Editor.EMPTY.substring(0, indent));
+
+        event.consume();
+        return true;
       }
-      break;
+      //break;
 
     case 10:  // auto-indent
     case 13:
@@ -174,8 +206,6 @@ public class EditorListener {
         // first remove anything that was there (in case this multiple
         // characters are selected, so that it's not in the way of the
         // spaces for the auto-indent
-        //System.out.println(textarea.getSelectionStart());
-        //System.out.println(textarea.getSelectionEnd());
         if (textarea.getSelectionStart() != textarea.getSelectionEnd()) {
           textarea.setSelectedText("");
         }
@@ -190,7 +220,6 @@ public class EditorListener {
         // if there's something besides whitespace, exit without
         // messing any sort of indenting.
         int index = prevCharIndex;
-        //int spaceCount = 0;
         boolean finished = false;
         while ((index != -1) && (!finished)) {
           if (contents[index] == 10) {
@@ -205,8 +234,8 @@ public class EditorListener {
         }
         if (!finished) return false;  // brace with no start
         int lineStartIndex = index;
-        //System.out.println("line starts at " + lineStartIndex);
 
+        /*
         // now that we know things are ok to be indented, walk
         // backwards to the last { to see how far its line is indented.
         // this isn't perfect cuz it'll pick up commented areas,
@@ -236,6 +265,9 @@ public class EditorListener {
         // check how many spaces on the line with the matching open brace
         int pairedSpaceCount = calcSpaceCount(index, contents);
         //System.out.println(pairedSpaceCount);
+        */
+        int pairedSpaceCount = calcBraceIndent(prevCharIndex, contents); //, 1);
+        if (pairedSpaceCount == -1) return false;
 
         /*
         // now walk forward and figure out how many spaces there are
@@ -269,7 +301,10 @@ public class EditorListener {
   }
 
 
-  protected int calcSpaceCount(int index, char contents[]) {
+  /**
+   * Return the index for the first character on this line.
+   */
+  protected int calcLineStart(int index, char contents[]) {
     // backup from the current caret position to the last newline,
     // so that we can figure out how far this line was indented
     int spaceCount = 0;
@@ -278,16 +313,71 @@ public class EditorListener {
       if ((contents[index] == 10) ||
           (contents[index] == 13)) {
         finished = true;
-        index++; // maybe ?
+        //index++; // maybe ?
       } else {
         index--;  // new
       }
     }
+    // add one because index is either -1 (the start of the document)
+    // or it's the newline character for the previous line
+    return index + 1;
+  }
+
+
+  /**
+   * Calculate the number of spaces on this line.
+   */
+  protected int calcSpaceCount(int index, char contents[]) {
+    index = calcLineStart(index, contents);
+
+    int spaceCount = 0;
     // now walk forward and figure out how many spaces there are
     while ((index < contents.length) && (index >= 0) &&
            (contents[index++] == ' ')) {
       spaceCount++;
     }
     return spaceCount;
+  }
+
+
+  /**
+   * Walk back from 'index' until the brace that seems to be
+   * the beginning of the current block, and return the number of
+   * spaces found on that line.
+   */
+  protected int calcBraceIndent(int index, char contents[]) { //, int braceDepth) {
+    // now that we know things are ok to be indented, walk
+    // backwards to the last { to see how far its line is indented.
+    // this isn't perfect cuz it'll pick up commented areas,
+    // but that's not really a big deal and can be fixed when
+    // this is all given a more complete (proper) solution.
+    int braceDepth = 1;
+    boolean finished = false;
+    while ((index != -1) && (!finished)) {
+      if (contents[index] == '}') {
+        // aww crap, this means we're one deeper
+        // and will have to find one more extra {
+        braceDepth++;
+        //if (braceDepth == 0) {
+        //finished = true;
+        //}
+        index--;
+      } else if (contents[index] == '{') {
+        braceDepth--;
+        if (braceDepth == 0) {
+          finished = true;
+        }
+        index--;
+      } else {
+        index--;
+      }
+    }
+    // never found a proper brace, be safe and don't do anything
+    if (!finished) return -1;
+
+    // check how many spaces on the line with the matching open brace
+    //int pairedSpaceCount = calcSpaceCount(index, contents);
+    //System.out.println(pairedSpaceCount);
+    return calcSpaceCount(index, contents);
   }
 }
