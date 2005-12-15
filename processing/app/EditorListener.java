@@ -104,7 +104,6 @@ public class EditorListener {
     switch ((int) c) {
 
     case 9:
-      tabsExpand = false;
       if (tabsExpand) {  // expand tabs
         textarea.setSelectedText(tabString);
         event.consume();
@@ -119,20 +118,39 @@ public class EditorListener {
         // now find the start of this line
         int lineStart = calcLineStart(prevCharIndex, contents);
 
-        int indent = calcBraceIndent(lineStart, contents); //, 0);
+        int lineEnd = lineStart;
+        while ((lineEnd < contents.length - 1) &&
+               (contents[lineEnd] != 10)) {
+          lineEnd++;
+        }
+
+        // get the number of braces, to determine whether this is an indent
+        int braceBalance = 0;
+        int index = lineStart;
+        while ((index < contents.length) &&
+               (contents[index] != 10)) {
+          if (contents[index] == '{') {
+            braceBalance++;
+          } else if (contents[index] == '}') {
+            braceBalance--;
+          }
+          index++;
+        }
+
+        // if it's a starting indent, need to ignore it, so lineStart
+        // will be the counting point. but if there's a closing indent,
+        // then the lineEnd should be used.
+        int where = (braceBalance > 0) ? lineStart : lineEnd;
+        int indent = calcBraceIndent(where, contents);
         if (indent == -1) {
           // no braces to speak of, do nothing
-          //System.out.println("no indent");
           indent = 0;
         } else {
-          //System.out.println("indent found at " + indent);
           indent += tabSize;
         }
 
         // and the number of spaces it has
         int spaceCount = calcSpaceCount(prevCharIndex, contents);
-
-        System.out.println(indent + " " + lineStart + " " + spaceCount);
 
         textarea.setSelectionStart(lineStart);
         textarea.setSelectionEnd(lineStart + spaceCount);
