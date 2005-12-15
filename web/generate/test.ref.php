@@ -1,15 +1,11 @@
 <?
-
-include('domit/xml_domit_include.php');
-include('lib/xhtml.class.php');
-include('lib/functions.inc.php');
+require('../config.php');
 include('lib/Ref.class.php');
+include('lib/Translation.class.php');
 
-$ref = new Ref('../content/api_en/abs.xml');
+$lang = 'en';
+$translation = new Translation($lang);
 
-$page = new xhtml_page('../templates/template.html');
-$page->set('title', $ref->title());
-$page->set('content_for_layout', $ref->display());
+$page = new ReferencePage(new Ref('/api_en/abs.xml'), $translation, $lang);
 echo $page->out();
-
 ?>

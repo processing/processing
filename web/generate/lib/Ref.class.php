@@ -16,6 +16,7 @@
 class Ref
 {
     var $xmlFile;
+	var $filepath;
     var $xml;
 
     // simple nodes
@@ -44,6 +45,7 @@ class Ref
 	
 	function Ref($filename)
 	{
+			$this->filepath = $filename;
         if ($this->xml =& openXML($filename)) {
             $this->parse($this->xml);
 	    }

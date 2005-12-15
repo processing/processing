@@ -106,6 +106,8 @@ class ReferencePage
         foreach ($translation->meta as $key => $value) {
             $xhtml->set($key, $value);
         }
+
+			$xhtml->set('updated', date('F d, Y h:i:sa T', filemtime(CONTENTDIR.'/'.$ref->filepath)));
         
         
         $this->xhtml = $xhtml;
