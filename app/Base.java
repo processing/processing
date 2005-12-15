@@ -119,6 +119,9 @@ public class Base {
       e.printStackTrace();
     }
 
+    // use native popups so they don't look so crappy on osx
+    JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+
     // build the editor object
     editor = new Editor();
 
