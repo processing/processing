@@ -2951,8 +2951,8 @@ public class PApplet extends Applet
       return new PFont(input);
 
     } catch (Exception e) {
-      die("Could not load font " + filename + "\n" +
-          "Make sure that the font has been copied\n" +
+      die("Could not load font " + filename + ". " +
+          "Make sure that the font has been copied " +
           "to the data folder of your sketch.", e);
     }
     return null;
