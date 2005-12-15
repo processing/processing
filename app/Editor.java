@@ -527,7 +527,11 @@ public class Editor extends JFrame
     exportAppItem = newJMenuItem("Export Application", 'E', true);
     exportAppItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          //buttons.activate(EditorButtons.EXPORT);
+          //SwingUtilities.invokeLater(new Runnable() {
+          //public void run() {
           handleExportApplication();
+          //}});
         }
       });
     menu.add(exportAppItem);
@@ -1063,7 +1067,7 @@ public class Editor extends JFrame
   public void handleRun(boolean present) {
     doClose();
     running = true;
-    buttons.run();
+    buttons.activate(EditorButtons.RUN);
 
     // do this for the terminal window / dos prompt / etc
     for (int i = 0; i < 10; i++) System.out.println();
@@ -1178,6 +1182,7 @@ public class Editor extends JFrame
     } else {
       doStop();
     }
+    buttons.clear();
   }
 
 
@@ -1310,15 +1315,20 @@ public class Editor extends JFrame
   /**
    * New was called (by buttons or by menu), first check modified
    * and if things work out ok, handleNew2() will be called.
-   *
+   * <p/>
    * If shift is pressed when clicking the toolbar button, then
    * force the opposite behavior from sketchbook.prompt's setting
    */
-  public void handleNew(boolean shift) {
-    doStop();
-    handleNewShift = shift;
-    handleNewLibrary = false;
-    checkModified(HANDLE_NEW);
+  public void handleNew(final boolean shift) {
+    buttons.activate(EditorButtons.NEW);
+
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          doStop();
+          handleNewShift = shift;
+          handleNewLibrary = false;
+          checkModified(HANDLE_NEW);
+        }});
   }
 
 
@@ -1369,6 +1379,7 @@ public class Editor extends JFrame
                      "An error occurred while creating\n" +
                      "a new sketch. Processing must now quit.", e);
     }
+    buttons.clear();
   }
 
 
@@ -1386,15 +1397,22 @@ public class Editor extends JFrame
    * Open a sketch given the full path to the .pde file.
    * Pass in 'null' to prompt the user for the name of the sketch.
    */
-  public void handleOpen(String path) {
-    if (path == null) {  // "open..." selected from the menu
-      path = sketchbook.handleOpen();
-      if (path == null) return;
-    }
-    doClose();
-    //doStop();
-    handleOpenPath = path;
-    checkModified(HANDLE_OPEN);
+  public void handleOpen(final String ipath) {
+    // haven't run across a case where i can verify that this works
+    // because open is usually very fast.
+    buttons.activate(EditorButtons.OPEN);
+
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          String path = ipath;
+          if (path == null) {  // "open..." selected from the menu
+            path = sketchbook.handleOpen();
+            if (path == null) return;
+          }
+          doClose();
+          handleOpenPath = path;
+          checkModified(HANDLE_OPEN);
+        }});
   }
 
 
@@ -1523,96 +1541,120 @@ public class Editor extends JFrame
 
   // there is no handleSave1 since there's never a need to prompt
   public void handleSave() {
-    message("Saving...");
-    try {
-      if (sketch.save()) {
-        message("Done Saving.");
-      } else {
-        message(EMPTY);
-      }
-      // rebuild sketch menu in case a save-as was forced
-      sketchbook.rebuildMenus();
+    doStop();
+    buttons.activate(EditorButtons.SAVE);
 
-    } catch (Exception e) {
-      // show the error as a message in the window
-      error(e);
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          message("Saving...");
+          try {
+            if (sketch.save()) {
+              message("Done Saving.");
+            } else {
+              message(EMPTY);
+            }
+            // rebuild sketch menu in case a save-as was forced
+            sketchbook.rebuildMenus();
 
-      // zero out the current action,
-      // so that checkModified2 will just do nothing
-      checkModifiedMode = 0;
-      // this is used when another operation calls a save
-    }
-    buttons.clear();
+          } catch (Exception e) {
+            // show the error as a message in the window
+            error(e);
+
+            // zero out the current action,
+            // so that checkModified2 will just do nothing
+            checkModifiedMode = 0;
+            // this is used when another operation calls a save
+          }
+          buttons.clear();
+        }});
   }
 
 
   public void handleSaveAs() {
     doStop();
+    buttons.activate(EditorButtons.SAVE);
 
-    message("Saving...");
-    try {
-      if (sketch.saveAs()) {
-        message("Done Saving.");
-        sketchbook.rebuildMenus();
-      } else {
-        message("Save Cancelled.");
-      }
-
-    } catch (Exception e) {
-      // show the error as a message in the window
-      error(e);
-    }
-    buttons.clear();
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          message("Saving...");
+          try {
+            if (sketch.saveAs()) {
+              message("Done Saving.");
+              sketchbook.rebuildMenus();
+            } else {
+              message("Save Cancelled.");
+            }
+          } catch (Exception e) {
+            // show the error as a message in the window
+            error(e);
+          }
+          buttons.clear();
+        }});
   }
 
 
   /**
    * Handles calling the export() function on sketch, and
    * queues all the gui status stuff that comes along with it.
-   *
+   * <p/>
    * Made synchronized to (hopefully) avoid problems of people
    * hitting export twice, quickly, and horking things up.
    */
   synchronized public void handleExport() {
     if (!handleExportCheckModified()) return;
+    buttons.activate(EditorButtons.EXPORT);
 
-    try {
-      boolean success = sketch.exportApplet();
-      if (success) {
-        File appletFolder = new File(sketch.folder, "applet");
-        Base.openFolder(appletFolder);
-        message("Done exporting.");
-      } else {
-        // error message will already be visible
-      }
-    } catch (Exception e) {
-      error(e);
-    }
-    buttons.clear();
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          try {
+            boolean success = sketch.exportApplet();
+            if (success) {
+              File appletFolder = new File(sketch.folder, "applet");
+              Base.openFolder(appletFolder);
+              message("Done exporting.");
+            } else {
+              // error message will already be visible
+            }
+          } catch (Exception e) {
+            error(e);
+          }
+          buttons.clear();
+        }});
   }
 
 
   synchronized public void handleExportApplication() {
     if (!handleExportCheckModified()) return;
+    buttons.activate(EditorButtons.EXPORT);
 
-    message("Exporting application...");
-    try {
-      if (sketch.exportApplication(PConstants.WINDOWS) &&
-          sketch.exportApplication(PConstants.MACOSX) &&
-          sketch.exportApplication(PConstants.LINUX)) {
-        Base.openFolder(sketch.folder);
-        message("Done exporting.");
-      } else {
-        // error message will already be visible
-      }
-    } catch (Exception e) {
-      message("Error during export.");
-      e.printStackTrace();
-    }
-    buttons.clear();
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          message("Exporting application...");
+          try {
+            if (sketch.exportApplication(PConstants.WINDOWS) &&
+                sketch.exportApplication(PConstants.MACOSX) &&
+                sketch.exportApplication(PConstants.LINUX)) {
+              Base.openFolder(sketch.folder);
+              message("Done exporting.");
+            } else {
+              // error message will already be visible
+            }
+          } catch (Exception e) {
+            message("Error during export.");
+            e.printStackTrace();
+          }
+          buttons.clear();
+        }});
   }
 
 
+  /**
+   * Checks to see if the sketch has been modified, and if so,
+   * asks the user to save the sketch or cancel the export.
+   * This prevents issues where an incomplete version of the sketch
+   * would be exported, and is a fix for
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=157">Bug 157</A>
+   */
   public boolean handleExportCheckModified() {
     if (!sketch.modified) return true;
 
@@ -1772,7 +1814,8 @@ public class Editor extends JFrame
     }
     error(mess);
 
-    buttons.clearRun();
+    //buttons.clearRun();
+    buttons.clear();
   }
 
 
