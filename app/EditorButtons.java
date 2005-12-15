@@ -60,7 +60,7 @@ public class EditorButtons extends JComponent implements MouseInputListener {
   static final int ACTIVE   = 2;
 
   Editor editor;
-  boolean disableRun;
+  //boolean disableRun;  // this was for library
   //Label status;
 
   Image offscreen;
@@ -73,7 +73,7 @@ public class EditorButtons extends JComponent implements MouseInputListener {
   Image rollover[];
   Image active[];
   int currentRollover;
-  int currentSelection;
+  //int currentSelection;
 
   JPopupMenu popup;
 
@@ -231,10 +231,10 @@ public class EditorButtons extends JComponent implements MouseInputListener {
     if (sel == -1) return;
 
     if (state[sel] != ACTIVE) {
-      if (!(disableRun && ((sel == RUN) || (sel == STOP)))) {
-        setState(sel, ROLLOVER, true);
-        currentRollover = sel;
-      }
+      //if (!(disableRun && ((sel == RUN) || (sel == STOP)))) {
+      setState(sel, ROLLOVER, true);
+      currentRollover = sel;
+      //}
     }
   }
 
@@ -281,6 +281,10 @@ public class EditorButtons extends JComponent implements MouseInputListener {
 
 
   public void mouseExited(MouseEvent e) {
+    // if the popup menu for is visible, don't register this,
+    // because the popup being set visible will fire a mouseExited() event
+    if ((popup != null) && popup.isVisible()) return;
+
     if (state[OPEN] != INACTIVE) {
       setState(OPEN, INACTIVE, true);
     }
@@ -292,26 +296,77 @@ public class EditorButtons extends JComponent implements MouseInputListener {
 
 
   public void mousePressed(MouseEvent e) {
-    int x = e.getX();
-    int y = e.getY();
+    final int x = e.getX();
+    final int y = e.getY();
 
     int sel = findSelection(x, y);
     ///if (sel == -1) return false;
     if (sel == -1) return;
     currentRollover = -1;
-    currentSelection = sel;
-    if (!(disableRun && ((sel == RUN) || (sel == STOP)))) {
-      setState(sel, ACTIVE, true);
-    }
+    //int currentSelection = sel;
+    //if (!(disableRun && ((sel == RUN) || (sel == STOP)))) {
+    // moving the handling of this over into the editor
+    //setState(sel, ACTIVE, true);
+    //}
 
-    if (currentSelection == OPEN) {
+    //if (currentSelection == OPEN) {
+    //switch (currentSelection) {
+    switch (sel) {
+    case RUN:
+      //if (!disableRun) {
+      editor.handleRun(e.isShiftDown());
+      //}
+      break;
+
+    case STOP:
+      //if (!disableRun) {
+      //setState(RUN, INACTIVE, true);
+      //setInactive();
+      editor.handleStop();
+      //}
+      break;
+
+    case OPEN:
       if (popup == null) {
         //popup = new JPopupMenu();
         popup = editor.sketchbook.getPopupMenu();
+        // no events properly being fired, so nevermind
+        /*
+        popup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              System.out.println("action " + e);
+            }
+          });
+        popup.addComponentListener(new ComponentAdapter() {
+            public void componentHidden(ComponentEvent e) {
+              System.out.println("hidden " + e);
+            }
+          });
+        */
         add(popup);
       }
-      //editor.sketchbook.rebuildPopup(popup);
-      popup.show(this, x, y);
+      //activate(OPEN);
+      //SwingUtilities.invokeLater(new Runnable() {
+      //public void run() {
+      popup.show(EditorButtons.this, x, y);
+      //}});
+      break;
+
+    case NEW:
+      editor.handleNew(e.isShiftDown());
+      break;
+
+    case SAVE:
+      editor.handleSave();
+      break;
+
+    case EXPORT:
+      if (e.isShiftDown()) {
+        editor.handleExportApplication();
+      } else {
+        editor.handleExport();
+      }
+      break;
     }
   }
 
@@ -320,49 +375,53 @@ public class EditorButtons extends JComponent implements MouseInputListener {
 
 
   public void mouseReleased(MouseEvent e) {
+    /*
     switch (currentSelection) {
-      case RUN:
-        if (!disableRun) {
-          editor.handleRun(e.isShiftDown());
-        }
-        break;
-
-      case STOP:
-        if (!disableRun) {
-          setState(RUN, INACTIVE, true);
-          editor.handleStop();
-        }
-        break;
 
       case OPEN:
         setState(OPEN, INACTIVE, true);
         break;
-
-      case NEW:
-        editor.handleNew(e.isShiftDown());
-        break;
-
-      case SAVE:
-        editor.handleSave();
-        break;
-
-      case EXPORT:
-        if (e.isShiftDown()) {
-          editor.handleExportApplication();
-        } else {
-          editor.handleExport();
-        }
-        break;
     }
     currentSelection = -1;
+    */
   }
 
 
-  public void disableRun(boolean what) {
-    disableRun = what;
+  //public void disableRun(boolean what) {
+  //disableRun = what;
+  //}
+
+
+  /*
+  public void run() {
+    if (inactive == null) return;
+    clear();
+    setState(RUN, ACTIVE, true);
+  }
+  */
+
+  public void running(boolean yesno) {
+    setState(RUN, yesno ? ACTIVE : INACTIVE, true);
   }
 
 
+  /**
+   * Set a particular button to be active.
+   */
+  public void activate(int what) {
+    if (inactive == null) return;
+    setState(what, ACTIVE, true);
+  }
+
+  //public void clearRun() {
+  //if (inactive == null) return;
+  //setState(RUN, INACTIVE, true);
+  //}
+
+
+  /**
+   * Clear all the state of all buttons.
+   */
   public void clear() { // (int button) {
     if (inactive == null) return;
 
@@ -371,24 +430,6 @@ public class EditorButtons extends JComponent implements MouseInputListener {
       setState(i, INACTIVE, false);
     }
     repaint(); // changed for swing from update();
-  }
-
-
-  public void run() {
-    if (inactive == null) return;
-    clear();
-    setState(RUN, ACTIVE, true);
-  }
-
-
-  public void running(boolean yesno) {
-    setState(RUN, yesno ? ACTIVE : INACTIVE, true);
-  }
-
-
-  public void clearRun() {
-    if (inactive == null) return;
-    setState(RUN, INACTIVE, true);
   }
 
 

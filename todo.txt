@@ -18,11 +18,9 @@ X hack to fix non-terminated multi-line comments
 X   http://dev.processing.org/bugs/show_bug.cgi?id=16
 X improved error message for bad sketch names to include the sketch path
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134466565
-
-casey priorities
-_ make editor save button highlight on ctrl-s
-_   same goes for the other editor buttons
-_   http://dev.processing.org/bugs/show_bug.cgi?id=242
+X make editor save button highlight on ctrl-s
+X   same goes for the other editor buttons
+X   http://dev.processing.org/bugs/show_bug.cgi?id=242
 
 _ deal with "could not delete stderr.txt" messages
 _   probably screwed up the temp folder stuff 
