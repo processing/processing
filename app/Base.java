@@ -315,7 +315,8 @@ public class Base {
       } else {
         //File folder = new File(getTempFolder(), "build");
         //if (!folder.exists()) folder.mkdirs();
-        buildFolder = getTempFolder("build");
+        buildFolder = createTempFolder("build");
+        buildFolder.deleteOnExit();
       }
     }
     return buildFolder;
@@ -329,7 +330,7 @@ public class Base {
    * Modified for revision 0094 to actually make the folder randomized
    * to avoid conflicts in multi-user environments. (Bug 177)
    */
-  static public File getTempFolder(String name) {
+  static public File createTempFolder(String name) {
     try {
       File folder = File.createTempFile(name, null);
       //String tempPath = ignored.getParent();
