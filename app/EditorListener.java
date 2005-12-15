@@ -42,6 +42,7 @@ public class EditorListener {
 
   boolean externalEditor;
   boolean expandTabs;
+  int tabSize;
   String tabString;
   boolean autoIndent;
 
@@ -62,7 +63,7 @@ public class EditorListener {
 
   public void applyPreferences() {
     expandTabs = Preferences.getBoolean("editor.tabs.expand");
-    int tabSize = Preferences.getInteger("editor.tabs.size");
+    tabSize = Preferences.getInteger("editor.tabs.size");
     tabString = Editor.EMPTY.substring(0, tabSize);
     autoIndent = Preferences.getBoolean("editor.indent");
     externalEditor = Preferences.getBoolean("editor.external");
@@ -115,13 +116,18 @@ public class EditorListener {
       if (autoIndent) {
         char contents[] = textarea.getText().toCharArray();
 
-        // this is the position of the caret, if the textarea
-        // only used a single kind of line ending
+        // this is the previous character
+        // (i.e. when you hit return, it'll be the last character
+        // just before where the newline will be inserted)
         int origIndex = textarea.getCaretPosition() - 1;
 
+        // NOTE all this cursing about CRLF stuff is probably moot
+        // NOTE since the switch to JEditTextArea, which seems to use
+        // NOTE only LFs internally (thank god). disabling for 0099.
         // walk through the array to the current caret position,
         // and count how many weirdo windows line endings there are,
         // which would be throwing off the caret position number
+        /*
         int offset = 0;
         int realIndex = origIndex;
         for (int i = 0; i < realIndex-1; i++) {
@@ -130,43 +136,70 @@ public class EditorListener {
             realIndex++;
           }
         }
-
         // back up until \r \r\n or \n.. @#($* cross platform
-
         //System.out.println(origIndex + " offset = " + offset);
         origIndex += offset; // ARGH!#(* WINDOWS#@($*
+        */
 
-        int index = origIndex;
-        int spaceCount = 0;
-        boolean finished = false;
-        while ((index != -1) && (!finished)) {
-          if ((contents[index] == 10) ||
-              (contents[index] == 13)) {
-            finished = true;
-            index++; // maybe ?
-          } else {
-            index--;  // new
+        int spaceCount = calcSpaces(origIndex, contents);
+
+        // now before inserting this many spaces, walk forward from
+        // the caret position, so that the number of spaces aren't
+        // just being duplicated again
+        int index = origIndex + 1;
+        while ((index < contents.length) &&
+               (contents[index] == ' ')) {
+          spaceCount--;
+          index++;
+        }
+
+        // if the last character was a left curly brace, then indent
+        if (origIndex != -1) {
+          if (contents[origIndex] == '{') {
+            spaceCount += tabSize;
           }
         }
-        while ((index < contents.length) && (index >= 0) &&
-               (contents[index++] == ' ')) {
-          spaceCount++;
-        }
 
-        // seems that \r is being inserted anyway
-        // so no need to insert the platform's line separator
         String insertion = "\n" + Editor.EMPTY.substring(0, spaceCount);
-        //tc.replaceSelection(insertion);
         textarea.setSelectedText(insertion);
-        // microsoft vm version:
-        //tc.setCaretPosition(oldCarrot + insertion.length() - 1);
-        // sun vm version:
-        //      tc.setCaretPosition(oldCarrot + insertion.length());
+
+        // mark this event as already handled
         event.consume();
         return true;
       }
       break;
+
+    case '}':
+      if (autoIndent) {
+        char contents[] = textarea.getText().toCharArray();
+        int origIndex = textarea.getCaretPosition() - 1;
+
+      }
+      break;
     }
     return false;
+  }
+
+
+  protected int calcSpaces(int index, char contents[]) {
+    // backup from the current caret position to the last newline,
+    // so that we can figure out how far this line was indented
+    int spaceCount = 0;
+    boolean finished = false;
+    while ((index != -1) && (!finished)) {
+      if ((contents[index] == 10) ||
+          (contents[index] == 13)) {
+        finished = true;
+        index++; // maybe ?
+      } else {
+        index--;  // new
+      }
+    }
+    // now walk forward and figure out how many spaces there are
+    while ((index < contents.length) && (index >= 0) &&
+           (contents[index++] == ' ')) {
+      spaceCount++;
+    }
+    return spaceCount;
   }
 }

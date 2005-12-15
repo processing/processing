@@ -27,10 +27,18 @@ X   build folder is randomized, being recreated on each build
 X mark temp build folder for deletion on exit
 X properly remove console files on exit
 X   in previous releases this was filling up the temp dir with a lotta garbage
+X bug where hiddenCount/codeCount weren't being set to zero on load()
+
+_ unchecking 'use external editor' sketch should not set modified
+_   dangerous if a version that hasn't been re-loaded has possibility
+_   to overwrite. i.e. make a change and save in external editor,
+_   don't actually 
 
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menus for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
+_   also the general warning dialogs are just ass ugly
+_   (i.e. we really need those replacements for JOptionPane)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
