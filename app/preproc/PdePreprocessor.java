@@ -194,9 +194,57 @@ public class PdePreprocessor {
 
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
+    // bug filed at http://dev.processing.org/bugs/show_bug.cgi?id=5
     if ((program.length() > 0) &&
         program.charAt(program.length()-1) != '\n') {
       program += "\n";
+    }
+
+    // if the program ends with an unterminated multiline comment,
+    // an OutOfMemoryError or NullPointerException will happen.
+    // again, not gonna bother tracking this down, but here's a hack.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=16
+    if (true) {
+      char p[] = program.toCharArray();
+      boolean insideSlashes;
+      //boolean insideComment;
+
+      int index = 0;
+      while (index < p.length) {
+        // for any double slash comments, ignore until the end of the line
+        if ((p[index] == '/') &&
+            (index < p.length - 1) &&
+            (p[index+1] == '/')) {
+          index += 2;
+          while ((index < p.length) &&
+                 (index != '\n')) {
+            index++;
+          }
+
+          // check to see if this is the start of a new multiline comment.
+          // if it is, then make sure it's actually terminated somewhere.
+        } else if ((p[index] == '/') &&
+                   (index < p.length - 1) &&
+                   (p[index+1] == '*')) {
+          index += 2;
+          boolean endOfRainbow = false;
+          while (index < p.length - 1) {
+            if ((p[index] == '*') && (p[index+1] == '/')) {
+              endOfRainbow = true;
+              break;
+
+            } else {
+              index++;
+            }
+          }
+          if (!endOfRainbow) {
+            throw new RuntimeException("Missing the */ from the end of a " +
+                                       "/* comment */");
+          }
+        } else {  // any old character, move along
+          index++;
+        }
+      }
     }
 
     if (Preferences.getBoolean("preproc.substitute_unicode")) {
@@ -240,7 +288,6 @@ public class PdePreprocessor {
     // just in case it's not an advanced mode sketch
     PatternMatcher matcher = new Perl5Matcher();
     PatternCompiler compiler = new Perl5Compiler();
-    //String mess = "^\\s*(import\\s+\\S+\\s*;)";
     String mess = "^\\s*(import\\s+)(\\S+)(\\s*;)";
     java.util.Vector imports = new java.util.Vector();
 
@@ -263,13 +310,10 @@ public class PdePreprocessor {
       String piece = piece1 + piece2 + piece3;
       int len = piece.length();
 
-      //imports.add(piece);
       imports.add(piece2);
       int idx = program.indexOf(piece);
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);
-
-      //System.out.println("removing " + piece);
 
     } while (true);
 
