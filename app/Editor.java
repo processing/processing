@@ -672,6 +672,22 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
+    item = new JMenuItem("Open in External Editor");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Preferences.setBoolean("editor.external", true);
+          applyPreferences();
+
+          String path = sketch.current.file.getAbsolutePath();
+          try {
+            Runtime.getRuntime().exec(new String[] {
+              "cmd", "/c", "c:\\emacs-20.7\\bin\\runemacs.exe", path
+            });
+          } catch (Exception ex) { }
+        }
+      });
+    menu.add(item);
+
     return menu;
   }
 
@@ -1069,7 +1085,7 @@ public class Editor extends JFrame
     running = true;
     buttons.activate(EditorButtons.RUN);
 
-    // do this for the terminal window / dos prompt / etc
+    // do this to advance/clear the terminal window / dos prompt / etc
     for (int i = 0; i < 10; i++) System.out.println();
 
     // clear the console on each run, unless the user doesn't want to
@@ -1099,6 +1115,9 @@ public class Editor extends JFrame
 
       runtime = new Runner(sketch, Editor.this);
       runtime.start(appletLocation);
+
+      // run button watcher not currently enabled
+      // it was contributing to the external vm hanging
       watcher = new RunButtonWatcher();
 
     } catch (RunnerException e) {
@@ -1704,6 +1723,7 @@ public class Editor extends JFrame
     Preferences.save();
 
     sketchbook.clean();
+    console.handleQuit();
 
     //System.out.println("exiting here");
     System.exit(0);
