@@ -52,6 +52,10 @@ public class EditorConsole extends JScrollPane {
   //int maxCharCount;
   int maxLineCount;
 
+  static File errFile;
+  static File outFile;
+  static File tempFolder;
+
   static PrintStream systemOut;
   static PrintStream systemErr;
 
@@ -116,23 +120,27 @@ public class EditorConsole extends JScrollPane {
       systemOut = System.out;
       systemErr = System.err;
 
+      tempFolder = Base.createTempFolder("console");
       try {
         String outFileName = Preferences.get("console.output.file");
         if (outFileName != null) {
-          File outFile = new File(Base.getBuildFolder(), outFileName);
+          outFile = new File(tempFolder, outFileName);
           stdoutFile = new FileOutputStream(outFile);
+          //outFile.deleteOnExit();
         }
 
         String errFileName = Preferences.get("console.error.file");
         if (errFileName != null) {
-          File errFile = new File(Base.getBuildFolder(), errFileName);
+          errFile = new File(tempFolder, errFileName);
           stderrFile = new FileOutputStream(errFile);
+          //errFile.deleteOnExit();
         }
       } catch (IOException e) {
         Base.showWarning("Console Error",
                          "A problem occurred while trying to open the\n" +
                          "files used to store the console output.", e);
       }
+      //tempFolder.deleteOnExit();
 
       consoleOut =
         new PrintStream(new EditorConsoleStream(this, false, stdoutFile));
@@ -168,6 +176,38 @@ public class EditorConsole extends JScrollPane {
         }
       }
     }).start();
+  }
+
+
+  /**
+   * Close the streams so that the temporary files can be deleted.
+   * <p/>
+   * File.deleteOnExit() cannot be used because the stdout and stderr
+   * files are inside a folder, and have to be deleted before the
+   * folder itself is deleted, which can't be guaranteed when using
+   * the deleteOnExit() method.
+   */
+  public void handleQuit() {
+    // replace original streams to remove references to console's streams
+    System.setOut(systemOut);
+    System.setErr(systemErr);
+
+    // close the PrintStream
+    consoleOut.close();
+    consoleErr.close();
+
+    // also have to close the original FileOutputStream
+    // otherwise it won't be shut down completely
+    try {
+      stdoutFile.close();
+      stderrFile.close();
+    } catch (IOException e) {
+      e.printStackTrace(systemOut);
+    }
+
+    outFile.delete();
+    errFile.delete();
+    tempFolder.delete();
   }
 
 
