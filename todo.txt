@@ -14,14 +14,19 @@ X   ESC should fake a cancel button press
 X   ENTER should do the default option
 X   (might be a matter of setting the default action for the window?)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=34
+X hack to fix non-terminated multi-line comments
+X   http://dev.processing.org/bugs/show_bug.cgi?id=16
+X improved error message for bad sketch names to include the sketch path
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134466565
+
+casey priorities
+_ make editor save button highlight on ctrl-s
+_   same goes for the other editor buttons
+_   http://dev.processing.org/bugs/show_bug.cgi?id=242
 
 _ deal with "could not delete stderr.txt" messages
 _   probably screwed up the temp folder stuff 
 _   build folder is randomized, being recreated on each build
-
-_ make editor save button highlight on ctrl-s
-_   same goes for the other editor buttons
-_   http://dev.processing.org/bugs/show_bug.cgi?id=242
 
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menus for all sub-windows
@@ -211,10 +216,6 @@ _   float u = (float(x)/width); doesn't work: "unexpected token: float".
 _   float u = (x/float(width)); works! 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=4
 _   return (int(5.5)) causes an error
-_ preprocessor error if last line of code is a comment with no CR after it,
-_   an OutOfMemoryError wants to happen, 
-_   but right now there's a hack to add a CR in PdePreprocessor
-_   http://dev.processing.org/bugs/show_bug.cgi?id=5
 _ random, single slash in the code doesn't throw an error
 _   (just gets removed by the preprocessor)
 _   http://processing.org/bugs/show_bug.cgi?id=6
@@ -239,9 +240,6 @@ _ "unexpected token void" -> "You're mixing dynamic and static mode"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=14
 _ expecting RPAREN messages are ugly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=15
-_ NullPointerException on unterminated comment at end of code
-_   and OutOfMemoryError and weird lockup
-_   http://dev.processing.org/bugs/show_bug.cgi?id=16
 _ not enough args for triangle (or args in general) 
 _   throws out bizarre message 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=17
@@ -251,6 +249,15 @@ _   add a better handler for this specific thing?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=18
 _ using a keyword as a variable name gives unhelpful error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=212
+
+hacked for fix, needs real fix
+_ NullPointerException on unterminated comment at end of code
+_   and OutOfMemoryError and weird lockup
+_   http://dev.processing.org/bugs/show_bug.cgi?id=16
+_ preprocessor error if last line of code is a comment with no CR after it,
+_   an OutOfMemoryError wants to happen, 
+_   but right now there's a hack to add a CR in PdePreprocessor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=5
 
 
 PDE / Editor
