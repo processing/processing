@@ -151,6 +151,11 @@ public class Sketch {
     // get list of files in the sketch folder
     String list[] = folder.list();
 
+    // reset these because load() may be called after an
+    // external editor event. (fix for 0099)
+    codeCount = 0;
+    hiddenCount = 0;
+
     for (int i = 0; i < list.length; i++) {
       if (list[i].endsWith(".pde")) codeCount++;
       else if (list[i].endsWith(".java")) codeCount++;

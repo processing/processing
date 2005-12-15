@@ -21,10 +21,12 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X make editor save button highlight on ctrl-s
 X   same goes for the other editor buttons
 X   http://dev.processing.org/bugs/show_bug.cgi?id=242
-
-_ deal with "could not delete stderr.txt" messages
-_   probably screwed up the temp folder stuff 
-_   build folder is randomized, being recreated on each build
+X deal with "could not delete stderr.txt" messages
+X   probably screwed up the temp folder stuff 
+X   build folder is randomized, being recreated on each build
+X mark temp build folder for deletion on exit
+X properly remove console files on exit
+X   in previous releases this was filling up the temp dir with a lotta garbage
 
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menus for all sub-windows
