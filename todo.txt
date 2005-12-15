@@ -28,6 +28,7 @@ X mark temp build folder for deletion on exit
 X properly remove console files on exit
 X   in previous releases this was filling up the temp dir with a lotta garbage
 X bug where hiddenCount/codeCount weren't being set to zero on load()
+X indent/outdent with curly braces
 
 _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
@@ -323,6 +324,8 @@ _   http://processing.org/bugs/show_bug.cgi?id=51
 _ code coloring is imperfect because it's not based on a parser
 _   i.e. mousePressed() is red but mouseMoved() is brown
 _   http://dev.processing.org/bugs/show_bug.cgi?id=113
+_ undoing to the code's original state won't unset it as "modified" 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=248
 
 
 PDE / Editor Buttons

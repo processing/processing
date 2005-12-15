@@ -141,7 +141,7 @@ public class EditorListener {
         origIndex += offset; // ARGH!#(* WINDOWS#@($*
         */
 
-        int spaceCount = calcSpaces(origIndex, contents);
+        int spaceCount = calcSpaceCount(origIndex, contents);
 
         // now before inserting this many spaces, walk forward from
         // the caret position, so that the number of spaces aren't
@@ -171,9 +171,97 @@ public class EditorListener {
 
     case '}':
       if (autoIndent) {
-        char contents[] = textarea.getText().toCharArray();
-        int origIndex = textarea.getCaretPosition() - 1;
+        // first remove anything that was there (in case this multiple
+        // characters are selected, so that it's not in the way of the
+        // spaces for the auto-indent
+        //System.out.println(textarea.getSelectionStart());
+        //System.out.println(textarea.getSelectionEnd());
+        if (textarea.getSelectionStart() != textarea.getSelectionEnd()) {
+          textarea.setSelectedText("");
+        }
 
+        // if this brace is the only thing on the line, outdent
+        char contents[] = textarea.getText().toCharArray();
+        // index to the character to the left of the caret
+        int prevCharIndex = textarea.getCaretPosition() - 1;
+
+        // backup from the current caret position to the last newline,
+        // checking for anything besides whitespace along the way.
+        // if there's something besides whitespace, exit without
+        // messing any sort of indenting.
+        int index = prevCharIndex;
+        //int spaceCount = 0;
+        boolean finished = false;
+        while ((index != -1) && (!finished)) {
+          if (contents[index] == 10) {
+            finished = true;
+            index++;
+          } else if (contents[index] != ' ') {
+            // don't do anything, this line has other stuff on it
+            return false;
+          } else {
+            index--;
+          }
+        }
+        if (!finished) return false;  // brace with no start
+        int lineStartIndex = index;
+        //System.out.println("line starts at " + lineStartIndex);
+
+        // now that we know things are ok to be indented, walk
+        // backwards to the last { to see how far its line is indented.
+        // this isn't perfect cuz it'll pick up commented areas,
+        // but that's not really a big deal and can be fixed when
+        // this is all given a more complete (proper) solution.
+        index = prevCharIndex;
+        int braceDepth = 1;
+        finished = false;
+        while ((index != -1) && (!finished)) {
+          if (contents[index] == '}') {
+            // aww crap, this means we're one deeper
+            // and will have to find one more extra {
+            braceDepth++;
+            index--;
+          } else if (contents[index] == '{') {
+            braceDepth--;
+            if (braceDepth == 0) {
+              finished = true;
+            } // otherwise just teasing, keep going..
+          } else {
+            index--;
+          }
+        }
+        // never found a proper brace, be safe and don't do anything
+        if (!finished) return false;
+
+        // check how many spaces on the line with the matching open brace
+        int pairedSpaceCount = calcSpaceCount(index, contents);
+        //System.out.println(pairedSpaceCount);
+
+        /*
+        // now walk forward and figure out how many spaces there are
+        while ((index < contents.length) && (index >= 0) &&
+               (contents[index++] == ' ')) {
+          spaceCount++;
+        }
+        */
+
+        // number of spaces found on this line
+        //int newSpaceCount = Math.max(0, spaceCount - tabSize);
+        // number of spaces on this current line
+        //int spaceCount = calcSpaces(caretIndex, contents);
+        //System.out.println("spaces is " + spaceCount);
+        //String insertion = "\n" + Editor.EMPTY.substring(0, spaceCount);
+        //int differential = newSpaceCount - spaceCount;
+        //System.out.println("diff is " + differential);
+        //int newStart = textarea.getSelectionStart() + differential;
+        //textarea.setSelectionStart(newStart);
+        //textarea.setSelectedText("}");
+        textarea.setSelectionStart(lineStartIndex);
+        textarea.setSelectedText(Editor.EMPTY.substring(0, pairedSpaceCount));
+
+        // mark this event as already handled
+        event.consume();
+        return true;
       }
       break;
     }
@@ -181,7 +269,7 @@ public class EditorListener {
   }
 
 
-  protected int calcSpaces(int index, char contents[]) {
+  protected int calcSpaceCount(int index, char contents[]) {
     // backup from the current caret position to the last newline,
     // so that we can figure out how far this line was indented
     int spaceCount = 0;
