@@ -217,42 +217,28 @@ td img { margin: 0; display: block; }
 /**************************************************************** Exhibition ***/
 
 #Exhibition .colone { width: 460px; float: left; margin-right: 40px; }
-
 #Exhibition .coltwo { width: 170px; float: right; margin-right: 20px; }
-
 #Exhibition h2 { margin: 0 0 20px 0; font-size: 1em; }
 #Exhibition h2.with-nav { margin-bottom: 0; }
-
 #Exhibition .onecol { clear: both; }
-
-
 #Exhibition td { vertical-align: top; }
 
-
 .curated-item { margin-bottom: 25px; }
-
 .curated-item h5 { margin-top: 1em; color: #666; font-size: 1em; }
-
 .curated-item h5 a { font-weight: bold; }
 .curated-item p {  padding-right: 2em; }
-
 
 #Network h2 { position: relative; }
 #Network h2 a.addalink { position: absolute; left: 455px; }
 
-
 dl.network dt { font-style: normal; }
-
 dl.network dd { margin: 0; }
-
 dl.network dd.date { color: #999966; margin-bottom: 1em; }
 
 p.network { margin: 0 0 1em 0; }
 p.network span.date { color: #999966; }
 
 p.exhibition-nav { margin-top: 0; }
-
-
 
 /**************************************************************** Reference ***/
 
@@ -354,3 +340,9 @@ div.ref-col { width: 30%;
 
 #Libraries .threecol { float: left; width: 210px; margin-right: 20px; }
 #Libraries .threecol p { margin-top: 0; margin-bottom: 2em; }
+
+/************************************************************** environment ***/
+#Environment h1 { margin-top: 2em; }
+#Environment h2 a { float: left; margin-left: -30px; }
+ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
+#Environment td { padding-bottom: 1em; }

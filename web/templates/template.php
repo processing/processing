@@ -7,20 +7,22 @@ class Page
     var $xhtml;
     var $lang;
     var $subtemplate = false;
+	var $section;
     
     function Page($title = '', $section = '', $bodyid = '')
     {
-        $bodyid = ($bodyid == '') ? $section : $bodyid;
-        $this->xhtml = new xhtml_page(TEMPLATEDIR.'template.html');
-        if ($section == 'Cover') {
-            $this->xhtml->set('header', '<img src="/img/processing_beta_cover.gif" alt="Processing cover" />');
-        } else {
-            $this->xhtml->set('header', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
-        }
-        $this->xhtml->set('bodyid', $bodyid);
-        $title = ($title == '') ? 'Processing 1.0 (BETA)' : $title . ' \ Processing 1.0 (BETA)';
-        $this->xhtml->set('title', $title);
-        $this->xhtml->set('navigation', navigation($section));
+		$bodyid = ($bodyid == '') ? $section : $bodyid;
+		$this->xhtml = new xhtml_page(TEMPLATEDIR.'template.html');
+		if ($section == 'Cover') {
+		    $this->xhtml->set('header', '<img src="/img/processing_beta_cover.gif" alt="Processing cover" />');
+		} else {
+		    $this->xhtml->set('header', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
+		}
+		$this->section = $section;
+		$this->xhtml->set('bodyid', $bodyid);
+		$title = ($title == '') ? 'Processing 1.0 (BETA)' : $title . ' \ Processing 1.0 (BETA)';
+		$this->xhtml->set('title', $title);
+		$this->xhtml->set('navigation', navigation($section));
     }
     
     function set($key, $value)
@@ -58,7 +60,7 @@ class Page
         $this->xhtml->set('charset', $LANGUAGES[$lang][1]);
         $this->xhtml->set('lang', $lang);
         if ($lang != 'en')
-            $this->xhtml->set('navigation', navigation_tr($section));
+            $this->xhtml->set('navigation', navigation_tr($this->section));
     }
     
     function out()
