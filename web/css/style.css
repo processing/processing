@@ -346,3 +346,9 @@ div.ref-col { width: 30%;
 #Environment h2 a { float: left; margin-left: -30px; }
 ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 #Environment td { padding-bottom: 1em; }
+
+/************************************************************** comparison ***/
+#Comparison h1 { margin-top: 2em; }
+#Comparison h2 { margin-bottom: 0; }
+#Comparison .threecol { float: left; width: 210px; margin-right: 20px; }
+#Comparison .threecol p { margin-top: 0; }

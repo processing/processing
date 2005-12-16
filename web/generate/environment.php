@@ -14,7 +14,7 @@ $source = CONTENTDIR."/api_$lang/environment/";
 $path = REFERENCEDIR . ($lang == 'en' ? '' : "/$lang") . "/environment/";
 make_necessary_directories($path."images/file");
 
-$page = new Page("Environment (IDE) \ Processing 1.0 (BETA)", "Environment", "Environment");
+$page = new Page("Environment (IDE)", "Environment", "Environment");
 $page->content(file_get_contents($source."index.html"));
 $page->language($lang);
 writeFile('reference/'.($lang=='en'?'':"$lang/").'environment/index.html', $page->out());
