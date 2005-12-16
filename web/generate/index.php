@@ -56,6 +56,9 @@ li { margin-bottom: 1em; }
         <a href="#" onclick="remote_link('reference_index.php', 'lang=zh'); return false;">Chinese Traditional</a>
     </li>
     <li>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></li>
+	<li>Generate Library References:<br />
+		<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">English</a>
+	</li>
     <li>Generate <a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a></li>
     <li>Generate <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a>
                 <a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>

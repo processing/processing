@@ -139,12 +139,15 @@ function language_nav($current)
     return $html;
 }
 
-function library_nav($libraries, $current)
+function library_nav($current=null)
 {
-    $html = "\n\t<span class=\"lib-nav\">\n";
-    $html .= "\t\t<a href=\"index.html\">$current</a>\n";
-    $html .= "\t</span>\n";
-    return $html;
+	$html = "\n\t<span class=\"lib-nav\">\n";
+	$html .= "\t\t<a href=\"../index.html\">Libraries</a>\n";
+	if ($current) {
+		$html .= "\t\t \ <a href=\"index.html\">".ucfirst($current)."</a>\n";
+	}
+	$html .= "\t</span>\n";
+	return $html;
 }
 
 

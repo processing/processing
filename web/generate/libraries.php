@@ -32,11 +32,10 @@ foreach ($libraries as $lib) {
 
     // get xml files
     if (!$files = getXMLFiles(CONTENTDIR.$source)) { 
-		echo "couldn't open files"; 
+		//echo "couldn't open files"; 
 	} else {
 	// parse xml files and create pages
 	    foreach ($files as $file) {
-	        echo $file.'<br/>';
 	        $page = new LibReferencePage(new Ref($source.'/'.$file), $lib, $translation, $lang);
 	        $page->write();
 	    }
@@ -53,4 +52,10 @@ foreach ($libraries as $lib) {
 
 }
 
+$benchmark_end = microtime_float();
+$execution_time = round($benchmark_end - $benchmark_start, 4);
+
 ?>
+
+<h2>Library Generation Successful</h2>
+<p>Generated files in <?=$execution_time?> seconds.</p>

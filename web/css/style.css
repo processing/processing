@@ -339,6 +339,12 @@ div.ref-col { width: 30%;
 
 #Library-index h5 { margin-bottom: 0; font-size: 1em; }
 #Library-index .twocol p { margin-top: 0; }
+.lib-nav { display: block; 
+	margin-bottom: 10px; 
+	margin-left: -30px; 
+	padding: 7px 0 3px 30px; 
+	background: url(/img/back_off.gif) no-repeat 
+}
 
 #Libraries h2 { margin-top: 2em; }
 #Libraries h5 { font-size: 1em; margin: 0; font-weight: bold; }

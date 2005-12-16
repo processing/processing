@@ -151,15 +151,15 @@ class LibReferencePage extends ReferencePage
         $xhtml->set('title', $title);
         $xhtml->set('bodyid', 'Library-ref');
         if ($lang == 'en') {
-            $xhtml->set('navigation', navigation('Language'));
+            $xhtml->set('navigation', navigation('Libraries'));
         } else {
-            $xhtml->set('navigation', navigation_tr('Language'));
+            $xhtml->set('navigation', navigation_tr('Libraries'));
         }
         
         $piece = new xhtml_piece(TEMPLATEDIR.'template.reference.item.html');
         $xhtml->set('content_for_layout', $piece->out());
         
-        $xhtml->set('reference_nav', library_nav($libraries, $lib));
+        $xhtml->set('reference_nav', library_nav($lib));
         $xhtml->set('language_nav', language_nav($lang));
         
         $xhtml->set('content', $ref->display());
@@ -171,7 +171,9 @@ class LibReferencePage extends ReferencePage
         foreach ($translation->meta as $key => $value) {
             $xhtml->set($key, $value);
         }
-        
+   	
+			$xhtml->set('updated', date('F d, Y h:i:sa T', filemtime(CONTENTDIR.'/'.$ref->filepath)));
+			
         $this->xhtml = $xhtml;
         $this->language($lang);
     }
