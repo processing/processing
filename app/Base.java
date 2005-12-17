@@ -50,8 +50,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 1;//93;
-  static final String VERSION_NAME = "0001";//"0093 Beta";
+  static final int VERSION = 2;//98;
+  static final String VERSION_NAME = "0002";//"0098 Beta";
 
   /**
    * Path of filename opened on the command line,
@@ -301,26 +301,39 @@ public class Base {
   }
 
 
-  static public File getBuildFolder() {
-    String buildPath = Preferences.get("build.path");
-    if (buildPath != null) return new File(buildPath);
+  static File buildFolder;
 
-    File folder = new File(getTempFolder(), "build");
-    if (!folder.exists()) folder.mkdirs();
-    return folder;
+  static public File getBuildFolder() {
+    if (buildFolder == null) {
+      String buildPath = Preferences.get("build.path");
+      if (buildPath != null) {
+        buildFolder = new File(buildPath);
+
+      } else {
+        //File folder = new File(getTempFolder(), "build");
+        //if (!folder.exists()) folder.mkdirs();
+        buildFolder = getTempFolder("build");
+      }
+    }
+    return buildFolder;
   }
 
 
   /**
    * Get the path to the platform's temporary folder, by creating
    * a temporary temporary file and getting its parent folder.
+   * <br/>
+   * Modified for revision 0094 to actually make the folder randomized
+   * to avoid conflicts in multi-user environments. (Bug 177)
    */
-  static public File getTempFolder() {
+  static public File getTempFolder(String name) {
     try {
-      File ignored = File.createTempFile("ignored", null);
-      String tempPath = ignored.getParent();
-      ignored.delete();
-      return new File(tempPath);
+      File folder = File.createTempFile(name, null);
+      //String tempPath = ignored.getParent();
+      //return new File(tempPath);
+      folder.delete();
+      folder.mkdirs();
+      return folder;
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -868,8 +881,49 @@ public class Base {
 
 
   /**
+   * Gets a list of all files within the specified folder,
+   * and returns a list of their relative paths.
+   * Ignores any files/folders prefixed with a dot.
+   */
+  static public String[] listFiles(String path, boolean relative) {
+    return listFiles(new File(path), relative);
+  }
+
+  static public String[] listFiles(File folder, boolean relative) {
+    String path = folder.getAbsolutePath();
+    Vector vector = new Vector();
+    listFiles(relative ? (path + File.separator) : "", path, vector);
+    String outgoing[] = new String[vector.size()];
+    vector.copyInto(outgoing);
+    return outgoing;
+  }
+
+  static protected void listFiles(String basePath,
+                                  String path, Vector vector) {
+    File folder = new File(path);
+    String list[] = folder.list();
+    if (list == null) return;
+
+    for (int i = 0; i < list.length; i++) {
+      if (list[i].charAt(0) == '.') continue;
+
+      File file = new File(path, list[i]);
+      String newPath = file.getAbsolutePath();
+      if (newPath.startsWith(basePath)) {
+        newPath = newPath.substring(basePath.length());
+      }
+      vector.add(newPath);
+      if (file.isDirectory()) {
+        listFiles(basePath, newPath, vector);
+      }
+    }
+  }
+
+
+  /**
    * Equivalent to the one in PApplet, but static (die() is removed)
    */
+  /*
   static public String[] loadStrings(File file) {
     try {
       FileInputStream input = new FileInputStream(file);
@@ -903,4 +957,5 @@ public class Base {
     }
     return null;
   }
+  */
 }

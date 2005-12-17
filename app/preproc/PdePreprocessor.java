@@ -42,6 +42,36 @@ import com.oroinc.text.regex.*;
 /**
  * Class that orchestrates preprocessing p5 syntax into straight Java.
  * <P/>
+ * <B>Current Preprocessor Subsitutions:</B>
+ * <UL>
+ * <LI>any function not specified as being protected or private will
+ * be made 'public'. this means that <TT>void setup()</TT> becomes
+ * <TT>public void setup()</TT>. This is important to note when
+ * coding with core.jar outside of the PDE.
+ * <LI><TT>compiler.substitute_floats</TT> (currently "substitute_f")
+ * treat doubles as floats, i.e. 12.3 becomes 12.3f so that people
+ * don't have to add f after their numbers all the time since it's
+ * confusing for beginners.
+ * <LI><TT>compiler.enhanced_casting</TT> byte(), char(), int(), float()
+ * works for casting. this is basic in the current implementation, but
+ * should be expanded as described above. color() works similarly to int(),
+ * however there is also a *function* called color(r, g, b) in p5.
+ * <LI><TT>compiler.color_datatype</TT> 'color' is aliased to 'int'
+ * as a datatype to represent ARGB packed into a single int, commonly
+ * used in p5 for pixels[] and other color operations. this is just a
+ * search/replace type thing, and it can be used interchangeably with int.
+ * <LI><TT>compiler.web_colors</TT> (currently "inline_web_colors")
+ * color c = #cc0080; should unpack to 0xffcc0080 (the ff at the top is
+ * so that the color is opaque), which is just an int.
+ * </UL>
+ * <B>Other preprocessor functionality</B>
+ * <UL>
+ * <LI>detects what 'mode' the program is in: static (no function
+ * brackets at all, just assumes everything is in draw), active
+ * (setup plus draw or loop), and java mode (full java support).
+ * http://processing.org/reference/environment/
+ * </UL>
+ * <P/>
  * The PDE Preprocessor is based on the Java Grammar that comes with
  * ANTLR 2.7.2.  Moving it forward to a new version of the grammar
  * shouldn't be too difficult.
@@ -97,39 +127,6 @@ import com.oroinc.text.regex.*;
  * itself.  The ANTLR manual goes into a fair amount of detail about the
  * what each type of file is for.
  * <P/>
- * <B>Current Preprocessor Subsitutions:</B>
- * <UL>
- * <LI><TT>compiler.substitute_floats</TT> (currently "substitute_f")
- * treat doubles as floats, i.e. 12.3 becomes 12.3f so that people
- * don't have to add f after their numbers all the time. this is
- * confusing for beginners.
- * <LI><TT>compiler.enhanced_casting</TT> byte(), char(), int(), float()
- * works for casting. this is basic in the current implementation, but
- * should be expanded as described above. color() works similarly to int(),
- * however there is also a *function* called color(r, g, b) in p5.
- * will this cause trouble?
- * <LI><TT>compiler.color_datattype</TT> 'color' is aliased to 'int'
- * as a datatype to represent ARGB packed into a single int, commonly
- * used in p5 for pixels[] and other color operations. this is just a
- * search/replace type thing, and it can be used interchangeably with int.
- * <LI><TT>compiler.web_colors</TT> (currently "inline_web_colors")
- * color c = #cc0080; should unpack to 0xffcc0080 (the ff at the top is
- * so that the color is opaque), which is just an int.
- * </UL>
- * <B>Other preprocessor functionality</B>
- * <UL>
- * <LI>detects what 'mode' the program is in: static (no function
- * brackets at all, just assumes everything is in draw), active
- * (setup plus draw or loop), and java mode (full java support).
- * http://processing.org/reference/environment/
- * <LI>size and background are pulled from draw mode programs and
- * placed into setup(). this has a problem if size() is based on a
- * variable, which we try to avoid people doing, but would like to be
- * able to support it (perhaps by requiring the size() to be final?)
- * <LI>currently does a godawful scrambling of the comments so that
- * the substitution doesn't try to run on them. this also causes lots
- * of bizarro bugs.
- * </UL>
  */
 public class PdePreprocessor {
 
@@ -153,7 +150,8 @@ public class PdePreprocessor {
   static public final int ACTIVE = 1;  // formerly INTERMEDIATE
   static public final int JAVA   = 2;  // formerly ADVANCED
   // static to make it easier for the antlr preproc to get at it
-  static public int programType = -1;
+  static public int programType;
+  static public boolean foundMain;
 
   Reader programReader;
   String buildPath;
@@ -202,6 +200,9 @@ public class PdePreprocessor {
   public String write(String program, String buildPath,
                       String name, String codeFolderPackages[])
     throws java.lang.Exception {
+    // need to reset whether or not this has a main()
+    foundMain = false;
+
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
     if ((program.length() > 0) &&
@@ -285,26 +286,6 @@ public class PdePreprocessor {
 
     extraImports = new String[imports.size()];
     imports.copyInto(extraImports);
-
-    // if using opengl, add it to the special imports
-    /*
-    if (Preferences.get("renderer").equals("opengl")) {
-      extraImports = new String[imports.size() + 1];
-      imports.copyInto(extraImports);
-      extraImports[extraImports.length - 1] = "processing.opengl.*";
-    }
-    */
-
-    /*
-    if (codeFolderPackages != null) {
-      extraImports = new String[importsCount + codeFolderPackages.length];
-      imports.copyInto(extraImports);
-      for (int i = 0; i < codeFolderPackages.length; i++) {
-        extraImports[importsCount + i] = codeFolderPackages[i] + ".*";
-      }
-      codeFolderImports = null;
-    }
-    */
 
     if (codeFolderPackages != null) {
       codeFolderImports = new String[codeFolderPackages.length];
@@ -393,7 +374,7 @@ public class PdePreprocessor {
     emitter.setOut(stream);
     emitter.print(rootNode);
 
-    writeFooter(stream);
+    writeFooter(stream, name);
     stream.close();
 
     // if desired, serialize the parse tree to an XML file.  can
@@ -491,13 +472,23 @@ public class PdePreprocessor {
    *
    * @param out         PrintStream to write it to.
    */
-  void writeFooter(PrintStream out) {
+  void writeFooter(PrintStream out, String className) {
 
     if (programType == STATIC) {
       // close off draw() definition
       out.print("noLoop(); ");
-      out.print("}");
+      out.print("} ");
     }
+//// mobile: no main function
+/*    
+    if ((programType == STATIC) || (programType < JAVA)) {
+      if (!PdePreprocessor.foundMain) {
+        out.print("static public void main(String args[]) { ");
+        out.print("  PApplet.main(new String[] { \"" + className + "\" });");
+        out.print("}");
+      }
+    }
+ */
 
     if (programType < JAVA) {
       // close off the class definition

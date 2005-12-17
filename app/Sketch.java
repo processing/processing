@@ -943,10 +943,8 @@ public class Sketch {
 
 
   /**
-   * Prompt the user for a new file to the sketch.
-   * This could be .class or .jar files for the code folder,
-   * .pde or .java files for the project,
-   * or .dll, .jnilib, or .so files for the code folder
+   * Prompt the user for a new file to the sketch, then call the
+   * other addFile() function to actually add it.
    */
   public void addFile() {
     // make sure the user didn't hide the sketch folder
@@ -977,6 +975,26 @@ public class Sketch {
     // it move instead of copy, they can do it by hand
     File sourceFile = new File(directory, filename);
 
+    // now do the work of adding the file
+    addFile(sourceFile);
+  }
+
+
+  /**
+   * Add a file to the sketch.
+   * <p/>
+   * .pde or .java files will be added to the sketch folder. <br/>
+   * .jar, .class, .dll, .jnilib, and .so files will all
+   * be added to the "code" folder. <br/>
+   * All other files will be added to the "data" folder.
+   * <p/>
+   * If they don't exist already, the "code" or "data" folder
+   * will be created.
+   * <p/>
+   * @return true if successful.
+   */
+  public boolean addFile(File sourceFile) {
+    String filename = sourceFile.getName();
     File destFile = null;
     boolean addingCode = false;
 
@@ -987,7 +1005,7 @@ public class Sketch {
         filename.toLowerCase().endsWith(".dll") ||
         filename.toLowerCase().endsWith(".jnilib") ||
         filename.toLowerCase().endsWith(".so")) {
-      //File codeFolder = new File(this.folder, "code");
+
       if (!codeFolder.exists()) codeFolder.mkdirs();
       destFile = new File(codeFolder, filename);
 
@@ -1005,10 +1023,10 @@ public class Sketch {
     // make sure they aren't the same file
     if (!addingCode && sourceFile.equals(destFile)) {
       Base.showWarning("You can't fool me",
-                          "This file has already been copied to the\n" +
-                          "location where you're trying to add it.\n" +
-                          "I ain't not doin nuthin'.", null);
-      return;
+                       "This file has already been copied to the\n" +
+                       "location where you're trying to add it.\n" +
+                       "I ain't not doin nuthin'.", null);
+      return false;
     }
 
     // in case the user is "adding" the code in an attempt
@@ -1016,10 +1034,11 @@ public class Sketch {
     if (!sourceFile.equals(destFile)) {
       try {
         Base.copyFile(sourceFile, destFile);
+
       } catch (IOException e) {
         Base.showWarning("Error adding file",
-                            "Could not add '" + filename +
-                            "' to the sketch.", e);
+                         "Could not add '" + filename + "' to the sketch.", e);
+        return false;
       }
     }
 
@@ -1042,6 +1061,7 @@ public class Sketch {
       setCurrent(newName);
       editor.header.repaint();
     }
+    return true;
   }
 
 
@@ -1276,12 +1296,9 @@ public class Sketch {
       classPath += File.pathSeparator + additionalClassPath;
     }
 /*
-    String javaClassPath = System.getProperty("java.class.path");
-    // remove quotes if any.. this is an annoying thing on windows
-    if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\"")) {
-      javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
-    }
-
+    //PApplet.println(PApplet.split(Sketchbook.librariesClassPath, ';'));
+    //PApplet.println(PApplet.split(buildPath, ';'));
+    //PApplet.println(PApplet.split(javaClassPath, ';'));
     classPath = buildPath +
       File.pathSeparator + Sketchbook.librariesClassPath +
       File.pathSeparator + javaClassPath;
@@ -1582,7 +1599,7 @@ public class Sketch {
     if (!exportMIDlet()) {
         return false;
     }
-/*      
+/*
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -1691,12 +1708,15 @@ public class Sketch {
                      code[i].name + "</a> ");
     }
 
+    //
+
+    // convert the applet template
+    // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
+    // and now @@description@@
+
     File htmlOutputFile = new File(appletFolder, "index.html");
     FileOutputStream fos = new FileOutputStream(htmlOutputFile);
     PrintStream ps = new PrintStream(fos);
-
-    // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
-    // and now @@description@@
 
     InputStream is = null;
     // if there is an applet.html file in the sketch folder, use that
@@ -1705,7 +1725,7 @@ public class Sketch {
       is = new FileInputStream(customHtml);
     }
     if (is == null) {
-      is = Base.getStream("applet.html");
+      is = Base.getStream("export/applet.html");
     }
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
@@ -1748,6 +1768,8 @@ public class Sketch {
     reader.close();
     ps.flush();
     ps.close();
+
+    //
 
     // copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
@@ -1799,16 +1821,11 @@ public class Sketch {
       // library sketch's "library" folder
       File libraryFolder = (File)en.nextElement();
       File exportSettings = new File(libraryFolder, "export.txt");
+      Hashtable exportTable = readSettings(exportSettings);
+      String appletList = (String) exportTable.get("applet");
       String exportList[] = null;
-      if (exportSettings.exists()) {
-        String info[] = Base.loadStrings(exportSettings);
-        for (int i = 0; i < info.length; i++) {
-          if (info[i].startsWith("applet")) {
-            int idx = info[i].indexOf('=');  // get applet= or applet =
-            String commas = info[i].substring(idx+1).trim();
-            exportList = PApplet.split(commas, ", ");
-          }
-        }
+      if (appletList != null) {
+        exportList = PApplet.split(appletList, ", ");
       } else {
         exportList = libraryFolder.list();
       }
@@ -1832,7 +1849,7 @@ public class Sketch {
 
         } else {  // just copy the file over.. prolly a .dll or something
           Base.copyFile(exportFile,
-                           new File(appletFolder, exportFile.getName()));
+                        new File(appletFolder, exportFile.getName()));
         }
       }
     }
@@ -1840,18 +1857,37 @@ public class Sketch {
     String bagelJar = "lib/core.jar";
     packClassPathIntoZipFile(bagelJar, zos);
 
-    // files to include from data directory
-    // TODO this needs to be recursive
     if (dataFolder.exists()) {
-      String dataFiles[] = dataFolder.list();
+      //String dataFiles[] = dataFolder.list();
+      String dataFiles[] = Base.listFiles(dataFolder, false);
+      int offset = folder.getAbsolutePath().length() + 1;
+      //int offset = dataFolder.getAbsolutePath().length() + 1;
       for (int i = 0; i < dataFiles.length; i++) {
+        if (PApplet.platform == PApplet.WINDOWS) {
+          dataFiles[i] = dataFiles[i].replace('\\', '/');
+        }
+        File dataFile = new File(dataFiles[i]);
+        if (dataFile.isDirectory()) continue;
+
         // don't export hidden files
         // skipping dot prefix removes all: . .. .DS_Store
-        if (dataFiles[i].charAt(0) == '.') continue;
+        //if (dataFiles[i].charAt(0) == '.') continue;
+        if (dataFile.getName().charAt(0) == '.') continue;
 
-        entry = new ZipEntry(dataFiles[i]);
+        //System.out.println("placing " + dataFiles[i].substring(offset));
+        //if (dataFile.isDirectory()) {
+        //entry = new ZipEntry(dataFiles[i].substring(offset) + "/");
+        //} else {
+        entry = new ZipEntry(dataFiles[i].substring(offset));
+        //}
+        //if (entry.isDirectory()) {
+        //System.out.println(entry + " is a dir");
+        //}
         zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
+        //zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
+        //if (!dataFile.isDirectory()) {
+        zos.write(Base.grabFile(dataFile));
+        //}
         zos.closeEntry();
       }
     }
@@ -1942,7 +1978,372 @@ public class Sketch {
    * +-------------------------------------------------------+
    * </PRE>
    */
-  public boolean exportApplication() {
+  public boolean exportApplication(int exportPlatform) throws Exception {
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    //int exportPlatform = PApplet.platform; //PConstants.MACOSX;
+    String exportPlatformStr = null;
+    if (exportPlatform == PConstants.WINDOWS) {
+      exportPlatformStr = "windows";
+    } else if (exportPlatform == PConstants.MACOSX) {
+      exportPlatformStr = "macosx";
+    } else if (exportPlatform == PConstants.LINUX) {
+      exportPlatformStr = "linux";
+    } else {
+      exportPlatform = -1;
+    }
+
+    String folderName = "application";
+    if (exportPlatform != -1) {
+      folderName += "." + exportPlatformStr;
+    }
+
+    // nuke the old folder because it can cause trouble
+    File destFolder = new File(folder, folderName);
+    Base.removeDir(destFolder);
+    destFolder.mkdirs();
+
+    // build the sketch
+    String foundName = build(destFolder.getPath(), name);
+
+    // (already reported) error during export, exit this function
+    if (foundName == null) return false;
+
+    // if name != exportSketchName, then that's weirdness
+    // BUG unfortunately, that can also be a bug in the preproc :(
+    if (!name.equals(foundName)) {
+      Base.showWarning("Error during export",
+                       "Sketch name is " + name + " but the sketch\n" +
+                       "name in the code was " + foundName, null);
+      return false;
+    }
+
+
+    /// figure out where the jar files will be placed
+
+    File jarFolder = new File(destFolder, "lib");
+
+
+    /// on macosx, need to copy .app skeleton since that's
+    /// also where the jar files will be placed
+    File dotAppFolder = null;
+    if (exportPlatform == PConstants.MACOSX) {
+      dotAppFolder = new File(destFolder, name + ".app");
+      String APP_SKELETON = "skeleton.app";
+      //File dotAppSkeleton = new File(folder, APP_SKELETON);
+      File dotAppSkeleton = new File("lib/export/" + APP_SKELETON);
+      Base.copyDir(dotAppSkeleton, dotAppFolder);
+
+      String stubName = "Contents/MacOS/JavaApplicationStub";
+      // need to set the stub to executable
+      // will work on osx or *nix, but just dies on windows, oh well..
+      if (PApplet.platform == PConstants.WINDOWS) {
+        File warningFile = new File(destFolder, "readme.txt");
+        PrintStream ps = new PrintStream(new FileOutputStream(warningFile));
+        ps.println("This application was created on Windows, which doesn't");
+        ps.println("properly support setting files as \"executable\",");
+        ps.println("a necessity for applications on Mac OS X.");
+        ps.println();
+        ps.println("To fix this, use the Terminal on Mac OS X, and from this");
+        ps.println("directory, type the following:");
+        ps.println();
+        ps.println("chmod +x " + dotAppFolder.getName() + "/" + stubName);
+        ps.flush();
+        ps.close();
+
+      } else {
+        File stubFile = new File(dotAppFolder, stubName);
+        String stubPath = stubFile.getAbsolutePath();
+        Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
+      }
+
+      // set the jar folder to a different location than windows/linux
+      jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
+    }
+
+
+    /// make the jar folder (windows and linux)
+
+    if (!jarFolder.exists()) jarFolder.mkdirs();
+
+
+    /// on windows, copy the exe file
+
+    if (exportPlatform == PConstants.WINDOWS) {
+      Base.copyFile(new File("lib/export/application.exe"),
+                    new File(destFolder, this.name + ".exe"));
+    }
+
+
+    /// start copying all jar files
+
+    Vector jarListVector = new Vector();
+
+
+    /// create the main .jar file
+
+    zipFileContents = new Hashtable();
+
+    FileOutputStream zipOutputFile =
+      new FileOutputStream(new File(jarFolder, name + ".jar"));
+    ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
+    ZipEntry entry;
+
+    // add the manifest file so that the .jar can be double clickable
+    addManifest(zos);
+
+    // add the project's .class files to the jar
+    // (just grabs everything from the build directory,
+    // since there may be some inner classes)
+    // TODO this needs to be recursive (for packages)
+    String classfiles[] = destFolder.list();
+    for (int i = 0; i < classfiles.length; i++) {
+      if (classfiles[i].endsWith(".class")) {
+        entry = new ZipEntry(classfiles[i]);
+        zos.putNextEntry(entry);
+        zos.write(Base.grabFile(new File(destFolder, classfiles[i])));
+        zos.closeEntry();
+      }
+    }
+
+    // add the data folder to the main jar file
+    if (dataFolder.exists()) {
+      String dataFiles[] = Base.listFiles(dataFolder, false);
+      int offset = folder.getAbsolutePath().length() + 1;
+      for (int i = 0; i < dataFiles.length; i++) {
+        if (PApplet.platform == PApplet.WINDOWS) {
+          dataFiles[i] = dataFiles[i].replace('\\', '/');
+        }
+        File dataFile = new File(dataFiles[i]);
+        if (dataFile.isDirectory()) continue;
+
+        // don't export hidden files
+        // skipping dot prefix removes all: . .. .DS_Store
+        if (dataFile.getName().charAt(0) == '.') continue;
+
+        entry = new ZipEntry(dataFiles[i].substring(offset));
+        zos.putNextEntry(entry);
+        zos.write(Base.grabFile(dataFile));
+        zos.closeEntry();
+      }
+    }
+
+    // add the contents of the code folder to the jar
+    // (will unpack all jar files in the code folder)
+    if (codeFolder.exists()) {
+      String includes = Compiler.contentsToClassPath(codeFolder);
+      packClassPathIntoZipFile(includes, zos);
+    }
+
+    zos.flush();
+    zos.close();
+
+    jarListVector.add(name + ".jar");
+
+
+    /// add core.jar to the jar destination folder
+
+    //System.out.println(jarFolder);
+    Base.copyFile(new File("lib/core.jar"), new File(jarFolder, "core.jar"));
+    jarListVector.add("core.jar");
+
+
+    /// add contents of 'library' folders to the export
+
+    // if a file called 'export.txt' is in there, it contains
+    // a list of the files that should be exported.
+    // otherwise, all files are exported.
+    Enumeration en = importedLibraries.elements();
+    while (en.hasMoreElements()) {
+      File libraryFolder = (File)en.nextElement();
+
+      // in the list is a File object that points the
+      // library sketch's "library" folder
+      File exportSettings = new File(libraryFolder, "export.txt");
+      Hashtable exportTable = readSettings(exportSettings);
+      String commaList = null;
+      String exportList[] = null;
+
+      if (exportPlatform != -1) {
+        // first check to see if there's something like application.macosx
+        commaList = (String)
+          exportTable.get("application." + exportPlatformStr);
+      }
+      if (commaList == null) {
+        // next check to see if something for 'application' is specified
+        commaList = (String) exportTable.get("application");
+      }
+      if (commaList == null) {
+        // otherwise just dump the whole folder
+        exportList = libraryFolder.list();
+      } else {
+        exportList = PApplet.split(commaList, ", ");
+      }
+
+      // add each item from the library folder / export list to the output
+      for (int i = 0; i < exportList.length; i++) {
+        if (exportList[i].equals(".") ||
+            exportList[i].equals("..")) continue;
+
+        exportList[i] = PApplet.trim(exportList[i]);
+        if (exportList[i].equals("")) continue;
+
+        File exportFile = new File(libraryFolder, exportList[i]);
+        if (!exportFile.exists()) {
+          System.err.println("File " + exportList[i] + " does not exist");
+
+        } else if (exportFile.isDirectory()) {
+          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+
+        } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
+                   exportFile.getName().toLowerCase().endsWith(".jar")) {
+          //packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
+          Base.copyFile(exportFile, new File(jarFolder, exportList[i]));
+          jarListVector.add(exportList[i]);
+
+        } else if ((exportPlatform == PConstants.MACOSX) &&
+                   (exportFile.getName().toLowerCase().endsWith(".jnilib"))) {
+          // jnilib files can be placed in Contents/Resources/Java
+          Base.copyFile(exportFile, new File(jarFolder, exportList[i]));
+
+        } else {
+          // copy the file to the main directory.. prolly a .dll or something
+          Base.copyFile(exportFile,
+                        new File(destFolder, exportFile.getName()));
+        }
+      }
+    }
+
+
+    /// create platform-specific CLASSPATH based on included jars
+
+    String jarList[] = new String[jarListVector.size()];
+    jarListVector.copyInto(jarList);
+    StringBuffer exportClassPath = new StringBuffer();
+
+    if (exportPlatform == PConstants.MACOSX) {
+      for (int i = 0; i < jarList.length; i++) {
+        if (i != 0) exportClassPath.append(":");
+        exportClassPath.append("$JAVAROOT/" + jarList[i]);
+      }
+    } else if (exportPlatform == PConstants.WINDOWS) {
+      for (int i = 0; i < jarList.length; i++) {
+        if (i != 0) exportClassPath.append(",");
+        exportClassPath.append(jarList[i]);
+      }
+    } else {
+      for (int i = 0; i < jarList.length; i++) {
+        if (i != 0) exportClassPath.append(":");
+        exportClassPath.append("$APPDIR/lib/" + jarList[i]);
+      }
+    }
+
+
+    /// macosx: write out Info.plist (template for classpath, etc)
+
+    if (exportPlatform == PConstants.MACOSX) {
+      String PLIST_TEMPLATE = "template.plist";
+      File plistTemplate = new File(folder, PLIST_TEMPLATE);
+      if (!plistTemplate.exists()) {
+        plistTemplate = new File("lib/export/" + PLIST_TEMPLATE);
+      }
+      File plistFile = new File(dotAppFolder, "Contents/Info.plist");
+      PrintStream ps = new PrintStream(new FileOutputStream(plistFile));
+
+      String lines[] = PApplet.loadStrings(plistTemplate);
+      for (int i = 0; i < lines.length; i++) {
+        if (lines[i].indexOf("@@") != -1) {
+          StringBuffer sb = new StringBuffer(lines[i]);
+          int index = 0;
+          while ((index = sb.indexOf("@@sketch@@")) != -1) {
+            sb.replace(index, index + "@@sketch@@".length(),
+                       name);
+          }
+          while ((index = sb.indexOf("@@classpath@@")) != -1) {
+            sb.replace(index, index + "@@classpath@@".length(),
+                       exportClassPath.toString());
+          }
+          lines[i] = sb.toString();
+        }
+        // explicit newlines to avoid Windows CRLF
+        ps.print(lines[i] + "\n");
+      }
+      ps.flush();
+      ps.close();
+
+    } else if (exportPlatform == PConstants.WINDOWS) {
+      File argsFile = new File(destFolder + "/lib/args.txt");
+      PrintStream ps = new PrintStream(new FileOutputStream(argsFile));
+
+      ps.println(Preferences.get("run.options"));
+      ps.println(this.name);
+      ps.println(exportClassPath);
+
+      ps.flush();
+      ps.close();
+
+    } else {
+      File shellScript = new File(destFolder, this.name);
+      PrintStream ps = new PrintStream(new FileOutputStream(shellScript));
+
+      // do the newlines explicitly so that windows CRLF
+      // isn't used when exporting for unix
+      ps.print("#!/bin/sh\n\n");
+      ps.print("APPDIR=`dirname $0`\n");
+      ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
+      ps.print("java " + Preferences.get("run.options") +
+               " -cp " + exportClassPath +
+               " " + this.name + "\n");
+
+      ps.flush();
+      ps.close();
+
+      String shellPath = shellScript.getAbsolutePath();
+      // will work on osx or *nix, but just dies on windows, oh well..
+      if (PApplet.platform != PConstants.WINDOWS) {
+        Runtime.getRuntime().exec(new String[] { "chmod", "+x", shellPath });
+      }
+    }
+
+
+    /// copy the source files to the target
+    /// (we like to encourage people to share their code)
+
+    File sourceFolder = new File(destFolder, "source");
+    sourceFolder.mkdirs();
+
+    for (int i = 0; i < codeCount; i++) {
+      try {
+        Base.copyFile(code[i].file,
+                      new File(sourceFolder, code[i].file.getName()));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    // move the .java file from the preproc there too
+    String preprocFilename = this.name + ".java";
+    File preprocFile = new File(destFolder, preprocFilename);
+    if (preprocFile.exists()) {
+      preprocFile.renameTo(new File(sourceFolder, preprocFilename));
+    }
+
+
+    /// remove the .class files from the export folder.
+    for (int i = 0; i < classfiles.length; i++) {
+      if (classfiles[i].endsWith(".class")) {
+        File deadguy = new File(destFolder, classfiles[i]);
+        if (!deadguy.delete()) {
+          Base.showWarning("Could not delete",
+                           classfiles[i] + " could not \n" +
+                           "be deleted from the applet folder.  \n" +
+                           "You'll need to remove it by hand.", null);
+        }
+      }
+    }
+
+
+    /// goodbye
     return true;
   }
 
@@ -1957,16 +2358,35 @@ public class Sketch {
       "Main-Class: " + name + "\n";  // TODO not package friendly
     zos.write(contents.getBytes());
     zos.closeEntry();
+  }
 
-    /*
-      for (int i = 0; i < bagelClasses.length; i++) {
-        if (!bagelClasses[i].endsWith(".class")) continue;
-        entry = new ZipEntry(bagelClasses[i]);
-        zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(exportDir + bagelClasses[i])));
-        zos.closeEntry();
+
+  /**
+   * Read from a file with a bunch of attribute/value pairs
+   * that are separated by = and ignore comments with #.
+   */
+  protected Hashtable readSettings(File inputFile) {
+    Hashtable outgoing = new Hashtable();
+    if (!inputFile.exists()) return outgoing;  // return empty hash
+
+    String lines[] = PApplet.loadStrings(inputFile);
+    for (int i = 0; i < lines.length; i++) {
+      int hash = lines[i].indexOf('#');
+      String line = (hash == -1) ?
+        lines[i].trim() : lines[i].substring(hash).trim();
+      if (line.length() == 0) continue;
+
+      int equals = line.indexOf('=');
+      if (equals == -1) {
+        System.err.println("ignoring illegal line in " + inputFile);
+        System.err.println("  " + line);
+        continue;
       }
-    */
+      String attr = line.substring(0, equals).trim();
+      String valu = line.substring(equals + 1).trim();
+      outgoing.put(attr, valu);
+    }
+    return outgoing;
   }
 
 
