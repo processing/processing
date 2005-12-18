@@ -672,6 +672,7 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
+    /*
     item = new JMenuItem("Open in External Editor");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -687,6 +688,7 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);
+    */
 
     return menu;
   }

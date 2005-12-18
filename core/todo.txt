@@ -1,7 +1,6 @@
 0099 core
-X PSound.play() won't play the sound a 2nd time (reopened)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=208
-X   removed playing() method
+X removed playing() method from PSound
+X integrate destroy() method from shiffman as dispose() in PSound2
 X ComponentListener is probably what's needed for resize() 
 X   make sure that components can be resized properly via size()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=209
@@ -11,11 +10,20 @@ X   A second call to size almost works.
 X   The buffer apparently gets allocated and saveFrame saves the 
 X   new size but drawing appears to be disabled.
 X   http://dev.processing.org/bugs/show_bug.cgi?id=243
+X update to java 1.4.2_09
+
+_ make dxf writer that'll work with recordRaw()
+_ enable PGraphicsPDF for inclusion
+_   write documentation on images (they suck) and fonts (use ttf)
+
+_ PSound.play() won't play the sound a 2nd time (reopened)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=208
 
 _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
-
+_ too much object creation in java2d
+_   causes inconsistency/hiccups as the gc runs
 _ fix the flicker in java2d mode
 _   http://dev.processing.org/bugs/show_bug.cgi?id=122
 _   framerate(30) is still flickery and jumpy..
@@ -26,22 +34,11 @@ _ framerate that's reported is out of joint with actual
 _   seems to be aliasing effect of low resolution on millis()
 _   so rates coming out double or half of their actual
 _   probably need to integrate over a rolling array of 10 frames or so
-
-_ don't block on loadImage()
-_   use a MediaTracker that's shared, so that while an image is still
-_   loading, other calls to loadImage might be able to add things to the
-_   queue. or maybe beginImage() and endImage()? or a mode that lets 
-_   you wait for the images to download (size is zero until they're ready)
-
 _ noLoop() at end of setup is prolly b/c of interruptedex
 _   need to not call Thread.interrupt()
 
 _ dataFolder() might be flawed b/c it's referring to contents of jar file
 _   for input, better to use openStream
-
-_ make dxf writer that'll work with recordRaw()
-_ enable PGraphicsPDF for inclusion
-_   write documentation on images (they suck) and fonts (use ttf)
 
 this should be fixed, test
 _ 404 error because first searches applet directory in isometricblocks
@@ -110,7 +107,6 @@ _ add a e2mouseX and e2mouseY
 _   so that the prev mouse location is still good on mouseReleased
 _   http://dev.processing.org/bugs/show_bug.cgi?id=170
 
-_ update to java 1.4.2_09
 _ add auto-install of cab file inside applet.html
 _   http://dev.processing.org/bugs/show_bug.cgi?id=181
 _   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/using_tags.html

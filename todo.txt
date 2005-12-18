@@ -63,21 +63,20 @@ _   (i.e. we really need those replacements for JOptionPane)
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-the biggies (from casey)
+the biggies
+_ finish record() and addition of the pdf library
 _ bring back P2D with proper stuff 
 _   it's something we had and we lost
-_ use javac?
-_   ask japanese students about whether jikes is working ok
-
-other biggies
 _ properly handle non-ascii chars in p5 folder name
+_   use javac?
+X   ask japanese students about whether jikes is working ok
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
 _   perhaps the get around this by building into sketch folder
 _     when non-ascii chars in use, just launch everything externally
 
 last minute regression from 0097
-_ exported movies seem to have trouble
+_ exported movies seem to have trouble (windows only?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=231
 
 _ make .pde files double-clickable from windows
@@ -200,6 +199,11 @@ _ write a simple example for threaded image loading "load several"
 _   MediaTracker blocking is prolly making jar download really slow
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
 _ scripts: how to make a long setup() sleep so that things don't lock way up
+_ example for no block on loadImage()
+_   use a MediaTracker that's shared, so that while an image is still
+_   loading, other calls to loadImage might be able to add things to the
+_   queue. or maybe beginImage() and endImage()? or a mode that lets 
+_   you wait for the images to download (size is zero until they're ready)
 
 
 

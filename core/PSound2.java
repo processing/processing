@@ -131,7 +131,7 @@ public class PSound2 extends PSound {
                     clip.stop();
                     clip.setFramePosition(0);
                   } else {
-                    // if not playing, just needs to reset things
+                    // if not playing, call stop() to reset clip internally
                     clip.stop();
                   }
                 }
@@ -165,15 +165,38 @@ public class PSound2 extends PSound {
   }
 
 
-  //public boolean playing() {
-  //return clip.isActive();
+  /**
+   * Free up resources used by this clip, otherwise an exception
+   * that reads "LineUnavailableException: No Free Voices" will be thrown
+   * after about 32 attempts. [thanks to daniel shiffman for this fix]
+   */
+  //public void destroy() {
+  protected void finalize() throws Throwable {
+    //try {
+    if (clip != null) {
+      clip.flush();
+      clip.close();
+    }
+    //} catch (Exception e) {
+    //System.err.println("Error destroying clip: " + e);
   //}
+  }
 
 
   /**
    * either sets repeat flag, or begins playing (and sets)
    */
   public void loop() {
+  /*
+    // other possible solution for the looping issues
+    looping = true;
+    //System.out.println("loop() clip active = " + clip.isActive());
+    if (!clip.isActive()) {
+      clip.stop();
+      clip.setFramePosition(0);
+      clip.start();
+    }
+    */
     clip.loop(Clip.LOOP_CONTINUOUSLY);
   }
 
@@ -185,12 +208,9 @@ public class PSound2 extends PSound {
    */
   public void noLoop() {
     clip.loop(0);
+    //looping = false;
+    //if (clip.isActive()) stop();
   }
-
-
-  // Play and repeat for a certain number of times
-  //int numberOfPlays = 3;
-  //clip.loop(numberOfPlays-1);
 
 
   public void pause() {
