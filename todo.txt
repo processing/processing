@@ -37,6 +37,16 @@ X   need a smarter handler (rather than the editor listener)
 X   could look at previous line for its indent
 X   and when hitting } do a proper outdent (if only spaces before it)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=22
+o if the previous line contains no ; then next line is indent
+o   need to strip out comments for this tho
+o   maybe preproc through and remove comments to spaces?
+o also, the brace may not be on the previous line directly
+o   so need to walk backwards until finding one
+X add ctrl-up and ctrl-down to jump between blocks
+
+_ add "recent files" list to open menu?
+_ autoformat selection out of range (prolly end of document)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134720763
 
 _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility

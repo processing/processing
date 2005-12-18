@@ -12,6 +12,10 @@ X   The buffer apparently gets allocated and saveFrame saves the
 X   new size but drawing appears to be disabled.
 X   http://dev.processing.org/bugs/show_bug.cgi?id=243
 
+_ figure out why 1024x768 image takes 3.5 seconds to load
+_   would using a BufferedImage work better?
+_   is the image actually a BufferedImage so PixelGrabber is a waste?
+
 _ fix the flicker in java2d mode
 _   http://dev.processing.org/bugs/show_bug.cgi?id=122
 _   framerate(30) is still flickery and jumpy..
