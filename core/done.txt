@@ -1,3 +1,17 @@
+0099 core
+X removed playing() method from PSound
+X integrate destroy() method from shiffman as dispose() in PSound2
+X ComponentListener is probably what's needed for resize() 
+X   make sure that components can be resized properly via size()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=209
+X   or that it properly responds to a setBounds() call
+X calling size() elsewhere in the app doesn't quite work
+X   A second call to size almost works. 
+X   The buffer apparently gets allocated and saveFrame saves the 
+X   new size but drawing appears to be disabled.
+X   http://dev.processing.org/bugs/show_bug.cgi?id=243
+
+
 0098 core
 X change recordShapes() to just record() and recordRaw()
 X width, height set to zero in static mode
