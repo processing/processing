@@ -15,6 +15,7 @@ X update to java 1.4.2_09
 _ make dxf writer that'll work with recordRaw()
 _ enable PGraphicsPDF for inclusion
 _   write documentation on images (they suck) and fonts (use ttf)
+_ when re-calling size() with opengl, need to remove the old canvas
 
 _ PSound.play() won't play the sound a 2nd time (reopened)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=208
