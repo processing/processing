@@ -7,6 +7,54 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0099 - 18 December 2005
+
+A general usability-oriented release. The most major thing is some
+additional support for auto-indenting of blocks (things inside curly
+braces) and being smarter about indents on new lines. Other than that, 
+it's a lot of bug fixes. If there are errors in the auto-indenting, 
+you might want to just move back to 0098.
+
+
++ better auto-indent code. it's not complete or perfect, but should
+  make the editor a little less annoying for general use.
+
++ ctrl-up and ctrl-down move up or down to the next empty line
+  (holding down shift will also select the area)
+
++ a /* without an ending */ was crashing with a NullPointerException 
+  or OutOfMemoryError or just plain locking up.
+  http://dev.processing.org/bugs/show_bug.cgi?id=16
+
++ let user know where offensively named sketches are located
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134466565
+
++ make windows respond to ctrl/cmd-w and esc more consistently
+
++ make buttons in toolbar highlight as their actions are taking place
+  (i.e. make the export button stay lit while the export is completing)
+  http://dev.processing.org/bugs/show_bug.cgi?id=242
+
++ processing should no longer fill the temporary directory with extra
+  folders. iron out other console and build related issues.
+
++ fix obscure bug with hidden files when using an external editor
+
++ fix an issue with autoformat showing up out of range
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134720763
+
++ support for ComponentListener to handle calling size() when 
+  a PApplet is resized by a layout manager or other means.
+  http://dev.processing.org/bugs/show_bug.cgi?id=209
+  this still doesn't work with opengl, however.
+
++ calling size() while app is running had some weirdness
+  http://dev.processing.org/bugs/show_bug.cgi?id=243  
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0098 - 1 December 2005
 
 Not heavily tested, a release primarily for Casey to fix some issues
