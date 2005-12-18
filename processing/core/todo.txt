@@ -1,15 +1,4 @@
-0099 core
-X removed playing() method from PSound
-X integrate destroy() method from shiffman as dispose() in PSound2
-X ComponentListener is probably what's needed for resize() 
-X   make sure that components can be resized properly via size()
-X   http://dev.processing.org/bugs/show_bug.cgi?id=209
-X   or that it properly responds to a setBounds() call
-X calling size() elsewhere in the app doesn't quite work
-X   A second call to size almost works. 
-X   The buffer apparently gets allocated and saveFrame saves the 
-X   new size but drawing appears to be disabled.
-X   http://dev.processing.org/bugs/show_bug.cgi?id=243
+0100 core
 
 _ make dxf writer that'll work with recordRaw()
 _ enable PGraphicsPDF for inclusion
@@ -47,12 +36,6 @@ this should be fixed, test
 _ 404 error because first searches applet directory in isometricblocks
 _ "this file is named" errors don't like subdirectories
 _   need to strip off past the file separator or something
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-0100 or later
 
 threading issues
 _ sketches often freeze when stop is hit on an HT machine

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-SHORT_REVISION=`head -1 ../../todo.txt | cut -c 3-4`
+SHORT_REVISION=`head -1 ../../todo.txt | cut -c 2-4`
 REVISION=`head -1 ../../todo.txt | cut -c 1-4`
 
 VERSIONED=`cat ../../app/Base.java | grep $REVISION`
