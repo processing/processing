@@ -35,6 +35,16 @@ import javax.swing.event.*;
 
 /**
  * Filters key events for tab expansion/indent/etc.
+ * <p/>
+ * For version 0099, some changes have been made to make the indents
+ * smarter. There are still issues though:
+ * + indent happens when it picks up a curly brace on the previous line,
+ *   but not if there's a  blank line between them.
+ * + It also doesn't handle single indent situations where a brace
+ *   isn't used (i.e. an if statement or for loop that's a single line).
+ *   It shouldn't actually be using braces.
+ * Solving these issues, however, would probably best be done by a
+ * smarter parser/formatter, rather than continuing to hack this class.
  */
 public class EditorListener {
   Editor editor;
@@ -42,6 +52,7 @@ public class EditorListener {
 
   boolean externalEditor;
   boolean tabsExpand;
+  boolean tabsIndent;
   int tabSize;
   String tabString;
   boolean autoIndent;
@@ -76,7 +87,13 @@ public class EditorListener {
   //}
 
 
-  // called by JEditTextArea inside processKeyEvent
+  /**
+   * Intercepts key pressed events for JEditTextArea.
+   * <p/>
+   * Called by JEditTextArea inside processKeyEvent(). Note that this
+   * won't intercept actual characters, because those are fired on
+   * keyTyped().
+   */
   public boolean keyPressed(KeyEvent event) {
     // don't do things if the textarea isn't editable
     if (externalEditor) return false;
@@ -85,7 +102,7 @@ public class EditorListener {
     char c = event.getKeyChar();
     int code = event.getKeyCode();
 
-    //System.out.println(c + " " + code + " " + event);
+    //System.out.println((int)c + " " + code + " " + event);
     //System.out.println();
 
     if ((event.getModifiers() & KeyEvent.META_MASK) != 0) {
@@ -94,12 +111,87 @@ public class EditorListener {
     }
 
     // TODO i don't like these accessors. clean em up later.
-    if (!editor.sketch.current.modified) {
+    if (!editor.sketch.modified) {
       if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
           (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
         editor.sketch.setModified();
       }
     }
+
+    if ((code == KeyEvent.VK_UP) &&
+        ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+      // back up to the last empty line
+      char contents[] = textarea.getText().toCharArray();
+      //int origIndex = textarea.getCaretPosition() - 1;
+      int caretIndex = textarea.getCaretPosition();
+
+      int index = calcLineStart(caretIndex - 1, contents);
+      //System.out.println("line start " + (int) contents[index]);
+      index -= 2;  // step over the newline
+      //System.out.println((int) contents[index]);
+      boolean onlySpaces = true;
+      while (index > 0) {
+        if (contents[index] == 10) {
+          if (onlySpaces) {
+            index++;
+            break;
+          } else {
+            onlySpaces = true;  // reset
+          }
+        } else if (contents[index] != ' ') {
+          onlySpaces = false;
+        }
+        index--;
+      }
+      // if the first char, index will be -2
+      if (index < 0) index = 0;
+
+      if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+        textarea.setSelectionStart(caretIndex);
+        textarea.setSelectionEnd(index);
+      } else {
+        textarea.setCaretPosition(index);
+      }
+      event.consume();
+      return true;
+
+    } else if ((code == KeyEvent.VK_DOWN) &&
+               ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+      char contents[] = textarea.getText().toCharArray();
+      int caretIndex = textarea.getCaretPosition();
+
+      int index = caretIndex;
+      int lineStart = 0;
+      boolean onlySpaces = false;  // don't count this line
+      while (index < contents.length) {
+        if (contents[index] == 10) {
+          if (onlySpaces) {
+            index = lineStart;  // this is it
+            break;
+          } else {
+            lineStart = index + 1;
+            onlySpaces = true;  // reset
+          }
+        } else if (contents[index] != ' ') {
+          onlySpaces = false;
+        }
+        index++;
+      }
+      // if the first char, index will be -2
+      //if (index < 0) index = 0;
+
+      //textarea.setSelectionStart(index);
+      //textarea.setSelectionEnd(index);
+      if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+        textarea.setSelectionStart(caretIndex);
+        textarea.setSelectionEnd(index);
+      } else {
+        textarea.setCaretPosition(index);
+      }
+      event.consume();
+      return true;
+    }
+
 
     switch ((int) c) {
 
@@ -109,8 +201,11 @@ public class EditorListener {
         event.consume();
         return true;
 
-      } else {  // tabs indent instead
+      } else if (tabsIndent) {
+        // this code is incomplete
+
         // if this brace is the only thing on the line, outdent
+        //char contents[] = getCleanedContents();
         char contents[] = textarea.getText().toCharArray();
         // index to the character to the left of the caret
         int prevCharIndex = textarea.getCaretPosition() - 1;
@@ -159,7 +254,7 @@ public class EditorListener {
         event.consume();
         return true;
       }
-      //break;
+      break;
 
     case 10:  // auto-indent
     case 13:
@@ -192,15 +287,25 @@ public class EditorListener {
         */
 
         int spaceCount = calcSpaceCount(origIndex, contents);
+        //int origCount = spaceCount;
 
         // now before inserting this many spaces, walk forward from
         // the caret position, so that the number of spaces aren't
         // just being duplicated again
         int index = origIndex + 1;
+        int extraCount = 0;
         while ((index < contents.length) &&
                (contents[index] == ' ')) {
-          spaceCount--;
+          //spaceCount--;
+          extraCount++;
           index++;
+        }
+
+        // hitting return on a line with spaces *after* the caret
+        // can cause trouble. for simplicity's sake, just ignore this case.
+        //if (spaceCount < 0) spaceCount = origCount;
+        if (spaceCount - extraCount > 0) {
+          spaceCount -= extraCount;
         }
 
         // if the last character was a left curly brace, then indent
@@ -363,7 +468,7 @@ public class EditorListener {
    * the beginning of the current block, and return the number of
    * spaces found on that line.
    */
-  protected int calcBraceIndent(int index, char contents[]) { //, int braceDepth) {
+  protected int calcBraceIndent(int index, char contents[]) {
     // now that we know things are ok to be indented, walk
     // backwards to the last { to see how far its line is indented.
     // this isn't perfect cuz it'll pick up commented areas,
@@ -398,4 +503,62 @@ public class EditorListener {
     //System.out.println(pairedSpaceCount);
     return calcSpaceCount(index, contents);
   }
+
+
+  /**
+   * Get the character array and blank out the commented areas.
+   * This hasn't yet been tested, the plan was to make auto-indent
+   * less gullible (it gets fooled by braces that are commented out).
+   */
+  protected char[] getCleanedContents() {
+    char c[] = textarea.getText().toCharArray();
+
+    int index = 0;
+    while (index < c.length - 1) {
+      if ((c[index] == '/') && (c[index+1] == '*')) {
+        c[index++] = 0;
+        c[index++] = 0;
+        while ((index < c.length - 1) &&
+               !((c[index] == '*') && (c[index+1] == '/'))) {
+          c[index++] = 0;
+        }
+
+      } else if ((c[index] == '/') && (c[index+1] == '/')) {
+        // clear out until the end of the line
+        while ((index < c.length) && (c[index] != 10)) {
+          c[index++] = 0;
+        }
+        if (index != c.length) {
+          index++;  // skip over the newline
+        }
+      }
+    }
+    return c;
+  }
+
+  /*
+  protected char[] getCleanedContents() {
+    char c[] = textarea.getText().toCharArray();
+    boolean insideMulti;  // multi-line comment
+    boolean insideSingle;  // single line double slash
+
+    //for (int i = 0; i < c.length - 1; i++) {
+    int index = 0;
+    while (index < c.length - 1) {
+      if (insideMulti && (c[index] == '*') && (c[index+1] == '/')) {
+        insideMulti = false;
+        index += 2;
+      } else if ((c[index] == '/') && (c[index+1] == '*')) {
+        insideMulti = true;
+        index += 2;
+      } else if ((c[index] == '/') && (c[index+1] == '/')) {
+        // clear out until the end of the line
+        while (c[index] != 10) {
+          c[index++] = 0;
+        }
+        index++;
+      }
+    }
+  }
+  */
 }
