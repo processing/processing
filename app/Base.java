@@ -50,8 +50,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 99;
-  static final String VERSION_NAME = "0099 Beta";
+  static final int VERSION = 100;
+  static final String VERSION_NAME = PApplet.nf(VERSION, 4) + " Beta";
 
   /**
    * Path of filename opened on the command line,
