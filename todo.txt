@@ -28,6 +28,8 @@ X mark temp build folder for deletion on exit
 X properly remove console files on exit
 X   in previous releases this was filling up the temp dir with a lotta garbage
 X bug where hiddenCount/codeCount weren't being set to zero on load()
+X autoformat selection out of range (prolly end of document)
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134720763
 
 tab handling
 X indent/outdent with curly braces
@@ -45,8 +47,6 @@ o   so need to walk backwards until finding one
 X add ctrl-up and ctrl-down to jump between blocks
 
 _ add "recent files" list to open menu?
-_ autoformat selection out of range (prolly end of document)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134720763
 
 _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
@@ -54,9 +54,9 @@ _   to overwrite. i.e. make a change and save in external editor,
 _   don't actually 
 
 _ we're breaking some mac human interface guidelines
-_   should be using a menu factory to create menus for all sub-windows
+_   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
-_   also the general warning dialogs are just ass ugly
+_   and the general warning dialogs are just ass ugly
 _   (i.e. we really need those replacements for JOptionPane)
 
 
