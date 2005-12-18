@@ -1013,7 +1013,14 @@ public class Editor extends JFrame
     beginCompoundEdit();
     textarea.setText(what);
     endCompoundEdit();
+
+    // make sure that a tool isn't asking for a bad location
+    selectionStart =
+      Math.max(0, Math.min(selectionStart, textarea.getDocumentLength()));
+    selectionEnd =
+      Math.max(0, Math.min(selectionStart, textarea.getDocumentLength()));
     textarea.select(selectionStart, selectionEnd);
+
     textarea.requestFocus();  // get the caret blinking
   }
 
