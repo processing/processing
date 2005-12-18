@@ -10,7 +10,6 @@ X   A second call to size almost works.
 X   The buffer apparently gets allocated and saveFrame saves the 
 X   new size but drawing appears to be disabled.
 X   http://dev.processing.org/bugs/show_bug.cgi?id=243
-X update to java 1.4.2_09
 
 _ make dxf writer that'll work with recordRaw()
 _ enable PGraphicsPDF for inclusion
@@ -19,6 +18,9 @@ _ when re-calling size() with opengl, need to remove the old canvas
 
 _ PSound.play() won't play the sound a 2nd time (reopened)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=208
+
+_ ArrayIndexOutOfBoundsException in PLine
+_   http://dev.processing.org/bugs/show_bug.cgi?id=246
 
 _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
@@ -50,7 +52,7 @@ _   need to strip off past the file separator or something
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-0099 or later
+0100 or later
 
 threading issues
 _ sketches often freeze when stop is hit on an HT machine
