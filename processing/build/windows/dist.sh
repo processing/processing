@@ -28,7 +28,7 @@ cp -r ../../net processing/libraries/
 cp -r ../../opengl processing/libraries/
 cp -r ../../serial processing/libraries/
 cp -r ../../video processing/libraries/
-cp -r ../../pdf processing/libraries/
+#cp -r ../../pdf processing/libraries/
 
 # new style examples thing ala reas
 cd processing
