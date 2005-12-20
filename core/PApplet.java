@@ -467,7 +467,7 @@ public class PApplet extends Applet
 
     try {
       if (sketchPath == null) {
-        System.getProperty("user.dir");
+        sketchPath = System.getProperty("user.dir");
       }
     } catch (Exception e) { }  // may be a security problem
 
