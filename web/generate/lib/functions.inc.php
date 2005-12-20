@@ -284,7 +284,7 @@ Author: Anton Makarenko
    makarenkoa at ukrpost dot net
    webmaster at eufimb dot edu dot ua
 */
-function copydirr($fromDir,$toDir,$recursive=true,$chmod=0757,$verbose=false)
+function copydirr($fromDir,$toDir,$recursive=true,$chmod=0777,$verbose=false)
 /*
    copies everything from directory $fromDir to directory $toDir
    and sets up files mode $chmod
