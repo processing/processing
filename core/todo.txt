@@ -1,4 +1,5 @@
 0100 core
+X user.dir wasn't getting set properly
 
 _ make dxf writer that'll work with recordRaw()
 _ enable PGraphicsPDF for inclusion
