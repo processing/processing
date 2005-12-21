@@ -27,7 +27,7 @@ import java.io.*;
  *
  * @author  Francis Li
  */
-public class Parser implements Runnable {
+public class XMLParser implements Runnable {
     public static final int EVENT_TAG_START     = XmlPullParser.START_TAG;
     public static final int EVENT_TEXT          = XmlPullParser.TEXT;
     public static final int EVENT_TAG_END       = XmlPullParser.END_TAG;
@@ -37,9 +37,57 @@ public class Parser implements Runnable {
     private KXmlParser  parser;
     private Thread      thread;
     
-    public Parser(PMIDlet midlet) {
+    public XMLParser(PMIDlet midlet) {
         this.midlet = midlet;
         parser = new KXmlParser();
+    }
+    
+    public XMLElement parse(InputStream is) {
+        synchronized (this) {
+            if (thread != null) {
+                throw new RuntimeException("Parser is already running");
+            }
+        }
+        try {
+            parser.setInput(new InputStreamReader(is));
+            XMLElement current = null, prev = null;
+            int event;
+            do {
+                event = parser.next();
+                switch (event) {
+                    case EVENT_TAG_START:
+                        current = new XMLElement(parser.getName());
+                        for (int i = 0, count = parser.getAttributeCount(); i < count; i++) {
+                            current.addAttribute(parser.getAttributeName(i), parser.getAttributeValue(i));
+                        }
+                        if (prev != null) {
+                            prev.addChild(current);                            
+                        }
+                        prev = current;
+                        break;
+                    case EVENT_TAG_END:
+                        current = prev.getParent();
+                        if (current != null) {
+                            prev = current;
+                        }
+                        break;
+                    case EVENT_TEXT:
+                        current = new XMLElement(parser.getText(), true);
+                        if (prev != null) {
+                            prev.addChild(current);                            
+                        }
+                        break;
+                }                
+            } while (event != EVENT_DOCUMENT_END);
+            
+            return prev;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }        
+    }
+    
+    public XMLElement parse(String document) {
+        return parse(new ByteArrayInputStream(document.getBytes()));
     }
     
     public void start(InputStream is) {

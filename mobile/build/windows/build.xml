@@ -198,7 +198,7 @@
         <exec executable="${cygwin.dir}/bin/bash.exe">
             <arg value="--login"/>
             <arg value="-c"/>
-            <arg value="cd ${parent.dir}/processing/build/windows; ./run.sh"/>
+            <arg value="cd ${parent.dir}/processing/build/windows; chmod +x run.sh; ./run.sh"/>
         </exec>
     </target>
 
