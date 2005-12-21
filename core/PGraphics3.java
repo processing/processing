@@ -2670,8 +2670,7 @@ public class PGraphics3 extends PGraphics {
 
   /**
    * Rotate around an arbitrary vector, similar to glRotate(),
-   * except that it takes radians (instead of degrees) by default,
-   * unless angleMode is set to RADIANS.
+   * except that it takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
     forwardTransform.rotate(angle, v0, v1, v2);
@@ -3849,17 +3848,14 @@ public class PGraphics3 extends PGraphics {
   }
 
   private final float sin(float angle) {
-    //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
   private final float cos(float angle) {
-    //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
   private final float tan(float angle) {
-    //if (angleMode == DEGREES) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 
