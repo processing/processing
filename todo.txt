@@ -1,4 +1,15 @@
 0100 pde
+X switch to using date as default for archive sketch
+_   add this as a preference
+_   need method for showing prefs for the tools
+
+_ when a conflicting library is found, need to report it
+_   altho prolly only when it's actually different (md5hash it?)
+
+_ issue of people calling their sketches things like Server
+
+_ keep checking whether google has started to honor robots.txt
+_   http://www.google.com/search?hl=en&lr=&q=angleMode+site%3Aprocessing.org&btnG=Search
 
 _ add "recent files" list to open menu?
 
@@ -28,6 +39,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   or at least warn the user to install somehwere else
 _   perhaps the get around this by building into sketch folder
 _     when non-ascii chars in use, just launch everything externally
+_   also fails with export-to-application
+_     http://dev.processing.org/bugs/show_bug.cgi?id=252
 
 last minute regression from 0097
 _ exported movies seem to have trouble (windows only?)
@@ -38,6 +51,19 @@ X   on drag, are these already passed to argv[]?
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
 _   http://groups.google.com/group/comp.os.ms-windows.programmer.misc/browse_thread/thread/4095cb6fc807863/ecdb3b35b0787116%23ecdb3b35b0787116?sa=X&oi=groupsr&start=0&num=3
+
+bugzilla 
+_ need to change what people can edit in the bug report
+_   do something about the bug summary field to not make it editable
+_   maybe just move it away from its current location?
+_   call it "bug title" instead of "summary"?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=253
+_ layout problems with attachments page
+_   http://dev.processing.org/bugs/show_bug.cgi?id=254
+_ layout problems with logout page
+_   http://dev.processing.org/bugs/show_bug.cgi?id=255
+_ bug duplicate text field doesn't retain focus 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=256
 
 board faq
 _ someone wrote up an initial version of this
@@ -93,9 +119,6 @@ bugs faq
 _ make a web page that describes how to use the bugs db
 _   don't change the bug subject/summary text
 _   don't mess with priorities (i will)
-_ do something about the bug summary field to not make it editable
-_   maybe just move it away from its current location?
-_   call it "bug title" instead of "summary"?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
