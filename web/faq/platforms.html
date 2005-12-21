@@ -1,0 +1,373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>FAQ \ Processing 1.0 (BETA)</title>
+		
+		<link rel="icon" href="/img/processing-beta.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="/img/processing-beta.ico" type="image/x-icon" />
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="Author" content="Casey Reas &amp; Ben Fry" />
+		<meta name="Publisher" content="Processing" />
+		<meta name="Keywords" content="Processing, Processing, Interactive Media, Electronic Arts, Programming, Java, Ben Fry, Casey Reas" />
+		<meta name="Description" content="Processing is an electronic sketchbook for developing 
+				ideas. It is a context for learning fundamentals of computer programming 
+				within the context of the electronic arts." />
+		<meta name="Copyright" content="All contents copyright Ben Fry, Casey Reas,  MIT Media Laboratory" />
+		
+		<script src="/javascript/MM_functions.js" type="text/javascript"></script>
+	
+		<link href="/css/style.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body id="FAQ" onload="" >
+		
+		<!-- ==================================== PAGE ============================ --> 
+		<div id="container">
+	
+			<!-- ==================================== HEADER ============================ --> 
+			<div id="header">
+				<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>
+			</div> 
+						<div id="navigation">
+				<div class="navBar" id="mainnav_noSub">
+					<a href="/">Cover</a> \
+					<a href="/exhibition/index.html">Exhibition</a> \
+					<a href="/learning/index.html">Learning</a> \
+					<a href="/reference/index.html">Reference</a> \
+					<a href="/download/index.html">Download</a> \
+					<a href="/discourse/index.html">Discourse</a> \
+					<a href="/contribute/index.html">Contribute</a>
+					<a href="/faq/index.html" class="active faq">FAQ</a>
+				</div>
+			</div>
+
+		
+			<a id="TOP" name="TOP"></a>
+			
+			<!-- ==================================== CONTENT - Headers ============================ -->
+			<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td width="55"><img src="images/1pix.gif" width="55" height="40"></td>
+			    <td width="675" valign="bottom">&nbsp;</td>
+			    <td width="20">&nbsp;</td>
+			  </tr>
+			</table>
+			<table width="730" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td width="55" valign="top"><img src="images/1pix.gif" width="1" height="1"><img src="images/1pix.gif" width="55" height="100"></td>
+			    <td width="675" valign="top"> <img src="images/header_faq.gif" width="675" height="68" alt="Frequently Asked Questions. There are many questions surrounding the enigmatic and youthful Processing project and we don't have all the answers, but we have many."><br>
+			    </td>
+			  </tr>
+			</table>
+			<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td width="55"><img src="images/1pix.gif" width="55" height="20"></td>
+			    <td width="695" valign="top">Select a topic from the pulldown:</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right">&nbsp;</td>
+			    <td width="695" valign="middle">
+			<table width="3%" border="0" cellspacing="0" cellpadding="0">
+			        <form>
+			          <tr> 
+			            <td width="1%" align="right" valign="middle"> <select
+			            name="nav" size="1" class="inputnav"
+			            onChange="javascript:gogo(this)">
+			<option value="index.html">General Information </option>
+			<option value="bugs.html">Setup, Troubleshooting, and Bugs</option>
+			<option value="platforms.html" selected>Platforms (Mac OS, Windows and Linux)</option>
+			<option value="changes.html">Changes Between Releases</option>
+			<option value="people.html">People, Contact, Affiliations </option>
+			              </select> </td>
+			          </tr>
+			        </form>
+			      </table></td>
+			  </tr>
+			  <tr> 
+			    <td width="55"><img src="images/1pix.gif" width="55" height="30"></td>
+			    <td width="695">&nbsp;</td>
+			  </tr>
+			</table>
+
+
+			<table width="730" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td width="55" valign="top"><img src="images/1pix.gif" width="1" height="1"><img src="images/1pix.gif" width="55" height="55"></td>
+			    <td width="675" valign="top"> <p>
+			<a href="#supported">Supported Platforms</a> <br>
+			<a href="#windows">Windows</a> <br>
+			<a href="#mac">Mac OS X</a> <br>
+			<a href="#linux">Linux</a><br>
+			<a href="#other">Other Platforms</a> <br>
+			<a href="#java">Java Versions (1.1, 1.3, 1.4...)</a> <br> 
+			        <br>
+			        <br>
+			      </p></td>
+			  </tr>
+			</table>
+
+
+			<table width="750" border="0" 
+			 cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+			    <a name="supported"></a> 
+			    <td width="645"><br>
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+			    <td width="645"> 
+			      <p> </p>
+			      <b>
+			Supported Platforms
+			      </b><br><br>
+			The processing development environment is tested most heavily on:
+			<OL>
+			<LI>Mac OS X 10.3
+			<LI>Windows XP
+			<LI>Fedora Core (Linux)
+			</OL>
+			Windows is by far the superior platform for running Java
+			applications. It's not because we like Windows the best but that's
+			just how it is. Java on Mac OS X is steadily improving (especially
+			when compared to Apple's previous efforts), but it's still far slower
+			than Windows and even the older Java that ran on Mac OS Classic.
+			We think OS X will be a great bet for the future, and Apple is
+			putting all their feeble weight behind it, hopefully it will evolve
+			somewhere.
+			<br> <br>
+			Windows 95/98/ME is a piece of crap, but since lots of people (are
+			often forced to) use it, we'll do our best to support it. Windows 95 is
+			<a href="http://www.java.com/en/download/help/win95.xml">not supported</a>.
+			Early alpha versions seem to be having trouble with 98/ME, 
+			so if possible, we <em>strongly</em> recommend using Windows 2000 or XP. 
+			<br> <br>
+			For the Linux version, you guys can support yourselves. If you're
+			enough of a hacker weenie to get a linux box set up, you oughta know
+			what's going on. For lack of time, we won't be testing extensively
+			under linux, but would be really happy to hear about any bugs or
+			issues you might run into. Actually, we don't get happy that you're
+			having issues, but if you're going to have issues, we're happy that
+			you tell us about them, so we can fix them.
+			      </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			</table>
+
+
+			<table width="750" border="0" 
+			 cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+			    <a name="windows"></a> 
+			    <td width="645"><br>
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+			    <td width="645"> 
+			      <p> </p>
+			      <b>
+			      Windows
+			      </b><br><br>
+			Windows XP is used as the primary development platforms, 
+			so the release will likely work best there.
+			<br> <br> 
+			Windows 95/98/ME seem to have some trouble, but we think it's just with
+			the .exe that we use, so hopefully that'll get fixed in the
+			      future. You can try using the 'run.bat' file instead, and see if
+			      that works better.
+			<br> <br>
+			The release is split into versions with and without Java. The non-Java
+			      version is only recommended for people who know what they're
+			      doing and have Java 1.4 installed. If you have trouble getting
+			      Processing to run properly, one of the first things you should
+			      try is downloading the version that includes Java, rather than
+			      the one without.
+			      </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			</table>
+
+
+			<table width="750" border="0" 
+			 cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+			    <a name="mac"></a> 
+			    <td width="645"><br>
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+			    <td width="645"> 
+			      <p> </p>
+			      <b>
+			Mac OS X
+			      </b><br><br>
+			The most current release has only been tested on Mac OS X 10.3.9 
+			(with some very minimal testing on 10.2.8). 
+			Your mileage may vary if you're running something else. Actually, your
+			mileage will vary no matter what, because who knows what this software
+			is gonna do. You're playing with free, beta-quality software. 
+			Get psyched!
+			<br> <br>
+			<UL>
+			<LI>Mac OS X 10.4 is completely unsupported until I can get a copy and
+			test it on my machine. Also, using Java 1.5 (J2SE 5.0) is 
+			<A HREF="#java">discouraged</A>, as I suspect that it causes even more 
+			headaches on OS X than it does on Windows. 
+
+			<LI>On Mac OS X 10.3, be sure to use Software Update to update to the most recent version of Java 1.4. Early releases had several problems (i.e. "Present" mode being broken) In addition, the Mac OS X 10.3.9 update causes Processing to crash on startup, or might cause Safari to crash when running Java applets. 
+			Apple has fixed the issue with 
+			<a href="http://docs.info.apple.com/article.html?artnum=301382">this
+			update</a> which is also available from the Software Update Control Panel.
+
+			<LI>Mac OS X 10.2 (Jaguar) is the minimum version that will run the Processing environment. If you want to run Processing itself on Mac OS X 10.2, you must install Java 1.4 via Software Update, and in fact, install absolutely everything available to get you up to 10.2.8, and all the security fixes. Revision 85 did not run properly on 10.2, but this has been fixed for 86. "Present" mode does not work on 10.2 because of apparent bugs in Apple's implementation of Java's full screen mode. 
+
+			<LI>Mac OS X 10.1 and 10.0 won't run the Processing environment, but should run applets that have been created with it. Make sure that Java is as up-to-date as possible (via Software Update). 
+
+			<LI>Mac OS 9 was a big headache, and we badly wanted to support it (since many people still use it), but it had to be discontinued for lack of time to work on it. As of revision 85, applets exported from Processing won't work on Mac OS 9 either, but that should return with a coming release of Processing.
+			</UL>
+			More information can be found at Apple's
+			<a href="http://developer.apple.com/java/faq/">Java FAQ</a>.
+			      </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			</table>
+
+
+			<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td><img src="images/1pix.gif" width="1" height="30" align="top">
+			<a name="linux"></a> 
+			    <td width="645"><br>
+			    </td>
+			    <td width="40">&nbsp;</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+			    <td width="645"> 
+			      <b>Linux</b><br>
+			      <br>
+			The Processing application is just a shell script, you can use this
+			as a guide to getting Processing to run with your specific configuration,
+			because who knows what sort of setup you have. this release was tested
+			on a Fedora Core 3, and Sun's Java Runtime Environment 1.4.2 is
+			included with the download. Replacing (or making a symlink to) the
+			contents of the &lsquo;java&rsquo; folder will let you tie in a
+			preferred Java VM for your machine.
+			<br> <br>
+			Getting Processing to run on Linux can be tricky, mostly because of Jikes. 
+			Some information on getting it to work can be found 
+			<a href="bugs.html#wontstart">here</a> under the Linux section. Similar to 
+			the Java folder, you can symlink a proper jikes in place of the distributed
+			version and you should be all set. However make sure that you're using 
+			Jikes 1.22, otherwise things may not work properly.
+			<br> <br>
+			If anyone out there knows how to properly build a version of Jikes that's 
+			compatible across all (or at least a wide range of) distros, please 
+			<a href="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Collaboration">let us know</a>. We're not Linux gurus so we don't know all the tricks.
+			      </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			</table>
+
+			<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td><img src="images/1pix.gif" width="1" height="30" align="top">
+			    <a name="other"></a> 
+			    <td width="645"><br>
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+			    <td width="645"> 
+			      <b>Other Platforms</b><br>
+			      <br>
+			      Because Processing is written in Java, it should run on any platform
+			      that supports Java 1.4. If you'd like to get it running on BSD,
+			      Irix, AmigaOS, BeOS... whatever, you should download the Linux
+			      version, and replace the &ldquo;java&rdquo; folder and jikes application
+			      with versions that support your platform. Then mess with the
+			      shell script to get things up and running. 
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			</table>
+
+			<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td><img src="images/1pix.gif" width="1" height="30" align="top">
+			    <a name="java"></a> 
+			    <td width="645"><br>
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+			    <td width="645"> 
+			      <b>
+			Java Versions (1.1, 1.3, 1.4...)
+			</b><br> <br>
+			      There are several versions of Java, each with a different story. The versions 
+			      from 1.2 to 1.4 are also referred to with names like "Java 2 SDK 1.2" or 
+			      "J2SE 1.4" (Java 2 Standard Edition 1.4). J2SE is different from the trimmed-down 
+			      J2ME ("Micro Edition") which runs on mobile devices, and J2EE ("Enterprise 
+			      Edition") which contains more "enterprise" related bloat. In a moment of 
+			      further anti-user marketing genius, Sun recently decided to call the latest 
+			      release "Java 5.0" when promoting, but it's Java 1.5 to developers. Awesome! <UL> 
+			      <LI>Java 1.0 &mdash; a long, long time ago in 1995&hellip;
+			<LI>Java 1.1 &mdash; this was the first truly usable version of
+			Java. It's the last version of Java that was supported by Microsoft,
+			but has since been discontinued because of a lawsuit by Sun. Informal
+			estimates show that about 40% of web users that are using Java are 
+			still using Java 1.1. As of beta, Processing does not support 1.1 (it
+			requires 1.3) but we hope that this is only a temporary change,
+			because 1.1 support is obviously important.
+			<LI>Java 1.2 &mdash; was a mess, and was mercifully replaced by 1.3.
+			<LI>Java 1.3 &mdash; took all the features added in 1.2 and made them
+			usable. This is the current minimum required installation for
+			applets exported from Processing beta. Java 1.3 (and 1.4) is installed
+			on all Mac OS X machines. Windows users must download from 
+			<a href="http://java.com">java.com</a>. Because the Java plug-in on
+			Windows urges people to upgrade to 1.4 or 1.5, very few people appear
+			to be using 1.3 on the web any more. 
+			<LI>Java 1.4 &mdash; this is required for running the
+			Processing environment itself, and the one that receives the most
+			testing from us. It is the version of Java that is included with the
+			Windows download of Processing.
+			Java 1.4 is also installed by default on Mac OS X. 
+			Windows users must download from <a
+			href="http://java.com">java.com</a>.
+			It's used by about a 30%
+			of the people with Java installed.
+			Most Linux users will have Java 1.4 or later if it is installed.
+			<LI>Java 1.5 &mdash; the very latest version of Java. We don't support it and recommend that you avoid using it, as we don't test with it and it appears that it may be the slowest (certainly most bloated) release of Java yet. For instance, if you have Java 1.5 installed but are using the Processing download that includes Java, you may be surprised to see that things run more slowly when run in a browser than when run from inside Processing itself. It is also not possible to use any of the new syntax introduced in Java 1.5 within Processing, even if you have 1.5 installed (the preprocessor and compiler used by Processing don't understand the 1.5 syntax). Unfortunately, 1.5 still accounts for about 30% of the people (almost entirely Windows users) who have Java installed.
+			It was released as a separate download for Mac OS X 10.4 (Tiger), 
+			and will not be available on anything earlier than 10.4. (<A
+			HREF="http://dev.processing.org/bugs/show_bug.cgi?id=175">Bug 175</A>)
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			</table>
+			<!-- ==================================== FOOTER ============================ --> 
+  			<div id="footer">
+    			<div id="copyright"> Processing is an open project initiated by <a href="http://benfry.com/">Ben Fry</a> and <a href="http://reas.com">Casey Reas</a> </div> 
+    			<div id="colophon">
+
+                    <a href="/copyright.html">&copy; Info</a> \ 
+
+                    <span>Site hosted by <a href="http://www.mediatemple.net">Media Temple!</a></span>
+
+                </div>
+  			</div>
+  			
+		</div>
+	</body>
+</html>s

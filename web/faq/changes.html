@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>FAQ \ Processing 1.0 (BETA)</title>
+		
+		<link rel="icon" href="/img/processing-beta.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="/img/processing-beta.ico" type="image/x-icon" />
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="Author" content="Casey Reas &amp; Ben Fry" />
+		<meta name="Publisher" content="Processing" />
+		<meta name="Keywords" content="Processing, Processing, Interactive Media, Electronic Arts, Programming, Java, Ben Fry, Casey Reas" />
+		<meta name="Description" content="Processing is an electronic sketchbook for developing 
+				ideas. It is a context for learning fundamentals of computer programming 
+				within the context of the electronic arts." />
+		<meta name="Copyright" content="All contents copyright Ben Fry, Casey Reas,  MIT Media Laboratory" />
+		
+		<script src="/javascript/MM_functions.js" type="text/javascript"></script>
+	
+		<link href="/css/style.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body id="FAQ" onload="" >
+		
+		<!-- ==================================== PAGE ============================ --> 
+		<div id="container">
+	
+			<!-- ==================================== HEADER ============================ --> 
+			<div id="header">
+				<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>
+			</div> 
+						<div id="navigation">
+				<div class="navBar" id="mainnav_noSub">
+					<a href="/">Cover</a> \
+					<a href="/exhibition/index.html">Exhibition</a> \
+					<a href="/learning/index.html">Learning</a> \
+					<a href="/reference/index.html">Reference</a> \
+					<a href="/download/index.html">Download</a> \
+					<a href="/discourse/index.html">Discourse</a> \
+					<a href="/contribute/index.html">Contribute</a>
+					<a href="/faq/index.html" class="active faq">FAQ</a>
+				</div>
+			</div>
+
+		
+			<a id="TOP" name="TOP"></a>
+			
+			<!-- ==================================== CONTENT - Headers ============================ -->
+			<table width="730" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td width="55" valign="top"><img src="images/1pix.gif" width="1" height="1"><img src="images/1pix.gif" width="55" height="100"></td>
+			    <td width="675" valign="top"> <img src="images/header_faq.gif" width="675" height="68" alt="Frequently Asked Questions. There are many questions surrounding the enigmatic and youthful Processing project and we don't have all the answers, but we have many."><br>
+			    </td>
+			  </tr>
+			</table>
+			<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td width="55"><img src="images/1pix.gif" width="55" height="20"></td>
+			    <td width="695" valign="top">Select a topic from the pulldown:</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right">&nbsp;</td>
+			    <td width="695" valign="middle">
+			<table width="3%" border="0" cellspacing="0" cellpadding="0">
+			        <form>
+			          <tr> 
+			            <td width="1%" align="right" valign="middle"> <select name="nav" size="1" class="inputnav" onChange="javascript:gogo(this)">
+			<option value="index.html">General Information </option>
+			<option value="bugs.html">Setup, Troubleshooting, and Bugs</option>
+			<option value="platforms.html">Platforms (Mac OS, Windows and Linux)</option>
+			<option value="changes.html" selected>Changes Between Releases</option>
+			<option value="people.html">People, Contact, Affiliations </option>
+
+			              </select> </td>
+			          </tr>
+			        </form>
+			      </table></td>
+			  </tr>
+			  <tr> 
+			    <td width="55"><img src="images/1pix.gif" width="55" height="30"></td>
+			    <td width="695">&nbsp;</td>
+			  </tr>
+			</table>
+
+
+			<!--
+			<table width="730" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td width="55" valign="top"><img src="images/1pix.gif" width="1" height="1"><img src="images/1pix.gif" width="55" height="55"></td>
+			    <td width="675" valign="top"> <p>
+			<a href="#people">People</a> <br>
+			<a href="#contact">Contact and Feedback</a> <br>
+			<a href="#links">Links</a> <br>
+			        <br>
+			        <br>
+			      </p></td>
+			  </tr>
+			</table>
+			-->
+
+			<table width="750" border="0" 
+			 cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+			  <tr> 
+			    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+			    <a name="people"></a> 
+			    <td width="645"><br>
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			  <tr> 
+			    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+			    <td width="645"> 
+			      <p> </p>
+			      <b>
+			Changes Between Releases
+			      </b><br><br>
+			For each release, read the revisions.txt file (included with the download) to see what's changed since the release before it. This is where you go if your code stops working in the most recent release, or if you want to know if your favorite bug has been fixed. If you don't want to download first, you can read the most recent version <a href="http://processing.org/download/revisions.txt">here</a>.
+			<br> <br>
+			Between revision 0069 (the last public alpha) and the beta release (0085), 
+			many, many functions have been added, and are detailed in the 
+			<a href="http://processing.org/reference/index_ext.html">complete
+			      reference</a>. Aside from that, this page lists functions whose
+			      names have changed or fundamental API differences between the
+			      two versions.
+			<UL>
+			<LI>loop() has been removed, and is instead called draw(). If you want
+			applications to only run draw() once (the way draw() used to work), 
+			use the function noLoop() inside of setup().
+			<LI>size() should now be the very first thing in your setup(),
+			otherwise commands that come before it may be ignored. your settings for 
+			fill() and stroke(), for instance, will disappear after you call size(). 
+			<LI>2D and 3D graphics are no longer completely mixed. To specify
+			3D graphics, instead of size(200, 200), the new way is to use
+			size(200, 200, P3D). 
+			<LI>BImage &rarr; PImage, BFont &rarr; PFont, and so on... 
+			<LI>For advanced users who were making their own BGraphics objects in
+			the previous release:
+			<PRE>BGraphics bg = new BGraphics(200, 200);
+			// has now become
+			PGraphics pg = new PGraphics2(200, 200, null);
+			pg.defaults(); // clear the buffer, get it ready</PRE>We didn't realize
+			quite how many people were using this, so we'll probably add a
+			createGraphics() method because PGraphics2 may be temporary (instead
+			of just PGraphics), and the "null" thing is pretty weird. Even still,
+			this isn't quite working as expected, but it's a high priority to fix
+			for the future, see <NOBR><A
+			HREF="http://dev.processing.org/bugs/show_bug.cgi?id=92">Bug 92</A></NOBR>
+			for the status.
+			<LI>The new renderers might be slower for some things, faster for others.
+			If you want faster pixel operations, try using P3D (until P2D is available
+			again). For high-quality lines and strokeWeight() and strokeCap(), use
+			JAVA2D (the default). 
+			<LI>To use OpenGL rendering, change that to size(200, 200, OPENGL),
+			and use Sketch &rarr; Import Library &rarr; opengl. OpenGL support is
+			incomplete, but allows for much larger screen sizes and accelerated
+			graphics that make use of a decent graphics card. 
+			<LI>When using the pixels[] array of the main window, or on an image,
+			you should first call loadPixels(), and once you're done editing, call
+			updatePixels(). This is because the new JAVA2D and OPENGL renderers both need to post-process the image data before displaying it, which is a time-consuming operation. 
+			<LI>Library events are handled differently because more than one
+			serial port or video input device can be used with Processing
+			beta. See the documentation for 
+			<a
+			href="http://processing.org/reference/libraries/video/movieEvent_.html">movieEvent</a>, 
+			<a
+			href="http://processing.org/reference/libraries/video/captureEvent_.html">captureEvent</a>, and
+			<a
+			href="http://processing.org/reference/libraries/serial/serialEvent_.html">serialEvent</a>.
+			Documentation for clientEvent and serverEvent for network will also
+			eventually be linked from <a
+			href="http://processing.org/reference/libraries/net/index.html">this page</a>.
+
+			<LI>push() &rarr; pushMatrix()
+			<LI>pop() &rarr; popMatrix()
+			<LI>textureMode(NORMAL_SPACE) &rarr; textureMode(NORMALIZED)
+			<LI>textureMode(IMAGE_SPACE) &rarr; textureMode(IMAGE)
+			<LI>textMode(ALIGN_LEFT) &rarr; textAlign(LEFT)
+			<LI>textMode(ALIGN_RIGHT) &rarr; textAlign(RIGHT)
+			<LI>textMode(ALIGN_CENTER) &rarr; textAlign(CENTER)
+			<LI>textSpace(SCREEN_SPACE) &rarr; textMode(SCREEN)
+			<LI>textSpace(OBJECT_SPACE) &rarr; textMode(MODEL)
+			<LI>font.width(String s) &rarr; textWidth(String s)
+			<LI>font.ascent() &rarr; textAscent()
+			<LI>font.descent() &rarr; textDescent()
+			<LI>fonts should now be more accurately sized, if your font sizing looks weird, try using "Create Font" to create a new font using the most recent release of Processing. It's strongly suggested that you do this when updated projects from alpha to beta. 
+			<LI>the function alpha(), when used to create an alpha mask of an image, is now <A HREF="../reference/PImage_mask_.html">mask()</A>, to remove a conflict with the alpha() function that extracts the alpha value of a color.
+			<LI>previous default was ellipseMode(CORNER) &rarr; now it's ellipseMode(CENTER)
+			<LI>RGBA for images &rarr; ARGB (more technically accurate)
+			<LI>CENTER_DIAMETER &rarr; CENTER
+			<LI>objectX, objectY, objectZ &rarr; modelX, modelY, modelZ
+			<LI>curveSegments() &rarr; curveDetail()
+			<LI>bezierSegments() &rarr; bezierDetail()
+			<LI>splitStrings() &rarr; split() (changed in rev 0069)
+			<LI>splitInts() &rarr; toInt(split()) (changed in rev 0069)
+			<LI>splitFloats() &rarr; toFloat(split()) (changed in rev 0069)
+			<LI>angleMode() has been removed. Radians are used for all functions. 
+			If you don't like radians, you can convert to radians to degrees via the radians() function, i.e.: sin(radians(90)).
+			<LI>four calls to bezierVertex(x, y) should instead be a single call
+			to vertex(x, y), followed by bezierVertex(cx1, cy1, cx2, cy2, x2, y2)
+			(two control points followed by the destination point). 
+			<LI>The libraries for serial, video, and network have changed
+			completely. Check out the examples or visit the <A HREF="../reference/libraries/index.html">libraries reference</A> for the full details.
+			<LI>&hellip;anything else that we've forgotten in our hastiness and we'll be adding over the next few days and weeks. If you find something that we've missed, please <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs">let us know</A>.
+			</UL>
+			The revisions.txt file also contains the release-by-release
+			information for what's incrementally changed from 68 through 85. 
+			    </td>
+			    <td width="50">&nbsp;</td>
+			  </tr>
+			</table>
+
+
+			<!-- ==================================== FOOTER ============================ --> 
+  			<div id="footer">
+    			<div id="copyright"> Processing is an open project initiated by <a href="http://benfry.com/">Ben Fry</a> and <a href="http://reas.com">Casey Reas</a> </div> 
+    			<div id="colophon">
+
+                    <a href="/copyright.html">&copy; Info</a> \ 
+
+                    <span>Site hosted by <a href="http://www.mediatemple.net">Media Temple!</a></span>
+
+                </div>
+  			</div>
+  			
+		</div>
+	</body>
+</html>
