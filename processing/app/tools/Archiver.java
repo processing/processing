@@ -35,7 +35,7 @@ public class Archiver {
   Editor editor;
 
   // someday these will be settable
-  boolean useDate = false;
+  boolean useDate = true; //false;
   int digits = 3;
 
   NumberFormat numberFormat;
