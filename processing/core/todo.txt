@@ -1,5 +1,6 @@
 0100 core
 X user.dir wasn't getting set properly
+X when graphics can be resized, resize rather than creating new context
 
 _ make dxf writer that'll work with recordRaw()
 _ enable PGraphicsPDF for inclusion

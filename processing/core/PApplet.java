@@ -757,6 +757,9 @@ public class PApplet extends Applet
 
     } else {
       // create a JAVA2D renderer (the current default)
+      size(iwidth, iheight, JAVA2D);
+
+      /*
       if (PApplet.javaVersion >= 1.3f) {
         try {
           Class c = Class.forName(JAVA2D);
@@ -766,6 +769,7 @@ public class PApplet extends Applet
         } catch (ClassNotFoundException e) { }
         size(iwidth, iheight, P2D);  // fall-through case
       }
+      */
     }
   }
 
@@ -778,22 +782,37 @@ public class PApplet extends Applet
    * but you need to always ask for the same renderer, otherwise
    * you're gonna run into trouble.
    * <P>
-   * Also note that this calls defaults(), which will reset any
-   * settings for the font, stroke, fill, colorMode, lights, etc.
+   * XXXX Also note that this calls defaults(), which will reset any
+   * XXXX settings for the font, stroke, fill, colorMode, lights, etc.
    */
-  public void size(int iwidth, int iheight, String renderer) {
+  public void size(int iwidth, int iheight, String irenderer) {
+    /*
+      cases are:
+
+      - no renderer set at all, create a new one (and throw ex)
+        newRenderer()
+      - displace the old renderer with a new one (make sure inside setup)
+        replaceRenderer()
+      - resize the previous renderer
+        resizeRenderer()
+     */
+
     String currentRenderer = (g == null) ? null : g.getClass().getName();
 
     if (currentRenderer != null) {
-      if (currentRenderer.equals(renderer)) {
+      if (currentRenderer.equals(irenderer)) {
         if ((iwidth == g.width) && (iheight == g.height)) {
           // in this case, size() is being called a second time because
           // setup() is being called a second time, since the first time
           // that setup was called, the renderer was changed so an
           // exception was thrown and setup() didn't complete. but this
-          // time around, g is the proper size and the proper class, so
-          // all that needs to be done is to set the defaults (clear the
-          // background, set default strokeWeight, etc).
+          // time around, g is the proper size and the proper class.
+
+          // that or size() is being called again for no good reason,
+          // in which case we just ignore it anyway.
+
+          // so all that needs to be done is to set the defaults
+          // (clear the background, set default strokeWeight, etc).
           //g.defaults();
 
           // this will happen when P3D or OPENGL are used with size()
@@ -801,7 +820,24 @@ public class PApplet extends Applet
           // because it's happening inside setup, which is just frame 0,
           // meaning that the graphics context is proper and visible.
           return;
+
+        } else {  // just resizing, no need to create new graphics object
+          //println("resizing to " + iwidth + " " + iheight);
+          g.resize(iwidth, iheight);
+          updateSize(iwidth, iheight);
+
+          /*
+          this.width = iwidth;
+          this.height = iheight;
+          defaultSize = false;
+
+          // make the applet itself larger.. it's a subclass of Component,
+          // so this is important for when it's embedded inside another app.
+          setSize(width, height);
+          */
+          return;
         }
+
       } else {
         if (frameCount > 0) {
           throw new RuntimeException("size() cannot be called to change " +
@@ -815,7 +851,7 @@ public class PApplet extends Applet
       "Import Library > opengl from the Sketch menu.";
 
     try {
-      Class rendererClass = Class.forName(renderer);
+      Class rendererClass = Class.forName(irenderer);
       Class constructorParams[] =
         new Class[] { Integer.TYPE,
                       Integer.TYPE,
@@ -827,21 +863,7 @@ public class PApplet extends Applet
                        new Integer(iheight),
                        this };
       // create the actual PGraphics object for rendering
-      //System.out.println("creating new PGraphics " + constructor);
       g = (PGraphics) constructor.newInstance(constructorValues);
-
-      this.width = iwidth;
-      this.height = iheight;
-      defaultSize = false;
-
-      // make the applet itself larger.. it's a subclass of Component,
-      // so this is important for when it's embedded inside another app.
-      setSize(width, height);
-
-      // probably needs to mess with the parent frame here?
-      // TODO wait for a "legitimate size" flag to be set
-      // (meaning that setup has finished properly)
-      // at which time the parent frame will do its thing.
 
     } catch (InvocationTargetException ite) {
       String msg = ite.getTargetException().getMessage();
@@ -859,7 +881,7 @@ public class PApplet extends Applet
         throw new RuntimeException(openglError);
       } else {
         throw new RuntimeException("You need to use \"Import Library\" " +
-                                   "to add " + renderer + " to your sketch.");
+                                   "to add " + irenderer + " to your sketch.");
       }
 
     } catch (Exception e) {
@@ -868,13 +890,31 @@ public class PApplet extends Applet
     }
 
     if ((currentRenderer != null) &&
-        !currentRenderer.equals(renderer)) {
+        !currentRenderer.equals(irenderer)) {
         // throw an exception so that setup() is called again
         // but with a properly sized render
         // this is for opengl, which needs a valid, properly sized
         // display before calling anything inside setup().
       throw new RuntimeException(NEW_RENDERER);
     }
+
+    updateSize(iwidth, iheight);
+  }
+
+
+  protected void updateSize(int iwidth, int iheight) {
+    this.width = iwidth;
+    this.height = iheight;
+    defaultSize = false;
+
+    // make the applet itself larger.. it's a subclass of Component,
+    // so this is important for when it's embedded inside another app.
+    setSize(width, height);
+
+    // probably needs to mess with the parent frame here?
+    // TODO wait for a "legitimate size" flag to be set
+    // (meaning that setup has finished properly)
+    // at which time the parent frame will do its thing.
 
     // if the default renderer is just being resized,
     // restore it to its default values
