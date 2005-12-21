@@ -865,6 +865,8 @@ public class PApplet extends Applet
       // create the actual PGraphics object for rendering
       g = (PGraphics) constructor.newInstance(constructorValues);
 
+      updateSize(iwidth, iheight);
+
     } catch (InvocationTargetException ite) {
       String msg = ite.getTargetException().getMessage();
       if ((msg != null) &&
@@ -897,8 +899,6 @@ public class PApplet extends Applet
         // display before calling anything inside setup().
       throw new RuntimeException(NEW_RENDERER);
     }
-
-    updateSize(iwidth, iheight);
   }
 
 
@@ -921,6 +921,8 @@ public class PApplet extends Applet
     //g.defaults();
     // no, otherwise fonts that were set in setup() will go away
 
+    // this has to be called after the exception is thrown,
+    // otherwise the supporting libs won't have a valid context to draw to
     Object methodArgs[] =
       new Object[] { new Integer(width), new Integer(height) };
     sizeMethods.handle(methodArgs);
