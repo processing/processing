@@ -878,7 +878,8 @@ public class PApplet extends Applet
 
     // if the default renderer is just being resized,
     // restore it to its default values
-    g.defaults();
+    //g.defaults();
+    // no, otherwise fonts that were set in setup() will go away
 
     Object methodArgs[] =
       new Object[] { new Integer(width), new Integer(height) };
