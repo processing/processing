@@ -1,6 +1,70 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+	<software name="Process" by="ART+COM" scroll="yes" resize="yes" width="825" height="700">
+	<image>images/ac.jpg</image>
+	  <description>
+	    The application of Computational Design in ART+COM projects.
+	  </description>
+	  <location>http://www.artcom.de/process/</location>
+	  <link href="http://www.artcom.de">ART+COM</link>
+	</software>
+
+	<software name="Jellyfish" by="Carolin Horn" scroll="yes" resize="yes" width="825" height="650">
+	<image>images/jellyfish.jpg</image>
+	  <description>
+              Visualization of an encyclopedia of the arts.
+	  </description>
+	  <location>http://www.carohorn.de/jellyfish</location>
+	  <link href="http://www.carohorn.de">Carolin Horn</link>
+	</software>
+
+	<software name="Flight Patterns" by="Aaron Koblin" scroll="yes" resize="yes" width="725" height="650">
+	<image>images/faa.jpg</image>
+	  <description>
+	       Flight pattern visualizations from FAA data parsed and plotted in Processing.
+	  </description>
+	  <location>http://www.aaronkoblin.com/work/faa/</location>
+	  <link href="http://www.aaronkoblin.com/">Aaron Koblin</link>
+	</software>
+
+	<software name="Aqueous" by="Zai Chang" scroll="yes" resize="yes" width="800" height="650">
+	<image>images/aqueous.jpg</image>
+	  <description>
+	          Aqueous is a meditative space that encourages perception of small things.  Water droplets fall from the ceiling through the space into water-filled tubes approximately tuned in a scale spanning two octaves. 
+	  </description>
+	  <location>aqueous/</location>
+	  <link href="http://www.zehao.com/">Zehao.com</link>
+	</software>
+
+	<software name="Net Worth" by="Osman Khan" scroll="yes" resize="yes" width="725" height="650">
+	<image>images/networth.gif</image>
+	  <description>
+	        How much do you really matter? Net Worth is an installation exploring our current condition where information is given more prominence than the corporeal.
+	  </description>
+	  <location>http://www.osmankhan.com/networth/</location>
+	  <link href="http://www.osmankhan.com">Osman Khan</link>
+	</software>
+
+	<software name="Letter-pairs Analysis" by="Martin Ignacio Bereciartua" scroll="yes" resize="yes" width="800" height="650">
+	<image>images/letterpairs.gif</image>
+	  <description>
+	         Showing the number of times each pair of letters appears in a given text.
+	  </description>
+	  <location>http://www.m-i-b.com.ar/mib/letter_pairs/eng/</location>
+	  <link href="http://www.m-i-b.com.ar/">Martin Ignacio Bereciartua</link>
+	</software>
+
+	<software name="Unreal Art" by="Alison Mealey" scroll="yes" resize="yes" width="725" height="650">
+	<image>images/unrealart.gif</image>
+	  <description>
+	  	 Generating illustration from pathed bot positions in a live Unreal Tournament Deathmatch game.
+	  </description>
+	  <location>http://alison.organised.info/unrealart/processing/</location>
+	  <link href="http://www.unrealart.co.uk">Unrealart</link>
+	  <link href="http://alison.organised.info">Development Blog</link>
+	</software>
+
 	<software name="Manifest" by="Michael Chang" scroll="yes" resize="yes" width="725" height="650">
 	<image>images/manifest.gif</image>
 	  <description>
@@ -70,7 +134,7 @@
 	  <link href="http://pantheon.yale.edu/~awm9">awm</link>
 	</software>
 	
-	<software name="Timescape" by="Ji-Hoon Byun & E.J. Gone" scroll="yes" resize="yes" width="900" height="570">
+	<software name="Timescape" by="Ji-Hoon Byun &amp; E.J. Gone" scroll="yes" resize="yes" width="900" height="570">
 	<image>images/timescape.jpg</image>
 	  <description>
 		Photographs made from a continious 1 pixel lines captured by a camera.
@@ -81,7 +145,7 @@
 	  <link href="http://php.chol.com/~atwork/index.htm">Gone</link>
 	</software>
 	
-	<software name="Ortho-type" by="Enrico Bravi, Mikkel Crone Koser & Paolo Palma" scroll="yes" resize="yes" width="850" height="500">
+	<software name="Ortho-type" by="Enrico Bravi, Mikkel Crone Koser &amp; Paolo Palma" scroll="yes" resize="yes" width="850" height="500">
 	<image>images/ortho.gif</image>
 	  <description>
 		An experiment in dimensional typography.
@@ -112,7 +176,7 @@
 	  <link href="http://www.limiteazero.com/">Limiteazero</link>
 	</software>
 	
-	<software name="Life vs. Life" by="Justin Bakse & Eric Williams" scroll="yes" resize="yes" width="600" height="400">
+	<software name="Life vs. Life" by="Justin Bakse &amp; Eric Williams" scroll="yes" resize="yes" width="600" height="400">
 	<image>images/lifevslife.gif</image>
 	  <description>
 		A two player adaptation of by John Conway's mathematical game of Life. 
@@ -226,7 +290,7 @@
 	<software name="TTC" by="Ariel Malka" scroll="no" resize="no" width="402" height="402">
 	<image>images/ttc.gif</image>
 	  <description>
-		 Writing on a modular medium with recording & replaying capabilities. Give your fingers a few minutes on the keyboard to get warm.
+		 Writing on a modular medium with recording &amp; replaying capabilities. Give your fingers a few minutes on the keyboard to get warm.
 	  </description>
 	  <location>http://www.chronotext.org/devices/ttc/main.htm</location>
 	  <source>ttc/ttc.java</source>
