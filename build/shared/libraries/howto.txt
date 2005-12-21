@@ -122,8 +122,11 @@ method called after draw has completed and the frame is done.
 no drawing allowed.
 
 public void size(int width, int height)
-this will be called the first time an applet sets its size, but
-also any time that it's called while the PApplet is running.
+this will be called the first time an applet sets its size, 
+but also any time that it's called while the PApplet is running.
+no drawing should occur inside of this method, because it may 
+not be the case that the new renderer is yet valid and ready.
+use this only to flag the new size and prepare for the next frame.
 
 public void stop()
 can be called by users, for instance movie.stop() will shut down
@@ -135,6 +138,8 @@ public void dispose()
 this should only be called by PApplet. dispose() is what gets 
 called when the host applet is stopped, so this should shut down
 any threads, disconnect from the net, unload memory, etc. 
+currently, this method is not being called consistently:
+http://dev.processing.org/bugs/show_bug.cgi?id=77
 
 To register any of these methods with the parent, call 
 parent.registerPre(this) or whatever the name of the function
@@ -434,4 +439,4 @@ things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 29 November 2005
+Ben Fry, Last updated 21 December 2005
