@@ -1987,6 +1987,10 @@ public class PGraphics extends PImage implements PConstants {
    * ignored.
    */
   public void text(String str, float x, float y) {
+    if (textFont == null) {
+      throw new RuntimeException("use textFont() before text()");
+    }
+
     if (textMode == SCREEN) loadPixels();
 
     int length = str.length();
