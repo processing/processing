@@ -1,3 +1,4 @@
+<? require('../config.php'); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -21,7 +22,7 @@ function showloading()
 }
     </script>
     
-    <style>
+    <style type="text/css">
 body { margin: 0; font: small Helvetica, Arial, sans-serif; }
 
 h1 { margin: 0; width: 750px; background: #000; }
@@ -50,6 +51,20 @@ li { margin-bottom: 1em; }
         <a href="#" onclick="remote_link('reference.php', 'lang=tr'); return false;">Turkish</a>, 
         <a href="#" onclick="remote_link('reference.php', 'lang=zh'); return false;">Chinese Traditional</a>
     </li>
+	<li>Generate One Reference file: 
+		<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_one.php', 
+		    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
+			<select name="lang">
+<?
+	foreach ($LANGUAGES as $code => $array) {
+		echo "\t\t\t\t<option value=\"$code\">$array[0]</option>\n";
+	}
+?>
+			</select> / 
+			<label><input type="text" name="file" size="35" value="abs.xml" /></label>
+			<input type="submit" value="Generate" />
+		</form>
+	</li>
     <li>Generate Reference Indices:<br />
         <a href="#" onclick="remote_link('reference_index.php', 'lang=en'); return false;">English</a>, 
         <a href="#" onclick="remote_link('reference_index.php', 'lang=tr'); return false;">Turkish</a>, 
@@ -68,7 +83,7 @@ li { margin-bottom: 1em; }
 </ul>
 
 <h2>Generate Template</h2>
-<form method="post" onsubmit="new Ajax.Updater('status', 'template.php', 
+<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'template.php', 
     { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
     <label>Title: <input type="text" name="title" size="50" /></label><br />
     <label>Section: <input type="text" name="section" size="30" /></label><br />
