@@ -35,6 +35,8 @@ li { margin-bottom: 1em; }
 #status-container { display: none; background: #efefff; border: 1px solid #c8c8ff; padding: 5px; width: 95%; overflow-x: hidden; }
 #status-container h3 { margin: 0; }
 #status { font-size: .7em; }
+
+.inline { display: inline; }
     </style>
 </head>
 
@@ -80,6 +82,30 @@ li { margin-bottom: 1em; }
                 <a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
                 <a href="#" onclick="remote_link('updated.php'); return false;">Updates.html</a>
     </li>
+	<li>Environment pages in 
+		<form class="inline" action="#" method="post" onsubmit="new Ajax.Updater('status', 'environment.php', 
+	    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
+		<select name="lang">
+<?
+foreach ($LANGUAGES as $code => $array) {
+	echo "\t\t\t\t<option value=\"$code\">$array[0]</option>\n";
+}
+?>
+		</select>
+		<input type="submit" value="Generate" /></form>
+	</li>
+	<li>Comparison pages in 
+		<form class="inline" action="#" method="post" onsubmit="new Ajax.Updater('status', 'compare.php', 
+		    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
+			<select name="lang">
+	<?
+	foreach ($LANGUAGES as $code => $array) {
+		echo "\t\t\t\t<option value=\"$code\">$array[0]</option>\n";
+	}
+	?>
+			</select>
+			<input type="submit" value="Generate" /></form>
+		</li>
 </ul>
 
 <h2>Generate Template</h2>
