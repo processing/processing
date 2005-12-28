@@ -75,7 +75,9 @@ of the project. We don't plan to grow the core library extensively.
 
 A Very Basic Example
 
+
 package libraryexample;
+import processing.core.*;
 
 public class BoringLibrary {
   PApplet parent;
@@ -89,6 +91,8 @@ public class BoringLibrary {
     // anything in here will be called automatically when 
     // the parent applet shuts down. for instance, this might
     // shut down a thread used by this library.
+    // note that this currently has issues, see bug #183
+    // http://dev.processing.org/bugs/show_bug.cgi?id=183
   }
 }
 
@@ -97,6 +101,10 @@ Usually you'll need to pass "this" to a library's constructor so that
 the library can access functions from PApplet, i.e graphics methods
 like line() and stroke() or loadImage(). See later in the document for
 information about reading and writing files.
+
+If you'd like to use constants such as "RGB", use the following:
+public class BoringLibrary implements PConstants {
+which will allow all the constants to be used by that class.
 
 
 //////////////////////////////////////////////////////////////
@@ -439,4 +447,4 @@ things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 21 December 2005
+Ben Fry, Last updated 27 December 2005
