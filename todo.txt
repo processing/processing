@@ -1,4 +1,7 @@
 0100 pde
+X missing import PApplet in library howto.txt
+X   http://dev.processing.org/bugs/show_bug.cgi?id=263
+
 X switch to using date as default for archive sketch
 _   add this as a preference
 _   need method for showing prefs for the tools
@@ -41,6 +44,12 @@ _   perhaps the get around this by building into sketch folder
 _     when non-ascii chars in use, just launch everything externally
 _   also fails with export-to-application
 _     http://dev.processing.org/bugs/show_bug.cgi?id=252
+_ finish putting all the bugs into bugzilla
+_   add a notation to the bugs site re: reading the faq and searching first
+X   move p5 site bug reporting to bugzilla
+_   do the same for suggestions
+_     and detail the suggestions policy on the dev site: diy
+_   post a page explaining the bug reporting system
 
 last minute regression from 0097
 _ exported movies seem to have trouble (windows only?)
