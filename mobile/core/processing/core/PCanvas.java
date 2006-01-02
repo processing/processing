@@ -120,6 +120,21 @@ public class PCanvas extends Canvas {
         midlet.enqueueEvent(PMIDlet.EVENT_KEY_RELEASED, keyCode, null);
     }
     
+    protected void pointerPressed(int x, int y) {
+        int value = (x << 16) | (y & 0xffff);
+        midlet.enqueueEvent(PMIDlet.EVENT_POINTER_PRESSED, value, null);
+    }
+
+    protected void pointerDragged(int x, int y) {
+        int value = (x << 16) | (y & 0xffff);
+        midlet.enqueueEvent(PMIDlet.EVENT_POINTER_DRAGGED, value, null);
+    }
+
+    protected void pointerReleased(int x, int y) {
+        int value = (x << 16) | (y & 0xffff);
+        midlet.enqueueEvent(PMIDlet.EVENT_POINTER_RELEASED, value, null);
+    }
+    
     public void point(int x1, int y1) {
         if (stroke) {
             bufferg.setColor(strokeColor);

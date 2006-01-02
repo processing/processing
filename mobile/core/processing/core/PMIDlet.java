@@ -73,6 +73,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     protected int       width;
     protected int       height;
     
+    protected boolean   pointerPressed;
+    protected int       pointerX;
+    protected int       pointerY;
+    
     protected char      key;
     protected int       keyCode;
     protected boolean   keyPressed;
@@ -115,6 +119,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public static final byte    EVENT_KEY_RELEASED      = 2;
     public static final byte    EVENT_SOFTKEY_PRESSED   = 3;
     public static final byte    EVENT_LIBRARY           = 4;
+    public static final byte    EVENT_POINTER_PRESSED   = 5;
+    public static final byte    EVENT_POINTER_DRAGGED   = 6;
+    public static final byte    EVENT_POINTER_RELEASED  = 7;
     
     private byte[]      events;
     private byte[]      eventsClone;
@@ -317,6 +324,23 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                         objs[0].notifyAll();
                     }
                     break;
+                case EVENT_POINTER_PRESSED:
+                    pointerPressed = true;
+                    pointerX = eventValuesClone[i] >> 16;
+                    pointerY = eventValuesClone[i] & 0xffff;
+                    pointerPressed();
+                    break;
+                case EVENT_POINTER_DRAGGED:
+                    pointerX = eventValuesClone[i] >> 16;
+                    pointerY = eventValuesClone[i] & 0xffff;
+                    pointerDragged();
+                    break;
+                case EVENT_POINTER_RELEASED:
+                    pointerPressed = false;
+                    pointerX = eventValuesClone[i] >> 16;
+                    pointerY = eventValuesClone[i] & 0xffff;
+                    pointerReleased();
+                    break;
             }
             eventDataClone[i] = null;
         }
@@ -377,6 +401,18 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public void keyReleased() {
+        
+    }
+
+    public void pointerPressed() {
+        
+    }
+    
+    public void pointerDragged() {
+        
+    }
+    
+    public void pointerReleased() {
         
     }
     
