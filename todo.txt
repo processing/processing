@@ -19,7 +19,7 @@ X Change (or temporarily disable) auto-update check to check Mobile Processing
 X Update copyright, license information in all source files
 - Add Exhibition to website, solicit examples from community members
 - Mobile vs. Processing FAQ update
-- Improve/fix error reporting and handling in PDE
+X Improve/fix error reporting and handling in PDE
 X Add touchscreen input support to core
 X Rename handset library to phone
 - Document xml library
