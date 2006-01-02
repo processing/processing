@@ -1921,7 +1921,8 @@ public class Editor extends JFrame
       runtime = new Emulator(sketch, this);
       runtime.start(null);
       watcher = new RunButtonWatcher();
-
+    } catch (RunnerException re) {
+      error(re);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -1938,6 +1939,8 @@ public class Editor extends JFrame
       } else {
         // error message will already be visible
       }
+    } catch (RunnerException re) {
+      error(re);
     } catch (Exception e) {
       message("Error during export.");
       e.printStackTrace();

@@ -2571,7 +2571,9 @@ public class Sketch {
   public boolean exportMIDlet() throws Exception {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
-
+    // save any recent changes
+    save();
+    
     zipFileContents = new Hashtable();
 
     boolean replaceJad = true;
