@@ -1,3 +1,14 @@
+ABOUT REV 0002 - 
+
+- Support for touchscreen devices. pointerPressed, pointerX, pointerY,
+  pointerPressed(), pointerDragged(), pointerReleased() added.
+
+- Handset library renamed to Phone library.
+
+- Net Client library is now part of the standard core features as PClient.
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 ABOUT REV 0001 - 02 November 2005
 
 I'm calling this release 0001 since the first was really just a quick proof-of-

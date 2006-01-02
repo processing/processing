@@ -438,6 +438,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
+    public final String getProperty(String property) {
+        return System.getProperty(property);
+    }
+    
     public final String textInput() {
         return textInput("Text Input", null, 256);
     }
