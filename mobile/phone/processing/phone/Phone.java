@@ -1,5 +1,7 @@
 package processing.phone;
 
+import processing.core.*;
+
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.Display;
 
@@ -26,12 +28,34 @@ import javax.microedition.lcdui.Display;
  * @author  Francis Li
  */
 public class Phone {
-    private MIDlet      midlet;
+    private PMIDlet     midlet;
+    private PCanvas     canvas;
     private Display     display;
     
-    public Phone(MIDlet midlet) {
+    public Phone(PMIDlet midlet) {
         this.midlet = midlet;
-        this.display = Display.getDisplay(midlet);
+        this.canvas = midlet.canvas;
+        this.display = midlet.display;
+    }
+    
+    public void fullscreen() {
+        canvas.removeCommand(midlet.cmdExit);
+        canvas.removeCommand(midlet.cmdCustom);
+        canvas.setCommandListener(null);
+        
+        canvas.setFullScreenMode(true);
+        midlet.width = canvas.getWidth();
+        midlet.height = canvas.getHeight();
+    }      
+    
+    public void noFullscreen() {
+        canvas.setFullScreenMode(false);
+        midlet.width = canvas.getWidth();
+        midlet.height = canvas.getHeight();
+        
+        canvas.addCommand(midlet.cmdExit);
+        canvas.addCommand(midlet.cmdCustom);
+        canvas.setCommandListener(midlet);
     }
     
     public boolean vibrate(int duration) {

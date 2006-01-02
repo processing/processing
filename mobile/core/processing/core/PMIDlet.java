@@ -53,6 +53,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public static final int GAME_B          = Canvas.GAME_B;
     public static final int GAME_C          = Canvas.GAME_C;
     public static final int GAME_D          = Canvas.GAME_D;
+    public static final int SOFTKEY1        = -6;
+    public static final int SOFTKEY2        = -7;
     
     public static final int FACE_SYSTEM         = Font.FACE_SYSTEM;
     public static final int FACE_MONOSPACE      = Font.FACE_MONOSPACE;
@@ -69,9 +71,6 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
 
     public static final int RGB             = 0;
     public static final int HSB             = 1;
-    
-    protected int       width;
-    protected int       height;
     
     protected boolean   pointerPressed;
     protected int       pointerX;
@@ -99,10 +98,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     protected int       framerate;
     protected int       frameCount;
     
-    protected PCanvas   canvas;    
-    protected Display   display;
-    protected Command   cmdExit;
-    protected Command   cmdCustom;
+    public PCanvas      canvas;    
+    public Command      cmdExit;
+    public Command      cmdCustom;
+    public Display      display;   
+    public int          width;
+    public int          height;
     
     private Runtime     runtime;
     private Thread      thread;
@@ -361,6 +362,16 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 case Canvas.KEY_STAR:
                     key = '*';
                     this.keyCode = (int) key;
+                    break;
+                case -6:
+                case -21:
+                    key = 0xffff;
+                    this.keyCode = SOFTKEY1;
+                    break;
+                case -7:
+                case -22:
+                    key = 0xffff;
+                    this.keyCode = SOFTKEY2;
                     break;
                 default:
                     key = 0xffff;

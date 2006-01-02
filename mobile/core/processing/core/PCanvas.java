@@ -919,12 +919,20 @@ public class PCanvas extends Canvas {
         textAlign = MODE;
     }
     
+    protected void showNotify() {
+        int width = getWidth();
+        int height = getHeight();
+        if ((this.width != width) || (this.height != height)) {
+            sizeChanged(width, height);
+        }
+    }
+    
     protected void sizeChanged(int width, int height) {        
-        midlet.width = width;
-        midlet.height = height;
+        this.width = midlet.width = width;
+        this.height = midlet.height = height;
         
         buffer = Image.createImage(width, height);
-        bufferg = buffer.getGraphics();        
+        bufferg = buffer.getGraphics();    
     }
     
     private static final int EDGE_X             = 0;
