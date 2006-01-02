@@ -310,7 +310,7 @@
         <antcall target="makelib">
             <param name="libname" value="phone"/>
             <param name="bootClassPath" value="${wtk.dir}/lib/cldcapi10.jar;${wtk.dir}/lib/midpapi20.jar"/>
-            <param name="classPath" value=""/>
+            <param name="classPath" value="mobile/build/windows/mobile.jar"/>
             <param name="cldc" value="CLDC1.0"/>
         </antcall>
         <!-- bluetooth library -->
