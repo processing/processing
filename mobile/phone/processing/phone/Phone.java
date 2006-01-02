@@ -1,4 +1,4 @@
-package processing.handset;
+package processing.phone;
 
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.Display;
@@ -25,11 +25,11 @@ import javax.microedition.lcdui.Display;
  *
  * @author  Francis Li
  */
-public class Handset {
+public class Phone {
     private MIDlet      midlet;
     private Display     display;
     
-    public Handset(MIDlet midlet) {
+    public Phone(MIDlet midlet) {
         this.midlet = midlet;
         this.display = Display.getDisplay(midlet);
     }
