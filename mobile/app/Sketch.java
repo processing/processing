@@ -2804,24 +2804,48 @@ public class Sketch {
     // close up the jar file
     zos.flush();
     zos.close();
+    
+    //// delete contents of temporary directory
+    Base.removeDescendants(tmpDir);
 
-    //// now we can get the size of the jar file to generate the JAD file from manifest file
+    //// obfuscate/shrink code in jar file
+    File obfsDir = new File(midletDir, "proguard");
+    if (!obfsDir.exists()) {
+        obfsDir.mkdir();
+    }
+    File obfsFile = new File(obfsDir, name + ".jar");
+    Obfuscator obfs = new Obfuscator();
+    obfs.obfuscate(jarFile, obfsFile);
+    //// preverify again
+    if (preverifier.preverify(obfsDir, tmpDir)) {
+        //// copy back into obfuscated directory
+        Base.copyDir(tmpDir, obfsDir);
+        //// re-jar
+        obfsFile = new File(midletDir, name + "_proguard.jar");
+        Obfuscator.compress(obfsDir, obfsFile);
+        //// Delete files
+        Base.removeDir(obfsDir);
+    }
+    //// delete temporary directory
+    Base.removeDir(tmpDir);
+    
+    //// now we can get the size of the jar files to generate the JAD file from manifest file
     jadPs.println("MIDlet-Jar-URL: " + name + ".jar");
+    jadPs.close();
+    
+    //// make a copy for the obfuscated version
+    File obfsJad = new File(midletDir, name + "_proguard.jad");
+    Base.copyFile(jadFile, obfsJad);
+    
+    jadPs = new PrintStream(new FileOutputStream(jadFile, true));
     jadPs.println("MIDlet-Jar-Size: " + jarFile.length());
     jadPs.close();
     
-    //// delete temporary directory
-    classfiles = tmpDir.list();
-    for (int i = 0; i < classfiles.length; i++) {
-      File deadguy = new File(tmpDir, classfiles[i]);
-      if (!deadguy.delete()) {
-        Base.showWarning("Could not delete",
-                            classfiles[i] + " could not \n" +
-                            "be deleted from the temporary folder.  \n" +
-                            "You'll need to remove it by hand.", null);
-      }
-    }    
-    tmpDir.delete();
+    if (obfsFile.exists()) {
+        jadPs = new PrintStream(new FileOutputStream(obfsJad, true));
+        jadPs.println("MIDlet-Jar-Size: " + obfsFile.length());
+        jadPs.close();
+    }
     
     return true;
   }

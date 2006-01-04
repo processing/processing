@@ -38,7 +38,9 @@
 # Print out a list of what we're preserving.
 
 # turn off output
-#-printseeds
+-printseeds proguard_seeds.txt
+-printmapping proguard_mapping.txt
+-printusage proguard_usage.txt
 
 # Preserve all native method names and the names of their classes.
 

@@ -1,6 +1,8 @@
 package processing.app;
 
 import java.io.*;
+import java.util.Enumeration;
+import java.util.zip.*;
 
 public class Obfuscator implements MessageConsumer {
   
@@ -28,15 +30,23 @@ public class Obfuscator implements MessageConsumer {
     command.append("java -jar lib");
     command.append(File.separator);
     command.append("proguard.jar -libraryjars ");
-    command.append(wtkLibPath);
-    command.append("cldcapi");
-    command.append(cldc);
-    command.append(".jar");
-    command.append(File.pathSeparator);
-    command.append(wtkLibPath);
-    command.append("midpapi");
-    command.append(midp);
-    command.append(".jar");
+    if (Base.isMacOS()) {
+        command.append(wtkPath);
+        command.append("/cldc.jar:");
+        command.append(wtkPath);
+        command.append("/midp.jar:");
+        command.append("/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar");        
+    } else {
+        command.append(wtkLibPath);
+        command.append("cldcapi");
+        command.append(cldc);
+        command.append(".jar");
+        command.append(File.pathSeparator);
+        command.append(wtkLibPath);
+        command.append("midpapi");
+        command.append(midp);
+        command.append(".jar");        
+    }
     command.append(" -injars \"");
     command.append(source.getPath());
     command.append("\" -outjar \"");
@@ -60,8 +70,13 @@ public class Obfuscator implements MessageConsumer {
           ie.printStackTrace ();
         }
       }
-      //System.out.println("Preverify complete!");
-      return (result == 0);
+      if (result != 0) {
+          return false;
+      }
+      //// extract
+      extract(output);
+      //// delete jar
+      output.delete();
     } catch (Exception e) {
       e.printStackTrace ();
     }
@@ -72,4 +87,58 @@ public class Obfuscator implements MessageConsumer {
   public void message(String s) {
     System.err.println(s);
   }  
+  
+  public static void extract(File zipfile) throws Exception {
+      File dir = zipfile.getParentFile();
+      ZipFile zip = new ZipFile(zipfile);
+      Enumeration e = zip.entries();
+      while (e.hasMoreElements()) {
+          ZipEntry ze = (ZipEntry) e.nextElement();
+          InputStream is = zip.getInputStream(ze);
+          File outfile = new File(dir, ze.getName());
+          File parent = outfile.getParentFile();
+          if (!parent.exists()) {
+              parent.mkdirs();
+          }
+          OutputStream os = new FileOutputStream(outfile);
+          byte[] buffer = new byte[4096];
+          int bytesRead = is.read(buffer);
+          while (bytesRead >= 0) {
+              os.write(buffer, 0, bytesRead);
+              bytesRead = is.read(buffer);
+          }
+          os.close();
+          is.close();
+      }
+  }
+  
+  public static void compress(File source, File output) throws Exception {
+      ZipOutputStream os = new ZipOutputStream(new FileOutputStream(output));
+      compress(source, "", os);
+      os.finish();
+      os.close();
+  }
+  
+  private static void compress(File source, String prefix, ZipOutputStream os) throws Exception {
+      File[] files = source.listFiles();
+      for (int i = 0, length = files.length; i < length; i++) {
+          if (!files[i].getName().startsWith(".")) {
+              if (files[i].isDirectory()) {
+                  compress(files[i], prefix + files[i].getName() + File.separator, os);
+              } else {
+                  ZipEntry ze = new ZipEntry(prefix + files[i].getName());
+                  os.putNextEntry(ze);
+                  byte[] buffer = new byte[4096];
+                  FileInputStream is = new FileInputStream(files[i]);
+                  int bytesRead = is.read(buffer);
+                  while (bytesRead >= 0) {
+                      os.write(buffer, 0, bytesRead);
+                      bytesRead = is.read(buffer);
+                  }
+                  os.closeEntry();
+                  is.close();
+              }
+          }
+      }
+  }
 }
