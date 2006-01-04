@@ -1,6 +1,6 @@
 MIDlet-1: @@sketch@@, ,@@sketch@@
 MIDlet-Name: @@sketch@@
 MIDlet-Version: 1.0.0
-MIDlet-Vendor: Mobile Processing ALPHA - 0001
+MIDlet-Vendor: Mobile Processing ALPHA - 0002
 MicroEdition-Profile: MIDP-1.0
 MicroEdition-Configuration: CLDC-1.0
