@@ -126,13 +126,14 @@ function reference_nav($current = '')
 function language_nav($current)
 {
     global $LANGUAGES;
-    if (count($LANGUAGES) < 2) { return ''; }
+	global $FINISHED;
+    if (count($FINISHED) < 2) { return ''; }
     
     $html = "\t".'Language: <select name="nav" size="1" class="refnav" onChange="javascript:gogo(this)">'."\n";
-    foreach ($LANGUAGES as $short => $array) {
-        if ($array[3] != '' ) {
-            $sel = ($current == $short) ? ' selected="selected"' : '';
-            $html .= "\t\t<option value=\"$array[3]\"$sel>$array[0]</option>\n";
+    foreach ($FINISHED as $code) {
+        if ($LANGUAGES[$code][3] != '' ) {
+            $sel = ($current == $code) ? ' selected="selected"' : '';
+            $html .= "\t\t<option value=\"{$LANGUAGES[$code][3]}\"$sel>{$LANGUAGES[$code][0]}</option>\n";
         }
     }
     $html .= "\t</select>\n";

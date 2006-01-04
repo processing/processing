@@ -49,9 +49,17 @@ li { margin-bottom: 1em; }
 <ul>
     <li>Generate <a href="#" onclick="remote_link('cover.php');return false;">Cover</a></li>
     <li>Generate Reference:<br />
-        <a href="#" onclick="remote_link('reference.php', 'lang=en');return false;">English</a>, 
-        <a href="#" onclick="remote_link('reference.php', 'lang=tr'); return false;">Turkish</a>, 
-        <a href="#" onclick="remote_link('reference.php', 'lang=zh'); return false;">Chinese Traditional</a>
+			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference.php', 
+			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
+				<select name="lang">
+				<?
+					foreach ($LANGUAGES as $code => $array) {
+						echo "\t\t\t\t<option value=\"$code\">$array[0]</option>\n";
+					}
+				?>
+				</select>
+				<input type="submit" value="Generate" />
+			</form>
     </li>
 	<li>Generate One Reference file: 
 		<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_one.php', 
@@ -68,9 +76,17 @@ li { margin-bottom: 1em; }
 		</form>
 	</li>
     <li>Generate Reference Indices:<br />
-        <a href="#" onclick="remote_link('reference_index.php', 'lang=en'); return false;">English</a>, 
-        <a href="#" onclick="remote_link('reference_index.php', 'lang=tr'); return false;">Turkish</a>, 
-        <a href="#" onclick="remote_link('reference_index.php', 'lang=zh'); return false;">Chinese Traditional</a>
+			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_index.php', 
+			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
+				<select name="lang">
+				<?
+					foreach ($LANGUAGES as $code => $array) {
+						echo "\t\t\t\t<option value=\"$code\">$array[0]</option>\n";
+					}
+				?>
+				</select>
+				<input type="submit" value="Generate" />
+			</form>
     </li>
     <li>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></li>
 	<li>Generate Library References:<br />
