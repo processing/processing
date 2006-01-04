@@ -80,7 +80,7 @@ li { margin-bottom: 1em; }
     <li>Generate <a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a></li>
     <li>Generate <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a>
                 <a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
-                <a href="#" onclick="remote_link('updated.php'); return false;">Updates.html</a>
+                <a href="#" onclick="remote_link('updates.php'); return false;">Updates.html</a>
     </li>
 	<li>Environment pages in 
 		<form class="inline" action="#" method="post" onsubmit="new Ajax.Updater('status', 'environment.php', 

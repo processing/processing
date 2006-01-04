@@ -1,47 +1,423 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <updates>
-    <item>
-        <date>7 May 2005</date>
-        <description>New software from Martin Wattenberg added to the <a href="exhibition/">exhibition</a>.</description>
-    </item>
-    <item>
-        <date>7 May 2005</date>
-        <description><em>Obsessive Camera Direction</em> <a href="reference/libraries/">library</a> contributed by Kristian Linn Damkjer. <em>MySQL</em> <a href="reference/libraries/">library</a> contributed by Florian Jenett. <em>Oscillator</em> <a href="reference/libraries/">library</a> contributed by Taka.</description>
-    </item>
-    <item>
-        <date>8 May 2005</date>
-        <description>Processing (BETA) 88, 89 released, fixing additional nice bugs found in the original (BETA) release.</description>
-    </item>
-    <item>
-        <date>9 May 2005</date>
-        <description>Processing (BETA) 90 released.</description>
-    </item>
-    <item>
-        <date>9 May 2005</date>
-        <description><em>Ess</em> sound <a href="reference/libraries/">library</a> contributed by Krister Olsson.</description>
-    </item>
-    <item>
-        <date>6 June 2005</date>
-        <description>Processing (BETA) 91 released.</description>
-    </item>
-    <item>
-        <date>24 June 2005</date>
-        <description>New software from Tom Carden, Clayton Cubitt, and Marius Watz added to the <a href="exhibition/">exhibition</a>.</description>
-    </item>
-    <item>
-        <date>11 July 2005</date>
-        <description>Many new examples from Dan Shiffman added to <a href="learning/">Learning</a>.</description>
-    </item>
-    <item>
-        <date>11 July 2005</date>
-        <description>New software from Robert Hodgin added to the <a href="exhibition/">exhibition</a>.</description>
-    </item>
-    <item>
-        <date>15 July 2005</date>
-        <description><a href="reference/libraries/net/">Net Library reference</a> augmented with examples from Tom Igoe.</description>
-    </item>
-    <item>
-        <date>19 July 2005</date>
-        <description>New software from Michael Chang added to the <a href="exhibition/">exhibition</a></description>
-    </item>
+	<item>
+		<date>2 August 2002</date>
+		<description>Release of Processing 1.0 (ALPHA)!</description>
+	</item>
+	<item>
+		<date>2 September 2002</date>
+		<description>A new release of Processing has been posted for the alpha testers. This version fixes several bugs (particularly on OS X) and adds a few fine features.</description>
+	</item>
+	<item>
+		<date>16 September 2002</date>
+		<description>32 additional <a href="learning/index.html">examples</a> posted.</description>
+	</item>
+	<item>
+		<date>14 October 2002</date>
+		<description>A new typeface designed by Mike Cina of <a href="http://www.weworkforthem.com">WeWorkForThem</a> is integrated into the website. Other typefaces from Mike are available at <a href="http://www.youworkforthem.com">YouWorkForThem</a>.</description>
+	</item>
+	<item>
+		<date>2 November 2002</date>
+		<description>New software from Schoenerwissen added to the <a href="exhibition/index.html">software</a> section and sixteen additional <a href="learning/index.html">examples</a> posted including  new work from barragan, mescabosa, forkinsocket, and REAS.</description>
+	</item>
+	<item>
+		<date>20 November 2002</date>
+		<description>A new release of Processing alpha (revision 46) is now available for testing. It fixes several of the worst Mac OS X problems and stability under Windows has improved. A few new features have been added as well.</description>
+	</item>
+	<item>
+		<date>25 November 2002</date>
+		<description>New software from Reed Kram added to the <a href="exhibition/index.html">software</a> section.</description>
+	</item>
+	<item>
+		<date>4 December 2002</date>
+		<description>New software from Nikita Pashenkov added to the <a href="exhibition/index.html">software</a> section and new work from Manny Tan and Casey Reas posted for the <a href="http://www.singlecell.org">Singlecell</a> project.</description>
+	</item>
+	<item>
+		<date>12 December 2002</date>
+		<description>New software from Glen Murphy added to the <a href="exhibition/index.html">software</a> section.</description>
+	</item>
+	<item>
+		<date>7 January 2003</date>
+		<description>Two recent updates to the Processing 1.0 (ALPHA) mean that we're now at revision 48. The latest release adds colored code, fixes to many of the bug reports from testers, and more mac tweaks to bring it up to par under OS X.</description>
+	</item>
+	<item>
+		<date>12 January 2003</date>
+		<description>New software from Boris M&amp;uuml;ller and Golan Levin added to the <a href="exhibition/index.html">software</a> section and eighteen additional <a href="learning/index.html">examples</a> posted including  new work from pcho, mescabosa, forkinsocket, and REAS..</description>
+	</item>
+	<item>
+		<date>20 January 2003</date>
+		<description>Twenty-three additional <a href="learning/index.html">examples</a> posted including  new work from James Patterson, Zach Lieberman, and REAS.</description>
+	</item>
+	<item>
+		<date>12 February 2003</date>
+		<description>New software from William Ngan added to the <a href="exhibition/index.html">software</a> section and a few additional <a href="learning/index.html">examples</a> posted including  new work from James Patterson, Joshua Nimoy, and REAS.</description>
+	</item>
+	<item>
+		<date>18 February 2003</date>
+		<description>Welcome Hernando Barrag&amp;aacute;n, Marc Escobosa, and Mathias Dahlstr&amp;ouml;m to the Processing development team. New <a href="learning/index.html">examples</a> posted including new work from Mike Davis and Glen Murphy. Name change&amp;#151;the project formally known as "Proce55ing" is now simply "Processing". The URL, however, confusingly remains the same.</description>
+	</item>
+	<item>
+		<date>5 March 2003</date>
+		<description>Welcome Carlos Rocha to the Processing development team. Processing 1.0 (ALPHA) #52 is released which means the addition of transparent/antialiased polygons, improved functions for text output, and enhanced camera control. The number of <a href="http://processing.org/discourse/">Discussion Board</a> members is approaching 300.</description>
+	</item>
+	<item>
+		<date>18 March 2003</date>
+		<description>New software from Josh On added to the <a href="exhibition/index.html">software</a> section.</description>
+	</item>
+	<item>
+		<date>7 April 2003</date>
+		<description>Processing 1.0 (ALPHA) #53 is released. Improved code for anti-aliasing graphics and a fix for the mysterious "disappearing caret" bug.</description>
+	</item>
+	<item>
+		<date>1 May 2003</date>
+		<description>New software from Ed Burton added to the <a href="exhibition/index.html">software</a> section. The <a href="reference/index.html">reference</a> section is completely updated and a new technical notes section is added.</description>
+	</item>
+	<item>
+		<date>6 May 2003</date>
+		<description>New software from Marius Watz added to the <a href="exhibition/index.html">software</a> section.</description>
+	</item>
+	<item>
+		<date>25 May 2003</date>
+		<description>Processing 1.0 (ALPHA) #55 is released. Includes code for audio, video, and networking.</description>
+	</item>
+	<item>
+		<date>4 June 2003</date>
+		<description>New software from GroupC and Carlos Andres Rocha added to the <a href="exhibition/index.html">software</a> section.</description>
+	</item>
+	<item>
+		<date>29 June 2003</date>
+		<description>New software from Lia and Manny Tan added to the <a href="exhibition/index.html">software</a> section.</description>
+	</item>
+	<item>
+		<date>5 August 2003</date>
+		<description>Processing 1.0 (ALPHA) #58 is released. Many updates to the environment and additions to the language.</description>
+	</item>
+	<item>
+		<date>22 September 2003</date>
+		<description>Processing 1.0 (ALPHA) #60 is released. Significant changes to the language and a swarm of bug fixes.</description>
+	</item>
+	<item>
+		<date>27 September 2003</date>
+		<description>Processing in Japanese. Tetsu Kondo updates the <a href="http://stage.itp.tsoa.nyu.edu/%7Etk403/proce55ing_reference_jp/">Japanese Processing reference</a>.</description>
+	</item>
+	<item>
+		<date>30 September 2003</date>
+		<description>Processing 1.0 (ALPHA) #65 is released. We're getting closer!</description>
+	</item>
+	<item>
+		<date>01 October 2003</date>
+		<description>Processing in Hebrew. Heidi Cropp and Ariel Malka release <a href="http://www.processing.co.il" target="_new">http://www.processing.co.il</a>.</description>
+	</item>
+	<item>
+		<date>03 October 2003</date>
+		<description>New software from Amit Pitaru added to the <a href="exhibition/index.html" target="_new">exhibition</a> section.</description>
+	</item>
+	<item>
+		<date>19 October 2003</date>
+		<description>Processing 1.0 (BETA) #66 is released.</description>
+	</item>
+	<item>
+		<date>23 October 2003</date>
+		<description>New software from Elise Co added to the <a href="exhibition/index.html" target="_new">exhibition</a> section.</description>
+	</item>
+	<item>
+		<date>25 October 2003</date>
+		<description>Sound and Tablet! Amit Pitaru has released the first two Processing external libraries. <a href="http://www.pitaru.com/sonia/" target="_new">Sonia</a> integrates Processing and the JSyn audio library. It requires the JSyn plugin to run from the web, but has a superior sound quality to the default Processing library.Wacom tablet interface provides access to the pressure and tilt data from a tablet.</description>
+	</item>
+	<item>
+		<date>28 October 2003</date>
+		<description>Processing 1.0 (BETA) #67 is released.</description>
+	</item>
+	<item>
+		<date>4 November 2003</date>
+		<description>New software from Jared Tarbell added to the <a href="exhibition/index.html" target="_new">exhibition</a> section.</description>
+	</item>
+	<item>
+		<date>15 January 2004</date>
+		<description>We're feeling lucky. Typing "Processing" into Google and clicking the "I'm Feeling Lucky" button will now take you here!</description>
+	</item>
+	<item>
+		<date>16 January 2004</date>
+		<description>New software from Matthew Jogan and Julia Stanat added to the <a href="exhibition/index.html">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>16 January 2004</date>
+		<description>Proce55ing.net has been joined by Processing.org. Two domains, the same great taste.</description>
+	</item>
+	<item>
+		<date>29 January 2004</date>
+		<description>New software from Brendan Dawes added to the <a href="exhibition/index.html">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>3 February 2004</date>
+		<description>Processing 1.0 (BETA) #68 is released and fixes a number of bugs which crash the application. Watch for a major release in a few months. It will increase the functionality of the programming environment and will add a new system for extending the language.</description>
+	</item>
+	<item>
+		<date>10 February 2004</date>
+		<description>New Libraries section added to the reference. As of release #69, Libraries will make it easier for people to extend Processing with their own code.</description>
+	</item>
+	<item>
+		<date>12 February 2004</date>
+		<description>New software from Mikkel Koser added to the <a href="exhibition/index.html">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>4 March 2004</date>
+		<description>Processing lecture at San Francisco Art Institute and presentation for Krister Olsson's course. We also had the pleasure of meeting Joshua Kit Clayton of Cycling'74, author of <a href="http://www.cycling74.com/products/jitter.html">Jitter</a>.</description>
+	</item>
+	<item>
+		<date>6 March 2004</date>
+		<description>New software from Toxi added to the <a href="exhibition/index.html">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>9 March 2004</date>
+		<description><a href="http://processing.org/reference/id/">Indonesian Reference</a> pages completed by Widianto Nugroho. These are the first finished reference pages built with our online reference translation scripts. I hope many more will follow soon. If you'd like to help translate write to reas at groupc.net.</description>
+	</item>
+	<item>
+		<date>27 March 2004</date>
+		<description>New software from Jonah Brucker-Cohen added to the <a href="exhibition/index.html">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>27 March 2004</date>
+		<description><a href="reference/libraries/sonia/">Reference for Sonia</a> is now online! Sonia is created by Amit Pitaru and integrates the Jsyn Java audio library into Processing.</description>
+	</item>
+	<item>
+		<date>9 April 2004</date>
+		<description>New software from Ryan Alexander added to the <a href="exhibition/index.html">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>11 April 2004</date>
+		<description><a href="http://www.nabi.or.kr/processing/">Korean Reference</a> pages completed by Soni Park of the Art Center Nabi and with Tae-Kyung Kim.</description>
+	</item>
+	<item>
+		<date>14 April 2004</date>
+		<description>Processing website initiative. Frederico Oliveira, Kevin Cannon, Widianto Nugroho, Glen Murphy, Martin Gomez, and Casey Reas have formed a team to improve the Processing website.</description>
+	</item>
+	<item>
+		<date>1 May 2004</date>
+		<description>New software from Francis Lam and Henry Chu added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>15 May 2004</date>
+		<description>New software from Alessandro Capozzo added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>3 June 2004</date>
+		<description>New software from Mario Klingemann added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>15 June 2004</date>
+		<description>New software from Ariel Malka added to the <a href="exhibition/index.html">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>17 June 2004</date>
+		<description>The Chinese reference is complete! Translated by the talented William Ngan, Tori Tan, and Mei Yu. Tremendous effort has gone into this accomplishment. These translations are added to the Japanese, Korean, and Indonesian translations.</description>
+	</item>
+	<item>
+		<date>29 June 2004</date>
+		<description>New software from Katya Moorman added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>03 July 2004</date>
+		<description>The French <a href="reference/fr/">reference</a> is complete! Thanks to Julien Gachadoat (v3ga). This is the first translation into a European language and we hope more will follow.</description>
+	</item>
+	<item>
+		<date>05 July 2004</date>
+		<description>Five new <a href="reference/libraries/">Libraries</a> added to the site. Learn how to export DXF and Illustrator files, how to communicate with other devices via OSC, and how to write simple graphic controllers for your software.</description>
+	</item>
+	<item>
+		<date>17 July 2004</date>
+		<description>New software from David Crawford added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>18 July 2004</date>
+		<description>The Spanish <a href="reference/es/">reference</a> is complete! This adds 400,000,000+ potential Processing users. Translated by Pedro Alpera.</description>
+	</item>
+	<item>
+		<date>21 July 2004</date>
+		<description>The Italian <a href="reference/it/">reference</a> is complete! Traduzione dall'inglese a cura di Alessandro Capozzo.</description>
+	</item>
+	<item>
+		<date>22 July 2004</date>
+		<description>The Turkish <a href="reference/tr/">reference</a> is complete! Translated by Burak Arikan.</description>
+	</item>
+	<item>
+		<date>2 August 2004</date>
+		<description>New software from Krister Olsson (with sound by Yoshi Sodeoka) added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>15 August 2004</date>
+		<description>New software from Justin Manor added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>25-27 August 2004</date>
+		<description>Who owns our (software) culture? A panel at <a href="http://www.isea2004.net/">ISEA 2004</a> with Miller Puckette, creator of MAX and PD, and Casey Reas, co-founder of Processing. Moderated by Juha Huuskonen.</description>
+	</item>
+	<item>
+		<date>25-27 August 2004</date>
+		<description>Processing is presented at the <a href="http://readme.runme.org/camp.php">Dorkbot City Camp</a> in Aarhus Denmark.</description>
+	</item>
+	<item>
+		<date>4 September 2004</date>
+		<description>Processing is featured on the Danish radio program <a href="http://www.dr.dk/Videnskab/Harddisken/Programmer/2004/09/readme2.htm">Harddisken</a>. Interview by Thomas Birch and Thomas Markussen.</description>
+	</item>
+	<item>
+		<date>15 September 2004</date>
+		<description>New software from Frederik Vanhoutte added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>23 September 2004</date>
+		<description>Processing is featured at <a href="http://www.interact1.co.uk/">Interact1</a> in London.</description>
+	</item>
+	<item>
+		<date>15 October 2004</date>
+		<description>New software from v3ga and Lucas Kuzma added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>2 November 2004</date>
+		<description>Processing in Hong Kong. Workshop by Casey Reas at the City University of Hong Kong in association with the Microwave International Media Art Festival. Thank you Fion!</description>
+	</item>
+	<item>
+		<date>13 November 2004</date>
+		<description>New software from Andreas Gysin and Gabriel Dunne added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>1 December 2004</date>
+		<description>New software from Justin Bakse &amp; Eric Williams added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>9 December 2004</date>
+		<description>Over 25,000 people have now signed up to download the Processing software.</description>
+	</item>
+	<item>
+		<date>15 December 2004</date>
+		<description>New software from Limiteazero added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>5 January 2005</date>
+		<description>New software from Daniel Rothaug added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>16 January 2005</date>
+		<description>New software from Enrico Bravi, Mikkel Crone Koser, and Paolo Palma added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>1 February 2005</date>
+		<description>New software from Ji-Hoon Byun and E.G. Gone added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>15 March 2005</date>
+		<description>New software from Allan William Martin added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>1-3 April 2005</date>
+		<description>Ben Fry and Casey Reas present Processing for the Tokyo TDC.</description>
+	</item>
+	<item>
+		<date>2 April 2005</date>
+		<description>New software from Ichitaro Masuda added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>9-11 April 2005</date>
+		<description>Ben Fry, Casey Reas, Robert Hodgin, Jared Tarbell present at <a href="http://www.fitc.ca/" target="_new">FITC</a>, Toronto.</description>
+	</item>
+	<item>
+		<date>20 April 2005</date>
+		<description>The Processing (BETA) is now available for download. This is the first public release. We're excited.</description>
+	</item>
+	<item>
+		<date>30 April 2005</date>
+		<description>Two new <a href="reference/libraries/">libraries</a> contributed from Tatsuya Saito. <em>Google API </em>interfaces with the Google search engine and <em>OBJ Loader</em> makes it easy to load 3D files.</description>
+	</item>
+	<item>
+		<date>1, 2 May 2005</date>
+		<description>Processing (BETA) 86, 87 released, fixing some nice bugs found in the original (BETA) release.</description>
+	</item>
+	<item>
+		<date>6 May 2005</date>
+		<description><em>BlobDetection</em><a href="reference/libraries/">library</a> contributed by v3ga. Performs the computer vision technique of finding "blobs" in an image.</description>
+	</item>
+	<item>
+		<date>7 May 2005</date>
+		<description>New software from Martin Wattenberg added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>7 May 2005</date>
+		<description><em>Obsessive Camera Direction</em><a href="reference/libraries/">library</a> contributed by Kristian Linn Damkjer. <em>MySQL</em><a href="reference/libraries/">library</a> contributed by Florian Jenett. <em>Oscillator</em><a href="reference/libraries/">library</a> contributed by Taka.</description>
+	</item>
+	<item>
+		<date>7,8 May 2005</date>
+		<description>Processing (BETA) 88, 89 released, fixing additional nice bugs found in the original (BETA) release.</description>
+	</item>
+	<item>
+		<date>9 May 2005</date>
+		<description>Processing (BETA) 90 released.</description>
+	</item>
+	<item>
+		<date>9 May 2005</date>
+		<description><em>Ess</em> sound <a href="reference/libraries/">library</a> contributed by Krister Olsson.</description>
+	</item>
+	<item>
+		<date>6 June 2005</date>
+		<description>Processing (BETA) 91 released.</description>
+	</item>
+	<item>
+		<date>24 June 2005</date>
+		<description>New software from Tom Carden, Clayton Cubitt, and Marius Watz added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>11 July 2005</date>
+		<description>Many new examples from Dan Shiffman added to <a href="learning/">Learning</a>.</description>
+	</item>
+	<item>
+		<date>11 July 2005</date>
+		<description>New software from Robert Hodgin added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>15 July 2005</date>
+		<description><a href="reference/libraries/net/">Net Library reference</a> augmented with examples from Tom Igoe.</description>
+	</item>
+	<item>
+		<date>19 July 2005</date>
+		<description>New software from Michael Chang added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>24 August 2005</date>
+		<description>New software from Alison Mealey added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>9 September 2005</date>
+		<description>New software from Martin Ignacio Bereciartua added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>14 September 2005</date>
+		<description>New software of Osman Khan added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>14 September 2005</date>
+		<description>The subdomain <a href="http://hardware.processing.org/">hardware.processing.org</a> is launched! Features links to the Wiring and Arduino initiatives.</description>
+	</item>
+	<item>
+		<date>20 September 2005</date>
+		<description>The subdomain <a href="http://mobile.processing.org/">mobile.processing.org</a> is launched! This site documents and presents the Mobile Processing initiative from Francis Li.</description>
+	</item>
+	<item>
+		<date>14 October 2005</date>
+		<description>Processing (BETA) 92 is released.</description>
+	</item>
+	<item>
+		<date>28 October 2005</date>
+		<description>New software from Aaron Koblin and Zai Chang added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>28 October 2005</date>
+		<description>New <a href="reference/libraries/">Libraries</a> from JohnG, Markavian, and Christian Riekoff.</description>
+	</item>
+	<item>
+		<date>02 November 2005</date>
+		<description>New <a href="reference/libraries/">Library</a> from Jeffrey Traer Bernstein.</description>
+	</item>
+	<item>
+		<date>09 November 2005</date>
+		<description>New software from Carolin Horn added to the <a href="exhibition/">exhibition</a>.</description>
+	</item>
 </updates>

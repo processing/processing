@@ -2,6 +2,25 @@
 
 class Happening
 {
+    var $date;
+    var $description;
+    
+    function Happening(&$xml)
+    {
+        $this->date = getValue($xml, 'date');
+        $this->description = innerHTML($xml, 'description');
+    }
+    
+    function display()
+    {
+        $html = "<dt>{$this->date}</dt>\n";
+        $html .= "\t<dd>{$this->description}</dd>\n";
+        return $html;
+    }
+}
+
+/*class Happening
+{
     var $startdate;
     var $enddate;
     var $description;
@@ -40,6 +59,6 @@ class Happening
         $html .= "\t<dd>{$this->description}</dd>\n";
         return $html;
     }
-}
+}*/
 
 ?>
