@@ -1,0 +1,47 @@
+// Increment_Decrement
+// by REAS <http://reas.com>
+
+// Writing "a++" is equivalent to "a = a + 1" and 
+// writing "a--" is equivalent to "a = a - 1"  
+
+// Created 09 December 2002
+
+int a;
+int b;
+boolean direction;
+
+void setup()
+{
+  size(200, 200);
+  colorMode(RGB, width);
+  a = 0;
+  b = width;
+  direction = true;
+  framerate(30);
+}
+
+void draw()
+{
+  a++;
+  if(a > width) {
+    a = 0;
+    direction = !direction;
+  }
+  if(direction == true){
+    stroke(a);
+  } else {
+    stroke(width-a);
+  }
+  line(a, 0, a, height/2);
+
+  b--;
+  if(b < 0) {
+    b = width;
+  }
+  if(direction == true) {
+    stroke(width-b);
+  } else {
+    stroke(b);
+  }
+  line(b, height/2+1, b, height);
+}
