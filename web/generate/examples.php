@@ -55,7 +55,7 @@ foreach ($cat_order as $cat) {
 	if ($cat != '.') {
 		$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
 		foreach ($categories[$cat] as $file) {
-			$html .= "\t<a href=\"examples\"".strtolower($file).".html\">$file</a><br />\n";
+			$html .= "\t<a href=\"examples/".strtolower($file).".html\">$file</a><br />\n";
 		}
 		echo '</p>';
 	} else {

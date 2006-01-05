@@ -277,7 +277,7 @@ div.ref-col { width: 30%;
 .ref-col h3+h5 { margin-top: 0; }
 .category { margin-bottom: 30px; }
 
-.ref-col p { margin-top: 0; margin-bottom: 1.5em; }
+.ref-col p { margin-top: -.5em; margin-bottom: 2em; }
 
 /**************************************************************** updates, courses, happenings ***/
 #Courses .content, #Updates .content, #Happenings .content {
