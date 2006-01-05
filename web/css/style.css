@@ -279,6 +279,10 @@ div.ref-col { width: 30%;
 
 .ref-col p { margin-top: -.5em; margin-bottom: 2em; }
 
+div.applet { float: left; margin-bottom: 10px; }
+p.doc-float { margin-left: 210px; }
+p.code { clear: both; margin-top: 10px; }
+
 /**************************************************************** updates, courses, happenings ***/
 #Courses .content, #Updates .content, #Happenings .content {
     width: 595px; 
