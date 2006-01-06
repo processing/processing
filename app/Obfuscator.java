@@ -47,23 +47,23 @@ public class Obfuscator implements MessageConsumer {
         command.append(midp);
         command.append(".jar");        
     }
-    command.append(" -injars \"");
+    command.append(" -injars '\"");
     command.append(source.getPath());
-    command.append("\" -outjar \"");
+    command.append("\"' -outjar '\"");
     command.append(output.getPath());
-    command.append("\" @lib");
+    command.append("\"' @lib");
     command.append(File.separator);
     command.append("proguard.pro");
-    //System.out.println(command.toString());
     try {
       Process p = Runtime.getRuntime().exec(command.toString());
+      new MessageSiphon(p.getInputStream(), this);
+      new MessageSiphon(p.getErrorStream(), this);
+      
       boolean running = true;
       int result = -1;
       while (running) {
         try {
           result = p.waitFor();
-          new MessageSiphon(p.getInputStream(), this);
-          new MessageSiphon(p.getErrorStream(), this);
           
           running = false;
         } catch (InterruptedException ie) {

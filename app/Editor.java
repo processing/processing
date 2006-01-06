@@ -1916,7 +1916,7 @@ public class Editor extends JFrame
     }
 
     try {
-      if (!sketch.exportMIDlet()) return;
+      if (!sketch.exportMIDlet(false)) return;
 
       runtime = new Emulator(sketch, this);
       runtime.start(null);
@@ -1932,7 +1932,7 @@ public class Editor extends JFrame
   synchronized public void handleExportMIDlet() {
     message("Exporting MIDlet...");
     try {
-      if (sketch.exportMIDlet()) {
+      if (sketch.exportMIDlet(true)) {
         message("Done exporting.");
         File midletDir = new File(sketch.folder, "midlet");
         Base.openFolder(midletDir);
