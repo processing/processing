@@ -110,6 +110,7 @@ public class Obfuscator implements MessageConsumer {
           os.close();
           is.close();
       }
+      zip.close();
   }
   
   public static void compress(File source, File output) throws Exception {
@@ -124,7 +125,10 @@ public class Obfuscator implements MessageConsumer {
       for (int i = 0, length = files.length; i < length; i++) {
           if (!files[i].getName().startsWith(".")) {
               if (files[i].isDirectory()) {
-                  compress(files[i], prefix + files[i].getName() + File.separator, os);
+                  ZipEntry ze = new ZipEntry(prefix + files[i].getName() + "/");
+                  os.putNextEntry(ze);
+                  os.closeEntry();
+                  compress(files[i], prefix + files[i].getName() + "/", os);
               } else {
                   ZipEntry ze = new ZipEntry(prefix + files[i].getName());
                   os.putNextEntry(ze);

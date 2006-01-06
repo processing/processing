@@ -2817,6 +2817,8 @@ public class Sketch {
         File obfsDir = new File(folder, "proguard");
         if (!obfsDir.exists()) {
             obfsDir.mkdir();
+        } else {
+            Base.removeDescendants(obfsDir);
         }
         File obfsFile = new File(obfsDir, name + ".jar");
         Obfuscator obfs = new Obfuscator();
