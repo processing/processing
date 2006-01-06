@@ -102,7 +102,8 @@ public class Preferences { //extends JComponent {
   JTextField fontSizeField;
   
   JTextField wtkLocationField;
-
+  JComboBox wtkCldcVer;
+  JComboBox wtkMidpVer;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -329,7 +330,33 @@ public class Preferences { //extends JComponent {
     c.insets = new Insets(0, 0, GUI_BETWEEN, GUI_BIG);
     pain.add(button, c);
     
+    // CLDC version
+    label = new JLabel("CLDC Version:");
     c.gridx = 0; c.gridy = 2;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.WEST;
+    c.insets = new Insets(0, GUI_BIG, 0, GUI_BIG);
+    pain.add(label, c);
+    
+    wtkCldcVer = new JComboBox(new String[] { "1.0", "1.1" });
+    wtkCldcVer.setEditable(false);
+    c.gridx = 0; c.gridy = 3;
+    c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
+    pain.add(wtkCldcVer, c);
+    
+    // MIDP version
+    label = new JLabel("MIDP Version:");
+    c.gridx = 0; c.gridy = 4;
+    c.insets = new Insets(0, GUI_BIG, 0, GUI_BIG);
+    pain.add(label, c);
+    
+    wtkMidpVer = new JComboBox(new String[] { "1.0", "2.0" });
+    wtkMidpVer.setEditable(false);
+    c.gridx = 0; c.gridy = 5;
+    c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
+    pain.add(wtkMidpVer, c);
+    
+    c.gridx = 0; c.gridy = 6;
     c.gridwidth = 2;
     c.weighty = 1;
     c.insets = new Insets(0, 0, 0, 0);    
@@ -450,6 +477,10 @@ public class Preferences { //extends JComponent {
     
     //// mobile specific
     set("wtk.path", wtkLocationField.getText());
+    String cldc = (String) wtkCldcVer.getSelectedItem();
+    set("wtk.cldc", "" + cldc.charAt(0) + cldc.charAt(2));
+    String midp = (String) wtkMidpVer.getSelectedItem();
+    set("wtk.midp", "" + midp.charAt(0) + midp.charAt(2));
 
     String newSizeText = fontSizeField.getText();
     try {
@@ -477,6 +508,18 @@ public class Preferences { //extends JComponent {
     
     //// mobile specific
     wtkLocationField.setText(get("wtk.path"));
+    String cldc = get("wtk.cldc");
+    if (cldc == null) {
+        //// default 1.0
+        cldc = "10";
+    }    
+    wtkCldcVer.setSelectedItem(cldc.charAt(0) + "." + cldc.charAt(1));
+    String midp = get("wtk.midp");
+    if (midp == null) { 
+        //// default 1.0
+        midp = "10";
+    }
+    wtkMidpVer.setSelectedItem(midp.charAt(0) + "." + midp.charAt(1));
 
     frame.show();
   }

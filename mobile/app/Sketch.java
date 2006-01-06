@@ -1596,7 +1596,7 @@ public class Sketch {
    * </PRE>
    */
   public boolean exportApplet() throws Exception {
-    if (!exportMIDlet()) {
+    if (!exportMIDlet(true)) {
         return false;
     }
 /*
@@ -2568,7 +2568,7 @@ public class Sketch {
   
   /** Packages up sketch into an executable midlet with JAD descriptor.
    */
-  public boolean exportMIDlet() throws Exception {
+  public boolean exportMIDlet(boolean obfuscate) throws Exception {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
     // save any recent changes
@@ -2682,7 +2682,11 @@ public class Sketch {
     }
     reader.close();
     ps.flush();
-    ps.close();      
+    ps.close(); 
+    
+    //// add midlet-url for jad file
+    jadPs.println("MIDlet-Jar-URL: " + name + ".jar");    
+    jadPs.close();    
 
     // create new .jar file
     File jarFile = new File(midletDir, name + ".jar");
@@ -2803,49 +2807,47 @@ public class Sketch {
 
     // close up the jar file
     zos.flush();
-    zos.close();
+    zos.close();        
     
     //// delete contents of temporary directory
     Base.removeDescendants(tmpDir);
 
-    //// obfuscate/shrink code in jar file
-    File obfsDir = new File(midletDir, "proguard");
-    if (!obfsDir.exists()) {
-        obfsDir.mkdir();
+    if (obfuscate) {
+        //// obfuscate/shrink code in jar file
+        File obfsDir = new File(folder, "proguard");
+        if (!obfsDir.exists()) {
+            obfsDir.mkdir();
+        }
+        File obfsFile = new File(obfsDir, name + ".jar");
+        Obfuscator obfs = new Obfuscator();
+        obfs.obfuscate(jarFile, obfsFile);
+        //// preverify again
+        if (preverifier.preverify(obfsDir, tmpDir)) {
+            //// copy back into obfuscated directory
+            Base.copyDir(tmpDir, obfsDir);
+            //// re-jar into temp directory
+            File tmpObfsFile = new File(tmpDir, name + ".jar");
+            Obfuscator.compress(obfsDir, tmpObfsFile);
+            //// Delete files
+            Base.removeDescendants(obfsDir);
+            //// Copy finished jar
+            Base.copyFile(tmpObfsFile, obfsFile);        
+            //// make a copy of jad file for the obfuscated version
+            File obfsJad = new File(obfsDir, name + ".jad");
+            Base.copyFile(jadFile, obfsJad);
+            //// update midlet size in jad file
+            jadPs = new PrintStream(new FileOutputStream(obfsJad, true));
+            jadPs.println("MIDlet-Jar-Size: " + obfsFile.length());
+            jadPs.close();
+        }
     }
-    File obfsFile = new File(obfsDir, name + ".jar");
-    Obfuscator obfs = new Obfuscator();
-    obfs.obfuscate(jarFile, obfsFile);
-    //// preverify again
-    if (preverifier.preverify(obfsDir, tmpDir)) {
-        //// copy back into obfuscated directory
-        Base.copyDir(tmpDir, obfsDir);
-        //// re-jar
-        obfsFile = new File(midletDir, name + "_proguard.jar");
-        Obfuscator.compress(obfsDir, obfsFile);
-        //// Delete files
-        Base.removeDir(obfsDir);
-    }
-    //// delete temporary directory
-    Base.removeDir(tmpDir);
-    
-    //// now we can get the size of the jar files to generate the JAD file from manifest file
-    jadPs.println("MIDlet-Jar-URL: " + name + ".jar");
-    jadPs.close();
-    
-    //// make a copy for the obfuscated version
-    File obfsJad = new File(midletDir, name + "_proguard.jad");
-    Base.copyFile(jadFile, obfsJad);
-    
+    //// now we can get the size of the jar file to generate the JAD file from manifest file
     jadPs = new PrintStream(new FileOutputStream(jadFile, true));
     jadPs.println("MIDlet-Jar-Size: " + jarFile.length());
-    jadPs.close();
+    jadPs.close();   
     
-    if (obfsFile.exists()) {
-        jadPs = new PrintStream(new FileOutputStream(obfsJad, true));
-        jadPs.println("MIDlet-Jar-Size: " + obfsFile.length());
-        jadPs.close();
-    }
+    //// delete temporary directory
+    Base.removeDir(tmpDir);
     
     return true;
   }
