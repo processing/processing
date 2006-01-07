@@ -10,7 +10,6 @@ $break_after = array('Typography', 'Simulate');
 $dir = CONTENTDIR.'examples/';
 
 $count = 0;
-echo '<pre>';
 foreach ($categories as $cat => $array) {
 	if ($dp = opendir($dir.$cat)) {
 		while ($fp = readdir($dp)) {
@@ -21,7 +20,6 @@ foreach ($categories as $cat => $array) {
 			}
 		}
 	}
-	print_r($array);
 }
 
 $page = new Page('Examples', 'Examples');
