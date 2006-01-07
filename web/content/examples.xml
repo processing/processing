@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<examples>
+	<cat label="Structure">
+		<ex file="StatementsComments.html">Statements and Comments</ex>
+		<ex file="Coordinates.html">Coordinates</ex>
+		<ex file="WidthHeight.html">Width and Height</ex>
+		<ex file="SetupDraw.html">Setup and Draw</ex>
+		<ex file="NoLoop.html">No Loop</ex>
+		<ex file="Loop.html">Loop </ex>
+		<ex file="Redraw.html">Redraw </ex>
+		<ex file="Functions.html">Functions</ex>
+		<ex file="Recursion.html">Recursion</ex>
+		<ex file="Recursion2.html">Recursion 2</ex>
+		<ex file="Objects.html">Objects </ex>
+	</cat>
+	<cat label="Form">
+		<ex file="PointsLines.html">Points and Lines</ex>
+		<ex file="ShapePrimitives.html">Shape Primitives</ex>
+		<ex file="CurvePrimitives.html">Curve Primitives</ex>
+		<ex file="Vertices.html">Vertices</ex>
+		<ex file="SimpleCurves.html">Simple Curves </ex>
+	</cat>
+	<cat label="Data">
+		<ex file="Variables.html">Variables</ex>
+		<ex file="IntegersFloats.html">Integers and Floats </ex>
+		<ex file="TrueFalse.html">True/False </ex>
+		<ex file="Array.html">Array</ex>
+		<ex file="Array2D.html">Array 2D</ex>
+		<ex file="ArrayObjects.html">Array Objects</ex>
+		<ex file="CharactersStrings.html">Characters and Strings </ex>
+		<ex file="DatatypeConversion.html">Datatype Conversion</ex>
+		<ex file="VariableScope.html">Variable Scope</ex>
+	</cat>
+	<cat label="Control">
+		<ex file="Iteration.html">Iteration</ex>
+		<ex file="EmbeddedIteration.html">Embedded Iteration </ex>
+		<ex file="Conditionals1.html">Conditionals 1</ex>
+		<ex file="Conditionals2.html">Conditionals 2</ex>
+		<ex file="LogicalOperators.html">Logical Operators</ex>
+	</cat>
+	<cat label="Math">
+		<ex file="IncrementDecrement.html">Increment/Decrement</ex>
+		<ex file="Modulo.html">Modulo</ex>
+		<ex file="OperatorPrecedence.html">Operator Precedence</ex>
+		<ex file="Distance1D.html">Distance 1D</ex>
+		<ex file="Distance2D.html">Distance 2D</ex>
+		<ex file="Sine.html">Sine</ex>
+		<ex file="SineCosine.html">Sine and Cosine</ex>
+		<ex file="AdditiveWave.html">Additive Wave</ex>
+		<ex file="Arctangent.html">Arctangent</ex>
+		<ex file="Graphing2DEquation.html">Graphing 2D Equation</ex>
+		<ex file="Koch.html">Koch </ex>
+		<ex file="Mandelbrot.html">Madelbrot</ex>
+		<ex file="Random.html">Random</ex>
+		<ex file="Noise1D.html">Noise 1D</ex>
+		<ex file="Noise2D.html">Noise 2D</ex>
+		<ex file="Noise3D.html">Noise 3D</ex>
+		<ex file="NoiseWave.html">NoiseWave</ex>
+		<ex file="PolarToCartesian.html">Polar to Cartesian</ex>
+	</cat>
+	<cat label="Drawing">
+		<ex file="ContinuousLines.html">Continuous Lines</ex>
+		<ex file="Pattern.html">Pattern</ex>
+		<ex file="CustomTool.html">Custom Tool </ex>
+	</cat>
+	<cat label="Typography">
+		<ex file="Letters.html">Letters</ex>
+		<ex file="Words.html">Words</ex>
+	</cat>
+	<cat label="Image">
+		<ex file="Displaying.html">Displaying</ex>
+		<ex file="BackgroundImage.html">Background Image</ex>
+		<ex file="Brightness.html">Brightness</ex>
+		<ex file="Pointillism.html">Pointillism</ex>
+		<ex file="Histogram.html">Histogram</ex>
+		<ex file="PixelArray.html">Pixel Array</ex>
+		<ex file="LinearImage.html">Linear Image</ex>
+		<ex file="Transparency.html">Transparency</ex>
+		<ex file="Convolution.html">Convolution</ex>
+		<ex file="EdgeDetection.html">Edge Detection</ex>
+		<ex file="Blur.html">Blur</ex>
+		<ex file="Sequential.html">Sequential</ex>
+		<ex file="Sprite.html">Sprite</ex>
+		<ex file="AnimatedSprite.html">Animated Sprite </ex>
+		<ex file="Alphamask.html">Alphamask</ex>
+	</cat>
+	<cat label="Color">
+		<ex file="Hue.html">Hue</ex>
+		<ex file="Saturation.html">Saturation</ex>
+		<ex file="Brightness.html">Brightness</ex>
+		<ex file="Reading.html">Reading</ex>
+		<ex file="Creating.html">Creating</ex>
+		<ex file="Relativity.html">Relativity</ex>
+	</cat>
+	<cat label="Transform">
+		<ex file="Translate.html">Translate</ex>
+		<ex file="Scale.html">Scale</ex>
+		<ex file="Rotate.html">Rotate</ex>
+	</cat>
+	<cat label="Motion">
+		<ex file="Linear.html">Linear </ex>
+		<ex file="Bounce.html">Bounce</ex>
+		<ex file="Nonlinear.html">Nonlinear</ex>
+		<ex file="MovingOnCurves.html">Moving On Curves </ex>
+		<ex file="BrownianMotion.html">Brownian Motion</ex>
+		<ex file="Collision.html">Collision</ex>
+	</cat>
+	<cat label="Input">
+		<ex file="Mouse1D.html">Mouse 1D</ex>
+		<ex file="Mouse2D.html">Mouse 2D</ex>
+		<ex file="Click.html">Click</ex>
+		<ex file="MouseSignals.html">Mouse Signals</ex>
+		<ex file="Interpolate.html">Interpolate </ex>
+		<ex file="Constrain.html">Constrain</ex>
+		<ex file="StoringInput.html">Storing Input</ex>
+		<ex file="MouseFunctions.html">Mouse Functions</ex>
+		<ex file="Keyboard.html">Keyboard</ex>
+		<ex file="KeyboardFunctions.html">Keyboard Functions</ex>
+		<ex file="Milliseconds.html">Milliseconds</ex>
+	</cat>
+	<cat label="GUI">
+		<ex file="Rollover.html">Rollover </ex>
+		<ex file="Button.html">Button</ex>
+		<ex file="Buttons.html">Buttons</ex>
+		<ex file="ImageButton.html">Image Button</ex>
+		<ex file="Handles.html">Handles</ex>
+		<ex file="Scrollbar.html">Scrollbar </ex>
+	</cat>
+	<cat label="Simulate">
+		<ex file="Spring.html">Spring</ex>
+		<ex file="Springs.html">Springs</ex>
+		<ex file="CellularAutomata1.html">Cellular Automata 1 (Life)</ex>
+		<ex file="CellularAutomata2.html">Cellular Automata 2</ex>
+		<ex file="CellularAutomata3.html">Cellular Automata 3</ex>
+		<ex file="WolframCA.html">Wolfram CA</ex>
+		<ex file="Tree.html">Tree</ex>
+		<ex file="Fluid.html">Fluid</ex>
+		<ex file="Smoke.html">Smoke</ex>
+		<ex file="SimpleParticleSystem.html">Simple Particle System</ex>
+		<ex file="MultipleParticleSystems.html">Multiple Particle Systems</ex>
+		<ex file="SmokeParticleSystem.html">Smoke Particle System</ex>
+	</cat>
+	<cat label="3D-Form">
+		<ex file="Primitives3D.html">Primitives 3D</ex>
+		<ex file="Vertices.html">Vertices </ex>
+		<ex file="RGBCube.html">RGB Cube</ex>
+	</cat>
+	<cat label="3D-Transform">
+		<ex file="Translate3D.html">Translate 3D</ex>
+		<ex file="Rotate3D.html">Rotate 3D</ex>
+		<ex file="PushPop.html">Push and Pop</ex>
+		<ex file="EmbeddingPushPop.html">Embedding Push and Pop </ex>
+	</cat>
+	<cat label="3D-Image">
+		<ex file="Extrusion.html">Extrusion</ex>
+		<ex file="Zoom.html">Zoom</ex>
+		<ex file="Explode.html">Explode</ex>
+	</cat>
+	<cat label="3D-Typography">
+		<ex file="LetterK.html">Letter K</ex>
+		<ex file="KineticType.html">Kinetic Type</ex>
+		<ex file="Typing.html">Typing </ex>
+	</cat>
+	<cat label="3D-Lights">
+		<ex file="Lights.html">Lights</ex>
+		<ex file="Directional.html">Directional</ex>
+		<ex file="Spot.html">Spot </ex>
+	</cat>
+	<cat label="3D-Camera">
+		<ex file="Ortho.html">Ortho</ex>
+		<ex file="Perspective.html">Perspective</ex>
+		<ex file="OrthoVSPerspective.html">Ortho vs. Perpective</ex>
+	</cat>
+	<cat label="Library-Video">
+		<ex file="MoviePlayback.html">MoviePlayback</ex>
+		<ex file="Pixelate.html">Pixelate</ex>
+		<ex file="WebCam.html">WebCam</ex>
+		<ex file="Mirror.html">Mirror</ex>
+		<ex file="Mirror2.html">Mirror2</ex>
+		<ex file="BrightnessTracking.html">Brightness Tracking </ex>
+	</cat>
+	<cat label="Library-Net">
+		<ex file="ValueClient.html">ValueClient</ex>
+		<ex file="ValueServer.html">ValueServer</ex>
+		<ex file="HTTPClient.html">HTTP Client</ex>
+		<ex file="ChatServer.html">Chat Server</ex>
+	</cat>
+	<cat label="Library-Serial">
+		<ex file="BinaryInput.html">Binary input</ex>
+		<ex file="AnalogInput.html">Analog input </ex>
+		<ex file="SerialCallResponse.html">Call / Response</ex>
+		<ex file="SerialDuplex.html">Duplex</ex>
+	</cat>
+	<cat label="Library-OpenGL">
+		<ex file="Matrix.html">Matrix</ex>
+	</cat>
+</examples>

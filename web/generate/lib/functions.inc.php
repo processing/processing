@@ -259,7 +259,6 @@ Write a file
 *****************************************************************/ 
 function writeFile($filename, $content)
 {
-	echo $filename.'<br/>';
     make_necessary_directories(BASEDIR.$filename);
     $fp = fopen(BASEDIR.$filename, 'w');
     fwrite($fp, $content);

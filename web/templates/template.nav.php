@@ -152,22 +152,7 @@ function library_nav($current=null)
 	return $html;
 }
 
-
-/** test **
-?>
-<style>
-
-#mainnav { background: #cfc; }
-#mainnav_noSub { background: #fcc; }
-#mainnav, #mainnav_noSub { width: 600px; position: relative;}
-#subNav { margin-left: 190px; }
-.active { font-weight: bold; }
-.faq { position: absolute; right: 10px; }
-
-</style>
-<?
-foreach ($navigation_pages as $page => $array) {
-    echo navigation($page);
+function examples_nav($current) {
+	// $html = "\n\t<div id=\"examples-nav\">\n";
 }
-**/
 ?>

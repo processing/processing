@@ -279,10 +279,6 @@ div.ref-col { width: 30%;
 
 .ref-col p { margin-top: -.5em; margin-bottom: 2em; }
 
-div.applet { float: left; margin-bottom: 10px; }
-p.doc-float { margin-left: 210px; }
-p.code { clear: both; margin-top: 10px; }
-
 /**************************************************************** updates, courses, happenings ***/
 #Courses .content, #Updates .content, #Happenings .content {
     width: 595px; 
@@ -358,3 +354,12 @@ ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 #Comparison h2 { margin-bottom: 0; }
 #Comparison .threecol { float: left; width: 210px; margin-right: 20px; }
 #Comparison .threecol p { margin-top: 0; }
+
+/************************************************************** examples ***/
+div.applet { float: left; margin-bottom: 40px; }
+p.doc-float { margin-left: 250px; }
+p.code { clear: both; margin-top: 10px; }
+
+#examples-nav { margin-left: -44px; display: relative; }
+#examples-nav img { display: absolute; top: 15px; left: 100px; }
+#examples-nav .next { padding-left: 20px; }
