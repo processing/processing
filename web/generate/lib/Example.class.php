@@ -29,9 +29,9 @@ class Example
 				$doc = false;
 			}
 			if ($doc) {
-				$doc_lines[] = str_replace('// ', '', $line);
+				$doc_lines[] = htmlspecialchars(str_replace('// ', '', $line));
 			} else {
-				$code_lines[] = $line;
+				$code_lines[] = htmlspecialchars($line);
 			}
 		}
 		$this->doc = implode("\n", $doc_lines);
@@ -54,9 +54,9 @@ class Example
 		$html .= nl2br($this->doc);
 		$html .= "</p>\n";
 		
-		$html .= "\n<p class=\"code\"><pre>";
+		$html .= "\n<pre class=\"code\">";
 		$html .= $this->code;
-		$html .= "</pre></p>\n\n";
+		$html .= "</pre>\n\n";
 		
 		$html .= "\n</div>\n";
 		return $html;
@@ -105,6 +105,8 @@ class Example
 		if (count($prev) > 0) {
 			$html .= '<td><a href="'.strtolower($prev[0]) .'">
 				<img src="/img/back_off.gif" alt="'.$prev[1].'" /></a></td>';
+		} else {
+			$html .= '<td width="38">&nbsp;</td>';
 		}
 		
 		$html .= '<td>'.$select.'</td>';

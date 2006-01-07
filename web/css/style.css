@@ -358,8 +358,7 @@ ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 /************************************************************** examples ***/
 div.applet { float: left; margin-bottom: 40px; }
 p.doc-float { margin-left: 250px; }
-p.code { clear: both; margin-top: 10px; }
+pre.code { clear: both; margin-top: 10px; }
 
 #examples-nav { margin-left: -44px; display: relative; }
 #examples-nav img { display: absolute; top: 15px; left: 100px; }
-#examples-nav .next { padding-left: 20px; }
