@@ -687,9 +687,9 @@ public class PApplet extends Applet
         //System.out.println("redraw interrupt");
         //thread.interrupt();
         //System.out.println("redraw interrupt done");
-        thread.notifyAll();
         //thread.notifyAll();
-        //notifyAll();
+        //thread.notifyAll();
+        notifyAll();
       }
     }
   }
@@ -704,9 +704,9 @@ public class PApplet extends Applet
         //System.out.println("loop interrupt");
         //thread.interrupt();
         //System.out.println("loop interrupt done");
-        thread.notifyAll();
         //thread.notifyAll();
-        //notifyAll();
+        //thread.notifyAll();
+        notifyAll();
       }
     }
   }
@@ -725,8 +725,8 @@ public class PApplet extends Applet
         //thread.interrupt();  // wake from sleep
         //thread.notifyAll();
         //System.out.println("noloop interrupt done");
-        thread.notifyAll();
-        //notifyAll();
+        //thread.notifyAll();
+        notifyAll();
       }
     }
   }
@@ -825,6 +825,7 @@ public class PApplet extends Applet
           //println("resizing to " + iwidth + " " + iheight);
           g.resize(iwidth, iheight);
           updateSize(iwidth, iheight);
+          redraw(); // changed for rev 0100
 
           /*
           this.width = iwidth;
@@ -1068,7 +1069,7 @@ public class PApplet extends Applet
   }
 
 
-  public void run() {
+  synchronized public void run() {
     try {
       /*
       // first time around, call the applet's setup method
@@ -1115,8 +1116,8 @@ public class PApplet extends Applet
           // will make the first draw wait 10 seconds before showing up
           if (frameCount == 1) nap = 1;
           //Thread.sleep(nap);
-          thread.wait(nap);
-          //wait(nap);
+          //thread.wait(nap);
+          wait(nap);
           if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " outta sleep");
         } catch (InterruptedException e) { }
