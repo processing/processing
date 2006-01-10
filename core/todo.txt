@@ -2,6 +2,12 @@
 X user.dir wasn't getting set properly
 X when graphics can be resized, resize rather than creating new context
 
+_ need to move off anim off the main event thread
+_   move away from using display()
+
+_ loadImage("") produces weird error message
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
+
 _ make dxf writer that'll work with recordRaw()
 _ enable PGraphicsPDF for inclusion
 _   write documentation on images (they suck) and fonts (use ttf)
@@ -319,6 +325,10 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
+
+_ cairo tesselation used: 
+_   John Hobby, Practical Segment Intersection with Finite Precision
+_   Output. Computational Geometry Theory and Application, 13(4), 1999.
 _ possible leads re: rendering stuff
 _   http://people.csail.mit.edu/bmcutler/
 _   http://people.csail.mit.edu/fredo/
@@ -482,6 +492,8 @@ CORE / PGraphics3
 
 _ rect() changes size as it changes position
 _   http://dev.processing.org/bugs/show_bug.cgi?id=95
+_ lines skip on 200x200 surface because of fixed point rounding error
+_   http://dev.processing.org/bugs/show_bug.cgi?id=267
 _ polygons perpendicular to axis not drawing
 _   is this a clipping error?
 _   probably a triangulation error, because triangles work ok
