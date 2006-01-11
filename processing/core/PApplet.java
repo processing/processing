@@ -726,7 +726,12 @@ public class PApplet extends Applet
         //thread.notifyAll();
         //System.out.println("noloop interrupt done");
         //thread.notifyAll();
-        notifyAll();
+        //notifyAll();
+        /*
+        try {
+          wait();  // until a notify
+        } catch (InterruptedException e) { }
+        */
       }
     }
   }
@@ -1118,6 +1123,7 @@ public class PApplet extends Applet
           //Thread.sleep(nap);
           //thread.wait(nap);
           wait(nap);
+          //wait(5);
           if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " outta sleep");
         } catch (InterruptedException e) { }
