@@ -2,6 +2,7 @@
 X user.dir wasn't getting set properly
 X when graphics can be resized, resize rather than creating new context
 
+X temporarily rolling back major thread changes
 X major threading change to use wait()/notifyAll() instead of interrupt/sleep
 _ noLoop() at end of setup is prolly b/c of interruptedex
 _   need to not call Thread.interrupt()
@@ -12,6 +13,7 @@ X     checked, not fixed
 _ noLoop() broken on opengl
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
 _   http://dev.processing.org/bugs/show_bug.cgi?id=164
+_ making 'run' synchronized caused a freeze on start w/ opengl
 
 _ need to move off anim off the main event thread
 _   move away from using display()
