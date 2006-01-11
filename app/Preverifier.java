@@ -26,6 +26,13 @@ public class Preverifier implements MessageConsumer {
     
     StringBuffer command = new StringBuffer();
     if (Base.isMacOS()) {
+        //// make sure execute permissions are set
+        try {
+            Process p = Runtime.getRuntime().exec("chmod +x " + wtkPath + "/osx/preverify/preverify");
+            p.waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }        
         command.append(wtkPath);        
         command.append("/osx/preverify/preverify -classpath ");
         command.append(wtkPath);
