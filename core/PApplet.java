@@ -411,6 +411,12 @@ public class PApplet extends Applet
   static public final String EXTERNAL_MOVE = "__MOVE__";
 
 
+  // during rev 0100 dev cycle, working on new threading model,
+  // but need to disable and go conservative with changes in order
+  // to get pdf and audio working properly first
+  static final boolean CRUSTY_THREADS = true;
+
+
   public void init() {
     // first get placed size in case it's non-zero
     Dimension initialSize = getSize();
@@ -684,12 +690,11 @@ public class PApplet extends Applet
       if (thread != null) {
         // wake from sleep (necessary otherwise it'll be
         // up to 10 seconds before update)
-        //System.out.println("redraw interrupt");
-        //thread.interrupt();
-        //System.out.println("redraw interrupt done");
-        //thread.notifyAll();
-        //thread.notifyAll();
-        notifyAll();
+        if (CRUSTY_THREADS) {
+          thread.interrupt();
+        } else {
+          notifyAll();
+        }
       }
     }
   }
@@ -701,12 +706,11 @@ public class PApplet extends Applet
       if (thread != null) {
         // wake from sleep (necessary otherwise it'll be
         // up to 10 seconds before update)
-        //System.out.println("loop interrupt");
-        //thread.interrupt();
-        //System.out.println("loop interrupt done");
-        //thread.notifyAll();
-        //thread.notifyAll();
-        notifyAll();
+        if (CRUSTY_THREADS) {
+          thread.interrupt();
+        } else {
+          notifyAll();
+        }
       }
     }
   }
@@ -721,17 +725,15 @@ public class PApplet extends Applet
       framerateLastMillis = 0;
 
       if (thread != null) {
-        //System.out.println("noloop interrupt");
-        //thread.interrupt();  // wake from sleep
-        //thread.notifyAll();
-        //System.out.println("noloop interrupt done");
-        //thread.notifyAll();
-        //notifyAll();
-        /*
-        try {
-          wait();  // until a notify
-        } catch (InterruptedException e) { }
-        */
+        if (CRUSTY_THREADS) {
+          thread.interrupt();  // wake from sleep
+        } else {
+          /*
+            try {
+              wait();  // until a notify
+            } catch (InterruptedException e) { }
+          */
+        }
       }
     }
   }
@@ -1120,10 +1122,11 @@ public class PApplet extends Applet
           // don't nap after setup, because if noLoop() is called this
           // will make the first draw wait 10 seconds before showing up
           if (frameCount == 1) nap = 1;
-          //Thread.sleep(nap);
-          //thread.wait(nap);
-          wait(nap);
-          //wait(5);
+          if (CRUSTY_THREADS) {
+            Thread.sleep(nap);
+          } else {
+            wait(nap);
+          }
           if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                     " outta sleep");
         } catch (InterruptedException e) { }
@@ -1840,8 +1843,11 @@ public class PApplet extends Applet
     if (frameCount == 0) return;
     if (napTime > 0) {
       try {
-        //Thread.sleep(napTime);
-        thread.wait(napTime);
+        if (CRUSTY_THREADS) {
+          Thread.sleep(napTime);
+        } else {
+          thread.wait(napTime);
+        }
       } catch (InterruptedException e) { }
     }
   }
