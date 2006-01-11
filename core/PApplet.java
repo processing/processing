@@ -781,6 +781,11 @@ public class PApplet extends Applet
   }
 
 
+  public void size(int iwidth, int iheight, String irenderer) {
+    size(iwidth, iheight, irenderer, null);
+  }
+
+
   /**
    * Creates a new PGraphics object and sets it to the specified size.
    * <P>
@@ -792,19 +797,10 @@ public class PApplet extends Applet
    * XXXX Also note that this calls defaults(), which will reset any
    * XXXX settings for the font, stroke, fill, colorMode, lights, etc.
    */
-  public void size(int iwidth, int iheight, String irenderer) {
-    /*
-      cases are:
-
-      - no renderer set at all, create a new one (and throw ex)
-        newRenderer()
-      - displace the old renderer with a new one (make sure inside setup)
-        replaceRenderer()
-      - resize the previous renderer
-        resizeRenderer()
-     */
-
-    String currentRenderer = (g == null) ? null : g.getClass().getName();
+  public void size(int iwidth, int iheight,
+                   String irenderer, String ipath) {
+    String currentRenderer =
+      (g == null) ? null : g.getClass().getName();
 
     if (currentRenderer != null) {
       if (currentRenderer.equals(irenderer)) {
@@ -821,95 +817,68 @@ public class PApplet extends Applet
           // so all that needs to be done is to set the defaults
           // (clear the background, set default strokeWeight, etc).
           //g.defaults();
+          // removed this in favor of calling defaults() from beginFrame()
 
           // this will happen when P3D or OPENGL are used with size()
           // inside of setup. it's also safe to call defaults() now,
           // because it's happening inside setup, which is just frame 0,
           // meaning that the graphics context is proper and visible.
-          return;
 
         } else {  // just resizing, no need to create new graphics object
-          //println("resizing to " + iwidth + " " + iheight);
           g.resize(iwidth, iheight);
           updateSize(iwidth, iheight);
           redraw(); // changed for rev 0100
-
-          /*
-          this.width = iwidth;
-          this.height = iheight;
-          defaultSize = false;
-
-          // make the applet itself larger.. it's a subclass of Component,
-          // so this is important for when it's embedded inside another app.
-          setSize(width, height);
-          */
-          return;
         }
+        // in either case, the renderer is unchanged, so return
+        //return;
 
-      } else {
+      } else {  // renderer is being changed
         if (frameCount > 0) {
           throw new RuntimeException("size() cannot be called to change " +
                                      "the renderer outside of setup()");
         }
-      }
-    }
+        // otherwise ok to fall through and create renderer below
+        // the renderer is changing, so need to create a new object
+        g = createGraphics(iwidth, iheight, irenderer, ipath);
+        //if (g != null) {
+        updateSize(iwidth, iheight);
+        //}
 
-    String openglError =
-      "Before using OpenGL, first select " +
-      "Import Library > opengl from the Sketch menu.";
-
-    try {
-      Class rendererClass = Class.forName(irenderer);
-      Class constructorParams[] =
-        new Class[] { Integer.TYPE,
-                      Integer.TYPE,
-                      PApplet.class };
-      Constructor constructor =
-        rendererClass.getConstructor(constructorParams);
-      Object constructorValues[] =
-        new Object[] { new Integer(iwidth),
-                       new Integer(iheight),
-                       this };
-      // create the actual PGraphics object for rendering
-      g = (PGraphics) constructor.newInstance(constructorValues);
-
-      updateSize(iwidth, iheight);
-
-    } catch (InvocationTargetException ite) {
-      String msg = ite.getTargetException().getMessage();
-      if ((msg != null) &&
-          (msg.indexOf("no jogl in java.library.path") != -1)) {
-        throw new RuntimeException(openglError);
-      } else {
-        //System.err.println("target ex");
-        ite.getTargetException().printStackTrace();
-        //throw ite.getTargetException();
-      }
-
-    } catch (ClassNotFoundException cnfe) {
-      if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsGL") != -1) {
-        throw new RuntimeException(openglError);
-      } else {
-        throw new RuntimeException("You need to use \"Import Library\" " +
-                                   "to add " + irenderer + " to your sketch.");
-      }
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      die("Could not start because of a problem with size()", e);
-    }
-
-    if ((currentRenderer != null) &&
-        !currentRenderer.equals(irenderer)) {
         // throw an exception so that setup() is called again
         // but with a properly sized render
         // this is for opengl, which needs a valid, properly sized
         // display before calling anything inside setup().
+        throw new RuntimeException(NEW_RENDERER);
+      }
+    } else {  // none exists, just create a freshy
+      g = createGraphics(iwidth, iheight, irenderer, ipath);
+      updateSize(iwidth, iheight);
+    }
+
+    /*
+    // the renderer is changing, so need to create a new object
+    g = createGraphics(iwidth, iheight, irenderer);
+    //if (g != null) {
+    updateSize(iwidth, iheight);
+    //}
+
+    //if ((currentRenderer != null) &&
+    //  !currentRenderer.equals(irenderer)) {
+    if (currentRenderer != null) {
+      // throw an exception so that setup() is called again
+      // but with a properly sized render
+      // this is for opengl, which needs a valid, properly sized
+      // display before calling anything inside setup().
       throw new RuntimeException(NEW_RENDERER);
     }
+    */
   }
 
 
+  /**
+   * Sets this.width and this.height, unsets defaultSize, and calls
+   * the size() methods inside any libraries.
+   */
   protected void updateSize(int iwidth, int iheight) {
     this.width = iwidth;
     this.height = iheight;
@@ -937,6 +906,7 @@ public class PApplet extends Applet
   }
 
 
+  /*
   public PGraphics createGraphics(String renderer) {
     return createGraphics(width, height, renderer);
   }
@@ -945,53 +915,108 @@ public class PApplet extends Applet
   public PGraphics createGraphics(int iwidth, int iheight) {
     return createGraphics(iwidth, iheight, g.getClass().getName());
   }
+  */
 
 
-  public PGraphics createGraphics(int iwidth, int iheight, String renderer) {
+  public PGraphics createGraphics(int iwidth, int iheight,
+                                  String irenderer, String ipath) {
+    return createGraphics(iwidth, iheight, irenderer, this, ipath);
+  }
+
+
+  static public PGraphics createGraphics(int iwidth, int iheight,
+                                         String irenderer, PApplet applet,
+                                         String ipath) {
+    /*
+    // ok when calling size, but not really with createGraphics()
     if (renderer.equals(OPENGL)) {
       throw new RuntimeException("createGraphics() with OPENGL is not " +
                                  "supported. Use P3D instead.");
     }
+    */
 
-    PGraphics outgoing;
+    String openglError =
+      "Before using OpenGL, first select " +
+      "Import Library > opengl from the Sketch menu.";
+
     try {
-      Class rendererClass = Class.forName(renderer);
-      Class constructorParams[] =
-        new Class[] { Integer.TYPE,
-                      Integer.TYPE,
-                      PApplet.class };
+      Class rendererClass = Class.forName(irenderer);
+      Class constructorParams[] = null;
+      Object constructorValues[] = null;
+
+      if (ipath == null) {
+        constructorParams = new Class[] {
+          Integer.TYPE, Integer.TYPE, PApplet.class
+        };
+        constructorValues = new Object[] {
+          new Integer(iwidth), new Integer(iheight), applet
+        };
+      } else {
+        constructorParams = new Class[] {
+          Integer.TYPE, Integer.TYPE, PApplet.class, String.class
+        };
+        constructorValues = new Object[] {
+          new Integer(iwidth), new Integer(iheight), applet, ipath
+        };
+      }
+
       Constructor constructor =
         rendererClass.getConstructor(constructorParams);
-      Object constructorValues[] =
-        new Object[] { new Integer(iwidth),
-                       new Integer(iheight),
-                       this };
       // create the actual PGraphics object for rendering
-      //System.out.println("creating new PGraphics " + constructor);
-      outgoing = (PGraphics) constructor.newInstance(constructorValues);
+      return (PGraphics) constructor.newInstance(constructorValues);
+      //updateSize(iwidth, iheight);
 
     } catch (InvocationTargetException ite) {
-      Throwable target = ite.getTargetException();
-      target.printStackTrace();
-      throw new RuntimeException(target.getMessage());
-      //throw new RuntimeException(ite.getTargetException());  // java 1.4
+      String msg = ite.getTargetException().getMessage();
+      if ((msg != null) &&
+          (msg.indexOf("no jogl in java.library.path") != -1)) {
+        throw new RuntimeException(openglError);
+      } else {
+        //ite.getTargetException().printStackTrace();
+        Throwable target = ite.getTargetException();
+        target.printStackTrace();
+        throw new RuntimeException(target.getMessage());
+      }
 
     } catch (ClassNotFoundException cnfe) {
-      throw new RuntimeException("You need to use \"Import Library\" " +
-                                 "to add " + renderer + " to your sketch.");
+      if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsGL") != -1) {
+        throw new RuntimeException(openglError);
+      } else {
+        throw new RuntimeException("You need to use \"Import Library\" " +
+                                   "to add " + irenderer + " to your sketch.");
+      }
 
     } catch (Exception e) {
-      //throw new RuntimeException(e);  // java 1.4
+      if ((e instanceof IllegalArgumentException) ||
+          (e instanceof NoSuchMethodException) ||
+          (e instanceof IllegalAccessException)) {
+
+        String msg = "public " +
+          irenderer.substring(irenderer.lastIndexOf('.') + 1) +
+          "(int width, int height, PApplet parent" +
+          ((ipath == null) ? "" : ", String filename") +
+          ") does not exist.";
+        throw new RuntimeException(msg);
+
+      } else {
+        e.printStackTrace();
+        return null;
+        //die("Could not create " + irenderer);
+      }
+
+      /*
+    } catch (Exception e) {
       e.printStackTrace();
-      throw new RuntimeException("Could not start because of a " +
-                                 "problem inside size()");
+      die("Could not start because of a problem with size()", e);
+      */
     }
 
     // clear things out to get started
-    outgoing.defaults();
+    //outgoing.defaults();
+    // tell people to use beginFrame/endFrame
 
     // and send 'em off
-    return outgoing;
+    //return outgoing;
   }
 
 
@@ -1062,6 +1087,7 @@ public class PApplet extends Applet
       //g.mis.newPixels(pixels, g.cm, 0, width); // must call this
 
       // make sure the screen is visible and usable
+      // (also prevents over-drawing when using PGraphicsGL)
       if ((g != null) && (g.image != null)) {
         screen.drawImage(g.image, 0, 0, null);
       }
@@ -5788,6 +5814,13 @@ public class PApplet extends Applet
   }
 
 
+  public PGraphics record(String renderer, String filename) {
+    this.recorder = createGraphics(width, height, renderer, filename);
+    recorder.beginFrame();
+    return recorder;
+  }
+
+
   //////////////////////////////////////////////////////////////
 
 
@@ -6931,5 +6964,10 @@ public class PApplet extends Applet
   public void recordRaw(PGraphics recorderRaw) {
     if (recorder != null) recorder.recordRaw(recorderRaw);
     g.recordRaw(recorderRaw);
+  }
+
+
+  public PGraphics recordRaw(String renderer, String filename) {
+    return g.recordRaw(renderer, filename);
   }
 }

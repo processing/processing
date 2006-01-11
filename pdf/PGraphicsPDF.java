@@ -22,11 +22,11 @@ public class PGraphicsPDF extends PGraphics2 {
   // recording api.. allow multiple frames per file?
   // would be the case for video, or for pdf
 
-  static public String filename;
+  //static public String filename;
 
   File temp;
   int frameCount;
-  File file; // = new File("test.pdf");
+  File file;
   Document document;
   PdfWriter writer;
   PdfContentByte content;
@@ -36,9 +36,11 @@ public class PGraphicsPDF extends PGraphics2 {
 
   // BaseFont baseFont = mapper.awtToPdf(java.awt.Font awtFont)
 
-  public PGraphicsPDF(int width, int height, PApplet applet) {  //File file) {
+  public PGraphicsPDF(int width, int height, PApplet applet, String path) {
     super(width, height, null);
-    //this.file = file;
+
+    if (path == null) path = "output.pdf";
+    this.file = new File(path);
 
     // don't want to require PApplet as the way to do this.. but how?
     //if (applet != null) {

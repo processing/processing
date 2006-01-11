@@ -2,6 +2,29 @@
 X user.dir wasn't getting set properly
 X when graphics can be resized, resize rather than creating new context
 
+_ make dxf writer that'll work with recordRaw()
+X enable PGraphicsPDF for inclusion
+_   write documentation on images (they suck) and fonts (use ttf)
+
+_ when re-calling size() with opengl, need to remove the old canvas
+_   need to check to see if this is working properly now
+
+_ straighten out save() and saveFrame()
+_   use File object for when people know what they're doing?
+_   same issue occurs with pdf and creating graphics obj
+
+_ loadImage("") produces weird error message
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+_ PSound.play() won't play the sound a 2nd time (reopened)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=208
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+_ need to move off anim off the main event thread
+_   move away from using display()
 X temporarily rolling back major thread changes
 X major threading change to use wait()/notifyAll() instead of interrupt/sleep
 _ noLoop() at end of setup is prolly b/c of interruptedex
@@ -14,20 +37,6 @@ _ noLoop() broken on opengl
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
 _   http://dev.processing.org/bugs/show_bug.cgi?id=164
 _ making 'run' synchronized caused a freeze on start w/ opengl
-
-_ need to move off anim off the main event thread
-_   move away from using display()
-
-_ loadImage("") produces weird error message
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
-
-_ make dxf writer that'll work with recordRaw()
-_ enable PGraphicsPDF for inclusion
-_   write documentation on images (they suck) and fonts (use ttf)
-_ when re-calling size() with opengl, need to remove the old canvas
-
-_ PSound.play() won't play the sound a 2nd time (reopened)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=208
 
 _ ArrayIndexOutOfBoundsException in PLine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=246
