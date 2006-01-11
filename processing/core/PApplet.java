@@ -1076,7 +1076,7 @@ public class PApplet extends Applet
   }
 
 
-  synchronized public void run() {
+  /*synchronized*/ public void run() {
     try {
       /*
       // first time around, call the applet's setup method
@@ -1846,7 +1846,7 @@ public class PApplet extends Applet
         if (CRUSTY_THREADS) {
           Thread.sleep(napTime);
         } else {
-          thread.wait(napTime);
+          wait(napTime);
         }
       } catch (InterruptedException e) { }
     }
