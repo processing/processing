@@ -1,4 +1,4 @@
-- Integrate proguard obfuscation step
+X Integrate proguard obfuscation step
 X Change name of executable to mobile.exe
 X Change version numbers to start from 0001
 X Sound library
