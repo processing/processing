@@ -2,6 +2,17 @@
 X user.dir wasn't getting set properly
 X when graphics can be resized, resize rather than creating new context
 
+X major threading change to use wait()/notifyAll() instead of interrupt/sleep
+_ noLoop() at end of setup is prolly b/c of interruptedex
+_   need to not call Thread.interrupt()
+_ opengl + noLoop() causes InterruptedException
+_   http://dev.processing.org/bugs/show_bug.cgi?id=164
+X   check to see noLoop() breakage is fixed in 92 vs 91
+X     checked, not fixed
+_ noLoop() broken on opengl
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
+_   http://dev.processing.org/bugs/show_bug.cgi?id=164
+
 _ need to move off anim off the main event thread
 _   move away from using display()
 
@@ -34,8 +45,6 @@ _ framerate that's reported is out of joint with actual
 _   seems to be aliasing effect of low resolution on millis()
 _   so rates coming out double or half of their actual
 _   probably need to integrate over a rolling array of 10 frames or so
-_ noLoop() at end of setup is prolly b/c of interruptedex
-_   need to not call Thread.interrupt()
 
 _ dataFolder() might be flawed b/c it's referring to contents of jar file
 _   for input, better to use openStream
@@ -609,10 +618,6 @@ _   texture re-allocated on each frame
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ point() doesn't work with some graphics card setups
 _   http://dev.processing.org/bugs/show_bug.cgi?id=121
-_ opengl + noLoop() causes InterruptedException
-_   http://dev.processing.org/bugs/show_bug.cgi?id=164
-X   check to see noLoop() breakage is fixed in 92 vs 91
-X     checked, not fixed
 _ blend(), get(), set(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
@@ -631,9 +636,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _ invocationtargetexception in gl with aioobe:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
 _ don't let users with java < 1.4 load OPENGL
-_ noLoop() broken on opengl
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
-_   http://dev.processing.org/bugs/show_bug.cgi?id=164
 _ fix non-bound textures from mangling everything else
 _ fix enable/disable textures for some objects
 _ fix endian ordering issues so that things work properly
