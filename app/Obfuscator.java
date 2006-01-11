@@ -36,6 +36,11 @@ public class Obfuscator implements MessageConsumer {
         command.append(wtkPath);
         command.append("/midp.jar:");
         command.append("/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar");        
+        command.append(" -injars '");
+        command.append(source.getPath());
+        command.append("' -outjar '");
+        command.append(output.getPath());
+        command.append("' ");
     } else {
         command.append(wtkLibPath);
         command.append("cldcapi");
@@ -46,12 +51,13 @@ public class Obfuscator implements MessageConsumer {
         command.append("midpapi");
         command.append(midp);
         command.append(".jar");        
+        command.append(" -injars '\"");
+        command.append(source.getPath());
+        command.append("\"' -outjar '\"");
+        command.append(output.getPath());
+        command.append("\"' ");
     }
-    command.append(" -injars '\"");
-    command.append(source.getPath());
-    command.append("\"' -outjar '\"");
-    command.append(output.getPath());
-    command.append("\"' @lib");
+    command.append("@lib");
     command.append(File.separator);
     command.append("proguard.pro");
     try {
