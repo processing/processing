@@ -952,6 +952,9 @@ public class PApplet extends Applet
           new Integer(iwidth), new Integer(iheight), applet
         };
       } else {
+        // first make sure that this in a nice, full, absolute path
+        ipath = applet.savePath(ipath);
+
         constructorParams = new Class[] {
           Integer.TYPE, Integer.TYPE, PApplet.class, String.class
         };
@@ -971,10 +974,15 @@ public class PApplet extends Applet
       if ((msg != null) &&
           (msg.indexOf("no jogl in java.library.path") != -1)) {
         throw new RuntimeException(openglError);
+
       } else {
-        //ite.getTargetException().printStackTrace();
+        ite.getTargetException().printStackTrace();
         Throwable target = ite.getTargetException();
-        target.printStackTrace();
+        target.printStackTrace(System.out);  // macosx bug
+        // neither of these help, or work
+        //target.printStackTrace(System.err);
+        //System.err.flush();
+        //System.out.println(System.err);  // and the object isn't null
         throw new RuntimeException(target.getMessage());
       }
 
@@ -987,6 +995,7 @@ public class PApplet extends Applet
       }
 
     } catch (Exception e) {
+      System.out.println("ex3");
       if ((e instanceof IllegalArgumentException) ||
           (e instanceof NoSuchMethodException) ||
           (e instanceof IllegalAccessException)) {
@@ -999,8 +1008,10 @@ public class PApplet extends Applet
         throw new RuntimeException(msg);
 
       } else {
-        e.printStackTrace();
-        return null;
+        e.printStackTrace(System.out);
+        //System.err.flush();
+        //return null;
+        throw new RuntimeException(e.getMessage());
         //die("Could not create " + irenderer);
       }
 
@@ -5836,6 +5847,14 @@ public class PApplet extends Applet
   }
 
 
+  public PGraphics recordRaw(String renderer, String filename) {
+    filename = savePath(filename);  // ensure an absolute path
+    PGraphics rec = createGraphics(width, height, renderer, filename);
+    g.recordRaw(rec);
+    return rec;
+  }
+
+
   //////////////////////////////////////////////////////////////
 
 
@@ -6973,10 +6992,5 @@ public class PApplet extends Applet
   public void recordRaw(PGraphics recorderRaw) {
     if (recorder != null) recorder.recordRaw(recorderRaw);
     g.recordRaw(recorderRaw);
-  }
-
-
-  public PGraphics recordRaw(String renderer, String filename) {
-    return g.recordRaw(renderer, filename);
   }
 }
