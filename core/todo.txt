@@ -1,6 +1,11 @@
 0100 core
 X user.dir wasn't getting set properly
 X when graphics can be resized, resize rather than creating new context
+X change savePath() et al a great deal, include better docs
+_ 
+
+_ registering font directories in pdf.. is it necessary? 
+_   (commented out for 0100)
 
 _ make dxf writer that'll work with recordRaw()
 X enable PGraphicsPDF for inclusion

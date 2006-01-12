@@ -36,11 +36,23 @@ public class PGraphicsPDF extends PGraphics2 {
 
   // BaseFont baseFont = mapper.awtToPdf(java.awt.Font awtFont)
 
+
+  public PGraphicsPDF(int width, int height, PApplet applet) {
+    this(width, height, applet, null);  // will throw an error
+  }
+
+
   public PGraphicsPDF(int width, int height, PApplet applet, String path) {
     super(width, height, null);
 
-    if (path == null) path = "output.pdf";
-    this.file = new File(path);
+    file = new File(path);
+    if (!file.isAbsolute() || (path == null)) {
+      throw new RuntimeException("PGraphicsPDF requires an absolute path " +
+                                 "for the location of the output file.");
+    }
+
+    //if (path == null) path = "output.pdf";
+    //this.file = new File(path);
 
     // don't want to require PApplet as the way to do this.. but how?
     //if (applet != null) {
@@ -59,9 +71,9 @@ public class PGraphicsPDF extends PGraphics2 {
     */
 
     // seems to only pick up ttf and otf fonts
-    FontFactory.registerDirectory("/System/Library/Fonts");
-    FontFactory.registerDirectory("/Library/Fonts");
-    FontFactory.registerDirectory("/Users/fry/Library/Fonts");
+    //FontFactory.registerDirectory("/System/Library/Fonts");
+    //FontFactory.registerDirectory("/Library/Fonts");
+    //FontFactory.registerDirectory("/Users/fry/Library/Fonts");
 
     /*
     Set registered = FontFactory.getRegisteredFonts();
@@ -134,7 +146,7 @@ public class PGraphicsPDF extends PGraphics2 {
 
   public void beginFrame() {
     // temporary
-    file = new File(filename); //"test.pdf");
+    //file = new File(filename); //"test.pdf");
 
     //document = new Document();
     document = new Document(new Rectangle(width, height));
