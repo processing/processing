@@ -45,11 +45,15 @@ public class PGraphicsPDF extends PGraphics2 {
   public PGraphicsPDF(int width, int height, PApplet applet, String path) {
     super(width, height, null);
 
+    //System.out.println("trying " + path);
+
     file = new File(path);
     if (!file.isAbsolute() || (path == null)) {
       throw new RuntimeException("PGraphicsPDF requires an absolute path " +
                                  "for the location of the output file.");
     }
+
+    //System.out.println("making " + path);
 
     //if (path == null) path = "output.pdf";
     //this.file = new File(path);
@@ -92,29 +96,9 @@ public class PGraphicsPDF extends PGraphics2 {
    * along the way and wants to hork things up.
    */
   protected void allocate() {
-    //temp = File.createTempFile("frame", ".pdf");
-
-    /*
-    if (document != null) {
-      throw new RuntimeException("Need to write PGraphicsPDF code " +
-                                 "for multiple calls to allocate()");
-    }
-
-    // temporary
-    file = new File("test.pdf");
-
-    //document = new Document();
-    document = new Document(new Rectangle(width, height));
-    try {
-      writer = PdfWriter.getInstance(document, new FileOutputStream(file));
-      document.open();
-      content = writer.getDirectContent();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException("Problem saving the PDF file.");
-    }
-    */
+    // can't do anything here, because this will be called by the
+    // superclass PGraphics, and the file/path object won't be set yet
+    // (since super() called right at the beginning of the constructor)
   }
 
 
@@ -147,8 +131,9 @@ public class PGraphicsPDF extends PGraphics2 {
   public void beginFrame() {
     // temporary
     //file = new File(filename); //"test.pdf");
-
+    //System.out.println("pdf beginFrame()");
     //document = new Document();
+
     document = new Document(new Rectangle(width, height));
     try {
       writer = PdfWriter.getInstance(document, new FileOutputStream(file));
@@ -189,6 +174,9 @@ public class PGraphicsPDF extends PGraphics2 {
   */
 
 
+  /**
+   * Call to explicitly go to the next page from within a single draw().
+   */
   public void nextPage() {
     g2.dispose();
     try {
