@@ -4,6 +4,22 @@ X when graphics can be resized, resize rather than creating new context
 X change savePath() et al a great deal, include better docs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=199
 
+_ recordRaw is really confusing.. 
+_   when to use beginFrame/endFrame
+_   is beginRaw/endRaw really needed?
+_   seems to be a problem that it's an applet method
+_   but then it's called on the g of the applet
+_   but then it's the recorderRaw of that g that gets it called.. 
+
+pdf stuff
+_ don't open a window the size of the pdf if in pdf mode
+_   need to have some sort of flag in the gfx context that it's visible or not
+_   handled inside updateSize()?
+_ how to flush when the sketch is done
+_   inside dispose method? explicit close?
+_   call exit() at end of pdf apps? exit calls dispose on gfx?
+_ beginRecord() and endRecord() so that record doesn't stop after frame?
+
 _ passing applet into createGraphics.. problems with re-adding listeners
 _   since the listeners are added to the PApplet
 
