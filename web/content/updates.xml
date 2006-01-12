@@ -420,4 +420,24 @@
 		<date>09 November 2005</date>
 		<description>New software from Carolin Horn added to the <a href="exhibition/">exhibition</a>.</description>
 	</item>
+	<item>
+		<date>17 November 2005</date>
+		<description>New software from ART+COM added to the <a href="exhibition/">exhibition</a>. </description>
+	</item>
+	<item>
+		<date>26 November 2005</date>
+		<description>Processing (BETA) 96 Released. </description>
+	</item>
+	<item>
+		<date>29 November 2005</date>
+		<description>Processing (BETA) 97 Released. </description>
+	</item>
+	<item>
+		<date>1 December 2005</date>
+		<description>Processing (BETA) 98 Released.</description>
+	</item>
+	<item>
+		<date>9 December 2005</date>
+		<description>New <a href="reference/libraries/">Libraries</a> from Michael Chang (loading SVG paths) and Christian Riekoff (game controller input).</description>
+	</item>
 </updates>
