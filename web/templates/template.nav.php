@@ -5,7 +5,6 @@ $pages = array(
     'Exhibition'    => array('/exhibition/index.html', 1),
     'Learning'      => array('/learning/index.html', 1),
     'Examples'      => array('/learning/examples/index.html', 2),
-	'Courses &amp; Workshops' => array('/courses.html', 2),
     'Tutorials'     => array('/learning/tutorials/index.html', 2),
     'Reference'     => array('/reference/index.html', 1),
     'Download'      => array('/download/index.html', 1),
@@ -52,8 +51,7 @@ function navigation($section = '')
     } else if (in_array($section, $learn)) {
         $html .= "\t\t\t\t" . '<div class="navBar learning" id="subNav">' . "\n";
         
-        $html .= "\t\t\t\t\t" . l('Examples', $section == 'Examples') . " \\\n";
-        $html .= "\t\t\t\t\t" . l('Courses &amp; Workshops', $section == 'Courses &amp; Workshops') . "\n";
+        $html .= "\t\t\t\t\t" . l('Examples', $section == 'Examples') . "\n";
         
         $html .= "\t\t\t\t</div>\n";
     }

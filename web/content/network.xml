@@ -1,5 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+  <software name="Mycelium" by="Relan Lel Rider">
+    <location>http://onecm.com/sketches/mycelium/</location>
+    <date>09 Jan '06</date>
+  </software>
+  <software name="GrassFire" by="yunsil heo">
+    <location>http://yunsil.com/index.htm?page=2.grassFire</location>
+    <date>09 Jan '06</date>
+  </software>
+  <software name="grassFire" by="heo">
+    <location>http://yunsil.com/index.htm?page=2.grassFire</location>
+    <date>09 Jan '06</date>
+  </software>
+  <software name="Passages" by="Alex Mitchell">
+    <location>http://pachome2.pacific.net.sg/~kamitchell/portfolio/passages.html</location>
+    <date>06 Jan '06</date>
+  </software>
+  <software name="Routefinding" by="Daniel Staudigel">
+    <location>http://www.uweb.ucsb.edu/~dstaudigel/a_star/</location>
+    <date>06 Jan '06</date>
+  </software>
+  <software name="Picking Stretching" by="Alcys">
+    <location>http://www.alcys.com/p5/Alcys_Picking_Stretching/applet/index.html</location>
+    <date>05 Jan '06</date>
+  </software>
+  <software name="Travel Time Tube Map" by="Tom Carden">
+    <location>http://www.tom-carden.co.uk/p5/tube_map_travel_times/applet/</location>
+    <date>01 Jan '06</date>
+  </software>
+  <software name="Liquid Image" by="Alcys">
+    <location>http://www.alcys.com/p5/Alcys_ImageLiquide/applet/index.html</location>
+    <date>30 Dec '05</date>
+  </software>
+  <software name="sin() cos() tan() GENART" by="evsc">
+    <location>http://www.evsc.net/v5/htm/ga_info.htm</location>
+    <date>30 Dec '05</date>
+  </software>
+  <software name="a string" by="e.j. gone">
+    <location>http://tokage.cafe24.com/string.htm</location>
+    <date>29 Dec '05</date>
+  </software>
+  <software name="Think simple" by="Peter Howell">
+    <location>http://www.peterhowell.me.uk/html/05_processing_03.html</location>
+    <date>29 Dec '05</date>
+  </software>
+  <software name="scripting scribing" by="evsc">
+    <location>http://www.evsc.net/v5/htm/wr_info.htm</location>
+    <date>28 Dec '05</date>
+  </software>
+  <software name="Rings - Advanced Vector" by="seltar">
+    <location>http://seltar.wliia.org/sketch.php?pid=35</location>
+    <date>27 Dec '05</date>
+  </software>
+  <software name="Density" by="Kyle McDonald">
+    <location>http://rpi.edu/~mcdonk/code/density/</location>
+    <date>24 Dec '05</date>
+  </software>
+  <software name="Rings" by="seltar">
+    <location>http://seltar.wliia.org/sketch.php?pid=34</location>
+    <date>24 Dec '05</date>
+  </software>
+  <software name="Merry Christmas" by="honaya">
+    <location>http://honaya.com/christmas</location>
+    <date>22 Dec '05</date>
+  </software>
+  <software name="French Billiard" by="Alcys">
+    <location>http://www.alcys.com/p5/Alcys_Billard/applet/index.html</location>
+    <date>21 Dec '05</date>
+  </software>
   <software name="The Lines Between" by="Egg Syntax">
     <location>http://www.galenmcgee.com/egg/LinesBetweenEx/applet/</location>
     <date>20 Dec '05</date>

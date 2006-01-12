@@ -48,7 +48,7 @@ $execution_time = round($benchmark_end - $benchmark_start, 4);
 
 ?>
 
-<h2>Comparison page generation Successful</h2>
+<h2>Examples pages generation Successful</h2>
 <p>Generated <?= $count+1 ?> files in <?=$execution_time?> seconds.</p>
 
 <?

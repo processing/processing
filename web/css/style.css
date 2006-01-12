@@ -288,7 +288,7 @@ div.ref-col { width: 30%;
 
 .course-desc p { margin: 0; }
 .course-desc p.date { margin: 0; }
-.course-desc h3 { margin: 0; font-size: 1.2em; font-weight: bold; }
+.course-desc h3 { margin: 0; font-size: 1em; font-weight: bold; line-height: 1em; }
 .course-desc { margin-bottom: 2em; }
 
 /**************************************************************** download ***/
