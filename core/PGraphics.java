@@ -3537,11 +3537,4 @@ public class PGraphics extends PImage implements PConstants {
     throw new RuntimeException("recordRaw() not supported " +
                                "by this renderer.");
   }
-
-  public PGraphics recordRaw(String renderer, String filename) {
-    PGraphics rec =
-      PApplet.createGraphics(width, height, renderer, null, filename);
-    recordRaw(rec);
-    return rec;
-  }
 }
