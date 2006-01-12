@@ -935,6 +935,19 @@ public class PGraphics2 extends PGraphics {
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void beginRaw(PGraphics recorderRaw) {
+    throw new RuntimeException("beginRaw() not available with this renderer");
+  }
+
+
+  public void endRaw() {
+  }
+
+
   //////////////////////////////////////////////////////////////
 
 

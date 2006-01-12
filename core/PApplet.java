@@ -528,7 +528,7 @@ public class PApplet extends Applet
    // the thread on, instead of doing it inside paint()
     //finished = true;  // why did i comment this out?
 
-    //System.out.println("stopping applet");
+     //System.out.println("stopping applet " + thread);
 
     // don't run stop and disposers twice
     if (thread == null) return;
@@ -918,6 +918,11 @@ public class PApplet extends Applet
   */
 
 
+  public PGraphics createGraphics(String irenderer, String ipath) {
+    return createGraphics(width, height, irenderer, this, ipath);
+  }
+
+
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer, String ipath) {
     return createGraphics(iwidth, iheight, irenderer, this, ipath);
@@ -978,7 +983,7 @@ public class PApplet extends Applet
       } else {
         ite.getTargetException().printStackTrace();
         Throwable target = ite.getTargetException();
-        target.printStackTrace(System.out);  // macosx bug
+        if (platform == MACOSX) target.printStackTrace(System.out);  // bug
         // neither of these help, or work
         //target.printStackTrace(System.err);
         //System.err.flush();
@@ -995,7 +1000,7 @@ public class PApplet extends Applet
       }
 
     } catch (Exception e) {
-      System.out.println("ex3");
+      //System.out.println("ex3");
       if ((e instanceof IllegalArgumentException) ||
           (e instanceof NoSuchMethodException) ||
           (e instanceof IllegalAccessException)) {
@@ -1008,7 +1013,7 @@ public class PApplet extends Applet
         throw new RuntimeException(msg);
 
       } else {
-        e.printStackTrace(System.out);
+        if (platform == MACOSX) e.printStackTrace(System.out);
         //System.err.flush();
         //return null;
         throw new RuntimeException(e.getMessage());
@@ -1191,10 +1196,12 @@ public class PApplet extends Applet
         // and the run button quits out
         leechErr.println(LEECH_WAKEUP);
         e.printStackTrace(leechErr);
+        e.printStackTrace(System.out);
 
       } else {
         System.err.println(LEECH_WAKEUP);
         e.printStackTrace();
+        e.printStackTrace(System.out);
       }
     }
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
@@ -1242,8 +1249,8 @@ public class PApplet extends Applet
         if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                   " 1b draw");
 
-        boolean recorderNull = true;
-        boolean recorderRawNull = true;
+        //boolean recorderNull = true;
+        //boolean recorderRawNull = true;
 
         if (frameCount == 0) {
           try {
@@ -1333,8 +1340,8 @@ public class PApplet extends Applet
           // as of draw().. this will prevent the recorder from being
           // reset if recordShape() is called in an event method, such
           // as mousePressed()
-          recorderNull = (recorder == null);
-          recorderRawNull = (g.recorderRaw == null);
+          //recorderNull = (recorder == null);
+          //recorderRawNull = (g.recorderRaw == null);
 
           // dmouseX/Y is updated only once per frame
           dmouseX = mouseX;
@@ -1360,6 +1367,7 @@ public class PApplet extends Applet
         }
 
         g.endFrame();
+        /*
         if (!recorderNull) {
           if (recorder != null) {
             recorder.endFrame();
@@ -1372,6 +1380,7 @@ public class PApplet extends Applet
             g.recorderRaw = null;
           }
         }
+        */
 
         //}  // older end sync
 
@@ -5834,25 +5843,52 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-  public void record(PGraphics recorder) {
+  public void beginRecord(PGraphics recorder) {
     this.recorder = recorder;
-    recorder.beginFrame();
+    recorder.beginRecord();
+    //recorder.beginFrame();
   }
 
 
-  public PGraphics record(String renderer, String filename) {
-    this.recorder = createGraphics(width, height, renderer, filename);
-    recorder.beginFrame();
-    return recorder;
-  }
-
-
-  public PGraphics recordRaw(String renderer, String filename) {
-    filename = savePath(filename);  // ensure an absolute path
+  public PGraphics beginRecord(String renderer, String filename) {
+    //this.recorder = createGraphics(width, height, renderer, filename);
+    //recorder.beginFrame();
     PGraphics rec = createGraphics(width, height, renderer, filename);
-    g.recordRaw(rec);
+    beginRecord(rec);
     return rec;
   }
+
+
+  public void endRecord() {
+    //println("endRecord()");
+    //if (!recorderNull) {
+    if (recorder != null) {
+      recorder.endRecord();
+      //recorder.endFrame();
+      recorder = null;
+    }
+  }
+
+
+  public PGraphics beginRaw(String renderer, String filename) {
+    //filename = savePath(filename);  // ensure an absolute path
+    PGraphics rec = createGraphics(width, height, renderer, filename);
+    //g.recordRaw(rec);
+    g.beginRaw(rec);
+    return rec;
+  }
+
+
+  /*
+  public void endRaw() {
+    //if (!recorderRawNull) {
+    if (g.recorderRaw != null) {
+      //g.recorderRaw.endFrame();
+      g.endRaw();
+      g.recorderRaw = null;
+    }
+  }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -6989,8 +7025,14 @@ public class PApplet extends Applet
   }
 
 
-  public void recordRaw(PGraphics recorderRaw) {
-    if (recorder != null) recorder.recordRaw(recorderRaw);
-    g.recordRaw(recorderRaw);
+  public void beginRaw(PGraphics recorderRaw) {
+    if (recorder != null) recorder.beginRaw(recorderRaw);
+    g.beginRaw(recorderRaw);
+  }
+
+
+  public void endRaw() {
+    if (recorder != null) recorder.endRaw();
+    g.endRaw();
   }
 }
