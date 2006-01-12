@@ -3533,8 +3533,34 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  public void recordRaw(PGraphics recorderRaw) {
-    throw new RuntimeException("recordRaw() not supported " +
-                               "by this renderer.");
+  public void beginRecord() {  // ignore
+    beginFrame();  // default is just to open the frame
   }
+
+
+  public void endRecord() {  // ignore
+    endFrame();
+  }
+
+
+  public void beginRaw(PGraphics recorderRaw) {
+    this.recorderRaw = recorderRaw;
+    recorderRaw.beginFrame();
+  }
+
+
+  public void endRaw() {
+    if (recorderRaw != null) {
+      recorderRaw.endFrame();
+      recorderRaw = null;
+    }
+  }
+
+  //public void beginRaw() {  // ignore
+  //beginFrame();
+  //}
+
+  //public void endRaw() {  // ignore
+  //endFrame();
+  //}
 }

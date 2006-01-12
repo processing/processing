@@ -47,10 +47,17 @@ public class PGraphicsPDF extends PGraphics2 {
 
     //System.out.println("trying " + path);
 
-    file = new File(path);
-    if (!file.isAbsolute() || (path == null)) {
+    if (path != null) {
+      file = new File(path);
+      if (!file.isAbsolute()) file = null;
+    }
+    if (file == null) {
       throw new RuntimeException("PGraphicsPDF requires an absolute path " +
                                  "for the location of the output file.");
+    }
+
+    if (applet != null) {
+      applet.registerDispose(this);
     }
 
     //System.out.println("making " + path);
@@ -85,6 +92,17 @@ public class PGraphicsPDF extends PGraphics2 {
       System.out.println((String) i.next());
     }
     */
+  }
+
+
+  public void dispose() {
+    //System.out.println("calling dispose");
+    if (document != null) {
+      g2.dispose();
+      document.close();  // can't be done in finalize, not always called
+      document = null;
+    }
+    //new Exception().printStackTrace(System.out);
   }
 
 
@@ -134,33 +152,35 @@ public class PGraphicsPDF extends PGraphics2 {
     //System.out.println("pdf beginFrame()");
     //document = new Document();
 
-    document = new Document(new Rectangle(width, height));
-    try {
-      writer = PdfWriter.getInstance(document, new FileOutputStream(file));
-      document.open();
-      content = writer.getDirectContent();
+    if (document == null) {
+      document = new Document(new Rectangle(width, height));
+      try {
+        writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+        document.open();
+        content = writer.getDirectContent();
 
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException("Problem saving the PDF file.");
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException("Problem saving the PDF file.");
+      }
+
+      // how to call newPage() in here?
+      /*
+        System.out.println("beginFrame() " + width + ", " + height);
+        tp = content.createTemplate(width, height);
+        //g2 = tp.createGraphics(width, height, mapper);
+        g2 = tp.createGraphicsShapes(width, height);
+        //System.out.println("g2 is " + g2);
+        tp.setWidth(width);
+        tp.setHeight(height);
+      */
+
+      // what's a good way to switch between these?
+      // the regular createGraphics doesn't seem to recognize fonts
+      // how should the insertDirectory stuff be used properly?
+      //g2 = content.createGraphics(width, height);
+      g2 = content.createGraphicsShapes(width, height);
     }
-
-    // how to call newPage() in here?
-    /*
-    System.out.println("beginFrame() " + width + ", " + height);
-    tp = content.createTemplate(width, height);
-    //g2 = tp.createGraphics(width, height, mapper);
-    g2 = tp.createGraphicsShapes(width, height);
-    //System.out.println("g2 is " + g2);
-    tp.setWidth(width);
-    tp.setHeight(height);
-    */
-
-    // what's a good way to switch between these?
-    // the regular createGraphics doesn't seem to recognize fonts
-    // how should the insertDirectory stuff be used properly?
-    //g2 = content.createGraphics(width, height);
-    g2 = content.createGraphicsShapes(width, height);
 
     super.beginFrame();
   }
@@ -185,6 +205,8 @@ public class PGraphicsPDF extends PGraphics2 {
       e.printStackTrace();
     }
     g2 = content.createGraphicsShapes(width, height);
+
+    // should there be a beginFrame/endFrame in here?
   }
 
 
@@ -198,26 +220,40 @@ public class PGraphicsPDF extends PGraphics2 {
     g2.drawString(text1, 100, 100);
     */
 
-    g2.dispose();
     /*
     content.addTemplate(tp, 0, 0); //50, 400);
     */
 
+    /*
     try {
       document.newPage();  // is this bad if no addl pages are made?
     } catch (Exception e) {
       e.printStackTrace();
     }
+    */
 
-    //System.out.println("closing document");
-    document.close();  // can't be done in finalize, not always called
+    /*
+      g2.dispose();
+      document.close();  // can't be done in finalize, not always called
+    */
   }
 
 
-  //protected void finalize() throws Throwable {
-  //System.out.println("calling finalize");
+  /*
+  protected void finalize() throws Throwable {
+    System.out.println("calling finalize");
   //document.close();  // do this in dispose instead?
-  //}
+  }
+  */
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void endRecord() {
+    super.endRecord();
+    dispose();
+  }
 
 
   //////////////////////////////////////////////////////////////

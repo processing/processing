@@ -3799,11 +3799,20 @@ public class PGraphics3 extends PGraphics {
   // RAW SHAPE RECORDING
 
 
-  public void recordRaw(PGraphics recorderRaw) {
+  /*
+  public void beginRaw(PGraphics recorderRaw) {
     this.recorderRaw = recorderRaw;
     recorderRaw.beginFrame();
   }
 
+
+  public void endRaw() {
+    if (recorderRaw != null) {
+      recorderRaw.endFrame();
+      recorderRaw = null;
+    }
+  }
+  */
 
 
   //////////////////////////////////////////////////////////////
