@@ -5879,6 +5879,15 @@ public class PApplet extends Applet
   }
 
 
+  public void beginRaw(PGraphics recorderRaw) {
+    g.beginRaw(recorderRaw);
+  }
+
+
+  public void endRaw() {
+    g.endRaw();
+  }
+
   /*
   public void endRaw() {
     //if (!recorderRawNull) {
@@ -7022,17 +7031,5 @@ public class PApplet extends Applet
 
   public final float brightness(int what) {
     return g.brightness(what);
-  }
-
-
-  public void beginRaw(PGraphics recorderRaw) {
-    if (recorder != null) recorder.beginRaw(recorderRaw);
-    g.beginRaw(recorderRaw);
-  }
-
-
-  public void endRaw() {
-    if (recorder != null) recorder.endRaw();
-    g.endRaw();
   }
 }
