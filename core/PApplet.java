@@ -2104,14 +2104,13 @@ public class PApplet extends Applet
 
 
   /**
-   * This version of save() is an override of PImage.save(),
-   * rather than calling g.save(). This version properly saves
-   * the image to the applet folder (whereas PImage.save() and
-   * the inherited PGraphics.save() don't know where to put things).
+   * Intercepts any relative paths to make them absolute (relative
+   * to the sketch folder) before passing to save() in PImage.
+   * (Changed in 0100)
    */
-  //public void save(String filename) {
-  //g.save(savePath(filename));
-  //}
+  public void save(String filename) {
+    g.save(savePath(filename));
+  }
 
 
   /**
@@ -3665,6 +3664,14 @@ public class PApplet extends Applet
    * libraries to save to the sketch folder.
    */
   public String sketchPath(String where) {
+    if (sketchPath == null) {
+      throw new RuntimeException("Applet not inited properly, " +
+                                 "the sketch path could not be determined.");
+    }
+    // isAbsolute() could throw an access exception, but so will writing
+    // to the local disk using the sketch path, so this is safe here.
+    if (new File(where).isAbsolute()) return where;
+
     return sketchPath + File.separator + where;
   }
 
@@ -3683,11 +3690,19 @@ public class PApplet extends Applet
 
   /**
    * Return a full path to an item in the data folder.
+   * <p>
+   * In this method, the data path is defined not as the applet's actual
+   * data path, but a folder titled "data" in the sketch's working
+   * directory. This is because in an application, the "data" folder is
+   * exported as part of the jar file, and it's not as though you're gonna
+   * write into the jar file itself. If you need to get things out of
+   * the jar file, you should use openStream().
    */
   public String dataPath(String where) {
-    //if (sketchPath == null) {  // can't be, set by init()
-    //return "data" + File.separator + where;
-    //}
+    // isAbsolute() could throw an access exception, but so will writing
+    // to the local disk using the sketch path, so this is safe here.
+    if (new File(where).isAbsolute()) return where;
+
     return sketchPath + File.separator + "data" + File.separator + where;
   }
 
@@ -5980,12 +5995,6 @@ public class PApplet extends Applet
   static public boolean saveTGA(OutputStream output, int pixels[],
                                 int width, int height, int format) {
     return PGraphics.saveTGA(output, pixels, width, height, format);
-  }
-
-
-  public void save(String filename) {
-    if (recorder != null) recorder.save(filename);
-    g.save(filename);
   }
 
 
