@@ -2,7 +2,14 @@
 X user.dir wasn't getting set properly
 X when graphics can be resized, resize rather than creating new context
 X change savePath() et al a great deal, include better docs
-_ 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=199
+
+_ passing applet into createGraphics.. problems with re-adding listeners
+_   since the listeners are added to the PApplet
+
+_ on osx, System.err isn't writing in things like createGraphics()
+_   but doing a printStackTrace(System.out) works
+_   something weird happening with one of the streams shutting down?
 
 _ registering font directories in pdf.. is it necessary? 
 _   (commented out for 0100)
