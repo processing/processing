@@ -256,6 +256,15 @@ public class PGraphicsPDF extends PGraphics2 {
   }
 
 
+  public void endRaw() {
+    System.out.println("ending raw");
+    super.endRaw();
+    System.out.println("disposing");
+    dispose();
+    System.out.println("done");
+  }
+
+
   //////////////////////////////////////////////////////////////
 
 

@@ -3543,15 +3543,17 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void beginRaw(PGraphics recorderRaw) {
+  public void beginRaw(PGraphics recorderRaw) {  // ignore
     this.recorderRaw = recorderRaw;
     recorderRaw.beginFrame();
   }
 
 
-  public void endRaw() {
+  public void endRaw() {  // ignore
     if (recorderRaw != null) {
-      recorderRaw.endFrame();
+      //System.out.println("legit end raw");
+      //recorderRaw.endFrame();
+      recorderRaw.endRaw();
       recorderRaw = null;
     }
   }

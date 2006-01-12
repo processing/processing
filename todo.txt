@@ -6,15 +6,8 @@ X switch to using date as default for archive sketch
 _   add this as a preference
 _   need method for showing prefs for the tools
 
-pdf stuff
-_ don't open a window the size of the pdf if in pdf mode
-_   need to have some sort of flag in the gfx context that it's visible or not
-_   handled inside updateSize()?
-_ how to flush when the sketch is done
-_   inside dispose method? explicit close?
-_   call exit() at end of pdf apps? exit calls dispose on gfx?
-_ beginRecord() and endRecord() so that record doesn't stop after frame?
-
+_ why was i allowed to save changes to the rgbcube example?
+_   wasn't, just that the error didn't come through. yay osx!
 
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
