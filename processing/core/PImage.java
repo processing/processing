@@ -678,11 +678,11 @@ public class PImage implements PConstants, Cloneable {
 
             // [toxi20050728] added new filters
         case ERODE:
-            throw new RuntimeException("Use filter(ERODE) instead of " +
-                                       "filter(ERODE, param)");
+          throw new RuntimeException("Use filter(ERODE) instead of " +
+                                     "filter(ERODE, param)");
         case DILATE:
-            throw new RuntimeException("Use filter(DILATE) instead of " +
-                                       "filter(DILATE, param)");
+          throw new RuntimeException("Use filter(DILATE) instead of " +
+                                     "filter(DILATE, param)");
     }
     updatePixels();  // mark as modified
   }
@@ -1987,19 +1987,26 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Save this image to disk. This method will save to the "current"
-   * folder, which when running inside the PDE will be the location
-   * of the Processing application, not the sketch folder. To save
-   * inside the sketch folder, use the function savePath from PApplet,
-   * or use saveFrame() instead.
+   * Save this image to disk.
+   * <p>
+   * As of revision 0100, this function requires an absolute path,
+   * in order to avoid confusion. To save inside the sketch folder,
+   * use the function savePath() from PApplet, or use saveFrame() instead.
+   * <p>
+   * <EM>TODO</EM> write reflection code here to use java 1.4 imageio
+   * methods for writing out images that might be much better.
+   * won't want to use them in all cases.. how to determine? <BR>
+   * boolean ImageIO.write(RenderedImage im, String formatName, File output)
    */
-  public void save(String filename) {
-    // TODO write reflection code here to use java 1.4 imageio methods
-    //      for writing out images that might be much better
-    //      won't want to use them in all cases.. how to determine?
-    // maybe for the 1.4 kids, would be nice to have:
-    //boolean ImageIO.write(RenderedImage im, String formatName, File output)
+  public void save(String filename) {  // ignore
     boolean success = false;
+
+    File file = new File(filename);
+    if (!file.isAbsolute()) {
+      System.err.println("PImage.save() requires an absolute path, " +
+                         "you might need to use savePath().");
+      return;
+    }
 
     try {
       OutputStream os = null;
