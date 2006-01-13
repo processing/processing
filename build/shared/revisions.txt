@@ -7,6 +7,88 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0100 - 13 January 2005
+
+This is a pre-release of the PDF generating code. There will be a couple 
+other quick releases to follow in the coming days, and this shouldn't be
+considered a "stable" release since it's not been tested heavily, but we
+wanted to post it for the people who'd like to try it out.
+
+To use it the pdf library, select Sketch -> Import Library -> pdf. 
+And then choose one of the following methods:
+
++ to render everything out to a file:
+
+  void setup() {
+    size(400, 400, PDF, "filename.pdf");
+  }
+
+  void draw() {
+    // draw something good here
+  }
+
+  void mousePressed() {
+    exit();  // important!
+  }
+
+  this will create a sketch that draws only to a file. successive frames
+  will be drawn on top of one another. when you're finished, call exit(), 
+  for instance, inside mousePressed() or a keyPressed() event.
+  this will still open a window of size 400x400 but not draw into it. 
+  future releases won't open the window, since it doesn't work properly 
+  with sizes larger than the screen size (as might often be the case when
+  rendering to a file).
+
++ if you want to record just a single frame, use beginRecord() and
+  endRecord() inside draw:
+
+  void draw() {
+    beginRecord(PDF, "frame-####.pdf");
+    // your awesome drawing happens here. 
+    endRecord();  // saves the file
+  }
+
+  this can also be triggered by a mouse press. the #### will cause a
+  four digit "frame" number to be inserted into the filename.
+
++ if you want to record the entire thing to a file at the same time as 
+  drawing to the screen (i.e. save out an interactive drawing), do this:
+
+  void setup() {
+    size(400, 400);
+    // etc
+    beginRecord(PDF, "everything.pdf");
+  }
+
+  void draw() {
+    // do your worst
+  }
+
+  // this needn't be mousePressed, but you need to call this somewhere
+  // when you're done, to ensure that the pdf file properly closes.
+  void mousePressed() {
+    endRecord();
+  }
+
+Caveats with PDF rendering: 
+
++ anything bitmapped works very poorly. so it's no good for images.
+
++ use createFont() with a truetype font (some opentype also work) to
+  make fonts work properly. any font that shows up in PFont.list() 
+  should work. if you don't use createFont(), they'll likely show up 
+  bitmappy and gross like images. the shape of the characters may be 
+  weird in some cases, there seems to be a java bug with cubic vs. 
+  quadric splines. looking into a workaround if necessary. 
+
++ rendering from 3D isn't yet supported, but coming soon. 
+
++ exit() is really important when using PDF with size()
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0099 - 18 December 2005
 
 A general usability-oriented release. The most major thing is some

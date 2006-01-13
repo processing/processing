@@ -432,10 +432,10 @@ public class PGraphicsGL extends PGraphics3 {
       float cb = min(1, triangleColors[i][2][TRI_DIFFUSE_B] +
                      triangleColors[i][2][TRI_SPECULAR_B]);
 
-      if (recorderRaw != null) {
-        recorderRaw.colorMode(RGB, 1);
-        recorderRaw.noStroke();
-        recorderRaw.beginShape(TRIANGLES);
+      if (raw != null) {
+        raw.colorMode(RGB, 1);
+        raw.noStroke();
+        raw.beginShape(TRIANGLES);
       }
 
       int textureIndex = triangles[i][TEXTURE_INDEX];
@@ -571,14 +571,14 @@ public class PGraphicsGL extends PGraphics3 {
 
         gl.glDisable(GL.GL_TEXTURE_2D);
 
-        if (recorderRaw != null) {
-          recorderRaw.texture(texture);
-          recorderRaw.fill(ar, ag, ab, a[A]);
-          recorderRaw.vertex(a[VX], a[VY], a[U] * uscale, a[V] * vscale);
-          recorderRaw.fill(br, bg, bb, b[A]);
-          recorderRaw.vertex(b[VX], b[VY], b[U] * uscale, b[V] * vscale);
-          recorderRaw.fill(cr, cg, cb, c[A]);
-          recorderRaw.vertex(c[VX], c[VY], c[U] * uscale, c[V] * vscale);
+        if (raw != null) {
+          raw.texture(texture);
+          raw.fill(ar, ag, ab, a[A]);
+          raw.vertex(a[VX], a[VY], a[U] * uscale, a[V] * vscale);
+          raw.fill(br, bg, bb, b[A]);
+          raw.vertex(b[VX], b[VY], b[U] * uscale, b[V] * vscale);
+          raw.fill(cr, cg, cb, c[A]);
+          raw.vertex(c[VX], c[VY], c[U] * uscale, c[V] * vscale);
         }
 
       } else {
@@ -600,19 +600,19 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
-        if (recorderRaw != null) {
-          recorderRaw.fill(ar, ag, ab, a[A]);
-          recorderRaw.vertex(a[VX], a[VY]);
-          recorderRaw.fill(br, bg, bb, b[A]);
-          recorderRaw.vertex(b[VX], b[VY]);
-          recorderRaw.fill(cr, cg, cb, c[A]);
-          recorderRaw.vertex(c[VX], c[VY]);
+        if (raw != null) {
+          raw.fill(ar, ag, ab, a[A]);
+          raw.vertex(a[VX], a[VY]);
+          raw.fill(br, bg, bb, b[A]);
+          raw.vertex(b[VX], b[VY]);
+          raw.fill(cr, cg, cb, c[A]);
+          raw.vertex(c[VX], c[VY]);
         }
         gl.glEnd();
       }
     }
-    if (recorderRaw != null) {
-      recorderRaw.endShape();
+    if (raw != null) {
+      raw.endShape();
     }
     report("out of triangles");
   }
@@ -634,8 +634,8 @@ public class PGraphicsGL extends PGraphics3 {
       //report("render_lines 2 " + lines[i][STROKE_WEIGHT]);
       gl.glBegin(GL.GL_LINE_STRIP);
 
-      if (recorderRaw != null) {
-        recorderRaw.strokeWeight(sw);
+      if (raw != null) {
+        raw.strokeWeight(sw);
       }
 
       // always draw a first point
@@ -644,12 +644,12 @@ public class PGraphicsGL extends PGraphics3 {
       gl.glVertex3f(a[VX], a[VY], a[VZ]);
       //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
 
-      if (recorderRaw != null) {
+      if (raw != null) {
         if (a[SA] > EPSILON) {  // don't draw if transparent
-          recorderRaw.colorMode(RGB, 1);
-          recorderRaw.beginShape(LINE_STRIP);
-          recorderRaw.stroke(a[SR], a[SG], a[SB], a[SA]);
-          recorderRaw.vertex(a[VX], a[VY]);
+          raw.colorMode(RGB, 1);
+          raw.beginShape(LINE_STRIP);
+          raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+          raw.vertex(a[VX], a[VY]);
         }
       }
 
@@ -660,14 +660,14 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
-        if (recorderRaw != null) {
-          recorderRaw.stroke(b[SR], b[SG], b[SB], b[SA]);
-          recorderRaw.vertex(b[VX], b[VY]);
+        if (raw != null) {
+          raw.stroke(b[SR], b[SG], b[SB], b[SA]);
+          raw.vertex(b[VX], b[VY]);
         }
         i++;
       }
-      if (recorderRaw != null) {
-        recorderRaw.endShape();
+      if (raw != null) {
+        raw.endShape();
       }
       gl.glEnd();
     }
