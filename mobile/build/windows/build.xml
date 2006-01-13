@@ -292,13 +292,6 @@
         
     <!-- makes core libraries -->
     <target name="makelibs" depends="init">
-        <!-- first, net library -->
-        <antcall target="makelib">
-            <param name="libname" value="net"/>
-            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
-            <param name="classPath" value=""/>
-            <param name="cldc" value="CLDC1.0"/>
-        </antcall>
         <!-- next, sound library -->
         <antcall target="makelib">
             <param name="libname" value="sound"/>
@@ -351,10 +344,6 @@
         <delete includeemptydirs="true">
             <fileset defaultexcludes="no" dir="processing/build/windows/${target}/libraries" includes="**/*" excludes="howto.txt"/>
         </delete>
-        <!-- copy net library -->
-        <antcall target="copylib">
-            <param name="libname" value="net"/>
-        </antcall>
         <!-- copy sound library -->
         <antcall target="copylib">
             <param name="libname" value="sound"/>
