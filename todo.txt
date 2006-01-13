@@ -1,10 +1,10 @@
 0100 pde
 X missing import PApplet in library howto.txt
 X   http://dev.processing.org/bugs/show_bug.cgi?id=263
-
 X switch to using date as default for archive sketch
-_   add this as a preference
-_   need method for showing prefs for the tools
+
+_ need method for showing prefs for the tools
+_   add pref to handle date vs. increment on archive sketch
 
 _ why was i allowed to save changes to the rgbcube example?
 _   wasn't, just that the error didn't come through. yay osx!
@@ -35,7 +35,6 @@ _   (i.e. we really need those replacements for JOptionPane)
 
 
 the biggies
-_ finish record() and addition of the pdf library
 _ bring back P2D with proper stuff 
 _   it's something we had and we lost
 _ properly handle non-ascii chars in p5 folder name

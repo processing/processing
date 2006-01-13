@@ -1,8 +1,10 @@
 #!/bin/sh
 
 
-SHORT_REVISION=`head -1 ../../todo.txt | cut -c 2-4`
+#SHORT_REVISION=`head -1 ../../todo.txt | cut -c 2-4`
 REVISION=`head -1 ../../todo.txt | cut -c 1-4`
+# as of 100, just use 0100 everywhere to avoid confusion
+SHORT_REVISION=$REVISION
 
 VERSIONED=`cat ../../app/Base.java | grep $REVISION`
 if [ -z "$VERSIONED" ]
