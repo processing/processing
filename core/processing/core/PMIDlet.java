@@ -1124,8 +1124,48 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
+    public final void print(boolean data) {
+        System.out.print(String.valueOf(data));
+    }
+    
+    public final void print(byte data) {
+        System.out.print(String.valueOf(data));
+    }
+    
+    public final void print(char data) {
+        System.out.print(String.valueOf(data));
+    }
+    
+    public final void print(int data) {
+        System.out.print(String.valueOf(data));
+    }
+    
+    public final void print(Object data) {
+        System.out.print(String.valueOf(data));
+    }
+    
     public final void print(String data) {
         System.out.print(data);
+    }
+    
+    public final void println(boolean data) {
+        System.out.println(String.valueOf(data));
+    }
+    
+    public final void println(byte data) {
+        System.out.println(String.valueOf(data));
+    }
+    
+    public final void println(char data) {
+        System.out.println(String.valueOf(data));
+    }
+    
+    public final void println(int data) {
+        System.out.println(String.valueOf(data));
+    }
+    
+    public final void println(Object data) {
+        System.out.println(String.valueOf(data));
     }
     
     public final void println(String data) {

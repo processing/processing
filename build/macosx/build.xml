@@ -107,33 +107,41 @@
         </antcall>
     </target>
 
-    <target name="dist" depends="init, copyappsrc, copylaunchersrc">        
+    <target name="dist" depends="init, copyappsrc, copylaunchersrc">     
+        <!-- copy modified dist.sh -->
+        <copy file="mobile/build/macosx/dist.sh" tofile="processing/build/macosx/dist.sh" overwrite="true"/>
         <!-- execute dist.sh shell script in processing build dir. -->
         <exec executable="/bin/bash">
             <arg value="--login"/>
             <arg value="-c"/>
-            <arg value="cd ${parent.dir}/processing/build/macosx; ./dist.sh"/>
+            <arg value="cd ${parent.dir}/processing/build/macosx; chmod +x dist.sh; ./dist.sh"/>
         </exec>
         <!-- delete the zip files- we need to copy our stuff in and re-zip -->
         <delete file="processing/build/macosx/${svn.tag.processing}.zip"/>
         <!-- copy into standard release -->
         <antcall target="copycore">
-            <param name="target" value="${svn.tag.processing}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
         </antcall>
         <antcall target="copylibs">
-            <param name="target" value="${svn.tag.processing}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
         </antcall>
         <antcall target="copydocs">
-            <param name="target" value="${svn.tag.processing}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
         </antcall>
         <!-- rename executable -->
-        <move todir="processing/build/macosx/${svn.tag.processing}/Mobile.app">
-            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}.app"/>
+        <move todir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}/Mobile.app">
+            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}/Processing ${svn.tag.processing.short}.app"/>
         </move>
         <!-- rename directories -->
-        <move todir="processing/build/macosx/mobile-${mobile.version}">
-            <fileset dir="processing/build/macosx/${svn.tag.processing}"/>
+        <move todir="processing/build/macosx/mobile-${mobile.version}/Mobile ${mobile.version}">
+            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
         </move>
+        <!-- execute mkdmg to create archive -->
+        <exec executable="/bin/bash">
+            <arg value="--login"/>
+            <arg value="-c"/>
+            <arg value="cd ${parent.dir}/processing/build/macosx; ./mkdmg mobile-${mobile.version}"/>
+        </exec>
     </target>
     
     <target name="run" depends="init">
