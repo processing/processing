@@ -67,7 +67,7 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   // used by recordRaw()
-  public PGraphics recorderRaw;
+  public PGraphics raw;
 
   // ........................................................
 
@@ -3533,6 +3533,7 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
+  /*
   public void beginRecord() {  // ignore
     beginFrame();  // default is just to open the frame
   }
@@ -3541,22 +3542,40 @@ public class PGraphics extends PImage implements PConstants {
   public void endRecord() {  // ignore
     endFrame();
   }
+  */
 
 
-  public void beginRaw(PGraphics recorderRaw) {  // ignore
-    this.recorderRaw = recorderRaw;
-    recorderRaw.beginFrame();
+  public void beginRaw(PGraphics raw) {
+    this.raw = raw;
+    raw.beginFrame();
   }
 
 
-  public void endRaw() {  // ignore
-    if (recorderRaw != null) {
+  public void endRaw() {
+    if (raw != null) {
       //System.out.println("legit end raw");
-      //recorderRaw.endFrame();
-      recorderRaw.endRaw();
-      recorderRaw = null;
+      //raw.endFrame();
+      //raw.endRaw();
+
+      // just like beginFrame, this will have to be called because
+      // endFrame() will be happening outside of draw()
+      raw.endFrame();
+      raw.dispose();
+      raw = null;
     }
   }
+
+
+  /**
+   * Handle any takedown for this graphics context.
+   * <p>
+   * This is called when a sketch is shut down and this renderer was
+   * specified using the size() command, or inside endRecord() and
+   * endRaw(), in order to shut things off.
+   */
+  public void dispose() {  // ignore
+  }
+
 
   //public void beginRaw() {  // ignore
   //beginFrame();

@@ -157,3 +157,14 @@ zip -r0q library/opengl.jar processing
 rm -rf processing
 mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
+
+
+# PDF LIBRARY
+echo Building PDF library...
+cd ../pdf
+$JIKES -target 1.1 +D -classpath "library/itext-1.3.jar:$CLASSPATH" -d . *.java 
+rm -f library/pdf.jar
+zip -r0q library/pdf.jar processing
+rm -rf processing
+mkdir -p $LIBRARIES/pdf/library/
+cp library/pdf.jar $LIBRARIES/pdf/library/
