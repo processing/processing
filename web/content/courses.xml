@@ -1,1703 +1,1735 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
-  <course>
-    <date>Fall 2005</date>
-    <institution>Aix-en-Provence School of Art</institution>
-    <title>L'image-algorithme : Introduction à la programmation graphique avec Processing</title>
-    <description>This class builds off our popular class on interactivity using Macromedia Director. As the role of the Atelier Hypermedia is to act as an interface to the other networked ateliers in the school (Sound, 3d, Robotics, Electronics, Video, Printmaking), we will be focusing not only on the interactive visual aspects of Processing, but also its use as a creative tool. There will be an online component, with tutorials and student examples, as is the tradition in our atelier. Also following tradition, outside participants are welcome on a first-come-first-serve basis, with a few slots open every year for the passionately determined. There is no fee. You will have to be proficient in French to attend.</description>
-    <contact>
-      <name>Douglas Edric Stanley</name>
-      <email>destanley@abstractmachine.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Atelier</title>
-        <url>http://www.ecole-art-aix.fr/hypermedia/</url>
-      </link>
-      <link>
-        <title>Course Website</title>
-        <url>http://www.ecole-art-aix.fr/rubrique.php3?id_rubrique=81</url>
-      </link>
-      <link>
-        <title>Student Work</title>
-        <url>http://www.ecole-art-aix.fr/rubrique.php3?id_rubrique=84</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Autumn 2005</date>
-    <institution>Ravensbourne School of Design and Communication</institution>
-    <title/>
-    <description>During the first semester of the MA Interactive Digital Media Processing will be utilised introduce students to programming as creative expression. Workshops explore various applications including imagery, sound, networking, data visualisations and digital typography. The module also encourages a critical approach to conceptual aspects of code art culture.</description>
-    <contact>
-      <name>David Muth</name>
-      <email>david@soda.co.uk</email>
-    </contact>
-    <links>
-      <link>
-        <title>Ravensbourne</title>
-        <url>http://www.rave.ac.uk/</url>
-      </link>
-      <link>
-        <title>MAIDM</title>
-        <url>http://maidm.net/wiki/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Winter 2005</date>
-    <institution>University of Copenhagen, Dept. of Art and Cultural Science</institution>
-    <title>The Biosemiotic View</title>
-    <description>This postgraduate course will give the students an introduction to code in both software and wetware.</description>
-    <contact>
-      <name>Mogens Jacobsen</name>
-      <email>jacobsen@artnode.org</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://www.0ooo0.info</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2005</date>
-    <institution>Portuguese Catholic University - Porto</institution>
-    <title>Multimedia Programming</title>
-    <description>The Multimedia Programming course is an introduction to computer programming. Previous programming experience is not required. This course aims at giving students an opportunity to acquire the basic concepts about algorithms and programming languages. Students will be encouraged to structure their way of thinking in order to solve problems through computer programming. We will use the Processing programming language - an image, sound and animation programming language - to put to practice the discussed concepts. The final goal of this course is to give students the conceptual tools to approach other programming languages easily.</description>
-    <contact>
-      <name>Jorge Cardoso</name>
-      <email>jccardoso@porto.ucp.pt</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course Website (in Portuguese)</title>
-        <url>http://soundserver.porto.ucp.pt/aulas/tiki-index.php?page=PaginaProgramacaoMultimedia</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>3rd October 2005</date>
-    <institution>University of Dundee</institution>
-    <title>Engineering Software (EG21003)</title>
-    <description>An Introduction to physical computing for product design and mechanical engineering students. The module brief is to make me a mobile phone exploring both graphical and physical ways to communicate. Processing is introcuded alongside microcontrollers, card, string, paper and jelly (concrete will be brought in at some point in the near future).</description>
-    <contact>
-      <name>Jon Rogers</name>
-      <email>j.rogers@dundee.ac.uk</email>
-    </contact>
-    <links>
-      <link>
-        <title>www.idl.dundee.ac.uk/~jon</title>
-        <url>http://www.idl.dundee.ac.uk/~jon</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2005</date>
-    <institution>University of New South Wales</institution>
-    <title>College of Fine Arts</title>
-    <description>A full day workshop for students wishing to learn the the core concepts of computer programming using the Processing language. Focus will be placed on its application in sound and image based work and the course material will include details of the most fundamental topics along with the more advanced code involved in object oriented programming and implementation of 3rd party libraries.</description>
-    <contact>
-      <name>Paul</name>
-      <email>z3168848@student.unsw.edu.au</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2005</date>
-    <institution>Royal College of Art</institution>
-    <title>MA Interaction Design</title>
-    <description>Processing is being utilised as an introduction to basic concepts of computer programming for students from diverse creative backgrounds. During the progression of the workshop series various possible applications are being explored - including imagery, video, data visualisation, code driven animation, locative media, networking and interfacing with Max/MSP. The module also discusses both historical and contemporary examples of computational art and encourages a critical approach towards conceptual aspects of code art culture.</description>
-    <contact>
-      <name>David Muth</name>
-      <email>david@soda.co.uk</email>
-    </contact>
-    <links>
-      <link>
-        <title>Interaction Design at the Royal College of Art</title>
-        <url>http://www.interaction.rca.ac.uk/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>20-23 June 2005</date>
-    <institution>MediaLabMadrid</institution>
-    <title>Making Things Move</title>
-    <description>How can we make things move in an interesting, compelling, and lifelike manner? We will investigate key concepts of programmatic animation techniques using processing, an environment for learning about code. We will explore explicit non-linear, sinusoidal and key frame approaches. Then we will examine implicit models for motion, including particle systems, springs, vector fields, collision detection and flocking. In the end, we will find ways of assembling these various approaches to create creatures and objects that move and respond in an elegant and natural manner through their fictional world. Close attention will be paid to exploring how these approaches integrate with interactive and audiovisual systems to create intuitive and playful modes of expression.</description>
-    <contact>
-      <name>Zachary Lieberman</name>
-      <email>zlieb@parsons.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Workshop Annoucement</title>
-        <url>http://www.medialabmadrid.org/medialab/medialab.php?l=0&a=a&i=242</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2005</date>
-    <institution>Bandung Institute of Technology (ITB)</institution>
-    <title>Department of Visual Art: Digital Printmaking (Seni Cetak Digital)</title>
-    <description>This undergraduate course introduces printmaking major into digital and electronic art beyond traditional printmaking media. Students are asked to make their own work in video, the Web, or programming media. Students are also introduced to the fundamentals of computer programming within the context of visual form, drawing, and responsive form using Processing.</description>
-    <contact>
-      <name>widianto nugroho</name>
-      <email>wnugroho at itb.ac.id</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://cmd.art.itb.ac.id/scd</url>
-      </link>
-      <link>
-        <title>Art Dept. Website</title>
-        <url>http://www.art.itb.ac.id</url>
-      </link>
-      <link>
-        <title>University Website</title>
-        <url>http://www.itb.ac.id</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2005</date>
-    <institution>UCLA</institution>
-    <title>Programming Media II (DESMA 152B, 252B)</title>
-    <description>A continued introduction to computer programming within the context of image and interaction. Each student's foundation in basic programming will serve as a platform from which to explore diverse media applications including video, sound, print, networking, data visualization, and other potential areas of their own choice.</description>
-    <contact>
-      <name>C.E.B. Reas</name>
-      <email>reas at ucla dot edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://classes.design.ucla.edu/Spring05/152BC/</url>
-      </link>
-      <link>
-        <title>UCLA Design | Media Arts</title>
-        <url>http://dma.ucla.edu/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2005</date>
-    <institution>Helsinki University of Technology</institution>
-    <title>Introduction to computer graphics (T-111.210 Informaatioverkostot: Studio 4)</title>
-    <description>Students with basic experience in programming experimented with different aspects of computer graphics by doing four exercises using the Processing-environment and by writing essays.</description>
-    <contact>
-      <name>Tapio Takala</name>
-      <email>tapio.takala at hut dot fi</email>
-    </contact>
-    <links>
-      <link>
-        <title>Exercises</title>
-        <url>http://www.tml.hut.fi/Opinnot/T-111.210/processingportfolios/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2005</date>
-    <institution>Royal Danish Academy of Fine Arts</institution>
-    <title>Copenhagen</title>
-    <description>Introduction to programmimg as a tool for artistic expression. Introduction to the programming language Processing.</description>
-    <contact>
-      <name>Mikkel Woldike Breum</name>
-      <email>req@jooze.dk</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Summer 2005</date>
-    <institution>Hochschule fuer Angewandte Wissenschaft Hamburg, Fachbereich Gestaltung</institution>
-    <title>Computergestuetztes Arbeiten - Digital Design Worlds</title>
-    <description>The course 'Digital Design Worlds' covers the basic principles of using the computer as a design tool. Research will explore specific design methods using the computer not only as a tool but also the computer as a medium. Additional themes explored will be the 'disappearing computer' and alteranative input and output methods.</description>
-    <contact>
-      <name>Franziska Huebler</name>
-      <email>franziska.truthdare.de</email>
-    </contact>
-    <links>
-      <link>
-        <title>University Website</title>
-        <url>http://www.haw-hamburg.de/Fachbereich_Gestaltung.5.0.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2005</date>
-    <institution>Fachbereich Gestaltung Fachhochschule Wuerzburg-Schweinfurt / University of Applied Sciences</institution>
-    <title>Introduction to Processing</title>
-    <description>The course is a step-by-step introduction to the processing language and the principles of computational design. No programming experience is needed.</description>
-    <contact>
-      <name>Daniel Rothaug</name>
-      <email>rothaug@zumkuckuck.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>University Website</title>
-        <url>http://www.fh-wuerzburg.de/gestaltung/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2005</date>
-    <institution>School of the Art Institute of Chicago, Department of Art and Technology Studies</institution>
-    <title>Programming for Automatic Drawing Systems</title>
-    <description>In this course, we juxtapose traditional practices of analog drawing with the process of sketching in code. Technically, the course will introduce the fundamentals of computer programming within a visual context through the development of an online software sketchbook. The first five tutorials are based in Lingo (Director) the second five are based in Processing (alpha shareware). Studio demonstrations will include: software that responds to environmental changes (temperature, oxygen, light), animations that change based on mouse input, software that draws from online data, and software that draws from a human heartbeat.</description>
-    <contact>
-      <name>Tiffany Holmes</name>
-      <email>tholme@artic.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Class Website</title>
-        <url>http://www.tiffanyholmes.com/Teaching/PADrawing/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>2004-2005</date>
-    <institution>Elisava School of Design</institution>
-    <title>Introduction to Programming</title>
-    <description>This postgraduate course gives an introduction to the programming world to graduates of Design, Art and Architecture. The object of the course is to give basic programming skills and to give a base to the students so they can use the programming tools in the real world along the course.</description>
-    <contact>
-      <name/>
-      <email>federico@area3.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course Website</title>
-        <url>http://elisava.es/elisava/fla_ing/continguts/estudis/mp.asp?id=41</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2004</date>
-    <institution>Univerity of Washington - Center for Digital Arts and Experimental Media</institution>
-    <title>Algorithmic Processes in the Arts</title>
-    <description>In this course students work through a progression of four major art projects designed to foster a sense of aesthetics and an understanding of code as emergent media. Examination of relevent work, readings, and supplementary assignments develop perspective and relate to the history of art and technology. Advanced concepts such as image processing, chaotic and complex algorithms, emergent behaviors and evolution are also explored.</description>
-    <contact>
-      <name>Stephanie Andrews</name>
-      <email>stephnet@u.washington.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course Website</title>
-        <url>http://www.stephnet.org/430/index.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2004</date>
-    <institution>Univerity of Virginia</institution>
-    <title>Intermediate New Media Studies</title>
-    <description>A three week introduction to fundamental programming methods, and algorithmic graphic generation. Students who had never used a script based program were able to overcome their fears by using the examples on the site as a launching point of their own ideas.</description>
-    <contact>
-      <name>Seth Hunter</name>
-      <email>seh4b@virginia.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course Website</title>
-        <url>http://www.uvanewmedia.com/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2004</date>
-    <institution>University of Copenhagen, Dept. of Art History</institution>
-    <title/>
-    <description>This course is an introduction to computational media for students without any prior experience in programming. We look at some basics in computability - building a Turing Machine out of paper. Then we move on to Design By Numbers and Processing.</description>
-    <contact>
-      <name>Mogens Jacobsen</name>
-      <email>jacobsen@artnode.org</email>
-    </contact>
-    <links>
-      <link>
-        <title>University Website</title>
-        <url>http://www.sis.ku.dk/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Winter 2004</date>
-    <institution>University College London, Bartlett School of Architecture</institution>
-    <title/>
-    <description>This postgraduate course examines the relationship between society and environments through the medium of new technology in order to construct emergent digital architecture. The course aim is to take students with little computing experience and give them a foundation in the generation of space, form and behaviour using a range of programming languages and interactive devices. The Bartlett's experience in social analysis gives the course a unique societal angle on emergent architecture.</description>
-    <contact>
-      <name>Alasdair Turner</name>
-      <email>a.turner@ucl.ac.uk</email>
-    </contact>
-    <links>
-      <link>
-        <title>University Website</title>
-        <url>http://www.vr.ucl.ac.uk/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Winter 2004</date>
-    <institution>Universität der Künste Berlin</institution>
-    <title>Designing with Digital Media</title>
-    <description>Students realize four short projects, each of a two week duration. Processing was used as the primary working environment to demonstrate alternatives to the GUI approach of common authoring systems based on animation. The purely text-based development process leads us to different design solutions.</description>
-    <contact>
-      <name>Ralph Ammer</name>
-      <email>ralph@ralphammer.de</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://grundlagen.digital.udk-berlin.de/ws03_04/index_en.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Winter 2004</date>
-    <institution>New York University</institution>
-    <title>Procedural Painting</title>
-    <description>This introductory level course covers the basics of computer programming within the context of images, drawing, and responsive visual forms. Processing will be used as the primary development environment for the class.</description>
-    <contact>
-      <name>Daniel Shiffman</name>
-      <email>daniel@shiffman.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course Website</title>
-        <url>http://stage.itp.nyu.edu/%7Edts204/ppaint/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Winter 2004</date>
-    <institution>N.Y.U Tisch School of Art, ITP</institution>
-    <title>Code And Me</title>
-    <description>The course helps graduate students of various backgrounds discover why and how they would use code in functional and expressive ways. Architects, Artists, Industrial Designers, Musicians, and Scientists will use Processing during the semester to establish a personal sensibility to coding.</description>
-    <contact>
-      <name>Amit Pitaru</name>
-      <email>amit@pitaru.com</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Winter 2004</date>
-    <institution>Pratt Institute, Computer Graphics and Interactive Media</institution>
-    <title>Creating Code for Digital Media</title>
-    <description>The goal of this course is to help Pratt's MFA students discover how to write software that furthers their activities as artists and designers. Using Processing, the course introduces a set of concepts, techniques and exercises specifically tailored for visually oriented minds.</description>
-    <contact>
-      <name>Amit Pitaru</name>
-      <email>amit@pitaru.com</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2003</date>
-    <institution>University of Roma Tor Vergata</institution>
-    <title>Multimodal Interface and Systems</title>
-    <description>Students within the Science of Media and Communication department create intriguing and natural interfaces with Processing.</description>
-    <contact>
-      <name>Carlo Giovannella</name>
-      <email>mifav@roma2.infn.it</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2003</date>
-    <institution>Universität der Künste Berlin</institution>
-    <title>Principles of Computational Design</title>
-    <description>By teaching the essential qualities of computational form, this course enables the students to question existing models of interaction and explore new spaces in electronic media. Communication goals are achieved through computational processes.</description>
-    <contact>
-      <name>Marius Watz</name>
-      <email>amoeba@evolutionzone.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>Universität der Künste</title>
-        <url>http://www.udk-berlin.de/</url>
-      </link>
-      <link>
-        <title>Course website</title>
-        <url>http://www.evolutionzone.com/udk/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2003</date>
-    <institution>Yale School of Architecture</institution>
-    <title>Model Based Design</title>
-    <description>Model-based design proposes that digital tools can produce documents that describe more than pure form. These digital artifacts are live, interconnected databases of objects with properties and behaviors. This class explores the role of data and formal process in generating such parametric design.</description>
-    <contact>
-      <name>Simon Greenwold</name>
-      <email>simon@aproposinteractive.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://www.architecture.yale.edu/872a/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2003</date>
-    <institution>New York University</institution>
-    <title>Pixels and Bits</title>
-    <description>Juxtaposing traditional components of artistic practice with the development of images and interactions starting from the level of the code that defines them. Understanding how values associated with traditional craft play out in the creation of information based objects.</description>
-    <contact>
-      <name>Rebecca Ross</name>
-      <email>rebecca@cat.nyu.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://cat.nyu.edu/%7Erebecca/pixelsandbits/index.html</url>
-      </link>
-      <link>
-        <title>Exercises</title>
-        <url>http://cat.nyu.edu/%7Erebecca/pixelsandbits/students/index.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring and Fall 2003</date>
-    <institution>University of North Carolina at Asheville</institution>
-    <title>Multimedia Arts & Sciences 373, Internet-based Art & Design</title>
-    <description>A study of the history, theory, and practice of internet art and design. Identity, conceptualism, performance, hacktivism, narrative, and computational aesthetics are all explored via research, critique, and hands-on creation.</description>
-    <contact>
-      <name>Curt Cloninger</name>
-      <email>curt@lab404.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>MMAS 373</title>
-        <url>http://www.lab404.com/373/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2003</date>
-    <institution>San Francisco Art Institute</institution>
-    <title>Artists in Cyberspace</title>
-    <description>This course is not a complete overview of Net Art and the Web. Rather, it focuses on using the Web as a medium for publishing work created with Processing, an art and design friendly programming environment. Throughout the course we will also discuss digital media and its place in the art continuum.</description>
-    <contact>
-      <name>Krister Olsson</name>
-      <email>krister@tree-axis.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>SFAI website</title>
-        <url>http://www.sfai.edu/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2003</date>
-    <institution>University of Washingon</institution>
-    <title>Algorithmic Processes in Art</title>
-    <description>Visual elements such as dot, line, and field are combined with the computational ideas of variables and conditional statements to generate images. The course explores Design By Numbers and Processing, a new Java-based system for algorithmic and interactive visual creation.</description>
-    <contact>
-      <name>Bret Battey</name>
-      <email>bbattey@u.washington.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Center for Digital Arts and Experimental Media</title>
-        <url>http://www.washington.edu/dxarts/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2003</date>
-    <institution>UMASS Lowell</institution>
-    <title>Interactive Data Visualization</title>
-    <description>This course provides a detailed description of what visualization is, how it works, how to use it, its role in numerous applications, how to implement and deploy applications using visualizations.</description>
-    <contact>
-      <name>Georges Grinstein</name>
-      <email>grinstein@cs.uml.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>UMASS Lowell CS</title>
-        <url>http://www.cs.uml.edu/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Summer 2003</date>
-    <institution>N.Y.U Tisch School of Art</institution>
-    <title>Code And Me</title>
-    <description>The course helps graduate students of various backgrounds discover why and how they would use code in functional and expressive ways. Architects, Artists, Industrial Designers, Musicians, and Scientists will use Processing during the semester to establish a personal sensibility to coding.</description>
-    <contact>
-      <name>Amit Pitaru</name>
-      <email>amit@pitaru.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>ITP website</title>
-        <url>http://itp.nyu.edu/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>18 April - 14 July 2003</date>
-    <institution>Universität der Künste Berlin</institution>
-    <title>Principles of Computational Design</title>
-    <description>Three month course introducing students to concepts in computational design, using Processing as the main tool.</description>
-    <contact>
-      <name>Marius Watz</name>
-      <email>amoeba@evolutionzone.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>Universität der Künste</title>
-        <url>http://www.udk-berlin.de/</url>
-      </link>
-      <link>
-        <title>Course website</title>
-        <url>http://www.evolutionzone.com/udk/2003spring/index.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>9 April - 28 May</date>
-    <institution>Department of Design and Architecture</institution>
-    <title>Nagoya City University</title>
-    <description>Students without prior programming experience spent six days designing an interaction on the LCD (320x128 pixels) of a cell phone.</description>
-    <contact>
-      <name>Hironobu Fujiyoshi</name>
-      <email>hf@cs.chubu.ac.jp</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://www.vision.cs.chubu.ac.jp/Proce55ing/Programming/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2003</date>
-    <institution>Ravensbourne School of Design and Communicaton</institution>
-    <title/>
-    <description>Processing used in the Programming and Generative Visualisation Module of the MA Interactive Digital Media to explain basic concepts of computer programming, as well as ideas and strategies of more complex generative processes.</description>
-    <contact>
-      <name>David Muth</name>
-      <email>david@soda.co.uk</email>
-    </contact>
-    <links>
-      <link>
-        <title>Ravensbourne</title>
-        <url>http://www.rave.ac.uk/</url>
-      </link>
-      <link>
-        <title>MA Interactive Digital Media</title>
-        <url>http://www.rave.ac.uk/postgrad/pg_idm.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>19 May 2003</date>
-    <institution/>
-    <title>Cologne Academy of Media Arts (Kunsthochschule für Medien Köln)</title>
-    <description>One day Processing workshop focusing on basic concepts of variables, loops, conditionals, and responding to the mouse.</description>
-    <contact>
-      <name>Boris Müller</name>
-      <email>boris@esono.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>KHM website</title>
-        <url>http://www.khm.de/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>3 May - 31 May 2003</date>
-    <institution>Ateneo de Manila University</institution>
-    <title>Computational Media Design Workshop</title>
-    <description>Five week workshop introducing principles of computing and visual arts. Processing is used as the base software for instruction. Final projects from this workshop featured in DECODE exhibition of the Ateneo Art Gallery.</description>
-    <contact>
-      <name>Martin Gomez</name>
-      <email>martin@decode.ateneo.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Ateneo de Manila University</title>
-        <url>http://www.ateneo.edu/</url>
-      </link>
-      <link>
-        <title>Workshop website</title>
-        <url>http://decode.ateneo.edu/csvaxxx</url>
-      </link>
-      <link>
-        <title>DECODE</title>
-        <url>http://decode.ateneo.edu/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>18-20 April 2003</date>
-    <institution>Interactive Media Art Laboratory</institution>
-    <title>Processing Workshop</title>
-    <description>Three day basic Processing workshop at iMAL in Brussels. An introduction to the fundamentals of computer programming within the context of images, drawing, animation, and responsive form.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>iMAL</title>
-        <url>http://www.imal.org/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>11 April 2003</date>
-    <institution>Universidad de Los Andes</institution>
-    <title>Processing Workshop</title>
-    <description>One day workshop in Bogota, Colombia introducing the Processing environment.</description>
-    <contact>
-      <name>Hernando Barragán</name>
-      <email>h.barragan@interaction-ivrea.it</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2003</date>
-    <institution>MIT</institution>
-    <title>Fundamentals of Computational Media Design</title>
-    <description>Introduces principles of analysis and synthesis in the computational medium. Expressive examples that illustrate the intersection of computation with the traditional arts are developed on a weekly basis. Hands-on design exercises are continually framed and examined in the larger context of contemporary digital art. Processing is used as one of many tools for creation.</description>
-    <contact>
-      <name>Ben Fry</name>
-      <email>fry@media.mit.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://acg.media.mit.edu/courses/mas110/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2003</date>
-    <institution>CCAC</institution>
-    <title>Investigative Studio, 'Programming Design'</title>
-    <description>One semester course at the California College of Arts and Crafts using DBN and Processing, focusing on giving designers the programming skills to create simple tools to facilitate creative exploration.</description>
-    <contact>
-      <name>Krister Olsson</name>
-      <email>krister@tree-axis.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://www.tree-axis.com/pd_spring_2003</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>6 February- 3 July 2003</date>
-    <institution>Ecole Romande d'Arts et Communication</institution>
-    <title>Concepteurs Multimedia</title>
-    <description>Processing used in the introduction to programming class for 'Concepteurs Multimedia' at the Ecole Romande d'Arts et Communication (Eracom) in Lausanne, Switzerland. The goal is to get the students comfortable with and excited about programming.</description>
-    <contact>
-      <name>Adrien Cater</name>
-      <email>adrien@boring.ch</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>9 February 2003</date>
-    <institution>Oslo School of Architecture</institution>
-    <title>Processing Workshop</title>
-    <description>One day workshop of exercises and lectures discussing critical issues of responsive software.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>AHO website</title>
-        <url>http://www.aho.no/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>8 February 2003</date>
-    <institution>New York University ITP</institution>
-    <title>Processing Workshop</title>
-    <description>One day workshop focusing on communicating Processing within the context of Macromedia Director and Flash.</description>
-    <contact>
-      <name>Joshua Nimoy</name>
-      <email>josh.nimoy@verizon.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>ITP website</title>
-        <url>http://itp.nyu.edu/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>3-4 February 2003</date>
-    <institution>Transmediale.03</institution>
-    <title>Processing Workshop</title>
-    <description>Two five hour workshops taught by Casey Reas, Boris Müller, and Hernando Barragan. Processing was used as an environment for introducing basic element of computer programming to an audience of media artists and designers.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Transmediale website</title>
-        <url>http://www.transmediale.de/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>24 January 2003</date>
-    <institution>Interaction Ivrea</institution>
-    <title>Piemonte Programming Workshop</title>
-    <description>Participants in this five hour workshop were introduced to the fundamentals of computer programming within the context of visual form, drawing, and responsive form. All pariticipants were beginning programmers with some prior experience with Python or Design By Numbers.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Workshop website</title>
-        <url>http://processing.org/learning/courses/ivrea</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>7-17 January 2003</date>
-    <institution>HyperWerk FHBB</institution>
-    <title>Living Surfaces Part I & II</title>
-    <description>Participants in this two week workshop were introduced to the fundamentals of computer programming within the context of images, drawing, animation, and responsive form.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Workshop website for Part I</title>
-        <url>http://processing.org/learning/courses/hyperwerk</url>
-      </link>
-      <link>
-        <title>Part II</title>
-        <url>http://processing.org/learning/courses/hyperwerk2/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Year project 2002-2003</date>
-    <institution>Sint Lucas Antwerpen</institution>
-    <title>Dotornot</title>
-    <description>Processing is used as a tool to do fundamental research on design and the language of form. Starting from the most fundamental element of design, the dot, we try to rebuild the rules of design using pure programming.</description>
-    <contact>
-      <name>Lucas Nijs</name>
-      <email>e.media@skynet.be</email>
-    </contact>
-    <links>
-      <link>
+    <course>
+        <date>Winter 2006</date>
+        <institution>UCLA</institution>
+        <title>The coolest class ever</title>
+        <description>It will really be the coolest class ever</description>
+        <contact>
+            <name>Your mom</name>
+            <email>your at mom dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>class</title>
+                <url>http://something.com/</url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2005</date>
+        <institution>Aix-en-Provence School of Art</institution>
+        <title>L&apos;image-algorithme : Introduction à la programmation graphique avec Processing</title>
+        <description>This class builds off our popular class on interactivity using Macromedia Director. As the role of the Atelier Hypermedia is to act as an interface to the other networked ateliers in the school (Sound, 3d, Robotics, Electronics, Video, Printmaking), we will be focusing not only on the interactive visual aspects of Processing, but also its use as a creative tool. There will be an online component, with tutorials and student examples, as is the tradition in our atelier. Also following tradition, outside participants are welcome on a first-come-first-serve basis, with a few slots open every year for the passionately determined. There is no fee. You will have to be proficient in French to attend.</description>
+        <contact>
+            <name>Douglas Edric Stanley</name>
+            <email>destanley@abstractmachine.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Atelier</title>
+                <url>http://www.ecole-art-aix.fr/hypermedia/</url>
+            </link>
+            <link>
+                <title>Course Website</title>
+                <url>http://www.ecole-art-aix.fr/rubrique.php3?id_rubrique=81</url>
+            </link>
+            <link>
+                <title>Student Work</title>
+                <url>http://www.ecole-art-aix.fr/rubrique.php3?id_rubrique=84</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Autumn 2005</date>
+        <institution>Ravensbourne School of Design and Communication</institution>
+        <title />
+        <description>During the first semester of the MA Interactive Digital Media Processing will be utilised introduce students to programming as creative expression. Workshops explore various applications including imagery, sound, networking, data visualisations and digital typography. The module also encourages a critical approach to conceptual aspects of code art culture.</description>
+        <contact>
+            <name>David Muth</name>
+            <email>david@soda.co.uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>Ravensbourne</title>
+                <url>http://www.rave.ac.uk/</url>
+            </link>
+            <link>
+                <title>MAIDM</title>
+                <url>http://maidm.net/wiki/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter 2005</date>
+        <institution>University of Copenhagen, Dept. of Art and Cultural Science</institution>
+        <title>The Biosemiotic View</title>
+        <description>This postgraduate course will give the students an introduction to code in both software and wetware.</description>
+        <contact>
+            <name>Mogens Jacobsen</name>
+            <email>jacobsen@artnode.org</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://www.0ooo0.info</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2005</date>
+        <institution>Portuguese Catholic University - Porto</institution>
+        <title>Multimedia Programming</title>
+        <description>The Multimedia Programming course is an introduction to computer programming. Previous programming experience is not required. This course aims at giving students an opportunity to acquire the basic concepts about algorithms and programming languages. Students will be encouraged to structure their way of thinking in order to solve problems through computer programming. We will use the Processing programming language - an image, sound and animation programming language - to put to practice the discussed concepts. The final goal of this course is to give students the conceptual tools to approach other programming languages easily.</description>
+        <contact>
+            <name>Jorge Cardoso</name>
+            <email>jccardoso@porto.ucp.pt</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course Website (in Portuguese)</title>
+                <url>http://soundserver.porto.ucp.pt/aulas/tiki-index.php?page=PaginaProgramacaoMultimedia</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>3rd October 2005</date>
+        <institution>University of Dundee</institution>
+        <title>Engineering Software (EG21003)</title>
+        <description>An Introduction to physical computing for product design and mechanical engineering students. The module brief is to make me a mobile phone exploring both graphical and physical ways to communicate. Processing is introcuded alongside microcontrollers, card, string, paper and jelly (concrete will be brought in at some point in the near future).</description>
+        <contact>
+            <name>Jon Rogers</name>
+            <email>j.rogers@dundee.ac.uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>www.idl.dundee.ac.uk/~jon</title>
+                <url>http://www.idl.dundee.ac.uk/~jon</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2005</date>
+        <institution>University of New South Wales</institution>
+        <title>College of Fine Arts</title>
+        <description>A full day workshop for students wishing to learn the the core concepts of computer programming using the Processing language. Focus will be placed on its application in sound and image based work and the course material will include details of the most fundamental topics along with the more advanced code involved in object oriented programming and implementation of 3rd party libraries.</description>
+        <contact>
+            <name>Paul</name>
+            <email>z3168848@student.unsw.edu.au</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2005</date>
+        <institution>Royal College of Art</institution>
+        <title>MA Interaction Design</title>
+        <description>Processing is being utilised as an introduction to basic concepts of computer programming for students from diverse creative backgrounds. During the progression of the workshop series various possible applications are being explored - including imagery, video, data visualisation, code driven animation, locative media, networking and interfacing with Max/MSP. The module also discusses both historical and contemporary examples of computational art and encourages a critical approach towards conceptual aspects of code art culture.</description>
+        <contact>
+            <name>David Muth</name>
+            <email>david@soda.co.uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>Interaction Design at the Royal College of Art</title>
+                <url>http://www.interaction.rca.ac.uk/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>20-23 June 2005</date>
+        <institution>MediaLabMadrid</institution>
+        <title>Making Things Move</title>
+        <description>How can we make things move in an interesting, compelling, and lifelike manner? We will investigate key concepts of programmatic animation techniques using processing, an environment for learning about code. We will explore explicit non-linear, sinusoidal and key frame approaches. Then we will examine implicit models for motion, including particle systems, springs, vector fields, collision detection and flocking. In the end, we will find ways of assembling these various approaches to create creatures and objects that move and respond in an elegant and natural manner through their fictional world. Close attention will be paid to exploring how these approaches integrate with interactive and audiovisual systems to create intuitive and playful modes of expression.</description>
+        <contact>
+            <name>Zachary Lieberman</name>
+            <email>zlieb@parsons.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Workshop Annoucement</title>
+                <url>http://www.medialabmadrid.org/medialab/medialab.php?l=0&amp;a=a&amp;i=242</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2005</date>
+        <institution>Bandung Institute of Technology (ITB)</institution>
+        <title>Department of Visual Art: Digital Printmaking (Seni Cetak Digital)</title>
+        <description>This undergraduate course introduces printmaking major into digital and electronic art beyond traditional printmaking media. Students are asked to make their own work in video, the Web, or programming media. Students are also introduced to the fundamentals of computer programming within the context of visual form, drawing, and responsive form using Processing.</description>
+        <contact>
+            <name>widianto nugroho</name>
+            <email>wnugroho at itb.ac.id</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://cmd.art.itb.ac.id/scd</url>
+            </link>
+            <link>
+                <title>Art Dept. Website</title>
+                <url>http://www.art.itb.ac.id</url>
+            </link>
+            <link>
+                <title>University Website</title>
+                <url>http://www.itb.ac.id</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2005</date>
+        <institution>UCLA</institution>
+        <title>Programming Media II (DESMA 152B, 252B)</title>
+        <description>A continued introduction to computer programming within the context of image and interaction. Each student&apos;s foundation in basic programming will serve as a platform from which to explore diverse media applications including video, sound, print, networking, data visualization, and other potential areas of their own choice.</description>
+        <contact>
+            <name>C.E.B. Reas</name>
+            <email>reas at ucla dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://classes.design.ucla.edu/Spring05/152BC/</url>
+            </link>
+            <link>
+                <title>UCLA Design | Media Arts</title>
+                <url>http://dma.ucla.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2005</date>
+        <institution>Helsinki University of Technology</institution>
+        <title>Introduction to computer graphics (T-111.210 Informaatioverkostot: Studio 4)</title>
+        <description>Students with basic experience in programming experimented with different aspects of computer graphics by doing four exercises using the Processing-environment and by writing essays.</description>
+        <contact>
+            <name>Tapio Takala</name>
+            <email>tapio.takala at hut dot fi</email>
+        </contact>
+        <links>
+            <link>
+                <title>Exercises</title>
+                <url>http://www.tml.hut.fi/Opinnot/T-111.210/processingportfolios/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2005</date>
+        <institution>Royal Danish Academy of Fine Arts</institution>
+        <title>Copenhagen</title>
+        <description>Introduction to programmimg as a tool for artistic expression. Introduction to the programming language Processing.</description>
+        <contact>
+            <name>Mikkel Woldike Breum</name>
+            <email>req@jooze.dk</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Summer 2005</date>
+        <institution>Hochschule fuer Angewandte Wissenschaft Hamburg, Fachbereich Gestaltung</institution>
+        <title>Computergestuetztes Arbeiten - Digital Design Worlds</title>
+        <description>The course &apos;Digital Design Worlds&apos; covers the basic principles of using the computer as a design tool. Research will explore specific design methods using the computer not only as a tool but also the computer as a medium. Additional themes explored will be the &apos;disappearing computer&apos; and alteranative input and output methods.</description>
+        <contact>
+            <name>Franziska Huebler</name>
+            <email>franziska.truthdare.de</email>
+        </contact>
+        <links>
+            <link>
+                <title>University Website</title>
+                <url>http://www.haw-hamburg.de/Fachbereich_Gestaltung.5.0.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2005</date>
+        <institution>Fachbereich Gestaltung Fachhochschule Wuerzburg-Schweinfurt / University of Applied Sciences</institution>
+        <title>Introduction to Processing</title>
+        <description>The course is a step-by-step introduction to the processing language and the principles of computational design. No programming experience is needed.</description>
+        <contact>
+            <name>Daniel Rothaug</name>
+            <email>rothaug@zumkuckuck.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>University Website</title>
+                <url>http://www.fh-wuerzburg.de/gestaltung/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2005</date>
+        <institution>School of the Art Institute of Chicago, Department of Art and Technology Studies</institution>
+        <title>Programming for Automatic Drawing Systems</title>
+        <description>In this course, we juxtapose traditional practices of analog drawing with the process of sketching in code. Technically, the course will introduce the fundamentals of computer programming within a visual context through the development of an online software sketchbook. The first five tutorials are based in Lingo (Director) the second five are based in Processing (alpha shareware). Studio demonstrations will include: software that responds to environmental changes (temperature, oxygen, light), animations that change based on mouse input, software that draws from online data, and software that draws from a human heartbeat.</description>
+        <contact>
+            <name>Tiffany Holmes</name>
+            <email>tholme@artic.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Class Website</title>
+                <url>http://www.tiffanyholmes.com/Teaching/PADrawing/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>2004-2005</date>
+        <institution>Elisava School of Design</institution>
+        <title>Introduction to Programming</title>
+        <description>This postgraduate course gives an introduction to the programming world to graduates of Design, Art and Architecture. The object of the course is to give basic programming skills and to give a base to the students so they can use the programming tools in the real world along the course.</description>
+        <contact>
+            <name />
+            <email>federico@area3.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course Website</title>
+                <url>http://elisava.es/elisava/fla_ing/continguts/estudis/mp.asp?id=41</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2004</date>
+        <institution>Univerity of Washington - Center for Digital Arts and Experimental Media</institution>
+        <title>Algorithmic Processes in the Arts</title>
+        <description>In this course students work through a progression of four major art projects designed to foster a sense of aesthetics and an understanding of code as emergent media. Examination of relevent work, readings, and supplementary assignments develop perspective and relate to the history of art and technology. Advanced concepts such as image processing, chaotic and complex algorithms, emergent behaviors and evolution are also explored.</description>
+        <contact>
+            <name>Stephanie Andrews</name>
+            <email>stephnet@u.washington.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course Website</title>
+                <url>http://www.stephnet.org/430/index.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2004</date>
+        <institution>Univerity of Virginia</institution>
+        <title>Intermediate New Media Studies</title>
+        <description>A three week introduction to fundamental programming methods, and algorithmic graphic generation. Students who had never used a script based program were able to overcome their fears by using the examples on the site as a launching point of their own ideas.</description>
+        <contact>
+            <name>Seth Hunter</name>
+            <email>seh4b@virginia.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course Website</title>
+                <url>http://www.uvanewmedia.com/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2004</date>
+        <institution>University of Copenhagen, Dept. of Art History</institution>
+        <title />
+        <description>This course is an introduction to computational media for students without any prior experience in programming. We look at some basics in computability - building a Turing Machine out of paper. Then we move on to Design By Numbers and Processing.</description>
+        <contact>
+            <name>Mogens Jacobsen</name>
+            <email>jacobsen@artnode.org</email>
+        </contact>
+        <links>
+            <link>
+                <title>University Website</title>
+                <url>http://www.sis.ku.dk/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter 2004</date>
+        <institution>University College London, Bartlett School of Architecture</institution>
+        <title />
+        <description>This postgraduate course examines the relationship between society and environments through the medium of new technology in order to construct emergent digital architecture. The course aim is to take students with little computing experience and give them a foundation in the generation of space, form and behaviour using a range of programming languages and interactive devices. The Bartlett&apos;s experience in social analysis gives the course a unique societal angle on emergent architecture.</description>
+        <contact>
+            <name>Alasdair Turner</name>
+            <email>a.turner@ucl.ac.uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>University Website</title>
+                <url>http://www.vr.ucl.ac.uk/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter 2004</date>
+        <institution>Universität der Künste Berlin</institution>
+        <title>Designing with Digital Media</title>
+        <description>Students realize four short projects, each of a two week duration. Processing was used as the primary working environment to demonstrate alternatives to the GUI approach of common authoring systems based on animation. The purely text-based development process leads us to different design solutions.</description>
+        <contact>
+            <name>Ralph Ammer</name>
+            <email>ralph@ralphammer.de</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://grundlagen.digital.udk-berlin.de/ws03_04/index_en.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter 2004</date>
+        <institution>New York University</institution>
+        <title>Procedural Painting</title>
+        <description>This introductory level course covers the basics of computer programming within the context of images, drawing, and responsive visual forms. Processing will be used as the primary development environment for the class.</description>
+        <contact>
+            <name>Daniel Shiffman</name>
+            <email>daniel@shiffman.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course Website</title>
+                <url>http://stage.itp.nyu.edu/%7Edts204/ppaint/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter 2004</date>
+        <institution>N.Y.U Tisch School of Art, ITP</institution>
+        <title>Code And Me</title>
+        <description>The course helps graduate students of various backgrounds discover why and how they would use code in functional and expressive ways. Architects, Artists, Industrial Designers, Musicians, and Scientists will use Processing during the semester to establish a personal sensibility to coding.</description>
+        <contact>
+            <name>Amit Pitaru</name>
+            <email>amit@pitaru.com</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter 2004</date>
+        <institution>Pratt Institute, Computer Graphics and Interactive Media</institution>
+        <title>Creating Code for Digital Media</title>
+        <description>The goal of this course is to help Pratt&apos;s MFA students discover how to write software that furthers their activities as artists and designers. Using Processing, the course introduces a set of concepts, techniques and exercises specifically tailored for visually oriented minds.</description>
+        <contact>
+            <name>Amit Pitaru</name>
+            <email>amit@pitaru.com</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2003</date>
+        <institution>University of Roma Tor Vergata</institution>
+        <title>Multimodal Interface and Systems</title>
+        <description>Students within the Science of Media and Communication department create intriguing and natural interfaces with Processing.</description>
+        <contact>
+            <name>Carlo Giovannella</name>
+            <email>mifav@roma2.infn.it</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2003</date>
+        <institution>Universität der Künste Berlin</institution>
+        <title>Principles of Computational Design</title>
+        <description>By teaching the essential qualities of computational form, this course enables the students to question existing models of interaction and explore new spaces in electronic media. Communication goals are achieved through computational processes.</description>
+        <contact>
+            <name>Marius Watz</name>
+            <email>amoeba@evolutionzone.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Universität der Künste</title>
+                <url>http://www.udk-berlin.de/</url>
+            </link>
+            <link>
+                <title>Course website</title>
+                <url>http://www.evolutionzone.com/udk/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2003</date>
+        <institution>Yale School of Architecture</institution>
+        <title>Model Based Design</title>
+        <description>Model-based design proposes that digital tools can produce documents that describe more than pure form. These digital artifacts are live, interconnected databases of objects with properties and behaviors. This class explores the role of data and formal process in generating such parametric design.</description>
+        <contact>
+            <name>Simon Greenwold</name>
+            <email>simon@aproposinteractive.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://www.architecture.yale.edu/872a/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2003</date>
+        <institution>New York University</institution>
+        <title>Pixels and Bits</title>
+        <description>Juxtaposing traditional components of artistic practice with the development of images and interactions starting from the level of the code that defines them. Understanding how values associated with traditional craft play out in the creation of information based objects.</description>
+        <contact>
+            <name>Rebecca Ross</name>
+            <email>rebecca@cat.nyu.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://cat.nyu.edu/%7Erebecca/pixelsandbits/index.html</url>
+            </link>
+            <link>
+                <title>Exercises</title>
+                <url>http://cat.nyu.edu/%7Erebecca/pixelsandbits/students/index.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring and Fall 2003</date>
+        <institution>University of North Carolina at Asheville</institution>
+        <title>Multimedia Arts &amp; Sciences 373, Internet-based Art &amp; Design</title>
+        <description>A study of the history, theory, and practice of internet art and design. Identity, conceptualism, performance, hacktivism, narrative, and computational aesthetics are all explored via research, critique, and hands-on creation.</description>
+        <contact>
+            <name>Curt Cloninger</name>
+            <email>curt@lab404.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>MMAS 373</title>
+                <url>http://www.lab404.com/373/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2003</date>
+        <institution>San Francisco Art Institute</institution>
+        <title>Artists in Cyberspace</title>
+        <description>This course is not a complete overview of Net Art and the Web. Rather, it focuses on using the Web as a medium for publishing work created with Processing, an art and design friendly programming environment. Throughout the course we will also discuss digital media and its place in the art continuum.</description>
+        <contact>
+            <name>Krister Olsson</name>
+            <email>krister@tree-axis.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>SFAI website</title>
+                <url>http://www.sfai.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2003</date>
+        <institution>University of Washingon</institution>
+        <title>Algorithmic Processes in Art</title>
+        <description>Visual elements such as dot, line, and field are combined with the computational ideas of variables and conditional statements to generate images. The course explores Design By Numbers and Processing, a new Java-based system for algorithmic and interactive visual creation.</description>
+        <contact>
+            <name>Bret Battey</name>
+            <email>bbattey@u.washington.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Center for Digital Arts and Experimental Media</title>
+                <url>http://www.washington.edu/dxarts/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2003</date>
+        <institution>UMASS Lowell</institution>
+        <title>Interactive Data Visualization</title>
+        <description>This course provides a detailed description of what visualization is, how it works, how to use it, its role in numerous applications, how to implement and deploy applications using visualizations.</description>
+        <contact>
+            <name>Georges Grinstein</name>
+            <email>grinstein@cs.uml.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>UMASS Lowell CS</title>
+                <url>http://www.cs.uml.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Summer 2003</date>
+        <institution>N.Y.U Tisch School of Art</institution>
+        <title>Code And Me</title>
+        <description>The course helps graduate students of various backgrounds discover why and how they would use code in functional and expressive ways. Architects, Artists, Industrial Designers, Musicians, and Scientists will use Processing during the semester to establish a personal sensibility to coding.</description>
+        <contact>
+            <name>Amit Pitaru</name>
+            <email>amit@pitaru.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>ITP website</title>
+                <url>http://itp.nyu.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>18 April - 14 July 2003</date>
+        <institution>Universität der Künste Berlin</institution>
+        <title>Principles of Computational Design</title>
+        <description>Three month course introducing students to concepts in computational design, using Processing as the main tool.</description>
+        <contact>
+            <name>Marius Watz</name>
+            <email>amoeba@evolutionzone.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Universität der Künste</title>
+                <url>http://www.udk-berlin.de/</url>
+            </link>
+            <link>
+                <title>Course website</title>
+                <url>http://www.evolutionzone.com/udk/2003spring/index.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>9 April - 28 May</date>
+        <institution>Department of Design and Architecture</institution>
+        <title>Nagoya City University</title>
+        <description>Students without prior programming experience spent six days designing an interaction on the LCD (320x128 pixels) of a cell phone.</description>
+        <contact>
+            <name>Hironobu Fujiyoshi</name>
+            <email>hf@cs.chubu.ac.jp</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://www.vision.cs.chubu.ac.jp/Proce55ing/Programming/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2003</date>
+        <institution>Ravensbourne School of Design and Communicaton</institution>
+        <title />
+        <description>Processing used in the Programming and Generative Visualisation Module of the MA Interactive Digital Media to explain basic concepts of computer programming, as well as ideas and strategies of more complex generative processes.</description>
+        <contact>
+            <name>David Muth</name>
+            <email>david@soda.co.uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>Ravensbourne</title>
+                <url>http://www.rave.ac.uk/</url>
+            </link>
+            <link>
+                <title>MA Interactive Digital Media</title>
+                <url>http://www.rave.ac.uk/postgrad/pg_idm.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>19 May 2003</date>
+        <institution />
+        <title>Cologne Academy of Media Arts (Kunsthochschule für Medien Köln)</title>
+        <description>One day Processing workshop focusing on basic concepts of variables, loops, conditionals, and responding to the mouse.</description>
+        <contact>
+            <name>Boris Müller</name>
+            <email>boris@esono.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>KHM website</title>
+                <url>http://www.khm.de/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>3 May - 31 May 2003</date>
+        <institution>Ateneo de Manila University</institution>
+        <title>Computational Media Design Workshop</title>
+        <description>Five week workshop introducing principles of computing and visual arts. Processing is used as the base software for instruction. Final projects from this workshop featured in DECODE exhibition of the Ateneo Art Gallery.</description>
+        <contact>
+            <name>Martin Gomez</name>
+            <email>martin@decode.ateneo.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Ateneo de Manila University</title>
+                <url>http://www.ateneo.edu/</url>
+            </link>
+            <link>
+                <title>Workshop website</title>
+                <url>http://decode.ateneo.edu/csvaxxx</url>
+            </link>
+            <link>
+                <title>DECODE</title>
+                <url>http://decode.ateneo.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>18-20 April 2003</date>
+        <institution>Interactive Media Art Laboratory</institution>
+        <title>Processing Workshop</title>
+        <description>Three day basic Processing workshop at iMAL in Brussels. An introduction to the fundamentals of computer programming within the context of images, drawing, animation, and responsive form.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>iMAL</title>
+                <url>http://www.imal.org/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>11 April 2003</date>
+        <institution>Universidad de Los Andes</institution>
+        <title>Processing Workshop</title>
+        <description>One day workshop in Bogota, Colombia introducing the Processing environment.</description>
+        <contact>
+            <name>Hernando Barragán</name>
+            <email>h.barragan@interaction-ivrea.it</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2003</date>
+        <institution>MIT</institution>
+        <title>Fundamentals of Computational Media Design</title>
+        <description>Introduces principles of analysis and synthesis in the computational medium. Expressive examples that illustrate the intersection of computation with the traditional arts are developed on a weekly basis. Hands-on design exercises are continually framed and examined in the larger context of contemporary digital art. Processing is used as one of many tools for creation.</description>
+        <contact>
+            <name>Ben Fry</name>
+            <email>fry@media.mit.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://acg.media.mit.edu/courses/mas110/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2003</date>
+        <institution>CCAC</institution>
+        <title>Investigative Studio, &apos;Programming Design&apos;</title>
+        <description>One semester course at the California College of Arts and Crafts using DBN and Processing, focusing on giving designers the programming skills to create simple tools to facilitate creative exploration.</description>
+        <contact>
+            <name>Krister Olsson</name>
+            <email>krister@tree-axis.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://www.tree-axis.com/pd_spring_2003</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>6 February- 3 July 2003</date>
+        <institution>Ecole Romande d&apos;Arts et Communication</institution>
+        <title>Concepteurs Multimedia</title>
+        <description>Processing used in the introduction to programming class for &apos;Concepteurs Multimedia&apos; at the Ecole Romande d&apos;Arts et Communication (Eracom) in Lausanne, Switzerland. The goal is to get the students comfortable with and excited about programming.</description>
+        <contact>
+            <name>Adrien Cater</name>
+            <email>adrien@boring.ch</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>9 February 2003</date>
+        <institution>Oslo School of Architecture</institution>
+        <title>Processing Workshop</title>
+        <description>One day workshop of exercises and lectures discussing critical issues of responsive software.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>AHO website</title>
+                <url>http://www.aho.no/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>8 February 2003</date>
+        <institution>New York University ITP</institution>
+        <title>Processing Workshop</title>
+        <description>One day workshop focusing on communicating Processing within the context of Macromedia Director and Flash.</description>
+        <contact>
+            <name>Joshua Nimoy</name>
+            <email>josh.nimoy@verizon.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>ITP website</title>
+                <url>http://itp.nyu.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>3-4 February 2003</date>
+        <institution>Transmediale.03</institution>
+        <title>Processing Workshop</title>
+        <description>Two five hour workshops taught by Casey Reas, Boris Müller, and Hernando Barragan. Processing was used as an environment for introducing basic element of computer programming to an audience of media artists and designers.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Transmediale website</title>
+                <url>http://www.transmediale.de/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>24 January 2003</date>
+        <institution>Interaction Ivrea</institution>
+        <title>Piemonte Programming Workshop</title>
+        <description>Participants in this five hour workshop were introduced to the fundamentals of computer programming within the context of visual form, drawing, and responsive form. All pariticipants were beginning programmers with some prior experience with Python or Design By Numbers.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Workshop website</title>
+                <url>http://processing.org/learning/courses/ivrea</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>7-17 January 2003</date>
+        <institution>HyperWerk FHBB</institution>
+        <title>Living Surfaces Part I &amp; II</title>
+        <description>Participants in this two week workshop were introduced to the fundamentals of computer programming within the context of images, drawing, animation, and responsive form.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Workshop website for Part I</title>
+                <url>http://processing.org/learning/courses/hyperwerk</url>
+            </link>
+            <link>
+                <title>Part II</title>
+                <url>http://processing.org/learning/courses/hyperwerk2/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Year project 2002-2003</date>
+        <institution>Sint Lucas Antwerpen</institution>
         <title>Dotornot</title>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2002</date>
-    <institution>N.Y.U Tisch School of Art</institution>
-    <title>Code And Me</title>
-    <description>The course helps graduate students of various backgrounds discover why and how they would use code in functional and expressive ways. Architects, Artists, Industrial Designers, Musicians, and Scientists will use Processing during the semester to establish a personal sensibility to coding.</description>
-    <contact>
-      <name>Amit Pitaru</name>
-      <email>amit@pitaru.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>ITP website</title>
-        <url>http://itp.nyu.edu/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>12 November 2002</date>
-    <institution>Royal Conservatory in The Hague</institution>
-    <title>Interfaculty Image and Sound, Processing Workshop</title>
-    <description>A one day workshop with the Interfaculty Image and Sound program at the Royal Conservatory in The Hague. Casey Reas, David Lu, Hernando Barragán, Davide Agnelli, Mathias Dahlström, Marc Escobosa, and Raphaël Meyer from Interaction Ivrea worked with a group of students to explain basic concepts of programming.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Interfaculty Image and Sound</title>
-        <url>http://www.interfaculty.nl/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>October 2002</date>
-    <institution>Interaction Ivrea</institution>
-    <title>Points and Pixels</title>
-    <description>A course in visual communication design for graduate students with backgrounds in engineering and humanities disciplines. Processing was used as a tool for integrating existing programming skills with emerging visual skills.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Course website</title>
-        <url>http://courses.interaction-ivrea.it/pointsandpixels/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2002</date>
-    <institution>Parsons School of Design</institution>
-    <title>Java I</title>
-    <description>Processing was used to introduce students to basic programming concepts and to ease them into the Java language in this introductory programming course.</description>
-    <contact>
-      <name>Zach Lieberman</name>
-      <email>zlieb@parsons.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>22-23 April 2002</date>
-    <institution>ENSCI Les Atelier</institution>
-    <title>Workshop Algorithmique</title>
-    <description>Twenty-six design students from ENSCI, ENCAD, and a few members of Hyptique participated in this two day Parisian workshop taught by Casey Reas, Ben Fry, and Peter Cho.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Workshop images</title>
-        <url>http://processing.org/learning/courses/lesateliers_images.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>12-15 January 2002</date>
-    <institution>HyperWerk FHBB</institution>
-    <title>Interactive Image Workshop</title>
-    <description>Fifteen students participated in a one week workshop taught by Casey Reas in Basel, Switzerland. Hundreds of programs were written and the spirit of Jean Tinguely was in the air.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title>Workshop images</title>
-        <url>http://processing.org/learning/courses/hyperwerk_images.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Spring 2002</date>
-    <institution>Parsons School of Design</institution>
-    <title>Audiovisual Systems and Machines</title>
-    <description>Graduate students in Golan Levin's AVSYS course at Parsons spent two weeks exploring abstract animation in Processing.</description>
-    <contact>
-      <name>Golan Levin</name>
-      <email>golan@flong.com</email>
-    </contact>
-    <links>
-      <link>
-        <title>Assignments</title>
-        <url>http://a.parsons.edu/%7Eavsys/homework6/</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>14-16 December 2001</date>
-    <institution>Interaction Design Institute Ivrea</institution>
-    <title/>
-    <description>Over the course of two evenings, ambitious students at Interaction Ivrea took part in an exploratory Processing workshop.</description>
-    <contact>
-      <name>Casey Reas</name>
-      <email>reas@groupc.net</email>
-    </contact>
-    <links>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
-  <course>
-    <date>Fall 2001</date>
-    <institution>MIT Media Laboratory</institution>
-    <title>Computational Media Design</title>
-    <description>Processing was used as tool for exploring the intersection of the physical and virtual in MAS968, a course in computational media design taught by John Maeda, Ben Fry, and Tom White.</description>
-    <contact>
-      <name>Ben Fry</name>
-      <email>fry@media.mit.edu</email>
-    </contact>
-    <links>
-      <link>
-        <title>Online exhibition</title>
-        <url>http://acg.media.mit.edu/courses/masxxx/people.html</url>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-      <link>
-        <title/>
-        <url/>
-      </link>
-    </links>
-  </course>
+        <description>Processing is used as a tool to do fundamental research on design and the language of form. Starting from the most fundamental element of design, the dot, we try to rebuild the rules of design using pure programming.</description>
+        <contact>
+            <name>Lucas Nijs</name>
+            <email>e.media@skynet.be</email>
+        </contact>
+        <links>
+            <link>
+                <title>Dotornot</title>
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2002</date>
+        <institution>N.Y.U Tisch School of Art</institution>
+        <title>Code And Me</title>
+        <description>The course helps graduate students of various backgrounds discover why and how they would use code in functional and expressive ways. Architects, Artists, Industrial Designers, Musicians, and Scientists will use Processing during the semester to establish a personal sensibility to coding.</description>
+        <contact>
+            <name>Amit Pitaru</name>
+            <email>amit@pitaru.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>ITP website</title>
+                <url>http://itp.nyu.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>12 November 2002</date>
+        <institution>Royal Conservatory in The Hague</institution>
+        <title>Interfaculty Image and Sound, Processing Workshop</title>
+        <description>A one day workshop with the Interfaculty Image and Sound program at the Royal Conservatory in The Hague. Casey Reas, David Lu, Hernando Barragán, Davide Agnelli, Mathias Dahlström, Marc Escobosa, and Raphaël Meyer from Interaction Ivrea worked with a group of students to explain basic concepts of programming.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Interfaculty Image and Sound</title>
+                <url>http://www.interfaculty.nl/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>October 2002</date>
+        <institution>Interaction Ivrea</institution>
+        <title>Points and Pixels</title>
+        <description>A course in visual communication design for graduate students with backgrounds in engineering and humanities disciplines. Processing was used as a tool for integrating existing programming skills with emerging visual skills.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://courses.interaction-ivrea.it/pointsandpixels/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2002</date>
+        <institution>Parsons School of Design</institution>
+        <title>Java I</title>
+        <description>Processing was used to introduce students to basic programming concepts and to ease them into the Java language in this introductory programming course.</description>
+        <contact>
+            <name>Zach Lieberman</name>
+            <email>zlieb@parsons.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>22-23 April 2002</date>
+        <institution>ENSCI Les Atelier</institution>
+        <title>Workshop Algorithmique</title>
+        <description>Twenty-six design students from ENSCI, ENCAD, and a few members of Hyptique participated in this two day Parisian workshop taught by Casey Reas, Ben Fry, and Peter Cho.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Workshop images</title>
+                <url>http://processing.org/learning/courses/lesateliers_images.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>12-15 January 2002</date>
+        <institution>HyperWerk FHBB</institution>
+        <title>Interactive Image Workshop</title>
+        <description>Fifteen students participated in a one week workshop taught by Casey Reas in Basel, Switzerland. Hundreds of programs were written and the spirit of Jean Tinguely was in the air.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Workshop images</title>
+                <url>http://processing.org/learning/courses/hyperwerk_images.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2002</date>
+        <institution>Parsons School of Design</institution>
+        <title>Audiovisual Systems and Machines</title>
+        <description>Graduate students in Golan Levin&apos;s AVSYS course at Parsons spent two weeks exploring abstract animation in Processing.</description>
+        <contact>
+            <name>Golan Levin</name>
+            <email>golan@flong.com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Assignments</title>
+                <url>http://a.parsons.edu/%7Eavsys/homework6/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>14-16 December 2001</date>
+        <institution>Interaction Design Institute Ivrea</institution>
+        <title />
+        <description>Over the course of two evenings, ambitious students at Interaction Ivrea took part in an exploratory Processing workshop.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas@groupc.net</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2001</date>
+        <institution>MIT Media Laboratory</institution>
+        <title>Computational Media Design</title>
+        <description>Processing was used as tool for exploring the intersection of the physical and virtual in MAS968, a course in computational media design taught by John Maeda, Ben Fry, and Tom White.</description>
+        <contact>
+            <name>Ben Fry</name>
+            <email>fry@media.mit.edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Online exhibition</title>
+                <url>http://acg.media.mit.edu/courses/masxxx/people.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
 </courses>
