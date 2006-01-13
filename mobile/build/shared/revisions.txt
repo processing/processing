@@ -8,6 +8,10 @@ ABOUT REV 0002 -
 
 - Net Client library is now part of the standard core features as PClient.
 
+- Xml library added.
+
+- Proguard obfuscation/pruning/shrinking added on export.
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 ABOUT REV 0001 - 02 November 2005
