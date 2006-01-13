@@ -8,21 +8,8 @@ import com.lowagie.text.pdf.*;
 
 import processing.core.*;
 
-  // need to concatenate the first two frames together..
-  // that a begin/endFrame when frameCount == 0 shouldn't really count
-
-  // may need an alternative version of this so that
-  // recordFrame(pgpdf, "filename.pdf") would work
-  // this would also help the savePath() situation
-  // since it would be a call inside PApplet
-
 
 public class PGraphicsPDF extends PGraphics2 {
-
-  // recording api.. allow multiple frames per file?
-  // would be the case for video, or for pdf
-
-  //static public String filename;
 
   File temp;
   int frameCount;
@@ -32,7 +19,6 @@ public class PGraphicsPDF extends PGraphics2 {
   PdfContentByte content;
   PdfTemplate tp;
   DefaultFontMapper mapper;
-
 
   // BaseFont baseFont = mapper.awtToPdf(java.awt.Font awtFont)
 
@@ -56,9 +42,9 @@ public class PGraphicsPDF extends PGraphics2 {
                                  "for the location of the output file.");
     }
 
-    if (applet != null) {
-      applet.registerDispose(this);
-    }
+    //if (applet != null) {
+    //  applet.registerDispose(this);
+    //}
 
     //System.out.println("making " + path);
 
@@ -92,17 +78,6 @@ public class PGraphicsPDF extends PGraphics2 {
       System.out.println((String) i.next());
     }
     */
-  }
-
-
-  public void dispose() {
-    //System.out.println("calling dispose");
-    if (document != null) {
-      g2.dispose();
-      document.close();  // can't be done in finalize, not always called
-      document = null;
-    }
-    //new Exception().printStackTrace(System.out);
   }
 
 
@@ -181,7 +156,6 @@ public class PGraphicsPDF extends PGraphics2 {
       //g2 = content.createGraphics(width, height);
       g2 = content.createGraphicsShapes(width, height);
     }
-
     super.beginFrame();
   }
 
@@ -239,6 +213,17 @@ public class PGraphicsPDF extends PGraphics2 {
   }
 
 
+  public void dispose() {
+    //System.out.println("calling dispose");
+    if (document != null) {
+      g2.dispose();
+      document.close();  // can't be done in finalize, not always called
+      document = null;
+    }
+    //new Exception().printStackTrace(System.out);
+  }
+
+
   /*
   protected void finalize() throws Throwable {
     System.out.println("calling finalize");
@@ -250,6 +235,7 @@ public class PGraphicsPDF extends PGraphics2 {
   //////////////////////////////////////////////////////////////
 
 
+  /*
   public void endRecord() {
     super.endRecord();
     dispose();
@@ -263,6 +249,7 @@ public class PGraphicsPDF extends PGraphics2 {
     dispose();
     System.out.println("done");
   }
+  */
 
 
   //////////////////////////////////////////////////////////////

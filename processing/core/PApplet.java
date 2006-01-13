@@ -2170,6 +2170,8 @@ public class PApplet extends Applet
       return;
     }
 
+    g.save(savePath(insertFrame(what)));
+    /*
     int first = what.indexOf('#');
     int last = what.lastIndexOf('#');
 
@@ -2182,6 +2184,7 @@ public class PApplet extends Applet
       String suffix = what.substring(last + 1);
       g.save(savePath(prefix + nf(frameCount, count) + suffix));
     }
+    */
   }
 
 
@@ -5843,19 +5846,20 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-  public void beginRecord(PGraphics recorder) {
-    this.recorder = recorder;
-    recorder.beginRecord();
-    //recorder.beginFrame();
-  }
-
-
   public PGraphics beginRecord(String renderer, String filename) {
     //this.recorder = createGraphics(width, height, renderer, filename);
     //recorder.beginFrame();
+    filename = insertFrame(filename);
     PGraphics rec = createGraphics(width, height, renderer, filename);
     beginRecord(rec);
     return rec;
+  }
+
+
+  public void beginRecord(PGraphics recorder) {
+    this.recorder = recorder;
+    //recorder.beginRecord();
+    recorder.beginFrame();
   }
 
 
@@ -5863,8 +5867,9 @@ public class PApplet extends Applet
     //println("endRecord()");
     //if (!recorderNull) {
     if (recorder != null) {
-      recorder.endRecord();
-      //recorder.endFrame();
+      //recorder.endRecord();
+      recorder.endFrame();
+      recorder.dispose();
       recorder = null;
     }
   }
@@ -5872,6 +5877,7 @@ public class PApplet extends Applet
 
   public PGraphics beginRaw(String renderer, String filename) {
     //filename = savePath(filename);  // ensure an absolute path
+    filename = insertFrame(filename);
     PGraphics rec = createGraphics(width, height, renderer, filename);
     //g.recordRaw(rec);
     g.beginRaw(rec);
@@ -5879,6 +5885,28 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Check a string for #### signs to see if the frame number should be
+   * inserted. Used for functions like saveFrame() and beginRecord() to
+   * replace the # marks with the frame number. If only one # is used,
+   * it will be ignored, under the assumption that it's probably not
+   * intended to be the frame number.
+   */
+  public String insertFrame(String what) {
+    int first = what.indexOf('#');
+    int last = what.lastIndexOf('#');
+
+    if ((first != -1) && (last - first > 0)) {
+      String prefix = what.substring(0, first);
+      int count = last - first + 1;
+      String suffix = what.substring(last + 1);
+      return prefix + nf(frameCount, count) + suffix;
+    }
+    return what;  // no change
+  }
+
+
+  /*
   public void beginRaw(PGraphics recorderRaw) {
     g.beginRaw(recorderRaw);
   }
@@ -5887,6 +5915,7 @@ public class PApplet extends Applet
   public void endRaw() {
     g.endRaw();
   }
+  */
 
   /*
   public void endRaw() {
@@ -7031,5 +7060,17 @@ public class PApplet extends Applet
 
   public final float brightness(int what) {
     return g.brightness(what);
+  }
+
+
+  public void beginRaw(PGraphics raw) {
+    if (recorder != null) recorder.beginRaw(raw);
+    g.beginRaw(raw);
+  }
+
+
+  public void endRaw() {
+    if (recorder != null) recorder.endRaw();
+    g.endRaw();
   }
 }
