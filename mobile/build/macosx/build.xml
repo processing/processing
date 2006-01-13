@@ -133,9 +133,15 @@
             <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}/Processing ${svn.tag.processing.short}.app"/>
         </move>
         <!-- rename directories -->
-        <move todir="processing/build/macosx/mobile-${mobile.version}">
+        <move todir="processing/build/macosx/mobile-${mobile.version}/Mobile ${mobile.version}">
             <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
         </move>
+        <!-- execute mkdmg to create archive -->
+        <exec executable="/bin/bash">
+            <arg value="--login"/>
+            <arg value="-c"/>
+            <arg value="cd ${parent.dir}/processing/build/macosx; ./mkdmg mobile-${mobile.version}"/>
+        </exec>
     </target>
     
     <target name="run" depends="init">
