@@ -534,6 +534,9 @@ public class PApplet extends Applet
     if (thread == null) return;
     thread = null;
 
+    // call to shut down renderer, in case it needs it (pdf does)
+    if (g != null) g.dispose();
+
     disposeMethods.handle();
   }
 
@@ -1175,9 +1178,6 @@ public class PApplet extends Applet
       }
 
     } catch (Exception e) {
-      // formerly in kjcapplet, now just checks to see
-      // if someone wants to leech off errors
-
       // note that this will not catch errors inside setup()
       // those are caught by the PdeRuntime
 

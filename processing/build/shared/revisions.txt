@@ -7,6 +7,17 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0101 - 14 January 2005
+
+Something I said about quick releases to follow...
+
+0101 fixes a bug in 0100 that prevented output from working properly 
+when the size() command was used to specify PDF rendering.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0100 - 13 January 2005
 
 This is a pre-release of the PDF generating code. There will be a couple 
