@@ -1,3 +1,25 @@
+0100 core
+X user.dir wasn't getting set properly
+X when graphics can be resized, resize rather than creating new context
+X change savePath() et al a great deal, include better docs
+X   http://dev.processing.org/bugs/show_bug.cgi?id=199
+
+get initial version of pdf working
+X get rid of beginFrame/endFrame echo to recorders?
+X   that way begin/end can just be where the recorder starts/stops?
+X recordRaw is really confusing.. 
+X   when to use beginFrame/endFrame
+X   is beginRaw/endRaw really needed?
+X   seems to be a problem that it's an applet method
+X   but then it's called on the g of the applet
+X   but then it's the recorderRaw of that g that gets it called.. 
+X how to flush when the sketch is done
+X   inside dispose method? explicit close?
+X   call exit() at end of pdf apps? exit calls dispose on gfx?
+X beginRecord() and endRecord() so that record doesn't stop after frame?
+X enable PGraphicsPDF for inclusion
+
+
 0099 core
 X removed playing() method from PSound
 X integrate destroy() method from shiffman as dispose() in PSound2
