@@ -1,3 +1,9 @@
+0100 pde
+X missing import PApplet in library howto.txt
+X   http://dev.processing.org/bugs/show_bug.cgi?id=263
+X switch to using date as default for archive sketch
+
+
 0099 pde
 X make buttons for editor status taller on macosx
 X   also fix the editor text field placement a bit
