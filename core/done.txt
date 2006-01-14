@@ -18,6 +18,7 @@ X   inside dispose method? explicit close?
 X   call exit() at end of pdf apps? exit calls dispose on gfx?
 X beginRecord() and endRecord() so that record doesn't stop after frame?
 X enable PGraphicsPDF for inclusion
+X write documentation on images (they suck) and fonts (use ttf)
 
 
 0099 core
