@@ -1,8 +1,4 @@
-0100 pde
-X missing import PApplet in library howto.txt
-X   http://dev.processing.org/bugs/show_bug.cgi?id=263
-X switch to using date as default for archive sketch
-
+0101 pde
 _ need method for showing prefs for the tools
 _   add pref to handle date vs. increment on archive sketch
 
