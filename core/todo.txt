@@ -1,11 +1,16 @@
 0101 core
 
-more pdf stuff for 0101
+more pdf/recording stuff
 _ don't open a window the size of the pdf if in pdf mode
 _   need to have some sort of flag in the gfx context that it's visible or not
 _   handled inside updateSize()?
 _ make dxf writer that'll work with recordRaw()
-_ write documentation on images (they suck) and fonts (use ttf)
+
+_ add option to sort triangles back to front so alpha works
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
+_ polygon z-order with alpha in opengl
+_   at least add it to the faq, or this would be a test case w/ the sorting
+_   http://dev.processing.org/bugs/show_bug.cgi?id=176
 
 _ check min/max texture sizes when binding to avoid problems
 _   minimum texture size may be 64x64
@@ -554,8 +559,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 _ Stroking a rect() leaves off the upper right pixel
 _ PPolygon no longer in use and PLine is a mess
 _   make a version of PGraphics3 that uses it for more accurate rendering?
-_ add option to sort triangles back to front so alpha works
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
 _ texture mapping
 _   very odd, "doom era" stuff
 _   would it be possible to have a 'slow but accurate' mode?
@@ -657,9 +660,6 @@ _   leave smooth off, get the gl object, then enable line smooth
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _ gl points not working again
-_ polygon z-order with alpha in opengl
-_   at least add it to the faq, or this would be a test case w/ the sorting
-_   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _ invocationtargetexception in gl with aioobe:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
 _ don't let users with java < 1.4 load OPENGL
