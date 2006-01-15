@@ -1,3 +1,7 @@
+0101 pde
+X no changes, only dipose() method fix for pdf
+
+
 0100 pde
 X missing import PApplet in library howto.txt
 X   http://dev.processing.org/bugs/show_bug.cgi?id=263
