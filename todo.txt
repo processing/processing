@@ -1,4 +1,12 @@
-0101 pde
+0102 pde
+
+_ QTJAVA with quotes has issues on win2k vpc.. should have been fixed already
+_ p5's exe has trouble when PATH has quotes (or spaces?)
+_   detect bad classpath or path settings
+_   some sort of path/classpath tester/fixer app for windows
+_   that " norton" thing in the path makes things a mess
+_   http://dev.processing.org/bugs/show_bug.cgi?id=112
+_   CLASSPATH figured out what to do with quotes, but not PATH
 
 _ need method for showing prefs for the tools
 _   add pref to handle date vs. increment on archive sketch
@@ -680,13 +688,6 @@ _   and include an md5hash to see if the file is correct
 
 DIST / Windows
 
-_ p5's exe has trouble when PATH has quotes (or spaces?)
-_   detect bad classpath or path settings
-_   some sort of path/classpath tester/fixer app for windows
-_   that " norton" thing in the path makes things a mess
-_   http://dev.processing.org/bugs/show_bug.cgi?id=112
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068388889
-_   CLASSPATH figured out what to do with quotes, but not PATH
 _ tie .pde files as documents of the application
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
 _   figure out proper registry key for windows
