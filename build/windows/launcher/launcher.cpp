@@ -23,39 +23,36 @@ void removeLineEndings(char *what);
 int STDCALL
 WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 {
-  // all these malloc statements... things may need to be larger.
+  // command line that was passed to this application
+  char *incoming_cmd_line = (char *)malloc(strlen(lpCmd + 1) * sizeof(char));
+  strcpy(incoming_cmd_line, lpCmd);
 
-  // what was passed to this application
-  char *incoming_cmdline = (char *)malloc(strlen(lpCmd) * sizeof(char));
-  strcpy (incoming_cmdline, lpCmd);
-
-  // append the classpath and launcher.Application
-  char *loaddir = (char *)malloc(MAX_PATH * sizeof(char));
-  *loaddir = 0;
-
-  GetModuleFileName(NULL, loaddir, MAX_PATH);
+  // get the full path to the application that was launched,
+  // drop the app name but keep the path
+  char *exe_directory = (char *)malloc(MAX_PATH * sizeof(char));
+  //*exe_directory = 0;
+  GetModuleFileName(NULL, exe_directory, MAX_PATH);
   // remove the application name
-  *(strrchr(loaddir, '\\')) = '\0';
+  *(strrchr(exe_directory, '\\')) = '\0';
 
-  //
 
   // open the file that contains the main class name and java args
 
-  char *argsfilepath = (char*) 
-    malloc(strlen(loaddir) * sizeof(char) + 
+  char *args_file_path = (char*) 
+    malloc(strlen(exe_directory) * sizeof(char) + 
            strlen(ARGS_FILE_PATH) * sizeof(char) + 1);
-  strcpy(argsfilepath, loaddir);
-  strcat(argsfilepath, ARGS_FILE_PATH);
+  strcpy(args_file_path, exe_directory);
+  strcat(args_file_path, ARGS_FILE_PATH);
 
-  char javaArgs[512];
-  char javaMainClass[512];
-  char jarList[512];
-  char *app_classpath = (char *)malloc(10 * strlen(loaddir) + 4096);
+  char java_args[512];
+  char java_main_class[512];
+  char jar_list[512];
+  char *app_classpath = (char *)malloc(10 * strlen(exe_directory) + 4096);
 
-  FILE *argsfile = fopen(argsfilepath, "r");
+  FILE *argsfile = fopen(args_file_path, "r");
   if (argsfile == NULL) {  // won't exist for processing.exe
-    strcpy(javaArgs, "-Xms128m -Xmx128m");
-    strcpy(javaMainClass, "processing.app.Base");
+    strcpy(java_args, "-Xms128m -Xmx128m");
+    strcpy(java_main_class, "processing.app.Base");
     sprintf(app_classpath, 
             "%s\\lib;"
             "%s\\lib\\build;"
@@ -65,42 +62,39 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
             "%s\\lib\\oro.jar;"
             "%s\\lib\\registry.jar;"
             "%s\\lib\\antlr.jar;",
-            loaddir, loaddir, loaddir, loaddir, 
-            loaddir, loaddir, loaddir, loaddir);
+            exe_directory, exe_directory, exe_directory, exe_directory, 
+            exe_directory, exe_directory, exe_directory, exe_directory);
   } else {
-    fgets(javaArgs, 511, argsfile);
-    removeLineEndings(javaArgs);
-    fgets(javaMainClass, 511, argsfile);
-    removeLineEndings(javaMainClass);
-    fgets(jarList, 511, argsfile);
-    removeLineEndings(jarList);
+    fgets(java_args, 511, argsfile);
+    removeLineEndings(java_args);
+    fgets(java_main_class, 511, argsfile);
+    removeLineEndings(java_main_class);
+    fgets(jar_list, 511, argsfile);
+    removeLineEndings(jar_list);
 
-    //MessageBox(NULL, javaArgs, "args",  MB_OK);
-    //MessageBox(NULL, javaMainClass, "class", MB_OK);
-    //MessageBox(NULL, jarList, "jarlist", MB_OK);
+    //MessageBox(NULL, java_args, "args",  MB_OK);
+    //MessageBox(NULL, java_main_class, "class", MB_OK);
+    //MessageBox(NULL, jar_list, "jarlist", MB_OK);
 
     app_classpath[0] = 0;
-    char *jar = (char*) strtok(jarList, ",");
+    char *jar = (char*) strtok(jar_list, ",");
     while (jar != NULL) {
-      //MessageBox(NULL, jar, "entry 1", MB_OK);      
       char entry[1024];
-      sprintf(entry, "%s\\lib\\%s;", loaddir, jar);
-      //MessageBox(NULL, entry, "entry 2", MB_OK);      
+      sprintf(entry, "%s\\lib\\%s;", exe_directory, jar);
       strcat(app_classpath, entry);
       jar = (char*) strtok(NULL, ",");
     }
-    //MessageBox(NULL, app_classpath, "app cp", MB_OK);
     fclose(argsfile);
   }
 
   //  
 
-  char *cp = (char *)malloc(10 * strlen(loaddir) + 4096);
+  char *cp = (char *)malloc(10 * strlen(exe_directory) + 4096);
 
   // test to see if running with a java runtime nearby or not
   char *testpath = (char *)malloc(MAX_PATH * sizeof(char));
   *testpath = 0;
-  strcpy(testpath, loaddir);
+  strcpy(testpath, exe_directory);
   strcat(testpath, "\\java\\bin\\java.exe");
   FILE *fp = fopen(testpath, "rb");
   int local_jre_installed = (fp != NULL);
@@ -108,11 +102,11 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   if (fp != NULL) fclose(fp); // argh! this was probably causing trouble
 
   //const char *envClasspath = getenv("CLASSPATH");
-  char *env_classpath = (char *)malloc(16384 * sizeof(char));
+  //char *env_classpath = (char *)malloc(16384 * sizeof(char));
 
   // ignoring CLASSPATH for now, because it's not needed
   // and causes more trouble than it's worth [0060]
-  env_classpath[0] = 0;
+  //env_classpath[0] = 0;
 
   /*
   // keep this code around since may be re-enabled later
@@ -144,6 +138,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   if (getenv("QTJAVA") != NULL) {
     char *qtjava_temp = (char *)malloc(16384 * sizeof(char));
     strcpy(qtjava_temp, getenv("QTJAVA"));
+    MessageBox(NULL, qtjava_temp, "QTJAVA", MB_OK);
     if (qtjava_temp[0] == '\"') {  // has quotes
       // remove quotes by subsetting string by two
       strncpy(qtjava_path, &qtjava_temp[1], strlen(qtjava_temp) - 2);
@@ -158,6 +153,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     } else {
       qtjava_path[0] = 0; // not a valid path
     }
+  } else {
+    MessageBox(NULL, "no qtjava set", "mess", MB_OK);
   }
 
   if (qtjava_path[0] == 0) {  // not set yet
@@ -203,14 +200,16 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
   strcpy(cp, app_classpath);
   if (local_jre_installed) {
-    char localjre[512];
-    printf(localjre, "%s\\java\\lib\\rt.jar;", loaddir);
-    strcat(cp, localjre);
+    char local_jre[512];
+    printf(local_jre, "%s\\java\\lib\\rt.jar;", exe_directory);
+    strcat(cp, local_jre);
   }
   strcat(cp, qtjava_path);
-  strcat(cp, env_classpath);
+  //strcat(cp, env_classpath);
 
-  if (!SetEnvironmentVariable("CLASSPATH", cp)) {
+  char *clean_cp = scrubPath(cp);
+  //if (!SetEnvironmentVariable("CLASSPATH", cp)) {
+  if (!SetEnvironmentVariable("CLASSPATH", clean_cp)) {
     MessageBox(NULL, "Could not set CLASSPATH environment variable",
                "Processing Error", MB_OK);
     return 0;
@@ -220,8 +219,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   if (local_jre_installed) {
     char *env_path = (char *)malloc(strlen(getenv("PATH")) * sizeof(char));
     strcpy(env_path, getenv("PATH"));
-    char *paf = (char *)malloc((strlen(env_path) + strlen(loaddir) + 32) * sizeof(char));
-    sprintf(paf, "%s\\java\\bin;%s", loaddir, env_path);
+    char *paf = (char *)malloc((strlen(env_path) + strlen(exe_directory) + 32) * sizeof(char));
+    sprintf(paf, "%s\\java\\bin;%s", exe_directory, env_path);
 
     if (!SetEnvironmentVariable("PATH", paf)) {
       MessageBox(NULL, "Could not set PATH environment variable",
@@ -231,27 +230,27 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   }
 
   // what gets put together to pass to jre
-  char *outgoing_cmdline = (char *)malloc(16384 * sizeof(char));
+  char *outgoing_cmd_line = (char *)malloc(16384 * sizeof(char));
 
   // prepend the args for -mx and -ms
-  strcpy(outgoing_cmdline, javaArgs);
-  strcat(outgoing_cmdline, " ");
+  strcpy(outgoing_cmd_line, java_args);
+  strcat(outgoing_cmd_line, " ");
 
   // add the name of the class to execute and a space before the next arg
-  strcat(outgoing_cmdline, javaMainClass);
-  strcat(outgoing_cmdline, " ");
+  strcat(outgoing_cmd_line, java_main_class);
+  strcat(outgoing_cmd_line, " ");
 
   // append additional incoming stuff (document names), if any
-  strcat(outgoing_cmdline, incoming_cmdline);
+  strcat(outgoing_cmd_line, incoming_cmd_line);
 
-  //MessageBox(NULL, outgoing_cmdline, "cmdline", MB_OK);
+  //MessageBox(NULL, outgoing_cmd_line, "cmd_line", MB_OK);
 
-  char *executable = (char *)malloc((strlen(loaddir) + 256) * sizeof(char));
-  // loaddir is the name path to the current application
+  char *executable = 
+    (char *)malloc((strlen(exe_directory) + 256) * sizeof(char));
+  // exe_directory is the name path to the current application
 
-  //if (localJreInstalled) {
   if (local_jre_installed) {
-    strcpy(executable, loaddir);
+    strcpy(executable, exe_directory);
     // copy in the path for javaw, relative to launcher.exe
     strcat(executable, "\\java\\bin\\javaw.exe");
   } else {
@@ -266,8 +265,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   ShExecInfo.hwnd = 0;
   ShExecInfo.lpVerb = "open";
   ShExecInfo.lpFile = executable;
-  ShExecInfo.lpParameters = outgoing_cmdline;
-  ShExecInfo.lpDirectory = loaddir;
+  ShExecInfo.lpParameters = outgoing_cmd_line;
+  ShExecInfo.lpDirectory = exe_directory;
   ShExecInfo.nShow = SW_SHOWNORMAL;
   ShExecInfo.hInstApp = NULL;
 
@@ -316,4 +315,35 @@ void removeLineEndings(char *what) {
       return;
     }
   }
+}
+
+// take a PATH environment variable, split on semicolons, 
+// remove extraneous quotes, perhaps even make 8.3 syntax if necessary
+char *scrubPath(char *incoming) {
+  char *cleaned = mallocChars(strlen(incoming) * 2);
+
+  int found = 0;
+  char *p = (char*) strtok(incoming, ";");
+  while (p != NULL) {
+    char entry[1024]; 
+    if (*p == '\"') {
+      // if this segment of the path contains quotes, remove them
+      strncpy(entry, &p[1], strlen(p) - 2);
+      // if it doesn't actually end with a quote, then the person 
+      // is screwed anyway.. they can deal with that themselves
+    } else {
+      strcpy(entry, p);
+    }
+    // TODO if this path doesn't exist, don't add it
+    if (found) strcat(cleaned, ";");
+    strcat(cleaned, entry);
+  }
+}
+
+// eventually make this handle unicode
+char *mallocChars(int count) {
+  // add one for the terminator
+  char *outgoing = (char*) malloc(count * sizeof(char) + 1);
+  outgoing[0] = 0;  // for safety
+  return outgoing;
 }
