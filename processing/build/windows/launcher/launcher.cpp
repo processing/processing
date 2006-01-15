@@ -19,6 +19,9 @@
 
 
 void removeLineEndings(char *what);
+char *scrubPath(char *incoming);
+char *mallocChars(int count);
+
 
 int STDCALL
 WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
@@ -214,19 +217,24 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
                "Processing Error", MB_OK);
     return 0;
   }
-  
+
+  //char *env_path = (char *)malloc(strlen(getenv("PATH")) * sizeof(char));
+  //char *env_path = mallocChars(strlen(getenv("PATH")));
+  //strcpy(env_path, getenv("PATH"));
+  char *env_path; 
+
   // need to add the local jre to the path for 'java mode' in the env
   if (local_jre_installed) {
-    char *env_path = (char *)malloc(strlen(getenv("PATH")) * sizeof(char));
-    strcpy(env_path, getenv("PATH"));
-    char *paf = (char *)malloc((strlen(env_path) + strlen(exe_directory) + 32) * sizeof(char));
-    sprintf(paf, "%s\\java\\bin;%s", exe_directory, env_path);
+    env_path = mallocChars(strlen(getEnv(PATH)) + strlen(exe_directory) + 30);
+    sprintf(env_path, "%s\\java\\bin;%s", exe_directory, env_path);
+  } else {
+    env_path = scrubPath(getenv("PATH"));
+  }
 
-    if (!SetEnvironmentVariable("PATH", paf)) {
-      MessageBox(NULL, "Could not set PATH environment variable",
-                 "Processing Error", MB_OK);
-      return 0;
-    }
+  if (!SetEnvironmentVariable("PATH", env_path)) {
+    MessageBox(NULL, "Could not set PATH environment variable",
+               "Processing Error", MB_OK);
+    return 0;
   }
 
   // what gets put together to pass to jre
@@ -243,7 +251,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // append additional incoming stuff (document names), if any
   strcat(outgoing_cmd_line, incoming_cmd_line);
 
-  //MessageBox(NULL, outgoing_cmd_line, "cmd_line", MB_OK);
+  MessageBox(NULL, outgoing_cmd_line, "cmd_line", MB_OK);
 
   char *executable = 
     (char *)malloc((strlen(exe_directory) + 256) * sizeof(char));
@@ -317,12 +325,13 @@ void removeLineEndings(char *what) {
   }
 }
 
+
 // take a PATH environment variable, split on semicolons, 
 // remove extraneous quotes, perhaps even make 8.3 syntax if necessary
 char *scrubPath(char *incoming) {
   char *cleaned = mallocChars(strlen(incoming) * 2);
 
-  int found = 0;
+  int found_so_far = 0;
   char *p = (char*) strtok(incoming, ";");
   while (p != NULL) {
     char entry[1024]; 
@@ -334,11 +343,20 @@ char *scrubPath(char *incoming) {
     } else {
       strcpy(entry, p);
     }
-    // TODO if this path doesn't exist, don't add it
-    if (found) strcat(cleaned, ";");
-    strcat(cleaned, entry);
+    // if this path doesn't exist, don't add it
+    WIN32_FIND_DATA find_file_data;
+    HANDLE hfind = FindFirstFile(argv[1], &find_file_data);
+    if (hfind != INVALID_HANDLE_VALUE) {
+      if (found_so_far) strcat(cleaned, ";");
+      strcat(cleaned, entry);
+      FindClose(hfind);
+      found_so_far = 1; 
+    }
   }
+  MessageBox(NULL, cleaned, "scrubPath", MB_OK);
+  return cleaned;
 }
+
 
 // eventually make this handle unicode
 char *mallocChars(int count) {
