@@ -7,6 +7,9 @@ X user.dir wasn't getting set properly
 X when graphics can be resized, resize rather than creating new context
 X change savePath() et al a great deal, include better docs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=199
+X   straighten out save() and saveFrame()
+o   use File object for when people know what they're doing?
+X   same issue occurs with pdf and creating graphics obj
 
 get initial version of pdf working
 X get rid of beginFrame/endFrame echo to recorders?
