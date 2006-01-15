@@ -6,10 +6,22 @@
 // so who knows where and when the quotes will show up. the code below is 
 // based on a couple years of trial and error with processing releases.
 
+// For revision 0102, a lot of changes were made to deal with stripping
+// the quotes from the PATH, CLASSPATH, and QTJAVA environment variables.
+// Any elements of the PATH and CLASSPATH that don't exist (whether files
+// or directories) are also stripped out before being set.
+// (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=112">Bug 112</A>)
+
 // The size of all of the strings was made sort of ambiguously large, since
 // 1) nothing is hurt by allocating an extra few bytes temporarily and
 // 2) if the user has a long path, and it gets copied five times over for the
-// classpath, the program runs the risk of crashing. Bad bad.
+// CLASSPATH, the program runs the risk of crashing. Bad bad.
+
+// TODO this code leaks memory all over the place because nothing has been
+//      done to properly handle creation/deletion of new strings. 
+
+// TODO switch to unicode versions of all methods in order to better support
+//      running on non-English (non-Roman especially) versions of Windows.
 
 #define ARGS_FILE_PATH "\\lib\\args.txt"
 
@@ -21,7 +33,7 @@
 void removeLineEndings(char *what);
 char *scrubPath(char *incoming);
 char *mallocChars(int count);
-
+void removeQuotes(char *quoted);
 
 int STDCALL
 WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
@@ -139,25 +151,35 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   qtjava_path[0] = 0;
 
   if (getenv("QTJAVA") != NULL) {
-    char *qtjava_temp = (char *)malloc(16384 * sizeof(char));
-    strcpy(qtjava_temp, getenv("QTJAVA"));
-    MessageBox(NULL, qtjava_temp, "QTJAVA", MB_OK);
+    //char *qtjava_temp = (char *)malloc(16384 * sizeof(char));
+    strcpy(qtjava_path, getenv("QTJAVA"));
+    removeQuotes(qtjava_path);
+
+    /*
+    //MessageBox(NULL, qtjava_temp, "QTJAVA", MB_OK);
     if (qtjava_temp[0] == '\"') {  // has quotes
       // remove quotes by subsetting string by two
-      strncpy(qtjava_path, &qtjava_temp[1], strlen(qtjava_temp) - 2);
+      int qtjava_repaired_length = strlen(qtjava_temp) - 2;
+      strncpy(qtjava_path, &qtjava_temp[1], qtjava_repaired_length);
+      // terminate the string since strncpy ain't gonna do it
+      qtjava_path[qtjava_repaired_length] = 0;
+      //MessageBox(NULL, qtjava_path, "QTJAVA", MB_OK);
     } else {
       strcpy(qtjava_path, getenv("QTJAVA"));
     }
+    */
+
     FILE *fp = fopen(qtjava_path, "rb");
     if (fp != NULL) {
       fclose(fp);  // found it, all set
       strcat(qtjava_path, ";"); // add path separator
       //MessageBox(NULL, "found 1", "msg", MB_OK);
+      //MessageBox(NULL, qtjava_path, "QTJAVA after strcat", MB_OK);
     } else {
       qtjava_path[0] = 0; // not a valid path
     }
-  } else {
-    MessageBox(NULL, "no qtjava set", "mess", MB_OK);
+    //} else {
+    //MessageBox(NULL, "no qtjava set", "mess", MB_OK);
   }
 
   if (qtjava_path[0] == 0) {  // not set yet
@@ -203,12 +225,15 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
   strcpy(cp, app_classpath);
   if (local_jre_installed) {
-    char local_jre[512];
-    printf(local_jre, "%s\\java\\lib\\rt.jar;", exe_directory);
+    char *local_jre = mallocChars(32 + strlen(exe_directory));
+    sprintf(local_jre, "%s\\java\\lib\\rt.jar;", exe_directory);
     strcat(cp, local_jre);
   }
   strcat(cp, qtjava_path);
   //strcat(cp, env_classpath);
+
+  //MessageBox(NULL, "scrubbing classpath", "scrubbing classpath", MB_OK);
+  //MessageBox(NULL, cp, "before scrubbing classpath", MB_OK);
 
   char *clean_cp = scrubPath(cp);
   //if (!SetEnvironmentVariable("CLASSPATH", cp)) {
@@ -218,20 +243,29 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     return 0;
   }
 
+  //MessageBox(NULL, "2", "checking", MB_OK);
+
   //char *env_path = (char *)malloc(strlen(getenv("PATH")) * sizeof(char));
-  //char *env_path = mallocChars(strlen(getenv("PATH")));
-  //strcpy(env_path, getenv("PATH"));
-  char *env_path; 
+
+  int env_path_length = strlen(getenv("PATH"));
+  char *env_path = mallocChars(env_path_length);
+  strcpy(env_path, getenv("PATH"));
+  char *clean_path;
 
   // need to add the local jre to the path for 'java mode' in the env
   if (local_jre_installed) {
-    env_path = mallocChars(strlen(getEnv(PATH)) + strlen(exe_directory) + 30);
-    sprintf(env_path, "%s\\java\\bin;%s", exe_directory, env_path);
+    char *path_to_clean = 
+      mallocChars(env_path_length + strlen(exe_directory) + 30);
+    sprintf(path_to_clean, "%s\\java\\bin;%s", exe_directory, env_path);
+    clean_path = scrubPath(path_to_clean);
   } else {
-    env_path = scrubPath(getenv("PATH"));
+    clean_path = scrubPath(getenv("PATH"));
   }
 
-  if (!SetEnvironmentVariable("PATH", env_path)) {
+  //MessageBox(NULL, clean_path, "after scrubbing PATH", MB_OK);
+  //MessageBox(NULL, "3", "checking", MB_OK);
+
+  if (!SetEnvironmentVariable("PATH", clean_path)) {
     MessageBox(NULL, "Could not set PATH environment variable",
                "Processing Error", MB_OK);
     return 0;
@@ -251,7 +285,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // append additional incoming stuff (document names), if any
   strcat(outgoing_cmd_line, incoming_cmd_line);
 
-  MessageBox(NULL, outgoing_cmd_line, "cmd_line", MB_OK);
+  //MessageBox(NULL, outgoing_cmd_line, "cmd_line", MB_OK);
 
   char *executable = 
     (char *)malloc((strlen(exe_directory) + 256) * sizeof(char));
@@ -334,26 +368,39 @@ char *scrubPath(char *incoming) {
   int found_so_far = 0;
   char *p = (char*) strtok(incoming, ";");
   while (p != NULL) {
-    char entry[1024]; 
+    char entry[1024];
+    /* 
     if (*p == '\"') {
       // if this segment of the path contains quotes, remove them
-      strncpy(entry, &p[1], strlen(p) - 2);
+      int fixed_length = strlen(p) - 2;
+      strncpy(entry, &p[1], fixed_length);
+      entry[fixed_length] = 0;
+      //MessageBox(NULL, entry, "clipped", MB_OK);      
+
       // if it doesn't actually end with a quote, then the person 
       // is screwed anyway.. they can deal with that themselves
     } else {
       strcpy(entry, p);
     }
+    */
+    strcpy(entry, p);
+    removeQuotes(entry);
+    //MessageBox(NULL, entry, "entry", MB_OK);
+
     // if this path doesn't exist, don't add it
     WIN32_FIND_DATA find_file_data;
-    HANDLE hfind = FindFirstFile(argv[1], &find_file_data);
+    HANDLE hfind = FindFirstFile(entry, &find_file_data);
     if (hfind != INVALID_HANDLE_VALUE) {
       if (found_so_far) strcat(cleaned, ";");
       strcat(cleaned, entry);
+      //MessageBox(NULL, cleaned, "cleaned so far", MB_OK);
       FindClose(hfind);
       found_so_far = 1; 
     }
+    // grab the next entry
+    p = (char*) strtok(NULL, ";");
   }
-  MessageBox(NULL, cleaned, "scrubPath", MB_OK);
+  //MessageBox(NULL, cleaned, "scrubPath", MB_OK);
   return cleaned;
 }
 
@@ -364,4 +411,24 @@ char *mallocChars(int count) {
   char *outgoing = (char*) malloc(count * sizeof(char) + 1);
   outgoing[0] = 0;  // for safety
   return outgoing;
+}
+
+
+void removeQuotes(char *quoted) {
+  int len = strlen(quoted);
+  // remove quote at the front
+  if (quoted[0] == '\"') {
+    for (int i = 0; i < len - 1; i++) {
+      quoted[i] = quoted[i+1];
+    }
+    len--;
+    quoted[len] = 0;
+  }
+  // remove quote at the end
+  if (len > 1) {
+    if (quoted[len - 1] == '\"') {
+      len--;
+      quoted[len] = 0;
+    }
+  }
 }
