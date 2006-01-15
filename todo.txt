@@ -1,12 +1,11 @@
 0102 pde
-
-_ p5's exe has trouble when PATH has quotes (or spaces?)
-_   detect bad classpath or path settings
-_   some sort of path/classpath tester/fixer app for windows
-_   that " norton" thing in the path makes things a mess
+X p5's exe has trouble when PATH has quotes (or spaces?)
+X   detect bad classpath or path settings
+X   some sort of path/classpath tester/fixer app for windows
+X   that " norton" thing in the path makes things a mess
 _   http://dev.processing.org/bugs/show_bug.cgi?id=112
-_   CLASSPATH figured out what to do with quotes, but not PATH
-_     quotes has issues on win2k vpc.. useful testbed
+X   CLASSPATH figured out what to do with quotes, but not PATH
+X     quotes has issues on win2k vpc.. useful testbed
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
