@@ -1,16 +1,25 @@
-0101 core
+0102 core
+
+X straighten out save() and saveFrame()
+o   use File object for when people know what they're doing?
+X   same issue occurs with pdf and creating graphics obj
 
 more pdf/recording stuff
 _ don't open a window the size of the pdf if in pdf mode
 _   need to have some sort of flag in the gfx context that it's visible or not
 _   handled inside updateSize()?
 _ make dxf writer that'll work with recordRaw()
+_ document how to switch to next page
+_   maybe background() should do this automatically?
 
 _ add option to sort triangles back to front so alpha works
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
 _ polygon z-order with alpha in opengl
 _   at least add it to the faq, or this would be a test case w/ the sorting
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
+
+_ loadImage("") produces weird error message
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
 
 _ check min/max texture sizes when binding to avoid problems
 _   minimum texture size may be 64x64
@@ -24,18 +33,11 @@ _ on osx, System.err isn't writing in things like createGraphics()
 _   but doing a printStackTrace(System.out) works
 _   something weird happening with one of the streams shutting down?
 
-_ registering font directories in pdf.. is it necessary? 
-_   (commented out for 0100)
-
+check to see if these are working
 _ when re-calling size() with opengl, need to remove the old canvas
 _   need to check to see if this is working properly now
-
-_ straighten out save() and saveFrame()
-_   use File object for when people know what they're doing?
-_   same issue occurs with pdf and creating graphics obj
-
-_ loadImage("") produces weird error message
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
+_ registering font directories in pdf.. is it necessary? 
+_   (commented out for 0100)
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

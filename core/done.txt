@@ -1,3 +1,7 @@
+0101 core
+X add dispose() call to the shutdown part of PApplet
+
+
 0100 core
 X user.dir wasn't getting set properly
 X when graphics can be resized, resize rather than creating new context
