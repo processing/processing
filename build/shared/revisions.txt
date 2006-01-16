@@ -7,6 +7,21 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0102 - 15 January 2005
+
+Windows-only release to repair issues that prevent Processing from 
+working properly when the PATH, CLASSPATH, and QTJAVA environment 
+variables have spaces or quotes. 
+
+references: 
+http://dev.processing.org/bugs/show_bug.cgi?id=112
+http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114040731
+http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114153542
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0101 - 14 January 2005
 
 Something I said about quick releases to follow...
