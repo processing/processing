@@ -7,12 +7,12 @@ Flashes the backlight of the display for the specified duration. Returns <b>true
 </description>
 
 <syntax>
-hs.flash(<c>duration</c>)
+p.flash(<c>duration</c>)
 </syntax>
 
 <parameter>
-<label>hs</label>
-<description>Handset: any variable of type Handset</description>
+<label>p</label>
+<description>Phone: any variable of type Phone</description>
 </parameter>
 
 <parameter>

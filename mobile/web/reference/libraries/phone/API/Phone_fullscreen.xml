@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>fullscreen()</name>
+
+<description>
+Enables fullscreen output on the phone display. Note that some indicators may still be visible at the top or bottom of the display, depending upon the make and model.
+</description>
+
+<syntax>
+p.fullscreen();
+</syntax>
+
+<parameter>
+<label>p</label>
+<description>Phone: any variable of type Phone</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>

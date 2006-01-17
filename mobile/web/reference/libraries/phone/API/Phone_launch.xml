@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>launch()</name>
+
+<description>
+Launches the browser to display the specified url. Returns true if the sketch must terminate before the call will be initiated.
+</description>
+
+<syntax>
+p.launch(<c>url</c>)
+</syntax>
+
+<parameter>
+<label>p</label>
+<description>Phone: any variable of type Phone</description>
+</parameter>
+
+<parameter>
+<label>url</label>
+<description>String: url to display</description>
+</parameter>
+
+<returns>boolean</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>

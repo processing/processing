@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>noFullscreen()</name>
+
+<description>
+Disables fullscreen output on the phone display.
+</description>
+
+<syntax>
+p.noFullscreen();
+</syntax>
+
+<parameter>
+<label>p</label>
+<description>Phone: any variable of type Phone</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+
+</root>

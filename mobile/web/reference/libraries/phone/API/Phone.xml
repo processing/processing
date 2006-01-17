@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>Handset</name>
+<name>Phone</name>
 
 <description>
-This class provides access to the handset methods.
+This class provides access to the phone library methods.
 </description>
 
 <method>
@@ -16,8 +16,28 @@ This class provides access to the handset methods.
 <mdescription>Flashes the backlight of the display.</mdescription>
 </method>
 
+<method>
+<mname>call()</mname>
+<mdescription>Calls a specified phone number.</mdescription>
+</method>
+
+<method>
+<mname>launch()</mname>
+<mdescription>Launches the browser with a specified url.</mdescription>
+</method>
+
+<method>
+<mname>fullscreen()</mname>
+<mdescription>Enables fullscreen output on the phone display.</mdescription>
+</method>
+
+<method>
+<mname>noFullscreen()</mname>
+<mdescription>Disables fullscreen output on the phone display.</mdescription>
+</method>
+
 <constructor>
-Handset(<c>parent</c>)
+Phone(<c>parent</c>)
 </constructor>
 
 <cparameter>
