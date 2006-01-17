@@ -13,8 +13,8 @@ require '../../header.inc.php';
 Sending and receiving data via the Internet.<br>
 <br>
 <br>
-<b><a href="handset/index.php">Handset</a></b><br>
-Vibration and backlight control.
+<b><a href="phone/index.php">Phone</a></b><br>
+Controlling phone-specific features.
 </div>
 <div class="column">
 <b><a href="sound/index.php">Sound</a></b><br>
