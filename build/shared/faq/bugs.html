@@ -741,8 +741,8 @@ we're such a small group!)
  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
   <tr> 
     <td><img src="images/1pix.gif" width="1" height="50" align="top">
-    <a name="video"></a> 
-    <td width="645"><br>
+    <a name="video"></a>  
+   <td width="645"><br>
     </td>
     <td width="50">&nbsp;</td>
   </tr>
@@ -753,66 +753,81 @@ we're such a small group!)
       <b>
 Problems with Video (Quicktime for Java)
 </b> <br> <br>
-The message "This version of QuickTime for Java has expired" is an Apple bug,
-and is fixed in the version of QuickTime that is included with iTunes
-6.0.1, or, as of 20 October 2005, is available separate from iTunes
-<A HREF="http://www.apple.com/quicktime/download/standalone.html">here</A>.
+Getting video to work can be kind of a cluster, particularly on
+Windows. We use QuickTime for Java, which is sometimes difficult to
+install or can be flakey. Someday in the future perhaps we can
+circumvent this mess.
 <br> <br>
 The QuickTime 7 upgrade released April 29, 2005 (and now included with
-iTunes 6) has not been tested extensively with the video library. If
-you're using QuickTime 7, you'll need to use release 93 (or later) of 
-Processing, which fixed some issues related to QT7. 
-<B>If you're working on a
-critical project that uses video, do not install QuickTime 7 (or
-iTunes 6, which will install QuickTime 7), as there are likely
-problems with QuickTime for Java</B>. On Mac OS X, Apple has provided a
-QuickTime 6.5.2 reinstallers for <a
-href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime701.html">QuickTime
-7.0.1</a> and <a
-href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime70.html">QuickTime
-7.0</A> that you can use to return to your previous configuration. If you're using QuickTime 7.0.3, use this <A HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime703.html">QuickTime 7.0.1 reinstaller</A> and then run the QuickTime 6.5.2 reinstaller for QuickTime 7.0.1. If
-you're on Windows (or another version), check the Apple <A
-HREF="http://www.apple.com/support/downloads/">downloads</A> area to
-see if there's a reinstaller that supports your platform.
+iTunes 6) introduces its own unique set of problems. See below for
+more caveats and fun that are specific to your platform.
 <br> <br>
-Follow-ups on issues related to problems with QuickTime 7 should
-happen in the bugs database, see the separate entries for <A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=172">Mac OS X</A>
-and <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=171">Windows</A>
+The message "This version of QuickTime for Java has expired" is an Apple bug,
+and is fixed in the version of QuickTime that is included with iTunes
+6.0.1 (or later), or, as of 20 October 2005, is available separate
+from iTunes <A
+HREF="http://www.apple.com/quicktime/download/standalone.html">here</A>.
+<br> <br>
+You can find more discussion about video and problems that people have
+had over in the <A
+HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera">Video
+& Movies</A> section of the discourse board. And if you find a bug,
+please use the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
 <br> <br>
 Windows
 <UL>
-
-<!--
-<LI>You must make sure that "QuickTime for Java" is installed. To
-install it, you need to download it from <a
-href="http://www.apple.com/quicktime/download/">apple.com/quicktime/download</A>. If you install the version "with iTunes", there's a second
-  step. After the installation, go to Start Menu &rarr; QuickTime &rarr;
-  QuickTime Updater. When it runs, use the "Custom" install, scroll
-  down, and click the checkbox next to "QuickTime for Java" and then
-  install. If you install the version of QuickTime without iTunes,
-  you'll also need to use the "Custom" install, as outlined above. You
-  will also need to follow this process if you have already installed
-  QuickTime, and did not use the "Custom" or "Full" install.
-
-<LI>Tt appears that QuickTime 7 breaks Processing video because Apple has decided to move the location of some files (specifically qtjava.zip). Stick with Quicktime 6.5.2.
--->
-
 <LI>In order for camera input to work, you'll need to install a
 QuickTime-compatible video digitizer (VDIG). Unfortunately, most
 cameras on Windows don't support QuickTime right off the bat, but
 we've had reasonable luck with <a
-href="http://www.vdig.com/WinVDIG/">WinVDIG</A>.
-
+href="http://www.vdig.com/WinVDIG/">WinVDIG</A>. 
+<A HREF="http://www.vdig.com/WinVDIG/WinVDIG_101.exe">WinVDIG
+1.0.1</A> is for QuickTime 6, and <A
+HREF="http://www.vdig.com/WinVDIG/WinVDIG_105.exe">WinVDIG 1.0.5</A>
+(or any later release on the site) is for QuickTime 7. Use the capture
+application included with the WinVDIG install to make sure that things
+are working properly (this helps us isolate WinVDIG vs. QuickTime for
+Java vs. Processing bugs).
+<LI>If you want to avoid QuickTime 7, use the <A
+HREF="http://www.apple.com/support/downloads/quicktime652forwindows.html">QuickTime
+6.5.2</A> installer that's buried on Apple's site. Uninstall QuickTime
+7 before installing 6.5 (see below). You will also have to use a
+version of iTunes that's compatible with QuickTime 6 (anything earlier
+than iTunes 6).
+<LI>If you're installing QuickTime 6.5, you must make sure that
+"QuickTime for Java" is included. During the
+installation, use the "Custom" install, scroll down, and make sure the
+checkbox next to "QuickTime for Java" is marked. You will also need to
+follow this process if you have already installed QuickTime 6, and did
+not use the "Custom" or "Full" install. To remedy this, use the
+QuickTime Updater from the QuickTime folder that's added to the Start
+menu.
+<LI>For QuickTime 7 (iTunes 6 and later), you'll need to use release
+0093 (or later) of Processing. QuickTime 7 causes 0092 and earlier to
+break because Apple decided to move the location of several installed
+files.
+<LI>Better yet, you should use release 0102 (or later) of
+Processing, which also fixes a number of QuickTime-related issues.
 <LI>If you're still having trouble, sometimes a full uninstall/reinstall 
-of Quicktime will do the trick. 
+of Quicktime will do the trick. This may take a good bit of
+work. First try using Add/Remove Programs to uninstall. At some point
+you might get an "Error 1714" saying that "The older version of
+QuickTime cannot be removed." The solution from Apple is to delete
+C:\WINDOWS\TEMP, and then clean remnants of QuickTime from the
+registry as outlined in <A
+HREF="http://support.microsoft.com/default.aspx?scid=kb;en-us;290301">this</A>
+Microsoft Support document. More discussion of installer-related
+issues can be seen at <A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=171">Bug 171</A>.
 
+<!--
         <LI>If you're having trouble with video examples crashing
   processing or locking up your system, you should try placing the
   processing folder into the root level of your C:\ drive, or at least
   inside a set of folders that have no spaces in the name. We haven't
   determined if this is a QuickTime for Java or Processing bug yet,
   but it's been a problem for lots of people.
+-->
 
 <LI>Video sometimes likes to crash the application completely on
   Windows. This seems to be due to problems with QuickTime for Java
@@ -823,11 +838,23 @@ of Quicktime will do the trick.
 
 Mac OS X
 <UL>
+<LI>If you're having problems since the QuickTime 7 update, one option
+is to reinstall QuickTime 6. Apple has provided a QuickTime 6.5.2
+reinstallers for <a
+href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime701.html">QuickTime 7.0.1</a> and <a
+href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime70.html">QuickTime
+7.0</A> that you can use to return to your previous configuration. If
+you're using QuickTime 7.0.3 or 7.0.4, you'll have to first downgrade
+to 7.0.1, using the QuickTime 7.0.1 reinstaller for <A
+HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime703.html">QuickTime
+7.0.3</A> or <A
+HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime704.html">QuickTime 7.0.4</A>.
 <LI>On Mac OS X 10.2 (Jaguar, or Jagwyre if you like black turtlenecks),
 QuickTime for Java was missing from the initial release of QuickTime
 6.4. An upgrade to QuickTime 6.4 that includes QuickTime for Java is
-available from software update. Better yet, you might also upgrade to Mac
-OS X 10.3 (Panther) which doesn't have this problem.
+available from software update. We don't recommend using 10.2 (we
+don't have time to support it), so if you can move to Panther or
+later, it's highly recommended.
 <LI>If you get the following error:
 <tt>Exception in thread "main" java.lang.NoClassDefFoundError: 
   com/apple/mrj/macos/carbon/CarbonLock</tt>
