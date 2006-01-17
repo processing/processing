@@ -125,7 +125,7 @@ Supported Platforms
       </b><br><br>
 The processing development environment is tested most heavily on:
 <OL>
-<LI>Mac OS X 10.3
+<LI>Mac OS X 10.3 and 10.4
 <LI>Windows XP
 <LI>Fedora Core (Linux)
 </OL>
@@ -142,7 +142,9 @@ Windows 95/98/ME is a piece of crap, but since lots of people (are
 often forced to) use it, we'll do our best to support it. Windows 95 is
 <a href="http://www.java.com/en/download/help/win95.xml">not supported</a>.
 Early alpha versions seem to be having trouble with 98/ME, 
-so if possible, we <em>strongly</em> recommend using Windows 2000 or XP. 
+so if possible, we <em>strongly</em> recommend using Windows 2000 or
+XP. We won't be testing on 95/98/ME or supporting it any more than we
+absolutely must.
 <br> <br>
 For the Linux version, you guys can support yourselves. If you're
 enough of a hacker weenie to get a linux box set up, you oughta know
@@ -173,13 +175,17 @@ you tell us about them, so we can fix them.
       <b>
       Windows
       </b><br><br>
-Windows XP is used as the primary development platforms, 
+Windows XP is used as one of the primary development platforms, 
 so the release will likely work best there.
+
+<!--
 <br> <br> 
 Windows 95/98/ME seem to have some trouble, but we think it's just with
 the .exe that we use, so hopefully that'll get fixed in the
       future. You can try using the 'run.bat' file instead, and see if
       that works better.
+-->
+
 <br> <br>
 The release is split into versions with and without Java. The non-Java
       version is only recommended for people who know what they're
@@ -209,19 +215,20 @@ The release is split into versions with and without Java. The non-Java
       <b>
 Mac OS X
       </b><br><br>
-The most current release has only been tested on Mac OS X 10.3.9 
-(with some very minimal testing on 10.2.8). 
+The most current release is tested on Mac OS X 10.3.9 and 10.4.x. We
+      only test on 10.2.8 if there's a specific issue raised and it's
+      something we can fix without too much trouble.
 Your mileage may vary if you're running something else. Actually, your
 mileage will vary no matter what, because who knows what this software
 is gonna do. You're playing with free, beta-quality software. 
 Get psyched!
 <br> <br>
 <UL>
-<LI>Mac OS X 10.4 is completely unsupported until I can get a copy and
-test it on my machine. Also, using Java 1.5 (J2SE 5.0) is 
-<A HREF="#java">discouraged</A>, as I suspect that it causes even more 
-headaches on OS X than it does on Windows. 
-
+<LI>As of January 2006, we're starting to support Mac OS X 10.4, which
+will be the primary development platform.
+<LI>Using Java 1.5 (J2SE 5.0) is <A HREF="#java">strongly
+discouraged</A>, as I suspect that it causes even more headaches on OS
+X than it does on Windows. 
 <LI>On Mac OS X 10.3, be sure to use Software Update to update to the most recent version of Java 1.4. Early releases had several problems (i.e. "Present" mode being broken) In addition, the Mac OS X 10.3.9 update causes Processing to crash on startup, or might cause Safari to crash when running Java applets. 
 Apple has fixed the issue with 
 <a href="http://docs.info.apple.com/article.html?artnum=301382">this
@@ -349,8 +356,8 @@ It's used by about a 30%
 of the people with Java installed.
 Most Linux users will have Java 1.4 or later if it is installed.
 <LI>Java 1.5 &mdash; the very latest version of Java. We don't support it and recommend that you avoid using it, as we don't test with it and it appears that it may be the slowest (certainly most bloated) release of Java yet. For instance, if you have Java 1.5 installed but are using the Processing download that includes Java, you may be surprised to see that things run more slowly when run in a browser than when run from inside Processing itself. It is also not possible to use any of the new syntax introduced in Java 1.5 within Processing, even if you have 1.5 installed (the preprocessor and compiler used by Processing don't understand the 1.5 syntax). Unfortunately, 1.5 still accounts for about 30% of the people (almost entirely Windows users) who have Java installed.
-It was released as a separate download for Mac OS X 10.4 (Tiger), 
-and will not be available on anything earlier than 10.4. (<A
+For Mac OS X 10.4, it was (at least initially) released as a separate
+download, and will not be available on anything earlier than 10.4. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=175">Bug 175</A>)
     </td>
     <td width="50">&nbsp;</td>
