@@ -9,7 +9,7 @@ $page = new Page('Add Happening', 'Happening');
 $title = "<h2><img src=\"/img/processinghappenings.gif\" alt=\"Processing Happenings\" /></h2>";
 
 $date = isset($_POST['date']) ? trim($_POST['date']) : false;
-$body  = isset($_POST['body'])  ? strip_tags($_POST['body'], '<a><b><strong><i><em>') : false;
+$body  = isset($_POST['body'])  ? stripslashes(strip_tags($_POST['body'], '<a><b><strong><i><em>')) : false;
 
 if (!$_POST['preview'] && 
     $date !== false && $body !== false ) { // valid input
