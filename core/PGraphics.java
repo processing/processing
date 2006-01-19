@@ -594,6 +594,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void defaults() {  // ignore
     //System.out.println("PGraphics.defaults() " + width + " " + height);
+
     colorMode(RGB, TFF);
     fill(TFF);
     stroke(0);
