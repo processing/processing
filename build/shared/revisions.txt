@@ -7,6 +7,20 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0103 - 18 January 2005 
+
+Fix for a bug specific to Mac OS X (may affect Windows as well) that
+prevented fonts from being used with PDF rendering. 
+
+Issue description and the patch that was applied can be seen here:
+http://www.mail-archive.com/itext-questions@lists.sourceforge.net/msg20234.html
+
+Releasing for all platforms to get things back in sync.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0102 - 15 January 2005
 
 Windows-only release to repair issues that prevent Processing from 
