@@ -1,5 +1,7 @@
 0103 core
-
+X fix stack overflow problem
+X   bug in itext implementation on osx (10.4 only?)
+X   http://www.mail-archive.com/itext-questions@lists.sourceforge.net/msg20234.html
 
 more pdf/recording stuff
 _ don't open a window the size of the pdf if in pdf mode
