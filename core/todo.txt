@@ -3,7 +3,17 @@ X fix stack overflow problem
 X   bug in itext implementation on osx (10.4 only?)
 X   http://www.mail-archive.com/itext-questions@lists.sourceforge.net/msg20234.html
 
+in previous releases
+X recordFrame() and beginFile()/endFile()
+X   how to deal with triangles/lines and triangleCount and lineCount
+X     maybe just need a triangleImpl and lineImpl
+X     because it's too messy to retain the triangle objects and info
+X calling recordFrame() from mousePressed is important
+X   dangerous tho because mouse fxn called just before endFrame
+
+
 more pdf/recording stuff
+_ figure out what's up with type on osx
 _ don't open a window the size of the pdf if in pdf mode
 _   need to have some sort of flag in the gfx context that it's visible or not
 _   handled inside updateSize()?
@@ -19,12 +29,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _ polygon z-order with alpha in opengl
 _   at least add it to the faq, or this would be a test case w/ the sorting
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
-X recordFrame() and beginFile()/endFile()
-X   how to deal with triangles/lines and triangleCount and lineCount
-X     maybe just need a triangleImpl and lineImpl
-X     because it's too messy to retain the triangle objects and info
-_ calling recordFrame() from mousePressed is important
-_   dangerous tho because mouse fxn called just before endFrame
 
 _ loadImage("") produces weird error message
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
