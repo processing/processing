@@ -1,3 +1,17 @@
+0103 core
+X fix stack overflow problem
+X   bug in itext implementation on osx (10.4 only?)
+X   http://www.mail-archive.com/itext-questions@lists.sourceforge.net/msg20234.html
+
+in previous releases
+X recordFrame() and beginFile()/endFile()
+X   how to deal with triangles/lines and triangleCount and lineCount
+X     maybe just need a triangleImpl and lineImpl
+X     because it's too messy to retain the triangle objects and info
+X calling recordFrame() from mousePressed is important
+X   dangerous tho because mouse fxn called just before endFrame
+
+
 0102 core
 X no changes, windows-only release to deal with processing.exe
 

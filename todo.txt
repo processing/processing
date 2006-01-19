@@ -1,4 +1,4 @@
-0103 pde
+0104 pde
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -34,6 +34,11 @@ _   (i.e. we really need those replacements for JOptionPane)
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+
+# tag current as the final
+svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-009X
+# tag revision 1666 as the final
+svn copy -r 1666 svn://processing.org/trunk/processing svn://processing.org/tags/processing-0093
 
 the biggies
 _ bring back P2D with proper stuff 

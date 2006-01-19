@@ -1,3 +1,7 @@
+0103 pde
+X no changes, only pdf fixes
+
+
 0102 pde
 X p5's exe has trouble when PATH has quotes (or spaces?)
 X   detect bad classpath or path settings
