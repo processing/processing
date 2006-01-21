@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>parse()</name>
+
+<description>
+This method will parse an XML document completely before returning the results as an XMLElement. The returned element represents the root of the document.
+</description>
+
+<syntax>
+parser.parse(document);
+parser.parse(is);
+</syntax>
+
+<parameter>
+<label>parser</label>
+<description>XMLParser: any variable of type XMLParser</description>
+</parameter>
+
+<parameter>
+<label>document</label>
+<description>String: string containing an XML document</description>
+</parameter>
+
+<parameter>
+<label>is</label>
+<description>InputStream: an open InputStream positioned at the beginning of an XML document</description>
+</parameter>
+
+<returns>XMLElement</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+</root>
