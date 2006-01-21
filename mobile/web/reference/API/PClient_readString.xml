@@ -2,6 +2,10 @@
 <root>
 <name>readString()</name>
 
+<category>Net</category>
+
+<subcategory></subcategory>
+
 <description>
 Reads the response from the server as String. This must be preceeded by a <b>GET()</b> or <b>POST()</b> that returns successfully.
 </description>
@@ -18,8 +22,5 @@ readBytes()
 <availability>1.0</availability>
 
 <type></type>
-
-<partof>Net</partof>
-
 
 </root>

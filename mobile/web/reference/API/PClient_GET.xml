@@ -2,6 +2,10 @@
 <root>
 <name>GET()</name>
 
+<category>Net</category>
+
+<subcategory></subcategory>
+
 <description>
 Makes a GET request to the server to retreive specified content. This is equivalent to typing a url into a desktop web browser and retreiving the contents of the web page. Note that you can pass parameters to the server if the file you are requesting is a script that will be executed. If the request is successful, the method will return <b>true</b> and the content can be retreived using the <b>read()</b> methods.
 </description>
@@ -34,8 +38,5 @@ GET(<c>file</c>, <c>params</c>, <c>values</c>)
 <availability>1.0</availability>
 
 <type></type>
-
-<partof>Net</partof>
-
 
 </root>
