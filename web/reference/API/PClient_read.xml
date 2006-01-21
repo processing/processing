@@ -2,6 +2,10 @@
 <root>
 <name>read()</name>
 
+<category>Net</category>
+
+<subcategory></subcategory>
+
 <description>
 Reads one byte of data from the server, as a value between 0 and 255. This must be preceeded by a <b>GET()</b> or <b>POST()</b> that returns successfully.
 </description>
@@ -18,8 +22,5 @@ read()
 <availability>1.0</availability>
 
 <type></type>
-
-<partof>Net</partof>
-
 
 </root>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>pointerReleased()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Touchscreen</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+</code>
+</example>
+
+<description>
+The <b>pointerReleased()</b> function is called as the stylus or other pointing device is picked up off the touchscreen. As a general rule, nothing should be drawn within the <b>pointerReleased()</b> block.
+</description>
+
+<syntax>
+void pointerReleased() { 
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+pointerX
+pointerY
+pointerPressed
+pointerPressed()
+pointerDragged() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>Client</name>
+<name>PClient</name>
+
+<category>Net</category>
+
+<subcategory></subcategory>
 
 <description>
 A client connects to a server and sends data back and forth.
@@ -37,8 +41,8 @@ A client connects to a server and sends data back and forth.
 </method>
 
 <constructor>
-Client(<c>server</c>)
-Client(<c>server</c>, <c>port</c>)
+PClient(<c>server</c>)
+PClient(<c>server</c>, <c>port</c>)
 </constructor>
 
 <cparameter>
@@ -59,14 +63,5 @@ Client(<c>server</c>, <c>port</c>)
 <availability>1.0</availability>
 
 <type>Object</type>
-
-<partof>Net</partof>
-
-
-
-
-
-
-
 
 </root>

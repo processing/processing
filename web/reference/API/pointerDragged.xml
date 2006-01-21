@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>pointerDragged()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Touchscreen</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+</code>
+</example>
+
+<description>
+The <b>pointerDragged()</b> function is called as the stylus or other pointing device is dragged across the touchscreen. As a general rule, nothing should be drawn within the <b>pointerDragged()</b> block.
+</description>
+
+<syntax>
+void pointerDragged() { 
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+pointerX
+pointerY
+pointerPressed
+pointerPressed()
+pointerReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

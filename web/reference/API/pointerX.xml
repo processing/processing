@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>pointerX</name>
+
+<category>Input/Output</category>
+
+<subcategory>Touchscreen</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+</code>
+</example>
+
+<description>
+The system variable <b>pointerX</b> contains the last known horizontal position of the stylus or other pointer on the touchscreen.
+</description>
+
+<syntax>
+pointerX
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+pointerY
+pointerPressed
+pointerDragged() 
+pointerPressed()
+pointerReleased()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

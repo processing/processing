@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>pointerPressed()</name>
+
+<category>Input/Output</category>
+
+<subcategory>Touchscreen</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+</code>
+</example>
+
+<description>
+The <b>pointerPressed()</b> function is called once every time the stylus or other pointing device has been pressed onto the touchscreen. As a general rule, nothing should be drawn within the <b>pointerPressed()</b> block.
+</description>
+
+<syntax>
+void pointerPressed() { 
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+pointerX
+pointerY
+pointerPressed
+pointerDragged()
+pointerReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+</root>

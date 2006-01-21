@@ -2,6 +2,10 @@
 <root>
 <name>POST()</name>
 
+<category>Net</category>
+
+<subcategory></subcategory>
+
 <description>
 Makes a POST request to the server. This is equivalent to submitting the contents of a form on a desktop web browser. You can submit String values or a mix of String and byte[] values. If the request is successful, the method will return <b>true</b> and the reply can be retreived using the <b>read()</b> methods.
 </description>
@@ -39,8 +43,5 @@ POST(<c>file</c>, <c>params</c>, <c>data</c>)
 <availability>1.0</availability>
 
 <type></type>
-
-<partof>Net</partof>
-
 
 </root>

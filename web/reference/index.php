@@ -18,8 +18,8 @@ $categories = array(
                      '3D Primitives' => array(),
                      'Stroke attributes' => array(),
                      'Vertex' => array()),
-    'Input/Output' => array('Mouse' => array(),
-                            'Keyboard' => array(),
+    'Input/Output' => array('Keyboard' => array(),
+                            'Touchscreen' => array(),
                             'Text Input' => array(),
                             'Text Output' => array(),
                             'Time & Date' => array(),
@@ -38,6 +38,7 @@ $categories = array(
                     'Calculation' => array(),
                     'Trigonometry' => array(),
                     'Random' => array()),
+    'Net' => array(),
     'Constants' => array()
 );
 
