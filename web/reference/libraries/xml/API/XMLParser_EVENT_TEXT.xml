@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>EVENT_TEXT</name>
+
+<description>
+This event occurs when text between a set of tags has been parsed. The <b>data</b> parameter of the <b>libraryEvent()</b> callback method contains the contents of the text.
+</description>
+
+<syntax>
+XMLParser.EVENT_TEXT
+</syntax>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>int</type>
+
+<partof>Net</partof>
+
+</root>

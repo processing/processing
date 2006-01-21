@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>EVENT_DOCUMENT_END</name>
+
+<description>
+This event occurs when an XML document being parsed in the background is finished.
+</description>
+
+<syntax>
+XMLParser.EVENT_DOCUMENT_END
+</syntax>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>int</type>
+
+<partof>Net</partof>
+
+</root>

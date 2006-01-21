@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>XMLParser</name>
+
+<description>
+This class is used to parse an XML document. Two methods of parsing are supported, one that runs in the background while the sketch continues to run through its loop, and one that will finish parsing completely before returning control to the sketch.
+</description>
+
+<method>
+<mname>parse()</mname>
+<mdescription>This method will parse an XML document completely before returning the results as an XMLElement.</mdescription>
+</method>
+
+<method>
+<mname>start()</mname>
+<mdescription>This method begin parsing an XML document in the background.</mdescription>
+</method>
+
+<method>
+<mname>stop()</mname>
+<mdescription>This method will stop an XML document being parsed in the background.</mdescription>
+</method>
+
+<method>
+<mname>attribute()</mname>
+<mdescription>This method is used to retrieve the value of an attribute during background parsing.</mdescription>
+</method>
+
+<method>
+<mname>EVENT_TAG_START</mname>
+<mdescription>This event occurs when a new tag has been encountered while parsing an XML document in the background.</mdescription>
+</method>
+
+<method>
+<mname>EVENT_TEXT</mname>
+<mdescription>This event occurs when text between a set of tags has been parsed.</mdescription>
+</method>
+
+<method>
+<mname>EVENT_TAG_END</mname>
+<mdescription>This event occurs when an closing tag has been encountered while parsing an XML document in the background.</mdescription>
+</method>
+
+<method>
+<mname>EVENT_DOCUMENT_END</mname>
+<mdescription>This event occurs when an XML document being parsed in the background is finished.</mdescription>
+</method>
+
+<constructor>
+XMLParser(<c>parent</c>)
+</constructor>
+
+<cparameter>
+<clabel>parent</clabel>
+<cdescription>PMIDlet: typically use "this"</cdescription>
+</cparameter>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Net</partof>
+
+</root>

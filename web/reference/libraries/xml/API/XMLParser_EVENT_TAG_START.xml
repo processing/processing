@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>EVENT_TAG_START</name>
+
+<description>
+This event occurs when a new tag has been encountered while parsing an XML document in the background. The <b>data</b> parameter of the <b>libraryEvent()</b> callback method contains the name of the tag.
+</description>
+
+<syntax>
+XMLParser.EVENT_TAG_START
+</syntax>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>int</type>
+
+<partof>Net</partof>
+
+</root>

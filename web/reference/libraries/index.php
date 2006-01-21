@@ -10,7 +10,7 @@ require '../../header.inc.php';
 <br>
 <div class="column">
 <b><a href="phone/index.php">Phone</a></b><br>
-Controlling phone-specific features.
+Controlling phone-specific features.<br>
 <br>
 <br>
 <b><a href="bluetooth/index.php">Bluetooth</a></b><br>
@@ -19,6 +19,10 @@ Sending and receiving data via Bluetooth wireless connections.
 <div class="column">
 <b><a href="sound/index.php">Sound</a></b><br>
 Sound playback.<br>
+<br>
+<br>
+<b><a href="xml/index.php">XML</a></b><br>
+Parsing and outputting XML documents.
 </div>
 <div class="column">
 <b><a href="video/index.php">Video</a></b><br>

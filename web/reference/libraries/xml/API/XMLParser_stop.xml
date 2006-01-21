@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>stop()</name>
+
+<description>
+This method will stop an XMl document being parsed in the background..
+</description>
+
+<syntax>
+parser.stop();
+</syntax>
+
+<parameter>
+<label>parser</label>
+<description>XMLParser: any variable of type XMLParser</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+</root>

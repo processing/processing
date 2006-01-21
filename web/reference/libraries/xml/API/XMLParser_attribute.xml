@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>attribute()</name>
+
+<description>
+This method is used to retrieve the value of an attribute during background parsing.
+</description>
+
+<syntax>
+parser.attribute(name)
+</syntax>
+
+<parameter>
+<label>parser</label>
+<description>XMLParser: any variable of type XMLParser</description>
+</parameter>
+
+<parameter>
+<label>name</label>
+<description>The name of the attribute.</description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Net</partof>
+
+</root>
