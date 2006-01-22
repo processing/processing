@@ -75,7 +75,7 @@ public class Preverifier implements MessageConsumer {
         command.append(" ");
         command.append(source.getPath());
     }
-
+    //System.out.println(command.toString());
     try {
       Process p = Runtime.getRuntime().exec(command.toString());
       boolean running = true;
