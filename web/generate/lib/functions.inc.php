@@ -202,7 +202,8 @@ function chars($string)
     $string = str_replace(' < ', ' &lt; ', $string);
     $string = str_replace('<<', '&lt;&lt;', $string);
     $string = str_replace('>>', '&gt;&gt;', $string);
-    $string = str_replace('&', '&amp;', $string);
+    $string = str_replace('& ', '&amp; ', $string);
+	$string = str_replace('&&', '&amp;&amp;', $string);
     $string = stripslashes($string);
     return $string;
 }
