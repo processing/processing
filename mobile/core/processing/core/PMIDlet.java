@@ -905,7 +905,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final int hour() {
         checkCalendar();
-        return calendar.get(Calendar.HOUR_OF_DAY);
+        return calendar.get(Calendar.HOUR);
     }
     
     public final int day() {
