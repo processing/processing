@@ -46,6 +46,9 @@ public class Preverifier implements MessageConsumer {
         command.append(cldc.charAt(0));
         command.append(".");
         command.append(cldc.charAt(1));
+        if (cldc.equals("10")) {
+            command.append(" -cldc");
+        }
         command.append(" -classpath \"");
         command.append(wtkLibPath);
         command.append("cldcapi");
