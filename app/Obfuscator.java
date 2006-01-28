@@ -26,6 +26,16 @@ public class Obfuscator implements MessageConsumer {
         midp = "10";
     }
     
+    //// process library path to only include jar files
+    StringBuffer libraries = new StringBuffer();
+    String[] tokens = Sketchbook.librariesClassPath.split(File.pathSeparator);
+    for (int i = 0, length = tokens.length; i < length; i++) {
+        if (tokens[i].toLowerCase().endsWith(".jar")) {
+            libraries.append(File.pathSeparator);
+            libraries.append(tokens[i]);
+        }
+    }
+    
     StringBuffer command = new StringBuffer();
     command.append("java -jar lib");
     command.append(File.separator);
@@ -36,6 +46,7 @@ public class Obfuscator implements MessageConsumer {
         command.append(wtkPath);
         command.append("/midp.jar:");
         command.append("/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar");        
+        command.append(libraries.toString());
         command.append(" -injars '");
         command.append(source.getPath());
         command.append("' -outjar '");
@@ -50,7 +61,8 @@ public class Obfuscator implements MessageConsumer {
         command.append(wtkLibPath);
         command.append("midpapi");
         command.append(midp);
-        command.append(".jar");        
+        command.append(".jar");      
+        command.append(libraries.toString());
         command.append(" -injars '\"");
         command.append(source.getPath());
         command.append("\"' -outjar '\"");
@@ -60,6 +72,7 @@ public class Obfuscator implements MessageConsumer {
     command.append("@lib");
     command.append(File.separator);
     command.append("proguard.pro");
+    //System.out.println(command.toString());
     try {
       Process p = Runtime.getRuntime().exec(command.toString());
       new MessageSiphon(p.getInputStream(), this);
