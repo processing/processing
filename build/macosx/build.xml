@@ -90,6 +90,11 @@
         <copy overwrite="true" file="mobile/build/shared/lib/me-applet.jar" todir="processing/build/shared/lib"/>
         <copy overwrite="true" file="mobile/build/shared/lib/large.jar" todir="processing/build/shared/lib"/>        
         <copy overwrite="true" file="mobile/build/shared/lib/export/applet.html" todir="processing/build/shared/lib/export"/>        
+        <!-- copy cldc/midp jars from Sun WTK for Windows into lib -->
+        <copy overwrite="true" file="mobile/build/macosx/lib/cldcapi10.jar" todir="processing/build/shared/lib"/>
+        <copy overwrite="true" file="mobile/build/macosx/lib/cldcapi11.jar" todir="processing/build/shared/lib"/>
+        <copy overwrite="true" file="mobile/build/macosx/lib/midpapi10.jar" todir="processing/build/shared/lib"/>        
+        <copy overwrite="true" file="mobile/build/macosx/lib/midpapi20.jar" todir="processing/build/shared/lib"/>
     </target>
 
     <target name="make" depends="init, copyappsrc, copylaunchersrc">        
@@ -165,6 +170,7 @@
         <!-- preverify compiled classes into another temporary directory -->
         <mkdir dir="mobile/build/macosx/preverified/core"/>
         <exec executable="${wtk.dir}/osx/preverify/preverify">
+            <arg value="-cldc1.0"/>
             <arg value="-classpath"/>
             <arg path="${wtk.bootClassPath}"/>
             <arg value="-d"/>
@@ -246,36 +252,36 @@
         <antcall target="makelib">
             <param name="libname" value="sound"/>
             <param name="bootClassPath" value="${wtk.bootClassPath}"/>
-            <param name="classPath" value="${wtk.dir}/lib/mmapi.jar"/>
-            <param name="cldc" value="CLDC1.0"/>
+            <param name="classPath" value="mobile/sound/library/mmapi.jar"/>
+            <param name="cldc" value="-cldc1.0"/>
         </antcall>
         <!-- next, phone library -->
         <antcall target="makelib">
             <param name="libname" value="phone"/>
-            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="bootClassPath" value="mobile/build/macosx/lib/cldcapi10.jar:mobile/build/macosx/lib/midpapi20.jar"/>
             <param name="classPath" value="mobile/build/macosx/mobile.jar"/>
-            <param name="cldc" value="CLDC1.0"/>
+            <param name="cldc" value="-cldc1.0"/>
         </antcall>
         <!-- next, video library -->
         <antcall target="makelib">
             <param name="libname" value="video"/>
             <param name="bootClassPath" value="${wtk.bootClassPath}"/>
             <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/video/library/mmapi.jar"/>
-            <param name="cldc" value="CLDC1.0"/>
+            <param name="cldc" value="-cldc1.0"/>
         </antcall>
         <!-- next, bluetooth library -->
         <antcall target="makelib">
             <param name="libname" value="bluetooth"/>
             <param name="bootClassPath" value="${wtk.bootClassPath}"/>
             <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/bluetooth/library/jsr082.jar"/>
-            <param name="cldc" value="CLDC1.0"/>
+            <param name="cldc" value="-cldc1.0"/>
         </antcall>
         <!-- xml library -->
         <antcall target="makelib">
             <param name="libname" value="xml"/>
             <param name="bootClassPath" value="${wtk.bootClassPath}"/>
             <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/xml/library/kxml.jar"/>
-            <param name="cldc" value="CLDC1.0"/>
+            <param name="cldc" value="-cldc1.0"/>
         </antcall>
     </target>
 
