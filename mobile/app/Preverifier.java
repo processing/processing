@@ -34,12 +34,23 @@ public class Preverifier implements MessageConsumer {
             e.printStackTrace();
         }        
         command.append(wtkPath);        
-        command.append("/osx/preverify/preverify -classpath ");
-        command.append(wtkPath);
-        command.append("/cldc.jar:");
-        command.append(wtkPath);
-        command.append("/midp.jar:");
-        command.append("/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar:lib");
+        command.append("/osx/preverify/preverify ");
+        if (cldc.equals("10")) {
+            command.append("-cldc1.0 ");
+        }
+        command.append("-classpath lib");
+        command.append(File.separator);
+        command.append("cldcapi");
+        command.append(cldc);
+        command.append(".jar");
+        command.append(File.pathSeparator);
+        command.append("lib");
+        command.append(File.separator);
+        command.append("midpapi");
+        command.append(midp);
+        command.append(".jar");
+        command.append(File.pathSeparator);
+        command.append("lib");
     } else {
         command.append(wtkBinPath);
         command.append("preverify.exe -target CLDC");
