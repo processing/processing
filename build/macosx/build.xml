@@ -141,6 +141,18 @@
         <move todir="processing/build/macosx/mobile-${mobile.version}/Mobile-${mobile.version}">
             <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
         </move>
+        <!-- move critical files out of the app package and back into lib dir -->
+        <move todir="processing/build/macosx/mobile-${mobile.version}/Mobile-${mobile.version}/lib">
+            <fileset dir="processing/build/macosx/mobile-${mobile.version}/Mobile-${mobile.version}/Mobile.app/Contents/Resources/Java">
+                <include name="proguard.jar"/>
+                <include name="me-applet.jar"/>
+                <include name="large.jar"/>
+                <include name="cldcapi10.jar"/>
+                <include name="cldcapi11.jar"/>
+                <include name="midpapi10.jar"/>
+                <include name="midpapi20.jar"/>
+            </fileset>
+        </move>
         <!-- execute mkdmg to create archive -->
         <exec executable="/bin/bash">
             <arg value="--login"/>
@@ -190,9 +202,6 @@
         <!-- copy jar and jad/manifest template into processing build -->
         <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/macosx/${target}/lib"/>
         <copy file="mobile/build/macosx/mobile.jar" todir="processing/build/macosx/${target}/lib"/>
-        <!-- copy proguard jar and its configuration file into processing lib -->
-        <copy file="mobile/build/shared/lib/proguard.jar" todir="processing/build/macosx/${target}/lib"/>
-        <copy file="mobile/build/shared/lib/proguard.pro" todir="processing/build/macosx/${target}/lib"/>        
     </target>
 
     <target name="compile">
