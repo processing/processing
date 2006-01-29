@@ -1,4 +1,23 @@
-ABOUT REV 0002 - 
+ABOUT REV 0003 - 29 January 2006
+
+Primarily a bug fix release:
+
+- Fixed applet export, added links into applet web page template to include
+  download links for the obfuscated build.
+
+- Fixed preverify issues on Mac OS X build.  Should now be generating valid
+  builds for older MIDP 1.0 phones.
+
+- Fixed cldc version preverify issues- should now properly report invalid
+  language constructs (i.e. float) when building for CLDC 1.0
+
+- Fixed problem with Proguard obfuscation when building with libraries.
+
+- Changed Mac OS X build folder to not have a space in its name.
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+ABOUT REV 0002 - 20 January 2006 
 
 - Support for touchscreen devices. pointerPressed, pointerX, pointerY,
   pointerPressed(), pointerDragged(), pointerReleased() added.
