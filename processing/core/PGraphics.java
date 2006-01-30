@@ -3578,6 +3578,17 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Return true if this renderer should be drawn to the screen.
+   * Overridden for subclasses like PDF so that an enormous window
+   * doesn't open up.
+   * showFrame, displayable, isVisible, visible, shouldDisplay,
+   * what to call this?
+   */
+  public boolean displayable() {
+    return true;
+  }
+
   //public void beginRaw() {  // ignore
   //beginFrame();
   //}
