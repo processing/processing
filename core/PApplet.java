@@ -5828,7 +5828,9 @@ public class PApplet extends Applet
         applet.setupFrameResizeListener();
 
         // all set for rockin
-        frame.show();
+        if (applet.displayable()) {
+          frame.show();
+        }
       }
 
       //System.out.println("showing frame");
@@ -7072,5 +7074,10 @@ public class PApplet extends Applet
   public void endRaw() {
     if (recorder != null) recorder.endRaw();
     g.endRaw();
+  }
+
+
+  public boolean displayable() {
+    return g.displayable();
   }
 }

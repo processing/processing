@@ -1,15 +1,17 @@
 0104 core
+X don't open a window the size of the pdf if in pdf mode
+X   need to have some sort of flag in the gfx context that it's visible or not
+o   handled inside updateSize()?
+X   if it doesn't display to the screen, needs to never show a window
+X   basically if the main gfx context isn't viewable, close the window
+X   since it may have already been opened at 100x100
+X   avoid opening it in the first place?
 
 
 more pdf/recording stuff
 _ figure out what's up with type on osx
-_ don't open a window the size of the pdf if in pdf mode
-_   need to have some sort of flag in the gfx context that it's visible or not
-_   handled inside updateSize()?
-_   if it doesn't display to the screen, needs to never show a window
-_   basically if the main gfx context isn't viewable, close the window
-_   since it may have already been opened at 100x100
-_   avoid opening it in the first place?
+_   sometimes bicubic vs quadratic beziers are mixed up in fonts
+_   not sure if it's limited to osx or what
 _ make dxf writer that'll work with recordRaw()
 _ document how to switch to next page
 _   maybe background() should do this automatically?
