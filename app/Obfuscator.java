@@ -26,13 +26,22 @@ public class Obfuscator implements MessageConsumer {
         midp = "10";
     }
     
+    boolean isWindows = Base.isWindows();
     //// process library path to only include jar files
     StringBuffer libraries = new StringBuffer();
     String[] tokens = Sketchbook.librariesClassPath.split(File.pathSeparator);
     for (int i = 0, length = tokens.length; i < length; i++) {
         if (tokens[i].toLowerCase().endsWith(".jar")) {
             libraries.append(File.pathSeparator);
+            libraries.append("'");
+            if (isWindows) {
+                libraries.append("\"");
+            }
             libraries.append(tokens[i]);
+            if (isWindows) {
+                libraries.append("\"");
+            }
+            libraries.append("'");
         }
     }
     
@@ -41,11 +50,17 @@ public class Obfuscator implements MessageConsumer {
     command.append(File.separator);
     command.append("proguard.jar -libraryjars ");
     if (Base.isMacOS()) {
-        command.append(wtkPath);
-        command.append("/cldc.jar:");
-        command.append(wtkPath);
-        command.append("/midp.jar:");
-        command.append("/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar");        
+        command.append("'lib");
+        command.append(File.separator);
+        command.append("cldcapi");
+        command.append(cldc);
+        command.append(".jar'");
+        command.append(File.pathSeparator);
+        command.append("'lib");
+        command.append(File.separator);
+        command.append("midpapi");
+        command.append(midp);
+        command.append(".jar'");      
         command.append(libraries.toString());
         command.append(" -injars '");
         command.append(source.getPath());
@@ -53,21 +68,49 @@ public class Obfuscator implements MessageConsumer {
         command.append(output.getPath());
         command.append("' ");
     } else {
+        command.append("'");
+        if (isWindows) {
+            command.append("\"");
+        }
         command.append(wtkLibPath);
         command.append("cldcapi");
         command.append(cldc);
         command.append(".jar");
+        if (isWindows) {
+            command.append("\"");
+        }
+        command.append("'");
         command.append(File.pathSeparator);
+        command.append("'");
+        if (isWindows) {
+            command.append("\"");
+        }
         command.append(wtkLibPath);
         command.append("midpapi");
         command.append(midp);
         command.append(".jar");      
+        if (isWindows) {
+            command.append("\"");
+        }
+        command.append("'");
         command.append(libraries.toString());
-        command.append(" -injars '\"");
+        command.append(" -injars '");
+        if (isWindows) {
+            command.append("\"");
+        }
         command.append(source.getPath());
-        command.append("\"' -outjar '\"");
+        if (isWindows) {
+            command.append("\"");
+        }
+        command.append("' -outjar '");
+        if (isWindows) {
+            command.append("\"");
+        }
         command.append(output.getPath());
-        command.append("\"' ");
+        if (isWindows) {
+            command.append("\"");
+        }
+        command.append("' ");
     }
     command.append("@lib");
     command.append(File.separator);
