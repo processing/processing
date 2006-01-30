@@ -619,6 +619,8 @@ _   which will also just give you the last camera
 _   should it be new Camera(PROMPT);
 _ saveFrame() directly to quicktime via port of DbnRecorder
 _   do this after beta, not likely to work with java 1.4 on macosx
+_ audio stops working after two seconds
+_   http://dev.processing.org/bugs/show_bug.cgi?id=277
 
 
 LIBRARIES / Net

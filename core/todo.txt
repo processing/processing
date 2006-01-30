@@ -21,6 +21,9 @@ _ polygon z-order with alpha in opengl
 _   at least add it to the faq, or this would be a test case w/ the sorting
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
 
+_ lookat is now camera(), but not fixed in the docs
+_   add notes to the faq about the camera changes on the changes page
+
 _ loadImage("") produces weird error message
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
 
@@ -637,7 +640,7 @@ _   texture re-allocated on each frame
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ point() doesn't work with some graphics card setups
 _   http://dev.processing.org/bugs/show_bug.cgi?id=121
-_ blend(), get(), set(), loadPixels, updatePixels() are broken in opengl
+_ blend(), get(), set(), copy(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
 _ when turning smoothing on, internal lines of shapes are visible
