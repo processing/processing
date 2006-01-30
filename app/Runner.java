@@ -310,7 +310,9 @@ public class Runner implements MessageConsumer {
     if (windowLocation != null) {
       window.setLocation(windowLocation);
     }
-    window.show();
+    if (applet.displayable()) {
+      window.show();
+    }
     applet.requestFocus();  // necessary for key events
   }
 
