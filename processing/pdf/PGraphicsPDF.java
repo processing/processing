@@ -224,6 +224,13 @@ public class PGraphicsPDF extends PGraphics2 {
   }
 
 
+  /**
+   * Don't open a window for this renderer, it won't be used.
+   */
+  public boolean displayable() {
+    return false;
+  }
+
   /*
   protected void finalize() throws Throwable {
     System.out.println("calling finalize");
