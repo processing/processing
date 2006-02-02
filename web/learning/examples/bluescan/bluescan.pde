@@ -3,8 +3,11 @@ import processing.bluetooth.*;
 final String SOFTKEY_DISCOVER = "Discover";
 final String SOFTKEY_CANCEL   = "Cancel";
 
+final String NAME_PENDING = "Discovering...";
+
 PFont font;
 Bluetooth bt;
+boolean discovering;
 CellphoneIcon[] icons;
 int numIcons;
 int selected;
@@ -15,23 +18,31 @@ int numRecords;
 int prev;
 
 void setup() {
+  //// get and set the default system font
   font = loadFont();
   textFont(font);
 
+  //// instantiate a new bluetooth object
   bt = new Bluetooth(this);
   
+  //// initialize the records array to a default size
   records = new Record[8];
   numRecords = 0;
   
+  //// initialize the icons array to a default size
   icons = new CellphoneIcon[8];
   numIcons = 0;
   
+  //// set up a command softkey to start discovery process
   softkey(SOFTKEY_DISCOVER);
   
+  //// cap framerate
   framerate(20);
   
+  //// align everything center
   textAlign(CENTER);
   
+  //// load previously saved records
   String[] savedRecords = loadStrings("records.txt");
   int numSaved = savedRecords.length;
   Record r;
@@ -42,6 +53,7 @@ void setup() {
 }
 
 void destroy() {
+  //// before the midlet is destroyed, save records
   String[] savedRecords = new String[numRecords];
   for (int i = 0; i < numRecords; i++) {
     savedRecords[i] = records[i].toString();
@@ -50,12 +62,15 @@ void destroy() {
 }
 
 void draw() {
+  //// set a nice blue sea background
   background(0xff0099ff);
   
+  //// update frame timing
   int current = millis();
   int elapsed = current - prev;
   prev = current;
   
+  //// move icons based on elapsed time
   for (int i = 0; i < numIcons; i++) {
     icons[i].move(elapsed);
     if (icons[i].ty >= (height - icons[i].height() / 2)) {
@@ -63,6 +78,7 @@ void draw() {
     }
   }
   
+  //// if icons have reached the bottom, remove them from the array
   for (int i = numIcons - 1; i >= 0; i--) {
     if (icons[i].scale_fp == 0) {
       icons[i] = null;
@@ -75,12 +91,23 @@ void draw() {
     selected = 0;
   }
   
+  //// draw the icons
   for (int i = 0; i < numIcons; i++) {
     icons[i].draw();    
   }
   
+  //// draw name of current selection
   if (selected < numIcons) {
-    String name = icons[selected].r.name;
+    Record r = icons[selected].r;
+    String name = r.name;
+    if (name.equals(NAME_PENDING) && (r.device != null)) {
+      //// if no name, query the device- this may take a long time, so adjust
+      //// timing as well
+      int start = millis();
+      r.name = r.device.name();
+      prev += millis() - start;
+    }
+    //// draw the name under the icon
     int width = textWidth(name);
     stroke(0);
     fill(255);
@@ -89,20 +116,24 @@ void draw() {
     text(name, icons[selected].x, icons[selected].y + icons[selected].height() / 2 + font.baseline + 2);
   }  
   
+  //// draw the current number of visible devices
   text(str(numIcons), width / 2, height);
 }
 
 void keyPressed() {
   if (key == '5') {
+    //// testing animation on the emulator, just puts a dummy device/icon on the screen
     Record r = new Record();
     r.name = "Test";
     r.count = 1;
     addIcon(r);
   } else if (keyCode == LEFT) {
+    //// update selection
     if (numIcons > 0) {
       selected = (selected - 1 + numIcons) % numIcons;
     }
   } else if (keyCode == RIGHT) {
+    //// update selection
     if (numIcons > 0) {
       selected = (selected + 1) % numIcons;
     }
@@ -111,9 +142,13 @@ void keyPressed() {
 
 void softkeyPressed(String label) {
   if (label.equals(SOFTKEY_DISCOVER)) {
+    //// start discovery process
+    discovering = true;  
     bt.discover();
     softkey(SOFTKEY_CANCEL);
   } else if (label.equals(SOFTKEY_CANCEL)) {
+    //// cancel discovery process
+    discovering = false;
     bt.cancel();
     softkey(SOFTKEY_DISCOVER);
   }
@@ -123,15 +158,20 @@ void libraryEvent(Object library, int event, Object data) {
   if (library == bt) {
     switch (event) {
       case Bluetooth.EVENT_DISCOVER_DEVICE:
+        //// new device discovered!
         Device d = (Device) data;
         Record r = null;
         String address = d.address();
         boolean found = false;
+        //// first, look for it in existing records list
         for (int i = 0; i < numRecords; i++) {
           if (records[i].address.equals(address)) {
+            /// found! update count and last encounter time
             r = records[i];
             r.count++;
+            //// a bit of a hack to get an absolute system time (unlike millis() which is relative to app start)
             r.last = (int) (System.currentTimeMillis() / 1000);
+            r.device = d;
             found = true;
             break;
           }
@@ -147,24 +187,30 @@ void libraryEvent(Object library, int event, Object data) {
             }
           }
           if (!found) {
+            //// put it on screen!
             addIcon(r);
           }
         } else {
+          //// not found, so create a new record
           r = new Record();
-          r.name = d.name();
+          r.name = NAME_PENDING;
           r.address = d.address();
           r.count = 1;
           r.last = (int) (System.currentTimeMillis() / 1000);
+          r.device = d;
           addRecord(r);
           addIcon(r);
         }
       case Bluetooth.EVENT_DISCOVER_DEVICE_COMPLETED:
+        //// done, reset command key and state
+        discovering = false;
         softkey(SOFTKEY_DISCOVER);
         break;
     }
   }
 }
 
+//// adds a record to the array, expanding it if necessary
 void addRecord(Record r) {
   records[numRecords] = r;
   numRecords++;
@@ -176,6 +222,7 @@ void addRecord(Record r) {
   }
 }
 
+//// puts an icon on the screen
 void addIcon(Record r) {
   CellphoneIcon i = new CellphoneIcon();
   i.r = r;
@@ -193,11 +240,13 @@ void addIcon(Record r) {
   }
 }
 
+//// a data structure to store device info, and to read/write it from strings
 class Record {
   String name;
   String address;
   int count;
   int last;
+  Device device;
   
   public Record() {
   }
@@ -215,6 +264,7 @@ class Record {
   }
 }
 
+//// a data structure to store icon info, as well as render it to screen
 class CellphoneIcon {
   /** Reference to device history record object */
   Record r;
