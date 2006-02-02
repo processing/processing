@@ -143,7 +143,7 @@ void keyPressed() {
     //// testing animation on the emulator, just puts a dummy device/icon on the screen
     Record r = new Record();
     r.name = "Test";
-    r.count = 1;
+    r.count = random(5);
     addIcon(r);
   } else if (keyCode == LEFT) {
     //// update selection
