@@ -1,4 +1,22 @@
-import processing.core.*; import processing.bluetooth.*; public class bluescan extends PMIDlet{
+import processing.core.*; import processing.bluetooth.*; public class bluescan extends PMIDlet{// Bluescan
+// by Francis Li
+// http://www.francisli.com/
+//
+// inspired by
+// 
+// Jabberwocky
+// by Intel Research Berkeley
+// http://www.urban-atmospheres.net/Jabberwocky/index.htm
+//
+// Posted January 2, 2006
+//
+// Bluescan discovers nearby bluetooth devices and represents them on the screen
+// as a cellphone icon (even though they may be PCs or other devices).  As they are discovered,
+// they appear at the top of the screen, then slowly drift down until they disappear at the bottom.
+// Newly discovered devices are red, devices you've encountered before are green.  The more times
+// you encounter a device, the bigger the icon will be.
+//
+
 
 final String SOFTKEY_DISCOVER = "Discover";
 final String SOFTKEY_CANCEL   = "Cancel";
@@ -125,7 +143,7 @@ public void keyPressed() {
     //// testing animation on the emulator, just puts a dummy device/icon on the screen
     Record r = new Record();
     r.name = "Test";
-    r.count = 1;
+    r.count = random(5);
     addIcon(r);
   } else if (keyCode == LEFT) {
     //// update selection
