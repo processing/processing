@@ -10,7 +10,13 @@ require '../header.inc.php';
 <img src="images/form.png"><br>
 <br>
 <a href="example.php?name=pointslines">Points and Lines</a><br>
-<a href="example.php?name=shapeprimitives">Shape Primitives</a>
+<a href="example.php?name=shapeprimitives">Shape Primitives</a><br>
+<br>
+<br>
+<img src="images/core.png"><br>
+<br>
+<i>Bluetooth</i><br
+<a href="example.php?name=bluescan">Bluescan</a><br>
 </div>
 <div class="column">
 <img src="images/input.png"><br>

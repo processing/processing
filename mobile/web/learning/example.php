@@ -23,16 +23,36 @@ require '../header.inc.php';
 ?>
 <h3><?php echo $title ?></h3>
 <br>
-<table border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td valign="top">
+<?php
+if (file_exists('examples/'. $name .'/'. $name .'.png')) {
+?>
+      <img src="examples/<?php echo $name ?>/<?php echo $name ?>.png">    
+<?php
+} else {
+?>
 <applet code="com.barteo.emulator.applet.Main"
         width="260" height="509"
         archive="../me-applet.jar,../large.jar,examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jar">
     <param name="midlet" value="<?php echo $name ?>">
     <param name="device" value="net.barteo.me.device.large.LargeDevice">
 </applet>
+<?php
+}
+?>
+<br>
+<br>
+Download:<br>
+<a href="examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jad"><?php echo $name ?>.jad</a><br>
+<a href="examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jar"><?php echo $name ?>.jar</a><br>
+<br>
+Obfuscated:<br>
+<a href="examples/<?php echo $name ?>/proguard/<?php echo $name ?>.jad"><?php echo $name ?>.jad</a><br>
+<a href="examples/<?php echo $name ?>/proguard/<?php echo $name ?>.jar"><?php echo $name ?>.jar</a><br>
     </td>
+    <td width="10">&nbsp;</td>
     <td valign="top">
 <pre><?php echo htmlentities($pde) ?></pre>
     </td>
