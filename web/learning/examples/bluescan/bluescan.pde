@@ -8,6 +8,8 @@
 // by Intel Research Berkeley
 // http://www.urban-atmospheres.net/Jabberwocky/index.htm
 //
+// Posted January 2, 2006
+//
 // Bluescan discovers nearby bluetooth devices and represents them on the screen
 // as a cellphone icon (even though they may be PCs or other devices).  As they are discovered,
 // they appear at the top of the screen, then slowly drift down until they disappear at the bottom.
