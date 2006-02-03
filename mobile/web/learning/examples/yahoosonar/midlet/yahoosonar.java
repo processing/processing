@@ -1,16 +1,41 @@
-import processing.core.*; import processing.xml.*; public class yahoosonar extends PMIDlet{
+import processing.core.*; import processing.xml.*; public class yahoosonar extends PMIDlet{// Yahoo! Sonar
+// by Francis Li
+// http://www.francisli.com/
+//
+// Posted February 3, 2006
+//
+// Yahoo! Sonar uses the Yahoo! developer apis documented at
+// http://developer.yahoo.com/ to query their local search engine.
+// Enter a 5-digit United States zip code (i.e. 94114 for my
+// neighborhood in San Francisco, CA), then enter some search
+// query terms by pressing the "Search" softkey.  The results
+// are plotted using an abstract representation- each ring of color
+// represents a different distance from the center of the zip code.
+// lighter/brighter rings are closer than darker rings.  Use
+// UP and DOWN keys to zoom in and out of the rings.  Results are
+// represented as dots positioned radially based on their distance
+// from the center of the zip code.  Use LEFT and RIGHT to cycle between
+// results, and FIRE to toggle showing more/less info.
+//
+// An obvious next feature would be to use the Phone library to allow
+// direct dialing of the phone numbers retrieved.  However, in order to 
+// make this example MIDP 1.0 compliant, I have not implemented this
+// feature (since the Phone library will only run on MIDP 2.0 phones).
+//
 
+
+//// constant parameters for querying the Yahoo! search engine
 final String SEARCH_APPID        = "mobileprocessing";
 final String SEARCH_SERVER       = "api.local.yahoo.com";
 final String SEARCH_FILE         = "/LocalSearchService/V2/localSearch";
-final String SEARCH_PARAMS[]     = { 
-  "appid", "query", "zip" };
+final String SEARCH_PARAMS[]     = { "appid", "query", "zip" };
 final int    SEARCH_PARAM_APPID  = 0;
 final int    SEARCH_PARAM_QUERY  = 1;
 final int    SEARCH_PARAM_ZIP    = 2;
 final int    SEARCH_PARAM_COUNT  = 3;
 final String SEARCH_VALUES[]     = new String[SEARCH_PARAM_COUNT];
 
+//// constant string tag names for parsing XML results
 final String TAG_RESULTSET    = "ResultSet";
 final String ATTR_RESULTS     = "totalResultsReturned";
 final String TAG_RESULT       = "Result";
@@ -22,18 +47,25 @@ final String TAG_LAT          = "Latitude";
 final String TAG_LON          = "Longitude";
 final String TAG_DISTANCE     = "Distance";
 
+//// holds the digits of the zip code
 final char   ZIP[]            = { 
   '0', '0', '0', '0', '0' };
 
+//// softkey command labels
 final String SOFTKEY_SEARCH   = "Search";
 final String SOFTKEY_BACK     = "Back";
 
+//// zoom/rotate timing values
 final int    SELECTION_DELTA_MS  = 750;
 final int    DISTANCE_DELTA_MS   = 1000;
+
+//// size of result dot
 final int    RESULT_DIAMETER     = 8;
 
+//// speed of "sonar sweep" animation
 final int    SWEEP_RATE_MS       = 2000;
 
+//// attribute indexes into attrs array of Result class
 final int    INDEX_TITLE       = 0;
 final int    INDEX_PHONE       = 1;
 final int    INDEX_ADDRESS     = 2;
@@ -42,6 +74,7 @@ final int    INDEX_DISTANCE    = 4;
 final int    INDEX_COUNT       = 5;
 final int    INDEX_COUNT_SHORT = 2;
 
+//// data structure to hold result info
 class Result {
   public final String[] attrs = new String[INDEX_COUNT];
   public String         lat;
@@ -49,8 +82,11 @@ class Result {
   public int            distance;
 }
 
+//// client network library object
 PClient net;
+//// xml parser library object
 XMLParser parser;
+//// fonts used
 PFont fontZip;
 PFont fontInfo;
 
@@ -101,6 +137,7 @@ public void setup() {
 }
 
 public void draw() {  
+  //// draw the background and range rings based on current distance
   if (distance < 8) {
     background(255 - distance * 64 + 1);
   } 
@@ -109,6 +146,7 @@ public void draw() {
   }
   int dt = millis() - start;
   int d;
+  //// animate zooming in/out
   if (distance != pdistance) {
     if (dt < DISTANCE_DELTA_MS) {
       if (distance > pdistance) {
@@ -153,6 +191,7 @@ public void draw() {
     }
   } 
 
+  //// render current distance results
   if (distance == pdistance) {
     if (distance < 8) {
       fill(255 - distance * 32 + 1);
@@ -168,6 +207,8 @@ public void draw() {
     drawSweep();
     drawZip();
 
+    //// if there are results in a closer ring, put a grey dot in the 
+    //// center as an indication
     if (numCloser > 0) {
       stroke(96);
       fill(200);
@@ -175,6 +216,8 @@ public void draw() {
       noStroke();
     }
 
+    //// if there are results in a further ring, render greyed dots on
+    //// the circumference to indicate them
     if (numFurther > 0) {
       stroke(96);
       fill(200);
@@ -190,9 +233,11 @@ public void draw() {
       noStroke();
     }
 
+    //// render results within current distance range
     if (numSelections > 0) {
       stroke(0);
       fill(255);
+      //// results are spaced at equal angles from each other on the circle
       int da_fp = TWO_PI / numSelections;
       int a_fp = PI / 2 + rotate_fp + da_fp * (numSelections - 1);
       Result r;
@@ -209,6 +254,7 @@ public void draw() {
           fill(255);
           ellipse(x, y, RESULT_DIAMETER, RESULT_DIAMETER);
 
+          //// draw info box text
           stroke(0);
           textFont(fontInfo);
           int rectWidth = 0;
@@ -242,6 +288,7 @@ public void draw() {
       }
       noStroke();
 
+      //// animate rotation
       if (rotate_fp != 0) {  
         int new_rotate_fp = dt * TWO_PI / SELECTION_DELTA_MS / numSelections;
         if (rotate_fp < 0) {
@@ -269,6 +316,7 @@ public void draw() {
   }
 }
 
+//// renders the zip code on the screen
 public void drawZip() {        
   textFont(fontZip);
   textAlign(CENTER);
@@ -276,6 +324,7 @@ public void drawZip() {
   text(new String(ZIP), width / 2, height / 2 + fontZip.baseline + RESULT_DIAMETER / 2);
 }
 
+//// renders the "sonar sweep" animation
 public void drawSweep() {
   if (sweep) {
     sweepa_fp = ((sweepa_fp - (millis() - sweepstart) * TWO_PI / SWEEP_RATE_MS) + TWO_PI) % TWO_PI;
@@ -348,12 +397,15 @@ public void keyPressed() {
 public void softkeyPressed(String label) {
   if (label.equals(SOFTKEY_SEARCH)) {
     if (!sweep) {
+      //// open a text input screen for search terms
       String query = textInput("Search", null, 128);
       if (query != null) {
+        //// set up url parameters for query
         SEARCH_VALUES[SEARCH_PARAM_APPID] = SEARCH_APPID;
         SEARCH_VALUES[SEARCH_PARAM_QUERY] = query;
         SEARCH_VALUES[SEARCH_PARAM_ZIP] = new String(ZIP);
         if (net.GET(SEARCH_FILE, SEARCH_PARAMS, SEARCH_VALUES)) {
+          //// http request successful, start background xml parsing of result
           parser.start(net);
           sweep = true;
           sweepstart = millis();
@@ -430,6 +482,7 @@ public void libraryEvent(Object library, int event, Object data) {
   }
 }
 
+//// determines number of results closer, in range, and further
 public void checkSelections() {
   numSelections = 0;
   numFurther = 0;
