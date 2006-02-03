@@ -15,8 +15,11 @@ require '../header.inc.php';
 <br>
 <img src="images/core.png"><br>
 <br>
-<i>Bluetooth</i><br
+<i>Bluetooth</i><br>
 <a href="example.php?name=bluescan">Bluescan</a><br>
+<br>
+<i>XML</i><br>
+<a href="example.php?name=yahoosonar">Yahoo! Sonar</a><br>
 </div>
 <div class="column">
 <img src="images/input.png"><br>
