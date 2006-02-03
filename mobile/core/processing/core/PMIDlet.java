@@ -55,6 +55,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public static final int GAME_D          = Canvas.GAME_D;
     public static final int SOFTKEY1        = -6;
     public static final int SOFTKEY2        = -7;
+    public static final int SEND            = -10;
+    
+    public static final String SOFTKEY1_NAME    = "SOFT1";
+    public static final String SOFTKEY2_NAME    = "SOFT2";
+    public static final String SEND_NAME        = "SEND";
     
     public static final int FACE_SYSTEM         = Font.FACE_SYSTEM;
     public static final int FACE_MONOSPACE      = Font.FACE_MONOSPACE;
@@ -363,21 +368,23 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                     key = '*';
                     this.keyCode = (int) key;
                     break;
-                case -6:
-                case -21:
-                    key = 0xffff;
-                    this.keyCode = SOFTKEY1;
-                    break;
-                case -7:
-                case -22:
-                    key = 0xffff;
-                    this.keyCode = SOFTKEY2;
-                    break;
                 default:
-                    key = 0xffff;
-                    this.keyCode = canvas.getGameAction(keyCode);
-                    if (this.keyCode == 0) {
-                        this.keyCode = keyCode;
+                    String name = canvas.getKeyName(keyCode);
+                    if (name.equals(SOFTKEY1_NAME)) {
+                        key = 0xffff;
+                        this.keyCode = SOFTKEY1;
+                    } else if (name.equals(SOFTKEY2_NAME)) {
+                        key = 0xffff;
+                        this.keyCode = SOFTKEY2;
+                    } else if (name.equals(SEND_NAME)) {
+                        key = 0xffff;
+                        this.keyCode = SEND;
+                    } else {
+                        key = 0xffff;
+                        this.keyCode = canvas.getGameAction(keyCode);
+                        if (this.keyCode == 0) {
+                            this.keyCode = keyCode;
+                        }
                     }
             }
         }        
