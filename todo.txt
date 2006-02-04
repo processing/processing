@@ -6,6 +6,7 @@ _   find/build universal version of jogl
 _   find/build universal version of rxtx
 X   if running on 10.4, univerals jikes installed in /usr/bin/jikes
 X     updated the jikes included with p5 to be the universal version
+X   add notes to the faq about status
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
