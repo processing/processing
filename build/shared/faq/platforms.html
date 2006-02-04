@@ -216,8 +216,8 @@ The release is split into versions with and without Java. The non-Java
 Mac OS X
       </b><br><br>
 The most current release is tested on Mac OS X 10.3.9 and 10.4.x. We
-      only test on 10.2.8 if there's a specific issue raised and it's
-      something we can fix without too much trouble.
+only test on 10.2.8 if there's a specific issue raised and it's
+something we can fix without too much trouble.
 Your mileage may vary if you're running something else. Actually, your
 mileage will vary no matter what, because who knows what this software
 is gonna do. You're playing with free, beta-quality software. 
@@ -234,6 +234,16 @@ Apple has fixed the issue with
 <a href="http://docs.info.apple.com/article.html?artnum=301382">this
 update</a> which is also available from the Software Update Control Panel.
 
+<LI>We can't yet afford an Intel-based Mac OS X machine so we haven't had
+a chance to test any releases on the new platform. The changes have already been
+made to make the Processing application itself a universal binary 
+(starting with revision 0104), though that means very little, since the only code this fixes is a tiny bit of binary code that launches the application. Revisions 103 and earlier may not run, since Java won't run via Rosetta, but I don't know how that affects Apple's Java launcher (can a Rosetta app invoke Java? it looks like the answer is no, but I've got no way to test).
+<BR> 
+Java, thankfully, is already native on the new Intel Macs, so the speed improvement that comes from the improved bus/processor speed will be a big help, and the ways in which the Intel chips aren't faster than PPC (Altivec, heavy media stuff) should have little effect on Java/Processing (yes, contradictory, since we're doing graphics things, right? but I don't have the impression that Java was optimized heavily to use Altivec and media hooey that's lost on the MacTels). 
+<BR> 
+Native code for libraries like jogl and serial are likely to not run at all, 
+and we'll need to get new versions of those (hopefully from the jogl and 
+rxtx people).  This may take some time, there are builds floating around of the jogl libs, but I'm not sure if there's anything official yet. I spent some time building rxtx to be a universal binary, but who knows what sort of endian issues lurk underneath.
 <LI>Mac OS X 10.2 (Jaguar) is the minimum version that will run the Processing environment. If you want to run Processing itself on Mac OS X 10.2, you must install Java 1.4 via Software Update, and in fact, install absolutely everything available to get you up to 10.2.8, and all the security fixes. Revision 85 did not run properly on 10.2, but this has been fixed for 86. "Present" mode does not work on 10.2 because of apparent bugs in Apple's implementation of Java's full screen mode. 
 
 <LI>Mac OS X 10.1 and 10.0 won't run the Processing environment, but should run applets that have been created with it. Make sure that Java is as up-to-date as possible (via Software Update). 
