@@ -687,6 +687,16 @@ Things that are often perceived as bugs, but aren't actually 'broken'.
 <LI>If your code has methods (it's not just in static mode) or needs
 to run over time, it must have a draw() method, otherwise nothing will
 happen. 
+<LI>Objects with alpha (lines or shapes with an alpha fill or stroke,
+images with alpha, all fonts) are displayed in P3D and OpenGL based on
+their drawing order. This creates some annoying effects like making
+things opaque if they're drawn out of order with objects above or
+beneath them. This is simply how most 3D rendering works, but is
+something that we'd like to develop a workaround for in the
+future. Currently, you should just try to draw things back-to-front as
+best as possible. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 176</A>)
+
 <LI> Names of sketches cannot start with a number, or have spaces
   inside. this is mostly because of a restriction on the naming of
   java classes. I suppose if lots of people find this upsetting, we
@@ -1044,8 +1054,6 @@ OpenGL Issues
   Processing in OpenGL mode. GL tends takes charge of things so
   results will be unexpected (windows from the other app showing
   through to the Processing window, etc.)
-
-<LI>Objects with alpha (lines or shapes with an alpha fill or stroke, images with alpha, all fonts) are displayed in OpenGL based on their drawing order. This creates some annoying effects like making things opaque if they're drawn out of order with objects above or beneath them. This is simply how OpenGL works, but is something that we'd like to develop a workaround for in the future. Currently, you should just try to draw things back-to-front as best as possible.
 
 <LI>OpenGL is really memory hungry because of how tetxures work. In
 OpenGL mode, your images as the next power of two larger in either
