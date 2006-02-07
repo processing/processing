@@ -7,6 +7,8 @@ X   basically if the main gfx context isn't viewable, close the window
 X   since it may have already been opened at 100x100
 X   avoid opening it in the first place?
 
+_ loadImage(url) broken on windows
+_   http://dev.processing.org/bugs/show_bug.cgi?id=279
 
 more pdf/recording stuff
 _ figure out what's up with type on osx
