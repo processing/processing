@@ -799,6 +799,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Optimized code for building the blur kernel.
    * further optimized blur code (approx. 15% for radius=20)
    * bigger speed gains for larger radii (~30%)
    * added support for various image types (ALPHA, RGB, ARGB)
