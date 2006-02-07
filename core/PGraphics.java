@@ -2430,8 +2430,8 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Rotate around the z axis. rotate() and rotateZ() are the same,
-   * it's just that it make sense to have rotate() and then rotateX()
+   * Rotate around the z axis. The functions rotate() and rotateZ() are
+   * the same, it's just that it make sense to have rotate() and then rotateX()
    * and rotateY() when running in 3D; nor does it make sense to use
    * a function called rotateZ() if you're only doing things in 2D.
    * so we just decided to have them both be the same.
