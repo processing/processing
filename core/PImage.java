@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -139,11 +139,9 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Construct a new PImage from a java.awt.Image
-   *
-   * this constructor assumes that you've done the work of
-   * making sure a MediaTracker has been used to fully
-   * download the data and that the img is valid.
+   * Construct a new PImage from a java.awt.Image. This constructor assumes
+   * that you've done the work of making sure a MediaTracker has been used
+   * to fully download the data and that the img is valid.
    */
   public PImage(java.awt.Image img) {
     width = img.getWidth(null);
@@ -165,8 +163,9 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * mode is one of CORNERS or CORNER, because the others are
-   * just too weird for the other functions
+   * The mode can only be set to CORNERS or CORNER, because the others are
+   * just too weird for the other functions. Do you really want to use
+   * get() or copy() with imageMode(CENTER)?
    */
   public void imageMode(int mode) {
     if ((mode == CORNER) || (mode == CORNERS)) {
