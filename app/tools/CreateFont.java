@@ -62,9 +62,9 @@ public class CreateFont extends JFrame {
   String list[];
   int selection = -1;
 
-  static {
-    System.out.println("yep yep yep");
-  }
+  //static {
+  //System.out.println("yep yep yep");
+  //}
   //static final String styles[] = {
   //"Plain", "Bold", "Italic", "Bold Italic"
   //};

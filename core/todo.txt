@@ -10,6 +10,9 @@ X   avoid opening it in the first place?
 _ loadImage(url) broken on windows
 _   http://dev.processing.org/bugs/show_bug.cgi?id=279
 
+_ updatePixels() is slow to create a BufferedImage
+_   therefore the incomplete rendering (mediatracker-type issue?)
+
 more pdf/recording stuff
 _ figure out what's up with type on osx
 _   sometimes bicubic vs quadratic beziers are mixed up in fonts
@@ -636,6 +639,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ opengl doesn't work in applets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=166
+_   example of getting it to work with an applet
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1131916668
 _ implement hint(NO_DEPTH_TEST) for opengl
 _ images are memory leaking pretty badly 
 _   texture re-allocated on each frame
