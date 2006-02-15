@@ -1,4 +1,5 @@
 0104 pde
+X removed "yep yep yep" when using "Create Font"
 
 X update osx for intel binary (if necessary) 
 _   http://developer.apple.com/qa/qa2005/qa1295.html
@@ -7,6 +8,7 @@ _   find/build universal version of rxtx
 X   if running on 10.4, univerals jikes installed in /usr/bin/jikes
 X     updated the jikes included with p5 to be the universal version
 X   add notes to the faq about status
+X   set java version to be 1.4, not 1.4+
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -303,7 +305,7 @@ _ mouse wheel broken in the text editor? (windows jdk 1.5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=24
 _ lock the minimum size for the main processing editor frame
 _   if it's made too small, stuff from the bottom disappears
-_   http://dev.processing.org/bugs/process_bug.cgi
+_   http://dev.processing.org/bugs/show_bug.cgi?id=25
 _ add mnemonics for menus (alt-f to open 'file')
 _   http://dev.processing.org/bugs/show_bug.cgi?id=26
 _ implement page setup and print
