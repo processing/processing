@@ -17,7 +17,7 @@ public class PGraphicsPDF extends PGraphics2 {
   Document document;
   PdfWriter writer;
   PdfContentByte content;
-  PdfTemplate tp;
+  //PdfTemplate tp;
   DefaultFontMapper mapper;
 
   // BaseFont baseFont = mapper.awtToPdf(java.awt.Font awtFont)
