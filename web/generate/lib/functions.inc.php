@@ -85,7 +85,7 @@ function innerHTML(&$xml, $nodeName)
         // replace invalid <c> with <kbd>
         $string = str_replace(array('<c>', '</c>'), array('<kbd>', '</kbd>'), $matches[1]);
         if (substr($string, 0, 1) == "\n") { $string = substr($string, 1); }
-	    return chars(trim($string));
+	    return trim(chars($string));
     } else {
         return false;
     }
@@ -198,12 +198,16 @@ Escape XML chars
 
 function chars($string)
 {
-	$string = str_replace('& ', '&amp; ', $string);
-	$string = str_replace('&&', '&amp;&amp;', $string);
-    $string = str_replace(' > ', ' &gt; ', $string);
-    $string = str_replace(' < ', ' &lt; ', $string);
-    $string = str_replace('<<', '&lt;&lt;', $string);
-    $string = str_replace('>>', '&gt;&gt;', $string);
+	//$string = str_replace('& ', '&amp; ', $string);
+    //$string = str_replace(' > ', ' &gt; ', $string);
+    //$string = str_replace(' < ', ' &lt; ', $string);
+    //$string = str_replace('<<', '&lt;&lt;', $string);
+    //$string = str_replace('>>', '&gt;&gt;', $string);
+	$string = str_replace('<=', '&lt;=', $string);
+	$string = preg_replace("/&(\W)/", "&amp;$1", $string);
+	$string = str_replace('&amp;&', '&amp;&amp;', $string);
+	$string = preg_replace("/<(!\/\W)/", "&lt;$1", $string);
+	$string = preg_replace("/>(!\s\W)/", "&gt;$1", $string);
     $string = stripslashes($string);
     return $string;
 }
