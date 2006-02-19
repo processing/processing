@@ -2254,8 +2254,10 @@ public class Sketch {
       // isn't used when exporting for unix
       ps.print("#!/bin/sh\n\n");
       ps.print("APPDIR=`dirname $0`\n");
-      ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
+      // another fix for bug #234
+      //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
       ps.print("java " + Preferences.get("run.options") +
+               " -Djava.library.path=$APPDIR" +
                " -cp " + exportClassPath +
                " " + this.name + "\n");
 
