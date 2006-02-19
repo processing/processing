@@ -2253,12 +2253,13 @@ public class Sketch {
       // do the newlines explicitly so that windows CRLF
       // isn't used when exporting for unix
       ps.print("#!/bin/sh\n\n");
-      ps.print("APPDIR=`dirname $0`\n");
-      // another fix for bug #234
+      //ps.print("APPDIR=`dirname $0`\n");
+      ps.print("APPDIR=$(dirname \"$0\")\n");  // more posix compliant
+      // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
       ps.print("java " + Preferences.get("run.options") +
-               " -Djava.library.path=$APPDIR" +
-               " -cp " + exportClassPath +
+               " -Djava.library.path=\"$APPDIR\"" +
+               " -cp \"" + exportClassPath + "\"" +
                " " + this.name + "\n");
 
       ps.flush();
