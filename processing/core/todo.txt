@@ -67,6 +67,8 @@ _   i think the listeners aren't re-added, but need to double check
 
 _ PSound.play() won't play the sound a 2nd time (reopened)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=208
+_ loadSound apparently broken in java 1.5?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=285
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -366,7 +368,10 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
-
+_ point() doesn't work with some graphics card setups
+_   particularly with opengl and java2d
+_   http://dev.processing.org/bugs/show_bug.cgi?id=121
+_   http://dev.processing.org/bugs/show_bug.cgi?id=269
 _ cairo tesselation used: 
 _   John Hobby, Practical Segment Intersection with Finite Precision
 _   Output. Computational Geometry Theory and Application, 13(4), 1999.
@@ -647,8 +652,6 @@ _ implement hint(NO_DEPTH_TEST) for opengl
 _ images are memory leaking pretty badly 
 _   texture re-allocated on each frame
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
-_ point() doesn't work with some graphics card setups
-_   http://dev.processing.org/bugs/show_bug.cgi?id=121
 _ blend(), get(), set(), copy(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
