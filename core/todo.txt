@@ -7,20 +7,24 @@ X   basically if the main gfx context isn't viewable, close the window
 X   since it may have already been opened at 100x100
 X   avoid opening it in the first place?
 X added toolkit getFontMetrics() for shape mode fonts to be able to change size
+X recordRaw() to a PGraphics3 should send 3D data.
+X   but recordRaw() to a PGraphics(2) should send only 2D data.
 
 _ registerSize() in arcball is causing trouble
 
 _ loadImage(url) broken on windows
+_   actually it's an issue with some types of jpeg files
 _   http://dev.processing.org/bugs/show_bug.cgi?id=279
 
 _ updatePixels() is slow to create a BufferedImage
 _   therefore the incomplete rendering (mediatracker-type issue?)
 
+_ finish dxf writer that'll work with recordRaw()
+
 more pdf/recording stuff
 _ figure out what's up with type on osx
 _   sometimes bicubic vs quadratic beziers are mixed up in fonts
 _   not sure if it's limited to osx or what
-_ make dxf writer that'll work with recordRaw()
 _ document how to switch to next page
 _   maybe background() should do this automatically?
 _ add option to sort triangles back to front so alpha works
