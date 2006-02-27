@@ -108,9 +108,9 @@ public class PGraphics extends PImage implements PConstants {
   /** tint that was last set (read-only) */
   public int tintColor;
 
-  boolean tintAlpha;
-  float tintR, tintG, tintB, tintA;
-  int tintRi, tintGi, tintBi, tintAi;
+  protected boolean tintAlpha;
+  protected float tintR, tintG, tintB, tintA;
+  protected int tintRi, tintGi, tintBi, tintAi;
 
   // ........................................................
 
@@ -120,9 +120,9 @@ public class PGraphics extends PImage implements PConstants {
   /** fill that was last set (read-only) */
   public int fillColor;
 
-  boolean fillAlpha;
-  float fillR, fillG, fillB, fillA;
-  int fillRi, fillGi, fillBi, fillAi;
+  protected boolean fillAlpha;
+  protected float fillR, fillG, fillB, fillA;
+  protected int fillRi, fillGi, fillBi, fillAi;
 
   // ........................................................
 
@@ -132,9 +132,9 @@ public class PGraphics extends PImage implements PConstants {
   /** stroke that was last set (read-only) */
   public int strokeColor;
 
-  boolean strokeAlpha;
-  float strokeR, strokeG, strokeB, strokeA;
-  int strokeRi, strokeGi, strokeBi, strokeAi;
+  protected boolean strokeAlpha;
+  protected float strokeR, strokeG, strokeB, strokeA;
+  protected int strokeRi, strokeGi, strokeBi, strokeAi;
 
   // ........................................................
 
@@ -174,8 +174,12 @@ public class PGraphics extends PImage implements PConstants {
    * Model transformation of the form m[row][column],
    * which is a "column vector" (as opposed to "row vector") matrix.
    */
-  public float m00, m01, m02;
-  public float m10, m11, m12;
+  //public float m00, m01, m02;
+  //public float m10, m11, m12;
+  public float m00, m01, m02, m03;
+  public float m10, m11, m12, m13;
+  public float m20, m21, m22, m23;
+  public float m30, m31, m32, m33;
 
   //public int angleMode;
 
@@ -1786,7 +1790,12 @@ public class PGraphics extends PImage implements PConstants {
     if (which != null) {
       textFont = which;
       textFontNative = which.font;
-      textFontNativeMetrics = null;
+      //textFontNativeMetrics = null;
+      // changed for rev 0104 for textMode(SHAPE) in opengl
+      if (textFontNative != null) {
+        textFontNativeMetrics =
+          Toolkit.getDefaultToolkit().getFontMetrics(textFontNative);
+      }
       textSize(which.size);
 
     } else {

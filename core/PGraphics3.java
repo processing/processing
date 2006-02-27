@@ -2770,6 +2770,31 @@ public class PGraphics3 extends PGraphics {
   }
 
 
+  /**
+   * Load the modelview into m00, m01, et al so that it can be used.
+   */
+  public void loadMatrix() {
+    m00 = modelview.m00;
+    m01 = modelview.m01;
+    m02 = modelview.m02;
+    m03 = modelview.m03;
+
+    m10 = modelview.m10;
+    m11 = modelview.m11;
+    m12 = modelview.m12;
+    m13 = modelview.m13;
+
+    m20 = modelview.m20;
+    m21 = modelview.m21;
+    m22 = modelview.m22;
+    m23 = modelview.m23;
+
+    m30 = modelview.m30;
+    m31 = modelview.m31;
+    m32 = modelview.m32;
+    m33 = modelview.m33;
+  }
+
 
   /**
    * Print the current model (or "transformation") matrix.
