@@ -1,28 +1,24 @@
 0104 pde
 X removed "yep yep yep" when using "Create Font"
-
-_ p5 not saving changes on quit, even if you say 'yes'
-_   http://dev.processing.org/bugs/show_bug.cgi?id=276
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1139519266;start=;mstate=0
-
-_ recordRaw() to a PGraphics3 should send 3D data.
-_   but recordRaw() to a PGraphics(2) should send only 2D data.
-
+X p5 not saving changes on quit, even if you say 'yes'
+X   http://dev.processing.org/bugs/show_bug.cgi?id=276
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1139519266
 X update osx for intel binary (if necessary) 
-_   http://developer.apple.com/qa/qa2005/qa1295.html
-_   find/build universal version of jogl
-_   find/build universal version of rxtx
 X   if running on 10.4, univerals jikes installed in /usr/bin/jikes
 X     updated the jikes included with p5 to be the universal version
 X   add notes to the faq about status
 X   set java version to be 1.4, not 1.4+
-
 X fix LD_LIBRARY_PATH issues for applications on some linux distros
 X   http://dev.processing.org/bugs/show_bug.cgi?id=234
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+
+_ finish updates for osx and opengl
+_   http://developer.apple.com/qa/qa2005/qa1295.html
+_   find/build universal version of jogl
+_   find/build universal version of rxtx
 
 _ need method for showing prefs for the tools
 _   add pref to handle date vs. increment on archive sketch

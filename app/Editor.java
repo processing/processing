@@ -503,7 +503,7 @@ public class Editor extends JFrame
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleSave();
+          handleSave(false);
         }
       });
     menu.add(saveMenuItem);
@@ -1313,7 +1313,7 @@ public class Editor extends JFrame
                                                 options[0]);
 
       if (result == JOptionPane.YES_OPTION) {
-        handleSave();
+        handleSave(true);
         checkModified2();
 
       } else if (result == JOptionPane.NO_OPTION) {
@@ -1568,33 +1568,51 @@ public class Editor extends JFrame
 
 
   // there is no handleSave1 since there's never a need to prompt
-  public void handleSave() {
+  /**
+   * Actually handle the save command. If 'force' is set to false,
+   * this will happen in another thread so that the message area
+   * will update and the save button will stay highlighted while the
+   * save is happening. If 'force' is true, then it will happen
+   * immediately. This is used during a quit, because invokeLater()
+   * won't run properly while a quit is happening. This fixes
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=276">Bug 276</A>.
+   */
+  public void handleSave(boolean force) {
     doStop();
     buttons.activate(EditorButtons.SAVE);
 
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          message("Saving...");
-          try {
-            if (sketch.save()) {
-              message("Done Saving.");
-            } else {
-              message(EMPTY);
-            }
-            // rebuild sketch menu in case a save-as was forced
-            sketchbook.rebuildMenus();
-
-          } catch (Exception e) {
-            // show the error as a message in the window
-            error(e);
-
-            // zero out the current action,
-            // so that checkModified2 will just do nothing
-            checkModifiedMode = 0;
-            // this is used when another operation calls a save
+    if (force) {
+      handleSave2();
+    } else {
+      SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
           }
-          buttons.clear();
-        }});
+        });
+    }
+  }
+
+
+  public void handleSave2() {
+    message("Saving...");
+    try {
+      if (sketch.save()) {
+        message("Done Saving.");
+      } else {
+        message(EMPTY);
+      }
+      // rebuild sketch menu in case a save-as was forced
+      sketchbook.rebuildMenus();
+
+    } catch (Exception e) {
+      // show the error as a message in the window
+      error(e);
+
+      // zero out the current action,
+      // so that checkModified2 will just do nothing
+      checkModifiedMode = 0;
+      // this is used when another operation calls a save
+    }
+    buttons.clear();
   }
 
 
@@ -1696,7 +1714,7 @@ public class Editor extends JFrame
                                               options,
                                               options[0]);
     if (result == JOptionPane.OK_OPTION) {
-      handleSave();
+      handleSave(true);
 
     } else {
       // why it's not CANCEL_OPTION is beyond me (at least on the mac)
