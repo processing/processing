@@ -5,6 +5,9 @@ _ p5 not saving changes on quit, even if you say 'yes'
 _   http://dev.processing.org/bugs/show_bug.cgi?id=276
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1139519266;start=;mstate=0
 
+_ recordRaw() to a PGraphics3 should send 3D data.
+_   but recordRaw() to a PGraphics(2) should send only 2D data.
+
 X update osx for intel binary (if necessary) 
 _   http://developer.apple.com/qa/qa2005/qa1295.html
 _   find/build universal version of jogl

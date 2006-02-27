@@ -1376,12 +1376,23 @@ public class PGraphics3 extends PGraphics {
       triangle.render();
 
       if (raw != null) {
-        raw.fill(ar, ag, ab, a[A]);
-        raw.vertex(a[X], a[Y]);  // a[X] and not a[VX] ?
-        raw.fill(br, bg, bb, b[A]);
-        raw.vertex(b[X], b[Y]);
-        raw.fill(cr, cg, cb, c[A]);
-        raw.vertex(c[X], c[Y]);
+        if (raw instanceof PGraphics3) {
+          if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
+            raw.fill(ar, ag, ab, a[A]);
+            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
+            raw.fill(br, bg, bb, b[A]);
+            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
+            raw.fill(cr, cg, cb, c[A]);
+            raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
+          }
+        } else {
+          raw.fill(ar, ag, ab, a[A]);
+          raw.vertex(a[X], a[Y]);
+          raw.fill(br, bg, bb, b[A]);
+          raw.vertex(b[X], b[Y]);
+          raw.fill(cr, cg, cb, c[A]);
+          raw.vertex(c[X], c[Y]);
+        }
       }
     }
 
@@ -1419,6 +1430,12 @@ public class PGraphics3 extends PGraphics {
 
 
   protected void render_lines() {
+    if (raw != null) {
+      raw.colorMode(RGB, 1);
+      raw.noFill();
+      raw.beginShape(LINES);
+    }
+
     for (int i = 0; i < lineCount; i ++) {
       float a[] = vertices[lines[i][VERTEX1]];
       float b[] = vertices[lines[i][VERTEX2]];
@@ -1432,12 +1449,28 @@ public class PGraphics3 extends PGraphics {
       line.setVertices(a[X], a[Y], a[Z],
                        b[X], b[Y], b[Z]);
 
-      //if (renderCallbackObject != null) {
-      //lineCallbackMethod.
-      //}
+      if (raw != null) {
+        if (raw instanceof PGraphics3) {
+          if ((a[VW] != 0) && (b[VW] != 0)) {
+            raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
+            raw.stroke(b[SR], b[SG], b[SB], b[SA]);
+            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
+          }
+        } else {
+          raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+          raw.vertex(a[X], a[Y]);
+          raw.stroke(b[SR], b[SG], b[SB], b[SA]);
+          raw.vertex(b[X], b[Y]);
+        }
+      }
 
       line.setIndex(index);
       line.draw();
+    }
+
+    if (raw != null) {
+      raw.endShape();
     }
   }
 
@@ -3817,27 +3850,6 @@ public class PGraphics3 extends PGraphics {
     throw new RuntimeException(msg);
   }
 
-
-
-  //////////////////////////////////////////////////////////////
-
-  // RAW SHAPE RECORDING
-
-
-  /*
-  public void beginRaw(PGraphics raw) {
-    this.raw = raw;
-    raw.beginFrame();
-  }
-
-
-  public void endRaw() {
-    if (raw != null) {
-      raw.endFrame();
-      raw = null;
-    }
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
