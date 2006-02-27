@@ -12,7 +12,7 @@ import processing.core.*;
 public class PGraphicsPDF extends PGraphics2 {
 
   File temp;
-  int frameCount;
+  //int frameCount;
   File file;
   Document document;
   PdfWriter writer;
