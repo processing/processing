@@ -7,6 +7,34 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0104 - 27 February 2006
+
+Fix for major bug where "Save Changes on Quit" was being ignored. 
+http://dev.processing.org/bugs/show_bug.cgi?id=276
+
+Other changes include: 
+
++ Processing.app is now a universal binary for Mac OS X. The version 
+  of jikes being used is also now a universal binary. However, OpenGL 
+  and the Serial library still will not work on Intel-based Macs:
+  http://processing.org/faq/platforms.html#mac
+
++ Fixed issues with LD_LIBRARY_PATH for applications exported for Linux.
+  http://dev.processing.org/bugs/show_bug.cgi?id=234  
+
++ No window is opened when using the PDF renderer, this is useful in 
+  situations where very large images are being created at it used to
+  freak out the OS.
+
++ Fixed an obscure font metrics issue with OpenGL and createFont().
+
++ A handful of additional internal changes for recordRaw() have been 
+  added to support writing out 2D and 3D data.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0103 - 18 January 2006
 
 Fix for a bug specific to Mac OS X (may affect Windows as well) that

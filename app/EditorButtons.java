@@ -357,7 +357,7 @@ public class EditorButtons extends JComponent implements MouseInputListener {
       break;
 
     case SAVE:
-      editor.handleSave();
+      editor.handleSave(false);
       break;
 
     case EXPORT:
