@@ -6,6 +6,9 @@ X   if it doesn't display to the screen, needs to never show a window
 X   basically if the main gfx context isn't viewable, close the window
 X   since it may have already been opened at 100x100
 X   avoid opening it in the first place?
+X added toolkit getFontMetrics() for shape mode fonts to be able to change size
+
+_ registerSize() in arcball is causing trouble
 
 _ loadImage(url) broken on windows
 _   http://dev.processing.org/bugs/show_bug.cgi?id=279
