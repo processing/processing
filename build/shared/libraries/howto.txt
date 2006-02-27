@@ -300,7 +300,7 @@ the preprocessor. The user never sees this, it just happens magically.
 
 Creating .jar Files For Your Library
 
-Since your code is inside a package, you need to make sure that its
+Since your code is inside a package, you need to make sure that it's
 inside subfolders in the .jar file. It should be noted that jar files
 are simply .zip files (they can be opened with WinZip or Stuffit) with
 a "manifest" file. 
@@ -440,8 +440,8 @@ Same goes for using "Processing", "Pro", or "P5" just like "P",
 or whether it's a prefix or a suffix. 
 
 Similarly, please don't using processing.* as the prefix for your
-library. We'd like to keep that name space clear for official 
-things as well.
+library packages. We'd like to keep that name space clear for 
+official things as well.
 
 
 //////////////////////////////////////////////////////////////
