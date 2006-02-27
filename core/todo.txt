@@ -647,6 +647,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ make a note about the anti-aliasing types in the faq
+_ y may be flipped in modelX/Y/Z stuff on opengl
 _ opengl doesn't work in applets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=166
 _   example of getting it to work with an applet

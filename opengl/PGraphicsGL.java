@@ -249,7 +249,7 @@ public class PGraphicsGL extends PGraphics3 {
    * because OpenGL's pixel buffer is all handled internally.
    */
   protected void allocate() {
-    // changing for 0100, need to resize rather than return-allocate
+    // changing for 0100, need to resize rather than re-allocate
     canvas.setSize(width, height);
   }
 

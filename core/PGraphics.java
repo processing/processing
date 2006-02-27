@@ -201,8 +201,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // vertices
   static final int DEFAULT_VERTICES = 512;
-  public float vertices[][] = new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
-  int vertexCount; // total number of vertices
+  protected float vertices[][] =
+    new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
+  protected int vertexCount; // total number of vertices
 
 
   // ........................................................
@@ -751,7 +752,7 @@ public class PGraphics extends PImage implements PConstants {
     // not everyone needs this, but just easier to store rather
     // than adding another moving part to the code...
     vertices[vertexCount][MX] = x;
-    vertices[vertexCount][MY] = x;
+    vertices[vertexCount][MY] = y;
     vertexCount++;
 
     switch (shape) {
