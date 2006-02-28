@@ -1,4 +1,5 @@
 0105 core
+X fix some issues with beginRaw and opengl
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

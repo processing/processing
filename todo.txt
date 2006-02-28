@@ -1,4 +1,5 @@
 0105 pde
+X no changes, only fixes for opengl
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
