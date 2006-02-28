@@ -572,13 +572,27 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glDisable(GL.GL_TEXTURE_2D);
 
         if (raw != null) {
-          raw.texture(texture);
-          raw.fill(ar, ag, ab, a[A]);
-          raw.vertex(a[VX], a[VY], a[U] * uscale, a[V] * vscale);
-          raw.fill(br, bg, bb, b[A]);
-          raw.vertex(b[VX], b[VY], b[U] * uscale, b[V] * vscale);
-          raw.fill(cr, cg, cb, c[A]);
-          raw.vertex(c[VX], c[VY], c[U] * uscale, c[V] * vscale);
+          if (raw instanceof PGraphics3) {
+            if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
+              raw.texture(texture);
+              raw.fill(ar, ag, ab, a[A]);
+              raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW],
+                         a[U] * uscale, a[V] * vscale);
+              raw.fill(br, bg, bb, b[A]);
+              raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW],
+                         b[U] * uscale, b[V] * vscale);
+              raw.fill(cr, cg, cb, c[A]);
+              raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW],
+                         c[U] * uscale, c[V] * vscale);
+            } else {
+              raw.fill(ar, ag, ab, a[A]);
+              raw.vertex(a[X], a[Y], a[U] * uscale, a[V] * vscale);
+              raw.fill(br, bg, bb, b[A]);
+              raw.vertex(b[X], b[Y], b[U] * uscale, b[V] * vscale);
+              raw.fill(cr, cg, cb, c[A]);
+              raw.vertex(c[X], c[Y], c[U] * uscale, c[V] * vscale);
+            }
+          }
         }
 
       } else {
@@ -601,6 +615,26 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
         if (raw != null) {
+          if (raw instanceof PGraphics3) {
+            if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
+              raw.fill(ar, ag, ab, a[A]);
+              raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
+              raw.fill(br, bg, bb, b[A]);
+              raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
+              raw.fill(cr, cg, cb, c[A]);
+              raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
+            }
+          } else {
+            raw.fill(ar, ag, ab, a[A]);
+            raw.vertex(a[X], a[Y]);
+            raw.fill(br, bg, bb, b[A]);
+            raw.vertex(b[X], b[Y]);
+            raw.fill(cr, cg, cb, c[A]);
+            raw.vertex(c[X], c[Y]);
+          }
+        }
+        /*
+        if (raw != null) {
           raw.fill(ar, ag, ab, a[A]);
           raw.vertex(a[VX], a[VY]);
           raw.fill(br, bg, bb, b[A]);
@@ -608,6 +642,7 @@ public class PGraphicsGL extends PGraphics3 {
           raw.fill(cr, cg, cb, c[A]);
           raw.vertex(c[VX], c[VY]);
         }
+        */
         gl.glEnd();
       }
     }
