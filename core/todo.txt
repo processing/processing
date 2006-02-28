@@ -1,14 +1,6 @@
-0104 core
-X don't open a window the size of the pdf if in pdf mode
-X   need to have some sort of flag in the gfx context that it's visible or not
-o   handled inside updateSize()?
-X   if it doesn't display to the screen, needs to never show a window
-X   basically if the main gfx context isn't viewable, close the window
-X   since it may have already been opened at 100x100
-X   avoid opening it in the first place?
-X added toolkit getFontMetrics() for shape mode fonts to be able to change size
-X recordRaw() to a PGraphics3 should send 3D data.
-X   but recordRaw() to a PGraphics(2) should send only 2D data.
+0105 core
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 _ registerSize() in arcball is causing trouble
 
