@@ -1,3 +1,7 @@
+0105 core
+X fix some issues with beginRaw and opengl
+
+
 0104 core
 X don't open a window the size of the pdf if in pdf mode
 X   need to have some sort of flag in the gfx context that it's visible or not
