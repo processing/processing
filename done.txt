@@ -1,3 +1,7 @@
+0105 pde
+X no changes, only fixes for opengl
+
+
 0104 pde
 X removed "yep yep yep" when using "Create Font"
 X p5 not saving changes on quit, even if you say 'yes'
