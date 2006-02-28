@@ -1,3 +1,17 @@
+0104 pde
+X removed "yep yep yep" when using "Create Font"
+X p5 not saving changes on quit, even if you say 'yes'
+X   http://dev.processing.org/bugs/show_bug.cgi?id=276
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1139519266
+X update osx for intel binary (if necessary) 
+X   if running on 10.4, univerals jikes installed in /usr/bin/jikes
+X     updated the jikes included with p5 to be the universal version
+X   add notes to the faq about status
+X   set java version to be 1.4, not 1.4+
+X fix LD_LIBRARY_PATH issues for applications on some linux distros
+X   http://dev.processing.org/bugs/show_bug.cgi?id=234
+
+
 0103 pde
 X no changes, only pdf fixes
 
