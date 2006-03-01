@@ -1586,6 +1586,7 @@ public class Editor extends JFrame
     } else {
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
+            handleSave2();
           }
         });
     }
