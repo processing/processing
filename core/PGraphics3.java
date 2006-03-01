@@ -515,9 +515,12 @@ public class PGraphics3 extends PGraphics {
 
   protected void setup_vertex(float x, float y, float z) {
     if (vertexCount == vertices.length) {
-      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+      float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
+      int temp2[] = new int[vertexCount << 1];
+      System.arraycopy(vertex_order, 0, temp2, 0, vertexCount);
+      vertex_order = temp2;
       //message(CHATTER, "allocating more vertices " + vertices.length);
     }
     float vertex[] = vertices[vertexCount++];
