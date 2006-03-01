@@ -1,5 +1,4 @@
-0106 core
-X fix bug where more than 512 vertices would cause trouble in P3D and OPENGL
+0107 core
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
