@@ -1,3 +1,7 @@
+0106 core
+X fix bug where more than 512 vertices would cause trouble in P3D and OPENGL
+
+
 0105 core
 X fix some issues with beginRaw and opengl
 
