@@ -7,6 +7,18 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0106 - 1 March 2006
+
+Fix for another major bug where sketches don't save properly if you 
+use the "Save" menu command (also ctrl-S, or cmd-S on the mac). 
+
+Also a minor bug with vertices greater than 512 in P3D and OPENGL 
+would crap out.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0105 - 27 February 2006
 
 Fixes some additional issues with beginRaw/endRaw and OpenGL. 
