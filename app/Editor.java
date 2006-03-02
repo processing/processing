@@ -4,7 +4,7 @@
   Editor - main editor panel for the processing development environment
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -790,7 +790,7 @@ public class Editor extends JFrame
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.cut();
-          sketch.setModified();
+          sketch.setModified(true);
         }
       });
     menu.add(item);
@@ -807,7 +807,7 @@ public class Editor extends JFrame
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.paste();
-          sketch.setModified();
+          sketch.setModified(true);
         }
       });
     menu.add(item);
@@ -898,11 +898,17 @@ public class Editor extends JFrame
         undoItem.setEnabled(true);
         undoItem.setText(undo.getUndoPresentationName());
         putValue(Action.NAME, undo.getUndoPresentationName());
+        if (sketch != null) {
+          sketch.setModified(true);  // 0107
+        }
       } else {
         this.setEnabled(false);
         undoItem.setEnabled(false);
         undoItem.setText("Undo");
         putValue(Action.NAME, "Undo");
+        if (sketch != null) {
+          sketch.setModified(false);  // 0107
+        }
       }
     }
   }
@@ -927,7 +933,6 @@ public class Editor extends JFrame
 
     protected void updateRedoState() {
       if (undo.canRedo()) {
-        this.setEnabled(true);
         redoItem.setEnabled(true);
         redoItem.setText(undo.getRedoPresentationName());
         putValue(Action.NAME, undo.getRedoPresentationName());
@@ -1861,31 +1866,13 @@ public class Editor extends JFrame
       mess = mess.substring(javaLang.length());
     }
     error(mess);
-
-    //buttons.clearRun();
     buttons.clear();
   }
-
-
-  /*
-  public void finished() {
-    running = false;
-    buttons.clearRun();
-    message("Done.");
-  }
-  */
 
 
   public void message(String msg) {
     status.notice(msg);
   }
-
-
-  /*
-  public void messageClear(String msg) {
-    status.unnotice(msg);
-  }
-  */
 
 
   // ...................................................................
@@ -1895,7 +1882,6 @@ public class Editor extends JFrame
    * Returns the edit popup menu.
    */
   class TextAreaPopup extends JPopupMenu {
-    //protected ReferenceKeys referenceItems = new ReferenceKeys();
     String currentDir = System.getProperty("user.dir");
     String referenceFile = null;
 
@@ -1910,6 +1896,7 @@ public class Editor extends JFrame
       cutItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             textarea.cut();
+            sketch.setModified(true);
           }
       });
       this.add(cutItem);
@@ -1926,6 +1913,7 @@ public class Editor extends JFrame
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             textarea.paste();
+            sketch.setModified(true);
           }
         });
       this.add(item);
