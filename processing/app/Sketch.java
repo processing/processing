@@ -715,8 +715,10 @@ public class Sketch {
   /**
    * Sets the modified value for the code in the frontmost tab.
    */
-  public void setModified() {
-    current.modified = true;
+  public void setModified(boolean state) {
+    //System.out.println("setting modified to " + state);
+    //new Exception().printStackTrace();
+    current.modified = state;
     calcModified();
   }
 
@@ -1092,7 +1094,7 @@ public class Sketch {
     buffer.append('\n');
     buffer.append(editor.getText());
     editor.setText(buffer.toString(), 0, 0);  // scroll to start
-    setModified();
+    setModified(true);
   }
 
 

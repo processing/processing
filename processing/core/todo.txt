@@ -645,6 +645,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ move to new implementation of jsr231 with new classes and launcher
 _ make a note about the anti-aliasing types in the faq
 _ y may be flipped in modelX/Y/Z stuff on opengl
 _ opengl doesn't work in applets

@@ -919,7 +919,7 @@ public class AutoFormat {
         // replace with new bootiful text
         // selectionEnd hopefully at least in the neighborhood
         editor.setText(formattedText, selectionEnd, selectionEnd);
-        editor.sketch.setModified();
+        editor.sketch.setModified(true);
 
         // warn user if there are too many parens in either direction
         if (paren != 0) {
