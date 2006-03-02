@@ -1,8 +1,16 @@
 0107 pde
+X fix yet another save bug, context menu paste/cut not setting modified
+X undoing to the code's original state won't unset it as "modified" 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=248
 
+_ fix linux dist script.. not sure what's going on
+_   no relative paths, etc
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+_ antlr.jar in the classpath will cause trouble.. 
+_ jogl jar files, or jogl install will cause trouble
+_   /System/Library/Extensions or /Library/Extensions
 
 _ finish updates for osx and opengl
 _   http://developer.apple.com/qa/qa2005/qa1295.html
@@ -339,8 +347,6 @@ _   http://processing.org/bugs/show_bug.cgi?id=51
 _ code coloring is imperfect because it's not based on a parser
 _   i.e. mousePressed() is red but mouseMoved() is brown
 _   http://dev.processing.org/bugs/show_bug.cgi?id=113
-_ undoing to the code's original state won't unset it as "modified" 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=248
 
 
 PDE / Editor Buttons

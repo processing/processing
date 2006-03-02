@@ -114,7 +114,7 @@ public class EditorListener {
     if (!editor.sketch.modified) {
       if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
           (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
-        editor.sketch.setModified();
+        editor.sketch.setModified(true);
       }
     }
 
