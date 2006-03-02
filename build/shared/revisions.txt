@@ -7,6 +7,21 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0107 - 2 March 2006
+
+More tweaks to "Save" to try an iron out further bugs, though these 
+are more minor than the others.
+
++ cut/paste from the context menu (right-click) in the editor wasn't
+  properly setting a sketch as modified.
+
++ set/unset the sketch's modified state as undo happens.
+  http://dev.processing.org/bugs/show_bug.cgi?id=248
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0106 - 1 March 2006
 
 Fix for another major bug where sketches don't save properly if you 
