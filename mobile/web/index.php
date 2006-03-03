@@ -23,8 +23,9 @@ require 'header.inc.php';
     <br>
     <img src="images/happenings.png"><br>
     <br>
-    <i>February 3</i><br>
-Second Mobile Processing introduction and workshop at Universidad Aut&oacute;noma de Manizales, Colombia by Marlon J. Manrique. <a href="http://mjs.darkgreenmedia.com/">More info</a>
+    <i>March 18</i><br>
+Mobile Processing Workshop II, 8 Hours of Mobility at Universidad Autonoma
+de Manizales, Colombia by Marlon J. Manrique. <a href="http://mjs.darkgreenmedia.com/">More info</a>
 </div>
 <?php
 require 'footer.inc.php';
