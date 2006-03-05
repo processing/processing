@@ -33,6 +33,21 @@ public class Capture {
     private Player          player;
     private VideoControl    control;
     
+    public Capture(PMIDlet midlet) {
+        this.midlet = midlet;
+        try {
+            player = Manager.createPlayer("capture://video");
+            player.realize();
+            
+            control = (VideoControl) player.getControl("VideoControl");
+            control.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, midlet.getCanvas());
+            
+            player.start();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
     public Capture(PMIDlet midlet, int width, int height) {
         this.midlet = midlet;
         try {
