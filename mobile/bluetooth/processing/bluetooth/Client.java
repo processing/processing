@@ -166,4 +166,12 @@ public class Client {
             throw new RuntimeException(ioe.getMessage());
         }
     }
+    
+    public void flush() {
+        try {
+            os.flush();
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe.getMessage());
+        }
+    }
 }
