@@ -1,5 +1,11 @@
 0107 core
 
+_ add notes to faq about video fix
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1134871549;start=18#18
+
+_ look into code that fixes crash on camera.settings()
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1139376484;start=1#1
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -74,6 +80,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=285
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 threading mess
+_ claim that things are much slower in 107 vs 92
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1141763531
 _ need to move off anim off the main event thread
 _   move away from using display()
 X temporarily rolling back major thread changes
