@@ -7,6 +7,17 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0105 - 27 February 2006
+
+Fixes some additional issues with beginRaw/endRaw and OpenGL. 
+Had to do an additional release for a course that's using these
+features, so this revision should be used instead of 0104, 
+since nobody has really downloaded 0104 yet.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0104 - 27 February 2006
 
 Fix for major bug where "Save Changes on Quit" was being ignored. 
