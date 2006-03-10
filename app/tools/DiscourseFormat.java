@@ -36,7 +36,7 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
 
   // False listener (no NullPointerException at processKeyEvent,
   // but gives other problems like the § on the Tab)
-  DiscourseListener listener;
+  //DiscourseListener listener;
 
   JFrame frame;
 
@@ -71,7 +71,7 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
 
     //frame.addWindowListener(this);
     //listener = new DiscourseListener(textarea);
-    wlistener = parent.editorListener;
+    //textarea.editorListener = parent.editorListener;
 
     //Make sure we have nice window decorations.
     //Sure... false, false...
@@ -100,6 +100,7 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
 
     // Display the window
     frame.pack();
+    frame.setLocation(100, 100);
     //frame.setVisible(true);
   }
 
