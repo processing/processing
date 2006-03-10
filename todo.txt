@@ -3,6 +3,9 @@ X fix yet another save bug, context menu paste/cut not setting modified
 X undoing to the code's original state won't unset it as "modified" 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=248
 
+_ some kind of internal color picker
+_   could be a separate window that's always around if needed
+
 _ check on whether linux is running properly 
 _   probably threading issue, 98 doesn't have any trouble
 _   http://dev.processing.org/bugs/show_bug.cgi?id=282
@@ -558,8 +561,6 @@ o     getMenu() -> return non-null the tool is a submenu
 o       no, bad idea.. don't want a zillion submenus on things
 _ need a proper means to handle command keys for tools
 _   http://dev.processing.org/bugs/show_bug.cgi?id=140
-_ make some kind of internal color picker
-_   could be a separate window that's always around if needed
 _ external editor -> add a command to launch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=141
 _ add tool for running in jview
