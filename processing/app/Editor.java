@@ -653,6 +653,14 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
+    item = newJMenuItem("Color Picker", 'P', false);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          new ColorPicker(Editor.this).show();
+        }
+      });
+    menu.add(item);
+
     item = new JMenuItem("Archive Sketch");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
