@@ -123,11 +123,14 @@ public class ColorPicker implements DocumentListener {
     greenField.getDocument().addDocumentListener(this);
     blueField.getDocument().addDocumentListener(this);
     hexField.getDocument().addDocumentListener(this);
+
+    hexField.setText("FFFFFF");
   }
 
 
   public void show() {
     frame.show();
+    frame.setCursor(Cursor.CROSSHAIR_CURSOR);
   }
 
 
@@ -179,7 +182,15 @@ public class ColorPicker implements DocumentListener {
       updateHex();
 
     } else if (doc == hexField.getDocument()) {
-
+      String str = hexField.getText();
+      while (str.length() < 6) {
+        str += "0";
+      }
+      if (str.length() > 6) {
+        str = str.substring(0, 6);
+      }
+      updateRGB2(Integer.parseInt(str, 16));
+      updateHSB();
     }
     range.redraw();
     slider.redraw();
@@ -195,6 +206,11 @@ public class ColorPicker implements DocumentListener {
     int rgb = Color.HSBtoRGB((float)hue / 359f,
                              (float)saturation / 99f,
                              (float)brightness / 99f);
+    updateRGB2(rgb);
+  }
+
+
+  protected void updateRGB2(int rgb) {
     red = (rgb >> 16) & 0xff;
     green = (rgb >> 8) & 0xff;
     blue = rgb & 0xff;
@@ -237,6 +253,9 @@ public class ColorPicker implements DocumentListener {
     try {
       int value = Integer.parseInt(text);
       if (value > max) {
+        // can't edit right away, so just act as if it's
+        // already been bounded, then fire an event to set
+        // it to a proper bounded value.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
               field.setText(String.valueOf(max));
@@ -267,10 +286,10 @@ public class ColorPicker implements DocumentListener {
         }
       };
     colorPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    Dimension dim = new Dimension(60, 60);
+    Dimension dim = new Dimension(60, 40);
     colorPanel.setMinimumSize(dim);
-    colorPanel.setMaximumSize(dim);
-    colorPanel.setPreferredSize(dim);
+    //colorPanel.setMaximumSize(dim);
+    //colorPanel.setPreferredSize(dim);
     box.add(colorPanel);
     box.add(Box.createVerticalStrut(10));
 
@@ -327,7 +346,7 @@ public class ColorPicker implements DocumentListener {
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("#"));
-    row.add(hexField = new NumberField(7, true));
+    row.add(hexField = new NumberField(5, true));
     row.add(Box.createHorizontalGlue());
     box.add(row);
     box.add(Box.createVerticalStrut(10));
@@ -353,9 +372,9 @@ public class ColorPicker implements DocumentListener {
   }
 
 
-  public void updateFields(NumberField field) {
-    System.out.println("update based on"); // " + field);
-  }
+  //public void updateFields(NumberField field) {
+  //System.out.println("update based on"); // " + field);
+  //}
 
 
   public class ColorRange extends PApplet {
@@ -363,25 +382,35 @@ public class ColorPicker implements DocumentListener {
     static final int WIDE = 256;
     static final int HIGH = 256;
 
+    int lastX, lastY;
+
+
     public void setup() {
       size(WIDE, HIGH, P3D);
       noLoop();
 
       colorMode(HSB, 360, 256, 256);
-      stroke(255);
-      ellipseMode(CENTER);
+      noFill();
+      rectMode(CENTER);
     }
 
     public void draw() {
       if ((g == null) || (g.pixels == null)) return;
-      if ((width != WIDE) || (height != HIGH)) return;
+      //if ((width != WIDE) || (height != HIGH)) return;
+      if ((width != WIDE) || (height != HIGH)) {
+        //System.out.println("bad size " + width + " " + height);
+        return;
+      }
 
       int index = 0;
       for (int j = 0; j < 256; j++) {
         for (int i = 0; i < 256; i++) {
-          g.pixels[index++] = color(hue, i, j);
+          g.pixels[index++] = color(hue, i, 255 - j);
         }
       }
+
+      stroke((brightness > 50) ? 0 : 255);
+      rect(lastX, lastY, 9, 9);
     }
 
     public void mousePressed() {
@@ -399,10 +428,13 @@ public class ColorPicker implements DocumentListener {
         int nbrightness = 100 - ((int) (100 * (mouseY / 255.0f)));
         saturationField.setText(String.valueOf(nsaturation));
         brightnessField.setText(String.valueOf(nbrightness));
+
+        lastX = mouseX;
+        lastY = mouseY;
       }
     }
 
-    public Dimension PreferredSize() {
+    public Dimension getPreferredSize() {
       return new Dimension(WIDE, HIGH);
     }
 
@@ -423,18 +455,23 @@ public class ColorPicker implements DocumentListener {
 
     public void setup() {
       size(WIDE, HIGH, P3D);
-      noLoop();
-
       colorMode(HSB, 255, 100, 100);
+      noLoop();
     }
 
     public void draw() {
       if ((g == null) || (g.pixels == null)) return;
-      if ((width != WIDE) || (height != HIGH)) return;
+      //if ((width != WIDE) || (height != HIGH)) return;
+      if ((width != WIDE) || (height != HIGH)) {
+        //System.out.println("bad size " + width + " " + height);
+        return;
+      }
 
       int index = 0;
+      int sel = 255 - (int) (255 * (hue / 359f));
       for (int j = 0; j < 256; j++) {
-        int c = color(j, 100, 100);
+        int c = color(255 - j, 100, 100);
+        if (j == sel) c = 0xFF000000;
         for (int i = 0; i < WIDE; i++) {
           g.pixels[index++] = c;
         }
@@ -457,7 +494,7 @@ public class ColorPicker implements DocumentListener {
       }
     }
 
-    public Dimension PreferredSize() {
+    public Dimension getPreferredSize() {
       return new Dimension(WIDE, HIGH);
     }
 
