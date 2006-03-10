@@ -1,5 +1,6 @@
-0107 core
+0108 core
 X image(String filename, ...) and textFont(String filename, ...) implemented
+
 
 _ add notes to faq about video fix
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1134871549;start=18#18
