@@ -2930,6 +2930,56 @@ public class PApplet extends Applet
   // IMAGE I/O
 
 
+  Hashtable imageTable;
+
+  /**
+   * Draw an image based on its filename. This is less than efficient
+   * than using loadImage because there's no way to unload it from memory,
+   * but it's useful for beginners.
+   */
+  public void image(String filename, float x, float y) {
+    image(tableImage(filename), x, y);
+  }
+
+  /**
+   * Draw an image based on its filename. This is less than efficient
+   * than using loadImage because there's no way to unload it from memory,
+   * but it's useful for beginners.
+   */
+  public void image(String filename,
+                    float x, float y, float c, float d) {
+    image(tableImage(filename), x, y, c, d);
+  }
+
+  /**
+   * Draw an image based on its filename. This is less than efficient
+   * than using loadImage because there's no way to unload it from memory,
+   * but it's useful for beginners.
+   */
+  public void image(String filename,
+                    float a, float b, float c, float d,
+                    int u1, int v1, int u2, int v2) {
+    image(tableImage(filename), a, b, c, d, u1, v1, u2, v2);
+  }
+
+
+  /**
+   * Load an image and store it in a table based on its name.
+   */
+  protected PImage tableImage(String filename) {
+    if (imageTable == null) imageTable = new Hashtable();
+
+    PImage image = (PImage) imageTable.get(filename);
+    if (image != null) return image;
+
+    image = loadImage(filename);
+    return image;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Load an image from the data folder or a local directory.
    * Supports .gif (including transparency), .tga, and .jpg images.
@@ -2982,8 +3032,8 @@ public class PApplet extends Applet
 
 
   /**
-   * [toxi 040304] Targa bitmap loader for 24/32bit RGB(A)
-   *
+   * Targa bitmap loader for 24/32bit RGB(A) [toxi 040304]
+   * <p/>
    * [fry] this could be optimized to not use loadBytes
    * which would help out memory situations with large images
    */
@@ -3034,6 +3084,50 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   // FONT I/O
+
+
+  Hashtable fontTable;
+
+  /**
+   * Set the font based on its filename. This is less than efficient
+   * than using loadFont because there's no way to unload it from memory,
+   * but it's useful for beginners.
+   */
+  public void textFont(String filename) {
+    if (filename.toLowerCase().indexOf(".vlw") == -1) {
+      System.err.println("textFont() needs the filename of a .vlw font");
+    } else {
+      textFont(tableFont(filename));
+    }
+  }
+
+
+  /**
+   * Set the font based on its filename. This is less than efficient
+   * than using loadFont because there's no way to unload it from memory,
+   * but it's useful for beginners.
+   */
+  public void textFont(String filename, float size) {
+    if (filename.toLowerCase().indexOf(".vlw") == -1) {
+      System.err.println("textFont() needs the filename of a .vlw font");
+    } else {
+      textFont(tableFont(filename), size);
+    }
+  }
+
+
+  protected PFont tableFont(String filename) {
+    if (fontTable == null) fontTable = new Hashtable();
+
+    PFont font = (PFont) fontTable.get(filename);
+    if (font != null) return font;
+
+    font = loadFont(filename);
+    return font;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   public PFont loadFont(String filename) {
