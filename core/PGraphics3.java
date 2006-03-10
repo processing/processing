@@ -279,6 +279,8 @@ public class PGraphics3 extends PGraphics {
 
 
   protected void allocate() {
+    //System.out.println("allocating for " + width + " " + height);
+
     pixelCount = width * height;
     pixels = new int[pixelCount];
 
