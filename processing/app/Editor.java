@@ -656,7 +656,11 @@ public class Editor extends JFrame
     item = newJMenuItem("Color Picker", 'P', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new ColorPicker(Editor.this).show();
+          SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                new ColorPicker(Editor.this).show();
+              }
+            });
         }
       });
     menu.add(item);

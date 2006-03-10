@@ -2,9 +2,8 @@
 X fix yet another save bug, context menu paste/cut not setting modified
 X undoing to the code's original state won't unset it as "modified" 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=248
-
-_ some kind of internal color picker
-_   could be a separate window that's always around if needed
+X internal color picker
+X   could be a separate window that's always around if needed
 
 _ check on whether linux is running properly 
 _   probably threading issue, 98 doesn't have any trouble
