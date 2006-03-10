@@ -1,13 +1,3 @@
-/*
- * Original code by owd, http://usuarios.iponet.es/imoreta
- *
- * Notes from the original source:
- * Discourse.java This is a dirty-mix source.
- * NOTE that: No macs and no keyboard. Unreliable source.
- * Only format processing code using fontMetrics.
- * It works under my windows XP + PentiumIV + Processing 0091.
- */
-
 package processing.app.tools;
 
 import java.awt.*;
@@ -20,6 +10,18 @@ import processing.app.syntax.*;
 import processing.core.PApplet;
 
 
+/**
+ * Format for Discourse Tool
+ * <p/>
+ * Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.
+ * Revised and updated for revision 0108 by Ben Fry (10 March 2006)
+ * <p/>
+ * Notes from the original source:
+ * Discourse.java This is a dirty-mix source.
+ * NOTE that: No macs and no keyboard. Unreliable source.
+ * Only format processing code using fontMetrics.
+ * It works under my windows XP + PentiumIV + Processing 0091.
+ */
 public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
 
   //static final String WINDOW_TITLE = "Code ready: processing.org/discourse";

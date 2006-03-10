@@ -1,7 +1,4 @@
-0107 pde
-X fix yet another save bug, context menu paste/cut not setting modified
-X undoing to the code's original state won't unset it as "modified" 
-X   http://dev.processing.org/bugs/show_bug.cgi?id=248
+0108 pde
 X internal color picker
 X   could be a separate window that's always around if needed
 o why was i allowed to save changes to the rgbcube example?
@@ -62,7 +59,7 @@ _   (i.e. we really need those replacements for JOptionPane)
 # tag current as the final
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 # tag revision 1666 as the final
-svn copy -r 1666 svn://processing.org/trunk/processing svn://processing.org/tags/processing-0093
+svn copy -r 2029 svn://processing.org/trunk/processing svn://processing.org/tags/processing-0107
 
 the biggies
 _ bring back P2D with proper stuff 

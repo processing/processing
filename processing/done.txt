@@ -1,3 +1,9 @@
+0107 pde
+X fix yet another save bug, context menu paste/cut not setting modified
+X undoing to the code's original state won't unset it as "modified" 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=248
+
+
 0106 pde
 X save wasn't working properly with ctrl-s
 
