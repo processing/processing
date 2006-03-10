@@ -4,6 +4,8 @@ X undoing to the code's original state won't unset it as "modified"
 X   http://dev.processing.org/bugs/show_bug.cgi?id=248
 X internal color picker
 X   could be a separate window that's always around if needed
+o why was i allowed to save changes to the rgbcube example?
+o   wasn't, just that the error didn't come through. yay osx!
 
 _ check on whether linux is running properly 
 _   probably threading issue, 98 doesn't have any trouble
@@ -31,12 +33,6 @@ _ finish updates for osx and opengl
 _   http://developer.apple.com/qa/qa2005/qa1295.html
 _   find/build universal version of jogl
 _   find/build universal version of rxtx
-
-_ need method for showing prefs for the tools
-_   add pref to handle date vs. increment on archive sketch
-
-_ why was i allowed to save changes to the rgbcube example?
-_   wasn't, just that the error didn't come through. yay osx!
 
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
@@ -545,17 +541,24 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=88
 
 
 TOOLS / General
+
+_ need method for showing prefs for the tools
+_   add pref to handle date vs. increment on archive sketch
 _ make dynamically loaded plugins and "tools" menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=124
 _   break out beautify as its own plugin
 _   tools api:
-_     setup() -> run when p5 is first launched
+_     init() -> run when p5 is first launched
 _     isAvailable() -> true/false whether the option should be dimmed
+_       skip this for now, not sending events to tools all the time
 _     show() -> open the window or run the tool
 _       is there a better name than show() since not all will be visible?
 _       maybe it's just a run() method launched via invokeLater()?
+_     hide() -> hide the tool's frame
 _     getDefaultShortcut() -> returns the default shortcut this tools wants
+_       store this in the data file instead
 _     needs to be able to get current sketch code
+_     look at the pretty-formatting code to see what else needs to be in api
 o     getMenu() -> return non-null the tool is a submenu
 o       no, bad idea.. don't want a zillion submenus on things
 _ need a proper means to handle command keys for tools
