@@ -653,12 +653,24 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
-    item = newJMenuItem("Color Picker", 'P', false);
+    item = new JMenuItem("Color Picker");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           SwingUtilities.invokeLater(new Runnable() {
               public void run() {
                 new ColorPicker(Editor.this).show();
+              }
+            });
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Format for Discourse");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                new DiscourseFormat(Editor.this).show();
               }
             });
         }
