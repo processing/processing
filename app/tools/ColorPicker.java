@@ -62,16 +62,18 @@ public class ColorPicker {
     range = new ColorRange();
     range.init();
     JPanel rangePanel = new JPanel();
+    rangePanel.setLayout(new BorderLayout());
     rangePanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    rangePanel.add(range);
+    rangePanel.add(range, BorderLayout.CENTER);
     box.add(rangePanel);
     box.add(Box.createHorizontalStrut(10));
 
     slider = new ColorSlider();
     slider.init();
     JPanel sliderPanel = new JPanel();
+    sliderPanel.setLayout(new BorderLayout());
     sliderPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    sliderPanel.add(slider);
+    sliderPanel.add(slider, BorderLayout.CENTER);
     box.add(sliderPanel);
     box.add(Box.createHorizontalStrut(10));
 
@@ -79,6 +81,7 @@ public class ColorPicker {
 
     frame.getContentPane().add(box, BorderLayout.CENTER);
     frame.pack();
+    frame.setResizable(false);
     frame.show();
   }
 
@@ -110,20 +113,23 @@ public class ColorPicker {
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("H:"));
     row.add(hueField = new NumberField(4));
-    row.add(new JLabel("\u00B0"));  // degree symbol
+    row.add(new JLabel(" \u00B0"));  // degree symbol
     box.add(row);
+    box.add(Box.createVerticalStrut(5));
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("S:"));
     row.add(saturationField = new NumberField(4));
-    row.add(new JLabel("%"));
+    row.add(new JLabel(" %"));
     box.add(row);
+    box.add(Box.createVerticalStrut(5));
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("B:"));
     row.add(brightnessField = new NumberField(4));
-    row.add(new JLabel("%"));
+    row.add(new JLabel(" %"));
     box.add(row);
+    box.add(Box.createVerticalStrut(10));
 
     //
 
@@ -131,17 +137,23 @@ public class ColorPicker {
     row.add(createFixedLabel("R:"));
     row.add(redField = new NumberField(4));
     box.add(row);
+    box.add(Box.createVerticalStrut(5));
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("G:"));
     row.add(greenField = new NumberField(4));
     box.add(row);
+    box.add(Box.createVerticalStrut(5));
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("B:"));
     row.add(blueField = new NumberField(4));
     box.add(row);
+    box.add(Box.createVerticalStrut(10));
 
+    //
+
+    box.add(Box.createVerticalGlue());
     return box;
   }
 
@@ -171,8 +183,11 @@ public class ColorPicker {
 
   public class ColorRange extends PApplet {
 
+    static final int WIDE = 256;
+    static final int HIGH = 256;
+
     public void setup() {
-      size(256, 256, P3D);
+      size(WIDE, HIGH, P3D);
       noLoop();
 
       colorMode(HSB, 360, 256, 256);
@@ -181,10 +196,13 @@ public class ColorPicker {
     }
 
     public void draw() {
+      if ((g == null) || (g.pixels == null)) return;
+      if ((width != WIDE) || (height != HIGH)) return;
+
       int index = 0;
       for (int j = 0; j < 256; j++) {
         for (int i = 0; i < 256; i++) {
-          pixels[index++] = color(hue, i, j);
+          g.pixels[index++] = color(hue, i, j);
         }
       }
     }
@@ -206,23 +224,38 @@ public class ColorPicker {
         brightnessField.setText(String.valueOf(nbrightness));
       }
     }
+
+    public Dimension getMinimumSize() {
+      return new Dimension(WIDE, HIGH);
+    }
+
+    public Dimension getMaximumSize() {
+      return new Dimension(WIDE, HIGH);
+    }
   }
 
 
   public class ColorSlider extends PApplet {
 
+    static final int WIDE = 20;
+    static final int HIGH = 256;
+
     public void setup() {
-      size(20, 256, P3D);
+      size(WIDE, HIGH, P3D);
       noLoop();
 
-      colorMode(HSB, 360, 100, 100);
+      colorMode(HSB, 255, 100, 100);
     }
 
     public void draw() {
+      if ((g == null) || (g.pixels == null)) return;
+      if ((width != WIDE) || (height != HIGH)) return;
+
       int index = 0;
       for (int j = 0; j < 256; j++) {
-        for (int i = 0; i < 256; i++) {
-          pixels[index++] = color(hue, i, j);
+        int c = color(j, 100, 100);
+        for (int i = 0; i < WIDE; i++) {
+          g.pixels[index++] = c;
         }
       }
     }
@@ -242,6 +275,14 @@ public class ColorPicker {
         hueField.setText(String.valueOf(nhue));
       }
     }
+
+    public Dimension getMinimumSize() {
+      return new Dimension(WIDE, HIGH);
+    }
+
+    public Dimension getMaximumSize() {
+      return new Dimension(WIDE, HIGH);
+    }
   }
 
 
@@ -257,6 +298,10 @@ public class ColorPicker {
     protected Document createDefaultModel() {
       return new NumberDocument();
     }
+
+    public Dimension getPreferredSize() {
+      return new Dimension(35, super.getPreferredSize().height);
+    }
   }
 
   class NumberDocument extends PlainDocument {
@@ -271,8 +316,9 @@ public class ColorPicker {
       for (int i = 0; i < chars.length; i++) {
         if (Character.isDigit(chars[i])) {
           if (charCount != i) {  // shift if necessary
-            chars[charCount++] = chars[i];
+            chars[charCount] = chars[i];
           }
+          charCount++;
         }
       }
       super.insertString(offs, new String(chars, 0, charCount), a);
