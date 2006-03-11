@@ -24,6 +24,7 @@ else
   cp -r ../../serial work/libraries/
   cp -r ../../video work/libraries/
   cp -r ../../pdf work/libraries/
+  cp -r ../../dxf work/libraries/
 
   echo Extracting examples...
   cd work
@@ -219,6 +220,7 @@ rm -rf processing
 mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
 
+
 # PDF LIBRARY
 echo Building PDF library...
 cd ../pdf
@@ -228,6 +230,18 @@ zip -r0q library/pdf.jar processing
 rm -rf processing
 mkdir -p $LIBRARIES/pdf/library/
 cp library/pdf.jar $LIBRARIES/pdf/library/
+
+
+# DXF LIBRARY
+echo Building dxf library...
+cd ../dxf
+$JIKES -target 1.1 +D -d . *.java 
+rm -f library/dxf.jar
+zip -r0q library/dxf.jar processing
+rm -rf processing
+mkdir -p $LIBRARIES/dxf/library/
+cp library/dxf.jar $LIBRARIES/dxf/library/
+
 
 CLASSPATH="..\\..\\build\\$PLATFORM\\work\\lib\\core.jar;..\\..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
 JIKES=../../build/$PLATFORM/work/jikes
