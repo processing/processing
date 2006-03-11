@@ -233,7 +233,7 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 
 
 # DXF LIBRARY
-echo Building dxf library...
+echo Building DXF library...
 cd ../dxf
 $JIKES -target 1.1 +D -d . *.java 
 rm -f library/dxf.jar
