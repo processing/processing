@@ -4,7 +4,7 @@
   PdeTextAreaDefaults - grabs font/color settings for the editor
   Part of the Processing project - http://Proce55ing.net
 
-  Except where noted, code is written by Ben Fry
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-03 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
