@@ -3,7 +3,7 @@ package antlr.java;
 }
 
 /** Java 1.3 Recognizer
- *
+ * <PRE>
  * Run 'java Main [-showtree] directory-full-of-java-files'
  *
  * [The -showtree option pops up a Swing frame that shows
@@ -109,6 +109,7 @@ package antlr.java;
  *	    and the 110k-line jGuru server source.
  *
  * This grammar is in the PUBLIC DOMAIN
+ * </PRE>
  */
 class JavaRecognizer extends Parser;
 options {
