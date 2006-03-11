@@ -3,6 +3,7 @@ X internal color picker
 X   could be a separate window that's always around if needed
 o why was i allowed to save changes to the rgbcube example?
 o   wasn't, just that the error didn't come through. yay osx!
+X adding dxf library to distribution
 
 _ check on whether linux is running properly 
 _   probably threading issue, 98 doesn't have any trouble
@@ -60,6 +61,8 @@ _   (i.e. we really need those replacements for JOptionPane)
 svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
 # tag revision 1666 as the final
 svn copy -r 2029 svn://processing.org/trunk/processing svn://processing.org/tags/processing-0107
+# rename a tag that was crapped up the first time around
+svn rename svn://processing.org/tags/release-0003 svn://processing.org/tags/processing-0003
 
 the biggies
 _ bring back P2D with proper stuff 
@@ -83,12 +86,6 @@ _   post a page explaining the bug reporting system
 last minute regression from 0097
 _ exported movies seem to have trouble (windows only?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=231
-
-_ make .pde files double-clickable from windows
-X   on drag, are these already passed to argv[]?
-_   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
-_   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
-_   http://groups.google.com/group/comp.os.ms-windows.programmer.misc/browse_thread/thread/4095cb6fc807863/ecdb3b35b0787116%23ecdb3b35b0787116?sa=X&oi=groupsr&start=0&num=3
 
 bugzilla 
 _ need to change what people can edit in the bug report
@@ -718,7 +715,11 @@ _   and include an md5hash to see if the file is correct
 
 DIST / Windows
 
-_ tie .pde files as documents of the application
+_ make .pde files double-clickable from windows
+X   on drag, are these already passed to argv[]?
+_   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
+_   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
+_   http://groups.google.com/group/comp.os.ms-windows.programmer.misc/browse_thread/thread/4095cb6fc807863/ecdb3b35b0787116%23ecdb3b35b0787116?sa=X&oi=groupsr&start=0&num=3
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1094149466
 _   figure out proper registry key for windows
 _     can be handled when the app first run (jni?)
