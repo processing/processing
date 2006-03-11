@@ -35,7 +35,7 @@ import quicktime.util.RawEncodedImage;
 
 
 /**
- * whatchin shit on tv
+ * Watchin' shit, on the telly.
  * <p>
  * The useful ref page for <a href="http://developer.apple.com/documentation/Java/Reference/1.4.1/Java141API_QTJ/constant-values.html">quicktime constants</a>
  */
