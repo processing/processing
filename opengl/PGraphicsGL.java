@@ -1209,12 +1209,12 @@ public class PGraphicsGL extends PGraphics3 {
     /**
      * Implementation of the GLU_TESS_COMBINE callback.
      * @param coords is the 3-vector of the new vertex
-     * @data is the vertex data to be combined, up to four elements.
+     * @param data is the vertex data to be combined, up to four elements.
      * This is useful when mixing colors together or any other
      * user data that was passed in to gluTessVertex.
-     * @weight is an array of weights, one for each element of "data"
+     * @param weight is an array of weights, one for each element of "data"
      * that should be linearly combined for new values.
-     * @outData is the set of new values of "data" after being
+     * @param outData is the set of new values of "data" after being
      * put back together based on the weights. it's passed back as a
      * single element Object[] array because that's the closest
      * that Java gets to a pointer.
