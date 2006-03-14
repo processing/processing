@@ -1,0 +1,2 @@
+midlet=messaging.jar
+

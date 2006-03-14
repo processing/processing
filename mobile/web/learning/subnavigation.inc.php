@@ -9,7 +9,7 @@ if (stristr($_SERVER['PHP_SELF'], SITE_ROOT .'learning/index.php')
 }
 ?>
 
-<div id="subnavigation" style="padding-left: 80px">
+<div id="subnavigation" style="padding-left: 145px">
     <img src="<?php echo SITE_ROOT?>images/nav_bottomarrow.png" align="absmiddle">
 
 <?php if ($section == 0) { ?>
