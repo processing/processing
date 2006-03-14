@@ -18,7 +18,7 @@ void setup() {
 }
 
 void draw() {
-  for(int i=0; i&lt;a.length; i++) {
+  for(int i=0; i &lt; a.length; i++) {
     line(0, a[i], 50, a[i]);
   }
 }
