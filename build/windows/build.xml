@@ -327,6 +327,13 @@
             <param name="classPath" value="mobile/xml/library/kxml.jar;mobile/build/windows/mobile.jar"/>
             <param name="cldc" value="CLDC1.0"/>
         </antcall>
+        <!-- next, messaging library -->
+        <antcall target="makelib">
+            <param name="libname" value="messaging"/>
+            <param name="bootClassPath" value="${wtk.dir}/lib/cldcapi10.jar;${wtk.dir}/lib/midpapi10.jar"/>
+            <param name="classPath" value="mobile/messaging/library/wma11.jar;mobile/build/windows/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
     </target>
 
     <target name="copylib">
@@ -363,6 +370,10 @@
         <!-- copy xml library -->
         <antcall target="copylib">
             <param name="libname" value="xml"/>
+        </antcall>
+        <!-- copy messaging library -->
+        <antcall target="copylib">
+            <param name="libname" value="messaging"/>
         </antcall>
     </target>
 </project>

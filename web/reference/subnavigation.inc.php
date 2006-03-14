@@ -12,7 +12,7 @@ if (stristr($_SERVER['PHP_SELF'],
 }
 ?>
 
-<div id="subnavigation" style="padding-left: 140px">
+<div id="subnavigation" style="padding-left: 208px">
     <img src="<?php echo SITE_ROOT?>images/nav_bottomarrow.png" align="absmiddle">
 
 <?php if ($section == 0) { ?>
