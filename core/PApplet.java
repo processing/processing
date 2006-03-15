@@ -2933,8 +2933,8 @@ public class PApplet extends Applet
   Hashtable imageTable;
 
   /**
-   * Draw an image based on its filename. This is less than efficient
-   * than using loadImage because there's no way to unload it from memory,
+   * Draw an image based on its filename. This is less efficient than
+   * using loadImage because there's no way to unload it from memory,
    * but it's useful for beginners.
    */
   public void image(String filename, float x, float y) {
