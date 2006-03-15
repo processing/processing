@@ -162,11 +162,19 @@ public class PGraphics extends PImage implements PConstants {
   /** Last value set by strokeWeight() (read-only) */
   public float strokeWeight;
 
-  /** Set by strokeJoin() (read-only) */
-  public int strokeJoin;
+  /**
+   * Set by strokeJoin() (read-only). This has a default setting
+   * so that strokeJoin() need not be called by defaults,
+   * because subclasses may not implement it (i.e. PGraphicsGL)
+   */
+  public int strokeJoin = MITER;
 
-  /** Set by strokeCap() (read-only) */
-  public int strokeCap;
+  /**
+   * Set by strokeCap() (read-only). This has a default setting
+   * so that strokeCap() need not be called by defaults,
+   * because subclasses may not implement it (i.e. PGraphicsGL)
+   */
+  public int strokeCap = ROUND;
 
   // ........................................................
 
@@ -605,11 +613,10 @@ public class PGraphics extends PImage implements PConstants {
     stroke(0);
 
     strokeWeight(ONE);
-    //strokeCap(SQUARE);
-    try {
-      strokeCap(ROUND);
-      strokeJoin(MITER);
-    } catch (RuntimeException e) { }  // P3D will complain
+    //try {
+    //strokeCap(ROUND);
+    //strokeJoin(MITER);
+    //} catch (RuntimeException e) { }  // P3D will complain
 
     background(204);
 

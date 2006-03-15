@@ -1,9 +1,8 @@
 0109 core
 X loadImage("") produces weird error message
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
-
-_ still having strokeCap() problems
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134011764
+X still having strokeCap() problems
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134011764
 
 _ when an exception comes through during cameraEvent, not printed
 _   need to show an actual stack trace (InvocationTargetEx) 
