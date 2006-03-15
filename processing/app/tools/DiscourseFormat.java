@@ -1,3 +1,26 @@
+/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2005-06 Ignacio Manuel González Moreta
+  Copyright (c) 2006 Ben Fry and Casey Reas
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package processing.app.tools;
 
 import java.awt.*;
@@ -14,7 +37,9 @@ import processing.core.PApplet;
  * Format for Discourse Tool
  * <p/>
  * Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.
- * Revised and updated for revision 0108 by Ben Fry (10 March 2006)
+ * Revised and updated for revision 0108 by Ben Fry (10 March 2006).
+ * This code will later be removed but is included with release 0108+
+ * while features for the "Tools" menu are in testing.
  * <p/>
  * Notes from the original source:
  * Discourse.java This is a dirty-mix source.
@@ -25,7 +50,7 @@ import processing.core.PApplet;
 public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
 
   //static final String WINDOW_TITLE = "Code ready: processing.org/discourse";
-  static final String WINDOW_TITLE = "Format for Discourse";
+  static final String WINDOW_TITLE = "Format for Discourse by owd";
 
   // p5 icon for the window
   static Image icon;
