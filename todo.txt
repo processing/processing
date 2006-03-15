@@ -66,6 +66,11 @@ svn copy -r 2029 svn://processing.org/trunk/processing svn://processing.org/tags
 # rename a tag that was crapped up the first time around
 svn rename svn://processing.org/tags/release-0003 svn://processing.org/tags/processing-0003
 
+# recognizing a .cvsignore file in the current directory
+# (seems to be required whenever changes are made there too)
+svn propset svn:ignore -F .cvsignore .
+
+
 the biggies
 _ bring back P2D with proper stuff 
 _   it's something we had and we lost
