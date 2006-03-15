@@ -270,8 +270,10 @@ public class Editor extends JFrame
             try {
               //System.out.println(flavors[i]);
               //System.out.println(transferable.getTransferData(flavors[i]));
-              java.util.List list =
-                (java.util.List) transferable.getTransferData(flavors[i]);
+              Object stuff = transferable.getTransferData(flavors[i]);
+              if (!(stuff instanceof java.util.List)) continue;
+              java.util.List list = (java.util.List) stuff;
+
               for (int j = 0; j < list.size(); j++) {
                 Object item = list.get(j);
                 if (item instanceof File) {
