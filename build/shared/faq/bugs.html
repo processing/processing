@@ -252,13 +252,14 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=232">Bug 232</A>).
 </UL>
 Mac OS X
 <UL>
+<LI>First be sure that you're not trying to run Processing from the disk image. As with most programs, Processing needs to be copied to the Applications folder in order for it to run properly.
+<LI>If it's still not working, open Console.app, found in Applications &rarr; Utilities &rarr; Console and see if there are any messages. If you don't know what they mean, post them to the discourse board where someone can help you out.
+<LI>Using developer releases of Java is strongly discouraged. These can often cause problems and we can't possibly support them.
 <LI>If you're running on Mac OS X 10.2, read the <a href="platforms.html#mac">platforms</a> section regarding things that may be broken.
 <LI>Sometimes you might see the following error: <br>
 <TT>dyld: /Applications/processing/jikes version mismatch for library:<br>/sw/lib/libiconv.2.dylib (compatibility version of user: <br>
 5.0.0 greater than library's version: 3.0.0)</TT> <br>
-It seems that this happens when an older version of <a
-  href="http://fink.sourceforge.net">Fink</A> is installed. In this
-  case, you should either update or uninstall Fink. (thanks to ryan govostes for tracking this down)
+It seems that this happens when an older version of <a href="http://fink.sourceforge.net">Fink</A> is installed. In this case, you should either update or uninstall Fink. (thanks to Ryan Govostes for tracking this down)
 </UL>
 Linux
 <UL>
