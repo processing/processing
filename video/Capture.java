@@ -449,7 +449,10 @@ public class Capture extends PImage implements Runnable {
    */
   public void settings() {
     try {
+      // fix for crash here submitted by hansi (stop/startPreview lines)
+	  capture.stop(); 
       channel.settingsDialog();
+	  capture.startPreview(); 
     } catch (StdQTException qte) {
       int errorCode = qte.errorCode();
       if (errorCode != Errors.userCanceledErr) {
