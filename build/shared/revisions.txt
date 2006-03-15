@@ -7,7 +7,7 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0108 - ? March 2006
+ABOUT REV 0108 - 15 March 2006
 
 A couple minor bug fixes but mostly fun additional features in this 
 release. 
