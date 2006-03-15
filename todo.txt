@@ -4,20 +4,22 @@ X   could be a separate window that's always around if needed
 o why was i allowed to save changes to the rgbcube example?
 o   wasn't, just that the error didn't come through. yay osx!
 X adding dxf library to distribution
+X fix bug with drag & drop of files to sketch on macosx
+X need space between bullet points in faq css
+X   also need the absolute url stuff to work
+X add discourse formatter tool 
 
-_ check on whether linux is running properly 
-_   probably threading issue, 98 doesn't have any trouble
-_   http://dev.processing.org/bugs/show_bug.cgi?id=282
 
-_ new set of quicktime issues introduced in 102+
-_   http://dev.processing.org/bugs/show_bug.cgi?id=299
+_ svg loader is on the list for 1.0
+_   maybe include as part of PApplet (casey thinks so)
+_ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
 
-_ fix linux dist script.. not sure what's going on
+_ fix linux dist script to work more like the exported apps
 _   no relative paths, etc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=298
 
-_ need space between bullet points in faq css
-_   also need the absolute url stuff to work
+_ new set of quicktime issues introduced in 102+
+_   http://dev.processing.org/bugs/show_bug.cgi?id=299
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

@@ -1,12 +1,12 @@
 0108 core
 X image(String filename, ...) and textFont(String filename, ...) implemented
+X add notes to faq about video fix
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1134871549
+X look into code that fixes crash on camera.settings()
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1139376484
 
-
-_ add notes to faq about video fix
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1134871549;start=18#18
-
-_ look into code that fixes crash on camera.settings()
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1139376484;start=1#1
+_ still having strokeCap() problems
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134011764
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -17,6 +17,8 @@ _ registerSize() in arcball is causing trouble
 _ loadImage(url) broken on windows
 _   actually it's an issue with some types of jpeg files
 _   http://dev.processing.org/bugs/show_bug.cgi?id=279
+_ png image loading problems
+_   http://dev.processing.org/bugs/show_bug.cgi?id=305
 
 _ updatePixels() is slow to create a BufferedImage
 _   therefore the incomplete rendering (mediatracker-type issue?)
@@ -82,6 +84,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=285
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 threading mess
+_ linux problems with things not showing up
+_   probably threading issue, 98 doesn't have any trouble
+_   http://dev.processing.org/bugs/show_bug.cgi?id=282
 _ claim that things are much slower in 107 vs 92
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1141763531
 _ need to move off anim off the main event thread
