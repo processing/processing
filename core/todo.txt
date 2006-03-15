@@ -1,24 +1,30 @@
 0109 core
+X loadImage("") produces weird error message
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
 
 _ still having strokeCap() problems
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134011764
+
+_ when an exception comes through during cameraEvent, not printed
+_   need to show an actual stack trace (InvocationTargetEx) 
+_   because otherwise it's impossible to debug this stuff
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 _ registerSize() in arcball is causing trouble
+_   some sort of infinite loop issue
 
-_ loadImage(url) broken on windows
+_ loadImage(url) having trouble with jpeg
 _   actually it's an issue with some types of jpeg files
 _   http://dev.processing.org/bugs/show_bug.cgi?id=279
 _ png image loading problems
 _   http://dev.processing.org/bugs/show_bug.cgi?id=305
 
 _ updatePixels() is slow to create a BufferedImage
-_   therefore the incomplete rendering (mediatracker-type issue?)
-
-_ finish dxf writer that'll work with recordRaw()
+_   therefore the incomplete rendering
+_   could this be an issue fixed by a MediaTracker?
 
 more pdf/recording stuff
 _ figure out what's up with type on osx
@@ -34,14 +40,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _   http://www.opengl.org/resources/tutorials/advanced/advanced97/notes/node112.html
 _ lookat is now camera(), but not fixed in the docs
 _   add notes to the faq about the camera changes on the changes page
-
-_ loadImage("") produces weird error message
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
-
-_ check min/max texture sizes when binding to avoid problems
-_   minimum texture size may be 64x64
-_   maximum appears to be 2048, on macs maybe 512
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
 
 _ more image file i/o in java 1.4
 _   add dynamic loading of the jpeg, png, and gif(?) encoder classes
@@ -656,7 +654,12 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 PGraphicsGL
 
 _ move to new implementation of jsr231 with new classes and launcher
+_ check min/max texture sizes when binding to avoid problems
+_   minimum texture size may be 64x64
+_   maximum appears to be 2048, on macs maybe 512
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
 _ make a note about the anti-aliasing types in the faq
+_   polygon vs line etc.. may want to enable lines but disable polys
 _ y may be flipped in modelX/Y/Z stuff on opengl
 _ opengl doesn't work in applets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=166
