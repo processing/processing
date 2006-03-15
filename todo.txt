@@ -1,14 +1,4 @@
-0108 pde
-X internal color picker
-X   could be a separate window that's always around if needed
-o why was i allowed to save changes to the rgbcube example?
-o   wasn't, just that the error didn't come through. yay osx!
-X adding dxf library to distribution
-X fix bug with drag & drop of files to sketch on macosx
-X need space between bullet points in faq css
-X   also need the absolute url stuff to work
-X add discourse formatter tool 
-
+0109 pde
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
