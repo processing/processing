@@ -221,16 +221,7 @@ Sometimes using run.bat instead will fix this. Another fix is to
 create a user account that uses only ascii characters. In the meantime, 
 we're looking for a fix. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=49">Bug 49</A>)
-<!-- <LI> In general, Processing probably won't work if you install it inside
-  a folder with non-ascii characters in its name. For instance, if the
-  name of your user folder includes Japanese characters, 
-or it has an umlaut or cedilla or anything else fancy, you're gonna
-  have trouble. The same sometimes happens when Processing is on the 
-desktop, or somewhere inside that folder. The fix
-  to place processing inside the root level of your C:\ drive (or
-  whatever drive you use) and it'll be ok again. This will be fixed in
-  the future.
--->
+
 <LI>If you have lots of garbage in your CLASSPATH environment
   variable, that might cause trouble starting up a sketch. You might
   get "Couldn't find package xxx.xxx" errors. Clean things up by avoiding
@@ -831,14 +822,7 @@ Microsoft Support document. More discussion of installer-related
 issues can be seen at <A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=171">Bug 171</A>.
 
-<!--
-        <LI>If you're having trouble with video examples crashing
-  processing or locking up your system, you should try placing the
-  processing folder into the root level of your C:\ drive, or at least
-  inside a set of folders that have no spaces in the name. We haven't
-  determined if this is a QuickTime for Java or Processing bug yet,
-  but it's been a problem for lots of people.
--->
+<LI>If you're completely stuck on the WinVDIG problems, some have found happiness with this solution from pandaman: "I deleted the files vsVDIG from system32/quicktime AND program files/quicktime and deleted VSdump from system32- uninstalled vdig - reinstalled vdig 1.01 and things seem to be working now". We've not tried this, and it always makes us scared to go deleting things in System32 much less Program Files. But depending on your level of frustration, the possibility of hurting your Windows install may even sound enticing.
 
 <LI>Video sometimes likes to crash the application completely on
   Windows. This seems to be due to problems with QuickTime for Java
