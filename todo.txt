@@ -1,5 +1,12 @@
 0109 pde
 
+_ new set of windows quicktime issues introduced in 102+
+_   seems to be ignoring any paths that contain spaces
+_   http://dev.processing.org/bugs/show_bug.cgi?id=299
+
+_ fix windows make.sh (or move back to Makefile)
+_   currently rewrites exe on each build, even if not updated
+
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
 _ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
@@ -7,9 +14,6 @@ _ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
 _ fix linux dist script to work more like the exported apps
 _   no relative paths, etc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=298
-
-_ new set of quicktime issues introduced in 102+
-_   http://dev.processing.org/bugs/show_bug.cgi?id=299
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

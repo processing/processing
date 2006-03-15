@@ -3502,6 +3502,14 @@ public class PApplet extends Applet
   public InputStream openStream(String filename) {
     InputStream stream = null;
 
+    if (filename == null) return null;
+
+    if (filename.length() == 0) {
+      // an error will be called by the parent function
+      //System.err.println("The filename passed to openStream() was empty.");
+      return null;
+    }
+
     // by default, data files are exported to the root path of the jar.
     // (not the data folder) so check there first.
     // using getClassLoader() prevents java from converting dots
@@ -3595,8 +3603,9 @@ public class PApplet extends Applet
     InputStream is = openStream(filename);
     if (is != null) return loadBytes(is);
 
-    System.err.println(filename + " is missing or inaccessible, make sure " +
-                       "the it's been added to your sketch and is readable.");
+    System.err.println("The file \"" + filename + "\" " +
+                       "is missing or inaccessible, make sure " +
+                       "it's been added to your sketch and is readable.");
     return null;
   }
 
@@ -3632,7 +3641,9 @@ public class PApplet extends Applet
     InputStream is = openStream(filename);
     if (is != null) return loadStrings(is);
 
-    System.err.println(filename + " is missing or inaccessible.");
+    System.err.println("The file \"" + filename + "\" " +
+                       "is missing or inaccessible, make sure " +
+                       "it's been added to your sketch and is readable.");
     return null;
   }
 
