@@ -6,10 +6,10 @@ Pretty soon it's gonna be an outrageous mess!)
 
 Libraries are a new feature that are present only in revisions 70 
 and higher. Before revision 70, users could place any sort of code
-inside the 'code' folder of their sketch, but this meant making
-several copies of each library. The code folder is still an option in
-revisions 70 and higher, but the use of the new "library" system is
-encouraged where that makes sense for your project.
+inside the 'code' folder of their sketch, but this meant too many
+copies of each library. The code folder is still an option, but the 
+use of the new "library" system is encouraged as a simple packaging 
+mechanism for your projects.
 
 A Processing library can be any sort of Java code that's been 
 given a package name and packed into a jar file. It can also register
@@ -29,8 +29,8 @@ extend the PDE to also support developing libraries (or "tools," once
 those are enabled) because then it simply becomes like any other IDE 
 that is quickly too general for our target audience. Users who are 
 advanced enough in their programming skills to build libraries will 
-almost always be skilled enough to use another IDE like Eclipse or 
-something else (if they aren't already) to build their library.
+almost always be skilled enough to use another IDE like Eclipse 
+(if they aren't already) to build their library.
 
 
 //////////////////////////////////////////////////////////////
@@ -38,36 +38,38 @@ something else (if they aren't already) to build their library.
 
 Notes on Library distribution
 
-There are two categories of libraries -- "core" libraries, which are 
-a part of the Processing distribution, and "contributed libraries"
-which are developed outside the core of Processing's development
-and are owned and maintained by members of the Processing community.
-Until we find a committed "librarian", this is what we can manage
-from our end. 
+There are two categories of libraries. The "core" libraries 
+(Video, OpenGL, Serial, Net) are part of the Processing distribution, 
+and "contributed libraries" are developed, owned, and maintained 
+by members of the Processing community.
 
 It's very possible that contributed libraries might make their way 
 into the regular distribution if it makes sense for all involved. 
 After the 1.0 release, we'll re-evaluate if some libraries should be 
-made a part of the standard distribution. For the time being, we
-don't have the people resources to support this, because it would
-require taking on the responsibility to debug the libraries with 
-each release. 
+made a part of the standard distribution. For now, we don't have the 
+people resources to support this, because it would require us to 
+debug the libraries with each release. 
 
-We try to place a strong focus on the importance of clear documentation 
-for the Processing project, so please attempt similar effort into 
-communicating your library's features to potential users through hosting 
-a descriptive web site.
+We try to place a strong focus on the importance of clear 
+documentation for the Processing project, so please attempt similar 
+effort into communicating your library's features to potential users 
+by hosting a descriptive web site.
 
 If you'd like to have your library posted on the Processing website
 (http://processing.org/reference/libraries) please email
 reas at processing.org and we'll make a decision about its inclusion.
+We strongly encourage (and may someday require as a stipulation for
+placement on the site) that the source to your library be included. 
+We're giving away all our stuff, and we want others to do so as well
+because it's good for the community.
 
 The contributed libraries are one of the most important aspects of 
 the Processing project and have an enormous impact on how people 
 understand Processing. Libraries have been designed into the larger 
 Processing plan to enable simple extensions of the core API in new, 
 innovative, and unexpected directions. The libraries are the future 
-of the project. We don't plan to grow the core library extensively.
+of the project as we plan for processing.core.* to remain very 
+minimal.
 
 
 //////////////////////////////////////////////////////////////
@@ -230,7 +232,7 @@ As of revision 0097, you can also specify what to export for other
 platforms as well (at least Mac OS X, Windows, Linux). For the example
 above, the application line could instead be changed to:
 
-application.macox=sonia.jar,JSynClasses.jar,libJSynV142.jnilib
+application.macosx=sonia.jar,JSynClasses.jar,libJSynV142.jnilib
 application.windows=sonia.jar,JSynClasses.jar,JSynV142.dll
 
 Platform-specific exports will be checked first, and if they don't
@@ -447,4 +449,4 @@ official things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 27 December 2005
+Ben Fry, Last updated 13 March 2006
