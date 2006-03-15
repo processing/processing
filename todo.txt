@@ -15,6 +15,9 @@ _ fix linux dist script to work more like the exported apps
 _   no relative paths, etc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=298
 
+_ sketch marked as modified too aggressively
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1142415397
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -32,6 +35,11 @@ _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
 
 _ issue of people calling their sketches things like Server
+_ warn if someone extends PApplet but mis-names the sketch
+_   or don't allow it to be exported
+_   or at least add a note about this to the faq
+_ show an error message when on export to app
+_   when no main() is included but class extends PApplet
 
 _ keep checking whether google has started to honor robots.txt
 _   http://www.google.com/search?hl=en&lr=&q=angleMode+site%3Aprocessing.org&btnG=Search
