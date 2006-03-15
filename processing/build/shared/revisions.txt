@@ -7,6 +7,62 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0108 - ? March 2006
+
+A couple minor bug fixes but mostly fun additional features in this 
+release. 
+
+
+[ additions ] 
+
++ A DXF file exporter. Lines and triangles from P3D or OPENGL 
+  rendering modes can be sent directly to a DXF file. More information
+  and an example can be found in the developer's reference:
+  http://dev.processing.org/reference/everything/javadoc/processing/dxf/RawDXF.html
+
++ A color picker has been added to the Tools menu. Using the keyboard 
+  shortcuts, you can copy/paste the values for the colors and paste 
+  them into your program. (We didn't do any sort of auto-insert of
+  colorMode() or fill() or stroke() code cuz we couldn't decide on a 
+  good way to do this.. your contributions welcome).
+
++ We've decided to include versions of image and textFont that take
+  a filename instead of requiring a call to loadImage(). This is less 
+  efficient than using loadImage because there's no way to unload it 
+  from memory, but it's useful for beginners.
+
+  void image(String filename, float x, float y)
+
+  void image(String filename, float x, float y, float c, float d)
+
+  void image(String filename,
+             float a, float b, float c, float d,
+             int u1, int v1, int u2, int v2)
+
+  void textFont(String filename)
+
+  void textFont(String filename, float size)
+
++ The discourse formatter tool posted to the discourse board by owd 
+  has been added to the Tools menu. We're distributing it for now 
+  while "Tools" menu features are in testing.
+
+
+[ bug fixes ]
+
++ a weird set of exceptions would show up whenever a file was dragged
+  to the sketch window on macosx. it didn't usually cause any trouble,
+  but the nasty error messages are now gone.
+
++ fix for the capture settings dialog submitted by hansi
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1139376484
+
++ fixes to the local version of the FAQ and a handful of additions.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0107 - 2 March 2006
 
 More tweaks to "Save" to try an iron out further bugs, though these 
