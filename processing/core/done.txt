@@ -4,6 +4,7 @@ X add notes to faq about video fix
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1134871549
 X look into code that fixes crash on camera.settings()
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1139376484
+X finish dxf writer that'll work with recordRaw()
 
 
 0107 core
