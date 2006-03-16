@@ -1,4 +1,5 @@
 0109 pde
+X turn off resizing of the color picker window
 
 _ new set of windows quicktime issues introduced in 102+
 _   seems to be ignoring any paths that contain spaces
