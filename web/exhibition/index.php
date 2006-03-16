@@ -10,13 +10,18 @@ require '../header.inc.php';
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td valign="top" width="224">
-<img src="images/rosaly.png"><br>
+<a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new"><img src="images/rosaly.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
-<b><a href="example.php?name=pointslines">Rosaly</a></b><br>
-<br>
+<b><a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new">Rosaly</a></b>
+    </td>
+  </tr>
+  <tr height="5">
+  </tr>
+  <tr>
+    <td>
 <b>by Oolong</b><br>
 <br>
 0 toggles lines/dots<br>
@@ -29,11 +34,16 @@ Use direction arrows for other controls<br>
 </table>
     </td>
     <td valign="top" width="224">
-<img src="images/resonata.png"><br>
-<br>
-<b><a href="example.php?name=pointslines">Resonata</a></b><br>
+<a href="http://www.mimeomai.f2s.com/applet/resmob/applet/index.html" target="_new"><img src="images/resonata.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td>
+<b><a href="http://www.mimeomai.f2s.com/applet/resmob/applet/index.html" target="_new">Resonata</a></b>
+    </td>
+  </tr>
+  <tr height="5">
+  </tr>
   <tr>
     <td>
 <b>by Oolong</b><br>
@@ -49,9 +59,11 @@ This is a spring system, designed to demonstrate many of the universal features 
 </table>
 </div>
 <div class="column">
+<!--
 <img src="images/network.png"><br>
 <br>
 <img src="images/addlink.png">
+-->
 </div>
 <?php
  require '../footer.inc.php';
