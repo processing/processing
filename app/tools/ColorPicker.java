@@ -93,7 +93,7 @@ public class ColorPicker implements DocumentListener {
 
     frame.getContentPane().add(box, BorderLayout.CENTER);
     frame.pack();
-    //frame.setResizable(false);
+    frame.setResizable(false);
 
     Dimension size = frame.getSize();
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
