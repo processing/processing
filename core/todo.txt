@@ -8,6 +8,31 @@ _ when an exception comes through during cameraEvent, not printed
 _   need to show an actual stack trace (InvocationTargetEx) 
 _   because otherwise it's impossible to debug this stuff
 
+priorities prior to fitc
+_ finish updates for osx and opengl
+_   http://developer.apple.com/qa/qa2005/qa1295.html
+_   find/build universal version of jogl
+_   find/build universal version of rxtx
+_ need to have a better way of getting/figuring out the endian 
+_   security ex when run as an applet
+_   also can no longer assume that macosx is big endian
+_ fix non-bound textures from mangling everything else
+_   fix enable/disable textures for some objects
+_ polygon z-order with alpha in opengl
+_   add option to sort triangles back to front so alpha works
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
+_   at least add it to the faq, or this would be a test case w/ the sorting
+_   http://dev.processing.org/bugs/show_bug.cgi?id=176
+_   http://www.opengl.org/resources/tutorials/advanced/advanced97/notes/node112.html
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   tint() honoring alpha but not colored tint
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
+_   check with the a_Displaying example and tint(255, 0, 0, 100);
+_   http://dev.processing.org/bugs/show_bug.cgi?id=90
+_   is fill() not coloring textures properly?
+_     don't need to apply tint() to textures, supposed to use fill color
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -31,12 +56,7 @@ _   sometimes bicubic vs quadratic beziers are mixed up in fonts
 _   not sure if it's limited to osx or what
 _ document how to switch to next page
 _   maybe background() should do this automatically?
-_ add option to sort triangles back to front so alpha works
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
-_ polygon z-order with alpha in opengl
-_   at least add it to the faq, or this would be a test case w/ the sorting
-_   http://dev.processing.org/bugs/show_bug.cgi?id=176
-_   http://www.opengl.org/resources/tutorials/advanced/advanced97/notes/node112.html
+
 _ lookat is now camera(), but not fixed in the docs
 _   add notes to the faq about the camera changes on the changes page
 
@@ -162,14 +182,6 @@ _   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
 
 _ related to the fill bugs: when fill is identical, no fill applied
 _   http://dev.processing.org/bugs/show_bug.cgi?id=169
-_ fix tint() for PGraphics3 (what could be wrong?)
-_   tint() honoring alpha but not colored tint
-_   maybe not setting fill color when drawing textures
-_   guessing it's an implementation issue in sami's renderer
-_   check with the a_Displaying example and tint(255, 0, 0, 100);
-_   http://dev.processing.org/bugs/show_bug.cgi?id=90
-_ is fill() not coloring textures properly?
-_   don't need to apply tint() to textures, supposed to use fill color
 
 _ update run.bat for new quicktime
 _   unfortunately this is messy because qtjava sometimes has quotes
@@ -683,9 +695,6 @@ _ gl points not working again
 _ invocationtargetexception in gl with aioobe:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
 _ don't let users with java < 1.4 load OPENGL
-_ fix non-bound textures from mangling everything else
-_ fix enable/disable textures for some objects
-_ fix endian ordering issues so that things work properly
 _ what should the update image function be called?
 _ box and sphere are broken in gl
 _ metaballs example dies when using box()
