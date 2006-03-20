@@ -3,6 +3,8 @@ X loadImage("") produces weird error message
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
 X still having strokeCap() problems
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134011764
+X fixes contributed by willis morse to deal with memory wastefulness
+X   should help speed up some types of OPENGL and P3D mode sketches
 
 _ when an exception comes through during cameraEvent, not printed
 _   need to show an actual stack trace (InvocationTargetEx) 
