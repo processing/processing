@@ -27,11 +27,6 @@ _ antlr.jar in the classpath will cause trouble..
 _ jogl jar files, or jogl install will cause trouble
 _   /System/Library/Extensions or /Library/Extensions
 
-_ finish updates for osx and opengl
-_   http://developer.apple.com/qa/qa2005/qa1295.html
-_   find/build universal version of jogl
-_   find/build universal version of rxtx
-
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
 
