@@ -59,6 +59,12 @@ public class PGraphics3 extends PGraphics {
   protected float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
   protected float[] worldNormal = new float[4];
 
+  // Used in light_triangle(). Allocated here once to
+  // avoid re-allocating each time
+  protected float[] dv1 = new float[3];
+  protected float[] dv2 = new float[3];
+  protected float[] norm = new float[3];
+
   // ........................................................
 
   /**
@@ -314,8 +320,8 @@ public class PGraphics3 extends PGraphics {
     // clear out the lights, they'll have to be turned on again
     lightCount = 0;
     lightingDependsOnVertexPosition = false;
-    lightFalloff(1,0,0);
-    lightSpecular(0,0,0);
+        lightFalloff(1, 0, 0);
+        lightSpecular(0, 0, 0);
 
     // reset lines
     lineCount = 0;
@@ -1951,13 +1957,24 @@ public class PGraphics3 extends PGraphics {
       vIndex = triangles[triIndex][VERTEX1];
       int vIndex2 = triangles[triIndex][VERTEX2];
       int vIndex3 = triangles[triIndex][VERTEX3];
+
+      /*
       float[] dv1 = new float[] {vertices[vIndex2][VX] - vertices[vIndex][VX],
                                vertices[vIndex2][VY] - vertices[vIndex][VY],
                                vertices[vIndex2][VZ] - vertices[vIndex][VZ]};
       float[] dv2 = new float[] {vertices[vIndex3][VX] - vertices[vIndex][VX],
                                vertices[vIndex3][VY] - vertices[vIndex][VY],
                                vertices[vIndex3][VZ] - vertices[vIndex][VZ]};
-      float[] norm = new float[3];
+      */
+      dv1[0] = vertices[vIndex2][VX] - vertices[vIndex][VX];
+      dv1[1] = vertices[vIndex2][VY] - vertices[vIndex][VY];
+      dv1[2] = vertices[vIndex2][VZ] - vertices[vIndex][VZ];
+
+      dv2[0] = vertices[vIndex3][VX] - vertices[vIndex][VX];
+      dv2[1] = vertices[vIndex3][VY] - vertices[vIndex][VY];
+      dv2[2] = vertices[vIndex3][VZ] - vertices[vIndex][VZ];
+
+      //float[] norm = new float[3];
       crossProduct(dv1, dv2, norm);
       float nMag = mag(norm[X], norm[Y], norm[Z]);
       if (nMag != 0 && nMag != ONE) {
@@ -2010,13 +2027,22 @@ public class PGraphics3 extends PGraphics {
         vIndex = triangles[triIndex][VERTEX1];
         int vIndex2 = triangles[triIndex][VERTEX2];
         int vIndex3 = triangles[triIndex][VERTEX3];
+        /*
         float[] dv1 = new float[] {vertices[vIndex2][VX] - vertices[vIndex][VX],
                                  vertices[vIndex2][VY] - vertices[vIndex][VY],
                                  vertices[vIndex2][VZ] - vertices[vIndex][VZ]};
         float[] dv2 = new float[] {vertices[vIndex3][VX] - vertices[vIndex][VX],
                                  vertices[vIndex3][VY] - vertices[vIndex][VY],
                                  vertices[vIndex3][VZ] - vertices[vIndex][VZ]};
-        float[] norm = new float[3];
+        */
+        dv1[0] = vertices[vIndex2][VX] - vertices[vIndex][VX];
+        dv1[1] = vertices[vIndex2][VY] - vertices[vIndex][VY];
+        dv1[2] = vertices[vIndex2][VZ] - vertices[vIndex][VZ];
+        dv2[0] = vertices[vIndex3][VX] - vertices[vIndex][VX];
+        dv2[1] = vertices[vIndex3][VY] - vertices[vIndex][VY];
+        dv2[2] = vertices[vIndex3][VZ] - vertices[vIndex][VZ];
+
+        //float[] norm = new float[3];
         crossProduct(dv1, dv2, norm);
         float nMag = mag(norm[X], norm[Y], norm[Z]);
         if (nMag != 0 && nMag != ONE) {
@@ -3785,12 +3811,12 @@ public class PGraphics3 extends PGraphics {
       modelviewInv.m02*x + modelviewInv.m12*y +
       modelviewInv.m22*z + modelviewInv.m32;
 
-    float norm = mag(lightsNX[num], lightsNY[num], lightsNZ[num]);
-    if (norm == 0 || norm == 1) return;
+    float n = mag(lightsNX[num], lightsNY[num], lightsNZ[num]);
+    if (n == 0 || n == 1) return;
 
-    lightsNX[num] /= norm;
-    lightsNY[num] /= norm;
-    lightsNZ[num] /= norm;
+    lightsNX[num] /= n;
+    lightsNY[num] /= n;
+    lightsNZ[num] /= n;
   }
 
 
