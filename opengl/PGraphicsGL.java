@@ -71,8 +71,16 @@ public class PGraphicsGL extends PGraphics3 {
   TessCallback tessCallback;
 
   /**
+   * Used in temporary calcuulations to avoid
+   * reallocating during heavy renders
+   */
+  protected float[] calcColor = new float[4];
+
+  /**
    * true if the host system is big endian (PowerPC, MIPS, SPARC),
-   * false if little endian (x86 Intel).
+   * false if little endian (x86 Intel). This throws a security
+   * exception in applets, though applets will need to be signed
+   * for JOGL anyways. This is a bad solution, however.
    */
   static public boolean BIG_ENDIAN =
     System.getProperty("sun.cpu.endian").equals("big");
@@ -1521,10 +1529,26 @@ public class PGraphicsGL extends PGraphics3 {
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Load the calculated color into a pre-allocated array so that
+   * it can be quickly passed over to OpenGL. (fix from Willis Morse)
+   */
+  private final void loadCalcColor() {
+    calcColor[0] = calcR;
+    calcColor[1] = calcG;
+    calcColor[2] = calcB;
+    calcColor[3] = calcA;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
   protected void fillFromCalc() {
     super.fillFromCalc();
+    loadCalcColor();
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
-                    new float[] { calcR, calcG, calcB, calcA });
+                    calcColor);
   }
 
 
@@ -1533,22 +1557,22 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void ambient(int rgb) {
     super.ambient(rgb);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, calcColor);
   }
 
 
   public void ambient(float gray) {
     super.ambient(gray);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, calcColor);
   }
 
 
   public void ambient(float x, float y, float z) {
     super.ambient(x, y, z);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, calcColor);
   }
 
 
@@ -1557,35 +1581,35 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void specular(int rgb) {
     super.specular(rgb);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
   }
 
   public void specular(float gray) {
     super.specular(gray);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
   }
 
 
   public void specular(float gray, float alpha) {
     super.specular(gray, alpha);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
   }
 
 
   public void specular(float x, float y, float z) {
     super.specular(x, y, z);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
   }
 
 
   public void specular(float x, float y, float z, float a) {
     super.specular(x, y, z, a);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
   }
 
 
@@ -1594,22 +1618,22 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void emissive(int rgb) {
     super.emissive(rgb);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, calcColor);
   }
 
 
   public void emissive(float gray) {
     super.emissive(gray);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, calcColor);
   }
 
 
   public void emissive(float x, float y, float z) {
     super.emissive(x, y, z);
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION,
-                    new float[] { calcR, calcG, calcB, calcA });
+    loadCalcColor();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, calcColor);
   }
 
 
