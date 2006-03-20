@@ -40,6 +40,10 @@ public final class PMatrix implements PConstants {
   float stack[][];
 
 
+  // locally allocated version to avoid creating new memory
+  static protected PMatrix inverseCopy;
+
+
   public PMatrix() {
     set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     maxStackDepth = DEFAULT_STACK_DEPTH;
@@ -372,11 +376,14 @@ public final class PMatrix implements PConstants {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    PMatrix copy = new PMatrix(n00, n01, n02, n03,
-                               n10, n11, n12, n13,
-                               n20, n21, n22, n23,
-                               n30, n31, n32, n33);
-    PMatrix inverse = copy.invert();
+    if (inverseCopy == null) {
+      inverseCopy = new PMatrix();
+    }
+    inverseCopy.apply(n00, n01, n02, n03,
+                      n10, n11, n12, n13,
+                      n20, n21, n22, n23,
+                      n30, n31, n32, n33);
+    PMatrix inverse = inverseCopy.invert();
     if (inverse == null) return false;
     preApply(inverse);
     return true;
