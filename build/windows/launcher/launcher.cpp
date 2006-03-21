@@ -34,6 +34,7 @@ void removeLineEndings(char *what);
 char *scrubPath(char *incoming);
 char *mallocChars(int count);
 void removeQuotes(char *quoted);
+void removeTrailingSlash(char *slashed);
 
 int STDCALL
 WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
@@ -324,25 +325,24 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     switch (reinterpret_cast<int>(ShExecInfo.hInstApp)) {
     case ERROR_FILE_NOT_FOUND:
     case ERROR_PATH_NOT_FOUND:
-	    MessageBox(NULL, "A required file could not be found. \n"
-                 "You may need to install a Java runtime\n"
-                 "or re-install Processing.",
-                 "Processing Error", MB_OK);
-	    break;
+      MessageBox(NULL, "A required file could not be found. \n"
+		 "You may need to install a Java runtime\n"
+		 "or re-install Processing.",
+		 "Processing Error", MB_OK);
+      break;
     case 0:
     case SE_ERR_OOM:
-	    MessageBox(NULL, "Not enough memory or resources to run at"
+      MessageBox(NULL, "Not enough memory or resources to run at"
                  " this time.", "Processing Error", MB_OK);
-	    
-	    break;
+      
+      break;
     default:
-	    MessageBox(NULL, "There is a problem with your installation.\n"
+      MessageBox(NULL, "There is a problem with your installation.\n"
                  "If the problem persists, re-install the program.", 
                  "Processing Error", MB_OK);
-	    break;
+      break;
     }
   }
-
   return 0;
 }
 
@@ -385,6 +385,8 @@ char *scrubPath(char *incoming) {
     */
     strcpy(entry, p);
     removeQuotes(entry);
+    // a trailing slash will cause FindFirstFile to fail.. grr [0109]
+    removeTrailingSlash(entry);
     //MessageBox(NULL, entry, "entry", MB_OK);
 
     // if this path doesn't exist, don't add it
@@ -396,6 +398,8 @@ char *scrubPath(char *incoming) {
       //MessageBox(NULL, cleaned, "cleaned so far", MB_OK);
       FindClose(hfind);
       found_so_far = 1; 
+    } else {
+      MessageBox(NULL, entry, "removing", MB_OK);
     }
     // grab the next entry
     p = (char*) strtok(NULL, ";");
@@ -429,6 +433,17 @@ void removeQuotes(char *quoted) {
     if (quoted[len - 1] == '\"') {
       len--;
       quoted[len] = 0;
+    }
+  }
+}
+
+
+void removeTrailingSlash(char *slashed) {
+  int len = strlen(slashed);  
+  if (len > 1) {
+    if (slashed[len - 1] == '\\') {
+      len--;
+      slashed[len] = 0;
     }
   }
 }
