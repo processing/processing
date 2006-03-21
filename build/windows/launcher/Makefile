@@ -1,16 +1,23 @@
 CXXFLAGS = -mwindows -mno-cygwin -O2 -Wall
-OBJS = launcher.o launcher-rc.o
+POBJS = launcher.o launcher-rc.o
+# don't want to include the p5 icons for the exported feller
+AOBJS = launcher.o 
 
-processing.exe: $(OBJS)
-	$(LINK.cc) $(CXXFLAGS) -o $@ $(OBJS)
+# this is a fairly ugly Makefile, if you're a Makefile guru,
+# please pipe up and post us a fixed version in the bugs db!
+# for instance, i always want both of these to build at the
+# same time, rather than doing "make" then "make application.exe"
+
+processing.exe: $(POBJS)
+	$(LINK.cc) $(CXXFLAGS) -o $@ $(POBJS)
 	cp processing.exe ../work/
 
-application.exe: $(OBJS)
-	$(LINK.cc) $(CXXFLAGS) -DEXPORT -o $@ $(OBJS)
+application.exe: $(AOBJS)
+	$(LINK.cc) $(CXXFLAGS) -DEXPORT -o $@ $(AOBJS)
 	cp application.exe ../work/lib/export/
 	cp application.exe ../../shared/lib/export/
 
-$(OBJS): Makefile 
+$(POBJS): Makefile 
 
 launcher-rc.o: launcher.rc
 	windres -i $< -o $@

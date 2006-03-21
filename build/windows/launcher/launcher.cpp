@@ -398,8 +398,8 @@ char *scrubPath(char *incoming) {
       //MessageBox(NULL, cleaned, "cleaned so far", MB_OK);
       FindClose(hfind);
       found_so_far = 1; 
-    } else {
-      MessageBox(NULL, entry, "removing", MB_OK);
+    //} else {
+      //MessageBox(NULL, entry, "removing", MB_OK);
     }
     // grab the next entry
     p = (char*) strtok(NULL, ";");
