@@ -20,6 +20,14 @@ _   security ex when run as an applet
 _   also can no longer assume that macosx is big endian
 _ fix non-bound textures from mangling everything else
 _   fix enable/disable textures for some objects
+_ move to new implementation of jsr231 with new classes and launcher
+_ images are memory leaking pretty badly 
+_   texture re-allocated on each frame
+_   http://dev.processing.org/bugs/show_bug.cgi?id=150
+_ check min/max texture sizes when binding to avoid problems
+_   minimum texture size may be 64x64
+_   maximum appears to be 2048, on macs maybe 512
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
 _ polygon z-order with alpha in opengl
 _   add option to sort triangles back to front so alpha works
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
@@ -666,11 +674,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
-_ move to new implementation of jsr231 with new classes and launcher
-_ check min/max texture sizes when binding to avoid problems
-_   minimum texture size may be 64x64
-_   maximum appears to be 2048, on macs maybe 512
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
 _ make a note about the anti-aliasing types in the faq
 _   polygon vs line etc.. may want to enable lines but disable polys
 _ y may be flipped in modelX/Y/Z stuff on opengl
@@ -679,9 +682,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=166
 _   example of getting it to work with an applet
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1131916668
 _ implement hint(NO_DEPTH_TEST) for opengl
-_ images are memory leaking pretty badly 
-_   texture re-allocated on each frame
-_   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ blend(), get(), set(), copy(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
