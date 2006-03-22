@@ -1,3 +1,7 @@
-application.macosx = opengl.jar, jogl.jar, libjogl.jnilib, libjogl_cg.jnilib
-application.windows = opengl.jar, jogl.jar, jogl.dll, jogl_cg.dll
-application.linux = opengl.jar, jogl.jar, libjogl.so, libjogl_cg.so
+application.macosx = opengl.jar, jogl.jar, libjogl.jnilib, libjogl_awt.jnilib, libjogl_cg.jnilib
+application.windows = opengl.jar, jogl.jar, jogl.dll, jogl_awt.dll, jogl_cg.dll
+application.linux = opengl.jar, jogl.jar, libjogl.so, libjogl_awt.so, libjogl_cg.so
+
+applet.macosx = opengl.jar, jogl.jar, jogl-natives-macosx.jar
+applet.windows = opengl.jar, jogl.jar, jogl-natives-linux.jar
+applet.linux = opengl.jar, jogl.jar, jogl-natives-win32.jar
