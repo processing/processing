@@ -129,7 +129,12 @@ public class PGraphicsGL extends PGraphics3 {
     canvas.addGLEventListener(new GLEventListener() {
 
         public void display(GLAutoDrawable drawable) {
+          System.out.println("calling display");
+          // need to get a fresh opengl object here
+          //gl = canvas.getGL();
+          //gl = drawable.getGL();
           parent.display();  // this means it's time to go
+          System.out.println("done calling display");
         }
 
         public void init(GLAutoDrawable drawable) { }
@@ -186,6 +191,7 @@ public class PGraphicsGL extends PGraphics3 {
 
     lightBuffer = BufferUtil.newFloatBuffer(4);
     lightBuffer.put(3, 1.0f);
+    lightBuffer.rewind();
 
     //System.out.println("done creating gl");
   }
@@ -196,9 +202,9 @@ public class PGraphicsGL extends PGraphics3 {
   // main applet thread requests an update,
   // but PGraphics has to respond back by calling PApplet.display()
   public void requestDisplay(PApplet parent) {
-    //System.out.println("requesting display");
+    System.out.println("requesting display");
 
-    if (!displayed) {
+    //if (!displayed) {
       // these two method calls (and explanations) were taken from
       // the FpsAnimator implementation from the jogl hoo-ha
 
@@ -224,13 +230,14 @@ public class PGraphicsGL extends PGraphics3 {
       //canvas.requestFocus();
 
       // done with this business
-      displayed = true;
-    }
+      //displayed = true;
+    //}
     // request a display from the gl canvas. when it happens,
     // we'll hear about it from the GLEventListener, which will
     // in turn call PApplet.display()... hold your breath...
     try {
       canvas.display();
+      System.out.println("out of canvas display");
 
     } catch (GLException e) {
       Throwable t = e.getCause();
@@ -311,8 +318,10 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   public void beginFrame() {
+    System.out.println("beginframe1");
     super.beginFrame();
 
+    System.out.println("beginframe2");
     report("top beginFrame()");
 
     gl.glDisable(GL.GL_LIGHTING);
@@ -357,6 +366,7 @@ public class PGraphicsGL extends PGraphics3 {
     }
     //gl.glLoadMatrixf(projectionFloats);
     projectionFloatBuffer.put(projectionFloats);
+    projectionFloatBuffer.rewind();
     gl.glLoadMatrixf(projectionFloatBuffer);
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
@@ -941,6 +951,7 @@ public class PGraphicsGL extends PGraphics3 {
         }
       }
       tbuffer.put(tpixels);
+      tbuffer.rewind();
     }
   }
 
@@ -1468,6 +1479,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightAmbient(int num) {
     lightBuffer.put(lightDiffuse[num]);
+    lightBuffer.rewind();
     gl.glLightfv(GL.GL_LIGHT0 + num,
                  GL.GL_AMBIENT, lightBuffer);
   }
@@ -1482,6 +1494,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightDiffuse(int num) {
     lightBuffer.put(lightDiffuse[num]);
+    lightBuffer.rewind();
     gl.glLightfv(GL.GL_LIGHT0 + num,
                  GL.GL_DIFFUSE, lightBuffer);
   }
@@ -1489,6 +1502,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightDirection(int num) {
     lightBuffer.put(lightNormal[num]);
+    lightBuffer.rewind();
 
     if (lightType[num] == DIRECTIONAL) {
       // TODO this expects a fourth arg that will be set to 1
@@ -1522,6 +1536,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightPosition(int num) {
     lightBuffer.put(lightPosition[num]);
+    lightBuffer.rewind();
     gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightBuffer);
                  //new float[] { lightsX[num], lightsY[num], lightsZ[num] });
   }
@@ -1529,6 +1544,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightSpecular(int num) {
     lightBuffer.put(lightSpecular[num]);
+    lightBuffer.rewind();
     gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPECULAR, lightBuffer);
                  //GL.GL_SPECULAR, new float[] { lightsSpecularR[num],
                  //                            lightsSpecularG[num],
@@ -1575,6 +1591,7 @@ public class PGraphicsGL extends PGraphics3 {
     colorBuffer.put(1, calcG);
     colorBuffer.put(2, calcB);
     colorBuffer.put(3, calcA);
+    colorBuffer.rewind();
   }
 
 
