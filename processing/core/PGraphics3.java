@@ -237,16 +237,17 @@ public class PGraphics3 extends PGraphics {
 
     // init lights (in resize() instead of allocate() b/c needed by opengl)
     lightType = new int[MAX_LIGHTS];
-    lightPosition = new float[3][MAX_LIGHTS];
-    lightDiffuse = new float[3][MAX_LIGHTS];
-    lightNormal = new float[3][MAX_LIGHTS];
-    lightSpecular = new float[3][MAX_LIGHTS];
+    lightPosition = new float[MAX_LIGHTS][3];
+    lightDiffuse = new float[MAX_LIGHTS][3];
+    lightNormal = new float[MAX_LIGHTS][3];
+    lightSpecular = new float[MAX_LIGHTS][3];
     lightFalloffConstant = new float[MAX_LIGHTS];
     lightFalloffLinear = new float[MAX_LIGHTS];
     lightFalloffQuadratic = new float[MAX_LIGHTS];
     lightSpotAngle = new float[MAX_LIGHTS];
     lightSpotAngleCos = new float[MAX_LIGHTS];
     lightSpotConcentration = new float[MAX_LIGHTS];
+    currentLightSpecular = new float[3];
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
     // will just be ignored if CUSTOM, the user's hosed anyways
