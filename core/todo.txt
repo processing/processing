@@ -6,6 +6,16 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X fixes contributed by willis morse to deal with memory wastefulness
 X   should help speed up some types of OPENGL and P3D mode sketches
 
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+_ loadImage(url) having trouble with jpeg
+_   actually it's an issue with some types of jpeg files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=279
+_ png image loading problems
+_   http://dev.processing.org/bugs/show_bug.cgi?id=305
+
 _ when an exception comes through during cameraEvent, not printed
 _   need to show an actual stack trace (InvocationTargetEx) 
 _   because otherwise it's impossible to debug this stuff
@@ -49,12 +59,6 @@ _     don't need to apply tint() to textures, supposed to use fill color
 
 _ registerSize() in arcball is causing trouble
 _   some sort of infinite loop issue
-
-_ loadImage(url) having trouble with jpeg
-_   actually it's an issue with some types of jpeg files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=279
-_ png image loading problems
-_   http://dev.processing.org/bugs/show_bug.cgi?id=305
 
 _ updatePixels() is slow to create a BufferedImage
 _   therefore the incomplete rendering
