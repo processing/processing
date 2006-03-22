@@ -126,7 +126,7 @@ public class Editor extends JFrame
   //SketchHistory history;  // TODO re-enable history
   Sketchbook sketchbook;
   //Preferences preferences;
-  //FindReplace find;
+  FindReplace find;
 
   //static Properties keywords; // keyword -> reference html lookup
 
@@ -851,21 +851,26 @@ public class Editor extends JFrame
     item = newJMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new FindReplace(Editor.this).show();
-          //find.show();
+          if (find == null) {
+            find = new FindReplace(Editor.this);
+          }
+          //new FindReplace(Editor.this).show();
+          find.show();
           //find.setVisible(true);
         }
       });
     menu.add(item);
 
+    // TODO find next should only be enabled after a
+    // search has actually taken place
     item = newJMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          // TODO find next should only be enabled after a
-          // search has actually taken place
-          //find.find(true);
-          FindReplace find = new FindReplace(Editor.this); //.show();
-          find.find(true);
+          if (find != null) {
+            //find.find(true);
+            //FindReplace find = new FindReplace(Editor.this); //.show();
+            find.find(true);
+          }
         }
       });
     menu.add(item);
