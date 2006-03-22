@@ -379,46 +379,51 @@ public class PGraphics extends PImage implements PConstants {
   public int lightCount = 0;
 
   /** Light types */
-  public int lights[];
+  public int lightType[];
 
   /** Light positions */
-  public float lightsX[], lightsY[], lightsZ[];
+  public float lightPosition[][];
+  //public float lightsX[], lightsY[], lightsZ[];
 
   /** Light direction (normalized vector) */
-  public float lightsNX[], lightsNY[], lightsNZ[];
+  public float lightNormal[][];
+  //public float lightsNX[], lightsNY[], lightsNZ[];
 
   /** Light falloff */
-  public float lightsFalloffConstant[];
-  public float lightsFalloffLinear[];
-  public float lightsFalloffQuadratic[];
+  public float lightFalloffConstant[];
+  public float lightFalloffLinear[];
+  public float lightFalloffQuadratic[];
 
   /** Light spot angle */
-  public float lightsSpotAngle[];
+  public float lightSpotAngle[];
 
   /** Cosine of light spot angle */
-  public float lightsSpotAngleCos[];
+  public float lightSpotAngleCos[];
 
   /** Light spot concentration */
-  public float lightsSpotConcentration[];
+  public float lightSpotConcentration[];
 
   /** Diffuse colors for lights.
    *  For an ambient light, this will hold the ambient color.
    *  Internally these are stored as numbers between 0 and 1. */
-  public float lightsDiffuseR[], lightsDiffuseG[], lightsDiffuseB[];
+  public float lightDiffuse[][];
+  //public float lightsDiffuseR[], lightsDiffuseG[], lightsDiffuseB[];
 
   /** Specular colors for lights.
       Internally these are stored as numbers between 0 and 1. */
-  public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
+  public float lightSpecular[][];
+  //public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
 
   /** Current specular color for lighting */
-  public float lightSpecularR;
-  public float lightSpecularG;
-  public float lightSpecularB;
+  public float currentLightSpecular[];
+  //public float lightSpecularR;
+  //public float lightSpecularG;
+  //public float lightSpecularB;
 
   /** Current light falloff */
-  public float lightFalloffConstant;
-  public float lightFalloffLinear;
-  public float lightFalloffQuadratic;
+  public float currentLightFalloffConstant;
+  public float currentLightFalloffLinear;
+  public float currentLightFalloffQuadratic;
 
   // ........................................................
 
