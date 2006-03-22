@@ -1,13 +1,5 @@
-0109 pde
-X turn off resizing of the color picker window
-X new set of windows quicktime issues introduced in 102+
-X   seems to be ignoring any paths that contain spaces
-X   http://dev.processing.org/bugs/show_bug.cgi?id=299
-X fix windows make.sh (or move back to Makefile)
-X   currently rewrites exe on each build, even if not updated
-X fix linux dist script to work more like the exported apps
-X   no relative paths, etc
-X   http://dev.processing.org/bugs/show_bug.cgi?id=298
+0110 pde
+
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
