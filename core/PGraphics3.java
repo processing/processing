@@ -236,27 +236,17 @@ public class PGraphics3 extends PGraphics {
     cameraAspect = (float)width / (float)height;
 
     // init lights (in resize() instead of allocate() b/c needed by opengl)
-    //lights = new PLight[MAX_LIGHTS];
-    //light = new boolean[MAX_LIGHTS];
-    lightsX = new float[MAX_LIGHTS];
-    lightsY = new float[MAX_LIGHTS];
-    lightsZ = new float[MAX_LIGHTS];
-    lightsDiffuseR = new float[MAX_LIGHTS];
-    lightsDiffuseG = new float[MAX_LIGHTS];
-    lightsDiffuseB = new float[MAX_LIGHTS];
-    lightsSpecularR = new float[MAX_LIGHTS];
-    lightsSpecularG = new float[MAX_LIGHTS];
-    lightsSpecularB = new float[MAX_LIGHTS];
-    lights = new int[MAX_LIGHTS];
-    lightsNX = new float[MAX_LIGHTS];
-    lightsNY = new float[MAX_LIGHTS];
-    lightsNZ = new float[MAX_LIGHTS];
-    lightsFalloffConstant = new float[MAX_LIGHTS];
-    lightsFalloffLinear = new float[MAX_LIGHTS];
-    lightsFalloffQuadratic = new float[MAX_LIGHTS];
-    lightsSpotAngle = new float[MAX_LIGHTS];
-    lightsSpotAngleCos = new float[MAX_LIGHTS];
-    lightsSpotConcentration = new float[MAX_LIGHTS];
+    lightType = new int[MAX_LIGHTS];
+    lightPosition = new float[3][MAX_LIGHTS];
+    lightDiffuse = new float[3][MAX_LIGHTS];
+    lightNormal = new float[3][MAX_LIGHTS];
+    lightSpecular = new float[3][MAX_LIGHTS];
+    lightFalloffConstant = new float[MAX_LIGHTS];
+    lightFalloffLinear = new float[MAX_LIGHTS];
+    lightFalloffQuadratic = new float[MAX_LIGHTS];
+    lightSpotAngle = new float[MAX_LIGHTS];
+    lightSpotAngleCos = new float[MAX_LIGHTS];
+    lightSpotConcentration = new float[MAX_LIGHTS];
 
     // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
     // will just be ignored if CUSTOM, the user's hosed anyways
@@ -1690,21 +1680,25 @@ public class PGraphics3 extends PGraphics {
     // if (!light[i]) continue;
     for (int i = 0; i < lightCount; i++) {
 
-      float denom = lightsFalloffConstant[i];
+      float denom = lightFalloffConstant[i];
       float spotTerm = 1;
 
-      if (lights[i] == AMBIENT) {
-        if (lightsFalloffQuadratic[i] != 0 || lightsFalloffLinear[i] != 0) {
+      if (lightType[i] == AMBIENT) {
+        if (lightFalloffQuadratic[i] != 0 || lightFalloffLinear[i] != 0) {
           // Falloff depends on distance
-          float distSq = mag(lightsX[i] - wx, lightsY[i] - wy, lightsZ[i] - wz);
-          denom += lightsFalloffQuadratic[i] * distSq + lightsFalloffLinear[i]
-              * (float) sqrt(distSq);
+          float distSq = mag(lightPosition[i][0] - wx,
+                             lightPosition[i][1] - wy,
+                             lightPosition[i][2] - wz);
+          denom +=
+            lightFalloffQuadratic[i] * distSq +
+            lightFalloffLinear[i] * (float) sqrt(distSq);
         }
-        if (denom == 0)
-          denom = 1;
-        contribution[LIGHT_AMBIENT_R] += lightsDiffuseR[i] / denom;
-        contribution[LIGHT_AMBIENT_G] += lightsDiffuseG[i] / denom;
-        contribution[LIGHT_AMBIENT_B] += lightsDiffuseB[i] / denom;
+        if (denom == 0) denom = 1;
+
+        contribution[LIGHT_AMBIENT_R] += lightDiffuse[i][0] / denom;
+        contribution[LIGHT_AMBIENT_G] += lightDiffuse[i][1] / denom;
+        contribution[LIGHT_AMBIENT_B] += lightDiffuse[i][2] / denom;
+
       } else {
         // If not ambient, we must deal with direction
 
@@ -1713,10 +1707,10 @@ public class PGraphics3 extends PGraphics {
         float lightDir_dot_li = 0;
         float n_dot_li = 0;
 
-        if (lights[i] == DIRECTIONAL) {
-          lix = -lightsNX[i];
-          liy = -lightsNY[i];
-          liz = -lightsNZ[i];
+        if (lightType[i] == DIRECTIONAL) {
+          lix = -lightNormal[i][0];
+          liy = -lightNormal[i][1];
+          liz = -lightNormal[i][2];
           denom = 1;
           n_dot_li = (nx * lix + ny * liy + nz * liz);
           // If light is lighting the face away from the camera, ditch
@@ -1724,9 +1718,9 @@ public class PGraphics3 extends PGraphics {
             continue;
           }
         } else { // Point or spot light (must deal also with light location)
-          lix = lightsX[i] - wx;
-          liy = lightsY[i] - wy;
-          liz = lightsZ[i] - wz;
+          lix = lightPosition[i][0] - wx;
+          liy = lightPosition[i][1] - wy;
+          liz = lightPosition[i][2] - wz;
           // normalize
           float distSq = mag(lix, liy, liz);
           if (distSq != 0) {
@@ -1740,20 +1734,23 @@ public class PGraphics3 extends PGraphics {
             continue;
           }
 
-          if (lights[i] == SPOT) { // Must deal with spot cone
+          if (lightType[i] == SPOT) { // Must deal with spot cone
             lightDir_dot_li =
-              -(lightsNX[i] * lix + lightsNY[i] * liy + lightsNZ[i] * liz);
+              -(lightNormal[i][0] * lix +
+                lightNormal[i][1] * liy +
+                lightNormal[i][2] * liz);
             // Outside of spot cone
-            if (lightDir_dot_li <= lightsSpotAngleCos[i]) {
+            if (lightDir_dot_li <= lightSpotAngleCos[i]) {
               continue;
             }
-            spotTerm = pow(lightDir_dot_li, lightsSpotConcentration[i]);
+            spotTerm = pow(lightDir_dot_li, lightSpotConcentration[i]);
           }
 
-          if (lightsFalloffQuadratic[i] != 0 || lightsFalloffLinear[i] != 0) {
+          if (lightFalloffQuadratic[i] != 0 || lightFalloffLinear[i] != 0) {
             // Falloff depends on distance
-            denom += lightsFalloffQuadratic[i] * distSq +
-              lightsFalloffLinear[i] * (float) sqrt(distSq);
+            denom +=
+              lightFalloffQuadratic[i] * distSq +
+              lightFalloffLinear[i] * (float) sqrt(distSq);
           }
         }
         // Directional, point, or spot light:
@@ -1763,17 +1760,17 @@ public class PGraphics3 extends PGraphics {
         if (denom == 0)
           denom = 1;
         float mul = n_dot_li * spotTerm / denom;
-        contribution[LIGHT_DIFFUSE_R] += lightsDiffuseR[i] * mul;
-        contribution[LIGHT_DIFFUSE_G] += lightsDiffuseG[i] * mul;
-        contribution[LIGHT_DIFFUSE_B] += lightsDiffuseB[i] * mul;
+        contribution[LIGHT_DIFFUSE_R] += lightDiffuse[i][0] * mul;
+        contribution[LIGHT_DIFFUSE_G] += lightDiffuse[i][1] * mul;
+        contribution[LIGHT_DIFFUSE_B] += lightDiffuse[i][2] * mul;
 
         // SPECULAR
 
         // If the material and light have a specular component.
         if ((sr > 0 || sg > 0 || sb > 0) &&
-            (lightsSpecularR[i] > 0 ||
-             lightsSpecularG[i] > 0 ||
-             lightsSpecularB[i] > 0)) {
+            (lightSpecular[i][0] > 0 ||
+             lightSpecular[i][1] > 0 ||
+             lightSpecular[i][2] > 0)) {
 
           float vmag = mag(wx, wy, wz);
           if (vmag != 0) {
@@ -1795,9 +1792,9 @@ public class PGraphics3 extends PGraphics {
           if (s_dot_n > 0) {
             s_dot_n = pow(s_dot_n, shine);
             mul = s_dot_n * spotTerm / denom;
-            contribution[LIGHT_SPECULAR_R] += lightsSpecularR[i] * mul;
-            contribution[LIGHT_SPECULAR_G] += lightsSpecularG[i] * mul;
-            contribution[LIGHT_SPECULAR_B] += lightsSpecularB[i] * mul;
+            contribution[LIGHT_SPECULAR_R] += lightSpecular[i][0] * mul;
+            contribution[LIGHT_SPECULAR_G] += lightSpecular[i][1] * mul;
+            contribution[LIGHT_SPECULAR_B] += lightSpecular[i][2] * mul;
           }
 
         }
@@ -3661,14 +3658,14 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightsDiffuseR[lightCount] = calcR;
-    lightsDiffuseG[lightCount] = calcG;
-    lightsDiffuseB[lightCount] = calcB;
+    lightDiffuse[lightCount][0] = calcR;
+    lightDiffuse[lightCount][1] = calcG;
+    lightDiffuse[lightCount][2] = calcB;
 
-    lights[lightCount] = AMBIENT;
-    lightsFalloffConstant[lightCount] = lightFalloffConstant;
-    lightsFalloffLinear[lightCount] = lightFalloffLinear;
-    lightsFalloffQuadratic[lightCount] = lightFalloffQuadratic;
+    lightType[lightCount] = AMBIENT;
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
     lightPosition(lightCount, x, y, z);
     lightCount++;
     //return lightCount-1;
@@ -3681,21 +3678,19 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightsDiffuseR[lightCount] = calcR;
-    lightsDiffuseG[lightCount] = calcG;
-    lightsDiffuseB[lightCount] = calcB;
+    lightDiffuse[lightCount][0] = calcR;
+    lightDiffuse[lightCount][1] = calcG;
+    lightDiffuse[lightCount][2] = calcB;
 
-    //light[lightCount] = true;
-    lights[lightCount] = DIRECTIONAL;
-    lightsFalloffConstant[lightCount] = lightFalloffConstant;
-    lightsFalloffLinear[lightCount] = lightFalloffLinear;
-    lightsFalloffQuadratic[lightCount] = lightFalloffQuadratic;
-    lightsSpecularR[lightCount] = lightSpecularR;
-    lightsSpecularG[lightCount] = lightSpecularG;
-    lightsSpecularB[lightCount] = lightSpecularB;
+    lightType[lightCount] = DIRECTIONAL;
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    lightSpecular[lightCount][0] = currentLightSpecular[0];
+    lightSpecular[lightCount][1] = currentLightSpecular[1];
+    lightSpecular[lightCount][2] = currentLightSpecular[2];
     lightDirection(lightCount, nx, ny, nz);
     lightCount++;
-    //return lightCount-1;
   }
 
 
@@ -3705,23 +3700,21 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightsDiffuseR[lightCount] = calcR;
-    lightsDiffuseG[lightCount] = calcG;
-    lightsDiffuseB[lightCount] = calcB;
+    lightDiffuse[lightCount][0] = calcR;
+    lightDiffuse[lightCount][1] = calcG;
+    lightDiffuse[lightCount][2] = calcB;
 
-    //light[lightCount] = true;
-    lights[lightCount] = POINT;
-    lightsFalloffConstant[lightCount] = lightFalloffConstant;
-    lightsFalloffLinear[lightCount] = lightFalloffLinear;
-    lightsFalloffQuadratic[lightCount] = lightFalloffQuadratic;
-    lightsSpecularR[lightCount] = lightSpecularR;
-    lightsSpecularG[lightCount] = lightSpecularG;
-    lightsSpecularB[lightCount] = lightSpecularB;
+    lightType[lightCount] = POINT;
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    lightSpecular[lightCount][0] = currentLightSpecular[0];
+    lightSpecular[lightCount][1] = currentLightSpecular[1];
+    lightSpecular[lightCount][2] = currentLightSpecular[2];
     lightPosition(lightCount, x, y, z);
     lightCount++;
 
     lightingDependsOnVertexPosition = true;
-    //return lightCount-1;
   }
 
 
@@ -3733,22 +3726,22 @@ public class PGraphics3 extends PGraphics {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
-    lightsDiffuseR[lightCount] = calcR;
-    lightsDiffuseG[lightCount] = calcG;
-    lightsDiffuseB[lightCount] = calcB;
+    lightDiffuse[lightCount][0] = calcR;
+    lightDiffuse[lightCount][1] = calcG;
+    lightDiffuse[lightCount][2] = calcB;
 
-    lights[lightCount] = SPOT;
-    lightsFalloffConstant[lightCount] = lightFalloffConstant;
-    lightsFalloffLinear[lightCount] = lightFalloffLinear;
-    lightsFalloffQuadratic[lightCount] = lightFalloffQuadratic;
-    lightsSpecularR[lightCount] = lightSpecularR;
-    lightsSpecularG[lightCount] = lightSpecularG;
-    lightsSpecularB[lightCount] = lightSpecularB;
+    lightType[lightCount] = SPOT;
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    lightSpecular[lightCount][0] = currentLightSpecular[0];
+    lightSpecular[lightCount][1] = currentLightSpecular[1];
+    lightSpecular[lightCount][2] = currentLightSpecular[2];
     lightPosition(lightCount, x, y, z);
     lightDirection(lightCount, nx, ny, nz);
-    lightsSpotAngle[lightCount] = angle;
-    lightsSpotAngleCos[lightCount] = max(0, cos(angle));
-    lightsSpotConcentration[lightCount] = concentration;
+    lightSpotAngle[lightCount] = angle;
+    lightSpotAngleCos[lightCount] = max(0, cos(angle));
+    lightSpotConcentration[lightCount] = concentration;
     lightCount++;
 
     lightingDependsOnVertexPosition = true;
@@ -3760,9 +3753,9 @@ public class PGraphics3 extends PGraphics {
    * Default is lightFalloff(1, 0, 0).
    */
   public void lightFalloff(float constant, float linear, float quadratic) {
-    lightFalloffConstant = constant;
-    lightFalloffLinear = linear;
-    lightFalloffQuadratic = quadratic;
+    currentLightFalloffConstant = constant;
+    currentLightFalloffLinear = linear;
+    currentLightFalloffQuadratic = quadratic;
 
     lightingDependsOnVertexPosition = true;
   }
@@ -3773,9 +3766,9 @@ public class PGraphics3 extends PGraphics {
    */
   public void lightSpecular(float x, float y, float z) {
     colorCalc(x, y, z);
-    lightSpecularR = calcR;
-    lightSpecularG = calcG;
-    lightSpecularB = calcB;
+    currentLightSpecular[0] = calcR;
+    currentLightSpecular[1] = calcG;
+    currentLightSpecular[2] = calcB;
 
     lightingDependsOnVertexPosition = true;
   }
@@ -3786,11 +3779,11 @@ public class PGraphics3 extends PGraphics {
    * based on the current modelview matrix.
    */
   protected void lightPosition(int num, float x, float y, float z) {
-    lightsX[num] =
+    lightPosition[num][0] =
       modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
-    lightsY[num] =
+    lightPosition[num][1] =
       modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
-    lightsZ[num] =
+    lightPosition[num][2] =
       modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
   }
 
@@ -3801,22 +3794,22 @@ public class PGraphics3 extends PGraphics {
    */
   protected void lightDirection(int num, float x, float y, float z) {
     // Multiply by inverse transpose.
-    lightsNX[num] =
+    lightNormal[num][0] =
       modelviewInv.m00*x + modelviewInv.m10*y +
       modelviewInv.m20*z + modelviewInv.m30;
-    lightsNY[num] =
+    lightNormal[num][1] =
       modelviewInv.m01*x + modelviewInv.m11*y +
       modelviewInv.m21*z + modelviewInv.m31;
-    lightsNZ[num] =
+    lightNormal[num][2] =
       modelviewInv.m02*x + modelviewInv.m12*y +
       modelviewInv.m22*z + modelviewInv.m32;
 
-    float n = mag(lightsNX[num], lightsNY[num], lightsNZ[num]);
+    float n = mag(lightNormal[num]);
     if (n == 0 || n == 1) return;
 
-    lightsNX[num] /= n;
-    lightsNY[num] /= n;
-    lightsNZ[num] /= n;
+    lightNormal[num][0] /= n;
+    lightNormal[num][1] /= n;
+    lightNormal[num][2] /= n;
   }
 
 
@@ -3894,6 +3887,10 @@ public class PGraphics3 extends PGraphics {
 
   private final float mag(float a, float b, float c) {
     return (float)Math.sqrt(a*a + b*b + c*c);
+  }
+
+  private final float mag(float abc[]) {
+    return (float)Math.sqrt(abc[0]*abc[0] + abc[1]*abc[1] + abc[2]*abc[2]);
   }
 
   private final float min(float a, float b) {
