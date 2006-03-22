@@ -4,7 +4,7 @@
   PGraphicsGL - opengl version of the graphics engine
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,11 @@ import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
 import java.lang.reflect.*;
-import net.java.games.jogl.*;
+import java.nio.*;  // FloatBuffer and friends
+
+import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
+import com.sun.opengl.util.*;
 
 
 /**
@@ -65,16 +69,26 @@ public class PGraphicsGL extends PGraphics3 {
   public GLU glu;
   public GLCanvas canvas;
 
+  protected FloatBuffer projectionFloatBuffer;
   protected float[] projectionFloats;
 
-  GLUtesselator tobj;
-  TessCallback tessCallback;
+  protected GLUtessellator tobj;
+  protected TessCallback tessCallback;
+
+  /// Buffer to hold light values before they're sent to OpenGL
+  protected FloatBuffer lightBuffer;
+
+  /// Used to hold color values to be sent to OpenGL
+  protected FloatBuffer colorBuffer;
+
+  /// IntBuffer to go with the pixels[] array
+  protected IntBuffer pixelBuffer;
 
   /**
    * Used in temporary calcuulations to avoid
    * reallocating during heavy renders
    */
-  protected float[] calcColor = new float[4];
+  //protected float[] calcColor = new float[4];
 
   /**
    * true if the host system is big endian (PowerPC, MIPS, SPARC),
@@ -105,25 +119,26 @@ public class PGraphicsGL extends PGraphics3 {
 
     //System.out.println("creating PGraphicsGL 2");
 
-    GLCapabilities capabilities = new GLCapabilities();
-    canvas = GLDrawableFactory.getFactory().createGLCanvas(capabilities);
+    //GLCapabilities capabilities = new GLCapabilities();
+    //canvas = GLDrawableFactory.getFactory().createGLCanvas(capabilities);
+    canvas = new GLCanvas();
 
     //System.out.println("creating PGraphicsGL 3");
 
     final PApplet parent = applet;
     canvas.addGLEventListener(new GLEventListener() {
 
-        public void display(GLDrawable drawable) {
+        public void display(GLAutoDrawable drawable) {
           parent.display();  // this means it's time to go
         }
 
-        public void init(GLDrawable drawable) { }
+        public void init(GLAutoDrawable drawable) { }
 
-        public void displayChanged(GLDrawable drawable,
+        public void displayChanged(GLAutoDrawable drawable,
                                    boolean modeChanged,
                                    boolean deviceChanged) { }
 
-        public void reshape(GLDrawable drawable,
+        public void reshape(GLAutoDrawable drawable,
                             int x, int y, int width, int height) { }
       });
 
@@ -144,7 +159,7 @@ public class PGraphicsGL extends PGraphics3 {
 
     // need to get proper opengl context since will be needed below
     gl = canvas.getGL();
-    glu = canvas.getGLU();
+    glu = new GLU(); //canvas.getGLU();
 
     //System.out.println("creating PGraphicsGL 7");
 
@@ -169,6 +184,9 @@ public class PGraphicsGL extends PGraphics3 {
     glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
     glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
 
+    lightBuffer = BufferUtil.newFloatBuffer(4);
+    lightBuffer.put(3, 1.0f);
+
     //System.out.println("done creating gl");
   }
 
@@ -188,7 +206,7 @@ public class PGraphicsGL extends PGraphics3 {
       // will be rendering this one drawable continually from
       // this thread; make the context current once instead of
       // making it current and freeing it each frame.
-      canvas.setRenderingThread(Thread.currentThread());
+      //canvas.setRenderingThread(Thread.currentThread());
       //System.out.println(Thread.currentThread());
 
       // Since setRenderingThread is currently advisory (because
@@ -200,7 +218,7 @@ public class PGraphicsGL extends PGraphics3 {
       // own animation loops which update multiple drawables per
       // tick then it may be necessary to enforce the order of
       // updates.
-      canvas.setNoAutoRedrawMode(true);
+      //canvas.setNoAutoRedrawMode(true);
 
       // maybe this will help?
       //canvas.requestFocus();
@@ -311,6 +329,11 @@ public class PGraphicsGL extends PGraphics3 {
         projection.m02, projection.m12, projection.m22, projection.m32,
         projection.m03, projection.m13, projection.m23, projection.m33
       };
+      // not sure the difference on these two,
+      // but this is what most jogl apps seem to be using
+      //projectionFloatBuffer = FloatBuffer.wrap(projectionFloats);
+      projectionFloatBuffer = BufferUtil.newFloatBuffer(16);
+
     } else {
       projectionFloats[0] = projection.m00;
       projectionFloats[1] = projection.m10;
@@ -332,7 +355,9 @@ public class PGraphicsGL extends PGraphics3 {
       projectionFloats[14] = projection.m23;
       projectionFloats[15] = projection.m33;
     }
-    gl.glLoadMatrixf(projectionFloats);
+    //gl.glLoadMatrixf(projectionFloats);
+    projectionFloatBuffer.put(projectionFloats);
+    gl.glLoadMatrixf(projectionFloatBuffer);
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
@@ -476,7 +501,8 @@ public class PGraphicsGL extends PGraphics3 {
                           cash.twidth, cash.theight,
                           0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
                           //0, GL.GL_BGRA_EXT, GL.GL_UNSIGNED_BYTE,
-                          cash.tpixels);
+                          //cash.tpixels);
+                          cash.tbuffer);
 
           report("re-binding " + cash.twidth + " " +
                  cash.theight + " " + cash.tpixels);
@@ -738,9 +764,11 @@ public class PGraphicsGL extends PGraphics3 {
   protected void cache(PImage image) {
     if (image.cache != null) return;
 
-    int names[] = new int[1];
+    //int names[] = new int[1];
+    IntBuffer names = BufferUtil.newIntBuffer(1);
     gl.glGenTextures(1, names);
-    int index = names[0];
+    //int index = names[0];
+    int index = names.get(0);
 
     //if (image.tindex != -1) return;
 
@@ -762,7 +790,8 @@ public class PGraphicsGL extends PGraphics3 {
     gl.glBindTexture(GL.GL_TEXTURE_2D, index);
 
     gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, cash.twidth, cash.theight,
-                    0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, cash.tpixels);
+                    //0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, cash.tpixels);
+                    0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, cash.tbuffer);
 
     gl.glTexParameterf(GL.GL_TEXTURE_2D,
                        //GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
@@ -799,6 +828,7 @@ public class PGraphicsGL extends PGraphics3 {
   class ImageCache {
     int tindex;
     int tpixels[];
+    IntBuffer tbuffer;
     int twidth, theight;
 
     //public void update(int pixels[], int width, int height) {
@@ -819,6 +849,7 @@ public class PGraphicsGL extends PGraphics3 {
         twidth = width2;
         theight = height2;
         tpixels = new int[twidth * theight];
+        tbuffer = BufferUtil.newIntBuffer(twidth * theight);
       }
 
       // copy image data into the texture
@@ -909,6 +940,7 @@ public class PGraphicsGL extends PGraphics3 {
           break;
         }
       }
+      tbuffer.put(tpixels);
     }
   }
 
@@ -1051,7 +1083,8 @@ public class PGraphicsGL extends PGraphics3 {
         vertex = new double[] {
           x + textPoints[0], y + textPoints[1], 0
         };
-        glu.gluTessVertex(tobj, vertex, vertex);
+        //glu.gluTessVertex(tobj, vertex, vertex);
+        glu.gluTessVertex(tobj, vertex, 0, vertex);
         lastX = textPoints[0];
         lastY = textPoints[1];
         break;
@@ -1069,7 +1102,8 @@ public class PGraphicsGL extends PGraphics3 {
             y + bezierPoint(lastY, textPoints[1],
                             textPoints[3], textPoints[3], t), 0
           };
-          glu.gluTessVertex(tobj, vertex, vertex);
+          //glu.gluTessVertex(tobj, vertex, vertex);
+          glu.gluTessVertex(tobj, vertex, 0, vertex);
         }
 
         /*
@@ -1097,7 +1131,8 @@ public class PGraphicsGL extends PGraphics3 {
             y + bezierPoint(lastY, textPoints[1],
                             textPoints[3], textPoints[5], t), 0
           };
-          glu.gluTessVertex(tobj, vertex, vertex);
+          //glu.gluTessVertex(tobj, vertex, vertex);
+          glu.gluTessVertex(tobj, vertex, 0, vertex);
         }
         /*
         vertex = new double[] {
@@ -1152,7 +1187,7 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   //public static class TessCallback extends GLUtesselatorCallbackAdapter {
-  public class TessCallback extends GLUtesselatorCallbackAdapter {
+  public class TessCallback extends GLUtessellatorCallbackAdapter {
     //GL gl;
     //GLU glu;
 
@@ -1432,39 +1467,40 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   protected void glLightAmbient(int num) {
+    lightBuffer.put(lightDiffuse[num]);
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_AMBIENT, new float[] { lightsDiffuseR[num],
-                                              lightsDiffuseG[num],
-                                              lightsDiffuseB[num] });
+                 GL.GL_AMBIENT, lightBuffer);
   }
 
 
   protected void glLightNoAmbient(int num) {
+    // hopefully buffers are filled with zeroes..
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_AMBIENT, new float[] { 0, 0, 0 });
+                 GL.GL_AMBIENT, BufferUtil.newFloatBuffer(3));
   }
 
 
   protected void glLightDiffuse(int num) {
+    lightBuffer.put(lightDiffuse[num]);
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_DIFFUSE, new float[] { lightsDiffuseR[num],
-                                              lightsDiffuseG[num],
-                                              lightsDiffuseB[num] });
+                 GL.GL_DIFFUSE, lightBuffer);
   }
 
 
   protected void glLightDirection(int num) {
-    if (lights[num] == DIRECTIONAL) {
-      gl.glLightfv(GL.GL_LIGHT0 + num,
-                   GL.GL_POSITION, new float[] { lightsNX[num],
-                                                 lightsNY[num],
-                                                 lightsNZ[num], 1 });
+    lightBuffer.put(lightNormal[num]);
+
+    if (lightType[num] == DIRECTIONAL) {
+      // TODO this expects a fourth arg that will be set to 1
+      //      this is why lightBuffer is length 4,
+      //      and the [3] element set to 1 in the constructor.
+      //      however this may be a source of problems since
+      //      it seems a bit "hack"
+      lightBuffer.put(lightNormal[num]);
+      gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightBuffer);
     } else {  // spotlight
-      gl.glLightfv(GL.GL_LIGHT0 + num,
-                   GL.GL_SPOT_DIRECTION,
-                   new float[] { lightsNX[num],
-                                 lightsNY[num],
-                                 lightsNZ[num] });
+      // this one only needs the 3 arg version
+      gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPOT_DIRECTION, lightBuffer);
     }
   }
 
@@ -1476,38 +1512,39 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void glLightFalloff(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_CONSTANT_ATTENUATION, lightsFalloffConstant[num]);
+                GL.GL_CONSTANT_ATTENUATION, lightFalloffConstant[num]);
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_LINEAR_ATTENUATION, lightsFalloffLinear[num]);
+                GL.GL_LINEAR_ATTENUATION, lightFalloffLinear[num]);
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_QUADRATIC_ATTENUATION, lightsFalloffQuadratic[num]);
+                GL.GL_QUADRATIC_ATTENUATION, lightFalloffQuadratic[num]);
   }
 
 
   protected void glLightPosition(int num) {
-    gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_POSITION,
-                 new float[] { lightsX[num], lightsY[num], lightsZ[num] });
+    lightBuffer.put(lightPosition[num]);
+    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightBuffer);
+                 //new float[] { lightsX[num], lightsY[num], lightsZ[num] });
   }
 
 
   protected void glLightSpecular(int num) {
-    gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_SPECULAR, new float[] { lightsSpecularR[num],
-                                               lightsSpecularG[num],
-                                               lightsSpecularB[num] });
+    lightBuffer.put(lightSpecular[num]);
+    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPECULAR, lightBuffer);
+                 //GL.GL_SPECULAR, new float[] { lightsSpecularR[num],
+                 //                            lightsSpecularG[num],
+                 //                            lightsSpecularB[num] });
   }
 
 
   public void glLightSpotAngle(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_SPOT_CUTOFF, lightsSpotAngle[num]);
+                GL.GL_SPOT_CUTOFF, lightSpotAngle[num]);
   }
 
 
   public void glLightSpotConcentration(int num) {
     gl.glLightf(GL.GL_LIGHT0 + num,
-                GL.GL_SPOT_EXPONENT, lightsSpotConcentration[num]);
+                GL.GL_SPOT_EXPONENT, lightSpotConcentration[num]);
   }
 
 
@@ -1533,11 +1570,11 @@ public class PGraphicsGL extends PGraphics3 {
    * Load the calculated color into a pre-allocated array so that
    * it can be quickly passed over to OpenGL. (fix from Willis Morse)
    */
-  private final void loadCalcColor() {
-    calcColor[0] = calcR;
-    calcColor[1] = calcG;
-    calcColor[2] = calcB;
-    calcColor[3] = calcA;
+  private final void calcColorBuffer() {
+    colorBuffer.put(0, calcR);
+    colorBuffer.put(1, calcG);
+    colorBuffer.put(2, calcB);
+    colorBuffer.put(3, calcA);
   }
 
 
@@ -1546,9 +1583,9 @@ public class PGraphicsGL extends PGraphics3 {
 
   protected void fillFromCalc() {
     super.fillFromCalc();
-    loadCalcColor();
+    calcColorBuffer();
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
-                    calcColor);
+                    colorBuffer);
   }
 
 
@@ -1557,22 +1594,22 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void ambient(int rgb) {
     super.ambient(rgb);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer);
   }
 
 
   public void ambient(float gray) {
     super.ambient(gray);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer);
   }
 
 
   public void ambient(float x, float y, float z) {
     super.ambient(x, y, z);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer);
   }
 
 
@@ -1581,35 +1618,35 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void specular(int rgb) {
     super.specular(rgb);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
   }
 
   public void specular(float gray) {
     super.specular(gray);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
   }
 
 
   public void specular(float gray, float alpha) {
     super.specular(gray, alpha);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
   }
 
 
   public void specular(float x, float y, float z) {
     super.specular(x, y, z);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
   }
 
 
   public void specular(float x, float y, float z, float a) {
     super.specular(x, y, z, a);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
   }
 
 
@@ -1618,22 +1655,22 @@ public class PGraphicsGL extends PGraphics3 {
 
   public void emissive(int rgb) {
     super.emissive(rgb);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer);
   }
 
 
   public void emissive(float gray) {
     super.emissive(gray);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer);
   }
 
 
   public void emissive(float x, float y, float z) {
     super.emissive(x, y, z);
-    loadCalcColor();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, calcColor);
+    calcColorBuffer();
+    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer);
   }
 
 
@@ -1688,9 +1725,9 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   public void loadPixels() {
-    //throw new RuntimeException("loadPixels() not yet implemented for OpenGL");
     if ((pixels == null) || (pixels.length != width*height)) {
       pixels = new int[width * height];
+      pixelBuffer = BufferUtil.newIntBuffer(pixels.length);
     }
 
     /*
@@ -1704,7 +1741,8 @@ public class PGraphicsGL extends PGraphics3 {
     */
 
     gl.glReadPixels(0, 0, width, height,
-                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels);
+                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
+    pixelBuffer.get(pixels);
 
     /*
     int temp[] = new int[width];
@@ -2018,12 +2056,10 @@ public class PGraphicsGL extends PGraphics3 {
     }
 
     // re-pack ARGB data into RGBA for opengl (big endian)
-    /*
-    for (int i = 0; i < pixels.length; i++) {
-      pixels[i] = ((pixels[i] >> 24) & 0xff) |
-        ((pixels[i] << 8) & 0xffffff00);
-    }
-    */
+    //for (int i = 0; i < pixels.length; i++) {
+      //pixels[i] = ((pixels[i] >> 24) & 0xff) |
+        //((pixels[i] << 8) & 0xffffff00);
+    //}
 
     //System.out.println("running glDrawPixels");
     //gl.glRasterPos2i(width/2, height/2);
@@ -2034,9 +2070,12 @@ public class PGraphicsGL extends PGraphics3 {
     // my guess is that it's getting "clipped", so adding an epsilon
     // makes it work. also, height-1 would be the logical start,
     // but apparently that's not how opengl coordinates work
-    gl.glRasterPos2f(0.0001f, height - 0.0001f);
+    //gl.glRasterPos2f(0.0001f, height - 0.0001f);
+    gl.glRasterPos2f(EPSILON, height - EPSILON);
 
-    gl.glDrawPixels(width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels);
+    pixelBuffer.put(pixels);
+    gl.glDrawPixels(width, height,
+                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
   }
 
 
@@ -2051,19 +2090,21 @@ public class PGraphicsGL extends PGraphics3 {
   //////////////////////////////////////////////////////////////
 
 
-  int getset[] = new int[1];
+  IntBuffer getsetBuffer = BufferUtil.newIntBuffer(1);
+  //int getset[] = new int[1];
 
   public int get(int x, int y) {
-    gl.glReadPixels(x, y, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getset);
+    gl.glReadPixels(x, y, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
+    int getset = getsetBuffer.get(0);
 
     if (BIG_ENDIAN) {
-      return 0xff000000 | ((getset[0] >> 8)  & 0x00ffffff);
+      return 0xff000000 | ((getset >> 8)  & 0x00ffffff);
 
     } else {
       return 0xff000000 |
-            ((getset[0] << 16) & 0xff0000) |
-            (getset[0] & 0xff00) |
-            ((getset[0] >> 16) & 0xff);
+            ((getset << 16) & 0xff0000) |
+            (getset & 0xff00) |
+            ((getset >> 16) & 0xff);
     }
   }
 
@@ -2088,8 +2129,9 @@ public class PGraphicsGL extends PGraphics3 {
 
     PImage newbie = new PImage(w, h); //new int[w*h], w, h, ARGB);
 
-    gl.glReadPixels(x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
-                    newbie.pixels);
+    IntBuffer newbieBuffer = BufferUtil.newIntBuffer(w*h);
+    gl.glReadPixels(x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
+    newbieBuffer.get(newbie.pixels);
 
     nativeToJavaARGB(newbie);
     return newbie;
@@ -2102,28 +2144,30 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   public void set(int x, int y, int argb) {
+    int getset = 0;
+
     if (BIG_ENDIAN) {
       // convert ARGB to RGBA
-      getset[0] = (argb << 8) | 0xff;
+      getset = (argb << 8) | 0xff;
 
     } else {
       // convert ARGB to ABGR
-      getset[0] =
+      getset =
         (argb & 0xff00ff00) |
         ((argb << 16) & 0xff0000) |
         ((argb >> 16) & 0xff);
     }
-
+    getsetBuffer.put(0, getset);
     gl.glRasterPos2f(x + EPSILON, y + EPSILON);
-    gl.glDrawPixels(1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getset);
+    gl.glDrawPixels(1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
   }
 
 
   /**
    * Set an image directly to the screen.
    * <P>
-   * TODO not optimized properly, creates a temporary buffer the
-   * size of the image. Needs to instead use image cache, but that
+   * TODO not optimized properly, creates multiple temporary buffers
+   * the size of the image. Needs to instead use image cache, but that
    * requires two types of image cache. One for power of 2 textures
    * and another for glReadPixels/glDrawPixels data that's flipped
    * vertically. Both have their components all swapped to native.
@@ -2142,9 +2186,11 @@ public class PGraphicsGL extends PGraphics3 {
     System.arraycopy(source.pixels, 0, backup, 0, source.pixels.length);
     javaToNativeARGB(source);
 
+    IntBuffer setBuffer = BufferUtil.newIntBuffer(source.pixels.length);
+    setBuffer.put(source.pixels);
     gl.glRasterPos2f(x + EPSILON, (height - y) - EPSILON);
     gl.glDrawPixels(source.width, source.height,
-                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, source.pixels);
+                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, setBuffer);
     //nativeToJavaARGB(source);
     source.pixels = backup;
   }
