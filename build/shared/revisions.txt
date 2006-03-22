@@ -7,6 +7,43 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0109 - 21 March 2006
+
+Lots of bug fixes, in particular for Windows QuickTime and the 
+shell script for Linux.
+
+
+[ bug fixes ] 
+
++ fix more issues with QuickTime on Windows. yet again, this should help 
+  the WinVDIG stuff, especially when using QuickTime 7.
+  http://dev.processing.org/bugs/show_bug.cgi?id=299
+
++ change how the linux shell script works to better support situations
+  where a parent folder of the processing app has spaces in the name.
+  http://dev.processing.org/bugs/show_bug.cgi?id=298
+
++ fix the "strokeCap not available in P3D" error (again)
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1134011764
+
++ fix the weird error message that comes from loadImage("") 
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
+
++ fixes contributed by willis morse to deal with memory wastefulness.
+  these should help speed up some types of OPENGL and P3D mode sketches, 
+  thanks willis!
+
++ only create a single instance of the find/replace window, was 
+  creating excessive numbers of windows with multiple finds.
+  http://dev.processing.org/bugs/show_bug.cgi?id=307
+
++ disabled resizing of the color picker window so that it doesn't
+  inadvertently disappear.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0108 - 15 March 2006
 
 A couple minor bug fixes but mostly fun additional features in this 

@@ -5,14 +5,13 @@ X   seems to be ignoring any paths that contain spaces
 X   http://dev.processing.org/bugs/show_bug.cgi?id=299
 X fix windows make.sh (or move back to Makefile)
 X   currently rewrites exe on each build, even if not updated
+X fix linux dist script to work more like the exported apps
+X   no relative paths, etc
+X   http://dev.processing.org/bugs/show_bug.cgi?id=298
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
 _ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
-
-_ fix linux dist script to work more like the exported apps
-_   no relative paths, etc
-_   http://dev.processing.org/bugs/show_bug.cgi?id=298
 
 _ sketch marked as modified too aggressively
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1142415397
