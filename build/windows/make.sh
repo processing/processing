@@ -59,7 +59,7 @@ else
 
   echo Compiling processing.exe
   cd launcher
-  chmod +x make.sh
+  #chmod +x make.sh
   #./make.sh # && cp processing.exe ../work/
   make 
   make application.exe
