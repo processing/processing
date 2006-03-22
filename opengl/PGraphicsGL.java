@@ -129,12 +129,10 @@ public class PGraphicsGL extends PGraphics3 {
     canvas.addGLEventListener(new GLEventListener() {
 
         public void display(GLAutoDrawable drawable) {
-          System.out.println("calling display");
           // need to get a fresh opengl object here
           //gl = canvas.getGL();
-          //gl = drawable.getGL();
+          gl = drawable.getGL();
           parent.display();  // this means it's time to go
-          System.out.println("done calling display");
         }
 
         public void init(GLAutoDrawable drawable) { }
@@ -197,12 +195,12 @@ public class PGraphicsGL extends PGraphics3 {
   }
 
 
-  protected boolean displayed = false;
+  //protected boolean displayed = false;
 
   // main applet thread requests an update,
   // but PGraphics has to respond back by calling PApplet.display()
   public void requestDisplay(PApplet parent) {
-    System.out.println("requesting display");
+    //System.out.println("requesting display");
 
     //if (!displayed) {
       // these two method calls (and explanations) were taken from
@@ -237,7 +235,7 @@ public class PGraphicsGL extends PGraphics3 {
     // in turn call PApplet.display()... hold your breath...
     try {
       canvas.display();
-      System.out.println("out of canvas display");
+      //System.out.println("out of canvas display");
 
     } catch (GLException e) {
       Throwable t = e.getCause();
@@ -318,10 +316,8 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   public void beginFrame() {
-    System.out.println("beginframe1");
     super.beginFrame();
 
-    System.out.println("beginframe2");
     report("top beginFrame()");
 
     gl.glDisable(GL.GL_LIGHTING);
@@ -1587,6 +1583,9 @@ public class PGraphicsGL extends PGraphics3 {
    * it can be quickly passed over to OpenGL. (fix from Willis Morse)
    */
   private final void calcColorBuffer() {
+    if (colorBuffer == null) {
+      colorBuffer = BufferUtil.newFloatBuffer(4);
+    }
     colorBuffer.put(0, calcR);
     colorBuffer.put(1, calcG);
     colorBuffer.put(2, calcB);
