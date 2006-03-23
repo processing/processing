@@ -1,3 +1,7 @@
+0110 pde
+X no changes to the pde, only fixes for jogl
+
+
 0109 pde
 X turn off resizing of the color picker window
 X new set of windows quicktime issues introduced in 102+

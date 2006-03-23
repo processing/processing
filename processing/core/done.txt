@@ -1,3 +1,9 @@
+0110 core
+X finish updates for osx and opengl
+X   http://developer.apple.com/qa/qa2005/qa1295.html
+X   find/build universal version of jogl
+
+
 0109 core
 X loadImage("") produces weird error message
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1136487954
