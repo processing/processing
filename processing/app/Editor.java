@@ -693,7 +693,11 @@ public class Editor extends JFrame
     item = new JMenuItem("Export Folder...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new ExportFolder(Editor.this).show();
+          SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                new ExportFolder(Editor.this).show();
+              }
+            });
         }
       });
     menu.add(item);
