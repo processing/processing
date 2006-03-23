@@ -1,7 +1,9 @@
 0111 pde
 X switch back to rev b3 of jogl so that applets will work
-
-_ fix color picker: http://dev.processing.org/bugs/show_bug.cgi?id=308
+X fix color picker: 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=308
+X   also add esc/ctrl-w for closing the picker
+X update information on mactels in the faq, also java 1.6
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
@@ -565,6 +567,9 @@ _   opens sketch folder,
 _   and gives info about what to do next (how to edit)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=143
 _ tool to run in appletviewer? sun.applet.Main is appletviewer
+_ small gray gap shows up in color picker
+_   getMaximumSize() not being respected on Windows (Linux?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=310
 
 
 TOOLS / Auto Format
@@ -652,6 +657,7 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 
 LIBRARIES / Serial
 
+_ find/build universal version of rxtx
 _ port buffering not working properly
 _   may just be a problem with thread starvation
 _   bufferUntil() fires an event but continues to fill up the buffer

@@ -1,4 +1,18 @@
 0111 core
+X need to have a better way of getting/figuring out the endian 
+X   use ByteOrder class in jdk 1.4, since issue is local to JOGL
+X   security ex when run as an applet
+X   also can no longer assume that macosx is big endian
+X   http://dev.processing.org/bugs/show_bug.cgi?id=309
+
+_ making 'run' synchronized caused a freeze on start w/ opengl
+_ sonia is locking up on load in rev 91
+_   prolly something w/ the threading issues
+_   http://dev.processing.org/bugs/show_bug.cgi?id=46
+_ display() as a function name is problematic
+_   causes nothing to show up.. either rename or mark it final
+_   http://dev.processing.org/bugs/show_bug.cgi?id=213
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -14,11 +28,6 @@ _   need to show an actual stack trace (InvocationTargetEx)
 _   because otherwise it's impossible to debug this stuff
 
 priorities prior to fitc
-_ find/build universal version of rxtx
-_ need to have a better way of getting/figuring out the endian 
-_   use ByteOrder class in jdk 1.4, since issue is local to JOGL
-_   security ex when run as an applet
-_   also can no longer assume that macosx is big endian
 _ fix non-bound textures from mangling everything else
 _   fix enable/disable textures for some objects
 _ move to new implementation of jsr231 with new classes and launcher
@@ -107,7 +116,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=282
 _ claim that things are much slower in 107 vs 92
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1141763531
 _ need to move off anim off the main event thread
-_   move away from using display()
+_   move away from using method like display
 X temporarily rolling back major thread changes
 X major threading change to use wait()/notifyAll() instead of interrupt/sleep
 _ noLoop() at end of setup is prolly b/c of interruptedex
@@ -119,7 +128,6 @@ X     checked, not fixed
 _ noLoop() broken on opengl
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
 _   http://dev.processing.org/bugs/show_bug.cgi?id=164
-_ making 'run' synchronized caused a freeze on start w/ opengl
 _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
@@ -138,15 +146,9 @@ _   probably need to integrate over a rolling array of 10 frames or so
 _ sketches often freeze when stop is hit on an HT machine
 _   need to test the examples cited on pardis' machine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=232
-_ sonia is locking up on load in rev 91
-_   prolly something w/ the threading issues
-_   http://dev.processing.org/bugs/show_bug.cgi?id=46
 _ debug NumberFormat InterruptedException on dual proc machine
 _   use notify() instead of interrupt()? 
 _   or Thread.currentThread() should be checked first?
-_ display() as a function name is problematic
-_   causes nothing to show up.. either rename or mark it final
-_   http://dev.processing.org/bugs/show_bug.cgi?id=213
 
 _ ArrayIndexOutOfBoundsException in PLine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=246
