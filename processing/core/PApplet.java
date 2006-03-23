@@ -1226,7 +1226,7 @@ public class PApplet extends Applet
   }
 
 
-  synchronized public void display() {
+  synchronized public void handleDisplay() {
     if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " formerly nextFrame()");
     if (looping || redraw) {

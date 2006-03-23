@@ -124,7 +124,7 @@ public class PGraphicsGL extends PGraphics3 {
           // need to get a fresh opengl object here
           //gl = canvas.getGL();
           gl = drawable.getGL();
-          parent.display();  // this means it's time to go
+          parent.handleDisplay();  // this means it's time to go
         }
 
         public void init(GLAutoDrawable drawable) { }
