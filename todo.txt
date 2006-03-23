@@ -1,4 +1,7 @@
 0111 pde
+X switch back to rev b3 of jogl so that applets will work
+
+_ fix color picker: http://dev.processing.org/bugs/show_bug.cgi?id=308
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
