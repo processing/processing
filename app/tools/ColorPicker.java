@@ -38,8 +38,8 @@ public class ColorPicker implements DocumentListener {
   Editor editor;
   JFrame frame;
 
-  int hue, saturation, brightness;  // 360, 100, 100
-  int red, green, blue;   // 256, 256, 256
+  int hue, saturation, brightness;  // range 360, 100, 100
+  int red, green, blue;   // range 256, 256, 256
 
   ColorRange range;
   ColorSlider slider;
@@ -67,7 +67,7 @@ public class ColorPicker implements DocumentListener {
     rangePanel.setLayout(new BorderLayout());
     rangePanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
     rangePanel.add(range, BorderLayout.CENTER);
-    //range.setSize(256, 256);
+    //range.setSize(256, 256);  // doesn't help, pack() trashes
     box.add(rangePanel);
     box.add(Box.createHorizontalStrut(10));
 
@@ -76,18 +76,11 @@ public class ColorPicker implements DocumentListener {
     JPanel sliderPanel = new JPanel();
     sliderPanel.setLayout(new BorderLayout());
     sliderPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    //slider.setSize(256, 20);
+    //slider.setSize(256, 20);  // doesn't help, pack() trashes
     sliderPanel.add(slider, BorderLayout.CENTER);
     box.add(sliderPanel);
     box.add(Box.createHorizontalStrut(10));
 
-    /*
-    JPanel fieldPanel = new JPanel();
-    fieldPanel.setLayout(new BorderLayout());
-    fieldPanel.add(createColorFields(), BorderLayout.CENTER);
-    fieldPanel.doLayout();
-    box.add(fieldPanel);
-    */
     box.add(createColorFields());
     box.add(Box.createHorizontalStrut(10));
 
@@ -95,26 +88,27 @@ public class ColorPicker implements DocumentListener {
     frame.pack();
     frame.setResizable(false);
 
+    // these don't help either.. they fix the component size but
+    // leave a gap where the component is located
+    //range.setSize(256, 256);
+    //slider.setSize(256, 20);
+
     Dimension size = frame.getSize();
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     frame.setLocation((screen.width - size.width) / 2,
                       (screen.height - size.height) / 2);
 
-    // handle window closing commands for ctrl/cmd-W or hitting ESC.
-    /*
-    frame.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          System.out.println(e);
-          KeyStroke wc = Editor.WINDOW_CLOSE_KEYSTROKE;
-          if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
-              (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
-            //disposeFrame();
-            //frame.dispose();
-            System.out.println("close me");
-          }
+    frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    frame.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          frame.hide();
         }
       });
-    */
+    Base.registerWindowCloseKeys(frame.getRootPane(), new ActionListener() {
+        public void actionPerformed(ActionEvent actionEvent) {
+          frame.hide();
+        }
+      });
 
     hueField.getDocument().addDocumentListener(this);
     saturationField.getDocument().addDocumentListener(this);
@@ -148,7 +142,6 @@ public class ColorPicker implements DocumentListener {
   public void insertUpdate(DocumentEvent e) {
     if (updating) return;  // don't update forever recursively
     updating = true;
-    //System.out.println(e);
 
     Document doc = e.getDocument();
     if (doc == hueField.getDocument()) {
@@ -210,6 +203,11 @@ public class ColorPicker implements DocumentListener {
   }
 
 
+  /**
+   * Set the RGB values based on a calculated ARGB int.
+   * Used by both updateRGB() to set the color from the HSB values,
+   * and by updateHex(), to unpack the hex colors and assign them.
+   */
   protected void updateRGB2(int rgb) {
     red = (rgb >> 16) & 0xff;
     green = (rgb >> 8) & 0xff;
@@ -222,7 +220,7 @@ public class ColorPicker implements DocumentListener {
 
 
   /**
-   * Set the HSB values based on the current RGB values;
+   * Set the HSB values based on the current RGB values.
    */
   protected void updateHSB() {
     float hsb[] = new float[3];
@@ -245,6 +243,12 @@ public class ColorPicker implements DocumentListener {
   }
 
 
+  /**
+   * Get the bounded value for a specific range. If the value is outside
+   * the max, you can't edit right away, so just act as if it's already
+   * been bounded and return the bounded value, then fire an event to set
+   * it to the value that was just returned.
+   */
   protected int bounded(int current, final JTextField field, final int max) {
     String text = field.getText();
     if (text.length() == 0) {
@@ -253,9 +257,6 @@ public class ColorPicker implements DocumentListener {
     try {
       int value = Integer.parseInt(text);
       if (value > max) {
-        // can't edit right away, so just act as if it's
-        // already been bounded, then fire an event to set
-        // it to a proper bounded value.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
               field.setText(String.valueOf(max));
@@ -272,10 +273,6 @@ public class ColorPicker implements DocumentListener {
 
 
   protected Container createColorFields() {
-    //JLabel label = new JLabel();
-    //int labelH = label.getPreferredSize().height;
-
-    //JPanel panel = new JPanel();
     Box box = Box.createVerticalBox();
 
     colorPanel = new JPanel() {
@@ -358,7 +355,9 @@ public class ColorPicker implements DocumentListener {
 
   int labelH;
 
-  // return a label of a fixed width
+  /**
+   * return a label of a fixed width
+   */
   protected JLabel createFixedLabel(String title) {
     JLabel label = new JLabel(title);
     if (labelH == 0) {
@@ -370,11 +369,6 @@ public class ColorPicker implements DocumentListener {
     label.setMaximumSize(dim);
     return label;
   }
-
-
-  //public void updateFields(NumberField field) {
-  //System.out.println("update based on"); // " + field);
-  //}
 
 
   public class ColorRange extends PApplet {
@@ -396,8 +390,7 @@ public class ColorPicker implements DocumentListener {
 
     public void draw() {
       if ((g == null) || (g.pixels == null)) return;
-      //if ((width != WIDE) || (height != HIGH)) return;
-      if ((width != WIDE) || (height != HIGH)) {
+      if ((width != WIDE) || (height < HIGH)) {
         //System.out.println("bad size " + width + " " + height);
         return;
       }
@@ -435,14 +428,17 @@ public class ColorPicker implements DocumentListener {
     }
 
     public Dimension getPreferredSize() {
+      //System.out.println("getting pref " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMinimumSize() {
+      //System.out.println("getting min " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMaximumSize() {
+      //System.out.println("getting max " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
   }
@@ -461,8 +457,7 @@ public class ColorPicker implements DocumentListener {
 
     public void draw() {
       if ((g == null) || (g.pixels == null)) return;
-      //if ((width != WIDE) || (height != HIGH)) return;
-      if ((width != WIDE) || (height != HIGH)) {
+      if ((width != WIDE) || (height < HIGH)) {
         //System.out.println("bad size " + width + " " + height);
         return;
       }
@@ -495,14 +490,17 @@ public class ColorPicker implements DocumentListener {
     }
 
     public Dimension getPreferredSize() {
+      //System.out.println("s getting pref " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMinimumSize() {
+      //System.out.println("s getting min " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMaximumSize() {
+      //System.out.println("s getting max " + WIDE + " " + HIGH);
       return new Dimension(WIDE, HIGH);
     }
   }
@@ -541,6 +539,9 @@ public class ColorPicker implements DocumentListener {
   }
 
 
+  /**
+   * Document model to go with JTextField that only allows numbers.
+   */
   class NumberDocument extends PlainDocument {
 
     NumberField parentField;
@@ -572,9 +573,8 @@ public class ColorPicker implements DocumentListener {
         }
       }
       super.insertString(offs, new String(chars, 0, charCount), a);
-      //System.out.println(parentField + " " + parentPicker);
-      //parentPicker.updateFields(parentField);
-      //someMethod();
+      // can't call any sort of methods on the enclosing class here
+      // seems to have something to do with how Document objects are set up
     }
   }
 }
