@@ -7,6 +7,40 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0110 - 22 March 2006
+
+This version updates the OPENGL rendering mode to a newer version of
+the JOGL library. Most importantly, this version is a Universal Binary
+that works on Intel machines running Mac OS X. 
+
+Some notes about this release: 
+
++ This new OpenGL setup has not been tested very much. Basically
+  I got things working and thought I was so cool that I just had
+  to post the new release.
+
++ Even though it will be easier to do because of the new JOGL, 
+  support for the OPENGL renderer in applets is still unavailable.
+  http://dev.processing.org/bugs/show_bug.cgi?id=166
+
++ The main reason for the lack of applet support is simply that 
+  I haven't yet had time to try to get this to work. An enterprising 
+  individual might give this a shot if they have a chance to look
+  into how this is done with the new JOGL (known as JSR-231). There
+  are .jar files for jogl that will be exported with a p5 applet 
+  that are signed by Sun. Note that the version for Mac OS X does
+  *not* support Intel Macs. The .jnilib files were built on my own, 
+  but the .jar files were left intact because of the signing.
+  
++ The release of JOGL is the nightly build dated 22 March 2006.
+
++ Lots more fixes for OpenGL are on the way, next on deck are
+  fixes for a lot of texture mapping (and image drawing) issues.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0109 - 21 March 2006
 
 Lots of bug fixes, in particular for Windows QuickTime and the 
