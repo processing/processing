@@ -4,14 +4,17 @@ X   use ByteOrder class in jdk 1.4, since issue is local to JOGL
 X   security ex when run as an applet
 X   also can no longer assume that macosx is big endian
 X   http://dev.processing.org/bugs/show_bug.cgi?id=309
+o making 'run' synchronized caused a freeze on start w/ opengl
+X display() as a function name is problematic
+X   causes nothing to show up.. either rename or mark it final
+X   http://dev.processing.org/bugs/show_bug.cgi?id=213
 
-_ making 'run' synchronized caused a freeze on start w/ opengl
-_ sonia is locking up on load in rev 91
+_ sonia (and anything awt) is locking up on load in rev 91
 _   prolly something w/ the threading issues
+_   paint is synchronized in 0091
+_     however this is a necessity, otherwise nasty flickering ensues
+_     and using a "glock" object seems to completely deadlock
 _   http://dev.processing.org/bugs/show_bug.cgi?id=46
-_ display() as a function name is problematic
-_   causes nothing to show up.. either rename or mark it final
-_   http://dev.processing.org/bugs/show_bug.cgi?id=213
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
