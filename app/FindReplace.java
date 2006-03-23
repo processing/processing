@@ -189,31 +189,18 @@ public class FindReplace extends JFrame implements ActionListener {
     setBounds((screen.width - wide) / 2,
               (screen.height - high) / 2, wide, high);
 
-    // add key listener to trap esc and ctrl/cmd-w
-    /*
-    KeyListener listener = new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          if (Base.isCloseWindowEvent(e)) hide();
-        }
-      };
-    findField.addKeyListener(listener);
-    replaceField.addKeyListener(listener);
-    addKeyListener(listener);
-    */
-    ActionListener disposer = new ActionListener() {
-        public void actionPerformed(ActionEvent actionEvent) {
-          //hide();
-          handleClose();
-        }
-      };
-
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           handleClose();
         }
       });
-    Base.registerWindowCloseKeys(getRootPane(), disposer);
+    Base.registerWindowCloseKeys(getRootPane(), new ActionListener() {
+        public void actionPerformed(ActionEvent actionEvent) {
+          //hide();
+          handleClose();
+        }
+      });
 
     /*
     // hack to to get first field to focus properly on osx
