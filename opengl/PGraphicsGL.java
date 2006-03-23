@@ -85,19 +85,11 @@ public class PGraphicsGL extends PGraphics3 {
   protected IntBuffer pixelBuffer;
 
   /**
-   * Used in temporary calcuulations to avoid
-   * reallocating during heavy renders
-   */
-  //protected float[] calcColor = new float[4];
-
-  /**
-   * true if the host system is big endian (PowerPC, MIPS, SPARC),
-   * false if little endian (x86 Intel). This throws a security
-   * exception in applets, though applets will need to be signed
-   * for JOGL anyways. This is a bad solution, however.
+   * Set to true if the host system is big endian (PowerPC, MIPS, SPARC),
+   * false if little endian (x86 Intel for Mac or PC).
    */
   static public boolean BIG_ENDIAN =
-    System.getProperty("sun.cpu.endian").equals("big");
+    ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
 
   /**
