@@ -1435,8 +1435,8 @@ public class PApplet extends Applet
             //int newWidth = bounds.width - bounds.x * 2;
             //int newHeight = bounds.height - (bounds.y + bounds.x);
             //System.out.println("  new: " + newWidth + " " + newHeight);
+
             size(bounds.width, bounds.height);
-            //size(newWidth, newHeight);
 
             //if (c == PApplet.this) {
             //Container con = (Container) c;
