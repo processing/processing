@@ -74,6 +74,7 @@ public class ExportFolder {
         editor.message("Exporting sketch " + (++counter) +
                        " of " + sketches.size());
         String path = (String) en.nextElement();
+        //System.out.println("handling " + path);
         editor.handleOpen(path);
         // success may not be that useful, usually an ex is thrown
         success = editor.sketch.exportApplet();
@@ -96,6 +97,8 @@ public class ExportFolder {
 
     // skip .DS_Store files, etc
     if (!folder.isDirectory()) return; // false;
+
+    System.out.println(folder.getAbsolutePath());
 
     String list[] = folder.list();
     // if a bad folder or something like that, this might come back null
