@@ -1,6 +1,4 @@
-0110 pde
-X no changes to the pde, only fixes for jogl
-
+0111 pde
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
