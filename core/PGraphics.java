@@ -535,7 +535,7 @@ public class PGraphics extends PImage implements PConstants {
    * Parent thread has requested that visual action be taken.
    */
   public void requestDisplay(PApplet parent) {  // ignore
-    parent.display();
+    parent.handleDisplay();
   }
 
 
