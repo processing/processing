@@ -33,6 +33,20 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 
+/**
+ * Color picker tool for the Tools menu.
+ * <p/>
+ * Using the keyboard shortcuts, you can copy/paste the values for the
+ * colors and paste them into your program. We didn't do any sort of
+ * auto-insert of colorMode() or fill() or stroke() code cuz we couldn't
+ * decide on a good way to do this.. your contributions welcome).
+ * <p/>
+ * There is currently a bug that causes the drawing area to show up
+ * slightly large on Windows and Linux. This is an annoyance but less
+ * important than me fixing some other stuff. If someone were to track
+ * down what's going wrong, I'd be super grateful.
+ * (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=310">Bug 310</A>)
+ */
 public class ColorPicker implements DocumentListener {
 
   Editor editor;
