@@ -1,4 +1,7 @@
 0110 core
+X finish updates for osx and opengl
+X   http://developer.apple.com/qa/qa2005/qa1295.html
+X   find/build universal version of jogl
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -15,10 +18,7 @@ _   need to show an actual stack trace (InvocationTargetEx)
 _   because otherwise it's impossible to debug this stuff
 
 priorities prior to fitc
-_ finish updates for osx and opengl
-_   http://developer.apple.com/qa/qa2005/qa1295.html
-_   find/build universal version of jogl
-_   find/build universal version of rxtx
+_ find/build universal version of rxtx
 _ need to have a better way of getting/figuring out the endian 
 _   use ByteOrder class in jdk 1.4, since issue is local to JOGL
 _   security ex when run as an applet
