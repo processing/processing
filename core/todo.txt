@@ -1,8 +1,4 @@
-0110 core
-X finish updates for osx and opengl
-X   http://developer.apple.com/qa/qa2005/qa1295.html
-X   find/build universal version of jogl
-
+0111 core
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
