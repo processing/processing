@@ -43,7 +43,7 @@ require 'header.inc.php';
 <br>
 <br>
 <br>
-<a href="examples/"><img src="images/examples.png"></a><br>
+<a href="learning/"><img src="images/examples.png"></a><br>
 <br>
 <br>
 <table border="0" cellspacing="0" cellpadding="0">
