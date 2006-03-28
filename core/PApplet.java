@@ -524,9 +524,11 @@ public class PApplet extends Applet
    * or when moving between web pages), and it's not always called.
    */
    public void stop() {
-   // maybe start should also be used as the method for kicking
-   // the thread on, instead of doing it inside paint()
-    //finished = true;  // why did i comment this out?
+     // maybe start should also be used as the method for kicking
+     // the thread on, instead of doing it inside paint()
+
+     // bringing this back for 0111, hoping it'll help opengl shutdown
+     finished = true;  // why did i comment this out?
 
      //System.out.println("stopping applet " + thread);
 
@@ -537,6 +539,8 @@ public class PApplet extends Applet
     // call to shut down renderer, in case it needs it (pdf does)
     if (g != null) g.dispose();
 
+    // maybe this should be done earlier? might help ensure it gets called
+    // before the vm just craps out since 1.5 craps out so aggressively.
     disposeMethods.handle();
   }
 
