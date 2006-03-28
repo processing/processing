@@ -4,6 +4,14 @@ X fix color picker:
 X   http://dev.processing.org/bugs/show_bug.cgi?id=308
 X   also add esc/ctrl-w for closing the picker
 X update information on mactels in the faq, also java 1.6
+X find/build universal version of rxtx
+X   http://dev.processing.org/bugs/show_bug.cgi?id=311
+X   update the faq
+
+_ linux problems with things not showing up
+_   probably threading issue, 98 doesn't have any trouble
+_   signs point to Runner or PApplet changes between 98 and 99
+_   http://dev.processing.org/bugs/show_bug.cgi?id=282
 
 _ make multiple jar files thing work as an option
 _   http://dev.processing.org/bugs/show_bug.cgi?id=62
@@ -658,8 +666,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 
 LIBRARIES / Serial
 
-_ find/build universal version of rxtx
-_   http://dev.processing.org/bugs/show_bug.cgi?id=311
 _ port buffering not working properly
 _   may just be a problem with thread starvation
 _   bufferUntil() fires an event but continues to fill up the buffer

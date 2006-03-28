@@ -8,27 +8,17 @@ o making 'run' synchronized caused a freeze on start w/ opengl
 X display() as a function name is problematic
 X   causes nothing to show up.. either rename or mark it final
 X   http://dev.processing.org/bugs/show_bug.cgi?id=213
-
-_ sonia (and anything awt) is locking up on load in rev 91
-_   prolly something w/ the threading issues
-_   paint is synchronized in 0091
-_     however this is a necessity, otherwise nasty flickering ensues
-_     and using a "glock" object seems to completely deadlock
-_   http://dev.processing.org/bugs/show_bug.cgi?id=46
+X fix for lights throwing a BufferOverflowException
 
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+bugs arising from / part of priorities
+_ color values on camera input flipped on intel macs
+_   http://dev.processing.org/bugs/show_bug.cgi?id=313
+_ spotLight has troubles with an invalid value
+_   probably somethign weird about the params (3 vs 4) being sent
+_ opengl needs to shut itself down properly when closing applet
+_   otherwise can crash the whole browser
 
-
-_ loadImage(url) having trouble with jpeg
-_   actually it's an issue with some types of jpeg files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=279
-_ png image loading problems
-_   http://dev.processing.org/bugs/show_bug.cgi?id=305
-
-_ when an exception comes through during cameraEvent, not printed
-_   need to show an actual stack trace (InvocationTargetEx) 
-_   because otherwise it's impossible to debug this stuff
 
 priorities prior to fitc
 _ fix non-bound textures from mangling everything else
@@ -55,6 +45,36 @@ _   check with the a_Displaying example and tint(255, 0, 0, 100);
 _   http://dev.processing.org/bugs/show_bug.cgi?id=90
 _   is fill() not coloring textures properly?
 _     don't need to apply tint() to textures, supposed to use fill color
+_ opengl doesn't work in applets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=166
+_   example of getting it to work with an applet
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1131916668
+_ implement hint(NO_DEPTH_TEST) for opengl
+_ blend(), get(), set(), copy(), loadPixels, updatePixels() are broken in opengl
+_   set(x, y, image) y reversed in openGL 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=91
+
+
+_ sonia (and anything awt) is locking up on load in rev 91
+_   prolly something w/ the threading issues
+_   paint is synchronized in 0091
+_     however this is a necessity, otherwise nasty flickering ensues
+_     and using a "glock" object seems to completely deadlock
+_   http://dev.processing.org/bugs/show_bug.cgi?id=46
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+_ loadImage(url) having trouble with jpeg
+_   actually it's an issue with some types of jpeg files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=279
+_ png image loading problems
+_   http://dev.processing.org/bugs/show_bug.cgi?id=305
+
+_ when an exception comes through during cameraEvent, not printed
+_   need to show an actual stack trace (InvocationTargetEx) 
+_   because otherwise it's impossible to debug this stuff
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -113,9 +133,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=285
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 threading mess
-_ linux problems with things not showing up
-_   probably threading issue, 98 doesn't have any trouble
-_   http://dev.processing.org/bugs/show_bug.cgi?id=282
 _ claim that things are much slower in 107 vs 92
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1141763531
 _ need to move off anim off the main event thread
@@ -677,14 +694,6 @@ PGraphicsGL
 _ make a note about the anti-aliasing types in the faq
 _   polygon vs line etc.. may want to enable lines but disable polys
 _ y may be flipped in modelX/Y/Z stuff on opengl
-_ opengl doesn't work in applets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=166
-_   example of getting it to work with an applet
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1131916668
-_ implement hint(NO_DEPTH_TEST) for opengl
-_ blend(), get(), set(), copy(), loadPixels, updatePixels() are broken in opengl
-_   set(x, y, image) y reversed in openGL 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=91
 _ when turning smoothing on, internal lines of shapes are visible
 _   need to turn off smoothing for the interior of shapes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=200
