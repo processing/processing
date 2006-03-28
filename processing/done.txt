@@ -1,3 +1,14 @@
+0111 pde
+X switch back to rev b3 of jogl so that applets will work
+X fix color picker: 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=308
+X   also add esc/ctrl-w for closing the picker
+X update information on mactels in the faq, also java 1.6
+X find/build universal version of rxtx
+X   http://dev.processing.org/bugs/show_bug.cgi?id=311
+X   update the faq
+
+
 0110 pde
 X no changes to the pde, only fixes for jogl
 
