@@ -1,14 +1,4 @@
-0111 core
-X need to have a better way of getting/figuring out the endian 
-X   use ByteOrder class in jdk 1.4, since issue is local to JOGL
-X   security ex when run as an applet
-X   also can no longer assume that macosx is big endian
-X   http://dev.processing.org/bugs/show_bug.cgi?id=309
-o making 'run' synchronized caused a freeze on start w/ opengl
-X display() as a function name is problematic
-X   causes nothing to show up.. either rename or mark it final
-X   http://dev.processing.org/bugs/show_bug.cgi?id=213
-X fix for lights throwing a BufferOverflowException
+0112 core
 
 
 bugs arising from / part of priorities
