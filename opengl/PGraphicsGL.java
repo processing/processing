@@ -1498,7 +1498,6 @@ public class PGraphicsGL extends PGraphics3 {
       //      and the [3] element set to 1 in the constructor.
       //      however this may be a source of problems since
       //      it seems a bit "hack"
-      lightBuffer.put(lightNormal[num]);
       gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightBuffer);
     } else {  // spotlight
       // this one only needs the 3 arg version
@@ -1751,6 +1750,11 @@ public class PGraphicsGL extends PGraphics3 {
     gl.glReadPixels(0, 0, width, height,
                     GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
     pixelBuffer.get(pixels);
+    pixelBuffer.rewind();
+
+    for (int i = 0; i < 5; i++) {
+      System.out.println(PApplet.hex(pixels[i]));
+    }
 
     /*
     int temp[] = new int[width];
@@ -2080,8 +2084,10 @@ public class PGraphicsGL extends PGraphics3 {
     // but apparently that's not how opengl coordinates work
     //gl.glRasterPos2f(0.0001f, height - 0.0001f);
     gl.glRasterPos2f(EPSILON, height - EPSILON);
+    //gl.glRasterPos2f(width/2, height/2);
 
     pixelBuffer.put(pixels);
+    pixelBuffer.rewind();
     gl.glDrawPixels(width, height,
                     GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
   }
