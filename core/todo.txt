@@ -1,14 +1,14 @@
 0112 core
-
-
-bugs arising from / part of priorities
-_ color values on camera input flipped on intel macs
-_   http://dev.processing.org/bugs/show_bug.cgi?id=313
-_ opengl needs to shut itself down properly when closing applet
-_   otherwise can crash the whole browser
+o PSound.play() won't play the sound a 2nd time (reopened)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=208
+o loadSound apparently broken in java 1.5?
+o   http://dev.processing.org/bugs/show_bug.cgi?id=285
+_ need to just remove PSound altogether
 
 
 priorities prior to fitc
+_ color values on camera input flipped on intel macs
+_   http://dev.processing.org/bugs/show_bug.cgi?id=313
 _ fix non-bound textures from mangling everything else
 _   fix enable/disable textures for some objects
 _ move to new implementation of jsr231 with new classes and launcher
@@ -38,9 +38,12 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=166
 _   example of getting it to work with an applet
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1131916668
 _ implement hint(NO_DEPTH_TEST) for opengl
-_ blend(), get(), set(), copy(), loadPixels, updatePixels() are broken in opengl
+_ pixel operations are broken in opengl
+_   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
+_ opengl needs to shut itself down properly when closing applet
+_   otherwise can crash the whole browser
 
 
 examples
@@ -53,16 +56,15 @@ _ need a pdf example (for size(), beginRecord())
 _ need beginRaw() examples using dxf and pdf
 
 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 _ sonia (and anything awt) is locking up on load in rev 91
 _   prolly something w/ the threading issues
 _   paint is synchronized in 0091
 _     however this is a necessity, otherwise nasty flickering ensues
 _     and using a "glock" object seems to completely deadlock
 _   http://dev.processing.org/bugs/show_bug.cgi?id=46
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
 
 _ loadImage(url) having trouble with jpeg
 _   actually it's an issue with some types of jpeg files
@@ -73,10 +75,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=305
 _ when an exception comes through during cameraEvent, not printed
 _   need to show an actual stack trace (InvocationTargetEx) 
 _   because otherwise it's impossible to debug this stuff
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
 
 _ registerSize() in arcball is causing trouble
 _   some sort of infinite loop issue
@@ -110,8 +108,8 @@ _   but doing a printStackTrace(System.out) works
 _   something weird happening with one of the streams shutting down?
 
 check to see if these are working
-_ when re-calling size() with opengl, need to remove the old canvas
-_   need to check to see if this is working properly now
+o when re-calling size() with opengl, need to remove the old canvas
+o   need to check to see if this is working properly now
 _ registering font directories in pdf.. is it necessary? 
 _   (commented out for 0100)
 _ 404 error because first searches applet directory in isometricblocks
@@ -121,14 +119,9 @@ _ passing applet into createGraphics.. problems with re-adding listeners
 _   since the listeners are added to the PApplet
 _   i think the listeners aren't re-added, but need to double check
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-_ PSound.play() won't play the sound a 2nd time (reopened)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=208
-_ loadSound apparently broken in java 1.5?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=285
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 
 threading mess
 _ claim that things are much slower in 107 vs 92
@@ -229,8 +222,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=167
 
 _ get creating new PGraphics/2/3 working again
 _   http://dev.processing.org/bugs/show_bug.cgi?id=92
-_   maybe createGraphics(200, 200) to create same as source
-_   createGraphics(200, 200, P2D) to create 2D from 3D
+X   maybe createGraphics(200, 200) to create same as source
+X   createGraphics(200, 200, P2D) to create 2D from 3D
 _   also, drawing a PGraphics2 doesn't seem to work
 _   new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
 _     they're drawn as transparent and don't have their high bits set
