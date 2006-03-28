@@ -917,13 +917,14 @@ javax.comm.properties. (contributed by stendahl)
 Mac OS X
 <UL>
 <LI>
-We use <a href="http://rxtx.org">rxtx</A> (version 2.1_6) to handle
+We use <a href="http://rxtx.org">rxtx</A> (formerly version 2.1_6, as of 0111 using version 2.1_7) to handle
 serial I/O, which is included with the Processing release. If this is
 the first time you're using rxtx, you'll need to make your way to the
 "libraries" folder, find "serial", and inside, and run
 macosx_setup.command (double-click it and follow the instructions).
 This will make sure that things are properly set up (a few permissions
 need to be changed). 
+<LI>For Intel Macs, you'll need to use Processing release 0111 or later, this is the first version to have a Universal Binary for RXTX.
 <LI>If you're getting a "serial port is already in
 use by another application" it's possible that you haven't run this
 script. On my machine, I installed the keyspan driver for my
@@ -953,7 +954,7 @@ macosx_setup.command, Shut down the machine and restart. <BR> <BR>
 </UL>
 Linux
 <UL>
-<LI>Linux also uses rxtx-2.1_6 (just like Mac OS X). If you're 
+<LI>Linux also uses rxtx-2.1_7 (just like Mac OS X). If you're 
 having trouble getting things to run, i.e. the port menu stays grayed 
 out or you get error message spew to the console when starting the 
 application saying "Permission denied" and "No permission to create 
