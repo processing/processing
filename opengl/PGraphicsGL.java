@@ -432,7 +432,7 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   protected void render_triangles() {
-    report("into triangles");
+    report("render_triangles in");
     //System.out.println("rendering " + triangleCount + " triangles");
 
     for (int i = 0; i < triangleCount; i ++) {
@@ -681,7 +681,7 @@ public class PGraphicsGL extends PGraphics3 {
     if (raw != null) {
       raw.endShape();
     }
-    report("out of triangles");
+    report("render_triangles out");
   }
 
 
