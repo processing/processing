@@ -7,6 +7,39 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0111 - 28 March 2006
+
+Bug fix release for more of this OpenGL stuff. Also includes a
+Universal Binary version of the Serial library so that the Intel
+Macs can now handle serial.
+
+[ more bug fixes ] 
+
++ Fixed issues security issues with endian check in PGraphicsGL.
+  This should pave the way for OpenGL applets with the new
+  PGraphicsGL, though it's not yet possible to do them automatically.
+  http://dev.processing.org/bugs/show_bug.cgi?id=309
+
++ Fix to prevent lights in OpenGL mode from throwing a 
+  BufferOverflowException.
+
++ Switched to an older version of the JOGL libraries so that we can
+  use the versions signed by Sun, further enabling OpenGL in applets.
+
++ Couple of minor fixes to the color picker
+  http://dev.processing.org/bugs/show_bug.cgi?id=308
+
++ More additions to the FAQ about the state of the various platforms
+
++ The example using spotLight still puts up an INVALID_VALUE error,
+  but this seems to be a problem in the code, not PGraphicsGL. 
+  Something in the newer JOGL just seems to be more finicky about the
+  values it's being fed. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0110 - 22 March 2006
 
 This version updates the OPENGL rendering mode to a newer version of

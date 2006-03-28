@@ -14,8 +14,6 @@ X fix for lights throwing a BufferOverflowException
 bugs arising from / part of priorities
 _ color values on camera input flipped on intel macs
 _   http://dev.processing.org/bugs/show_bug.cgi?id=313
-_ spotLight has troubles with an invalid value
-_   probably somethign weird about the params (3 vs 4) being sent
 _ opengl needs to shut itself down properly when closing applet
 _   otherwise can crash the whole browser
 
@@ -53,6 +51,16 @@ _ implement hint(NO_DEPTH_TEST) for opengl
 _ blend(), get(), set(), copy(), loadPixels, updatePixels() are broken in opengl
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
+
+
+examples
+_ spotLight has troubles with an invalid value
+X   probably somethign weird about the params (3 vs 4) being sent
+_   the first spotLight works fine, it's something with the second
+_   (the one that follows the mouse)
+_   just something to debug in the example
+_ need a pdf example (for size(), beginRecord())
+_ need beginRaw() examples using dxf and pdf
 
 
 _ sonia (and anything awt) is locking up on load in rev 91
