@@ -8,6 +8,7 @@ X find/build universal version of rxtx
 X   http://dev.processing.org/bugs/show_bug.cgi?id=311
 X   update the faq
 
+
 _ linux problems with things not showing up
 _   probably threading issue, 98 doesn't have any trouble
 _   signs point to Runner or PApplet changes between 98 and 99
@@ -32,9 +33,10 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 _ antlr.jar in the classpath will cause trouble.. 
 _ jogl jar files, or jogl install will cause trouble
 _   /System/Library/Extensions or /Library/Extensions
-
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
+_   this seems to be causing a lot of trouble with recent releases
+_   (opengl changes and whatnot)
 
 _ issue of people calling their sketches things like Server
 _ warn if someone extends PApplet but mis-names the sketch
@@ -621,6 +623,8 @@ LIBRARIES / General
 
 _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
+_ unregisterXxxx() calls to remove methods from libs
+_   http://dev.processing.org/bugs/show_bug.cgi?id=312
 
 
 LIBRARIES / Video
