@@ -1,5 +1,7 @@
 0112 pde
 
+_ jar files like the bad aiexport plugin will cause serious problems
+
 _ linux problems with things not showing up
 _   probably threading issue, 98 doesn't have any trouble
 _   signs point to Runner or PApplet changes between 98 and 99
