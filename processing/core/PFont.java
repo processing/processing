@@ -27,7 +27,6 @@ package processing.core;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.util.*;
 
 
 /**

@@ -24,7 +24,6 @@
 package processing.core;
 
 import java.io.*;
-import java.lang.reflect.*;
 import javax.sound.sampled.*;
 
 

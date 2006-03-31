@@ -24,9 +24,7 @@
 
 package processing.core;
 
-import java.awt.*;
 import java.awt.image.*;
-import java.lang.reflect.*;
 import java.io.*;
 
 
@@ -1678,9 +1676,11 @@ public class PImage implements PConstants, Cloneable {
   /**
    * returns the fractional portion of a number: frac(2.3) = .3;
    */
+  /*
   private static float frac(float x) {
     return (x - (int) x);
   }
+  */
 
 
   /**

@@ -566,7 +566,7 @@ public class PGraphics2 extends PGraphics {
             tintedPixels = new int[source.width * source.height];
           }
 
-          int argb2 = tintColor;
+          //int argb2 = tintColor;
           int a2 = (tintColor >> 24) & 0xff;
           int r2 = (tintColor >> 16) & 0xff;
           int g2 = (tintColor >> 8) & 0xff;
