@@ -431,7 +431,7 @@ public class PPolygon implements PConstants {
               tpixels[txy + twidth + 1] : tpixels[txy];
 
             int p00, p01, p10, p11;
-            int px0, px1, pxy;
+            int px0, px1; //, pxy;
 
             if (tformat == ALPHA) {
               px0 = (pixel00*tuf + pixel10*tuf1) >> 8;

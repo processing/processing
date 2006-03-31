@@ -3882,9 +3882,11 @@ public class PGraphics3 extends PGraphics {
   // MATH (internal use only)
 
 
+  /*
   private final float mag(float a, float b) {
     return (float)Math.sqrt(a*a + b*b);
   }
+  */
 
   private final float mag(float a, float b, float c) {
     return (float)Math.sqrt(a*a + b*b + c*c);
@@ -3902,6 +3904,7 @@ public class PGraphics3 extends PGraphics {
     return (a > b) ? a : b;
   }
 
+  /*
   private final float max(float a, float b, float c) {
     return Math.max(a, Math.max(b, c));
   }
@@ -3909,6 +3912,7 @@ public class PGraphics3 extends PGraphics {
   private final float sq(float a) {
     return a*a;
   }
+  */
 
   private final float sqrt(float a) {
     return (float)Math.sqrt(a);
@@ -3918,6 +3922,7 @@ public class PGraphics3 extends PGraphics {
     return (float)Math.pow(a, b);
   }
 
+  /*
   private final float abs(float a) {
     return (a < 0) ? -a : a;
   }
@@ -3925,6 +3930,7 @@ public class PGraphics3 extends PGraphics {
   private final float sin(float angle) {
     return (float)Math.sin(angle);
   }
+  */
 
   private final float cos(float angle) {
     return (float)Math.cos(angle);

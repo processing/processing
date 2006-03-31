@@ -24,11 +24,8 @@
 
 package processing.core;
 
-import java.applet.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
-import java.io.*;
 
 
 /**
@@ -753,7 +750,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public void vertex(float x, float y) {
     splineVertexCount = 0;
-    float vertex[];
+    //float vertex[];
 
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
