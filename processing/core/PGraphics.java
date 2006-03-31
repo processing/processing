@@ -2394,8 +2394,7 @@ public class PGraphics extends PImage implements PConstants {
       for (int col = x0; col < x0 + w0; col++) {
         int a1 = (fa * pixels1[row * textFont.twidth + col]) >> 8;
         int a2 = a1 ^ 0xff;
-        //int p1 = pixels1[row * textFont.width[glyph] + col];
-        int p1 = pixels1[row * glyph.width + col];
+        //int p1 = pixels1[row * glyph.width + col];
         int p2 = pixels[(yy + row-y0)*width + (xx+col-x0)];
 
         pixels[(yy + row-y0)*width + xx+col-x0] =
