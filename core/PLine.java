@@ -35,7 +35,7 @@ public class PLine implements PConstants
 {
   private int[]   m_pixels;
   private float[] m_zbuffer;
-  private int[]   m_stencil;
+  //private int[]   m_stencil;
 
   private int m_index;
 
@@ -59,7 +59,7 @@ public class PLine implements PConstants
   private boolean SMOOTH;
 
   // blender
-  private boolean BLENDER;
+  //private boolean BLENDER;
 
   // stroke color
   private int m_stroke;
@@ -124,7 +124,7 @@ public class PLine implements PConstants
     SCREEN_HEIGHT1 = SCREEN_HEIGHT-1;
 
     m_pixels = parent.pixels;
-    m_stencil = parent.stencil;
+    //m_stencil = parent.stencil;
     m_zbuffer = parent.zbuffer;
 
     // other things to reset
@@ -134,7 +134,7 @@ public class PLine implements PConstants
     //INTERPOLATE_Z = false;
     m_drawFlags = 0;
     m_index = 0;
-    BLENDER = false;
+    //BLENDER = false;
   }
 
 
@@ -209,9 +209,9 @@ public class PLine implements PConstants
 
   public void setIndex(int index) {
     m_index = index;
-    BLENDER = false;
+    //BLENDER = false;
     if (m_index != -1) {
-      BLENDER = true;
+      //BLENDER = true;
     } else {
       m_index = 0;
     }

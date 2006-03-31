@@ -135,7 +135,7 @@ public class PGraphics2 extends PGraphics {
 
   public void vertex(float x, float y) {
     splineVertexCount = 0;
-    float vertex[];
+    //float vertex[];
 
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];

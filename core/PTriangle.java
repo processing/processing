@@ -44,8 +44,8 @@ public class PTriangle implements PConstants
 
   private int SCREEN_WIDTH;
   private int SCREEN_HEIGHT;
-  private int SCREEN_WIDTH1;
-  private int SCREEN_HEIGHT1;
+  //private int SCREEN_WIDTH1;
+  //private int SCREEN_HEIGHT1;
 
   private int TEX_WIDTH;
   private int TEX_HEIGHT;
@@ -99,36 +99,36 @@ public class PTriangle implements PConstants
   private float v2;
 
   /* deltas */
-  private float dx0;
-  private float dx1;
+  //private float dx0;
+  //private float dx1;
   private float dx2;
   private float dy0;
   private float dy1;
   private float dy2;
   private float dz0;
-  private float dz1;
+  //private float dz1;
   private float dz2;
 
   /* texture deltas */
   private float du0;
-  private float du1;
+  //private float du1;
   private float du2;
   private float dv0;
-  private float dv1;
+  //private float dv1;
   private float dv2;
 
   /* rgba deltas */
   private float dr0;
-  private float dr1;
+  //private float dr1;
   private float dr2;
   private float dg0;
-  private float dg1;
+  //private float dg1;
   private float dg2;
   private float db0;
-  private float db1;
+  //private float db1;
   private float db2;
   private float da0;
-  private float da1;
+  //private float da1;
   private float da2;
 
   /* */
@@ -157,7 +157,7 @@ public class PTriangle implements PConstants
 
   /* other somewhat useful variables :) */
   private float dta;
-  private float dta2;
+  //private float dta2;
   private float temp;
   private float width;
 
@@ -225,8 +225,8 @@ public class PTriangle implements PConstants
 
     SCREEN_WIDTH = parent.width;
     SCREEN_HEIGHT = parent.height;
-    SCREEN_WIDTH1 = SCREEN_WIDTH-1;
-    SCREEN_HEIGHT1 = SCREEN_HEIGHT-1;
+    //SCREEN_WIDTH1 = SCREEN_WIDTH-1;
+    //SCREEN_HEIGHT1 = SCREEN_HEIGHT-1;
 
     m_pixels = parent.pixels;
     m_stencil = parent.stencil;
@@ -2268,7 +2268,7 @@ public class PTriangle implements PConstants
   ) {
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
-    int p = m_index;
+    //int p = m_index;
 
     float iuf = iuadd;
     float ivf = ivadd;
