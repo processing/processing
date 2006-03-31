@@ -3301,7 +3301,7 @@ public class PApplet extends Applet
       }
       comp = comp.getParent();
     }
-    return outputFile(prompt, frame);
+    return outputFile(prompt, parentFrame);
   }
 
 
@@ -5614,7 +5614,7 @@ public class PApplet extends Applet
    * notify on quit. See more notes in the Worker class.
    */
   public void setupExternalMessages() {  //Frame parentFrame) {
-    final Worker worker = new Worker();
+    //final Worker worker = new Worker();
 
     //parentFrame.addComponentListener(new ComponentAdapter() {
     frame.addComponentListener(new ComponentAdapter() {
