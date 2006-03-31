@@ -776,7 +776,7 @@ public class PGraphics3 extends PGraphics {
 
     int increment = 1;
     int stop = 0;
-    int counter = 0;
+    //int counter = 0;
 
     if (stroke) {
       switch (shape) {
@@ -820,7 +820,7 @@ public class PGraphics3 extends PGraphics {
         {
           for (int i = vertex_start; i < vertex_end-2; i += 3) {
             add_path();
-            counter = i - vertex_start;
+            //counter = i - vertex_start;
             add_line(i+0, i+1);
             add_line(i+1, i+2);
             add_line(i+2, i+0);
@@ -835,7 +835,7 @@ public class PGraphics3 extends PGraphics {
 
           add_path();
           for (int i = vertex_start; i < stop; i++) {
-            counter = i - vertex_start;
+            //counter = i - vertex_start;
             add_line(i,i+1);
           }
 
@@ -871,7 +871,7 @@ public class PGraphics3 extends PGraphics {
         {
           for (int i = vertex_start; i < vertex_end; i += 4) {
             add_path();
-            counter = i - vertex_start;
+            //counter = i - vertex_start;
             add_line(i+0, i+1);
             add_line(i+1, i+2);
             add_line(i+2, i+3);
@@ -1119,7 +1119,7 @@ public class PGraphics3 extends PGraphics {
   protected final void add_triangle_with_clip(int a, int b, int c) {
     boolean aClipped = false;
     boolean bClipped = false;
-    boolean cClipped = false;
+    //boolean cClipped = false;
     int     clippedCount = 0;
 
     cameraNear = -8;
@@ -1132,7 +1132,7 @@ public class PGraphics3 extends PGraphics {
       clippedCount++;
     }
     if (vertices[c][VZ] > cameraNear) {
-      cClipped = true;
+      //cClipped = true;
       clippedCount++;
     }
     if (clippedCount == 0) {

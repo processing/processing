@@ -829,8 +829,8 @@ public class PImage implements PConstants, Cloneable {
   }
 
   protected void blurAlpha(float r) {
-    int sum, cr, cg, cb, k;
-    int pixel, read, ri, roff, ym, ymi, riw,bk0;
+    int sum, /*cr, cg,*/ cb; //, k;
+    int /*pixel,*/ read, ri, /*roff,*/ ym, ymi, /*riw,*/ bk0;
     int b2[] = new int[pixels.length];
     int yi = 0;
 
@@ -838,7 +838,8 @@ public class PImage implements PConstants, Cloneable {
 
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        cb = cg = cr = sum = 0;
+        //cb = cg = cr = sum = 0;
+    	cb = sum = 0;
         read = x - blurRadius;
         if (read<0) {
           bk0=-read;
@@ -869,7 +870,8 @@ public class PImage implements PConstants, Cloneable {
 
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        cb = cg = cr = sum = 0;
+        //cb = cg = cr = sum = 0;
+    	cb = sum = 0;
         if (ym<0) {
           bk0 = ri = -ym;
           read = x;
@@ -898,8 +900,8 @@ public class PImage implements PConstants, Cloneable {
   }
 
   protected void blurRGB(float r) {
-    int sum, cr, cg, cb, k;
-    int pixel, read, ri, roff, ym, ymi, riw,bk0;
+    int sum, cr, cg, cb; //, k;
+    int /*pixel,*/ read, ri, /*roff,*/ ym, ymi, /*riw,*/ bk0;
     int r2[] = new int[pixels.length];
     int g2[] = new int[pixels.length];
     int b2[] = new int[pixels.length];
@@ -976,7 +978,7 @@ public class PImage implements PConstants, Cloneable {
 
   protected void blurARGB(float r) {
     int sum, cr, cg, cb, ca;
-    int pixel, read, ri, roff, ym, ymi, riw, bk0;
+    int /*pixel,*/ read, ri, /*roff,*/ ym, ymi, /*riw,*/ bk0;
     int wh = pixels.length;
     int r2[] = new int[wh];
     int g2[] = new int[wh];
@@ -1882,7 +1884,7 @@ public class PImage implements PConstants, Cloneable {
 
        int maxLen = height * width;
        int index = 0;
-       int col, prevCol;
+       int col; //, prevCol;
        int[] currChunk = new int[128];
 
        // 8bit image exporter is in separate loop
