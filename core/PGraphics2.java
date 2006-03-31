@@ -955,7 +955,9 @@ public class PGraphics2 extends PGraphics {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
     }
-    ((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
+    //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
+    WritableRaster raster = ((BufferedImage) image).getRaster();
+    raster.getDataElements(0, 0, width, height, pixels);
   }
 
 
@@ -966,7 +968,9 @@ public class PGraphics2 extends PGraphics {
    * update happens, in PGraphics2, this will happen immediately.
    */
   public void updatePixels() {
-    updatePixels(0, 0, width, height);
+    //updatePixels(0, 0, width, height);
+    WritableRaster raster = ((BufferedImage) image).getRaster();
+    raster.setDataElements(0, 0, width, height, pixels);
   }
 
 
@@ -977,19 +981,37 @@ public class PGraphics2 extends PGraphics {
    * update happens, in PGraphics2, this will happen immediately.
    */
   public void updatePixels(int x, int y, int c, int d) {
+    if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
+      updatePixels();
+    } else {
+      throw new RuntimeException("updatePixels(x, y, c, d) not implemented");
+    }
+    /*
     ((BufferedImage) image).setRGB(x, y,
                                    (imageMode == CORNER) ? c : (c - x),
                                    (imageMode == CORNER) ? d : (d - y),
                                    pixels, 0, width);
+    WritableRaster raster = ((BufferedImage) image).getRaster();
+    raster.setDataElements(x, y,
+                           (imageMode == CORNER) ? c : (c - x),
+                           (imageMode == CORNER) ? d : (d - y),
+                           pixels);
+  */
   }
 
 
   //////////////////////////////////////////////////////////////
 
 
+  static int getset[] = new int[1];
+
+
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
-    return ((BufferedImage) image).getRGB(x, y);
+    //return ((BufferedImage) image).getRGB(x, y);
+    WritableRaster raster = ((BufferedImage) image).getRaster();
+    raster.getDataElements(x, y, getset);
+    return getset[0];
   }
 
 
@@ -1014,7 +1036,10 @@ public class PGraphics2 extends PGraphics {
 
     PImage output = new PImage(w, h);
     // oops, the last parameter is the scan size of the *target* buffer
-    ((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
+    //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
+    WritableRaster raster = ((BufferedImage) image).getRaster();
+    raster.getDataElements(x, y, w, h, output.pixels);
+
     return output;
   }
 
@@ -1023,16 +1048,22 @@ public class PGraphics2 extends PGraphics {
    * Grab a copy of the current pixel buffer.
    */
   public PImage get() {
+    /*
     PImage outgoing = new PImage(width, height);
     ((BufferedImage) image).getRGB(0, 0, width, height,
                                    outgoing.pixels, 0, width);
     return outgoing;
+    */
+    return get(0, 0, width, height);
   }
 
 
   public void set(int x, int y, int argb) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
-    ((BufferedImage) image).setRGB(x, y, argb);
+    //((BufferedImage) image).setRGB(x, y, argb);
+    getset[0] = argb;
+    WritableRaster raster = ((BufferedImage) image).getRaster();
+    raster.setDataElements(x, y, getset);
   }
 
 
@@ -1069,11 +1100,13 @@ public class PGraphics2 extends PGraphics {
   }
   */
 
+  /*
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
     BufferedImage bi = (BufferedImage) image;
     bi.setRGB(dx, dy, sw, sh, src.pixels, sy*src.width + sx, src.width);
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -1171,7 +1204,10 @@ public class PGraphics2 extends PGraphics {
 
 
   public void save(String filename) {
+    System.out.println("start load");
     loadPixels();
+    System.out.println("end load, start save");
     super.save(filename);
+    System.out.println("done with save");
   }
 }

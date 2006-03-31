@@ -3,6 +3,9 @@ o PSound.play() won't play the sound a 2nd time (reopened)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=208
 o loadSound apparently broken in java 1.5?
 o   http://dev.processing.org/bugs/show_bug.cgi?id=285
+X saveFrame() issues with JAVA2D on osx
+X   http://dev.processing.org/bugs/show_bug.cgi?id=189
+
 _ need to just remove PSound altogether
 
 
