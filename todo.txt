@@ -1,5 +1,13 @@
 0112 pde
 
+_ PortInUseException with serial for 0111+ on Mac OS X
+_   need to fix the setup scripts to cover the new lock file location
+_   http://dev.processing.org/bugs/show_bug.cgi?id=315
+
+_ set "no smileys" as the default for posting code
+_ make the export to the board just copy to clipboard
+_   also make it insert &nbsp; for extra spaces
+
 _ jar files like the bad aiexport plugin will cause serious problems
 
 _ linux problems with things not showing up
