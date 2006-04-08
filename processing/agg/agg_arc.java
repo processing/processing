@@ -1,5 +1,7 @@
 import processing.core.*;
 
+package agg;
+
 
 public class agg_arc {
 
