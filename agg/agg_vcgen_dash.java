@@ -29,23 +29,6 @@ public class agg_vcgen_dash {
 
   //typedef vertex_sequence<vertex_dist, 6> vertex_storage;
 
-  //vcgen_dash();
-
-  //void remove_all_dashes();
-        void add_dash(float dash_len, float gap_len);
-        void dash_start(float ds);
-
-        void shorten(float s) { m_shorten = s; }
-        float shorten() const { return m_shorten; }
-
-        // Vertex Generator Interface
-  //void remove_all();
-        void add_vertex(float x, float y, unsigned cmd);
-
-        // Vertex Source Interface
-  void     rewind(unsigned path_id);
-        unsigned vertex(double* x, double* y);
-
   //vcgen_dash(const vcgen_dash&);
   //const vcgen_dash& operator = (const vcgen_dash&);
 
@@ -61,9 +44,9 @@ public class agg_vcgen_dash {
   private vertex_dist m_v2;
 
   private vertex_storage m_src_vertices;
-  private unsigned       m_closed;
-  private status_e       m_status;
-  private unsigned       m_src_vertex;
+  private unsigned m_closed;
+  private status_e m_status;
+  private unsigned m_src_vertex;
 
 
   public agg_vcgen_dash() {
@@ -97,7 +80,7 @@ public class agg_vcgen_dash {
   }
 
 
-  public void vcgen_dash::dash_start(float ds) {
+  public void dash_start(float ds) {
     m_dash_start = ds;
     calc_dash_start(Math.abs(ds));
   }
@@ -127,6 +110,16 @@ public class agg_vcgen_dash {
   }
 
 
+  public void shorten(float s) {
+    m_shorten = s;
+  }
+
+
+  public float shorten() {
+    return m_shorten;
+  }
+
+
   public void add_vertex(float x, float y, int cmd) {  // un
     m_status = initial;
     if (agg_basics.is_move_to(cmd)) {
@@ -141,6 +134,8 @@ public class agg_vcgen_dash {
   }
 
 
+  //void rewind(unsigned path_id);  // ??
+
   public void rewind() {
     if (m_status == initial) {
       m_src_vertices.close(m_closed != 0);
@@ -151,7 +146,7 @@ public class agg_vcgen_dash {
   }
 
 
-  public int vcgen_dash::vertex(double x[], double y[]) {  // un
+  public int vertex(double x[], double y[], int offset) {  // un
     int cmd = path_cmd_move_to;  // un
     while (!agg_basics.is_stop(cmd)) {
       switch (m_status) {
@@ -170,74 +165,52 @@ public class agg_vcgen_dash {
         m_curr_rest = m_v1->dist;
         *x = m_v1->x;
         *y = m_v1->y;
-        if(m_dash_start >= 0.0) calc_dash_start(m_dash_start);
+        if (m_dash_start >= 0.0) calc_dash_start(m_dash_start);
         return path_cmd_move_to;
 
-            case polyline:
-                {
-                    float dash_rest = m_dashes[m_curr_dash] - m_curr_dash_start;
+      case polyline: {
+        float dash_rest = m_dashes[m_curr_dash] - m_curr_dash_start;
 
-                    unsigned cmd = (m_curr_dash & 1) ?
-                                   path_cmd_move_to :
-                                   path_cmd_line_to;
+        int cmd = (m_curr_dash & 1) ? path_cmd_move_to : path_cmd_line_to;
 
-                    if(m_curr_rest > dash_rest)
-                    {
-                        m_curr_rest -= dash_rest;
-                        ++m_curr_dash;
-                        if(m_curr_dash >= m_num_dashes) m_curr_dash = 0;
-                        m_curr_dash_start = 0.0;
-                        *x = m_v2->x - (m_v2->x - m_v1->x) * m_curr_rest / m_v1->dist;
-                        *y = m_v2->y - (m_v2->y - m_v1->y) * m_curr_rest / m_v1->dist;
-                    }
-                    else
-                    {
-                        m_curr_dash_start += m_curr_rest;
-                        *x = m_v2->x;
-                        *y = m_v2->y;
-                        ++m_src_vertex;
-                        m_v1 = m_v2;
-                        m_curr_rest = m_v1->dist;
-                        if(m_closed)
-                        {
-                            if(m_src_vertex > m_src_vertices.size())
-                            {
-                                m_status = stop;
-                            }
-                            else
-                            {
-                                m_v2 = &m_src_vertices
-                                [
-                                    (m_src_vertex >= m_src_vertices.size()) ? 0 :
-                                    m_src_vertex
-                                ];
-                            }
-                        }
-                        else
-                        {
-                            if(m_src_vertex >= m_src_vertices.size())
-                            {
-                                m_status = stop;
-                            }
-                            else
-                            {
-                                m_v2 = &m_src_vertices[m_src_vertex];
-                            }
-                        }
-                    }
-                    return cmd;
-                }
-                break;
-
-            case stop:
-                cmd = path_cmd_stop;
-                break;
+        if(m_curr_rest > dash_rest) {
+          m_curr_rest -= dash_rest;
+          ++m_curr_dash;
+          if(m_curr_dash >= m_num_dashes) m_curr_dash = 0;
+          m_curr_dash_start = 0.0;
+          x[offset] = m_v2->x - (m_v2->x - m_v1->x) * m_curr_rest / m_v1->dist;
+          y[offset] = m_v2->y - (m_v2->y - m_v1->y) * m_curr_rest / m_v1->dist;
+        } else {
+          m_curr_dash_start += m_curr_rest;
+          x[offset] = m_v2->x;
+          y[offset] = m_v2->y;
+          ++m_src_vertex;
+          m_v1 = m_v2;
+          m_curr_rest = m_v1->dist;
+          if (m_closed) {
+            if(m_src_vertex > m_src_vertices.size()) {
+              m_status = stop;
+            } else {
+              m_v2 = &m_src_vertices[(m_src_vertex >= m_src_vertices.size()) ?
+                                     0 : m_src_vertex];
             }
-
+          } else {
+            if (m_src_vertex >= m_src_vertices.size()) {
+              m_status = stop;
+            } else {
+              m_v2 = &m_src_vertices[m_src_vertex];
+            }
+          }
         }
-        return path_cmd_stop;
+        return cmd;
+      }
+        break;
+
+      case stop:
+        cmd = path_cmd_stop;
+        break;
+      }
     }
-
-
+    return path_cmd_stop;
+  }
 }
-
