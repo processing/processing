@@ -1,19 +1,21 @@
 import processing.core.*;
 
+package agg;
+
 
 public class agg_arrowhead {
   float m_head_d1;
-  float   m_head_d2;
-  float   m_head_d3;
-  float   m_head_d4;
-  float   m_tail_d1;
-  float   m_tail_d2;
-  float   m_tail_d3;
-  float   m_tail_d4;
+  float m_head_d2;
+  float m_head_d3;
+  float m_head_d4;
+  float m_tail_d1;
+  float m_tail_d2;
+  float m_tail_d3;
+  float m_tail_d4;
   boolean m_head_flag;
   boolean m_tail_flag;
-  float   m_coord = new float[16];
-  int m_cmd = new int[8];  // un
+  float m_coord[] = new float[16];
+  int m_cmd[] = new int[8];  // un
   int m_curr_id;  // un
   int m_curr_coord;  // un
 
