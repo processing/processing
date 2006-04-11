@@ -98,6 +98,7 @@ li { margin-bottom: 1em; }
                 <a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
                 <a href="#" onclick="remote_link('updates.php'); return false;">Updates.html</a>
     </li>
+	<li>Generate <a href="#" onclick="remote_link('examples.php'); return false;">Examples</a></li>
 	<li>Environment pages in 
 		<form class="inline" action="#" method="post" onsubmit="new Ajax.Updater('status', 'environment.php', 
 	    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
