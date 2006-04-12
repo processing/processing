@@ -23,7 +23,7 @@ foreach ($files as $file) {
     $refs[] = new Ref("api_$lang/".$file);
 }
 
-// create ReferencePage object
+// create ReferencePage objects
 $count = 0;
 foreach ($refs as $ref) {
     $local = new LocalReferencePage($ref, $translation, $lang);
@@ -115,6 +115,12 @@ media
 *******************************************************/
 
 // copy images directory from content folder to public folder
+$dirs = array('images', 'media', 'css', 'javascript', 'img', 'img/reference');
+foreach ($dirs as $d) {
+	if (!is_dir(DISTDIR.$d)) {
+		mkdir(DISTDIR.$d, 0757);
+	}
+}
 copydirr(CONTENTDIR."api_en/images", DISTDIR.'images');
 copydirr(CONTENTDIR."api_media", DISTDIR.'media');
 copydirr(BASEDIR."css", DISTDIR.'css');
