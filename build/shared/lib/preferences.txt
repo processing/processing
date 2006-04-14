@@ -213,6 +213,9 @@ history.recording = true
 # for advanced users, enable option to export a library
 export.library = false
 
+# false will place all exported files into a single .jar
+export.applet.separate_jar_files = false
+
 # may be useful when attempting to debug the preprocessor
 preproc.save_build_files=false
 
