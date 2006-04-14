@@ -1,3 +1,21 @@
+0113 pde
+X easier export to gl applet, finalize support for applets
+X   http://dev.processing.org/bugs/show_bug.cgi?id=166
+X   add additional html file (applet-jogl.html)
+X   parse for renderer on export (and remove comments)
+X   when the renderer is OPENGL, change to:
+X     wire in the new jogl html file
+X     include the applet version of the jogl jar files (that contain DLLs)
+X     include the jogl.jar file itself
+X     use separate jar files
+o     can natives be included as jar files without trouble?
+X make multiple jar files thing work as an option
+X   http://dev.processing.org/bugs/show_bug.cgi?id=62
+X   applet default is one file, application default is multiple
+X   buttons on side of sketch do default (last) behavior
+X don't slurp out the contents of code folders when exporting to application
+
+
 0112 pde
 X PortInUseException with serial for 0111+ on Mac OS X
 X   need to fix the setup scripts to cover the new lock file location
