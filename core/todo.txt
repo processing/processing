@@ -1,6 +1,4 @@
-0113 core
-X fix for open() on macosx submitted by chandler
-
+0114 core
 
 priorities prior to fitc
 _ color values on camera input flipped on intel macs
