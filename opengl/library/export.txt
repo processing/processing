@@ -1,4 +1,5 @@
-application.macosx = opengl.jar, jogl.jar, libjogl.jnilib, libjogl_awt.jnilib, libjogl_cg.jnilib 
+# macosx is missing libjogl_cg.jnilib for now
+application.macosx = opengl.jar, jogl.jar, libjogl.jnilib, libjogl_awt.jnilib
 application.windows = opengl.jar, jogl.jar, jogl.dll, jogl_awt.dll, jogl_cg.dll
 application.linux = opengl.jar, jogl.jar, libjogl.so, libjogl_awt.so, libjogl_cg.so, libjogl_drihack.so
 
