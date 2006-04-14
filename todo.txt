@@ -1,4 +1,22 @@
 0113 pde
+_ easier export to gl applet, finalize support for applets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=166
+X   add additional html file (applet-jogl.html)
+X   parse for renderer on export (and remove comments)
+_   when the renderer is OPENGL, change to:
+_     wire in the new jogl html file
+_     include the applet version of the jogl jar files for DLLs
+_     include the jogl.jar file itself
+_     use separate jar files
+_     can natives be included as jar files without trouble?
+_ make multiple jar files thing work as an option
+_   http://dev.processing.org/bugs/show_bug.cgi?id=62
+_   applet default is one file, application default is multiple
+_   buttons on side of sketch do default (last) behavior
+
+_ jar files like the bad aiexport plugin will cause serious problems
+_   need to ignore processing.core classes showing up in other jar files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=321
 
 _ stop button won't kill a video sketch (bug 150 example does this) 
 
@@ -6,19 +24,10 @@ _ set "no smileys" as the default for posting code
 _ make the export to the board just copy to clipboard
 _   also make it insert &nbsp; for extra spaces
 
-_ jar files like the bad aiexport plugin will cause serious problems
-_   need to ignore processing.core classes showing up in other jar files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=321
-
 _ linux problems with things not showing up
 _   probably threading issue, 98 doesn't have any trouble
 _   signs point to Runner or PApplet changes between 98 and 99
 _   http://dev.processing.org/bugs/show_bug.cgi?id=282
-
-_ make multiple jar files thing work as an option
-_   http://dev.processing.org/bugs/show_bug.cgi?id=62
-_   applet default is one file, application default is multiple
-_   buttons on side of sketch do default (last) behavior
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)

@@ -1604,6 +1604,7 @@ public class Sketch {
 
     int wide = PApplet.DEFAULT_WIDTH;
     int high = PApplet.DEFAULT_HEIGHT;
+    String renderer = "";
 
     PatternMatcher matcher = new Perl5Matcher();
     PatternCompiler compiler = new Perl5Compiler();
@@ -1616,19 +1617,29 @@ public class Sketch {
     // modified for 83 to match size(XXX, ddd so that it'll
     // properly handle size(200, 200) and size(200, 200, P3D)
     String sizing =
-      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
+      // match the renderer string as well
+      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\d\\)]*)\\s*\\)";
+      // match just the width and height
+      //"[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)(.*)\\)";
     Pattern pattern = compiler.compile(sizing);
 
     // adds a space at the beginning, in case size() is the very
     // first thing in the program (very common), since the regexp
     // needs to check for things in front of it.
     PatternMatcherInput input =
-      new PatternMatcherInput(" " + code[0].program);
+      new PatternMatcherInput(" " + scrubComments(code[0].program));
     if (matcher.contains(input, pattern)) {
       MatchResult result = matcher.getMatch();
+
       try {
         wide = Integer.parseInt(result.group(1).toString());
         high = Integer.parseInt(result.group(2).toString());
+
+        //System.out.println("groups " + result.groups());
+        renderer = result.group(3).toString(); //.trim();
+        //if (renderer.length() != 0) {
+        //System.out.println("render '" + renderer + "'");
+        //}
 
       } catch (NumberFormatException e) {
         // found a reference to size, but it didn't
@@ -1893,6 +1904,53 @@ public class Sketch {
     zos.close();
 
     return true;
+  }
+
+
+  static public String scrubComments(String what) {
+    char p[] = what.toCharArray();
+
+    int index = 0;
+    while (index < p.length) {
+      // for any double slash comments, ignore until the end of the line
+      if ((p[index] == '/') &&
+          (index < p.length - 1) &&
+          (p[index+1] == '/')) {
+        p[index++] = ' ';
+        p[index++] = ' ';
+        while ((index < p.length) &&
+               (p[index] != '\n')) {
+          p[index++] = ' ';
+        }
+
+        // check to see if this is the start of a new multiline comment.
+        // if it is, then make sure it's actually terminated somewhere.
+      } else if ((p[index] == '/') &&
+                 (index < p.length - 1) &&
+                 (p[index+1] == '*')) {
+        p[index++] = ' ';
+        p[index++] = ' ';
+        boolean endOfRainbow = false;
+        while (index < p.length - 1) {
+          if ((p[index] == '*') && (p[index+1] == '/')) {
+            p[index++] = ' ';
+            p[index++] = ' ';
+            endOfRainbow = true;
+            break;
+
+          } else {
+            index++;
+          }
+        }
+        if (!endOfRainbow) {
+          throw new RuntimeException("Missing the */ from the end of a " +
+                                     "/* comment */");
+        }
+      } else {  // any old character, move along
+        index++;
+      }
+    }
+    return new String(p);
   }
 
 
