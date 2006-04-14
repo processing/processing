@@ -22,10 +22,6 @@ _ pixel operations are broken in opengl
 _   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
-_ easier export to gl applet, finalize support for applets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=166
-_   example of getting it to work with an applet
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1131916668
 _ opengl needs to shut itself down properly when closing applet
 _   otherwise can crash the whole browser
 _ when closing a sketch via the close box, make sure stop() getting called

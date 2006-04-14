@@ -204,48 +204,9 @@ public class PdePreprocessor {
     // an OutOfMemoryError or NullPointerException will happen.
     // again, not gonna bother tracking this down, but here's a hack.
     // http://dev.processing.org/bugs/show_bug.cgi?id=16
-    if (true) {
-      char p[] = program.toCharArray();
-      boolean insideSlashes;
-      //boolean insideComment;
-
-      int index = 0;
-      while (index < p.length) {
-        // for any double slash comments, ignore until the end of the line
-        if ((p[index] == '/') &&
-            (index < p.length - 1) &&
-            (p[index+1] == '/')) {
-          index += 2;
-          while ((index < p.length) &&
-                 (index != '\n')) {
-            index++;
-          }
-
-          // check to see if this is the start of a new multiline comment.
-          // if it is, then make sure it's actually terminated somewhere.
-        } else if ((p[index] == '/') &&
-                   (index < p.length - 1) &&
-                   (p[index+1] == '*')) {
-          index += 2;
-          boolean endOfRainbow = false;
-          while (index < p.length - 1) {
-            if ((p[index] == '*') && (p[index+1] == '/')) {
-              endOfRainbow = true;
-              break;
-
-            } else {
-              index++;
-            }
-          }
-          if (!endOfRainbow) {
-            throw new RuntimeException("Missing the */ from the end of a " +
-                                       "/* comment */");
-          }
-        } else {  // any old character, move along
-          index++;
-        }
-      }
-    }
+    Sketch.scrubComments(program);
+    // this returns the scrubbed version, but more important for this
+    // function, it'll check to see if there are errors with the comments.
 
     if (Preferences.getBoolean("preproc.substitute_unicode")) {
       // check for non-ascii chars (these will be/must be in unicode format)
