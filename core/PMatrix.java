@@ -379,10 +379,10 @@ public final class PMatrix implements PConstants {
     if (inverseCopy == null) {
       inverseCopy = new PMatrix();
     }
-    inverseCopy.apply(n00, n01, n02, n03,
-                      n10, n11, n12, n13,
-                      n20, n21, n22, n23,
-                      n30, n31, n32, n33);
+    inverseCopy.set(n00, n01, n02, n03,
+                    n10, n11, n12, n13,
+                    n20, n21, n22, n23,
+                    n30, n31, n32, n33);
     PMatrix inverse = inverseCopy.invert();
     if (inverse == null) return false;
     preApply(inverse);

@@ -12,25 +12,26 @@ X check min/max texture sizes when binding to avoid problems
 X   minimum texture size may be 64x64
 X   maximum appears to be 2048, on macs maybe 512
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
+X fix non-bound textures from mangling everything else
+X   http://dev.processing.org/bugs/show_bug.cgi?id=322
+X   fix enable/disable textures for some objects
+X   also a big problem for fonts
+X   calling updatePixels() on each frame fixes the issue (sorta)
+X images are memory leaking pretty badly 
+X   texture re-allocated on each frame
+X lighting bug introduced in rev 109
+X   spotLight has troubles with an invalid value
+X     probably somethign weird about the params (3 vs 4) being sent
+X     the first spotLight works fine, it's something with the second
+X     (the one that follows the mouse)
+X     just something to debug in the example
+X   regression from contributed code.. 
+X   was using apply() instead of set() in PMatrix inverse copy
 
-_ lighting bug introduced in rev 109
-_ spotLight has troubles with an invalid value
-X   probably somethign weird about the params (3 vs 4) being sent
-_   the first spotLight works fine, it's something with the second
-_   (the one that follows the mouse)
-_   just something to debug in the example
 
 priorities prior to fitc
 _ color values on camera input flipped on intel macs
 _   http://dev.processing.org/bugs/show_bug.cgi?id=313
-_ fix non-bound textures from mangling everything else
-_   http://dev.processing.org/bugs/show_bug.cgi?id=322
-_   fix enable/disable textures for some objects
-_   also a big problem for fonts
-_   calling updatePixels() on each frame fixes the issue (sorta)
-_ images are memory leaking pretty badly 
-_   texture re-allocated on each frame
-_   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ polygon z-order with alpha in opengl
 _   add option to sort triangles back to front so alpha works
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
@@ -49,7 +50,7 @@ _ pixel operations are broken in opengl
 _   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
-_   filter() is also broken
+_ filter() is also broken (not rewinding the intbuffer)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1144561113
 _ easier export to gl applet, finalize support for applets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=166
@@ -691,6 +692,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ when creating a new PImage on every frame, slurps a ton of memory
+_   workaround is to write the code properly, but suggests something bad
+_   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ make a note about the anti-aliasing types in the faq
 _   polygon vs line etc.. may want to enable lines but disable polys
 _ y may be flipped in modelX/Y/Z stuff on opengl
