@@ -23,6 +23,11 @@ applet is closed. Many libraries, especially those with native code,
 need this to properly shut down. 
 
 It is not possible to build libraries from within Processing itself. 
+In fact, creating a library with Processing will cause problems 
+because when exported as an applet, the jar file will contain the
+current version of the processing.core classes, which will cause
+major conflicts when trying to use any other code.
+
 The PDE is built with the sole purpose of creating short sketches that 
 are part of PApplet that have a few files at most. We don't plan to 
 extend the PDE to also support developing libraries (or "tools," once 
