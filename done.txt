@@ -1,3 +1,9 @@
+0112 pde
+X PortInUseException with serial for 0111+ on Mac OS X
+X   need to fix the setup scripts to cover the new lock file location
+X   http://dev.processing.org/bugs/show_bug.cgi?id=315
+
+
 0111 pde
 X switch back to rev b3 of jogl so that applets will work
 X fix color picker: 
