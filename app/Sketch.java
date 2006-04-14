@@ -1618,7 +1618,7 @@ public class Sketch {
     // properly handle size(200, 200) and size(200, 200, P3D)
     String sizing =
       // match the renderer string as well
-      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\d\\)]*)\\s*\\)";
+      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
       // match just the width and height
       //"[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)(.*)\\)";
     Pattern pattern = compiler.compile(sizing);
@@ -1635,11 +1635,7 @@ public class Sketch {
         wide = Integer.parseInt(result.group(1).toString());
         high = Integer.parseInt(result.group(2).toString());
 
-        //System.out.println("groups " + result.groups());
         renderer = result.group(3).toString(); //.trim();
-        //if (renderer.length() != 0) {
-        //System.out.println("render '" + renderer + "'");
-        //}
 
       } catch (NumberFormatException e) {
         // found a reference to size, but it didn't
@@ -1693,64 +1689,13 @@ public class Sketch {
 
     //
 
-    // convert the applet template
-    // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
-    // and now @@description@@
-
-    File htmlOutputFile = new File(appletFolder, "index.html");
-    FileOutputStream fos = new FileOutputStream(htmlOutputFile);
-    PrintStream ps = new PrintStream(fos);
-
-    InputStream is = null;
-    // if there is an applet.html file in the sketch folder, use that
-    File customHtml = new File(folder, "applet.html");
-    if (customHtml.exists()) {
-      is = new FileInputStream(customHtml);
+    // determine whether to use one jar file or several
+    StringBuffer archives = new StringBuffer();
+    boolean separateJar =
+      Preferences.getBoolean("export.applet.separate_jar_files");
+    if (renderer.equals("OPENGL")) {
+      separateJar = true;
     }
-    if (is == null) {
-      is = Base.getStream("export/applet.html");
-    }
-    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-    String line = null;
-    while ((line = reader.readLine()) != null) {
-      if (line.indexOf("@@") != -1) {
-        StringBuffer sb = new StringBuffer(line);
-        int index = 0;
-        while ((index = sb.indexOf("@@sketch@@")) != -1) {
-          sb.replace(index, index + "@@sketch@@".length(),
-                     name);
-        }
-        while ((index = sb.indexOf("@@source@@")) != -1) {
-          sb.replace(index, index + "@@source@@".length(),
-                     sources.toString());
-        }
-        while ((index = sb.indexOf("@@archive@@")) != -1) {
-          sb.replace(index, index + "@@archive@@".length(),
-                     name + ".jar");
-        }
-        while ((index = sb.indexOf("@@width@@")) != -1) {
-          sb.replace(index, index + "@@width@@".length(),
-                     String.valueOf(wide));
-        }
-        while ((index = sb.indexOf("@@height@@")) != -1) {
-          sb.replace(index, index + "@@height@@".length(),
-                     String.valueOf(high));
-        }
-        while ((index = sb.indexOf("@@description@@")) != -1) {
-          sb.replace(index, index + "@@description@@".length(),
-                     description);
-        }
-        line = sb.toString();
-      }
-      ps.println(line);
-    }
-
-    reader.close();
-    ps.flush();
-    ps.close();
-
-    //
 
     // copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
@@ -1776,16 +1721,32 @@ public class Sketch {
       new FileOutputStream(new File(appletFolder, name + ".jar"));
     ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
     ZipEntry entry;
+    archives.append(name + ".jar");
 
     // add the manifest file
     addManifest(zos);
 
     // add the contents of the code folder to the jar
-    // unpacks all jar files
-    //File codeFolder = new File(folder, "code");
+    // unpacks all jar files, unless multi jar files selected in prefs
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
-      packClassPathIntoZipFile(includes, zos);
+      if (separateJar) {
+        String codeList[] = PApplet.split(includes, File.separatorChar);
+        String cp = "";
+        for (int i = 0; i < codeList.length; i++) {
+          if (codeList[i].toLowerCase().endsWith(".jar") ||
+              codeList[i].toLowerCase().endsWith(".zip")) {
+            File exportFile = new File(codeFolder, codeList[i]);
+            String exportFilename = exportFile.getName();
+            Base.copyFile(exportFile, new File(appletFolder, exportFilename));
+          } else {
+            cp += codeList[i] + File.separatorChar;
+            packClassPathIntoZipFile(cp, zos);
+          }
+        }
+      } else {
+        packClassPathIntoZipFile(includes, zos);
+      }
     }
 
     // add contents of 'library' folders to the jar file
@@ -1822,7 +1783,18 @@ public class Sketch {
 
         } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
                    exportFile.getName().toLowerCase().endsWith(".jar")) {
-          packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
+          if (separateJar) {
+            String exportFilename = exportFile.getName();
+            Base.copyFile(exportFile, new File(appletFolder, exportFilename));
+            if (renderer.equals("OPENGL") &&
+                exportFilename.indexOf("natives") != -1) {
+              // don't add these to the archives list
+            } else {
+              archives.append("," + exportFilename);
+            }
+          } else {
+            packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
+          }
 
         } else {  // just copy the file over.. prolly a .dll or something
           Base.copyFile(exportFile,
@@ -1832,10 +1804,14 @@ public class Sketch {
     }
 
     String bagelJar = "lib/core.jar";
-    packClassPathIntoZipFile(bagelJar, zos);
+    if (separateJar) {
+      Base.copyFile(new File(bagelJar), new File(appletFolder, "core.jar"));
+      archives.append(",core.jar");
+    } else {
+      packClassPathIntoZipFile(bagelJar, zos);
+    }
 
     if (dataFolder.exists()) {
-      //String dataFiles[] = dataFolder.list();
       String dataFiles[] = Base.listFiles(dataFolder, false);
       int offset = folder.getAbsolutePath().length() + 1;
       //int offset = dataFolder.getAbsolutePath().length() + 1;
@@ -1848,23 +1824,11 @@ public class Sketch {
 
         // don't export hidden files
         // skipping dot prefix removes all: . .. .DS_Store
-        //if (dataFiles[i].charAt(0) == '.') continue;
         if (dataFile.getName().charAt(0) == '.') continue;
 
-        //System.out.println("placing " + dataFiles[i].substring(offset));
-        //if (dataFile.isDirectory()) {
-        //entry = new ZipEntry(dataFiles[i].substring(offset) + "/");
-        //} else {
         entry = new ZipEntry(dataFiles[i].substring(offset));
-        //}
-        //if (entry.isDirectory()) {
-        //System.out.println(entry + " is a dir");
-        //}
         zos.putNextEntry(entry);
-        //zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
-        //if (!dataFile.isDirectory()) {
         zos.write(Base.grabFile(dataFile));
-        //}
         zos.closeEntry();
       }
     }
@@ -1902,6 +1866,69 @@ public class Sketch {
     // close up the jar file
     zos.flush();
     zos.close();
+
+    //
+
+    // convert the applet template
+    // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
+    // and now @@description@@
+
+    File htmlOutputFile = new File(appletFolder, "index.html");
+    FileOutputStream fos = new FileOutputStream(htmlOutputFile);
+    PrintStream ps = new PrintStream(fos);
+
+    InputStream is = null;
+    // if there is an applet.html file in the sketch folder, use that
+    File customHtml = new File(folder, "applet.html");
+    if (customHtml.exists()) {
+      is = new FileInputStream(customHtml);
+    }
+    if (is == null) {
+      if (renderer.equals("OPENGL")) {
+        is = Base.getStream("export/applet-opengl.html");
+      } else {
+        is = Base.getStream("export/applet.html");
+      }
+    }
+    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+    String line = null;
+    while ((line = reader.readLine()) != null) {
+      if (line.indexOf("@@") != -1) {
+        StringBuffer sb = new StringBuffer(line);
+        int index = 0;
+        while ((index = sb.indexOf("@@sketch@@")) != -1) {
+          sb.replace(index, index + "@@sketch@@".length(),
+                     name);
+        }
+        while ((index = sb.indexOf("@@source@@")) != -1) {
+          sb.replace(index, index + "@@source@@".length(),
+                     sources.toString());
+        }
+        while ((index = sb.indexOf("@@archive@@")) != -1) {
+          sb.replace(index, index + "@@archive@@".length(),
+                     archives.toString());
+        }
+        while ((index = sb.indexOf("@@width@@")) != -1) {
+          sb.replace(index, index + "@@width@@".length(),
+                     String.valueOf(wide));
+        }
+        while ((index = sb.indexOf("@@height@@")) != -1) {
+          sb.replace(index, index + "@@height@@".length(),
+                     String.valueOf(high));
+        }
+        while ((index = sb.indexOf("@@description@@")) != -1) {
+          sb.replace(index, index + "@@description@@".length(),
+                     description);
+        }
+        line = sb.toString();
+      }
+      ps.println(line);
+    }
+
+    reader.close();
+    ps.flush();
+    ps.close();
 
     return true;
   }
@@ -2153,10 +2180,22 @@ public class Sketch {
     }
 
     // add the contents of the code folder to the jar
-    // (will unpack all jar files in the code folder)
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
-      packClassPathIntoZipFile(includes, zos);
+      String codeList[] = PApplet.split(includes, File.separatorChar);
+      String cp = "";
+      for (int i = 0; i < codeList.length; i++) {
+        if (codeList[i].toLowerCase().endsWith(".jar") ||
+            codeList[i].toLowerCase().endsWith(".zip")) {
+          File exportFile = new File(codeFolder, codeList[i]);
+          String exportFilename = exportFile.getName();
+          Base.copyFile(exportFile, new File(jarFolder, exportFilename));
+          jarListVector.add(exportFilename);
+        } else {
+          cp += codeList[i] + File.separatorChar;
+        }
+      }
+      packClassPathIntoZipFile(cp, zos);
     }
 
     zos.flush();
@@ -2399,7 +2438,7 @@ public class Sketch {
     for (int i = 0; i < lines.length; i++) {
       int hash = lines[i].indexOf('#');
       String line = (hash == -1) ?
-        lines[i].trim() : lines[i].substring(hash).trim();
+        lines[i].trim() : lines[i].substring(hash + 1).trim();
       if (line.length() == 0) continue;
 
       int equals = line.indexOf('=');
