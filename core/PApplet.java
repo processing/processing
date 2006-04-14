@@ -2027,7 +2027,31 @@ public class PApplet extends Applet
         throw new RuntimeException("Could not open " + filename);
       }
 
-    } else if ((platform == MACOSX) || (platform == MACOS9)) {
+    } else if (platform == MACOSX) {
+      // osx fix contributed by chandler for rev 0113
+      try {
+        // Java on OS X doesn't like to exec commands inside quotes
+        // for some reason.. escape spaces with slashes just in case
+        if (filename.indexOf(' ') != -1) {
+          StringBuffer sb = new StringBuffer();
+          char c[] = filename.toCharArray();
+          for (int i = 0; i < c.length; i++) {
+            if (c[i] == ' ') {
+              sb.append("\\\\ ");
+            } else {
+              sb.append(c[i]);
+            }
+          }
+          filename = sb.toString();
+        }
+        Runtime.getRuntime().exec("open " + filename);
+
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new RuntimeException("Could not open " + filename);
+      }
+
+    } else if (platform == MACOS9) {
       // prepend file:// on this guy since it's a file
       String url = "file://" + filename;
 
@@ -2049,7 +2073,7 @@ public class PApplet extends Applet
       }
       link(url);
 
-    } else {
+    } else {  // give up and just pass it to Runtime.exec()
       open(new String[] { filename });
     }
   }
