@@ -2919,14 +2919,14 @@ public class PApplet extends Applet
 
   // SOUND I/O
 
-
+  /*
   public PSound loadSound(String filename) {
     if (PApplet.javaVersion >= 1.3f) {
       return new PSound2(this, openStream(filename));
     }
     return new PSound(this, openStream(filename));
   }
-
+  */
 
 
   //////////////////////////////////////////////////////////////
