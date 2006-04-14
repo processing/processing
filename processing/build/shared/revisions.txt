@@ -7,6 +7,24 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0113 - 14 April 2006
+
+OpenGL applet export! 
+
++ It is now possible to export applets that use the OpenGL library.
+  http://dev.processing.org/bugs/show_bug.cgi?id=166
+
++ Added an option in preferences to export applets as separate jar files. 
+  When selected, core.jar and any other libraries in use won't be copied
+  directly into the sketch jar file, instead they be kept intact. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=62
+
++ added a fix for open() on Mac OS X submitted by chandler
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0112 - 13 April 2006
 
 Lots of OpenGL bug fixes, and some big OS X fixes too.
