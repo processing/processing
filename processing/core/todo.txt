@@ -27,6 +27,8 @@ X     (the one that follows the mouse)
 X     just something to debug in the example
 X   regression from contributed code.. 
 X   was using apply() instead of set() in PMatrix inverse copy
+X filter() is also broken (not rewinding the intbuffer)
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1144561113
 
 
 priorities prior to fitc
@@ -50,8 +52,6 @@ _ pixel operations are broken in opengl
 _   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
-_ filter() is also broken (not rewinding the intbuffer)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1144561113
 _ easier export to gl applet, finalize support for applets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=166
 _   example of getting it to work with an applet
@@ -59,6 +59,9 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpen
 _ opengl needs to shut itself down properly when closing applet
 _   otherwise can crash the whole browser
 _ when closing a sketch via the close box, make sure stop() getting called
+_ get rid of some of the sillier IntBuffer stuff where it's not needed
+_   use the version of the prototypes that use an offset into the array
+_   need to test performance either way
 
 
 examples
