@@ -7,6 +7,43 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0112 - 13 April 2006
+
+Lots of OpenGL bug fixes, and some big OS X fixes too.
+
++ Changed macosx_setup script for the new version of RXTX on OS X, 
+  you'll need to re-run this script if you used a previous version 
+  of Processing. You may also need to remove the contents of 
+  /var/spool/uucp or at least its contents if they exist. Please 
+  report on whether this works and whether you needed to remove 
+  the older version of the folder, so the script can be updated.
+  http://dev.processing.org/bugs/show_bug.cgi?id=315
+
++ PSound has been removed. Getting sound to work with Java is a total
+  headache, and therefore something better left to a library. The
+  Sonia and Ess libraries will both provide better audio support.
+
++ Fix nasty issue that caused images to take over one another with OpenGL.
+  For instance, when using video input and text in a sketch, some letters
+  of text would become images from the video camera. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=322
+
++ Fixed issues that would cause saveFrame() to be ridiculously slow
+  on OS X. Another nasty one that took me forever to reproduce.
+  http://dev.processing.org/bugs/show_bug.cgi?id=189
+
++ Fix lighting issues with that were introduced in revision 0109. 
+
++ Now checking maximum supported texture sizes for the video card
+  when using OpenGL. It will now throw a RuntimeException to avoid
+  a possible BSOD if you try to make an image that's too large.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1144651735
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0111 - 28 March 2006
 
 Bug fix release for more of this OpenGL stuff. Also includes a
