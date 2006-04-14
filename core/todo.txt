@@ -1,4 +1,5 @@
 0113 core
+X fix for open() on macosx submitted by chandler
 
 
 priorities prior to fitc
