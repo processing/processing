@@ -471,30 +471,30 @@ public class PGraphicsGL extends PGraphics3 {
 
       int textureIndex = triangles[i][TEXTURE_INDEX];
       if (textureIndex != -1) {
-        //System.out.println("texture drawing");
-
         PImage texture = textures[textureIndex];
+
         report("before enable");
-        //gl.glEnable(GL.GL_TEXTURE_2D);
+        gl.glEnable(GL.GL_TEXTURE_2D);
         report("after enable");
 
         ImageCache cash = (ImageCache) texture.cache;  // as in johnny
         if (cash == null) {
+          //System.out.println("cash null");
           // make sure this thing is cached and a power of 2
-          //if (texture.cache == null) {
-          cache(texture);
-          cash = (ImageCache) texture.cache;
-          // mark for update (nope, already updated)
-          //texture.updatePixels(0, 0, texture.width, texture.height);
-          //texture.modified = true;
+          //cache(texture);
+          cash = new ImageCache(); //texture);
+          texture.cache = cash;
+          texture.modified = true;
+        }
 
-        } else if (texture.modified) {
+        if (texture.modified) {
+          //System.out.println("texture modified");
           // TODO make this more efficient and just update a sub-part
           // based on mx1 et al, also use gl function to update
           // only a sub-portion of the image.
-          //cash.update(texture.pixels, texture.width, texture.height);
-          cash.update(texture);
+          cash.rebind(texture);
 
+          /*
           gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4,
                           cash.twidth, cash.theight,
                           0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
@@ -516,9 +516,13 @@ public class PGraphicsGL extends PGraphics3 {
           report("re-binding 3");
           gl.glTexEnvf(GL.GL_TEXTURE_ENV,
                        GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+          */
 
           // actually bind this feller
           texture.modified = false;
+
+        } else {
+          gl.glBindTexture(GL.GL_TEXTURE_2D, cash.tindex);
         }
 
         report("before bind");
@@ -530,9 +534,6 @@ public class PGraphicsGL extends PGraphics3 {
         // these don't seem to do much
         //gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
         //gl.glPixelStorei(GL.GL_UNPACK_SWAP_BYTES, 1);
-
-        int tindex = ((ImageCache) texture.cache).tindex;
-        gl.glBindTexture(GL.GL_TEXTURE_2D, tindex);
 
         //if (image.format == ALPHA) {
         //System.out.println("binding with replace");
@@ -579,7 +580,7 @@ public class PGraphicsGL extends PGraphics3 {
         float uscale = (float) texture.width / (float) cash.twidth;
         float vscale = (float) texture.height / (float) cash.theight;
 
-        gl.glEnable(GL.GL_TEXTURE_2D);
+        //int tindex = ((ImageCache) texture.cache).tindex;
 
         gl.glBegin(GL.GL_TRIANGLES);
 
@@ -627,7 +628,7 @@ public class PGraphicsGL extends PGraphics3 {
           }
         }
 
-      } else {
+      } else {  // image has no texture
         gl.glBegin(GL.GL_TRIANGLES);
 
         //System.out.println("tri " + a[VX] + " " + a[VY] + " " + a[VZ]);
@@ -752,92 +753,65 @@ public class PGraphicsGL extends PGraphics3 {
   //////////////////////////////////////////////////////////////
 
 
-  /**
-   * Cache an image using a specified glTexName
-   * (name is just an integer index).
-   * <p/>
-   * If a cacheIndex is already assigned in the image,
-   * this request will be ignored.
-   */
-  protected void cache(PImage image) {
-    if (image.cache != null) return;
-
-    //int names[] = new int[1];
-    IntBuffer names = BufferUtil.newIntBuffer(1);
-    gl.glGenTextures(1, names);
-    //int index = names[0];
-    int index = names.get(0);
-
-    //if (image.tindex != -1) return;
-
-    // use glGetIntegerv with the argument GL_MAX_TEXTURE_SIZE
-    // to figure out min/max texture sizes
-
-    //report("into cache");
-    //image.modified();
-    image.cache = new ImageCache();
-    ImageCache cash = (ImageCache) image.cache;
-    //cash.update(image.pixels, image.width, image.height);
-    cash.update(image);
-
-    // first-time binding of entire texture
-
-    gl.glEnable(GL.GL_TEXTURE_2D);
-    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-    //gl.glPixelStorei(GL.GL_UNPACK_SWAP_BYTES, 0);
-    gl.glBindTexture(GL.GL_TEXTURE_2D, index);
-
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, cash.twidth, cash.theight,
-                    //0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, cash.tpixels);
-                    0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, cash.tbuffer);
-
-    gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                       //GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-                       GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-    gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                       //GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-                       GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-
-    /*
-    int err = glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, 4,
-                                    image.width, image.height,
-                                    GL.GL_RGBA,
-                                    //GL.GL_ALPHA,
-                                    GL.GL_UNSIGNED_BYTE, image.pixels);
-    //System.out.println("mipmap: " + err);
-
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                       GL.GL_NEAREST_MIPMAP_NEAREST);
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                       GL.GL_NEAREST_MIPMAP_LINEAR);
-    */
-
-    //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
-    //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
-
-    gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-
-    //gl.glDisable(GL.GL_TEXTURE_2D);
-
-    cash.tindex = index;
-  }
-
+  static int maxTextureSize;
 
   class ImageCache {
-    int tindex;
+    int tindex = -1;  // not yet ready
     int tpixels[];
     IntBuffer tbuffer;
     int twidth, theight;
 
-    //public void update(int pixels[], int width, int height) {
-    public void update(PImage source) {
-      tindex = -1;
+    /*
+    public ImageCache(PImage image) {
+      tindex = -1;  // mark the texture as uninited
+      prepare(image);
+
+      // first-time binding of entire texture
+      gl.glEnable(GL.GL_TEXTURE_2D);
+
+      gl.glDisable(GL.GL_TEXTURE_2D);
+    }
+    */
+
+
+    /**
+     * Generate a texture ID and do the necessary bitshifting for the image.
+     */
+    public void rebind(PImage source) {
+      if (tindex != -1) {
+        // free up the old memory
+        gl.glDeleteTextures(1, new int[] { tindex }, 0);
+      }
+      // generate a new texture number to bind to
+      int[] tmp = new int[1];
+      gl.glGenTextures(1, tmp, 0);
+      tindex = tmp[0];
 
       // bit shifting this might be more efficient
-      int width2 =
-        (int) Math.pow(2, Math.ceil(Math.log(source.width) / Math.log(2)));
-      int height2 =
-        (int) Math.pow(2, Math.ceil(Math.log(source.height) / Math.log(2)));
+      int width2 = nextPowerOfTwo(source.width);
+      //(int) Math.pow(2, Math.ceil(Math.log(source.width) / Math.log(2)));
+      int height2 = nextPowerOfTwo(source.height);
+      //(int) Math.pow(2, Math.ceil(Math.log(source.height) / Math.log(2)));
+
+      // use glGetIntegerv with the argument GL_MAX_TEXTURE_SIZE
+      // to figure out min/max texture sizes
+      if (maxTextureSize == 0) {
+        int maxSize[] = new int[1];
+        gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+        maxTextureSize = maxSize[0];
+        System.out.println("max texture size is " + maxTextureSize);
+      }
+      if ((width2 > maxTextureSize) || (height2 > maxTextureSize)) {
+        /*
+        System.err.println("Maximum texture size for your graphics " +
+                           "card is " + maxTextureSize + ". " +
+                           "A " + image.width + "x" + image.height +
+                           " image is too large to be displayed.");
+        */
+        throw new RuntimeException("Image width and height cannot be" +
+                                   " larger than " + maxTextureSize +
+                                   " with your graphics card.");
+      }
 
       if ((width2 > twidth) || (height2 > theight)) {
         // either twidth/theight are zero, or size has changed
@@ -854,7 +828,6 @@ public class PGraphicsGL extends PGraphics3 {
       int p = 0;
       int t = 0;
 
-      //if (System.getProperty("sun.cpu.endian").equals("big")) {
       if (BIG_ENDIAN) {
         switch (source.format) {
         case ALPHA:
@@ -867,19 +840,16 @@ public class PGraphicsGL extends PGraphics3 {
           break;
 
         case RGB:
-          //System.out.println("swapping RGB");
           for (int y = 0; y < source.height; y++) {
             for (int x = 0; x < source.width; x++) {
               int pixel = source.pixels[p++];
               tpixels[t++] = (pixel << 8) | 0xff;
-              //tpixels[t++] = pixel;  // nice effect, actually
             }
             t += twidth - source.width;
           }
           break;
 
         case ARGB:
-          //System.out.println("gonna swap ARGB");
           for (int y = 0; y < source.height; y++) {
             for (int x = 0; x < source.width; x++) {
               int pixel = source.pixels[p++];
@@ -890,7 +860,7 @@ public class PGraphicsGL extends PGraphics3 {
           break;
         }
 
-      } else {
+      } else {  // LITTLE_ENDIAN
         // ARGB native, and RGBA opengl means ABGR on windows
         // for the most part just need to swap two components here
         // the sun.cpu.endian here might be "false", oddly enough..
@@ -940,6 +910,50 @@ public class PGraphicsGL extends PGraphics3 {
       }
       tbuffer.put(tpixels);
       tbuffer.rewind();
+
+      //
+
+      gl.glBindTexture(GL.GL_TEXTURE_2D, tindex);
+
+      gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+      //gl.glPixelStorei(GL.GL_UNPACK_SWAP_BYTES, 0);
+
+      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4, twidth, theight,
+                      //0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, cash.tpixels);
+                      0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, tbuffer);
+
+      gl.glTexParameterf(GL.GL_TEXTURE_2D,
+                         //GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+                         GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D,
+                         //GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+                         GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+
+      //int err = glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, 4,
+      //                              image.width, image.height,
+      //                              GL.GL_RGBA,
+      //                              //GL.GL_ALPHA,
+      //                              GL.GL_UNSIGNED_BYTE, image.pixels);
+      //System.out.println("mipmap: " + err);
+
+      //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+      //                 GL.GL_NEAREST_MIPMAP_NEAREST);
+      //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+      //                 GL.GL_NEAREST_MIPMAP_LINEAR);
+
+      //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
+      //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+
+      gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+    }
+
+
+    private int nextPowerOfTwo(int val) {
+      int ret = 1;
+      while (ret < val) {
+        ret <<= 1;
+      }
+      return ret;
     }
   }
 
