@@ -5,7 +5,7 @@ X   add additional html file (applet-jogl.html)
 X   parse for renderer on export (and remove comments)
 _   when the renderer is OPENGL, change to:
 _     wire in the new jogl html file
-_     include the applet version of the jogl jar files for DLLs
+_     include the applet version of the jogl jar files (that contain DLLs)
 _     include the jogl.jar file itself
 _     use separate jar files
 _     can natives be included as jar files without trouble?
