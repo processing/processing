@@ -5,33 +5,32 @@ o loadSound apparently broken in java 1.5?
 o   http://dev.processing.org/bugs/show_bug.cgi?id=285
 X saveFrame() issues with JAVA2D on osx
 X   http://dev.processing.org/bugs/show_bug.cgi?id=189
+X need to just remove PSound altogether
+o implement hint(NO_DEPTH_TEST) for opengl
+X   already done hint(DISABLE_DEPTH_TEXT);
+X check min/max texture sizes when binding to avoid problems
+X   minimum texture size may be 64x64
+X   maximum appears to be 2048, on macs maybe 512
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
 
 _ lighting bug introduced in rev 109
-_   
 _ spotLight has troubles with an invalid value
 X   probably somethign weird about the params (3 vs 4) being sent
 _   the first spotLight works fine, it's something with the second
 _   (the one that follows the mouse)
 _   just something to debug in the example
 
-_ need to just remove PSound altogether
-
-
 priorities prior to fitc
 _ color values on camera input flipped on intel macs
 _   http://dev.processing.org/bugs/show_bug.cgi?id=313
 _ fix non-bound textures from mangling everything else
+_   http://dev.processing.org/bugs/show_bug.cgi?id=322
 _   fix enable/disable textures for some objects
 _   also a big problem for fonts
 _   calling updatePixels() on each frame fixes the issue (sorta)
-_ move to new implementation of jsr231 with new classes and launcher
 _ images are memory leaking pretty badly 
 _   texture re-allocated on each frame
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
-_ check min/max texture sizes when binding to avoid problems
-_   minimum texture size may be 64x64
-_   maximum appears to be 2048, on macs maybe 512
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
 _ polygon z-order with alpha in opengl
 _   add option to sort triangles back to front so alpha works
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
@@ -46,17 +45,19 @@ _   check with the a_Displaying example and tint(255, 0, 0, 100);
 _   http://dev.processing.org/bugs/show_bug.cgi?id=90
 _   is fill() not coloring textures properly?
 _     don't need to apply tint() to textures, supposed to use fill color
-_ opengl doesn't work in applets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=166
-_   example of getting it to work with an applet
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1131916668
-_ implement hint(NO_DEPTH_TEST) for opengl
 _ pixel operations are broken in opengl
 _   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
+_   filter() is also broken
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1144561113
+_ easier export to gl applet, finalize support for applets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=166
+_   example of getting it to work with an applet
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1131916668
 _ opengl needs to shut itself down properly when closing applet
 _   otherwise can crash the whole browser
+_ when closing a sketch via the close box, make sure stop() getting called
 
 
 examples
