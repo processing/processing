@@ -2186,6 +2186,7 @@ public class PGraphicsGL extends PGraphics3 {
         ((argb >> 16) & 0xff);
     }
     getsetBuffer.put(0, getset);
+    getsetBuffer.rewind();
     gl.glRasterPos2f(x + EPSILON, y + EPSILON);
     gl.glDrawPixels(1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
   }
@@ -2216,6 +2217,7 @@ public class PGraphicsGL extends PGraphics3 {
 
     IntBuffer setBuffer = BufferUtil.newIntBuffer(source.pixels.length);
     setBuffer.put(source.pixels);
+    setBuffer.rewind();
     gl.glRasterPos2f(x + EPSILON, (height - y) - EPSILON);
     gl.glDrawPixels(source.width, source.height,
                     GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, setBuffer);
