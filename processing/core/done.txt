@@ -1,3 +1,7 @@
+0113 core
+X fix for open() on macosx submitted by chandler
+
+
 0112 core
 o PSound.play() won't play the sound a 2nd time (reopened)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=208
