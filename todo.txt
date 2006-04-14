@@ -1,7 +1,4 @@
-0112 pde
-X PortInUseException with serial for 0111+ on Mac OS X
-X   need to fix the setup scripts to cover the new lock file location
-X   http://dev.processing.org/bugs/show_bug.cgi?id=315
+0113 pde
 
 _ stop button won't kill a video sketch (bug 150 example does this) 
 

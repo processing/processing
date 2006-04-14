@@ -50,8 +50,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 112;
-  static final String VERSION_NAME = "0112 Beta";
+  static final int VERSION = 113;
+  static final String VERSION_NAME = "0113 Beta";
 
   /**
    * Path of filename opened on the command line,

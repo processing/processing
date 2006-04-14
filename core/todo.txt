@@ -1,34 +1,4 @@
-0112 core
-o PSound.play() won't play the sound a 2nd time (reopened)
-o   http://dev.processing.org/bugs/show_bug.cgi?id=208
-o loadSound apparently broken in java 1.5?
-o   http://dev.processing.org/bugs/show_bug.cgi?id=285
-X saveFrame() issues with JAVA2D on osx
-X   http://dev.processing.org/bugs/show_bug.cgi?id=189
-X need to just remove PSound altogether
-o implement hint(NO_DEPTH_TEST) for opengl
-X   already done hint(DISABLE_DEPTH_TEXT);
-X check min/max texture sizes when binding to avoid problems
-X   minimum texture size may be 64x64
-X   maximum appears to be 2048, on macs maybe 512
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1137130317
-X fix non-bound textures from mangling everything else
-X   http://dev.processing.org/bugs/show_bug.cgi?id=322
-X   fix enable/disable textures for some objects
-X   also a big problem for fonts
-X   calling updatePixels() on each frame fixes the issue (sorta)
-X images are memory leaking pretty badly 
-X   texture re-allocated on each frame
-X lighting bug introduced in rev 109
-X   spotLight has troubles with an invalid value
-X     probably somethign weird about the params (3 vs 4) being sent
-X     the first spotLight works fine, it's something with the second
-X     (the one that follows the mouse)
-X     just something to debug in the example
-X   regression from contributed code.. 
-X   was using apply() instead of set() in PMatrix inverse copy
-X filter() is also broken (not rewinding the intbuffer)
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1144561113
+0113 core
 
 
 priorities prior to fitc
