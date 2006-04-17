@@ -59,11 +59,27 @@ a:link:visited {
 	height: 50px;
 	overflow: hidden;
 	background-color: #000000;
+	position:relative;
 }
 
 #header h1 {
 		display: none;
 		float: left;
+}
+
+#header form {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 200px;
+	color: #ccc;
+}
+
+#header form input.text {
+	width: 150px;
+}
+#header form input {
+	border: 1px solid black;
 }
 
 /* ================ NAVBAR ================== */
