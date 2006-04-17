@@ -4,19 +4,38 @@ class Happening
 {
     var $date;
     var $description;
+	var $id;
     
     function Happening(&$xml)
     {
         $this->date = getValue($xml, 'date');
         $this->description = innerHTML($xml, 'description');
+		$this->id = 'happening'.preg_replace("/\W/", '', $this->date);
     }
     
     function display()
     {
-        $html = "<dt>{$this->date}</dt>\n";
+        $html = "<dt id=\"{$this->id}\">{$this->date}</dt>\n";
         $html .= "\t<dd>{$this->description}</dd>\n";
         return $html;
     }
+
+	function display_rss()
+	{
+		$shortdesc = htmlspecialchars(substr(strip_tags($this->description), 0, 256));
+		$link = "http://processing.org/happenings.html#{$this->id}";
+		$longdate = $this->date;
+		return <<<ITEM
+<item>
+	<title>$shortdesc</title>
+	<description><![CDATA[<p>{$this->description}</p>]]></description>
+	<link>$link</link>
+	<guid>$link</guid>
+	<pubDate>$longdate</pubDate>
+</item>	
+
+ITEM;
+	}
 }
 
 /*class Happening

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+<channel>
+<title><!--*-->title<!--*--></title>
+<link>http://processing.org</link>
+<description><!--*-->description<!--*--></description>
+<language>en-us</language>
+<managingEditor>reas@processing.org</managingEditor>
+<copyright>http://creativecommons.org/licenses/by-sa/1.0</copyright>
+<lastBuildDate><!--*-->buildDate<!--*--></lastBuildDate>
+<webMaster>lennyburdette@gmail.com</webMaster>
+<ttl>120</ttl>
+
+<!--*-->items<!--*-->
+
+</channel>
+</rss>

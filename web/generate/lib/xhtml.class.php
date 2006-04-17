@@ -180,7 +180,7 @@ extends xhtml_plugin
 
 	function xhtml_page ( $file=NULL )
 	{
-		if ( !empty($file) && file_exists($file) && is_readable($file) && strstr($file,'.html') !== FALSE ) {
+		if ( !empty($file) && file_exists($file) && is_readable($file) ) {
 			$this->data_raw = file_get_contents($file);
 		}
 		else

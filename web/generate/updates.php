@@ -30,6 +30,32 @@ function get_updates($num = 5)
     return $html;
 }
 
+function get_updates_rss($num = 5)
+{
+    // open and parse updates.xml
+    $xml =& openXML('updates.xml');
+    
+    // get each item node
+    $items = $xml->getElementsByTagName('item');
+    $items = $items->toArray();
+    $items = array_reverse($items);
+    
+    // create Update objects
+    $i = 1;
+    foreach ($items as $item) {
+        $updates[] = new Update($item);
+        if ($i >= $num && $num != 'all') { break; }
+        $i++;
+    }
+    
+    // output html
+    $html = '';
+    foreach ($updates as $update) {
+        $html .= $update->display_rss();
+    }
+    return $html;
+}
+
 if (!defined('COVER')) {
     $benchmark_start = microtime_float();
     
