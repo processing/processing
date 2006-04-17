@@ -2,6 +2,7 @@
 
 require_once('../config.php');
 require_once('lib/Update.class.php');
+require_once('../templates/rss.php');
 
 function get_updates($num = 5)
 {
@@ -63,6 +64,10 @@ if (!defined('COVER')) {
     $page->subtemplate('template.updates.html');
     $page->content(get_updates('all'));
     writeFile("updates.html", $page->out());
+
+	$rss = new RSS('Processing.org Updates', 'Updates and News about Processing programming project and Processing.org');
+	$rss->set_items(get_updates_rss('10'));
+	writeFile("updates.xml", $rss->out());
     
     $benchmark_end = microtime_float();
     $execution_time = round($benchmark_end - $benchmark_start, 4);
