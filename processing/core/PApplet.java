@@ -931,6 +931,12 @@ public class PApplet extends Applet
 
 
   public PGraphics createGraphics(int iwidth, int iheight,
+                                  String irenderer) {
+    return createGraphics(iwidth, iheight, irenderer, this, null);
+  }
+
+
+  public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer, String ipath) {
     return createGraphics(iwidth, iheight, irenderer, this, ipath);
   }
