@@ -1,4 +1,11 @@
 0114 core
+X added createGraphics(width, height, renderer) 
+X   no need to use (..., null) anymore
+
+_ gray background in pdf (using both gl and p3d)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=324
+_ using gl, lines don't show up in pdf with record (they're ok with p3d)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=325
 
 priorities prior to fitc
 _ color values on camera input flipped on intel macs

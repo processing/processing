@@ -6,6 +6,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=321
 
 _ stop button won't kill a video sketch (bug 150 example does this) 
 
+_ add "hide stop button" arg for PApplet
+
 _ set "no smileys" as the default for posting code
 _ make the export to the board just copy to clipboard
 _   also make it insert &nbsp; for extra spaces
@@ -13,6 +15,8 @@ _   also make it insert &nbsp; for extra spaces
 _ linux problems with things not showing up
 _   probably threading issue, 98 doesn't have any trouble
 _   signs point to Runner or PApplet changes between 98 and 99
+_   commenting out applet.setupFrameResizeListener() 
+_     in line 307 from Runner.java solved the problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=282
 
 _ svg loader is on the list for 1.0
@@ -111,6 +115,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=256
 
 text faq
 _ how to use textMode(SHAPES) with opengl
+_   things will be extremely slow (fix later)
+_   things will also be very ugly on-screen
 _ text being nicer in java2d
 _ textMode(SCREEN) for P2D and P3D for nice fast text
 
