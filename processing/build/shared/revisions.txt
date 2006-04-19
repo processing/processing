@@ -7,6 +7,31 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0114 - 19 April 2006
+
+A few minor bug fixes and added a basic implementation of depth sorting
+for triangles when used with P3D or OPENGL.
+
+- hint(ENABLE_DEPTH_SORT) will enable simplistic depth sorting of 
+  triangles, so that they look a little better when transparency is 
+  used. The implementation is hokey, and doesn't look great in a lot
+  of cases. The proper fix is much more complicated so I'm releasing 
+  this version until I have a chance to fix it properly.
+  http://dev.processing.org/bugs/show_bug.cgi?id=176
+
+- added createGraphics(width, height, "renderer"); 
+  this is mentioned in the FAQ but was not implemented.
+
+- fix set() and background(PImage) for JAVA2D. 
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1145108567
+
+- removed "max texture size" and "ignoring illegal line" error
+  messages that were accidentally left in the previous release.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0113 - 14 April 2006
 
 OpenGL applet export! 
