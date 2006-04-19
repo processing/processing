@@ -775,9 +775,12 @@ images with alpha, all fonts) are displayed in P3D and OpenGL based on
 their drawing order. This creates some annoying effects like making
 things opaque if they're drawn out of order with objects above or
 beneath them. This is simply how most 3D rendering works, but is
-something that we'd like to develop a workaround for in the
-future. Currently, you should just try to draw things back-to-front as
-best as possible. (<A
+something that we'd like to hide from users in the future. 
+As of revision 0114, the situation can be improved by adding 
+<TT>hint(ENABLE_DEPTH_SORT)</TT> to setup(). However, the implementation
+is far from perfect. It may improve things or it may not, better support
+will arrive in a future release.
+(<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 176</A>)
 
 <LI> Names of sketches cannot start with a number, or have spaces
@@ -1321,8 +1324,8 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=126">Bug 126</A>.
 though we're hoping to have it complete soon. (<A
 HREF="http://as.processing.org/bugs/show_bug.cgi?id=60">Bug
 60</A>)</STRIKE> Export to Application works in 0097.
-<LI>The get(), set(), blend(), loadPixels() and updatePixels() 
-functions are fairly broken when using OpenGL. (<A
+<LI>Pixel operations (get(), set(), blend(), loadPixels(), updatePixels(), 
+filter(), etc. there are others) are fairly broken when using OpenGL. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=91">Bug 91</A>)
 <LI>The size of exported applets is larger than we would like, but
 we'll get things smaller and more optimize again. Having separated the
