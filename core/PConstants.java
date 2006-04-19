@@ -293,7 +293,7 @@ public interface PConstants {
   //static final int DISABLE_SMOOTH_HACK     = 4;
   static final int DISABLE_DEPTH_TEST      = 5;
   static final int NO_FLYING_POO           = 6;
-  static final int DEPTH_SORT              = 7;
+  static final int ENABLE_DEPTH_SORT       = 7;
 
   static final int HINT_COUNT              = 8;
 
