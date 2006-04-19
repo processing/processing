@@ -343,7 +343,7 @@ public class PGraphics3 extends PGraphics {
     // no need to z order and render
     // shapes were already rendered in endShape();
     // (but can't return, since needs to update memimgsrc
-    if (hints[DEPTH_SORT]) {
+    if (hints[ENABLE_DEPTH_SORT]) {
       if (triangleCount > 0) {
         depth_sort_triangles();
         render_triangles();
@@ -387,7 +387,7 @@ public class PGraphics3 extends PGraphics {
       shape_index = 0;
     }
 
-    if (hints[DEPTH_SORT]) {
+    if (hints[ENABLE_DEPTH_SORT]) {
       // continue with previous vertex, line and triangle count
       // all shapes are rendered at endFrame();
       vertex_start = vertexCount;
@@ -1041,7 +1041,7 @@ public class PGraphics3 extends PGraphics {
     // RENDER SHAPES FILLS HERE WHEN NOT DEPTH SORTING
 
     // if true, the shapes will be rendered on endFrame
-    if (!hints[DEPTH_SORT]) {
+    if (!hints[ENABLE_DEPTH_SORT]) {
       if (fill) render_triangles();
       if (stroke) render_lines();
     }
@@ -1319,6 +1319,52 @@ public class PGraphics3 extends PGraphics {
 
 
   protected void depth_sort_triangles() {
+    depth_sort_triangles_internal(0, triangleCount);
+  }
+
+
+  protected void depth_sort_triangles_internal(int i, int j) {
+    int pivotIndex = (i+j)/2;
+    depth_sort_triangles_swap(pivotIndex, j);
+    int k = depth_sort_triangles_partition(i-1, j);
+    depth_sort_triangles_swap(k, j);
+    if ((k-i) > 1) depth_sort_triangles_internal(i, k-1);
+    if ((j-k) > 1) depth_sort_triangles_internal(k+1, j);
+  }
+
+
+  protected int depth_sort_triangles_partition(int left, int right) {
+    int pivot = right;
+    do {
+      while (depth_sort_triangles_compare(++left, pivot) < 0) { }
+      while ((right != 0) &&
+             (depth_sort_triangles_compare(--right, pivot) > 0)) { }
+      depth_sort_triangles_swap(left, right);
+    } while (left < right);
+    depth_sort_triangles_swap(left, right);
+    return left;
+  }
+
+
+  protected void depth_sort_triangles_swap(int a, int b) {
+    int temp[] = triangles[a];
+    triangles[a] = triangles[b];
+    triangles[b] = temp;
+
+    float tempf[][] = triangleColors[a];
+    triangleColors[a] = triangleColors[b];
+    triangleColors[b] = tempf;
+  }
+
+
+  protected float depth_sort_triangles_compare(int a, int b) {
+    return
+      (vertices[triangles[b][VERTEX1]][Z] +
+       vertices[triangles[b][VERTEX2]][Z] +
+       vertices[triangles[b][VERTEX3]][Z]) -
+      (vertices[triangles[a][VERTEX1]][Z] +
+       vertices[triangles[a][VERTEX2]][Z] +
+       vertices[triangles[a][VERTEX3]][Z]);
   }
 
 
@@ -1376,6 +1422,8 @@ public class PGraphics3 extends PGraphics {
 
       triangle.setIndex(index);
       triangle.render();
+
+      //System.out.println(i + " " + a[Z] + " " + b[Z] + " " + c[Z]);
 
       if (raw != null) {
         if (raw instanceof PGraphics3) {

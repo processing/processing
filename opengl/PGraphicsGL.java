@@ -402,7 +402,7 @@ public class PGraphicsGL extends PGraphics3 {
 
     report("top endFrame()");
 
-    if (hints[DEPTH_SORT]) {
+    if (hints[ENABLE_DEPTH_SORT]) {
       if (triangleCount > 0) {
         depth_sort_triangles();
         render_triangles();
@@ -799,7 +799,7 @@ public class PGraphicsGL extends PGraphics3 {
         int maxSize[] = new int[1];
         gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, maxSize, 0);
         maxTextureSize = maxSize[0];
-        System.out.println("max texture size is " + maxTextureSize);
+        //System.out.println("max texture size is " + maxTextureSize);
       }
       if ((width2 > maxTextureSize) || (height2 > maxTextureSize)) {
         /*
