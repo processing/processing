@@ -1319,7 +1319,7 @@ public class PGraphics3 extends PGraphics {
 
 
   protected void depth_sort_triangles() {
-    depth_sort_triangles_internal(0, triangleCount);
+    depth_sort_triangles_internal(0, triangleCount-1);
   }
 
 
@@ -1347,10 +1347,9 @@ public class PGraphics3 extends PGraphics {
 
 
   protected void depth_sort_triangles_swap(int a, int b) {
-    int temp[] = triangles[a];
+    int tempi[] = triangles[a];
     triangles[a] = triangles[b];
-    triangles[b] = temp;
-
+    triangles[b] = tempi;
     float tempf[][] = triangleColors[a];
     triangleColors[a] = triangleColors[b];
     triangleColors[b] = tempf;

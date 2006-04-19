@@ -4,11 +4,14 @@ X   no need to use (..., null) anymore
 X fix set() for JAVA2D, also fixes background(PImage) for JAVA2D
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1145108567
 X remove "max texture size" debug message
+X flicker with depth sort enabled
 
-_ flicker with depth sort enabled
 _ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
 _   because the triangles won't be rendered by the time endRaw() is called
-_ 
+_ need to merge sorting/drawing of lines and triangles
+_   lines will occlude tris and vice versa
+_   will need to split each based on the other
+_   sort issues will affect both
 
 _ gray background in pdf (using both gl and p3d)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=324
@@ -20,7 +23,6 @@ _ color values on camera input flipped on intel macs
 _   http://dev.processing.org/bugs/show_bug.cgi?id=313
 _ polygon z-order with alpha in opengl
 _   add option to sort triangles back to front so alpha works
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076660476
 _   at least add it to the faq, or this would be a test case w/ the sorting
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _   http://www.opengl.org/resources/tutorials/advanced/advanced97/notes/node112.html
