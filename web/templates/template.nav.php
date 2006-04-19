@@ -83,6 +83,22 @@ function short_nav($section)
     return $html;
 }
 
+function local_nav($section, $rel_path)
+{
+    $html  = "\t\t\t".'<div id="navigation">'."\n";
+    $html .= "\t\t\t\t".'<div class="navBar" id="mainnav_noSub">'."\n";
+
+    $html .= "\t\t\t\t\t<a href=\"{$rel_path}index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">Langauge</a> \\ \n";
+    $html .= "\t\t\t\t\t<a href=\"{$rel_path}libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">Libraries</a> \\ \n";
+    $html .= "\t\t\t\t\t<a href=\"{$rel_path}environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
+    $html .= "\t\t\t\t\t<a href=\"{$rel_path}compare/index.html\"" . ($section == 'Comparison' ? 'class="active"' : '') . ">Comparison</a>\n";
+    
+    $html .= "\t\t\t\t</div>\n";
+    $html .= "\t\t\t</div>\n";
+    
+    return $html;	
+}
+
 function navigation_tr($section)
 {
     global $lang;

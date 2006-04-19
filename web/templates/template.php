@@ -2,6 +2,9 @@
 
 require(TEMPLATEDIR.'template.nav.php');
 
+define('HEADER', '<img src="/img/processing_beta_cover.gif" alt="Processing cover" />');
+define('HEADER_LINK', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
+
 class Page
 {
     var $xhtml;
@@ -11,15 +14,10 @@ class Page
     
     function Page($title = '', $section = '', $bodyid = '')
     {
-		$bodyid = ($bodyid == '') ? $section : $bodyid;
 		$this->xhtml = new xhtml_page(TEMPLATEDIR.'template.html');
-		if ($section == 'Cover') {
-		    $this->xhtml->set('header', '<img src="/img/processing_beta_cover.gif" alt="Processing cover" />');
-		} else {
-		    $this->xhtml->set('header', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
-		}
+		$this->xhtml->set('header', $section == 'Cover' ? HEADER : HEADER_LINK);
 		$this->section = $section;
-		$this->xhtml->set('bodyid', $bodyid);
+		$this->xhtml->set('bodyid', ($bodyid == '') ? $section : $bodyid);
 		$title = ($title == '') ? 'Processing 1.0 (BETA)' : $title . ' \ Processing 1.0 (BETA)';
 		$this->xhtml->set('title', $title);
 		$this->xhtml->set('navigation', navigation($section));
@@ -69,6 +67,10 @@ class Page
         return $this->xhtml->out();
     }
 
+	function set_rel_path($path = '') 
+	{
+		$this->xhtml->set('relpath', $path);
+	}
 }
 
 class ReferencePage
@@ -85,15 +87,12 @@ class ReferencePage
         $title = $ref->title() . ($lang == 'en' ? '' : " \ {$LANGUAGES[$lang][0]}") .' \ Language (API) \ Processing 1.0 (BETA)';
         
         $xhtml = new xhtml_page(TEMPLATEDIR.'template.translation.html');
-        $xhtml->set('header', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
+        $xhtml->set('header', HEADER_LINK);
         $xhtml->set('title', $title);
         $xhtml->set('bodyid', 'Langauge-'.$lang);
-        if ($lang == 'en') {
-            $xhtml->set('navigation', navigation('Language'));
-        } else {
-            $xhtml->set('navigation', navigation_tr('Language'));
-        }
         
+        $xhtml->set('navigation', ($lang == 'en') ? navigation('Language') : navigation_tr('Language'));
+
         $piece = new xhtml_piece(TEMPLATEDIR.'template.reference.item.html');
         $xhtml->set('content_for_layout', $piece->out());
         
@@ -109,8 +108,7 @@ class ReferencePage
             $xhtml->set($key, $value);
         }
 
-			$xhtml->set('updated', date('F d, Y h:i:sa T', filemtime(CONTENTDIR.'/'.$ref->filepath)));
-        
+		$xhtml->set('updated', date('F d, Y h:i:sa T', filemtime(CONTENTDIR.'/'.$ref->filepath)));
         
         $this->xhtml = $xhtml;
         $this->language($lang);
@@ -149,7 +147,7 @@ class LibReferencePage extends ReferencePage
         $title = $ref->title() . ($lang == 'en' ? '' : " \ {$LANGUAGES[$lang][0]}") .' \ Language (API) \ Processing 1.0 (BETA)';
         
         $xhtml = new xhtml_page(TEMPLATEDIR.'template.translation.html');
-        $xhtml->set('header', '<a href="http://processing.org/"><img src="/img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
+        $xhtml->set('header', HEADER_LINK);
         $xhtml->set('title', $title);
         $xhtml->set('bodyid', 'Library-ref');
         if ($lang == 'en') {
@@ -174,7 +172,7 @@ class LibReferencePage extends ReferencePage
             $xhtml->set($key, $value);
         }
    	
-			$xhtml->set('updated', date('F d, Y h:i:sa T', filemtime(CONTENTDIR.'/'.$ref->filepath)));
+		$xhtml->set('updated', date('F d, Y h:i:sa T', filemtime(CONTENTDIR.'/'.$ref->filepath)));
 			
         $this->xhtml = $xhtml;
         $this->language($lang);
@@ -187,15 +185,16 @@ class LocalPage extends Page
     var $lang = 'en';
     var $subtemplate = false;
     
-    function LocalPage($title = '', $section = '', $bodyid = '')
+    function LocalPage($title = '', $section = '', $bodyid = '', $rel_path = '')
     {
         $this->xhtml = new xhtml_page(TEMPLATEDIR.'template.local.html');
-        $this->xhtml->set('header', '<a href="http://processing.org/"><img src="img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
-        $bodyid = ($bodyid == '') ? $section : $bodyid;
-        $this->xhtml->set('bodyid', $bodyid);
+        $this->xhtml->set('header', '<a href="http://processing.org/"><img src="'.$rel_path.'img/processing_beta_cover.gif" alt="Processing cover" title="Go to Processing.org" /></a>');
         $title = ($title == '') ? 'Processing 1.0 (BETA)' : $title . ' \ Processing 1.0 (BETA)';
         $this->xhtml->set('title', $title);
-        $this->xhtml->set('navigation', short_nav($section));
+        $this->xhtml->set('navigation', local_nav($section, $rel_path));
+		$this->set('relpath', $rel_path);
+		$this->language('en');
+		$this->xhtml->set('bodyid', ($bodyid == '') ? $section : $bodyid);
     }
 }
 
@@ -205,21 +204,21 @@ class LocalReferencePage extends ReferencePage
     var $lang = 'en';
     var $filepath;
     
-    function LocalReferencePage(&$ref, $translation, $lang = 'en')
+    function LocalReferencePage(&$ref, $translation, $lang = 'en', $rel_path = '')
     {        
         $this->filepath = 'distribution/' . $ref->name();
         $title = $ref->title() .' \ Language (API) \ Processing 1.0 (BETA)';
         
         $xhtml = new xhtml_page(TEMPLATEDIR.'template.local.html');
-        $xhtml->set('header', '<a href="http://processing.org/"><img src="img/processing_beta.gif" alt="Processing cover" title="Back to the cover." /></a>');
+        $xhtml->set('header', '<a href="http://processing.org/"><img src="img/processing_beta.gif" alt="Processing cover" title="Back to the reference index." /></a>');
         $xhtml->set('title', $title);
         $xhtml->set('bodyid', 'Langauge');
-        $xhtml->set('navigation', short_nav('Language'));
+        $xhtml->set('navigation', local_nav('Language'));
         
         $piece = new xhtml_piece(TEMPLATEDIR.'template.reference.item.html');
         $xhtml->set('content_for_layout', $piece->out());
         
-        $xhtml->set('reference_nav', reference_nav());
+        $xhtml->set('reference_nav', local_nav($section, $rel_path));
         $xhtml->set('language_nav', language_nav($lang));
         
         $xhtml->set('content', $ref->display());
@@ -230,9 +229,52 @@ class LocalReferencePage extends ReferencePage
         foreach ($translation->meta as $key => $value) {
             $xhtml->set($key, $value);
         }
+
+		$xhtml->set('relpath', $rel_path);
+		$xhtml->set('updated', date('F d, Y h:i:sa T', filemtime(CONTENTDIR.'/'.$ref->filepath)));
         
         $this->xhtml = $xhtml;
         $this->language($lang);
+    }
+}
+
+class LocalLibReferencePage extends ReferencePage
+{
+    function LocalLibReferencePage(&$ref, $lib, $translation, $rel_path = '../../')
+    {
+        global $LANGUAGES;
+		$lang = 'en';
+        
+        $this->filepath = "distribution/libraries/$lib/" . $ref->name();
+        
+        $title = $ref->title() . "\\ $lib \\ Language (API) \\ Processing 1.0 (BETA)";
+        
+        $xhtml = new xhtml_page(TEMPLATEDIR.'template.local.html');
+        $xhtml->set('header', '<a href="http://processing.org/"><img src="'.$rel_path.'img/processing_beta.gif" alt="Processing.org" title="Back to the reference index." /></a>');
+        $xhtml->set('title', $title);
+        $xhtml->set('bodyid', 'Library-ref');
+        
+        $xhtml->set('navigation', local_nav('Libraries', $rel_path));
+        
+        $piece = new xhtml_piece(TEMPLATEDIR.'template.reference.item.html');
+        $xhtml->set('content_for_layout', $piece->out());
+        
+        $xhtml->set('reference_nav', library_nav($lib));
+        $xhtml->set('language_nav', language_nav($lang));
+
+        foreach ($translation->attributes as $key => $value) {
+            $xhtml->set($key, $value);
+        }
+        
+        foreach ($translation->meta as $key => $value) {
+            $xhtml->set($key, $value);
+        }
+
+        $xhtml->set('content', $ref->display());
+   	
+		$xhtml->set('updated', date('F d, Y h:i:sa T', filemtime(CONTENTDIR.'/'.$ref->filepath)));
+		$xhtml->set('relpath', $rel_path);
+        $this->xhtml = $xhtml;
     }
 }
 
