@@ -1,4 +1,6 @@
 0114 pde
+X fix "ignoring illegal line...macosx is missing libjogl_cg.jnilib" error msg
+
 
 _ jar files like the bad aiexport plugin will cause serious problems
 _   need to ignore processing.core classes showing up in other jar files
