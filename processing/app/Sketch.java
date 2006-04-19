@@ -2438,7 +2438,7 @@ public class Sketch {
     for (int i = 0; i < lines.length; i++) {
       int hash = lines[i].indexOf('#');
       String line = (hash == -1) ?
-        lines[i].trim() : lines[i].substring(hash + 1).trim();
+        lines[i].trim() : lines[i].substring(0, hash).trim();
       if (line.length() == 0) continue;
 
       int equals = line.indexOf('=');
