@@ -1100,13 +1100,23 @@ public class PGraphics2 extends PGraphics {
   }
   */
 
-  /*
+
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
-    BufferedImage bi = (BufferedImage) image;
-    bi.setRGB(dx, dy, sw, sh, src.pixels, sy*src.width + sx, src.width);
+    //BufferedImage bi = (BufferedImage) image;
+    //bi.setRGB(dx, dy, sw, sh, src.pixels, sy*src.width + sx, src.width);
+
+    WritableRaster raster = ((BufferedImage) image).getRaster();
+    if ((sx == 0) && (sy == 0) && (sw == src.width) && (sh == src.height)) {
+      raster.setDataElements(dx, dy, src.width, src.height, src.pixels);
+    } else {
+      int mode = src.imageMode;
+      src.imageMode = CORNERS;
+      PImage temp = src.get(sx, sy, sw, sh);
+      src.imageMode = mode;
+      raster.setPixels(dx, dy, temp.width, temp.height, temp.pixels);
+    }
   }
-  */
 
 
   //////////////////////////////////////////////////////////////
