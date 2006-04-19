@@ -1,6 +1,14 @@
 0114 core
 X added createGraphics(width, height, renderer) 
 X   no need to use (..., null) anymore
+X fix set() for JAVA2D, also fixes background(PImage) for JAVA2D
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1145108567
+X remove "max texture size" debug message
+
+_ flicker with depth sort enabled
+_ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
+_   because the triangles won't be rendered by the time endRaw() is called
+_ 
 
 _ gray background in pdf (using both gl and p3d)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=324
@@ -28,12 +36,7 @@ _ pixel operations are broken in opengl
 _   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
-_ opengl needs to shut itself down properly when closing applet
-_   otherwise can crash the whole browser
 _ when closing a sketch via the close box, make sure stop() getting called
-_ get rid of some of the sillier IntBuffer stuff where it's not needed
-_   use the version of the prototypes that use an offset into the array
-_   need to test performance either way
 
 
 examples
@@ -667,6 +670,11 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ opengl needs to shut itself down properly when closing applet
+_   otherwise can crash the whole browser
+_ get rid of some of the sillier IntBuffer stuff where it's not needed
+_   use the version of the prototypes that use an offset into the array
+_   need to test performance either way
 _ when creating a new PImage on every frame, slurps a ton of memory
 _   workaround is to write the code properly, but suggests something bad
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
