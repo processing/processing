@@ -1766,9 +1766,9 @@ public class PGraphicsGL extends PGraphics3 {
     pixelBuffer.get(pixels);
     pixelBuffer.rewind();
 
-    for (int i = 0; i < 5; i++) {
-      System.out.println(PApplet.hex(pixels[i]));
-    }
+    //for (int i = 0; i < 5; i++) {
+    //System.out.println(PApplet.hex(pixels[i]));
+    //}
 
     /*
     int temp[] = new int[width];
