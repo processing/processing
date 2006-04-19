@@ -90,12 +90,18 @@ li { margin-bottom: 1em; }
     </li>
     <li>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></li>
 
-	<li>Generate <a href="#" onclick="remote_link('reference_local.php'); return false;">Reference for Distribution</a>
-	</li>
 	<li>Generate Library References:<br />
 		<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">English</a>
 		<a href="#" onclick="remote_link('libraries.php', 'lang=tr'); return false;">Turkish</a>
 	</li>
+	
+	<li>Generate for distribution: 
+		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a>
+		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a>
+		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment</a>
+		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a>
+	</li>
+	
     <li>Generate <a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a></li>
     <li>Generate <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a>
                 <a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
