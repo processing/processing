@@ -1,14 +1,7 @@
-0114 core
-X added createGraphics(width, height, renderer) 
-X   no need to use (..., null) anymore
-X fix set() for JAVA2D, also fixes background(PImage) for JAVA2D
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1145108567
-X remove "max texture size" debug message
-X flicker with depth sort enabled
-X implement basic depth sorting for triangles in P3D and OPENGL
-X   add option to sort triangles back to front so alpha works
-X   http://dev.processing.org/bugs/show_bug.cgi?id=176
-o   at least add it to the faq, or this would be a test case w/ the sorting
+0115 core
+X remove debug message from loadPixels()
+X remove debug message from PGraphics2.save()
+
 
 _ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
 _   because the triangles won't be rendered by the time endRaw() is called

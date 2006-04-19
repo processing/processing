@@ -1214,10 +1214,10 @@ public class PGraphics2 extends PGraphics {
 
 
   public void save(String filename) {
-    System.out.println("start load");
+    //System.out.println("start load");
     loadPixels();
-    System.out.println("end load, start save");
+    //System.out.println("end load, start save");
     super.save(filename);
-    System.out.println("done with save");
+    //System.out.println("done with save");
   }
 }
