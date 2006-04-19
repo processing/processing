@@ -5,6 +5,10 @@ X fix set() for JAVA2D, also fixes background(PImage) for JAVA2D
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1145108567
 X remove "max texture size" debug message
 X flicker with depth sort enabled
+X implement basic depth sorting for triangles in P3D and OPENGL
+X   add option to sort triangles back to front so alpha works
+X   http://dev.processing.org/bugs/show_bug.cgi?id=176
+o   at least add it to the faq, or this would be a test case w/ the sorting
 
 _ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
 _   because the triangles won't be rendered by the time endRaw() is called
@@ -21,11 +25,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=325
 priorities prior to fitc
 _ color values on camera input flipped on intel macs
 _   http://dev.processing.org/bugs/show_bug.cgi?id=313
-_ polygon z-order with alpha in opengl
-_   add option to sort triangles back to front so alpha works
-_   at least add it to the faq, or this would be a test case w/ the sorting
-_   http://dev.processing.org/bugs/show_bug.cgi?id=176
-_   http://www.opengl.org/resources/tutorials/advanced/advanced97/notes/node112.html
 _ fix tint() for PGraphics3 (what could be wrong?)
 _   tint() honoring alpha but not colored tint
 _   maybe not setting fill color when drawing textures
@@ -672,6 +671,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ polygon z-order with alpha in opengl
+_   complete the implementation of hint() with proper implementation
+_   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _ opengl needs to shut itself down properly when closing applet
 _   otherwise can crash the whole browser
 _ get rid of some of the sillier IntBuffer stuff where it's not needed
