@@ -1,0 +1,10 @@
+version=pmwiki-2.0.beta26
+newline=²
+time=1110736672
+text=<<|[[PmWiki.Variables]]|>>²²This page describes the variables used by PmWiki for [[Internationalizations]] (i18n).²²:$VarPagesFmt:An array which contains the `PageNames where you can find variables definition. To be modified when documentation is not in english. See ''vardoc.php'' ²²
+targets=PmWiki.UploadVariables,PmWiki.Variables,PmWiki.OtherVariables,PmWiki.Internationalizations,PmWiki.PmWiki
+author=Radu
+name=PmWiki.I18nVariables
+host=24.43.175.212
+agent=Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)
+rev=3

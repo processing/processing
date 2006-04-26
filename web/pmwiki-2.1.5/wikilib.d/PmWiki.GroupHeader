@@ -1,0 +1,9 @@
+version=pmwiki-2.0.beta55 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6
+author=Pm
+host=24.1.26.255
+name=PmWiki.GroupHeader
+rev=13
+targets=
+text=%25define=trail bgcolor=#eee block%25%0a%25define=note font-style=italic color=green%25%0a%25define=important block bgcolor=#fcc border='1px solid black' padding=5px%25%0a%25define=audience class='frame rfloat' font-size:smaller bgcolor=#ffffcc%25%0a
+time=1125518181

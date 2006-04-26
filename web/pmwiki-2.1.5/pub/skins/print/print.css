@@ -1,0 +1,50 @@
+/***********************************************************************
+** print.css
+**  Copyright 2004 Patrick R. Michaud (pmichaud@pobox.com)
+**  This file is part of PmWiki; you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License as published
+**  by the Free Software Foundation; either version 2 of the License, or
+**  (at your option) any later version.  See pmwiki.php for full details.
+***********************************************************************/
+
+/***********************************************************************
+** These settings are part of the ?action=print skin.  If you want
+** to change these settings, create a new print template and set
+** $PrintTemplateFmt in the config.php file to point to your new 
+** printing skin.
+***********************************************************************/
+
+body { 
+  width:auto;
+  background-color:white;
+  color:black;
+  font-family:serif;
+}
+
+#printhead { 
+  font-family:sans-serif;
+  border-top:3px solid #a0a0a0; 
+  border-bottom:5px solid #a0a0a0; 
+  margin-bottom:1em; 
+}
+#printhead h3 { margin-top:0px; } 
+#printhead h1 { margin-bottom:0px; }
+
+#printtitle { 
+}
+
+#printfoot {
+  clear:both;
+  margin-top:1em; 
+  border-top:5px solid #a0a0a0; 
+  font-size:smaller; 
+}
+
+  
+a:link { color:#444444; font-weight:bold; text-decoration:none; }
+a:visited { color:#444444; font-weight:bold; text-decoration:none; }
+a.wikilink:hover { color: #444444; text-decoration:underline; }
+a.createlink { color:#444444; }
+a.createlink:visited { color:#444444; }
+a.createlink:hover { color:#ff2222; }
+

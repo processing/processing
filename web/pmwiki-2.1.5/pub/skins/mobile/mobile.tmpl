@@ -1,0 +1,71 @@
+<!DOCTYPE html 
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>$WikiTitle - {$Group} - {$Title} $Action</title>
+  <meta http-equiv='Content-Style-Type' content='text/css' />
+  <link rel='stylesheet' href='$SITE_ROOT/css/mobile.css' type='text/css' />
+  <!--HeaderText-->
+</head>
+<body>
+<div id="head"> 
+    <img src="$SITE_ROOT/images/mobile.png">
+</div>
+<div id="navigation">
+    <img src="$SITE_ROOT/images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="$SITE_ROOT/index.php">Cover</a>
+
+    <span class="backslash">\</span>
+    <a href="$SITE_ROOT/exhibition/index.php">Exhibition</a>
+
+    <span class="backslash">\</span>
+    <a href="$SITE_ROOT/learning/index.php">Learning</a>
+
+    <span class="backslash">\</span>
+    <a href="$SITE_ROOT/reference/index.php">Reference</a> 
+
+    <span class="backslash">\</span>
+    <a href="$SITE_ROOT/download/index.php">Download</a>
+
+    <span class="backslash">\</span>
+    <a href="$SITE_ROOT/faq/index.php">FAQ</a>
+
+    <span class="backslash">\</span>
+    <a href="$SITE_ROOT/discourse/index.php">Discourse</a>
+
+    <span class="backslash">\</span>
+    Wiki
+</div>
+<div id="subnavigation" style="padding-left: 450px;">
+    <img src="$SITE_ROOT/images/nav_bottomarrow.png" align="absmiddle">
+    <a href="{$ScriptUrl}">Home</a>
+
+    <span class="backslash">\</span>
+    <a href="{$ScriptUrl}/$[{$SiteGroup}/AllRecentChanges]">$[Recent Changes]</a>
+
+    <span class="backslash">\</span>
+    <a href="{$ScriptUrl}/$[{$SiteGroup}/Search]">$[Search]</a>
+
+    <span class="backslash">\</span>
+    <a href="{$PageUrl}?action=logout">$[Logout]</a>
+</div>
+<div class="content">
+  <h3>{$Title}</h3>
+  <br>
+  <br>
+  <!--PageText-->
+  <div style="margin-top: 40px">
+    <a rel="nofollow" href='{$PageUrl}?action=edit'>$[Edit]</a> -
+    <a rel="nofollow" href='{$PageUrl}?action=diff'>$[History]</a> -
+    <a rel="nofollow" href='{$PageUrl}?action=print' target='_blank'>$[Print]</a> - $[Page last modified on {$LastModified}]
+  </div>
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="$SITE_ROOT/copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

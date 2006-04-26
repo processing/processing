@@ -1,0 +1,10 @@
+version=pmwiki-2.1.beta38 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; U; Linux i686 (x86_64); en-US; rv:1.8) Gecko/20051128 SUSE/1.5-0.1 Firefox/1.5
+author=Pm
+csum=Removed temporary xyz class from edit link
+host=24.1.26.255
+name=Site.PageActions
+rev=23
+targets=Site.PageActions
+text=* %25item class=browse accesskey='$[ak_view]'%25[[{$FullName} | $[View] ]]%0a* %25item rel=nofollow class=edit accesskey='$[ak_edit]'%25[[{$FullName}?action=edit | $[Edit] ]]%0a* %25item rel=nofollow class=diff accesskey='$[ak_history]'%25[[{$FullName}?action=diff | $[History] ]]%0a(:if auth upload:)%0a* %25item rel=nofollow class=upload accesskey='$[ak_attach]'%25[[{$FullName}?action=upload | $[Attach] ]]%0a(:if:)%0a* %25item rel=nofollow class=print accesskey='$[ak_print]'%25[[{$FullName}?action=print | $[Print] ]]
+time=1142198002

@@ -1,0 +1,10 @@
+version=pmwiki-2.1.beta22 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; U; Linux i686 (x86_64); en-US; rv:1.8) Gecko/20051128 SUSE/1.5-0.1 Firefox/1.5
+author=Pm
+csum=Eliminate ` from pagenames.
+host=24.1.26.255
+name=Site.EditForm
+rev=48
+targets=
+text=!!$[Editing {$FullName}] %25block class=wikiaction%25%0a(:messages:)%0a(:div id='wikiedit':)%0a(:input e_form:)[[#top]](:e_guibuttons:)\\%0a(:input e_textarea:)\\%0a$[Summary]: (:input e_changesummary:)\\%0a$[Author]: (:input e_author:) (:input e_minorcheckbox:) $[This is a minor edit]\\%0a(:input e_savebutton:) (:input e_saveeditbutton:) (:input e_savedraftbutton:) (:input e_previewbutton:) (:input e_cancelbutton:)%0a(:input end:)%0a(:divend:)%0a(:include $[{$SiteGroup}/EditQuickReference]:)%0a(:if e_preview:)%0a!!$[Preview {$FullName}]%0a'''$[Page is unsaved]'''%0a(:e_preview:)%0a----%0a'''$[End of preview -- remember to save]'''\\%0a[[#top | $[Top] ]]%0a(:if:)%0a
+time=1139265077

@@ -1,0 +1,22 @@
+This directory contains the files to display pages in PmWiki according
+to the default layout.  
+
+==>Don't edit these files directly, as you may lose your edits the
+next time you upgrade PmWiki!
+
+Instead, copy the files to another directory in pub/skins/ and edit
+them there.  You can then configure PmWiki to use your modified layout
+files by setting the $Skin variable in your local/config.php.  For 
+example, if you copy your custom skin to pub/skins/custom, then you 
+would set
+   $Skin = 'custom';
+in local/config.php.
+
+The files in this directory:
+    pmwiki.tmpl   -- the default template for page layouts
+    pmwiki.css    -- PmWiki's default css
+    pmwiki-32.gif -- the PmWiki logo
+
+If you just want to change the logo, you can do it by setting $PageLogoUrl
+to the url location of your logo.
+

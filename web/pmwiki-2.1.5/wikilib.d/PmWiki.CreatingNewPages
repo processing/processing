@@ -1,0 +1,11 @@
+version=pmwiki-2.1.1 ordered=1 urlencoded=1
+agent=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)
+author=
+csum=
+host=87.202.218.224
+name=PmWiki.CreatingNewPages
+rev=22
+targets=PmWiki.Links,PmWiki.MyNewPage,PmWiki.WikiWords,Site.SideBar,PmWiki.WikiGroup,PmWiki.DocumentationIndex
+text=(:title Creating New Pages:)%0aTo create a new page, you need to edit an existing page, and add a link to the page you want to create.  %0a%0aTo link to your new page, you must choose a name for it.  The best names describe the page's contents well, so that everyone can remember and type the name easily.%0a%0aThere are two main ways to create a link:%0a%0a# '''Double brackets''': Typing [@[[my new page]]@] will create a link to [[my new page]].  There's [[a lot you can do -> Links]] with double bracket links.%0a# '''WikiWords''': Typing [@[[MyNewPage]]@] will create a link to [[MyNewPage]].  [[WikiWords]] are CapitalizedWordsSmashedTogether, and don't need double brackets to become links.  Note that some sites have turned off WikiWord links -- including this one!%0a%0aYou can see that the links to [[my new page]] all have question marks after them.  That's because [[my new page]] hasn't been written yet.  Clicking the link will take you to an edit form where you can write and save the new page.%0a%0a----%0a%0aAnother way to create a page:  in your browser's address bar (where the page URL is), replace the name of the current page with the name of the page you wish to create, and hit Enter or do whatever you would normally do to go to a new location.  PmWiki will then dutifully tell you that the page you entered doesn't exist, but you can click on the "Edit" link in order to create, edit, and save the new page.%0a%0aThe bad thing about this method is that there are no links to your new page, so you're the only person who knows it is there.  It will be an orphan, unread, unlinked, unloved.  That's why adding a link to an existing page or to the [[Site/SideBar]] is a better way to create a page.%0a%0a----%0a%0aYou can also organize related pages into [[wiki group | groups]], and link between pages in different groups.  [[wiki group | Learn more]].%0a%0a%25trail%25%3c%3c|[[Documentation Index]]|>>%0a%0a
+time=1142436262
+title=Creating New Pages

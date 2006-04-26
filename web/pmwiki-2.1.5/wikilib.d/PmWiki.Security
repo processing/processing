@@ -1,0 +1,9 @@
+version=pmwiki-2.0.beta55 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6
+author=Pm
+host=24.1.26.255
+name=PmWiki.Security
+rev=23
+targets=PmWiki.Passwords,PmWiki.PasswordsAdmin,PmWiki.UrlApprovals
+text=Distributed Pages:%0a*[[PmWiki.Passwords]] General use of passwords%0a*[[PmWiki.PasswordsAdmin]] More password options for the administrator%0a*[[PmWiki.UrlApprovals]] Require approval of Url links%0a%0aCookbook Pages%0a* See also [[Cookbook:Cookbook#Security | Cookbook index: Security]]%0a*[[Cookbook:Blocklist2]] Block postings based on content or IP address%0a*[[Cookbook:MTBlackList]] Movable Type spam blacklist%0a*[[Cookbook:WebServerSecurity]] Making the server more secure with .htaccess%0a*[[Cookbook:FarmSecurity]] Making Farm installations secure%0a*[[Cookbook:EProtect]] Hide e-mail address%0a*[[Cookbook:AuditImages]] Check to see what images have been uploaded to your wiki.
+time=1125541098

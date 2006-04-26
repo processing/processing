@@ -133,6 +133,7 @@ a:active {
 	position: relative;
 	left: 0px;
 	width: 750px;
+        height: 22px;
 	margin: 30px 50px 0px 50px;
 	padding: 0px 0px 0px 0px;
 }
@@ -148,7 +149,6 @@ a:active {
 #subnavigation {
 	position: relative;
 	left: 0px;
-	width: 750px;
 	margin: 0px 50px 0px 50px;
 	padding: 0px 0px 0px 0px;
 }
