@@ -971,11 +971,11 @@ public class PFont implements PConstants {
       //  GraphicsEnvironment.getLocalGraphicsEnvironment();
       Class geClass = Class.forName("java.awt.GraphicsEnvironment");
       Method glgeMethod =
-        geClass.getMethod("getLocalGraphicsEnvironment", null);
-      Object ge = glgeMethod.invoke(null, null);
+        geClass.getMethod("getLocalGraphicsEnvironment", (Class[]) null);
+      Object ge = glgeMethod.invoke((Class[]) null, (Object[]) null);
 
-      Method gafMethod = geClass.getMethod("getAllFonts", null);
-      Font fonts[] = (Font[]) gafMethod.invoke(ge, null); //ge.getAllFonts();
+      Method gafMethod = geClass.getMethod("getAllFonts", (Class[]) null);
+      Font fonts[] = (Font[]) gafMethod.invoke(ge, (Object[]) null); //ge.getAllFonts();
       String list[] = new String[fonts.length];
       for (int i = 0; i < list.length; i++) {
         list[i] = fonts[i].getName();
