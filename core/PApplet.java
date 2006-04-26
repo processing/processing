@@ -3306,7 +3306,7 @@ public class PApplet extends Applet
   static public File inputFile(String prompt, Frame parentFrame) {
     if (parentFrame == null) parentFrame = new Frame();
     FileDialog fd = new FileDialog(parentFrame, prompt, FileDialog.LOAD);
-    fd.show();
+    fd.setVisible(true);
 
     String directory = fd.getDirectory();
     String filename = fd.getFile();
@@ -3350,7 +3350,7 @@ public class PApplet extends Applet
   static public File outputFile(String prompt, Frame parentFrame) {
     if (parentFrame == null) parentFrame = new Frame();
     FileDialog fd = new FileDialog(parentFrame, prompt, FileDialog.SAVE);
-    fd.show();
+    fd.setVisible(true);
 
     String directory = fd.getDirectory();
     String filename = fd.getFile();
@@ -5968,7 +5968,7 @@ public class PApplet extends Applet
 
         // all set for rockin
         if (applet.displayable()) {
-          frame.show();
+          frame.setVisible(true);
         }
       }
 

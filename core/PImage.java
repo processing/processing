@@ -115,6 +115,11 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  public PImage(int width, int height, int format) {
+    init(width, height, format);
+  }
+  
+  
   public PImage(int pixels[], int width, int height, int format) {
     this.pixels = pixels;
     this.width = width;
