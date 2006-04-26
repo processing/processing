@@ -1,0 +1,19 @@
+version=pmwiki-2.1.5 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; en-US; rv:1.8.0.1) Gecko/20060214 Camino/1.0
+author=Carl
+csum=
+host=127.0.0.1
+name=Main.HomePage
+rev=203
+targets=PmWiki.DocumentationIndex,PmWiki.InitialSetupTasks,PmWiki.BasicEditing,Main.WikiSandbox
+text=Welcome to PmWiki!%0a%0aA local copy of PmWiki's%0adocumentation has been installed along with the software,%0aand is available via the [[PmWiki/documentation index]].  %0a%0aTo continue setting up PmWiki, see [[PmWiki/initial setup tasks]].%0a%0aThe [[PmWiki/basic editing]] page describes how to create pages%0ain PmWiki.  You can practice editing in the [[wiki sandbox]].%0a%0aMore information about PmWiki is available from http://www.pmwiki.org .%0a
+time=1146035713
+author:1146035713=Carl
+diff:1146035713:1146035599:=
+host:1146035713=127.0.0.1
+author:1146035599=Carl
+diff:1146035599:1146035565:=12a13%0a> asdf%0a\ No newline at end of file%0a
+host:1146035599=127.0.0.1
+author:1146035565=Carl
+diff:1146035565:1142203034:=13d12%0a%3c asdf%0a\ No newline at end of file%0a
+host:1146035565=127.0.0.1

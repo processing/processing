@@ -1,0 +1,10 @@
+Where is the documentation?
+
+PmWiki maintains its documentation as wiki pages.
+If you already have PmWiki installed, then a local copy of
+the documentation is available through PmWiki itself --
+see the "PmWiki.DocumentationIndex" page on your site.
+
+The documentation is also available online at
+http://www.pmwiki.org/wiki/PmWiki/DocumentationIndex .
+

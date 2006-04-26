@@ -1,0 +1,10 @@
+version=pmwiki-2.1.beta17 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8) Gecko/20051111 Firefox/1.5
+author=Pm
+excerpt=%3cp>%3cstrong>Password required%3c/strong>%0a%3c/p>%0a%3cpre> * Name/password not recognized%0a%3c/pre>%0a%3cp class='vspace'>%3c/p>%3cform action='/wiki/Site/AuthForm?action=edit' method='post' %0a    name='authform'>$PostVars%0a%3cpre> Name: %3cinput type='text' name='authid' />%3cbr /> Password: %3cinput type='password' name='authpw' />%0a%3c/pre>%3cp>%3cinput type='submit' value='OK' />%0a%3c/p>%3c/form>%0a
+host=24.1.26.255
+name=Site.AuthForm
+rev=11
+targets=
+text='''$[Password required]'''%0a(:messages:)%0a(:if enabled InvalidLogin:)* $[Name/password not recognized]%0a(:if:)%0a(:input auth_form:)%0a(:if enabled EnableAuthUser:)$[Name]: (:input text name=authid:)\\%0a(:if:)$[Password]: (:input password name=authpw:)%0a(:input submit value='OK':)%0a(:input end:)%0a
+time=1135895744

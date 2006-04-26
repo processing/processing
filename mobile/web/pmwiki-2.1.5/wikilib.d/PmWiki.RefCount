@@ -1,0 +1,10 @@
+version=pmwiki-2.1.beta38 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; U; Linux i686 (x86_64); en-US; rv:1.8) Gecko/20051128 SUSE/1.5-0.1 Firefox/1.5
+author=Pm
+csum=
+host=24.1.26.255
+name=PmWiki.RefCount
+rev=27
+targets=PmWiki.WikiAdministrator,PmWiki.LocalCustomizations,PmWiki.DocumentationIndex
+text=RefCount performs link reference counts on pages in the PmWiki database (i.e., counts of links between pages).  Before using RefCount, it must be enabled by the [[wiki administrator]] by placing the following line in a [[local customization(s)]] file:%0a%0a->[@include_once("$FarmD/scripts/refcount.php");@]%0a%0aTo use refcount add [@?action=refcount@] to the URL of any wiki page to bring up the reference count form. For example:%0a%0a%25newwin%25http://www.pmichaud.com/wiki/PmWiki/RefCount?action=refcount%0a%0aThe refcount form contains the following controls:%0a*'''Show''' ~ This selects which pages will appear in the output%0a**all ~ Shows all references %0a**missing ~ Shows only references to pages that don't exist%0a**existing ~ Shows only references to pages that do exist%0a**orphaned ~ Shows pages that exist but don't have any references to them.  There is no way to browse to an orphaned page.%0a*'''page names in group''' ~ Selects which group(s) to the referenced pages can be in%0a*'''referenced from pages in''' ~ Selects which group(s) the referencing pages can be in%0a*'''Display referencing pages''' ~ Includes a link to the referencing page -- this can make for a very long output unless you limit the groups searched%0a%0aThe output is a table where each row of the table contains a page name or link reference, the number of (non-RecentChanges) pages that contain links to the page and the number of Recent Changes pages with links to the page.%0a%0a%25trail%25%3c%3c|[[Documentation Index]]|>>%0a
+time=1142197844

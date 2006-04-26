@@ -1,0 +1,11 @@
+version=pmwiki-2.1.beta28 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (X11; U; Linux i686 (x86_64); en-US; rv:1.8) Gecko/20051128 SUSE/1.5-0.1 Firefox/1.5
+author=Pm
+csum=Updated description of $EnablePageListProtect
+ctime=1136054369
+host=24.1.26.255
+name=PmWiki.PagelistVariables
+rev=11
+targets=PmWiki.Variables
+text=%3c%3c|[[PmWiki.Variables]]|>>%0a%0a:$EnablePageListProtect:When set to 1 (which is the default), causes [@(:pagelist:)@] and [@(:searchresults:)@] to exclude listing any pages for which the browser does not currently have read authorization.  Setting this to zero means that read-protected pages can appear in a listing, but can also speed up searches considerably (because page permissions do not need to be checked).%0a%0a:$EnablePageIndex:When set to 1, causes PmWiki to maintain a "link and word index" in $PageIndexFile which significantly speeds up categories, backlinks, and searches.%0a%0a:$PageIndexFile:The location of the "page index" file for [@(:pagelist:)@], defaults to @@$WorkDir/.pageindex@@.%0a%0a:$SearchPatterns:An array of page name patterns to be required or excluded from search and pagelist results.  In order to be included in a search listing or page listing, a page's name must not match any pattern that is delimited by exclamation points (!) and must match all other patterns.  See Cookbook:SearchPatterns.%0a        # Limit all searches to Main group%0a        $SearchPatterns['default'][] = [='/^Main\\./';=]%0a        # Exclude the Main group from search results%0a        $SearchPatterns['default'][] = [='!^Main\\.!';=]%0a        # Exclude RecentChanges pages from search results%0a        $SearchPatterns['default'][] = [='!\\.(All)?RecentChanges$!';=]%0a%0a:$PageSearchForm:The page to be used to format search results for [@?action=search@] (unless the current page has a "searchresults" directive in it.  This variable can be an array, in which case the first page found from the array is used.%0a        # Use Search page in current group if it exists, otherwise use Site.Search%0a        $PageSearchForm = array('$Group.Search', '[=$[$SiteGroup/Search]=]');%0a
+time=1140839096
