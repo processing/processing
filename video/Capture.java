@@ -140,7 +140,13 @@ public class Capture extends PImage implements Runnable {
 
     try {
       QDRect qdrect = new QDRect(requestWidth, requestHeight);
-      QDGraphics qdgraphics = new QDGraphics(qdrect);
+      // workaround for bug with the intel macs
+      QDGraphics qdgraphics = null; //new QDGraphics(qdrect);
+      if (quicktime.util.EndianOrder.isNativeLittleEndian()) {
+        graphics = new QDGraphics(QDConstants.k32BGRAPixelFormat, qdrect);
+      } else {
+        graphics = new QDGraphics(QDGraphics.kDefaultPixelFormat, qdrect);
+      }
 
       capture = new SequenceGrabber();
       capture.setGWorld(qdgraphics, null);
@@ -450,9 +456,9 @@ public class Capture extends PImage implements Runnable {
   public void settings() {
     try {
       // fix for crash here submitted by hansi (stop/startPreview lines)
-	  capture.stop(); 
+          capture.stop();
       channel.settingsDialog();
-	  capture.startPreview(); 
+          capture.startPreview();
     } catch (StdQTException qte) {
       int errorCode = qte.errorCode();
       if (errorCode != Errors.userCanceledErr) {
