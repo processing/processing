@@ -24,7 +24,7 @@ _   maybe include as part of PApplet (casey thinks so)
 _ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
 
 _ sketch marked as modified too aggressively
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1142415397
+_   http://dev.processing.org/bugs/show_bug.cgi?id=328
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -75,6 +75,7 @@ svn rename svn://processing.org/tags/release-0003 svn://processing.org/tags/proc
 # recognizing a .cvsignore file in the current directory
 # (seems to be required whenever changes are made there too)
 svn propset svn:ignore -F .cvsignore .
+svn propset svn:ignore -F .svnignore .
 
 
 the biggies
