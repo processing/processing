@@ -143,9 +143,9 @@ public class Capture extends PImage implements Runnable {
       // workaround for bug with the intel macs
       QDGraphics qdgraphics = null; //new QDGraphics(qdrect);
       if (quicktime.util.EndianOrder.isNativeLittleEndian()) {
-        graphics = new QDGraphics(QDConstants.k32BGRAPixelFormat, qdrect);
+        qdgraphics = new QDGraphics(QDConstants.k32BGRAPixelFormat, qdrect);
       } else {
-        graphics = new QDGraphics(QDGraphics.kDefaultPixelFormat, qdrect);
+        qdgraphics = new QDGraphics(QDGraphics.kDefaultPixelFormat, qdrect);
       }
 
       capture = new SequenceGrabber();
