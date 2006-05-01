@@ -1010,6 +1010,7 @@ public class PGraphics3 extends PGraphics {
 
     // ------------------------------------------------------------------
     // POINTS FROM CAMERA SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
+    // this appears to be wasted time with the opengl renderer
 
     for (int i = vertex_start; i < vertex_end_including_clip_verts; i++) {
       float vx[] = vertices[i];

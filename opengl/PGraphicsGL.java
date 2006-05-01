@@ -384,7 +384,6 @@ public class PGraphicsGL extends PGraphics3 {
 
     // these tend to make life easier
     // (but sometimes at the expense of a little speed)
-
     // Not using them right now because we're doing our own lighting.
     //gl.glEnable(GL.GL_NORMALIZE);
     //gl.glEnable(GL.GL_AUTO_NORMAL); // I think this is OpenGL 1.2 only
@@ -415,6 +414,48 @@ public class PGraphicsGL extends PGraphics3 {
     //gl.glPopMatrix();
 
     report("bot endFrame()");
+  }
+
+
+  private float ctm[];
+
+  public GL beginGL() {
+    //beginFrame();  // frame will have already started
+    gl.glPushMatrix();
+
+    // load p5 modelview into the opengl modelview
+    if (ctm == null) ctm = new float[16];
+
+    ctm[0] = modelview.m00;
+    ctm[1] = modelview.m01;
+    ctm[2] = modelview.m02;
+    ctm[3] = modelview.m03;
+
+    ctm[4] = modelview.m10;
+    ctm[5] = modelview.m11;
+    ctm[6] = modelview.m12;
+    ctm[7] = modelview.m13;
+
+    ctm[8] = modelview.m20;
+    ctm[9] = modelview.m21;
+    ctm[10] = modelview.m22;
+    ctm[11] = modelview.m23;
+
+    ctm[12] = modelview.m30;
+    ctm[13] = modelview.m31;
+    ctm[14] = modelview.m32;
+    ctm[15] = modelview.m33;
+
+    // apply this modelview and get to work
+    gl.glMultMatrixf(ctm, 0);
+
+    return gl;
+  }
+
+
+  public void endGL() {
+    // remove the p5 modelview from opengl
+    gl.glPopMatrix();
   }
 
 

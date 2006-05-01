@@ -2,6 +2,9 @@
 X remove debug message from loadPixels()
 X remove debug message from PGraphics2.save()
 
+_ color values on camera input flipped on intel macs
+X   checked in a change for this recommended on qtjava list
+_   http://dev.processing.org/bugs/show_bug.cgi?id=313
 
 _ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
 _   because the triangles won't be rendered by the time endRaw() is called
@@ -15,9 +18,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=324
 _ using gl, lines don't show up in pdf with record (they're ok with p3d)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=325
 
-priorities prior to fitc
-_ color values on camera input flipped on intel macs
-_   http://dev.processing.org/bugs/show_bug.cgi?id=313
+_ beginShape() moving
+_   merge POLYGON, LINE_LOOP, LINE_STRIP?
+
 _ fix tint() for PGraphics3 (what could be wrong?)
 _   tint() honoring alpha but not colored tint
 _   maybe not setting fill color when drawing textures
