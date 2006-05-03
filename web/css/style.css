@@ -78,8 +78,12 @@ a:link:visited {
 #header form input.text {
 	width: 150px;
 }
+
+#header form p { margin: 0; }
 #header form input {
 	border: 1px solid black;
+	float: left;
+	margin-top: 1px;
 }
 
 /* ================ NAVBAR ================== */
