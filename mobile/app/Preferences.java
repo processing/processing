@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ import processing.core.PApplet;
  * properties files are iso8859-1, which is highly likely to
  * be a problem when trying to save sketch folders and locations.
  */
-public class Preferences { //extends JComponent {
+public class Preferences {
 
   // what to call the feller
 
@@ -71,16 +71,32 @@ public class Preferences { //extends JComponent {
   static final String PROMPT_OK      = "OK";
   static final String PROMPT_BROWSE  = "Browse";
 
-  // mac needs it to be 70, windows needs 66, linux needs 76
+  /**
+   * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
+   * Windows XP needs 66, and Linux needs 76, so 76 seems proper.
+   */
+  static public int BUTTON_WIDTH  = 76;
 
-  static int BUTTON_WIDTH  = 76;
-  static int BUTTON_HEIGHT = 24;
+  /**
+   * Standardized button height. Mac OS X 10.3 (Java 1.4) wants 29,
+   * presumably because it now includes the blue border, where it didn't
+   * in Java 1.3. Windows XP only wants 23 (not sure what default Linux
+   * would be). Because of the disparity, on Mac OS X, it will be set
+   * inside a static block.
+   */
+  static public int BUTTON_HEIGHT = 24;
+  static {
+    if (Base.isMacOS()) BUTTON_HEIGHT = 29;
+  }
 
   // value for the size bars, buttons, etc
 
   static final int GRID_SIZE     = 33;
 
-  // gui variables
+
+  // indents and spacing standards. these probably need to be modified
+  // per platform as well, since macosx is so huge, windows is smaller,
+  // and linux is all over the map
 
   static final int GUI_BIG     = 13;
   static final int GUI_BETWEEN = 10;
@@ -88,14 +104,13 @@ public class Preferences { //extends JComponent {
 
   // gui elements
 
-  //JFrame frame;
-  JDialog frame;
+  JDialog dialog;
   int wide, high;
 
   JTextField sketchbookLocationField;
+  JCheckBox exportSeparateBox;
   JCheckBox sketchPromptBox;
   JCheckBox sketchCleanBox;
-  //JCheckBox exportLibraryBox;
   JCheckBox externalEditorBox;
   JCheckBox checkUpdatesBox;
 
@@ -113,7 +128,6 @@ public class Preferences { //extends JComponent {
 
   static Hashtable table = new Hashtable();;
   static File preferencesFile;
-  //boolean firstTime;  // first time this feller has been run
 
 
   static public void init() {
@@ -154,9 +168,6 @@ public class Preferences { //extends JComponent {
 
     // next load user preferences file
 
-    //File home = new File(System.getProperty("user.home"));
-    //File processingHome = new File(home, "Processing");
-    //preferencesFile = new File(home, PREFS_FILE);
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
 
     if (!preferencesFile.exists()) {
@@ -183,8 +194,8 @@ public class Preferences { //extends JComponent {
 
   public Preferences() {
 
-    // setup frame for the prefs
-    frame = new JDialog(editor, "Preferences", true);
+    // setup dialog for the prefs
+    dialog = new JDialog(editor, "Preferences", true);
     
     //// create tabs to separate IDE, WTK options
     JTabbedPane tabs = new JTabbedPane();
@@ -193,35 +204,43 @@ public class Preferences { //extends JComponent {
     //// new gridbaglayout setup
     Container pain = new JPanel(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
-
     JLabel label;
     JButton button, button2;
     JComboBox combo;
 
-    // [ ] Prompt for name and folder when creating new sketch
-    sketchPromptBox =
-      new JCheckBox("Prompt for name when opening or creating a sketch");
+    // [ ] Use multiple .jar files when exporting applets
+
+    exportSeparateBox =
+      new JCheckBox("Use multiple .jar files when exporting applets");
     c.gridx = 0; c.gridy = 0;
     c.gridwidth = 2;
     c.anchor = GridBagConstraints.WEST;
     c.insets = new Insets(GUI_BIG, GUI_BIG, GUI_BETWEEN, GUI_BIG);
+    pain.add(exportSeparateBox, c);
+
+
+    // [ ] Prompt for name and folder when creating new sketch
+    sketchPromptBox =
+      new JCheckBox("Prompt for name when opening or creating a sketch");
+    c.gridx = 0; c.gridy = 1;
+    c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
     pain.add(sketchPromptBox, c);
 
     // [ ] Delete empty sketches on Quit
     sketchCleanBox = new JCheckBox("Delete empty sketches on Quit");
-    c.gridx = 0; c.gridy = 1;
+    c.gridx = 0; c.gridy = 2;
     c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
     pain.add(sketchCleanBox, c);
 
     // Sketchbook location:
     // [...............................]  [ Browse ]
     label = new JLabel("Sketchbook location:");
-    c.gridx = 0; c.gridy = 2;
+    c.gridx = 0; c.gridy = 3;
     c.insets = new Insets(0, GUI_BIG, 0, GUI_BIG);
     pain.add(label, c);
 
     sketchbookLocationField = new JTextField(40);
-    c.gridx = 0; c.gridy = 3;
+    c.gridx = 0; c.gridy = 4;
     c.gridwidth = 1;
     c.weightx = 1;
     c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_SMALL);
@@ -242,7 +261,7 @@ public class Preferences { //extends JComponent {
           }
         }
       });
-    c.gridx = 1; c.gridy = 3;
+    c.gridx = 1; c.gridy = 4;
     c.weightx = 0;
     c.fill = GridBagConstraints.NONE;
     c.insets = new Insets(0, 0, GUI_BETWEEN, GUI_BIG);
@@ -254,7 +273,7 @@ public class Preferences { //extends JComponent {
     box.add(label);
     fontSizeField = new JTextField(4);
     box.add(fontSizeField);
-    c.gridx = 0; c.gridy = 4;
+    c.gridx = 0; c.gridy = 5;
     c.gridwidth = 2;
     c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
     pain.add(box, c);
@@ -263,29 +282,15 @@ public class Preferences { //extends JComponent {
     fontSizeField.setText(String.valueOf(editorFont.getSize()));
 
 
-    // [ ] Enable export to "Library"
-
-    /*
-    exportLibraryBox = new JCheckBox("Enable advanced \"Library\" features" +
-                                     " (requires restart)");
-    exportLibraryBox.setEnabled(false);
-    pain.add(exportLibraryBox);
-    d = exportLibraryBox.getPreferredSize();
-    exportLibraryBox.setBounds(left, top, d.width, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
-    */
-
-
     // [ ] Use external editor
     externalEditorBox = new JCheckBox("Use external editor");
-    c.gridx = 0; c.gridy = 5;
+    c.gridx = 0; c.gridy = 6;
     c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
     pain.add(externalEditorBox, c);
 
     // [ ] Check for updates on startup
     checkUpdatesBox = new JCheckBox("Check for updates on startup");
-    c.gridx = 0; c.gridy = 6;
+    c.gridx = 0; c.gridy = 7;
     pain.add(checkUpdatesBox, c);
 
     tabs.add("General", pain);
@@ -414,29 +419,36 @@ public class Preferences { //extends JComponent {
     c.insets = new Insets(0, 0, GUI_BIG, GUI_BIG);
     pain.add(button, c);
 
-    frame.getContentPane().add(tabs, BorderLayout.CENTER);
-    frame.getContentPane().add(pain, BorderLayout.SOUTH);
+    dialog.getContentPane().add(tabs, BorderLayout.CENTER);
+    dialog.getContentPane().add(pain, BorderLayout.SOUTH);
 
     // closing the window is same as hitting cancel button
 
-    frame.addWindowListener(new WindowAdapter() {
+    dialog.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           disposeFrame();
         }
       });
 
-    frame.pack();
-    
-    Dimension size = frame.getSize();
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    frame.setLocation((screen.width - size.width) / 2,
-                      (screen.height - size.height) / 2);
+    ActionListener disposer = new ActionListener() {
+        public void actionPerformed(ActionEvent actionEvent) {
+          disposeFrame();
+        }
+      };
+    Base.registerWindowCloseKeys(dialog.getRootPane(), disposer);
 
+    dialog.pack();
+    
+    Dimension size = dialog.getSize();
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    dialog.setLocation((screen.width - size.width) / 2,
+                      (screen.height - size.height) / 2);
 
     // handle window closing commands for ctrl/cmd-W or hitting ESC.
 
-    frame.addKeyListener(new KeyAdapter() {
+    dialog.addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent e) {
+          //System.out.println(e);
           KeyStroke wc = Editor.WINDOW_CLOSE_KEYSTROKE;
           if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
               (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
@@ -445,6 +457,26 @@ public class Preferences { //extends JComponent {
         }
       });
   }
+
+
+  /*
+  protected JRootPane createRootPane() {
+    System.out.println("creating root pane esc received");
+
+    ActionListener actionListener = new ActionListener() {
+        public void actionPerformed(ActionEvent actionEvent) {
+          //setVisible(false);
+          System.out.println("esc received");
+        }
+      };
+
+    JRootPane rootPane = new JRootPane();
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+    rootPane.registerKeyboardAction(actionListener, stroke,
+                                    JComponent.WHEN_IN_FOCUSED_WINDOW);
+    return rootPane;
+  }
+  */
 
 
   public Dimension getPreferredSize() {
@@ -459,7 +491,7 @@ public class Preferences { //extends JComponent {
    * Close the window after an OK or Cancel.
    */
   public void disposeFrame() {
-    frame.dispose();
+    dialog.dispose();
   }
 
 
@@ -469,6 +501,8 @@ public class Preferences { //extends JComponent {
    */
   public void applyFrame() {
     // put each of the settings into the table
+    setBoolean("export.applet.separate_jar_files",
+               exportSeparateBox.isSelected());
     setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
     setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
     set("sketchbook.path", sketchbookLocationField.getText());
@@ -500,6 +534,8 @@ public class Preferences { //extends JComponent {
     this.editor = editor;
 
     // set all settings entry boxes to their actual status
+    exportSeparateBox.
+      setSelected(getBoolean("export.applet.separate_jar_files"));
     sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
     sketchCleanBox.setSelected(getBoolean("sketchbook.auto_clean"));
     sketchbookLocationField.setText(get("sketchbook.path"));
@@ -521,7 +557,7 @@ public class Preferences { //extends JComponent {
     }
     wtkMidpVer.setSelectedItem(midp.charAt(0) + "." + midp.charAt(1));
 
-    frame.show();
+    dialog.show();
   }
 
 

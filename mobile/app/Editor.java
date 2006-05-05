@@ -4,7 +4,7 @@
   Editor - main editor panel for the processing development environment
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -172,7 +172,7 @@ public class Editor extends JFrame
     setJMenuBar(menubar);
 
     // doesn't matter when this is created, just make it happen at some point
-    find = new FindReplace(Editor.this);
+    //find = new FindReplace(Editor.this);
 
     Container pain = getContentPane();
     pain.setLayout(new BorderLayout());
@@ -270,8 +270,10 @@ public class Editor extends JFrame
             try {
               //System.out.println(flavors[i]);
               //System.out.println(transferable.getTransferData(flavors[i]));
-              java.util.List list =
-                (java.util.List) transferable.getTransferData(flavors[i]);
+              Object stuff = transferable.getTransferData(flavors[i]);
+              if (!(stuff instanceof java.util.List)) continue;
+              java.util.List list = (java.util.List) stuff;
+
               for (int j = 0; j < list.size(); j++) {
                 Object item = list.get(j);
                 if (item instanceof File) {
@@ -503,7 +505,7 @@ public class Editor extends JFrame
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleSave();
+          handleSave(false);
         }
       });
     menu.add(saveMenuItem);
@@ -530,7 +532,11 @@ public class Editor extends JFrame
     exportAppItem = newJMenuItem("Export Application", 'E', true);
     exportAppItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          //buttons.activate(EditorButtons.EXPORT);
+          //SwingUtilities.invokeLater(new Runnable() {
+          //public void run() {
           handleExportApplication();
+          //}});
         }
       });
     menu.add(exportAppItem);
@@ -669,6 +675,30 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
+    item = new JMenuItem("Color Picker");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                new ColorPicker(Editor.this).show();
+              }
+            });
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Format for Discourse");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                new DiscourseFormat(Editor.this).show();
+              }
+            });
+        }
+      });
+    menu.add(item);
+
     item = new JMenuItem("Archive Sketch");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -683,10 +713,32 @@ public class Editor extends JFrame
     item = new JMenuItem("Export Folder...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new ExportFolder(Editor.this).show();
+          SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                new ExportFolder(Editor.this).show();
+              }
+            });
         }
       });
     menu.add(item);
+
+    /*
+    item = new JMenuItem("Open in External Editor");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Preferences.setBoolean("editor.external", true);
+          applyPreferences();
+
+          String path = sketch.current.file.getAbsolutePath();
+          try {
+            Runtime.getRuntime().exec(new String[] {
+              "cmd", "/c", "c:\\emacs-20.7\\bin\\runemacs.exe", path
+            });
+          } catch (Exception ex) { }
+        }
+      });
+    menu.add(item);
+    */
 
     return menu;
   }
@@ -788,7 +840,7 @@ public class Editor extends JFrame
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.cut();
-          sketch.setModified();
+          sketch.setModified(true);
         }
       });
     menu.add(item);
@@ -805,7 +857,7 @@ public class Editor extends JFrame
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.paste();
-          sketch.setModified();
+          sketch.setModified(true);
         }
       });
     menu.add(item);
@@ -823,17 +875,26 @@ public class Editor extends JFrame
     item = newJMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          if (find == null) {
+            find = new FindReplace(Editor.this);
+          }
+          //new FindReplace(Editor.this).show();
           find.show();
+          //find.setVisible(true);
         }
       });
     menu.add(item);
 
+    // TODO find next should only be enabled after a
+    // search has actually taken place
     item = newJMenuItem("Find Next", 'G');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          // TODO find next should only be enabled after a
-          // search has actually taken place
-          find.find(true);
+          if (find != null) {
+            //find.find(true);
+            //FindReplace find = new FindReplace(Editor.this); //.show();
+            find.find(true);
+          }
         }
       });
     menu.add(item);
@@ -892,11 +953,17 @@ public class Editor extends JFrame
         undoItem.setEnabled(true);
         undoItem.setText(undo.getUndoPresentationName());
         putValue(Action.NAME, undo.getUndoPresentationName());
+        if (sketch != null) {
+          sketch.setModified(true);  // 0107
+        }
       } else {
         this.setEnabled(false);
         undoItem.setEnabled(false);
         undoItem.setText("Undo");
         putValue(Action.NAME, "Undo");
+        if (sketch != null) {
+          sketch.setModified(false);  // 0107
+        }
       }
     }
   }
@@ -921,7 +988,6 @@ public class Editor extends JFrame
 
     protected void updateRedoState() {
       if (undo.canRedo()) {
-        this.setEnabled(true);
         redoItem.setEnabled(true);
         redoItem.setText(undo.getRedoPresentationName());
         putValue(Action.NAME, undo.getRedoPresentationName());
@@ -1009,7 +1075,14 @@ public class Editor extends JFrame
     beginCompoundEdit();
     textarea.setText(what);
     endCompoundEdit();
+
+    // make sure that a tool isn't asking for a bad location
+    selectionStart =
+      Math.max(0, Math.min(selectionStart, textarea.getDocumentLength()));
+    selectionEnd =
+      Math.max(0, Math.min(selectionStart, textarea.getDocumentLength()));
     textarea.select(selectionStart, selectionEnd);
+
     textarea.requestFocus();  // get the caret blinking
   }
 
@@ -1079,9 +1152,9 @@ public class Editor extends JFrame
   public void handleRun(boolean present) {
     doClose();
     running = true;
-    buttons.run();
+    buttons.activate(EditorButtons.RUN);
 
-    // do this for the terminal window / dos prompt / etc
+    // do this to advance/clear the terminal window / dos prompt / etc
     for (int i = 0; i < 10; i++) System.out.println();
 
     // clear the console on each run, unless the user doesn't want to
@@ -1111,6 +1184,9 @@ public class Editor extends JFrame
 
       runtime = new Runner(sketch, Editor.this);
       runtime.start(appletLocation);
+
+      // run button watcher not currently enabled
+      // it was contributing to the external vm hanging
       watcher = new RunButtonWatcher();
 
     } catch (RunnerException e) {
@@ -1200,6 +1276,7 @@ public class Editor extends JFrame
     } else {
       doStop();
     }
+    buttons.clear();
   }
 
 
@@ -1302,7 +1379,7 @@ public class Editor extends JFrame
                                                 options[0]);
 
       if (result == JOptionPane.YES_OPTION) {
-        handleSave();
+        handleSave(true);
         checkModified2();
 
       } else if (result == JOptionPane.NO_OPTION) {
@@ -1332,15 +1409,20 @@ public class Editor extends JFrame
   /**
    * New was called (by buttons or by menu), first check modified
    * and if things work out ok, handleNew2() will be called.
-   *
+   * <p/>
    * If shift is pressed when clicking the toolbar button, then
    * force the opposite behavior from sketchbook.prompt's setting
    */
-  public void handleNew(boolean shift) {
-    doStop();
-    handleNewShift = shift;
-    handleNewLibrary = false;
-    checkModified(HANDLE_NEW);
+  public void handleNew(final boolean shift) {
+    buttons.activate(EditorButtons.NEW);
+
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          doStop();
+          handleNewShift = shift;
+          handleNewLibrary = false;
+          checkModified(HANDLE_NEW);
+        }});
   }
 
 
@@ -1391,6 +1473,7 @@ public class Editor extends JFrame
                      "An error occurred while creating\n" +
                      "a new sketch. Processing must now quit.", e);
     }
+    buttons.clear();
   }
 
 
@@ -1408,15 +1491,22 @@ public class Editor extends JFrame
    * Open a sketch given the full path to the .pde file.
    * Pass in 'null' to prompt the user for the name of the sketch.
    */
-  public void handleOpen(String path) {
-    if (path == null) {  // "open..." selected from the menu
-      path = sketchbook.handleOpen();
-      if (path == null) return;
-    }
-    doClose();
-    //doStop();
-    handleOpenPath = path;
-    checkModified(HANDLE_OPEN);
+  public void handleOpen(final String ipath) {
+    // haven't run across a case where i can verify that this works
+    // because open is usually very fast.
+    buttons.activate(EditorButtons.OPEN);
+
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          String path = ipath;
+          if (path == null) {  // "open..." selected from the menu
+            path = sketchbook.handleOpen();
+            if (path == null) return;
+          }
+          doClose();
+          handleOpenPath = path;
+          checkModified(HANDLE_OPEN);
+        }});
   }
 
 
@@ -1544,7 +1634,32 @@ public class Editor extends JFrame
 
 
   // there is no handleSave1 since there's never a need to prompt
-  public void handleSave() {
+  /**
+   * Actually handle the save command. If 'force' is set to false,
+   * this will happen in another thread so that the message area
+   * will update and the save button will stay highlighted while the
+   * save is happening. If 'force' is true, then it will happen
+   * immediately. This is used during a quit, because invokeLater()
+   * won't run properly while a quit is happening. This fixes
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=276">Bug 276</A>.
+   */
+  public void handleSave(boolean force) {
+    doStop();
+    buttons.activate(EditorButtons.SAVE);
+
+    if (force) {
+      handleSave2();
+    } else {
+      SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            handleSave2();
+          }
+        });
+    }
+  }
+
+
+  public void handleSave2() {
     message("Saving...");
     try {
       if (sketch.save()) {
@@ -1570,71 +1685,89 @@ public class Editor extends JFrame
 
   public void handleSaveAs() {
     doStop();
+    buttons.activate(EditorButtons.SAVE);
 
-    message("Saving...");
-    try {
-      if (sketch.saveAs()) {
-        message("Done Saving.");
-        sketchbook.rebuildMenus();
-      } else {
-        message("Save Cancelled.");
-      }
-
-    } catch (Exception e) {
-      // show the error as a message in the window
-      error(e);
-    }
-    buttons.clear();
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          message("Saving...");
+          try {
+            if (sketch.saveAs()) {
+              message("Done Saving.");
+              sketchbook.rebuildMenus();
+            } else {
+              message("Save Cancelled.");
+            }
+          } catch (Exception e) {
+            // show the error as a message in the window
+            error(e);
+          }
+          buttons.clear();
+        }});
   }
 
 
   /**
    * Handles calling the export() function on sketch, and
    * queues all the gui status stuff that comes along with it.
-   *
+   * <p/>
    * Made synchronized to (hopefully) avoid problems of people
    * hitting export twice, quickly, and horking things up.
    */
   synchronized public void handleExport() {
     if (!handleExportCheckModified()) return;
+    buttons.activate(EditorButtons.EXPORT);
 
-    try {
-      boolean success = sketch.exportApplet();
-      if (success) {
-        File appletFolder = new File(sketch.folder, "applet");
-        Base.openFolder(appletFolder);
-        message("Done exporting.");
-      } else {
-        // error message will already be visible
-      }
-    } catch (Exception e) {
-      error(e);
-    }
-    buttons.clear();
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          try {
+            boolean success = sketch.exportApplet();
+            if (success) {
+              File appletFolder = new File(sketch.folder, "applet");
+              Base.openFolder(appletFolder);
+              message("Done exporting.");
+            } else {
+              // error message will already be visible
+            }
+          } catch (Exception e) {
+            error(e);
+          }
+          buttons.clear();
+        }});
   }
 
 
   synchronized public void handleExportApplication() {
     if (!handleExportCheckModified()) return;
+    buttons.activate(EditorButtons.EXPORT);
 
-    message("Exporting application...");
-    try {
-      if (sketch.exportApplication(PConstants.WINDOWS) &&
-          sketch.exportApplication(PConstants.MACOSX) &&
-          sketch.exportApplication(PConstants.LINUX)) {
-        Base.openFolder(sketch.folder);
-        message("Done exporting.");
-      } else {
-        // error message will already be visible
-      }
-    } catch (Exception e) {
-      message("Error during export.");
-      e.printStackTrace();
-    }
-    buttons.clear();
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          message("Exporting application...");
+          try {
+            if (sketch.exportApplication(PConstants.WINDOWS) &&
+                sketch.exportApplication(PConstants.MACOSX) &&
+                sketch.exportApplication(PConstants.LINUX)) {
+              Base.openFolder(sketch.folder);
+              message("Done exporting.");
+            } else {
+              // error message will already be visible
+            }
+          } catch (Exception e) {
+            message("Error during export.");
+            e.printStackTrace();
+          }
+          buttons.clear();
+        }});
   }
 
 
+  /**
+   * Checks to see if the sketch has been modified, and if so,
+   * asks the user to save the sketch or cancel the export.
+   * This prevents issues where an incomplete version of the sketch
+   * would be exported, and is a fix for
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=157">Bug 157</A>
+   */
   public boolean handleExportCheckModified() {
     if (!sketch.modified) return true;
 
@@ -1648,7 +1781,7 @@ public class Editor extends JFrame
                                               options,
                                               options[0]);
     if (result == JOptionPane.OK_OPTION) {
-      handleSave();
+      handleSave(true);
 
     } else {
       // why it's not CANCEL_OPTION is beyond me (at least on the mac)
@@ -1684,6 +1817,7 @@ public class Editor extends JFrame
     Preferences.save();
 
     sketchbook.clean();
+    console.handleQuit();
 
     //System.out.println("exiting here");
     System.exit(0);
@@ -1793,30 +1927,13 @@ public class Editor extends JFrame
       mess = mess.substring(javaLang.length());
     }
     error(mess);
-
-    buttons.clearRun();
+    buttons.clear();
   }
-
-
-  /*
-  public void finished() {
-    running = false;
-    buttons.clearRun();
-    message("Done.");
-  }
-  */
 
 
   public void message(String msg) {
     status.notice(msg);
   }
-
-
-  /*
-  public void messageClear(String msg) {
-    status.unnotice(msg);
-  }
-  */
 
 
   // ...................................................................
@@ -1826,7 +1943,6 @@ public class Editor extends JFrame
    * Returns the edit popup menu.
    */
   class TextAreaPopup extends JPopupMenu {
-    //protected ReferenceKeys referenceItems = new ReferenceKeys();
     String currentDir = System.getProperty("user.dir");
     String referenceFile = null;
 
@@ -1841,6 +1957,7 @@ public class Editor extends JFrame
       cutItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             textarea.cut();
+            sketch.setModified(true);
           }
       });
       this.add(cutItem);
@@ -1857,6 +1974,7 @@ public class Editor extends JFrame
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             textarea.paste();
+            sketch.setModified(true);
           }
         });
       this.add(item);
