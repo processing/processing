@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -50,8 +50,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 3;//98;
-  static final String VERSION_NAME = "0003";//"0098 Beta";
+  static final int VERSION = 4;//114;
+  static final String VERSION_NAME = "0004";//"0114 Beta";
 
   /**
    * Path of filename opened on the command line,
@@ -118,6 +118,9 @@ public class Base {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    // use native popups so they don't look so crappy on osx
+    JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
     // build the editor object
     editor = new Editor();
@@ -312,7 +315,8 @@ public class Base {
       } else {
         //File folder = new File(getTempFolder(), "build");
         //if (!folder.exists()) folder.mkdirs();
-        buildFolder = getTempFolder("build");
+        buildFolder = createTempFolder("build");
+        buildFolder.deleteOnExit();
       }
     }
     return buildFolder;
@@ -326,7 +330,7 @@ public class Base {
    * Modified for revision 0094 to actually make the folder randomized
    * to avoid conflicts in multi-user environments. (Bug 177)
    */
-  static public File getTempFolder(String name) {
+  static public File createTempFolder(String name) {
     try {
       File folder = File.createTempFile(name, null);
       //String tempPath = ignored.getParent();
@@ -493,6 +497,55 @@ public class Base {
     }
     //System.out.println();
     return new String(c);
+  }
+
+
+  // .................................................................
+
+
+  // someone needs to be slapped
+  //static KeyStroke closeWindowKeyStroke;
+
+  /**
+   * Return true if the key event was a Ctrl-W or an ESC,
+   * both indicators to close the window.
+   * Use as part of a keyPressed() event handler for frames.
+   */
+  /*
+  static public boolean isCloseWindowEvent(KeyEvent e) {
+    if (closeWindowKeyStroke == null) {
+      int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+      closeWindowKeyStroke = KeyStroke.getKeyStroke('W', modifiers);
+    }
+    return ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
+            KeyStroke.getKeyStrokeForEvent(e).equals(closeWindowKeyStroke));
+  }
+  */
+
+
+  /**
+   * Registers key events for a Ctrl-W and ESC with an ActionListener
+   * that will take care of disposing the window.
+   */
+  static public void registerWindowCloseKeys(JRootPane root, //Window window,
+                                             ActionListener disposer) {
+    /*
+    JRootPane root = null;
+    if (window instanceof JFrame) {
+      root = ((JFrame)window).getRootPane();
+    } else if (window instanceof JDialog) {
+      root = ((JDialog)window).getRootPane();
+    }
+    */
+
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+    root.registerKeyboardAction(disposer, stroke,
+                                JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    stroke = KeyStroke.getKeyStroke('W', modifiers);
+    root.registerKeyboardAction(disposer, stroke,
+                                JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
 
@@ -821,7 +874,9 @@ public class Base {
   static public void removeDir(File dir) {
     if (dir.exists()) {
       removeDescendants(dir);
-      dir.delete();
+      if (!dir.delete()) {
+        System.err.println("Could not delete " + dir);
+      }
     }
   }
 
@@ -843,7 +898,7 @@ public class Base {
         if (!Preferences.getBoolean("compiler.save_build_files")) {
           if (!dead.delete()) {
             // temporarily disabled
-            //System.err.println("couldn't delete " + dead);
+            System.err.println("Could not delete " + dead);
           }
         }
       } else {
@@ -918,44 +973,4 @@ public class Base {
       }
     }
   }
-
-
-  /**
-   * Equivalent to the one in PApplet, but static (die() is removed)
-   */
-  /*
-  static public String[] loadStrings(File file) {
-    try {
-      FileInputStream input = new FileInputStream(file);
-      BufferedReader reader =
-        new BufferedReader(new InputStreamReader(input));
-
-      String lines[] = new String[100];
-      int lineCount = 0;
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        if (lineCount == lines.length) {
-          String temp[] = new String[lineCount << 1];
-          System.arraycopy(lines, 0, temp, 0, lineCount);
-          lines = temp;
-        }
-        lines[lineCount++] = line;
-      }
-      reader.close();
-
-      if (lineCount == lines.length) {
-        return lines;
-      }
-
-      // resize array to appropraite amount for these lines
-      String output[] = new String[lineCount];
-      System.arraycopy(lines, 0, output, 0, lineCount);
-      return output;
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-  */
 }

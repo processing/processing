@@ -205,10 +205,19 @@ public class PdePreprocessor {
 
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
+    // bug filed at http://dev.processing.org/bugs/show_bug.cgi?id=5
     if ((program.length() > 0) &&
         program.charAt(program.length()-1) != '\n') {
       program += "\n";
     }
+
+    // if the program ends with an unterminated multiline comment,
+    // an OutOfMemoryError or NullPointerException will happen.
+    // again, not gonna bother tracking this down, but here's a hack.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=16
+    Sketch.scrubComments(program);
+    // this returns the scrubbed version, but more important for this
+    // function, it'll check to see if there are errors with the comments.
 
     if (Preferences.getBoolean("preproc.substitute_unicode")) {
       // check for non-ascii chars (these will be/must be in unicode format)
@@ -251,7 +260,6 @@ public class PdePreprocessor {
     // just in case it's not an advanced mode sketch
     PatternMatcher matcher = new Perl5Matcher();
     PatternCompiler compiler = new Perl5Compiler();
-    //String mess = "^\\s*(import\\s+\\S+\\s*;)";
     String mess = "^\\s*(import\\s+)(\\S+)(\\s*;)";
     java.util.Vector imports = new java.util.Vector();
 
@@ -274,13 +282,10 @@ public class PdePreprocessor {
       String piece = piece1 + piece2 + piece3;
       int len = piece.length();
 
-      //imports.add(piece);
       imports.add(piece2);
       int idx = program.indexOf(piece);
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);
-
-      //System.out.println("removing " + piece);
 
     } while (true);
 

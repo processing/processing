@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -151,6 +151,11 @@ public class Sketch {
 
     // get list of files in the sketch folder
     String list[] = folder.list();
+
+    // reset these because load() may be called after an
+    // external editor event. (fix for 0099)
+    codeCount = 0;
+    hiddenCount = 0;
 
     for (int i = 0; i < list.length; i++) {
       if (list[i].endsWith(".pde")) codeCount++;
@@ -711,8 +716,10 @@ public class Sketch {
   /**
    * Sets the modified value for the code in the frontmost tab.
    */
-  public void setModified() {
-    current.modified = true;
+  public void setModified(boolean state) {
+    //System.out.println("setting modified to " + state);
+    //new Exception().printStackTrace();
+    current.modified = state;
     calcModified();
   }
 
@@ -1088,7 +1095,7 @@ public class Sketch {
     buffer.append('\n');
     buffer.append(editor.getText());
     editor.setText(buffer.toString(), 0, 0);  // scroll to start
-    setModified();
+    setModified(true);
   }
 
 
@@ -1599,72 +1606,6 @@ public class Sketch {
     if (!exportMIDlet(true)) {
         return false;
     }
-/*
-    // make sure the user didn't hide the sketch folder
-    ensureExistence();
-
-    zipFileContents = new Hashtable();
-
-    // nuke the old applet folder because it can cause trouble
-    File appletFolder = new File(folder, "applet");
-    Base.removeDir(appletFolder);
-    appletFolder.mkdirs();
-
-    // build the sketch
-    String foundName = build(appletFolder.getPath(), name);
-
-    // (already reported) error during export, exit this function
-    if (foundName == null) return false;
-
-    // if name != exportSketchName, then that's weirdness
-    // BUG unfortunately, that can also be a bug in the preproc :(
-    if (!name.equals(foundName)) {
-      Base.showWarning("Error during export",
-                       "Sketch name is " + name + " but the sketch\n" +
-                       "name in the code was " + foundName, null);
-      return false;
-    }
-
-    int wide = PApplet.DEFAULT_WIDTH;
-    int high = PApplet.DEFAULT_HEIGHT;
-
-    PatternMatcher matcher = new Perl5Matcher();
-    PatternCompiler compiler = new Perl5Compiler();
-
-    // this matches against any uses of the size() function,
-    // whether they contain numbers of variables or whatever.
-    // this way, no warning is shown if size() isn't actually
-    // used in the applet, which is the case especially for
-    // beginners that are cutting/pasting from the reference.
-    // modified for 83 to match size(XXX, ddd so that it'll
-    // properly handle size(200, 200) and size(200, 200, P3D)
-    String sizing =
-      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)";
-    Pattern pattern = compiler.compile(sizing);
-
-    // adds a space at the beginning, in case size() is the very
-    // first thing in the program (very common), since the regexp
-    // needs to check for things in front of it.
-    PatternMatcherInput input =
-      new PatternMatcherInput(" " + code[0].program);
-    if (matcher.contains(input, pattern)) {
-      MatchResult result = matcher.getMatch();
-      try {
-        wide = Integer.parseInt(result.group(1).toString());
-        high = Integer.parseInt(result.group(2).toString());
-
-      } catch (NumberFormatException e) {
-        // found a reference to size, but it didn't
-        // seem to contain numbers
-        final String message =
-          "The size of this applet could not automatically be\n" +
-          "determined from your code. You'll have to edit the\n" +
-          "HTML file to set the size of the applet.";
-
-        Base.showWarning("Could not find applet size", message, null);
-      }
-    }  // else no size() command found
-*/
     // nuke the old applet folder because it can cause trouble
     File appletFolder = new File(folder, "applet");
     Base.removeDir(appletFolder);
@@ -1708,7 +1649,35 @@ public class Sketch {
                      code[i].name + "</a> ");
     }
 
-    //
+    // determine whether to use one jar file or several
+    StringBuffer archives = new StringBuffer();
+    boolean separateJar =
+      Preferences.getBoolean("export.applet.separate_jar_files");
+
+    // copy the loading gif to the applet
+    String LOADING_IMAGE = "loading.gif";
+    File loadingImage = new File(folder, LOADING_IMAGE);
+    if (!loadingImage.exists()) {
+      loadingImage = new File("lib", LOADING_IMAGE);
+    }
+    Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
+
+    // copy the source files to the target, since we like
+    // to encourage people to share their code
+    for (int i = 0; i < codeCount; i++) {
+      try {
+        Base.copyFile(code[i].file,
+                      new File(appletFolder, code[i].file.getName()));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    
+    //// copy the applet emulator jars into the applet folder
+    Base.copyFile(new File("lib", "me-applet.jar"), new File(appletFolder, "me-applet.jar"));
+    Base.copyFile(new File("lib", "large.jar"), new File(appletFolder, "large.jar"));
+    
+    Base.openFolder(appletFolder);
 
     // convert the applet template
     // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@
@@ -1744,18 +1713,8 @@ public class Sketch {
         }
         while ((index = sb.indexOf("@@archive@@")) != -1) {
           sb.replace(index, index + "@@archive@@".length(),
-                     name + ".jar");
+                     archives.toString());
         }
-/*        
-        while ((index = sb.indexOf("@@width@@")) != -1) {
-          sb.replace(index, index + "@@width@@".length(),
-                     String.valueOf(wide));
-        }
-        while ((index = sb.indexOf("@@height@@")) != -1) {
-          sb.replace(index, index + "@@height@@".length(),
-                     String.valueOf(high));
-        }
- */
         while ((index = sb.indexOf("@@description@@")) != -1) {
           sb.replace(index, index + "@@description@@".length(),
                      description);
@@ -1769,165 +1728,54 @@ public class Sketch {
     ps.flush();
     ps.close();
 
-    //
-
-    // copy the loading gif to the applet
-    String LOADING_IMAGE = "loading.gif";
-    File loadingImage = new File(folder, LOADING_IMAGE);
-    if (!loadingImage.exists()) {
-      loadingImage = new File("lib", LOADING_IMAGE);
-    }
-    Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
-
-    // copy the source files to the target, since we like
-    // to encourage people to share their code
-    for (int i = 0; i < codeCount; i++) {
-      try {
-        Base.copyFile(code[i].file,
-                      new File(appletFolder, code[i].file.getName()));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    
-    //// copy the applet emulator jars into the applet folder
-    Base.copyFile(new File("lib", "me-applet.jar"), new File(appletFolder, "me-applet.jar"));
-    Base.copyFile(new File("lib", "large.jar"), new File(appletFolder, "large.jar"));
-/*
-    // create new .jar file
-    FileOutputStream zipOutputFile =
-      new FileOutputStream(new File(appletFolder, name + ".jar"));
-    ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
-    ZipEntry entry;
-
-    // add the manifest file
-    addManifest(zos);
-
-    // add the contents of the code folder to the jar
-    // unpacks all jar files
-    //File codeFolder = new File(folder, "code");
-    if (codeFolder.exists()) {
-      String includes = Compiler.contentsToClassPath(codeFolder);
-      packClassPathIntoZipFile(includes, zos);
-    }
-
-    // add contents of 'library' folders to the jar file
-    // if a file called 'export.txt' is in there, it contains
-    // a list of the files that should be exported.
-    // otherwise, all files are exported.
-    Enumeration en = importedLibraries.elements();
-    while (en.hasMoreElements()) {
-      // in the list is a File object that points the
-      // library sketch's "library" folder
-      File libraryFolder = (File)en.nextElement();
-      File exportSettings = new File(libraryFolder, "export.txt");
-      Hashtable exportTable = readSettings(exportSettings);
-      String appletList = (String) exportTable.get("applet");
-      String exportList[] = null;
-      if (appletList != null) {
-        exportList = PApplet.split(appletList, ", ");
-      } else {
-        exportList = libraryFolder.list();
-      }
-      for (int i = 0; i < exportList.length; i++) {
-        if (exportList[i].equals(".") ||
-            exportList[i].equals("..")) continue;
-
-        exportList[i] = PApplet.trim(exportList[i]);
-        if (exportList[i].equals("")) continue;
-
-        File exportFile = new File(libraryFolder, exportList[i]);
-        if (!exportFile.exists()) {
-          System.err.println("File " + exportList[i] + " does not exist");
-
-        } else if (exportFile.isDirectory()) {
-          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
-
-        } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
-                   exportFile.getName().toLowerCase().endsWith(".jar")) {
-          packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
-
-        } else {  // just copy the file over.. prolly a .dll or something
-          Base.copyFile(exportFile,
-                        new File(appletFolder, exportFile.getName()));
-        }
-      }
-    }
-
-    String bagelJar = "lib/core.jar";
-    packClassPathIntoZipFile(bagelJar, zos);
-
-    if (dataFolder.exists()) {
-      //String dataFiles[] = dataFolder.list();
-      String dataFiles[] = Base.listFiles(dataFolder, false);
-      int offset = folder.getAbsolutePath().length() + 1;
-      //int offset = dataFolder.getAbsolutePath().length() + 1;
-      for (int i = 0; i < dataFiles.length; i++) {
-        if (PApplet.platform == PApplet.WINDOWS) {
-          dataFiles[i] = dataFiles[i].replace('\\', '/');
-        }
-        File dataFile = new File(dataFiles[i]);
-        if (dataFile.isDirectory()) continue;
-
-        // don't export hidden files
-        // skipping dot prefix removes all: . .. .DS_Store
-        //if (dataFiles[i].charAt(0) == '.') continue;
-        if (dataFile.getName().charAt(0) == '.') continue;
-
-        //System.out.println("placing " + dataFiles[i].substring(offset));
-        //if (dataFile.isDirectory()) {
-        //entry = new ZipEntry(dataFiles[i].substring(offset) + "/");
-        //} else {
-        entry = new ZipEntry(dataFiles[i].substring(offset));
-        //}
-        //if (entry.isDirectory()) {
-        //System.out.println(entry + " is a dir");
-        //}
-        zos.putNextEntry(entry);
-        //zos.write(Base.grabFile(new File(dataFolder, dataFiles[i])));
-        //if (!dataFile.isDirectory()) {
-        zos.write(Base.grabFile(dataFile));
-        //}
-        zos.closeEntry();
-      }
-    }
-
-    // add the project's .class files to the jar
-    // just grabs everything from the build directory
-    // since there may be some inner classes
-    // (add any .class files from the applet dir, then delete them)
-    // TODO this needs to be recursive (for packages)
-    String classfiles[] = appletFolder.list();
-    for (int i = 0; i < classfiles.length; i++) {
-      if (classfiles[i].endsWith(".class")) {
-        entry = new ZipEntry(classfiles[i]);
-        zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(appletFolder, classfiles[i])));
-        zos.closeEntry();
-      }
-    }
-
-    // remove the .class files from the applet folder. if they're not
-    // removed, the msjvm will complain about an illegal access error,
-    // since the classes are outside the jar file.
-    for (int i = 0; i < classfiles.length; i++) {
-      if (classfiles[i].endsWith(".class")) {
-        File deadguy = new File(appletFolder, classfiles[i]);
-        if (!deadguy.delete()) {
-          Base.showWarning("Could not delete",
-                           classfiles[i] + " could not \n" +
-                           "be deleted from the applet folder.  \n" +
-                           "You'll need to remove it by hand.", null);
-        }
-      }
-    }
-
-    // close up the jar file
-    zos.flush();
-    zos.close();
-*/
-    Base.openFolder(appletFolder);
     return true;
+  }
+
+
+  static public String scrubComments(String what) {
+    char p[] = what.toCharArray();
+
+    int index = 0;
+    while (index < p.length) {
+      // for any double slash comments, ignore until the end of the line
+      if ((p[index] == '/') &&
+          (index < p.length - 1) &&
+          (p[index+1] == '/')) {
+        p[index++] = ' ';
+        p[index++] = ' ';
+        while ((index < p.length) &&
+               (p[index] != '\n')) {
+          p[index++] = ' ';
+        }
+
+        // check to see if this is the start of a new multiline comment.
+        // if it is, then make sure it's actually terminated somewhere.
+      } else if ((p[index] == '/') &&
+                 (index < p.length - 1) &&
+                 (p[index+1] == '*')) {
+        p[index++] = ' ';
+        p[index++] = ' ';
+        boolean endOfRainbow = false;
+        while (index < p.length - 1) {
+          if ((p[index] == '*') && (p[index+1] == '/')) {
+            p[index++] = ' ';
+            p[index++] = ' ';
+            endOfRainbow = true;
+            break;
+
+          } else {
+            index++;
+          }
+        }
+        if (!endOfRainbow) {
+          throw new RuntimeException("Missing the */ from the end of a " +
+                                     "/* comment */");
+        }
+      } else {  // any old character, move along
+        index++;
+      }
+    }
+    return new String(p);
   }
 
 
@@ -2130,10 +1978,22 @@ public class Sketch {
     }
 
     // add the contents of the code folder to the jar
-    // (will unpack all jar files in the code folder)
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
-      packClassPathIntoZipFile(includes, zos);
+      String codeList[] = PApplet.split(includes, File.separatorChar);
+      String cp = "";
+      for (int i = 0; i < codeList.length; i++) {
+        if (codeList[i].toLowerCase().endsWith(".jar") ||
+            codeList[i].toLowerCase().endsWith(".zip")) {
+          File exportFile = new File(codeFolder, codeList[i]);
+          String exportFilename = exportFile.getName();
+          Base.copyFile(exportFile, new File(jarFolder, exportFilename));
+          jarListVector.add(exportFilename);
+        } else {
+          cp += codeList[i] + File.separatorChar;
+        }
+      }
+      packClassPathIntoZipFile(cp, zos);
     }
 
     zos.flush();
@@ -2290,10 +2150,13 @@ public class Sketch {
       // do the newlines explicitly so that windows CRLF
       // isn't used when exporting for unix
       ps.print("#!/bin/sh\n\n");
-      ps.print("APPDIR=`dirname $0`\n");
-      ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
+      //ps.print("APPDIR=`dirname $0`\n");
+      ps.print("APPDIR=$(dirname \"$0\")\n");  // more posix compliant
+      // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
+      //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
       ps.print("java " + Preferences.get("run.options") +
-               " -cp " + exportClassPath +
+               " -Djava.library.path=\"$APPDIR\"" +
+               " -cp \"" + exportClassPath + "\"" +
                " " + this.name + "\n");
 
       ps.flush();
@@ -2373,7 +2236,7 @@ public class Sketch {
     for (int i = 0; i < lines.length; i++) {
       int hash = lines[i].indexOf('#');
       String line = (hash == -1) ?
-        lines[i].trim() : lines[i].substring(hash).trim();
+        lines[i].trim() : lines[i].substring(0, hash).trim();
       if (line.length() == 0) continue;
 
       int equals = line.indexOf('=');
