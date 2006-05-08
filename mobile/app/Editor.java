@@ -803,6 +803,17 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);
+    
+    item = new JMenuItem("Check for updates...");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            //// reset last update check time to ensure the check happens
+            Preferences.set("update.last", "0");
+            UpdateCheck check = new UpdateCheck(Editor.this);
+            check.show();
+        }
+    });
+    menu.add(item);
 
     // macosx already has its own about menu
     if (!Base.isMacOS()) {
