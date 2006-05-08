@@ -9,6 +9,12 @@
         
      processing will be checked out into the parent directory, if it doesn't exist -->     
 <project name="mobile" default="dist" basedir="..\..\..">
+    <!-- load ant-contrib additional tasks -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="mobile/build/lib/ant-contrib.jar"/>
+        </classpath>
+    </taskdef>
 
     <!-- first try to read customized properties -->
     <property file="build.properties"/>
@@ -336,15 +342,37 @@
         </antcall>
     </target>
 
-    <target name="copylib">
+    <target name="copylib">        
+        <!-- copy to build directory -->
         <mkdir dir="processing/build/windows/${target}/libraries/${libname}"/>
         <copy todir="processing/build/windows/${target}/libraries/${libname}">
             <fileset dir="mobile/${libname}"/>
         </copy>
+        
+        <!-- load local version property -->
+        <property file="mobile/${libname}/version.properties" prefix="${libname}"/>
+        <!-- set local and archive versions into comparable properties -->
+        <var name="localversion" value="" unset="true"/>
+        <var name="archiveversion" value="" unset="true"/>
+        <propertycopy property="localversion" from="${libname}.build"/>
+        <propertycopy property="archiveversion" from="${libname}" silent="true"/>
+        <if>
+            <not><equals arg1="${localversion}" arg2="${archiveversion}"/></not>
+            <then>
+                <!-- update archive property file -->
+                <propertyfile file="mobile/web/download/libraries/windows/version.properties">
+                    <entry key="${libname}" value="${localversion}"/>
+                </propertyfile>
+                <!-- zip and copy library -->
+                <zip destfile="mobile/web/download/libraries/windows/${libname}.zip" basedir="mobile/${libname}"/>
+            </then>
+        </if>
     </target>
         
     <!-- copies core libraries over to processing build -->
     <target name="copylibs" depends="makelibs">
+        <!-- load archive versions -->
+        <property file="mobile/web/download/libraries/windows/version.properties"/>
         <!-- default target is work folder, can be overridden by call -->
         <property name="target" value="work"/>
         <!-- delete contents of libraries folder -->
