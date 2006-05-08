@@ -204,7 +204,7 @@ function chars($string)
     //$string = str_replace('<<', '&lt;&lt;', $string);
     //$string = str_replace('>>', '&gt;&gt;', $string);
 	$string = str_replace('<=', '&lt;=', $string);
-	$string = preg_replace("/&(\W)/", "&amp;$1", $string);
+	$string = preg_replace("/&[!#](\W)/", "&amp;$1", $string);
 	$string = str_replace('&amp;&', '&amp;&amp;', $string);
 	$string = preg_replace("/<(!\/\W)/", "&lt;$1", $string);
 	$string = preg_replace("/>(!\s\W)/", "&gt;$1", $string);
