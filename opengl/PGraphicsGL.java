@@ -402,16 +402,8 @@ public class PGraphicsGL extends PGraphics3 {
     report("top endFrame()");
 
     if (hints[ENABLE_DEPTH_SORT]) {
-      if (triangleCount > 0) {
-        depth_sort_triangles();
-        render_triangles();
-      }
-      if (lineCount > 0) {
-        depth_sort_lines();
-        render_lines();
-      }
+      flush();
     }
-    //gl.glPopMatrix();
 
     report("bot endFrame()");
   }
@@ -419,6 +411,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   private float ctm[];
 
+  // this would also need to set up the lighting.. ?
   public GL beginGL() {
     //beginFrame();  // frame will have already started
     gl.glPushMatrix();
@@ -707,16 +700,6 @@ public class PGraphicsGL extends PGraphics3 {
             raw.vertex(c[X], c[Y]);
           }
         }
-        /*
-        if (raw != null) {
-          raw.fill(ar, ag, ab, a[A]);
-          raw.vertex(a[VX], a[VY]);
-          raw.fill(br, bg, bb, b[A]);
-          raw.vertex(b[VX], b[VY]);
-          raw.fill(cr, cg, cb, c[A]);
-          raw.vertex(c[VX], c[VY]);
-        }
-        */
         gl.glEnd();
       }
     }
@@ -757,8 +740,15 @@ public class PGraphicsGL extends PGraphics3 {
         if (a[SA] > EPSILON) {  // don't draw if transparent
           raw.colorMode(RGB, 1);
           raw.beginShape(LINE_STRIP);
-          raw.stroke(a[SR], a[SG], a[SB], a[SA]);
-          raw.vertex(a[VX], a[VY]);
+          if (raw instanceof PGraphics3) {
+            if (a[VW] != 0) {
+              raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+              raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
+            }
+          } else {
+            raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+            raw.vertex(a[X], a[Y]);
+          }
         }
       }
 
@@ -768,10 +758,17 @@ public class PGraphicsGL extends PGraphics3 {
         float b[] = vertices[lines[i][VERTEX2]];
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
-
         if (raw != null) {
-          raw.stroke(b[SR], b[SG], b[SB], b[SA]);
-          raw.vertex(b[VX], b[VY]);
+          if (raw instanceof PGraphics3) {
+            if ((a[VW] != 0) && (b[VW] != 0)) {
+              raw.stroke(b[SR], b[SG], b[SB], b[SA]);
+              raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
+            }
+          } else {
+            //System.out.println("writing 2d vertex");
+            raw.stroke(b[SR], b[SG], b[SB], b[SA]);
+            raw.vertex(b[X], b[Y]);
+          }
         }
         i++;
       }
