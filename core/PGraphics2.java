@@ -512,9 +512,11 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Handle renderer-specific image drawing.
+   */
   protected void imageImpl(PImage who,
                            float x1, float y1, float x2, float y2,
-                           //float x, float y, float w, float h,
                            int u1, int v1, int u2, int v2) {
     if (who.cache == null) {
       who.cache = new ImageCache(who);
@@ -537,7 +539,22 @@ public class PGraphics2 extends PGraphics {
       //System.out.println("image modified");
     }
 
-    g2.drawImage(((ImageCache) who.cache).image,
+    /*
+    imageImplAWT(((ImageCache) who.cache).image,
+                 x1, y1, x2, y2,
+                 u1, v1, u2, v2);
+  }
+
+    // Second stage of image implementation. In this case, all that's
+    // done is the AWT version of the image is drawn. This is broken out
+    // separately because the PDF library needs to handle drawImage()
+    // differently at this stage.
+
+  protected void imageImplAWT(Image awtImage,
+                              float x1, float y1, float x2, float y2,
+                              int u1, int v1, int u2, int v2) {
+    */
+    g2.drawImage(((ImageCache) who.cache).image, //awtImage,
                  (int) x1, (int) y1, (int) x2, (int) y2,
                  u1, v1, u2, v2, null);
   }
