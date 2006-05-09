@@ -311,8 +311,8 @@ public class PGraphics3 extends PGraphics {
     // clear out the lights, they'll have to be turned on again
     lightCount = 0;
     lightingDependsOnVertexPosition = false;
-        lightFalloff(1, 0, 0);
-        lightSpecular(0, 0, 0);
+    lightFalloff(1, 0, 0);
+    lightSpecular(0, 0, 0);
 
     // reset lines
     lineCount = 0;
@@ -344,17 +344,29 @@ public class PGraphics3 extends PGraphics {
     // shapes were already rendered in endShape();
     // (but can't return, since needs to update memimgsrc
     if (hints[ENABLE_DEPTH_SORT]) {
-      if (triangleCount > 0) {
-        depth_sort_triangles();
-        render_triangles();
-      }
-      if (lineCount > 0) {
-        depth_sort_lines();
-        render_lines();
-      }
+      flush();
     }
     // blit to screen
     super.endFrame();
+  }
+
+
+  /**
+   * Emit any sorted geometry that's been collected on this frame.
+   */
+  protected void flush() {
+    if (triangleCount > 0) {
+      if (hints[ENABLE_DEPTH_SORT]) {
+        depth_sort_triangles();
+      }
+      render_triangles();
+    }
+    if (lineCount > 0) {
+      if (hints[ENABLE_DEPTH_SORT]) {
+        depth_sort_lines();
+      }
+      render_lines();
+    }
   }
 
 
