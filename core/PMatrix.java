@@ -311,6 +311,7 @@ public final class PMatrix implements PConstants {
   }
 
 
+  /*
   public void transform(float n00, float n01, float n02, float n03,
                         float n10, float n11, float n12, float n13,
                         float n20, float n21, float n22, float n23,
@@ -320,6 +321,7 @@ public final class PMatrix implements PConstants {
           n20, n21, n22, n23,
           n30, n31, n32, n33);
   }
+  */
 
 
   public void preApply(PMatrix lhs) {
