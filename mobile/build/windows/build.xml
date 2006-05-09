@@ -240,7 +240,27 @@
         <property name="target" value="work"/>
         <!-- copy jar and jad/manifest template into processing build -->
         <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/windows/${target}/lib"/>
+        <copy file="mobile/build/shared/lib/mobile.properties" todir="processing/build/windows/${target}/lib"/>
         <copy file="mobile/build/windows/mobile.jar" todir="processing/build/windows/${target}/lib"/>
+        
+        <property file="mobile/build/shared/lib/mobile.properties" prefix="localcore"/>
+        <property file="mobile/web/download/mobile.properties" prefix="archivecore"/>
+        <!-- set local and archive versions into comparable properties -->
+        <var name="localversion" value="" unset="true"/>
+        <var name="archiveversion" value="" unset="true"/>
+        <propertycopy property="localversion" from="localcore.build"/>
+        <propertycopy property="archiveversion" from="archivecore.build" silent="true"/>
+        <if>
+            <not><equals arg1="${localversion}" arg2="${archiveversion}"/></not>
+            <then>
+                <!-- update archive property file -->
+                <propertyfile file="mobile/web/download/mobile.properties">
+                    <entry key="build" value="${localversion}"/>
+                </propertyfile>
+                <!-- copy library -->
+                <copy file="mobile/build/windows/mobile.jar" todir="mobile/web/download"/>
+            </then>
+        </if>
     </target>
 
     <target name="compile">
@@ -360,11 +380,11 @@
             <not><equals arg1="${localversion}" arg2="${archiveversion}"/></not>
             <then>
                 <!-- update archive property file -->
-                <propertyfile file="mobile/web/download/libraries/windows/version.properties">
+                <propertyfile file="mobile/web/download/libraries/version.properties">
                     <entry key="${libname}" value="${localversion}"/>
                 </propertyfile>
                 <!-- zip and copy library -->
-                <zip destfile="mobile/web/download/libraries/windows/${libname}.zip" basedir="mobile/${libname}"/>
+                <zip destfile="mobile/web/download/libraries/${libname}.zip" basedir="mobile/${libname}"/>
             </then>
         </if>
     </target>
@@ -372,7 +392,7 @@
     <!-- copies core libraries over to processing build -->
     <target name="copylibs" depends="makelibs">
         <!-- load archive versions -->
-        <property file="mobile/web/download/libraries/windows/version.properties"/>
+        <property file="mobile/web/download/libraries/version.properties"/>
         <!-- default target is work folder, can be overridden by call -->
         <property name="target" value="work"/>
         <!-- delete contents of libraries folder -->

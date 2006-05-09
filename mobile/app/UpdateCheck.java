@@ -58,9 +58,11 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
   Editor editor;
   public static final String downloadURL = "http://mobile.processing.org/download/latest.txt";
   
-  public static final String libURL = "http://mobile.processing.org/download/libraries/";
-  public static final String libVersion = "version.properties";
-  String platform;
+  public static final String coreURL        = "http://mobile.processing.org/download/mobile.jar";
+  public static final String coreVersion    = "http://mobile.processing.org/download/mobile.properties";
+  
+  public static final String libURL         = "http://mobile.processing.org/download/libraries/";
+  public static final String libVersion     = "version.properties";
   boolean cancelled = false;
   boolean outOfDate = false;  
   JLabel label;
@@ -71,11 +73,6 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
   public UpdateCheck(Editor editor) {
     super(editor);
     this.editor = editor;
-    if (Base.isWindows()) {
-        platform = "windows/";
-    } else if (Base.isMacOS()) {
-        platform = "macosx/";
-    }
     Thread thread = new Thread(this);
     thread.start();
   }
@@ -196,7 +193,12 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       if (cancelled) {
           return;
       }
-      
+      //// check for updated core jar
+      setMessage("Checking latest version of mobile core library...");
+      checkCore();
+      if (cancelled) {
+          return;
+      }
       //// now do library update check
       setMessage("Checking latest version of libraries...");
       HashMap versions = new HashMap();
@@ -229,54 +231,124 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
     }
   }
   
-  protected void readLibraryVersions(HashMap versions) throws Exception {
-      URL url = new URL(libURL + platform + libVersion);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-      String line = reader.readLine();
-      String lib, version;
-      int pos;
-      while (line != null) {
-          pos = line.indexOf('=');
-          if (!line.startsWith("#") && (pos > 0)) {
-              lib = line.substring(0, pos).trim();
-              version = line.substring(pos + 1).trim();
-              versions.put(lib, version);
+  protected void checkCore() throws Exception {
+      BufferedReader reader = null;
+      try {
+          URL url = new URL(coreVersion);
+          reader = new BufferedReader(new InputStreamReader(url.openStream()));
+          String line = reader.readLine();
+          int pos, serverVersion = -1;
+          while (line != null) {
+              pos = line.indexOf('=');
+              if (!line.startsWith("#") && (pos >= 0)) {
+                  serverVersion = Integer.parseInt(line.substring(line.indexOf('=') + 1).trim());
+                  break;
+              }
+              line = reader.readLine();
           }
-          line = reader.readLine();
+          reader.close();
+          if (serverVersion >= 0) {
+              //// now read local version
+              reader = new BufferedReader(new InputStreamReader(Base.getStream("mobile.properties")));
+              line = reader.readLine();
+              int localVersion = Integer.parseInt(line.substring(line.indexOf('=') + 1).trim());
+              if (localVersion < serverVersion) {
+                  outOfDate = true;
+                  //// backup old version
+                  File f = new File("lib/mobile.jar");
+                  File backup = new File("lib/mobile_bak.jar");
+                  //// delete any old leftover backup
+                  if (backup.exists()) {
+                      backup.delete();
+                  }
+                  Base.copyFile(f, backup);
+                  //// now delete core
+                  f.delete();
+                  //// download new
+                  url = new URL(coreURL);
+                  writeStreamToFile(url.openStream(), f);
+                  //// also version properties
+                  File version = new File("lib/mobile.properties");
+                  File versionBackup = new File("lib/mobile_bak.properties");
+                  if (versionBackup.exists()) {
+                      versionBackup.delete();
+                  }
+                  Base.copyFile(version, versionBackup);
+                  url = new URL(coreVersion);
+                  writeStreamToFile(url.openStream(), version);
+                  //// delete backups
+                  backup.deleteOnExit();
+                  versionBackup.deleteOnExit();
+              }
+          }
+      } finally {
+          if (reader != null) {
+              reader.close();
+          }
       }
-      reader.close();
+  }
+  
+  protected void readLibraryVersions(HashMap versions) throws Exception {
+      BufferedReader reader = null;
+      try {
+          URL url = new URL(libURL + libVersion);
+          reader = new BufferedReader(new InputStreamReader(url.openStream()));
+          String line = reader.readLine();
+          String lib, version;
+          int pos;
+          while (line != null) {
+              pos = line.indexOf('=');
+              if (!line.startsWith("#") && (pos > 0)) {
+                  lib = line.substring(0, pos).trim();
+                  version = line.substring(pos + 1).trim();
+                  versions.put(lib, version);
+              }
+              line = reader.readLine();
+          }
+      } finally {
+          if (reader != null) {
+              reader.close();
+          }
+      }
   }
   
   protected void compareLibraryVersions(HashMap versions) throws Exception {
-      Iterator keys = versions.keySet().iterator();
-      String lib;
-      int localVersion, serverVersion;
-      while (keys.hasNext()) {
-          lib = (String) keys.next();
-          serverVersion = Integer.parseInt((String) versions.get(lib));
-          //// open and parse local library version
-          File f = new File(Sketchbook.librariesFolder, lib + File.separator + libVersion);
-          if (f.exists()) {
-              BufferedReader reader = new BufferedReader(new FileReader(f));
-              //// assume that first line MUST be build version
-              String version = reader.readLine();
-              reader.close();
-              if (version != null) {
-                  localVersion = Integer.parseInt(version.substring(version.indexOf('=') + 1).trim());
+      BufferedReader reader = null;
+      try {
+          Iterator keys = versions.keySet().iterator();
+          String lib;
+          int localVersion, serverVersion;
+          while (keys.hasNext()) {
+              lib = (String) keys.next();
+              serverVersion = Integer.parseInt((String) versions.get(lib));
+              //// open and parse local library version
+              File f = new File(Sketchbook.librariesFolder, lib + File.separator + libVersion);
+              if (f.exists()) {
+                  reader = new BufferedReader(new FileReader(f));
+                  //// assume that first line MUST be build version
+                  String version = reader.readLine();
+                  reader.close();
+                  if (version != null) {
+                      localVersion = Integer.parseInt(version.substring(version.indexOf('=') + 1).trim());
+                  } else {
+                      localVersion = 0;
+                  }
+                  if (localVersion < serverVersion) {
+                      //// mark for download
+                      versions.put(lib, new Boolean(true));                  
+                      outOfDate = true;
+                  } else {
+                      versions.put(lib, new Boolean(false));
+                  }
               } else {
-                  localVersion = 0;
-              }
-              if (localVersion < serverVersion) {
                   //// mark for download
-                  versions.put(lib, new Boolean(true));                  
+                  versions.put(lib, new Boolean(true));
                   outOfDate = true;
-              } else {
-                  versions.put(lib, new Boolean(false));
               }
-          } else {
-              //// mark for download
-              versions.put(lib, new Boolean(true));
-              outOfDate = true;
+          }
+      } finally {
+          if (reader != null) {
+              reader.close();
           }
       }
   }
@@ -288,17 +360,17 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       while (keys.hasNext()) {
           lib = (String) keys.next();
           updated = ((Boolean) versions.get(lib)).booleanValue();
+          if (cancelled) {
+              return;
+          }
           if (updated) {
               setMessage("Downloading new " + lib + " library...");
-              if (cancelled) {
-                  return;
-              }
               File f = new File(Sketchbook.librariesFolder, lib + ".zip");
               //// check if any previous download exists, and delete if so
               if (f.exists()) {
                   f.delete();
               }
-              URL url = new URL(libURL + platform + lib + ".zip");
+              URL url = new URL(libURL + lib + ".zip");
               writeStreamToFile(url.openStream(), f);
               
               //// rename old library folder as a backup
@@ -314,9 +386,6 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
                   throw new Exception("Directory create failed.");
               }
               setMessage("Extracting " + lib + " library...");
-              if (cancelled) {
-                  return;
-              }
               //// extract files into folder
               ZipFile zip = new ZipFile(f);
               Enumeration e = zip.entries();
@@ -329,12 +398,9 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
                   } else {
                       writeStreamToFile(zip.getInputStream(ze), zf);
                   }
-                  if (cancelled) {
-                      return;
-                  }
               }
               //// delete zip file
-              f.delete();
+              f.deleteOnExit();
               //// delete backup
               if (backup.exists()) {
                   Base.removeDir(backup);
