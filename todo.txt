@@ -1,14 +1,30 @@
 0115 pde
+o what's the long delay when hitting "save as" on osx?
+o   the first time, it's very slow.. presumably an awt problem
+X renaming a sketch should rebuild the sketch menu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=332
+
+_ would be nice to have macosx packaged up as a single .app file
+_   should recommend that people install libraries into their sketchbook
 
 _ jar files like the bad aiexport plugin will cause serious problems
 _   need to ignore processing.core classes showing up in other jar files
+_   tougher than it looks, because it all depends on what java wants to use
+_     i.e. even if not specified, the stuff will be in the classpath
+_   need to make classpath code be less promiscuous
+_   the order of adding libraries to classpath should be opposite
+_     the important local libraries should be first in cp, user contrib later
 _   http://dev.processing.org/bugs/show_bug.cgi?id=321
 
 _ stop button won't kill a video sketch (bug 150 example does this) 
+_ run/stop button highlight is almost completely broken
 
 _ add "hide stop button" arg for PApplet
 
+board stuff
+_ only allow moderators to delete posts
 _ set "no smileys" as the default for posting code
+
 _ make the export to the board just copy to clipboard
 _   also make it insert &nbsp; for extra spaces
 
@@ -121,6 +137,17 @@ _   things will also be very ugly on-screen
 _ text being nicer in java2d
 _ textMode(SCREEN) for P2D and P3D for nice fast text
 
+advanced faq
+_ move 'how do i create large images' here
+_ move stuff about getting gl object and java2d stuff here
+_ explain how to integrate code with swing
+_   use a separate environment, call init(), use noLoop(), redraw()
+_ how do i add gui to a sketch?
+_   don't use awt components
+_ advanced reference contains more info about how things work
+_ createGraphics with PDF, using dispose() to clear the thing
+_ calling nextPage()
+
 board faq
 _ someone wrote up an initial version of this
 _ how to put [code] around blocks of code
@@ -129,6 +156,7 @@ _   also the reference page on the bb commands
 _ i don't answer to instant messages
 _ i don't answer email
 _ use the bugs db instead of the bugs board
+_ use the search box (not the forum search)
 _ read the faq, read the faq
 _ read the reference.. right-click on a word and choose "find in ref"
 _ non-processing posts will be deleted (not a java discussion board)
@@ -774,7 +802,6 @@ _   was missing the error about a package being gone
 _   can comment out /System/Library/ as a test
 _ Contents/Resources/Java can take jnilib files
 _ set file type/creator for .pde files of examples
-_ would be nice to have macosx packaged up as a single .app file
 _ is there a way to set the color of the Frame growbox?
 _   currently it's white instead of dark gray like the ui
 _   setBackground(Color) didn't seem to help inside PdeBase.<init>
