@@ -644,6 +644,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  protected void flush() {
+    // no-op, mostl for P3D to write sorted stuff
+  }
+
+
   /**
    * do anything that needs doing after setup before draw
    */
@@ -3572,9 +3577,8 @@ public class PGraphics extends PImage implements PConstants {
 
   public void endRaw() {
     if (raw != null) {
-      //System.out.println("legit end raw");
-      //raw.endFrame();
-      //raw.endRaw();
+      // for 3D, need to flush any geometry that's been stored for sorting
+      raw.flush();
 
       // just like beginFrame, this will have to be called because
       // endFrame() will be happening outside of draw()
