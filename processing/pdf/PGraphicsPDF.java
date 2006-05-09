@@ -282,6 +282,27 @@ public class PGraphicsPDF extends PGraphics2 {
   //////////////////////////////////////////////////////////////
 
 
+  /*
+  protected void imageImplAWT(java.awt.Image awtImage,
+                              float x1, float y1, float x2, float y2,
+                              int u1, int v1, int u2, int v2) {
+    pushMatrix();
+    translate(x1, y1);
+    int awtImageWidth = awtImage.getWidth(null);
+    int awtImageHeight = awtImage.getHeight(null);
+    scale((x2 - x1) / (float)awtImageWidth,
+          (y2 - y1) / (float)awtImageHeight);
+    g2.drawImage(awtImage,
+                 0, 0, awtImageWidth, awtImageHeight,
+                 u1, v1, u2, v2, null);
+    popMatrix();
+  }
+  */
+
+
+  //////////////////////////////////////////////////////////////
+
+
   public void loadPixels() {
     nope("loadPixels");
   }
