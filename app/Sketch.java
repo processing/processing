@@ -492,7 +492,11 @@ public class Sketch {
         load();
         */
 
-      } else {
+        // get the changes into the sketchbook menu
+        // (re-enabled in 0115 to fix bug #332)
+        editor.sketchbook.rebuildMenus();
+
+      } else {  // else if something besides code[0]
         if (!current.file.renameTo(newFile)) {
           Base.showWarning("Error",
                            "Could not rename \"" + current.file.getName() +

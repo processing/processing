@@ -544,6 +544,8 @@ public class Sketchbook {
         String packages[] =
           Compiler.packageListFromClassPath(libraryClassPath);
         for (int k = 0; k < packages.length; k++) {
+          //System.out.println(packages[k] + " -> " + exported);
+          //String already = (String) importToLibraryTable.get(packages[k]);
           importToLibraryTable.put(packages[k], exported);
         }
 
