@@ -3365,7 +3365,12 @@ public class PApplet extends Applet
    */
   public BufferedReader reader(String filename) {
     try {
-      return reader(openStream(filename));
+      InputStream is = openStream(filename);
+      if (is == null) {
+        System.err.println(filename + " does not exist or could not be read");
+        return null;
+      }
+      return reader(is);
 
     } catch (Exception e) {
       if (filename == null) {
@@ -4059,6 +4064,15 @@ public class PApplet extends Applet
                                Object dst, int dstPosition,
                                int length) {
     System.arraycopy(src, srcPosition, dst, dstPosition, length);
+  }
+
+
+  /**
+   * Convenience method for arraycopy().
+   * Identical to <CODE>arraycopy(src, 0, dst, 0, length);</CODE>
+   */
+  static public void arraycopy(Object src, Object dst, int length) {
+    System.arraycopy(src, 0, dst, 0, length);
   }
 
 
