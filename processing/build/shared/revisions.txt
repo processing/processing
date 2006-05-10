@@ -4,6 +4,42 @@ reference of how to use processing, because the information for older
 releases will be super crusty. 
 
 
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+ABOUT REV 0115 - 10 May 2006
+
++ When using Java 1.4 and later, you can now write to several formats 
+  other than tga and tiff. If Java 1.4 is installed and the extension 
+  used is supported (usually png, jpg, jpeg, bmp), then those methods 
+  will be used to write the image. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=165
+  More detailed information is available in the save() section 
+  of the developer's reference:
+  http://dev.processing.org/reference/core/javadoc/processing/core/PImage.html#save(java.lang.String)
+
++ loadImage() also supports image loading in the same manner, which 
+  though it's not recommended for projects that export to the web. 
+  Again, more detailed information is in the developer's reference:
+  http://dev.processing.org/reference/core/javadoc/processing/core/PApplet.html#loadImage(java.lang.String)
+
++ The image loading and saving issues were covered by Bug #165.
+  http://dev.processing.org/bugs/show_bug.cgi?id=165
+
++ loadImage() now works with TIFF images created by Processing. 
+  It will not support TIFF images from other programs. 
+
+
+[ issues ]
+
++ You cannot set the level of compression when writing JPEG:
+  http://dev.processing.org/bugs/show_bug.cgi?id=342
+
++ TIFF writing does not support images that are ARGB or ALPHA format.
+  http://dev.processing.org/bugs/show_bug.cgi?id=343
+
+
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
