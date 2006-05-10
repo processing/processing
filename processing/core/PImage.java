@@ -1919,17 +1919,19 @@ public class PImage implements PConstants, Cloneable {
    * Also figured out how to avoid parsing the image upside-down
    * (there's a header flag to set the image origin to top-left)
    * </p>
-   * New version starting with rev 92 takes format setting into account:
-   * <TT>ALPHA</TT> images written as 8bit grayscale (uses lowest byte)
-   * <TT>RGB</TT> &rarr; 24 bits
-   * <TT>ARGB</TT> &rarr; 32 bits
+   * Starting with revision 0092, the format setting is taken into account:
+   * <UL>
+   * <LI><TT>ALPHA</TT> images written as 8bit grayscale (uses lowest byte)
+   * <LI><TT>RGB</TT> &rarr; 24 bits
+   * <LI><TT>ARGB</TT> &rarr; 32 bits
+   * </UL>
    * all versions are RLE compressed
    * </p>
    * Contributed by toxi 8-10 May 2005, based on this RLE
    * <A HREF="http://www.wotsit.org/download.asp?f=tga">specification</A>
    */
   protected boolean saveTGA(OutputStream output) {
-     byte header[] = new byte[18];
+    byte header[] = new byte[18];
 
      if (format == ALPHA) {  // save ALPHA images as 8bit grayscale
        header[2] = 0x0B;
@@ -2179,7 +2181,7 @@ public class PImage implements PConstants, Cloneable {
         }
         if (saveImageFormats != null) {
           for (int i = 0; i < saveImageFormats.length; i++) {
-            System.out.println(saveImageFormats[i]);
+            //System.out.println(saveImageFormats[i]);
             if (filename.endsWith("." + saveImageFormats[i])) {
               saveImageIO(filename);
               return;
