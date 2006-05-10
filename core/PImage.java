@@ -26,6 +26,9 @@ package processing.core;
 
 import java.awt.image.*;
 import java.io.*;
+import java.lang.reflect.*;
+
+import javax.imageio.*;
 
 
 /**
@@ -118,8 +121,8 @@ public class PImage implements PConstants, Cloneable {
   public PImage(int width, int height, int format) {
     init(width, height, format);
   }
-  
-  
+
+
   public PImage(int pixels[], int width, int height, int format) {
     this.pixels = pixels;
     this.width = width;
@@ -844,7 +847,7 @@ public class PImage implements PConstants, Cloneable {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         //cb = cg = cr = sum = 0;
-    	cb = sum = 0;
+        cb = sum = 0;
         read = x - blurRadius;
         if (read<0) {
           bk0=-read;
@@ -876,7 +879,7 @@ public class PImage implements PConstants, Cloneable {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         //cb = cg = cr = sum = 0;
-    	cb = sum = 0;
+        cb = sum = 0;
         if (ym<0) {
           bk0 = ri = -ym;
           read = x;
@@ -1782,7 +1785,7 @@ public class PImage implements PConstants, Cloneable {
   // FILE I/O
 
 
-  static byte tiff_header[] = {
+  static byte TIFF_HEADER[] = {
     77, 77, 0, 42, 0, 0, 0, 8, 0, 9, 0, -2, 0, 4, 0, 0, 0, 1, 0, 0,
     0, 0, 1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 3, 0, 0, 0, 1,
     0, 0, 0, 0, 1, 2, 0, 3, 0, 0, 0, 3, 0, 0, 0, 122, 1, 6, 0, 3, 0,
@@ -1792,8 +1795,8 @@ public class PImage implements PConstants, Cloneable {
   };
 
 
-  static public boolean saveHeaderTIFF(OutputStream output,
-                                       int width, int height) {
+  /*
+  protected boolean saveHeaderTIFF(OutputStream output) {
     try {
       byte tiff[] = new byte[768];
       System.arraycopy(tiff_header, 0, tiff, 0, tiff_header.length);
@@ -1817,14 +1820,83 @@ public class PImage implements PConstants, Cloneable {
     }
     return false;
   }
+  */
 
 
-  static public boolean saveTIFF(OutputStream output, int pixels[],
-                                 int width, int height) {
-    try {
-      if (!saveHeaderTIFF(output, width, height)) {
-        return false;
+  static final String TIFF_ERROR =
+    "Error: Processing can only read its own TIFF files.";
+
+  static protected PImage loadTIFF(byte tiff[]) {
+    if ((tiff[42] != tiff[102]) ||  // width/height in both places
+        (tiff[43] != tiff[103])) {
+      System.err.println(TIFF_ERROR);
+      return null;
+    }
+
+    int width =
+      ((tiff[30] & 0xff) << 8) | (tiff[31] & 0xff);
+    int height =
+      ((tiff[42] & 0xff) << 8) | (tiff[43] & 0xff);
+
+    int count =
+      ((tiff[114] & 0xff) << 24) |
+      ((tiff[115] & 0xff) << 16) |
+      ((tiff[116] & 0xff) << 8) |
+      (tiff[117] & 0xff);
+    if (count != width * height * 3) {
+      System.err.println(TIFF_ERROR + " (" + width + ", " + height +")");
+      return null;
+    }
+
+    // check the rest of the header
+    for (int i = 0; i < TIFF_HEADER.length; i++) {
+      if ((i == 30) || (i == 31) || (i == 42) || (i == 43) ||
+          (i == 102) || (i == 103) ||
+          (i == 114) || (i == 115) || (i == 116) || (i == 117)) continue;
+
+      if (tiff[i] != TIFF_HEADER[i]) {
+        System.err.println(TIFF_ERROR + " (" + i + ")");
+        return null;
       }
+    }
+
+    PImage outgoing = new PImage(width, height, RGB);
+    int index = 768;
+    count /= 3;
+    for (int i = 0; i < count; i++) {
+      outgoing.pixels[i] =
+        0xFF000000 |
+        (tiff[index++] & 0xff) << 16 |
+        (tiff[index++] & 0xff) << 8 |
+        (tiff[index++] & 0xff);
+    }
+    return outgoing;
+  }
+
+
+  protected boolean saveTIFF(OutputStream output) {
+    if (format != RGB) {
+      System.out.println("Warning: only RGB information is saved with " +
+                         ".tif files. Use .tga or .png if you want alpha.");
+    }
+    try {
+      byte tiff[] = new byte[768];
+      System.arraycopy(TIFF_HEADER, 0, tiff, 0, TIFF_HEADER.length);
+
+      tiff[30] = (byte) ((width >> 8) & 0xff);
+      tiff[31] = (byte) ((width) & 0xff);
+      tiff[42] = tiff[102] = (byte) ((height >> 8) & 0xff);
+      tiff[43] = tiff[103] = (byte) ((height) & 0xff);
+
+      int count = width*height*3;
+      tiff[114] = (byte) ((count >> 24) & 0xff);
+      tiff[115] = (byte) ((count >> 16) & 0xff);
+      tiff[116] = (byte) ((count >> 8) & 0xff);
+      tiff[117] = (byte) ((count) & 0xff);
+
+      //if (!saveHeaderTIFF(output)) { //, width, height)) {
+      //return false;
+      //}
       for (int i = 0; i < pixels.length; i++) {
         output.write((pixels[i] >> 16) & 0xff);
         output.write((pixels[i] >> 8) & 0xff);
@@ -1856,8 +1928,7 @@ public class PImage implements PConstants, Cloneable {
    * Contributed by toxi 8-10 May 2005, based on this RLE
    * <A HREF="http://www.wotsit.org/download.asp?f=tga">specification</A>
    */
-  static public boolean saveTGA(OutputStream output, int pixels[],
-                                int width, int height, int format) {
+  protected boolean saveTGA(OutputStream output) {
      byte header[] = new byte[18];
 
      if (format == ALPHA) {  // save ALPHA images as 8bit grayscale
@@ -1994,16 +2065,91 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Use ImageIO functions from Java 1.4 and later to handle image save.
+   * Various formats are supported, typically jpeg, png, bmp, and wbmp.
+   * To get a list of the supported formats for writing, use: <BR>
+   * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
+   */
+  protected void saveImageIO(String path) throws IOException {
+    try {
+      //BufferedImage bimage =
+      //  new BufferedImage(width, height, (format == ARGB) ?
+      //                    BufferedImage.TYPE_INT_ARGB :
+      //                    BufferedImage.TYPE_INT_RGB);
+      Class bufferedImageClass =
+        Class.forName("java.awt.image.BufferedImage");
+      Constructor bufferedImageConstructor =
+        bufferedImageClass.getConstructor(new Class[] {
+            Integer.TYPE,
+            Integer.TYPE,
+            Integer.TYPE });
+      Field typeIntRgbField = bufferedImageClass.getField("TYPE_INT_RGB");
+      int typeIntRgb = typeIntRgbField.getInt(typeIntRgbField);
+      Field typeIntArgbField = bufferedImageClass.getField("TYPE_INT_ARGB");
+      int typeIntArgb = typeIntArgbField.getInt(typeIntArgbField);
+      Object bimage =
+        bufferedImageConstructor.newInstance(new Object[] {
+            new Integer(width),
+            new Integer(height),
+            new Integer((format == ARGB) ? typeIntArgb : typeIntRgb)
+          });
+
+      //bimage.setRGB(0, 0, width, height, pixels, 0, width);
+      Method setRgbMethod =
+        bufferedImageClass.getMethod("setRGB", new Class[] {
+            Integer.TYPE, Integer.TYPE,
+            Integer.TYPE, Integer.TYPE,
+            pixels.getClass(),
+            Integer.TYPE, Integer.TYPE
+          });
+      setRgbMethod.invoke(bimage, new Object[] {
+          new Integer(0), new Integer(0),
+          new Integer(width), new Integer(height),
+          pixels, new Integer(0), new Integer(width)
+        });
+
+      File file = new File(path);
+      String extension = path.substring(path.lastIndexOf('.') + 1);
+
+      //ImageIO.write(bimage, extension, file);
+      Class renderedImageClass =
+        Class.forName("java.awt.image.RenderedImage");
+      Class ioClass = Class.forName("javax.imageio.ImageIO");
+      Method writeMethod =
+        ioClass.getMethod("write", new Class[] {
+            renderedImageClass, String.class, File.class
+          });
+      writeMethod.invoke(null, new Object[] { bimage, extension, file });
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new IOException("image save failed.");
+    }
+  }
+
+
+  protected String[] saveImageFormats;
+
+  /**
    * Save this image to disk.
    * <p>
    * As of revision 0100, this function requires an absolute path,
    * in order to avoid confusion. To save inside the sketch folder,
    * use the function savePath() from PApplet, or use saveFrame() instead.
    * <p>
-   * <EM>TODO</EM> write reflection code here to use java 1.4 imageio
-   * methods for writing out images that might be much better.
-   * won't want to use them in all cases.. how to determine? <BR>
-   * boolean ImageIO.write(RenderedImage im, String formatName, File output)
+   * As of revision 0115, when using Java 1.4 and later, you can write
+   * to several formats besides tga and tiff. If Java 1.4 is installed
+   * and the extension used is supported (usually png, jpg, jpeg, bmp,
+   * and tiff), then those methods will be used to write the image.
+   * To get a list of the supported formats for writing, use: <BR>
+   * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
+   * <p>
+   * To use the original built-in image writers, use .tga as the extension,
+   * or don't include an extension, in which case .tif will be added.
+   * <p>
+   * The ImageIO API claims to support wbmp files, however they probably
+   * require a black and white image. Basic testing produced a zero-length
+   * file with no error.
    */
   public void save(String filename) {  // ignore
     boolean success = false;
@@ -2018,9 +2164,33 @@ public class PImage implements PConstants, Cloneable {
     try {
       OutputStream os = null;
 
+      if (PApplet.javaVersion >= 1.4f) {
+        if (saveImageFormats == null) {
+          //saveImageFormats = javax.imageio.ImageIO.getWriterFormatNames();
+          try {
+            Class ioClass = Class.forName("javax.imageio.ImageIO");
+            Method getFormatNamesMethod =
+              ioClass.getMethod("getWriterFormatNames", (Class[]) null);
+            saveImageFormats = (String[])
+              getFormatNamesMethod.invoke((Class[]) null, (Object[]) null);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+        if (saveImageFormats != null) {
+          for (int i = 0; i < saveImageFormats.length; i++) {
+            System.out.println(saveImageFormats[i]);
+            if (filename.endsWith("." + saveImageFormats[i])) {
+              saveImageIO(filename);
+              return;
+            }
+          }
+        }
+      }
+
       if (filename.toLowerCase().endsWith(".tga")) {
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        success = saveTGA(os, pixels, width, height, format);
+        success = saveTGA(os); //, pixels, width, height, format);
 
       } else {
         if (!filename.toLowerCase().endsWith(".tif") &&
@@ -2029,7 +2199,7 @@ public class PImage implements PConstants, Cloneable {
           filename += ".tif";
         }
         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
-        success = saveTIFF(os, pixels, width, height);
+        success = saveTIFF(os); //, pixels, width, height);
       }
       os.flush();
       os.close();

@@ -4,6 +4,13 @@ o   the first time, it's very slow.. presumably an awt problem
 X renaming a sketch should rebuild the sketch menu
 X   http://dev.processing.org/bugs/show_bug.cgi?id=332
 
+_ toInt() needs to go away in time for the book.. fix parser bugs
+_ make expand() et al work on objects
+
+_ notes about setting key=0 to catch ESC
+_   also size(screen.width, screen.height);
+_   maybe make a section in installations with p5
+
 _ would be nice to have macosx packaged up as a single .app file
 _   should recommend that people install libraries into their sketchbook
 
