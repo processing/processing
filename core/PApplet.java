@@ -3020,15 +3020,27 @@ public class PApplet extends Applet
   /**
    * Load an image from the data folder or a local directory.
    * Supports .gif (including transparency), .tga, and .jpg images.
-   * In Java 1.3 or later, .png images are also supported.
-   * http://java.sun.com/j2se/1.3/docs/guide/2d/new_features.html
+   * In Java 1.3 or later, .png images are
+   * <A HREF="http://java.sun.com/j2se/1.3/docs/guide/2d/new_features.html">
+   * also supported</A>.
    * <P>
    * Generally this should only be used during setup, re-loading
    * images inside draw() is likely to cause a significant delay
    * while memory is allocated and the thread blocks while waiting
    * for the image to load because loading is not asynchronous.
    * <P>
-   * As of 0096, returns null if no image of that name is found.
+   * As of 0096, returns null if no image of that name is found,
+   * rather than an error.
+   * <P>
+   * Release 0115 also provides support for reading TIFF images
+   * that are created by Processing.
+   * <P>
+   * Also in release 0115, more image formats (BMP and others) can
+   * be read when using Java 1.4 and later. Because many people still
+   * use Java 1.1 and 1.3, these formats are not recommended for
+   * work that will be posted on the web. To get a list of possible
+   * image formats for use with Java 1.4 and later, use the following:
+   * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
    */
   public PImage loadImage(String filename) {
     if (PApplet.javaVersion >= 1.4f) {
