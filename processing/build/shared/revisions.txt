@@ -4,11 +4,13 @@ reference of how to use processing, because the information for older
 releases will be super crusty. 
 
 
-
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0115 - 10 May 2006
+ABOUT REV 0115 - 11 May 2006
+
+Greetings from the advanced processing workshop in the beautiful city 
+of Barcelona. 
 
 + When using Java 1.4 and later, you can now write to several formats 
   other than tga and tiff. If Java 1.4 is installed and the extension 
@@ -27,9 +29,24 @@ ABOUT REV 0115 - 10 May 2006
 + The image loading and saving issues were covered by Bug #165.
   http://dev.processing.org/bugs/show_bug.cgi?id=165
 
-+ loadImage() now works with TIFF images created by Processing. 
-  It will not support TIFF images from other programs. 
++ loadImage() now works with TIFF and Targa images created by Processing. 
+  It will probably not support TIFF or Targa files created by other programs. 
+  Use PNG or another image format if you want to load images.
+  http://dev.processing.org/bugs/show_bug.cgi?id=260
 
++ fixed issue with beginRaw() that made the stroke of objects appear with
+  no translations (even though the fill was properly translated) 
+  http://dev.processing.org/bugs/show_bug.cgi?id=339
+
++ removed debugging messages from loadPixels() and PGraphics2.save()
+
++ fixed error message that prevented DXF from being used with OpenGL
+
++ added arraycopy(from[], to[], count)
+
++ renaming a sketch now rebuilds the sketch menu (accidental regression
+  as the result of a bug fix and moving some code around)
+  http://dev.processing.org/bugs/show_bug.cgi?id=332
 
 [ issues ]
 
