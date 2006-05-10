@@ -728,7 +728,7 @@ public class Editor extends JFrame
     JMenu menu = new JMenu("Help");
     JMenuItem item;
 
-    item = new JMenuItem("Environment");
+    item = new JMenuItem("Getting Started");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Base.openURL(System.getProperty("user.dir") + File.separator +
@@ -743,14 +743,6 @@ public class Editor extends JFrame
         public void actionPerformed(ActionEvent e) {
           Base.openURL(System.getProperty("user.dir") + File.separator +
                           "reference" + File.separator + "index.html");
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Frequently Asked Questions");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.showFAQ();
         }
       });
     menu.add(item);
@@ -772,6 +764,14 @@ public class Editor extends JFrame
               }
             }
           }
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Frequently Asked Questions");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.showFAQ();
         }
       });
     menu.add(item);
