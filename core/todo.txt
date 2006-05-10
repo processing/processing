@@ -18,6 +18,13 @@ X   need to update docs re: tga
 X   and add support for reading its own uncompressed TIFs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=260
 
+
+0116 core
+_ endRaw() should force depth sorted triangles to flush
+_ fix dxf export bug
+_ fix erik's problems with export (also in bugs db)
+
+
 _ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
 
 _ illegal jpeg images are what happens whenever the image cannot be read
@@ -33,12 +40,8 @@ _ this produces a dark blue background:
 colorMode(RGB, 100);
 background(128);
 
-_ endRaw() should force depth sorted triangles to flush
-_ fix dxf export bug
-_ fix erik's problems with export (also in bugs db)
 
-
-0116 core
+0117 core
 _ bring back the old P2D, rename PGraphics2 into PGraphicsJava
 
 
