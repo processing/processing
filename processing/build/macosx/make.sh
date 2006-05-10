@@ -80,6 +80,7 @@ export CLASSPATH
 
 perl preproc.pl
 ../build/macosx/work/jikes -d . +D -target 1.1 *.java
+#javac -d . -source 1.3 -target 1.1 *.java
 zip -r0q ../build/macosx/work/lib/core.jar processing
 
 # head back to root "processing" dir

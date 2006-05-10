@@ -3014,6 +3014,9 @@ public class PApplet extends Applet
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  protected String[] loadImageFormats;
+
+
   /**
    * Load an image from the data folder or a local directory.
    * Supports .gif (including transparency), .tga, and .jpg images.
@@ -3028,12 +3031,39 @@ public class PApplet extends Applet
    * As of 0096, returns null if no image of that name is found.
    */
   public PImage loadImage(String filename) {
+    if (PApplet.javaVersion >= 1.4f) {
+      if (loadImageFormats == null) {
+        //loadImageFormats = javax.imageio.ImageIO.getReaderFormatNames();
+        try {
+          Class ioClass = Class.forName("javax.imageio.ImageIO");
+          Method getFormatNamesMethod =
+            ioClass.getMethod("getReaderFormatNames", (Class[]) null);
+          loadImageFormats = (String[])
+            getFormatNamesMethod.invoke((Class[]) null, (Object[]) null);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      if (loadImageFormats != null) {
+        for (int i = 0; i < loadImageFormats.length; i++) {
+          if (filename.endsWith("." + loadImageFormats[i])) {
+            return loadImageIO(filename);
+          }
+        }
+      }
+    }
+
     if (filename.toLowerCase().endsWith(".tga")) {
       return loadImageTGA(filename);
     }
 
     byte bytes[] = loadBytes(filename);
     if (bytes == null) return null;
+
+    if (filename.toLowerCase().endsWith(".tif") ||
+        filename.toLowerCase().endsWith(".tiff")) {
+      return PImage.loadTIFF(bytes);
+    }
 
     Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
 
@@ -3062,6 +3092,61 @@ public class PApplet extends Applet
       }
     }
     return image;
+  }
+
+
+  /**
+   *
+   */
+  protected PImage loadImageIO(String filename) {
+    InputStream stream = openStream(filename);
+    if (stream == null) {
+      System.err.println("The image " + filename + " could not be found.");
+      return null;
+    }
+
+    try {
+      Class ioClass = Class.forName("javax.imageio.ImageIO");
+      Method readMethod =
+        ioClass.getMethod("read", new Class[] { InputStream.class });
+      Object bimage = readMethod.invoke(null, new Object[] { stream });
+
+      // need to get width and height, then create pixels[] at that size
+      int px[] = null;
+
+      Class biClass =
+        Class.forName("java.awt.image.BufferedImage");
+
+      Method getHeightMethod =
+        biClass.getMethod("getHeight", (Class[]) null);
+      Integer hi = (Integer) getHeightMethod.invoke(bimage, (Object[]) null);
+      //int h = hi.intValue();
+
+      Method getWidthMethod =
+        biClass.getMethod("getWidth", (Class[]) null);
+      Integer wi = (Integer) getWidthMethod.invoke(bimage, (Object[]) null);
+      //int w = wi.intValue();
+
+      // need to call getType() on the image to see if RGB or ARGB
+
+      PImage outgoing = new PImage(wi.intValue(), hi.intValue());
+
+      Method getRgbMethod =
+        biClass.getMethod("getRGB", new Class[] {
+            Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE,
+            outgoing.pixels.getClass(), Integer.TYPE, Integer.TYPE
+          });
+      getRgbMethod.invoke(bimage, new Object[] {
+          new Integer(0), new Integer(0),
+          new Integer(outgoing.width), new Integer(outgoing.height),
+          outgoing.pixels, new Integer(0), new Integer(outgoing.width)
+        });
+      return outgoing;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
 
@@ -6225,24 +6310,6 @@ public class PApplet extends Applet
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     if (recorder != null) recorder.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
     g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-  }
-
-
-  static public boolean saveHeaderTIFF(OutputStream output,
-                                       int width, int height) {
-    return PGraphics.saveHeaderTIFF(output, width, height);
-  }
-
-
-  static public boolean saveTIFF(OutputStream output, int pixels[],
-                                 int width, int height) {
-    return PGraphics.saveTIFF(output, pixels, width, height);
-  }
-
-
-  static public boolean saveTGA(OutputStream output, int pixels[],
-                                int width, int height, int format) {
-    return PGraphics.saveTGA(output, pixels, width, height, format);
   }
 
 
