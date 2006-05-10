@@ -962,7 +962,18 @@ public class PFont implements PConstants {
    */
   static public String[] list() {
     if (PApplet.javaVersion < 1.3f) {
-      return Toolkit.getDefaultToolkit().getFontList();
+      // make this reflection too, since compilers complain about the
+      // deprecation, and it's bound to stop working in 1.6 or something
+      //return Toolkit.getDefaultToolkit().getFontList();
+      try {
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Method getFontListMethod =
+          tk.getClass().getMethod("getFontList", (Class[]) null);
+        return (String[]) getFontListMethod.invoke(tk, (Object[]) null);
+      } catch (Exception e) {
+        e.printStackTrace();
+        return new String[] { };
+      }
     }
 
     // getFontList is deprecated in 1.4, so this has to be used
@@ -974,8 +985,9 @@ public class PFont implements PConstants {
         geClass.getMethod("getLocalGraphicsEnvironment", (Class[]) null);
       Object ge = glgeMethod.invoke((Class[]) null, (Object[]) null);
 
+      //Font fonts[] = ge.getAllFonts();
       Method gafMethod = geClass.getMethod("getAllFonts", (Class[]) null);
-      Font fonts[] = (Font[]) gafMethod.invoke(ge, (Object[]) null); //ge.getAllFonts();
+      Font fonts[] = (Font[]) gafMethod.invoke(ge, (Object[]) null);
       String list[] = new String[fonts.length];
       for (int i = 0; i < list.length; i++) {
         list[i] = fonts[i].getName();
