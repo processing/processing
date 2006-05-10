@@ -3024,16 +3024,22 @@ public class PApplet extends Applet
    * <A HREF="http://java.sun.com/j2se/1.3/docs/guide/2d/new_features.html">
    * also supported</A>.
    * <P>
-   * Generally this should only be used during setup, re-loading
-   * images inside draw() is likely to cause a significant delay
-   * while memory is allocated and the thread blocks while waiting
+   * Generally, loadImage() should only be used during setup, because
+   * re-loading images inside draw() is likely to cause a significant
+   * delay while memory is allocated and the thread blocks while waiting
    * for the image to load because loading is not asynchronous.
+   * <P>
+   * To load several images asynchronously, see more information in the
+   * FAQ about writing your own threaded image loading method.
    * <P>
    * As of 0096, returns null if no image of that name is found,
    * rather than an error.
    * <P>
-   * Release 0115 also provides support for reading TIFF images
-   * that are created by Processing.
+   * Release 0115 also provides support for reading TIFF and RLE-encoded
+   * Targa (.tga) files written by Processing via save() and saveFrame().
+   * Other TIFF and Targa files will probably not load, use a different
+   * format (gif, jpg and png are safest bets) when creating images with
+   * another application to use with Processing.
    * <P>
    * Also in release 0115, more image formats (BMP and others) can
    * be read when using Java 1.4 and later. Because many people still
@@ -3066,7 +3072,12 @@ public class PApplet extends Applet
     }
 
     if (filename.toLowerCase().endsWith(".tga")) {
-      return loadImageTGA(filename);
+      try {
+        return loadImageTGA(filename);
+      } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+      }
     }
 
     byte bytes[] = loadBytes(filename);
@@ -3163,31 +3174,103 @@ public class PApplet extends Applet
 
 
   /**
-   * Targa bitmap loader for 24/32bit RGB(A) [toxi 040304]
-   * <p/>
-   * [fry] this could be optimized to not use loadBytes
-   * which would help out memory situations with large images
+   * Targa image loader for RLE-compressed TGA files.
+   * <P>
+   * Rewritten for 0115 to read/write RLE-encoded targa images.
    */
-  protected PImage loadImageTGA(String filename) {
-    // load image file as byte array
-    byte[] buffer = loadBytes(filename);
-    if (buffer == null) return null;
+  protected PImage loadImageTGA(String filename) throws IOException {
+    InputStream is = openStream(filename);
+    if (is == null) return null;
 
-    // check if it's a TGA and has 8bits/colour channel
-    //if (buffer[2] == 2 && buffer[17] == 8) {
-    // [toxi20050929] changed format validation
-    // only number of bits/pixel are checked now...
-    if (buffer[2] == 2 && (buffer[16] == 24 || buffer[16]==32 )) {
-      // get image dimensions
-      int w = ((buffer[13] & 0xff) << 8) + (buffer[12] & 0xff);
-      int h = ((buffer[15] & 0xff) << 8) + (buffer[14] & 0xff);
-      // check if image has alpha
-      boolean hasAlpha=(buffer[16] == 32);
+    byte header[] = new byte[18];
+    int offset = 0;
+    do {
+      int count = is.read(header, offset, header.length - offset);
+      if (count == -1) return null;
+      offset += count;
+    } while (offset < 18);
 
-      // setup new image object
-      PImage img = new PImage(w,h);
-      img.format = (hasAlpha ? ARGB : RGB);
+    int format = 0;
+    if ((header[2] == 0x0B) &&
+        (header[16] == 0x08) &&
+        (header[17] == 0x28)) {
+      format = ALPHA;
 
+    } else if ((header[2] == 0x0A) &&
+               (header[16] == 24) &&
+               (header[17] == 0x20)) {
+      format = RGB;
+
+    } else if ((header[2] == 0x0A) &&
+               (header[16] == 32) &&
+               (header[17] == 0x28)) {
+      format = ARGB;
+    }
+    if (format == 0) {
+      System.err.println("Unknown .tga file format for " + filename);
+      return null;
+    }
+
+    // get image dimensions
+    int w = ((header[13] & 0xff) << 8) + (header[12] & 0xff);
+    int h = ((header[15] & 0xff) << 8) + (header[14] & 0xff);
+    PImage outgoing = new PImage(w, h, format);
+
+    int index = 0;
+    int px[] = outgoing.pixels;
+
+    while (index < px.length) {
+      int num = is.read();
+      boolean isRLE = (num & 0x80) != 0;
+      if (isRLE) {
+        num -= 127;  // (num & 0x7F) + 1
+        int pixel = 0;
+        switch (format) {
+        case ALPHA:
+          pixel = is.read();
+          break;
+        case RGB:
+          pixel = 0xFF000000 |
+            is.read() | (is.read() << 8) | (is.read() << 16);
+            //(is.read() << 16) | (is.read() << 8) | is.read();
+          break;
+        case ARGB:
+          pixel = is.read() |
+            (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+          break;
+        }
+        for (int i = 0; i < num; i++) {
+          px[index++] = pixel;
+          if (index == px.length) break;
+        }
+      } else {  // write up to 127 bytes as uncompressed
+        num += 1;
+        switch (format) {
+        case ALPHA:
+          for (int i = 0; i < num; i++) {
+            px[index++] = is.read();
+          }
+          break;
+        case RGB:
+          for (int i = 0; i < num; i++) {
+            px[index++] = 0xFF000000 |
+              is.read() | (is.read() << 8) | (is.read() << 16);
+              //(is.read() << 16) | (is.read() << 8) | is.read();
+          }
+          break;
+        case ARGB:
+          for (int i = 0; i < num; i++) {
+            px[index++] = is.read() | //(is.read() << 24) |
+              (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+              //(is.read() << 16) | (is.read() << 8) | is.read();
+          }
+          break;
+        }
+      }
+    }
+    return outgoing;
+
+    /*
       // targa's are written upside down, so we need to parse it in reverse
       int index = (h-1) * w;
       // actual bitmap data starts at byte 18
@@ -3206,9 +3289,11 @@ public class PApplet extends Applet
       }
       return img;
     }
+
     System.err.println("loadImage(): bad targa image format");
     return null;
-  }
+    */
+}
 
 
 
