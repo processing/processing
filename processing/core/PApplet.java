@@ -376,11 +376,13 @@ public class PApplet extends Applet
 
   static public final String ARGS_DISPLAY = "--display";
 
-  static public final String ARGS_PRESENT = "--present";
-
   static public final String ARGS_BGCOLOR = "--bgcolor";
 
-  static public final String ARGS_PRESENT_STOP_COLOR = "--present-stop-color";
+  static public final String ARGS_PRESENT = "--present";
+
+  static public final String ARGS_STOP_COLOR = "--stop-color";
+
+  static public final String ARGS_HIDE_STOP = "--hide-stop";
 
   /**
    * Allows the user or PdeEditor to set a specific sketch folder path.
@@ -436,7 +438,7 @@ public class PApplet extends Applet
 
     finished = false; // just for clarity
 
-    // this will be cleared by loop() if it is not overridden
+    // this will be cleared by draw() if it is not overridden
     looping = true;
     redraw = true;  // draw this guy once
     firstMouse = true;
@@ -824,7 +826,7 @@ public class PApplet extends Applet
           // so all that needs to be done is to set the defaults
           // (clear the background, set default strokeWeight, etc).
           //g.defaults();
-          // removed this in favor of calling defaults() from beginFrame()
+          // removed this in favor of calling defaults() from beginDraw()
 
           // this will happen when P3D or OPENGL are used with size()
           // inside of setup. it's also safe to call defaults() now,
@@ -1042,7 +1044,7 @@ public class PApplet extends Applet
 
     // clear things out to get started
     //outgoing.defaults();
-    // tell people to use beginFrame/endFrame
+    // tell people to use beginDraw/endDraw
 
     // and send 'em off
     //return outgoing;
@@ -1254,8 +1256,8 @@ public class PApplet extends Applet
       // use a different sync object
       //synchronized (glock) {
         if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                  " 1a beginFrame");
-        g.beginFrame();
+                                  " 1a beginDraw");
+        g.beginDraw();
         if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                                   " 1b draw");
 
@@ -1318,10 +1320,15 @@ public class PApplet extends Applet
             } else {
               long timeToLeave =
                 framerateLastDelayTime + (long)(1000.0f / framerateTarget);
-              int napTime =
-                (int) (timeToLeave - System.currentTimeMillis());
-              framerateLastDelayTime = timeToLeave;
-              delay(napTime);
+              long now = System.currentTimeMillis();
+              int napTime = (int) (timeToLeave - now);
+              if (napTime > 0) {
+                framerateLastDelayTime = timeToLeave;
+                delay(napTime);
+              } else {
+                // nap time is negative, need to reset clock (bug #336)
+                framerateLastDelayTime = now;
+              }
             }
           }
 
@@ -1365,7 +1372,7 @@ public class PApplet extends Applet
 
           dequeueKeyEvents();
           if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                    " 2b endFrame");
+                                    " 2b endDraw");
 
           drawMethods.handle();
           //for (int i = 0; i < libraryCount; i++) {
@@ -1376,17 +1383,17 @@ public class PApplet extends Applet
           // (only do this once draw() has run, not just setup())
         }
 
-        g.endFrame();
+        g.endDraw();
         /*
         if (!recorderNull) {
           if (recorder != null) {
-            recorder.endFrame();
+            recorder.endDraw();
             recorder = null;
           }
         }
         if (!recorderRawNull) {
           if (g.recorderRaw != null) {
-            g.recorderRaw.endFrame();
+            g.recorderRaw.endDraw();
             g.recorderRaw = null;
           }
         }
@@ -2171,7 +2178,7 @@ public class PApplet extends Applet
    * Grab an image of what's currently in the drawing area and save it
    * as a .tif or .tga file.
    * <P>
-   * Best used just before endFrame() at the end of your loop().
+   * Best used just before endDraw() at the end of your draw().
    * This can only create .tif or .tga images, so if neither extension
    * is specified it defaults to writing a tiff and adds a .tif suffix.
    */
@@ -4409,13 +4416,12 @@ public class PApplet extends Applet
     return b;
   }
 
-  /*
   static public Object append(Object b, Object value) {
-    b = expand(b, b.length + 1);
-    b[b.length-1] = value;
+    int length = Array.getLength(b);
+    b = expand(b, length + 1);
+    Array.set(b, length, value);
     return b;
   }
-  */
 
   //
 
@@ -4443,11 +4449,11 @@ public class PApplet extends Applet
     return contract(list, list.length-1);
   }
 
-  /*
   static public Object shorten(Object list) {
-    return contract(list, list.length-1);
+    int length = Array.getLength(list);
+    //Object b = Array.get(list, length - 1);
+    return contract(list, length - 1);
   }
-  */
 
   //
 
@@ -4576,6 +4582,28 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+
+  static final public Object splice(Object list, Object v, int index) {
+    Object[] outgoing = null;
+    int length = Array.getLength(list);
+
+    // check whether is an array or not, and if so, treat as such
+    if (list.getClass().getName().charAt(0) == '[') {
+      int vlength = Array.getLength(v);
+      outgoing = new Object[length + vlength];
+      System.arraycopy(list, 0, outgoing, 0, index);
+      System.arraycopy(v, 0, outgoing, index, vlength);
+      System.arraycopy(list, index, outgoing, index + vlength, length - index);
+
+    } else {
+      outgoing = new Object[length + 1];
+      System.arraycopy(list, 0, outgoing, 0, index);
+      Array.set(outgoing, index, v);
+      System.arraycopy(list, index, outgoing, index + 1, length - index);
+    }
+    return outgoing;
+  }
+
   //
 
   static public boolean[] subset(boolean list[], int start) {
@@ -4643,6 +4671,24 @@ public class PApplet extends Applet
     return output;
   }
 
+
+  static public Object subset(Object list, int start) {
+    int length = Array.getLength(list);
+    int count = length - start;
+    Class type = list.getClass().getComponentType();
+    Object outgoing = Array.newInstance(type, count);
+    System.arraycopy(list, 0, outgoing, 0, count);
+    return outgoing;
+  }
+
+  static public Object subset(Object list, int start, int count) {
+    int length = Array.getLength(list);
+    Class type = list.getClass().getComponentType();
+    Object outgoing = Array.newInstance(type, count);
+    System.arraycopy(list, start, outgoing, 0, count);
+    return outgoing;
+  }
+
   //
 
   static public boolean[] concat(boolean a[], boolean b[]) {
@@ -4685,6 +4731,16 @@ public class PApplet extends Applet
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
+  }
+
+  static public Object concat(Object a, Object b) {
+    Class type = a.getClass().getComponentType();
+    int alength = Array.getLength(a);
+    int blength = Array.getLength(b);
+    Object outgoing = Array.newInstance(type, alength + blength);
+    System.arraycopy(a, 0, outgoing, 0, alength);
+    System.arraycopy(b, 0, outgoing, alength, blength);
+    return outgoing;
   }
 
   //
@@ -4739,6 +4795,16 @@ public class PApplet extends Applet
     int length1 = list.length - 1;
     for (int i = 0; i < list.length; i++) {
       outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
+  static public Object reverse(Object list) {
+    Class type = list.getClass().getComponentType();
+    int length = Array.getLength(list);
+    Object outgoing = Array.newInstance(type, length);
+    for (int i = 0; i < length; i++) {
+      Array.set(outgoing, i, Array.get(list, (length - 1) - i));
     }
     return outgoing;
   }
@@ -5912,6 +5978,14 @@ public class PApplet extends Applet
    * --present             put the applet into full screen presentation
    *                       mode. requires java 1.4 or later.
    *
+   * --hide-stop           use to hide the stop button in situations where
+   *                       you don't want to allow users to exit. also
+   *                       see the FAQ on information for capturing the ESC
+   *                       key when running in presentation mode.
+   *
+   * --stop-color          color of the 'stop' text used to quit an
+   *                       sketch when it's in present mode.
+   *
    * --bgcolor=#xxxxxx     background color of the window.
    *
    * --sketch-path         location of where to save files from functions
@@ -5925,15 +5999,12 @@ public class PApplet extends Applet
    *                       displays are numbered starting from 1.
    *
    *
-   * Parameters used by Processing when running an applet externally:
+   * Parameters used by Processing when running via the PDE
    *
-   * --external             set when the applet is being used by the PDE
+   * --external            set when the applet is being used by the PDE
    *
-   * --editor-location=x,y  position of the upper-lefthand corner of the
-   *                        editor window, for placement of applet window
-   *
-   * --present-stop-color   color of the 'stop' text used to quit an
-   *                        applet when it's in present mode.
+   * --editor-location=x,y position of the upper-lefthand corner of the
+   *                       editor window, for placement of applet window
    * </PRE>
    */
   static public void main(String args[]) {
@@ -5955,6 +6026,7 @@ public class PApplet extends Applet
       Color backgroundColor = Color.black; //BLACK;
       Color stopColor = Color.gray; //GRAY;
       GraphicsDevice displayDevice = null;
+      boolean hideStop = false;
 
       String param = null, value = null;
 
@@ -5989,7 +6061,7 @@ public class PApplet extends Applet
             if (value.charAt(0) == '#') value = value.substring(1);
             backgroundColor = new Color(Integer.parseInt(value, 16));
 
-          } else if (param.equals(ARGS_PRESENT_STOP_COLOR)) {
+          } else if (param.equals(ARGS_STOP_COLOR)) {
             if (value.charAt(0) == '#') value = value.substring(1);
             stopColor = new Color(Integer.parseInt(value, 16));
 
@@ -6003,6 +6075,9 @@ public class PApplet extends Applet
         } else {
           if (args[argIndex].equals(ARGS_PRESENT)) {
             present = true;
+
+          } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
+            hideStop = true;
 
           } else if (args[argIndex].equals(ARGS_EXTERNAL)) {
             external = true;
@@ -6067,21 +6142,23 @@ public class PApplet extends Applet
                          (fullscreen.height - applet.height) / 2,
                          applet.width, applet.height);
 
-        Label label = new Label("stop");
-        label.setForeground(stopColor);
-        label.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-              System.exit(0);
-            }
-          });
-        frame.add(label);
+        if (!hideStop) {
+          Label label = new Label("stop");
+          label.setForeground(stopColor);
+          label.addMouseListener(new MouseAdapter() {
+              public void mousePressed(MouseEvent e) {
+                System.exit(0);
+              }
+            });
+          frame.add(label);
 
-        Dimension labelSize = label.getPreferredSize();
-        // sometimes shows up truncated on mac
-        //System.out.println("label width is " + labelSize.width);
-        labelSize = new Dimension(100, labelSize.height);
-        label.setSize(labelSize);
-        label.setLocation(20, fullscreen.height - labelSize.height - 20);
+          Dimension labelSize = label.getPreferredSize();
+          // sometimes shows up truncated on mac
+          //System.out.println("label width is " + labelSize.width);
+          labelSize = new Dimension(100, labelSize.height);
+          label.setSize(labelSize);
+          label.setLocation(20, fullscreen.height - labelSize.height - 20);
+        }
 
         // not always running externally when in present mode
         if (external) {
@@ -6184,8 +6261,6 @@ public class PApplet extends Applet
 
 
   public PGraphics beginRecord(String renderer, String filename) {
-    //this.recorder = createGraphics(width, height, renderer, filename);
-    //recorder.beginFrame();
     filename = insertFrame(filename);
     PGraphics rec = createGraphics(width, height, renderer, filename);
     beginRecord(rec);
@@ -6195,8 +6270,7 @@ public class PApplet extends Applet
 
   public void beginRecord(PGraphics recorder) {
     this.recorder = recorder;
-    //recorder.beginRecord();
-    recorder.beginFrame();
+    recorder.beginDraw();
   }
 
 
@@ -6205,7 +6279,7 @@ public class PApplet extends Applet
     //if (!recorderNull) {
     if (recorder != null) {
       //recorder.endRecord();
-      recorder.endFrame();
+      recorder.endDraw();
       recorder.dispose();
       recorder = null;
     }
@@ -6241,29 +6315,6 @@ public class PApplet extends Applet
     }
     return what;  // no change
   }
-
-
-  /*
-  public void beginRaw(PGraphics recorderRaw) {
-    g.beginRaw(recorderRaw);
-  }
-
-
-  public void endRaw() {
-    g.endRaw();
-  }
-  */
-
-  /*
-  public void endRaw() {
-    //if (!recorderRawNull) {
-    if (g.recorderRaw != null) {
-      //g.recorderRaw.endFrame();
-      g.endRaw();
-      g.recorderRaw = null;
-    }
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////

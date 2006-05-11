@@ -121,10 +121,10 @@ public class PGraphicsPDF extends PGraphics2 {
   }
   */
 
-  public void beginFrame() {
+  public void beginDraw() {
     // temporary
     //file = new File(filename); //"test.pdf");
-    //System.out.println("pdf beginFrame()");
+    //System.out.println("pdf beginDraw()");
     //document = new Document();
 
     if (document == null) {
@@ -141,7 +141,7 @@ public class PGraphicsPDF extends PGraphics2 {
 
       // how to call newPage() in here?
       /*
-        System.out.println("beginFrame() " + width + ", " + height);
+        System.out.println("beginDraw() " + width + ", " + height);
         tp = content.createTemplate(width, height);
         //g2 = tp.createGraphics(width, height, mapper);
         g2 = tp.createGraphicsShapes(width, height);
@@ -156,7 +156,7 @@ public class PGraphicsPDF extends PGraphics2 {
       //g2 = content.createGraphics(width, height);
       g2 = content.createGraphicsShapes(width, height);
     }
-    super.beginFrame();
+    super.beginDraw();
   }
 
 
@@ -180,12 +180,12 @@ public class PGraphicsPDF extends PGraphics2 {
     }
     g2 = content.createGraphicsShapes(width, height);
 
-    // should there be a beginFrame/endFrame in here?
+    // should there be a beginDraw/endDraw in here?
   }
 
 
-  public void endFrame() {
-    //System.out.println("endFrame()");
+  public void endDraw() {
+    //System.out.println("endDraw()");
 
     /*
     String text1 = "This text has \u0634\u0627\u062f\u062c\u0645\u0647\u0648\u0631 123,456 \u0645\u0646 (Arabic)";

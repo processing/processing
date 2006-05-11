@@ -307,10 +307,10 @@ public class PGraphicsGL extends PGraphics3 {
   */
 
 
-  public void beginFrame() {
-    super.beginFrame();
+  public void beginDraw() {
+    super.beginDraw();
 
-    report("top beginFrame()");
+    report("top beginDraw()");
 
     gl.glDisable(GL.GL_LIGHTING);
     for (int i = 0; i < MAX_LIGHTS; i++) {
@@ -390,22 +390,22 @@ public class PGraphicsGL extends PGraphics3 {
     //gl.glEnable(GL.GL_RESCALE_NORMAL);
     //gl.GlLightModeli(GL.GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
-    report("bot beginFrame()");
+    report("bot beginDraw()");
     // are there other things to do here?
-    //System.out.println("beginFrame() stop error " + PApplet.hex(gl.glGetError()));
+    //System.out.println("beginDraw() stop error " + PApplet.hex(gl.glGetError()));
   }
 
 
-  public void endFrame() {
-    //System.out.println("endFrame() error " + PApplet.hex(gl.glGetError()));
+  public void endDraw() {
+    //System.out.println("endDraw() error " + PApplet.hex(gl.glGetError()));
 
-    report("top endFrame()");
+    report("top endDraw()");
 
     if (hints[ENABLE_DEPTH_SORT]) {
       flush();
     }
 
-    report("bot endFrame()");
+    report("bot endDraw()");
   }
 
 
@@ -413,7 +413,7 @@ public class PGraphicsGL extends PGraphics3 {
 
   // this would also need to set up the lighting.. ?
   public GL beginGL() {
-    //beginFrame();  // frame will have already started
+    //beginDraw();  // frame will have already started
     gl.glPushMatrix();
 
     // load p5 modelview into the opengl modelview

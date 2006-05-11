@@ -1,11 +1,44 @@
 0116 pde
 
-_ toInt() needs to go away in time for the book.. fix parser bugs
-_ make expand() et al work on objects
+_ size of sketch different in setup() and draw() on linux
+_   make sure that the sketch isn't being sized based on bad insets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=341
 
+text faq
+_ how to use textMode(SHAPES) with opengl
+_   things will be extremely slow (fix later)
+_   things will also be very ugly on-screen
+_ text being nicer in java2d
+_   use createFont() to load the font or use a font from your machine
+_   note that createFont() is no good for applets/export to web
+_ textMode(SCREEN) for P2D and P3D for nice fast text in screen space
+_   currently slow in JAVA2D and OPENGL, but this will improve
+
+the only way to do it (this will improve later) is to use some undocumented features  
+1) you have to use the OPENGL renderer 
+2) use textMode(SHAPE); 
+3) use createFont() (which you already are) 
+this will convert all the shape data from the fonts for writing. it will be *extremely* slow, which is part of why it's not documented yet. but it will work with beginRaw().
+
+advanced faq
+X advanced reference contains more info about how things work
+X move 'how do i create large images' here
+_ move stuff about getting gl object and java2d stuff here
+_ explain how to integrate code with swing
+_   use a separate environment, call init(), use noLoop(), redraw()
+_ how do i add gui to a sketch?
+_   don't use awt components
+X createGraphics with PDF, using dispose() to clear the thing
+X calling nextPage()
 _ notes about setting key=0 to catch ESC
 _   also size(screen.width, screen.height);
 _   maybe make a section in installations with p5
+
+_ clean up the notes in the faq about how to get video to work
+_   make the instructions for winvdig clearer
+
+_ toInt() needs to go away in time for the book.. fix parser bugs
+_ make expand() et al work on objects
 
 _ would be nice to have macosx packaged up as a single .app file
 _   should recommend that people install libraries into their sketchbook
@@ -21,8 +54,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=321
 
 _ stop button won't kill a video sketch (bug 150 example does this) 
 _ run/stop button highlight is almost completely broken
-
-_ add "hide stop button" arg for PApplet
 
 board stuff
 _ only allow moderators to delete posts
@@ -132,24 +163,6 @@ _ layout problems with logout page
 _   http://dev.processing.org/bugs/show_bug.cgi?id=255
 _ bug duplicate text field doesn't retain focus 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=256
-
-text faq
-_ how to use textMode(SHAPES) with opengl
-_   things will be extremely slow (fix later)
-_   things will also be very ugly on-screen
-_ text being nicer in java2d
-_ textMode(SCREEN) for P2D and P3D for nice fast text
-
-advanced faq
-_ move 'how do i create large images' here
-_ move stuff about getting gl object and java2d stuff here
-_ explain how to integrate code with swing
-_   use a separate environment, call init(), use noLoop(), redraw()
-_ how do i add gui to a sketch?
-_   don't use awt components
-_ advanced reference contains more info about how things work
-_ createGraphics with PDF, using dispose() to clear the thing
-_ calling nextPage()
 
 board faq
 _ someone wrote up an initial version of this

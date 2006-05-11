@@ -328,8 +328,7 @@ public class PGraphics extends PImage implements PConstants {
   public PMatrix modelviewInv;
 
   /**
-   * The camera matrix, the modelview
-   * will be set to this on beginFrame.
+   * The camera matrix, the modelview will be set to this on beginDraw.
    */
   public PMatrix camera;
 
@@ -565,15 +564,35 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * Former function, now called beginDraw.
+   * @deprecated
+   */
+  public void beginFrame() {  // ignore
+    System.err.println("beginFrame() is now beginDraw(), please use that instead");
+    beginDraw();
+  }
+
+
+  /**
+   * Former function, now called endDraw.
+   * @deprecated
+   */
+  public void endFrame() {  // ignore
+    System.err.println("endFrame() is now endDraw(), please use that instead");
+    endDraw();
+  }
+
+
+  /**
    * Prepares the PGraphics for drawing.
    * <p/>
    * When creating your own PGraphics, you should call this before
    * drawing anything.
    */
-  public void beginFrame() {  // ignore
+  public void beginDraw() {  // ignore
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
-    // beginFrame/endFrame).
+    // beginDraw/endDraw).
     if (!defaultsInited) defaults();
 
     resetMatrix(); // reset model matrix
@@ -589,7 +608,7 @@ public class PGraphics extends PImage implements PConstants {
    * When creating your own PGraphics, you should call this when
    * you're finished drawing.
    */
-  public void endFrame() {  // ignore
+  public void endDraw() {  // ignore
     // moving this back here (post-68) because of macosx thread problem
     if (mis != null) {
       mis.newPixels(pixels, cm, 0, width);
@@ -3557,21 +3576,9 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  /*
-  public void beginRecord() {  // ignore
-    beginFrame();  // default is just to open the frame
-  }
-
-
-  public void endRecord() {  // ignore
-    endFrame();
-  }
-  */
-
-
   public void beginRaw(PGraphics raw) {
     this.raw = raw;
-    raw.beginFrame();
+    raw.beginDraw();
   }
 
 
@@ -3580,9 +3587,9 @@ public class PGraphics extends PImage implements PConstants {
       // for 3D, need to flush any geometry that's been stored for sorting
       raw.flush();
 
-      // just like beginFrame, this will have to be called because
-      // endFrame() will be happening outside of draw()
-      raw.endFrame();
+      // just like beginDraw, this will have to be called because
+      // endDraw() will be happening outside of draw()
+      raw.endDraw();
       raw.dispose();
       raw = null;
     }
@@ -3610,12 +3617,4 @@ public class PGraphics extends PImage implements PConstants {
   public boolean displayable() {
     return true;
   }
-
-  //public void beginRaw() {  // ignore
-  //beginFrame();
-  //}
-
-  //public void endRaw() {  // ignore
-  //endFrame();
-  //}
 }
