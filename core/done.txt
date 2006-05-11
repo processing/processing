@@ -37,13 +37,8 @@ X fix for open() on macosx submitted by chandler
 
 
 0112 core
-o PSound.play() won't play the sound a 2nd time (reopened)
-o   http://dev.processing.org/bugs/show_bug.cgi?id=208
-o loadSound apparently broken in java 1.5?
-o   http://dev.processing.org/bugs/show_bug.cgi?id=285
 X saveFrame() issues with JAVA2D on osx
 X   http://dev.processing.org/bugs/show_bug.cgi?id=189
-X need to just remove PSound altogether
 o implement hint(NO_DEPTH_TEST) for opengl
 X   already done hint(DISABLE_DEPTH_TEXT);
 X check min/max texture sizes when binding to avoid problems
@@ -67,6 +62,29 @@ X   regression from contributed code..
 X   was using apply() instead of set() in PMatrix inverse copy
 X filter() is also broken (not rewinding the intbuffer)
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1144561113
+
+sound has been removed
+o duration as an internal param, not a function
+o When a sound is finished playing, 
+o   it should return to 0 so it can play again
+o Putting sound.loop() in draw() seemed to spawn multiple sounds threads?
+o After a sound is paused, it will only play from where it was paused
+o   to its end and will not loop again
+o The ref in PSound2 says volume accepts vals from 0...1
+o   but values larger than one increase the volume.
+o SoundEvent // is sound finished?? Can't access now. 
+o make java 1.1 version of PSound work properly
+o merge PSound and PSound2 via reflection?
+o   once debugged, merge these back together and use reflection
+o     (unless it's a messy disaster)
+o Unsupported control type: Master Gain 
+o   what's actually causing this error?
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831
+o PSound.play() won't play the sound a 2nd time (reopened)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=208
+o loadSound apparently broken in java 1.5?
+o   http://dev.processing.org/bugs/show_bug.cgi?id=285
+X need to just remove PSound altogether
 
 
 0111 core
