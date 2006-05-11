@@ -1653,6 +1653,10 @@ public class Sketch {
     StringBuffer archives = new StringBuffer();
     boolean separateJar =
       Preferences.getBoolean("export.applet.separate_jar_files");
+    
+    //// for our case, just set the archive list to the midlet jar
+    archives.append(name);
+    archives.append(".jar");
 
     // copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
@@ -1673,9 +1677,19 @@ public class Sketch {
       }
     }
     
+    //// applet can't seem to open packed data files, so copy them over (disk wasteful, but works for now)
+    if (dataFolder.exists()) {
+      String dataFiles[] = Base.listFiles(dataFolder, false);
+      for (int i = 0; i < dataFiles.length; i++) {
+        File dataFile = new File(dataFiles[i]);
+        Base.copyFile(dataFile, new File(appletFolder, dataFile.getName()));
+      }
+    }
+    
+    
     //// copy the applet emulator jars into the applet folder
     Base.copyFile(new File("lib", "me-applet.jar"), new File(appletFolder, "me-applet.jar"));
-    Base.copyFile(new File("lib", "large.jar"), new File(appletFolder, "large.jar"));
+    Base.copyFile(new File("lib", "qvga.jar"), new File(appletFolder, "qvga.jar"));
     
     Base.openFolder(appletFolder);
 

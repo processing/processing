@@ -89,6 +89,7 @@
         <!-- copy applet emulator jars into processing lib -->
         <copy overwrite="true" file="mobile/build/shared/lib/me-applet.jar" todir="processing/build/shared/lib"/>
         <copy overwrite="true" file="mobile/build/shared/lib/large.jar" todir="processing/build/shared/lib"/>        
+        <copy overwrite="true" file="mobile/build/shared/lib/qvga.jar" todir="processing/build/shared/lib"/>        
         <copy overwrite="true" file="mobile/build/shared/lib/export/applet.html" todir="processing/build/shared/lib/export"/>        
         <!-- copy cldc/midp jars from Sun WTK for Windows into lib -->
         <copy overwrite="true" file="mobile/build/macosx/lib/cldcapi10.jar" todir="processing/build/shared/lib"/>
