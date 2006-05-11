@@ -44,7 +44,7 @@ public interface PConstants {
   static final String JAVA2D = "processing.core.PGraphics2";
   static final String OPENGL = "processing.opengl.PGraphicsGL";
   static final String PDF    = "processing.pdf.PGraphicsPDF";
-  //static final String DXF    = "processing.dxf.RawDXF";
+  static final String DXF    = "processing.dxf.RawDXF";
   //static final String SVG    = "processing.dxf.PGraphicsSVG";
 
 
