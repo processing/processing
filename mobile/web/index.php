@@ -67,8 +67,8 @@ require 'header.inc.php';
     <img src="images/updates.png"><br>
     <br>
     <br>
-    <i>January 29</i><br>
-    Mobile Processing 0003 is released.<br>
+    <i>May 10</i><br>
+    Mobile Processing 0004 is released.<br>
     <br>
     <br>
     <br>
