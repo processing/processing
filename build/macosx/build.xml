@@ -148,6 +148,7 @@
                 <include name="proguard.jar"/>
                 <include name="me-applet.jar"/>
                 <include name="large.jar"/>
+                <include name="qvga.jar"/>
                 <include name="cldcapi10.jar"/>
                 <include name="cldcapi11.jar"/>
                 <include name="midpapi10.jar"/>
