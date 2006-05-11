@@ -66,6 +66,7 @@
             <td width="1%" align="right" valign="middle"> <select name="nav" size="1" class="inputnav" onChange="javascript:gogo(this)">
 <option value="index.html">General Information </option>
 <option value="bugs.html" selected>Setup, Troubleshooting, and Bugs</option>
+<option value="advanced.html">Advanced Topics</option>
 <option value="platforms.html">Platforms (Mac OS, Windows and Linux)</option>
 <option value="changes.html">Changes Between Releases</option>
 <option value="people.html">People, Contact, Affiliations </option>
@@ -89,7 +90,6 @@
 <a href="#applet">Export and Browser Troubles</a> <br>
 <a href="#application">Issues with "Export to Application"</a> <br>
 <a href="#memory">Out Of Memory Errors</a> <br>
-<a href="#big">How do I make really large images?</a> <br>
 <a href="#strings">Why don't these Strings equal?</a> <br>
 <a href="#integers">Why does 2 / 5 = 0 instead of 0.4?</a> <br>
 <a href="#issues">Common Issues (not bugs)</a> <br>
@@ -568,97 +568,6 @@ of ram) as you need to (and at your own risk).
     <td width="50">&nbsp;</td>
   </tr>
 </table>
-
-<table width="750" border="0" 
- cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
-  <tr> 
-    <td><img src="images/1pix.gif" width="1" height="50" align="top">
-    <a name="big"></a> 
-    <td width="645"><br>
-    </td>
-    <td width="50">&nbsp;</td>
-  </tr>
-  <tr> 
-    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
-    <td width="645"> 
-      <p> </p>
-      <b>
-How do I make really large images, or export my images?
-</b> <br> <br>
-There are several options for creating really large images with
-Processing. These fall into two categories, vector and bitmap.
-<BR> <BR>
-<EM>Creating Vector Images</EM>
-<UL>
-<LI>Vector images, along the lines of an Adobe Illustrator file, have
-the benefit that they can be scaled to any size and output at very
-high resolution. 
-<LI>As of release of 0100 of Processing, it's
-possible to create PDF files instead of (or in addition to) drawing to
-the screen. The documentation on the site has not yet been updated,
-but the process is described in <A
-HREF="http://processing.org/download/revisions.txt">revisions.txt</A>
-in the "ABOUT REV 0100" section. This information will eventually be
-integrated into the reference when we get the time.
-<LI>To record data from a 3D scene, you can write to PDF (though the
-polygons won't yet be sorted) or DXF. The use of the DXF library is
-described <A
-HREF="http://dev.processing.org/reference/everything/javadoc/processing/dxf/RawDXF.html">here</A>
-in the "developer's" reference.
-<LI>There are also contributed libraries for exporting images to SVG
-and Adobe Illustrator format, check the <A
-HREF="http://processing.org/libraries/">libraries</A> section of the
-site for more information.
-</UL>
-<EM>Creating Bitmap Images</EM>
-<UL>
-<LI>The basic way to create bitmap images is to use the <A
-HREF="http://processing.org/reference/saveFrame_.html">saveFrame()</A>
-function. 
-<LI>If you want to create a really large scene and write that, first
-make sure that you've <A HREF="#memory">allocated a lot of memory</A>.
-<LI>If you want to create images that are larger than the screen, you
-should create your own PGraphics object, draw to that, and use <A
-HREF="http://processing.org/reference/save_.html">save()</A>. For now,
-it's best to use <A
-HREF="http://dev.processing.org/reference/everything/javadoc/processing/core/PGraphics3.html">PGraphics3</A>
-in this scenario. PGraphics is currently disabled, and PGraphics2 will
-give mixed results. So for instance:
-<PRE>
-PGraphics big;
-
-void setup() {
-  big = (PGraphics) createGraphics(3000, 3000, P3D);
-
-  big.beginFrame();
-  big.background(128);
-  big.line(20, 1800, 1800, 900);
-  // etc..
-  big.endFrame();
-
-  // make sure the file is written to the sketch folder
-  String path = savePath("big.tif");
-  big.save(path);
-}
-</PRE>
-again, be sure to allocate lots of memory before trying this. Read the
-memory section carefully, it's confusing.
-<LI>To write files as JPG or some other file format besides TIFF and
-TGA, instructions have been posted on the <A
-HREF="http://processing.org/discourse/">discourse</A> site several
-times. For instance, <A
-HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1117185427">this</A>
-helpful post, or <A
-HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1120174647">this
-one</A>. Give it a search. We're also looking to provide built-in
-support for this sometime soon. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=165">Bug 165</A>)
-</UL>
-      </td>
-    <td width="50">&nbsp;</td>
-  </tr>
-</table>
-
 
 <table width="750" border="0" 
  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
