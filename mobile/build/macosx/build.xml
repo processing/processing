@@ -153,6 +153,10 @@
                 <include name="midpapi20.jar"/>
             </fileset>
         </move>
+        <antcall target="mkdmg"/>
+    </target>
+    
+    <target name="mkdmg" depends="init">
         <!-- execute mkdmg to create archive -->
         <exec executable="/bin/bash">
             <arg value="--login"/>
@@ -201,6 +205,7 @@
         <property name="target" value="work"/>
         <!-- copy jar and jad/manifest template into processing build -->
         <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/macosx/${target}/lib"/>
+        <copy file="mobile/build/shared/lib/mobile.properties" todir="processing/build/macosx/${target}/lib"/>
         <copy file="mobile/build/macosx/mobile.jar" todir="processing/build/macosx/${target}/lib"/>
     </target>
 
@@ -292,6 +297,13 @@
             <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/xml/library/kxml.jar"/>
             <param name="cldc" value="-cldc1.0"/>
         </antcall>
+        <!-- next, messaging library -->
+        <antcall target="makelib">
+            <param name="libname" value="messaging"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="mobile/messaging/library/wma11.jar;mobile/build/macosx/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
     </target>
 
     <target name="copylib">
@@ -325,9 +337,13 @@
         <antcall target="copylib">
             <param name="libname" value="bluetooth"/>
         </antcall>
-        <!-- copy bluetooth library -->
+        <!-- copy xml library -->
         <antcall target="copylib">
             <param name="libname" value="xml"/>
+        </antcall>
+        <!-- copy messaging library -->
+        <antcall target="copylib">
+            <param name="libname" value="messaging"/>
         </antcall>
     </target>
     
