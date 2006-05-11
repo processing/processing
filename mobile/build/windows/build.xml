@@ -88,6 +88,7 @@
         <!-- copy applet emulator jars into processing lib -->
         <copy overwrite="true" file="mobile/build/shared/lib/me-applet.jar" todir="processing/build/shared/lib"/>
         <copy overwrite="true" file="mobile/build/shared/lib/large.jar" todir="processing/build/shared/lib"/>        
+        <copy overwrite="true" file="mobile/build/shared/lib/qvga.jar" todir="processing/build/shared/lib"/>        
         <copy overwrite="true" file="mobile/build/shared/lib/export/applet.html" todir="processing/build/shared/lib/export"/>        
         <!-- copy icon for windows executable -->
         <copy todir="processing/build/windows/launcher" overwrite="true">
