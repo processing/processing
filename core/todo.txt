@@ -1,14 +1,34 @@
 0116 core
-_ endRaw() should force depth sorted triangles to flush
+X make background() ignore transformations in JAVA2D
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1147010374
+o createGraphics to not require defaults()
+X   can't do, because an end() function must be called to clear the renderer
+X add "hide stop button" arg for PApplet
+X beginFrame/endFrame -> beginDraw/endDraw
+X add new constant for the DXF renderer
+X array utilities on Object[] are worthless.. fix it with reflection?
+X   see if reflection will allow expand for all class types
+X   expand, append, contract, subset, splice, concat, reverse
+X typed version of array functions:
+X   append(), shorten(), splice, slice, subset, concat, reverse
+X   http://dev.processing.org/bugs/show_bug.cgi?id=115
+X fix issue where processing applets would run extremely fast 
+X   after having been starved of resources where there framerate dropped
+X   http://dev.processing.org/bugs/show_bug.cgi?id=336
+
+
+0117 core
+_ bring back the old P2D, rename PGraphics2 into PGraphicsJava
+
+
+_ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
+_   because the triangles won't be rendered by the time endRaw() is called
+_   force depth sorted triangles to flush
 _ fix dxf export bug
 _ fix erik's problems with export (also in bugs db)
 
-
 _ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
 
-_ illegal jpeg images are what happens whenever the image cannot be read
-_   java.lang.IllegalArgumentException: Width (-1) and height (-1) cannot be <= 0
-_   for instance, trying to load a tiff image with the jpg loader
 
 _ test support for reading and writing images that have alpha and imageio
 
@@ -20,14 +40,13 @@ colorMode(RGB, 100);
 background(128);
 
 
-0117 core
-_ bring back the old P2D, rename PGraphics2 into PGraphicsJava
-
 
 _ opengl keeping memory around.. 
 _   could this be in vertices that have an image associated
 _   or the image buffer used for textures
 _   that never gets cleared fully?
+_ resizing opengl applet likely to cause big trouble
+_   componentlistener should prolly only do size() command outside of draw
 
 _ make the opengl textmode shape stuff get better and use PShape
 
@@ -40,12 +59,10 @@ _ textMode(SHAPE) faster in opengl
 _   cache for tyhpe should be per-renderer
 _   because opengl needs vectors, but also the image cache for textures
 
-_ createGraphics to not require defaults()
 _ how to clear the screen with alpha? background(0, 0, 0, 0)?
 _   background(EMPTY) -> background(0x01000000) or something?
 
 _ remove POLYGON, LINE_LOOP, LINE_STRIP
-_ beginFrame/endFrame -> beginDraw/endDraw
 _ begin/endPixels.. 
 _   on PImage, sets a flag that marks it to be updated on next render
 _   for PImage, begin after an end is ignored, no pixels are re-loaded
@@ -75,8 +92,6 @@ _ color values on camera input flipped on intel macs
 X   checked in a change for this recommended on qtjava list
 _   http://dev.processing.org/bugs/show_bug.cgi?id=313
 
-_ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
-_   because the triangles won't be rendered by the time endRaw() is called
 _ need to merge sorting/drawing of lines and triangles
 _   lines will occlude tris and vice versa
 _   will need to split each based on the other
@@ -119,12 +134,6 @@ _   paint is synchronized in 0091
 _     however this is a necessity, otherwise nasty flickering ensues
 _     and using a "glock" object seems to completely deadlock
 _   http://dev.processing.org/bugs/show_bug.cgi?id=46
-
-_ loadImage(url) having trouble with jpeg
-_   actually it's an issue with some types of jpeg files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=279
-_ png image loading problems
-_   http://dev.processing.org/bugs/show_bug.cgi?id=305
 
 _ when an exception comes through during cameraEvent, not printed
 _   need to show an actual stack trace (InvocationTargetEx) 
@@ -314,9 +323,6 @@ The graphics library was formerly called Bagel.
 
 CORE / PApplet
 
-_ typed version of array functions:
-_   append(), shorten(), splice, slice, subset, concat, reverse
-_   http://dev.processing.org/bugs/show_bug.cgi?id=115
 _ would be cool if could sort w/o the sort class..
 _   meaning use reflection to sort objects, just by implementing a few methods
 _   would be much simpler and less confusing than new Sort() etc 
@@ -352,8 +358,6 @@ _   delay might be a good way to signal drawing to the screen/updating
 _ catch security exceptions around applet i/o calls
 _   not just for saving files, but provide better error msgs when
 _     attempting to download from another server
-_ array utilities on Object[] are worthless.. fix it with reflection?
-_   see if reflection will allow expand for all class types
 _ ed's thread re: fullscreen strategies
 _   could add a new BApplet that uses BufferStrategy?
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
@@ -450,6 +454,8 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
+_ have createGraphics() create a completely transparent image
+_   and also not require defaults() to be called
 _ point() doesn't work with some graphics card setups
 _   particularly with opengl and java2d
 _   http://dev.processing.org/bugs/show_bug.cgi?id=121
@@ -653,6 +659,15 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=103
 
 
 CORE / PImage
+_ loadImage(url) having trouble with jpeg
+_   actually it's an issue with some types of jpeg files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=279
+_   java.lang.IllegalArgumentException: 
+_     Width (-1) and height (-1) cannot be <= 0
+_   identical to what happens when the image data is bad
+_     for instance, trying to load a tiff image with the jpg loader
+_ png image loading problems
+_   http://dev.processing.org/bugs/show_bug.cgi?id=305
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
@@ -671,26 +686,6 @@ _     specifically, which tags that were in the original image file
 _     perhaps something gets corrected? 
 _ loadImage() using spaces in the name
 _   if loadImage() with spaces when online(), throw an error
-
-
-CORE / PSound
-
-_ duration as an internal param, not a function
-_ When a sound is finished playing, 
-_   it should return to 0 so it can play again
-_ Putting sound.loop() in draw() seemed to spawn multiple sounds threads?
-_ After a sound is paused, it will only play from where it was paused
-_   to its end and will not loop again
-_ The ref in PSound2 says volume accepts vals from 0...1
-_   but values larger than one increase the volume.
-_ SoundEvent // is sound finished?? Can't access now. 
-_ make java 1.1 version of PSound work properly
-_ merge PSound and PSound2 via reflection?
-_   once debugged, merge these back together and use reflection
-_     (unless it's a messy disaster)
-_ Unsupported control type: Master Gain 
-_   what's actually causing this error?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115467831
 
 
 CORE / Documentation

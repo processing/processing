@@ -117,7 +117,7 @@ public class PGraphics2 extends PGraphics {
 
 
   // turn off mis.newPixels
-  public void endFrame() {
+  public void endDraw() {
     // moving this back here (post-68) because of macosx thread problem
     //mis.newPixels(pixels, cm, 0, width);
 
@@ -929,8 +929,13 @@ public class PGraphics2 extends PGraphics {
 
 
   public void clear() {
+    // in case people do transformations before background(),
+    // need to handle this with a push/reset/pop
+    pushMatrix();
+    resetMatrix();
     g2.setColor(new Color(backgroundColor));
     g2.fillRect(0, 0, width, height);
+    popMatrix();
   }
 
 

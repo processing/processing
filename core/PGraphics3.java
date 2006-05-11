@@ -88,7 +88,7 @@ public class PGraphics3 extends PGraphics {
 
   // i think vertex_end is actually the last vertex in the current shape
   // and is separate from vertexCount for occasions where drawing happens
-  // on endFrame with all the triangles being depth sorted
+  // on endDraw() with all the triangles being depth sorted
   protected int vertex_end;
 
   // vertices may be added during clipping against the near plane.
@@ -302,8 +302,8 @@ public class PGraphics3 extends PGraphics {
   }
 
 
-  public void beginFrame() {
-    super.beginFrame();
+  public void beginDraw() {
+    super.beginDraw();
 
     modelview.set(camera);
     modelviewInv.set(cameraInv);
@@ -339,7 +339,7 @@ public class PGraphics3 extends PGraphics {
    * all be quicksorted here (to make alpha work more properly)
    * and then blit to the screen.
    */
-  public void endFrame() {
+  public void endDraw() {
     // no need to z order and render
     // shapes were already rendered in endShape();
     // (but can't return, since needs to update memimgsrc
@@ -347,7 +347,7 @@ public class PGraphics3 extends PGraphics {
       flush();
     }
     // blit to screen
-    super.endFrame();
+    super.endDraw();
   }
 
 
@@ -401,7 +401,7 @@ public class PGraphics3 extends PGraphics {
 
     if (hints[ENABLE_DEPTH_SORT]) {
       // continue with previous vertex, line and triangle count
-      // all shapes are rendered at endFrame();
+      // all shapes are rendered at endDraw();
       vertex_start = vertexCount;
       vertex_end = 0;
 
@@ -1053,7 +1053,7 @@ public class PGraphics3 extends PGraphics {
     // ------------------------------------------------------------------
     // RENDER SHAPES FILLS HERE WHEN NOT DEPTH SORTING
 
-    // if true, the shapes will be rendered on endFrame
+    // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
       if (fill) render_triangles();
       if (stroke) render_lines();
