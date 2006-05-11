@@ -1,3 +1,12 @@
+ABOUT REV 0004 - 10 May 2006
+
+First release in a long while.  This release brings the development environment
+up to date with the recent 114 build of Processing.  Plus, it adds to the 
+auto-update mechanism so that the core APIs and libraries can be updated
+separately- hopefully this will allow faster bug fixes and new features and
+libraries to be released.
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 ABOUT REV 0003 - 29 January 2006
 
 Primarily a bug fix release:
