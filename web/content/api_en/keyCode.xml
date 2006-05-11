@@ -11,6 +11,24 @@
 <example>
 <image></image>
 <code>
+int x = 90;
+
+void draw() {
+  noStroke();
+  rect(x, 10, 3, 80);
+}
+
+void keyPressed() {
+  if (keyCode == BACKSPACE) {
+    x = x - 5;
+  }
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
 color fillVal = color(126);
 
 void draw() {
@@ -19,7 +37,7 @@ void draw() {
 }
 
 void keyPressed() {
-  if(key == CODED) {
+  if (key == CODED) {
     if (keyCode == UP) {
       fillVal = 255;
     } else if (keyCode == DOWN) {
@@ -33,7 +51,7 @@ void keyPressed() {
 </example>
 
 <description>
-The system variable <b>keyCode</b> is used to detect special keys such as the UP, DOWN, LEFT, or RIGHT keys on the keyboard. Other special key constants are ALT, CONTROL, SHIFT, BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE. Before testin which coded key is pressed it's necessary to test and see if the key is coded at all. This is done with the conditional "if(key == CODED) {}" as shown in the above example.
+The system variable <b>keyCode</b> is used to detect special keys such as the UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT, BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE. When checking for UP, DOWN, LEFT, RIGHT, ALT, CONTROL, and SHIFT, it's first necessary to check and see if the key is coded. This is done with the conditional "if(key == CODED) {}" as shown in the second example. The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded. If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make sure your program will work for all platforms.
 </description>
 
 <syntax>
