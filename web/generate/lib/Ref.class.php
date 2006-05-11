@@ -110,12 +110,16 @@ class Ref
 		$html .= refTableRow('<!--*-->Name<!--*-->', '<h3>'.$this->name.'</h3>', 'name-row');
         
         $examples = '';
+		$count = 0;
         foreach ($this->examples as $ex) {
             $examples .= '<div class="example">';
             $path = ($lang != 'en' ? '../media' : 'media');
             $examples .= !empty($ex['image']) ? "<img src=\"$path/$ex[image]\" alt=\"example pic\" />" : '';
             $examples .= !empty($ex['image']) ? "<pre class=\"margin\">$ex[code]</pre>" : "<pre>$ex[code]</pre>";
             $examples .= '</div>';
+			if (count($this->examples) != ++$count) {
+				$examples .= '<hr class="noShade" noshade="noshade" size="1" />';
+			}
         }
         $html .= refTableRow('<!--*-->Examples<!--*-->', $examples);
         $html .= refTableRow('<!--*-->Description<!--*-->', $this->description);
