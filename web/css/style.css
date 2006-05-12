@@ -279,7 +279,7 @@ td p { margin-top: 0; }
 .example img { float: left; margin-right: 15px; margin-bottom: 15px; }
 .example { clear: both; margin-bottom: 15px; }
 .example pre.margin { margin-left: 115px; }
-hr.noShade { height: 0px; color: #ccc; background: #ccc; margin-bottom: 15px; clear: both;}
+hr.noShade { height: 0px; color: #ccc; background: #ccc; margin-bottom: 15px; clear: both; width: 60%; text-align: left; float: left; }
 
 /*** ref index ***/
 .abridged-notice { margin: 0 50px 30px 0; }
