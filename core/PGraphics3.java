@@ -3434,7 +3434,7 @@ public class PGraphics3 extends PGraphics {
       ambient((float) rgb);
 
     } else {
-      colorCalcARGB(rgb);
+      colorCalcARGB(rgb, colorModeA);
       ambientFromCalc();
     }
   }
@@ -3467,7 +3467,7 @@ public class PGraphics3 extends PGraphics {
       specular((float) rgb);
 
     } else {
-      colorCalcARGB(rgb);
+      colorCalcARGB(rgb, colorModeA);
       specularFromCalc();
     }
   }
@@ -3522,7 +3522,7 @@ public class PGraphics3 extends PGraphics {
       emissive((float) rgb);
 
     } else {
-      colorCalcARGB(rgb);
+      colorCalcARGB(rgb, colorModeA);
       emissiveFromCalc();
     }
   }
