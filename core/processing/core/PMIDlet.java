@@ -258,6 +258,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public void setup() {
     }
     
+    public void suspend()  {
+    }
+
+    public void resume() {      
+    }    
+    
     public void destroy() {        
     }
     
@@ -912,7 +918,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final int hour() {
         checkCalendar();
-        return calendar.get(Calendar.HOUR);
+        return calendar.get(Calendar.HOUR_OF_DAY);
     }
     
     public final int day() {

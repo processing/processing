@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>destroy()</name>
+
+<category>Structure</category>
+
+<subcategory>Execution</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description>
+Called once when the program is about to be ended. This may be due to the user exiting the program or the phone may decide to end your program if memory is running low or some other hardware event has occured (for example, some phones will exit a program upon hitting the end call key). Implement this callback to handle any special needs of your program saving state to a file.
+</description>
+
+<syntax>
+void destroy() {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>statements</label>
+<description>any valid statements</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+resume()
+setup()
+suspend()
+</related>
+
+<availability>1.0</availability>
+
+<type>Processing Function</type>
+
+<partof>PDE</partof>
+
+</root>

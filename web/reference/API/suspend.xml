@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>suspend()</name>
+
+<category>Structure</category>
+
+<subcategory>Execution</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description>
+Called once when the program is suspended by the phone. This may be due to an incoming call, text message, or other hardware event (such as the user closing a flip phone). Implement this callback to handle any special needs of your program, such as pausing a game or saving state to a file.
+</description>
+
+<syntax>
+void suspend() {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>statements</label>
+<description>any valid statements</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+destroy()
+resume()
+setup()
+</related>
+
+<availability>1.0</availability>
+
+<type>Processing Function</type>
+
+<partof>PDE</partof>
+
+</root>
