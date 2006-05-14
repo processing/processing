@@ -615,7 +615,7 @@ public class PGraphics extends PImage implements PConstants {
     }
     // mark pixels as having been updated, so that they'll work properly
     // when this PGraphics is drawn using image().
-    updatePixels();
+    endPixels();
   }
 
 
@@ -1982,19 +1982,19 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Draw a single character on screen.
    * Extremely slow when used with textMode(SCREEN) and Java 2D,
-   * because loadPixels has to be called first and updatePixels last.
+   * because beginPixels has to be called first and updatePixels last.
    */
   public void text(char c, float x, float y) {
     if (textFont == null) {
       throw new RuntimeException("use textFont() before text()");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    if (textMode == SCREEN) beginPixels();
 
     textBuffer[0] = c;
     textLineImpl(textBuffer, 0, 1, x, y);
 
-    if (textMode == SCREEN) updatePixels();
+    if (textMode == SCREEN) endPixels();
   }
 
 
@@ -2035,7 +2035,7 @@ public class PGraphics extends PImage implements PConstants {
       throw new RuntimeException("use textFont() before text()");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    if (textMode == SCREEN) beginPixels();
 
     int length = str.length();
     if (length > textBuffer.length) {
@@ -2056,7 +2056,7 @@ public class PGraphics extends PImage implements PConstants {
     if (start < length) {
       textLineImpl(textBuffer, start, index, x, y);
     }
-    if (textMode == SCREEN) updatePixels();
+    if (textMode == SCREEN) endPixels();
   }
 
 
@@ -2126,7 +2126,7 @@ public class PGraphics extends PImage implements PConstants {
       throw new RuntimeException("use textFont() before text()");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    if (textMode == SCREEN) beginPixels();
 
     float hradius, vradius;
     switch (rectMode) {
@@ -2254,7 +2254,7 @@ public class PGraphics extends PImage implements PConstants {
       textLineImpl(textBuffer, lineStart, index, lineX, currentY);
     }
 
-    if (textMode == SCREEN) updatePixels();
+    if (textMode == SCREEN) endPixels();
   }
 
 
@@ -2940,9 +2940,13 @@ public class PGraphics extends PImage implements PConstants {
    * <P>
    * Note, no need for a bounds check since it's a 32 bit number.
    */
-  protected void colorCalcARGB(int argb) {
+  protected void colorCalcARGB(int argb, float alpha) {
     calcColor = argb;
-    calcAi = (argb >> 24) & 0xff;
+    if (alpha == colorModeA) {
+      calcAi = (argb >> 24) & 0xff;
+    } else {
+      calcAi = (int) (((argb >> 24) & 0xff) * (alpha / colorModeA));
+    }
     calcRi = (argb >> 16) & 0xff;
     calcGi = (argb >> 8) & 0xff;
     calcBi = argb & 0xff;
@@ -2978,15 +2982,26 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the tint to either a grayscale or ARGB value. See notes
-   * attached to the fill() function.
+   * Set the tint to either a grayscale or ARGB value.
+   * See notes attached to the fill() function.
    */
   public void stroke(int rgb) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
       stroke((float) rgb);
 
     } else {
-      colorCalcARGB(rgb);
+      colorCalcARGB(rgb, colorModeA);
+      strokeFromCalc();
+    }
+  }
+
+
+  public void stroke(int rgb, float alpha) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+      stroke((float) rgb, alpha);
+
+    } else {
+      colorCalcARGB(rgb, alpha);
       strokeFromCalc();
     }
   }
@@ -3049,7 +3064,17 @@ public class PGraphics extends PImage implements PConstants {
       tint((float) rgb);
 
     } else {
-      colorCalcARGB(rgb);
+      colorCalcARGB(rgb, colorModeA);
+      tintFromCalc();
+    }
+  }
+
+  public void tint(int rgb, float alpha) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+      tint((float) rgb, alpha);
+
+    } else {
+      colorCalcARGB(rgb, alpha);
       tintFromCalc();
     }
   }
@@ -3126,10 +3151,22 @@ public class PGraphics extends PImage implements PConstants {
       fill((float) rgb);
 
     } else {
-      colorCalcARGB(rgb);
+      colorCalcARGB(rgb, colorModeA);
       fillFromCalc();
     }
   }
+
+
+  public void fill(int rgb, float alpha) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      fill((float) rgb, alpha);
+
+    } else {
+      colorCalcARGB(rgb, alpha);
+      fillFromCalc();
+    }
+  }
+
 
   public void fill(float gray) {
     colorCalc(gray);
@@ -3292,7 +3329,7 @@ public class PGraphics extends PImage implements PConstants {
       background((float) rgb);
 
     } else {
-      colorCalcARGB(rgb);
+      colorCalcARGB(rgb, colorModeA);
       backgroundFromCalc();
     }
     clear();
@@ -3402,12 +3439,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public final int color(int gray) {  // ignore
-    if (colorRgb255) {
-      // bounds checking to make sure the numbers aren't to high or low
-      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
-      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+    if (((gray & 0xff000000) == 0) && (gray <= colorModeX)) {
+      if (colorRgb255) {
+        // bounds checking to make sure the numbers aren't to high or low
+        if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
+        return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+      } else {
+        colorCalc(gray);
+      }
+    } else {
+      colorCalcARGB(gray, colorModeA);
     }
-    colorCalc(gray);
     return calcColor;
   }
 
@@ -3417,6 +3459,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * @param gray can be packed ARGB or a gray in this case
+   */
   public final int color(int gray, int alpha) {  // ignore
     if (colorRgb255) {
       // bounds checking to make sure the numbers aren't to high or low
@@ -3426,6 +3471,18 @@ public class PGraphics extends PImage implements PConstants {
       return ((alpha & 0xff) << 24) | (gray << 16) | (gray << 8) | gray;
     }
     colorCalc(gray, alpha);
+    return calcColor;
+  }
+
+  /**
+   * @param rgb can be packed ARGB or a gray in this case
+   */
+  public final int color(int rgb, float alpha) {  // ignore
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+      colorCalc(rgb, alpha);
+    } else {
+      colorCalcARGB(rgb, alpha);
+    }
     return calcColor;
   }
 

@@ -419,6 +419,7 @@ public class PGraphicsGL extends PGraphics3 {
     // load p5 modelview into the opengl modelview
     if (ctm == null) ctm = new float[16];
 
+    /*
     ctm[0] = modelview.m00;
     ctm[1] = modelview.m01;
     ctm[2] = modelview.m02;
@@ -437,6 +438,26 @@ public class PGraphicsGL extends PGraphics3 {
     ctm[12] = modelview.m30;
     ctm[13] = modelview.m31;
     ctm[14] = modelview.m32;
+    ctm[15] = modelview.m33;
+    */
+    ctm[0] = modelview.m00;
+    ctm[1] = modelview.m10;
+    ctm[2] = modelview.m20;
+    ctm[3] = modelview.m30;
+
+    ctm[4] = modelview.m01;
+    ctm[5] = modelview.m11;
+    ctm[6] = modelview.m21;
+    ctm[7] = modelview.m31;
+
+    ctm[8] = modelview.m02;
+    ctm[9] = modelview.m12;
+    ctm[10] = modelview.m22;
+    ctm[11] = modelview.m32;
+
+    ctm[12] = modelview.m03;
+    ctm[13] = modelview.m13;
+    ctm[14] = modelview.m23;
     ctm[15] = modelview.m33;
 
     // apply this modelview and get to work
@@ -1783,7 +1804,7 @@ public class PGraphicsGL extends PGraphics3 {
   //////////////////////////////////////////////////////////////
 
 
-  public void loadPixels() {
+  public void beginPixels() {
     if ((pixels == null) || (pixels.length != width*height)) {
       pixels = new int[width * height];
       pixelBuffer = BufferUtil.newIntBuffer(pixels.length);
@@ -1848,7 +1869,7 @@ public class PGraphicsGL extends PGraphics3 {
         for (int x = 0; x < width; x++) {
           int temp = pixels[index];
 
-          // identical to updatePixels because only two
+          // identical to endPixels because only two
           // components are being swapped
           pixels[index] = 0xff000000 |
             ((pixels[yindex] << 16) & 0xff0000) |
@@ -1893,7 +1914,7 @@ public class PGraphicsGL extends PGraphics3 {
         for (int x = 0; x < image.width; x++) {
           int temp = image.pixels[index];
 
-          // identical to updatePixels because only two
+          // identical to endPixels because only two
           // components are being swapped
           image.pixels[index] = 0xff000000 |
             ((image.pixels[yindex] << 16) & 0xff0000) |
@@ -1940,7 +1961,7 @@ public class PGraphicsGL extends PGraphics3 {
         for (int x = 0; x < image.width; x++) {
           int temp = image.pixels[index];
 
-          // identical to updatePixels because only two
+          // identical to endPixels because only two
           // components are being swapped
           image.pixels[index] =
             (image.pixels[yindex] & 0xff000000) |
@@ -2072,7 +2093,7 @@ public class PGraphicsGL extends PGraphics3 {
   }
 
 
-  public void updatePixels() {
+  public void endPixels() {
     // flip vertically (opengl stores images upside down),
 
     int index = 0;
@@ -2145,11 +2166,11 @@ public class PGraphicsGL extends PGraphics3 {
   }
 
 
-  public void updatePixels(int x, int y, int c, int d) {
-    //throw new RuntimeException("updatePixels() not available with OpenGL");
+  public void endPixels(int x, int y, int c, int d) {
+    //throw new RuntimeException("endPixels() not available with OpenGL");
     // TODO make this actually work for a smaller region
     //      problem is, it gets pretty messy with the y reflection, etc
-    updatePixels();
+    endPixels();
   }
 
 
@@ -2296,29 +2317,29 @@ public class PGraphicsGL extends PGraphics3 {
 
   /**
    * Extremely slow and not optimized, should use glCopyPixels instead.
-   * Currently calls a loadPixels() on the whole canvas, then does the copy,
-   * then it calls updatePixels().
+   * Currently calls a beginPixels() on the whole canvas, then does the copy,
+   * then it calls endPixels().
    */
   public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
     //throw new RuntimeException("copy() not available with OpenGL");
-    loadPixels();
+    beginPixels();
     super.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    updatePixels();
+    endPixels();
   }
 
 
   /**
    * TODO - extremely slow and not optimized.
-   * Currently calls a loadPixels() on the whole canvas,
-   * then does the copy, then it calls updatePixels().
+   * Currently calls a beginPixels() on the whole canvas,
+   * then does the copy, then it calls endPixels().
    */
   public void copy(PImage src,
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
-    loadPixels();
+    beginPixels();
     super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    updatePixels();
+    endPixels();
   }
 
 
@@ -2338,28 +2359,28 @@ public class PGraphicsGL extends PGraphics3 {
 
   /**
    * TODO - extremely slow and not optimized.
-   * Currently calls a loadPixels() on the whole canvas,
-   * then does the blend, then it calls updatePixels().
+   * Currently calls a beginPixels() on the whole canvas,
+   * then does the blend, then it calls endPixels().
    */
   public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    loadPixels();
+    beginPixels();
     super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    updatePixels();
+    endPixels();
   }
 
 
   /**
    * TODO - extremely slow and not optimized.
-   * Currently calls a loadPixels() on the whole canvas,
-   * then does the blend, then it calls updatePixels().
+   * Currently calls a beginPixels() on the whole canvas,
+   * then does the blend, then it calls endPixels().
    */
   public void blend(PImage src,
                     int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    loadPixels();
+    beginPixels();
     super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    updatePixels();
+    endPixels();
   }
 
 
@@ -2367,7 +2388,7 @@ public class PGraphicsGL extends PGraphics3 {
 
 
   public void save(String filename) {
-    loadPixels();
+    beginPixels();
     super.save(filename);
   }
 

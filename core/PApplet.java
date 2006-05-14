@@ -182,7 +182,7 @@ public class PApplet extends Applet
    * Pixel buffer from this applet's PGraphics.
    * <P>
    * When used with OpenGL or Java2D, this value will
-   * be null until loadPixels() has been called.
+   * be null until beginPixels() has been called.
    */
   public int pixels[];
 
@@ -1294,7 +1294,7 @@ public class PApplet extends Applet
           // if depth() is called inside setup, pixels/width/height
           // will be ok by the time it's back out again
 
-          //this.pixels = g.pixels;  // make em call loadPixels
+          //this.pixels = g.pixels;  // make em call beginPixels
           // now for certain that we've got a valid size
           this.width = g.width;
           this.height = g.height;
@@ -5714,11 +5714,19 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * As of 0116 this also takes color(#FF8800, alpha)
+   */
   public final int color(int gray, int alpha) {
     if (g == null) {
-      if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-      return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
+      if (gray > 255) {
+        // then assume this is actually a #FF8800
+        return (alpha << 24) | (gray & 0xFFFFFF);
+      } else {
+        //if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
+        return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
+      }
     }
     return g.color(gray, alpha);
   }
@@ -6321,7 +6329,13 @@ public class PApplet extends Applet
 
 
   public void loadPixels() {
-    g.loadPixels();
+    System.err.println("Use beginPixels() instead of loadPixels() " +
+                       "with release 0116 and later.");
+  }
+
+
+  public void beginPixels() {
+    g.beginPixels();
     pixels = g.pixels;
   }
 
@@ -6356,9 +6370,15 @@ public class PApplet extends Applet
   }
 
 
-  public void updatePixels(int x1, int y1, int x2, int y2) {
-    if (recorder != null) recorder.updatePixels(x1, y1, x2, y2);
-    g.updatePixels(x1, y1, x2, y2);
+  public void endPixels() {
+    if (recorder != null) recorder.endPixels();
+    g.endPixels();
+  }
+
+
+  public void endPixels(int x1, int y1, int x2, int y2) {
+    if (recorder != null) recorder.endPixels(x1, y1, x2, y2);
+    g.endPixels(x1, y1, x2, y2);
   }
 
 
@@ -7152,6 +7172,12 @@ public class PApplet extends Applet
   }
 
 
+  public void stroke(int rgb, float alpha) {
+    if (recorder != null) recorder.stroke(rgb, alpha);
+    g.stroke(rgb, alpha);
+  }
+
+
   public void stroke(float gray) {
     if (recorder != null) recorder.stroke(gray);
     g.stroke(gray);
@@ -7188,6 +7214,12 @@ public class PApplet extends Applet
   }
 
 
+  public void tint(int rgb, float alpha) {
+    if (recorder != null) recorder.tint(rgb, alpha);
+    g.tint(rgb, alpha);
+  }
+
+
   public void tint(float gray) {
     if (recorder != null) recorder.tint(gray);
     g.tint(gray);
@@ -7221,6 +7253,12 @@ public class PApplet extends Applet
   public void fill(int rgb) {
     if (recorder != null) recorder.fill(rgb);
     g.fill(rgb);
+  }
+
+
+  public void fill(int rgb, float alpha) {
+    if (recorder != null) recorder.fill(rgb, alpha);
+    g.fill(rgb, alpha);
   }
 
 

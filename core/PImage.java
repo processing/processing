@@ -276,19 +276,33 @@ public class PImage implements PConstants, Cloneable {
   */
 
 
+  public void loadPixels() {  // ignore
+    System.err.println("Use beginPixels() instead of loadPixels() " +
+                       "with release 0116 and later.");
+    beginPixels();
+  }
+
+
+  public void updatePixels() {
+    System.err.println("Use endPixels() instead of updatePixels() " +
+                       "with release 0116 and later.");
+    endPixels();
+  }
+
+
   /**
    * For subclasses where the pixels[] buffer isn't set by default,
    * this should copy all data into the pixels[] array
    */
-  public void loadPixels() {  // ignore
+  public void beginPixels() {  // ignore
   }
 
 
   /**
    * Mark all pixels as needing update.
    */
-  public void updatePixels() {
-    updatePixels(0, 0, width, height);
+  public void endPixels() {
+    endPixels(0, 0, width, height);
   }
 
 
@@ -302,7 +316,7 @@ public class PImage implements PConstants, Cloneable {
    * Note that when using imageMode(CORNERS),
    * the x2 and y2 positions are non-inclusive.
    */
-  public void updatePixels(int x1, int y1, int x2, int y2) {
+  public void endPixels(int x1, int y1, int x2, int y2) {
     //if (!modified) {  // could just set directly, but..
     //}
 
