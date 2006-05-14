@@ -15,24 +15,56 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=115
 X fix issue where processing applets would run extremely fast 
 X   after having been starved of resources where there framerate dropped
 X   http://dev.processing.org/bugs/show_bug.cgi?id=336
+X added color/stroke/tint/fill(#FF8800, 30);
 
+fixed in 0115 / quicktime 7.1
+X color values on camera input flipped on intel macs
+X   checked in a change for this recommended on qtjava list
+X   http://dev.processing.org/bugs/show_bug.cgi?id=313
 
-0117 core
-_ bring back the old P2D, rename PGraphics2 into PGraphicsJava
+_ AIOOBE on PLine 757.. halts renderer
 
+X begin/endPixels.. change has been made
+_   on PImage, sets a flag that marks it to be updated on next render
+_   for PImage, begin after an end is ignored, no pixels are re-loaded
+_     the "changed" bit gets turned off when the PImage is rendered
+_   for subclasses of PGraphics, the reload bit needs to be set on endFrame
+_   filter() checks to see if inside begin/endPixels, if so doesn't call
+o   if line() is called inside beginpixels, call updatepixels?
+_   when NPE on line with pixels[], suggest user includes beginPixels
+
+_ with network connection
+_   download a copy of the source for 0069, get the renderer 
+_   svn mv PGraphics2 PGraphicsJava
+
+_ for subclasses, make it easy to grab the structure of vertices
+_   actually, just use PShape internally and this will be easier
+
+_ add notes about fixing serial on the mac to the faq (and link to bug)
 
 _ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
 _   because the triangles won't be rendered by the time endRaw() is called
 _   force depth sorted triangles to flush
 _ fix dxf export bug
 _ fix erik's problems with export (also in bugs db)
+_ check into ricard's problems with beginRecord()
+_ should beginRecord inherit settings from its parent renderer?
+_   textFont() is null on beginRecord
+_   same would be the case for strokeWeight, background, etc.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=346
+
+
+_ bring back the old P2D, rename PGraphics2 into PGraphicsJava
+_ remove POLYGON, LINE_LOOP, LINE_STRIP
+
 
 _ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
 
-
-_ test support for reading and writing images that have alpha and imageio
+_ test imageio with images that have alpha (does it work?)
 
 _ get tiff exporter for p5 to support argb and gray
+_   would also need to modify the tiff loading code, 
+_   because the header would be different
 _   http://dev.processing.org/bugs/show_bug.cgi?id=343
 
 _ this produces a dark blue background: 
@@ -62,20 +94,10 @@ _   because opengl needs vectors, but also the image cache for textures
 _ how to clear the screen with alpha? background(0, 0, 0, 0)?
 _   background(EMPTY) -> background(0x01000000) or something?
 
-_ remove POLYGON, LINE_LOOP, LINE_STRIP
-_ begin/endPixels.. 
-_   on PImage, sets a flag that marks it to be updated on next render
-_   for PImage, begin after an end is ignored, no pixels are re-loaded
-_     the "changed" bit gets turned off when the PImage is rendered
-_   for subclasses of PGraphics, the reload bit needs to be set on endFrame
-_   filter() checks to see if inside begin/endPixels, if so doesn't call
-o   if line() is called inside beginpixels, call updatepixels?
 _ introduce calc()
 _ tint() sets texture color, fill() is ignored with textures
 
 _ cmyk version of tiff encoder code?
-
-_ when NPE on line with pixels[], suggest user includes beginPixels
 
 _ when turning smoothing on, internal lines of shapes are visible
 _   need to turn off smoothing for the interior of shapes
@@ -88,9 +110,6 @@ _ get()/set() in PGraphicsJava don't bounds check
 
 _ add better error messages for all built-in renderers
 _   i.e. "import library -> pdf" when pdf is missing
-_ color values on camera input flipped on intel macs
-X   checked in a change for this recommended on qtjava list
-_   http://dev.processing.org/bugs/show_bug.cgi?id=313
 
 _ need to merge sorting/drawing of lines and triangles
 _   lines will occlude tris and vice versa
@@ -723,7 +742,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
-_ polygon z-order with alpha in opengl
+_ polygon z-order depth sorting with alpha in opengl
 _   complete the implementation of hint() with proper implementation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _ opengl needs to shut itself down properly when closing applet
@@ -784,3 +803,11 @@ _   sorting of polygons/lines on simple painters algorithm
 _   better lighting model to show darkness at various depths
 _     maybe just ultra-high res bitmaps from gl
 o   version of BApplet that replaces g. with ai. or pdf.
+
+
+PGraphicsPDF
+
+_ pdf export ignoring transparency on linux
+_   check to see if this is the case on other linux machines
+_   seems to be working fine on windows
+_   http://dev.processing.org/bugs/show_bug.cgi?id=345

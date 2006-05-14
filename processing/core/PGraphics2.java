@@ -122,8 +122,8 @@ public class PGraphics2 extends PGraphics {
     //mis.newPixels(pixels, cm, 0, width);
 
     // need to mark pixels as needing an update, without calling
-    // its own updatePixels, since that's crazy slow
-    //updatePixels();
+    // its own endPixels, since that's crazy slow
+    //endPixels();
   }
 
 
@@ -520,7 +520,7 @@ public class PGraphics2 extends PGraphics {
                            int u1, int v1, int u2, int v2) {
     if (who.cache == null) {
       who.cache = new ImageCache(who);
-      who.updatePixels();  // mark the whole thing for update
+      who.endPixels();  // mark the whole thing for update
     }
 
     ImageCache cash = (ImageCache) who.cache;
@@ -530,7 +530,7 @@ public class PGraphics2 extends PGraphics {
         (tint && (cash.tintedColor != tintColor)) ||
         (!tint && cash.tinted)) {
       // for tint change, mark all pixels as needing update
-      who.updatePixels();
+      who.endPixels();
     }
 
     if (who.modified) {
@@ -973,7 +973,7 @@ public class PGraphics2 extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  public void loadPixels() {
+  public void beginPixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];
     }
@@ -986,11 +986,11 @@ public class PGraphics2 extends PGraphics {
   /**
    * Update the pixels[] buffer to the PGraphics image.
    * <P>
-   * Unlike in PImage, where updatePixels() only asks that the
+   * Unlike in PImage, where endPixels() only asks that the
    * update happens, in PGraphics2, this will happen immediately.
    */
-  public void updatePixels() {
-    //updatePixels(0, 0, width, height);
+  public void endPixels() {
+    //endPixels(0, 0, width, height);
     WritableRaster raster = ((BufferedImage) image).getRaster();
     raster.setDataElements(0, 0, width, height, pixels);
   }
@@ -999,14 +999,14 @@ public class PGraphics2 extends PGraphics {
   /**
    * Update the pixels[] buffer to the PGraphics image.
    * <P>
-   * Unlike in PImage, where updatePixels() only asks that the
+   * Unlike in PImage, where endPixels() only asks that the
    * update happens, in PGraphics2, this will happen immediately.
    */
-  public void updatePixels(int x, int y, int c, int d) {
+  public void endPixels(int x, int y, int c, int d) {
     if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
-      updatePixels();
+      endPixels();
     } else {
-      throw new RuntimeException("updatePixels(x, y, c, d) not implemented");
+      throw new RuntimeException("endPixels(x, y, c, d) not implemented");
     }
     /*
     ((BufferedImage) image).setRGB(x, y,
@@ -1158,16 +1158,16 @@ public class PGraphics2 extends PGraphics {
 
 
   public void filter(int kind) {
-    loadPixels();
+    beginPixels();
     super.filter(kind);
-    updatePixels();
+    endPixels();
   }
 
 
   public void filter(int kind, float param) {
-    loadPixels();
+    beginPixels();
     super.filter(kind, param);
-    updatePixels();
+    endPixels();
   }
 
 
@@ -1193,9 +1193,9 @@ public class PGraphics2 extends PGraphics {
   public void copy(PImage src,
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
-    loadPixels();
+    beginPixels();
     super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    updatePixels();
+    endPixels();
   }
 
 
@@ -1203,32 +1203,32 @@ public class PGraphics2 extends PGraphics {
 
 
   public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
-    loadPixels();
+    beginPixels();
     super.blend(src, sx, sy, dx, dy, mode);
-    updatePixels();
+    endPixels();
   }
 
 
   public void blend(int sx, int sy, int dx, int dy, int mode) {
-    loadPixels();
+    beginPixels();
     super.blend(sx, sy, dx, dy, mode);
-    updatePixels();
+    endPixels();
   }
 
 
   public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    loadPixels();
+    beginPixels();
     super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    updatePixels();
+    endPixels();
   }
 
 
   public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    loadPixels();
+    beginPixels();
     super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    updatePixels();
+    endPixels();
   }
 
 
@@ -1237,7 +1237,7 @@ public class PGraphics2 extends PGraphics {
 
   public void save(String filename) {
     //System.out.println("start load");
-    loadPixels();
+    beginPixels();
     //System.out.println("end load, start save");
     super.save(filename);
     //System.out.println("done with save");

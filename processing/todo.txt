@@ -1,8 +1,78 @@
 0116 pde
+o including function outlines in the code? 
+o   i.e. make setup() and draw() for people? seems silly.. not much to do
+o when importing a library, insert 'captureEvent'?
+o   again, seems to fraught with potential problems
 
-_ size of sketch different in setup() and draw() on linux
-_   make sure that the sketch isn't being sized based on bad insets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=341
+_ archive sketch direct to bug report
+_ start including source tarball? 
+_ post releases on sourceforge so that international mirrors are better?
+
+_ does closing the window call stop()?
+_   need to make sure hitting stop button and closing window explicitly call
+
+_ exporting applications copies .java files 
+_   .java files are copied to the root folder as well as the source folder
+_ hitting ESC on "create this, move file, continue" opened anyway
+
+_ show progress dialog during export and save
+
+libraries
+_ make a note of how to add to a sketch (put in sketchbook)
+_ disable subfolders working as libraries (if a sketch, don't allow subfolders)
+o   or maybe just that libraries must be in the root? 
+o   nah, cuz that would mean can't make subfolder called "libraries"
+_ library/download.url and library/home.url
+_ tools -> get library
+_   library url: [ http://blahblah.org/something ]
+_   this would grab something.version, and something.zip
+_ tools -> update libraries
+_   this would check the something.version to see if it's newer
+
+_ tools -> shared code
+_   Integrator / FloatThing / CameraStuff -- Update
+_   to pull code from a local folder
+_   update will update classes from shared in the current folder
+
+_ need to document how subclass of pgraphics works
+_   what are the necessary bits that need to be subclassed
+_   simple handling of colors, what fields are available
+_   how to get the matrices
+_   simple endshape handler
+
+_ include a separate video class to handle playback
+_   video playback can be much faster if not messing with pixels
+_   could instead use texsubimage in opengl, etc
+
+site
+_ make source link on p5 site go direct to the source
+_ start creating source tarball when finishing
+_ post the downloads also on the sourceforge site
+
+_ make the p5 icon show up for the window (and in the dock) 
+_   when launching a new sketch
+_ tools -> import sketch from url (takes a zip from archive sketch)
+_ tools -> ftp upload sketch
+
+_ several save/save as issues in the release
+
+faq
+_ include notes about the new way to fix the serial lib on the mac
+_ opengl, may need to install new version of video drivers
+_ add note in reference about how to add something to the sketch
+_   (code, .java files, etc)
+_ audio hiccups, throttling the cpu
+_   p5 will take as much cpu as it can, which can choke other apps
+_   call delay(10) (or so) if you want to make sure audio keeps running
+_ using beginGL().. also import javax.media.opengl.*;
+_   lighting will not work
+_ write a threading example
+_   show an example of how to handle callback into the app
+X   or handle this some more intelligent way, super.stop() is needed.
+X   registerDispose() does the trick
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
+_ fix the internal file chooser so that people don't need to make their own
 
 text faq
 _ how to use textMode(SHAPES) with opengl
@@ -20,6 +90,13 @@ the only way to do it (this will improve later) is to use some undocumented feat
 3) use createFont() (which you already are) 
 this will convert all the shape data from the fonts for writing. it will be *extremely* slow, which is part of why it's not documented yet. but it will work with beginRaw().
 
+video faq
+_ clean up the notes in the faq about how to get video to work
+_   make the instructions for winvdig clearer
+_ be sure to say "yes to all" when deinstalling winvdig
+_ install 1.0.1 not 1.0.5
+_ 1.0.5 doesn't seem to be necessary, and can't resize windows
+
 advanced faq
 X advanced reference contains more info about how things work
 X move 'how do i create large images' here
@@ -28,17 +105,29 @@ _ explain how to integrate code with swing
 _   use a separate environment, call init(), use noLoop(), redraw()
 _ how do i add gui to a sketch?
 _   don't use awt components
+_   how to use swing and embed components inside p5
 X createGraphics with PDF, using dispose() to clear the thing
 X calling nextPage()
 _ notes about setting key=0 to catch ESC
 _   also size(screen.width, screen.height);
 _   maybe make a section in installations with p5
 
-_ clean up the notes in the faq about how to get video to work
-_   make the instructions for winvdig clearer
+_ add note to bugs db asking to please use archive sketch and attach
 
 _ toInt() needs to go away in time for the book.. fix parser bugs
-_ make expand() et al work on objects
+
+
+linux problems
+_ things not showing up
+_   probably threading issue, 98 doesn't have any trouble
+_   signs point to Runner or PApplet changes between 98 and 99
+_   commenting out applet.setupFrameResizeListener() 
+_     in line 307 from Runner.java solved the problem
+_   http://dev.processing.org/bugs/show_bug.cgi?id=282
+_ size of sketch different in setup() and draw() on linux
+_   make sure that the sketch isn't being sized based on bad insets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=341
+_ not being able to make a link to the processing app
 
 _ would be nice to have macosx packaged up as a single .app file
 _   should recommend that people install libraries into their sketchbook
@@ -61,13 +150,6 @@ _ set "no smileys" as the default for posting code
 
 _ make the export to the board just copy to clipboard
 _   also make it insert &nbsp; for extra spaces
-
-_ linux problems with things not showing up
-_   probably threading issue, 98 doesn't have any trouble
-_   signs point to Runner or PApplet changes between 98 and 99
-_   commenting out applet.setupFrameResizeListener() 
-_     in line 307 from Runner.java solved the problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=282
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
@@ -257,14 +339,11 @@ _     ctrl-x-o switch windows
 _     ctrl-x-1 single window
 
 _ write a timer class/example library
-_ write a threading example
-X   or handle this some more intelligent way, super.stop() is needed.
-X   registerDispose() does the trick
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ write an example that uses Hashtable
 _ write an example that uses Vector
 _ get an xml library and example in there
+_   xquery and xpath (latter in particular) for dealing with xml
+_   jeff uses saxon for switchboard.. saxon also part of nux
 _   nanoxml problems with manifest
 _   appears to use 1.6.8 version since it's just two classes
 _ post to web example 
