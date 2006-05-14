@@ -4,7 +4,7 @@
 
 <category>Structure</category>
 
-<subcategory></subcategory>
+<subcategory>Execution</subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -44,8 +44,9 @@ void setup() {
 <returns>None</returns>
 
 <related>
-loop()
-size()
+destroy()
+resume()
+suspend()
 </related>
 
 <availability>1.0</availability>
@@ -53,12 +54,5 @@ size()
 <type>Processing Function</type>
 
 <partof>PDE</partof>
-
-
-
-
-
-
-
 
 </root>

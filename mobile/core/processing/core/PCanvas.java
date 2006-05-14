@@ -28,6 +28,7 @@ import java.util.*;
  */
 public class PCanvas extends Canvas {
     private PMIDlet     midlet;
+    private boolean     suspended;
     
     private Image       buffer;
     private Graphics    bufferg;
@@ -925,6 +926,15 @@ public class PCanvas extends Canvas {
         if ((this.width != width) || (this.height != height)) {
             sizeChanged(width, height);
         }
+        if (suspended) {
+            midlet.resume();
+            suspended = false;
+        }
+    }
+    
+    protected void hideNotify() {
+        midlet.suspend();
+        suspended = true;
     }
     
     protected void sizeChanged(int width, int height) {        

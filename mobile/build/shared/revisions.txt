@@ -1,3 +1,15 @@
+ABOUT REV 0005
+
+Core API
+========
+
+- Callbacks for suspend(), resume(), and destroy() events.
+
+- Fixed hour() function to return 24 hour value instead of 12 hour 
+  morning/evening value.
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 ABOUT REV 0004 - 10 May 2006
 
 First release in a long while.  This release brings the development environment
@@ -7,6 +19,7 @@ separately- hopefully this will allow faster bug fixes and new features and
 libraries to be released.
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 ABOUT REV 0003 - 29 January 2006
 
 Primarily a bug fix release:

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>resume()</name>
+
+<category>Structure</category>
+
+<subcategory>Execution</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description>
+Called once when the program is resumed by the phone after previously being suspended. For example, after an incoming call has been completed, a text message read, or a phone being opened. Implement this callback to handle any special needs of your program, such as restarting a game or loading state back from a file.
+</description>
+
+<syntax>
+void resume() {
+  <c>statements</c>
+}
+</syntax>
+
+<parameter>
+<label>statements</label>
+<description>any valid statements</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+destroy()
+setup()
+suspend()
+</related>
+
+<availability>1.0</availability>
+
+<type>Processing Function</type>
+
+<partof>PDE</partof>
+
+</root>
