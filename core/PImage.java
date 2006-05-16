@@ -145,6 +145,23 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Check the alpha on an image, using a really primitive loop.
+   */
+  protected void checkAlpha() {
+    if (pixels == null) return;
+
+    for (int i = 0; i < pixels.length; i++) {
+      // since transparency is often at corners, hopefully this
+      // will find a non-transparent pixel quickly and exit
+      if ((pixels[i] & 0xff000000) != 0xff000000) {
+        format = ARGB;
+        break;
+      }
+    }
+  }
+
+
+  /**
    * Construct a new PImage from a java.awt.Image. This constructor assumes
    * that you've done the work of making sure a MediaTracker has been used
    * to fully download the data and that the img is valid.

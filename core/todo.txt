@@ -16,6 +16,9 @@ X fix issue where processing applets would run extremely fast
 X   after having been starved of resources where there framerate dropped
 X   http://dev.processing.org/bugs/show_bug.cgi?id=336
 X added color/stroke/tint/fill(#FF8800, 30);
+X test imageio with images that have alpha (does it work?)
+X   nope, doesn't, didn't finish support
+X   http://dev.processing.org/bugs/show_bug.cgi?id=350
 
 fixed in 0115 / quicktime 7.1
 X color values on camera input flipped on intel macs
@@ -57,15 +60,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=346
 _ bring back the old P2D, rename PGraphics2 into PGraphicsJava
 _ remove POLYGON, LINE_LOOP, LINE_STRIP
 
-
 _ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
-
-_ test imageio with images that have alpha (does it work?)
-
-_ get tiff exporter for p5 to support argb and gray
-_   would also need to modify the tiff loading code, 
-_   because the header would be different
-_   http://dev.processing.org/bugs/show_bug.cgi?id=343
+_   also if transparency set but RGB is setting, still honors transparency
+_   http://dev.processing.org/bugs/show_bug.cgi?id=351
 
 _ this produces a dark blue background: 
 colorMode(RGB, 100);
@@ -705,6 +702,10 @@ _     specifically, which tags that were in the original image file
 _     perhaps something gets corrected? 
 _ loadImage() using spaces in the name
 _   if loadImage() with spaces when online(), throw an error
+_ get tiff exporter for p5 to support argb and gray
+_   would also need to modify the tiff loading code, 
+_   because the header would be different
+_   http://dev.processing.org/bugs/show_bug.cgi?id=343
 
 
 CORE / Documentation
