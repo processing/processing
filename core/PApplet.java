@@ -3056,6 +3056,12 @@ public class PApplet extends Applet
    * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
    */
   public PImage loadImage(String filename) {
+    // it's not clear whether this method is more efficient for
+    // loading gif, jpeg, and png data than the standard toolkit function,
+    // in fact it may even be identical. but who knows, with any luck
+    // it may even fix the image loading problems from bug #279.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=279
+    // (if anyone reading this knows for certain, please post)
     if (PApplet.javaVersion >= 1.4f) {
       if (loadImageFormats == null) {
         //loadImageFormats = javax.imageio.ImageIO.getReaderFormatNames();
@@ -3112,21 +3118,15 @@ public class PApplet extends Applet
     // if it's a .gif image, test to see if it has transparency
     if ((filename.toLowerCase().endsWith(".gif")) ||
         (filename.toLowerCase().endsWith(".png"))) {
-      for (int i = 0; i < image.pixels.length; i++) {
-        // since transparency is often at corners, hopefully this
-        // will find a non-transparent pixel quickly and exit
-        if ((image.pixels[i] & 0xff000000) != 0xff000000) {
-          image.format = ARGB;
-          break;
-        }
-      }
+      image.checkAlpha();
     }
     return image;
   }
 
 
   /**
-   *
+   * Use Java 1.4 ImageIO methods to load an image. All done via reflection
+   * in order to maintain compatability with previous releases.
    */
   protected PImage loadImageIO(String filename) {
     InputStream stream = openStream(filename);
@@ -3150,14 +3150,17 @@ public class PApplet extends Applet
       Method getHeightMethod =
         biClass.getMethod("getHeight", (Class[]) null);
       Integer hi = (Integer) getHeightMethod.invoke(bimage, (Object[]) null);
-      //int h = hi.intValue();
 
       Method getWidthMethod =
         biClass.getMethod("getWidth", (Class[]) null);
       Integer wi = (Integer) getWidthMethod.invoke(bimage, (Object[]) null);
-      //int w = wi.intValue();
 
-      // need to call getType() on the image to see if RGB or ARGB
+      // was gonna call getType() on the image to see if RGB or ARGB,
+      // but it's not actually useful, since gif images will come through
+      // as TYPE_BYTE_INDEXED, which means it'll still have to check for
+      // the transparency. also, would have to iterate through all the other
+      // types and guess whether alpha was in there, so.. just gonna stick
+      // with the old method.
 
       PImage outgoing = new PImage(wi.intValue(), hi.intValue());
 
@@ -3171,6 +3174,11 @@ public class PApplet extends Applet
           new Integer(outgoing.width), new Integer(outgoing.height),
           outgoing.pixels, new Integer(0), new Integer(outgoing.width)
         });
+
+      // check the alpha for this image
+      outgoing.checkAlpha();
+
+      // return the image
       return outgoing;
 
     } catch (Exception e) {
