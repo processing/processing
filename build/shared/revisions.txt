@@ -140,6 +140,7 @@ Lots of OpenGL bug fixes, and some big OS X fixes too.
   http://dev.processing.org/bugs/show_bug.cgi?id=189
 
 + Fix lighting issues with that were introduced in revision 0109. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=316 
 
 + Now checking maximum supported texture sizes for the video card
   when using OpenGL. It will now throw a RuntimeException to avoid

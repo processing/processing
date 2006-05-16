@@ -103,6 +103,8 @@ X move 'how do i create large images' here
 _ move stuff about getting gl object and java2d stuff here
 _ explain how to integrate code with swing
 _   use a separate environment, call init(), use noLoop(), redraw()
+_   use JPopupMenu.setDefaultLightWeightPopupEnabled(false); for zorder
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1147670059
 _ how do i add gui to a sketch?
 _   don't use awt components
 _   how to use swing and embed components inside p5
