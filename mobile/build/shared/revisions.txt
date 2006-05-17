@@ -1,7 +1,7 @@
 ABOUT REV 0005
 
-Core API
-========
+Core 0002
+=========
 
 - Callbacks for suspend(), resume(), and destroy() events.
 
