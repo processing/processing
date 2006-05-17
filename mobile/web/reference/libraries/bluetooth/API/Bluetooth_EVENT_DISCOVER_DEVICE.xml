@@ -20,7 +20,7 @@ void libraryEvent(Object library, int event, Object data) {
         println(device.name() + " discovered.");
         break;
       case Bluetooth.EVENT_DISCOVER_DEVICE_COMPLETED:
- Device[] devices = (Device[]) data;
+        Device[] devices = (Device[]) data;
         println(device.length + " devices discovered.");
         break;
     }

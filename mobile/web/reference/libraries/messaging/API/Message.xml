@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Message</name>
+
+<description>
+This class represents messages that have been received.
+</description>
+
+<method>
+<mname>readBytes()</mname>
+<mdescription>Reads the contents of the message as a byte array of data.</mdescription>
+</method>
+
+<method>
+<mname>readString()</mname>
+<mdescription>Reads the contents of the message as a text String.</mdescription>
+</method>
+
+<returns></returns>
+
+<constructor>
+</constructor>
+
+<cparameter>
+<clabel></clabel>
+<cdescription></cdescription>
+</cparameter>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Messaging</partof>
+
+</root>

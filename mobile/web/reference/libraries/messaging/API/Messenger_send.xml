@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>send()</name>
+
+<description>
+Sends a message containing text or data.
+</description>
+
+<syntax>
+m.send(to, text)
+m.send(to, data)
+</syntax>
+
+<parameter>
+<label>m</label>
+<description>Messenger: any variable of type Messenger</description>
+</parameter>
+
+<parameter>
+<label>to</label>
+<description>String: recipient phone number</description>
+</parameter>
+
+<parameter>
+<label>text</label>
+<description>String: text to send</description>
+</parameter>
+
+<parameter>
+<label>data</label>
+<description>byte[]: data to send</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Messenger</partof>
+
+
+</root>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>readString()</name>
+
+<description>
+Reads the contents of the message as a text String
+</description>
+
+<syntax>
+msg.readString()
+</syntax>
+
+<parameter>
+<label>msg</label>
+<description>Message: any variable of type Message</description>
+</parameter>
+
+<returns>String</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Messenger</partof>
+
+
+</root>
