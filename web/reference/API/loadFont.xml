@@ -21,7 +21,7 @@ text("word", 15, 50);
 </example>
 
 <description>
-Loads a font into a variable of type <b>PFont</b>. Bitmap fonts can be created by selecting <b>Create Font...</b> from the <b>Sketch</b> menu. To load correctly, bitmap fonts must be located in the data directory of the current sketch. Note that bitmap fonts created with Mobile Processing are not compatible with bitmap fonts created with Processing and vice versa.<br /><br />
+Loads a font into a variable of type <b>PFont</b>. Bitmap fonts can be created by selecting <b>Create Font...</b> from the <b>Tools</b> menu. To load correctly, bitmap fonts must be located in the data directory of the current sketch. Note that bitmap fonts created with Mobile Processing are not compatible with bitmap fonts created with Processing and vice versa.<br /><br />
 Bitmap fonts can consume a large amount of memory. Mobile Processing also allows you to load system fonts from the mobile phone. Use the FACE, STYLE, and SIZE constants to specify a system font. Not all phones support all combinations of FACE, STYLE, and SIZE, but will return the closest matching font.
 </description>
 

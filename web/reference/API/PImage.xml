@@ -12,7 +12,7 @@
 <image>PImage.jpg</image>
 <code>
 PImage b;
-b = loadImage("laDefense.jpg");
+b = loadImage("laDefense.png");
 image(b, 0, 0);
 </code>
 </example>
