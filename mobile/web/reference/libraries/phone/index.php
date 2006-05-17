@@ -19,10 +19,10 @@ This class provides access to the phone-specific features of the Phone library.<
 <a href="reference.php?name=Phone">Phone</a><br>
 <a href="reference.php?name=Phone_vibrate">vibrate()</a><br>
 <a href="reference.php?name=Phone_flash">flash()</a><br>
-<a href="reference.php?name=Phone_flash">call()</a><br>
-<a href="reference.php?name=Phone_flash">launch()</a><br>
-<a href="reference.php?name=Phone_flash">fullscreen()</a><br>
-<a href="reference.php?name=Phone_flash">noFullscreen()</a><br>
+<a href="reference.php?name=Phone_call">call()</a><br>
+<a href="reference.php?name=Phone_launch">launch()</a><br>
+<a href="reference.php?name=Phone_fullscreen">fullscreen()</a><br>
+<a href="reference.php?name=Phone_noFullscreen">noFullscreen()</a><br>
 </div>
 <?php
 require '../../../footer.inc.php';
