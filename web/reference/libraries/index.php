@@ -26,7 +26,11 @@ Parsing and outputting XML documents.
 </div>
 <div class="column">
 <b><a href="video/index.php">Video</a></b><br>
-Video playback and frame capture.
+Video playback and frame capture.<br>
+<br>
+<br>
+<b><a href="messaging/index.php">Messaging</a></b><br>
+Sending and receiving text and data messages.
 </div>
 <?php
 require '../../footer.inc.php';

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>Messenger</name>
+
+<description>
+This class provides the primary interface for sending and receiving messages. In order to properly receive messages, the <b>port</b> number in the message must match the port number assigned to the library.
+</description>
+
+<field>
+<fname>EVENT_MSG_RECEIVED</fname>
+<fdescription>Reported when a message has been received.</fdescription>
+</field>
+
+<method>
+<mname>send()</mname>
+<mdescription>Sends a message.</mdescription>
+</method>
+
+<returns></returns>
+
+<constructor>
+Messenger(<c>parent</c>)
+Messenger(<c>parent</c>, <c>port</c>)
+</constructor>
+
+<cparameter>
+<clabel>parent</clabel>
+<cdescription>PMIDlet: typically use "this"</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>port</clabel>
+<cdescription>int: a number to uniquely identify messages from your sketch, default is 12345</cdescription>
+</cparameter>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Messaging</partof>
+
+</root>

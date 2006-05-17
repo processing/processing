@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>EVENT_MSG_RECEIVED</name>
+
+<example>
+<code>
+Messenger m;
+
+void setup() {
+  m = new Messenger(this);
+  noLoop();
+}
+
+void libraryEvent(Object library, int event, Object data) {
+  if (library == m) {
+    switch (event) {
+      case Messenger.EVENT_MSG_RECEIVED:
+        Message msg = (Message) data;
+        println(msg.readString());
+        break;
+    }
+  }
+}
+</code>
+</example>
+
+<description>
+This constant value is reported in <b>libraryEvent</b> when a message has been received. The data object is the Message received.
+</description>
+
+<syntax>
+Messenger.EVENT_MSG_RECEIVED
+</syntax>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>int</type>
+
+<partof>Messaging</partof>
+
+
+</root>
