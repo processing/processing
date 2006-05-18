@@ -81,7 +81,7 @@ public class Service implements Runnable {
             try {
                 StreamConnection con = bt.server.acceptAndOpen();
                 Client c = new Client(con);
-                bt.midlet.enqueueLibraryEvent(this, Bluetooth.EVENT_CLIENT_CONNECTED, c);
+                bt.midlet.enqueueLibraryEvent(bt, Bluetooth.EVENT_CLIENT_CONNECTED, c);
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe.getMessage());
             }
