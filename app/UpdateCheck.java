@@ -251,7 +251,14 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
               //// now read local version
               reader = new BufferedReader(new InputStreamReader(Base.getStream("mobile.properties")));
               line = reader.readLine();
-              int localVersion = Integer.parseInt(line.substring(line.indexOf('=') + 1).trim());
+              int localVersion = 0;
+              while (line != null) {
+                  pos = line.indexOf('=');
+                  if (!line.startsWith("#") && (pos >= 0)) {
+                      localVersion = Integer.parseInt(line.substring(line.indexOf('=') + 1).trim());
+                  }
+                  line = reader.readLine();
+              }
               if (localVersion < serverVersion) {
                   outOfDate = true;
                   //// backup old version
