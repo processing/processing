@@ -598,18 +598,18 @@ public class Editor extends JFrame
     JMenuItem item;
     JMenu menu = new JMenu("Sketch");
 
-    item = newJMenuItem("Run", 'R');
+    item = newJMenuItem("Build and Run", 'R');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleRun(false);
+          handleRunEmulator(true);
         }
       });
     menu.add(item);
 
-    item = newJMenuItem("Present", 'R', true);
+    item = newJMenuItem("Run", 'R', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleRun(true);
+          handleRunEmulator(false);
         }
       });
     menu.add(item);
@@ -2029,7 +2029,7 @@ public class Editor extends JFrame
   }
  
 //// mobile: exports MIDlet and executes emulator  
-  public void handleRunEmulator() {
+  public void handleRunEmulator(boolean build) {
     doClose();
     running = true;
     buttons.run();
@@ -2045,7 +2045,9 @@ public class Editor extends JFrame
     }
 
     try {
-      if (!sketch.exportMIDlet(false)) return;
+      if (build) {
+          if (!sketch.exportMIDlet(false)) return;
+      }
 
       runtime = new Emulator(sketch, this);
       runtime.start(null);
