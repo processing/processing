@@ -314,7 +314,8 @@ public class EditorButtons extends JComponent implements MouseInputListener {
     switch (sel) {
     case RUN:
       //if (!disableRun) {
-      editor.handleRunEmulator();//(e.isShiftDown());
+      //// if shift is down, don't re-build midlet
+      editor.handleRunEmulator(!e.isShiftDown());
       //}
       break;
 

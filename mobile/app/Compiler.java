@@ -483,8 +483,9 @@ public class Compiler implements MessageConsumer {
 
 
   static private void packageListFromZip(String filename, Hashtable table) {
+    ZipFile file = null;
     try {
-      ZipFile file = new ZipFile(filename);
+      file = new ZipFile(filename);
       Enumeration entries = file.entries();
       while (entries.hasMoreElements()) {
         ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -506,6 +507,12 @@ public class Compiler implements MessageConsumer {
     } catch (IOException e) {
       System.err.println("Ignoring " + filename + " (" + e.getMessage() + ")");
       //e.printStackTrace();
+    } finally {
+      if (file != null) {
+        try {
+          file.close();
+        } catch (IOException ioe) { }
+      }
     }
   }
 
