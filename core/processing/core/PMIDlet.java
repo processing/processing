@@ -1001,16 +1001,21 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(filename);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            
-            byte[] buffer = new byte[1024];
-            int bytesRead = is.read(buffer);
-            while (bytesRead >= 0) {
-                baos.write(buffer, 0, bytesRead);
-                bytesRead = is.read(buffer);
+            byte[] result;
+            if (is != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                byte[] buffer = new byte[1024];
+                int bytesRead = is.read(buffer);
+                while (bytesRead >= 0) {
+                    baos.write(buffer, 0, bytesRead);
+                    bytesRead = is.read(buffer);
+                }
+                result = baos.toByteArray();
+            } else {
+                result = new byte[0];
             }
-            
-            return baos.toByteArray();
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -1052,29 +1057,31 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(filename);
-            Reader r = new InputStreamReader(is);
-            
-            int numStrings = 0;
-            
-            StringBuffer buffer = new StringBuffer();
-            int input = r.read();
-            while (true) {
-                if ((input < 0) || (input == '\n')) {
-                    String s = buffer.toString().trim();
-                    if (s.length() > 0) {
-                        numStrings++;
-                        v.addElement(s);
+            if (is != null) {
+                Reader r = new InputStreamReader(is);
+
+                int numStrings = 0;
+
+                StringBuffer buffer = new StringBuffer();
+                int input = r.read();
+                while (true) {
+                    if ((input < 0) || (input == '\n')) {
+                        String s = buffer.toString().trim();
+                        if (s.length() > 0) {
+                            numStrings++;
+                            v.addElement(s);
+                        }
+                        buffer.delete(0, Integer.MAX_VALUE);
+
+                        if (input < 0) {
+                            break;
+                        }
+                    } else {
+                        buffer.append((char) input);
                     }
-                    buffer.delete(0, Integer.MAX_VALUE);
-                    
-                    if (input < 0) {
-                        break;
-                    }
-                } else {
-                    buffer.append((char) input);
+
+                    input = r.read();
                 }
-                
-                input = r.read();
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

@@ -38,17 +38,19 @@ public class Bluetooth implements DiscoveryListener, Runnable {
     public static final int EVENT_DISCOVER_SERVICE_COMPLETED    = 4;
     public static final int EVENT_CLIENT_CONNECTED              = 5;
     
-    protected PMIDlet           midlet;
-    protected LocalDevice       local;
-    protected DiscoveryAgent    agent;
+    protected PMIDlet                   midlet;
+    protected LocalDevice               local;
+    protected DiscoveryAgent            agent;
     
-    private Vector              devices;
-    private Thread              thread;
+    protected Vector                    devices;
+    protected Thread                    serverThread;
+    protected Thread                    discoverThread;
     
-    private StreamConnectionNotifier    server;
+    protected StreamConnectionNotifier  server;
     
     public Bluetooth(PMIDlet midlet) {
         this.midlet = midlet;
+        devices = new Vector();
         try {
             local = LocalDevice.getLocalDevice();
             agent = local.getDiscoveryAgent();
@@ -58,21 +60,58 @@ public class Bluetooth implements DiscoveryListener, Runnable {
     }
         
     public void discover() {
-        try {
-            devices = new Vector();
-            agent.startInquiry(DiscoveryAgent.GIAC, this);
-        } catch (BluetoothStateException bse) {
-            throw new RuntimeException(bse.getMessage());
+        if (discoverThread == null) {
+            discoverThread = new Thread(this);
+            discoverThread.start();
         }
     }    
     
     public void cancel() {
+        discoverThread = null;
         agent.cancelInquiry(this);
     }
     
+    public void run() {
+        try {
+            //// clear any devices from previous search
+            devices.removeAllElements();
+            synchronized (devices) {
+                //// start inquiry
+                agent.startInquiry(DiscoveryAgent.GIAC, this);
+                try {
+                    //// block and wait until complete
+                    devices.wait();
+                } catch (InterruptedException ie) { }
+            }
+            //// check if cancelled first
+            if (discoverThread != null) {
+                //// if not, get name for each device
+                Enumeration e = devices.elements();
+                Device d;
+                String name;
+                while (e.hasMoreElements()) {
+                    d = (Device) e.nextElement();
+                    try {
+                        name = d.device.getFriendlyName(false);
+                        if (name != null) {
+                            d.name = name;
+                        }
+                    } catch (IOException ioe) { }
+                }
+            }
+            //// copy into array
+            Device[] devices = new Device[this.devices.size()];
+            this.devices.copyInto(devices);
+            //// fire event back into midlet
+            midlet.enqueueLibraryEvent(this, EVENT_DISCOVER_DEVICE_COMPLETED, devices);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        discoverThread = null;
+    }
+    
     public void start(String name) {
-        if (thread == null) {
-            thread = new Thread(this);
+        if (serverThread == null) {
             try {
                 local.setDiscoverable(DiscoveryAgent.GIAC);
                 UUID uuid = new UUID(UUID_DEFAULT, false);
@@ -80,35 +119,22 @@ public class Bluetooth implements DiscoveryListener, Runnable {
                 server = (StreamConnectionNotifier) Connector.open(url);             
                 ServiceRecord record = local.getRecord(server);
                 //// set availability to fully available
-                record.setAttributeValue( 0x0008, new DataElement( DataElement.U_INT_1, 0xFF ) );
+                record.setAttributeValue(0x0008, new DataElement(DataElement.U_INT_1, 0xFF));
                 //// set device class to telephony
-                record.setDeviceServiceClasses( 0x400000  );                
-                thread.start();
+                record.setDeviceServiceClasses(0x400000);
+                //// set up a service for this record and set it up as the thread
+                Service s = new Service(record, this);
+                serverThread = new Thread(s);
+                serverThread.start();
             } catch (Exception e) {
-                thread = null;
+                serverThread = null;
                 throw new RuntimeException(e.getMessage());
             }
         }
     }
     
     public void stop() {
-        thread = null;
-    }
-    
-    public void run() {                
-        while (thread == Thread.currentThread()) {
-            try {
-                StreamConnection con = server.acceptAndOpen();
-                Client c = new Client(con);
-                midlet.enqueueLibraryEvent(this, EVENT_CLIENT_CONNECTED, c);
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe.getMessage());
-            }
-        }
-        try {
-            server.close();
-        } catch (IOException ioe) {            
-        }
+        serverThread = null;
     }
 
     public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
@@ -118,9 +144,10 @@ public class Bluetooth implements DiscoveryListener, Runnable {
     }
 
     public void inquiryCompleted(int discType) {
-        Device[] devices = new Device[this.devices.size()];
-        this.devices.copyInto(devices);
-        midlet.enqueueLibraryEvent(this, EVENT_DISCOVER_DEVICE_COMPLETED, devices);
+        synchronized (devices) {
+            //// wake up discover thread
+            devices.notifyAll();
+        }
     }
 
     public void serviceSearchCompleted(int param, int param1) {
