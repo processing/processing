@@ -1,5 +1,17 @@
 ABOUT REV 0005
 
+Bluetooth 0002
+==============
+
+- Changed discover process to run in background, fetch friendly names 
+  automatically after discover inquiry is complete
+
+Core 0003
+=========
+
+- Changed loadStrings() and loadBytes() to return 0 length arrays instead of
+  throwing an exception if file/data not found.
+
 Core 0002
 =========
 

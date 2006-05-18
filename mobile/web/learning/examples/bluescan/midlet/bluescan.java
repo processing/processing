@@ -21,8 +21,6 @@ import processing.core.*; import processing.bluetooth.*; public class bluescan e
 final String SOFTKEY_DISCOVER = "Discover";
 final String SOFTKEY_CANCEL   = "Cancel";
 
-final String NAME_PENDING = "Discovering...";
-
 PFont font;
 Bluetooth bt;
 boolean discovering;
@@ -117,21 +115,18 @@ public void draw() {
   //// draw name of current selection
   if (selected < numIcons) {
     Record r = icons[selected].r;
-    String name = r.name;
-    if (name.equals(NAME_PENDING) && (r.device != null)) {
-      //// if no name, query the device- this may take a long time, so adjust
-      //// timing as well
-      int start = millis();
-      r.name = r.device.name();
-      prev += millis() - start;
-    }
     //// draw the name under the icon
-    int width = textWidth(name);
+    if (r.name == Device.UNKNOWN) {
+      //// if the record name is unknown, check the device to see if it has
+      //// been updated in the background discovery process
+      r.name = r.device.name;
+    }
+    int width = textWidth(r.name);
     stroke(0);
     fill(255);
     rect(icons[selected].x - width / 2 - 2, icons[selected].y + icons[selected].height() / 2, width + 4, font.height + 4);
     fill(0);
-    text(name, icons[selected].x, icons[selected].y + icons[selected].height() / 2 + font.baseline + 2);
+    text(r.name, icons[selected].x, icons[selected].y + icons[selected].height() / 2 + font.baseline + 2);
   }  
   
   //// draw the current number of visible devices
@@ -179,7 +174,7 @@ public void libraryEvent(Object library, int event, Object data) {
         //// new device discovered!
         Device d = (Device) data;
         Record r = null;
-        String address = d.address();
+        String address = d.address;
         boolean found = false;
         //// first, look for it in existing records list
         for (int i = 0; i < numRecords; i++) {
@@ -211,14 +206,15 @@ public void libraryEvent(Object library, int event, Object data) {
         } else {
           //// not found, so create a new record
           r = new Record();
-          r.name = NAME_PENDING;
-          r.address = d.address();
+          r.name = d.name;
+          r.address = d.address;
           r.count = 1;
           r.last = (int) (System.currentTimeMillis() / 1000);
           r.device = d;
           addRecord(r);
           addIcon(r);
         }
+        break;
       case Bluetooth.EVENT_DISCOVER_DEVICE_COMPLETED:
         //// done, reset command key and state
         discovering = false;

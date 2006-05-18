@@ -27,27 +27,22 @@ import javax.bluetooth.*;
  * @author  Francis Li
  */
 public class Device implements DiscoveryListener {
+    public static final String UNKNOWN = "(Unknown)";
+    
     public RemoteDevice     device;
     
     private Bluetooth       bt;
     private int             id;
     
+    public String           name;
+    public String           address;
+    
     protected Device(RemoteDevice device, Bluetooth bt) {
         this.device = device;
         this.bt = bt;
+        name = UNKNOWN;
+        address = device.getBluetoothAddress();
         id = -1;
-    }
-    
-    public String name() {
-        try {
-            return device.getFriendlyName(false);            
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
-        }
-    }
-    
-    public String address() {
-        return device.getBluetoothAddress();
     }
     
     public void discover() {
@@ -86,7 +81,7 @@ public class Device implements DiscoveryListener {
             Service[] services = new Service[servRecord.length];
             Service s;
             for (int i = 0, length = servRecord.length; i < length; i++) {
-                s = new Service(servRecord[i]);
+                s = new Service(servRecord[i], bt);
                 services[i] = s;
             }
             bt.midlet.enqueueLibraryEvent(bt, Bluetooth.EVENT_DISCOVER_SERVICE, services);

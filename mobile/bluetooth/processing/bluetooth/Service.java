@@ -26,15 +26,17 @@ import javax.bluetooth.*;
  *
  * @author  Francis Li
  */
-public class Service {
+public class Service implements Runnable {
     public static final int ATTR_SERVICENAME    = 0x0100;
     public static final int ATTR_SERVICEDESC    = 0x0101;
     public static final int ATTR_PROVIDERNAME   = 0x0102;
     
     public ServiceRecord    record;
+    public Bluetooth        bt;
     
-    protected Service(ServiceRecord record) {
+    protected Service(ServiceRecord record, Bluetooth bt) {
         this.record = record;
+        this.bt = bt;
     }
     
     public String name() {
@@ -71,6 +73,22 @@ public class Service {
             return c;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+    public void run() {                
+        while (bt.serverThread == Thread.currentThread()) {
+            try {
+                StreamConnection con = bt.server.acceptAndOpen();
+                Client c = new Client(con);
+                bt.midlet.enqueueLibraryEvent(this, Bluetooth.EVENT_CLIENT_CONNECTED, c);
+            } catch (IOException ioe) {
+                throw new RuntimeException(ioe.getMessage());
+            }
+        }
+        try {
+            bt.server.close();
+        } catch (IOException ioe) {            
         }
     }
 }
