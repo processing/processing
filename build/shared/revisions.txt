@@ -1,4 +1,13 @@
-ABOUT REV 0005
+ABOUT REV 0005 - 18 May 2006
+
+An update to fix some bugs with the auto-update feature!  Also fixes a bug
+with the Sketch menu having incorrect Run/Present applet items.  They have
+been replaced with "Build and Run" (default action on play) and "Run" items.
+You can also hold SHIFT while clicking on the play button to "Run" without
+re-building.  This is useful when you want to have more than one instance
+of the emulator running the same sketch (for testing bluetooth or
+messaging, for example).  This release also includes the following fixes
+to the core and library apis.
 
 Bluetooth 0002
 ==============
