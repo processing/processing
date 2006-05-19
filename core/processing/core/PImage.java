@@ -36,6 +36,12 @@ public class PImage {
     /** If true, this is a mutable image */
     public final boolean mutable;
     
+    protected PImage(int width, int height, boolean mutable) {
+        this.width = width;
+        this.height = height;
+        this.mutable = mutable;
+    }
+    
     public PImage(int width, int height) {
         image = Image.createImage(width, height);
         this.width = width;
@@ -74,8 +80,8 @@ public class PImage {
     
     public void copy(int sx, int sy, int swidth, int sheight, int dx, int dy, int dwidth, int dheight) {
         if (PCanvas.imageMode == PMIDlet.CORNERS) {
-            swidth = swidth - sx;
-            sheight = sheight - sy;
+            swidth -= sx;
+            sheight -= sy;
         }
         Image image = Image.createImage(swidth, sheight);
         Graphics g = image.getGraphics();
@@ -127,5 +133,9 @@ public class PImage {
                 scaleY = dy - sy - y * sheight / dheight + y;
             }
         }
+    }
+    
+    protected void draw(Graphics g, int x, int y) {
+        g.drawImage(image, x, y, Graphics.TOP | Graphics.LEFT);
     }
 }
