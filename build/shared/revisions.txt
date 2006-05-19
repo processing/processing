@@ -1,3 +1,19 @@
+ABOUT REV 0006 - 
+
+Image2 0001
+===========
+
+- New! The PImage2 class provides much of the functionality of the original
+  Processing PImage class, including access to the pixel buffer, alpha 
+  blending support, etc.
+
+Core 0004
+=========
+
+- Internals changed to support new Image2 library.
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 ABOUT REV 0005 - 18 May 2006
 
 An update to fix some bugs with the auto-update feature!  Also fixes a bug
@@ -13,7 +29,7 @@ Bluetooth 0002
 ==============
 
 - Changed discover process to run in background, fetch friendly names 
-  automatically after discover inquiry is complete
+  automatically after discover inquiry is complete.
 
 Core 0003
 =========
