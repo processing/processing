@@ -6,10 +6,15 @@
 Objects of this class represent nearby devices discovered on the Bluetooth network.
 </description>
 
-<method>
-<mname>address()</mname>
-<mdescription>Returns a string uniquely identifying the device on the network.</mdescription>
-</method>
+<field>
+<fname>name</fname>
+<fdescription>The name of the device. The name may be (Unknown) until the discovery process is complete.</fdescription>
+</field>
+
+<field>
+<fname>address</fname>
+<fdescription>A string uniquely identifying the device on the network.</fdescription>
+</field>
 
 <method>
 <mname>cancel()</mname>
@@ -19,11 +24,6 @@ Objects of this class represent nearby devices discovered on the Bluetooth netwo
 <method>
 <mname>discover()</mname>
 <mdescription>Searches for services on the device.</mdescription>
-</method>
-
-<method>
-<mname>name()</mname>
-<mdescription>Returns the name of the device.</mdescription>
 </method>
 
 <returns></returns>

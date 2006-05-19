@@ -88,7 +88,10 @@ while ($child) {
   <tr>
     <td class="reffieldheader">Examples</td>
     <td class="reffield">
-       <?php foreach ($value['example'] as $e) { ?>
+       <?php 
+             for ($i=0, $length=count($value['example']); $i<$length; $i++) {
+                 $e = $value['example'][$i];
+       ?>
                <table border="0" cellspacing="0" cellpadding="0">
                  <tr>
        <?php     if (isset($e['image'])) { ?>
@@ -107,6 +110,9 @@ while ($child) {
                  <td valign="top"><pre><?php echo $e['code'] ?></pre></td>
                  </tr>
                </table>
+       <?php     if ($i < ($length - 1)) { ?>
+               <hr size="1">
+       <?php     } ?>
                <br>
        <?php } ?>
     </td>

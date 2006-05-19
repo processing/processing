@@ -40,7 +40,8 @@ void libraryEvent(Object library, int event, Object data) {
 </example>
 
 <description>
-This constant value is reported in <b>libraryEvent</b> when when a service search started by Device.<b>discover()</b> has completed. There is no additional data provided, so data is <b>null</b>.</description>
+This constant value is reported in <b>libraryEvent</b> when when a service search started by Device.<b>discover()</b> or Bluetooth.<b>find()</b> has completed.<br /><br />If the search was started by Device.<b>discover()</b>, there is no additional data provided, so data is <b>null</b>.<br /><br />If the search was started by Bluetooth.<b>find()</b>, data will be a Service[] of Service objects representing the requested service on nearby devices.
+</description>
 
 <syntax>
 Bluetooth.EVENT_DISCOVER_SERVICE_COMPLETED

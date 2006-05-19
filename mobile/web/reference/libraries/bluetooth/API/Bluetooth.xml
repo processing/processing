@@ -42,6 +42,11 @@ This class provides the primary interface for discovering and establishing a Blu
 </method>
 
 <method>
+<mname>find()</mname>
+<mdescription>Searches for nearby Bluetooth devices running a specific service.</mdescription>
+</method>
+
+<method>
 <mname>start()</mname>
 <mdescription>Starts a Bluetooth service that other devices can connect to.</mdescription>
 </method>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>this</name>
+
+<category>Structure</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+int ypos = 50;
+
+void setup() {
+  size(100, 100);
+  noLoop();
+}
+
+void draw() {
+  line(0, 0, 100, ypos);
+  this.ypos = 100;
+  line(0, 0, 100, ypos);
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
+import processing.video.*;
+Capture cap;
+
+void setup() {
+  cap = new Capture(this);
+  cap.show(0, 0, 176, 144);
+}
+</code>
+</example>
+
+<description>
+Refers to the current object (i.e. "this object"). In Processing, it's most common to use <b>this</b> to pass a reference from the current object into one of the libraries.
+</description>
+
+<syntax>
+this
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Keyword</type>
+
+<partof>PDE</partof>
+
+<level>extended</level>
+
+
+</root>

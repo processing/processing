@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>name()</name>
+<name>name</name>
 
 <description>
-Returns a friendly name for the device.
+A friendly name for the device. The name may be <b>(Unknown)</b> until the discovery process is complete, at which point it may be updated.
 </description>
 
 <syntax>
-device.name()
+device.name
 </syntax>
 
 <parameter>

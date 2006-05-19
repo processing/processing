@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>description()</name>
+<name>description</name>
 
 <description>
 Returns a description of the service.
 </description>
 
 <syntax>
-serv.description()
+serv.description
 </syntax>
 
 <parameter>
