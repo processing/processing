@@ -1,5 +1,17 @@
 ABOUT REV 0006 - 
 
+Bluetooth 0004
+==============
+
+- Refactored a bit- made name, description and provider public fields in
+  Service rather than functions, added a new find() function that handles
+  most of the discovery business for you.
+
+Bluetooth 0003
+==============
+
+- Fixed a bug with server connection handling introduced in 0002.
+
 Image2 0001
 ===========
 

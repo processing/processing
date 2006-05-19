@@ -27,43 +27,46 @@ import javax.bluetooth.*;
  * @author  Francis Li
  */
 public class Service implements Runnable {
+    public static final String UNKNOWN = "(Unknown)";
+    
     public static final int ATTR_SERVICENAME    = 0x0100;
     public static final int ATTR_SERVICEDESC    = 0x0101;
     public static final int ATTR_PROVIDERNAME   = 0x0102;
     
+    public Device           device;
     public ServiceRecord    record;
     public Bluetooth        bt;
     
-    protected Service(ServiceRecord record, Bluetooth bt) {
+    public String           name;
+    public String           description;
+    public String           provider;
+    
+    protected Service(Device device, ServiceRecord record, Bluetooth bt) {
+        this.device = device;
         this.record = record;
         this.bt = bt;
-    }
-    
-    public String name() {
-        String name = null;
-        DataElement element = record.getAttributeValue(ATTR_SERVICENAME);
+        
+        DataElement element;
+        element = record.getAttributeValue(ATTR_SERVICENAME);
         if (element != null) {
             name = (String) element.getValue();
+        } else {
+            name = UNKNOWN;
         }
-        return name;
-    }
-    
-    public String description() {
-        String desc = null;
-        DataElement element = record.getAttributeValue(ATTR_SERVICEDESC);
+        
+        element = record.getAttributeValue(ATTR_SERVICEDESC);
         if (element != null) {
-            desc = (String) element.getValue();
+            description = (String) element.getValue();
+        } else {
+            description = UNKNOWN;
         }
-        return desc;
-    }
-    
-    public String provider() {
-        String provider = null;
-        DataElement element = record.getAttributeValue(ATTR_PROVIDERNAME);
+        
+        element = record.getAttributeValue(ATTR_PROVIDERNAME);
         if (element != null) {
             provider = (String) element.getValue();
+        } else {
+            provider = UNKNOWN;
         }
-        return provider;
     }
     
     public Client connect() {
@@ -76,7 +79,12 @@ public class Service implements Runnable {
         }
     }
     
-    public void run() {                
+    /** 
+     * This run() method is used to run the server thread, which accepts
+     * client connections and dispatches them to the sketch.  The setup
+     * occurs in Bluetooth.start().
+     */
+    public void run() {
         while (bt.serverThread == Thread.currentThread()) {
             try {
                 StreamConnection con = bt.server.acceptAndOpen();
