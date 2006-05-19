@@ -81,7 +81,7 @@ public class Device implements DiscoveryListener {
             Service[] services = new Service[servRecord.length];
             Service s;
             for (int i = 0, length = servRecord.length; i < length; i++) {
-                s = new Service(servRecord[i], bt);
+                s = new Service(this, servRecord[i], bt);
                 services[i] = s;
             }
             bt.midlet.enqueueLibraryEvent(bt, Bluetooth.EVENT_DISCOVER_SERVICE, services);
