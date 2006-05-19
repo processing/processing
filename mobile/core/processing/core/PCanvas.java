@@ -27,10 +27,14 @@ import java.util.*;
  * @author  Francis Li
  */
 public class PCanvas extends Canvas {
+    //// the following two fields are public static so that PImage and its subclasses can access them
+    //// without requiring a reference
+    public static Image buffer;
+    public static int   imageMode;
+    
     private PMIDlet     midlet;
     private boolean     suspended;
     
-    private Image       buffer;
     private Graphics    bufferg;
     
     private int         width;
@@ -52,9 +56,6 @@ public class PCanvas extends Canvas {
     
     private int         rectMode;
     private int         ellipseMode;
-    
-    //// imageMode static, permissions relaxed so PImage can access without an object reference
-    protected static int    imageMode;
     
     private int         shapeMode;
     private int[]       vertex;
@@ -638,7 +639,7 @@ public class PCanvas extends Canvas {
     }
     
     public void image(PImage img, int x, int y) {
-        bufferg.drawImage(img.image, x, y, Graphics.TOP | Graphics.LEFT);
+        img.draw(bufferg, x, y);
     }
     
     public void image(PImage img, int sx, int sy, int swidth, int sheight, int dx, int dy) {
@@ -647,7 +648,7 @@ public class PCanvas extends Canvas {
             sheight = sheight - sy;
         }
         bufferg.setClip(dx, dy, swidth, sheight);
-        bufferg.drawImage(img.image, dx - sx, dy - sy, Graphics.TOP | Graphics.LEFT);
+        img.draw(bufferg, dx - sx, dy - sy);
         bufferg.setClip(0, 0, width, height);
     }
     
