@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>name()</name>
+<name>name</name>
 
 <description>
-Returns the name of the service.
+The name of the service.
 </description>
 
 <syntax>
-serv.name()
+serv.name
 </syntax>
 
 <parameter>

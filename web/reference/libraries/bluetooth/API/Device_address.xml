@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>address()</name>
+<name>address</name>
 
 <description>
-Returns a String that uniquely identifies this device on the Bluetooth network.
+A String that uniquely identifies this device on the Bluetooth network.
 </description>
 
 <syntax>
-device.address()
+device.address
 </syntax>
 
 <parameter>

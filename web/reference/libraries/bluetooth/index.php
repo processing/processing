@@ -23,6 +23,7 @@ This class provides the primary interface for discovering and establishing a Blu
 <a href="reference.php?name=Bluetooth">Bluetooth</a><br>
 <a href="reference.php?name=Bluetooth_cancel">cancel()</a><br>
 <a href="reference.php?name=Bluetooth_discover">discover()</a><br>
+<a href="reference.php?name=Bluetooth_find">find()</a><br>
 <a href="reference.php?name=Bluetooth_start">start()</a><br>
 <a href="reference.php?name=Bluetooth_stop">stop()</a><br>
 <br>
@@ -37,20 +38,21 @@ This class provides the primary interface for discovering and establishing a Blu
 Objects of this class represent nearby devices discovered on the Bluetooth network.<br>
 <br>
 <a href="reference.php?name=Device">Device</a><br>
-<a href="reference.php?name=Device_address">address()</a><br>
+<a href="reference.php?name=Device_name">name</a><br>
+<a href="reference.php?name=Device_address">address</a><br>
 <a href="reference.php?name=Device_cancel">cancel()</a><br>
 <a href="reference.php?name=Device_discover">discover()</a><br>
-<a href="reference.php?name=Device_name">name()</a><br>
 <br>
 <br>
 <b>Service</b><br>
 Objects of this class represent software running on devices that can be connected to via the Bluetooth network.<br>
 <br>
 <a href="reference.php?name=Service">Service</a><br>
+<a href="reference.php?name=Service_name">name</a><br>
+<a href="reference.php?name=Service_description">description</a><br>
+<a href="reference.php?name=Service_provider">provider</a><br>
+<a href="reference.php?name=Service_device">device</a><br>
 <a href="reference.php?name=Service_connect">connect()</a><br>
-<a href="reference.php?name=Service_description">description()</a><br>
-<a href="reference.php?name=Service_name">name()</a><br>
-<a href="reference.php?name=Service_provider">provider()</a><br>
 <br>
 <br>
 <b>Client</b><br>

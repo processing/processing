@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>provider</name>
+<name>device</name>
 
 <description>
-Returns the name of the provider of the service.
+The parent device hosting this service.
 </description>
 
 <syntax>
-serv.provider
+serv.device
 </syntax>
 
 <parameter>
@@ -15,7 +15,7 @@ serv.provider
 <description>Service: any variable of type Service</description>
 </parameter>
 
-<returns>String</returns>
+<returns>Device</returns>
 
 <related>
 </related>

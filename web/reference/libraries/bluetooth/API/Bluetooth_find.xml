@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>find()</name>
+
+<description>
+Searches for nearby Bluetooth devices sharing a serial port connection and advertising a service with a specified name. This method returns immediately and reports its results in the <b>libraryEvent</b> method. In the final event, <b>EVENT_SERVICE_DISCOVER_COMPLETED</b>, an array of Service objects containing matching services on nearby devices is returned.
+</description>
+
+<syntax>
+bt.find(name)
+</syntax>
+
+<parameter>
+<label>bt</label>
+<description>Bluetooth: any variable of type Bluetooth</description>
+</parameter>
+
+<parameter>
+<label>name</label>
+<description>String: name of the service you are looking for</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type></type>
+
+<partof>Bluetooth</partof>
+
+
+</root>

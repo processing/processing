@@ -7,8 +7,8 @@ Reads data into an array of bytes. Returns the number of bytes read and stored i
 </description>
 
 <syntax>
-client.readBoolean(<c>buffer</c>)
-client.readBoolean(<c>buffer</c>, <c>offset</c>, <c>length</c>)
+client.readBytes(<c>buffer</c>)
+client.readBytes(<c>buffer</c>, <c>offset</c>, <c>length</c>)
 </syntax>
 
 <parameter>
