@@ -1,8 +1,8 @@
 <?
-
+/*** THIS FILE IS UNNECESSARY ***/
 define('COVER', true);
-require('happenings.php');
-require('../templates/rss.php');
+require_once('happenings.php');
+require_once('../templates/rss.php');
 
 $benchmark_start = microtime_float();
 

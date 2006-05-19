@@ -121,6 +121,7 @@ class Example
 	function copy_media()
 	{
 		if (file_exists($this->applet)) {
+			make_necessary_directories(EXAMPLESDIR.'media/include');
 			if (!copy($this->applet, EXAMPLESDIR.'media/'.$this->name.'.jar')) {
 				echo "Could not copy {$this->applet} to .";
 			}

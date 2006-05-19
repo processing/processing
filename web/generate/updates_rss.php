@@ -1,5 +1,5 @@
 <?
-
+/*** THIS FILE IS UNNECESSARY ***/
 define('COVER', true);
 require('updates.php');
 require('../templates/rss.php');

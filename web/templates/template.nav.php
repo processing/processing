@@ -83,7 +83,7 @@ function short_nav($section)
     return $html;
 }
 
-function local_nav($section, $rel_path)
+function local_nav($section, $rel_path='')
 {
     $html  = "\t\t\t".'<div id="navigation">'."\n";
     $html .= "\t\t\t\t".'<div class="navBar" id="mainnav_noSub">'."\n";

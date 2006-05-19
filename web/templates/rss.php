@@ -1,6 +1,6 @@
 <?
 
-class RSS
+class RSS_feed
 {
 	var $xml;
 	var $title;
@@ -9,7 +9,7 @@ class RSS
 	var $items;
 	
 	var $attributes = array('title', 'description', 'buildDate', 'items');
-	function RSS($title, $description)
+	function RSS_feed($title, $description)
 	{
 		$this->xml = new xhtml_page(TEMPLATEDIR.'rss.xml');
 		$this->title = $title;

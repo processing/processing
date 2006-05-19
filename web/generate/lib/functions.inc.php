@@ -374,7 +374,7 @@ function category_index($array)
             if (in_array($cat, $break_before)) {
                 $html .= "\n</div><div class=\"ref-col\">\n";            
             }
-            $section = "\n<div class=\"category\">\n<h3><img src=\"images/" . category_image($cat) ."\" alt=\"{$translation->cat_tr[$cat]}\" /></h3>\n";
+            $section = "\n<div class=\"category\">\n<h3>{$translation->cat_tr[$cat]}</h3>\n";
             foreach ($subs as $sub => $refs) {
                 if (count($refs) > 0) {
                     if ($sub != '') $section .= "\t<h5>$sub</h5>\n";
