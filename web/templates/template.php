@@ -218,7 +218,7 @@ class LocalReferencePage extends ReferencePage
         $piece = new xhtml_piece(TEMPLATEDIR.'template.reference.item.html');
         $xhtml->set('content_for_layout', $piece->out());
         
-        $xhtml->set('reference_nav', local_nav($section, $rel_path));
+        $xhtml->set('reference_nav', reference_nav());
         $xhtml->set('language_nav', language_nav($lang));
         
         $xhtml->set('content', $ref->display());
