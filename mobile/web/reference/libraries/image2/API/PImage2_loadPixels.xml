@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>loadPixels()</name>
+
+<category>Image</category>
+
+<subcategory>Pixels</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description>
+Copies the pixel data for the output window into the <b>pixels[]</b> array of the image. Anything that has been drawn to the output so far in <b>draw()</b> will be copied into the image. If the <b>PImage2</b> object is not big enough for the entire screen, the image will be cropped. Otherwise, use the optional parameters to specify exactly the area you wish to copy from and its destination in the <b>PImage2</b> object.
+</description>
+
+<syntax>
+<c>img</c>.loadPixels()
+<c>img</c>.loadPixels(<c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>);
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>any variable of type PImage2</description>
+</parameter>
+
+<parameter>
+<label>sx</label>
+<description>int: X coordinate of the source's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>sy</label>
+<description>int: Y coordinate of the source's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>swidth</label>
+<description>int: source image width</description>
+</parameter>
+
+<parameter>
+<label>sheight</label>
+<description>int: source image height</description>
+</parameter>
+
+<parameter>
+<label>dx</label>
+<description>int: X coordinate of the destination's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>dy</label>
+<description>int: Y coordinate of the destination's upper left corner</description>
+</parameter>
+
+<parameter>
+<label>dwidth</label>
+<description>int: destination image width</description>
+</parameter>
+
+<parameter>
+<label>dheight</label>
+<description>int: destination image height</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+pixels[]
+updatePixels()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

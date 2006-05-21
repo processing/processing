@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>textWrap()</name>
+
+<category>Typography</category>
+
+<subcategory>Loading &amp; Displaying</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description>
+This function takes text in a String object and returns an array of String objects containing the text split into lines that will fit in the specified width when rendered with the current font. If a height is also specified, the array will only contain lines that will fit in the box- any text that would not fit is ignored.
+</description>
+
+<syntax>
+textWrap(<c>stringdata</c>, <c>width</c>)
+textWrap(<c>stringdata</c>, <c>width</c>, <c>height</c>)
+</syntax>
+
+<parameter>
+<label>stringdata</label>
+<description>String: text to be displayed</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>int: width of text</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>int: height of text</description>
+</parameter>
+
+<returns>None</returns>
+
+<related>
+textAlign()
+textMode()
+loadFont() 
+PFont 
+textFont() 
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+
+
+
+
+
+
+</root>

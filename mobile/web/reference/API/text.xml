@@ -20,12 +20,26 @@ text("word", 15, 50);
 </code>
 </example>
 
+<example>
+<image>text_3.gif</image>
+<code>
+PFont font;
+font = loadFont("FFScala-Bold-12.vlw"); 
+textFont(font, 12); 
+String s = "The quick brown fox jumped over the lazy dog.";
+text(s, 15, 20, 70, 70); 
+</code>
+</example>
+
 <description>
-Draws text to the screen. Displays the information specified in the <b>stringdata</b> parameter on the screen in the position specified by the <b>x</b> and <b>y</b> parameters. A font must be set with the <b>textFont()</b> function before <b>text()</b> may be called. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. If the font was loaded from the mobile phone (not a bitmap font created with Mobile Processing), you can change the color of the text with the <b>fill()</b> function. To change the color of a bitmap font, you must reload it with the color specified in <b>loadFont()</b>.
+Draws text to the screen. Displays the information specified in the <b>stringdata</b> parameter on the screen in the position specified by the <b>x</b> and <b>y</b> parameters. A font must be set with the <b>textFont()</b> function before <b>text()</b> may be called. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. If the font was loaded from the mobile phone (not a bitmap font created with Mobile Processing), you can change the color of the text with the <b>fill()</b> function. To change the color of a bitmap font, you must reload it with the color specified in <b>loadFont()</b>.<br />
+<br />
+The <b>width</b> and <b>height</b> parameters define a rectangular area to display within. Text will automatically be wrapped and clipped to fit within the area.
 </description>
 
 <syntax>
 text(<c>stringdata</c>, <c>x</c>, <c>y</c>)
+text(<c>stringdata</c>, <c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
 </syntax>
 
 <parameter>
@@ -35,12 +49,22 @@ text(<c>stringdata</c>, <c>x</c>, <c>y</c>)
 
 <parameter>
 <label>y</label>
-<description>int: y-coordinate of text</description>
+<description>int: y-coordinate of text baseline (if no width and height specified) or the top of the text box (if width and height specified)</description>
 </parameter>
 
 <parameter>
 <label>stringdata</label>
 <description>String: letters to be displayed</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>int: width of text box</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>int: height of text box</description>
 </parameter>
 
 <returns>None</returns>

@@ -27,7 +27,7 @@ if (is_null($fullpath)) {
     $fullpath = dirname(__FILE__);
 }
 
-$dom = @domxml_open_file($fullpath ."/API/". $_GET['name'] .".xml");
+$dom = domxml_open_file($fullpath ."/API/". $_GET['name'] .".xml");
 $root = $dom->document_element();
 $value = array();
 $child = $root->first_child();
@@ -164,7 +164,7 @@ while ($child) {
        <?php foreach ($value['field'] as $f) { ?>
                  <tr>
                    <td valign="top" width="70">
-                     <a href="reference.php?name=<?php echo $_GET['name'] ?>_<?php echo rtrim($f['fname'], "() ") ?>"><?php echo $f['fname'] ?></a>
+                     <a href="reference.php?name=<?php echo $_GET['name'] ?>_<?php echo rtrim($f['fname'], "[]() ") ?>"><?php echo $f['fname'] ?></a>
                    </td>
                    <td valign="top" width="20">&nbsp;</td>
                    <td><?php echo $f['fdescription'] ?><br><br></td>

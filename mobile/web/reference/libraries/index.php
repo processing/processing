@@ -14,7 +14,11 @@ Controlling phone-specific features.<br>
 <br>
 <br>
 <b><a href="bluetooth/index.php">Bluetooth</a></b><br>
-Sending and receiving data via Bluetooth wireless connections.
+Sending and receiving data via Bluetooth wireless connections.<br>
+<br>
+<br>
+<b><a href="image2/index.php">Image2</a></b><br>
+Provides a new PImage-compatible image with an editable pixel buffer.
 </div>
 <div class="column">
 <b><a href="sound/index.php">Sound</a></b><br>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>PImage2</name>
+
+<description>
+This class provides a PImage-compatible image with an editable pixel buffer. It can be used wherever a PImage is used, such as with the <b>image()</b> function to draw it to the screen. It also supports all of the PImage fields and methods, such as <b>width</b>, <b>height</b>, and <b>copy()</b>.
+</description>
+
+<field>
+<fname>pixels[]</fname>
+<fdescription>array containing the color of every pixel in the image</fdescription>
+</field>
+
+<method>
+<mname>get()</mname>
+<mdescription>Reads the clor of any pixel or grabs a rectangle of pixels.</mdescription>
+</method>
+
+<method>
+<mname>set()</mname>
+<mdescription>Writes a color to any pixel or writes an image into another.</mdescription>
+</method>
+
+<method>
+<mname>mask()</mname>
+<mdescription>Masks part of the image from displaying</mdescription>
+</method>
+
+<method>
+<mname>loadPixels()</mname>
+<mdescription>Loads the current contents of the screen</mdescription>
+</method>
+
+<constructor>
+PImage2(<c>img</c>)
+PImage2(<c>width</c>, <c>height</c>)
+PImage2(<c>pixels[]</c>, <c>width</c>, <c>height</c>)
+</constructor>
+
+<cparameter>
+<clabel>img</clabel>
+<cdescription>PImage: an image to copy into this pixel buffer</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>width</clabel>
+<cdescription>int: image width</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>height</clabel>
+<cdescription>int: image height</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>pixels[]</clabel>
+<cdescription>int[] or color[]: array of integers or colors, must have width*height number of elements</cdescription>
+</cparameter>
+
+<returns></returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Net</partof>
+
+</root>

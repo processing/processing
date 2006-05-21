@@ -30,20 +30,13 @@ Sets the color used to draw lines and borders around shapes. This color is eithe
 
 <syntax>
 stroke(<c>gray</c>)
-stroke(<c>gray</c>, <c>alpha</c>)
 stroke(<c>color</c>)
 stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>)
-stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 </syntax>
 
 <parameter>
 <label>gray</label>
 <description>int or float: specifies a value between white and black</description>
-</parameter>
-
-<parameter>
-<label>alpha</label>
-<description>int or float: opacity of the stroke</description>
 </parameter>
 
 <parameter>
@@ -65,7 +58,6 @@ stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 <label>value3</label>
 <description>int or float: blue or brightness value (depending on the current color mode)</description>
 </parameter>
-
 
 <returns>None</returns>
 
