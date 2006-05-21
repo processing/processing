@@ -160,4 +160,103 @@ public class PFont {
         // if it's in the upper half, continue there
         return getIndex(c, pivot+1, stop);
     }
+    
+    public int charsWidth(char[] ch, int offset, int length) {
+        int result = 0;
+        if (font != null) {
+            result = font.charsWidth(ch, offset, length);
+        } else {
+            int index;
+            for (int i = offset, end = offset + length; i < end; i++) {
+                index = getIndex(ch[i]);
+                if (index >= 0) {
+                    result += setWidth[index];
+                } else {
+                    result += setWidth[ascii['i']];
+                }                
+            }
+        }
+        return result;
+    }
+    
+    public int charWidth(char ch) {
+        int result;
+        if (font != null) {
+            result = font.charWidth(ch);
+        } else {
+            int index = getIndex(ch);
+            if (index >= 0) {
+                result = setWidth[index];
+            } else {
+                //// for unknown characters give back some default value (this case, width of letter 'i')
+                result = setWidth[ascii['i']];
+            }
+        }
+        return result;
+    }
+    
+    public int stringWidth(String str) {
+        int result;
+        if (font != null) {
+            result = font.stringWidth(str);
+        } else {
+            result = substringWidth(str, 0, str.length());
+        }
+        return result;
+    }
+    
+    public int substringWidth(String str, int offset, int length) {
+        int result = 0;
+        if (font != null) {
+            result = font.substringWidth(str, offset, length);
+        } else {
+            int index;
+            for (int i = offset, end = offset + length; i < end; i++) {
+                index = getIndex(str.charAt(i));
+                if (index >= 0) {
+                    result += setWidth[index];
+                } else {
+                    result += setWidth[ascii['i']];
+                }                
+            }            
+        }
+        return result;
+    }
+    
+    public void draw(Graphics g, String str, int x, int y, int textAlign) {
+        if (font != null) {
+            //// system font
+            g.setFont(font);
+            int align = Graphics.TOP;
+            if (textAlign == PMIDlet.CENTER) {
+                align |= Graphics.HCENTER;
+            } else if (textAlign == PMIDlet.RIGHT) {
+                align |= Graphics.RIGHT;
+            } else {
+                align |= Graphics.LEFT;
+            }
+            g.drawString(str, x, y - font.getBaselinePosition(), align);
+        } else {
+            if (textAlign != PMIDlet.LEFT) {
+                int width = stringWidth(str);
+                if (textAlign == PMIDlet.CENTER) {
+                    x -= width >> 1;
+                } else if (textAlign == PMIDlet.RIGHT) {
+                    x -= width;
+                }
+            }
+            char c;
+            int index;
+            for (int i = 0, length = str.length(); i < length; i++) {
+                c = str.charAt(i);
+                index = getIndex(c);
+                if (index >= 0) {
+                    g.drawImage(images[index].image, x + leftExtent[index], y - topExtent[index], Graphics.TOP | Graphics.LEFT);
+                    x += setWidth[index];
+                } else {
+                    x += setWidth[ascii['i']];
+                }
+            }
+        }
+    }
 }

@@ -891,6 +891,18 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         canvas.text(data, x, y);
     }
     
+    public final void text(String data, int x, int y, int width, int height) {
+        canvas.text(data, x, y, width, height);
+    }
+    
+    public final String[] textWrap(String data, int width) {
+        return canvas.textWrap(data, width, Integer.MAX_VALUE);
+    }
+    
+    public final String[] textWrap(String data, int width, int height) {
+        return canvas.textWrap(data, width, height);
+    }
+    
     public final int textWidth(String data) {
         return canvas.textWidth(data);
     }
@@ -1190,6 +1202,26 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final void println(String data) {
         System.out.println(data);
+    }
+    
+    public final int length(boolean[] array) {
+        return array.length;
+    }
+    
+    public final int length(byte[] array) {
+        return array.length;
+    }
+    
+    public final int length(char[] array) {
+        return array.length;
+    }
+    
+    public final int length(int[] array) {
+        return array.length;
+    }
+    
+    public final int length(Object[] array) {
+        return array.length;
     }
     
     public final String join(String[] anyArray, String separator) {

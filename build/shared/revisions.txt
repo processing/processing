@@ -1,5 +1,19 @@
 ABOUT REV 0006 - 
 
+Core 0005
+=========
+
+- New textWrap() function performs word-wrapping and returns an array of
+  String objects representing individual lines. Also, text() can now
+  word-wrap text to fit a bounding box.
+
+- The background(), fill(), color(), and stroke() functions can now all take
+  values with alpha.
+
+- A length() function returns the number of elements in an array. Essentially
+  the same as array.length, but this is needed to get around a bug in the Jikes
+  compiler that complains when using that syntax.
+
 Bluetooth 0004
 ==============
 
