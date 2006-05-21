@@ -113,7 +113,6 @@ public class Bluetooth implements DiscoveryListener, Runnable {
             synchronized (services) {
                 if (transId > 0) {
                     agent.cancelServiceSearch(transId);
-                    transId = 0;
                     cancelled = true;
                 }
             }
@@ -122,12 +121,14 @@ public class Bluetooth implements DiscoveryListener, Runnable {
     
     public void run() {
         try {
+            devices.removeAllElements();
+            services.removeAllElements();
             synchronized (devices) {
                 //// start inquiry
                 agent.startInquiry(DiscoveryAgent.GIAC, this);
                 try {
                     //// block and wait until complete
-                    devices.wait();
+                    devices.wait();                    
                 } catch (InterruptedException ie) { }
             }
             //// check if cancelled first
@@ -154,7 +155,7 @@ public class Bluetooth implements DiscoveryListener, Runnable {
             }
             //// copy into array
             Device[] devices = new Device[this.devices.size()];
-            this.devices.copyInto(devices);
+            this.devices.copyInto(devices);            
             //// fire event back into midlet
             midlet.enqueueLibraryEvent(this, EVENT_DISCOVER_DEVICE_COMPLETED, devices);
             
@@ -171,7 +172,7 @@ public class Bluetooth implements DiscoveryListener, Runnable {
                     }
                     synchronized (services) {
                         transId = agent.searchServices(new int[] { Service.ATTR_SERVICENAME, Service.ATTR_SERVICEDESC, Service.ATTR_PROVIDERNAME }, 
-                                                       new UUID[] { new UUID(0x1101) }, devices[i].device, this);      
+                                                       new UUID[] { new UUID(0x0100) }, devices[i].device, this);      
                         try {
                             services.wait();
                         } catch (InterruptedException ie) { }
@@ -254,7 +255,7 @@ public class Bluetooth implements DiscoveryListener, Runnable {
             //// search for a matching record
             DataElement element;
             for (int i = 0, length = servRecord.length; i < length; i++) {
-                element = servRecord[i].getAttributeValue(Service.ATTR_SERVICENAME);
+                element = servRecord[i].getAttributeValue(Service.ATTR_SERVICENAME);                
                 if (element != null) {
                     if (serviceName.equals(element.getValue())) {
                         //// find matching device object (should change vector to hashtable to optimize this)
