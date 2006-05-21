@@ -52,12 +52,20 @@ public class PImage2 extends PImage {
     }
     
     public PImage2(int[] pixels, int width, int height) {
-        super(width, height, true);
+        super(width, height, true);        
         this.pixels = pixels;
+        if (pixels.length != (width * height)) {
+            throw new RuntimeException("pixels array must have width*height number of elements");
+        }
     }
     
     public int get(int x, int y) {
-        return pixels[y * width + x];
+        int index = y * width + x;
+        int result = 0;
+        if ((index >= 0) && (index < pixels.length)) {
+            result = pixels[index];
+        }
+        return result;
     }
     
     public void set(int x, int y, int color) {
