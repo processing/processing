@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>length()</name>
+
+<category>Data</category>
+
+<subcategory>Array Functions</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+String sa1[] = { "OH ", "NY ", "CA "}; 
+int l = length(sa1);
+</code>
+</example>
+
+<description>
+Returns the length, or size, of an array.
+</description>
+
+<syntax>
+length(<c>array</c>)
+</syntax>
+
+<parameter>
+<label>array</label>
+<description>boolean[], byte[], char[], int[], String[], or any type of Object[]</description>
+</parameter>
+
+<returns>int: total number of elements in the array</returns>
+
+<related>
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+</root>

@@ -13,23 +13,32 @@
 <code>
 color c1 = color(102, 102, 0);
 fill(c1);
-noStroke();
 rect(30, 20, 55, 55);
 </code>
 </example>
 
 <description>
-Creates colors for storing in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. The <b>color()</b> function packs the information input through its parameters into a 32 bit number in the following order AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB where R is the red/hue value, G is green/saturation, and B is blue/brightness.<br /><br />Color can also be created using hexadecimal notation. For example, "color(0, 102, 153)" is equivalent to "color(#006699)" and "color(0x006699)".
+Creates colors for storing in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. The <b>color()</b> function packs the information input through its parameters into a 32 bit number in the following order AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB where R is the red/hue value, G is green/saturation, and B is blue/brightness.<br /><br />Color can also be created using hexadecimal notation. For example, "color(0, 102, 153)" is equivalent to "color(#006699)" and "color(0x006699)".<br />
+<br />
+Although the <b>color</b> function accepts values for alpha, note that phones currently do not support drawing directly to the screen using alpha. When passing a <b>color</b> to the <b>fill()</b> or <b>stroke()</b> functions, the alpha will be ignored.<br />
+<br />
+However, alpha is supported in <b>PImage2</b> objects in the Image2 library. If pixels are set to a <b>color</b> with alpha in a <b>PImage2</b> object, they will be blended with the current output when the image is drawn to the screen using <b>image()</b>.
 </description>
 
 <syntax>
 color(<c>gray</c>)
-color(<c>value1</c>, <c>value2</c>, <c>value3</c>)
+color(<c>gray</c>, <c>alpha</c>)
+color(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 </syntax>
 
 <parameter>
 <label>gray</label>
 <description>int: number specifying value between white and black</description>
+</parameter>
+
+<parameter>
+<label>alpha</label>
+<description>int: number specifying opacity</description>
 </parameter>
 
 <parameter>

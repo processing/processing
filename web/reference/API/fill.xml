@@ -40,11 +40,6 @@ fill(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 </parameter>
 
 <parameter>
-<label>alpha</label>
-<description>int: opacity of the fill</description>
-</parameter>
-
-<parameter>
 <label>color</label>
 <description>color: any value of the color datatype</description>
 </parameter>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>pixels[]</name>
+
+<category>PImage2</category>
+
+<subcategory>Field</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description>
+Array containing the values for all the pixels in the image. These values are of the color datatype. This array is the size of the image, meaning if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statement <b>color b = img.pixels[230]</b> will set the variable <b>b</b> equal to the value at that location in the array.
+</description>
+
+<syntax>
+<c>img</c>.pixels[<c>index</c>]
+</syntax>
+
+<parameter>
+<label>img</label>
+<description>PImage: any variable of type PImage</description>
+</parameter>
+
+<parameter>
+<label>index</label>
+<description>int: must not exceed the size of the array</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+get()
+set()
+blend()
+copy()
+</related>
+
+<availability>1.0</availability>
+
+<type>Field</type>
+
+<partof>Core</partof>
+
+</root>

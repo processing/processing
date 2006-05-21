@@ -1,6 +1,6 @@
 <?php
 
-$PAGE_TITLE = "Phone &raquo; Libraries &raquo; Mobile Processing";
+$PAGE_TITLE = "Image2 &raquo; Libraries &raquo; Mobile Processing";
 $PAGE_SHOWBACKINDEX = true;
 
 require '../../../header.inc.php';

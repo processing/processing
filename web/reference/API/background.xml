@@ -27,10 +27,21 @@ The <b>background()</b> function sets the color used for the background of the P
 </description>
 
 <syntax>
-background(<c>value1</c>)
+background(<c>gray</c>)
+background(<c>color</c>)
 background(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 background(<c>img</c>)
 </syntax>
+
+<parameter>
+<label>gray</label>
+<description>int: specifies a value between white and black</description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description>color: any value of the color datatype</description>
+</parameter>
 
 <parameter>
 <label>value1</label>
