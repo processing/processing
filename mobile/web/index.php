@@ -68,7 +68,7 @@ require 'header.inc.php';
     <br>
     <br>
     <i>May 21</i><br>
-    Mobile Processing 0005 is released.<br>
+    Mobile Processing 0005 is <a href="download/">released</a>.<br>
     <br>
     <br>
     <br>
