@@ -220,6 +220,9 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       if (!outOfDate) {
         setMessage("No updates found.");
       } else {
+        if (label == null) {
+            show();
+        }
         setMessage("Update check complete. Please restart Mobile Processing.");
       }
     } catch (Exception e) {
