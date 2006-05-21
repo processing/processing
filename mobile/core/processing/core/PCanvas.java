@@ -622,16 +622,15 @@ public class PCanvas extends Canvas {
     
     public void background(int gray) {
         if (((gray & 0xff000000) == 0) && (gray <= colorMaxX)) {
-            background(gray, gray, gray);
+            bufferg.setColor(color(gray, colorMaxA));
         } else {
             bufferg.setColor(gray);
-            bufferg.fillRect(0, 0, width, height);
         }    
+        bufferg.fillRect(0, 0, width, height);
     }
     
     public void background(int value1, int value2, int value3) {
-        bufferg.setColor(color(value1, value2, value3));
-        bufferg.fillRect(0, 0, width, height);
+        background(value1, value2, value3, colorMaxA);
     }
     
     public void background(PImage img) {
@@ -647,9 +646,13 @@ public class PCanvas extends Canvas {
             swidth = swidth - sx;
             sheight = sheight - sy;
         }
+        int clipX = bufferg.getClipX();
+        int clipY = bufferg.getClipY();
+        int clipWidth = bufferg.getClipWidth();
+        int clipHeight = bufferg.getClipHeight();
         bufferg.setClip(dx, dy, swidth, sheight);
         img.draw(bufferg, dx - sx, dy - sy);
-        bufferg.setClip(0, 0, width, height);
+        bufferg.setClip(clipX, clipY, clipWidth, clipHeight);
     }
     
     public void imageMode(int mode) {
@@ -810,17 +813,17 @@ public class PCanvas extends Canvas {
     }
     
     public void stroke(int gray) {
+        stroke = true;
         if (((gray & 0xff000000) == 0) && (gray <= colorMaxX)) {
-            stroke(gray, gray, gray);
+            strokeColor = color(gray, colorMaxA);
         } else {
-            stroke = true;
             strokeColor = gray;
         }
     }
     
     public void stroke(int value1, int value2, int value3) {
         stroke = true;
-        strokeColor = color(value1, value2, value3);
+        strokeColor = color(value1, value2, value3, colorMaxA);
     }
     
     public void noStroke() {
@@ -828,17 +831,17 @@ public class PCanvas extends Canvas {
     }
     
     public void fill(int gray) {
+        fill = true;
         if (((gray & 0xff000000) == 0) && (gray <= colorMaxX)) {
-            fill(gray, gray, gray);
+            fillColor = color(gray, colorMaxA);
         } else {
-            fill = true;
             fillColor = gray;
         }    
     }
     
     public void fill(int value1, int value2, int value3) {
         fill = true;
-        fillColor = color(value1, value2, value3);
+        fillColor = color(value1, value2, value3, colorMaxA);
     }
     
     public void noFill() {
@@ -849,69 +852,119 @@ public class PCanvas extends Canvas {
         if (textFont == null) {
             throw new RuntimeException("The current font has not yet been set with textFont()");
         }
-        if (textFont.font != null) {
-            //// system font
-            bufferg.setColor(fillColor);
-            bufferg.setFont(textFont.font);
-            int align = Graphics.TOP;
-            if (textAlign == PMIDlet.CENTER) {
-                align |= Graphics.HCENTER;
-            } else if (textAlign == PMIDlet.RIGHT) {
-                align |= Graphics.RIGHT;
-            } else {
-                align |= Graphics.LEFT;
-            }
-            bufferg.drawString(data, x, y - textFont.font.getBaselinePosition(), align);
-        } else {
-            if (textAlign != PMIDlet.LEFT) {
-                int width = textWidth(data);
-                if (textAlign == PMIDlet.CENTER) {
-                    x -= width >> 1;
-                } else if (textAlign == PMIDlet.RIGHT) {
-                    x -= width;
-                }
-            }
-            char c;
-            int index;
-            for (int i = 0, length = data.length(); i < length; i++) {
-                c = data.charAt(i);
-                index = textFont.getIndex(c);
-                if (index >= 0) {
-                    bufferg.drawImage(textFont.images[index].image, x + textFont.leftExtent[index], y - textFont.topExtent[index], Graphics.TOP | Graphics.LEFT);
-                    x += textFont.setWidth[index];
-                } else {
-                    x += textFont.setWidth[textFont.ascii['i']];
-                }
-            }
+        //// for system fonts, set fillcolor
+        bufferg.setColor(fillColor);
+        textFont.draw(bufferg, data, x, y, textAlign);
+    }
+    
+    public void text(String data, int x, int y, int width, int height) {
+        if (textFont == null) {
+            throw new RuntimeException("The current font has not yet been set with textFont()");
         }
+        //// for system fonts, set fillcolor
+        bufferg.setColor(fillColor);
+        //// wrap into lines
+        String[] lines = textWrap(data, width, height);
+        //// save current clip and apply clip to bounding area
+        int clipX = bufferg.getClipX();
+        int clipY = bufferg.getClipY();
+        int clipWidth = bufferg.getClipWidth();
+        int clipHeight = bufferg.getClipHeight();
+        bufferg.setClip(x, y, width, height);
+        //// adjust starting baseline so that text is _contained_ within the bounds
+        y += textFont.baseline;
+        for (int i = 0, length = lines.length; i < length; i++) {
+            textFont.draw(bufferg, lines[i], x, y, textAlign);
+            y += textFont.height;
+        }
+        //// restore clip
+        bufferg.setClip(clipX, clipY, clipWidth, clipHeight);
+    }
+    
+    public String[] textWrap(String data, int width, int height) {
+        if (textFont == null) {
+            throw new RuntimeException("The current font has not yet been set with textFont()");
+        }
+        //// calculate max number of lines that will fit in height
+        int maxlines = height / textFont.height;
+        //// total number of chars in text
+        int textLength = data.length();
+        //// current index into text;
+        int i = 0;
+        //// working character
+        char c;                
+        //// vector of lines
+        Vector lines = new Vector();
+        //// current line
+        char[] line = new char[256];
+        //// number of characters in current line
+        int lineLength;
+        //// index of last whitespace break point in current line
+        int last;
+        //// width of current line
+        int lineWidth;
+        while (i < textLength) {
+            c = data.charAt(i);
+            //// start at first non-whitespace character
+            if (c != ' ') {
+                //// at first non-whitespace character, start building up line
+                lineLength = 0;
+                last = 0;
+                lineWidth = 0;
+                while (lineWidth < width) {
+                    if (i == textLength) {
+                        last = lineLength;
+                        break;
+                    }
+                    c = data.charAt(i);
+                    i++;
+                    line[lineLength] = c;                        
+                    lineLength++;
+                    if (c == ' ') {
+                        last = lineLength - 1;
+                        while ((i < textLength) && (data.charAt(i) == ' ')) {
+                            i++;
+                            line[lineLength] = ' ';
+                            lineLength++;
+                        }
+                    }
+                    lineWidth = textFont.charsWidth(line, 0, lineLength);
+                }
+                if (last > 0) {
+                    //// take chars up to last break point
+                    lines.addElement(new String(line, 0, last));
+                    i -= lineLength - last;
+                } else {
+                    //// rare case of very long words (i.e. urls) that can't fit on one line, just split
+                    lines.addElement(new String(line, 0, lineLength - 1));
+                    i = i - 2;
+                }
+            }
+            //// check if reached max number of lines
+            if (lines.size() == maxlines) {
+                break;
+            }
+            //// increment to next character
+            i++;
+        }
+        //// finally, copy into array and return
+        String[] array = new String[lines.size()];
+        lines.copyInto(array);
+        return array;
     }
     
     public int textWidth(char data) {
-        return textWidth(String.valueOf(data));
+        if (textFont == null) {
+            throw new RuntimeException("The current font has not yet been set with textFont()");
+        }
+        return textFont.charWidth(data);
     }
     
     public int textWidth(String data) {
         if (textFont == null) {
             throw new RuntimeException("The current font has not yet been set with textFont()");
         }
-        int width = 0;
-        if (textFont.font != null) {
-            width = textFont.font.stringWidth(data);
-        } else {
-            char c;
-            int index;
-            for (int i = 0, length = data.length(); i < length; i++) {
-                c = data.charAt(i);
-                index = textFont.getIndex(c);
-                if (index >= 0) {
-                    width += textFont.setWidth[index];
-                } else {
-                    width += textFont.setWidth[textFont.ascii['i']];
-                }
-            }
-        }
-        
-        return width;
+        return textFont.stringWidth(data);
     }
     
     public void textAlign(int MODE) {
