@@ -2,6 +2,6 @@ MIDlet-1: @@sketch@@, /icon.png, @@sketch@@
 MIDlet-Icon: /icon.png
 MIDlet-Name: @@sketch@@
 MIDlet-Version: 1.0.0
-MIDlet-Vendor: Mobile Processing ALPHA - 0004
+MIDlet-Vendor: Mobile Processing ALPHA - 0006
 MicroEdition-Profile: MIDP-1.0
 MicroEdition-Configuration: CLDC-1.0
