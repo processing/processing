@@ -630,7 +630,7 @@ public class PCanvas extends Canvas {
     }
     
     public void background(int value1, int value2, int value3) {
-        background(value1, value2, value3, colorMaxA);
+        background(value1, value2, value3);
     }
     
     public void background(PImage img) {

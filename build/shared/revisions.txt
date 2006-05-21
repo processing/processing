@@ -1,5 +1,16 @@
 ABOUT REV 0006 - 
 
+Image2 0002
+===========
+
+- Minor change to get() to handle out-of-bounds coordinate.
+
+Bluetooth 0005
+==============
+
+- Changed service discovery to look for all l2cap protocol services, which
+  returns a more interesting list of things.
+
 Core 0005
 =========
 
