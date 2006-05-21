@@ -17,6 +17,7 @@ require '../header.inc.php';
   <li>Download and install Mobile Processing.<br><br>
 <a href="mobile-0005-expert.zip"><img border="0" src="images/windows.png"></a><a href="mobile-0005.dmg"><img border="0" src="images/mac.png"></a><br><br>
 0005 ALPHA&nbsp;&nbsp|&nbsp;&nbsp;18 05 2006&nbsp;&nbsp;<a href="mobile-0005-expert.zip">Windows</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="mobile-0005.dmg">Mac OS X</a><br><br>
+<a href="revisions.txt">Changes</a> for the latest release as well as core and library API updates.<br><br>
   </li>
   <li>Run Mobile Processing. Choose <b>Preferences</b> from the main drop-down menu. In the <b>Preferences</b> dialog box, go to the <b>Mobile</b> tab, and enter the location of the WTK.<br>
 <br>

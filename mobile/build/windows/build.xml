@@ -260,6 +260,8 @@
                 </propertyfile>
                 <!-- copy library -->
                 <copy file="mobile/build/windows/mobile.jar" todir="mobile/web/download"/>
+                <!-- and revision history -->
+                <copy file="mobile/build/shared/revisions.txt" todir="mobile/web/download"/>
             </then>
         </if>
     </target>
@@ -393,6 +395,8 @@
                 </propertyfile>
                 <!-- zip and copy library -->
                 <zip destfile="mobile/web/download/libraries/${libname}.zip" basedir="mobile/${libname}"/>
+                <!-- copy revision history -->
+                <copy file="mobile/build/shared/revisions.txt" todir="mobile/web/download"/>                
             </then>
         </if>
     </target>
