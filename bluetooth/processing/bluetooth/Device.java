@@ -49,7 +49,7 @@ public class Device implements DiscoveryListener {
         if (id < 0) {
             try {
                 id = bt.agent.searchServices(new int[] { Service.ATTR_SERVICENAME, Service.ATTR_SERVICEDESC, Service.ATTR_PROVIDERNAME }, 
-                                             new UUID[] { new UUID(0x1101) }, device, this);            
+                                             new UUID[] { new UUID(0x0100) }, device, this);            
             } catch (BluetoothStateException bse) {
                 throw new RuntimeException(bse.getMessage());
             }
