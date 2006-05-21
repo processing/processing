@@ -6,18 +6,19 @@ require '../header.inc.php';
 <img src="images/header.png"><br>
 &nbsp;
 <ol>
-  <li>Install the latest version of Java on your computer.<br><br>
+  <li><b>Windows</b>: Install the latest version of Java on your computer.<br><br>
 <a href="http://java.com/"><img border="0" src="images/java.png"></a><br>
 <a href="http://java.com/">http://java.com/</a><br><br>Choose <b>Download Now</b> to begin or <b>Verify Installation</b> to check if it is already installed on your computer.<br><br></li>
-  <li>Download and install a Wireless Toolkit (WTK) for building mobile phone applications.<br><br>
+  <li>Download and install a Wireless Toolkit (WTK) for building mobile phone applications. Note the location of the installation.<br><br>
 <b>Windows</b>: Sun WTK 2.2<br>
 <a href="http://java.sun.com/products/j2mewtoolkit/">http://java.sun.com/products/j2mewtoolkit/</a><br><br>
 <b>Mac OS X</b>: Mpowerplayer SDK<br>
 <a href="http://www.mpowerplayer.com/products-sdk.php">http://www.mpowerplayer.com/products-sdk.php</a><br>&nbsp;</li>
   <li>Download and install Mobile Processing.<br><br>
+<a href="mobile-0005-expert.zip"><img border="0" src="images/windows.png"></a><a href="mobile-0005.dmg"><img border="0" src="images/mac.png"></a><br><br>
 0005 ALPHA&nbsp;&nbsp|&nbsp;&nbsp;18 05 2006&nbsp;&nbsp;<a href="mobile-0005-expert.zip">Windows</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="mobile-0005.dmg">Mac OS X</a><br><br>
   </li>
-  <li>Run Mobile Processing. Choose <b>Preferences</b> from the main drop-down menu. In the <b>Preferences</b> dialog box in the Mobile Processing IDE, go to the <b>Mobile</b> tab, and enter the location of the WTK.<br>
+  <li>Run Mobile Processing. Choose <b>Preferences</b> from the main drop-down menu. In the <b>Preferences</b> dialog box, go to the <b>Mobile</b> tab, and enter the location of the WTK.<br>
 <br>
 <br>
 <br>
