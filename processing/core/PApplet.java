@@ -3754,7 +3754,16 @@ public class PApplet extends Applet
     // the jar, rather than trying to dig into the package location)
     ClassLoader cl = getClass().getClassLoader();
     stream = cl.getResourceAsStream("data/" + filename);
-    if (stream != null) return stream;
+    if (stream != null) {
+      String cn = stream.getClass().getName();
+      // this is an irritation of sun's java plug-in, which will return
+      // a non-null stream for an object that doesn't exist. like all good
+      // things, this is probably introduced in java 1.5. awesome!
+      // http://dev.processing.org/bugs/show_bug.cgi?id=359
+      if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
+        return stream;
+      }
+    }
 
     try {
       URL url = new URL(filename);
@@ -3816,7 +3825,7 @@ public class PApplet extends Applet
         } catch (IOException e2) { }
 
         try {
-          stream = new FileInputStream(new File(sketchPath, filename));
+          stream = new FileInputStream(sketchPath(filename))
           if (stream != null) return stream;
         } catch (Exception e) { }  // ignored
 
