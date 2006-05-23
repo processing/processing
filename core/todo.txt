@@ -25,6 +25,20 @@ X color values on camera input flipped on intel macs
 X   checked in a change for this recommended on qtjava list
 X   http://dev.processing.org/bugs/show_bug.cgi?id=313
 
+really old stuff
+o get loop, noLoop, redraw, and framerate all working in opengl
+o   needs custom animator thread..
+o depth() shouldn't be needed for opengl unless actually 3D
+o   right now the camera doesn't get set up unless you call depth()
+o box and sphere are broken in gl
+o what should the update image function be called?
+
+_ make framerate into frameRate (to match frameCount)
+_ remove image(filename) and textFont(filename) et al.
+_ hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
+_ loading lots of images is a problem, describe how to unload
+_   is it possible? necessary to call delay(5) or something?
+
 _ AIOOBE on PLine 757.. halts renderer
 
 X begin/endPixels.. change has been made
@@ -35,6 +49,19 @@ _   for subclasses of PGraphics, the reload bit needs to be set on endFrame
 _   filter() checks to see if inside begin/endPixels, if so doesn't call
 o   if line() is called inside beginpixels, call updatepixels?
 _   when NPE on line with pixels[], suggest user includes beginPixels
+_ need to test/straighten out load/update pixels
+_   loadPixels() and updatePixels() only need to be used when 
+_   touching pixels[]. All other functions including get(), set(),
+_   filter(), etc shouldn't need them. 
+_ fjen says blend() doens't work in JAVA2D
+_   the functions are fairly well separated now in PMethods
+_   just go through all the stuff to make sure it's setting properly
+_ don't do a loadPixels unless an updatePixels has completed
+_   tho this won't affect anything, since either it's an image buffer
+_   or it's the PGraphics object, which does an updatePixels() immediately
+_ if (modified) don't loadPixels again, just ignore it
+_   make a note that updatePixels() only sets a flag in PImage
+_     (but not PGraphics, which does it immediately)
 
 _ with network connection
 _   download a copy of the source for 0069, get the renderer 
@@ -68,7 +95,9 @@ _ this produces a dark blue background:
 colorMode(RGB, 100);
 background(128);
 
-
+_ image memory use.. how to handle lots of images
+_   need to figure out exactly how they should/can unload
+_   
 
 _ opengl keeping memory around.. 
 _   could this be in vertices that have an image associated
@@ -311,20 +340,6 @@ _   probably later, want to do the 3D/arch stuff correctly
 _ PApplet.main(new String[] { "classname }) won't pass in args.. grr
 _   PApplet.main(append(new String[] { "classname }, args));
 
-_ need to test/straighten out load/update pixels
-_   loadPixels() and updatePixels() only need to be used when 
-_   touching pixels[]. All other functions including get(), set(),
-_   filter(), etc shouldn't need them. 
-_ fjen says blend() doens't work in JAVA2D
-_   the functions are fairly well separated now in PMethods
-_   just go through all the stuff to make sure it's setting properly
-_ don't do a loadPixels unless an updatePixels has completed
-_   tho this won't affect anything, since either it's an image buffer
-_   or it's the PGraphics object, which does an updatePixels() immediately
-_ if (modified) don't loadPixels again, just ignore it
-_   make a note that updatePixels() only sets a flag in PImage
-_     (but not PGraphics, which does it immediately)
-
 
 
 ////////////////////////////////////////////////////////////////////
@@ -442,11 +457,9 @@ _   when did this break? 1.4.1? 1.4.x vs 1.3?
 _   may be that cff fonts won't work?
 _   or is it only those with ps names?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
-_ createFont not working from applets
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115877723;start=0
-_ createFont() with a .ttf doesn't work in applets?
+_ createFont not working from applets (only with .ttf?)
 _   throws a security exception because of the reflection stuff
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115877723;start=0
+_   http://dev.processing.org/bugs/show_bug.cgi?id=101
 _ text() with a z coordinate is now using translate, very slow
 X   also puts up a weird error message about translate() in 2D mode
 _ make screen space fonts use get/set as well?
@@ -687,6 +700,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=305
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
+
 _ add ability to control jpeg compression level with save() and saveFrame()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=342
 _ also when drawing an image, sense whether drawn rotated
@@ -694,7 +708,9 @@ _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ alpha not set on saveFrame, so can't be used in photoshop as a layer
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623
-_ should image i/o and sound i/o be moved into PImage and PSound?
+_ should image i/o be moved into PImage?
+_   still needs applet object, so it's not like this is very useful
+_   external PImage methods could take stream, i suppose..
 _ figure out why tiff images won't open with after effects
 _   http://dev.processing.org/bugs/show_bug.cgi?id=153
 _   open with photoshop, resave, see which tags change
@@ -706,12 +722,6 @@ _ get tiff exporter for p5 to support argb and gray
 _   would also need to modify the tiff loading code, 
 _   because the header would be different
 _   http://dev.processing.org/bugs/show_bug.cgi?id=343
-
-
-CORE / Documentation
-
-_ write documentation on general use of processing.core
-_   note that applet is itself a Component
 
 
 CORE / Mac OS X
@@ -762,15 +772,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _ gl points not working again
 _ invocationtargetexception in gl with aioobe:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
-_ don't let users with java < 1.4 load OPENGL
-_ what should the update image function be called?
-_ box and sphere are broken in gl
 _ metaballs example dies when using box()
 _   long string of exceptions, which are also missing their newlines
-_ get loop, noLoop, redraw, and framerate all working in opengl
-_   needs custom animator thread..
-_ depth() shouldn't be needed for opengl unless actually 3D
-_   right now the camera doesn't get set up unless you call depth()
 _ resolve ARGB versus RGBA versus just A issues for fonts
 _   make sure that current scenario works identically on mac
 _   if so, just switch the image code to expect alpha in the high bits
@@ -784,6 +787,7 @@ _   i.e. ABGR_EXT might allow for just two shifts instead of 4
 _ allow access to native pixel buffer in opengl and power of 2
 _   so that no need to copy/update everything
 _ need to write an error if people try to use opengl with 1.3 (i.e. on export)
+_   don't let users with java < 1.4 load OPENGL
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
 _ grabbing sun.cpu.endian throws a security exception with gl applets
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
