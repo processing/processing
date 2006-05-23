@@ -117,7 +117,7 @@ class Ref
             $examples .= !empty($ex['image']) ? "<img src=\"$path/$ex[image]\" alt=\"example pic\" />" : '';
             $examples .= !empty($ex['image']) ? "<pre class=\"margin\">$ex[code]</pre>" : "<pre>$ex[code]</pre>";
             $examples .= '</div>';
-			if (count($this->examples) != ++$count && !empty($ex['image'])) {
+			if (count($this->examples) != ++$count && empty($ex['image'])) {
 				$examples .= '<hr class="noShade" noshade="noshade" size="1" />';
 			}
         }
