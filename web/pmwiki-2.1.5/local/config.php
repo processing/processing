@@ -29,7 +29,7 @@ $WikiTitle = 'Mobile Processing &raquo; Wiki';
 ## of the directory (in pub/skins/) that contains your skin files.
 ## See PmWiki.Skins and Cookbook.Skins.
 $Skin = 'mobile';
-$AuthUser['yabb'] = '/Users/fli/Documents/Projects/processing/mobile/web/discourse/Members';
+$AuthUser['yabb'] = '/var/www/processing/discourse/yabb_beta/Members';
 include_once("$FarmD/scripts/authuser.php");
 $Author = $AuthId;
 $GroupPattern = '(?:Site|PmWiki|Main|Profiles)';
