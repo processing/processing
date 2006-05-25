@@ -39,7 +39,7 @@ $GroupPattern = '(?:Site|PmWiki|Main|Profiles)';
 ## the "attr" passwords for the PmWiki and Main groups are locked, so
 ## an admin password is a good way to unlock those.  See PmWiki.Passwords
 ## and PmWiki.PasswordsAdmin.
-$DefaultPasswords['admin'] = 'nCSU5fDRsh1VU';
+$DefaultPasswords['admin'] = crypt(' ');//'nCSU5fDRsh1VU';
 $DefaultPasswords['edit'] = 'id:*';
 
 ##  PmWiki comes with graphical user interface buttons for editing;
