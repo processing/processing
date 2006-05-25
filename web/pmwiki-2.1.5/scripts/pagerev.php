@@ -50,14 +50,11 @@ SDV($HTMLStylesFmt['diff'], "
   .diffbox { width:570px; border-left:1px #999999 solid; margin-top:1.33em; }
   .diffauthor { font-weight:bold; }
   .diffchangesum { font-weight:bold; }
-  .difftime { font-family:verdana,sans-serif; font-size:66%; 
-    background-color:#dddddd; }
-  .difftype { clear:both; font-family:verdana,sans-serif; 
-    font-size:66%; font-weight:bold; }
+  .difftime { font-family:verdana,sans-serif; background-color:#dddddd; }
+  .difftype { clear:both; font-family:verdana,sans-serif; font-weight:bold; }
   .diffadd { border-left:5px #99ff99 solid; padding-left:5px; }
   .diffdel { border-left:5px #ffff99 solid; padding-left:5px; }
-  .diffrestore { clear:both; font-family:verdana,sans-serif; 
-    font-size:66%; margin:1.5em 0px; }
+  .diffrestore { clear:both; font-family:verdana,sans-serif; margin:1.5em 0px; }
   .diffmarkup { font-family:monospace; } ");
 
 function PrintDiff($pagename) {
