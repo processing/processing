@@ -730,7 +730,6 @@ sub elimnests {
 }
 
 sub wrap {
-	$message =~ s~ &nbsp; &nbsp; &nbsp;~\t~g;
 	$message =~ s~<br>~\n~g;
 	&FromHTML($message);
 	$message =~ s~[\n\r]~ <yabbbr> ~g;
