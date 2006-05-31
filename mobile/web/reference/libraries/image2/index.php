@@ -13,7 +13,7 @@ require '../../../header.inc.php';
 The Image2 library adds a new PImage-compatible image with an editable pixel buffer to Mobile Processing. The phone must implement the MIDP 2.0 specification to support this library.
 </div>
 <div class="column" style="padding-left: 40px">
-<b>Image2</b><br>
+<b>PImage2</b><br>
 This class provides a PImage-compatible image with an editable pixel buffer.<br>
 <br>
 <a href="reference.php?name=PImage2">PImage2</a><br>
