@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>hide()</name>
+<name>sourceWidth</name>
 
 <description>
-Hides the viewfinder output of live video displayed using <b>show()</b>.
+The width of the camera resolution. Note that the resolution of the camera
+available in Mobile Processing may not be as high as the actual hardware due
+to memory limitations.
 </description>
 
 <syntax>
-cap.hide()
+cap.sourceWidth
 </syntax>
 
 <parameter>

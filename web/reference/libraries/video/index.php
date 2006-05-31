@@ -17,6 +17,14 @@ The Video library allows Mobile Processing sketches to play and record sounds on
 The capture class allows live video output and frame capture.<br>
 <br>
 <a href="reference.php?name=Capture">Capture</a><br>
+<br>
+<a href="reference.php?name=Capture_viewX">viewX</a><br>
+<a href="reference.php?name=Capture_viewY">viewY</a><br>
+<a href="reference.php?name=Capture_viewWidth">viewWidth</a><br>
+<a href="reference.php?name=Capture_viewHeight">viewHeight</a><br>
+<a href="reference.php?name=Capture_sourceWidth">sourceWidth</a><br>
+<a href="reference.php?name=Capture_sourceHeight">sourceHeight</a><br>
+<br>
 <a href="reference.php?name=Capture_close">close()</a><br>
 <a href="reference.php?name=Capture_hide">hide()</a><br>
 <a href="reference.php?name=Capture_read">read()</a><br>

@@ -1,6 +1,25 @@
 This file reflects the ongoing history of revisions to the Mobile Processing
 software, including its core and library APIs.
 
+Video 0002
+==========
+
+- Updated Capture class to include new viewX/Y/Width/Height fields reflecting
+  the position and size of the camera viewfinder and sourceWidth/Height fields
+  reflecting resolution of camera capture.
+
+- Changed constructor to only take PMIDlet reference.  Setting width/height
+  in capture url doesn't seem to work.
+
+- Updated show() methods to include size and positioning for viewfinder.
+
+- Updated read() methods to include encoding and size of frame capture.
+
+Core 0006
+=========
+
+- Fixed bug with background() going into an infinite loop.
+
 Image2 0002
 ===========
 

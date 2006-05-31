@@ -3,10 +3,12 @@
 <name>show()</name>
 
 <description>
-Displays the output of live video from the camera. This output will overlay on top of the sketch.
+Displays the viewfinder output of live video from the camera. This output will overlay on top of the sketch. Note that, if you are drawing frames of animation while the viewfinder is showing, you may overwrite the viewfinder and cause flickering on the display. It is recommended that you do not draw to the screen while the viewfinder is showing by calling <b>noLoop()</b> to stop the main animation loop.<br /><br />You may optionally specify a position and size for the viewfinder, although not all phones will allow the the viewfinder to be changed. The actual position and size of the viewfinder is reflected in the <b>viewX</b>, <b>viewY</b>, <b>viewWidth</b>, and <b>viewHeight</b> variables in the <b>Capture</b> class.
 </description>
 
 <syntax>
+cap.show()
+cap.show(<c>x</c>, <c>y</c>)
 cap.show(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
 </syntax>
 
@@ -17,22 +19,22 @@ cap.show(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
 
 <parameter>
 <label>x</label>
-<description>int: x coordinate of upper left corner of output</description>
+<description>int: x coordinate of upper left corner of viewfinder</description>
 </parameter>
 
 <parameter>
 <label>y</label>
-<description>int: y coordinate of upper left corner of output</description>
+<description>int: y coordinate of upper left corner of viewfinder</description>
 </parameter>
 
 <parameter>
 <label>width</label>
-<description>int: width of output</description>
+<description>int: width of viewfinder</description>
 </parameter>
 
 <parameter>
 <label>height</label>
-<description>int: height of output</description>
+<description>int: height of viewfinder</description>
 </parameter>
 
 <returns>void</returns>

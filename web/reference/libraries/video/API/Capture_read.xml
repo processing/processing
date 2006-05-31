@@ -3,16 +3,41 @@
 <name>read()</name>
 
 <description>
-Captures a frame from the live video feed. The frame is returned as an array of bytes containing the image data for the frame. The image data is in the <b>.png</b> file format and can be displayed by using <b>loadImage()</b> to create a PImage object.
+Captures a frame from the live video feed. The frame is returned as an array of bytes containing the image data for the frame. By default, the image data is in the <b>.png</b> file format and can be displayed by using <b>loadImage()</b> to create a PImage object.<br />
+<br />
+Optionally, you can specify a width, height and alternative image encoding format for the capture. Not all phones support these options. Note that capturing high-resolution images often will cause out-of-memory problems in Java.
 </description>
 
 <syntax>
 cap.read()
+cap.read(<c>width</c>, <c>height</c>)
+cap.read(<c>encoding</c>, <c>width</c>, <c>height</c>)
+cap.read(<c>paramstring</c>)
 </syntax>
 
 <parameter>
 <label>cap</label>
 <description>Capture: any variable of type Capture</description>
+</parameter>
+
+<parameter>
+<label>width</label>
+<description>int: width of frame</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>int: height of frame</description>
+</parameter>
+
+<parameter>
+<label>encoding</label>
+<description>String: an alternative encoding, in mime format (i.e. image/jpeg)</description>
+</parameter>
+
+<parameter>
+<label>paramstring</label>
+<description>String: a custom parameter string as specified in the MIDP 2.0/MMAPI 1.0 specification</description>
 </parameter>
 
 <returns>byte[]</returns>
