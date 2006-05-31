@@ -31,7 +31,7 @@ if (!isset($Author)) {
 }
 if (!isset($AuthorPage)) $AuthorPage = 
     FmtPageName('$AuthorGroup/$Name', MakePageName($pagename, $Author));
-SDV($AuthorLink,($Author) ? "[[~$Author]]" : '?');
+SDV($AuthorLink,($Author) ? "'''$Author'''" : '?');
 
 if (IsEnabled($EnableAuthorSignature,1)) {
   $ROSPatterns['/(?<!~)~~~~(?!~)/'] = '[[~$Author]] $CurrentTime';
