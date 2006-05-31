@@ -55,6 +55,10 @@ require 'header.inc.php';
     <td>
 <a href="learning/example.php?name=bluescan"><img src="images/examples/bluescan.png"></a>
     </td>
+    <td width="1"></td>
+    <td>
+<a href="learning/example.php?name=photoslider"><img src="images/examples/photoslider.png"></a>
+    </td>
   </tr>
 </table>
 </div>
@@ -69,6 +73,9 @@ require 'header.inc.php';
     <br>
     <i>May 21</i><br>
     Mobile Processing 0005 is <a href="download/">released</a>.<br>
+    <br>
+    <i>May 31</i><br>
+    New <a href="learning/example.php?name=photoslider">Photoslider</a> example posted.<br>
     <br>
     <br>
     <br>
