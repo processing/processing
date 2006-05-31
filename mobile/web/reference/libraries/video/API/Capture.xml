@@ -6,6 +6,36 @@
 The capture class allows live video output and frame capture.
 </description>
 
+<field>
+<fname>viewX</fname>
+<fdescription>The current x-coordinate of the camera viewfinder</fdescription>
+</field>
+
+<field>
+<fname>viewY</fname>
+<fdescription>The current y-coordinate of the camera viewfinder</fdescription>
+</field>
+
+<field>
+<fname>viewWidth</fname>
+<fdescription>The current width of the camera viewfinder</fdescription>
+</field>
+
+<field>
+<fname>viewHeight</fname>
+<fdescription>The current height of the camera viewfinder</fdescription>
+</field>
+
+<field>
+<fname>sourceWidth</fname>
+<fdescription>The width of the camera resolution</fdescription>
+</field>
+
+<field>
+<fname>sourceHeight</fname>
+<fdescription>The height of the camera resolution</fdescription>
+</field>
+
 <method>
 <mname>close()</mname>
 <mdescription>Closes the camera and releases the video hardware.</mdescription>
@@ -13,7 +43,7 @@ The capture class allows live video output and frame capture.
 
 <method>
 <mname>hide()</mname>
-<mdescription>Hides the output of live video from the camera.</mdescription>
+<mdescription>Hides the viewfinder output of live video from the camera.</mdescription>
 </method>
 
 <method>
@@ -23,28 +53,18 @@ The capture class allows live video output and frame capture.
 
 <method>
 <mname>show()</mname>
-<mdescription>Displays the output of live video from the camera.</mdescription>
+<mdescription>Displays the viewfinder output of live video from the camera.</mdescription>
 </method>
 
 <returns></returns>
 
 <constructor>
-Capture(<c>parent</c>, <c>width</c>, <c>height</c>)
+Capture(<c>parent</c>)
 </constructor>
 
 <cparameter>
 <clabel>parent</clabel>
 <cdescription>PMIDlet: typically use "this"</cdescription>
-</cparameter>
-
-<cparameter>
-<clabel>width</clabel>
-<cdescription>int: width of captured video frames</cdescription>
-</cparameter>
-
-<cparameter>
-<clabel>height</clabel>
-<cdescription>int: height of captured video frames</cdescription>
 </cparameter>
 
 <related>

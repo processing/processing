@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>hide()</name>
+<name>viewX</name>
 
 <description>
-Hides the viewfinder output of live video displayed using <b>show()</b>.
+The current x-coordinate of the camera viewfinder.
 </description>
 
 <syntax>
-cap.hide()
+cap.viewX
 </syntax>
 
 <parameter>
