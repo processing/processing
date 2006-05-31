@@ -18,8 +18,12 @@ require '../header.inc.php';
 <i>Bluetooth</i><br>
 <a href="example.php?name=bluescan">Bluescan</a><br>
 <br>
+<i>Video</i><br>
+<a href="example.php?name=photoslider">Photoslider</a><br>
+<br>
 <i>XML</i><br>
 <a href="example.php?name=yahoosonar">Yahoo! Sonar</a><br>
+<br>
 </div>
 <div class="column">
 <img src="images/input.png"><br>

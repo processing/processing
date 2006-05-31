@@ -1,0 +1,9 @@
+MIDlet-1: photoslider, /icon.png, photoslider
+MIDlet-Icon: /icon.png
+MIDlet-Name: photoslider
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: Mobile Processing ALPHA - 0004
+MicroEdition-Profile: MIDP-1.0
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Jar-URL: photoslider.jar
+MIDlet-Jar-Size: 13509
