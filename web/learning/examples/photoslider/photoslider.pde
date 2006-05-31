@@ -12,7 +12,7 @@
 // box around, swapping with an adjoining piece, until you've reassembled
 // the image. When the image has been reassembled, the original image will
 // be displayed in its entirety. If you can't reassemble the photo, simply
-// press select/fire again to see the solved image. Pressing select/fire
+// press select/fire again to see the solved image. Press select/fire
 // on the assembled image to start the process over again with camera capture.
 //
 import processing.video.*;
