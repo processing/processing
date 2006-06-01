@@ -113,13 +113,6 @@ PREV;
     $happening_form = <<<H_FORM
 <form accept-charset="utf-8" action="{$_SERVER['PHP_SELF']}" method="post" name="mform">
 
-	<label>Registered Email Address (with Discourse or Bugs board)</label><br />
-	<input type="text" name="user" value="{$_POST['user']}" id="email" /><br />
-	
-	<label>Password</label><br />
-	<input type="password" name="pass" value="" id="pass" /><br />
-	{$msg['auth']}<br />
-
     <label>Date: <em>format: 01 January 05</em></label><br />
     <input name="date" type="text" size="12" value="{$date}" /><br />
     {$msg['date']}<br />
@@ -127,10 +120,17 @@ PREV;
     <label>What&rsquo;s Happening?: <em>Allowed html: &lt;a&gt;, &lt;strong&gt;, &lt;em&gt;</em></label><br />
     <textarea name="body" cols="40" rows="3">{$body}</textarea><br />
     {$msg['body']}<br />
+
+	<br />
+	<br />
+
+	<label>Registered Email Address <br />(with Discourse or Bugs board)</label><br />
+	<input type="text" name="user" value="{$_POST['user']}" id="email" /><br />
+	
+	<label>Password</label><br />
+	<input type="password" name="pass" value="" id="pass" /><br />
+	{$msg['auth']}<br />
     
-    <br />
-    <br />
-    <br />
     <br />
     
 	<input type="image" src="/img/submit.gif" value="Submit" alt="Submit" /> <input type="image" src="/img/preview.gif" name="preview" value="Preview" alt="Preview" />
