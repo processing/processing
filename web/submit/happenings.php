@@ -11,9 +11,10 @@ $title = "<h2><img src=\"/img/processinghappenings.gif\" alt=\"Processing Happen
 
 $date = isset($_POST['date']) ? trim($_POST['date']) : false;
 $body  = isset($_POST['body'])  ? stripslashes(strip_tags($_POST['body'], '<a><b><strong><i><em>')) : false;
+$auth = !user_auth($_POST['email'], $_POST['pass'];
 
 if (!$_POST['preview'] && 
-    $date !== false && $body !== false ) { // valid input
+    $date !== false && $body !== false && $auth !== false) { // valid input
 
     // let's first check back if he / she just added something and
 	// politely ask to come back a little later ...
@@ -85,7 +86,7 @@ XML;
 
     $msg = array(); 
     if (count($_POST) !== 0) {
-		if (!user_auth($_POST['email'], $_POST['pass'])) {
+		if (!$auth) {
 			$msg['auth'] = 'You must be registered with either the Processing Bugs or Discourse board to submit a new Happening.';
 		}
         if (!$date) {
