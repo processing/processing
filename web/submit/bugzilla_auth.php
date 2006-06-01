@@ -61,15 +61,15 @@ function user_auth ( $name, $pass )
 	
 	$result = mysql_fetch_array( mysql_query($sql) );
 	
-	if ( !$result )
+	if ( !$result = mysql_query($sql) )
 		die( basename(__FILE__).': Problem with query:.'."\n".
 			 $sql."\n".mysql_error() );
 
 	
 	// ok, now check pass
 	//
-	
-	return ( crypt( $pass, $result['cryptpassword'] ) == $result['cryptpassword'] );
+	$row = mysql_fetch_assoc($result);
+	return ( crypt( $pass, $row['cryptpassword'] ) == $row['cryptpassword'] );
 }
 
 // testing it ..

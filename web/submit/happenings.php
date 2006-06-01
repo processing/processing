@@ -11,7 +11,7 @@ $title = "<h2><img src=\"/img/processinghappenings.gif\" alt=\"Processing Happen
 
 $date = isset($_POST['date']) ? trim($_POST['date']) : false;
 $body  = isset($_POST['body'])  ? stripslashes(strip_tags($_POST['body'], '<a><b><strong><i><em>')) : false;
-$auth = !user_auth($_POST['email'], $_POST['pass']);
+$auth = !user_auth($_POST['user'], $_POST['pass']);
 
 if (!$_POST['preview'] && 
     $date !== false && $body !== false && $auth !== false) { // valid input
@@ -112,8 +112,8 @@ PREV;
     $happening_form = <<<H_FORM
 <form accept-charset="utf-8" action="{$_SERVER['PHP_SELF']}" method="post" name="mform">
 
-	<label>Registered Email Address (with Discourse or Bugs board)</label><br />
-	<input type="text" name="email" value="{$_POST['email']}" id="email" /><br />
+	<label>Registered Username (with Discourse or Bugs board)</label><br />
+	<input type="text" name="user" value="{$_POST['email']}" id="email" /><br />
 	
 	<label>Password</label><br />
 	<input type="password" name="pass" value="" id="pass" /><br />
