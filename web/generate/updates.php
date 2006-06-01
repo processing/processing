@@ -65,7 +65,7 @@ if (!defined('COVER')) {
     $page->content(get_updates('all'));
     writeFile("updates.html", $page->out());
 
-	$rss = new RSS('Processing.org Updates', 'Updates and News about Processing programming project and Processing.org');
+	$rss = new RSS_feed('Processing.org Updates', 'Updates and News about Processing programming project and Processing.org');
 	$rss->set_items(get_updates_rss('10'));
 	writeFile("updates.xml", $rss->out());
     

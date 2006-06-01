@@ -66,7 +66,7 @@ if (!defined('COVER')) {
     $page->content(get_happenings('all'));
     writeFile("happenings.html", $page->out());
 
-	$rss = new RSS('Processing.org Happenings', 'User-submitted Happenings about Processing programming project and Processing.org');
+	$rss = new RSS_feed('Processing.org Happenings', 'User-submitted Happenings about Processing programming project and Processing.org');
 	$rss->set_items(get_happenings_rss('10'));
 	writeFile("happenings.xml", $rss->out());
     

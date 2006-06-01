@@ -2,6 +2,7 @@
 
 require('../config.php');
 require('bugzilla_auth.php');
+require_once('../templates/rss.php');
 
 $minutes_blocked    = 5;
 $date_format        = 'd F y';   // 30 Apr '05
