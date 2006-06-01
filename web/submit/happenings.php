@@ -113,8 +113,8 @@ PREV;
     $happening_form = <<<H_FORM
 <form accept-charset="utf-8" action="{$_SERVER['PHP_SELF']}" method="post" name="mform">
 
-	<label>Registered Username (with Discourse or Bugs board)</label><br />
-	<input type="text" name="user" value="{$_POST['email']}" id="email" /><br />
+	<label>Registered Email Address (with Discourse or Bugs board)</label><br />
+	<input type="text" name="user" value="{$_POST['user']}" id="email" /><br />
 	
 	<label>Password</label><br />
 	<input type="password" name="pass" value="" id="pass" /><br />
