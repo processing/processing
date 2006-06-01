@@ -111,6 +111,13 @@ PREV;
     $happening_form = <<<H_FORM
 <form accept-charset="utf-8" action="{$_SERVER['PHP_SELF']}" method="post" name="mform">
 
+	<label>Registered Email Address (with Discourse or Bugs board)</label><br />
+	<input type="text" name="email" value="{$_POST['email']}" id="email" /><br />
+	
+	<label>Password</label><br />
+	<input type="password" name="pass" value="" id="pass" /><br />
+	{$msg['auth']}<br />
+
     <label>Date: <em>format: 01 January 05</em></label><br />
     <input name="date" type="text" size="12" value="{$date}" /><br />
     {$msg['date']}<br />
