@@ -1,6 +1,7 @@
 <?
 
 require('../config.php');
+require('bugzilla_auth.php');
 
 $minutes_blocked    = 5;
 $date_format        = 'd F y';   // 30 Apr '05
@@ -84,6 +85,9 @@ XML;
 
     $msg = array(); 
     if (count($_POST) !== 0) {
+		if (!user_auth($_POST['email'], $_POST['pass'])) {
+			$msg['auth'] = 'You must be registered with either the Processing Bugs or Discourse board to submit a new Happening.';
+		}
         if (!$date) {
             $msg['date'] = 'Please enter a date';
         }
