@@ -11,7 +11,7 @@ $title = "<h2><img src=\"/img/processinghappenings.gif\" alt=\"Processing Happen
 
 $date = isset($_POST['date']) ? trim($_POST['date']) : false;
 $body  = isset($_POST['body'])  ? stripslashes(strip_tags($_POST['body'], '<a><b><strong><i><em>')) : false;
-$auth = !user_auth($_POST['email'], $_POST['pass'];
+$auth = !user_auth($_POST['email'], $_POST['pass']);
 
 if (!$_POST['preview'] && 
     $date !== false && $body !== false && $auth !== false) { // valid input
