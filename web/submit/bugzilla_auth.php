@@ -59,7 +59,7 @@ function user_auth ( $name, $pass )
 		   'FROM profiles '.
 		   'WHERE login_name=\''.$name.'\'';
 	
-	$result = mysql_fetch_array( mysql_query($sql) );
+	//$result = mysql_fetch_array( mysql_query($sql) );
 	
 	if ( !$result = mysql_query($sql) )
 		die( basename(__FILE__).': Problem with query:.'."\n".
