@@ -19,6 +19,8 @@ X added color/stroke/tint/fill(#FF8800, 30);
 X test imageio with images that have alpha (does it work?)
 X   nope, doesn't, didn't finish support
 X   http://dev.processing.org/bugs/show_bug.cgi?id=350
+X openStream() fails with java plug-in because non-null stream returned
+X   http://dev.processing.org/bugs/show_bug.cgi?id=359
 
 fixed in 0115 / quicktime 7.1
 X color values on camera input flipped on intel macs
@@ -32,6 +34,25 @@ o depth() shouldn't be needed for opengl unless actually 3D
 o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
+
+_ saveStrings(filename, strings, count) 
+_   otherwise the save is kinda wonky
+_   or maybe that should just be done with the array fxns
+_ blend() should prolly have its mode be the first param
+_ some way to vertically center text
+_   either by setting its middle vertical point
+_   or by setting a top/bottom for the rectangle in which it should be placed
+_   maybe textAlign(CENTER | VERTICAL_CENTER);
+_   or TOP, MIDDLE, and BOTTOM
+_   textAlign(CENTER | TOP);
+_   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
+_   or textAlign(LEFT, MIDDLE); -> this one seems best
+
+_ PGraphics.clear() problem from workbench and malware stuff
+_   had to put synchronized onto draw and size()
+_   actually it'll work if it's only on size()
+_   the sync on the mac hangs an applet running by itself
+_     even though it seems to be ok for a component
 
 _ make framerate into frameRate (to match frameCount)
 _ remove image(filename) and textFont(filename) et al.
