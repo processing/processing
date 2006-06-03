@@ -4,6 +4,33 @@ o   i.e. make setup() and draw() for people? seems silly.. not much to do
 o when importing a library, insert 'captureEvent'?
 o   again, seems to fraught with potential problems
 
+_ is the 'hide' option for code dumb? i've never used it
+_   should it just hide the code, not actually remove it?
+_ do we finish the tabs thing for 1.0?
+_   could probably be done in a reasonable simple way.. ala eclipse
+
+_ only rebuild sketchbook on "save as" or "rename" of sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=357
+_   even more of a problem becase set modified set true all the time
+
+_ imports inside comments are being included
+
+_ drag & drop on the mac snaps back as if it didn't work
+_   does this also happen on windows?
+_   are there better classes to use inside the com.apple classes?
+_   including the number of items would be especially nice
+_   file a bug for this stuff
+
+_ make message status text dark instead of white.. too subtle
+
+_ add notes about sketchPath() and savePath() to library docs
+_   also explain why save doesn't go to the data folder
+
+_ file for 2.0.. stroke on type
+_ add notes to the faq about including the java subfolder with exports
+_   this means no need to install an additional java vm
+_   or an option to include the 'java' folder on windows/linux with export
+
 _ archive sketch direct to bug report
 _ start including source tarball? 
 _ post releases on sourceforge so that international mirrors are better?
@@ -58,6 +85,8 @@ _ several save/save as issues in the release
 
 faq
 _ include notes about the new way to fix the serial lib on the mac
+_ write documentation on general use of processing.core
+_   note that applet is itself a Component
 _ opengl, may need to install new version of video drivers
 _ add note in reference about how to add something to the sketch
 _   (code, .java files, etc)
@@ -73,6 +102,8 @@ X   registerDispose() does the trick
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ fix the internal file chooser so that people don't need to make their own
+_ add stuff about the history into the people section
+_   descended from dbn, but not dbn, etc..
 
 text faq
 _ how to use textMode(SHAPES) with opengl
@@ -83,6 +114,8 @@ _   use createFont() to load the font or use a font from your machine
 _   note that createFont() is no good for applets/export to web
 _ textMode(SCREEN) for P2D and P3D for nice fast text in screen space
 _   currently slow in JAVA2D and OPENGL, but this will improve
+_ what is the vlw font file format?
+_ createFont() needs to run 1.3+, and not in applets
 
 the only way to do it (this will improve later) is to use some undocumented features  
 1) you have to use the OPENGL renderer 
@@ -499,6 +532,9 @@ _   http://processing.org/bugs/show_bug.cgi?id=51
 _ code coloring is imperfect because it's not based on a parser
 _   i.e. mousePressed() is red but mouseMoved() is brown
 _   http://dev.processing.org/bugs/show_bug.cgi?id=113
+_ quirks in selection and arrow keys
+_   http://dev.processing.org/bugs/show_bug.cgi?id=348
+_   http://dev.processing.org/bugs/show_bug.cgi?id=349
 
 
 PDE / Editor Buttons
