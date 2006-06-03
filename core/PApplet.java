@@ -3825,7 +3825,7 @@ public class PApplet extends Applet
         } catch (IOException e2) { }
 
         try {
-          stream = new FileInputStream(sketchPath(filename))
+          stream = new FileInputStream(sketchPath(filename));
           if (stream != null) return stream;
         } catch (Exception e) { }  // ignored
 
