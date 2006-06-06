@@ -28,7 +28,7 @@ void draw()
 float noiseScale=0.02;
 void draw() {
   background(0);
-  for(int x=0; x&lt;width; x++) {
+  for(int x=0; x &lt; width; x++) {
     float noiseVal = noise((mouseX+x)*noiseScale, 
                             mouseY*noiseScale);
     stroke(noiseVal*255);
