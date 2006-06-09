@@ -60,11 +60,17 @@ This class provides the primary interface for discovering and establishing a Blu
 
 <constructor>
 Bluetooth(<c>parent</c>)
+Bluetooth(<c>parent</c>, <c>uuid</c>)
 </constructor>
 
 <cparameter>
 <clabel>parent</clabel>
 <cdescription>PMIDlet: typically use "this"</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>uuid</clabel>
+<cdescription>String: a 32-character hexadecimal value representing a 128-bit universally unique identifier for this service</cdescription>
 </cparameter>
 
 <related>

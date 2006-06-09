@@ -45,6 +45,7 @@ public class Bluetooth implements DiscoveryListener, Runnable {
     protected PMIDlet                   midlet;
     protected LocalDevice               local;
     protected DiscoveryAgent            agent;
+    protected UUID                      uuid;
     
     protected Vector                    devices;
     protected Thread                    serverThread;
@@ -52,20 +53,25 @@ public class Bluetooth implements DiscoveryListener, Runnable {
     
     /** Transaction id for the service search process, must be positive if searching */
     protected int                       transId;
-    /** Name of service to look for in discovery process */
-    protected String                    serviceName;
+    /** Whether or not to find exactly this service */
+    protected boolean                   find;
     /** List of matching services found */
     protected Vector                    services;
-    
+    /** Actual server notifier object that will be used to get client connections */
     protected StreamConnectionNotifier  server;
     
     public Bluetooth(PMIDlet midlet) {
+        this(midlet, UUID_DEFAULT);
+    }
+    
+    public Bluetooth(PMIDlet midlet, String id) {
         this.midlet = midlet;
         devices = new Vector();
         services = new Vector();
         try {
             local = LocalDevice.getLocalDevice();
             agent = local.getDiscoveryAgent();
+            uuid = new UUID(id, false);
         } catch (BluetoothStateException bse) {
             throw new RuntimeException(bse.getMessage());
         }
@@ -80,12 +86,12 @@ public class Bluetooth implements DiscoveryListener, Runnable {
             }
         }
         if (start) {
-            this.serviceName = null;
+            find = false;
             discoverThread.start();
         }
     }    
     
-    public void find(String serviceName) {
+    public void find() {
         boolean start = false;
         synchronized (UUID_DEFAULT) {
             if (discoverThread == null) {
@@ -94,7 +100,7 @@ public class Bluetooth implements DiscoveryListener, Runnable {
             }
         }
         if (start) {
-            this.serviceName = serviceName;
+            find = true;
             discoverThread.start();
         }
     }
@@ -159,8 +165,8 @@ public class Bluetooth implements DiscoveryListener, Runnable {
             //// fire event back into midlet
             midlet.enqueueLibraryEvent(this, EVENT_DISCOVER_DEVICE_COMPLETED, devices);
             
-            //// if service name specified, search for it on all the devices
-            if (serviceName != null) {
+            //// if find is true, look for this specific service
+            if (find) {
                 for (int i = 0, length = devices.length; i < length; i++) {
                     synchronized (UUID_DEFAULT) {
                         if (discoverThread != Thread.currentThread()) {
@@ -172,7 +178,7 @@ public class Bluetooth implements DiscoveryListener, Runnable {
                     }
                     synchronized (services) {
                         transId = agent.searchServices(new int[] { Service.ATTR_SERVICENAME, Service.ATTR_SERVICEDESC, Service.ATTR_PROVIDERNAME }, 
-                                                       new UUID[] { new UUID(0x0100) }, devices[i].device, this);      
+                                                       new UUID[] { uuid }, devices[i].device, this);      
                         try {
                             services.wait();
                         } catch (InterruptedException ie) { }
@@ -200,7 +206,6 @@ public class Bluetooth implements DiscoveryListener, Runnable {
         if (serverThread == null) {
             try {
                 local.setDiscoverable(DiscoveryAgent.GIAC);
-                UUID uuid = new UUID(UUID_DEFAULT, false);
                 String url = "btspp://localhost:" + uuid.toString() + ";name=" + name;
                 server = (StreamConnectionNotifier) Connector.open(url);             
                 ServiceRecord record = local.getRecord(server);
@@ -251,40 +256,33 @@ public class Bluetooth implements DiscoveryListener, Runnable {
                 valid = true;
             }
         }
-        if (valid) {
-            //// search for a matching record
-            DataElement element;
-            for (int i = 0, length = servRecord.length; i < length; i++) {
-                element = servRecord[i].getAttributeValue(Service.ATTR_SERVICENAME);                
-                if (element != null) {
-                    if (serviceName.equals(element.getValue())) {
-                        //// find matching device object (should change vector to hashtable to optimize this)
-                        Enumeration e = devices.elements();
-                        RemoteDevice host = servRecord[i].getHostDevice();
-                        Device d = null;
-                        boolean found = false;
-                        while (e.hasMoreElements()) {
-                            d = (Device) e.nextElement();
-                            if (d.device.equals(host)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            //// not sure this should _ever_ happen
-                            d = new Device(host, this);
-                        }
-                        //// add to found services list
-                        Service s = new Service(d, servRecord[i], this);
-                        services.addElement(s);
-
-                        //// fire event 
-                        Service[] data = new Service[1];
-                        data[0] = s;
-                        midlet.enqueueLibraryEvent(this, Bluetooth.EVENT_DISCOVER_SERVICE, data);
-                    }
+        if (valid && (servRecord.length > 0)) {
+            //// find matching device object (should change vector to hashtable to optimize this)
+            Enumeration e = devices.elements();
+            RemoteDevice host = servRecord[0].getHostDevice();
+            Device d = null;
+            boolean found = false;
+            while (e.hasMoreElements()) {
+                d = (Device) e.nextElement();
+                if (d.device.equals(host)) {
+                    found = true;
+                    break;
                 }
             }
+            if (!found) {
+                //// not sure this should _ever_ happen
+                d = new Device(host, this);
+            }
+            //// build service list for event callback
+            DataElement element;
+            Service[] data = new Service[servRecord.length];
+            for (int i = 0, length = servRecord.length; i < length; i++) {
+                data[i] = new Service(d, servRecord[i], this);
+                //// add to found services list
+                services.addElement(data[i]);
+            }
+            //// fire event 
+            midlet.enqueueLibraryEvent(this, Bluetooth.EVENT_DISCOVER_SERVICE, data);
         }
     }
 }

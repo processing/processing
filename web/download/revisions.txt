@@ -1,6 +1,30 @@
 This file reflects the ongoing history of revisions to the Mobile Processing
 software, including its core and library APIs.
 
+Video 0003
+==========
+
+- Added String parameter to Capture class to specify custom locator urls.
+
+Bluetooth 0006
+==============
+
+- Added new constructor that allows specifying a custom UUID for the service.
+
+- Changed find() to search based on UUID rather than name, since it doesn't appear
+  all devices are advertising and returning the name properly.
+
+- Added a reference to the device for incoming client connections.
+
+Core 0007
+=========
+
+- Added a new PException wrapper so that throwable error messages can be
+  reproduced exactly.
+
+- Fixed CENTER/RIGHT text alignment drawing wrapped text, added support for
+  parsing \n newlines in text when using text().
+
 Video 0002
 ==========
 
