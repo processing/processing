@@ -60,11 +60,17 @@ The capture class allows live video output and frame capture.
 
 <constructor>
 Capture(<c>parent</c>)
+Capture(<c>parent</c>, <c>locator</c>)
 </constructor>
 
 <cparameter>
 <clabel>parent</clabel>
 <cdescription>PMIDlet: typically use "this"</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>locator</clabel>
+<cdescription>String: optional locator url for opening the capture device</cdescription>
 </cparameter>
 
 <related>

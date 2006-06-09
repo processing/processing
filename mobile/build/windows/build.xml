@@ -212,6 +212,7 @@
     <!-- builds the mobile core files and packages them up for inclusion with processing ide-->
     <target name="makecore" depends="init">
         <!-- compile core source files into a temporary directory -->
+        <delete dir="mobile/build/windows/classes/core" failonerror="false"/>
         <mkdir dir="mobile/build/windows/classes/core"/>
         <javac srcdir="mobile/core/processing/core"
                destdir="mobile/build/windows/classes/core"
@@ -297,6 +298,8 @@
     </target>
     
     <target name="makelib">
+        <delete dir="mobile/build/windows/classes/${libname}" failonerror="false"/>
+        <delete dir="mobile/build/windows/preverified/${libname}" failonerror="false"/>
         <antcall target="compile">
             <param name="src" value="mobile/${libname}/processing/${libname}"/>
             <param name="dest" value="mobile/build/windows/classes/${libname}"/>

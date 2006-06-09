@@ -109,7 +109,7 @@ public class PCanvas extends Canvas {
         
         background(200);
     }
-    
+
     protected void paint(Graphics g) {
         g.drawImage(buffer, 0, 0, Graphics.LEFT | Graphics.TOP);
     }
@@ -630,7 +630,8 @@ public class PCanvas extends Canvas {
     }
     
     public void background(int value1, int value2, int value3) {
-        background(value1, value2, value3);
+        bufferg.setColor(color(value1, value2, value3));
+        bufferg.fillRect(0, 0, width, height);
     }
     
     public void background(PImage img) {
@@ -854,7 +855,12 @@ public class PCanvas extends Canvas {
         }
         //// for system fonts, set fillcolor
         bufferg.setColor(fillColor);
-        textFont.draw(bufferg, data, x, y, textAlign);
+        //// check for embedded new-line characters
+        if (data.indexOf('\n') >= 0) {
+            text(data, x, y - textFont.baseline, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        } else {
+            textFont.draw(bufferg, data, x, y, textAlign);
+        }
     }
     
     public void text(String data, int x, int y, int width, int height) {
@@ -872,9 +878,19 @@ public class PCanvas extends Canvas {
         int clipHeight = bufferg.getClipHeight();
         bufferg.setClip(x, y, width, height);
         //// adjust starting baseline so that text is _contained_ within the bounds
+        int textX = x;
         y += textFont.baseline;
         for (int i = 0, length = lines.length; i < length; i++) {
-            textFont.draw(bufferg, lines[i], x, y, textAlign);
+            //// calculate alignment within bounds
+            switch (textAlign) {
+                case PMIDlet.CENTER:
+                    textX = x + ((width - textWidth(lines[i])) >> 1);
+                    break;
+                case PMIDlet.RIGHT:
+                    textX = x + width - textWidth(lines[i]);
+                    break;
+            }
+            textFont.draw(bufferg, lines[i], textX, y, PMIDlet.LEFT);
             y += textFont.height;
         }
         //// restore clip
@@ -909,7 +925,7 @@ public class PCanvas extends Canvas {
             if (c != ' ') {
                 //// at first non-whitespace character, start building up line
                 lineLength = 0;
-                last = 0;
+                last = -1;
                 lineWidth = 0;
                 while (lineWidth < width) {
                     if (i == textLength) {
@@ -927,10 +943,13 @@ public class PCanvas extends Canvas {
                             line[lineLength] = ' ';
                             lineLength++;
                         }
+                    } else if (c == '\n') {
+                        last = lineLength - 1;
+                        break;
                     }
                     lineWidth = textFont.charsWidth(line, 0, lineLength);
                 }
-                if (last > 0) {
+                if (last >= 0) {
                     //// take chars up to last break point
                     lines.addElement(new String(line, 0, last));
                     i -= lineLength - last;

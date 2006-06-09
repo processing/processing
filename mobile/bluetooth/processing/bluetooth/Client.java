@@ -1,5 +1,7 @@
 package processing.bluetooth;
 
+import processing.core.PException;
+
 import java.io.*;
 import javax.microedition.io.*;
 
@@ -30,24 +32,34 @@ public class Client {
     private DataInputStream     is;
     private DataOutputStream    os;
     
-    protected Client(StreamConnection con) throws IOException {
+    public Device               device;
+    
+    protected Client(StreamConnection con) {
         this.con = con;
-        is = con.openDataInputStream();
+    }
+    
+    public void open() throws IOException {
         os = con.openDataOutputStream();
+        is = con.openDataInputStream();//new DataInputStream(new AvailableInputStream(con.openInputStream()));
     }
     
     public void stop() {
         try {
             os.close();
-        } catch (IOException ioe) {
-        }
+        } catch (IOException ioe) { }
         try {
             is.close();
-        } catch (IOException ioe) {
-        }
+        } catch (IOException ioe) { }
         try {
             con.close();
+        } catch (IOException ioe) { }
+    }
+    
+    public int available() {
+        try {
+            return is.available();
         } catch (IOException ioe) {
+            throw new PException(ioe);
         }
     }
     
@@ -55,7 +67,7 @@ public class Client {
         try {
             return is.read();
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
 
@@ -63,7 +75,7 @@ public class Client {
         try {
             return is.readBoolean();
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
     
@@ -71,7 +83,7 @@ public class Client {
         try {
             return is.readChar();
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
 
@@ -83,7 +95,7 @@ public class Client {
         try {
             is.readFully(b, offset, length);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
 
@@ -91,7 +103,7 @@ public class Client {
         try {
             return is.readInt();
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
 
@@ -99,7 +111,7 @@ public class Client {
         try {
             return is.readUTF();
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
     
@@ -107,7 +119,7 @@ public class Client {
         try {
             return is.skipBytes(bytes);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
     
@@ -115,7 +127,7 @@ public class Client {
         try {
             os.write(data);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
     
@@ -123,7 +135,7 @@ public class Client {
         try {
             os.write(data);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
 
@@ -131,7 +143,7 @@ public class Client {
         try {
             os.writeBoolean(v);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
 
@@ -139,7 +151,7 @@ public class Client {
         try {
             os.write(s.getBytes());
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
 
@@ -147,7 +159,7 @@ public class Client {
         try {
             os.writeChar(v);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
     
@@ -155,7 +167,7 @@ public class Client {
         try {
             os.writeInt(v);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
     
@@ -163,7 +175,7 @@ public class Client {
         try {
             os.writeUTF(s);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
     
@@ -171,7 +183,7 @@ public class Client {
         try {
             os.flush();
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
 }

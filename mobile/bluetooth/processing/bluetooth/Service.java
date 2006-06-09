@@ -73,6 +73,8 @@ public class Service implements Runnable {
         try {
             StreamConnection con = (StreamConnection) Connector.open(record.getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false));
             Client c = new Client(con);
+            c.device = device;
+            c.open();
             return c;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -89,6 +91,16 @@ public class Service implements Runnable {
             try {
                 StreamConnection con = bt.server.acceptAndOpen();
                 Client c = new Client(con);
+                c.device = new Device(RemoteDevice.getRemoteDevice(con), bt);
+                try {
+                    c.device.name = c.device.device.getFriendlyName(false);
+                } catch (Exception e) {
+                    c.device.name = null;
+                }
+                if (c.device.name == null) {
+                    c.device.name = Device.UNKNOWN;
+                }
+                c.open();
                 bt.midlet.enqueueLibraryEvent(bt, Bluetooth.EVENT_CLIENT_CONNECTED, c);
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe.getMessage());

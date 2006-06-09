@@ -245,9 +245,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 }
                 Thread.yield();
             } while (running || (eventsLength > 0));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             Form form = new Form("Exception");
-            form.append(e.getMessage());
+            form.append(t.toString());
             form.setCommandListener(this);
             form.addCommand(cmdExit);
             display.setCurrent(form);
@@ -450,6 +450,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final void noLoop() {
         running = false;
+        //// let at least one draw to occur following this command
+        redraw = true;
     }    
     
     public final void size(int width, int height) {        
