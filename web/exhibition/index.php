@@ -10,6 +10,24 @@ require '../header.inc.php';
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td valign="top" width="224">
+<a href="mandelbrotMobile/applet/index.html" target="_new"><img src="images/mandelbrotMobile.png"></a><br>
+<br>
+<table width="200" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td>
+<b><a href="mandelbrotMobile/applet/index.html" target="_new">mandelbrotMobile</a></b>
+    </td>
+  </tr>
+  <tr height="5">
+  </tr>
+  <tr>
+    <td>
+<b>by skanaar</b>
+    </td>
+  </tr>
+</table>
+    </td>
+    <td valign="top" width="224">
 <a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new"><img src="images/rosaly.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
@@ -33,6 +51,11 @@ Use direction arrows for other controls<br>
   </tr>
 </table>
     </td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr>
     <td valign="top" width="224">
 <a href="http://www.mimeomai.f2s.com/applet/resmob/applet/index.html" target="_new"><img src="images/resonata.png"></a><br>
 <br>
@@ -54,6 +77,8 @@ This is a spring system, designed to demonstrate many of the universal features 
     </td>
   </tr>
 </table>
+    </td>
+    <td valign="top" width="224">
     </td>
   </tr>
 </table>
