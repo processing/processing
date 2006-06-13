@@ -17,6 +17,7 @@ require '../header.inc.php';
 <br>
 <i>Bluetooth</i><br>
 <a href="example.php?name=bluescan">Bluescan</a><br>
+<a href="example.php?name=tictactoe">Tic-Tac-Toe</a><br>
 <br>
 <i>Video</i><br>
 <a href="example.php?name=photoslider">Photoslider</a><br>

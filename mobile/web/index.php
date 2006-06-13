@@ -7,29 +7,29 @@ require 'header.inc.php';
     <img src="exhibition/images/header.png"><br>
 <br>
 <br>
-<a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new"><img src="exhibition/images/rosaly.png"></a><br>
+<a href="exhibition/mandelbrotMobile/applet/index.html" target="_new"><img src="exhibition/images/mandelbrotMobile.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
-<b><a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new">Rosaly</a></b>
+<b><a href="exhibition/mandelbrotMobile/applet/index.html" target="_new">mandelbrotMobile</a></b>
     </td>
   </tr>
   <tr height="5">
   </tr>
   <tr>
     <td>
-<b>by Oolong</b><br>
+<b>by skanaar</b><br>
     </td>
   </tr>
 </table><br>
 <br>
-<a href="http://www.mimeomai.f2s.com/applet/resmob/applet/index.html" target="_new"><img src="exhibition/images/resonata.png"></a><br>
+<a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new"><img src="exhibition/images/rosaly.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
-<b><a href="http://www.mimeomai.f2s.com/applet/resmob/applet/index.html" target="_new">Resonata</a></b>
+<b><a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new">Rosaly</a></b>
     </td>
   </tr>
   <tr height="5">
@@ -60,6 +60,17 @@ require 'header.inc.php';
 <a href="learning/example.php?name=photoslider"><img src="images/examples/photoslider.png"></a>
     </td>
   </tr>
+  <tr>
+    <td>
+<a href="learning/example.php?name=tictactoe"><img src="images/examples/tictactoe.png"></a>
+    </td>
+    <td width="1"></td>
+    <td>
+    </td>
+    <td width="1"></td>
+    <td>
+    </td>
+  </tr>
 </table>
 </div>
 <div class="column" style="width: 400px">
@@ -77,6 +88,8 @@ require 'header.inc.php';
     <i>May 31</i><br>
     New <a href="learning/example.php?name=photoslider">Photoslider</a> example posted.<br>
     <br>
+    <i>June 11</i><br>
+    New <a href="learning/example.php?name=tictactoe">Tic-Tac-Toe</a> Bluetooth library example posted.<br /><br />Added <a href="exhibition/mandelbrotMobile/applet/index.html" target="_new">mandelbrotMobile</a> by skanaar to the exhibition.<br>
     <br>
     <br>
     <img src="images/happenings.png"><br>

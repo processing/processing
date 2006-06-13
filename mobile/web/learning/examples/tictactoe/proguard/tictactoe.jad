@@ -1,0 +1,9 @@
+MIDlet-1: tictactoe, /icon.png, tictactoe
+MIDlet-Icon: /icon.png
+MIDlet-Name: tictactoe
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: Mobile Processing ALPHA - 0004
+MicroEdition-Profile: MIDP-1.0
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Jar-URL: tictactoe.jar
+MIDlet-Jar-Size: 18020
