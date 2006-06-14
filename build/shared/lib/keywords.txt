@@ -313,7 +313,6 @@ loadBytes	KEYWORD2	loadBytes_
 loadFont	KEYWORD2	loadFont_
 loadImage	KEYWORD2	loadImage_
 loadPixels	KEYWORD2	loadPixels_
-loadSound	KEYWORD2	loadSound_
 loadStrings	KEYWORD2	loadStrings_
 log	KEYWORD2	log_
 &&		logicalAND
@@ -392,15 +391,6 @@ printCamera	KEYWORD2	printCamera_
 println	KEYWORD2	println_
 printMatrix	KEYWORD2	printMatrix_
 printProjection	KEYWORD2	printProjection_
-PSound	KEYWORD1	PSound
-duration	KEYWORD2	PSound_duration_
-loop	KEYWORD2	PSound_loop_
-noLoop	KEYWORD2	PSound_noLoop_
-pause	KEYWORD2	PSound_pause_
-play	KEYWORD2	PSound_play_
-stop	KEYWORD2	PSound_stop_
-time	KEYWORD2	PSound_time_
-volume	KEYWORD2	PSound_volume_
 pushMatrix	KEYWORD2	pushMatrix_
 quad	KEYWORD2	quad_
 radians	KEYWORD2	radians_
