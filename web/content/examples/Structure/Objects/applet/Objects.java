@@ -48,7 +48,6 @@ class MRect
   float ypos ; // rect yposition
   float d; // single bar distance
   float t; // number of bars
-  float side; // rect width
  
   MRect(int iw, float ixp, float ih, float iyp, float id, float it) {
     w = iw;
@@ -74,9 +73,9 @@ class MRect
   }
  
   public void display() {
-    for (int i = 0; i<t; i++) {
-      rect(xpos+(i*d*w), ypos, w, height*h);
+    for (int i=0; i<t; i++) {
+      rect(xpos+(i*(d+w)), ypos, w, height*h);
     }
   }
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Objects" });}}
