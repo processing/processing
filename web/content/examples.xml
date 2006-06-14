@@ -16,9 +16,9 @@
 	<cat label="Form">
 		<ex file="PointsLines.html">Points and Lines</ex>
 		<ex file="ShapePrimitives.html">Shape Primitives</ex>
-		<ex file="CurvePrimitives.html">Curve Primitives</ex>
 		<ex file="Vertices.html">Vertices</ex>
 		<ex file="SimpleCurves.html">Simple Curves </ex>
+		<ex file="Bezier.html">Bezier</ex>
 	</cat>
 	<cat label="Data">
 		<ex file="Variables.html">Variables</ex>
