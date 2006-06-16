@@ -1,11 +1,13 @@
-// http client
-// by Tom Igoe
-
-// Starts a network client that connects to a server on port 80,
-// sends an HTTP 1.1 GET request, and prints the results.
-
-// created March 18, 2005
-
+/**
+ * HTTP Client
+ * by Tom Igoe. 
+ * 
+ * Starts a network client that connects to a server on port 80,
+ * sends an HTTP 1.1 GET request, and prints the results. 
+ * 
+ * created March 18, 2005
+ */
+ 
 import processing.net.*;
 
 Client client;

@@ -1,11 +1,13 @@
-// Mirror1
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Each pixel from the video source is drawn as a 
-// rectangle with size based on brightness. 
-
-// Created 2 May 2005
-
+/**
+ * Mirror 2 
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Each pixel from the video source is drawn as a 
+ * rectangle with size based on brightness.  
+ * 
+ * Created 2 May 2005
+ */
+ 
 import processing.video.*;
 
 // Size of each cell in the grid

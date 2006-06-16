@@ -1,13 +1,15 @@
-// Value Server
-// by hbarragan
-
-// Starts a network server on the local computer using the port 5204. 
-// It sends the connected clients values between 0 and 255. Click the 
-// mouse to stop the server.
-
-// Created 23 June 2003
-// Updated 15 April 2005
-
+/** 
+ * Value Server 
+ * by hbarragan. 
+ * 
+ * Starts a network server on the local computer using the port 5204. 
+ * It sends the connected clients values between 0 and 255. Click the 
+ * mouse to stop the server. 
+ * 
+ * Created 23 June 2003. 
+ * Updated 15 April 2005
+ */
+ 
 import processing.net.*;
 
 PFont font;

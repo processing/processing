@@ -1,10 +1,12 @@
-// Chat Server
-// by Tom Igoe
-
-//
-
-// Created 18 March 2005
-
+/**
+ * Chat Server 
+ * by Tom Igoe. 
+ * 
+ * Press the mouse to stop the server.
+ * 
+ * Created 18 March 2005
+ */
+ 
 import processing.net.*;
 
 PFont font;
@@ -26,7 +28,7 @@ void setup()
   background(0);
 }
 
-public void mouseClicked()
+void mousePressed()
 {
   // If the mouse clicked the myServer stops
   myServer.stop();

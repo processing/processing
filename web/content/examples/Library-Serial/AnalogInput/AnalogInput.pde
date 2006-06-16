@@ -1,15 +1,17 @@
-// Analog In 
-// by Josh Nimoy <http://itp.jtnimoy.com>
-
-// Reads a value from the serial port and sets the background color. 
-// Running this example requires you have a BX-24 microcontroller
-// and peripheral hardware. More information can be found on the tutorial 
-// pages of Tom Igoe: http://stage.itp.nyu.edu/~tigoe/pcomp/examples.shtml
-// Because this program uses the serial port, it will not work within a web browser.
-
-// Created 8 February 2003
-// Updated 2 April 2005
-
+/**
+ * Analog In 
+ * by <a href="http://itp.jtnimoy.com">Josh Nimoy</a>. 
+ * 
+ * Reads a value from the serial port and sets the background color. 
+ * Running this example requires you have a BX-24 microcontroller
+ * and peripheral hardware. More information can be found on the tutorial 
+ * pages of Tom Igoe: http://stage.itp.nyu.edu/~tigoe/pcomp/examples.shtml
+ * Because this program uses the serial port, it will not work within a web browser. 
+ * 
+ * Created 8 February 2003. 
+ * Updated 2 April 2005
+ */
+ 
 import processing.serial.*;
 
 String buff = "";

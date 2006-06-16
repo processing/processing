@@ -1,17 +1,19 @@
-// Binary Input
-// by Mathias Dahlstrom <http://people.interaction-ivrea.it/m.dahlstrom>
-  
-//  Example of a binary input from a serial device using serial communcation.
-//  This example takes input from an external serial device running at 19200 bps.
-//  Examples for the BX-24 microcontroller and the PIC 18F452 
-//  microcontroller (in PicBasic Pro) are given below.
-//  More information on microcontrollers can be found on the tutorial 
-//  pages of Tom Igoe: http://itp.nyu.edu/tigoe/pcomp/  
-//  Because this program uses the serial port, it will not work within a web browser.
-
-//  Created 12 February 2003
-//  Updated 21 March 2005, T. Igoe
-
+/** 
+ * Binary Input 
+ * by Mathias Dahlstrom. 
+ * 
+ * Example of a binary input from a serial device using serial communcation.
+ * This example takes input from an external serial device running at 19200 bps. 
+ * Examples for the BX-24 microcontroller and the PIC 18F452 
+ * microcontroller (in PicBasic Pro) are given below.
+ * More information on microcontrollers can be found on the tutorial 
+ * pages of Tom Igoe: http://itp.nyu.edu/tigoe/pcomp/  
+ * Because this program uses the serial port, it will not work within a web browser. 
+ *
+ * Created 12 February 2003. 
+ * Updated 21 March 2005, T. Igoe
+ */
+ 
 import processing.serial.*;
 
 // State of the circle drawing

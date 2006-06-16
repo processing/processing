@@ -1,10 +1,13 @@
-// Simple Color Tracking
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Select a color to track by clicking the mouse
-
-// Created 2 May 2005
-
+/**
+ * Brightness Tracking 
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>.  
+ * 
+ * Tracks the brightest pixel in the video.
+ * Click the mouse to select a different color. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 import processing.video.*;
 
 // Variable for capture device

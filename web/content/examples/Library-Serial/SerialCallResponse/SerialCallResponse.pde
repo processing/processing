@@ -1,13 +1,15 @@
-// Serial call-and-response for v.85
-// by Tom Igoe
-
-// Sends a byte out the serial port, and reads 3 bytes in.
-// Sets foregound color, xpos, and ypos of a circle onstage
-// using the values returned from the serial port.
-// Thanks to Daniel Shiffman for the improvements.
-
-// Updated 21 March 2005
-
+/** 
+ * Serial Call-Response 
+ * by Tom Igoe. 
+ * 
+ * Sends a byte out the serial port, and reads 3 bytes in. 
+ * Sets foregound color, xpos, and ypos of a circle onstage
+ * using the values returned from the serial port. 
+ * Thanks to Daniel Shiffman for the improvements. 
+ * 
+ * Updated 21 March 2005
+ */
+ 
 import processing.serial.*;
 
 int bgcolor;			     // Background color
