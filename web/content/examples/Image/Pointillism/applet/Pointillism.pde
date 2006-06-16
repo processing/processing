@@ -1,12 +1,14 @@
-// Pointillism
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Mouse horizontal location controls size of dots
-// Creates a simple pointillist-like effect using ellipse colored
-// according to pixels in the image
-
-// Created 2 May 2005
-
+/**
+ * Pointillism
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Mouse horizontal location controls size of dots. 
+ * Creates a simple pointillist effect using ellipses colored
+ * according to pixels in an image. 
+ *
+ * Created 2 May 2005
+ */
+ 
 PImage a;
 void setup()
 {

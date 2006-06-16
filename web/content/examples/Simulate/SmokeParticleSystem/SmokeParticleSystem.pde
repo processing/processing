@@ -1,18 +1,20 @@
-// Smoke Particle System
-// Daniel Shiffman <http://www.shiffman.net>
-
-// A basic smoke effect using a particle system
-// Each particle is rendered as an alpha masked image
-
-// Created 2 May 2005
-
+/**
+ * Smoke Particle System
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * 
+ * A basic smoke effect using a particle system. 
+ * Each particle is rendered as an alpha masked image. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 ParticleSystem ps;
 Random generator;
 
 void setup() {
-  size(200,200);
+  size(600, 600);
   framerate(30);
-  colorMode(RGB,255,255,255,100);
+  colorMode(RGB, 255, 255, 255, 100);
   generator = new Random();
     
   // Create an alpha masked image to be applied as the particle's texture

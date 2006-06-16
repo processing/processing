@@ -1,19 +1,19 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Ortho extends PApplet {// Ortho
-// by REAS <http://reas.com>
-
-// Move the mouse across the screen to change the parameters
-// for the orthographic projection.
-// The ortho() function sets an orthographic projection and 
-// defines a parallel clipping volume. All objects with the 
-// same dimension appear the same size, regardless of whether 
-// they are near or far from the camera. The parameters to this 
-// function specify the clipping volume where left and right 
-// are the minimum and maximum x values, top and bottom are the 
-// minimum and maximum y values, and near and far are the minimum 
-// and maximum z values.
-
-// Created 28 April 2005
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Ortho extends PApplet {/**
+ * Ortho. 
+ * 
+ * Move the mouse across the screen to change the parameters
+ * for the orthographic projection.
+ * The ortho() function sets an orthographic projection and 
+ * defines a parallel clipping volume. All objects with the 
+ * same dimension appear the same size, regardless of whether 
+ * they are near or far from the camera. The parameters to this 
+ * function specify the clipping volume where left and right 
+ * are the minimum and maximum x values, top and bottom are the 
+ * minimum and maximum y values, and near and far are the minimum 
+ * and maximum z values.
+ * 
+ * Created 28 April 2005
+ */
 
 public void setup() 
 {
@@ -45,4 +45,4 @@ public void draw()
 
 }
 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Ortho" });}}

@@ -1,11 +1,13 @@
-// Smoke
-// by Glen Murphy <http://www.bodytag.org>
-
-// Drag the mouse across the image to move the particles.
-// Code has not been optimised and will run fairly slowly.
-
-// Completed 5 November 2002
-
+/**
+ * Smoke
+ * by <a href="http://www.bodytag.org">Glen Murphy</a>.
+ * 
+ * Drag the mouse across the image to move the particles.
+ * Code has not been optimised and will run fairly slowly.
+ * 
+ * Completed 5 November 2002
+ */
+ 
 int res = 2;
 int penSize = 30;
 int lwidth;

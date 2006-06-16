@@ -1,10 +1,10 @@
-// Collision (Pong)
-// by REAS <http://reas.com>
-
-// Move the mouse up and down to move the paddle. 
-
-// Updated 13 January 2003 by K Pfeiffer
-
+/**
+ * Collision (Pong). 
+ * 
+ * Move the mouse up and down to move the paddle.  
+ * 
+ * Updated 13 January 2003 by K Pfeiffer
+ */
 
 // Global variables for the ball
 float ball_x;

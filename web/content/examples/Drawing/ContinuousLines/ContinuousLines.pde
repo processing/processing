@@ -1,11 +1,12 @@
-// Continuous Lines
-// by REAS <http://reas.com>
-
-// Click and drag the mouse to draw a line.
-
-// Updated 27 October 2002 
-// Created 23 October 2002
-
+/**
+ * Continuous Lines. 
+ * 
+ * Click and drag the mouse to draw a line. 
+ * 
+ * Updated 27 October 2002. 
+ * Created 23 October 2002
+ */
+ 
 void setup() {
   size(200, 200);
   background(102);

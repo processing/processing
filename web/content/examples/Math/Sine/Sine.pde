@@ -1,11 +1,11 @@
-// Sine
-// by REAS <http://reas.com>
-
-// Smoothly scaling size with the sin() function.
-
-// Updated 21 August 2002
-
-
+/**
+ * Sine. 
+ * 
+ * Smoothly scaling size with the sin() function. 
+ * 
+ * Updated 21 August 2002
+ */
+ 
 float spin = 0.0; 
 float radius = 42.0; 
 float angle;

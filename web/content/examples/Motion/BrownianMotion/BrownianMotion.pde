@@ -1,10 +1,11 @@
-// Brownian motion
-// by REAS <http://reas.com>
-
-// Recording random movement as a continuous line.
-
-// Updated 21 August 2002
-
+/**
+ * Brownian motion. 
+ * 
+ * Recording random movement as a continuous line. 
+ * 
+ * Updated 21 August 2002
+ */
+ 
 int num = 2000;
 int range = 4;
 

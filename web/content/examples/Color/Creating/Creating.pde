@@ -1,11 +1,12 @@
-// Creating (Homage to Albers)
-// by REAS <http://reas.com>
-
-// Creating variables for colors that may be referred to 
-// in the program by their name, rather than a number.
-
-// Created 09 December 2002
-
+/**
+ * Creating (Homage to Albers). 
+ * 
+ * Creating variables for colors that may be referred to 
+ * in the program by their name, rather than a number. 
+ * 
+ * Created 09 December 2002
+ */
+ 
 size(200, 200);
 noStroke();
 

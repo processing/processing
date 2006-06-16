@@ -1,10 +1,11 @@
-// Words
-// by REAS <http://reas.com>
-
-// The text() function is used for writing words to the screen.
-
-// Created 15 January 2003
-
+/**
+ * Words. 
+ * 
+ * The text() function is used for writing words to the screen. 
+ * 
+ * Created 15 January 2003
+ */
+ 
 size(200, 200);
 background(102);
 

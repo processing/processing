@@ -1,10 +1,11 @@
-// Vertices 3D
-// by REAS <http://reas.com>
-
-// Scaling an object back in space makes it appear smaller.
-
-// Updated 21 August 2002
-
+/**
+ * Vertices 3D.
+ * 
+ * Scaling an object back in space makes it appear smaller.
+ * 
+ * Updated 21 August 2002
+ */ 
+ 
 float spin = PI/6;       // Rotation angle
 int circle_points = 6;   // Resolution of arcs
 int depth = 10;

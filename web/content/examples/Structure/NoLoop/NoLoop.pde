@@ -1,11 +1,13 @@
-// No Loop
-// by REAS <http://reas.com>
-
-// The noLoop() function causes draw() to only
-// execute once. Without calling noLoop(), draw()
-// executed continually.
-
-// Created 09 December 2002
+/**
+ * No Loop. 
+ * 
+ * The noLoop() function causes draw() to only
+ * execute once. Without calling noLoop(), draw()
+ * executed continually. 
+ * 
+ * Created 09 December 2002
+ */
+ 
 
 // The statements in the setup() function 
 // execute once when the program begins

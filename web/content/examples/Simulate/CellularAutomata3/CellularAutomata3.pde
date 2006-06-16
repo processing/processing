@@ -1,14 +1,16 @@
-// Cellular Automata 3
-// by Mike Davis <http://www.lightcycle.org>
-
-// A short program for alife experiments. Click in the window to restart.
-// Each cell is represented by a pixel on the display as well as an entry in
-// the array 'cells'. Each cell has a run() method, which performs actions
-// based on the cell's surroundings.  Cells run one at a time (to avoid conflicts
-// like wanting to move to the same space) and in random order.
-
-// Created 9 January 2003
-
+/**
+ * Cellular Automata 3
+ * by <a href="http://www.lifecycle.org">Mike Davis</a>. 
+ * 
+ * A short program for alife experiments. Click in the window to restart. 
+ * Each cell is represented by a pixel on the display as well as an entry in
+ * the array 'cells'. Each cell has a run() method, which performs actions
+ * based on the cell's surroundings.  Cells run one at a time (to avoid conflicts
+ * like wanting to move to the same space) and in random order. 
+ * 
+ * Created 9 January 2003
+ */
+ 
 World w;
 int maxcells = 4000;
 int numcells;

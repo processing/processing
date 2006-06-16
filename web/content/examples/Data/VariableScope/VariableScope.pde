@@ -1,18 +1,19 @@
-// Variable_Scope
-// by REAS <http://reas.com>
-
-// Variables may either have a global or local "scope".
-// For example, variables declared within either the
-// setup() or loop() functions may be only used in these
-// functions. Global variables, variables declared outside
-// of setup() and loop(), may be used anywhere within the program.
-// If a local variable is declared with the same name as a
-// global variable, the program will use the local variable to make 
-// its calculations within the current scope. Variables may be localized
-// within classes, functions, and iterative statements.
-
-// Created 19 January 2003
-
+/**
+ * Variable Scope. 
+ * 
+ * Variables may either have a global or local "scope". 
+ * For example, variables declared within either the
+ * setup() or loop() functions may be only used in these
+ * functions. Global variables, variables declared outside
+ * of setup() and loop(), may be used anywhere within the program.
+ * If a local variable is declared with the same name as a
+ * global variable, the program will use the local variable to make 
+ * its calculations within the current scope. Variables may be localized
+ * within classes, functions, and iterative statements. 
+ * 
+ * Created 19 January 2003
+ */
+ 
 int a = 20;  // Create a global variable "a"
 
 void setup() 

@@ -1,11 +1,12 @@
-// Blur
-// by REAS <http://reas.com>
-
-// Bluring half of an image by processing it through a
-// low-pass filter
-
-// Created 9 December 2002
-
+/**
+ * Blur. 
+ * 
+ * Bluring half of an image by processing it through a
+ * low-pass filter. 
+ * 
+ * Created 9 December 2002
+ */
+ 
 size(200, 200); 
 PImage a;  // Declare variable "a" of type PImage 
 a = loadImage("trees.jpg"); // Load the images into the program 

@@ -1,12 +1,14 @@
-// PolarToCartesian
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Convert a polar coordinate (r,theta) to cartesian (x,y)
-// x = r * cos(theta)
-// y = r * sin(theta)
-
-// Created 2 May 2005
-
+/**
+ * PolarToCartesian
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Convert a polar coordinate (r,theta) to cartesian (x,y):  
+ * x = r * cos(theta)
+ * y = r * sin(theta)
+ * 
+ * Created 2 May 2005
+ */
+ 
 float r;
 
 // Angle and angular velocity, accleration

@@ -1,11 +1,12 @@
-// Array Objects
-// by REAS <http://reas.com>
-
-// Demonstrates the syntax for creating an array of custom objects.
-
-// Updated 10 March 2003
-// Created 20 October 2002
-
+/**
+ * Array Objects. 
+ * 
+ * Demonstrates the syntax for creating an array of custom objects. 
+ * 
+ * Updated 10 March 2003
+ * Created 20 October 2002
+ */ 
+ 
 int unit = 40;
 int num;
 Module[] mods;

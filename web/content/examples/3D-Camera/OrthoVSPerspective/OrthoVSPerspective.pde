@@ -1,11 +1,11 @@
-// Ortho
-// by REAS <http://reas.com>
-
-// Click to see the difference between orthographic projection
-// and perspective projection as applied to a simple box.
-
-// Created 28 April 2005
-
+/** 
+ * Ortho vs Perspective. 
+ * 
+ * Click to see the difference between orthographic projection
+ * and perspective projection as applied to a simple box.
+ * 
+ * Created 28 April 2005
+ */
 
 void setup() 
 {

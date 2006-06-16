@@ -1,10 +1,11 @@
-// Handles
-// by REAS <http://reas.com>
-
-// Click and drag the white boxes to change their position.
-
-// Created 10 February 2003
-
+/**
+ * Handles. 
+ * 
+ * Click and drag the white boxes to change their position. 
+ * 
+ * Created 10 February 2003
+ */
+ 
 Handle[] handles;
 int num;
 

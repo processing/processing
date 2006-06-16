@@ -1,12 +1,13 @@
-// Rollover
-// by REAS <http://reas.com>
-
-// Roll over the colored squares in the center of the image
-// to change the color of the outside rectangle
-
-// Updated 09 February 2003
-// Created 21 August 2002
-
+/**
+ * Rollover. 
+ * 
+ * Roll over the colored squares in the center of the image
+ * to change the color of the outside rectangle. 
+ * 
+ * Updated 09 February 2003. 
+ * Created 21 August 2002
+ */
+ 
 int rectX, rectY;      // Position of square button
 int circleX, circleY;  // Position of circle button
 int rectSize = 50;     // Diameter of rect

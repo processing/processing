@@ -1,12 +1,14 @@
-// Springs
-// by REAS <http://reas.com>
-
-// Move the mouse over one of the circles and click to re-position. 
-// When you release the mouse, it will snap back into position.
-// Each circle has a slightly different behavior. 
-
-// Created 09 December 2002
-
+/**
+ * Springs
+ * by REAS <http://reas.com>
+ * 
+ * Move the mouse over one of the circles and click to re-position. 
+ * When you release the mouse, it will snap back into position. 
+ * Each circle has a slightly different behavior.  
+ * 
+ * Created 09 December 2002
+ */
+ 
 
 int num = 3; 
 Spring[] springs = new Spring[num]; 

@@ -1,12 +1,14 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Pointillism extends PApplet {// Pointillism
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Mouse horizontal location controls size of dots
-// Creates a simple pointillist-like effect using ellipse colored
-// according to pixels in the image
-
-// Created 2 May 2005
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Pointillism extends PApplet {/**
+ * Pointillism
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Mouse horizontal location controls size of dots. 
+ * Creates a simple pointillist effect using ellipses colored
+ * according to pixels in an image. 
+ *
+ * Created 2 May 2005
+ */
+ 
 PImage a;
 public void setup()
 {
@@ -30,4 +32,4 @@ public void draw()
   fill(r,g,b,126);
   ellipse(x,y,pointillize,pointillize);
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Pointillism" });}}

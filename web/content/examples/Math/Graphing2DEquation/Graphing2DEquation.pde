@@ -1,10 +1,12 @@
-// Graphing 2D Equations
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Graphics the following equation
-// sin(n*cos(r) + 5*theta)
-// where n is a function of horizontal mouse location 
-
+/**
+ * Graphing 2D Equations
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Graphics the following equation: 
+ * sin(n*cos(r) + 5*theta) 
+ * where n is a function of horizontal mouse location.  
+ */
+ 
 void setup() {
   size(200,200);
   framerate(30);

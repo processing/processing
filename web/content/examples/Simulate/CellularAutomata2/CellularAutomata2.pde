@@ -1,14 +1,15 @@
-// Cellular Automata 2
-// by Mike Davis <http://www.lightcycle.org>
-
-// A short program for alife experiments. Click in the window to restart.
-// Each cell is represented by a pixel on the display as well as an entry in
-// the array 'cells'. Each cell has a run() method, which performs actions
-// based on the cell's surroundings.  Cells run one at a time (to avoid conflicts
-// like wanting to move to the same space) and in random order.
-
-// Created 9 January 2003
-
+/**
+ * Cellular Automata 2
+ * by <a href="http://www.lifecycle.org">Mike Davis</a>. 
+ * 
+ * A short program for alife experiments. Click in the window to restart.
+ * Each cell is represented by a pixel on the display as well as an entry in
+ * the array 'cells'. Each cell has a run() method, which performs actions
+ * based on the cell's surroundings.  Cells run one at a time (to avoid conflicts
+ * like wanting to move to the same space) and in random order.
+ * 
+ * Created 9 January 2003
+ */
 
 World w;
 int numcells = 0;
@@ -23,22 +24,17 @@ void setup()
 {
   size(200, 200);
   framerate(24);
+  clearscr();  
   w = new World();
   spore_color = color(172, 255, 128);
-  seed(); 
+  seed();
 }
 
 void seed() 
 {
-  numcells = 0;
-  // Clear the screen
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
-      set(x, y, color(0));
-    }
-  }
   // Add cells at random places
-  for (int i = 0; i < maxcells; i++) {
+  for (int i = 0; i < maxcells; i++)
+  {
     int cX = (int)random(width);
     int cY = (int)random(height);
     if (w.getpix(cX, cY) == black)
@@ -56,6 +52,15 @@ void draw()
   for (int i = 0; i < runs_per_loop; i++) {
     int selected = min((int)random(numcells), numcells - 1);
     cells[selected].run();
+  }
+}
+
+void clearscr()
+{
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      set(x, y, color(0));
+    }
   }
 }
 
@@ -128,6 +133,6 @@ class World
 
 void mousePressed()
 {
-  seed();
+  setup();
 }
 

@@ -1,13 +1,14 @@
-// Zoom
-// by REAS <http://reas.com>
-
-// Move the cursor over the image to alter its position. Click and press
-// the mouse to zoom and set the density of the matrix by typing numbers 1-5.
-// This program displays a series of lines with their heights corresponding to 
-// a color value read from an image. 
-
-// Created 10 August 2002
-
+/**
+ * Zoom. 
+ * 
+ * Move the cursor over the image to alter its position. Click and press
+ * the mouse to zoom and set the density of the matrix by typing numbers 1-5.
+ * This program displays a series of lines with their heights corresponding to 
+ * a color value read from an image. 
+ * 
+ * Created 10 August 2002
+ */
+ 
 PImage a;
 boolean onetime = true;
 int[][] aPixels;

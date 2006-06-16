@@ -1,13 +1,14 @@
-// Alpha Mask
-// by toxi <http://www.toxi.co.uk>
-
-// Loads a "mask" for an image which specifies its transparency 
-// in different parts of the image. The two images are blended
-// together using the mask() method of PImage.
-
-// Created 29 April 2003
-// Updated 7 July 2004
-
+/**
+ * Alpha Mask. 
+ * 
+ * Loads a "mask" for an image to specify the transparency 
+ * in different parts of the image. The two images are blended
+ * together using the mask() method of PImage. 
+ * 
+ * Created 29 April 2003. 
+ * Updated 7 July 2004
+ */
+ 
 PImage img;
 PImage maskImg;
 

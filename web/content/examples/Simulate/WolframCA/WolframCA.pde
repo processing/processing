@@ -1,12 +1,14 @@
-// Wolfram Cellular Automata
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Simple demonstration of a Wolfram 1-dimensional cellular automata
-// When the system reaches bottom of the window, it restarts with a new ruleset
-// Mouse click restarts as well
-
-// Created 2 May 2005
-
+/**
+ * Wolfram Cellular Automata
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * 
+ * Simple demonstration of a Wolfram 1-dimensional cellular automata
+ * When the system reaches bottom of the window, it restarts with a new ruleset
+ * Mouse click restarts as well. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 CA ca;   // An instance object to describe the Wolfram basic Cellular Automata
 
 void setup() {

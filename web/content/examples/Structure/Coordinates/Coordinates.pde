@@ -1,12 +1,13 @@
-// Coordinates
-// by REAS <http://reas.com>
-
-// All shapes drawn to the screen have a position that is specified as a coordinate.
-// All coordinates are measured as the distance from the origin in units of pixels.
-// The origin [0, 0] is the coordinate is in the upper left of the window
-// and the coordinate in the lower right is [width-1, height-1]. 
-
-// Created 1 September 2002
+/**
+ * Coordinates. 
+ * 
+ * All shapes drawn to the screen have a position that is specified as a coordinate.
+ * All coordinates are measured as the distance from the origin in units of pixels.
+ * The origin [0, 0] is the coordinate is in the upper left of the window
+ * and the coordinate in the lower right is [width-1, height-1].  
+ * 
+ * Created 1 September 2002
+ */
 
 // Sets the screen to be 200, 200, so the width of the window is 200 pixels
 // and the height of the window is 200 pixels

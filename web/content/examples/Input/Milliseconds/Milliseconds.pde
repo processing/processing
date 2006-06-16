@@ -1,13 +1,14 @@
-// Milliseconds
-// by REAS <http://reas.com>
-
-// A millisecond is 1/1000 of a second. 
-// Processing keeps track of the number of milliseconds a program has run.
-// By modifying this number with the modulo(%) operator, 
-// different patterns in time are created.  
-
-// Created 27 October 2002
-
+/**
+ * Milliseconds. 
+ * 
+ * A millisecond is 1/1000 of a second. 
+ * Processing keeps track of the number of milliseconds a program has run.
+ * By modifying this number with the modulo(%) operator, 
+ * different patterns in time are created.  
+ * 
+ * Created 27 October 2002
+ */
+ 
 float scale;
 
 void setup()

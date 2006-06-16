@@ -1,14 +1,15 @@
-// Integers_Floats
-// by REAS <http://reas.com>
-
-// Integers and floats are two different kinds of numerical data.
-// An integer (more commonly called an int) is a number without 
-// a decimal point. A float is a floating-point number, which means 
-// it is a number that has a decimal place. Floats are used when
-// more precision is needed. 
-
-// Created 09 December 2002
-
+/**
+ * Integers Floats. 
+ * 
+ * Integers and floats are two different kinds of numerical data. 
+ * An integer (more commonly called an int) is a number without 
+ * a decimal point. A float is a floating-point number, which means 
+ * it is a number that has a decimal place. Floats are used when
+ * more precision is needed. 
+ * 
+ * Created 09 December 2002
+ */
+ 
 int a = 0;      // Create a variable "a" of the datatype "int"
 float b = 0.0;  // Create a variable "b" of the datatype "float"
 

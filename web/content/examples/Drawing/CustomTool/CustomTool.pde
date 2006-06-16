@@ -1,12 +1,13 @@
-// Custom Tool
-// by REAS <http://reas.com>
-
-// Move the cursor across the screen to draw.
-// In addition to creating software tools to simulate pens and pencils, 
-// it is possible to create unique tools to draw with.
-
-// Created 23 October 2002
-
+/**
+ * Custom Tool. 
+ * 
+ * Move the cursor across the screen to draw. 
+ * In addition to creating software tools to simulate pens and pencils, 
+ * it is possible to create unique tools to draw with. 
+ * 
+ * Created 23 October 2002
+ */
+ 
 int dots = 1000;
 float[] dX = new float[dots];
 float[] dY = new float[dots];

@@ -1,11 +1,13 @@
-// Koch Curve
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Renders a simple fractal, the Koch snowflake
-// Each recursive level drawn in sequence
-
-// Created 2 May 2005
-
+/**
+ * Koch Curve
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Renders a simple fractal, the Koch snowflake. 
+ * Each recursive level drawn in sequence. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 KochFractal k;
 
 void setup() {

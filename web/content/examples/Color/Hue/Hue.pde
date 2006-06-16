@@ -1,13 +1,13 @@
-// Hue
-// by REAS <http://reas.com>
-// Modified from code by Rusty Robison
-
-// Hue is the color reflected from or transmitted through an object 
-// and is typically referred to as the name of the color (red, blue, yellow, etc.) 
-// Move the cursor vertically over each bar to alter its hue.
-
-// Updated 26 October 2002
-
+/**
+ * Hue. 
+ * 
+ * Hue is the color reflected from or transmitted through an object 
+ * and is typically referred to as the name of the color (red, blue, yellow, etc.) 
+ * Move the cursor vertically over each bar to alter its hue. 
+ * 
+ * Updated 26 October 2002
+ */
+ 
 int barWidth = 5;
 int[] hue = new int[200/barWidth];
 

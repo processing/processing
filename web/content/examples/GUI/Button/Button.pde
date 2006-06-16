@@ -1,13 +1,14 @@
-// Button
-// by REAS <http://reas.com>
-
-// Click on one of the colored squares in the 
-// center of the image to change the color of 
-// the background
-
-// Updated 09 February 2003
-// Created 21 August 2002
-
+/**
+ * Button. 
+ * 
+ * Click on one of the colored squares in the 
+ * center of the image to change the color of 
+ * the background. 
+ * 
+ * Updated 09 February 2003. 
+ * Created 21 August 2002
+ */
+ 
 int rectX, rectY;      // Position of square button
 int circleX, circleY;  // Position of circle button
 int rectSize = 50;     // Diameter of rect

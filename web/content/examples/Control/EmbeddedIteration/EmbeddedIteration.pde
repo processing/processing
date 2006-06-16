@@ -1,10 +1,11 @@
-// Embedding Iteration
-// by REAS <http://reas.com>
-
-// Embedding "for" structures allows repetition in two dimensions.
-
-// Updated 21 August 2002
-
+/**
+ * Embedding Iteration. 
+ * 
+ * Embedding "for" structures allows repetition in two dimensions. 
+ *
+ * Updated 21 August 2002
+ */
+ 
 float box_size = 11; 
 float box_space = 12; 
 int margin = 7; 

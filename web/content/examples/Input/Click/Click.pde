@@ -1,11 +1,12 @@
-// Click
-// by REAS <http://reas.com>
-
-// Move the mouse to position the shape.
-// Press the mouse button to invert the color.
-
-// Updated 21 August 2002
-
+/**
+ * Click. 
+ * 
+ * Move the mouse to position the shape. 
+ * Press the mouse button to invert the color. 
+ * 
+ * Updated 21 August 2002
+ */
+ 
 int size = 30;
 
 void setup() {

@@ -1,11 +1,13 @@
-// Noise3D
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Using 3D noise to create simple animated texture
-// Here, the third dimension ('z') is treated as time
-
-// Created 2 May 2005
-
+/**
+ * Noise3D
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Using 3D noise to create simple animated texture. 
+ * Here, the third dimension ('z') is treated as time. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 float increment = 0.01;
 // The noise function's 3rd argument, a global variable that increments once per cycle
 float zoff = 0.0;  

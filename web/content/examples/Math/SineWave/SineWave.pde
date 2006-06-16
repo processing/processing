@@ -1,10 +1,12 @@
-// Sine Wave
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Render a simple sine wave
-
-// Created 2 May 2005
-
+/**
+ * Sine Wave
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Render a simple sine wave. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 int xspacing = 8;   // How far apart should each horizontal location be spaced
 int w;              // Width of entire wave
 

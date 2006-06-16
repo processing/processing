@@ -1,13 +1,14 @@
-// Keyboard
-// by REAS <http://reas.com>
-
-// Click on the image to give it focus and press the letter keys 
-// to create forms in time and space. Each key has a unique identifying 
-// number called it's ASCII value. These numbers can be used to position 
-// shapes in space.
-
-// Created 27 October 2002
-
+/**
+ * Keyboard. 
+ * 
+ * Click on the image to give it focus and press the letter keys 
+ * to create forms in time and space. Each key has a unique identifying 
+ * number called it's ASCII value. These numbers can be used to position 
+ * shapes in space. 
+ * 
+ * Created 27 October 2002
+ */
+ 
 int numChars = 26;
 color[] colors = new color[numChars];
 int keyIndex;

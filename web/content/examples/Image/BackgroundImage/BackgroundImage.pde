@@ -1,11 +1,12 @@
-// Background image
-// by REAS <http://reas.com>
-
-// This example presents the fastest way to load a background image
-// into Processing.
-
-// Created 16 January 2003
-
+/**
+ * Background Image. 
+ * 
+ * This example presents the fastest way to load a background image
+ * into Processing. 
+ * 
+ * Created 16 January 2003
+ */
+ 
 PImage bg;
 int a; 
 

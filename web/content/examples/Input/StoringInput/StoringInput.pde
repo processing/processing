@@ -1,14 +1,15 @@
-// Storing Input 
-// by REAS <http://reas.com>
-
-// Move the mouse across the screen to change the position
-// of the circles. The positions of the mouse are recorded
-// into an array and played back every frame. Between each
-// frame, the newest value are added to the end of each array
-// and the oldest value is deleted.
-
-// Updated 21 August 2002
-
+/**
+ * Storing Input. 
+ * 
+ * Move the mouse across the screen to change the position
+ * of the circles. The positions of the mouse are recorded
+ * into an array and played back every frame. Between each
+ * frame, the newest value are added to the end of each array
+ * and the oldest value is deleted. 
+ *
+ * Updated 21 August 2002
+ */
+ 
 int num = 60;
 float mx[] = new float[num];
 float my[] = new float[num];

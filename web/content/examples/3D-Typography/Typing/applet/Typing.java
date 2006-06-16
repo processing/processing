@@ -1,11 +1,13 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Typing extends PApplet {// Typing (Excerpt from the piece Textension)
-// by Josh Nimoy <http://www.jtnimoy.com>
-
-// Click in the window to give it focus.
-// Type to add letters and press backspace to delete.
-
-// Created 27 January 2003
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Typing extends PApplet {/**
+ * Typing (Excerpt from the piece Textension)
+ * by <a href="http://www.jtnimoy.com">Josh Nimoy</a>.  
+ * 
+ * Click in the window to give it focus.
+ * Type to add letters and press backspace to delete. 
+ * 
+ * Created 27 January 2003
+ */ 
+ 
 PFont f;
 int leftmargin = 10;
 int rightmargin = 20;
@@ -84,4 +86,4 @@ public void keyPressed()
     break;
   }
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Typing" });}}

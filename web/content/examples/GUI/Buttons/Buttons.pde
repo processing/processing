@@ -1,12 +1,13 @@
-// Buttons
-// by REAS <http://reas.com>
-
-// Click on one of the shapes to change
-// the background color. This example
-// demonstates a class for buttons.
-
-// Created 09 February 2003
-
+/**
+ * Buttons. 
+ * 
+ * Click on one of the shapes to change
+ * the background color. This example
+ * demonstates a class for buttons.
+ * 
+ * Created 09 February 2003
+ */
+ 
 color currentcolor;
 
 CircleButton circle1, circle2, circle3;

@@ -1,10 +1,12 @@
-// Noise Wave
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Using Perlin Noise to generate a wave-like pattern
-
-// Created 2 May 2005
-
+/**
+ * Noise Wave
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Using Perlin Noise to generate a wave-like pattern. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 int xspacing = 8;   // How far apart should each horizontal location be spaced
 int w;              // Width of entire wave
 

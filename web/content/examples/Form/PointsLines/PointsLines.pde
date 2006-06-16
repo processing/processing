@@ -1,12 +1,13 @@
-// Points and Lines
-// by REAS <http://reas.com>
-
-// Constructing a simple dimensional form with lines and rectangles.
-// Changing the value of the variable 'd' scales the image.
-// The four variables set the positions based on the value of 'd'.
-
-// Updated 21 August 2002
-
+/**
+ * Points and Lines. 
+ * 
+ * Constructing a simple dimensional form with lines and rectangles.
+ * Changing the value of the variable 'd' scales the image.
+ * The four variables set the positions based on the value of 'd'. 
+ * 
+ * Updated 21 August 2002
+ */
+ 
 int d = 40;
 int p1 = d;
 int p2 = p1+d;

@@ -1,13 +1,13 @@
-// Simple Curves
-// by REAS <http://reas.com>
-
-// Simple curves are drawn with simple equations.
-// By using numbers with values between 0 and 1 in
-// the equations, a series of elegant curves
-// are created. The numbers are then scaled to fill the screen.
-
-// Updated 15 September 2002
-
+/**
+ * Simple Curves. 
+ * 
+ * Simple curves are drawn with simple equations. 
+ * By using numbers with values between 0 and 1 in
+ * the equations, a series of elegant curves
+ * are created. The numbers are then scaled to fill the screen. 
+ * 
+ * Updated 15 September 2002
+ */
 
 void setup() {
   size(200, 200);

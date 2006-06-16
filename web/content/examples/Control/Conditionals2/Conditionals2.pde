@@ -1,13 +1,14 @@
-// Conditionals 2
-// by REAS <http://reas.com>
-
-// We extend the language of conditionals by adding the 
-// keyword "else". This allows conditionals to ask 
-// two or more sequential questions, each with a different
-// action.
-
-// Created 16 January 2003
-
+/**
+ * Conditionals 2. 
+ * 
+ * We extend the language of conditionals by adding the 
+ * keyword "else". This allows conditionals to ask 
+ * two or more sequential questions, each with a different
+ * action. 
+ * 
+ * Created 16 January 2003
+ */
+ 
 size(200, 200);
 background(0);
 

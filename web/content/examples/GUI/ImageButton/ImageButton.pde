@@ -1,10 +1,11 @@
-// Image button
-// by REAS <http://reas.com>
-
-// Loading images and using them to create a button
-
-// Created 10 February 2003
-
+/**
+ * Image button. 
+ * 
+ * Loading images and using them to create a button. 
+ * 
+ * Created 10 February 2003
+ */
+ 
 ImageButtons button;
 
 void setup()

@@ -1,11 +1,12 @@
-// Edge Detection
-// by REAS <http://reas.com>
-
-// Exposing areas of contrast within an image
-// by processing it through a high-pass fiter.
-
-// Created 9 December 2002
-
+/**
+ * Edge Detection. 
+ * 
+ * Exposing areas of contrast within an image 
+ * by processing it through a high-pass fiter. 
+ * 
+ * Created 9 December 2002
+ */
+ 
 size(200, 200); 
 PImage a;                    // Declare variable 'a' of type PImage 
 a = loadImage("house.jpg");  // Load the images into the program 

@@ -1,10 +1,11 @@
-// Spring
-// by REAS <http://reas.com>
-
-// Click, drag, and release the horizontal bar to start the spring.
-
-// Updated 1 September 2001
-
+/**
+ * Spring. 
+ * 
+ * Click, drag, and release the horizontal bar to start the spring. 
+ * 
+ * Updated 1 September 2001
+ */
+ 
 // Spring drawing constants for top bar
 int s_height = 16;     // Height
 int left = 50;         // Left position

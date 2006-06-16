@@ -1,11 +1,13 @@
-// Typing (Excerpt from the piece Textension)
-// by Josh Nimoy <http://www.jtnimoy.com>
-
-// Click in the window to give it focus.
-// Type to add letters and press backspace to delete.
-
-// Created 27 January 2003
-
+/**
+ * Typing (Excerpt from the piece Textension)
+ * by <a href="http://www.jtnimoy.com">Josh Nimoy</a>.  
+ * 
+ * Click in the window to give it focus.
+ * Type to add letters and press backspace to delete. 
+ * 
+ * Created 27 January 2003
+ */ 
+ 
 PFont f;
 int leftmargin = 10;
 int rightmargin = 20;

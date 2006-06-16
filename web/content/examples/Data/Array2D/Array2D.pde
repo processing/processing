@@ -1,13 +1,14 @@
-// Array 2D
-// by REAS <http://reas.com>
-
-// Demonstrates the syntax for creating a two-dimensional (2D) array.
-// Values in a 2D array are accessed through two index values. 
-// 2D arrays are useful for storing images. In this example, each dot 
-// is colored in relation to its distance from the center of the image.
-
-// Created 09 December 2002
-
+/**
+ * Array 2D. 
+ * 
+ * Demonstrates the syntax for creating a two-dimensional (2D) array.
+ * Values in a 2D array are accessed through two index values.  
+ * 2D arrays are useful for storing images. In this example, each dot 
+ * is colored in relation to its distance from the center of the image. 
+ * 
+ * Created 09 December 2002
+ */
+ 
 float[][] distances;
 float maxDistance;
 

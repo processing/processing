@@ -1,11 +1,12 @@
-// Functions
-// by REAS <http://reas.com>
-
-// The draw_target() function makes it easy to draw many distinct targets.
-// Each call to draw_target() specifies the position, size, and number of 
-// rings for each target.
-
-// Updated 21 August 2002
+/**
+ * Functions. 
+ * 
+ * The draw_target() function makes it easy to draw many distinct targets. 
+ * Each call to draw_target() specifies the position, size, and number of 
+ * rings for each target. 
+ * 
+ * Updated 21 August 2002
+ */
 
 void setup() 
 {

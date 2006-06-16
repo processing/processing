@@ -1,12 +1,13 @@
-// Mouse 1D
-// by REAS <http://reas.com>
-
-// Move the mouse left and right to shift the balance.
-// The "mouseX" variable is used to control both the 
-// size and color of the rectangles.
-
-// Updated 16 September 2002
-
+/**
+ * Mouse 1D. 
+ * 
+ * Move the mouse left and right to shift the balance. 
+ * The "mouseX" variable is used to control both the 
+ * size and color of the rectangles. 
+ * 
+ * Updated 16 September 2002
+ */
+ 
 int gx = 15;
 int gy = 35;
 float leftColor = 0.0;

@@ -1,10 +1,11 @@
-// Noise1D
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Using 1D Perlin Noise to assign location
-
-// Created 2 May 2005
-
+/**
+ * Noise1D. 
+ * 
+ * Using 1D Perlin Noise to assign location. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 float xoff = 0.0;
 float xincrement = 0.01; 
 

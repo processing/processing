@@ -1,10 +1,11 @@
-// Lights
-// by REAS <http://reas.com>
-
-// Uses the default lights to show a simple box
-
-// Created 16 April 2004
-
+/**
+ * Lights. 
+ * 
+ * Uses the default lights to show a simple box. 
+ * 
+ * Created 16 April 2004
+ */
+ 
 float spin = 0.0;
 
 void setup() 

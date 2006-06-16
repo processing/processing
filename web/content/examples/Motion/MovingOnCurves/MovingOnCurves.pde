@@ -1,12 +1,13 @@
-// Moving along curves
-// by REAS <http://reas.com>
-
-// Shapes may be moved along function curves by setting
-// their position to be the values input and returned 
-// from the equations.
-
-// Updated 15 September 2002
-
+/**
+ * Moving On Curves. 
+ * 
+ * Shapes may be moved along function curves by setting
+ * their position to be the values input and returned 
+ * from the equations. 
+ * 
+ * Updated 15 September 2002
+ */
+ 
 // Variables for first ellipse
 int e1_size = 18;
 float e1_x, e1_y = 0;

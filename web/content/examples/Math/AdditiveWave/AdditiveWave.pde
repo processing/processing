@@ -1,10 +1,12 @@
-// Additive Wave
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Create a more complex wave by adding two waves together
-
-// Created 2 May 2005
-
+/**
+ * Additive Wave
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Create a more complex wave by adding two waves together. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 int xspacing = 8;   // How far apart should each horizontal location be spaced
 int w;              // Width of entire wave
 int maxwaves = 4;   // total # of waves to add together

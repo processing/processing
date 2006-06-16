@@ -1,10 +1,11 @@
-// Distance_1D
-// by REAS <http://reas.com>
-
-// Move the mouse left and right to control the speed and direction of the moving shapes
-
-// Updated 21 August 2002
-
+/**
+ * Distance 1D. 
+ * 
+ * Move the mouse left and right to control the speed and direction of the moving shapes. 
+ * 
+ * Updated 21 August 2002
+ */
+ 
 int thin = 8;
 int thick = 36;
 float xpos1 = 134.0;

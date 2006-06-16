@@ -1,15 +1,17 @@
-// Multiple Particle Systems
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Click the mouse to generate a burst of particles
-// at mouse location
-
-// Each burst is one instance of a particle system
-// with Particles and CrazyParticles (a subclass of Particle)
-// Note use of Inheritance and Polymorphism here
-
-// Created 2 May 2005
-
+/**
+ * Multiple Particle Systems
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * 
+ * Click the mouse to generate a burst of particles
+ * at mouse location. 
+ * 
+ * Each burst is one instance of a particle system
+ * with Particles and CrazyParticles (a subclass of Particle)
+ * Note use of Inheritance and Polymorphism here. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 ArrayList psystems;
 
 void setup() {

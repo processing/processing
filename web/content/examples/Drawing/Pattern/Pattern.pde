@@ -1,11 +1,12 @@
-// Patterns
-// by REAS <http://reas.com>
-
-// Move the cursor over the image to draw with a software tool 
-// which responds to the speed of the mouse.
-
-// Created 19 January 2003
-
+/**
+ * Patterns. 
+ * 
+ * Move the cursor over the image to draw with a software tool 
+ * which responds to the speed of the mouse. 
+ * 
+ * Created 19 January 2003
+ */
+ 
 int maxSpeed;
 void setup()
 {

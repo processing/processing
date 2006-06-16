@@ -1,13 +1,14 @@
-// Pixel Array
-// by REAS <http://reas.com>
-
-// Click and drag the mouse up and down to control the signal and 
-// press and hold any key to see the current pixel being read.
-// This program sequentially reads the color of every pixel of an image
-// and displays this color to fill the window. 
-
-// Created 10 August 2002
-
+/**
+ * Pixel Array. 
+ * 
+ * Click and drag the mouse up and down to control the signal and 
+ * press and hold any key to see the current pixel being read. 
+ * This program sequentially reads the color of every pixel of an image
+ * and displays this color to fill the window.  
+ * 
+ * Created 10 August 2002
+ */
+ 
 PImage a;
 int[] aPixels;
 int direction = 1;

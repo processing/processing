@@ -1,10 +1,11 @@
-// Mouse Functions
-// by REAS <http://reas.com>
-
-// Click on the box and drag it across the screen.
-
-// Updated 19 January 2003
-
+/**
+ * Mouse Functions. 
+ * 
+ * Click on the box and drag it across the screen. 
+ * 
+ * Updated 19 January 2003
+ */
+ 
 float bx;
 float by;
 int bs = 20;

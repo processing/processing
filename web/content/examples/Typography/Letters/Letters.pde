@@ -1,17 +1,18 @@
-// Letters
-// by REAS <http://reas.com>
-
-// Drawing letters to the screen in Processing
-// uses a technology developed in the mid 1990s
-// at the Visual Language Workshop at the MIT
-// Media Laboratory. It is a closed system,
-// but we have supplied a number of fonts
-// located in the "font" directory in the main
-// "processing" directory. We expect to change
-// the Processing font technology in the future.
-
-// Created 15 January 2003
-
+/**
+ * Letters. 
+ * 
+ * Drawing letters to the screen in Processing
+ * uses a technology developed in the mid 1990s
+ * at the Visual Language Workshop at the MIT
+ * Media Laboratory. It is a closed system,
+ * but we have supplied a number of fonts
+ * located in the "font" directory in the main
+ * "processing" directory. We expect to change
+ * the Processing font technology in the future. 
+ *
+ * Created 15 January 2003
+ */
+ 
 size(200, 200);
 background(0);
 

@@ -1,11 +1,13 @@
-// Brightness
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Adjusts the brightness of part of the image
-// Pixels closer to the mouse will appear brighter
-
-// Created 2 May 2005
-
+/**
+ * Brightness
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Adjusts the brightness of part of the image
+ * Pixels closer to the mouse will appear brighter. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 PImage img;
 
 void setup() {

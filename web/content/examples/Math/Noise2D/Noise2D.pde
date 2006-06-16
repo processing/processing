@@ -1,10 +1,12 @@
-// Noise2D
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Using 2D noise to create simple texture
-
-// Created 2 May 2005
-
+/*
+ * Noise2D
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Using 2D noise to create simple texture
+ * 
+ * Created 2 May 2005
+ */
+ 
 float increment = 0.02;
 
 void setup() {

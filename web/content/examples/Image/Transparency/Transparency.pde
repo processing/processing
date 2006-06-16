@@ -1,12 +1,12 @@
-// Transparency
-// by REAS <http://reas.com>
-
-// Move the pointer left and right across the image to change
-// its position. This program overlays one image over another 
-// by modifying the alpha value of the image.
-
-// Created 09 December 2002
-
+/**
+ * Transparency. 
+ * 
+ * Move the pointer left and right across the image to change
+ * its position. This program overlays one image over another 
+ * by modifying the alpha value of the image. 
+ * 
+ * Created 09 December 2002
+ */
 
 PImage a, b;
 boolean once = false;

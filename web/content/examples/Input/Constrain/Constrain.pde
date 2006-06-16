@@ -1,11 +1,12 @@
-// Constrain
-// by REAS <http://reas.com>
-
-// Move the mouse across the screen to move the circle.
-// The program constrains the circle to its box.
-
-// Updated 20 January 2003
-
+/**
+ * Constrain. 
+ * 
+ * Move the mouse across the screen to move the circle. 
+ * The program constrains the circle to its box. 
+ * 
+ * Updated 20 January 2003
+ */
+ 
 float mx;
 float my;
 float delay = 40.0;

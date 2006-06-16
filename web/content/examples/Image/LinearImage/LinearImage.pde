@@ -1,11 +1,12 @@
-// Linear Image
-// by REAS <http://reas.com>
-
-// Click and drag mouse up and down to control the signal.
-// Press and hold any key to watch the scanning.
-
-// Created 10 August 2002
-
+/**
+ * Linear Image. 
+ * 
+ * Click and drag mouse up and down to control the signal. 
+ * Press and hold any key to watch the scanning. 
+ * 
+ * Created 10 August 2002
+ */
+ 
 PImage a;
 boolean onetime = true;
 int[] aPixels = new int[200*200];

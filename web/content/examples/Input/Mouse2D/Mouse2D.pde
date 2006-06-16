@@ -1,10 +1,11 @@
-// Mouse 2D
-// by REAS <http://reas.com>
-
-// Moving the mouse changes the position and size of each box.
-
-// Updated 21 August 2002
-
+/**
+ * Mouse 2D. 
+ * 
+ * Moving the mouse changes the position and size of each box. 
+ * 
+ * Updated 21 August 2002
+ */
+ 
 void setup() 
 {
   size(200, 200); 

@@ -1,11 +1,13 @@
-// Kinetic Type
-// by Zach Lieberman <http://www.thesystemis.com>
-
-// Using the push() pop() defines the curves of the lines of type.
-
-// Created Spring 2002
-// Updated 18 January 2003
-
+/**
+ * Kinetic Type
+ * by <a href="http://www.thesystemis.com">Zach Lieberman</a>. 
+ * 
+ * Using the push() pop() defines the curves of the lines of type. 
+ * 
+ * Created Spring 2002. 
+ * Updated 18 January 2003
+ */
+ 
 Line ln;
 Line lns[];
 PFont f;

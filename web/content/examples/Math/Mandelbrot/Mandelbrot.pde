@@ -1,22 +1,26 @@
-// The Mandelbrot Set
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Simple rendering of the Mandelbrot set
-// c = a + bi
-// Iterate z = z^2 + c, i.e.
-// z(0) = 0
-// z(1) = 0*0 + c
-// z(2) = c*c + c
-// z(3) = (c*c + c) * (c*c + c) + c
-// etc.
-// c*c = (a+bi) * (a+bi) = a^2 - b^2 + 2abi
-
-// Created 2 May 2005
-
+/**
+ * The Mandelbrot Set
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Simple rendering of the Mandelbrot set: 
+ * c = a + bi
+ * Iterate z = z^2 + c, i.e.
+ * z(0) = 0
+ * z(1) = 0*0 + c
+ * z(2) = c*c + c
+ * z(3) = (c*c + c) * (c*c + c) + c
+ * etc.
+ * c*c = (a+bi) * (a+bi) = a^2 - b^2 + 2abi
+ * 
+ * Created 2 May 2005
+ */
+ 
 // Establish a range of values on the complex plane
-double xmin = -2.5; double ymin = -2; double wh = 4;
+float xmin = -2.5; 
+float ymin = -2; 
+float wh = 4;
 // A different range will allow us to "zoom" in or out on the fractal
-// double xmin = -1.5; double ymin = -.1; double wh = 0.15;
+// float xmin = -1.5; float ymin = -.1; float wh = 0.15;
 
 void setup() {
   size(200,200,P2D);
@@ -30,29 +34,29 @@ void draw() {
   int maxiterations = 200;
 
   // x goes from xmin to xmax
-  double xmax = xmin + wh;
+  float xmax = xmin + wh;
   // y goes from ymin to ymax
-  double ymax = ymin + wh;
+  float ymax = ymin + wh;
   
   // Calculate amount we increment x,y for each pixel
-  double dx = (xmax - xmin) / (width);
-  double dy = (ymax - ymin) / (height);
+  float dx = (xmax - xmin) / (width);
+  float dy = (ymax - ymin) / (height);
 
   // Start y
-  double y = ymin;
+  float y = ymin;
   for(int j = 0; j < height; j++) {
     // Start x
-    double x = xmin;
+    float x = xmin;
     for(int i = 0;  i < width; i++) {
       
       // Now we test, as we iterate z = z^2 + cm does z tend towards infinity?
-      double a = x;
-      double b = y;
+      float a = x;
+      float b = y;
       int n = 0;
       while (n < maxiterations) {
-        double aa = a * a;
-        double bb = b * b;
-        double twoab = 2.0 * a * b;
+        float aa = a * a;
+        float bb = b * b;
+        float twoab = 2.0 * a * b;
         a = aa - bb + x;
         b = twoab + y;
         // Infinty in our finite world is simple, let's just consider it 16

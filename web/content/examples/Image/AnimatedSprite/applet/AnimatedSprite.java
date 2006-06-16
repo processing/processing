@@ -1,14 +1,16 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class AnimatedSprite extends PApplet {// Animated Sprite (Shifty + Teddy)
-// by James Patterson <http://www.presstube.com> and REAS <http://reas.com>
-
-// Press the mouse button to change animations.
-// Demonstrates loading, displaying, and animating GIF images.
-// It would be easy to write a program to display 
-// animated GIFs, but would not allow as much control over 
-// the display sequence and rate of display
-
-// Created 28 January 2003
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class AnimatedSprite extends PApplet {/**
+ * Animated Sprite (Shifty + Teddy)
+ * by <a href="http://www.presstube.com">James Patterson</a>. 
+ * 
+ * Press the mouse button to change animations.
+ * Demonstrates loading, displaying, and animating GIF images.
+ * It would be easy to write a program to display 
+ * animated GIFs, but would not allow as much control over 
+ * the display sequence and rate of display. 
+ * 
+ * Created 28 January 2003
+ */
+ 
 AniSprite animation1, animation2;
 float xpos, ypos;
 float drag = 30.0f;
@@ -73,4 +75,4 @@ class AniSprite
   }
 
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "AnimatedSprite" });}}

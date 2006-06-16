@@ -1,13 +1,14 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Explode extends PApplet {// Explode
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Mouse horizontal location controls breaking apart of image
-
-// Maps pixels from a 2D image into 3D space
-// Pixel brightness controls translation along z axis
-
-// Created 2 May 2005
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Explode extends PApplet {/**
+ * Explode 
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Mouse horizontal location controls breaking apart of image and 
+ * Maps pixels from a 2D image into 3D space. Pixel brightness controls 
+ * translation along z axis. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 PImage img;       // The source image
 int cellsize = 2; // Dimensions of each cell in the grid
 int COLS, ROWS;   // Number of columns and rows in our system
@@ -44,4 +45,4 @@ public void draw()
     }
   }
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Explode" });}}

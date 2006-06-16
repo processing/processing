@@ -1,18 +1,19 @@
-// Vertices
-// by REAS <http://reas.com>
-
-// The beginShape() function begins recording vertices 
-// for a shape and endShape() stops recording.
-// A vertex is a location in space specified by X, Y, 
-// and sometimes Z coordinates. beginShape() requires a parameter 
-// to tell it which type of shape to create from the provided vertices. 
-// The choices available are LINES, LINE_STRIP, LINE_LOOP, TRIANGLES, 
-// TRIANGLE_STRIP, QUADS, QUAD_STRIP, and POLYGON. After calling the 
-// beginShape() function, a series of vertex() functions must follow. 
-// To stop drawing the shape, call the endShape() functions. 
-
-// Created 2 September 2002
-
+/**
+ * Vertices. 
+ * 
+ * The beginShape() function begins recording vertices 
+ * for a shape and endShape() stops recording. 
+ * A vertex is a location in space specified by X, Y, 
+ * and sometimes Z coordinates. beginShape() requires a parameter 
+ * to tell it which type of shape to create from the provided vertices.  
+ * The choices available are LINES, LINE_STRIP, LINE_LOOP, TRIANGLES, 
+ * TRIANGLE_STRIP, QUADS, QUAD_STRIP, and POLYGON. After calling the 
+ * beginShape() function, a series of vertex() functions must follow.  
+ * To stop drawing the shape, call the endShape() functions.  
+ * 
+ * Created 2 September 2002
+ */
+ 
 size(200, 200);
 background(0);
 

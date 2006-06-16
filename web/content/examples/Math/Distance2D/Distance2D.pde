@@ -1,12 +1,13 @@
-// Distance 2D
-// by REAS <http://reas.com>
-
-// Move the mouse across the image to obscure and reveal the matrix. 
-// Measures the distance from the mouse to each square and sets the
-// size proportionally.
-
-// Updated 21 August 2002
-
+/**
+ * Distance 2D. 
+ *
+ * Move the mouse across the image to obscure and reveal the matrix.  
+ * Measures the distance from the mouse to each square and sets the
+ * size proportionally. 
+ * 
+ * Updated 21 August 2002
+ */
+ 
 float max_distance;
 
 void setup() {

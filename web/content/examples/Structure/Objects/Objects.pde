@@ -1,11 +1,13 @@
-// Objects
-// By hbarragan
-
-// Move the cursor across the image to change the speed and positions
-// of the geometry. The class MRect defines a group of lines.
-
-// Created 11 October 2002
-
+/**
+ * Objects
+ * by hbarragan
+ * 
+ * Move the cursor across the image to change the speed and positions
+ * of the geometry. The class MRect defines a group of lines.
+ * 
+ * Created 11 October 2002
+ * Updated 14 June 2006
+ */
 
 MRect r1, r2, r3, r4;
  

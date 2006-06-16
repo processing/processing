@@ -1,12 +1,14 @@
-// Fluid 
-// by Glen Murphy <http://www.bodytag.org>
-
-// Click and drag the mouse to move the simulated fluid.
-// Adjust the "res" variable below to change resolution.
-// Code has not been optimised, and will run fairly slowly.
-
-// Completed 5 November 2002
-
+/**
+ * Fluid 
+ * by <a href="http://www.bodytag.org">Glen Murphy</a>. 
+ * 
+ * Click and drag the mouse to move the simulated fluid.
+ * Adjust the "res" variable below to change resolution.
+ * Code has not been optimised, and will run fairly slowly.
+ * 
+ * Completed 5 November 2002
+ */
+ 
 int res = 2;
 int penSize = 30;
 int lwidth;

@@ -6,6 +6,7 @@ import processing.core.*; import java.applet.*; import java.awt.*; import java.a
 
 // Created 09 December 2002
 
+
 // The statements in the setup() function 
 // execute once when the program begins
 public void setup() 
@@ -29,4 +30,4 @@ public void draw()
   line(0, y, width, y);  
 } 
 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "SetupDraw" });}}

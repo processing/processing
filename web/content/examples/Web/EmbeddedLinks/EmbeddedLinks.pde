@@ -1,13 +1,14 @@
-// Loading URLs
-// by REAS <http://reas.com>
-
-// Click on the left button to open a 
-// different URL in the same window (Only
-// works online). Click on the right button 
-// to open a URL in a new browser window. 
-
-// Created 21 June 2003
-// Updated 16 April 2005
+/**
+ * Loading URLs. 
+ * 
+ * Click on the left button to open a 
+ * different URL in the same window (Only
+ * works online). Click on the right button 
+ * to open a URL in a new browser window.  
+ * 
+ * Created 21 June 2003. 
+ * Updated 16 April 2005
+*/
 
 boolean overLeftButton = false;
 boolean overRightButton = false;

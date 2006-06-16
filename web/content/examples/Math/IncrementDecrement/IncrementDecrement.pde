@@ -1,11 +1,12 @@
-// Increment_Decrement
-// by REAS <http://reas.com>
-
-// Writing "a++" is equivalent to "a = a + 1" and 
-// writing "a--" is equivalent to "a = a - 1"  
-
-// Created 09 December 2002
-
+/**
+ * Increment_Decrement. 
+ * 
+ * Writing "a++" is equivalent to "a = a + 1".  
+ * Writing "a--" is equivalent to "a = a - 1".   
+ * 
+ * Created 09 December 2002
+ */
+ 
 int a;
 int b;
 boolean direction;

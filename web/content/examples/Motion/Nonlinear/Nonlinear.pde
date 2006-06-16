@@ -1,13 +1,13 @@
-// Nonlinear
-// by REAS <http://reas.com>
-
-// Each object moves according to a different simple equation.
-// These are the same equations that were drawn in the "SimpleCurves" example.
-// Once again, each value put into the equation is between 0 and 1 and 
-// then scaled to fill the screen.
-
-// Updated 1 September 2002
-
+/**
+ * Nonlinear. 
+ * 
+ * Each object moves according to a different simple equation. 
+ * These are the same equations that were drawn in the "SimpleCurves" example. 
+ * Once again, each value put into the equation is between 0 and 1 and 
+ * then scaled to fill the screen. 
+ * 
+ * Updated 1 September 2002
+ */
 
 int size = 8;
 int legth = 50;

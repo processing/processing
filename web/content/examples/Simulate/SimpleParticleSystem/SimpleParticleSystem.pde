@@ -1,16 +1,15 @@
-// Simple Particle System
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Particles are generated each cycle through draw(),
-// fall with gravity and fade out over time
-// A ParticleSystem object manages a variable size (ArrayList) 
-// list of particles.
-
-// More advanced particle systems can be created with
-// Simon Greenwold's Particle Library
-
-// Created 2 May 2005
-
+/**
+ * Simple Particle System
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * 
+ * Particles are generated each cycle through draw(),
+ * fall with gravity and fade out over time
+ * A ParticleSystem object manages a variable size (ArrayList) 
+ * list of particles. 
+ * 
+ * Created 2 May 2005
+ */
+ 
 ParticleSystem ps;
 
 void setup() {

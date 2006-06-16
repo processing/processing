@@ -1,15 +1,16 @@
-// Interpolate
-// by REAS <http://reas.com>
-
-// Move the mouse across the screen and the symbol will follow. 
-// Between drawing each frame of the animation, the program
-// calculates the difference between the position of the 
-// symbol and the cursor. If the distance is larger than
-// 1 pixel, the symbol moves half of the distance from its
-// current position toward the cursor.
-
-// Updated 21 August 2002
-
+/**
+ * Interpolate. 
+ * 
+ * Move the mouse across the screen and the symbol will follow.  
+ * Between drawing each frame of the animation, the program
+ * calculates the difference between the position of the 
+ * symbol and the cursor. If the distance is larger than
+ * 1 pixel, the symbol moves half of the distance from its
+ * current position toward the cursor. 
+ * 
+ * Updated 21 August 2002
+ */
+ 
 float mx;
 float my;
 float delay = 60.0;

@@ -1,11 +1,13 @@
-// Recursive Tree
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Renders a simple tree-like structure via recursion
-// Branching angle calculated as a function of horizontal mouse location
-
-// Created 2 May 2005
-
+/**
+ * Recursive Tree
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * 
+ * Renders a simple tree-like structure via recursion
+ * Branching angle calculated as a function of horizontal mouse location
+ * 
+ * Created 2 May 2005
+ */
+ 
 float theta;   
 void setup() {
   size(200,200);

@@ -1,14 +1,14 @@
-// Bezier
-// by REAS <http://reas.com>
-
-// The first two parameters for the bezier() function specify the 
-// first point in the curve and the last two parameters specify 
-// the last point. The middle parameters set the control points
-// that define the shape of the curve. 
-
-
-// Created 16 January 2003
-
+/**
+ * Bezier. 
+ * 
+ * The first two parameters for the bezier() function specify the 
+ * first point in the curve and the last two parameters specify 
+ * the last point. The middle parameters set the control points
+ * that define the shape of the curve. 
+ * 
+ * Created 16 January 2003
+ */
+ 
 size(200, 200); 
 background(0); 
 stroke(255);

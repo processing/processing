@@ -1,13 +1,14 @@
-// Datatype Conversion
-// by REAS <http://reas.com>
-
-// It is sometimes beneficial to convert a value from one type of 
-// data to another. Each of the conversion functions converts its parameter 
-// to an equivalent representation within its datatype.
-// The conversion functions include int(), float(), char(), byte(), and others
-
-// Created 09 December 2002
-
+/**
+ * Datatype Conversion. 
+ * 
+ * It is sometimes beneficial to convert a value from one type of 
+ * data to another. Each of the conversion functions converts its parameter 
+ * to an equivalent representation within its datatype. 
+ * The conversion functions include int(), float(), char(), byte(), and others. 
+ * 
+ * Created 09 December 2002
+ */
+ 
 size(200, 200);
 background(51);
 noStroke();

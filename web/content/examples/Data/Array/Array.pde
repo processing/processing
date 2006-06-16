@@ -1,16 +1,16 @@
-// Array
-// by REAS <http://reas.com>
-
-// An array is a list of data. Each piece of data in an array 
-// is identified by an index number representing its position in 
-// the array. Arrays are zero based, which means that the first 
-// element in the array is [0], the second element is [1], and so on.
-// In this example, an array named "coswav" is created and
-// filled with the cosine values. This data is displayed three 
-// separate ways on the screen. 
-
-// Created 09 December 2002
-
+/**
+ * Array. 
+ * 
+ * An array is a list of data. Each piece of data in an array 
+ * is identified by an index number representing its position in 
+ * the array. Arrays are zero based, which means that the first 
+ * element in the array is [0], the second element is [1], and so on. 
+ * In this example, an array named "coswav" is created and
+ * filled with the cosine values. This data is displayed three 
+ * separate ways on the screen.  
+ * 
+ * Created 09 December 2002
+ */
 
 size(200, 200);
 

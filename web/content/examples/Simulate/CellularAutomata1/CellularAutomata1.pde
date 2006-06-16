@@ -1,16 +1,18 @@
-// Cellular Automata 1, Conway's Game of Life 
-// by Mike Davis <http://www.lifecycle.org>
-
-// This program is a simple version of Conway's 
-// game of Life.  A lit point turns off if there 
-// are fewer than two or more than three surrounding 
-// lit points.  An unlit point turns on if there 
-// are exactly three lit neighbors.  The 'density' 
-// parameter determines how much of the board will 
-// start out lit. 
-
-// Created 3 August 2002
-
+/**
+ * Cellular Automata 1, Conway's Game of Life 
+ * by <a href="http://www.lifecycle.org">Mike Davis</a>. 
+ * 
+ * This program is a simple version of Conway's 
+ * game of Life.  A lit point turns off if there 
+ * are fewer than two or more than three surrounding 
+ * lit points.  An unlit point turns on if there 
+ * are exactly three lit neighbors.  The 'density' 
+ * parameter determines how much of the board will 
+ * start out lit.  
+ * 
+ * Created 3 August 2002
+ */
+ 
 int sx, sy; 
 float density = 0.5; 
 int[][][] world;

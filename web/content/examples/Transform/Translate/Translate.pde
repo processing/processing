@@ -1,13 +1,14 @@
-// Translate
-// by REAS <http://reas.com>
-
-// The translate() function allows objects to be moved
-// to any location within the window. The first parameter
-// sets the x-axis offset and the second parameter sets the
-// y-axis offset.
-
-// Created 16 January 2003
-
+/**
+ * Translate. 
+ * 
+ * The translate() function allows objects to be moved
+ * to any location within the window. The first parameter
+ * sets the x-axis offset and the second parameter sets the
+ * y-axis offset. 
+ * 
+ * Created 16 January 2003
+ */
+ 
 float x, y;
 float size = 40.0;
 
