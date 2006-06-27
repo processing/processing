@@ -293,6 +293,7 @@ public class PImage implements PConstants, Cloneable {
   */
 
 
+  /*
   public void loadPixels() {  // ignore
     System.err.println("Use beginPixels() instead of loadPixels() " +
                        "with release 0116 and later.");
@@ -303,11 +304,16 @@ public class PImage implements PConstants, Cloneable {
   public void updatePixels() {
     System.err.println("Use endPixels() instead of updatePixels() " +
                        "with release 0116 and later.");
+    System.err.flush();
     endPixels();
   }
+  */
 
 
   /**
+   * Call this when you want to mess with the pixels[] array.
+   * Formerly called loadPixels().
+   * <p/>
    * For subclasses where the pixels[] buffer isn't set by default,
    * this should copy all data into the pixels[] array
    */
@@ -316,6 +322,9 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Call this when finished messing with the pixels[] array.
+   * Formerly called updatePixels().
+   * <p/>
    * Mark all pixels as needing update.
    */
   public void endPixels() {
@@ -722,116 +731,6 @@ public class PImage implements PConstants, Cloneable {
     }
     updatePixels();  // mark as modified
   }
-
-
-    /* protected void blur(float r) {
-    // adjustment to make this algorithm
-    // similar to photoshop's gaussian blur settings
-    int radius = (int) (r * 3.5f);
-    radius = (radius < 1) ? 1 : ((radius < 248) ? radius : 248);
-    //radius = min(Math.max(1, radius), 248);
-    if (blurRadius != radius) {
-      // it's actually a little silly to cache this stuff
-      // when all the cost is gonna come from allocating 2x the
-      // image size in r1[] and r2[] et al.
-
-      blurRadius = radius;
-      blurKernelSize = 1 + radius*2;
-      blurKernel = new int[blurKernelSize]; //1 + radius*2];
-      blurMult = new int[blurKernelSize][256]; //new int[1+radius*2][256];
-
-      int sum = 0;
-      for (int i = 1; i < radius; i++) {
-        int radiusi = radius - i;
-        blurKernel[radius+i] = blurKernel[radiusi] = radiusi * radiusi;
-        sum += blurKernel[radiusi] + blurKernel[radiusi];
-        for (int j = 0; j < 256; j++) {
-          blurMult[radius+i][j] = blurMult[radiusi][j] = blurKernel[radiusi]*j;
-        }
-      }
-      blurKernel[radius] = radius * radius;
-      sum += blurKernel[radius];
-      for (int j = 0; j < 256; j++) {
-        blurMult[radius][j] = blurKernel[radius]*j;
-      }
-    }
-
-    //void blur(BImage img,int x, int y,int w,int h){
-    int sum, cr, cg, cb, k;
-    int pixel, read, ri, xl, yl, ym, riw;
-    //int[] pix=img.pixels;
-    //int iw=img.width;
-
-    int wh = width * height;
-    int r1[] = new int[wh];
-    int g1[] = new int[wh];
-    int b1[] = new int[wh];
-
-    for (int i = 0; i < wh; i++) {
-      ri = pixels[i];
-      r1[i] = (ri & 0xff0000) >> 16;
-      g1[i] = (ri & 0x00ff00) >> 8;
-      b1[i] = (ri & 0x0000ff);
-    }
-
-    int r2[] = new int[wh];
-    int g2[] = new int[wh];
-    int b2[] = new int[wh];
-
-    int x = 0; //Math.max(0, x);
-    int y = 0; //Math.max(0, y);
-    int w = width; // x + w - Math.max(0, (x+w)-width);
-    int h = height; //y + h - Math.max(0, (y+h)-height);
-    int yi = y*width;
-
-    for (yl = y; yl < h; yl++) {
-      for (xl = x; xl < w; xl++) {
-        cb = cg = cr = sum = 0;
-        ri = xl - blurRadius;
-        for (int i = 0; i < blurKernelSize; i++) {
-          read = ri + i;
-          if ((read >= x) && (read < w)) {
-            read += yi;
-            cr += blurMult[i][r1[read]];
-            cg += blurMult[i][g1[read]];
-            cb += blurMult[i][b1[read]];
-            sum += blurKernel[i];
-          }
-        }
-        ri = yi + xl;
-        r2[ri] = cr / sum;
-        g2[ri] = cg / sum;
-        b2[ri] = cb / sum;
-      }
-      yi += width;
-    }
-    yi = y * width;
-
-    for (yl = y; yl < h; yl++) {
-      ym = yl - blurRadius;
-      riw = ym * width;
-      for (xl = x; xl < w; xl++) {
-        cb = cg = cr = sum = 0;
-        ri = ym;
-        read = xl + riw;
-
-        for (int i = 0; i < blurKernelSize; i++) {
-          if ((ri < h) && (ri >= y)) {
-            cr += blurMult[i][r2[read]];
-            cg += blurMult[i][g2[read]];
-            cb += blurMult[i][b2[read]];
-            sum += blurKernel[i];
-          }
-          ri++;
-          read += width;
-        }
-        pixels[xl+yi] = 0xff000000 | (cr/sum)<<16 | (cg/sum)<<8 | (cb/sum);
-      }
-      yi += width;
-    }
-  }
-    // end of original blur code.......
-    */
 
 
   /**
