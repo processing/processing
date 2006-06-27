@@ -87,8 +87,9 @@
 <a href="#found">I've found a bug!</a> <br>
 <a href="#wontstart">Processing won't start! 
     Nothing happens when I click &ldquo;Run&rdquo;!</a> <br>
+<a href="#revisions">This used to work and now it doesn't</a> <br>
 <a href="#applet">Export and Browser Troubles</a> <br>
-<a href="#application">Issues with "Export to Application"</a> <br>
+<!--<a href="#application">Issues with "Export to Application"</a> <br>-->
 <a href="#memory">Out Of Memory Errors</a> <br>
 <a href="#strings">Why don't these Strings equal?</a> <br>
 <a href="#integers">Why does 2 / 5 = 0 instead of 0.4?</a> <br>
@@ -295,6 +296,29 @@ loadImage and the rest) inside of a function like setup().
  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
   <tr> 
     <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="revisions"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+This used to work and now it doesn't!
+      </b><br><br>
+Read the <A HREF="changes.html">changes</A> section of the FAQ.
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
     <a name="applet"></a> 
     <td width="645"><br>
     </td>
@@ -312,11 +336,12 @@ errors in a browser. <br> <br>
 To figure out what your problem is, you should first check the Java
 (not JavaScript!) console. On Windows, right-click the coffee cup at
 the right of the task bar, and select "Open Console". On Mac OS X, go
-to Applications &rarr; Utilities &rarr; Console and see what the last
+to Applications &rarr; Utilities &rarr; Console.app and see what the last
 few error messages were.
 <BR> <BR>
-The most common cause is a security issue. Java applets aren't allowed
-to do things like the following:
+The most common cause is a security issue. For details on how to avoid
+this, see <A HREF="export.html#signing">this section</A> of the FAQ. 
+Java applets aren't allowed to do things like the following:
 <UL>
 <LI>Applets cannot open or write to files on the local machine. So
 things like saveFrame() will cause an error when run from an
@@ -324,15 +349,16 @@ applet. To read files, make sure that you use "Add File..." to add the
 file to your sketch (or place it in the data folder yourself) so that
 it will be included when exported. Then, only use functions like
 loadStrings(), loadImage(), openStream(), etc. to read data from your file.
-<LI>Applets may only connect to servers other than the one from which
+<LI>Applets may not connect to servers other than the one from which
 they came. If you need to redirect things from another server, you can
 write a short script that will do it, understanding the possible
 security consequences for your own machine.
-<LI>They're also not allowed to do things like capture video or
+<LI>Applets are also not allowed to do things like capture video or
 audio. You don't want a malicious applet that turns on your webcam and
 starts sending things back to their server.
+<LI>
 </UL>
-Other common problems:
+Other issues:
 <UL>
 <LI>Another common problem is placing images or files into the sketch
 folder by hand, rather than placing them in the data folder (or using
@@ -362,134 +388,9 @@ and we'll add it to the FAQ.
 </UL>
 Some libraries simply don't work with the web (at least not for now):
 <UL>
-<LI>You cannot use the OpenGL library from the web. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>)
+<LI><strike>You cannot use the OpenGL library from the web. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>)</strike> As of revision 0113, it's possible for applets that use the OPENGL renderer setting to run from the web.
 <LI>The video library (both Capture and Movie) cannot be used on the
 web
-</UL>
-      </td>
-    <td width="50">&nbsp;</td>
-  </tr>
-</table>
-
-
-
-<table width="750" border="0" 
- cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
-  <tr> 
-    <td><img src="images/1pix.gif" width="1" height="50" align="top">
-    <a name="application"></a> 
-    <td width="645"><br>
-    </td>
-    <td width="50">&nbsp;</td>
-  </tr>
-  <tr> 
-    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
-    <td width="645"> 
-      <p> </p>
-      <b>
-Issues with "Export to Application"
-</b> <br> <br>
-The "Export to Application" is implemented as of release 0097 but has
-not been heavily tested. If you find problems, 
-<A HREF="http://dev.processing.org/bugs/">file a bug</A>.
-<UL>
-<LI>Just like when exporting as an applet, the "application.xxxx"
-folders will be removed completely on export.
-<LI>It is important that you don't have a method named main() in your
-sketch, unless you know what you're doing (writing your own
-main). Otherwise this will fool the preprocessor into thinking you
-have a clue, when in fact you don't.
-<LI>If running in "Java" mode, where your code starts "public class
-blah extends PApplet", you'll need to write your own main() method in
-order for Export to Application to work. It should look something like this:
-<PRE>
-static public void main(String args[]) {
-  PApplet.main(new String[] { "YourClassName" });
-}
-</PRE>
-Not doing this, or using your own main can cause problems internally
-with variables not being properly set up. If you opt not to use
-PApplet.main(), make sure you read the source code for it so that you
-understand how it works, and don't whine if it breaks.
-<LI>To make an exported application run in "present" mode, you'll have 
-to write your own main(). It needs to look something like this:
-<PRE>
-static public void main(String args[]) {
-  PApplet.main(new String[] { "--display", "YourClassName" });
-}
-</PRE>
-Other advanced options can be read in the 
-<A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PApplet.html#main(java.lang.String[])">developer's reference</A> for main(). In a future release, this will be part of an export options dialog.
-<LI>The "Movie" and "Capture" examples do not yet work properly, this
-will be fixed shortly. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=230">Bug 230</A>)
-<LI>Exporting sketches that use the video library may be broken, it's
-not clear the extent of this issue (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=231">Bug
-231</A>), but it will be repaired for a future release. 
-<LI>Export to Application will create sketches for Windows, Mac OS X,
-and Linux. Someday we might implement a dialog box that lets you
-select which one you actually want, but for now, enjoy the bounty.
-<LI>When exporting for Mac OS X from Windows, be sure to read through
-the readme.txt file in the application.macosx folder&mdash;your
-application likely won't work on Mac OS X without a minor
-modification.
-<LI>The Mac OS X export is a nice .app bundle like a regular OS X
-application. You can change the icon or edit its settings by using
-"Show Package Contents" and editing Info.plist or replacing
-sketch.icns with something more exciting.
-<LI>Windows is a shell .exe that calls the code and requires the "lib"
-folder along with it be kept intact. Someday we might make Windows be
-a nice single .exe file, but this requires more time to implement, and
-more specifically, make work consistently with the libraries. If
-you're finicky about this, use a Java EXE generator such as <A
-HREF="http://jsmooth.sourceforge.net/">JSmooth</A> or <A
-HREF="http://launch4j.sourceforge.net/">launch4j</A>.
-<LI>To set the icon used on the title bar for Windows, use the
-following code: (submitted by dxtx)
-<PRE>
-ImageIcon titlebaricon = new ImageIcon(loadBytes("myicon.gif"));
-frame.setIconImage(titlebaricon.getImage());
-</PRE>
-Note that within the PDE, the icon will only show up when a code 
-folder is in use or a library has been imported. However, it should
-show up on all occasions when exported to an application.
-<LI>Linux is just a shell script, which can probably be used on most
-Unix platforms (there's almost nothing to it). 
-<LI>When distributing your application, the "source" folder can be
-removed from the export if you'd like, but other files (such as the
-lib folder and any .dll files or whatever) should be left intact
-otherwise the application may not work properly.
-<LI>If you just want an executable jar file, export as an
-applet. Executable jar files will most likely not work with
-libraries because the path information will not be properly set, and
-the additional library jars won't be referenced. 
-<LI>Library writers can now specify what files to export for each
-platform, see the updated libraries/howto.txt for more information.
-<LI>Your current memory settings will be exported with the
-application. If you've set outrageous memory requirements, you might
-want to undo that before exporting for others, or edit the exported
-files by hand (Contents/Resources/Info.plist on Mac OS X and
-lib/args.txt on Windows).
-<LI>If you want to replace (or add) titlebar text, just do this in
-setup():
-<PRE>
-frame.setTitle("This is in the titlebar!"); </PRE>
-(thanks dxtx for pointing this out)
-<LI>Holding down shift while clicking "Export" on the toolbar will
-export to application instead of an applet.
-<LI>Users must still have Java installed to use your exported
-application. You can also copy the "java" folder from Processing to
-the same folder as your app so that users needn't install their own
-Java (this is the same as the "standard" version of processing), or
-you want to ensure that a certain version of the VM is used. For the
-time being, the error message when Java is installed may be
-nonexistant or cryptic. 
-<LI>Someday we'll also add features like icon files and whatnot. Or at
-least a default icon for the exported stuff. Or maybe even a splash
-screen while the VM is loading. Again, if you want more control, use
-your own application generator (see above for Windows, or use the Java
-package maker whatchamacallit on Mac OS X).
 </UL>
       </td>
     <td width="50">&nbsp;</td>
@@ -679,6 +580,27 @@ Things that are often perceived as bugs, but aren't actually 'broken'.
 <LI>If your code has methods (it's not just in static mode) or needs
 to run over time, it must have a draw() method, otherwise nothing will
 happen. 
+
+<LI>Any code that accesses the pixels[] array should be placed inside <TT>beginPixels()</TT> and <TT>endPixels()</TT> (called loadPixels and updatePixels in versions 0115 and earlier, and not required prior to 0085). Strictly speaking, this isn't necessary for P2D and P3D, but is required for the OPENGL and JAVA2D renderer settings. It's best to simply get in the habit of using begin/end in your programs. A complete description can be found in the reference for the <A HREF="http://processing.org/reference/pixels.html">pixels[]</A> array.
+
+<LI>PSound has been removed as of release 0112. Getting sound to work with Java is a total headache, and therefore something better left to a <A HREF="http://processing.org/reference/libraries/">library</A>. The Sonia and Ess libraries will both provide better audio support. We had hoped to provide a simple means to play audio clips and whatnot, but Sun's audio classes are too buggy across different platforms and different versions of Java. A buggy mess like that requires lots of code (and lots of testing across all our platforms), and we didn't want to muck up the core with that business. 
+
+<LI>Unless you know what you're doing, you should not have a method 
+in your sketch that's called run() (with no parameters, at least). 
+This will break your sketch. Unfortunately, we can't explicitly disallow it, 
+because some advanced programmers need to write their own run(). 
+
+<LI><EM>Why doesn't saveFrame (or saveStrings or saveBytes) 
+write things to the data folder?</EM>
+   All saveXxxx() functions use the path to the sketch folder, rather than
+   its data folder. Once exported, the data folder will be found inside the
+   jar file of the exported application or applet. In this case, it's not
+   possible to save data into the jar file, because it will often be running
+   from a server, or marked in-use if running from a local file system.
+   With this in mind, saving to the data path doesn't make sense anyway.
+   If you know you're running locally, and want to save to the data folder,
+   use <TT>saveXxxx("data/blah.dat")</TT>.
+
 <LI>Objects with alpha (lines or shapes with an alpha fill or stroke,
 images with alpha, all fonts) are displayed in P3D and OpenGL based on
 their drawing order. This creates some annoying effects like making
@@ -727,15 +649,53 @@ is not something from processing, it is a bug in Roxio Toast 5.2's Video
   multiple source code files (more than one tab), or extra code files
   in the 'code' folder are employed.
 
+<LI>A Processing sketch will attempt to use as much CPU as is available, 
+unless framerate() is called. On Windows, this can sometimes cause audio
+hiccups when an MP3 player is running at the same time, or another 
+application is trying to do something simultaneously. To fix the audio
+issue, add a delay(5) or delay(10) to your code, which will give five 
+or ten milliseconds to other applications so they can breathe. For other
+applications, you may have to set the framerate() lower, or use a longer
+delay().
+
 <LI>mouseX and mouseY always even (or always odd) numbers? By default,
 Windows 2000 (and XP?) seems to skip every other pixel on the screen,
 causing weirdness for some drawing applications done with Processing.
 If you're seeing this, you can fix it by visiting Control Panels
 &rarr; Mouse &rarr; Pointer Options &rarr; Enhance pointer precision.
 (This was actually tracked down by someone else in the community,
-whose name I have misplaced. if it was you, please drop me a line so
+whose name I have misplaced. If it was you, please drop me a line so
 you can be properly cited. This kind of help is huge for us, since
 we're such a small group!)
+
+<LI>You may find that pmouseX and pmouseY have different values 
+inside draw() and inside events like mousePressed() and mouseMoved().
+This is because they're used for different roles, so don't mix them!
+Inside draw(), pmouseX and pmouseY update only once per frame (once per trip
+through your draw() method). 
+Inside mouse events, they update each time the event is called. 
+If they weren't separated, then the mouse would be read only once 
+per frame, making response choppy. 
+If the mouse variables were always updated multiple times per frame, 
+using <NOBR><TT>line(pmouseX, pmouseY, mouseX, mouseY)</TT></NOBR> inside 
+draw() would have lots of gaps, because pmouseX may have changed 
+several times in between the calls to line(). Use pmouseX/Y inside draw()
+if you want values relative to the previous frame. Use pmouseX/Y inside the
+mouse functions if you want continuous response.
+<LI>If your sketch is based on "Java mode", where you explicitly say
+that the class extends PApplet, then the preprocessor assumes that you
+know what you're doing. You'll have to make sure that your code is named
+properly. This means that if you have "public class PooTime extends PApplet" 
+at the beginning of your sketch, you bet your a-- the tab will need to be
+named PooTime. If not, your code isn't gonna run. 
+I mean, c'mon. you know what you're doing, right?
+<LI>Don't name your sketch the same thing as a library or other class
+that's used in your sketch. For instance, your sketch shouldn't be named
+"Server" if you've imported the net library, because it already has a 
+class named Server. You can be more creative than that.
+<LI>When exporting to an application, the same deal applies with Java
+mode and knowing what you're doing. See the notes on 
+<A HREF="export.html#application">export to application</A>.
       </td>
     <td width="50">&nbsp;</td>
   </tr>
@@ -764,8 +724,8 @@ install or can be flakey. Someday in the future perhaps we can
 circumvent this mess.
 <br> <br>
 The QuickTime 7 upgrade released April 29, 2005 (and now included with
-iTunes 6) introduces its own unique set of problems. See below for
-more caveats and fun that are specific to your platform.
+iTunes 6) introduces its own unique set of problems. See caveats and fun
+below for your platform.
 <br> <br>
 The message "This version of QuickTime for Java has expired" is an Apple bug,
 and is fixed in the version of QuickTime that is included with iTunes
@@ -774,25 +734,22 @@ from iTunes <A
 HREF="http://www.apple.com/quicktime/download/standalone.html">here</A>.
 <br> <br>
 You can find more discussion about video and problems that people have
-had over in the <A
-HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera">Video
-& Movies</A> section of the discourse board. And if you find a bug,
-please use the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
+had over in the <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera">Video & Movies</A> section of the discourse board. And if you find a bug, please use the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
 <br> <br>
 Windows
 <UL>
 <LI>In order for camera input to work, you'll need to install a
 QuickTime-compatible video digitizer (VDIG). Unfortunately, most
 cameras on Windows don't support QuickTime right off the bat, but
-we've had reasonable luck with <a
-href="http://www.vdig.com/WinVDIG/">WinVDIG</A>. 
+we've had some luck with <a
+href="http://www.vdig.com/WinVDIG/">WinVDIG</A>. Unfortunately, WinVDIG
+1.0.5 seems to be quite broken (either doesn't work at all, or video
+can't be resized), so you should stick with 
 <A HREF="http://www.vdig.com/WinVDIG/WinVDIG_101.exe">WinVDIG
-1.0.1</A> is for QuickTime 6, and <A
-HREF="http://www.vdig.com/WinVDIG/WinVDIG_105.exe">WinVDIG 1.0.5</A>
-(or any later release on the site) is for QuickTime 7. Use the capture
-application included with the WinVDIG install to make sure that things
-are working properly (this helps us isolate WinVDIG vs. QuickTime for
-Java vs. Processing bugs).
+1.0.1</A>. 
+<LI>If you've already installed WinVDIG 1.0.5, do an uninstall, and be sure to say "Yes To All" (or the equivalent for your language) when it asks whether you want to de-install the DLLs. 
+<LI>If you're completely stuck on the WinVDIG problems, some have found happiness with this solution from pandaman: "I deleted the files vsVDIG from system32/quicktime AND program files/quicktime and deleted VSdump from system32- uninstalled vdig - reinstalled vdig 1.01 and things seem to be working now". It always makes us scared to go deleting things in System32 much less Program Files. But depending on your level of frustration, the possibility of hurting your Windows install may even sound enticing. Be sure to follow that line of instructions <EM>carefuly</EM>. I spent half an hour trying to reinstall WinVDIG on a student's machine because I missed some of it.
+<LI>Use the capture application included with the WinVDIG install to make sure that things are working properly (this helps us isolate WinVDIG vs. QuickTime for Java vs. Processing bugs).
 <LI>If you want to avoid QuickTime 7, use the <A
 HREF="http://www.apple.com/support/downloads/quicktime652forwindows.html">QuickTime
 6.5.2</A> installer that's buried on Apple's site. Uninstall QuickTime
@@ -824,9 +781,6 @@ HREF="http://support.microsoft.com/default.aspx?scid=kb;en-us;290301">this</A>
 Microsoft Support document. More discussion of installer-related
 issues can be seen at <A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=171">Bug 171</A>.
-
-<LI>If you're completely stuck on the WinVDIG problems, some have found happiness with this solution from pandaman: "I deleted the files vsVDIG from system32/quicktime AND program files/quicktime and deleted VSdump from system32- uninstalled vdig - reinstalled vdig 1.01 and things seem to be working now". We've not tried this, and it always makes us scared to go deleting things in System32 much less Program Files. But depending on your level of frustration, the possibility of hurting your Windows install may even sound enticing.
-
 <LI>Video sometimes likes to crash the application completely on
   Windows. This seems to be due to problems with QuickTime for Java
   (since we shouldn't be able to write code that crashes using
@@ -862,12 +816,12 @@ of sync with the Apple's Java updates, and this is one of the leftovers
 of that scenario. Blame Apple. Blame Canada.
 </UL>
 
-Linux (or any other platform)
+Linux (or any platform besides Mac and Windows)
 <UL>
 <LI>The video library is only supported on Windows and Mac OS, because it relies on QuickTime for Java. There has been discussion of using other libraries (such as JMF) to bring support to Linux, search <A HREF="http://processing.org/discourse">discourse</A> for more information.
 </UL>
 
-Windows and Mac OS
+All Platforms
 <UL>
 <LI>Video performance is not particularly great. The library is simply not built (and Java is not currently capable) of moving around 640x480 video on most machines, much less doing analysis on the video. The library was intended as a way to get pixels and manipulate them (either small pixel buffers interactively, or large ones for non real-time use). There are better tools for real-time, large screen analysis. It is my estimate that a 2x performance increase can probably be obtained by making better use of the QuickTime for Java library, but this still won't be enough to do analysis of 640x480 pixels at 30 frames per second, so it remains a lower priority. As always <A HREF="http://dev.processing.org/">contributions are welcome</A>, in case you're a video hacker who wants to help improve the library. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=40">Bug 40</A>)
 <LI>Projects that use video cannot (currently?) be exported to the
@@ -916,7 +870,7 @@ is a messy thing to straighten out, because it could be anywhere in
 your PATH or CLASSPATH. Search your drive for RXTXcomm.jar or simply
 comm.jar. Files that might cause trouble are libSerial.jnilib 
 (on Mac OS X), libSerial.dll (Windows), jcl.jar, and
-javax.comm.properties. (contributed by stendahl)
+javax.comm.properties. (additional notes from stendahl)
 </UL>
 Mac OS X
 <UL>
@@ -928,13 +882,16 @@ the first time you're using rxtx, you'll need to make your way to the
 macosx_setup.command (double-click it and follow the instructions).
 This will make sure that things are properly set up (a few permissions
 need to be changed). 
-<LI>For Intel Macs, you'll need to use Processing release 0111 or later, this is the first version to have a Universal Binary for RXTX.
+<LI>For Intel Macs, you'll need to use Processing release 0111 or later, this is the first version to have a Universal Binary for RXTX. 
+<LI>If you ran the setup script on an earlier version of Processing, 
+you'll need to re-run it (once) with release 0111 and later.
 <LI>If you're getting a "serial port is already in
-use by another application" it's possible that you haven't run this
-script. On my machine, I installed the keyspan driver for my
+use by another application" it's possible that you haven't run the
+setup script. On my machine, I installed the keyspan driver for my
 usb-serial converter, ran the script, and then rebooted in order for
-things to work (a reboot does the body good). In the past, I've used a
-keyspan 28X dual port adapter, and Serial.list() returns things like
+things to work (a reboot does the body good). 
+<LI>In the past, I've used a keyspan 28X dual port adapter, 
+and Serial.list() returns things like
 <tt>/dev/cu.USA28X21P1.1</tt>. You'll probably have something
 similar. Don't mind the frightening names.
 <LI>Tom Igoe was kind enough to note that you'll be in a world of hurt
@@ -942,7 +899,9 @@ if you disconnect your serial adapter while a sketch is
 running&mdash;it'll prolly freeze the machine and require a forced
 reboot. This scenario may seem unlikely, but you might run into it if
 your adapter is plugged into a USB keyboard, and you have the
-keyboard plugged into a monitor/keyboard switcher.
+keyboard plugged into a monitor/keyboard switcher. You know, those cheap
+KVMs that everyone likes to talk about in relation to the Mac Minis? 
+The ones that actually cost ~$150 and up?
 <LI>The OS X 10.4 (Tiger) installer wipes out your permissions and groups
 on /var/spool/uucp, so you'll have to run the setup command
 again. However, running it returns:
@@ -992,41 +951,6 @@ them: beta code that runs as root and handles files? yeah great...)
  cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
   <tr> 
     <td><img src="images/1pix.gif" width="1" height="50" align="top">
-    <a name="java2d"></a> 
-    <td width="645"><br>
-    </td>
-    <td width="50">&nbsp;</td>
-  </tr>
-  <tr> 
-    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
-    <td width="645"> 
-      <p> </p>
-      <b>
-When Drawing in 2D
-</b> <br> <br>
-<UL>
-<LI>The default renderer as of beta uses Java 2D. It's more accurate
-than the renderer used in alpha, but is super slow for handling
-pixels. At least until we get a chance to get the old 2D renderer
-working in a similar fashion, you can use size(w, h, P3D)
-instead of size(w, h) which will be faster for general pixel flipping
-madness.
-<LI>To get access to the Java 2D "Graphics2D" object for the default
-renderer, use:
-<PRE>Graphics2D g2 = ((PGraphics2)g).g2;</PRE>
-This will let you do Java 2D stuff directly, but is not supported in
-any way shape or form. Which just means "have fun, but don't complain
-if it breaks."
-      </td>
-    <td width="50">&nbsp;</td>
-  </tr>
-</table>
-
-
-<table width="750" border="0" 
- cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
-  <tr> 
-    <td><img src="images/1pix.gif" width="1" height="50" align="top">
     <a name="opengl"></a> 
     <td width="645"><br>
     </td>
@@ -1040,6 +964,17 @@ if it breaks."
 OpenGL Issues
 </b> <br> <br>
 <UL>
+<LI><EM>Try updating your drivers</A>. 
+If you're getting a blank screen with sketch that uses OpenGL, 
+or the sketch is hanging or starting very slowly, you likely need to
+update your drivers. Release 0110 and later use a newer version of
+<A HREF="http://jogl.dev.java.net">JOGL</A>, which requires a software
+update for some video cards. On Windows, updated drivers are available
+from your machine's vendor, Windows Update, or the manufacturer of
+your graphics card. On Mac OS X, use Software Update to make sure your
+system is up to date. For instance, OS X 10.4.2 has problems with 
+0110+ that are fixed in later releases of 10.4.x.
+
 <LI>We don't recommend running other OpenGL programs while running
   Processing in OpenGL mode. GL tends takes charge of things so
   results will be unexpected (windows from the other app showing
@@ -1086,26 +1021,11 @@ Daniel Shiffman for finding this fix.
   focus" bug on OS X is fixed for Processing release 93, thanks to
   toxi for tracking it down as fixed with a new JOGL release.
 
-<LI> On Windows, if you're getting a lot of OpenGL crashing, blue
-screens, or other mess, your driver might be bad. For instance, if
-you're using a Dell, use the driver they provide (<a
-href="http://support.dell.com">support.dell.com</a>) instead of what
+<LI>On Windows, if you're getting a lot of OpenGL crashing, blue
+screens, or other mess, your driver might be bad (really!) 
+For instance, if you're using a Dell, use the driver they provide 
+(<a href="http://support.dell.com">support.dell.com</a>) instead of what
 might be a more recent driver obtained directly from nvidia.com.
-
-<LI>To get access to the GL object, you can use the following:
-<PRE>GL gl = ((PGraphicsGL)g).gl;</PRE>
-This will give you the <a href="https://jogl.dev.java.net/">jogl</a> 
-object that talks directly to OpenGL and will let you make OpenGL 
-calls directly. Note, however, that <em>this is not supported</em>, 
-in the sense that if you get weird problems with a GL-based sketch
-that uses this method, you're on your own. Processing is not intended
-as a nice wrapper on top of OpenGL. Instead, we're using 
-OpenGL graphics for one implementation of the Processing Core
-API. <BR> 
-Because most of the work in drawing is handled by Processing, most
-OpenGL calls will not work, because the model and perspective matrices
-won't be set up properly. Therefore, using the GL object will mostly
-only be useful for tweaking obscure OpenGL parameters.
 
       </td>
     <td width="50">&nbsp;</td>
