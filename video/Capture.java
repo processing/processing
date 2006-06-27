@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-06 Ben Fry and Casey Reas
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -281,21 +281,15 @@ public class Capture extends PImage implements Runnable {
   public void read() {
     //try {
     //synchronized (capture) {
+    beginPixels();
     synchronized (pixels) {
-      //long t1 = System.currentTimeMillis();
-
+      //System.out.println("read1");
       if (crop) {
-        /*
-        // f#$)(#$ing quicktime / jni is so g-d slow that this
-        // code takes literally 100x longer to run
-        int sourceOffset = cropX*4 + cropY*dataRowBytes;
-        int destOffset = 0;
-        for (int y = 0; y < cropH; y++) {
-          raw.copyToArray(sourceOffset, pixels, destOffset, cropW);
-          sourceOffset += dataRowBytes;
-          destOffset += width;
-        }
-        */
+        //System.out.println("read2a");
+        // f#$)(#$ing quicktime / jni is so g-d slow, calling copyToArray
+        // for the invidual rows is literally 100x slower. instead, first
+        // copy the entire buffer to a separate array (i didn't need that
+        // memory anyway), and do an arraycopy for each row.
         if (data == null) {
           data = new int[dataWidth * dataHeight];
         }
@@ -308,15 +302,17 @@ public class Capture extends PImage implements Runnable {
           destOffset += width;
         }
       } else {  // no crop, just copy directly
+        //System.out.println("read2b");
         raw.copyToArray(0, pixels, 0, width * height);
       }
-      //long t2 = System.currentTimeMillis();
-      //System.out.println(t2 - t1);
+      //System.out.println("read3");
 
       available = false;
-      // mark this image as modified so that PGraphics2 and PGraphicsGL
-      // willproperly re-blit and draw this guy
-      updatePixels();
+      // mark this image as modified so that PGraphicsJava and PGraphicsGL
+      // will properly re-blit and draw this guy
+      //updatePixels();
+      endPixels();
+      //System.out.println("read4");
     }
   }
 
