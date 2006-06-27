@@ -85,6 +85,9 @@
     <td width="55" valign="top"><img src="images/1pix.gif" width="1" height="1"><img src="images/1pix.gif" width="55" height="55"></td>
     <td width="675" valign="top"> <p>
 <a href="#big">How do I make really large images?</a> <br>
+<a href="#mouse">How do I move the mouse cursor?</a> <br>
+<a href="#using_java2d">Using the (default) Java2D renderer</a> <br>
+<a href="#using_opengl">Using the OpenGL renderer</a> <br>
         <br>
         <br>
       </p></td>
@@ -370,6 +373,131 @@ memory section carefully, it can be confusing.
 <LI>It's not possible to use createGraphics() with OPENGL, because it doesn't allow offscreen use. 
 <LI>With Processing 0115 and later, it's possible to write images in formats other than the default .tga and .tiff. The exact formats and background information can be found in the developer's reference for <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PImage.html#save(java.lang.String)">PImage.save()</A>.
 </UL>
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="mouse"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+How do I move the mouse cursor to another location? 
+</b> <br> <br>
+If you want to control the position of the mouse cursor, rather than just reading it, you'll need to Java's AWT Robot class. The API reference for this class can be found 
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Robot.html">here</A>. 
+<p/>
+For security reasons, you won't be able to do this in an applet (imagine going to any web page and having control of your mouse taken away), unless you <A HREF="export.html#signing">sign</A> your applet. 
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="using_java2d"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+Using the (default) Java2D renderer
+</b> <br> <br>
+<UL>
+<LI>Pixel operations too slow? As of release 0085 (the first beta), the default renderer uses Java2D. It's more accurate than the renderer used in alpha (handles stroke caps and joins, better polygon tessellation), 
+but is super slow for handling pixels. At least until we get a chance 
+to get the old 2D renderer working in a similar fashion, 
+you can use <TT>size(w, h, P3D)</TT>
+instead of <TT>size(w, h)</TT> which will be faster for general pixel flipping
+madness.
+<LI>To get access to the Java 2D "Graphics2D" object for the default
+renderer, use:
+<PRE>Graphics2D g2 = ((PGraphics2)g).g2;</PRE>
+This will let you do Java 2D stuff directly, but is not supported in
+any way shape or form. Which just means "have fun, but don't complain
+if it breaks."
+      </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+</table>
+
+
+<table width="750" border="0" 
+ cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+  <tr> 
+    <td><img src="images/1pix.gif" width="1" height="50" align="top">
+    <a name="using_opengl"></a> 
+    <td width="645"><br>
+    </td>
+    <td width="50">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="55" align="right" valign="top"><a href="#top"><img src="images/up_arrow_small.gif" width="26" height="19" border="0"></a></td>
+    <td width="645"> 
+      <p> </p>
+      <b>
+Using the OpenGL renderer
+</b> <br> <br>
+<UL>
+<LI>To get access to the GL object, you can use the following:
+<PRE>GL gl = ((PGraphicsGL)g).gl;</PRE>
+This will give you the <a href="https://jogl.dev.java.net/">jogl</a> 
+object that talks directly to OpenGL and will let you make OpenGL 
+calls directly. Note, however, that <em>this is not supported</em>, 
+in the sense that if you get weird problems with a GL-based sketch
+that uses this method, you're on your own. Processing is not intended
+as a nice wrapper on top of OpenGL. Instead, we're using OpenGL 
+graphics for one implementation of the Processing Core API.
+<BR>
+Because most of the work in drawing is handled by Processing, most
+OpenGL calls will not work, because the model and perspective matrices
+won't be set up properly. Therefore, using the GL object will mostly
+only be useful for tweaking obscure OpenGL parameters.
+<LI>Another option for talking directly to OpenGL in release 0116 and 
+later is to use the beginGL() and endGL() methods. These were added 
+against my better judgement, and handle setting up the camera matrices.
+Lighting and other features still will not work. An example:
+<PRE>
+
+import javax.media.opengl.*;
+
+void setup() {
+  size(400, 400, OPENGL);
+}
+
+void draw() {
+  PGraphicsGL pgl = (PGraphicsGL) g;
+  GL gl = pgl.beginGL();
+  // do some things with gl.xxx functions here
+  pgl.endGL();
+}
+
+</PRE>
+Generally, this should be only considered a last-ditch way to get 
+at a particular GL-specific feature. 
+It makes your code completely incompatible with everything else 
+(such as future versions of Processing, or other 3D renderers) 
+and will confuse the hell outta people when you post
+your code to the web. Again, if this works for you great, but if not, 
+we're not gonna field questions about it on the board.
+Man, how I'm gonna regret this.
       </td>
     <td width="50">&nbsp;</td>
   </tr>
