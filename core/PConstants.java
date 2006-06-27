@@ -39,9 +39,9 @@ public interface PConstants {
 
   // renderers known to processing.core
 
-  static final String P2D    = "processing.core.PGraphics";
+  static final String P2D    = "processing.core.PGraphics2";
   static final String P3D    = "processing.core.PGraphics3";
-  static final String JAVA2D = "processing.core.PGraphics2";
+  static final String JAVA2D = "processing.core.PGraphicsJava";
   static final String OPENGL = "processing.opengl.PGraphicsGL";
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
@@ -86,7 +86,7 @@ public interface PConstants {
 
 
   // used by split, all the standard whitespace chars
-  // (uncludes unicode nbsp, that little bostage)
+  // (also includes unicode nbsp, that little bostage)
 
   static final String WHITESPACE = " \t\n\r\f\u00A0";
 
@@ -115,8 +115,6 @@ public interface PConstants {
   static final int OPAQUE    = 14;
   static final int POSTERIZE = 15;
   static final int THRESHOLD = 16;
-
-  // [toxi20050728] added 2 new filter types for CV tasks
   static final int ERODE     = 17;
   static final int DILATE    = 18;
 

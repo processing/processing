@@ -35,6 +35,59 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+_ fix the internal file chooser so that people don't need to make their own
+_   threading is a problem with inputFile() and inputFolder()
+
+_ jai handles setting image size
+_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
+_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
+_    JAI.create("filestore", bufImage, filename+".png", "PNG");
+_ jpeg loading may be extremely slow (loadBytes?)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_Responsive;action=display;num=1150064360
+
+_ svg loader is on the list for 1.0
+_   maybe include as part of PApplet (casey thinks so)
+_ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
+
+_ cameraXYZ doesn't seem to actually be used for anything
+_   since camera functions don't even look at it or set it
+
+_ file for 2.0.. stroke on type
+
+_ saveFrame() not working for casey
+_   problem with tiff loading in photoshop etc
+void setup() {
+size(400, 400);
+noLoop();
+}
+void draw() {
+line(0, 0, width, height);
+line(0, width, height, 0);
+saveFrame();
+}
+
+_ urls with ampersands don't work with link()
+_   Runtime.getRuntime().exec("cmd /c start " + url.replaceAll("&","^&"));
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1149974261
+
+_ fonts in java 1.5 have changed again
+_   appears that asking for the postscript name no longer works
+_   fix "create font" and associated font stuff to straighten it out
+
+_ blend() mode param should be moved to the front
+_   make sure there's parity with the copy() functions
+_   remove single pixel blend functions
+
+_ add to docs: save() on a PImage needs savePath() added
+
+_ background() with an image ignores the tint.. it's basically like set()
+
+_ gl point stuff is a problem
+_   need to implement point() as actual gl points
+_   this means adding points to the pipeline
+
+_ make version of loadbytes that checks length of the stream first
+
 _ saveStrings(filename, strings, count) 
 _   otherwise the save is kinda wonky
 _   or maybe that should just be done with the array fxns
@@ -47,6 +100,16 @@ _   or TOP, MIDDLE, and BOTTOM
 _   textAlign(CENTER | TOP);
 _   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
 _   or textAlign(LEFT, MIDDLE); -> this one seems best
+
+_ only call defaults() when it's part of a PApplet canvas
+_   don't want to hose PGraphics for others
+_   both for pdf, and making background transparent images
+_ background(0, 0, 0, 0) is the way to really clear everything with zeroes
+_   or background(0, 0), but the former is prolly better conceptually
+_ if calling beginPixels inside another, need to increment a counter
+_   otherwise the end will look like it's time to update
+_   which may not actually be the case
+_   i.e. calling filter() inside begin/end block
 
 _ PGraphics.clear() problem from workbench and malware stuff
 _   had to put synchronized onto draw and size()

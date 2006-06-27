@@ -99,7 +99,14 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  /** true if tint() is enabled (read-only) */
+  /**
+   * true if tint() is enabled (read-only).
+   * Using tint/tintColor seems a better option for naming than
+   * tintEnabled/tint because the latter seems ugly, even though
+   * g.tint as the actual color seems a little more intuitive,
+   * it's just that g.tintEnabled is even more unintuitive.
+   * Same goes for fill and stroke et al.
+   */
   public boolean tint;
 
   /** tint that was last set (read-only) */
@@ -179,14 +186,10 @@ public class PGraphics extends PImage implements PConstants {
    * Model transformation of the form m[row][column],
    * which is a "column vector" (as opposed to "row vector") matrix.
    */
-  //public float m00, m01, m02;
-  //public float m10, m11, m12;
   public float m00, m01, m02, m03;
   public float m10, m11, m12, m13;
   public float m20, m21, m22, m23;
   public float m30, m31, m32, m33;
-
-  //public int angleMode;
 
   static final int MATRIX_STACK_DEPTH = 32;
   float matrixStack[][] = new float[MATRIX_STACK_DEPTH][16];
@@ -403,18 +406,13 @@ public class PGraphics extends PImage implements PConstants {
    *  For an ambient light, this will hold the ambient color.
    *  Internally these are stored as numbers between 0 and 1. */
   public float lightDiffuse[][];
-  //public float lightsDiffuseR[], lightsDiffuseG[], lightsDiffuseB[];
 
   /** Specular colors for lights.
       Internally these are stored as numbers between 0 and 1. */
   public float lightSpecular[][];
-  //public float lightsSpecularR[], lightsSpecularG[], lightsSpecularB[];
 
   /** Current specular color for lighting */
   public float currentLightSpecular[];
-  //public float lightSpecularR;
-  //public float lightSpecularG;
-  //public float lightSpecularB;
 
   /** Current light falloff */
   public float currentLightFalloffConstant;
@@ -567,20 +565,24 @@ public class PGraphics extends PImage implements PConstants {
    * Former function, now called beginDraw.
    * @deprecated
    */
+  /*
   public void beginFrame() {  // ignore
     System.err.println("beginFrame() is now beginDraw(), please use that instead");
     beginDraw();
   }
+  */
 
 
   /**
    * Former function, now called endDraw.
    * @deprecated
    */
+  /*
   public void endFrame() {  // ignore
     System.err.println("endFrame() is now endDraw(), please use that instead");
     endDraw();
   }
+  */
 
 
   /**
@@ -664,15 +666,8 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void flush() {
-    // no-op, mostl for P3D to write sorted stuff
+    // no-op, mostly for P3D to write sorted stuff
   }
-
-
-  /**
-   * do anything that needs doing after setup before draw
-   */
-  //public void postSetup() {
-  //}
 
 
   //////////////////////////////////////////////////////////////
