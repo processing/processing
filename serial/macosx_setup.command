@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# double-checked for release 0116 because of complaints of problems
+# but this seems to be all that's in the preinstall/preupgrade scripts from
+# rxtx-2.1-7r2/MACOSX_IDE/ForPackageMaker/Resources/
+
 # modified to change from /var/spool/uucp to /var/lock for rxtx 2.1_7r2
 # for processing release 0112, 13 april 2006 [fry]
 
