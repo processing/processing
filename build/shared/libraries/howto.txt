@@ -419,17 +419,36 @@ public class FancyLibrary {
 //////////////////////////////////////////////////////////////
 
 
+Using built-in functions from processing.core
+
+Many methods in PApplet are made static for use by other libraries
+and code that interfaces with Processing. For instance, openStream()
+requires an applet object, but loadStrings() is a static method 
+that can be run on any InputStream. See the developer's reference
+for more information about which methods are available.
+
+
+//////////////////////////////////////////////////////////////
+
+
 Accessing files from inside a library
 
-These functions were finalized in revision 0096, apologies for the 
-API changes along the way.
+To open files for use with a library, use the openStream() method.
+This is the most compatible means for loading data, and makes use
+of many hours of headaches that were the result of attempts to 
+create functions that loaded data across platforms (Mac, Windows, 
+and Linux) and circumstances (applet, application, and other). 
 
 The functions sketchPath(), savePath(), dataPath(), and createPath()
 all facilitate reading and writing files relative to the sketch 
 folder. They should be used to ensure that file I/O works consistently
 between your library and functions like loadImage() or loadStrings().
 Their documentation can be seen in the online javadoc reference found
-on dev.processing.org.
+on dev.processing.org. The variable sketchPath is available for
+convenience, but in nearly all cases, the sketchPath() method is
+a better (and more compatible) route.
+
+The xxxxPath() functions were finalized in revision 0096.
 
 
 //////////////////////////////////////////////////////////////
@@ -454,4 +473,4 @@ official things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 13 March 2006
+Ben Fry, Last updated 26 June 2006
