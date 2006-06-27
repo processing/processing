@@ -155,7 +155,8 @@ console.auto_clear = true
 # the default is 500, lengthen at your own peril
 console.length = 500
 
-status.notice.fgcolor = #ffffff
+#status.notice.fgcolor = #ffffff
+status.notice.fgcolor = #000000
 status.notice.bgcolor = #bbbbaa
 status.error.fgcolor  = #ffffff
 status.error.bgcolor  = #662000
