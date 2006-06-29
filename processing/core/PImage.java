@@ -586,8 +586,9 @@ public class PImage implements PConstants, Cloneable {
    * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
    */
   public void filter(int kind) {
-    switch (kind) {
+    beginPixels();
 
+    switch (kind) {
       case BLUR:
         // TODO write basic low-pass filter blur here
         // what does photoshop do on the edges with this guy?
@@ -641,7 +642,7 @@ public class PImage implements PConstants, Cloneable {
         dilate(false);
         break;
     }
-    updatePixels();  // mark as modified
+    endPixels();  // mark as modified
   }
 
 
@@ -662,8 +663,9 @@ public class PImage implements PConstants, Cloneable {
    * and later updated by toxi for better speed.
    */
   public void filter(int kind, float param) {
-    switch (kind) {
+    beginPixels();
 
+    switch (kind) {
       case BLUR:
         if (format == ALPHA)
           blurAlpha(param);
@@ -729,7 +731,7 @@ public class PImage implements PConstants, Cloneable {
           throw new RuntimeException("Use filter(DILATE) instead of " +
                                      "filter(DILATE, param)");
     }
-    updatePixels();  // mark as modified
+    endPixels();  // mark as modified
   }
 
 
