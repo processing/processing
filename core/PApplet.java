@@ -6390,12 +6390,6 @@ public class PApplet extends Applet
   }
 
 
-  public void updatePixels() {
-    if (recorder != null) recorder.updatePixels();
-    g.updatePixels();
-  }
-
-
   public void endPixels() {
     if (recorder != null) recorder.endPixels();
     g.endPixels();

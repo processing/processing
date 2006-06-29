@@ -32,7 +32,7 @@ import java.awt.image.*;
  * Subclass for PGraphics that implements the graphics API
  * in Java 1.3+ using Java 2D.
  */
-public class PGraphics2 extends PGraphics {
+public class PGraphicsJava extends PGraphics {
 
   public Graphics2D g2;
   GeneralPath gpath;
@@ -59,11 +59,11 @@ public class PGraphics2 extends PGraphics {
 
 
   /**
-   * Constructor for the PGraphics2 object.
+   * Constructor for the PGraphicsJava object.
    * This prototype only exists because of annoying
    * java compilers, and should not be used.
    */
-  public PGraphics2() { }
+  public PGraphicsJava() { }
 
 
   /**
@@ -75,7 +75,7 @@ public class PGraphics2 extends PGraphics {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  public PGraphics2(int iwidth, int iheight, PApplet parent) {
+  public PGraphicsJava(int iwidth, int iheight, PApplet parent) {
     super(iwidth, iheight, parent);
     //resize(iwidth, iheight);
   }
@@ -987,7 +987,7 @@ public class PGraphics2 extends PGraphics {
    * Update the pixels[] buffer to the PGraphics image.
    * <P>
    * Unlike in PImage, where endPixels() only asks that the
-   * update happens, in PGraphics2, this will happen immediately.
+   * update happens, in PGraphicsJava, this will happen immediately.
    */
   public void endPixels() {
     //endPixels(0, 0, width, height);
@@ -1000,7 +1000,7 @@ public class PGraphics2 extends PGraphics {
    * Update the pixels[] buffer to the PGraphics image.
    * <P>
    * Unlike in PImage, where endPixels() only asks that the
-   * update happens, in PGraphics2, this will happen immediately.
+   * update happens, in PGraphicsJava, this will happen immediately.
    */
   public void endPixels(int x, int y, int c, int d) {
     if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
