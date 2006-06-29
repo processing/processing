@@ -85,6 +85,12 @@ _   including the java subfolder with exported applications
 _   this means no need to install an additional java vm
 _   or an option to include the 'java' folder on windows/linux with export
 
+faq / large images
+_ jai handles setting image size
+_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
+_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
+_    JAI.create("filestore", bufImage, filename+".png", "PNG");
+
 text faq
 _ how to use textMode(SHAPE) with opengl
 _   things will be extremely slow (fix later)
