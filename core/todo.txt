@@ -35,13 +35,22 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+reasons to drop 1.1 support (and support 1.3+)
+_ remove reflection from createFont() constructor/methods in PFont
+_   this would make PFont much smaller
+_   would also get rid of security exception
+_ array functions could be done through Arrays.xxx class
+_   although some of these may be built in
+_ sorting could be done through built-in sort() class
+_ split() function could echo the built in split/regexp setup
+_   and add features for regexp
+_ could introduce use of Timer class in examples
+_ also use SwingWorker to launch things on other threads
+
 _ fix the internal file chooser so that people don't need to make their own
 _   threading is a problem with inputFile() and inputFolder()
+_   dynamically load swingworker?
 
-_ jai handles setting image size
-_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
-_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
-_    JAI.create("filestore", bufImage, filename+".png", "PNG");
 _ jpeg loading may be extremely slow (loadBytes?)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_Responsive;action=display;num=1150064360
 
