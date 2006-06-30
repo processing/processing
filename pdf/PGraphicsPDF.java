@@ -9,7 +9,7 @@ import com.lowagie.text.pdf.*;
 import processing.core.*;
 
 
-public class PGraphicsPDF extends PGraphics2 {
+public class PGraphicsPDF extends PGraphicsJava {
 
   File temp;
   //int frameCount;
