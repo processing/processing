@@ -149,7 +149,46 @@ public class PCanvas extends Canvas {
             bufferg.setColor(strokeColor);
             bufferg.drawLine(x1, y1, x2, y2);
             if (strokeWidth > 1) {
-                //// to do
+                boolean steep = Math.abs(y2 - y1) > Math.abs(x2 - x1);
+                if (steep) {
+                    int swap = x1;
+                    x1 = y1;
+                    y1 = swap;
+                    swap = x2;
+                    x2 = y2;
+                    y2 = swap;
+                }
+                if (x1 > x2) {
+                    int swap = x1;
+                    x1 = x2;
+                    x2 = swap;
+                    swap = y1;
+                    y1 = y2;
+                    y2 = swap;
+                }
+                int dx = x2 - x1;
+                int dy = (y2 > y1) ? y2 - y1 : y1 - y2;
+                int error = 0;
+                int halfWidth = strokeWidth >> 1;
+                int y = y1 - halfWidth;
+                int ystep;
+                if (y1 < y2) {
+                    ystep = 1;
+                } else {
+                    ystep = -1;
+                }
+                for (int x = x1 - halfWidth, endx = x2 - halfWidth; x <= endx; x++) {
+                    if (steep) {
+                        bufferg.fillArc(y, x, strokeWidth, strokeWidth, 0, 360);
+                    } else {
+                        bufferg.fillArc(x, y, strokeWidth, strokeWidth, 0, 360);
+                    }
+                    error += dy;
+                    if ((2 * error) >= dx) {
+                        y += ystep;
+                        error -= dx;
+                    }
+                }
             }
         }
     }
