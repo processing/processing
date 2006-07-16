@@ -25,7 +25,8 @@ export PATH
 #
 #echo $APPDIR/jikes
 "$APPDIR/jikes" -version 1> /dev/null 2> /dev/null
-if [ $? == 0 ]
+# if stmt modified as per bug #373
+if [ $? -eq 0 ]
 then 
   # need to cd to the dir because subfolders like lib et al need to be ready
   cd "$APPDIR" && java processing.app.Base
