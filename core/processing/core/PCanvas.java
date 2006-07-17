@@ -1042,6 +1042,7 @@ public class PCanvas extends Canvas {
             midlet.resume();
             suspended = false;
         }
+        midlet.start();
     }
     
     protected void hideNotify() {
@@ -1055,6 +1056,8 @@ public class PCanvas extends Canvas {
         
         buffer = Image.createImage(width, height);
         bufferg = buffer.getGraphics();    
+        
+        background(200);
     }
     
     private static final int EDGE_X             = 0;

@@ -25,25 +25,45 @@ import javax.microedition.io.*;
  *
  * @author  Francis Li
  */
-public class PClient extends InputStream {
+public class PClient extends InputStream implements Runnable {
+    public static final int EVENT_CONNECTED     = 0;
+    public static final int EVENT_ERROR         = 1;
+    
+    private PMIDlet         midlet;
+    
     private String          server;
     private int             port;
     
     private HttpConnection  con;
     private InputStream     is;
+    private String          url;
+    private String          contentType;
+    private byte[]          request;
+    
+    public PClient() {
+        
+    }
     
     public PClient(String server) {
         this(server, 80);
     }
-        
+    
     public PClient(String server, int port) {
         this.server = server;
         this.port = port;
     }
     
-    public PClient() {        
+    public PClient(PMIDlet midlet, String server) {
+        this(midlet, server, 80);
     }
     
+    public PClient(PMIDlet midlet, String server, int port) {
+        this.midlet = midlet;
+        this.server = server;
+        this.port = port;
+    }
+    
+    /** Minimal URL encoding implementation */
     public static String encode(String str) {
         StringBuffer encoded = new StringBuffer();
         char c;
@@ -65,66 +85,28 @@ public class PClient extends InputStream {
     }
     
     public boolean POST(String file, String[] params, String[] values) {
-        boolean result = false;
-        close();
-        OutputStream os = null;
-        try {
-            //// prepend slash if necessary
-            if (!file.startsWith("/")) {
-                file = "/" + file;
+        url = "http://" + server + ((port != 80) ? ":" + port : "") + file;
+        contentType = "application/x-www-form-urlencoded";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        for (int i = 0, length = params.length; i < length; i++) {
+            if (i > 0) {
+                ps.print("&");
             }
-            //// open connection to server
-            con = (HttpConnection) Connector.open("http://" + server + ((port != 80) ? ":" + port : "") + file);
-            con.setRequestMethod(HttpConnection.POST);
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            con.setRequestProperty("Connection", "close");
-            //// if successful, open outputstream for writing post
-            os = con.openOutputStream();
-            //// post contents
-            PrintStream ps = new PrintStream(os);
-            for (int i = 0, length = params.length; i < length; i++) {
-                if (i > 0) {
-                    ps.print("&");
-                }
-                ps.print(encode(params[i]));
-                ps.print("=");
-                ps.print(encode(values[i]));                
-            }
-            //// now, open inputstream, committing the post
-            is = con.openInputStream();
-            result = true;
-        } catch (IOException ioe) {
-            close();
-            result = false;
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (Exception e) {                    
-                }
-            }            
+            ps.print(encode(params[i]));
+            ps.print("=");
+            ps.print(encode(values[i]));             
         }
-        return result;
+        request = baos.toByteArray();
+        return start();
     }
     
     public boolean POST(String file, String[] params, Object[] values) {
-        boolean result = false;
-        close();
-        OutputStream os = null;
+        url = "http://" + server + ((port != 80) ? ":" + port : "") + file;
+        contentType = "multipart/form-data; boundary=BOUNDARY_185629";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
         try {
-            //// prepend slash if necessary
-            if (!file.startsWith("/")) {
-                file = "/" + file;
-            }
-            //// open connection to server
-            con = (HttpConnection) Connector.open("http://" + server + ((port != 80) ? ":" + port : "") + file);
-            con.setRequestMethod(HttpConnection.POST);
-            con.setRequestProperty("Content-Type", "multipart/form-data; boundary=BOUNDARY_185629");
-            con.setRequestProperty("Connection", "close");
-            //// if successful, open outputstream for writing post
-            os = con.openOutputStream();
-            //// post contents
-            PrintStream ps = new PrintStream(os);
             for (int i = 0, length = params.length; i < length; i++) {
                 ps.print("--BOUNDARY_185629\r\n");
                 ps.print("Content-Disposition: form-data; name=\"");
@@ -146,28 +128,17 @@ public class PClient extends InputStream {
                 }                
             }
             ps.print("--BOUNDARY_185629--\r\n\r\n");
-            //// now, open inputstream, committing the post
-            is = con.openInputStream();
-            result = true;
+            request = baos.toByteArray();
+            return start();
         } catch (IOException ioe) {
-            close();
-            result = false;
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (Exception e) {                    
-                }
-            }            
+            throw new RuntimeException(ioe.getMessage());
         }
-        return result;
     }
     
-    public boolean GET(String file, String[] params, String[] values) {
+    public boolean GET(String file, String[] params, String[] values) {        
         StringBuffer query = new StringBuffer();
         query.append(file);
         query.append("?");
-        
         for (int i = 0, length = params.length; i < length; i++) {
             query.append(params[i]);
             query.append("=");
@@ -176,32 +147,85 @@ public class PClient extends InputStream {
                 query.append("&");
             }
         }
-        
         return GET(query.toString());
     }
     
     public boolean GET(String file) {
-        return GET_URL("http://" + server + ((port != 80) ? ":" + port : "") + file);
+        if (file.startsWith("http")) {
+            url = file;
+        } else {
+            url = "http://" + server + ((port != 80) ? ":" + port : "") + file;
+        }
+        contentType = null;
+        request = null;        
+        return start();
     }
     
-    public boolean GET_URL(String url) {
-        boolean result = false;
-        close();
-        try {
-            //// open connection to server
-            con = (HttpConnection) Connector.open(url);
-            con.setRequestProperty("Connection", "close");
-            //// if successful, open inputstream
-            is = con.openInputStream();
-            //// return contents as string
-            result = true;
-        } catch (IOException ioe) {
-            close();
-            result = false;
+    private boolean start() {
+        Thread t = new Thread(this);
+        boolean result = true;
+        if (midlet == null) {
+            //// block until connected
+            synchronized (server) {
+                t.start();
+                try {
+                    server.wait();
+                } catch (InterruptedException ie) { }
+                result = is != null;
+            }
+        } else {
+            t.start();
         }
         return result;
     }
     
+    public void run() {
+        close();
+        OutputStream os = null;
+        try {
+            //// open connection to server
+            con = (HttpConnection) Connector.open(url);
+            if (contentType != null) {
+                con.setRequestMethod(HttpConnection.POST);
+                con.setRequestProperty("Content-Type", contentType);
+            } else {
+                con.setRequestMethod(HttpConnection.GET);
+            }
+            con.setRequestProperty("Connection", "close");
+            if (request != null) {
+                os = con.openOutputStream();
+                os.write(request);
+                os.flush();
+                os.close();
+                os = null;
+            }
+            //// now, open inputstream, committing the post
+            is = con.openInputStream();
+            if (midlet != null) {
+                //// done, notify midlet
+                midlet.enqueueLibraryEvent(this, EVENT_CONNECTED, null);
+            }
+        } catch (IOException ioe) {
+            close();
+            if (midlet != null) {
+                midlet.enqueueLibraryEvent(this, EVENT_ERROR, null);
+            }
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (Exception e) {                    
+                }
+                os = null;
+            }            
+        }
+        if (midlet == null) {
+            synchronized (server) {
+                server.notify();
+            }
+        }
+    }
+        
     public int read() {
         int result = -1;
         try {

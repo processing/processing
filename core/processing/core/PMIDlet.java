@@ -112,6 +112,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     private Runtime     runtime;
     private Thread      thread;
+    private boolean     setup;
     private boolean     running;
     private boolean     redraw;
     private long        startTime;
@@ -189,7 +190,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         if (canvas == null) {
             cmdExit = new Command("Exit", Command.EXIT, 1);
             
-            canvas = new PCanvas(this);            
+            canvas = new PCanvas(this);
             canvas.addCommand(cmdExit);
             canvas.setCommandListener(this);
             
@@ -212,20 +213,25 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             eventData = new Object[8];
             eventDataClone = new Object[8];
             
+            setup = false;
             running = true;
-            
-            setup();
-            
-            lastFrameTime = startTime - msPerFrame;
         }
         redraw = true;
         
-        display.setCurrent(canvas);        
-        thread = new Thread(this);
-        thread.start();
+        display.setCurrent(canvas);
+    }
+    
+    protected final void start() {
+        Thread t = new Thread(this);
+        t.start();
     }
     
     public final void run() {
+        if (!setup) {
+            setup();
+            lastFrameTime = startTime - msPerFrame;
+            setup = true;
+        }        
         try {
             do {
                 long currentTime = System.currentTimeMillis();
@@ -246,6 +252,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 Thread.yield();
             } while (running || (eventsLength > 0));
         } catch (Throwable t) {
+            t.printStackTrace();
             Form form = new Form("Exception");
             form.append(t.toString());
             form.setCommandListener(this);
@@ -829,12 +836,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         try {
             if (filename.startsWith("http")) {
                 PClient client = new PClient();
-                client.GET_URL(filename);
+                client.GET(filename);
                 byte[] data = client.readBytes();
                 return new PImage(data);
             } else {
-                Image peer = Image.createImage("/" + filename);
-                return new PImage(peer);
+                Image img = Image.createImage("/" + filename);
+                return new PImage(img);
             }
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -1329,9 +1336,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         Vector v = new Vector();
         int prevIndex = 0;
         int nextIndex = str.indexOf(delim, prevIndex);
+        int delimLength = delim.length();
         while (nextIndex >= 0) {
             v.addElement(str.substring(prevIndex, nextIndex));
-            prevIndex = nextIndex + 1;
+            prevIndex = nextIndex + delimLength;
             nextIndex = str.indexOf(delim, prevIndex);
         }
         if (prevIndex < str.length()) {
