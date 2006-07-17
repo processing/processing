@@ -70,6 +70,13 @@ _   only allow moderators to delete posts
 _   set "no smileys" as the default (better for posting code)
 _ add stuff about the history into the people section
 _   descended from dbn, but not dbn, etc..
+_ remove the 'search' item from yabb.cgi
+
+faq / general
+_ the source code to the libs are included
+_   this makes them easy to modify (in another app)
+_   or you can remove the package statements and embed them 
+_   serial is a little trickier since you'd have to put stuff in code/
 
 faq / export
 X exporting applets
@@ -86,6 +93,7 @@ _   this means no need to install an additional java vm
 _   or an option to include the 'java' folder on windows/linux with export
 
 faq / large images
+_ making things fast with pixel operations
 _ jai handles setting image size
 _  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
 _    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
@@ -827,6 +835,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=312
 
 LIBRARIES / Video
 
+_ need to add resize method to camera capture
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
+_ capture.settings() changes size of capture
+_   http://dev.processing.org/bugs/show_bug.cgi?id=366
 _ exported movies seem to have trouble (windows only?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=231
 _ reading movie is really really slow (2-3 fps)
@@ -845,6 +857,8 @@ _ pause and framerate aren't working
 _   framerate does set the frequency which movieEvent will be called, 
 _   but it is not setting the "available" field corrrectly. 
 _   sketch .zip file in casey's email message
+_ actual bug filed for pause() issues
+_   http://dev.processing.org/bugs/show_bug.cgi?id=370
 _ video wrong device name crashes things
 _ when passing in 'null' as the capture, dialog pops up fine
 _   but the applet craps out after a few seconds (pinwheel spin)
@@ -893,6 +907,8 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ implement automatic update
+_   http://dev.processing.org/bugs/show_bug.cgi?id=374
 _ move build scripts to something better like ant
 _   too much to maintain the multiple versions, too much code
 _   http://dev.processing.org/bugs/show_bug.cgi?id=151
