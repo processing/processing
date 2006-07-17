@@ -35,6 +35,24 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+
+
+_ copy() sort of broken in JAVA2D
+_   example sketch posted with bug report
+_   http://dev.processing.org/bugs/show_bug.cgi?id=372
+
+_ what's up with stop() vs exit()?
+_   need to get this straightened for p5 (i.e. bc has this problem)
+_   make sure the main() doesn't exit until the applet has finished
+_   i.e. problem with main calling itself multiple times in Alpheus
+
+_ AIOOBE in P3D during defaults/background/clear
+_   thread sync problem with allocation
+
+_ update jogl to latest beta 5
+_   might fix blank screen issues on linux:
+_   http://dev.processing.org/bugs/show_bug.cgi?id=367
+
 reasons to drop 1.1 support (and support 1.3+)
 _ remove reflection from createFont() constructor/methods in PFont
 _   this would make PFont much smaller
