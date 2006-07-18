@@ -1,7 +1,6 @@
 package processing.pdf;
 
 import java.io.*;
-import java.util.*;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
