@@ -91,7 +91,7 @@ cd core
 CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar"
 export CLASSPATH
 
-./preproc.pl
+perl preproc.pl
 
 mkdir -p bin
 ../build/windows/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
@@ -100,8 +100,6 @@ mkdir -p bin
 
 # package this folder into core.jar
 cd bin && zip -rq ../../build/windows/work/lib/core.jar processing && cd ..
-
-#rm -rf processing
 
 # back to base processing dir
 cd ..
@@ -227,8 +225,8 @@ echo Building OpenGL library...
 cd ../opengl
 mkdir -p bin
 $JIKES -target 1.1 +D \
-  -classpath "library\\jogl.jar;$CLASSPATH" \
-  -d bin src/processing/opengl/*.java 
+    -classpath "library\\jogl.jar;$CLASSPATH" \
+    -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
 cd bin && zip -r0q ../library/opengl.jar processing/opengl/*.class && cd ..
 mkdir -p $LIBRARIES/opengl/library/
