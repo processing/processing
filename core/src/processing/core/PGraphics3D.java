@@ -24,8 +24,9 @@
 
 package processing.core;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Toolkit;
+import java.awt.image.DirectColorModel;
+import java.awt.image.MemoryImageSource;
 
 
 /**
