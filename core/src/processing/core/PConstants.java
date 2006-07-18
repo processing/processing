@@ -326,12 +326,14 @@ public interface PConstants {
   static final int MY = 10;
   static final int MZ = 11;
 
-  static final int SR = 12; // stroke colors
+  /** stroke argb values */
+  static final int SR = 12;
   static final int SG = 13;
   static final int SB = 14;
   static final int SA = 15;
 
-  static final int SW = 16; // stroke weight
+  /** stroke weight */
+  static final int SW = 16;
 
   // not used in rendering
   // only used for calculating colors
