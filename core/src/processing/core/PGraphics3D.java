@@ -309,7 +309,15 @@ public class PGraphics3D extends PGraphics {
 
 
   public void beginDraw() {
-    super.beginDraw();
+    // need to call defaults(), but can only be done when it's ok
+    // to draw (i.e. for opengl, no drawing can be done outside
+    // beginDraw/endDraw).
+    if (!defaultsInited) defaults();
+
+    resetMatrix(); // reset model matrix
+
+    // reset vertices
+    vertexCount = 0;
 
     modelview.set(camera);
     modelviewInv.set(cameraInv);
@@ -353,7 +361,13 @@ public class PGraphics3D extends PGraphics {
       flush();
     }
     // blit to screen
-    super.endDraw();
+    // moving this back here (post-68) because of macosx thread problem
+    if (mis != null) {
+      mis.newPixels(pixels, cm, 0, width);
+    }
+    // mark pixels as having been updated, so that they'll work properly
+    // when this PGraphics is drawn using image().
+    endPixels();
   }
 
 

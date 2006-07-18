@@ -163,8 +163,12 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  /** Last value set by strokeWeight() (read-only) */
-  public float strokeWeight;
+  /** 
+   * Last value set by strokeWeight() (read-only). This has a default
+   * setting, rather than fighting with renderers about whether that 
+   * renderer supports thick lines. 
+   */
+  public float strokeWeight = 1;
 
   /**
    * Set by strokeJoin() (read-only). This has a default setting
@@ -597,14 +601,17 @@ public abstract class PGraphics extends PImage implements PConstants {
     colorMode(RGB, TFF);
     fill(TFF);
     stroke(0);
+    // other stroke attributes are set in the initializers
+    // inside the class (see above, strokeWeight = 1 et al)
 
-    strokeWeight(ONE);
-    //try {
-    //strokeCap(ROUND);
-    //strokeJoin(MITER);
-    //} catch (RuntimeException e) { }  // P3D will complain
-
-    background(204);
+    // if this fella is associated with an applet, then clear its background.
+    // if it's been created by someone else through createGraphics, 
+    // they have to call background() themselves, otherwise everything gets
+    // a gray background (when just a transparent surface or an empty pdf 
+    // is what's desired)
+    if (parent != null) {
+      background(204);
+    }
 
     // init shape stuff
     shape = 0;
