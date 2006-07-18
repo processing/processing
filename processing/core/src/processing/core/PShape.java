@@ -102,7 +102,7 @@ public class PShape {
    * shape(s);
    */
   public void draw(PGraphics g) {
-    boolean flat = g instanceof PGraphics3;
+    boolean flat = g instanceof PGraphics3D;
 
     if (matrix != null) {
       g.pushMatrix();

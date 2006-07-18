@@ -98,10 +98,10 @@ public class PLine implements PConstants
   private float db;
   private float da;
 
-  private PGraphics3 parent;
+  private PGraphics3D parent;
 
 
-  public PLine(PGraphics3 g) {
+  public PLine(PGraphics3D g) {
     INTERPOLATE_Z = false;
 
     x_array = new float[2];
