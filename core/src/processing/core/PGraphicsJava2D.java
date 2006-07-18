@@ -32,7 +32,7 @@ import java.awt.image.*;
  * Subclass for PGraphics that implements the graphics API
  * in Java 1.3+ using Java 2D.
  */
-public class PGraphicsJava extends PGraphics {
+public class PGraphicsJava2D extends PGraphics {
 
   public Graphics2D g2;
   GeneralPath gpath;
@@ -63,7 +63,7 @@ public class PGraphicsJava extends PGraphics {
    * This prototype only exists because of annoying
    * java compilers, and should not be used.
    */
-  public PGraphicsJava() { }
+  public PGraphicsJava2D() { }
 
 
   /**
@@ -75,7 +75,7 @@ public class PGraphicsJava extends PGraphics {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  public PGraphicsJava(int iwidth, int iheight, PApplet parent) {
+  public PGraphicsJava2D(int iwidth, int iheight, PApplet parent) {
     super(iwidth, iheight, parent);
     //resize(iwidth, iheight);
   }

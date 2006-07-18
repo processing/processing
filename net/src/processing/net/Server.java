@@ -26,12 +26,10 @@
 package processing.net;
 import processing.core.*;
 
-import java.awt.event.*;
-import java.util.*;
-import java.awt.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
+import java.util.*;
 
 
 public class Server implements Runnable {
