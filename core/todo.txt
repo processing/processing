@@ -35,7 +35,10 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
-
+_ should really be doing the 'right' thing with sketch file handling
+_   create temporary file when saving
+_   once done writing, use remove the original and rename the old
+_   some basic stuff like this..
 
 _ copy() sort of broken in JAVA2D
 _   example sketch posted with bug report
