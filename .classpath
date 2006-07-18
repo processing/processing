@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="core/src"/>
 	<classpathentry kind="src" path="dxf/src"/>
 	<classpathentry kind="src" path="opengl/src"/>
-	<classpathentry kind="lib" path="opengl/library/jogl.jar"/>
+	<classpathentry sourcepath="opengl/jogl-src-1_0_0-beta05.zip" kind="lib" path="opengl/library/jogl.jar"/>
 	<classpathentry kind="src" path="net/src"/>
 	<classpathentry kind="src" path="pdf/src"/>
 	<classpathentry kind="src" path="serial/src"/>
