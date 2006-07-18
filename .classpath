@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="pdf/library/itext.jar"/>
 	<classpathentry kind="src" path="serial/src"/>
 	<classpathentry kind="lib" path="serial/library/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="video/QTJava.zip"/>
+	<classpathentry kind="src" path="video/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
