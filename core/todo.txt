@@ -38,6 +38,12 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+
+things before 1.0
+_ know internal vs. external lines, so that anti-aliasing can be shut off for internal
+
+_ is the texture[] array in PGraphics3D causing the problems with memory?
+
 _ for a PGraphics2D, should its image cache object be the memoryimagesource?
 
 _ only call defaults() when it's part of a PApplet canvas
