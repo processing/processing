@@ -48,6 +48,14 @@ X audio hiccups, throttling the cpu
 X   p5 will take as much cpu as it can, which can choke other apps
 X   call delay(10) (or so) if you want to make sure audio keeps running
 
+
+FOR 1.0
+_ should really be doing the 'right' thing with sketch file handling
+_   create temporary file when saving
+_   once done writing, use remove the original and rename the old
+_   some basic stuff like this..
+
+
 _ bugs.html#application -> export.html#application
 _ with network, check in advanced, then rename advanced.html to howto.html
 
@@ -98,6 +106,8 @@ _ jai handles setting image size
 _  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
 _    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
 _    JAI.create("filestore", bufImage, filename+".png", "PNG");
+_ add somethign about getting a bufferedimage from a PGraphics
+_   maybe this should be a method?
 
 text faq
 _ how to use textMode(SHAPE) with opengl
@@ -110,6 +120,7 @@ _ textMode(SCREEN) for P2D and P3D for nice fast text in screen space
 _   currently slow in JAVA2D and OPENGL, but this will improve
 _ what is the vlw font file format?
 _ createFont() needs to run 1.3+, and not in applets
+_   where is the bug reference for this.. and can it be fixed?
 _ shapes from 3D type
 _   the way to do it (will improve later) is to use some undocumented features  
 _   1) you have to use the OPENGL renderer 
