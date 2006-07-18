@@ -26,7 +26,6 @@
 package processing.video;
 import processing.core.*;
 
-import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
@@ -35,7 +34,6 @@ import quicktime.*;
 import quicktime.io.QTFile;
 import quicktime.qd.*;
 import quicktime.std.*;
-import quicktime.std.movies.*;
 import quicktime.std.movies.media.DataRef;
 import quicktime.util.RawEncodedImage;
 
@@ -275,7 +273,7 @@ public class Movie extends PImage implements PConstants, Runnable {
             movieWidth = dataWidth;
           }
         }
-        int vpixels[] = new int[movieWidth * movieHeight];
+        //int vpixels[] = new int[movieWidth * movieHeight];
         //image = new PImage(vpixels, movieWidth, movieHeight, RGB);
         super.init(movieWidth, movieHeight, RGB);
         //parent.video = image;
