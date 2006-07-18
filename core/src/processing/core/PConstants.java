@@ -39,10 +39,10 @@ public interface PConstants {
 
   // renderers known to processing.core
 
-  static final String P2D    = "processing.core.PGraphics2";
-  static final String P3D    = "processing.core.PGraphics3";
-  static final String JAVA2D = "processing.core.PGraphicsJava";
-  static final String OPENGL = "processing.opengl.PGraphicsGL";
+  static final String P2D    = "processing.core.PGraphics2D";
+  static final String P3D    = "processing.core.PGraphics3D";
+  static final String JAVA2D = "processing.core.PGraphicsJava2D";
+  static final String OPENGL = "processing.opengl.PGraphicsOpenGL";
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
   //static final String SVG    = "processing.dxf.PGraphicsSVG";
