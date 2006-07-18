@@ -130,12 +130,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   
   public void endDraw() {
-    // moving this back here (post-68) because of macosx thread problem
-    //mis.newPixels(pixels, cm, 0, width);
-
-    // need to mark pixels as needing an update, without calling
-    // its own endPixels, since that's crazy slow
-    //endPixels();
+    endPixels();  // mark pixels as changed
   }
 
 
@@ -145,6 +140,31 @@ public class PGraphicsJava2D extends PGraphics {
   // SHAPES
 
 
+  public void beginShape(int kind) {
+    //super.beginShape(kind);
+    shape = kind;
+    vertexCount = 0;
+    splineVertexCount = 0;
+
+    // set gpath to null, because when mixing curves and straight
+    // lines, vertexCount will be set back to zero, so vertexCount == 1
+    // is no longer a good indicator of whether the shape is new.
+    // this way, just check to see if gpath is null, and if it isn't
+    // then just use it to continue the shape.
+    gpath = null;
+  }
+  
+  
+  public void textureMode(int mode) {
+    unavailableError("textureMode(mode)");
+  }
+
+  
+  public void texture(PImage image) {
+    unavailableError("texture(image)");
+  }
+
+  
   public void vertex(float x, float y) {
     splineVertexCount = 0;
     //float vertex[];
@@ -260,6 +280,21 @@ public class PGraphicsJava2D extends PGraphics {
       break;
     }
   }
+  
+  
+  public void vertex(float x, float y, float u, float v) {
+    unavailableError("vertex(x, y, u, v");
+  }
+
+  
+  public void vertex(float x, float y, float z) {
+    depthErrorXYZ("vertex");
+  }
+
+  
+  public void vertex(float x, float y, float z, float u, float v) {
+    depthErrorXYZ("vertex");
+  }
 
 
   public void bezierVertex(float x1, float y1,
@@ -345,18 +380,6 @@ public class PGraphicsJava2D extends PGraphics {
     splineVertices[splineVertexCount][MX] = x;
     splineVertices[splineVertexCount][MY] = y;
     splineVertexCount++;
-  }
-
-
-  public void beginShape(int kind) {
-    super.beginShape(kind);
-
-    // set gpath to null, because when mixing curves and straight
-    // lines, vertexCount will be set back to zero, so vertexCount == 1
-    // is no longer a good indicator of whether the shape is new.
-    // this way, just check to see if gpath is null, and if it isn't
-    // then just use it to continue the shape.
-    gpath = null;
   }
 
 

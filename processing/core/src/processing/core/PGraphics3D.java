@@ -356,7 +356,7 @@ public class PGraphics3D extends PGraphics {
   public void endDraw() {
     // no need to z order and render
     // shapes were already rendered in endShape();
-    // (but can't return, since needs to update memimgsrc
+    // (but can't return, since needs to update memimgsrc)
     if (hints[ENABLE_DEPTH_SORT]) {
       flush();
     }
@@ -488,21 +488,6 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  /**
-   * Set texture mode to either to use coordinates based on the IMAGE
-   * (more intuitive for new users) or NORMALIZED (better for advanced chaps)
-   */
-  public void textureMode(int mode) {
-    this.textureMode = mode;
-  }
-
-
-  /**
-   * Set texture image for current shape
-   * needs to be called between @see beginShape and @see endShape
-   *
-   * @param image reference to a PImage object
-   */
   public void texture(PImage image) {
     textureImage = image;
 
@@ -527,7 +512,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void vertex(float x, float y, float u, float v) {
-    texture_vertex(u, v);
+    textureVertex(u, v);
     setup_vertex(x, y, 0);
   }
 
@@ -539,7 +524,7 @@ public class PGraphics3D extends PGraphics {
 
   public void vertex(float x, float y, float z,
                      float u, float v) {
-    texture_vertex(u, v);
+    textureVertex(u, v);
     setup_vertex(x, y, z);
   }
 
@@ -611,107 +596,6 @@ public class PGraphics3D extends PGraphics {
 
 
   /**
-   * set UV coords for the next vertex in the current shape.
-   * this is ugly as its own fxn, and will almost always be
-   * coincident with a call to vertex, so it's being moved
-   * to be an optional param of and overloaded vertex()
-   *
-   * @param  u  U coordinate (X coord in image 0<=X<=image width)
-   * @param  v  V coordinate (Y coord in image 0<=Y<=image height)
-   */
-  protected void texture_vertex(float u, float v) {
-    if (textureImage == null) {
-      throw new RuntimeException("need to set an image with texture() " +
-                                 "before using u and v coordinates");
-    }
-    if (textureMode == IMAGE) {
-      u /= (float) textureImage.width;
-      v /= (float) textureImage.height;
-    }
-
-    textureU = u;
-    textureV = v;
-
-    if (textureU < 0) textureU = 0;
-    else if (textureU > ONE) textureU = ONE;
-
-    if (textureV < 0) textureV = 0;
-    else if (textureV > ONE) textureV = ONE;
-  }
-
-
-  protected void spline_vertex(float x, float y, float z, boolean bezier) {
-    // allocate space for the spline vertices
-    // to improve processing applet load times, don't allocate until actual use
-    if (splineVertices == null) {
-      splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
-    }
-
-    // if more than 128 points, shift everything back to the beginning
-    if (splineVertexCount == DEFAULT_SPLINE_VERTICES) {
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-3], 0,
-                       splineVertices[0], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-2], 0,
-                       splineVertices[1], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-1], 0,
-                       splineVertices[2], 0, VERTEX_FIELD_COUNT);
-      splineVertexCount = 3;
-    }
-
-    float vertex[] = splineVertices[splineVertexCount];
-
-    vertex[MX] = x;
-    vertex[MY] = y;
-    vertex[MZ] = z;
-
-    if (fill) {
-      vertex[R] = fillR;
-      vertex[G] = fillG;
-      vertex[B] = fillB;
-      vertex[A] = fillA;
-    }
-
-    if (stroke) {
-      vertex[SR] = strokeR;
-      vertex[SG] = strokeG;
-      vertex[SB] = strokeB;
-      vertex[SA] = strokeA;
-      vertex[SW] = strokeWeight;
-    }
-
-    if (textureImage != null) {
-      vertex[U] = textureU;
-      vertex[V] = textureV;
-    }
-
-    vertex[NX] = normalX;
-    vertex[NY] = normalY;
-    vertex[NZ] = normalZ;
-
-    splineVertexCount++;
-
-    // draw a segment if there are enough points
-    if (splineVertexCount > 3) {
-      if (bezier) {
-        if ((splineVertexCount % 4) == 0) {
-          if (!bezierInited) bezier_init();
-          spline3_segment(splineVertexCount-4,
-                          splineVertexCount-4,
-                          bezier_draw,
-                          bezierDetail);
-        }
-      } else {  // catmull-rom curve (!bezier)
-        if (!curve_inited) curve_init();
-        spline3_segment(splineVertexCount-4,
-                        splineVertexCount-3,
-                        curve_draw,
-                        curveDetail);
-      }
-    }
-  }
-
-
-  /**
    * See notes with the bezier() function.
    */
   public void bezierVertex(float x2, float y2,
@@ -729,35 +613,20 @@ public class PGraphics3D extends PGraphics {
                            float x4, float y4, float z4) {
     if (splineVertexCount > 0) {
       float vertex[] = splineVertices[splineVertexCount-1];
-      spline_vertex(vertex[MX], vertex[MY], vertex[MZ], true);
+      splineVertex(vertex[MX], vertex[MY], vertex[MZ], true);
 
     } else if (vertexCount > 0) {
       // make sure there's at least a call to vertex()
       float vertex[] = vertices[vertexCount-1];
-      spline_vertex(vertex[MX], vertex[MY], vertex[MZ], true);
+      splineVertex(vertex[MX], vertex[MY], vertex[MZ], true);
 
     } else {
       throw new RuntimeException("A call to vertex() must be used " +
                                  "before bezierVertex()");
     }
-    spline_vertex(x2, y2, z2, true);
-    spline_vertex(x3, y3, z3, true);
-    spline_vertex(x4, y4, z4, true);
-  }
-
-
-  /**
-   * See notes with the curve() function.
-   */
-  public void curveVertex(float x, float y) {
-    spline_vertex(x, y, 0, false);
-  }
-
-  /**
-   * See notes with the curve() function.
-   */
-  public void curveVertex(float x, float y, float z) {
-    spline_vertex(x, y, z, false);
+    splineVertex(x2, y2, z2, true);
+    splineVertex(x3, y3, z3, true);
+    splineVertex(x4, y4, z4, true);
   }
 
 
@@ -3993,10 +3862,6 @@ public class PGraphics3D extends PGraphics {
     return a*a;
   }
   */
-
-  private final float sqrt(float a) {
-    return (float)Math.sqrt(a);
-  }
 
   private final float pow(float a, float b) {
     return (float)Math.pow(a, b);
