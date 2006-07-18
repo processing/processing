@@ -83,24 +83,28 @@ cd ../..
 
 echo Building processing.core
 
-# move to bagel inside base 'processing' directory
-#cd bagel
+# move to core inside base 'processing' directory
 cd core
-rm -f processing/core/*.class
+#rm -f processing/core/*.class
 
-# new regular version
 CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar"
 export CLASSPATH
 
-perl preproc.pl
-../build/windows/work/jikes -d . +D -target 1.1 *.java
+./preproc.pl
+
+../build/windows/work/jikes -d . +D -target 1.1 src/processing/core/*.java
 # use this from time to time to test 1.1 savviness
-#/cygdrive/c/msjdk-4.0/bin/jvc /d . *.java
+#/cygdrive/c/msjdk-4.0/bin/jvc /d . src/processing/core/*.java
+
+# package this folder into core.jar
 zip -rq ../build/windows/work/lib/core.jar processing
 
+#rm -rf processing
 
 # back to base processing dir
 cd ..
+
+exit
 
 ### -- BUILD PREPROC ---------------------------------------------
 

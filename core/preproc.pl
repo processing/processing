@@ -1,21 +1,23 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
+
+$basedir = 'src/processing/core';
 
 # PGraphics subclasses PImage.. so first get methods from bimage
-open(F, "PImage.java") || die $!;
+open(F, "$basedir/PImage.java") || die $!;
 @contents = <F>;
 close(F);
 
 # next slurp methods from PGraphics
-open(F, "PGraphics.java") || die $!;
+open(F, "$basedir/PGraphics.java") || die $!;
 #@contents = <F>;
 foreach $line (<F>) {
     # can't remember perl right now.. there must be a better way
-    @contents[$#contents++] = $line;
+    $contents[$#contents++] = $line;
 }
 close(F);
 
 
-open(APPLET, "PApplet.java") || die $!;
+open(APPLET, "$basedir/PApplet.java") || die $!;
 @applet = <APPLET>;
 close(APPLET);
 
@@ -23,7 +25,7 @@ close(APPLET);
 $insert = 'public functions for processing.core';
 
 # an improved version of this would only rewrite if changes made
-open(OUT, ">PApplet.new") || die $!;
+open(OUT, ">$basedir/PApplet.new") || die $!;
 foreach $line (@applet) {
     print OUT $line;
     last if ($line =~ /$insert/);
@@ -147,7 +149,7 @@ close(OUT);
 
 $oldguy = join(' ', @applet);
 
-open(NEWGUY, "PApplet.new") || die $!;
+open(NEWGUY, "$basedir/PApplet.new") || die $!;
 @newbie = <NEWGUY>;
 $newguy = join(' ', @newbie);
 close(NEWGUY);
