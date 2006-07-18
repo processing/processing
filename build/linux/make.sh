@@ -10,6 +10,7 @@ else
   echo Setting up directories to build for linux...
   BUILD_PREPROC=true
   cp -r ../shared work
+  rm -rf work/.svn
 
   # needs to make the dir because of packaging goofiness
   mkdir -p work/classes/processing/app/preproc
