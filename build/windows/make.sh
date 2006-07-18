@@ -79,6 +79,7 @@ fi
 
 cd ../..
 
+
 ### -- BUILD CORE ----------------------------------------------
 
 echo Building processing.core
@@ -92,19 +93,19 @@ export CLASSPATH
 
 ./preproc.pl
 
-../build/windows/work/jikes -d . +D -target 1.1 src/processing/core/*.java
+mkdir -p bin
+../build/windows/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
 # use this from time to time to test 1.1 savviness
 #/cygdrive/c/msjdk-4.0/bin/jvc /d . src/processing/core/*.java
 
 # package this folder into core.jar
-zip -rq ../build/windows/work/lib/core.jar processing
+cd bin && zip -rq ../../build/windows/work/lib/core.jar processing && cd ..
 
 #rm -rf processing
 
 # back to base processing dir
 cd ..
 
-exit
 
 ### -- BUILD PREPROC ---------------------------------------------
 
@@ -158,7 +159,6 @@ cd ../..
 
 ### -- BUILD LIBRARIES ------------------------------------------------
 
-
 PLATFORM=windows
 
 
@@ -174,22 +174,26 @@ cd ..
 # SERIAL LIBRARY
 echo Building serial library...
 cd ../serial
-$JIKES -target 1.1 +D -classpath "code\\RXTXcomm.jar;$CORE;$CLASSPATH" -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D \
+    -classpath "library\\RXTXcomm.jar;$CORE;$CLASSPATH" \
+    -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
-zip -r0q library/serial.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/serial.jar processing/serial/*.class && cd ..
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
+
 
 # NET LIBRARY
 echo Building net library...
 cd ../net
-$JIKES -target 1.1 +D -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D -d bin src/processing/net/*.java 
 rm -f library/net.jar
-zip -r0q library/net.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
 mkdir -p $LIBRARIES/net/library/
 cp library/net.jar $LIBRARIES/net/library/
+
 
 # VIDEO LIBRARY
 echo Building video library...
@@ -208,10 +212,12 @@ else
   fi
 fi
 cd ../video
-$JIKES -target 1.1 +D -classpath "$QTJAVA;$CLASSPATH" -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D \
+    -classpath "$QTJAVA;$CLASSPATH" \
+    -d bin src/processing/video/*.java 
 rm -f library/video.jar
-zip -r0q library/video.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/video.jar processing/video/*.class && cd ..
 mkdir -p $LIBRARIES/video/library/
 cp library/video.jar $LIBRARIES/video/library/
 
@@ -219,10 +225,12 @@ cp library/video.jar $LIBRARIES/video/library/
 # OPENGL LIBRARY
 echo Building OpenGL library...
 cd ../opengl
-$JIKES -target 1.1 +D -classpath "library\\jogl.jar;$CLASSPATH" -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D \
+  -classpath "library\\jogl.jar;$CLASSPATH" \
+  -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
-zip -r0q library/opengl.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/opengl.jar processing/opengl/*.class && cd ..
 mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
 
@@ -230,10 +238,12 @@ cp library/opengl.jar $LIBRARIES/opengl/library/
 # PDF LIBRARY
 echo Building PDF library...
 cd ../pdf
-$JIKES -target 1.1 +D -classpath "library\\itext.jar;$CLASSPATH" -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D \
+    -classpath "library\\itext.jar;$CLASSPATH" \
+    -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
-zip -r0q library/pdf.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/pdf.jar processing/pdf/*.class && cd ..
 mkdir -p $LIBRARIES/pdf/library/
 cp library/pdf.jar $LIBRARIES/pdf/library/
 
@@ -241,29 +251,13 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 # DXF LIBRARY
 echo Building DXF library...
 cd ../dxf
-$JIKES -target 1.1 +D -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
-zip -r0q library/dxf.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
 
-
-CLASSPATH="..\\..\\build\\$PLATFORM\\work\\lib\\core.jar;..\\..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
-JIKES=../../build/$PLATFORM/work/jikes
-CORE=..\\..\\build\\$PLATFORM\\work\\lib\\core.jar
-LIBRARIES=..\\..\\build\\$PLATFORM\\work\\libraries
-
-
-# PARTICLES LIBRARY
-#echo Build particles library...
-#cd ../lib/particles
-#$JIKES -target 1.1 +D -d . *.java 
-#rm -f library/particles.jar
-#zip -r0q library/particles.jar simong
-#rm -rf simong
-#mkdir -p $LIBRARIES/particles/library/
-#cp library/particles.jar $LIBRARIES/particles/library/
 
 echo
 echo Done.
