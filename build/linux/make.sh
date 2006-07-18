@@ -23,11 +23,13 @@ else
   cp -r ../../pdf work/libraries/
   cp -r ../../dxf work/libraries/
 
+  echo Extracting examples...
   cd work
   unzip -q examples.zip
   rm examples.zip
   cd ..
 
+  echo Extracting reference...
   cd work
   unzip -q reference.zip
   rm reference.zip
@@ -61,17 +63,14 @@ cd ../..
 
 echo Building processing.core
 
-# move to bagel inside base 'processing' directory
 cd core
 
-# new regular version
 CLASSPATH="../build/linux/work/java/lib/rt.jar"
 export CLASSPATH
 
 perl preproc.pl
-../build/linux/work/jikes -d . +D -target 1.1 *.java
-zip -rq ../build/linux/work/lib/core.jar processing
-rm -rf processing
+../build/linux/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
+cd bin && zip -rq ../../build/linux/work/lib/core.jar processing && cd ..
 
 
 # back to base processing dir
@@ -130,10 +129,12 @@ cd ..
 # SERIAL LIBRARY
 echo Building serial library...
 cd ../serial
-$JIKES -target 1.1 +D -classpath "code/RXTXcomm.jar:$CORE:$CLASSPATH" -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D \
+    -classpath "code/RXTXcomm.jar:$CORE:$CLASSPATH" \
+    -d bin src/processing/serial.java 
 rm -f library/serial.jar
-zip -r0q library/serial.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/serial.jar processing && cd ..
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
 
@@ -141,10 +142,10 @@ cp library/serial.jar $LIBRARIES/serial/library/
 # NET LIBRARY
 echo Building net library...
 cd ../net
-$JIKES -target 1.1 +D -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D -d bin src/processing/net/*.java 
 rm -f library/net.jar
-zip -r0q library/net.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
 mkdir -p $LIBRARIES/net/library/
 cp library/net.jar $LIBRARIES/net/library/
 
@@ -152,10 +153,12 @@ cp library/net.jar $LIBRARIES/net/library/
 # OPENGL LIBRARY
 echo Building OpenGL library...
 cd ../opengl
-$JIKES -target 1.1 +D -classpath "library/jogl.jar:$CLASSPATH" -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D \
+    -classpath "library/jogl.jar:$CLASSPATH" \
+    -d bin processing/opengl/*.java 
 rm -f library/opengl.jar
-zip -r0q library/opengl.jar processing
-rm -rf processing
+cd bin && zip -r0q ../library/opengl.jar processing/opengl/*.class && cd ..
 mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
 
@@ -163,10 +166,12 @@ cp library/opengl.jar $LIBRARIES/opengl/library/
 # PDF LIBRARY
 echo Building PDF library...
 cd ../pdf
-$JIKES -target 1.1 +D -classpath "library/itext.jar:$CLASSPATH" -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D \
+    -classpath "library/itext.jar:$CLASSPATH" \
+    -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
-zip -r0q library/pdf.jar processing
-rm -rf processing
+cd bin && zip -r0q library/pdf.jar processing/pdf/*.class && cd ..
 mkdir -p $LIBRARIES/pdf/library/
 cp library/pdf.jar $LIBRARIES/pdf/library/
 
@@ -174,9 +179,13 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 # DXF LIBRARY
 echo Building DXF library...
 cd ../dxf
-$JIKES -target 1.1 +D -d . *.java 
+mkdir -p bin
+$JIKES -target 1.1 +D -d bin processing/dxf/*.java 
 rm -f library/dxf.jar
-zip -r0q library/dxf.jar processing
-rm -rf processing
+cd bin && zip -r0q library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
+
+
+echo
+echo Done.
