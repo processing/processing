@@ -10,7 +10,7 @@ else
   echo Setting up directories to build P5...
   BUILD_PREPROC=true
   cp -r ../shared work
-  rm -rf work/CVS
+  rm -rf work/.svn
   rm -f work/.DS_Store 
   # in case one of those little mac poopers show up
 
