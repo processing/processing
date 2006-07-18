@@ -38,6 +38,30 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+_ for a PGraphics2D, should its image cache object be the memoryimagesource?
+
+_ only call defaults() when it's part of a PApplet canvas
+_   don't want to hose PGraphics for others
+_   both for pdf, and making background transparent images
+_ background(0, 0, 0, 0) is the way to really clear everything with zeroes
+_   or background(0, 0), but the former is prolly better conceptually
+_ if calling beginPixels inside another, need to increment a counter
+_   otherwise the end will look like it's time to update
+_   which may not actually be the case
+_   i.e. calling filter() inside begin/end block
+
+_ PGraphics.clear() problem from workbench and malware stuff
+_   had to put synchronized onto draw and size()
+_   actually it'll work if it's only on size()
+_   the sync on the mac hangs an applet running by itself
+_     even though it seems to be ok for a component
+_ AIOOBE in P3D during defaults/background/clear
+_   thread sync problem with allocation
+
+_ make framerate into frameRate (to match frameCount)
+_ remove image(filename) and textFont(filename) et al.
+_ hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
+
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
 _   make sure the main() doesn't exit until the applet has finished
@@ -47,8 +71,6 @@ _ copy() sort of broken in JAVA2D
 _   example sketch posted with bug report
 _   http://dev.processing.org/bugs/show_bug.cgi?id=372
 
-_ AIOOBE in P3D during defaults/background/clear
-_   thread sync problem with allocation
 
 reasons to drop 1.1 support (and support 1.3+)
 _ remove reflection from createFont() constructor/methods in PFont
@@ -128,25 +150,6 @@ _   textAlign(CENTER | TOP);
 _   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
 _   or textAlign(LEFT, MIDDLE); -> this one seems best
 
-_ only call defaults() when it's part of a PApplet canvas
-_   don't want to hose PGraphics for others
-_   both for pdf, and making background transparent images
-_ background(0, 0, 0, 0) is the way to really clear everything with zeroes
-_   or background(0, 0), but the former is prolly better conceptually
-_ if calling beginPixels inside another, need to increment a counter
-_   otherwise the end will look like it's time to update
-_   which may not actually be the case
-_   i.e. calling filter() inside begin/end block
-
-_ PGraphics.clear() problem from workbench and malware stuff
-_   had to put synchronized onto draw and size()
-_   actually it'll work if it's only on size()
-_   the sync on the mac hangs an applet running by itself
-_     even though it seems to be ok for a component
-
-_ make framerate into frameRate (to match frameCount)
-_ remove image(filename) and textFont(filename) et al.
-_ hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
 _ loading lots of images is a problem, describe how to unload
 _   is it possible? necessary to call delay(5) or something?
 
