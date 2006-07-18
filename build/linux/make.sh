@@ -171,7 +171,7 @@ $JIKES -target 1.1 +D \
     -classpath "library/itext.jar:$CLASSPATH" \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
-cd bin && zip -r0q library/pdf.jar processing/pdf/*.class && cd ..
+cd bin && zip -r0q ../library/pdf.jar processing/pdf/*.class && cd ..
 mkdir -p $LIBRARIES/pdf/library/
 cp library/pdf.jar $LIBRARIES/pdf/library/
 
@@ -182,7 +182,7 @@ cd ../dxf
 mkdir -p bin
 $JIKES -target 1.1 +D -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
-cd bin && zip -r0q library/dxf.jar processing/dxf/*.class && cd ..
+cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
 
