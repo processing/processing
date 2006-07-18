@@ -58,7 +58,9 @@ public class PGraphics2D extends PGraphics {
   
   //resize handled by superclass
   
+  
   //requestDisplay handled by superclass
+  
   
   protected void allocate() {
     pixelCount = width * height;
