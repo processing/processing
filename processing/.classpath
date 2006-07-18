@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="core/src"/>
+	<classpathentry kind="src" path="dxf/src"/>
+	<classpathentry kind="src" path="opengl/src"/>
+	<classpathentry kind="lib" path="opengl/library/jogl.jar"/>
+	<classpathentry kind="src" path="net/src"/>
+	<classpathentry kind="src" path="pdf/src"/>
+	<classpathentry kind="lib" path="pdf/library/itext.jar"/>
+	<classpathentry kind="src" path="serial/src"/>
+	<classpathentry kind="lib" path="serial/library/RXTXcomm.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
