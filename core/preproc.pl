@@ -31,11 +31,6 @@ foreach $line (@applet) {
     last if ($line =~ /$insert/);
 }
 
-#open(INTF, ">PMethods.java") || die $!;
-#print INTF "package processing.core;\n\n\n\n";
-#print INTF "// this file is auto-generated. no touchy-touchy.\n\n";
-#print INTF "public interface PMethods {\n";
-
 $comments = 0;
 
 while ($line = shift(@contents)) {
@@ -118,7 +113,9 @@ while ($line = shift(@contents)) {
         $prev = 0;
         @parts = split(', ', $decl);
         foreach $part (@parts) {
-            ($the_type, $the_arg) = split(' ', $part);
+            #($the_type, $the_arg) = split(' ', $part);
+	    @blargh = split(' ', $part);
+	    $the_arg = $blargh[1];
             $the_arg =~ s/[\[\]]//g;
             if ($prev != 0) {
                 #print OUT ", ";
@@ -157,12 +154,9 @@ close(NEWGUY);
 if ($oldguy ne $newguy) {
     # replace him
     print "updating PApplet with PGraphics api changes\n";
-    `mv PApplet.new PApplet.java`;
+    `mv $basedir/PApplet.new $basedir/PApplet.java`;
 } else {
     # just kill the new guy
     #print "no changes to applet\n";
-    `rm PApplet.new`;
+    `rm -f $basedir/PApplet.new`;
 }
-
-# then do the actual building
-#print `perl buzz.pl '${JIKES} -target 1.1 -bootclasspath $extra_classes +D -d classes' $video_flag $sonic_flag $serial_flag $opengl_flag $illustrator_flag $jdk13_flag *.java`;
