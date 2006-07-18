@@ -34,7 +34,7 @@ import java.awt.image.*;
  * <P>
  * As of beta, this class is semi-disabled.
  */
-public class PGraphics extends PImage implements PConstants {
+public abstract class PGraphics extends PImage implements PConstants {
 
   /***
    * Parent applet as passed in by the constructor. If null, then
@@ -463,11 +463,10 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Constructor for the PGraphics object.
-   * This prototype only exists because of annoying
-   * java compilers, and should not be used.
+   * Constructor for the PGraphics object. This prototype only exists 
+   * because of annoying java compilers, and cannot be used.
    */
-  public PGraphics() { }
+  protected PGraphics() { }
 
 
   /**
@@ -534,25 +533,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   // broken out because of subclassing
-  protected void allocate() {
-    pixelCount = width * height;
-    pixels = new int[pixelCount];
-
-    // because of a java 1.1 bug, pixels must be registered as
-    // opaque before their first run, the memimgsrc will flicker
-    // and run very slowly.
-    backgroundColor |= 0xff000000;  // just for good measure
-    for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
-    //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
-
-    if (parent != null) {
-      cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
-      mis = new MemoryImageSource(width, height, pixels, 0, width);
-      mis.setFullBufferUpdates(true);
-      mis.setAnimated(true);
-      image = Toolkit.getDefaultToolkit().createImage(mis);
-    }
-  }
+  abstract protected void allocate();
 
 
 
@@ -591,17 +572,7 @@ public class PGraphics extends PImage implements PConstants {
    * When creating your own PGraphics, you should call this before
    * drawing anything.
    */
-  public void beginDraw() {  // ignore
-    // need to call defaults(), but can only be done when it's ok
-    // to draw (i.e. for opengl, no drawing can be done outside
-    // beginDraw/endDraw).
-    if (!defaultsInited) defaults();
-
-    resetMatrix(); // reset model matrix
-
-    // reset vertices
-    vertexCount = 0;
-  }
+  abstract public void beginDraw();  // ignore
 
 
   /**
@@ -610,15 +581,7 @@ public class PGraphics extends PImage implements PConstants {
    * When creating your own PGraphics, you should call this when
    * you're finished drawing.
    */
-  public void endDraw() {  // ignore
-    // moving this back here (post-68) because of macosx thread problem
-    if (mis != null) {
-      mis.newPixels(pixels, cm, 0, width);
-    }
-    // mark pixels as having been updated, so that they'll work properly
-    // when this PGraphics is drawn using image().
-    endPixels();
-  }
+  abstract public void endDraw();  // ignore
 
 
   /**
