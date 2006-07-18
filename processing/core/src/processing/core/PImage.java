@@ -32,7 +32,8 @@ import java.lang.reflect.*;
 
 
 /**
- * Storage class for pixel data.
+ * Storage class for pixel data. This is the base class for most image and
+ * pixel information, such as PGraphics and the video library classes.
  * <P>
  * Code for copying, resizing, scaling, and blending contributed
  * by <A HREF="http://www.toxi.co.uk">toxi</A>
