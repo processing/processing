@@ -180,7 +180,7 @@ public class PTriangle implements PConstants
   private int m_index;
 
   /** */
-  private PGraphics3 parent;
+  private PGraphics3D parent;
 
   private boolean noDepthTest;
 
@@ -193,7 +193,7 @@ public class PTriangle implements PConstants
   /** */
   private boolean   m_bilinear;
 
-  public PTriangle(PGraphics3 g) {
+  public PTriangle(PGraphics3D g) {
     //SCREEN_WIDTH = g.width;
     //SCREEN_HEIGHT = g.height;
     //SCREEN_WIDTH1 = SCREEN_WIDTH-1;

@@ -64,7 +64,7 @@ import com.sun.opengl.util.*;
  * as we approached beta while both Simon and I were working on it.
  * Relax, we'll get it fixed up later.
  */
-public class PGraphicsGL extends PGraphics3 {
+public class PGraphicsOpenGL extends PGraphics3D {
   public GL gl;
   public GLU glu;
   public GLCanvas canvas;
@@ -101,7 +101,7 @@ public class PGraphicsGL extends PGraphics3 {
    * that is visible on screen in order to work properly.
    * @param applet the host applet
    */
-  public PGraphicsGL(int width, int height, PApplet applet) {
+  public PGraphicsOpenGL(int width, int height, PApplet applet) {
     //System.out.println("creating PGraphicsGL");
 
     if (applet == null) {
@@ -660,7 +660,7 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glDisable(GL.GL_TEXTURE_2D);
 
         if (raw != null) {
-          if (raw instanceof PGraphics3) {
+          if (raw instanceof PGraphics3D) {
             if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
               raw.texture(texture);
               raw.fill(ar, ag, ab, a[A]);
@@ -703,7 +703,7 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
         if (raw != null) {
-          if (raw instanceof PGraphics3) {
+          if (raw instanceof PGraphics3D) {
             if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
               raw.fill(ar, ag, ab, a[A]);
               raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
@@ -761,7 +761,7 @@ public class PGraphicsGL extends PGraphics3 {
         if (a[SA] > EPSILON) {  // don't draw if transparent
           raw.colorMode(RGB, 1);
           raw.beginShape(LINE_STRIP);
-          if (raw instanceof PGraphics3) {
+          if (raw instanceof PGraphics3D) {
             if (a[VW] != 0) {
               raw.stroke(a[SR], a[SG], a[SB], a[SA]);
               raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
@@ -780,7 +780,7 @@ public class PGraphicsGL extends PGraphics3 {
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
         if (raw != null) {
-          if (raw instanceof PGraphics3) {
+          if (raw instanceof PGraphics3D) {
             if ((a[VW] != 0) && (b[VW] != 0)) {
               raw.stroke(b[SR], b[SG], b[SB], b[SA]);
               raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);

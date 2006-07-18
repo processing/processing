@@ -4708,7 +4708,7 @@ public class PApplet extends Applet
   }
 
   static public Object subset(Object list, int start, int count) {
-    int length = Array.getLength(list);
+    //int length = Array.getLength(list);
     Class type = list.getClass().getComponentType();
     Object outgoing = Array.newInstance(type, count);
     System.arraycopy(list, start, outgoing, 0, count);

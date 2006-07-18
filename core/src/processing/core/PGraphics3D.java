@@ -33,7 +33,7 @@ import java.awt.image.*;
  * <p/>
  * Lighting and camera implementation by Simon Greenwold.
  */
-public class PGraphics3 extends PGraphics {
+public class PGraphics3D extends PGraphics {
 
   // ........................................................
 
@@ -174,13 +174,13 @@ public class PGraphics3 extends PGraphics {
    * This prototype only exists because of annoying
    * java compilers, and should not be used.
    */
-  public PGraphics3() {
+  public PGraphics3D() {
     forwardTransform = modelview;
     reverseTransform = modelviewInv;
   }
 
 
-  public PGraphics3(int iwidth, int iheight) {
+  public PGraphics3D(int iwidth, int iheight) {
     this(iwidth, iheight, null);
   }
 
@@ -194,7 +194,7 @@ public class PGraphics3 extends PGraphics {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  public PGraphics3(int iwidth, int iheight, PApplet parent) {
+  public PGraphics3D(int iwidth, int iheight, PApplet parent) {
     // super will add the listeners to the applet, and call resize()
     super(iwidth, iheight, parent);
     forwardTransform = modelview;
@@ -1438,7 +1438,7 @@ public class PGraphics3 extends PGraphics {
       //System.out.println(i + " " + a[Z] + " " + b[Z] + " " + c[Z]);
 
       if (raw != null) {
-        if (raw instanceof PGraphics3) {
+        if (raw instanceof PGraphics3D) {
           if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
             raw.fill(ar, ag, ab, a[A]);
             raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
@@ -1512,7 +1512,7 @@ public class PGraphics3 extends PGraphics {
                        b[X], b[Y], b[Z]);
 
       if (raw != null) {
-        if (raw instanceof PGraphics3) {
+        if (raw instanceof PGraphics3D) {
           if ((a[VW] != 0) && (b[VW] != 0)) {
             raw.stroke(a[SR], a[SG], a[SB], a[SA]);
             raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);

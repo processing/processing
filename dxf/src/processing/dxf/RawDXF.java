@@ -22,8 +22,6 @@
 
 package processing.dxf;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 
 import processing.core.*;
@@ -113,7 +111,7 @@ import processing.core.*;
  * Rewritten to support beginRaw/endRaw by Ben Fry in February 2006.
  * Updated again for inclusion as a core library in March 2006.
  */
-public class RawDXF extends PGraphics3 {
+public class RawDXF extends PGraphics3D {
 
   //static final int MAX_TRI_LAYERS = 500000;
   //static final int NO_LAYER = -1;
