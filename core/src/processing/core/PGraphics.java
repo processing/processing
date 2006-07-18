@@ -1822,6 +1822,10 @@ public class PGraphics extends PImage implements PConstants {
       //textFontNativeMetrics = null;
       // changed for rev 0104 for textMode(SHAPE) in opengl
       if (textFontNative != null) {
+        // TODO need a better way to handle this. could use reflection to get
+        // rid of the warning, but that'd be a little silly. supporting this is
+        // an artifact of supporting java 1.1, otherwise we'd use getLineMetrics,
+        // as recommended by the @deprecated flag.
         textFontNativeMetrics =
           Toolkit.getDefaultToolkit().getFontMetrics(textFontNative);
       }

@@ -30,7 +30,12 @@ import java.awt.image.MemoryImageSource;
 
 
 /**
- * Subclass of PGraphics that handles 3D rendering.
+ * Subclass of PGraphics that handles 3D rendering for Java 1.1. 
+ * It can render 3D inside a browser window and requires no plug-ins.
+ * <p/>
+ * The renderer is mostly set up based on the structure of the OpenGL API, 
+ * if you have questions about specifics that aren't covered here, 
+ * look for reference on the OpenGL implementation of a similar feature.
  * <p/>
  * Lighting and camera implementation by Simon Greenwold.
  */
