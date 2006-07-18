@@ -115,8 +115,20 @@ public class PGraphicsJava2D extends PGraphics {
 
   // FRAME
 
+  
+  public void beginDraw() {
+    // need to call defaults(), but can only be done when it's ok
+    // to draw (i.e. for opengl, no drawing can be done outside
+    // beginDraw/endDraw).
+    if (!defaultsInited) defaults();
 
-  // turn off mis.newPixels
+    resetMatrix(); // reset model matrix
+
+    // reset vertices
+    vertexCount = 0;
+  }
+
+  
   public void endDraw() {
     // moving this back here (post-68) because of macosx thread problem
     //mis.newPixels(pixels, cm, 0, width);
