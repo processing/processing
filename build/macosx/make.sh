@@ -80,7 +80,7 @@ export CLASSPATH
 perl preproc.pl
 
 mkdir -p bin
-../build/macosx/work/jikes -d bin +D -target 1.1 src/processing/core/.java
+../build/macosx/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
 #javac -d bin -source 1.3 -target 1.1 src/processing/core/*.java
 cd bin && zip -r0q ../../build/macosx/work/lib/core.jar processing && cd ..
 
@@ -151,8 +151,8 @@ echo Building serial library...
 cd ../serial
 mkdir -p bin
 $JIKES -target 1.1 +D \
-    -classpath "code/RXTXcomm.jar:$CORE:$CLASSPATH" \
-    -d bin src/processing/serial.java 
+    -classpath "library/RXTXcomm.jar:$CORE:$CLASSPATH" \
+    -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 cd bin && zip -r0q ../library/serial.jar processing && cd ..
 mkdir -p $LIBRARIES/serial/library/
@@ -197,7 +197,7 @@ cd ../opengl
 mkdir -p bin
 $JIKES -target 1.1 +D \
     -classpath "library/jogl.jar:$CLASSPATH" \
-    -d bin processing/opengl/*.java 
+    -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
 cd bin && zip -r0q ../library/opengl.jar processing/opengl/*.class && cd ..
 mkdir -p $LIBRARIES/opengl/library/
@@ -212,7 +212,7 @@ $JIKES -target 1.1 +D \
     -classpath "library/itext.jar:$CLASSPATH" \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
-cd bin && zip -r0q library/pdf.jar processing/pdf/*.class && cd ..
+cd bin && zip -r0q ../library/pdf.jar processing/pdf/*.class && cd ..
 mkdir -p $LIBRARIES/pdf/library/
 cp library/pdf.jar $LIBRARIES/pdf/library/
 
@@ -221,9 +221,9 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 echo Building DXF library...
 cd ../dxf
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin processing/dxf/*.java 
+$JIKES -target 1.1 +D -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
-cd bin && zip -r0q library/dxf.jar processing/dxf/*.class && cd ..
+cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
 
