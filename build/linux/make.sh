@@ -131,8 +131,8 @@ echo Building serial library...
 cd ../serial
 mkdir -p bin
 $JIKES -target 1.1 +D \
-    -classpath "code/RXTXcomm.jar:$CORE:$CLASSPATH" \
-    -d bin src/processing/serial.java 
+    -classpath "library/RXTXcomm.jar:$CORE:$CLASSPATH" \
+    -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 cd bin && zip -r0q ../library/serial.jar processing && cd ..
 mkdir -p $LIBRARIES/serial/library/
@@ -156,7 +156,7 @@ cd ../opengl
 mkdir -p bin
 $JIKES -target 1.1 +D \
     -classpath "library/jogl.jar:$CLASSPATH" \
-    -d bin processing/opengl/*.java 
+    -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
 cd bin && zip -r0q ../library/opengl.jar processing/opengl/*.class && cd ..
 mkdir -p $LIBRARIES/opengl/library/
@@ -180,7 +180,7 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 echo Building DXF library...
 cd ../dxf
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin processing/dxf/*.java 
+$JIKES -target 1.1 +D -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
 cd bin && zip -r0q library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
