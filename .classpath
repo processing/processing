@@ -7,10 +7,10 @@
 	<classpathentry kind="lib" path="opengl/library/jogl.jar"/>
 	<classpathentry kind="src" path="net/src"/>
 	<classpathentry kind="src" path="pdf/src"/>
-	<classpathentry kind="lib" path="pdf/library/itext.jar"/>
 	<classpathentry kind="src" path="serial/src"/>
 	<classpathentry kind="lib" path="serial/library/RXTXcomm.jar"/>
 	<classpathentry kind="lib" path="video/QTJava.zip"/>
 	<classpathentry kind="src" path="video/src"/>
+	<classpathentry sourcepath="pdf/itext-src-1.4.2.zip" kind="lib" path="pdf/library/itext-1.4.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
