@@ -201,7 +201,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  Path path;
+  //Path path;
 
   // ........................................................
 
@@ -604,15 +604,6 @@ public abstract class PGraphics extends PImage implements PConstants {
     // other stroke attributes are set in the initializers
     // inside the class (see above, strokeWeight = 1 et al)
 
-    // if this fella is associated with an applet, then clear its background.
-    // if it's been created by someone else through createGraphics, 
-    // they have to call background() themselves, otherwise everything gets
-    // a gray background (when just a transparent surface or an empty pdf 
-    // is what's desired)
-    if (parent != null) {
-      background(204);
-    }
-
     // init shape stuff
     shape = 0;
 
@@ -631,14 +622,26 @@ public abstract class PGraphics extends PImage implements PConstants {
     textAlign = LEFT;
     textMode = MODEL;
 
+    // if this fella is associated with an applet, then clear its background.
+    // if it's been created by someone else through createGraphics, 
+    // they have to call background() themselves, otherwise everything gets
+    // a gray background (when just a transparent surface or an empty pdf 
+    // is what's desired)
+    if (parent != null) {
+      background(204);
+    }
+
     defaultsInited = true;
   }
 
 
+  /*
   protected void flush() {
     // no-op, mostly for P3D to write sorted stuff
   }
+  */
 
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -666,6 +669,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     hints[which] = true;
   }
 
+  
   /**
    * Disable a hint.
    */
@@ -673,6 +677,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     hints[which] = false;
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -708,7 +713,8 @@ public abstract class PGraphics extends PImage implements PConstants {
    * the code and maintain it. for beta, the latter is most important so
    * that's how things are implemented.
    */
-  public void beginShape(int kind) {
+  abstract public void beginShape(int kind);
+    /*
     shape = kind;
 
     // reset vertex, line and triangle information
@@ -721,23 +727,72 @@ public abstract class PGraphics extends PImage implements PConstants {
     //strokeChanged = false;
     //fillChanged = false;
     //normalChanged = false;
-  }
+     */
 
 
   public void normal(float nx, float ny, float nz) {
     depthError("normal");
   }
 
+  
+  /**
+   * Set texture mode to either to use coordinates based on the IMAGE
+   * (more intuitive for new users) or NORMALIZED (better for advanced chaps)
+   */
   public void textureMode(int mode) {
-    depthError("textureMode");
+    this.textureMode = mode;
   }
 
+
+  /**
+   * Set texture image for current shape.
+   * Needs to be called between @see beginShape and @see endShape
+   *
+   * @param image reference to a PImage object
+   */
   public void texture(PImage image) {
-    depthError("texture");
+    textureImage = image;
+  }
+  
+
+  /**
+   * Set (U, V) coords for the next vertex in the current shape.
+   * This is ugly as its own function, and will (almost?) always be
+   * coincident with a call to vertex. As of beta, this was moved to 
+   * the protected method you see here, and called from an optional 
+   * param of and overloaded vertex().
+   * <p/>
+   * The parameters depend on the current textureMode. When using
+   * textureMode(IMAGE), the coordinates will be relative to the size
+   * of the image texture, when used with textureMode(NORMAL), 
+   * they'll be in the range 0..1.
+   * <p/>
+   * Used by both PGraphics2D (for images) and PGraphics3D.
+   */
+  protected void textureVertex(float u, float v) {
+    if (textureImage == null) {
+      throw new RuntimeException("need to set an image with texture() " +
+                                 "before using u and v coordinates");
+    }
+    if (textureMode == IMAGE) {
+      u /= (float) textureImage.width;
+      v /= (float) textureImage.height;
+    }
+
+    textureU = u;
+    textureV = v;
+
+    if (textureU < 0) textureU = 0;
+    else if (textureU > ONE) textureU = ONE;
+
+    if (textureV < 0) textureV = 0;
+    else if (textureV > ONE) textureV = ONE;
   }
 
 
-  public void vertex(float x, float y) {
+  // eventually need to push a "default" setup down to this class
+  abstract public void vertex(float x, float y);
+    /*
     splineVertexCount = 0;
     //float vertex[];
 
@@ -872,35 +927,150 @@ public abstract class PGraphics extends PImage implements PConstants {
       }
       break;
     }
+    */
+
+
+  abstract public void vertex(float x, float y, float z);
+
+
+  abstract public void vertex(float x, float y, float u, float v);
+
+
+  abstract public void vertex(float x, float y, float z, float u, float v);
+  
+  
+  public void bezierVertex(float x2, float y2,
+                           float x3, float y3,
+                           float x4, float y4) {
+    bezierVertex(x2, y2, Float.MAX_VALUE, 
+                 x3, y3, Float.MAX_VALUE, 
+                 x4, y4, Float.MAX_VALUE);
+  }
+  
+  
+  /**
+   * See notes with the bezier() function.
+   */
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+    if (shape != POLYGON) {
+      throw new RuntimeException("beginShape() and vertex() " +
+                                 "must be used before bezierVertex()");
+    }
+    if (splineVertexCount > 0) {
+      float vertex[] = splineVertices[splineVertexCount-1];
+      splineVertex(vertex[MX], vertex[MY], vertex[MZ], true);
+
+    } else if (vertexCount > 0) {
+      // make sure there's at least a call to vertex()
+      float vertex[] = vertices[vertexCount-1];
+      splineVertex(vertex[MX], vertex[MY], vertex[MZ], true);
+
+    } else {
+      throw new RuntimeException("A call to vertex() must be used " +
+                                 "before bezierVertex()");
+    }
+    splineVertex(x2, y2, z2, true);
+    splineVertex(x3, y3, z3, true);
+    splineVertex(x4, y4, z4, true);
+  }
+
+  
+  /**
+   * See notes with the curve() function.
+   */
+  public void curveVertex(float x, float y) {
+    splineVertex(x, y, Float.MAX_VALUE, false);
   }
 
 
-  public void vertex(float x, float y, float z) {
-    depthErrorXYZ("vertex");
+  /**
+   * See notes with the curve() function.
+   */
+  public void curveVertex(float x, float y, float z) {
+    splineVertex(x, y, z, false);
   }
 
 
-  public void vertex(float x, float y, float u, float v) {
-    throw new RuntimeException("vertex() with u, v coordinates " +
-                               "can only be used with OPENGL or P3D");
+  protected void splineVertex(float x, float y, float z, boolean bezier) {
+    // to improve processing applet load times, don't allocate 
+    // space for the vertex data until actual use
+    if (splineVertices == null) {
+      splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
+    }
+
+    // if more than 128 points, shift everything back to the beginning
+    if (splineVertexCount == DEFAULT_SPLINE_VERTICES) {
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-3], 0,
+                       splineVertices[0], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-2], 0,
+                       splineVertices[1], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-1], 0,
+                       splineVertices[2], 0, VERTEX_FIELD_COUNT);
+      splineVertexCount = 3;
+    }
+
+    float vertex[] = splineVertices[splineVertexCount];
+
+    vertex[MX] = x;
+    vertex[MY] = y;
+
+    if (fill) {
+      vertex[R] = fillR;
+      vertex[G] = fillG;
+      vertex[B] = fillB;
+      vertex[A] = fillA;
+    }
+
+    if (stroke) {
+      vertex[SR] = strokeR;
+      vertex[SG] = strokeG;
+      vertex[SB] = strokeB;
+      vertex[SA] = strokeA;
+      vertex[SW] = strokeWeight;
+    }
+
+    if (textureImage != null) {
+      vertex[U] = textureU;
+      vertex[V] = textureV;
+    }
+
+    // when the coords are Float.MAX_VALUE, then treat as a 2D curve
+    int dimensions = (x == Float.MAX_VALUE) ? 2 : 3;
+
+    if (dimensions == 3) {
+      vertex[MZ] = z;
+      
+      vertex[NX] = normalX;
+      vertex[NY] = normalY;
+      vertex[NZ] = normalZ;
+    }
+    
+    splineVertexCount++;
+      
+    // draw a segment if there are enough points
+    if (splineVertexCount > 3) {
+      if (bezier) {
+        if ((splineVertexCount % 4) == 0) {
+          if (!bezierInited) bezier_init();
+          splineSegment(splineVertexCount-4,
+                        splineVertexCount-4,
+                        bezier_draw, dimensions,
+                        bezierDetail);
+        }
+      } else {  // catmull-rom curve (!bezier)
+        if (!curve_inited) curve_init();
+        splineSegment(splineVertexCount-4,
+                      splineVertexCount-3,
+                      curve_draw, dimensions,
+                      curveDetail);
+      }
+    }
   }
 
 
-  public void vertex(float x, float y, float z, float u, float v) {
-    throw new RuntimeException("vertex() with u, v coordinates " +
-                               "can only be used with OPENGL or P3D");
-  }
-
-
-  public void bezierVertex(float x1, float y1,
-                           float x2, float y2,
-                           float x3, float y3) {
-    // if there hasn't yet been a call to vertex(), throw an error
-
-    // otherwise, draw a bezier segment to this point
-  }
-
-
+/*
   protected void bezier_vertex(float x, float y) {
     vertexCount = 0;
 
@@ -941,33 +1111,41 @@ public abstract class PGraphics extends PImage implements PConstants {
                                  "LINE_LOOP and POLYGON shapes");
     }
   }
+  */
 
 
+  /*
   public void bezierVertex(float x1, float y1, float z1,
                            float x2, float y2, float z2,
                            float x3, float y3, float z3) {
     depthErrorXYZ("bezierVertex");
   }
+  */
 
 
   /**
    * See notes with the curve() function.
    */
+  /*
   public void curveVertex(float x, float y) {
     //throw new RuntimeException("curveVertex() temporarily disabled");
     // TODO get matrix setup happening
   }
+  */
 
 
   /**
    * See notes with the curve() function.
    */
+  /*
   public void curveVertex(float x, float y, float z) {
     depthErrorXYZ("curveVertex");
   }
+  */
 
 
-  public void endShape() {
+  abstract public void endShape();
+  /*
     shape = 0;
 
     switch (shape) {
@@ -986,6 +1164,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       break;
     }
   }
+  */
 
 
 
@@ -1036,6 +1215,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   // STROKE/FILL/DRAW
 
 
+  /*
   //protected void fill_shape(Shape s) {
   protected void fill_shape(Path s) {
     if (fill) {
@@ -1063,44 +1243,64 @@ public abstract class PGraphics extends PImage implements PConstants {
       //graphics.draw(s);
     }
   }
+  */
 
-
+  
 
   //////////////////////////////////////////////////////////////
 
-  // POINT
+  // SIMPLE SHAPES WITH ANALOGUES IN beginShape()
 
 
   public void point(float x, float y) {
-    // TODO
+    beginShape(POINTS);
+    vertex(x, y);
+    endShape();
   }
 
 
   public void point(float x, float y, float z) {
-    depthErrorXYZ("point");
+    beginShape(POINTS);
+    vertex(x, y, z);
+    endShape();
   }
 
 
   public void line(float x1, float y1, float x2, float y2) {
-    // TODO
+    beginShape(LINES);
+    vertex(x1, y1);
+    vertex(x2, y2);
+    endShape();
   }
 
 
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
-    depthErrorXYZ("line");
+    beginShape(LINES);
+    vertex(x1, y1, z1);
+    vertex(x2, y2, z2);
+    endShape();
   }
 
 
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
-    // TODO
+    beginShape(TRIANGLES);
+    vertex(x1, y1);
+    vertex(x2, y2);
+    vertex(x3, y3);
+    endShape();
   }
 
 
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
-    // TODO
+    beginShape(QUADS);
+    vertex(x1, y1);
+    vertex(x2, y2);
+    vertex(x3, y3);
+    vertex(x4, y4);
+    endShape();
   }
 
 
@@ -1153,7 +1353,12 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   protected void rectImpl(float x1, float y1, float x2, float y2) {
-    // TODO write rect drawing function
+    beginShape(QUADS);
+    vertex(x1, y1);
+    vertex(x2, y1);
+    vertex(x2, y2);
+    vertex(x1, y2);
+    endShape();
   }
 
 
@@ -1586,6 +1791,62 @@ public abstract class PGraphics extends PImage implements PConstants {
    * for catmull-rom curves, the first control point (x2, y2, z2)
    * is the first drawn point, and is accumulated to.
    */
+  protected void splineSegment(int offset, int start, float m[][], 
+                               int dimensions, int segments) {
+    float x1 = splineVertices[offset+0][MX];
+    float x2 = splineVertices[offset+1][MX];
+    float x3 = splineVertices[offset+2][MX];
+    float x4 = splineVertices[offset+3][MX];
+    float x0 = splineVertices[start][MX];
+    
+    float y1 = splineVertices[offset+0][MY];
+    float y2 = splineVertices[offset+1][MY];
+    float y3 = splineVertices[offset+2][MY];
+    float y4 = splineVertices[offset+3][MY];
+    float y0 = splineVertices[start][MY];
+
+    float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
+    float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
+    float xplot3 = m[3][0]*x1 + m[3][1]*x2 + m[3][2]*x3 + m[3][3]*x4;
+    
+    float yplot1 = m[1][0]*y1 + m[1][1]*y2 + m[1][2]*y3 + m[1][3]*y4;
+    float yplot2 = m[2][0]*y1 + m[2][1]*y2 + m[2][2]*y3 + m[2][3]*y4;
+    float yplot3 = m[3][0]*y1 + m[3][1]*y2 + m[3][2]*y3 + m[3][3]*y4;
+    
+    // vertex() will reset splineVertexCount, so save it
+    int cvertexSaved = splineVertexCount;
+
+    if (dimensions == 3) {
+      float z1 = splineVertices[offset+0][MZ];
+      float z2 = splineVertices[offset+1][MZ];
+      float z3 = splineVertices[offset+2][MZ];    
+      float z4 = splineVertices[offset+3][MZ];
+      float z0 = splineVertices[start][MZ];
+
+      float zplot1 = m[1][0]*z1 + m[1][1]*z2 + m[1][2]*z3 + m[1][3]*z4;
+      float zplot2 = m[2][0]*z1 + m[2][1]*z2 + m[2][2]*z3 + m[2][3]*z4;
+      float zplot3 = m[3][0]*z1 + m[3][1]*z2 + m[3][2]*z3 + m[3][3]*z4;
+      
+      vertex(x0, y0, z0);
+      for (int j = 0; j < segments; j++) {
+        x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+        y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+        z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
+        vertex(x0, y0, z0);
+      }
+    } else {
+      vertex(x0, y0);
+      for (int j = 0; j < segments; j++) {
+        x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+        y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+        vertex(x0, y0);
+      }
+    }
+    splineVertexCount = cvertexSaved;
+  }  
+  
+  
+  /*
   protected void spline2_segment(int offset, int start,
                                  float m[][], int segments) {
     float x1 = splineVertices[offset][MX];
@@ -1668,6 +1929,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
     splineVertexCount = cvertexSaved;
   }
+  */
 
 
 
@@ -3391,13 +3653,21 @@ public abstract class PGraphics extends PImage implements PConstants {
                                "with P3D or OPENGL.");
   }
 
+  
   protected void depthErrorXYZ(String method) {
     throw new RuntimeException(method + "(x, y, z) can only be used with " +
                                "OPENGL or P3D, use " +
                                method + "(x, y) instead.");
   }
+  
+  
+  protected void unavailableError(String methodStr) {
+    throw new RuntimeException(methodStr + 
+                               " is not available with this renderer");
+  }
 
 
+  
   //////////////////////////////////////////////////////////////
 
   // COLOR MANIPULATION
@@ -3553,11 +3823,23 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
+  
+  //////////////////////////////////////////////////////////////
+
+  // MATH
+
+  
+  static final float sqrt(float a) {
+    return (float)Math.sqrt(a);
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
   // PATH
 
+  /*
   class Path {
 
     public void moveTo(float x, float y) {  // ignore
@@ -3574,7 +3856,8 @@ public abstract class PGraphics extends PImage implements PConstants {
     public void closePath() {  // ignore
     }
   }
-
+  */
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -3611,7 +3894,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void endRaw() {
     if (raw != null) {
       // for 3D, need to flush any geometry that's been stored for sorting
-      raw.flush();
+      //raw.flush();  // this should be called by endDraw() instead
 
       // just like beginDraw, this will have to be called because
       // endDraw() will be happening outside of draw()
