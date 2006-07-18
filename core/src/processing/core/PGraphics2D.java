@@ -29,7 +29,8 @@ package processing.core;
 
 /**
  * Subclass of PGraphics that handles fast 2D rendering, 
- * more commonly referred to as P2D. 
+ * more commonly referred to as P2D. This class uses no Java2D 
+ * and will run with Java 1.1.
  */
 public class PGraphics2D extends PGraphics {
   // not finished yet
