@@ -214,18 +214,18 @@ public class PGraphics2D extends PGraphics {
     //shape = 0;
     // hm can't do anymore..
 
-    int vertexCount = polygon.vertexCount;
-    float vertices[][] = polygon.vertices;
+    int polyVertexCount = polygon.vertexCount;
+    float polyVertices[][] = polygon.vertices;
 
     if (untransformed()) {
-      for (int i = 0; i < vertexCount; i++) {
-        vertices[i][X] = vertices[i][MX];
-        vertices[i][Y] = vertices[i][MY];
+      for (int i = 0; i < polyVertexCount; i++) {
+        polyVertices[i][X] = polyVertices[i][MX];
+        polyVertices[i][Y] = polyVertices[i][MY];
       }
     } else {
-      for (int i = 0; i < vertexCount; i++) {
-        vertices[i][X] = m00*vertices[i][MX] + m01*vertices[i][MY] + m03;
-        vertices[i][Y] = m10*vertices[i][MX] + m11*vertices[i][MY] + m13;
+      for (int i = 0; i < polyVertexCount; i++) {
+        polyVertices[i][X] = m00*polyVertices[i][MX] + m01*polyVertices[i][MY] + m03;
+        polyVertices[i][Y] = m10*polyVertices[i][MX] + m11*polyVertices[i][MY] + m13;
       }
     }
     
@@ -257,24 +257,24 @@ public class PGraphics2D extends PGraphics {
     case POINTS:
       if (untransformed() && (strokeWeight == 1)) {
         if (!strokeChanged) {
-          for (int i = 0; i < vertexCount; i++) {
-            thin_point((int) vertices[i][X], (int) vertices[i][Y], 
+          for (int i = 0; i < polyVertexCount; i++) {
+            thin_point((int) polyVertices[i][X], (int) polyVertices[i][Y], 
                 0, strokeColor);
           }
         } else {
-          for (int i = 0; i < vertexCount; i++) {
-            thin_point((int) vertices[i][X], (int) vertices[i][Y],
-                0, float_color(vertices[i][SR], 
-                    vertices[i][SG], 
-                    vertices[i][SB]));
+          for (int i = 0; i < polyVertexCount; i++) {
+            thin_point((int) polyVertices[i][X], (int) polyVertices[i][Y],
+                0, float_color(polyVertices[i][SR], 
+                    polyVertices[i][SG], 
+                    polyVertices[i][SB]));
           }
           //strokei = strokeiSaved;
         }
       } else {
-        float f[] = vertices[0];
+        float f[] = polyVertices[0];
         
-        for (int i = 0; i < vertexCount; i++) {
-          float v[] = vertices[i];
+        for (int i = 0; i < polyVertexCount; i++) {
+          float v[] = polyVertices[i];
           
           // if this is the first time (i == 0)
           // or if lighting is enabled
@@ -304,7 +304,7 @@ public class PGraphics2D extends PGraphics {
       if (shape == LINE_LOOP) {
         float v0[] = polygon.vertices[0];
         float v1[] = polygon.nextVertex();
-        vertexCount++; // since it had already been read above
+        polyVertexCount++; // since it had already been read above
         
         v1[X] = v0[X]; v1[Y] = v0[Y]; v1[Z] = v0[Z];
         v1[SR] = v0[SR]; v1[SG] = v0[SG]; v1[SB] = v0[SB];
@@ -312,7 +312,7 @@ public class PGraphics2D extends PGraphics {
       
       // increment by two for individual lines
       increment = (shape == LINES) ? 2 : 1;
-      draw_lines(vertices, vertexCount-1, 1, increment, 0);
+      draw_lines(polyVertices, polyVertexCount-1, 1, increment, 0);
       break;
       
     case TRIANGLES:
@@ -322,20 +322,20 @@ public class PGraphics2D extends PGraphics {
       // the lines will be stroked more than necessary
       if (fill) {
         fpolygon.vertexCount = 3;
-        for (int i = 0; i < vertexCount-2; i += increment) {
+        for (int i = 0; i < polyVertexCount-2; i += increment) {
           for (int j = 0; j < 3; j++) {
-            fpolygon.vertices[j][R] = vertices[i+j][R];
-            fpolygon.vertices[j][G] = vertices[i+j][G];
-            fpolygon.vertices[j][B] = vertices[i+j][B];
-            fpolygon.vertices[j][A] = vertices[i+j][A];
+            fpolygon.vertices[j][R] = polyVertices[i+j][R];
+            fpolygon.vertices[j][G] = polyVertices[i+j][G];
+            fpolygon.vertices[j][B] = polyVertices[i+j][B];
+            fpolygon.vertices[j][A] = polyVertices[i+j][A];
             
-            fpolygon.vertices[j][X] = vertices[i+j][X];
-            fpolygon.vertices[j][Y] = vertices[i+j][Y];
-            fpolygon.vertices[j][Z] = vertices[i+j][Z];
+            fpolygon.vertices[j][X] = polyVertices[i+j][X];
+            fpolygon.vertices[j][Y] = polyVertices[i+j][Y];
+            fpolygon.vertices[j][Z] = polyVertices[i+j][Z];
             
             if (polygon.interpUV) {
-              fpolygon.vertices[j][U] = vertices[i+j][U];
-              fpolygon.vertices[j][V] = vertices[i+j][V];
+              fpolygon.vertices[j][U] = polyVertices[i+j][U];
+              fpolygon.vertices[j][V] = polyVertices[i+j][V];
             }
           }
           fpolygon.render();
@@ -344,13 +344,13 @@ public class PGraphics2D extends PGraphics {
       if (stroke) {
         // first draw all vertices as a line strip
         if (shape == TRIANGLE_STRIP) {
-          draw_lines(vertices, vertexCount-1, 1, 1, 0);
+          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 0);
         } else {
-          draw_lines(vertices, vertexCount-1, 1, 1, 3);
+          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 3);
         }
         // then draw from vertex (n) to (n+2) 
         // incrementing n using the same as above
-        draw_lines(vertices, vertexCount-2, 2, increment, 0);
+        draw_lines(polyVertices, polyVertexCount-2, 2, increment, 0);
         // changed this to vertexCount-2, because it seemed
         // to be adding an extra (nonexistant) line
       }
@@ -362,20 +362,20 @@ public class PGraphics2D extends PGraphics {
       increment = (shape == QUADS) ? 4 : 2;
       if (fill) {
         fpolygon.vertexCount = 4;
-        for (int i = 0; i < vertexCount-3; i += increment) {
+        for (int i = 0; i < polyVertexCount-3; i += increment) {
           for (int j = 0; j < 4; j++) {
-            fpolygon.vertices[j][R] = vertices[i+j][R];
-            fpolygon.vertices[j][G] = vertices[i+j][G];
-            fpolygon.vertices[j][B] = vertices[i+j][B];
-            fpolygon.vertices[j][A] = vertices[i+j][A];
+            fpolygon.vertices[j][R] = polyVertices[i+j][R];
+            fpolygon.vertices[j][G] = polyVertices[i+j][G];
+            fpolygon.vertices[j][B] = polyVertices[i+j][B];
+            fpolygon.vertices[j][A] = polyVertices[i+j][A];
             
-            fpolygon.vertices[j][X] = vertices[i+j][X];
-            fpolygon.vertices[j][Y] = vertices[i+j][Y];
-            fpolygon.vertices[j][Z] = vertices[i+j][Z];
+            fpolygon.vertices[j][X] = polyVertices[i+j][X];
+            fpolygon.vertices[j][Y] = polyVertices[i+j][Y];
+            fpolygon.vertices[j][Z] = polyVertices[i+j][Z];
             
             if (polygon.interpUV) {
-              fpolygon.vertices[j][U] = vertices[i+j][U];
-              fpolygon.vertices[j][V] = vertices[i+j][V];
+              fpolygon.vertices[j][U] = polyVertices[i+j][U];
+              fpolygon.vertices[j][V] = polyVertices[i+j][V];
             }
           }
           fpolygon.render();
@@ -384,13 +384,13 @@ public class PGraphics2D extends PGraphics {
       if (stroke) {
         // first draw all vertices as a line strip
         if (shape == QUAD_STRIP) {
-          draw_lines(vertices, vertexCount-1, 1, 1, 0);
+          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 0);
         } else {  // skip every few for quads
-          draw_lines(vertices, vertexCount, 1, 1, 4);
+          draw_lines(polyVertices, polyVertexCount, 1, 1, 4);
         }
         // then draw from vertex (n) to (n+3) 
         // incrementing n by the same increment as above
-        draw_lines(vertices, vertexCount-2, 3, increment, 0);
+        draw_lines(polyVertices, polyVertexCount-2, 3, increment, 0);
       }
       break;
       
@@ -402,10 +402,10 @@ public class PGraphics2D extends PGraphics {
         }
         
         if (stroke) {
-          draw_lines(vertices, vertexCount-1, 1, 1, 0);
+          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 0);
           // draw the last line connecting back to the first point in poly
-          svertices[0] = vertices[vertexCount-1];
-          svertices[1] = vertices[0];
+          svertices[0] = polyVertices[polyVertexCount-1];
+          svertices[1] = polyVertices[0];
           draw_lines(svertices, 1, 1, 1, 0);
         }
       } else {
@@ -422,11 +422,11 @@ public class PGraphics2D extends PGraphics {
         }
         
         if (stroke) {
-          draw_lines(vertices, vertexCount-1, 1, 1, 0);
+          draw_lines(polyVertices, polyVertexCount-1, 1, 1, 0);
           // draw the last line connecting back 
           // to the first point in poly
-          svertices[0] = vertices[vertexCount-1];
-          svertices[1] = vertices[0];
+          svertices[0] = polyVertices[polyVertexCount-1];
+          svertices[1] = polyVertices[0];
           draw_lines(svertices, 1, 1, 1, 0);
         }
       }
