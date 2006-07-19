@@ -236,8 +236,8 @@ public abstract class PGraphics extends PImage implements PConstants {
                 -3,  3,  0,  0,
                  1,  0,  0,  0);
 
-  protected float bezier_forward[][]; // = new float[4][4];
-  protected float bezier_draw[][]; // = new float[4][4];
+  protected float bezierForwardMatrix[][]; // = new float[4][4];
+  protected float bezierDrawMatrix[][]; // = new float[4][4];
 
   // ........................................................
 
@@ -598,8 +598,8 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void defaults() {  // ignore
     //System.out.println("PGraphics.defaults() " + width + " " + height);
 
-    colorMode(RGB, TFF);
-    fill(TFF);
+    colorMode(RGB, 255);
+    fill(255);
     stroke(0);
     // other stroke attributes are set in the initializers
     // inside the class (see above, strokeWeight = 1 et al)
@@ -993,6 +993,14 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Implementation of generic spline vertex, will add coords to 
+   * the splineVertices[] array and emit calls to draw segments
+   * as needed (every fourth point for bezier or every point starting
+   * with the fourth for catmull-rom).
+   * @param z z-coordinate, set to MAX_VALUE if it's 2D
+   * @param bezier true if it's a bezier instead of catmull-rom
+   */
   protected void splineVertex(float x, float y, float z, boolean bezier) {
     // to improve processing applet load times, don't allocate 
     // space for the vertex data until actual use
@@ -1053,10 +1061,10 @@ public abstract class PGraphics extends PImage implements PConstants {
     if (splineVertexCount > 3) {
       if (bezier) {
         if ((splineVertexCount % 4) == 0) {
-          if (!bezierInited) bezier_init();
+          if (!bezierInited) bezierInit();
           splineSegment(splineVertexCount-4,
                         splineVertexCount-4,
-                        bezier_draw, dimensions,
+                        bezierDrawMatrix, dimensions,
                         bezierDetail);
         }
       } else {  // catmull-rom curve (!bezier)
@@ -1070,103 +1078,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-/*
-  protected void bezier_vertex(float x, float y) {
-    vertexCount = 0;
-
-    if (splineVertices == null) {
-      splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
-    }
-
-    // if more than 128 points, shift everything back to the beginning
-    if (splineVertexCount == DEFAULT_SPLINE_VERTICES) {
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 3], 0,
-                       splineVertices[0], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 2], 0,
-                       splineVertices[1], 0, VERTEX_FIELD_COUNT);
-      splineVertexCount = 3;
-    }
-    splineVertices[splineVertexCount][MX] = x;
-    splineVertices[splineVertexCount][MY] = y;
-    splineVertexCount++;
-
-    switch (shape) {
-    case LINE_LOOP:
-    case LINE_STRIP:
-    case POLYGON:
-      if (splineVertexCount == 1) {
-        path.moveTo(x, y);
-
-      } else if (splineVertexCount >= 4) {
-        path.curveTo(splineVertices[splineVertexCount-3][MX],
-                     splineVertices[splineVertexCount-3][MY],
-                     splineVertices[splineVertexCount-2][MX],
-                     splineVertices[splineVertexCount-2][MY],
-                     x, y);
-      }
-      break;
-
-    default:
-      throw new RuntimeException("bezierVertex() can only be used with " +
-                                 "LINE_LOOP and POLYGON shapes");
-    }
-  }
-  */
-
-
-  /*
-  public void bezierVertex(float x1, float y1, float z1,
-                           float x2, float y2, float z2,
-                           float x3, float y3, float z3) {
-    depthErrorXYZ("bezierVertex");
-  }
-  */
-
-
-  /**
-   * See notes with the curve() function.
-   */
-  /*
-  public void curveVertex(float x, float y) {
-    //throw new RuntimeException("curveVertex() temporarily disabled");
-    // TODO get matrix setup happening
-  }
-  */
-
-
-  /**
-   * See notes with the curve() function.
-   */
-  /*
-  public void curveVertex(float x, float y, float z) {
-    depthErrorXYZ("curveVertex");
-  }
-  */
-
-
   abstract public void endShape();
-  /*
-    shape = 0;
 
-    switch (shape) {
-    case LINE_STRIP:
-      stroke_shape(path);
-      break;
-
-    case LINE_LOOP:
-      path.closePath();
-      stroke_shape(path);
-      break;
-
-    case POLYGON:
-      path.closePath();
-      draw_shape(path);
-      break;
-    }
-  }
-  */
-
-
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -1209,43 +1123,6 @@ public abstract class PGraphics extends PImage implements PConstants {
   //}
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // STROKE/FILL/DRAW
-
-
-  /*
-  //protected void fill_shape(Shape s) {
-  protected void fill_shape(Path s) {
-    if (fill) {
-      //graphics.setColor(fillColorObject);
-      //graphics.fill(s);
-    }
-  }
-
-  //protected void stroke_shape(Shape s) {
-  protected void stroke_shape(Path s) {
-    if (stroke) {
-      //graphics.setColor(strokeColorObject);
-      //graphics.draw(s);
-    }
-  }
-
-  //protected void draw_shape(Shape s) {
-  protected void draw_shape(Path s) {
-    if (fill) {
-      //graphics.setColor(fillColorObject);
-      //graphics.fill(s);
-    }
-    if (stroke) {
-      //graphics.setColor(strokeColorObject);
-      //graphics.draw(s);
-    }
-  }
-  */
-
-  
 
   //////////////////////////////////////////////////////////////
 
@@ -1353,12 +1230,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   protected void rectImpl(float x1, float y1, float x2, float y2) {
-    beginShape(QUADS);
-    vertex(x1, y1);
-    vertex(x2, y1);
-    vertex(x2, y2);
-    vertex(x1, y2);
-    endShape();
+    quad(x1, y1,  x2, y1,  x2, y2,  x1, y2);
   }
 
 
@@ -1408,8 +1280,76 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void ellipseImpl(float x, float y, float w, float h) {
-    // TODO draw an ellipse
+  protected void ellipseImpl(float x1, float y1, float w, float h) {
+    float hradius = w / 2f;
+    float vradius = h / 2f;
+
+    float centerX = x1 + hradius;
+    float centerY = y1 + vradius;
+
+    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
+    // now uses current scale factors to determine "real" transformed radius
+
+    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
+    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
+
+    // notched this up to *3 instead of *2 because things were
+    // looking a little rough, i.e. the calculate->arctangent example [fry]
+
+    // also removed the m00 and m11 because those were causing weirdness
+    // need an actual measure of magnitude in there [fry]
+
+    int accuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
+
+    // [toxi031031] adapted to use new lookup tables
+    float inc = (float)SINCOS_LENGTH / accuracy;
+
+    float val = 0;
+    /*
+    beginShape(POLYGON);
+    for (int i = 0; i < cAccuracy; i++) {
+      vertex(centerX + cosLUT[(int) val] * hradius,
+             centerY + sinLUT[(int) val] * vradius);
+      val += inc;
+    }
+    endShape();
+    */
+
+    if (fill) {
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      beginShape(TRIANGLE_FAN);
+      normal(0, 0, 1);
+      vertex(centerX, centerY);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * hradius,
+               centerY + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      // back to the beginning
+      vertex(centerX + cosLUT[0] * hradius,
+             centerY + sinLUT[0] * vradius);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      boolean savedFill = fill;
+      fill = false;
+
+      val = 0;
+      beginShape(LINE_LOOP);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * hradius,
+               centerY + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      endShape();
+
+      fill = savedFill;
+    }
   }
 
 
@@ -1457,15 +1397,75 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void arcImpl(float x, float y, float w, float h,
+  /**
+   * Start and stop are in radians, converted by the parent function.
+   * Note that the radians can be greater (or less) than TWO_PI.
+   * This is so that an arc can be drawn that crosses zero mark,
+   * and the user will still collect $200.
+   */
+  protected void arcImpl(float x1, float y1, float w, float h,
                          float start, float stop) {
+    float hr = w / 2f;
+    float vr = h / 2f;
+
+    float centerX = x1 + hr;
+    float centerY = y1 + vr;
+
+    if (fill) {
+      // shut off stroke for a minute
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(TRIANGLE_FAN);
+      vertex(centerX, centerY);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      // Almost identical to above, but this uses a LINE_STRIP
+      // and doesn't include the first (center) vertex.
+
+      boolean savedFill = fill;
+      fill = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(LINE_STRIP);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      fill = savedFill;
+    }
   }
 
-
+  
 
   //////////////////////////////////////////////////////////////
 
-  // 3D SHAPES
+  // BOX & SPHERE
 
 
   public void box(float size) {
@@ -1488,7 +1488,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // CURVES
+  // BEZIER
 
 
   /**
@@ -1538,25 +1538,25 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void bezier_init() {
+  protected void bezierInit() {
     bezierDetail(bezierDetail);
   }
 
 
   public void bezierDetail(int detail) {
-    if (bezier_forward == null) {
-      bezier_forward = new float[4][4];
-      bezier_draw = new float[4][4];
+    if (bezierForwardMatrix == null) {
+      bezierForwardMatrix = new float[4][4];
+      bezierDrawMatrix = new float[4][4];
     }
     bezierDetail = detail;
     bezierInited = true;
 
     // setup matrix for forward differencing to speed up drawing
-    setup_spline_forward(detail, bezier_forward);
+    setup_spline_forward(detail, bezierForwardMatrix);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
-    mult_spline_matrix(bezier_forward, bezier_basis, bezier_draw, 4);
+    mult_spline_matrix(bezierForwardMatrix, bezier_basis, bezierDrawMatrix, 4);
   }
 
 
@@ -1598,11 +1598,19 @@ public abstract class PGraphics extends PImage implements PConstants {
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    depthErrorXYZ("bezier");
+    beginShape(LINE_STRIP);
+    vertex(x1, y1, z1);
+    bezierVertex(x2, y2, z2,
+                 x3, y3, z3,
+                 x4, y4, z4);
+    endShape();
   }
 
+  
 
   //////////////////////////////////////////////////////////////
+
+  // CATMULL-ROM CURVE
 
 
   /**
@@ -1733,11 +1741,19 @@ public abstract class PGraphics extends PImage implements PConstants {
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    depthErrorXYZ("curve");
+    beginShape(LINE_STRIP);
+    curveVertex(x1, y1, z1);
+    curveVertex(x2, y2, z2);
+    curveVertex(x3, y3, z3);
+    curveVertex(x4, y4, z4);
+    endShape();
   }
+  
 
-
+  
   //////////////////////////////////////////////////////////////
+
+  // SPLINE UTILITY FUNCTIONS (used by both Bezier and Catmull-Rom)
 
 
   /**
@@ -1988,12 +2004,57 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * Expects x1, y1, x2, y2 coordinates where (x2 >= x1) and (y2 >= y1).
    * If tint() has been called, the image will be colored.
+   * <p/>
+   * The default implementation draws an image as a textured quad.
+   * The (u, v) coordinates are in image space (they're ints, after all..)
    */
   protected void imageImpl(PImage image,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
-    // TODO blit an image to the screen
-    System.err.println("unimplemented imageImpl() in PGraphics");
+    boolean savedStroke = stroke;
+    boolean savedFill = fill;
+    int savedTextureMode = textureMode;
+
+    stroke = false;
+    fill = true;
+    textureMode = IMAGE;
+
+    float savedFillR = fillR;
+    float savedFillG = fillG;
+    float savedFillB = fillB;
+    float savedFillA = fillA;
+
+    if (tint) {
+      fillR = tintR;
+      fillG = tintG;
+      fillB = tintB;
+      fillA = tintA;
+
+    } else {
+      fillR = 1;
+      fillG = 1;
+      fillB = 1;
+      fillA = 1;
+    }
+
+    //System.out.println(fill + " " + fillR + " " + fillG + " " + fillB);
+
+    beginShape(QUADS);
+    texture(image);
+    vertex(x1, y1, u1, v1);
+    vertex(x1, y2, u1, v2);
+    vertex(x2, y2, u2, v2);
+    vertex(x2, y1, u2, v1);
+    endShape();
+
+    stroke = savedStroke;
+    fill = savedFill;
+    textureMode = savedTextureMode;
+
+    fillR = savedFillR;
+    fillG = savedFillG;
+    fillB = savedFillB;
+    fillA = savedFillA;
   }
 
 
@@ -2531,11 +2592,13 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  // ........................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
 
 
+  // what was this for?
   //font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
 
+  
   protected void textCharImpl(char ch, float x, float y) { //, float z) {
     int index = textFont.index(ch);
     if (index == -1) return;
