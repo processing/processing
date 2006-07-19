@@ -60,11 +60,7 @@ public interface PConstants {
   // for better parity between c++ version (at no speed cost)
 
   static final float EPSILON   = 0.0001f;
-  static final float TWO       = 2.0f;
   static final float ONE       = 1.0f;
-  static final float HALF      = 0.5f;
-  static final float TFF       = 255.0f;
-  static final float MAX_FLOAT = Float.MAX_VALUE;
 
 
   // useful goodness
