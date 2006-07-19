@@ -644,7 +644,7 @@ public class PPolygon implements PConstants {
                                 float p[], float dp[], int y) {
     float delta = p2[Y] - p1[Y];
     if (delta == 0) delta = ONE;
-    float fraction = y + HALF - p1[Y];
+    float fraction = y + 0.5f - p1[Y];
 
     if (interpX) {
       dp[X] = (p2[X] - p1[X]) / delta;
@@ -687,7 +687,7 @@ public class PPolygon implements PConstants {
                                 float p[], float dp[], int x) {
     float delta = p2[X] - p1[X];
     if (delta == 0) delta = ONE;
-    float fraction = x + HALF - p1[X];
+    float fraction = x + 0.5f - p1[X];
     if (smooth) {
       delta /= SUBXRES;
       fraction /= SUBXRES;
