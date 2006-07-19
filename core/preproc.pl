@@ -51,6 +51,8 @@ while ($line = shift(@contents)) {
     if ($line =~ /^\s*public ([\w\[\]]+) [a-zA-z_]+\(.*$/) {
         $got_something = 1;
 	$got_interface = 1;
+    } elsif ($line =~ /^\s*abstract public ([\w\[\]]+) [a-zA-z_]+\(.*$/) {
+        $got_something = 1;
     } elsif ($line =~ /^\s*public final ([\w\[\]]+) [a-zA-z_]+\(.*$/) {
         $got_something = 1;
     } elsif ($line =~ /^\s*static public ([\w\[\]]+) [a-zA-z_]+\(.*$/) {
@@ -68,6 +70,11 @@ while ($line = shift(@contents)) {
         } else {
             $returns = '';
         }
+	if ($line =~ /^(\s+)abstract\s+([^;]+);/) {
+	    $line = $1 . $2 . " {\n";
+	    #print "found $1\n";
+	    # hrm
+	}
         print OUT "\n\n$line";
 
 	if ($got_interface == 1) {
