@@ -485,7 +485,7 @@ public class PGraphics2D extends PGraphics {
     // local initiations of some variables are made to
     // keep the code modular and easy to integrate
     // restet triangle
-    float vertices[][] = polygon.vertices;
+    float polyVertices[][] = polygon.vertices;
     
     if (tpolygon == null) {
       // allocate on first use, rather than slowing 
@@ -520,17 +520,17 @@ public class PGraphics2D extends PGraphics {
     int mm; // postion for LR vertex
     float min[] = new float[2];
     
-    min[X] = vertices[0][X];
-    min[Y] = vertices[0][Y];
+    min[X] = polyVertices[0][X];
+    min[Y] = polyVertices[0][Y];
     mm = 0;
     
     for(int i = 0; i < n; i++ ) {
-      if( (vertices[i][Y] < min[Y]) ||
-          ( (vertices[i][Y] == min[Y]) && (vertices[i][X] > min[X]) )
+      if( (polyVertices[i][Y] < min[Y]) ||
+          ( (polyVertices[i][Y] == min[Y]) && (polyVertices[i][X] > min[X]) )
       ) {
         mm = i;
-        min[X] = vertices[mm][X];
-        min[Y] = vertices[mm][Y];
+        min[X] = polyVertices[mm][X];
+        min[Y] = polyVertices[mm][Y];
       }
     }
     
@@ -547,9 +547,9 @@ public class PGraphics2D extends PGraphics {
     
     // assign a[0] to point to poly[m1][0] etc.
     for(int i = 0; i < 2; i++ ) {
-      a[i] = vertices[mm1][i];
-      b[i] = vertices[mm][i];
-      c[i] = vertices[(mm+1)%n][i];
+      a[i] = polyVertices[mm1][i];
+      b[i] = polyVertices[mm][i];
+      c[i] = polyVertices[(mm+1)%n][i];
     }
     
     cp = a[0] * b[1] - a[1] * b[0] +
@@ -599,12 +599,12 @@ public class PGraphics2D extends PGraphics {
       // triangle A B C
       float Ax, Ay, Bx, By, Cx, Cy, Px, Py;
       
-      Ax =  -vertices[tpolygon_vertex_order[u]][X];
-      Ay =   vertices[tpolygon_vertex_order[u]][Y];
-      Bx =  -vertices[tpolygon_vertex_order[v]][X];
-      By =   vertices[tpolygon_vertex_order[v]][Y];
-      Cx =  -vertices[tpolygon_vertex_order[w]][X];
-      Cy =   vertices[tpolygon_vertex_order[w]][Y];
+      Ax =  -polyVertices[tpolygon_vertex_order[u]][X];
+      Ay =   polyVertices[tpolygon_vertex_order[u]][Y];
+      Bx =  -polyVertices[tpolygon_vertex_order[v]][X];
+      By =   polyVertices[tpolygon_vertex_order[v]][Y];
+      Cx =  -polyVertices[tpolygon_vertex_order[w]][X];
+      Cy =   polyVertices[tpolygon_vertex_order[w]][Y];
       
       if ( EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
         continue;
@@ -622,8 +622,8 @@ public class PGraphics2D extends PGraphics {
           continue;
         }
         
-        Px = -vertices[tpolygon_vertex_order[p]][X];
-        Py =  vertices[tpolygon_vertex_order[p]][Y];
+        Px = -polyVertices[tpolygon_vertex_order[p]][X];
+        Py =  polyVertices[tpolygon_vertex_order[p]][Y];
         
         ax = Cx - Bx; ay = Cy - By;
         bx = Ax - Cx; by = Ay - Cy;

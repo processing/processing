@@ -130,7 +130,9 @@ public class PGraphicsJava2D extends PGraphics {
 
   
   public void endDraw() {
-    endPixels();  // mark pixels as changed
+    // hm, mark pixels as changed, because this will instantly do a full 
+    // copy of all the pixels to the surface.. so that's kind of a mess.
+    //endPixels();  
   }
 
 
