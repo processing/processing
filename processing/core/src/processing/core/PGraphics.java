@@ -163,10 +163,10 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  /** 
+  /**
    * Last value set by strokeWeight() (read-only). This has a default
-   * setting, rather than fighting with renderers about whether that 
-   * renderer supports thick lines. 
+   * setting, rather than fighting with renderers about whether that
+   * renderer supports thick lines.
    */
   public float strokeWeight = 1;
 
@@ -467,7 +467,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Constructor for the PGraphics object. This prototype only exists 
+   * Constructor for the PGraphics object. This prototype only exists
    * because of annoying java compilers, and cannot be used.
    */
   protected PGraphics() { }
@@ -623,9 +623,9 @@ public abstract class PGraphics extends PImage implements PConstants {
     textMode = MODEL;
 
     // if this fella is associated with an applet, then clear its background.
-    // if it's been created by someone else through createGraphics, 
+    // if it's been created by someone else through createGraphics,
     // they have to call background() themselves, otherwise everything gets
-    // a gray background (when just a transparent surface or an empty pdf 
+    // a gray background (when just a transparent surface or an empty pdf
     // is what's desired)
     if (parent != null) {
       background(204);
@@ -641,7 +641,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
   */
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -669,7 +669,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     hints[which] = true;
   }
 
-  
+
   /**
    * Disable a hint.
    */
@@ -677,7 +677,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     hints[which] = false;
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -731,10 +731,10 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   public void normal(float nx, float ny, float nz) {
-    depthError("normal");
+    //depthError("normal");
   }
 
-  
+
   /**
    * Set texture mode to either to use coordinates based on the IMAGE
    * (more intuitive for new users) or NORMALIZED (better for advanced chaps)
@@ -753,18 +753,18 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void texture(PImage image) {
     textureImage = image;
   }
-  
+
 
   /**
    * Set (U, V) coords for the next vertex in the current shape.
    * This is ugly as its own function, and will (almost?) always be
-   * coincident with a call to vertex. As of beta, this was moved to 
-   * the protected method you see here, and called from an optional 
+   * coincident with a call to vertex. As of beta, this was moved to
+   * the protected method you see here, and called from an optional
    * param of and overloaded vertex().
    * <p/>
    * The parameters depend on the current textureMode. When using
    * textureMode(IMAGE), the coordinates will be relative to the size
-   * of the image texture, when used with textureMode(NORMAL), 
+   * of the image texture, when used with textureMode(NORMAL),
    * they'll be in the range 0..1.
    * <p/>
    * Used by both PGraphics2D (for images) and PGraphics3D.
@@ -937,17 +937,17 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   abstract public void vertex(float x, float y, float z, float u, float v);
-  
-  
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
-    bezierVertex(x2, y2, Float.MAX_VALUE, 
-                 x3, y3, Float.MAX_VALUE, 
+    bezierVertex(x2, y2, Float.MAX_VALUE,
+                 x3, y3, Float.MAX_VALUE,
                  x4, y4, Float.MAX_VALUE);
   }
-  
-  
+
+
   /**
    * See notes with the bezier() function.
    */
@@ -976,7 +976,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     splineVertex(x4, y4, z4, true);
   }
 
-  
+
   /**
    * See notes with the curve() function.
    */
@@ -994,7 +994,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Implementation of generic spline vertex, will add coords to 
+   * Implementation of generic spline vertex, will add coords to
    * the splineVertices[] array and emit calls to draw segments
    * as needed (every fourth point for bezier or every point starting
    * with the fourth for catmull-rom).
@@ -1002,7 +1002,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * @param bezier true if it's a bezier instead of catmull-rom
    */
   protected void splineVertex(float x, float y, float z, boolean bezier) {
-    // to improve processing applet load times, don't allocate 
+    // to improve processing applet load times, don't allocate
     // space for the vertex data until actual use
     if (splineVertices == null) {
       splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
@@ -1049,14 +1049,14 @@ public abstract class PGraphics extends PImage implements PConstants {
 
     if (dimensions == 3) {
       vertex[MZ] = z;
-      
+
       vertex[NX] = normalX;
       vertex[NY] = normalY;
       vertex[NZ] = normalZ;
     }
-    
+
     splineVertexCount++;
-      
+
     // draw a segment if there are enough points
     if (splineVertexCount > 3) {
       if (bezier) {
@@ -1080,7 +1080,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   abstract public void endShape();
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1461,7 +1461,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1606,7 +1606,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     endShape();
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1748,9 +1748,9 @@ public abstract class PGraphics extends PImage implements PConstants {
     curveVertex(x4, y4, z4);
     endShape();
   }
-  
 
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // SPLINE UTILITY FUNCTIONS (used by both Bezier and Catmull-Rom)
@@ -1807,14 +1807,14 @@ public abstract class PGraphics extends PImage implements PConstants {
    * for catmull-rom curves, the first control point (x2, y2, z2)
    * is the first drawn point, and is accumulated to.
    */
-  protected void splineSegment(int offset, int start, float m[][], 
+  protected void splineSegment(int offset, int start, float m[][],
                                int dimensions, int segments) {
     float x1 = splineVertices[offset+0][MX];
     float x2 = splineVertices[offset+1][MX];
     float x3 = splineVertices[offset+2][MX];
     float x4 = splineVertices[offset+3][MX];
     float x0 = splineVertices[start][MX];
-    
+
     float y1 = splineVertices[offset+0][MY];
     float y2 = splineVertices[offset+1][MY];
     float y3 = splineVertices[offset+2][MY];
@@ -1824,25 +1824,25 @@ public abstract class PGraphics extends PImage implements PConstants {
     float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
     float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
     float xplot3 = m[3][0]*x1 + m[3][1]*x2 + m[3][2]*x3 + m[3][3]*x4;
-    
+
     float yplot1 = m[1][0]*y1 + m[1][1]*y2 + m[1][2]*y3 + m[1][3]*y4;
     float yplot2 = m[2][0]*y1 + m[2][1]*y2 + m[2][2]*y3 + m[2][3]*y4;
     float yplot3 = m[3][0]*y1 + m[3][1]*y2 + m[3][2]*y3 + m[3][3]*y4;
-    
+
     // vertex() will reset splineVertexCount, so save it
     int cvertexSaved = splineVertexCount;
 
     if (dimensions == 3) {
       float z1 = splineVertices[offset+0][MZ];
       float z2 = splineVertices[offset+1][MZ];
-      float z3 = splineVertices[offset+2][MZ];    
+      float z3 = splineVertices[offset+2][MZ];
       float z4 = splineVertices[offset+3][MZ];
       float z0 = splineVertices[start][MZ];
 
       float zplot1 = m[1][0]*z1 + m[1][1]*z2 + m[1][2]*z3 + m[1][3]*z4;
       float zplot2 = m[2][0]*z1 + m[2][1]*z2 + m[2][2]*z3 + m[2][3]*z4;
       float zplot3 = m[3][0]*z1 + m[3][1]*z2 + m[3][2]*z3 + m[3][3]*z4;
-      
+
       vertex(x0, y0, z0);
       for (int j = 0; j < segments; j++) {
         x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
@@ -1859,9 +1859,9 @@ public abstract class PGraphics extends PImage implements PConstants {
       }
     }
     splineVertexCount = cvertexSaved;
-  }  
-  
-  
+  }
+
+
   /*
   protected void spline2_segment(int offset, int start,
                                  float m[][], int segments) {
@@ -2592,13 +2592,13 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   // what was this for?
   //font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
 
-  
+
   protected void textCharImpl(char ch, float x, float y) { //, float z) {
     int index = textFont.index(ch);
     if (index == -1) return;
@@ -3716,21 +3716,21 @@ public abstract class PGraphics extends PImage implements PConstants {
                                "with P3D or OPENGL.");
   }
 
-  
+
   protected void depthErrorXYZ(String method) {
     throw new RuntimeException(method + "(x, y, z) can only be used with " +
                                "OPENGL or P3D, use " +
                                method + "(x, y) instead.");
   }
-  
-  
+
+
   protected void unavailableError(String methodStr) {
-    throw new RuntimeException(methodStr + 
+    throw new RuntimeException(methodStr +
                                " is not available with this renderer");
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // COLOR MANIPULATION
@@ -3886,12 +3886,12 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // MATH
 
-  
+
   static final float sqrt(float a) {
     return (float)Math.sqrt(a);
   }
@@ -3920,7 +3920,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
   }
   */
-  
+
 
   //////////////////////////////////////////////////////////////
 

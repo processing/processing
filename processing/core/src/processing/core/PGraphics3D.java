@@ -30,11 +30,11 @@ import java.awt.image.MemoryImageSource;
 
 
 /**
- * Subclass of PGraphics that handles 3D rendering for Java 1.1. 
+ * Subclass of PGraphics that handles 3D rendering for Java 1.1.
  * It can render 3D inside a browser window and requires no plug-ins.
  * <p/>
- * The renderer is mostly set up based on the structure of the OpenGL API, 
- * if you have questions about specifics that aren't covered here, 
+ * The renderer is mostly set up based on the structure of the OpenGL API,
+ * if you have questions about specifics that aren't covered here,
  * look for reference on the OpenGL implementation of a similar feature.
  * <p/>
  * Lighting and camera implementation by Simon Greenwold.
@@ -450,7 +450,7 @@ public class PGraphics3D extends PGraphics {
    * allowing you to specify a vector perpendicular to the surface
    * of the shape, which determines how lighting affects it.
    * <P/>
-   * For the most part, PGraphics will attempt to automatically
+   * For the most part, PGraphics3D will attempt to automatically
    * assign normals to shapes, but since that's imperfect,
    * this is a better option when you want more control.
    * <P/>
@@ -2105,7 +2105,7 @@ public class PGraphics3D extends PGraphics {
   */
 
 
-  /** 
+  /**
    * Compared to the implementation in PGraphics, this adds normal().
    */
   public void triangle(float x1, float y1, float x2, float y2,
@@ -2119,7 +2119,7 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  /** 
+  /**
    * Compared to the implementation in PGraphics, this adds normal().
    */
   public void quad(float x1, float y1, float x2, float y2,
@@ -2408,7 +2408,7 @@ public class PGraphics3D extends PGraphics {
     curveVertex(x4, y4, z4);
     endShape();
   }
-  
+
   */
 
 
