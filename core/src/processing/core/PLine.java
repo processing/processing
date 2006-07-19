@@ -570,7 +570,7 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
         m_pixels[offset] = m_stroke;
-        m_zbuffer[offset] = m_z0;
+        //m_zbuffer[offset] = m_z0;
         j+=dt;
       }
     }
