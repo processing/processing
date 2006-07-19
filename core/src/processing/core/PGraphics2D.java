@@ -47,7 +47,7 @@ public class PGraphics2D extends PGraphics {
   
   PLine line;
   
-  boolean untransformed;
+  //boolean untransformed;
   boolean strokeChanged = true;
   boolean fillChanged = true;
   
@@ -217,7 +217,7 @@ public class PGraphics2D extends PGraphics {
     int vertexCount = polygon.vertexCount;
     float vertices[][] = polygon.vertices;
 
-    if (untransformed) {
+    if (untransformed()) {
       for (int i = 0; i < vertexCount; i++) {
         vertices[i][X] = vertices[i][MX];
         vertices[i][Y] = vertices[i][MY];
@@ -255,7 +255,7 @@ public class PGraphics2D extends PGraphics {
         
     switch (shape) {
     case POINTS:
-      if (untransformed && (strokeWeight == 1)) {
+      if (untransformed() && (strokeWeight == 1)) {
         if (!strokeChanged) {
           for (int i = 0; i < vertexCount; i++) {
             thin_point((int) vertices[i][X], (int) vertices[i][Y], 
@@ -697,7 +697,7 @@ public class PGraphics2D extends PGraphics {
       int x2 = (int) x2f;
       int y2 = (int) y2f;
       
-      rectImplFillUnRGB(x1, y1, x2, y2);
+      rectImplFillUntranSolidRGB(x1, y1, x2, y2);
       
       if (stroke) {
         if (strokeWeight == 1) {
@@ -732,7 +732,7 @@ public class PGraphics2D extends PGraphics {
   /**
    * Draw an untransformed rectangle with no alpha.
    */
-  private void rectImplFillUnRGB(int x1, int y1, int x2, int y2) {
+  private void rectImplFillUntranSolidRGB(int x1, int y1, int x2, int y2) {
     //System.out.println("flat quad");
     if (y2 < y1) { 
       int temp = y1; y1 = y2; y2 = temp; 
@@ -744,50 +744,409 @@ public class PGraphics2D extends PGraphics {
     if ((x1 > width1) || (x2 < 0) ||
         (y1 > height1) || (y2 < 0)) return;
     
-    if (fill) {
-      int fx1 = x1;
-      int fy1 = y1; 
-      int fx2 = x2;
-      int fy2 = y2;
-      
-      // these only affect the fill, not the stroke
-      // (otherwise strange boogers at edges b/c frame changes shape)
-      if (fx1 < 0) fx1 = 0;
-      if (fx2 > width) fx2 = width;
-      if (fy1 < 0) fy1 = 0;
-      if (fy2 > height) fy2 = height;
-      
-      // [toxi 031223] 
-      // on avg. 20-25% faster fill routine using System.arraycopy()
-      int ww = fx2 - fx1;
-      int hh = fy2 - fy1;
-      int[] row = new int[ww];
-      for (int i = 0; i < ww; i++) row[i] = fillColor;
-      int idx = fy1 * width + fx1;
-      for (int y = 0; y < hh; y++) {
-        System.arraycopy(row, 0, pixels, idx, ww);
-        idx += width;
-      }
-      row = null;
+    //if (fill) {
+    int fx1 = x1;
+    int fy1 = y1; 
+    int fx2 = x2;
+    int fy2 = y2;
+    
+    // these only affect the fill, not the stroke
+    // (otherwise strange boogers at edges b/c frame changes shape)
+    if (fx1 < 0) fx1 = 0;
+    if (fx2 > width) fx2 = width;
+    if (fy1 < 0) fy1 = 0;
+    if (fy2 > height) fy2 = height;
+    
+    // [toxi 031223] 
+    // on avg. 20-25% faster fill routine using System.arraycopy()
+    int ww = fx2 - fx1;
+    int hh = fy2 - fy1;
+    int[] row = new int[ww];
+    for (int i = 0; i < ww; i++) row[i] = fillColor;
+    int idx = fy1 * width + fx1;
+    for (int y = 0; y < hh; y++) {
+      System.arraycopy(row, 0, pixels, idx, ww);
+      idx += width;
     }
+    row = null;
+    //}
   }
 
   
   
   //////////////////////////////////////////////////////////////
 
-  // RECT
+  // ELLIPSE AND ARC
   
   
+  public void ellipseImpl(float x1, float y1, float w, float h) {
+    if (!smooth && (strokeWeight == 1) && 
+        !fillAlpha && !strokeAlpha && untransformed()) {
+      float hradius = w / 2f;
+      float vradius = h / 2f;
+
+      int centerX = (int) (x1 + hradius);
+      int centerY = (int) (y1 + vradius);
+
+      if (hradius == vradius) {
+        flat_circle(centerX, centerY, (int)hradius);
+
+      } else {
+        flat_ellipse(centerX, centerY, (int)hradius, (int)vradius);
+      }
+    } else {
+      super.ellipseImpl(x1, y1, w, h);
+    }
+  }
+  
+  
+  private void flat_circle(int centerX, int centerY, int radius) {
+    if (unwarped()) {
+      float x = m00*centerX + m01*centerY + m02;
+      float y = m10*centerX + m11*centerY + m12;
+      centerX = (int)x;
+      centerY = (int)y;
+    }
+    if (fill) flat_circle_fill(centerX, centerY, radius);
+    if (stroke) flat_circle_stroke(centerX, centerY, radius);
+  }
+
+
+  /**
+   * Draw the outline around a flat circle using a bresenham-style
+   * algorithm. Adapted from drawCircle function in "Computer Graphics
+   * for Java Programmers" by Leen Ammeraal, p. 110.
+   * <P/>
+   * This function is included because the quality is so much better,
+   * and the drawing significantly faster than with adaptive ellipses
+   * drawn using the sine/cosine tables.
+   * <P/>
+   * Circle quadrants break down like so:
+   * <PRE>
+   *              |
+   *        \ NNW | NNE /  
+   *          \   |   / 
+   *       WNW  \ | /  ENE
+   *     -------------------
+   *       WSW  / | \  ESE
+   *          /   |   \
+   *        / SSW | SSE \
+   *              |
+   * </PRE>
+   * @param xc x center
+   * @param yc y center
+   * @param r radius
+   */
+  private void flat_circle_stroke(int xC, int yC, int r) {
+    int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
+    while (x < y) {
+      thin_point(xC + x, yC + y, 0, strokeColor); // NNE
+      thin_point(xC + y, yC - x, 0, strokeColor); // ESE
+      thin_point(xC - x, yC - y, 0, strokeColor); // SSW
+      thin_point(xC - y, yC + x, 0, strokeColor); // WNW
+
+      x++; E += u; u += 2;
+      if (v < 2 * E) {
+        y--; E -= v; v -= 2;
+      }
+      if (x > y) break;
+
+      thin_point(xC + y, yC + x, 0, strokeColor); // ENE
+      thin_point(xC + x, yC - y, 0, strokeColor); // SSE
+      thin_point(xC - y, yC - x, 0, strokeColor); // WSW
+      thin_point(xC - x, yC + y, 0, strokeColor); // NNW
+    }
+  }
+
+  /**
+   * Heavily adapted version of the above algorithm that handles 
+   * filling the ellipse. Works by drawing from the center and 
+   * outwards to the points themselves. Has to be done this way 
+   * because the values for the points are changed halfway through
+   * the function, making it impossible to just store a series of
+   * left and right edges to be drawn more quickly.
+   *
+   * @param xc x center
+   * @param yc y center
+   * @param r radius
+   */
+  private void flat_circle_fill(int xc, int yc, int r) {
+    int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
+    while (x < y) {
+      for (int xx = xc; xx < xc + x; xx++) {  // NNE
+        thin_point(xx, yc + y, 0, fillColor);
+      }
+      for (int xx = xc; xx < xc + y; xx++) {  // ESE
+        thin_point(xx, yc - x, 0, fillColor);
+      }
+      for (int xx = xc - x; xx < xc; xx++) {  // SSW
+        thin_point(xx, yc - y, 0, fillColor);
+      }
+      for (int xx = xc - y; xx < xc; xx++) {  // WNW
+        thin_point(xx, yc + x, 0, fillColor);
+      }
+
+      x++; E += u; u += 2;
+      if (v < 2 * E) {
+        y--; E -= v; v -= 2;
+      }
+      if (x > y) break;
+
+      for (int xx = xc; xx < xc + y; xx++) {  // ENE
+        thin_point(xx, yc + x, 0, fillColor);
+      }
+      for (int xx = xc; xx < xc + x; xx++) {  // SSE
+        thin_point(xx, yc - y, 0, fillColor);
+      }
+      for (int xx = xc - y; xx < xc; xx++) {  // WSW
+        thin_point(xx, yc - x, 0, fillColor);
+      }
+      for (int xx = xc - x; xx < xc; xx++) {  // NNW
+        thin_point(xx, yc + y, 0, fillColor);
+      }
+    }
+  }
+
+  // unfortunately this can't handle fill and stroke simultaneously,
+  // because the fill will later replace some of the stroke points
+
+  private final void flat_ellipse_symmetry(int centerX, int centerY, 
+                                           int ellipseX, int ellipseY,
+                                           boolean filling) {
+    if (filling) {
+      for (int i = centerX - ellipseX + 1; i < centerX + ellipseX; i++) {
+        thin_point(i, centerY - ellipseY, 0, fillColor);
+        thin_point(i, centerY + ellipseY, 0, fillColor);
+      }
+    } else {
+      thin_point(centerX - ellipseX, centerY + ellipseY, 0, strokeColor);
+      thin_point(centerX + ellipseX, centerY + ellipseY, 0, strokeColor);
+      thin_point(centerX - ellipseX, centerY - ellipseY, 0, strokeColor);
+      thin_point(centerX + ellipseX, centerY - ellipseY, 0, strokeColor);
+    }
+  }
+
+
+  /**
+   * Bresenham-style ellipse drawing function, adapted from a posting to 
+   * comp.graphics.algortihms.
+   *
+   * This function is included because the quality is so much better,
+   * and the drawing significantly faster than with adaptive ellipses
+   * drawn using the sine/cosine tables.
+   *
+   * @param centerX x coordinate of the center
+   * @param centerY y coordinate of the center
+   * @param a horizontal radius
+   * @param b vertical radius
+   */
+  private void flat_ellipse_internal(int centerX, int centerY, 
+                                     int a, int b, boolean filling) {
+    int x, y, a2, b2, s, t;
+
+    a2 = a*a;
+    b2 = b*b;
+    x = 0;
+    y = b;
+    s = a2*(1-2*b) + 2*b2;
+    t = b2 - 2*a2*(2*b-1);
+    flat_ellipse_symmetry(centerX, centerY, x, y, filling);
+
+    do {
+      if (s < 0) {
+        s += 2*b2*(2*x+3);
+        t += 4*b2*(x+1);
+        x++;
+      } else if (t < 0) {
+        s += 2*b2*(2*x+3) - 4*a2*(y-1);
+        t += 4*b2*(x+1) - 2*a2*(2*y-3);
+        x++;
+        y--;
+      } else {
+        s -= 4*a2*(y-1);
+        t -= 2*a2*(2*y-3);
+        y--;
+      }
+      flat_ellipse_symmetry(centerX, centerY, x, y, filling);
+
+    } while (y > 0);
+  }
+  
+  
+  private void flat_ellipse(int centerX, int centerY, int a, int b) {
+    if (unwarped()) {
+      float x = m00*centerX + m01*centerY + m02;
+      float y = m10*centerX + m11*centerY + m12;
+      centerX = (int)x;
+      centerY = (int)y;
+    }
+    if (fill) flat_ellipse_internal(centerX, centerY, a, b, true);
+    if (stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
+  }
+
+  
+  // TODO really need a decent arc function in here..
+  
+  //protected void arcImpl(float x1, float y1, float w, float h,
+  //                       float start, float stop)
 
   
 
   //////////////////////////////////////////////////////////////
 
-    // RENDERING
+  // BOX & SPHERE
+
+  
+  // The PGraphics superclass will throw errors for these fellas
+  
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // BEZIER & CURVE
+
+  
+  public void bezier(float x1, float y1, float z1,
+                     float x2, float y2, float z2,
+                     float x3, float y3, float z3,
+                     float x4, float y4, float z4) {
+    depthErrorXYZ("bezier");
+  }
+
+  
+  public void curve(float x1, float y1, float z1,
+                    float x2, float y2, float z2,
+                    float x3, float y3, float z3,
+                    float x4, float y4, float z4) {
+    depthErrorXYZ("curve");
+  }
+  
+  
+
+  //////////////////////////////////////////////////////////////
+  
+  // IMAGE
+
+  
+  protected void imageImpl(PImage image,
+                           float x1, float y1, float x2, float y2,
+                           int u1, int v1, int u2, int v2) {
+    if ((x2 - x1 == image.width) && 
+        (y2 - y1 == image.height) &&
+        !tint && unwarped()) {      
+      flat_image(image, (int) (x1 + m02), (int) (y1 + m12), u1, v1, u2, v2);
+      
+    } else {
+      super.imageImpl(image, x1, y1, x2, y2, u1, v1, u2, v2);
+    }
+  }
+  
+  
+  /**
+   * Image drawn in flat "screen space", with no scaling or warping.
+   * this is so common that a special routine is included for it, 
+   * because the alternative is much slower.
+   *
+   * @param  image  image to be drawn
+   * @param  sx1    x coordinate of upper-lefthand corner in screen space
+   * @param  sy1    y coordinate of upper-lefthand corner in screen space
+   */
+  private void flat_image(PImage image, int sx1, int sy1, 
+                          int ix1, int iy1, int ix2, int iy2) {
+    /*
+    int ix1 = 0;
+    int iy1 = 0;
+    int ix2 = image.width;
+    int iy2 = image.height;
+    */
+    
+    if (imageMode == CENTER) {
+      sx1 -= image.width / 2;
+      sy1 -= image.height / 2;
+    }
+    
+    int sx2 = sx1 + image.width;
+    int sy2 = sy1 + image.height;
+    
+    // don't draw if completely offscreen
+    // (without this check, ArrayIndexOutOfBoundsException)
+    if ((sx1 > width1) || (sx2 < 0) || 
+        (sy1 > height1) || (sy2 < 0)) return;
+    
+    if (sx1 < 0) {  // off left edge
+      ix1 -= sx1;
+      sx1 = 0;
+    }
+    if (sy1 < 0) {  // off top edge
+      iy1 -= sy1;
+      sy1 = 0;
+    }
+    if (sx2 > width) {  // off right edge
+      ix2 -= sx2 - width;
+      sx2 = width;
+    }
+    if (sy2 > height) {  // off bottom edge
+      iy2 -= sy2 - height;
+      sy2 = height;
+    }
+    
+    int source = iy1 * image.width + ix1;
+    int target = sy1 * width;
+    
+    if (image.format == ARGB) {
+      for (int y = sy1; y < sy2; y++) {
+        int tx = 0;
+        
+        for (int x = sx1; x < sx2; x++) {
+          pixels[target + x] = 
+            _blend(pixels[target + x], 
+                   image.pixels[source + tx], 
+                   image.pixels[source + tx++] >>> 24);
+        }
+        source += image.width;
+        target += width;
+      }
+    } else if (image.format == ALPHA) {
+      for (int y = sy1; y < sy2; y++) {
+        int tx = 0;
+        
+        for (int x = sx1; x < sx2; x++) {
+          pixels[target + x] = 
+            _blend(pixels[target + x], 
+                   fillColor, 
+                   image.pixels[source + tx++]);
+        }
+        source += image.width;
+        target += width;
+      }
+      
+    } else if (image.format == RGB) {
+      target += sx1;
+      int tw = sx2 - sx1;
+      for (int y = sy1; y < sy2; y++) {
+        System.arraycopy(image.pixels, source, pixels, target, tw);
+        // should set z coordinate in here
+        // or maybe not, since dims=0, meaning no relevant z
+        source += image.width;
+        target += width;
+      }
+    }
+  }
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // TEXT/FONTS
+
+  
+  // These will be handled entirely by PGraphics.
+  
+  
+  
+  //////////////////////////////////////////////////////////////
 
 
-    // expects properly clipped coords, hence does 
+  // expects properly clipped coords, hence does 
     // NOT check if x/y are in bounds [toxi]
     private void thin_pointAt(int x, int y, float z, int color) {
       int index = y*width+x; // offset values are pre-calced in constructor
@@ -1158,7 +1517,7 @@ public class PGraphics2D extends PGraphics {
 
       } else {  // use old line code for thickness > 1
 
-          if ((strokeWeight < TWO) && !strokeChanged) {
+          if ((strokeWeight < 2) && !strokeChanged) {
             // need to set color at least once?
 
             // THIS PARTICULAR CASE SHOULD NO LONGER BE REACHABLE
@@ -1231,277 +1590,8 @@ public class PGraphics2D extends PGraphics {
       zbuffer[index] = z;
     }
 
-
-    private void flat_circle(int centerX, int centerY, int radius) {
-      if (translateNoScale()) {
-        centerX = (int) screenX(centerX, centerY, 0);
-        centerY = (int) screenY(centerX, centerY, 0);
-      }
-      if (fill) flat_circle_fill(centerX, centerY, radius);
-      if (stroke) flat_circle_stroke(centerX, centerY, radius);
-    }
-
-
-    /**
-     * Draw the outline around a flat circle using a bresenham-style
-     * algorithm. Adapted from drawCircle function in "Computer Graphics
-     * for Java Programmers" by Leen Ammeraal, p. 110
-     *
-     * This function is included because the quality is so much better,
-     * and the drawing significantly faster than with adaptive ellipses
-     * drawn using the sine/cosine tables.
-     *
-     * Circle quadrants break down like so:
-     *              |
-     *        \ NNW | NNE /  
-     *          \   |   / 
-     *       WNW  \ | /  ENE
-     *     -------------------
-     *       WSW  / | \  ESE
-     *          /   |   \
-     *        / SSW | SSE \
-     *              |
-     *
-     * @param xc x center
-     * @param yc y center
-     * @param r radius
-     */
-    private void flat_circle_stroke(int xC, int yC, int r) {
-      int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
-      while (x < y) {
-        thin_point(xC + x, yC + y, 0, strokeColor); // NNE
-        thin_point(xC + y, yC - x, 0, strokeColor); // ESE
-        thin_point(xC - x, yC - y, 0, strokeColor); // SSW
-        thin_point(xC - y, yC + x, 0, strokeColor); // WNW
-
-        x++; E += u; u += 2;
-        if (v < 2 * E) {
-          y--; E -= v; v -= 2;
-        }
-        if (x > y) break;
-
-        thin_point(xC + y, yC + x, 0, strokeColor); // ENE
-        thin_point(xC + x, yC - y, 0, strokeColor); // SSE
-        thin_point(xC - y, yC - x, 0, strokeColor); // WSW
-        thin_point(xC - x, yC + y, 0, strokeColor); // NNW
-      }
-    }
-
-    /**
-     * Heavily adapted version of the above algorithm that handles 
-     * filling the ellipse. Works by drawing from the center and 
-     * outwards to the points themselves. Has to be done this way 
-     * because the values for the points are changed halfway through
-     * the function, making it impossible to just store a series of
-     * left and right edges to be drawn more quickly.
-     *
-     * @param xc x center
-     * @param yc y center
-     * @param r radius
-     */
-    private void flat_circle_fill(int xc, int yc, int r) {
-      int x = 0, y = r, u = 1, v = 2 * r - 1, E = 0;
-      while (x < y) {
-        for (int xx = xc; xx < xc + x; xx++) {  // NNE
-          thin_point(xx, yc + y, 0, fillColor);
-        }
-        for (int xx = xc; xx < xc + y; xx++) {  // ESE
-          thin_point(xx, yc - x, 0, fillColor);
-        }
-        for (int xx = xc - x; xx < xc; xx++) {  // SSW
-          thin_point(xx, yc - y, 0, fillColor);
-        }
-        for (int xx = xc - y; xx < xc; xx++) {  // WNW
-          thin_point(xx, yc + x, 0, fillColor);
-        }
-
-        x++; E += u; u += 2;
-        if (v < 2 * E) {
-          y--; E -= v; v -= 2;
-        }
-        if (x > y) break;
-
-        for (int xx = xc; xx < xc + y; xx++) {  // ENE
-          thin_point(xx, yc + x, 0, fillColor);
-        }
-        for (int xx = xc; xx < xc + x; xx++) {  // SSE
-          thin_point(xx, yc - y, 0, fillColor);
-        }
-        for (int xx = xc - y; xx < xc; xx++) {  // WSW
-          thin_point(xx, yc - x, 0, fillColor);
-        }
-        for (int xx = xc - x; xx < xc; xx++) {  // NNW
-          thin_point(xx, yc + y, 0, fillColor);
-        }
-      }
-    }
-
-    // unfortunately this can't handle fill and stroke simultaneously,
-    // because the fill will later replace some of the stroke points
-
-    private final void flat_ellipse_symmetry(int centerX, int centerY, 
-                                             int ellipseX, int ellipseY,
-                                             boolean filling) {
-      if (filling) {
-        for (int i = centerX - ellipseX + 1; i < centerX + ellipseX; i++) {
-          thin_point(i, centerY - ellipseY, 0, fillColor);
-          thin_point(i, centerY + ellipseY, 0, fillColor);
-        }
-      } else {
-        thin_point(centerX - ellipseX, centerY + ellipseY, 0, strokeColor);
-        thin_point(centerX + ellipseX, centerY + ellipseY, 0, strokeColor);
-        thin_point(centerX - ellipseX, centerY - ellipseY, 0, strokeColor);
-        thin_point(centerX + ellipseX, centerY - ellipseY, 0, strokeColor);
-      }
-    }
-
-
-    /**
-     * Bresenham-style ellipse drawing function, adapted from a posting to 
-     * comp.graphics.algortihms.
-     *
-     * This function is included because the quality is so much better,
-     * and the drawing significantly faster than with adaptive ellipses
-     * drawn using the sine/cosine tables.
-     *
-     * @param centerX x coordinate of the center
-     * @param centerY y coordinate of the center
-     * @param a horizontal radius
-     * @param b vertical radius
-     */
-    private void flat_ellipse_internal(int centerX, int centerY, 
-                                       int a, int b, boolean filling) {
-      int x, y, a2, b2, s, t;
-
-      a2 = a*a;
-      b2 = b*b;
-      x = 0;
-      y = b;
-      s = a2*(1-2*b) + 2*b2;
-      t = b2 - 2*a2*(2*b-1);
-      flat_ellipse_symmetry(centerX, centerY, x, y, filling);
-
-      do {
-        if (s < 0) {
-          s += 2*b2*(2*x+3);
-          t += 4*b2*(x+1);
-          x++;
-        } else if (t < 0) {
-          s += 2*b2*(2*x+3) - 4*a2*(y-1);
-          t += 4*b2*(x+1) - 2*a2*(2*y-3);
-          x++;
-          y--;
-        } else {
-          s -= 4*a2*(y-1);
-          t -= 2*a2*(2*y-3);
-          y--;
-        }
-        flat_ellipse_symmetry(centerX, centerY, x, y, filling);
-
-      } while (y > 0);
-    }
-
-
-    private void flat_ellipse(int centerX, int centerY, int a, int b) {
-      if (translateNoScale()) {
-        centerX = (int) screenX(centerX, centerY, 0);
-        centerY = (int) screenY(centerX, centerY, 0);
-      }
-      if (fill) flat_ellipse_internal(centerX, centerY, a, b, true);
-      if (stroke) flat_ellipse_internal(centerX, centerY, a, b, false);
-    }
-
-
-    /**
-     * Image drawn in flat "screen space", with no scaling or warping.
-     * this is so common that a special routine is included for it, 
-     * because the alternative is much slower.
-     *
-     * @param  image  image to be drawn
-     * @param  sx1    x coordinate of upper-lefthand corner in screen space
-     * @param  sy1    y coordinate of upper-lefthand corner in screen space
-     */
-    public void flat_image(PImage image, int sx1, int sy1) {
-      int ix1 = 0;
-      int iy1 = 0;
-      int ix2 = image.width;
-      int iy2 = image.height;
-
-      if (imageMode == CENTER) {
-        sx1 -= image.width / 2;
-        sy1 -= image.height / 2;
-      }
-
-      int sx2 = sx1 + image.width;
-      int sy2 = sy1 + image.height;
-
-      // don't draw if completely offscreen
-      // (without this check, ArrayIndexOutOfBoundsException)
-      if ((sx1 > width1) || (sx2 < 0) || 
-          (sy1 > height1) || (sy2 < 0)) return;
-
-      if (sx1 < 0) {  // off left edge
-        ix1 -= sx1;
-        sx1 = 0;
-      }
-      if (sy1 < 0) {  // off top edge
-        iy1 -= sy1;
-        sy1 = 0;
-      }
-      if (sx2 > width) {  // off right edge
-        ix2 -= sx2 - width;
-        sx2 = width;
-      }
-      if (sy2 > height) {  // off bottom edge
-        iy2 -= sy2 - height;
-        sy2 = height;
-      }
-
-      int source = iy1 * image.width + ix1;
-      int target = sy1 * width;
-
-      if (image.format == ARGB) {
-        for (int y = sy1; y < sy2; y++) {
-          int tx = 0;
-
-          for (int x = sx1; x < sx2; x++) {
-            pixels[target + x] = 
-              _blend(pixels[target + x], 
-                     image.pixels[source + tx], 
-                     image.pixels[source + tx++] >>> 24);
-          }
-          source += image.width;
-          target += width;
-        }
-      } else if (image.format == ALPHA) {
-        for (int y = sy1; y < sy2; y++) {
-          int tx = 0;
-
-          for (int x = sx1; x < sx2; x++) {
-            pixels[target + x] = 
-              _blend(pixels[target + x], 
-                     fillColor, 
-                     image.pixels[source + tx++]);
-          }
-          source += image.width;
-          target += width;
-        }
-
-      } else if (image.format == RGB) {
-        target += sx1;
-        int tw = sx2 - sx1;
-        for (int y = sy1; y < sy2; y++) {
-          System.arraycopy(image.pixels, source, pixels, target, tw);
-          // should set z coordinate in here
-          // or maybe not, since dims=0, meaning no relevant z
-          source += image.width;
-          target += width;
-        }
-      }
-    }
     
-    
-    
+
     //////////////////////////////////////////////////////////////
 
     // INTERNAL SCHIZZLE
@@ -1512,7 +1602,8 @@ public class PGraphics2D extends PGraphics {
               (m10 == 0) && (m11 == 1) && (m12 == 0));
     }
     
-    private boolean translateNoScale() {
+    
+    private boolean unwarped() {
       return ((m00 == 1) && (m01 == 0) && (m10 == 0) && (m11 == 1));
     }
       

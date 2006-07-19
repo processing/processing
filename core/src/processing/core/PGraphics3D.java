@@ -2105,20 +2105,9 @@ public class PGraphics3D extends PGraphics {
   */
 
 
-  public void line(float x1, float y1, float x2, float y2) {
-    line(x1, y1, 0, x2, y2, 0);
-  }
-
-
-  public void line(float x1, float y1, float z1,
-                   float x2, float y2, float z2) {
-    beginShape(LINES);
-    vertex(x1, y1, z1);
-    vertex(x2, y2, z2);
-    endShape();
-  }
-
-
+  /** 
+   * Compared to the implementation in PGraphics, this adds normal().
+   */
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
     beginShape(TRIANGLES);
@@ -2130,6 +2119,9 @@ public class PGraphics3D extends PGraphics {
   }
 
 
+  /** 
+   * Compared to the implementation in PGraphics, this adds normal().
+   */
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
     beginShape(QUADS);
@@ -2145,156 +2137,7 @@ public class PGraphics3D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // PLACED SHAPES
-
-
-  protected void rectImpl(float x1, float y1, float x2, float y2) {
-    quad(x1, y1,  x2, y1,  x2, y2,  x1, y2);
-  }
-
-
-  protected void ellipseImpl(float x1, float y1, float w, float h) {
-    float hradius = w / 2f;
-    float vradius = h / 2f;
-
-    float centerX = x1 + hradius;
-    float centerY = y1 + vradius;
-
-    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
-    // now uses current scale factors to determine "real" transformed radius
-
-    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
-    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
-
-    // notched this up to *3 instead of *2 because things were
-    // looking a little rough, i.e. the calculate->arctangent example [fry]
-
-    // also removed the m00 and m11 because those were causing weirdness
-    // need an actual measure of magnitude in there [fry]
-
-    int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
-
-    // [toxi031031] adapted to use new lookup tables
-    float inc = (float)SINCOS_LENGTH / cAccuracy;
-
-    float val = 0;
-    /*
-    beginShape(POLYGON);
-    for (int i = 0; i < cAccuracy; i++) {
-      vertex(centerX + cosLUT[(int) val] * hradius,
-             centerY + sinLUT[(int) val] * vradius);
-      val += inc;
-    }
-    endShape();
-    */
-
-    if (fill) {
-      boolean savedStroke = stroke;
-      stroke = false;
-
-      beginShape(TRIANGLE_FAN);
-      normal(0, 0, 1);
-      vertex(centerX, centerY);
-      for (int i = 0; i < cAccuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * hradius,
-               centerY + sinLUT[(int) val] * vradius);
-        val += inc;
-      }
-      // back to the beginning
-      vertex(centerX + cosLUT[0] * hradius,
-             centerY + sinLUT[0] * vradius);
-      endShape();
-
-      stroke = savedStroke;
-    }
-
-    if (stroke) {
-      boolean savedFill = fill;
-      fill = false;
-
-      val = 0;
-      beginShape(LINE_LOOP);
-      for (int i = 0; i < cAccuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * hradius,
-               centerY + sinLUT[(int) val] * vradius);
-        val += inc;
-      }
-      endShape();
-
-      fill = savedFill;
-    }
-  }
-
-
-  /**
-   * Start and stop are in radians, converted by the parent function.
-   * Note that the radians can be greater (or less) than TWO_PI.
-   * This is so that an arc can be drawn that crosses zero mark,
-   * and the user will still collect $200.
-   */
-  protected void arcImpl(float x1, float y1, float w, float h,
-                         float start, float stop) {
-    float hr = w / 2f;
-    float vr = h / 2f;
-
-    float centerX = x1 + hr;
-    float centerY = y1 + vr;
-
-    if (fill) {
-      // shut off stroke for a minute
-      boolean savedStroke = stroke;
-      stroke = false;
-
-      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
-      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
-
-      beginShape(TRIANGLE_FAN);
-      vertex(centerX, centerY);
-      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-      for (int i = startLUT; i < stopLUT; i += increment) {
-        int ii = i % SINCOS_LENGTH;
-        vertex(centerX + cosLUT[ii] * hr,
-               centerY + sinLUT[ii] * vr);
-      }
-      // draw last point explicitly for accuracy
-      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
-      endShape();
-
-      stroke = savedStroke;
-    }
-
-    if (stroke) {
-      // Almost identical to above, but this uses a LINE_STRIP
-      // and doesn't include the first (center) vertex.
-
-      boolean savedFill = fill;
-      fill = false;
-
-      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
-      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
-
-      beginShape(LINE_STRIP);
-      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-      for (int i = startLUT; i < stopLUT; i += increment) {
-        int ii = i % SINCOS_LENGTH;
-        vertex(centerX + cosLUT[ii] * hr,
-               centerY + sinLUT[ii] * vr);
-      }
-      // draw last point explicitly for accuracy
-      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
-      endShape();
-
-      fill = savedFill;
-    }
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // 3D BOX
+  // BOX
 
 
   public void box(float size) {
@@ -2369,7 +2212,7 @@ public class PGraphics3D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // 3D SPHERE
+  // SPHERE
 
 
   // [toxi031031] used by the new sphere code below
@@ -2517,6 +2360,7 @@ public class PGraphics3D extends PGraphics {
 
   // CURVES
 
+  /*
 
   public void bezier(float x1, float y1,
                      float x2, float y2,
@@ -2564,63 +2408,8 @@ public class PGraphics3D extends PGraphics {
     curveVertex(x4, y4, z4);
     endShape();
   }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  protected void imageImpl(PImage image,
-                           float x1, float y1, float x2, float y2,
-                           int u1, int v1, int u2, int v2) {
-
-    //float x2 = x1 + w;
-    //float y2 = y1 + h;
-
-    boolean savedStroke = stroke;
-    boolean savedFill = fill;
-    int savedTextureMode = textureMode;
-
-    stroke = false;
-    fill = true;
-    textureMode = IMAGE;
-
-    float savedFillR = fillR;
-    float savedFillG = fillG;
-    float savedFillB = fillB;
-    float savedFillA = fillA;
-
-    if (tint) {
-      fillR = tintR;
-      fillG = tintG;
-      fillB = tintB;
-      fillA = tintA;
-
-    } else {
-      fillR = 1;
-      fillG = 1;
-      fillB = 1;
-      fillA = 1;
-    }
-
-    //System.out.println(fill + " " + fillR + " " + fillG + " " + fillB);
-
-    beginShape(QUADS);
-    texture(image);
-    vertex(x1, y1, u1, v1);
-    vertex(x1, y2, u1, v2);
-    vertex(x2, y2, u2, v2);
-    vertex(x2, y1, u2, v1);
-    endShape();
-
-    stroke = savedStroke;
-    fill = savedFill;
-    textureMode = savedTextureMode;
-
-    fillR = savedFillR;
-    fillG = savedFillG;
-    fillB = savedFillB;
-    fillA = savedFillA;
-  }
+  
+  */
 
 
 
@@ -3782,7 +3571,7 @@ public class PGraphics3D extends PGraphics {
     super.background(image);
 
     for (int i = 0; i < pixelCount; i++) {
-      zbuffer[i] = MAX_FLOAT;
+      zbuffer[i] = Float.MAX_VALUE;
       stencil[i] = 0;
     }
   }
@@ -3798,7 +3587,7 @@ public class PGraphics3D extends PGraphics {
     //                 PApplet.hex(backgroundColor) + ")");
     for (int i = 0; i < pixelCount; i++) {
       pixels[i] = backgroundColor;
-      zbuffer[i] = MAX_FLOAT;
+      zbuffer[i] = Float.MAX_VALUE;
       stencil[i] = 0;
     }
   }
