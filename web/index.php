@@ -100,7 +100,10 @@ Mobile Processing Workshop III, 8 Hours of Mobility at Universidad Autonoma
 de Manizales, Colombia by Marlon J. Manrique. <a href="http://mjs.darkgreenmedia.com/">More info</a><br>
     <br>
     <i>May 15 - May 19</i><br>
-    Mobile Processing Workshop, Interactive Applications for Mobile Phones, Atmosferas Digital Arts Center in Lisbon, Portugal by Francis Li. <a href="http://www.atmosferas.net/mobileprocessing/index_en.html">More info</a>
+    Mobile Processing Workshop, Interactive Applications for Mobile Phones, Atmosferas Digital Arts Center in Lisbon, Portugal by Francis Li. <a href="http://www.atmosferas.net/mobileprocessing/index_en.html">More info</a><br>
+    <br>
+    <i>June 26 - July 7</i><br>
+    Mobile Processing used in a workshop at the Istituto Universitario di Venezia to prototype concepts for the Venice Biennale.
 </div>
 <?php
 require 'footer.inc.php';
