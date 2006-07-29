@@ -39,6 +39,9 @@ X   make the instructions for winvdig clearer
 X be sure to say "yes to all" when deinstalling winvdig
 X install 1.0.1 not 1.0.5
 X 1.0.5 doesn't seem to be necessary, and can't resize windows
+_ use capture events when doing computation, use available() when drawing
+_   there are threading issues with reading video and its pixels
+_   these particularly show up on slower machines
 
 faq / troubleshooting
 X a method called run() with no params will cause trouble
@@ -428,6 +431,9 @@ _   add a better handler for this specific thing?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=18
 _ using a keyword as a variable name gives unhelpful error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=212
+_ unspecified return type creates compile error
+_   or maybe not? followup said maybe not
+_   http://dev.processing.org/bugs/show_bug.cgi?id=379
 
 hacked for fix, needs real fix
 _ NullPointerException on unterminated comment at end of code
