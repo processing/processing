@@ -24,6 +24,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=359
 X update jogl to latest beta 5
 _   might fix blank screen issues on linux:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=367
+X make framerate into frameRate (to match frameCount)
 
 fixed in 0115 / quicktime 7.1
 X color values on camera input flipped on intel macs
@@ -38,6 +39,13 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+_ color(0, 0, 0, 0) produces black
+_   although fill(0, 0, 0, 0) does the right thing
+_   also, rgb255 not getting set
+_   http://dev.processing.org/bugs/show_bug.cgi?id=382
+
+_ revision 115 may be saving raw files as TIFF format
+_   http://dev.processing.org/bugs/show_bug.cgi?id=378
 
 things before 1.0
 _ know internal vs. external lines, so that anti-aliasing can be shut off for internal
@@ -64,7 +72,6 @@ _     even though it seems to be ok for a component
 _ AIOOBE in P3D during defaults/background/clear
 _   thread sync problem with allocation
 
-_ make framerate into frameRate (to match frameCount)
 _ remove image(filename) and textFont(filename) et al.
 _ hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
 

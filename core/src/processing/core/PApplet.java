@@ -301,12 +301,12 @@ public class PApplet extends Applet
    * but is instead averaged (integrated) over several frames.
    * As such, this value won't be valid until after 5-10 frames.
    */
-  public float framerate = 10;
-  protected long framerateLastMillis = 0;
+  public float frameRate = 10;
+  protected long frameRateLastMillis = 0;
 
   // setting the frame rate
-  protected long framerateLastDelayTime = 0;
-  protected float framerateTarget = 0;
+  protected long frameRateLastDelayTime = 0;
+  protected float frameRateTarget = 0;
 
   protected boolean looping;
 
@@ -729,9 +729,9 @@ public class PApplet extends Applet
     if (looping) {
       looping = false;
 
-      // reset framerate delay times
-      framerateLastDelayTime = 0;
-      framerateLastMillis = 0;
+      // reset frameRate delay times
+      frameRateLastDelayTime = 0;
+      frameRateLastMillis = 0;
 
       if (thread != null) {
         if (CRUSTY_THREADS) {
@@ -1101,7 +1101,7 @@ public class PApplet extends Applet
 
     // g.image is synchronized so that draw/loop and paint don't
     // try to fight over it. this was causing a randomized slowdown
-    // that would cut the framerate into a third on macosx,
+    // that would cut the frameRate into a third on macosx,
     // and is probably related to the windows sluggishness bug too
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               "     5b enter paint sync");
@@ -1301,33 +1301,33 @@ public class PApplet extends Applet
           this.defaultSize = false;
 
         } else {  // frameCount > 0, meaning an actual draw()
-          // update the current framerate
-          if (framerateLastMillis != 0) {
+          // update the current frameRate
+          if (frameRateLastMillis != 0) {
             float elapsed = (float)
-              (System.currentTimeMillis() - framerateLastMillis);
+              (System.currentTimeMillis() - frameRateLastMillis);
             if (elapsed != 0) {
-              framerate =
-                (framerate * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
+              frameRate =
+                (frameRate * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
             }
           }
-          framerateLastMillis = System.currentTimeMillis();
+          frameRateLastMillis = System.currentTimeMillis();
 
-          if (framerateTarget != 0) {
+          if (frameRateTarget != 0) {
             //System.out.println("delaying");
-            if (framerateLastDelayTime == 0) {
-              framerateLastDelayTime = System.currentTimeMillis();
+            if (frameRateLastDelayTime == 0) {
+              frameRateLastDelayTime = System.currentTimeMillis();
 
             } else {
               long timeToLeave =
-                framerateLastDelayTime + (long)(1000.0f / framerateTarget);
+                frameRateLastDelayTime + (long)(1000.0f / frameRateTarget);
               long now = System.currentTimeMillis();
               int napTime = (int) (timeToLeave - now);
               if (napTime > 0) {
-                framerateLastDelayTime = timeToLeave;
+                frameRateLastDelayTime = timeToLeave;
                 delay(napTime);
               } else {
                 // nap time is negative, need to reset clock (bug #336)
-                framerateLastDelayTime = now;
+                frameRateLastDelayTime = now;
               }
             }
           }
@@ -1917,11 +1917,15 @@ public class PApplet extends Applet
 
 
   /**
-   * Set a target framerate. This will cause delay() to be called
-   * after each frame to allow for a specific rate to be set.
+   * Set a target frameRate. This will cause delay() to be called
+   * after each frame so that the sketch synchronizes to a particular speed.
+   * Note that this only sets the maximum frame rate, it cannot be used to
+   * make a slow sketch go faster. Sketches have no default frame rate
+   * setting, and will attempt to use maximum processor power to achieve
+   * maximum speed.
    */
-  public void framerate(float framerateTarget) {
-    this.framerateTarget = framerateTarget;
+  public void frameRate(float frameRateTarget) {
+    this.frameRateTarget = frameRateTarget;
   }
 
 
