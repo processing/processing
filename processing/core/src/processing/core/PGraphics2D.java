@@ -1591,6 +1591,22 @@ public class PGraphics2D extends PGraphics {
     }
 
     
+    
+    //////////////////////////////////////////////////////////////
+
+    // BACKGROUND AND FRIENDS
+
+    
+    /**
+     * Clear the pixel buffer.
+     */
+    protected void clear() {
+      for (int i = 0; i < pixelCount; i++) {
+        pixels[i] = backgroundColor;
+      }
+    }
+
+    
 
     //////////////////////////////////////////////////////////////
 
