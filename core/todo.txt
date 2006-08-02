@@ -25,6 +25,20 @@ X update jogl to latest beta 5
 _   might fix blank screen issues on linux:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=367
 X make framerate into frameRate (to match frameCount)
+X AIOOBE in P3D during defaults/background/clear
+X   PGraphics.clear() problem from workbench and malware stuff
+X   had to put synchronized onto draw and size()
+X   actually it'll work if it's only on size()
+X   the sync on the mac hangs an applet running by itself
+X     even though it seems to be ok for a component
+X   thread sync problem with allocation
+X   http://dev.processing.org/bugs/show_bug.cgi?id=369
+
+_ size of sketch different in setup() and draw() on linux
+_   make sure that the sketch isn't being sized based on bad insets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=341
+
+_ add begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, and PGraphics3D
 
 fixed in 0115 / quicktime 7.1
 X color values on camera input flipped on intel macs
@@ -39,12 +53,15 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+_ set default frameRate cap at 60?
+
 _ color(0, 0, 0, 0) produces black
 _   although fill(0, 0, 0, 0) does the right thing
 _   also, rgb255 not getting set
 _   http://dev.processing.org/bugs/show_bug.cgi?id=382
 
 _ revision 115 may be saving raw files as TIFF format
+_   may be a bug specific to java 1.5
 _   http://dev.processing.org/bugs/show_bug.cgi?id=378
 
 things before 1.0
@@ -63,14 +80,6 @@ _ if calling beginPixels inside another, need to increment a counter
 _   otherwise the end will look like it's time to update
 _   which may not actually be the case
 _   i.e. calling filter() inside begin/end block
-
-_ PGraphics.clear() problem from workbench and malware stuff
-_   had to put synchronized onto draw and size()
-_   actually it'll work if it's only on size()
-_   the sync on the mac hangs an applet running by itself
-_     even though it seems to be ok for a component
-_ AIOOBE in P3D during defaults/background/clear
-_   thread sync problem with allocation
 
 _ remove image(filename) and textFont(filename) et al.
 _ hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?

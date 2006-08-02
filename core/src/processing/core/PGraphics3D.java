@@ -218,8 +218,17 @@ public class PGraphics3D extends PGraphics {
    * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
-    //System.out.println("PGraphics3 resize");
-
+    insideDrawWait();
+    /*
+    while (insideDraw) {
+      //System.out.println("waiting");
+      try {
+        Thread.sleep(5);
+      } catch (InterruptedException e) { }
+    }
+    */
+    insideResize = true;
+    
     width = iwidth;
     height = iheight;
     width1 = width - 1;
@@ -278,11 +287,14 @@ public class PGraphics3D extends PGraphics {
     // own projection, they'll need to fix it after resize anyway.
     // this helps the people who haven't set up their own projection.
     perspective();
+
+    insideResize = false;  // ok to draw again
   }
 
 
   protected void allocate() {
-    //System.out.println("allocating for " + width + " " + height);
+    //System.out.println(this + " allocating for " + width + " " + height);
+    //new Exception().printStackTrace();
 
     pixelCount = width * height;
     pixels = new int[pixelCount];
@@ -305,10 +317,15 @@ public class PGraphics3D extends PGraphics {
 
     line = new PLine(this);
     triangle = new PTriangle(this);
+
+    //System.out.println(this + " done allocating");
   }
 
 
   public void beginDraw() {
+    insideResizeWait();
+    insideDraw = true;
+    
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
     // beginDraw/endDraw).
@@ -368,6 +385,9 @@ public class PGraphics3D extends PGraphics {
     // mark pixels as having been updated, so that they'll work properly
     // when this PGraphics is drawn using image().
     endPixels();
+
+    //System.out.println(this + " end draw");
+    insideDraw = false;
   }
 
 
@@ -3578,8 +3598,7 @@ public class PGraphics3D extends PGraphics {
 
 
   /**
-   * Clears pixel buffer.
-   * <P>
+   * Clear pixel buffer.
    * With P3D and OPENGL, this also clears the stencil and zbuffer.
    */
   public void clear() {

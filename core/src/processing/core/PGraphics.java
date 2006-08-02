@@ -54,6 +54,12 @@ public abstract class PGraphics extends PImage implements PConstants {
   /// true if defaults() has been called a first time
   boolean defaultsInited;
 
+  /// true if in-between beginDraw() and endDraw()
+  boolean insideDraw;
+  
+  /// true if in the midst of resize (no drawing can take place)
+  boolean insideResize;
+  
   // ........................................................
 
   // specifics for java memoryimagesource
@@ -546,30 +552,26 @@ public abstract class PGraphics extends PImage implements PConstants {
   // FRAME
 
 
-  /**
-   * Former function, now called beginDraw.
-   * @deprecated
-   */
-  /*
-  public void beginFrame() {  // ignore
-    System.err.println("beginFrame() is now beginDraw(), please use that instead");
-    beginDraw();
+  protected void insideResizeWait() {
+    while (insideResize) {
+      //System.out.println("waiting");
+      try {
+        Thread.sleep(5);
+      } catch (InterruptedException e) { }
+    }
   }
-  */
 
-
-  /**
-   * Former function, now called endDraw.
-   * @deprecated
-   */
-  /*
-  public void endFrame() {  // ignore
-    System.err.println("endFrame() is now endDraw(), please use that instead");
-    endDraw();
+  
+  protected void insideDrawWait() {
+    while (insideDraw) {
+      //System.out.println("waiting");
+      try {
+        Thread.sleep(5);
+      } catch (InterruptedException e) { }
+    }
   }
-  */
-
-
+  
+  
   /**
    * Prepares the PGraphics for drawing.
    * <p/>
@@ -3693,15 +3695,9 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Clears pixel buffer.
-   * <P>
-   * Subclasses (PGraphics3) will also clear the
-   * stencil and zbuffer if they exist.
+   * Clear the pixel buffer.
    */
   protected void clear() {
-    for (int i = 0; i < pixelCount; i++) {
-      pixels[i] = backgroundColor;
-    }
   }
 
 
