@@ -158,6 +158,8 @@ public class PApplet extends Applet
   /** When debugging headaches */
   static final boolean THREAD_DEBUG = false;
 
+  private Object blocker = new Object();
+  
   /** Default width and height for applet when not specified */
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
@@ -416,7 +418,7 @@ public class PApplet extends Applet
   // during rev 0100 dev cycle, working on new threading model,
   // but need to disable and go conservative with changes in order
   // to get pdf and audio working properly first
-  static final boolean CRUSTY_THREADS = true;
+  static final boolean CRUSTY_THREADS = false; //true;
 
 
   public void init() {
@@ -690,61 +692,6 @@ public class PApplet extends Applet
     // if no draw method, then shut things down
     //System.out.println("no draw method, goodbye");
     finished = true;
-  }
-
-
-  synchronized public void redraw() {
-    if (!looping) {
-      redraw = true;
-      if (thread != null) {
-        // wake from sleep (necessary otherwise it'll be
-        // up to 10 seconds before update)
-        if (CRUSTY_THREADS) {
-          thread.interrupt();
-        } else {
-          notifyAll();
-        }
-      }
-    }
-  }
-
-
-  synchronized public void loop() {
-    if (!looping) {
-      looping = true;
-      if (thread != null) {
-        // wake from sleep (necessary otherwise it'll be
-        // up to 10 seconds before update)
-        if (CRUSTY_THREADS) {
-          thread.interrupt();
-        } else {
-          notifyAll();
-        }
-      }
-    }
-  }
-
-
-  synchronized public void noLoop() {
-    if (looping) {
-      looping = false;
-
-      // reset frameRate delay times
-      frameRateLastDelayTime = 0;
-      frameRateLastMillis = 0;
-
-      if (thread != null) {
-        if (CRUSTY_THREADS) {
-          thread.interrupt();  // wake from sleep
-        } else {
-          /*
-            try {
-              wait();  // until a notify
-            } catch (InterruptedException e) { }
-          */
-        }
-      }
-    }
   }
 
 
@@ -1133,111 +1080,6 @@ public class PApplet extends Applet
   }
 
 
-  /*synchronized*/ public void run() {
-    try {
-      /*
-      // first time around, call the applet's setup method
-      setup();
-
-      // these are the same things as get run inside a call to size()
-      this.pixels = g.pixels;
-      this.width = g.width;
-      this.height = g.height;
-      */
-
-      while ((Thread.currentThread() == thread) && !finished) {
-        //while ((thread != null) && !finished) {
-        //while (!finished) {
-        //updated = false;
-
-        // render a single frame
-        g.requestDisplay(this);
-        //requestDisplay(this);
-
-        // moving this to update() (for 0069+) for linux sync problems
-        //if (firstFrame) firstFrame = false;
-
-        // wait for update & paint to happen before drawing next frame
-        // this is necessary since the drawing is sometimes in a
-        // separate thread, meaning that the next frame will start
-        // before the update/paint is completed
-        //while (!updated) {
-        try {
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      " " + looping + " " + redraw);
-          //Thread.yield();
-          // windows doesn't like 'yield', so have to sleep at least
-          // for some small amount of time.
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                    " gonna sleep");
-          // can't remember when/why i changed that to '1'
-          // (rather than 3 or 5, as has been traditional), but i
-          // have a feeling that some platforms aren't gonna like that
-          // if !looping, sleeps for a nice long time,
-          // or until interrupted
-          int nap = (looping || finished) ? 1 : 10000;
-          // don't nap after setup, because if noLoop() is called this
-          // will make the first draw wait 10 seconds before showing up
-          if (frameCount == 1) nap = 1;
-          if (CRUSTY_THREADS) {
-            Thread.sleep(nap);
-          } else {
-            wait(nap);
-          }
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                    " outta sleep");
-        } catch (InterruptedException e) { }
-      }
-
-    } catch (Exception e) {
-      // note that this will not catch errors inside setup()
-      // those are caught by the PdeRuntime
-
-      //System.out.println("exception occurred (if you don't see a stack " +
-      //                 "trace below this message, we've got a bug)");
-      finished = true;
-      if (e instanceof InvocationTargetException) {
-        //System.out.println("target problem");
-        e = (Exception) (((InvocationTargetException) e).getTargetException());
-      }
-      exception = e;
-      //e.printStackTrace(System.out);
-
-      if (leechErr != null) {
-        // if draw() mode, make sure that ui stops waiting
-        // and the run button quits out
-        leechErr.println(LEECH_WAKEUP);
-        e.printStackTrace(leechErr);
-        e.printStackTrace(System.out);
-
-      } else {
-        System.err.println(LEECH_WAKEUP);
-        e.printStackTrace();
-        e.printStackTrace(System.out);
-      }
-    }
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                              " thread finished");
-
-    // this may not be safe? this will get triggered with exit()
-    // but need to see if this is it
-    //if ((leechErr == null) && !online) {
-    //System.exit(0);
-    //}
-
-    //System.out.println("exiting run " + finished);
-    stop();  // call to shutdown libs?
-
-    if (exit) {  // user called exit() function
-      if ((leechErr == null) && !online) {
-        // don't want to call System.exit() when an applet,
-        // or running inside the PDE (would kill the PDE)
-        System.exit(0);
-      }
-    }
-  }
-
-
   synchronized public void handleDisplay() {
     if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
                                       " formerly nextFrame()");
@@ -1312,6 +1154,7 @@ public class PApplet extends Applet
           }
           frameRateLastMillis = System.currentTimeMillis();
 
+          /*
           if (frameRateTarget != 0) {
             //System.out.println("delaying");
             if (frameRateLastDelayTime == 0) {
@@ -1331,6 +1174,7 @@ public class PApplet extends Applet
               }
             }
           }
+          */
 
           preMethods.handle();
 
@@ -1426,8 +1270,191 @@ public class PApplet extends Applet
         //}  // end of synchronize
     }
   }
+  
+  
+  //////////////////////////////////////////////////////////////
 
 
+  public void run() {  // not good to make this synchronized, locks things up
+    try {
+      while ((Thread.currentThread() == thread) && !finished) {
+        // render a single frame
+        g.requestDisplay(this);
+
+        // wait for update & paint to happen before drawing next frame
+        // this is necessary since the drawing is sometimes in a
+        // separate thread, meaning that the next frame will start
+        // before the update/paint is completed
+        
+        try {
+          // Windows doesn't like Thread.yield(), acts as though it hasn't
+          // even been called and starves the CPU anyway. So have to sleep 
+          // (or wait) at least for some small amount of time (below).
+          //Thread.yield();
+
+          // Can't remember when/why I changed the generic nap time to '1'
+          // (rather than 3 or 5, like back in the day), but I have a feeling
+          // that some platforms aren't gonna like that.
+          
+          // If !looping, sleeps for a nice long time, or until an
+          // interrupt or notify from a call to loop/noLoop/redraw
+          
+          int nap = (looping || finished) ? 1 : 10000;
+          
+          // don't nap after setup, because if noLoop() is called this
+          // will make the first draw wait 10 seconds before showing up
+          if (frameCount == 1) { 
+            nap = 1;
+            
+          } else if (finished) {
+            nap = 0;
+            
+          } else if (looping) {
+            if (frameRateTarget != 0) {
+              if (frameRateLastDelayTime == 0) {
+                frameRateLastDelayTime = System.currentTimeMillis();
+                
+              } else {
+                long timeToLeave =
+                  frameRateLastDelayTime + (long)(1000.0f / frameRateTarget);
+                long now = System.currentTimeMillis();
+                nap = (int) (timeToLeave - now);
+                if (nap > 0) {
+                  frameRateLastDelayTime = timeToLeave;
+                  //delay(napTime);
+                  //nap = napTime;
+                  
+                } else {
+                  // nap time is negative, need to reset clock (bug #336)
+                  frameRateLastDelayTime = now;
+                }
+              }
+            } else {
+              nap = 1;
+            }
+          }
+          
+          if (CRUSTY_THREADS) {
+            Thread.sleep(nap);
+          } else {
+            synchronized (blocker) {
+              if (nap > 0) blocker.wait(nap);
+            }
+          }
+        } catch (InterruptedException e) { }
+      }
+
+    } catch (Exception e) {
+      // note that this will not catch errors inside setup()
+      // those are caught by the PdeRuntime
+
+      //System.out.println("exception occurred (if you don't see a stack " +
+      //                 "trace below this message, we've got a bug)");
+      finished = true;
+      if (e instanceof InvocationTargetException) {
+        //System.out.println("target problem");
+        e = (Exception) (((InvocationTargetException) e).getTargetException());
+      }
+      exception = e;
+      //e.printStackTrace(System.out);
+
+      if (leechErr != null) {
+        // if draw() mode, make sure that ui stops waiting
+        // and the run button quits out
+        leechErr.println(LEECH_WAKEUP);
+        e.printStackTrace(leechErr);
+        e.printStackTrace(System.out);
+
+      } else {
+        System.err.println(LEECH_WAKEUP);
+        e.printStackTrace();
+        e.printStackTrace(System.out);
+      }
+    }
+    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
+                              " thread finished");
+
+    // this may not be safe? this will get triggered with exit()
+    // but need to see if this is it
+    //if ((leechErr == null) && !online) {
+    //System.exit(0);
+    //}
+
+    //System.out.println("exiting run " + finished);
+    stop();  // call to shutdown libs?
+
+    if (exit) {  // user called exit() function
+      if ((leechErr == null) && !online) {
+        // don't want to call System.exit() when an applet,
+        // or running inside the PDE (would kill the PDE)
+        System.exit(0);
+      }
+    }
+  }
+
+  
+  synchronized public void redraw() {
+    if (!looping) {
+      redraw = true;
+      if (thread != null) {
+        // wake from sleep (necessary otherwise it'll be
+        // up to 10 seconds before update)
+        if (CRUSTY_THREADS) {
+          thread.interrupt();
+        } else {
+          synchronized (blocker) {
+            blocker.notifyAll();
+          }
+        }
+      }
+    }
+  }
+
+
+  synchronized public void loop() {
+    if (!looping) {
+      looping = true;
+      if (thread != null) {
+        // wake from sleep (necessary otherwise it'll be
+        // up to 10 seconds before update)
+        if (CRUSTY_THREADS) {
+          thread.interrupt();
+        } else {
+          synchronized (blocker) {
+            blocker.notifyAll();  
+          }
+        }
+      }
+    }
+  }
+
+
+  synchronized public void noLoop() {
+    if (looping) {
+      looping = false;
+
+      // reset frameRate delay times
+      frameRateLastDelayTime = 0;
+      frameRateLastMillis = 0;
+
+      if (thread != null) {
+        if (CRUSTY_THREADS) {
+          thread.interrupt();  // wake from sleep
+        } else {
+          synchronized (blocker) {
+            blocker.notifyAll();
+          }
+          /*
+            try {
+              wait();  // until a notify
+            } catch (InterruptedException e) { }
+          */
+        }
+      }
+    }
+  }
+
+  
   //////////////////////////////////////////////////////////////
 
 
