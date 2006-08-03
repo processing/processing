@@ -33,6 +33,17 @@ X   the sync on the mac hangs an applet running by itself
 X     even though it seems to be ok for a component
 X   thread sync problem with allocation
 X   http://dev.processing.org/bugs/show_bug.cgi?id=369
+X major threading change to use wait()/notifyAll() instead of interrupt/sleep
+_ noLoop() at end of setup is prolly b/c of interruptedex
+_   need to not call Thread.interrupt()
+_ opengl + noLoop() causes InterruptedException
+_   http://dev.processing.org/bugs/show_bug.cgi?id=164
+X   check to see noLoop() breakage is fixed in 92 vs 91
+X     checked, not fixed
+_ noLoop() broken on opengl
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
+_   http://dev.processing.org/bugs/show_bug.cgi?id=164
+
 
 _ size of sketch different in setup() and draw() on linux
 _   make sure that the sketch isn't being sized based on bad insets
@@ -363,16 +374,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=
 _ need to move off anim off the main event thread
 _   move away from using method like display
 X temporarily rolling back major thread changes
-X major threading change to use wait()/notifyAll() instead of interrupt/sleep
-_ noLoop() at end of setup is prolly b/c of interruptedex
-_   need to not call Thread.interrupt()
-_ opengl + noLoop() causes InterruptedException
-_   http://dev.processing.org/bugs/show_bug.cgi?id=164
-X   check to see noLoop() breakage is fixed in 92 vs 91
-X     checked, not fixed
-_ noLoop() broken on opengl
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
-_   http://dev.processing.org/bugs/show_bug.cgi?id=164
 _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
