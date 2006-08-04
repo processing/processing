@@ -22,8 +22,6 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=350
 X openStream() fails with java plug-in because non-null stream returned
 X   http://dev.processing.org/bugs/show_bug.cgi?id=359
 X update jogl to latest beta 5
-_   might fix blank screen issues on linux:
-_   http://dev.processing.org/bugs/show_bug.cgi?id=367
 X make framerate into frameRate (to match frameCount)
 X AIOOBE in P3D during defaults/background/clear
 X   PGraphics.clear() problem from workbench and malware stuff
@@ -34,22 +32,18 @@ X     even though it seems to be ok for a component
 X   thread sync problem with allocation
 X   http://dev.processing.org/bugs/show_bug.cgi?id=369
 X major threading change to use wait()/notifyAll() instead of interrupt/sleep
-_ noLoop() at end of setup is prolly b/c of interruptedex
-_   need to not call Thread.interrupt()
-_ opengl + noLoop() causes InterruptedException
-_   http://dev.processing.org/bugs/show_bug.cgi?id=164
+X noLoop() at end of setup is prolly b/c of interruptedex
+X   need to not call Thread.interrupt()
+X opengl + noLoop() causes InterruptedException
 X   check to see noLoop() breakage is fixed in 92 vs 91
 X     checked, not fixed
-_ noLoop() broken on opengl
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568;start=0
-_   http://dev.processing.org/bugs/show_bug.cgi?id=164
-
-
-_ size of sketch different in setup() and draw() on linux
-_   make sure that the sketch isn't being sized based on bad insets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=341
-
-_ add begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, and PGraphics3D
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568
+X   http://dev.processing.org/bugs/show_bug.cgi?id=164
+X remove image(filename) and textFont(filename) et al.
+X revision 115 may be saving raw files as TIFF format
+X   may be a bug specific to java 1.5 (nope)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=378
+X hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
 
 fixed in 0115 / quicktime 7.1
 X color values on camera input flipped on intel macs
@@ -64,27 +58,31 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+needs to be tested
+_ threading or new jogl may fix blank screen issues on linux:
+_   http://dev.processing.org/bugs/show_bug.cgi?id=367
+_ things not showing up in linux
+_   probably threading issue, 98 doesn't have any trouble
+_   signs point to Runner or PApplet changes between 98 and 99
+_   commenting out applet.setupFrameResizeListener() 
+_     in line 307 from Runner.java solved the problem
+_   http://dev.processing.org/bugs/show_bug.cgi?id=282
+
+_ remove LINE_LOOP and LINE_STRIP
+_ also remove POLYGON? still would be good to have an internal constant
+
+_ was grabbing the wrong native font with ico sketch 
+_   seems that the psname is no longer a good way to grab the font? related?
+
+_ add begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, and PGraphics3D
+
 _ set default frameRate cap at 60?
+_   otherwise really thrashing the cpu when not necessary
 
 _ color(0, 0, 0, 0) produces black
 _   although fill(0, 0, 0, 0) does the right thing
 _   also, rgb255 not getting set
 _   http://dev.processing.org/bugs/show_bug.cgi?id=382
-
-_ revision 115 may be saving raw files as TIFF format
-_   may be a bug specific to java 1.5
-_   http://dev.processing.org/bugs/show_bug.cgi?id=378
-
-things before 1.0
-_ know internal vs. external lines, so that anti-aliasing can be shut off for internal
-
-_ is the texture[] array in PGraphics3D causing the problems with memory?
-
-_ for a PGraphics2D, should its image cache object be the memoryimagesource?
-
-_ only call defaults() when it's part of a PApplet canvas
-_   don't want to hose PGraphics for others
-_   both for pdf, and making background transparent images
 _ background(0, 0, 0, 0) is the way to really clear everything with zeroes
 _   or background(0, 0), but the former is prolly better conceptually
 _ if calling beginPixels inside another, need to increment a counter
@@ -92,8 +90,19 @@ _   otherwise the end will look like it's time to update
 _   which may not actually be the case
 _   i.e. calling filter() inside begin/end block
 
-_ remove image(filename) and textFont(filename) et al.
-_ hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
+
+things before 1.0
+_ know internal vs. external lines, so that anti-aliasing can be shut off for internal
+
+_ is the texture[] array in PGraphics3D causing the problems with memory?
+_   actually it's a PGraphicsGL problem.. maybe the image binding not getting unbound?
+
+_ for a PGraphics2D, should its image cache object be the memoryimagesource?
+
+_ only call defaults() when it's part of a PApplet canvas
+_   make sure that defaults() is no longer necessary
+_   don't want to hose PGraphics for others
+_   both for pdf, and making background transparent images
 
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)

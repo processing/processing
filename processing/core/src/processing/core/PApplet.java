@@ -3002,42 +3002,51 @@ public class PApplet extends Applet
   // IMAGE I/O
 
 
+  /*
   Hashtable imageTable;
-
+  */
+  
   /**
    * Draw an image based on its filename. This is less efficient than
    * using loadImage because there's no way to unload it from memory,
    * but it's useful for beginners.
    */
+  /*
   public void image(String filename, float x, float y) {
     image(tableImage(filename), x, y);
   }
+  */
 
   /**
    * Draw an image based on its filename. This is less than efficient
    * than using loadImage because there's no way to unload it from memory,
    * but it's useful for beginners.
    */
+  /*
   public void image(String filename,
                     float x, float y, float c, float d) {
     image(tableImage(filename), x, y, c, d);
   }
+  */
 
   /**
    * Draw an image based on its filename. This is less than efficient
    * than using loadImage because there's no way to unload it from memory,
    * but it's useful for beginners.
    */
+  /*
   public void image(String filename,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
     image(tableImage(filename), a, b, c, d, u1, v1, u2, v2);
   }
+  */
 
 
   /**
    * Load an image and store it in a table based on its name.
    */
+  /*
   protected PImage tableImage(String filename) {
     if (imageTable == null) imageTable = new Hashtable();
 
@@ -3047,6 +3056,7 @@ public class PApplet extends Applet
     image = loadImage(filename);
     return image;
   }
+  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -3348,13 +3358,16 @@ public class PApplet extends Applet
   // FONT I/O
 
 
+  /*
   Hashtable fontTable;
-
+  */
+  
   /**
    * Set the font based on its filename. This is less than efficient
    * than using loadFont because there's no way to unload it from memory,
    * but it's useful for beginners.
    */
+  /*
   public void textFont(String filename) {
     if (filename.toLowerCase().indexOf(".vlw") == -1) {
       System.err.println("textFont() needs the filename of a .vlw font");
@@ -3362,6 +3375,7 @@ public class PApplet extends Applet
       textFont(tableFont(filename));
     }
   }
+  */
 
 
   /**
@@ -3369,6 +3383,7 @@ public class PApplet extends Applet
    * than using loadFont because there's no way to unload it from memory,
    * but it's useful for beginners.
    */
+  /*
   public void textFont(String filename, float size) {
     if (filename.toLowerCase().indexOf(".vlw") == -1) {
       System.err.println("textFont() needs the filename of a .vlw font");
@@ -3376,8 +3391,10 @@ public class PApplet extends Applet
       textFont(tableFont(filename), size);
     }
   }
+  */
 
 
+  /*
   protected PFont tableFont(String filename) {
     if (fontTable == null) fontTable = new Hashtable();
 
@@ -3387,6 +3404,7 @@ public class PApplet extends Applet
     font = loadFont(filename);
     return font;
   }
+  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
