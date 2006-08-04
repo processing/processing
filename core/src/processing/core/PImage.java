@@ -1809,7 +1809,7 @@ public class PImage implements PConstants, Cloneable {
 
   protected boolean saveTIFF(OutputStream output) {
     if (format != RGB) {
-      System.out.println("Warning: only RGB information is saved with " +
+      System.err.println("Warning: only RGB information is saved with " +
                          ".tif files. Use .tga or .png if you want alpha.");
     }
     try {
@@ -1827,9 +1827,9 @@ public class PImage implements PConstants, Cloneable {
       tiff[116] = (byte) ((count >> 8) & 0xff);
       tiff[117] = (byte) ((count) & 0xff);
 
-      //if (!saveHeaderTIFF(output)) { //, width, height)) {
-      //return false;
-      //}
+      // spew the header to the disk
+      output.write(tiff);
+      
       for (int i = 0; i < pixels.length; i++) {
         output.write((pixels[i] >> 16) & 0xff);
         output.write((pixels[i] >> 8) & 0xff);

@@ -2113,7 +2113,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      textFontNative = which.font;
+      if (!hints[DISABLE_NATIVE_FONTS]) {
+        textFontNative = which.font;
+      }
       //textFontNativeMetrics = null;
       // changed for rev 0104 for textMode(SHAPE) in opengl
       if (textFontNative != null) {
