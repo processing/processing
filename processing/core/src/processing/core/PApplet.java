@@ -159,7 +159,7 @@ public class PApplet extends Applet
   static final boolean THREAD_DEBUG = false;
 
   private Object blocker = new Object();
-  
+
   /** Default width and height for applet when not specified */
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
@@ -1270,8 +1270,8 @@ public class PApplet extends Applet
         //}  // end of synchronize
     }
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
 
@@ -1285,35 +1285,35 @@ public class PApplet extends Applet
         // this is necessary since the drawing is sometimes in a
         // separate thread, meaning that the next frame will start
         // before the update/paint is completed
-        
+
         try {
           // Windows doesn't like Thread.yield(), acts as though it hasn't
-          // even been called and starves the CPU anyway. So have to sleep 
+          // even been called and starves the CPU anyway. So have to sleep
           // (or wait) at least for some small amount of time (below).
           //Thread.yield();
 
           // Can't remember when/why I changed the generic nap time to '1'
           // (rather than 3 or 5, like back in the day), but I have a feeling
           // that some platforms aren't gonna like that.
-          
+
           // If !looping, sleeps for a nice long time, or until an
           // interrupt or notify from a call to loop/noLoop/redraw
-          
+
           int nap = (looping || finished) ? 1 : 10000;
-          
+
           // don't nap after setup, because if noLoop() is called this
           // will make the first draw wait 10 seconds before showing up
-          if (frameCount == 1) { 
+          if (frameCount == 1) {
             nap = 1;
-            
+
           } else if (finished) {
             nap = 0;
-            
+
           } else if (looping) {
             if (frameRateTarget != 0) {
               if (frameRateLastDelayTime == 0) {
                 frameRateLastDelayTime = System.currentTimeMillis();
-                
+
               } else {
                 long timeToLeave =
                   frameRateLastDelayTime + (long)(1000.0f / frameRateTarget);
@@ -1323,7 +1323,7 @@ public class PApplet extends Applet
                   frameRateLastDelayTime = timeToLeave;
                   //delay(napTime);
                   //nap = napTime;
-                  
+
                 } else {
                   // nap time is negative, need to reset clock (bug #336)
                   frameRateLastDelayTime = now;
@@ -1333,7 +1333,7 @@ public class PApplet extends Applet
               nap = 1;
             }
           }
-          
+
           if (CRUSTY_THREADS) {
             Thread.sleep(nap);
           } else {
@@ -1392,7 +1392,7 @@ public class PApplet extends Applet
     }
   }
 
-  
+
   synchronized public void redraw() {
     if (!looping) {
       redraw = true;
@@ -1421,7 +1421,7 @@ public class PApplet extends Applet
           thread.interrupt();
         } else {
           synchronized (blocker) {
-            blocker.notifyAll();  
+            blocker.notifyAll();
           }
         }
       }
@@ -1454,7 +1454,7 @@ public class PApplet extends Applet
     }
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
 
@@ -3005,7 +3005,7 @@ public class PApplet extends Applet
   /*
   Hashtable imageTable;
   */
-  
+
   /**
    * Draw an image based on its filename. This is less efficient than
    * using loadImage because there's no way to unload it from memory,
@@ -3361,7 +3361,7 @@ public class PApplet extends Applet
   /*
   Hashtable fontTable;
   */
-  
+
   /**
    * Set the font based on its filename. This is less than efficient
    * than using loadFont because there's no way to unload it from memory,
@@ -3764,7 +3764,7 @@ public class PApplet extends Applet
    * If the requested item doesn't exist, null is returned.
    * (Prior to 0096, die() would be called, killing the applet)
    * <P>
-   * For 0096, the "data" folder is exported intact with subfolders,
+   * For 0096+, the "data" folder is exported intact with subfolders,
    * and openStream() properly handles subdirectories from the data folder
    * <P>
    * If not online, this will also check to see if the user is asking
@@ -3795,13 +3795,28 @@ public class PApplet extends Applet
       return null;
     }
 
-    // by default, data files are exported to the root path of the jar.
-    // (not the data folder) so check there first.
+    // safe to check for this as a url first. this will prevent online
+    // access logs from being spammed with GET /sketchfolder/http://blahblah
+    try {
+      URL url = new URL(filename);
+      stream = url.openStream();
+      return stream;
+
+    } catch (MalformedURLException e) {
+      // not a url, that's fine
+
+    } catch (IOException e) {
+      throw new RuntimeException("Error downloading from URL " + filename);
+    }
+
     // using getClassLoader() prevents java from converting dots
     // to slashes or requiring a slash at the beginning.
     // (a slash as a prefix means that it'll load from the root of
     // the jar, rather than trying to dig into the package location)
     ClassLoader cl = getClass().getClassLoader();
+
+    // by default, data files are exported to the root path of the jar.
+    // (not the data folder) so check there first.
     stream = cl.getResourceAsStream("data/" + filename);
     if (stream != null) {
       String cn = stream.getClass().getName();
@@ -3814,16 +3829,15 @@ public class PApplet extends Applet
       }
     }
 
-    try {
-      URL url = new URL(filename);
-      stream = url.openStream();
-      return stream;
-
-    } catch (MalformedURLException e) {
-      // not a url, that's fine
-
-    } catch (IOException e) {
-      throw new RuntimeException("Error downloading from URL " + filename);
+    // when used with an online script, also need to check without the
+    // data folder, in case it's not in a subfolder called 'data'
+    // http://dev.processing.org/bugs/show_bug.cgi?id=389
+    stream = cl.getResourceAsStream(filename);
+    if (stream != null) {
+      String cn = stream.getClass().getName();
+      if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
+        return stream;
+      }
     }
 
     // handle case sensitivity check
