@@ -44,6 +44,10 @@ X revision 115 may be saving raw files as TIFF format
 X   may be a bug specific to java 1.5 (nope)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=378
 X hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
+X check http:// stuff to see if it's a url first on openStream()
+X   it's the most harmless, since prolly just a MFUEx
+X fix problem where root of exported sketch won't be checked
+X   http://dev.processing.org/bugs/show_bug.cgi?id=389
 
 fixed in 0115 / quicktime 7.1
 X color values on camera input flipped on intel macs
@@ -58,15 +62,28 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+_ use parseFloat instead of toFloat()? to be consistent with javascript
+
+_ should reader() be openReader() for consistency?
+_ outofmemoryerror for casey's students
+_   http://dev.processing.org/bugs/show_bug.cgi?id=355
+_   this may be related to a ton of other memory bugs
+
 needs to be tested
 _ threading or new jogl may fix blank screen issues on linux:
+_   applet.setupFrameResizeListener() hack fixes things though
 _   http://dev.processing.org/bugs/show_bug.cgi?id=367
+
+still not fixed
 _ things not showing up in linux
 _   probably threading issue, 98 doesn't have any trouble
 _   signs point to Runner or PApplet changes between 98 and 99
 _   commenting out applet.setupFrameResizeListener() 
 _     in line 307 from Runner.java solved the problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=282
+
+_ when running as an applet, sketchPath won't be set
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1153150923
 
 _ remove LINE_LOOP and LINE_STRIP
 _ also remove POLYGON? still would be good to have an internal constant
@@ -76,7 +93,7 @@ _   seems that the psname is no longer a good way to grab the font? related?
 
 _ add begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, and PGraphics3D
 
-_ set default frameRate cap at 60?
+_ set default frameRate cap at 60
 _   otherwise really thrashing the cpu when not necessary
 
 _ color(0, 0, 0, 0) produces black
@@ -168,6 +185,7 @@ _   fix "create font" and associated font stuff to straighten it out
 _ blend() mode param should be moved to the front
 _   make sure there's parity with the copy() functions
 _   remove single pixel blend functions
+_   blend() should prolly have its mode be the first param
 
 _ add to docs: save() on a PImage needs savePath() added
 
@@ -182,7 +200,6 @@ _ make version of loadbytes that checks length of the stream first
 _ saveStrings(filename, strings, count) 
 _   otherwise the save is kinda wonky
 _   or maybe that should just be done with the array fxns
-_ blend() should prolly have its mode be the first param
 _ some way to vertically center text
 _   either by setting its middle vertical point
 _   or by setting a top/bottom for the rectangle in which it should be placed

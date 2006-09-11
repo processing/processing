@@ -24,6 +24,9 @@ X advanced reference contains more info about how things work
 X move 'how do i create large images' here
 X createGraphics with PDF, using dispose() to clear the thing
 X calling nextPage()
+_ under the memory section, getting free/total memory
+_   long mem = Runtime.getRuntime().freeMemory()
+_   long mem = Runtime.getRuntime().totalMemory()
 
 mac faq
 X windows, may need to install new version of video drivers
@@ -42,6 +45,9 @@ X 1.0.5 doesn't seem to be necessary, and can't resize windows
 _ use capture events when doing computation, use available() when drawing
 _   there are threading issues with reading video and its pixels
 _   these particularly show up on slower machines
+_ video for web may actually work, just requires signed applet
+_   (bug marked elsewhere in here, may need to close it)
+_ camera not installed: quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
 
 faq / troubleshooting
 X a method called run() with no params will cause trouble
@@ -51,6 +57,7 @@ X audio hiccups, throttling the cpu
 X   p5 will take as much cpu as it can, which can choke other apps
 X   call delay(10) (or so) if you want to make sure audio keeps running
 
+_ is 'code' folder being ignored on export?
 
 FOR 1.0
 _ should really be doing the 'right' thing with sketch file handling
@@ -63,6 +70,7 @@ _ bugs.html#application -> export.html#application
 _ with network, check in advanced, then rename advanced.html to howto.html
 
 site / docs
+_ add note about adding libraries to the sketchbook to the reference
 _ add begin/endPixels stuff to the pixels[] reference
 _   make mention of doing it to main pix array, and on an image
 _ add note in environment reference about how to add something to the sketch
@@ -503,7 +511,8 @@ _ quirks in selection and arrow keys
 _   http://dev.processing.org/bugs/show_bug.cgi?id=348
 _   http://dev.processing.org/bugs/show_bug.cgi?id=349
 _ video library in applets doesn't work
-_   file a bug for this, and link from troubleshoot.html#applet
+_   http://dev.processing.org/bugs/show_bug.cgi?id=44
+_   may be fixed by simply signing the applet, or may just work in places
 
 
 PDE / Editor Buttons
@@ -803,6 +812,8 @@ _ tools -> update libraries
 _   this would check the something.version to see if it's newer
 _ document how to add libraries: put in sketchbook (not libraries folder)
 _ library/download.url and library/home.url
+_ if there's a reference subfolder, add that to the help menu
+_   and enable it for "find in reference"
 
 
 TOOLS / Auto Format
@@ -1017,12 +1028,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;acti
 
 DIST / Linux
 
-_ things not showing up
-_   probably threading issue, 98 doesn't have any trouble
-_   signs point to Runner or PApplet changes between 98 and 99
-_   commenting out applet.setupFrameResizeListener() 
-_     in line 307 from Runner.java solved the problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=282
 _ size of sketch different in setup() and draw() on linux
 _   make sure that the sketch isn't being sized based on bad insets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=341
