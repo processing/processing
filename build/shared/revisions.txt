@@ -7,12 +7,17 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0116 - ?? May 2006
+ABOUT REV 0116 - ?? ?? 2006
 
 + the flag in PApplet.main() formerly called --present-stop-color 
   is now simply --stop-color. A flag named --hide-stop has also 
   been added, to prevent users from quitting out of a present mode 
   application. see the faq on details for capturing ESC as well.
+
++ altered mouse behavior so that mouse positions update only on 
+  mouseMoved and mouseDragged. this also fixes a macosx bug that 
+  caused mouseX/Y values to be bizarre because mouseExited() 
+  gave weird positions (workaround for apple bug).
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
