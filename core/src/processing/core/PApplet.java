@@ -1536,11 +1536,19 @@ public class PApplet extends Applet
    * overloaded to do something more useful.
    */
   protected void handleMouseEvent(MouseEvent event) {
-    pmouseX = emouseX;
-    pmouseY = emouseY;
+    int id = event.getID();
 
-    mouseX = event.getX();
-    mouseY = event.getY();
+    // http://dev.processing.org/bugs/show_bug.cgi?id=170
+    // also prevents mouseExited() on the mac from hosing the mouse
+    // position, because x/y are bizarre values on the exit event.
+    // see also the id check below.. both of these go together
+    if ((id == MouseEvent.MOUSE_DRAGGED) ||
+        (id == MouseEvent.MOUSE_MOVED)) {
+      pmouseX = emouseX;
+      pmouseY = emouseY;
+      mouseX = event.getX();
+      mouseY = event.getY();
+    }
 
     mouseEvent = event;
 
@@ -1571,7 +1579,8 @@ public class PApplet extends Applet
       firstMouse = false;
     }
 
-    int id = event.getID();
+    //println(event);
+
     switch (id) {
     case MouseEvent.MOUSE_PRESSED:
       mousePressed = true;
@@ -1591,14 +1600,12 @@ public class PApplet extends Applet
       mouseMoved();
       break;
     }
-    // an attempt to solve bug 170
-    // http://dev.processing.org/bugs/show_bug.cgi?id=170
-    //if ((id == MouseEvent.MOUSE_DRAGGED) ||
-    //  (id == MouseEvent.MOUSE_MOVED)) {
-    //println(emouseX + " " + emouseY + "  " + mouseX + " " + mouseY);
-    emouseX = mouseX;
-    emouseY = mouseY;
-    //}
+
+    if ((id == MouseEvent.MOUSE_DRAGGED) ||
+        (id == MouseEvent.MOUSE_MOVED)) {
+      emouseX = mouseX;
+      emouseY = mouseY;
+    }
   }
 
 

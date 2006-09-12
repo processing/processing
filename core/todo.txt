@@ -49,6 +49,11 @@ X   it's the most harmless, since prolly just a MFUEx
 X fix problem where root of exported sketch won't be checked
 X   http://dev.processing.org/bugs/show_bug.cgi?id=389
 
+more recent
+X only update mouse pos on moved and dragged
+X   http://dev.processing.org/bugs/show_bug.cgi?id=170
+X   also updates a bug that caused sketches to jump in funny ways
+
 fixed in 0115 / quicktime 7.1
 X color values on camera input flipped on intel macs
 X   checked in a change for this recommended on qtjava list
@@ -65,6 +70,7 @@ o what should the update image function be called?
 _ use parseFloat instead of toFloat()? to be consistent with javascript
 
 _ should reader() be openReader() for consistency?
+_   though printwriter is odd for output..
 _ outofmemoryerror for casey's students
 _   http://dev.processing.org/bugs/show_bug.cgi?id=355
 _   this may be related to a ton of other memory bugs
@@ -446,10 +452,6 @@ _   it's goofy to have the naming so different
 
 X tweak to only exit from ESC on keyPressed
 _   probably should just make this a hint() instead
-
-_ add a e2mouseX and e2mouseY 
-_   so that the prev mouse location is still good on mouseReleased
-_   http://dev.processing.org/bugs/show_bug.cgi?id=170
 
 _ add auto-install of cab file inside applet.html
 _   http://dev.processing.org/bugs/show_bug.cgi?id=181
