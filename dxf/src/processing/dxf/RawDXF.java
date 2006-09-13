@@ -171,7 +171,7 @@ public class RawDXF extends PGraphics3D {
   // ..............................................................
 
 
-  public void beginFrame() {
+  public void beginDraw() {
     // have to create file object here, because the name isn't yet
     // available in allocate()
     if (writer == null) {
@@ -185,7 +185,7 @@ public class RawDXF extends PGraphics3D {
   }
 
 
-  public void endFrame() {
+  public void endDraw() {
     // nothing done here
   }
 
