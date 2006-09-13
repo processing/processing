@@ -170,7 +170,37 @@ public class Sketch {
     int hiddenCounter = 0;
 
     for (int i = 0; i < list.length; i++) {
-      if (list[i].endsWith(".pde")) {
+      // figure out the name without any extension
+      String base = list[i];
+      // first strip off the .x items
+      if (base.endsWith(".x")) {
+        base = base.substring(0, base.length() - 2);
+      }
+      // now strip off the .pde and .java extensions
+      if (base.endsWith(".pde")) {
+        base = base.substring(0, base.length() - 4);
+      }
+      if (base.endsWith(".java")) {
+        base = base.substring(0, base.length() - 4);
+      }
+
+      if (list[i].startsWith(".")) {
+        // ignoring the dot prefix files is especially important to
+        // ignore ._ files on macosx because they'll have binary mess
+        // in them which can cause a crash.. ouch. [rev 0116]
+        continue;
+
+      } else if (!Sketchbook.isSanitary(base)) {
+        // also don't allow people to use files with invalid names,
+        // since on load, it would be otherwise possible to sneak in
+        // nasty filenames. [rev 0116]
+        continue;
+
+      } else if (new File(folder, list[i]).isDirectory()) {
+        // don't let some wacko name a directory blah.pde or bling.java.
+        continue;
+
+      } else if (list[i].endsWith(".pde")) {
         code[codeCounter++] =
           new SketchCode(list[i].substring(0, list[i].length() - 4),
                       new File(folder, list[i]),

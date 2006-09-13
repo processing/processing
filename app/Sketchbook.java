@@ -256,10 +256,25 @@ public class Sketchbook {
 
 
   /**
-   * Java classes are pretty limited about what you can use
-   * for their naming. This helper function replaces everything
-   * but A-Z, a-z, and 0-9 with underscores. Also disallows
-   * starting the sketch name with a digit.
+   * Return true if the name is valid for a Processing sketch.
+   */
+  static public boolean isSanitary(String name) {
+    return sanitizedName(name).equals(name);
+  }
+
+
+  /**
+   * Produce a sanitized name that fits our standards for likely to work.
+   * <p/>
+   * Java classes have a wider range of names that are technically allowed
+   * (supposedly any Unicode name) than what we support. The reason for
+   * going more narrow is to avoid situations with text encodings and
+   * converting during the process of moving files between operating
+   * systems, i.e. uploading from a Windows machine to a Linux server,
+   * or reading a FAT32 partition in OS X and using a thumb drive.
+   * <p/>
+   * This helper function replaces everything but A-Z, a-z, and 0-9 with
+   * underscores. Also disallows starting the sketch name with a digit.
    */
   static public String sanitizedName(String origName) {
     char c[] = origName.toCharArray();
@@ -279,7 +294,12 @@ public class Sketchbook {
         buffer.append('_');
       }
     }
-    // let's not be ridiculous about the length of filenames
+    // let's not be ridiculous about the length of filenames.
+    // in fact, Mac OS 9 can handle 255 chars, though it can't really
+    // deal with filenames longer than 31 chars in the Finder.
+    // but limiting to that for sketches would mean setting the
+    // upper-bound on the character limit here to 25 characters
+    // (to handle the base name + ".class")
     if (buffer.length() > 63) {
       buffer.setLength(63);
     }
@@ -289,7 +309,7 @@ public class Sketchbook {
 
   public String handleOpen() {
     // swing's file choosers are ass ugly, so we use the
-    // native (awt peered) dialogs instead
+    // native (awt peered) dialogs where possible
     FileDialog fd = new FileDialog(editor, //new Frame(),
                                    "Open a Processing sketch...",
                                    FileDialog.LOAD);
@@ -454,8 +474,9 @@ public class Sketchbook {
       File entry = new File(subfolder, list[i] + ".pde");
       // if a .pde file of the same prefix as the folder exists..
       if (entry.exists()) {
-        String sanityCheck = sanitizedName(list[i]);
-        if (!sanityCheck.equals(list[i])) {
+        //String sanityCheck = sanitizedName(list[i]);
+        //if (!sanityCheck.equals(list[i])) {
+        if (!Sketchbook.isSanitary(list[i])) {
           if (!builtOnce) {
             String complaining =
               "The sketch \"" + list[i] + "\" cannot be used.\n" +
