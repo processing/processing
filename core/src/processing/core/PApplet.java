@@ -2036,6 +2036,10 @@ public class PApplet extends Applet
           //Runtime.getRuntime().exec("cmd /c " + currentDir + "\\reference\\" +
           //                    referenceFile + ".html");
 
+          // replace ampersands with control sequence for DOS.
+          // solution contributed by toxi on the bugs board.
+          url = url.replaceAll("&","^&");
+
           // open dos prompt, give it 'start' command, which will
           // open the url properly. start by itself won't work since
           // it appears to need cmd

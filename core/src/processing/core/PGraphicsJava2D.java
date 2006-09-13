@@ -115,7 +115,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   // FRAME
 
-  
+
   public void beginDraw() {
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
@@ -128,11 +128,11 @@ public class PGraphicsJava2D extends PGraphics {
     vertexCount = 0;
   }
 
-  
+
   public void endDraw() {
-    // hm, mark pixels as changed, because this will instantly do a full 
+    // hm, mark pixels as changed, because this will instantly do a full
     // copy of all the pixels to the surface.. so that's kind of a mess.
-    //endPixels();  
+    //endPixels();
   }
 
 
@@ -155,18 +155,18 @@ public class PGraphicsJava2D extends PGraphics {
     // then just use it to continue the shape.
     gpath = null;
   }
-  
-  
+
+
   public void textureMode(int mode) {
     unavailableError("textureMode(mode)");
   }
 
-  
+
   public void texture(PImage image) {
     unavailableError("texture(image)");
   }
 
-  
+
   public void vertex(float x, float y) {
     splineVertexCount = 0;
     //float vertex[];
@@ -282,18 +282,18 @@ public class PGraphicsJava2D extends PGraphics {
       break;
     }
   }
-  
-  
+
+
   public void vertex(float x, float y, float u, float v) {
     unavailableError("vertex(x, y, u, v");
   }
 
-  
+
   public void vertex(float x, float y, float z) {
     depthErrorXYZ("vertex");
   }
 
-  
+
   public void vertex(float x, float y, float z, float u, float v) {
     depthErrorXYZ("vertex");
   }
@@ -769,15 +769,19 @@ public class PGraphicsJava2D extends PGraphics {
       return;
     }
 
-    // check to see if this font wants to be smoothed but smoothing
-    // is currently shut off for the graphics context overall
-    boolean savedSmooth = smooth;
-    if (textFont.smooth != savedSmooth) {
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                          textFont.smooth ?
-                          RenderingHints.VALUE_ANTIALIAS_ON :
-                          RenderingHints.VALUE_ANTIALIAS_OFF);
-    }
+    // save the current setting for text smoothing. note that this is
+    // different from the smooth() function, because the font smoothing
+    // is controlled when the font is created, not now as it's drawn.
+    // fixed a bug in 0116 that handled this incorrectly.
+    Object textAntialias =
+      g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
+
+    // override the current text smoothing setting based on the font
+    // (don't change the global smoothing settings)
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        textFont.smooth ?
+                        RenderingHints.VALUE_ANTIALIAS_ON :
+                        RenderingHints.VALUE_ANTIALIAS_OFF);
 
     g2.setColor(fillColorObject);
     // better to use drawString(float, float)?
@@ -790,13 +794,8 @@ public class PGraphicsJava2D extends PGraphics {
     //g2.drawGlyphVector(gv, x, y);
 
     // return to previous smoothing state if it was changed
-    if (textFont.smooth != savedSmooth) {
-      if (savedSmooth) {
-        smooth();
-      } else {
-        noSmooth();
-      }
-    }
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
+
     textX = x + textWidthImpl(buffer, start, stop);
     textY = y;
     textZ = 0;  // this will get set by the caller if non-zero

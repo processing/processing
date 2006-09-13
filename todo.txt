@@ -11,6 +11,11 @@ o is there a way to set the color of the Frame growbox?
 o   currently it's white instead of dark gray like the ui
 o   setBackground(Color) didn't seem to help inside PdeBase.<init>
 X   moot point because grow boxes removed in later os releases
+X ignore sketches that have ._blah.java or ._blah.pde files
+X   this could cause crashes on macosx
+X be more strict about opening sketches with illegal characters
+X   in previous releases, it was possible to rename sketches outside p5
+X   to something that was illegal. now those files are ignored
 
 faq additions
 X add notes about sketchPath() and savePath() to library docs
@@ -503,6 +508,7 @@ _   http://processing.org/bugs/show_bug.cgi?id=36
 _ undo after "import library" makes a blank screen
 _   http://processing.org/bugs/show_bug.cgi?id=41
 _ fonts smaller than 10 cause problems in the editor on osx
+_   on windows and linux, changing the size throws things off
 _   http://processing.org/bugs/show_bug.cgi?id=51
 _ code coloring is imperfect because it's not based on a parser
 _   i.e. mousePressed() is red but mouseMoved() is brown
@@ -645,9 +651,12 @@ _     that way if it's enabled, will always run externally
 
 PDE / Runner 
 
-_ antlr.jar in the classpath will cause trouble.. 
-_ jogl jar files, or jogl install will cause trouble
-_   /System/Library/Extensions or /Library/Extensions
+_ need to deal with classpath conflicts
+_   avoid garbage that people have installed on their machines
+_   antlr.jar in the classpath will cause trouble.. 
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
+_   jogl jar files, or jogl install will cause trouble
+_     /System/Library/Extensions or /Library/Extensions
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases
@@ -833,6 +842,9 @@ _ hex colors don't get formatted
 _   http://dev.processing.org/bugs/show_bug.cgi?id=303
 _ another code example that crashes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=363
+_ japanese characters in comments cause trouble with auto-format
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
+
 
 TOOLS / Create Font
 

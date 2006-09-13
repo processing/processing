@@ -731,7 +731,7 @@ public class PFont implements PConstants {
       //PApplet.printarr(renderingHintsClass.getFields());
 
       Field antialiasingKeyField =
-        renderingHintsClass.getDeclaredField("KEY_TEXT_ANTIALIASING");
+        renderingHintsClass.getField("KEY_TEXT_ANTIALIASING");
       Object antialiasingKey =
         antialiasingKeyField.get(renderingHintsClass);
 
