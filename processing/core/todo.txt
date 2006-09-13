@@ -57,6 +57,8 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X fix bug where smooth() was shut off after using text
 X   (that had the smoothing turned off when used in "Create Font")
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1148362664
+X fix dxf to use begin/endDraw instead of begin/endFrame
+X   fixes axel's bug with dxf export
 
 more recent
 X only update mouse pos on moved and dragged
@@ -91,6 +93,11 @@ _   commenting out applet.setupFrameResizeListener()
 _     in line 307 from Runner.java solved the problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=282
 
+_ problems between modelX between alpha and beta
+_   http://dev.processing.org/bugs/show_bug.cgi?id=386
+_ y may be flipped in modelX/Y/Z stuff on opengl
+_   is this the same bug?
+
 _ image outofmemoryerror for casey's students
 _   http://dev.processing.org/bugs/show_bug.cgi?id=355
 _   this may be related to a ton of other memory bugs
@@ -110,6 +117,8 @@ _ also remove POLYGON? still would be good to have an internal constant
 _ use parseFloat instead of toFloat()? to be consistent with javascript
 _ should reader() be openReader() for consistency?
 _   though printwriter is odd for output..
+_ bring back the old P2D, rename PGraphics2 into PGraphicsJava
+_ remove POLYGON, LINE_LOOP, LINE_STRIP
 
 _ when running as an applet, sketchPath won't be set
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1153150923
@@ -251,20 +260,20 @@ _   actually, just use PShape internally and this will be easier
 
 _ add notes about fixing serial on the mac to the faq (and link to bug)
 
+_ beginFrame()/beginDraw() and defaults()
+_   when should these be called, when not?
+_   seems as though the begin/end should happen inside beginRaw/Record
+_   defaults() gets called by the size() command in PApplet
+
 _ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
 _   because the triangles won't be rendered by the time endRaw() is called
 _   force depth sorted triangles to flush
-_ fix dxf export bug
 _ fix erik's problems with export (also in bugs db)
 _ check into ricard's problems with beginRecord()
 _ should beginRecord inherit settings from its parent renderer?
 _   textFont() is null on beginRecord
 _   same would be the case for strokeWeight, background, etc.
 _   http://dev.processing.org/bugs/show_bug.cgi?id=346
-
-
-_ bring back the old P2D, rename PGraphics2 into PGraphicsJava
-_ remove POLYGON, LINE_LOOP, LINE_STRIP
 
 _ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
 _   also if transparency set but RGB is setting, still honors transparency
@@ -928,7 +937,6 @@ _   workaround is to write the code properly, but suggests something bad
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ make a note about the anti-aliasing types in the faq
 _   polygon vs line etc.. may want to enable lines but disable polys
-_ y may be flipped in modelX/Y/Z stuff on opengl
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _ gl points not working again
