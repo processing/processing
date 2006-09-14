@@ -16,6 +16,9 @@ X   this could cause crashes on macosx
 X be more strict about opening sketches with illegal characters
 X   in previous releases, it was possible to rename sketches outside p5
 X   to something that was illegal. now those files are ignored
+X better fix for find/replace focus issue on osx
+_   http://dev.processing.org/bugs/show_bug.cgi?id=244
+X   give that field focus explicitly, rather than just for typing
 
 faq additions
 X add notes about sketchPath() and savePath() to library docs
@@ -597,9 +600,6 @@ _   placing "replace" next to "find" ... (hitting "replace all" by accident)
 _   have a button "replace & find next"
 _ allowing to find & replace over multiple tabs 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=69
-_ better fix for find/replace focus issue on osx
-_   http://dev.processing.org/bugs/show_bug.cgi?id=244
-_   give that field focus explicitly, rather than just for typing
 
 
 PDE / History
