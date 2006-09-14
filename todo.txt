@@ -19,6 +19,8 @@ X   to something that was illegal. now those files are ignored
 X better fix for find/replace focus issue on osx
 _   http://dev.processing.org/bugs/show_bug.cgi?id=244
 X   give that field focus explicitly, rather than just for typing
+X menu option/command key to switch between tabs
+X   http://dev.processing.org/bugs/show_bug.cgi?id=55
 
 faq additions
 X add notes about sketchPath() and savePath() to library docs
@@ -65,14 +67,13 @@ X audio hiccups, throttling the cpu
 X   p5 will take as much cpu as it can, which can choke other apps
 X   call delay(10) (or so) if you want to make sure audio keeps running
 
-_ is 'code' folder being ignored on export?
+_ is 'code' folder being ignored on export application?
 
 FOR 1.0
 _ should really be doing the 'right' thing with sketch file handling
 _   create temporary file when saving
 _   once done writing, use remove the original and rename the old
 _   some basic stuff like this..
-
 
 _ bugs.html#application -> export.html#application
 _ with network, check in advanced, then rename advanced.html to howto.html
@@ -542,8 +543,6 @@ PDE / Editor Header
 _ make some fancy extendo things because the tabs get too big
 _   either condense or popdown menu thingy
 _   http://dev.processing.org/bugs/show_bug.cgi?id=54
-_ ctrl-tab to switch between tabs
-_   http://dev.processing.org/bugs/show_bug.cgi?id=55
 _ not always updating on rename (maybe a mac problem?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=56
 
