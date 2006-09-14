@@ -68,6 +68,7 @@ public class Sketch {
   static final int JAVA = 1;
 
   public SketchCode current;
+  int currentIndex;
   int codeCount;
   SketchCode code[];
 
@@ -331,7 +332,7 @@ public class Sketch {
     // ask for new name of file (internal to window)
     // TODO maybe just popup a text area?
     renamingCode = true;
-    String prompt = (current == code[0]) ?
+    String prompt = (currentIndex == 0) ?
       "New name for sketch:" : "New name for file:";
     String oldName =
       (current.flavor == PDE) ? current.name : current.name + ".java";
@@ -428,7 +429,7 @@ public class Sketch {
     }
 
     if (renamingCode) {
-      if (current == code[0]) {
+      if (currentIndex == 0) {
         // get the new folder name/location
         File newFolder = new File(folder.getParentFile(), newName);
         if (newFolder.exists()) {
@@ -588,7 +589,7 @@ public class Sketch {
 
     // confirm deletion with user, yes/no
     Object[] options = { "OK", "Cancel" };
-    String prompt = (current == code[0]) ?
+    String prompt = (currentIndex == 0) ?
       "Are you sure you want to delete this sketch?" :
       "Are you sure you want to delete \"" + current.name + "\"?";
     int result = JOptionPane.showOptionDialog(editor,
@@ -600,7 +601,7 @@ public class Sketch {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      if (current == code[0]) {
+      if (currentIndex == 0) {
         // need to unset all the modified flags, otherwise tries
         // to do a save on the handleNew()
 
@@ -666,7 +667,7 @@ public class Sketch {
 
     // don't allow hide of the main code
     // TODO maybe gray out the menu on setCurrent(0)
-    if (current == code[0]) {
+    if (currentIndex == 0) {
       Base.showMessage("Can't do that",
                        "You cannot hide the main " +
                        ".pde file from a sketch\n");
@@ -1141,8 +1142,8 @@ public class Sketch {
    * </OL>
    */
   public void setCurrent(int which) {
-    if (current == code[which]) {
-      //System.out.println("already current, ignoring");
+    // if current is null, then this is the first setCurrent(0)
+    if ((currentIndex == which) && (current != null)) {
       return;
     }
 
@@ -1155,6 +1156,7 @@ public class Sketch {
     }
 
     current = code[which];
+    currentIndex = which;
     editor.setCode(current);
     //editor.setDocument(current.document,
     //                 current.selectionStart, current.selectionStop,
@@ -2663,5 +2665,17 @@ public class Sketch {
    */
   public String getMainFilePath() {
     return code[0].file.getAbsolutePath();
+  }
+
+
+  public void prevCode() {
+    int prev = currentIndex - 1;
+    if (prev < 0) prev = codeCount-1;
+    setCurrent(prev);
+  }
+
+
+  public void nextCode() {
+    setCurrent((currentIndex + 1) % codeCount);
   }
 }
