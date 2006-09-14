@@ -306,9 +306,10 @@ public class PApplet extends Applet
   public float frameRate = 10;
   protected long frameRateLastMillis = 0;
 
-  // setting the frame rate
+  /** Last time in milliseconds that a frameRate delay occurred */
   protected long frameRateLastDelayTime = 0;
-  protected float frameRateTarget = 0;
+  /** As of release 0116, frameRate(60) is called as a default */
+  protected float frameRateTarget = 60;
 
   protected boolean looping;
 

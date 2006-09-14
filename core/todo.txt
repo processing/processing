@@ -59,6 +59,8 @@ X   (that had the smoothing turned off when used in "Create Font")
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1148362664
 X fix dxf to use begin/endDraw instead of begin/endFrame
 X   fixes axel's bug with dxf export
+X set default frameRate cap at 60
+X   otherwise really thrashing the cpu when not necessary
 
 more recent
 X only update mouse pos on moved and dragged
@@ -83,9 +85,6 @@ _ jogl issues with some cards on linux, might be fixed with newer jogl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=367
 
 still not fixed
-_ add begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, and PGraphics3D
-_ set default frameRate cap at 60
-_   otherwise really thrashing the cpu when not necessary
 _ things not showing up in linux
 _   probably threading issue, 98 doesn't have any trouble
 _   signs point to Runner or PApplet changes between 98 and 99
@@ -97,6 +96,12 @@ _ problems between modelX between alpha and beta
 _   http://dev.processing.org/bugs/show_bug.cgi?id=386
 _ y may be flipped in modelX/Y/Z stuff on opengl
 _   is this the same bug?
+
+_ fix 3D tessellation problems with curveVertex and bezierVertex
+_   http://dev.processing.org/bugs/show_bug.cgi?id=390
+_   two examples in sketchbook
+
+_ add begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, and PGraphics3D
 
 _ image outofmemoryerror for casey's students
 _   http://dev.processing.org/bugs/show_bug.cgi?id=355
