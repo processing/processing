@@ -21,6 +21,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=244
 X   give that field focus explicitly, rather than just for typing
 X menu option/command key to switch between tabs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=55
+X fix movie playback on intel macs
+X   http://dev.processing.org/bugs/show_bug.cgi?id=313
 
 faq additions
 X add notes about sketchPath() and savePath() to library docs
