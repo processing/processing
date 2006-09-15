@@ -246,7 +246,14 @@ public class Movie extends PImage implements PConstants, Runnable {
     try {
       if (firstFrame) {
         movieRect = movie.getBox();
-        movieGraphics = new QDGraphics(movieRect);
+        //movieGraphics = new QDGraphics(movieRect);
+        if (quicktime.util.EndianOrder.isNativeLittleEndian()) {
+          movieGraphics =
+            new QDGraphics(QDConstants.k32BGRAPixelFormat, movieRect);
+        } else {
+          movieGraphics =
+            new QDGraphics(QDGraphics.kDefaultPixelFormat, movieRect);
+        }
       }
 
       Pict pict = movie.getPict(movie.getTime());  // returns an int
