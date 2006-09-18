@@ -163,9 +163,18 @@ public class Movie extends PImage implements PConstants, Runnable {
 
   public void init(PApplet parent, URL url, int ifps) {
 
+    System.out.println("url is " + url.toString());
+
+    String externalized = url.toExternalForm();
+    System.out.println("externalized is " + externalized);
+
+    // qtjava doesn't seem to like the jar: syntax
+    if (externalized.startsWith("jar:")) {
+      externalized = externalized.substring(4);
+    }
+
     // qtjava likes file: urls to read file:/// not file:/
     // so this changes them when appropriate
-    String externalized = url.toExternalForm();
     if (externalized.startsWith("file:/") &&
         !externalized.startsWith("file:///")) {
       externalized = "file:///" + url.getPath();
@@ -175,7 +184,11 @@ public class Movie extends PImage implements PConstants, Runnable {
     // an InputStream (indirectly) since it uses url syntax
     //DataRef urlRef = new DataRef(requestFile);
     try {
+      System.out.println(url);
+      System.out.println(externalized);
       DataRef urlRef = new DataRef(externalized);
+      System.out.println(urlRef);
+
       movie = fromDataRef(urlRef);
       //movie = quicktime.std.movies.Movie.fromDataRef(urlRef,
       //StdQTConstants4.newMovieAsyncOK |
