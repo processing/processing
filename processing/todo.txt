@@ -23,6 +23,8 @@ X menu option/command key to switch between tabs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=55
 X fix movie playback on intel macs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=313
+X when using external editor, update the code on export
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1158549785
 
 faq additions
 X add notes about sketchPath() and savePath() to library docs
@@ -68,6 +70,27 @@ X   maybe need to move animation into an internal class
 X audio hiccups, throttling the cpu
 X   p5 will take as much cpu as it can, which can choke other apps
 X   call delay(10) (or so) if you want to make sure audio keeps running
+
+o menu weirdness (benelek)
+o   when you've got a menu open, move a cursor over the text area
+o   and back over the menu, the text-area cursor type remains. 
+_   mark this as wontfix, since it's just a java bug
+_   http://dev.processing.org/bugs/show_bug.cgi?id=30
+
+_ quicktime in applets
+_   probably need to do a better job with openStream
+quicktime.QTException[QTJava:6.1.5g],-2012=invalidDataRef,QT.vers:7138000
+        at quicktime.std.movies.media.DataRef.setURLDataRef(DataRef.java:283)
+        at quicktime.std.movies.media.DataRef.<init>(DataRef.java:148)
+        at processing.video.Movie.init(Movie.java:180)
+        at processing.video.Movie.<init>(Movie.java:118)
+        at processing.video.Movie.<init>(Movie.java:84)
+        at MoviePlayback.setup(MoviePlayback.java:18)
+        at processing.core.PApplet.handleDisplay(PApplet.java:1269)
+        at processing.core.PGraphics.requestDisplay(PGraphics.java:535)
+        at processing.core.PApplet.run(PApplet.java:1152)
+        at java.lang.Thread.run(Thread.java:613)
+_ remove the second movie from the movie playback example
 
 _ is 'code' folder being ignored on export application?
 
@@ -471,6 +494,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=328
 _ stop button won't kill a video sketch (bug 150 example does this) 
 _   although ESC seems to work? (not sure, didn't test)
 _ run/stop button highlight is almost completely broken
+_   http://dev.processing.org/bugs/show_bug.cgi?id=396
 _ when running with external editor, hide the editor text area
 _   http://dev.processing.org/bugs/show_bug.cgi?id=20
 _ horizontal scroller gets weird sometimes
@@ -493,10 +517,6 @@ _   not confirmed for a long time
 _   even without sketches open, perhaps not gc'ing properly
 _   objects probably not getting finalized
 _   http://dev.processing.org/bugs/show_bug.cgi?id=29
-_ menu weirdness (benelek)
-_   when you've got a menu open, move a cursor over the text area
-_   and back over the menu, the text-area cursor type remains. 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=30
 _ rename/saveas doesn't properly have its focus set
 _   under windows, immediately typing after rename doesn't select
 _   the whole thing is selected, but not directly editable
@@ -513,7 +533,8 @@ _ undo has become sluggish
 _   http://processing.org/bugs/show_bug.cgi?id=36
 _ undo after "import library" makes a blank screen
 _   http://processing.org/bugs/show_bug.cgi?id=41
-_ fonts smaller than 10 cause problems in the editor on osx
+_ fonts smaller than 10 cause problems in the editor
+_   generally causes trouble on osx
 _   on windows and linux, changing the size throws things off
 _   http://processing.org/bugs/show_bug.cgi?id=51
 _ code coloring is imperfect because it's not based on a parser
