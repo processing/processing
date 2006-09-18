@@ -56,10 +56,10 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   /// true if in-between beginDraw() and endDraw()
   boolean insideDraw;
-  
+
   /// true if in the midst of resize (no drawing can take place)
   boolean insideResize;
-  
+
   // ........................................................
 
   // specifics for java memoryimagesource
@@ -561,7 +561,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
   protected void insideDrawWait() {
     while (insideDraw) {
       //System.out.println("waiting");
@@ -570,8 +570,8 @@ public abstract class PGraphics extends PImage implements PConstants {
       } catch (InterruptedException e) { }
     }
   }
-  
-  
+
+
   /**
    * Prepares the PGraphics for drawing.
    * <p/>
@@ -1302,6 +1302,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     // need an actual measure of magnitude in there [fry]
 
     int accuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
+    //System.out.println("accuracy is " + accuracy);
 
     // [toxi031031] adapted to use new lookup tables
     float inc = (float)SINCOS_LENGTH / accuracy;
