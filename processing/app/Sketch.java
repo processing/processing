@@ -1616,6 +1616,13 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
+    // fix for issue posted on the board. make sure that the code
+    // is reloaded when exporting and an external editor is being used.
+    if (Preferences.getBoolean("editor.external")) {
+      // nuke previous files and settings
+      load();
+    }
+
     zipFileContents = new Hashtable();
 
     // nuke the old applet folder because it can cause trouble
@@ -2067,6 +2074,13 @@ public class Sketch {
   public boolean exportApplication(int exportPlatform) throws Exception {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
+
+    // fix for issue posted on the board. make sure that the code
+    // is reloaded when exporting and an external editor is being used.
+    if (Preferences.getBoolean("editor.external")) {
+      // nuke previous files and settings
+      load();
+    }
 
     //int exportPlatform = PApplet.platform; //PConstants.MACOSX;
     String exportPlatformStr = null;
