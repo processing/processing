@@ -80,6 +80,8 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
+_ does ENABLE_DEPTH_SORT not work with opengl?
+
 needs to be tested
 _ jogl issues with some cards on linux, might be fixed with newer jogl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=367
