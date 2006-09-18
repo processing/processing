@@ -604,7 +604,7 @@ public class Editor extends JFrame
 
     menu.addSeparator();
 
-    item = newJMenuItem("Previous Tab", KeyEvent.VK_LEFT);
+    item = newJMenuItem("Previous Tab", '['); //KeyEvent.VK_LEFT);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           sketch.prevCode();
@@ -612,7 +612,7 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
-    item = newJMenuItem("Next Tab", KeyEvent.VK_RIGHT);
+    item = newJMenuItem("Next Tab", ']'); //KeyEvent.VK_RIGHT);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           sketch.nextCode();
