@@ -439,6 +439,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     ctm[14] = modelview.m32;
     ctm[15] = modelview.m33;
     */
+
     ctm[0] = modelview.m00;
     ctm[1] = modelview.m10;
     ctm[2] = modelview.m20;
@@ -525,59 +526,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
       int textureIndex = triangles[i][TEXTURE_INDEX];
       if (textureIndex != -1) {
-        PImage texture = textures[textureIndex];
-
         report("before enable");
         gl.glEnable(GL.GL_TEXTURE_2D);
         report("after enable");
 
-        ImageCache cash = (ImageCache) texture.cache;  // as in johnny
-        if (cash == null) {
-          //System.out.println("cash null");
-          // make sure this thing is cached and a power of 2
-          //cache(texture);
-          cash = new ImageCache(); //texture);
-          texture.cache = cash;
-          texture.modified = true;
-        }
-
-        if (texture.modified) {
-          //System.out.println("texture modified");
-          // TODO make this more efficient and just update a sub-part
-          // based on mx1 et al, also use gl function to update
-          // only a sub-portion of the image.
-          cash.rebind(texture);
-
-          /*
-          gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 4,
-                          cash.twidth, cash.theight,
-                          0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
-                          //0, GL.GL_BGRA_EXT, GL.GL_UNSIGNED_BYTE,
-                          //cash.tpixels);
-                          cash.tbuffer);
-
-          report("re-binding " + cash.twidth + " " +
-                 cash.theight + " " + cash.tpixels);
-          gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                             GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
-          gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                             GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
-          gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                             GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-          gl.glTexParameterf(GL.GL_TEXTURE_2D,
-                             GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-
-          report("re-binding 3");
-          gl.glTexEnvf(GL.GL_TEXTURE_ENV,
-                       GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-          */
-
-          // actually bind this feller
-          texture.modified = false;
-
-        } else {
-          gl.glBindTexture(GL.GL_TEXTURE_2D, cash.tindex);
-        }
+        PImage texture = textures[textureIndex];
+        bindTexture(texture);
 
         report("before bind");
         //System.out.println(gl.glIsTexture(image.tindex));
@@ -631,6 +585,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         }
         */
 
+        ImageCache cash = (ImageCache) texture.cache;
         float uscale = (float) texture.width / (float) cash.twidth;
         float vscale = (float) texture.height / (float) cash.theight;
 
@@ -727,6 +682,39 @@ public class PGraphicsOpenGL extends PGraphics3D {
       raw.endShape();
     }
     report("render_triangles out");
+  }
+
+
+  public float uscale(PImage texture) {
+    ImageCache cash = (ImageCache) texture.cache;
+    return (float) texture.width / (float) cash.twidth;
+  }
+
+  public float vscale(PImage texture) {
+    ImageCache cash = (ImageCache) texture.cache;
+    return (float) texture.height / (float) cash.theight;
+  }
+
+  public void bindTexture(PImage texture) {
+    ImageCache cash = (ImageCache) texture.cache;  // as in johnny
+    if (cash == null) {
+      cash = new ImageCache();
+      texture.cache = cash;
+      texture.modified = true;
+    }
+
+    if (texture.modified) {
+      //System.out.println("texture modified");
+      // TODO make this more efficient and just update a sub-part
+      // based on mx1 et al, also use gl function to update
+      // only a sub-portion of the image.
+      cash.rebind(texture);
+      // clear the modified flag
+      texture.modified = false;
+
+    } else {
+      gl.glBindTexture(GL.GL_TEXTURE_2D, cash.tindex);
+    }
   }
 
 
