@@ -31,7 +31,7 @@ class Example
 			# Change for new comment style - cr
 			if (!preg_match("/\*\//", $line) && doc) {
 			  $doc = false;  # End the documentation<br>
-              echo "match found";
+              echo "$line\n";
 			}
 			if ($doc) {
 				#$doc_lines[] = htmlspecialchars(str_replace('// ', '', $line));<br>
