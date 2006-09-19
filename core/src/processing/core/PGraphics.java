@@ -2279,19 +2279,19 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * Draw a single character on screen.
    * Extremely slow when used with textMode(SCREEN) and Java 2D,
-   * because beginPixels has to be called first and updatePixels last.
+   * because loadPixels has to be called first and updatePixels last.
    */
   public void text(char c, float x, float y) {
     if (textFont == null) {
       throw new RuntimeException("use textFont() before text()");
     }
 
-    if (textMode == SCREEN) beginPixels();
+    if (textMode == SCREEN) loadPixels();
 
     textBuffer[0] = c;
     textLineImpl(textBuffer, 0, 1, x, y);
 
-    if (textMode == SCREEN) endPixels();
+    if (textMode == SCREEN) updatePixels();
   }
 
 
@@ -2332,7 +2332,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       throw new RuntimeException("use textFont() before text()");
     }
 
-    if (textMode == SCREEN) beginPixels();
+    if (textMode == SCREEN) loadPixels();
 
     int length = str.length();
     if (length > textBuffer.length) {
@@ -2353,7 +2353,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     if (start < length) {
       textLineImpl(textBuffer, start, index, x, y);
     }
-    if (textMode == SCREEN) endPixels();
+    if (textMode == SCREEN) updatePixels();
   }
 
 
@@ -2423,7 +2423,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       throw new RuntimeException("use textFont() before text()");
     }
 
-    if (textMode == SCREEN) beginPixels();
+    if (textMode == SCREEN) loadPixels();
 
     float hradius, vradius;
     switch (rectMode) {
@@ -2551,7 +2551,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       textLineImpl(textBuffer, lineStart, index, lineX, currentY);
     }
 
-    if (textMode == SCREEN) endPixels();
+    if (textMode == SCREEN) updatePixels();
   }
 
 

@@ -281,7 +281,7 @@ public class Capture extends PImage implements Runnable {
   public void read() {
     //try {
     //synchronized (capture) {
-    beginPixels();
+    loadPixels();
     synchronized (pixels) {
       //System.out.println("read1");
       if (crop) {
@@ -311,7 +311,7 @@ public class Capture extends PImage implements Runnable {
       // mark this image as modified so that PGraphicsJava and PGraphicsGL
       // will properly re-blit and draw this guy
       //updatePixels();
-      endPixels();
+      updatePixels();
       //System.out.println("read4");
     }
   }
