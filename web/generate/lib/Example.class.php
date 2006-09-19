@@ -25,8 +25,11 @@ class Example
 		$code_lines = array();
 		$doc = true;
 		foreach ($lines as $line) {
-			if (!preg_match("/^\W/", $line) && $doc) {
-				$doc = false;
+			#if (!preg_match("/^\W/", $line) && $doc) {
+			#	$doc = false;
+			#}
+			if (!preg_match("*/", $line) && doc) {
+			  $doc = false;
 			}
 			if ($doc) {
 				$doc_lines[] = htmlspecialchars(str_replace('// ', '', $line));
