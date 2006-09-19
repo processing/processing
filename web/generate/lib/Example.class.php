@@ -28,11 +28,14 @@ class Example
 			#if (!preg_match("/^\W/", $line) && $doc) {
 			#	$doc = false;
 			#}
-			if (!preg_match("*/", $line) && doc) {
-			  $doc = false;
+			# Change for new comment style - cr
+			if (!preg_match('^ *\/', $line) && doc) {
+			  $doc = false;  # End the documentation
 			}
 			if ($doc) {
-				$doc_lines[] = htmlspecialchars(str_replace('// ', '', $line));
+				#$doc_lines[] = htmlspecialchars(str_replace('// ', '', $line));<br>
+                # Change for new comment style - cr
+				$doc_lines[] = htmlspecialchars(str_replace(' * ', '', $line));
 			} else {
 				$code_lines[] = htmlspecialchars($line);
 			}
