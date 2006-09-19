@@ -39,7 +39,8 @@ class Example
 				#$doc_lines[] = htmlspecialchars(str_replace('// ', '', $line));
                 # Change for new comment style - cr<br>
                 if(!preg_match("/\/\*\*/", $line)) {
-				  $doc_lines[] = htmlspecialchars(str_replace(' * ', '', $line));
+				  #$doc_lines[] = htmlspecialchars(str_replace(' * ', '', $line)); # Removed to allow arefs - cr
+				  $doc_lines[] = str_replace(' * ', '', $line);
                 }
 			} else {
 				$code_lines[] = htmlspecialchars($line);
