@@ -4,7 +4,7 @@
   PMovie - reading from video files
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry
+  Copyright (c) 2004-06 Ben Fry
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@ import quicktime.io.QTFile;
 import quicktime.qd.*;
 import quicktime.std.*;
 import quicktime.std.movies.media.DataRef;
+import quicktime.util.QTHandle;
 import quicktime.util.RawEncodedImage;
 
 
@@ -52,7 +53,10 @@ public class Movie extends PImage implements PConstants, Runnable {
   boolean available;
   int fps;
 
-  /** The movie object, made public in case anyone wants to play with it. */
+  /**
+   * The QuickTime for Java "Movie" object, made public
+   * in case anyone wants to play with it.
+   */
   public quicktime.std.movies.Movie movie;
 
   QDRect movieRect;
@@ -88,6 +92,79 @@ public class Movie extends PImage implements PConstants, Runnable {
     // attempts to draw, something happens that's not an exception
     super.init(1, 1, RGB);
 
+    this.parent = parent;
+
+    // first check to see if this can be read locally from a file.
+    // otherwise, will have to load the file into memory, which is
+    // gonna make people unhappy who are trying to play back 50 MB
+    // quicktime movies with a locally installed piece exported
+    // as an application.
+    try {
+      try {
+        // first try a local file using the dataPath. usually this will
+        // work ok, but sometimes the dataPath is inside a jar file,
+        // which is less fun, so this will crap out.
+        File file = new File(parent.dataPath(filename));
+        if (file.exists()) {
+          movie = fromDataRef(new DataRef(new QTFile(file)));
+          //init(parent, movie, ifps);
+          //return;
+        }
+      } catch (Exception e) { }  // ignored
+
+      // read from a folder local to the current working dir
+      // called "data". presumably this might be the data folder,
+      // though that should be caught above, if such a folder exists.
+      /*
+      if (movie == null) {
+        try {
+          File file = new File("data", filename);
+          if (file.exists()) {
+            movie = fromDataRef(new DataRef(new QTFile(file)));
+            init(parent, movie, ifps);
+            return;
+          }
+        } catch (QTException e2) { }
+      }
+      */
+
+      // read from a file just hanging out in the local folder.
+      // this might happen when the video library is used with some
+      // other application, or the person enters a full path name
+      if (movie == null) {
+        try {
+          File file = new File(filename);
+          if (file.exists()) {
+            movie = fromDataRef(new DataRef(new QTFile(file)));
+            //init(parent, movie, ifps);
+            //return;
+          }
+        } catch (QTException e1) { }
+      }
+
+    } catch (SecurityException se) {
+      // online, whups. catch the security exception out here rather than
+      // doing it three times (or whatever) for each of the cases above.
+    }
+
+    // if the movie can't be read from a local file, it has to be read
+    // into a byte array and passed to qtjava. it's annoying that apple
+    // doesn't have something in the api to read a movie from a friggin
+    // InputStream, but oh well. it's their api.
+    if (movie == null) {
+      byte data[] = parent.loadBytes(filename);
+      int dot = filename.lastIndexOf(".");
+      // grab the extension from the file, use mov if there is none
+      String extension = (dot == -1) ? "mov" :
+        filename.substring(dot + 1).toLowerCase();
+      try {
+        movie = fromDataRef(new DataRef(new QTHandle(data)));
+      } catch (QTException e) {
+        e.printStackTrace();
+      }
+    }
+
+    /*
     URL url = null;
     this.filename = filename; // for error messages
 
@@ -146,11 +223,57 @@ public class Movie extends PImage implements PConstants, Runnable {
       } catch (QTException e1) { }
 
     } catch (SecurityException se) { }  // online, whups
+    */
 
-    parent.die("Could not find movie file " + filename, null);
+    if (movie == null) {
+      parent.die("Could not find movie file " + filename, null);
+    }
+
+    // we've got a valid movie! let's rock.
+    try {
+      // this is probably causing the 2 seconds of audio
+      movie.prePreroll(0, 1.0f);
+      movie.preroll(0, 1.0f);
+
+      // this has a possibility of running forever..
+      // should probably happen on the thread as well.
+      while (movie.maxLoadedTimeInMovie() == 0) {
+        movie.task(100);
+
+        // 0106: tried adding sleep time so this doesn't spin out of control
+        // works fine but doesn't really help anything
+        //try {
+        //Thread.sleep(5);
+        //} catch (InterruptedException e) { }
+      }
+      movie.setRate(1);
+      fps = ifps;
+
+      // register methods
+      parent.registerDispose(this);
+
+      try {
+        movieEventMethod =
+          parent.getClass().getMethod("movieEvent",
+                                      new Class[] { Movie.class });
+      } catch (Exception e) {
+        // no such method, or an error.. which is fine, just ignore
+      }
+
+      // and now, make the magic happen
+      runner = new Thread(this);
+      runner.start();
+
+    } catch (QTException qte) {
+      qte.printStackTrace();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 
+  /*
   public Movie(PApplet parent, URL url) {
     init(parent, url, 30);
   }
@@ -163,15 +286,8 @@ public class Movie extends PImage implements PConstants, Runnable {
 
   public void init(PApplet parent, URL url, int ifps) {
 
-    System.out.println("url is " + url.toString());
-
     String externalized = url.toExternalForm();
     System.out.println("externalized is " + externalized);
-
-    // qtjava doesn't seem to like the jar: syntax
-    if (externalized.startsWith("jar:")) {
-      externalized = externalized.substring(4);
-    }
 
     // qtjava likes file: urls to read file:/// not file:/
     // so this changes them when appropriate
@@ -190,18 +306,20 @@ public class Movie extends PImage implements PConstants, Runnable {
       System.out.println(urlRef);
 
       movie = fromDataRef(urlRef);
-      //movie = quicktime.std.movies.Movie.fromDataRef(urlRef,
-      //StdQTConstants4.newMovieAsyncOK |
-      //StdQTConstants.newMovieActive);
       init(parent, movie, ifps);
 
     } catch (QTException e) {
       e.printStackTrace();
     }
-    //System.out.println("done with init");
   }
+  */
 
 
+  /**
+   * Why does this function have to be so bizarre? i love the huge
+   * constants! i think they're neato. i feel like i'm coding for
+   * think pascal on my mac plus! those were happier times.
+   */
   private quicktime.std.movies.Movie fromDataRef(DataRef ref)
     throws QTException {
 
@@ -212,15 +330,26 @@ public class Movie extends PImage implements PConstants, Runnable {
   }
 
 
+  /*
   public void init(PApplet parent,
                    quicktime.std.movies.Movie movie, int ifps) {
     this.parent = parent;
 
     try {
+      // this is probably causing the 2 seconds of audio
       movie.prePreroll(0, 1.0f);
       movie.preroll(0, 1.0f);
+
+      // this has a possibility of running forever..
+      // should probably happen on the thread as well.
       while (movie.maxLoadedTimeInMovie() == 0) {
         movie.task(100);
+
+        // 0106: tried adding sleep time so this doesn't spin out of control
+        // works fine but doesn't really help anything
+        //try {
+        //Thread.sleep(5);
+        //} catch (InterruptedException e) { }
       }
       movie.setRate(1);
       fps = ifps;
@@ -248,6 +377,7 @@ public class Movie extends PImage implements PConstants, Runnable {
       e.printStackTrace();
     }
   }
+  */
 
 
   public boolean available() {
@@ -362,7 +492,7 @@ public class Movie extends PImage implements PConstants, Runnable {
    */
   public void pause() {
     play = false;
-    System.out.println("pause");
+    //System.out.println("pause");
   }
 
 
@@ -371,7 +501,7 @@ public class Movie extends PImage implements PConstants, Runnable {
    */
   public void stop() {
     play = false;
-    System.out.println("stop");
+    //System.out.println("stop");
     try {
       movie.setTimeValue(0);
 
@@ -383,22 +513,27 @@ public class Movie extends PImage implements PConstants, Runnable {
 
   /**
    * Set how often new frames are to be read from the movie.
+   * Does not actually set the speed of the movie playback,
+   * that's handled by the speed() method.
    */
-  public void framerate(int ifps) {
+  public void frameRate(int ifps) {
     if (ifps <= 0) {
-      System.err.println("Movie: ignoring bad framerate of " +
+      System.err.println("Movie: ignoring bad frame rate of " +
                          ifps + " fps.");
-      return;
+    } else {
+      fps = ifps;
     }
-    fps = ifps;
   }
 
 
   /**
    * Set a multiplier for how fast/slow the movie should be run.
-   * speed(2) will play the movie at double speed (2x).
-   * speed(0.5) will play at half speed.
-   * speed(-1) will play backwards at regular speed.
+   * The default is 1.0.
+   * <UL>
+   * <LI>speed(2) will play the movie at double speed (2x).
+   * <LI>speed(0.5) will play at half speed.
+   * <LI>speed(-1) will play backwards at regular speed.
+   * </UL>
    */
   public void speed(float rate) {
     //rate = irate;
@@ -430,7 +565,6 @@ public class Movie extends PImage implements PConstants, Runnable {
    * Jump to a specific location (in seconds).
    * The number is a float so fractions of seconds can be used.
    */
-  //public void jump(int where) {
   public void jump(float where) {
     try {
       //movie.setTime(new TimeRecord(rate, where));  // scale, value
@@ -551,7 +685,7 @@ public class Movie extends PImage implements PConstants, Runnable {
 
 
   public void dispose() {
-    System.out.println("disposing");
+    //System.out.println("disposing");
     stop();
     runner = null;
     QTSession.close();
