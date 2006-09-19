@@ -302,7 +302,7 @@ public class Movie extends PImage implements PConstants, Runnable {
       // this happens later (found by hernando)
       //raw.copyToArray(0, image.pixels, 0, image.width * image.height);
 
-      beginPixels();
+      loadPixels();
       // this is identical to a chunk of code inside PCamera
       // this might be a candidate to move up to PVideo or something
       if (borderImage != null) {  // need to remove borders
@@ -323,7 +323,7 @@ public class Movie extends PImage implements PConstants, Runnable {
       // ready to rock
       //System.out.println("updating pixels");
       //updatePixels();  // mark as modified
-      endPixels();
+      updatePixels();
 
     } catch (QTException qte) {
       qte.printStackTrace();
