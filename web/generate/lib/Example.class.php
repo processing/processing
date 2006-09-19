@@ -29,8 +29,8 @@ class Example
 			#	$doc = false;
 			#}
 			# Change for new comment style - cr
-			if (!preg_match("/\*\//", $line) && doc) {
-			  $doc = false;  # End the documentation<br>
+			if (preg_match("/\*\//", $line) && doc) {
+			  $doc = false;  # End the documentation
               echo "$line\n";
 			}
 			if ($doc) {
