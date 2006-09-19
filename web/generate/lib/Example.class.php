@@ -31,8 +31,9 @@ class Example
 			# Change for new comment style - cr
 			if (preg_match("/\*\//", $line) && doc) {
 			  $doc = false;  # End the documentation
-              echo "$line\n";
-			  break;
+              #echo "$line\n";
+			  #break;
+			  continue;
 			}
 			if ($doc) {
 				#$doc_lines[] = htmlspecialchars(str_replace('// ', '', $line));
@@ -61,7 +62,8 @@ class Example
 			$html .= "\n<p class=\"doc\">";
 		}
 
-		$html .= nl2br($this->doc);
+		#$html .= nl2br($this->doc);
+		$html .= $this->doc;
 		$html .= "</p>\n";
 		
 		$html .= "\n<pre class=\"code\">";
