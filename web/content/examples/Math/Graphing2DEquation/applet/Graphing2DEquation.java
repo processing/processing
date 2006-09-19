@@ -1,13 +1,15 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Graphing2DEquation extends PApplet {// Graphing 2D Equations
-// Daniel Shiffman <http://www.shiffman.net>
-
-// Graphics the following equation
-// sin(n*cos(r) + 5*theta)
-// where n is a function of horizontal mouse location 
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Graphing2DEquation extends PApplet {/**
+ * Graphing 2D Equations
+ * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * 
+ * Graphics the following equation: 
+ * sin(n*cos(r) + 5*theta) 
+ * where n is a function of horizontal mouse location.  
+ */
+ 
 public void setup() {
   size(200,200);
-  framerate(30);
+  frameRate(30);
 }
 
 public void draw() {
@@ -36,4 +38,4 @@ public void draw() {
   updatePixels();
 }
 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Graphing2DEquation" });}}

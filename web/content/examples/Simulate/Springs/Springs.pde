@@ -21,7 +21,7 @@ void setup()
   springs[0] = new Spring( 70, 160,  20, 0.98, 8.0, 0.1, springs, 0); 
   springs[1] = new Spring(150, 110,  60, 0.95, 9.0, 0.1, springs, 1); 
   springs[2] = new Spring( 40,  70, 120, 0.90, 9.9, 0.1, springs, 2); 
-  framerate(60);
+  frameRate(60);
   
 }
 

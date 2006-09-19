@@ -16,7 +16,7 @@ void setup()
 {
   size(200,200);
   noStroke();
-  framerate(30);
+  frameRate(30);
 }
 
 void draw() 
@@ -33,7 +33,7 @@ void draw()
   fill(255);
   rect(-size/2, -size/2, size, size);
   
-  // Transforms add on each other.
+  // Transforms accumulate.
   // Notice how this rect moves twice
   // as fast as the other, but it has
   // the same parameter for the x-axis value

@@ -11,7 +11,6 @@ float spin = 0.0;
 void setup() 
 {
   size(200, 200, P3D);
-  framerate(30);
   noStroke();
 }
 

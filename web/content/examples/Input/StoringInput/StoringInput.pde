@@ -20,7 +20,6 @@ void setup()
   smooth();
   noStroke();
   fill(255, 153); 
-  framerate(60);
 }
 
 void draw() 

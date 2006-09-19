@@ -20,7 +20,7 @@ void setup()
 {
   size(200, 200);
   noStroke();
-  framerate(30);
+  frameRate(30);
   smooth();
   // Set the starting position of the shape
   xpos = width/2;

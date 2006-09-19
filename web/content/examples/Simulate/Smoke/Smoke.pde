@@ -37,7 +37,7 @@ void setup()
   vbuf = new vbuffer[lwidth+1][lheight+1];
   p = new particle[pnum];
   noStroke();
-  framerate(60);
+  frameRate(60);
   for(int i = 0; i < pnum; i++) {
     p[i] = new particle(random(width/2-20,width/2+20),random(height-20,height));
   }

@@ -14,7 +14,7 @@ ParticleSystem ps;
 
 void setup() {
   size(200,200);
-  framerate(30);
+  frameRate(30);
   colorMode(RGB,255,255,255,100);
   ps = new ParticleSystem(1,new Vector3D(width/2,height/2,0));
   smooth();

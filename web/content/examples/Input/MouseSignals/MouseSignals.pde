@@ -16,7 +16,6 @@ int[] bvals;
 void setup() 
 {
   size(200, 200);
-  framerate(30);
   xvals = new int[width];
   yvals = new int[width];
   bvals = new int[width];

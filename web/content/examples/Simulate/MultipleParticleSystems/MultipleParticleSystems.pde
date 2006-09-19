@@ -16,7 +16,7 @@ ArrayList psystems;
 
 void setup() {
   size(200,200);
-  framerate(30);
+  frameRate(30);
   colorMode(RGB,255,255,255,100);
   psystems = new ArrayList();
   smooth();

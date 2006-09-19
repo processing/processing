@@ -17,7 +17,7 @@ void setup()
 {
   size(200, 200);
   noStroke();
-  framerate(60);
+  frameRate(60);
 }
 
 void draw() 

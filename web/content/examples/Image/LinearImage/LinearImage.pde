@@ -22,7 +22,7 @@ void setup()
   for(int i=0; i<width*height; i++) {
     aPixels[i] = a.pixels[i];
   }
-  framerate(30);
+  frameRate(30);
 }
 
 void draw() 

@@ -18,7 +18,7 @@ void setup()
   a = 0;
   b = width;
   direction = true;
-  framerate(30);
+  frameRate(30);
 }
 
 void draw()

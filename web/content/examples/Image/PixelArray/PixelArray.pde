@@ -21,7 +21,7 @@ void setup()
   aPixels = new int[width*height];
   noFill();
   stroke(255);
-  framerate(30);
+  frameRate(30);
   a = loadImage("ystone08.jpg");
   for(int i=0; i<width*height; i++) {
     aPixels[i] = a.pixels[i];

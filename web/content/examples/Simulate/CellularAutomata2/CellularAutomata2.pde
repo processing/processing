@@ -23,7 +23,7 @@ color black = color(0, 0, 0);
 void setup()
 {
   size(200, 200);
-  framerate(24);
+  frameRate(24);
   clearscr();  
   w = new World();
   spore_color = color(172, 255, 128);

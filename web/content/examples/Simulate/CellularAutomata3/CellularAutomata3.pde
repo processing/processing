@@ -23,7 +23,7 @@ int runs_per_loop = 10000;
 void setup()
 {
   size(200, 200);
-  framerate(24);
+  frameRate(24);
   clearscr();
   w = new World();
   spore1 = color(128, 172, 255);

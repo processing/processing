@@ -19,7 +19,7 @@ void setup()
 {
   size(200,200);
   background(255, 204, 0);
-  framerate(24);
+  frameRate(24);
   animation1 = new AniSprite("PT_Shifty_00", 38);
   animation2 = new AniSprite("PT_Teddy_00", 60);
 }

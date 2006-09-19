@@ -16,7 +16,6 @@ void setup()
   size(200, 200);
   background(176);
   noStroke();
-  framerate(60);
   
   num = width/unit * width/unit;
   mods = new Module[num];

@@ -19,7 +19,7 @@ void setup()
   noStroke();
   ellipseMode(CENTER_RADIUS);
   smooth();
-  framerate(30);
+  frameRate(30);
 }
 
 void draw() 

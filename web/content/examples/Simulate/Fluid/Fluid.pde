@@ -25,7 +25,7 @@ void setup()
 {
   size(200,200);
   noStroke();
-  framerate(30);
+  frameRate(30);
   lwidth = width/res;
   lheight = height/res;
   v = new vsquare[lwidth+1][lheight+1];

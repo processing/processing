@@ -15,7 +15,7 @@ PImage[] images = new PImage[numFrames];
 void setup()
 {
   size(200, 200);
-  framerate(30);
+  frameRate(30);
   
   images[0]  = loadImage("PT_anim0000.gif");
   images[1]  = loadImage("PT_anim0001.gif"); 

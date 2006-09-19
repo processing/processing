@@ -20,7 +20,7 @@ void setup()
   teddy = loadImage("teddy.gif");
   xpos = width/2;
   ypos = height/2;
-  framerate(60);
+  frameRate(60);
 }
 
 void draw() 

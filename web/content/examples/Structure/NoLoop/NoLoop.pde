@@ -15,7 +15,7 @@ void setup()
 {
   size(200, 200);  // Size should be the first statement
   stroke(255);     // Set line drawing color to white
-  framerate(30);
+  frameRate(30);
   noLoop();
 }
 

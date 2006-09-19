@@ -21,7 +21,7 @@ void setup()
 {
   size(200, 200, P3D);
   
-  framerate(30);
+  frameRate(30);
   
   // Array of line objects
   lns = new Line[8];

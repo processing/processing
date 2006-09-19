@@ -16,7 +16,7 @@ void setup()
   size(200,200);
   noStroke();
   fill(255);
-  framerate(30);
+  frameRate(30);
 }
 
 float angle;

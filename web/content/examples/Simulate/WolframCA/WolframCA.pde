@@ -13,7 +13,7 @@ CA ca;   // An instance object to describe the Wolfram basic Cellular Automata
 
 void setup() {
   size(200,200);
-  framerate(30);
+  frameRate(30);
   background(0);
   int[] ruleset = {0,1,0,1,1,0,1,0};    // An initial rule system
   ca = new CA(ruleset);                 // Initialize CA

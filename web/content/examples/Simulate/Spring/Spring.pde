@@ -33,7 +33,7 @@ void setup()
   size(200, 200);
   rectMode(CORNERS);
   noStroke();
-  framerate(60);
+  frameRate(60);
 }
 
 void draw() 

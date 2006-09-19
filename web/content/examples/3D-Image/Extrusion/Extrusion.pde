@@ -16,7 +16,6 @@ float angle;
 void setup() 
 {
   size(200, 200, P3D);
-  framerate(24);
   
   aPixels = new int[width][height];
   values = new int[width][height];
@@ -31,7 +30,6 @@ void setup()
       values[j][i] = int(blue(aPixels[j][i]));
     }
   }
-  framerate(30);
 }
 
 void draw() 

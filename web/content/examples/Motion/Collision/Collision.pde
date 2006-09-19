@@ -25,19 +25,19 @@ void setup()
   rectMode(CENTER_RADIUS);
   ellipseMode(CENTER_RADIUS);
   noStroke();
+  smooth();
   ball_y = height/2;
   ball_x = 1;
-  framerate(30);
 }
 
 void draw() 
 {
   background(51);
   
-  ball_x += ball_dir * 2;
+  ball_x += ball_dir * 1.0;
   ball_y += dy;
   if(ball_x > width+ball_size) {
-    ball_x = -width/2-ball_size;
+    ball_x = -width/2 - ball_size;
     ball_y = random(0, height);
     dy = 0;
   }

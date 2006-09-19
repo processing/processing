@@ -18,7 +18,7 @@ float[] yvalues;          // Using an array to store height values for the wave 
 
 void setup() {
   size(200,200);
-  framerate(30);
+  frameRate(30);
   colorMode(RGB,255,255,255,100);
   smooth();
   w = width+16;

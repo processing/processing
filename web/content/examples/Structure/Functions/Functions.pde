@@ -13,15 +13,15 @@ void setup()
   size(200, 200);
   background(51);
   noStroke();
-  ellipseMode(CENTER_RADIUS);
+  smooth();
   noLoop();
 }
 
 void draw() 
 {
-  draw_target(68, 34, 100, 10);
-  draw_target(152, 16, 50, 3);
-  draw_target(100, 144, 40, 5);
+  draw_target(68, 34, 200, 10);
+  draw_target(152, 16, 100, 3);
+  draw_target(100, 144, 80, 5);
 }
 
 void draw_target(int xloc, int yloc, int size, int num) 

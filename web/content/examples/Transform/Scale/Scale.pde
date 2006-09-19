@@ -1,5 +1,5 @@
 /**
- * Scale
+ * Scale 
  * by Denis Grutze. 
  * 
  * Paramenters for the scale() function are values specified 
@@ -18,7 +18,7 @@ void setup()
   size(200,200);
   noStroke();
   rectMode(CENTER);
-  framerate(30);
+  frameRate(30);
 }
 
 void draw()

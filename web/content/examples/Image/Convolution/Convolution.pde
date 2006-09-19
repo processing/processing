@@ -13,7 +13,7 @@ int w = 80;
 
 void setup() {
   size(200, 200);
-  framerate(30);
+  frameRate(30);
   img = loadImage("end.jpg");
 }
 

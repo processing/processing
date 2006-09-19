@@ -17,7 +17,6 @@ void setup()
   noStroke();
   background(255);
   smooth();
-  framerate(30);
 }
 
 void draw()

@@ -15,7 +15,6 @@ float thick = 50.0;
 void setup() 
 {
   size(200, 200, P3D);
-  framerate(30);
   background(0);
 }
 

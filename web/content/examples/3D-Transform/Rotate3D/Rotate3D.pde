@@ -18,7 +18,6 @@ void setup()
   rSize = width/4;  
   noStroke();
   fill(204, 204);
-  framerate(30);
 }
 
 void draw() 

@@ -16,7 +16,6 @@ void setup()
   size(200, 200);
   noStroke();
   scale = width/10;
-  framerate(30);
 }
 
 void draw()

@@ -12,8 +12,8 @@ ParticleSystem ps;
 Random generator;
 
 void setup() {
-  size(600, 600);
-  framerate(30);
+  size(200, 200);
+  frameRate(30);
   colorMode(RGB, 255, 255, 255, 100);
   generator = new Random();
     

@@ -33,7 +33,7 @@ void setup()
   stroke(102);
   ellipseMode(CENTER);
   smooth();
-  framerate(30);
+  frameRate(30);
 }
 
 void draw() 

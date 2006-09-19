@@ -20,7 +20,7 @@ void setup()
   bufferOffset = newBufferOffset = 0.0;
   a = loadImage("construct.jpg");  // Load an image into the program 
   b = loadImage("wash.jpg");   // Load an image into the program 
-  framerate(60);
+  frameRate(60);
 }
 
 void draw() 

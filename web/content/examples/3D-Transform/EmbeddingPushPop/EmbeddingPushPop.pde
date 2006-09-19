@@ -23,7 +23,6 @@ void setup()
   noStroke(); 
   colorMode(HSB, 100); 
   gDistance = width - width/4;  
-  framerate(30);
 } 
 
 void draw() 

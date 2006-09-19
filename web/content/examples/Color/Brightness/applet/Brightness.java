@@ -1,11 +1,13 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Brightness extends PApplet {// Brightness
-// by Rusty Robison
-
-// Brightness is the relative lightness or darkness of a color.
-// Move the cursor vertically over each bar to alter its brightness.
-
-// Updated 26 October 2002
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Brightness extends PApplet {/**
+ * Brightness 
+ * by Rusty Robison. 
+ * 
+ * Brightness is the relative lightness or darkness of a color.
+ * Move the cursor vertically over each bar to alter its brightness. 
+ * 
+ * Updated 26 October 2002
+ */
+ 
 int barWidth = 5;
 int[] brightness = new int[200/barWidth];
 
@@ -28,4 +30,4 @@ public void draw()
     j++;
   }
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Brightness" });}}

@@ -20,7 +20,7 @@ void setup()
     ax[i] = 50;
     ay[i] = height/2;
   }
-  framerate(30);
+  frameRate(30);
 }
 
 void draw() 

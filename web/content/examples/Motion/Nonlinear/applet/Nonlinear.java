@@ -1,13 +1,13 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Nonlinear extends PApplet {// Nonlinear
-// by REAS <http://reas.com>
-
-// Each object moves according to a different simple equation.
-// These are the same equations that were drawn in the "SimpleCurves" example.
-// Once again, each value put into the equation is between 0 and 1 and 
-// then scaled to fill the screen.
-
-// Updated 1 September 2002
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Nonlinear extends PApplet {/**
+ * Nonlinear. 
+ * 
+ * Each object moves according to a different simple equation. 
+ * These are the same equations that were drawn in the "SimpleCurves" example. 
+ * Once again, each value put into the equation is between 0 and 1 and 
+ * then scaled to fill the screen. 
+ * 
+ * Updated 1 September 2002
+ */
 
 int size = 8;
 int legth = 50;
@@ -34,7 +34,7 @@ public void setup()
 {
   size(200, 200);
   noStroke();
-  framerate(60);
+  frameRate(60);
   aPos = bPos = cPos = dPos = width/2;
 }
 
@@ -86,4 +86,4 @@ public float squared(float sa) {
   sa = sa*sa;
   return sa;
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Nonlinear" });}}

@@ -1,10 +1,11 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Bounce extends PApplet {// Bounce
-// by REAS <http://reas.com>
-
-// When the shape hits the edge of the window, it reverses its direction
-
-// Updated 1 September 2002
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Bounce extends PApplet {/**
+ * Bounce. 
+ * 
+ * When the shape hits the edge of the window, it reverses its direction. 
+ * 
+ * Updated 1 September 2002
+ */
+ 
 int size = 60;       // Width of the shape
 float xpos, ypos;    // Starting position of shape    
 
@@ -19,7 +20,7 @@ public void setup()
 {
   size(200, 200);
   noStroke();
-  framerate(30);
+  frameRate(30);
   smooth();
   // Set the starting position of the shape
   xpos = width/2;
@@ -46,4 +47,4 @@ public void draw()
   // Draw the shape
   ellipse(xpos+size/2, ypos+size/2, size, size);
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Bounce" });}}

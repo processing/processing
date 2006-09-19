@@ -20,7 +20,7 @@ void setup()
 { 
   size(200, 200, P3D);
   noStroke();  
-  framerate(30);
+  frameRate(30);
   safecolor = color(153, 153, 153);
   for(int i=0; i<num; i++) {
     colors[i] = color(255 * (i+1)/num, 153 * (num-i)/num, 204);

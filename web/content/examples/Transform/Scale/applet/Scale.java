@@ -1,13 +1,15 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Scale extends PApplet {// Scale
-// by Denis Grutze
-
-// Paramenters for the scale() function are values specified 
-// as decimal percentages. For example, the method call scale(2.0) 
-// will increase the dimension of the shape by 200 percent. 
-// Objects always scale from the origin.
-
-// Created 12 January 2003
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Scale extends PApplet {/**
+ * Scale 
+ * by Denis Grutze. 
+ * 
+ * Paramenters for the scale() function are values specified 
+ * as decimal percentages. For example, the method call scale(2.0) 
+ * will increase the dimension of the shape by 200 percent. 
+ * Objects always scale from the origin. 
+ * 
+ * Created 12 January 2003
+ */
+ 
 float a = 0.0f;
 float s = 0.0f;
 
@@ -16,7 +18,7 @@ public void setup()
   size(200,200);
   noStroke();
   rectMode(CENTER);
-  framerate(30);
+  frameRate(30);
 }
 
 public void draw()
@@ -36,4 +38,4 @@ public void draw()
   scale(s);
   rect(0, 0, 50, 50);       
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Scale" });}}

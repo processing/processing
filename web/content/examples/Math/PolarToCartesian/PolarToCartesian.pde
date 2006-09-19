@@ -18,7 +18,7 @@ float theta_acc;
 
 void setup() {
   size(200,200);
-  framerate(30);
+  frameRate(30);
   smooth();
   
   // Initialize all values
