@@ -26,6 +26,20 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=313
 X when using external editor, update the code on export
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1158549785
 
+video
+X quicktime in applets
+X   probably need to do a better job with openStream
+X video library in applets doesn't work
+X   http://dev.processing.org/bugs/show_bug.cgi?id=44
+X   may be fixed by simply signing the applet, or may just work in places
+X exported movies seem to have trouble (windows only?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=231
+X video doesn't work in applets
+X   on export, need to first import applet's packages before qt et al
+X   video working in applets? (no, never did in alpha so untested)
+X     Movie should perhaps work?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=44
+
 faq additions
 X add notes about sketchPath() and savePath() to library docs
 X explain why save doesn't go to the data folder
@@ -59,8 +73,9 @@ X 1.0.5 doesn't seem to be necessary, and can't resize windows
 _ use capture events when doing computation, use available() when drawing
 _   there are threading issues with reading video and its pixels
 _   these particularly show up on slower machines
-_ video for web may actually work, just requires signed applet
-_   (bug marked elsewhere in here, may need to close it)
+o video for web may actually work, just requires signed applet
+o   (bug marked elsewhere in here, may need to close it)
+X   video does in fact work now for 0116, with different handling of file i/o
 _ camera not installed: quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
 
 faq / troubleshooting
@@ -70,60 +85,11 @@ X   maybe need to move animation into an internal class
 X audio hiccups, throttling the cpu
 X   p5 will take as much cpu as it can, which can choke other apps
 X   call delay(10) (or so) if you want to make sure audio keeps running
-
-o menu weirdness (benelek)
-o   when you've got a menu open, move a cursor over the text area
-o   and back over the menu, the text-area cursor type remains. 
-_   mark this as wontfix, since it's just a java bug
-_   http://dev.processing.org/bugs/show_bug.cgi?id=30
-
-_ quicktime in applets
-_   probably need to do a better job with openStream
-quicktime.QTException[QTJava:6.1.5g],-2012=invalidDataRef,QT.vers:7138000
-        at quicktime.std.movies.media.DataRef.setURLDataRef(DataRef.java:283)
-        at quicktime.std.movies.media.DataRef.<init>(DataRef.java:148)
-        at processing.video.Movie.init(Movie.java:180)
-        at processing.video.Movie.<init>(Movie.java:118)
-        at processing.video.Movie.<init>(Movie.java:84)
-        at MoviePlayback.setup(MoviePlayback.java:18)
-        at processing.core.PApplet.handleDisplay(PApplet.java:1269)
-        at processing.core.PGraphics.requestDisplay(PGraphics.java:535)
-        at processing.core.PApplet.run(PApplet.java:1152)
-        at java.lang.Thread.run(Thread.java:613)
-_ remove the second movie from the movie playback example
-
-_ is 'code' folder being ignored on export application?
-
-FOR 1.0
-_ should really be doing the 'right' thing with sketch file handling
-_   create temporary file when saving
-_   once done writing, use remove the original and rename the old
-_   some basic stuff like this..
-
 _ bugs.html#application -> export.html#application
 _ with network, check in advanced, then rename advanced.html to howto.html
-
-site / docs
-_ add note about adding libraries to the sketchbook to the reference
-_ add begin/endPixels stuff to the pixels[] reference
-_   make mention of doing it to main pix array, and on an image
-_ add note in environment reference about how to add something to the sketch
-_   (code, .java files, etc)
-_ make sure that psound has been removed (from docs, ref, mentions)
+_ search for ALL in the bugs db turns up:
+http://dev.processing.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED
 _ add note to bugs db asking to please use archive sketch and attach
-_ make source link on p5 site go direct to the source
-_   or at least explain how to navigate
-_ post releases on sourceforge so that international mirrors are better?
-_ start creating source tarball for each release?
-_ roll over the discourse board for 1.0?
-_ should we add processinghacks to main site? hacks.processing.org?
-_   this would enable site search across this as well?
-_ board stuff
-_   only allow moderators to delete posts
-_   set "no smileys" as the default (better for posting code)
-_ add stuff about the history into the people section
-_   descended from dbn, but not dbn, etc..
-_ remove the 'search' item from yabb.cgi
 
 faq / general
 _ the source code to the libs are included
@@ -145,14 +111,53 @@ _   including the java subfolder with exported applications
 _   this means no need to install an additional java vm
 _   or an option to include the 'java' folder on windows/linux with export
 
-faq / large images
+faq / images
 _ making things fast with pixel operations
 _ jai handles setting image size
 _  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
 _    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
 _    JAI.create("filestore", bufImage, filename+".png", "PNG");
-_ add somethign about getting a bufferedimage from a PGraphics
+_ also an example of setting the jpeg compression
+_ add something about getting a bufferedimage from a PGraphics
 _   maybe this should be a method?
+_ how to upload an image to a server
+
+o menu weirdness (benelek)
+o   when you've got a menu open, move a cursor over the text area
+o   and back over the menu, the text-area cursor type remains. 
+_   mark this as wontfix, since it's just a java bug
+_   http://dev.processing.org/bugs/show_bug.cgi?id=30
+
+_ remove the second movie from the movie playback example
+
+_ is 'code' folder being ignored on export application?
+
+FOR 1.0
+_ should really be doing the 'right' thing with sketch file handling
+_   create temporary file when saving
+_   once done writing, use remove the original and rename the old
+_   some basic stuff like this..
+
+site / docs
+_ add note about adding libraries to the sketchbook to the reference
+_ add load/updatePixels stuff to the pixels[] reference
+_   make mention of doing it to main pix array, and on an image
+_ add note in environment reference about how to add something to the sketch
+_   (code, .java files, etc)
+_ make sure that psound has been removed (from docs, ref, mentions)
+_ make source link on p5 site go direct to the source
+_   or at least explain how to navigate
+_ post releases on sourceforge so that international mirrors are better?
+_ start creating source tarball for each release?
+_ roll over the discourse board for 1.0?
+_ should we add processinghacks to main site? hacks.processing.org?
+_   this would enable site search across this as well?
+_ board stuff
+_   only allow moderators to delete posts
+_   set "no smileys" as the default (better for posting code)
+_ add stuff about the history into the people section
+_   descended from dbn, but not dbn, etc..
+_ remove the 'search' item from yabb.cgi
 
 text faq
 _ how to use textMode(SHAPE) with opengl
@@ -543,9 +548,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=113
 _ quirks in selection and arrow keys
 _   http://dev.processing.org/bugs/show_bug.cgi?id=348
 _   http://dev.processing.org/bugs/show_bug.cgi?id=349
-_ video library in applets doesn't work
-_   http://dev.processing.org/bugs/show_bug.cgi?id=44
-_   may be fixed by simply signing the applet, or may just work in places
 
 
 PDE / Editor Buttons
@@ -901,8 +903,6 @@ _ need to add resize method to camera capture
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
 _ capture.settings() changes size of capture
 _   http://dev.processing.org/bugs/show_bug.cgi?id=366
-_ exported movies seem to have trouble (windows only?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=231
 _ reading movie is really really slow (2-3 fps)
 _   possible improvement from qtjava list added
 _   http://dev.processing.org/bugs/show_bug.cgi?id=40
@@ -910,18 +910,12 @@ _ Movie needs the crop() functions ala Capture
 _ tearing and incomplete updates on capture?
 _   putting read() inside draw() seems to eliminate this?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=114
-_ video doesn't work in applets
-_   on export, need to first import applet's packages before qt et al
-_   video working in applets? (no, never did in alpha so untested)
-_     Movie should perhaps work?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=44
 _ pause and framerate aren't working
 _   framerate does set the frequency which movieEvent will be called, 
 _   but it is not setting the "available" field corrrectly. 
 _   sketch .zip file in casey's email message
-_ actual bug filed for pause() issues
 _   http://dev.processing.org/bugs/show_bug.cgi?id=370
-_ video wrong device name crashes things
+_ wrong device name for video capture will cause a crash
 _ when passing in 'null' as the capture, dialog pops up fine
 _   but the applet craps out after a few seconds (pinwheel spin)
 _ couldn't get req'd component also happens when the capture isn't ready
