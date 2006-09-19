@@ -62,8 +62,8 @@ class Example
 			$html .= "\n<p class=\"doc\">";
 		}
 
-		#$html .= nl2br($this->doc);
-		$html .= $this->doc;
+		$html .= nl2br($this->doc);
+		#$html .= $this->doc;
 		$html .= "</p>\n";
 		
 		$html .= "\n<pre class=\"code\">";
