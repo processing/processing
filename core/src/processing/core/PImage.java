@@ -296,17 +296,17 @@ public class PImage implements PConstants, Cloneable {
 
   /*
   public void loadPixels() {  // ignore
-    System.err.println("Use beginPixels() instead of loadPixels() " +
+    System.err.println("Use loadPixels() instead of loadPixels() " +
                        "with release 0116 and later.");
-    beginPixels();
+    loadPixels();
   }
 
 
   public void updatePixels() {
-    System.err.println("Use endPixels() instead of updatePixels() " +
+    System.err.println("Use updatePixels() instead of updatePixels() " +
                        "with release 0116 and later.");
     System.err.flush();
-    endPixels();
+    updatePixels();
   }
   */
 
@@ -318,7 +318,7 @@ public class PImage implements PConstants, Cloneable {
    * For subclasses where the pixels[] buffer isn't set by default,
    * this should copy all data into the pixels[] array
    */
-  public void beginPixels() {  // ignore
+  public void loadPixels() {  // ignore
   }
 
 
@@ -328,8 +328,8 @@ public class PImage implements PConstants, Cloneable {
    * <p/>
    * Mark all pixels as needing update.
    */
-  public void endPixels() {
-    endPixels(0, 0, width, height);
+  public void updatePixels() {
+    updatePixels(0, 0, width, height);
   }
 
 
@@ -343,7 +343,7 @@ public class PImage implements PConstants, Cloneable {
    * Note that when using imageMode(CORNERS),
    * the x2 and y2 positions are non-inclusive.
    */
-  public void endPixels(int x1, int y1, int x2, int y2) {
+  public void updatePixels(int x1, int y1, int x2, int y2) {
     //if (!modified) {  // could just set directly, but..
     //}
 
@@ -587,7 +587,7 @@ public class PImage implements PConstants, Cloneable {
    * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
    */
   public void filter(int kind) {
-    beginPixels();
+    loadPixels();
 
     switch (kind) {
       case BLUR:
@@ -643,7 +643,7 @@ public class PImage implements PConstants, Cloneable {
         dilate(false);
         break;
     }
-    endPixels();  // mark as modified
+    updatePixels();  // mark as modified
   }
 
 
@@ -664,7 +664,7 @@ public class PImage implements PConstants, Cloneable {
    * and later updated by toxi for better speed.
    */
   public void filter(int kind, float param) {
-    beginPixels();
+    loadPixels();
 
     switch (kind) {
       case BLUR:
@@ -732,7 +732,7 @@ public class PImage implements PConstants, Cloneable {
           throw new RuntimeException("Use filter(DILATE) instead of " +
                                      "filter(DILATE, param)");
     }
-    endPixels();  // mark as modified
+    updatePixels();  // mark as modified
   }
 
 
@@ -1829,7 +1829,7 @@ public class PImage implements PConstants, Cloneable {
 
       // spew the header to the disk
       output.write(tiff);
-      
+
       for (int i = 0; i < pixels.length; i++) {
         output.write((pixels[i] >> 16) & 0xff);
         output.write((pixels[i] >> 8) & 0xff);

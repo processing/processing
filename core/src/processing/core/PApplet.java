@@ -184,7 +184,7 @@ public class PApplet extends Applet
    * Pixel buffer from this applet's PGraphics.
    * <P>
    * When used with OpenGL or Java2D, this value will
-   * be null until beginPixels() has been called.
+   * be null until loadPixels() has been called.
    */
   public int pixels[];
 
@@ -1137,7 +1137,7 @@ public class PApplet extends Applet
           // if depth() is called inside setup, pixels/width/height
           // will be ok by the time it's back out again
 
-          //this.pixels = g.pixels;  // make em call beginPixels
+          //this.pixels = g.pixels;  // make em call loadPixels
           // now for certain that we've got a valid size
           this.width = g.width;
           this.height = g.height;
@@ -6429,14 +6429,13 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Override the g.pixels[] function to set the pixels[] array
+   * that's part of the PApplet object. Allows the use of
+   * pixels[] in the code, rather than g.pixels[].
+   */
   public void loadPixels() {
-    System.err.println("Use beginPixels() instead of loadPixels() " +
-                       "with release 0116 and later.");
-  }
-
-
-  public void beginPixels() {
-    g.beginPixels();
+    g.loadPixels();
     pixels = g.pixels;
   }
 
@@ -6465,15 +6464,15 @@ public class PApplet extends Applet
   }
 
 
-  public void endPixels() {
-    if (recorder != null) recorder.endPixels();
-    g.endPixels();
+  public void updatePixels() {
+    if (recorder != null) recorder.updatePixels();
+    g.updatePixels();
   }
 
 
-  public void endPixels(int x1, int y1, int x2, int y2) {
-    if (recorder != null) recorder.endPixels(x1, y1, x2, y2);
-    g.endPixels(x1, y1, x2, y2);
+  public void updatePixels(int x1, int y1, int x2, int y2) {
+    if (recorder != null) recorder.updatePixels(x1, y1, x2, y2);
+    g.updatePixels(x1, y1, x2, y2);
   }
 
 
