@@ -457,7 +457,7 @@ Using the OpenGL renderer
 </b> <br> <br>
 <UL>
 <LI>To get access to the GL object, you can use the following:
-<PRE>GL gl = ((PGraphicsGL)g).gl;</PRE>
+<PRE>GL gl = ((PGraphicsOpenGL)g).gl;</PRE>
 This will give you the <a href="https://jogl.dev.java.net/">jogl</a> 
 object that talks directly to OpenGL and will let you make OpenGL 
 calls directly. Note, however, that <em>this is not supported</em>, 
@@ -473,7 +473,8 @@ only be useful for tweaking obscure OpenGL parameters.
 <LI>Another option for talking directly to OpenGL in release 0116 and 
 later is to use the beginGL() and endGL() methods. These were added 
 against my better judgement, and handle setting up the camera matrices.
-Lighting and other features still will not work. An example:
+Many features still will not work, but it opens up lots 
+of control for geometry.
 <PRE>
 
 import javax.media.opengl.*;
@@ -483,7 +484,7 @@ void setup() {
 }
 
 void draw() {
-  PGraphicsGL pgl = (PGraphicsGL) g;
+  PGraphicsOpenGL pgl = (PGraphicsOpenGL) g;
   GL gl = pgl.beginGL();
   // do some things with gl.xxx functions here
   pgl.endGL();
@@ -496,7 +497,9 @@ It makes your code completely incompatible with everything else
 (such as future versions of Processing, or other 3D renderers) 
 and will confuse the hell outta people when you post
 your code to the web. Again, if this works for you great, but if not, 
-we're not gonna field questions about it on the board.
+we will not field questions about it on the board. If you want to write 
+code for Java and JOGL, then find yourself a good Java IDE and get JOGL
+installed, Processing is not the way to do it. 
 Man, how I'm gonna regret this.
       </td>
     <td width="50">&nbsp;</td>
