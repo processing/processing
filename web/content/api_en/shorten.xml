@@ -14,7 +14,7 @@
 <code>
 String sa1[] = { "OH ", "NY ", "CA "}; 
 String sa2[] = shorten(sa1); 
-print(sa1);  // Prints "OH NY " 
+print(sa1);  // Prints "OH NY CA " 
 println();
 sa2 = shorten(sa2); 
 print(sa2);  // Prints "OH " 

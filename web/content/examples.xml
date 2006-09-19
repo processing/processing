@@ -142,7 +142,7 @@
 	</cat>
 	<cat label="3D-Form">
 		<ex file="Primitives3D.html">Primitives 3D</ex>
-		<ex file="Vertices.html">Vertices </ex>
+		<ex file="Vertices3D.html">Vertices 3D</ex>
 		<ex file="RGBCube.html">RGB Cube</ex>
 	</cat>
 	<cat label="3D-Transform">

@@ -41,7 +41,7 @@ box(20, 20, 20);
 </example>
 
 <description>
-Increasing and decreasing the size of an object by expanding and contracting vertices. Scale values are specified as decimal percentages. The function call <b>scale(2.0)</b> increases the dimension of a shape by 200%. Objects always scale from their relative origin to the coordinate system. Transformations apply to everything that happens after and subsequent calls to the function multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(2.5)</b>. If <b>scale()</b> is called within <b>draw()</b>, the transformation is reset when the loop begins again. Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter as shown in the example above.
+Increasing and decreasing the size of an object by expanding and contracting vertices. Scale values are specified as decimal percentages. The function call <b>scale(2.0)</b> increases the dimension of a shape by 200%. Objects always scale from their relative origin to the coordinate system. Transformations apply to everything that happens after and subsequent calls to the function multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(2.5)</b>. If <b>scale()</b> is called within <b>draw()</b>, the transformation is reset when the loop begins again. Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter as shown in the example above. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
 </description>
 
 <syntax>
