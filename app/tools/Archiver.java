@@ -35,7 +35,7 @@ public class Archiver {
   Editor editor;
 
   // someday these will be settable
-  boolean useDate = true; //false;
+  boolean useDate;
   int digits = 3;
 
   NumberFormat numberFormat;
@@ -79,6 +79,9 @@ public class Archiver {
     String namely = null;
     int index = 0;
     do {
+      // only use the date if the sketch name isn't the default name
+      useDate = !name.startsWith("sketch_");
+
       if (useDate) {
         String purty = dateFormat.format(new Date());
         String stamp = purty + ((char) ('a' + index));

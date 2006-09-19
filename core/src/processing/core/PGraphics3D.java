@@ -228,7 +228,7 @@ public class PGraphics3D extends PGraphics {
     }
     */
     insideResize = true;
-    
+
     width = iwidth;
     height = iheight;
     width1 = width - 1;
@@ -325,7 +325,7 @@ public class PGraphics3D extends PGraphics {
   public void beginDraw() {
     insideResizeWait();
     insideDraw = true;
-    
+
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
     // beginDraw/endDraw).
@@ -384,7 +384,7 @@ public class PGraphics3D extends PGraphics {
     }
     // mark pixels as having been updated, so that they'll work properly
     // when this PGraphics is drawn using image().
-    endPixels();
+    updatePixels();
 
     //System.out.println(this + " end draw");
     insideDraw = false;
