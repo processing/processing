@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>createGraphics()</name>
+
+<category>Rendering</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image>pgraphics.jpg</image>
+<code>
+PGraphics pg;
+
+void setup() {
+  size(100, 100);
+  pg = createGraphics(80, 80, P2D);
+  pg.beginDraw();
+  pg.background(102);
+  pg.stroke(255);
+  pg.line(20, 20, 80, 80);
+  pg.endDraw();
+  noLoop();
+}
+
+void draw() {
+  image(pg, 10, 10); 
+}
+</code>
+</example>
+
+<description>
+Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use.
+</description>
+
+<syntax>
+createGraphics(<c>width</c>, <c>height</c>, <c>renderer</c>)
+</syntax>
+
+<parameter>
+<label>width</label>
+<description>int: width in pixels</description>
+</parameter>
+
+<parameter>
+<label>height</label>
+<description>int: height in pixels</description>
+</parameter>
+
+<parameter>
+<label>renderer</label>
+<description>Either P2D, P3D, JAVA2D</description>
+</parameter>
+
+<returns>PImage or null</returns>
+
+<related>
+PGraphics
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+<level>Extended</level>
+
+
+
+
+
+
+</root>
