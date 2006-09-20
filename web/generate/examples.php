@@ -28,8 +28,8 @@ $page->subtemplate('template.examples.html');
 $html = "<div class=\"ref-col\">\n";
 foreach ($categories as $cat => $array) {
 	
-	#$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
-	$html .= "<p><b>$cat</b><br />";
+	$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
+	#$html .= "<p><b>$cat</b><br />";
 	foreach ($array as $file => $name) {
 		$html .= "\t<a href=\"examples/".strtolower($file)."\">$name</a><br />\n";
 	}
