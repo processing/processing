@@ -1,0 +1,158 @@
+<span class="lib-nav">
+	<a href="../index.html">Libraries</a>
+</span>
+
+<div>
+    <h2>PDF</h2>
+    
+  <p>This library makes it possible to write PDF files directly from Processing. 
+    A series of examples demonstrating some basic uses of the library appear below:</p>
+  
+<p>This example draws a single frame to a PDF file and quits. Note that no window will open, 
+this helps when you're trying to create massive PDF images that are far larger than the screen size.</p>
+
+<pre>import processing.pdf.*;
+
+void setup() {
+  size(400, 400, PDF, "filename.pdf");
+}
+
+void draw() {
+  // draw something good here
+
+  // if this is a single frame, get out
+  println("finished.");
+  exit();
+}</pre>
+
+
+<p>It's also possible to write every frame as a new page:</p>
+
+<pre>import processing.pdf.*;
+
+void setup() {
+  size(400, 400, PDF, "filename.pdf");
+}
+
+void draw() {
+  // draw something good here
+
+  PGraphicsPDF pdf = (PGraphicsPDF) g;  // get the renderer
+  pdf.nextPage();  // tell it to go to the next page
+
+  // when finished drawing, quit and save the file
+  if (frame == 100) exit();
+}</pre>
+
+
+<p>To draw to the screen while also saving a PDF, use the beginRecord() 
+and endRecord() functions. This is slower, but is useful when you need to 
+see what you're working on as it saves.</p>
+
+<pre>import processing.pdf.*;
+
+boolean record;
+
+void setup() {
+  size(400, 400);
+}
+
+void draw() {
+  if (record) {
+    // note that #### will be replaced with the frame number. fancy!
+    beginRecord(PDF, "frame-####.pdf"); 
+  }
+
+  // draw something good here
+
+  if (record) {
+    endRecord();
+  }
+}
+
+// use a keypress so a million files aren't created
+void mousePressed() {
+  record = true;
+}</pre>
+
+
+<p>The following example records absolutely everything that happens 
+while a sketch is running. Hitting the 'q' key will quit the sketch. 
+The sketch calls exit(), which is necessary to make sure that the file 
+is properly written when complete.</p>
+
+<pre>import processing.pdf.*;
+
+void setup() {
+  size(400, 400);
+  beginRecord(PDF, "everything.pdf");
+}
+
+void draw() {
+  // be sure not to call background, otherwise your file
+  // will just accumulate lots of mess, only to become invisible
+   
+  // draw something good here
+}
+
+void keyPressed() {
+  if (key == 'q') {
+    endRecord();
+    exit();
+  }
+}</pre>
+
+
+<p>It's also possible to pause/resume recording along the way. 
+The following example toggles recording on/off each time you hit the 'r' key. 
+Pressing the 'q' key will quit the sketch.</p>
+
+<pre>import processing.pdf.*;
+
+boolean recording;
+PGraphicsPDF pdf;
+
+void setup() {
+  size(400, 400);
+  pdf = createGraphics(PDF, "pause-resume.pdf");
+}
+
+void draw() {
+  // be sure not to call background, otherwise your file
+  // will just accumulate lots of mess, only to become invisible
+   
+  // draw something good here
+}
+
+void keyPressed() {
+  if (key == 'r') {
+    if (recording) {
+      endRecord();
+      println("Recording stopped.");
+      recording = false;
+    } else {
+      beginRecord(pdf);
+      println("Recording started.");
+      recording = true;
+    }
+  } else if (key == q') {
+    if (recording) {
+      endRecord();
+    }
+    exit();
+  } 
+}</pre>
+
+
+<p>Super advanced bonus round: To write a PDF file using only the createGraphics() command, 
+rather than as part of a sketch, it's necessary to call dispose() on the PGraphicsPDF object. 
+This is the same as calling exit(), but it won't quit the sketch.</p>
+
+<pre>import processing.pdf.*;
+
+PGraphicsPDF pdf = createGraphics(300, 300, PDF, "output.pdf");
+pdf.background(128, 0, 0);
+pdf.line(50, 50, 250, 250);
+pdf.dispose();</pre>
+  
+</div>
