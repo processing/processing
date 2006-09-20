@@ -91,12 +91,6 @@
             <sub name="Trigonometry">Trigonometry</sub>
             <sub name="Random">Random</sub>
         </cat>
-        <!--<cat name="Lights &amp; Camera">Lights &amp; Camera
-            <sub name="Lights">Lights</sub>
-            <sub name="Camera">Camera</sub>
-            <sub name="Coordinates">Coordinates</sub>
-            <sub name="Material Properties">Material Properties</sub>
-        </cat>-->
         <cat name="Constants">Constants</cat>
 	</categories>
 	
