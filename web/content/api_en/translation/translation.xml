@@ -72,6 +72,12 @@
             <sub name="Files">Files</sub>
         </cat>
         <cat name="Transform">Transform</cat>
+		<cat name="Lights, Camera">Lights, Camera
+            <sub name="Lights">Lights</sub>
+            <sub name="Camera">Camera</sub>
+            <sub name="Coordinates">Coordinates</sub>
+            <sub name="Material Properties">Material Properties</sub>
+        </cat>
         <cat name="Color">Color
             <sub name="Setting">Setting</sub>
             <sub name="Creating &amp; Reading">Creating &amp; Reading</sub>
@@ -90,12 +96,6 @@
             <sub name="Calculation">Calculation</sub>
             <sub name="Trigonometry">Trigonometry</sub>
             <sub name="Random">Random</sub>
-        </cat>
-        <cat name="Lights, Camera">Lights, Camera
-            <sub name="Lights">Lights</sub>
-            <sub name="Camera">Camera</sub>
-            <sub name="Coordinates">Coordinates</sub>
-            <sub name="Material Properties">Material Properties</sub>
         </cat>
         <cat name="Constants">Constants</cat>
 	</categories>
