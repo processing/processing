@@ -1,11 +1,12 @@
-// Spot
-// by REAS <http://reas.com>
-
-// Move the mouse the change the position and concentation
-// of a blue spot light.
-
-// Created 28 April 2005
-
+/**
+ * Spot. 
+ * 
+ * Move the mouse the change the position and concentation
+ * of a blue spot light. 
+ * 
+ * Created 28 April 2005
+ */
+ 
 int concentration = 600; // Try 1 -> 10000
 
 void setup() 

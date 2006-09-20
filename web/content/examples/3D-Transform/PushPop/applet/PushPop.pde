@@ -1,12 +1,13 @@
-// Push Pop
-// by REAS <http://reas.com>
-
-// The push() and pop() functions allow for more control over transformations.
-// The push function saves the current coordinate system to the stack 
-// and pop() restores the prior coordinate system. 
-
-// Created 26 October 2002
-
+/**
+ * Push Pop. 
+ * 
+ * The push() and pop() functions allow for more control over transformations.
+ * The push function saves the current coordinate system to the stack 
+ * and pop() restores the prior coordinate system. 
+ * 
+ * Created 26 October 2002
+ */
+ 
 float a;                          // Angle of rotation
 float offset = PI/24;             // Angle offset between boxes
 int num = 12;                     // Number of boxes
@@ -19,7 +20,7 @@ void setup()
 { 
   size(200, 200, P3D);
   noStroke();  
-  framerate(30);
+  frameRate(30);
   safecolor = color(153, 153, 153);
   for(int i=0; i<num; i++) {
     colors[i] = color(255 * (i+1)/num, 153 * (num-i)/num, 204);

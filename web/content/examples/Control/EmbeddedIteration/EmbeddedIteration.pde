@@ -2,7 +2,7 @@
  * Embedding Iteration. 
  * 
  * Embedding "for" structures allows repetition in two dimensions. 
- *
+ * 
  * Updated 21 August 2002
  */
  

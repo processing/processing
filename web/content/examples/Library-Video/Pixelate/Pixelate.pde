@@ -2,7 +2,7 @@
  * Pixelate a movie file 
  * by hbarragan. 
  * 
- * Load a QuickTime m file and display the video signal 
+ * Load a QuickTime file and display the video signal 
  * using rectangles as pixels by reading the values stored 
  * in the current video frame pixels array. 
  * 

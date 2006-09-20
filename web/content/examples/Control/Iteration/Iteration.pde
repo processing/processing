@@ -1,6 +1,6 @@
 /**
  * Iteration. 
- *
+ * 
  * Iteration with a "for" structure constructs repetitive forms. 
  * 
  * Updated 21 August 2002

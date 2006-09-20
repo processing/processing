@@ -18,7 +18,7 @@ color trackColor;
 void setup()
 {
   size(200, 200);
-  framerate(30);
+  frameRate(30);
   colorMode(RGB,255,255,255,100);
   // Using the default capture device
   video = new Capture(this, 200, 200, 12);
@@ -27,7 +27,6 @@ void setup()
   smooth();
   strokeWeight(4.0);
   stroke(0);
-
 }
 
 void captureEvent(Capture camera)

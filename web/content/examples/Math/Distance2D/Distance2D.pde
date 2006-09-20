@@ -1,6 +1,6 @@
 /**
  * Distance 2D. 
- *
+ * 
  * Move the mouse across the image to obscure and reveal the matrix.  
  * Measures the distance from the mouse to each square and sets the
  * size proportionally. 

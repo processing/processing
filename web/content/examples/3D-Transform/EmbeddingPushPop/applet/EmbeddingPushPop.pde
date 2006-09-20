@@ -1,10 +1,11 @@
-// Embedding Push Pop
-// by Chris Noessel
-
-// Embedding pop() and push() within a for() loop
-
-// Created 9 December 2002
-
+/**
+ * Embedding Push Pop 
+ * by Chris Noessel. 
+ * 
+ * Embedding pop() and push() within a for() loop. 
+ * 
+ * Created 9 December 2002
+ */
 
 int xgridcount = 4; 
 int ygridcount = 4; 
@@ -22,7 +23,6 @@ void setup()
   noStroke(); 
   colorMode(HSB, 100); 
   gDistance = width - width/4;  
-  framerate(30);
 } 
 
 void draw() 

@@ -1,11 +1,12 @@
-// RGB Cube
-// by fry <http://benfry.com>
-
-// The three primary colors of the additive color model are red, green, and blue.
-// This RGB color cube displays smooth transitions between these colors. 
-
-// Created 25 October 2002
-
+/**
+ * RGB Cube.
+ * 
+ * The three primary colors of the additive color model are red, green, and blue.
+ * This RGB color cube displays smooth transitions between these colors. 
+ * 
+ * Created 25 October 2002
+ */
+ 
 float xmag, ymag = 0;
 float newXmag, newYmag = 0; 
  

@@ -9,7 +9,7 @@
  * More information on microcontrollers can be found on the tutorial 
  * pages of Tom Igoe: http://itp.nyu.edu/tigoe/pcomp/  
  * Because this program uses the serial port, it will not work within a web browser. 
- *
+ * 
  * Created 12 February 2003. 
  * Updated 21 March 2005, T. Igoe
  */

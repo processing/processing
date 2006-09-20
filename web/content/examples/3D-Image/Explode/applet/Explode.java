@@ -15,7 +15,6 @@ int COLS, ROWS;   // Number of columns and rows in our system
 public void setup()
 {
   size(200, 200, P3D); 
-  framerate(30);
   img = loadImage("eames.jpg"); // Load the image
   COLS = width/cellsize;            // Calculate # of columns
   ROWS = height/cellsize;           // Calculate # of rows

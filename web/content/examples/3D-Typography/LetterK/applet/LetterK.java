@@ -1,10 +1,12 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class LetterK extends PApplet {// Letter K
-// by Peter Cho <www.pcho.net>
-
-// Move the mouse across the screen to fold the "K"
-
-// Created: 16 December 2002
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class LetterK extends PApplet {/**
+ * Letter K
+ * by <a href="http://www.pcho.net">Peter Cho</a>. 
+ * 
+ * Move the mouse across the screen to fold the "K". 
+ * 
+ * Created 16 December 2002
+ */
+ 
 int bgc, fgc, fgc2;
 
 float p_x, p_y;
@@ -119,4 +121,4 @@ public void drawK()
 
 
 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "LetterK" });}}

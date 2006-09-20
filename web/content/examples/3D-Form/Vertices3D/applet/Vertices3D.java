@@ -1,10 +1,11 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Vertices3D extends PApplet {// Vertices 3D
-// by REAS <http://reas.com>
-
-// Scaling an object back in space makes it appear smaller.
-
-// Updated 21 August 2002
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Vertices3D extends PApplet {/**
+ * Vertices 3D.
+ * 
+ * Scaling an object back in space makes it appear smaller.
+ * 
+ * Updated 21 August 2002
+ */ 
+ 
 float spin = PI/6;       // Rotation angle
 int circle_points = 6;   // Resolution of arcs
 int depth = 10;
@@ -14,7 +15,6 @@ float thick = 50.0f;
 public void setup() 
 {
   size(200, 200, P3D);
-  framerate(30);
   background(0);
 }
 
@@ -53,4 +53,4 @@ public void drawSpokes(float z_space)
   endShape();
 }
 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Vertices3D" });}}

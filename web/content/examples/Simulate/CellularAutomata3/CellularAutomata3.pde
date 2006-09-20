@@ -1,6 +1,6 @@
 /**
  * Cellular Automata 3
- * by <a href="http://www.lifecycle.org">Mike Davis</a>. 
+ * by Mike Davis. 
  * 
  * A short program for alife experiments. Click in the window to restart. 
  * Each cell is represented by a pixel on the display as well as an entry in

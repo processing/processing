@@ -1,10 +1,12 @@
-// Letter K
-// by Peter Cho <www.pcho.net>
-
-// Move the mouse across the screen to fold the "K"
-
-// Created: 16 December 2002
-
+/**
+ * Letter K
+ * by <a href="http://www.pcho.net">Peter Cho</a>. 
+ * 
+ * Move the mouse across the screen to fold the "K". 
+ * 
+ * Created 16 December 2002
+ */
+ 
 color bgc, fgc, fgc2;
 
 float p_x, p_y;

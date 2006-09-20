@@ -1,4 +1,4 @@
-/*
+/**
  * Noise2D
  * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
  * 

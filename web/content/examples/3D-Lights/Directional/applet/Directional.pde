@@ -1,14 +1,14 @@
-// Directional
-// by REAS <http://reas.com>
-
-// Move the mouse the change the direction of the light.
-// Directional light comes from one direction and is stronger 
-// when hitting a surface squarely and weaker if it hits at a 
-// a gentle angle. After hitting a surface, a directional lights 
-// scatters in all directions.
-
-// Created 28 April 2005
-
+/**
+ * Directional. 
+ * 
+ * Move the mouse the change the direction of the light.
+ * Directional light comes from one direction and is stronger 
+ * when hitting a surface squarely and weaker if it hits at a 
+ * a gentle angle. After hitting a surface, a directional lights 
+ * scatters in all directions. 
+ * 
+ * Created 28 April 2005
+ */
 
 void setup() 
 {

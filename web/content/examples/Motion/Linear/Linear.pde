@@ -5,7 +5,7 @@
  * When the line moves off the edge of the window, 
  * the variable is set to 0, which places the line
  * back at the bottom of the screen. 
- *
+ * 
  * Updated 21 August 2002
  */
  

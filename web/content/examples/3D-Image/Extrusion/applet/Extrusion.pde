@@ -1,10 +1,12 @@
-// Extrusion
-// by REAS <http://reas.com>
-
-// Converts a flat image into spatial data points. 
-
-// Created 18 August 2002
-
+/**
+ * Extrusion. 
+ * 
+ * Converts a flat image into spatial data points and rotates the points
+ * around the center.
+ * 
+ * Created 18 August 2002
+ */
+ 
 PImage a;
 boolean onetime = true;
 int[][] aPixels;
@@ -14,7 +16,6 @@ float angle;
 void setup() 
 {
   size(200, 200, P3D);
-  framerate(24);
   
   aPixels = new int[width][height];
   values = new int[width][height];
@@ -23,13 +24,12 @@ void setup()
   // Load the image into a new array
   // Extract the values and store in an array
   a = loadImage("ystone08.jpg");
-  for(int i=0; i<height; i++) {
-    for(int j=0; j<width; j++) {
+  for (int i=0; i<height; i++) {
+    for (int j=0; j<width; j++) {
       aPixels[j][i] = a.pixels[i*width + j];
       values[j][i] = int(blue(aPixels[j][i]));
     }
   }
-  framerate(30);
 }
 
 void draw() 
@@ -38,7 +38,7 @@ void draw()
   
   // Update and constrain the angle
   angle += 0.005;
-  if(angle > TWO_PI) { angle = 0; }
+  if (angle > TWO_PI) { angle = 0; }
   
   // Rotate around the center axis
   translate(width/2, 0, 128);
@@ -46,8 +46,8 @@ void draw()
   translate(-width/2, 0, 128);
   
   // Display the image mass
-  for(int i=0; i<height; i+=2) {
-    for(int j=0; j<width; j+=2) {
+  for (int i=0; i<height; i+=2) {
+    for (int j=0; j<width; j+=2) {
       stroke(values[j][i]);
       point(j, i, -values[j][i]);
     }

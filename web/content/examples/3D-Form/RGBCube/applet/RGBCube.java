@@ -1,11 +1,12 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class RGBCube extends PApplet {// RGB Cube
-// by fry <http://benfry.com>
-
-// The three primary colors of the additive color model are red, green, and blue.
-// This RGB color cube displays smooth transitions between these colors. 
-
-// Created 25 October 2002
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class RGBCube extends PApplet {/**
+ * RGB Cube.
+ * 
+ * The three primary colors of the additive color model are red, green, and blue.
+ * This RGB color cube displays smooth transitions between these colors. 
+ * 
+ * Created 25 October 2002
+ */
+ 
 float xmag, ymag = 0;
 float newXmag, newYmag = 0; 
  
@@ -73,4 +74,4 @@ public void draw()
   
   popMatrix(); 
 } 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "RGBCube" });}}

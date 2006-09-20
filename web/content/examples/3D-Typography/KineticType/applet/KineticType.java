@@ -1,11 +1,13 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class KineticType extends PApplet {// Kinetic Type
-// by Zach Lieberman <http://www.thesystemis.com>
-
-// Using the push() pop() defines the curves of the lines of type.
-
-// Created Spring 2002
-// Updated 18 January 2003
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class KineticType extends PApplet {/**
+ * Kinetic Type
+ * by <a href="http://www.thesystemis.com">Zach Lieberman</a>. 
+ * 
+ * Using the push() pop() defines the curves of the lines of type. 
+ * 
+ * Created Spring 2002. 
+ * Updated 18 January 2003
+ */
+ 
 Line ln;
 Line lns[];
 PFont f;
@@ -19,7 +21,7 @@ public void setup()
 {
   size(200, 200, P3D);
   
-  framerate(30);
+  frameRate(30);
   
   // Array of line objects
   lns = new Line[8];
@@ -126,4 +128,4 @@ class Line
     curlInX = 0.1f;
   }
 }
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "KineticType" });}}

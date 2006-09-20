@@ -1,6 +1,6 @@
 /**
  * Cellular Automata 1, Conway's Game of Life 
- * by <a href="http://www.lifecycle.org">Mike Davis</a>. 
+ * by Mike Davis. 
  * 
  * This program is a simple version of Conway's 
  * game of Life.  A lit point turns off if there 

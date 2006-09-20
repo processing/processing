@@ -1,11 +1,12 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Spot extends PApplet {// Spot
-// by REAS <http://reas.com>
-
-// Move the mouse the change the position and concentation
-// of a blue spot light.
-
-// Created 28 April 2005
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Spot extends PApplet {/**
+ * Spot. 
+ * 
+ * Move the mouse the change the position and concentation
+ * of a blue spot light. 
+ * 
+ * Created 28 April 2005
+ */
+ 
 int concentration = 600; // Try 1 -> 10000
 
 public void setup() 
@@ -26,4 +27,4 @@ public void draw()
   sphere(90); 
 }
 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Spot" });}}

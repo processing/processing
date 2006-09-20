@@ -179,6 +179,14 @@
 		<ex file="Mirror2.html">Mirror2</ex>
 		<ex file="BrightnessTracking.html">Brightness Tracking</ex>
 	</cat>
+	<cat label="Library-PDF">
+		<ex file="OneFrame.html">One Frame</ex>
+		<ex file="MultipleFrames.html">Multiple Frames</ex>
+		<ex file="MousePress.html">Mouse Press</ex>
+		<ex file="LargePage.html">Large Page</ex>
+	    <ex file="ManyPages.html">Many Pages</ex>
+		<ex file="MousePress.html">Mouse Press</ex>
+	</cat>
 	<cat label="Library-Net">
 		<ex file="ValueClient.html">ValueClient</ex>
 		<ex file="ValueServer.html">ValueServer</ex>

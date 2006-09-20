@@ -21,7 +21,7 @@ Capture video;
 void setup()
 {
   size(200, 200);
-  framerate(30);
+  frameRate(30);
   //set up columns and rows
   cols = width/cellsize;
   rows = height/cellsize;

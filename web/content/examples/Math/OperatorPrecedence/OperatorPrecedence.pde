@@ -1,5 +1,6 @@
 /**
- * Operator Precedence. 
+ * Operator_Precedence
+ * by REAS <http://reas.com>
  * 
  * If you don't explicitly state the order in which
  * an expression is evaluated, they are evaluated based
@@ -7,10 +8,10 @@
  * "4 + 2 * 8", the 2 will first be multiplied by 8 and then the result will
  * be added to 4. This is because the "*" has a higher precedence
  * than the "+". To avoid ambiguity in reading the program, 
- * it is recommended that is statement is written as "4 + (2 * 8)". 
+ * it is recommended that is statement is written as "4 + (2 * 8)".
  * The order of evaluation can be controlled through placement of
- * parenthesis in the code. A table of operator precedence follows below. 
- *
+ * parenthesis in the code. A table of operator precedence follows below.
+ * 
  * Created 17 January 2003
  */
  
@@ -23,7 +24,6 @@
 // Logical AND: &&
 // Logical OR: ||
 // Assignment: = += -= *= /= %=
-
 
 size(200, 200);
 background(51);

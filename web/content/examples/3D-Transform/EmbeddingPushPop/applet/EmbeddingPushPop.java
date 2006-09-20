@@ -1,10 +1,11 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class EmbeddingPushPop extends PApplet {// Embedding Push Pop
-// by Chris Noessel
-
-// Embedding pop() and push() within a for() loop
-
-// Created 9 December 2002
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class EmbeddingPushPop extends PApplet {/**
+ * Embedding Push Pop 
+ * by Chris Noessel. 
+ * 
+ * Embedding pop() and push() within a for() loop. 
+ * 
+ * Created 9 December 2002
+ */
 
 int xgridcount = 4; 
 int ygridcount = 4; 
@@ -22,7 +23,6 @@ public void setup()
   noStroke(); 
   colorMode(HSB, 100); 
   gDistance = width - width/4;  
-  framerate(30);
 } 
 
 public void draw() 
@@ -58,4 +58,4 @@ public void draw()
     popMatrix(); 
   } 
 } 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "EmbeddingPushPop" });}}

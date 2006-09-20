@@ -1,13 +1,14 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Zoom extends PApplet {// Zoom
-// by REAS <http://reas.com>
-
-// Move the cursor over the image to alter its position. Click and press
-// the mouse to zoom and set the density of the matrix by typing numbers 1-5.
-// This program displays a series of lines with their heights corresponding to 
-// a color value read from an image. 
-
-// Created 10 August 2002
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Zoom extends PApplet {/**
+ * Zoom. 
+ * 
+ * Move the cursor over the image to alter its position. Click and press
+ * the mouse to zoom and set the density of the matrix by typing numbers 1-5.
+ * This program displays a series of lines with their heights corresponding to 
+ * a color value read from an image. 
+ * 
+ * Created 10 August 2002
+ */
+ 
 PImage a;
 boolean onetime = true;
 int[][] aPixels;
@@ -88,4 +89,4 @@ public void keyPressed() {
 
 
 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "Zoom" });}}

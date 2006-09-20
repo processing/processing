@@ -1,11 +1,11 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class OrthoVSPerspective extends PApplet {// Ortho
-// by REAS <http://reas.com>
-
-// Click to see the difference between orthographic projection
-// and perspective projection as applied to a simple box.
-
-// Created 28 April 2005
-
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class OrthoVSPerspective extends PApplet {/** 
+ * Ortho vs Perspective. 
+ * 
+ * Click to see the difference between orthographic projection
+ * and perspective projection as applied to a simple box.
+ * 
+ * Created 28 April 2005
+ */
 
 public void setup() 
 {
@@ -34,4 +34,4 @@ public void draw()
   box(85); 
 }
 
-}
+static public void main(String args[]) {   PApplet.main(new String[] { "OrthoVSPerspective" });}}
