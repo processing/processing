@@ -1,5 +1,5 @@
 /**
- * Mouse Press
+ * One Frame. 
  * 
  * Saves one PDF with the contents of the display window.
  * Because this example uses beginRecord, the image is shown

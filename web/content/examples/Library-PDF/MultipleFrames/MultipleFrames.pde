@@ -1,5 +1,5 @@
 /** 
- * Multiple Frames
+ * Multiple Frames. 
  * 
  * Saves one PDF document of many frames drawn to the screen.
  * Starts the file when the mouse is pressed and end the file
@@ -7,6 +7,7 @@
  * 
  * Created 14 June 2006
  */
+
 
 import processing.pdf.*;
 
