@@ -40,8 +40,8 @@
         <cat name="Structure">Structure</cat>
         <cat name="Environment">Environment</cat>
         <cat name="Data">Data
+		    <sub name="Primitive">Primitive</sub>
 		    <sub name="Composite">Composite</sub>
-            <sub name="Primitive">Primitive</sub>
             <sub name="Conversion">Conversion</sub>
             <sub name="String Functions">String Function</sub>
             <sub name="Array Functions">Array Function</sub>
