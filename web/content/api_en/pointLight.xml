@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
     <name>pointLight()</name>
-    <category>Lights &amp; Camera</category>
+    <category>Lights, Camera</category>
     <subcategory>Lights</subcategory>
     <usage>Web &amp; Application</usage>
     
