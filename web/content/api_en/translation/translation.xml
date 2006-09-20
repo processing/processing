@@ -37,7 +37,7 @@
 	</attributes>
 	
 	<categories>
-        <cat name="Structure">Structure</cat>
+        <cat name="Structure">StructureTRANSLATE</cat>
         <cat name="Environment">Environment</cat>
         <cat name="Data">Data
             <sub name="Primitive">Primitive</sub>
