@@ -110,6 +110,11 @@ public class Runner implements MessageConsumer {
       }
     }
 
+    if (Preferences.getBoolean("run.options.memory")) {
+      params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
+      params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
+    }
+
     params.add("-Djava.library.path=" +
                sketch.libraryPath +
                File.pathSeparator +
@@ -181,6 +186,12 @@ public class Runner implements MessageConsumer {
         }
       }
     }
+
+    if (Preferences.getBoolean("run.options.memory")) {
+      params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
+      params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
+    }
+
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
     params.add("-Djava.library.path=" +
@@ -203,7 +214,7 @@ public class Runner implements MessageConsumer {
 
     String command[] = new String[params.size()];
     params.copyInto(command);
-    //PApplet.println(command);
+    PApplet.println(command);
 
     process = Runtime.getRuntime().exec(command);
     processInput = new SystemOutSiphon(process.getInputStream());

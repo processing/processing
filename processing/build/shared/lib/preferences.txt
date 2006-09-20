@@ -187,6 +187,11 @@ run.present.bgcolor = #666666
 # if you hose this and can't run things, it's your own durn fault 
 run.options = 
 
+# settings for the -XmsNNNm and -XmxNNNm command line option
+run.options.memory = false
+run.options.memory.initial = 64
+run.options.memory.maximum = 256
+
 # example of increasing the memory size for applets run externally
 #run.options = -Xms128m -Xmx1024m
 
