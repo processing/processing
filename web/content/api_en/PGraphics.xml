@@ -11,26 +11,26 @@
 <example>
 <image></image>
 <code>
-PGraphics g;
+PGraphics pg;
 
 void setup() {
   size(200, 200);
-  g = createGraphics(100, 100, P2D);
-  g.beginDraw();
-  g.background(102);
-  g.line(20, 20, 80, 80);
-  g.endDraw();
+  pg = createGraphics(100, 100, P2D);
+  pg.beginDraw();
+  pg.background(102);
+  pg.line(20, 20, 80, 80);
+  pg.endDraw();
   noLoop();
 }
 
 void draw() {
-  image(g, 50, 50); 
+  image(pg, 50, 50); 
 }
 </code>
 </example>
 
 <description>
-Main graphics and rendering context, as well as the base API implementation for processing "core". A PGraphics object can be constructed with the <b>createGraphics()</b> function. The fields and methods for this class are extensive. For a complete list of fields and methods, visit the developer's reference at: http://dev.processing.org/reference/core/
+Main graphics and rendering context, as well as the base API implementation for processing "core". A PGraphics object can be constructed with the <b>createGraphics()</b> function. The fields and methods for this class are extensive; for a complete list visit the developer's reference at: http://dev.processing.org/reference/core/
 </description>
 
 <syntax>
