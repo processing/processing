@@ -380,7 +380,7 @@ function category_index($array)
                     if ($sub != '') {
 						$section .= "\t<h5>$sub</h5>\n";
 					} else {
-					    $section .= "<br /><br />"
+					    $section .= "<br /><br />";
 					}
                     foreach ($refs as $ref) {
                         $section .= "\t\t<a href=\"$ref[1]\">$ref[0]</a><br />\n";
