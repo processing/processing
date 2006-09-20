@@ -7,6 +7,7 @@
  * Updated 8 April 2005
  */
  
+ 
 import processing.video.*;
 
 Capture camera;

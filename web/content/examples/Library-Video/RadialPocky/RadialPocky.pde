@@ -4,7 +4,8 @@
  * 
  * Unwrap each frame of live video into a single line of pixels along a circle
  */ 
- 
+
+  
 import processing.video.*;
 
 Capture video;
@@ -18,7 +19,7 @@ int angles[];
 
 void setup() {
   // size must be video.width*video.height*2 in both directions
-  size(600, 600, P3D); 
+  size(600, 600); 
 
   video = new Capture(this, 20, 15);
   videoCount = video.width * video.height;

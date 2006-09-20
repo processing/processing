@@ -8,7 +8,9 @@
  * Updated 30 March 2005
  */
  
+ 
 import processing.video.*;
+
 Movie myMovie;
 
 void setup() 

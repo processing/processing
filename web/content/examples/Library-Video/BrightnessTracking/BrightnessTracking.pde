@@ -1,6 +1,6 @@
 /**
  * Brightness Tracking 
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>.  
+ * by Daniel Shiffman.  
  * 
  * Tracks the brightest pixel in the video.
  * Click the mouse to select a different color. 

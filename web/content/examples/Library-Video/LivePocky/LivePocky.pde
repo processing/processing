@@ -5,6 +5,7 @@
  * Unwrap each frame of live video into a single line of pixels.
  */
  
+ 
 import processing.video.*;
 
 Capture video;

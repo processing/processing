@@ -5,6 +5,7 @@
  * Show subsequent frames from video input as a grid. Also fun with movie files.
  */
 
+
 import processing.video.*;
 
 Capture video;
