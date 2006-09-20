@@ -1,11 +1,12 @@
-// WebCam
-// by REAS <http://reas.com>
-
-// Reading and displaying an image from an
-// attached Capture device.
-
-// Updated 8 April 2005
-
+/**
+ * Capture. 
+ * 
+ * Reading and displaying an image from an
+ * attached Capture device. 
+ * 
+ * Updated 8 April 2005
+ */
+ 
 import processing.video.*;
 
 Capture camera;

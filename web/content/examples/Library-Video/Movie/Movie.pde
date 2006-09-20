@@ -1,12 +1,13 @@
-// Movie Playback
-// by hbarragan
-
-// Move the cursor across the screen to draw.
-// Shows how to load and play a QuickTime movie file.
-
-// Created 21 June 2003
-// Updated 30 March 2005 by REAS
-
+/**
+ * Loading QuickTime. 
+ * 
+ * Move the cursor across the screen to draw. 
+ * Shows how to load and play a QuickTime movie file. 
+ * 
+ * Created 21 June 2003. 
+ * Updated 30 March 2005
+ */
+ 
 import processing.video.*;
 Movie myMovie;
 
