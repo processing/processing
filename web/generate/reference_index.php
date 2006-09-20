@@ -23,14 +23,14 @@ foreach ($files as $file) {
     $ref = new Ref("api_$lang/".$file);
     if ($ref->index()) {
 	
-        if ($ref->level != 'Extended') {
+        #if ($ref->level != 'Extended') {
             if ($ref->subcategory == $ref->name) {
                 $abridged[$ref->category][''][] = array($ref->name, $ref->name());
             } else {
                 $abridged[$ref->category][$ref->subcategory][] = array($ref->name, $ref->name());
             }
             $abridged_alpha[strtolower($ref->name)] = array($ref->name, $ref->name());
-        }
+        #}
     
 	    if ($ref->subcategory == $ref->name) {
             $complete[$ref->category][''][] = array($ref->name, $ref->name());
