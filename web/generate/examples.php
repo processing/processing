@@ -29,7 +29,7 @@ $html = "<div class=\"ref-col\">\n";
 foreach ($categories as $cat => $array) {
 	
 	#$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
-	$html .= "<h1>$cat</h1>\n";
+	$html .= "<h2>$cat</h2>\n";
 	foreach ($array as $file => $name) {
 		$html .= "\t<a href=\"examples/".strtolower($file)."\">$name</a><br />\n";
 	}
