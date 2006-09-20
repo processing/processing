@@ -172,12 +172,12 @@
 		<ex file="OrthoVSPerspective.html">Ortho vs. Perpective</ex>
 	</cat>
 	<cat label="Library-Video">
-		<ex file="MoviePlayback.html">MoviePlayback</ex>
+		<ex file="Movie.html">Movie</ex>
 		<ex file="Pixelate.html">Pixelate</ex>
-		<ex file="WebCam.html">WebCam</ex>
+		<ex file="Capture.html">Capture</ex>
 		<ex file="Mirror.html">Mirror</ex>
 		<ex file="Mirror2.html">Mirror2</ex>
-		<ex file="BrightnessTracking.html">Brightness Tracking </ex>
+		<ex file="BrightnessTracking.html">Brightness Tracking</ex>
 	</cat>
 	<cat label="Library-Net">
 		<ex file="ValueClient.html">ValueClient</ex>
