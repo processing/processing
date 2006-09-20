@@ -36,17 +36,18 @@ Copies an array (or part of an array) to another array. The <b>src</b> array is 
 
 <syntax>
 arraycopy(<c>src</c>, <c>dest</c>)
+arraycopy(<c>src</c>, <c>dest</c>, <c>length</c>)
 arraycopy(<c>src</c>, <c>srcPos</c>, <c>dest</c>, <c>destPos</c>, <c>length</c>)
 </syntax>
 
 <parameter>
 <label>src</label>
-<description>booleans[], bytes[], chars[], ints[], floats[], or Strings[]: the source array</description>
+<description>boolean[], byte[], char[], int[], float[], or String[]: the source array</description>
 </parameter>
 
 <parameter>
 <label>dest</label>
-<description>booleans[], bytes[], chars[], ints[], floats[], or Strings[]: the destination array</description>
+<description>boolean[], byte[], char[], int[], float[], or String[]: the destination array</description>
 </parameter>
 
 <parameter>

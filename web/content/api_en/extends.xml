@@ -55,6 +55,8 @@ extends
 <returns></returns>
 
 <related>
+class
+super
 </related>
 
 <availability>1.0</availability>
@@ -62,8 +64,6 @@ extends
 <type>Keyword</type>
 
 <partof>PDE</partof>
-
-<level>extended</level>
 
 
 </root>

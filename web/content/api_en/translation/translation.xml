@@ -86,6 +86,7 @@
             <sub name="Loading &amp; Displaying">Loading &amp; Displaying</sub>
             <sub name="Pixels">Pixels</sub>
         </cat>
+		<cat name="Rendering">Rendering</cat>
         <cat name="Typography">Typography
             <sub name="Loading &amp; Displaying">Loading &amp; Displaying</sub>
             <sub name="Attributes">Attributes</sub>

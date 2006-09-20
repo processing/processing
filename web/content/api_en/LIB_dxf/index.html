@@ -1,0 +1,39 @@
+<span class="lib-nav">
+	<a href="../index.html">Libraries</a>
+</span>
+
+<div>
+    <h2>DXF</h2>
+    
+  <p>This library writes all current triangle-based graphics (polygons, boxes, 
+    spheres, etc.) to a DXF file. It works with the beginRaw() and endRaw() functions. 
+    Use something like a keyPressed() to trigger it, to avoid writing a file each 
+    time through draw(). Usually, the file will be saved to the sketch's folder. 
+    Use Sketch &gt; Show Sketch Folder to see it from the Processing Environment.</p>
+  <p>A simple example of how to use: </p>
+  <pre>import processing.dxf.*;
+
+boolean record;
+
+void setup() {
+  size(500, 500, P3D);
+}
+
+void keyPressed() {
+  // use a key press so that it doesn't make a million files
+  if (key == 'r') record = true;
+}
+
+void draw() {
+  if (record) {
+    beginRaw("processing.dxf.RawDXF", "output.dxf");
+  }
+
+  // do all your drawing here
+
+  if (record) {
+    endRaw();
+    record = false;
+  }
+}</pre>
+</div>

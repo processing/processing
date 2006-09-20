@@ -2,9 +2,9 @@
 <root>
 <name>PGraphics</name>
 
-<category>Shape</category>
+<category>Rendering</category>
 
-<subcategory>PGraphics</subcategory>
+<subcategory></subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -31,7 +31,7 @@ void draw() {
 </example>
 
 <description>
-Main graphics and rendering context, as well as the base API implementation for processing "core". Use this class if you need to draw into an off-screen graphics buffer. A PGraphics object can be constructed with the <b>createGraphics()</b> function. The <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are necessary to set up the buffer and the finalize it. The fields and methods for this class are extensive; for a complete list visit the developer's reference at: http://dev.processing.org/reference/core/
+Main graphics and rendering context, as well as the base API implementation for processing "core". Use this class if you need to draw into an off-screen graphics buffer. A PGraphics object can be constructed with the <b>createGraphics()</b> function. The <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are necessary to set up the buffer and to finalize it. The fields and methods for this class are extensive; for a complete list visit the developer's reference: http://dev.processing.org/reference/core/
 </description>
 
 <syntax>
@@ -41,19 +41,19 @@ Main graphics and rendering context, as well as the base API implementation for 
 </parameters>
 
 <constructor>
-PImage()
-PImage(<c>width</c>, <c>height</c>)
-PImage(<c>width</c>, <c>height</c>, <c>applet</c>)
+PGraphics()
+PGraphics(<c>width</c>, <c>height</c>)
+PGraphics(<c>width</c>, <c>height</c>, <c>applet</c>)
 </constructor>
 
 <cparameter>
 <clabel>width</clabel>
-<cdescription>int: image width</cdescription>
+<cdescription>int: width in pixels</cdescription>
 </cparameter>
 
 <cparameter>
 <clabel>height</clabel>
-<cdescription>int: image height</cdescription>
+<cdescription>int: height in pixels</cdescription>
 </cparameter>
 
 <cparameter>

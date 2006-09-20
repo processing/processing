@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>saveStrings()</name>
+<name>savePath()</name>
 
 <category>Output</category>
 
@@ -11,38 +11,33 @@
 <example>
 <image></image>
 <code>
-String words = "apple bear cat dog";
-String list[] = splitStrings(words);
-
-// now write the strings to a file, each on a separate line
-saveStrings("nouns.txt", list);
+// Makes a new image and then saves it 
+// to the current sketch's folder
+PImage img = new PImage(100, 100);
+String path = savePath("newImage.jpg");
+img.save(path);
 </code>
 </example>
 
 <description>
-Writes an array of strings to a file, one line per string. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
+Returns a path inside the applet folder to save to. Use this function before using the <b>save()</b> method of a <b>PImage</b> or <b>PGraphics</b> object so the file will save to the current sketch's folder.
 </description>
 
 <syntax>
-saveStrings(<c>filename</c>, <c>strings</c>)
+savePath(<c>filename</c>)
 </syntax>
 
 <parameter>
 <label>filename</label>
-<description>filename for output</description>
+<description>String: filename for output</description>
 </parameter>
 
-<parameter>
-<label>strings</label>
-<description>string array to be written</description>
-</parameter>
-
-<returns></returns>
+<returns>String</returns>
 
 <related>
-loadStrings()
-loadBytes() 
 saveBytes()
+saveStrings()
+saveFrame()
 </related>
 
 <availability>1.0</availability>
