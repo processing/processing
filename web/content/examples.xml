@@ -178,6 +178,12 @@
 		<ex file="Mirror.html">Mirror</ex>
 		<ex file="Mirror2.html">Mirror2</ex>
 		<ex file="BrightnessTracking.html">Brightness Tracking</ex>
+		<ex file="AsciiVideo.html">ASCII Video</ex>
+		<ex file="Disgrand.html">Disgrand</ex>
+		<ex file="Framingham.html">Framingham</ex>
+		<ex file="HsvSpace.html">HSV Space</ex>
+		<ex file="LivePocky.html">Live Pocky</ex>
+		<ex file="RadialPocky.html">Radial Pocky</ex>
 	</cat>
 	<cat label="Library-PDF">
 		<ex file="OneFrame.html">One Frame</ex>
