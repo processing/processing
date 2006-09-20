@@ -17,7 +17,7 @@ X be more strict about opening sketches with illegal characters
 X   in previous releases, it was possible to rename sketches outside p5
 X   to something that was illegal. now those files are ignored
 X better fix for find/replace focus issue on osx
-_   http://dev.processing.org/bugs/show_bug.cgi?id=244
+X   http://dev.processing.org/bugs/show_bug.cgi?id=244
 X   give that field focus explicitly, rather than just for typing
 X menu option/command key to switch between tabs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=55
@@ -25,6 +25,25 @@ X fix movie playback on intel macs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=313
 X when using external editor, update the code on export
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1158549785
+o p5 becomes a memory hog (benelek and glen murphy)
+o   not confirmed for a long time
+o   even without sketches open, perhaps not gc'ing properly
+o   objects probably not getting finalized
+o   http://dev.processing.org/bugs/show_bug.cgi?id=29
+X add pref item for setting the memory properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=233
+o   external apps should inherit memory settings from p5 itself
+X   too confusing to set the memory in two places
+X   or perhaps, have a setting in the ide for it
+o   and allow a checkbox for "always run externally" 
+X   that way people don't have to adjust the memory settings for p5 itself
+X   perhaps the memory setting should be enabled/disabled
+X     that way if it's enabled, will always run externally
+o menu weirdness (benelek)
+o   when you've got a menu open, move a cursor over the text area
+o   and back over the menu, the text-area cursor type remains. 
+X   mark this as wontfix, since it's just a java bug
+X   http://dev.processing.org/bugs/show_bug.cgi?id=30
 
 video
 X quicktime in applets
@@ -56,6 +75,9 @@ _ under the memory section, getting free/total memory
 _   long allocated = Runtime.getRuntime().totalMemory()  (-Xms usually)
 _   long allocatedButFree = Runtime.getRuntime().freeMemory()  (-Xms minus used)
 _   long maximum = Runtime.getRuntime().maxMemory()  (-Xmx setting)
+_ remove the memory setting stuff from the faq
+_ add more information about setting the memory
+_   move memory setting to troubleshooting page on bugs db
 
 mac faq
 X windows, may need to install new version of video drivers
@@ -86,13 +108,14 @@ X   maybe need to move animation into an internal class
 X audio hiccups, throttling the cpu
 X   p5 will take as much cpu as it can, which can choke other apps
 X   call delay(10) (or so) if you want to make sure audio keeps running
-_ bugs.html#application -> export.html#application
-_ with network, check in advanced, then rename advanced.html to howto.html
+_ move troubleshooting page to the reference
+_   and the bugs page to dev.processing.org/bugs
 _ search for ALL in the bugs db turns up:
 http://dev.processing.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED
 _ add note to bugs db asking to please use archive sketch and attach
 
-faq / advanced
+faq / advanced (should these be hacks?)
+_ with network, check in advanced, then rename advanced.html to howto.html
 _ the source code to the libs are included
 _   this makes them easy to modify (in another app)
 _   or you can remove the package statements and embed them 
@@ -126,12 +149,6 @@ _   possible to include a java subfolder with exported applications
 _   this means no need to install an additional java vm
 _   or an option to include the 'java' folder on windows/linux with export
 _   on unix machines it's also possible to use a symlink
-
-o menu weirdness (benelek)
-o   when you've got a menu open, move a cursor over the text area
-o   and back over the menu, the text-area cursor type remains. 
-_   mark this as wontfix, since it's just a java bug
-_   http://dev.processing.org/bugs/show_bug.cgi?id=30
 
 _ remove the second movie from the movie playback example
 
@@ -522,11 +539,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=27
 _ option to just print all code in project
 _   option to export all the code as colored html
 _   http://dev.processing.org/bugs/show_bug.cgi?id=28
-_ p5 becomes a memory hog (benelek and glen murphy)
-_   not confirmed for a long time
-_   even without sketches open, perhaps not gc'ing properly
-_   objects probably not getting finalized
-_   http://dev.processing.org/bugs/show_bug.cgi?id=29
 _ rename/saveas doesn't properly have its focus set
 _   under windows, immediately typing after rename doesn't select
 _   the whole thing is selected, but not directly editable
@@ -667,15 +679,6 @@ _ make available the background colors for present mode, stop button color
 _   http://dev.processing.org/bugs/show_bug.cgi?id=75
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130781367;start=2#2
 _ add ability to set the display where present mode makes things start
-_ add pref item for setting the memory properly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=233
-o   external apps should inherit memory settings from p5 itself
-_   too confusing to set the memory in two places
-_   or perhaps, have a setting in the ide for it
-_   and allow a checkbox for "always run externally" 
-_   that way people don't have to adjust the memory settings for p5 itself
-_   perhaps the memory setting should be enabled/disabled
-_     that way if it's enabled, will always run externally
 
 
 PDE / Runner 
@@ -736,7 +739,7 @@ _ write prefs when opening/saving/etc a file
 _   when p5 crashes, want to re-open file easily
 _ is the 'hide' option for code dumb? i've never used it
 _   should it just hide the code, not actually remove it?
-_ do we finish the tabs thing for 1.0?
+_ do we finish the tabs thing for 1.0? yes
 _   could probably be done in a reasonable simple way.. ala eclipse
 _   show additional tabs in the dropdown list? show all?
 _ robert's tunnel example, why does tunnel not show up as leftmost tab?

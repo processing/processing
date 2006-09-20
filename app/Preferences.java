@@ -508,25 +508,6 @@ public class Preferences {
     }
 
     /*
-      linux
-      % java -Xmx3000m
-      Error occurred during initialization of VM
-      Could not reserve enough space for object heap
-      fry@pooserve:~
-      % java -Xmx5000m
-      Invalid maximum heap size: -Xmx5000m
-      Could not create the Java virtual machine.
-
-      macosx
-      : java -Xmx3g
-      Error occurred during initialization of VM
-      Could not reserve enough space for object heap
-      Trace/BPT trap
-      : java -Xmx5g
-      Invalid maximum heap size: -Xmx5g
-      The specified size exceeds the maximum representable size.
-      Could not create the Java virtual machine.
-
       // was gonna use this to check memory settings,
       // but it quickly gets much too messy
     if (getBoolean("run.options.memory")) {
