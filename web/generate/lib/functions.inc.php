@@ -374,13 +374,13 @@ function category_index($array)
             if (in_array($cat, $break_before)) {
                 $html .= "\n</div><div class=\"ref-col\">\n";            
             }
-            $section = "\n<div class=\"category\">\n<b>{$translation->cat_tr[$cat]}</b>\n";
+            $section = "\n<div class=\"category\">\n<h2>{$translation->cat_tr[$cat]}</h2>\n";
             foreach ($subs as $sub => $refs) {
                 if (count($refs) > 0) {
                     if ($sub != '') {
 						$section .= "\t<h5>$sub</h5>\n";
-					} #else {
-					#    $section .= "<br /><br />";
+					}# else {
+					#   $section .= "<br /><br />";
 					#}
                     foreach ($refs as $ref) {
                         $section .= "\t\t<a href=\"$ref[1]\">$ref[0]</a><br />\n";
