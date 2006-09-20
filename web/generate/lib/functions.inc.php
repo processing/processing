@@ -379,9 +379,9 @@ function category_index($array)
                 if (count($refs) > 0) {
                     if ($sub != '') {
 						$section .= "\t<h5>$sub</h5>\n";
-					} else {
-					    $section .= "<br /><br />";
-					}
+					} #else {
+					#    $section .= "<br /><br />";
+					#}
                     foreach ($refs as $ref) {
                         $section .= "\t\t<a href=\"$ref[1]\">$ref[0]</a><br />\n";
                         $empty = false;
