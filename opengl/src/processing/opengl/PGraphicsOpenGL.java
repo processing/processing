@@ -2397,32 +2397,31 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * throw an GL_INVALID_OPERATION error.
    */
   public void report(String where) {
-    //if (true) return;
-
-    int err = gl.glGetError();
-    if (err == 0) {
-      return;
-      //System.out.println("no error");
-    } else {
-      System.out.print("GL_ERROR at " + where + ": ");
-      System.out.print(PApplet.hex(err, 4) + "  ");
-      switch (err) {
-      case 0x0500: System.out.print("GL_INVALID_ENUM"); break;
-      case 0x0501: System.out.print("GL_INVALID_VALUE"); break;
-      case 0x0502: System.out.print("GL_INVALID_OPERATION"); break;
-      case 0x0503: System.out.print("GL_STACK_OVERFLOW"); break;
-      case 0x0504: System.out.print("GL_STACK_UNDERFLOW"); break;
-      case 0x0505: System.out.print("GL_OUT_OF_MEMORY"); break;
-      default: System.out.print("UNKNOWN");
+    if (!hints[DISABLE_ERROR_REPORT]) {
+      int err = gl.glGetError();
+      if (err != 0) {
+        System.out.print("GL_ERROR at " + where + ": ");
+        System.out.print(PApplet.hex(err, 4) + "  ");
+        switch (err) {
+        case 0x0500: System.out.print("GL_INVALID_ENUM"); break;
+        case 0x0501: System.out.print("GL_INVALID_VALUE"); break;
+        case 0x0502: System.out.print("GL_INVALID_OPERATION"); break;
+        case 0x0503: System.out.print("GL_STACK_OVERFLOW"); break;
+        case 0x0504: System.out.print("GL_STACK_UNDERFLOW"); break;
+        case 0x0505: System.out.print("GL_OUT_OF_MEMORY"); break;
+        default: System.out.print("UNKNOWN");
+        }
+        System.out.println();
       }
-      System.out.println();
     }
   }
 
-//GL will do the clipping for us
+
+  //GL will do the clipping for us
   protected void add_line(int a, int b) {
     add_line_no_clip(a, b);
   }
+
 
   // GL will do the clipping for us
   protected void add_triangle(int a, int b, int c) {

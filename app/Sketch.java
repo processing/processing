@@ -1370,6 +1370,12 @@ public class Sketch {
       libraryPath = "";
     }
 
+    // if the memory options are set, then use an external runtime
+    // so that the setting can always be honored.
+    if (Preferences.getBoolean("run.options.memory")) {
+      externalRuntime = true;
+    }
+
     // if 'data' folder is large, set to external runtime
     if (dataFolder.exists() &&
         Base.calcFolderSize(dataFolder) > 768 * 1024) {  // if > 768k
@@ -2388,7 +2394,13 @@ public class Sketch {
       File argsFile = new File(destFolder + "/lib/args.txt");
       PrintStream ps = new PrintStream(new FileOutputStream(argsFile));
 
-      ps.println(Preferences.get("run.options"));
+      ps.print(Preferences.get("run.options") + " ");
+      if (Preferences.getBoolean("run.options.memory")) {
+        ps.print("-Xms" + Preferences.get("run.options.memory.initial") + "m ");
+        ps.print("-Xmx" + Preferences.get("run.options.memory.maximum") + "m ");
+      }
+      ps.println();
+
       ps.println(this.name);
       ps.println(exportClassPath);
 
