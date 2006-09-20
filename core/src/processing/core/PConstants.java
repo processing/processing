@@ -289,8 +289,9 @@ public interface PConstants {
   static final int DISABLE_DEPTH_TEST      = 5;
   static final int NO_FLYING_POO           = 6;
   static final int ENABLE_DEPTH_SORT       = 7;
+  static final int DISABLE_ERROR_REPORT    = 8;
 
-  static final int HINT_COUNT              = 8;
+  static final int HINT_COUNT              = 9;
 
 
   //////////////////////////////////////////////////////////////

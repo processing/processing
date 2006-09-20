@@ -53,8 +53,9 @@ X move 'how do i create large images' here
 X createGraphics with PDF, using dispose() to clear the thing
 X calling nextPage()
 _ under the memory section, getting free/total memory
-_   long mem = Runtime.getRuntime().freeMemory()
-_   long mem = Runtime.getRuntime().totalMemory()
+_   long allocated = Runtime.getRuntime().totalMemory()  (-Xms usually)
+_   long allocatedButFree = Runtime.getRuntime().freeMemory()  (-Xms minus used)
+_   long maximum = Runtime.getRuntime().maxMemory()  (-Xmx setting)
 
 mac faq
 X windows, may need to install new version of video drivers
@@ -91,11 +92,25 @@ _ search for ALL in the bugs db turns up:
 http://dev.processing.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED
 _ add note to bugs db asking to please use archive sketch and attach
 
-faq / general
+faq / advanced
 _ the source code to the libs are included
 _   this makes them easy to modify (in another app)
 _   or you can remove the package statements and embed them 
 _   serial is a little trickier since you'd have to put stuff in code/
+_ making things fast with pixel operations
+_ jai handles setting image size
+_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
+_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
+_    JAI.create("filestore", bufImage, filename+".png", "PNG");
+_ also an example of setting the jpeg compression
+_ add something about getting a bufferedimage from a PGraphics
+_   maybe this should be a method?
+_ how to upload an image to a server
+
+faq / platforms
+_ add notes about running processing on various platforms
+_ directions for rebuilding jikes, etc (where is this?) 
+_ and then link to posts on the discourse site about how to do it
 
 faq / export
 X exporting applets
@@ -107,20 +122,10 @@ _   notes about setting key=0 to catch ESC
 _   also size(screen.width, screen.height);
 _   maybe make a section in installations with p5
 _ exporting applications
-_   including the java subfolder with exported applications
+_   possible to include a java subfolder with exported applications
 _   this means no need to install an additional java vm
 _   or an option to include the 'java' folder on windows/linux with export
-
-faq / images
-_ making things fast with pixel operations
-_ jai handles setting image size
-_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
-_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
-_    JAI.create("filestore", bufImage, filename+".png", "PNG");
-_ also an example of setting the jpeg compression
-_ add something about getting a bufferedimage from a PGraphics
-_   maybe this should be a method?
-_ how to upload an image to a server
+_   on unix machines it's also possible to use a symlink
 
 o menu weirdness (benelek)
 o   when you've got a menu open, move a cursor over the text area
@@ -901,6 +906,8 @@ LIBRARIES / Video
 
 _ need to add resize method to camera capture
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
+_ need to prevent multiple QTSession open or close
+_   static method shared across the lib, or some such
 _ capture.settings() changes size of capture
 _   http://dev.processing.org/bugs/show_bug.cgi?id=366
 _ reading movie is really really slow (2-3 fps)

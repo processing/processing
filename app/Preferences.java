@@ -48,6 +48,10 @@ import processing.core.PApplet;
  * This class no longer uses the Properties class, since
  * properties files are iso8859-1, which is highly likely to
  * be a problem when trying to save sketch folders and locations.
+ * <p>
+ * This is very poorly put together, that the prefs panel and the
+ * actual prefs i/o is part of the same code. But there hasn't yet
+ * been a compelling reason to bother with the separation.
  */
 public class Preferences {
 
@@ -112,8 +116,9 @@ public class Preferences {
   JCheckBox sketchPromptBox;
   JCheckBox sketchCleanBox;
   JCheckBox externalEditorBox;
+  JCheckBox memoryOverrideBox;
+  JTextField memoryField;
   JCheckBox checkUpdatesBox;
-
   JTextField fontSizeField;
 
 
@@ -303,6 +308,20 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
 
 
+    // [ ] Set maximum available memory to [______] MB
+
+    Container memoryBox = Box.createHorizontalBox();
+    memoryOverrideBox = new JCheckBox("Set maximum available memory to ");
+    memoryBox.add(memoryOverrideBox);
+    memoryField = new JTextField(4);
+    memoryBox.add(memoryField);
+    memoryBox.add(new JLabel(" MB"));
+    pain.add(memoryBox);
+    d = memoryBox.getPreferredSize();
+    memoryBox.setBounds(left, top, d.width, d.height);
+    top += d.height + GUI_BETWEEN;
+
+
     // [ ] Use external editor
 
     externalEditorBox = new JCheckBox("Use external editor");
@@ -476,6 +495,49 @@ public class Preferences {
     setBoolean("editor.external", externalEditorBox.isSelected());
     setBoolean("update.check", checkUpdatesBox.isSelected());
 
+    setBoolean("run.options.memory", memoryOverrideBox.isSelected());
+    int memoryMin = Preferences.getInteger("run.options.memory.initial");
+    int memoryMax = Preferences.getInteger("run.options.memory.maximum");
+    try {
+      memoryMax = Integer.parseInt(memoryField.getText().trim());
+      // make sure memory setting isn't too small
+      if (memoryMax < memoryMin) memoryMax = memoryMin;
+      setInteger("run.options.memory.maximum", memoryMax);
+    } catch (NumberFormatException e) {
+      System.err.println("Ignoring bad memory setting");
+    }
+
+    /*
+      linux
+      % java -Xmx3000m
+      Error occurred during initialization of VM
+      Could not reserve enough space for object heap
+      fry@pooserve:~
+      % java -Xmx5000m
+      Invalid maximum heap size: -Xmx5000m
+      Could not create the Java virtual machine.
+
+      macosx
+      : java -Xmx3g
+      Error occurred during initialization of VM
+      Could not reserve enough space for object heap
+      Trace/BPT trap
+      : java -Xmx5g
+      Invalid maximum heap size: -Xmx5g
+      The specified size exceeds the maximum representable size.
+      Could not create the Java virtual machine.
+
+      // was gonna use this to check memory settings,
+      // but it quickly gets much too messy
+    if (getBoolean("run.options.memory")) {
+      Process process = Runtime.getRuntime().exec(new String[] {
+          "java", "-Xms" + memoryMin + "m", "-Xmx" + memoryMax + "m"
+        });
+      processInput = new SystemOutSiphon(process.getInputStream());
+      processError = new MessageSiphon(process.getErrorStream(), this);
+    }
+    */
+
     String newSizeText = fontSizeField.getText();
     try {
       int newSize = Integer.parseInt(newSizeText.trim());
@@ -501,6 +563,9 @@ public class Preferences {
     sketchbookLocationField.setText(get("sketchbook.path"));
     externalEditorBox.setSelected(getBoolean("editor.external"));
     checkUpdatesBox.setSelected(getBoolean("update.check"));
+
+    memoryOverrideBox.setSelected(getBoolean("run.options.memory"));
+    memoryField.setText(get("run.options.memory.maximum"));
 
     dialog.show();
   }
