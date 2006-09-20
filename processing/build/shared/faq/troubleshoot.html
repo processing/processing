@@ -373,6 +373,15 @@ checks to try and catch this (at least for images) but they're not
 perfect. This can especially be a problem when the .JPG extension is
 not even visible (the default on Windows), so you don't know whether
 it's upper or lower case.
+<LI> If you get a "ClassCastException" when trying to run your code 
+  in a browser, you're probably trying to run non-Java 1.1 compliant 
+  code. This means any classes that didn't exist in java 1.1. Or, 
+  if if you're exporting as applet, variables that are 'final int' 
+  need to be 'static final int', otherwise they'll have trouble on 
+  a maching that only has Java 1.1 installed (i.e. running Microsoft's 
+  Java on Windows). You should also avoid using "final" variables 
+  <em>inside</em> of methods, since those aren't supported by 
+  Microsoft's VM (and that's the one most widely installed).
 <LI>Your browser may be using an old version of an
 applet. Unfortunately it's often difficult to get your browser to
 flush its cache. You
@@ -388,7 +397,7 @@ and we'll add it to the FAQ.
 </UL>
 Some libraries simply don't work with the web (at least not for now):
 <UL>
-<LI><strike>You cannot use the OpenGL library from the web. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>)</strike> As of revision 0113, it's possible for applets that use the OPENGL renderer setting to run from the web.
+<LI><strike>You cannot use the OpenGL library from the web. </STRIKE>(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>) As of revision 0113, it's possible for applets that use the OPENGL renderer setting to run from the web.
 <LI><STRIKE>The video library (both Capture and Movie) cannot be used on the
 web</STRIKE> As of release 0115, it's possible to play back movies via the web,
 however you still cannot capture video without a signed applet (see above).
@@ -415,6 +424,60 @@ however you still cannot capture video without a signed applet (see above).
       <b>
 Out Of Memory Errors
 </b> <br> <br>
+If you get an OutOfMemoryError while running your program, use the
+Preferences window to increase the amount of available memory.
+<BR> <BR>
+Depending on your OS and available RAM, there are limits on how much
+memory you can ask for. Use this preference with caution, 
+because if you set the memory too high, 
+programs will no longer run in Processing. 
+When you hit run, you'll get error messages. <BR> <BR>
+
+This message means that you're trying to use more memory than the 
+machine has installed:
+<PRE>
+
+Error occurred during initialization of VM
+Could not reserve enough space for object heap
+
+</PRE>
+
+These mean that you're trying to use more memory than the
+Operating System allows (regardless of how much RAM you have):
+
+<PRE>
+
+Invalid maximum heap size: -Xmx5000m
+Could not create the Java virtual machine.
+
+Invalid maximum heap size: -Xmx5g
+The specified size exceeds the maximum representable size.
+Could not create the Java virtual machine.
+
+</PRE>
+
+On Windows with 1G of RAM, it seems to be in
+the neighborhood of 1.5 GB. Mac OS X and Linux seem to allow up to 
+just shy of 4 GB, depending on how much RAM you have installed. 
+Usually you can allocate 50% more RAM than you have installed. 
+i.e. for a machine with 1 GB of physical memory, about 1.5 GB is
+the maximum that can be used. Your mileage will also vary with 
+different versions of Java (1.3, 1.4, 1.5, 1.6...)
+<BR> <BR>
+Unfortunately the memory limitations of Java set an upper bound 
+that is outside our control. If you're having trouble creating very 
+large images for this reason, you might look into the PDF or DXF 
+libraries that are included with Processing, or the contributed 
+Illustrator or SVG vector export libraries that can be found on the 
+libraries page as another alternative for creating large format images.
+<BR> <BR>
+There are also two known bugs that eat memory:
+<UL>
+<LI>OpenGL is really memory hungry because of how textures work.
+<LI>
+</UL>
+
+<!--
 There are two types of programs in Processing. Some are run from
 inside the environment, but whenever you import a library, include a
 code folder, or use "Present" to view your sketch, it will be run
@@ -466,6 +529,7 @@ of ram) as you need to (and at your own risk).
 <br> <br>
 <LI>On Linux, adjust the Processing shell script as needed.
 </UL>
+-->
       </td>
     <td width="50">&nbsp;</td>
   </tr>
@@ -582,7 +646,7 @@ Things that are often perceived as bugs, but aren't actually 'broken'.
 to run over time, it must have a draw() method, otherwise nothing will
 happen. 
 
-<LI>Any code that accesses the pixels[] array should be placed inside <TT>beginPixels()</TT> and <TT>endPixels()</TT> (called loadPixels and updatePixels in versions 0115 and earlier, and not required prior to 0085). Strictly speaking, this isn't necessary for P2D and P3D, but is required for the OPENGL and JAVA2D renderer settings. It's best to simply get in the habit of using begin/end in your programs. A complete description can be found in the reference for the <A HREF="http://processing.org/reference/pixels.html">pixels[]</A> array.
+<LI>Any code that accesses the pixels[] array should be placed inside <TT>loadPixels()</TT> and <TT>updatePixels()</TT>. This can be confusing because it was not required in older code, i.e. with alpha releases of Processing prior to release 0085. Strictly speaking, this isn't necessary for P2D and P3D, but is required for the OPENGL and JAVA2D renderer settings. It's best to simply get in the habit of using begin/end in your programs. A complete description can be found in the reference for the <A HREF="http://processing.org/reference/pixels.html">pixels[]</A> array.
 
 <LI>PSound has been removed as of release 0112. Getting sound to work with Java is a total headache, and therefore something better left to a <A HREF="http://processing.org/reference/libraries/">library</A>. The Sonia and Ess libraries will both provide better audio support. We had hoped to provide a simple means to play audio clips and whatnot, but Sun's audio classes are too buggy across different platforms and different versions of Java. A buggy mess like that requires lots of code (and lots of testing across all our platforms), and we didn't want to muck up the core with that business. 
 
@@ -625,16 +689,6 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 176</A>)
 name is two words, usually the first word is lowercase and the first letter
 of the second word will be capitalized. For instance: keyPressed, movieEvent, mouseX, etc. If you have a function called mousepressed(), it won't be called when mouse events occur, because it needs the capital P on 'pressed'.
 
-<LI> If you get a "ClassCastException" when trying to run your code 
-  in a browser, you're probably trying to run non-Java 1.1 compliant 
-  code. This means any classes that didn't exist in java 1.1. Or, 
-  if if you're exporting as applet, variables that are 'final int' 
-  need to be 'static final int', otherwise they'll have trouble on 
-  a maching that only has Java 1.1 installed (i.e. running Microsoft's 
-  Java on Windows). You should also avoid using "final" variables 
-  <em>inside</em> of methods, since those aren't supported by 
-  Microsoft's VM (and that's the one most widely installed).
-
 <LI>On Mac OS X, the error message: 
 <tt>## Component Manager: attempting to find symbols in a component
   alias of type (regR/carP/x!bt)</tt> 
@@ -650,13 +704,13 @@ is not something from processing, it is a bug in Roxio Toast 5.2's Video
   multiple source code files (more than one tab), or extra code files
   in the 'code' folder are employed.
 
-<LI>A Processing sketch will attempt to use as much CPU as is available, 
-unless framerate() is called. On Windows, this can sometimes cause audio
+<LI>As of release 0116, Processing sketches have a default frameRate setting of 60. This prevents sketches from needlessly running too fast and throttling the CPU. However, this is only the "maximum" frame rate, if a lot of computation is in the code, the sketch will attempt to use as much CPU as is available. 
+On Windows, this can sometimes cause audio
 hiccups when an MP3 player is running at the same time, or another 
 application is trying to do something simultaneously. To fix the audio
 issue, add a delay(5) or delay(10) to your code, which will give five 
 or ten milliseconds to other applications so they can breathe. For other
-applications, you may have to set the framerate() lower, or use a longer
+applications, you may have to set the frameRate() lower, or use a longer
 delay().
 
 <LI>mouseX and mouseY always even (or always odd) numbers? By default,
@@ -689,14 +743,12 @@ know what you're doing. You'll have to make sure that your code is named
 properly. This means that if you have "public class PooTime extends PApplet" 
 at the beginning of your sketch, you bet your a-- the tab will need to be
 named PooTime. If not, your code isn't gonna run. 
-I mean, c'mon. you know what you're doing, right?
+I mean, c'mon... You know what you're doing, right? 
+This is also true when exporting to an application.
 <LI>Don't name your sketch the same thing as a library or other class
 that's used in your sketch. For instance, your sketch shouldn't be named
-"Server" if you've imported the net library, because it already has a 
-class named Server. You can be more creative than that.
-<LI>When exporting to an application, the same deal applies with Java
-mode and knowing what you're doing. See the notes on 
-<A HREF="export.html#application">export to application</A>.
+"Server" if you've imported the net library, because it already has  
+something called Server. You can be more creative than that.
       </td>
     <td width="50">&nbsp;</td>
   </tr>
@@ -724,19 +776,27 @@ Windows. We use QuickTime for Java, which is sometimes difficult to
 install or can be flakey. Someday in the future perhaps we can
 circumvent this mess.
 <br> <br>
-The QuickTime 7 upgrade released April 29, 2005 (and now included with
+All Platforms
+<UL>
+<LI>The video library is only supported on Windows and Mac OS, because it relies on QuickTime for Java. There has been discussion of using other libraries (such as JMF) to bring support to Linux, search <A HREF="http://processing.org/discourse">discourse</A> for more information.
+<LI>An error that reads <TT>quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror</TT> when trying to capture video probably means that 1) no camera is plugged in 2) the camera is not turned on or 3) on Windows, the VDIG for the camera (see below) is not installed.
+<LI>The QuickTime 7 upgrade released April 29, 2005 (and now included with
 iTunes 6) introduces its own unique set of problems. See caveats and fun
 below for your platform.
 <br> <br>
-The message "This version of QuickTime for Java has expired" is an Apple bug,
-and is fixed in the version of QuickTime that is included with iTunes
-6.0.1 (or later), or, as of 20 October 2005, is available separate
-from iTunes <A
+<LI>The message "This version of QuickTime for Java has expired" 
+is an Apple bug, and is fixed in the version of QuickTime that is 
+included with iTunes 6.0.1 (or later), or, as of 20 October 2005, 
+is available separate from iTunes <A
 HREF="http://www.apple.com/quicktime/download/standalone.html">here</A>.
 <br> <br>
-You can find more discussion about video and problems that people have
+<LI>Video performance is not particularly great. The library is simply not built (and Java is not currently capable) of moving around 640x480 video on most machines, much less doing analysis on the video. The library was intended as a way to get pixels and manipulate them (either small pixel buffers interactively, or large ones for non real-time use). There are better tools for real-time, large screen analysis. It is my estimate that a 2x performance increase can probably be obtained by making better use of the QuickTime for Java library, but this still may not be enough to do analysis of 640x480 pixels at 30 frames per second, so it remains a lower priority. As always <A HREF="http://dev.processing.org/">contributions are welcome</A>, in case you're a video hacker who wants to help improve the library. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=40">Bug 40</A>)
+<LI><STRIKE>Projects that use video cannot (currently?) be exported to the
+web.</STRIKE> As of release 0116, video playback runs just fine from the web, but video capture requires a signed applet (for security reasons). See the applet applet troubleshooting section for information about signed applets. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=44">Bug 44</A>) 
+<LI>QuickTime movies are treated as nothing but pixel data in Processing. This means that none of the interaction features (fancy "click here to start movie" buttons and the like) are supported, and that other features such as QTVR won't work either. 
+<LI>You can find more discussion about video and problems that people have
 had over in the <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera">Video & Movies</A> section of the discourse board. And if you find a bug, please use the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
-<br> <br>
+</UL>
 Windows
 <UL>
 <LI>In order for camera input to work, you'll need to install a
@@ -817,19 +877,6 @@ then it means you need to update and/or reinstall QuickTime. There
   was some monkey business about QuickTime for Java updates being out
 of sync with the Apple's Java updates, and this is one of the leftovers
 of that scenario. Blame Apple. Blame Canada.
-</UL>
-
-Linux (or any platform besides Mac and Windows)
-<UL>
-<LI>The video library is only supported on Windows and Mac OS, because it relies on QuickTime for Java. There has been discussion of using other libraries (such as JMF) to bring support to Linux, search <A HREF="http://processing.org/discourse">discourse</A> for more information.
-</UL>
-
-All Platforms
-<UL>
-<LI>Video performance is not particularly great. The library is simply not built (and Java is not currently capable) of moving around 640x480 video on most machines, much less doing analysis on the video. The library was intended as a way to get pixels and manipulate them (either small pixel buffers interactively, or large ones for non real-time use). There are better tools for real-time, large screen analysis. It is my estimate that a 2x performance increase can probably be obtained by making better use of the QuickTime for Java library, but this still may not be enough to do analysis of 640x480 pixels at 30 frames per second, so it remains a lower priority. As always <A HREF="http://dev.processing.org/">contributions are welcome</A>, in case you're a video hacker who wants to help improve the library. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=40">Bug 40</A>)
-<LI><STRIKE>Projects that use video cannot (currently?) be exported to the
-web. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=44">Bug 44</A>)</STRIKE> As of release 0116, video playback runs just fine from the web, but video capture requires a signed applet (for security reasons). See the applet applet troubleshooting section for information about signed applets.
-<LI>QuickTime movies are treated as nothing but pixel data in Processing. This means that none of the interaction features (fancy "click here to start movie" buttons and the like) are supported, and that other features such as QTVR won't work either. 
 </UL>
       </td>
     <td width="50">&nbsp;</td>
@@ -967,7 +1014,7 @@ them: beta code that runs as root and handles files? yeah great...)
 OpenGL Issues
 </b> <br> <br>
 <UL>
-<LI><EM>Try updating your drivers</A>. 
+<LI><EM>Try updating your drivers</EM></A>. 
 If you're getting a blank screen with sketch that uses OpenGL, 
 or the sketch is hanging or starting very slowly, you likely need to
 update your drivers. Release 0110 and later use a newer version of
@@ -983,7 +1030,7 @@ system is up to date. For instance, OS X 10.4.2 has problems with
   results will be unexpected (windows from the other app showing
   through to the Processing window, etc.)
 
-<LI>OpenGL is really memory hungry because of how tetxures work. In
+<LI>OpenGL is really memory hungry because of how textures work. In
 OpenGL mode, your images as the next power of two larger in either
 direction. This means an image that's 40x190 pixels will be stored as
 a 64x256 pixel x 4 bytes per pixel array (along with the original
@@ -992,9 +1039,11 @@ can optimize in the future, however no attempt will be made until the
 surrounding code is debugged. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=150">Bug 150</A>)
 
-<LI>OpenGL sketches cannot be exported to run in a browser. The export
+<STRIKE><LI>OpenGL sketches cannot be exported to run in a browser. The export
 probably won't give an error, but they won't run properly. It's not
-clear whether this is something that we can fix for the future.
+clear whether this is something that we can fix for the future.</STRIKE>
+OpenGL sketches run on the web starting with release 0113.
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>)
 
 <LI>OpenGL requires Java 1.4 or later. 
 
