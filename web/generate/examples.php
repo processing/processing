@@ -29,11 +29,11 @@ $html = "<div class=\"ref-col\">\n";
 foreach ($categories as $cat => $array) {
 	
 	#$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
-	$html .= "<b>$cat</b>\n<p>";
+	$html .= "<p><b>$cat</b><br />";
 	foreach ($array as $file => $name) {
 		$html .= "\t<a href=\"examples/".strtolower($file)."\">$name</a><br />\n";
 	}
-	echo '<br /></p>';
+	echo '</p>';
 	
 	if (in_array($cat, $break_after)) {
 		$html .= "</div><div class=\"ref-col\">";
