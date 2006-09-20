@@ -33,7 +33,7 @@ foreach ($categories as $cat => $array) {
 	foreach ($array as $file => $name) {
 		$html .= "\t<a href=\"examples/".strtolower($file)."\">$name</a><br />\n";
 	}
-	echo '<br /></p>';
+	echo '</p><p>&nbsp;</p>';
 	
 	if (in_array($cat, $break_after)) {
 		$html .= "</div><div class=\"ref-col\">";
