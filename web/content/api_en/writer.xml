@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>writer()</name>
+
+<category>Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+PrintWriter output;
+
+void setup() {
+  output = new writer("positions.txt"); // Create a new file in the sketch directory
+}
+
+void draw() {
+  point(mouseX, mouseY);
+  output.println(mouseX; // Write the coordinate to the file
+}
+
+void keyPressed() {
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  exit(); // Stops the program
+}
+
+</code>
+</example>
+
+<description>
+Creates and returns a new PrintWriter object.
+</description>
+
+<syntax>
+writer(<c>filename</c>)
+</syntax>
+
+<parameter>
+<label>filename</label>
+<description>String: filename for output</description>
+</parameter>
+
+<returns></returns>
+
+<related>
+PrintWriter
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+</root>
