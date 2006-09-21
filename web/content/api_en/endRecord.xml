@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>beginRecord()</name>
+<name>endRecord()</name>
 
 <category>Output</category>
 
@@ -32,28 +32,22 @@ void keyPressed() {
 </example>
 
 <description>
-Opens a new file and all subsequent drawing functions are echoed to this file as well as the display window. The <b>beginRecord()</b> function requires two parameters, the first is the renderer and the second is the file name. This function is always used with <b>endRecord()</b> to stop the recording process and close the file.
+Stops the recording process started by <b>beginRecord()</b> and closes the file.
 </description>
 
 <syntax>
-beginRecord(<c>renderer</c>, <c>filename</c>)
+endRecord()
 </syntax>
 
 <parameter>
-<label>renderer</label>
-<description>string arra</description>
+<label></label>
+<description></description>
 </parameter>
-
-<parameter>
-<label>filename</label>
-<description>String:  filename for output</description>
-</parameter>
-
 
 <returns></returns>
 
 <related>
-endRecord()
+beginRecord()
 </related>
 
 <availability>1.0</availability>
