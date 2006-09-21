@@ -71,7 +71,7 @@ ORTHOGRAPHIC	LITERAL1
 OPAQUE	LITERAL1
 OPENGL	LITERAL1
 ONE	LITERAL1
-OVERLAY	LITERAL1
+OVERLAY	LITRRAL1
 PAL	LITERAL1
 P2D	LITERAL1
 P3D	LITERAL1
@@ -195,12 +195,14 @@ applyMatrix	KEYWORD2	applyMatrix_
 arc	KEYWORD2	arc_
 Array	KEYWORD1	Array
 []		arrayaccess
+arraycopy	KEYWORD2	arraycopy_
 asin	KEYWORD2	asin_
 =		assign
 atan	KEYWORD2	atan_
 atan2	KEYWORD2	atan2_
 background	KEYWORD2	background_
 beginCamera	KEYWORD2	beginCamera_
+beginRecord	KEYWORD2	beginRecord_
 beginShape	KEYWORD2	beginShape_
 bezier	KEYWORD2	bezier_
 bezierDetail	KEYWORD2	bezierDetail_
@@ -208,7 +210,7 @@ bezierPoint	KEYWORD2	bezierPoint_
 bezierTangent	KEYWORD2	bezierTangent_
 bezierVertex	KEYWORD2	bezierVertex_
 binary	KEYWORD2	binary_
-&		bitwiseAND
+binary	KEYWORD2	bitwiseAND_
 |		bitwiseOR
 blend	KEYWORD2	blend_
 blue	KEYWORD2	blue_
@@ -224,7 +226,7 @@ case	KEYWORD1	case
 ceil	KEYWORD2	ceil_
 char	KEYWORD1	char
 char	KEYWORD2	char_
-class	KEYWORD1	class
+char	KEYWORD2	class_
 color	KEYWORD2	color_
 colorMode	KEYWORD2	colorMode_
 color	KEYWORD1	color_datatype
@@ -237,6 +239,7 @@ contract	KEYWORD2	contract_
 copy	KEYWORD2	copy_
 cos	KEYWORD2	cos_
 createFont	KEYWORD2	createFont_
+createGraphics	KEYWORD2	createGraphics_
 {}		curlybraces
 cursor	KEYWORD2	cursor_
 curve	KEYWORD2	curve_
@@ -260,8 +263,10 @@ ellipseMode	KEYWORD2	ellipseMode_
 else	KEYWORD1	else
 emissive	KEYWORD2	emissive_
 endCamera	KEYWORD2	endCamera_
+endRecord	KEYWORD2	endRecord_
 endShape	KEYWORD2	endShape_
 ==		equality
+exit	KEYWORD2	exit_
 exp	KEYWORD2	exp_
 expand	KEYWORD2	expand_
 extends	KEYWORD1	extends
@@ -274,8 +279,8 @@ floor	KEYWORD2	floor_
 focused	LITERAL2	focused
 for	KEYWORD1	for_
 frameCount	LITERAL2	frameCount
-framerate	KEYWORD2	framerate_
-framerate	LITERAL2	framerate
+frameRate	KEYWORD2	frameRate_
+framerate	LITERAL2	frameRate
 frustum	KEYWORD2	frustum_
 get	KEYWORD2	get_
 <		greaterthan
@@ -318,7 +323,6 @@ log	KEYWORD2	log_
 &&		logicalAND
 !		logicalNOT
 ||		logicalOR
-lookat	KEYWORD2	lookat_
 loop	KEYWORD2	loop_
 mag	KEYWORD2	mag_
 max	KEYWORD2	max_
@@ -367,6 +371,9 @@ param	KEYWORD2	param_
 perspective	KEYWORD2	perspective_
 PFont	KEYWORD1	PFont
 list	KEYWORD2	PFont_list_
+PGraphics	KEYWORD1	PGraphics
+beginDraw	KEYWORD2	PGraphics_beginDraw_
+endDraw	KEYWORD2	PGraphics_endDraw_
 PI	LITERAL1	PI
 PImage	KEYWORD1	PImage
 alpha	KEYWORD2	PImage_alpha_
@@ -383,7 +390,7 @@ pixels	LITERAL2	pixels
 pmouseX	LITERAL2	pmouseX
 pmouseY	LITERAL2	pmouseY
 point	KEYWORD2	point_
-pointLight	KEYWORD2	pointLight_
+point	KEYWORD2	pointLight_
 popMatrix	KEYWORD2	popMatrix_
 pow	KEYWORD2	pow_
 print	KEYWORD2	print_
@@ -391,6 +398,9 @@ printCamera	KEYWORD2	printCamera_
 println	KEYWORD2	println_
 printMatrix	KEYWORD2	printMatrix_
 printProjection	KEYWORD2	printProjection_
+PrintWriter	KEYWORD1	PrintWriter
+close	KEYWORD2	PrintWriter_close_
+flush	KEYWORD2	PrintWriter_flush_
 pushMatrix	KEYWORD2	pushMatrix_
 quad	KEYWORD2	quad_
 radians	KEYWORD2	radians_
@@ -403,7 +413,7 @@ redraw	KEYWORD2	redraw_
 resetMatrix	KEYWORD2	resetMatrix_
 return	KEYWORD1	return
 reverse	KEYWORD2	reverse_
->>		rightshift
+<<		rightshift
 rotate	KEYWORD2	rotate_
 rotateX	KEYWORD2	rotateX_
 rotateY	KEYWORD2	rotateY_
@@ -413,6 +423,7 @@ saturation	KEYWORD2	saturation_
 save	KEYWORD2	save_
 saveBytes	KEYWORD2	saveBytes_
 saveFrame	KEYWORD2	saveFrame_
+savePath	KEYWORD2	savePath_
 saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
 screen	LITERAL2	screen
@@ -453,6 +464,7 @@ strokeJoin	KEYWORD2	strokeJoin_
 strokeWeight	KEYWORD2	strokeWeight_
 subset	KEYWORD2	subset_
 -=		subtractassign
+super	KEYWORD1	super
 switch	KEYWORD2	switch_
 tan	KEYWORD2	tan_
 text	KEYWORD2	text_
@@ -480,4 +492,5 @@ vertex	KEYWORD2	vertex_
 void	KEYWORD1	void
 while	KEYWORD1	while_
 width	LITERAL2	width
+writer	KEYWORD2	writer_
 year	KEYWORD2	year_
