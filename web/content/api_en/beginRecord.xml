@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>beginRecord()</name>
+
+<category>Output</category>
+
+<subcategory>Files</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+...
+</code>
+</example>
+
+<description>
+This function is always used with <b>endRecord()</b>.
+</description>
+
+<syntax>
+beginRecord(<c>renderer</c>, <c>filename</c>)
+beginRecord(<c>recorder</c>)
+</syntax>
+
+<parameter>
+<label>renderer</label>
+<description>string arra</description>
+</parameter>
+
+<parameter>
+<label>filename</label>
+<description>String:  filename for output</description>
+</parameter>
+
+<parameter>
+<label>recorder</label>
+<description>a rendering context such as PGraphics object</description>
+</parameter>
+
+
+<returns></returns>
+
+<related>
+endRecord()
+</related>
+
+<availability>1.0</availability>
+
+<type>Function</type>
+
+<partof>Core</partof>
+
+
+</root>

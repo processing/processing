@@ -35,17 +35,6 @@ void keyPressed() {
 Allows characters to print to a text-output stream. A new PrintWriter object is created with the <b>writer()</b> function. For the file to be made correctly, it should be flushed and must be closed with its <b>flush()</b> and <b>close()</b> methods (see above example). 
 </description>
 
-<syntax>
-</syntax>
-
-<parameters>
-</parameters>
-
-<field>
-<fname></fname>
-<fdescription></fdescription>
-</field>
-
 <method>
 <mname>flush()</mname>
 <mdescription>Flushes the stream</mdescription>
@@ -54,14 +43,6 @@ Allows characters to print to a text-output stream. A new PrintWriter object is 
 <mname>close()</mname>
 <mdescription>Closes the stream</mdescription>
 </method>
-
-<constructor>
-</constructor>
-
-<cparameter>
-<clabel></clabel>
-<cdescription></cdescription>
-</cparameter>
 
 <returns></returns>
 

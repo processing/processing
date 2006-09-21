@@ -34,6 +34,15 @@ void draw() {
 Main graphics and rendering context, as well as the base API implementation for processing "core". Use this class if you need to draw into an off-screen graphics buffer. A PGraphics object can be constructed with the <b>createGraphics()</b> function. The <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are necessary to set up the buffer and to finalize it. The fields and methods for this class are extensive; for a complete list visit the developer's reference: http://dev.processing.org/reference/core/
 </description>
 
+<method>
+<mname>beginDraw()</mname>
+<mdescription>Sets up the rendering context</mdescription>
+</method>
+<method>
+<mname>endDraw()</mname>
+<mdescription>Finalizes the renderering context</mdescription>
+</method>
+
 <syntax>
 </syntax>
 
