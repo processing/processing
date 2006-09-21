@@ -46,10 +46,6 @@ Closes the <b>PrintWriter</b> object.
 </parameter>
 
 
-<label>alphaArray</label>
-<description>int[]: any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array</description>
-</parameter>
-
 <returns></returns>
 
 <related></related>

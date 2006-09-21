@@ -33,13 +33,13 @@ Set the alpha channel of an image. Because Processing can only load GIF and JPEG
 <label>img</label>
 <description>any variable of type PImage</description>
 </parameter>
-<parameter>
 
+<parameter>
 <label>alphaImg</label>
 <description>PImage: any PImage object used as the alpha channel for "img", needs to be same size as "img"</description>
 </parameter>
-<parameter>
 
+<parameter>
 <label>alphaArray</label>
 <description>int[]: any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array</description>
 </parameter>
