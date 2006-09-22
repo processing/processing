@@ -2368,7 +2368,7 @@ public class PApplet extends Applet
     if (!cursor_visible) return;  // don't hide if already hidden.
 
     if (invisible_cursor == null) {
-      invisible_cursor = new PImage(new int[16*16], 16, 16, ARGB);
+      invisible_cursor = new PImage(16, 16, ARGB);
     }
     // was formerly 16x16, but the 0x0 was added by jdf as a fix
     // for macosx, which didn't wasn't honoring the invisible cursor

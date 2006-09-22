@@ -198,8 +198,7 @@ public class PFont implements PConstants {
 
     images = new PImage[charCount];
     for (int i = 0; i < charCount; i++) {
-      int pixels[] = new int[twidth * theight];
-      images[i] = new PImage(pixels, twidth, theight, ALPHA);
+      images[i] = new PImage(twidth, theight, ALPHA);
       int bitmapSize = height[i] * width[i];
 
       byte temp[] = new byte[bitmapSize];
@@ -889,8 +888,7 @@ public class PFont implements PConstants {
       if (width[index] > maxWidthHeight) maxWidthHeight = width[index];
       if (height[index] > maxWidthHeight) maxWidthHeight = height[index];
 
-      bitmaps[index] = new PImage(new int[width[index] * height[index]],
-                                  width[index], height[index], ALPHA);
+      bitmaps[index] = new PImage(width[index], height[index], ALPHA);
 
       for (int y = minY; y <= maxY; y++) {
         for (int x = minX; x <= maxX; x++) {
@@ -929,7 +927,7 @@ public class PFont implements PConstants {
     // so that this font can be used immediately by p5.
     images = new PImage[charCount];
     for (int i = 0; i < charCount; i++) {
-      images[i] = new PImage(new int[mbox2*mbox2], mbox2, mbox2, ALPHA);
+      images[i] = new PImage(mbox2, mbox2, ALPHA);
       for (int y = 0; y < height[i]; y++) {
         System.arraycopy(bitmaps[i].pixels, y*width[i],
                          images[i].pixels, y*mbox2,
