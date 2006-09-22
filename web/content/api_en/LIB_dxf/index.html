@@ -7,6 +7,11 @@
     
   <p>This library writes all current triangle-based graphics (polygons, boxes, 
     spheres, etc.) to a DXF file. It works with the beginRaw() and endRaw() functions. 
+	These functions will grab the shape data just before it is rendered to the screen. 
+	At this stage, your entire scene is nothing but a long list of lines and triangles. 
+	This means that a shape created with sphere() method will be made up of hundreds of 
+	triangles, rather than a single object.<br />
+	<br />
     Use something like a keyPressed() to trigger it, to avoid writing a file each 
     time through draw(). Usually, the file will be saved to the sketch's folder. 
     Use Sketch &gt; Show Sketch Folder to see it from the Processing Environment.</p>
@@ -36,4 +41,11 @@ void draw() {
     record = false;
   }
 }</pre>
+
+<p>If the results when drawing from P3D or OPENGL to PDF look bizarre, it's probably 
+    because the polygons are not sorted. To attempt sorting of 3D shapes before 
+    they're written to a file, use hint(ENABLE_DEPTH_SORT). This method is still 
+    not particularly good, but will help in some situations. 
+	See <a href="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 
+    #176</a> for status of the implementation.</p>
 </div>

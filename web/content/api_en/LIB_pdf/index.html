@@ -6,7 +6,12 @@
     <h2>PDF</h2>
     
   <p>This library makes it possible to write PDF files directly from Processing. 
-    A series of examples demonstrating some basic uses of the library appear below:</p>
+    These vector graphics files can be scaled to any size and output at very high 
+    resolutions. There are also contributed libraries for exporting images to 
+    SVG and Adobe Illustrator format, check the <a href="http://www.processing.org/reference/libraries/">libraries</a> 
+    section of the website for more information. </p>
+  <p>A series of examples demonstrating some basic uses of the library appear 
+    below:</p>
   
 <p>This example draws a single frame to a PDF file and quits. Note that no window will open, 
 this helps when you're trying to create massive PDF images that are far larger than the screen size.</p>
@@ -154,5 +159,54 @@ PGraphicsPDF pdf = createGraphics(300, 300, PDF, "output.pdf");
 pdf.background(128, 0, 0);
 pdf.line(50, 50, 250, 250);
 pdf.dispose();</pre>
+
+<p>To create vectors from 3D data, use the beginRaw() and endRaw() commands. 
+These commands will grab the shape data just before it is rendered to the screen. 
+At this stage, your entire scene is nothing but a long list of lines and triangles. 
+This means that a shape created with sphere() method will be made up of hundreds of 
+triangles, rather than a single object.</p>
+
+<p>When using beginRaw() and endRaw(), it's possible to write to either a 2D or 3D renderer. 
+For instance, beginRaw() with the PDF library will write the geometry as flattened triangles 
+and lines. </p>
+
+<pre>import processing.pdf.*;
+
+boolean record;
+
+void setup() {
+  size(500, 500, P3D);
+}
+
+// hit 'r' to record a single frame
+void keyPressed() {
+  if (key == 'r') record = true;
+}
+
+void draw() {
+  if (record) {
+    beginRaw(PDF, "output.pdf");
+  }
+
+  // do all your drawing here
+
+  if (record) {
+    endRaw();
+    record = false;
+  }
+}
+</pre>
+
+
+<p>Using the DXF library instead will save the file as 3D data.</p>
+
+  <p>If the results when drawing from P3D or OPENGL to PDF look bizarre, it's probably 
+    because the polygons are not sorted. To attempt sorting of 3D shapes before 
+    they're written to a file, use hint(ENABLE_DEPTH_SORT). This method is still 
+    not particularly good, but will help in some situations. 
+	See <a href="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 
+    #176</a> for status of the implementation.</p>
+
+
   
 </div>
