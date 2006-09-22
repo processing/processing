@@ -5,6 +5,8 @@ require('lib/Ref.class.php');
 require('lib/Translation.class.php');
 $benchmark_start = microtime_float();
 
+// arguments
+$lang = isSet($_GET['lang']) ? $_GET['lang'] : 'en';
 
 // make changes file
 $lib_dir = 'reference/';
@@ -14,9 +16,6 @@ $page->content(file_get_contents($index));
 //make_necessary_directories(BASEDIR.$lib_dir.'/images/include.php');
 writeFile($lib_dir.'/index.html', $page->out());
 
-
-// arguments
-$lang = isSet($_GET['lang']) ? $_GET['lang'] : 'en';
 
 // get translation file
 $translation = new Translation($lang);
