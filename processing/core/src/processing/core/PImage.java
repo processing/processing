@@ -124,6 +124,7 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  /*
   public PImage(int pixels[], int width, int height, int format) {
     this.pixels = pixels;
     this.width = width;
@@ -131,6 +132,7 @@ public class PImage implements PConstants, Cloneable {
     this.format = format;
     this.cache = null;
   }
+  */
 
 
   /**
@@ -446,7 +448,7 @@ public class PImage implements PConstants, Cloneable {
     if (x + w > width) w = width - x;
     if (y + h > height) h = height - y;
 
-    PImage newbie = new PImage(new int[w*h], w, h, format);
+    PImage newbie = new PImage(w, h, format);
 
     int index = y*width + x;
     int index2 = 0;
