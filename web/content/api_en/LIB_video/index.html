@@ -20,12 +20,13 @@
     format of your video source into commonly used video functions. You 
     can get this software from the makers of the video hardware.</p>
     
-    <p>If you are not using an Apple computer, you will also need a VDIG, 
-    a video driver that translates from your hardware to the video functions 
-    used by QuickTime. This software may be included in the software provided 
-    by the maker of your hardware, or you can download the free VDIG available 
-    at http://www.vdig.com and check if it is compatible with your video 
-    camera. The free VDIG is slower than many you pay for.</p>
+    
+  <p>If you are not using an Apple computer, you will also need a VDIG, a video 
+    driver that translates from your hardware to the video functions used by QuickTime. 
+    This software may be included in the software provided by the maker of your 
+    hardware, or you can download the free VDIG available at http://www.vdig.com 
+    and check if it is compatible with your video camera. The free VDIG is slower 
+    than many you pay for. There's more information about this below...</p>
 </div>
 
 <div class="twocol">
@@ -69,4 +70,123 @@
     <br />
     <a href="movieEvent_.html">movieEvent()</a>
     </p>
+</div>
+
+<div class="content">
+<p>      <b>
+Problems with Video (Quicktime for Java)
+</b> <br> <br>
+
+Getting video to work can be kind of a cluster, particularly on
+Windows. We use QuickTime for Java, which is sometimes difficult to
+install or can be flakey. Someday in the future perhaps we can
+circumvent this mess.
+<br> <br>
+All Platforms
+<UL>
+<LI>The video library is only supported on Windows and Mac OS, because it relies on QuickTime for Java. There has been discussion of using other libraries (such as JMF) to bring support to Linux, search <A HREF="http://processing.org/discourse">discourse</A> for more information.
+<LI>An error that reads <TT>quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror</TT> when trying to capture video probably means that 1) no camera is plugged in 2) the camera is not turned on or 3) on Windows, the VDIG for the camera (see below) is not installed.
+<LI>The QuickTime 7 upgrade released April 29, 2005 (and now included with
+iTunes 6) introduces its own unique set of problems. See caveats and fun
+below for your platform.
+<br> <br>
+<LI>The message "This version of QuickTime for Java has expired" 
+is an Apple bug, and is fixed in the version of QuickTime that is 
+included with iTunes 6.0.1 (or later), or, as of 20 October 2005, 
+is available separate from iTunes <A
+HREF="http://www.apple.com/quicktime/download/standalone.html">here</A>.
+
+<br> <br>
+<LI>Video performance is not particularly great. The library is simply not built (and Java is not currently capable) of moving around 640x480 video on most machines, much less doing analysis on the video. The library was intended as a way to get pixels and manipulate them (either small pixel buffers interactively, or large ones for non real-time use). There are better tools for real-time, large screen analysis. It is my estimate that a 2x performance increase can probably be obtained by making better use of the QuickTime for Java library, but this still may not be enough to do analysis of 640x480 pixels at 30 frames per second, so it remains a lower priority. As always <A HREF="http://dev.processing.org/">contributions are welcome</A>, in case you're a video hacker who wants to help improve the library. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=40">Bug 40</A>)
+<LI><STRIKE>Projects that use video cannot (currently?) be exported to the
+web.</STRIKE> As of release 0116, video playback runs just fine from the web, but video capture requires a signed applet (for security reasons). See the applet applet troubleshooting section for information about signed applets. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=44">Bug 44</A>) 
+<LI>QuickTime movies are treated as nothing but pixel data in Processing. This means that none of the interaction features (fancy "click here to start movie" buttons and the like) are supported, and that other features such as QTVR won't work either. 
+<LI>You can find more discussion about video and problems that people have
+had over in the <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera">Video & Movies</A> section of the discourse board. And if you find a bug, please use the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
+
+</UL>
+Windows
+<UL>
+<LI>In order for camera input to work, you'll need to install a
+QuickTime-compatible video digitizer (VDIG). Unfortunately, most
+cameras on Windows don't support QuickTime right off the bat, but
+we've had some luck with <a
+href="http://www.vdig.com/WinVDIG/">WinVDIG</A>. Unfortunately, WinVDIG
+1.0.5 seems to be quite broken (either doesn't work at all, or video
+can't be resized), so you should stick with 
+<A HREF="http://www.vdig.com/WinVDIG/WinVDIG_101.exe">WinVDIG
+1.0.1</A>. 
+<LI>Use the capture application included with the WinVDIG install to make sure that things are working properly (this helps us isolate WinVDIG vs. QuickTime for Java vs. Processing bugs).
+<LI>If you've already installed WinVDIG 1.0.5, do an uninstall, and be sure to say "Yes To All" (or the equivalent for your language) when it asks whether you want to de-install the DLLs. 
+<LI>If you're completely stuck on the WinVDIG problems, some have found happiness with this solution from pandaman: "I deleted the files vsVDIG from system32/quicktime AND program files/quicktime and deleted VSdump from system32- uninstalled vdig - reinstalled vdig 1.01 and things seem to be working now". It always makes us scared to go deleting things in System32, much less Program Files. But depending on your level of frustration, the possibility of hurting your Windows install may even sound enticing. Be sure to follow that line of instructions <EM>carefuly</EM>. I spent half an hour trying to reinstall WinVDIG on a student's machine because I missed some of it.
+<LI>If you want to avoid QuickTime 7, use the <A
+HREF="http://www.apple.com/support/downloads/quicktime652forwindows.html">QuickTime
+6.5.2</A> installer that's buried on Apple's site. Uninstall QuickTime
+7 before installing 6.5 (see below). You will also have to use a
+version of iTunes that's compatible with QuickTime 6 (anything earlier
+than iTunes 6).
+
+<LI>If you're installing QuickTime 6.5, you must make sure that
+"QuickTime for Java" is included. During the
+installation, use the "Custom" install, scroll down, and make sure the
+checkbox next to "QuickTime for Java" is marked. You will also need to
+follow this process if you have already installed QuickTime 6, and did
+not use the "Custom" or "Full" install. To remedy this, use the
+QuickTime Updater from the QuickTime folder that's added to the Start
+menu.
+<LI>For QuickTime 7 (iTunes 6 and later), you'll need to use release
+0093 (or later) of Processing. QuickTime 7 causes 0092 and earlier to
+break because Apple decided to move the location of several installed
+files.
+<LI>Better yet, you should use release 0102 (or later) of
+Processing, which also fixes a number of QuickTime-related issues.
+<LI>If you're still having trouble, sometimes a full uninstall/reinstall 
+of Quicktime will do the trick. This may take a good bit of
+work. First try using Add/Remove Programs to uninstall. At some point
+you might get an "Error 1714" saying that "The older version of
+QuickTime cannot be removed." The solution from Apple is to delete
+C:\WINDOWS\TEMP, and then clean remnants of QuickTime from the
+registry as outlined in <A
+HREF="http://support.microsoft.com/default.aspx?scid=kb;en-us;290301">this</A>
+Microsoft Support document. More discussion of installer-related
+issues can be seen at <A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=171">Bug 171</A>.
+<LI>Video sometimes likes to crash the application completely on
+  Windows. This seems to be due to problems with QuickTime for Java
+  (since we shouldn't be able to write code that crashes using
+  Java.. heh right), so these situations are probably outside of our
+  control.
+<LI>pause() and framerate() aren't working with the video library.
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=370">Bug 370</A>)
+</UL>
+
+Mac OS X
+<UL>
+
+<LI>If you're having problems since the QuickTime 7 update, one option
+is to reinstall QuickTime 6. Apple has provided a QuickTime 6.5.2
+reinstallers for <a
+href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime701.html">QuickTime 7.0.1</a> and <a
+href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime70.html">QuickTime
+7.0</A> that you can use to return to your previous configuration. If
+you're using QuickTime 7.0.3 or 7.0.4, you'll have to first downgrade
+to 7.0.1, using the QuickTime 7.0.1 reinstaller for <A
+HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime703.html">QuickTime
+7.0.3</A> or <A
+HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime704.html">QuickTime 7.0.4</A>.
+<LI>On Mac OS X 10.2 (Jaguar, or Jagwyre if you like black turtlenecks),
+QuickTime for Java was missing from the initial release of QuickTime
+6.4. An upgrade to QuickTime 6.4 that includes QuickTime for Java is
+available from software update. We don't recommend using 10.2 (we
+don't have time to support it), so if you can move to Panther or
+later, it's highly recommended.
+<LI>If you get the following error:
+<tt>Exception in thread "main" java.lang.NoClassDefFoundError: 
+  com/apple/mrj/macos/carbon/CarbonLock</tt>
+then it means you need to update and/or reinstall QuickTime. There
+  was some monkey business about QuickTime for Java updates being out
+of sync with the Apple's Java updates, and this is one of the leftovers
+of that scenario. Blame Apple. Blame Canada.
+
+</UL></p>
 </div>
