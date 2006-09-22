@@ -262,6 +262,9 @@ p.exhibition-nav { margin-top: 0; }
 
 /**************************************************************** Reference ***/
 
+
+#Language h5 a { float: left; margin-left: -30px; }
+
 #reference-nav { position: relative; height: 2em; padding-top: .5em; }
 #reference-nav p { position: absolute; right: 10px; top: 0; margin: 0; }
 
@@ -356,6 +359,8 @@ div.ref-col { width: 30%;
 	padding: 7px 0 3px 30px; 
 	background: url(/img/back_off.gif) no-repeat 
 }
+
+#Library-index pre { margin-left: 30px; margin-bottom: 30px; }
 
 #Libraries h2 { margin-top: 2em; }
 #Libraries h5 { font-size: 1em; margin: 0; font-weight: bold; }
