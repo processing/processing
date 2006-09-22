@@ -14,6 +14,19 @@ $translation = new Translation($lang);
 // get reference files for the language
 $files = getRefFiles($lang);
 
+// make changes file
+$lib_dir = DISTDIR;
+$index = CONTENTDIR."api_$lang/changes.html";
+//$page = new Page('Language (API) \\ Processing 1.0 (BETA)', 'Language');<br>
+$page = new LocalPage('Language (API) \\ Processing 1.0 (BETA)', 'Language', 'Language', './');
+$page->content(file_get_contents($index));
+writeFile('distribution/changes.html', $page->out());
+
+//$page = new LocalPage('Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Libraries', '../');
+//$page->content(file_get_contents($index));
+//writeFile('distribution/libraries/index.html', $page->out());
+
+
 /*******************************************************
 reference files
 *******************************************************/
