@@ -24,31 +24,27 @@
           
     <pre>import processing.opengl.*;
 
-void setup() 
-{
-    size(800, 600, OPENGL);
-    noStroke();
+float a; 
+
+void setup() {
+  size(800, 600, OPENGL);
+  fill(0, 153);
+  noStroke();
 }
 
-void draw() 
-{
-    float x = mouseX - width/2;
-    background(255);
-    fill(0, 102, 153, 26);
-    for(int i=0; i&lt;height; i+=10) {
-        for(int j=0; j&lt;width; j+=10) {
-            beginShape(QUADS);
-            vertex(x+j,   i,    0);
-            vertex(x+j, i+5,    0);
-            vertex(j-x, i+5, -400);
-            vertex(j-x,   i, -400);
-            endShape();
-        }
-    }
+void draw() {
+  background(255);
+  translate(width/2, height/2);
+  rotateX(a);
+  rotateY(a*2);
+  rect(-200, -200, 400, 400);
+  rotateX(PI/2);
+  rect(-200, -200, 400, 400);
+  a += 0.01;
 }</pre>
 
 
-<h6>Using the OpenGL Renderer (DANGER!!!)</h6>
+<h6>OpenGL Issues</h6>
 <p><UL>
 <LI><EM>Try updating your drivers</EM></A>. 
 If you're getting a blank screen with sketch that uses OpenGL, 
@@ -114,8 +110,8 @@ Daniel Shiffman for finding this fix.
 screens, or other mess, your driver might be bad (really!) 
 For instance, if you're using a Dell, use the driver they provide 
 (<a href="http://support.dell.com">support.dell.com</a>) instead of what
-might be a more recent driver obtained directly from nvidia.com.</p>
-
+might be a more recent driver obtained directly from nvidia.com.
+</p>
 
 
 <h6>Using the OpenGL Renderer (DANGER!!!)</h6>
