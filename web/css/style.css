@@ -351,6 +351,13 @@ div.ref-col { width: 30%;
 	float: left; 
 }
 
+#Library-index .full {
+	width: 650px;
+	float: left;
+	margin-right: 0px;
+	margin-top: 50px;
+}
+
 #Library-index h5 { margin-bottom: 0; font-size: 1em; }
 #Library-index .twocol p { margin-top: 0; }
 .lib-nav { display: block; 
