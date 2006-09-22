@@ -14,7 +14,7 @@ $index = CONTENTDIR."api_$lang/changes.html";
 $page = new Page('Language (API) \\ Processing 1.0 (BETA)', 'Language');
 $page->content(file_get_contents($index));
 //make_necessary_directories(BASEDIR.$lib_dir.'/images/include.php');
-writeFile($lib_dir.'/index.html', $page->out());
+writeFile($lib_dir.'/changes.html', $page->out());
 
 
 // get translation file
