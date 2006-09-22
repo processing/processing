@@ -111,11 +111,20 @@ screens, or other mess, your driver might be bad (really!)
 For instance, if you're using a Dell, use the driver they provide 
 (<a href="http://support.dell.com">support.dell.com</a>) instead of what
 might be a more recent driver obtained directly from nvidia.com.
+</ul>
 </p>
 
 
-<h6>Using the OpenGL Renderer (DANGER!!!)</h6>
-<p>To get access to the GL object, you can use the following:
+<h6>Using the OpenGL Renderer (DANGER!!!)</h6><br>
+<p>Generally, this should be only considered a last-ditch way to get at a particular 
+  GL-specific feature. It makes your code completely incompatible with everything 
+  else (such as future versions of Processing, or other 3D renderers) and will 
+  confuse the hell outta people when you post your code to the web. Again, if 
+  this works for you great, but if not, we will not field questions about it on 
+  the board. If you want to write code for Java and JOGL, then find yourself a 
+  good Java IDE and get JOGL installed, Processing is not the way to do it. Man, 
+  how I'm gonna regret this.</p>
+<p>To get access to the GL object, use the following:
 <PRE>GL gl = ((PGraphicsOpenGL)g).gl;</PRE>
   <p>This will give you the <a href="https://jogl.dev.java.net/">jogl</a> object 
     that talks directly to OpenGL and will let you make OpenGL calls directly. 
@@ -148,13 +157,6 @@ void draw() {
 }
 
 </PRE>
-  Generally, this should be only considered a last-ditch way to get at a particular 
-  GL-specific feature. It makes your code completely incompatible with everything 
-  else (such as future versions of Processing, or other 3D renderers) and will 
-  confuse the hell outta people when you post your code to the web. Again, if 
-  this works for you great, but if not, we will not field questions about it on 
-  the board. If you want to write code for Java and JOGL, then find yourself a 
-  good Java IDE and get JOGL installed, Processing is not the way to do it. Man, 
-  how I'm gonna regret this.</p> 
+  </p> 
   
   </div>
