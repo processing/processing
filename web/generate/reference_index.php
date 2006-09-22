@@ -5,6 +5,16 @@ require('lib/Ref.class.php');
 require('lib/Translation.class.php');
 $benchmark_start = microtime_float();
 
+
+// make changes file
+$lib_dir = 'reference/';
+$index = CONTENTDIR."api_$lang/changes.html";
+$page = new Page('Language (API) \\ Processing 1.0 (BETA)', 'Language');
+$page->content(file_get_contents($index));
+//make_necessary_directories(BASEDIR.$lib_dir.'/images/include.php');
+writeFile($lib_dir.'/index.html', $page->out());
+
+
 // arguments
 $lang = isSet($_GET['lang']) ? $_GET['lang'] : 'en';
 
