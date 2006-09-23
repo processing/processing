@@ -6,7 +6,7 @@ $benchmark_start = microtime_float();
 
 // make troubleshooting page
 $source = CONTENTDIR."/static/";
-$path = BASEDIR;
+$path = BASEDIR."/";
 
 // make troubleshooting page
 #$source = CONTENTDIR."/api_$lang/troubleshooting/";
@@ -20,6 +20,7 @@ $path = BASEDIR;
 
 $page = new Page("Troubleshooting", "Troubleshooting", "Troubleshooting");
 $page->content(file_get_contents($source."faq.html"));
+$page->language('en');
 writeFile($path.'/faq.html', $page->out());
 #copydirr($source.'/images', $path.'/images');
 
