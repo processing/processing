@@ -5,7 +5,7 @@ $benchmark_start = microtime_float();
 
 
 // make troubleshooting page
-$source = CONTENTDIR."/static/";
+$source = CONTENTDIR."static/";
 $path = BASEDIR;
 
 // make troubleshooting page
