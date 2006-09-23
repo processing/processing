@@ -6,7 +6,7 @@ $benchmark_start = microtime_float();
 
 // make troubleshooting page
 $source = CONTENTDIR."/static/";
-$path = BASEDIR."/";
+$path = BASEDIR;
 
 // make troubleshooting page
 #$source = CONTENTDIR."/api_$lang/troubleshooting/";
@@ -32,4 +32,5 @@ $execution_time = round($benchmark_end - $benchmark_start, 4);
 
 <h2>Static page generation Successful</h2>
 <p>Generated files in <?=$execution_time?> seconds.</p>
+<p>Page put here: <?=$source."faq.html"?></p>
 <p>Page put here: <?=$path.'faq.html'?></p>
