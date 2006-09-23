@@ -22,6 +22,12 @@ $page = new LocalPage('Language (API) \\ Processing 1.0 (BETA)', 'Language', 'La
 $page->content(file_get_contents($index));
 writeFile('distribution/changes.html', $page->out());
 
+// make troubleshooting file
+$index = CONTENTDIR."api_$lang/troubleshooting/index.html";
+$page = new LocalPage('Troubleshooting \\ Processing 1.0 (BETA)', 'Troubleshooting', 'Troubleshooting', './');
+$page->content(file_get_contents($index));
+writeFile('distribution/troubleshooting/index.html', $page->out());
+
 //$page = new LocalPage('Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Libraries', '../');
 //$page->content(file_get_contents($index));
 //writeFile('distribution/libraries/index.html', $page->out());
