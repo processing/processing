@@ -44,22 +44,29 @@ li { margin-bottom: 1em; }
 <h1><img src="img/processing_beta_cover.gif" alt="Processing (BETA)" /></h1>
 
 <div id="body">
-
-<h2>Generate for Distribution</h2>
-<ul>
-	<li>Generate for distribution: 
-		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a>
+<p>
+<strong>Generate for Distribution</strong>
+</p>
+<p>		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a>
 		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a>
 		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a>
 		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a>
-		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages</a>
-	</li>
-</ul>
-
-<h2>Generate Site Files</h2>
+		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
+</p>
+<p>&nbsp;</p>
+<strong>Generate Site Files</strong>
 <ul>	
-    <li>Generate <a href="#" onclick="remote_link('cover.php');return false;">Cover</a></li>
-    <li>Generate Reference:<br />
+    <a href="#" onclick="remote_link('cover.php');return false;">Cover</a>
+	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a>
+	<a href="#" onclick="remote_link('examples.php'); return false;">Examples</a>
+	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a>
+	<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a>
+    <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a>
+  	<a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
+    <a href="#" onclick="remote_link('updates.php'); return false;">Updates.html</a>
+	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
+	
+    <p>Generate Reference:<br />
 			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference.php', 
 			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 				<select name="lang">
@@ -71,8 +78,8 @@ li { margin-bottom: 1em; }
 				</select>
 				<input type="submit" value="Generate" />
 			</form>
-    </li>
-	<li>Generate One Reference file: 
+    </p>
+	<p>Generate One Reference file: 
 		<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_one.php', 
 		    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 			<select name="lang">
@@ -85,8 +92,8 @@ li { margin-bottom: 1em; }
 			<label><input type="text" name="file" size="35" value="abs.xml" /></label>
 			<input type="submit" value="Generate" />
 		</form>
-	</li>
-    <li>Generate Reference Indices:<br />
+	</p>
+    <p>Generate Reference Indices:<br />
 			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_index.php', 
 			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 				<select name="lang">
@@ -98,27 +105,17 @@ li { margin-bottom: 1em; }
 				</select>
 				<input type="submit" value="Generate" />
 			</form>
-    </li>
-    <li>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></li>
+    </p>
+    <p>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></p>
 
-	<li>Generate Library References:
+	<p>Generate Library References:
 		<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">English</a>
 		<a href="#" onclick="remote_link('libraries.php', 'lang=tr'); return false;">Turkish</a>
-	</li>
+	</p>
 	
-	<li>Generate for web: 
-		<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a>
-		<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a>
-	</li>
-		
-    <li>Generate <a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a></li>
-    <li>Generate <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a>
-                <a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
-                <a href="#" onclick="remote_link('updates.php'); return false;">Updates.html</a>
-    </li>
-	<li>Generate <a href="#" onclick="remote_link('examples.php'); return false;">Examples</a></li>
-	<li>Generate <a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute)</a></li>
-	<li>Environment pages in 
+
+
+	<p>Environment pages in 
 		<form class="inline" action="#" method="post" onsubmit="new Ajax.Updater('status', 'environment.php', 
 	    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 		<select name="lang">
@@ -129,8 +126,9 @@ foreach ($LANGUAGES as $code => $array) {
 ?>
 		</select>
 		<input type="submit" value="Generate" /></form>
-	</li>
-	<li>Comparison pages in 
+	</p>
+	
+	<p>Comparison pages in 
 		<form class="inline" action="#" method="post" onsubmit="new Ajax.Updater('status', 'compare.php', 
 		    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 			<select name="lang">
@@ -141,17 +139,18 @@ foreach ($LANGUAGES as $code => $array) {
 	?>
 			</select>
 			<input type="submit" value="Generate" /></form>
-		</li>
-</ul>
-
-<h2>Generate Template</h2>
+		</p>
+<p>&nbsp;</p>
+<p>
+<strong>Generate Template</strong>
 <form action="#" method="post" onsubmit="new Ajax.Updater('status', 'template.php', 
     { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
     <label>Title: <input type="text" name="title" size="50" /></label><br />
     <label>Section: <input type="text" name="section" size="30" /></label><br />
     <input type="submit" value="Generate" />
 </form>
-
+</p>
+<p>&nbsp;</p>
 <div id="status-container">
     <h3>Status</h3>
     <div id="status"></div>
