@@ -9,7 +9,7 @@ $lang = isSet($_POST['lang']) ? $_POST['lang'] : 'en';
 
 // make troubleshooting file
 $source = CONTENTDIR."/api_$lang/troubleshooting/";
-$path = DISTDIR."/troubleshooting/";<br>
+$path = DISTDIR."/troubleshooting/";
 make_necessary_directories($path."images/file");
 $page = new LocalPage('Troubleshooting \\ Processing 1.0 (BETA)', 'Troubleshooting', 'Troubleshooting', '../');
 $page->content(file_get_contents($source."index.html"));
