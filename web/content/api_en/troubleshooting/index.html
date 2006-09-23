@@ -15,101 +15,108 @@
 <a href="#known">Known Bugs</a>
 </p>
 
-	<h5 id="found"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
+<!-- NEXT SECTION -->
+
+<h5 id="found"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       I've found a bug!</h5>
+	  
 	<p>
 	<em>I know you're excited, but please avoid the urge to just email
-      us!</em> especially sending mail to Ben or Casey directly. This
-      includes sending us "Instant Messages" on the discourse section
-      of the site. While you may prefer the privacy of a personal
-      message, it's much quicker for
-      you to write to the board, where you'll find all sorts of
-      helpful people who are also often at all hours of the night. If you
-      email us directly, we'll either not respond or just ask you to
-      use the discourse board anyway.
-<br /> <br />
-<em>We spend a lot of
-      our time helping people with Processing, so reading and
-      following these instructions means that you respect our time and
-      don't want to waste it.</em>
-<br /> <br />
-First, read the FAQ. Start with digging through this page and maybe
-      the <A HREF="platforms.html">platforms</A> page too in case it's
-      something specific to your operating system. 
-<br /> <br />
-Second, search the <a href="http://dev.processing.org/bugs/">bug
-database</a> to see if your problem has already been reported. 
-Most often, this will contain background on the bug, a workaround, 
-or hopefully a bit about its status. The bug database is unfortunately
-      incomplete so it doesn't cover everything, but it will get
-      better with time.
+      	us!</em> especially sending mail to Ben or Casey directly. This
+      	includes sending us "Instant Messages" on the discourse section
+      	of the site. While you may prefer the privacy of a personal
+      	message, it's much quicker for
+      	you to write to the board, where you'll find all sorts of
+      	helpful people who are also often at all hours of the night. If you
+      	email us directly, we'll either not respond or just ask you to
+      	use the discourse board anyway.<br /> 
+	  <br />
+	<em>We spend a lot of
+      	our time helping people with Processing, so reading and
+      	following these instructions means that you respect our time and
+      	don't want to waste it.</em><br /> 
+	<br />
+		First, read the FAQ. Start with digging through this page and maybe
+      	the <A HREF="platforms.html">platforms</A> page too in case it's
+      	something specific to your operating system.<br /> 
+	<br />
+		Second, search the <a href="http://dev.processing.org/bugs/">bug
+		database</a> to see if your problem has already been reported. 
+		Most often, this will contain background on the bug, a workaround, 
+		or hopefully a bit about its status. The bug database is unfortunately
+		incomplete so it doesn't cover everything, but it will get
+		better with time.<br />	
+	<br />
+		If you don't find your bug, enter it as a new bug in
+		the database, which we use to keep track of things. If you're having
+      	trouble or find it confusing (or the word "database" gives you
+      	the willies), please post on the
+      	discourse board so that we can get you straightened out.<br /> 
+	<br />
+		When reporting please include information about
+		<ul>
+			<li>the revision number (i.e. 0085)</li>
+			<li>what operating system you're using, and on what kind of hardware</li>
+			<li>a copy of the smallest possible piece of code that will
+   				produce the error you're having trouble with</li>
+			<li> details of the error, either the red spew that you see in the
+				console, or the last few lines from the files stdout.txt or stderr.txt 
+				from the 'lib' folder. </li>
+		</ul>
 
-<br /> <br />
-If you don't find your bug, enter it as a new bug in
-the database, which we use to keep track of things. If you're having
-      trouble or find it confusing (or the word "database" gives you
-      the willies), please post on the
-      discourse board so that we can get you straightened out.
-<br /> <br />
-When reporting please include information about
-<OL>
-<LI> the revision number (i.e. 0085)</LI>
-<LI> what operating system you're using, and on what kind of hardware
-<LI> a copy of the smallest possible piece of code that will
-   produce the error you're having trouble with</LI>
-<LI> details of the error, either the red spew that you see in the
-console, or the last few lines from the files stdout.txt or stderr.txt 
-from the 'lib' folder. </LI>
-</OL>
+	For stranger errors during compile time, you can also look inside the
+	build folder which contains an intermediate (translated into
+	java) version of your code. The build folder is in the same location
+	as preferences.txt: <br />
 
-For stranger errors during compile time, you can also look inside the
-build folder which contains an intermediate (translated into
-java) version of your code. The build folder is in the same location
-as preferences.txt: <br />
+	<UL>
+	<li> Windows: Documents and Settings &rarr; (your user name) &rarr;
+		Application Data &rarr; Processing &rarr; build</li>
+	<li> Mac OS X: Users &rarr; (your user name) &rarr; Library &rarr; 
+		Processing &rarr; build</li>
+	<li> Linux and others: ~/.processing &rarr; build</li>
+	</UL>
 
-<UL>
-<LI> Windows: Documents and Settings &rarr; (your user name) &rarr;
-Application Data &rarr; Processing &rarr; build</LI>
-<LI> Mac OS X: Users &rarr; (your user name) &rarr; Library &rarr; </LI>
+	The more details you can post, the better, because it helps us figure
+	out what's going on. Useful things when reporting:
 
-Processing &rarr; build
-<LI> Linux and others: ~/.processing &rarr; build</LI>
-</UL>
-The more details you can post, the better, because it helps us figure
-out what's going on. Useful things when reporting:
-<UL>
-<LI> We want the minimum amount of code that will still replicate the
-  bug. The worst that can happen is we get a report with a subject
-  saying "problem!" along with a three page program. 
-  Sure, everyone likes a puzzle, but simpler code will receive a 
-  faster response. </LI>
-<LI> Occasionally we may need you to pack up a copy of your sketch folder 
-  or something similar so that we can try and replicate the weirdness 
-  on our own machine. Rest assured, we have no interest in messing with
-  your fancy creations or stealing your ideas. The Processing team is
-  a pair of straight-laced boys who hail from the midwestern U.S. who 
-  were brought up better than that. and as we often lack enough time to
-  build our own projects, we have even less time to spend figuring out
-  other peoples' projects to rip them off.</LI>
+	<UL>
+	<li> We want the minimum amount of code that will still replicate the
+  		bug. The worst that can happen is we get a report with a subject
+  		saying "problem!" along with a three page program. 
+  		Sure, everyone likes a puzzle, but simpler code will receive a 
+  		faster response. </li>
+		<li> Occasionally we may need you to pack up a copy of your sketch folder 
+  		or something similar so that we can try and replicate the weirdness 
+  		on our own machine. Rest assured, we have no interest in messing with
+ 		 your fancy creations or stealing your ideas. The Processing team is
+ 		 a pair of straight-laced boys who hail from the midwestern U.S. who 
+ 		 were brought up better than that. and as we often lack enough time to
+ 		 build our own projects, we have even less time to spend figuring out
+		 other peoples' projects to rip them off.</li>
 </UL>
 
 </p>
+
+
+<!-- NEXT SECTION -->
 	
+<!--
 	<h5 id="wontstart"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Processing won't start! Nothing happens when I click &ldquo;Run&rdquo;!</h5>
 	<p>
 Windows
+
 <UL>
-<LI>If you're using the "without Java" download, try downloading the version that includes Java. Chances are, your machine has Java 1.5 installed, which is <A HREF="platforms#java">not supported</A> and causes lots of headaches. For instance, it won't play nice with some graphics cards and causes the Processing window to come up mostly blank.
-<LI> Processing seems to have trouble starting when run from a user 
+<li>If you're using the "without Java" download, try downloading the version that includes Java. Chances are, your machine has Java 1.5 installed, which is <A HREF="platforms#java">not supported</A> and causes lots of headaches. For instance, it won't play nice with some graphics cards and causes the Processing window to come up mostly blank.
+<li> Processing seems to have trouble starting when run from a user 
 account that contains non-ascii characters. For instance, if your name 
 contains Japanese characters or umlauts, it's likely to have trouble. 
 Sometimes using run.bat instead will fix this. Another fix is to
 create a user account that uses only ascii characters. In the meantime, 
 we're looking for a fix. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=49">Bug 49</A>)
-
-<LI>If you have lots of garbage in your CLASSPATH environment
+<li>If you have lots of garbage in your CLASSPATH environment
   variable, that might cause trouble starting up a sketch. You might
   get "Couldn't find package xxx.xxx" errors. Clean things up by avoiding
   spaces and quotes. This is because of Windows' awesome
@@ -117,33 +124,36 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=49">Bug 49</A>)
   future, we'd like to detect errors like this before they cause
   trouble. That issue is being tracked at <A
   HREF="http://dev.processing.org/bugs/show_bug.cgi?id=112">Bug 112</A>.
-<LI>You might also try using run.bat to start processing. Lots
+<li>You might also try using run.bat to start processing. Lots
   of people seem to have a better time with this method.
-<LI>Some graphics cards have conflicts with Java applications and
+<li>Some graphics cards have conflicts with Java applications and
 therefore Processing, which can cause the application to hang or
 freeze. Under one scenario, disabling anti-aliasing on the card will
 get rid of these problems (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=232">Bug 232</A>).
 
-<LI>If you're still having trouble, try disabling any overly
+<li>If you're still having trouble, try disabling any overly
   protective virus scanning software. It might be holding things up,
   especially when libraries have been imported.
 </UL>
+
 Mac OS X
+
 <UL>
-<LI>First be sure that you're not trying to run Processing from the disk image. As with most programs, Processing needs to be copied to the Applications folder in order for it to run properly.
-<LI>If it's still not working, open Console.app, found in Applications &rarr; Utilities &rarr; Console and see if there are any messages. If you don't know what they mean, post them to the discourse board where someone can help you out.
-<LI>Using developer releases of Java is strongly discouraged. These can often cause problems and we can't possibly support them.
-<LI>If you're running on Mac OS X 10.2, read the <a href="platforms.html#mac">platforms</a> section regarding things that may be broken.
-<LI>Sometimes you might see the following error: <br />
+<li>First be sure that you're not trying to run Processing from the disk image. As with most programs, Processing needs to be copied to the Applications folder in order for it to run properly.
+<li>If it's still not working, open Console.app, found in Applications &rarr; Utilities &rarr; Console and see if there are any messages. If you don't know what they mean, post them to the discourse board where someone can help you out.
+<li>Using developer releases of Java is strongly discouraged. These can often cause problems and we can't possibly support them.
+<li>If you're running on Mac OS X 10.2, read the <a href="platforms.html#mac">platforms</a> section regarding things that may be broken.
+<li>Sometimes you might see the following error: <br />
 
 <TT>dyld: /Applications/processing/jikes version mismatch for library:<br />/sw/lib/libiconv.2.dylib (compatibility version of user: <br />
 5.0.0 greater than library's version: 3.0.0)</TT> <br />
 It seems that this happens when an older version of <a href="http://fink.sourceforge.net">Fink</A> is installed. In this case, you should either update or uninstall Fink. (thanks to Ryan Govostes for tracking this down)
 </UL>
 Linux
+
 <UL>
-<LI>If you get an error reading <TT>jikes: error while loading 
+<li>If you get an error reading <TT>jikes: error while loading 
 shared libraries: libstdc++.so.5: cannot open shared object file: 
 No such file or directory</TT>,
 It's because Processing requires libstdc++-libc6.2-2.so.3 for jikes. 
@@ -155,79 +165,96 @@ processing-XXXX folder and you should be all set. (<A
 HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)
 
 <br /> <br />
-<LI>Or if you encounter a problem like this one: <TT>jikes: relocation
+<li>Or if you encounter a problem like this one: <TT>jikes: relocation
 error: /opt/processing-0087/./jikes: undefined symbol:
 __dynamic_cast_2</TT>, then that also means that jikes is incompatible
 with your distro. (Also <A
 HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)
 </UL>
 Any Platform
+
 <UL>
-<LI> 
+<li> 
 Errors inside code that is outside of setup() or draw() may just
 hang/freeze Processing. For instance, with this code, if "blah.vlw" is
 not in the "data" folder, it may just hang:
-<PRE>  PFont font = loadFont("blah.vlw");
+<pre>  PFont font = loadFont("blah.vlw");
 
   void setup {
     // your awesome code
-  }</PRE>
+  }</pre>
 In general, a better practice is to use loadFont() (and
 loadImage and the rest) inside of a function like setup().
-    </p>
+	</li></UL>
+</p>
+
+-->
+
+<!-- NEXT SECTION -->
 	
 	<h5 id="revisions"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       This used to work and now it doesn't</h5>
 	<p>Read the <a href="../changes.html">changes</A> section of the reference.</p>
+
 	
+<!-- NEXT SECTION -->
+	
+<!--
 	<h5 id="applet"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Export and Browser Troubles</h5>
+
 	<p>
 Sketches (applets) often have trouble once exported that will cause
-errors in a browser. <br /> <br />
+errors in a browser. <br /> 
+<br />
 
 To figure out what your problem is, you should first check the Java
 (not JavaScript!) console. On Windows, right-click the coffee cup at
 the right of the task bar, and select "Open Console". On Mac OS X, go
 to Applications &rarr; Utilities &rarr; Console.app and see what the last
 few error messages were.
-<br /> <br />
+<br /> 
+<br />
 The most common cause is a security issue. For details on how to avoid
 this, see <A HREF="export.html#signing">this section</A> of the FAQ. 
 Java applets aren't allowed to do things like the following:
+
 <UL>
-<LI>Applets cannot open or write to files on the local machine. So
+<li>Applets cannot open or write to files on the local machine. So
 things like saveFrame() will cause an error when run from an
 applet. To read files, make sure that you use "Add File..." to add the
 file to your sketch (or place it in the data folder yourself) so that
 it will be included when exported. Then, only use functions like
-loadStrings(), loadImage(), openStream(), etc. to read data from your file.
-<LI>Applets may not connect to servers other than the one from which
+loadStrings(), loadImage(), openStream(), etc. to read data from your file.</li>
+
+<li>Applets may not connect to servers other than the one from which
 they came. If you need to redirect things from another server, you can
 write a short script that will do it, understanding the possible
-security consequences for your own machine.
-<LI>Applets are also not allowed to do things like capture video or
+security consequences for your own machine.</li>
+
+<li>Applets are also not allowed to do things like capture video or
 audio. You don't want a malicious applet that turns on your webcam and
-starts sending things back to their server.
-<LI>
+starts sending things back to their server.</li>
 </UL>
 
 Other issues:
 <UL>
-<LI>Another common problem is placing images or files into the sketch
+<li>Another common problem is placing images or files into the sketch
 folder by hand, rather than placing them in the data folder (or using
 "Add File..." to do so automatically). This will work from the
 PDE, but on export, the files won't be in included with your sketch
-because they're not in the data folder.
-<LI>Watch out for issues with capitalization! Windows and Mac OS don't
+because they're not in the data folder.</li>
+
+<li>Watch out for issues with capitalization! Windows and Mac OS don't
 care about capitalization, so "blah.JPG" looks just the same as
 "blah.jpg". However, since most servers run on Unix, capitalization
 becomes a huge problem, because it must be exact. We've added some
 checks to try and catch this (at least for images) but they're not
 perfect. This can especially be a problem when the .JPG extension is
 not even visible (the default on Windows), so you don't know whether
-it's upper or lower case.
-<LI> If you get a "ClassCastException" when trying to run your code 
+it's upper or lower case.</li>
+
+<li>If you get a "ClassCastException" when trying to run your code 
   in a browser, you're probably trying to run non-Java 1.1 compliant 
   code. This means any classes that didn't exist in java 1.1. Or, 
   if if you're exporting as applet, variables that are 'final int' 
@@ -235,8 +262,9 @@ it's upper or lower case.
   a maching that only has Java 1.1 installed (i.e. running Microsoft's 
   Java on Windows). You should also avoid using "final" variables 
   <em>inside</em> of methods, since those aren't supported by 
-  Microsoft's VM (and that's the one most widely installed).
-<LI>Your browser may be using an old version of an
+  Microsoft's VM (and that's the one most widely installed).</li>
+  
+<li>Your browser may be using an old version of an
 applet. Unfortunately it's often difficult to get your browser to
 flush its cache. You
 may need to quit all instances of the browser, use alt-reload (or ctrl
@@ -247,18 +275,29 @@ cache too. This is different across all platforms, but if someone
 wants to write a good explanation for any platform they're familiar
 with, please post on the <A
 HREF="http://processing.org/discourse/">discourse</A> area of the site
-and we'll add it to the FAQ.
+and we'll add it to the FAQ.</li>
 </UL>
-Some libraries simply don't work with the web (at least not for now):
-<UL>
-<LI><strike>You cannot use the OpenGL library from the web. </STRIKE>(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>) As of revision 0113, it's possible for applets that use the OPENGL renderer setting to run from the web.
 
-<LI><STRIKE>The video library (both Capture and Movie) cannot be used on the
+Some libraries simply don't work with the web (at least not for now):
+
+<UL>
+<li><strike>You cannot use the OpenGL library from the web. </STRIKE>
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>) 
+As of revision 0113, it's possible for applets that use the OPENGL renderer 
+setting to run from the web.</li>
+
+<li><STRIKE>The video library (both Capture and Movie) cannot be used on the
 web</STRIKE> As of release 0115, it's possible to play back movies via the web,
-however you still cannot capture video without a signed applet (see above).
+however you still cannot capture video without a signed applet (see above).</li>
 </UL>
       </p>
 	
+-->
+	
+<!-- NEXT SECTION -->
+
+
+	<!--
 	<h5 id="memory"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Out Of Memory Errors</h5>
 	<p>
@@ -273,17 +312,17 @@ When you hit run, you'll get error messages. <br /> <br />
 
 This message means that you're trying to use more memory than the 
 machine has installed:
-<PRE>
+<pre>
 
 Error occurred during initialization of VM
 Could not reserve enough space for object heap
 
-</PRE>
+</pre>
 
 These mean that you're trying to use more memory than the
 Operating System allows (regardless of how much RAM you have):
 
-<PRE>
+<pre>
 
 Invalid maximum heap size: -Xmx5000m
 Could not create the Java virtual machine.
@@ -292,7 +331,7 @@ Invalid maximum heap size: -Xmx5g
 The specified size exceeds the maximum representable size.
 Could not create the Java virtual machine.
 
-</PRE>
+</pre>
 
 On Windows with 1G of RAM, it seems to be in
 the neighborhood of 1.5 GB. Mac OS X and Linux seem to allow up to 
@@ -311,8 +350,7 @@ libraries page as another alternative for creating large format images.
 <br /> <br />
 There are also two known bugs that eat memory:
 <UL>
-<LI>OpenGL is really memory hungry because of how textures work.
-<LI>
+<li>OpenGL is really memory hungry because of how textures work.
 </UL>
 
 <!--
@@ -324,7 +362,7 @@ as a separate Java program, which we sometimes call running "externally".
 To increase the amount of memory available to those programs, open
 your preferences.txt file and edit the run.options line to include
 something like:
-<PRE>-Xms128m -Xmx1024m</PRE>
+<pre>-Xms128m -Xmx1024m</pre>
 This will increase the amount of RAM to 128 megabytes of stack, and
 1024 megabytes of heap (the latter being effectively usable RAM).
 This will eventually be a setting that's added to the preferences
@@ -343,110 +381,142 @@ as another alternative for creating large format images.
 The preferences.txt file is stored in different locations on each
 platform:
 <UL>
-<LI> Windows: Documents and Settings &rarr; (your user name) &rarr;
+<li> Windows: Documents and Settings &rarr; (your user name) &rarr;
 Application Data &rarr; Processing &rarr; preferences.txt
-<LI> Mac OS X: Users &rarr; (your user name) &rarr; Library &rarr; 
+<li> Mac OS X: Users &rarr; (your user name) &rarr; Library &rarr; 
 Processing &rarr; preferences.txt
-<LI> Linux and others: ~/.processing &rarr; preferences.txt
+<li> Linux and others: ~/.processing &rarr; preferences.txt
 </UL>
 To increase the amount of memory for Processing itself and for
 sketches that are not running externally: 
 <UL>
-<LI>On Windows, try adjusting the parameters in the file 'run.bat' and
+<li>On Windows, try adjusting the parameters in the file 'run.bat' and
 use that to run instead of Processing.exe. Short instructions can be
 found inside that file. It appears that the maximum amount of RAM that
 can be used on Windows is around 1.4 GB.
 <br /> <br />
-<LI>On Mac OS X, right-click on Processing, select Show Package
+<li>On Mac OS X, right-click on Processing, select Show Package
 Contents, then edit "Info.plist" inside "Contents". Change these
 lines:
-<PRE>&lt;key&gt;VMOptions&lt;/key&gt;
-&lt;string&gt;-Xms128M -Xmx256M&lt;/string&gt;</PRE>
+<pre>&lt;key&gt;VMOptions&lt;/key&gt;
+&lt;string&gt;-Xms128M -Xmx256M&lt;/string&gt;</pre>
 to set to something higher than 128M and 256M (128 and 256 megabytes
 of ram) as you need to (and at your own risk).
 <br /> <br />
-<LI>On Linux, adjust the Processing shell script as needed.
+<li>On Linux, adjust the Processing shell script as needed.
 </UL>
---></p>
+--></p>-->
+
 	
+<!-- NEXT SECTION -->
+
+<!--
 	<h5 id="strings"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Why don't these Strings equal?</h5>
 	<p>
 Comparing a string (quoted text) is different in Processing (Java) than it is in
 ActionScript, which often confuses people. For instance, while this
 might make sense:
-<PRE>String[] lines = loadStrings("sometext.txt");
+<pre>String[] lines = loadStrings("sometext.txt");
 for (int i = 0; i < lines.length; i++) {
   if (lines[i] == "hello") { 
     println("hello found on line: " + i); // you'll never see this
   }
-}</PRE>
+}</pre>
 You'll never see the message, even if "hello" is in the list. 
 This is because a String is an <em>object</em>
 in Java, comparing them with == will only compare whether the two
 things are pointing at the same memory, not their actual
 contents. Instead, use equals() or one of the other String methods:
-<PRE>String[] lines = loadStrings("sometext.txt");
+<pre>String[] lines = loadStrings("sometext.txt");
 for (int i = 0; i < lines.length; i++) {
   if (<B>lines[i].equals("hello")</B>) {
     println("hello found on line: " + i); // happiness
   }
-}</PRE>
+}</pre>
       </p>
+
+-->
+<!-- NEXT SECTION -->
+<!--
 	
 	<h5 id="integers"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Why does 2 / 5 = 0 instead of 0.4?</h5>
 	<p>
 The result of dividing two integers will always be another integer:
-<PRE>int a = 2;
+<pre>int a = 2;
 int b = 5;
 int result = a / b;
-// result is zero</PRE>
+// result is zero</pre>
 While somewhat confusing at first, this is later useful for more
 advanced programming. <br /> <br />
 
 To get fractions, use a 'float' instead: 
-<PRE>float a = 2.0;
+<pre>float a = 2.0;
 float b = 5.0;
 float result = a / b;
-// result is 0.4</PRE>
+// result is 0.4</pre>
 It is not enough to just divide two integers and set them to a float:
-<PRE>float y = 2 / 5;</PRE>
+<pre>float y = 2 / 5;</pre>
 In this case, integer 2 is divided by 5, which is zero, and then zero
 is assigned to a float. The number doesn't become a float until the
 lefthand side of the = sign. On the other hand, this:
-<PRE>float y = 2.0 / 5;</PRE>
+<pre>float y = 2.0 / 5;</pre>
 will work just fine. In this case, Java sees that 2.0 is a float, so
 it also converts the 5 to a float so that they can be divided, which
 makes it identical to:
-<PRE>float y = 2.0 / 5.0;</PRE>
+<pre>float y = 2.0 / 5.0;</pre>
 and because floats are being used on the righthand side, the result
 will be a float, even before it gets to the lefthand side.
     </p>
+-->
+
+<!-- NEXT SECTION -->
+
 	
 	<h5 id="issues"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Common Issues (not bugs)</h5>
 	<p>...</p>
+
+
+<!-- NEXT SECTION -->
+
 	
 	<h5 id="video"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Problems with Video</h5>
 	<p>...</p>
+
+
+<!-- NEXT SECTION -->
+
 	
 	<h5 id="serial"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Problems with the Serial Port</h5>
 	<p>...</p>
+
+
+<!-- NEXT SECTION -->
+
 	
 	<h5 id="opengl"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Problems with OpenGL</h5>
 	<p>...</p>
+
+
+<!-- NEXT SECTION -->
+
 	
 	<h5 id="cantfix"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Things that we probably can't fix</h5>
 	<p>...</p>
+
+
+<!-- NEXT SECTION -->
+
 	
 	<h5 id="known"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Known Bugs</h5>
 	<p>...</p>
-
-
-</p>
+	
+	
+<!-- NEXT SECTION -->

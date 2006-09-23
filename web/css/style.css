@@ -200,6 +200,8 @@ code {
 	line-height			: normal; color: #000000;
 }
 
+li {margin-bottom: 1em; }
+
 .error { color: #f00; margin: 0; }
 
 /* ================== RANDOM CLASSES =============== */
