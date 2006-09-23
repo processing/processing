@@ -10,7 +10,7 @@ $pages = array(
     'Download'      => array('/download/index.html', 1),
     'Discourse'     => array('/discourse/index.html', 1),
     'Contribute'    => array('/contribute/index.html', 1),
-    'FAQ'           => array('/faq/index.html', 1),
+    'FAQ'           => array('/faq.html', 1),
     'Language'      => array('/reference/index.html', 1),
     'Environment'   => array('/reference/environment/index.html', 2),
     'Libraries'     => array('/reference/libraries/index.html', 2),
@@ -36,7 +36,7 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . l('Download', $section == 'Download') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Discourse', $section == 'Discourse') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Contribute', $section == 'Contribute') . "\n";
-    $html .= "\t\t\t\t\t" . "<a href=\"/faq/index.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
+    $html .= "\t\t\t\t\t" . "<a href=\"/faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
        
     $html .= "\t\t\t\t</div>\n";
     
@@ -96,7 +96,7 @@ function local_nav($section, $rel_path='')
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}compare/index.html\"" . ($section == 'Comparison' ? 'class="active"' : '') . ">Comparison</a> \\ \n";
 	$html .= "\t\t\t\t\t<a href=\"{$rel_path}troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">Troubleshooting</a>\n";
-
+ 	$html .= "\t\t\t\t\t<a href=\"{$rel_path}faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
     
     $html .= "\t\t\t\t</div>\n";
     $html .= "\t\t\t</div>\n";
