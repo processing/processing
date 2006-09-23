@@ -1,5 +1,3 @@
-<html><body>
-
 <h1 id="top"><img src="../compare/images/header.gif" alt="Comparison. Comparing Processing to other languages exposes its unique and similar qualities. Comparison also assists people familiar with one language in transferring their knowledge." /></h1>
 
 <p><a href="#found">I've found a bug!</a><br />
@@ -9,10 +7,10 @@
 <a href="#memory">Out Of Memory Errors</a> <br />
 <a href="#strings">Why don't these Strings equal?</a> <br />
 <a href="#integers">Why does 2 / 5 = 0 instead of 0.4?</a> <br />
-<a href="#issues">Common Issues (not bugs)</a> <br />
 <a href="#video">Problems with Video</a> <br />
 <a href="#serial">Problems with the Serial Port</a> <br />
 <a href="#opengl">Problems with OpenGL</a> <br />
+<a href="#issues">Common Issues (not bugs)</a> <br />
 <a href="#cantfix">Things that we probably can't fix</a> <br />
 <a href="#known">Known Bugs</a>
 </p>
@@ -463,20 +461,13 @@ and because floats are being used on the righthand side, the result
 will be a float, even before it gets to the lefthand side.
     </p>
 
-<!-- NEXT SECTION -->
-
-	
-	<h5 id="issues"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
-      Common Issues (not bugs)</h5>
-	<p>...</p>
-
 
 <!-- NEXT SECTION -->
 
 	
 	<h5 id="video"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Problems with Video</h5>
-	<p>...</p>
+	<p>See the <a href="../libraries/video/">Video library reference</a></p>
 
 
 <!-- NEXT SECTION -->
@@ -484,7 +475,7 @@ will be a float, even before it gets to the lefthand side.
 	
 	<h5 id="serial"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Problems with the Serial Port</h5>
-	<p>...</p>
+	<p>See the <a href="../libraries/serial/">Serial library reference</a></p>
 
 
 <!-- NEXT SECTION -->
@@ -492,15 +483,220 @@ will be a float, even before it gets to the lefthand side.
 	
 	<h5 id="opengl"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Problems with OpenGL</h5>
-	<p>...</p>
+	<p>See the <a href="../libraries/opengl/">OpenGL library reference</a></p>
 
 
 <!-- NEXT SECTION -->
 
 	
+	<h5 id="issues"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
+      Common Issues (not bugs)</h5>
+	<p>
+Things that are often perceived as bugs, but aren't actually 'broken'.
+
+<UL>
+<li>If your code has methods (it's not just in static mode) or needs
+to run over time, it must have a draw() method, otherwise nothing will
+happen.</li>
+
+<li>Any code that accesses the pixels[] array should be placed 
+inside <TT>loadPixels()</TT> and <TT>updatePixels()</TT>. This can be 
+confusing because it was not required in older code, i.e. with alpha 
+releases of Processing prior to release 0085. Strictly speaking, this 
+isn't necessary for P2D and P3D, but is required for the OPENGL and 
+JAVA2D renderer settings. It's best to simply get in the habit of using 
+begin/end in your programs. A complete description can be found in the 
+reference for the <A HREF="http://processing.org/reference/pixels.html">pixels[]</A> array.</li>
+
+
+<li>PSound has been removed as of release 0112. Getting sound to work 
+with Java is a total headache, and therefore something better left to 
+a <A HREF="http://processing.org/reference/libraries/">library</A>. The 
+Sonia and Ess libraries will both provide better audio support. We had 
+hoped to provide a simple means to play audio clips and whatnot, but Sun's 
+audio classes are too buggy across different platforms and different 
+versions of Java. A buggy mess like that requires lots of code (and lots 
+of testing across all our platforms), and we didn't want to muck up the 
+core with that business.</li>
+
+<li>Unless you know what you're doing, you should not have a method 
+in your sketch that's called run() (with no parameters, at least). 
+This will break your sketch. Unfortunately, we can't explicitly disallow it, 
+because some advanced programmers need to write their own run().</li>
+
+<li><EM>Why doesn't saveFrame (or saveStrings or saveBytes) 
+write things to the data folder?</EM>
+   All saveXxxx() functions use the path to the sketch folder, rather than
+   its data folder. Once exported, the data folder will be found inside the
+   jar file of the exported application or applet. In this case, it's not
+   possible to save data into the jar file, because it will often be running
+   from a server, or marked in-use if running from a local file system.
+   With this in mind, saving to the data path doesn't make sense anyway.
+   If you know you're running locally, and want to save to the data folder,
+   use <TT>saveXxxx("data/blah.dat")</TT>.</li>
+
+<li>Objects with alpha (lines or shapes with an alpha fill or stroke,
+images with alpha, all fonts) are displayed in P3D and OpenGL based on
+their drawing order. This creates some annoying effects like making
+things opaque if they're drawn out of order with objects above or
+beneath them. This is simply how most 3D rendering works, but is
+something that we'd like to hide from users in the future. 
+As of revision 0114, the situation can be improved by adding 
+<TT>hint(ENABLE_DEPTH_SORT)</TT> to setup(). However, the implementation
+is far from perfect. It may improve things or it may not, better support
+will arrive in a future release.
+(<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 176</A>)</li>
+
+<li> Names of sketches cannot start with a number, or have spaces
+  inside. This is mostly because of a restriction on the naming of
+  java classes. I suppose if lots of people find this upsetting, we
+  could add some extra code to unhinge the resulting class name from
+  the sketch name, but it adds complexity, and complexity == bugs. :)</li>
+
+<li>Mind the capitalization of built-in functions. If a method or variable 
+name is two words, usually the first word is lowercase and the first letter
+of the second word will be capitalized. For instance: keyPressed, movieEvent, 
+mouseX, etc. If you have a function called mousepressed(), it won't be called 
+when mouse events occur, because it needs the capital P on 'pressed'.</li>
+
+<li>On Mac OS X, the error message: 
+<tt>## Component Manager: attempting to find symbols in a component
+  alias of type (regR/carP/x!bt)</tt> 
+is not something from processing, it is a bug in Roxio Toast 5.2's Video
+  CD Support extension. To suppress the messages, move "Toast Video CD
+  Support.qtx" out of /Library/QuickTime (at least until you need to
+  do Video CD work).</li>
+
+<li>On Windows, sometimes your programs will run in a window that has a 
+  Java coffee cup icon, instead of the usual Processing icon. This 
+  simply means that the application is being run outside of Processing
+  as an external application. This happens when extra libraries, 
+  multiple source code files (more than one tab), or extra code files
+  in the 'code' folder are employed.</li>
+
+<li>As of release 0116, Processing sketches have a default frameRate setting of 60. This prevents sketches from needlessly running too fast and throttling the CPU. However, this is only the "maximum" frame rate, if a lot of computation is in the code, the sketch will attempt to use as much CPU as is available. 
+On Windows, this can sometimes cause audio
+hiccups when an MP3 player is running at the same time, or another 
+application is trying to do something simultaneously. To fix the audio
+issue, add a delay(5) or delay(10) to your code, which will give five 
+or ten milliseconds to other applications so they can breathe. For other
+applications, you may have to set the frameRate() lower, or use a longer
+delay().</li>
+
+<li>mouseX and mouseY always even (or always odd) numbers? By default,
+Windows 2000 (and XP?) seems to skip every other pixel on the screen,
+causing weirdness for some drawing applications done with Processing.
+If you're seeing this, you can fix it by visiting Control Panels
+&rarr; Mouse &rarr; Pointer Options &rarr; Enhance pointer precision.
+(This was actually tracked down by someone else in the community,
+whose name I have misplaced. If it was you, please drop me a line so
+you can be properly cited. This kind of help is huge for us, since
+we're such a small group!)</li>
+
+<li>You may find that pmouseX and pmouseY have different values 
+inside draw() and inside events like mousePressed() and mouseMoved().
+This is because they're used for different roles, so don't mix them!
+Inside draw(), pmouseX and pmouseY update only once per frame (once per trip
+through your draw() method). 
+Inside mouse events, they update each time the event is called. 
+If they weren't separated, then the mouse would be read only once 
+per frame, making response choppy. 
+If the mouse variables were always updated multiple times per frame, 
+using <NOBR><TT>line(pmouseX, pmouseY, mouseX, mouseY)</TT></NOBR> inside 
+draw() would have lots of gaps, because pmouseX may have changed 
+several times in between the calls to line(). Use pmouseX/Y inside draw()
+if you want values relative to the previous frame. Use pmouseX/Y inside the
+mouse functions if you want continuous response.</li>
+
+<li>If your sketch is based on "Java mode", where you explicitly say
+that the class extends PApplet, then the preprocessor assumes that you
+know what you're doing. You'll have to make sure that your code is named
+properly. This means that if you have "public class PooTime extends PApplet" 
+at the beginning of your sketch, you bet your a-- the tab will need to be
+named PooTime. If not, your code isn't gonna run. 
+I mean, c'mon... You know what you're doing, right? 
+This is also true when exporting to an application.</li>
+
+<li>Don't name your sketch the same thing as a library or other class
+that's used in your sketch. For instance, your sketch shouldn't be named
+"Server" if you've imported the net library, because it already has  
+something called Server. You can be more creative than that.</li>
+</ul>
+</p>
+	
+	
+<!-- NEXT SECTION -->
+
+	
 	<h5 id="cantfix"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Things that we probably can't fix</h5>
-	<p>...</p>
+	<p>
+	Some things are out of our control, or not actually bugs...
+<br> <br>
+
+All Platforms
+<UL>
+<LI>A long sketch menu that goes off the edge of the screen? Doesn't
+  scroll properly? There's not much we can do. This is a java issue which
+  happens on most platforms. To get around it, you can organize your
+  sketches into subfolders which will appear as submenus (be sure to
+  quit before reorganizing, and then restart when finished). 
+  (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=391">Bug 391</A>)
+<LI>If you're seeing a <TT>sun.dc.pr.PRException</TT>, it's because
+  you're trying to draw something that's waaaaay off screen (like an x
+  coordinate of -100,000 or something nutty like that). (<A
+  HREF="http://dev.processing.org/bugs/show_bug.cgi?id=104">Bug 104</A>)
+</UL>
+
+Windows
+<UL>
+<LI>The system clock sometimes goes weird, especially when
+  using framerate() or delay(). This is a <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4500388">long-standing bug</a> with the
+  Windows version of the Java VM.
+  According to someone on the sun site: This bug has been fixed in 
+  bug no 4500388 and one requires a PRODUCT FLAG to use the fix.
+  This flag and fix are available in 1.3.1_4, 1.4.0_2, 1.4.1 and 1.4.2.
+  But for Java to actually use the fix: <br>
+
+  Open your Java Plug-in Control Panel in the section 'Java Runtime 
+  Parameters' just enter: -XX:+ForceTimeHighResolution
+<LI>Create Font sometimes crashes on Windows, bringing down the whole
+  environment. This seems to be a Java bug, because it's not a Java
+  exception, but a full crash. (<A
+  HREF="http://dev.processing.org/bugs/show_bug.cgi?id=99">Bug 99</A>).
+<LI>An error starting with <tt>"hs_err_pid10XX.txt"</tt> 
+sometimes shows up. This is something within the Sun's Java VM that
+we can't fix. It's not clear what the problem is, but it seems to have
+shown up with java 1.4.
+</UL>
+Mac OS X
+<UL>
+<LI>
+An error that reads something like 
+<TT>2005-05-19 14:20:44.209 java[875] _initWithWindowNumber: error
+creating graphics ctxt object for ctxt:72059, window:26969</TT> is a
+known bug in Apple's Java implementation. (<A
+HREF="http://processing.org/bugs/show_bug.cgi?id=53">Bug 53</A>)
+
+<LI>
+Sometimes something like the following will come up: <TT> ***
+malloc[438]: Deallocation of a pointer not malloced: 0xffffffff; This
+could be a double free(), or free() called with the middle of an
+allocated block; Try setting environment variable MallocHelp to see
+tools to help debug </TT> it seems to be a bug in Apple's OS X
+Java. It doesn't appear to hurt anything but there also doesn't appear
+to be anything we can do to fix it. (<A
+HREF="http://processing.org/bugs/show_bug.cgi?id=52">Bug 52</A>)
+</UL>
+Linux
+<UL>
+<LI>The following message (or messages like it) on startup: 
+<tt>Warning: Cannot convert string
+"-b&h-lucida-medium-r-normal-sans-*-140-*-*-p-*-iso8859-1" to type
+FontStruct</tt>. This is just a Java issue, but doesn't seem to 
+affect things.
+</UL></p>
 
 
 <!-- NEXT SECTION -->
@@ -508,10 +704,78 @@ will be a float, even before it gets to the lefthand side.
 	
 	<h5 id="known"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Known Bugs</h5>
-	<p>...</p>
-	
-	
-<!-- NEXT SECTION -->
+	<p><em>This section is incomplete, but contains some links to the bug
+      database's Greatest Hits collection.</em>
+<br> <br>
+
+And of course, if these and others give you a burr in the
+saddle, <A HREF="http://dev.processing.org">join us</A> and help!
+<UL>
+<LI>Java 1.1 support has been (temporarily) removed from this
+release. We hope to bring it back, but it will take some time and we
+didn't want to hold up beta any longer. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=125">Bug 125</A>)
+<LI>The stop button sometimes doesn't stop things properly (especially
+when using libraries). Closing the window to shut things down usually
+works fine, though even that might lock up sometimes. Make sure you
+save your sketches before you run, in case you have to force-quit. If
+this happens to you, please post information about it at <A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=126">Bug 126</A>.
+<LI><STRIKE> &ldquo;Export to Application&rdquo; remains unimplemented, 
+though we're hoping to have it complete soon. (<A
+HREF="http://as.processing.org/bugs/show_bug.cgi?id=60">Bug
+60</A>)</STRIKE> Export to Application works in 0097.
+
+<LI>Pixel operations (get(), set(), blend(), loadPixels(), updatePixels(), 
+filter(), etc. there are others) are fairly broken when using OpenGL. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=91">Bug 91</A>)
+<LI>The size of exported applets is larger than we would like, but
+we'll get things smaller and more optimize again. Having separated the
+2D and 3D libraries, eventually we won't have to include the 3D code
+when using 2D. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=127">Bug 127</A>).
+<LI><STRIKE>println() can be super slow and often locks things
+up</STRIKE> println() issues fixed for Processing release 93.
+<LI><STRIKE>Dragging the applet window around will often make
+Processing lock up</STRIKE> Fixed in a recent release.
+<LI>2D graphics might be a bit flickery sometimes, try setting the
+framerate() to get things under control (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=122">Bug 122</A>)
+<LI>strokeWeight() is disabled in P3D and OPENGL. Not really a bug
+per se (how do you define a stroke in 3D?), but something we'd like to
+fix someday. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=123">Bug 123</A>)
+
+<LI>The placement of applets that are 100x100 is sometimes weird. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=128">Bug 128</A>)
+<LI><STRIKE>Sometimes things lock up when there are errors in code,
+for instance, when using libraries like OpenGL, video, or
+net.</STRIKE> (fixed in the early 90s releases, please re-file a bug
+if you run into it)
+<LI><STRIKE>Errors sometimes don't come through, or are
+InvocationTargetExceptions, particularly on the Mac.</STRIKE> (if this
+hasn't been fixed please re-file a new bug)
+<LI>int() and float() don't always work, use ((int) blah) or ((float)
+blah) instead for the time being. or toInt(blah) and toFloat(blah). (<A
+HREF="http://as.processing.org/bugs/show_bug.cgi?id=4">Bug 4</A>)
+<LI>The beloved(?) "History" function from previous versions is
+missing. In the meantime, "Archive Sketch" might be useful. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=71">Bug 71</A>)
+<LI>Need to complete the "Tools" menu, which will be a way for people
+to develop their own editor plug-ins. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=124">Bug 124</A>)
+
+<LI>When you have too many tabs, things get ugly (<A
+HREF="http://processing.org/bugs/show_bug.cgi?id=54">Bug 54</A>)
+<LI>Save changes before quitting needs a "Cancel" button. (<A
+HREF="http://dev.processing.org/bugs/show_bug.cgi?id=32">Bug 32</A>)
+<LI>Error messages after you hit Run are often too long to read or too
+weird to understand
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=57">Bug 57</A>)
+<LI><STRIKE>updatePixels() seems to stink on the Mac. It can sometimes
+cause the screen to not update properly, or for video to contain weird
+bands of mixed frames.</STRIKE> Fixed in release 91.
+<LI>Lots of little UI things like proper focus or key shortcuts
+</UL></p>
 
 
-</body></html>
