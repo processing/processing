@@ -22,9 +22,9 @@ $page->content(file_get_contents($source."faq.html"));
 writeFile('faq.html', $page->out());
 #copydirr($source.'/images', $path.'/images');
 
-$page = new LocalPage('Contribute \\ Processing 1.0 (BETA)', "Contribute", "Contribute", '../');
-$page->content(file_get_contents($source."contribute.html"));
-writeFile('distribution/contribute/index.html', $page->out());
+#$page = new LocalPage('Contribute \\ Processing 1.0 (BETA)', "Contribute", "Contribute", '../');
+#$page->content(file_get_contents($source."contribute.html"));
+#writeFile('distribution/contribute/index.html', $page->out());
 
 $page = new LocalPage('Copyright \\ Processing 1.0 (BETA)', "Copyright", "Copyright", './');
 $page->content(file_get_contents($source."copyright.html"));

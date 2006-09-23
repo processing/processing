@@ -52,7 +52,7 @@ li { margin-bottom: 1em; }
 		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a> \ 
 		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a> \ 
 		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a> \ <br />
-		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
+		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (FAQ, Copyright, People)</a>
 </p>
 <p>&nbsp;</p>
 <strong>Generate Site Files</strong>
