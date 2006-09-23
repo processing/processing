@@ -10,7 +10,6 @@ $path = BASEDIR;
 
 $page = new Page("FAQ", "FAQ", "FAQ");
 $page->content(file_get_contents($source."faq.html"));
-$page->language($lang);
 writeFile($path.'/faq.html', $page->out());
 #copydirr($source.'/images', $path.'/images');
 
@@ -20,5 +19,5 @@ $execution_time = round($benchmark_end - $benchmark_start, 4);
 
 ?>
 
-<h2>Environment page generation Successful</h2>
+<h2>Static page generation Successful</h2>
 <p>Generated files in <?=$execution_time?> seconds.</p>
