@@ -8,7 +8,17 @@ $benchmark_start = microtime_float();
 $source = CONTENTDIR."/static/";
 $path = BASEDIR;
 
-$page = new Page("FAQ", "FAQ", "FAQ");
+// make troubleshooting page
+#$source = CONTENTDIR."/api_$lang/troubleshooting/";
+#$path = REFERENCEDIR . ($lang == 'en' ? '' : "/$lang") . "/troubleshooting/";
+#make_necessary_directories($path."images/file");
+#$page = new Page("Troubleshooting", "Troubleshooting", "Troubleshooting");
+#$page->content(file_get_contents($source."index.html"));
+#$page->language($lang);
+#writeFile('reference/'.($lang=='en'?'':"$lang/").'troubleshooting/index.html', $page->out());
+#copydirr($source.'/images', $path.'/images');
+
+$page = new Page("Troubleshooting", "Troubleshooting", "Troubleshooting");
 $page->content(file_get_contents($source."faq.html"));
 writeFile($path.'/faq.html', $page->out());
 #copydirr($source.'/images', $path.'/images');
