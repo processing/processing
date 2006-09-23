@@ -43,8 +43,9 @@ foreach ($libraries as $lib) {
 
     // template and copy index
     $index = CONTENTDIR.$source.'/index.html';
-    $page = new Page(ucfirst($lib) . ' \\ Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Library-index');
-	 $page->language($lang);
+    //$page = new Page(ucfirst($lib) . ' \\ Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Library-index');
+	$page = new Page($lib . ' \\ Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Library-index');
+	$page->language($lang);
     $page->content(file_get_contents($index));
     writeFile('reference/'.$destination.'/index.html', $page->out());
     
