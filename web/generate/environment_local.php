@@ -37,7 +37,7 @@ $page->language($lang);
 writeFile('distribution/environment/export.html', $page->out());
 
 // make platforms page
-$page = new LocalPage("Environment (IDE)", "Environment", "Environment");
+$page = new LocalPage("Environment (IDE)", "Environment", "Environment", '../');
 $page->content(file_get_contents($source."platforms.html"));
 $page->language($lang);
 writeFile('distribution/environment/platforms.html', $page->out());

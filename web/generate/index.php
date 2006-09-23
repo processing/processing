@@ -90,7 +90,7 @@ li { margin-bottom: 1em; }
     </li>
     <li>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></li>
 
-	<li>Generate Library References:<br />
+	<li>Generate Library References:
 		<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">English</a>
 		<a href="#" onclick="remote_link('libraries.php', 'lang=tr'); return false;">Turkish</a>
 	</li>
@@ -113,6 +113,7 @@ li { margin-bottom: 1em; }
                 <a href="#" onclick="remote_link('updates.php'); return false;">Updates.html</a>
     </li>
 	<li>Generate <a href="#" onclick="remote_link('examples.php'); return false;">Examples</a></li>
+	<li>Generate <a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute)</a></li>
 	<li>Environment pages in 
 		<form class="inline" action="#" method="post" onsubmit="new Ajax.Updater('status', 'environment.php', 
 	    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
