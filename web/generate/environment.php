@@ -7,13 +7,22 @@ $benchmark_start = microtime_float();
 // arguments
 $lang = isSet($_POST['lang']) ? $_POST['lang'] : 'en';
 
+// make troubleshooting page
+$source = CONTENTDIR."/api_$lang/troubleshooting/";
+$path = REFERENCEDIR . ($lang == 'en' ? '' : "/$lang") . "/troubleshooting/";
+make_necessary_directories($path."images/file");
+$page = new Page("Troubleshooting", "Troubleshooting", "Troubleshooting");
+$page->content(file_get_contents($source."index.html"));
+$page->language($lang);
+writeFile('reference/'.($lang=='en'?'':"$lang/").'troubleshooting/index.html', $page->out());
+copydirr($source.'/images', $path.'/images');
+
 // get translation file
 $translation = new Translation($lang);
 
 $source = CONTENTDIR."/api_$lang/environment/";
 $path = REFERENCEDIR . ($lang == 'en' ? '' : "/$lang") . "/environment/";
 make_necessary_directories($path."images/file");
-
 $page = new Page("Environment (IDE)", "Environment", "Environment");
 $page->content(file_get_contents($source."index.html"));
 $page->language($lang);
