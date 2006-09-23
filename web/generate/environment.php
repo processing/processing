@@ -40,7 +40,7 @@ writeFile('reference/'.($lang=='en'?'':"$lang/").'environment/export.html', $pag
 $page = new Page("Environment (IDE)", "Environment", "Environment");
 $page->content(file_get_contents($source."platforms.html"));
 $page->language($lang);
-writeFile('reference/'.($lang=='en'?'':"$lang/").'platforms/export.html', $page->out());
+writeFile('reference/'.($lang=='en'?'':"$lang/").'environment/platforms.html', $page->out());
 
 
 $benchmark_end = microtime_float();
