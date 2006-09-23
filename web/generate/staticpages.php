@@ -17,6 +17,10 @@ $page = new Page("Contribute", "Contribute");
 $page->content(file_get_contents($source."contribute.html"));
 writeFile('contribute/index.html', $page->out());
 
+$page = new Page("Copyright", "Copyright");
+$page->content(file_get_contents($source."copyright.html"));
+writeFile('copyright.html', $page->out());
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 

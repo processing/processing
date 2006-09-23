@@ -112,7 +112,7 @@ a:link:visited {
 }
 #subNav.learning { margin-left: 157px; }
 .active { color: #ccccbe !important; }
-.faq { position: absolute; right: 10px; }
+.faq { position: absolute; right: 10px; color: #ccccbe }
 
 /* ================ CONTENT ================== */
 
