@@ -60,14 +60,15 @@ li { margin-bottom: 1em; }
     <a href="#" onclick="remote_link('cover.php');return false;">Cover</a> \ 
 	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a> \ 
 	<a href="#" onclick="remote_link('examples.php'); return false;">Examples</a> \ 
+	<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">Libraries</a> \ 
 	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a> \ 
 	<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a> \ 
-    <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a> \ 
-  	<a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a> \ 
-    <a href="#" onclick="remote_link('updates.php'); return false;">Updates.html</a> \ 
+    <a href="#" onclick="remote_link('courses.php'); return false;">Courses</a> \ 
+  	<a href="#" onclick="remote_link('happenings.php'); return false;">Happenings</a> \ 
+    <a href="#" onclick="remote_link('updates.php'); return false;">Updates</a> \ 
 	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
 	</p>
-	
+	<p>&nbsp;</p>
     <p>Generate Reference:<br />
 			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference.php', 
 			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
@@ -110,13 +111,14 @@ li { margin-bottom: 1em; }
     </p>
     <p>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></p>
 
+<!--
 	<p>Generate Library References:
 		<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">English</a>
 		<a href="#" onclick="remote_link('libraries.php', 'lang=tr'); return false;">Turkish</a>
 	</p>
-	
+-->
 
-
+<!--
 	<p>Environment pages in 
 		<form class="inline" action="#" method="post" onsubmit="new Ajax.Updater('status', 'environment.php', 
 	    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
@@ -142,6 +144,9 @@ foreach ($LANGUAGES as $code => $array) {
 			</select>
 			<input type="submit" value="Generate" /></form>
 		</p>
+-->
+
+
 <p>&nbsp;</p>
 <p>
 <strong>Generate Template</strong>
