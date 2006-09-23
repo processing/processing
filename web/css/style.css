@@ -392,7 +392,7 @@ ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 
 /************************************************************** troubleshooting ***/
 #Troubleshooting h1 { margin-top: 2em; }
-#Troubleshooting h2 a { float: left; margin-left: -30px; }
+#Troubleshooting h5 a { float: left; margin-left: -30px; }
 ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 #Troubleshooting td { padding-bottom: 1em; }
 
