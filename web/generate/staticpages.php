@@ -18,7 +18,7 @@ $source = CONTENTDIR."static/";
 #writeFile('reference/'.($lang=='en'?'':"$lang/").'troubleshooting/index.html', $page->out());
 #copydirr($source.'/images', $path.'/images');
 
-$page = new Page("Troubleshooting", "Troubleshooting");
+$page = new Page("FAQ", "FAQ");
 $page->content(file_get_contents($source."faq.html"));
 writeFile('faq.html', $page->out());
 #copydirr($source.'/images', $path.'/images');
