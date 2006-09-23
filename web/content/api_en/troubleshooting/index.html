@@ -1,3 +1,5 @@
+<html><body>
+
 <h1 id="top"><img src="../compare/images/header.gif" alt="Comparison. Comparing Processing to other languages exposes its unique and similar qualities. Comparison also assists people familiar with one language in transferring their knowledge." /></h1>
 
 <p><a href="#found">I've found a bug!</a><br />
@@ -54,7 +56,7 @@
       	discourse board so that we can get you straightened out.<br /> 
 	<br />
 		When reporting please include information about
-		<ul>
+		<ol>
 			<li>the revision number (i.e. 0085)</li>
 			<li>what operating system you're using, and on what kind of hardware</li>
 			<li>a copy of the smallest possible piece of code that will
@@ -62,12 +64,12 @@
 			<li> details of the error, either the red spew that you see in the
 				console, or the last few lines from the files stdout.txt or stderr.txt 
 				from the 'lib' folder. </li>
-		</ul>
+		</ol>
 
 	For stranger errors during compile time, you can also look inside the
 	build folder which contains an intermediate (translated into
 	java) version of your code. The build folder is in the same location
-	as preferences.txt: <br />
+	as preferences.txt:
 
 	<UL>
 	<li> Windows: Documents and Settings &rarr; (your user name) &rarr;
@@ -101,7 +103,6 @@
 
 <!-- NEXT SECTION -->
 	
-<!--
 	<h5 id="wontstart"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Processing won't start! Nothing happens when I click &ldquo;Run&rdquo;!</h5>
 	<p>
@@ -163,8 +164,6 @@ version of jikes that's compatible with your distro. Jikes is available
 <a href="http://sourceforge.net/project/showfiles.php?group_id=128803">here</a>, and it's an easy ./configure, make, and then copy src/jikes to the 
 processing-XXXX folder and you should be all set. (<A
 HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)
-
-<br /> <br />
 <li>Or if you encounter a problem like this one: <TT>jikes: relocation
 error: /opt/processing-0087/./jikes: undefined symbol:
 __dynamic_cast_2</TT>, then that also means that jikes is incompatible
@@ -182,13 +181,12 @@ not in the "data" folder, it may just hang:
 
   void setup {
     // your awesome code
-  }</pre>
+  }</pre>	</li></UL>
 In general, a better practice is to use loadFont() (and
 loadImage and the rest) inside of a function like setup().
-	</li></UL>
+
 </p>
 
--->
 
 <!-- NEXT SECTION -->
 	
@@ -199,7 +197,6 @@ loadImage and the rest) inside of a function like setup().
 	
 <!-- NEXT SECTION -->
 	
-<!--
 	<h5 id="applet"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Export and Browser Troubles</h5>
 
@@ -292,12 +289,10 @@ however you still cannot capture video without a signed applet (see above).</li>
 </UL>
       </p>
 	
--->
 	
 <!-- NEXT SECTION -->
 
 
-	<!--
 	<h5 id="memory"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Out Of Memory Errors</h5>
 	<p>
@@ -350,7 +345,8 @@ libraries page as another alternative for creating large format images.
 <br /> <br />
 There are also two known bugs that eat memory:
 <UL>
-<li>OpenGL is really memory hungry because of how textures work.
+<li>OpenGL is really memory hungry because of how textures work.</li><br>
+<li></li>
 </UL>
 
 <!--
@@ -405,12 +401,11 @@ of ram) as you need to (and at your own risk).
 <br /> <br />
 <li>On Linux, adjust the Processing shell script as needed.
 </UL>
---></p>-->
+--></p>
 
 	
 <!-- NEXT SECTION -->
 
-<!--
 	<h5 id="strings"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Why don't these Strings equal?</h5>
 	<p>
@@ -436,9 +431,7 @@ for (int i = 0; i < lines.length; i++) {
 }</pre>
       </p>
 
--->
 <!-- NEXT SECTION -->
-<!--
 	
 	<h5 id="integers"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Why does 2 / 5 = 0 instead of 0.4?</h5>
@@ -469,7 +462,6 @@ makes it identical to:
 and because floats are being used on the righthand side, the result
 will be a float, even before it gets to the lefthand side.
     </p>
--->
 
 <!-- NEXT SECTION -->
 
@@ -520,3 +512,6 @@ will be a float, even before it gets to the lefthand side.
 	
 	
 <!-- NEXT SECTION -->
+
+
+</body></html>
