@@ -95,10 +95,15 @@ li { margin-bottom: 1em; }
 		<a href="#" onclick="remote_link('libraries.php', 'lang=tr'); return false;">Turkish</a>
 	</li>
 	
+	<li>Generate for web: 
+		<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a>
+		<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a>
+	</li>
+	
 	<li>Generate for distribution: 
 		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a>
 		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a>
-		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment</a>
+		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a>
 		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a>
 	</li>
 	
