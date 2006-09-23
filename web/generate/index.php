@@ -45,8 +45,19 @@ li { margin-bottom: 1em; }
 
 <div id="body">
 
-<h2>Generate Site Files</h2>
+<h2>Generate for Distribution</h2>
 <ul>
+	<li>Generate for distribution: 
+		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a>
+		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a>
+		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a>
+		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a>
+		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages</a>
+	</li>
+</ul>
+
+<h2>Generate Site Files</h2>
+<ul>	
     <li>Generate <a href="#" onclick="remote_link('cover.php');return false;">Cover</a></li>
     <li>Generate Reference:<br />
 			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference.php', 
@@ -99,14 +110,7 @@ li { margin-bottom: 1em; }
 		<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a>
 		<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a>
 	</li>
-	
-	<li>Generate for distribution: 
-		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a>
-		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a>
-		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a>
-		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a>
-	</li>
-	
+		
     <li>Generate <a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a></li>
     <li>Generate <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a>
                 <a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
