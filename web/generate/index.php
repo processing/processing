@@ -68,7 +68,6 @@ li { margin-bottom: 1em; }
     <a href="#" onclick="remote_link('updates.php'); return false;">Updates</a> \ 
 	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
 	</p>
-	<p>&nbsp;</p>
     <p>Generate Reference:<br />
 			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference.php', 
 			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
