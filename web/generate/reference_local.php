@@ -18,7 +18,7 @@ $files = getRefFiles($lang);
 $lib_dir = DISTDIR;
 $index = CONTENTDIR."api_$lang/changes.html";
 //$page = new Page('Language (API) \\ Processing 1.0 (BETA)', 'Language');<br>
-$page = new LocalPage('Language (API) \\ Processing 1.0 (BETA)', 'Language', 'Language', './');
+$page = new LocalPage('Language (API) \\ Processing 1.0 (BETA)', 'Changes', 'Changes', './');
 $page->content(file_get_contents($index));
 writeFile('distribution/changes.html', $page->out());
 
