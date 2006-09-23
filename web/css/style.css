@@ -398,9 +398,9 @@ ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 #Troubleshooting td { padding-bottom: 1em; }
 
-/************************************************************** Faq ***/
+/************************************************************** FAQ ***/
 
-#Faq h5 a { float: left; margin-left: -30px; }
+#FAQ h5 a { float: left; margin-left: -30px; }
 
 /************************************************************** examples ***/
 div.applet { float: left; margin-bottom: 40px; }
