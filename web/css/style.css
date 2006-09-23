@@ -13,7 +13,7 @@ body {
 	margin				: 0;
 	padding				: 0;
 	
-	background-color	: #FFFFFF; /* #333322 */
+	background-color	: #E2E2CC;  /* #FFFFFF; */  /* #333322 */
 	
 	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
 	font-size			: 100%; 
@@ -118,6 +118,7 @@ a:link:visited {
 
 .content {
 	margin-left    : 55px;
+	margin-right   : 50px;
 	position: relative;
 }
 
@@ -218,6 +219,12 @@ li {margin-bottom: 1em; }
 }
 #Cover .leftcol { width: 250px; }
 
+.content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
 #Cover h3 { margin: 40px 0 0 0; }
 .exhibition-small { padding: 0; margin: 0; }
 .exhibition-small h3 { margin-top: 0px !important; }
@@ -245,6 +252,12 @@ td img { margin: 0; display: block; }
 #Exhibition .onecol { clear: both; }
 #Exhibition td { vertical-align: top; }
 
+#Exhibition .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
 .curated-item { margin-bottom: 25px; }
 .curated-item h5 { margin-top: 1em; color: #666; font-size: 1em; }
 .curated-item h5 a { font-weight: bold; }
@@ -266,6 +279,18 @@ p.exhibition-nav { margin-top: 0; }
 
 
 #Language h5 a { float: left; margin-left: -30px; }
+
+#Language .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
+.skinny {
+        margin-left    : 0px;
+        margin-right   : 50px;
+        position: relative;
+}
 
 #reference-nav { position: relative; height: 2em; padding-top: .5em; }
 #reference-nav p { position: absolute; right: 10px; top: 0; margin: 0; }
@@ -360,6 +385,13 @@ div.ref-col { width: 30%;
 	margin-top: 30px;
 }
 
+#Libraries .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
+
 #Library-index h5 { margin-bottom: 0; font-size: 1em; }
 #Library-index .twocol p { margin-top: 0; }
 .lib-nav { display: block; 
@@ -382,15 +414,29 @@ div.ref-col { width: 30%;
 
 /************************************************************** environment ***/
 #Environment h1 { margin-top: 2em; }
-#Environment h2 a { float: left; margin-left: -30px; }
+#Environment h5 a { float: left; margin-left: -30px; }
 ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 #Environment td { padding-bottom: 1em; }
+
+#Environment .content {
+        margin-left    : 55px;
+        margin-right   : 50px;
+        position: relative;
+}
 
 /************************************************************** comparison ***/
 #Comparison h1 { margin-top: 2em; }
 #Comparison h2 { margin-bottom: 0; }
 #Comparison .threecol { float: left; width: 210px; margin-right: 20px; }
 #Comparison .threecol p { margin-top: 0; }
+
+
+#Comparison .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
 
 /************************************************************** troubleshooting ***/
 #Troubleshooting h1 { margin-top: 2em; }
@@ -409,3 +455,10 @@ pre.code { clear: both; margin-top: 10px; }
 
 #examples-nav { margin-left: -44px; display: relative; }
 #examples-nav img { display: absolute; top: 15px; left: 100px; }
+
+/************************************************************** contribute ***/
+#Contribute .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
