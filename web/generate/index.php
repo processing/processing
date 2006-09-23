@@ -44,26 +44,27 @@ li { margin-bottom: 1em; }
 <h1><img src="img/processing_beta_cover.gif" alt="Processing (BETA)" /></h1>
 
 <div id="body">
+<p>&nbsp;</p>
 <p>
 <strong>Generate for Distribution</strong>
 </p>
-<p>		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a>
-		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a>
-		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a>
-		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a>
+<p>		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a> \ 
+		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a> \ 
+		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a> \ 
+		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a> \ 
 		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
 </p>
 <p>&nbsp;</p>
 <strong>Generate Site Files</strong>
-<ul>	
-    <a href="#" onclick="remote_link('cover.php');return false;">Cover</a>
-	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a>
-	<a href="#" onclick="remote_link('examples.php'); return false;">Examples</a>
-	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a>
-	<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a>
-    <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a>
-  	<a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a>
-    <a href="#" onclick="remote_link('updates.php'); return false;">Updates.html</a>
+<p>	
+    <a href="#" onclick="remote_link('cover.php');return false;">Cover</a> \ 
+	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a> \ 
+	<a href="#" onclick="remote_link('examples.php'); return false;">Examples</a> \ 
+	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a> \ 
+	<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a> \ 
+    <a href="#" onclick="remote_link('courses.php'); return false;">Courses.html</a> \ 
+  	<a href="#" onclick="remote_link('happenings.php'); return false;">Happenings.html</a> \ 
+    <a href="#" onclick="remote_link('updates.php'); return false;">Updates.html</a> \ 
 	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
 	
     <p>Generate Reference:<br />
@@ -151,6 +152,7 @@ foreach ($LANGUAGES as $code => $array) {
 </form>
 </p>
 <p>&nbsp;</p>
+</p>
 <div id="status-container">
     <h3>Status</h3>
     <div id="status"></div>
