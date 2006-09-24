@@ -214,7 +214,7 @@ public class Runner implements MessageConsumer {
 
     String command[] = new String[params.size()];
     params.copyInto(command);
-    PApplet.println(command);
+    //PApplet.println(command);
 
     process = Runtime.getRuntime().exec(command);
     processInput = new SystemOutSiphon(process.getInputStream());
