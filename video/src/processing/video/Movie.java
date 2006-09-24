@@ -40,7 +40,9 @@ import quicktime.util.RawEncodedImage;
 
 
 public class Movie extends PImage implements PConstants, Runnable {
-  PApplet parent;
+  // no longer needing a reference to the parent because PImage has one
+  //PApplet parent;
+
   Method movieEventMethod;
   String filename;
   Thread runner;
@@ -90,7 +92,7 @@ public class Movie extends PImage implements PConstants, Runnable {
   public Movie(PApplet parent, String filename, int ifps) {
     // this creates a fake image so that the first time this
     // attempts to draw, something happens that's not an exception
-    super.init(1, 1, RGB);
+    super(1, 1, RGB);
 
     this.parent = parent;
 
@@ -417,8 +419,7 @@ public class Movie extends PImage implements PConstants, Runnable {
 
         if (dataWidth != movieWidth) {
           if (removeBorders) {
-            int bpixels[] = new int[dataWidth * movieHeight];
-            borderImage = new PImage(bpixels, dataWidth, movieHeight, RGB);
+            borderImage = new PImage(dataWidth, movieHeight, RGB);
           } else {
             movieWidth = dataWidth;
           }

@@ -41,9 +41,9 @@ import com.sun.opengl.util.*;
  * JOGL requires Java 1.4 or higher, so there are no restrictions on this
  * code to be compatible with Java 1.1 or Java 1.3.
  * <p/>
- * This code relies on PGraphics3 for all lighting and transformations.
+ * This code relies on PGraphics3D for all lighting and transformations.
  * Meaning that translate(), rotate(), and any lighting will be done in
- * PGraphics3, and OpenGL is only used to blit lines and triangles as fast
+ * PGraphics3D, and OpenGL is only used to blit lines and triangles as fast
  * as it possibly can.
  * <p/>
  * For this reason, OpenGL may not be accelerated as far as it could be,
@@ -98,15 +98,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * be null for this renderer because OpenGL uses a special Canvas
    * object that must be added to a component (the host PApplet, in this case)
    * that is visible on screen in order to work properly.
-   * @param applet the host applet
+   * @param parent the host applet
    */
-  public PGraphicsOpenGL(int width, int height, PApplet applet) {
+  public PGraphicsOpenGL(int width, int height, PApplet iparent) {
     //System.out.println("creating PGraphicsGL");
 
-    if (applet == null) {
+    if (iparent == null) {
       throw new RuntimeException("The applet passed to PGraphicsGL " +
                                  "cannot be null");
     }
+    this.parent = iparent;
 
     //System.out.println("creating PGraphicsGL 2");
 
@@ -115,13 +116,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
     canvas = new GLCanvas();
 
     //System.out.println("creating PGraphicsGL 3");
-
-    final PApplet parent = applet;
     canvas.addGLEventListener(new GLEventListener() {
 
         public void display(GLAutoDrawable drawable) {
           // need to get a fresh opengl object here
-          //gl = canvas.getGL();
           gl = drawable.getGL();
           parent.handleDisplay();  // this means it's time to go
         }
@@ -138,16 +136,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     //System.out.println("creating PGraphicsGL 4");
 
-    applet.setLayout(null);
-    applet.add(canvas);
+    parent.setLayout(null);
+    parent.add(canvas);
     canvas.setBounds(0, 0, width, height);
 
     //System.out.println("creating PGraphicsGL 5");
     //System.out.println("adding canvas listeners");
-    canvas.addMouseListener(applet);
-    canvas.addMouseMotionListener(applet);
-    canvas.addKeyListener(applet);
-    canvas.addFocusListener(applet);
+    canvas.addMouseListener(parent);
+    canvas.addMouseMotionListener(parent);
+    canvas.addKeyListener(parent);
+    canvas.addFocusListener(parent);
 
     //System.out.println("creating PGraphicsGL 6");
 
@@ -184,8 +182,17 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     //System.out.println("done creating gl");
   }
+  
+  
+  /**
+   * Overridden from base PGraphics, because this PGraphics will set its own listeners.
+   */
+  public void setMainDrawingSurface() {
+      mainDrawingSurface = true;
+      //parent.addListeners();
+    }
 
-
+  
   //protected boolean displayed = false;
 
   // main applet thread requests an update,
@@ -1791,7 +1798,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //////////////////////////////////////////////////////////////
 
 
-  public void beginPixels() {
+  public void loadPixels() {
     if ((pixels == null) || (pixels.length != width*height)) {
       pixels = new int[width * height];
       pixelBuffer = BufferUtil.newIntBuffer(pixels.length);
@@ -2080,7 +2087,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  public void endPixels() {
+  public void updatePixels() {
     // flip vertically (opengl stores images upside down),
 
     int index = 0;
@@ -2152,14 +2159,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
                     GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
   }
 
-
-  public void endPixels(int x, int y, int c, int d) {
-    //throw new RuntimeException("endPixels() not available with OpenGL");
-    // TODO make this actually work for a smaller region
-    //      problem is, it gets pretty messy with the y reflection, etc
-    endPixels();
-  }
-
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -2310,9 +2310,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
     //throw new RuntimeException("copy() not available with OpenGL");
-    beginPixels();
+    loadPixels();
     super.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    endPixels();
+    updatePixels();
   }
 
 
@@ -2324,9 +2324,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public void copy(PImage src,
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
-    beginPixels();
+    loadPixels();
     super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    endPixels();
+    updatePixels();
   }
 
 
@@ -2334,13 +2334,13 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void blend(int sx, int sy, int dx, int dy, int mode) {
-    set(dx, dy, PImage.blend(get(sx, sy), get(dx, dy), mode));
+    set(dx, dy, PImage.blendColor(get(sx, sy), get(dx, dy), mode));
   }
 
 
   public void blend(PImage src,
                     int sx, int sy, int dx, int dy, int mode) {
-    set(dx, dy, PImage.blend(src.get(sx, sy), get(dx, dy), mode));
+    set(dx, dy, PImage.blendColor(src.get(sx, sy), get(dx, dy), mode));
   }
 
 
@@ -2351,9 +2351,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
    */
   public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    beginPixels();
+    loadPixels();
     super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    endPixels();
+    updatePixels();
   }
 
 
@@ -2365,9 +2365,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public void blend(PImage src,
                     int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
-    beginPixels();
+    loadPixels();
     super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    endPixels();
+    updatePixels();
   }
 
 
@@ -2375,7 +2375,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void save(String filename) {
-    beginPixels();
+    loadPixels();
     super.save(filename);
   }
 

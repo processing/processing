@@ -43,7 +43,10 @@ X remove image(filename) and textFont(filename) et al.
 X revision 115 may be saving raw files as TIFF format
 X   may be a bug specific to java 1.5 (nope)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=378
+X saveFrame() not working for casey
+X   problem with tiff loading in photoshop etc
 X hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
+_   or maybe this should be hint(ENABLE_NATIVE_FONTS) instead?
 X check http:// stuff to see if it's a url first on openStream()
 X   it's the most harmless, since prolly just a MFUEx
 X fix problem where root of exported sketch won't be checked
@@ -61,6 +64,26 @@ X fix dxf to use begin/endDraw instead of begin/endFrame
 X   fixes axel's bug with dxf export
 X set default frameRate cap at 60
 X   otherwise really thrashing the cpu when not necessary
+X jpeg loading may be extremely slow (loadBytes?)
+X   seems specific to 0115 versus the others
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1158111639
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1154714548
+X   http://dev.processing.org/bugs/show_bug.cgi?id=392
+X loadImage() problems with png and jpg
+X   actually it's an issue with some types of jpeg files
+X   http://dev.processing.org/bugs/show_bug.cgi?id=279
+X   java.lang.IllegalArgumentException: 
+X     Width (-1) and height (-1) cannot be <= 0
+X   identical to what happens when the image data is bad
+X     for instance, trying to load a tiff image with the jpg loader
+X   http://dev.processing.org/bugs/show_bug.cgi?id=305
+o blend() mode param should be moved to the front
+X   nah, works better with the other format
+X   make sure there's parity with the copy() functions
+X   remove single pixel blend functions
+o   blend() should prolly have its mode be the first param
+X   move blend() to blendColor() when applying it to a color
+X added lerpColor(), though it needs a new name
 
 more recent
 X only update mouse pos on moved and dragged
@@ -111,11 +134,8 @@ _ for a PGraphics2D, should its image cache object be the memoryimagesource?
 _ is the texture[] array in PGraphics3D causing the problems with memory?
 _   actually it's a PGraphicsGL problem.. 
 _   maybe the image binding not getting unbound?
-
-_ jpeg loading may be extremely slow (loadBytes?)
-_   seems specific to 0115 versus the others
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1158111639
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1154714548
+_ loading lots of images is a problem, describe how to unload
+_   is it possible? necessary to call delay(5) or something?
 
 api issues
 _ remove LINE_LOOP and LINE_STRIP
@@ -187,26 +207,9 @@ _   since camera functions don't even look at it or set it
 
 _ file for 2.0.. stroke on type
 
-_ saveFrame() not working for casey
-_   problem with tiff loading in photoshop etc
-void setup() {
-size(400, 400);
-noLoop();
-}
-void draw() {
-line(0, 0, width, height);
-line(0, width, height, 0);
-saveFrame();
-}
-
 _ fonts in java 1.5 have changed again
 _   appears that asking for the postscript name no longer works
 _   fix "create font" and associated font stuff to straighten it out
-
-_ blend() mode param should be moved to the front
-_   make sure there's parity with the copy() functions
-_   remove single pixel blend functions
-_   blend() should prolly have its mode be the first param
 
 _ add to docs: save() on a PImage needs savePath() added
 
@@ -229,9 +232,6 @@ _   or TOP, MIDDLE, and BOTTOM
 _   textAlign(CENTER | TOP);
 _   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
 _   or textAlign(LEFT, MIDDLE); -> this one seems best
-
-_ loading lots of images is a problem, describe how to unload
-_   is it possible? necessary to call delay(5) or something?
 
 _ AIOOBE on PLine 757.. halts renderer
 
@@ -865,15 +865,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=103
 
 
 CORE / PImage
-_ loadImage(url) having trouble with jpeg
-_   actually it's an issue with some types of jpeg files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=279
-_   java.lang.IllegalArgumentException: 
-_     Width (-1) and height (-1) cannot be <= 0
-_   identical to what happens when the image data is bad
-_     for instance, trying to load a tiff image with the jpg loader
-_ png image loading problems
-_   http://dev.processing.org/bugs/show_bug.cgi?id=305
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change

@@ -186,9 +186,11 @@ public class PGraphics3D extends PGraphics {
   }
 
 
+  /*
   public PGraphics3D(int iwidth, int iheight) {
     this(iwidth, iheight, null);
   }
+  */
 
 
   /**
