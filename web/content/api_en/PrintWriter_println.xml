@@ -33,16 +33,21 @@ void keyPressed() {
 </example>
 
 <description>
-
+Writes data to a <b>PrintWriter</b> object stream and then starts a new line.
 </description>
 
 <syntax>
-<c>pw</c>.println()
+<c>pw</c>.println(<c>data</c>)
 </syntax>
-Writes data to a <b>PrintWriter</b> object stream and then starts a new line.
+
 <parameter>
 <label>pw</label>
 <description>any object of the type PrintWriter</description>
+</parameter>
+
+<parameter>
+<label>data</label>
+<description>boolean, byte, char, color, int, float, String</description>
 </parameter>
 
 
