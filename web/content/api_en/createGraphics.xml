@@ -31,11 +31,12 @@ void draw() {
 </example>
 
 <description>
-Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use.
+Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use. The DXF and PDF renderers require the filename parameter.
 </description>
 
 <syntax>
 createGraphics(<c>width</c>, <c>height</c>, <c>renderer</c>)
+createGraphics(<c>width</c>, <c>height</c>, <c>renderer</c>, <c>filename</c>)
 </syntax>
 
 <parameter>
@@ -50,7 +51,12 @@ createGraphics(<c>width</c>, <c>height</c>, <c>renderer</c>)
 
 <parameter>
 <label>renderer</label>
-<description>Either P2D, P3D, JAVA2D</description>
+<description>Either P2D, P3D, JAVA2D, PDF, DXF</description>
+</parameter>
+
+<parameter>
+<label>filename</label>
+<description>String: the name of the file</description>
 </parameter>
 
 <returns>PImage or null</returns>

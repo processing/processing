@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>writer()</name>
 
-<category>Output</category>
+<name>print()</name>
 
-<subcategory>Files</subcategory>
+<category>PrintWriter</category>
 
-<usage>Application</usage>
+<subcategory>Method</subcategory>
+
+<usage>Web &amp; Application</usage>
 
 <example>
 <image></image>
@@ -19,7 +20,8 @@ void setup() {
 
 void draw() {
   point(mouseX, mouseY);
-  output.println(mouseX; // Write the coordinate to the file
+  output.print(mouseX + "\t"); // Write the X coordinate to the file
+  output.println(mouseY); // Write the Y coordinate to the file
 }
 
 void keyPressed() {
@@ -32,27 +34,26 @@ void keyPressed() {
 </example>
 
 <description>
-Creates and returns a new PrintWriter object.
+
 </description>
 
 <syntax>
-writer(<c>filename</c>)
+<c>pw</c>.println()
 </syntax>
-
+Writes data to a <b>PrintWriter</b> object stream.
 <parameter>
-<label>filename</label>
-<description>String: filename for output</description>
+<label>pw</label>
+<description>any object of the type PrintWriter</description>
 </parameter>
+
 
 <returns></returns>
 
-<related>
-PrintWriter
-</related>
+<related></related>
 
 <availability>1.0</availability>
 
-<type>Function</type>
+<type>Method</type>
 
 <partof>Core</partof>
 
