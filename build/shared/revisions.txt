@@ -9,15 +9,55 @@ releases will be super crusty.
 
 ABOUT REV 0116 - ?? ?? 2006
 
-+ the flag in PApplet.main() formerly called --present-stop-color 
+This is a major release. It contains a large number of bug fixes, 
+as well as several API changes as we try to firm up the API for 1.0.
+
+         *** PLEASE READ ALL THESE NOTES CAREFULLY ***
+
++ Threading has been modified signficantly.
+
++ The OpenGL library has been updated to use the "final" release 
+  of JOGL 1.0, released September 2006, rather than beta 4, found
+  in release 0115. 
+
++ The flag in PApplet.main() formerly called --present-stop-color 
   is now simply --stop-color. A flag named --hide-stop has also 
   been added, to prevent users from quitting out of a present mode 
   application. see the faq on details for capturing ESC as well.
 
-+ altered mouse behavior so that mouse positions update only on 
++ Altered mouse behavior so that mouse positions update only on 
   mouseMoved and mouseDragged. this also fixes a macosx bug that 
   caused mouseX/Y values to be bizarre because mouseExited() 
   gave weird positions (workaround for apple bug).
+
+
+[ Major changes to the use of PGraphics and its subclasses ] 
+
++ The PGraphics classes have all been reworked and renamed.
+
+  - PGraphics is an abstract class on which additional PGraphics
+    subclasses can be built. It is an abstract class, and therefore
+    cannot be invoked directly. 
+
+  - PGraphics2D (P2D) contains the former contents of PGraphics that 
+    are specific to 2D rendering. This will be P2D once it is complete.
+
+  - PGraphics3D (P3D), formerly PGraphics3, remains mostly unchanged.
+
+  - PGraphicsJava2D (JAVA2D), formerly PGraphics2, is the renderer 
+    used when you call for size(width, height, JAVA2D). It remains 
+    the default renderer when none is specified. It is slower but 
+    more accurate than the others.
+
++ Do not use new PGraphics(...) to create PGraphics objects.
+  Instead, use createGraphics(), which will properly handle connecting
+  the new graphics object to its parent sketch, and will enable save()
+  to work properly. See the reference for createGraphics:
+  http://processing.org/reference/createGraphics_.html
+
++ For the same reasons as above, createImage(width, height, format) 
+  should be used instead of new PImage(...) when creating images:
+  http://test.processing.org/reference/createImage_.html
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

@@ -28,8 +28,6 @@ import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.*;
 
-//import javax.imageio.*;
-
 
 /**
  * Storage class for pixel data. This is the base class for most image and
@@ -52,6 +50,12 @@ public class PImage implements PConstants, Cloneable {
   public int width, height;
   // would scan line be useful? maybe for pow of 2 gl textures
 
+  /**
+   * Path to parent object that will be used with save(). 
+   * This prevents users from needing savePath() to use PImage.save(). 
+   */
+  public PApplet parent;
+  
   // note! inherited by PGraphics
   public int imageMode = CORNER;
   public boolean smooth = false;
@@ -107,6 +111,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage(int width, int height) {
     init(width, height, RGB);
+    //init(width, height, RGB);
     //this(new int[width * height], width, height, ARGB);
     // toxi: is it maybe better to init the image with max alpha enabled?
     //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
@@ -124,19 +129,10 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  /*
-  public PImage(int pixels[], int width, int height, int format) {
-    this.pixels = pixels;
-    this.width = width;
-    this.height = height;
-    this.format = format;
-    this.cache = null;
-  }
-  */
-
-
   /**
    * Function to be used by subclasses to setup their own bidness.
+   * Used by Capture and Movie classes (and perhaps others), 
+   * because the width/height will not be known when super() is called.
    */
   public void init(int width, int height, int format) {  // ignore
     this.width = width;
@@ -226,93 +222,6 @@ public class PImage implements PConstants, Cloneable {
   // MARKING IMAGE AS MODIFIED / FOR USE w/ GET/SET
 
 
-  /*
-  public int[] loadPixels() {
-    return getPixels(0, 0, width, height);
-  }
-  */
-
-
-  /**
-   * Note that when using imageMode(CORNERS),
-   * the x2 and y2 positions are non-inclusive.
-   */
-  /*
-  public int[] loadPixels(int x1, int y1, int x2, int y2) {
-    if (modified) {
-      // have to set the modified region to include the min/max
-      // of the coordinates coming in.
-      // also, mustn't get the pixels for the section that's
-      // already been marked as modified. gah.
-      // too complicated, just throw an error
-      String msg =
-        "getPixels(x, y, w, h) cannot be used multiple times. " +
-        "Use getPixels() once to get the entire image instead.";
-      throw new RuntimeException(msg);
-    }
-
-    if (imageMode == CORNER) {  // x2, y2 are w/h
-      x2 += x1;
-      y2 += y1;
-    }
-
-    if (pixels == null) {  // this is a java 1.3 buffered image
-      if (image == null) {  // this is just an error
-        throw new RuntimeException("PImage not properly setup for getPixels()");
-      } else {
-        pixels = new int[width*height];
-      }
-    }
-
-    if (image == null) {
-      // this happens when using just the 1.1 library
-      // no need to do anything, since the pixels have already been grabbed
-
-    } else {
-      // copy the contents of the buffered image to pixels[]
-      //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, width);
-      try {
-        //System.out.println("running getrgb...");
-        Class bufferedImageClass =
-          Class.forName("java.awt.image.BufferedImage");
-        // getRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize)
-        Method getRgbMethod =
-          bufferedImageClass.getMethod("getRGB", new Class[] {
-            Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE,
-            int[].class, Integer.TYPE, Integer.TYPE
-          });
-        getRgbMethod.invoke(image, new Object[] {
-          new Integer(x1), new Integer(y1),
-          new Integer(x2 - x1 + 1), new Integer(y2 - y1 + 1),
-          pixels, new Integer(0), new Integer(width)
-        });
-
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    return pixels;  // just to be nice
-  }
-  */
-
-
-  /*
-  public void loadPixels() {  // ignore
-    System.err.println("Use loadPixels() instead of loadPixels() " +
-                       "with release 0116 and later.");
-    loadPixels();
-  }
-
-
-  public void updatePixels() {
-    System.err.println("Use updatePixels() instead of updatePixels() " +
-                       "with release 0116 and later.");
-    System.err.flush();
-    updatePixels();
-  }
-  */
-
-
   /**
    * Call this when you want to mess with the pixels[] array.
    * Formerly called loadPixels().
@@ -374,15 +283,7 @@ public class PImage implements PConstants, Cloneable {
     }
   }
 
-
-  //public void pixelsUpdated() {
-    //mx1 = Integer.MAX_VALUE;
-    //my1 = Integer.MAX_VALUE;
-    //mx2 = -Integer.MAX_VALUE;
-    //my2 = -Integer.MAX_VALUE;
-  //modified = false;
-  //}
-
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -1151,10 +1052,10 @@ public class PImage implements PConstants, Cloneable {
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
     if (imageMode == CORNER) {  // if CORNERS, do nothing
-            sx2 += sx1;
-            sy2 += sy1;
-            dx2 += dx1;
-            dy2 += dy1;
+      sx2 += sx1;
+      sy2 += sy1;
+      dx2 += dx1;
+      dy2 += dy1;
 
     //} else if (imageMode == CENTER) {
       //sx2 /= 2f; sy2 /= 2f;
@@ -1185,7 +1086,7 @@ public class PImage implements PConstants, Cloneable {
    * REPLACE - destination colour equals colour of source pixel: C = A
    * </PRE>
    */
-  static public int blend(int c1, int c2, int mode) {
+  static public int blendColor(int c1, int c2, int mode) {
     switch (mode) {
     case BLEND:    return blend_multiply(c1, c2);
     case ADD:      return blend_add_pin(c1, c2);
@@ -1197,10 +1098,28 @@ public class PImage implements PConstants, Cloneable {
     return 0;
   }
 
+  
+  static public int lerpColor(int c1, int c2, float amt) {
+    float a1 = ((c1 >> 24) & 0xff);
+    float r1 = (c1 >> 16) & 0xff;
+    float g1 = (c1 >> 8) & 0xff;
+    float b1 = c1 & 0xff;
+    float a2 = (c2 >> 24) & 0xff;
+    float r2 = (c2 >> 16) & 0xff;
+    float g2 = (c2 >> 8) & 0xff;
+    float b2 = c2 & 0xff;
+    
+    return (((int) (a1 + (a2-a1)*amt) << 24) |
+            ((int) (r1 + (r2-r1)*amt) << 16) |
+            ((int) (g1 + (g2-g1)*amt) << 8) |
+            ((int) (b1 + (b2-b1)*amt)));
+  }
 
   /**
    * Copies and blends 1 pixel with MODE to pixel in this image.
+   * Removing this function, the blend() command above can be used instead.
    */
+  /*
   public void blend(int sx, int sy, int dx, int dy, int mode) {
     if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < width) &&
         (dy >= 0) && (dy < height) && (sy >= 0) && (sy < height)) {
@@ -1208,11 +1127,13 @@ public class PImage implements PConstants, Cloneable {
         blend(pixels[dy * width + dx], pixels[sy * width + sx], mode);
     }
   }
+  */
 
 
   /**
    * Copies and blends 1 pixel with MODE to pixel in another image
    */
+  /*
   public void blend(PImage src,
                     int sx, int sy, int dx, int dy, int mode) {
     if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
@@ -1222,6 +1143,7 @@ public class PImage implements PConstants, Cloneable {
               src.pixels[sy * src.width + sx], mode);
     }
   }
+  */
 
 
   /**
@@ -1305,7 +1227,10 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Duplicate an image, returns new PImage object.
    * The pixels[] array for the new object will be unique
-   * and recopied from the source image.
+   * and recopied from the source image. This is implemented as an
+   * override of Object.clone(). We recommend using get() instead, 
+   * because it prevents you from needing to catch the
+   * CloneNotSupportedException, and from doing a cast from the result.
    */
   public Object clone() throws CloneNotSupportedException {  // ignore
     PImage c = (PImage) super.clone();
@@ -1618,19 +1543,6 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  /**
-   * returns the fractional portion of a number: frac(2.3) = .3;
-   */
-  /*
-  private static float frac(float x) {
-    return (x - (int) x);
-  }
-  */
-
-
-  /**
-   * generic linear interpolation
-   */
   private static int mix(int a, int b, int f) {
     return a + (((b - a) * f) >> 8);
   }
@@ -1812,7 +1724,7 @@ public class PImage implements PConstants, Cloneable {
   protected boolean saveTIFF(OutputStream output) {
     if (format != RGB) {
       System.err.println("Warning: only RGB information is saved with " +
-                         ".tif files. Use .tga or .png if you want alpha.");
+                         ".tif files. Use .tga or .png for ARGB images and others.");
     }
     try {
       byte tiff[] = new byte[768];
@@ -1849,7 +1761,7 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Creates a Targa32 formatted byte sequence of specified
-   * pixel buffer now using RLE compression.
+   * pixel buffer using RLE compression.
    * </p>
    * Also figured out how to avoid parsing the image upside-down
    * (there's a header flag to set the image origin to top-left)
@@ -1860,7 +1772,7 @@ public class PImage implements PConstants, Cloneable {
    * <LI><TT>RGB</TT> &rarr; 24 bits
    * <LI><TT>ARGB</TT> &rarr; 32 bits
    * </UL>
-   * all versions are RLE compressed
+   * All versions are RLE compressed.
    * </p>
    * Contributed by toxi 8-10 May 2005, based on this RLE
    * <A HREF="http://www.wotsit.org/download.asp?f=tga">specification</A>
@@ -2087,15 +1999,23 @@ public class PImage implements PConstants, Cloneable {
    * The ImageIO API claims to support wbmp files, however they probably
    * require a black and white image. Basic testing produced a zero-length
    * file with no error.
+   * <p>
+   * As of revision 0116, savePath() is not needed if this object has been
+   * created (as recommended) via createImage() or createGraphics() or
+   * one of its neighbors.
    */
-  public void save(String filename) {  // ignore
+  public void save(String path) {  // ignore
     boolean success = false;
 
-    File file = new File(filename);
+    File file = new File(path);
     if (!file.isAbsolute()) {
-      System.err.println("PImage.save() requires an absolute path, " +
-                         "you might need to use savePath().");
-      return;
+      if (parent != null) {
+        //file = new File(parent.savePath(filename));
+        path = parent.savePath(path);
+      } else {
+        throw new RuntimeException("PImage.save() requires an absolute path. Or you can " +
+                                   "use createImage() instead or pass savePath() to save().");
+      }
     }
 
     try {
@@ -2116,26 +2036,25 @@ public class PImage implements PConstants, Cloneable {
         }
         if (saveImageFormats != null) {
           for (int i = 0; i < saveImageFormats.length; i++) {
-            //System.out.println(saveImageFormats[i]);
-            if (filename.endsWith("." + saveImageFormats[i])) {
-              saveImageIO(filename);
+            if (path.endsWith("." + saveImageFormats[i])) {
+              saveImageIO(path);
               return;
             }
           }
         }
       }
 
-      if (filename.toLowerCase().endsWith(".tga")) {
-        os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
+      if (path.toLowerCase().endsWith(".tga")) {
+        os = new BufferedOutputStream(new FileOutputStream(path), 32768);
         success = saveTGA(os); //, pixels, width, height, format);
 
       } else {
-        if (!filename.toLowerCase().endsWith(".tif") &&
-            !filename.toLowerCase().endsWith(".tiff")) {
+        if (!path.toLowerCase().endsWith(".tif") &&
+            !path.toLowerCase().endsWith(".tiff")) {
           // if no .tif extension, add it..
-          filename += ".tif";
+          path += ".tif";
         }
-        os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
+        os = new BufferedOutputStream(new FileOutputStream(path), 32768);
         success = saveTIFF(os); //, pixels, width, height);
       }
       os.flush();

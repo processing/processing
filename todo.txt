@@ -75,9 +75,9 @@ _ under the memory section, getting free/total memory
 _   long allocated = Runtime.getRuntime().totalMemory()  (-Xms usually)
 _   long allocatedButFree = Runtime.getRuntime().freeMemory()  (-Xms minus used)
 _   long maximum = Runtime.getRuntime().maxMemory()  (-Xmx setting)
-_ remove the memory setting stuff from the faq
-_ add more information about setting the memory
-_   move memory setting to troubleshooting page on bugs db
+X remove the memory setting stuff from the faq
+X   add more information about setting the memory
+X   move memory setting to troubleshooting page on bugs db
 
 mac faq
 X windows, may need to install new version of video drivers

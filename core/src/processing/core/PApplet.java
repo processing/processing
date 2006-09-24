@@ -38,6 +38,78 @@ import java.util.zip.*;
 
 /**
  * Base class for all sketches that use processing.core.
+ * <p/>
+ * Note that you should not use AWT or Swing components inside a Processing
+ * applet. The surface is made to automatically update itself, and will cause
+ * problems with redraw of components drawn above it. If you'd like to
+ * integrate other Java components, see below.
+ * <p/>
+ * This class extends Applet instead of JApplet because 1) we will eventually
+ * be returning Java 1.1 support, which does not include Swing (without an
+ * additional, sizable, download), and 2) Swing is a bloated piece of crap.
+ * A Processing applet is a heavyweight AWT component, and can be used the
+ * same as any other AWT component.
+ * <p/>
+ * Similarly, Processing runs in a Frame and not a JFrame. However, there's
+ * nothing to prevent you from embedding a PApplet into a JFrame, it's just
+ * that the base version uses a regular AWT frame because there's simply
+ * no need for swing in that context. If people want to use Swing, they can
+ * embed themselves as they wish.
+ * <p/>
+ * It is possible to use PApplet, along with core.jar in other projects.
+ * In addition to enabling you to use Java 1.5+ features with your sketch,
+ * this also allows you to embed a Processing drawing area into another Java
+ * application. This means you can use standard GUI controls with a Processing
+ * sketch. Because AWT and Swing GUI components cannot be used on top of a
+ * PApplet, you can instead embed the Component inside another GUI the way
+ * you would any other Component.
+ * <p/>
+ * By default, the animation thread will run at 60 frames per second,
+ * which can make the parent applet sluggish. If you want to only update the
+ * sketch intermittently, use noLoop() inside setup(), and redraw() whenever
+ * the screen needs to be updated once, or loop() to re-enable the animation
+ * thread. The following example embeds a sketch and also uses the noLoop()
+ * and redraw() methods. You need not use noLoop() and redraw() when embedding
+ * if you want your application to animate continuously.
+ * <PRE>
+ * public class ExampleFrame extends Frame {
+ *
+ *     public ExampleFrame() {
+ *         super("Embedded PApplet");
+ *
+ *         setLayout(new BorderLayout());
+ *         PApplet embed = new Embedded();
+ *         add(embed, BorderLayout.CENTER);
+ *
+ *         // important to call this whenever embedding a PApplet.
+ *         // It ensures that the animation thread is started and
+ *         // that other internal variables are properly set.
+ *         embed.init();
+ *     }
+ * }
+ *
+ * public class Embedded extends PApplet {
+ *
+ *     public void setup() {
+ *         // original setup code here ...
+ *         size(400, 400);
+ *
+ *         // prevent thread from starving everything else
+ *         noLoop();
+ *     }
+ *
+ *     public void draw() {
+ *         // drawing code goes here
+ *     }
+ *
+ *     public void mousePressed() {
+ *         // do something based on mouse movement
+ *
+ *         // update the screen (run draw once)
+ *         redraw();
+ *     }
+ * }
+ * </PRE>
  */
 public class PApplet extends Applet
   implements PConstants, Runnable,
@@ -797,6 +869,7 @@ public class PApplet extends Applet
         // otherwise ok to fall through and create renderer below
         // the renderer is changing, so need to create a new object
         g = createGraphics(iwidth, iheight, irenderer, ipath);
+        g.setMainDrawingSurface();
         //if (g != null) {
         updateSize(iwidth, iheight);
         //}
@@ -809,6 +882,7 @@ public class PApplet extends Applet
       }
     } else {  // none exists, just create a freshy
       g = createGraphics(iwidth, iheight, irenderer, ipath);
+      g.setMainDrawingSurface();
       updateSize(iwidth, iheight);
     }
 
@@ -864,6 +938,9 @@ public class PApplet extends Applet
 
 
   /*
+  // these constructors removed because they were silly
+
+
   public PGraphics createGraphics(String renderer) {
     return createGraphics(width, height, renderer);
   }
@@ -872,29 +949,29 @@ public class PApplet extends Applet
   public PGraphics createGraphics(int iwidth, int iheight) {
     return createGraphics(iwidth, iheight, g.getClass().getName());
   }
-  */
 
 
   public PGraphics createGraphics(String irenderer, String ipath) {
     return createGraphics(width, height, irenderer, this, ipath);
   }
+  */
 
 
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer) {
-    return createGraphics(iwidth, iheight, irenderer, this, null);
+    return createGraphics(iwidth, iheight, irenderer, null, this);
   }
 
 
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer, String ipath) {
-    return createGraphics(iwidth, iheight, irenderer, this, ipath);
+    return createGraphics(iwidth, iheight, irenderer, ipath, this);
   }
 
 
   static public PGraphics createGraphics(int iwidth, int iheight,
-                                         String irenderer, PApplet applet,
-                                         String ipath) {
+                                         String irenderer, String ipath,
+                                         PApplet applet) {
     /*
     // ok when calling size, but not really with createGraphics()
     if (renderer.equals(OPENGL)) {
@@ -933,9 +1010,8 @@ public class PApplet extends Applet
 
       Constructor constructor =
         rendererClass.getConstructor(constructorParams);
-      // create the actual PGraphics object for rendering
-      return (PGraphics) constructor.newInstance(constructorValues);
-      //updateSize(iwidth, iheight);
+      PGraphics pg = (PGraphics) constructor.newInstance(constructorValues);
+      return pg;
 
     } catch (InvocationTargetException ite) {
       String msg = ite.getTargetException().getMessage();
@@ -977,27 +1053,22 @@ public class PApplet extends Applet
 
       } else {
         if (platform == MACOSX) e.printStackTrace(System.out);
-        //System.err.flush();
-        //return null;
         throw new RuntimeException(e.getMessage());
-        //die("Could not create " + irenderer);
       }
-
-      /*
-    } catch (Exception e) {
-      e.printStackTrace();
-      die("Could not start because of a problem with size()", e);
-      */
     }
-
-    // clear things out to get started
-    //outgoing.defaults();
-    // tell people to use beginDraw/endDraw
-
-    // and send 'em off
-    //return outgoing;
   }
 
+
+  /**
+   * Preferred method of creating new PImage objects, ensures that a
+   * reference to the parent PApplet is included, which makes save() work
+   * without needing an absolute path.
+   */
+  public PImage createImage(int width, int height, int format) {
+    PImage image = new PImage(width, height, format);
+    image.parent = this;  // make save() work
+    return image;
+  }
 
   public void update(Graphics screen) {
     //System.out.println("PApplet.update()");
@@ -2280,9 +2351,9 @@ public class PApplet extends Applet
   //
 
 
-  int cursor_type = ARROW; // cursor type
-  boolean cursor_visible = true; // cursor visibility flag
-  PImage invisible_cursor;
+  int cursorType = ARROW; // cursor type
+  boolean cursorVisible = true; // cursor visibility flag
+  PImage invisibleCursor;
 
 
   /**
@@ -2290,8 +2361,8 @@ public class PApplet extends Applet
    */
   public void cursor(int _cursor_type) {
     setCursor(Cursor.getPredefinedCursor(_cursor_type));
-    cursor_visible = true;
-    cursor_type = _cursor_type;
+    cursorVisible = true;
+    cursorType = _cursor_type;
   }
 
 
@@ -2330,7 +2401,7 @@ public class PApplet extends Applet
                                                     hotspot,
                                                     "no cursor" });
       setCursor(cursor);
-      cursor_visible = true;
+      cursorVisible = true;
 
     } catch (NoSuchMethodError e) {
       System.err.println("cursor() is not available " +
@@ -2353,9 +2424,9 @@ public class PApplet extends Applet
     // it's likely that java will set the cursor to something
     // else on its own, and the applet will be stuck b/c bagel
     // thinks that the cursor is set to one particular thing
-    if (!cursor_visible) {
-      cursor_visible = true;
-      setCursor(Cursor.getPredefinedCursor(cursor_type));
+    if (!cursorVisible) {
+      cursorVisible = true;
+      setCursor(Cursor.getPredefinedCursor(cursorType));
     }
   }
 
@@ -2365,15 +2436,15 @@ public class PApplet extends Applet
    * and using it as a custom cursor.
    */
   public void noCursor() {
-    if (!cursor_visible) return;  // don't hide if already hidden.
+    if (!cursorVisible) return;  // don't hide if already hidden.
 
-    if (invisible_cursor == null) {
-      invisible_cursor = new PImage(16, 16, ARGB);
+    if (invisibleCursor == null) {
+      invisibleCursor = new PImage(16, 16, ARGB);
     }
     // was formerly 16x16, but the 0x0 was added by jdf as a fix
     // for macosx, which didn't wasn't honoring the invisible cursor
-    cursor(invisible_cursor, 0, 0);
-    cursor_visible = false;
+    cursor(invisibleCursor, 0, 0);
+    cursorVisible = false;
   }
 
 
@@ -3107,14 +3178,88 @@ public class PApplet extends Applet
    * work that will be posted on the web. To get a list of possible
    * image formats for use with Java 1.4 and later, use the following:
    * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
+   * <P>
+   * Images are loaded via a byte array that is passed to
+   * Toolkit.createImage(). Unfortunately, we cannot use Applet.getImage()
+   * because it takes a URL argument, which would be a pain in the a--
+   * to make work consistently for online and local sketches.
+   * Sometimes this causes problems, resulting in issues like
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=279">Bug 279</A>
+   * and
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=305">Bug 305</A>.
+   * In release 0115, everything was instead run through javax.imageio,
+   * but that turned out to be very slow, see
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=392">Bug 392</A>.
+   * As a result, starting with 0116, the following happens:
+   * <UL>
+   * <LI>TGA and TIFF images are loaded using the internal load methods.
+   * <LI>JPG, GIF, and PNG images are loaded via loadBytes().
+   * <LI>If the image still isn't loaded, it's passed to javax.imageio.
+   * </UL>
+   * For releases 0116 and later, if you have problems such as those seen
+   * in Bugs 279 and 305, use Applet.getImage() instead. You'll be stuck
+   * with the limitations of getImage() (the headache of dealing with
+   * online/offline use). Set up your own MediaTracker, and pass the resulting
+   * java.awt.Image to the PImage constructor that takes an AWT image.
+   * You can also use the loadImageSync() function (added in 0116) that
+   * takes an AWT image and loads it synchronously inside PApplet.
+   * This isn't much fun, but this will have to do unless we find the
+   * actual culprit, which may still be a threading issue.
+   * <PRE>
+   * public PImage loadImageAlt(String filename) {
+   *   java.awt.Image img = getImage(getCodeBase(), filename);
+   *   return loadImageSync(img);
+   * }
+   * </PRE>
    */
   public PImage loadImage(String filename) {
-    // it's not clear whether this method is more efficient for
-    // loading gif, jpeg, and png data than the standard toolkit function,
-    // in fact it may even be identical. but who knows, with any luck
-    // it may even fix the image loading problems from bug #279.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=279
-    // (if anyone reading this knows for certain, please post)
+    String lower = filename.toLowerCase();
+
+    if (lower.endsWith(".tga")) {
+      try {
+        return loadImageTGA(filename);
+      } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+      }
+    }
+
+    if (lower.endsWith(".tif") || lower.endsWith(".tiff")) {
+      byte bytes[] = loadBytes(filename);
+      return (bytes == null) ? null : PImage.loadTIFF(bytes);
+    }
+
+    // Make sure that PNG images aren't being loaded by Java 1.1
+    if (lower.endsWith(".png") && PApplet.javaVersion < 1.3f) {
+      System.err.println("PNG images can only be loaded when " +
+                         "using Java 1.3 and later.");
+      return null;
+    }
+
+    // For jpeg, gif, and png, load them using createImage(),
+    // because the javax.imageio code was found to be much slower, see
+    // <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=392">Bug 392</A>.
+    try {
+      if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
+          lower.endsWith(".gif") || lower.endsWith(".png")) {
+        byte bytes[] = loadBytes(filename);
+        if (bytes == null) {
+          return null;
+        } else {
+          Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
+          PImage image = loadImageSync(awtImage);
+          // if it's a .gif image, test to see if it has transparency
+          if ((lower.endsWith(".gif")) || (lower.endsWith(".png"))) {
+            image.checkAlpha();
+          }
+          return image;
+        }
+      }
+    } catch (Exception e) {
+      // show error, but move on to the stuff below, see if it'll work
+      e.printStackTrace();
+    }
+
     if (PApplet.javaVersion >= 1.4f) {
       if (loadImageFormats == null) {
         //loadImageFormats = javax.imageio.ImageIO.getReaderFormatNames();
@@ -3137,42 +3282,25 @@ public class PApplet extends Applet
       }
     }
 
-    if (filename.toLowerCase().endsWith(".tga")) {
-      try {
-        return loadImageTGA(filename);
-      } catch (IOException e) {
-        e.printStackTrace();
-        return null;
-      }
-    }
+    // failed, could not load image after all those attempts
+    return null;
+  }
 
-    byte bytes[] = loadBytes(filename);
-    if (bytes == null) return null;
 
-    if (filename.toLowerCase().endsWith(".tif") ||
-        filename.toLowerCase().endsWith(".tiff")) {
-      return PImage.loadTIFF(bytes);
-    }
-
-    Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
-
+  /**
+   * Load an AWT image synchronously.
+   */
+  public PImage loadImageSync(Image awtImage) {
     MediaTracker tracker = new MediaTracker(this);
     tracker.addImage(awtImage, 0);
     try {
       tracker.waitForAll();
     } catch (InterruptedException e) {
-      // don't bother, since this may be interrupted by draw
-      // or noLoop or something like that
       //e.printStackTrace();  // non-fatal, right?
     }
 
     PImage image = new PImage(awtImage);
-
-    // if it's a .gif image, test to see if it has transparency
-    if ((filename.toLowerCase().endsWith(".gif")) ||
-        (filename.toLowerCase().endsWith(".png"))) {
-      image.checkAlpha();
-    }
+    image.parent = this;
     return image;
   }
 
@@ -3216,6 +3344,7 @@ public class PApplet extends Applet
       // with the old method.
 
       PImage outgoing = new PImage(wi.intValue(), hi.intValue());
+      outgoing.parent = this;
 
       Method getRgbMethod =
         biClass.getMethod("getRGB", new Class[] {
@@ -3283,6 +3412,7 @@ public class PApplet extends Applet
     int w = ((header[13] & 0xff) << 8) + (header[12] & 0xff);
     int h = ((header[15] & 0xff) << 8) + (header[14] & 0xff);
     PImage outgoing = new PImage(w, h, format);
+    outgoing.parent = this;
 
     int index = 0;
     int px[] = outgoing.pixels;
@@ -3337,31 +3467,7 @@ public class PApplet extends Applet
       }
     }
     return outgoing;
-
-    /*
-      // targa's are written upside down, so we need to parse it in reverse
-      int index = (h-1) * w;
-      // actual bitmap data starts at byte 18
-      int offset = 18;
-
-      // read out line by line
-      for (int y = h-1; y >= 0; y--) {
-        for (int x = 0; x < w; x++) {
-          img.pixels[index + x] =
-            (buffer[offset++] & 0xff) |
-            ((buffer[offset++] & 0xff) << 8) |
-            ((buffer[offset++] & 0xff) << 16) |
-            (hasAlpha ? ((buffer[offset++] & 0xff) << 24) : 0xff000000);
-        }
-        index -= w;
-      }
-      return img;
-    }
-
-    System.err.println("loadImage(): bad targa image format");
-    return null;
-    */
-}
+  }
 
 
 
@@ -3621,14 +3727,14 @@ public class PApplet extends Applet
    * I want to read lines from a file. I have RSI from typing these
    * eight lines of code so many times.
    */
-  public BufferedReader reader(String filename) {
+  public BufferedReader createReader(String filename) {
     try {
       InputStream is = openStream(filename);
       if (is == null) {
         System.err.println(filename + " does not exist or could not be read");
         return null;
       }
-      return reader(is);
+      return createReader(is);
 
     } catch (Exception e) {
       if (filename == null) {
@@ -3644,9 +3750,9 @@ public class PApplet extends Applet
   /**
    * I want to read lines from a file. And I'm still annoyed.
    */
-  static public BufferedReader reader(File file) {
+  static public BufferedReader createReader(File file) {
     try {
-      return reader(new FileInputStream(file));
+      return createReader(new FileInputStream(file));
 
     } catch (Exception e) {
       if (file == null) {
@@ -3665,7 +3771,7 @@ public class PApplet extends Applet
    * I want to read lines from a stream. If I have to type the
    * following lines any more I'm gonna send Sun my medical bills.
    */
-  static public BufferedReader reader(InputStream input) {
+  static public BufferedReader createReader(InputStream input) {
     InputStreamReader isr = new InputStreamReader(input);
     return new BufferedReader(isr);
   }
@@ -3702,9 +3808,9 @@ public class PApplet extends Applet
   /**
    * I want to print lines to a file. Why can't I?
    */
-  public PrintWriter writer(String filename) {
+  public PrintWriter createWriter(String filename) {
     try {
-      return writer(new FileOutputStream(savePath(filename)));
+      return createWriter(new FileOutputStream(savePath(filename)));
 
     } catch (Exception e) {
       if (filename == null) {
@@ -3721,9 +3827,9 @@ public class PApplet extends Applet
    * I want to print lines to a file. I have RSI from typing these
    * eight lines of code so many times.
    */
-  static public PrintWriter writer(File file) {
+  static public PrintWriter createWriter(File file) {
     try {
-      return writer(new FileOutputStream(file));
+      return createWriter(new FileOutputStream(file));
 
     } catch (Exception e) {
       if (file == null) {
@@ -3742,7 +3848,7 @@ public class PApplet extends Applet
    * I want to print lines to a file. Why am I always explaining myself?
    * It's the JavaSoft API engineers who need to explain themselves.
    */
-  static public PrintWriter writer(OutputStream output) {
+  static public PrintWriter createWriter(OutputStream output) {
     OutputStreamWriter osw = new OutputStreamWriter(output);
     return new PrintWriter(osw);
   }
@@ -6542,21 +6648,13 @@ public class PApplet extends Applet
   }
 
 
-  static public int blend(int c1, int c2, int mode) {
-    return PGraphics.blend(c1, c2, mode);
+  static public int blendColor(int c1, int c2, int mode) {
+    return PGraphics.blendColor(c1, c2, mode);
   }
 
 
-  public void blend(int sx, int sy, int dx, int dy, int mode) {
-    if (recorder != null) recorder.blend(sx, sy, dx, dy, mode);
-    g.blend(sx, sy, dx, dy, mode);
-  }
-
-
-  public void blend(PImage src,
-                    int sx, int sy, int dx, int dy, int mode) {
-    if (recorder != null) recorder.blend(src, sx, sy, dx, dy, mode);
-    g.blend(src, sx, sy, dx, dy, mode);
+  static public int lerpColor(int c1, int c2, float amt) {
+    return PGraphics.lerpColor(c1, c2, amt);
   }
 
 
@@ -6572,6 +6670,12 @@ public class PApplet extends Applet
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     if (recorder != null) recorder.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
     g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+  }
+
+
+  public void setMainDrawingSurface() {
+    if (recorder != null) recorder.setMainDrawingSurface();
+    g.setMainDrawingSurface();
   }
 
 
