@@ -51,7 +51,9 @@ public class Capture extends PImage implements Runnable {
   static public final int PAL = StdQTConstants.palIn;
   static public final int SECAM = StdQTConstants.secamIn;
 
-  PApplet parent;
+  // no longer needed because parent field added to PImage
+  //PApplet parent;
+
   Method captureEventMethod;
   String name; // keep track for error messages (unused)
   Thread runner;
@@ -129,7 +131,7 @@ public class Capture extends PImage implements Runnable {
    * <P/>
    * If the following function:
    * <PRE>public void captureEvent(Capture c)</PRE>
-   * is defined int the host PApplet, then it will be called every
+   * is defined in the host PApplet, then it will be called every
    * time a new frame is available from the capture device.
    */
   public Capture(PApplet parent, String name,
