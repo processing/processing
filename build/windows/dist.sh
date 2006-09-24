@@ -71,7 +71,7 @@ chmod +x processing/ICE_JNIRegistry.dll
 
 # get platform-specific goodies from the dist dir
 cp launcher/processing.exe processing/
-cp dist/run.bat processing/
+#cp dist/run.bat processing/
 
 # convert notes.txt to windows LFs
 # the 2> is because the app is a little chatty
@@ -113,8 +113,8 @@ echo
 cp -a $P5 $P5-expert
 
 # can't use the run.bat that's tied to a local jre
-rm $P5-expert/run.bat
-cp dist/run-expert.bat $P5-expert/
+#rm $P5-expert/run.bat
+#cp dist/run-expert.bat $P5-expert/
 
 # remove enormous java runtime
 rm -rf $P5-expert/java
