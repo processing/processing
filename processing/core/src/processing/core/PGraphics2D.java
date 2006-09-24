@@ -62,17 +62,22 @@ public class PGraphics2D extends PGraphics {
   protected PGraphics2D() { }
 
 
+  /*
   public PGraphics2D(int iwidth, int iheight) {
     this(iwidth, iheight, null);
   }
+  */
 
 
   public PGraphics2D(int iwidth, int iheight, PApplet applet) {
+    super(iwidth, iheight, applet);
+    /*
     if (applet != null) {
       this.parent = applet;
       applet.addListeners();
     }
     resize(iwidth, iheight);
+    */
   }
 
 
@@ -93,7 +98,8 @@ public class PGraphics2D extends PGraphics {
     for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
     //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
 
-    if (parent != null) {
+    //if (parent != null) {
+    if (mainDrawingSurface) {
       cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
       mis = new MemoryImageSource(width, height, pixels, 0, width);
       mis.setFullBufferUpdates(true);

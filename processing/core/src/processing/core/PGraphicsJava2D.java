@@ -1253,6 +1253,7 @@ public class PGraphicsJava2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
+  /*
   public void blend(PImage src, int sx, int sy, int dx, int dy, int mode) {
     loadPixels();
     super.blend(src, sx, sy, dx, dy, mode);
@@ -1265,6 +1266,7 @@ public class PGraphicsJava2D extends PGraphics {
     super.blend(sx, sy, dx, dy, mode);
     updatePixels();
   }
+  */
 
 
   public void blend(int sx1, int sy1, int sx2, int sy2,

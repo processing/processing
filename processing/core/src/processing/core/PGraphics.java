@@ -36,12 +36,6 @@ import java.awt.image.*;
  */
 public abstract class PGraphics extends PImage implements PConstants {
 
-  /***
-   * Parent applet as passed in by the constructor. If null, then
-   * no MemoryImageSource will be used or updated, saving memory.
-   */
-  PApplet parent;
-
   /// width minus one (useful for many calculations)
   public int width1;
 
@@ -60,6 +54,16 @@ public abstract class PGraphics extends PImage implements PConstants {
   /// true if in the midst of resize (no drawing can take place)
   boolean insideResize;
 
+  // ........................................................
+  
+  /**
+   * true if this is the main drawing surface for a particular sketch.
+   * This would be set to false for an offscreen buffer or if it were
+   * created any other way than size(). When this is set, the listeners
+   * are also added to the sketch.
+   */
+  protected boolean mainDrawingSurface;
+  
   // ........................................................
 
   // specifics for java memoryimagesource
@@ -488,10 +492,10 @@ public abstract class PGraphics extends PImage implements PConstants {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  public PGraphics(int iwidth, int iheight) {
-    this(iwidth, iheight, null);
+  //public PGraphics(int iwidth, int iheight) {
+    //this(iwidth, iheight, null);
     //resize(iwidth, iheight);
-  }
+  //}
 
 
   /**
@@ -503,11 +507,14 @@ public abstract class PGraphics extends PImage implements PConstants {
    * @param iwidth  viewport width
    * @param iheight viewport height
    */
-  public PGraphics(int iwidth, int iheight, PApplet applet) {
+  public PGraphics(int iwidth, int iheight, PApplet parent) {
+    /*
     if (applet != null) {
       this.parent = applet;
       applet.addListeners();
     }
+    */
+    this.parent = parent;
     resize(iwidth, iheight);
   }
 
@@ -535,10 +542,25 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Parent thread has requested that visual action be taken.
+   * Set this as the main drawing surface. Meaning that it can safely be 
+   * set to opaque (given a default gray background) and listeners for
+   * the mouse and keyboard added.
+   * <p/>
+   * This should only be used by subclasses of PGraphics.
    */
-  public void requestDisplay(PApplet parent) {  // ignore
-    parent.handleDisplay();
+  public void setMainDrawingSurface() {
+    mainDrawingSurface = true;
+    parent.addListeners();
+  }
+  
+  
+  /**
+   * Parent thread has requested that visual action be taken.
+   * This is broken out like this because the OpenGL library 
+   * handles updates in a very different way.
+   */
+  public void requestDisplay(PApplet pa) {  // ignore
+    pa.handleDisplay();
   }
 
 
@@ -629,7 +651,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     // they have to call background() themselves, otherwise everything gets
     // a gray background (when just a transparent surface or an empty pdf
     // is what's desired)
-    if (parent != null) {
+    if (mainDrawingSurface) {
       background(204);
     }
 
