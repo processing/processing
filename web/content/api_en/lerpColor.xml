@@ -33,7 +33,7 @@ Calculates a color or colors between two color at a specific increment. The <b>a
 </description>
 
 <syntax>
-lerpColor(<b>c1</b>, <b>c2</b>, <b>amt</b>)
+lerpColor(<c>c1</c>, <c>c2</c>, <c>amt</c>)
 </syntax>
 
 <parameter>
