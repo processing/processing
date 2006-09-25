@@ -40,7 +40,7 @@ void serverEvent(Server someServer, Client someClient) {
 </example>
 
 <description>
-Coming soon...
+The code inside <b>serverEvent()</b> is run when a new client connects to a server that has been created within the program.
 </description>
 
 <syntax>
@@ -51,12 +51,12 @@ void serverEvent(<c>client</c>, <c>server</c>) {
 
 <parameter>
 <label>client</label>
-<description>Client</description>
+<description>Client: client connecting to the server</description>
 </parameter>
 
 <parameter>
 <label>server</label>
-<description>Server</description>
+<description>Server: server the client is connecting to</description>
 </parameter>
 
 <parameter>
