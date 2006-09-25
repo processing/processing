@@ -11,6 +11,7 @@
 <example>
 <image>texture_.gif</image>
 <code>
+size(100, 100, P3D);
 noStroke();
 PImage a = loadImage("arch.jpg");
 beginShape();
