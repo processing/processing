@@ -192,6 +192,7 @@
 		<ex file="LargePage.html">Large Page</ex>
 	    <ex file="ManyPages.html">Many Pages</ex>
 		<ex file="MousePress.html">Mouse Press</ex>
+		<ex file="Complex3D.html">Complex 3D</ex>
 	</cat>
 	<cat label="Library-Net">
 		<ex file="ValueClient.html">ValueClient</ex>
