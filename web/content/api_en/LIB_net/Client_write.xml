@@ -12,8 +12,7 @@
 <example>
 <image></image>
 <code>
-// Example by Tom Igoe
- 
+// Example by Tom Igoe 
 // Creates a client that sends input to a server
 
 import processing.net.*; 
@@ -63,7 +62,7 @@ Writes data to a server specified when constructing the client.
 
 <parameter>
 <label>data</label>
-<description>bytes, chars, ints, bytes[], Strings: data to write</description>
+<description>byte, char, int, byte[], String: data to write</description>
 </parameter>
 
 <returns>int</returns>

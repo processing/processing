@@ -25,7 +25,7 @@ void setup() {
 }
 
 void draw() {
-  if (myClient.available() > 0) {
+  if (myClient.available() &gt; 0) {
     dataIn = myClient.read();
   }
   background(dataIn);
