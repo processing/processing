@@ -283,7 +283,7 @@ focused	LITERAL2	focused
 for	KEYWORD1	for_
 frameCount	LITERAL2	frameCount
 frameRate	KEYWORD2	frameRate_
-framerate	LITERAL2	frameRate
+frameRate	LITERAL2	frameRate
 frustum	KEYWORD2	frustum_
 get	KEYWORD2	get_
 <		greaterthan
@@ -414,7 +414,7 @@ random	KEYWORD2	random_
 randomSeed	KEYWORD2	randomSeed_
 rect	KEYWORD2	rect_
 rectMode	KEYWORD2	rectMode_
-blendColor	KEYWORD2	red_
+red	KEYWORD2	red_
 redraw	KEYWORD2	redraw_
 resetMatrix	KEYWORD2	resetMatrix_
 return	KEYWORD1	return
