@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>blendColor()</name>
+<name>red()</name>
 
 <category>Color</category>
 
@@ -9,35 +9,40 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image></image>
+<image>red_.gif</image>
 <code>
-Example to come...
+noStroke();
+color c = color(0, 126, 255);
+fill(c);
+rect(15, 20, 35, 60);
+float value = red(c);  // Sets "value" to "0"
+fill(value);
+rect(50, 20, 35, 60);
 </code>
 </example>
 
 <description>
-...
+Extracts the red value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br /><br />The red() function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br /><pre>float r1 = red(myColor);<br />float r2 = myColor &gt;&gt; 16 & 0xFF;</pre>
 </description>
 
 <syntax>
-blendColor(<c>c1</c>, <c>c2</c>)
+red(<c>color</c>)
 </syntax>
 
 <parameter>
-<label>c1</label>
-<description>color: any value of the color datatype</description>
-</parameter>
-
-<parameter>
-<label>c2</label>
-<description>color: any value of the color datatype</description>
+<label>color</label>
+<description>any value of the color datatype</description>
 </parameter>
 
 <returns>float</returns>
 
 <related>
-blend()
-color()
+green() 
+blue() 
+hue() 
+saturation() 
+brightness()
+&gt;&gt; (right shift)
 </related>
 
 <availability>1.0</availability>
@@ -45,6 +50,12 @@ color()
 <type>Function</type>
 
 <partof>Core</partof>
+
+
+
+
+
+
 
 
 </root>
