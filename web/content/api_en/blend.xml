@@ -46,26 +46,26 @@ blend(img, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
 </example>
 
 <description>
-Blends a region of pixels from one image into another (or in itself again) with full alpha channel support. There is a choice of the following modes to blend the source pixels (A) with the ones of pixels in the destination image (B):
-
-BLEND - linear interpolation of colours: C = A*factor + B
-
-ADD - additive blending with white clip: C = min(A*factor + B, 255)
-
-SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)
-
-DARKEST - only the darkest colour succeeds: C = min(A*factor, B)
-
-LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)
-
-All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.
-
+Blends a region of pixels from one image into another (or in itself again) with full alpha channel support. There is a choice of the following modes to blend the source pixels (A) with the ones of pixels in the destination image (B):<br />
+<br />
+BLEND - linear interpolation of colours: C = A*factor + B<br />
+<br />
+ADD - additive blending with white clip: C = min(A*factor + B, 255)<br />
+<br />
+SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br />
+<br />
+DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br />
+<br />
+LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br />
+<br />
+All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br />
+<br />
 The <b>imageMode()</b> function changes the way the parameters work. For example, a call to <b>imageMode(CORNERS)</b> will change the width and height parameters to define the x and y values of the opposite corner of the image.
 </description>
 
 <syntax>
-blend(<c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>, <c>mode</c>)
-blend(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>, <c>mode</c>)
+blend(<c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>, <c>MODE</c>)
+blend(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>, <c>MODE</c>)
 </syntax>
 
 <parameter>
@@ -114,7 +114,7 @@ blend(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx<
 </parameter>
 
 <parameter>
-<label>mode</label>
+<label>MODE</label>
 <description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST</description>
 </parameter>
 
