@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>blendColor()</name>
+<name>lerpColor()</name>
 
 <category>Color</category>
 
@@ -11,32 +11,27 @@
 <example>
 <image></image>
 <code>
-Example to come...
+Examples to come...
 </code>
 </example>
 
 <description>
-...
+Description to come...
 </description>
 
 <syntax>
-blendColor(<c>c1</c>, <c>c2</c>)
+To come...
 </syntax>
 
 <parameter>
-<label>c1</label>
-<description>color: any value of the color datatype</description>
-</parameter>
-
-<parameter>
-<label>c2</label>
-<description>color: any value of the color datatype</description>
+<label></label>
+<description></description>
 </parameter>
 
 <returns>float</returns>
 
 <related>
-blend()
+blendColor()
 color()
 </related>
 
@@ -45,6 +40,8 @@ color()
 <type>Function</type>
 
 <partof>Core</partof>
+
+<level>Extended</level>
 
 
 </root>

@@ -6,23 +6,6 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>blend_color.gif</image>
-<code>
-color orange = color(204, 102, 0);
-color blue = color(0, 102, 153);
-color orangeblueadd = blend(orange, blue, ADD);
-background(51);
-noStroke();
-fill(orange);
-rect(14, 20, 20, 60);
-fill(orangeblueadd);
-rect(40, 20, 20, 60);
-fill(blue);
-rect(66, 20, 20, 60);
-</code>
-</example>
-
-<example>
 <image>blend_add.jpg</image>
 <code>
 background(loadImage("rockies.jpg")); 
@@ -63,7 +46,7 @@ blend(img, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
 </example>
 
 <description>
-Blends two color values and copies a single pixel or region of pixels from one image into another (or in itself again) with full alpha channel support. There is a choice of the following modes to blend the source pixels (A) with the ones of pixels in the destination image (B):
+Blends a region of pixels from one image into another (or in itself again) with full alpha channel support. There is a choice of the following modes to blend the source pixels (A) with the ones of pixels in the destination image (B):
 
 BLEND - linear interpolation of colours: C = A*factor + B
 
@@ -81,60 +64,17 @@ The <b>imageMode()</b> function changes the way the parameters work. For example
 </description>
 
 <syntax>
-blend(<c>c1</c>, <c>c2</c>, <c>mode</c>);
-blend(<c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>, <c>mode</c>);
-blend(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>dx</c>, <c>dy</c>, <c>mode</c>);
-blend(<c>sx1</c>, <c>sy1</c>, <c>swidth</c>, <c>sheight</c>, <c>dx1</c>, <c>dy1</c>, <c>dwidth</c>, <c>dheight</c>, <c>mode</c>);
-blend(<c>srcImg</c>, <c>sx1</c>, <c>sy1</c>, <c>swidth</c>, <c>sheight</c>, <c>dx1</c>, <c>dy1</c>, <c>dwidth</c>, <c>dheight</c>, <c>mode</c>);
+blend(<c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>, <c>mode</c>)
+blend(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>, <c>mode</c>)
 </syntax>
 
 <parameter>
-<label>c1</label>
-<description>color: the first color to be blended</description>
-</parameter>
-
-<parameter>
-<label>c2</label>
-<description>color: the second color to be blended</description>
-</parameter>
-
-<parameter>
-<label>mode</label>
-<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST</description>
-</parameter>
-
-<parameter>
 <label>sx</label>
-<description>int: X coordinate of the pixel in source image</description>
-</parameter>
-
-<parameter>
-<label>sy</label>
-<description>int: Y coordinate of the pixel in source image</description>
-</parameter>
-
-<parameter>
-<label>dx</label>
-<description>int: X coordinate of the pixel in destination image</description>
-</parameter>
-
-<parameter>
-<label>dy</label>
-<description>int: Y coordinate of the pixel in destination image</description>
-</parameter>
-
-<parameter>
-<label>srcImg</label>
-<description>PImage: a image variable referring to the source image</description>
-</parameter>
-
-<parameter>
-<label>sx1</label>
 <description>int: X coordinate of the source's upper left corner</description>
 </parameter>
 
 <parameter>
-<label>sy1</label>
+<label>sy</label>
 <description>int: Y coordinate of the source's upper left corner</description>
 </parameter>
 
@@ -149,13 +89,13 @@ blend(<c>srcImg</c>, <c>sx1</c>, <c>sy1</c>, <c>swidth</c>, <c>sheight</c>, <c>d
 </parameter>
 
 <parameter>
-<label>dx1</label>
-<description>int: X coordinate of the destination's upper left corner</description>
+<label>dx</label>
+<description>int: X coordinate of the destinations's upper left corner</description>
 </parameter>
 
 <parameter>
-<label>dy1</label>
-<description>int: Y coordinate of the destination's upper left corner</description>
+<label>dy</label>
+<description>int: Y coordinate of the destinations's upper left corner</description>
 </parameter>
 
 <parameter>
@@ -166,6 +106,16 @@ blend(<c>srcImg</c>, <c>sx1</c>, <c>sy1</c>, <c>swidth</c>, <c>sheight</c>, <c>d
 <parameter>
 <label>dheight</label>
 <description>int: destination image height</description>
+</parameter>
+
+<parameter>
+<label>srcImg</label>
+<description>PImage: a image variable referring to the source image</description>
+</parameter>
+
+<parameter>
+<label>mode</label>
+<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST</description>
 </parameter>
 
 

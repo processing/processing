@@ -15,7 +15,8 @@
 PrintWriter output;
 
 void setup() {
-  output = new writer("positions.txt"); // Create a new file in the sketch directory
+  // Create a new file in the sketch directory
+  output = new writer("positions.txt"); 
 }
 
 void draw() {

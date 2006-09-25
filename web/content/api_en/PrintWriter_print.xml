@@ -15,7 +15,8 @@
 PrintWriter output;
 
 void setup() {
-  output = new writer("positions.txt"); // Create a new file in the sketch directory
+  // Create a new file in the sketch directory
+  output = new writer("positions.txt"); 
 }
 
 void draw() {
@@ -38,12 +39,17 @@ Writes data to a <b>PrintWriter</b> object stream.
 </description>
 
 <syntax>
-<c>pw</c>.println()
+<c>pw</c>.println(<c>data</c>)
 </syntax>
 
 <parameter>
 <label>pw</label>
 <description>any object of the type PrintWriter</description>
+</parameter>
+
+<parameter>
+<label>data</label>
+<description>boolean, byte, char, color, int, float, String</description>
 </parameter>
 
 
