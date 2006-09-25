@@ -213,6 +213,7 @@ binary	KEYWORD2	binary_
 binary	KEYWORD2	bitwiseAND_
 |		bitwiseOR
 blend	KEYWORD2	blend_
+blendColor	KEYWORD2	blendColor_
 blue	KEYWORD2	blue_
 boolean	KEYWORD1	boolean
 boolean	KEYWORD2	boolean_
@@ -240,6 +241,8 @@ copy	KEYWORD2	copy_
 cos	KEYWORD2	cos_
 createFont	KEYWORD2	createFont_
 createGraphics	KEYWORD2	createGraphics_
+createImage	KEYWORD2	createImage_
+createWriter	KEYWORD2	createWriter_
 {}		curlybraces
 cursor	KEYWORD2	cursor_
 curve	KEYWORD2	curve_
@@ -307,6 +310,7 @@ keyPressed	LITERAL2	keyPressed
 keyReleased	KEYWORD2	keyReleased_
 <<		leftshift
 lerp	KEYWORD2	lerp_
+lerpColor	KEYWORD2	lerpColor_
 <		lessthan
 <=		lessthanorequalto
 lightFalloff	KEYWORD2	lightFalloff_
@@ -401,6 +405,8 @@ printProjection	KEYWORD2	printProjection_
 PrintWriter	KEYWORD1	PrintWriter
 close	KEYWORD2	PrintWriter_close_
 flush	KEYWORD2	PrintWriter_flush_
+print	KEYWORD2	PrintWriter_print_
+println	KEYWORD2	PrintWriter_println_
 pushMatrix	KEYWORD2	pushMatrix_
 quad	KEYWORD2	quad_
 radians	KEYWORD2	radians_
@@ -408,7 +414,7 @@ random	KEYWORD2	random_
 randomSeed	KEYWORD2	randomSeed_
 rect	KEYWORD2	rect_
 rectMode	KEYWORD2	rectMode_
-red	KEYWORD2	red_
+blendColor	KEYWORD2	red_
 redraw	KEYWORD2	redraw_
 resetMatrix	KEYWORD2	resetMatrix_
 return	KEYWORD1	return
@@ -423,7 +429,6 @@ saturation	KEYWORD2	saturation_
 save	KEYWORD2	save_
 saveBytes	KEYWORD2	saveBytes_
 saveFrame	KEYWORD2	saveFrame_
-savePath	KEYWORD2	savePath_
 saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
 screen	LITERAL2	screen
@@ -492,5 +497,4 @@ vertex	KEYWORD2	vertex_
 void	KEYWORD1	void
 while	KEYWORD1	while_
 width	LITERAL2	width
-writer	KEYWORD2	writer_
 year	KEYWORD2	year_
