@@ -58,6 +58,9 @@ X   on export, need to first import applet's packages before qt et al
 X   video working in applets? (no, never did in alpha so untested)
 X     Movie should perhaps work?
 X   http://dev.processing.org/bugs/show_bug.cgi?id=44
+X capture.settings() changes size of capture
+X   http://dev.processing.org/bugs/show_bug.cgi?id=366
+X   fix submitted by hansi
 
 faq additions
 X add notes about sketchPath() and savePath() to library docs
@@ -73,7 +76,7 @@ X createGraphics with PDF, using dispose() to clear the thing
 X calling nextPage()
 _ under the memory section, getting free/total memory
 _   long allocated = Runtime.getRuntime().totalMemory()  (-Xms usually)
-_   long allocatedButFree = Runtime.getRuntime().freeMemory()  (-Xms minus used)
+_   long free = Runtime.getRuntime().freeMemory()  (-Xms minus used)
 _   long maximum = Runtime.getRuntime().maxMemory()  (-Xmx setting)
 X remove the memory setting stuff from the faq
 X   add more information about setting the memory
@@ -911,8 +914,6 @@ _ need to add resize method to camera capture
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
 _ need to prevent multiple QTSession open or close
 _   static method shared across the lib, or some such
-_ capture.settings() changes size of capture
-_   http://dev.processing.org/bugs/show_bug.cgi?id=366
 _ reading movie is really really slow (2-3 fps)
 _   possible improvement from qtjava list added
 _   http://dev.processing.org/bugs/show_bug.cgi?id=40
