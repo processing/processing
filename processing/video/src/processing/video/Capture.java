@@ -84,6 +84,8 @@ public class Capture extends PImage implements Runnable {
   /** the guy who's doing all the work */
   public SGVideoChannel channel;
 
+  /** boundary of image at the requested size */
+  protected QDRect qdrect;
 
   static {
     try {
@@ -141,7 +143,7 @@ public class Capture extends PImage implements Runnable {
     this.framerate = framerate;
 
     try {
-      QDRect qdrect = new QDRect(requestWidth, requestHeight);
+      qdrect = new QDRect(requestWidth, requestHeight);
       // workaround for bug with the intel macs
       QDGraphics qdgraphics = null; //new QDGraphics(qdrect);
       if (quicktime.util.EndianOrder.isNativeLittleEndian()) {
@@ -454,9 +456,18 @@ public class Capture extends PImage implements Runnable {
   public void settings() {
     try {
       // fix for crash here submitted by hansi (stop/startPreview lines)
-          capture.stop();
+      capture.stop();
+
+      // Whenever settingsDialog() is called, the boundries change,
+      // causing the image to be cropped. Fix for Bug #366
+      // http://dev.processing.org/bugs/show_bug.cgi?id=366
+      channel.setBounds(qdrect);
+
+      // open the settings dialog
       channel.settingsDialog();
-          capture.startPreview();
+      // start the preview again
+      capture.startPreview();
+
     } catch (StdQTException qte) {
       int errorCode = qte.errorCode();
       if (errorCode != Errors.userCanceledErr) {
