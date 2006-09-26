@@ -84,6 +84,8 @@ X   remove single pixel blend functions
 o   blend() should prolly have its mode be the first param
 X   move blend() to blendColor() when applying it to a color
 X added lerpColor(), though it needs a new name
+X went back to old image i/o (sometimes caused trouble when exported)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=376
 
 more recent
 X only update mouse pos on moved and dragged
@@ -868,7 +870,7 @@ CORE / PImage
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
-
+_   http://dev.processing.org/bugs/show_bug.cgi?id=356
 _ add ability to control jpeg compression level with save() and saveFrame()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=342
 _ also when drawing an image, sense whether drawn rotated
@@ -894,6 +896,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=343
 
 CORE / Mac OS X
 
+_ first line of applets is missing on java 1.4+ on the mac
+_   http://dev.processing.org/bugs/show_bug.cgi?id=283
 _ change how java version is determined on mac
 _   http://developer.apple.com/technotes/tn2002/tn2110.html
 _   (this tn provides no guidance for macos8/9.. gah)

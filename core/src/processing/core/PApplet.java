@@ -48,7 +48,7 @@ import java.util.zip.*;
  * be returning Java 1.1 support, which does not include Swing (without an
  * additional, sizable, download), and 2) Swing is a bloated piece of crap.
  * A Processing applet is a heavyweight AWT component, and can be used the
- * same as any other AWT component.
+ * same as any other AWT component, with or without Swing.
  * <p/>
  * Similarly, Processing runs in a Frame and not a JFrame. However, there's
  * nothing to prevent you from embedding a PApplet into a JFrame, it's just
