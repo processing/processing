@@ -347,11 +347,26 @@ libraries that are included with Processing, or the contributed
 Illustrator or SVG vector export libraries that can be found on the 
 libraries page as another alternative for creating large format images.
 <br /> <br />
-There are also two known bugs that eat memory:
-<UL>
-<li>OpenGL is really memory hungry because of how textures work.</li><br>
-<li></li>
-</UL>
+To check the amount of memory that's used so far, or how much is available, 
+use Java's Runtime object:
+
+<pre>
+
+// The amount of memory allocated so far (usually the -Xms setting)
+long allocated = Runtime.getRuntime().totalMemory();
+
+// Free memory out of the amount allocated (value above minus used)
+long free = Runtime.getRuntime().freeMemory();
+
+// The maximum amount of memory that can eventually be consumed
+// by this application. This is the value set by the Preferences
+// dialog box to increase the memory settings for an application.
+long maximum = Runtime.getRuntime().maxMemory();
+
+</pre>
+
+There are also some known bugs that eat memory that can be found
+in the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
 
 <!--
 There are two types of programs in Processing. Some are run from
