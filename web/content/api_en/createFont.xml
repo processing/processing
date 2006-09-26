@@ -27,14 +27,13 @@ void setup() {
 </example>
 
 <description>
-Dynamically converts a font to the format used by Processing from either a font name that's installed on the computer, or from a .ttf or .otf file inside the sketches "data" folder. Use the <b>PFont.list()</b> method to first determine the names for the fonts recognized by the computer and are compatible with this function. Not all fonts can be used and some might work with one operating system and not others. If you're going to be sharing the program with other people or posting it on the web, it's important to include a .ttf or .otf version of your font in the data directory of the sketch because other people might not have the font installed on their computer.<br /><br />The <b>size</b> parameter states the font size you want to generate. The <b>charset</b> parameter is an array of chars which specifies the characters to generate, and the <b>smooth</b> parameter specifies if the font should be antialiased or not. Processing displays fonts using the .vlw font format, which uses images for each letter, rather than defining them through vector data.<br /><br />This function is an advanced feature for precise control. On most occasions you should create fonts through selecting "Create Font..." from the Tools menu.
+Dynamically converts a font to the format used by Processing from either a font name that's installed on the computer, or from a .ttf or .otf file inside the sketches "data" folder. Use the <b>PFont.list()</b> method to first determine the names for the fonts recognized by the computer and are compatible with this function. Not all fonts can be used and some might work with one operating system and not others. If you're going to be sharing the program with other people or posting it on the web, it's important to include a .ttf or .otf version of your font in the data directory of the sketch because other people might not have the font installed on their computer.<br /><br />The <b>size</b> parameter states the font size you want to generate. The <b>smooth</b> parameter specifies if the font should be antialiased or not, and the <b>charset</b> parameter is an array of chars that specifies the characters to generate. Processing displays fonts using the .vlw font format, which uses images for each letter, rather than defining them through vector data.<br /><br />This function is an advanced feature for precise control. On most occasions you should create fonts through selecting "Create Font..." from the Tools menu.
 </description>
 
 <syntax>
 createFont(<c>name</c>, <c>size</c>)
-createFont(<c>name</c>, <c>size</c>, <c>charset</c>)
 createFont(<c>name</c>, <c>size</c>, <c>smooth</c>)
-createFont(<c>name</c>, <c>size</c>, <c>charset</c>, <c>smooth</c>)
+createFont(<c>name</c>, <c>size</c>, <c>smooth</c>, <c>charset</c>)
 </syntax>
 
 <parameter>
