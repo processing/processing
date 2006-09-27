@@ -691,6 +691,7 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
+    /*
     item = new JMenuItem("Export Folder...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -702,6 +703,7 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);
+    */
 
     /*
     item = new JMenuItem("Open in External Editor");
