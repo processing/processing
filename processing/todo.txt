@@ -52,6 +52,7 @@ X   make mention of doing it to main pix array, and on an image
 X move fwd/back tab into the tab menu
 X   however it includes a bug that loses focus (at least on osx)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=402
+X "export folder" tool has been removed, if temporarily
 
 video
 X quicktime in applets
