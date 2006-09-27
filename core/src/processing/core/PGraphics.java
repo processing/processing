@@ -55,7 +55,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   boolean insideResize;
 
   // ........................................................
-  
+
   /**
    * true if this is the main drawing surface for a particular sketch.
    * This would be set to false for an offscreen buffer or if it were
@@ -63,7 +63,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * are also added to the sketch.
    */
   protected boolean mainDrawingSurface;
-  
+
   // ........................................................
 
   // specifics for java memoryimagesource
@@ -542,7 +542,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set this as the main drawing surface. Meaning that it can safely be 
+   * Set this as the main drawing surface. Meaning that it can safely be
    * set to opaque (given a default gray background) and listeners for
    * the mouse and keyboard added.
    * <p/>
@@ -552,11 +552,11 @@ public abstract class PGraphics extends PImage implements PConstants {
     mainDrawingSurface = true;
     parent.addListeners();
   }
-  
-  
+
+
   /**
    * Parent thread has requested that visual action be taken.
-   * This is broken out like this because the OpenGL library 
+   * This is broken out like this because the OpenGL library
    * handles updates in a very different way.
    */
   public void requestDisplay(PApplet pa) {  // ignore
@@ -2136,7 +2136,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      if (!hints[DISABLE_NATIVE_FONTS]) {
+      if (hints[ENABLE_NATIVE_FONTS]) {
         textFontNative = which.font;
       }
       //textFontNativeMetrics = null;
