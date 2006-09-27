@@ -49,6 +49,9 @@ X keep checking whether google has started to honor robots.txt
 X   http://www.google.com/search?hl=en&lr=&q=angleMode+site%3Aprocessing.org&btnG=Search
 X add load/updatePixels stuff to the pixels[] reference
 X   make mention of doing it to main pix array, and on an image
+X move fwd/back tab into the tab menu
+X   however it includes a bug that loses focus (at least on osx)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=402
 
 video
 X quicktime in applets
@@ -146,18 +149,17 @@ X   on unix machines it's also possible to use a symlink
 _ need to write converter that will handle syntax changes
 _   basically find & replace with regexps
 _   framerate() -> frameRate()
-_ add info to the new faq
-_   where to find out about embedding PApplet (the dev ref)
-_   also the link to the eclipse integration
-_   also add to the platforms page
-_     i want to use java 1.5 crap (so do it, just don't use our env)
+X add info to the new faq
+X   where to find out about embedding PApplet (the dev ref)
+X   also the link to the eclipse integration
+X   also add to the platforms page
+X     i want to use java 1.5 crap (so do it, just don't use our env)
 X   where have all the old faq pages gone?
-_ add to createImage() or createGraphics reference:
-_   Creating bitmap images - from advanced.html
-_ move fwd/back tab into the tab menu
-_ add to opengl ref the information about downloading more native libs
-_   we only include linux-i586, macosx (ppc and universal), windows
-_   also can get linux amd64 and sunos, just need to include the libs
+X add to opengl ref the information about downloading more native libs
+X   we only include linux-i586, macosx (ppc and universal), windows
+X   also can get linux amd64 and sunos, just need to include the libs
+X add to createImage() or createGraphics reference:
+X   Creating bitmap images - from advanced.html
 _ the "export folder" command doesn't seem to work at all
 _   check with casey, see if he's using it
 _ on archive sketch, open the sketch folder where it's saved
@@ -551,6 +553,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=39
 
 PDE / Editor Header
 
+_ cmd-{ and cmd-} no longer work after the menu is shown
+_   http://dev.processing.org/bugs/show_bug.cgi?id=402
 _ make some fancy extendo things because the tabs get too big
 _   either condense or popdown menu thingy
 _   http://dev.processing.org/bugs/show_bug.cgi?id=54

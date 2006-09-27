@@ -969,6 +969,57 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Create an offscreen PGraphics object for drawing. This can be used
+   * for bitmap or vector images drawing or rendering.
+   *
+   * <UL>
+   * <LI>Do not use "new PGraphicsXxxx()", use this method. This method
+   * ensures that internal variables are set up properly that tie the
+   * new graphics context back to its parent PApplet.
+   * <LI>The basic way to create bitmap images is to use the <A
+   * HREF="http://processing.org/reference/saveFrame_.html">saveFrame()</A>
+   * function.
+   * <LI>If you want to create a really large scene and write that,
+   * first make sure that you've allocated a lot of memory in the Preferences.
+   * <LI>If you want to create images that are larger than the screen,
+   * you should create your own PGraphics object, draw to that, and use
+   * <A HREF="http://processing.org/reference/save_.html">save()</A>.
+   * For now, it's best to use <A HREF="http://dev.processing.org/reference/everything/javadoc/processing/core/PGraphics3D.html">P3D</A> in this scenario.
+   * P2D is currently disabled, and the JAVA2D default will give mixed
+   * results. An example of using P3D:
+   * <PRE>
+   *
+   * PGraphics big;
+   *
+   * void setup() {
+   *   big = createGraphics(3000, 3000, P3D);
+   *
+   *   big.beginDraw();
+   *   big.background(128);
+   *   big.line(20, 1800, 1800, 900);
+   *   // etc..
+   *   big.endDraw();
+   *
+   *   // make sure the file is written to the sketch folder
+   *   big.save("big.tif");
+   * }
+   *
+   * </PRE>
+   * <LI>It's important to always wrap drawing to createGraphics() with
+   * beginDraw() and endDraw() (beginFrame() and endFrame() prior to
+   * revision 0115). The reason is that the renderer needs to know when
+   * drawing has stopped, so that it can update itself internally.
+   * This also handles calling the defaults() method, for people familiar
+   * with that.
+   * <LI>It's not possible to use createGraphics() with the OPENGL renderer,
+   * because it doesn't allow offscreen use.
+   * <LI>With Processing 0115 and later, it's possible to write images in
+   * formats other than the default .tga and .tiff. The exact formats and
+   * background information can be found in the developer's reference for
+   * <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PImage.html#save(java.lang.String)">PImage.save()</A>.
+   * </UL>
+   */
   static public PGraphics createGraphics(int iwidth, int iheight,
                                          String irenderer, String ipath,
                                          PApplet applet) {
