@@ -111,37 +111,54 @@ screens, or other mess, your driver might be bad (really!)
 For instance, if you're using a Dell, use the driver they provide 
 (<a href="http://support.dell.com">support.dell.com</a>) instead of what
 might be a more recent driver obtained directly from nvidia.com.
+
+<LI>When exporting a sketch that uses OpenGL, we only provide the necessary
+binaries to make the sketch work with Windows (i586), 
+Mac OS X (PPC and Universal), and Linux (i586). There are versions of 
+JOGL that will run on other platforms, such as variants of SunOS or 
+Linux on other platforms (such as amd64). Adding the "JOGL natives" for 
+these platforms along with the default native .jar files that are included
+with your sketch will enable support for those platforms. The other
+native binaries can be found on the JOGL web site. Do not use the 
+nightly downloads (they are not "signed", so they won't run in a browser),
+and make sure that the version matches what's being used with Processing.
+As of release 0116, this is JOGL 1.0.
+
 </ul>
 </p>
 </div>
 
 <div class="full">
-<h6>Using the OpenGL Renderer</h6>
+<h6>Using the OpenGL Renderer - <EM>advanced users only!</EM> </h6>
 <p><em>Generally, this should be only considered a last-ditch way to get at a particular 
-  GL-specific feature.</em> It makes your code completely incompatible with everything 
-  else (such as future versions of Processing, or other 3D renderers) and will 
+  GL-specific feature.</em> It makes your code completely incompatible 
+  with everything else (such as future versions of Processing, or other 
+  3D renderers) and will 
   confuse the hell outta people when you post your code to the web. Again, if 
-  this works for you great, but if not, we will not field questions about it on 
-  the board. If you want to write code for Java and JOGL, then find yourself a 
-  good Java IDE and get JOGL installed, Processing is not the way to do it. Man, 
-  how I'm gonna regret this.</p>
+  this works for you great, but if not, we aren't responsible and 
+  we will not field questions about it on the board. 
+  If you want to write code for Java and JOGL, then find yourself a 
+  good Java IDE and get JOGL installed, Processing is not the way to do it. 
+  </p>
 <p>To get access to the GL object, use the following:
 <PRE>GL gl = ((PGraphicsOpenGL)g).gl;</PRE>
-  <p>This will give you the <a href="https://jogl.dev.java.net/">jogl</a> object 
-    that talks directly to OpenGL and will let you make OpenGL calls directly. 
-    Note, however, that <em>this is not supported</em>, in the sense that if you 
+  <p>This will give you <a href="https://jogl.dev.java.net/">JOGL's</a> GL 
+    object that talks directly to OpenGL and will let you make OpenGL 
+    calls directly. 
+    Again, <em>this is not supported</em>, in the sense that if you 
     get weird problems with a GL-based sketch that uses this method, you're on 
-    your own. Processing is not intended as a nice wrapper on top of OpenGL. Instead, 
-    we're using OpenGL graphics for one implementation of the Processing Core 
-    API. <BR>
-    Because most of the work in drawing is handled by Processing, most OpenGL 
-    calls will not work, because the model and perspective matrices won't be set 
-    up properly. Therefore, using the GL object will mostly only be useful for 
-    tweaking obscure OpenGL parameters.</p>
+    your own. Processing is not intended as a nice wrapper on top of OpenGL. 
+    Instead, we're using OpenGL graphics for one implementation of the 
+    Processing Core API. <BR>
+  Because most of the work in drawing is handled by Processing, most OpenGL 
+  calls will not work, because the model and perspective matrices won't be set 
+  up properly. Therefore, using the GL object will mostly only be useful for 
+  tweaking obscure OpenGL parameters.</p>
   <p>Another option for talking directly to OpenGL in release 0116 and later is 
-    to use the beginGL() and endGL() methods. These were added against my better 
-    judgement, and handle setting up the camera matrices. Many features still 
-    will not work, but it opens up lots of control for geometry. </p>
+  to use the beginGL() and endGL() methods. These were added against my better 
+  judgement, and handle setting up the camera matrices. Many features still 
+  will not work, but it opens up lots of control for geometry. All the
+  above caveats about "don't cry when it breaks" apply. </p>
   <PRE>
 
 import javax.media.opengl.*;
