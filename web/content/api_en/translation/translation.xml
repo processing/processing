@@ -12,7 +12,7 @@
 		<changes>Changes</changes>
 		<technotes>TechNotes</technotes>
 		<abridged>Abridged</abridged>
-		<complete>Complete</complete>
+		<complete>Extended</complete>
       <alphabetical>Alphabetical</alphabetical>
       <api>API</api>
 		<az>A-Z</az>
@@ -107,7 +107,7 @@
 		<!-- Such as "Translated from English to Russian by Olga Pashenkov" -->
 		<translators></translators>
         
-        <abridged_notice><strong>You are viewing the Abridged Reference,</strong> which omits description and functions for drawing in 3D and for detailed drawing and data manipulation. Click <a href="index_ext.html">Complete</a> above to view the entire reference.</abridged_notice>
+        <abridged_notice><strong>You are viewing the Abridged Reference,</strong> which omits description and functions for drawing in 3D and for detailed drawing and data manipulation. Click <a href="index_ext.html">Extended</a> above to view additional reference.</abridged_notice>
         <refheader>Language (API). The Processing Language has been designed to facilitate the creation of sophisticated visual and conceptual structures.</refheader>
 		
 		<!-- Information for bottom of the page -->
