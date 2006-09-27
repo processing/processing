@@ -74,6 +74,8 @@ public class Movie extends PImage implements PConstants, Runnable {
     } catch (QTException e) {
       e.printStackTrace();
     }
+    /*
+      // shutting off for 0116, hoping for better exception handling
     QTRuntimeException.registerHandler(new QTRuntimeHandler() {
         public void exceptionOccurred(QTRuntimeException e,
                                       Object obj, String s, boolean flag) {
@@ -81,6 +83,7 @@ public class Movie extends PImage implements PConstants, Runnable {
           e.printStackTrace();
         }
       });
+    */
   }
 
 
