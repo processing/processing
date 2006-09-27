@@ -295,23 +295,7 @@ _ image memory use.. how to handle lots of images
 _   need to figure out exactly how they should/can unload
 _   
 
-_ opengl keeping memory around.. 
-_   could this be in vertices that have an image associated
-_   or the image buffer used for textures
-_   that never gets cleared fully?
-_ resizing opengl applet likely to cause big trouble
-_   componentlistener should prolly only do size() command outside of draw
-
-_ make the opengl textmode shape stuff get better and use PShape
-
 _ docs: get/set are faster way to do image, but no tint, no translations
-_ textSpace(SCREEN) for opengl and java2d
-_   don't use loadPixels for either
-_   use font code to set the cached color of the font, then call set()
-_   although set() with alpha is a little different..
-_ textMode(SHAPE) faster in opengl
-_   cache for tyhpe should be per-renderer
-_   because opengl needs vectors, but also the image cache for textures
 
 _ how to clear the screen with alpha? background(0, 0, 0, 0)?
 _   background(EMPTY) -> background(0x01000000) or something?
@@ -925,6 +909,20 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsGL
 
+_ opengl keeping memory around.. 
+_   could this be in vertices that have an image associated
+_   or the image buffer used for textures
+_   that never gets cleared fully?
+_ resizing opengl applet likely to cause big trouble
+_   componentlistener should prolly only do size() command outside of draw
+_ make the opengl textmode shape stuff get better and use PShape
+_ make textMode(SHAPE) faster in opengl
+_   cache for tyhpe should be per-renderer
+_   because opengl needs vectors, but also the image cache for textures
+_ textSpace(SCREEN) for opengl and java2d
+_   don't use loadPixels for either
+_   use font code to set the cached color of the font, then call set()
+_   although set() with alpha is a little different..
 _ polygon z-order depth sorting with alpha in opengl
 _   complete the implementation of hint() with proper implementation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
