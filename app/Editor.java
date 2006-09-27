@@ -604,32 +604,6 @@ public class Editor extends JFrame
 
     menu.addSeparator();
 
-    item = newJMenuItem("Previous Tab", '['); //KeyEvent.VK_LEFT);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          sketch.prevCode();
-        }
-      });
-    menu.add(item);
-
-    item = newJMenuItem("Next Tab", ']'); //KeyEvent.VK_RIGHT);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          sketch.nextCode();
-        }
-      });
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Add File...");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          sketch.addFile();
-        }
-      });
-    menu.add(item);
-
     menu.add(sketchbook.getImportMenu());
 
     if (Base.isWindows() || Base.isMacOS()) {
@@ -644,6 +618,15 @@ public class Editor extends JFrame
       });
       menu.add(item);
     }
+    //menu.addSeparator();
+
+    item = new JMenuItem("Add File...");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          sketch.addFile();
+        }
+      });
+    menu.add(item);
 
     // TODO re-enable history
     //history.attachMenu(menu);

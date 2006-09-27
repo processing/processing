@@ -238,6 +238,7 @@ public class EditorHeader extends JComponent {
 
 
   public void rebuildMenu() {
+    //System.out.println("rebuilding");
     if (menu != null) {
       menu.removeAll();
 
@@ -245,6 +246,9 @@ public class EditorHeader extends JComponent {
       menu = new JMenu();
       popup = menu.getPopupMenu();
       add(popup);
+      popup.setLightWeightPopupEnabled(true);
+
+      /*
       popup.addPopupMenuListener(new PopupMenuListener() {
           public void popupMenuCanceled(PopupMenuEvent e) {
             // on redraw, the isVisible() will get checked.
@@ -256,6 +260,7 @@ public class EditorHeader extends JComponent {
           public void popupMenuWillBecomeInvisible(PopupMenuEvent e) { }
           public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
         });
+      */
     }
     JMenuItem item;
 
@@ -347,6 +352,25 @@ public class EditorHeader extends JComponent {
     }
 
     menu.add(unhide);
+    menu.addSeparator();
+
+    //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
+
+    item = Editor.newJMenuItem("Previous Tab", '[', true);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.sketch.prevCode();
+        }
+      });
+    menu.add(item);
+
+    item = Editor.newJMenuItem("Next Tab", ']', true);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.sketch.nextCode();
+        }
+      });
+    menu.add(item);
 
     if (sketch != null) {
       menu.addSeparator();
