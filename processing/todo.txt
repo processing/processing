@@ -44,6 +44,7 @@ o   when you've got a menu open, move a cursor over the text area
 o   and back over the menu, the text-area cursor type remains. 
 X   mark this as wontfix, since it's just a java bug
 X   http://dev.processing.org/bugs/show_bug.cgi?id=30
+X remove the second movie from the movie playback example
 
 video
 X quicktime in applets
@@ -74,16 +75,22 @@ X advanced reference contains more info about how things work
 X move 'how do i create large images' here
 X createGraphics with PDF, using dispose() to clear the thing
 X calling nextPage()
-_ under the memory section, getting free/total memory
-_   long allocated = Runtime.getRuntime().totalMemory()  (-Xms usually)
-_   long free = Runtime.getRuntime().freeMemory()  (-Xms minus used)
-_   long maximum = Runtime.getRuntime().maxMemory()  (-Xmx setting)
+X under the memory section, getting free/total memory
+X   long allocated = Runtime.getRuntime().totalMemory()  (-Xms usually)
+X   long free = Runtime.getRuntime().freeMemory()  (-Xms minus used)
+X   long maximum = Runtime.getRuntime().maxMemory()  (-Xmx setting)
 X remove the memory setting stuff from the faq
 X   add more information about setting the memory
 X   move memory setting to troubleshooting page on bugs db
+X the source code to the libs are included
+X   this makes them easy to modify (in another app)
+X   or you can remove the package statements and embed them 
+X   serial is a little trickier since you'd have to put stuff in code/
+
+opengl
+X windows, may need to install new version of video drivers
 
 mac faq
-X windows, may need to install new version of video drivers
 X add to faq: 10.4.2 seems to have trouble with opengl and 0110+
 X   opengl updates necessary
 X   *we will only test with the latest updates applied*
@@ -96,13 +103,12 @@ X   make the instructions for winvdig clearer
 X be sure to say "yes to all" when deinstalling winvdig
 X install 1.0.1 not 1.0.5
 X 1.0.5 doesn't seem to be necessary, and can't resize windows
-_ use capture events when doing computation, use available() when drawing
-_   there are threading issues with reading video and its pixels
-_   these particularly show up on slower machines
+X use capture events when doing computation, use available() when drawing
+X   there are threading issues with reading video and its pixels
+X   these particularly show up on slower machines
 o video for web may actually work, just requires signed applet
 o   (bug marked elsewhere in here, may need to close it)
 X   video does in fact work now for 0116, with different handling of file i/o
-_ camera not installed: quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
 
 faq / troubleshooting
 X a method called run() with no params will cause trouble
@@ -111,51 +117,51 @@ X   maybe need to move animation into an internal class
 X audio hiccups, throttling the cpu
 X   p5 will take as much cpu as it can, which can choke other apps
 X   call delay(10) (or so) if you want to make sure audio keeps running
-_ move troubleshooting page to the reference
-_   and the bugs page to dev.processing.org/bugs
-_ search for ALL in the bugs db turns up:
-http://dev.processing.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED
-_ add note to bugs db asking to please use archive sketch and attach
-
-faq / advanced (should these be hacks?)
-_ with network, check in advanced, then rename advanced.html to howto.html
-_ the source code to the libs are included
-_   this makes them easy to modify (in another app)
-_   or you can remove the package statements and embed them 
-_   serial is a little trickier since you'd have to put stuff in code/
-_ making things fast with pixel operations
-_ jai handles setting image size
-_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
-_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
-_    JAI.create("filestore", bufImage, filename+".png", "PNG");
-_ also an example of setting the jpeg compression
-_ add something about getting a bufferedimage from a PGraphics
-_   maybe this should be a method?
-_ how to upload an image to a server
+X move troubleshooting page to the reference
 
 faq / platforms
-_ add notes about running processing on various platforms
-_ directions for rebuilding jikes, etc (where is this?) 
-_ and then link to posts on the discourse site about how to do it
+X add notes about running processing on various platforms
+o directions for rebuilding jikes, etc (where is this?) 
+o and then link to posts on the discourse site about how to do it
 
 faq / export
 X exporting applets
 X   to make your own applet html, copy the template
 X   adding comments to applet html
 X     include a /** */ style description will be included in your applet
-_ present mode
-_   notes about setting key=0 to catch ESC
-_   also size(screen.width, screen.height);
-_   maybe make a section in installations with p5
+X present mode
+X   notes about setting key=0 to catch ESC
+X   also size(screen.width, screen.height);
+o   maybe make a section in installations with p5
 _ exporting applications
 _   possible to include a java subfolder with exported applications
 _   this means no need to install an additional java vm
 _   or an option to include the 'java' folder on windows/linux with export
 _   on unix machines it's also possible to use a symlink
 
-_ remove the second movie from the movie playback example
 
-_ is 'code' folder being ignored on export application?
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+0117+
+
+moving the bugs db
+_ move the bugs section of the troubleshooting page to dev.processing.org/bugs
+_ search for ALL in the bugs db turns up:
+http://dev.processing.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED
+_ add note to bugs db asking to please use archive sketch and attach
+
+write hacks for these
+_ making things fast with pixel operations
+_ jai handles setting image size
+_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
+_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
+_    JAI.create("filestore", bufImage, filename+".png", "PNG");
+_ also an example of setting the jpeg compression (included in bug report)
+_ add something about getting a bufferedimage from a PGraphics
+_   maybe this should be a method?
+_ how to upload an image to a server
+
 
 FOR 1.0
 _ should really be doing the 'right' thing with sketch file handling
@@ -183,6 +189,85 @@ _   set "no smileys" as the default (better for posting code)
 _ add stuff about the history into the people section
 _   descended from dbn, but not dbn, etc..
 _ remove the 'search' item from yabb.cgi
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+_ is 'code' folder being ignored on export application?
+
+_ warn if people call their sketches things like Server
+_ warn if someone extends PApplet but mis-names the sketch
+_   or don't allow it to be exported
+_   add bug reference to the faq once added to the db
+X   or at least add a note about this to the faq
+_ show an error message when on export to app
+_   when no main() is included but class extends PApplet
+
+_ keep checking whether google has started to honor robots.txt
+_   http://www.google.com/search?hl=en&lr=&q=angleMode+site%3Aprocessing.org&btnG=Search
+
+_ add "recent files" list to open menu?
+
+_ unchecking 'use external editor' sketch should not set modified
+_   dangerous if a version that hasn't been re-loaded has possibility
+_   to overwrite. i.e. make a change and save in external editor,
+_   don't actually 
+
+_ we're breaking some mac human interface guidelines
+_   should be using a menu factory to create menubar for all sub-windows
+_   http://developer.apple.com/technotes/tn/tn2042.html
+_   and the general warning dialogs are just ass ugly
+_   (i.e. we really need those replacements for JOptionPane)
+
+_ need to document how subclass of pgraphics works
+_   what are the necessary bits that need to be subclassed
+_   simple handling of colors, what fields are available
+_   how to get the matrices
+_   simple endshape handler
+
+the biggies
+_ bring back P2D with proper stuff 
+_   it's something we had and we lost
+_ properly handle non-ascii chars in p5 folder name
+_   use javac? 
+_     the eclipse jdt compiler may be even better
+X   ask japanese students about whether jikes is working ok
+_   http://dev.processing.org/bugs/show_bug.cgi?id=49
+_   or at least warn the user to install somehwere else
+_   perhaps the get around this by building into sketch folder
+_     when non-ascii chars in use, just launch everything externally
+_   also fails with export-to-application
+_     http://dev.processing.org/bugs/show_bug.cgi?id=252
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+DOCUMENTATION
+
+
+bugzilla 
+_ make a web page that describes how to use the bugs db
+_   don't change the bug subject/summary text
+_   don't mess with priorities (i will)
+_ need to change what people can edit in the bug report
+_   do something about the bug summary field to not make it editable
+_   maybe just move it away from its current location?
+_   call it "bug title" instead of "summary"?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=253
+_ layout problems with attachments page
+_   http://dev.processing.org/bugs/show_bug.cgi?id=254
+_ layout problems with logout page
+_   http://dev.processing.org/bugs/show_bug.cgi?id=255
+_ bug duplicate text field doesn't retain focus 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=256
+_ finish putting all the bugs into bugzilla
+_   add a notation to the bugs site re: reading the faq and searching first
+X   move p5 site bug reporting to bugzilla
+_   do the same for suggestions
+_     and detail the suggestions policy on the dev site: diy
+_   post a page explaining the bug reporting system
 
 text faq
 _ how to use textMode(SHAPE) with opengl
@@ -218,90 +303,6 @@ _   use JPopupMenu.setDefaultLightWeightPopupEnabled(false); for zorder
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1147670059
 _ write documentation on general use of processing.core
 _   note that applet is itself a Component
-
-development faq
-_ need to document how subclass of pgraphics works
-_   what are the necessary bits that need to be subclassed
-_   simple handling of colors, what fields are available
-_   how to get the matrices
-_   simple endshape handler
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-_ warn if people call their sketches things like Server
-_ warn if someone extends PApplet but mis-names the sketch
-_   or don't allow it to be exported
-_   add bug reference to the faq once added to the db
-X   or at least add a note about this to the faq
-_ show an error message when on export to app
-_   when no main() is included but class extends PApplet
-
-_ keep checking whether google has started to honor robots.txt
-_   http://www.google.com/search?hl=en&lr=&q=angleMode+site%3Aprocessing.org&btnG=Search
-
-_ add "recent files" list to open menu?
-
-_ unchecking 'use external editor' sketch should not set modified
-_   dangerous if a version that hasn't been re-loaded has possibility
-_   to overwrite. i.e. make a change and save in external editor,
-_   don't actually 
-
-_ we're breaking some mac human interface guidelines
-_   should be using a menu factory to create menubar for all sub-windows
-_   http://developer.apple.com/technotes/tn/tn2042.html
-_   and the general warning dialogs are just ass ugly
-_   (i.e. we really need those replacements for JOptionPane)
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-# tag current as the final
-svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
-# tag revision 1666 as the final
-svn copy -r 2029 svn://processing.org/trunk/processing svn://processing.org/tags/processing-0107
-# rename a tag that was crapped up the first time around
-svn rename svn://processing.org/tags/release-0003 svn://processing.org/tags/processing-0003
-
-# recognizing a .cvsignore file in the current directory
-# (seems to be required whenever changes are made there too)
-svn propset svn:ignore -F .cvsignore .
-svn propset svn:ignore -F .svnignore .
-
-
-the biggies
-_ bring back P2D with proper stuff 
-_   it's something we had and we lost
-_ properly handle non-ascii chars in p5 folder name
-_   use javac?
-X   ask japanese students about whether jikes is working ok
-_   http://dev.processing.org/bugs/show_bug.cgi?id=49
-_   or at least warn the user to install somehwere else
-_   perhaps the get around this by building into sketch folder
-_     when non-ascii chars in use, just launch everything externally
-_   also fails with export-to-application
-_     http://dev.processing.org/bugs/show_bug.cgi?id=252
-_ finish putting all the bugs into bugzilla
-_   add a notation to the bugs site re: reading the faq and searching first
-X   move p5 site bug reporting to bugzilla
-_   do the same for suggestions
-_     and detail the suggestions policy on the dev site: diy
-_   post a page explaining the bug reporting system
-
-bugzilla 
-_ need to change what people can edit in the bug report
-_   do something about the bug summary field to not make it editable
-_   maybe just move it away from its current location?
-_   call it "bug title" instead of "summary"?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=253
-_ layout problems with attachments page
-_   http://dev.processing.org/bugs/show_bug.cgi?id=254
-_ layout problems with logout page
-_   http://dev.processing.org/bugs/show_bug.cgi?id=255
-_ bug duplicate text field doesn't retain focus 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=256
 
 board faq
 _ someone wrote up an initial version of this
@@ -355,45 +356,9 @@ _   be sure to check the "complete" reference
 _ change bugs.html to issues.html
 _   and add a redirect in httpd.conf
 
-bugs faq
-_ make a web page that describes how to use the bugs db
-_   don't change the bug subject/summary text
-_   don't mess with priorities (i will)
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-
-_ emacs keybindings
-_   general (easier to support)
-_     ctrl-space to set selection start
-_       selection end is just wherever the cursor is after selection set
-_     esc-w to copy (clears the mark)
-_     ctrl-w to cut (clears the mark)
-_     ctrl-y to paste
-_     ctrl-up arrow for next empty line up
-_     ctrl-down arrow for next empty line down
-_     ctrl-left arrow for prev word
-_     ctrl-right arrow for next work
-_     ctrl-a start of line
-_     ctrl-e end of line
-_     home/end are beginning/end of document (not line)
-_   inline search (ouch)
-_     ctrl-s to search inline
-_     ctrl-r to search inline backwards
-_     esc-% for query replace 
-_       then y for replace, n for no, ! for all
-_   file i/o (ouch ouch)
-_     save ctrl-x-s
-_     open ctrl-x-f
-_     save as ctrl-x-w
-_   buffer (tab) movement
-_     ctrl-x-b (switch to another tab)
-_     ctrl-x-k (close.. not in p5? maybe make this hide tab?)
-_   window stuff (probably not)
-_     ctrl-x-2 split window
-_     ctrl-x-o switch windows
-_     ctrl-x-1 single window
 
 _ write a threading example
 _   show an example of how to handle callback into the app
@@ -568,6 +533,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=113
 _ quirks in selection and arrow keys
 _   http://dev.processing.org/bugs/show_bug.cgi?id=348
 _   http://dev.processing.org/bugs/show_bug.cgi?id=349
+_ implement emacs keybindings (list is at the bug report)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=401
 
 
 PDE / Editor Buttons
@@ -910,8 +877,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=312
 
 LIBRARIES / Video
 
-_ need to add resize method to camera capture
+_ documented in faq, add something to the lib "camera not installed"
+_   quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
+_ need to add resize method to capture object
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
+_ figure out what's up with the qt error handler
+_   is this what's preventing the errors from being caught properly?
+_   shutting these off for 0116 so hopefully the messages improve
 _ need to prevent multiple QTSession open or close
 _   static method shared across the lib, or some such
 _ reading movie is really really slow (2-3 fps)
