@@ -176,10 +176,18 @@ Using Fedora Core 4, I had to install compat-libstdc++-33 and xorg-x11-deprecate
 	<p>
 Because Processing is written in Java, it should run on any platform
       that supports Java 1.4. If you'd like to get it running on BSD,
-      Irix, AmigaOS, BeOS... whatever, you should download the Linux
-      version, and replace the &ldquo;java&rdquo; folder and jikes application
-      with versions that support your platform. Then mess with the
-      shell script to get things up and running. </p>
+      Irix, AmigaOS, BeOS... whatever, do the following:
+<UL>
+<LI>1. Download the Linux version, and replace the &ldquo;java&rdquo; 
+folder and jikes application with versions that support your platform. 
+The files can by symbolic links to your Java Runtime installation 
+(note how the folder hierarchy works to make sure you're linking 
+the right thing) or Jikes executable.
+<LI>2. Next, mess with the shell script if necessary to get things up
+and running. 
+<LI>3. If you have success, <A HREF="http://processing.org/discourse/">share 
+the details</A> for others.
+ </p>
 	
 	<h5 id="java"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Java Versions</h5>

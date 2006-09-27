@@ -4,6 +4,7 @@
 
 	
 <p>
+    <a href="#faq">Where's the old FAQ!?!</a> <br />
     <a href="#download">When can I download Processing and how much does it cost?</a> <br />
     <a href="#start">How do I get started?</a> <br />
     <a href="#learn">How do I learn to use Processing?</a> <br />
@@ -18,6 +19,11 @@
     <a href="#update">Why Is Processing Connecting to the Network?</a> <br />
     <a href="#typeface">What is that fantastic typeface used for the page headers?</a><br />
 </p>
+
+
+<h5 id="faq"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
+      Where's the old FAQ!?!</h5>
+<p>The former multi-page FAQ grew too large, and for release 0116, it has been dispersed throughout the <A HREF="reference/index.html">reference</A>. The <A HREF="reference/troubleshooting/">troubleshooting</A> page is perhaps the most important, it contains most of the former bugs.html, which had outgrown its title. The sections relating to library issues (video, OpenGL, serial) have moved to the web pages for those libraries. Changes between releases has <A HREF="reference/changes.html">its own page</A>, as do the sections that cover specific <A HREF="environment/platforms.html">platforms</A> and the how and why of <A HREF="environment/export.html">exporting</A> your code.</p>
 
 
 <h5 id="download"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
@@ -38,23 +44,22 @@ the word and refer them to the <a href="http://processing.org">processing.org</a
    
      <p>Double click the 'Processing' application, and select something from
 the examples menu: File &rarr; Open &rarr; Examples. Hit the 'run' button
-(which looks like the play button on a vcr or tape deck).</p>
-
-    <p>Lather, rinse, repeat as necessary.</p>
+(which looks like the play button on a vcr or tape deck). 
+Lather, rinse, repeat as necessary.</p>
     
     <p>More information on using Processing itself is can be found in the 
 <a href="http://processing.org/reference/environment/index.html">environment</a>
 section of the reference.</p>
 
-    <p>If you're having trouble getting Processing to start, check 
-<a href="bugs.html#nostart">here</a> for possible solutions.</p>
+    <p>If you're having trouble getting Processing to start, check the
+<a href="reference/troubleshooting/index.html#nostart">troubleshooting</a> 
+section of the reference for possible solutions.</p>
 
 <h5 id="learn"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       How do I learn to use Processing?</h5>
  
-    <p>To learn the Processing language, we recommend you try a few of the examples, 
-read some of the <a href="">tutorials</a> and check out the 
-<a href="">reference</a>. </p>
+    <p>To learn the Processing language, we recommend you try a few of the
+built-in examples, and check out the <a href="">reference</a>. </p>
 
     <p>When using the examples (or trying someone else's code), 
 if you run across a function that you're not familiar with, 
@@ -63,6 +68,11 @@ and select "Find in Reference" to open the reference page
 for that keyword. This can be helpful for understanding how
 programs work.</p>
 
+<p>If you're stuck or want to talk about your work, head over to the <A HREF="http://processing.org/discourse/">discourse</A> section of the site to find
+open minds and helpful peers.</p>
+
+<p>Once you've graduated beyond the examples and devoured the <A HREF="reference/index_ext.html">"complete"</A> reference, also check out the <A HREF="http://processinghacks.com">Processing Hacks</A> site: it's not quite reference, not quite examples, and not as developed as a library. These mutants are known as hacks, and there's lots of good stuff to be found.</p>
+
 <h5 id="platforms"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       On what platforms can I run Processing?</h5>
 	  
@@ -70,9 +80,9 @@ programs work.</p>
 We test extensively on Mac and Windows platforms, but not much on Linux.</p>
 
     <p>More detailed information for the specific platforms can be found 
-in the <a href="platforms.html">Platforms</a> section of this FAQ,
+in the <a href="environment/platforms.html">Platforms</a> section,
 which also includes information about running the Processing
-Development Environment on <a href="platforms.html#other">other
+Development Environment on <a href="environment/platforms.html#other">other
 platforms</a>.</p>
 
 <h5 id="opensource"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
@@ -104,13 +114,19 @@ which is public domain</li>
     <li>com.ice.jni.registry from the <a href="http://www.gjt.org/">Giant
 Java Tree</a> (GPL license) </li>
 
-    <li>perhaps others but that's all I can think of right now while we're
+    <li>perhaps others, but that's all I can think of right now while we're
 cramming for the beta release</li>
 </ul>
 
     <p>The source code is stored on our <a
 href="http://dev.processing.org/">developer site</a>, and more
 information about its use can be found over there.</p>
+
+    <p>The source code for the libraries is also included with the Processing
+software itself, should you want to modify them for your own use. If you
+want to modify the library for your own use, you can include the .java file 
+as part of your sketch. Just be sure to remove the "package processing.xx;" 
+line at the beginning. The Processing environment does not allow packages.
 
     <p>We need help! Having shared all the code and made it available for
 free, doesn't it just make you want to pitch in? We have too much work
@@ -140,7 +156,7 @@ download page for the license shenanigans). </p>
 <h5 id="versions"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       What's with the version numbers?</h5>
 	  
-    <p>This is not 1.0 software.. It's buggy and may kill people. That's part
+    <p>This is not 1.0 software.. It's buggy and may kill people.* That's part
 of why we used to make everyone sign up to download, so that we know that you 
 care enough to bother and have more of an inkling of what you're 
 getting into.</p>
@@ -157,6 +173,9 @@ if/when something breaks. Check the <a href="http://processing.org/bugs/">bugs</
 section of the site and report the problem if it's new, and in the meantime, 
 you can go back to the previous numbered release until there's a fix. </p>
 
+<p>* <EM>please note that Processing is not yet known to be responsible 
+for any actual deaths</EM></p>
+
 <h5 id="naming"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Why is it called &ldquo;Processing&rdquo;?</h5>
 	     
@@ -168,18 +187,20 @@ the &ldquo;process&rdquo; of creation rather than end results. The design of the
 and encourages sketching and the website presents fragments of projects 
 and exposes the concepts behind finished software. </p>
 
-    <p>&ldquo;Proce55ing&rdquo; is the spelling we originally used for the url. Even 
-though it's a combination of numbers and letters, it was simply
-pronounced &ldquo;processing.&rdquo; We saved our pennies and had a can
-drive so now we've since acquired the processing.org domain name. 
+    <p>&ldquo;Proce55ing&rdquo; is the spelling we originally used for the URL 
+of the web site, because "Processing" was already taken. Even 
+though it's a combination of numbers and letters, it was always
+pronounced &ldquo;processing.&rdquo; Since then, 
+we saved our pennies, had a can drive, and used the funds to 
+acquire the processing.org domain name. 
 As a result we are no longer using the name &ldquo;Proce55ing.&rdquo;</p>
 
-    <p>When we see it with the 55's it annoys us and we want to punch people 
-in the face. Or punch ourselves in the face for using it 
+    <p>When we see it with the 55's it annoys us and we want to 
+punch people in the face. Or punch ourselves in the face for using it 
 in the first place. Actually, we try not to be that emotional about it
-but we're trying to kill off the previous naming. However, to
+but we're trying to avoid the previous naming. However, to
 make it more confusing, we sometimes still use &ldquo;p5&rdquo;
-(not p55) as a shortened version of the name. </p>
+(but not p55!) as a shortened version of the name. </p>
 
 <h5 id="sketchbook"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       What is the sketchbook? What do you mean by sketches?</h5>

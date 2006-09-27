@@ -157,18 +157,19 @@ frame.setTitle("This is in the titlebar!"); </PRE>
         (thanks dxtx for pointing this out) 
       <LI>Holding down shift while clicking "Export" on the toolbar will export 
         to application instead of an applet. 
-      <LI>Users must still have Java installed to use your exported application. 
-        You can also copy the "java" folder from Processing to the same folder 
-        as your app so that users needn't install their own Java (this is the 
-        same as the "standard" version of processing), or you want to ensure that 
-        a certain version of the VM is used. For the time being, the error message 
-        when Java is installed may be nonexistant or cryptic. 
-      <LI>Someday we'll also add features like icon files and whatnot. Or at least 
-        a default icon for the exported stuff. Or maybe even a splash screen while 
-        the VM is loading. Again, if you want more control, use your own application 
-        generator (see above for Windows, or use the Java package maker whatchamacallit 
-        on Mac OS X). 
+<LI>Except for Mac OS X, users will need to install Java to use your 
+exported application. To avoid the installation requirement, 
+you can also copy the "java" folder from Processing to the same folder 
+as your application. This also ensures that a certain version of the Java VM
+is used. At least for now, the error message shown when Java 
+is missing may be nonexistant or cryptic. 
+<LI>Someday we'll also add features like icon files to the applications 
+produced by Processing. Or at least a default icon for the exported stuff. 
+Or maybe even a splash screen while Java is loading. Again, if you want more
+control, use your own application generator (see above for Windows, 
+or use the Java package maker whatchamacallit on Mac OS X). 
     </UL></p>
+
     <h5 id="security"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Applet Security Restrictions</h5>
     <p>Applets running inside a web browser have several security restrictions, 
@@ -177,15 +178,18 @@ frame.setTitle("This is in the titlebar!"); </PRE>
       it came. To avoid these restrictions, it's possible to "sign" an applet. 
       In a signed applet, a dialog box will appear to ask the user whether they 
       trust you as the provider of the applet, and if it's ok for the applet to 
-      perform actions that might be a security risk. More information can be found 
-      in Sun's documentation.</p>
+      perform actions that might be a security risk. More information can be 
+      found in Sun's documentation.</p>
+
+
     <h5 id="present"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       "Present" Features</h5>
     <p>
     <UL>
       <LI>The ESC key will quit a sketch, even in Present mode. To prevent this 
-        from happening, intercept the ESC on keyPressed() so that it isn't passed 
-        through to PApplet. Like so: 
+        from happening, intercept the ESC on keyPressed() so that it isn't 
+	passed through to PApplet. Use the following code to prevent
+	ESC from quitting the application:
         <PRE>
 
 void keyPressed() {
@@ -195,9 +199,15 @@ void keyPressed() {
 }
 
 </PRE>
-      <LI>You can hide the stop button with the --hide-stop command line option 
-        to PApplet. More details are above in the "Export to Application" section. 
-        From inside the Processing environment, you can't hide the stop button 
-        (unless your sketch window obscures it anyway) easily, so better to export 
-        as an application. 
+<LI>You can hide the stop button with the --hide-stop command line option 
+  to PApplet. More details about command line options 
+  are above in the "Export to Application" section. 
+  From inside the Processing environment, you can't hide the stop button 
+  (unless your sketch window obscures it anyway) easily, so better to export 
+  as an application. 
+
+<LI>To make a sketch run with a window the size of the screen, 
+use size(screen.width, screen.height). The "screen" variable will be 
+initialized with the width and height of your main display 
+(your default monitor).
     </UL></p>
