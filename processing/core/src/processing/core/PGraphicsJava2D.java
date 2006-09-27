@@ -31,6 +31,22 @@ import java.awt.image.*;
 /**
  * Subclass for PGraphics that implements the graphics API
  * in Java 1.3+ using Java 2D.
+ *
+ * <p>Pixel operations too slow? As of release 0085 (the first beta),
+ * the default renderer uses Java2D. It's more accurate than the renderer
+ * used in alpha releases of Processing (it handles stroke caps and joins,
+ * and has better polygon tessellation), but it's super slow for handling
+ * pixels. At least until we get a chance to get the old 2D renderer
+ * (now called P2D) working in a similar fashion, you can use
+ * <TT>size(w, h, P3D)</TT> instead of <TT>size(w, h)</TT> which will
+ * be faster for general pixel flipping madness. </p>
+ *
+ * <p>To get access to the Java 2D "Graphics2D" object for the default
+ * renderer, use:
+ * <PRE>Graphics2D g2 = ((PGraphics2)g).g2;</PRE>
+ * This will let you do Java 2D stuff directly, but is not supported in
+ * any way shape or form. Which just means "have fun, but don't complain
+ * if it breaks."</p>
  */
 public class PGraphicsJava2D extends PGraphics {
 
@@ -784,7 +800,7 @@ public class PGraphicsJava2D extends PGraphics {
                         RenderingHints.VALUE_ANTIALIAS_ON :
                         RenderingHints.VALUE_ANTIALIAS_OFF);
     */
-    
+
     Object antialias =
       g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
 
@@ -810,7 +826,7 @@ public class PGraphicsJava2D extends PGraphics {
     // return to previous smoothing state if it was changed
     //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
-    
+
     textX = x + textWidthImpl(buffer, start, stop);
     textY = y;
     textZ = 0;  // this will get set by the caller if non-zero
