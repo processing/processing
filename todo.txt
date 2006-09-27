@@ -45,6 +45,10 @@ o   and back over the menu, the text-area cursor type remains.
 X   mark this as wontfix, since it's just a java bug
 X   http://dev.processing.org/bugs/show_bug.cgi?id=30
 X remove the second movie from the movie playback example
+X keep checking whether google has started to honor robots.txt
+X   http://www.google.com/search?hl=en&lr=&q=angleMode+site%3Aprocessing.org&btnG=Search
+X add load/updatePixels stuff to the pixels[] reference
+X   make mention of doing it to main pix array, and on an image
 
 video
 X quicktime in applets
@@ -86,9 +90,8 @@ X the source code to the libs are included
 X   this makes them easy to modify (in another app)
 X   or you can remove the package statements and embed them 
 X   serial is a little trickier since you'd have to put stuff in code/
-
-opengl
 X windows, may need to install new version of video drivers
+X   add to opengl doc/faq
 
 mac faq
 X add to faq: 10.4.2 seems to have trouble with opengl and 0110+
@@ -133,121 +136,51 @@ X present mode
 X   notes about setting key=0 to catch ESC
 X   also size(screen.width, screen.height);
 o   maybe make a section in installations with p5
-_ exporting applications
-_   possible to include a java subfolder with exported applications
-_   this means no need to install an additional java vm
-_   or an option to include the 'java' folder on windows/linux with export
-_   on unix machines it's also possible to use a symlink
+X exporting applications
+X   possible to include a java subfolder with exported applications
+X   this means no need to install an additional java vm
+X   or an option to include the 'java' folder on windows/linux with export
+X   on unix machines it's also possible to use a symlink
+
+
+_ need to write converter that will handle syntax changes
+_   basically find & replace with regexps
+_   framerate() -> frameRate()
+_ add info to the new faq
+_   where to find out about embedding PApplet (the dev ref)
+_   also the link to the eclipse integration
+_   also add to the platforms page
+_     i want to use java 1.5 crap (so do it, just don't use our env)
+X   where have all the old faq pages gone?
+_ add to createImage() or createGraphics reference:
+_   Creating bitmap images - from advanced.html
+_ move fwd/back tab into the tab menu
+_ add to opengl ref the information about downloading more native libs
+_   we only include linux-i586, macosx (ppc and universal), windows
+_   also can get linux amd64 and sunos, just need to include the libs
+_ the "export folder" command doesn't seem to work at all
+_   check with casey, see if he's using it
+_ on archive sketch, open the sketch folder where it's saved
+_    or bring up name, and let people change if they want
+_    that's prolly better, can send it to desktop or whatever
+_    but default folder will be sketchbook/its parent folder
+_    add "save sketch before archive? (or cancel)" option
+_    also need to export sketch as applet when uploading
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-0117+
+DOC / Bugzilla 
 
-moving the bugs db
+_ goes to bugs page
+_   longer description of "i found a bug"
+_   what was the unfinished bullet item?
+_   also something i forgot to add to the opengl faq stuff
 _ move the bugs section of the troubleshooting page to dev.processing.org/bugs
 _ search for ALL in the bugs db turns up:
 http://dev.processing.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED
 _ add note to bugs db asking to please use archive sketch and attach
-
-write hacks for these
-_ making things fast with pixel operations
-_ jai handles setting image size
-_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
-_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
-_    JAI.create("filestore", bufImage, filename+".png", "PNG");
-_ also an example of setting the jpeg compression (included in bug report)
-_ add something about getting a bufferedimage from a PGraphics
-_   maybe this should be a method?
-_ how to upload an image to a server
-
-
-FOR 1.0
-_ should really be doing the 'right' thing with sketch file handling
-_   create temporary file when saving
-_   once done writing, use remove the original and rename the old
-_   some basic stuff like this..
-
-site / docs
-_ add note about adding libraries to the sketchbook to the reference
-_ add load/updatePixels stuff to the pixels[] reference
-_   make mention of doing it to main pix array, and on an image
-_ add note in environment reference about how to add something to the sketch
-_   (code, .java files, etc)
-_ make sure that psound has been removed (from docs, ref, mentions)
-_ make source link on p5 site go direct to the source
-_   or at least explain how to navigate
-_ post releases on sourceforge so that international mirrors are better?
-_ start creating source tarball for each release?
-_ roll over the discourse board for 1.0?
-_ should we add processinghacks to main site? hacks.processing.org?
-_   this would enable site search across this as well?
-_ board stuff
-_   only allow moderators to delete posts
-_   set "no smileys" as the default (better for posting code)
-_ add stuff about the history into the people section
-_   descended from dbn, but not dbn, etc..
-_ remove the 'search' item from yabb.cgi
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-_ is 'code' folder being ignored on export application?
-
-_ warn if people call their sketches things like Server
-_ warn if someone extends PApplet but mis-names the sketch
-_   or don't allow it to be exported
-_   add bug reference to the faq once added to the db
-X   or at least add a note about this to the faq
-_ show an error message when on export to app
-_   when no main() is included but class extends PApplet
-
-_ keep checking whether google has started to honor robots.txt
-_   http://www.google.com/search?hl=en&lr=&q=angleMode+site%3Aprocessing.org&btnG=Search
-
-_ add "recent files" list to open menu?
-
-_ unchecking 'use external editor' sketch should not set modified
-_   dangerous if a version that hasn't been re-loaded has possibility
-_   to overwrite. i.e. make a change and save in external editor,
-_   don't actually 
-
-_ we're breaking some mac human interface guidelines
-_   should be using a menu factory to create menubar for all sub-windows
-_   http://developer.apple.com/technotes/tn/tn2042.html
-_   and the general warning dialogs are just ass ugly
-_   (i.e. we really need those replacements for JOptionPane)
-
-_ need to document how subclass of pgraphics works
-_   what are the necessary bits that need to be subclassed
-_   simple handling of colors, what fields are available
-_   how to get the matrices
-_   simple endshape handler
-
-the biggies
-_ bring back P2D with proper stuff 
-_   it's something we had and we lost
-_ properly handle non-ascii chars in p5 folder name
-_   use javac? 
-_     the eclipse jdt compiler may be even better
-X   ask japanese students about whether jikes is working ok
-_   http://dev.processing.org/bugs/show_bug.cgi?id=49
-_   or at least warn the user to install somehwere else
-_   perhaps the get around this by building into sketch folder
-_     when non-ascii chars in use, just launch everything externally
-_   also fails with export-to-application
-_     http://dev.processing.org/bugs/show_bug.cgi?id=252
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-DOCUMENTATION
-
-
-bugzilla 
 _ make a web page that describes how to use the bugs db
 _   don't change the bug subject/summary text
 _   don't mess with priorities (i will)
@@ -269,7 +202,9 @@ _   do the same for suggestions
 _     and detail the suggestions policy on the dev site: diy
 _   post a page explaining the bug reporting system
 
-text faq
+
+DOC / Text
+
 _ how to use textMode(SHAPE) with opengl
 _   things will be extremely slow (fix later)
 _   things will also be very ugly on-screen
@@ -290,7 +225,9 @@ _   this will convert all the shape data from the fonts for writing.
 _   it will be *extremely* slow, which is part of why it's not documented yet. 
 _   but it will work with beginRaw().
 
-integration faq
+
+DOC / Integration
+
 _ move stuff about getting gl object and java2d stuff here
 _ how do i add gui to a sketch?
 _   don't use awt components
@@ -304,7 +241,9 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=di
 _ write documentation on general use of processing.core
 _   note that applet is itself a Component
 
-board faq
+
+DOC / Discourse Board
+
 _ someone wrote up an initial version of this
 _ how to put [code] around blocks of code
 _   also mention contributed plugin for formatting
@@ -322,7 +261,9 @@ _ be sure to look at the reference, especially the extended reference
 _   questions like 'how do i do x' are often solved by looking at the api
 _   for instance, to get the framerate, use framerate()
 
-other faq
+
+DOC / Other
+
 _ why adding .0001 to a float doesn't work
 _   and how they're imprecise in general (use nf)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130877990
@@ -355,11 +296,50 @@ _   advanced users who are outgrowing the basic reference:
 _   be sure to check the "complete" reference
 _ change bugs.html to issues.html
 _   and add a redirect in httpd.conf
+_ need to document how subclass of pgraphics works
+_   what are the necessary bits that need to be subclassed
+_   simple handling of colors, what fields are available
+_   how to get the matrices
+_   simple endshape handler
 
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+DOC / Site
+
+_ add note about adding libraries to the sketchbook to the reference
+_ add note in environment reference about how to add something to the sketch
+_   (code, .java files, etc)
+_ make sure that psound has been removed (from docs, ref, mentions)
+_ make source link on p5 site go direct to the source
+_   or at least explain how to navigate
+_ post releases on sourceforge so that international mirrors are better?
+_ start creating source tarball for each release?
+_ roll over the discourse board for 1.0?
+_ should we add processinghacks to main site? hacks.processing.org?
+_   this would enable site search across this as well?
+_ board stuff
+_   only allow moderators to delete posts
+_   set "no smileys" as the default (better for posting code)
+_ add stuff about the history into the people section
+_   descended from dbn, but not dbn, etc..
+_ remove the 'search' item from yabb.cgi
 
 
+DOC / Examples or Hacks
+
+_ add to key reference a pointer to an example that tracks all keys
+_   write simple example that tracks all keys
+_ how to grab the java2d object from PGraphics2D
+_ How do I move the mouse cursor to another location? (advanced.html)
+_   post a hack for this or a simple example
+_ making things fast with pixel operations
+_ jai handles setting image size
+_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
+_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
+_    JAI.create("filestore", bufImage, filename+".png", "PNG");
+_ also an example of setting the jpeg compression (included in bug report)
+_ add something about getting a bufferedimage from a PGraphics
+_   maybe this should be a method?
+_ how to upload an image to a server
 _ write a threading example
 _   show an example of how to handle callback into the app
 X   or handle this some more intelligent way, super.stop() is needed.
@@ -402,6 +382,16 @@ PDE - Processing Development Environment
 
 PDE / Base
 
+_ properly handle non-ascii chars in p5 folder name
+_   use javac? 
+_     the eclipse jdt compiler may be even better
+X   ask japanese students about whether jikes is working ok
+_   http://dev.processing.org/bugs/show_bug.cgi?id=49
+_   or at least warn the user to install somehwere else
+_   perhaps the get around this by building into sketch folder
+_     when non-ascii chars in use, just launch everything externally
+_   also fails with export-to-application
+_     http://dev.processing.org/bugs/show_bug.cgi?id=252
 _ command line support
 _   http://dev.processing.org/bugs/show_bug.cgi?id=219
 _   would still require awt, but would take a sketch on cmd line
@@ -486,6 +476,15 @@ PDE / Editor
 
 _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
+_ should really be doing the 'right' thing with sketch file handling
+_   create temporary file when saving
+_   once done writing, use remove the original and rename the old
+_   some basic stuff like this..
+_ add "recent files" list to open menu?
+_ unchecking 'use external editor' sketch should not set modified
+_   dangerous if a version that hasn't been re-loaded has possibility
+_   to overwrite. i.e. make a change and save in external editor,
+_   don't actually 
 _ stop button won't kill a video sketch (bug 150 example does this) 
 _   although ESC seems to work? (not sure, didn't test)
 _ run/stop button highlight is almost completely broken
@@ -578,6 +577,14 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
+_ is 'code' folder being ignored on export application?
+_ warn on export when people call their sketches things like Server
+_ warn if someone extends PApplet but mis-names the sketch
+_   or don't allow it to be exported
+_   add bug reference to the faq once added to the db
+X   or at least add a note about this to the faq
+_ show error when no main() is included but class extends PApplet
+_   error can happen or be checked 
 _ errors during export don't show up properly (no red status bar)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=194
 _ include a note that 'applet' folder will get emptied/rewritten
@@ -1016,6 +1023,11 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 DIST / Mac OS X
 
 _ try the better mac l&f
+_ we're breaking some mac human interface guidelines
+_   should be using a menu factory to create menubar for all sub-windows
+_   http://developer.apple.com/technotes/tn/tn2042.html
+_   and the general warning dialogs are just ass ugly
+_   (i.e. we really need those replacements for JOptionPane)
 _ drag & drop on the mac snaps back as if it didn't work
 _   does this also happen on windows?
 _   are there better classes to use inside the com.apple classes?
