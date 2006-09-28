@@ -755,7 +755,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
       if (raw != null) {
         if (a[SA] > EPSILON) {  // don't draw if transparent
           raw.colorMode(RGB, 1);
-          raw.beginShape(LINE_STRIP);
+          raw.noFill();  // 0116
+          raw.beginShape(); // 0116  LINE_STRIP);
           if (raw instanceof PGraphics3D) {
             if (a[VW] != 0) {
               raw.stroke(a[SR], a[SG], a[SB], a[SA]);
@@ -1274,7 +1275,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       case GL.GL_TRIANGLE_FAN: beginShape(TRIANGLE_FAN); break;
       case GL.GL_TRIANGLE_STRIP: beginShape(TRIANGLE_STRIP); break;
       case GL.GL_TRIANGLES: beginShape(TRIANGLES); break;
-      case GL.GL_LINE_LOOP: beginShape(LINE_LOOP); break;
+      //case GL.GL_LINE_LOOP: beginShape(LINE_LOOP); break;
       }
       //System.out.println("shape type is " + shape);
     }
