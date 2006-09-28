@@ -127,20 +127,23 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
-_ maybe break out a separate timage object in textures?
-_   under assumption that most will just need an extra image object
-_   this could also be used by people eventually to control tex themselves
-_   or maybe call the object "texture"?
-_   in opengl lib, need beginTexture(PImage) and endTexture()
-_   this will be helpful to have access to the raw texture data
-_   that way it can be re-bound by itself, and ppl can write directly to it
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 0117 core
 
+
+opengl texture handling
+_ maybe break out a separate timage object in textures?
+_   needs tindex and tbuffer, both gl specific
+_     and for tpixels and twidth/theight, could use another PImage
+_   under assumption that most will just need an extra image object
+_   this could also be used by people eventually to control tex themselves
+_   or maybe call the object "texture"?
+_   in opengl lib, need beginTexture(PImage) and endTexture()
+_   this will be helpful to have access to the raw texture data
+_   that way it can be re-bound by itself, and ppl can write directly to it
 
 needs to be tested
 _ jogl issues with some cards on linux, might be fixed with newer jogl
