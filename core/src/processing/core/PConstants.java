@@ -167,8 +167,8 @@ public interface PConstants {
   static final int POINTS          = (1 << 4) | 0;
 
   static final int LINES           = (1 << 5) | 0;
-  static final int LINE_STRIP      = (1 << 5) | 1;
-  static final int LINE_LOOP       = (1 << 5) | 2;
+  //static final int LINE_STRIP      = (1 << 5) | 1;
+  //static final int LINE_LOOP       = (1 << 5) | 2;
 
   static final int TRIANGLES       = (1 << 6) | 0;
   static final int TRIANGLE_STRIP  = (1 << 6) | 1;
@@ -180,6 +180,9 @@ public interface PConstants {
   static final int POLYGON         = (1 << 8) | 0;
   //static final int CONCAVE_POLYGON = (1 << 8) | 1;
   //static final int CONVEX_POLYGON  = (1 << 8) | 2;
+  
+  static final int OPEN = 1;
+  static final int CLOSE = 2;
 
 
   // shape modes

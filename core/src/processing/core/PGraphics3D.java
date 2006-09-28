@@ -644,7 +644,7 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  public void endShape() {
+  public void endShape(int mode) {
     vertex_end = vertexCount;
     vertex_end_including_clip_verts = vertex_end;
 
@@ -707,8 +707,8 @@ public class PGraphics3D extends PGraphics {
         break;
 
         case LINES:
-        case LINE_STRIP:
-        case LINE_LOOP:
+        //case LINE_STRIP:
+        //case LINE_LOOP:
         {
           // store index of first vertex
           int first = lineCount;
@@ -725,7 +725,8 @@ public class PGraphics3D extends PGraphics {
           }
 
           // for LINE_LOOP, close the loop with a final segment
-          if (shape == LINE_LOOP) {
+          //if (shape == LINE_LOOP) {
+          if (mode == CLOSE) {
             add_line(stop, lines[first][VERTEX1]);
           }
         }
@@ -838,8 +839,10 @@ public class PGraphics3D extends PGraphics {
           for (int i = vertex_start; i < stop; i++) {
             add_line(i, i+1);
           }
-          // draw the last line connecting back to the first point in poly
-          add_line(stop, lines[first][VERTEX1]);
+          if (mode == CLOSE) {
+            // draw the last line connecting back to the first point in poly
+            add_line(stop, lines[first][VERTEX1]);
+          }
         }
         break;
       }
