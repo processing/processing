@@ -27,7 +27,142 @@ changes are presented on this page." /></h1>
 	<p>&nbsp;</p>
 	
 	   <h5 id="beta"><a href="#top"><img src="environment/images/up_arrow.gif" alt="Top" /></a> Changes in 0116+ (approaching 1.0)</h5>
-       <p>To be completed later.</p>
+
+Release 0116 contains many changes, frameRate(), beginShape(), 
+and endShape() are the biggest ones.
+
+<UL>
+
+<LI> framerate() is now called frameRate(), for better API consistency.
+  It didn't make sense to have a frameCount variable and a framerate()
+  method as its misshapen cousin. 
+
+<LI> The default frameRate is now 60 fps. This will prevent some odd
+  quirks with sketches running faster than they need to and throttling
+  the resources of your machine. To disable this, you can set the 
+  frameRate arbitrarily high.
+
+<LI> beginShape() has changed. LINE_LOOP and LINE_STRIP have been 
+  removed because they are redundant, and not consistent with the 
+  rest of the API. beginShape(POLYGON) is no longer recommended, 
+  simply use beginShape() with no parameters when drawing an
+  irregular shape. Code examples:
+<PRE>
+
+  OLD SYNTAX:
+  beginShape(POLYGON);
+  // call vertex() several times
+  endShape()
+
+  NEW SYNTAX:
+  beginShape();
+  // call vertex() several times
+  endShape(CLOSE);
+
+</PRE>
+  endShape() with the CLOSE parameter will make the stroke on your
+  shape continue back to where the shape started. This is the same
+  way that POLYGON and LINE_LOOP worked.
+<PRE>
+
+  OLD_SYNTAX:
+  beginShape(LINE_STRIP);
+  // draw with vertex()
+  endShape();
+
+  NEW SYNTAX:
+  noFill();
+  beginShape();
+  // draw with vertex();
+  endShape();
+
+</PRE>
+  In the above case, noFill() must be called, and the CLOSE parameter 
+  to endShape() is not used, because the last point should not come 
+  back to meet the original point.
+<PRE>
+
+  OLD SYNTAX:
+  beginShape(LINE_LOOP);
+  // draw with vertex()
+  endShape();
+
+  NEW SYNTAX:
+  noFill();
+  beginShape();
+  // draw with vertex();
+  endShape(CLOSE);
+
+</PRE>
+  For the LINE_LOOP example, endShape(CLOSE) is used to specify close the
+  shape. noFill() must also be called, so that the shape is not filled in.
+<br /> 
+  The two main problems with the old API were 1) LINE_LOOP was simply a 
+  POLYGON with no fill setting, this made for a strange inconsistency.
+  2) there was no way to draw a non-closed POLYGON shape. 
+<br />
+  Using beginShape(POLYGON) doesn't make much sense when you're drawing 
+  a line, so this is one more reason that beginShape() with no parameters
+  is recommended.
+
+<LI> The single pixel blend() methods have been removed, they were 
+  overkill. Also, the blend() function that blends a color, instead
+  of image data, is now called blendColor().
+
+<LI> Along with blendColor(), a lerpColor() method has been added.
+  It works just like lerp()... but with colors!
+
+<LI> writer() and reader() are now createWriter() and createReader().
+  These weren't really documented, so the change doesn't officially
+  "count" per se, but maybe someone was using 'em.
+
+<LI> toInt() and toFloat() are now parseInt() and parseFloat(), 
+  to change to JavaScript syntax. Not sure if anyone was using these.
+
+<LI> Text with the JAVA2D setting no longer uses native fonts by default,
+  which means they'll be slower and uglier. See the reference for
+  textFont() for details and how it can be addressed.
+
+<LI> Threading has been modified signficantly. Some of these changes 
+  had to be undone at the last minute, so further changes are coming.
+  The changes will fix several strange InterruptedException problems.
+
+<LI> The PGraphics classes have all been reworked and renamed.
+
+<UL>
+  <LI> PGraphics is an abstract class on which additional PGraphics
+    subclasses can be built. It is an abstract class, and therefore
+    cannot be invoked directly. 
+
+  <LI> PGraphics2D (P2D) contains the former contents of PGraphics that 
+    are specific to 2D rendering. This will be P2D once it is complete.
+
+  <LI> PGraphics3D (P3D), formerly PGraphics3, remains mostly unchanged.
+
+  <LI> PGraphicsJava2D (JAVA2D), formerly PGraphics2, is the renderer 
+    used when you call for size(width, height, JAVA2D). It remains 
+    the default renderer when none is specified. It is slower but 
+    more accurate than the others.
+</UL>
+
+<LI> Do not use "new PGraphics" to create PGraphics objects.
+  Instead, use createGraphics(), which will properly handle connecting
+  the new graphics object to its parent sketch, and will enable save()
+  to work properly. See the reference for <A HREF="http://processing.org/reference/createGraphics_.html">createGraphics</A>
+  
+<LI> For the same reasons as above, createImage(width, height, format) 
+  should be used instead of "new PImage" when <A HREF="http://processing.org/reference/createImage_.html">creating images</A>
+
+<LI> PImage objects default to ARGB instead of RGB format. This is 
+  helpful for using createImage() or createGraphics() to generate
+  a transparent surface. Be sure to use PNG or another format that
+  supports alpha.
+
+<LI> beginFrame() and endFrame() are now beginDraw() and endDraw(). 
+  Use these around drawing commands to a PGraphics created by
+  createGraphics(). The defaults() method should not/need not
+  be called, just beginDraw() and endDraw().
+</UL>
     
 	<p>&nbsp;</p>
 	
