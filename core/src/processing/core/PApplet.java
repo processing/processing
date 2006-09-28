@@ -5433,17 +5433,18 @@ public class PApplet extends Applet
   }
 
   static final public int parseInt(String what) {
-    try {
-      return Integer.parseInt(what);
-    } catch (NumberFormatException e) { }
-    return 0;
+    return parseInt(what, 0);
   }
 
   static final public int parseInt(String what, int otherwise) {
     try {
-      return Integer.parseInt(what);
+      int offset = what.indexOf('.');
+      if (offset == -1) {
+        return Integer.parseInt(what);
+      } else {
+        return Integer.parseInt(what.substring(0, offset));
+      }
     } catch (NumberFormatException e) { }
-
     return otherwise;
   }
 
