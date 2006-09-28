@@ -164,10 +164,6 @@ X   this means no need to install an additional java vm
 X   or an option to include the 'java' folder on windows/linux with export
 X   on unix machines it's also possible to use a symlink
 
-_ need to write converter that will handle syntax changes
-_   basically find & replace with regexps
-_   framerate() -> frameRate()
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -758,6 +754,9 @@ TOOLS / General
 
 _ make the export to the board just copy to clipboard
 _   also make it insert &nbsp; for extra spaces
+_ need to write converter that will handle syntax changes
+_   basically find & replace with regexps
+_   framerate() -> frameRate()
 _ convert from alpha to 1.0 syntax
 _   acts just like find/replace.. go through and do by hand
 _   3 column input file
