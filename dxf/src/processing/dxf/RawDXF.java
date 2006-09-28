@@ -241,7 +241,7 @@ public class RawDXF extends PGraphics3D {
   }
 
 
-  protected void writeLine() {
+  protected void writeLine(int index1, int index2) {
     writer.println("0");
     writer.println("LINE");
 
@@ -249,24 +249,24 @@ public class RawDXF extends PGraphics3D {
     writer.println("8");
     writer.println(String.valueOf(currentLayer));
 
-    write("10", vertices[0][X]);
-    write("20", vertices[0][Y]);
-    write("30", vertices[0][Z]);
+    write("10", vertices[index1][X]);
+    write("20", vertices[index1][Y]);
+    write("30", vertices[index1][Z]);
 
-    write("11", vertices[1][X]);
-    write("21", vertices[1][Y]);
-    write("31", vertices[1][Z]);
-
-    vertexCount = 0;
+    write("11", vertices[index2][X]);
+    write("21", vertices[index2][Y]);
+    write("31", vertices[index2][Z]);
   }
 
 
+  /*
   protected void writeLineStrip() {
     writeLine();
     // shift the last vertex to be the first vertex
     System.arraycopy(vertices[1], 0, vertices[0], 0, vertices[1].length);
     vertexCount = 1;
   }
+  */
 
 
   protected void writeTriangle() {
@@ -314,12 +314,16 @@ public class RawDXF extends PGraphics3D {
     shape = kind;
 
     if ((shape != LINES) &&
-        (shape != LINE_STRIP) &&
-        (shape != TRIANGLES)) {
+        (shape != TRIANGLES) &&
+        (shape != POLYGON)) {
       String err =
-        "RawDXF should only be used with beginRaw(), " +
-        "as it only supports lines and triangles";
+        "RawDXF can only be used with beginRaw(), " +
+        "because it only supports lines and triangles";
       throw new RuntimeException(err);
+    }
+    
+    if ((shape == POLYGON) && fill) {
+      throw new RuntimeException("RawDXF only supports non-filled shapes.");
     }
 
     vertexCount = 0;
@@ -360,21 +364,34 @@ public class RawDXF extends PGraphics3D {
     vertexCount++;
 
     if ((shape == LINES) && (vertexCount == 2)) {
-      writeLine();
+      writeLine(0, 1);
+      vertexCount = 0;
 
+/*
     } else if ((shape == LINE_STRIP) && (vertexCount == 2)) {
       writeLineStrip();
-
+*/
+      
     } else if ((shape == TRIANGLES) && (vertexCount == 3)) {
       writeTriangle();
     }
   }
 
 
-  public void endShape() {
+  public void endShape(int mode) {
+    if (shape == POLYGON) {
+      for (int i = 0; i < vertexCount - 1; i++) {
+        writeLine(i, i+1);
+        }
+        if (mode == CLOSE) {
+            writeLine(vertexCount - 1, 0);
+        }
+    }
+    /*
     if ((vertexCount != 0) &&
         ((shape != LINE_STRIP) && (vertexCount != 1))) {
       System.err.println("Extra vertex boogers found.");
     }
+    */
   }
 }
