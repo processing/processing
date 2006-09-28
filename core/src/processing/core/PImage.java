@@ -99,7 +99,8 @@ public class PImage implements PConstants, Cloneable {
    * The pixel array is not allocated.
    */
   public PImage() {
-    format = RGB;  // makes sure that this guy is useful
+    //format = RGB;  // makes sure that this guy is useful
+    format = ARGB;  // default to ARGB images for release 0116
     cache = null;
   }
 

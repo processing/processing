@@ -221,14 +221,6 @@ public class PGraphics3D extends PGraphics {
    */
   public void resize(int iwidth, int iheight) {  // ignore
     insideDrawWait();
-    /*
-    while (insideDraw) {
-      //System.out.println("waiting");
-      try {
-        Thread.sleep(5);
-      } catch (InterruptedException e) { }
-    }
-    */
     insideResize = true;
 
     width = iwidth;
