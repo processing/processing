@@ -6288,7 +6288,7 @@ public class PApplet extends Applet
       boolean external = false;
       int location[] = null;
       int editorLocation[] = null;
-      String folder = System.getProperty("user.dir");
+
       String name = null;
       boolean present = false;
       Color backgroundColor = Color.black; //BLACK;
@@ -6297,6 +6297,14 @@ public class PApplet extends Applet
       boolean hideStop = false;
 
       String param = null, value = null;
+
+      // try to get the user folder. if running under java web start,
+      // this may cause a security exception if the code is not signed.
+      // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
+      String folder = null;
+      try {
+        folder = System.getProperty("user.dir");
+      } catch (Exception e) { }
 
       int argIndex = 0;
       while (argIndex < args.length) {
@@ -6826,9 +6834,15 @@ public class PApplet extends Applet
   }
 
 
-  public void endShape() {
+  public final void endShape() {
     if (recorder != null) recorder.endShape();
     g.endShape();
+  }
+
+
+  public void endShape(int mode) {
+    if (recorder != null) recorder.endShape(mode);
+    g.endShape(mode);
   }
 
 
