@@ -133,6 +133,9 @@ o what should the update image function be called?
 
 0117 core
 
+_ alloc() stuff not fixed because of thread halting
+_   problem where alloc happens inside setup(), so, uh..
+_   http://dev.processing.org/bugs/show_bug.cgi?id=369
 
 opengl texture handling
 _ maybe break out a separate timage object in textures?

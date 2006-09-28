@@ -9,32 +9,110 @@ releases will be super crusty.
 
 ABOUT REV 0116 - 28 September 2006
 
-This is a major release. It contains a large number of bug fixes, 
+This is a major release. It contains a million billion bug fixes, 
 as well as several API changes as we try to firm up the API for 1.0.
 
-         *** PLEASE READ ALL THESE NOTES CAREFULLY ***
+          *** PLEASE READ ALL THESE NOTES CAREFULLY ***
+          ***     YOUR CODE NEEDS TO BE UPDATED!    ***
+
+If you don't want to update your code yet, and are just trying to get
+your coursework done, you may want to stick with release 0115.
+
++ The reference has received major updates. The contents of the FAQ
+  have now been integrated into the reference. The remaining page
+  of the FAQ has more details about where everyone went:
+  http://processing.org/faq.html
+
++ framerate() is now called frameRate(), for better API consistency.
+  It didn't make sense to have a frameCount variable and a framerate()
+  method as its misshapen cousin. 
+
++ The default frameRate is now 60 fps. This will prevent some odd
+  quirks with sketches running faster than they need to and throttling
+  the resources of your machine. To disable this, you can set the 
+  frameRate arbitrarily high.
+
++ beginShape() has changed. LINE_LOOP and LINE_STRIP have been 
+  removed because they are redundant, and not consistent with the 
+  rest of the API. beginShape(POLYGON) is no longer recommended, 
+  simply use beginShape() with no parameters when drawing an
+  irregular shape. Code examples:
+
+  OLD SYNTAX:
+  beginShape(POLYGON);
+  // call vertex() several times
+  endShape()
+
+  NEW SYNTAX:
+  beginShape();
+  // call vertex() several times
+  endShape(CLOSE);
+
+  endShape() with the CLOSE parameter will make the stroke on your
+  shape continue back to where the shape started. This is the same
+  way that POLYGON and LINE_LOOP worked.
+
+  OLD_SYNTAX:
+  beginShape(LINE_STRIP);
+  // draw with vertex()
+  endShape();
+
+  NEW SYNTAX:
+  noFill();
+  beginShape();
+  // draw with vertex();
+  endShape();
+
+  In the above case, noFill() must be called, and the CLOSE parameter 
+  to endShape() is not used, because the last point should not come 
+  back to meet the original point.
+
+  OLD SYNTAX:
+  beginShape(LINE_LOOP);
+  // draw with vertex()
+  endShape();
+
+  NEW SYNTAX:
+  noFill();
+  beginShape();
+  // draw with vertex();
+  endShape(CLOSE);
+
+  For the LINE_LOOP example, endShape(CLOSE) is used to specify close the
+  shape. noFill() must also be called, so that the shape is not filled in.
+
+  The two main problems with the old API were 1) LINE_LOOP was simply a 
+  POLYGON with no fill setting, this made for a strange inconsistency.
+  2) there was no way to draw a non-closed POLYGON shape. 
+
+  Using beginShape(POLYGON) doesn't make much sense when you're drawing 
+  a line, so this is one more reason that beginShape() with no parameters
+  is recommended.
+
++ The single pixel blend() methods have been removed, they were 
+  overkill. Also, the blend() function that blends a color, instead
+  of image data, is now called blendColor().
+
++ Along with blendColor(), a lerpColor() method has been added.
+  It works just like lerp()... but with colors!
+
++ writer() and reader() are now createWriter() and createReader().
+  These weren't really documented, so the change doesn't officially
+  "count" per se, but maybe someone was using 'em.
+
++ toInt() and toFloat() are now parseInt() and parseFloat(), 
+  to change to JavaScript syntax. Not sure if anyone was using these.
+
++ Text with the JAVA2D setting no longer uses native fonts by default,
+  which means they'll be slower and uglier. See the reference for
+  textFont() for details and how it can be addressed.
 
 + Threading has been modified signficantly. Some of these changes 
   had to be undone at the last minute, so further changes are coming.
-
-+ The OpenGL library has been updated to use the "final" release 
-  of JOGL 1.0, released September 2006, rather than beta 4, found
-  in release 0115. 
-
-+ The flag in PApplet.main() formerly called --present-stop-color 
-  is now simply --stop-color. A flag named --hide-stop has also 
-  been added, to prevent users from quitting out of a present mode 
-  application. see the faq on details for capturing ESC as well.
-
-+ Altered mouse behavior so that mouse positions update only on 
-  mouseMoved and mouseDragged. this also fixes a macosx bug that 
-  caused mouseX/Y values to be bizarre because mouseExited() 
-  gave weird positions (workaround for apple bug).
+  The changes will fix several strange InterruptedException problems.
 
 
-[ major changes to the use of PGraphics and its subclasses ] 
-
-+ PImage objects default to ARGB instead of RGB format 
+[ major changes to PGraphics and its subclasses ] 
 
 + The PGraphics classes have all been reworked and renamed.
 
@@ -52,21 +130,139 @@ as well as several API changes as we try to firm up the API for 1.0.
     the default renderer when none is specified. It is slower but 
     more accurate than the others.
 
-+ Do not use new PGraphics(...) to create PGraphics objects.
++ Do not use "new PGraphics" to create PGraphics objects.
   Instead, use createGraphics(), which will properly handle connecting
   the new graphics object to its parent sketch, and will enable save()
   to work properly. See the reference for createGraphics:
   http://processing.org/reference/createGraphics_.html
 
 + For the same reasons as above, createImage(width, height, format) 
-  should be used instead of new PImage(...) when creating images:
-  http://test.processing.org/reference/createImage_.html
+  should be used instead of "new PImage" when creating images:
+  http://processing.org/reference/createImage_.html
+
++ PImage objects default to ARGB instead of RGB format. This is 
+  helpful for using createImage() or createGraphics() to generate
+  a transparent surface. Be sure to use PNG or another format that
+  supports alpha.
+
++ beginFrame() and endFrame() are now beginDraw() and endDraw(). 
+  Use these around drawing commands to a PGraphics created by
+  createGraphics(). The defaults() method should not/need not
+  be called, just beginDraw() and endDraw().
+  
+
+[ other additions and enhancements ]
+
++ Added an option to Preferences that sets the available memory 
+  http://dev.processing.org/bugs/show_bug.cgi?id=233
+
++ Added a menu option to switch between tabs
+  http://dev.processing.org/bugs/show_bug.cgi?id=55
+  however, there's a problem where it sometimes stops working:
+  http://dev.processing.org/bugs/show_bug.cgi?id=402
+
++ The OpenGL library has been updated to use the "final" release 
+  of JOGL 1.0, released September 2006, rather than beta 4, found
+  in release 0115. 
+
++ The flag in PApplet.main() formerly called --present-stop-color 
+  is now simply --stop-color. A flag named --hide-stop has also 
+  been added, to prevent users from quitting out of a present mode 
+  application. see the faq on details for capturing ESC as well.
+
++ Altered mouse behavior so that mouse positions update only on 
+  mouseMoved and mouseDragged. this also fixes a macosx bug that 
+  caused mouseX/Y values to be bizarre because mouseExited() 
+  gave weird positions (workaround for apple bug).
+
++ The "Export Folder" Tool has been removed, if temporarily.
+
++ "Archive Sketch" now prompts for a sketch name, it was awkward
+  trying to dig the sketches out of the sketchbook folder.
+
++ added constant for DXF so recordRaw(DXF, "blah.dxf") can be 
+  used instead of recordRaw("processing.dxf.RawDXF", "blah.dxf")
+
++ Make all array functions work on arrays of all types:
+  expand, append, contract, subset, splice, concat, reverse
+  http://dev.processing.org/bugs/show_bug.cgi?id=115
+
++ Added alpha parameter to color/stroke/tint/fill for use with
+  web colors. i.e. fill(#FF8800, 30) is now valid.
+
++ Removed image(filename) and textFont(filename) et al. These made a 
+  brief appearance for the last release, but were not a good idea.
+
++ URLs with ampersands now supported on Windows, thanks to toxi.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1149974261
+
++ Only update mouseX and mouseY when mouse is moved and dragged. Fixes 
+  certain kinds of sketches, and also avoids a Mac OS X bug that causes
+  sketches to jump as you move the mouse to the edge of the window.
+  http://dev.processing.org/bugs/show_bug.cgi?id=170
 
 
-[ minor bug fixes ]
+[ bug fixes ]
 
-+ ignore files that start with . or ._ because they were a problem
-  with Mac OS X and things like thumb drives.
++ noLoop() no longer causes an InterruptedException with OpenGL
+  http://dev.processing.org/bugs/show_bug.cgi?id=164
+
++ Fix transparency on images (was broken in 0115)
+  http://dev.processing.org/bugs/show_bug.cgi?id=350
+
++ save() and saveImage() with TIFF files works again.
+  http://dev.processing.org/bugs/show_bug.cgi?id=378
+
++ Fix issue where processing applets would run extremely fast 
+  after having been starved of resources where there framerate dropped.
+  http://dev.processing.org/bugs/show_bug.cgi?id=336
+
++ createFont() now works with applets.
+  http://dev.processing.org/bugs/show_bug.cgi?id=101
+
++ Fixed Find/Replace "focus" issues.
+
++ loadImage() should be returned to its former speed.
+  http://dev.processing.org/bugs/show_bug.cgi?id=392
+
++ Fixed loadImage() problem with some types of files.
+  http://dev.processing.org/bugs/show_bug.cgi?id=279
+
++ Only use Java ImageIO when necessary, it was causing trouble.
+  http://dev.processing.org/bugs/show_bug.cgi?id=376
+
++ Ignore files that start with . or ._ because they were a problem
+  with Mac OS X, especially used with thumb drives.
+
++ Fix bug where smooth() was shut off by some fonts and JAVA2D
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1148362664
+
++ Added stricter controls to prevent opening sketches that contain 
+  illegal characters in their title.
+
++ Movie playback no longer tinted blue on Intel macs
+  http://dev.processing.org/bugs/show_bug.cgi?id=313
+
++ Movie playback now works inside applets!
+  http://dev.processing.org/bugs/show_bug.cgi?id=44
+  http://dev.processing.org/bugs/show_bug.cgi?id=231
+
++ Make tweaks to openStream for URL handling and checking root
+  of sketch folder, rather than just the data/ folder.
+  http://dev.processing.org/bugs/show_bug.cgi?id=389
+
++ Prevent settings() from changing the size of a Capture object.
+  http://dev.processing.org/bugs/show_bug.cgi?id=366
+  Fix submitted by Hansi Raber, thanks!
+
++ When using external editor, code is updated on export.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1158549785
+
++ Make background() ignore transformations in JAVA2D
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1147010374
+
++ Fix obscure openStream() problem caused by Sun's idiocy
+  http://dev.processing.org/bugs/show_bug.cgi?id=359
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
