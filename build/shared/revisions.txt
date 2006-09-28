@@ -7,14 +7,15 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0116 - ?? ?? 2006
+ABOUT REV 0116 - 28 September 2006
 
 This is a major release. It contains a large number of bug fixes, 
 as well as several API changes as we try to firm up the API for 1.0.
 
          *** PLEASE READ ALL THESE NOTES CAREFULLY ***
 
-+ Threading has been modified signficantly.
++ Threading has been modified signficantly. Some of these changes 
+  had to be undone at the last minute, so further changes are coming.
 
 + The OpenGL library has been updated to use the "final" release 
   of JOGL 1.0, released September 2006, rather than beta 4, found
@@ -31,7 +32,7 @@ as well as several API changes as we try to firm up the API for 1.0.
   gave weird positions (workaround for apple bug).
 
 
-[ Major changes to the use of PGraphics and its subclasses ] 
+[ major changes to the use of PGraphics and its subclasses ] 
 
 + PImage objects default to ARGB instead of RGB format 
 
@@ -60,6 +61,12 @@ as well as several API changes as we try to firm up the API for 1.0.
 + For the same reasons as above, createImage(width, height, format) 
   should be used instead of new PImage(...) when creating images:
   http://test.processing.org/reference/createImage_.html
+
+
+[ minor bug fixes ]
+
++ ignore files that start with . or ._ because they were a problem
+  with Mac OS X and things like thumb drives.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
