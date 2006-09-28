@@ -1111,7 +1111,12 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  abstract public void endShape();
+  public final void endShape() {
+    endShape(OPEN);
+  }
+  
+  
+  abstract public void endShape(int mode);
 
 
 
@@ -1374,13 +1379,13 @@ public abstract class PGraphics extends PImage implements PConstants {
       fill = false;
 
       val = 0;
-      beginShape(LINE_LOOP);
+      beginShape(); //LINE_LOOP);
       for (int i = 0; i < accuracy; i++) {
         vertex(centerX + cosLUT[(int) val] * hradius,
                centerY + sinLUT[(int) val] * vradius);
         val += inc;
       }
-      endShape();
+      endShape(CLOSE);
 
       fill = savedFill;
     }
@@ -1479,7 +1484,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
       int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
 
-      beginShape(LINE_STRIP);
+      beginShape(); //LINE_STRIP);
       int increment = 1; // what's a good algorithm? stopLUT - startLUT;
       for (int i = startLUT; i < stopLUT; i += increment) {
         int ii = i % SINCOS_LENGTH;
@@ -1621,7 +1626,7 @@ public abstract class PGraphics extends PImage implements PConstants {
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
-    beginShape(LINE_STRIP);
+    beginShape(); //LINE_STRIP);
     vertex(x1, y1);
     bezierVertex(x2, y2, x3, y3, x4, y4);
     endShape();
@@ -1632,7 +1637,7 @@ public abstract class PGraphics extends PImage implements PConstants {
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    beginShape(LINE_STRIP);
+    beginShape(); //LINE_STRIP);
     vertex(x1, y1, z1);
     bezierVertex(x2, y2, z2,
                  x3, y3, z3,
@@ -1762,7 +1767,7 @@ public abstract class PGraphics extends PImage implements PConstants {
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
-    beginShape(LINE_STRIP);
+    beginShape(); //LINE_STRIP);
     curveVertex(x1, y1);
     curveVertex(x2, y2);
     curveVertex(x3, y3);
@@ -1775,7 +1780,7 @@ public abstract class PGraphics extends PImage implements PConstants {
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    beginShape(LINE_STRIP);
+    beginShape(); //LINE_STRIP);
     curveVertex(x1, y1, z1);
     curveVertex(x2, y2, z2);
     curveVertex(x3, y3, z3);
