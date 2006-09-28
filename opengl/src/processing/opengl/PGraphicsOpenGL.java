@@ -411,6 +411,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       flush();
     }
 
+    insideDraw = false;
     report("bot endDraw()");
   }
 

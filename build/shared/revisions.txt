@@ -33,6 +33,8 @@ as well as several API changes as we try to firm up the API for 1.0.
 
 [ Major changes to the use of PGraphics and its subclasses ] 
 
++ PImage objects default to ARGB instead of RGB format 
+
 + The PGraphics classes have all been reworked and renamed.
 
   - PGraphics is an abstract class on which additional PGraphics

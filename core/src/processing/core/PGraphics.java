@@ -49,7 +49,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   boolean defaultsInited;
 
   /// true if in-between beginDraw() and endDraw()
-  boolean insideDraw;
+  protected boolean insideDraw;
 
   /// true if in the midst of resize (no drawing can take place)
   boolean insideResize;
@@ -524,10 +524,12 @@ public abstract class PGraphics extends PImage implements PConstants {
    * new width and height internally, as well as re-allocating
    * the pixel buffer for the new size.
    * <P>
-   * Note that this will nuke any cameraMode() settings.
+   * Note that this will nuke any camera settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
     //System.out.println("resize " + iwidth + " " + iheight);
+    insideDrawWait();
+    insideResize = true;
 
     width = iwidth;
     height = iheight;
@@ -536,8 +538,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
     allocate();
 
-    // clear the screen with the old background color
-    //background(backgroundColor);
+    insideResize = false;  // ok to draw again
   }
 
 
@@ -550,6 +551,10 @@ public abstract class PGraphics extends PImage implements PConstants {
    */
   public void setMainDrawingSurface() {
     mainDrawingSurface = true;
+    // base images must be opaque (for performance and general
+    // headache reasons.. argh, a semi-transparent opengl surface?)
+    // use createGraphics() if you want a transparent surface.
+    format = RGB;
     parent.addListeners();
   }
 
@@ -575,22 +580,26 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   protected void insideResizeWait() {
+    /*
     while (insideResize) {
       //System.out.println("waiting");
       try {
         Thread.sleep(5);
       } catch (InterruptedException e) { }
     }
+    */
   }
 
 
   protected void insideDrawWait() {
+    /*
     while (insideDraw) {
       //System.out.println("waiting");
       try {
         Thread.sleep(5);
       } catch (InterruptedException e) { }
     }
+    */
   }
 
 
@@ -3262,11 +3271,12 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Note, no need for a bounds check since it's a 32 bit number.
    */
   protected void colorCalcARGB(int argb, float alpha) {
-    calcColor = argb;
     if (alpha == colorModeA) {
       calcAi = (argb >> 24) & 0xff;
+      calcColor = argb;
     } else {
       calcAi = (int) (((argb >> 24) & 0xff) * (alpha / colorModeA));
+      calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
     }
     calcRi = (argb >> 16) & 0xff;
     calcGi = (argb >> 8) & 0xff;
@@ -3276,6 +3286,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     calcG = (float)calcGi / 255.0f;
     calcB = (float)calcBi / 255.0f;
     calcAlpha = (calcAi != 255);
+
   }
 
 
