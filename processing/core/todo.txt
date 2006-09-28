@@ -90,6 +90,9 @@ X change reader() to createReader() for consistency?
 X   though printwriter is odd for output..
 X   also createWriter() and the rest
 o add to docs: save() on a PImage needs savePath() added
+X figure out default behavior for native text fonts
+X make sure insideDrawWait() is in other resize() methods
+X   begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, PGraphics3D
 
 more recent
 X only update mouse pos on moved and dragged
@@ -109,9 +112,8 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
-
-_ make sure insideDrawWait() is in other resize() methods
-_   begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, PGraphics3D
+_ toInt() on a float string needs to work
+_   need to check for periods to see if float -> int first
 _ shape changes
 _   remove LINE_STRIP - tell people to use beginShape() with no params
 _   remove LINE_LOOP - tell people to use endShape(CLOSE)
@@ -127,18 +129,8 @@ _   in opengl lib, need beginTexture(PImage) and endTexture()
 _   this will be helpful to have access to the raw texture data
 _   that way it can be re-bound by itself, and ppl can write directly to it
 _ use parseFloat instead of toFloat()? to be consistent with javascript
-_ bring back the old P2D, rename PGraphics2 into PGraphicsJava
 _ when running as an applet, sketchPath won't be set
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1153150923
-
-
-text and fonts
-_ figure out default behavior for native text fonts
-_ was grabbing the wrong native font with ico sketch 
-_   seems that the psname is no longer a good way to grab the font? related?
-_ fonts in java 1.5 have changed again
-_   appears that asking for the postscript name no longer works
-_   fix "create font" and associated font stuff to straighten it out
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -620,6 +612,11 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
+_ fonts in java 1.5 have changed again
+_   appears that asking for the postscript name no longer works
+_   fix "create font" and associated font stuff to straighten it out
+_   was grabbing the wrong native font with ico sketch 
+_   seems that the psname is no longer a good way to grab the font? related?
 _ leading looks too big, at least in PGraphics2 with news gothic
 _   though it may be the converted version of the .ttf?
 _ font encoding issues 
@@ -800,7 +797,7 @@ _     not clipping areas from offscreen
 _       huge geometry slows things way down
 
 
-CORE / PGraphics2
+CORE / PGraphicsJava2D
 
 _ make get/getImpl for PGraphics/PGraphics2
 _   make sure there's a loadPixels/updatePixels in PGraphics2
@@ -830,7 +827,7 @@ g2.setPaint(gradient);
 g2.draw(gp);
 
 
-CORE / PGraphics3
+CORE / PGraphics3D
 
 _ rect() changes size as it changes position
 _   http://dev.processing.org/bugs/show_bug.cgi?id=95
@@ -923,7 +920,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 ////////////////////////////////////////////////////////////////////
 
 
-PGraphicsGL
+PGraphicsOpenGL
 
 _ opengl keeping memory around.. 
 _   could this be in vertices that have an image associated

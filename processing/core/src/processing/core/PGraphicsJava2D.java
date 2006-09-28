@@ -106,6 +106,8 @@ public class PGraphicsJava2D extends PGraphics {
    */
   public void resize(int iwidth, int iheight) {  // ignore
     //System.out.println("resize " + iwidth + " " + iheight);
+    insideDrawWait();
+    insideResize = true;
 
     width = iwidth;
     height = iheight;
@@ -114,8 +116,8 @@ public class PGraphicsJava2D extends PGraphics {
 
     allocate();
 
-    // clear the screen with the old background color
-    //background(backgroundColor);
+    // ok to draw again
+    insideResize = false;
   }
 
 
@@ -133,6 +135,9 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   public void beginDraw() {
+    insideResizeWait();
+    insideDraw = true;
+
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
     // beginDraw/endDraw).
@@ -149,6 +154,8 @@ public class PGraphicsJava2D extends PGraphics {
     // hm, mark pixels as changed, because this will instantly do a full
     // copy of all the pixels to the surface.. so that's kind of a mess.
     //updatePixels();
+    
+    insideDraw = false;
   }
 
 
