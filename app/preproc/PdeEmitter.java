@@ -868,7 +868,7 @@ public class PdeEmitter implements PdeTokenTypes
 
       //out.print("(");
       String pooType = terminalTypeNode.getText();
-      out.print("PApplet.to" +
+      out.print("PApplet.parse" +
                 Character.toUpperCase(pooType.charAt(0)) +
                 pooType.substring(1));
       dumpHiddenAfter(terminalTypeNode);  // the left paren

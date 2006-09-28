@@ -96,6 +96,18 @@ X   begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, PGraphics3D
 X fix bug with fill(#ffcc00, 50); 
 X toInt() on a float string needs to work
 X   need to check for periods to see if float -> int first
+X shape changes
+X   remove LINE_STRIP - tell people to use beginShape() with no params
+X   remove LINE_LOOP - tell people to use endShape(CLOSE)
+o   also remove POLYGON? 
+X     may as well remove it
+X     though something still needed as an internal constant
+X   add endShape(CLOSE) or CLOSED
+X when running as an applet, sketchPath won't be set
+X   change the error message slightly
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1153150923
+X use parseFloat instead of toFloat()? to be consistent with javascript
+X   also clean up some of the casting silliness
 
 more recent
 X only update mouse pos on moved and dragged
@@ -115,13 +127,6 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
-_ shape changes
-_   remove LINE_STRIP - tell people to use beginShape() with no params
-_   remove LINE_LOOP - tell people to use endShape(CLOSE)
-_   also remove POLYGON? 
-_     may as well remove it
-_     though something still needed as an internal constant
-_   add endShape(CLOSE) or CLOSED
 _ maybe break out a separate timage object in textures?
 _   under assumption that most will just need an extra image object
 _   this could also be used by people eventually to control tex themselves
@@ -129,9 +134,6 @@ _   or maybe call the object "texture"?
 _   in opengl lib, need beginTexture(PImage) and endTexture()
 _   this will be helpful to have access to the raw texture data
 _   that way it can be re-bound by itself, and ppl can write directly to it
-_ use parseFloat instead of toFloat()? to be consistent with javascript
-_ when running as an applet, sketchPath won't be set
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1153150923
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
