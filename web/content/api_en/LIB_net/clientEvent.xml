@@ -11,17 +11,37 @@
 <example>
 <image></image>
 <code>
-Example to come...
+import processing.net.*;
+
+Client myClient;
+int dataIn;
+
+void setup() {
+  size(200, 200);
+  myClient = new Client(this, "127.0.0.1", 5204);
+}
+
+void draw() { }  // Empty draw keeps the program running
+
+// ClientEvent message is generated when the server 
+// sends a byte to an existing client.
+void clientEvent(Client someClient) {
+  print("Server Says:  ");
+  dataIn = myClient.read();
+  println(dataIn);
+  background(dataIn);
+
+}
 
 </code>
 </example>
 
 <description>
-Description to come...
+This function is called when a server sends a byte to an existing Client object.
 </description>
 
 <syntax>
-void clientEvent() {
+void clientEvent(<c>client</c>) {
   <c>statements</c>
 }
 </syntax>
@@ -29,6 +49,11 @@ void clientEvent() {
 <parameter>
 <label>statements</label>
 <description>any valid statements</description>
+</parameter>
+
+<parameter>
+<label>client</label>
+<description>the client with new data</description>
 </parameter>
 
 <returns></returns>

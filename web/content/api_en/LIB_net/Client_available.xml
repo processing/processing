@@ -35,7 +35,7 @@ void draw() {
 </example>
 
 <description>
-Returns the number of bytes available.
+Returns the number of bytes available. When any client has bytes available from the server, it returns the number of bytes.
 </description>
 
 <syntax>

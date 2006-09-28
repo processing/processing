@@ -12,12 +12,29 @@
 <example>
 <image></image>
 <code>
-Example to come...
+import processing.net.*;
+
+Server myServer;
+int port = 5204;
+int val = 0;
+
+void setup() {
+  size(200, 200);
+  // Starts a myServer on port 5204
+  myServer = new Server(this, port);
+}
+
+void draw() {
+  val = val + 1;
+  background(val);
+  myServer.write(val);
+}
+
 </code>
 </example>
 
 <description>
-Writes a value to all the connected clients.
+Writes a value to all the connected clients. It sends bytes out from the Server object.
 </description>
 
 <syntax>
