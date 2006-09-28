@@ -552,15 +552,37 @@ public class Base {
   // .................................................................
 
 
+  static public void showReference() {
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + "index.html");
+  }
+
+
   /**
    * Given the reference filename from the keywords list,
    * builds a URL and passes it to openURL.
    */
   static public void showReference(String referenceFile) {
-    String currentDir = System.getProperty("user.dir");
-    openURL(currentDir + File.separator +
-            "reference" + File.separator +
-            referenceFile + ".html");
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + referenceFile + ".html");
+  }
+
+
+  static public void showEnvironment() {
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + "environment" +
+            File.separator + "index.html");
+  }
+
+
+  static public void showTroubleshooting() {
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + "troubleshooting" +
+            File.separator + "index.html");
   }
 
 
@@ -570,10 +592,13 @@ public class Base {
    */
   static public void showFAQ() {
     //Base.openURL("http://processing.org/faq/");
-    String currentDir = System.getProperty("user.dir");
-    openURL(currentDir + File.separator + "faq" +
-            File.separator + "index.html");
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + "faq.html");
   }
+
+
+  // .................................................................
 
 
   /**
