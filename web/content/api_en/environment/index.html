@@ -9,6 +9,7 @@
     <p>
       <a href="#PDE">Processing Development Environment (PDE)</a><br />
       <a href="#Sketchbook">Sketchbook</a><br />
+      <a href="#Tabs">Tabs (Multiple Files)</a><br />
       <a href="#Coordinates">Coordinates</a><br />
       <a href="#Programming_modes">Programming Modes</a><br />
       <a href="#Rendering_modes">Rendering Modes</a><br />
@@ -231,6 +232,29 @@ This button gives access to creating, deleting, and renaming the files that comp
 can write functions and classes in new PDE files and you can write any Java code in files with the JAVA
 extension. Working with multiple files makes it easier to re-use code and to separate programs into small
 sub-programs.</p>
+
+
+    <h5 id="Tabs"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
+      Tabs (Multiple Files)</h5>
+    <p>It can be inconvenient to write a long program within a single file. When programs grow to 
+	hundreds and thousands of lines, breaking them into modular units helps manage the different parts. 
+ 	Processing manages files with the Sketchbook and each sketch can have multiple files that are 
+	managed with tabs. The arrow button in the upper-right corner of the Processing Development 
+	Environment is used to manage these files. Click this button to reveal options to create a 
+	new tab, rename the current tab, and delete the current tab. If a project has more than one tab, 
+	they can also be hidden and revealed. Hiding a tab temporarily removes that code from the sketch.</p>
+	
+	<p>Tabs are for advanced users, and are "hidden" for a reason. When a program with multiple tabs
+	is run, the code is grouped together and the classes in other tabs become inner classes.  
+	Because they're inner classes, you cannot use static variables. Simply place the "static" variable 
+	outside the class itself to do the same thing (it need not be explicitly named "static" once you 
+	list it in this manner). If you don't want code to be an inner class, you can also create a tab 
+	with a .java suffix, which means it will be interpreted as straight java code. Having done this, 
+	you'll need to pass the PApplet object to that object in that tab in order to get PApplet functions 
+	like line(), loadStrings() or saveFrame() to work. 
+	
+	<p>The tabs gets truncated when there are too many (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=54">Bug 54</a>)</p>
+	
    
     <h5 id="Coordinates"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Coordinates</h5>
@@ -355,6 +379,10 @@ noStroke();
 fill(255, 204, 0);
 rect(30, 20, 140, 160);
 </pre>
+    <h6>P2D</h6>
+    <p>Optimized for fast 2D drawing. It's doesn't have as many features as the 
+	JAVA2D renderer but it's much faster. For example, the smooth() and strokeWeight()
+	functions won't work. It is currently not supported, but it will be in future releases.</p>
     <h6>P3D</h6>
     <p>Optimized for fast 3D drawing, but also supports 2D:</p>
     <pre>size(200, 200, P3D);
@@ -378,26 +406,22 @@ rect(-60, -60, 120, 120);
       cards as some cards support OpenGL better than others.</em></p>
     <pre>import processing.opengl.*;
 
-void setup() 
-{
+float a; 
+
+void setup() {
   size(800, 600, OPENGL);
+  fill(0, 153);
   noStroke();
 }
 
-void draw() 
-{
-  float x = mouseX - width/2;
+void draw() {
   background(255);
-  fill(0, 102, 153, 26);
-  for(int i=0; i&lt;height; i+=10) {
-    for(int j=0; j&lt;width; j+=10) {
-      beginShape(QUADS);
-      vertex(x+j,   i,    0);
-      vertex(x+j, i+5,    0);
-      vertex(j-x, i+5, -400);
-      vertex(j-x,   i, -400);
-      endShape();
-    }
-  }
+  translate(width/2, height/2);
+  rotateX(a);
+  rotateY(a*2);
+  rect(-200, -200, 400, 400);
+  rotateX(PI/2);
+  rect(-200, -200, 400, 400);
+  a += 0.01;
 }
 </pre>

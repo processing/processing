@@ -109,7 +109,7 @@
         
         <abridged_notice><strong>You are viewing the Abridged Reference.</strong> It omits description and functions for drawing in 3D and for detailed drawing and data manipulation. Click <a href="index_ext.html">Extended</a> above to view additional reference.</abridged_notice>
         
-		<extended_notice><strong>You are viewing the Extended Reference.</strong> There's an <a href="index.html">Abridged Reference</a> that is less complicated and a <a href="http://dev.processing.org/reference/core/">Developers Reference</a> that includes additional language elements.</extended_notice>
+		<extended_notice><strong>You are viewing the Extended Reference.</strong> There's an <a href="./index.html">Abridged Reference</a> that is less complicated and a <a href="http://dev.processing.org/reference/core/">Developers Reference</a> that includes additional language elements.</extended_notice>
 		
 		<refheader>Language (API). The Processing Language has been designed to facilitate the creation of sophisticated visual and conceptual structures.</refheader>
 		
