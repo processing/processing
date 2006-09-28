@@ -734,9 +734,15 @@ public class Editor extends JFrame
     item = new JMenuItem("Getting Started");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.openURL(System.getProperty("user.dir") + File.separator +
-                          "reference" + File.separator + "environment" +
-                          File.separator + "index.html");
+          Base.showEnvironment();
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Troubleshooting");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.showTroubleshooting();
         }
       });
     menu.add(item);
@@ -744,8 +750,7 @@ public class Editor extends JFrame
     item = new JMenuItem("Reference");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.openURL(System.getProperty("user.dir") + File.separator +
-                          "reference" + File.separator + "index.html");
+          Base.showReference();
         }
       });
     menu.add(item);
