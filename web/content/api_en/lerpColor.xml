@@ -47,7 +47,7 @@ lerpColor(<c>c1</c>, <c>c2</c>, <c>amt</c>)
 </parameter>
 
 <parameter>
-<label>c1</label>
+<label>amt</label>
 <description>float: between 0.0 and 1.0</description>
 </parameter>
 

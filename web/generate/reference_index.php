@@ -87,7 +87,7 @@ writeFile($path.'index_alpha.html', $page->out());
 
 // complete reference
 $page = new Page($completeTitle, 'Language');
-$page->subtemplate('template.ref.index.html');
+$page->subtemplate('template.ref.index.ext.html');
 $page->content(category_index($complete));
 $page->set('reference_nav', reference_nav());
 $page->set('language_nav', language_nav($lang));
@@ -98,7 +98,7 @@ writeFile($path.'index_ext.html', $page->out());
 
 // complete alphabetical
 $page = new Page($alphaCompleteTitle, 'Language');
-$page->subtemplate('template.ref.index.html');
+$page->subtemplate('template.ref.index.ext.html');
 $page->content(alpha_index($complete_alpha));
 $page->set('reference_nav', reference_nav());
 $page->set('language_nav', language_nav($lang));
