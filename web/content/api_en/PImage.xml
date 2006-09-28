@@ -64,6 +64,10 @@ Datatype for storing images. Processing can display of <b>.gif</b>, <b>.jpg</b>,
 <mname>filter()</mname>
 <mdescription>Converts the image to grayscale or black and white</mdescription>
 </method>
+<method>
+<mname>save()</mname>
+<mdescription>Saves the image to a TIFF, TARGA, PNG, or JPEG file</mdescription>
+</method>
 
 <constructor>
 PImage()
