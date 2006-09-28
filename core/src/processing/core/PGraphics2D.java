@@ -220,7 +220,7 @@ public class PGraphics2D extends PGraphics {
   }
 
 
-  public void endShape() {
+  public void endShape(int mode) {
     // clear the 'shape drawing' flag in case of early exit
     //shape = 0;
     // hm can't do anymore..
@@ -312,7 +312,8 @@ public class PGraphics2D extends PGraphics {
       if (!stroke) return;
 
       // if it's a line loop, copy the vertex data to the last element
-      if (shape == LINE_LOOP) {
+      //if (shape == LINE_LOOP) {
+      if (mode == CLOSE) {
         float v0[] = polygon.vertices[0];
         float v1[] = polygon.nextVertex();
         polyVertexCount++; // since it had already been read above

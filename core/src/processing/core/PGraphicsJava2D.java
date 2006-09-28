@@ -219,6 +219,7 @@ public class PGraphicsJava2D extends PGraphics {
       }
       break;
 
+/*
     case LINE_STRIP:
     case LINE_LOOP:
       if (gpath == null) {
@@ -228,7 +229,8 @@ public class PGraphicsJava2D extends PGraphics {
         gpath.lineTo(x, y);
       }
       break;
-
+*/
+      
     case TRIANGLES:
       if ((vertexCount % 3) == 0) {
         triangle(vertices[vertexCount - 3][MX],
@@ -331,8 +333,8 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     switch (shape) {
-      case LINE_LOOP:
-      case LINE_STRIP:
+      //case LINE_LOOP:
+      //case LINE_STRIP:
       case POLYGON:
         gpath.curveTo(x1, y1, x2, y2, x3, y3);
         break;
@@ -348,9 +350,11 @@ public class PGraphicsJava2D extends PGraphics {
   float curveY[] = new float[4];
 
   public void curveVertex(float x, float y) {
-    if ((shape != LINE_LOOP) && (shape != LINE_STRIP) && (shape != POLYGON)) {
+    //if ((shape != LINE_LOOP) && (shape != LINE_STRIP) && (shape != POLYGON)) {
+    if (shape != POLYGON) {
       throw new RuntimeException("curveVertex() can only be used with " +
-                                 "LINE_LOOP, LINE_STRIP, and POLYGON shapes");
+                                 "POLYGON shapes");
+                                 //"LINE_LOOP, LINE_STRIP, and POLYGON shapes");
     }
 
     if (!curve_inited) curve_init();
@@ -408,22 +412,13 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  public void endShape() {
+  public void endShape(int mode) {
     if (gpath != null) {  // make sure something has been drawn
-      switch (shape) {
-      case LINE_STRIP:
-        stroke_shape(gpath);
-        break;
-
-      case LINE_LOOP:
-        gpath.closePath();
-        stroke_shape(gpath);
-        break;
-
-      case POLYGON:
-        gpath.closePath();
+      if (shape == POLYGON) {
+        if (mode == CLOSE) {
+          gpath.closePath();
+        }
         draw_shape(gpath);
-        break;
       }
     }
     shape = 0;
