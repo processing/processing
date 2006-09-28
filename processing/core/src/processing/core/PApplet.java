@@ -4265,14 +4265,24 @@ public class PApplet extends Applet
 
 
   /**
-   * Prepend the path to the sketch folder to the filename or
-   * path that is passed in. Can be used by applets or external
-   * libraries to save to the sketch folder.
+   * Prepend the sketch folder path to the filename (or path) that is
+   * passed in. External libraries should use this function to save to
+   * the sketch folder.
+   * <p/>
+   * Note that when running as an applet inside a web browser,
+   * the sketchPath will be set to null, because security restrictions
+   * prevent applets from accessing that information.
+   * <p/>
+   * This will also cause an error if the sketch is not inited properly,
+   * meaning that init() was never called on the PApplet when hosted
+   * my some other main() or by other code. For proper use of init(),
+   * see the examples in the main description text for PApplet.
    */
   public String sketchPath(String where) {
     if (sketchPath == null) {
-      throw new RuntimeException("Applet not inited properly, " +
-                                 "the sketch path could not be determined.");
+      throw new RuntimeException("The applet was not inited properly, " +
+                                 "or security restrictions prevented " +
+                                 "it from determining its path.");
     }
     // isAbsolute() could throw an access exception, but so will writing
     // to the local disk using the sketch path, so this is safe here.
@@ -5230,6 +5240,7 @@ public class PApplet extends Applet
   // CASTING FUNCTIONS, INSERTED BY PREPROC
 
 
+  /*
   static final public boolean parseBoolean(char what) {
     return ((what == 't') || (what == 'T') || (what == '1'));
   }
@@ -5245,9 +5256,11 @@ public class PApplet extends Applet
   static final public boolean parseBoolean(String what) {
     return new Boolean(what).booleanValue();
   }
+  */
 
   //
 
+  /*
   static final public boolean[] parseBoolean(char what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5280,12 +5293,15 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
+  */
 
   //
 
+  /*
   static final public byte parseByte(boolean what) {
     return what ? (byte)1 : 0;
   }
+  */
 
   static final public byte parseByte(char what) {
     return (byte) what;
@@ -5295,6 +5311,7 @@ public class PApplet extends Applet
     return (byte) what;
   }
 
+  /*
   static final public byte parseByte(float what) {  // nonsensical
     return (byte) what;
   }
@@ -5302,9 +5319,11 @@ public class PApplet extends Applet
   static final public byte[] parseByte(String what) {  // note: array[]
     return what.getBytes();
   }
+  */
 
   //
 
+  /*
   static final public byte[] parseByte(boolean what[]) {
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5312,6 +5331,7 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
+  */
 
   static final public byte[] parseByte(char what[]) {
     byte outgoing[] = new byte[what.length];
@@ -5329,6 +5349,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  /*
   static final public byte[] parseByte(float what[]) {  // nonsensical
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5344,12 +5365,15 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
+  */
 
   //
 
+  /*
   static final public char parseChar(boolean what) {  // 0/1 or T/F ?
     return what ? 't' : 'f';
   }
+  */
 
   static final public char parseChar(byte what) {
     return (char) (what & 0xff);
@@ -5359,6 +5383,7 @@ public class PApplet extends Applet
     return (char) what;
   }
 
+  /*
   static final public char parseChar(float what) {  // nonsensical
     return (char) what;
   }
@@ -5366,9 +5391,11 @@ public class PApplet extends Applet
   static final public char[] parseChar(String what) {  // note: array[]
     return what.toCharArray();
   }
+  */
 
   //
 
+  /*
   static final public char[] parseChar(boolean what[]) {  // 0/1 or T/F ?
     char outgoing[] = new char[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5376,6 +5403,7 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
+  */
 
   static final public char[] parseChar(int what[]) {
     char outgoing[] = new char[what.length];
@@ -5393,6 +5421,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  /*
   static final public char[] parseChar(float what[]) {  // nonsensical
     char outgoing[] = new char[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5408,14 +5437,20 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
+  */
 
   //
 
+  /*
   static final public int parseInt(boolean what) {
     return what ? 1 : 0;
   }
+  */
 
-  static final public int parseInt(byte what) {  // note this unsigns
+  /**
+   * Note that parseInt() will un-sign a signed byte value.
+   */
+  static final public int parseInt(byte what) {
     return what & 0xff;
   }
 
@@ -5428,14 +5463,24 @@ public class PApplet extends Applet
     return what;
   }
 
+  /**
+   * Same as floor(), or an (int) cast.
+   */
   static final public int parseInt(float what) {
     return (int) what;
   }
 
+  /**
+   * Parse a String into an int value. Returns 0 if the value is bad.
+   */
   static final public int parseInt(String what) {
     return parseInt(what, 0);
   }
 
+  /**
+   * Parse a String to an int, and provide an alternate value that
+   * should be used when the number is invalid.
+   */
   static final public int parseInt(String what, int otherwise) {
     try {
       int offset = what.indexOf('.');
@@ -5450,6 +5495,7 @@ public class PApplet extends Applet
 
   //
 
+  /*
   static final public int[] parseInt(boolean what[]) {
     int list[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5457,6 +5503,7 @@ public class PApplet extends Applet
     }
     return list;
   }
+  */
 
   static final public int[] parseInt(byte what[]) {  // note this unsigns
     int list[] = new int[what.length];
@@ -5519,16 +5566,17 @@ public class PApplet extends Applet
 
   //
 
+  /*
   static final public float parseFloat(boolean what) {
     return what ? 1 : 0;
   }
+  */
 
   static final public float parseFloat(int what) {
     return (float)what;
   }
 
   static final public float parseFloat(String what) {
-    //return new Float(what).floatValue();
     return parseFloat(what, Float.NaN);
   }
 
@@ -5542,6 +5590,7 @@ public class PApplet extends Applet
 
   //
 
+  /*
   static final public float[] parseFloat(boolean what[]) {
     float floaties[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5557,6 +5606,7 @@ public class PApplet extends Applet
     }
     return floaties;
   }
+  */
 
   static final public float[] parseFloat(int what[]) {
     float floaties[] = new float[what.length];
