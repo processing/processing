@@ -93,6 +93,7 @@ o add to docs: save() on a PImage needs savePath() added
 X figure out default behavior for native text fonts
 X make sure insideDrawWait() is in other resize() methods
 X   begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, PGraphics3D
+X fix bug with fill(#ffcc00, 50); 
 
 more recent
 X only update mouse pos on moved and dragged
