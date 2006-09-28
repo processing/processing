@@ -45,8 +45,6 @@ X   may be a bug specific to java 1.5 (nope)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=378
 X saveFrame() not working for casey
 X   problem with tiff loading in photoshop etc
-X hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
-_   or maybe this should be hint(ENABLE_NATIVE_FONTS) instead?
 X check http:// stuff to see if it's a url first on openStream()
 X   it's the most harmless, since prolly just a MFUEx
 X fix problem where root of exported sketch won't be checked
@@ -90,10 +88,14 @@ X change reader() to createReader() for consistency?
 X   though printwriter is odd for output..
 X   also createWriter() and the rest
 o add to docs: save() on a PImage needs savePath() added
-X figure out default behavior for native text fonts
+X hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
+X   or maybe this should be hint(ENABLE_NATIVE_FONTS) instead?
+X   figure out default behavior for native text fonts
 X make sure insideDrawWait() is in other resize() methods
 X   begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, PGraphics3D
 X fix bug with fill(#ffcc00, 50); 
+X toInt() on a float string needs to work
+X   need to check for periods to see if float -> int first
 
 more recent
 X only update mouse pos on moved and dragged
@@ -113,8 +115,6 @@ o   right now the camera doesn't get set up unless you call depth()
 o box and sphere are broken in gl
 o what should the update image function be called?
 
-_ toInt() on a float string needs to work
-_   need to check for periods to see if float -> int first
 _ shape changes
 _   remove LINE_STRIP - tell people to use beginShape() with no params
 _   remove LINE_LOOP - tell people to use endShape(CLOSE)
