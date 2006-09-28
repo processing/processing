@@ -92,7 +92,7 @@ $page->content(category_index($complete));
 $page->set('reference_nav', reference_nav());
 $page->set('language_nav', language_nav($lang));
 $page->set_array($translation->meta);
-$page->set('abridged_notice', 'extended_notice');
+$page->set('abridged_notice', $translation->meta->extended_reference);
 $page->language($lang);
 writeFile($path.'index_ext.html', $page->out());
 
@@ -103,7 +103,7 @@ $page->content(alpha_index($complete_alpha));
 $page->set('reference_nav', reference_nav());
 $page->set('language_nav', language_nav($lang));
 $page->set_array($translation->meta);
-$page->set('abridged_notice', 'extended_notice');
+$page->set('abridged_notice', $translation->meta->extended_reference);
 $page->language($lang);
 writeFile($path.'index_alpha_ext.html', $page->out());
 
