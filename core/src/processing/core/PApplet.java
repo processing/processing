@@ -490,7 +490,8 @@ public class PApplet extends Applet
 
   // during rev 0100 dev cycle, working on new threading model,
   // but need to disable and go conservative with changes in order
-  // to get pdf and audio working properly first
+  // to get pdf and audio working properly first.
+  // for 0116, the CRUSTY_THREADS are being disabled to fix lots of bugs.
   static final boolean CRUSTY_THREADS = false; //true;
 
 

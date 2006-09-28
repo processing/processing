@@ -113,6 +113,9 @@ public class PGraphics2D extends PGraphics {
 
 
   public void beginDraw() {
+    insideResizeWait();
+    insideDraw = true;
+    
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
     // beginDraw/endDraw).
@@ -141,6 +144,8 @@ public class PGraphics2D extends PGraphics {
     // mark pixels as having been updated, so that they'll work properly
     // when this PGraphics is drawn using image().
     updatePixels();
+    
+    insideDraw = false;
   }
 
 

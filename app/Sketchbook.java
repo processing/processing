@@ -169,11 +169,8 @@ public class Sketchbook {
     if (noPrompt) prompt = false;
 
     if (prompt) {
-    //if (!startup) {
       // prompt for the filename and location for the new sketch
-
-      FileDialog fd = new FileDialog(editor, //new Frame(),
-                                     //"Create new sketch named",
+      FileDialog fd = new FileDialog(editor,
                                      "Create sketch folder named:",
                                      FileDialog.SAVE);
       fd.setDirectory(getSketchbookPath());

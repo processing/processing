@@ -25,6 +25,7 @@ package processing.app.tools;
 
 import processing.app.*;
 
+import java.awt.FileDialog;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -96,22 +97,39 @@ public class Archiver {
       index++;
     } while (newbie.exists());
 
-    try {
-      //System.out.println(newbie);
-      FileOutputStream zipOutputFile = new FileOutputStream(newbie);
-      ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
+    // open up a prompt for where to save this fella
+    FileDialog fd =
+      new FileDialog(editor, "Archive sketch as:", FileDialog.SAVE);
+    fd.setDirectory(parent.getAbsolutePath());
+    fd.setFile(newbie.getName());
+    fd.show();
 
-      // recursively fill the zip file
-      buildZip(location, name, zos);
+    String directory = fd.getDirectory();
+    String filename = fd.getFile();
 
-      // close up the jar file
-      zos.flush();
-      zos.close();
+    // only write the file if not canceled
+    if (filename != null) {
+      newbie = new File(directory, filename);
 
-      editor.message("Created archive " + newbie.getName() + ".");
+      try {
+        //System.out.println(newbie);
+        FileOutputStream zipOutputFile = new FileOutputStream(newbie);
+        ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
 
-    } catch (IOException e) {
-      e.printStackTrace();
+        // recursively fill the zip file
+        buildZip(location, name, zos);
+
+        // close up the jar file
+        zos.flush();
+        zos.close();
+
+        editor.message("Created archive " + newbie.getName() + ".");
+
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      editor.message("Archive sketch canceled.");
     }
   }
 
