@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>mouseReleased()</name>
+<name>mouseClicked()</name>
 
 <category>Input</category>
 
@@ -12,7 +12,8 @@
 <image></image>
 <code>
 // Click within the image to change 
-// the value of the rectangle
+// the value of the rectangle after
+// after the mouse has been clicked
 
 int value = 0;
 
@@ -21,7 +22,7 @@ void draw() {
   rect(25, 25, 50, 50);
 }
 
-void mouseReleased() {
+void mouseClicked() {
   if(value == 0) {
     value = 255;
   } else {
@@ -32,13 +33,11 @@ void mouseReleased() {
 </example>
 
 <description>
-The <b>mouseReleased()</b> function is called every time a mouse button is released.
+The <b>mouseClicked()</b> function is called once after a mouse button has been pressed and then released.
 </description>
 
 <syntax>
-void mouseReleased() {
-  <c>statements</c>
-}
+mouseClicked()
 </syntax>
 
 <parameter>
@@ -51,8 +50,9 @@ void mouseReleased() {
 <related>
 mouseX
 mouseY
+mouseButton
 mousePressed
-mousePressed()
+mouseReleased()
 mouseMoved()
 mouseDragged()
 </related>
@@ -63,7 +63,7 @@ mouseDragged()
 
 <partof>Core</partof>
 
-
+<level>Extended</level>
 
 
 

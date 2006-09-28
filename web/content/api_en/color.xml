@@ -28,6 +28,7 @@ color(<c>gray</c>, <c>alpha</c>)
 color(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 color(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 color(<c>hex</c>)
+color(<c>hex</c>, <c>alpha</c>)
 </syntax>
 
 <parameter>

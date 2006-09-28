@@ -17,6 +17,7 @@ image(b, 0, 0);
 // Tint blue
 tint(0, 153, 204); 
 image(b, 50, 0); 
+
 </code>
 </example>
 
@@ -42,6 +43,9 @@ tint(<c>gray</c>, <c>alpha</c>)
 tint(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 tint(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 tint(<c>color</c>)
+tint(<c>color</c>, <c>alpha</c>)
+tint(<c>hex</c>)
+tint(<c>hex</c>, <c>alpha</c>)
 </syntax>
 
 <parameter>
@@ -72,6 +76,11 @@ tint(<c>color</c>)
 <parameter>
 <label>color</label>
 <description>color: any value of the color datatype</description>
+</parameter>
+
+<parameter>
+<label>hex</label>
+<description>int: color value in hexadecimal notation (i.e. #FFCC00 or 0xFFCC00)</description>
 </parameter>
 
 <returns>None</returns>

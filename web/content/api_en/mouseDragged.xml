@@ -32,11 +32,13 @@ void mouseDragged()
 </example>
 
 <description>
-Called every time the mouse moves and a mouse button is pressed.
+The <b>mouseDragged()</b> function is called once every time the mouse moves and a mouse button is pressed.
 </description>
 
 <syntax>
-mouseDragged
+void mouseDragged() {
+  <c>statements</c>
+}
 </syntax>
 
 <parameter>

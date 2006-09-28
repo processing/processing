@@ -31,9 +31,12 @@ Sets the color used to fill shapes. For example, if you call <b>fill(204, 102, 0
 <syntax>
 fill(<c>gray</c>)
 fill(<c>gray</c>, <c>alpha</c>)
-fill(<c>color</c>)
 fill(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 fill(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
+fill(<c>color</c>)
+fill(<c>color</c>, <c>alpha</c>)
+fill(<c>hex</c>)
+fill(<c>hex</c>, <c>alpha</c>)
 </syntax>
 
 <parameter>
@@ -44,11 +47,6 @@ fill(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 <parameter>
 <label>alpha</label>
 <description>int or float: opacity of the fill</description>
-</parameter>
-
-<parameter>
-<label>color</label>
-<description>color: any value of the color datatype</description>
 </parameter>
 
 <parameter>
@@ -64,6 +62,16 @@ fill(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 <parameter>
 <label>value3</label>
 <description>int or float: blue or brightness value</description>
+</parameter>
+
+<parameter>
+<label>color</label>
+<description>color: any value of the color datatype</description>
+</parameter>
+
+<parameter>
+<label>hex</label>
+<description>int: color value in hexadecimal notation (i.e. #FFCC00 or 0xFFCC00)</description>
 </parameter>
 
 <returns>None</returns>

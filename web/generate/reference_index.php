@@ -92,7 +92,7 @@ $page->content(category_index($complete));
 $page->set('reference_nav', reference_nav());
 $page->set('language_nav', language_nav($lang));
 $page->set_array($translation->meta);
-$page->set('abridged_notice', '');
+$page->set('abridged_notice', 'Testing mate!');
 $page->language($lang);
 writeFile($path.'index_ext.html', $page->out());
 

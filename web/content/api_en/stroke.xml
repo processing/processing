@@ -31,9 +31,12 @@ Sets the color used to draw lines and borders around shapes. This color is eithe
 <syntax>
 stroke(<c>gray</c>)
 stroke(<c>gray</c>, <c>alpha</c>)
-stroke(<c>color</c>)
 stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>)
 stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
+stroke(<c>color</c>)
+stroke(<c>color</c>, <c>alpha</c>)
+stroke(<c>hex</c>)
+stroke(<c>hex</c>, <c>alpha</c>)
 </syntax>
 
 <parameter>
@@ -44,11 +47,6 @@ stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 <parameter>
 <label>alpha</label>
 <description>int or float: opacity of the stroke</description>
-</parameter>
-
-<parameter>
-<label>color</label>
-<description>color: any value of the color datatype</description>
 </parameter>
 
 <parameter>
@@ -66,6 +64,15 @@ stroke(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)
 <description>int or float: blue or brightness value (depending on the current color mode)</description>
 </parameter>
 
+<parameter>
+<label>color</label>
+<description>color: any value of the color datatype</description>
+</parameter>
+
+<parameter>
+<label>hex</label>
+<description>int: color value in hexadecimal notation (i.e. #FFCC00 or 0xFFCC00)</description>
+</parameter>
 
 <returns>None</returns>
 

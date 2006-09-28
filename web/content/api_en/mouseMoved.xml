@@ -21,8 +21,7 @@ void draw() {
   rect(25, 25, 50, 50);
 }
 
-void mouseMoved() 
-{
+void mouseMoved() {
   value = value + 5;
   if (value &gt; 255) {
     value = 0;
@@ -36,7 +35,9 @@ The <b>mouseMoved()</b> function is called every time the mouse moves and a mous
 </description>
 
 <syntax>
-mouseMoved()
+void mouseMoved() {
+  <c>statements</c>
+}
 </syntax>
 
 <parameter>
