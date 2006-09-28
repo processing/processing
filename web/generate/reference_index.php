@@ -75,7 +75,7 @@ $page->set_array($translation->meta);
 $page->language($lang);
 writeFile($path.'index.html', $page->out());
 
-// abridged alpha
+// abridged alphaphabetical
 $page = new Page($alphaTitle, 'Language');
 $page->subtemplate('template.ref.index.html');
 $page->content(alpha_index($abridged_alpha));
@@ -92,18 +92,18 @@ $page->content(category_index($complete));
 $page->set('reference_nav', reference_nav());
 $page->set('language_nav', language_nav($lang));
 $page->set_array($translation->meta);
-$page->set('abridged_notice', $page->extended_notice);
+//$page->set('abridged_notice', $page->extended_notice);
 $page->language($lang);
 writeFile($path.'index_ext.html', $page->out());
 
-// complete alpha
+// complete alphabetical
 $page = new Page($alphaCompleteTitle, 'Language');
 $page->subtemplate('template.ref.index.html');
 $page->content(alpha_index($complete_alpha));
 $page->set('reference_nav', reference_nav());
 $page->set('language_nav', language_nav($lang));
 $page->set_array($translation->meta);
-$page->set('abridged_notice', 'test for now...');
+//$page->set('abridged_notice', 'test for now...');
 $page->language($lang);
 writeFile($path.'index_alpha_ext.html', $page->out());
 
