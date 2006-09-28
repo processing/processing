@@ -5230,25 +5230,25 @@ public class PApplet extends Applet
   // CASTING FUNCTIONS, INSERTED BY PREPROC
 
 
-  static final public boolean toBoolean(char what) {
+  static final public boolean parseBoolean(char what) {
     return ((what == 't') || (what == 'T') || (what == '1'));
   }
 
-  static final public boolean toBoolean(int what) {  // this will cover byte
+  static final public boolean parseBoolean(int what) {  // this will cover byte
     return (what != 0);
   }
 
-  static final public boolean toBoolean(float what) {
+  static final public boolean parseBoolean(float what) {
     return (what != 0);
   }
 
-  static final public boolean toBoolean(String what) {
+  static final public boolean parseBoolean(String what) {
     return new Boolean(what).booleanValue();
   }
 
   //
 
-  static final public boolean[] toBoolean(char what[]) {
+  static final public boolean[] parseBoolean(char what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] =
@@ -5257,7 +5257,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public boolean[] toBoolean(byte what[]) {
+  static final public boolean[] parseBoolean(byte what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (what[i] != 0);
@@ -5265,7 +5265,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public boolean[] toBoolean(float what[]) {
+  static final public boolean[] parseBoolean(float what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (what[i] != 0);
@@ -5273,7 +5273,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public boolean[] toBoolean(String what[]) {
+  static final public boolean[] parseBoolean(String what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = new Boolean(what[i]).booleanValue();
@@ -5283,29 +5283,29 @@ public class PApplet extends Applet
 
   //
 
-  static final public byte toByte(boolean what) {
+  static final public byte parseByte(boolean what) {
     return what ? (byte)1 : 0;
   }
 
-  static final public byte toByte(char what) {
+  static final public byte parseByte(char what) {
     return (byte) what;
   }
 
-  static final public byte toByte(int what) {
+  static final public byte parseByte(int what) {
     return (byte) what;
   }
 
-  static final public byte toByte(float what) {  // nonsensical
+  static final public byte parseByte(float what) {  // nonsensical
     return (byte) what;
   }
 
-  static final public byte[] toByte(String what) {  // note: array[]
+  static final public byte[] parseByte(String what) {  // note: array[]
     return what.getBytes();
   }
 
   //
 
-  static final public byte[] toByte(boolean what[]) {
+  static final public byte[] parseByte(boolean what[]) {
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = what[i] ? (byte)1 : 0;
@@ -5313,7 +5313,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public byte[] toByte(char what[]) {
+  static final public byte[] parseByte(char what[]) {
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (byte) what[i];
@@ -5321,7 +5321,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public byte[] toByte(int what[]) {
+  static final public byte[] parseByte(int what[]) {
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (byte) what[i];
@@ -5329,7 +5329,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public byte[] toByte(float what[]) {  // nonsensical
+  static final public byte[] parseByte(float what[]) {  // nonsensical
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (byte) what[i];
@@ -5337,7 +5337,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public byte[][] toByte(String what[]) {  // note: array[][]
+  static final public byte[][] parseByte(String what[]) {  // note: array[][]
     byte outgoing[][] = new byte[what.length][];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = what[i].getBytes();
@@ -5347,29 +5347,29 @@ public class PApplet extends Applet
 
   //
 
-  static final public char toChar(boolean what) {  // 0/1 or T/F ?
+  static final public char parseChar(boolean what) {  // 0/1 or T/F ?
     return what ? 't' : 'f';
   }
 
-  static final public char toChar(byte what) {
+  static final public char parseChar(byte what) {
     return (char) (what & 0xff);
   }
 
-  static final public char toChar(int what) {
+  static final public char parseChar(int what) {
     return (char) what;
   }
 
-  static final public char toChar(float what) {  // nonsensical
+  static final public char parseChar(float what) {  // nonsensical
     return (char) what;
   }
 
-  static final public char[] toChar(String what) {  // note: array[]
+  static final public char[] parseChar(String what) {  // note: array[]
     return what.toCharArray();
   }
 
   //
 
-  static final public char[] toChar(boolean what[]) {  // 0/1 or T/F ?
+  static final public char[] parseChar(boolean what[]) {  // 0/1 or T/F ?
     char outgoing[] = new char[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = what[i] ? 't' : 'f';
@@ -5377,7 +5377,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public char[] toChar(int what[]) {
+  static final public char[] parseChar(int what[]) {
     char outgoing[] = new char[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (char) what[i];
@@ -5385,7 +5385,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public char[] toChar(byte what[]) {
+  static final public char[] parseChar(byte what[]) {
     char outgoing[] = new char[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (char) (what[i] & 0xff);
@@ -5393,7 +5393,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public char[] toChar(float what[]) {  // nonsensical
+  static final public char[] parseChar(float what[]) {  // nonsensical
     char outgoing[] = new char[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (char) what[i];
@@ -5401,7 +5401,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public char[][] toChar(String what[]) {  // note: array[][]
+  static final public char[][] parseChar(String what[]) {  // note: array[][]
     char outgoing[][] = new char[what.length][];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = what[i].toCharArray();
@@ -5411,35 +5411,35 @@ public class PApplet extends Applet
 
   //
 
-  static final public int toInt(boolean what) {
+  static final public int parseInt(boolean what) {
     return what ? 1 : 0;
   }
 
-  static final public int toInt(byte what) {  // note this unsigns
+  static final public int parseInt(byte what) {  // note this unsigns
     return what & 0xff;
   }
 
   /**
-   * Note that toInt('5') is unlike String in the sense that it
+   * Note that parseInt('5') is unlike String in the sense that it
    * won't return 5, but the ascii value. This is because ((int) someChar)
-   * returns the ascii value, and toInt() is just longhand for the cast.
+   * returns the ascii value, and parseInt() is just longhand for the cast.
    */
-  static final public int toInt(char what) {
+  static final public int parseInt(char what) {
     return what;
   }
 
-  static final public int toInt(float what) {
+  static final public int parseInt(float what) {
     return (int) what;
   }
 
-  static final public int toInt(String what) {
+  static final public int parseInt(String what) {
     try {
       return Integer.parseInt(what);
     } catch (NumberFormatException e) { }
     return 0;
   }
 
-  static final public int toInt(String what, int otherwise) {
+  static final public int parseInt(String what, int otherwise) {
     try {
       return Integer.parseInt(what);
     } catch (NumberFormatException e) { }
@@ -5449,7 +5449,7 @@ public class PApplet extends Applet
 
   //
 
-  static final public int[] toInt(boolean what[]) {
+  static final public int[] parseInt(boolean what[]) {
     int list[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       list[i] = what[i] ? 1 : 0;
@@ -5457,7 +5457,7 @@ public class PApplet extends Applet
     return list;
   }
 
-  static final public int[] toInt(byte what[]) {  // note this unsigns
+  static final public int[] parseInt(byte what[]) {  // note this unsigns
     int list[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       list[i] = (what[i] & 0xff);
@@ -5465,7 +5465,7 @@ public class PApplet extends Applet
     return list;
   }
 
-  static final public int[] toInt(char what[]) {
+  static final public int[] parseInt(char what[]) {
     int list[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       list[i] = what[i];
@@ -5473,7 +5473,7 @@ public class PApplet extends Applet
     return list;
   }
 
-  static public int[] toInt(float what[]) {
+  static public int[] parseInt(float what[]) {
     int inties[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       inties[i] = (int)what[i];
@@ -5486,12 +5486,12 @@ public class PApplet extends Applet
    * If the String can't be parsed as a number, it will be set to zero.
    *
    * String s[] = { "1", "300", "44" };
-   * int numbers[] = toInt(s);
+   * int numbers[] = parseInt(s);
    *
    * numbers will contain { 1, 300, 44 }
    */
-  static public int[] toInt(String what[]) {
-    return toInt(what, 0);
+  static public int[] parseInt(String what[]) {
+    return parseInt(what, 0);
   }
 
   /**
@@ -5500,11 +5500,11 @@ public class PApplet extends Applet
    * array will be set to the value of the "missing" parameter.
    *
    * String s[] = { "1", "300", "apple", "44" };
-   * int numbers[] = toInt(s, 9999);
+   * int numbers[] = parseInt(s, 9999);
    *
    * numbers will contain { 1, 300, 9999, 44 }
    */
-  static public int[] toInt(String what[], int missing) {
+  static public int[] parseInt(String what[], int missing) {
     int output[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       try {
@@ -5518,20 +5518,20 @@ public class PApplet extends Applet
 
   //
 
-  static final public float toFloat(boolean what) {
+  static final public float parseFloat(boolean what) {
     return what ? 1 : 0;
   }
 
-  static final public float toFloat(int what) {
+  static final public float parseFloat(int what) {
     return (float)what;
   }
 
-  static final public float toFloat(String what) {
+  static final public float parseFloat(String what) {
     //return new Float(what).floatValue();
-    return toFloat(what, Float.NaN);
+    return parseFloat(what, Float.NaN);
   }
 
-  static final public float toFloat(String what, float otherwise) {
+  static final public float parseFloat(String what, float otherwise) {
     try {
       return new Float(what).floatValue();
     } catch (NumberFormatException e) { }
@@ -5541,7 +5541,7 @@ public class PApplet extends Applet
 
   //
 
-  static final public float[] toFloat(boolean what[]) {
+  static final public float[] parseFloat(boolean what[]) {
     float floaties[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       floaties[i] = what[i] ? 1 : 0;
@@ -5549,7 +5549,7 @@ public class PApplet extends Applet
     return floaties;
   }
 
-  static final public float[] toFloat(char what[]) {
+  static final public float[] parseFloat(char what[]) {
     float floaties[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       floaties[i] = (char) what[i];
@@ -5557,7 +5557,7 @@ public class PApplet extends Applet
     return floaties;
   }
 
-  static final public float[] toFloat(int what[]) {
+  static final public float[] parseFloat(int what[]) {
     float floaties[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       floaties[i] = what[i];
@@ -5565,11 +5565,11 @@ public class PApplet extends Applet
     return floaties;
   }
 
-  static final public float[] toFloat(String what[]) {
-    return toFloat(what, 0);
+  static final public float[] parseFloat(String what[]) {
+    return parseFloat(what, 0);
   }
 
-  static final public float[] toFloat(String what[], float missing) {
+  static final public float[] parseFloat(String what[], float missing) {
     float output[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       try {
@@ -6306,7 +6306,7 @@ public class PApplet extends Applet
 
           if (param.equals(ARGS_EDITOR_LOCATION)) {
             external = true;
-            editorLocation = toInt(split(value, ','));
+            editorLocation = parseInt(split(value, ','));
 
           } else if (param.equals(ARGS_DISPLAY)) {
             int deviceIndex = Integer.parseInt(value) - 1;
@@ -6336,7 +6336,7 @@ public class PApplet extends Applet
             folder = value;
 
           } else if (param.equals(ARGS_LOCATION)) {
-            location = toInt(split(value, ','));
+            location = parseInt(split(value, ','));
           }
 
         } else {
