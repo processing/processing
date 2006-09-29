@@ -219,7 +219,7 @@ li {margin-bottom: 1em; }
 }
 #Cover .leftcol { width: 250px; }
 
-.content {
+#Cover .content {
         margin-left    : 55px;
         margin-right   : 0px;
         position: relative;
@@ -386,6 +386,12 @@ div.ref-col { width: 30%;
 }
 
 #Libraries .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
+#Library-index .content {
         margin-left    : 55px;
         margin-right   : 0px;
         position: relative;
