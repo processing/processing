@@ -1,3 +1,133 @@
+0116 core
+X make background() ignore transformations in JAVA2D
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1147010374
+o createGraphics to not require defaults()
+X   can't do, because an end() function must be called to clear the renderer
+X add "hide stop button" arg for PApplet
+X beginFrame/endFrame -> beginDraw/endDraw
+X add new constant for the DXF renderer
+X array utilities on Object[] are worthless.. fix it with reflection?
+X   see if reflection will allow expand for all class types
+X   expand, append, contract, subset, splice, concat, reverse
+X typed version of array functions:
+X   append(), shorten(), splice, slice, subset, concat, reverse
+X   http://dev.processing.org/bugs/show_bug.cgi?id=115
+X fix issue where processing applets would run extremely fast 
+X   after having been starved of resources where there framerate dropped
+X   http://dev.processing.org/bugs/show_bug.cgi?id=336
+X added color/stroke/tint/fill(#FF8800, 30);
+X test imageio with images that have alpha (does it work?)
+X   nope, doesn't, didn't finish support
+X   http://dev.processing.org/bugs/show_bug.cgi?id=350
+X openStream() fails with java plug-in because non-null stream returned
+X   http://dev.processing.org/bugs/show_bug.cgi?id=359
+X update jogl to latest beta 5
+X make framerate into frameRate (to match frameCount)
+X AIOOBE in P3D during defaults/background/clear
+X   PGraphics.clear() problem from workbench and malware stuff
+X   had to put synchronized onto draw and size()
+X   actually it'll work if it's only on size()
+X   the sync on the mac hangs an applet running by itself
+X     even though it seems to be ok for a component
+X   thread sync problem with allocation
+X   http://dev.processing.org/bugs/show_bug.cgi?id=369
+X major threading change to use wait()/notifyAll() instead of interrupt/sleep
+X noLoop() at end of setup is prolly b/c of interruptedex
+X   need to not call Thread.interrupt()
+X opengl + noLoop() causes InterruptedException
+X   check to see noLoop() breakage is fixed in 92 vs 91
+X     checked, not fixed
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115330568
+X   http://dev.processing.org/bugs/show_bug.cgi?id=164
+X remove image(filename) and textFont(filename) et al.
+X revision 115 may be saving raw files as TIFF format
+X   may be a bug specific to java 1.5 (nope)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=378
+X saveFrame() not working for casey
+X   problem with tiff loading in photoshop etc
+X check http:// stuff to see if it's a url first on openStream()
+X   it's the most harmless, since prolly just a MFUEx
+X fix problem where root of exported sketch won't be checked
+X   http://dev.processing.org/bugs/show_bug.cgi?id=389
+X createFont not working from applets (only with .ttf?)
+X   throws a security exception because of the reflection stuff
+X   http://dev.processing.org/bugs/show_bug.cgi?id=101
+X urls with ampersands don't work with link()
+X   Runtime.getRuntime().exec("cmd /c start " + url.replaceAll("&","^&"));
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1149974261
+X fix bug where smooth() was shut off after using text
+X   (that had the smoothing turned off when used in "Create Font")
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1148362664
+X fix dxf to use begin/endDraw instead of begin/endFrame
+X   fixes axel's bug with dxf export
+X set default frameRate cap at 60
+X   otherwise really thrashing the cpu when not necessary
+X jpeg loading may be extremely slow (loadBytes?)
+X   seems specific to 0115 versus the others
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1158111639
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1154714548
+X   http://dev.processing.org/bugs/show_bug.cgi?id=392
+X loadImage() problems with png and jpg
+X   actually it's an issue with some types of jpeg files
+X   http://dev.processing.org/bugs/show_bug.cgi?id=279
+X   java.lang.IllegalArgumentException: 
+X     Width (-1) and height (-1) cannot be <= 0
+X   identical to what happens when the image data is bad
+X     for instance, trying to load a tiff image with the jpg loader
+X   http://dev.processing.org/bugs/show_bug.cgi?id=305
+o blend() mode param should be moved to the front
+X   nah, works better with the other format
+X   make sure there's parity with the copy() functions
+X   remove single pixel blend functions
+o   blend() should prolly have its mode be the first param
+X   move blend() to blendColor() when applying it to a color
+X added lerpColor(), though it needs a new name
+X went back to old image i/o (sometimes caused trouble when exported)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=376
+X change reader() to createReader() for consistency?
+X   though printwriter is odd for output..
+X   also createWriter() and the rest
+o add to docs: save() on a PImage needs savePath() added
+X hint(DISABLE_NATIVE_FONTS) to disable the built-in stuff?
+X   or maybe this should be hint(ENABLE_NATIVE_FONTS) instead?
+X   figure out default behavior for native text fonts
+X make sure insideDrawWait() is in other resize() methods
+X   begin/end/alloc waits to PGraphicsJava2D, PGraphicsOpenGL, PGraphics3D
+X fix bug with fill(#ffcc00, 50); 
+X toInt() on a float string needs to work
+X   need to check for periods to see if float -> int first
+X shape changes
+X   remove LINE_STRIP - tell people to use beginShape() with no params
+X   remove LINE_LOOP - tell people to use endShape(CLOSE)
+o   also remove POLYGON? 
+X     may as well remove it
+X     though something still needed as an internal constant
+X   add endShape(CLOSE) or CLOSED
+X when running as an applet, sketchPath won't be set
+X   change the error message slightly
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1153150923
+X use parseFloat instead of toFloat()? to be consistent with javascript
+X   also clean up some of the casting silliness
+
+more recent
+X only update mouse pos on moved and dragged
+X   http://dev.processing.org/bugs/show_bug.cgi?id=170
+X   also updates a bug that caused sketches to jump in funny ways
+
+fixed in 0115 / quicktime 7.1
+X color values on camera input flipped on intel macs
+X   checked in a change for this recommended on qtjava list
+X   http://dev.processing.org/bugs/show_bug.cgi?id=313
+
+really old stuff
+o get loop, noLoop, redraw, and framerate all working in opengl
+o   needs custom animator thread..
+o depth() shouldn't be needed for opengl unless actually 3D
+o   right now the camera doesn't get set up unless you call depth()
+o box and sphere are broken in gl
+o what should the update image function be called?
+
+
 0115 core
 X remove debug message from loadPixels()
 X remove debug message from PGraphics2.save()
