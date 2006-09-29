@@ -37,9 +37,9 @@ else
   unzip -q reference.zip
   # necessary for launching reference from shell/command prompt
   # which is done internally to view reference
-  #chmod +x reference/*.html
+  chmod +x reference/*.html
   # needed by 'help' menu
-  #chmod +x reference/environment/*.html
+  chmod +x reference/environment/*.html
   # chmod -R +x *.html doesn't seem to work
 
   rm reference.zip
