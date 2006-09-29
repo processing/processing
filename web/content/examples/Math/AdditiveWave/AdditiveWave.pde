@@ -1,6 +1,6 @@
 /**
  * Additive Wave
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * by Daniel Shiffman. 
  * 
  * Create a more complex wave by adding two waves together. 
  * 

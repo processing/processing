@@ -1,6 +1,6 @@
 /**
  * Multiple Particle Systems
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * by Daniel Shiffman.  
  * 
  * Click the mouse to generate a burst of particles
  * at mouse location. 

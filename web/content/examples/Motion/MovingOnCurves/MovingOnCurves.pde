@@ -31,7 +31,6 @@ void setup()
 {
   size(200, 200);
   stroke(102);
-  ellipseMode(CENTER);
   smooth();
   frameRate(30);
 }
@@ -42,19 +41,19 @@ void draw()
   
   stroke(102);
   
-  beginShape(LINE_STRIP);
+  beginShape();
   for(int i=0; i<width; i++) {
    vertex(i, singraph((float)i/width)*height);
   }
   endShape();
   
-  beginShape(LINE_STRIP);
+  beginShape();
   for(int i=0; i<width; i++) {
    vertex(i, quad((float)i/width)*height);
   }
   endShape();
   
-  beginShape(LINE_STRIP);
+  beginShape();
   for(int i=0; i<width; i++) {
    vertex(i, hump((float)i/width)*height);
   }
@@ -65,6 +64,7 @@ void draw()
     e1_direction = e1_direction * -1;
   }
   e1_y = singraph((float)e1_x/width)*height;
+  
   noStroke();
   fill(255);
   ellipse(e1_x, e1_y, e1_size, e1_size);

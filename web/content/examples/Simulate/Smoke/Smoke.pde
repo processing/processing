@@ -1,6 +1,6 @@
 /**
  * Smoke
- * by <a href="http://www.bodytag.org">Glen Murphy</a>.
+ * by Glen Murphy.
  * 
  * Drag the mouse across the image to move the particles.
  * Code has not been optimised and will run fairly slowly.

@@ -1,6 +1,5 @@
 /**
- * Noise3D
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * Noise3D. 
  * 
  * Using 3D noise to create simple animated texture. 
  * Here, the third dimension ('z') is treated as time. 

@@ -1,6 +1,6 @@
 /**
  * Fluid 
- * by <a href="http://www.bodytag.org">Glen Murphy</a>. 
+ * by Glen Murphy. 
  * 
  * Click and drag the mouse to move the simulated fluid.
  * Adjust the "res" variable below to change resolution.

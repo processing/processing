@@ -1,6 +1,6 @@
 /**
  * Smoke Particle System
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * by Daniel Shiffman.  
  * 
  * A basic smoke effect using a particle system. 
  * Each particle is rendered as an alpha masked image. 

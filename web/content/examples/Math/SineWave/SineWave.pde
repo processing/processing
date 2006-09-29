@@ -1,6 +1,6 @@
 /**
  * Sine Wave
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * by Daniel Shiffman.  
  * 
  * Render a simple sine wave. 
  * 

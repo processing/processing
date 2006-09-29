@@ -1,6 +1,6 @@
 /**
  * Noise Wave
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * by Daniel Shiffman.  
  * 
  * Using Perlin Noise to generate a wave-like pattern. 
  * 

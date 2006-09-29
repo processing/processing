@@ -1,6 +1,6 @@
 /**
  * Simple Particle System
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * by Daniel Shiffman.  
  * 
  * Particles are generated each cycle through draw(),
  * fall with gravity and fade out over time

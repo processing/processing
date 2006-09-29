@@ -2,7 +2,7 @@
  * Displaying. 
  * 
  * Images can be displayed to the screen at their actual size
- * or any other size. Only JPG and GIF images may be loaded. 
+ * or any other size. 
  * 
  * Created 2 November 2002
  */

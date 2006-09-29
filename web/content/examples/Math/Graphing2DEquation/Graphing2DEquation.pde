@@ -1,6 +1,6 @@
 /**
  * Graphing 2D Equations
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * by Daniel Shiffman. 
  * 
  * Graphics the following equation: 
  * sin(n*cos(r) + 5*theta) 

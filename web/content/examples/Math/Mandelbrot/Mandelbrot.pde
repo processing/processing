@@ -1,6 +1,6 @@
 /**
  * The Mandelbrot Set
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * by Daniel Shiffman.  
  * 
  * Simple rendering of the Mandelbrot set: 
  * c = a + bi

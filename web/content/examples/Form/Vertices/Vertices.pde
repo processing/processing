@@ -16,9 +16,10 @@
  
 size(200, 200);
 background(0);
+noFill();
 
 stroke(102);
-beginShape(LINE_STRIP);
+beginShape();
 curveVertex(168, 182);
 curveVertex(168, 182);
 curveVertex(136, 38);
@@ -36,7 +37,7 @@ vertex(60, 150);
 endShape();
 
 stroke(126);
-beginShape(LINE_STRIP);
+beginShape();
 vertex(60, 40);
 bezierVertex(160, 10, 170, 150, 60, 150);
 endShape();

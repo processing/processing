@@ -1,6 +1,6 @@
 /**
  * Wolfram Cellular Automata
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>
+ * by Daniel Shiffman.  
  * 
  * Simple demonstration of a Wolfram 1-dimensional cellular automata
  * When the system reaches bottom of the window, it restarts with a new ruleset

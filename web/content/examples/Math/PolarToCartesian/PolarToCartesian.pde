@@ -1,6 +1,6 @@
 /**
  * PolarToCartesian
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * by Daniel Shiffman.  
  * 
  * Convert a polar coordinate (r,theta) to cartesian (x,y):  
  * x = r * cos(theta)

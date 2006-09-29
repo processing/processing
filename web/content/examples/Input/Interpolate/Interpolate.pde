@@ -42,9 +42,8 @@ void plus()
 {
   int s = 20;
   int t = 3;
-  
   // Draw the symbol
-  beginShape( POLYGON );
+  beginShape();
   vertex( -t,  s );
   vertex(  t,  s );
   vertex(  t,  t );
@@ -57,5 +56,5 @@ void plus()
   vertex( -s, -t );
   vertex( -s,  t );
   vertex( -t,  t );  
-  endShape();
+  endShape(CLOSE);
 }

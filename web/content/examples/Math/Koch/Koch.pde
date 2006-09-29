@@ -1,6 +1,6 @@
 /**
  * Koch Curve
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>. 
+ * by Daniel Shiffman.
  * 
  * Renders a simple fractal, the Koch snowflake. 
  * Each recursive level drawn in sequence. 
