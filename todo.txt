@@ -1,4 +1,7 @@
 0117 pde
+_ add PGraphicsOpenGL change to revisions.txt and the changes faq
+
+_ add server/client notification thing for the nyu guys
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -770,6 +773,7 @@ _   only supports tint() (to set alpha or color) and drawing? just drawing?
 
 LIBRARIES / Net
 
+_ add an event to Server that notifies when a Client disconnects
 _ move the useful serial buffering fxns into net library
 _ make the Client list public
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
