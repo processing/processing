@@ -140,9 +140,11 @@ and endShape() are the biggest ones.
   <LI> PGraphics3D (P3D), formerly PGraphics3, remains mostly unchanged.
 
   <LI> PGraphicsJava2D (JAVA2D), formerly PGraphics2, is the renderer 
-    used when you call for size(width, height, JAVA2D). It remains 
+    used when you call size(w, h) or size(w, h, JAVA2D). It remains 
     the default renderer when none is specified. It is slower but 
     more accurate than the others.
+
+  <LI> PGraphicsOpenGL (OPENGL) is the new name for PGraphicsGL.
 </UL>
 
 <LI> Do not use "new PGraphics" to create PGraphics objects.
