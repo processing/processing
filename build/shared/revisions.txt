@@ -137,6 +137,8 @@ your coursework done, you may want to stick with release 0115.
     the default renderer when none is specified. It is slower but 
     more accurate than the others.
 
+  - PGraphicsOpenGL (OPENGL) is the new name for PGraphicsGL.
+
 + Do not use "new PGraphics" to create PGraphics objects.
   Instead, use createGraphics(), which will properly handle connecting
   the new graphics object to its parent sketch, and will enable save()
