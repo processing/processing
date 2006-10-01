@@ -3976,7 +3976,11 @@ public class PApplet extends Applet
       // not a url, that's fine
 
     } catch (IOException e) {
-      throw new RuntimeException("Error downloading from URL " + filename);
+      // changed for 0117, shouldn't be throwing exception
+      e.printStackTrace();
+      //System.err.println("Error downloading from URL " + filename);
+      return null;
+      //throw new RuntimeException("Error downloading from URL " + filename);
     }
 
     // using getClassLoader() prevents java from converting dots
