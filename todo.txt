@@ -1,5 +1,6 @@
 0117 pde
-_ add PGraphicsOpenGL change to revisions.txt and the changes faq
+X add PGraphicsOpenGL change to revisions.txt and the changes faq
+_   have casey run an svn update of the site
 
 _ add server/client notification thing for the nyu guys
 
