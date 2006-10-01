@@ -71,6 +71,8 @@ export CLASSPATH
 
 perl preproc.pl
 ../build/linux/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
+find bin -name "*~" -exec rm -f {} ';'
+rm -f ../build/linux/work/lib/core.jar
 cd bin && zip -rq ../../build/linux/work/lib/core.jar processing && cd ..
 
 
@@ -135,6 +137,7 @@ $JIKES -target 1.1 +D \
     -classpath "library/RXTXcomm.jar:$CORE:$CLASSPATH" \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
+find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/serial.jar processing && cd ..
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
@@ -146,6 +149,7 @@ cd ../net
 mkdir -p bin
 $JIKES -target 1.1 +D -d bin src/processing/net/*.java 
 rm -f library/net.jar
+find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
 mkdir -p $LIBRARIES/net/library/
 cp library/net.jar $LIBRARIES/net/library/
@@ -159,6 +163,7 @@ $JIKES -target 1.1 +D \
     -classpath "library/jogl.jar:$CLASSPATH" \
     -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
+find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/opengl.jar processing/opengl/*.class && cd ..
 mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
@@ -172,6 +177,7 @@ $JIKES -target 1.1 +D \
     -classpath "library/itext.jar:$CLASSPATH" \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
+find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/pdf.jar processing/pdf/*.class && cd ..
 mkdir -p $LIBRARIES/pdf/library/
 cp library/pdf.jar $LIBRARIES/pdf/library/
@@ -183,6 +189,7 @@ cd ../dxf
 mkdir -p bin
 $JIKES -target 1.1 +D -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
+find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
