@@ -197,16 +197,36 @@ void draw() {
 }
 </pre>
 
+Additional notes for the PDF renderer:
 
-<p>Using the DXF library instead will save the file as 3D data.</p>
+<UL>
 
-  <p>If the results when drawing from P3D or OPENGL to PDF look bizarre, it's probably 
-    because the polygons are not sorted. To attempt sorting of 3D shapes before 
-    they're written to a file, use hint(ENABLE_DEPTH_SORT). This method is still 
-    not particularly good, but will help in some situations. 
-	See <a href="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 
-    #176</a> for status of the implementation.</p>
+<LI>If you want 3D data, use the DXF recording library instead.
 
+<LI>If the results with beginRaw() from P3D or OPENGL to PDF look bizarre, 
+it's probably because the polygons are not sorted. 
+To attempt sorting of 3D shapes before they're written to a file, 
+use hint(ENABLE_DEPTH_SORT). This method is still 
+not particularly good, but will help in some situations. 
+See <a href="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 
+176</a> for status of the implementation.</p>
 
+<LI>Images don't look great, mostly because of the difference of
+expectations in how a PDF should look (scalable and high res) versus
+what happens when image data is written to it at 72 dpi. 
+
+<LI>use createFont() with a TrueType font (some OpenType fonts also work) 
+to make fonts work properly. Any font that shows up in PFont.list() 
+should work. If you don't use createFont(), text will likely show up 
+bitmappy and gross like images. Using hint(ENABLE_NATIVE_FONTS) may 
+improve things as well, but not in all situations.
+
+<LI> The shape of the characters may be weird in some cases, 
+there seems to be a Java bug with cubic vs. quadric splines. 
+This bug may be specific to Mac OS X. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=404">Bug 404</A>)
+
+<LI> Again, exit() is really important when using PDF with size(). 
+
+</UL>
   
 </div>
