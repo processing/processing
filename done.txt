@@ -1,3 +1,7 @@
+0117 pde
+X add PGraphicsOpenGL change to revisions.txt and the changes faq
+
+
 0116 pde
 o including function outlines in the code? 
 o   i.e. make setup() and draw() for people? seems silly.. not much to do
