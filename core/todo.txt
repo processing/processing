@@ -1,5 +1,7 @@
 0118 core
-X fix a problem with opengl export
+X replace jogl.jar with a signed version
+X fix the export.txt file for the linux release
+
 
 _ alloc() stuff not fixed because of thread halting
 _   problem where alloc happens inside setup(), so, uh..
