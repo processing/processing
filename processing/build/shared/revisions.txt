@@ -7,6 +7,18 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0118 - 1 October 2006
+
+This release fixes problems with exported applets that use the 
+OpenGL library.
+
+If this is the first release you're using since 0115 or earlier, 
+please read the section below that contains the release notes for 0116. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0117 - 1 October 2006
 
 This release fixes a problem with release 0116 that made exported
