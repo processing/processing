@@ -1,5 +1,5 @@
 0118 core
-
+X fix a problem with opengl export
 
 _ alloc() stuff not fixed because of thread halting
 _   problem where alloc happens inside setup(), so, uh..
