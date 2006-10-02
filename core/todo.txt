@@ -1,6 +1,7 @@
 0118 core
 X replace jogl.jar with a signed version
 X fix the export.txt file for the linux release
+X fix problem with setting the parent and the PDF renderer
 
 
 _ alloc() stuff not fixed because of thread halting

@@ -28,7 +28,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
 
   public PGraphicsPDF(int width, int height, PApplet applet, String path) {
-    super(width, height, null);
+    super(width, height, applet);
 
     //System.out.println("trying " + path);
 
@@ -77,6 +77,16 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       System.out.println((String) i.next());
     }
     */
+  }
+
+
+  public void setMainDrawingSurface() {
+    // set as main drawing surface
+    mainDrawingSurface = true;
+    // this shouldn't actually affect anything
+    format = RGB;
+    // don't bother adding listeners for this guy
+    //parent.addListeners();
   }
 
 
