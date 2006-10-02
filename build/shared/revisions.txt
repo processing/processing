@@ -9,8 +9,14 @@ releases will be super crusty.
 
 ABOUT REV 0118 - 1 October 2006
 
-This release fixes problems with exported applets that use the 
-OpenGL library.
+This release fixes two major bugs that are minor fixes. 
+
+1. Repairs problems with exported applets that use the OpenGL library.
+
+2. Fixes an issue with size(w, h, PDF, "blah.pdf");
+
+This version was re-released after the PDF bug was found in the midst
+of posting the OpenGL fix. 
 
 If this is the first release you're using since 0115 or earlier, 
 please read the section below that contains the release notes for 0116. 
