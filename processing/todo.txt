@@ -1,6 +1,26 @@
-0118 pde
-X no changes, only an opengl export fix
+0119 pde
+X .java files weren't working in 116+
+X   http://dev.processing.org/bugs/show_bug.cgi?id=405
 
+_ need to document changes to int() (no longer accepts boolean)
+_ also parseInt and parseFloat, how they can return another number of NaN
+
+_ macosx dropping exceptions all the time.. grr
+_   solution is to export, and then see how it runs
+_   this is particularly bad with threaded applications
+
+Exception in thread "Thread-2" java.lang.NoClassDefFoundError:
+processing/core/PApplet
+    at processing.serial.Serial.<init>(Serial.java:156) 
+
+generally, that error means that something is missing from the
+CLASSPATH. the NoClassDefError gives erroneous feedback about *what*
+class is actually missing, as of java 1.3+ (yay!)
+
+so perhaps conflicting versions of a library in the sketchbook (solve
+this by setting to an empty sketchbook temporarily) or files might be
+installed in the CLASSPATH variable or something conflicting in
+/System/Library/Extensions. 
 
 _ add server/client notification thing for the nyu guys
 
