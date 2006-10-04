@@ -1,7 +1,30 @@
-0118 core
-X replace jogl.jar with a signed version
-X fix the export.txt file for the linux release
-X fix problem with setting the parent and the PDF renderer
+0119 core
+X add saveStream() method
+X change to handle Java 1.5 f-up where URLs now give FileNotFoundException
+X   http://dev.processing.org/bugs/show_bug.cgi?id=403
+
+_ make lerpColor honor the current color mode
+_   though that's awkward b/c colors always RGB
+_   lerpColor(c1, c2, amt, RGB/HSB/???)
+
+_ with default renderer, no default background color set(!)
+
+_ figure out what's breaking pdf font stuff, see if it's the 1.5 problem
+_ fonts in java 1.5 have changed again
+_   appears that asking for the postscript name no longer works
+_   fix "create font" and associated font stuff to straighten it out
+_   was grabbing the wrong native font with ico sketch 
+_   seems that the psname is no longer a good way to grab the font? related?
+_ available font issues
+_   is getFontList returning a different set of fonts from device2d?
+_     try it out on java 1.3 versus 1.4
+_   getAllFonts() not quite working for many fonts
+_   i.e. Orator Std on windows.. macosx seems to be ok
+_   is getFamilyNames() any different/better?
+_   when did this break? 1.4.1? 1.4.x vs 1.3?
+_   may be that cff fonts won't work?
+_   or is it only those with ps names?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
 
 
 _ alloc() stuff not fixed because of thread halting
@@ -492,11 +515,6 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
-_ fonts in java 1.5 have changed again
-_   appears that asking for the postscript name no longer works
-_   fix "create font" and associated font stuff to straighten it out
-_   was grabbing the wrong native font with ico sketch 
-_   seems that the psname is no longer a good way to grab the font? related?
 _ leading looks too big, at least in PGraphics2 with news gothic
 _   though it may be the converted version of the .ttf?
 _ font encoding issues 
@@ -506,16 +524,6 @@ _   many (all?) opentype fonts won't show up or aren't supported
 _     this may be only cff fonts that have trouble
 _   when encoding is not the standard encoding, problematic
 _     so sonata otf and sonata don't seem to have any chars at all
-_ available font issues
-_   is getFontList returning a different set of fonts from device2d?
-_     try it out on java 1.3 versus 1.4
-_   getAllFonts() not quite working for many fonts
-_   i.e. Orator Std on windows.. macosx seems to be ok
-_   is getFamilyNames() any different/better?
-_   when did this break? 1.4.1? 1.4.x vs 1.3?
-_   may be that cff fonts won't work?
-_   or is it only those with ps names?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
 _ text() with a z coordinate is now using translate, very slow
 X   also puts up a weird error message about translate() in 2D mode
 _ make screen space fonts use get/set as well?
