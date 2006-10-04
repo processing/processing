@@ -182,7 +182,7 @@ public class Sketch {
         base = base.substring(0, base.length() - 4);
       }
       if (base.endsWith(".java")) {
-        base = base.substring(0, base.length() - 4);
+        base = base.substring(0, base.length() - 5);
       }
 
       if (list[i].startsWith(".")) {
