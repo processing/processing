@@ -1,3 +1,9 @@
+0118 core
+X replace jogl.jar with a signed version
+X fix the export.txt file for the linux release
+X fix problem with setting the parent and the PDF renderer
+
+
 0117 core
 X no changes, only to the build scripts
 
