@@ -3972,8 +3972,12 @@ public class PApplet extends Applet
       stream = url.openStream();
       return stream;
 
-    } catch (MalformedURLException e) {
+    } catch (MalformedURLException mfue) {
       // not a url, that's fine
+
+    } catch (FileNotFoundException fnfe) {
+      // Java 1.5 likes to throw this when URL not available. (fix for 0119)
+      // http://dev.processing.org/bugs/show_bug.cgi?id=403
 
     } catch (IOException e) {
       // changed for 0117, shouldn't be throwing exception
@@ -4169,6 +4173,25 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   // FILE OUTPUT
+
+
+  /**
+   * Save the contents of a stream to a file in the sketch folder.
+   * This is basically saveBytes(loadBytes(), blah), but done
+   * in a less confusing manner.
+   */
+  public void saveStream(String filename, String stream) {
+    saveBytes(filename, loadBytes(stream));
+  }
+
+
+  /**
+   * Identical to the other saveStream(), but writes to a File
+   * object, for greater control over the file location.
+   */
+  public void saveStream(File file, String stream) {
+    saveBytes(file, loadBytes(stream));
+  }
 
 
   /**
