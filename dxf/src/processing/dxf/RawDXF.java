@@ -91,13 +91,16 @@ import processing.core.*;
  *   }
  *
  *   // do all your drawing here, and to set the layer, call:
- *   // dxf.setLayer(num);
+ *   // if (record) {
+ *   //   dxf.setLayer(num);
+ *   // }
  *   // where 'num' is an integer.
  *   // the default is zero, or you can set it to whatever.
  *
  *   if (record) {
  *     endRaw();
  *     record = false;
+ *     dxf = null;
  *   }
  * }
  * </PRE>
@@ -321,7 +324,7 @@ public class RawDXF extends PGraphics3D {
         "because it only supports lines and triangles";
       throw new RuntimeException(err);
     }
-    
+
     if ((shape == POLYGON) && fill) {
       throw new RuntimeException("RawDXF only supports non-filled shapes.");
     }
@@ -371,7 +374,7 @@ public class RawDXF extends PGraphics3D {
     } else if ((shape == LINE_STRIP) && (vertexCount == 2)) {
       writeLineStrip();
 */
-      
+
     } else if ((shape == TRIANGLES) && (vertexCount == 3)) {
       writeTriangle();
     }
