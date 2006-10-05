@@ -7,36 +7,36 @@ require 'header.inc.php';
     <img src="exhibition/images/header.png"><br>
 <br>
 <br>
-<a href="exhibition/mandelbrotMobile/applet/index.html" target="_new"><img src="exhibition/images/mandelbrotMobile.png"></a><br>
+<a href="http://todbot.com/blog/2006/09/12/roombactrl-drive-your-roomba-with-your-cell-phone/" target="_new"><img src="exhibition/images/roombactrl.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
-<b><a href="exhibition/mandelbrotMobile/applet/index.html" target="_new">mandelbrotMobile</a></b>
+<b><a href="http://todbot.com/blog/2006/09/12/roombactrl-drive-your-roomba-with-your-cell-phone/" target="_new">RoombaCtrl</a></b>
     </td>
   </tr>
   <tr height="5">
   </tr>
   <tr>
     <td>
-<b>by skanaar</b><br>
+<b>by todbot</b><br>
     </td>
   </tr>
 </table><br>
 <br>
-<a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new"><img src="exhibition/images/rosaly.png"></a><br>
+<a href="http://i.document.m05.de/?p=189" target="_new"><img src="exhibition/images/pixiebubble.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
-<b><a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new">Rosaly</a></b>
+<b><a href="http://i.document.m05.de/?p=189" target="_new">pixiebubble</a></b>
     </td>
   </tr>
   <tr height="5">
   </tr>
   <tr>
     <td>
-<b>by Oolong</b><br>
+<b>by michael</b><br>
     </td>
   </tr>
 </table><br>
@@ -90,6 +90,9 @@ require 'header.inc.php';
     <br>
     <i>June 11</i><br>
     New <a href="learning/example.php?name=tictactoe">Tic-Tac-Toe</a> Bluetooth library example posted.<br /><br />Added <a href="exhibition/mandelbrotMobile/applet/index.html" target="_new">mandelbrotMobile</a> by skanaar to the exhibition.<br>
+    <br>
+    <i>October 5</i><br>
+    Updated Bluetooth library, added RoombaCtrl and pixiebubble to the Exhibition.<br>
     <br>
     <br>
     <img src="images/happenings.png"><br>
