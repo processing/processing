@@ -1,6 +1,22 @@
 This file reflects the ongoing history of revisions to the Mobile Processing
 software, including its core and library APIs.
 
+Bluetooth 0007
+==============
+
+- Added constructor for specifying UUID by long integer.s
+
+Core 0008
+=========
+
+- Implemented strokeWeight for line().
+
+- Fixed split() with string delimiters.
+
+- Added background event PClient implementation (backwards compatible).
+
+- Fixed first paint.
+
 Video 0003
 ==========
 
