@@ -2785,19 +2785,23 @@ public class PApplet extends Applet
 
 
   static public final float max(float a, float b) {
-    return Math.max(a, b);
+    //return Math.max(a, b);
+    return (a > b) ? a : b;
   }
 
   static public final float max(float a, float b, float c) {
-    return Math.max(a, Math.max(b, c));
+    //return Math.max(a, Math.max(b, c));
+    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
 
   static public final float min(float a, float b) {
-    return Math.min(a, b);
+    //return Math.min(a, b);
+    return (a < b) ? a : b;
   }
 
   static public final float min(float a, float b, float c) {
-    return Math.min(a, Math.min(b, c));
+    //return Math.min(a, Math.min(b, c));
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
 
 
