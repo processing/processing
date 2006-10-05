@@ -35,6 +35,8 @@ public class Bluetooth implements DiscoveryListener, Runnable {
      * on (this)...
      */
     public static final String UUID_DEFAULT = "102030405060708090A0B0C0D0E0F010";
+    /** short UUID assigned to Serial Port Profile */
+    public static final long UUID_SERIALPORT = 0x1101;
     
     public static final int EVENT_DISCOVER_DEVICE               = 1;
     public static final int EVENT_DISCOVER_DEVICE_COMPLETED     = 2;
@@ -76,7 +78,20 @@ public class Bluetooth implements DiscoveryListener, Runnable {
             throw new RuntimeException(bse.getMessage());
         }
     }
-        
+   
+    public Bluetooth(PMIDlet midlet, long id) {
+        this.midlet = midlet;
+        devices = new Vector();
+        services = new Vector();
+        try {
+            local = LocalDevice.getLocalDevice();
+            agent = local.getDiscoveryAgent();
+            uuid = new UUID(id);
+        } catch (BluetoothStateException bse) {
+            throw new RuntimeException(bse.getMessage());
+        }
+    } 
+
     public void discover() {
         boolean start = false;
         synchronized (UUID_DEFAULT) {
