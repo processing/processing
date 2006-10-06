@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
-        <date>Winter 2006</date>
-        <institution>UCLA</institution>
-        <title>The coolest class ever</title>
-        <description>It will really be the coolest class ever</description>
+        <date>Oct 1, 2006</date>
+        <institution>Dugumkume</institution>
+        <title>ITE Computational Design Workshop</title>
+        <description>One day computational design workshop at 20ML in Istanbul by Burak Arikan and Dara Kilicoglu. An introduction to the fundamentals of computer programming within the context of dynamic visual compositions.</description>
         <contact>
-            <name>Your mom</name>
-            <email>your at mom dot com</email>
+            <name>Burak Arikan</name>
+            <email>arikan at media dot mit dot edu</email>
         </contact>
         <links>
             <link>
-                <title>class</title>
-                <url>http://something.com/</url>
+                <title>ITE</title>
+                <url>http://ite.dugumkume.org/</url>
+            </link>
+            <link>
+                <title>Dugumkume</title>
+                <url>http://www.dugumkume.org/</url>
             </link>
             <link>
                 <title></title>
@@ -26,9 +30,626 @@
                 <title></title>
                 <url></url>
             </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall, 2006</date>
+        <institution>Miami University of Ohio</institution>
+        <title>Aesthetics + Computation</title>
+        <description>Designed primarily for a creative population (non-programmers,) this course presents an introduction to the syntax and semantics of the Processing programming language, as well as an introduction to computational aesthetics. The course assumes no prior programming experience, although a basic working knowledge of computer graphics application software is assumed (e.g. PhotoShop.) Through a series of lectures, hands-on tutorials and critiques, students will be exposed to fundamental graphics programming concepts and techniques, including basic object-oriented programming. Whenever possible, programming examples will be conceptually and creatively based.</description>
+        <contact>
+            <name>Ira</name>
+            <email>greenbi at muohio dot du</email>
+        </contact>
+        <links>
             <link>
-                <title></title>
-                <url></url>
+                <title>interactive media studies | miami</title>
+                <url>http://student.sba.muohio.edu/ims/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>09/25/2006</date>
+        <institution>Arts et Technologies de L Image. Université Paris 8</institution>
+        <title>Generative and Evolutionary Art</title>
+        <description>Processing est utilisé comme outil pour les cours en Art Génératif et Art Evolutionniste. Etudiants en Master 1.
+---------------------------------------------
+Processing is used as a tool for the courses about Generative Art and Evolutionary Art.
+Students in Master 1.</description>
+        <contact>
+            <name>Alain Lioret</name>
+            <email>alainlioret at wanadoo dot fr</email>
+        </contact>
+        <links>
+            <link>
+                <title>Alain Lioret</title>
+                <url>http://www.alainlioret.com/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2006</date>
+        <institution>ITIP, New York University</institution>
+        <title>Nature of Code</title>
+        <description>Can we capture the unpredictable evolutionary and emergent properties of nature in software? Can understanding the mathematical principles behind our physical world world help us to create digital worlds? This class will focus on the programming strategies and techniques behind computer simulations of natural systems. We’ll explore topics ranging from basic mathematics and physics concepts to more advanced simulations of complex systems. Subjects covered will include forces, trigonometry, fractals, cellular automata, self-organization, and genetic algorithms. Examples will be demonstrated using Processing with a focus on object oriented programming.</description>
+        <contact>
+            <name>Daniel Shiffman</name>
+            <email>daniel dot shiffman at nyu dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course Website</title>
+                <url>http://www.shiffman.net/teaching/the-nature-of-code</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2006</date>
+        <institution>New York University</institution>
+        <title>Introduction to Computational Media</title>
+        <description>What can computation add to human communication? Creating computer applications, instead of just using them, will give you a deeper understanding of the essential possibilities of computation. This requires that you learn to program the computer. The first few weeks of this course focus on four very basic programming concepts, if statements, repeat loops, variables and routines. The Java-based ‘Processing’ graphical programming environment is the primary vehicle for the class. Another programming language and environment will also be introduced very quickly to show the generality of these programming concepts using a different environment and syntax. Weekly assignments are required through most of the semester. The end of the semester is spent developing an idea for a final project and implementing it using computer programming.</description>
+        <contact>
+            <name>Daniel Shiffman</name>
+            <email>daniel dot shiffman at nyu dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course Website</title>
+                <url>http://itp.nyu.edu/icm/</url>
+            </link>
+            <link>
+                <title>Syllabus</title>
+                <url>http://www.shiffman.net/teaching/icm/</url>
+            </link>
+            <link>
+                <title>Textbook Project</title>
+                <url>http://book.shiffman.net/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>[ 09.07.06 ]</date>
+        <institution>UNION COLLEGE</institution>
+        <title>[ The Proce55ed Pixel ]</title>
+        <description>Utilizing basic aspects of computer programming, this course will explore how artists can use code to explore a variety of content in computer graphics.  By means of the programming environment proce55ing and Macromedia’s Action Scripting, students will investigate issues in animation, computational design, gaming, interactivity, and other relevant topics.  Instruction will take place through examples, technical demos, readings, discussions, and several projects.</description>
+        <contact>
+            <name>fernando orellana</name>
+            <email>orellana at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Class Website:</title>
+                <url>http://cs.union.edu/ava270</url>
+            </link>
+            <link>
+                <title>Fernando Orellana</title>
+                <url>http://www.fernandoorellana.com/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Jul 22-December 2006</date>
+        <institution>Srishti School of Art,Design and Technology,Bangalore</institution>
+        <title>Programming for poets</title>
+        <description>The course introduces programming concepts to art+design students.The course\\\&apos;s primary aim is to look at coding as an aesthetic practice.</description>
+        <contact>
+            <name>yashas</name>
+            <email>yashas at intersections dot in</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course webpage</title>
+                <url>http://www.intersections.in/wiki/index.php?n=Main.ProgrammingForPoets</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>17 a 21 de julio de 2006</date>
+        <institution>Fundación de Arte Contemporáneo (Montevideo-Uruguay)</institution>
+        <title>La imagen calculada</title>
+        <description>A partir de la naturaleza numérica de la imagen en movimiento y sus diferentes usos se desarrollarán diversas estrategias de producción, manipulación y exhibición con la herramienta video.
+
+1)La imagen digital
+2)Creación de objetos audiovisuales
+3)Programación para artistas y diseñadores -Introducción a Processing-</description>
+        <contact>
+            <name>Enrique Aguerre</name>
+            <email>enriqueaguerre at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Fundación de Arte Contemporáneo</title>
+                <url>http://www.facmvd.org/actividades/2006/julio/mvd-digital.htm</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>12/06/2006</date>
+        <institution />
+        <title>Programming for Telemedicine</title>
+        <description>Would like to get a programming language that can best be used for Telemdicine.</description>
+        <contact>
+            <name>MAJEK</name>
+            <email>spacemajek3000 at yahoo dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>12-14 june 2006</date>
+        <institution>Médias-Cité, Bordeaux[FR]</institution>
+        <title>Introduction à Processing</title>
+        <description>Cet atelier permettra d’aborder l’environnement processing pour ses capacités à créer des applications interactives. L’animation de l’atelier sera assuré par Julien Gachadoat (http://v3ga.net). L’atelier alternera entre temps d’apprentissages et temps de pratiques accompagnées permettant aux participants de travailler à une première création/réalisation. L’accent sera mis sur l’échange de savoirs et d’expériences entre participants, intervenants et organisateurs.</description>
+        <contact>
+            <name>Julien Gachadoat</name>
+            <email>me at v3ga dot net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Article Médias-cité</title>
+                <url>http://www.medias-cite.org/article.php3?id_article=484</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>May 4, 2006</date>
+        <institution>Instituto Universitario Nacional de Arte (Buenos Aires - Argentina)</institution>
+        <title>Processing: programación para el arte interactivo. Net.Art e instalaciones interactivas con nuevas tecnologías.</title>
+        <description>El objetivo de este curso es capacitar al alumno en la programación con fines artísticos, de forma que este pueda realizar trabajos de Net.Art y de arte interactivo en general. Con tal fin, la meta es enseñar al alumno el lenguaje de programación Processing, el cual fue diseñado para contemplar las necesidades de los artistas relacionados con las nuevas tecnologías.</description>
+        <contact>
+            <name>Emiliano Causa</name>
+            <email>e_causa at yahoo dot com dot ar</email>
+        </contact>
+        <links>
+            <link>
+                <title>Curso:Processing: programación para el arte interactivo.I.U.N.A.</title>
+                <url>http://www.proyecto-biopus.com.ar/emiliano/catedras2006/processing/index.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2006</date>
+        <institution>IUAV - Istituto Universitario di Architettura di Venezia</institution>
+        <title>Informatica: Media Processing in Processing</title>
+        <description>A course on fundamentals of image/sound processing and graphic programming explained by means of the free language and environment Processing.</description>
+        <contact>
+            <name>Davide Rocchesso</name>
+            <email>davide dot rocchesso at univr dot it</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course material in English</title>
+                <url>http://cnx.org/content/col10268/latest/</url>
+            </link>
+            <link>
+                <title>Course material in Italian</title>
+                <url>http://cnx.org/content/col10299/latest/</url>
+            </link>
+            <link>
+                <title>Official course page</title>
+                <url>http://www.iuav.it/Didattica1/pagine-web/facolt--di1/Davide-Roc/claVES---i/index.htm</url>
+            </link>
+            <link>
+                <title>Teacher profile</title>
+                <url>http://cnx.org/member_profile/drocchesso</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2006</date>
+        <institution>UdK Berlin</institution>
+        <title>Gestalten Mit Code ( Designing With Code )</title>
+        <description>in this course we will explore tools that enable us to express thoughts, ideas and concepts in code.</description>
+        <contact>
+            <name>Dennis Paul</name>
+            <email>d3 at magnetspeicher dot de</email>
+        </contact>
+        <links>
+            <link>
+                <title>University Website</title>
+                <url>http://www.digital.udk-berlin.de/de/</url>
+            </link>
+            <link>
+                <title>Last Semester s Wiki ( german )</title>
+                <url>http://entropie.digital.udk-berlin.de/wiki/GestaltenMitCode</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2006</date>
+        <institution>FH W-S / University of Applied Sciences / Fachbereich Gestaltung</institution>
+        <title>Introduction to Processing</title>
+        <description>The course is a step-by-step introduction to the processing language and the principles of computational design. No programming experience is needed.</description>
+        <contact>
+            <name>Daniel Rothaug</name>
+            <email>rothaug at zumkuckuck dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>University Website</title>
+                <url>http://www.fh-wuerzburg.de/gestaltung/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>October 2006 to September 2007</date>
+        <institution>Goldsmiths College, University of London</institution>
+        <title>MA in Interactive Media, Critical Theory and Practice</title>
+        <description>The MA Interactive Media provides students with an opportunity to respond creatively (at a theoretical and practical level) to the interaction between connecting fields of aesthetics, science, biology, philosophy, commerce, media production, design and architecture
+
+Students draw on the conceptual work discussed in the post-structuralist theories of Foucault, Deleuze and Guattari, Irigaray, Elisabeth Grosz, Serres, Greg Lynn, Massumi, DeLanda, Bergson, classic and contemporary media theory such as McLuhan, Kittler, Virilio, Lev Manovich, Peter Weibel, Pierre Levy, and theories of scientific interaction including Shannon, Weiner, Varela and Maturana, Prigogine, Darwinism and endosymbiosis. 
+
+The MA also connects students to a strong network of visiting lectures on bioart, robotics, performance, virtual architecture, media arts, social networks, and machinic interaction. Alongside the theory programme there is a closely related programme of visiting practitioners in the field of interactive media art, telemedicine, viral branding, video games, performance and installation art, and sound design.
+
+We offer a specific emphasis on the making: making concepts, making media artefacts, installations and interactive experiences. Half of the final dissertation is based on practical work that students make and exhibit. It offers training in the application of media technologies for the purpose of creating practical conceptually grounded work in the final show.  In common with Goldsmiths over-arching commitment to interdisciplinarity, Students can chose optional courses from the vast range of MA offered at Goldsmiths.</description>
+        <contact>
+            <name>Luciana Parisi</name>
+            <email>cus01lp at gold dot ac dot uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>Goldsmiths College MA Interactive Media</title>
+                <url>http://www.goldsmiths.ac.uk/study-options/postgraduate/MA-Interactive-Media-Critical-Theory-Practice.php</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>march 5, 06</date>
+        <institution>University of Colorado, Boulder</institution>
+        <title>Digital Art 2: Machinima, Software Art, Future</title>
+        <description>This course will introduce students to three different areas of digital art. The course begins with an assignment using machinima, a method of narrative storytelling using 3-D digital games. The course then shifts its focus to software art and includes a number of demos and an assigment using Processing, a scripting language based on Java developed at MIT especially for visual artists.Finally we end the course with a an assignment about the future of the environment.</description>
+        <contact>
+            <name>Anne-Marie Schleiner</name>
+            <email>opensorcery at opensorcery dot net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course</title>
+                <url>http://www.opensorcery.net/skool/digart206.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Semester 2 2005/2006</date>
+        <institution>Faculty of the Arts - Thames Valley University, London, UK</institution>
+        <title>Creative Coding (Introduction to programming for artists and designers)</title>
+        <description>Creative Coding (Introduction to programming for artists and designers) gives students (year 1) of BA Digital Arts key technical skills and understanding in programming and computational media in the context of design and art. It provides students with the necessary knowledge and experience so that they can begin to use code in functional and expressive ways.</description>
+        <contact>
+            <name>Mitja Kostomaj</name>
+            <email>mitja dot kostomaj at tvu dot ac dot uk</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter 2006</date>
+        <institution>UCLA</institution>
+        <title>School of Architecture Research Studio</title>
+        <description>The research studio at UCLA is a year long studio taken during the last year of a students graduate studies. Weekly processing workshops are used to develop and support the students explorations of computation in their studio projects.</description>
+        <contact>
+            <name>John Houck</name>
+            <email>jdhouck at yahoo dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>UCLA Architecture</title>
+                <url>http://www.aud.ucla.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2006</date>
+        <institution>ITP -- New York University</institution>
+        <title>The Nature of Code</title>
+        <description>Can we capture the unpredictable evolutionary and emergent properties of nature in software? Can understanding the mathematical principles behind our physical world world help us to create digital worlds? This class will focus on the programming strategies and techniques behind computer simulations of natural systems. We’ll explore topics ranging from basic mathematics and physics concepts to more advanced simulations of complex systems. Subjects covered will include forces, trigonometry, fractals, cellular automata, self-organization, and genetic algorithms. Examples will be demonstrated using Processing with a focus on object oriented programming.</description>
+        <contact>
+            <name>Daniel Shiffman</name>
+            <email>daniel dot shiffman at nyu dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course Website</title>
+                <url>http://www.shiffman.net/teaching/the-nature-of-code/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>January 2006</date>
+        <institution>California Institute of the Arts</institution>
+        <title>Intro to Computational Concepts</title>
+        <description>This workshop introduced graduate and undergraduate level graphic design students to the fundamentals of code through a series of direct, visual exercises. We explored computational concepts in print, motion, and interaction through the Processing environment.</description>
+        <contact>
+            <name>Peter Cho</name>
+            <email>peter at pcho dot net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Computational Concepts</title>
+                <url>http://www.pcho.net/calarts/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
             </link>
         </links>
     </course>

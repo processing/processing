@@ -1,6 +1,121 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+	<software name="Blinks & Buttons" by="Sascha Pohflepp" scroll="yes" resize="yes" width="1024" height="600">
+	<image>images/buttons.jpg</image>
+	  <description>
+	      Networked photography reveals what happened simultaneously in the world.
+	  </description>
+	  <location>http://www.blinksandbuttons.net/</location>
+	  <link href="http://www.pohflepp.com/">Pohflepp.com</link>
+	</software>
+
+
+	<software name="Shadow Monsters" by="Philip Worthington" scroll="yes" resize="yes" width="1024" height="600">
+	<image>images/shadowmonsters.jpg</image>
+	  <description>
+	      Monsters appear from the shadows cast by the hands of participants.
+	  </description>
+	  <location>http://worthersoriginal.com/viki/#page=shadowmonsters</location>
+	  <link href="http://worthersoriginal.com/">Worthers' Original</link>
+	  <link href="http://worthersoriginal.com/viki/#page=ants">Ants</link>
+	</software>
+
+	<software name="Ping Genius Loci" by="Aether Architecture" scroll="yes" resize="yes" width="1024" height="600">
+	<image>images/ping.jpg</image>
+	  <description>
+	      Three hundred networked analogue pixels place in a 20 by 20 meter grid.
+	  </description>
+	  <location>http://www.aether.hu/pgl/usingprocessing.html</location>
+	  <link href="http://www.aether.hu/">Aether Architecture</link>
+	</software>
+
+	<software name="Nike One" by="Motion Theory" scroll="yes" resize="yes" width="600" height="600">
+	<image>images/nikeone.jpg</image>
+	  <description>
+              Motion Theory used coding and design to visualize the thoughts and mechanics of the creative process of two engineers.
+	  </description>
+	  <location>http://dev.motiontheory.com/nikegolf/</location>
+	  <link href="http://www.motiontheory.com/work/nike_one">Nike 'One' at Motion Theory</link>
+	  <link href="http://www.motiontheory.com/">Motion Theory</link>
+	</software>
+
+	<software name="We Feel Fine" by="Jonathan Harris and Sepandar Kamvar" scroll="yes" resize="yes" width="900" height="600">
+	<image>images/wefeelfine.jpg</image>
+	  <description>
+	      An exploration of human emotion on a global scale using data gathered from blogs.
+	  </description>
+	  <location>http://www.wefeelfine.org</location>
+	  <link href="http://www.number27.org">Jonathan Harris</link>
+	  <link href="http://www.stanford.edu/~sdkamvar/">Sepandar Kamvar</link>
+	</software>
+
+	<software name="Visual Scratch" by="Jesse Kriss" scroll="yes" resize="yes" width="600" height="600">
+	<image>images/visualscratch.jpg</image>
+	  <description>
+	      Realtime visualization of scratch DJ performance.
+	  </description>
+	  <location>http://jklabs.net/projects/visualscratch/</location>
+	  <link href="http://jklabs.net">jklabs</link>
+	</software>
+
+	<software name="Khronos Projector" by="Alvaro Cassinelli" scroll="yes" resize="yes" width="800" height="600">
+	<image>images/khronos.jpg</image>
+	  <description>
+             Software demos for a video time-warping machine with a tangible deformable screen.
+	  </description>
+	  <location>http://www.k2.t.u-tokyo.ac.jp/members/alvaro/Khronos/Khronos_P5/Khronos_Applets.htm</location>
+	  <link href="http://www.k2.t.u-tokyo.ac.jp/members/alvaro/Khronos/">Khronos Projector Website</link>
+	</software>
+
+	<software name="Dreamlines" by="Leonardo Solaas" scroll="yes" resize="yes" width="800" height="600">
+	<image>images/dreamlines.jpg</image>
+	  <description>
+             A crowd of autonomous particles drawing your ever-flowing dreams.
+	  </description>
+	  <location>http://www.solaas.com.ar/dreamlines/p5/</location>
+	  <link href="http://solaas.com.ar">Leonardo Solaas</link>
+	</software>
+
+
+	<software name="The Dumpster" by="Golan Levin et al." scroll="yes" resize="yes" width="700" height="500">
+	<image>images/dumpster.gif</image>
+	  <description>
+             An interactive online visualization that attempts to depict a slice through the romantic lives of American teenagers.
+	  </description>
+	  <location>http://artport.whitney.org/commissions/thedumpster/</location>
+	  <link href="http://artport.whitney.org">Whitney Artport</link>
+	  <link href="http://www.flong.com">Flong</link>
+	</software>
+
+	<software name="Polyptic" by="George Legrady" scroll="yes" resize="yes" width="900" height="800">
+	<image>images/gl.gif</image>
+	  <description>
+             A dynamically generated visualization consisting of a 2D matrix of cells that can flip between two states.
+	  </description>
+	  <location>http://www.mat.ucsb.edu/~g.legrady/glWeb/Projects/algo2/i/</location>
+	  <link href="http://www.mat.ucsb.edu/~g.legrady/">George Legrady Studio</link>
+	</software>
+
+	<software name="Parametric Difference" by="Morphosis" scroll="yes" resize="yes" width="825" height="650">
+	<image>images/parametric.jpg</image>
+	  <description>
+	    Formal and spatial exploration of boolean difference applied to two systems.
+	  </description>
+	  <location>http://www.johnhouck.com/works/morphosis_05/index.html</location>
+	  <link href="http://www.johnhouck.com">John Houck</link>
+	  <link href="http://www.morphosis.net">Morphosis</link>
+	</software>
+
+	<software name="A String" by="E.J. Gone" scroll="yes" resize="yes" width="700" height="600">
+	<image>images/astring.jpg</image>
+	  <description>
+	    Shadowgraphs for dance performance 'be silent' at the national theater of korea.
+	  </description>
+	  <location>http://tokage.cafe24.com/string.htm</location>
+	  <link href="http://tokage.cafe24.com/">Gone</link>
+	</software>
+
 	<software name="Process" by="ART+COM" scroll="yes" resize="yes" width="825" height="700">
 	<image>images/ac.jpg</image>
 	  <description>
@@ -33,7 +148,7 @@
 	  <description>
 	          Aqueous is a meditative space that encourages perception of small things.  Water droplets fall from the ceiling through the space into water-filled tubes approximately tuned in a scale spanning two octaves. 
 	  </description>
-	  <location>aqueous/</location>
+	  <location>works/aqueous/</location>
 	  <link href="http://www.zehao.com/">Zehao.com</link>
 	</software>
 
@@ -89,7 +204,7 @@
 	  <description>
                   Fashion photography meets print resolution physics-inspired generative artwork.
 	  </description>
-	  <location>metropop/index.html</location>
+	  <location>works/metropop/</location>
 	  <link href="http://www.claytoncubitt.com">Clayton Cubitt</link>
 	  <link href="http://www.tom-carden.co.uk">Tom Carden</link>
 	</software>
@@ -202,7 +317,7 @@
 	  <description>
 		Software for Papa Roach's "Getting Away with Murder" music video by Motion Theory 
 	  </description>
-	  <location>papa/index.html</location>
+	  <location>works/papa/index.html</location>
 	  <source>papa/ticker_applet.txt</source>
 	  <link href="http://www.quilime.com">Quilime</link>
 	  <link href="http://www.motiontheory.com">Motion Theory</link>
@@ -213,7 +328,7 @@
 	  <description>
 		 Give pixels the opportunity to express their strength in a scalar field and to mix with liquid metaballs. Use mouse and keyboard to interact.
 	  </description>
-	  <location>liquidliquid/index.html</location>
+	  <location>works/liquidliquid/index.html</location>
 	  <source>liquidliquid/LiquidLiquid.pde</source>
 	  <link href="http://processing.v3ga.net">processing.v3ga.net</link>
 	  <link href="http://www.2roqsmuseum.net">2roqsmuseum</link>
@@ -224,7 +339,7 @@
 	  <description>
 		 Simulation developed to model the expected behavior of a physical sound installation. Both potential and actual     network connections are shown.
 	  </description>
-	  <location>ecstasy/index.html</location>
+	  <location>works/ecstasy/index.html</location>
 	  <source>ecstasy/n_e_13.pde</source>
 	  <link href="http://machinatus.net/">Machinatus</link>
 	</software>
@@ -235,7 +350,7 @@
 		Exploring volume and emotional texture with simple generative geometry. 
 		Interaction and randomness modify the structure.
 	  </description>
-	  <location>d5lv/index.html</location>
+	  <location>works/d5lv/index.html</location>
 	  <source>d5lv/D5LV.pde</source>
 	  <link href="http://www.wmute.org/">W:Mute</link>
 	</software>
@@ -248,7 +363,7 @@
 		a long-facer like Kerry can bring to the table, but just
 		know you'll miss Cheney's fangs if there's a democratic upset?
 	  </description>
-	  <location>discom/index.html</location>
+	  <location>works/discom/index.html</location>
 	  <source>discom/discom.pde</source>
 	  <link href="http://www.justinmanor.com/">Justin Manor</link>
 	  <link href="http://www.sosolimited.com/">SOSOlimited</link>
@@ -271,7 +386,7 @@
 	  <description>
 		Framerate and alpha values are stepped up and down. (Takes a long time to load, please be patient)
 	  </description>
-	  <location>tokyo/index.html</location>
+	  <location>works/tokyo/index.html</location>
 	  <source>tokyo/Tokyo.pde</source>
 	  <link href="http://www.stopmotionstudies.net/">SMS</link>
 	</software>
@@ -281,7 +396,7 @@
 	  <description>
 		Playing with the idea of the 'portrait' or snapshot. How can motion add to the viewer's perception of the person?
 	  </description>
-	  <location>katya/index.html</location>
+	  <location>works/katya/index.html</location>
 	  <source>katya/katya.pde</source>
 	  <link href="http://www.lab5769.com/">lab5769</link>
 	  <link href="http://www.lab5769.com/portraits.html">lab5769 portraits</link>
@@ -303,7 +418,7 @@
 	  <description>
 		 Playing with particles is fun. Give this one a few seconds to get warm.
 	  </description>
-	  <location>liquid/index.html</location>
+	  <location>works/liquid/index.html</location>
 	  <source>liquid/liquidsky.pde</source>
 	  <link href="http://incubator.quasimondo.com/">Quasimondo Incubator</link>
 	  <link href="http://www.quasimondo.com/">Quasimondo</link>
@@ -314,7 +429,7 @@
 	  <description>
 		Each flocking creature connects with others by an ephemeral net of relations.
 	  </description>
-	  <location>relations/index.html</location>
+	  <location>works/relations/index.html</location>
 	  <source>relations/relations_enviroment.pde</source>
 	  <link href="http://www.abstract-codex.net">Abstract-Codex</link>
 	  <link href="http://www.ghostagency.net">Ghost Agency</link>
@@ -336,7 +451,7 @@
 	  <description>
 		Software for the R.E.M. video Animal. (Requires QuickTime)
 	  </description>
-	  <location>starnursery/index.html</location>
+	  <location>works/starnursery/index.html</location>
 	  <source>starnursery/Star_Nursery_Yeah.pde</source>
 	  <link href="http://elfman.vendetta.com/ryan/">Ryan Alexander</link>
 	  <link href="http://motiontheory.com">Motion Theory</link>
@@ -347,7 +462,7 @@
 	  <description>
 		The year is 2020. The future of computing is a battle between two opposing forces...
 	  </description>
-	  <location>techsupport/index.html</location>
+	  <location>works/techsupport/index.html</location>
 	  <source>techsupport/tech_support.pde</source>
 	  <link href="http://coin-operated.com">Coin-Operated</link>
 	</software>
@@ -357,7 +472,7 @@
 	  <description>
 		A spatial overview of four letter words in the English language.
 	  </description>
-	  <location>base26/index.html</location>
+	  <location>works/base26/index.html</location>
 	  <source>base26/base26.pde</source>
 	  <link href="http://www.toxi.co.uk">Toxi homepage</link>
 	  <link href="http://www.toxi.co.uk/p5/">Toxi processing work</link>
@@ -369,7 +484,7 @@
 	  <description>
 		"To the rescue!" "I'll save you!" "You'll be safe!" "Don't worry!"
 	  </description>
-	  <location>superhero/index.html</location>
+	  <location>works/superhero/index.html</location>
 	  <source>superhero/applet/superhero_7.pde</source>
 	  <link href="http://www.beyondthree.com">Beyond Three</link>
 	  <link href="http://proce55ing.beyondthree.com">Processing @ Beyond Three</link>
@@ -380,7 +495,7 @@
 	  <description>
 		Compressing an entire film into a single image to reveal the editing rhythms and tone. Compare Vertigo, Taxi Driver, Deliverance, and more.
 	  </description>
-	  <location>redux/index.html</location>
+	  <location>works/redux/index.html</location>
 	  <source>redux/moviemap3.pde</source>
 	  <link href="http://www.brendandawes.com">Brendan Dawes</link>
 	</software>
@@ -390,7 +505,7 @@
 	  <description>
 		An undulating spatial construction. Click and drag the mouse to change view. Press keys 1 through 6 to change the visualization.
 	  </description>
-	  <location>versionb/index.html</location>
+	  <location>works/versionb/index.html</location>
 	  <source>versionb/mmj_project_FINALd.pde</source>
 	</software>
 	
@@ -399,7 +514,7 @@
 	  <description>
 		Particle collisions generate a familiar structure.
 	  </description>
-	  <location>bees/index.html</location>
+	  <location>works/bees/index.html</location>
 	  <source>bees/bees6.pde</source>
 	</software>
 	
@@ -430,7 +545,7 @@
 	  <description>
 		A generative painting system of colliding particles. Oddly familiar patterns are transcribed as a discrete universe of four particle types.
 	  </description>
-	  <location>chamber/index.html</location>
+	  <location>works/chamber/index.html</location>
 	  <source>chamber/chamberMedium.pde</source>
 	  <link href="http://www.levitated.net/p5/chamber">Bubble Chamber</link>
 	  <link href="http://www.levitated.net/">Levitated.net</link>
@@ -441,7 +556,7 @@
 	  <description>
 		Pumpkin-feeding candy game using an off-the-shelf serial LCD module.
 	  </description>
-	  <location>jackolantern/index.html</location>
+	  <location>works/jackolantern/index.html</location>
 	  <source>jackolantern/jackolantern.pde</source>
 	  <link href="http://www.seetron.com/slcds.htm">LCD modules</link>
 	</software>
@@ -462,7 +577,7 @@
 	  <description>
 		Video footage of webcam interaction based on real-time tracking of light sources.
 	  </description>
-	  <location>tracking/index.html</location>
+	  <location>works/tracking/index.html</location>
 	  <source>tracking/tracking.pde</source>
 	  <link href="http://www.flight404.com/">Flight404</link>
 	</software>
@@ -472,7 +587,7 @@
 	  <description>
 		Stir the pixel soup with your mouse. For additional flavors, press A, S, M.
 	  </description>
-	  <location>juhuu/index.html</location>
+	  <location>works/juhuu/index.html</location>
 	  <source>juhuu/juhuu.pde</source>
 	  <link href="http://www.juhuu.nu/">Juhuu.nu</link>
 	</software>
@@ -482,7 +597,7 @@
 	  <description>
 		Springy text collides with the edge of the image to jumble the forms. Press keys on your keyboard to generate new letters.
 	  </description>
-	  <location>ricochet/index.html</location>
+	  <location>works/ricochet/index.html</location>
 	  <source>ricochet/ricochet.pde</source>
 	  <link href="http://www.jtnimoy.com/">JTNimoy</link>
 	  <link href="http://www.potatoland.org/">Potatoland</link>
@@ -493,7 +608,7 @@
 	  <description>
 		An elegant cellular automata. An elusive structure is continually emerging and dispersing.
 	  </description>
-	  <location>skyline/index.html</location>
+	  <location>works/skyline/index.html</location>
 	  <source>skyline/skyline.pde</source>
 	  <link href="http://www.lightcycle.org/">Lightcycle</link>
 	</software>
@@ -503,7 +618,7 @@
 	  <description>
 		An expanding, contracting, and twisting responsive organ.
 	  </description>
-	  <location>wiggle/index.html</location>
+	  <location>works/wiggle/index.html</location>
 	  <source>wiggle/wiggle.pde</source>
 	  <link href="http://www.uncontrol.com/">Uncontrol</link>
 	</software>
@@ -513,7 +628,7 @@
 	  <description>
 		A software machine exploring the boundaries of control.
 	  </description>
-	  <location>withouttitle/index.html</location>
+	  <location>works/withouttitle/index.html</location>
 	  <source>withouttitle/withouttitle.pde</source>
 	  <link href="http://www.re-move.org/">Re-Move</link>
 	  <link href="http://www.wofbot.org">Wofbot</link>
@@ -524,7 +639,7 @@
 	  <description>
 		Structure emerges through the interactions of autonomous elements.
 	  </description>
-	  <location>articulate/index.html</location>
+	  <location>works/articulate/index.html</location>
 	  <source>articulate/articulate.pde</source>
 	  <link href="http://www.groupc.net">GroupC</link>
 	</software>
@@ -534,7 +649,7 @@
 	  <description>
 		Simplified version of the renowned Soda Constructor implemented in Processing.
 	  </description>
-	  <location>sodaprocessing/index.html</location>
+	  <location>works/sodaprocessing/index.html</location>
 	  <source>sodaprocessing/sodaprocessing.pde</source>
 	  <link href="http://www.soda.co.uk">Soda</link>
 	  <link href="http://sodaplay.com">SodaPlay</link>
@@ -546,7 +661,7 @@
 		Like drawing with a bunch of crayons in one hand. 
 	Simple and messy, but fun.
 	  </description>
-	  <location>cdrawer/index.html</location>
+	  <location>works/cdrawer/index.html</location>
 	  <source>cdrawer/cdrawer.pde</source>
 	  <link href="http://www.evolutionzone.com/">Evolution Zone</link>
 	</software>
@@ -556,7 +671,7 @@
 	  <description>
 		In 2001 US CEOs were paid 411 times more than the average worker...
 	  </description>
-	  <location>inequality/index.html</location>
+	  <location>works/inequality/index.html</location>
 	  <source>inequality/inequality.pde</source>
 	  <link href="http://www.theyrule.net">They Rule</link>
 	  <link href="http://www.futurefarmers.com">Future Farmers</link>
@@ -567,7 +682,7 @@
 	  <description>
 		Autonomous bezier fish swarm around their liquid environment. Press keys 0-3 to hide and reveal predator fish.
 	  </description>
-	  <location>pond/index.html</location>
+	  <location>works/pond/index.html</location>
 	  <source>pond/pond.pde</source>
 	  <link href="http://www.metaphorical.net">Metaphorical</link>
 	  <link href="http://www.interaction.rca.ac.uk/alumni/99-01/william/">Royal College of Art</link>
@@ -578,7 +693,7 @@
 	  <description>
 		An interpretation of the poem 'Der und Die' by Ernst Jandl
 	  </description>
-	  <location>hinundher/index.html</location>
+	  <location>works/hinundher/index.html</location>
 	  <source>hinundher/hinundher.pde</source>
 	  <link href="http://www.esono.com">Esono</link>
 	</software>
@@ -588,7 +703,7 @@
 	  <description>
 		An interactive software system for the gestural creation and performance of real-time abstract animation.
 	  </description>
-	  <location>yellowtail/index.html</location>
+	  <location>works/yellowtail/index.html</location>
 	  <source>yellowtail/yellowtail.pde</source>
 	  <link href="http://www.flong.com/yellowtail/">Yellowtail</link>
 	  <link href="http://www.flong.com">Flong</link>
@@ -599,7 +714,7 @@
 	  <description>
 		Alphabot is a virtual robot that is able to take the shape of any letter in the English alphabet as you type them on a keyboard.
 	  </description>
-	  <location>004/index.html</location>
+	  <location>works/004/index.html</location>
 	  <source>004/code.html</source>
 	  <link href="http://acg.media.mit.edu/people/nik/projects/alphabot/">Alphabot</link>
 	  <link href="http://acg.media.mit.edu/">ACG</link>
@@ -610,7 +725,7 @@
 	  <description>
 		Creating a simulation from summery dreams of the one I love.
 	  </description>
-	  <location>europa/index.html</location>
+	  <location>works/europa/index.html</location>
 	  <source>europa/europa.pde</source>
 	  <link href="http://www.glenmurphy.com/">Glen Murphy</link>
 	  <link href="http://www.bodytag.org">Body Tag</link>
@@ -621,7 +736,7 @@
 	  <description>
 		Reassembling a movieclip database by using the properties of the collected information to generate a new visual data matrix.
 	  </description>
-	  <location>003/index.html</location>
+	  <location>works/003/index.html</location>
 	  <source>003/code.html</source>
 	  <link href="http://www.schoenerwissen.com/">Schoenerwissen</link>
 	  <link href="http://www.minitasking.com">Minitasking</link>
@@ -631,7 +746,7 @@
 	<image>images/002.gif</image>
 	  <description>
 	  </description>
-	  <location>002/index.html</location>
+	  <location>works/002/index.html</location>
 	  <source>002/code.html</source>
 	  <link href="http://www.kramdesign.com/">kramdesign</link>
 	</software>
@@ -641,20 +756,10 @@
 	  <description>
 		An exploration into building representations for structures and relationships inside large sets of information.
 	  </description>
-	  <location>001/index.html</location>
+	  <location>works/001/index.html</location>
 	  <source>none</source>
 	  <link href="http://acg.media.mit.edu/people/fry">Genomic Cartography</link>
 	  <link href="http://acg.media.mit.edu/">ACG</link>
-	</software>
-	
-	<software name="Tissue" by="Casey Reas" scroll="no" resize="no" width="600" height="250">
-	  <image>images/000.gif</image>
-	  <description>
-		Exposing the movements of hundreds of synthetic systems. An understanding of the total system emerges from the subtle relations between the stimulus and response.
-	  </description>
-	  <location>000/index.html</location>
-	  <source>000/code.html</source>
-	  <link href="http://www.groupc.net">Group C</link>
 	</software>
 	
 </curated>

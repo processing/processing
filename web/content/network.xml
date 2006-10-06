@@ -1,7 +1,815 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
-    <software name="awesome project" by="Just Testing">
-        <location>http://something.com/</location>
+    <software name="Dragoria: 3D Curlicue Fractal" by="Fergus Ray Murray">
+        <location>http://www.mimeomai.f2s.com/applet/dragoj3d/applet</location>
+        <date>06 Oct &apos;06</date>
+    </software>
+    <software name="IteratoForm" by="skanaar">
+        <location>http://82.182.180.147/skanaar/iteratoform2.html</location>
+        <date>05 Oct &apos;06</date>
+    </software>
+    <software name="Landscape Generator" by="Matt Kozak">
+        <location>http://www.screamyguy.net/processing/tgtd/</location>
+        <date>26 Sep &apos;06</date>
+    </software>
+    <software name="Ring Ring" by="Kyle McDonald">
+        <location>http://rpi.edu/~mcdonk/code/ringring/</location>
+        <date>25 Sep &apos;06</date>
+    </software>
+    <software name="Webcam Mouse" by="Ian Bellomy">
+        <location>http://www.ianbellomy.com/portfolio/portfolio.php?title=Webcam+Mouse</location>
+        <date>23 Sep &apos;06</date>
+    </software>
+    <software name="Pixel Eaters" by="Ian Bellomy">
+        <location>http://www.oneorangesquare.com/orchard/viewWork2.php?title=Pixel%20Eaters</location>
+        <date>23 Sep &apos;06</date>
+    </software>
+    <software name="we only come out at night" by="salt and onion">
+        <location>http://users.design.ucla.edu/~djaiyo/html/weonlycomeoutatnight.html</location>
+        <date>21 Sep &apos;06</date>
+    </software>
+    <software name="Interferences" by="Matteo Sisti Sette &amp; Maribel Pozo Ruiz">
+        <location>http://www.interferencesweb.org/</location>
+        <date>21 Sep &apos;06</date>
+    </software>
+    <software name="Subdivision Form" by="Michael Hansmeyer">
+        <location>http://www.mh-portfolio.com/subdivide.html</location>
+        <date>18 Sep &apos;06</date>
+    </software>
+    <software name="Wiremap" by="Albert Hwang">
+        <location>http://phedhex.com/wiki/index.php?title=Wiremap</location>
+        <date>17 Sep &apos;06</date>
+    </software>
+    <software name="Confetti" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/confetti/</location>
+        <date>15 Sep &apos;06</date>
+    </software>
+    <software name="Magnattractor" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/magnattractor/</location>
+        <date>14 Sep &apos;06</date>
+    </software>
+    <software name="Menger Sponge" by="skanaar">
+        <location>http://82.182.180.147/skanaar/mengersponge.html</location>
+        <date>13 Sep &apos;06</date>
+    </software>
+    <software name="del.icio.us network explorer" by="Michael Schieben">
+        <location>http://www.twoantennas.com/projects/delicious-network-explorer</location>
+        <date>11 Sep &apos;06</date>
+    </software>
+    <software name="tsoro" by="christian schneider">
+        <location>http://www.christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=40&amp;Itemid=59</location>
+        <date>05 Sep &apos;06</date>
+    </software>
+    <software name="LlamaXML - simple XML parsing and management" by="Scott Lawrence">
+        <location>http://umlautllama.com/p/processing/LlamaXMLExample/</location>
+        <date>04 Sep &apos;06</date>
+    </software>
+    <software name="Heightmap" by="Semifer">
+        <location>http://semifershome.free.fr/semifer/index.php?2006/09/04/16-heightmap-v1</location>
+        <date>03 Sep &apos;06</date>
+    </software>
+    <software name="tree three d" by="christian horisberger">
+        <location>http://homepage.hispeed.ch/lotek/java/tree/index.html</location>
+        <date>02 Sep &apos;06</date>
+    </software>
+    <software name="nine moths" by="charlie">
+        <location>http://www.charliemezak.com/photos/index.php?showimage=63</location>
+        <date>01 Sep &apos;06</date>
+    </software>
+    <software name="Skybox" by="Semifer">
+        <location>http://semifershome.free.fr/semifer/index.php?2006/08/20/5-test-processing</location>
+        <date>01 Sep &apos;06</date>
+    </software>
+    <software name="checkit" by="James F.">
+        <location>http://stomped.piczo.com/</location>
+        <date>31 Aug &apos;06</date>
+    </software>
+    <software name="Taccuino" by="Travis Kirton">
+        <location>http://traviskirton.com/tac/index.html</location>
+        <date>29 Aug &apos;06</date>
+    </software>
+    <software name="Concerto per 16 Automi" by="salvatore iaconesi">
+        <location>http://www.artisopensource.net/concertoper16automi/</location>
+        <date>28 Aug &apos;06</date>
+    </software>
+    <software name="dispersion" by="salvatore iaconesi">
+        <location>http://www.artisopensource.net/dispersion</location>
+        <date>28 Aug &apos;06</date>
+    </software>
+    <software name="Two installations" by="benjamin Déal">
+        <location>http://dbenjamin.chez-alice.fr/fr/dnsep.html</location>
+        <date>28 Aug &apos;06</date>
+    </software>
+    <software name="Particulates" by="David">
+        <location>http://doswa.com/processing/Particulates/</location>
+        <date>27 Aug &apos;06</date>
+    </software>
+    <software name="Collective Creativity " by="Roxlu">
+        <location>http://www.collectivecreative.org/</location>
+        <date>27 Aug &apos;06</date>
+    </software>
+    <software name="Interactive Morphogenesis" by="Irad Lee">
+        <location>http://companje.nl/morphogenesis</location>
+        <date>25 Aug &apos;06</date>
+    </software>
+    <software name="Dark Matter Project" by="Christine Mitchell">
+        <location>http://www.dark-matter-project.com/</location>
+        <date>24 Aug &apos;06</date>
+    </software>
+    <software name="Candle" by="David">
+        <location>http://doswa.com/processing/Candle/</location>
+        <date>23 Aug &apos;06</date>
+    </software>
+    <software name="sam" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=39&amp;Itemid=58</location>
+        <date>23 Aug &apos;06</date>
+    </software>
+    <software name="Cursor2" by="David">
+        <location>http://doswa.com/processing/Cursor2/</location>
+        <date>22 Aug &apos;06</date>
+    </software>
+    <software name="Meat" by="Travis Kirton">
+        <location>http://www.traviskirton.com/meat/index.html</location>
+        <date>22 Aug &apos;06</date>
+    </software>
+    <software name="Topic Flowers" by="Jeff Clark">
+        <location>http://www.neoformix.com/2006/TopicFlower.html</location>
+        <date>22 Aug &apos;06</date>
+    </software>
+    <software name="dejong 3D" by="postpop">
+        <location>http://amor.rz.hu-berlin.de/~clemensj/p5.dejong/3d.html</location>
+        <date>22 Aug &apos;06</date>
+    </software>
+    <software name="paris" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=38&amp;Itemid=57</location>
+        <date>21 Aug &apos;06</date>
+    </software>
+    <software name="Everyday Complexity" by="travis kirton">
+        <location>http://www.traviskirton.com/edc/</location>
+        <date>21 Aug &apos;06</date>
+    </software>
+    <software name="TiefRot" by="Frederik Vanhoutte">
+        <location>http://www.wmute.org/Constructs/tiefRot/tiefRot.html</location>
+        <date>20 Aug &apos;06</date>
+    </software>
+    <software name="simas" by="jimmi">
+        <location>http://gliukai.googlepages.com/</location>
+        <date>17 Aug &apos;06</date>
+    </software>
+    <software name="the waving torch draws unbelievable pictures" by="Rhian Hinkley">
+        <location>http://www.lowercase.com.au/the_waving_torch</location>
+        <date>16 Aug &apos;06</date>
+    </software>
+    <software name="&quot;Tron&quot; Blur" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/tronblur/</location>
+        <date>15 Aug &apos;06</date>
+    </software>
+    <software name="NeuroNebula" by="Skanaar">
+        <location>http://82.182.180.147/skanaarNeuroNebulaApplet/index.html</location>
+        <date>11 Aug &apos;06</date>
+    </software>
+    <software name="A Leaf" by="Ryan">
+        <location>http://onecm.com/sketches/a.leaf/</location>
+        <date>11 Aug &apos;06</date>
+    </software>
+    <software name="Guest Favicon" by="Ryan">
+        <location>http://onecm.com/goodies/guestfavi/</location>
+        <date>11 Aug &apos;06</date>
+    </software>
+    <software name="Space Wars" by="Gabriel Villar">
+        <location>http://gvillar.googlepages.com/index.html</location>
+        <date>07 Aug &apos;06</date>
+    </software>
+    <software name="PixelSkin02XML" by="Sachin Anshuman">
+        <location>http://www.orangevoid.org.uk/index.php?option=com_content&amp;task=blogcategory&amp;id=20&amp;Itemid=86</location>
+        <date>05 Aug &apos;06</date>
+    </software>
+    <software name="Flies" by="Andrew White // Vohm">
+        <location>http://www.vohm.com/processing/flies</location>
+        <date>04 Aug &apos;06</date>
+    </software>
+    <software name="Grass" by="Andrew White // Vohm">
+        <location>http://www.vohm.com/processing/grass</location>
+        <date>04 Aug &apos;06</date>
+    </software>
+    <software name="Beckett Machine" by="Spencer Roberts">
+        <location>http://www.anthropo.org.uk/godot/</location>
+        <date>03 Aug &apos;06</date>
+    </software>
+    <software name="Dibujo: busquedas y apropiaciones" by="esteban gutierrez">
+        <location>http://www.noarquitectura.com/dba/indexdbya.html</location>
+        <date>03 Aug &apos;06</date>
+    </software>
+    <software name="Elude" by="David">
+        <location>http://doswa.com/processing/Elude/</location>
+        <date>02 Aug &apos;06</date>
+    </software>
+    <software name="Tiny Tony" by="Jens Weber">
+        <location>http://mediaarchitecture.de/projekte/tiny-tony/</location>
+        <date>02 Aug &apos;06</date>
+    </software>
+    <software name="Video Pong" by="Josh Minor">
+        <location>http://lux.vu/blog/?p=38</location>
+        <date>01 Aug &apos;06</date>
+    </software>
+    <software name="RhNav - Realtime User Traffic Visualisation" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/wiki/Blog/2006-07-31/RhNavLive</location>
+        <date>31 Jul &apos;06</date>
+    </software>
+    <software name="In Search of Maxwell&apos;s Demon" by="Jon Kher Kaw">
+        <location>http://www.jonkherkaw.com/index.php/projects/details/maxwells_demon</location>
+        <date>29 Jul &apos;06</date>
+    </software>
+    <software name="Maze Blur" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/mazeblur/</location>
+        <date>26 Jul &apos;06</date>
+    </software>
+    <software name="Snakey" by="David">
+        <location>http://doswa.com/processing/Snakey/</location>
+        <date>25 Jul &apos;06</date>
+    </software>
+    <software name="Fireworks" by="David">
+        <location>http://doswa.com/processing/Fireworks/</location>
+        <date>23 Jul &apos;06</date>
+    </software>
+    <software name="Automazer" by="Dimitre">
+        <location>http://dmtr.org/?653</location>
+        <date>20 Jul &apos;06</date>
+    </software>
+    <software name="tagesschau â an urban media installation" by="Helge Fischer">
+        <location>http://www.hfischer.info/urbanscreen.html</location>
+        <date>20 Jul &apos;06</date>
+    </software>
+    <software name="Dancing Ideas" by="Wally Glutton">
+        <location>http://tinyurl.com/eat9r</location>
+        <date>17 Jul &apos;06</date>
+    </software>
+    <software name="Fungi" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/fungi/</location>
+        <date>14 Jul &apos;06</date>
+    </software>
+    <software name="VoicePong" by="andrea bellini">
+        <location>http://www.driftingmedia.org/ctrlbulb/index.html</location>
+        <date>11 Jul &apos;06</date>
+    </software>
+    <software name="Avoid" by="Jonathan Brodsky">
+        <location>http://jonbro.tk/blog/2006/07/09/avoid-a-game/</location>
+        <date>10 Jul &apos;06</date>
+    </software>
+    <software name="Pixel Robots" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/pixelrobots</location>
+        <date>06 Jul &apos;06</date>
+    </software>
+    <software name="Mahrzipanien" by="daytar">
+        <location>http://www.daytar.de/art</location>
+        <date>06 Jul &apos;06</date>
+    </software>
+    <software name="mobile fishTank" by="3c-3k">
+        <location>http://www.3c-3k.com/</location>
+        <date>05 Jul &apos;06</date>
+    </software>
+    <software name="faceCloth" by="Elie Zananiri">
+        <location>http://www.facecloth.digital-spa.com/</location>
+        <date>04 Jul &apos;06</date>
+    </software>
+    <software name="OjosNegros" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/ojosnegros</location>
+        <date>03 Jul &apos;06</date>
+    </software>
+    <software name="Seedling" by="Josh">
+        <location>http://lux.vu/blog/?p=29</location>
+        <date>03 Jul &apos;06</date>
+    </software>
+    <software name="Ye Olde Proce55ing Experiments" by="Jim Qode">
+        <location>http://www.symbolengine.com/cornholio/index.htm</location>
+        <date>25 Jun &apos;06</date>
+    </software>
+    <software name="BFA Project" by="Mikael Konttinen">
+        <location>http://www.mknart.net/BFA_Project</location>
+        <date>21 Jun &apos;06</date>
+    </software>
+    <software name="Seoul Limbo" by="Mikael Konttinen">
+        <location>http://www.mknart.net/limbo</location>
+        <date>21 Jun &apos;06</date>
+    </software>
+    <software name="Himachal Hotels" by="Himachal Hotels">
+        <location>http://www.himachalhotels.in/</location>
+        <date>19 Jun &apos;06</date>
+    </software>
+    <software name="3D Game Map" by="JohnG">
+        <location>http://www.hardcorepawn.com/CitiesMapGL/</location>
+        <date>19 Jun &apos;06</date>
+    </software>
+    <software name="Tag Tool" by="Strukt Visual Network">
+        <location>http://tagtool.wassergasse.org/wiki/index.php?title=TagTool_Introduction</location>
+        <date>17 Jun &apos;06</date>
+    </software>
+    <software name="Wop Palette" by="seltar">
+        <location>http://seltar.org/sketch.php?pid=47</location>
+        <date>17 Jun &apos;06</date>
+    </software>
+    <software name="semaphore" by="Xavier Snelgrove">
+        <location>http://www.wxs.ca/applets/semaphore</location>
+        <date>14 Jun &apos;06</date>
+    </software>
+    <software name="LigthsOn!" by="i2off.org+r3nder.net">
+        <location>http://r3nder.net/resource/archives/categorias/processing/ligthson.html</location>
+        <date>13 Jun &apos;06</date>
+    </software>
+    <software name="Menagerie 1.0" by="Richard deCosta">
+        <location>http://www.turingshop.com/processing/menagerie/</location>
+        <date>11 Jun &apos;06</date>
+    </software>
+    <software name="Whizz VJ tool" by="Jan Kremlacek">
+        <location>http://kremlacek.com/projects/2006-01-whizz/</location>
+        <date>10 Jun &apos;06</date>
+    </software>
+    <software name="Life" by="Richard deCosta">
+        <location>http://www.turingshop.com/processing/life/</location>
+        <date>08 Jun &apos;06</date>
+    </software>
+    <software name="Realistic Liquid Water" by="Kristopher Collins">
+        <location>http://www.spacefillingcurve.net/programming/processing/splish/</location>
+        <date>06 Jun &apos;06</date>
+    </software>
+    <software name="Grid Menu" by="seltar">
+        <location>http://seltar.org/sketch.php?pid=46</location>
+        <date>04 Jun &apos;06</date>
+    </software>
+    <software name="ambient_light" by="Annie Spinster &amp; Carl Collins">
+        <location>http://anniespinster.co.uk/aboutambient_light.htm</location>
+        <date>01 Jun &apos;06</date>
+    </software>
+    <software name="ramas:VideoCode02" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/ramas</location>
+        <date>28 May &apos;06</date>
+    </software>
+    <software name="PICAMOTICS - augmented spaces out of the box" by="Hermann Wolfram Kloeckner, Lars Grau, Andrew You">
+        <location>http://www.picamotics.com/</location>
+        <date>28 May &apos;06</date>
+    </software>
+    <software name="Websites as Graphs" by="Sala">
+        <location>http://www.aharef.info/static/htmlgraph/</location>
+        <date>26 May &apos;06</date>
+    </software>
+    <software name="Slang Anaylsis" by="Bryan Ijeoma">
+        <location>http://hypehypehype.net/work/slang/</location>
+        <date>25 May &apos;06</date>
+    </software>
+    <software name="Fractal Explorer" by="Kristopher Collins">
+        <location>http://www.spacefillingcurve.net/programming/processing/mandel/</location>
+        <date>24 May &apos;06</date>
+    </software>
+    <software name="Interactive Video Works" by="Chris Basmajian">
+        <location>http://basmajian.net/work/</location>
+        <date>24 May &apos;06</date>
+    </software>
+    <software name="meet Lindenmayer" by="simon_geilfus@hotmail.com">
+        <location>http://sim-ple.be/lsystems/</location>
+        <date>23 May &apos;06</date>
+    </software>
+    <software name="RhNav - Rhizome Navigation" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/wiki/Blog/2006-04-18/RhNav3D</location>
+        <date>22 May &apos;06</date>
+    </software>
+    <software name="The Sheep Market" by="Aaron Koblin">
+        <location>http://www.aaronkoblin.com/work/thesheepmarket</location>
+        <date>20 May &apos;06</date>
+    </software>
+    <software name="Interactive Punching Bag :: Processing + Arduino" by="FLUIDFORMS :: INDIVIDUAL DESIGN">
+        <location>http://fluidforms.at/de/CassiusHow.php</location>
+        <date>19 May &apos;06</date>
+    </software>
+    <software name="&apos;Ant&apos; Simulation" by="Eiii">
+        <location>http://eri3ch.googlepages.com/index.html</location>
+        <date>18 May &apos;06</date>
+    </software>
+    <software name="La Suite Kali" by="RubÃ©n DÃ¯az de Corcuera">
+        <location>http://www.lasuitekali.info/</location>
+        <date>17 May &apos;06</date>
+    </software>
+    <software name="Pong" by="Benjamin Skirlo">
+        <location>http://public.hausnr11.de/files/processing/pong/</location>
+        <date>16 May &apos;06</date>
+    </software>
+    <software name="Obtuse Triangle" by="Toine Heuvelmans">
+        <location>http://www.toine.org/processing/apps/Obtuse/</location>
+        <date>15 May &apos;06</date>
+    </software>
+    <software name="Cubic Exploration" by="CyK">
+        <location>http://iisqlsrv.cs.washington.edu/CollaborativeDynamicArt/Tree.aspx?tree=32&amp;expand=685;687;#</location>
+        <date>14 May &apos;06</date>
+    </software>
+    <software name="boom" by="mitchell whitelaw">
+        <location>http://creative.canberra.edu.au/mitchell/boom</location>
+        <date>12 May &apos;06</date>
+    </software>
+    <software name="SpirThi" by="seltar">
+        <location>http://seltar.wliia.org/sketch.php?pid=44</location>
+        <date>09 May &apos;06</date>
+    </software>
+    <software name="On Everything" by="Pall Thayer">
+        <location>http://pallit.lhi.is/on_everything</location>
+        <date>08 May &apos;06</date>
+    </software>
+    <software name="3d pixel height from realtime video" by="steve cooley">
+        <location>http://somejunkwelike.com/fineart/pixelcam2/applet/</location>
+        <date>08 May &apos;06</date>
+    </software>
+    <software name="Force-Directed World Export Atlas" by="Sean McCullough">
+        <location>http://www.cricketschirping.com/processing/ExportAtlas/</location>
+        <date>07 May &apos;06</date>
+    </software>
+    <software name="State of the Union" by="Brad Borevitz">
+        <location>http://stateoftheunion.onetwothree.net/</location>
+        <date>03 May &apos;06</date>
+    </software>
+    <software name="Hack the SF" by="Jeff Liu http://spaces.msn.com/jebberwocky">
+        <location>http://jebberwocky.tripod.com/Processing/sketch_060504b/index.html</location>
+        <date>03 May &apos;06</date>
+    </software>
+    <software name="Grow A Seed" by="Chase Adams">
+        <location>http://games.curvedinfinity.com/GrowASeed/</location>
+        <date>03 May &apos;06</date>
+    </software>
+    <software name="strange symmetry" by="Frederik Vanhoutte">
+        <location>http://www.wmute.org/Constructs/strangeSymmetry/strangeSymmetry1.html</location>
+        <date>30 Apr &apos;06</date>
+    </software>
+    <software name="yoo" by="Jin Sung Yoo">
+        <location>http://ujinsung.com/yoo</location>
+        <date>30 Apr &apos;06</date>
+    </software>
+    <software name="acuanauta[interactive musical experience]" by="estadoLateral">
+        <location>http://www.estadolateral.net/kent/</location>
+        <date>28 Apr &apos;06</date>
+    </software>
+    <software name="old school style tunnel" by="gipsh">
+        <location>http://www.autolyrics.com/~gipsh/tunnel</location>
+        <date>28 Apr &apos;06</date>
+    </software>
+    <software name="TuchfÃ¼hlung" by="&lt;br&gt;Manuel Dahm">
+        <location>http://www.unshift.de/admin/SAM//www/index.php?remoteID=477</location>
+        <date>28 Apr &apos;06</date>
+    </software>
+    <software name="Bubbles" by="Toine Heuvelmans">
+        <location>http://www.toine.org/processing/apps/Bubbles/</location>
+        <date>27 Apr &apos;06</date>
+    </software>
+    <software name="The Waiting Room" by="Matt Borland">
+        <location>http://homepage.mac.com/mattborland/processing/waiting/waiting.html</location>
+        <date>25 Apr &apos;06</date>
+    </software>
+    <software name="Blubbs" by="Jim George">
+        <location>http://www.jim-george.com/dev/blubbs.php</location>
+        <date>24 Apr &apos;06</date>
+    </software>
+    <software name="City of Worms" by="Foliativ">
+        <location>http://www.foliativ.net/index.php?2006/04/24/62-city-of-worms</location>
+        <date>24 Apr &apos;06</date>
+    </software>
+    <software name="Tag2" by="Kyle McDonald">
+        <location>http://rpi.edu/~mcdonk/code/tag2</location>
+        <date>23 Apr &apos;06</date>
+    </software>
+    <software name="Blobz" by="seltar">
+        <location>http://seltar.wliia.org/sketch.php?pid=43</location>
+        <date>22 Apr &apos;06</date>
+    </software>
+    <software name="Uhmans" by="Abe Pazos">
+        <location>http://www.hamoid.com/uhmans/</location>
+        <date>22 Apr &apos;06</date>
+    </software>
+    <software name="diatomic clock" by="reid williams">
+        <location>http://tnq.mit.edu/~reidw/clock</location>
+        <date>22 Apr &apos;06</date>
+    </software>
+    <software name="Pics And Quads" by="Travis Kirton">
+        <location>http://www.traviskirton.com/processing/picsAndQuads</location>
+        <date>19 Apr &apos;06</date>
+    </software>
+    <software name="elle system - interactive fractal" by="nick">
+        <location>http://www.coolbubble.com/programs/elle.htm</location>
+        <date>18 Apr &apos;06</date>
+    </software>
+    <software name="Origami Butterfly" by="Kyle McDonald">
+        <location>http://rpi.edu/~mcdonk/code/origamibutterfly/</location>
+        <date>18 Apr &apos;06</date>
+    </software>
+    <software name="Architectris" by="Aaron Steed &amp;amp; John Holder">
+        <location>http://www.robotacid.com/PBeta/architectris/index.html</location>
+        <date>18 Apr &apos;06</date>
+    </software>
+    <software name="Matrix Console" by="Shaun Williams">
+        <location>http://www12.brinkster.com/bitterbanana/processing/matrixconsole/</location>
+        <date>18 Apr &apos;06</date>
+    </software>
+    <software name="visual scratch" by="Jesse Kriss">
+        <location>http://www.youtube.com/watch?v=kinhybgOOTI</location>
+        <date>18 Apr &apos;06</date>
+    </software>
+    <software name="stillLife#2" by="richard willis">
+        <location>http://richtextformat.org/processing/0011/</location>
+        <date>18 Apr &apos;06</date>
+    </software>
+    <software name="rotator I and variations" by="Frederik Vanhoutte">
+        <location>http://www.wmute.org/Constructs/rotatorI/rotatorI.html</location>
+        <date>17 Apr &apos;06</date>
+    </software>
+    <software name="1992-404" by="Rene Christen">
+        <location>http://renechristen.net/pages/memorial.html</location>
+        <date>16 Apr &apos;06</date>
+    </software>
+    <software name="additive wave [6]" by="steve cooley">
+        <location>http://somejunkwelike.com/fineart/additivewave6/</location>
+        <date>16 Apr &apos;06</date>
+    </software>
+    <software name="ParticleString" by="Jorge Cardoso">
+        <location>http://jorgecardoso.org/processing/ParticleString/applet/index.html</location>
+        <date>14 Apr &apos;06</date>
+    </software>
+    <software name="random moves" by="Benjamin Skirlo">
+        <location>http://public.hausnr11.de/files/processing/random_moves/index.html</location>
+        <date>14 Apr &apos;06</date>
+    </software>
+    <software name=" Bubble Breeze" by="Linus Nilsson/ FABRICA ">
+        <location>http://www.benettonplay.com/toys/bubblebreeze/</location>
+        <date>13 Apr &apos;06</date>
+    </software>
+    <software name="Chess Shapes" by="Kyle McDonald">
+        <location>http://rpi.edu/~mcdonk/code/chessshapes/</location>
+        <date>12 Apr &apos;06</date>
+    </software>
+    <software name="Planesong" by="James Hutchinson &amp;amp; Spencer Roberts">
+        <location>http://www.anthropo.org.uk/psong/</location>
+        <date>11 Apr &apos;06</date>
+    </software>
+    <software name="Falling" by="Travis Kirton">
+        <location>http://www.traviskirton.com/processing/falling/</location>
+        <date>11 Apr &apos;06</date>
+    </software>
+    <software name="pixelSticker" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/pixelsticker</location>
+        <date>07 Apr &apos;06</date>
+    </software>
+    <software name="dippergalaxyflush" by="daytar">
+        <location>http://www.daytar.de/art/dippergalaxyflush/</location>
+        <date>06 Apr &apos;06</date>
+    </software>
+    <software name="Arctiidae : Evolution" by="Kristopher R. Collins">
+        <location>http://www.spacefillingcurve.net/programming/processing/mothevolve/</location>
+        <date>06 Apr &apos;06</date>
+    </software>
+    <software name="Interpolation" by="Toine Heuvelmans">
+        <location>http://student-kmt.hku.nl/~toine/processing/sketchbook/interpolation/</location>
+        <date>05 Apr &apos;06</date>
+    </software>
+    <software name="Arctiidae" by="Kristopher R. Collins">
+        <location>http://www.spacefillingcurve.net/programming/processing/mothweb/</location>
+        <date>03 Apr &apos;06</date>
+    </software>
+    <software name="Buddhabrot" by="Daniel Kallin">
+        <location>http://82.182.180.147/skanaarBuddhabrotApplet/index.html</location>
+        <date>02 Apr &apos;06</date>
+    </software>
+    <software name="sky-rail" by="boredomresearch">
+        <location>http://sky-rail.net/</location>
+        <date>31 Mar &apos;06</date>
+    </software>
+    <software name="Infected Area" by="Carl Emil Carlsen">
+        <location>http://moodplug.com/index.php?page=project&amp;id=13</location>
+        <date>27 Mar &apos;06</date>
+    </software>
+    <software name="Improvibes" by="Carl Emil Carlsen">
+        <location>http://moodplug.com/index.php?page=project&amp;id=15</location>
+        <date>27 Mar &apos;06</date>
+    </software>
+    <software name="Time Wheel" by="Carl Emil Carlsen">
+        <location>http://moodplug.com/index.php?page=project&amp;id=16</location>
+        <date>27 Mar &apos;06</date>
+    </software>
+    <software name="Power Plant" by="Carl Emil Carlsen">
+        <location>http://moodplug.com/index.php?page=project&amp;id=14</location>
+        <date>27 Mar &apos;06</date>
+    </software>
+    <software name="Fuoco" by="Paolo Emilio &quot;The_sLideR&quot; Selva">
+        <location>http://www.paoloemilioselva.it/programmatore/processing/fuoco/index.html</location>
+        <date>27 Mar &apos;06</date>
+    </software>
+    <software name="Esfera de pelos" by="David PeÃ±a">
+        <location>http://david.laveneno.org/processing/esfera/</location>
+        <date>26 Mar &apos;06</date>
+    </software>
+    <software name="Mouse Spring Drawer" by="seltar">
+        <location>http://seltar.wliia.org/sketch.php?pid=42</location>
+        <date>26 Mar &apos;06</date>
+    </software>
+    <software name="PIXEL SKIN 02" by="Sachin Anshuman">
+        <location>http://www.orangevoid.org.uk/Projects/04/04.html</location>
+        <date>25 Mar &apos;06</date>
+    </software>
+    <software name="RandomGL" by="JohnG">
+        <location>http://www.hardcorepawn.com/RandomGL/</location>
+        <date>24 Mar &apos;06</date>
+    </software>
+    <software name="down the drain" by="woo">
+        <location>http://designeer.net/index.php?page=bbs/list.php?db=my_works</location>
+        <date>24 Mar &apos;06</date>
+    </software>
+    <software name="rubber - runge kutta" by="nick - coolbubble.com">
+        <location>http://www.coolbubble.com/programs/rubber.htm</location>
+        <date>23 Mar &apos;06</date>
+    </software>
+    <software name="Minerva" by="JohnG">
+        <location>http://www.hardcorepawn.com/minerva/</location>
+        <date>21 Mar &apos;06</date>
+    </software>
+    <software name="Go / Baduk / Weichi influence simulation" by="Louis Meckes">
+        <location>http://canut-ki-in.jeudego.org/go_blob/</location>
+        <date>21 Mar &apos;06</date>
+    </software>
+    <software name="CloudBrain" by="Gravity Monkey">
+        <location>http://www.gravitymonkey.com/cloudbrain/applet.jsp?user=gravitymonkey</location>
+        <date>20 Mar &apos;06</date>
+    </software>
+    <software name="Normal distribution" by="Jonas Jarutis">
+        <location>http://jonas.dve.lt/tolydus/applets/normal_density_d2/</location>
+        <date>15 Mar &apos;06</date>
+    </software>
+    <software name="grass" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=37&amp;Itemid=56</location>
+        <date>14 Mar &apos;06</date>
+    </software>
+    <software name="flag" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=36&amp;Itemid=54</location>
+        <date>13 Mar &apos;06</date>
+    </software>
+    <software name="Fairy Clocks" by="David Muth">
+        <location>http://www.lubric.com/tricks/fc.html</location>
+        <date>11 Mar &apos;06</date>
+    </software>
+    <software name="Concatenation of the Arcs" by="Alcys">
+        <location>http://www.alcys.com/p5/AlcysMultArcQuat/applet/index.html</location>
+        <date>11 Mar &apos;06</date>
+    </software>
+    <software name="Metafluid" by="Flux">
+        <location>http://www.ghost-hack.com/post/metafluid/applet/</location>
+        <date>08 Mar &apos;06</date>
+    </software>
+    <software name="Snake Charmer" by="Fergus Ray Murray">
+        <location>http://mimeomai.f2s.com/applet/Friedlander/</location>
+        <date>06 Mar &apos;06</date>
+    </software>
+    <software name="AstroShuttle" by="Daniel Kallin">
+        <location>http://82.182.180.147/astroShuttleApplet/index.html</location>
+        <date>06 Mar &apos;06</date>
+    </software>
+    <software name="Tharros" by="Franco Buffa">
+        <location>http://laser1.ca.astro.it/tharros/index.html</location>
+        <date>01 Mar &apos;06</date>
+    </software>
+    <software name="Baseball Salary Navigator" by="Erik Wannebo">
+        <location>http://home.comcast.net/~ewannebo/baseball/index.html</location>
+        <date>27 Feb &apos;06</date>
+    </software>
+    <software name="Scrub" by="Toine Heuvelmans">
+        <location>http://student-kmt.hku.nl/~toine/processing/sketchbook/Scrub/</location>
+        <date>27 Feb &apos;06</date>
+    </software>
+    <software name="The Mummy" by="tomyccc">
+        <location>http://www.3c-3k.com/</location>
+        <date>26 Feb &apos;06</date>
+    </software>
+    <software name="Tube Travel Contours" by="Tom Carden">
+        <location>http://www.tom-carden.co.uk/p5/tube_map_travel_times_texture_grid/applet/</location>
+        <date>21 Feb &apos;06</date>
+    </software>
+    <software name="isingEyes" by="daytar">
+        <location>http://www.daytar.de/art/isingEyes/</location>
+        <date>17 Feb &apos;06</date>
+    </software>
+    <software name="Krazydad P5 Gallery" by="Jim Bumgardner">
+        <location>http://krazydad.com/p5/</location>
+        <date>16 Feb &apos;06</date>
+    </software>
+    <software name="Acoustesia v0.1" by="David Boardman">
+        <location>http://www.netzfunk.org/usr/d/p5/acoustesia0-1/</location>
+        <date>13 Feb &apos;06</date>
+    </software>
+    <software name="Insekt" by="David Boardman">
+        <location>http://www.netzfunk.org/usr/d/p5/insect/</location>
+        <date>13 Feb &apos;06</date>
+    </software>
+    <software name="Grundlagen Gestaltung" by="Daniel Fetzner">
+        <location>http://webuser.hs-furtwangen.de/~fetzner/gestaltung/</location>
+        <date>12 Feb &apos;06</date>
+    </software>
+    <software name="A .jar of bugs" by="Manuel Dahm [beachmeat]">
+        <location>http://www.unshift.de/admin/SAM/www/index.php?remoteID=473</location>
+        <date>08 Feb &apos;06</date>
+    </software>
+    <software name="FTIR Multitouch Interaction Experiments" by="p davidson">
+        <location>http://mrl.nyu.edu/~jhan/ftirtouch/</location>
+        <date>07 Feb &apos;06</date>
+    </software>
+    <software name="Caligraft" by="Ricard Marxer PiÃ±Ã³n">
+        <location>http://www.caligraft.com/</location>
+        <date>06 Feb &apos;06</date>
+    </software>
+    <software name="The Line Drawn" by="David Lu">
+        <location>http://david-lu.net/v5/_thelinedrawn.html</location>
+        <date>06 Feb &apos;06</date>
+    </software>
+    <software name="Rosaly" by="Fergus Ray Murray">
+        <location>http://www.mimeomai.f2s.com/applet/rosaly.htm</location>
+        <date>06 Feb &apos;06</date>
+    </software>
+    <software name="Yinyo" by="Fergus Ray Murray">
+        <location>http://www.mimeomai.f2s.com/applet/yinyo4.htm</location>
+        <date>06 Feb &apos;06</date>
+    </software>
+    <software name="Freeze Tag" by="blprnt">
+        <location>http://www.blprnt.com/processing/freezetag</location>
+        <date>05 Feb &apos;06</date>
+    </software>
+    <software name="People" by="David">
+        <location>http://doswa.com/processing/Physics-People/</location>
+        <date>04 Feb &apos;06</date>
+    </software>
+    <software name="The world of Archoon" by="SietJP">
+        <location>http://www.pepere.org/flash-development_1_3x/flash-game-world-archoon_u_31.html</location>
+        <date>04 Feb &apos;06</date>
+    </software>
+    <software name="Babboon &amp;amp; friends" by="SietJP">
+        <location>http://www.pepere.org/flash-development_1_3x/flash-game_u_32.html</location>
+        <date>04 Feb &apos;06</date>
+    </software>
+    <software name="Realtime discourse" by="toastie">
+        <location>http://www.ivansafrin.com/processing/</location>
+        <date>03 Feb &apos;06</date>
+    </software>
+    <software name="L-Systems" by="Geraldine Sarmiento">
+        <location>http://www.sensescape.com/itp/lsystems/</location>
+        <date>29 Jan &apos;06</date>
+    </software>
+    <software name="sound painter" by="daniel dihardja">
+        <location>http://www.dihardja.de/artwork/apps/soundpainter/applet/index.html</location>
+        <date>29 Jan &apos;06</date>
+    </software>
+    <software name="PhysArkitus" by="Ali Eslami">
+        <location>http://www.arkitus.com/?id=22</location>
+        <date>27 Jan &apos;06</date>
+    </software>
+    <software name="Falling" by="Zongo">
+        <location>http://zongorama.free.fr/processing/chutte/chutte3/</location>
+        <date>26 Jan &apos;06</date>
+    </software>
+    <software name="Reclus" by="Giovanni Baldini">
+        <location>http://www.alcunecose.it/giovanni/fosset0405/reclus/</location>
+        <date>25 Jan &apos;06</date>
+    </software>
+    <software name="cellular automata : hourglass" by="yunsil">
+        <location>http://yunsil.com/bnh/java/CA/hourglass_core/</location>
+        <date>24 Jan &apos;06</date>
+    </software>
+    <software name="Interactive Tribal" by="seltar">
+        <location>http://seltar.wliia.org/sketch.php?pid=41</location>
+        <date>23 Jan &apos;06</date>
+    </software>
+    <software name="Strings" by="seltar">
+        <location>http://seltar.wliia.org/sketch.php?pid=40</location>
+        <date>23 Jan &apos;06</date>
+    </software>
+    <software name="part_1" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;amp;task=view&amp;amp;id=35&amp;amp;Itemid=53</location>
+        <date>23 Jan &apos;06</date>
+    </software>
+    <software name="tech" by="ppank">
+        <location>http://www.phlow.org/</location>
+        <date>22 Jan &apos;06</date>
+    </software>
+    <software name="3D Coordinate Drawer" by="Xavier Snelgrove">
+        <location>http://www.wxs.ca/applets/CoordinateDraw</location>
+        <date>18 Jan &apos;06</date>
+    </software>
+    <software name="manta" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;amp;task=view&amp;amp;id=34&amp;amp;Itemid=51</location>
+        <date>17 Jan &apos;06</date>
+    </software>
+    <software name="kaleidoskop" by="Andreas KÃ¶berle">
+        <location>http://www.eskimoblood.de/applet.php?i=26</location>
+        <date>16 Jan &apos;06</date>
+    </software>
+    <software name="dMUD" by="dMUDder">
+        <location>http://www.mudolc.org/dMUD</location>
+        <date>14 Jan &apos;06</date>
+    </software>
+    <software name="Killing Time" by="Jonathan Puckey">
+        <location>http://www.jonathanpuckey.com/</location>
+        <date>14 Jan &apos;06</date>
+    </software>
+    <software name="Keep Breathing" by="Donnie">
+        <location>http://classes.design.ucla.edu/Fall05/28/index_visor.php?id=3&amp;amp;ejercicio_id=19&amp;amp;persona_id=19</location>
         <date>13 Jan &apos;06</date>
     </software>
     <software name="Mycelium" by="Relan Lel Rider">
@@ -108,7 +916,7 @@
         <location>http://www.teclas.org/documentos.php?art=A008&amp;pg=4</location>
         <date>12 Dec &apos;05</date>
     </software>
-    <software name="Cola" by="David Peña Lopera">
+    <software name="Cola" by="David PeÃ±a Lopera">
         <location>http://david.laveneno.org/processing/cola/</location>
         <date>12 Dec &apos;05</date>
     </software>
@@ -352,7 +1160,7 @@
         <location>http://ific.uv.es/~rtomas/Processing/RubiksCube/</location>
         <date>20 Oct &apos;05</date>
     </software>
-    <software name="Bézier Wire" by="Toine Heuvelmans">
+    <software name="BÃ©zier Wire" by="Toine Heuvelmans">
         <location>http://student-kmt.hku.nl/~toine/processing/sketchbook/BezierWire/index.html</location>
         <date>17 Oct &apos;05</date>
     </software>
@@ -472,7 +1280,7 @@
         <location>http://www.arkitus.com/?id=21</location>
         <date>11 Sep &apos;05</date>
     </software>
-    <software name="bullekonst v0.1" by="Xerxes Rånby">
+    <software name="bullekonst v0.1" by="Xerxes RÃ¥nby">
         <location>http://www.gudinna.com/~zyz/processing/bulle/</location>
         <date>06 Sep &apos;05</date>
     </software>
@@ -772,7 +1580,7 @@
         <location>http://www.acn.waw.pl/gargulio/</location>
         <date>18 May &apos;05</date>
     </software>
-    <software name="longline" by="Andreas K�berle">
+    <software name="longline" by="Andreas Kï¿½berle">
         <location>http://www.eskimoblood.de/applet.php?i=25</location>
         <date>18 May &apos;05</date>
     </software>
@@ -884,7 +1692,7 @@
         <location>http://lukelab.com/lab/proce55ing/reflection/applet/index.php</location>
         <date>21 Mar &apos;05</date>
     </software>
-    <software name="Cut me" by="Andreas K�berle">
+    <software name="Cut me" by="Andreas Kï¿½berle">
         <location>http://www.eskimoblood.de/applet.php?i=24</location>
         <date>20 Mar &apos;05</date>
     </software>
@@ -892,7 +1700,7 @@
         <location>http://sjeiti.com/p5ref.html?attractor%20viewer&amp;code/lorenz15.jar&amp;code/lorenz15.pde&amp;800&amp;600&amp;attractor%20viewer&amp;:</location>
         <date>19 Mar &apos;05</date>
     </software>
-    <software name="pixelpuffer" by="Andreas K�berle">
+    <software name="pixelpuffer" by="Andreas Kï¿½berle">
         <location>http://www.eskimoblood.de/applet.php?i=23</location>
         <date>16 Mar &apos;05</date>
     </software>
@@ -972,11 +1780,11 @@
         <location>http://www.ertdfgcvb.ch/p1/delayed_magnets.html</location>
         <date>23 Feb &apos;05</date>
     </software>
-    <software name="Sound" by="Andreas K�berle">
+    <software name="Sound" by="Andreas Kï¿½berle">
         <location>http://www.eskimoblood.de/applet.php?i=22</location>
         <date>22 Feb &apos;05</date>
     </software>
-    <software name="milkyway" by="Andreas K�berle">
+    <software name="milkyway" by="Andreas Kï¿½berle">
         <location>http://www.eskimoblood.de/applet.php?i=21</location>
         <date>21 Feb &apos;05</date>
     </software>
@@ -1416,7 +2224,7 @@
         <location>http://bipolar.egenius.com</location>
         <date>20 Oct &apos;04</date>
     </software>
-    <software name="Blendmodes" by="Andreas K�berle">
+    <software name="Blendmodes" by="Andreas Kï¿½berle">
         <location>http://www.eskimoblood.de/applet.php?i=20</location>
         <date>20 Oct &apos;04</date>
     </software>
@@ -1460,7 +2268,7 @@
         <location>http://stage.itp.nyu.edu/~rd842/ICM/week3/ancientGenius.html</location>
         <date>10 Oct &apos;04</date>
     </software>
-    <software name="Pop2" by="Andreas K�berle">
+    <software name="Pop2" by="Andreas Kï¿½berle">
         <location>http://www.eskimoblood.de/index.php?i=19</location>
         <date>08 Oct &apos;04</date>
     </software>
@@ -1828,7 +2636,7 @@
         <location>http://members.chello.nl/m.vander.haagen/applets/mira.html</location>
         <date>17 Jun &apos;04</date>
     </software>
-    <software name="paint" by="Andreas K�berle">
+    <software name="paint" by="Andreas Kï¿½berle">
         <location>http://www.eskimoblood.de/applet.php?i=18</location>
         <date>16 Jun &apos;04</date>
     </software>
@@ -2328,7 +3136,7 @@
         <location>http://www.setmeonfire.com/processing/cafe_con_leche/</location>
         <date>19 Jan &apos;04</date>
     </software>
-    <software name="pop color" by="Andreas K�berle">
+    <software name="pop color" by="Andreas Kï¿½berle">
         <location>http://www.bittegutfinden.de/processing/applet6/</location>
         <date>19 Jan &apos;04</date>
     </software>
@@ -2360,7 +3168,7 @@
         <location>http://www.uncontrol.com/reflection.html</location>
         <date>12 Jan &apos;04</date>
     </software>
-    <software name="star" by="Andreas K�berle">
+    <software name="star" by="Andreas Kï¿½berle">
         <location>http://www.bittegutfinden.de/processing/applet5</location>
         <date>12 Jan &apos;04</date>
     </software>
@@ -2376,7 +3184,7 @@
         <location>http://www.beyondthree.com/index.php?chapter=code&amp;project=superhero</location>
         <date>09 Jan &apos;04</date>
     </software>
-    <software name="grid" by="Andreas K�berle">
+    <software name="grid" by="Andreas Kï¿½berle">
         <location>http://www.bittegutfinden.de/processing/applet4/</location>
         <date>09 Jan &apos;04</date>
     </software>
@@ -2524,11 +3332,11 @@
         <location>http://www.vas-animatum.net/blog/archives/proce55ing/031115/sketch_031115k.html</location>
         <date>22 Nov &apos;03</date>
     </software>
-    <software name="Gravity" by="Andreas K�berle">
+    <software name="Gravity" by="Andreas Kï¿½berle">
         <location>http://www.bittegutfinden.de/processing/applet3</location>
         <date>20 Nov &apos;03</date>
     </software>
-    <software name="BlackHole" by="Andreas K�berle">
+    <software name="BlackHole" by="Andreas Kï¿½berle">
         <location>http://www.bittegutfinden.de/processing/applet2/</location>
         <date>20 Nov &apos;03</date>
     </software>
@@ -2752,7 +3560,7 @@
         <location>http://richter.colorado.edu/~sethmc/solbox1/</location>
         <date>26 Sep &apos;03</date>
     </software>
-    <software name="Just some experiments" by="J�rgen Skogmo">
+    <software name="Just some experiments" by="Jï¿½rgen Skogmo">
         <location>http://ASCII33.com/?C=t_9</location>
         <date>22 Sep &apos;03</date>
     </software>
