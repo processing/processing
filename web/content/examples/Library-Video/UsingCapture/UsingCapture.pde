@@ -1,5 +1,5 @@
 /**
- * Capture. 
+ * Using Capture. 
  * 
  * Reading and displaying an image from an
  * attached Capture device. 
