@@ -174,7 +174,7 @@
 	<cat label="Library-Video">
 		<ex file="Movie.html">Movie</ex>
 		<ex file="Pixelate.html">Pixelate</ex>
-		<ex file="Capture.html">Capture</ex>
+		<ex file="UsingCapture.html">Using Capture</ex>
 		<ex file="Mirror.html">Mirror</ex>
 		<ex file="Mirror2.html">Mirror2</ex>
 		<ex file="BrightnessTracking.html">Brightness Tracking</ex>
