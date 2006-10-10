@@ -1,6 +1,18 @@
 0119 pde
 X .java files weren't working in 116+
 X   http://dev.processing.org/bugs/show_bug.cgi?id=405
+_ need new copy of Capture example that has a new name
+_   http://dev.processing.org/bugs/show_bug.cgi?id=408
+
+_ createFont() should always use native fonts
+_   need to warn that fonts may not be installed
+_   recommend that people include the ttf if that's the thing
+_   or rather, that this is only recommended for offline use
+
+_ macosx having trouble finding monaco
+_   changing font size, 
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1160057791
+_   http://dev.processing.org/bugs/show_bug.cgi?id=406
 
 _ need to document changes to int() (no longer accepts boolean)
 _ also parseInt and parseFloat, how they can return another number of NaN
