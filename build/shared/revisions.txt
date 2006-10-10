@@ -7,7 +7,25 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0119 - ?? October 2006
+ABOUT REV 0119 - 10 October 2006
+
+Mostly minor bug fix release.
+
++ Fixed support for .java files, which haven't been working since 0116+
+  http://dev.processing.org/bugs/show_bug.cgi?id=405
+
++ Rename the "Capture" example to avoid problems with Export
+  http://dev.processing.org/bugs/show_bug.cgi?id=408
+
++ Added workaround for Java 1.5 issue where openStream(), and therefore 
+  loadImage(), were throwing a different exception than Java 1.4.
+  http://dev.processing.org/bugs/show_bug.cgi?id=403
+
++ Added saveStream() and unlerp() methods as testing for teh API. 
+  Documentation will probably be limited to the developer's reference.
+
+If this is the first release you're using since 0115 or earlier, 
+please read the section below that contains the release notes for 0116. 
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
