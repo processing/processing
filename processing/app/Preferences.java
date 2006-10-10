@@ -300,6 +300,8 @@ public class Preferences {
     box.add(label);
     fontSizeField = new JTextField(4);
     box.add(fontSizeField);
+    label = new JLabel("  (requires restart of Processing)");
+    box.add(label);
     pain.add(box);
     d = box.getPreferredSize();
     box.setBounds(left, top, d.width, d.height);

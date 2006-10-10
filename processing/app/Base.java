@@ -107,11 +107,18 @@ public class Base {
     // set the look and feel before opening the window
 
     try {
-      if (Base.isLinux()) {
-        // linux is by default (motif?) even uglier than metal
-        // actually, i'm using native menus, so they're ugly and
-        // motif-looking. ick. need to fix this.
-        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+      if (Base.isMacOS()) {
+        // Use the Quaqua L & F on OS X to make JFileChooser less awful
+        UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+        UIManager.put("Component.visualMargin", new Insets(1, 1, 1, 1));
+
+      } else if (Base.isLinux()) {
+        // Linux is by default even uglier than metal (Motif?).
+        // Actually, i'm using native menus, so they're even uglier
+        // and Motif-looking (Lesstif?). Ick. Need to fix this.
+        String lfname = UIManager.getCrossPlatformLookAndFeelClassName();
+        UIManager.setLookAndFeel(lfname);
+
       } else {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }

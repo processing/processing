@@ -1,8 +1,6 @@
-0119 pde
-X .java files weren't working in 116+
-X   http://dev.processing.org/bugs/show_bug.cgi?id=405
-X need new copy of Capture example that has a new name
-X   http://dev.processing.org/bugs/show_bug.cgi?id=408
+0120 pde
+X add a note saying that changing the font size requires restart
+X add quaqua look and feel on the mac, improve how things look
 
 _ createFont() should always use native fonts
 _   need to warn that fonts may not be installed
