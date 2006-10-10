@@ -1,3 +1,10 @@
+0119 pde
+X .java files weren't working in 116+
+X   http://dev.processing.org/bugs/show_bug.cgi?id=405
+X need new copy of Capture example that has a new name
+X   http://dev.processing.org/bugs/show_bug.cgi?id=408
+
+
 0118 pde
 X no changes, only an opengl export fix
 
