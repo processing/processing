@@ -2805,8 +2805,12 @@ public class PApplet extends Applet
   }
 
 
-  static public final float lerp(float a, float b, float amt) {
-    return a + (b-a) * amt;
+  static public final float lerp(float start, float stop, float amt) {
+    return start + (stop-start) * amt;
+  }
+
+  static public final float unlerp(float start, float stop, float value) {
+    return (value - start) / (stop - start);
   }
 
   static public final float constrain(float amt, float low, float high) {
