@@ -1,8 +1,4 @@
-0119 core
-X add saveStream() method
-X change to handle Java 1.5 f-up where URLs now give FileNotFoundException
-X   http://dev.processing.org/bugs/show_bug.cgi?id=403
-X add unlerp() method
+0120 core
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
