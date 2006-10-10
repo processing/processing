@@ -2,14 +2,28 @@
 X add saveStream() method
 X change to handle Java 1.5 f-up where URLs now give FileNotFoundException
 X   http://dev.processing.org/bugs/show_bug.cgi?id=403
+X add unlerp() method
+
+_ loadBytes() and saveStream() functions badly need optimization!
+_   don't bother using a buffering stream, just handle internally. gah!
 
 _ make lerpColor honor the current color mode
 _   though that's awkward b/c colors always RGB
 _   lerpColor(c1, c2, amt, RGB/HSB/???)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
 
-_ with default renderer, no default background color set(!)
+_ with default renderer, no default background color?
 
+_ optimizations to opengl
+_   disabling error reporting (what's taking it so long?)
+_     maybe use a hint() to enable it? or a getError() function?
+_   make cached display list of filled/non-filled ellipse.. rect.. etc
+_     these don't work when the vertex colors change, but..
+_   or maybe should be using vertex arrays?
+
+- make a note in the pdf reference that createFont() messed with 1.5
 _ figure out what's breaking pdf font stuff, see if it's the 1.5 problem
+_   filed as bug #4769141 with apple
 _ fonts in java 1.5 have changed again
 _   appears that asking for the postscript name no longer works
 _   fix "create font" and associated font stuff to straighten it out
@@ -25,7 +39,6 @@ _   when did this break? 1.4.1? 1.4.x vs 1.3?
 _   may be that cff fonts won't work?
 _   or is it only those with ps names?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
-
 
 _ alloc() stuff not fixed because of thread halting
 _   problem where alloc happens inside setup(), so, uh..
