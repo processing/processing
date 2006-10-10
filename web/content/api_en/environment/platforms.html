@@ -81,7 +81,7 @@ but is perhaps a losing battle.
 <TT>2006-03-30 15:27:47.118 java[1170] CFLog (0): CFMessagePort: bootstrap_register(): failed 1103 (0x44f), port = 0x11303, name = 'java.ServiceProvider'<BR>
 See /usr/include/servers/bootstrap_defs.h for the error codes.<BR>
 2006-03-30 15:27:47.119 java[1170] CFLog (99): CFMessagePortCreateLocal(): failed to name Mach port (java.ServiceProvider)</TT> <BR>
-This is an Apple bug that shows up any time that more than one instance of Java is running. I'm baffled that they haven't fixed this issue. 
+This is an <A HREF="http://developer.apple.com/releasenotes/Java/Java50Release4RN/OutstandingIssues/chapter_4_section_3.html">Apple bug</A> that shows up any time that more than one instance of Java is running. I'm baffled that they haven't fixed this issue. 
 <!--<LI>As of revision 0104, Mac OS X version 10.3.9 is the minimum version that will run Processing. Unfortunately, we cannot support any earlier releases. OS X 10.2 is problematic and 10.3 should be updated to 10.3.9 anyways, if nothing else to take advantage of security updates. -->
 <!--<LI>On Mac OS X 10.3, be sure to use Software Update to update to the most recent version of Java 1.4. Early releases had several problems (i.e. "Present" mode being broken) In addition, the Mac OS X 10.3.9 update causes Processing to crash on startup, or might cause Safari to crash when running Java applets. 
 Apple has fixed the issue with 
