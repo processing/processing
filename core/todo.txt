@@ -1,4 +1,7 @@
 0120 core
+X fixed error when using hint(ENABLE_NATIVE_FONTS) with JAVA2D
+X   java.lang.IllegalArgumentException: 
+X   null incompatible with Global antialiasing enable key
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
