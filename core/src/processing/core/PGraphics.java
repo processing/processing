@@ -1114,8 +1114,8 @@ public abstract class PGraphics extends PImage implements PConstants {
   public final void endShape() {
     endShape(OPEN);
   }
-  
-  
+
+
   abstract public void endShape(int mode);
 
 
@@ -2151,8 +2151,12 @@ public abstract class PGraphics extends PImage implements PConstants {
     if (which != null) {
       textFont = which;
       if (hints[ENABLE_NATIVE_FONTS]) {
-        textFontNative = which.font;
+        if (which.font == null) {
+          which.findFont();
+        }
       }
+      textFontNative = which.font;
+
       //textFontNativeMetrics = null;
       // changed for rev 0104 for textMode(SHAPE) in opengl
       if (textFontNative != null) {
