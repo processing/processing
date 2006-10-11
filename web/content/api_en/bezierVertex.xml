@@ -11,7 +11,8 @@
 <example>
 <image>bezierVertex_.gif</image>
 <code>
-beginShape(LINE_STRIP);
+noFill();
+beginShape();
 vertex(30, 20);
 bezierVertex(80, 0, 80, 75, 30, 75);
 endShape();
@@ -30,7 +31,7 @@ endShape();
 </example>
 
 <description>
-Specifies vertex coordinates for Bezier curves. Each call to bezierVertex() defines the position of two control points and one anchor point of a Bezier curve, adding a new segment to a line or shape. The first time bezierVertex() is used within a beginShape() call, it must be prefaced with a call to vertex() to set the first anchor point. This function must be used between beginShape() and endShape() can only be used with the drawing types POLYGON, LINE_LOOP, and LINE_STRIP. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
+Specifies vertex coordinates for Bezier curves. Each call to <b>bezierVertex()</b> defines the position of two control points and one anchor point of a Bezier curve, adding a new segment to a line or shape. The first time <b>bezierVertex()</b> is used within a <b>beginShape()</b> call, it must be prefaced with a call to <b>vertex()</b> to set the first anchor point. This function must be used between <b>beginShape()</b> and <b>endShape()</b> and only when there is no MODE parameter specified to <b>beginShape()</b>. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
 </description>
 
 <syntax>

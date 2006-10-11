@@ -14,7 +14,7 @@
 // Run this program to learn how each of these functions
 // relate to the others 
 
-void draw() { } // Empy draw() need to keep the program running
+void draw() { } // Empty draw() needed to keep the program running
 
 void keyPressed() {
   println("pressed " + int(key) + " " + keyCode);

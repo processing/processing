@@ -11,10 +11,11 @@
 <example>
 <image>strokeJoin_.gif</image>
 <code>
+noFill();
 smooth();
 strokeWeight(10.0);
 strokeJoin(MITER);
-beginShape(LINE_STRIP);
+beginShape();
 vertex(35, 20);
 vertex(65, 50);
 vertex(35, 80);
@@ -25,10 +26,11 @@ endShape();
 <example>
 <image>strokeJoin_2.gif</image>
 <code>
+noFill();
 smooth();
 strokeWeight(10.0);
 strokeJoin(BEVEL);
-beginShape(LINE_STRIP);
+beginShape();
 vertex(35, 20);
 vertex(65, 50);
 vertex(35, 80);
@@ -39,10 +41,11 @@ endShape();
 <example>
 <image>strokeJoin_3.gif</image>
 <code>
+noFill();
 smooth();
 strokeWeight(10.0);
 strokeJoin(ROUND);
-beginShape(LINE_STRIP);
+beginShape();
 vertex(35, 20);
 vertex(65, 50);
 vertex(35, 80);

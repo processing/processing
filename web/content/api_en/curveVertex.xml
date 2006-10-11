@@ -11,7 +11,8 @@
 <example>
 <image>curveVertex_.gif</image>
 <code>
-beginShape(LINE_STRIP);
+noFill();
+beginShape();
 curveVertex(84,  91);
 curveVertex(84,  91);
 curveVertex(68,  19);
@@ -23,7 +24,7 @@ endShape();
 </example>
 
 <description>
-Specifies vertex coordinates for curves. This function may only be called between <b>beginShape()</b> and <b>endShape()</b> and can only be used with the drawing types POLYGON, LINE_LOOP, and LINE_STRIP. The <b>curveVertex()</b> function is an implementation of Catmull-Rom splines. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
+Specifies vertex coordinates for curves. This function may only be used between <b>beginShape()</b> and <b>endShape()</b> and only when there is no MODE parameter specified to <b>beginShape()</b>. The <b>curveVertex()</b> function is an implementation of Catmull-Rom splines. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
 </description>
 
 <syntax>

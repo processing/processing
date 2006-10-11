@@ -12,8 +12,9 @@
 <image>curveTightness_.gif</image>
 <code>
 // White curve 
+noFill();
 stroke(255); 
-beginShape(LINE_STRIP);
+beginShape();
 curveVertex(10, 26);
 curveVertex(10, 26);
 curveVertex(83, 24);
@@ -22,10 +23,10 @@ curveVertex(25, 65);
 curveVertex(25, 65);
 endShape();
 
-// Gray curve 
+// Gray curve
 stroke(126); 
 curveTightness(3.5); 
-beginShape(LINE_STRIP);
+beginShape();
 curveVertex(10, 26);
 curveVertex(10, 26);
 curveVertex(83, 24);
@@ -37,7 +38,7 @@ endShape();
 // Black curve 
 stroke(0); 
 curveTightness(-2.5); 
-beginShape(LINE_STRIP);
+beginShape();
 curveVertex(10, 26);
 curveVertex(10, 26);
 curveVertex(83, 24);
