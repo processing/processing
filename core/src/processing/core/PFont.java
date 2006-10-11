@@ -224,25 +224,32 @@ public class PFont implements PConstants {
     if (version >= 10) {  // includes the font name at the end of the file
       name = is.readUTF();
       psname = is.readUTF();
-
-      // this font may or may not be installed
-      font = new Font(name, Font.PLAIN, size);
-      // if the ps name matches, then we're in fine shape
-      if (!font.getPSName().equals(psname)) {
-        // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
-        // of the font, so try that in case this .vlw font was created on pc
-        // and the name is different, but the ps name is found on the
-        // java 1.4 mac that's currently running this sketch.
-        font = new Font(psname, Font.PLAIN, size);
-      }
-      // check again, and if still bad, screw em
-      if (!font.getPSName().equals(psname)) {
-        font = null;
-      }
     }
     if (version == 11) {
       smooth = is.readBoolean();
     }
+  }
+
+
+  /**
+   * Try to find the native version of this font.
+   */
+  protected Font findFont() {
+    // this font may or may not be installed
+    font = new Font(name, Font.PLAIN, size);
+    // if the ps name matches, then we're in fine shape
+    if (!font.getPSName().equals(psname)) {
+      // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
+      // of the font, so try that in case this .vlw font was created on pc
+      // and the name is different, but the ps name is found on the
+      // java 1.4 mac that's currently running this sketch.
+      font = new Font(psname, Font.PLAIN, size);
+    }
+    // check again, and if still bad, screw em
+    if (!font.getPSName().equals(psname)) {
+      font = null;
+    }
+    return font;
   }
 
 
