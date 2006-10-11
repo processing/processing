@@ -154,7 +154,7 @@ public class PGraphicsJava2D extends PGraphics {
     // hm, mark pixels as changed, because this will instantly do a full
     // copy of all the pixels to the surface.. so that's kind of a mess.
     //updatePixels();
-    
+
     insideDraw = false;
   }
 
@@ -230,7 +230,7 @@ public class PGraphicsJava2D extends PGraphics {
       }
       break;
 */
-      
+
     case TRIANGLES:
       if ((vertexCount % 3) == 0) {
         triangle(vertices[vertexCount - 3][MX],
@@ -805,6 +805,10 @@ public class PGraphicsJava2D extends PGraphics {
 
     Object antialias =
       g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+    if (antialias == null) {
+      // if smooth() and noSmooth() not called, this will be null (0120)
+      antialias = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
+    }
 
     // override the current smoothing setting based on the font
     // also changes global setting for antialiasing, but this is because it's
