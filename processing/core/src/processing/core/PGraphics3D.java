@@ -1844,7 +1844,7 @@ public class PGraphics3D extends PGraphics {
       min(1, v[EG] + v[AG] * lightContribution[LIGHT_AMBIENT_G] +
           v[DG] * lightContribution[LIGHT_DIFFUSE_G]);
     triColor[TRI_DIFFUSE_B] =
-      min(1, v[EB] + v[AB] * lightContribution[LIGHT_AMBIENT_R] +
+      min(1, v[EB] + v[AB] * lightContribution[LIGHT_AMBIENT_B] +
           v[DB] * lightContribution[LIGHT_DIFFUSE_B]);
     triColor[TRI_DIFFUSE_A] = min(1, v[DA]);
 
