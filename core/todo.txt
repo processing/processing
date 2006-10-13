@@ -2,6 +2,12 @@
 X fixed error when using hint(ENABLE_NATIVE_FONTS) with JAVA2D
 X   java.lang.IllegalArgumentException: 
 X   null incompatible with Global antialiasing enable key
+X fix issue where ambientLight(r, g, b) was instead ambientLight(r, g, r)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=412
+X createFont() should always use native fonts
+_   need to warn that fonts may not be installed
+_   recommend that people include the ttf if that's the thing
+_   or rather, that this is only recommended for offline use
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
