@@ -1,6 +1,7 @@
 0120 pde
 X add a note saying that changing the font size requires restart
 X trying out quaqua look and feel on the mac, improve how things look
+X trying the gtk+ look and feel for linux
 
 _ macosx having trouble finding monaco
 _   changing font size, 
