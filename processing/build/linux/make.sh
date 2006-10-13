@@ -82,7 +82,7 @@ cd ..
 
 ### -- BUILD PREPROC ------------------------------------------------
 
-echo Building PDE for JDK 1.3
+echo Building PDE for JDK 1.4
 
 cd app/preproc
 
