@@ -1,6 +1,7 @@
 package processing.pdf;
 
 import java.io.*;
+import java.util.*;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
@@ -163,18 +164,82 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       // the regular createGraphics doesn't seem to recognize fonts
       // how should the insertDirectory stuff be used properly?
       //g2 = content.createGraphics(width, height);
-      g2 = content.createGraphicsShapes(width, height);
+//      g2 = content.createGraphicsShapes(width, height);
+
+      mapper = new DefaultFontMapper();
+      //System.out.println("registering directories");
+      //FontFactory.registerDirectories();
+      //mapper.insertDirectory("c:\\windows\\fonts");
+      //System.out.println("done registering directories");
+
+      if (PApplet.platform == PApplet.MACOSX) {
+        try {
+          String homeLibraryFonts =
+            System.getProperty("user.home") + "/Library/Fonts";
+          mapper.insertDirectory(homeLibraryFonts);
+          //System.out.println(homeLibraryFonts);
+        } catch (Exception e) {
+          // might be a security issue if this is happening on the web
+        }
+        // add the system font paths
+        mapper.insertDirectory("/System/Library/Fonts");
+        mapper.insertDirectory("/Library/Fonts");
+
+      } else if (PApplet.platform == PApplet.WINDOWS) {
+        // how to get the windows fonts directory?
+        // could be c:\winnt\fonts or c:\windows\fonts or not even c:
+        // maybe do a Runtime.exec() on echo %WINDIR% ?
+
+        // find the windows fonts folder
+        File roots[] = File.listRoots();
+        for (int i = 0; i < roots.length; i++) {
+          File folder = new File(roots[i], "WINDOWS/Fonts");
+          if (folder.exists()) {
+            mapper.insertDirectory(folder.getAbsolutePath());
+            break;
+          }
+          folder = new File(roots[i], "WINNT/Fonts");
+          if (folder.exists()) {
+            mapper.insertDirectory(folder.getAbsolutePath());
+            break;
+          }
+        }
+      }
+
+      //System.out.println("inserting directory");
+      //mapper.insertDirectory("/Users/fry/Library/Fonts");
+      //mapper.insertDirectory("/System/Library/Fonts");
+      //System.out.println("done inserting directory");
+
+      g2 = content.createGraphics(width, height, mapper);
     }
     super.beginDraw();
   }
 
 
-  /*
-  public void rect(float x1, float y1, float x2, float y2) {
-    System.out.println("calling rect " + x1 + " " + y1 + " " + x2 + " " + y2);
-    super.rect(x1, y1, x2, y2);
+  /**
+   * Change the textMode() to either SHAPE or MODEL.
+   * <br/>
+   * This resets all renderer settings, and should therefore
+   * be called <EM>before</EM> any other commands that set the fill()
+   * or the textFont() or anything. Unlike other renderers,
+   * use textMode() directly after the size() command.
+   */
+  public void textMode(int mode) {
+    if (textMode != mode) {
+      if (mode == SHAPE) {
+        g2.dispose();
+        g2 = content.createGraphicsShapes(width, height);
+      } else if (mode == MODEL) {
+        g2.dispose();
+        g2 = content.createGraphics(width, height, mapper);
+      } else if (mode == SCREEN) {
+        throw new RuntimeException("textMode(SCREEN) not supported with PDF");
+      } else {
+        throw new RuntimeException("That textMode() doesn't exist");
+      }
+    }
   }
-  */
 
 
   /**
@@ -408,6 +473,72 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
   public void save(String filename) {
     nope("save");
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  /**
+   * Add a directory that should be searched for font data.
+   * <br/>
+   * On Mac OS X, the following directories are added by default:
+   * <UL>
+   * <LI>/System/Library/Fonts
+   * <LI>/Library/Fonts
+   * <LI>~/Library/Fonts
+   * </UL>
+   * On Windows, all drive letters are searched for WINDOWS\Fonts
+   * or WINNT\Fonts, any that exists is added.
+   * <br/><br/>
+   * On Linux or any other platform, you'll need to add the
+   * directories by hand. (If there are actual standards here that we
+   * can use as a starting point, please file a bug to make a note of it)
+   */
+  public void addFonts(String directory) {
+    mapper.insertDirectory(directory);
+  }
+
+
+  /**
+   * List the fonts known to the PDF renderer. This is like PFont.list(),
+   * however not all those fonts are available by default.
+   */
+  public String[] listFonts() {
+     /*
+      //System.out.println("list of fonts");
+      HashMap map = mapper.getAliases();
+      //KeySet keys = map.keySet();
+      Set entries = map.entrySet();
+      Iterator it = entries.iterator();
+      while (it.hasNext()) {
+        Map.Entry entry = (Map.Entry) it.next();
+        System.out.println(entry.getKey() + "-->" + entry.getValue());
+      }
+     */
+
+     /*
+    HashMap map = mapper.getAliases();
+    KeySet keys = map.keySet();
+    Iterator it = entries.iterator();
+    while (it.hasNext()) {
+      Map.Entry entry = (Map.Entry) it.next();
+      System.out.println(entry.getKey() + "-->" + entry.getValue());
+    }
+     */
+
+    HashMap map = mapper.getAliases();
+    Set entries = map.entrySet();
+    String list[] = new String[entries.size()];
+    Iterator it = entries.iterator();
+    int count = 0;
+    while (it.hasNext()) {
+      Map.Entry entry = (Map.Entry) it.next();
+      //System.out.println(entry.getKey() + "-->" + entry.getValue());
+      list[count++] = (String) entry.getKey();
+    }
+    //return PApplet.sort(list);
+    return list;
   }
 
 

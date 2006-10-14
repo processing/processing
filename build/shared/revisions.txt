@@ -7,6 +7,16 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0120 - XX October 2006
+
++ With the PDF library, text no longer defaults to raw shape outlines. 
+  Details (and a means to revert to the old behavior) in the reference:
+  http://processing.org/reference/libraries/pdf/
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0119 - 10 October 2006
 
 Mostly minor bug fix release.
