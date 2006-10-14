@@ -92,7 +92,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   /**
-   * Create a new PGraphicsGL at the specified size.
+   * Create a new PGraphicsOpenGL at the specified size.
    * <P/>
    * Unlike other PGraphics objects, the PApplet object passed in cannot
    * be null for this renderer because OpenGL uses a special Canvas
@@ -101,21 +101,21 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * @param parent the host applet
    */
   public PGraphicsOpenGL(int width, int height, PApplet iparent) {
-    //System.out.println("creating PGraphicsGL");
+    //System.out.println("creating PGraphicsOpenGL");
 
     if (iparent == null) {
-      throw new RuntimeException("The applet passed to PGraphicsGL " +
+      throw new RuntimeException("The applet passed to PGraphicsOpenGL " +
                                  "cannot be null");
     }
     this.parent = iparent;
 
-    //System.out.println("creating PGraphicsGL 2");
+    //System.out.println("creating PGraphicsOpenGL 2");
 
     //GLCapabilities capabilities = new GLCapabilities();
     //canvas = GLDrawableFactory.getFactory().createGLCanvas(capabilities);
     canvas = new GLCanvas();
 
-    //System.out.println("creating PGraphicsGL 3");
+    //System.out.println("creating PGraphicsOpenGL 3");
     canvas.addGLEventListener(new GLEventListener() {
 
         public void display(GLAutoDrawable drawable) {
@@ -134,26 +134,26 @@ public class PGraphicsOpenGL extends PGraphics3D {
                             int x, int y, int width, int height) { }
       });
 
-    //System.out.println("creating PGraphicsGL 4");
+    //System.out.println("creating PGraphicsOpenGL 4");
 
     parent.setLayout(null);
     parent.add(canvas);
     canvas.setBounds(0, 0, width, height);
 
-    //System.out.println("creating PGraphicsGL 5");
+    //System.out.println("creating PGraphicsOpenGL 5");
     //System.out.println("adding canvas listeners");
     canvas.addMouseListener(parent);
     canvas.addMouseMotionListener(parent);
     canvas.addKeyListener(parent);
     canvas.addFocusListener(parent);
 
-    //System.out.println("creating PGraphicsGL 6");
+    //System.out.println("creating PGraphicsOpenGL 6");
 
     // need to get proper opengl context since will be needed below
     gl = canvas.getGL();
     glu = new GLU(); //canvas.getGLU();
 
-    //System.out.println("creating PGraphicsGL 7");
+    //System.out.println("creating PGraphicsOpenGL 7");
 
     // this sets width/height and calls allocate() in PGraphics
     resize(width, height);
@@ -182,8 +182,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     //System.out.println("done creating gl");
   }
-  
-  
+
+
   /**
    * Overridden from base PGraphics, because this PGraphics will set its own listeners.
    */
@@ -192,7 +192,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       //parent.addListeners();
     }
 
-  
+
   //protected boolean displayed = false;
 
   // main applet thread requests an update,
@@ -1375,11 +1375,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 /*
   public void endCamera() {
-    //System.out.println("PGraphicsGL.endCamera() 1");
+    //System.out.println("PGraphicsOpenGL.endCamera() 1");
     super.endCamera();
 
     System.out.println("begin endCamera");
-    //System.out.println("PGraphicsGL.endCamera() " + width + " " + height);
+    //System.out.println("PGraphicsOpenGL.endCamera() " + width + " " + height);
     //System.exit(0);
 
     //System.out.println("into camera error " + PApplet.hex(gl.glGetError()));
@@ -2161,7 +2161,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
                     GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
