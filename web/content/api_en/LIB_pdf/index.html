@@ -215,15 +215,29 @@ See <a href="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug
 expectations in how a PDF should look (scalable and high res) versus
 what happens when image data is written to it at 72 dpi. 
 
-<LI>use createFont() with a TrueType font (some OpenType fonts also work) 
+<LI>Use createFont() with a TrueType font (some OpenType fonts also work) 
 to make fonts work properly. Any font that shows up in PFont.list() 
-should work. If you don't use createFont(), text will likely show up 
-bitmappy and gross like images. Using hint(ENABLE_NATIVE_FONTS) may 
-improve things as well, but not in all situations.
+should work, or if not, adding a .ttf file to the data directory and
+calling createFont("fontname.ttf") will also work. 
+If you don't use createFont(), text will likely show up 
+bitmappy and gross like images. 
+
+<LI>If loadFont() is used instead of createFont(), hint(ENABLE_NATIVE_FONTS) 
+may improve things if the font is installed on the machine, 
+but not in all situations.
 
 <LI> The shape of the characters may be weird in some cases, 
 there seems to be a Java bug with cubic vs. quadric splines. 
-This bug may be specific to Mac OS X. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=404">Bug 404</A>)
+This bug may be specific to Mac OS X. 
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=404">Bug 404</A>)
+
+<LI>Starting in release 0120, text is no longer treated as shape data by 
+default, meaning that the font will need to be installed to view the
+PDF that's created. The upside is that the PDF will render better 
+(particularly in light of the Mac OS X bug listed above). To force text
+to be treated as shape data, use textMode(SHAPE), immediately after size().
+See the developer reference for PGraphicsPDF.textMode() 
+for more specifics.
 
 <LI> Again, exit() is really important when using PDF with size(). 
 
