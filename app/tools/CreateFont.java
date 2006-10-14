@@ -111,7 +111,7 @@ public class CreateFont extends JFrame {
     int index = 0;
     for (int i = 0; i < fonts.length; i++) {
       String psname = fonts[i].getPSName();
-      if (psname == null) System.err.println("ps name is null");
+      //if (psname == null) System.err.println("ps name is null");
 
       flist[index++] = fonts[i].getPSName();
       table.put(fonts[i].getPSName(), fonts[i]);
