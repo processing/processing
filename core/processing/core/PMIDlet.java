@@ -222,8 +222,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     protected final void start() {
-        Thread t = new Thread(this);
-        t.start();
+        thread = new Thread(this);
+        thread.start();
     }
     
     public final void run() {
