@@ -1,6 +1,11 @@
 This file reflects the ongoing history of revisions to the Mobile Processing
 software, including its core and library APIs.
 
+Core 0009
+=========
+
+- Fixed threading bug introduced in 0008.
+
 Bluetooth 0007
 ==============
 
