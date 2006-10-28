@@ -72,7 +72,6 @@ Datatype for storing images. Processing can display of <b>.gif</b>, <b>.jpg</b>,
 <constructor>
 PImage()
 PImage(<c>width</c>, <c>height</c>)
-PImage(<c>pixels[]</c>, <c>width</c>, <c>height</c>, <c>format</c>)
 PImage(<c>img</c>)
 </constructor>
 
