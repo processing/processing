@@ -15,7 +15,7 @@ PGraphics pg;
 
 void setup() {
   size(100, 100);
-  pg = createGraphics(80, 80, P2D);
+  pg = createGraphics(80, 80, P3D);
   pg.beginDraw();
   pg.background(102);
   pg.stroke(255);
@@ -31,7 +31,7 @@ void draw() {
 </example>
 
 <description>
-Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use. The DXF and PDF renderers require the filename parameter.
+Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. P2D is not yet implemented, but will be available in a future release. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use. The DXF and PDF renderers require the filename parameter.
 </description>
 
 <syntax>
