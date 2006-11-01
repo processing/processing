@@ -378,6 +378,24 @@ public class XMLElement {
         element.parent = this;
         children.insertElementAt(element, position);
     }
+    
+    /**
+     * @param element XMLElement, element you want to remove
+     */
+    public void removeChild(XMLElement element) {
+        if (children.removeElement(element)) {
+            element.parent = null;
+            empty = children.size() == 0;
+        }
+    }
+    
+    /**
+     * @param position int, position where you want to remove an element
+     */
+    public void removeChild(int position) {
+        XMLElement element = (XMLElement) children.elementAt(position);
+        removeChild(element);
+    }
 
     /** Use getDepth to get the maximum depth of an Element to one of its leaves.
      * @return int, the maximum depth of an Element to one of its leaves
