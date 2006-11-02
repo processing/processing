@@ -150,12 +150,11 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=232">Bug 232</A>).
 Mac OS X
 
 <UL>
+<li>Processing requires Mac OS X 10.3.9 or later, see the <a href="../environment/platforms.html#mac">platforms</a> section for more information.
 <li>First be sure that you're not trying to run Processing from the disk image. As with most programs, Processing needs to be copied to the Applications folder in order for it to run properly.
 <li>If it's still not working, open Console.app, found in Applications &rarr; Utilities &rarr; Console and see if there are any messages. If you don't know what they mean, post them to the discourse board where someone can help you out.
 <li>Using developer releases of Java is strongly discouraged. These can often cause problems and we can't possibly support them.
-<li>If you're running on Mac OS X 10.2, read the <a href="../environment/platforms.html#mac">platforms</a> section regarding things that may be broken.
-<li>Sometimes you might see the following error: <br />
-
+<li>Fink users might see the following error: <br />
 <TT>dyld: /Applications/processing/jikes version mismatch for library:<br />/sw/lib/libiconv.2.dylib (compatibility version of user: <br />
 5.0.0 greater than library's version: 3.0.0)</TT> <br />
 It seems that this happens when an older version of <a href="http://fink.sourceforge.net">Fink</A> is installed. In this case, you should either update or uninstall Fink. (thanks to Ryan Govostes for tracking this down)
@@ -464,25 +463,34 @@ The result of dividing two integers will always be another integer:
 <pre>int a = 2;
 int b = 5;
 int result = a / b;
-// result is zero</pre>
+// result is zero
+</pre>
 While somewhat confusing at first, this is later useful for more
 advanced programming. <br /> <br />
 
-To get fractions, use a 'float' instead: 
-<pre>float a = 2.0;
+To get fractions, use a 'float' instead:
+<pre>
+float a = 2.0;
 float b = 5.0;
 float result = a / b;
-// result is 0.4</pre>
+// 'result' will be 0.4
+</pre>
 It is not enough to just divide two integers and set them to a float:
-<pre>float y = 2 / 5;</pre>
+<pre>
+float y = 2 / 5;
+</pre>
 In this case, integer 2 is divided by 5, which is zero, and then zero
 is assigned to a float. The number doesn't become a float until the
 lefthand side of the = sign. On the other hand, this:
-<pre>float y = 2.0 / 5;</pre>
+<pre>
+float y = 2.0 / 5;
+</pre>
 will work just fine. In this case, Java sees that 2.0 is a float, so
 it also converts the 5 to a float so that they can be divided, which
 makes it identical to:
-<pre>float y = 2.0 / 5.0;</pre>
+<pre>
+float y = 2.0 / 5.0;
+</pre>
 and because floats are being used on the righthand side, the result
 will be a float, even before it gets to the lefthand side.
     </p>
@@ -721,7 +729,7 @@ Linux
 <tt>Warning: Cannot convert string
 "-b&h-lucida-medium-r-normal-sans-*-140-*-*-p-*-iso8859-1" to type
 FontStruct</tt>. This is just a Java issue, but doesn't seem to 
-affect things.
+affect anything.
 </UL></p>
 
 
