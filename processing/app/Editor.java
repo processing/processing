@@ -174,8 +174,14 @@ public class Editor extends JFrame
     // doesn't matter when this is created, just make it happen at some point
     //find = new FindReplace(Editor.this);
 
-    Container pain = getContentPane();
+    //Container pain = getContentPane();
+    //pain.setLayout(new BorderLayout());
+    // for rev 0120, placing things inside a JPanel because
+    Container contentPain = getContentPane();
+    contentPain.setLayout(new BorderLayout());
+    JPanel pain = new JPanel();
     pain.setLayout(new BorderLayout());
+    contentPain.add(pain, BorderLayout.CENTER);
 
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
@@ -237,6 +243,17 @@ public class Editor extends JFrame
     listener = new EditorListener(this, textarea);
     pain.add(box);
 
+    pain.setTransferHandler(new TransferHandler() {
+
+        public boolean canImport(JComponent dest, DataFlavor[] flavors) {
+          // claim that we can import everything
+          return true;
+        }
+
+        public boolean importData(JComponent src, Transferable transferable) {
+          DataFlavor[] flavors = transferable.getTransferDataFlavors();
+
+    /*
     DropTarget dt = new DropTarget(this, new DropTargetListener() {
 
         public void dragEnter(DropTargetDragEvent event) {
@@ -264,6 +281,7 @@ public class Editor extends JFrame
 
           Transferable transferable = event.getTransferable();
           DataFlavor flavors[] = transferable.getTransferDataFlavors();
+    */
           int successful = 0;
 
           for (int i = 0; i < flavors.length; i++) {
@@ -286,7 +304,7 @@ public class Editor extends JFrame
                     File parent = file.getParentFile();
                     if (name.equals(parent.getName())) {
                       handleOpenFile(file);
-                      return;
+                      return true;
                     }
                   }
 
@@ -298,6 +316,7 @@ public class Editor extends JFrame
 
             } catch (Exception e) {
               e.printStackTrace();
+              return false;
             }
           }
 
@@ -310,6 +329,7 @@ public class Editor extends JFrame
           } else {
             message(successful + " files added to the sketch.");
           }
+          return true;
         }
       });
   }
