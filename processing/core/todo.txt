@@ -9,6 +9,70 @@ _   need to warn that fonts may not be installed
 _   recommend that people include the ttf if that's the thing
 _   or rather, that this is only recommended for offline use
 
+_ saveFrame() produces a black background because bg not set correctly:
+_   http://dev.processing.org/bugs/show_bug.cgi?id=421
+// This code creates an image with a black background, 
+// which is different from the screen default background of light gray:
+size(100, 100);
+ellipse(50, 50, 30, 30);
+saveFrame("blah.tif");
+
+_ with default renderer, no default background color?
+_ only call defaults() when it's part of a PApplet canvas
+_   make sure that defaults() is no longer necessary
+_   don't want to hose PGraphics for others
+_   both for pdf, and making background transparent images
+_ PGraphics3D should alloc to all transparent
+_   unless it's the main drawing surface (does it know on alloc?)
+_   in which case it should be set to opaque
+_ have createGraphics() create a completely transparent image
+_   and also not require defaults() to be called
+
+_ this produces a dark blue background: 
+colorMode(RGB, 100);
+background(128);
+
+_ fix 3D tessellation problems with curveVertex and bezierVertex
+_   http://dev.processing.org/bugs/show_bug.cgi?id=390
+_   two examples in sketchbook
+_   this has been reported several times
+
+_ image outofmemoryerror for casey's students
+_   http://dev.processing.org/bugs/show_bug.cgi?id=355
+_   this may be related to a ton of other memory bugs
+_ for a PGraphics2D, should its image cache object be the memoryimagesource?
+_ is the texture[] array in PGraphics3D causing the problems with memory?
+_   actually it's a PGraphicsGL problem.. 
+_   maybe the image binding not getting unbound?
+_ loading lots of images is a problem, describe how to unload
+_   is it possible? necessary to call delay(5) or something?
+
+_ make this work for JAVA2D and P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=419
+
+PGraphics pg;
+
+void setup() {
+  size(100, 100);
+  pg = createGraphics(80, 80, P3D);
+  pg.beginDraw();
+  pg.background(102);
+  pg.stroke(255);
+  pg.line(20, 20, 80, 80);
+  pg.endDraw();
+  noLoop();
+}
+
+void draw() {
+  image(pg, 10, 10); 
+}
+
+_ detect when using full screen
+_   and if so, remove decoration and don't bother with bg present frame
+_   frame.setUndecorated(true);
+_   frame.setLocation(0,0);
+_   size(screen.width,screen,height); 
+
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
 
@@ -16,8 +80,6 @@ _ make lerpColor honor the current color mode
 _   though that's awkward b/c colors always RGB
 _   lerpColor(c1, c2, amt, RGB/HSB/???)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
-
-_ with default renderer, no default background color?
 
 _ optimizations to opengl
 _   disabling error reporting (what's taking it so long?)
@@ -78,20 +140,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=386
 _ y may be flipped in modelX/Y/Z stuff on opengl
 _   is this the same bug?
 
-_ fix 3D tessellation problems with curveVertex and bezierVertex
-_   http://dev.processing.org/bugs/show_bug.cgi?id=390
-_   two examples in sketchbook
-
-_ image outofmemoryerror for casey's students
-_   http://dev.processing.org/bugs/show_bug.cgi?id=355
-_   this may be related to a ton of other memory bugs
-_ for a PGraphics2D, should its image cache object be the memoryimagesource?
-_ is the texture[] array in PGraphics3D causing the problems with memory?
-_   actually it's a PGraphicsGL problem.. 
-_   maybe the image binding not getting unbound?
-_ loading lots of images is a problem, describe how to unload
-_   is it possible? necessary to call delay(5) or something?
-
 _ color(0, 0, 0, 0) produces black
 _   although fill(0, 0, 0, 0) does the right thing
 _   also, rgb255 not getting set
@@ -102,14 +150,11 @@ _ if calling beginPixels inside another, need to increment a counter
 _   otherwise the end will look like it's time to update
 _   which may not actually be the case
 _   i.e. calling filter() inside begin/end block
+_ how to clear the screen with alpha? background(0, 0, 0, 0)?
+_   background(EMPTY) -> background(0x01000000) or something?
 
 _ keep track of internal lines in shapes
 _   disable anti-aliasing for internal edges
-
-_ only call defaults() when it's part of a PApplet canvas
-_   make sure that defaults() is no longer necessary
-_   don't want to hose PGraphics for others
-_   both for pdf, and making background transparent images
 
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
@@ -219,18 +264,11 @@ _ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
 _   also if transparency set but RGB is setting, still honors transparency
 _   http://dev.processing.org/bugs/show_bug.cgi?id=351
 
-_ this produces a dark blue background: 
-colorMode(RGB, 100);
-background(128);
-
 _ image memory use.. how to handle lots of images
 _   need to figure out exactly how they should/can unload
 _   
 
 _ docs: get/set are faster way to do image, but no tint, no translations
-
-_ how to clear the screen with alpha? background(0, 0, 0, 0)?
-_   background(EMPTY) -> background(0x01000000) or something?
 
 _ introduce calc()
 _ tint() sets texture color, fill() is ignored with textures
@@ -565,8 +603,6 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
-_ have createGraphics() create a completely transparent image
-_   and also not require defaults() to be called
 _ point() doesn't work with some graphics card setups
 _   particularly with opengl and java2d
 _   http://dev.processing.org/bugs/show_bug.cgi?id=121
@@ -828,6 +864,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsOpenGL
 
+_ textMode(SCREEN) is broken for opengl
+_   http://dev.processing.org/bugs/show_bug.cgi?id=426
 _ opengl keeping memory around.. 
 _   could this be in vertices that have an image associated
 _   or the image buffer used for textures
