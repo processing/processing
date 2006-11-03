@@ -1457,8 +1457,10 @@ public class Sketch {
       }
       errorLine -= code[errorFile].preprocOffset;
 
-      throw new RunnerException(re.getMessage(), errorFile,
-                             errorLine, re.getColumn());
+      String msg = re.getMessage();
+      //System.out.println("msg is " + msg);
+      throw new RunnerException(msg, errorFile,
+                                errorLine, re.getColumn());
 
     } catch (antlr.TokenStreamRecognitionException tsre) {
       // while this seems to store line and column internally,
