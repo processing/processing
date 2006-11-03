@@ -132,7 +132,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public boolean fill;
 
   /** fill that was last set (read-only) */
-  public int fillColor;
+  public int fillColor = 0xffFFFFFF;
 
   protected boolean fillAlpha;
   protected float fillR, fillG, fillB, fillA;
@@ -144,7 +144,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public boolean stroke;
 
   /** stroke that was last set (read-only) */
-  public int strokeColor;
+  public int strokeColor = 0xff000000;
 
   protected boolean strokeAlpha;
   protected float strokeR, strokeG, strokeB, strokeA;
@@ -153,7 +153,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   /** Last background color that was set, zero if an image */
-  public int backgroundColor;
+  public int backgroundColor = 0xffC0C0C0;
 
   float backgroundR, backgroundG, backgroundB;
   int backgroundRi, backgroundGi, backgroundBi;
@@ -661,7 +661,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     // a gray background (when just a transparent surface or an empty pdf
     // is what's desired)
     if (mainDrawingSurface) {
-      background(204);
+      background(backgroundColor);
     }
 
     defaultsInited = true;
@@ -1600,7 +1600,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Draw a quadratic bezier curve. The first and last points are
+   * Draw a cubic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
    * or 'handles' in an application like Illustrator.
    * <P>
@@ -1618,7 +1618,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * This would be done in processing by adding these statements:
    * <PRE>bezierVertex(x5, y5, x6, y6, x7, y7)
    * </PRE>
-   * To draw a cubic (instead of quadratic) curve,
+   * To draw a quadratic (instead of cubic) curve,
    * use the control point twice by doubling it:
    * <PRE>bezier(x1, y1, cx, cy, cx, cy, x2, y2);</PRE>
    */
