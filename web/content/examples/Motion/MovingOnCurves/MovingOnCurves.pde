@@ -39,6 +39,7 @@ void draw()
 {
   background(0);
   
+  noFill();
   stroke(102);
   
   beginShape();
