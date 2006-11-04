@@ -441,6 +441,15 @@ public class Base {
       }
 
     } else {
+      sketchbookFolder =
+        Base.selectFolder("Select the folder where " +
+                          "Processing sketches should be stored...",
+                          null, null);
+      if (sketchbookFolder == null) {
+        System.exit(0);
+      }
+
+      /*
       // on linux (or elsewhere?) prompt the user for the location
       JFileChooser fc = new JFileChooser();
       fc.setDialogTitle("Select the folder where " +
@@ -457,6 +466,7 @@ public class Base {
       } else {
         System.exit(0);
       }
+      */
     }
 
     // create the folder if it doesn't exist already
@@ -482,6 +492,42 @@ public class Base {
     }
 
     return sketchbookFolder;
+  }
+
+
+  /**
+   * Implementation for choosing directories that handles both the
+   * Mac OS X hack to allow the native AWT file dialog, or uses
+   * the JFileChooser on other platforms. Mac AWT trick obtained from
+   * <A HREF="http://lists.apple.com/archives/java-dev/2003/Jul/msg00243.html">this post</A>
+   * on the OS X Java dev archive which explains the cryptic note in
+   * Apple's Java 1.4 release docs about the special System property.
+   */
+  static public File selectFolder(String prompt, File folder, Frame frame) {
+    if (Base.isMacOS()) {
+      if (frame == null) frame = new Frame(); //.pack();
+      FileDialog fd = new FileDialog(frame, prompt, FileDialog.LOAD);
+      fd.setDirectory(folder.getParent());
+      //fd.setFile(folder.getName());
+      System.setProperty("apple.awt.fileDialogForDirectories", "true");
+      fd.show();
+      System.setProperty("apple.awt.fileDialogForDirectories", "false");
+      return new File(fd.getDirectory(), fd.getFile());
+
+    } else {
+      JFileChooser fc = new JFileChooser();
+      fc.setDialogTitle(prompt);
+      if (folder != null) {
+        fc.setSelectedFile(folder);
+      }
+      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+      int returned = fc.showOpenDialog(new JDialog());
+      if (returned == JFileChooser.APPROVE_OPTION) {
+        return fc.getSelectedFile();
+      }
+    }
+    return null;
   }
 
 
