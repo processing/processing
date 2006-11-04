@@ -1395,7 +1395,6 @@ public class Editor extends JFrame
         checkModified2();  // though this may just quit
 
       } else if (result == JOptionPane.CANCEL_OPTION) {
-        System.out.println("canceled");
         // ignored
       }
     }
