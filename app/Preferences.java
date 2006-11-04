@@ -108,7 +108,8 @@ public class Preferences {
 
   // gui elements
 
-  JDialog dialog;
+  //JDialog dialog;
+  JFrame dialog;
   int wide, high;
 
   JTextField sketchbookLocationField;
@@ -198,7 +199,8 @@ public class Preferences {
 
     // setup dialog for the prefs
 
-    dialog = new JDialog(editor, "Preferences", true);
+    //dialog = new JDialog(editor, "Preferences", true);
+    dialog = new JFrame("Preferences");
     dialog.setResizable(false);
 
     Container pain = dialog.getContentPane();
@@ -263,6 +265,7 @@ public class Preferences {
     button = new JButton(PROMPT_BROWSE);
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          /*
           JFileChooser fc = new JFileChooser();
           fc.setSelectedFile(new File(sketchbookLocationField.getText()));
           fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -270,6 +273,13 @@ public class Preferences {
           int returned = fc.showOpenDialog(new JDialog());
           if (returned == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
+            sketchbookLocationField.setText(file.getAbsolutePath());
+          }
+          */
+          File dflt = new File(sketchbookLocationField.getText());
+          File file =
+            Base.selectFolder("Select new sketchbook location", dflt, dialog);
+          if (file != null) {
             sketchbookLocationField.setText(file.getAbsolutePath());
           }
         }
