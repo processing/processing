@@ -153,7 +153,7 @@ public class Editor extends JFrame
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          handleQuit();
+          handleQuitInternal();
         }
       });
 
@@ -585,7 +585,7 @@ public class Editor extends JFrame
       item = newJMenuItem("Quit", 'Q');
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            handleQuit();
+            handleQuitInternal();
           }
         });
       menu.add(item);
@@ -1370,6 +1370,12 @@ public class Editor extends JFrame
       // turns out windows has the same problem (sometimes)
       // disable cancel for now until a fix can be found.
 
+      int result =
+        JOptionPane.showConfirmDialog(this, prompt, "Quit",
+                                      JOptionPane.YES_NO_CANCEL_OPTION,
+                                      JOptionPane.QUESTION_MESSAGE);
+
+      /*
       Object[] options = { "Yes", "No" };
       int result = JOptionPane.showOptionDialog(this,
                                                 prompt,
@@ -1379,6 +1385,7 @@ public class Editor extends JFrame
                                                 null,
                                                 options,
                                                 options[0]);
+      */
 
       if (result == JOptionPane.YES_OPTION) {
         handleSave(true);
@@ -1388,6 +1395,7 @@ public class Editor extends JFrame
         checkModified2();  // though this may just quit
 
       } else if (result == JOptionPane.CANCEL_OPTION) {
+        System.out.println("canceled");
         // ignored
       }
     }
@@ -1782,6 +1790,7 @@ public class Editor extends JFrame
                                               null,
                                               options,
                                               options[0]);
+
     if (result == JOptionPane.OK_OPTION) {
       handleSave(true);
 
@@ -1802,12 +1811,33 @@ public class Editor extends JFrame
    * to disk just in case they want to quit. Final exit() happens
    * in Editor since it has the callback from EditorStatus.
    */
-  public void handleQuit() {
+  public void handleQuitInternal() {
     // doStop() isn't sufficient with external vm & quit
     // instead use doClose() which will kill the external vm
     doClose();
 
     checkModified(HANDLE_QUIT);
+  }
+
+
+  /**
+   * Method for the MRJQuitHandler, needs to be dealt with differently
+   * than the regular handler because OS X has an annoying implementation
+   * <A HREF="http://developer.apple.com/qa/qa2001/qa1187.html">quirk</A>
+   * that requires an exception to be thrown in order to properly cancel
+   * a quit message.
+   */
+  public void handleQuit() {
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          handleQuitInternal();
+        }
+      });
+
+    // Throw IllegalStateException so new thread can execute.
+    // If showing dialog on this thread in 10.2, we would throw
+    // upon JOptionPane.NO_OPTION
+    throw new IllegalStateException("Quit Pending User Confirmation");
   }
 
 
