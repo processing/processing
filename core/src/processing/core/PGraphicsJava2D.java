@@ -79,7 +79,7 @@ public class PGraphicsJava2D extends PGraphics {
    * This prototype only exists because of annoying
    * java compilers, and should not be used.
    */
-  public PGraphicsJava2D() { }
+  //public PGraphicsJava2D() { }
 
 
   /**
@@ -124,6 +124,7 @@ public class PGraphicsJava2D extends PGraphics {
   // broken out because of subclassing for opengl
   protected void allocate() {
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    //image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     g2 = (Graphics2D) image.getGraphics();
   }
 
@@ -154,6 +155,10 @@ public class PGraphicsJava2D extends PGraphics {
     // hm, mark pixels as changed, because this will instantly do a full
     // copy of all the pixels to the surface.. so that's kind of a mess.
     //updatePixels();
+
+    if (!mainDrawingSurface) {
+      loadPixels();
+    }
 
     insideDraw = false;
   }
@@ -575,7 +580,8 @@ public class PGraphicsJava2D extends PGraphics {
                            int u1, int v1, int u2, int v2) {
     if (who.cache == null) {
       who.cache = new ImageCache(who);
-      who.updatePixels();  // mark the whole thing for update
+      //who.updatePixels();  // mark the whole thing for update
+      who.modified = true;
     }
 
     ImageCache cash = (ImageCache) who.cache;
@@ -591,25 +597,9 @@ public class PGraphicsJava2D extends PGraphics {
     if (who.modified) {
       cash.update();
       who.modified = false;
-      //System.out.println("image modified");
     }
 
-    /*
-    imageImplAWT(((ImageCache) who.cache).image,
-                 x1, y1, x2, y2,
-                 u1, v1, u2, v2);
-  }
-
-    // Second stage of image implementation. In this case, all that's
-    // done is the AWT version of the image is drawn. This is broken out
-    // separately because the PDF library needs to handle drawImage()
-    // differently at this stage.
-
-  protected void imageImplAWT(Image awtImage,
-                              float x1, float y1, float x2, float y2,
-                              int u1, int v1, int u2, int v2) {
-    */
-    g2.drawImage(((ImageCache) who.cache).image, //awtImage,
+    g2.drawImage(((ImageCache) who.cache).image,
                  (int) x1, (int) y1, (int) x2, (int) y2,
                  u1, v1, u2, v2, null);
   }
@@ -1059,8 +1049,8 @@ public class PGraphicsJava2D extends PGraphics {
   /**
    * Update the pixels[] buffer to the PGraphics image.
    * <P>
-   * Unlike in PImage, where updatePixels() only asks that the
-   * update happens, in PGraphicsJava, this will happen immediately.
+   * Unlike in PImage, where updatePixels() only requests that the
+   * update happens, in PGraphicsJava2D, this will happen immediately.
    */
   public void updatePixels() {
     //updatePixels(0, 0, width, height);
@@ -1072,8 +1062,8 @@ public class PGraphicsJava2D extends PGraphics {
   /**
    * Update the pixels[] buffer to the PGraphics image.
    * <P>
-   * Unlike in PImage, where updatePixels() only asks that the
-   * update happens, in PGraphicsJava, this will happen immediately.
+   * Unlike in PImage, where updatePixels() only requests that the
+   * update happens, in PGraphicsJava2D, this will happen immediately.
    */
   public void updatePixels(int x, int y, int c, int d) {
     if ((x == 0) && (y == 0) && (c == width) && (d == height)) {

@@ -29,18 +29,17 @@ o update run.bat for new quicktime
 o   unfortunately this is messy because qtjava sometimes has quotes
 o   and qtsystem might be somewhere besides c:\progra~1
 X   run.bat has been removed from current releases
+X registering font directories in pdf.. is it necessary? 
+X   (commented out for 0100)
+X   re-added for 0120
 
 defaults/createGraphics/etc
 _ createGraphics() having problems with JAVA2D, and sometimes with P3D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=419
 _ saveFrame() produces a black background because bg not set correctly:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=421
-// This code creates an image with a black background, 
-// which is different from the screen default background of light gray:
-size(100, 100);
-ellipse(50, 50, 30, 30);
-saveFrame("blah.tif");
 _ with default renderer, no default background color?
+_   only sometimes.. why is this?
 _ only call defaults() when it's part of a PApplet canvas
 _   make sure that defaults() is no longer necessary
 _   don't want to hose PGraphics for others
@@ -69,24 +68,7 @@ _   though that's awkward b/c colors always RGB
 _   lerpColor(c1, c2, amt, RGB/HSB/???)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
 
-- make a note in the pdf reference that createFont() messed with 1.5
-_ figure out what's breaking pdf font stuff, see if it's the 1.5 problem
-_   filed as bug #4769141 with apple
-_ fonts in java 1.5 have changed again
-_   appears that asking for the postscript name no longer works
-_   fix "create font" and associated font stuff to straighten it out
-_   was grabbing the wrong native font with ico sketch 
-_   seems that the psname is no longer a good way to grab the font? related?
-_ available font issues
-_   is getFontList returning a different set of fonts from device2d?
-_     try it out on java 1.3 versus 1.4
-_   getAllFonts() not quite working for many fonts
-_   i.e. Orator Std on windows.. macosx seems to be ok
-_   is getFamilyNames() any different/better?
-_   when did this break? 1.4.1? 1.4.x vs 1.3?
-_   may be that cff fonts won't work?
-_   or is it only those with ps names?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
+X make a note in the createFont() reference that 1.5 on OS X has problems
 
 needs to be tested
 _ jogl issues with some cards on linux, might be fixed with newer jogl
@@ -318,8 +300,6 @@ _   something weird happening with one of the streams shutting down?
 check to see if these are working
 o when re-calling size() with opengl, need to remove the old canvas
 o   need to check to see if this is working properly now
-_ registering font directories in pdf.. is it necessary? 
-_   (commented out for 0100)
 _ 404 error because first searches applet directory in isometricblocks
 _ "this file is named" errors don't like subdirectories
 _   need to strip off past the file separator or something
@@ -530,6 +510,23 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
+_ some fonts broken in java 1.5 on osx have changed again
+_   http://dev.processing.org/bugs/show_bug.cgi?id=407
+_   filed as bug #4769141 with apple
+_   appears that asking for the postscript name no longer works
+o   fix "create font" and associated font stuff to straighten it out
+X   was grabbing the wrong native font with ico sketch 
+X   seems that the psname is no longer a good way to grab the font? related?
+_ available font issues
+_   is getFontList returning a different set of fonts from device2d?
+_     try it out on java 1.3 versus 1.4
+_   getAllFonts() not quite working for many fonts
+_   i.e. Orator Std on windows.. macosx seems to be ok
+_   is getFamilyNames() any different/better?
+_   when did this break? 1.4.1? 1.4.x vs 1.3?
+_   may be that cff fonts won't work?
+_   or is it only those with ps names?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
 _ leading looks too big, at least in PGraphics2 with news gothic
 _   though it may be the converted version of the .ttf?
 _ font encoding issues 
