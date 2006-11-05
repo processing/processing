@@ -869,8 +869,8 @@ public class PApplet extends Applet
         }
         // otherwise ok to fall through and create renderer below
         // the renderer is changing, so need to create a new object
-        g = createGraphics(iwidth, iheight, irenderer, ipath);
-        g.setMainDrawingSurface();
+        g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
+        //g.setMainDrawingSurface();
         //if (g != null) {
         updateSize(iwidth, iheight);
         //}
@@ -882,8 +882,8 @@ public class PApplet extends Applet
         throw new RuntimeException(NEW_RENDERER);
       }
     } else {  // none exists, just create a freshy
-      g = createGraphics(iwidth, iheight, irenderer, ipath);
-      g.setMainDrawingSurface();
+      g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
+      //g.setMainDrawingSurface();
       updateSize(iwidth, iheight);
     }
 
@@ -938,35 +938,21 @@ public class PApplet extends Applet
   }
 
 
-  /*
-  // these constructors removed because they were silly
-
-
-  public PGraphics createGraphics(String renderer) {
-    return createGraphics(width, height, renderer);
-  }
-
-
-  public PGraphics createGraphics(int iwidth, int iheight) {
-    return createGraphics(iwidth, iheight, g.getClass().getName());
-  }
-
-
-  public PGraphics createGraphics(String irenderer, String ipath) {
-    return createGraphics(width, height, irenderer, this, ipath);
-  }
-  */
-
-
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer) {
-    return createGraphics(iwidth, iheight, irenderer, null, this);
+    PGraphics pg =
+      PApplet.createGraphics(iwidth, iheight, irenderer, null, null);
+    pg.parent = this;  // make save() work
+    return pg;
   }
 
 
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer, String ipath) {
-    return createGraphics(iwidth, iheight, irenderer, ipath, this);
+    PGraphics pg =
+      PApplet.createGraphics(iwidth, iheight, irenderer, ipath, null);
+    pg.parent = this;  // make save() work
+    return pg;
   }
 
 
@@ -6838,12 +6824,6 @@ public class PApplet extends Applet
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     if (recorder != null) recorder.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
     g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-  }
-
-
-  public void setMainDrawingSurface() {
-    if (recorder != null) recorder.setMainDrawingSurface();
-    g.setMainDrawingSurface();
   }
 
 

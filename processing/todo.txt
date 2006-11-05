@@ -25,6 +25,8 @@ X   make notice that restart is required
 X when auto-format has a warning, don't change anything
 X   this is a temporary fix to avoid code being destroyed
 
+_ remember location of cursor on "save as" ?
+
 _ several bits of reference are updated
 _ do we include map and norm? (also include unlerp for now?)
 
