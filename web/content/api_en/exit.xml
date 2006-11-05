@@ -22,7 +22,7 @@ void mousePressed() {
 </example>
 
 <description>
-Quits/stops/exits the program. Programs without a <b>draw()</b> function exit automatically after the last line has run, but programs with <b>draw()</b> run continuously until the program is manually stoped or <b>exit()</b> is run.
+Quits/stops/exits the program. Programs without a <b>draw()</b> function exit automatically after the last line has run, but programs with <b>draw()</b> run continuously until the program is manually stopped or <b>exit()</b> is run. Rather than terminating immediately, <b>exit()</b> will cause the sketch to exit after <b>draw()</b> has completed.
 </description>
 
 <syntax>
