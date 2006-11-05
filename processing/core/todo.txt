@@ -32,33 +32,97 @@ X   run.bat has been removed from current releases
 X registering font directories in pdf.. is it necessary? 
 X   (commented out for 0100)
 X   re-added for 0120
+o when re-calling size() with opengl, need to remove the old canvas
+o   need to check to see if this is working properly now
+X passing applet into createGraphics.. problems with re-adding listeners
+X   since the listeners are added to the PApplet
+X   i think the listeners aren't re-added, but need to double check
+X createGraphics() having problems with JAVA2D, and sometimes with P3D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=419
+X with default renderer, no default background color?
+X   only sometimes.. why is this?
+X only call defaults() when it's part of a PApplet canvas
+X   make sure that defaults() is no longer necessary
+X   don't want to hose PGraphics for others
+X   both for pdf, and making background transparent images
+X PGraphics3D should alloc to all transparent
+X   unless it's the main drawing surface (does it know on alloc?)
+X   in which case it should be set to opaque
+X have createGraphics() create a completely transparent image
+X   and also not require defaults() to be called
+X make a note in the createFont() reference that 1.5 on OS X has problems
+o if calling beginPixels inside another, need to increment a counter
+o   otherwise the end will look like it's time to update
+o   which may not actually be the case
+o   i.e. calling filter() inside begin/end block
+X get creating new PGraphics/2/3 working again
+X   http://dev.processing.org/bugs/show_bug.cgi?id=92
+X   maybe createGraphics(200, 200) to create same as source
+X   createGraphics(200, 200, P2D) to create 2D from 3D
+X   also, drawing a PGraphics2 doesn't seem to work
+X   new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
+X     they're drawn as transparent and don't have their high bits set
+X problems between modelX between alpha and beta
+X   http://dev.processing.org/bugs/show_bug.cgi?id=386
+X   y may be flipped in modelX/Y/Z stuff on opengl
+X     is this the same bug? assuming that it is
 
-defaults/createGraphics/etc
-_ createGraphics() having problems with JAVA2D, and sometimes with P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=419
+in previous releases
+X when using PGraphics, must call beginFrame() and endFrame()
+X   also need to be able to turn off MemoryImageSource on endFrame
+X   call defaults() in beginFrame()
+X should PGraphics be a base class with implementations and variables?
+X   then PGraphics2D and PGraphics3D that subclass it?
+X   (or even just PGraphics2 and PGraphics3)
+X   also rename PGraphics2 to PGraphicsJava
+X   it's goofy to have the naming so different
+X tweak to only exit from ESC on keyPressed
+o   probably should just make this a hint() instead
+X   just documented in reference instead
+o metaballs example dies when using box()
+o   long string of exceptions, which are also missing their newlines
+X grabbing sun.cpu.endian throws a security exception with gl applets
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123
+
+_ related to the fill bugs: when fill is identical, no fill applied
+_   actually tint() should take over for fill as per-vertex color
+_   when textured images are being used
+_   http://dev.processing.org/bugs/show_bug.cgi?id=169
+_ tint() should set texture color, fill() is ignored with textures
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   tint() honoring alpha but not colored tint
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
+_   check with the a_Displaying example and tint(255, 0, 0, 100);
+_   http://dev.processing.org/bugs/show_bug.cgi?id=90
+_   is fill() not coloring textures properly?
+_     don't need to apply tint() to textures, supposed to use fill color
+
+add to reference
+_ background() with an image ignores the tint.. it's basically like set()
+_ get/set are faster way draw screen space images, but no tint, no translations
+
+should be fixed, but needs to be tested
 _ saveFrame() produces a black background because bg not set correctly:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=421
-_ with default renderer, no default background color?
-_   only sometimes.. why is this?
-_ only call defaults() when it's part of a PApplet canvas
-_   make sure that defaults() is no longer necessary
-_   don't want to hose PGraphics for others
-_   both for pdf, and making background transparent images
-_ PGraphics3D should alloc to all transparent
-_   unless it's the main drawing surface (does it know on alloc?)
-_   in which case it should be set to opaque
-_ have createGraphics() create a completely transparent image
-_   and also not require defaults() to be called
+_ jogl issues with some cards on linux, might be fixed with newer jogl
+_   http://dev.processing.org/bugs/show_bug.cgi?id=367
+_ does ENABLE_DEPTH_SORT not work with opengl?
+_ 404 error because first searches applet directory in isometricblocks
+_ "this file is named" errors don't like subdirectories
+_   need to strip off past the file separator or something
+
+_ things not showing up in linux
+_   probably threading issue, 98 doesn't have any trouble
+_   signs point to Runner or PApplet changes between 98 and 99
+_   commenting out applet.setupFrameResizeListener() 
+_     in line 307 from Runner.java solved the problem
+_   http://dev.processing.org/bugs/show_bug.cgi?id=282
+
 _ alloc() stuff not fixed because of thread halting
 _   problem where alloc happens inside setup(), so, uh..
 _   http://dev.processing.org/bugs/show_bug.cgi?id=369
 _   should instead create new buffer, and swap it in next time through
-
-_ detect when using full screen
-_   and if so, remove decoration and don't bother with bg present frame
-_   frame.setUndecorated(true);
-_   frame.setLocation(0,0);
-_   size(screen.width,screen,height); 
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
@@ -68,36 +132,8 @@ _   though that's awkward b/c colors always RGB
 _   lerpColor(c1, c2, amt, RGB/HSB/???)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
 
-X make a note in the createFont() reference that 1.5 on OS X has problems
-
-needs to be tested
-_ jogl issues with some cards on linux, might be fixed with newer jogl
-_   http://dev.processing.org/bugs/show_bug.cgi?id=367
-_ does ENABLE_DEPTH_SORT not work with opengl?
-
-still not fixed
-_ things not showing up in linux
-_   probably threading issue, 98 doesn't have any trouble
-_   signs point to Runner or PApplet changes between 98 and 99
-_   commenting out applet.setupFrameResizeListener() 
-_     in line 307 from Runner.java solved the problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=282
-
-_ problems between modelX between alpha and beta
-_   http://dev.processing.org/bugs/show_bug.cgi?id=386
-_ y may be flipped in modelX/Y/Z stuff on opengl
-_   is this the same bug?
-
-_ color(0, 0, 0, 0) produces black
-_   although fill(0, 0, 0, 0) does the right thing
-_   also, rgb255 not getting set
-_   http://dev.processing.org/bugs/show_bug.cgi?id=382
 _ background(0, 0, 0, 0) is the way to really clear everything with zeroes
 _   or background(0, 0), but the former is prolly better conceptually
-_ if calling beginPixels inside another, need to increment a counter
-_   otherwise the end will look like it's time to update
-_   which may not actually be the case
-_   i.e. calling filter() inside begin/end block
 _ how to clear the screen with alpha? background(0, 0, 0, 0)?
 _   background(EMPTY) -> background(0x01000000) or something?
 
@@ -113,20 +149,6 @@ _ copy() sort of broken in JAVA2D
 _   example sketch posted with bug report
 _   http://dev.processing.org/bugs/show_bug.cgi?id=372
 
-reasons to drop 1.1 support (and support 1.3+)
-_ remove reflection from createFont() constructor/methods in PFont
-_   this would make PFont much smaller
-_ array functions could be done through Arrays.xxx class
-_   although some of these may be built in
-_ sorting could be done through built-in sort() class
-_ split() function could echo the built in split/regexp setup
-_   and add features for regexp
-_ could introduce use of Timer class in examples
-_ also use SwingWorker to launch things on other threads
-_ weirdness of two modes of handling font metrics
-_   textFontNativeMetrics gives deprecation error
-_   getFontList stuff in PFont causes problems
-
 _ fix the internal file chooser so that people don't need to make their own
 _   threading is a problem with inputFile() and inputFolder()
 _   dynamically load swingworker?
@@ -137,10 +159,6 @@ _ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
 
 _ cameraXYZ doesn't seem to actually be used for anything
 _   since camera functions don't even look at it or set it
-
-_ file for 2.0.. stroke on type
-
-_ background() with an image ignores the tint.. it's basically like set()
 
 _ gl point stuff is a problem
 _   need to implement point() as actual gl points
@@ -215,11 +233,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=351
 _ image memory use.. how to handle lots of images
 _   need to figure out exactly how they should/can unload
 _   
-
-_ docs: get/set are faster way to do image, but no tint, no translations
-
 _ introduce calc()
-_ tint() sets texture color, fill() is ignored with textures
 
 _ cmyk version of tiff encoder code?
 
@@ -245,28 +259,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=324
 _ using gl, lines don't show up in pdf with record (they're ok with p3d)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=325
 
-_ beginShape() moving
-_   merge POLYGON, LINE_LOOP, LINE_STRIP?
-
-_ fix tint() for PGraphics3 (what could be wrong?)
-_   tint() honoring alpha but not colored tint
-_   maybe not setting fill color when drawing textures
-_   guessing it's an implementation issue in sami's renderer
-_   check with the a_Displaying example and tint(255, 0, 0, 100);
-_   http://dev.processing.org/bugs/show_bug.cgi?id=90
-_   is fill() not coloring textures properly?
-_     don't need to apply tint() to textures, supposed to use fill color
 _ pixel operations are broken in opengl
 _   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
+_   also textMode(SCREEN)
+
 _ when closing a sketch via the close box, make sure stop() getting called
-
-
-examples
-_ need a pdf example (for size(), beginRecord())
-_ need beginRaw() examples using dxf and pdf
-
 
 _ sonia (and anything awt) is locking up on load in rev 91
 _   prolly something w/ the threading issues
@@ -286,29 +285,27 @@ _ updatePixels() is slow to create a BufferedImage
 _   therefore the incomplete rendering
 _   could this be an issue fixed by a MediaTracker?
 
-more pdf/recording stuff
-_ figure out what's up with type on osx
-_   sometimes bicubic vs quadratic beziers are mixed up in fonts
-_   not sure if it's limited to osx or what
-_ document how to switch to next page
-o   maybe background() should do this automatically?
-
 _ on osx, System.err isn't writing in things like createGraphics()
 _   but doing a printStackTrace(System.out) works
 _   something weird happening with one of the streams shutting down?
 
-check to see if these are working
-o when re-calling size() with opengl, need to remove the old canvas
-o   need to check to see if this is working properly now
-_ 404 error because first searches applet directory in isometricblocks
-_ "this file is named" errors don't like subdirectories
-_   need to strip off past the file separator or something
-_ passing applet into createGraphics.. problems with re-adding listeners
-_   since the listeners are added to the PApplet
-_   i think the listeners aren't re-added, but need to double check
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+reasons to drop 1.1 support (and support 1.3+)
+_ remove reflection from createFont() constructor/methods in PFont
+_   this would make PFont much smaller
+_ array functions could be done through Arrays.xxx class
+_   although some of these may be built in
+_ sorting could be done through built-in sort() class
+_ split() function could echo the built in split/regexp setup
+_   and add features for regexp
+_ could introduce use of Timer class in examples
+_ also use SwingWorker to launch things on other threads
+_ weirdness of two modes of handling font metrics
+_   textFontNativeMetrics gives deprecation error
+_   getFontList stuff in PFont causes problems
 
 
 threading mess
@@ -349,31 +346,7 @@ _   clear up the documentation on this
 _ tint() and noTint() switching problem in P2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=222
 
-_ when using PGraphics, must call beginFrame() and endFrame()
-_   also need to be able to turn off MemoryImageSource on endFrame
-_   call defaults() in beginFrame()
-
 _ add texture support to recordShapesRaw (this might be pretty obscure...)
-
-_ should PGraphics be a base class with implementations and variables?
-_   then PGraphics2D and PGraphics3D that subclass it?
-_   (or even just PGraphics2 and PGraphics3)
-_   also rename PGraphics2 to PGraphicsJava
-_   it's goofy to have the naming so different
-
-X tweak to only exit from ESC on keyPressed
-_   probably should just make this a hint() instead
-
-_ add auto-install of cab file inside applet.html
-_   http://dev.processing.org/bugs/show_bug.cgi?id=181
-_   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/using_tags.html
-_   http://java.sun.com/j2se/1.5.0/docs/guide/javaws/developersguide/launch.html#creating
-_   http://java.sun.com/update/1.4.2/jinstall-1_4_2_09-windows-i586.cab
-for the 1.5 versions:
-_   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
-
-_ related to the fill bugs: when fill is identical, no fill applied
-_   http://dev.processing.org/bugs/show_bug.cgi?id=169
 
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
@@ -390,13 +363,6 @@ _   need to track this stuff down a bit
 _ clipboard implementation as example or as part of api
 _   http://dev.processing.org/bugs/show_bug.cgi?id=167
 
-_ get creating new PGraphics/2/3 working again
-_   http://dev.processing.org/bugs/show_bug.cgi?id=92
-X   maybe createGraphics(200, 200) to create same as source
-X   createGraphics(200, 200, P2D) to create 2D from 3D
-_   also, drawing a PGraphics2 doesn't seem to work
-_   new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
-_     they're drawn as transparent and don't have their high bits set
 _ why aren't background() / defaults() being called for opengl?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 _ some optimizations from zach
@@ -426,6 +392,11 @@ The graphics library was formerly called Bagel.
 
 CORE / PApplet
 
+_ detect when using full screen
+_   and if so, remove decoration and don't bother with bg present frame
+_   frame.setUndecorated(true);
+_   frame.setLocation(0,0);
+_   size(screen.width,screen,height); 
 _ would be cool if could sort w/o the sort class..
 _   meaning use reflection to sort objects, just by implementing a few methods
 _   would be much simpler and less confusing than new Sort() etc 
@@ -838,6 +809,10 @@ _   this will be helpful to have access to the raw texture data
 _   that way it can be re-bound by itself, and ppl can write directly to it
 _ textMode(SCREEN) is broken for opengl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=426
+_ textSpace(SCREEN) for opengl and java2d
+_   don't use loadPixels for either
+_   use font code to set the cached color of the font, then call set()
+_   although set() with alpha is a little different..
 _ opengl keeping memory around.. 
 _   could this be in vertices that have an image associated
 _   or the image buffer used for textures
@@ -848,10 +823,6 @@ _ make the opengl textmode shape stuff get better and use PShape
 _ make textMode(SHAPE) faster in opengl
 _   cache for tyhpe should be per-renderer
 _   because opengl needs vectors, but also the image cache for textures
-_ textSpace(SCREEN) for opengl and java2d
-_   don't use loadPixels for either
-_   use font code to set the cached color of the font, then call set()
-_   although set() with alpha is a little different..
 _ polygon z-order depth sorting with alpha in opengl
 _   complete the implementation of hint() with proper implementation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
@@ -870,8 +841,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _ gl points not working again
 _ invocationtargetexception in gl with aioobe:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
-_ metaballs example dies when using box()
-_   long string of exceptions, which are also missing their newlines
 _ resolve ARGB versus RGBA versus just A issues for fonts
 _   make sure that current scenario works identically on mac
 _   if so, just switch the image code to expect alpha in the high bits
@@ -886,8 +855,6 @@ _ allow access to native pixel buffer in opengl and power of 2
 _   so that no need to copy/update everything
 _ need to write an error if people try to use opengl with 1.3 (i.e. on export)
 _   don't let users with java < 1.4 load OPENGL
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
-_ grabbing sun.cpu.endian throws a security exception with gl applets
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123;start=3
 _ strokeWeight() doesn't work in opengl or p3d
 _ how to handle gluTessVertex calls
@@ -918,5 +885,15 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=345
 
 LATER
 
+because 'color' isn't a real data type
+_ should fill(c) instead be fillColor(c)?
+_ should color(123, 4, 99) instead be createColor()?
 _ setting a gray that's greater than the colorMode() can produce strange colors
 _   http://dev.processing.org/bugs/show_bug.cgi?id=432
+_ color(0, 0, 0, 0) produces black
+_   although fill(0, 0, 0, 0) does the right thing
+_   also, rgb255 not getting set
+_   http://dev.processing.org/bugs/show_bug.cgi?id=382
+
+other
+_ file for 2.0.. stroke on type
