@@ -553,9 +553,19 @@ public class PGraphics3D extends PGraphics {
       vertex_order = temp2;
       //message(CHATTER, "allocating more vertices " + vertices.length);
     }
-    float vertex[] = vertices[vertexCount++];
+    float vertex[] = vertices[vertexCount];
 
     //if (polygon.redundantVertex(x, y, z)) return;
+    if (vertexCount > 0) {
+      float pvertex[] = vertices[vertexCount-1];
+      if ((abs(pvertex[MX] - x) < EPSILON) &&
+          (abs(pvertex[MY] - y) < EPSILON) &&
+          (abs(pvertex[MZ] - z) < EPSILON)) {
+        // this vertex is identical, don't add it,
+        // because it will anger the triangulator
+        return;
+      }
+    }
 
     // user called vertex(), so that invalidates anything queued
     // up for curve vertices. if this is internally called by
@@ -606,6 +616,8 @@ public class PGraphics3D extends PGraphics {
     vertex[NZ] = normalZ;
 
     vertex[BEEN_LIT] = 0;
+
+    vertexCount++;
   }
 
 
@@ -832,16 +844,17 @@ public class PGraphics3D extends PGraphics {
           //case CONVEX_POLYGON:
         {
           // store index of first vertex
-          int first = lineCount;
+          //int first = lineCount;
           stop = vertex_end - 1;
 
           add_path();
           for (int i = vertex_start; i < stop; i++) {
             add_line(i, i+1);
+            //System.out.println("adding line " + i);
           }
           if (mode == CLOSE) {
             // draw the last line connecting back to the first point in poly
-            add_line(stop, lines[first][VERTEX1]);
+            add_line(stop, vertex_start); //lines[first][VERTEX1]);
           }
         }
         break;
@@ -918,7 +931,7 @@ public class PGraphics3D extends PGraphics {
     // TRANSFORM / LIGHT / CLIP
 
     if (lightCount > 0 && fill) {
-    handle_lighting();
+      handle_lighting();
     }
     else {
       handle_no_lighting();
@@ -1452,18 +1465,72 @@ public class PGraphics3D extends PGraphics {
    * bit of code from the web.
    */
   private void triangulate_polygon() {
+    // this clipping algorithm only works in 2D, so in cases where a
+    // polygon is drawn perpendicular to the z-axis, the area will be zero,
+    // and triangulation will fail. as such, when the area calculates to
+    // zero, figure out whether x or y is empty, and calculate based on the
+    // two dimensions that actually contain information.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=111
+    int d1 = MX;
+    int d2 = MY;
+    // this brings up the nastier point that there may be cases where
+    // a polygon is irregular in space and will throw off the
+    // clockwise/counterclockwise calculation. for instance, if clockwise
+    // relative to x and z, but counter relative to y and z or something
+    // like that.. will wait to see if this is in fact a problem before
+    // hurting my head on the math.
+
     // first we check if the polygon goes clockwise or counterclockwise
-    float area = 0.0f;
+    float area = 0;
     for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
-      area += (vertices[q][MX] * vertices[p][MY] -
-               vertices[p][MX] * vertices[q][MY]);
-      //area += (vertices[q][X] * vertices[p][Y] -
-      //       vertices[p][X] * vertices[q][Y]);
+      area += (vertices[q][d1] * vertices[p][d2] -
+               vertices[p][d1] * vertices[q][d2]);
+    }
+    // rather than checking for the perpendicular case first, only do it
+    // when the area calculates to zero. checking for perpendicular would be
+    // a needless waste of time for the 99% case.
+    if (area == 0) {
+      // figure out which dimension is the perpendicular axis
+      boolean foundValidX = false;
+      boolean foundValidY = false;
+      for (int i = vertex_start; i < vertex_end; i++) {
+        if (vertices[i][MX] != 0) foundValidX = true;
+        if (vertices[i][MY] != 0) foundValidY = true;
+      }
+      if (foundValidX && !foundValidY) {
+        //d1 = MX;  // already the case
+        d2 = MZ;
+
+      } else if (!foundValidX && foundValidY) {
+        // ermm.. which is the proper order for cw/ccw here?
+        d1 = MY;
+        d2 = MZ;
+
+      } else {
+        // screw it, this polygon is just f-ed up
+        return;
+      }
+
+      // re-calculate the area, with what should be good values
+      for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
+        area += (vertices[q][d1] * vertices[p][d2] -
+                 vertices[p][d1] * vertices[q][d2]);
+      }
+    }
+
+    // don't allow polygons to come back and meet themselves,
+    // otherwise it will anger the triangulator
+    // http://dev.processing.org/bugs/show_bug.cgi?id=97
+    float vfirst[] = vertices[vertex_start];
+    float vlast[] = vertices[vertex_end-1];
+    if ((abs(vfirst[MX] - vlast[MX]) < EPSILON) &&
+        (abs(vfirst[MY] - vlast[MY]) < EPSILON) &&
+        (abs(vfirst[MZ] - vlast[MZ]) < EPSILON)) {
+      vertex_end--;
     }
 
     // then sort the vertices so they are always in a counterclockwise order
     int j = 0;
-    //if (0.0f < area) {  // def <
     if (area > 0) {
       for (int i = vertex_start; i < vertex_end; i++) {
         j = i - vertex_start;
@@ -1494,14 +1561,12 @@ public class PGraphics3D extends PGraphics {
       int w = v + 1; if (vc <= w) w = 0; // next
 
       // triangle A B C
-      //float Ax, Ay, Bx, By, Cx, Cy, Px, Py;
-
-      float Ax = -vertices[vertex_order[u]][MX];
-      float Ay =  vertices[vertex_order[u]][MY];
-      float Bx = -vertices[vertex_order[v]][MX];
-      float By =  vertices[vertex_order[v]][MY];
-      float Cx = -vertices[vertex_order[w]][MX];
-      float Cy =  vertices[vertex_order[w]][MY];
+      float Ax = -vertices[vertex_order[u]][d1];
+      float Ay =  vertices[vertex_order[u]][d2];
+      float Bx = -vertices[vertex_order[v]][d1];
+      float By =  vertices[vertex_order[v]][d2];
+      float Cx = -vertices[vertex_order[w]][d1];
+      float Cy =  vertices[vertex_order[w]][d2];
 
       // first we check if <u,v,w> continues going ccw
       if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
@@ -1516,10 +1581,8 @@ public class PGraphics3D extends PGraphics {
           continue;
         }
 
-        //float Px = -vertices[vertex_order[p]][X];
-        //float Py =  vertices[vertex_order[p]][Y];
-        float Px = -vertices[vertex_order[p]][MX];
-        float Py =  vertices[vertex_order[p]][MY];
+        float Px = -vertices[vertex_order[p]][d1];
+        float Py =  vertices[vertex_order[p]][d2];
 
         float ax  = Cx - Bx;  float ay  = Cy - By;
         float bx  = Ax - Cx;  float by  = Ay - Cy;
@@ -3672,11 +3735,11 @@ public class PGraphics3D extends PGraphics {
     return (float)Math.pow(a, b);
   }
 
-  /*
   private final float abs(float a) {
     return (a < 0) ? -a : a;
   }
 
+  /*
   private final float sin(float angle) {
     return (float)Math.sin(angle);
   }
