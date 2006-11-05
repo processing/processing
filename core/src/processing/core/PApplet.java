@@ -2810,20 +2810,28 @@ public class PApplet extends Applet
   }
 
   /**
-   * Opposite of lerp(), figures out what proportion a particular value is
-   * relative to start and stop coordinates.
+   * @deprecated Used only in release 0119, will be removed.
    */
   static public final float unlerp(float start, float stop, float value) {
+    return norm(start, stop, value);
+  }
+
+  /**
+   * Normalize a value to exist between 0 and 1 (inclusive).
+   * Mathematically the opposite of lerp(), figures out what proportion
+   * a particular value is relative to start and stop coordinates.
+   */
+  static public final float norm(float start, float stop, float value) {
     return (value - start) / (stop - start);
   }
 
   /**
-   * Convenience function equivalent to unlerp() followed by lerp().
+   * Convenience function to map a variable from what coordinate space to
+   * another. Equivalent to unlerp() followed by lerp().
    */
-  static public final float relerp(float istart, float istop, float value,
-                                   float ostart, float ostop) {
-    //float amt = (value - istart) / (istop - istart);
-    //return ostart + (ostop - ostart) * amt;
+  static public final float map(float value,
+                                float istart, float istop,
+                                float ostart, float ostop) {
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
   }
 
