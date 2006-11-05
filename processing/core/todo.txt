@@ -23,7 +23,16 @@ X   is this a clipping error?
 X   probably a triangulation error, because triangles work ok
 X   http://dev.processing.org/bugs/show_bug.cgi?id=111
 X   problem is that the area of the polygon isn't taking into account z
+X lookat is now camera(), but not fixed in the docs
+X   add notes to the faq about the camera changes on the changes page
+o update run.bat for new quicktime
+o   unfortunately this is messy because qtjava sometimes has quotes
+o   and qtsystem might be somewhere besides c:\progra~1
+X   run.bat has been removed from current releases
 
+defaults/createGraphics/etc
+_ createGraphics() having problems with JAVA2D, and sometimes with P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=419
 _ saveFrame() produces a black background because bg not set correctly:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=421
 // This code creates an image with a black background, 
@@ -31,7 +40,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=421
 size(100, 100);
 ellipse(50, 50, 30, 30);
 saveFrame("blah.tif");
-
 _ with default renderer, no default background color?
 _ only call defaults() when it's part of a PApplet canvas
 _   make sure that defaults() is no longer necessary
@@ -42,19 +50,10 @@ _   unless it's the main drawing surface (does it know on alloc?)
 _   in which case it should be set to opaque
 _ have createGraphics() create a completely transparent image
 _   and also not require defaults() to be called
-
-_ image outofmemoryerror for casey's students
-_   http://dev.processing.org/bugs/show_bug.cgi?id=355
-_   this may be related to a ton of other memory bugs
-_ for a PGraphics2D, should its image cache object be the memoryimagesource?
-_ is the texture[] array in PGraphics3D causing the problems with memory?
-_   actually it's a PGraphicsGL problem.. 
-_   maybe the image binding not getting unbound?
-_ loading lots of images is a problem, describe how to unload
-_   is it possible? necessary to call delay(5) or something?
-
-_ createGraphics() having problems with JAVA2D, and sometimes with P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=419
+_ alloc() stuff not fixed because of thread halting
+_   problem where alloc happens inside setup(), so, uh..
+_   http://dev.processing.org/bugs/show_bug.cgi?id=369
+_   should instead create new buffer, and swap it in next time through
 
 _ detect when using full screen
 _   and if so, remove decoration and don't bother with bg present frame
@@ -69,13 +68,6 @@ _ make lerpColor honor the current color mode
 _   though that's awkward b/c colors always RGB
 _   lerpColor(c1, c2, amt, RGB/HSB/???)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
-
-_ optimizations to opengl
-_   disabling error reporting (what's taking it so long?)
-_     maybe use a hint() to enable it? or a getError() function?
-_   make cached display list of filled/non-filled ellipse.. rect.. etc
-_     these don't work when the vertex colors change, but..
-_   or maybe should be using vertex arrays?
 
 - make a note in the pdf reference that createFont() messed with 1.5
 _ figure out what's breaking pdf font stuff, see if it's the 1.5 problem
@@ -95,22 +87,6 @@ _   when did this break? 1.4.1? 1.4.x vs 1.3?
 _   may be that cff fonts won't work?
 _   or is it only those with ps names?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
-
-_ alloc() stuff not fixed because of thread halting
-_   problem where alloc happens inside setup(), so, uh..
-_   http://dev.processing.org/bugs/show_bug.cgi?id=369
-_   should instead create new buffer, and swap it in next time through
-
-opengl texture handling
-_ maybe break out a separate timage object in textures?
-_   needs tindex and tbuffer, both gl specific
-_     and for tpixels and twidth/theight, could use another PImage
-_   under assumption that most will just need an extra image object
-_   this could also be used by people eventually to control tex themselves
-_   or maybe call the object "texture"?
-_   in opengl lib, need beginTexture(PImage) and endTexture()
-_   this will be helpful to have access to the raw texture data
-_   that way it can be re-bound by itself, and ppl can write directly to it
 
 needs to be tested
 _ jogl issues with some cards on linux, might be fixed with newer jogl
@@ -333,10 +309,7 @@ _ figure out what's up with type on osx
 _   sometimes bicubic vs quadratic beziers are mixed up in fonts
 _   not sure if it's limited to osx or what
 _ document how to switch to next page
-_   maybe background() should do this automatically?
-
-_ lookat is now camera(), but not fixed in the docs
-_   add notes to the faq about the camera changes on the changes page
+o   maybe background() should do this automatically?
 
 _ on osx, System.err isn't writing in things like createGraphics()
 _   but doing a printStackTrace(System.out) works
@@ -421,10 +394,6 @@ _   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
 
 _ related to the fill bugs: when fill is identical, no fill applied
 _   http://dev.processing.org/bugs/show_bug.cgi?id=169
-
-_ update run.bat for new quicktime
-_   unfortunately this is messy because qtjava sometimes has quotes
-_   and qtsystem might be somewhere besides c:\progra~1
 
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
@@ -787,6 +756,16 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=103
 
 
 CORE / PImage
+
+_ image outofmemoryerror for casey's students
+_   http://dev.processing.org/bugs/show_bug.cgi?id=355
+_   this may be related to a ton of other memory bugs
+_ for a PGraphics2D, should its image cache object be the memoryimagesource?
+_ is the texture[] array in PGraphics3D causing the problems with memory?
+_   actually it's a PGraphicsGL problem.. 
+_   maybe the image binding not getting unbound?
+_ loading lots of images is a problem, describe how to unload
+_   is it possible? necessary to call delay(5) or something?
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
@@ -845,6 +824,21 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsOpenGL
 
+_ optimizations to opengl
+_   disabling error reporting (what's taking it so long?)
+_     maybe use a hint() to enable it? or a getError() function?
+_   make cached display list of filled/non-filled ellipse.. rect.. etc
+_     these don't work when the vertex colors change, but..
+_   or maybe should be using vertex arrays?
+_ maybe break out a separate timage object in textures?
+_   needs tindex and tbuffer, both gl specific
+_     and for tpixels and twidth/theight, could use another PImage
+_   under assumption that most will just need an extra image object
+_   this could also be used by people eventually to control tex themselves
+_   or maybe call the object "texture"?
+_   in opengl lib, need beginTexture(PImage) and endTexture()
+_   this will be helpful to have access to the raw texture data
+_   that way it can be re-bound by itself, and ppl can write directly to it
 _ textMode(SCREEN) is broken for opengl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=426
 _ opengl keeping memory around.. 
