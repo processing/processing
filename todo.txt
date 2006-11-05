@@ -464,6 +464,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 PDE / Export
 
 _ is 'code' folder being ignored on export application?
+_ add auto-install of cab file inside applet.html
+_   http://dev.processing.org/bugs/show_bug.cgi?id=181
+_   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/using_tags.html
+_   http://java.sun.com/j2se/1.5.0/docs/guide/javaws/developersguide/launch.html#creating
+_   http://java.sun.com/update/1.4.2/jinstall-1_4_2_09-windows-i586.cab
+for the 1.5 versions:
+_   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
 _ warn on export when people call their sketches things like Server
 _ warn if someone extends PApplet but mis-names the sketch
 _   or don't allow it to be exported
