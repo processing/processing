@@ -4,28 +4,35 @@ X trying out quaqua look and feel on the mac, improve how things look
 X trying the gtk+ look and feel for linux
 X use special awt hack on the mac to handle directory selection
 X drag & drop on the mac snaps back as if it didn't work
-_   does this also happen on windows?
-_   are there better classes to use inside the com.apple classes?
-_   including the number of items would be especially nice
-_   file a bug for this stuff
-
+X   does this also happen on windows?
+o   are there better classes to use inside the com.apple classes?
+o   file a bug for this stuff
 X figure out how to cancel 'save changes' on macosx and windows
 X   macosx handleQuit seems to force termination (at least on 1.3)
 X   http://developer.apple.com/qa/qa2001/qa1187.html
-_   http://dev.processing.org/bugs/show_bug.cgi?id=32
-_   need to test on windows to make sure it works
+X   http://dev.processing.org/bugs/show_bug.cgi?id=32
+X   need to test on windows to make sure it works
+X try the better mac l&f
+o Contents/Resources/Java can take jnilib files
+o set file type/creator for .pde files of examples
+o use disk:// notation as panther alternative
+o   so that it doesn't download the disk, just mounts it
+o   although.. this only works on panther.. how many are using it?
+X   filed as http://dev.processing.org/bugs/show_bug.cgi?id=431
+o changing font size in editor not updating all font objects
+o   particularly after backspace
+X   make notice that restart is required
+X when auto-format has a warning, don't change anything
+X   this is a temporary fix to avoid code being destroyed
 
-_ changing font size in editor not updating all font objects
-_   particularly after backspace
-
-_ macosx having trouble finding monaco
-_   changing font size, 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1160057791
-_   http://dev.processing.org/bugs/show_bug.cgi?id=406
+_ several bits of reference are updated
+_ do we include map and norm? (also include unlerp for now?)
 
 _ need to document changes to int() (no longer accepts boolean)
-_ also parseInt and parseFloat, how they can return another number of NaN
+_ also parseInt and parseFloat, how they can return another number or NaN
 
+_ lots of runtime exceptions still being lost on osx
+_   particularly with multi-threaded applications
 _ macosx dropping exceptions all the time.. grr
 _   solution is to export, and then see how it runs
 _   this is particularly bad with threaded applications
@@ -33,11 +40,9 @@ _   this is particularly bad with threaded applications
 Exception in thread "Thread-2" java.lang.NoClassDefFoundError:
 processing/core/PApplet
     at processing.serial.Serial.<init>(Serial.java:156) 
-
 generally, that error means that something is missing from the
 CLASSPATH. the NoClassDefError gives erroneous feedback about *what*
 class is actually missing, as of java 1.3+ (yay!)
-
 so perhaps conflicting versions of a library in the sketchbook (solve
 this by setting to an empty sketchbook temporarily) or files might be
 installed in the CLASSPATH variable or something conflicting in
@@ -843,6 +848,8 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ drag and drop
+_   including the number of items would be especially nice
 _ implement automatic update
 _   http://dev.processing.org/bugs/show_bug.cgi?id=374
 _ move build scripts to something better like ant
@@ -912,7 +919,10 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 DIST / Mac OS X
 
-_ try the better mac l&f
+_ preferences file gone corrupt (on osx only?)
+_   changing font size, 
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1160057791
+_   http://dev.processing.org/bugs/show_bug.cgi?id=406
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
@@ -921,15 +931,9 @@ _   (i.e. we really need those replacements for JOptionPane)
 _ would be nice to have macosx packaged up as a single .app file
 _   should recommend that people install libraries into their sketchbook
 _ set nice background for disk image on macosx
-_ test more to see if runtime exceptions are coming through
 _ track down error in PdeCompiler for message parsing
 _   was missing the error about a package being gone
 _   can comment out /System/Library/ as a test
-_ Contents/Resources/Java can take jnilib files
-_ set file type/creator for .pde files of examples
-_ use disk:// notation as panther alternative
-_   so that it doesn't download the disk, just mounts it
-_   although.. this only works on panther.. how many are using it?
 _ mac standard key combinations for moving around in the editor
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
 

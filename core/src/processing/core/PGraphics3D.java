@@ -2856,7 +2856,7 @@ public class PGraphics3D extends PGraphics {
    * that the following:
    * <PRE>
    * beginCamera();
-   * rotateY(PI/80);
+   * rotateY(PI/8);
    * endCamera();
    * </PRE>
    * will result in a camera that spins without stopping. If you want to
@@ -2864,7 +2864,7 @@ public class PGraphics3D extends PGraphics {
    * <PRE>
    * beginCamera();
    * camera(); // sets up the default view
-   * rotateY(PI/80);
+   * rotateY(PI/8);
    * endCamera();
    * </PRE>
    * That will rotate a little off of the default view. Note that this
@@ -2872,7 +2872,7 @@ public class PGraphics3D extends PGraphics {
    * <PRE>
    * camera(); // sets up the default view
    * beginCamera();
-   * rotateY(PI/80);
+   * rotateY(PI/8);
    * endCamera();
    * </PRE>
    * because camera() doesn't care whether or not it's inside a
