@@ -3139,28 +3139,64 @@ public class PGraphics3D extends PGraphics {
 
   public float modelX(float x, float y, float z) {
     float ax =
-      modelview.m00*x + modelview.m01*y + modelview.m02*z + modelview.m03;
+      cameraInv.m00*x + cameraInv.m01*y + cameraInv.m02*z + cameraInv.m03;
+    float ay =
+      cameraInv.m10*x + cameraInv.m11*y + cameraInv.m12*z + cameraInv.m13;
+    float az =
+      cameraInv.m20*x + cameraInv.m21*y + cameraInv.m22*z + cameraInv.m23;
     float aw =
-      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
-    return (aw != 0) ? ax / aw : ax;
+      cameraInv.m30*x + cameraInv.m31*y + cameraInv.m32*z + cameraInv.m33;
+
+    float ox =
+      modelview.m00*ax + modelview.m01*ay +
+      modelview.m02*az + modelview.m03*aw;
+    float ow =
+      modelview.m30*ax + modelview.m31*ay +
+      modelview.m32*az + modelview.m33*aw;
+
+    return (ow != 0) ? ox / ow : ox;
   }
 
 
   public float modelY(float x, float y, float z) {
+    float ax =
+      cameraInv.m00*x + cameraInv.m01*y + cameraInv.m02*z + cameraInv.m03;
     float ay =
-      modelview.m10*x + modelview.m11*y + modelview.m12*z + modelview.m13;
+      cameraInv.m10*x + cameraInv.m11*y + cameraInv.m12*z + cameraInv.m13;
+    float az =
+      cameraInv.m20*x + cameraInv.m21*y + cameraInv.m22*z + cameraInv.m23;
     float aw =
-      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
-    return (aw != 0) ? ay / aw : ay;
+      cameraInv.m30*x + cameraInv.m31*y + cameraInv.m32*z + cameraInv.m33;
+
+    float oy =
+      modelview.m10*ax + modelview.m11*ay +
+      modelview.m12*az + modelview.m13*aw;
+    float ow =
+      modelview.m30*ax + modelview.m31*ay +
+      modelview.m32*az + modelview.m33*aw;
+
+    return (ow != 0) ? oy / ow : oy;
   }
 
 
   public float modelZ(float x, float y, float z) {
+    float ax =
+      cameraInv.m00*x + cameraInv.m01*y + cameraInv.m02*z + cameraInv.m03;
+    float ay =
+      cameraInv.m10*x + cameraInv.m11*y + cameraInv.m12*z + cameraInv.m13;
     float az =
-      modelview.m20*x + modelview.m21*y + modelview.m22*z + modelview.m23;
+      cameraInv.m20*x + cameraInv.m21*y + cameraInv.m22*z + cameraInv.m23;
     float aw =
-      modelview.m30*x + modelview.m31*y + modelview.m32*z + modelview.m33;
-    return (aw != 0) ? az / aw : az;
+      cameraInv.m30*x + cameraInv.m31*y + cameraInv.m32*z + cameraInv.m33;
+
+    float oz =
+      modelview.m20*ax + modelview.m21*ay +
+      modelview.m22*az + modelview.m23*aw;
+    float ow =
+      modelview.m30*ax + modelview.m31*ay +
+      modelview.m32*az + modelview.m33*aw;
+
+    return (ow != 0) ? oz / ow : oz;
   }
 
 
