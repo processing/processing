@@ -180,11 +180,12 @@ public class PGraphics3D extends PGraphics {
    * This prototype only exists because of annoying
    * java compilers, and should not be used.
    */
+  /*
   public PGraphics3D() {
     forwardTransform = modelview;
     reverseTransform = modelviewInv;
   }
-
+  */
 
   /*
   public PGraphics3D(int iwidth, int iheight) {
@@ -292,21 +293,30 @@ public class PGraphics3D extends PGraphics {
 
     pixelCount = width * height;
     pixels = new int[pixelCount];
-
-    // because of a java 1.1 bug, pixels must be registered as
-    // opaque before their first run, the memimgsrc will flicker
-    // and run very slowly.
-    backgroundColor |= 0xff000000;  // just for good measure
-    for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
-    //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
-
-    cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
-    mis = new MemoryImageSource(width, height, pixels, 0, width);
-    mis.setFullBufferUpdates(true);
-    mis.setAnimated(true);
-    image = Toolkit.getDefaultToolkit().createImage(mis);
-
     zbuffer = new float[pixelCount];
+
+    if (mainDrawingSurface) {
+      // because of a java 1.1 bug, pixels must be registered as
+      // opaque before their first run, the memimgsrc will flicker
+      // and run very slowly.
+      //backgroundColor |= 0xff000000;  // just for good measure
+      for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
+      //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
+
+      cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
+      mis = new MemoryImageSource(width, height, pixels, 0, width);
+      mis.setFullBufferUpdates(true);
+      mis.setAnimated(true);
+      image = Toolkit.getDefaultToolkit().createImage(mis);
+
+    } else {
+      // when not the main drawing surface, need to set the zbuffer,
+      // because there's a possibility that background() will not be called
+      for (int i = 0; i < pixelCount; i++) {
+        zbuffer[i] = Float.MAX_VALUE;
+      }
+    }
+
     stencil = new int[pixelCount];
 
     line = new PLine(this);
@@ -3652,22 +3662,22 @@ public class PGraphics3D extends PGraphics {
 
     for (int i = 0; i < pixelCount; i++) {
       zbuffer[i] = Float.MAX_VALUE;
-      stencil[i] = 0;
+      //stencil[i] = 0;
     }
   }
 
 
   /**
-   * Clear pixel buffer.
-   * With P3D and OPENGL, this also clears the stencil and zbuffer.
+   * Clear pixel buffer. With P3D and OPENGL, this also clears the zbuffer.
+   * Stencil buffer should also be cleared, but for now is ignored in P3D.
    */
-  public void clear() {
+  protected void clear() {
     //System.out.println("PGraphics3.clear(" +
     //                 PApplet.hex(backgroundColor) + ")");
     for (int i = 0; i < pixelCount; i++) {
       pixels[i] = backgroundColor;
       zbuffer[i] = Float.MAX_VALUE;
-      stencil[i] = 0;
+      //stencil[i] = 0;
     }
   }
 

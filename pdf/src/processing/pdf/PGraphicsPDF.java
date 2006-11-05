@@ -177,9 +177,9 @@ public class PGraphicsPDF extends PGraphicsJava2D {
           String homeLibraryFonts =
             System.getProperty("user.home") + "/Library/Fonts";
           mapper.insertDirectory(homeLibraryFonts);
-          //System.out.println(homeLibraryFonts);
         } catch (Exception e) {
-          // might be a security issue if this is happening on the web
+          // might be a security issue with getProperty() and user.home
+          // if this sketch is running from the web
         }
         // add the system font paths
         mapper.insertDirectory("/System/Library/Fonts");
@@ -205,11 +205,6 @@ public class PGraphicsPDF extends PGraphicsJava2D {
           }
         }
       }
-
-      //System.out.println("inserting directory");
-      //mapper.insertDirectory("/Users/fry/Library/Fonts");
-      //mapper.insertDirectory("/System/Library/Fonts");
-      //System.out.println("done inserting directory");
 
       g2 = content.createGraphics(width, height, mapper);
     }

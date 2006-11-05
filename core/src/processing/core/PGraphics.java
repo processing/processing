@@ -480,7 +480,9 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Constructor for the PGraphics object. This prototype only exists
    * because of annoying java compilers, and cannot be used.
    */
+  /*
   protected PGraphics() { }
+  */
 
 
   /**
@@ -491,31 +493,41 @@ public abstract class PGraphics extends PImage implements PConstants {
    *
    * @param iwidth  viewport width
    * @param iheight viewport height
-   */
-  //public PGraphics(int iwidth, int iheight) {
-    //this(iwidth, iheight, null);
-    //resize(iwidth, iheight);
-  //}
-
-
-  /**
-   * Constructor for the PGraphics object. Use this to ensure that
-   * the defaults get set properly. In a subclass, use this(w, h)
-   * as the first line of a subclass' constructor to properly set
-   * the internal fields and defaults.
-   *
-   * @param iwidth  viewport width
-   * @param iheight viewport height
+   * @param parent null unless this is the main drawing surface
    */
   public PGraphics(int iwidth, int iheight, PApplet parent) {
-    /*
-    if (applet != null) {
-      this.parent = applet;
-      applet.addListeners();
-    }
-    */
     this.parent = parent;
+    if (parent != null) setMainDrawingSurface();
+/*
+    // if this is being created by createGraphics(), the parent applet
+    // will be set later via another method.
+    if (parent != null) {
+      mainDrawingSurface = true;
+      // base images must be opaque (for performance and general
+      // headache reasons.. argh, a semi-transparent opengl surface?)
+      // use createGraphics() if you want a transparent surface.
+      format = RGB;
+      parent.addListeners();
+    }
+*/
     resize(iwidth, iheight);
+  }
+
+
+  /**
+   * Set this as the main drawing surface. Meaning that it can safely be
+   * set to opaque (given a default gray background) and listeners for
+   * the mouse and keyboard added.
+   * <p/>
+   * This should only be used by subclasses of PGraphics.
+   */
+  public void setMainDrawingSurface() {  // ignore
+    mainDrawingSurface = true;
+    // base images must be opaque (for performance and general
+    // headache reasons.. argh, a semi-transparent opengl surface?)
+    // use createGraphics() if you want a transparent surface.
+    format = RGB;
+    parent.addListeners();
   }
 
 
@@ -539,23 +551,6 @@ public abstract class PGraphics extends PImage implements PConstants {
     allocate();
 
     insideResize = false;  // ok to draw again
-  }
-
-
-  /**
-   * Set this as the main drawing surface. Meaning that it can safely be
-   * set to opaque (given a default gray background) and listeners for
-   * the mouse and keyboard added.
-   * <p/>
-   * This should only be used by subclasses of PGraphics.
-   */
-  public void setMainDrawingSurface() {
-    mainDrawingSurface = true;
-    // base images must be opaque (for performance and general
-    // headache reasons.. argh, a semi-transparent opengl surface?)
-    // use createGraphics() if you want a transparent surface.
-    format = RGB;
-    parent.addListeners();
   }
 
 
