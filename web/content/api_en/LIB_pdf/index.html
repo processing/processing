@@ -237,6 +237,13 @@ not particularly good, but will help in some situations.
 See <a href="http://dev.processing.org/bugs/show_bug.cgi?id=176">Bug 
 176</a> for status of the implementation.</p>
 
+<LI>Starting a new page is a matter of calling nextPage() like so:
+<PRE>  
+PGraphicsPDF pdf = (PGraphicsPDF) g;
+pdf.nextPage();
+</PRE>
+(This example is also shown above)
+
 <LI> Again, exit() is really important when using PDF with size(). 
 
 </UL>
