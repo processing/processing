@@ -51,11 +51,11 @@ public class PImage implements PConstants, Cloneable {
   // would scan line be useful? maybe for pow of 2 gl textures
 
   /**
-   * Path to parent object that will be used with save(). 
-   * This prevents users from needing savePath() to use PImage.save(). 
+   * Path to parent object that will be used with save().
+   * This prevents users from needing savePath() to use PImage.save().
    */
   public PApplet parent;
-  
+
   // note! inherited by PGraphics
   public int imageMode = CORNER;
   public boolean smooth = false;
@@ -132,7 +132,7 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Function to be used by subclasses to setup their own bidness.
-   * Used by Capture and Movie classes (and perhaps others), 
+   * Used by Capture and Movie classes (and perhaps others),
    * because the width/height will not be known when super() is called.
    */
   public void init(int width, int height, int format) {  // ignore
@@ -284,7 +284,7 @@ public class PImage implements PConstants, Cloneable {
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1099,7 +1099,7 @@ public class PImage implements PConstants, Cloneable {
     return 0;
   }
 
-  
+
   static public int lerpColor(int c1, int c2, float amt) {
     float a1 = ((c1 >> 24) & 0xff);
     float r1 = (c1 >> 16) & 0xff;
@@ -1109,7 +1109,7 @@ public class PImage implements PConstants, Cloneable {
     float r2 = (c2 >> 16) & 0xff;
     float g2 = (c2 >> 8) & 0xff;
     float b2 = c2 & 0xff;
-    
+
     return (((int) (a1 + (a2-a1)*amt) << 24) |
             ((int) (r1 + (r2-r1)*amt) << 16) |
             ((int) (g1 + (g2-g1)*amt) << 8) |
@@ -1229,7 +1229,7 @@ public class PImage implements PConstants, Cloneable {
    * Duplicate an image, returns new PImage object.
    * The pixels[] array for the new object will be unique
    * and recopied from the source image. This is implemented as an
-   * override of Object.clone(). We recommend using get() instead, 
+   * override of Object.clone(). We recommend using get() instead,
    * because it prevents you from needing to catch the
    * CloneNotSupportedException, and from doing a cast from the result.
    */
@@ -1723,10 +1723,13 @@ public class PImage implements PConstants, Cloneable {
 
 
   protected boolean saveTIFF(OutputStream output) {
+    // shutting off the warning, people can figure this out themselves
+    /*
     if (format != RGB) {
       System.err.println("Warning: only RGB information is saved with " +
                          ".tif files. Use .tga or .png for ARGB images and others.");
     }
+    */
     try {
       byte tiff[] = new byte[768];
       System.arraycopy(TIFF_HEADER, 0, tiff, 0, TIFF_HEADER.length);

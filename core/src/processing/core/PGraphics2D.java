@@ -59,7 +59,7 @@ public class PGraphics2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  protected PGraphics2D() { }
+  //protected PGraphics2D() { }
 
 
   /*

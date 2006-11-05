@@ -101,96 +101,23 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * @param parent the host applet
    */
   public PGraphicsOpenGL(int width, int height, PApplet iparent) {
-    //System.out.println("creating PGraphicsOpenGL");
+    super(width, height, iparent);
 
-    if (iparent == null) {
-      throw new RuntimeException("The applet passed to PGraphicsOpenGL " +
-                                 "cannot be null");
+    if (parent == null) {
+      throw new RuntimeException("PGraphicsOpenGL can only be used " +
+                                 "as the main drawing surface");
     }
-    this.parent = iparent;
-
-    //System.out.println("creating PGraphicsOpenGL 2");
-
-    //GLCapabilities capabilities = new GLCapabilities();
-    //canvas = GLDrawableFactory.getFactory().createGLCanvas(capabilities);
-    canvas = new GLCanvas();
-
-    //System.out.println("creating PGraphicsOpenGL 3");
-    canvas.addGLEventListener(new GLEventListener() {
-
-        public void display(GLAutoDrawable drawable) {
-          // need to get a fresh opengl object here
-          gl = drawable.getGL();
-          parent.handleDisplay();  // this means it's time to go
-        }
-
-        public void init(GLAutoDrawable drawable) { }
-
-        public void displayChanged(GLAutoDrawable drawable,
-                                   boolean modeChanged,
-                                   boolean deviceChanged) { }
-
-        public void reshape(GLAutoDrawable drawable,
-                            int x, int y, int width, int height) { }
-      });
-
-    //System.out.println("creating PGraphicsOpenGL 4");
-
-    parent.setLayout(null);
-    parent.add(canvas);
-    canvas.setBounds(0, 0, width, height);
-
-    //System.out.println("creating PGraphicsOpenGL 5");
-    //System.out.println("adding canvas listeners");
-    canvas.addMouseListener(parent);
-    canvas.addMouseMotionListener(parent);
-    canvas.addKeyListener(parent);
-    canvas.addFocusListener(parent);
-
-    //System.out.println("creating PGraphicsOpenGL 6");
-
-    // need to get proper opengl context since will be needed below
-    gl = canvas.getGL();
-    glu = new GLU(); //canvas.getGLU();
-
-    //System.out.println("creating PGraphicsOpenGL 7");
-
-    // this sets width/height and calls allocate() in PGraphics
-    resize(width, height);
-    //defaults();  // call this just before setup instead
-
-    tobj = glu.gluNewTess();
-    // unfortunately glu.gluDeleteTess(tobj); is never called
-    //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
-    //                  GLU.GLU_TESS_WINDING_NONZERO);
-    //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
-    //                  GLU.GLU_TESS_WINDING_POSITIVE);
-    //GLU.GLU_TESS_WINDING_ODD);
-    //glu.gluTessProperty(tobj, GLU.GLU_TESS_BOUNDARY_ONLY,
-    //                  GL.GL_TRUE);
-
-    tessCallback = new TessCallback(); //gl, glu);
-    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
-    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
-    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
-    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
-    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
-
-    lightBuffer = BufferUtil.newFloatBuffer(4);
-    lightBuffer.put(3, 1.0f);
-    lightBuffer.rewind();
-
-    //System.out.println("done creating gl");
   }
 
 
   /**
-   * Overridden from base PGraphics, because this PGraphics will set its own listeners.
+   * Overridden from base PGraphics, because this subclass
+   * will set its own listeners.
    */
-  public void setMainDrawingSurface() {
-      mainDrawingSurface = true;
-      //parent.addListeners();
-    }
+  public void setMainDrawingSurface() {  // ignore
+    mainDrawingSurface = true;
+    format = RGB;
+  }
 
 
   //protected boolean displayed = false;
@@ -274,12 +201,88 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   /**
-   * Called by resize(), but nothing to allocate for an OpenGL canvas
+   * Called by resize(), this handles creating the actual GLCanvas the
+   * first time around, or simply resizing it on subsequent calls.
+   * There is no pixel array to allocate for an OpenGL canvas
    * because OpenGL's pixel buffer is all handled internally.
    */
   protected void allocate() {
-    // changing for 0100, need to resize rather than re-allocate
-    canvas.setSize(width, height);
+    if (canvas == null) {
+      //GLCapabilities capabilities = new GLCapabilities();
+      //canvas = GLDrawableFactory.getFactory().createGLCanvas(capabilities);
+      canvas = new GLCanvas();
+
+      //System.out.println("creating PGraphicsOpenGL 3");
+      canvas.addGLEventListener(new GLEventListener() {
+
+          public void display(GLAutoDrawable drawable) {
+            // need to get a fresh opengl object here
+            gl = drawable.getGL();
+            parent.handleDisplay();  // this means it's time to go
+          }
+
+          public void init(GLAutoDrawable drawable) { }
+
+          public void displayChanged(GLAutoDrawable drawable,
+                                     boolean modeChanged,
+                                     boolean deviceChanged) { }
+
+          public void reshape(GLAutoDrawable drawable,
+                              int x, int y, int width, int height) { }
+        });
+
+      //System.out.println("creating PGraphicsOpenGL 4");
+
+      if ((parent != null) && mainDrawingSurface) {
+        parent.setLayout(null);
+        parent.add(canvas);
+        canvas.setBounds(0, 0, width, height);
+
+        //System.out.println("creating PGraphicsOpenGL 5");
+        //System.out.println("adding canvas listeners");
+        canvas.addMouseListener(parent);
+        canvas.addMouseMotionListener(parent);
+        canvas.addKeyListener(parent);
+        canvas.addFocusListener(parent);
+      }
+
+      //System.out.println("creating PGraphicsOpenGL 6");
+
+      // need to get proper opengl context since will be needed below
+      gl = canvas.getGL();
+      glu = new GLU(); //canvas.getGLU();
+
+      //System.out.println("creating PGraphicsOpenGL 7");
+
+      // this sets width/height and calls allocate() in PGraphics
+      //resize(width, height);
+      //defaults();  // call this just before setup instead
+
+      tobj = glu.gluNewTess();
+      // unfortunately glu.gluDeleteTess(tobj); is never called
+      //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
+      //                  GLU.GLU_TESS_WINDING_NONZERO);
+      //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
+      //                  GLU.GLU_TESS_WINDING_POSITIVE);
+      //GLU.GLU_TESS_WINDING_ODD);
+      //glu.gluTessProperty(tobj, GLU.GLU_TESS_BOUNDARY_ONLY,
+      //                  GL.GL_TRUE);
+
+      tessCallback = new TessCallback(); //gl, glu);
+      glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
+      glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
+      glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
+      glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
+      glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
+
+      lightBuffer = BufferUtil.newFloatBuffer(4);
+      lightBuffer.put(3, 1.0f);
+      lightBuffer.rewind();
+
+    } else {
+      // changing for 0100, need to resize rather than re-allocate
+      canvas.setSize(width, height);
+    }
   }
 
 
