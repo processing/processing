@@ -1078,7 +1078,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
 
     // when the coords are Float.MAX_VALUE, then treat as a 2D curve
-    int dimensions = (x == Float.MAX_VALUE) ? 2 : 3;
+    int dimensions = (z == Float.MAX_VALUE) ? 2 : 3;
 
     if (dimensions == 3) {
       vertex[MZ] = z;
