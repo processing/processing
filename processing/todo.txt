@@ -24,12 +24,15 @@ o   particularly after backspace
 X   make notice that restart is required
 X when auto-format has a warning, don't change anything
 X   this is a temporary fix to avoid code being destroyed
-
-_ remember location of cursor on "save as" ?
+X remember location of cursor on "save as" ?
+X   also scroll bar position and current tab
+X "save as" loses cursor/scroll positions (because reloading)
+X   http://processing.org/bugs/show_bug.cgi?id=86
 
 _ several bits of reference are updated
 _ do we include map and norm? (also include unlerp for now?)
 
+reference
 _ need to document changes to int() (no longer accepts boolean)
 _ also parseInt and parseFloat, how they can return another number or NaN
 
@@ -601,6 +604,8 @@ _ only rebuild sketchbook on "save as" or "rename" of sketch
 _   currently it's rebuilding whenever "save" called too
 _   http://dev.processing.org/bugs/show_bug.cgi?id=357
 _   even more of a problem becase set modified set true all the time
+_ don't reload sketch on "save as"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=433
 _ in rebuild sketch menu - disable subfolders working as libraries
 _   if a sketch, don't allow subfolders
 o   or maybe just that libraries must be in the root? 
@@ -618,14 +623,12 @@ _ may need a progress bar for "save as"
 _   or just the file copy function in general
 _   since it may take a long time (i.e. 1000s of screen grabs)
 _   http://processing.org/bugs/show_bug.cgi?id=82
-_ "save as" shouldn't show always show save as dialog
+_ "save as" shouldn't always show save as dialog
 _   unless that's the current mode that's being used
 _   http://processing.org/bugs/show_bug.cgi?id=83
 _ handle renaming with case changes (currently ignores case change)
 _   see notes/bitching in Sketch.nameCode()
 _   http://processing.org/bugs/show_bug.cgi?id=85
-_ "save as" loses cursor/scroll positions (because reloading)
-_   http://processing.org/bugs/show_bug.cgi?id=86
 _ setting sketchbook to a folder on a network mounted drive
 _   does this work? test on both on mac and pc.. 
 _   or if not, should recommend people against it 
