@@ -28,6 +28,7 @@ X remember location of cursor on "save as" ?
 X   also scroll bar position and current tab
 X "save as" loses cursor/scroll positions (because reloading)
 X   http://processing.org/bugs/show_bug.cgi?id=86
+X   as a result, people avoid using "save as"
 X several bits of reference are updated, incorporate new zip file
 
 
