@@ -70,6 +70,7 @@ public class PCanvas extends Canvas {
     
     private PFont       textFont;
     private int         textAlign;
+    private int         textLeading;
         
     /** Creates a new instance of PCanvas */
     public PCanvas(PMIDlet midlet) {
@@ -116,6 +117,11 @@ public class PCanvas extends Canvas {
     
     protected void keyPressed(int keyCode) {
         midlet.enqueueEvent(PMIDlet.EVENT_KEY_PRESSED, keyCode, null);
+    }
+    
+    protected void keyRepeated(int keyCode) {
+        midlet.enqueueEvent(PMIDlet.EVENT_KEY_PRESSED, keyCode, null);
+        midlet.enqueueEvent(PMIDlet.EVENT_KEY_RELEASED, keyCode, null);
     }
     
     protected void keyReleased(int keyCode) {
@@ -632,6 +638,29 @@ public class PCanvas extends Canvas {
         bufferg.translate(x, y);
     }
     
+    public void clip(int x, int y, int width, int height) {
+        int x2 = x + width;
+        int y2 = y + height;
+        //// get current clip
+        int clipX = bufferg.getClipX();
+        int clipY = bufferg.getClipY();
+        int clipX2 = clipX + bufferg.getClipWidth();
+        int clipY2 = clipY + bufferg.getClipHeight();
+        //// check for intersection
+        if (!((x >= clipX2) || (x2 <= clipX) || (y >= clipY2) || (y2 <= clipY))) {
+            //// intersect
+            int intersectX = Math.max(x, clipX);
+            int intersectY = Math.max(y, clipY);
+            int intersectWidth = Math.min(x2, clipX2) - intersectX;
+            int intersectHeight = Math.min(y2, clipY2) - intersectY;
+            bufferg.setClip(intersectX, intersectY, intersectWidth, intersectHeight);
+        }
+    }
+    
+    public void noClip() {
+        bufferg.setClip(0, 0, width, height);
+    }
+    
     public void pushMatrix() {
         if (stackIndex == stack.length) {
             int[] old = stack;
@@ -657,6 +686,7 @@ public class PCanvas extends Canvas {
         translateX = 0;
         translateY = 0;
         bufferg.translate(-bufferg.getTranslateX(), -bufferg.getTranslateY());
+        bufferg.setClip(0, 0, width, height);
     }
     
     public void background(int gray) {
@@ -690,7 +720,7 @@ public class PCanvas extends Canvas {
         int clipY = bufferg.getClipY();
         int clipWidth = bufferg.getClipWidth();
         int clipHeight = bufferg.getClipHeight();
-        bufferg.setClip(dx, dy, swidth, sheight);
+        clip(dx, dy, swidth, sheight);
         img.draw(bufferg, dx - sx, dy - sy);
         bufferg.setClip(clipX, clipY, clipWidth, clipHeight);
     }
@@ -704,6 +734,7 @@ public class PCanvas extends Canvas {
     
     public void textFont(PFont font) {
         textFont = font;
+        textLeading = font.height;
     }
     
     public void colorMode(int mode) {
@@ -903,34 +934,41 @@ public class PCanvas extends Canvas {
     }
     
     public void text(String data, int x, int y, int width, int height) {
+        //// wrap into lines
+        String[] lines = textWrap(data, width, height);
+        //// draw lines
+        text(lines, x, y, width, height);
+    }
+    
+    public void text(String[] data, int x, int y, int width, int height) {
         if (textFont == null) {
             throw new RuntimeException("The current font has not yet been set with textFont()");
         }
         //// for system fonts, set fillcolor
         bufferg.setColor(fillColor);
-        //// wrap into lines
-        String[] lines = textWrap(data, width, height);
         //// save current clip and apply clip to bounding area
         int clipX = bufferg.getClipX();
         int clipY = bufferg.getClipY();
         int clipWidth = bufferg.getClipWidth();
         int clipHeight = bufferg.getClipHeight();
-        bufferg.setClip(x, y, width, height);
+        clip(x, y, width, height);
         //// adjust starting baseline so that text is _contained_ within the bounds
         int textX = x;
         y += textFont.baseline;
-        for (int i = 0, length = lines.length; i < length; i++) {
+        String line;
+        for (int i = 0, length = data.length; i < length; i++) {
+            line = data[i];
             //// calculate alignment within bounds
             switch (textAlign) {
                 case PMIDlet.CENTER:
-                    textX = x + ((width - textWidth(lines[i])) >> 1);
+                    textX = x + ((width - textWidth(line)) >> 1);
                     break;
                 case PMIDlet.RIGHT:
-                    textX = x + width - textWidth(lines[i]);
+                    textX = x + width - textWidth(line);
                     break;
             }
-            textFont.draw(bufferg, lines[i], textX, y, PMIDlet.LEFT);
-            y += textFont.height;
+            textFont.draw(bufferg, line, textX, y, PMIDlet.LEFT);
+            y += textLeading;
         }
         //// restore clip
         bufferg.setClip(clipX, clipY, clipWidth, clipHeight);
@@ -941,7 +979,7 @@ public class PCanvas extends Canvas {
             throw new RuntimeException("The current font has not yet been set with textFont()");
         }
         //// calculate max number of lines that will fit in height
-        int maxlines = height / textFont.height;
+        int maxlines = height / textLeading;
         //// total number of chars in text
         int textLength = data.length();
         //// current index into text;
@@ -966,7 +1004,7 @@ public class PCanvas extends Canvas {
                 lineLength = 0;
                 last = -1;
                 lineWidth = 0;
-                while (lineWidth < width) {
+                while (lineWidth <= width) {
                     if (i == textLength) {
                         last = lineLength;
                         break;
@@ -1030,6 +1068,10 @@ public class PCanvas extends Canvas {
             throw new IllegalArgumentException("Invalid textAlign MODE value");
         }
         textAlign = MODE;
+    }
+    
+    public void textLeading(int dist) {
+        textLeading = dist;
     }
     
     protected void showNotify() {
