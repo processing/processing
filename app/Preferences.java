@@ -89,9 +89,12 @@ public class Preferences {
    * inside a static block.
    */
   static public int BUTTON_HEIGHT = 24;
+  /*
+  // remove this for 0121, because quaqua takes care of it
   static {
     if (Base.isMacOS()) BUTTON_HEIGHT = 29;
   }
+  */
 
   // value for the size bars, buttons, etc
 

@@ -1,34 +1,6 @@
-0120 pde
-X add a note saying that changing the font size requires restart
-X trying out quaqua look and feel on the mac, improve how things look
-X trying the gtk+ look and feel for linux
-X use special awt hack on the mac to handle directory selection
-X drag & drop on the mac snaps back as if it didn't work
-X   does this also happen on windows?
-o   are there better classes to use inside the com.apple classes?
-o   file a bug for this stuff
-X figure out how to cancel 'save changes' on macosx and windows
-X   macosx handleQuit seems to force termination (at least on 1.3)
-X   http://developer.apple.com/qa/qa2001/qa1187.html
-X   http://dev.processing.org/bugs/show_bug.cgi?id=32
-X   need to test on windows to make sure it works
-X try the better mac l&f
-o Contents/Resources/Java can take jnilib files
-o set file type/creator for .pde files of examples
-o use disk:// notation as panther alternative
-o   so that it doesn't download the disk, just mounts it
-o   although.. this only works on panther.. how many are using it?
-X   filed as http://dev.processing.org/bugs/show_bug.cgi?id=431
-o changing font size in editor not updating all font objects
-o   particularly after backspace
-X   make notice that restart is required
-X when auto-format has a warning, don't change anything
-X   this is a temporary fix to avoid code being destroyed
-X remember location of cursor on "save as" ?
-X   also scroll bar position and current tab
-X "save as" loses cursor/scroll positions (because reloading)
-X   http://processing.org/bugs/show_bug.cgi?id=86
-X several bits of reference are updated, incorporate new zip file
+0121 pde
+X fix button fatness on osx 
+X   quaqua already takes care of this for us
 
 reference
 _ need to document changes to int() (no longer accepts boolean)
