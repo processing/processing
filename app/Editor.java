@@ -1523,9 +1523,15 @@ public class Editor extends JFrame
    * Open a sketch from a particular path, but don't check to save changes.
    * Used by Sketch.saveAs() to re-open a sketch after the "Save As"
    */
-  public void handleOpenUnchecked(String path) {
+  public void handleOpenUnchecked(String path, int codeIndex,
+                                  int selStart, int selStop, int scrollPos) {
     doClose();
     handleOpen2(path);
+
+    sketch.setCurrent(codeIndex);
+    textarea.select(selStart, selStop);
+    //textarea.updateScrollBars();
+    textarea.setScrollPosition(scrollPos);
   }
 
 

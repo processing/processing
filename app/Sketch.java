@@ -487,7 +487,11 @@ public class Sketch {
         // having saved everything and renamed the folder and the main .pde,
         // use the editor to re-open the sketch to re-init state
         // (unfortunately this will kill positions for carets etc)
-        editor.handleOpenUnchecked(mainFilename);
+        editor.handleOpenUnchecked(mainFilename,
+                                   currentIndex,
+                                   editor.textarea.getSelectionStart(),
+                                   editor.textarea.getSelectionEnd(),
+                                   editor.textarea.getScrollPosition());
 
         /*
           // backtrack and don't rename the sketch folder
@@ -926,7 +930,11 @@ public class Sketch {
     File newFile = new File(newFolder, newName + ".pde");
     code[0].saveAs(newFile);
 
-    editor.handleOpenUnchecked(newFile.getPath());
+    editor.handleOpenUnchecked(newFile.getPath(),
+                               currentIndex,
+                               editor.textarea.getSelectionStart(),
+                               editor.textarea.getSelectionEnd(),
+                               editor.textarea.getScrollPosition());
 
     /*
     // copy the entire contents of the sketch folder
