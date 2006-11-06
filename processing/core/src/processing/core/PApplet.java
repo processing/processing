@@ -831,6 +831,8 @@ public class PApplet extends Applet
                    String irenderer, String ipath) {
     String currentRenderer =
       (g == null) ? null : g.getClass().getName();
+    // ensure that this is an absolute path
+    if (ipath != null) ipath = savePath(ipath);
 
     if (currentRenderer != null) {
       if (currentRenderer.equals(irenderer)) {
@@ -938,24 +940,6 @@ public class PApplet extends Applet
   }
 
 
-  public PGraphics createGraphics(int iwidth, int iheight,
-                                  String irenderer) {
-    PGraphics pg =
-      PApplet.createGraphics(iwidth, iheight, irenderer, null, null);
-    pg.parent = this;  // make save() work
-    return pg;
-  }
-
-
-  public PGraphics createGraphics(int iwidth, int iheight,
-                                  String irenderer, String ipath) {
-    PGraphics pg =
-      PApplet.createGraphics(iwidth, iheight, irenderer, ipath, null);
-    pg.parent = this;  // make save() work
-    return pg;
-  }
-
-
   /**
    * Create an offscreen PGraphics object for drawing. This can be used
    * for bitmap or vector images drawing or rendering.
@@ -1007,9 +991,42 @@ public class PApplet extends Applet
    * <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PImage.html#save(java.lang.String)">PImage.save()</A>.
    * </UL>
    */
-  static public PGraphics createGraphics(int iwidth, int iheight,
-                                         String irenderer, String ipath,
-                                         PApplet applet) {
+  public PGraphics createGraphics(int iwidth, int iheight,
+                                  String irenderer) {
+    PGraphics pg =
+      PApplet.createGraphics(iwidth, iheight, irenderer, null, null);
+    pg.parent = this;  // make save() work
+    return pg;
+  }
+
+
+  /**
+   * Create an offscreen graphics surface for drawing, in this case
+   * for a renderer that writes to a file (such as PDF or DXF).
+   * @param ipath can be an absolute or relative path
+   */
+  public PGraphics createGraphics(int iwidth, int iheight,
+                                  String irenderer, String ipath) {
+    if (ipath != null) {
+      ipath = savePath(ipath);
+    }
+    PGraphics pg =
+      PApplet.createGraphics(iwidth, iheight, irenderer, ipath, null);
+    pg.parent = this;  // make save() work
+    return pg;
+  }
+
+
+  /**
+   * Version of createGraphics() used internally.
+   *
+   * @param ipath must be an absolute path, usually set via savePath()
+   * @oaram applet the parent applet object, this should only be non-null
+   *               in cases where this is the main drawing surface object.
+   */
+  static protected PGraphics createGraphics(int iwidth, int iheight,
+                                            String irenderer, String ipath,
+                                            PApplet applet) {
     /*
     // ok when calling size, but not really with createGraphics()
     if (renderer.equals(OPENGL)) {
@@ -1036,7 +1053,7 @@ public class PApplet extends Applet
         };
       } else {
         // first make sure that this in a nice, full, absolute path
-        ipath = applet.savePath(ipath);
+        //ipath = applet.savePath(ipath);
 
         constructorParams = new Class[] {
           Integer.TYPE, Integer.TYPE, PApplet.class, String.class
@@ -4329,7 +4346,10 @@ public class PApplet extends Applet
     }
     // isAbsolute() could throw an access exception, but so will writing
     // to the local disk using the sketch path, so this is safe here.
-    if (new File(where).isAbsolute()) return where;
+    // for 0120, added a try/catch anyways.
+    try {
+      if (new File(where).isAbsolute()) return where;
+    } catch (Exception e) { }
 
     return sketchPath + File.separator + where;
   }
@@ -6631,6 +6651,7 @@ public class PApplet extends Applet
 
   public PGraphics beginRecord(String renderer, String filename) {
     filename = insertFrame(filename);
+    //filename = savePath(filename);
     PGraphics rec = createGraphics(width, height, renderer, filename);
     beginRecord(rec);
     return rec;
@@ -6656,8 +6677,8 @@ public class PApplet extends Applet
 
 
   public PGraphics beginRaw(String renderer, String filename) {
-    //filename = savePath(filename);  // ensure an absolute path
     filename = insertFrame(filename);
+    //filename = savePath(filename);  // ensure an absolute path
     PGraphics rec = createGraphics(width, height, renderer, filename);
     //g.recordRaw(rec);
     g.beginRaw(rec);
