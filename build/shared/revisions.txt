@@ -41,6 +41,9 @@ Several long-standing bugs fixed in this release.
   hint(ENABLE_NATIVE_FONTS). Also added lots of notes to the reference
   based on frequently asked questions.
 
++ maintain selection, current tab, and scroll position on "save as"
+  http://processing.org/bugs/show_bug.cgi?id=86
+
 + Fixed issue where ambientLight(r, g, b) was instead ambientLight(r, g, r)
   http://dev.processing.org/bugs/show_bug.cgi?id=412
 
