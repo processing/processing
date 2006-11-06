@@ -28,9 +28,7 @@ X remember location of cursor on "save as" ?
 X   also scroll bar position and current tab
 X "save as" loses cursor/scroll positions (because reloading)
 X   http://processing.org/bugs/show_bug.cgi?id=86
-
-_ several bits of reference are updated
-_ do we include map and norm? (also include unlerp for now?)
+X several bits of reference are updated, incorporate new zip file
 
 reference
 _ need to document changes to int() (no longer accepts boolean)
