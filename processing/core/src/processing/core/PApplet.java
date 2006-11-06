@@ -5295,11 +5295,11 @@ public class PApplet extends Applet
   static final public boolean parseBoolean(float what) {
     return (what != 0);
   }
+  */
 
   static final public boolean parseBoolean(String what) {
     return new Boolean(what).booleanValue();
   }
-  */
 
   //
 
@@ -5328,6 +5328,7 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
+  */
 
   static final public boolean[] parseBoolean(String what[]) {
     boolean outgoing[] = new boolean[what.length];
@@ -5336,7 +5337,6 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-  */
 
   //
 
@@ -7770,15 +7770,33 @@ public class PApplet extends Applet
   }
 
 
+  public void background(int rgb, float alpha) {
+    if (recorder != null) recorder.background(rgb, alpha);
+    g.background(rgb, alpha);
+  }
+
+
   public void background(float gray) {
     if (recorder != null) recorder.background(gray);
     g.background(gray);
   }
 
 
+  public void background(float gray, float alpha) {
+    if (recorder != null) recorder.background(gray, alpha);
+    g.background(gray, alpha);
+  }
+
+
   public void background(float x, float y, float z) {
     if (recorder != null) recorder.background(x, y, z);
     g.background(x, y, z);
+  }
+
+
+  public void background(float x, float y, float z, float a) {
+    if (recorder != null) recorder.background(x, y, z, a);
+    g.background(x, y, z, a);
   }
 
 
