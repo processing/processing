@@ -7,6 +7,46 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0121 - 6 November 2006
+
+Adds printing, fixes a last-minute createGraphics() regression in 0120, 
+and some other minor tweaks.
+
+[ features! ] 
+
++ Printing a tab is now supported (but with caveats)
+  http://dev.processing.org/bugs/show_bug.cgi?id=27
+  The"Page Setup" dialog doesn't work very well because Java seems 
+  to suck at printing, and suck differently on different platforms:
+  http://dev.processing.org/bugs/show_bug.cgi?id=435
+  Also, only the current tab is printed:
+  http://dev.processing.org/bugs/show_bug.cgi?id=28
+
++ Added background() with alpha parameters, but only for use with 
+  graphics created by createGraphics(). Also, it replaces the pixels
+  with pixels that have that alpha, it's not like drawing a semi-
+  transparent rect() onto the screen. For instance, o make a drawing 
+  surface transparent again, use background(0, 0, 0, 0). Using
+  background(0, 0, 0, 128) will replace the background with black
+  pixels that are 50% transparent, it will not fade the existing 
+  image toward black, use a rect() for that.
+
+[ bug fixes ] 
+
++ size(), beginRecords(), beginRaw(), and createGraphics() were broken 
+  for file-based renderers in 0120
+  http://dev.processing.org/bugs/show_bug.cgi?id=434
+
++ Fixed overly fat buttons on OS X due to a previous workaround that's
+  no longer a problem because we're using (testing?) the Quaqua L&F.
+  http://www.randelshofer.ch/quaqua/
+
++ Fixed a bug with 'hidden' code causing an error inside rebuildMenu()
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0120 - 5 November 2006
 
 Several long-standing bugs fixed in this release.
