@@ -1,12 +1,5 @@
-0121 core
-X need to document changes to int() (no longer accepts boolean)
-X background(0, 0, 0, 0) is the way to really clear everything with zeroes
-X   or background(0, 0), but the former is prolly better conceptually
-X   how to clear the screen with alpha? background(0, 0, 0, 0)?
-o   background(EMPTY) -> background(0x01000000) or something?
-X size(), beginRecords(), beginRaw(), createGraphics() 
-X   broken for file-based renderers in 0120
-X   http://dev.processing.org/bugs/show_bug.cgi?id=434
+0122 core
+
 
 _ make lerpColor honor the current color mode
 _   though that's awkward b/c colors always RGB
