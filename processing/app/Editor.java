@@ -570,7 +570,6 @@ public class Editor extends JFrame
           handlePageSetup();
         }
       });
-    //item.setEnabled(false);
     menu.add(item);
 
     item = newJMenuItem("Print", 'P');
@@ -1849,6 +1848,9 @@ public class Editor extends JFrame
     } else {
       printerJob.setPrintable(textarea.getPainter());
     }
+    // set the name of the job to the code name
+    printerJob.setJobName(sketch.current.name);
+
     if (printerJob.printDialog()) {
       try {
         printerJob.print();
