@@ -1,11 +1,5 @@
-0121 pde
-X fix button fatness on osx 
-X   quaqua already takes care of this for us
-X implement page setup and print
-X   pretty printing of code in project
-X   http://dev.processing.org/bugs/show_bug.cgi?id=27
-X   also turn off line highlighting while printing
-X fix bug with 'hidden' code causing an error inside rebuildMenu()
+0122 pde
+
 
 processing wish list 
 _ opening multiple versions of p5 at a time
