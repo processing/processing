@@ -412,11 +412,9 @@ implements TabExpander, Printable
 
 
   public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
-    //System.out.println("painter page format is " + pageFormat);
     int lineHeight = fm.getHeight();
     int linesPerPage = (int) (pageFormat.getImageableHeight() / lineHeight);
     int lineCount = textArea.getLineCount();
-    //int pageCount = (lineCount + linesPerPage-1) / linesPerPage;
     int lastPage = lineCount / linesPerPage;
 
     if (pageIndex > lastPage) {
@@ -426,7 +424,7 @@ implements TabExpander, Printable
       Graphics2D g2d = (Graphics2D)g;
       TokenMarker tokenMarker = textArea.getDocument().getTokenMarker();
       int firstLine = pageIndex*linesPerPage;
-      g2d.translate(pageFormat.getImageableX(),
+      g2d.translate(Math.max(54, pageFormat.getImageableX()),
                     pageFormat.getImageableY() - firstLine*lineHeight);
       printing = true;
       for (int line = firstLine; line < firstLine + linesPerPage; line++) {
