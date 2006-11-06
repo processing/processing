@@ -17,7 +17,7 @@ and some other minor tweaks.
 + Printing a tab is now supported (but with caveats)
   http://dev.processing.org/bugs/show_bug.cgi?id=27
   The"Page Setup" dialog doesn't work very well because Java seems 
-  to suck at printing, and suck differently on different platforms:
+  to suck at printing, and sucks differently on different platforms:
   http://dev.processing.org/bugs/show_bug.cgi?id=435
   Also, only the current tab is printed:
   http://dev.processing.org/bugs/show_bug.cgi?id=28
