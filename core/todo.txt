@@ -1,5 +1,14 @@
 0121 core
+X need to document changes to int() (no longer accepts boolean)
+X background(0, 0, 0, 0) is the way to really clear everything with zeroes
+X   or background(0, 0), but the former is prolly better conceptually
+X   how to clear the screen with alpha? background(0, 0, 0, 0)?
+o   background(EMPTY) -> background(0x01000000) or something?
 
+_ make lerpColor honor the current color mode
+_   though that's awkward b/c colors always RGB
+_   lerpColor(c1, c2, amt, RGB/HSB/???)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
 
 _ related to the fill bugs: when fill is identical, no fill applied
 _   actually tint() should take over for fill as per-vertex color
@@ -16,6 +25,7 @@ _   is fill() not coloring textures properly?
 _     don't need to apply tint() to textures, supposed to use fill color
 
 add to reference
+_ also parseInt and parseFloat, how they can return another number or NaN
 _ background() with an image ignores the tint.. it's basically like set()
 _ get/set are faster way draw screen space images, but no tint, no translations
 
@@ -43,16 +53,6 @@ _   should instead create new buffer, and swap it in next time through
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
-
-_ make lerpColor honor the current color mode
-_   though that's awkward b/c colors always RGB
-_   lerpColor(c1, c2, amt, RGB/HSB/???)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
-
-_ background(0, 0, 0, 0) is the way to really clear everything with zeroes
-_   or background(0, 0), but the former is prolly better conceptually
-_ how to clear the screen with alpha? background(0, 0, 0, 0)?
-_   background(EMPTY) -> background(0x01000000) or something?
 
 _ keep track of internal lines in shapes
 _   disable anti-aliasing for internal edges
