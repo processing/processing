@@ -1,6 +1,10 @@
 0121 pde
 X fix button fatness on osx 
 X   quaqua already takes care of this for us
+X implement page setup and print
+X   pretty printing of code in project
+X   http://dev.processing.org/bugs/show_bug.cgi?id=27
+X   also turn off line highlighting while printing
 
 reference
 _ need to document changes to int() (no longer accepts boolean)
@@ -360,9 +364,6 @@ _   if it's made too small, stuff from the bottom disappears
 _   http://dev.processing.org/bugs/show_bug.cgi?id=25
 _ add mnemonics for menus (alt-f to open 'file')
 _   http://dev.processing.org/bugs/show_bug.cgi?id=26
-_ implement page setup and print
-_   pretty printing of code in project
-_   http://dev.processing.org/bugs/show_bug.cgi?id=27
 _ option to just print all code in project
 _   option to export all the code as colored html
 _   http://dev.processing.org/bugs/show_bug.cgi?id=28

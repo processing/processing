@@ -32,6 +32,7 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 import java.awt.event.*;
+import java.awt.print.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
@@ -76,6 +77,9 @@ public class Editor extends JFrame
   String handleOpenPath;
   boolean handleNewShift;
   boolean handleNewLibrary;
+
+  PageFormat pageFormat;
+  PrinterJob printerJob;
 
   EditorButtons buttons;
   EditorHeader header;
@@ -561,11 +565,20 @@ public class Editor extends JFrame
     menu.addSeparator();
 
     item = newJMenuItem("Page Setup", 'P', true);
-    item.setEnabled(false);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handlePageSetup();
+        }
+      });
+    //item.setEnabled(false);
     menu.add(item);
 
     item = newJMenuItem("Print", 'P');
-    item.setEnabled(false);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handlePrint();
+        }
+      });
     menu.add(item);
 
     // macosx already has its own preferences and quit menu
@@ -1808,6 +1821,47 @@ public class Editor extends JFrame
       return false;
     }
     return true;
+  }
+
+
+  public void handlePageSetup() {
+    //printerJob = null;
+    if (printerJob == null) {
+      printerJob = PrinterJob.getPrinterJob();
+    }
+    if (pageFormat == null) {
+      pageFormat = printerJob.defaultPage();
+    }
+    pageFormat = printerJob.pageDialog(pageFormat);
+    //System.out.println("page format is " + pageFormat);
+  }
+
+
+  public void handlePrint() {
+    message("Printing...");
+    //printerJob = null;
+    if (printerJob == null) {
+      printerJob = PrinterJob.getPrinterJob();
+    }
+    if (pageFormat != null) {
+      //System.out.println("setting page format " + pageFormat);
+      printerJob.setPrintable(textarea.getPainter(), pageFormat);
+    } else {
+      printerJob.setPrintable(textarea.getPainter());
+    }
+    if (printerJob.printDialog()) {
+      try {
+        printerJob.print();
+        message("Done printing.");
+
+      } catch (PrinterException pe) {
+        error("Error while printing.");
+        pe.printStackTrace();
+      }
+    } else {
+      message("Printing canceled.");
+    }
+    //printerJob = null;  // clear this out?
   }
 
 
