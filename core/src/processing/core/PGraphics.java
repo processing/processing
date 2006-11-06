@@ -155,8 +155,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   /** Last background color that was set, zero if an image */
   public int backgroundColor = 0xffC0C0C0;
 
-  float backgroundR, backgroundG, backgroundB, backgroundA;
-  int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
+  protected boolean backgroundAlpha;
+  protected float backgroundR, backgroundG, backgroundB, backgroundA;
+  protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
 
   // ........................................................
 
@@ -3678,14 +3679,16 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void background(int rgb, float alpha) {
     if (mainDrawingSurface) {
       background(rgb);  // don't allow people to set alpha
-    }
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      background((float) rgb, alpha);
 
     } else {
-      colorCalcARGB(rgb, alpha);
-      backgroundFromCalc();
-      clear();
+      if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+        background((float) rgb, alpha);
+
+      } else {
+        colorCalcARGB(rgb, alpha);
+        backgroundFromCalc();
+        clear();
+      }
     }
   }
 
@@ -3707,10 +3710,12 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void background(float gray, float alpha) {
     if (mainDrawingSurface) {
       background(gray);  // don't allow people to set alpha
+
+    } else {
+      colorCalc(gray, alpha);
+      backgroundFromCalc();
+      clear();
     }
-    colorCalc(gray, alpha);
-    backgroundFromCalc();
-    clear();
   }
 
 
@@ -3738,10 +3743,12 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void background(float x, float y, float z, float a) {
     if (mainDrawingSurface) {
       background(x, y, z);  // don't allow people to set alpha
+
+    } else {
+      colorCalc(x, y, z, a);
+      backgroundFromCalc();
+      clear();
     }
-    colorCalc(x, y, z, a);
-    backgroundFromCalc();
-    clear();
   }
 
 
@@ -3754,6 +3761,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     backgroundGi = calcGi;
     backgroundBi = calcBi;
     backgroundAi = calcAi;
+    backgroundAlpha = calcAlpha;
     backgroundColor = calcColor;
   }
 

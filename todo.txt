@@ -377,6 +377,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=26
 _ option to just print all code in project
 _   option to export all the code as colored html
 _   http://dev.processing.org/bugs/show_bug.cgi?id=28
+_ "page setup" sucks in java
+_   http://dev.processing.org/bugs/show_bug.cgi?id=435
 _ rename/saveas doesn't properly have its focus set
 _   under windows, immediately typing after rename doesn't select
 _   the whole thing is selected, but not directly editable

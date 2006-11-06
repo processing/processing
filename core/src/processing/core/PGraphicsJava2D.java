@@ -124,7 +124,6 @@ public class PGraphicsJava2D extends PGraphics {
   // broken out because of subclassing for opengl
   protected void allocate() {
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    //image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     g2 = (Graphics2D) image.getGraphics();
   }
 
@@ -992,11 +991,17 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   public void clear() {
+    // the only way to properly clear the screen is to re-allocate
+    if (backgroundAlpha) {
+      // clearRect() doesn't work because it just makes everything black.
+      // instead, just wipe out the canvas to its transparent original
+      allocate();
+    }
     // in case people do transformations before background(),
     // need to handle this with a push/reset/pop
     pushMatrix();
     resetMatrix();
-    g2.setColor(new Color(backgroundColor));
+    g2.setColor(new Color(backgroundColor, backgroundAlpha));
     g2.fillRect(0, 0, width, height);
     popMatrix();
   }
