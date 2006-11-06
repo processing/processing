@@ -2799,7 +2799,7 @@ public class PApplet extends Applet
    * @deprecated Used only in release 0119, will be removed.
    */
   static public final float unlerp(float start, float stop, float value) {
-    return norm(start, stop, value);
+    return (value - start) / (stop - start);
   }
 
   /**
@@ -2807,7 +2807,7 @@ public class PApplet extends Applet
    * Mathematically the opposite of lerp(), figures out what proportion
    * a particular value is relative to start and stop coordinates.
    */
-  static public final float norm(float start, float stop, float value) {
+  static public final float norm(float value, float start, float stop) {
     return (value - start) / (stop - start);
   }
 
