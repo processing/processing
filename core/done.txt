@@ -1,3 +1,90 @@
+0120 core
+X fixed error when using hint(ENABLE_NATIVE_FONTS) with JAVA2D
+X   java.lang.IllegalArgumentException: 
+X   null incompatible with Global antialiasing enable key
+X fix issue where ambientLight(r, g, b) was instead ambientLight(r, g, r)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=412
+X createFont() should always use native fonts
+X   need to warn that fonts may not be installed
+X   recommend that people include the ttf if that's the thing
+X   or rather, that this is only recommended for offline use
+X fix 3D tessellation problems with curveVertex and bezierVertex
+X   actually was z = Float.MAX_VALUE regression
+X   http://dev.processing.org/bugs/show_bug.cgi?id=390
+X   two examples in sketchbook
+X   this has been reported several times
+X concave polygons having trouble if points come back to meet 
+X   tesselator/triangulator gets confused when points doubled up
+X   might need to avoid previous vertex hitting itself
+X   http://dev.processing.org/bugs/show_bug.cgi?id=97
+X   graphics gems 5 has more about tessellation
+X polygons perpendicular to axis not drawing
+X   is this a clipping error?
+X   probably a triangulation error, because triangles work ok
+X   http://dev.processing.org/bugs/show_bug.cgi?id=111
+X   problem is that the area of the polygon isn't taking into account z
+X lookat is now camera(), but not fixed in the docs
+X   add notes to the faq about the camera changes on the changes page
+o update run.bat for new quicktime
+o   unfortunately this is messy because qtjava sometimes has quotes
+o   and qtsystem might be somewhere besides c:\progra~1
+X   run.bat has been removed from current releases
+X registering font directories in pdf.. is it necessary? 
+X   (commented out for 0100)
+X   re-added for 0120
+o when re-calling size() with opengl, need to remove the old canvas
+o   need to check to see if this is working properly now
+X passing applet into createGraphics.. problems with re-adding listeners
+X   since the listeners are added to the PApplet
+X   i think the listeners aren't re-added, but need to double check
+X createGraphics() having problems with JAVA2D, and sometimes with P3D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=419
+X with default renderer, no default background color?
+X   only sometimes.. why is this?
+X only call defaults() when it's part of a PApplet canvas
+X   make sure that defaults() is no longer necessary
+X   don't want to hose PGraphics for others
+X   both for pdf, and making background transparent images
+X PGraphics3D should alloc to all transparent
+X   unless it's the main drawing surface (does it know on alloc?)
+X   in which case it should be set to opaque
+X have createGraphics() create a completely transparent image
+X   and also not require defaults() to be called
+X make a note in the createFont() reference that 1.5 on OS X has problems
+o if calling beginPixels inside another, need to increment a counter
+o   otherwise the end will look like it's time to update
+o   which may not actually be the case
+o   i.e. calling filter() inside begin/end block
+X get creating new PGraphics/2/3 working again
+X   http://dev.processing.org/bugs/show_bug.cgi?id=92
+X   maybe createGraphics(200, 200) to create same as source
+X   createGraphics(200, 200, P2D) to create 2D from 3D
+X   also, drawing a PGraphics2 doesn't seem to work
+X   new PGraphics2 objects are set as RGB, but on loadPixels/updatePixels
+X     they're drawn as transparent and don't have their high bits set
+X problems between modelX between alpha and beta
+X   http://dev.processing.org/bugs/show_bug.cgi?id=386
+X   y may be flipped in modelX/Y/Z stuff on opengl
+X     is this the same bug? assuming that it is
+
+in previous releases
+X when using PGraphics, must call beginFrame() and endFrame()
+X   also need to be able to turn off MemoryImageSource on endFrame
+X   call defaults() in beginFrame()
+X should PGraphics be a base class with implementations and variables?
+X   then PGraphics2D and PGraphics3D that subclass it?
+X   (or even just PGraphics2 and PGraphics3)
+X   also rename PGraphics2 to PGraphicsJava
+X   it's goofy to have the naming so different
+X tweak to only exit from ESC on keyPressed
+o   probably should just make this a hint() instead
+X   just documented in reference instead
+o metaballs example dies when using box()
+o   long string of exceptions, which are also missing their newlines
+X grabbing sun.cpu.endian throws a security exception with gl applets
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1114368123
+
+
 0119 core
 X add saveStream() method
 X change to handle Java 1.5 f-up where URLs now give FileNotFoundException
