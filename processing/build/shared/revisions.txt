@@ -25,7 +25,7 @@ and some other minor tweaks.
 + Added background() with alpha parameters, but only for use with 
   graphics created by createGraphics(). Also, it replaces the pixels
   with pixels that have that alpha, it's not like drawing a semi-
-  transparent rect() onto the screen. For instance, o make a drawing 
+  transparent rect() onto the screen. For instance, to make a drawing 
   surface transparent again, use background(0, 0, 0, 0). Using
   background(0, 0, 0, 128) will replace the background with black
   pixels that are 50% transparent, it will not fade the existing 
@@ -50,7 +50,6 @@ and some other minor tweaks.
 ABOUT REV 0120 - 5 November 2006
 
 Several long-standing bugs fixed in this release.
-
 
 [ bug fixes ]
 
@@ -87,7 +86,6 @@ Several long-standing bugs fixed in this release.
 + Fixed issue where ambientLight(r, g, b) was instead ambientLight(r, g, r)
   http://dev.processing.org/bugs/show_bug.cgi?id=412
 
-
 [ functional improvements ]
 
 + With the PDF library, text no longer defaults to raw shape outlines. 
@@ -111,7 +109,6 @@ Several long-standing bugs fixed in this release.
   transparent drawing surface that can be written to a file. The alpha
   channel will also be written for the file if using a file format
   (such as PNG) that supports transparency.
-
 
 If this is the first release you're using since 0115 or earlier, 
 please read the section below that contains the release notes for 0116. 
