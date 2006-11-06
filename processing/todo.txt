@@ -5,6 +5,20 @@ X implement page setup and print
 X   pretty printing of code in project
 X   http://dev.processing.org/bugs/show_bug.cgi?id=27
 X   also turn off line highlighting while printing
+X fix bug with 'hidden' code causing an error inside rebuildMenu()
+
+processing wish list 
+_ opening multiple versions of p5 at a time
+_   shouldn't actually be a big deal 
+_   would also help the opening multiple files thing
+_ TRIANGLE_STRIP not highlighted for "find in reference"
+_   nor is it listed on the reference page
+_   so students can't find the ref for it
+_   needs to link TRIANGLE_STRIP to the beginShape() reference
+_ stop button not stopping anything
+_ copy running from from /tmp/buildXXxxx on crash of p5
+_   should probably make a way to save/recover code
+_ code as columns (screen is wide, code is not)
 
 _ lots of runtime exceptions still being lost on osx
 _   particularly with multi-threaded applications
