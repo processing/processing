@@ -155,8 +155,8 @@ public abstract class PGraphics extends PImage implements PConstants {
   /** Last background color that was set, zero if an image */
   public int backgroundColor = 0xffC0C0C0;
 
-  float backgroundR, backgroundG, backgroundB;
-  int backgroundRi, backgroundGi, backgroundBi;
+  float backgroundR, backgroundG, backgroundB, backgroundA;
+  int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
 
   // ........................................................
 
@@ -3673,11 +3673,42 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * See notes about alpha in background(x, y, z, a).
+   */
+  public void background(int rgb, float alpha) {
+    if (mainDrawingSurface) {
+      background(rgb);  // don't allow people to set alpha
+    }
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      background((float) rgb, alpha);
+
+    } else {
+      colorCalcARGB(rgb, alpha);
+      backgroundFromCalc();
+      clear();
+    }
+  }
+
+
+  /**
    * Set the background to a grayscale value, based on the
    * current colorMode.
    */
   public void background(float gray) {
     colorCalc(gray);
+    backgroundFromCalc();
+    clear();
+  }
+
+
+  /**
+   * See notes about alpha in background(x, y, z, a).
+   */
+  public void background(float gray, float alpha) {
+    if (mainDrawingSurface) {
+      background(gray);  // don't allow people to set alpha
+    }
+    colorCalc(gray, alpha);
     backgroundFromCalc();
     clear();
   }
@@ -3694,13 +3725,35 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Clear the background with a color that includes an alpha value.
+   * This should only be used with objects created by createGraphics(),
+   * setting the main drawing surface transparent may cause problems.
+   * It might be tempting to use this function to partially clear the
+   * screen on each frame, however that's not how this function works.
+   * When calling background(), the pixels will be replaced with pixels
+   * that have that level of transparency. To do a semi-transparent
+   * overlay, use fill() with alpha and draw a rectangle.
+   */
+  public void background(float x, float y, float z, float a) {
+    if (mainDrawingSurface) {
+      background(x, y, z);  // don't allow people to set alpha
+    }
+    colorCalc(x, y, z, a);
+    backgroundFromCalc();
+    clear();
+  }
+
+
   protected void backgroundFromCalc() {
     backgroundR = calcR;
     backgroundG = calcG;
     backgroundB = calcB;
+    backgroundA = calcA;
     backgroundRi = calcRi;
     backgroundGi = calcGi;
     backgroundBi = calcBi;
+    backgroundAi = calcAi;
     backgroundColor = calcColor;
   }
 
@@ -3737,8 +3790,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * Clear the pixel buffer.
    */
-  protected void clear() {
-  }
+  abstract protected void clear();
 
 
 

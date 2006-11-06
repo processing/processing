@@ -6,10 +6,6 @@ X   pretty printing of code in project
 X   http://dev.processing.org/bugs/show_bug.cgi?id=27
 X   also turn off line highlighting while printing
 
-reference
-_ need to document changes to int() (no longer accepts boolean)
-_ also parseInt and parseFloat, how they can return another number or NaN
-
 _ lots of runtime exceptions still being lost on osx
 _   particularly with multi-threaded applications
 _ macosx dropping exceptions all the time.. grr
