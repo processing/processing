@@ -11,17 +11,13 @@
 <example>
 <image></image>
 <code>
-float f = 0.0;
-boolean b = boolean(f);
-println(f + " : " + b);  // Prints "0.0 : false"
-
-int i = 1;
-b = boolean(i);
-println(i + " : " + b);  // Prints "1 : true"
-
-i = 3445;
-b = boolean(i);
-println(i + " : " + b);  // Prints "3445 : true"
+String s = "true";
+boolean b = boolean(s);
+if (b) {
+  println("The boolean is true");
+} else {
+  println("The boolean is false");
+}
 </code>
 </example>
 
@@ -35,7 +31,7 @@ boolean(<c>val</c>)
 
 <parameter>
 <label>val</label>
-<description>int, float, char, byte, String, int[], float[], char[], byte[], String[]</description>
+<description>String, String[]</description>
 </parameter>
 
 <returns>boolean</returns>

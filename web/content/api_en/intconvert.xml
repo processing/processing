@@ -31,7 +31,7 @@ int(<c>value</c>)
 
 <parameter>
 <label>value</label>
-<description>float, char, byte, boolean, String, float[], char[], byte[], boolean[], String[]</description>
+<description>float, char, byte, String, float[], char[], byte[], String[]</description>
 </parameter>
 
 <returns>int</returns>

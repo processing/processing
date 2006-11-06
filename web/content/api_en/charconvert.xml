@@ -15,18 +15,14 @@ int i = 65;
 char c = char(i);
 println(i + " : " + c);  // Prints "65 : A"
 
-float f = 72.4;
-c = char(f);
-println(f + " : " + c);  // Prints "72.4 : H"
-
-boolean b = true;
-c = char(b);
-println(b + " : " + c);  // Prints "true : t"
+byte b = 65;
+char c = char(b);
+println(b + " : " + c);  // Prints "65 : 65"
 </code>
 </example>
 
 <description>
-Converts a primitive datatype, string, or array to a numeric character representation.
+Converts a primitive datatype or array to a numeric character representation.
 </description>
 
 <syntax>
@@ -35,7 +31,7 @@ char(<c>val</c>)
 
 <parameter>
 <label>val</label>
-<description>int, float, byte, boolean, String, int[], float[], byte[], boolean[], String[]</description>
+<description>int, byte, int[], byte[]</description>
 </parameter>
 
 <returns>char</returns>

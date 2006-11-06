@@ -11,22 +11,18 @@
 <example>
 <image></image>
 <code>
-float f = 65.0;
-byte b = byte(f);
-println(f + " : " + b);  // Prints "65.0 : 65"
-
 char c = 'E';
 b = byte(c);
 println(c + " : " + b);  // Prints "E : 69"
 
-f = 130.0;
-b = byte(f);
-println(f + " : " + b);  // Prints "130.0 : -126"
+int i = 130;
+b = byte(i);
+println(i + " : " + b);  // Prints "130 : -126"
 </code>
 </example>
 
 <description>
-Converts a primitive datatype, string, or array to its byte representation. A byte can only be a whole number between -128 and 127, therefore when a number outside this range is converted, its value wraps to the corresponding byte representation.
+Converts a primitive datatype or array to its byte representation. A byte can only be a whole number between -128 and 127, therefore when a number outside this range is converted, its value wraps to the corresponding byte representation.
 </description>
 
 <syntax>
@@ -35,7 +31,7 @@ byte(<c>val</c>)
 
 <parameter>
 <label>val</label>
-<description>int, float, char, boolean, String, int[], float[], char[], boolean[], String[]</description>
+<description>int, char, int[], char[]</description>
 </parameter>
 
 <returns>byte</returns>
