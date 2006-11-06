@@ -1772,9 +1772,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void clear() {
-    float backgroundR = (float) ((backgroundColor >> 16) & 0xff) / 255.0f;
-    float backgroundG = (float) ((backgroundColor >> 8) & 0xff) / 255.0f;
-    float backgroundB = (float) (backgroundColor & 0xff) / 255.0f;
+    //float backgroundR = (float) ((backgroundColor >> 16) & 0xff) / 255.0f;
+    //float backgroundG = (float) ((backgroundColor >> 8) & 0xff) / 255.0f;
+    //float backgroundB = (float) (backgroundColor & 0xff) / 255.0f;
 
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
