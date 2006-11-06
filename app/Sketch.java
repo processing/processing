@@ -195,6 +195,7 @@ public class Sketch {
         // also don't allow people to use files with invalid names,
         // since on load, it would be otherwise possible to sneak in
         // nasty filenames. [rev 0116]
+        //System.out.println("skipping unsanitary " + base + " for " + list[i]);
         continue;
 
       } else if (new File(folder, list[i]).isDirectory()) {
@@ -227,7 +228,11 @@ public class Sketch {
       }
     }
 
-    // remove any entries that didn't load properly
+    // some of the hidden files may be bad too, so use hiddenCounter
+    // added for rev 0121, fixes bug found by axel
+    hiddenCount = hiddenCounter;
+
+    // remove any entries that didn't load properly from codeCount
     int index = 0;
     while (index < codeCount) {
       if ((code[index] == null) ||
