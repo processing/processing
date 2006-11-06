@@ -221,9 +221,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         display.setCurrent(canvas);
     }
     
-    protected final void start() {
-        thread = new Thread(this);
-        thread.start();
+    protected synchronized final void start() {
+        if (thread == null) {
+            thread = new Thread(this);
+            thread.start();
+        }
     }
     
     public final void run() {
@@ -284,24 +286,22 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         enqueueEvent(EVENT_LIBRARY, event, new Object[] { library, data });
     }
     
-    public final void enqueueEvent(byte event, int value, Object data) {
-        synchronized (this) {
-            eventsLength++;
-            if (eventsLength > events.length) {
-                byte[] oldEvents = events;
-                int[] oldEventValues = eventValues;
-                Object[] oldEventData = eventData;
-                events = new byte[oldEvents.length * 2];
-                eventValues = new int[events.length];
-                eventData = new Object[events.length];
-                System.arraycopy(oldEvents, 0, events, 0, eventsLength - 1);
-                System.arraycopy(oldEventValues, 0, eventValues, 0, eventsLength - 1);
-                System.arraycopy(oldEventData, 0, eventData, 0, eventsLength - 1);
-            }            
-            events[eventsLength - 1] = event;
-            eventValues[eventsLength - 1] = value;
-            eventData[eventsLength - 1] = data;
-        }        
+    public synchronized final void enqueueEvent(byte event, int value, Object data) {
+        eventsLength++;
+        if (eventsLength > events.length) {
+            byte[] oldEvents = events;
+            int[] oldEventValues = eventValues;
+            Object[] oldEventData = eventData;
+            events = new byte[oldEvents.length * 2];
+            eventValues = new int[events.length];
+            eventData = new Object[events.length];
+            System.arraycopy(oldEvents, 0, events, 0, eventsLength - 1);
+            System.arraycopy(oldEventValues, 0, eventValues, 0, eventsLength - 1);
+            System.arraycopy(oldEventData, 0, eventData, 0, eventsLength - 1);
+        }            
+        events[eventsLength - 1] = event;
+        eventValues[eventsLength - 1] = value;
+        eventData[eventsLength - 1] = data;
         if (thread == null) {
             thread = new Thread(this);
             thread.start();
@@ -752,6 +752,14 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         canvas.translate(x, y);
     }
     
+    public final void clip(int x, int y, int width, int height) {
+        canvas.clip(x, y, width, height);
+    }
+    
+    public final void noClip() {
+        canvas.noClip();
+    }
+    
     public final void pushMatrix() {
         canvas.pushMatrix();
     }
@@ -892,6 +900,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         canvas.textFont(font);
     }
     
+    public final void textLeading(int dist) {
+        canvas.textLeading(dist);
+    }
+    
     public final void textAlign(int MODE) {
         canvas.textAlign(MODE);
     }
@@ -901,6 +913,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final void text(String data, int x, int y, int width, int height) {
+        canvas.text(data, x, y, width, height);
+    }
+    
+    public final void text(String data[], int x, int y, int width, int height) {
         canvas.text(data, x, y, width, height);
     }
     
