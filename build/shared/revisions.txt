@@ -7,6 +7,19 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0122 - XX November 2006
+
+[ bug fixes ] 
+
++ Forgot to mention, there was a fix added in revision 0120 that
+  prevented files dragged into a sketch from bouncing back to the 
+  desktop on Mac OS X. (It formerly gave the impression that the 
+  file was not properly added to the sketch).
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0121 - 6 November 2006
 
 Adds printing, fixes a last-minute createGraphics() regression in 0120, 
