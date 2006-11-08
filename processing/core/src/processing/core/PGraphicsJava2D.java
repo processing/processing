@@ -64,10 +64,16 @@ public class PGraphicsJava2D extends PGraphics {
   Arc2D.Float arc = new Arc2D.Float();
 
   protected Color tintColorObject;
+
   protected Color fillColorObject;
+  public boolean fillGradient;
+  public Paint fillGradientObject;
+
   protected Color strokeColorObject;
+  public boolean strokeGradient;
+  public Paint strokeGradientObject;
 
-
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -431,28 +437,56 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   //////////////////////////////////////////////////////////////
+  
+  
+  /*
+  protected void fillGradient(Paint paint) {
+    fillGradient = true;
+    fillGradientObject = paint;
+  }
+  
+  
+  protected void noFillGradient() {
+    fillGradient = false;
+  }
+  */
+  
+  
+  //////////////////////////////////////////////////////////////
 
 
   protected void fill_shape(Shape s) {
-    if (fill) {
+    if (fillGradient) {
+      g2.setPaint(fillGradientObject);
+      g2.fill(s);
+    } else if (fill) {
       g2.setColor(fillColorObject);
       g2.fill(s);
     }
   }
 
   protected void stroke_shape(Shape s) {
-    if (stroke) {
+    if (strokeGradient) {
+      g2.setPaint(strokeGradientObject);
+      g2.draw(s);
+    } else if (stroke) {
       g2.setColor(strokeColorObject);
       g2.draw(s);
     }
   }
 
   protected void draw_shape(Shape s) {
-    if (fill) {
+    if (fillGradient) {
+      g2.setPaint(fillGradientObject);
+      g2.fill(s);
+    } else if (fill) {
       g2.setColor(fillColorObject);
       g2.fill(s);
     }
-    if (stroke) {
+    if (strokeGradient) {
+      g2.setPaint(strokeGradientObject);
+      g2.draw(s);
+    } else if (stroke) {
       g2.setColor(strokeColorObject);
       g2.draw(s);
     }
