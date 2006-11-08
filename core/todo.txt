@@ -1,5 +1,21 @@
 0122 core
 
+_ gradient-painted lines and fills
+_   java2d will do both line and fill, illusfarter only does fills
+import java.awt.geom.*;
+Color c = new Color(0x00FFFF00, true);
+GradientPaint gradient = 
+  new GradientPaint(0,0,Color.red,100,100,c);
+GeneralPath gp = new GeneralPath();
+gp.moveTo(10, 10);
+gp.lineTo(100, 90);
+gp.lineTo(20, 50);
+gp.closePath();
+Graphics2D g2 = ((PGraphicsJava2D)g).g2;
+g2.setPaint(gradient);
+//g2.draw(gp);
+g2.fill(gp);
+
 
 _ make lerpColor honor the current color mode
 _   though that's awkward b/c colors always RGB
@@ -595,18 +611,6 @@ _   along with 90, 180 and 270 versions of it as well
 _   tie to glDrawPixels.. how to clear matrix properly for that?
 _ catch sun.dc.pr.PRException?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=104
-_ gradient-painted lines
-Color c = new Color(0x00FFFF00, true);
-GradientPaint gradient = 
-  new GradientPaint(0,0,Color.red,100,100,c);
-GeneralPath gp = new GeneralPath();
-gp.moveTo(10, 10);
-gp.lineTo(100, 90);
-gp.lineTo(20, 50);
-gp.closePath();
-Graphics2D g2 = ((PGraphics2)g).g2;
-g2.setPaint(gradient);
-g2.draw(gp);
 
 
 CORE / PGraphics3D
