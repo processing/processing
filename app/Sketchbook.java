@@ -224,7 +224,7 @@ public class Sketchbook {
     }
 
     // make a note of a newly added sketch in the sketchbook menu
-    rebuildMenus();
+    rebuildMenusAsync();
 
     // now open it up
     //handleOpen(newbieName, newbieFile, newbieDir);
@@ -341,6 +341,19 @@ public class Sketchbook {
 
 
   /**
+   * Asynchronous version of menu rebuild to be used on 'new' and 'save',
+   * to prevent the interface from locking up until the menus are done.
+   */
+  public void rebuildMenusAsync() {
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          rebuildMenus();
+        }
+      });
+  }
+
+
+  /**
    * Rebuild the menu full of sketches based on the
    * contents of the sketchbook.
    *
@@ -349,6 +362,7 @@ public class Sketchbook {
    * the menu will disappear from its original location.
    */
   public void rebuildMenus() {
+    //EditorConsole.systemOut.println("rebuilding menus");
     try {
       // rebuild file/open and the toolbar popup menus
       buildMenu(openMenu);
@@ -373,6 +387,7 @@ public class Sketchbook {
                           "sketchbook menu. Things might get a little\n" +
                           "kooky around here.", e);
     }
+    //EditorConsole.systemOut.println("done rebuilding menus");
   }
 
 

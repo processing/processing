@@ -1563,7 +1563,8 @@ public class Editor extends JFrame
         if (!oldPath.equals(newPath)) {
           if (Base.calcFolderSize(sketch.folder) == 0) {
             Base.removeDir(sketch.folder);
-            sketchbook.rebuildMenus();
+            //sketchbook.rebuildMenus();
+            sketchbook.rebuildMenusAsync();
           }
         }
       } catch (Exception e) { }   // oh well
@@ -1695,7 +1696,8 @@ public class Editor extends JFrame
         message(EMPTY);
       }
       // rebuild sketch menu in case a save-as was forced
-      sketchbook.rebuildMenus();
+      //sketchbook.rebuildMenus();
+      sketchbook.rebuildMenusAsync();
 
     } catch (Exception e) {
       // show the error as a message in the window
@@ -1720,7 +1722,7 @@ public class Editor extends JFrame
           try {
             if (sketch.saveAs()) {
               message("Done Saving.");
-              sketchbook.rebuildMenus();
+              sketchbook.rebuildMenusAsync();
             } else {
               message("Save Cancelled.");
             }
