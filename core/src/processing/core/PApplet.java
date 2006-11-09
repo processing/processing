@@ -3033,7 +3033,7 @@ public class PApplet extends Applet
   // new vars needed due to recent change of cos table in PGraphics
   int perlin_TWOPI, perlin_PI;
   float[] perlin_cosTable;
-  float perlin[];
+  float[] perlin;
 
   Random perlinRandom;
 
@@ -3147,6 +3147,8 @@ public class PApplet extends Applet
   public void noiseSeed(long what) {
     if (perlinRandom == null) perlinRandom = new Random();
     perlinRandom.setSeed(what);
+    // force table reset after changing the random number seed [0122]
+    perlin = null;
   }
 
 
