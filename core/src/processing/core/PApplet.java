@@ -6830,11 +6830,6 @@ public class PApplet extends Applet
   }
 
 
-  static public int lerpColor(int c1, int c2, float amt) {
-    return PGraphics.lerpColor(c1, c2, amt);
-  }
-
-
   public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     if (recorder != null) recorder.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
@@ -7861,6 +7856,16 @@ public class PApplet extends Applet
 
   public final float brightness(int what) {
     return g.brightness(what);
+  }
+
+
+  public int lerpColor(int c1, int c2, float amt) {
+    return g.lerpColor(c1, c2, amt);
+  }
+
+
+  static public int lerpColor(int c1, int c2, float amt, int mode) {
+    return PGraphics.lerpColor(c1, c2, amt, mode);
   }
 
 
