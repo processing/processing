@@ -1,6 +1,7 @@
 0122 pde
 
 _ slow save/new because of large sketchbook
+_   this is a total cluster, the rebuild is being called incessantly
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162801212
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1141126582
 

@@ -18,7 +18,6 @@ g2.setPaint(gradient);
 //g2.draw(gp);
 g2.fill(gp);
 
-
 _ make lerpColor honor the current color mode
 _   though that's awkward b/c colors always RGB
 _   lerpColor(c1, c2, amt, RGB/HSB/???)
