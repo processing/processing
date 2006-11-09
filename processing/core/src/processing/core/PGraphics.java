@@ -3982,6 +3982,66 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
+  public int lerpColor(int c1, int c2, float amt) {
+    return lerpColor(c1, c2, amt, colorMode);
+  }
+
+  static float[] lerpColorHSB1;
+  static float[] lerpColorHSB2;
+
+  static public int lerpColor(int c1, int c2, float amt, int mode) {
+    if (mode == RGB) {
+      float a1 = ((c1 >> 24) & 0xff);
+      float r1 = (c1 >> 16) & 0xff;
+      float g1 = (c1 >> 8) & 0xff;
+      float b1 = c1 & 0xff;
+      float a2 = (c2 >> 24) & 0xff;
+      float r2 = (c2 >> 16) & 0xff;
+      float g2 = (c2 >> 8) & 0xff;
+      float b2 = c2 & 0xff;
+
+      return (((int) (a1 + (a2-a1)*amt) << 24) |
+              ((int) (r1 + (r2-r1)*amt) << 16) |
+              ((int) (g1 + (g2-g1)*amt) << 8) |
+              ((int) (b1 + (b2-b1)*amt)));
+
+    } else if (mode == HSB) {
+      if (lerpColorHSB1 == null) {
+        lerpColorHSB1 = new float[3];
+        lerpColorHSB2 = new float[3];
+      }
+
+      float a1 = (c1 >> 24) & 0xff;
+      float a2 = (c2 >> 24) & 0xff;
+      int alfa = ((int) (a1 + (a2-a1)*amt)) << 24;
+
+      Color.RGBtoHSB((c1 >> 16) & 0xff, (c1 >> 8) & 0xff, c1 & 0xff,
+                     lerpColorHSB1);
+      Color.RGBtoHSB((c2 >> 16) & 0xff, (c2 >> 8) & 0xff, c2 & 0xff,
+                     lerpColorHSB2);
+
+      // roll around when 0.9 to 0.1
+      // more than 0.5 away means that it should roll in the other direction
+      float h1 = lerpColorHSB1[0];
+      float h2 = lerpColorHSB2[0];
+      if (Math.abs(h1 - h2) > 0.5f) {
+        if (h1 > h2) {
+          // i.e. h1 is 0.7, h2 is 0.1
+          h2 += 1;
+        } else {
+          // i.e. h1 is 0.1, h2 is 0.7
+          h1 += 1;
+        }
+      }
+      float ho = (PApplet.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt)) % 1.0f;
+      float so = PApplet.lerp(lerpColorHSB1[1], lerpColorHSB2[1], amt);
+      float bo = PApplet.lerp(lerpColorHSB1[2], lerpColorHSB2[2], amt);
+
+      return alfa | (Color.HSBtoRGB(ho, so, bo) & 0xFFFFFF);
+    }
+    return 0;
+  }
+
 
   //////////////////////////////////////////////////////////////
 
