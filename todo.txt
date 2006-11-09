@@ -1,5 +1,8 @@
 0122 pde
 
+_ slow save/new because of large sketchbook
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162801212
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1141126582
 
 processing wish list 
 _ opening multiple versions of p5 at a time
