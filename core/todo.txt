@@ -1,4 +1,6 @@
 0122 core
+X noiseSeed() only works once, before the arrays are created
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162856262
 
 _ gradient-painted lines and fills
 _   java2d will do both line and fill, illusfarter only does fills
