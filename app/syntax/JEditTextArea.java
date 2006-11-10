@@ -2144,20 +2144,52 @@ public class JEditTextArea extends JComponent
         bl.printStackTrace();
       }
 
-      // Ok, it's not a bracket... select the word
-      String lineText = getLineText(line);
-      char ch = lineText.charAt(Math.max(0,offset - 1));
-
       String noWordSep = (String)document.getProperty("noWordSep");
       if(noWordSep == null)
         noWordSep = "";
+
+      // Ok, it's not a bracket... select the word
+      String lineText = getLineText(line);
+
+      int wordStart = 0;
+      int wordEnd = lineText.length();
+
+      char ch = lineText.charAt(Math.max(0,offset - 1));
+
+      // special case for whitespace (fry 0122, bug #348)
+      // this is really nasty.. turns out that double-clicking any non-letter
+      // or digit char gets lumped together.. sooo, this quickly gets messy,
+      // because really it needs to check whether the chars are of the same
+      // type.. so a double space or double - might be grouped together,
+      // but what about a +=1? do + and - get grouped but not the 1? blech,
+      // coming back to this later. it's not a difficult fix, just a
+      // time-consuming one to track down all the proper cases.
+      /*
+      if (ch == ' ') {
+        //System.out.println("yeehaa");
+
+        for(int i = offset - 1; i >= 0; i--) {
+          if (lineText.charAt(i) == ' ') {
+            wordStart = i;
+          } else {
+            break;
+          }
+        }
+        for(int i = offset; i < lineText.length(); i++) {
+          if (lineText.charAt(i) == ' ') {
+            wordEnd = i + 1;
+          } else {
+            break;
+          }
+        }
+
+      } else {
+      */
 
       // If the user clicked on a non-letter char,
       // we select the surrounding non-letters
       boolean selectNoLetter = (!Character.isLetterOrDigit(ch)
                                 && noWordSep.indexOf(ch) == -1);
-
-      int wordStart = 0;
 
       for(int i = offset - 1; i >= 0; i--) {
         ch = lineText.charAt(i);
@@ -2168,17 +2200,15 @@ public class JEditTextArea extends JComponent
         }
       }
 
-      int wordEnd = lineText.length();
-      for(int i = offset; i < lineText.length(); i++)
-        {
-          ch = lineText.charAt(i);
-          if(selectNoLetter ^ (!Character.isLetterOrDigit(ch) &&
-                               noWordSep.indexOf(ch) == -1))
-            {
-              wordEnd = i;
-              break;
-            }
+      for(int i = offset; i < lineText.length(); i++) {
+        ch = lineText.charAt(i);
+        if(selectNoLetter ^ (!Character.isLetterOrDigit(ch) &&
+                             noWordSep.indexOf(ch) == -1)) {
+          wordEnd = i;
+          break;
         }
+      }
+      //}
 
       int lineStart = getLineStartOffset(line);
       select(lineStart + wordStart,lineStart + wordEnd);
