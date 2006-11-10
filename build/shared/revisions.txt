@@ -11,6 +11,15 @@ ABOUT REV 0122 - XX November 2006
 
 [ bug fixes ] 
 
++ Lots of work done to improve the formatting, and also make the
+  key combinations work more appropriately for the various platforms.
+  For instance, HOME and END keys now move to the beginning or end
+  of the document, while ctrl-left and right (cmd-left and right on mac) 
+  moves to the beginning or the end of a line. Outdenting when a brace
+  is used and some other quirks have been ironed out more. 
+  Shift-backspace now also produces 'delete', which is a useful thing
+  found in many programming text editors.
+
 + Forgot to mention, there was a fix added in revision 0120 that
   prevented files dragged into a sketch from bouncing back to the 
   desktop on Mac OS X. (It formerly gave the impression that the 
