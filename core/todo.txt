@@ -1,6 +1,26 @@
 0122 core
 X noiseSeed() only works once, before the arrays are created
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162856262
+X make lerpColor honor the current color mode
+X   lerpColor(c1, c2, amt, RGB/HSB/???)
+_   test this out for a bit
+_   though that's awkward b/c colors always RGB
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
+
+_ http://dev.processing.org/bugs/show_bug.cgi?id=428
+_ related to the fill bugs: when fill is identical, no fill applied
+_   actually tint() should take over for fill as per-vertex color
+_   when textured images are being used
+_   http://dev.processing.org/bugs/show_bug.cgi?id=169
+_ tint() should set texture color, fill() is ignored with textures
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   tint() honoring alpha but not colored tint
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
+_   check with the a_Displaying example and tint(255, 0, 0, 100);
+_   http://dev.processing.org/bugs/show_bug.cgi?id=90
+_   is fill() not coloring textures properly?
+_     don't need to apply tint() to textures, supposed to use fill color
 
 _ gradient-painted lines and fills
 _   java2d will do both line and fill, illusfarter only does fills
@@ -17,25 +37,6 @@ Graphics2D g2 = ((PGraphicsJava2D)g).g2;
 g2.setPaint(gradient);
 //g2.draw(gp);
 g2.fill(gp);
-
-_ make lerpColor honor the current color mode
-_   though that's awkward b/c colors always RGB
-_   lerpColor(c1, c2, amt, RGB/HSB/???)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
-
-_ related to the fill bugs: when fill is identical, no fill applied
-_   actually tint() should take over for fill as per-vertex color
-_   when textured images are being used
-_   http://dev.processing.org/bugs/show_bug.cgi?id=169
-_ tint() should set texture color, fill() is ignored with textures
-_ fix tint() for PGraphics3 (what could be wrong?)
-_   tint() honoring alpha but not colored tint
-_   maybe not setting fill color when drawing textures
-_   guessing it's an implementation issue in sami's renderer
-_   check with the a_Displaying example and tint(255, 0, 0, 100);
-_   http://dev.processing.org/bugs/show_bug.cgi?id=90
-_   is fill() not coloring textures properly?
-_     don't need to apply tint() to textures, supposed to use fill color
 
 add to reference
 _ also parseInt and parseFloat, how they can return another number or NaN
