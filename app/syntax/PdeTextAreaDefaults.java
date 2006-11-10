@@ -32,25 +32,33 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
   public PdeTextAreaDefaults() {
 
     inputHandler = new DefaultInputHandler();
-    inputHandler.addDefaultKeyBindings();
+    //inputHandler.addDefaultKeyBindings();  // 0122
 
     // use option on mac for things that are ctrl on windows/linux
     String mod = Base.isMacOS() ? "A" : "C";
 
-    inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.BACKSPACE);
-    inputHandler.addKeyBinding("S+DELETE", InputHandler.DELETE);
+    // right now, ctrl-up/down is select up/down, but mod should be
+    // used instead, because the mac expects it to be option(alt)
 
     inputHandler.addKeyBinding("BACK_SPACE", InputHandler.BACKSPACE);
     inputHandler.addKeyBinding("DELETE", InputHandler.DELETE);
+
+    //inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.BACKSPACE);
+    // for 0122, shift-backspace is delete
+    inputHandler.addKeyBinding("S+BACK_SPACE", InputHandler.DELETE);
+    inputHandler.addKeyBinding("S+DELETE", InputHandler.DELETE);
+
     // the following two were changing for 0122 for better mac/pc compatability
     inputHandler.addKeyBinding(mod+"+BACK_SPACE", InputHandler.BACKSPACE_WORD);
     inputHandler.addKeyBinding(mod+"+DELETE", InputHandler.DELETE_WORD);
 
-    inputHandler.addKeyBinding("ENTER", InputHandler.INSERT_BREAK);
-    inputHandler.addKeyBinding("TAB", InputHandler.INSERT_TAB);
+    // handled by listener, don't bother here
+    //inputHandler.addKeyBinding("ENTER", InputHandler.INSERT_BREAK);
+    //inputHandler.addKeyBinding("TAB", InputHandler.INSERT_TAB);
 
     inputHandler.addKeyBinding("INSERT", InputHandler.OVERWRITE);
-    inputHandler.addKeyBinding("C+\\", InputHandler.TOGGLE_RECT);
+    // disabling for 0122, not sure what this does
+    //inputHandler.addKeyBinding("C+\\", InputHandler.TOGGLE_RECT);
 
     // beginning and ending of the current line
     /*
@@ -70,13 +78,13 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     if (Base.isMacOS()) {
       inputHandler.addKeyBinding("M+LEFT", InputHandler.HOME);
       inputHandler.addKeyBinding("M+RIGHT", InputHandler.END);
-      inputHandler.addKeyBinding("M+S+LEFT", InputHandler.SELECT_HOME); // 0122
-      inputHandler.addKeyBinding("M+S+RIGHT", InputHandler.SELECT_END);  // 0122
+      inputHandler.addKeyBinding("MS+LEFT", InputHandler.SELECT_HOME); // 0122
+      inputHandler.addKeyBinding("MS+RIGHT", InputHandler.SELECT_END);  // 0122
     } else {
       inputHandler.addKeyBinding("C+LEFT", InputHandler.HOME);  // 0122
       inputHandler.addKeyBinding("C+RIGHT", InputHandler.END);  // 0122
-      inputHandler.addKeyBinding("C+S+HOME", InputHandler.SELECT_HOME); // 0122
-      inputHandler.addKeyBinding("C+S+END", InputHandler.SELECT_END);  // 0122
+      inputHandler.addKeyBinding("CS+HOME", InputHandler.SELECT_HOME); // 0122
+      inputHandler.addKeyBinding("CS+END", InputHandler.SELECT_END);  // 0122
     }
 
     inputHandler.addKeyBinding("PAGE_UP", InputHandler.PREV_PAGE);

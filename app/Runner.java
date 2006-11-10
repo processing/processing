@@ -174,6 +174,7 @@ public class Runner implements MessageConsumer {
 
     //params.add("-Xint"); // interpreted mode
     //params.add("-Xprof");  // profiler
+    //params.add("-Xaprof");  // allocation profiler
     //params.add("-Xrunhprof:cpu=samples");  // old-style profiler
 
     String options = Preferences.get("run.options");
