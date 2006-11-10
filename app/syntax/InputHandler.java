@@ -747,11 +747,17 @@ public abstract class InputHandler extends KeyAdapter
                                 return;
                         }
 
-                        if(select)
-                                textArea.select(textArea.getMarkPosition(),
-                                        caret + 1);
-                        else
-                                textArea.setCaretPosition(caret + 1);
+                        if (select) {
+                          textArea.select(textArea.getMarkPosition(), caret+1);
+                        } else {
+                          int start = textArea.getSelectionStart();
+                          int end = textArea.getSelectionEnd();
+                          if (start != end) {
+                            textArea.select(end, end);
+                          } else {
+                            textArea.setCaretPosition(caret + 1);
+                          }
+                        }
                 }
         }
 
@@ -899,11 +905,17 @@ public abstract class InputHandler extends KeyAdapter
                                 return;
                         }
 
-                        if(select)
-                                textArea.select(textArea.getMarkPosition(),
-                                        caret - 1);
-                        else
-                                textArea.setCaretPosition(caret - 1);
+                        if (select) {
+                          textArea.select(textArea.getMarkPosition(), caret-1);
+                        } else {
+                          int start = textArea.getSelectionStart();
+                          int end = textArea.getSelectionEnd();
+                          if (start != end) {
+                            textArea.select(start, start);
+                          } else {
+                            textArea.setCaretPosition(caret - 1);
+                          }
+                        }
                 }
         }
 

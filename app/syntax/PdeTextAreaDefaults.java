@@ -41,9 +41,10 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     inputHandler.addKeyBinding("S+DELETE", InputHandler.DELETE);
 
     inputHandler.addKeyBinding("BACK_SPACE", InputHandler.BACKSPACE);
-    inputHandler.addKeyBinding("C+BACK_SPACE", InputHandler.BACKSPACE_WORD);
     inputHandler.addKeyBinding("DELETE", InputHandler.DELETE);
-    inputHandler.addKeyBinding("C+DELETE", InputHandler.DELETE_WORD);
+    // the following two were changing for 0122 for better mac/pc compatability
+    inputHandler.addKeyBinding(mod+"+BACK_SPACE", InputHandler.BACKSPACE_WORD);
+    inputHandler.addKeyBinding(mod+"+DELETE", InputHandler.DELETE_WORD);
 
     inputHandler.addKeyBinding("ENTER", InputHandler.INSERT_BREAK);
     inputHandler.addKeyBinding("TAB", InputHandler.INSERT_TAB);
@@ -52,20 +53,31 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     inputHandler.addKeyBinding("C+\\", InputHandler.TOGGLE_RECT);
 
     // beginning and ending of the current line
+    /*
     inputHandler.addKeyBinding("HOME", InputHandler.HOME);
     inputHandler.addKeyBinding("END", InputHandler.END);
+    inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_HOME);
+    inputHandler.addKeyBinding("S+END", InputHandler.SELECT_END);
+    */
+
+    // for 0122, these have been changed for better compatability
+    // HOME and END now mean the beginning/end of the document
+    inputHandler.addKeyBinding("HOME", InputHandler.DOCUMENT_HOME);
+    inputHandler.addKeyBinding("END", InputHandler.DOCUMENT_END);
+    inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_DOC_HOME);
+    inputHandler.addKeyBinding("S+END", InputHandler.SELECT_DOC_END);
 
     if (Base.isMacOS()) {
       inputHandler.addKeyBinding("M+LEFT", InputHandler.HOME);
       inputHandler.addKeyBinding("M+RIGHT", InputHandler.END);
+      inputHandler.addKeyBinding("M+S+LEFT", InputHandler.SELECT_HOME); // 0122
+      inputHandler.addKeyBinding("M+S+RIGHT", InputHandler.SELECT_END);  // 0122
+    } else {
+      inputHandler.addKeyBinding("C+LEFT", InputHandler.HOME);  // 0122
+      inputHandler.addKeyBinding("C+RIGHT", InputHandler.END);  // 0122
+      inputHandler.addKeyBinding("C+S+HOME", InputHandler.SELECT_HOME); // 0122
+      inputHandler.addKeyBinding("C+S+END", InputHandler.SELECT_END);  // 0122
     }
-
-    inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_HOME);
-    inputHandler.addKeyBinding("S+END", InputHandler.SELECT_END);
-    inputHandler.addKeyBinding(mod + "+HOME", InputHandler.DOCUMENT_HOME);
-    inputHandler.addKeyBinding(mod + "+END", InputHandler.DOCUMENT_END);
-    inputHandler.addKeyBinding(mod + "S+HOME", InputHandler.SELECT_DOC_HOME);
-    inputHandler.addKeyBinding(mod + "S+END", InputHandler.SELECT_DOC_END);
 
     inputHandler.addKeyBinding("PAGE_UP", InputHandler.PREV_PAGE);
     inputHandler.addKeyBinding("PAGE_DOWN", InputHandler.NEXT_PAGE);
