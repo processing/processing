@@ -286,12 +286,30 @@ public class EditorListener {
         origIndex += offset; // ARGH!#(* WINDOWS#@($*
         */
 
+        // calculate the amount of indent on the previous line
         int spaceCount = calcSpaceCount(origIndex, contents);
-        //int origCount = spaceCount;
+
+        // If the last character was a left curly brace, then indent.
+        // For 0122, walk backwards a bit to make sure that the there
+        // isn't a curly brace several spaces (or lines) back. Also
+        // moved this before calculating extraCount, since it'll affect
+        // that as well.
+        int index2 = origIndex;
+        while ((index2 >= 0) &&
+               Character.isWhitespace(contents[index2])) {
+          index2--;
+        }
+        if (index2 != -1) {
+          // still won't catch a case where prev stuff is a comment
+          if (contents[index2] == '{') {
+            spaceCount += tabSize;
+          }
+        }
+        //System.out.println("spaceCount should be " + spaceCount);
 
         // now before inserting this many spaces, walk forward from
-        // the caret position, so that the number of spaces aren't
-        // just being duplicated again
+        // the caret position and count the number of spaces,
+        // so that the number of spaces aren't duplicated again
         int index = origIndex + 1;
         int extraCount = 0;
         while ((index < contents.length) &&
@@ -302,21 +320,26 @@ public class EditorListener {
         }
 
         // hitting return on a line with spaces *after* the caret
-        // can cause trouble. for simplicity's sake, just ignore this case.
-        //if (spaceCount < 0) spaceCount = origCount;
+        // can cause trouble. for 0099, was ignoring the case, but this is
+        // annoying, so in 0122 we're trying to fix that.
+        /*
         if (spaceCount - extraCount > 0) {
           spaceCount -= extraCount;
         }
+        */
+        spaceCount -= extraCount;
+        //if (spaceCount < 0) spaceCount = 0;
+        //System.out.println("extraCount is " + extraCount);
 
-        // if the last character was a left curly brace, then indent
-        if (origIndex != -1) {
-          if (contents[origIndex] == '{') {
-            spaceCount += tabSize;
-          }
+        if (spaceCount < 0) {
+          // for rev 0122, actually delete extra space
+          //textarea.setSelectionStart(origIndex + 1);
+          textarea.setSelectionEnd(textarea.getSelectionEnd() - spaceCount);
+          textarea.setSelectedText("\n");
+        } else {
+          String insertion = "\n" + Editor.EMPTY.substring(0, spaceCount);
+          textarea.setSelectedText(insertion);
         }
-
-        String insertion = "\n" + Editor.EMPTY.substring(0, spaceCount);
-        textarea.setSelectedText(insertion);
 
         // mark this event as already handled
         event.consume();

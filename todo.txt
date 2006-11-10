@@ -1,4 +1,11 @@
 0122 pde
+X improve editor listener to not add so many extraneous indents
+
+libraries
+_ add control for dependencies (i.e. svg needs xml), needed for export
+_ add "pretty menu name" to the export.txt file
+_ more export.txt to xml? (nah, it's only flat information)
+_ need better platform designation setup for libs
 
 _ slow save/new because of large sketchbook
 _   this is a total cluster, the rebuild is being called incessantly
