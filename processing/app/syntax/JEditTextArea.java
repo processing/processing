@@ -2154,8 +2154,7 @@ public class JEditTextArea extends JComponent
 
       // If the user clicked on a non-letter char,
       // we select the surrounding non-letters
-      boolean selectNoLetter = (!Character
-                                .isLetterOrDigit(ch)
+      boolean selectNoLetter = (!Character.isLetterOrDigit(ch)
                                 && noWordSep.indexOf(ch) == -1);
 
       int wordStart = 0;
@@ -2173,8 +2172,7 @@ public class JEditTextArea extends JComponent
       for(int i = offset; i < lineText.length(); i++)
         {
           ch = lineText.charAt(i);
-          if(selectNoLetter ^ (!Character
-                               .isLetterOrDigit(ch) &&
+          if(selectNoLetter ^ (!Character.isLetterOrDigit(ch) &&
                                noWordSep.indexOf(ch) == -1))
             {
               wordEnd = i;

@@ -7,7 +7,19 @@ _   test this out for a bit
 _   though that's awkward b/c colors always RGB
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
 
-_ http://dev.processing.org/bugs/show_bug.cgi?id=428
+fixed earlier, bug cleaning
+X gray background in pdf (using both gl and p3d)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=324
+X   verified as fixed in 0122
+
+_ using gl, lines don't show up in pdf with record (they're ok with p3d)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=325
+
+_ tint() and noTint() switching problem in P2D
+_   this should be a quick fix
+_   http://dev.processing.org/bugs/show_bug.cgi?id=222
+_ ARGB problems with createGraphics
+_   http://dev.processing.org/bugs/show_bug.cgi?id=428
 _ related to the fill bugs: when fill is identical, no fill applied
 _   actually tint() should take over for fill as per-vertex color
 _   when textured images are being used
@@ -185,11 +197,6 @@ _   lines will occlude tris and vice versa
 _   will need to split each based on the other
 _   sort issues will affect both
 
-_ gray background in pdf (using both gl and p3d)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=324
-_ using gl, lines don't show up in pdf with record (they're ok with p3d)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=325
-
 _ pixel operations are broken in opengl
 _   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
@@ -273,9 +280,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=246
 _ dataFolder() might be flawed b/c it's referring to contents of jar file
 _   for input, better to use openStream
 _   clear up the documentation on this
-
-_ tint() and noTint() switching problem in P2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=222
 
 _ add texture support to recordShapesRaw (this might be pretty obscure...)
 

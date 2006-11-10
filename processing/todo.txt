@@ -1,5 +1,27 @@
 0122 pde
 X improve editor listener to not add so many extraneous indents
+X with text selected, hitting left or right arrow should move to beginning/end
+X   right now, it deselects the text and moves over one char
+X   http://dev.processing.org/bugs/show_bug.cgi?id=349
+X cmd-shift-left and cmd-shift right should select the entire line
+X   cmd-left and cmd-right move back and forth properly
+o option for behavior of HOME and END
+X   right now goes to begin/end of line.. should be begin/end of file?
+X   change to begin/end of file, and use cmd or alt, based on platform
+_ other quirks with handling of keyboard shortcuts?
+_   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGUserInput/chapter_11_section_3.html#//apple_ref/doc/uid/TP30000361-TP22
+
+_ when running externally, set window frame title to the sketch name
+_   is this only a problem on macosx? 
+
+fixed earlier or wontfix
+X double-click only selects part of underscored word
+X   http://dev.processing.org/bugs/show_bug.cgi?id=261
+X   this is actually a feature
+
+_ when drawing large video, the two triangles for the rect are out of sync
+_   only shows up in P3D
+
 
 libraries
 _ add control for dependencies (i.e. svg needs xml), needed for export
@@ -57,6 +79,8 @@ _   also something i forgot to add to the opengl faq stuff
 _ move the bugs section of the troubleshooting page to dev.processing.org/bugs
 _ search for ALL in the bugs db turns up:
 http://dev.processing.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED
+http://dev.processing.org/bugs/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED
+_ http://dev.processing.org/bugs/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&query_format=advanced&order=bugs.priority,bugs.priority%2Cbugs.resolution%2Cbugs.bug_id&query_based_on=
 _ add note to bugs db asking to please use archive sketch and attach
 _ make a web page that describes how to use the bugs db
 _   don't change the bug subject/summary text
@@ -404,9 +428,10 @@ _   http://processing.org/bugs/show_bug.cgi?id=51
 _ code coloring is imperfect because it's not based on a parser
 _   i.e. mousePressed() is red but mouseMoved() is brown
 _   http://dev.processing.org/bugs/show_bug.cgi?id=113
-_ quirks in selection and arrow keys
+_ clicking i-- ) between -- and ) will select "-- )"
+_   in eclipse, it looks to see which is closest and selects that
+_   need to check behavior for word and bbedit
 _   http://dev.processing.org/bugs/show_bug.cgi?id=348
-_   http://dev.processing.org/bugs/show_bug.cgi?id=349
 _ implement emacs keybindings (list is at the bug report)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=401
 

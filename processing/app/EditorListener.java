@@ -286,7 +286,14 @@ public class EditorListener {
         origIndex += offset; // ARGH!#(* WINDOWS#@($*
         */
 
+        // if the previous thing is a brace (whether prev line or
+        // up farther) then the correct indent is the number of spaces
+        // on that line + 'indent'.
+        // if the previous line is not a brace, then just use the
+        // identical indentation to the previous line
+
         // calculate the amount of indent on the previous line
+        // this will be used *only if the prev line is not an indent*
         int spaceCount = calcSpaceCount(origIndex, contents);
 
         // If the last character was a left curly brace, then indent.
@@ -302,6 +309,9 @@ public class EditorListener {
         if (index2 != -1) {
           // still won't catch a case where prev stuff is a comment
           if (contents[index2] == '{') {
+            // intermediate lines be damned,
+            // use the indent for this line instead
+            spaceCount = calcSpaceCount(index2, contents);
             spaceCount += tabSize;
           }
         }
@@ -318,6 +328,13 @@ public class EditorListener {
           extraCount++;
           index++;
         }
+        int braceCount = 0;
+        while ((index < contents.length) && (contents[index] != '\n')) {
+          if (contents[index] == '}') {
+            braceCount++;
+          }
+          index++;
+        }
 
         // hitting return on a line with spaces *after* the caret
         // can cause trouble. for 0099, was ignoring the case, but this is
@@ -331,6 +348,12 @@ public class EditorListener {
         //if (spaceCount < 0) spaceCount = 0;
         //System.out.println("extraCount is " + extraCount);
 
+        // now, check to see if the current line contains a } and if so,
+        // outdent again by indent
+        //if (braceCount > 0) {
+        //spaceCount -= 2;
+        //}
+
         if (spaceCount < 0) {
           // for rev 0122, actually delete extra space
           //textarea.setSelectionStart(origIndex + 1);
@@ -339,6 +362,19 @@ public class EditorListener {
         } else {
           String insertion = "\n" + Editor.EMPTY.substring(0, spaceCount);
           textarea.setSelectedText(insertion);
+        }
+
+        // not gonna bother handling more than one brace
+        if (braceCount > 0) {
+          int sel = textarea.getSelectionStart();
+          textarea.select(sel - tabSize, sel);
+          String s = Editor.EMPTY.substring(0, tabSize);
+          // if these are spaces that we can delete
+          if (textarea.getSelectedText().equals(s)) {
+            textarea.setSelectedText("");
+          } else {
+            textarea.select(sel, sel);
+          }
         }
 
         // mark this event as already handled
