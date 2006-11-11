@@ -460,6 +460,7 @@ public class XMLElement
      * @param parent
      */
     public XMLElement(String filename, PApplet parent) {
+        this();
         try {
             Reader reader = parent.createReader(filename);
             if (reader == null) {
@@ -478,6 +479,7 @@ public class XMLElement
      * @author fry
      */
     public XMLElement(Reader reader) throws IOException {
+        this();
         parseFromReader(reader);
     }
 
@@ -487,6 +489,7 @@ public class XMLElement
      * @author fry
      */
     public XMLElement(InputStream input) throws IOException {
+        this();
         InputStreamReader reader = new InputStreamReader(input);
         parseFromReader(reader);
     }
