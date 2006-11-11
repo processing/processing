@@ -200,13 +200,21 @@ public class XMLElement
 
 
     /**
+     * Use this to simply ignore unknown entities. This is a necessity because
+     * <!ENTITY ...> lines are not currently parsed, and cause dumb problems
+     * with Illustrator SVG files. [fry]
+     */
+    private boolean ignoreUnknownEntities = true;
+
+
+    /**
      * The line number where the element starts.
      *
      * <dl><dt><b>Invariants:</b></dt><dd>
      * <ul><li><code>lineNr &gt= 0</code>
      * </ul></dd></dl>
      */
-    private int lineNr;
+    private int lineNumber;
 
 
     /**
@@ -477,10 +485,10 @@ public class XMLElement
         this.attributes = new Hashtable();
         this.children = new Vector();
         this.entities = entities;
-        this.lineNr = 0;
-        Enumeration enum = this.entities.keys();
-        while (enum.hasMoreElements()) {
-            Object key = enum.nextElement();
+        this.lineNumber = 0;
+        Enumeration en = this.entities.keys();
+        while (en.hasMoreElements()) {
+            Object key = en.nextElement();
             Object value = this.entities.get(key);
             if (value instanceof String) {
                 value = ((String) value).toCharArray();
@@ -591,11 +599,13 @@ public class XMLElement
      * @deprecated Use {@link #setAttribute(java.lang.String, java.lang.Object)
      *             setAttribute} instead.
      */
+    /*
     public void addProperty(String name,
                             Object value)
     {
         this.setAttribute(name, value);
     }
+    */
 
 
     /**
@@ -654,11 +664,13 @@ public class XMLElement
      * @deprecated Use {@link #setIntAttribute(java.lang.String, int)
      *             setIntAttribute} instead.
      */
+    /*
     public void addProperty(String key,
                             int    value)
     {
         this.setIntAttribute(key, value);
     }
+    */
 
 
     /**
@@ -717,11 +729,13 @@ public class XMLElement
      * @deprecated Use {@link #setDoubleAttribute(java.lang.String, double)
      *             setDoubleAttribute} instead.
      */
+    /*
     public void addProperty(String name,
                             double value)
     {
         this.setDoubleAttribute(name, value);
     }
+    */
 
 
     /**
@@ -738,7 +752,16 @@ public class XMLElement
      * @see nanoxml.XMLElement#removeChild(nanoxml.XMLElement)
      *         removeChild(XMLElement)
      */
+    /*
     public int countChildren()
+    {
+        return this.children.size();
+    }
+    */
+
+
+    // [fry]
+    public int getChildCount()
     {
         return this.children.size();
     }
@@ -809,10 +832,12 @@ public class XMLElement
      * @deprecated Use {@link #enumerateAttributeNames()
      *             enumerateAttributeNames} instead.
      */
+    /*
     public Enumeration enumeratePropertyNames()
     {
         return this.enumerateAttributeNames();
     }
+    */
 
 
     /**
@@ -850,6 +875,7 @@ public class XMLElement
      * @see nanoxml.XMLElement#removeChild(nanoxml.XMLElement)
      *         removeChild(XMLElement)
      */
+    /*
     public Vector getChildren()
     {
         try {
@@ -860,6 +886,19 @@ public class XMLElement
             return null;
         }
     }
+    */
+    public XMLElement[] getChildren() {  // change this to return an array.. tho not a clone? [fry]
+        int childCount = getChildCount();
+        XMLElement[] kids = new XMLElement[childCount];
+        children.copyInto(kids);
+        return kids;
+    }
+
+
+    // quick accessor for a particular element [fry]
+    public XMLElement getChild(int which) {
+        return (XMLElement) children.elementAt(which);
+    }
 
 
     /**
@@ -868,6 +907,7 @@ public class XMLElement
      *
      * @deprecated Use {@link #getContent() getContent} instead.
      */
+    /*
     public String getContents()
     {
         return this.getContent();
@@ -895,9 +935,15 @@ public class XMLElement
      * <ul><li><code>result >= 0</code>
      * </ul></dd></dl>
      */
-    public int getLineNr()
+    public int getLineNumber()
     {
-        return this.lineNr;
+        return this.lineNumber;
+    }
+
+
+    // useful addition [fry]
+    public boolean hasAttribute(String name) {
+        return (getAttribute(name) != null);
     }
 
 
@@ -1277,6 +1323,63 @@ public class XMLElement
     }
 
 
+    public float getFloatAttribute(String name)
+    {
+        return getFloatAttribute(name, 0);
+    }
+
+
+    public float getFloatAttribute(String name,
+                                   float defaultValue)
+    {
+        if (this.ignoreCase) {
+            name = name.toUpperCase();
+        }
+        String value = (String) this.attributes.get(name);
+        if (value == null) {
+            return defaultValue;
+        } else {
+            try {
+                return Float.valueOf(value).floatValue();
+            } catch (NumberFormatException e) {
+                throw this.invalidValue(name, value);
+            }
+        }
+    }
+
+
+    public float getFloatAttribute(String    name,
+                                   Hashtable valueSet,
+                                   String    defaultKey,
+                                   boolean   allowLiteralNumbers)
+    {
+        if (this.ignoreCase) {
+            name = name.toUpperCase();
+        }
+        Object key = this.attributes.get(name);
+        Float result;
+        if (key == null) {
+            key = defaultKey;
+        }
+        try {
+            result = (Float) valueSet.get(key);
+        } catch (ClassCastException e) {
+            throw this.invalidValueSet(name);
+        }
+        if (result == null) {
+            if (! allowLiteralNumbers) {
+                throw this.invalidValue(name, (String) key);
+            }
+            try {
+                result = Float.valueOf((String) key);
+            } catch (NumberFormatException e) {
+                throw this.invalidValue(name, (String) key);
+            }
+        }
+        return result.floatValue();
+    }
+
+
     /**
      * Returns an attribute of the element.
      * If the attribute doesn't exist, <code>0.0</code> is returned.
@@ -1471,12 +1574,14 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getIntAttribute} instead.
      */
+    /*
     public int getIntProperty(String    name,
                               Hashtable valueSet,
                               String    defaultKey)
     {
         return this.getIntAttribute(name, valueSet, defaultKey, false);
     }
+    */
 
 
     /**
@@ -1485,10 +1590,12 @@ public class XMLElement
      * @deprecated Use {@link #getStringAttribute(java.lang.String)
      *             getStringAttribute} instead.
      */
+    /*
     public String getProperty(String name)
     {
         return this.getStringAttribute(name);
     }
+    */
 
 
     /**
@@ -1497,11 +1604,13 @@ public class XMLElement
      * @deprecated Use {@link #getStringAttribute(java.lang.String,
      *             java.lang.String) getStringAttribute} instead.
      */
+    /*
     public String getProperty(String name,
                               String defaultValue)
     {
         return this.getStringAttribute(name, defaultValue);
     }
+    */
 
 
     /**
@@ -1510,11 +1619,13 @@ public class XMLElement
      * @deprecated Use {@link #getIntAttribute(java.lang.String, int)
      *             getIntAttribute} instead.
      */
+    /*
     public int getProperty(String name,
                            int    defaultValue)
     {
         return this.getIntAttribute(name, defaultValue);
     }
+    */
 
 
     /**
@@ -1523,11 +1634,13 @@ public class XMLElement
      * @deprecated Use {@link #getDoubleAttribute(java.lang.String, double)
      *             getDoubleAttribute} instead.
      */
+    /*
     public double getProperty(String name,
                               double defaultValue)
     {
         return this.getDoubleAttribute(name, defaultValue);
     }
+    */
 
 
     /**
@@ -1537,6 +1650,7 @@ public class XMLElement
      *             java.lang.String, java.lang.String, boolean)
      *             getBooleanAttribute} instead.
      */
+    /*
     public boolean getProperty(String  key,
                                String  trueValue,
                                String  falseValue,
@@ -1545,6 +1659,7 @@ public class XMLElement
         return this.getBooleanAttribute(key, trueValue, falseValue,
                                         defaultValue);
     }
+    */
 
 
     /**
@@ -1554,12 +1669,14 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getAttribute} instead.
      */
+    /*
     public Object getProperty(String    name,
                               Hashtable valueSet,
                               String    defaultKey)
     {
         return this.getAttribute(name, valueSet, defaultKey, false);
     }
+    */
 
 
     /**
@@ -1569,12 +1686,14 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getStringAttribute} instead.
      */
+    /*
     public String getStringProperty(String    name,
                                     Hashtable valueSet,
                                     String    defaultKey)
     {
         return this.getStringAttribute(name, valueSet, defaultKey, false);
     }
+    */
 
 
     /**
@@ -1584,12 +1703,14 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getIntAttribute} instead.
      */
+    /*
     public int getSpecialIntProperty(String    name,
                                      Hashtable valueSet,
                                      String    defaultKey)
     {
         return this.getIntAttribute(name, valueSet, defaultKey, true);
     }
+    */
 
 
     /**
@@ -1599,12 +1720,14 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getDoubleAttribute} instead.
      */
+    /*
     public double getSpecialDoubleProperty(String    name,
                                            Hashtable valueSet,
                                            String    defaultKey)
     {
         return this.getDoubleAttribute(name, valueSet, defaultKey, true);
     }
+    */
 
 
     /**
@@ -1623,10 +1746,12 @@ public class XMLElement
      *
      * @deprecated Use {@link #getName() getName} instead.
      */
+    /*
     public String getTagName()
     {
         return this.getName();
     }
+    */
 
 
     /**
@@ -2042,10 +2167,12 @@ public class XMLElement
      * @deprecated Use {@link #removeAttribute(java.lang.String)
      *             removeAttribute} instead.
      */
+    /*
     public void removeProperty(String name)
     {
         this.removeAttribute(name);
     }
+    */
 
 
     /**
@@ -2057,10 +2184,12 @@ public class XMLElement
      * @deprecated Use {@link #removeAttribute(java.lang.String)
      *             removeAttribute} instead.
      */
+    /*
     public void removeChild(String name)
     {
         this.removeAttribute(name);
     }
+    */
 
 
     /**
@@ -2097,10 +2226,12 @@ public class XMLElement
      *
      * @deprecated Use {@link #setName(java.lang.String) setName} instead.
      */
+    /*
     public void setTagName(String name)
     {
         this.setName(name);
     }
+    */
 
 
     /**
@@ -2168,10 +2299,10 @@ public class XMLElement
         writer.write('<');
         writer.write(this.name);
         if (! this.attributes.isEmpty()) {
-            Enumeration enum = this.attributes.keys();
-            while (enum.hasMoreElements()) {
+            Enumeration en = this.attributes.keys();
+            while (en.hasMoreElements()) {
                 writer.write(' ');
-                String key = (String) enum.nextElement();
+                String key = (String) en.nextElement();
                 String value = (String) this.attributes.get(key);
                 writer.write(key);
                 writer.write('='); writer.write('"');
@@ -2189,9 +2320,9 @@ public class XMLElement
             writer.write('/'); writer.write('>');
         } else {
             writer.write('>');
-            Enumeration enum = this.enumerateChildren();
-            while (enum.hasMoreElements()) {
-                XMLElement child = (XMLElement) enum.nextElement();
+            Enumeration en = this.enumerateChildren();
+            while (en.hasMoreElements()) {
+                XMLElement child = (XMLElement) en.nextElement();
                 child.write(writer);
             }
             writer.write('<'); writer.write('/');
@@ -2747,10 +2878,14 @@ public class XMLElement
             buf.append(ch);
         } else {
             char[] value = (char[]) this.entities.get(key);
+            // [fry] modified this to provide the option of ignoring missing entities
             if (value == null) {
-                throw this.unknownEntity(key);
+                if (!ignoreUnknownEntities) {
+                    throw this.unknownEntity(key);
+                }
+            } else {
+                buf.append(value);
             }
-            buf.append(value);
         }
     }
 
