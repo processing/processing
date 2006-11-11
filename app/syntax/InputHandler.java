@@ -741,14 +741,21 @@ public abstract class InputHandler extends KeyAdapter
                 {
                         JEditTextArea textArea = getTextArea(evt);
                         int caret = textArea.getCaretPosition();
+
                         if(caret == textArea.getDocumentLength())
                         {
-                                textArea.getToolkit().beep();
-                                return;
-                        }
+                          if (textArea.getSelectionStart() !=
+                              textArea.getSelectionEnd()) {
+                            // just move to the end of the selection
+                            textArea.select(caret, caret);
+                          } else {
+                            // beep at the user for being annoying
+                            textArea.getToolkit().beep();
+                          }
 
-                        if (select) {
+                        } else if (select) {
                           textArea.select(textArea.getMarkPosition(), caret+1);
+
                         } else {
                           int start = textArea.getSelectionStart();
                           int end = textArea.getSelectionEnd();
