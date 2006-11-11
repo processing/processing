@@ -1,31 +1,30 @@
-/* XMLElement.java
- *
- * $Revision: 1.4 $
- * $Date: 2002/03/24 10:27:59 $
- * $Name: RELEASE_2_2_1 $
- *
- * This file is part of NanoXML 2 Lite.
- * Copyright (C) 2000-2002 Marc De Scheemaecker, All Rights Reserved.
- *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from the
- * use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- *
- *  1. The origin of this software must not be misrepresented; you must not
- *     claim that you wrote the original software. If you use this software in
- *     a product, an acknowledgment in the product documentation would be
- *     appreciated but is not required.
- *
- *  2. Altered source versions must be plainly marked as such, and must not be
- *     misrepresented as being the original software.
- *
- *  3. This notice may not be removed or altered from any source distribution.
- *****************************************************************************/
+/*
+  This code is from NanoXML 2.2.3 Lite
+  Copyright (C) 2000-2002 Marc De Scheemaecker, All Rights Reserved.
 
+  Additional modifications Copyright (c) 2006 Ben Fry and Casey Reas 
+  to make the code better-suited for use with Processing.
+
+  Original license notice from Marc De Scheemaecker:
+  
+  This software is provided 'as-is', without any express or implied warranty.
+  In no event will the authors be held liable for any damages arising from the
+  use of this software.
+ 
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+ 
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software in
+     a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+ 
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+ 
+  3. This notice may not be removed or altered from any source distribution.
+*/
 
 package processing.xml;
 
@@ -33,6 +32,8 @@ package processing.xml;
 import java.io.ByteArrayOutputStream;
 import java.io.CharArrayReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
@@ -41,64 +42,37 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import processing.core.PApplet;
+
 
 /**
  * XMLElement is a representation of an XML object. The object is able to parse
- * XML code.
- * <P><DL>
- * <DT><B>Parsing XML Data</B></DT>
- * <DD>
- * You can parse XML data using the following code:
- * <UL><CODE>
- * XMLElement xml = new XMLElement();<BR>
- * FileReader reader = new FileReader("filename.xml");<BR>
- * xml.parseFromReader(reader);
- * </CODE></UL></DD></DL>
- * <DL><DT><B>Retrieving Attributes</B></DT>
- * <DD>
- * You can enumerate the attributes of an element using the method
- * {@link #enumerateAttributeNames() enumerateAttributeNames}.
- * The attribute values can be retrieved using the method
- * {@link #getStringAttribute(java.lang.String) getStringAttribute}.
- * The following example shows how to list the attributes of an element:
- * <UL><CODE>
- * XMLElement element = ...;<BR>
- * Enumeration enum = element.getAttributeNames();<BR>
- * while (enum.hasMoreElements()) {<BR>
- * &nbsp;&nbsp;&nbsp;&nbsp;String key = (String) enum.nextElement();<BR>
- * &nbsp;&nbsp;&nbsp;&nbsp;String value = element.getStringAttribute(key);<BR>
- * &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(key + " = " + value);<BR>
- * }
- * </CODE></UL></DD></DL>
- * <DL><DT><B>Retrieving Child Elements</B></DT>
- * <DD>
- * You can enumerate the children of an element using
- * {@link #enumerateChildren() enumerateChildren}.
- * The number of child elements can be retrieved using
- * {@link #countChildren() countChildren}.
- * </DD></DL>
- * <DL><DT><B>Elements Containing Character Data</B></DT>
- * <DD>
- * If an elements contains character data, like in the following example:
- * <UL><CODE>
- * &lt;title&gt;The Title&lt;/title&gt;
- * </CODE></UL>
- * you can retrieve that data using the method
- * {@link #getContent() getContent}.
- * </DD></DL>
- * <DL><DT><B>Subclassing XMLElement</B></DT>
- * <DD>
- * When subclassing XMLElement, you need to override the method
- * {@link #createAnotherElement() createAnotherElement}
- * which has to return a new copy of the receiver.
- * </DD></DL>
+ * XML code. 
  * <P>
- *
- * @see nanoxml.XMLParseException
- *
+ * The code is from NanoXML 2.2.3 Lite from Marc De Scheemaecker. His project is
+ * online at <A HREF="http://nanoxml.cyberelf.be/">http://nanoxml.cyberelf.be/</A>.
+ * Some interfaces to the code have been changed, and the package naming has been
+ * altered, however it should be clear that this code is almost entirely his
+ * work, with no connection to the Processing project.
+ * <P>
+ * The intent of this library (with regard to Processing) is to provide an 
+ * extremely simple (and compact) means of reading and writing XML data from a 
+ * sketch. As such, this is not a full-featured library for handling XML data. 
+ * For those who need it, more sophisticated libraries are available, and there
+ * are no plans to add significant new features to this library.
+ * <CODE>
+ * import processing.xml.*;
+ * 
+ * XMLElement xml = new XMLElement("filename.xml", this);
+ * int childCount = xml.getChildCount();
+ * for (int i = 0; i < childCount; i++) {
+ *   XMLElement kid = xml.getChild(i);
+ *   float attr = kid.getFloatAttribute("some-attribute");
+ *   println("some-attribute is " + attr);
+ * }
+ * </CODE>
  * @author Marc De Scheemaecker
  *         &lt;<A href="mailto:cyberelf@mac.com">cyberelf@mac.com</A>&gt;
- * @version $Name: RELEASE_2_2_1 $, $Revision: 1.4 $
  */
 public class XMLElement
 {
@@ -106,7 +80,7 @@ public class XMLElement
     /**
      * Serialization serial version ID.
      */
-    static final long serialVersionUID = 6685035139346394777L;
+    //static final long serialVersionUID = 6685035139346394777L;
 
 
     /**
@@ -115,9 +89,9 @@ public class XMLElement
      * are source compatible. If the major version is different, you may
      * need to modify the client source code.
      *
-     * @see nanoxml.XMLElement#NANOXML_MINOR_VERSION
+     * @see processing.xml.XMLElement#NANOXML_MINOR_VERSION
      */
-    public static final int NANOXML_MAJOR_VERSION = 2;
+    //public static final int NANOXML_MAJOR_VERSION = 2;
 
 
     /**
@@ -126,9 +100,9 @@ public class XMLElement
      * are source compatible. If the major version is different, you may
      * need to modify the client source code.
      *
-     * @see nanoxml.XMLElement#NANOXML_MAJOR_VERSION
+     * @see processing.xml.XMLElement#NANOXML_MAJOR_VERSION
      */
-    public static final int NANOXML_MINOR_VERSION = 2;
+    //public static final int NANOXML_MINOR_VERSION = 2;
 
 
     /**
@@ -211,7 +185,7 @@ public class XMLElement
      * The line number where the element starts.
      *
      * <dl><dt><b>Invariants:</b></dt><dd>
-     * <ul><li><code>lineNr &gt= 0</code>
+     * <ul><li><code>lineNumber &gt= 0</code>
      * </ul></dd></dl>
      */
     private int lineNumber;
@@ -255,10 +229,10 @@ public class XMLElement
      * The current line number in the source content.
      *
      * <dl><dt><b>Invariants:</b></dt><dd>
-     * <ul><li>parserLineNr &gt; 0 while the parse method is running.
+     * <ul><li>parserLineNumber &gt; 0 while the parse method is running.
      * </ul></dd></dl>
      */
-    private int parserLineNr;
+    private int parserLineNumber;
 
 
     /**
@@ -273,14 +247,14 @@ public class XMLElement
      *     <li>enumeratePropertyNames() => empty enumeration
      *     <li>getChildren() => empty vector
      *     <li>getContent() => ""
-     *     <li>getLineNr() => 0
+     *     <li>getLineNumber() => 0
      *     <li>getName() => null
      * </ul></dd></dl>
      *
-     * @see nanoxml.XMLElement#XMLElement(java.util.Hashtable)
+     * @see processing.xml.XMLElement#XMLElement(java.util.Hashtable)
      *         XMLElement(Hashtable)
-     * @see nanoxml.XMLElement#XMLElement(boolean)
-     * @see nanoxml.XMLElement#XMLElement(java.util.Hashtable,boolean)
+     * @see processing.xml.XMLElement#XMLElement(boolean)
+     * @see processing.xml.XMLElement#XMLElement(java.util.Hashtable,boolean)
      *         XMLElement(Hashtable, boolean)
      */
     public XMLElement()
@@ -308,13 +282,13 @@ public class XMLElement
      *     <li>enumeratePropertyNames() => empty enumeration
      *     <li>getChildren() => empty vector
      *     <li>getContent() => ""
-     *     <li>getLineNr() => 0
+     *     <li>getLineNumber() => 0
      *     <li>getName() => null
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#XMLElement()
-     * @see nanoxml.XMLElement#XMLElement(boolean)
-     * @see nanoxml.XMLElement#XMLElement(java.util.Hashtable,boolean)
+     * @see processing.xml.XMLElement#XMLElement()
+     * @see processing.xml.XMLElement#XMLElement(boolean)
+     * @see processing.xml.XMLElement#XMLElement(java.util.Hashtable,boolean)
      *         XMLElement(Hashtable, boolean)
      */
     public XMLElement(Hashtable entities)
@@ -339,14 +313,14 @@ public class XMLElement
      *     <li>enumeratePropertyNames() => empty enumeration
      *     <li>getChildren() => empty vector
      *     <li>getContent() => ""
-     *     <li>getLineNr() => 0
+     *     <li>getLineNumber() => 0
      *     <li>getName() => null
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#XMLElement()
-     * @see nanoxml.XMLElement#XMLElement(java.util.Hashtable)
+     * @see processing.xml.XMLElement#XMLElement()
+     * @see processing.xml.XMLElement#XMLElement(java.util.Hashtable)
      *         XMLElement(Hashtable)
-     * @see nanoxml.XMLElement#XMLElement(java.util.Hashtable,boolean)
+     * @see processing.xml.XMLElement#XMLElement(java.util.Hashtable,boolean)
      *         XMLElement(Hashtable, boolean)
      */
     public XMLElement(boolean skipLeadingWhitespace)
@@ -377,13 +351,13 @@ public class XMLElement
      *     <li>enumeratePropertyNames() => empty enumeration
      *     <li>getChildren() => empty vector
      *     <li>getContent() => ""
-     *     <li>getLineNr() => 0
+     *     <li>getLineNumber() => 0
      *     <li>getName() => null
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#XMLElement()
-     * @see nanoxml.XMLElement#XMLElement(boolean)
-     * @see nanoxml.XMLElement#XMLElement(java.util.Hashtable)
+     * @see processing.xml.XMLElement#XMLElement()
+     * @see processing.xml.XMLElement#XMLElement(boolean)
+     * @see processing.xml.XMLElement#XMLElement(java.util.Hashtable)
      *         XMLElement(Hashtable)
      */
     public XMLElement(Hashtable entities,
@@ -415,15 +389,15 @@ public class XMLElement
      *     <li>enumeratePropertyNames() => empty enumeration
      *     <li>getChildren() => empty vector
      *     <li>getContent() => ""
-     *     <li>getLineNr() => 0
+     *     <li>getLineNumber() => 0
      *     <li>getName() => null
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#XMLElement()
-     * @see nanoxml.XMLElement#XMLElement(boolean)
-     * @see nanoxml.XMLElement#XMLElement(java.util.Hashtable)
+     * @see processing.xml.XMLElement#XMLElement()
+     * @see processing.xml.XMLElement#XMLElement(boolean)
+     * @see processing.xml.XMLElement#XMLElement(java.util.Hashtable)
      *         XMLElement(Hashtable)
-     * @see nanoxml.XMLElement#XMLElement(java.util.Hashtable,boolean)
+     * @see processing.xml.XMLElement#XMLElement(java.util.Hashtable,boolean)
      *         XMLElement(Hashtable, boolean)
      */
     public XMLElement(Hashtable entities,
@@ -467,11 +441,11 @@ public class XMLElement
      *     <li>enumeratePropertyNames() => empty enumeration
      *     <li>getChildren() => empty vector
      *     <li>getContent() => ""
-     *     <li>getLineNr() => 0
+     *     <li>getLineNumber() => 0
      *     <li>getName() => null
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#createAnotherElement()
+     * @see processing.xml.XMLElement#createAnotherElement()
      */
     protected XMLElement(Hashtable entities,
                          boolean   skipLeadingWhitespace,
@@ -503,6 +477,48 @@ public class XMLElement
             this.entities.put("gt", new char[] { '>' });
         }
     }
+    
+    
+    /**
+     * Begin parsing XML data passed in from a PApplet. This code
+     * wraps exception handling, for more advanced exception handling, 
+     * use the constructor that takes a Reader or InputStream, 
+     * or use the parseFromReader() method.
+     * @author fry
+     * @param filename
+     * @param parent
+     */
+    public XMLElement(String filename, PApplet parent) {
+        try {
+            Reader reader = parent.createReader(filename);
+            if (reader == null) {
+                System.err.println("The file " + filename + " could not be found.");
+                return;
+            }
+            parseFromReader(reader);
+        } catch (IOException e) {
+            e.printStackTrace();            
+        }
+    }
+    
+    
+    /**
+     * Create and parse immediately.
+     * @author fry
+     */
+    public XMLElement(Reader reader) throws IOException {
+        parseFromReader(reader);
+    }
+
+    
+    /**
+     * Create and parse immediately.
+     * @author fry
+     */
+    public XMLElement(InputStream input) throws IOException {
+        InputStreamReader reader = new InputStreamReader(input);
+        parseFromReader(reader);
+    }
 
 
     /**
@@ -523,10 +539,10 @@ public class XMLElement
      *     <li>getChildren() => old.enumerateChildren() + child
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#countChildren()
-     * @see nanoxml.XMLElement#enumerateChildren()
-     * @see nanoxml.XMLElement#getChildren()
-     * @see nanoxml.XMLElement#removeChild(nanoxml.XMLElement)
+     * @see processing.xml.XMLElement#countChildren()
+     * @see processing.xml.XMLElement#enumerateChildren()
+     * @see processing.xml.XMLElement#getChildren()
+     * @see processing.xml.XMLElement#removeChild(processing.xml.XMLElement)
      *         removeChild(XMLElement)
      */
     public void addChild(XMLElement child)
@@ -555,25 +571,25 @@ public class XMLElement
      *     <li>getAttribute(name) => value
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#setDoubleAttribute(java.lang.String, double)
      *         setDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#setIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#setIntAttribute(java.lang.String, int)
      *         setIntAttribute(String, int)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String)
      *         getAttribute(String)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
      *         getAttribute(String, Object)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String,
      *                                      java.util.Hashtable,
      *                                      java.lang.String, boolean)
      *         getAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String)
      *         getStringAttribute(String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.lang.String)
      *         getStringAttribute(String, String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getStringAttribute(String, Hashtable, String, boolean)
@@ -596,26 +612,6 @@ public class XMLElement
      * @param value
      *     The value of the attribute.
      *
-     * @deprecated Use {@link #setAttribute(java.lang.String, java.lang.Object)
-     *             setAttribute} instead.
-     */
-    /*
-    public void addProperty(String name,
-                            Object value)
-    {
-        this.setAttribute(name, value);
-    }
-    */
-
-
-    /**
-     * Adds or modifies an attribute.
-     *
-     * @param name
-     *     The name of the attribute.
-     * @param value
-     *     The value of the attribute.
-     *
      * </dl><dl><dt><b>Preconditions:</b></dt><dd>
      * <ul><li><code>name != null</code>
      *     <li><code>name</code> is a valid XML identifier
@@ -627,18 +623,18 @@ public class XMLElement
      *     <li>getIntAttribute(name) => value
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#setDoubleAttribute(java.lang.String, double)
      *         setDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String)
      *         getIntAttribute(String)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String, int)
      *         getIntAttribute(String, int)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String,
      *                                         java.util.Hashtable,
      *                                         java.lang.String, boolean)
      *         getIntAttribute(String, Hashtable, String, boolean)
@@ -661,26 +657,6 @@ public class XMLElement
      * @param value
      *     The value of the attribute.
      *
-     * @deprecated Use {@link #setIntAttribute(java.lang.String, int)
-     *             setIntAttribute} instead.
-     */
-    /*
-    public void addProperty(String key,
-                            int    value)
-    {
-        this.setIntAttribute(key, value);
-    }
-    */
-
-
-    /**
-     * Adds or modifies an attribute.
-     *
-     * @param name
-     *     The name of the attribute.
-     * @param value
-     *     The value of the attribute.
-     *
      * </dl><dl><dt><b>Preconditions:</b></dt><dd>
      * <ul><li><code>name != null</code>
      *     <li><code>name</code> is a valid XML identifier
@@ -692,18 +668,18 @@ public class XMLElement
      *     <li>getDoubleAttribute(name) => value
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#setIntAttribute(java.lang.String, int)
      *         setIntAttribute(String, int)
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String)
      *         getDoubleAttribute(String)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String, double)
      *         getDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getDoubleAttribute(String, Hashtable, String, boolean)
@@ -719,48 +695,9 @@ public class XMLElement
 
 
     /**
-     * Adds or modifies an attribute.
-     *
-     * @param name
-     *     The name of the attribute.
-     * @param value
-     *     The value of the attribute.
-     *
-     * @deprecated Use {@link #setDoubleAttribute(java.lang.String, double)
-     *             setDoubleAttribute} instead.
+     * Get the number of children for this element.
+     * @return number of children
      */
-    /*
-    public void addProperty(String name,
-                            double value)
-    {
-        this.setDoubleAttribute(name, value);
-    }
-    */
-
-
-    /**
-     * Returns the number of child elements of the element.
-     *
-     * <dl><dt><b>Postconditions:</b></dt><dd>
-     * <ul><li><code>result >= 0</code>
-     * </ul></dd></dl>
-     *
-     * @see nanoxml.XMLElement#addChild(nanoxml.XMLElement)
-     *         addChild(XMLElement)
-     * @see nanoxml.XMLElement#enumerateChildren()
-     * @see nanoxml.XMLElement#getChildren()
-     * @see nanoxml.XMLElement#removeChild(nanoxml.XMLElement)
-     *         removeChild(XMLElement)
-     */
-    /*
-    public int countChildren()
-    {
-        return this.children.size();
-    }
-    */
-
-
-    // [fry]
     public int getChildCount()
     {
         return this.children.size();
@@ -774,48 +711,48 @@ public class XMLElement
      * <ul><li><code>result != null</code>
      * </ul></dd></dl>
      *
-     * @see nanoxml.XMLElement#setDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#setDoubleAttribute(java.lang.String, double)
      *         setDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#setIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#setIntAttribute(java.lang.String, int)
      *         setIntAttribute(String, int)
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String)
      *         getAttribute(String)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
      *         getAttribute(String, String)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String,
      *                                      java.util.Hashtable,
      *                                      java.lang.String, boolean)
      *         getAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String)
      *         getStringAttribute(String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.lang.String)
      *         getStringAttribute(String, String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getStringAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String)
      *         getIntAttribute(String)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String, int)
      *         getIntAttribute(String, int)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String,
      *                                         java.util.Hashtable,
      *                                         java.lang.String, boolean)
      *         getIntAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String)
      *         getDoubleAttribute(String)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String, double)
      *         getDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getDoubleAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getBooleanAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getBooleanAttribute(java.lang.String,
      *                                             java.lang.String,
      *                                             java.lang.String, boolean)
      *         getBooleanAttribute(String, String, String, boolean)
@@ -827,31 +764,17 @@ public class XMLElement
 
 
     /**
-     * Enumerates the attribute names.
-     *
-     * @deprecated Use {@link #enumerateAttributeNames()
-     *             enumerateAttributeNames} instead.
-     */
-    /*
-    public Enumeration enumeratePropertyNames()
-    {
-        return this.enumerateAttributeNames();
-    }
-    */
-
-
-    /**
      * Enumerates the child elements.
      *
      * <dl><dt><b>Postconditions:</b></dt><dd>
      * <ul><li><code>result != null</code>
      * </ul></dd></dl>
      *
-     * @see nanoxml.XMLElement#addChild(nanoxml.XMLElement)
+     * @see processing.xml.XMLElement#addChild(processing.xml.XMLElement)
      *         addChild(XMLElement)
-     * @see nanoxml.XMLElement#countChildren()
-     * @see nanoxml.XMLElement#getChildren()
-     * @see nanoxml.XMLElement#removeChild(nanoxml.XMLElement)
+     * @see processing.xml.XMLElement#countChildren()
+     * @see processing.xml.XMLElement#getChildren()
+     * @see processing.xml.XMLElement#removeChild(processing.xml.XMLElement)
      *         removeChild(XMLElement)
      */
     public Enumeration enumerateChildren()
@@ -868,11 +791,11 @@ public class XMLElement
      * <ul><li><code>result != null</code>
      * </ul></dd></dl>
      *
-     * @see nanoxml.XMLElement#addChild(nanoxml.XMLElement)
+     * @see processing.xml.XMLElement#addChild(processing.xml.XMLElement)
      *         addChild(XMLElement)
-     * @see nanoxml.XMLElement#countChildren()
-     * @see nanoxml.XMLElement#enumerateChildren()
-     * @see nanoxml.XMLElement#removeChild(nanoxml.XMLElement)
+     * @see processing.xml.XMLElement#countChildren()
+     * @see processing.xml.XMLElement#enumerateChildren()
+     * @see processing.xml.XMLElement#removeChild(processing.xml.XMLElement)
      *         removeChild(XMLElement)
      */
     /*
@@ -905,20 +828,7 @@ public class XMLElement
      * Returns the PCDATA content of the object. If there is no such content,
      * <CODE>null</CODE> is returned.
      *
-     * @deprecated Use {@link #getContent() getContent} instead.
-     */
-    /*
-    public String getContents()
-    {
-        return this.getContent();
-    }
-
-
-    /**
-     * Returns the PCDATA content of the object. If there is no such content,
-     * <CODE>null</CODE> is returned.
-     *
-     * @see nanoxml.XMLElement#setContent(java.lang.String)
+     * @see processing.xml.XMLElement#setContent(java.lang.String)
      *         setContent(String)
      */
     public String getContent()
@@ -928,7 +838,7 @@ public class XMLElement
 
 
     /**
-     * Returns the line nr in the source data on which the element is found.
+     * Returns the line Number in the source data on which the element is found.
      * This method returns <code>0</code> there is no associated source data.
      *
      * <dl><dt><b>Postconditions:</b></dt><dd>
@@ -941,7 +851,12 @@ public class XMLElement
     }
 
 
-    // useful addition [fry]
+    /**
+     * Convenience function to check whether an attribute is available.
+     * @author fry
+     * @param name name of the attribute
+     * @return true if the attribute is non-null
+     */
     public boolean hasAttribute(String name) {
         return (getAttribute(name) != null);
     }
@@ -958,14 +873,14 @@ public class XMLElement
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
      *         getAttribute(String, Object)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String,
      *                                      java.util.Hashtable,
      *                                      java.lang.String, boolean)
      *         getAttribute(String, Hashtable, String, boolean)
@@ -988,14 +903,14 @@ public class XMLElement
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String)
      *         getAttribute(String)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String,
      *                                      java.util.Hashtable,
      *                                      java.lang.String, boolean)
      *         getAttribute(String, Hashtable, String, boolean)
@@ -1041,14 +956,14 @@ public class XMLElement
      *     <li>the keys of <code>valueSet</code> are strings
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String)
      *         getAttribute(String)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
      *         getAttribute(String, Object)
      */
     public Object getAttribute(String    name,
@@ -1087,15 +1002,15 @@ public class XMLElement
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.lang.String)
      *         getStringAttribute(String, String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getStringAttribute(String, Hashtable, String, boolean)
@@ -1118,14 +1033,14 @@ public class XMLElement
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String)
      *         getStringAttribute(String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getStringAttribute(String, Hashtable, String, boolean)
@@ -1165,14 +1080,14 @@ public class XMLElement
      *     <li>the values of <code>valueSet</code> are strings
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String)
      *         getStringAttribute(String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.lang.String)
      *         getStringAttribute(String, String)
      */
@@ -1197,12 +1112,12 @@ public class XMLElement
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#setIntAttribute(java.lang.String, int)
      *         setIntAttribute(String, int)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String, int)
      *         getIntAttribute(String, int)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String,
      *                                         java.util.Hashtable,
      *                                         java.lang.String, boolean)
      *         getIntAttribute(String, Hashtable, String, boolean)
@@ -1225,12 +1140,12 @@ public class XMLElement
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#setIntAttribute(java.lang.String, int)
      *         setIntAttribute(String, int)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String)
      *         getIntAttribute(String)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String,
      *                                         java.util.Hashtable,
      *                                         java.lang.String, boolean)
      *         getIntAttribute(String, Hashtable, String, boolean)
@@ -1283,12 +1198,12 @@ public class XMLElement
      *         key in <code>valueSet</code> or an integer.
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#setIntAttribute(java.lang.String, int)
      *         setIntAttribute(String, int)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String)
      *         getIntAttribute(String)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String, int)
      *         getIntAttribute(String, int)
      */
     public int getIntAttribute(String    name,
@@ -1323,12 +1238,26 @@ public class XMLElement
     }
 
 
+    /**
+     * Method to get a float attribute, identical to getDoubleAttribute(), 
+     * @see processing.xml.XMLElement#getDoubleAttribute() but added to 
+     * handle float data as used by Processing. This code is adapted from
+     * the identical code in the getDoubleAttribute methods.
+     * @author processing.org
+     */
     public float getFloatAttribute(String name)
     {
         return getFloatAttribute(name, 0);
     }
 
 
+    /**
+     * Method to get a float attribute, identical to getDoubleAttribute(), 
+     * @see processing.xml.XMLElement#getDoubleAttribute() but added to 
+     * handle float data as used by Processing. This code is adapted from
+     * the identical code in the getDoubleAttribute methods.
+     * @author processing.org
+     */
     public float getFloatAttribute(String name,
                                    float defaultValue)
     {
@@ -1348,6 +1277,13 @@ public class XMLElement
     }
 
 
+    /**
+     * Method to get a float attribute, identical to getDoubleAttribute(), 
+     * @see processing.xml.XMLElement#getDoubleAttribute() but added to 
+     * handle float data as used by Processing. This code is adapted from
+     * the identical code in the getDoubleAttribute methods.
+     * @author processing.org
+     */
     public float getFloatAttribute(String    name,
                                    Hashtable valueSet,
                                    String    defaultKey,
@@ -1391,12 +1327,12 @@ public class XMLElement
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#setDoubleAttribute(java.lang.String, double)
      *         setDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String, double)
      *         getDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getDoubleAttribute(String, Hashtable, String, boolean)
@@ -1419,12 +1355,12 @@ public class XMLElement
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#setDoubleAttribute(java.lang.String, double)
      *         setDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String)
      *         getDoubleAttribute(String)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getDoubleAttribute(String, Hashtable, String, boolean)
@@ -1478,12 +1414,12 @@ public class XMLElement
      *         key in <code>valueSet</code> or a double.
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#setDoubleAttribute(java.lang.String, double)
      *         setDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String)
      *         getDoubleAttribute(String)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String, double)
      *         getDoubleAttribute(String, double)
      */
     public double getDoubleAttribute(String    name,
@@ -1540,11 +1476,11 @@ public class XMLElement
      *         are different strings.
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#removeAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#removeAttribute(java.lang.String)
      *         removeAttribute(String)
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
      */
     public boolean getBooleanAttribute(String  name,
                                        String  trueValue,
@@ -1568,190 +1504,14 @@ public class XMLElement
 
 
     /**
-     * Returns an attribute by looking up a key in a hashtable.
-     *
-     * @deprecated Use {@link #getIntAttribute(java.lang.String,
-     *             java.util.Hashtable, java.lang.String, boolean)
-     *             getIntAttribute} instead.
-     */
-    /*
-    public int getIntProperty(String    name,
-                              Hashtable valueSet,
-                              String    defaultKey)
-    {
-        return this.getIntAttribute(name, valueSet, defaultKey, false);
-    }
-    */
-
-
-    /**
-     * Returns an attribute.
-     *
-     * @deprecated Use {@link #getStringAttribute(java.lang.String)
-     *             getStringAttribute} instead.
-     */
-    /*
-    public String getProperty(String name)
-    {
-        return this.getStringAttribute(name);
-    }
-    */
-
-
-    /**
-     * Returns an attribute.
-     *
-     * @deprecated Use {@link #getStringAttribute(java.lang.String,
-     *             java.lang.String) getStringAttribute} instead.
-     */
-    /*
-    public String getProperty(String name,
-                              String defaultValue)
-    {
-        return this.getStringAttribute(name, defaultValue);
-    }
-    */
-
-
-    /**
-     * Returns an attribute.
-     *
-     * @deprecated Use {@link #getIntAttribute(java.lang.String, int)
-     *             getIntAttribute} instead.
-     */
-    /*
-    public int getProperty(String name,
-                           int    defaultValue)
-    {
-        return this.getIntAttribute(name, defaultValue);
-    }
-    */
-
-
-    /**
-     * Returns an attribute.
-     *
-     * @deprecated Use {@link #getDoubleAttribute(java.lang.String, double)
-     *             getDoubleAttribute} instead.
-     */
-    /*
-    public double getProperty(String name,
-                              double defaultValue)
-    {
-        return this.getDoubleAttribute(name, defaultValue);
-    }
-    */
-
-
-    /**
-     * Returns an attribute.
-     *
-     * @deprecated Use {@link #getBooleanAttribute(java.lang.String,
-     *             java.lang.String, java.lang.String, boolean)
-     *             getBooleanAttribute} instead.
-     */
-    /*
-    public boolean getProperty(String  key,
-                               String  trueValue,
-                               String  falseValue,
-                               boolean defaultValue)
-    {
-        return this.getBooleanAttribute(key, trueValue, falseValue,
-                                        defaultValue);
-    }
-    */
-
-
-    /**
-     * Returns an attribute by looking up a key in a hashtable.
-     *
-     * @deprecated Use {@link #getAttribute(java.lang.String,
-     *             java.util.Hashtable, java.lang.String, boolean)
-     *             getAttribute} instead.
-     */
-    /*
-    public Object getProperty(String    name,
-                              Hashtable valueSet,
-                              String    defaultKey)
-    {
-        return this.getAttribute(name, valueSet, defaultKey, false);
-    }
-    */
-
-
-    /**
-     * Returns an attribute by looking up a key in a hashtable.
-     *
-     * @deprecated Use {@link #getStringAttribute(java.lang.String,
-     *             java.util.Hashtable, java.lang.String, boolean)
-     *             getStringAttribute} instead.
-     */
-    /*
-    public String getStringProperty(String    name,
-                                    Hashtable valueSet,
-                                    String    defaultKey)
-    {
-        return this.getStringAttribute(name, valueSet, defaultKey, false);
-    }
-    */
-
-
-    /**
-     * Returns an attribute by looking up a key in a hashtable.
-     *
-     * @deprecated Use {@link #getIntAttribute(java.lang.String,
-     *             java.util.Hashtable, java.lang.String, boolean)
-     *             getIntAttribute} instead.
-     */
-    /*
-    public int getSpecialIntProperty(String    name,
-                                     Hashtable valueSet,
-                                     String    defaultKey)
-    {
-        return this.getIntAttribute(name, valueSet, defaultKey, true);
-    }
-    */
-
-
-    /**
-     * Returns an attribute by looking up a key in a hashtable.
-     *
-     * @deprecated Use {@link #getDoubleAttribute(java.lang.String,
-     *             java.util.Hashtable, java.lang.String, boolean)
-     *             getDoubleAttribute} instead.
-     */
-    /*
-    public double getSpecialDoubleProperty(String    name,
-                                           Hashtable valueSet,
-                                           String    defaultKey)
-    {
-        return this.getDoubleAttribute(name, valueSet, defaultKey, true);
-    }
-    */
-
-
-    /**
      * Returns the name of the element.
      *
-     * @see nanoxml.XMLElement#setName(java.lang.String) setName(String)
+     * @see processing.xml.XMLElement#setName(java.lang.String) setName(String)
      */
     public String getName()
     {
         return this.name;
     }
-
-
-    /**
-     * Returns the name of the element.
-     *
-     * @deprecated Use {@link #getName() getName} instead.
-     */
-    /*
-    public String getTagName()
-    {
-        return this.getName();
-    }
-    */
 
 
     /**
@@ -1774,13 +1534,13 @@ public class XMLElement
      *
      * @throws java.io.IOException
      *     If an error occured while reading the input.
-     * @throws nanoxml.XMLParseException
+     * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the read data.
      */
     public void parseFromReader(Reader reader)
     throws IOException, XMLParseException
     {
-        this.parseFromReader(reader, /*startingLineNr*/ 1);
+        this.parseFromReader(reader, /*startingLineNumber*/ 1);
     }
 
 
@@ -1789,7 +1549,7 @@ public class XMLElement
      *
      * @param reader
      *     The reader from which to retrieve the XML data.
-     * @param startingLineNr
+     * @param startingLineNumber
      *     The line number of the first line in the data.
      *
      * </dl><dl><dt><b>Preconditions:</b></dt><dd>
@@ -1806,11 +1566,11 @@ public class XMLElement
      *
      * @throws java.io.IOException
      *     If an error occured while reading the input.
-     * @throws nanoxml.XMLParseException
+     * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the read data.
      */
     public void parseFromReader(Reader reader,
-                                int    startingLineNr)
+                                int    startingLineNumber)
         throws IOException, XMLParseException
     {
         this.name = null;
@@ -1819,7 +1579,7 @@ public class XMLElement
         this.children = new Vector();
         this.charReadTooMuch = '\0';
         this.reader = reader;
-        this.parserLineNr = startingLineNr;
+        this.parserLineNumber = startingLineNumber;
 
         for (;;) {
             char ch = this.scanWhitespace();
@@ -1857,7 +1617,7 @@ public class XMLElement
      *         parsed from the reader
      * </ul></dd></dl><dl>
      *
-     * @throws nanoxml.XMLParseException
+     * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the string.
      */
     public void parseString(String string)
@@ -1865,7 +1625,7 @@ public class XMLElement
     {
         try {
             this.parseFromReader(new StringReader(string),
-                                 /*startingLineNr*/ 1);
+                                 /*startingLineNumber*/ 1);
         } catch (IOException e) {
             // Java exception handling suxx
         }
@@ -1891,7 +1651,7 @@ public class XMLElement
      *         parsed from the reader
      * </ul></dd></dl><dl>
      *
-     * @throws nanoxml.XMLParseException
+     * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the string.
      */
     public void parseString(String string,
@@ -1925,7 +1685,7 @@ public class XMLElement
      *         parsed from the reader
      * </ul></dd></dl><dl>
      *
-     * @throws nanoxml.XMLParseException
+     * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the string.
      */
     public void parseString(String string,
@@ -1947,7 +1707,7 @@ public class XMLElement
      * @param end
      *     The character where to stop scanning.
      *     This character is not scanned.
-     * @param startingLineNr
+     * @param startingLineNumber
      *     The line number of the first line in the data.
      *
      * </dl><dl><dt><b>Preconditions:</b></dt><dd>
@@ -1962,18 +1722,18 @@ public class XMLElement
      *         parsed from the reader
      * </ul></dd></dl><dl>
      *
-     * @throws nanoxml.XMLParseException
+     * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the string.
      */
     public void parseString(String string,
                             int    offset,
                             int    end,
-                            int    startingLineNr)
+                            int    startingLineNumber)
         throws XMLParseException
     {
         string = string.substring(offset, end);
         try {
-            this.parseFromReader(new StringReader(string), startingLineNr);
+            this.parseFromReader(new StringReader(string), startingLineNumber);
         } catch (IOException e) {
             // Java exception handling suxx
         }
@@ -2003,7 +1763,7 @@ public class XMLElement
      *         parsed from the reader
      * </ul></dd></dl><dl>
      *
-     * @throws nanoxml.XMLParseException
+     * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the string.
      */
     public void parseCharArray(char[] input,
@@ -2011,7 +1771,7 @@ public class XMLElement
                                int    end)
         throws XMLParseException
     {
-        this.parseCharArray(input, offset, end, /*startingLineNr*/ 1);
+        this.parseCharArray(input, offset, end, /*startingLineNumber*/ 1);
     }
 
 
@@ -2025,7 +1785,7 @@ public class XMLElement
      * @param end
      *     The character where to stop scanning.
      *     This character is not scanned.
-     * @param startingLineNr
+     * @param startingLineNumber
      *     The line number of the first line in the data.
      *
      * </dl><dl><dt><b>Preconditions:</b></dt><dd>
@@ -2040,18 +1800,18 @@ public class XMLElement
      *         parsed from the reader
      * </ul></dd></dl><dl>
      *
-     * @throws nanoxml.XMLParseException
+     * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the string.
      */
     public void parseCharArray(char[] input,
                                int    offset,
                                int    end,
-                               int    startingLineNr)
+                               int    startingLineNumber)
         throws XMLParseException
     {
         try {
             Reader reader = new CharArrayReader(input, offset, end);
-            this.parseFromReader(reader, startingLineNr);
+            this.parseFromReader(reader, startingLineNumber);
         } catch (IOException e) {
             // This exception will never happen.
         }
@@ -2075,11 +1835,11 @@ public class XMLElement
      *     <li>getChildren() => old.enumerateChildren() - child
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#addChild(nanoxml.XMLElement)
+     * @see processing.xml.XMLElement#addChild(processing.xml.XMLElement)
      *         addChild(XMLElement)
-     * @see nanoxml.XMLElement#countChildren()
-     * @see nanoxml.XMLElement#enumerateChildren()
-     * @see nanoxml.XMLElement#getChildren()
+     * @see processing.xml.XMLElement#countChildren()
+     * @see processing.xml.XMLElement#enumerateChildren()
+     * @see processing.xml.XMLElement#getChildren()
      */
     public void removeChild(XMLElement child)
     {
@@ -2104,47 +1864,47 @@ public class XMLElement
      *     <li>getAttribute(name) => <code>null</code>
      * </ul></dd></dl><dl>
      *
-     * @see nanoxml.XMLElement#enumerateAttributeNames()
-     * @see nanoxml.XMLElement#setDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#enumerateAttributeNames()
+     * @see processing.xml.XMLElement#setDoubleAttribute(java.lang.String, double)
      *         setDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#setIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#setIntAttribute(java.lang.String, int)
      *         setIntAttribute(String, int)
-     * @see nanoxml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#setAttribute(java.lang.String, java.lang.Object)
      *         setAttribute(String, Object)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String)
      *         getAttribute(String)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String, java.lang.Object)
      *         getAttribute(String, Object)
-     * @see nanoxml.XMLElement#getAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getAttribute(java.lang.String,
      *                                      java.util.Hashtable,
      *                                      java.lang.String, boolean)
      *         getAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String)
      *         getStringAttribute(String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.lang.String)
      *         getStringAttribute(String, String)
-     * @see nanoxml.XMLElement#getStringAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getStringAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getStringAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String)
      *         getIntAttribute(String)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String, int)
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String, int)
      *         getIntAttribute(String, int)
-     * @see nanoxml.XMLElement#getIntAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getIntAttribute(java.lang.String,
      *                                         java.util.Hashtable,
      *                                         java.lang.String, boolean)
      *         getIntAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String)
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String)
      *         getDoubleAttribute(String)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String, double)
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String, double)
      *         getDoubleAttribute(String, double)
-     * @see nanoxml.XMLElement#getDoubleAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getDoubleAttribute(java.lang.String,
      *                                            java.util.Hashtable,
      *                                            java.lang.String, boolean)
      *         getDoubleAttribute(String, Hashtable, String, boolean)
-     * @see nanoxml.XMLElement#getBooleanAttribute(java.lang.String,
+     * @see processing.xml.XMLElement#getBooleanAttribute(java.lang.String,
      *                                             java.lang.String,
      *                                             java.lang.String, boolean)
      *         getBooleanAttribute(String, String, String, boolean)
@@ -2156,40 +1916,6 @@ public class XMLElement
         }
         this.attributes.remove(name);
     }
-
-
-    /**
-     * Removes an attribute.
-     *
-     * @param name
-     *     The name of the attribute.
-     *
-     * @deprecated Use {@link #removeAttribute(java.lang.String)
-     *             removeAttribute} instead.
-     */
-    /*
-    public void removeProperty(String name)
-    {
-        this.removeAttribute(name);
-    }
-    */
-
-
-    /**
-     * Removes an attribute.
-     *
-     * @param name
-     *     The name of the attribute.
-     *
-     * @deprecated Use {@link #removeAttribute(java.lang.String)
-     *             removeAttribute} instead.
-     */
-    /*
-    public void removeChild(String name)
-    {
-        this.removeAttribute(name);
-    }
-    */
 
 
     /**
@@ -2224,28 +1950,12 @@ public class XMLElement
      * @param name
      *     The new name.
      *
-     * @deprecated Use {@link #setName(java.lang.String) setName} instead.
-     */
-    /*
-    public void setTagName(String name)
-    {
-        this.setName(name);
-    }
-    */
-
-
-    /**
-     * Changes the name of the element.
-     *
-     * @param name
-     *     The new name.
-     *
      * </dl><dl><dt><b>Preconditions:</b></dt><dd>
      * <ul><li><code>name != null</code>
      *     <li><code>name</code> is a valid XML identifier
      * </ul></dd></dl>
      *
-     * @see nanoxml.XMLElement#getName()
+     * @see processing.xml.XMLElement#getName()
      */
     public void setName(String name)
     {
@@ -2256,7 +1966,7 @@ public class XMLElement
     /**
      * Writes the XML element to a string.
      *
-     * @see nanoxml.XMLElement#write(java.io.Writer) write(Writer)
+     * @see processing.xml.XMLElement#write(java.io.Writer) write(Writer)
      */
     public String toString()
     {
@@ -2287,7 +1997,7 @@ public class XMLElement
      * @throws java.io.IOException
      *      If the data could not be written to the writer.
      *
-     * @see nanoxml.XMLElement#toString()
+     * @see processing.xml.XMLElement#toString()
      */
     public void write(Writer writer)
         throws IOException
@@ -2715,7 +2425,7 @@ public class XMLElement
             if (i < 0) {
                 throw this.unexpectedEndOfData();
             } else if (i == 10) {
-                this.parserLineNr += 1;
+                this.parserLineNumber += 1;
                 return '\n';
             } else {
                 return (char) i;
@@ -2919,7 +2629,7 @@ public class XMLElement
     protected XMLParseException invalidValueSet(String name)
     {
         String msg = "Invalid value set (entity name = \"" + name + "\")";
-        return new XMLParseException(this.getName(), this.parserLineNr, msg);
+        return new XMLParseException(this.getName(), this.parserLineNumber, msg);
     }
 
 
@@ -2940,7 +2650,7 @@ public class XMLElement
     {
         String msg = "Attribute \"" + name + "\" does not contain a valid "
                    + "value (\"" + value + "\")";
-        return new XMLParseException(this.getName(), this.parserLineNr, msg);
+        return new XMLParseException(this.getName(), this.parserLineNumber, msg);
     }
 
 
@@ -2951,7 +2661,7 @@ public class XMLElement
     protected XMLParseException unexpectedEndOfData()
     {
         String msg = "Unexpected end of data reached";
-        return new XMLParseException(this.getName(), this.parserLineNr, msg);
+        return new XMLParseException(this.getName(), this.parserLineNumber, msg);
     }
 
 
@@ -2968,7 +2678,7 @@ public class XMLElement
     protected XMLParseException syntaxError(String context)
     {
         String msg = "Syntax error while parsing " + context;
-        return new XMLParseException(this.getName(), this.parserLineNr, msg);
+        return new XMLParseException(this.getName(), this.parserLineNumber, msg);
     }
 
 
@@ -2987,7 +2697,7 @@ public class XMLElement
     protected XMLParseException expectedInput(String charSet)
     {
         String msg = "Expected: " + charSet;
-        return new XMLParseException(this.getName(), this.parserLineNr, msg);
+        return new XMLParseException(this.getName(), this.parserLineNumber, msg);
     }
 
 
@@ -3004,7 +2714,6 @@ public class XMLElement
     protected XMLParseException unknownEntity(String name)
     {
         String msg = "Unknown or invalid entity: &" + name + ";";
-        return new XMLParseException(this.getName(), this.parserLineNr, msg);
+        return new XMLParseException(this.getName(), this.parserLineNumber, msg);
     }
-
 }
