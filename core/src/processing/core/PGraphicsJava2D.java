@@ -311,6 +311,9 @@ public class PGraphicsJava2D extends PGraphics {
       if (gpath == null) {
         gpath = new GeneralPath();
         gpath.moveTo(x, y);
+      } else if (breakShape) {
+        gpath.moveTo(x, y);
+        breakShape = false;
       } else {
         gpath.lineTo(x, y);
       }
@@ -422,6 +425,12 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
+  boolean breakShape;
+  public void breakShape() {
+    breakShape = true;
+  }
+  
+  
   public void endShape(int mode) {
     if (gpath != null) {  // make sure something has been drawn
       if (shape == POLYGON) {
