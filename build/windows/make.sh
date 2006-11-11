@@ -26,7 +26,7 @@ else
   cp -r ../../pdf work/libraries/
   cp -r ../../dxf work/libraries/
   cp -r ../../xml work/libraries/
-  cp -r ../../svg work/libraries/
+  cp -r ../../svgreader work/libraries/
 
   echo Extracting examples...
   cd work
@@ -280,16 +280,16 @@ mkdir -p $LIBRARIES/xml/library/
 cp library/xml.jar $LIBRARIES/xml/library/
 
 
-# SVG LIBRARY
-echo Building SVG library...
-cd ../svg
+# SVG READER LIBRARY
+echo Building SVG Reader library...
+cd ../svgreader
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin src/processing/svg/*.java 
-rm -f library/svg.jar
+$JIKES -target 1.1 +D -d bin src/processing/svgreader/*.java 
+rm -f library/svgreader.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/svg.jar processing/svg/*.class && cd ..
-mkdir -p $LIBRARIES/svg/library/
-cp library/svg.jar $LIBRARIES/svg/library/
+cd bin && zip -r0q ../library/svgreader.jar processing/svgreader/*.class && cd ..
+mkdir -p $LIBRARIES/svgreader/library/
+cp library/svgreader.jar $LIBRARIES/svgreader/library/
 
 
 echo
