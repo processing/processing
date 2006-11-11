@@ -76,35 +76,6 @@ import processing.core.PApplet;
  */
 public class XMLElement
 {
-
-    /**
-     * Serialization serial version ID.
-     */
-    //static final long serialVersionUID = 6685035139346394777L;
-
-
-    /**
-     * Major version of NanoXML. Classes with the same major and minor
-     * version are binary compatible. Classes with the same major version
-     * are source compatible. If the major version is different, you may
-     * need to modify the client source code.
-     *
-     * @see processing.xml.XMLElement#NANOXML_MINOR_VERSION
-     */
-    //public static final int NANOXML_MAJOR_VERSION = 2;
-
-
-    /**
-     * Minor version of NanoXML. Classes with the same major and minor
-     * version are binary compatible. Classes with the same major version
-     * are source compatible. If the major version is different, you may
-     * need to modify the client source code.
-     *
-     * @see processing.xml.XMLElement#NANOXML_MAJOR_VERSION
-     */
-    //public static final int NANOXML_MINOR_VERSION = 2;
-
-
     /**
      * The attributes given to the element.
      *
@@ -153,7 +124,7 @@ public class XMLElement
      *     <li>The field can be any string, including the empty string.
      * </ul></dd></dl>
      */
-    private String contents;
+    private String content;
 
 
     /**
@@ -455,7 +426,7 @@ public class XMLElement
         this.ignoreWhitespace = skipLeadingWhitespace;
         this.ignoreCase = ignoreCase;
         this.name = null;
-        this.contents = "";
+        this.content = "";
         this.attributes = new Hashtable();
         this.children = new Vector();
         this.entities = entities;
@@ -784,8 +755,9 @@ public class XMLElement
 
 
     /**
-     * Returns the child elements as a Vector. It is safe to modify this
-     * Vector.
+     * Returns the child elements as an array. The code currently uses
+     * a Vector internally, but that will likely change in a future release
+     * because arrays are more efficient.
      *
      * <dl><dt><b>Postconditions:</b></dt><dd>
      * <ul><li><code>result != null</code>
@@ -798,19 +770,7 @@ public class XMLElement
      * @see processing.xml.XMLElement#removeChild(processing.xml.XMLElement)
      *         removeChild(XMLElement)
      */
-    /*
-    public Vector getChildren()
-    {
-        try {
-            return (Vector) this.children.clone();
-        } catch (Exception e) {
-            // this never happens, however, some Java compilers are so
-            // braindead that they require this exception clause
-            return null;
-        }
-    }
-    */
-    public XMLElement[] getChildren() {  // change this to return an array.. tho not a clone? [fry]
+    public XMLElement[] getChildren() {
         int childCount = getChildCount();
         XMLElement[] kids = new XMLElement[childCount];
         children.copyInto(kids);
@@ -818,7 +778,10 @@ public class XMLElement
     }
 
 
-    // quick accessor for a particular element [fry]
+    /**
+     * Quick accessor for a particular element
+     * @author processing.org
+     */
     public XMLElement getChild(int which) {
         return (XMLElement) children.elementAt(which);
     }
@@ -833,7 +796,7 @@ public class XMLElement
      */
     public String getContent()
     {
-        return this.contents;
+        return this.content;
     }
 
 
@@ -1574,7 +1537,7 @@ public class XMLElement
         throws IOException, XMLParseException
     {
         this.name = null;
-        this.contents = "";
+        this.content = "";
         this.attributes = new Hashtable();
         this.children = new Vector();
         this.charReadTooMuch = '\0';
@@ -1940,7 +1903,7 @@ public class XMLElement
      */
     public void setContent(String content)
     {
-        this.contents = content;
+        this.content = content;
     }
 
 
@@ -2003,7 +1966,7 @@ public class XMLElement
         throws IOException
     {
         if (this.name == null) {
-            this.writeEncoded(writer, this.contents);
+            this.writeEncoded(writer, this.content);
             return;
         }
         writer.write('<');
@@ -2020,9 +1983,9 @@ public class XMLElement
                 writer.write('"');
             }
         }
-        if ((this.contents != null) && (this.contents.length() > 0)) {
+        if ((this.content != null) && (this.content.length() > 0)) {
             writer.write('>');
-            this.writeEncoded(writer, this.contents);
+            this.writeEncoded(writer, this.content);
             writer.write('<'); writer.write('/');
             writer.write(this.name);
             writer.write('>');
