@@ -1107,6 +1107,11 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
+  /** This feature is in testing, do not use or rely upon its implementation */
+  public void breakShape() {    
+  }
+  
+  
   public final void endShape() {
     endShape(OPEN);
   }
