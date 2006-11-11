@@ -2,27 +2,27 @@
   This code is from NanoXML 2.2.3 Lite
   Copyright (C) 2000-2002 Marc De Scheemaecker, All Rights Reserved.
 
-  Additional modifications Copyright (c) 2006 Ben Fry and Casey Reas 
+  Additional modifications Copyright (c) 2006 Ben Fry and Casey Reas
   to make the code better-suited for use with Processing.
 
   Original license notice from Marc De Scheemaecker:
-  
+
   This software is provided 'as-is', without any express or implied warranty.
   In no event will the authors be held liable for any damages arising from the
   use of this software.
- 
+
   Permission is granted to anyone to use this software for any purpose,
   including commercial applications, and to alter it and redistribute it
   freely, subject to the following restrictions:
- 
+
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software in
      a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
- 
+
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
- 
+
   3. This notice may not be removed or altered from any source distribution.
 */
 
@@ -47,7 +47,7 @@ import processing.core.PApplet;
 
 /**
  * XMLElement is a representation of an XML object. The object is able to parse
- * XML code. 
+ * XML code.
  * <P>
  * The code is from NanoXML 2.2.3 Lite from Marc De Scheemaecker. His project is
  * online at <A HREF="http://nanoxml.cyberelf.be/">http://nanoxml.cyberelf.be/</A>.
@@ -55,14 +55,14 @@ import processing.core.PApplet;
  * altered, however it should be clear that this code is almost entirely his
  * work, with no connection to the Processing project.
  * <P>
- * The intent of this library (with regard to Processing) is to provide an 
- * extremely simple (and compact) means of reading and writing XML data from a 
- * sketch. As such, this is not a full-featured library for handling XML data. 
+ * The intent of this library (with regard to Processing) is to provide an
+ * extremely simple (and compact) means of reading and writing XML data from a
+ * sketch. As such, this is not a full-featured library for handling XML data.
  * For those who need it, more sophisticated libraries are available, and there
  * are no plans to add significant new features to this library.
  * <CODE>
  * import processing.xml.*;
- * 
+ *
  * XMLElement xml = new XMLElement("filename.xml", this);
  * int childCount = xml.getChildCount();
  * for (int i = 0; i < childCount; i++) {
@@ -448,12 +448,12 @@ public class XMLElement
             this.entities.put("gt", new char[] { '>' });
         }
     }
-    
-    
+
+
     /**
      * Begin parsing XML data passed in from a PApplet. This code
-     * wraps exception handling, for more advanced exception handling, 
-     * use the constructor that takes a Reader or InputStream, 
+     * wraps exception handling, for more advanced exception handling,
+     * use the constructor that takes a Reader or InputStream,
      * or use the parseFromReader() method.
      * @author fry
      * @param filename
@@ -462,36 +462,37 @@ public class XMLElement
     public XMLElement(String filename, PApplet parent) {
         this();
         try {
-            Reader reader = parent.createReader(filename);
-            if (reader == null) {
-                System.err.println("The file " + filename + " could not be found.");
+            Reader r = parent.createReader(filename);
+            if (r == null) {
+                System.err.println("The file " + filename +
+                                   " could not be found.");
                 return;
             }
-            parseFromReader(reader);
+            parseFromReader(r);
         } catch (IOException e) {
-            e.printStackTrace();            
+            e.printStackTrace();
         }
     }
-    
-    
+
+
     /**
      * Create and parse immediately.
      * @author fry
      */
-    public XMLElement(Reader reader) throws IOException {
+    public XMLElement(Reader r) throws IOException {
         this();
-        parseFromReader(reader);
+        parseFromReader(r);
     }
 
-    
+
     /**
      * Create and parse immediately.
      * @author fry
      */
     public XMLElement(InputStream input) throws IOException {
         this();
-        InputStreamReader reader = new InputStreamReader(input);
-        parseFromReader(reader);
+        InputStreamReader r = new InputStreamReader(input);
+        parseFromReader(r);
     }
 
 
@@ -823,8 +824,8 @@ public class XMLElement
      * @param name name of the attribute
      * @return true if the attribute is non-null
      */
-    public boolean hasAttribute(String name) {
-        return (getAttribute(name) != null);
+    public boolean hasAttribute(String aname) {
+        return (getAttribute(aname) != null);
     }
 
 
@@ -851,9 +852,9 @@ public class XMLElement
      *                                      java.lang.String, boolean)
      *         getAttribute(String, Hashtable, String, boolean)
      */
-    public Object getAttribute(String name)
+    public Object getAttribute(String aname)
     {
-        return this.getAttribute(name, null);
+        return this.getAttribute(aname, null);
     }
 
 
@@ -861,7 +862,7 @@ public class XMLElement
      * Returns an attribute of the element.
      * If the attribute doesn't exist, <code>defaultValue</code> is returned.
      *
-     * @param name         The name of the attribute.
+     * @param aname         The name of the attribute.
      * @param defaultValue Key to use if the attribute is missing.
      *
      * </dl><dl><dt><b>Preconditions:</b></dt><dd>
@@ -881,13 +882,13 @@ public class XMLElement
      *                                      java.lang.String, boolean)
      *         getAttribute(String, Hashtable, String, boolean)
      */
-    public Object getAttribute(String name,
+    public Object getAttribute(String aname,
                                Object defaultValue)
     {
         if (this.ignoreCase) {
-            name = name.toUpperCase();
+            aname = aname.toUpperCase();
         }
-        Object value = this.attributes.get(name);
+        Object value = this.attributes.get(aname);
         if (value == null) {
             value = defaultValue;
         }
@@ -1205,8 +1206,8 @@ public class XMLElement
 
 
     /**
-     * Method to get a float attribute, identical to getDoubleAttribute(), 
-     * @see processing.xml.XMLElement#getDoubleAttribute() but added to 
+     * Method to get a float attribute, identical to getDoubleAttribute(),
+     * @see processing.xml.XMLElement#getDoubleAttribute() but added to
      * handle float data as used by Processing. This code is adapted from
      * the identical code in the getDoubleAttribute methods.
      * @author processing.org
@@ -1218,8 +1219,8 @@ public class XMLElement
 
 
     /**
-     * Method to get a float attribute, identical to getDoubleAttribute(), 
-     * @see processing.xml.XMLElement#getDoubleAttribute() but added to 
+     * Method to get a float attribute, identical to getDoubleAttribute(),
+     * @see processing.xml.XMLElement#getDoubleAttribute() but added to
      * handle float data as used by Processing. This code is adapted from
      * the identical code in the getDoubleAttribute methods.
      * @author processing.org
@@ -1244,8 +1245,8 @@ public class XMLElement
 
 
     /**
-     * Method to get a float attribute, identical to getDoubleAttribute(), 
-     * @see processing.xml.XMLElement#getDoubleAttribute() but added to 
+     * Method to get a float attribute, identical to getDoubleAttribute(),
+     * @see processing.xml.XMLElement#getDoubleAttribute() but added to
      * handle float data as used by Processing. This code is adapted from
      * the identical code in the getDoubleAttribute methods.
      * @author processing.org
@@ -1503,10 +1504,10 @@ public class XMLElement
      * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the read data.
      */
-    public void parseFromReader(Reader reader)
+    public void parseFromReader(Reader r)
     throws IOException, XMLParseException
     {
-        this.parseFromReader(reader, /*startingLineNumber*/ 1);
+        this.parseFromReader(r, /*startingLineNumber*/ 1);
     }
 
 
@@ -1535,7 +1536,7 @@ public class XMLElement
      * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the read data.
      */
-    public void parseFromReader(Reader reader,
+    public void parseFromReader(Reader r,
                                 int    startingLineNumber)
         throws IOException, XMLParseException
     {
@@ -1544,7 +1545,7 @@ public class XMLElement
         this.attributes = new Hashtable();
         this.children = new Vector();
         this.charReadTooMuch = '\0';
-        this.reader = reader;
+        this.reader = r;
         this.parserLineNumber = startingLineNumber;
 
         for (;;) {
@@ -1776,8 +1777,8 @@ public class XMLElement
         throws XMLParseException
     {
         try {
-            Reader reader = new CharArrayReader(input, offset, end);
-            this.parseFromReader(reader, startingLineNumber);
+            Reader r = new CharArrayReader(input, offset, end);
+            this.parseFromReader(r, startingLineNumber);
         } catch (IOException e) {
             // This exception will never happen.
         }
@@ -2141,6 +2142,7 @@ public class XMLElement
                 case '\t':
                 case '\n':
                     result.append(ch);
+                    break;
                 case '\r':
                     break;
                 default:
@@ -2415,8 +2417,8 @@ public class XMLElement
     {
         StringBuffer buf = new StringBuffer();
         this.scanIdentifier(buf);
-        String name = buf.toString();
-        elt.setName(name);
+        String bname = buf.toString();
+        elt.setName(bname);
         char ch = this.scanWhitespace();
         while ((ch != '>') && (ch != '/')) {
             buf.setLength(0);
@@ -2508,8 +2510,8 @@ public class XMLElement
             throw this.expectedInput("/");
         }
         this.unreadChar(this.scanWhitespace());
-        if (! this.checkLiteral(name)) {
-            throw this.expectedInput(name);
+        if (! this.checkLiteral(bname)) {
+            throw this.expectedInput(bname);
         }
         if (this.scanWhitespace() != '>') {
             throw this.expectedInput(">");
