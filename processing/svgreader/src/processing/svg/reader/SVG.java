@@ -102,7 +102,7 @@ public class SVG {
         }
         */
         if (!document.getName().equals("svg")) {
-            System.err.println("root isn't svg, it's " + document.getName());
+            throw new RuntimeException("root isn't svg, it's " + document.getName());
         }
 
         width = document.getFloatAttribute("width");
