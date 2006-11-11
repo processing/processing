@@ -32,6 +32,8 @@ cp -r ../../serial processing/libraries/
 cp -r ../../video processing/libraries/
 cp -r ../../pdf processing/libraries/
 cp -r ../../dxf processing/libraries/
+cp -r ../../xml processing/libraries/
+cp -r ../../svg processing/libraries/
 
 # new style examples thing ala reas
 cd processing
