@@ -3825,9 +3825,9 @@ public class PApplet extends Applet
 
     } catch (Exception e) {
       if (filename == null) {
-        die("Filename passed to reader() was null", e);
+        System.err.println("Filename passed to reader() was null");
       } else {
-        die("Couldn't create a reader for " + filename, e);
+        System.err.println("Couldn't create a reader for " + filename);
       }
     }
     return null;

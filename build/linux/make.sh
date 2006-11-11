@@ -23,6 +23,8 @@ else
   cp -r ../../video work/libraries/
   cp -r ../../pdf work/libraries/
   cp -r ../../dxf work/libraries/
+  cp -r ../../xml work/libraries/
+  cp -r ../../svg work/libraries/
 
   echo Extracting examples...
   cd work
@@ -193,6 +195,30 @@ find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
+
+
+# XML LIBRARY
+echo Building XML library...
+cd ../xml
+mkdir -p bin
+$JIKES -target 1.1 +D -d bin src/processing/xml/*.java 
+rm -f library/xml.jar
+find bin -name "*~" -exec rm -f {} ';'
+cd bin && zip -r0q ../library/xml.jar processing/xml/*.class && cd ..
+mkdir -p $LIBRARIES/xml/library/
+cp library/xml.jar $LIBRARIES/xml/library/
+
+
+# SVG LIBRARY
+echo Building SVG library...
+cd ../svg
+mkdir -p bin
+$JIKES -target 1.1 +D -d bin src/processing/svg/*.java 
+rm -f library/svg.jar
+find bin -name "*~" -exec rm -f {} ';'
+cd bin && zip -r0q ../library/svg.jar processing/svg/*.class && cd ..
+mkdir -p $LIBRARIES/svg/library/
+cp library/svg.jar $LIBRARIES/svg/library/
 
 
 echo
