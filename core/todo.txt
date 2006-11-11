@@ -359,7 +359,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;nu
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891
 _ test winding polygons in different directions
 _ test lighting to see how it compares with gl
-_ better lockout inside beginShape() to keep other things from happening
 _ is quad strip broken or not behaving as expected?
 _   may be correct, it worked for nik
 _ inside draw() mode, delay() does nothing
@@ -470,8 +469,9 @@ _   particularly with opengl and java2d
 _   http://dev.processing.org/bugs/show_bug.cgi?id=121
 _   http://dev.processing.org/bugs/show_bug.cgi?id=269
 _ cairo tesselation used: 
-_   John Hobby, Practical Segment Intersection with Finite Precision
-_   Output. Computational Geometry Theory and Application, 13(4), 1999.
+_   John Hobby, Practical Segment Intersection with Finite Precision Output. 
+_   Computational Geometry Theory and Application, 13(4), 1999.
+_   http://citeseer.ist.psu.edu/hobby93practical.html
 _ possible leads re: rendering stuff
 _   http://people.csail.mit.edu/bmcutler/
 _   http://people.csail.mit.edu/fredo/
@@ -484,6 +484,7 @@ _ y2 position of rectangles not same as y2 position of lines
 _   happens when the rectangle is flipped on the x or y axis
 _   probably a hack that draws the "last" point differently
 _ beginShape() 
+_   better lockout inside beginShape() to keep other things from happening
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)

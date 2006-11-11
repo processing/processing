@@ -6939,6 +6939,12 @@ public class PApplet extends Applet
   }
 
 
+  public void breakShape() {
+    if (recorder != null) recorder.breakShape();
+    g.breakShape();
+  }
+
+
   public final void endShape() {
     if (recorder != null) recorder.endShape();
     g.endShape();
