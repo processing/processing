@@ -3,8 +3,14 @@ package processing.svg.reader;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Paint;
-//import java.io.IOException;
-//import java.io.Reader;
+import java.awt.PaintContext;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 
 import processing.core.PApplet;
@@ -33,12 +39,16 @@ TODO
 X add a table for all objects with their names, so they can be grabbed individually
 _   add accessor to get items from the table
 _   see if items can be named in illusfarter using the svg palette
+_ vectors shouldn't be exposed, need to expose attr lists as arrays
+_   or also add a method for getting the vectors?
 X rename draw() and its buddy
 X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
 X implement polyline
 _ some means of centering the entire drawing (is this included already?)
 _   or setting to one of the corners
+_   does the svg spec just do this?
+_ look into transformation issues... guessing this is probably wrong
 _ implement A and a
 _ compound shapes (fonts) won't wind properly, so fill will be messed up
 _ check for any other pieces of missing path api
@@ -339,7 +349,7 @@ public class SVG {
                 fill = true;
                 fillColor = opacityMask |
                     (Integer.parseInt(fillText.substring(1), 16)) & 0xFFFFFF;
-                System.out.println("hex for fill is " + PApplet.hex(fillColor));
+                //System.out.println("hex for fill is " + PApplet.hex(fillColor));
             } else if (fillText.startsWith("url(#")) {
                 fillName = fillText.substring(5, fillText.length() - 1);
                 //PApplet.println("looking for " + fillName);
@@ -365,20 +375,19 @@ public class SVG {
         protected Paint calcGradientPaint(Gradient gradient) {
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
-                    
-                /*
-                    PApplet.println(PApplet.hex(grad.color[0]));
-                    PApplet.println(PApplet.hex(grad.color[grad.count-1]));
-                    PApplet.println();
-                 */
-                    
+                
                 Color c1 = new Color(0xFF000000 | grad.color[0]);
                 Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
                 return new GradientPaint(grad.x1, grad.y1, c1,
                                          grad.x2, grad.y2, c2);
                     
             } else if (gradient instanceof RadialGradient) {
+                RadialGradient grad = (RadialGradient) gradient;
                 
+                Color c1 = new Color(0xFF000000 | grad.color[0]);
+                Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
+                return new RoundGradientPaint(grad.cx, grad.cy, c1, 
+                                              new Point2D.Double(grad.r, grad.r), c2);
             }
             return null;
         }
@@ -405,7 +414,7 @@ public class SVG {
                     parent.noStroke();
                 }
                 if (fill) {
-                    System.out.println("filling " + PApplet.hex(fillColor));
+                    //System.out.println("filling " + PApplet.hex(fillColor));
                     parent.fill(fillColor);
                 } else {
                     parent.noFill();
@@ -457,6 +466,85 @@ public class SVG {
                     p2d.fillGradient = false;
                 }
             }
+        }
+    }
+
+    
+    public class RoundGradientPaint implements Paint {
+        protected Point2D mPoint;
+        protected Point2D mRadius;
+        protected Color mPointColor, mBackgroundColor;
+
+        public RoundGradientPaint(double x, double y, Color pointColor,
+                                  Point2D radius, Color backgroundColor) {
+            if (radius.distance(0, 0) <= 0)
+                throw new IllegalArgumentException("Radius must be greater than 0.");
+            mPoint = new Point2D.Double(x, y);
+            mPointColor = pointColor;
+            mRadius = radius;
+            mBackgroundColor = backgroundColor;
+        }
+
+        public PaintContext createContext(ColorModel cm,
+                                          java.awt.Rectangle deviceBounds, Rectangle2D userBounds,
+                                          AffineTransform xform, RenderingHints hints) {
+            Point2D transformedPoint = xform.transform(mPoint, null);
+            Point2D transformedRadius = xform.deltaTransform(mRadius, null);
+            return new RoundGradientContext(transformedPoint, mPointColor,
+                                            transformedRadius, mBackgroundColor);
+        }
+
+        public int getTransparency() {
+            int a1 = mPointColor.getAlpha();
+            int a2 = mBackgroundColor.getAlpha();
+            return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
+        }
+    }          
+    
+    
+    public class RoundGradientContext implements PaintContext {
+        protected Point2D mPoint;
+        protected Point2D mRadius;
+        protected Color mC1, mC2;
+        
+        public RoundGradientContext(Point2D p, Color c1, Point2D r, Color c2) {
+            mPoint = p;
+            mC1 = c1;
+            mRadius = r;
+            mC2 = c2;
+        }
+
+        public void dispose() {}
+
+        public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
+
+        public Raster getRaster(int x, int y, int w, int h) {
+            WritableRaster raster =
+                getColorModel().createCompatibleWritableRaster(w, h);
+
+            int[] data = new int[w * h * 4];
+            for (int j = 0; j < h; j++) {
+                for (int i = 0; i < w; i++) {
+                    double distance = mPoint.distance(x + i, y + j);
+                    double radius = mRadius.distance(0, 0);
+                    double ratio = distance / radius;
+                    if (ratio > 1.0)
+                        ratio = 1.0;
+
+                    int base = (j * w + i) * 4;
+                    data[base + 0] = (int)(mC1.getRed() + ratio *
+                            (mC2.getRed() - mC1.getRed()));
+                    data[base + 1] = (int)(mC1.getGreen() + ratio *
+                            (mC2.getGreen() - mC1.getGreen()));
+                    data[base + 2] = (int)(mC1.getBlue() + ratio *
+                            (mC2.getBlue() - mC1.getBlue()));
+                    data[base + 3] = (int)(mC1.getAlpha() + ratio *
+                            (mC2.getAlpha() - mC1.getAlpha()));
+                }
+            }
+            raster.setPixels(0, 0, w, h, data);
+
+            return raster;
         }
     }
 
@@ -1088,11 +1176,14 @@ public class SVG {
             while (i < count) {
                 switch (kind[i]) {
                 case MOVETO:
+                    /*
                     //if (i != 0) {
                     parent.endShape(closed ? PConstants.CLOSE : PConstants.OPEN);
                     closed = false;
                     parent.beginShape();
                     //}
+                     */
+                    parent.breakShape();
                     parent.vertex(x[i], y[i]);
                     i++;
                     break;
