@@ -40,20 +40,33 @@ import processing.xml.*;
  * can view SVG files, including Firefox, Adobe products, etc. 
  * You can use something like Illustrator to edit SVG files.
  * <p>
+ * We have no intention of turning this into a full-featured SVG library.
+ * The goal of this project is a basic shape importer that is small enough
+ * to be included with applets, meaning that its download size should be 
+ * in the neighborhood of 25-30k. Because of this size, it is not made part
+ * of processing.core, because it would increase the download size of any
+ * applet by 20%, and it's not a feature that will be used by 20% of our 
+ * audience. For more sophisticated import/export, consider the 
+ * <A HREF="http://xmlgraphics.apache.org/batik/">Batik</A> library
+ * from the Apache Software Foundation. Future improvements to this
+ * library may focus on this properly supporting a specific subset of
+ * SVG, for instance the simpler SVG profiles known as 
+ * <A HREF="http://www.w3.org/TR/SVGMobile/">SVG Tiny or Basic</A>, 
+ * although we still would not support the interactivity options.
+ * <p>
  * This library was specifically tested under SVG files created from
  * Adobe Illustrator. I can't guarantee that it'll work for any
  * SVG's created from anything else. In the future I will also
  * test with open source graphics editing software so we'll reach
  * maximal compatibility. In the mean time, you're on your own.
  * <p>
- * An SVG created under Illustrator must be created in the
- * following manner: <br>
- * File &rarr; Save for Web (or control-alt-shift-s on a PC)
- * Under settings, make sure the CSS properties is set to
- * "Presentation Attributes". With Illustrator CS2, it is also
- * possible to use "Save As" with "SVG" as the file setting, 
- * but the CSS properties should also be set similarly.
- * <p>
+ * An SVG created under Illustrator must be created in one of two ways:
+ * <UL>
+ * <LI>File &rarr; Save for Web (or control-alt-shift-s on a PC). Under 
+ * settings, make sure the CSS properties is set to "Presentation Attributes". 
+ * <LI>With Illustrator CS2, it is also possible to use "Save As" with "SVG" 
+ * as the file setting, but the CSS properties should also be set similarly.
+ * </UL> 
  * Saving it any other way will most likely break Candy.
  * 
  * <p> <hr noshade> <p>
@@ -61,7 +74,7 @@ import processing.xml.*;
  * A minimal example program using Candy:
  * (assuming a working moo.svg is in your data folder)
  *   
- * <CODE>
+ * <PRE>
  * import processing.candy.*;
  * import processing.xml.*;
  * 
@@ -73,7 +86,7 @@ import processing.xml.*;
  * void draw(){
  *   moo.draw();
  * } 
- * </CODE>
+ * </PRE>
  * 
  * Note that processing.xml is imported as well. This is not needed 
  * when running the app directly from Processing, as Candy will know
@@ -114,7 +127,7 @@ import processing.xml.*;
  * </UL>
  *
  * If you experience any other wierdness or bugs, please file them to
- * flux.blackcat@gmail.com with subject: Delicious Candy
+ * flux.blackcat at gmail.com with subject: Delicious Candy
  */
 public class SVG {
 
@@ -132,8 +145,6 @@ public class SVG {
 
     /**
      * Initializes a new SVG Object with the given filename.
-     * @param filename, String: filename of the object
-     * @param parent, PApplet: instance of the parent application
      */
     public SVG(String filename, PApplet parent){
         this.parent = parent;        
@@ -204,8 +215,11 @@ public class SVG {
     }
 
 
-    public SVG(PApplet parent, float width, float height, Hashtable table, 
-               BaseObject obj, boolean styleOverride) {
+    /**
+     * Internal method used to clone an object and return the subtree.
+     */
+    protected SVG(PApplet parent, float width, float height, Hashtable table, 
+                  BaseObject obj, boolean styleOverride) {
         this.parent = parent;
         this.width = width;
         this.height = height;
@@ -219,14 +233,14 @@ public class SVG {
     /**
      * Parse a size that may have a suffix for its units.
      * Ignoring cases where this could also be a percentage.
-     * <CODE>
-     * http://www.w3.org/TR/SVG/coords.html#Units
-     * "1pt" equals "1.25px" (and therefore 1.25 user units)
-     * "1pc" equals "15px" (and therefore 15 user units)
-     * "1mm" would be "3.543307px" (3.543307 user units)
-     * "1cm" equals "35.43307px" (and therefore 35.43307 user units)
-     * "1in" equals "90px" (and therefore 90 user units)
-     * </CODE>
+     * The <A HREF="http://www.w3.org/TR/SVG/coords.html#Units">units</A> spec:
+     * <UL>
+     * <LI>"1pt" equals "1.25px" (and therefore 1.25 user units)
+     * <LI>"1pc" equals "15px" (and therefore 15 user units)
+     * <LI>"1mm" would be "3.543307px" (3.543307 user units)
+     * <LI>"1cm" equals "35.43307px" (and therefore 35.43307 user units)
+     * <LI>"1in" equals "90px" (and therefore 90 user units)
+     * </UL>
      */
     public float parseUnitSize(String text) {
         int len = text.length() - 2;
@@ -253,10 +267,10 @@ public class SVG {
      * these IDs can be edited by expanding the layers palette. The names used
      * in the layers palette, both for the layers or the shapes and groups 
      * beneath them can be used here.
-     * <CODE>
+     * <PRE>
      * // This code grabs "Layer 3" and the shapes beneath it.
      * SVG layer3 = svg.getElement("Layer 3");
-     * </CODE>
+     * </PRE>
      */
     public SVG getElement(String name) {
         BaseObject obj = (BaseObject) table.get(name);
