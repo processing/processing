@@ -357,19 +357,24 @@ public class EditorHeader extends JComponent {
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
 
     item = Editor.newJMenuItem("Previous Tab", '[', true);
+    // this didn't want to work consistently
+    /*
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.sketch.prevCode();
         }
       });
+    */
     menu.add(item);
 
     item = Editor.newJMenuItem("Next Tab", ']', true);
+    /*
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.sketch.nextCode();
         }
       });
+    */
     menu.add(item);
 
     if (sketch != null) {

@@ -10,6 +10,8 @@ X   right now goes to begin/end of line.. should be begin/end of file?
 X   change to begin/end of file, and use cmd or alt, based on platform
 X other quirks with handling of keyboard shortcuts?
 X   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGUserInput/chapter_11_section_3.html#//apple_ref/doc/uid/TP30000361-TP22
+X cmd-{ and cmd-} no longer work after the menu is shown
+X   http://dev.processing.org/bugs/show_bug.cgi?id=402
 
 fixed earlier or wontfix
 X double-click only selects part of underscored word
@@ -28,6 +30,30 @@ X rename draw() and its buddy
 X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
 X implement polyline
+
+_ add alt-shift-arrow-down and command-shift-arrow-down
+_   select all from that point to beginning (or end) of doc
+
+_ clicking "cancel" on close still quitting the app (suspect java 1.5)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=440
+
+_ applet sizing issues with external vm
+_   could this possibly be related to the linux bug?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=430
+
+
+casey's lists:
+
+Must have for 1.0:
+> a,c) P2D to return, P2D to simply return in its previous form
+> f) Java 1.5 support (jikes won't let you use Java 1.5 constructs)
+> h) fix auto-format
+
+For 2.0
+> b) P2D to be accurate like JAVA2D
+> e) Java 1.1 support (we're now limited to 1.3)
+> g) support for running with user accounts that have umlauts/accents/etc
+> d) strokeWeight() for 3D objects, even if it's ugly 
 
 
 LIBRARIES / svg
@@ -53,9 +79,6 @@ LIBRARIES / xml
 _ need to handle <!ENTITY tags for svg documents
 _ vectors shouldn't be exposed, need to expose attr lists as arrays
 _   or also add a method for getting the vectors?
-
-_ clicking "cancel" on close still quitting the app (suspect java 1.5)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=440
 
 _ when running externally, set window frame title to the sketch name
 _   is this only a problem on macosx? 
@@ -492,8 +515,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=39
 
 PDE / Editor Header
 
-_ cmd-{ and cmd-} no longer work after the menu is shown
-_   http://dev.processing.org/bugs/show_bug.cgi?id=402
 _ make some fancy extendo things because the tabs get too big
 _   either condense or popdown menu thingy
 _   http://dev.processing.org/bugs/show_bug.cgi?id=54
@@ -589,6 +610,8 @@ _   make hooks to history api so others can write tools around it
 
 PDE / Preferences
 
+_ prefs window not visible on windows taskbar
+_   http://dev.processing.org/bugs/show_bug.cgi?id=438
 _ saved window positions.. if displays has changed, becomes a problem
 _   record the display that it was on?
 _     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
