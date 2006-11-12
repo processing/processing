@@ -37,6 +37,7 @@ import processing.xml.XMLElement;
 
 /*
 TODO
+X actual linear gradients working properly
 X add a table for all objects with their names, so they can be grabbed individually
 _   add accessor to get items from the table
 _   see if items can be named in illusfarter using the svg palette
@@ -46,6 +47,7 @@ X rename draw() and its buddy
 X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
 X implement polyline
+_ try enabling blending modes
 _ test what happens when transparency is used with gradient fill
 _ some means of centering the entire drawing (is this included already?)
 _   or setting to one of the corners
@@ -552,7 +554,7 @@ public class SVG {
                 int c0 = color[i-1];
                 int c1 = color[i];
                 int last = (int) (offset[i] * (span - 1));
-                for (int j = prev; j < last; j++) {
+                for (int j = prev; j <= last; j++) {
                     float btwn = PApplet.norm(j, prev, last);
                     interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
                     interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
@@ -640,7 +642,7 @@ public class SVG {
 
         public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
 
-        int ACCURACY = 5;
+        int ACCURACY = 1;
         
         public Raster getRaster(int x, int y, int w, int h) {
             WritableRaster raster =
@@ -661,12 +663,14 @@ public class SVG {
             for (int i = 1; i < count; i++) {
                 int c0 = color[i-1];
                 int c1 = color[i];
-                int last = (int) (offset[i] * (span - 1));
-                for (int j = prev; j < last; j++) {
+                int last = (int) (offset[i] * (span-1));
+                //System.out.println("last is " + last);
+                for (int j = prev; j <= last; j++) {
                     float btwn = PApplet.norm(j, prev, last);
                     interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
                     interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
                     interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+                    //System.out.println(j + " " + interp[j][0] + " " + interp[j][1] + " " + interp[j][2]);
                 }
                 prev = last;
             }
@@ -684,6 +688,7 @@ public class SVG {
                     int which = (int) ((px*nx + py*ny) * ACCURACY);
                     if (which < 0) which = 0;
                     if (which > interp.length-1) which = interp.length-1; 
+                    //if (which > 138) System.out.println("grabbing " + which);
                     
                     data[index++] = interp[which][0];
                     data[index++] = interp[which][1];
