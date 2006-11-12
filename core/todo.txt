@@ -15,6 +15,10 @@ X   verified as fixed in 0122
 _ using gl, lines don't show up in pdf with record (they're ok with p3d)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=325
 
+_ gradients
+_   use gradients in a class for the svg lib for now
+_   don't add api to main p5 stuff (though maybe setPaint/noPaint api?)
+
 _ tint() and noTint() switching problem in P2D
 _   this should be a quick fix
 _   http://dev.processing.org/bugs/show_bug.cgi?id=222
