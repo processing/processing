@@ -33,7 +33,7 @@ cp -r ../../video processing/libraries/
 cp -r ../../pdf processing/libraries/
 cp -r ../../dxf processing/libraries/
 cp -r ../../xml processing/libraries/
-cp -r ../../svgreader processing/libraries/
+cp -r ../../candy processing/libraries/
 
 # new style examples thing ala reas
 cd processing

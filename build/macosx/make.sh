@@ -33,7 +33,7 @@ else
   cp -r ../../pdf work/libraries/
   cp -r ../../dxf work/libraries/
   cp -r ../../xml work/libraries/
-  cp -r ../../svgreader work/libraries/
+  cp -r ../../candy work/libraries/
 
   echo Extracting examples...
   cd work
@@ -251,16 +251,18 @@ mkdir -p $LIBRARIES/xml/library/
 cp library/xml.jar $LIBRARIES/xml/library/
 
 
-# SVG READER LIBRARY
-echo Building SVG Reader library...
-cd ../svgreader
+# CANDY SVG LIBRARY
+echo Building Candy SVG library...
+cd ../candy
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin src/processing/svgreader/*.java 
-rm -f library/svgreader.jar
+$JIKES -target 1.1 +D \
+    -classpath "../xml/library/xml.jar:$CLASSPATH" \
+    -d bin src/processing/candy/*.java 
+rm -f library/candy.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/svgreader.jar processing/svgreader/*.class && cd ..
-mkdir -p $LIBRARIES/svgreader/library/
-cp library/svgreader.jar $LIBRARIES/svgreader/library/
+cd bin && zip -r0q ../library/candy.jar processing/candy/*.class && cd ..
+mkdir -p $LIBRARIES/candy/library/
+cp library/candy.jar $LIBRARIES/candy/library/
 
 
 echo
