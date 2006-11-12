@@ -1,7 +1,7 @@
 package processing.svg.reader;
 
-import java.awt.Color;
-import java.awt.GradientPaint;
+//import java.awt.Color;
+//import java.awt.GradientPaint;
 import java.awt.Paint;
 import java.awt.PaintContext;
 import java.awt.Rectangle;
@@ -46,6 +46,7 @@ X rename draw() and its buddy
 X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
 X implement polyline
+_ test what happens when transparency is used with gradient fill
 _ some means of centering the entire drawing (is this included already?)
 _   or setting to one of the corners
 _   does the svg spec just do this?
@@ -377,10 +378,15 @@ public class SVG {
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
                 
+                /*
                 Color c1 = new Color(0xFF000000 | grad.color[0]);
                 Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
                 return new GradientPaint(grad.x1, grad.y1, c1,
                                          grad.x2, grad.y2, c2);
+                                         */
+                return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
+                                               grad.offset, grad.color, grad.count);
+                
                     
             } else if (gradient instanceof RadialGradient) {
                 RadialGradient grad = (RadialGradient) gradient;
@@ -471,87 +477,6 @@ public class SVG {
     }
 
     
-    /*
-    public class RoundGradientPaint implements Paint {
-        protected Point2D mPoint;
-        protected Point2D mRadius;
-        protected Color mPointColor, mBackgroundColor;
-
-        public RoundGradientPaint(double x, double y, Color pointColor,
-                                  Point2D radius, Color backgroundColor) {
-            if (radius.distance(0, 0) <= 0)
-                throw new IllegalArgumentException("Radius must be greater than 0.");
-            mPoint = new Point2D.Double(x, y);
-            mPointColor = pointColor;
-            mRadius = radius;
-            mBackgroundColor = backgroundColor;
-        }
-
-        public PaintContext createContext(ColorModel cm,
-                                          java.awt.Rectangle deviceBounds, Rectangle2D userBounds,
-                                          AffineTransform xform, RenderingHints hints) {
-            Point2D transformedPoint = xform.transform(mPoint, null);
-            Point2D transformedRadius = xform.deltaTransform(mRadius, null);
-            return new RoundGradientContext(transformedPoint, mPointColor,
-                                            transformedRadius, mBackgroundColor);
-        }
-
-        public int getTransparency() {
-            int a1 = mPointColor.getAlpha();
-            int a2 = mBackgroundColor.getAlpha();
-            return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
-        }
-    }          
-    
-    
-    public class RoundGradientContext implements PaintContext {
-        protected Point2D mPoint;
-        protected Point2D mRadius;
-        protected Color mC1, mC2;
-        
-        public RoundGradientContext(Point2D p, Color c1, Point2D r, Color c2) {
-            mPoint = p;
-            mC1 = c1;
-            mRadius = r;
-            mC2 = c2;
-        }
-
-        public void dispose() {}
-
-        public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
-
-        public Raster getRaster(int x, int y, int w, int h) {
-            WritableRaster raster =
-                getColorModel().createCompatibleWritableRaster(w, h);
-
-            int[] data = new int[w * h * 4];
-            int index = 0;
-            for (int j = 0; j < h; j++) {
-                for (int i = 0; i < w; i++) {
-                    double distance = mPoint.distance(x + i, y + j);
-                    double radius = mRadius.distance(0, 0);
-                    double ratio = distance / radius;
-                    if (ratio > 1.0) ratio = 1.0;
-                    
-                    int base = (j * w + i) * 4;
-                    data[base + 0] = (int)(mC1.getRed() + ratio *
-                            (mC2.getRed() - mC1.getRed()));
-                    data[base + 1] = (int)(mC1.getGreen() + ratio *
-                            (mC2.getGreen() - mC1.getGreen()));
-                    data[base + 2] = (int)(mC1.getBlue() + ratio *
-                            (mC2.getBlue() - mC1.getBlue()));
-                    data[base + 3] = (int)(mC1.getAlpha() + ratio *
-                            (mC2.getAlpha() - mC1.getAlpha()));
-                }
-            }
-            raster.setPixels(0, 0, w, h, data);
-
-            return raster;
-        }
-    }
-     */
-    
-    
     public class RadialGradientPaint implements Paint {
         float cx, cy, radius;
         float[] offset;
@@ -576,8 +501,6 @@ public class SVG {
             // this causes problems
             //Point2D transformedRadius = 
             //    xform.deltaTransform(new Point2D.Float(radius, radius), null);
-            //System.out.println("x is " + cx + " but trans is " + transformedPoint.getX());
-            //System.out.println("untrans radius is " + radius);
             return new RadialGradientContext((float) transformedPoint.getX(), 
                                              (float) transformedPoint.getY(), 
                                              radius, //(float) transformedRadius.distance(0, 0), 
@@ -631,11 +554,6 @@ public class SVG {
                 int last = (int) (offset[i] * (span - 1));
                 for (int j = prev; j < last; j++) {
                     float btwn = PApplet.norm(j, prev, last);
-                    /*
-                    interp[j] = 0xff000000 | 
-                        PApplet.lerpColor(c0, c1, btwn, PConstants.RGB);
-                    System.out.println(j + " = " + PApplet.hex(interp[j]));
-                    */
                     interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
                     interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
                     interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
@@ -647,38 +565,13 @@ public class SVG {
             int index = 0;
             for (int j = 0; j < h; j++) {
                 for (int i = 0; i < w; i++) {
-                    //double distance = mPoint.distance(x + i, y + j);
                     float distance = PApplet.dist(cx, cy, x + i, y + j);
-                    if (distance > 2000) System.out.println("calc dist is " + distance);
                     int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
                     
-                    //double radius = mRadius.distance(0, 0);
-                    
-                    /*
-                    float ratio = distance / radius;
-                    if (ratio > 1.0f) ratio = 1.0f;
-                    */
-                    //if (distance > radius) distance = radius;
-                    
-                    //data[index++] = interp[which]; //interp[(int) (distance * ACCURACY)];
-                    
-                    //data[index++] = PApplet.lerpColor(c1, c2, amt, PApplet.RGB);
                     data[index++] = interp[which][0];
                     data[index++] = interp[which][1];
                     data[index++] = interp[which][2];
                     data[index++] = 255;
-                    
-                    /*
-                    int base = (j * w + i) * 4;
-                    data[base + 0] = (int)(mC1.getRed() + ratio *
-                            (mC2.getRed() - mC1.getRed()));
-                    data[base + 1] = (int)(mC1.getGreen() + ratio *
-                            (mC2.getGreen() - mC1.getGreen()));
-                    data[base + 2] = (int)(mC1.getBlue() + ratio *
-                            (mC2.getBlue() - mC1.getBlue()));
-                    data[base + 3] = (int)(mC1.getAlpha() + ratio *
-                            (mC2.getAlpha() - mC1.getAlpha()));
-                    */
                 }
             }
             raster.setPixels(0, 0, w, h, data);
@@ -687,6 +580,123 @@ public class SVG {
         }
     }
 
+    
+    public class LinearGradientPaint implements Paint {
+        float x1, y1, x2, y2;
+        float[] offset;
+        int[] color;
+        int count;
+        
+        public LinearGradientPaint(float x1, float y1, float x2, float y2,
+                                   float[] offset, int[] color, int count) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.offset = offset;
+            this.color = color;
+            this.count = count;
+        }
+
+        public PaintContext createContext(ColorModel cm,
+                                          Rectangle deviceBounds, Rectangle2D userBounds,
+                                          AffineTransform xform, RenderingHints hints) {
+            Point2D t1 = xform.transform(new Point2D.Float(x1, y1), null);
+            Point2D t2 = xform.transform(new Point2D.Float(x2, y2), null);
+            return new LinearGradientContext((float) t1.getX(), (float) t1.getY(), 
+                                             (float) t2.getX(), (float) t2.getY(), 
+                                             offset, color, count);
+        }
+
+        public int getTransparency() {
+            /*
+            int a1 = mPointColor.getAlpha();
+            int a2 = mBackgroundColor.getAlpha();
+            return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
+            */
+            return OPAQUE;
+        }
+    }          
+    
+    
+    public class LinearGradientContext implements PaintContext {
+        float x1, y1, x2, y2;
+        float[] offset;
+        int[] color;
+        int count;
+        
+        public LinearGradientContext(float x1, float y1, float x2, float y2,
+                                     float[] offset, int[] color, int count) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.offset = offset;
+            this.color = color;
+            this.count = count;
+        }
+
+        public void dispose() { }
+
+        public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
+
+        int ACCURACY = 5;
+        
+        public Raster getRaster(int x, int y, int w, int h) {
+            WritableRaster raster =
+                getColorModel().createCompatibleWritableRaster(w, h);
+
+            // make normalized version of base vector
+            float nx = x2 - x1;
+            float ny = y2 - y1;
+            float len = (float) Math.sqrt(nx*nx + ny*ny);
+            if (len != 0) {
+                nx /= len;
+                ny /= len;
+            }
+            
+            int span = (int) PApplet.dist(x1, y1, x2, y2) * ACCURACY;
+            int[][] interp = new int[span][3];
+            int prev = 0;
+            for (int i = 1; i < count; i++) {
+                int c0 = color[i-1];
+                int c1 = color[i];
+                int last = (int) (offset[i] * (span - 1));
+                for (int j = prev; j < last; j++) {
+                    float btwn = PApplet.norm(j, prev, last);
+                    interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
+                    interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
+                    interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+                }
+                prev = last;
+            }
+
+            int[] data = new int[w * h * 4];
+            int index = 0;
+            for (int j = 0; j < h; j++) {
+                for (int i = 0; i < w; i++) {
+                    //float distance = 0; //PApplet.dist(cx, cy, x + i, y + j);
+                    //int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
+                    float px = (x + i) - x1;
+                    float py = (y + j) - y1;
+                    // distance up the line is the dot product of the normalized
+                    // vector of the gradient start/stop by the point being tested
+                    int which = (int) ((px*nx + py*ny) * ACCURACY);
+                    if (which < 0) which = 0;
+                    if (which > interp.length-1) which = interp.length-1; 
+                    
+                    data[index++] = interp[which][0];
+                    data[index++] = interp[which][1];
+                    data[index++] = interp[which][2];
+                    data[index++] = 255;
+                }
+            }
+            raster.setPixels(0, 0, w, h, data);
+
+            return raster;
+        }
+    }
+    
     
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
     
