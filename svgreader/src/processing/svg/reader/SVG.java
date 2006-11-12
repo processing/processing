@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Paint;
 import java.awt.PaintContext;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -39,8 +40,8 @@ TODO
 X add a table for all objects with their names, so they can be grabbed individually
 _   add accessor to get items from the table
 _   see if items can be named in illusfarter using the svg palette
-_ vectors shouldn't be exposed, need to expose attr lists as arrays
-_   or also add a method for getting the vectors?
+X compound shapes (fonts) won't wind properly, so fill will be messed up
+X   added hack to allow for broken shapes
 X rename draw() and its buddy
 X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
@@ -49,8 +50,8 @@ _ some means of centering the entire drawing (is this included already?)
 _   or setting to one of the corners
 _   does the svg spec just do this?
 _ look into transformation issues... guessing this is probably wrong
+_   this may be what's throwing off the radial radius transform
 _ implement A and a
-_ compound shapes (fonts) won't wind properly, so fill will be messed up
 _ check for any other pieces of missing path api
 _   multiple sets of coordinates after a command not supported
 _   i.e. M with several coords means moveto followed by many linetos
@@ -74,8 +75,8 @@ public class SVG {
     //private Vector draw = new Vector();
 
     private Hashtable idTable = new Hashtable();  
-    private XMLElement document;
-    private Group group;
+    private XMLElement svg;
+    private Group root;
 
     //For some reason Processing was using -1 for #FFFFFFFF
     //thus we will use our own null value
@@ -94,7 +95,7 @@ public class SVG {
 
         // this will grab the root document, starting <svg ...>
         // the xml version and initial comments are ignored
-        document = new XMLElement(filename, parent);
+        svg = new XMLElement(filename, parent);
         
         /*
         Reader reader = parent.createReader(filename);
@@ -111,12 +112,12 @@ public class SVG {
             return;
         }
         */
-        if (!document.getName().equals("svg")) {
-            throw new RuntimeException("root isn't svg, it's " + document.getName());
+        if (!svg.getName().equals("svg")) {
+            throw new RuntimeException("root isn't svg, it's " + svg.getName());
         }
 
-        width = document.getFloatAttribute("width");
-        height = document.getFloatAttribute("height");
+        width = svg.getFloatAttribute("width");
+        height = svg.getFloatAttribute("height");
         
         /*
         PApplet.println("document has " + document.getChildCount() + " children");
@@ -145,7 +146,7 @@ public class SVG {
         */
         
         //parseChildren(document);
-        group = new Group(document);
+        root = new Group(svg);
         
         /*
         XMLElement graphics = null;
@@ -178,7 +179,7 @@ public class SVG {
             vo.basicDraw();
         }
         */
-        group.draw();
+        root.draw();
 
         //set back the changed modes
         parent.g.ellipseMode = saveEllipseMode;
@@ -202,7 +203,7 @@ public class SVG {
      * Prints out the SVG document usefull for parsing
      */
     public void print(){
-        PApplet.println(document.toString());
+        PApplet.println(svg.toString());
     }
     
 
@@ -384,10 +385,10 @@ public class SVG {
             } else if (gradient instanceof RadialGradient) {
                 RadialGradient grad = (RadialGradient) gradient;
                 
-                Color c1 = new Color(0xFF000000 | grad.color[0]);
-                Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
-                return new RoundGradientPaint(grad.cx, grad.cy, c1, 
-                                              new Point2D.Double(grad.r, grad.r), c2);
+                //Color c1 = new Color(0xFF000000 | grad.color[0]);
+                //Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
+                return new RadialGradientPaint(grad.cx, grad.cy, grad.r, 
+                                               grad.offset, grad.color, grad.count);
             }
             return null;
         }
@@ -470,6 +471,7 @@ public class SVG {
     }
 
     
+    /*
     public class RoundGradientPaint implements Paint {
         protected Point2D mPoint;
         protected Point2D mRadius;
@@ -523,14 +525,14 @@ public class SVG {
                 getColorModel().createCompatibleWritableRaster(w, h);
 
             int[] data = new int[w * h * 4];
+            int index = 0;
             for (int j = 0; j < h; j++) {
                 for (int i = 0; i < w; i++) {
                     double distance = mPoint.distance(x + i, y + j);
                     double radius = mRadius.distance(0, 0);
                     double ratio = distance / radius;
-                    if (ratio > 1.0)
-                        ratio = 1.0;
-
+                    if (ratio > 1.0) ratio = 1.0;
+                    
                     int base = (j * w + i) * 4;
                     data[base + 0] = (int)(mC1.getRed() + ratio *
                             (mC2.getRed() - mC1.getRed()));
@@ -540,6 +542,143 @@ public class SVG {
                             (mC2.getBlue() - mC1.getBlue()));
                     data[base + 3] = (int)(mC1.getAlpha() + ratio *
                             (mC2.getAlpha() - mC1.getAlpha()));
+                }
+            }
+            raster.setPixels(0, 0, w, h, data);
+
+            return raster;
+        }
+    }
+     */
+    
+    
+    public class RadialGradientPaint implements Paint {
+        float cx, cy, radius;
+        float[] offset;
+        int[] color;
+        int count;
+        
+        public RadialGradientPaint(float cx, float cy, float radius, 
+                                   float[] offset, int[] color, int count) {
+            this.cx = cx;
+            this.cy = cy;
+            this.radius = radius;
+            this.offset = offset;
+            this.color = color;
+            this.count = count;
+        }
+
+        public PaintContext createContext(ColorModel cm,
+                                          Rectangle deviceBounds, Rectangle2D userBounds,
+                                          AffineTransform xform, RenderingHints hints) {
+            Point2D transformedPoint = 
+                xform.transform(new Point2D.Float(cx, cy), null);
+            // this causes problems
+            //Point2D transformedRadius = 
+            //    xform.deltaTransform(new Point2D.Float(radius, radius), null);
+            //System.out.println("x is " + cx + " but trans is " + transformedPoint.getX());
+            //System.out.println("untrans radius is " + radius);
+            return new RadialGradientContext((float) transformedPoint.getX(), 
+                                             (float) transformedPoint.getY(), 
+                                             radius, //(float) transformedRadius.distance(0, 0), 
+                                             offset, color, count);
+        }
+
+        public int getTransparency() {
+            /*
+            int a1 = mPointColor.getAlpha();
+            int a2 = mBackgroundColor.getAlpha();
+            return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
+            */
+            return OPAQUE;
+        }
+    }          
+    
+    
+    public class RadialGradientContext implements PaintContext {
+        float cx, cy, radius;
+        float[] offset;
+        int[] color;
+        int count;
+        
+        public RadialGradientContext(float cx, float cy, float radius, 
+                                     float[] offset, int[] color, int count) {
+            this.cx = cx;
+            this.cy = cy;
+            this.radius = radius;
+            this.offset = offset;
+            this.color = color;
+            this.count = count;
+        }
+
+        public void dispose() {}
+
+        public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
+
+        int ACCURACY = 5;
+        
+        public Raster getRaster(int x, int y, int w, int h) {
+            WritableRaster raster =
+                getColorModel().createCompatibleWritableRaster(w, h);
+
+            //System.out.println("radius here is " + radius);
+            int span = (int) radius * ACCURACY; 
+            int[][] interp = new int[span][3];
+            int prev = 0;
+            for (int i = 1; i < count; i++) {
+                int c0 = color[i-1];
+                int c1 = color[i];
+                int last = (int) (offset[i] * (span - 1));
+                for (int j = prev; j < last; j++) {
+                    float btwn = PApplet.norm(j, prev, last);
+                    /*
+                    interp[j] = 0xff000000 | 
+                        PApplet.lerpColor(c0, c1, btwn, PConstants.RGB);
+                    System.out.println(j + " = " + PApplet.hex(interp[j]));
+                    */
+                    interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
+                    interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
+                    interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+                }
+                prev = last;
+            }
+                
+            int[] data = new int[w * h * 4];
+            int index = 0;
+            for (int j = 0; j < h; j++) {
+                for (int i = 0; i < w; i++) {
+                    //double distance = mPoint.distance(x + i, y + j);
+                    float distance = PApplet.dist(cx, cy, x + i, y + j);
+                    if (distance > 2000) System.out.println("calc dist is " + distance);
+                    int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
+                    
+                    //double radius = mRadius.distance(0, 0);
+                    
+                    /*
+                    float ratio = distance / radius;
+                    if (ratio > 1.0f) ratio = 1.0f;
+                    */
+                    //if (distance > radius) distance = radius;
+                    
+                    //data[index++] = interp[which]; //interp[(int) (distance * ACCURACY)];
+                    
+                    //data[index++] = PApplet.lerpColor(c1, c2, amt, PApplet.RGB);
+                    data[index++] = interp[which][0];
+                    data[index++] = interp[which][1];
+                    data[index++] = interp[which][2];
+                    data[index++] = 255;
+                    
+                    /*
+                    int base = (j * w + i) * 4;
+                    data[base + 0] = (int)(mC1.getRed() + ratio *
+                            (mC2.getRed() - mC1.getRed()));
+                    data[base + 1] = (int)(mC1.getGreen() + ratio *
+                            (mC2.getGreen() - mC1.getGreen()));
+                    data[base + 2] = (int)(mC1.getBlue() + ratio *
+                            (mC2.getBlue() - mC1.getBlue()));
+                    data[base + 3] = (int)(mC1.getAlpha() + ratio *
+                            (mC2.getAlpha() - mC1.getAlpha()));
+                    */
                 }
             }
             raster.setPixels(0, 0, w, h, data);
@@ -580,7 +719,7 @@ public class SVG {
                     objects[objectCount++] = new Ellipse(element);
                     
                 } else if (name.equals("rect")) {
-                    objects[objectCount++] = new Rectangle(element);
+                    objects[objectCount++] = new Rect(element);
                     
                 } else if (name.equals("polygon")) {
                     objects[objectCount++] = new Poly(element, true);
@@ -751,11 +890,11 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
     
-    private class Rectangle extends VectorObject{
+    private class Rect extends VectorObject{
 
         float x, y, w, h;
 
-        public Rectangle(XMLElement properties){
+        public Rect(XMLElement properties){
             super(properties);
             this.x = properties.getFloatAttribute("x");
             this.y = properties.getFloatAttribute("y");
