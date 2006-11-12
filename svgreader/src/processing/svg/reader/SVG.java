@@ -41,6 +41,7 @@ X actual linear gradients working properly
 X add a table for all objects with their names, so they can be grabbed individually
 _   add accessor to get items from the table
 _   see if items can be named in illusfarter using the svg palette
+_ get entity tags working in xml library
 X compound shapes (fonts) won't wind properly, so fill will be messed up
 X   added hack to allow for broken shapes
 X rename draw() and its buddy
@@ -48,6 +49,7 @@ X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
 X implement polyline
 _ try enabling blending modes
+_ add better support for attributes buried in styles (support ai9/10/11)
 _ test what happens when transparency is used with gradient fill
 _ some means of centering the entire drawing (is this included already?)
 _   or setting to one of the corners
@@ -64,28 +66,17 @@ _   also curveto with multiple sets of points is ignored
 
 public class SVG {
 
-    public String filename;
-
-    //protected static PApplet parent;
-    //private static XMLInOut xmlio;
     protected PApplet parent;
 
     public float width;
-    public float height;    
-    //private float svgWidth = 0;
-    //private float svgHeight = 0;
+    public float height;
 
-    //private Vector draw = new Vector();
+    protected Hashtable table = new Hashtable();  
+    protected XMLElement svg;
+    protected BaseObject root;
 
-    private Hashtable idTable = new Hashtable();  
-    private XMLElement svg;
-    private Group root;
-
-    //For some reason Processing was using -1 for #FFFFFFFF
-    //thus we will use our own null value
-    //private static int transValue = -255;
-
-    private boolean styleOverride = false;
+    protected boolean styleOverride = false;
+    
 
     /**
      * Initializes a new SVG Object with the given filename.
@@ -94,7 +85,7 @@ public class SVG {
      */
     public SVG(String filename, PApplet parent){
         this.parent = parent;        
-        this.filename = filename;
+        //this.filename = filename;
 
         // this will grab the root document, starting <svg ...>
         // the xml version and initial comments are ignored
@@ -119,8 +110,8 @@ public class SVG {
             throw new RuntimeException("root isn't svg, it's " + svg.getName());
         }
 
-        width = svg.getFloatAttribute("width");
-        height = svg.getFloatAttribute("height");
+        width = parseUnitSize(svg.getStringAttribute("width"));
+        height = parseUnitSize(svg.getStringAttribute("height"));
         
         /*
         PApplet.println("document has " + document.getChildCount() + " children");
@@ -159,11 +150,66 @@ public class SVG {
         //svg.printElementTree(" .");
         */
     }
+
+
+    public SVG(PApplet parent, float width, float height, Hashtable table, 
+               BaseObject obj, boolean styleOverride) {
+        this.parent = parent;
+        this.width = width;
+        this.height = height;
+        this.table = table;
+        this.root = obj;
+        this.svg = obj.element;
+        this.styleOverride = styleOverride;
+    }
     
     
     /**
+     * Parse a size that may have a suffix for its units.
+     * Ignoring cases where this could also be a percentage.
+     * <CODE>
+     * http://www.w3.org/TR/SVG/coords.html#Units
+     * "1pt" equals "1.25px" (and therefore 1.25 user units)
+     * "1pc" equals "15px" (and therefore 15 user units)
+     * "1mm" would be "3.543307px" (3.543307 user units)
+     * "1cm" equals "35.43307px" (and therefore 35.43307 user units)
+     * "1in" equals "90px" (and therefore 90 user units)
+     * </CODE>
+     */
+    public float parseUnitSize(String text) {
+        int len = text.length() - 2;
+            
+        if (text.endsWith("pt")) {
+            return PApplet.parseFloat(text.substring(0, len)) * 1.25f;
+        } else if (text.endsWith("pc")) {
+            return PApplet.parseFloat(text.substring(0, len)) * 15;
+        } else if (text.endsWith("mm")) {
+            return PApplet.parseFloat(text.substring(0, len)) * 3.543307f;
+        } else if (text.endsWith("cm")) {
+            return PApplet.parseFloat(text.substring(0, len)) * 35.43307f;
+        } else if (text.endsWith("in")) {
+            return PApplet.parseFloat(text.substring(0, len));
+        } else {
+            return PApplet.parseFloat(text);
+        }
+    }
+
+    
+    public SVG getItem(String name) {
+        BaseObject obj = (BaseObject) table.get(name);
+        if (obj == null) {
+            // try with underscores instead of spaces
+            obj = (BaseObject) table.get(name.replace(' ', '_'));
+        }
+        if (obj != null) {
+            return new SVG(parent, width, height, table, obj, styleOverride);
+        }
+        return null;
+    }
+
+    
+    /**
      * Draws the SVG document.
-     *
      */
     public void draw(){
         //Maybe it would be smart to save all changes that have 
@@ -223,11 +269,13 @@ public class SVG {
     
     protected abstract class BaseObject {
         String id;
+        XMLElement element;
         
         public BaseObject(XMLElement properties) {
+            element = properties;
             id = properties.getStringAttribute("id");
             if (id != null) {
-                idTable.put(id, this);
+                table.put(id, this);
                 //System.out.println("now parsing " + id);
             }
         }
@@ -335,10 +383,10 @@ public class SVG {
                     (Integer.parseInt(strokeText.substring(1), 16)) & 0xFFFFFF;
             } else if (strokeText.startsWith("url(#")) {
                 strokeName = strokeText.substring(5, strokeText.length() - 1);
-                Object strokeObject = idTable.get(strokeName);
+                Object strokeObject = table.get(strokeName);
                 if (strokeObject instanceof Gradient) {
                     strokeGradient = (Gradient) strokeObject;
-                    strokeGradientPaint = calcGradientPaint(strokeGradient);
+                    strokeGradientPaint = calcGradientPaint(strokeGradient); //, opacity);
                 } else {
                     System.err.println("url " + strokeName + " refers to unexpected data");
                 }
@@ -357,12 +405,12 @@ public class SVG {
             } else if (fillText.startsWith("url(#")) {
                 fillName = fillText.substring(5, fillText.length() - 1);
                 //PApplet.println("looking for " + fillName);
-                Object fillObject = idTable.get(fillName);
+                Object fillObject = table.get(fillName);
                 //PApplet.println("found " + fillObject);
                 if (fillObject instanceof Gradient) {
                     fill = true;
                     fillGradient = (Gradient) fillObject;
-                    fillGradientPaint = calcGradientPaint(fillGradient);
+                    fillGradientPaint = calcGradientPaint(fillGradient); //, opacity);
                     //PApplet.println("got filla " + fillObject);
                 } else {
                     System.err.println("url " + fillName + " refers to unexpected data");
@@ -376,7 +424,7 @@ public class SVG {
         }
 
         
-        protected Paint calcGradientPaint(Gradient gradient) {
+        protected Paint calcGradientPaint(Gradient gradient) { //, float opacity) {
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
                 
@@ -387,7 +435,8 @@ public class SVG {
                                          grad.x2, grad.y2, c2);
                                          */
                 return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
-                                               grad.offset, grad.color, grad.count);
+                                               grad.offset, grad.color, grad.count,
+                                               opacity);
                 
                     
             } else if (gradient instanceof RadialGradient) {
@@ -396,7 +445,8 @@ public class SVG {
                 //Color c1 = new Color(0xFF000000 | grad.color[0]);
                 //Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
                 return new RadialGradientPaint(grad.cx, grad.cy, grad.r, 
-                                               grad.offset, grad.color, grad.count);
+                                               grad.offset, grad.color, grad.count, 
+                                               opacity);
             }
             return null;
         }
@@ -484,15 +534,18 @@ public class SVG {
         float[] offset;
         int[] color;
         int count;
+        float opacity;
         
         public RadialGradientPaint(float cx, float cy, float radius, 
-                                   float[] offset, int[] color, int count) {
+                                   float[] offset, int[] color, int count,
+                                   float opacity) {
             this.cx = cx;
             this.cy = cy;
             this.radius = radius;
             this.offset = offset;
             this.color = color;
             this.count = count;
+            this.opacity = opacity;
         }
 
         public PaintContext createContext(ColorModel cm,
@@ -506,7 +559,7 @@ public class SVG {
             return new RadialGradientContext((float) transformedPoint.getX(), 
                                              (float) transformedPoint.getY(), 
                                              radius, //(float) transformedRadius.distance(0, 0), 
-                                             offset, color, count);
+                                             offset, color, count, opacity);
         }
 
         public int getTransparency() {
@@ -515,7 +568,8 @@ public class SVG {
             int a2 = mBackgroundColor.getAlpha();
             return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
             */
-            return OPAQUE;
+            //return (opacity == 1) ? OPAQUE : TRANSLUCENT;
+            return TRANSLUCENT;  // why not.. rather than checking each color
         }
     }          
     
@@ -525,15 +579,18 @@ public class SVG {
         float[] offset;
         int[] color;
         int count;
+        float opacity;
         
         public RadialGradientContext(float cx, float cy, float radius, 
-                                     float[] offset, int[] color, int count) {
+                                     float[] offset, int[] color, int count,
+                                     float opacity) {
             this.cx = cx;
             this.cy = cy;
             this.radius = radius;
             this.offset = offset;
             this.color = color;
             this.count = count;
+            this.opacity = opacity;
         }
 
         public void dispose() {}
@@ -547,8 +604,9 @@ public class SVG {
                 getColorModel().createCompatibleWritableRaster(w, h);
 
             //System.out.println("radius here is " + radius);
+            //System.out.println("count is " + count);
             int span = (int) radius * ACCURACY; 
-            int[][] interp = new int[span][3];
+            int[][] interp = new int[span][4];
             int prev = 0;
             for (int i = 1; i < count; i++) {
                 int c0 = color[i-1];
@@ -559,6 +617,8 @@ public class SVG {
                     interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
                     interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
                     interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+                    interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
+                    //System.out.println(interp[j][3]);
                 }
                 prev = last;
             }
@@ -573,7 +633,7 @@ public class SVG {
                     data[index++] = interp[which][0];
                     data[index++] = interp[which][1];
                     data[index++] = interp[which][2];
-                    data[index++] = 255;
+                    data[index++] = interp[which][3];
                 }
             }
             raster.setPixels(0, 0, w, h, data);
@@ -588,9 +648,11 @@ public class SVG {
         float[] offset;
         int[] color;
         int count;
+        float opacity;
         
         public LinearGradientPaint(float x1, float y1, float x2, float y2,
-                                   float[] offset, int[] color, int count) {
+                                   float[] offset, int[] color, int count, 
+                                   float opacity) {
             this.x1 = x1;
             this.y1 = y1;
             this.x2 = x2;
@@ -598,6 +660,7 @@ public class SVG {
             this.offset = offset;
             this.color = color;
             this.count = count;
+            this.opacity = opacity;
         }
 
         public PaintContext createContext(ColorModel cm,
@@ -607,7 +670,7 @@ public class SVG {
             Point2D t2 = xform.transform(new Point2D.Float(x2, y2), null);
             return new LinearGradientContext((float) t1.getX(), (float) t1.getY(), 
                                              (float) t2.getX(), (float) t2.getY(), 
-                                             offset, color, count);
+                                             offset, color, count, opacity);
         }
 
         public int getTransparency() {
@@ -616,7 +679,8 @@ public class SVG {
             int a2 = mBackgroundColor.getAlpha();
             return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
             */
-            return OPAQUE;
+            //return OPAQUE;
+            return TRANSLUCENT;  // why not.. rather than checking each color
         }
     }          
     
@@ -626,9 +690,11 @@ public class SVG {
         float[] offset;
         int[] color;
         int count;
+        float opacity;
         
         public LinearGradientContext(float x1, float y1, float x2, float y2,
-                                     float[] offset, int[] color, int count) {
+                                     float[] offset, int[] color, int count,
+                                     float opacity) {
             this.x1 = x1;
             this.y1 = y1;
             this.x2 = x2;
@@ -636,13 +702,14 @@ public class SVG {
             this.offset = offset;
             this.color = color;
             this.count = count;
+            this.opacity = opacity;
         }
 
         public void dispose() { }
 
         public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
 
-        int ACCURACY = 1;
+        int ACCURACY = 2;
         
         public Raster getRaster(int x, int y, int w, int h) {
             WritableRaster raster =
@@ -658,7 +725,7 @@ public class SVG {
             }
             
             int span = (int) PApplet.dist(x1, y1, x2, y2) * ACCURACY;
-            int[][] interp = new int[span][3];
+            int[][] interp = new int[span][4];
             int prev = 0;
             for (int i = 1; i < count; i++) {
                 int c0 = color[i-1];
@@ -670,6 +737,7 @@ public class SVG {
                     interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
                     interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
                     interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+                    interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
                     //System.out.println(j + " " + interp[j][0] + " " + interp[j][1] + " " + interp[j][2]);
                 }
                 prev = last;
@@ -693,7 +761,7 @@ public class SVG {
                     data[index++] = interp[which][0];
                     data[index++] = interp[which][1];
                     data[index++] = interp[which][2];
-                    data[index++] = 255;
+                    data[index++] = interp[which][3];
                 }
             }
             raster.setPixels(0, 0, w, h, data);
@@ -719,37 +787,42 @@ public class SVG {
             
             for (int i = 0; i < elements.length; i++){
                 String name = elements[i].getName(); //getElement();
-                XMLElement element = elements[i];
+                XMLElement elem = elements[i];
                 
                 if (name.equals("g")) {
-                    objects[objectCount++] = new Group(element);
+                    objects[objectCount++] = new Group(elem);
+                    
+                } else if (name.equals("defs")) {
+                    // generally this will contain gradient info, so may 
+                    // as well just throw it into a group element for parsing
+                    objects[objectCount++] = new Group(elem);
                     
                 } else if (name.equals("line")) {
-                    objects[objectCount++] = new Line(element);
+                    objects[objectCount++] = new Line(elem);
                     
                 } else if (name.equals("circle")) {
-                    objects[objectCount++] = new Circle(element);
+                    objects[objectCount++] = new Circle(elem);
                     
                 } else if (name.equals("ellipse")) {
-                    objects[objectCount++] = new Ellipse(element);
+                    objects[objectCount++] = new Ellipse(elem);
                     
                 } else if (name.equals("rect")) {
-                    objects[objectCount++] = new Rect(element);
+                    objects[objectCount++] = new Rect(elem);
                     
                 } else if (name.equals("polygon")) {
-                    objects[objectCount++] = new Poly(element, true);
+                    objects[objectCount++] = new Poly(elem, true);
                     
                 } else if (name.equals("polyline")) {
-                    objects[objectCount++] = new Poly(element, false);
+                    objects[objectCount++] = new Poly(elem, false);
                     
                 } else if (name.equals("path")) {
-                    objects[objectCount++] = new Path(element);
+                    objects[objectCount++] = new Path(elem);
                     
                 } else if (name.equals("radialGradient")) {
-                    objects[objectCount++] = new RadialGradient(element);
+                    objects[objectCount++] = new RadialGradient(elem);
                     
                 } else if (name.equals("linearGradient")) {
-                    objects[objectCount++] = new LinearGradient(element);                    
+                    objects[objectCount++] = new LinearGradient(elem);                    
                     
                 } else {
                     PApplet.println("not handled " + name);
@@ -783,11 +856,23 @@ public class SVG {
             
             // <stop  offset="0" style="stop-color:#967348"/>
             for (int i = 0; i < elements.length; i++){
-                XMLElement element = elements[i];
-                String name = element.getName();
+                XMLElement elem = elements[i];
+                String name = elem.getName();
                 if (name.equals("stop")) {
-                    offset[count] = element.getFloatAttribute("offset");
-                    String farbe = element.getStringAttribute("style");
+                    offset[count] = elem.getFloatAttribute("offset");
+                    String style = elem.getStringAttribute("style");
+                    Hashtable styles = parseStyleAttributes(style);
+                    
+                    String colorStr = (String) styles.get("stop-color");
+                    if (colorStr == null) colorStr = "#000000";
+                    String opacityStr = (String) styles.get("stop-opacity");
+                    if (opacityStr == null) opacityStr = "1";
+                    int tupacity = (int) (PApplet.parseFloat(opacityStr) * 255);
+                    color[count] = (tupacity << 24) | 
+                        Integer.parseInt(colorStr.substring(1), 16);
+                    count++;
+                    //System.out.println("this color is " + PApplet.hex(color[count]));
+                    /*
                     int idx = farbe.indexOf("#");
                     if (idx != -1) {
                         color[count] = Integer.parseInt(farbe.substring(idx+1), 16);
@@ -795,11 +880,22 @@ public class SVG {
                     } else {
                         System.err.println("problem with gradient stop " + properties);
                     }
+                    */
                 }
             }
         }
         
         abstract protected void drawShape();
+    }
+    
+    static protected Hashtable parseStyleAttributes(String style) {
+        Hashtable table = new Hashtable();
+        String[] pieces = style.split(";");
+        for (int i = 0; i < pieces.length; i++) {
+            String[] parts = pieces[i].split(":");
+            table.put(parts[0], parts[1]);
+        }
+        return table;
     }
     
     
