@@ -483,6 +483,30 @@ public class EditorListener {
   }
 
 
+  /** Cmd-Shift or Ctrl-Shift depending on the platform */
+  static final int CMD_SHIFT = ActionEvent.SHIFT_MASK |
+    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
+  public boolean keyTyped(KeyEvent event) {
+    char c = event.getKeyChar();
+    int code = event.getKeyCode();
+
+    //System.out.println((int)c + " " + code + " " + event);
+    //System.out.println();
+
+    if ((event.getModifiers() & CMD_SHIFT) != 0) {
+      if (c == '[') {
+        editor.sketch.prevCode();
+        return true;
+      } else if (c == ']') {
+        editor.sketch.nextCode();
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   /**
    * Return the index for the first character on this line.
    */
