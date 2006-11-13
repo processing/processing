@@ -3,13 +3,14 @@ X improve editor listener to not add so many extraneous indents
 X with text selected, hitting left or right arrow should move to beginning/end
 X   right now, it deselects the text and moves over one char
 X   http://dev.processing.org/bugs/show_bug.cgi?id=349
+X add alt-shift-arrow-down and command-shift-arrow-down
+X   select all from that point to beginning (or end) of doc
+X   ctrl-shift up/down has some weird issue, but oh well
 X cmd-shift-left and cmd-shift right should select the entire line
 X   cmd-left and cmd-right move back and forth properly
 o option for behavior of HOME and END
 X   right now goes to begin/end of line.. should be begin/end of file?
 X   change to begin/end of file, and use cmd or alt, based on platform
-X other quirks with handling of keyboard shortcuts?
-X   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGUserInput/chapter_11_section_3.html#//apple_ref/doc/uid/TP30000361-TP22
 X cmd-{ and cmd-} no longer work after the menu is shown
 X   http://dev.processing.org/bugs/show_bug.cgi?id=402
 
@@ -30,9 +31,6 @@ X rename draw() and its buddy
 X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
 X implement polyline
-
-_ add alt-shift-arrow-down and command-shift-arrow-down
-_   select all from that point to beginning (or end) of doc
 
 _ clicking "cancel" on close still quitting the app (suspect java 1.5)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=440

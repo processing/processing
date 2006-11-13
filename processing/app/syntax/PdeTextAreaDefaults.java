@@ -60,14 +60,6 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     // disabling for 0122, not sure what this does
     //inputHandler.addKeyBinding("C+\\", InputHandler.TOGGLE_RECT);
 
-    // beginning and ending of the current line
-    /*
-    inputHandler.addKeyBinding("HOME", InputHandler.HOME);
-    inputHandler.addKeyBinding("END", InputHandler.END);
-    inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_HOME);
-    inputHandler.addKeyBinding("S+END", InputHandler.SELECT_END);
-    */
-
     // for 0122, these have been changed for better compatability
     // HOME and END now mean the beginning/end of the document
     inputHandler.addKeyBinding("HOME", InputHandler.DOCUMENT_HOME);
@@ -100,12 +92,18 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     inputHandler.addKeyBinding("S+RIGHT", InputHandler.SELECT_NEXT_CHAR);
     inputHandler.addKeyBinding(mod + "+RIGHT", InputHandler.NEXT_WORD);
     inputHandler.addKeyBinding(mod + "S+RIGHT", InputHandler.SELECT_NEXT_WORD);
+
     inputHandler.addKeyBinding("UP", InputHandler.PREV_LINE);
     inputHandler.addKeyBinding(mod + "+UP", InputHandler.PREV_LINE);  // p5
     inputHandler.addKeyBinding("S+UP", InputHandler.SELECT_PREV_LINE);
     inputHandler.addKeyBinding("DOWN", InputHandler.NEXT_LINE);
     inputHandler.addKeyBinding(mod + "+DOWN", InputHandler.NEXT_LINE);  // p5
     inputHandler.addKeyBinding("S+DOWN", InputHandler.SELECT_NEXT_LINE);
+
+    inputHandler.addKeyBinding("MS+UP", InputHandler.SELECT_DOC_HOME);
+    inputHandler.addKeyBinding("CS+UP", InputHandler.SELECT_DOC_HOME);
+    inputHandler.addKeyBinding("MS+DOWN", InputHandler.SELECT_DOC_END);
+    inputHandler.addKeyBinding("CS+DOWN", InputHandler.SELECT_DOC_END);
 
     inputHandler.addKeyBinding(mod + "+ENTER", InputHandler.REPEAT);
 
