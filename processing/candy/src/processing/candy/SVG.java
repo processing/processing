@@ -362,7 +362,7 @@ public class SVG {
 
         boolean stroke;
         int strokeColor; // = transValue;
-        float strokeWeight = Float.NaN; // none
+        float strokeWeight; // default is 1
         Gradient strokeGradient; 
         Paint strokeGradientPaint;
         String strokeName;  // id of another object, gradients only?
@@ -489,7 +489,7 @@ public class SVG {
             //if (properties.hasAttribute("stroke-width")){
             //strokeWeight = properties.getFloatAttribute("stroke-width");
             //}
-            strokeWeight = properties.getFloatAttribute("stroke-width", Float.NaN);
+            strokeWeight = properties.getFloatAttribute("stroke-width", 1);
         }
 
         
