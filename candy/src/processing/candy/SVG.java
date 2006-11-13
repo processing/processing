@@ -460,6 +460,8 @@ public class SVG {
                     System.err.println("url " + strokeName + " refers to unexpected data");
                 }
             }
+            // strokeWeight defaults to 1, assuming that a stroke is present
+            strokeWeight = properties.getFloatAttribute("stroke-width", 1);
             
             // fill defaults to black (though stroke defaults to "none")
             // http://www.w3.org/TR/SVG/painting.html#FillProperties
@@ -485,11 +487,6 @@ public class SVG {
                     System.err.println("url " + fillName + " refers to unexpected data");
                 }
             }
-
-            //if (properties.hasAttribute("stroke-width")){
-            //strokeWeight = properties.getFloatAttribute("stroke-width");
-            //}
-            strokeWeight = properties.getFloatAttribute("stroke-width", 1);
         }
 
         
@@ -538,9 +535,11 @@ public class SVG {
                 
                 if (stroke) {
                     parent.stroke(strokeColor);
+                    parent.strokeWeight(strokeWeight);
                 } else {
                     parent.noStroke();
                 }
+                
                 if (fill) {
                     //System.out.println("filling " + PApplet.hex(fillColor));
                     parent.fill(fillColor);
@@ -565,11 +564,7 @@ public class SVG {
                         // need to shut off, in case parent object has a gradient applied
                         //p2d.fillGradient = false;
                     }
-                }
-                
-                if (!Float.isNaN(strokeWeight)) {
-                    parent.strokeWeight(strokeWeight);
-                }
+                }                
             }
             
             if (hasTransform){
