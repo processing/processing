@@ -135,8 +135,9 @@ public abstract class InputHandler extends KeyAdapter
                 {
                         String name = (String)en.nextElement();
                         ActionListener _listener = getAction(name);
-                        if(_listener == listener)
+                        if(_listener == listener) {
                                 return name;
+                        }
                 }
                 return null;
         }
