@@ -4158,6 +4158,18 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Load data from a file and shove it into a String array.
+   * <P>
+   * Exceptions are handled internally, when an error, occurs, an
+   * exception is printed to the console and 'null' is returned,
+   * but the program continues running. This is a tradeoff between
+   * 1) showing the user that there was a problem but 2) not requiring
+   * that all i/o code is contained in try/catch blocks, for the sake
+   * of new users (or people who are just trying to get things done
+   * in a "scripting" fashion. If you want to handle exceptions,
+   * use Java methods for I/O.
+   */
   public String[] loadStrings(String filename) {
     InputStream is = openStream(filename);
     if (is != null) return loadStrings(is);
@@ -6939,7 +6951,7 @@ public class PApplet extends Applet
   }
 
 
-  public void breakShape() {    
+  public void breakShape() {
     if (recorder != null) recorder.breakShape();
     g.breakShape();
   }
