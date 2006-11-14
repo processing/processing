@@ -142,6 +142,8 @@ public class SVG {
 
     protected boolean styleOverride = false;
     
+    int drawMode = PConstants.CORNER;
+    
 
     /**
      * Initializes a new SVG Object with the given filename.
@@ -288,7 +290,7 @@ public class SVG {
     /**
      * Draws the SVG document.
      */
-    public void draw(){
+    public void draw() {
         //Maybe it would be smart to save all changes that have 
         // to made to processing modes here like
         int saveEllipseMode = parent.g.ellipseMode;
@@ -305,7 +307,14 @@ public class SVG {
             vo.basicDraw();
         }
         */
+        if (drawMode == PConstants.CENTER) {
+            parent.pushMatrix();
+            parent.translate(-width/2, -height/2);
+        }
         root.draw();
+        if (drawMode == PConstants.CENTER) {
+            parent.popMatrix();
+        }
 
         //set back the changed modes
         parent.g.ellipseMode = saveEllipseMode;
@@ -314,6 +323,16 @@ public class SVG {
 
         parent.g.strokeColor = strokeColor;
         parent.g.fillColor = fillColor;
+    }
+    
+    
+    public void drawMode(int which) {
+        if (which == PConstants.CORNER || which == PConstants.CENTER) {
+            drawMode = which;
+        } else {
+            throw new RuntimeException("Only drawMode(CENTER) and " + 
+                                       "drawMode(CORNER) are available.");
+        }
     }
 
     
