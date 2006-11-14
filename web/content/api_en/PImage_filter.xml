@@ -15,7 +15,7 @@
 PImage a;
 a = loadImage("archcrop.jpg");
 image(a, 0, 0);
-a.filter(GRAYSCALE);
+a.filter(GRAY);
 image(a, 50, 0);
 </code>
 </example>
@@ -26,15 +26,15 @@ image(a, 50, 0);
 PImage a, b;
 a = loadImage("archcrop.jpg");
 b = loadImage("archcrop.jpg");
-a.filter(BLACK_WHITE, .6);
+a.filter(THRESHOLD, .6);
 image(a, 0, 0);
-b.filter(BLACK_WHITE, .4);
+b.filter(THRESHOLD, .4);
 image(b, 50, 0);
 </code>
 </example>
 
 <description>
-Filters an image. The filter is specified by the <b>MODE</b> parameter and there are currently two options: GRAYSCALE and  BLACK_WHITE. When using BLACK_WHITE, the <b>param</b> is in the range from 0 to 1 and determines the threshold value from which a pixel should be black or white. When using GRAYSCALE, the <b>param</b> has no effect. 
+Filters an image as defined by one of the following modes:<br /><br />THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br /><br />GRAY - converts any colors in the image to grayscale equivalents<br /><br />INVERT - sets each pixel to its inverse value<br /><br />POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br /><br />BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br /><br />OPAQUE - sets the alpha channel to entirely opaque.
 </description>
 
 <syntax>
@@ -49,7 +49,7 @@ Filters an image. The filter is specified by the <b>MODE</b> parameter and there
 
 <parameter>
 <label>MODE</label>
-<description>either GRAYSCALE, BLACK_WHITE</description>
+<description>Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, or OPAQUE</description>
 </parameter>
 
 <parameter>
