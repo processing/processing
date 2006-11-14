@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>ignoreStyles()</name>
+
+<category>SVGImport</category>
+
+<subcategory>SVGImport</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+import processing.candy.*;
+import processing.xml.*;
+
+SVG m;
+
+void setup(){
+  size(400,400);
+  // The file "moo.svg" but be in the data folder
+  // of the current sketch to load successfully
+  m = new SVG("moo.svg",this);
+} 
+
+void draw() {
+  background(204);
+  m.ignoreStyles(false);
+  m.draw();
+  translate(0, 100);
+  m.ignoreStyles(true);
+  fill(0, 90, 120);
+  m.draw();
+} 
+</code>
+</example>
+
+<description>
+Overrides SVG-set styles and uses Processing styles and colors. The function has one parameter to determine if SVG shapes drawn after will ignore or follow the current Processing style. If the <b>state</b> parameter is <b>true</b>, it will ignore the embedded SVG styles and if the <b>state</b> is <b>false</b>, it will display the SVG styles.
+</description>
+
+<syntax>
+<c>svg</c>.ignoreStyles(<c>state</c>)
+</syntax>
+
+<parameter>
+<label>svg</label>
+<description>any variable of type SVG</description>
+</parameter>
+
+<parameter>
+<label>svg</label>
+<description>true or false</description>
+</parameter>
+
+<returns>none</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

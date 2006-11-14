@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>draw()</name>
+
+<category>SVGImport</category>
+
+<subcategory>SVGImport</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+import processing.candy.*;
+import processing.xml.*;
+
+SVG m;
+
+void setup(){
+  size(400,400);
+  // The file "moo.svg" but be in the data folder
+  // of the current sketch to load successfully
+  m = new SVG("moo.svg",this);
+} 
+
+void draw(){
+  m.draw();
+}
+</code>
+</example>
+
+<description>
+Draws the SVG file to the display window. By default, shapes are drawn to the upper-left corner of the display window. The <b>drawMode()</b> method allows the shape to be drawn from its center coordinate. Use the <b>translate()</b> function to move them to a different location on screen.
+</description>
+
+<syntax>
+<c>svg</c>.draw()
+</syntax>
+
+<parameter>
+<label>svg</label>
+<description>any variable of type SVG</description>
+</parameter>
+
+<returns>none</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>
