@@ -148,7 +148,7 @@ public class SVG {
     /**
      * Initializes a new SVG Object with the given filename.
      */
-    public SVG(String filename, PApplet parent){
+    public SVG(PApplet parent, String filename){
         this.parent = parent;        
         //this.filename = filename;
 
