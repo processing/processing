@@ -76,6 +76,9 @@ import processing.core.PApplet;
  */
 public class XMLElement
 {
+    static final boolean DEBUG = false;
+    
+    
     /**
      * The attributes given to the element.
      *
@@ -145,12 +148,19 @@ public class XMLElement
 
 
     /**
-     * Use this to simply ignore unknown entities. This is a necessity because
+     * Use this to leave unknown entities unchanged. This is a necessity because
      * <!ENTITY ...> lines are not currently parsed, and cause dumb problems
      * with Illustrator SVG files. [fry]
      */
     private boolean ignoreUnknownEntities = true;
 
+    
+    /**
+     * For attributes such as NOWRAP that aren't set equal to anything, 
+     * parse without giving an error, and set their contents to an empty String.
+     */
+    private boolean ignoreMissingAttributes = true;
+    
 
     /**
      * The line number where the element starts.
@@ -446,6 +456,7 @@ public class XMLElement
             this.entities.put("apos", new char[] { '\'' });
             this.entities.put("lt", new char[] { '<' });
             this.entities.put("gt", new char[] { '>' });
+            //this.entities.put("nbsp", new char[] { 0xA0 });
         }
     }
 
@@ -2165,6 +2176,7 @@ public class XMLElement
     protected void scanString(StringBuffer string)
         throws IOException
     {
+        /*
         char delimiter = this.readChar();
         if ((delimiter != '\'') && (delimiter != '"')) {
             throw this.expectedInput("' or \"");
@@ -2174,9 +2186,45 @@ public class XMLElement
             if (ch == delimiter) {
                 return;
             } else if (ch == '&') {
-                this.resolveEntity(string);
+                //this.resolveEntity(string);
+                System.out.println("resolving ent " + delimiter);
+                this.resolveEntity(string, delimiter);
             } else {
                 string.append(ch);
+            }
+        }
+        */
+        // be slightly less strict, and don't require delimiters
+        char delimiter = this.readChar();
+        if ((delimiter != '\'') && (delimiter != '"')) {
+            string.append(delimiter);
+            //throw this.expectedInput("' or \"");
+            // read until whitespace, a slash, or a closing bracket >
+            // don't allow delimiters in this case
+            for (;;) {
+                char ch = this.readChar();
+                if ((ch == ' ') || 
+                    (ch == '\t') || (ch == '\n') || (ch == '\r') ||
+                    (ch == '/') || (ch == '>')) { 
+                    unreadChar(ch);
+                    return;
+                } else {
+                    string.append(ch);
+                }
+            }
+            
+        } else {
+            for (;;) {
+                char ch = this.readChar();
+                if (ch == delimiter) {
+                    return;
+                } else if (ch == '&') {
+                    //this.resolveEntity(string);
+                    //System.out.println("resolving ent " + delimiter);
+                    this.resolveEntity(string, delimiter);
+                } else {
+                    string.append(ch);
+                }
             }
         }
     }
@@ -2396,6 +2444,7 @@ public class XMLElement
                 this.parserLineNumber += 1;
                 return '\n';
             } else {
+                if (DEBUG) System.out.println((char) i);
                 return (char) i;
             }
         }
@@ -2419,31 +2468,53 @@ public class XMLElement
         this.scanIdentifier(buf);
         String bname = buf.toString();
         elt.setName(bname);
+        if (DEBUG) System.out.println("got bname '" + bname + "'" + "  " + parserLineNumber);
         char ch = this.scanWhitespace();
         while ((ch != '>') && (ch != '/')) {
+            if (DEBUG) System.out.println("up here then");
             buf.setLength(0);
             this.unreadChar(ch);
             this.scanIdentifier(buf);
             String key = buf.toString();
+            if (DEBUG) System.out.println("  attr is " + key);
             ch = this.scanWhitespace();
+            /*
             if (ch != '=') {
                 throw this.expectedInput("=");
             }
-            this.unreadChar(this.scanWhitespace());
-            buf.setLength(0);
-            this.scanString(buf);
-            elt.setAttribute(key, buf);
+            */
+            if (ch != '=') {
+                if (ignoreMissingAttributes) {
+                    if (DEBUG) System.out.println("expected = got " + ch);
+                    this.unreadChar(ch);
+                    //buf.setLength(0);
+                    elt.setAttribute(key, "");
+                    if (DEBUG) System.out.println("    value is empty");
+                } else {
+                    throw this.expectedInput("=");
+                }
+            } else {
+                this.unreadChar(this.scanWhitespace());
+                buf.setLength(0);
+                this.scanString(buf);
+                elt.setAttribute(key, buf);
+                if (DEBUG) System.out.println("    value is " + buf);
+            }            
             ch = this.scanWhitespace();
+            if (DEBUG) System.out.println("scan of white produced " + ch);
         }
+        if (DEBUG) System.out.println("out here now?");
         if (ch == '/') {
             ch = this.readChar();
             if (ch != '>') {
                 throw this.expectedInput(">");
             }
+            if (DEBUG) System.out.println("leaving");
             return;
         }
         buf.setLength(0);
         ch = this.scanWhitespace(buf);
+        if (DEBUG) System.out.println("not yet leaving " + ch);
         if (ch != '<') {
             this.unreadChar(ch);
             this.scanPCData(buf);
@@ -2542,6 +2613,7 @@ public class XMLElement
             }
             keyBuf.append(ch);
         }
+        //System.out.println("found ent " + keyBuf);
         String key = keyBuf.toString();
         if (key.charAt(0) == '#') {
             try {
@@ -2560,13 +2632,66 @@ public class XMLElement
             if (value == null) {
                 if (!ignoreUnknownEntities) {
                     throw this.unknownEntity(key);
+                } else {
+                    // push the unknown entity back onto the stream
+                    buf.append("&" + key + ";");
                 }
             } else {
+                if (DEBUG) System.out.println("appending entity " + new String(value));
                 buf.append(value);
             }
         }
     }
+    
 
+    /** 
+     * Version of resolveEntity that gives up when it hits its ending delimiter.
+     * Handles parsing <meta http-equiv> stuff where the URL contains an ampersand.
+     */
+    protected void resolveEntity(StringBuffer buf, char delimiter) throws IOException
+    {
+        char ch = '\0';
+        StringBuffer keyBuf = new StringBuffer();
+        for (;;) {
+            ch = this.readChar();
+            if (ch == ';') {
+                break;
+            }
+            // this wasn't an entity, and we've reached the end of the string
+            if (ch == delimiter) {
+                if (DEBUG) System.out.println("found end of delim " + keyBuf);
+                buf.append(keyBuf);
+                unreadChar(ch);
+                return;
+            }
+            keyBuf.append(ch);
+        }
+        String key = keyBuf.toString();
+        if (key.charAt(0) == '#') {
+            try {
+                if (key.charAt(1) == 'x') {
+                    ch = (char) Integer.parseInt(key.substring(2), 16);
+                } else {
+                    ch = (char) Integer.parseInt(key.substring(1), 10);
+                }
+            } catch (NumberFormatException e) {
+                throw this.unknownEntity(key);
+            }
+            buf.append(ch);
+        } else {
+            char[] value = (char[]) this.entities.get(key);
+            if (value == null) {
+                if (!ignoreUnknownEntities) {
+                    throw this.unknownEntity(key);
+                } else {
+                    // could also just push back the text instead of a blank?
+                }
+            } else {
+                if (DEBUG) System.out.println("appending entity2 " + new String(value));
+                buf.append(value);
+            }
+        }
+    }
 
     /**
      * Pushes a character back to the read-back buffer.
