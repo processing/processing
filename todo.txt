@@ -74,6 +74,7 @@ _   http://www.adobe.com/svg/eol.html
 
 
 LIBRARIES / xml
+_ need to handle how save() works inside xml lib
 _ need to handle <!ENTITY tags for svg documents
 _ vectors shouldn't be exposed, need to expose attr lists as arrays
 _   or also add a method for getting the vectors?
