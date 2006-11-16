@@ -160,6 +160,10 @@ public class Editor extends JFrame
           handleQuitInternal();
         }
       });
+    // don't close the window when clicked, the app will take care
+    // of that via the handleQuitInternal() methods
+    // http://dev.processing.org/bugs/show_bug.cgi?id=440
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
     PdeKeywords keywords = new PdeKeywords();
     sketchbook = new Sketchbook(this);
