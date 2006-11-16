@@ -703,7 +703,7 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
-    item = new JMenuItem("Format for Discourse");
+    item = new JMenuItem("Copy for Discourse");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           SwingUtilities.invokeLater(new Runnable() {
