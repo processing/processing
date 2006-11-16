@@ -565,15 +565,20 @@ public class PGraphics3D extends PGraphics {
     }
     float vertex[] = vertices[vertexCount];
 
-    //if (polygon.redundantVertex(x, y, z)) return;
-    if (vertexCount > 0) {
-      float pvertex[] = vertices[vertexCount-1];
-      if ((abs(pvertex[MX] - x) < EPSILON) &&
-          (abs(pvertex[MY] - y) < EPSILON) &&
-          (abs(pvertex[MZ] - z) < EPSILON)) {
-        // this vertex is identical, don't add it,
-        // because it will anger the triangulator
-        return;
+    // only do this if we're using an irregular (POLYGON) shape that
+    // will go through the triangulator. otherwise it'll do thinks like
+    // disappear in mathematically odd ways
+    // http://dev.processing.org/bugs/show_bug.cgi?id=444
+    if (shape == POLYGON) {
+      if (vertexCount > 0) {
+        float pvertex[] = vertices[vertexCount-1];
+        if ((abs(pvertex[MX] - x) < EPSILON) &&
+            (abs(pvertex[MY] - y) < EPSILON) &&
+            (abs(pvertex[MZ] - z) < EPSILON)) {
+          // this vertex is identical, don't add it,
+          // because it will anger the triangulator
+          return;
+        }
       }
     }
 

@@ -281,10 +281,10 @@ public abstract class PGraphics extends PImage implements PConstants {
   // [toxi 031031]
   // changed table's precision to 0.5 degree steps
   // introduced new vars for more flexible code
-  static final float sinLUT[];
-  static final float cosLUT[];
-  static final float SINCOS_PRECISION = 0.5f;
-  static final int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
+  static final protected float sinLUT[];
+  static final protected float cosLUT[];
+  static final protected float SINCOS_PRECISION = 0.5f;
+  static final protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
   static {
     sinLUT = new float[SINCOS_LENGTH];
     cosLUT = new float[SINCOS_LENGTH];
@@ -1108,10 +1108,10 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /** This feature is in testing, do not use or rely upon its implementation */
-  public void breakShape() {    
+  public void breakShape() {
   }
-  
-  
+
+
   public final void endShape() {
     endShape(OPEN);
   }
