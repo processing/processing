@@ -1371,46 +1371,110 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //////////////////////////////////////////////////////////////
 
 
-  //public void cameraMode(int mode) {
-  //super.cameraMode(mode);
-  //syncMatrices();
-  //}
+  /*
+  boolean ellipseInited;
+  int ellipseFillList;
+  int ellipseStrokeList;
 
-/*
-  public void endCamera() {
-    //System.out.println("PGraphicsOpenGL.endCamera() 1");
-    super.endCamera();
+  protected void ellipseImpl(float x1, float y1, float w, float h) {
+    float hradius = w / 2f;
+    float vradius = h / 2f;
 
-    System.out.println("begin endCamera");
-    //System.out.println("PGraphicsOpenGL.endCamera() " + width + " " + height);
-    //System.exit(0);
+    float centerX = x1 + hradius;
+    float centerY = y1 + vradius;
 
-    //System.out.println("into camera error " + PApplet.hex(gl.glGetError()));
+    // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
+    // now uses current scale factors to determine "real" transformed radius
 
-    gl.glMatrixMode(GL.GL_PROJECTION);
-    //gl.glLoadIdentity();
-    //System.out.println("camera should be");
-    //printCamera();
+    //int cAccuracy = (int)(4+Math.sqrt(hradius*abs(m00)+vradius*abs(m11))*2);
+    //int cAccuracy = (int)(4+Math.sqrt(hradius+vradius)*2);
 
-    // opengl matrices are rotated from processing's
-    gl.glLoadMatrixf(new float[] { projection.m00, projection.m10, projection.m20, projection.m30,
-        projection.m01, projection.m11, projection.m21, projection.m31,
-        projection.m02, projection.m12, projection.m22, projection.m32,
-        projection.m03, projection.m13, projection.m23, projection.m33 } );
-    //gl.glScalef(1, -1, 1);
+    // notched this up to *3 instead of *2 because things were
+    // looking a little rough, i.e. the calculate->arctangent example [fry]
 
-    //System.out.println("trying " + height);
-    // this needs to be done since the model matrix will be
-    // goofy since it's mid-frame and the translate/scale will be wrong
-    gl.glMatrixMode(GL.GL_MODELVIEW);
-    gl.glLoadIdentity();
-    // gl coordinates are reversed
-    gl.glTranslatef(0, height, 0);
-    gl.glScalef(1, -1, 1);
+    // also removed the m00 and m11 because those were causing weirdness
+    // need an actual measure of magnitude in there [fry]
 
-    report("out of endCamera");
+    int accuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
+    //System.out.println("accuracy is " + accuracy);
+    //accuracy = 5;
+
+    // [toxi031031] adapted to use new lookup tables
+    float inc = (float)SINCOS_LENGTH / accuracy;
+
+    float val = 0;
+
+    if (fill) {
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      beginShape(TRIANGLE_FAN);
+      normal(0, 0, 1);
+      vertex(centerX, centerY);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * hradius,
+               centerY + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      // back to the beginning
+      vertex(centerX + cosLUT[0] * hradius,
+             centerY + sinLUT[0] * vradius);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      boolean savedFill = fill;
+      fill = false;
+
+      val = 0;
+      beginShape(); //LINE_LOOP);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * hradius,
+               centerY + sinLUT[(int) val] * vradius);
+        val += inc;
+      }
+      endShape(CLOSE);
+
+      fill = savedFill;
+    }
   }
-*/
+  */
+
+  /*
+    pgl.beginGL();
+    //PGraphics gr = PApplet.this.g;
+    //GL gl = ((PGraphicsOpenGL).gr).beginGL();
+    if (!ellipseInited) {
+      ellipseList = gl.glGenLists(1);
+      gl.glNewList(ellipseList, GL.GL_COMPILE);
+      gl.glBegin(GL.GL_LINE_LOOP);
+      int seg = 15;
+      float segf = 15;
+      for (int i = 0; i < seg; i++) {
+        float theta = TWO_PI * (float)i / segf;
+        gl.glVertex2f(cos(theta), sin(theta));
+      }
+      gl.glEnd();
+      gl.glEndList();
+      ellipseInited = true;
+    }
+
+    for (int i=1; i<numSegments-1; i++) {
+    gl.glPushMatrix();
+    gl.glTranslatef(x[i], y[i], z);
+    float r = w[i]/2f;
+    gl.glScalef(r, r, r);
+    gl.glColor4f(1, 1, 1, 150.0/255.0);
+    gl.glCallList(ellipseList);
+    gl.glScalef(0.5, 0.5, 0.5);
+    gl.glColor4f(1, 1, 1, 50.0/255.0);
+    gl.glCallList(ellipseList);
+    gl.glPopMatrix();
+    }
+    pgl.endGL();
+  */
 
 
   //////////////////////////////////////////////////////////////
