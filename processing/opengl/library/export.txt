@@ -1,0 +1,12 @@
+# if you want to support more platforms, see the jogl web site to get
+# the natives libraries for the platform in question (i.e. linux-amd64). 
+# then, add it to the applet line for export. for applications, you'll
+# have to make the changes by hand, i.e. use the linux version of the
+# export, and modify its contents to include the necessary files for
+# your platform.
+
+application.macosx = opengl.jar, jogl.jar, libjogl.jnilib, libjogl_awt.jnilib, libjogl_cg.jnilib
+application.windows = opengl.jar, jogl.jar, jogl.dll, jogl_awt.dll, jogl_cg.dll
+application.linux = opengl.jar, jogl.jar, libjogl.so, libjogl_awt.so, libjogl_cg.so, libjogl_drihack.so
+
+applet = opengl.jar, jogl.jar, jogl-natives-linux-i586.jar, jogl-natives-macosx-ppc.jar, jogl-natives-macosx-universal.jar, jogl-natives-windows-i586.jar
