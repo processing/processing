@@ -6,6 +6,9 @@ X   lerpColor(c1, c2, amt, RGB/HSB/???)
 _   test this out for a bit
 _   though that's awkward b/c colors always RGB
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
+X regression in P3D that prevents point() from drawing
+X   problem is with setup_vertex() not adding similar points
+X   http://dev.processing.org/bugs/show_bug.cgi?id=444
 
 fixed earlier, bug cleaning
 X gray background in pdf (using both gl and p3d)
