@@ -13,6 +13,8 @@ X   right now goes to begin/end of line.. should be begin/end of file?
 X   change to begin/end of file, and use cmd or alt, based on platform
 X cmd-{ and cmd-} no longer work after the menu is shown
 X   http://dev.processing.org/bugs/show_bug.cgi?id=402
+X clicking "cancel" on close still quitting the app
+X   http://dev.processing.org/bugs/show_bug.cgi?id=440
 
 fixed earlier or wontfix
 X double-click only selects part of underscored word
@@ -32,8 +34,9 @@ X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
 X implement polyline
 
-_ clicking "cancel" on close still quitting the app (suspect java 1.5)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=440
+
+X updated to antlr 2.7.7
+_ added log4j (for the autoformatter)
 
 _ applet sizing issues with external vm
 _   could this possibly be related to the linux bug?
@@ -55,6 +58,8 @@ For 2.0
 
 
 LIBRARIES / svg
+_ support for text (shouldn't be too bad, use createFont)
+_ honor the designation for layers that are marked 'hidden'
 _ get entity tags working in xml library
 _ try enabling blending modes
 _ add better support for attributes buried in styles (support ai9/10/11)
