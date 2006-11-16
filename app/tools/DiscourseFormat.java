@@ -24,6 +24,7 @@
 package processing.app.tools;
 
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.text.Segment;
@@ -31,7 +32,6 @@ import javax.swing.text.Segment;
 import processing.app.*;
 import processing.app.syntax.*;
 import processing.core.PApplet;
-
 
 /**
  * Format for Discourse Tool
@@ -41,36 +41,29 @@ import processing.core.PApplet;
  * This code will later be removed but is included with release 0108+
  * while features for the "Tools" menu are in testing.
  * <p/>
+ * Updated for 0122 to simply copy the code directly to the clipboard,
+ * rather than opening a new window.
+ * <p/>
  * Notes from the original source:
  * Discourse.java This is a dirty-mix source.
  * NOTE that: No macs and no keyboard. Unreliable source.
  * Only format processing code using fontMetrics.
  * It works under my windows XP + PentiumIV + Processing 0091.
  */
-public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
+public class DiscourseFormat {
 
-  //static final String WINDOW_TITLE = "Code ready: processing.org/discourse";
-  static final String WINDOW_TITLE = "Format for Discourse by owd";
+  //static final String WINDOW_TITLE = "Format for Discourse by owd";
 
   // p5 icon for the window
-  static Image icon;
+  //static Image icon;
 
   Editor editor;
-  JEditTextArea textarea;
+  //JEditTextArea textarea;
 
-  // Parent editor JTextArea
+  // JTextArea of the actual Editor
   JEditTextArea parent;
 
-  // False listener (no NullPointerException at processKeyEvent,
-  // but gives other problems like the § on the Tab)
-  //DiscourseListener listener;
-
-  JFrame frame;
-
-  // One window only (if window exists, update())
-  //static boolean active = false;
-
-  //Discourse.formatDiscourse(textarea);
+  //JFrame frame;
 
   /**
    * Creates a new window with the formated (YaBB tags) sketchcode
@@ -78,31 +71,16 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
    * web (copy & paste)
    */
   public DiscourseFormat(Editor editor) {
-    //super(new GridBagLayout());
-
     this.editor = editor;
     this.parent = editor.textarea;
 
+    /*
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new DiscourseTextAreaPopup());
     textarea.setTokenMarker(new PdeKeywords());
     textarea.setHorizontalOffset(6);
 
-    //GridBagConstraints c = new GridBagConstraints();
-    //c.fill = GridBagConstraints.BOTH;
-    //c.weightx = 1.0;
-    //c.weighty = 1.0;
-    //add(textarea, c);
-
     textarea.setEditable(false);
-
-    //frame.addWindowListener(this);
-    //listener = new DiscourseListener(textarea);
-    //textarea.editorListener = parent.editorListener;
-
-    //Make sure we have nice window decorations.
-    //Sure... false, false...
-    //JFrame.setDefaultLookAndFeelDecorated(false);
 
     // Create and set up the window.
     frame = new JFrame(WINDOW_TITLE);
@@ -115,20 +93,16 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
     } catch (Exception e) {  } // fail silently, no big whup
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-    // Create and set up the content pane.
-    //JComponent newContentPane = new Discourse();
-    //newContentPane.setOpaque(true); //content panes must be opaque
-    //frame.setContentPane(newContentPane);
     Container pain = frame.getContentPane();
     pain.setLayout(new BorderLayout());
     pain.add(textarea, BorderLayout.CENTER);
 
     frame.setResizable(true);
 
-    // Display the window
     frame.pack();
     frame.setLocation(100, 100);
     //frame.setVisible(true);
+    */
   }
 
 
@@ -145,46 +119,25 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
 
     cf.append("\n [/quote]");
 
+    /*
     // Send the text to the textarea
     textarea.setText(cf.toString());
     textarea.select(0, 0);
 
     frame.show();
-  }
+    */
 
+    StringSelection formatted = new StringSelection(cf.toString());
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    clipboard.setContents(formatted, new ClipboardOwner() {
+        public void lostOwnership(Clipboard clipboard, Transferable contents) {
+          // i don't care about ownership
+        }
+      });
 
-  /*
-  // Update contents
-  public static void update() {
-    //
-    preliminars();
-    frame.toFront();
+    editor.message("Discourse-formatted code has been " +
+                   "copied to the clipboard.");
   }
-  */
-
-  /** Read parent textarea */
-  /*
-  public static void formatDiscourse(JEditTextArea parentTxa) {
-    //String code = parent.getText(0, textarea.getDocumentLength());
-    parent = parentTxa;
-    if (Discourse.active) {
-      // Discourse window exists
-      Discourse.update();
-    } else {
-      // Creates a new discourse window
-      Discourse.createAndShowGUI();
-    }
-  }
-  */
-
-  /*
-  // Returns a string from a char
-  static String character(char ch) {
-    return String.valueOf(ch);
-    //Character Ch = new Character(ch);
-    //return Ch.toString();
-  }
-  */
 
 
   // A terrible headache...
@@ -199,10 +152,6 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
 
     // Use painter's cached info for speed
     FontMetrics fm = painter.getFontMetrics();
-
-    // Jump empty lines
-    // if (parent.getLineLength(line) == 0) cf.concat(character('\n'));
-    // return cf;
 
     // get line text from parent textarea
     parent.getLineText(line, lineSegment);
@@ -302,70 +251,14 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
   }
 
 
-  /* Return a string [#rrggbb] from color */
-  //public static String color(Color rgbColor) {
-    /*
-    int r = rgbColor.getRed();
-    int g = rgbColor.getGreen();
-    int b = rgbColor.getBlue();
-
-    String rx = r >= 16 ? Integer.toHexString(r) : "0"
-      + Integer.toHexString(r);
-    String gx = g >= 16 ? Integer.toHexString(g) : "0"
-      + Integer.toHexString(g);
-    String bx = b >= 16 ? Integer.toHexString(b) : "0"
-      + Integer.toHexString(b);
-    rx = rx.toUpperCase();
-    gx = gx.toUpperCase();
-    bx = bx.toUpperCase();
-
-    return "#" + rx + gx + bx;
-    */
-
-    /*
-    return "#" +
-      PApplet.hex(rgbColor.getRed(), 2) +
-      PApplet.hex(rgbColor.getGreen(), 2) +
-      PApplet.hex(rgbColor.getBlue(), 2);
-    */
-    //return "#" + PApplet.hex(rgbColor.getRGB() & 0xFFFFFF, 6);
-  //}
-
-  /*
-  // M*erda... voids, voids, voids... Really needed?
-  // Eclipse says YES (?)
-  public void windowOpened(WindowEvent e) {
-  }
-
-  public void windowIconified(WindowEvent e) {
-  }
-
-  public void windowDeiconified(WindowEvent e) {
-  }
-
-  public void windowActivated(WindowEvent e) {
-  }
-
-  public void windowDeactivated(WindowEvent e) {
-  }
-
-  public void windowClosing(WindowEvent arg0) {
-  }
-  */
-
-
   /**
    * Returns the discourse popup menu. Another features can be added: format
    * selected text with a determinated tag (I'm thinking about [url]selected
    * text[/url])
    */
+  /*
   class DiscourseTextAreaPopup extends JPopupMenu {
-    //protected ReferenceKeys referenceItems = new ReferenceKeys();
-    //String currentDir = System.getProperty("user.dir");
-    //String referenceFile = null;
-    //JMenuItem cutItem, copyItem;
     JMenuItem copyItem;
-    //JMenuItem referenceItem;
 
     public DiscourseTextAreaPopup() {
       JMenuItem item;
@@ -398,6 +291,7 @@ public class DiscourseFormat /*extends JPanel implements WindowListener*/ {
       super.show(component, x, y);
     }
   }
+  */
 
 
   /*
