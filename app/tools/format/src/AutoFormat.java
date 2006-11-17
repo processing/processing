@@ -26,7 +26,6 @@ import processing.app.*;
 import processing.core.*;
 
 import java.io.*;
-import java.util.StringTokenizer;
 
 
 /**
@@ -46,6 +45,8 @@ public class AutoFormat {
   public void show() {
     String originalText = editor.textarea.getText();
     int indentSize = Preferences.getInteger("editor.tabs.size");
+
+    //
 
     String formattedText = null; //strOut.toString();
     if (formattedText.equals(originalText)) {
@@ -72,6 +73,87 @@ public class AutoFormat {
         editor.message("Auto Format finished.");
       }
       */
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  private static class PluginImpl extends AbstractPlugin {
+    JEditStatusBar statusBar;
+    Project project;
+
+
+    /**
+     * Creates a new PluginImpl object.
+     */
+    public PluginImpl()
+    {
+      super(new JEditAppender());
+    }
+
+
+    public Project getActiveProject()
+    {
+      if (this.project == null)
+        {
+          this.project = new JEditProject();
+        }
+
+      return this.project;
+    }
+
+
+    public FileFormat getFileFormat()
+    {
+      // there is a bug(?) in jEdit's text area whereas inserting text with
+      // DOS file format results in displaying EOF characters, so we always
+      // use UNIX format and let jEdit handle the specified file format upon
+      // file saving
+      return FileFormat.UNIX;
+    }
+
+
+    public Frame getMainWindow()
+    {
+      return jEdit.getActiveView();
+    }
+
+
+    public StatusBar getStatusBar()
+    {
+      return this.statusBar;
+    }
+
+
+    public void afterEnd()
+    {
+      super.afterEnd();
+      MessageView.getInstance().update();
+    }
+
+
+    /**
+     * Formats the currently active buffer.
+     */
+    public void formatActive()
+    {
+      // only perform the action if the current Buffer contains
+      // a Java source file
+      //if (isJava(jEdit.getActiveView().getBuffer()))
+      //{
+      performAction(Action.FORMAT_ACTIVE);
+      //}
+    }
+
+
+    /**
+     * Formats the currently open buffers.
+     */
+    public void formatOpen()
+    {
+      performAction(Action.FORMAT_OPEN);
     }
   }
 }
