@@ -345,11 +345,15 @@ public class Sketchbook {
    * to prevent the interface from locking up until the menus are done.
    */
   public void rebuildMenusAsync() {
+    // disabling the async option for actual release, this hasn't been tested
+    /*
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           rebuildMenus();
         }
       });
+    */
+    rebuildMenus();
   }
 
 
