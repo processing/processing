@@ -45,9 +45,9 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-import com.oroinc.text.regex.*;
-
 import com.apple.mrj.*;
+import com.oroinc.text.regex.*;
+import de.hunsicker.jalopy.*;
 
 
 public class Editor extends JFrame
@@ -678,7 +678,22 @@ public class Editor extends JFrame
     item.addActionListener(new ActionListener() {
         synchronized public void actionPerformed(ActionEvent e) {
           new AutoFormat(Editor.this).show();
-          //handleBeautify();
+
+          /*
+          Jalopy jalopy = new Jalopy();
+          jalopy.setInput(getText(), sketch.current.file.getAbsolutePath());
+          StringBuffer buffer = new StringBuffer();
+          jalopy.setOutput(buffer);
+          jalopy.format();
+          setText(buffer.toString(), 0, 0);
+
+          if (jalopy.getState() == Jalopy.State.OK)
+            System.out.println("successfully formatted");
+          else if (jalopy.getState() == Jalopy.State.WARN)
+            System.out.println(" formatted with warnings");
+          else if (jalopy.getState() == Jalopy.State.ERROR)
+            System.out.println(" could not be formatted");
+          */
         }
       });
     menu.add(item);
