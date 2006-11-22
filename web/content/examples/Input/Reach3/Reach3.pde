@@ -2,7 +2,7 @@
  * Reach 3. 
  * Based on code from Keith Peters (www.bit-101.com).
  * 
- * The arm follows the position of the mouse by 
+ * The arm follows the position of the ball by 
  * calculating the angles with atan2().
  * 
  * Created November 21 2006
