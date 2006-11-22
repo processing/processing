@@ -322,6 +322,7 @@ public class PGraphics3D extends PGraphics {
     line = new PLine(this);
     triangle = new PTriangle(this);
 
+    defaultsInited = false;
     //System.out.println(this + " done allocating");
   }
 
