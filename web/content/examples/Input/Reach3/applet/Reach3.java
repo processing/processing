@@ -1,5 +1,5 @@
-import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Reach02 extends PApplet {/**
- * Reach 2. 
+import processing.core.*; import java.applet.*; import java.awt.*; import java.awt.image.*; import java.awt.event.*; import java.io.*; import java.net.*; import java.text.*; import java.util.*; import java.util.zip.*; public class Reach3 extends PApplet {/**
+ * Reach 3. 
  * Based on code from Keith Peters (www.bit-101.com).
  * 
  * The arm follows the position of the mouse by 
@@ -8,27 +8,43 @@ import processing.core.*; import java.applet.*; import java.awt.*; import java.a
  * Created November 21 2006
  */
  
- 
-int numSegments = 10;
+int numSegments = 6;
 float[] x = new float[numSegments];
 float[] y = new float[numSegments];
 float[] angle = new float[numSegments];
-float segLength = 20;
+float segLength = 15;
 float targetX, targetY;
+
+float ballX = 50;
+float ballY = 50;
+int ballXDirection = 1;
+int ballYDirection = -1;
 
 public void setup() {
   size(200, 200);
   smooth(); 
   strokeWeight(20.0f);
   stroke(0, 100);
-  x[x.length-1] = 0;     // Set base x-coordinate
+  noFill();
+  x[x.length-1] = width/2;     // Set base x-coordinate
   y[x.length-1] = height;  // Set base y-coordinate
 }
 
 public void draw() {
   background(226);
   
-  reachSegment(0, mouseX, mouseY);
+  strokeWeight(20);
+  ballX = ballX + 1.0f * ballXDirection;
+  ballY = ballY + 0.8f * ballYDirection;
+  if(ballX > width-25 || ballX < 25) {
+    ballXDirection *= -1; 
+  }
+  if(ballY > height-25 || ballY < 25) {
+    ballYDirection *= -1; 
+  }
+  ellipse(ballX, ballY, 30, 30);
+  
+  reachSegment(0, ballX, ballY);
   for(int i=1; i<numSegments; i++) {
     reachSegment(i, targetX, targetY);
   }
@@ -61,4 +77,4 @@ public void segment(float x, float y, float a, float sw) {
   line(0, 0, segLength, 0);
   popMatrix();
 }
-static public void main(String args[]) {   PApplet.main(new String[] { "Reach02" });}}
+static public void main(String args[]) {   PApplet.main(new String[] { "Reach3" });}}
