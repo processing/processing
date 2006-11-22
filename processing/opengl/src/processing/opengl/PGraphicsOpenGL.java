@@ -836,6 +836,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
      * Generate a texture ID and do the necessary bitshifting for the image.
      */
     public void rebind(PImage source) {
+      //System.out.println("rebinding texture for " + source);
       if (tindex != -1) {
         // free up the old memory
         gl.glDeleteTextures(1, new int[] { tindex }, 0);

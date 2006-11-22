@@ -46,7 +46,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public int pixelCount;
 
   /// true if defaults() has been called a first time
-  boolean defaultsInited;
+  protected boolean defaultsInited;
 
   /// true if in-between beginDraw() and endDraw()
   protected boolean insideDraw;

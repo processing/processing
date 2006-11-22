@@ -31,27 +31,27 @@ import processing.xml.*;
 
 /**
  * Candy is a minimal SVG import library for Processing.
- * Candy was written by Michael Chang, and later revised and  
+ * Candy was written by Michael Chang, and later revised and
  * expanded for use as a Processing core library by Ben Fry.
  * <p>
  * SVG stands for Scalar Vector Graphics, a portable graphics
  * format. It is a vector format so it allows for infinite resolution
  * and relatively minute file sizes. Most modern media software
- * can view SVG files, including Firefox, Adobe products, etc. 
+ * can view SVG files, including Firefox, Adobe products, etc.
  * You can use something like Illustrator to edit SVG files.
  * <p>
  * We have no intention of turning this into a full-featured SVG library.
  * The goal of this project is a basic shape importer that is small enough
- * to be included with applets, meaning that its download size should be 
+ * to be included with applets, meaning that its download size should be
  * in the neighborhood of 25-30k. Because of this size, it is not made part
  * of processing.core, because it would increase the download size of any
- * applet by 20%, and it's not a feature that will be used by 20% of our 
- * audience. For more sophisticated import/export, consider the 
+ * applet by 20%, and it's not a feature that will be used by 20% of our
+ * audience. For more sophisticated import/export, consider the
  * <A HREF="http://xmlgraphics.apache.org/batik/">Batik</A> library
  * from the Apache Software Foundation. Future improvements to this
  * library may focus on this properly supporting a specific subset of
- * SVG, for instance the simpler SVG profiles known as 
- * <A HREF="http://www.w3.org/TR/SVGMobile/">SVG Tiny or Basic</A>, 
+ * SVG, for instance the simpler SVG profiles known as
+ * <A HREF="http://www.w3.org/TR/SVGMobile/">SVG Tiny or Basic</A>,
  * although we still would not support the interactivity options.
  * <p>
  * This library was specifically tested under SVG files created from
@@ -62,40 +62,40 @@ import processing.xml.*;
  * <p>
  * An SVG created under Illustrator must be created in one of two ways:
  * <UL>
- * <LI>File &rarr; Save for Web (or control-alt-shift-s on a PC). Under 
- * settings, make sure the CSS properties is set to "Presentation Attributes". 
- * <LI>With Illustrator CS2, it is also possible to use "Save As" with "SVG" 
+ * <LI>File &rarr; Save for Web (or control-alt-shift-s on a PC). Under
+ * settings, make sure the CSS properties is set to "Presentation Attributes".
+ * <LI>With Illustrator CS2, it is also possible to use "Save As" with "SVG"
  * as the file setting, but the CSS properties should also be set similarly.
- * </UL> 
+ * </UL>
  * Saving it any other way will most likely break Candy.
- * 
+ *
  * <p> <hr noshade> <p>
- * 
+ *
  * A minimal example program using Candy:
  * (assuming a working moo.svg is in your data folder)
- *   
+ *
  * <PRE>
  * import processing.candy.*;
  * import processing.xml.*;
- * 
+ *
  * SVG moo;
  * void setup(){
  *   size(400,400);
  *   moo = new SVG("moo.svg",this);
- * } 
+ * }
  * void draw(){
  *   moo.draw();
- * } 
+ * }
  * </PRE>
- * 
- * Note that processing.xml is imported as well. This is not needed 
+ *
+ * Note that processing.xml is imported as well. This is not needed
  * when running the app directly from Processing, as Candy will know
  * where it is. However when you export as an applet you will
  * also need to export processing.xml along with it to have working Candy.
- * 
+ *
  * <p> <hr noshade> <p>
  *
- * Revisions for "Candy 2" November 2006 by fry 
+ * Revisions for "Candy 2" November 2006 by fry
  * <UL>
  * <LI> Switch to the new processing.xml library
  * <LI> Several bug fixes for parsing of shape data
@@ -104,7 +104,7 @@ import processing.xml.*;
  * <LI> Added compound shapes (shapes with interior points)
  * <LI> Added methods to get shapes from an internal table
  * </UL>
- * 
+ *
  * Revision 10/31/06 by flux
  * <UL>
  * <LI>Now properly supports Processing-0118
@@ -136,26 +136,26 @@ public class SVG {
     public float width;
     public float height;
 
-    protected Hashtable table = new Hashtable();  
+    protected Hashtable table = new Hashtable();
     protected XMLElement svg;
     protected BaseObject root;
 
     protected boolean styleOverride = false;
-    
+
     int drawMode = PConstants.CORNER;
-    
+
 
     /**
      * Initializes a new SVG Object with the given filename.
      */
     public SVG(PApplet parent, String filename){
-        this.parent = parent;        
+        this.parent = parent;
         //this.filename = filename;
 
         // this will grab the root document, starting <svg ...>
         // the xml version and initial comments are ignored
         svg = new XMLElement(filename, parent);
-        
+
         /*
         Reader reader = parent.createReader(filename);
         if (reader == null) {
@@ -177,7 +177,7 @@ public class SVG {
 
         width = parseUnitSize(svg.getStringAttribute("width"));
         height = parseUnitSize(svg.getStringAttribute("height"));
-        
+
         /*
         PApplet.println("document has " + document.getChildCount() + " children");
         //Get the xml child node we need
@@ -185,7 +185,7 @@ public class SVG {
         PApplet.println(doc);
         if (true) return;
         */
-        
+
         /*
         //XMLElement entSVG = doc.getChild(0);
         //XMLElement svg = entSVG.getChild(1);
@@ -194,19 +194,19 @@ public class SVG {
         //svgHeight = svg.getIntAttribute("height");
 
         //Catch exception when SVG doesn't have a <g> tag
-        XMLElement graphics;	
+        XMLElement graphics;
         String nameOfFirstChild = svg.getChild(1).toString();
         if(nameOfFirstChild.equals("<g>"))
-            graphics = svg.getChild(1);	
+            graphics = svg.getChild(1);
         else
-            graphics = svg;	   
+            graphics = svg;
 
         this.svgData = svg;
         */
-        
+
         //parseChildren(document);
         root = new Group(svg);
-        
+
         /*
         XMLElement graphics = null;
 
@@ -220,7 +220,7 @@ public class SVG {
     /**
      * Internal method used to clone an object and return the subtree.
      */
-    protected SVG(PApplet parent, float width, float height, Hashtable table, 
+    protected SVG(PApplet parent, float width, float height, Hashtable table,
                   BaseObject obj, boolean styleOverride) {
         this.parent = parent;
         this.width = width;
@@ -230,8 +230,8 @@ public class SVG {
         this.svg = obj.element;
         this.styleOverride = styleOverride;
     }
-    
-    
+
+
     /**
      * Parse a size that may have a suffix for its units.
      * Ignoring cases where this could also be a percentage.
@@ -246,7 +246,7 @@ public class SVG {
      */
     public float parseUnitSize(String text) {
         int len = text.length() - 2;
-            
+
         if (text.endsWith("pt")) {
             return PApplet.parseFloat(text.substring(0, len)) * 1.25f;
         } else if (text.endsWith("pc")) {
@@ -262,19 +262,19 @@ public class SVG {
         }
     }
 
-    
+
     /**
      * Get a particular element based on its SVG ID. When editing SVG by hand,
      * this is the id="" tag on any SVG element. When editing from Illustrator,
      * these IDs can be edited by expanding the layers palette. The names used
-     * in the layers palette, both for the layers or the shapes and groups 
+     * in the layers palette, both for the layers or the shapes and groups
      * beneath them can be used here.
      * <PRE>
      * // This code grabs "Layer 3" and the shapes beneath it.
-     * SVG layer3 = svg.getElement("Layer 3");
+     * SVG layer3 = svg.get("Layer 3");
      * </PRE>
      */
-    public SVG getElement(String name) {
+    public SVG get(String name) {
         BaseObject obj = (BaseObject) table.get(name);
         if (obj == null) {
             // try with underscores instead of spaces
@@ -286,12 +286,12 @@ public class SVG {
         return null;
     }
 
-    
+
     /**
      * Draws the SVG document.
      */
     public void draw() {
-        //Maybe it would be smart to save all changes that have 
+        //Maybe it would be smart to save all changes that have
         // to made to processing modes here like
         int saveEllipseMode = parent.g.ellipseMode;
 
@@ -324,18 +324,29 @@ public class SVG {
         parent.g.strokeColor = strokeColor;
         parent.g.fillColor = fillColor;
     }
-    
-    
+
+
+    /**
+     * Convenience method to draw at a particular location.
+     */
+    public void draw(float x, float y) {
+        parent.pushMatrix();
+        parent.translate(x, y);
+        draw();
+        parent.popMatrix();
+    }
+
+
     public void drawMode(int which) {
         if (which == PConstants.CORNER || which == PConstants.CENTER) {
             drawMode = which;
         } else {
-            throw new RuntimeException("Only drawMode(CENTER) and " + 
+            throw new RuntimeException("Only drawMode(CENTER) and " +
                                        "drawMode(CORNER) are available.");
         }
     }
 
-    
+
     /**
      * Overrides SVG-set styles and uses PGraphics styles and colors.
      */
@@ -343,49 +354,49 @@ public class SVG {
         styleOverride = state;
     }
 
-    
+
     /**
      * Prints out the SVG document useful for parsing
      */
     public void print() {
         PApplet.println(svg.toString());
     }
-    
 
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-    
-    
+
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     protected abstract class BaseObject {
         String id;
         XMLElement element;
-        
+
         public BaseObject(XMLElement properties) {
             element = properties;
             id = properties.getStringAttribute("id");
             if (id != null) {
                 table.put(id, this);
-                //System.out.println("now parsing " + id);
+                System.out.println("now parsing " + id);
             }
         }
 
         protected abstract void drawShape();
-        
+
         protected void draw() {
             drawShape();
         }
     }
-    
-    
+
+
     //Default vector graphics class from which all others will polymorph
     protected abstract class VectorObject extends BaseObject {
 
         boolean stroke;
         int strokeColor; // = transValue;
         float strokeWeight; // default is 1
-        Gradient strokeGradient; 
+        Gradient strokeGradient;
         Paint strokeGradientPaint;
         String strokeName;  // id of another object, gradients only?
-        
+
         boolean fill;
         int fillColor; // = transValue;
         Gradient fillGradient;
@@ -396,7 +407,7 @@ public class SVG {
         float[] transformation; //= null;
 
         float opacity;
-        
+
         //Should we keep these here even when we don't have transforms?
         float rotation = 0;
         float translateX = 0;
@@ -439,9 +450,9 @@ public class SVG {
             }
         }
 
-        
+
         /*
-        private int colorFromString(String color, String opacity){ 
+        private int colorFromString(String color, String opacity){
             if (!color.equals("none")){
                 color = color.substring(1, 7);
                 color = opacity + color;
@@ -451,17 +462,17 @@ public class SVG {
             }
         }
         */
-        
+
 
         //We'll need color information like stroke, fill, opacity, stroke-weight
         protected void getColors(XMLElement properties){
-            
+
             // opacity for postscript-derived things like svg affects both stroke and fill
             //if (properties.hasAttribute("opacity")) {
             opacity = properties.getFloatAttribute("opacity", 1);
             //}
             int opacityMask = ((int) (opacity * 255)) << 24;
-            
+
             String strokeText = properties.getStringAttribute("stroke", "none");
             if (strokeText.equals("none")) {
 
@@ -481,7 +492,7 @@ public class SVG {
             }
             // strokeWeight defaults to 1, assuming that a stroke is present
             strokeWeight = properties.getFloatAttribute("stroke-width", 1);
-            
+
             // fill defaults to black (though stroke defaults to "none")
             // http://www.w3.org/TR/SVG/painting.html#FillProperties
             String fillText = properties.getStringAttribute("fill", "#000000");
@@ -508,11 +519,11 @@ public class SVG {
             }
         }
 
-        
+
         protected Paint calcGradientPaint(Gradient gradient) { //, float opacity) {
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
-                
+
                 /*
                 Color c1 = new Color(0xFF000000 | grad.color[0]);
                 Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
@@ -522,24 +533,24 @@ public class SVG {
                 return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
                                                grad.offset, grad.color, grad.count,
                                                opacity);
-                
-                    
+
+
             } else if (gradient instanceof RadialGradient) {
                 RadialGradient grad = (RadialGradient) gradient;
-                
+
                 //Color c1 = new Color(0xFF000000 | grad.color[0]);
                 //Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
-                return new RadialGradientPaint(grad.cx, grad.cy, grad.r, 
-                                               grad.offset, grad.color, grad.count, 
+                return new RadialGradientPaint(grad.cx, grad.cy, grad.r,
+                                               grad.offset, grad.color, grad.count,
                                                opacity);
             }
             return null;
         }
-        
+
 
         protected abstract void drawShape();
 
-        
+
         //might be more efficient for all subclasses
         protected void draw(){
             //PApplet.println(getClass().getName() + " " + id);
@@ -551,24 +562,24 @@ public class SVG {
              */
             if (!styleOverride) {
                 parent.colorMode(PConstants.RGB, 255);
-                
+
                 if (stroke) {
                     parent.stroke(strokeColor);
                     parent.strokeWeight(strokeWeight);
                 } else {
                     parent.noStroke();
                 }
-                
+
                 if (fill) {
                     //System.out.println("filling " + PApplet.hex(fillColor));
                     parent.fill(fillColor);
                 } else {
                     parent.noFill();
-                }                
+                }
 
                 if (parent.g instanceof PGraphicsJava2D) {
                     PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
-                
+
                     if (strokeGradient != null) {
                         p2d.strokeGradient = true;
                         p2d.strokeGradientObject = strokeGradientPaint;
@@ -583,9 +594,9 @@ public class SVG {
                         // need to shut off, in case parent object has a gradient applied
                         //p2d.fillGradient = false;
                     }
-                }                
+                }
             }
-            
+
             if (hasTransform){
                 parent.pushMatrix();
                 parent.translate(translateX, translateY);
@@ -600,7 +611,7 @@ public class SVG {
 
             if (parent.g instanceof PGraphicsJava2D) {
                 PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
-            
+
                 if (strokeGradient != null) {
                     p2d.strokeGradient = false;
                 }
@@ -611,15 +622,15 @@ public class SVG {
         }
     }
 
-    
+
     public class RadialGradientPaint implements Paint {
         float cx, cy, radius;
         float[] offset;
         int[] color;
         int count;
         float opacity;
-        
-        public RadialGradientPaint(float cx, float cy, float radius, 
+
+        public RadialGradientPaint(float cx, float cy, float radius,
                                    float[] offset, int[] color, int count,
                                    float opacity) {
             this.cx = cx;
@@ -634,14 +645,14 @@ public class SVG {
         public PaintContext createContext(ColorModel cm,
                                           Rectangle deviceBounds, Rectangle2D userBounds,
                                           AffineTransform xform, RenderingHints hints) {
-            Point2D transformedPoint = 
+            Point2D transformedPoint =
                 xform.transform(new Point2D.Float(cx, cy), null);
             // this causes problems
-            //Point2D transformedRadius = 
+            //Point2D transformedRadius =
             //    xform.deltaTransform(new Point2D.Float(radius, radius), null);
-            return new RadialGradientContext((float) transformedPoint.getX(), 
-                                             (float) transformedPoint.getY(), 
-                                             radius, //(float) transformedRadius.distance(0, 0), 
+            return new RadialGradientContext((float) transformedPoint.getX(),
+                                             (float) transformedPoint.getY(),
+                                             radius, //(float) transformedRadius.distance(0, 0),
                                              offset, color, count, opacity);
         }
 
@@ -654,17 +665,17 @@ public class SVG {
             //return (opacity == 1) ? OPAQUE : TRANSLUCENT;
             return TRANSLUCENT;  // why not.. rather than checking each color
         }
-    }          
-    
-    
+    }
+
+
     public class RadialGradientContext implements PaintContext {
         float cx, cy, radius;
         float[] offset;
         int[] color;
         int count;
         float opacity;
-        
-        public RadialGradientContext(float cx, float cy, float radius, 
+
+        public RadialGradientContext(float cx, float cy, float radius,
                                      float[] offset, int[] color, int count,
                                      float opacity) {
             this.cx = cx;
@@ -681,14 +692,14 @@ public class SVG {
         public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
 
         int ACCURACY = 5;
-        
+
         public Raster getRaster(int x, int y, int w, int h) {
             WritableRaster raster =
                 getColorModel().createCompatibleWritableRaster(w, h);
 
             //System.out.println("radius here is " + radius);
             //System.out.println("count is " + count);
-            int span = (int) radius * ACCURACY; 
+            int span = (int) radius * ACCURACY;
             int[][] interp = new int[span][4];
             int prev = 0;
             for (int i = 1; i < count; i++) {
@@ -705,14 +716,14 @@ public class SVG {
                 }
                 prev = last;
             }
-                
+
             int[] data = new int[w * h * 4];
             int index = 0;
             for (int j = 0; j < h; j++) {
                 for (int i = 0; i < w; i++) {
                     float distance = PApplet.dist(cx, cy, x + i, y + j);
                     int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
-                    
+
                     data[index++] = interp[which][0];
                     data[index++] = interp[which][1];
                     data[index++] = interp[which][2];
@@ -725,16 +736,16 @@ public class SVG {
         }
     }
 
-    
+
     public class LinearGradientPaint implements Paint {
         float x1, y1, x2, y2;
         float[] offset;
         int[] color;
         int count;
         float opacity;
-        
+
         public LinearGradientPaint(float x1, float y1, float x2, float y2,
-                                   float[] offset, int[] color, int count, 
+                                   float[] offset, int[] color, int count,
                                    float opacity) {
             this.x1 = x1;
             this.y1 = y1;
@@ -751,8 +762,8 @@ public class SVG {
                                           AffineTransform xform, RenderingHints hints) {
             Point2D t1 = xform.transform(new Point2D.Float(x1, y1), null);
             Point2D t2 = xform.transform(new Point2D.Float(x2, y2), null);
-            return new LinearGradientContext((float) t1.getX(), (float) t1.getY(), 
-                                             (float) t2.getX(), (float) t2.getY(), 
+            return new LinearGradientContext((float) t1.getX(), (float) t1.getY(),
+                                             (float) t2.getX(), (float) t2.getY(),
                                              offset, color, count, opacity);
         }
 
@@ -765,16 +776,16 @@ public class SVG {
             //return OPAQUE;
             return TRANSLUCENT;  // why not.. rather than checking each color
         }
-    }          
-    
-    
+    }
+
+
     public class LinearGradientContext implements PaintContext {
         float x1, y1, x2, y2;
         float[] offset;
         int[] color;
         int count;
         float opacity;
-        
+
         public LinearGradientContext(float x1, float y1, float x2, float y2,
                                      float[] offset, int[] color, int count,
                                      float opacity) {
@@ -793,7 +804,7 @@ public class SVG {
         public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
 
         int ACCURACY = 2;
-        
+
         public Raster getRaster(int x, int y, int w, int h) {
             WritableRaster raster =
                 getColorModel().createCompatibleWritableRaster(w, h);
@@ -806,8 +817,9 @@ public class SVG {
                 nx /= len;
                 ny /= len;
             }
-            
+
             int span = (int) PApplet.dist(x1, y1, x2, y2) * ACCURACY;
+            System.out.println("span is " + span + " " + x1 + " " + y1 + " " + x2 + " " + y2);
             int[][] interp = new int[span][4];
             int prev = 0;
             for (int i = 1; i < count; i++) {
@@ -838,9 +850,9 @@ public class SVG {
                     // vector of the gradient start/stop by the point being tested
                     int which = (int) ((px*nx + py*ny) * ACCURACY);
                     if (which < 0) which = 0;
-                    if (which > interp.length-1) which = interp.length-1; 
+                    if (which > interp.length-1) which = interp.length-1;
                     //if (which > 138) System.out.println("grabbing " + which);
-                    
+
                     data[index++] = interp[which][0];
                     data[index++] = interp[which][1];
                     data[index++] = interp[which][2];
@@ -852,68 +864,68 @@ public class SVG {
             return raster;
         }
     }
-    
-    
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-    
-    
+
+
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     private class Group extends BaseObject {
         BaseObject[] objects;
         int objectCount;
-        
-        
+
+
         public Group(XMLElement graphics) {
             super(graphics);
-            
+
             XMLElement elements[] = graphics.getChildren();
             objects = new BaseObject[elements.length];
-            
+
             for (int i = 0; i < elements.length; i++){
                 String name = elements[i].getName(); //getElement();
                 XMLElement elem = elements[i];
-                
+
                 if (name.equals("g")) {
                     objects[objectCount++] = new Group(elem);
-                    
+
                 } else if (name.equals("defs")) {
-                    // generally this will contain gradient info, so may 
+                    // generally this will contain gradient info, so may
                     // as well just throw it into a group element for parsing
                     objects[objectCount++] = new Group(elem);
-                    
+
                 } else if (name.equals("line")) {
                     objects[objectCount++] = new Line(elem);
-                    
+
                 } else if (name.equals("circle")) {
                     objects[objectCount++] = new Circle(elem);
-                    
+
                 } else if (name.equals("ellipse")) {
                     objects[objectCount++] = new Ellipse(elem);
-                    
+
                 } else if (name.equals("rect")) {
                     objects[objectCount++] = new Rect(elem);
-                    
+
                 } else if (name.equals("polygon")) {
                     objects[objectCount++] = new Poly(elem, true);
-                    
+
                 } else if (name.equals("polyline")) {
                     objects[objectCount++] = new Poly(elem, false);
-                    
+
                 } else if (name.equals("path")) {
                     objects[objectCount++] = new Path(elem);
-                    
+
                 } else if (name.equals("radialGradient")) {
                     objects[objectCount++] = new RadialGradient(elem);
-                    
+
                 } else if (name.equals("linearGradient")) {
-                    objects[objectCount++] = new LinearGradient(elem);                    
-                    
+                    objects[objectCount++] = new LinearGradient(elem);
+
                 } else {
                     PApplet.println("not handled " + name);
                 }
             }
         }
-        
-        
+
+
         public void drawShape() {
             for (int i = 0; i < objectCount; i++) {
                 objects[i].draw();
@@ -921,22 +933,22 @@ public class SVG {
         }
     }
 
-    
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-    
-    
+
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     abstract private class Gradient extends BaseObject {
         float[] offset;
         int[] color;
         int count;
-        
+
         public Gradient(XMLElement properties) {
             super(properties);
-            
+
             XMLElement elements[] = properties.getChildren();
             offset = new float[elements.length];
             color = new int[elements.length];
-            
+
             // <stop  offset="0" style="stop-color:#967348"/>
             for (int i = 0; i < elements.length; i++){
                 XMLElement elem = elements[i];
@@ -945,13 +957,13 @@ public class SVG {
                     offset[count] = elem.getFloatAttribute("offset");
                     String style = elem.getStringAttribute("style");
                     Hashtable styles = parseStyleAttributes(style);
-                    
+
                     String colorStr = (String) styles.get("stop-color");
                     if (colorStr == null) colorStr = "#000000";
                     String opacityStr = (String) styles.get("stop-opacity");
                     if (opacityStr == null) opacityStr = "1";
                     int tupacity = (int) (PApplet.parseFloat(opacityStr) * 255);
-                    color[count] = (tupacity << 24) | 
+                    color[count] = (tupacity << 24) |
                         Integer.parseInt(colorStr.substring(1), 16);
                     count++;
                     //System.out.println("this color is " + PApplet.hex(color[count]));
@@ -967,10 +979,10 @@ public class SVG {
                 }
             }
         }
-        
+
         abstract protected void drawShape();
     }
-    
+
     static protected Hashtable parseStyleAttributes(String style) {
         Hashtable table = new Hashtable();
         String[] pieces = style.split(";");
@@ -980,14 +992,14 @@ public class SVG {
         }
         return table;
     }
-    
-    
+
+
     private class LinearGradient extends Gradient {
         float x1, y1, x2, y2;
 
         public LinearGradient(XMLElement properties) {
             super(properties);
-            
+
             this.x1 = properties.getFloatAttribute("x1");
             this.y1 = properties.getFloatAttribute("y1");
             this.x2 = properties.getFloatAttribute("x2");
@@ -998,27 +1010,27 @@ public class SVG {
         }
     }
 
-    
+
     private class RadialGradient extends Gradient {
         float cx, cy, r;
-        
-        
-        public RadialGradient(XMLElement properties) {            
+
+
+        public RadialGradient(XMLElement properties) {
             super(properties);
-            
+
             this.cx = properties.getFloatAttribute("cx");
             this.cy = properties.getFloatAttribute("cy");
             this.r = properties.getFloatAttribute("r");
         }
-        
+
         protected void drawShape() {
         }
-    }    
-    
-    
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-    
-    
+    }
+
+
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     private class Line extends VectorObject{
 
         float x1, y1, x2, y2;
@@ -1036,10 +1048,10 @@ public class SVG {
         }
     }
 
-    
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-    
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     private class Circle extends VectorObject{
 
         float x, y, radius;
@@ -1057,10 +1069,10 @@ public class SVG {
         }
     }
 
-    
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-    
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     private class Ellipse extends VectorObject{
 
         float x, y, rx, ry;
@@ -1071,19 +1083,19 @@ public class SVG {
             this.x = properties.getFloatAttribute("cx");
             this.y = properties.getFloatAttribute("cy");
             this.rx = properties.getFloatAttribute("rx") * 2;
-            this.ry = properties.getFloatAttribute("ry") * 2; 
+            this.ry = properties.getFloatAttribute("ry") * 2;
         }
 
         protected void drawShape(){
-            parent.ellipseMode(PConstants.CENTER); 
+            parent.ellipseMode(PConstants.CENTER);
             parent.ellipse(x, y, rx, ry);
         }
     }
 
-    
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-    
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     private class Rect extends VectorObject{
 
         float x, y, w, h;
@@ -1102,10 +1114,10 @@ public class SVG {
         }
     }
 
-    
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-    
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     private class Poly extends VectorObject {
 
         float points[][] = null;
@@ -1117,11 +1129,11 @@ public class SVG {
             String pointsBuffer[] = null;
             this.closed = closed;
 
-            if (properties.hasAttribute("points")) { 
+            if (properties.hasAttribute("points")) {
                 //pointsBuffer = PApplet.split(properties.getStringAttribute("points"), ' ');
                 pointsBuffer = PApplet.split(properties.getStringAttribute("points"));
             }
-            
+
             points = new float[pointsBuffer.length][2];
             for (int i = 0; i < points.length; i++){
                 String pb[] = PApplet.split(pointsBuffer[i], ',');
@@ -1142,27 +1154,27 @@ public class SVG {
         }
     }
 
-    
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-    
-    
+
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
     private class Path extends VectorObject {
 
         //Vector points = new Vector();
         boolean closed = false;
-        
+
         int count = 0;
         float[] x = new float[4];
         float[] y = new float[4];
         //boolean[] bezier = new boolean[4];
-        
+
         static final int MOVETO = 0;
         static final int LINETO = 1;
         static final int CURVETO = 2;
         int[] kind = new int[4];
-        
 
-        //Hang on! This is going to be meaty.   
+
+        //Hang on! This is going to be meaty.
         //Big and nasty constructor coming up....
         public Path(XMLElement properties){
             super(properties);
@@ -1212,7 +1224,7 @@ public class SVG {
 
             //String pathDataKeys[] = PApplet.split(pathDataBuffer, '|');
             // use whitespace constant to get rid of extra spaces and CR or LF
-            String pathDataKeys[] = 
+            String pathDataKeys[] =
                 PApplet.split(pathDataBuffer, "|" + PConstants.WHITESPACE);
             //for (int j = 0; j < pathDataKeys.length; j++) {
             //    PApplet.println(j + "\t" + pathDataKeys[j]);
@@ -1229,7 +1241,7 @@ public class SVG {
             while (i < pathDataKeys.length) {
                 char c = pathDataKeys[i].charAt(0);
                 switch (c) {
-                
+
                 //M - move to (absolute)
                 case 'M':
                     /*
@@ -1244,8 +1256,8 @@ public class SVG {
                     moveto(cx, cy);
                     i += 3;
                     break;
-                
-                    
+
+
                 //m - move to (relative)
                 case 'm':
                     /*
@@ -1261,53 +1273,53 @@ public class SVG {
                     i += 3;
                     break;
 
-                
+
                 case 'L':
                     cx = PApplet.parseFloat(pathDataKeys[i + 1]);
                     cy = PApplet.parseFloat(pathDataKeys[i + 2]);
                     lineto(cx, cy);
                     i += 3;
                     break;
-                
-                
+
+
                 case 'l':
                     cx = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
                     cy = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
                     lineto(cx, cy);
                     i += 3;
                     break;
-                
-                
+
+
                 // horizontal lineto absolute
-                case 'H': 
+                case 'H':
                     cx = PApplet.parseFloat(pathDataKeys[i + 1]);
                     lineto(cx, cy);
                     i += 2;
                     break;
-                
-                
+
+
                 // horizontal lineto relative
                 case 'h':
                     cx = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
                     lineto(cx, cy);
                     i += 2;
                     break;
-                
-                
-                case 'V': 
+
+
+                case 'V':
                     cy = PApplet.parseFloat(pathDataKeys[i + 1]);
                     lineto(cx, cy);
                     i += 2;
                     break;
 
-                    
-                case 'v': 
+
+                case 'v':
                     cy = cy + PApplet.parseFloat(pathDataKeys[i + 1]);
                     lineto(cx, cy);
                     i += 2;
                     break;
 
-                
+
                 //C - curve to (absolute)
                 case 'C': {
                     /*
@@ -1333,7 +1345,7 @@ public class SVG {
                     i += 7;
                 }
                 break;
-                
+
                 //c - curve to (relative)
                 case 'c': {
                     /*
@@ -1359,15 +1371,15 @@ public class SVG {
                     i += 7;
                 }
                 break;
-                
+
                 //S - curve to shorthand (absolute)
                 case 'S': {
                     /*
                     float lastPoint[] = (float[]) points.get(points.size() - 1);
                     float lastLastPoint[] = (float[]) points.get(points.size() - 2);
-                    float curvePA[] = {cp[0] + (lastPoint[0] - lastLastPoint[0]), 
+                    float curvePA[] = {cp[0] + (lastPoint[0] - lastLastPoint[0]),
                                        cp[1] + (lastPoint[1] - lastLastPoint[1])};
-                    float curvePB[] = {PApplet.parseFloat(pathDataKeys[i + 1]), 
+                    float curvePB[] = {PApplet.parseFloat(pathDataKeys[i + 1]),
                                        PApplet.parseFloat(pathDataKeys[i + 2])};
                     float e[] = {PApplet.parseFloat(pathDataKeys[i + 3]), PApplet.parseFloat(pathDataKeys[i + 4])};
                     cp[0] = e[0];
@@ -1393,7 +1405,7 @@ public class SVG {
                     i += 5;
                 }
                 break;
-                
+
                 //s - curve to shorthand (relative)
                 case 's': {
                     /*
@@ -1425,20 +1437,20 @@ public class SVG {
                     i += 5;
                 }
                 break;
-                
+
                 case 'Z':
                 case 'z':
                     closed = true;
                     i++;
                     break;
-                    
+
                 default:
                     throw new RuntimeException("shape command not handled: " + pathDataKeys[i]);
                 }
             }
         }
-        
-        
+
+
         protected void moveto(float px, float py) {
             if (count == x.length) {
                 x = PApplet.expand(x);
@@ -1450,8 +1462,8 @@ public class SVG {
             y[count] = py;
             count++;
         }
-        
-        
+
+
         protected void lineto(float px, float py) {
             if (count == x.length) {
                 x = PApplet.expand(x);
@@ -1463,8 +1475,8 @@ public class SVG {
             y[count] = py;
             count++;
         }
-        
-        
+
+
         protected void curveto(float x1, float y1, float x2, float y2, float x3, float y3) {
             if (count + 2 >= x.length) {
                 x = PApplet.expand(x);
@@ -1483,7 +1495,7 @@ public class SVG {
             count++;
         }
 
-        
+
         protected void drawShape(){
             parent.beginShape();
             /*
@@ -1496,14 +1508,14 @@ public class SVG {
                 parent.bezierVertex(a[0], a[1], b[0], b[1], e[0], e[1]);
             }
             */
-            
+
             /*
             for (int i = 0; i < count; i++) {
                 PApplet.println(i + "\t" + x[i] + "\t" + y[i] + "\t" + bezier[i]);
             }
             PApplet.println();
             */
-            
+
             parent.vertex(x[0], y[0]);
             int i = 1;  // moveto has the first point
             while (i < count) {
@@ -1520,12 +1532,12 @@ public class SVG {
                     parent.vertex(x[i], y[i]);
                     i++;
                     break;
-                    
+
                 case LINETO:
                     parent.vertex(x[i], y[i]);
                     i++;
                     break;
-                    
+
                 case CURVETO:
                     parent.bezierVertex(x[i], y[i], x[i+1], y[i+1], x[i+2], y[i+2]);
                     i += 3;
@@ -1538,7 +1550,7 @@ public class SVG {
                 parent.endShape(PConstants.CLOSE);
             else
                 parent.beginShape();
-            //	    p.endShape();
+            //      p.endShape();
              */
         }
     }
