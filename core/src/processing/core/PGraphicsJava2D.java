@@ -73,7 +73,7 @@ public class PGraphicsJava2D extends PGraphics {
   public boolean strokeGradient;
   public Paint strokeGradientObject;
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -131,6 +131,7 @@ public class PGraphicsJava2D extends PGraphics {
   protected void allocate() {
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     g2 = (Graphics2D) image.getGraphics();
+    defaultsInited = false;
   }
 
 
@@ -429,8 +430,8 @@ public class PGraphicsJava2D extends PGraphics {
   public void breakShape() {
     breakShape = true;
   }
-  
-  
+
+
   public void endShape(int mode) {
     if (gpath != null) {  // make sure something has been drawn
       if (shape == POLYGON) {
@@ -446,21 +447,21 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   //////////////////////////////////////////////////////////////
-  
-  
+
+
   /*
   protected void fillGradient(Paint paint) {
     fillGradient = true;
     fillGradientObject = paint;
   }
-  
-  
+
+
   protected void noFillGradient() {
     fillGradient = false;
   }
   */
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
 

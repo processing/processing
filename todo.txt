@@ -15,6 +15,9 @@ X cmd-{ and cmd-} no longer work after the menu is shown
 X   http://dev.processing.org/bugs/show_bug.cgi?id=402
 X clicking "cancel" on close still quitting the app
 X   http://dev.processing.org/bugs/show_bug.cgi?id=440
+X discourse format sucked, changed to format for discourse
+X   http://dev.processing.org/bugs/show_bug.cgi?id=447
+X changing macosx to allow Java 1.5 to be used
 
 fixed earlier or wontfix
 X double-click only selects part of underscored word
@@ -34,10 +37,10 @@ X a moveto *inside* a shape will be treated as a lineto
 X   had to fix this
 X implement polyline
 
-
 X updated to antlr 2.7.7
 _ added log4j (for the autoformatter)
 
+_ after sketch -> add file, no confirmation message is shown
 _ applet sizing issues with external vm
 _   could this possibly be related to the linux bug?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=430

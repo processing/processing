@@ -4126,7 +4126,8 @@ public class PApplet extends Applet
 
     System.err.println("The file \"" + filename + "\" " +
                        "is missing or inaccessible, make sure " +
-                       "it's been added to your sketch and is readable.");
+                       "the URL is valid or that the file has been " +
+                       "added to your sketch and is readable.");
     return null;
   }
 
@@ -4176,7 +4177,8 @@ public class PApplet extends Applet
 
     System.err.println("The file \"" + filename + "\" " +
                        "is missing or inaccessible, make sure " +
-                       "it's been added to your sketch and is readable.");
+                       "the URL is valid or that the file has been " +
+                       "added to your sketch and is readable.");
     return null;
   }
 

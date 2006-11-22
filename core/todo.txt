@@ -9,11 +9,22 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=
 X regression in P3D that prevents point() from drawing
 X   problem is with setup_vertex() not adding similar points
 X   http://dev.processing.org/bugs/show_bug.cgi?id=444
+X if doing openstream on url, says that "the file" is missing or invalid
+X   add notes about it being a url
 
 fixed earlier, bug cleaning
 X gray background in pdf (using both gl and p3d)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=324
 X   verified as fixed in 0122
+
+
+_ background not being set properly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=454
+_ ARGB problems with createGraphics
+_   http://dev.processing.org/bugs/show_bug.cgi?id=160
+_   http://dev.processing.org/bugs/show_bug.cgi?id=428
+_ why aren't background() / defaults() being called for opengl?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 
 _ using gl, lines don't show up in pdf with record (they're ok with p3d)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=325
@@ -21,26 +32,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=325
 _ gradients
 _   use gradients in a class for the svg lib for now
 _   don't add api to main p5 stuff (though maybe setPaint/noPaint api?)
-
-_ tint() and noTint() switching problem in P2D
-_   this should be a quick fix
-_   http://dev.processing.org/bugs/show_bug.cgi?id=222
-_ ARGB problems with createGraphics
-_   http://dev.processing.org/bugs/show_bug.cgi?id=428
-_ related to the fill bugs: when fill is identical, no fill applied
-_   actually tint() should take over for fill as per-vertex color
-_   when textured images are being used
-_   http://dev.processing.org/bugs/show_bug.cgi?id=169
-_ tint() should set texture color, fill() is ignored with textures
-_ fix tint() for PGraphics3 (what could be wrong?)
-_   tint() honoring alpha but not colored tint
-_   maybe not setting fill color when drawing textures
-_   guessing it's an implementation issue in sami's renderer
-_   check with the a_Displaying example and tint(255, 0, 0, 100);
-_   http://dev.processing.org/bugs/show_bug.cgi?id=90
-_   is fill() not coloring textures properly?
-_     don't need to apply tint() to textures, supposed to use fill color
-
 _ gradient-painted lines and fills
 _   java2d will do both line and fill, illusfarter only does fills
 import java.awt.geom.*;
@@ -56,6 +47,23 @@ Graphics2D g2 = ((PGraphicsJava2D)g).g2;
 g2.setPaint(gradient);
 //g2.draw(gp);
 g2.fill(gp);
+
+_ tint() and noTint() switching problem in P2D
+_   this should be a quick fix
+_   http://dev.processing.org/bugs/show_bug.cgi?id=222
+_ related to the fill bugs: when fill is identical, no fill applied
+_   actually tint() should take over for fill as per-vertex color
+_   when textured images are being used
+_   http://dev.processing.org/bugs/show_bug.cgi?id=169
+_ tint() should set texture color, fill() is ignored with textures
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   tint() honoring alpha but not colored tint
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
+_   check with the a_Displaying example and tint(255, 0, 0, 100);
+_   http://dev.processing.org/bugs/show_bug.cgi?id=90
+_   is fill() not coloring textures properly?
+_     don't need to apply tint() to textures, supposed to use fill color
 
 add to reference
 _ also parseInt and parseFloat, how they can return another number or NaN
@@ -305,8 +313,6 @@ _   need to track this stuff down a bit
 _ clipboard implementation as example or as part of api
 _   http://dev.processing.org/bugs/show_bug.cgi?id=167
 
-_ why aren't background() / defaults() being called for opengl?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 _ some optimizations from zach
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
 
@@ -317,7 +323,7 @@ _   probably later, want to do the 3D/arch stuff correctly
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-_ PApplet.main(new String[] { "classname }) won't pass in args.. grr
+_ PApplet.main(new String[] { "classname" }) won't pass in args.. grr
 _   PApplet.main(append(new String[] { "classname }, args));
 
 
