@@ -96,6 +96,7 @@
 		<ex file="Translate.html">Translate</ex>
 		<ex file="Scale.html">Scale</ex>
 		<ex file="Rotate.html">Rotate</ex>
+		<ex file="Limb.html">Limb</ex>
 	</cat>
 	<cat label="Motion">
 		<ex file="Linear.html">Linear </ex>
@@ -116,7 +117,12 @@
 		<ex file="MouseFunctions.html">Mouse Functions</ex>
 		<ex file="Keyboard.html">Keyboard</ex>
 		<ex file="KeyboardFunctions.html">Keyboard Functions</ex>
-		<ex file="Milliseconds.html">Milliseconds</ex>
+		<ex file="Follow1.html">Follow 1</ex>
+		<ex file="Follow2.html">Follow 2</ex>
+		<ex file="Follow3.html">Follow 3</ex>
+		<ex file="Reach1.html">Reach 1</ex>
+		<ex file="Reach2.html">Reach 2</ex>
+		<ex file="Reach3.html">Reach 3</ex>
 	</cat>
 	<cat label="GUI">
 		<ex file="Rollover.html">Rollover </ex>

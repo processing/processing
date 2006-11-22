@@ -63,17 +63,17 @@ This class stores graphics in the SVG vector format and can draw them to the scr
 </method>
 
 <constructor>
-SVG(<c>filename</c>, <c>parent</c>)
+SVG(<c>parent</c>, <c>filename</c>)
 </constructor>
-
-<cparameter>
-<clabel>width</clabel>
-<cdescription>String: name of the file to load</cdescription>
-</cparameter>
 
 <cparameter>
 <clabel>parent</clabel>
 <cdescription>PApplet: typically use "this"</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>width</clabel>
+<cdescription>String: name of the file to load</cdescription>
 </cparameter>
 
 <returns></returns>

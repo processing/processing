@@ -26,10 +26,10 @@ void setup(){
 
 void draw() {
   background(204);
-  m.ignoreStyles(false);
+  m.ignoreStyles(true);
   m.draw();
   translate(0, 100);
-  m.ignoreStyles(true);
+  m.ignoreStyles(false);
   fill(0, 90, 120);
   m.draw();
 } 
