@@ -16,11 +16,11 @@ import processing.xml.*;
 
 // The following short XML file called "sites.xml" is parsed 
 // in the code below. It must be in the project's "data" directory
-// <?xml version="1.0"?>
-// <websites>
-//   <site id="0" url="processing.org">Processing</site>
-//   <site id="1" url="mobile.processing.org">Processing Mobile</site>
-// </websites>
+// &#60;?xml version="1.0"?&#62;
+// &#60;websites&#62;
+//   &#60;site id="0" url="processing.org">Processing&#60;/site&#62;
+//   &#60;site id="1" url="mobile.processing.org">Processing Mobile&#60;/site&#62;
+// &#60;/websites&#62;
 
 XMLElement xml;
 
@@ -40,7 +40,7 @@ void setup() {
 </example>
 
 <description>
-Returns a String attribute of the element. If the <b>default<b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned. When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned. 
+Returns a String attribute of the element. If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned. When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned. 
 </description>
 
 <syntax>
@@ -59,7 +59,7 @@ Returns a String attribute of the element. If the <b>default<b> parameter is use
 </parameter>
 
 <parameter>
-<label>name</label>
+<label>default</label>
 <description>int: value returned if the attribute is not found</description>
 </parameter>
 

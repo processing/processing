@@ -74,12 +74,12 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 
 <method>
 <mname>getFloatAttribute()</mname>
-<mdescription>Returns an float attribute of the element.</mdescription>
+<mdescription>Returns a float attribute of the element.</mdescription>
 </method>
 
 <method>
 <mname>getStringAttribute()</mname>
-<mdescription>Returns an String attribute of the element.</mdescription>
+<mdescription>Returns a String attribute of the element.</mdescription>
 </method>
 
 <method>
