@@ -16,13 +16,13 @@ import processing.xml.*;
 
 // The following short XML file called "sites.xml" is parsed 
 // in the code below. It must be in the project's "data" directory
-// <?xml version="1.0"?>
-// <websites>
-//   <site>
-//     <name>Processing</name>
-//     <url>www.processing.org</url>
-//   </site>
-// </websites>
+// &#60;?xml version="1.0"?&#62;
+// &#60;websites&#62;
+//   &#60;site&#62;
+//     &#60;name>Processing&#60;/name&#62;
+//     &#60;url>www.processing.org&#60;/url&#62;
+//   &#60;/site&#62;
+// &#60;/websites&#62;
 
 XMLElement xml;
 
