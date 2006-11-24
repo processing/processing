@@ -19,8 +19,8 @@ import processing.xml.*;
 // &#60;?xml version="1.0"?&#62;
 // &#60;websites&#62;
 //   &#60;site&#62;
-//     &#60;name>Processing&#60;/name&#62;
-//     &#60;url>www.processing.org&#60;/url&#62;
+//     &#60;name&#62;Processing&#60;/name&#62;
+//     &#60;url&#62;www.processing.org&#60;/url&#62;
 //   &#60;/site&#62;
 // &#60;/websites&#62;
 
