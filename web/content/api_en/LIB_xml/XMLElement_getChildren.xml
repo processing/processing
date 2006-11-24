@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>getChild()</name>
+
+<category>XML</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+import processing.xml.*;
+
+// The following short XML file called "sites.xml" is parsed 
+// in the code below. It must be in the project's "data" directory
+// <?xml version="1.0"?>
+// <websites>
+//   <site id="0" url="processing.org">Processing</site>
+//   <site id="1" url="mobile.processing.org">Processing Mobile</site>
+// </websites>
+
+XMLElement xml;
+
+void setup() {
+  size(200, 200);
+  xml = new XMLElement("sites.xml", this);
+  XMLElement[] kids = xml.getChildren();
+  for (int i=0; i<kids.length; i++) {
+    String site = kids[i].getContent();
+    println(site); 
+  }
+}
+</code>
+</example>
+
+<description>
+Returns all of the children as an XMLElement array.
+</description>
+
+<syntax>
+<c>xml</c>.getChildren()
+</syntax>
+
+<parameter>
+<label>xml</label>
+<description>any variable of type XML</description>
+</parameter>
+
+<returns>XMLElement[]</returns>
+
+<related>
+getChildCount()
+getChild()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

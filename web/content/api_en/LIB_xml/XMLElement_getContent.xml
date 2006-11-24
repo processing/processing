@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>getContent()</name>
+
+<category>XML</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+import processing.xml.*;
+
+// The following short XML file called "sites.xml" is parsed 
+// in the code below. It must be in the project's "data" directory
+// <?xml version="1.0"?>
+// <websites>
+//   <site id="0" url="processing.org">Processing</site>
+//   <site id="1" url="mobile.processing.org">Processing Mobile</site>
+// </websites>
+
+XMLElement xml;
+
+void setup() {
+  size(200, 200);
+  xml = new XMLElement("sites.xml", this);
+  int numSites = xml.getChildCount();
+  for (int i = 0; i < numSites; i++) {
+    XMLElement kid = xml.getChild(i);
+    String site = kid.getContent();
+    println(site);    
+  }
+}
+</code>
+</example>
+
+<description>
+Returns the content of an element. If there is no such content, <b>null</b> is returned.
+</description>
+
+<syntax>
+<c>xml</c>.getContent()
+</syntax>
+
+<parameter>
+<label>xml</label>
+<description>any variable of type XML</description>
+</parameter>
+
+<returns>String</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

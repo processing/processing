@@ -163,15 +163,31 @@ As of release 0116, this is JOGL 1.0.
 
 import javax.media.opengl.*;
 
+float a; 
+
 void setup() {
-  size(400, 400, OPENGL);
+  size(800, 600, OPENGL);
 }
 
 void draw() {
+  background(255);
+  
   PGraphicsOpenGL pgl = (PGraphicsOpenGL) g;
   GL gl = pgl.beginGL();
-  // do some things with gl.xxx functions here
+  
+  // Do some things with gl.xxx functions here.
+  // For example, the program above is translated into:
+  gl.glColor4f(0.7, 0.7, 0.7, 0.8);
+  gl.glTranslatef(width/2, height/2, 0);
+  gl.glRotatef(a, 1, 0, 0);
+  gl.glRotatef(a*2, 0, 1, 0);
+  gl.glRectf(-200, -200, 200, 200);
+  gl.glRotatef(90, 1, 0, 0);
+  gl.glRectf(-200, -200, 200, 200);
+  
   pgl.endGL();
+  
+  a += 0.5;
 }
 
 </PRE>

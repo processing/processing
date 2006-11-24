@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>getChildCount()</name>
+
+<category>XML</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+import processing.xml.*;
+
+// The following short XML file called "sites.xml" is parsed 
+// in the code below. It must be in the project's "data" directory
+// <?xml version="1.0"?>
+// <websites>
+//   <site id="0" url="processing.org">Processing</site>
+//   <site id="1" url="mobile.processing.org">Processing Mobile</site>
+// </websites>
+
+XMLElement xml;
+
+void setup() {
+  size(200, 200);
+  xml = new XMLElement("sites.xml", this);
+  int numSites = xml.getChildCount();
+  println(numSites); // Prints "2"
+}
+</code>
+</example>
+
+<description>
+Returns the number of children for the element.
+</description>
+
+<syntax>
+<c>xml</c>.getChildCount()
+</syntax>
+
+<parameter>
+<label>xml</label>
+<description>any variable of type XML</description>
+</parameter>
+
+<returns>int</returns>
+
+<related>
+getChild()
+getChildren()
+</related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>

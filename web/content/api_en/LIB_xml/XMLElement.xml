@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>XMLElement</name>
+
+<category>XML</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+// The following short XML file called "sites.xml" is parsed 
+// in the code below. It must be in the project's "data" directory
+// <?xml version="1.0"?>
+// <websites>
+//   <site id="0" url="processing.org">Processing</site>
+//   <site id="1" url="mobile.processing.org">Processing Mobile</site>
+// </websites>
+
+XMLElement xml;
+
+void setup() {
+  size(200, 200);
+  xml = new XMLElement("sites.xml", this);
+  int numSites = xml.getChildCount();
+  for (int i = 0; i < numSites; i++) {
+    XMLElement kid = xml.getChild(i);
+    int id = kid.getIntAttribute("id"); 
+    String url = kid.getStringAttribute("url"); 
+    String site = kid.getContent();
+    println(id + " : " + url + " : " + site);    
+  }
+}
+</code>
+</example>
+
+<description>
+XMLElement is a representation of an XML object. The object is able to parse XML code. The methods described here are the most basic. More are documented in the Developer's Reference.
+</description>
+
+<syntax>
+</syntax>
+
+<parameters>
+</parameters>
+
+<method>
+<mname>getChildCount()</mname>
+<mdescription>Returns the number of children for the element.</mdescription>
+</method>
+
+<method>
+<mname>getChild()</mname>
+<mdescription>Returns a single child.</mdescription>
+</method>
+
+<method>
+<mname>getChildren()</mname>
+<mdescription>Returns all of the children as an XMLElement array.</mdescription>
+</method>
+
+<method>
+<mname>getContent()</mname>
+<mdescription>Returns the content of an element</mdescription>
+</method>
+
+<method>
+<mname>getIntAttribute()</mname>
+<mdescription>Returns an integer attribute of the element.</mdescription>
+</method>
+
+<method>
+<mname>getFloatAttribute()</mname>
+<mdescription>Returns an float attribute of the element.</mdescription>
+</method>
+
+<method>
+<mname>getStringAttribute()</mname>
+<mdescription>Returns an String attribute of the element.</mdescription>
+</method>
+
+<method>
+<mname>getName()</mname>
+<mdescription>Returns the name of the element.</mdescription>
+</method>
+
+
+<constructor>
+XML(<c>file</c>, <c>parent</c>)
+</constructor>
+
+<cparameter>
+<clabel>file</clabel>
+<cdescription>String: name of the XML file to load</cdescription>
+</cparameter>
+
+<cparameter>
+<clabel>parent</clabel>
+<cdescription>PApplet: typically use "this"</cdescription>
+</cparameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Object</type>
+
+<partof>Library</partof>
+
+</root>
