@@ -14,11 +14,11 @@
 <code>
 // The following short XML file called "sites.xml" is parsed 
 // in the code below. It must be in the project's "data" directory
-// &lt;?xml version="1.0"?&gt;
-// &lt;websites&gt;
-//   &lt;site id="0" url="processing.org"&gt;Processing&lt;/site&gt;
-//   &lt;site id="1" url="mobile.processing.org"&gt;Processing Mobile&lt;/site&gt;
-// &lt;/websites&gt;
+// &#60;?xml version="1.0"?&#62;
+// &#60;websites&#62;
+//   &#60;site id="0" url="processing.org"&#62;Processing&#60;/site&#62;
+//   &#60;site id="1" url="mobile.processing.org"&#62;Processing Mobile&#60;/site&#62;
+// &#60;/websites&#62;
 
 XMLElement xml;
 
