@@ -12,30 +12,7 @@
 <example>
 <image></image>
 <code>
-import processing.xml.*;
-
-// The following short XML file called "sites.xml" is parsed 
-// in the code below. It must be in the project's "data" directory
-// &#60;?xml version="1.0"?&#62;
-// &#60;websites&#62;
-//   &#60;site id="0" url="processing.org">Processing&#60;/site&#62;
-//   &#60;site id="1" url="mobile.processing.org">Processing Mobile&#60;/site&#62;
-// &#60;/websites&#62;
-
-XMLElement xml;
-
-void setup() {
-  size(200, 200);
-  xml = new XMLElement("sites.xml", this);
-  int numSites = xml.getChildCount();
-  for (int i = 0; i &lt; numSites; i++) {
-    XMLElement kid = xml.getChild(i);
-    int id = kid.getIntAttribute("id"); 
-    String url = kid.getStringAttribute("url"); 
-    String site = kid.getContent();
-    println(id + " : " + url + " : " + site);    
-  }
-}
+...
 </code>
 </example>
 

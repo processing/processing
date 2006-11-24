@@ -40,7 +40,7 @@ void setup() {
 </example>
 
 <description>
-Returns a float attribute of the element. If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned. When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned. 
+Returns a float attribute of the element. If the <b>default</b> parameter is used and the attribute doesn't exist, the <b>default</b> value is returned. When using the version of the method without the <b>default</b> parameter, if the attribute doesn't exist, the value 0 is returned.
 </description>
 
 <syntax>
