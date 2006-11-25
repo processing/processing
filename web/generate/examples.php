@@ -15,7 +15,7 @@ foreach ($categories as $cat => $array) {
 	if ($dp = opendir($dir.$cat)) {
 		while ($fp = readdir($dp)) {
 			if (substr($fp, 0, 1) != '.') {
-				$ex = new Example($fp, strtolower($subdir).'/'.$cat);
+				$ex = new Example($fp, $subdir.'/'.$cat);
 				$ex->output_file($categories);
 				$count++;
 			}
@@ -32,7 +32,7 @@ foreach ($categories as $cat => $array) {
 	#$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
 	$html .= "<p><br /><b>$cat</b><br /><br />";
 	foreach ($array as $file => $name) {
-		$html .= "\t<a href=\"examples/".strtolower($file)."\">$name</a><br />\n";
+		$html .= "\t<a href=\"examples/".strtolower($subdir)."/".strtolower($file)."\">$name</a><br />\n";
 	}
 	echo '</p>';
 	
