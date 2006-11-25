@@ -7,7 +7,7 @@ $benchmark_start = microtime_float();
 
 $categories = get_examples_list('examples.xml');
 $break_after = array('Typography', 'Simulate');
-$dir = CONTENTDIR.'examples/basics/';
+$dir = CONTENTDIR.'examples/Basics/';
 
 $count = 0;
 foreach ($categories as $cat => $array) {
