@@ -7,14 +7,15 @@ $benchmark_start = microtime_float();
 
 $categories = get_examples_list('examples.xml');
 $break_after = array('Typography', 'Simulate');
-$dir = CONTENTDIR.'examples/Basics/';
+$subdir = 'Basics';
+$dir = CONTENTDIR.'examples/'.$subdir.'/';
 
 $count = 0;
 foreach ($categories as $cat => $array) {
 	if ($dp = opendir($dir.$cat)) {
 		while ($fp = readdir($dp)) {
 			if (substr($fp, 0, 1) != '.') {
-				$ex = new Example($fp, $cat);
+				$ex = new Example($fp, $subdir.'/'.$cat);
 				$ex->output_file($categories);
 				$count++;
 			}
