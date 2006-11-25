@@ -12,7 +12,7 @@ $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
 $count = 0;
 foreach ($categories as $cat => $array) {
-	if ($dp = opendir($dir.$cat)) {
+	if ($dp = opendir($dir.subdir."/".$cat)) {
 		while ($fp = readdir($dp)) {
 			if (substr($fp, 0, 1) != '.') {
 				#$ex = new Example($fp, $subdir.'/'.$cat);
