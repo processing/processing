@@ -32,7 +32,7 @@ foreach ($categories as $cat => $array) {
 	#$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
 	$html .= "<p><br /><b>$cat</b><br /><br />";
 	foreach ($array as $file => $name) {
-		$html .= "\t<a href=\"strtolower($file)."/">$name</a><br />\n";
+		$html .= "\t<a href=\"strtolower($file)>$name</a><br />\n";
 	}
 	echo '</p>';
 	
