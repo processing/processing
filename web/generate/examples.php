@@ -15,7 +15,7 @@ foreach ($categories as $cat => $array) {
 	if ($dp = opendir($dir.$cat)) {
 		while ($fp = readdir($dp)) {
 			if (substr($fp, 0, 1) != '.') {
-				$ex = new Example($fp, $subdir.'/'.$cat);
+				$ex = new Example($fp, strtolower($subdir).'/'.$cat);
 				$ex->output_file($categories);
 				$count++;
 			}
