@@ -6,7 +6,7 @@ $benchmark_start = microtime_float();
 
 
 $categories = get_examples_list('examples.xml');
-$break_after = array('Control', 'Color');
+$break_after = array('Math', 'Transform');
 $subdir = 'Basics';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -33,7 +33,7 @@ foreach ($categories as $cat => $array) {
 	#$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
 	$html .= "<p><br /><b>$cat</b><br /><br />";
 	foreach ($array as $file => $name) {
-		$html .= "\t<a href=\".strtolower($file)\">$name</a><br />\n";
+		$html .= "\t<a href=\".strtolower($file).\">$name</a><br />\n";
 	}
 	echo '</p>';
 	
