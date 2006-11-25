@@ -4,10 +4,10 @@ require('../config.php');
 require('lib/Example.class.php');
 $benchmark_start = microtime_float();
 
-$categories = get_examples_list();
-$break_after = array('Typography', 'Simulate');
 
-$dir = CONTENTDIR.'examples/';
+$categories = get_examples_list('examples.xml');
+$break_after = array('Typography', 'Simulate');
+$dir = CONTENTDIR.'examples/basics/';
 
 $count = 0;
 foreach ($categories as $cat => $array) {
@@ -42,7 +42,12 @@ foreach ($categories as $cat => $array) {
 $html .= "</div>";
 
 $page->content($html);
-writeFile('learning/index.html', $page->out());
+writeFile('learning/basics/index.html', $page->out());
+
+
+
+
+
 
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
@@ -54,9 +59,9 @@ $execution_time = round($benchmark_end - $benchmark_start, 4);
 
 <?
 
-function get_examples_list()
+function get_examples_list($exstr)
 {
-	$xml = openXML('examples.xml');
+	$xml = openXML($exstr);
 	$my_cats = array();
 	foreach ($xml->childNodes as $c) {
 	    $name = htmlspecialchars($c->getAttribute('label'));
