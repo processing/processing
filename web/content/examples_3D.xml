@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<examples>
+	<cat label="Form">
+		<ex file="Primitives3D.html">Primitives 3D</ex>
+		<ex file="Vertices3D.html">Vertices 3D</ex>
+		<ex file="RGBCube.html">RGB Cube</ex>
+	</cat>
+	<cat label="Transform">
+		<ex file="Translate3D.html">Translate 3D</ex>
+		<ex file="Rotate3D.html">Rotate 3D</ex>
+		<ex file="PushPop.html">Push and Pop</ex>
+		<ex file="EmbeddingPushPop.html">Embedding Push and Pop </ex>
+	</cat>
+	<cat label="Image">
+		<ex file="Extrusion.html">Extrusion</ex>
+		<ex file="Zoom.html">Zoom</ex>
+		<ex file="Explode.html">Explode</ex>
+	</cat>
+	<cat label="Typography">
+		<ex file="LetterK.html">Letter K</ex>
+		<ex file="KineticType.html">Kinetic Type</ex>
+		<ex file="Typing.html">Typing </ex>
+	</cat>
+	<cat label="Lights">
+		<ex file="Lights.html">Lights</ex>
+		<ex file="Directional.html">Directional</ex>
+		<ex file="Spot.html">Spot </ex>
+	</cat>
+	<cat label="Camera">
+		<ex file="Ortho.html">Ortho</ex>
+		<ex file="Perspective.html">Perspective</ex>
+		<ex file="OrthoVSPerspective.html">Ortho vs. Perpective</ex>
+	</cat>
+</examples>
