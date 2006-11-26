@@ -22,7 +22,8 @@ $pages = array(
 function navigation($section = '')
 {  
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Comparison', 'Troubleshooting');
-    $learn = array('Learning', 'Examples', 'Tutorials');
+    #$learn = array('Learning', 'Examples', 'Tutorials');
+	$learn = array('Learning', 'Books', 'Basic', '3D', 'Libraries');
     
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
@@ -52,10 +53,12 @@ function navigation($section = '')
         $html .= "\t\t\t\t</div>\n";
     } else if (in_array($section, $learn)) {
         $html .= "\t\t\t\t" . '<div class="navBar learning" id="subNav">' . "\n";
-        
-        $html .= "\t\t\t\t\t" . l('Examples', $section == 'Examples') . "\n";
-        
-        $html .= "\t\t\t\t</div>\n";
+		
+        $html .= "\t\t\t\t\t" . l('Examples', $section == 'Books') . " \\\n";;
+		$html .= "\t\t\t\t\t" . l('Examples', $section == 'Basics') . " \\\n";;
+		$html .= "\t\t\t\t\t" . l('Examples', $section == '3D') . " \\\n";;
+		$html .= "\t\t\t\t\t" . l('Examples', $section == 'Libraries') . "\n";
+        #$html .= "\t\t\t\t</div>\n";
     }
 
     

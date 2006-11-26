@@ -52,7 +52,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_3D.xml');
-$break_after = array('', '');
+$break_after = array('Transform', 'Typography');
 $subdir = '3D';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -98,7 +98,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_libraries.xml');
-$break_after = array('', '');
+$break_after = array('PDF', 'Serial');
 $subdir = 'Libraries';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
