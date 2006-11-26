@@ -3,13 +3,15 @@
 $pages = array(
     'Cover'         => array('/', 0),
     'Exhibition'    => array('/exhibition/index.html', 1),
-    'Learning'      => array('/learning/index.html', 1),
+    
+	'Learning'      => array('/learning/index.html', 1),
     #'Examples'      => array('/learning/index.html', 2),
     #'Tutorials'     => array('/learning/tutorials/index.html', 2),
 	'Books'      => array('/learning/index.html', 2),
     'Basic Examples'     => array('/learning/basics/index.html', 2),
 	'3D Examples'     => array('/learning/3d/index.html', 2),
 	'Library Examples'     => array('/learning/libraries/index.html', 2),
+	
     'Reference'     => array('/reference/index.html', 1),
     'Download'      => array('/download/index.html', 1),
     'Discourse'     => array('/discourse/index.html', 1),
@@ -27,7 +29,7 @@ function navigation($section = '')
 {  
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Comparison', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
-	$learn = array('Learning', 'Books', 'Basic', '3D', 'Libraries');
+	$learn = array('Learning', 'Books', 'Basic Examples', '3D Examples', 'Library Examples');
     
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
