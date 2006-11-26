@@ -48,6 +48,96 @@ $page->content($html);
 writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
+# --------------------------------- 3D
+
+
+$categories = get_examples_list('examples_3D.xml');
+$break_after = array('', '');
+$subdir = '3D';
+$dir = CONTENTDIR.'examples/'.$subdir.'/';
+
+$count = 0;
+foreach ($categories as $cat => $array) {
+	if ($dp = opendir($dir.$cat)) {
+		while ($fp = readdir($dp)) {
+			if (substr($fp, 0, 1) != '.') {
+				$ex = new Example($fp, $subdir."/".$cat, $subdir);
+				//$ex = new Example($fp, $cat);
+				$ex->output_file($categories);
+				$count++;
+			}
+		}
+	}
+}
+
+$page = new Page('Examples', 'Examples');
+$page->subtemplate('template.examples.html');
+
+$html = "<div class=\"ref-col\">\n";
+foreach ($categories as $cat => $array) {
+	
+	#$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
+	$html .= "<p><br /><b>$cat</b><br /><br />";
+	foreach ($array as $file => $name) {
+	    $thisfile = strtolower($file);
+		$html .= "\t<a href=\"$thisfile\">$name</a><br />\n";
+	}
+	echo '</p>';
+	
+	if (in_array($cat, $break_after)) {
+		$html .= "</div><div class=\"ref-col\">";
+	}
+}
+$html .= "</div>";
+
+$page->content($html);
+writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
+
+
+# --------------------------------- LIBRARIES
+
+
+$categories = get_examples_list('examples_libraries.xml');
+$break_after = array('', '');
+$subdir = 'Libraries';
+$dir = CONTENTDIR.'examples/'.$subdir.'/';
+
+$count = 0;
+foreach ($categories as $cat => $array) {
+	if ($dp = opendir($dir.$cat)) {
+		while ($fp = readdir($dp)) {
+			if (substr($fp, 0, 1) != '.') {
+				$ex = new Example($fp, $subdir."/".$cat, $subdir);
+				//$ex = new Example($fp, $cat);
+				$ex->output_file($categories);
+				$count++;
+			}
+		}
+	}
+}
+
+$page = new Page('Examples', 'Examples');
+$page->subtemplate('template.examples.html');
+
+$html = "<div class=\"ref-col\">\n";
+foreach ($categories as $cat => $array) {
+	
+	#$html .= "<h3><img src=\"images/".strtolower(removesymbols($cat)).".gif\" alt=\"$cat\" /></h3>\n<p>";
+	$html .= "<p><br /><b>$cat</b><br /><br />";
+	foreach ($array as $file => $name) {
+	    $thisfile = strtolower($file);
+		$html .= "\t<a href=\"$thisfile\">$name</a><br />\n";
+	}
+	echo '</p>';
+	
+	if (in_array($cat, $break_after)) {
+		$html .= "</div><div class=\"ref-col\">";
+	}
+}
+$html .= "</div>";
+
+$page->content($html);
+writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 
