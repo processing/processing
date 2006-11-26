@@ -51,6 +51,7 @@ function navigation($section = '')
         $html .= "\t\t\t\t\t" . l('Troubleshooting', $section == 'Troubleshooting') . "\n";
         
         $html .= "\t\t\t\t</div>\n";
+		
     } else if (in_array($section, $learn)) {
         $html .= "\t\t\t\t" . '<div class="navBar learning" id="subNav">' . "\n";
 		
@@ -58,7 +59,7 @@ function navigation($section = '')
 		$html .= "\t\t\t\t\t" . l('Examples', $section == 'Basics') . " \\\n";;
 		$html .= "\t\t\t\t\t" . l('Examples', $section == '3D') . " \\\n";;
 		$html .= "\t\t\t\t\t" . l('Examples', $section == 'Libraries') . "\n";
-        #$html .= "\t\t\t\t</div>\n";
+        $html .= "\t\t\t\t</div>\n";
     }
 
     
