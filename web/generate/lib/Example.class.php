@@ -146,7 +146,7 @@ class Example
 			if (!copy($this->applet, EXAMPLESDIR.strtolower($this->sub).'/media/'.$this->name.'.jar')) {
 				echo "Could not copy {$this->applet} to .";
 			}
-			echo EXAMPLESDIR.strtolower($this->sub).'/media/'.$this->name.'.jar';
+			#echo EXAMPLESDIR.strtolower($this->sub).'/media/'.$this->name.'.jar';
 		}
 	}
 }
