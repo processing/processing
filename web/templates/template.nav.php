@@ -27,7 +27,7 @@ function navigation($section = '')
     
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
-    $id = (in_array($section, $ref) || in_array($section, $learn)) ? 'mainnav' : 'mainnav';    
+    $id = (in_array($section, $ref) || in_array($section, $learn)) ? 'mainnav' : 'mainnav_noSub';    
     $html .= "\t\t\t\t".'<div class="navBar" id="'.$id.'">'."\n";
     
     $html .= "\t\t\t\t\t" . l('Cover', $section == 'Cover') . " \\\n";
