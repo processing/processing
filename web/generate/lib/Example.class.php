@@ -8,11 +8,13 @@ class Example
 	var $applet;
 	var $doc;
 	var $code;
+	var $sub;
 	
-	function Example($name, $cat)
+	function Example($name, $cat, $sub)
 	{
 		$this->name = $name;
 		$this->cat = $cat;
+		$this->sub = $sub;
 		#$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
 		#$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
 		$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
@@ -83,9 +85,9 @@ class Example
 		$page->subtemplate('template.example.html');
 		$page->content($this->display());
 		$page->set('examples_nav', $this->make_nav($menu_array));
-		writeFile("learning/examples/".strtolower($this->name).".html", $page->out());
+		writeFile("learning/examples/".strtolower($this->$sub).strtolower($this->name).".html", $page->out());
 		$this->copy_media();
-		echo "learning/examples/".strtolower($this->name).".html\n";
+		echo "learning/examples/".strtolower($this->$sub).strtolower($this->name).".html\n";
 	}
 	
 	function make_nav(&$array) {
