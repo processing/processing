@@ -84,7 +84,7 @@ class Example
 	
 	function output_file(&$menu_array)
 	{
-		$page = new Page($this->name . ' \ Examples', 'Examples');
+		$page = new Page($this->name . ' \ Learning', 'Learning');
 		$page->subtemplate('template.example.html');
 		$page->content($this->display());
 		$page->set('examples_nav', $this->make_nav($menu_array));
