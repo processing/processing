@@ -142,11 +142,11 @@ class Example
 	function copy_media()
 	{
 		if (file_exists($this->applet)) {
-			make_necessary_directories(EXAMPLESDIR.$sub.'/media/include');
-			if (!copy($this->applet, EXAMPLESDIR.$sub.'/media/'.$this->name.'.jar')) {
+			make_necessary_directories(EXAMPLESDIR.$this->sub.'/media/include');
+			if (!copy($this->applet, EXAMPLESDIR.$this->sub.'/media/'.$this->name.'.jar')) {
 				echo "Could not copy {$this->applet} to .";
 			}
-			echo EXAMPLESDIR.$sub.'/media/'.$this->name.'.jar';
+			echo EXAMPLESDIR.$this->sub.'/media/'.$this->name.'.jar';
 		}
 	}
 }
