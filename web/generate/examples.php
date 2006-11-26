@@ -24,7 +24,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Learning', 'Basics');
+$page = new Page('Learning', 'Basic Examples');
 $page->subtemplate('template.examples.html');
 
 $html = "<div class=\"ref-col\">\n";
@@ -70,7 +70,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Learning', '3D');
+$page = new Page('Learning', '3D Examples');
 $page->subtemplate('template.examples.html');
 
 $html = "<div class=\"ref-col\">\n";
@@ -116,7 +116,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Learning', 'Libraries');
+$page = new Page('Learning', 'Library Examples');
 $page->subtemplate('template.examples.html');
 
 $html = "<div class=\"ref-col\">\n";
