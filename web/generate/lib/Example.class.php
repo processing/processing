@@ -19,7 +19,7 @@ class Example
 		#$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
 		$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
 		$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
-		echo CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde'<br>;
+		echo CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde';
 		
 		$this->split_file();
 	}
