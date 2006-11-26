@@ -19,6 +19,8 @@ class Example
 		#$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
 		$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
 		$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
+		echo "CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde'";
+		
 		$this->split_file();
 	}
 	
@@ -87,7 +89,7 @@ class Example
 		$page->set('examples_nav', $this->make_nav($menu_array));
 		writeFile("learning/examples/".strtolower($this->sub)."/".strtolower($this->name).".html", $page->out());
 		$this->copy_media();
-		echo "learning/examples/".strtolower($this->sub)."/".strtolower($this->name).".html\n";
+		#echo "learning/examples/".strtolower($this->sub)."/".strtolower($this->name).".html\n";
 	}
 	
 	function make_nav(&$array) {
