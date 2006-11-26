@@ -85,9 +85,9 @@ class Example
 		$page->subtemplate('template.example.html');
 		$page->content($this->display());
 		$page->set('examples_nav', $this->make_nav($menu_array));
-		writeFile("learning/examples/".strtolower($this->$sub).strtolower($this->name).".html", $page->out());
+		writeFile("learning/examples/".strtolower($this->sub).strtolower($this->name).".html", $page->out());
 		$this->copy_media();
-		echo "learning/examples/".strtolower($this->$sub).strtolower($this->name).".html\n";
+		echo "learning/examples/".strtolower($this->sub).strtolower($this->name).".html\n";
 	}
 	
 	function make_nav(&$array) {
