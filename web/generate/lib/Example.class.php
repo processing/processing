@@ -15,8 +15,8 @@ class Example
 		$this->cat = $cat;
 		#$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
 		#$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
-		$this->file = file_get_contents(CONTENTDIR.$cat.'/'.$name.'/'.$name.'.pde');
-		$this->applet = CONTENTDIR.$cat.'/'.$name.'/applet/'.$name.'.jar';
+		$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
+		$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
 		$this->split_file();
 	}
 	
