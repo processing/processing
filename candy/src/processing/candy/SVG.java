@@ -9,8 +9,7 @@
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,7 +33,7 @@ import processing.xml.*;
  * Candy was written by Michael Chang, and later revised and
  * expanded for use as a Processing core library by Ben Fry.
  * <p>
- * SVG stands for Scalar Vector Graphics, a portable graphics
+ * SVG stands for Scalable Vector Graphics, a portable graphics
  * format. It is a vector format so it allows for infinite resolution
  * and relatively minute file sizes. Most modern media software
  * can view SVG files, including Firefox, Adobe products, etc.
@@ -56,7 +55,7 @@ import processing.xml.*;
  * <p>
  * This library was specifically tested under SVG files created from
  * Adobe Illustrator. I can't guarantee that it'll work for any
- * SVG's created from anything else. In the future I will also
+ * SVGs created from anything else. In the future I will also
  * test with open source graphics editing software so we'll reach
  * maximal compatibility. In the mean time, you're on your own.
  * <p>
@@ -288,25 +287,33 @@ public class SVG {
 
 
     /**
+     * Temporary hack for gradient handling. This is not supported 
+     * and will be removed from future releases.
+     */
+    public void drawStyles() {
+        //PApplet.println(root);
+        
+        if (root instanceof VectorObject) {
+            ((VectorObject)root).drawStyles();
+        } else {
+            PApplet.println("Only use drawStyles() on an object, not a group.");
+        }
+    }
+    
+    
+    /**
      * Draws the SVG document.
      */
     public void draw() {
-        //Maybe it would be smart to save all changes that have
-        // to made to processing modes here like
-        int saveEllipseMode = parent.g.ellipseMode;
-
         boolean stroke = parent.g.stroke;
         int strokeColor = parent.g.strokeColor;
+        float strokeWeight = parent.g.strokeWeight;
 
         boolean fill = parent.g.fill;
         int fillColor = parent.g.fillColor;
 
-        /*
-        for (int i = 0; i < draw.size(); i++){
-            VectorObject vo = (VectorObject) draw.get(i);
-            vo.basicDraw();
-        }
-        */
+        int ellipseMode = parent.g.ellipseMode;
+
         if (drawMode == PConstants.CENTER) {
             parent.pushMatrix();
             parent.translate(-width/2, -height/2);
@@ -316,13 +323,14 @@ public class SVG {
             parent.popMatrix();
         }
 
-        //set back the changed modes
-        parent.g.ellipseMode = saveEllipseMode;
         parent.g.stroke = stroke;
-        parent.g.fill = fill;
-
         parent.g.strokeColor = strokeColor;
+        parent.g.strokeWeight = strokeWeight;
+
+        parent.g.fill = fill;
         parent.g.fillColor = fillColor;
+
+        parent.g.ellipseMode = ellipseMode;
     }
 
 
@@ -335,15 +343,37 @@ public class SVG {
         draw();
         parent.popMatrix();
     }
-
-
-    public void drawMode(int which) {
-        if (which == PConstants.CORNER || which == PConstants.CENTER) {
-            drawMode = which;
-        } else {
-            throw new RuntimeException("Only drawMode(CENTER) and " +
-                                       "drawMode(CORNER) are available.");
+    
+    
+    public void draw(float x, float y, float c, float d) {
+        System.err.println("Not yet implemented");
+        
+        parent.pushMatrix();
+        
+        if (drawMode == PConstants.CENTER) {
+            // c and d refer to a diameter
+            
+        } else if (drawMode == PConstants.CORNER) {
+            
+        } else if (drawMode == PConstants.CORNERS) {
+                        
         }
+        
+        parent.popMatrix();
+    }
+
+
+    /**
+     * Set the orientation for drawn objects, similar to PImage.imageMode().
+     * @param which Either CORNER, CORNERS, or CENTER.
+     */
+    public void drawMode(int which) {
+        //if (which == PConstants.CORNER || which == PConstants.CENTER) {
+        drawMode = which;
+        //} else {
+        //    throw new RuntimeException("Only drawMode(CENTER) and " +
+        //                               "drawMode(CORNER) are available.");
+        //}
     }
 
 
@@ -370,13 +400,20 @@ public class SVG {
         String id;
         XMLElement element;
 
+        // set to false if the object is hidden in the layers palette
+        boolean display;
+        
         public BaseObject(XMLElement properties) {
             element = properties;
+            
             id = properties.getStringAttribute("id");
             if (id != null) {
                 table.put(id, this);
-                System.out.println("now parsing " + id);
+                //System.out.println("now parsing " + id);
             }
+            
+            String displayStr = properties.getStringAttribute("display", "inline");
+            display = !displayStr.equals("none");
         }
 
         protected abstract void drawShape();
@@ -416,6 +453,7 @@ public class SVG {
 
         public VectorObject(XMLElement properties) {
             super(properties);
+            
             getColors(properties);
             getTransformation(properties);
         }
@@ -551,50 +589,11 @@ public class SVG {
         protected abstract void drawShape();
 
 
-        //might be more efficient for all subclasses
         protected void draw(){
-            //PApplet.println(getClass().getName() + " " + id);
-
-            /*
-             *                     p2d.fillGradient = true;
-                    p2d.fillGradientObject = paint;
-
-             */
+            if (!display) return;  // don't display if set invisible
+            
             if (!styleOverride) {
-                parent.colorMode(PConstants.RGB, 255);
-
-                if (stroke) {
-                    parent.stroke(strokeColor);
-                    parent.strokeWeight(strokeWeight);
-                } else {
-                    parent.noStroke();
-                }
-
-                if (fill) {
-                    //System.out.println("filling " + PApplet.hex(fillColor));
-                    parent.fill(fillColor);
-                } else {
-                    parent.noFill();
-                }
-
-                if (parent.g instanceof PGraphicsJava2D) {
-                    PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
-
-                    if (strokeGradient != null) {
-                        p2d.strokeGradient = true;
-                        p2d.strokeGradientObject = strokeGradientPaint;
-                    } else {
-                        // need to shut off, in case parent object has a gradient applied
-                        //p2d.strokeGradient = false;
-                    }
-                    if (fillGradient != null) {
-                        p2d.fillGradient = true;
-                        p2d.fillGradientObject = fillGradientPaint;
-                    } else {
-                        // need to shut off, in case parent object has a gradient applied
-                        //p2d.fillGradient = false;
-                    }
-                }
+                drawStyles();
             }
 
             if (hasTransform){
@@ -609,6 +608,7 @@ public class SVG {
                 parent.popMatrix();
             }
 
+            /*
             if (parent.g instanceof PGraphicsJava2D) {
                 PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
 
@@ -617,6 +617,45 @@ public class SVG {
                 }
                 if (fillGradient != null) {
                     p2d.fillGradient = false;
+                }
+            }
+            */
+        }
+        
+        
+        protected void drawStyles() {
+            parent.colorMode(PConstants.RGB, 255);
+
+            if (stroke) {
+                parent.stroke(strokeColor);
+                parent.strokeWeight(strokeWeight);
+            } else {
+                parent.noStroke();
+            }
+
+            if (fill) {
+                //System.out.println("filling " + PApplet.hex(fillColor));
+                parent.fill(fillColor);
+            } else {
+                parent.noFill();
+            }
+
+            if (parent.g instanceof PGraphicsJava2D) {
+                PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
+
+                if (strokeGradient != null) {
+                    p2d.strokeGradient = true;
+                    p2d.strokeGradientObject = strokeGradientPaint;
+                } else {
+                    // need to shut off, in case parent object has a gradient applied
+                    //p2d.strokeGradient = false;
+                }
+                if (fillGradient != null) {
+                    p2d.fillGradient = true;
+                    p2d.fillGradientObject = fillGradientPaint;
+                } else {
+                    // need to shut off, in case parent object has a gradient applied
+                    //p2d.fillGradient = false;
                 }
             }
         }
@@ -809,6 +848,8 @@ public class SVG {
             WritableRaster raster =
                 getColorModel().createCompatibleWritableRaster(w, h);
 
+            int[] data = new int[w * h * 4];
+            
             // make normalized version of base vector
             float nx = x2 - x1;
             float ny = y2 - y1;
@@ -819,44 +860,57 @@ public class SVG {
             }
 
             int span = (int) PApplet.dist(x1, y1, x2, y2) * ACCURACY;
-            System.out.println("span is " + span + " " + x1 + " " + y1 + " " + x2 + " " + y2);
-            int[][] interp = new int[span][4];
-            int prev = 0;
-            for (int i = 1; i < count; i++) {
-                int c0 = color[i-1];
-                int c1 = color[i];
-                int last = (int) (offset[i] * (span-1));
-                //System.out.println("last is " + last);
-                for (int j = prev; j <= last; j++) {
-                    float btwn = PApplet.norm(j, prev, last);
-                    interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
-                    interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
-                    interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
-                    interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
-                    //System.out.println(j + " " + interp[j][0] + " " + interp[j][1] + " " + interp[j][2]);
+            if (span <= 0) {
+                // annoying edge case where the gradient isn't legit
+                int index = 0;
+                for (int j = 0; j < h; j++) {
+                    for (int i = 0; i < w; i++) {
+                        data[index++] = 0;
+                        data[index++] = 0;
+                        data[index++] = 0;
+                        data[index++] = 255;
+                    }
                 }
-                prev = last;
-            }
+                
+            } else {
+                //System.out.println("span is " + span + " " + x1 + " " + y1 + " " + x2 + " " + y2);
+                int[][] interp = new int[span][4];
+                int prev = 0;
+                for (int i = 1; i < count; i++) {
+                    int c0 = color[i-1];
+                    int c1 = color[i];
+                    int last = (int) (offset[i] * (span-1));
+                    //System.out.println("last is " + last);
+                    for (int j = prev; j <= last; j++) {
+                        float btwn = PApplet.norm(j, prev, last);
+                        interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
+                        interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
+                        interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+                        interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
+                        //System.out.println(j + " " + interp[j][0] + " " + interp[j][1] + " " + interp[j][2]);
+                    }
+                    prev = last;
+                }
 
-            int[] data = new int[w * h * 4];
-            int index = 0;
-            for (int j = 0; j < h; j++) {
-                for (int i = 0; i < w; i++) {
-                    //float distance = 0; //PApplet.dist(cx, cy, x + i, y + j);
-                    //int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
-                    float px = (x + i) - x1;
-                    float py = (y + j) - y1;
-                    // distance up the line is the dot product of the normalized
-                    // vector of the gradient start/stop by the point being tested
-                    int which = (int) ((px*nx + py*ny) * ACCURACY);
-                    if (which < 0) which = 0;
-                    if (which > interp.length-1) which = interp.length-1;
-                    //if (which > 138) System.out.println("grabbing " + which);
+                int index = 0;
+                for (int j = 0; j < h; j++) {
+                    for (int i = 0; i < w; i++) {
+                        //float distance = 0; //PApplet.dist(cx, cy, x + i, y + j);
+                        //int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
+                        float px = (x + i) - x1;
+                        float py = (y + j) - y1;
+                        // distance up the line is the dot product of the normalized
+                        // vector of the gradient start/stop by the point being tested
+                        int which = (int) ((px*nx + py*ny) * ACCURACY);
+                        if (which < 0) which = 0;
+                        if (which > interp.length-1) which = interp.length-1;
+                        //if (which > 138) System.out.println("grabbing " + which);
 
-                    data[index++] = interp[which][0];
-                    data[index++] = interp[which][1];
-                    data[index++] = interp[which][2];
-                    data[index++] = interp[which][3];
+                        data[index++] = interp[which][0];
+                        data[index++] = interp[which][1];
+                        data[index++] = interp[which][2];
+                        data[index++] = interp[which][3];
+                    }
                 }
             }
             raster.setPixels(0, 0, w, h, data);
@@ -919,6 +973,16 @@ public class SVG {
                 } else if (name.equals("linearGradient")) {
                     objects[objectCount++] = new LinearGradient(elem);
 
+                } else if (name.equals("text")) {
+                    PApplet.println("Text is not currently handled, " + 
+                                    "convert text to outlines instead.");
+                    
+                } else if (name.equals("filter")) {
+                    PApplet.println("Filters are not supported.");
+                    
+                } else if (name.equals("mask")) {
+                    PApplet.println("Masks are not supported.");
+                    
                 } else {
                     PApplet.println("not handled " + name);
                 }
@@ -927,8 +991,10 @@ public class SVG {
 
 
         public void drawShape() {
-            for (int i = 0; i < objectCount; i++) {
-                objects[i].draw();
+            if (display) {
+                for (int i = 0; i < objectCount; i++) {
+                    objects[i].draw();
+                }
             }
         }
     }
