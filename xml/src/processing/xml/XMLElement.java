@@ -470,7 +470,7 @@ public class XMLElement
      * @param filename
      * @param parent
      */
-    public XMLElement(String filename, PApplet parent) {
+    public XMLElement(PApplet parent, String filename) {
         this();
         try {
             Reader r = parent.createReader(filename);
