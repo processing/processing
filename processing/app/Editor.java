@@ -47,7 +47,7 @@ import javax.swing.undo.*;
 
 import com.apple.mrj.*;
 import com.oroinc.text.regex.*;
-import de.hunsicker.jalopy.*;
+//import de.hunsicker.jalopy.*;
 
 
 public class Editor extends JFrame
