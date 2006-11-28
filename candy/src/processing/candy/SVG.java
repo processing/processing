@@ -44,8 +44,8 @@ import processing.xml.*;
  * to be included with applets, meaning that its download size should be
  * in the neighborhood of 25-30k. Because of this size, it is not made part
  * of processing.core, because it would increase the download size of any
- * applet by 20%, and it's not a feature that will be used by 20% of our
- * audience. For more sophisticated import/export, consider the
+ * applet by 20%, and it's not a feature that will be used by the majority 
+ * of our audience. For more sophisticated import/export, consider the
  * <A HREF="http://xmlgraphics.apache.org/batik/">Batik</A> library
  * from the Apache Software Foundation. Future improvements to this
  * library may focus on this properly supporting a specific subset of
@@ -53,11 +53,12 @@ import processing.xml.*;
  * <A HREF="http://www.w3.org/TR/SVGMobile/">SVG Tiny or Basic</A>,
  * although we still would not support the interactivity options.
  * <p>
- * This library was specifically tested under SVG files created from
- * Adobe Illustrator. I can't guarantee that it'll work for any
- * SVGs created from anything else. In the future I will also
- * test with open source graphics editing software so we'll reach
- * maximal compatibility. In the mean time, you're on your own.
+ * This library was specifically tested under SVG files created with Adobe 
+ * Illustrator. We can't guarantee that it'll work for any SVGs created with 
+ * other software. In the future we would like to improve compatibility with
+ * Open Source software such as InkScape, however initial tests show its
+ * base implementation produces more complicated files, and this will require 
+ * more time.
  * <p>
  * An SVG created under Illustrator must be created in one of two ways:
  * <UL>
@@ -106,12 +107,12 @@ import processing.xml.*;
  *
  * Revision 10/31/06 by flux
  * <UL>
- * <LI>Now properly supports Processing-0118
- * <LI>Fixed a bunch of things for Casey's students and general buggity.
- * <LI>Will now properly draw #FFFFFFFF colors (were being represented as -1)
- * <LI>SVGs without <g> tags are now properly caught and loaded
- * <LI>Added a method customStyle() for overriding SVG colors/styles
- * <LI>Added a method SVGStyle() to go back to using SVG colors/styles
+ * <LI> Now properly supports Processing-0118
+ * <LI> Fixed a bunch of things for Casey's students and general buggity.
+ * <LI> Will now properly draw #FFFFFFFF colors (were being represented as -1)
+ * <LI> SVGs without <g> tags are now properly caught and loaded
+ * <LI> Added a method customStyle() for overriding SVG colors/styles
+ * <LI> Added a method SVGStyle() to go back to using SVG colors/styles
  * </UL>
  *
  * Some SVG objects and features may not yet be supported.
@@ -120,9 +121,9 @@ import processing.xml.*;
  * <LI> Rounded rectangles
  * <LI> Drop shadow objects
  * <LI> Typography
- * <LI><STRIKE>Layers</STRIKE> added for Candy 2
- * <LI>Patterns
- * <LI>Embedded images
+ * <LI> <STRIKE>Layers</STRIKE> added for Candy 2
+ * <LI> Patterns
+ * <LI> Embedded images
  * </UL>
  *
  * If you experience any other wierdness or bugs, please file them to
@@ -139,7 +140,7 @@ public class SVG {
     protected XMLElement svg;
     protected BaseObject root;
 
-    protected boolean styleOverride = false;
+    protected boolean ignoreStyles = false;
 
     int drawMode = PConstants.CORNER;
 
@@ -147,31 +148,16 @@ public class SVG {
     /**
      * Initializes a new SVG Object with the given filename.
      */
-    public SVG(PApplet parent, String filename){
+    public SVG(PApplet parent, String filename) {
         this.parent = parent;
         //this.filename = filename;
 
         // this will grab the root document, starting <svg ...>
         // the xml version and initial comments are ignored
-        svg = new XMLElement(filename, parent);
+        svg = new XMLElement(parent, filename);
 
-        /*
-        Reader reader = parent.createReader(filename);
-        if (reader == null) {
-            System.err.println("The file " + filename + " could not be found.");
-            return;
-        }
-        try {
-            document.parseFromReader(reader);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Could not load SVG file");
-            //throw new RuntimeException("Could not load SVG file");
-            return;
-        }
-        */
         if (!svg.getName().equals("svg")) {
-            throw new RuntimeException("root isn't svg, it's " + svg.getName());
+            throw new RuntimeException("root isn't svg, it's <" + svg.getName() + ">");
         }
 
         width = parseUnitSize(svg.getStringAttribute("width"));
@@ -227,7 +213,7 @@ public class SVG {
         this.table = table;
         this.root = obj;
         this.svg = obj.element;
-        this.styleOverride = styleOverride;
+        this.ignoreStyles = styleOverride;
     }
 
 
@@ -280,7 +266,7 @@ public class SVG {
             obj = (BaseObject) table.get(name.replace(' ', '_'));
         }
         if (obj != null) {
-            return new SVG(parent, width, height, table, obj, styleOverride);
+            return new SVG(parent, width, height, table, obj, ignoreStyles);
         }
         return null;
     }
@@ -300,11 +286,70 @@ public class SVG {
         }
     }
     
+
+    public void draw() {
+        if (drawMode == PConstants.CENTER) {
+            parent.pushMatrix();
+            parent.translate(-width/2, -height/2);
+            drawImpl();
+            parent.popMatrix();
+            
+        } else if ((drawMode == PConstants.CORNER) || 
+                   (drawMode == PConstants.CORNERS)) {
+            drawImpl();
+        }                    
+    }
     
+    
+    /**
+     * Convenience method to draw at a particular location.
+     */
+    public void draw(float x, float y) {
+        parent.pushMatrix();
+        
+        if (drawMode == PConstants.CENTER) {
+            parent.translate(x - width/2, y - height/2);
+            
+        } else if ((drawMode == PConstants.CORNER) || 
+                   (drawMode == PConstants.CORNERS)) {
+            parent.translate(x, y);
+        }
+        drawImpl();
+        
+        parent.popMatrix();
+    }
+    
+    
+    public void draw(float x, float y, float c, float d) {
+        parent.pushMatrix();
+        
+        if (drawMode == PConstants.CENTER) {
+            // x and y are center, c and d refer to a diameter
+            parent.translate(x - c/2f, y - d/2f);
+            parent.scale(c / width, d / height);
+            
+        } else if (drawMode == PConstants.CORNER) {
+            parent.translate(x, y);
+            parent.scale(c / width, d / height);
+            
+        } else if (drawMode == PConstants.CORNERS) {
+            // c and d are x2/y2, make them into width/height
+            c -= x;
+            d -= y;
+            // then same as above
+            parent.translate(x, y);
+            parent.scale(c / width, d / height);
+        }
+        drawImpl();
+        
+        parent.popMatrix();
+    }
+
+
     /**
      * Draws the SVG document.
      */
-    public void draw() {
+    public void drawImpl() {
         boolean stroke = parent.g.stroke;
         int strokeColor = parent.g.strokeColor;
         float strokeWeight = parent.g.strokeWeight;
@@ -314,14 +359,7 @@ public class SVG {
 
         int ellipseMode = parent.g.ellipseMode;
 
-        if (drawMode == PConstants.CENTER) {
-            parent.pushMatrix();
-            parent.translate(-width/2, -height/2);
-        }
         root.draw();
-        if (drawMode == PConstants.CENTER) {
-            parent.popMatrix();
-        }
 
         parent.g.stroke = stroke;
         parent.g.strokeColor = strokeColor;
@@ -332,56 +370,32 @@ public class SVG {
 
         parent.g.ellipseMode = ellipseMode;
     }
-
-
-    /**
-     * Convenience method to draw at a particular location.
-     */
-    public void draw(float x, float y) {
-        parent.pushMatrix();
-        parent.translate(x, y);
-        draw();
-        parent.popMatrix();
-    }
     
     
-    public void draw(float x, float y, float c, float d) {
-        System.err.println("Not yet implemented");
-        
-        parent.pushMatrix();
-        
-        if (drawMode == PConstants.CENTER) {
-            // c and d refer to a diameter
-            
-        } else if (drawMode == PConstants.CORNER) {
-            
-        } else if (drawMode == PConstants.CORNERS) {
-                        
-        }
-        
-        parent.popMatrix();
-    }
-
-
     /**
      * Set the orientation for drawn objects, similar to PImage.imageMode().
      * @param which Either CORNER, CORNERS, or CENTER.
      */
     public void drawMode(int which) {
-        //if (which == PConstants.CORNER || which == PConstants.CENTER) {
         drawMode = which;
-        //} else {
-        //    throw new RuntimeException("Only drawMode(CENTER) and " +
-        //                               "drawMode(CORNER) are available.");
-        //}
     }
 
 
     /**
      * Overrides SVG-set styles and uses PGraphics styles and colors.
+     * Identical to ignoreStyles(true).
      */
-    public void ignoreStyles(boolean state){
-        styleOverride = state;
+    public void ignoreStyles() {
+        ignoreStyles(true);
+    }
+
+    
+    /**
+     * Enables or disables style information (fill and stroke) set in the file.
+     * @param state true to use user-specified stroke/fill, false for svg version
+     */
+    public void ignoreStyles(boolean state) {
+        ignoreStyles = state;
     }
 
 
@@ -592,7 +606,7 @@ public class SVG {
         protected void draw(){
             if (!display) return;  // don't display if set invisible
             
-            if (!styleOverride) {
+            if (!ignoreStyles) {
                 drawStyles();
             }
 
