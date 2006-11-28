@@ -28,7 +28,7 @@ void setup() {
   size(200, 200);
   xml = new XMLElement(this, "sites.xml");
   XMLElement[] kids = xml.getChildren();
-  for (int i=0; i&lt;kids.length; i++) {
+  for (int i=0; i&#60;kids.length; i++) {
     String site = kids[i].getContent();
     println(site); 
   }

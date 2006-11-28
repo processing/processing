@@ -18,7 +18,7 @@ SVG m;
 
 void setup(){
   size(400,400);
-  // The file "moo.svg" but be in the data folder
+  // The file "moo.svg" must be in the data folder
   // of the current sketch to load successfully
   m = new SVG(this, "moo.svg");
   m.drawMode(CENTER);
@@ -56,7 +56,7 @@ This class stores graphics in the SVG vector format and can draw them to the scr
 </method>
 
 <method>
-<mname>getElement()</mname>
+<mname>get()</mname>
 <mdescription>Get's a particular element based on its SVG ID</mdescription>
 </method>
 

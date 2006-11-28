@@ -18,7 +18,7 @@ SVG m, layer;
 
 void setup(){
   size(400,400);
-  // The file "moo.svg" but be in the data folder
+  // The file "moo.svg" must be in the data folder
   // of the current sketch to load successfully
   m = new SVG(this, "moo.svg");
   // Grabs "Layer 3" and the shapes beneath it.
