@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
 
-<name>draw()</name>
+<name>print()</name>
 
-<category>SVGImport</category>
+<category>SVG</category>
 
-<subcategory>SVGImport</subcategory>
+<subcategory>SVG</subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -13,7 +13,6 @@
 <image></image>
 <code>
 import processing.candy.*;
-import processing.xml.*;
 
 SVG m;
 
@@ -21,17 +20,15 @@ void setup(){
   size(400,400);
   // The file "moo.svg" but be in the data folder
   // of the current sketch to load successfully
-  m = new SVG("moo.svg",this);
+  m = new SVG(this, "moo.svg");
+  m.print();
 } 
 
-void draw(){
-  m.draw();
-}
 </code>
 </example>
 
 <description>
-Draws the SVG file to the display window. By default, shapes are drawn to the upper-left corner of the display window. The <b>drawMode()</b> method allows the shape to be drawn from its center coordinate. Use the <b>translate()</b> function to move them to a different location on screen.
+Prints the contents of the SVG file to the console. This is useful for looking at the file to gain a better understanding of it or to see if there are any problems.
 </description>
 
 <syntax>
@@ -43,7 +40,7 @@ Draws the SVG file to the display window. By default, shapes are drawn to the up
 <description>any variable of type SVG</description>
 </parameter>
 
-<returns>none</returns>
+<returns>int</returns>
 
 <related></related>
 

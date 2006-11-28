@@ -89,18 +89,19 @@ XMLElement is a representation of an XML object. The object is able to parse XML
 
 
 <constructor>
-XML(<c>file</c>, <c>parent</c>)
+XML(<c>parent</c>, <c>file</c>)
 </constructor>
+
+<cparameter>
+<clabel>parent</clabel>
+<cdescription>PApplet: typically use "this"</cdescription>
+</cparameter>
 
 <cparameter>
 <clabel>file</clabel>
 <cdescription>String: name of the XML file to load</cdescription>
 </cparameter>
 
-<cparameter>
-<clabel>parent</clabel>
-<cdescription>PApplet: typically use "this"</cdescription>
-</cparameter>
 
 <returns></returns>
 

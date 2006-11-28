@@ -3,7 +3,7 @@
 
 <name>getName()</name>
 
-<category>XML</category>
+<category>XMLElement</category>
 
 <subcategory></subcategory>
 
@@ -28,7 +28,7 @@ XMLElement xml;
 
 void setup() {
   size(200, 200);
-  xml = new XMLElement("sites.xml", this);
+  xml = new XMLElement(this, "sites.xml");
   XMLElement site = xml.getChild(0);
   XMLElement[] siteData = site.getChildren();
   String s1 = siteData[0].getName();
@@ -48,7 +48,7 @@ Returns the name of the element.
 
 <parameter>
 <label>xml</label>
-<description>any variable of type XML</description>
+<description>any variable of type XMLElement</description>
 </parameter>
 
 <returns>String</returns>

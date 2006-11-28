@@ -3,7 +3,7 @@
 
 <name>getChild()</name>
 
-<category>XML</category>
+<category>XMLElement</category>
 
 <subcategory></subcategory>
 
@@ -26,7 +26,7 @@ XMLElement xml;
 
 void setup() {
   size(200, 200);
-  xml = new XMLElement("sites.xml", this);
+  xml = new XMLElement(this, "sites.xml");
   XMLElement kid = xml.getChild(0);
   String site = kid.getContent();
   println(site);    
@@ -44,7 +44,7 @@ Returns the child XMLElement as specified by the <b>which</b> parameter. The val
 
 <parameter>
 <label>xml</label>
-<description>any variable of type XML</description>
+<description>any variable of type XMLElement</description>
 </parameter>
 
 <parameter>

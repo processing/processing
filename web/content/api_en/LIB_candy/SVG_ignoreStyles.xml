@@ -3,9 +3,9 @@
 
 <name>ignoreStyles()</name>
 
-<category>SVGImport</category>
+<category>SVG</category>
 
-<subcategory>SVGImport</subcategory>
+<subcategory></subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -13,7 +13,6 @@
 <image></image>
 <code>
 import processing.candy.*;
-import processing.xml.*;
 
 SVG m;
 
@@ -21,26 +20,26 @@ void setup(){
   size(400,400);
   // The file "moo.svg" but be in the data folder
   // of the current sketch to load successfully
-  m = new SVG("moo.svg",this);
+  m = new SVG(this, "moo.svg");
 } 
 
 void draw() {
   background(204);
-  m.ignoreStyles(true);
+  m.ignoreStyles();
   m.draw();
-  translate(0, 100);
   m.ignoreStyles(false);
   fill(0, 90, 120);
-  m.draw();
+  m.draw(0, 100);
 } 
 </code>
 </example>
 
 <description>
-Overrides SVG-set styles and uses Processing styles and colors. The function has one parameter to determine if SVG shapes drawn after will ignore or follow the current Processing style. If the <b>state</b> parameter is <b>true</b>, it will ignore the embedded SVG styles and if the <b>state</b> is <b>false</b>, it will display the SVG styles.
+When no parameter is used, this function overrides the SVG's fill and stroke attributes and uses Processing styles and colors to draw the SVG. The function has one optional parameter to enable and disable the original SVG's fill and stroke attributes. If the <b>state</b> parameter is <b>false</b>, it will display the embedded SVG styles and if the <b>state</b> parameter is <b>true</b>, it will ignore the SVG's fill and stroke values.
 </description>
 
 <syntax>
+<c>svg</c>.ignoreStyles()
 <c>svg</c>.ignoreStyles(<c>state</c>)
 </syntax>
 
@@ -50,8 +49,8 @@ Overrides SVG-set styles and uses Processing styles and colors. The function has
 </parameter>
 
 <parameter>
-<label>svg</label>
-<description>true or false</description>
+<label>state</label>
+<description>false or true</description>
 </parameter>
 
 <returns>none</returns>

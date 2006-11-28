@@ -3,7 +3,7 @@
 
 <name>getChildCount()</name>
 
-<category>XML</category>
+<category>XMLElement</category>
 
 <subcategory></subcategory>
 
@@ -26,7 +26,7 @@ XMLElement xml;
 
 void setup() {
   size(200, 200);
-  xml = new XMLElement("sites.xml", this);
+  xml = new XMLElement(this, "sites.xml");
   int numSites = xml.getChildCount();
   println(numSites); // Prints "2"
 }
@@ -43,7 +43,7 @@ Returns the number of children for the element.
 
 <parameter>
 <label>xml</label>
-<description>any variable of type XML</description>
+<description>any variable of type XMLElement</description>
 </parameter>
 
 <returns>int</returns>

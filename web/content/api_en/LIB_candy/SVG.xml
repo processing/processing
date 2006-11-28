@@ -3,7 +3,7 @@
 
 <name>SVG</name>
 
-<category>SVGImport</category>
+<category>SVG</category>
 
 <subcategory></subcategory>
 
@@ -13,7 +13,6 @@
 <image></image>
 <code>
 import processing.candy.*;
-import processing.xml.*;
 
 SVG m;
 
@@ -21,13 +20,12 @@ void setup(){
   size(400,400);
   // The file "moo.svg" but be in the data folder
   // of the current sketch to load successfully
-  m = new SVG("moo.svg",this);
+  m = new SVG(this, "moo.svg");
   m.drawMode(CENTER);
 } 
 
 void draw(){
-  translate(width/2, height/2);
-  m.draw();
+  m.draw(width/2, height/2);
 }
 </code>
 </example>
@@ -45,6 +43,11 @@ This class stores graphics in the SVG vector format and can draw them to the scr
 <method>
 <mname>draw()</mname>
 <mdescription>Draws the SVG to the screen</mdescription>
+</method>
+
+<method>
+<mname>drawMode()</mname>
+<mdescription>Changes the way the parameters to draw() are interpreted</mdescription>
 </method>
 
 <method>

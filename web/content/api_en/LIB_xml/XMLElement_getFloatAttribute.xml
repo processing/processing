@@ -3,7 +3,7 @@
 
 <name>getFloatAttribute()</name>
 
-<category>XML</category>
+<category>XMLElement</category>
 
 <subcategory></subcategory>
 
@@ -26,7 +26,7 @@ XMLElement xml;
 
 void setup() {
   size(200, 200);
-  xml = new XMLElement("sites.xml", this);
+  xml = new XMLElement(this, "sites.xml");
   int numSites = xml.getChildCount();
   for (int i = 0; i &lt; numSites; i++) {
     XMLElement kid = xml.getChild(i);
@@ -50,7 +50,7 @@ Returns a float attribute of the element. If the <b>default</b> parameter is use
 
 <parameter>
 <label>xml</label>
-<description>any variable of type XML</description>
+<description>any variable of type XMLElement</description>
 </parameter>
 
 <parameter>

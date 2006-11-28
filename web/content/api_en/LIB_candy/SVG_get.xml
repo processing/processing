@@ -3,9 +3,9 @@
 
 <name>draw()</name>
 
-<category>SVGImport</category>
+<category>SVG</category>
 
-<subcategory>SVGImport</subcategory>
+<subcategory></subcategory>
 
 <usage>Web &amp; Application</usage>
 
@@ -13,7 +13,6 @@
 <image></image>
 <code>
 import processing.candy.*;
-import processing.xml.*;
 
 SVG m, layer;
 
@@ -21,9 +20,9 @@ void setup(){
   size(400,400);
   // The file "moo.svg" but be in the data folder
   // of the current sketch to load successfully
-  m = new SVG("moo.svg",this);
+  m = new SVG(this, "moo.svg");
   // Grabs "Layer 3" and the shapes beneath it.
-  layer = m.getElement("Layer 3");
+  layer = m.get("Layer 3");
 } 
 
 void draw(){
@@ -37,7 +36,7 @@ Get a particular element based on its SVG ID. When editing SVG by hand, this is 
 </description>
 
 <syntax>
-<c>svg</c>.getElement(name)
+<c>svg</c>.get(name)
 </syntax>
 
 <parameter>
@@ -47,7 +46,7 @@ Get a particular element based on its SVG ID. When editing SVG by hand, this is 
 
 <parameter>
 <label>name</label>
-<description>String: the name of the SVG layer to </description>
+<description>String: the name of the SVG layer to get</description>
 </parameter>
 
 <returns>SVG</returns>
