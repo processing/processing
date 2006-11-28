@@ -7,7 +7,27 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0122 - XX November 2006
+ABOUT REV 0122 - 28 November 2006
+
+Lots of bug fixes and two new libraries.
+
+[ features ] 
+
++ Michael Chang's "Candy" SVG Importer has been expanded significantly 
+  and added as a "core" library. We are grateful to Michael for his
+  contribution to the project. 
+
++ A simple XML library (processing.xml) has been added. It is based on
+  NanoXML, and requires documents to be very strictly formatted, and
+  doesn't support some XML features. 
+
++ For both of these new libraries, they are intentionally minimal 
+  implementations. A full XML library or a full SVG import/export 
+  library would be quite significant in size. We think it's instead
+  helpful to have libraries that can be included as part of an applet, 
+  meaning that they should be no larger than around 20-30k. If you 
+  don't need the compact size, you can use a larger XML library, 
+  or something like Apache's Batik to handle SVG import.
 
 [ bug fixes ] 
 
@@ -18,12 +38,42 @@ ABOUT REV 0122 - XX November 2006
   moves to the beginning or the end of a line. Outdenting when a brace
   is used and some other quirks have been ironed out more. 
   Shift-backspace now also produces 'delete', which is a useful thing
-  found in many programming text editors.
+  found in many programming text editors. Also text selection and arrow 
+  issues like http://dev.processing.org/bugs/show_bug.cgi?id=349
+  This is one of several fixes that improve the use of the arrow keys
+  along with cmd/alt-right/left and others. In general, the editor 
+  has been mostly brought up to spec for how keys work. 
+
++ Fixed the menu shortcuts for next and previous tab:
+  http://dev.processing.org/bugs/show_bug.cgi?id=402
+
++ Fixed a problem where clicking the close box of Processing, then hitting
+  "Cancel" when asked to save changes, would close the window anyway.
+  http://dev.processing.org/bugs/show_bug.cgi?id=440
+
++ Changed "Format for Discourse" to "Copy for Discourse", which just 
+  copies the code directly to the clipboard so it can easily be
+  pasted into the forum. The UI was too goofy before.
+  http://dev.processing.org/bugs/show_bug.cgi?id=447
 
 + Forgot to mention, there was a fix added in revision 0120 that
   prevented files dragged into a sketch from bouncing back to the 
   desktop on Mac OS X. (It formerly gave the impression that the 
   file was not properly added to the sketch).
+
++ noiseSeed() was only working once, and only before noise() was used.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162856262
+
++ lerpColor() now honors the current color mode. Also added support
+  for lerpColor(c1, c2, MODE) where MODE is RGB or HSB.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
+
++ Fixed a regression in P3D/OPENGL that prevented points from drawing
+  in some areas of the screen.
+  http://dev.processing.org/bugs/show_bug.cgi?id=444
+
++ Fixed earlier but not announced: gray backgrounds in PDF export
+  http://dev.processing.org/bugs/show_bug.cgi?id=324
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

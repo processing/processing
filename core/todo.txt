@@ -3,9 +3,9 @@ X noiseSeed() only works once, before the arrays are created
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162856262
 X make lerpColor honor the current color mode
 X   lerpColor(c1, c2, amt, RGB/HSB/???)
-_   test this out for a bit
-_   though that's awkward b/c colors always RGB
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
+o   test this out for a bit
+o   though that's awkward b/c colors always RGB
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
 X regression in P3D that prevents point() from drawing
 X   problem is with setup_vertex() not adding similar points
 X   http://dev.processing.org/bugs/show_bug.cgi?id=444
