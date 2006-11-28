@@ -1,3 +1,23 @@
+0122 core
+X noiseSeed() only works once, before the arrays are created
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162856262
+X make lerpColor honor the current color mode
+X   lerpColor(c1, c2, amt, RGB/HSB/???)
+o   test this out for a bit
+o   though that's awkward b/c colors always RGB
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1160096087
+X regression in P3D that prevents point() from drawing
+X   problem is with setup_vertex() not adding similar points
+X   http://dev.processing.org/bugs/show_bug.cgi?id=444
+X if doing openstream on url, says that "the file" is missing or invalid
+X   add notes about it being a url
+
+fixed earlier, bug cleaning
+X gray background in pdf (using both gl and p3d)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=324
+X   verified as fixed in 0122
+
+
 0121 core
 X need to document changes to int() (no longer accepts boolean)
 X background(0, 0, 0, 0) is the way to really clear everything with zeroes
