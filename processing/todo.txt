@@ -1,46 +1,4 @@
-0122 pde
-X improve editor listener to not add so many extraneous indents
-X with text selected, hitting left or right arrow should move to beginning/end
-X   right now, it deselects the text and moves over one char
-X   http://dev.processing.org/bugs/show_bug.cgi?id=349
-X add alt-shift-arrow-down and command-shift-arrow-down
-X   select all from that point to beginning (or end) of doc
-X   ctrl-shift up/down has some weird issue, but oh well
-X cmd-shift-left and cmd-shift right should select the entire line
-X   cmd-left and cmd-right move back and forth properly
-o option for behavior of HOME and END
-X   right now goes to begin/end of line.. should be begin/end of file?
-X   change to begin/end of file, and use cmd or alt, based on platform
-X cmd-{ and cmd-} no longer work after the menu is shown
-X   http://dev.processing.org/bugs/show_bug.cgi?id=402
-X clicking "cancel" on close still quitting the app
-X   http://dev.processing.org/bugs/show_bug.cgi?id=440
-X discourse format sucked, changed to format for discourse
-X   http://dev.processing.org/bugs/show_bug.cgi?id=447
-X changing macosx to allow Java 1.5 to be used
-X updated to antlr 2.7.7
-
-fixed earlier or wontfix
-X double-click only selects part of underscored word
-X   http://dev.processing.org/bugs/show_bug.cgi?id=261
-X   this is actually a feature
-
-svg completed
-X actual linear gradients working properly
-X add a table for all objects with their names,
-X   so they can be grabbed individually
-X   add accessor to get items from the table
-X   see if items can be named in illusfarter using the svg palette
-X compound shapes (fonts) won't wind properly, so fill will be messed up
-X   added hack to allow for broken shapes
-X rename draw() and its buddy
-X a moveto *inside* a shape will be treated as a lineto
-X   had to fix this
-X implement polyline
-X some means of centering the entire drawing (is this included already?)
-X   or setting to one of the corners
-o   does the svg spec just do this?
-X finish draw(x, y, c, d)
+0123 pde
 
 _ temporarily added log4j and jalopy (for the autoformatter)
 _   need to decide where these go, or if they're included at all
