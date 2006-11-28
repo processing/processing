@@ -970,11 +970,13 @@ public class PGraphicsJava2D extends PGraphics {
   protected void fillFromCalc() {
     super.fillFromCalc();
     fillColorObject = new Color(fillColor, true);
+    fillGradient = false;
   }
 
   protected void strokeFromCalc() {
     super.strokeFromCalc();
     strokeColorObject = new Color(strokeColor, true);
+    strokeGradient = false; 
   }
 
 
