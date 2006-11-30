@@ -657,6 +657,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     // a gray background (when just a transparent surface or an empty pdf
     // is what's desired)
     if (mainDrawingSurface) {
+      //System.out.println("main drawing surface");
       background(backgroundColor);
     }
 
