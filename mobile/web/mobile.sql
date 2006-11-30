@@ -1,6 +1,6 @@
 USE mobile;
 
-CREATE TABLE Links (
+CREATE TABLE links (
 	id		int 		auto_increment primary key,
 	name		varchar(255),
 	title		varchar(255),
