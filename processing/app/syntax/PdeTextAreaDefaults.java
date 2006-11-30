@@ -2,7 +2,7 @@
 
 /*
   PdeTextAreaDefaults - grabs font/color settings for the editor
-  Part of the Processing project - http://Proce55ing.net
+  Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-06 Ben Fry and Casey Reas
   Copyright (c) 2001-03 Massachusetts Institute of Technology
@@ -62,10 +62,22 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
 
     // for 0122, these have been changed for better compatability
     // HOME and END now mean the beginning/end of the document
-    inputHandler.addKeyBinding("HOME", InputHandler.DOCUMENT_HOME);
-    inputHandler.addKeyBinding("END", InputHandler.DOCUMENT_END);
-    inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_DOC_HOME);
-    inputHandler.addKeyBinding("S+END", InputHandler.SELECT_DOC_END);
+    if (Base.isMacOS()) {
+      inputHandler.addKeyBinding("HOME", InputHandler.DOCUMENT_HOME);
+      inputHandler.addKeyBinding("END", InputHandler.DOCUMENT_END);
+      inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_DOC_HOME);
+      inputHandler.addKeyBinding("S+END", InputHandler.SELECT_DOC_END);
+    } else {
+      // for 0123 added the proper windows defaults
+      inputHandler.addKeyBinding("HOME", InputHandler.HOME);
+      inputHandler.addKeyBinding("END", InputHandler.END);
+      inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_HOME);
+      inputHandler.addKeyBinding("S+END", InputHandler.SELECT_END);
+      inputHandler.addKeyBinding("C+HOME", InputHandler.DOCUMENT_HOME);
+      inputHandler.addKeyBinding("C+END", InputHandler.DOCUMENT_END);
+      inputHandler.addKeyBinding("CS+HOME", InputHandler.SELECT_DOC_HOME);
+      inputHandler.addKeyBinding("CS+END", InputHandler.SELECT_DOC_END);
+    }
 
     if (Base.isMacOS()) {
       inputHandler.addKeyBinding("M+LEFT", InputHandler.HOME);
