@@ -67,6 +67,7 @@ public class Movie extends PImage implements PConstants, Runnable {
   RawEncodedImage raw;
 
 
+    /*
   static {
     try {
       //System.out.println("jlp = " + System.getProperty("java.library.path"));
@@ -74,7 +75,6 @@ public class Movie extends PImage implements PConstants, Runnable {
     } catch (QTException e) {
       e.printStackTrace();
     }
-    /*
       // shutting off for 0116, hoping for better exception handling
     QTRuntimeException.registerHandler(new QTRuntimeHandler() {
         public void exceptionOccurred(QTRuntimeException e,
@@ -83,8 +83,8 @@ public class Movie extends PImage implements PConstants, Runnable {
           e.printStackTrace();
         }
       });
-    */
   }
+    */
 
 
   public Movie(PApplet parent, String filename) {
@@ -98,6 +98,13 @@ public class Movie extends PImage implements PConstants, Runnable {
     super(1, 1, RGB);
 
     this.parent = parent;
+
+    try {
+      QTSession.open();
+    } catch (QTException e) {
+      e.printStackTrace();
+      return;
+    }
 
     // first check to see if this can be read locally from a file.
     // otherwise, will have to load the file into memory, which is
