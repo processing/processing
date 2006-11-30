@@ -131,7 +131,8 @@ public class PGraphicsJava2D extends PGraphics {
   protected void allocate() {
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     g2 = (Graphics2D) image.getGraphics();
-    defaultsInited = false;
+    // can't un-set this because this may be only a resize (Bug #463)
+    //defaultsInited = false;
   }
 
 

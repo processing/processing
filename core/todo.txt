@@ -1,5 +1,6 @@
 0123 core
-
+X setup() and basic mode apps not working
+X   http://dev.processing.org/bugs/show_bug.cgi?id=463
 
 _ background not being set properly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=454
