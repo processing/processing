@@ -87,13 +87,13 @@ public class Capture extends PImage implements Runnable {
   /** boundary of image at the requested size */
   protected QDRect qdrect;
 
+    /*
   static {
     try {
       QTSession.open();
     } catch (QTException e) {
       e.printStackTrace();
     }
-    /*
       // this doesn't appear to do jack
     QTRuntimeException.registerHandler(new QTRuntimeHandler() {
         public void exceptionOccurred(QTRuntimeException e,
@@ -102,8 +102,8 @@ public class Capture extends PImage implements Runnable {
           e.printStackTrace();
         }
       });
-    */
   }
+    */
 
 
   public Capture(PApplet parent, int requestWidth, int requestHeight) {
@@ -141,6 +141,13 @@ public class Capture extends PImage implements Runnable {
     this.parent = parent;
     this.name = name;
     this.framerate = framerate;
+
+    try {
+      QTSession.open();
+    } catch (QTException e) {
+      e.printStackTrace();
+      return;
+    }
 
     try {
       qdrect = new QDRect(requestWidth, requestHeight);
