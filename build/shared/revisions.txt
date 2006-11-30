@@ -7,6 +7,27 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0123 - 30 November 2006
+
+Bug fixes for regressions found in 0122.
+
++ Fixed an issue where drawing inside setup() didn't work, and any
+  "basic" mode applications didn't draw anything.
+  http://dev.processing.org/bugs/show_bug.cgi?id=463
+
++ Remapped the home/end keys on Windows/Linux to be their proper 
+  assignments as per the Windows UI guidelines (lacking any sort of
+  Linux UI guidelines...) Mac OS X is still stuck with begin/end
+  of document, because Apple says so. Don't like it? Complain to the 
+  guy in the jeans and turtleneck.
+
++ (Should be a) minor change to QTSession.open() and QTSession.close() 
+  for the video library. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0122 - 28 November 2006
 
 Lots of bug fixes and two new libraries.
