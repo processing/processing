@@ -322,7 +322,8 @@ public class PGraphics3D extends PGraphics {
     line = new PLine(this);
     triangle = new PTriangle(this);
 
-    defaultsInited = false;
+    // can't un-set this because this may be only a resize (Bug #463)
+    //defaultsInited = false;
     //System.out.println(this + " done allocating");
   }
 

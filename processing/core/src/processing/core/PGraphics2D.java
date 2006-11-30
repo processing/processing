@@ -107,7 +107,8 @@ public class PGraphics2D extends PGraphics {
       image = Toolkit.getDefaultToolkit().createImage(mis);
     }
 
-    defaultsInited = false;
+    // can't un-set this because this may be only a resize (Bug #463)
+    //defaultsInited = false;
   }
 
 
