@@ -17,7 +17,7 @@ $lockfp = fopen(dirname(__FILE__) . '/lockfile', 'r');
 if ($lockfp !== FALSE) {
     if (flock($lockfp, LOCK_SH)) {
         //// read total number of pages
-        $fp = fopen('pagecount.txt', 'rb');
+        $fp = fopen('generated/pagecount.txt', 'rb');
         $pages = fgets($fp);
         fclose($fp);
 
@@ -39,7 +39,7 @@ if ($lockfp !== FALSE) {
         echo '<br /><br />';
         
         //// insert page of links
-        require "links.{$_GET['page']}.inc.php";
+        require "generated/links.{$_GET['page']}.inc.php";
 
         //// release lock
         flock($lockfp, LOCK_UN);
