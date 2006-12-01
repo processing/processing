@@ -139,11 +139,11 @@ This is a spring system, designed to demonstrate many of the universal features 
 $lockfp = fopen('network/lockfile', 'r');
 if ($lockfp !== FALSE) {
     if (flock($lockfp, LOCK_SH)) {
-        include 'network/links.inc.php';
+        require 'network/generated/links.inc.php';
     }
 }
 ?>
 </div>
 <?php
- require '../footer.inc.php';
+require '../footer.inc.php';
 ?>

@@ -20,7 +20,7 @@ function links_generate() {
     $lockfp = fopen($dirname . '/lockfile', 'r');
     if ($lockfp !== FALSE) {
         if (flock($lockfp, LOCK_EX)) {
-            $fp = fopen($dirname . '/links.inc.php', 'wb');
+            $fp = fopen($dirname . '/generated/links.inc.php', 'wb');
             if ($fp !== FALSE) {
                 $link = db_connect();
                 $result = mysql_query("SELECT * FROM links ORDER BY submitted DESC LIMIT {$linkspercolumn}");
@@ -42,7 +42,7 @@ function links_generate() {
                 //// calculate total number of pages, write to countfile
                 $linksperpage = 3 * $linkspercolumn;
                 $pages = ceil(($count - $linkspercolumn) / $linksperpage);
-                $fp = fopen($dirname .'/pagecount.txt', 'wb');
+                $fp = fopen($dirname .'/generated/pagecount.txt', 'wb');
                 fwrite($fp, $pages);
                 fclose($fp);
 
@@ -53,7 +53,7 @@ function links_generate() {
                     $result = mysql_query("SELECT * FROM links ORDER BY submitted DESC LIMIT {$offset}, {$linksperpage}");
                     //// generate the file
                     $page = $i + 2;
-                    $fp = fopen("{$dirname}/links.{$page}.inc.php", 'wb');
+                    $fp = fopen("{$dirname}/generated/links.{$page}.inc.php", 'wb');
                     fwrite($fp, '<div class="column">');
 
                     $count = 0;
