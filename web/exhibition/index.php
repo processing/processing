@@ -131,11 +131,18 @@ This is a spring system, designed to demonstrate many of the universal features 
 </table>
 </div>
 <div class="column">
-<!--
-<img src="images/network.png"><br>
-<br>
-<img src="images/addlink.png">
--->
+<img src="images/network.png"><br />
+<br />
+<a href="submit.php"><img border="0" src="images/addlink.png"></a><br />
+<br />
+<?php
+$lockfp = fopen('network/lockfile', 'r');
+if ($lockfp !== FALSE) {
+    if (flock($lockfp, LOCK_SH)) {
+        include 'network/links.inc.php';
+    }
+}
+?>
 </div>
 <?php
  require '../footer.inc.php';

@@ -177,3 +177,7 @@ a:active {
 	margin: 0px 50px 20px 50px;
 	padding: 100px 0px 0px 0px;
 }
+
+.error { color: #f00; margin: 0; }
+
+.date { color: #999966; }
