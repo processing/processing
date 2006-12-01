@@ -1,6 +1,5 @@
-0123 core
-X setup() and basic mode apps not working
-X   http://dev.processing.org/bugs/show_bug.cgi?id=463
+0124 core
+
 
 _ background not being set properly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=454
@@ -275,6 +274,7 @@ _   or Thread.currentThread() should be checked first?
 
 _ ArrayIndexOutOfBoundsException in PLine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=246
+_   http://dev.processing.org/bugs/show_bug.cgi?id=462
 
 _ dataFolder() might be flawed b/c it's referring to contents of jar file
 _   for input, better to use openStream
