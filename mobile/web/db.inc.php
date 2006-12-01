@@ -1,0 +1,16 @@
+<?php
+
+$db_server = "localhost";
+$db_name = "mobile";
+$db_username = "root";
+$db_password = "";
+
+function db_connect() {
+    global $db_server, $db_name, $db_username, $db_password;
+    $link = mysql_connect($db_server, $db_username, $db_password);
+    mysql_select_db($db_name, $link);
+
+    return $link;
+}
+
+?>
