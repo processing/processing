@@ -1,11 +1,11 @@
-0123 pde
-X pair up QTSession.open() and QTSession.close()
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1163736864
-X fix home/end for windows
+0124 pde
 
-from rev 0122
-X honor the svg designation for layers that are marked 'hidden'
 
+libraries
+_ add control for dependencies (i.e. svg needs xml), needed for export
+_ add "pretty menu name" to the export.txt file
+_ more export.txt to xml? (nah, it's only flat information)
+_ need better platform designation setup for libs
 
 _ make more fixes to the key bindings
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnacc/html/atg_keyboardshortcuts.asp
@@ -64,12 +64,6 @@ _   is this only a problem on macosx?
 _ when drawing large video, the two triangles for the rect are out of sync
 _   only shows up in P3D
 
-
-libraries
-_ add control for dependencies (i.e. svg needs xml), needed for export
-_ add "pretty menu name" to the export.txt file
-_ more export.txt to xml? (nah, it's only flat information)
-_ need better platform designation setup for libs
 
 _ slow save/new because of large sketchbook
 _   this is a total cluster, the rebuild is being called incessantly

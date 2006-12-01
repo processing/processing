@@ -1,3 +1,12 @@
+0123 pde
+X pair up QTSession.open() and QTSession.close()
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1163736864
+X fix home/end for windows
+
+from rev 0122
+X honor the svg designation for layers that are marked 'hidden'
+
+
 0122 pde
 X improve editor listener to not add so many extraneous indents
 X with text selected, hitting left or right arrow should move to beginning/end
