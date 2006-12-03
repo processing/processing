@@ -6,6 +6,12 @@ _ add control for dependencies (i.e. svg needs xml), needed for export
 _ add "pretty menu name" to the export.txt file
 _ more export.txt to xml? (nah, it's only flat information)
 _ need better platform designation setup for libs
+_ library installation should use the sketchbook folder, not the p5 folder
+
+_ PApplet.this doesn't work (does it work in javac?)
+_   sketchname.this also doesn't work, because Temporary_NNNN used for name
+_   but since it's another tab/class, will run externally
+_   so should make the external version use the actual sketch name not temp
 
 _ make more fixes to the key bindings
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnacc/html/atg_keyboardshortcuts.asp
@@ -37,6 +43,7 @@ _   otherwise it's always relative to the original document
 _ save/restore more of the p5 graphics drawing state
 _   not setting colorMode(), strokeCap, etc.
 _ support for text (shouldn't be too bad, use createFont)
+_   implement text spans for svg output
 _ get entity tags working in xml library
 _ try enabling blending modes
 _ add better support for attributes buried in styles (support ai9/10/11)
