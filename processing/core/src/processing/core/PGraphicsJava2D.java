@@ -977,7 +977,7 @@ public class PGraphicsJava2D extends PGraphics {
   protected void strokeFromCalc() {
     super.strokeFromCalc();
     strokeColorObject = new Color(strokeColor, true);
-    strokeGradient = false; 
+    strokeGradient = false;
   }
 
 
@@ -1063,12 +1063,16 @@ public class PGraphicsJava2D extends PGraphics {
   public void smooth() {
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC);
   }
 
 
   public void noSmooth() {
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_OFF);
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
   }
 
 

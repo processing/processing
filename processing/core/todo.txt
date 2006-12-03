@@ -1,6 +1,16 @@
 0124 core
+X with smooth() turned off, shouldn't be smoothing image on resize
+X   but on osx, apple defaults the image smoothing to true
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1164753510
+X   http://developer.apple.com/documentation/Java/Conceptual/JavaPropVMInfoRef/Articles/JavaSystemProperties.html#//apple_ref/doc/uid/TP40001975-DontLinkElementID_6
 
+_ loadImage() requires an extension, maybe add a second version?
+_   loadImage("blah", "jpg");
+_   otherwise people have to use strange hacks to get around it
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 
+_ having shut off the defaults reset, background not getting called for java2d
+_   so this will make that other stuff regress again
 _ background not being set properly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=454
 _ ARGB problems with createGraphics
