@@ -1037,20 +1037,42 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
+  int[] clearPixels;
+
   public void clear() {
     // the only way to properly clear the screen is to re-allocate
     if (backgroundAlpha) {
       // clearRect() doesn't work because it just makes everything black.
       // instead, just wipe out the canvas to its transparent original
-      allocate();
+      //allocate();
+
+      // allocate also won't work, because all the settings
+      // (like smooth) will be completely reset.
+      // Instead, create a small array that can be used to set the pixels
+      // several times. Using a single-pixel line of length 'width' is a
+      // tradeoff between speed (setting each pixel individually is too slow)
+      // and memory (an array for width*height would waste lots of memory
+      // if it stayed resident, and would terrify the gc if it were
+      // re-created on each trip to background().
+      WritableRaster raster = ((BufferedImage) image).getRaster();
+      if ((clearPixels == null) || (clearPixels.length < width)) {
+        clearPixels = new int[width];
+      }
+      for (int i = 0; i < width; i++) {
+        clearPixels[i] = backgroundColor;
+      }
+      for (int i = 0; i < height; i++) {
+        raster.setDataElements(0, i, width, 1, clearPixels);
+      }
+    } else {
+      // in case people do transformations before background(),
+      // need to handle this with a push/reset/pop
+      pushMatrix();
+      resetMatrix();
+      g2.setColor(new Color(backgroundColor, backgroundAlpha));
+      g2.fillRect(0, 0, width, height);
+      popMatrix();
     }
-    // in case people do transformations before background(),
-    // need to handle this with a push/reset/pop
-    pushMatrix();
-    resetMatrix();
-    g2.setColor(new Color(backgroundColor, backgroundAlpha));
-    g2.fillRect(0, 0, width, height);
-    popMatrix();
   }
 
 
