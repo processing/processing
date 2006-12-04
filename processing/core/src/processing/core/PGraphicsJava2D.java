@@ -622,6 +622,14 @@ public class PGraphicsJava2D extends PGraphics {
   protected void imageImpl(PImage who,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
+    if (who.cache != null) {
+      if (!(who.cache instanceof ImageCache)) {
+        // this cache belongs to another renderer.. fix me later,
+        // because this is gonna make drawing *really* inefficient
+        //who.cache = null;
+      }
+    }
+
     if (who.cache == null) {
       who.cache = new ImageCache(who);
       //who.updatePixels();  // mark the whole thing for update
@@ -639,7 +647,7 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     if (who.modified) {
-      cash.update();
+      cash.update(tint, tintColor);
       who.modified = false;
     }
 
@@ -664,7 +672,14 @@ public class PGraphicsJava2D extends PGraphics {
       image = new BufferedImage(source.width, source.height, type);
     }
 
-    public void update() {  //boolean t, int argb) {
+    // for rev 0124, passing the tintColor in here. the problem is that
+    // the 'parent' PGraphics object of this inner class may not be
+    // the same one that's used when drawing. for instance, if this
+    // is a font used by the main drawing surface, then it's later
+    // used in an offscreen PGraphics, the tintColor value from the
+    // original PGraphics will be used.
+    public void update(boolean tint, int tintColor) {
+
       if ((source.format == ARGB) || (source.format == RGB)) {
         if (tint) {
           // create tintedPixels[] if necessary
@@ -672,12 +687,10 @@ public class PGraphicsJava2D extends PGraphics {
             tintedPixels = new int[source.width * source.height];
           }
 
-          //int argb2 = tintColor;
           int a2 = (tintColor >> 24) & 0xff;
           int r2 = (tintColor >> 16) & 0xff;
           int g2 = (tintColor >> 8) & 0xff;
           int b2 = (tintColor) & 0xff;
-          //System.out.println("a2 is " + a2);
 
           // multiply each of the color components into tintedPixels
           // if straight RGB image, don't bother multiplying
@@ -717,14 +730,20 @@ public class PGraphicsJava2D extends PGraphics {
           tintedColor = tintColor;
 
           // finally, do a setRGB based on tintedPixels
-          image.setRGB(0, 0, source.width, source.height,
-                       tintedPixels, 0, source.width);
+          //image.setRGB(0, 0, source.width, source.height,
+          //             tintedPixels, 0, source.width);
+          WritableRaster raster = ((BufferedImage) image).getRaster();
+          raster.setDataElements(0, 0, source.width, source.height,
+                                 tintedPixels);
 
         } else {  // no tint
           // just do a setRGB like before
           // (and we'll just hope that the high bits are set)
-          image.setRGB(0, 0, source.width, source.height,
-                       source.pixels, 0, source.width);
+          //image.setRGB(0, 0, source.width, source.height,
+          //             source.pixels, 0, source.width);
+          WritableRaster raster = ((BufferedImage) image).getRaster();
+          raster.setDataElements(0, 0, source.width, source.height,
+                                 tintedPixels);
         }
 
       } else if (source.format == ALPHA) {
@@ -734,6 +753,7 @@ public class PGraphicsJava2D extends PGraphics {
 
         int lowbits = tintColor & 0x00ffffff;
         if (((tintColor >> 24) & 0xff) >= 254) {
+          //PApplet.println("  no alfa " + PApplet.hex(tintColor));
           // no actual alpha to the tint, set the image's alpha
           // as the high 8 bits, and use the color as the low 24 bits
           for (int i = 0; i < tintedPixels.length; i++) {
@@ -743,6 +763,7 @@ public class PGraphicsJava2D extends PGraphics {
           }
 
         } else {
+          //PApplet.println("  yes alfa " + PApplet.hex(tintColor));
           // multiply each image alpha by the tint alpha
           int alphabits = (tintColor >> 24) & 0xff;
           for (int i = 0; i < tintedPixels.length; i++) {
@@ -756,8 +777,10 @@ public class PGraphicsJava2D extends PGraphics {
         tintedColor = tintColor;
 
         // finally, do a setRGB based on tintedPixels
-        image.setRGB(0, 0, source.width, source.height,
-                     tintedPixels, 0, source.width);
+        //image.setRGB(0, 0, source.width, source.height,
+        //             tintedPixels, 0, source.width);
+        WritableRaster raster = ((BufferedImage) image).getRaster();
+        raster.setDataElements(0, 0, source.width, source.height, tintedPixels);
       }
     }
   }

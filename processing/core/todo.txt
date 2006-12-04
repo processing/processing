@@ -4,6 +4,12 @@ X   but on osx, apple defaults the image smoothing to true
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1164753510
 X   http://developer.apple.com/documentation/Java/Conceptual/JavaPropVMInfoRef/Articles/JavaSystemProperties.html#//apple_ref/doc/uid/TP40001975-DontLinkElementID_6
 X background(0, 0, 0, 0) was resetting stroke, smooth, etc.
+X make imageImpl() use WritableRaster in an attempt to speed things up
+X fix weird situation where fonts used in more than one renderer wouldn't show
+
+_ calling graphics.smooth(), graphics.colorMode() outside begin/endDraw
+_   this causes everything to be reset once the draw occurs
+_   kinda seems problematic and prone to errors?
 
 _ loadImage() requires an extension, maybe add a second version?
 _   loadImage("blah", "jpg");
