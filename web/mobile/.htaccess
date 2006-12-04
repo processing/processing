@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^(.*)\.jad$ http://mobile.processing.org/mobile/dl.php?n=$1
