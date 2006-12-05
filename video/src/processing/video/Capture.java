@@ -507,11 +507,11 @@ public class Capture extends PImage implements Runnable {
       int errorCode = qte.errorCode();
       if (errorCode == Errors.couldntGetRequiredComponent) {
         throw new RuntimeException("Couldn't find any capture devices, " +
-                                   "check the FAQ for more info.");
+                                   "read the video reference for more info.");
       } else {
         qte.printStackTrace();
         throw new RuntimeException("Problem listing capture devices, " +
-                                   "check the FAQ for more info.");
+                                   "read the video reference for more info.");
       }
     }
     //return null;
