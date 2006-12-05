@@ -3693,6 +3693,15 @@ public class PApplet extends Applet
       Float floatSize = new Float(size);
 
       if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
+        InputStream stream = openStream(name);
+        if (stream == null) {
+          System.err.println("The font \"" + name + "\" " +
+                             "is missing or inaccessible, make sure " +
+                             "the URL is valid or that the file has been " +
+                             "added to your sketch and is readable.");
+          return null;
+        }
+        
         //font = Font.createFont(Font.TRUETYPE_FONT, openStream(name));
         Method createFontMethod =
           Font.class.getMethod("createFont",
