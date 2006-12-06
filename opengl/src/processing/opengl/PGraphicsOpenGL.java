@@ -124,7 +124,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   // main applet thread requests an update,
   // but PGraphics has to respond back by calling PApplet.display()
-  public void requestDisplay(PApplet parent) {
+  public void requestDisplay(PApplet applet) {
     //System.out.println("requesting display");
 
     //if (!displayed) {
@@ -228,7 +228,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
                                      boolean deviceChanged) { }
 
           public void reshape(GLAutoDrawable drawable,
-                              int x, int y, int width, int height) { }
+                              int x, int y, int w, int h) { }
         });
 
       //System.out.println("creating PGraphicsOpenGL 4");
@@ -428,28 +428,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     // load p5 modelview into the opengl modelview
     if (ctm == null) ctm = new float[16];
-
-    /*
-    ctm[0] = modelview.m00;
-    ctm[1] = modelview.m01;
-    ctm[2] = modelview.m02;
-    ctm[3] = modelview.m03;
-
-    ctm[4] = modelview.m10;
-    ctm[5] = modelview.m11;
-    ctm[6] = modelview.m12;
-    ctm[7] = modelview.m13;
-
-    ctm[8] = modelview.m20;
-    ctm[9] = modelview.m21;
-    ctm[10] = modelview.m22;
-    ctm[11] = modelview.m23;
-
-    ctm[12] = modelview.m30;
-    ctm[13] = modelview.m31;
-    ctm[14] = modelview.m32;
-    ctm[15] = modelview.m33;
-    */
 
     ctm[0] = modelview.m00;
     ctm[1] = modelview.m10;
@@ -1152,7 +1130,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
     FontRenderContext frc = graphics.getFontRenderContext();
     GlyphVector gv = textFontNative.createGlyphVector(frc, textArray);
     Shape shp = gv.getOutline();
-    PathIterator iter = shp.getPathIterator(null, 0.05);
+    //PathIterator iter = shp.getPathIterator(null, 0.05);
+    PathIterator iter = shp.getPathIterator(null);
 
     glu.gluTessBeginPolygon(tobj, null);
     // second param to gluTessVertex is for a user defined object that contains
@@ -1167,32 +1146,39 @@ public class PGraphicsOpenGL extends PGraphics3D {
     // display lists will be the way to go.
     double vertex[];
 
+    final boolean DEBUG_OPCODES = false;
+    
     while (!iter.isDone()) {
       int type = iter.currentSegment(textPoints);
       switch (type) {
       case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in textPoints
       case PathIterator.SEG_LINETO:   // 1 point
         if (type == PathIterator.SEG_MOVETO) {
-          //System.out.println("moveto\t" +
-          //                   textPoints[0] + "\t" + textPoints[1]);
+          if (DEBUG_OPCODES) {
+            System.out.println("moveto\t" +
+                               textPoints[0] + "\t" + textPoints[1]);
+          }
           glu.gluTessBeginContour(tobj);
         } else {
-          //System.out.println("lineto\t" +
-          //                   textPoints[0] + "\t" + textPoints[1]);
+          if (DEBUG_OPCODES) {
+            System.out.println("lineto\t" +
+                               textPoints[0] + "\t" + textPoints[1]);
+           }
         }
         vertex = new double[] {
           x + textPoints[0], y + textPoints[1], 0
         };
-        //glu.gluTessVertex(tobj, vertex, vertex);
         glu.gluTessVertex(tobj, vertex, 0, vertex);
         lastX = textPoints[0];
         lastY = textPoints[1];
         break;
 
       case PathIterator.SEG_QUADTO:   // 2 points
-        //System.out.println("quadto\t" +
-        //                 textPoints[0] + "\t" + textPoints[1] + "\t" +
-        //                 textPoints[2] + "\t" + textPoints[3]);
+        if (DEBUG_OPCODES) {
+          System.out.println("quadto\t" +
+                             textPoints[0] + "\t" + textPoints[1] + "\t" +
+                             textPoints[2] + "\t" + textPoints[3]);
+        }
 
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
@@ -1202,26 +1188,20 @@ public class PGraphicsOpenGL extends PGraphics3D {
             y + bezierPoint(lastY, textPoints[1],
                             textPoints[3], textPoints[3], t), 0
           };
-          //glu.gluTessVertex(tobj, vertex, vertex);
           glu.gluTessVertex(tobj, vertex, 0, vertex);
         }
-
-        /*
-        vertex = new double[] {
-          x + textPoints[2], y + textPoints[3], 0
-        };
-        glu.gluTessVertex(tobj, vertex, vertex);
-        */
 
         lastX = textPoints[2];
         lastY = textPoints[3];
         break;
 
       case PathIterator.SEG_CUBICTO:  // 3 points
-        //System.out.println("cubicto\t" +
-        //                 textPoints[0] + "\t" + textPoints[1] + "\t" +
-        //                 textPoints[2] + "\t" + textPoints[3] + "\t" +
-        //                 textPoints[4] + "\t" + textPoints[5]);
+        if (DEBUG_OPCODES) {
+          System.out.println("cubicto\t" +
+                             textPoints[0] + "\t" + textPoints[1] + "\t" +
+                             textPoints[2] + "\t" + textPoints[3] + "\t" +
+                             textPoints[4] + "\t" + textPoints[5]);
+        }
 
         for (int i = 1; i < bezierDetail; i++) {
           float t = (float)i / (float)bezierDetail;
@@ -1231,23 +1211,18 @@ public class PGraphicsOpenGL extends PGraphics3D {
             y + bezierPoint(lastY, textPoints[1],
                             textPoints[3], textPoints[5], t), 0
           };
-          //glu.gluTessVertex(tobj, vertex, vertex);
           glu.gluTessVertex(tobj, vertex, 0, vertex);
         }
-        /*
-        vertex = new double[] {
-          x + textPoints[4], y + textPoints[5], 0
-        };
-        glu.gluTessVertex(tobj, vertex, vertex);
-        */
 
         lastX = textPoints[4];
         lastY = textPoints[5];
         break;
 
       case PathIterator.SEG_CLOSE:
-        //System.out.println("close");
-        //System.out.println();
+        if (DEBUG_OPCODES) {
+          System.out.println("close");
+          System.out.println();
+        }
         glu.gluTessEndContour(tobj);
         break;
       }
@@ -1281,9 +1256,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * this method call. However, it is not visible in this nested class because
    * a method with the same name in an intervening class is hiding it.
    */
+  /*
   public void vertexRedirect(float x, float y, float z) {
     vertex(x, y, z);
   }
+  */
 
 
   //public static class TessCallback extends GLUtesselatorCallbackAdapter {
@@ -1326,7 +1303,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
         }
         //System.out.println("tess callback vertex " +
         //                 d[0] + " " + d[1] + " " + d[2]);
-        vertexRedirect((float) d[0], (float) d[1], (float) d[2]);
+        //vertexRedirect((float) d[0], (float) d[1], (float) d[2]);
+        PGraphicsOpenGL.this.vertex((float) d[0], (float) d[1], (float) d[2]);
         /*
         if (d.length == 6) {
           double[] d2 = {d[0], d[1], d[2]};
@@ -1858,9 +1836,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //////////////////////////////////////////////////////////////
 
 
-  public void background(PImage image) {
+  public void background(PImage bgimage) {
     clear();
-    set(0, 0, image);
+    set(0, 0, bgimage);
   }
 
 
