@@ -616,12 +616,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
               raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW],
                          c[U] * uscale, c[V] * vscale);
             } else {
-              raw.fill(ar, ag, ab, a[A]);
-              raw.vertex(a[X], a[Y], a[U] * uscale, a[V] * vscale);
-              raw.fill(br, bg, bb, b[A]);
-              raw.vertex(b[X], b[Y], b[U] * uscale, b[V] * vscale);
-              raw.fill(cr, cg, cb, c[A]);
-              raw.vertex(c[X], c[Y], c[U] * uscale, c[V] * vscale);
+              if (reasonablePoint(a[X], a[Y], a[Z]) &&
+                  reasonablePoint(b[X], b[Y], b[Z]) && 
+                  reasonablePoint(c[X], c[Y], c[Z])) {
+                raw.fill(ar, ag, ab, a[A]);
+                raw.vertex(a[X], a[Y], a[U] * uscale, a[V] * vscale);
+                raw.fill(br, bg, bb, b[A]);
+                raw.vertex(b[X], b[Y], b[U] * uscale, b[V] * vscale);
+                raw.fill(cr, cg, cb, c[A]);
+                raw.vertex(c[X], c[Y], c[U] * uscale, c[V] * vscale);
+              }
             }
           }
         }
@@ -656,12 +660,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
               raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
             }
           } else {
-            raw.fill(ar, ag, ab, a[A]);
-            raw.vertex(a[X], a[Y]);
-            raw.fill(br, bg, bb, b[A]);
-            raw.vertex(b[X], b[Y]);
-            raw.fill(cr, cg, cb, c[A]);
-            raw.vertex(c[X], c[Y]);
+            if (reasonablePoint(a[X], a[Y], a[Z]) &&
+                reasonablePoint(b[X], b[Y], b[Z]) && 
+                reasonablePoint(c[X], c[Y], c[Z])) {
+              raw.fill(ar, ag, ab, a[A]);
+              raw.vertex(a[X], a[Y]);
+              raw.fill(br, bg, bb, b[A]);
+              raw.vertex(b[X], b[Y]);
+              raw.fill(cr, cg, cb, c[A]);
+              raw.vertex(c[X], c[Y]);
+            }
           }
         }
         gl.glEnd();
@@ -671,6 +679,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
       raw.endShape();
     }
     report("render_triangles out");
+  }
+  
+  
+  // TODO bad clipping, replace me 
+  private boolean reasonablePoint(float x, float y, float z) {
+    return ((z < 1) && (x > -width) && (x < width*2) && (y > -height) && (y < height*2));
   }
 
 
@@ -1082,6 +1096,23 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   /**
    * Override to handle rendering characters with textMode(SHAPE).
+   */
+  protected void textCharImpl(char ch, float x, float y) {
+    if (textMode == SHAPE) {
+      if (textFontNative == null) {
+        throw new RuntimeException("textMode(SHAPE) is disabled " +
+                                   "because the font \"" + textFont.name +
+                                   "\" is not available.");
+      } else {
+        textCharImplShape(ch, x, y);
+      }
+    } else {
+      super.textCharImpl(ch, x, y);
+    }
+  }
+  
+  
+  /**
    * This uses the tesselation functions from GLU to handle triangulation
    * to convert the character into a series of shapes.
    * <p/>
@@ -1104,17 +1135,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * tested with Akzidenz Grotesk Light). But this won't be visible
    * with the stroke shut off, so tabling that bug for now.
    */
-  protected void textCharImpl(char ch, float x, float y) {
-    if ((textMode == SHAPE) && (textFontNative == null)) {
-      throw new RuntimeException("textMode(SHAPE) is disabled " +
-                                 "because the font \"" + textFont.name +
-                                 "\" is not available.");
-    }
-    if ((textMode != SHAPE) || (textFontNative == null)) {
-      super.textCharImpl(ch, x, y);
-      return;
-    }
-
+  protected void textCharImplShape(char ch, float x, float y) {
     // save the current stroke because it needs to be disabled
     // while the text is being drawn
     boolean strokeSaved = stroke;
@@ -1146,7 +1167,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     // display lists will be the way to go.
     double vertex[];
 
-    final boolean DEBUG_OPCODES = false;
+    final boolean DEBUG_OPCODES = false; //true;
     
     while (!iter.isDone()) {
       int type = iter.currentSegment(textPoints);
@@ -1843,9 +1864,22 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void clear() {
-    //float backgroundR = (float) ((backgroundColor >> 16) & 0xff) / 255.0f;
-    //float backgroundG = (float) ((backgroundColor >> 8) & 0xff) / 255.0f;
-    //float backgroundB = (float) (backgroundColor & 0xff) / 255.0f;
+    if (raw != null) {
+      raw.colorMode(RGB, 1);
+      raw.noStroke();
+      raw.fill(backgroundR, backgroundG, backgroundB);
+      raw.beginShape(TRIANGLES);
+
+      raw.vertex(0, 0);
+      raw.vertex(width, 0);
+      raw.vertex(0, height);
+      
+      raw.vertex(width, 0);
+      raw.vertex(width, height);
+      raw.vertex(0, height);
+
+      raw.endShape();
+    }
 
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
