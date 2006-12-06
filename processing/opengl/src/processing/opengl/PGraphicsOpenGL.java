@@ -1059,7 +1059,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       graphics.setFont(textFontNative);
 
       // get the metrics info
-      textFontNativeMetrics = graphics.getFontMetrics(textFontNative);
+      textFontNativeMetrics = graphics.getFontMetrics(textFontNative);      
     }
   }
 
@@ -1068,9 +1068,37 @@ public class PGraphicsOpenGL extends PGraphics3D {
     if ((textMode != SHAPE) || (textFontNative == null)) {
       return super.textWidthImpl(buffer, start, stop);
     }
+    
+    /*
     // maybe should use one of the newer/fancier functions for this?
     int length = stop - start;
     return textFontNativeMetrics.charsWidth(buffer, start, length);
+    */
+    Graphics2D graphics = (Graphics2D) canvas.getGraphics();
+    // otherwise smaller sizes will be totally crapped up 
+    // seems to need to be before the getFRC, but after the canvas.getGraphics
+    // (placing this inside textSize(), even though it was called, wasn't working)
+    graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
+            RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    
+    FontRenderContext frc = graphics.getFontRenderContext();
+    GlyphVector gv;
+
+    /*
+    if (start == 0 && stop == buffer.length) {
+        gv = textFontNative.createGlyphVector(frc, buffer);
+    } else {
+        char[] fellas = PApplet.subset(buffer, start, length);
+        gv = textFontNative.createGlyphVector(frc, fellas);
+    }
+    */
+    gv = textFontNative.createGlyphVector(frc, buffer);
+    float sum = 0;
+    for (int i = start; i < stop; i++) {
+        GlyphMetrics gm = gv.getGlyphMetrics(i);
+        sum += gm.getAdvance();
+    }
+    return sum;
   }
 
 
