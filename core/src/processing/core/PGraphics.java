@@ -665,11 +665,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  /*
   protected void flush() {
     // no-op, mostly for P3D to write sorted stuff
   }
-  */
 
 
 
@@ -4119,7 +4117,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void endRaw() {
     if (raw != null) {
       // for 3D, need to flush any geometry that's been stored for sorting
-      //raw.flush();  // this should be called by endDraw() instead
+      raw.flush();  // this should be called by endDraw() instead
 
       // just like beginDraw, this will have to be called because
       // endDraw() will be happening outside of draw()
