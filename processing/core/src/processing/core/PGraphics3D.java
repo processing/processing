@@ -563,7 +563,7 @@ public class PGraphics3D extends PGraphics {
       int temp2[] = new int[vertexCount << 1];
       System.arraycopy(vertex_order, 0, temp2, 0, vertexCount);
       vertex_order = temp2;
-      //message(CHATTER, "allocating more vertices " + vertices.length);
+      //System.out.println("allocating more vertices " + vertices.length);
     }
     float vertex[] = vertices[vertexCount];
 
@@ -1268,6 +1268,7 @@ public class PGraphics3D extends PGraphics {
 
 
   protected void depth_sort_triangles() {
+    //System.out.println("sorting " + triangleCount + " triangles");
     depth_sort_triangles_internal(0, triangleCount-1);
   }
 
@@ -1306,6 +1307,14 @@ public class PGraphics3D extends PGraphics {
 
 
   protected float depth_sort_triangles_compare(int a, int b) {
+    if (Float.isNaN(vertices[triangles[a][VERTEX1]][Z]) ||
+        Float.isNaN(vertices[triangles[a][VERTEX2]][Z]) || 
+        Float.isNaN(vertices[triangles[a][VERTEX3]][Z]) || 
+        Float.isNaN(vertices[triangles[b][VERTEX1]][Z]) || 
+        Float.isNaN(vertices[triangles[b][VERTEX2]][Z]) || 
+        Float.isNaN(vertices[triangles[b][VERTEX3]][Z])) {
+      throw new RuntimeException("nan triangle");
+    }
     return
       (vertices[triangles[b][VERTEX1]][Z] +
        vertices[triangles[b][VERTEX2]][Z] +
