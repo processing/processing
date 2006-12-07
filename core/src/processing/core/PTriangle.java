@@ -359,11 +359,14 @@ public class PTriangle implements PConstants
     }
 
     //if (parent.hints[SMOOTH_IMAGES]) {
+    /*
     if (parent.smooth) {
       m_bilinear = true;
     } else {
       m_bilinear = false;
     }
+    */
+    m_bilinear = true;
   }
 
   /**

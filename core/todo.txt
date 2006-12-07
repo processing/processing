@@ -6,6 +6,16 @@ X   http://developer.apple.com/documentation/Java/Conceptual/JavaPropVMInfoRef/A
 X background(0, 0, 0, 0) was resetting stroke, smooth, etc.
 X make imageImpl() use WritableRaster in an attempt to speed things up
 X fix weird situation where fonts used in more than one renderer wouldn't show
+X opengl doesn't draw a background for the raw recorder
+X change P3D to smooth images nicely (bilinear was disabled)
+
+_ in opengl mode, use its tesselator
+_   because the vertex calls can just come right back to regular vertex calls
+_   this way we can also implement breakShape() for opengl
+_ with opengl optimizations via call lists..
+_   watch out to make sure raw recording still works
+_   (optimizations will have to be disabled to some extent)
+_ look into using glu quadrics to handle shape geometries quickly
 
 _ calling graphics.smooth(), graphics.colorMode() outside begin/endDraw
 _   this causes everything to be reset once the draw occurs
