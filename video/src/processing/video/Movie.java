@@ -28,7 +28,6 @@ import processing.core.*;
 
 import java.io.*;
 import java.lang.reflect.*;
-import java.net.*;
 
 import quicktime.*;
 import quicktime.io.QTFile;
@@ -165,10 +164,10 @@ public class Movie extends PImage implements PConstants, Runnable {
     // InputStream, but oh well. it's their api.
     if (movie == null) {
       byte data[] = parent.loadBytes(filename);
-      int dot = filename.lastIndexOf(".");
+      //int dot = filename.lastIndexOf(".");
       // grab the extension from the file, use mov if there is none
-      String extension = (dot == -1) ? "mov" :
-        filename.substring(dot + 1).toLowerCase();
+      //String extension = (dot == -1) ? "mov" :
+      //  filename.substring(dot + 1).toLowerCase();
       try {
         movie = fromDataRef(new DataRef(new QTHandle(data)));
       } catch (QTException e) {
