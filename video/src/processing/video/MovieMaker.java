@@ -217,35 +217,6 @@ public class MovieMaker {
   }
 
 
-  public void finishMovie() {
-    System.out.println("Finishing movie file.");
-    try {
-      readyForFrames = false;
-      videoMedia.endEdits();
-      videoTrack.insertMedia(0, 0, videoMedia.getDuration(), 1);
-      OpenMovieFile omf = OpenMovieFile.asWrite(movFile);
-      movie.addResource(omf, StdQTConstants.movieInDataForkResID,
-                        movFile.getName());
-    } catch (StdQTException e) {
-      e.printStackTrace();
-    } catch (QTException e) {
-      e.printStackTrace();
-    }
-    // Causes windows to hang??
-    //QTSession.close();
-  }
-
-  public void dispose() {
-    if (readyForFrames) finishMovie();
-
-    try {
-      QTSession.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-
   public void addFrame(int[] _pixels, int w, int h) {
     // Now that I fixed the intel mac bug in the constructor, I think windows
     // is covered too so the code below is unnecessary.  I think.  I hope.
@@ -286,6 +257,36 @@ public class MovieMaker {
         videoMedia.addSample(imageHandle, 0, imgDesc.getDataSize(), TIME_SCALE/rate, imgDesc, 1, syncSample ? 0 : StdQTConstants.mediaSampleNotSync);
       }
     } catch (QTException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  
+  public void finishMovie() {
+    System.out.println("Finishing movie file.");
+    try {
+      readyForFrames = false;
+      videoMedia.endEdits();
+      videoTrack.insertMedia(0, 0, videoMedia.getDuration(), 1);
+      OpenMovieFile omf = OpenMovieFile.asWrite(movFile);
+      movie.addResource(omf, StdQTConstants.movieInDataForkResID,
+                        movFile.getName());
+    } catch (StdQTException e) {
+      e.printStackTrace();
+    } catch (QTException e) {
+      e.printStackTrace();
+    }
+    // Causes windows to hang??
+    //QTSession.close();
+  }
+
+  
+  public void dispose() {
+    if (readyForFrames) finishMovie();
+
+    try {
+      QTSession.close();
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
