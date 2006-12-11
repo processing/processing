@@ -1308,10 +1308,10 @@ public class PGraphics3D extends PGraphics {
 
   protected float depth_sort_triangles_compare(int a, int b) {
     if (Float.isNaN(vertices[triangles[a][VERTEX1]][Z]) ||
-        Float.isNaN(vertices[triangles[a][VERTEX2]][Z]) || 
-        Float.isNaN(vertices[triangles[a][VERTEX3]][Z]) || 
-        Float.isNaN(vertices[triangles[b][VERTEX1]][Z]) || 
-        Float.isNaN(vertices[triangles[b][VERTEX2]][Z]) || 
+        Float.isNaN(vertices[triangles[a][VERTEX2]][Z]) ||
+        Float.isNaN(vertices[triangles[a][VERTEX3]][Z]) ||
+        Float.isNaN(vertices[triangles[b][VERTEX1]][Z]) ||
+        Float.isNaN(vertices[triangles[b][VERTEX2]][Z]) ||
         Float.isNaN(vertices[triangles[b][VERTEX3]][Z])) {
       throw new RuntimeException("nan triangle");
     }
@@ -1877,7 +1877,7 @@ public class PGraphics3D extends PGraphics {
                v[DR] * contribution[LIGHT_DIFFUSE_R]);
     v[G] = min(1, v[EG] + v[AG] * contribution[LIGHT_AMBIENT_G] +
                v[DG] * contribution[LIGHT_DIFFUSE_G]);
-    v[B] = min(1, v[EB] + v[AB] * contribution[LIGHT_AMBIENT_R] +
+    v[B] = min(1, v[EB] + v[AB] * contribution[LIGHT_AMBIENT_B] +
                v[DB] * contribution[LIGHT_DIFFUSE_B]);
     v[A] = min(1, v[DA]);
 
