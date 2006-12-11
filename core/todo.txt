@@ -8,6 +8,11 @@ X make imageImpl() use WritableRaster in an attempt to speed things up
 X fix weird situation where fonts used in more than one renderer wouldn't show
 X opengl doesn't draw a background for the raw recorder
 X change P3D to smooth images nicely (bilinear was disabled)
+X ambientLight(r,g,b) was still ambientLight(r,g,r)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=465
+
+_ P3D smooshes the top row of pixels when drawing text (or images)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=466
 
 _ in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
