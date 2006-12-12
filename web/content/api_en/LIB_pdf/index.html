@@ -155,10 +155,12 @@ void keyPressed() {
 
 <pre>import processing.pdf.*;
 
-PGraphicsPDF pdf = createGraphics(300, 300, PDF, "output.pdf");
+PGraphics pdf = createGraphics(300, 300, PDF, "output.pdf");
+pdf.beginDraw();
 pdf.background(128, 0, 0);
 pdf.line(50, 50, 250, 250);
-pdf.dispose();</pre>
+pdf.dispose();
+pdf.endDraw();</pre>
 
 <p>To create vectors from 3D data, use the beginRaw() and endRaw() commands. 
 These commands will grab the shape data just before it is rendered to the screen. 
