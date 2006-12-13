@@ -20,8 +20,9 @@
 package processing.candy;
 
 import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
+import java.awt.geom.AffineTransform;
+//import java.awt.geom.*;
+//import java.awt.image.*;
 import java.util.Hashtable;
 
 import processing.core.*;
@@ -157,7 +158,7 @@ public class SVG {
         svg = new XMLElement(parent, filename);
 
         if (!svg.getName().equals("svg")) {
-            throw new RuntimeException("root isn't svg, it's <" + svg.getName() + ">");
+            throw new RuntimeException("root is not <svg>, it's <" + svg.getName() + ">");
         }
 
         width = parseUnitSize(svg.getStringAttribute("width"));
@@ -269,6 +270,92 @@ public class SVG {
             return new SVG(parent, width, height, table, obj, ignoreStyles);
         }
         return null;
+    }
+    
+    
+    // grab the (fill) gradient from a particular object by name
+    // and apply it to either the stroke or fill
+    // based on 
+    
+
+    protected Paint getGradient(String name, float cx, float cy, float r) {
+        BaseObject obj = (BaseObject) table.get(name);
+        if (obj == null) {
+            // try with underscores instead of spaces
+            obj = (BaseObject) table.get(name.replace(' ', '_'));
+        }
+        
+        if (obj != null) {        
+            VectorObject vobj = (VectorObject) obj;
+            if (vobj.fillGradient != null) {
+                return vobj.calcGradientPaint(vobj.fillGradient, cx, cy, r);
+            }
+        }
+        throw new RuntimeException("No gradient found for shape " + name);
+    }
+    
+    
+    protected Paint getGradient(String name, float x1, float y1, float x2, float y2) {
+        BaseObject obj = (BaseObject) table.get(name);
+        if (obj == null) {
+            // try with underscores instead of spaces
+            obj = (BaseObject) table.get(name.replace(' ', '_'));
+        }
+        
+        if (obj != null) {        
+            VectorObject vobj = (VectorObject) obj;
+            if (vobj.fillGradient != null) {
+                return vobj.calcGradientPaint(vobj.fillGradient, x1, y1, x2, y2);
+            }
+        }
+        throw new RuntimeException("No gradient found for shape " + name);
+    }
+
+    
+    public void strokeGradient(String name, float x, float y, float r) {
+        Paint paint = getGradient(name, x, y, r);
+        
+        if (parent.g instanceof PGraphicsJava2D) {
+            PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
+
+            p2d.strokeGradient = true;
+            p2d.strokeGradientObject = paint;
+        }
+    }
+    
+    public void strokeGradient(String name, float x1, float y1, float x2, float y2) {
+        Paint paint = getGradient(name, x1, y1, x2, y2);
+        
+        if (parent.g instanceof PGraphicsJava2D) {
+            PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
+
+            p2d.strokeGradient = true;
+            p2d.strokeGradientObject = paint;
+        }
+    }
+    
+    
+    public void fillGradient(String name, float x, float y, float r) {
+        Paint paint = getGradient(name, x, y, r);
+        
+        if (parent.g instanceof PGraphicsJava2D) {
+            PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
+
+            p2d.fillGradient = true;
+            p2d.fillGradientObject = paint;
+        }
+    }
+    
+    
+    public void fillGradient(String name, float x1, float y1, float x2, float y2) {
+        Paint paint = getGradient(name, x1, y1, x2, y2);
+        
+        if (parent.g instanceof PGraphicsJava2D) {
+            PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
+
+            p2d.fillGradient = true;
+            p2d.fillGradientObject = paint;
+        }
     }
 
 
@@ -572,31 +659,44 @@ public class SVG {
         }
 
 
-        protected Paint calcGradientPaint(Gradient gradient) { //, float opacity) {
+        protected Paint calcGradientPaint(Gradient gradient) { 
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
-
-                /*
-                Color c1 = new Color(0xFF000000 | grad.color[0]);
-                Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
-                return new GradientPaint(grad.x1, grad.y1, c1,
-                                         grad.x2, grad.y2, c2);
-                                         */
                 return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
                                                grad.offset, grad.color, grad.count,
                                                opacity);
 
-
             } else if (gradient instanceof RadialGradient) {
                 RadialGradient grad = (RadialGradient) gradient;
-
-                //Color c1 = new Color(0xFF000000 | grad.color[0]);
-                //Color c2 = new Color(0xFF000000 | grad.color[grad.count-1]);
                 return new RadialGradientPaint(grad.cx, grad.cy, grad.r,
                                                grad.offset, grad.color, grad.count,
                                                opacity);
             }
             return null;
+        }
+
+
+        protected Paint calcGradientPaint(Gradient gradient, 
+                                          float x1, float y1, float x2, float y2) { 
+            if (gradient instanceof LinearGradient) {
+                LinearGradient grad = (LinearGradient) gradient;
+                return new LinearGradientPaint(x1, y1, x2, y2,
+                                               grad.offset, grad.color, grad.count,
+                                               opacity);
+            }
+            throw new RuntimeException("Not a linear gradient.");
+        }
+        
+        
+        protected Paint calcGradientPaint(Gradient gradient, 
+                                          float cx, float cy, float r) {
+            if (gradient instanceof RadialGradient) {
+                RadialGradient grad = (RadialGradient) gradient;
+                return new RadialGradientPaint(cx, cy, r,
+                                               grad.offset, grad.color, grad.count,
+                                               opacity);
+            }
+            throw new RuntimeException("Not a radial gradient.");
         }
 
 
@@ -674,265 +774,7 @@ public class SVG {
             }
         }
     }
-
-
-    public class RadialGradientPaint implements Paint {
-        float cx, cy, radius;
-        float[] offset;
-        int[] color;
-        int count;
-        float opacity;
-
-        public RadialGradientPaint(float cx, float cy, float radius,
-                                   float[] offset, int[] color, int count,
-                                   float opacity) {
-            this.cx = cx;
-            this.cy = cy;
-            this.radius = radius;
-            this.offset = offset;
-            this.color = color;
-            this.count = count;
-            this.opacity = opacity;
-        }
-
-        public PaintContext createContext(ColorModel cm,
-                                          Rectangle deviceBounds, Rectangle2D userBounds,
-                                          AffineTransform xform, RenderingHints hints) {
-            Point2D transformedPoint =
-                xform.transform(new Point2D.Float(cx, cy), null);
-            // this causes problems
-            //Point2D transformedRadius =
-            //    xform.deltaTransform(new Point2D.Float(radius, radius), null);
-            return new RadialGradientContext((float) transformedPoint.getX(),
-                                             (float) transformedPoint.getY(),
-                                             radius, //(float) transformedRadius.distance(0, 0),
-                                             offset, color, count, opacity);
-        }
-
-        public int getTransparency() {
-            /*
-            int a1 = mPointColor.getAlpha();
-            int a2 = mBackgroundColor.getAlpha();
-            return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
-            */
-            //return (opacity == 1) ? OPAQUE : TRANSLUCENT;
-            return TRANSLUCENT;  // why not.. rather than checking each color
-        }
-    }
-
-
-    public class RadialGradientContext implements PaintContext {
-        float cx, cy, radius;
-        float[] offset;
-        int[] color;
-        int count;
-        float opacity;
-
-        public RadialGradientContext(float cx, float cy, float radius,
-                                     float[] offset, int[] color, int count,
-                                     float opacity) {
-            this.cx = cx;
-            this.cy = cy;
-            this.radius = radius;
-            this.offset = offset;
-            this.color = color;
-            this.count = count;
-            this.opacity = opacity;
-        }
-
-        public void dispose() {}
-
-        public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
-
-        int ACCURACY = 5;
-
-        public Raster getRaster(int x, int y, int w, int h) {
-            WritableRaster raster =
-                getColorModel().createCompatibleWritableRaster(w, h);
-
-            //System.out.println("radius here is " + radius);
-            //System.out.println("count is " + count);
-            int span = (int) radius * ACCURACY;
-            int[][] interp = new int[span][4];
-            int prev = 0;
-            for (int i = 1; i < count; i++) {
-                int c0 = color[i-1];
-                int c1 = color[i];
-                int last = (int) (offset[i] * (span - 1));
-                for (int j = prev; j <= last; j++) {
-                    float btwn = PApplet.norm(j, prev, last);
-                    interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
-                    interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
-                    interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
-                    interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
-                    //System.out.println(interp[j][3]);
-                }
-                prev = last;
-            }
-
-            int[] data = new int[w * h * 4];
-            int index = 0;
-            for (int j = 0; j < h; j++) {
-                for (int i = 0; i < w; i++) {
-                    float distance = PApplet.dist(cx, cy, x + i, y + j);
-                    int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
-
-                    data[index++] = interp[which][0];
-                    data[index++] = interp[which][1];
-                    data[index++] = interp[which][2];
-                    data[index++] = interp[which][3];
-                }
-            }
-            raster.setPixels(0, 0, w, h, data);
-
-            return raster;
-        }
-    }
-
-
-    public class LinearGradientPaint implements Paint {
-        float x1, y1, x2, y2;
-        float[] offset;
-        int[] color;
-        int count;
-        float opacity;
-
-        public LinearGradientPaint(float x1, float y1, float x2, float y2,
-                                   float[] offset, int[] color, int count,
-                                   float opacity) {
-            this.x1 = x1;
-            this.y1 = y1;
-            this.x2 = x2;
-            this.y2 = y2;
-            this.offset = offset;
-            this.color = color;
-            this.count = count;
-            this.opacity = opacity;
-        }
-
-        public PaintContext createContext(ColorModel cm,
-                                          Rectangle deviceBounds, Rectangle2D userBounds,
-                                          AffineTransform xform, RenderingHints hints) {
-            Point2D t1 = xform.transform(new Point2D.Float(x1, y1), null);
-            Point2D t2 = xform.transform(new Point2D.Float(x2, y2), null);
-            return new LinearGradientContext((float) t1.getX(), (float) t1.getY(),
-                                             (float) t2.getX(), (float) t2.getY(),
-                                             offset, color, count, opacity);
-        }
-
-        public int getTransparency() {
-            /*
-            int a1 = mPointColor.getAlpha();
-            int a2 = mBackgroundColor.getAlpha();
-            return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
-            */
-            //return OPAQUE;
-            return TRANSLUCENT;  // why not.. rather than checking each color
-        }
-    }
-
-
-    public class LinearGradientContext implements PaintContext {
-        float x1, y1, x2, y2;
-        float[] offset;
-        int[] color;
-        int count;
-        float opacity;
-
-        public LinearGradientContext(float x1, float y1, float x2, float y2,
-                                     float[] offset, int[] color, int count,
-                                     float opacity) {
-            this.x1 = x1;
-            this.y1 = y1;
-            this.x2 = x2;
-            this.y2 = y2;
-            this.offset = offset;
-            this.color = color;
-            this.count = count;
-            this.opacity = opacity;
-        }
-
-        public void dispose() { }
-
-        public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
-
-        int ACCURACY = 2;
-
-        public Raster getRaster(int x, int y, int w, int h) {
-            WritableRaster raster =
-                getColorModel().createCompatibleWritableRaster(w, h);
-
-            int[] data = new int[w * h * 4];
-            
-            // make normalized version of base vector
-            float nx = x2 - x1;
-            float ny = y2 - y1;
-            float len = (float) Math.sqrt(nx*nx + ny*ny);
-            if (len != 0) {
-                nx /= len;
-                ny /= len;
-            }
-
-            int span = (int) PApplet.dist(x1, y1, x2, y2) * ACCURACY;
-            if (span <= 0) {
-                // annoying edge case where the gradient isn't legit
-                int index = 0;
-                for (int j = 0; j < h; j++) {
-                    for (int i = 0; i < w; i++) {
-                        data[index++] = 0;
-                        data[index++] = 0;
-                        data[index++] = 0;
-                        data[index++] = 255;
-                    }
-                }
-                
-            } else {
-                //System.out.println("span is " + span + " " + x1 + " " + y1 + " " + x2 + " " + y2);
-                int[][] interp = new int[span][4];
-                int prev = 0;
-                for (int i = 1; i < count; i++) {
-                    int c0 = color[i-1];
-                    int c1 = color[i];
-                    int last = (int) (offset[i] * (span-1));
-                    //System.out.println("last is " + last);
-                    for (int j = prev; j <= last; j++) {
-                        float btwn = PApplet.norm(j, prev, last);
-                        interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
-                        interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
-                        interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
-                        interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
-                        //System.out.println(j + " " + interp[j][0] + " " + interp[j][1] + " " + interp[j][2]);
-                    }
-                    prev = last;
-                }
-
-                int index = 0;
-                for (int j = 0; j < h; j++) {
-                    for (int i = 0; i < w; i++) {
-                        //float distance = 0; //PApplet.dist(cx, cy, x + i, y + j);
-                        //int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
-                        float px = (x + i) - x1;
-                        float py = (y + j) - y1;
-                        // distance up the line is the dot product of the normalized
-                        // vector of the gradient start/stop by the point being tested
-                        int which = (int) ((px*nx + py*ny) * ACCURACY);
-                        if (which < 0) which = 0;
-                        if (which > interp.length-1) which = interp.length-1;
-                        //if (which > 138) System.out.println("grabbing " + which);
-
-                        data[index++] = interp[which][0];
-                        data[index++] = interp[which][1];
-                        data[index++] = interp[which][2];
-                        data[index++] = interp[which][3];
-                    }
-                }
-            }
-            raster.setPixels(0, 0, w, h, data);
-
-            return raster;
-        }
-    }
-
+    
 
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -1076,6 +918,7 @@ public class SVG {
 
     private class LinearGradient extends Gradient {
         float x1, y1, x2, y2;
+        AffineTransform transform;
 
         public LinearGradient(XMLElement properties) {
             super(properties);
@@ -1084,10 +927,31 @@ public class SVG {
             this.y1 = properties.getFloatAttribute("y1");
             this.x2 = properties.getFloatAttribute("x2");
             this.y2 = properties.getFloatAttribute("y2");
+            
+            String transformStr = 
+                properties.getStringAttribute("gradientTransform");
+            if (transformStr != null) {
+                this.transform = parseTransform(transformStr);
+                System.out.println(transform);
+            }
         }
 
         protected void drawShape(){
         }
+    }
+    
+    
+    // complete version is here
+    // http://www.w3.org/TR/SVG/coords.html#TransformAttribute
+    AffineTransform parseTransform(String what) {
+        if (what != null) {
+            if (what.startsWith("matrix(") && what.endsWith(")")) {
+                // columns go first with AT constructor
+                what = what.substring(7, what.length() - 1);
+                return new AffineTransform(PApplet.parseFloat(PApplet.split(what, ' ')));                
+            }
+        }
+        return null;
     }
 
 
