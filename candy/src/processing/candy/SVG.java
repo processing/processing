@@ -21,8 +21,7 @@ package processing.candy;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-//import java.awt.geom.*;
-//import java.awt.image.*;
+import java.awt.geom.Point2D;
 import java.util.Hashtable;
 
 import processing.core.*;
@@ -860,6 +859,8 @@ public class SVG {
 
 
     abstract private class Gradient extends BaseObject {
+        AffineTransform transform;
+
         float[] offset;
         int[] color;
         int count;
@@ -905,6 +906,7 @@ public class SVG {
         abstract protected void drawShape();
     }
 
+    
     static protected Hashtable parseStyleAttributes(String style) {
         Hashtable table = new Hashtable();
         String[] pieces = style.split(";");
@@ -918,7 +920,6 @@ public class SVG {
 
     private class LinearGradient extends Gradient {
         float x1, y1, x2, y2;
-        AffineTransform transform;
 
         public LinearGradient(XMLElement properties) {
             super(properties);
@@ -932,7 +933,14 @@ public class SVG {
                 properties.getStringAttribute("gradientTransform");
             if (transformStr != null) {
                 this.transform = parseTransform(transformStr);
-                System.out.println(transform);
+                
+                Point2D t1 = transform.transform(new Point2D.Float(x1, y1), null);
+                Point2D t2 = transform.transform(new Point2D.Float(x2, y2), null);
+                this.x1 = (float) t1.getX();
+                this.y1 = (float) t1.getY();
+                this.x2 = (float) t2.getX();
+                this.y2 = (float) t2.getY();
+
             }
         }
 
@@ -958,13 +966,24 @@ public class SVG {
     private class RadialGradient extends Gradient {
         float cx, cy, r;
 
-
         public RadialGradient(XMLElement properties) {
             super(properties);
 
             this.cx = properties.getFloatAttribute("cx");
             this.cy = properties.getFloatAttribute("cy");
             this.r = properties.getFloatAttribute("r");
+            
+            String transformStr = 
+                properties.getStringAttribute("gradientTransform");
+            if (transformStr != null) {
+                this.transform = parseTransform(transformStr);
+                
+                Point2D t1 = transform.transform(new Point2D.Float(cx, cy), null);
+                Point2D t2 = transform.transform(new Point2D.Float(cx + r, cy), null);
+                this.cx = (float) t1.getX();
+                this.cy = (float) t1.getY();
+                this.r = (float) (t2.getX() - t1.getX());
+            }
         }
 
         protected void drawShape() {
@@ -975,7 +994,7 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Line extends VectorObject{
+    private class Line extends VectorObject {
 
         float x1, y1, x2, y2;
 
@@ -996,7 +1015,7 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Circle extends VectorObject{
+    private class Circle extends VectorObject {
 
         float x, y, radius;
 
