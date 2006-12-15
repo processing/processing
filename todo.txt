@@ -1,5 +1,7 @@
 0124 pde
 
+_ 'code' folder being ignored on export to application
+_   http://dev.processing.org/bugs/show_bug.cgi?id=469
 
 libraries
 _ add control for dependencies (i.e. svg needs xml), needed for export
@@ -522,7 +524,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
-_ is 'code' folder being ignored on export application?
 _ add auto-install of cab file inside applet.html
 _   http://dev.processing.org/bugs/show_bug.cgi?id=181
 _   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/using_tags.html
