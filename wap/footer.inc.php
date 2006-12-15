@@ -13,7 +13,7 @@ if (isset($PAGE_FOOTER)) {
     <div id="attribution">
       <small>
         Mobile Processing<br />
-        <a href="http://atmp.at">http://atmp.at/</a>
+        <a href="http://wapmp.at">http://wapmp.at/</a>
       </small>
     </div>
   </body>
