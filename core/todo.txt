@@ -11,6 +11,8 @@ X change P3D to smooth images nicely (bilinear was disabled)
 X ambientLight(r,g,b) was still ambientLight(r,g,r)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=465
 
+_ an offscreen JAVA2D graphics needs loadPixels() before being drawn
+_   i.e. offscreen JAVA2D, then image() with OPENGL renderer as main
 _ P3D smooshes the top row of pixels when drawing text (or images)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=466
 
