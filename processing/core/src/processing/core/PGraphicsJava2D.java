@@ -43,7 +43,7 @@ import java.awt.image.*;
  *
  * <p>To get access to the Java 2D "Graphics2D" object for the default
  * renderer, use:
- * <PRE>Graphics2D g2 = ((PGraphics2)g).g2;</PRE>
+ * <PRE>Graphics2D g2 = ((PGraphicsJava2D)g).g2;</PRE>
  * This will let you do Java 2D stuff directly, but is not supported in
  * any way shape or form. Which just means "have fun, but don't complain
  * if it breaks."</p>
@@ -632,7 +632,7 @@ public class PGraphicsJava2D extends PGraphics {
 
     if (who.cache == null) {
       who.cache = new ImageCache(who);
-      //who.updatePixels();  // mark the whole thing for update
+      who.updatePixels();  // mark the whole thing for update
       who.modified = true;
     }
 
@@ -679,13 +679,16 @@ public class PGraphicsJava2D extends PGraphics {
     // used in an offscreen PGraphics, the tintColor value from the
     // original PGraphics will be used.
     public void update(boolean tint, int tintColor) {
+      if (tintedPixels == null) {
+        tintedPixels = new int[source.width * source.height];
+      }
 
       if ((source.format == ARGB) || (source.format == RGB)) {
         if (tint) {
           // create tintedPixels[] if necessary
-          if (tintedPixels == null) {
-            tintedPixels = new int[source.width * source.height];
-          }
+          //if (tintedPixels == null) {
+          //  tintedPixels = new int[source.width * source.height];
+          //}
 
           int a2 = (tintColor >> 24) & 0xff;
           int r2 = (tintColor >> 16) & 0xff;
@@ -747,10 +750,6 @@ public class PGraphicsJava2D extends PGraphics {
         }
 
       } else if (source.format == ALPHA) {
-        if (tintedPixels == null) {
-          tintedPixels = new int[source.width * source.height];
-        }
-
         int lowbits = tintColor & 0x00ffffff;
         if (((tintColor >> 24) & 0xff) >= 254) {
           //PApplet.println("  no alfa " + PApplet.hex(tintColor));

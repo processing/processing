@@ -225,7 +225,6 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Call this when you want to mess with the pixels[] array.
-   * Formerly called loadPixels().
    * <p/>
    * For subclasses where the pixels[] buffer isn't set by default,
    * this should copy all data into the pixels[] array
@@ -236,7 +235,6 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Call this when finished messing with the pixels[] array.
-   * Formerly called updatePixels().
    * <p/>
    * Mark all pixels as needing update.
    */
@@ -256,8 +254,6 @@ public class PImage implements PConstants, Cloneable {
    * the x2 and y2 positions are non-inclusive.
    */
   public void updatePixels(int x1, int y1, int x2, int y2) {
-    //if (!modified) {  // could just set directly, but..
-    //}
 
     if (imageMode == CORNER) {  // x2, y2 are w/h
       x2 += x1;
@@ -300,8 +296,8 @@ public class PImage implements PConstants, Cloneable {
    * the value will get its high bits set, just to avoid cases where
    * they haven't been set already.
    * <P>
-   * If the image is in ALPHA format, this returns a white color
-   * that has its alpha value set.
+   * If the image is in ALPHA format, this returns a white with its
+   * alpha value set.
    * <P>
    * This function is included primarily for beginners. It is quite
    * slow because it has to check to see if the x, y that was provided
