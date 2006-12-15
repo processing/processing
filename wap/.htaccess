@@ -1,0 +1,5 @@
+AddType text/vnd.sun.j2me.app-descriptor jad
+AddType application/java-archive jar
+
+RewriteEngine On
+RewriteRule ^(.*).jad /dl.php?n=$1
