@@ -10,6 +10,18 @@ X opengl doesn't draw a background for the raw recorder
 X change P3D to smooth images nicely (bilinear was disabled)
 X ambientLight(r,g,b) was still ambientLight(r,g,r)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=465
+X fix from dave bollinger for the POSTERIZE filter
+X   http://dev.processing.org/bugs/show_bug.cgi?id=399
+
+_ make sure the docs include "beginShape() cannot be nested"
+
+_ for PShape, need to be able to set the origin (flash people)
+
+_ look into anti-aliasing on osx
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
+
+_ 1.5.0_07 and 1.4.2_12 contain the -XX:+HeapDumpOnOutOfMemoryError switch 
+_   invaluable for tracking down memory leaks 
 
 _ an offscreen JAVA2D graphics needs loadPixels() before being drawn
 _   i.e. offscreen JAVA2D, then image() with OPENGL renderer as main

@@ -594,18 +594,14 @@ public class PImage implements PConstants, Cloneable {
           throw new RuntimeException("Levels must be between 2 and 255 for " +
                                      "filter(POSTERIZE, levels)");
         }
-        // TODO not optimized
-        int levels256 = 256 / levels;
         int levels1 = levels - 1;
         for (int i = 0; i < pixels.length; i++) {
-          int rlevel = ((pixels[i] >> 16) & 0xff) / levels256;
-          int glevel = ((pixels[i] >> 8) & 0xff) / levels256;
-          int blevel = (pixels[i] & 0xff) / levels256;
-
-          rlevel = (rlevel * 255 / levels1) & 0xff;
-          glevel = (glevel * 255 / levels1) & 0xff;
-          blevel = (blevel * 255 / levels1) & 0xff;
-
+          int rlevel = (pixels[i] >> 16) & 0xff;
+          int glevel = (pixels[i] >> 8) & 0xff;
+          int blevel = pixels[i] & 0xff;
+          rlevel = (((rlevel * levels) >> 8) * 255) / levels1;
+          glevel = (((glevel * levels) >> 8) * 255) / levels1;
+          blevel = (((blevel * levels) >> 8) * 255) / levels1;
           pixels[i] = ((0xff000000 & pixels[i]) |
                        (rlevel << 16) |
                        (glevel << 8) |
@@ -1073,7 +1069,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Blend a two colors based on a particular mode.
+   * Blend two colors based on a particular mode.
    * <PRE>
    * BLEND - linear interpolation of colours: C = A*factor + B
    * ADD - additive blending with white clip: C = min(A*factor + B, 255)
