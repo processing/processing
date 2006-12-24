@@ -129,6 +129,7 @@ public class Sketchbook {
 
       //System.out.println("resetting sketchbook path");
       File sketchbookFolder = Base.getDefaultSketchbookFolder();
+      //System.out.println("default is " + sketchbookFolder);
       Preferences.set("sketchbook.path",
                       sketchbookFolder.getAbsolutePath());
 
