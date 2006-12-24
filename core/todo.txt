@@ -63,19 +63,8 @@ _   use gradients in a class for the svg lib for now
 _   don't add api to main p5 stuff (though maybe setPaint/noPaint api?)
 _ gradient-painted lines and fills
 _   java2d will do both line and fill, illusfarter only does fills
-import java.awt.geom.*;
-Color c = new Color(0x00FFFF00, true);
-GradientPaint gradient = 
-  new GradientPaint(0,0,Color.red,100,100,c);
-GeneralPath gp = new GeneralPath();
-gp.moveTo(10, 10);
-gp.lineTo(100, 90);
-gp.lineTo(20, 50);
-gp.closePath();
-Graphics2D g2 = ((PGraphicsJava2D)g).g2;
-g2.setPaint(gradient);
-//g2.draw(gp);
-g2.fill(gp);
+_ gradients not supported in java2d
+_   http://dev.processing.org/bugs/show_bug.cgi?id=371
 
 _ tint() and noTint() switching problem in P2D
 _   this should be a quick fix
