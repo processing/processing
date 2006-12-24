@@ -4,6 +4,8 @@ X   properly go to the beginning or ending of the document
 X create "Documents" folder for the user if it doesn't exist
 X   just default to the user's home directory if no 'sketchbook' folder
 X   otherwise ask the user to select a folder
+X fix QTSession.open/close problem in Capture.list()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=472
 
 _ 'code' folder being ignored on export to application
 _   http://dev.processing.org/bugs/show_bug.cgi?id=469
