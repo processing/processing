@@ -786,8 +786,14 @@ public abstract class InputHandler extends KeyAdapter
 
                         if(line == textArea.getLineCount() - 1)
                         {
-                                textArea.getToolkit().beep();
-                                return;
+                          //textArea.getToolkit().beep();
+                          int doc = textArea.getDocumentLength();
+                          if (select) {
+                            textArea.select(textArea.getMarkPosition(), doc);
+                          } else {
+                            textArea.setCaretPosition(doc);
+                          }
+                          return;
                         }
 
                         int magic = textArea.getMagicCaretPosition();
@@ -944,7 +950,14 @@ public abstract class InputHandler extends KeyAdapter
 
                         if(line == 0)
                         {
-                                textArea.getToolkit().beep();
+                          if (select) {
+                            if (textArea.getSelectionStart() != 0) {
+                              textArea.select(textArea.getMarkPosition(), 0);
+                            }
+                          } else {
+                            textArea.setCaretPosition(0);
+                          }
+                          //textArea.getToolkit().beep();
                                 return;
                         }
 

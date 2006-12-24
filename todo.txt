@@ -1,4 +1,6 @@
 0124 pde
+X handle next/prev line with up/down arrow, with/without shift down
+X   properly go to the beginning or ending of the document
 
 _ 'code' folder being ignored on export to application
 _   http://dev.processing.org/bugs/show_bug.cgi?id=469
