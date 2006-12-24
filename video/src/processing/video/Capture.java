@@ -491,6 +491,7 @@ public class Capture extends PImage implements Runnable {
    */
   static public String[] list() {
     try {
+      QTSession.open();
       SequenceGrabber grabber = new SequenceGrabber();
       SGVideoChannel channel = new SGVideoChannel(grabber);
 
@@ -501,6 +502,7 @@ public class Capture extends PImage implements Runnable {
       }
       // properly shut down the channel so the app can use it again
       grabber.disposeChannel(channel);
+      QTSession.close();
       return listing;
 
     } catch (QTException qte) {
