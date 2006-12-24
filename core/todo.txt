@@ -13,6 +13,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=465
 X fix from dave bollinger for the POSTERIZE filter
 X   http://dev.processing.org/bugs/show_bug.cgi?id=399
 
+_ java 1.5.0_10 breaks jogl
+
 _ make sure the docs include "beginShape() cannot be nested"
 
 _ for PShape, need to be able to set the origin (flash people)
