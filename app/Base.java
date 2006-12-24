@@ -405,9 +405,19 @@ public class Base {
                                                        domainDocuments });
         sketchbookFolder = new File(documentsFolder, "Processing");
 
-      } catch (Exception e) {
+        /*
+          // more specific version for debugging
+      } catch (InvocationTargetException ite) {
+        Throwable target =
+          ((InvocationTargetException) ite).getTargetException();
         showError("sketch folder problem",
-                  "Could not locate default sketch folder location.", e);
+                  "Could not locate default sketch folder location.", target);
+        */
+
+      } catch (Exception e) {
+        //showError("Could not find folder",
+        //          "Could not locate the Documents folder.", e);
+        sketchbookFolder = promptSketchbookLocation();
       }
 
     } else if (isWindows()) {
@@ -436,18 +446,13 @@ public class Base {
         sketchbookFolder = new File(personalPath, "Processing");
 
       } catch (Exception e) {
-        showError("Problem getting documents folder",
-                  "Error getting the Processing sketchbook folder.", e);
+        //showError("Problem getting folder",
+        //          "Could not locate the Documents folder.", e);
+        sketchbookFolder = promptSketchbookLocation();
       }
 
     } else {
-      sketchbookFolder =
-        Base.selectFolder("Select the folder where " +
-                          "Processing sketches should be stored...",
-                          null, null);
-      if (sketchbookFolder == null) {
-        System.exit(0);
-      }
+      sketchbookFolder = promptSketchbookLocation();
 
       /*
       // on linux (or elsewhere?) prompt the user for the location
@@ -496,6 +501,27 @@ public class Base {
 
 
   /**
+   * Check for a new sketchbook location.
+   */
+  static protected File promptSketchbookLocation() {
+    File folder = null;
+
+    folder = new File(System.getProperty("user.home"), "sketchbook");
+    if (!folder.exists()) {
+      folder.mkdirs();
+      return folder;
+    }
+
+    folder = Base.selectFolder("Select (or create new) folder for sketches...",
+                               null, null);
+    if (folder == null) {
+      System.exit(0);
+    }
+    return folder;
+  }
+
+
+  /**
    * Implementation for choosing directories that handles both the
    * Mac OS X hack to allow the native AWT file dialog, or uses
    * the JFileChooser on other platforms. Mac AWT trick obtained from
@@ -507,11 +533,16 @@ public class Base {
     if (Base.isMacOS()) {
       if (frame == null) frame = new Frame(); //.pack();
       FileDialog fd = new FileDialog(frame, prompt, FileDialog.LOAD);
-      fd.setDirectory(folder.getParent());
-      //fd.setFile(folder.getName());
+      if (folder != null) {
+        fd.setDirectory(folder.getParent());
+        //fd.setFile(folder.getName());
+      }
       System.setProperty("apple.awt.fileDialogForDirectories", "true");
       fd.show();
       System.setProperty("apple.awt.fileDialogForDirectories", "false");
+      if (fd.getFile() == null) {
+        return null;
+      }
       return new File(fd.getDirectory(), fd.getFile());
 
     } else {
@@ -797,7 +828,7 @@ public class Base {
    * for errors that allow P5 to continue running.
    */
   static public void showError(String title, String message,
-                               Exception e) {
+                               Throwable e) {
     if (title == null) title = "Error";
     JOptionPane.showMessageDialog(new Frame(), message, title,
                                   JOptionPane.ERROR_MESSAGE);
