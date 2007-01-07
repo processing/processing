@@ -153,6 +153,30 @@ Mac OS X
 <li>Processing requires Mac OS X 10.3.9 or later, see the <a href="../environment/platforms.html#mac">platforms</a> section for more information.
 <li>First be sure that you're not trying to run Processing from the disk image. As with most programs, Processing needs to be copied to the Applications folder in order for it to run properly.
 <li>If it's still not working, open Console.app, found in Applications &rarr; Utilities &rarr; Console and see if there are any messages. If you don't know what they mean, post them to the discourse board where someone can help you out.
+<li>An error such as this one visible in Console.app:
+<PRE>
+#
+# The exception above was detected in native code outside the VM
+#
+# Java VM: Java HotSpot(TM) Client VM (1.4.2-50 mixed mode)
+#
+/Applications/Processing 0123.app/Contents/MacOS/JavaApplicationStub: 
+An unexpected Java error has been detected by HotSpot Virtual Machine: 
+</PRE>
+may be the result of a partially failed Java update. First try entering this with Terminal.app:
+<PRE>
+ /System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java -version
+</PRE>
+If that results in a message like:
+<PRE>
+update_sharing command failed to execute 
+</PRE>
+followed by more text, then your install is messed up. To fix it, enter this:
+<PRE>
+ /System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/update_sharing 1.4
+</PRE>
+and then try the -version command again. Hopefully, the "update_sharing command failed to execute" message will no longer be there, meaning that Processing and other Java applications should run again. (This problem was first tracked down
+<A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1166189461">here</A>)
 <li>Using developer releases of Java is strongly discouraged. These can often cause problems and we can't possibly support them.
 <li>Fink users might see the following error: <br />
 <TT>dyld: /Applications/processing/jikes version mismatch for library:<br />/sw/lib/libiconv.2.dylib (compatibility version of user: <br />
