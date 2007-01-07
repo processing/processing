@@ -72,6 +72,16 @@ while ($child) {
 
     $child = $child->next_sibling();
 }
+
+//// check for parent, if any
+$pos = strpos($_GET['name'], "_");
+if ($pos !== false) {
+    $parent = substr($_GET['name'], 0, $pos);
+    if (!file_exists('API/'. $parent .'.xml')) {
+        unset($parent);
+    }
+}
+
 ?>
     
 
@@ -164,7 +174,11 @@ while ($child) {
        <?php foreach ($value['field'] as $f) { ?>
                  <tr>
                    <td valign="top" width="70">
-                     <a href="reference.php?name=<?php echo $_GET['name'] ?>_<?php echo rtrim($f['fname'], "[]() ") ?>"><?php echo $f['fname'] ?></a>
+<?php
+                 $filename = $_GET['name'] ."_". rtrim($f['fname'], "[]() ");
+                 $displayname = $f['fname'];
+?>
+                     <a href="<?php echo reflink($filename) ?>"><?php echo $displayname ?></a>
                    </td>
                    <td valign="top" width="20">&nbsp;</td>
                    <td><?php echo $f['fdescription'] ?><br><br></td>
@@ -182,7 +196,11 @@ while ($child) {
        <?php foreach ($value['method'] as $m) { ?>
                  <tr>
                    <td valign="top" width="70">
-                     <a href="reference.php?name=<?php echo $_GET['name'] ?>_<?php echo rtrim($m['mname'], "() ") ?>"><?php echo $m['mname'] ?></a>
+<?php
+                   $filename = $_GET['name'] ."_". rtrim($m['mname'], "() ");
+                   $displayname = $m['mname'];
+?>
+                   <a href="<?php echo reflink($filename) ?>"><?php echo $displayname ?></a>
                    </td>
                    <td valign="top" width="20">&nbsp;</td>
                    <td><?php echo $m['mdescription'] ?><br><br></td>
@@ -218,15 +236,28 @@ while ($child) {
     </td>
   </tr>
 <?php } ?>
-<?php if (isset($value['related'])) { ?>
+<?php 
+if (isset($value['related'])) { 
+?>
   <tr>
     <td class="reffieldheader">Related</td>
     <td class="reffield">
-       <?php foreach ($value['related'] as $f) { ?>
-         <a href="reference.php?name=<?php echo rtrim($f, "() ") ?>"><?php echo $f ?></a><br>
-       <?php } ?>
+<?php
+       foreach ($value['related'] as $f) {
+           if (isset($parent)) {
+               $filename = $parent ."_". rtrim($f, "() ");
+           } else {
+               $filename = rtrim($f, "() ");
+           }
+?>
+         <a href="<?php echo reflink($filename) ?>"><?php echo $f ?></a><br>
+<?php 
+       } 
+?>
     </td>
   </tr>
-<?php } ?>
+<?php
+}
+?>
 </table>
 

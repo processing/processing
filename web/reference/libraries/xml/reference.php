@@ -2,6 +2,7 @@
 
 $PAGE_TITLE = "XML &raquo; Libraries &raquo; Mobile Processing";
 $PAGE_SHOWBACKINDEX = true;
+$PAGE_BACK_NAME = 'XML library';
 
 require '../../../header.inc.php';
 

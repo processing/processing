@@ -1,7 +1,42 @@
 <?php
-require 'settings.inc.php';
-?>
+//// check if we're on the web, or being run on the command line to 
+//// generate offline documentation
 
+$offline = false;
+$ext = "php";
+if (is_null($argv)) {
+    require 'settings.inc.php';
+} else {
+    require 'offline.inc.php';
+
+    //// define the site root, passed in as a relative path on the command line
+    define("SITE_ROOT", $argv[1]);
+    //// get working directory
+    $dir = str_replace("\\", "/", getcwd());
+    //// reconstruct PHP_SELF
+    $count = substr_count($argv[1], "../");
+    $root = $dir;
+    for ($i = 0; $i < $count; $i++) {
+        $root = substr($root, 0, strrpos($root, "/"));
+    }
+    $dir = substr($dir, strlen($root) + 1);
+    $_SERVER['PHP_SELF'] = SITE_ROOT . $dir ."/". $argv[0];
+    //// set name parameter, if exits
+    if (isset($argv[3])) {      
+        $_GET['name'] = $argv[3];
+    }
+    /*
+    echo "count=". $count ."<br />";
+    echo "root=". $root .", dir=". $dir ."<br />";
+    echo "PHP_SELF=". $_SERVER['PHP_SELF'] ."<br />";
+    echo var_dump($argv);
+    */
+
+    $offline = true;
+    $ext = "html";
+}
+
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
                       "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -24,53 +59,52 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 </div>
 <div id="navigation"> 
     <img src="<?php echo SITE_ROOT?>images/nav_bottomarrow.png" align="absmiddle">
-
+<?php if (!$offline) { ?>
 <?php if ($_SERVER['PHP_SELF'] == SITE_ROOT . 'index.php') { ?>
     Cover
 <?php } else { ?>
-    <a href="<?php echo SITE_ROOT ?>index.php">Cover</a>
+    <a href="<?php echo SITE_ROOT ?>index.<?php echo $ext ?>">Cover</a>
 <?php } ?>
 
     <span class="backslash">\</span>
-<?php if ($PAGE_LINKHEADER || (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'exhibition/') === false)) { ?>
+<?php     if ($PAGE_LINKHEADER || (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'exhibition/') === false)) { ?>
     <a href="<?php echo SITE_ROOT ?>exhibition/index.php">Exhibition</a>
-<?php } else { ?>
+<?php     } else { ?>
     Exhibition
-<?php } ?>
+<?php     } ?>
 
     <span class="backslash">\</span>
-<?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'learning/') === false) { ?>
+<?php     if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'learning/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>learning/index.php">Learning</a>
-<?php } else { ?>
+<?php     } else { ?>
     Learning
-<?php } ?>
-
+<?php     } ?>
     <span class="backslash">\</span>
+<?php } ?>
 <?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'reference/') === false) { ?>
-    <a href="<?php echo SITE_ROOT ?>reference/index.php">Reference</a> 
+    <a href="<?php echo SITE_ROOT ?>reference/index.<?php echo $ext ?>">Reference</a> 
 <?php } else { ?>
     Reference
 <?php } ?>
-
+<?php if (!$offline) { ?>
     <span class="backslash">\</span>
-<?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'download/') === false) { ?>
+<?php     if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'download/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>download/index.php">Download</a>
-<?php } else { ?>
+<?php     } else { ?>
     Download
-<?php } ?>
-
-    <span class="backslash">\</span>
+<?php     } ?>
+<    <span class="backslash">\</span>
 <?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'faq/') === false) { ?>
-    <a href="<?php echo SITE_ROOT ?>faq/index.php">FAQ</a>
+    <a href="<?php echo SITE_ROOT ?>faq/index.<?php echo $ext ?>">FAQ</a>
 <?php } else { ?>
     FAQ
 <?php } ?>
-
     <span class="backslash">\</span>
-<?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'discourse/') === false) { ?>
+<?php     if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'discourse/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>discourse/index.php">Discourse</a>
-<?php } else { ?>
+<?php     } else { ?>
     Discourse
+<?php     } ?>
 <?php } ?>
 </div>
 <?php 
@@ -86,13 +120,19 @@ if (!(@include 'subnavigation.inc.php')) {
         if ($pos !== false) {
             $parent = substr($_GET['name'], 0, $pos);
             if (file_exists('API/'. $parent .'.xml')) {
-                $PAGE_BACK_LINK = 'reference.php?name='. $parent;
-                $PAGE_BACK_NAME = 'Back';
+                if ($offline) {
+                    $PAGE_BACK_LINK = $parent .".html";
+                } else {
+                    $PAGE_BACK_LINK = 'reference.php?name='. $parent;
+                }
+                $PAGE_BACK_NAME = $parent .' class';
             }
         }
     }
     if (is_null($PAGE_BACK_LINK)) {
-        $PAGE_BACK_LINK = 'index.php';
+        $PAGE_BACK_LINK = 'index.'. $ext;
+    } else if ($offline) {
+        $PAGE_BACK_LINK = str_replace(".php", ".html", $PAGE_BACK_LINK);
     }
     if (is_null($PAGE_BACK_NAME)) {
         $PAGE_BACK_NAME = 'Index';
