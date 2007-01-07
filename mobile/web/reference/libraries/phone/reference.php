@@ -2,6 +2,7 @@
 
 $PAGE_TITLE = "Phone &raquo; Libraries &raquo; Mobile Processing";
 $PAGE_SHOWBACKINDEX = true;
+$PAGE_BACK_NAME = 'Phone library';
 
 require '../../../header.inc.php';
 

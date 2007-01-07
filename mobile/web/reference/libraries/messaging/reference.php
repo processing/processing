@@ -2,6 +2,7 @@
 
 $PAGE_TITLE = "Messaging &raquo; Libraries &raquo; Mobile Processing";
 $PAGE_SHOWBACKINDEX = true;
+$PAGE_BACK_NAME = 'Messaging library';
 
 require '../../../header.inc.php';
 
