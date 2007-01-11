@@ -13,7 +13,7 @@
 <image>createImage.jpg</image>
 <code>
 PImage img = createImage(66, 66, RGB);
-for(int i=0; i < img.pixels.length; i++) {
+for(int i=0; i &lt; img.pixels.length; i++) {
   img.pixels[i] = color(0, 90, 102); 
 }
 image(img, 17, 17);
@@ -24,7 +24,7 @@ image(img, 17, 17);
 <image>createImage_2.jpg</image>
 <code>
 PImage img = createImage(66, 66, RGB);
-for(int i=0; i < img.pixels.length; i++) {
+for(int i=0; i &lt; img.pixels.length; i++) {
   img.pixels[i] = color(0, 90, 102, i%img.width * 2); 
 }
 image(img, 17, 17);
