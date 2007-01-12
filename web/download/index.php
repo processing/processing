@@ -26,12 +26,15 @@ require '../header.inc.php';
 function parse_date($line) {
     //// remove comment #
     $line = substr($line, 1);
-    //// move timezone to end of string so it can be parsed
+    //// move time and timezone to end of string so it can be parsed
     $pos = strrpos($line, " ");
     $year = substr($line, $pos);
     $line = substr($line, 0, $pos);
     $pos = strrpos($line, " ");
-    $line = substr($line, 0, $pos) . $year . substr($line, $pos);
+    $tz = substr($line, $pos);
+    $line = substr($line, 0, $pos);
+    $pos = strrpos($line, " ");
+    $line = substr($line, 0, $pos) . $year . substr($line, $pos) . $tz;
     //// return formatted date
     return date("d m Y", strtotime($line));
 }
