@@ -1,14 +1,15 @@
 <?php
+
+//// load offline functions
+require 'offline.inc.php';
+
 //// check if we're on the web, or being run on the command line to 
 //// generate offline documentation
-
 $offline = false;
 $ext = "php";
 if (is_null($argv)) {
     require 'settings.inc.php';
 } else {
-    require 'offline.inc.php';
-
     //// define the site root, passed in as a relative path on the command line
     define("SITE_ROOT", $argv[1]);
     //// get working directory
