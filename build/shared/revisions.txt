@@ -1,6 +1,11 @@
 This file reflects the ongoing history of revisions to the Mobile Processing
 software, including its core and library APIs.
 
+XML 0002
+========
+
+- Added removeChild() methods to XMLElement class.
+
 Core 0009
 =========
 

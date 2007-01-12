@@ -125,6 +125,8 @@
         <!-- delete the zip files- we need to copy our stuff in and re-zip -->
         <delete file="processing/build/windows/${svn.tag.processing}.zip"/>
         <delete file="processing/build/windows/${svn.tag.processing}-expert.zip"/>
+        <!-- build the documentation -->
+        <antcall target="makedocs"/>
         <!-- copy into standard release -->
         <antcall target="copycore">
             <param name="target" value="${svn.tag.processing}"/>
@@ -163,6 +165,37 @@
              basedir="processing/build/windows/mobile-${mobile.version}-expert"/>
     </target>
     
+    <target name="makedocs" depends="init">
+        <!-- build documentation -->
+        <exec executable="${php.executable}" dir="mobile/web">
+            <arg value="offline.php"/>
+            <arg value="${php.executable}"/>
+        </exec>
+        <!-- move reference files into docs folder -->
+        <move todir="mobile/docs/reference" overwrite="true">
+            <fileset dir="mobile/web/reference">
+                <include name="**/*.html"/>
+            </fileset>
+        </move>
+        <!-- copy reference images -->
+        <copy todir="mobile/docs/reference" overwrite="true">
+            <fileset dir="mobile/web/reference">
+                <include name="**/*.gif"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.png"/>
+            </fileset>
+        </copy>
+        <!-- copy relevant shared supporting files (css, images, etc) -->
+        <copy todir="mobile/docs" overwrite="true">
+            <fileset dir="mobile/web">
+                <include name="css/mobile.css"/>
+                <include name="images/mobile.png"/>
+                <include name="images/back_off.png"/>
+                <include name="images/nav_bottomarrow.png"/>
+            </fileset>
+        </copy>
+    </target>
+    
     <target name="copydocs" depends="init">
         <!-- default target is work folder, can be overridden by call -->
         <property name="target" value="work"/>
@@ -194,6 +227,15 @@
         <copy todir="processing/build/windows/${target}/reference" overwrite="true">
             <fileset dir="mobile/docs/reference">
                 <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- copy shared css/image stuff -->
+        <copy todir="processing/build/windows/${target}" overwrite="true">
+            <fileset dir="mobile/docs">
+                <include name="css/mobile.css"/>
+                <include name="images/mobile.png"/>
+                <include name="images/back_off.png"/>
+                <include name="images/nav_bottomarrow.png"/>
             </fileset>
         </copy>
         <!-- copy revisions list -->
