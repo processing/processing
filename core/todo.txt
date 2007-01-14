@@ -13,7 +13,17 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=465
 X fix from dave bollinger for the POSTERIZE filter
 X   http://dev.processing.org/bugs/show_bug.cgi?id=399
 
+_ no disk in drive error
+_   was this something that changed with the java updates?
+_   problem was the floppy drive.. gak
+_   http://dev.processing.org/bugs/show_bug.cgi?id=478
+
+_ textAlign(CENTER) with P3D and OPENGL produces messy result
+_   http://dev.processing.org/bugs/show_bug.cgi?id=475
+
 _ java 1.5.0_10 breaks jogl
+_   rc1 update that will fix things
+_   https://jogl.dev.java.net/servlets/ProjectDocumentList?folderID=6624&;exp%20andFolder=6624&folderID=0
 
 _ make sure the docs include "beginShape() cannot be nested"
 
@@ -235,6 +245,7 @@ _   sort issues will affect both
 _ pixel operations are broken in opengl
 _   get(), set(), copy(), blend(), loadPixels, updatePixels() 
 _   set(x, y, image) y reversed in openGL 
+_   background(image) also broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
 _   also textMode(SCREEN)
 
