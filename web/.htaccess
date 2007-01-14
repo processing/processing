@@ -1,0 +1,3 @@
+AddType text/vnd.sun.j2me.app-descriptor jad
+AddType application/java-archive jar
+AddType application/x-httpd-php xml

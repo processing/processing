@@ -109,7 +109,7 @@ if ($fp) {
 }
 ?>
     <br />
-    <a href="http://mobile.processing.org/discourse/YaBB.cgi?board=news">Previous Updates</a>
+    <a href="discourse/YaBB.cgi?board=news">Previous Updates</a> \ <a href="updates.xml"><img src="images/feed.gif"> RSS</a><br />
     <br />
     <br />
 <!--
