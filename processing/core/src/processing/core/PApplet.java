@@ -665,11 +665,11 @@ public class PApplet extends Applet
       handle(new Object[] { });
     }
 
-    public void handle(Object args[]) {
+    public void handle(Object oargs[]) {
       for (int i = 0; i < count; i++) {
         try {
           //System.out.println(objects[i] + " " + args);
-          methods[i].invoke(objects[i], args);
+          methods[i].invoke(objects[i], oargs);
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -743,10 +743,10 @@ public class PApplet extends Applet
 
 
   protected void registerWithArgs(RegisteredMethods meth,
-                                  String name, Object o, Class args[]) {
+                                  String name, Object o, Class cargs[]) {
     Class c = o.getClass();
     try {
-      Method method = c.getMethod(name, args);
+      Method method = c.getMethod(name, cargs);
       meth.add(o, method);
 
     } catch (Exception e) {
@@ -1028,7 +1028,7 @@ public class PApplet extends Applet
                                             String irenderer, String ipath,
                                             PApplet applet) {
     if (irenderer.equals(P2D)) {
-      throw new RuntimeException("P2D is not yet implemented, " + 
+      throw new RuntimeException("P2D is not yet implemented, " +
                                  "use JAVA2D or P3D instead.");
     }
     /*
@@ -1123,8 +1123,8 @@ public class PApplet extends Applet
    * reference to the parent PApplet is included, which makes save() work
    * without needing an absolute path.
    */
-  public PImage createImage(int width, int height, int format) {
-    PImage image = new PImage(width, height, format);
+  public PImage createImage(int wide, int high, int format) {
+    PImage image = new PImage(wide, high, format);
     image.parent = this;  // make save() work
     return image;
   }
@@ -1684,11 +1684,11 @@ public class PApplet extends Applet
     mouseEvent = event;
 
     int modifiers = event.getModifiers();
-    if ((modifiers & MouseEvent.BUTTON1_MASK) != 0) {
+    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
       mouseButton = LEFT;
-    } else if ((modifiers & MouseEvent.BUTTON2_MASK) != 0) {
+    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
       mouseButton = CENTER;
-    } else if ((modifiers & MouseEvent.BUTTON3_MASK) != 0) {
+    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
       mouseButton = RIGHT;
     }
     // if running on macos, allow ctrl-click as right mouse
@@ -2058,14 +2058,21 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-  // controlling time and playing god
+  // controlling time (playing god)
 
 
   /**
-   * Delay for some amount of time. I'm not sure if this is even
-   * helpful anymore, as the screen isn't updated before or after the
-   * delay, meaning which means it just makes the app lock up
-   * temporarily.
+   * The delay() function causes the program to halt for a specified time.
+   * Delay times are specified in thousandths of a second. For example,
+   * running delay(3000) will stop the program for three seconds and
+   * delay(500) will stop the program for a half-second. Remember: the
+   * display window is updated only at the end of draw(), so putting more
+   * than one delay() inside draw() will simply add them together and the new
+   * frame will be drawn when the total delay is over.
+   * <br/> <br/>
+   * I'm not sure if this is even helpful anymore, as the screen isn't
+   * updated before or after the delay, meaning which means it just
+   * makes the app lock up temporarily.
    */
   public void delay(int napTime) {
     if (frameCount == 0) return;
@@ -2089,8 +2096,8 @@ public class PApplet extends Applet
    * setting, and will attempt to use maximum processor power to achieve
    * maximum speed.
    */
-  public void frameRate(float frameRateTarget) {
-    this.frameRateTarget = frameRateTarget;
+  public void frameRate(float newRateTarget) {
+    this.frameRateTarget = newRateTarget;
   }
 
 
@@ -2269,12 +2276,12 @@ public class PApplet extends Applet
    * Launch a process using a platforms shell, and an array of
    * args passed on the command line.
    */
-  public Process open(String args[]) {
+  public Process open(String argv[]) {
     try {
-      return Runtime.getRuntime().exec(args);
+      return Runtime.getRuntime().exec(argv);
     } catch (Exception e) {
       e.printStackTrace();
-      throw new RuntimeException("Could not open " + join(args, ' '));
+      throw new RuntimeException("Could not open " + join(argv, ' '));
     }
   }
 
@@ -3701,7 +3708,7 @@ public class PApplet extends Applet
                              "added to your sketch and is readable.");
           return null;
         }
-        
+
         //font = Font.createFont(Font.TRUETYPE_FONT, openStream(name));
         Method createFontMethod =
           Font.class.getMethod("createFont",
