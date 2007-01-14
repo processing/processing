@@ -82,19 +82,37 @@ require 'header.inc.php';
     <img src="images/updates.png"><br>
     <br>
     <br>
-    <i>May 21</i><br>
-    Mobile Processing 0005 is <a href="download/">released</a>.<br>
-    <br>
-    <i>May 31</i><br>
-    New <a href="learning/example.php?name=photoslider">Photoslider</a> example posted.<br>
-    <br>
-    <i>June 11</i><br>
-    New <a href="learning/example.php?name=tictactoe">Tic-Tac-Toe</a> Bluetooth library example posted.<br /><br />Added <a href="exhibition/mandelbrotMobile/applet/index.html" target="_new">mandelbrotMobile</a> by skanaar to the exhibition.<br>
-    <br>
-    <i>October 5</i><br>
-    Updated Bluetooth library, added RoombaCtrl and pixiebubble to the Exhibition.<br>
-    <br>
-    <br>
+<?php
+$fp = fopen("discourse/Boards/news.txt", 'r');
+if ($fp) {
+  $i = 0;
+  while (!feof($fp) && ($i < 3)) {
+    $line = fgets($fp);
+    $tokens = explode("|", $line);
+    $id = $tokens[0];
+
+    $fp2 = fopen("discourse/Messages/". $id .".txt", 'r');
+    $line = fgets($fp2);    
+    $tokens = explode("|", $line);
+    $line = null;
+    fclose($fp2);
+
+    $ts = strtotime($tokens[3]);
+    echo "<i>". date("j M Y", $ts) ."</i><br />";
+    echo $tokens[0] ."<br />";
+    echo substr($tokens[8], 0, strpos($tokens[8], "<br>")) ."<br />";
+    echo "<a href=\"discourse/YaBB.cgi?board=news;action=display;num=". $id ."\">Read more...</a><br /><br />";
+    $tokens = null;
+    $i++;
+  }
+  fclose($fp);
+}
+?>
+    <br />
+    <a href="http://mobile.processing.org/discourse/YaBB.cgi?board=news">Previous Updates</a>
+    <br />
+    <br />
+<!--
     <img src="images/happenings.png"><br>
     <br>
     <br>
@@ -107,6 +125,7 @@ de Manizales, Colombia by Marlon J. Manrique. <a href="http://mjs.darkgreenmedia
     <br>
     <i>June 26 - July 7</i><br>
     Mobile Processing used in a workshop at the Istituto Universitario di Venezia to prototype concepts for the Venice Biennale.
+-->
 </div>
 <?php
 require 'footer.inc.php';
