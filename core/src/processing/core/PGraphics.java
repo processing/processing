@@ -4108,9 +4108,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  public void beginRaw(PGraphics raw) {
-    this.raw = raw;
-    raw.beginDraw();
+  public void beginRaw(PGraphics rawGraphics) {
+    this.raw = rawGraphics;
+    rawGraphics.beginDraw();
   }
 
 
