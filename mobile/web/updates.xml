@@ -1,0 +1,55 @@
+<?php
+echo "<?xml version=\"1.0\"?>\n";
+?>
+<rss version="2.0">
+   <channel>
+      <title>Mobile Processing</title>
+      <link>http://mobile.processing.org/</link>
+      <description>Mobile Processing is an open source programming environment for people who want to design and prototype software for mobile phones.</description>
+      <language>en-us</language>
+      <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+      <managingEditor>mail@francisli.com</managingEditor>
+      <webMaster>mail@francisli.com</webMaster>
+<?php
+$fp = fopen("discourse/Boards/news.txt", 'r');
+if ($fp) {
+  $i = 0;
+  while (!feof($fp) && ($i < 9)) {
+    $line = fgets($fp);
+    $tokens = explode("|", $line);
+    $id = $tokens[0];
+
+    $fp2 = fopen("discourse/Messages/". $id .".txt", 'r');
+    $line = fgets($fp2);    
+    $tokens = explode("|", $line);
+    $line = null;
+    fclose($fp2);
+
+    $ts = strtotime($tokens[3]);
+    $date = date("D, d M Y H:i:s T", $ts);
+    if ($i == 0) {
+      //// put in last message date as publication/build date
+?>
+      <pubDate><?php echo $date ?></pubDate>
+      <lastBuildDate><?php echo $date ?></lastBuildDate>
+<?php
+    }
+
+    $url = "http://mobile.processing.org/discourse/YaBB.cgi?board=news;action=display;num=". $id;
+?>
+      <item>
+         <title><?php echo $tokens[0] ?></title>
+         <link><?php echo $url ?></link>
+         <description><?php echo htmlentities(trim(substr($tokens[8], 0, strpos($tokens[8], "<br>")))) ?></description>
+         <pubDate><?php echo $date ?></pubDate>
+         <guid><?php echo $url ?></guid>
+      </item>
+<?php
+    $tokens = null;
+    $i++;
+  }
+  fclose($fp);
+}
+?>
+   </channel>
+</rss>
