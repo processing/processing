@@ -109,6 +109,13 @@ a:active {
 	padding: 0px;
 }
 
+.columnpadded {
+	float: left;
+	width: 230px;
+	margin: 0px;
+	padding-right: 20px;
+}
+
 .column2x {
 	float: left;
 	width: 500px;
