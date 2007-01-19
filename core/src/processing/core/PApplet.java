@@ -6381,7 +6381,7 @@ public class PApplet extends Applet
    * The simplest way to turn and applet into an application is to
    * add the following code to your program:
    * <PRE>static public void main(String args[]) {
-   *   PApplet.main(new String[] { "YourSketchName" };
+   *   PApplet.main(new String[] { "YourSketchName" });
    * }</PRE>
    * This will properly launch your applet from a double-clickable
    * .jar or from the command line.
@@ -7909,9 +7909,9 @@ public class PApplet extends Applet
   }
 
 
-  public void beginRaw(PGraphics raw) {
-    if (recorder != null) recorder.beginRaw(raw);
-    g.beginRaw(raw);
+  public void beginRaw(PGraphics rawGraphics) {
+    if (recorder != null) recorder.beginRaw(rawGraphics);
+    g.beginRaw(rawGraphics);
   }
 
 
