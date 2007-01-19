@@ -367,13 +367,17 @@ public class EditorListener {
         // not gonna bother handling more than one brace
         if (braceCount > 0) {
           int sel = textarea.getSelectionStart();
-          textarea.select(sel - tabSize, sel);
-          String s = Editor.EMPTY.substring(0, tabSize);
-          // if these are spaces that we can delete
-          if (textarea.getSelectedText().equals(s)) {
-            textarea.setSelectedText("");
-          } else {
-            textarea.select(sel, sel);
+          // sel - tabSize will be -1 if start/end parens on the same line
+          // http://dev.processing.org/bugs/show_bug.cgi?id=484
+          if (sel - tabSize >= 0) {
+            textarea.select(sel - tabSize, sel);
+            String s = Editor.EMPTY.substring(0, tabSize);
+            // if these are spaces that we can delete
+            if (textarea.getSelectedText().equals(s)) {
+              textarea.setSelectedText("");
+            } else {
+              textarea.select(sel, sel);
+            }
           }
         }
 
