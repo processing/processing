@@ -12,6 +12,10 @@ X ambientLight(r,g,b) was still ambientLight(r,g,r)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=465
 X fix from dave bollinger for the POSTERIZE filter
 X   http://dev.processing.org/bugs/show_bug.cgi?id=399
+X fix PImage regression in 0124 and the cache crap
+
+_ modelX/Y/Z still not working
+_   http://dev.processing.org/bugs/show_bug.cgi?id=486
 
 _ no disk in drive error
 _   was this something that changed with the java updates?
@@ -37,8 +41,6 @@ _   invaluable for tracking down memory leaks
 
 _ an offscreen JAVA2D graphics needs loadPixels() before being drawn
 _   i.e. offscreen JAVA2D, then image() with OPENGL renderer as main
-_ P3D smooshes the top row of pixels when drawing text (or images)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=466
 
 _ in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
@@ -460,9 +462,12 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
+_ P3D smooshes the top row of pixels when drawing text (or images)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=466
 _ some fonts broken in java 1.5 on osx have changed again
 _   http://dev.processing.org/bugs/show_bug.cgi?id=407
 _   filed as bug #4769141 with apple
+_   http://bugreport.apple.com/
 _   appears that asking for the postscript name no longer works
 o   fix "create font" and associated font stuff to straighten it out
 X   was grabbing the wrong native font with ico sketch 
