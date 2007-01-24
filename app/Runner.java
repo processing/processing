@@ -170,6 +170,8 @@ public class Runner implements MessageConsumer {
     // will throw an error if it's shoved into a single array element
     Vector params = new Vector();
 
+    // get around Apple's Java 1.5 bugs
+    //params.add("/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java");
     params.add("java");
 
     //params.add("-Xint"); // interpreted mode
