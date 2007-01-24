@@ -7,6 +7,32 @@ X   otherwise ask the user to select a folder
 X fix QTSession.open/close problem in Capture.list()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=472
 
+_ add a timer("functionname", 45) method
+_   this can be used to schedule something to happen at a specific time
+_   or import the swing timer (for actionPerformed)
+X   look into javascript timers to see how they work
+_   also add interval("functionname", 40)
+_   and thread("functionname");
+
+_ can draw() not be run on awt event thread?
+_   look into opengl stuff for dealing with this
+
+official instructions for removing winvdig
+from http://www.videoscript.com/forum/viewtopic.php?t=21
+First try to Uninstall WinVDIG from the Control Panel. Add/Remove Software.
+If this does not work, or you wish to manually uninstall WinVDIG, try the following steps:
+Remove VsVDIG.qtx (located in System32\QuickTime).
+Remove VsDump.ax (located in System32).
+Delete Program Files\WinVDIG
+Restart you system 
+
+_ don't reload sketch on "save as"
+_   this can result in loss of data
+_   http://dev.processing.org/bugs/show_bug.cgi?id=433
+
+_ put stdout/stderr into ~/Library/Logs
+_   and have a .log extension so it can be browsed properly
+
 _ 'code' folder being ignored on export to application
 _   http://dev.processing.org/bugs/show_bug.cgi?id=469
 
@@ -416,6 +442,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=212
 _ unspecified return type creates compile error
 _   or maybe not? followup said maybe not
 _   http://dev.processing.org/bugs/show_bug.cgi?id=379
+_ Blah.class will confuse the preproc
+_   http://dev.processing.org/bugs/show_bug.cgi?id=481
+_ http://dev.processing.org/bugs/show_bug.cgi?id=492
+_   http://dev.processing.org/bugs/show_bug.cgi?id=492
 
 hacked for fix, needs real fix
 _ NullPointerException on unterminated comment at end of code
@@ -670,8 +700,6 @@ _ only rebuild sketchbook on "save as" or "rename" of sketch
 _   currently it's rebuilding whenever "save" called too
 _   http://dev.processing.org/bugs/show_bug.cgi?id=357
 _   even more of a problem becase set modified set true all the time
-_ don't reload sketch on "save as"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=433
 _ in rebuild sketch menu - disable subfolders working as libraries
 _   if a sketch, don't allow subfolders
 o   or maybe just that libraries must be in the root? 
