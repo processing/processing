@@ -746,7 +746,7 @@ public class PGraphicsJava2D extends PGraphics {
           //             source.pixels, 0, source.width);
           WritableRaster raster = ((BufferedImage) image).getRaster();
           raster.setDataElements(0, 0, source.width, source.height,
-                                 tintedPixels);
+                                 source.pixels);
         }
 
       } else if (source.format == ALPHA) {
