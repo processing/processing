@@ -2788,10 +2788,13 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Two dimensional rotation. Same as rotateZ (this is identical
-   * to a 3D rotation along the z-axis) but included for clarity --
-   * it'd be weird for people drawing 2D graphics to be using rotateZ.
-   * And they might kick our a-- for the confusion.
+   * Two dimensional rotation.
+   * <br/> <br/>
+   * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
+   * <br/> <br/>
+   * Same as rotateZ (this is identical to a 3D rotation along the z-axis)
+   * but included for clarity. It'd be weird for people drawing 2D graphics
+   * to be using rotateZ. And they might kick our a-- for the confusion.
    */
   public void rotate(float angle) {
     float c = (float) Math.cos(angle);
