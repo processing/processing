@@ -14,6 +14,12 @@ X fix from dave bollinger for the POSTERIZE filter
 X   http://dev.processing.org/bugs/show_bug.cgi?id=399
 X fix PImage regression in 0124 and the cache crap
 
+_ loadImage() requires an extension, maybe add a second version?
+_   loadImage("blah", "jpg");
+_   otherwise people have to use strange hacks to get around it
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
+_   http://dev.processing.org/bugs/show_bug.cgi?id=500
+
 _ modelX/Y/Z still not working
 _   http://dev.processing.org/bugs/show_bug.cgi?id=486
 
@@ -53,11 +59,6 @@ _ look into using glu quadrics to handle shape geometries quickly
 _ calling graphics.smooth(), graphics.colorMode() outside begin/endDraw
 _   this causes everything to be reset once the draw occurs
 _   kinda seems problematic and prone to errors?
-
-_ loadImage() requires an extension, maybe add a second version?
-_   loadImage("blah", "jpg");
-_   otherwise people have to use strange hacks to get around it
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 
 _ having shut off the defaults reset, background not getting called for java2d
 _   so this will make that other stuff regress again
