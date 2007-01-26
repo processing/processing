@@ -234,6 +234,55 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
 
   /**
+   * Gives the same basic functionality of File.exists but can be
+   * used to look for removable media without showing a system
+   * dialog if the media is not present. Workaround pulled from the
+   * <A HREF="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4089199">
+   * bug report</A> on bugs.sun.com.
+   */
+  protected static boolean fileExists(File file) {
+    try {
+      Process process =
+        Runtime.getRuntime().exec(new String[] {
+            "cmd.exe", "/c", "dir", file.getAbsolutePath()
+          });
+
+      // We need to consume all available output or the process will block.
+      boolean haveExitCode = false;
+      int exitCode = -1;
+      InputStream out = process.getInputStream();
+      InputStream err = process.getErrorStream();
+
+      while (!haveExitCode) {
+        while (out.read() >= 0) {
+        }
+        while (err.read() >= 0) {
+        }
+
+        try {
+          exitCode = process.exitValue();
+          haveExitCode = true;
+        } catch ( IllegalThreadStateException e ) {
+          // Not yet complete.
+          Thread.sleep(100);
+        }
+      }
+      //int exitCode = process.waitFor();
+      return exitCode == 0;
+
+    } catch (IOException e) {
+      System.out.println("Unable to check for file: " + file + " : " + e);
+      return false;
+
+    } catch ( InterruptedException e ) {
+      System.out.println("Unable to check for file.  Interrupted: " +
+                         file + " : " + e);
+      return false;
+    }
+  }
+
+
+  /**
    * Change the textMode() to either SHAPE or MODEL.
    * <br/>
    * This resets all renderer settings, and should therefore
