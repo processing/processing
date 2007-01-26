@@ -3301,19 +3301,48 @@ public class PApplet extends Applet
    * java.awt.Image to the PImage constructor that takes an AWT image.
    * You can also use the loadImageSync() function (added in 0116) that
    * takes an AWT image and loads it synchronously inside PApplet.
-   * This isn't much fun, but this will have to do unless we find the
-   * actual culprit, which may still be a threading issue.
    * <PRE>
    * public PImage loadImageAlt(String filename) {
    *   java.awt.Image img = getImage(getCodeBase(), filename);
    *   return loadImageSync(img);
    * }
    * </PRE>
+   * This isn't much fun, but this will have to do unless we find the
+   * actual culprit, which may still be a threading issue.
    */
   public PImage loadImage(String filename) {
     String lower = filename.toLowerCase();
+    int dot = filename.lastIndexOf('.');
+    if (dot == -1) {
+      // no extension found
+      return loadImage(filename, "unknown");
+    }
+    String extension = lower.substring(dot + 1);
 
-    if (lower.endsWith(".tga")) {
+    // check for, and strip any parameters on the url, i.e.
+    // filename.jpg?blah=blah&something=that
+    int question = extension.indexOf('?');
+    if (question != -1) {
+      extension = extension.substring(0, question);
+    }
+
+    return loadImage(filename, extension);
+  }
+
+
+  /**
+   * Identical to loadImage, but allows you to specify the type of
+   * image by its extension. Especially useful when downloading from
+   * CGI scripts.
+   * <br/> <br/>
+   * Use 'unknown' as the extension to pass off to the default
+   * image loader that handles gif, jpg, and png.
+   */
+  public PImage loadImage(String filename, String extension) {
+    // just in case. them users will try anything!
+    extension = extension.toLowerCase();
+
+    if (extension.equals("tga")) {
       try {
         return loadImageTGA(filename);
       } catch (IOException e) {
@@ -3322,13 +3351,15 @@ public class PApplet extends Applet
       }
     }
 
-    if (lower.endsWith(".tif") || lower.endsWith(".tiff")) {
+    //if (lower.endsWith(".tif") || lower.endsWith(".tiff")) {
+    if (extension.equals("tif") || extension.equals("tiff")) {
       byte bytes[] = loadBytes(filename);
       return (bytes == null) ? null : PImage.loadTIFF(bytes);
     }
 
     // Make sure that PNG images aren't being loaded by Java 1.1
-    if (lower.endsWith(".png") && PApplet.javaVersion < 1.3f) {
+    //if (lower.endsWith(".png") && PApplet.javaVersion < 1.3f) {
+    if (extension.equals("png") && PApplet.javaVersion < 1.3f) {
       System.err.println("PNG images can only be loaded when " +
                          "using Java 1.3 and later.");
       return null;
@@ -3338,8 +3369,11 @@ public class PApplet extends Applet
     // because the javax.imageio code was found to be much slower, see
     // <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=392">Bug 392</A>.
     try {
-      if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
-          lower.endsWith(".gif") || lower.endsWith(".png")) {
+      //if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
+      //  lower.endsWith(".gif") || lower.endsWith(".png")) {
+      if (extension.equals("jpg") || extension.equals("jpeg") ||
+          extension.equals("gif") || extension.equals("png") ||
+          extension.equals("unknown")) {
         byte bytes[] = loadBytes(filename);
         if (bytes == null) {
           return null;
@@ -3347,7 +3381,8 @@ public class PApplet extends Applet
           Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
           PImage image = loadImageSync(awtImage);
           // if it's a .gif image, test to see if it has transparency
-          if ((lower.endsWith(".gif")) || (lower.endsWith(".png"))) {
+          //if ((lower.endsWith(".gif")) || (lower.endsWith(".png"))) {
+          if (extension.equals("gif") || extension.equals("png")) {
             image.checkAlpha();
           }
           return image;
@@ -3373,7 +3408,8 @@ public class PApplet extends Applet
       }
       if (loadImageFormats != null) {
         for (int i = 0; i < loadImageFormats.length; i++) {
-          if (filename.endsWith("." + loadImageFormats[i])) {
+          //if (filename.endsWith("." + loadImageFormats[i])) {
+          if (extension.equals(loadImageFormats[i])) {
             return loadImageIO(filename);
           }
         }
@@ -3381,6 +3417,7 @@ public class PApplet extends Applet
     }
 
     // failed, could not load image after all those attempts
+    System.err.println("Could not find a method to load " + filename);
     return null;
   }
 
