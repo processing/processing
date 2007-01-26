@@ -3,7 +3,6 @@ X with smooth() turned off, shouldn't be smoothing image on resize
 X   but on osx, apple defaults the image smoothing to true
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1164753510
 X   http://developer.apple.com/documentation/Java/Conceptual/JavaPropVMInfoRef/Articles/JavaSystemProperties.html#//apple_ref/doc/uid/TP40001975-DontLinkElementID_6
-X also using VALUE_INTERPOLATION_QUALITY for the default image interpolation
 X background(0, 0, 0, 0) was resetting stroke, smooth, etc.
 X make imageImpl() use WritableRaster in an attempt to speed things up
 X fix weird situation where fonts used in more than one renderer wouldn't show
