@@ -15,8 +15,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=399
 X fix PImage regression in 0124 and the cache crap
 
 _ loadImage() requires an extension, maybe add a second version?
-_   loadImage("blah", "jpg");
-_   otherwise people have to use strange hacks to get around it
+X   loadImage("blah", "jpg");
+X   otherwise people have to use strange hacks to get around it
+X   also chop off ? from url detritus
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 _   http://dev.processing.org/bugs/show_bug.cgi?id=500
 
