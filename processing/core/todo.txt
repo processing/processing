@@ -21,6 +21,10 @@ X   also chop off ? from url detritus
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 _   http://dev.processing.org/bugs/show_bug.cgi?id=500
 
+_ backgroundColor to cccccc instead of c0c0c0
+_ Stroking a rect() leaves off the upper right pixel
+_   http://dev.processing.org/bugs/show_bug.cgi?id=501
+
 _ modelX/Y/Z still not working
 _   http://dev.processing.org/bugs/show_bug.cgi?id=486
 
@@ -691,7 +695,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 _ simon reports borders on P3D and OPENGL if background() not called
 _ clipping not yet completely implemented
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
-_ Stroking a rect() leaves off the upper right pixel
 _ PPolygon no longer in use and PLine is a mess
 _   make a version of PGraphics3 that uses it for more accurate rendering?
 _ texture mapping
