@@ -153,7 +153,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   /** Last background color that was set, zero if an image */
-  public int backgroundColor = 0xffC0C0C0;
+  public int backgroundColor = 0xffCCCCCC;
 
   protected boolean backgroundAlpha;
   protected float backgroundR, backgroundG, backgroundB, backgroundA;
