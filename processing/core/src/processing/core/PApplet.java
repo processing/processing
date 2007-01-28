@@ -4679,6 +4679,7 @@ public class PApplet extends Applet
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
 
+  //
 
   static public boolean[] expand(boolean list[]) {
     return expand(list, list.length << 1);
@@ -4761,33 +4762,8 @@ public class PApplet extends Applet
 
   //
 
-  static public boolean[] contract(boolean list[], int newSize) {
-    return expand(list, newSize);
-  }
-
-  static public byte[] contract(byte list[], int newSize) {
-    return expand(list, newSize);
-  }
-
-  static public char[] contract(char list[], int newSize) {
-    return expand(list, newSize);
-  }
-
-  static public int[] contract(int list[], int newSize) {
-    return expand(list, newSize);
-  }
-
-  static public float[] contract(float list[], int newSize) {
-    return expand(list, newSize);
-  }
-
-  static public String[] contract(String list[], int newSize) {
-    return expand(list, newSize);
-  }
-
-  static public Object contract(Object list, int newSize) {
-    return expand(list, newSize);
-  }
+  // contract() has been removed in revision 0124, use subset() instead.
+  // (expand() is also functionally equivalent)
 
   //
 
@@ -4831,33 +4807,32 @@ public class PApplet extends Applet
   //
 
   static public boolean[] shorten(boolean list[]) {
-    return contract(list, list.length-1);
+    return subset(list, 0, list.length-1);
   }
 
   static public byte[] shorten(byte list[]) {
-    return contract(list, list.length-1);
+    return subset(list, 0, list.length-1);
   }
 
   static public char[] shorten(char list[]) {
-    return contract(list, list.length-1);
+    return subset(list, 0, list.length-1);
   }
 
   static public int[] shorten(int list[]) {
-    return contract(list, list.length-1);
+    return subset(list, 0, list.length-1);
   }
 
   static public float[] shorten(float list[]) {
-    return contract(list, list.length-1);
+    return subset(list, 0, list.length-1);
   }
 
   static public String[] shorten(String list[]) {
-    return contract(list, list.length-1);
+    return subset(list, 0, list.length-1);
   }
 
   static public Object shorten(Object list) {
     int length = Array.getLength(list);
-    //Object b = Array.get(list, length - 1);
-    return contract(list, length - 1);
+    return subset(list, 0, length - 1);
   }
 
   //
@@ -5242,6 +5217,20 @@ public class PApplet extends Applet
     return str.substring(left, right-left+1);
     */
   }
+
+
+  /**
+   * Trim the whitespace from a String array. This returns a new
+   * array and does not affect the passed-in array.
+   */
+  static public String[] trim(String[] array) {
+    String[] outgoing = new String[array.length];
+    for (int i = 0; i < array.length; i++) {
+      outgoing[i] = array[i].replace('\u00A0', ' ').trim();
+    }
+    return outgoing;
+  }
+
 
   /**
    * Join an array of Strings together as a single String,
