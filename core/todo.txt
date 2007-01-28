@@ -13,8 +13,10 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=465
 X fix from dave bollinger for the POSTERIZE filter
 X   http://dev.processing.org/bugs/show_bug.cgi?id=399
 X fix PImage regression in 0124 and the cache crap
+X added a version of trim() that handles an entire array
+X removed contract(), one can use expand() and subset() instead
 
-_ loadImage() requires an extension, maybe add a second version?
+X loadImage() requires an extension, maybe add a second version?
 X   loadImage("blah", "jpg");
 X   otherwise people have to use strange hacks to get around it
 X   also chop off ? from url detritus
