@@ -58,6 +58,7 @@ split(<c>str</c>, <c>delim</c>)
 
 <related>
 join()
+trim()
 </related>
 
 <availability>1.0</availability>

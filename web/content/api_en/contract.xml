@@ -14,13 +14,16 @@
 <code>
 int[] ia = {0, 1, 2, 3, 4, 5, 6, 7};
 println(ia.length);  // Prints "8"
-ia = contract(ia, 5);
+<strike>ia = contract(ia, 5);
+println(ia.length);  // Prints "5"</strike>
+ia = subset(ia, 0, 5);
 println(ia.length);  // Prints "5"
 </code>
 </example>
 
 <description>
-Decreases the size of an array. The required <b>newSize</b> parameter provides precise control over the decrease in size.
+This function has been removed starting in revision 0124. Use <b>subset()</b> instead.
+<strike>Decreases the size of an array. The required <b>newSize</b> parameter provides precise control over the decrease in size.</strike>
 </description>
 
 <syntax>

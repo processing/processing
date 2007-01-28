@@ -52,6 +52,7 @@ join(<c>stringArray</c>, <c>separator</c>)
 
 <related>
 split()
+trim()
 nf()
 nfs()
 </related>
