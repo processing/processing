@@ -460,13 +460,18 @@ java.lang.NullPointerException
       if (!foundMessageSource) {
         //    "     at javatest.<init>(javatest.java:5)"
         // -> "javatest.<init>(javatest.java:5)"
-        int afterAt = s.indexOf("at") + 3;
-        //if (afterAt == -1) {
-        if (afterAt == 2) {  // means indexOf was -1
+        int atIndex = s.indexOf("at ");
+        if (atIndex == -1) {
           //System.err.println(s);  // stop double-printing exceptions
           return;
         }
-        s = s.substring(afterAt + 1);
+        s = s.substring(atIndex + 3);
+
+        // added for 0124 to improve error handling
+        // not highlighting lines if it's in the p5 code
+        if (s.startsWith("processing.")) return;
+        // no highlight if it's java.lang.whatever
+        if (s.startsWith("java.")) return;
 
         //    "javatest.<init>(javatest.java:5)"
         // -> "javatest.<init>" and "(javatest.java:5)"
@@ -520,6 +525,7 @@ java.lang.NullPointerException
             }
 
             if (codeIndex != -1) {
+              //System.out.println("got line num " + lineNumber);
               // in case this was a tab that got embedded into the main .java
               lineNumber -= sketch.code[codeIndex].preprocOffset;
 
