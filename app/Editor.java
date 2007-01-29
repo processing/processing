@@ -2045,7 +2045,7 @@ public class Editor extends JFrame
 
 
   public void error(RunnerException e) {
-    //System.out.println("ERORROOROROR 2");
+    //System.out.println("file and line is " + e.file + " " + e.line);
     if (e.file >= 0) sketch.setCurrent(e.file);
     if (e.line >= 0) highlightLine(e.line);
 
