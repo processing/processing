@@ -1,23 +1,32 @@
-PImageLabel header;
-PLabel headerLabel;
-PContainer container;
-PScrollBar scrollbar;
-PFont fontBold, fontSmall;
-
 final int SCREEN_MAIN      = 0;
 final int SCREEN_SUMMARY   = 1;
 final int SCREEN_DETAILS   = 2;
 final int SCREEN_FONTS     = 3;
-final int SCREEN_SUBMIT    = 4;
+final int SCREEN_SHARE     = 4;
 
 final String LABEL_SUMMARY = "View Summary";
 final String LABEL_DETAILS = "View Details";
 final String LABEL_FONTS   = "View Fonts";
-final String LABEL_SUBMIT  = "Submit Results";
+final String LABEL_SHARE   = "Share Results";
 final String LABEL_PREVIOUS= "Previous";
 final String LABEL_NEXT    = "Next";
+final String LABEL_SUBMIT  = "Submit";
+final String LABEL_CANCEL  = "Cancel";
 
 final String SOFTKEY_BACK  = "Back";
+
+final String SERVER_NAME   = "localhost";
+final String SERVER_FILE   = "/wap/post.php";
+
+PImageLabel header;
+PLabel headerLabel, status;
+PButton submit;
+PContainer container;
+PScrollBar scrollbar;
+PFont fontBold, fontSmall;
+
+PClient client;
+PRequest request;
 
 int screen;
 
@@ -36,6 +45,9 @@ String[] face, style, size;
 
 void setup() {
   framerate(10);
+  
+  client = new PClient(this, SERVER_NAME);
+  
   Class manager = null;
   try {
     manager = Class.forName("javax.microedition.media.Manager");
@@ -70,7 +82,6 @@ void setup() {
   
   categories = new String[] {
     "Base",
-    "Bluetooth",
     "Messaging",
     "Multimedia"    
   };
@@ -84,19 +95,6 @@ void setup() {
       "microedition.platform",
       "microedition.hostname",
       "microedition.commports",
-    },
-    new String[] {
-      "bluetooth.api.version",
-      "obex.api.version",
-      "bluetooth.l2cap.receiveMTU.max",
-      "bluetooth.connected.devices.max",
-      "bluetooth.connected.inquiry",
-      "bluetooth.connected.page",
-      "bluetooth.connected.inquiry.scan",
-      "bluetooth.connected.page.scan",
-      "bluetooth.master.switch",
-      "bluetooth.sd.trans.max",
-      "bluetooth.sd.attr.retrievable.max"
     },
     new String[] {
       "wireless.messaging.sms.smsc",
@@ -124,7 +122,7 @@ void setup() {
   }
     
   libraries = new String[] {
-    "Bluetooth", "Image2", "Messaging", "Phone", "Sound", "Video (playback)", "Video (capture)", "XML"
+    "Bluetooth", "Image2", "Messaging", "Phone", "Sound", "Video (playback)", "Video (snapshot)", "XML"
   };
   supported = new boolean[length(libraries)];
   supported[0] = discoveryagent != null;
@@ -133,15 +131,17 @@ void setup() {
   supported[3] = supported[1];
   supported[4] = supported[0] || (manager != null);
   supported[5] = videocontrol != null;
-  supported[6] = supported[5] && ((values[3][3] != null) && (values[3][3].equals("true")));
+  supported[6] = supported[5] && (values[2][7] != null);
   supported[7] = true;
   
   String[] tzs = java.util.TimeZone.getAvailableIDs();
-  timezones = "";
-  for (int i = 0, length= tzs.length; i < length; i++) {
-    timezones += tzs[i] + "\n";
+  StringBuffer tzb = new StringBuffer();
+  for (int i = 0, length = length(tzs); i < length; i++) {
+    tzb.append(tzs[i]);
+    tzb.append('\n');
   }
-
+  timezones = tzb.toString();
+  
   font = new int[3];
   face = new String[] {
     "FACE_SYSTEM", "FACE_MONOSPACE", "FACE_PROPORTIONAL"
@@ -205,8 +205,8 @@ void libraryEvent(Object library, int event, Object data) {
       font[1] = STYLE_PLAIN;
       font[2] = SIZE_SMALL;
       showFonts();
-    } else if (data.equals(LABEL_SUBMIT)) {
-      showSubmit();
+    } else if (data.equals(LABEL_SHARE)) {
+      showShare();
     }
   } else if (screen == SCREEN_FONTS) {
     if (data.equals(LABEL_PREVIOUS)) {
@@ -286,6 +286,108 @@ void libraryEvent(Object library, int event, Object data) {
       }
       showFonts();
     }
+  } else if (screen == SCREEN_SHARE) {
+    if (library == request) {
+      //// handle networking
+      if (event == PRequest.EVENT_CONNECTED) {
+        //// update status message
+        status.label = "Status: Reading response...\n\n";
+        status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
+        submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
+        
+        container.initialize();
+        container.acceptFocus();        
+        
+        //// read response
+        request.readBytes();
+      } else if (event == PRequest.EVENT_DONE) {        
+        status.label = "Status: Done!\n\n";
+        status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
+        submit.label = LABEL_SUBMIT;
+        submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
+        
+        container.initialize();
+        container.acceptFocus();        
+        
+        request.close();
+        softkey(SOFTKEY_BACK);
+      } else if (event == PRequest.EVENT_ERROR) {
+        status.label = "Status: An error has occured- " + data + "\n\n";
+        status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
+        submit.label = LABEL_SUBMIT;
+        submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
+        
+        container.initialize();
+        container.acceptFocus();        
+        
+        request.close();
+        softkey(SOFTKEY_BACK);
+      }
+    } else if (library == submit) {
+      //// handle the button ui events
+      if (data.equals(LABEL_SUBMIT)) {
+        //// set up connection status display and cancel option
+        status.label = ("Status: Connecting...\n\n");
+        status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
+        
+        submit.label = LABEL_CANCEL;
+        submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
+        
+        container.initialize();
+        container.acceptFocus();  
+        
+        softkey(null);
+  
+        //// initiate network request
+        String names[], values[];
+        int totalLength = 3 + length(display) + length(libraries);
+        for (int i = 0, length = length(properties); i < length; i++) {
+          totalLength += length(properties[i]);
+        }
+        int index;
+        names = new String[totalLength];
+        values = new String[totalLength];
+        names[0] = "id";           values[0] = (id == null) ? "0" : id;
+        names[1] = "useragent";    values[1] = (useragent == null) ? "None" : useragent;
+        names[2] = "timezones";    values[2] = timezones;
+        index = 3;
+        for (int i = 0, length = length(display); i < length; i++) {
+          names[index] = display[i];
+          values[index] = displayValues[i].toString();
+          index++;
+        }
+        for (int i = 0, length = length(libraries); i < length; i++) {
+          names[index] = libraries[i].toLowerCase();
+          values[index] = String.valueOf(supported[i]);
+          index++;
+        }
+        for (int i = 0, length = length(properties); i < length; i++) {
+          String[] props = properties[i];
+          String[] vals = this.values[i];
+          for (int j = 0, length2 = length(props); j < length2; j++) {
+            names[index] = props[j];
+            values[index] = (vals[j] == null) ? "NULL" : vals[j];
+            index++;
+          }
+        }
+        request = client.POST(SERVER_FILE, names, values);
+      } else if (data.equals(LABEL_CANCEL)) {
+        //// cancel network request
+        request.close();
+        
+        //// remove status display
+        container.remove(status);        
+        submit.label = LABEL_SUBMIT;
+        submit.setBounds(submit.x, status.y, submit.width, submit.height);
+        
+        status = null;
+        
+        container.initialize();
+        container.acceptFocus(); 
+ 
+        softkey(SOFTKEY_BACK);       
+      }
+    }
   }
 }
 
@@ -297,7 +399,7 @@ void showMain() {
   container.scrollbar = scrollbar;
   container.setBounds(0, y, width, height - y - 4);  
   
-  PButton summary, details, fonts, submit;
+  PButton summary, details, fonts, share;
   summary = new PButton(LABEL_SUMMARY);
   summary.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(summary);
@@ -313,15 +415,15 @@ void showMain() {
   container.add(fonts);
   y = fonts.y + fonts.height + 4;
   
-  submit = new PButton(LABEL_SUBMIT);
-  submit.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
-  container.add(submit);
+  share = new PButton(LABEL_SHARE);
+  share.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(share);
   
-  int buttonWidth = max(max(max(summary.width, details.width), fonts.width), submit.width);
+  int buttonWidth = max(max(max(summary.width, details.width), fonts.width), share.width);
   summary.setBounds(summary.x, summary.y, buttonWidth, summary.height);
   details.setBounds(details.x, details.y, buttonWidth, details.height);
   fonts.setBounds(fonts.x, fonts.y, buttonWidth, fonts.height);
-  submit.setBounds(submit.x, submit.y, buttonWidth, submit.height);
+  share.setBounds(share.x, share.y, buttonWidth, share.height);
   
   container.initialize();
   container.acceptFocus();  
@@ -342,18 +444,6 @@ void showSummary() {
   PLabel label;
   String text;
   
-  label = new PLabel("Id:");
-  label.font = fontBold;
-  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
-  container.add(label);
-  y = label.y + label.height;
-       
-  label = new PLabel(id + "\n\n");
-  label.font = fontSmall;
-  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
-  container.add(label);
-  y = label.y + label.height;
-
   label = new PLabel("User Agent:");
   label.font = fontBold;
   label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
@@ -399,18 +489,6 @@ void showSummary() {
   }
   text += "\n\n";
   label = new PLabel(text);
-  label.font = fontSmall;
-  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
-  container.add(label);
-  y = label.y + label.height;
-  
-  label = new PLabel("Time Zones:");
-  label.font = fontBold;
-  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
-  container.add(label);
-  y = label.y + label.height;
-    
-  label = new PLabel(timezones + "\n");
   label.font = fontSmall;
   label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(label);
@@ -503,6 +581,19 @@ void showFonts() {
   
   PLabel label;
   PFont fontShow = loadFont(font[0], font[1], font[2]);
+  
+  label = new PLabel("Sample:");
+  label.font = fontBold;
+  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(label);
+  y = label.y + label.height;
+  
+  label = new PLabel("0123456789\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\nThe quick brown fox jumped over the lazy dogs.\n\n");
+  label.font = fontShow;
+  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(label);
+  y = label.y + label.height;
+  
   label = new PLabel("Font:");
   label.font = fontBold;
   label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
@@ -554,25 +645,13 @@ void showFonts() {
   label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(label);
   y = label.y + label.height;
-  
-  label = new PLabel("Sample:");
-  label.font = fontBold;
-  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
-  container.add(label);
-  y = label.y + label.height;
-  
-  label = new PLabel("0123456789\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\nThe quick brown fox jumped over the lazy dogs.\n\n");
-  label.font = fontShow;
-  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
-  container.add(label);
-  y = label.y + label.height;
-  
+      
   PButton prev, next;
   next = new PButton(LABEL_NEXT);
   next.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(next);
-  y = next.y + next.height;
   
+  y = next.y + next.height;
   prev = new PButton(LABEL_PREVIOUS);
   prev.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(prev);
@@ -589,27 +668,34 @@ void showFonts() {
   screen = SCREEN_FONTS;
 }
 
-void showSubmit() {
+void showShare() {
   int y = headerLabel.y + headerLabel.height + 8;
 
   container = new PContainer();
-  container.scrolling = false;
+  container.scrolling = true;
+  container.scrollbar = scrollbar;
   container.setBounds(0, y, width, height - y - 4);  
   
-  String[] items = new String[50];
-  for (int i = 0; i < 50; i++) {
-    items[i] = Integer.toString(i);
-  }
+  PLabel label;
+  label = new PLabel("Press Submit to connect to the Internet and share your results with the Mobile Processing website.\n\n");
+  label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(label);
+  y = label.y + label.height;
   
-  PList list = new PList();
-  list.setBounds(0, y, width - 4, height - y - 4);
-  list.scrollBar = scrollbar;
-  list.add(items);
-  list.initialize();
-  container.add(list);
-  container.add(scrollbar);
+  status = new PLabel("Status: Not connected.\n\n");
+  status.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(status);
+  y = status.y + status.height;
+
+  submit = new PButton(LABEL_SUBMIT);
+  submit.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  submit.setBounds(4 + ((width - 8 - submit.width) >> 1), y, submit.width, submit.height);
+  container.add(submit);  
+  
+  container.initialize();
+  container.acceptFocus();  
   
   softkey(SOFTKEY_BACK);
   
-  screen = SCREEN_SUBMIT;
+  screen = SCREEN_SHARE;
 }

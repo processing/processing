@@ -1,5 +1,9 @@
 <?php
 
+require_once '../web/db.inc.php';
+
+$link = db_connect();
+
 //// get device profile, if any
 
 //// read jad file into array
@@ -9,11 +13,13 @@ $lines = file($_GET['n'] .'.jad');
 $compatible = true;
 
 if ($compatible || isset($_GET['f'])) {
-    //// increment and fetch download count for id
-    $id = 1;
+    //// add to download log and get id
+    mysql_query("INSERT INTO downloads (name, useragent) VALUES ('".
+                $_GET['n'] ."', '". $_SERVER['HTTP_USER_AGENT'] ."')");
+    $id = mysql_insert_id();
 
     //// set content type for jad file
-    header("Content-Type: text/vnd.sun.j2me.app-descriptor");
+    //header("Content-Type: text/vnd.sun.j2me.app-descriptor");
 
     //// write out jad with additional params, full url to jar file
     foreach ($lines as $l) {
