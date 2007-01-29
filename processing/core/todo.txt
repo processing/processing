@@ -23,6 +23,31 @@ X   also chop off ? from url detritus
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 _   http://dev.processing.org/bugs/show_bug.cgi?id=500
 
+point()
+_ gl point stuff is a problem
+_ gl points not working again
+_   need to implement point() as actual gl points
+_   this means adding points to the pipeline
+_ point() doesn't work with some graphics card setups
+_   particularly with opengl and java2d
+_   http://dev.processing.org/bugs/show_bug.cgi?id=121
+_   http://dev.processing.org/bugs/show_bug.cgi?id=269
+_ point() issues
+_   point() being funneled through beginShape is terribly slow
+_     go the other way 'round
+_   sometimes broken, could be a problem with java 1.5? (was using win2k)
+noStroke();
+colorMode(RGB, 100);  
+for(int i=0; i<100; i++) {  
+  for(int j=0; j<100; j++) {  
+    stroke(i, j, 0);  
+    point(i, j);  
+  }  
+}  
+As an aside, set() is at least 10x faster, and 
+perhaps should be used in these examples anyway. 
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116;start=0
+
 _ backgroundColor to cccccc instead of c0c0c0
 _ Stroking a rect() leaves off the upper right pixel
 _   http://dev.processing.org/bugs/show_bug.cgi?id=501
@@ -158,10 +183,6 @@ _ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
 
 _ cameraXYZ doesn't seem to actually be used for anything
 _   since camera functions don't even look at it or set it
-
-_ gl point stuff is a problem
-_   need to implement point() as actual gl points
-_   this means adding points to the pipeline
 
 _ make version of loadbytes that checks length of the stream first
 
@@ -523,10 +544,6 @@ _   and then does 5 step sizes for each curveto
 
 CORE / PGraphics
 
-_ point() doesn't work with some graphics card setups
-_   particularly with opengl and java2d
-_   http://dev.processing.org/bugs/show_bug.cgi?id=121
-_   http://dev.processing.org/bugs/show_bug.cgi?id=269
 _ cairo tesselation used: 
 _   John Hobby, Practical Segment Intersection with Finite Precision Output. 
 _   Computational Geometry Theory and Application, 13(4), 1999.
@@ -549,21 +566,6 @@ _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)
 _ figure out a good model for adaptive sizing of circles
 _   also goes for arcs, though will be weighted based on arc size
-_ point() issues
-_   point() being funneled through beginShape is terribly slow
-_     go the other way 'round
-_   sometimes broken, could be a problem with java 1.5? (was using win2k)
-noStroke();
-colorMode(RGB, 100);  
-for(int i=0; i<100; i++) {  
-  for(int j=0; j<100; j++) {  
-    stroke(i, j, 0);  
-    point(i, j);  
-  }  
-}  
-As an aside, set() is at least 10x faster, and 
-perhaps should be used in these examples anyway. 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116;start=0
 _ lines
 _   z value hack for lines is causing trouble for 2D
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
@@ -820,7 +822,6 @@ _ make a note about the anti-aliasing types in the faq
 _   polygon vs line etc.. may want to enable lines but disable polys
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
-_ gl points not working again
 _ invocationtargetexception in gl with aioobe:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
 _ resolve ARGB versus RGBA versus just A issues for fonts
