@@ -1,6 +1,6 @@
 <?php
 
-require_once '../web/db.inc.php';
+require_once '../mobile/db.inc.php';
 
 $link = db_connect();
 
@@ -19,7 +19,7 @@ if ($compatible || isset($_GET['f'])) {
     $id = mysql_insert_id();
 
     //// set content type for jad file
-    //header("Content-Type: text/vnd.sun.j2me.app-descriptor");
+    header("Content-Type: text/vnd.sun.j2me.app-descriptor");
 
     //// write out jad with additional params, full url to jar file
     foreach ($lines as $l) {
