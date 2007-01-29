@@ -1,3 +1,5 @@
+import processing.phone.*;
+
 final int SCREEN_MAIN      = 0;
 final int SCREEN_SUMMARY   = 1;
 final int SCREEN_DETAILS   = 2;
@@ -12,15 +14,15 @@ final String LABEL_PREVIOUS= "Previous";
 final String LABEL_NEXT    = "Next";
 final String LABEL_SUBMIT  = "Submit";
 final String LABEL_CANCEL  = "Cancel";
-
-final String SOFTKEY_BACK  = "Back";
+final String LABEL_EXIT    = "Exit";
+final String LABEL_BACK    = "Back";
 
 final String SERVER_NAME   = "wapmp.at";
 final String SERVER_FILE   = "/post.php";
 
 PImageLabel header;
 PLabel headerLabel, status;
-PButton submit;
+PButton submit, back;
 PContainer container;
 PScrollBar scrollbar;
 PFont fontBold, fontSmall;
@@ -73,12 +75,17 @@ void setup() {
   useragent = getProperty("MP-UserAgent");
   
   display = new String[] {
-    "width", "height", "colors"
+    "width", "height", "fullWidth", "fullHeight", "colors", "alpha"
   };
   displayValues = new Object[length(display)];
   displayValues[0] = new Integer(width);
   displayValues[1] = new Integer(height);
-  displayValues[2] = new Integer(numColors());
+  Phone p = new Phone(this);
+  p.fullscreen();
+  displayValues[2] = new Integer(width);
+  displayValues[3] = new Integer(height);
+  displayValues[4] = new Integer(numColors());
+  displayValues[5] = new Integer(p.numAlphaLevels());
   
   categories = new String[] {
     "Base",
@@ -126,7 +133,7 @@ void setup() {
   };
   supported = new boolean[length(libraries)];
   supported[0] = discoveryagent != null;
-  supported[1] = values[0][1].equals("MIDP-2.0");
+  supported[1] = values[0][1].indexOf("MIDP-2.0") >= 0;
   supported[2] = messageconnection != null;
   supported[3] = supported[1];
   supported[4] = supported[0] || (manager != null);
@@ -174,6 +181,11 @@ void setup() {
 }
 
 void draw() {
+  //// hack for phones that don't switch to fullscreen immediately-
+  //// update the fullWidth/Height values so that they are correct
+  displayValues[2] = new Integer(width);
+  displayValues[3] = new Integer(height);
+  
   background(255);
   header.draw();
   headerLabel.draw();
@@ -188,14 +200,10 @@ void keyReleased() {
   container.keyReleased();
 }
 
-void softkeyPressed(String label) {
-  if (label.equals(SOFTKEY_BACK)) {
-    showMain();
-  }
-}
-
 void libraryEvent(Object library, int event, Object data) {
-  if (screen == SCREEN_MAIN) {
+  if ((library == back) && data.equals(LABEL_BACK)) {
+    showMain();
+  } else if (screen == SCREEN_MAIN) {
     if (data.equals(LABEL_SUMMARY)) {
       showSummary();
     } else if (data.equals(LABEL_DETAILS)) {
@@ -207,6 +215,8 @@ void libraryEvent(Object library, int event, Object data) {
       showFonts();
     } else if (data.equals(LABEL_SHARE)) {
       showShare();
+    } else if (data.equals(LABEL_EXIT)) {
+      exit();
     }
   } else if (screen == SCREEN_FONTS) {
     if (data.equals(LABEL_PREVIOUS)) {
@@ -306,22 +316,26 @@ void libraryEvent(Object library, int event, Object data) {
         submit.label = LABEL_SUBMIT;
         submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
         
+        back.setBounds(back.x, submit.y + submit.height + 4, back.width, back.height);
+        container.add(back);
+        
         container.initialize();
         container.acceptFocus();        
         
         request.close();
-        softkey(SOFTKEY_BACK);
       } else if (event == PRequest.EVENT_ERROR) {
         status.label = "Status: An error has occured- " + data + "\n\n";
         status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
         submit.label = LABEL_SUBMIT;
         submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
         
+        back.setBounds(back.x, submit.y + submit.height + 4, back.width, back.height);
+        container.add(back);
+        
         container.initialize();
         container.acceptFocus();        
         
         request.close();
-        softkey(SOFTKEY_BACK);
       }
     } else if (library == submit) {
       //// handle the button ui events
@@ -333,11 +347,12 @@ void libraryEvent(Object library, int event, Object data) {
         submit.label = LABEL_CANCEL;
         submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
         
+        //// hide back button
+        container.remove(back);
+        
         container.initialize();
         container.acceptFocus();  
-        
-        softkey(null);
-  
+          
         //// initiate network request
         String names[], values[];
         int totalLength = 3 + length(display) + length(libraries);
@@ -375,17 +390,18 @@ void libraryEvent(Object library, int event, Object data) {
         //// cancel network request
         request.close();
         
-        //// remove status display
-        container.remove(status);        
+        //// reset status display
+        status.label = "Status: Not connected.\n\n";
+        status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
+  
         submit.label = LABEL_SUBMIT;
-        submit.setBounds(submit.x, status.y, submit.width, submit.height);
+        submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
         
-        status = null;
-        
+        back.setBounds(back.x, submit.y + submit.height + 4, back.width, back.height);
+        container.add(back);
+                
         container.initialize();
-        container.acceptFocus(); 
- 
-        softkey(SOFTKEY_BACK);       
+        container.acceptFocus();  
       }
     }
   }
@@ -399,7 +415,7 @@ void showMain() {
   container.scrollbar = scrollbar;
   container.setBounds(0, y, width, height - y - 4);  
   
-  PButton summary, details, fonts, share;
+  PButton summary, details, fonts, share, exit;
   summary = new PButton(LABEL_SUMMARY);
   summary.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(summary);
@@ -418,17 +434,21 @@ void showMain() {
   share = new PButton(LABEL_SHARE);
   share.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(share);
+  y = share.y + share.height + 4;
   
-  int buttonWidth = max(max(max(summary.width, details.width), fonts.width), share.width);
+  exit = new PButton(LABEL_EXIT);
+  exit.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(exit);
+  
+  int buttonWidth = max(max(max(max(summary.width, details.width), fonts.width), share.width), exit.width);
   summary.setBounds(summary.x, summary.y, buttonWidth, summary.height);
   details.setBounds(details.x, details.y, buttonWidth, details.height);
   fonts.setBounds(fonts.x, fonts.y, buttonWidth, fonts.height);
   share.setBounds(share.x, share.y, buttonWidth, share.height);
+  exit.setBounds(exit.x, exit.y, buttonWidth, exit.height);
   
   container.initialize();
   container.acceptFocus();  
-  
-  softkey(null);
   
   screen = SCREEN_MAIN;
 }
@@ -484,7 +504,7 @@ void showSummary() {
   text = values[0][1];
   if (text.equals("MIDP-1.0")) {
     text += "\nYour phone CANNOT run Profiler Advanced.";
-  } else if (text.equals("MIDP-2.0")) {
+  } else if (text.indexOf("MIDP-2.0") >= 0) {
     text += "\nYour phone CAN run Profiler Advanced.";
   }
   text += "\n\n";
@@ -527,11 +547,13 @@ void showSummary() {
   container.add(label);
   y = label.y + label.height;
   
+  back = new PButton(LABEL_BACK);
+  back.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(back);
+  
   container.initialize();
   container.acceptFocus();  
-  
-  softkey(SOFTKEY_BACK);
-  
+    
   screen = SCREEN_SUMMARY;
 }
 
@@ -562,11 +584,13 @@ void showDetails() {
     container.add(label);
     y = label.y + label.height;
   }
+  
+  back = new PButton(LABEL_BACK);
+  back.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(back);
 
   container.initialize();
   container.acceptFocus();  
-  
-  softkey(SOFTKEY_BACK);
   
   screen = SCREEN_DETAILS;
 }
@@ -649,21 +673,25 @@ void showFonts() {
   PButton prev, next;
   next = new PButton(LABEL_NEXT);
   next.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
-  container.add(next);
+  container.add(next);  
+  y = next.y + next.height + 4;
   
-  y = next.y + next.height;
   prev = new PButton(LABEL_PREVIOUS);
   prev.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(prev);
+  y = prev.y + prev.height + 4;
   
-  int buttonWidth = max(prev.width, next.width);
+  back = new PButton(LABEL_BACK);
+  back.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  container.add(back);
+  
+  int buttonWidth = max(max(back.width, prev.width), next.width);
   prev.setBounds(prev.x, prev.y, buttonWidth, prev.height);
   next.setBounds(next.x, next.y, buttonWidth, next.height);
+  back.setBounds(back.x, back.y, buttonWidth, back.height);  
   
   container.initialize();
   container.acceptFocus();  
-  
-  softkey(SOFTKEY_BACK);
   
   screen = SCREEN_FONTS;
 }
@@ -678,6 +706,7 @@ void showShare() {
   
   PLabel label;
   label = new PLabel("Press Submit to connect to the Internet and share your results with the Mobile Processing website.\n\n");
+  label.font = fontSmall;
   label.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   container.add(label);
   y = label.y + label.height;
@@ -690,12 +719,16 @@ void showShare() {
   submit = new PButton(LABEL_SUBMIT);
   submit.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   submit.setBounds(4 + ((width - 8 - submit.width) >> 1), y, submit.width, submit.height);
-  container.add(submit);  
+  container.add(submit);
+  y = submit.y + submit.height + 4;
+  
+  back = new PButton(LABEL_BACK);
+  back.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
+  back.setBounds(4 + ((width - 8 - submit.width) >> 1), y, submit.width, submit.height);
+  container.add(back);
   
   container.initialize();
   container.acceptFocus();  
-  
-  softkey(SOFTKEY_BACK);
   
   screen = SCREEN_SHARE;
 }
