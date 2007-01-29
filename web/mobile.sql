@@ -36,14 +36,14 @@ CREATE TABLE IF NOT EXISTS profile_display (
 
 CREATE TABLE IF NOT EXISTS profile_libraries (
 	id 		int		primary key,
-	bluetooth	boolean,
-	image2		boolean,
-	messaging	boolean,
-	phone		boolean,
-	sound		boolean,
-	videoplayback	boolean,
-	videosnapshot	boolean,
-	xml		boolean
+	bluetooth	bool,
+	image2		bool,
+	messaging	bool,
+	phone		bool,
+	sound		bool,
+	videoplayback	bool,
+	videosnapshot	bool,
+	xml		bool
 );
 
 CREATE TABLE IF NOT EXISTS profile_microedition (
@@ -66,10 +66,10 @@ CREATE TABLE IF NOT EXISTS profile_messaging (
 CREATE TABLE IF NOT EXISTS profile_mmapi (
 	id		int		primary key,
 	version		varchar(255),
-	mixing		boolean,
-	audiocapture	boolean,
-	videocapture	boolean,
-	recording	boolean,
+	mixing		bool,
+	audiocapture	bool,
+	videocapture	bool,
+	recording	bool,
 	audioencodings	text,
 	videoencodings	text,
 	snapencodings	text,
