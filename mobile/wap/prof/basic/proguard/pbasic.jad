@@ -1,9 +1,0 @@
-MIDlet-1: pbasic, /icon.png, pbasic
-MIDlet-Icon: /icon.png
-MIDlet-Name: pbasic
-MIDlet-Version: 1.0.0
-MIDlet-Vendor: Mobile Processing ALPHA - 0006
-MicroEdition-Profile: MIDP-1.0
-MicroEdition-Configuration: CLDC-1.0
-MIDlet-Jar-URL: pbasic.jar
-MIDlet-Jar-Size: 26567
