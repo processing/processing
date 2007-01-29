@@ -169,7 +169,7 @@ void setup() {
   header.initialize();
   y = header.y + header.height;
   
-  headerLabel = new PLabel("Profiler Basic v1.0");
+  headerLabel = new PLabel("Profiler Advanced v1.0");
   headerLabel.calculateBounds(4, y, width - 8, Integer.MAX_VALUE);
   headerLabel.initialize();
   y = headerLabel.y + headerLabel.height + 8;
