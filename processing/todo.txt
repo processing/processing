@@ -388,6 +388,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=219
 _   would still require awt, but would take a sketch on cmd line
 _   build it and then exit
 _   also an option to launch p5, load a sketch and run it
+_   notations have been added to the bug report that cover the plw changes
 _ settings.path.fallback not being used
 _   need to check the mkdirs() to make sure it's not going too deep
 _   really important for intl versions that are having trouble
