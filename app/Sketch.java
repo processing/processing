@@ -1470,7 +1470,38 @@ public class Sketch {
       }
       errorLine -= code[errorFile].preprocOffset;
 
+      //System.out.println("i found this guy snooping around..");
+      //System.out.println("whatcha want me to do with 'im boss?");
+      //System.out.println(errorLine + " " + errorFile);
+
       String msg = re.getMessage();
+
+      if (msg.equals("expecting RCURLY, found 'null'")) {
+        throw new RunnerException("Found one too many { characters " +
+                                  "without a } to match it.");
+      }
+
+      if (msg.indexOf("expecting RBRACK") != -1) {
+        System.err.println(msg);
+        throw new RunnerException("Syntax error, " +
+                                  "maybe a missing ] character?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      if (msg.indexOf("expecting SEMI") != -1) {
+        System.err.println(msg);
+        throw new RunnerException("Syntax error, " +
+                                  "maybe a missing semicolon?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      if (msg.indexOf("expecting RPAREN") != -1) {
+        System.err.println(msg);
+        throw new RunnerException("Syntax error, " +
+                                  "maybe a missing right parenthesis?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
       //System.out.println("msg is " + msg);
       throw new RunnerException(msg, errorFile,
                                 errorLine, re.getColumn());
@@ -1511,7 +1542,7 @@ public class Sketch {
         errorLine -= code[errorFile].preprocOffset;
 
         throw new RunnerException(tsre.getMessage(),
-                               errorFile, errorLine, errorColumn);
+                                  errorFile, errorLine, errorColumn);
 
       } else {
         // this is bad, defaults to the main class.. hrm.
