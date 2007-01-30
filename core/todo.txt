@@ -683,6 +683,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=104
 
 CORE / PGraphics3D
 
+_ images are losing pixels at the edges
+_   http://dev.processing.org/bugs/show_bug.cgi?id=102
 _ rect() changes size as it changes position
 _   http://dev.processing.org/bugs/show_bug.cgi?id=95
 _ lines skip on 200x200 surface because of fixed point rounding error

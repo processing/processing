@@ -190,7 +190,8 @@ public class PApplet extends Applet
    * Message of the Exception thrown when size() is called the first time.
    * <P>
    * This is used internally so that setup() is forced to run twice
-   * when the renderer is changed. Reason being that the
+   * when the renderer is changed. This is the only way for us to handle
+   * invoking the new renderer while also in the midst of rendering.
    */
   static final String NEW_RENDERER = "new renderer";
 
