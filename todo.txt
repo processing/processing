@@ -12,6 +12,12 @@ X slight improvements to some preproc/compiler error messages
 X   http://dev.processing.org/bugs/show_bug.cgi?id=12
 X   http://dev.processing.org/bugs/show_bug.cgi?id=13
 X   http://dev.processing.org/bugs/show_bug.cgi?id=15
+X deal with strange problem with KeyListener and {} on same line 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=484
+X copy custom applet.html file on "Save As" 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=485
+_ prev/next tab conflicting with typing brackets on french macs
+_  http://dev.processing.org/bugs/show_bug.cgi?id=480
 
 _ add a timer("functionname", 45) method
 _   this can be used to schedule something to happen at a specific time
@@ -908,6 +914,8 @@ _ documented in faq, add something to the lib "camera not installed"
 _   quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
 _ need to add resize method to capture object
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
+_ Capture.settings() mangles external iSight image
+_   http://dev.processing.org/bugs/show_bug.cgi?id=496
 _ figure out what's up with the qt error handler
 _   is this what's preventing the errors from being caught properly?
 _   shutting these off for 0116 so hopefully the messages improve
