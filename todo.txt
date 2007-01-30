@@ -6,6 +6,12 @@ X   just default to the user's home directory if no 'sketchbook' folder
 X   otherwise ask the user to select a folder
 X fix QTSession.open/close problem in Capture.list()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=472
+X fix some of the error handling while running a sketch
+X   now a little better at highlighting the correct line
+X slight improvements to some preproc/compiler error messages
+X   http://dev.processing.org/bugs/show_bug.cgi?id=12
+X   http://dev.processing.org/bugs/show_bug.cgi?id=13
+X   http://dev.processing.org/bugs/show_bug.cgi?id=15
 
 _ add a timer("functionname", 45) method
 _   this can be used to schedule something to happen at a specific time

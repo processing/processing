@@ -15,13 +15,14 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=399
 X fix PImage regression in 0124 and the cache crap
 X added a version of trim() that handles an entire array
 X removed contract(), one can use expand() and subset() instead
-
+X backgroundColor to cccccc instead of c0c0c0
 X loadImage() requires an extension, maybe add a second version?
 X   loadImage("blah", "jpg");
 X   otherwise people have to use strange hacks to get around it
 X   also chop off ? from url detritus
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
-_   http://dev.processing.org/bugs/show_bug.cgi?id=500
+X   also just pass off to default createImage() if no extension available
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
+X   http://dev.processing.org/bugs/show_bug.cgi?id=500
 
 point()
 _ gl point stuff is a problem
@@ -48,7 +49,6 @@ As an aside, set() is at least 10x faster, and
 perhaps should be used in these examples anyway. 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116;start=0
 
-_ backgroundColor to cccccc instead of c0c0c0
 _ Stroking a rect() leaves off the upper right pixel
 _   http://dev.processing.org/bugs/show_bug.cgi?id=501
 
