@@ -110,6 +110,25 @@ import java.util.zip.*;
  *     }
  * }
  * </PRE>
+ *
+ * <H2>Processing on multiple displays</H2>
+ * <P>I was asked about P5 with multiple displays, and for lack of a better
+ * place to document it, things will go here.</P>
+ * <P>You can address both screens by making a window the width of both,
+ * and the height of the maximum of both screens. In this case, do not use
+ * present mode, because that's exclusive to one screen. Basically it'll
+ * give you a PApplet that spans both screens. If using one half to control
+ * and the other half for graphics, you'd just have to put the 'live' stuff
+ * on one half of the canvas, the control stuff on the other. This works
+ * better in windows because on the mac we can't get rid of the menu bar
+ * unless it's running in present mode.</P>
+ * <P>For more control, you need to write straight java code that uses p5.
+ * You can create two windows, that are shown on two separate screens,
+ * that have their own PApplet. this is just one of the tradeoffs of one of
+ * the things that we don't support in p5 from within the environment
+ * itself (we must draw the line somewhere), because of how messy it would
+ * get to start talking about multiple screens. It's also not that tough to
+ * do by hand w/ some Java code.</P>
  */
 public class PApplet extends Applet
   implements PConstants, Runnable,

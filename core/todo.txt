@@ -24,6 +24,9 @@ X   also just pass off to default createImage() if no extension available
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 X   http://dev.processing.org/bugs/show_bug.cgi?id=500
 
+_ modelX/Y/Z still having trouble
+_   http://dev.processing.org/bugs/show_bug.cgi?id=486
+
 _ problems with depth buffer and createGraphics with P3D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=482
 _ ARGB problems with createGraphics
