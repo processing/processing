@@ -327,9 +327,17 @@ public class Compiler implements MessageConsumer {
           }
         }
 
+        if ((description.indexOf("\";\" inserted " +
+                                 "to complete BlockStatement") != -1) ||
+            (description.indexOf("; expected instead of this token") != -1)) {
+          System.err.println(description);
+          description = "Compiler error, maybe a missing semicolon?";
+        }
+
         //System.out.println("description = " + description);
         //System.out.println("creating exception " + exception);
-        exception = new RunnerException(description, fileIndex, lineNumber-1, -1);
+        exception =
+          new RunnerException(description, fileIndex, lineNumber-1, -1);
 
         // NOTE!! major change here, this exception will be queued
         // here to be thrown by the compile() function
