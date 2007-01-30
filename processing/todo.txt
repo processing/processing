@@ -452,6 +452,8 @@ _ Blah.class will confuse the preproc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=481
 _ http://dev.processing.org/bugs/show_bug.cgi?id=492
 _   http://dev.processing.org/bugs/show_bug.cgi?id=492
+_ non-matching curly brackets sometimes don't cause an error
+_   http://dev.processing.org/bugs/show_bug.cgi?id=507
 
 hacked for fix, needs real fix
 _ NullPointerException on unterminated comment at end of code
@@ -469,10 +471,16 @@ PDE / Editor
 
 _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
+_ dragging title bar while sketch running causes strange selection behavior
+_   http://dev.processing.org/bugs/show_bug.cgi?id=504
 _ should really be doing the 'right' thing with sketch file handling
 _   create temporary file when saving
 _   once done writing, use remove the original and rename the old
 _   some basic stuff like this..
+_ shortcuts not working after rename? (osx only?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=505
+_ convert tabs to spaces when pasting text
+_   http://dev.processing.org/bugs/show_bug.cgi?id=506
 _ add "recent files" list to open menu?
 _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
@@ -808,12 +816,18 @@ _   opens sketch folder,
 _   and gives info about what to do next (how to edit)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=143
 _ tool to run in appletviewer? sun.applet.Main is appletviewer
-_ small gray gap shows up in color picker
-_   getMaximumSize() not being respected on Windows (Linux?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=310
 _ import sketch from url (takes a zip from archive sketch)
 _ ftp upload sketch
 _ archive sketch direct to bug report
+
+
+TOOLS / Color Picker
+
+_ pasting into color picker doesn't update the color values
+_   http://dev.processing.org/bugs/show_bug.cgi?id=503
+_ small gray gap shows up in color picker
+_   getMaximumSize() not being respected on Windows (Linux?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=310
 
 
 TOOLS / Courseware
