@@ -674,6 +674,14 @@ public class PFont implements PConstants {
     psname = font.getPSName();
 
     try {
+      // charset needs to be sorted to make index lookup run more quickly
+      // http://dev.processing.org/bugs/show_bug.cgi?id=494
+      //Arrays.sort(charset);
+      Class arraysClass = Class.forName("java.util.Arrays");
+      Method sortMethod =
+        arraysClass.getMethod("sort", new Class[] { charset.getClass() });
+      sortMethod.invoke(null, new Object[] { charset });
+
       // the count gets reset later based on how many of
       // the chars are actually found inside the font.
       this.charCount = (charset == null) ? 65536 : charset.length;
