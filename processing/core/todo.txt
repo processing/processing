@@ -24,6 +24,15 @@ X   also just pass off to default createImage() if no extension available
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 X   http://dev.processing.org/bugs/show_bug.cgi?id=500
 
+_ problems with depth buffer and createGraphics with P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=482
+_ ARGB problems with createGraphics
+_   http://dev.processing.org/bugs/show_bug.cgi?id=160
+_   http://dev.processing.org/bugs/show_bug.cgi?id=428
+
+_ hint(DISABLE_DEPTH_TEST) not behaving consistently
+_   http://dev.processing.org/bugs/show_bug.cgi?id=483
+
 point()
 _ gl point stuff is a problem
 _ gl points not working again
@@ -96,9 +105,6 @@ _ having shut off the defaults reset, background not getting called for java2d
 _   so this will make that other stuff regress again
 _ background not being set properly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=454
-_ ARGB problems with createGraphics
-_   http://dev.processing.org/bugs/show_bug.cgi?id=160
-_   http://dev.processing.org/bugs/show_bug.cgi?id=428
 _ why aren't background() / defaults() being called for opengl?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 
