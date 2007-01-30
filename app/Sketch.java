@@ -931,6 +931,14 @@ public class Sketch {
       Base.copyDir(codeFolder, newCodeFolder);
     }
 
+    // copy custom applet.html file if one exists
+    // http://dev.processing.org/bugs/show_bug.cgi?id=485
+    File customHtml = new File(folder, "applet.html");
+    if (customHtml.exists()) {
+      File newHtml = new File(newFolder, "applet.html");
+      Base.copyFile(customHtml, newHtml);
+    }
+
     // save the main tab with its new name
     File newFile = new File(newFolder, newName + ".pde");
     code[0].saveAs(newFile);
