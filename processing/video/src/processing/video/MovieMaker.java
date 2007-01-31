@@ -80,7 +80,7 @@ import processing.core.*;
  * void keyPressed() {
  *   // Finish the movie if space bar is pressed!
  *   if (key == ' ') {
- *     mm.finish();
+ *     mm.stop();
  *   }
  * }
  * </PRE>
@@ -314,7 +314,10 @@ public class MovieMaker {
   }
 
 
-  public void finish() {
+  /**
+   * Close out and finish the movie file.
+   */
+  public void stop() {
     System.out.println("Finishing movie file.");
     try {
       readyForFrames = false;
@@ -334,7 +337,7 @@ public class MovieMaker {
 
 
   public void dispose() {
-    if (readyForFrames) finishMovie();
+    if (readyForFrames) stop();
 
     try {
       QTSession.close();

@@ -26,6 +26,11 @@ X   look into javascript timers to see how they work
 _   also add interval("functionname", 40)
 _   and thread("functionname");
 
+_ ArticulatePrint-070103a.pde from ArticulatePrint-070103a loads ok
+_   but when opening the sketch, it leaves out the file
+_   because there's a dash in the name
+_   and instead only loads StemCell.pde
+
 _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
 
