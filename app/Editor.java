@@ -684,6 +684,7 @@ public class Editor extends JFrame
           jalopy.setInput(getText(), sketch.current.file.getAbsolutePath());
           StringBuffer buffer = new StringBuffer();
           jalopy.setOutput(buffer);
+          jalopy.setInspect(false);
           jalopy.format();
           setText(buffer.toString(), 0, 0);
 

@@ -315,17 +315,19 @@ public class PFont implements PConstants {
   public int index(char c) {
     // degenerate case, but the find function will have trouble
     // if there are somehow zero chars in the lookup
-    if (value.length == 0) return -1;
+    //if (value.length == 0) return -1;
+    if (charCount == 0) return -1;
 
     // quicker lookup for the ascii fellers
     if (c < 128) return ascii[c];
 
     // some other unicode char, hunt it out
-    return index_hunt(c, 0, value.length-1);
+    //return index_hunt(c, 0, value.length-1);
+    return indexHunt(c, 0, charCount-1);
   }
 
 
-  protected int index_hunt(int c, int start, int stop) {
+  protected int indexHunt(int c, int start, int stop) {
     int pivot = (start + stop) / 2;
 
     // if this is the char, then return it
@@ -336,10 +338,10 @@ public class PFont implements PConstants {
     if (start >= stop) return -1;
 
     // if it's in the lower half, continue searching that
-    if (c < value[pivot]) return index_hunt(c, start, pivot-1);
+    if (c < value[pivot]) return indexHunt(c, start, pivot-1);
 
     // if it's in the upper half, continue there
-    return index_hunt(c, pivot+1, stop);
+    return indexHunt(c, pivot+1, stop);
   }
 
 
