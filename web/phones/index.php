@@ -14,7 +14,7 @@ $link = db_connect();
 $query = "SELECT DISTINCT useragent, stamp FROM profile_summary ORDER BY stamp DESC LIMIT 8";
 $result = mysql_query($query);
 while ($data = mysql_fetch_assoc($result)) {
-    echo $result['useragent'] ."<br />";
+    echo $data['useragent'] ."<br />";
 }
 ?>
 &nbsp;
