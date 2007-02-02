@@ -19,9 +19,8 @@ CREATE TABLE IF NOT EXISTS profile_summary (
 	id		int		auto_increment primary key,
 	downloadId	int,
 	useragent	varchar(255),
-	brand		varchar(255),
-	model		varchar(255),
-	timezones	text
+	timezones	text,
+	stamp		timestamp	not null
 );
 
 CREATE TABLE IF NOT EXISTS profile_display (
