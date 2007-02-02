@@ -1,0 +1,85 @@
+Tera-WURFL README
+Beta Version 1.4.4 Stable
+http://www.tera-wurfl.com/
+-----------------------
+
+ABOUT TERA-WURFL
+
+Tera-WURFL is a PHP & MySQL based library that uses the Wireless Universal
+Resource File (WURFL). The WURFL website  nicely defines the WURFL as
+follows: "The WURFL is an "ambitious" configuration file that contains
+info about all known Wireless devices on earth. Of course, new devices are
+created and released at all times. While this configuration file is bound 
+to be out of date one day after each update, chances are that the WURFL 
+lists all of the WAP devices you can purchase in the nearest shops."
+
+Tera-WURFL is loosely based on the original PHP Tools Library by Andrea 
+Trasatti and serves as a drop in replacement with only minor changes to 
+your existing code. Since Tera-WURFL uses a MySQL database backend, the 
+real world performace increase over the existing PHP Tools (with multicache) 
+implementation is extremely high - normally between 5x and 10x faster!
+The author of Tera-WURFL is Steve Kamerman, a professional PHP Programmer,
+MySQL DBA, Flash/Actionscript/Javascript Developer and Linux Administrator.
+This project is financially sponsored by Tera Technologies and was originally
+an internal project used for delivering content to customers of the mobile
+ringtone and image creation site www.Tera-Tones.com.
+
+Read more about Tera-WURFL and download the latest release at:
+http://www.tera-wurfl.com
+
+See what else Steve Kamerman has cookin' at his blog:
+http://www.teratechnologies.net/stevekamerman/
+
+INSTALLATION
+
+1. Copy the files into a directory on your webserver that can be accessed
+   from the internet.
+2. Create a new database for Tera-WURFL and a user that has a minimum of
+   the following privileges on the new database:
+      SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER
+3. Edit the tera_wurfl_config.php file and make sure you have the database
+   settings correct.
+   a. Make sure WURFL_PATCH_ENABLE is set to false until you get it going
+      this could cause issues if you haven't built the database yet.
+   b. Make sure the DB_EMPTY METHOD is set to "DROP_CREATE" - this will
+      automatically create the database tables for you.
+4. Set DATADIR to a directory that is accessible (read+write) by the user
+   that runs your webserver. This is normally "apache", "www-data" or 
+   "nobody" on Linux. (chown -R apache:apache ./data/)
+5. Go to http://yourwebserver/tera_wurfl_directory/admin/
+   a. You should see the Tera-WURFL administration.  As of version 1.4.4,
+      this package comes with a stable release of the wurfl.xml file.
+      Since this file is constantly updated with new devices, the Web Admin
+      Interface has two options for updating your wurfl database from the
+      official WURFL website: 1. the current stable release; 2. the current
+      development (CVS) release.  Selecting either option will download the
+      appropriate WURFL (to your DATADIR/dl_wurfl.xml) and install it into
+      the database.  It will also attempt to apply the WURFL patch file if
+      patching is enabled.  If an error occurs while updating the device
+      table, the changes are automatically rolled back and no changes to
+      you database will be made.
+   b. Click on "Tera-WURFL test script" to test the installation.  You can
+      type in any user agent to search for it in the WURFL.  You should look
+      at the source of this file to get an idea of how to use Tera-WURLF.
+6. Protect your 'admin' directory by using a method specific to your web
+   server software.  For Apache, this means a .htaccess file would work:
+   http://www.elated.com/articles/password-protecting-your-pages-with-htaccess/
+
+USAGE
+
+Please see the test script (check_wurfl.php) for a complete example of usage.
+There are also a couple more examples of how to use Tera-WURFL in the main
+class file - tera_wurfl.php.
+
+SUPPORT
+
+You may contact me, Steve Kamerman with questions - once I feel that there
+are too many emails to deal with I will probably put up a forum, but since
+this project is still fairly new, I will just help you all out over email.
+
+Here's my email address: kamermans(at)teratechnologies.net
+      
+NOTE: The public methods from the WURFL PHP Tools class at 
+wurfl.sourceforge.net are avalible in this class and they all use the same
+syntax as before with the exception of the constructor - "tera_wurfl" which has
+been renamed from "wurfl_class".

@@ -1,0 +1,59 @@
+.titlediv {
+	background-color: #FFFFCC;
+	border: 3px solid #333333;
+	font-size: 24px;
+	color: #333333;
+}
+.logfile {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 11px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 5px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #FFFFCC;
+	border-right-color: #FFFFCC;
+	border-bottom-color: #FFFFCC;
+	border-left-color: #FFFFCC;
+	color: #00CC00;
+	background-color: #000000;
+	width: 800px;
+}
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-color: #333333;
+	color: #CCCCCC;
+	font-size: 13px;
+}
+a:link, a:visited {
+	color: #FFFFCC;
+	text-decoration: underline;
+}
+a:hover, a:active {
+	color: #FF0000;
+	text-decoration: none;
+}
+td {
+	padding-top: 5px;
+}
+th {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCCCCC;
+	font-size: 16px;
+}
+.version {font-size: 14px}
+.lightrow {
+	background-color: #373737;
+}
+.darkrow {
+	background-color: #2E2E2E;
+}
+.setting {
+	font-weight: normal;
+	color: #996633;
+}
