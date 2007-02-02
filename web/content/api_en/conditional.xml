@@ -21,7 +21,12 @@ for(int i=5; i<100; i+=5) {
 </example>
 
 <description>
-A shortcut for writing an <b>if()</b> and <b>else</b> structure. If the <b>condition</b> evaluates to <b>true</b>, <b>expression1</b> is evaluated and returned. If the <b>condition</b> evaluates to <b>false</b>, <b>expression2</b> is evaluated and returned.<br /><br />The following conditional: <br /><pre>condition : expression1 ? expression2</pre><br />is equivalent to this structure: <br /><pre>if(condition) {<br />  expression1 <br />} else { <br />  expression2 <br />}</pre>
+A shortcut for writing an <b>if()</b> and <b>else</b> structure. If the <b>condition</b> evaluates to <b>true</b>, <b>expression1</b> is evaluated and returned. If the <b>condition</b> evaluates to <b>false</b>, <b>expression2</b> is evaluated and returned.
+<br /><br />
+The following conditional: <br />
+<pre>condition ? expression1 : expression2</pre><br />
+is equivalent to this structure: <br />
+<pre>if(condition) {<br />  expression1 <br />} else { <br />  expression2 <br />}</pre>
 </description>
 
 <syntax>
