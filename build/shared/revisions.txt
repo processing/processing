@@ -7,6 +7,88 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0124 - 3 February 2007
+
+Bug fix bonanza! 
+
+[ editor ] 
+
++ Minor improvements to preprocessor and compiler error messages.
+  Did my best to suggest something more useful than things like
+  the "expected RCURLY" or "RPAREN" crap.
+  http://dev.processing.org/bugs/show_bug.cgi?id=12
+  http://dev.processing.org/bugs/show_bug.cgi?id=13
+  http://dev.processing.org/bugs/show_bug.cgi?id=15
+
++ Copy custom applet.html file on "Save As" 
+  http://dev.processing.org/bugs/show_bug.cgi?id=485
+
++ Create the "Documents" folder on OS X if it doesn't exist already. 
+  (Problem for some lab machines with strange home directory setups)
+
++ With the shift key pressed, handle next/prev line with up/down arrow
+
++ Fixed minor issue with { and } on the same line
+  http://dev.processing.org/bugs/show_bug.cgi?id=484
+
+
+[ core & libraries ] 
+
++ With smooth() turned off, shouldn't be smoothing image on resize. 
+  This was inconsisten between OS X and Windows. Now fixed.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1164753510
+
++ Speed up image drawing with JAVA2D (the default) renderer
+
++ ambientLight(r,g,b) no longer ambientLight(r,g,r)
+  http://dev.processing.org/bugs/show_bug.cgi?id=465
+
++ A fix from Dave Bollinger for the POSTERIZE filter (thanks Dave!)
+  http://dev.processing.org/bugs/show_bug.cgi?id=399
+
++ background(0, 0, 0, 0) was resetting stroke, smooth, etc.
+
++ OpenGL background() calls now work with begin/endRaw().
+
++ Fix QTSession.open/close problem in Capture.list()
+  http://dev.processing.org/bugs/show_bug.cgi?id=472
+
++ The default backgroundColor changed to #cccccc instead of #c0c0c0.
+  It was always intended to be CC, not sure how it got to be C0.
+
++ Show an error message when trying to use size(w, h, OPENGL)
+  with Java 1.5.0_10, which doesn't work with JOGL because of a Sun bug.
+  http://dev.processing.org/bugs/show_bug.cgi?id=513
+
++ Hopefully a fix for the "No disk in drive" error on some Windows machines
+  when the PDF library is used. I haven't been able to reproduce this 
+  problem, so I can't gauge whether it's fixed.
+  http://dev.processing.org/bugs/show_bug.cgi?id=478
+
++ Fix bug in copy() that caused part of image to be replicated.
+  http://dev.processing.org/bugs/show_bug.cgi?id=372
+
+
+[ features ]
+
++ smooth() now improves image smoothing when used with the JAVA2D renderer.
+
++ Change P3D to smooth images more nicely (bilinear was disabled)
+
++ Added a version of trim() that handles an entire array
+
++ Removed contract(), one can use expand() and subset() instead
+
++ Added optional second parameter to loadImage(), that can be used to 
+  specify the file extension if it's not part of the URL.
+  i.e. loadImage("http://someserver.com/blah/fancy.cgi?234234", "jpg");
+  http://dev.processing.org/bugs/show_bug.cgi?id=500
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0123 - 30 November 2006
 
 Bug fixes for regressions found in 0122.
