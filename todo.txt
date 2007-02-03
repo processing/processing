@@ -16,8 +16,38 @@ X deal with strange problem with KeyListener and {} on same line
 X   http://dev.processing.org/bugs/show_bug.cgi?id=484
 X copy custom applet.html file on "Save As" 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=485
+o preferences file gone corrupt (on osx only?)
+o   changing font size, 
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1160057791
+X   http://dev.processing.org/bugs/show_bug.cgi?id=406
+
+
 _ prev/next tab conflicting with typing brackets on french macs
 _  http://dev.processing.org/bugs/show_bug.cgi?id=480
+
+
+classpath problems [1.0]
+_ need to deal with classpath conflicts
+_   avoid garbage that people have installed on their machines
+_   antlr.jar in the classpath will cause trouble.. 
+_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
+_   jogl jar files, or jogl install will cause trouble
+_     /System/Library/Extensions or /Library/Extensions
+_ when a conflicting library is found, need to report it
+_   altho prolly only when it's actually different (md5hash it?)
+_   this seems to be causing a lot of trouble with recent releases
+_   (opengl changes and whatnot)
+_ jar files like the bad aiexport plugin will cause serious problems
+_   need to ignore processing.core classes showing up in other jar files
+_   tougher than it looks, because it all depends on what java wants to use
+_     i.e. even if not specified, the stuff will be in the classpath
+_   need to make classpath code be less promiscuous
+_   the order of adding libraries to classpath should be opposite
+_     the important local libraries should be first in cp, user contrib later
+_   http://dev.processing.org/bugs/show_bug.cgi?id=321
+
+_ stop button needs to update itself and work properly [1.0]
+_   http://dev.processing.org/bugs/show_bug.cgi?id=396
 
 _ add a timer("functionname", 45) method
 _   this can be used to schedule something to happen at a specific time
@@ -25,11 +55,6 @@ _   or import the swing timer (for actionPerformed)
 X   look into javascript timers to see how they work
 _   also add interval("functionname", 40)
 _   and thread("functionname");
-
-_ ArticulatePrint-070103a.pde from ArticulatePrint-070103a loads ok
-_   but when opening the sketch, it leaves out the file
-_   because there's a dash in the name
-_   and instead only loads StemCell.pde
 
 _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
@@ -47,9 +72,6 @@ _ don't reload sketch on "save as"
 _   this can result in loss of data
 _   http://dev.processing.org/bugs/show_bug.cgi?id=433
 
-_ put stdout/stderr into ~/Library/Logs
-_   and have a .log extension so it can be browsed properly
-
 _ 'code' folder being ignored on export to application
 _   http://dev.processing.org/bugs/show_bug.cgi?id=469
 
@@ -64,6 +86,8 @@ _ PApplet.this doesn't work (does it work in javac?)
 _   sketchname.this also doesn't work, because Temporary_NNNN used for name
 _   but since it's another tab/class, will run externally
 _   so should make the external version use the actual sketch name not temp
+_   can't use PApplet.this, doesn't seem to like that
+_   instead, must pass variable to inner class
 
 _ make more fixes to the key bindings
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnacc/html/atg_keyboardshortcuts.asp
@@ -124,11 +148,6 @@ _ when drawing large video, the two triangles for the rect are out of sync
 _   only shows up in P3D
 
 
-_ slow save/new because of large sketchbook
-_   this is a total cluster, the rebuild is being called incessantly
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162801212
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1141126582
-
 processing wish list 
 _ opening multiple versions of p5 at a time
 _   shouldn't actually be a big deal 
@@ -138,7 +157,7 @@ _   nor is it listed on the reference page
 _   so students can't find the ref for it
 _   needs to link TRIANGLE_STRIP to the beginShape() reference
 _ stop button not stopping anything
-_ copy running from from /tmp/buildXXxxx on crash of p5
+_ copy running code from /tmp/buildXXxxx on crash of p5
 _   should probably make a way to save/recover code
 _ code as columns (screen is wide, code is not)
 
@@ -324,6 +343,8 @@ DOC / Examples or Hacks
 
 _ add to key reference a pointer to an example that tracks all keys
 _   write simple example that tracks all keys
+_ also mention in keyPressed docs that ASCII key codes will not be coded
+_   it's just how java is (maybe this is already in there?)
 _ how to grab the java2d object from PGraphics2D
 _ How do I move the mouse cursor to another location? (advanced.html)
 _   post a hack for this or a simple example
@@ -544,6 +565,8 @@ _   need to check behavior for word and bbedit
 _   http://dev.processing.org/bugs/show_bug.cgi?id=348
 _ implement emacs keybindings (list is at the bug report)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=401
+_ implement better method of showing curly brace closure
+_   http://dev.processing.org/bugs/show_bug.cgi?id=295
 
 
 PDE / Editor Buttons
@@ -678,24 +701,6 @@ _ add ability to set the display where present mode makes things start
 
 PDE / Runner 
 
-_ need to deal with classpath conflicts
-_   avoid garbage that people have installed on their machines
-_   antlr.jar in the classpath will cause trouble.. 
-_     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
-_   jogl jar files, or jogl install will cause trouble
-_     /System/Library/Extensions or /Library/Extensions
-_ when a conflicting library is found, need to report it
-_   altho prolly only when it's actually different (md5hash it?)
-_   this seems to be causing a lot of trouble with recent releases
-_   (opengl changes and whatnot)
-_ jar files like the bad aiexport plugin will cause serious problems
-_   need to ignore processing.core classes showing up in other jar files
-_   tougher than it looks, because it all depends on what java wants to use
-_     i.e. even if not specified, the stuff will be in the classpath
-_   need to make classpath code be less promiscuous
-_   the order of adding libraries to classpath should be opposite
-_     the important local libraries should be first in cp, user contrib later
-_   http://dev.processing.org/bugs/show_bug.cgi?id=321
 _ make the p5 icon show up for the window (and in the dock) 
 _   when launching a new sketch
 _ does closing the window call stop()?
@@ -721,9 +726,17 @@ _   http://processing.org/bugs/show_bug.cgi?id=42
 
 PDE / Sketch & Sketchbook
 
+_ ArticulatePrint-070103a.pde from ArticulatePrint-070103a loads ok
+_   but when opening the sketch, it leaves out the file
+_   because there's a dash in the name
+_   and instead only loads StemCell.pde
 _ show progress dialog during export and save
-_ only rebuild sketchbook on "save as" or "rename" of sketch
+_ slow save/new because of large sketchbook
+_   only rebuild sketchbook on "save as" or "rename" of sketch
 _   currently it's rebuilding whenever "save" called too
+_   this is a total cluster, the rebuild is being called incessantly
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162801212
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1141126582
 _   http://dev.processing.org/bugs/show_bug.cgi?id=357
 _   even more of a problem becase set modified set true all the time
 _ in rebuild sketch menu - disable subfolders working as libraries
@@ -885,7 +898,10 @@ _ another code example that crashes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=363
 _ japanese characters in comments cause trouble with auto-format
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1153505384
-
+_ arrays are reformatted on each autoformat
+_   http://dev.processing.org/bugs/show_bug.cgi?id=259
+_ crash on particular string
+_   http://dev.processing.org/bugs/show_bug.cgi?id=363
 
 TOOLS / Create Font
 
@@ -1059,10 +1075,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 DIST / Mac OS X
 
-_ preferences file gone corrupt (on osx only?)
-_   changing font size, 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1160057791
-_   http://dev.processing.org/bugs/show_bug.cgi?id=406
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
@@ -1076,6 +1088,8 @@ _   was missing the error about a package being gone
 _   can comment out /System/Library/ as a test
 _ mac standard key combinations for moving around in the editor
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
+_ put stdout/stderr into ~/Library/Logs
+_   and have a .log extension so it can be browsed properly
 
 
 DIST / Linux

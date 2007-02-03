@@ -23,18 +23,81 @@ X   also chop off ? from url detritus
 X   also just pass off to default createImage() if no extension available
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 X   http://dev.processing.org/bugs/show_bug.cgi?id=500
+X 1.5.0_10 breaks jogl
+X   add error message to p5 about it
+X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6504460
+X   http://www.javagaming.org/forums/index.php?topic=15439.0
+X   upgrade to 1.5.0_11 or later:
+X     http://java.sun.com/javase/downloads/index_jdk5.jsp
+X   or downgrade to 1.5.0_09
+X     http://java.sun.com/products/archive/j2se/5.0_09/index.html
 
-_ modelX/Y/Z still having trouble
-_   http://dev.processing.org/bugs/show_bug.cgi?id=486
+fixed earlier
+o sketches often freeze when stop is hit on an HT machine
+o   need to test the examples cited on pardis' machine
+o   http://dev.processing.org/bugs/show_bug.cgi?id=232
+X debug NumberFormat InterruptedException on dual proc machine
+X   use notify() instead of interrupt()? 
+X   or Thread.currentThread() should be checked first?
 
-_ problems with depth buffer and createGraphics with P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=482
-_ ARGB problems with createGraphics
-_   http://dev.processing.org/bugs/show_bug.cgi?id=160
-_   http://dev.processing.org/bugs/show_bug.cgi?id=428
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-_ hint(DISABLE_DEPTH_TEST) not behaving consistently
-_   http://dev.processing.org/bugs/show_bug.cgi?id=483
+
+gledgeflag
+_ when turning smoothing on, internal lines of shapes are visible
+_   need to turn off smoothing for the interior of shapes
+_   http://dev.processing.org/bugs/show_bug.cgi?id=200
+_ gl smoothing.. how to disable polygon but keep line enabled
+_   or at least make a note of this?
+_   leave smooth off, get the gl object, then enable line smooth
+
+
+threading
+_ major threading overhaul before 1.0 (compendium)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=511
+_ 100x100 issues are exhibited on bh140c PCs, test and fix!
+_   http://dev.processing.org/bugs/show_bug.cgi?id=197
+_ things not showing up in linux
+_   probably threading issue, 98 doesn't have any trouble
+_   signs point to Runner or PApplet changes between 98 and 99
+_   commenting out applet.setupFrameResizeListener() 
+_     in line 307 from Runner.java solved the problem
+_   http://dev.processing.org/bugs/show_bug.cgi?id=282
+_ alloc() stuff not fixed because of thread halting
+_   problem where alloc happens inside setup(), so, uh..
+_   http://dev.processing.org/bugs/show_bug.cgi?id=369
+_   should instead create new buffer, and swap it in next time through
+_ fix the internal file chooser so that people don't need to make their own
+_   threading is a problem with inputFile() and inputFolder()
+_   dynamically load swingworker?
+_ sonia (and anything awt) is locking up on load in rev 91
+_   prolly something w/ the threading issues
+_   paint is synchronized in 0091
+_     however this is a necessity, otherwise nasty flickering ensues
+_     and using a "glock" object seems to completely deadlock
+_   http://dev.processing.org/bugs/show_bug.cgi?id=46
+_ claim that things are much slower in 107 vs 92
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1141763531
+_ need to move off anim off the main event thread
+_   move away from using method like display
+_ too much object creation in java2d
+_   causes inconsistency/hiccups as the gc runs?
+_ fix the flicker in java2d mode
+_   http://dev.processing.org/bugs/show_bug.cgi?id=122
+_   framerate(30) is still flickery and jumpy..
+_   not clear what's happening here
+_   appears to be much worse (unfinished drawing) on macosx
+_     try turning off hw accel on the mac to see if that's the problem
+_ framerate that's reported is out of joint with actual
+_   http://dev.processing.org/bugs/show_bug.cgi?id=512
+_   accuracy of frame timer is incorrect
+_   seems to be aliasing effect of low resolution on millis()
+_   so rates coming out double or half of their actual
+_   probably need to integrate over a rolling array of 10 frames or so
+_ framerate() speeds up temporarily if CPU load drops dramatically
+_   http://dev.processing.org/bugs/show_bug.cgi?id=297
+_   perhaps add a hint(DISABLE_FRAMERATE_DAMPER)
+
 
 point()
 _ gl point stuff is a problem
@@ -61,14 +124,12 @@ As an aside, set() is at least 10x faster, and
 perhaps should be used in these examples anyway. 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116;start=0
 
-_ Stroking a rect() leaves off the upper right pixel
-_   http://dev.processing.org/bugs/show_bug.cgi?id=501
 
-_ modelX/Y/Z still not working
-_   http://dev.processing.org/bugs/show_bug.cgi?id=486
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
 
 _ no disk in drive error
-_   was this something that changed with the java updates?
+_   was this something that changed with the java updates? (1.5_10)
 _   problem was the floppy drive.. gak
 _   http://dev.processing.org/bugs/show_bug.cgi?id=478
 
@@ -78,6 +139,27 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=475
 _ java 1.5.0_10 breaks jogl
 _   rc1 update that will fix things
 _   https://jogl.dev.java.net/servlets/ProjectDocumentList?folderID=6624&;exp%20andFolder=6624&folderID=0
+
+_ loadBytes() and saveStream() functions badly need optimization!
+_   don't bother using a buffering stream, just handle internally. gah!
+
+_ modelX/Y/Z still having trouble
+_   http://dev.processing.org/bugs/show_bug.cgi?id=486
+
+_ problems with depth buffer and createGraphics with P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=482
+_ ARGB problems with createGraphics
+_   http://dev.processing.org/bugs/show_bug.cgi?id=160
+_   http://dev.processing.org/bugs/show_bug.cgi?id=428
+
+_ hint(DISABLE_DEPTH_TEST) not behaving consistently
+_   http://dev.processing.org/bugs/show_bug.cgi?id=483
+
+_ jre 1.5.0_10 is still default at java.com.. blech
+_   http://dev.processing.org/bugs/show_bug.cgi?id=513
+
+_ Stroking a rect() leaves off the upper right pixel
+_   http://dev.processing.org/bugs/show_bug.cgi?id=501
 
 _ make sure the docs include "beginShape() cannot be nested"
 
@@ -122,6 +204,9 @@ _   java2d will do both line and fill, illusfarter only does fills
 _ gradients not supported in java2d
 _   http://dev.processing.org/bugs/show_bug.cgi?id=371
 
+_ images with 0x00 in their high bits being drawn transparent
+_   even though they're set to draw as RGB
+_   http://dev.processing.org/bugs/show_bug.cgi?id=351
 _ tint() and noTint() switching problem in P2D
 _   this should be a quick fix
 _   http://dev.processing.org/bugs/show_bug.cgi?id=222
@@ -153,25 +238,9 @@ _ does ENABLE_DEPTH_SORT not work with opengl?
 _ 404 error because first searches applet directory in isometricblocks
 _ "this file is named" errors don't like subdirectories
 _   need to strip off past the file separator or something
-
-_ threading issues are exhibited on bh140c PCs, test and fix!
-_ things not showing up in linux
-_   probably threading issue, 98 doesn't have any trouble
-_   signs point to Runner or PApplet changes between 98 and 99
-_   commenting out applet.setupFrameResizeListener() 
-_     in line 307 from Runner.java solved the problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=282
-
-_ alloc() stuff not fixed because of thread halting
-_   problem where alloc happens inside setup(), so, uh..
-_   http://dev.processing.org/bugs/show_bug.cgi?id=369
-_   should instead create new buffer, and swap it in next time through
-
-_ loadBytes() and saveStream() functions badly need optimization!
-_   don't bother using a buffering stream, just handle internally. gah!
-
-_ keep track of internal lines in shapes
-_   disable anti-aliasing for internal edges
+_ figure out why 1024x768 image takes 3.5 seconds to load
+_   would using a BufferedImage work better?
+_   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
@@ -181,10 +250,6 @@ _   i.e. problem with main calling itself multiple times in Alpheus
 _ copy() sort of broken in JAVA2D
 _   example sketch posted with bug report
 _   http://dev.processing.org/bugs/show_bug.cgi?id=372
-
-_ fix the internal file chooser so that people don't need to make their own
-_   threading is a problem with inputFile() and inputFolder()
-_   dynamically load swingworker?
 
 _ svg loader is on the list for 1.0
 _   maybe include as part of PApplet (casey thinks so)
@@ -266,13 +331,6 @@ _ introduce calc()
 
 _ cmyk version of tiff encoder code?
 
-_ when turning smoothing on, internal lines of shapes are visible
-_   need to turn off smoothing for the interior of shapes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=200
-_ gl smoothing.. how to disable polygon but keep line enabled
-_   or at least make a note of this?
-_   leave smooth off, get the gl object, then enable line smooth
-
 _ get()/set() in PGraphicsJava don't bounds check
 
 _ add better error messages for all built-in renderers
@@ -291,13 +349,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=91
 _   also textMode(SCREEN)
 
 _ when closing a sketch via the close box, make sure stop() getting called
-
-_ sonia (and anything awt) is locking up on load in rev 91
-_   prolly something w/ the threading issues
-_   paint is synchronized in 0091
-_     however this is a necessity, otherwise nasty flickering ensues
-_     and using a "glock" object seems to completely deadlock
-_   http://dev.processing.org/bugs/show_bug.cgi?id=46
 
 _ when an exception comes through during cameraEvent, not printed
 _   need to show an actual stack trace (InvocationTargetEx) 
@@ -332,34 +383,6 @@ _ weirdness of two modes of handling font metrics
 _   textFontNativeMetrics gives deprecation error
 _   getFontList stuff in PFont causes problems
 
-
-threading mess
-_ claim that things are much slower in 107 vs 92
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1141763531
-_ need to move off anim off the main event thread
-_   move away from using method like display
-X temporarily rolling back major thread changes
-_ figure out why 1024x768 image takes 3.5 seconds to load
-_   would using a BufferedImage work better?
-_   is the image actually a BufferedImage so PixelGrabber is a waste?
-_ too much object creation in java2d
-_   causes inconsistency/hiccups as the gc runs?
-_ fix the flicker in java2d mode
-_   http://dev.processing.org/bugs/show_bug.cgi?id=122
-_   framerate(30) is still flickery and jumpy..
-_   not clear what's happening here
-_   appears to be much worse (unfinished drawing) on macosx
-_     try turning off hw accel on the mac to see if that's the problem
-_ framerate that's reported is out of joint with actual
-_   seems to be aliasing effect of low resolution on millis()
-_   so rates coming out double or half of their actual
-_   probably need to integrate over a rolling array of 10 frames or so
-_ sketches often freeze when stop is hit on an HT machine
-_   need to test the examples cited on pardis' machine
-_   http://dev.processing.org/bugs/show_bug.cgi?id=232
-_ debug NumberFormat InterruptedException on dual proc machine
-_   use notify() instead of interrupt()? 
-_   or Thread.currentThread() should be checked first?
 
 _ ArrayIndexOutOfBoundsException in PLine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=246
@@ -733,11 +756,6 @@ _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
 _   http://dev.processing.org/bugs/show_bug.cgi?id=356
-_ add ability to control jpeg compression level with save() and saveFrame()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=342
-_ also when drawing an image, sense whether drawn rotated
-_   specifically, if drawn rotated 90 in either direction, or 180
-_   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ alpha not set on saveFrame, so can't be used in photoshop as a layer
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623
 _ should image i/o be moved into PImage?
@@ -755,6 +773,12 @@ _   would also need to modify the tiff loading code,
 _   because the header would be different
 _   http://dev.processing.org/bugs/show_bug.cgi?id=343
 
+enhancements
+_ add ability to control jpeg compression level with save() and saveFrame()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=342
+_ also when drawing an image, sense whether drawn rotated
+_   specifically, if drawn rotated 90 in either direction, or 180
+_   if just rotate/translate, then can use SCREEN_SPACE for fonts
 
 CORE / Mac OS X
 
