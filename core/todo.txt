@@ -36,6 +36,12 @@ X   was this something that changed with the java updates? (1.5_10)
 X     doesn't seem to be, still not sure
 X   problem was the floppy drive.. gak
 X   http://dev.processing.org/bugs/show_bug.cgi?id=478
+X copy() sort of broken in JAVA2D
+X   example sketch posted with bug report
+X   http://dev.processing.org/bugs/show_bug.cgi?id=372
+o saveStrings(filename, strings, count) 
+o   otherwise the save is kinda wonky
+o   or maybe that should just be done with the array fxns
 
 fixed earlier
 o sketches often freeze when stop is hit on an HT machine
@@ -46,12 +52,34 @@ X   use notify() instead of interrupt()?
 X   or Thread.currentThread() should be checked first?
 o svg loader is on the list for 1.0
 o   maybe include as part of PApplet (casey thinks so)
+X using gl, lines don't show up in pdf with record (they're ok with p3d)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=325
+o with network connection
+o   download a copy of the source for 0069, get the renderer 
+o   svn mv PGraphics2 PGraphicsJava
+o version of BApplet that replaces g. with ai. or pdf.
+
+out of our control, just waiting
+_ jre 1.5.0_10 is still default at java.com.. blech
+_   http://dev.processing.org/bugs/show_bug.cgi?id=513
+
+should be fixed, but needs to be tested
+_ saveFrame() produces a black background because bg not set correctly:
+_   http://dev.processing.org/bugs/show_bug.cgi?id=421
+_ jogl issues with some cards on linux, might be fixed with newer jogl
+_   http://dev.processing.org/bugs/show_bug.cgi?id=367
+_ 404 error because first searches applet directory in isometricblocks
+_ "this file is named" errors don't like subdirectories
+_   need to strip off past the file separator or something
+_ figure out why 1024x768 image takes 3.5 seconds to load
+_   would using a BufferedImage work better?
+_   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-gledgeflag
+gledgeflag [1.0]
 _ when turning smoothing on, internal lines of shapes are visible
 _   need to turn off smoothing for the interior of shapes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=200
@@ -60,7 +88,7 @@ _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
 
 
-threading
+threading [1.0]
 _ major threading overhaul before 1.0 (compendium)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=511
 _ 100x100 issues are exhibited on bh140c PCs, test and fix!
@@ -102,7 +130,7 @@ _   accuracy of frame timer is incorrect
 _   seems to be aliasing effect of low resolution on millis()
 _   so rates coming out double or half of their actual
 _   probably need to integrate over a rolling array of 10 frames or so
-_ framerate() speeds up temporarily if CPU load drops dramatically
+_ frameRate() speeds up temporarily if CPU load drops dramatically
 _   http://dev.processing.org/bugs/show_bug.cgi?id=297
 _   perhaps add a hint(DISABLE_FRAMERATE_DAMPER)
 
@@ -130,17 +158,23 @@ for(int i=0; i<100; i++) {
 }  
 As an aside, set() is at least 10x faster, and 
 perhaps should be used in these examples anyway. 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116;start=0
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
+_   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
+_ make version of loadBytes that checks length of the stream first
+_   this might not be worth it
+_     the number of cases where this works is small (half of url streams) 
+_     and who knows if the value returned will be correct
+_     (i.e. will it be the uncompressed or compressed size of the data?)
 
 _ modelX/Y/Z still having trouble
 _   http://dev.processing.org/bugs/show_bug.cgi?id=486
@@ -154,18 +188,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=428
 _ hint(DISABLE_DEPTH_TEST) not behaving consistently
 _   http://dev.processing.org/bugs/show_bug.cgi?id=483
 
-_ jre 1.5.0_10 is still default at java.com.. blech
-_   http://dev.processing.org/bugs/show_bug.cgi?id=513
-
 _ Stroking a rect() leaves off the upper right pixel
 _   http://dev.processing.org/bugs/show_bug.cgi?id=501
 
 _ make sure the docs include "beginShape() cannot be nested"
-
-_ for PShape, need to be able to set the origin (flash people)
-
-_ look into anti-aliasing on osx
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
+_   also add error messages to the renderers
+_   also note that ellipse() et al use beginShape()
+_   and that java2d should complain if people try it
 
 _ 1.5.0_07 and 1.4.2_12 contain the -XX:+HeapDumpOnOutOfMemoryError switch 
 _   invaluable for tracking down memory leaks 
@@ -173,14 +202,6 @@ _   invaluable for tracking down memory leaks
 _ an offscreen JAVA2D graphics needs loadPixels() before being drawn
 _   i.e. offscreen JAVA2D, then image() with OPENGL renderer as main
 _   needs to be marked as its cache needs an update, but not its pixels
-
-_ in opengl mode, use its tesselator
-_   because the vertex calls can just come right back to regular vertex calls
-_   this way we can also implement breakShape() for opengl
-_ with opengl optimizations via call lists..
-_   watch out to make sure raw recording still works
-_   (optimizations will have to be disabled to some extent)
-_ look into using glu quadrics to handle shape geometries quickly
 
 _ calling graphics.smooth(), graphics.colorMode() outside begin/endDraw
 _   this causes everything to be reset once the draw occurs
@@ -193,9 +214,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=454
 _ why aren't background() / defaults() being called for opengl?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 
-_ using gl, lines don't show up in pdf with record (they're ok with p3d)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=325
-
 _ gradients
 _   use gradients in a class for the svg lib for now
 _   don't add api to main p5 stuff (though maybe setPaint/noPaint api?)
@@ -204,8 +222,9 @@ _   java2d will do both line and fill, illusfarter only does fills
 _ gradients not supported in java2d
 _   http://dev.processing.org/bugs/show_bug.cgi?id=371
 
-_ images with 0x00 in their high bits being drawn transparent
-_   even though they're set to draw as RGB
+_ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
+_   images with 0x00 in their high bits being drawn transparent
+_   also if transparency set but RGB is setting, still honors transparency
 _   http://dev.processing.org/bugs/show_bug.cgi?id=351
 _ tint() and noTint() switching problem in P2D
 _   this should be a quick fix
@@ -226,40 +245,20 @@ _     don't need to apply tint() to textures, supposed to use fill color
 
 add to reference
 _ also parseInt and parseFloat, how they can return another number or NaN
+_   should the default be NaN or 0?
 _ background() with an image ignores the tint.. it's basically like set()
 _ get/set are faster way draw screen space images, but no tint, no translations
-
-should be fixed, but needs to be tested
-_ saveFrame() produces a black background because bg not set correctly:
-_   http://dev.processing.org/bugs/show_bug.cgi?id=421
-_ jogl issues with some cards on linux, might be fixed with newer jogl
-_   http://dev.processing.org/bugs/show_bug.cgi?id=367
-_ 404 error because first searches applet directory in isometricblocks
-_ "this file is named" errors don't like subdirectories
-_   need to strip off past the file separator or something
-_ figure out why 1024x768 image takes 3.5 seconds to load
-_   would using a BufferedImage work better?
-_   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
 _   make sure the main() doesn't exit until the applet has finished
 _   i.e. problem with main calling itself multiple times in Alpheus
-
-_ copy() sort of broken in JAVA2D
-_   example sketch posted with bug report
-_   http://dev.processing.org/bugs/show_bug.cgi?id=372
-
-_ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
+_   if exit() (or stop) is called, then System.exit() gets called,
+_   even though the main() wants to keep going
 
 _ cameraXYZ doesn't seem to actually be used for anything
 _   since camera functions don't even look at it or set it
 
-_ make version of loadbytes that checks length of the stream first
-
-_ saveStrings(filename, strings, count) 
-_   otherwise the save is kinda wonky
-_   or maybe that should just be done with the array fxns
 _ some way to vertically center text
 _   either by setting its middle vertical point
 _   or by setting a top/bottom for the rectangle in which it should be placed
@@ -293,13 +292,6 @@ _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
 
-_ with network connection
-_   download a copy of the source for 0069, get the renderer 
-_   svn mv PGraphics2 PGraphicsJava
-
-_ for subclasses, make it easy to grab the structure of vertices
-_   actually, just use PShape internally and this will be easier
-
 _ add notes about fixing serial on the mac to the faq (and link to bug)
 
 _ beginFrame()/beginDraw() and defaults()
@@ -317,18 +309,10 @@ _   textFont() is null on beginRecord
 _   same would be the case for strokeWeight, background, etc.
 _   http://dev.processing.org/bugs/show_bug.cgi?id=346
 
-_ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
-_   also if transparency set but RGB is setting, still honors transparency
-_   http://dev.processing.org/bugs/show_bug.cgi?id=351
-
 _ image memory use.. how to handle lots of images
 _   need to figure out exactly how they should/can unload
-_   
-_ introduce calc()
 
-_ cmyk version of tiff encoder code?
-
-_ get()/set() in PGraphicsJava don't bounds check
+_ get()/set() in PGraphicsJava2D don't bounds check
 
 _ add better error messages for all built-in renderers
 _   i.e. "import library -> pdf" when pdf is missing
@@ -337,13 +321,6 @@ _ need to merge sorting/drawing of lines and triangles
 _   lines will occlude tris and vice versa
 _   will need to split each based on the other
 _   sort issues will affect both
-
-_ pixel operations are broken in opengl
-_   get(), set(), copy(), blend(), loadPixels, updatePixels() 
-_   set(x, y, image) y reversed in openGL 
-_   background(image) also broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=91
-_   also textMode(SCREEN)
 
 _ when closing a sketch via the close box, make sure stop() getting called
 
@@ -808,6 +785,21 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsOpenGL
 
+_ pixel operations are broken in opengl
+_   get(), set(), copy(), blend(), loadPixels, updatePixels() 
+_   set(x, y, image) y reversed in openGL 
+_   background(image) also broken
+_   http://dev.processing.org/bugs/show_bug.cgi?id=91
+_   also textMode(SCREEN)
+_ look into jogl anti-aliasing on osx
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
+_ in opengl mode, use its tesselator
+_   because the vertex calls can just come right back to regular vertex calls
+_   this way we can also implement breakShape() for opengl
+_ with opengl optimizations via call lists..
+_   watch out to make sure raw recording still works
+_   (optimizations will have to be disabled to some extent)
+_ look into using glu quadrics to handle shape geometries quickly
 _ optimizations to opengl
 _   disabling error reporting (what's taking it so long?)
 _     maybe use a hint() to enable it? or a getError() function?
@@ -887,7 +879,6 @@ _     even if not actually working properly.. just in naming of things
 _   sorting of polygons/lines on simple painters algorithm
 _   better lighting model to show darkness at various depths
 _     maybe just ultra-high res bitmaps from gl
-o   version of BApplet that replaces g. with ai. or pdf.
 
 
 PGraphicsPDF
@@ -898,17 +889,31 @@ _   seems to be working fine on windows
 _   http://dev.processing.org/bugs/show_bug.cgi?id=345
 
 
+PShape
+_ for subclasses, make it easy to grab the structure of vertices
+_   actually, just use PShape internally and this will be easier
+_ for PShape, need to be able to set the origin (flash people)
+
+
 LATER
 
-because 'color' isn't a real data type
-_ should fill(c) instead be fillColor(c)?
-_ should color(123, 4, 99) instead be createColor()?
-_ setting a gray that's greater than the colorMode() can produce strange colors
-_   http://dev.processing.org/bugs/show_bug.cgi?id=432
-_ color(0, 0, 0, 0) produces black
-_   although fill(0, 0, 0, 0) does the right thing
-_   also, rgb255 not getting set
-_   http://dev.processing.org/bugs/show_bug.cgi?id=382
-
-other
-_ file for 2.0.. stroke on type
+_ add a timer("functionname", 45) method
+_   this can be used to schedule something to happen at a specific time
+_   or import the swing timer (for actionPerformed)
+X   look into javascript timers to see how they work
+_   also add interval("functionname", 40)
+_   and thread("functionname");
+_ introduce calc()
+_ cmyk version of tiff encoder code?
+_ because 'color' isn't a real data type
+_   color(0, 0, 0, 0) produces black
+_     because color(0, 0, 0, 0) creates an int that is simply '0'
+_     although fill(0, 0, 0, 0) does the right thing
+_     also, rgb255 not getting set
+_     http://dev.processing.org/bugs/show_bug.cgi?id=382
+_   should fill(c) instead be fillColor(c)?
+_   should color(123, 4, 99) instead be createColor()?
+_   gray that's greater than the colorMode() can produce strange colors
+_     http://dev.processing.org/bugs/show_bug.cgi?id=432
+_ add stroke() to type
+_   more for doing outlines-only and that sort of business
