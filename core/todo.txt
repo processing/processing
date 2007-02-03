@@ -23,7 +23,7 @@ X   also chop off ? from url detritus
 X   also just pass off to default createImage() if no extension available
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
 X   http://dev.processing.org/bugs/show_bug.cgi?id=500
-X 1.5.0_10 breaks jogl
+X java 1.5.0_10 breaks jogl
 X   add error message to p5 about it
 X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6504460
 X   http://www.javagaming.org/forums/index.php?topic=15439.0
@@ -31,6 +31,11 @@ X   upgrade to 1.5.0_11 or later:
 X     http://java.sun.com/javase/downloads/index_jdk5.jsp
 X   or downgrade to 1.5.0_09
 X     http://java.sun.com/products/archive/j2se/5.0_09/index.html
+X no disk in drive error
+X   was this something that changed with the java updates? (1.5_10)
+X     doesn't seem to be, still not sure
+X   problem was the floppy drive.. gak
+X   http://dev.processing.org/bugs/show_bug.cgi?id=478
 
 fixed earlier
 o sketches often freeze when stop is hit on an HT machine
@@ -39,6 +44,9 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=232
 X debug NumberFormat InterruptedException on dual proc machine
 X   use notify() instead of interrupt()? 
 X   or Thread.currentThread() should be checked first?
+o svg loader is on the list for 1.0
+o   maybe include as part of PApplet (casey thinks so)
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -128,17 +136,8 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-_ no disk in drive error
-_   was this something that changed with the java updates? (1.5_10)
-_   problem was the floppy drive.. gak
-_   http://dev.processing.org/bugs/show_bug.cgi?id=478
-
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
-
-_ java 1.5.0_10 breaks jogl
-_   rc1 update that will fix things
-_   https://jogl.dev.java.net/servlets/ProjectDocumentList?folderID=6624&;exp%20andFolder=6624&folderID=0
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
@@ -173,6 +172,7 @@ _   invaluable for tracking down memory leaks
 
 _ an offscreen JAVA2D graphics needs loadPixels() before being drawn
 _   i.e. offscreen JAVA2D, then image() with OPENGL renderer as main
+_   needs to be marked as its cache needs an update, but not its pixels
 
 _ in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
@@ -234,7 +234,6 @@ _ saveFrame() produces a black background because bg not set correctly:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=421
 _ jogl issues with some cards on linux, might be fixed with newer jogl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=367
-_ does ENABLE_DEPTH_SORT not work with opengl?
 _ 404 error because first searches applet directory in isometricblocks
 _ "this file is named" errors don't like subdirectories
 _   need to strip off past the file separator or something
@@ -251,8 +250,6 @@ _ copy() sort of broken in JAVA2D
 _   example sketch posted with bug report
 _   http://dev.processing.org/bugs/show_bug.cgi?id=372
 
-_ svg loader is on the list for 1.0
-_   maybe include as part of PApplet (casey thinks so)
 _ svg output, make simple version of PGraphicsSVG based on PGraphicsPDF
 
 _ cameraXYZ doesn't seem to actually be used for anything
