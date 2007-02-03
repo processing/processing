@@ -135,7 +135,8 @@ public class PApplet extends Applet
              MouseListener, MouseMotionListener, KeyListener, FocusListener
 {
   /**
-   * "1.3" or "1.1" or whatever (just the first three chars)
+   * Full name of the Java version (i.e. 1.5.0_11).
+   * Prior to 0124, this was only the first three digits.
    */
   public static final String javaVersionName =
     System.getProperty("java.version").substring(0,3);
@@ -152,7 +153,7 @@ public class PApplet extends Applet
    * because there's no good way to specify a double with the preproc.
    */
   public static final float javaVersion =
-    new Float(javaVersionName).floatValue();
+    new Float(javaVersionName.substring(0, 3)).floatValue();
 
   /**
    * Current platform in use, one of the
@@ -1056,7 +1057,7 @@ public class PApplet extends Applet
             System.err.println("See http://dev.processing.org" +
                                "/bugs/show_bug.cgi?id=513 for more info.");
             throw new RuntimeException("Please update your Java " +
-                                       "installation (see bug #512)");
+                                       "installation (see bug #513)");
           }
         }
       }
