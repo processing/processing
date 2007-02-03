@@ -210,10 +210,30 @@ public class PGraphicsPDF extends PGraphicsJava2D {
         // how to get the windows fonts directory?
         // could be c:\winnt\fonts or c:\windows\fonts or not even c:
         // maybe do a Runtime.exec() on echo %WINDIR% ?
+        // Runtime.exec solution might be a mess on systems where the
+        // the backslash/colon characters not really used (i.e. JP)
 
         // find the windows fonts folder
         File roots[] = File.listRoots();
+        /*
+        PApplet.println(roots);
+        roots = new File[] { new File("A:\\"),
+                             new File("C:\\"),
+                             new File("D:\\") };
+        PApplet.println(roots);
+        */
         for (int i = 0; i < roots.length; i++) {
+          if (roots[i].toString().startsWith("A:")) {
+            // Seems to be a problem with some machines that the A:
+            // drive is returned as an actual root, even if not available.
+            // This won't fix the issue if the same thing happens with
+            // other removable drive devices, but should fix the
+            // initial/problem as cited by the bug report:
+            // http://dev.processing.org/bugs/show_bug.cgi?id=478
+            // If not, will need to use the other fileExists() code below.
+            continue;
+          }
+
           File folder = new File(roots[i], "WINDOWS/Fonts");
           if (folder.exists()) {
             mapper.insertDirectory(folder.getAbsolutePath());
