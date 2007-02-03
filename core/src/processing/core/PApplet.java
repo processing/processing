@@ -2863,9 +2863,11 @@ public class PApplet extends Applet
   /**
    * @deprecated Used only in release 0119, will be removed.
    */
+  /*
   static public final float unlerp(float start, float stop, float value) {
     return (value - start) / (stop - start);
   }
+  */
 
   /**
    * Normalize a value to exist between 0 and 1 (inclusive).
