@@ -1048,7 +1048,7 @@ public class PApplet extends Applet
                                             String irenderer, String ipath,
                                             PApplet applet) {
     if (irenderer.equals(OPENGL)) {
-      if (PApplet.platform = WINDOWS) {
+      if (PApplet.platform == WINDOWS) {
         String s = System.getProperty("java.version");
         if (s != null) {
           if (s.equals("1.5.0_10")) {
@@ -1057,6 +1057,7 @@ public class PApplet extends Applet
                                "/bugs/show_bug.cgi?id=513 for more info.");
             throw new RuntimeException("Please update your Java " +
                                        "installation (see bug #512)");
+          }
         }
       }
     }
