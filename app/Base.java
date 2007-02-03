@@ -110,6 +110,8 @@ public class Base {
       if (Base.isMacOS()) {
         // Use the Quaqua L & F on OS X to make JFileChooser less awful
         UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+        // undo quaqua trying to fix the margins, since we've already
+        // hacked that in, bit by bit, over the years
         UIManager.put("Component.visualMargin", new Insets(1, 1, 1, 1));
 
       } else if (Base.isLinux()) {
@@ -128,6 +130,11 @@ public class Base {
       } else {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
+    //} catch (ClassNotFoundException cnfe) {
+      // just default to the native look and feel for this platform
+      // i.e. appears that some linux systems don't have the gtk l&f
+      //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
     } catch (Exception e) {
       e.printStackTrace();
     }
