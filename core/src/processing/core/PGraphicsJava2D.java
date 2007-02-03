@@ -1342,14 +1342,16 @@ public class PGraphicsJava2D extends PGraphics {
     if ((sw != dw) || (sh != dh)) {
       // use slow version if changing size
       copy(this, sx, sy, sw, sh, dx, dy, dw, dh);
+
+    } else {
+      if (imageMode == CORNERS) {
+        sw -= sx;
+        sh -= sy;
+      }
+      dx = dx - sx;  // java2d's "dx" is the delta, not dest
+      dy = dy - sy;
+      g2.copyArea(sx, sy, sw, sh, dx, dy);
     }
-    if (imageMode == CORNERS) {
-      sw -= sx;
-      sh -= sy;
-    }
-    dx = dx - sx;  // java2d's "dx" is the delta, not dest
-    dy = dy - sy;
-    g2.copyArea(sx, sy, sw, sh, dx, dy);
   }
 
 
