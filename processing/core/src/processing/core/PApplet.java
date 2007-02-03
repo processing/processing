@@ -1047,12 +1047,24 @@ public class PApplet extends Applet
   static protected PGraphics createGraphics(int iwidth, int iheight,
                                             String irenderer, String ipath,
                                             PApplet applet) {
-    /*
+    if (irenderer.equals(OPENGL)) {
+      if (PApplet.platform = WINDOWS) {
+        String s = System.getProperty("java.version");
+        if (s != null) {
+          if (s.equals("1.5.0_10")) {
+            System.err.println("OpenGL support is broken with Java 1.5.0_10");
+            System.err.println("See http://dev.processing.org" +
+                               "/bugs/show_bug.cgi?id=513 for more info.");
+            throw new RuntimeException("Please update your Java " +
+                                       "installation (see bug #512)");
+        }
+      }
+    }
+
     if (irenderer.equals(P2D)) {
       throw new RuntimeException("P2D is not yet implemented, " +
                                  "use JAVA2D or P3D instead.");
     }
-    */
 
     /*
     // ok when calling size, but not really with createGraphics()
