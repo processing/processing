@@ -73,17 +73,19 @@ Bug fix bonanza!
 
 + smooth() now improves image smoothing when used with the JAVA2D renderer.
 
-+ Change P3D to smooth images more nicely (bilinear was disabled)
++ Change P3D to smooth images more nicely (bilinear was disabled).
 
-+ Added a version of trim() that handles an entire array
++ Added a version of trim() that handles an entire array.
 
-+ Removed contract(), one can use expand() and subset() instead
++ Removed contract(), one can use expand() and subset() instead.
 
 + Added optional second parameter to loadImage(), that can be used to 
   specify the file extension if it's not part of the URL.
   i.e. loadImage("http://someserver.com/blah/fancy.cgi?234234", "jpg");
   http://dev.processing.org/bugs/show_bug.cgi?id=500
   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
+
++ Removed unlerp/relerp, use map() and norm() instead.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
