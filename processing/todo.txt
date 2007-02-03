@@ -26,7 +26,13 @@ _ prev/next tab conflicting with typing brackets on french macs
 _  http://dev.processing.org/bugs/show_bug.cgi?id=480
 
 
-classpath problems [1.0]
+libraries and classpaths [1.0]
+_ add control for dependencies (i.e. svg needs xml), needed for export
+_ add "pretty menu name" to the export.txt file
+_ more export.txt to xml? (nah, it's only flat information)
+_ need better platform designation setup for libs
+_ library installation should use the sketchbook folder, not the p5 folder
+_   actually enforce this, give users a warning about other libs
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
 _   antlr.jar in the classpath will cause trouble.. 
@@ -49,13 +55,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=321
 _ stop button needs to update itself and work properly [1.0]
 _   http://dev.processing.org/bugs/show_bug.cgi?id=396
 
-_ add a timer("functionname", 45) method
-_   this can be used to schedule something to happen at a specific time
-_   or import the swing timer (for actionPerformed)
-X   look into javascript timers to see how they work
-_   also add interval("functionname", 40)
-_   and thread("functionname");
-
 _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
 
@@ -74,13 +73,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=433
 
 _ 'code' folder being ignored on export to application
 _   http://dev.processing.org/bugs/show_bug.cgi?id=469
-
-libraries
-_ add control for dependencies (i.e. svg needs xml), needed for export
-_ add "pretty menu name" to the export.txt file
-_ more export.txt to xml? (nah, it's only flat information)
-_ need better platform designation setup for libs
-_ library installation should use the sketchbook folder, not the p5 folder
 
 _ PApplet.this doesn't work (does it work in javac?)
 _   sketchname.this also doesn't work, because Temporary_NNNN used for name
@@ -1103,3 +1095,4 @@ _ computationally intensive stuff runs really slow inside p5
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116872745
 _ some reports of it not quitting properly, but not confirmed
 _ splash screen
+
