@@ -7,7 +7,7 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0124 - 3 February 2007
+ABOUT REV 0124 - 4 February 2007
 
 Bug fix bonanza! 
 
@@ -30,7 +30,6 @@ Bug fix bonanza!
 
 + Fixed minor issue with { and } on the same line
   http://dev.processing.org/bugs/show_bug.cgi?id=484
-
 
 [ core & libraries ] 
 
@@ -67,7 +66,6 @@ Bug fix bonanza!
 
 + Fix bug in copy() that caused part of image to be replicated.
   http://dev.processing.org/bugs/show_bug.cgi?id=372
-
 
 [ features ]
 
