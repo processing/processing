@@ -20,6 +20,8 @@ o preferences file gone corrupt (on osx only?)
 o   changing font size, 
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1160057791
 X   http://dev.processing.org/bugs/show_bug.cgi?id=406
+o temporarily added log4j and jalopy (for the autoformatter)
+o   need to decide where these go, or if they're included at all
 
 
 _ prev/next tab conflicting with typing brackets on french macs
@@ -85,8 +87,8 @@ _ make more fixes to the key bindings
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnacc/html/atg_keyboardshortcuts.asp
 _   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGUserInput/chapter_11_section_3.html#//apple_ref/doc/uid/TP30000361-TPXREF61
 
-_ temporarily added log4j and jalopy (for the autoformatter)
-_   need to decide where these go, or if they're included at all
+_ install astyle formatter
+_   build on each platform, then "lipo -create astyle.* -output astyle"
 
 _ after sketch -> add file, no confirmation message is shown
 _ applet sizing issues with external vm
