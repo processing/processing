@@ -44,9 +44,7 @@ cd processing
 unzip -q reference.zip
 # necessary for launching reference from shell/command prompt
 # which is done internally to view reference
-chmod +x reference/*.html
-# needed by 'help' menu
-chmod +x reference/environment/*.html
+find reference -name "*.html" -exec chmod +x {} ';'
 # get rid of the zip file
 rm reference.zip
 cd ..
