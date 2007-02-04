@@ -1,3 +1,65 @@
+0124 core
+X with smooth() turned off, shouldn't be smoothing image on resize
+X   but on osx, apple defaults the image smoothing to true
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1164753510
+X   http://developer.apple.com/documentation/Java/Conceptual/JavaPropVMInfoRef/Articles/JavaSystemProperties.html#//apple_ref/doc/uid/TP40001975-DontLinkElementID_6
+X background(0, 0, 0, 0) was resetting stroke, smooth, etc.
+X make imageImpl() use WritableRaster in an attempt to speed things up
+X fix weird situation where fonts used in more than one renderer wouldn't show
+X opengl doesn't draw a background for the raw recorder
+X change P3D to smooth images nicely (bilinear was disabled)
+X ambientLight(r,g,b) was still ambientLight(r,g,r)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=465
+X fix from dave bollinger for the POSTERIZE filter
+X   http://dev.processing.org/bugs/show_bug.cgi?id=399
+X fix PImage regression in 0124 and the cache crap
+X added a version of trim() that handles an entire array
+X removed contract(), one can use expand() and subset() instead
+X backgroundColor to cccccc instead of c0c0c0
+X loadImage() requires an extension, maybe add a second version?
+X   loadImage("blah", "jpg");
+X   otherwise people have to use strange hacks to get around it
+X   also chop off ? from url detritus
+X   also just pass off to default createImage() if no extension available
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1165174666
+X   http://dev.processing.org/bugs/show_bug.cgi?id=500
+X java 1.5.0_10 breaks jogl
+X   add error message to p5 about it
+X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6504460
+X   http://www.javagaming.org/forums/index.php?topic=15439.0
+X   upgrade to 1.5.0_11 or later:
+X     http://java.sun.com/javase/downloads/index_jdk5.jsp
+X   or downgrade to 1.5.0_09
+X     http://java.sun.com/products/archive/j2se/5.0_09/index.html
+X no disk in drive error
+X   was this something that changed with the java updates? (1.5_10)
+X     doesn't seem to be, still not sure
+X   problem was the floppy drive.. gak
+X   http://dev.processing.org/bugs/show_bug.cgi?id=478
+X copy() sort of broken in JAVA2D
+X   example sketch posted with bug report
+X   http://dev.processing.org/bugs/show_bug.cgi?id=372
+o saveStrings(filename, strings, count) 
+o   otherwise the save is kinda wonky
+o   or maybe that should just be done with the array fxns
+
+fixed earlier
+o sketches often freeze when stop is hit on an HT machine
+o   need to test the examples cited on pardis' machine
+o   http://dev.processing.org/bugs/show_bug.cgi?id=232
+X debug NumberFormat InterruptedException on dual proc machine
+X   use notify() instead of interrupt()? 
+X   or Thread.currentThread() should be checked first?
+o svg loader is on the list for 1.0
+o   maybe include as part of PApplet (casey thinks so)
+X using gl, lines don't show up in pdf with record (they're ok with p3d)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=325
+o with network connection
+o   download a copy of the source for 0069, get the renderer 
+o   svn mv PGraphics2 PGraphicsJava
+o version of BApplet that replaces g. with ai. or pdf.
+
+
 0123 core
 X setup() and basic mode apps not working
 X   http://dev.processing.org/bugs/show_bug.cgi?id=463
