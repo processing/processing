@@ -1,3 +1,29 @@
+0124 pde
+X handle next/prev line with up/down arrow, with/without shift down
+X   properly go to the beginning or ending of the document
+X create "Documents" folder for the user if it doesn't exist
+X   just default to the user's home directory if no 'sketchbook' folder
+X   otherwise ask the user to select a folder
+X fix QTSession.open/close problem in Capture.list()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=472
+X fix some of the error handling while running a sketch
+X   now a little better at highlighting the correct line
+X slight improvements to some preproc/compiler error messages
+X   http://dev.processing.org/bugs/show_bug.cgi?id=12
+X   http://dev.processing.org/bugs/show_bug.cgi?id=13
+X   http://dev.processing.org/bugs/show_bug.cgi?id=15
+X deal with strange problem with KeyListener and {} on same line 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=484
+X copy custom applet.html file on "Save As" 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=485
+o preferences file gone corrupt (on osx only?)
+o   changing font size, 
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1160057791
+X   http://dev.processing.org/bugs/show_bug.cgi?id=406
+o temporarily added log4j and jalopy (for the autoformatter)
+o   need to decide where these go, or if they're included at all
+
+
 0123 pde
 X pair up QTSession.open() and QTSession.close()
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1163736864
