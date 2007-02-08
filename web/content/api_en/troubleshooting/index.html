@@ -555,24 +555,35 @@ Things that are often perceived as bugs, but aren't actually 'broken'.
 <UL>
 <li>If your code has methods (it's not just in static mode) or needs
 to run over time, it must have a draw() method, otherwise nothing will
-happen.</li>
+happen. For instance, without a draw(), this code will stop after the 
+setup() method:
+<PRE>
+void setup() {
+  size(400, 400);
+}
+
+void keyPressed() {
+  println(key);
+}
+</PRE>
+</li>
 
 <li>Any code that accesses the pixels[] array should be placed 
 inside <TT>loadPixels()</TT> and <TT>updatePixels()</TT>. This can be 
 confusing because it was not required in older code, i.e. with alpha 
-releases of Processing prior to release 0085. Strictly speaking, this 
-isn't necessary for P2D and P3D, but is required for the OPENGL and 
-JAVA2D renderer settings. It's best to simply get in the habit of using 
-begin/end in your programs. A complete description can be found in the 
-reference for the <A HREF="http://processing.org/reference/pixels.html">pixels[]</A> array.</li>
-
+releases of Processing prior to release 0085. Strictly speaking, it's  
+also not necessary for P3D (or the forthcoming P2D), 
+but is required for the JAVA2D (default) and OPENGL renderers. 
+It's best to simply get in the habit of using load/update in your programs. 
+A complete description can be found in the reference for the 
+<A HREF="http://processing.org/reference/pixels.html">pixels[]</A> array.</li>
 
 <li>PSound has been removed as of release 0112. Getting sound to work 
 with Java is a total headache, and therefore something better left to 
-a <A HREF="../libraries/index.html">library</A>. The 
-Sonia and Ess libraries will both provide better audio support. We had 
-hoped to provide a simple means to play audio clips and whatnot, but Sun's 
-audio classes are too buggy across different platforms and different 
+a <A HREF="../libraries/index.html">library</A>. 
+The Sonia and Ess libraries will both provide better audio support. 
+We had hoped to provide a simple means to play audio clips and whatnot, 
+but Sun's audio classes are too buggy across different platforms and different 
 versions of Java. A buggy mess like that requires lots of code (and lots 
 of testing across all our platforms), and we didn't want to muck up the 
 core with that business.</li>
