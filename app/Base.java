@@ -649,37 +649,23 @@ public class Base {
   // .................................................................
 
 
-  static public void showReference() {
-    openURL(System.getProperty("user.dir") +
-            File.separator + "reference" +
-            File.separator + "index.html");
+  static public void showReference(String referenceFile) {
+    openURL(Base.getContents("reference" + File.separator + referenceFile));
   }
 
 
-  /**
-   * Given the reference filename from the keywords list,
-   * builds a URL and passes it to openURL.
-   */
-  static public void showReference(String referenceFile) {
-    openURL(System.getProperty("user.dir") +
-            File.separator + "reference" +
-            File.separator + referenceFile + ".html");
+  static public void showReference() {
+    showReference("index.html");
   }
 
 
   static public void showEnvironment() {
-    openURL(System.getProperty("user.dir") +
-            File.separator + "reference" +
-            File.separator + "environment" +
-            File.separator + "index.html");
+    showReference("environment" + File.separator + "index.html");
   }
 
 
   static public void showTroubleshooting() {
-    openURL(System.getProperty("user.dir") +
-            File.separator + "reference" +
-            File.separator + "troubleshooting" +
-            File.separator + "index.html");
+    showReference("troubleshooting" + File.separator + "index.html");
   }
 
 
@@ -688,10 +674,7 @@ public class Base {
    * with the Processing download.
    */
   static public void showFAQ() {
-    //Base.openURL("http://processing.org/faq/");
-    openURL(System.getProperty("user.dir") +
-            File.separator + "reference" +
-            File.separator + "faq.html");
+    showReference("faq.html");
   }
 
 
@@ -771,7 +754,7 @@ public class Base {
 
     } catch (IOException e) {
       Base.showWarning("Could not open URL",
-                          "An error occurred while trying to open\n" + url, e);
+                       "An error occurred while trying to open\n" + url, e);
     }
   }
 
@@ -848,23 +831,29 @@ public class Base {
   // ...................................................................
 
 
+  static public String getContents(String what) {
+    String basePath = System.getProperty("user.dir");
+    /*
+      // do this later, when moving to .app package
+    if (PApplet.platform == PConstants.MACOSX) {
+      basePath = System.getProperty("processing.contents");
+    }
+    */
+    return basePath + File.separator + what;
+  }
+
+
+  static public String getLibContents(String what) {
+    return getContents("lib" + File.separator + what);
+  }
+
+
   static public Image getImage(String name, Component who) {
     Image image = null;
     Toolkit tk = Toolkit.getDefaultToolkit();
 
-    //if ((Base.platform == Base.MACOSX) ||
-    //(Base.platform == Base.MACOS9)) {
-    image = tk.getImage("lib/" + name);
-    //} else {
-    //image = tk.getImage(who.getClass().getResource(name));
-    //}
-
-    //image =  tk.getImage("lib/" + name);
-    //URL url = PdeApplet.class.getResource(name);
-    //image = tk.getImage(url);
-    //}
-    //MediaTracker tracker = new MediaTracker(applet);
-    MediaTracker tracker = new MediaTracker(who); //frame);
+    image = tk.getImage(getLibContents(name));
+    MediaTracker tracker = new MediaTracker(who);
     tracker.addImage(image, 0);
     try {
       tracker.waitForAll();
@@ -874,17 +863,7 @@ public class Base {
 
 
   static public InputStream getStream(String filename) throws IOException {
-    //if (Base.platform == Base.MACOSX) {
-    // macos doesn't seem to think that files in the lib folder
-    // are part of the resources, unlike windows or linux.
-    // actually, this is only the case when running as a .app,
-    // since it works fine from run.sh, but not Processing.app
-    return new FileInputStream("lib/" + filename);
-    //}
-
-    // all other, more reasonable operating systems
-    //return cls.getResource(filename).openStream();
-    //return Base.class.getResource(filename).openStream();
+    return new FileInputStream(getLibContents(filename));
   }
 
 
