@@ -1,7 +1,8 @@
 0125 pde
+X prev/next tab conflicting with typing brackets on french macs
+X  http://dev.processing.org/bugs/show_bug.cgi?id=480
 
-_ prev/next tab conflicting with typing brackets on french macs
-_  http://dev.processing.org/bugs/show_bug.cgi?id=480
+_ update to 1.4.2_12 on linux and windows
 
 
 libraries and classpaths [1.0]
@@ -1045,6 +1046,10 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 DIST / Mac OS X
 
+_ for the .app file, $APP_PACKAGE will give the path
+_   $JAVAROOT will give Contents/Resources/Java location
+_ when marking a window as moddifed
+_   getRootPane().putClientProperty(WINDOW_MODIFIED, Boolean.TRUE);
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html

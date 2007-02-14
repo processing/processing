@@ -819,7 +819,7 @@ public class Editor extends JFrame
               if (referenceFile == null) {
                 message("No reference available for \"" + text + "\"");
               } else {
-                Base.showReference(referenceFile);
+                Base.showReference(referenceFile + ".html");
               }
             }
           }
@@ -2079,7 +2079,7 @@ public class Editor extends JFrame
    * Returns the edit popup menu.
    */
   class TextAreaPopup extends JPopupMenu {
-    String currentDir = System.getProperty("user.dir");
+    //String currentDir = System.getProperty("user.dir");
     String referenceFile = null;
 
     JMenuItem cutItem, copyItem;
@@ -2128,7 +2128,7 @@ public class Editor extends JFrame
       referenceItem = new JMenuItem("Find in Reference");
       referenceItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            Base.showReference(referenceFile);
+            Base.showReference(referenceFile + ".html");
           }
         });
       this.add(referenceItem);

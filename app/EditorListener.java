@@ -60,6 +60,10 @@ public class EditorListener {
   int selectionStart, selectionEnd;
   int position;
 
+  /** ctrl-alt on windows and linux, cmd-alt on mac os x */
+  static final int CTRL_ALT = ActionEvent.ALT_MASK |
+    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
 
   public EditorListener(Editor editor, JEditTextArea textarea) {
     this.editor = editor;
@@ -104,6 +108,16 @@ public class EditorListener {
 
     //System.out.println((int)c + " " + code + " " + event);
     //System.out.println();
+
+    if ((event.getModifiers() & CTRL_ALT) == CTRL_ALT) {
+      if (code == KeyEvent.VK_LEFT) {
+        editor.sketch.prevCode();
+        return true;
+      } else if (code == KeyEvent.VK_RIGHT) {
+        editor.sketch.nextCode();
+        return true;
+      }
+    }
 
     if ((event.getModifiers() & KeyEvent.META_MASK) != 0) {
       //event.consume();  // does nothing
@@ -488,27 +502,31 @@ public class EditorListener {
 
 
   /** Cmd-Shift or Ctrl-Shift depending on the platform */
-  static final int CMD_SHIFT = ActionEvent.SHIFT_MASK |
-    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+  //static final int CMD_SHIFT = ActionEvent.SHIFT_MASK |
+  //  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+  /** ctrl-alt on windows and linux, cmd-alt on mac os x */
+  //static final int CTRL_ALT = ActionEvent.ALT_MASK |
+  //  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
+  /*
   public boolean keyTyped(KeyEvent event) {
     char c = event.getKeyChar();
     int code = event.getKeyCode();
 
-    //System.out.println((int)c + " " + code + " " + event);
-    //System.out.println();
-
-    if ((event.getModifiers() & CMD_SHIFT) != 0) {
-      if (c == '[') {
+    if ((event.getModifiers() & CMD_ALT) == CMD_ALT) {
+      if (code == KeyEvent.VK_LEFT) {
+      //if (c == '[') {
         editor.sketch.prevCode();
         return true;
-      } else if (c == ']') {
+      } else if (code == KeyEvent.VK_RIGHT) {
+        //} else if (c == ']') {
         editor.sketch.nextCode();
         return true;
       }
     }
     return false;
   }
+  */
 
 
   /**
