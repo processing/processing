@@ -5404,27 +5404,46 @@ public class PApplet extends Applet
   // CASTING FUNCTIONS, INSERTED BY PREPROC
 
 
+  /**
+   * Convert a char to a boolean. 'T', 't', and '1' will become the
+   * boolean value true, while 'F', 'f', or '0' will become false.
+   */
   /*
   static final public boolean parseBoolean(char what) {
     return ((what == 't') || (what == 'T') || (what == '1'));
   }
+  */
 
-  static final public boolean parseBoolean(int what) {  // this will cover byte
+  /**
+   * <p>Convert an integer to a boolean. Because of how Java handles upgrading
+   * numbers, this will also cover byte and char (as they will upgrade to
+   * an int without any sort of explicit cast).</p>
+   * <p>The preprocessor will convert boolean(what) to parseBoolean(what).</p>
+   * @return false if 0, true if any other number
+   */
+  static final public boolean parseBoolean(int what) {
     return (what != 0);
   }
 
+  /*
+  // removed because this makes no useful sense
   static final public boolean parseBoolean(float what) {
     return (what != 0);
   }
   */
 
+  /**
+   * Convert the string "true" or "false" to a boolean.
+   * @return true if 'what' is "true" or "TRUE", false otherwise
+   */
   static final public boolean parseBoolean(String what) {
     return new Boolean(what).booleanValue();
   }
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /*
+  // removed, no need to introduce strange syntax from other languages
   static final public boolean[] parseBoolean(char what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5433,7 +5452,14 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
+  */
 
+  /**
+   * Convert a byte array to a boolean array. Each element will be
+   * evaluated identical to the integer case, where a byte equal
+   * to zero will return false, and any other value will return true.
+   * @return array of boolean elements
+   */
   static final public boolean[] parseBoolean(byte what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5442,6 +5468,21 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  /**
+   * Convert an int array to a boolean array. An int equal
+   * to zero will return false, and any other value will return true.
+   * @return array of boolean elements
+   */
+  static final public boolean[] parseBoolean(int what[]) {
+    boolean outgoing[] = new boolean[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (what[i] != 0);
+    }
+    return outgoing;
+  }
+
+  /*
+  // removed, not necessary... if necessary, convert to int array first
   static final public boolean[] parseBoolean(float what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5459,13 +5500,11 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  /*
   static final public byte parseByte(boolean what) {
     return what ? (byte)1 : 0;
   }
-  */
 
   static final public byte parseByte(char what) {
     return (byte) what;
@@ -5475,19 +5514,19 @@ public class PApplet extends Applet
     return (byte) what;
   }
 
-  /*
-  static final public byte parseByte(float what) {  // nonsensical
+  static final public byte parseByte(float what) {
     return (byte) what;
   }
 
+  /*
+  // nixed, no precedent
   static final public byte[] parseByte(String what) {  // note: array[]
     return what.getBytes();
   }
   */
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  /*
   static final public byte[] parseByte(boolean what[]) {
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5495,7 +5534,6 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-  */
 
   static final public byte[] parseByte(char what[]) {
     byte outgoing[] = new byte[what.length];
@@ -5513,8 +5551,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  /*
-  static final public byte[] parseByte(float what[]) {  // nonsensical
+  static final public byte[] parseByte(float what[]) {
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (byte) what[i];
@@ -5522,6 +5559,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  /*
   static final public byte[][] parseByte(String what[]) {  // note: array[][]
     byte outgoing[][] = new byte[what.length][];
     for (int i = 0; i < what.length; i++) {
@@ -5531,7 +5569,7 @@ public class PApplet extends Applet
   }
   */
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /*
   static final public char parseChar(boolean what) {  // 0/1 or T/F ?
@@ -5557,7 +5595,7 @@ public class PApplet extends Applet
   }
   */
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /*
   static final public char[] parseChar(boolean what[]) {  // 0/1 or T/F ?
@@ -5569,18 +5607,18 @@ public class PApplet extends Applet
   }
   */
 
-  static final public char[] parseChar(int what[]) {
-    char outgoing[] = new char[what.length];
-    for (int i = 0; i < what.length; i++) {
-      outgoing[i] = (char) what[i];
-    }
-    return outgoing;
-  }
-
   static final public char[] parseChar(byte what[]) {
     char outgoing[] = new char[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (char) (what[i] & 0xff);
+    }
+    return outgoing;
+  }
+
+  static final public char[] parseChar(int what[]) {
+    char outgoing[] = new char[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (char) what[i];
     }
     return outgoing;
   }
@@ -5603,13 +5641,11 @@ public class PApplet extends Applet
   }
   */
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  /*
   static final public int parseInt(boolean what) {
     return what ? 1 : 0;
   }
-  */
 
   /**
    * Note that parseInt() will un-sign a signed byte value.
@@ -5657,9 +5693,8 @@ public class PApplet extends Applet
     return otherwise;
   }
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  /*
   static final public int[] parseInt(boolean what[]) {
     int list[] = new int[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -5667,7 +5702,6 @@ public class PApplet extends Applet
     }
     return list;
   }
-  */
 
   static final public int[] parseInt(byte what[]) {  // note this unsigns
     int list[] = new int[what.length];
@@ -5728,7 +5762,7 @@ public class PApplet extends Applet
     return output;
   }
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /*
   static final public float parseFloat(boolean what) {
@@ -5736,7 +5770,11 @@ public class PApplet extends Applet
   }
   */
 
-  static final public float parseFloat(int what) {
+  /**
+   * Convert an int to a float value. Also handles bytes because of
+   * Java's rules for upgrading values.
+   */
+  static final public float parseFloat(int what) {  // also handles byte
     return (float)what;
   }
 
@@ -5752,7 +5790,7 @@ public class PApplet extends Applet
     return otherwise;
   }
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /*
   static final public float[] parseFloat(boolean what[]) {
@@ -5771,6 +5809,14 @@ public class PApplet extends Applet
     return floaties;
   }
   */
+
+  static final public float[] parseByte(byte what[]) {
+    float floaties[] = new float[what.length];
+    for (int i = 0; i < what.length; i++) {
+      floaties[i] = what[i];
+    }
+    return floaties;
+  }
 
   static final public float[] parseFloat(int what[]) {
     float floaties[] = new float[what.length];
@@ -5796,18 +5842,29 @@ public class PApplet extends Applet
     return output;
   }
 
-  //
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  static final public String str(boolean x) { return String.valueOf(x); }
-  static final public String str(byte x)    { return String.valueOf(x); }
-  static final public String str(char x)    { return String.valueOf(x); }
-  static final public String str(short x)   { return String.valueOf(x); }
-  static final public String str(int x)     { return String.valueOf(x); }
-  static final public String str(float x)   { return String.valueOf(x); }
-  static final public String str(long x)    { return String.valueOf(x); }
-  static final public String str(double x)  { return String.valueOf(x); }
+  static final public String str(boolean x) {
+    return String.valueOf(x);
+  }
 
-  //
+  static final public String str(byte x) {
+    return String.valueOf(x);
+  }
+
+  static final public String str(char x) {
+    return String.valueOf(x);
+  }
+
+  static final public String str(int x) {
+    return String.valueOf(x);
+  }
+
+  static final public String str(float x) {
+    return String.valueOf(x);
+  }
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   static final public String[] str(boolean x[]) {
     String s[] = new String[x.length];
@@ -5827,12 +5884,6 @@ public class PApplet extends Applet
     return s;
   }
 
-  static final public String[] str(short x[]) {
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
   static final public String[] str(int x[]) {
     String s[] = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
@@ -5844,19 +5895,6 @@ public class PApplet extends Applet
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
     return s;
   }
-
-  static final public String[] str(long x[]) {
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
-  static final public String[] str(double x[]) {
-    String s[] = new String[x.length];
-    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x);
-    return s;
-  }
-
 
 
   //////////////////////////////////////////////////////////////
