@@ -1,4 +1,7 @@
 0124 core
+X ironed out more of the preproc parseXxxx() functions
+_   update the reference to cover these decisions
+_   also add notes about parseInt/Float(blah, otherwise)
 
 
 out of our control, just waiting
@@ -19,6 +22,54 @@ _   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+blend modes [1.0]
+_ more blend() modes (the five listed on the thread below?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=132
+_   figure out what the modes should actually be: 
+_     photoshop: normal, dissolve; darken, multiply, color burn, 
+_                linear burn; lighten, screen, color dodge, linear
+_                dodge; overlay, soft light, hard light, vivid light, 
+_                linear light, pin light, hard mix; difference, 
+_                exclusion; hue, saturation, color, luminosity
+_     illustrator: normal; darken, multiply, color burn; lighten,
+_                  screen, color dodge; overlay, soft light, hard light; 
+_                  difference, exclusion; hue, sat, color, luminosity
+_     director: Copy, Transparent, Reverse, Ghost, Not copy, 
+_               Not transparent, Not reverse, Not ghost, Matte, Mask;
+_               (below seems more useful:
+_               Blend, Add pin, Add, Subtract pin, Background transparent,
+_               Lightest, Subtract, Darkest, Lighten, Darken
+_     flash: 
+_   DIFFERENCE: C = abs(A-B);
+_   MULTIPLY: C = (A * B ) / 255
+_   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
+_   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+_   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+_   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
+
+X begin/endPixels.. change has been made
+_   on PImage, sets a flag that marks it to be updated on next render
+_   for PImage, begin after an end is ignored, no pixels are re-loaded
+_     the "changed" bit gets turned off when the PImage is rendered
+_   for subclasses of PGraphics, the reload bit needs to be set on endFrame
+_   filter() checks to see if inside begin/endPixels, if so doesn't call
+o   if line() is called inside beginpixels, call updatepixels?
+_   when NPE on line with pixels[], suggest user includes beginPixels
+_ need to test/straighten out load/update pixels
+_   loadPixels() and updatePixels() only need to be used when 
+_   touching pixels[]. All other functions including get(), set(),
+_   filter(), etc shouldn't need them. 
+_ fjen says blend() doens't work in JAVA2D
+_   the functions are fairly well separated now in PMethods
+_   just go through all the stuff to make sure it's setting properly
+_ don't do a loadPixels unless an updatePixels has completed
+_   tho this won't affect anything, since either it's an image buffer
+_   or it's the PGraphics object, which does an updatePixels() immediately
+_ if (modified) don't loadPixels again, just ignore it
+_   make a note that updatePixels() only sets a flag in PImage
+_     (but not PGraphics, which does it immediately)
 
 
 gledgeflag [1.0]
@@ -121,6 +172,9 @@ _     (i.e. will it be the uncompressed or compressed size of the data?)
 _ modelX/Y/Z still having trouble
 _   http://dev.processing.org/bugs/show_bug.cgi?id=486
 
+_ Use getContextClassLoader() instead of Class.forName()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=514
+
 _ problems with depth buffer and createGraphics with P3D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=482
 _ ARGB problems with createGraphics
@@ -211,28 +265,6 @@ _   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
 _   or textAlign(LEFT, MIDDLE); -> this one seems best
 
 _ AIOOBE on PLine 757.. halts renderer
-
-X begin/endPixels.. change has been made
-_   on PImage, sets a flag that marks it to be updated on next render
-_   for PImage, begin after an end is ignored, no pixels are re-loaded
-_     the "changed" bit gets turned off when the PImage is rendered
-_   for subclasses of PGraphics, the reload bit needs to be set on endFrame
-_   filter() checks to see if inside begin/endPixels, if so doesn't call
-o   if line() is called inside beginpixels, call updatepixels?
-_   when NPE on line with pixels[], suggest user includes beginPixels
-_ need to test/straighten out load/update pixels
-_   loadPixels() and updatePixels() only need to be used when 
-_   touching pixels[]. All other functions including get(), set(),
-_   filter(), etc shouldn't need them. 
-_ fjen says blend() doens't work in JAVA2D
-_   the functions are fairly well separated now in PMethods
-_   just go through all the stuff to make sure it's setting properly
-_ don't do a loadPixels unless an updatePixels has completed
-_   tho this won't affect anything, since either it's an image buffer
-_   or it's the PGraphics object, which does an updatePixels() immediately
-_ if (modified) don't loadPixels again, just ignore it
-_   make a note that updatePixels() only sets a flag in PImage
-_     (but not PGraphics, which does it immediately)
 
 _ add notes about fixing serial on the mac to the faq (and link to bug)
 
@@ -574,29 +606,6 @@ _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bu
 _   ellipses are just plain ugly
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
 _   toxi ellipses don't adapt properly with transformations
-_ more blend() modes (the five listed on the thread below?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=132
-_   figure out what the modes should actually be: 
-_     photoshop: normal, dissolve; darken, multiply, color burn, 
-_                linear burn; lighten, screen, color dodge, linear
-_                dodge; overlay, soft light, hard light, vivid light, 
-_                linear light, pin light, hard mix; difference, 
-_                exclusion; hue, saturation, color, luminosity
-_     illustrator: normal; darken, multiply, color burn; lighten,
-_                  screen, color dodge; overlay, soft light, hard light; 
-_                  difference, exclusion; hue, sat, color, luminosity
-_     director: Copy, Transparent, Reverse, Ghost, Not copy, 
-_               Not transparent, Not reverse, Not ghost, Matte, Mask;
-_               (below seems more useful:
-_               Blend, Add pin, Add, Subtract pin, Background transparent,
-_               Lightest, Subtract, Darkest, Lighten, Darken
-_     flash: 
-_   DIFFERENCE: C = abs(A-B);
-_   MULTIPLY: C = (A * B ) / 255
-_   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
-_   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
-_   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
-_   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
 _ clipping planes
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
