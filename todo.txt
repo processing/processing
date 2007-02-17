@@ -1,11 +1,21 @@
 0125 pde
 X prev/next tab conflicting with typing brackets on french macs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=480
+X update javadoc reference to include xml, candy, etc
+X update to 1.4.2_12 on linux and windows
+X export to web, wrong character encoding in html
+X   http://dev.processing.org/bugs/show_bug.cgi?id=474
+X generate xhtml-1.0-strict (standards compliant) code for exported applets
+X   http://dev.processing.org/bugs/show_bug.cgi?id=490
+X add auto-install of cab file inside applet.html
+X   http://dev.processing.org/bugs/show_bug.cgi?id=181
+X   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/using_tags.html
+X   http://java.sun.com/j2se/1.5.0/docs/guide/javaws/developersguide/launch.html#creating
+X   http://java.sun.com/update/1.4.2/jinstall-1_4_2_09-windows-i586.cab
+X   or the 1.5 versions:
+X   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
 
-_ update javadoc reference to include xml, candy, etc
-_ need to add moviemaker reference
-
-_ update to 1.4.2_12 on linux and windows
+_ need to add reference for moviemaker 
 
 _ with additional .pde files, don't allow static mode in front tab
 
@@ -587,13 +597,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=59
 
 PDE / Export
 
-_ add auto-install of cab file inside applet.html
-_   http://dev.processing.org/bugs/show_bug.cgi?id=181
-_   http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/using_tags.html
-_   http://java.sun.com/j2se/1.5.0/docs/guide/javaws/developersguide/launch.html#creating
-_   http://java.sun.com/update/1.4.2/jinstall-1_4_2_09-windows-i586.cab
-for the 1.5 versions:
-_   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
 _ warn on export when people call their sketches things like Server
 _ warn if someone extends PApplet but mis-names the sketch
 _   or don't allow it to be exported
