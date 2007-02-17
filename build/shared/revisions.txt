@@ -16,6 +16,22 @@ ABOUT REV 0125 - XX February 2007
   that caused French keyboards to have problems since 0123.
   http://dev.processing.org/bugs/show_bug.cgi?id=480
 
++ Blending modes have been finalized for 1.0, thanks to the help
+  of Dave Bollinger, who contributed code to complete the set:
+  http://dev.processing.org/bugs/show_bug.cgi?id=132  
+  See the reference for blend() for more details. Thanks Dave!
+
+
+[ java ] 
+
++ Java 1.5.0_10 is no longer the default download at java.com, 
+  so OpenGL applets should be more likely to work properly.
+  http://dev.processing.org/bugs/show_bug.cgi?id=513
+
++ Apple has released a Java update, which brings Java 1.4.2 on OS X
+  up to release 1.4.2_12. Subsequently we have updated the version of
+  Java included with the Linux and Windows releases to 1.4.2_12.
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
