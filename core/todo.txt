@@ -1,12 +1,34 @@
 0124 core
+X more blend() modes (the five listed on the thread below?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=132
+X   figure out what the modes should actually be: 
+X     photoshop: normal, dissolve; darken, multiply, color burn, 
+X                linear burn; lighten, screen, color dodge, linear
+X                dodge; overlay, soft light, hard light, vivid light, 
+X                linear light, pin light, hard mix; difference, 
+X                exclusion; hue, saturation, color, luminosity
+X     illustrator: normal; darken, multiply, color burn; lighten,
+X                  screen, color dodge; overlay, soft light, hard light; 
+X                  difference, exclusion; hue, sat, color, luminosity
+X     director: Copy, Transparent, Reverse, Ghost, Not copy, 
+X               Not transparent, Not reverse, Not ghost, Matte, Mask;
+X               (below seems more useful:
+X               Blend, Add pin, Add, Subtract pin, Background transparent,
+X               Lightest, Subtract, Darkest, Lighten, Darken
+X     flash: 
+X   DIFFERENCE: C = abs(A-B);
+X   MULTIPLY: C = (A * B ) / 255
+X   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
+X   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+X   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+X   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
+X jre 1.5.0_10 is still default at java.com.. blech
+X   http://dev.processing.org/bugs/show_bug.cgi?id=513
 X ironed out more of the preproc parseXxxx() functions
 _   update the reference to cover these decisions
 _   also add notes about parseInt/Float(blah, otherwise)
 
-
-out of our control, just waiting
-_ jre 1.5.0_10 is still default at java.com.. blech
-_   http://dev.processing.org/bugs/show_bug.cgi?id=513
+_ split() inconsistency (emailed casey, will discuss later)
 
 should be fixed, but needs to be tested
 _ saveFrame() produces a black background because bg not set correctly:
@@ -23,31 +45,6 @@ _   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-
-blend modes [1.0]
-_ more blend() modes (the five listed on the thread below?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=132
-_   figure out what the modes should actually be: 
-_     photoshop: normal, dissolve; darken, multiply, color burn, 
-_                linear burn; lighten, screen, color dodge, linear
-_                dodge; overlay, soft light, hard light, vivid light, 
-_                linear light, pin light, hard mix; difference, 
-_                exclusion; hue, saturation, color, luminosity
-_     illustrator: normal; darken, multiply, color burn; lighten,
-_                  screen, color dodge; overlay, soft light, hard light; 
-_                  difference, exclusion; hue, sat, color, luminosity
-_     director: Copy, Transparent, Reverse, Ghost, Not copy, 
-_               Not transparent, Not reverse, Not ghost, Matte, Mask;
-_               (below seems more useful:
-_               Blend, Add pin, Add, Subtract pin, Background transparent,
-_               Lightest, Subtract, Darkest, Lighten, Darken
-_     flash: 
-_   DIFFERENCE: C = abs(A-B);
-_   MULTIPLY: C = (A * B ) / 255
-_   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
-_   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
-_   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
-_   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
 
 X begin/endPixels.. change has been made
 _   on PImage, sets a flag that marks it to be updated on next render

@@ -1,8 +1,10 @@
 0125 pde
 X prev/next tab conflicting with typing brackets on french macs
-X  http://dev.processing.org/bugs/show_bug.cgi?id=480
+X   http://dev.processing.org/bugs/show_bug.cgi?id=480
 
 _ update to 1.4.2_12 on linux and windows
+
+_ with additional .pde files, don't allow static mode in front tab
 
 
 libraries and classpaths [1.0]
