@@ -1978,7 +1978,8 @@ public class Sketch {
 
     File htmlOutputFile = new File(appletFolder, "index.html");
     FileOutputStream fos = new FileOutputStream(htmlOutputFile);
-    PrintStream ps = new PrintStream(fos);
+    // UTF-8 fixes http://dev.processing.org/bugs/show_bug.cgi?id=474
+    PrintStream ps = new PrintStream(fos, false, "UTF-8");
 
     InputStream is = null;
     // if there is an applet.html file in the sketch folder, use that
@@ -1993,7 +1994,8 @@ public class Sketch {
         is = Base.getStream("export/applet.html");
       }
     }
-    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+    InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+    BufferedReader reader = new BufferedReader(isr);
 
     String line = null;
     while ((line = reader.readLine()) != null) {
