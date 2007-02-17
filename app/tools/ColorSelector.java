@@ -34,7 +34,7 @@ import javax.swing.text.*;
 
 
 /**
- * Color picker tool for the Tools menu.
+ * Color selector tool for the Tools menu.
  * <p/>
  * Using the keyboard shortcuts, you can copy/paste the values for the
  * colors and paste them into your program. We didn't do any sort of
@@ -47,7 +47,7 @@ import javax.swing.text.*;
  * down what's going wrong, I'd be super grateful.
  * (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=310">Bug 310</A>)
  */
-public class ColorPicker implements DocumentListener {
+public class ColorSelector implements DocumentListener {
 
   Editor editor;
   JFrame frame;
@@ -66,10 +66,10 @@ public class ColorPicker implements DocumentListener {
   JPanel colorPanel;
 
 
-  public ColorPicker(Editor editor) {
+  public ColorSelector(Editor editor) {
     this.editor = editor;
 
-    frame = new JFrame("Color Picker");
+    frame = new JFrame("Color Selector");
     frame.getContentPane().setLayout(new BorderLayout());
 
     Box box = Box.createHorizontalBox();
@@ -562,7 +562,7 @@ public class ColorPicker implements DocumentListener {
 
     public NumberDocument(NumberField parentField) {
       this.parentField = parentField;
-      //System.out.println("setting parent to " + parentPicker);
+      //System.out.println("setting parent to " + parentSelector);
     }
 
     public void insertString(int offs, String str, AttributeSet a)

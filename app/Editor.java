@@ -707,12 +707,12 @@ public class Editor extends JFrame
       });
     menu.add(item);
 
-    item = new JMenuItem("Color Picker");
+    item = new JMenuItem("Color Selector");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           SwingUtilities.invokeLater(new Runnable() {
               public void run() {
-                new ColorPicker(Editor.this).show();
+                new ColorSelector(Editor.this).show();
               }
             });
         }
