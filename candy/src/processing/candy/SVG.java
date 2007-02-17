@@ -44,7 +44,7 @@ import processing.xml.*;
  * to be included with applets, meaning that its download size should be
  * in the neighborhood of 25-30k. Because of this size, it is not made part
  * of processing.core, because it would increase the download size of any
- * applet by 20%, and it's not a feature that will be used by the majority 
+ * applet by 20%, and it's not a feature that will be used by the majority
  * of our audience. For more sophisticated import/export, consider the
  * <A HREF="http://xmlgraphics.apache.org/batik/">Batik</A> library
  * from the Apache Software Foundation. Future improvements to this
@@ -53,11 +53,11 @@ import processing.xml.*;
  * <A HREF="http://www.w3.org/TR/SVGMobile/">SVG Tiny or Basic</A>,
  * although we still would not support the interactivity options.
  * <p>
- * This library was specifically tested under SVG files created with Adobe 
- * Illustrator. We can't guarantee that it'll work for any SVGs created with 
+ * This library was specifically tested under SVG files created with Adobe
+ * Illustrator. We can't guarantee that it will work for any SVGs created with
  * other software. In the future we would like to improve compatibility with
  * Open Source software such as InkScape, however initial tests show its
- * base implementation produces more complicated files, and this will require 
+ * base implementation produces more complicated files, and this will require
  * more time.
  * <p>
  * An SVG created under Illustrator must be created in one of two ways:
@@ -88,10 +88,11 @@ import processing.xml.*;
  * }
  * </PRE>
  *
- * Note that processing.xml is imported as well. This is not needed
- * when running the app directly from Processing, as Candy will know
- * where it is. However when you export as an applet you will
- * also need to export processing.xml along with it to have working Candy.
+ * <EM>Note that processing.xml is imported as well.</EM>
+ * This may not be required when running code within the Processing
+ * environment, but when exported it may cause a NoClassDefError.
+ * This will be fixed in later releases of Processing
+ * (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=518">Bug 518</A>).
  *
  * <p> <hr noshade> <p>
  *
@@ -125,9 +126,6 @@ import processing.xml.*;
  * <LI> Patterns
  * <LI> Embedded images
  * </UL>
- *
- * If you experience any other wierdness or bugs, please file them to
- * flux.blackcat at gmail.com with subject: Delicious Candy
  */
 public class SVG {
 
@@ -270,12 +268,12 @@ public class SVG {
         }
         return null;
     }
-    
-    
+
+
     // grab the (fill) gradient from a particular object by name
     // and apply it to either the stroke or fill
-    // based on 
-    
+    // based on
+
 
     protected Paint getGradient(String name, float cx, float cy, float r) {
         BaseObject obj = (BaseObject) table.get(name);
@@ -283,8 +281,8 @@ public class SVG {
             // try with underscores instead of spaces
             obj = (BaseObject) table.get(name.replace(' ', '_'));
         }
-        
-        if (obj != null) {        
+
+        if (obj != null) {
             VectorObject vobj = (VectorObject) obj;
             if (vobj.fillGradient != null) {
                 return vobj.calcGradientPaint(vobj.fillGradient, cx, cy, r);
@@ -292,16 +290,16 @@ public class SVG {
         }
         throw new RuntimeException("No gradient found for shape " + name);
     }
-    
-    
+
+
     protected Paint getGradient(String name, float x1, float y1, float x2, float y2) {
         BaseObject obj = (BaseObject) table.get(name);
         if (obj == null) {
             // try with underscores instead of spaces
             obj = (BaseObject) table.get(name.replace(' ', '_'));
         }
-        
-        if (obj != null) {        
+
+        if (obj != null) {
             VectorObject vobj = (VectorObject) obj;
             if (vobj.fillGradient != null) {
                 return vobj.calcGradientPaint(vobj.fillGradient, x1, y1, x2, y2);
@@ -310,10 +308,10 @@ public class SVG {
         throw new RuntimeException("No gradient found for shape " + name);
     }
 
-    
+
     public void strokeGradient(String name, float x, float y, float r) {
         Paint paint = getGradient(name, x, y, r);
-        
+
         if (parent.g instanceof PGraphicsJava2D) {
             PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
 
@@ -321,10 +319,10 @@ public class SVG {
             p2d.strokeGradientObject = paint;
         }
     }
-    
+
     public void strokeGradient(String name, float x1, float y1, float x2, float y2) {
         Paint paint = getGradient(name, x1, y1, x2, y2);
-        
+
         if (parent.g instanceof PGraphicsJava2D) {
             PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
 
@@ -332,11 +330,11 @@ public class SVG {
             p2d.strokeGradientObject = paint;
         }
     }
-    
-    
+
+
     public void fillGradient(String name, float x, float y, float r) {
         Paint paint = getGradient(name, x, y, r);
-        
+
         if (parent.g instanceof PGraphicsJava2D) {
             PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
 
@@ -344,11 +342,11 @@ public class SVG {
             p2d.fillGradientObject = paint;
         }
     }
-    
-    
+
+
     public void fillGradient(String name, float x1, float y1, float x2, float y2) {
         Paint paint = getGradient(name, x1, y1, x2, y2);
-        
+
         if (parent.g instanceof PGraphicsJava2D) {
             PGraphicsJava2D p2d = ((PGraphicsJava2D) parent.g);
 
@@ -359,19 +357,19 @@ public class SVG {
 
 
     /**
-     * Temporary hack for gradient handling. This is not supported 
+     * Temporary hack for gradient handling. This is not supported
      * and will be removed from future releases.
      */
     public void drawStyles() {
         //PApplet.println(root);
-        
+
         if (root instanceof VectorObject) {
             ((VectorObject)root).drawStyles();
         } else {
             PApplet.println("Only use drawStyles() on an object, not a group.");
         }
     }
-    
+
 
     public void draw() {
         if (drawMode == PConstants.CENTER) {
@@ -379,45 +377,45 @@ public class SVG {
             parent.translate(-width/2, -height/2);
             drawImpl();
             parent.popMatrix();
-            
-        } else if ((drawMode == PConstants.CORNER) || 
+
+        } else if ((drawMode == PConstants.CORNER) ||
                    (drawMode == PConstants.CORNERS)) {
             drawImpl();
-        }                    
+        }
     }
-    
-    
+
+
     /**
      * Convenience method to draw at a particular location.
      */
     public void draw(float x, float y) {
         parent.pushMatrix();
-        
+
         if (drawMode == PConstants.CENTER) {
             parent.translate(x - width/2, y - height/2);
-            
-        } else if ((drawMode == PConstants.CORNER) || 
+
+        } else if ((drawMode == PConstants.CORNER) ||
                    (drawMode == PConstants.CORNERS)) {
             parent.translate(x, y);
         }
         drawImpl();
-        
+
         parent.popMatrix();
     }
-    
-    
+
+
     public void draw(float x, float y, float c, float d) {
         parent.pushMatrix();
-        
+
         if (drawMode == PConstants.CENTER) {
             // x and y are center, c and d refer to a diameter
             parent.translate(x - c/2f, y - d/2f);
             parent.scale(c / width, d / height);
-            
+
         } else if (drawMode == PConstants.CORNER) {
             parent.translate(x, y);
             parent.scale(c / width, d / height);
-            
+
         } else if (drawMode == PConstants.CORNERS) {
             // c and d are x2/y2, make them into width/height
             c -= x;
@@ -427,7 +425,7 @@ public class SVG {
             parent.scale(c / width, d / height);
         }
         drawImpl();
-        
+
         parent.popMatrix();
     }
 
@@ -456,8 +454,8 @@ public class SVG {
 
         parent.g.ellipseMode = ellipseMode;
     }
-    
-    
+
+
     /**
      * Set the orientation for drawn objects, similar to PImage.imageMode().
      * @param which Either CORNER, CORNERS, or CENTER.
@@ -475,7 +473,7 @@ public class SVG {
         ignoreStyles(true);
     }
 
-    
+
     /**
      * Enables or disables style information (fill and stroke) set in the file.
      * @param state true to use user-specified stroke/fill, false for svg version
@@ -502,16 +500,16 @@ public class SVG {
 
         // set to false if the object is hidden in the layers palette
         boolean display;
-        
+
         public BaseObject(XMLElement properties) {
             element = properties;
-            
+
             id = properties.getStringAttribute("id");
             if (id != null) {
                 table.put(id, this);
                 //System.out.println("now parsing " + id);
             }
-            
+
             String displayStr = properties.getStringAttribute("display", "inline");
             display = !displayStr.equals("none");
         }
@@ -553,7 +551,7 @@ public class SVG {
 
         public VectorObject(XMLElement properties) {
             super(properties);
-            
+
             getColors(properties);
             getTransformation(properties);
         }
@@ -658,7 +656,7 @@ public class SVG {
         }
 
 
-        protected Paint calcGradientPaint(Gradient gradient) { 
+        protected Paint calcGradientPaint(Gradient gradient) {
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
                 return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
@@ -675,8 +673,8 @@ public class SVG {
         }
 
 
-        protected Paint calcGradientPaint(Gradient gradient, 
-                                          float x1, float y1, float x2, float y2) { 
+        protected Paint calcGradientPaint(Gradient gradient,
+                                          float x1, float y1, float x2, float y2) {
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
                 return new LinearGradientPaint(x1, y1, x2, y2,
@@ -685,9 +683,9 @@ public class SVG {
             }
             throw new RuntimeException("Not a linear gradient.");
         }
-        
-        
-        protected Paint calcGradientPaint(Gradient gradient, 
+
+
+        protected Paint calcGradientPaint(Gradient gradient,
                                           float cx, float cy, float r) {
             if (gradient instanceof RadialGradient) {
                 RadialGradient grad = (RadialGradient) gradient;
@@ -704,7 +702,7 @@ public class SVG {
 
         protected void draw(){
             if (!display) return;  // don't display if set invisible
-            
+
             if (!ignoreStyles) {
                 drawStyles();
             }
@@ -734,8 +732,8 @@ public class SVG {
             }
             */
         }
-        
-        
+
+
         protected void drawStyles() {
             parent.colorMode(PConstants.RGB, 255);
 
@@ -773,7 +771,7 @@ public class SVG {
             }
         }
     }
-    
+
 
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -829,15 +827,15 @@ public class SVG {
                     objects[objectCount++] = new LinearGradient(elem);
 
                 } else if (name.equals("text")) {
-                    PApplet.println("Text is not currently handled, " + 
+                    PApplet.println("Text is not currently handled, " +
                                     "convert text to outlines instead.");
-                    
+
                 } else if (name.equals("filter")) {
                     PApplet.println("Filters are not supported.");
-                    
+
                 } else if (name.equals("mask")) {
                     PApplet.println("Masks are not supported.");
-                    
+
                 } else {
                     PApplet.println("not handled " + name);
                 }
@@ -906,7 +904,7 @@ public class SVG {
         abstract protected void drawShape();
     }
 
-    
+
     static protected Hashtable parseStyleAttributes(String style) {
         Hashtable table = new Hashtable();
         String[] pieces = style.split(";");
@@ -928,12 +926,12 @@ public class SVG {
             this.y1 = properties.getFloatAttribute("y1");
             this.x2 = properties.getFloatAttribute("x2");
             this.y2 = properties.getFloatAttribute("y2");
-            
-            String transformStr = 
+
+            String transformStr =
                 properties.getStringAttribute("gradientTransform");
             if (transformStr != null) {
                 this.transform = parseTransform(transformStr);
-                
+
                 Point2D t1 = transform.transform(new Point2D.Float(x1, y1), null);
                 Point2D t2 = transform.transform(new Point2D.Float(x2, y2), null);
                 this.x1 = (float) t1.getX();
@@ -947,8 +945,8 @@ public class SVG {
         protected void drawShape(){
         }
     }
-    
-    
+
+
     // complete version is here
     // http://www.w3.org/TR/SVG/coords.html#TransformAttribute
     AffineTransform parseTransform(String what) {
@@ -956,7 +954,7 @@ public class SVG {
             if (what.startsWith("matrix(") && what.endsWith(")")) {
                 // columns go first with AT constructor
                 what = what.substring(7, what.length() - 1);
-                return new AffineTransform(PApplet.parseFloat(PApplet.split(what, ' ')));                
+                return new AffineTransform(PApplet.parseFloat(PApplet.split(what, ' ')));
             }
         }
         return null;
@@ -972,12 +970,12 @@ public class SVG {
             this.cx = properties.getFloatAttribute("cx");
             this.cy = properties.getFloatAttribute("cy");
             this.r = properties.getFloatAttribute("r");
-            
-            String transformStr = 
+
+            String transformStr =
                 properties.getStringAttribute("gradientTransform");
             if (transformStr != null) {
                 this.transform = parseTransform(transformStr);
-                
+
                 Point2D t1 = transform.transform(new Point2D.Float(cx, cy), null);
                 Point2D t2 = transform.transform(new Point2D.Float(cx + r, cy), null);
                 this.cx = (float) t1.getX();
