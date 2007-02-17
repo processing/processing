@@ -9,6 +9,13 @@ releases will be super crusty.
 
 ABOUT REV 0125 - XX February 2007
 
+[ changes ] 
+
++ Changing key command to instead use ctrl/cmd-alt-left/right, 
+  identical to Firefox on Mac, PC and Linux. Also fixes a bug
+  that caused French keyboards to have problems since 0123.
+  http://dev.processing.org/bugs/show_bug.cgi?id=480
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
