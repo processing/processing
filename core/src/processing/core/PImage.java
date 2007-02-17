@@ -1117,6 +1117,20 @@ public class PImage implements PConstants, Cloneable {
    * <LI>BURN - Darker areas are applied, increasing contrast, ignores lights.
    *     Called "Color Burn" in Illustrator and Photoshop.
    * </UL>
+   * <P>A useful reference for blending modes and their algorithms can be
+   * found in the <A HREF="http://www.w3.org/TR/SVG12/rendering.html">SVG</A>
+   * specification.</P>
+   * <P>It is important to note that Processing uses "fast" code, not
+   * necessarily "correct" code. No biggie, most software does. A nitpicker
+   * can find numerous "off by 1 division" problems in the blend code where
+   * <TT>&gt;&gt;8</TT> or <TT>&gt;&gt;7</TT> is used when strictly speaking
+   * <TT>/255.0</T> or <TT>/127.0</TT> should have been used.</P>
+   * <P>For instance, exclusion (not intended for real-time use) reads
+   * <TT>r1 + r2 - ((2 * r1 * r2) / 255)</TT> because <TT>255 == 1.0</TT>
+   * not <TT>256 == 1.0</TT>. In other words, <TT>(255*255)>>8</TT> is not
+   * the same as <TT>(255*255)/255</TT>. But for real-time use the shifts
+   * are preferrable, and the difference is insignificant for applications
+   * built with Processing.</P>
    */
   static public int blendColor(int c1, int c2, int mode) {
     switch (mode) {
