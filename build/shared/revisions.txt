@@ -9,6 +9,8 @@ releases will be super crusty.
 
 ABOUT REV 0125 - XX February 2007
 
+Throwing out the baby with the bathwater.
+
 [ changes ] 
 
 + Changing key command to instead use ctrl/cmd-alt-left/right, 
@@ -21,6 +23,8 @@ ABOUT REV 0125 - XX February 2007
   http://dev.processing.org/bugs/show_bug.cgi?id=132  
   See the reference for blend() for more details. Thanks Dave!
 
++ At Casey's urging, the "Color Picker" is now called the 
+  "Color Selector". 
 
 [ java ] 
 
