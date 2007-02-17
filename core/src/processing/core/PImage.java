@@ -1070,57 +1070,80 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Blend two colors based on a particular mode.
-   * <PRE>
-   * BLEND - linear interpolation of colours: C = A*factor + B
-   * ADD - additive blending with white clip: C = min(A*factor + B, 255)
-   * SUBTRACT - substractive blend with black clip: C = max(B - A*factor, 0)
-   * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)
-   * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)
-   * REPLACE - destination colour equals colour of source pixel: C = A
+   * <UL>
+   * <LI>REPLACE - destination colour equals colour of source pixel: C = A.
+   *     Sometimes called "Normal" or "Copy" in other software.
+   *
+   * <LI>BLEND - linear interpolation of colours:
+   *     <TT>C = A*factor + B</TT>
+   *
+   * <LI>ADD - additive blending with white clip:
+   *     <TT>C = min(A*factor + B, 255)</TT>.
+   *     Clipped to 0..255, Photoshop calls this "Linear Burn",
+   *     and Director calls it "Add Pin".
+   *
+   * <LI>SUBTRACT - substractive blend with black clip:
+   *     <TT>C = max(B - A*factor, 0)</TT>.
+   *     Clipped to 0..255, Photoshop calls this "Linear Dodge",
+   *     and Director calls it "Subtract Pin".
+   *
+   * <LI>DARKEST - only the darkest colour succeeds:
+   *     <TT>C = min(A*factor, B)</TT>.
+   *     Illustrator calls this "Darken".
+   *
+   * <LI>LIGHTEST - only the lightest colour succeeds:
+   *     <TT>C = max(A*factor, B)</TT>.
+   *     Illustrator calls this "Lighten".
+   *
+   * <LI>DIFFERENCE -
+   *
+   * <LI>EXCLUSION -
+   *
+   * <LI>MULTIPLY - Multiply the colors, result will always be darker.
+   *
+   * <LI>SCREEN - Opposite multiply, uses inverse values of the colors.
+   *
+   * <LI>OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
+   *     and screens light values.
+   *
+   * <LI>HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.
+   *
+   * <LI>SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
+   *     Works like OVERLAY, but not as harsh.
+   *
+   * <LI>DODGE - Lightens light tones and increases contrast, ignores darks.
+   *     Called "Color Dodge" in Illustrator and Photoshop.
+   *
+   * <LI>BURN - Darker areas are applied, increasing contrast, ignores lights.
+   *     Called "Color Burn" in Illustrator and Photoshop.
    * </PRE>
    */
   static public int blendColor(int c1, int c2, int mode) {
     switch (mode) {
-    case BLEND:    return blend_multiply(c1, c2);
-    case ADD:      return blend_add_pin(c1, c2);
-    case SUBTRACT: return blend_sub_pin(c1, c2);
-    case LIGHTEST: return blend_lightest(c1, c2);
-    case DARKEST:  return blend_darkest(c1, c2);
-    case REPLACE:  return c2;
+    case REPLACE:    return c2;
+    case BLEND:      return blend_blend(c1, c2);
+
+    case ADD:        return blend_add_pin(c1, c2);
+    case SUBTRACT:   return blend_sub_pin(c1, c2);
+
+    case LIGHTEST:   return blend_lightest(c1, c2);
+    case DARKEST:    return blend_darkest(c1, c2);
+
+    case DIFFERENCE: return blend_difference(c1, c2);
+    case EXCLUSION:  return blend_exclusion(c1, c2);
+
+    case MULTIPLY:   return blend_multiply(c1, c2);
+    case SCREEN:     return blend_screen(c1, c2);
+
+    case HARD_LIGHT: return blend_hard_light(c1, c2);
+    case SOFT_LIGHT: return blend_soft_light(c1, c2);
+    case OVERLAY:    return blend_overlay(c1, c2);
+
+    case DODGE:      return blend_dodge(c1, c2);
+    case BURN:       return blend_burn(c1, c2);
     }
     return 0;
   }
-
-
-  /**
-   * Copies and blends 1 pixel with MODE to pixel in this image.
-   * Removing this function, the blend() command above can be used instead.
-   */
-  /*
-  public void blend(int sx, int sy, int dx, int dy, int mode) {
-    if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < width) &&
-        (dy >= 0) && (dy < height) && (sy >= 0) && (sy < height)) {
-      pixels[dy * width + dx] =
-        blend(pixels[dy * width + dx], pixels[sy * width + sx], mode);
-    }
-  }
-  */
-
-
-  /**
-   * Copies and blends 1 pixel with MODE to pixel in another image
-   */
-  /*
-  public void blend(PImage src,
-                    int sx, int sy, int dx, int dy, int mode) {
-    if ((dx >= 0) && (dx < width) && (sx >= 0) && (sx < src.width) &&
-        (dy >= 0) && (dy < height) && (sy >= 0) && (sy < src.height)) {
-      pixels[dy * width + dx] =
-        blend(pixels[dy * width + dx],
-              src.pixels[sy * src.width + sx], mode);
-    }
-  }
-  */
 
 
   /**
@@ -1289,8 +1312,9 @@ public class PImage implements PConstants, Cloneable {
         for (int y = 0; y < destH; y++) {
           filter_new_scanline();
           for (int x = 0; x < destW; x++) {
+            // davbol  - renamed old blend_multiply to blend_blend
             destPixels[destOffset + x] =
-              blend_multiply(destPixels[destOffset + x], filter_bilinear());
+              blend_blend(destPixels[destOffset + x], filter_bilinear());
             sX += dx;
           }
           destOffset += screenW;
@@ -1361,6 +1385,125 @@ public class PImage implements PConstants, Cloneable {
           srcYOffset += dy;
         }
         break;
+
+      case DIFFERENCE:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_difference(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case EXCLUSION:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_exclusion(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case MULTIPLY:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_multiply(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case SCREEN:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_screen(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case OVERLAY:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_overlay(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case HARD_LIGHT:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_hard_light(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case SOFT_LIGHT:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_soft_light(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      // davbol - proposed 2007-01-09
+      case DODGE:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_dodge(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case BURN:
+        for (int y = 0; y < destH; y++) {
+          filter_new_scanline();
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_burn(destPixels[destOffset + x], filter_bilinear());
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
       }
 
     } else {
@@ -1372,8 +1515,9 @@ public class PImage implements PConstants, Cloneable {
           sX = srcXOffset;
           sY = (srcYOffset >> PRECISIONB) * img.width;
           for (int x = 0; x < destW; x++) {
+            // davbol - renamed old blend_multiply to blend_blend
             destPixels[destOffset + x] =
-              blend_multiply(destPixels[destOffset + x],
+              blend_blend(destPixels[destOffset + x],
                              srcBuffer[sY + (sX >> PRECISIONB)]);
             sX += dx;
           }
@@ -1454,6 +1598,143 @@ public class PImage implements PConstants, Cloneable {
           srcYOffset += dy;
         }
         break;
+
+      case DIFFERENCE:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_difference(destPixels[destOffset + x],
+                               srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case EXCLUSION:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_exclusion(destPixels[destOffset + x],
+                              srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case MULTIPLY:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_multiply(destPixels[destOffset + x],
+                            srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case SCREEN:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_screen(destPixels[destOffset + x],
+                            srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case OVERLAY:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_overlay(destPixels[destOffset + x],
+                            srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case HARD_LIGHT:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_hard_light(destPixels[destOffset + x],
+                            srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case SOFT_LIGHT:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_soft_light(destPixels[destOffset + x],
+                            srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      // davbol - proposed 2007-01-09
+      case DODGE:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_dodge(destPixels[destOffset + x],
+                            srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
+      case BURN:
+        for (int y = 0; y < destH; y++) {
+          sX = srcXOffset;
+          sY = (srcYOffset >> PRECISIONB) * img.width;
+          for (int x = 0; x < destW; x++) {
+            destPixels[destOffset + x] =
+              blend_burn(destPixels[destOffset + x],
+                            srcBuffer[sY + (sX >> PRECISIONB)]);
+            sX += dx;
+          }
+          destOffset += screenW;
+          srcYOffset += dy;
+        }
+        break;
+
       }
     }
   }
@@ -1519,6 +1800,10 @@ public class PImage implements PConstants, Cloneable {
     return (a > b) ? a : b;
   }
 
+  // davbol - added peg helper, equiv to constrain(n,0,255)
+  private static int peg(int n) {
+    return (n < 0) ? 0 : ((n > 255) ? 255 : n);
+  }
 
   private static int mix(int a, int b, int f) {
     return a + (((b - a) * f) >> 8);
@@ -1530,7 +1815,8 @@ public class PImage implements PConstants, Cloneable {
 
   // BLEND MODE IMPLEMENTIONS
 
-  private static int blend_multiply(int a, int b) {
+
+  private static int blend_blend(int a, int b) {
     int f = (b & ALPHA_MASK) >>> 24;
 
     return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
@@ -1602,6 +1888,237 @@ public class PImage implements PConstants, Cloneable {
                     ((b & BLUE_MASK) * f) >> 8), f));
   }
 
+
+  /**
+   * returns the absolute value of the difference of the input colors
+   * C = |A - B|
+   */
+  private static int blend_difference(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = (ar > br) ? (ar-br) : (br-ar);
+    int cg = (ag > bg) ? (ag-bg) : (bg-ag);
+    int cb = (ab > bb) ? (ab-bb) : (bb-ab);
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
+
+
+  /**
+   * Cousin of difference, algorithm used here is based on a Lingo version
+   * found here: http://www.mediamacros.com/item/item-1006687616/
+   * (Not yet verified to be correct).
+   */
+  private static int blend_exclusion(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = ar + br - ((ar * br) >> 7);
+    int cg = ag + bg - ((ag * bg) >> 7);
+    int cb = ab + bb - ((ab * bb) >> 7);
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
+
+
+  /**
+   * returns the product of the input colors
+   * C = A * B
+   */
+  private static int blend_multiply(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = (ar * br) >> 8;
+    int cg = (ag * bg) >> 8;
+    int cb = (ab * bb) >> 8;
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
+
+
+  /**
+   * returns the inverse of the product of the inverses of the input colors
+   * (the inverse of multiply).  C = 1 - (1-A) * (1-B)
+   */
+  private static int blend_screen(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = 255 - (((255 - ar) * (255 - br)) >> 8);
+    int cg = 255 - (((255 - ag) * (255 - bg)) >> 8);
+    int cb = 255 - (((255 - ab) * (255 - bb)) >> 8);
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
+
+
+  /**
+   * returns either multiply or screen for darker or lighter values of A
+   * (the inverse of hard light)
+   * C =
+   *   A < 0.5 : 2 * A * B
+   *   A >=0.5 : 1 - (2 * (255-A) * (255-B))
+   */
+  private static int blend_overlay(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = (ar < 128) ? ((ar*br)>>7) : (255-(((255-ar)*(255-br))>>7));
+    int cg = (ag < 128) ? ((ag*bg)>>7) : (255-(((255-ag)*(255-bg))>>7));
+    int cb = (ab < 128) ? ((ab*bb)>>7) : (255-(((255-ab)*(255-bb))>>7));
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
+
+
+  /**
+   * returns either multiply or screen for darker or lighter values of B
+   * (the inverse of overlay)
+   * C =
+   *   B < 0.5 : 2 * A * B
+   *   B >=0.5 : 1 - (2 * (255-A) * (255-B))
+   */
+   private static int blend_hard_light(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = (br < 128) ? ((ar*br)>>7) : (255-(((255-ar)*(255-br))>>7));
+    int cg = (bg < 128) ? ((ag*bg)>>7) : (255-(((255-ag)*(255-bg))>>7));
+    int cb = (bb < 128) ? ((ab*bb)>>7) : (255-(((255-ab)*(255-bb))>>7));
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
+
+
+  /**
+   * returns the inverse multiply plus screen, which simplifies to
+   * C = 2AB + A^2 - 2A^2B
+   */
+  private static int blend_soft_light(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = ((ar*br)>>7) + ((ar*ar)>>8) - ((ar*ar*br)>>15);
+    int cg = ((ag*bg)>>7) + ((ag*ag)>>8) - ((ag*ag*bg)>>15);
+    int cb = ((ab*bb)>>7) + ((ab*ab)>>8) - ((ab*ab*bb)>>15);
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
+
+
+  /**
+   * Returns the first (underlay) color divided by the inverse of
+   * the second (overlay) color. C = A / (255-B)
+   */
+  private static int blend_dodge(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = (br==255) ? 255 : peg((ar << 8) / (255 - br)); // division requires pre-peg()-ing
+    int cg = (bg==255) ? 255 : peg((ag << 8) / (255 - bg)); // "
+    int cb = (bb==255) ? 255 : peg((ab << 8) / (255 - bb)); // "
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
+
+
+  /**
+   * returns the inverse of the inverse of the first (underlay) color
+   * divided by the second (overlay) color. C = 255 - (255-A) / B
+   */
+  private static int blend_burn(int a, int b) {
+    // setup (this portion will always be the same)
+    int f = (b & ALPHA_MASK) >>> 24;
+    int ar = (a & RED_MASK) >> 16;
+    int ag = (a & GREEN_MASK) >> 8;
+    int ab = (a & BLUE_MASK);
+    int br = (b & RED_MASK) >> 16;
+    int bg = (b & GREEN_MASK) >> 8;
+    int bb = (b & BLUE_MASK);
+    // formula:
+    int cr = (br==0) ? 0 : 255 - peg(((255 - ar) << 8) / br); // division requires pre-peg()-ing
+    int cg = (bg==0) ? 0 : 255 - peg(((255 - ag) << 8) / bg); // "
+    int cb = (bb==0) ? 0 : 255 - peg(((255 - ab) << 8) / bb); // "
+    // alpha blend (this portion will always be the same)
+    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
+            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
+            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
+            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1993,8 +2510,9 @@ public class PImage implements PConstants, Cloneable {
         //file = new File(parent.savePath(filename));
         path = parent.savePath(path);
       } else {
-        throw new RuntimeException("PImage.save() requires an absolute path. Or you can " +
-                                   "use createImage() instead or pass savePath() to save().");
+        String re = "PImage.save() requires an absolute path. " +
+          "Use createImage(), or pass savePath() to save().";
+        throw new RuntimeException(re);
       }
     }
 

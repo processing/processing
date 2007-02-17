@@ -122,15 +122,15 @@ public interface PConstants {
   public final static int SUBTRACT   = 1 << 2;
   public final static int LIGHTEST   = 1 << 3;
   public final static int DARKEST    = 1 << 4;
-
-  // incomplete, slated for beta
   public final static int DIFFERENCE = 1 << 5;
-  public final static int MULTIPLY   = 1 << 6;
-  public final static int SCREEN     = 1 << 7;
-  public final static int OVERLAY    = 1 << 8;
-  public final static int HARD_LIGHT = 1 << 9;
-  public final static int SOFT_LIGHT = 1 << 10;
-
+  public final static int EXCLUSION  = 1 << 6;
+  public final static int MULTIPLY   = 1 << 7;
+  public final static int SCREEN     = 1 << 8;
+  public final static int OVERLAY    = 1 << 9;
+  public final static int HARD_LIGHT = 1 << 10;
+  public final static int SOFT_LIGHT = 1 << 11;
+  public final static int DODGE      = 1 << 12;
+  public final static int BURN       = 1 << 13;
 
   // colour component bitmasks
 
@@ -180,7 +180,7 @@ public interface PConstants {
   static final int POLYGON         = (1 << 8) | 0;
   //static final int CONCAVE_POLYGON = (1 << 8) | 1;
   //static final int CONVEX_POLYGON  = (1 << 8) | 2;
-  
+
   static final int OPEN = 1;
   static final int CLOSE = 2;
 

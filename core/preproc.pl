@@ -12,9 +12,15 @@ open(F, "$basedir/PGraphics.java") || die $!;
 #@contents = <F>;
 foreach $line (<F>) {
     # can't remember perl right now.. there must be a better way
-    $contents[$#contents++] = $line;
+    #$contents[$#contents++] = $line;
+    push @contents, $line;
 }
 close(F);
+
+#open(DEBUG, ">debug.java") || die $!;
+#print DEBUG @contents;
+#close(DEBUG);
+#exit;
 
 
 open(APPLET, "$basedir/PApplet.java") || die $!;
@@ -38,9 +44,11 @@ while ($line = shift(@contents)) {
 
     if ($line =~ /\/\*/) {
         $comments++;
+	#print "+[$comments] $line";
     }
     if ($line =~ /\*\//) {
         $comments--;
+	#print "-[$comments] $line";
     }
     next if ($comments > 0);
 

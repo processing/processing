@@ -136,10 +136,10 @@ public class PApplet extends Applet
 {
   /**
    * Full name of the Java version (i.e. 1.5.0_11).
-   * Prior to 0124, this was only the first three digits.
+   * Prior to 0125, this was only the first three digits.
    */
   public static final String javaVersionName =
-    System.getProperty("java.version").substring(0,3);
+    System.getProperty("java.version");
 
   /**
    * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
@@ -3573,11 +3573,16 @@ public class PApplet extends Applet
       format = RGB;
 
     } else if ((header[2] == 0x0A) &&
+    //} else if ((header[2] == 0x0A || header[2] == 0x02) &&
                (header[16] == 32) &&
                (header[17] == 0x28)) {
       format = ARGB;
     }
     if (format == 0) {
+      //System.err.println(header);
+      System.err.println(hex(header[2], 2) + " " +
+                         (header[16] & 0xff) + " " +
+                         hex(header[17], 2));
       System.err.println("Unknown .tga file format for " + filename);
       return null;
     }
