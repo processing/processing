@@ -231,7 +231,9 @@ public class RawDXF extends PGraphics3D {
    */
   public void write(String cmd, float val) {
     writer.println(cmd);
-    writer.println(PApplet.nf(val, 0, 4));
+    // don't format, will cause trouble on systems that aren't en-us
+    // http://dev.processing.org/bugs/show_bug.cgi?id=495
+    writer.println(val);
   }
 
 

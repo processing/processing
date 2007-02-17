@@ -114,7 +114,9 @@ public interface PConstants {
   static final int ERODE     = 17;
   static final int DILATE    = 18;
 
+
   // blend mode keyword definitions
+  // @see processing.core.PImage#blendColor(int,int,int)
 
   public final static int REPLACE    = 0;
   public final static int BLEND      = 1 << 0;
