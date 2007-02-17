@@ -1275,6 +1275,9 @@ public class Sketch {
       //handleOpen(sketch);
       //history.lastRecorded = historySaved;
 
+      // set current to null so that the tab gets updated
+      // http://dev.processing.org/bugs/show_bug.cgi?id=515
+      current = null;
       // nuke previous files and settings, just get things loaded
       load();
     }
