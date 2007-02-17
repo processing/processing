@@ -26,6 +26,16 @@ Throwing out the baby with the bathwater.
 + At Casey's urging, the "Color Picker" is now called the 
   "Color Selector". 
 
+[ bug fixes ]
+
++ Properly refresh code when using an external editor (regression)
+  http://dev.processing.org/bugs/show_bug.cgi?id=515
+
++ The DXF export library no longer attempts to format its output because 
+  it was causing problems on systems that use , instead of . for their
+  decimal separator character.
+  http://dev.processing.org/bugs/show_bug.cgi?id=495
+
 [ java ] 
 
 + Java 1.5.0_10 is no longer the default download at java.com, 
