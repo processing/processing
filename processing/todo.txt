@@ -2,6 +2,9 @@
 X prev/next tab conflicting with typing brackets on french macs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=480
 
+_ update javadoc reference to include xml, candy, etc
+_ need to add moviemaker reference
+
 _ update to 1.4.2_12 on linux and windows
 
 _ with additional .pde files, don't allow static mode in front tab
@@ -9,6 +12,7 @@ _ with additional .pde files, don't allow static mode in front tab
 
 libraries and classpaths [1.0]
 _ add control for dependencies (i.e. svg needs xml), needed for export
+_   http://dev.processing.org/bugs/show_bug.cgi?id=518
 _ add "pretty menu name" to the export.txt file
 _ more export.txt to xml? (nah, it's only flat information)
 _ need better platform designation setup for libs

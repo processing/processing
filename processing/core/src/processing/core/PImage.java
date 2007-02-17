@@ -1095,9 +1095,9 @@ public class PImage implements PConstants, Cloneable {
    *     <TT>C = max(A*factor, B)</TT>.
    *     Illustrator calls this "Lighten".
    *
-   * <LI>DIFFERENCE -
+   * <LI>DIFFERENCE - subtract colors from underlying image.
    *
-   * <LI>EXCLUSION -
+   * <LI>EXCLUSION - similar to DIFFERENCE, but less extreme.
    *
    * <LI>MULTIPLY - Multiply the colors, result will always be darker.
    *
@@ -1116,7 +1116,7 @@ public class PImage implements PConstants, Cloneable {
    *
    * <LI>BURN - Darker areas are applied, increasing contrast, ignores lights.
    *     Called "Color Burn" in Illustrator and Photoshop.
-   * </PRE>
+   * </UL>
    */
   static public int blendColor(int c1, int c2, int mode) {
     switch (mode) {
