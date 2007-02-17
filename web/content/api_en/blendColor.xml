@@ -26,13 +26,7 @@ rect(66, 20, 20, 60);
 </example>
 
 <description>
-Blends two color values together based on the blending mode given as the <b>MODE</b> parameter. There is a choice of the following modes to blend the source pixels (A) with the ones of pixels in the destination image (B):<br /> 
-<br />
-BLEND - linear interpolation of colours: C = A*factor + B <br />
-ADD - additive blending with white clip: C = min(A*factor + B, 255)<br /> 
-SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br /> 
-DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br />
-LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)
+Blends two color values together based on the blending mode given as the <b>MODE</b> parameter. The possible modes are described in the reference for the <b>blend()</b> function.
 </description>
 
 <syntax>

@@ -253,7 +253,7 @@ sub-programs.</p>
 	you'll need to pass the PApplet object to that object in that tab in order to get PApplet functions 
 	like line(), loadStrings() or saveFrame() to work. 
 	
-	<p>The tabs gets truncated when there are too many (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=54">Bug 54</a>)</p>
+	<p>Currently, the tabs get truncated when there are too many (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=54">Bug 54</a>).</p>
 	
    
     <h5 id="Coordinates"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
@@ -315,9 +315,9 @@ void circles(int x, int y) {
   ellipse(x+20, y+20, 60, 60);
 }</pre>
     <p>This example draws rectangles that follow the mouse position (stored in 
-      the system variables mouseX and mouseY). The<strong>draw()</strong> section 
-      runs forever until the program is stopped, thus creating the potential for 
-      motion and interaction.</p>
+      the system variables mouseX and mouseY). The <strong>draw()</strong> 
+      block runs forever until the program is stopped, thus creating the 
+      potential for motion and interaction.</p>
     <pre>void setup()
 {
   size(200, 200);
@@ -402,7 +402,7 @@ rect(-60, -60, 120, 120);
       to have an OpenGL accelerated graphics card installed on your computer to 
       fully utilize this library. For more information, please visit the <a href="http://www.opengl.org/" target="_new">OpenGL</a> 
       and <a href="https://jogl.dev.java.net/" target="_new">JOGL</a> websites.</p>
-    <p><em>Note: Software using this mode may appear different on varying graphics 
+    <p><em>Note: Software using this mode may appear differently on varying graphics 
       cards as some cards support OpenGL better than others.</em></p>
     <pre>import processing.opengl.*;
 
