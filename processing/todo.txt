@@ -16,6 +16,7 @@ X   or the 1.5 versions:
 X   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
 X PDE does not refresh code when using an External Editor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=515
+X change framerate to frameRate inside Capture
 
 _ need to add reference for moviemaker 
 
