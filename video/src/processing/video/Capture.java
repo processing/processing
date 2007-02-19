@@ -106,15 +106,15 @@ public class Capture extends PImage implements Runnable {
 
 
   public Capture(PApplet parent, int requestWidth, int requestHeight) {
-    this(parent, null, requestWidth, requestHeight, 30);
+    this(parent, requestWidth, requestHeight, null, 30);
   }
 
   public Capture(PApplet parent, int reqWidth, int reqHeight, int frameRate) {
-    this(parent, null, reqWidth, reqHeight, frameRate);
+    this(parent, reqWidth, reqHeight, null, frameRate);
   }
 
-  public Capture(PApplet parent, String name, int reqWidth, int reqHeight) {
-    this(parent, name, reqWidth, reqHeight, 30);
+  public Capture(PApplet parent, int reqWidth, int reqHeight, String name) {
+    this(parent, reqWidth, reqHeight, name, 30);
   }
 
 
@@ -135,8 +135,8 @@ public class Capture extends PImage implements Runnable {
    * is defined in the host PApplet, then it will be called every
    * time a new frame is available from the capture device.
    */
-  public Capture(PApplet parent, String name,
-                 int requestWidth, int requestHeight, int frameRate) {
+  public Capture(PApplet parent, int requestWidth, int requestHeight,
+                 String name, int frameRate) {
     this.parent = parent;
     this.name = name;
     this.frameRate = frameRate;
