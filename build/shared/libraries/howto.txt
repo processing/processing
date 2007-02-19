@@ -162,8 +162,7 @@ is that you'd like to use.
 
 Note that making things "public" is extremely important. When running
 inside Processing, anything left blank has public added by the
-preprocessor, meaning "void loop()" becomes "public void loop()". 
-But in straight Java, the public becomes important.
+preprocessor, meaning "void draw()" becomes "public void draw()". 
 
 You can only draw inside of pre(), draw(), mouseEvent(), or keyEvent()
 otherwise you may run into trouble. pre() and draw() happen while
