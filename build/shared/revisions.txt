@@ -13,7 +13,22 @@ Throwing out the baby with the bathwater.
 
 [ changes ] 
 
-+ Changing key command to instead use ctrl/cmd-alt-left/right, 
++ Changed the constructors for the Capture class to be more consistent 
+  with the rest of the video library. The following constructors:
+  Capture(PApplet parent, int width, int height)
+  Capture(PApplet parent, int width, int height, int rate)
+  Capture(PApplet parent, String name, int width, int height)
+  Capture(PApplet parent, String name, int width, int height, int rate)
+  have been changed to:
+  Capture(PApplet parent, int width, int height)
+  Capture(PApplet parent, int width, int height, int rate)
+  Capture(PApplet parent, int width, int height, String name)
+  Capture(PApplet parent, int width, int height, String name, int rate)
+  This version is not particularly consistent:
+  Capture(PApplet parent, int width, int height, int rate)
+  though we'll be leaving it in because it was used so heavily.
+
++ Changing key command to instead use ctrl/cmd + alt + left/right, 
   identical to Firefox on Mac, PC and Linux. Also fixes a bug
   that caused French keyboards to have problems since 0123.
   http://dev.processing.org/bugs/show_bug.cgi?id=480
