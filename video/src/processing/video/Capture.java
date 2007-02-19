@@ -35,13 +35,12 @@ import quicktime.util.RawEncodedImage;
 
 
 /**
- * Watchin' shit, on the telly.
- * <p>
- * The useful ref page for <a href="http://developer.apple.com/documentation/Java/Reference/1.4.1/Java141API_QTJ/constant-values.html">quicktime constants</a>
+ * Watchin' shit on the telly.
  */
 public class Capture extends PImage implements Runnable {
 
   // there are more, but these are all we'll provide for now
+  // The useful ref page for <a href="http://developer.apple.com/documentation/Java/Reference/1.4.1/Java141API_QTJ/constant-values.html">quicktime constants</a>
   static public final int COMPOSITE = StdQTConstants.compositeIn;  // 0
   static public final int SVIDEO = StdQTConstants.sVideoIn;  // 1
   static public final int COMPONENT = StdQTConstants.rgbComponentIn;  // 2
@@ -76,7 +75,7 @@ public class Capture extends PImage implements Runnable {
   public int cropW;
   public int cropH;
 
-  public int framerate;
+  public int frameRate;
 
   public RawEncodedImage raw;
   public SequenceGrabber capture;
@@ -110,8 +109,8 @@ public class Capture extends PImage implements Runnable {
     this(parent, null, requestWidth, requestHeight, 30);
   }
 
-  public Capture(PApplet parent, int reqWidth, int reqHeight, int framerate) {
-    this(parent, null, reqWidth, reqHeight, framerate);
+  public Capture(PApplet parent, int reqWidth, int reqHeight, int frameRate) {
+    this(parent, null, reqWidth, reqHeight, frameRate);
   }
 
   public Capture(PApplet parent, String name, int reqWidth, int reqHeight) {
@@ -137,10 +136,10 @@ public class Capture extends PImage implements Runnable {
    * time a new frame is available from the capture device.
    */
   public Capture(PApplet parent, String name,
-                 int requestWidth, int requestHeight, int framerate) {
+                 int requestWidth, int requestHeight, int frameRate) {
     this.parent = parent;
     this.name = name;
-    this.framerate = framerate;
+    this.frameRate = frameRate;
 
     try {
       QTSession.open();
@@ -319,9 +318,8 @@ public class Capture extends PImage implements Runnable {
       //System.out.println("read3");
 
       available = false;
-      // mark this image as modified so that PGraphicsJava and PGraphicsGL
-      // will properly re-blit and draw this guy
-      //updatePixels();
+      // mark this image as modified so that PGraphicsJava2D and
+      // PGraphicsOpenGL will properly re-blit and draw this guy
       updatePixels();
       //System.out.println("read4");
     }
@@ -353,23 +351,23 @@ public class Capture extends PImage implements Runnable {
       }
 
       try {
-        Thread.sleep(1000 / framerate);
+        Thread.sleep(1000 / frameRate);
       } catch (InterruptedException e) { }
     }
   }
 
 
   /**
-   * Set the framerate for how quickly new frames are read
+   * Set the frameRate for how quickly new frames are read
    * from the capture device.
    */
-  public void framerate(int iframerate) {
-    if (iframerate <= 0) {
-      System.err.println("Capture: ignoring bad framerate of " +
-                         iframerate + " fps.");
+  public void frameRate(int iframeRate) {
+    if (iframeRate <= 0) {
+      System.err.println("Capture: ignoring bad frameRate of " +
+                         iframeRate + " fps.");
       return;
     }
-    framerate = iframerate;
+    frameRate = iframeRate;
   }
 
 
