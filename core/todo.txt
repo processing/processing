@@ -31,6 +31,11 @@ X deal with targa upside-down and non-rle encoding for tga images
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1171576234
 
 _ split() inconsistency (emailed casey, will discuss later)
+_   make split(String, String) behave like String.split(String)
+_   and make current split(String) into splitTokens(String)
+
+_ set() doesn't bounds check
+_   http://dev.processing.org/bugs/show_bug.cgi?id=522
 
 should be fixed, but needs to be tested
 _ saveFrame() produces a black background because bg not set correctly:
