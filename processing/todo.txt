@@ -16,8 +16,21 @@ X   or the 1.5 versions:
 X   http://java.sun.com/update/1.5.0/jinstall-1_5_0_03-windows-i586.cab
 X PDE does not refresh code when using an External Editor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=515
+X preprocessor cannot handle L or l added to 'long' values
+X   http://dev.processing.org/bugs/show_bug.cgi?id=492
 X change constructors for Capture, also framerate to frameRate
 _   need to update reference
+
+_ archive sketch shouldn't include applet or application dirs
+
+_ add to mac reference for present mode
+_   can make full screen work via Info.plist key
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
+_ add to troubleshooting
+_   problem with big floats:
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
+_   problem with small floats:
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
 
 _ need to add reference for moviemaker 
 
@@ -474,8 +487,6 @@ _   or maybe not? followup said maybe not
 _   http://dev.processing.org/bugs/show_bug.cgi?id=379
 _ Blah.class will confuse the preproc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=481
-_ http://dev.processing.org/bugs/show_bug.cgi?id=492
-_   http://dev.processing.org/bugs/show_bug.cgi?id=492
 _ non-matching curly brackets sometimes don't cause an error
 _   http://dev.processing.org/bugs/show_bug.cgi?id=507
 
