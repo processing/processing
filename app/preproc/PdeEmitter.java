@@ -635,6 +635,7 @@ public class PdeEmitter implements PdeTokenTypes
     case CHAR_LITERAL:
     case STRING_LITERAL:
     case NUM_FLOAT:
+    case NUM_LONG:
       out.print(ast.getText());
       dumpHiddenAfter(ast);
       break;
