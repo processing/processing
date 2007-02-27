@@ -2310,8 +2310,10 @@ public class PApplet extends Applet
 
 
   /**
-   * Launch a process using a platforms shell, and an array of
-   * args passed on the command line.
+   * Launch a process using a platforms shell. This version uses an array
+   * to make it easier to deal with spaces in the individual elements.
+   * (This avoids the situation of trying to put single or double quotes
+   * around different bits).
    */
   public Process open(String argv[]) {
     try {
