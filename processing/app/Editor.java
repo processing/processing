@@ -1174,9 +1174,11 @@ public class Editor extends JFrame
     redoAction.updateRedoState();
   }
 
+
   public void beginCompoundEdit() {
     compoundEdit = new CompoundEdit();
   }
+
 
   public void endCompoundEdit() {
     compoundEdit.end();
@@ -1186,6 +1188,8 @@ public class Editor extends JFrame
     compoundEdit = null;
   }
 
+
+  // ...................................................................
 
 
   public void handleRun(boolean present) {
