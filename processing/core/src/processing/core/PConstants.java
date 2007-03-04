@@ -187,12 +187,19 @@ public interface PConstants {
   static final int CLOSE = 2;
 
 
-  // shape modes
+  // shape drawing modes
 
+  /** Draw mode convention to use (x, y) to (width, height) */
   static final int CORNER        = 0;
+  /** Draw mode convention to use (x1, y1) to (x2, y2) coordinates */
   static final int CORNERS       = 1;
+  /** @deprecated Use RADIUS instead (as of 0125) */
   static final int CENTER_RADIUS = 2;
-  static final int CENTER        = 3;  // former CENTER_DIAMETER
+  /** Draw mode from the center, and using the radius */
+  static final int RADIUS        = 2;
+  /** Draw from the center, using second pair of values as the diameter.
+      Formerly called CENTER_DIAMETER in alpha releases */
+  static final int CENTER        = 3;
 
 
   // uv texture orientation modes
