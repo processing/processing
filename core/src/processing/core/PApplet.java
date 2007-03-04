@@ -5508,7 +5508,7 @@ public class PApplet extends Applet
   /**
    * FIXME this is only temporary
    */
-  static public String split(String what, String delim) {
+  static public String[] split(String what, String delim) {
     return what.split(delim);
   }
 
