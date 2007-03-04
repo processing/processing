@@ -61,14 +61,16 @@ import java.util.zip.*;
  * this also allows you to embed a Processing drawing area into another Java
  * application. This means you can use standard GUI controls with a Processing
  * sketch. Because AWT and Swing GUI components cannot be used on top of a
- * PApplet, you can instead embed the Component inside another GUI the way
- * you would any other Component.
+ * PApplet, you can instead embed the PApplet inside another GUI the wayyou
+ * would any other Component.
  * <p/>
- * By default, the animation thread will run at 60 frames per second,
- * which can make the parent applet sluggish. If you want to only update the
- * sketch intermittently, use noLoop() inside setup(), and redraw() whenever
- * the screen needs to be updated once, or loop() to re-enable the animation
- * thread. The following example embeds a sketch and also uses the noLoop()
+ * Because the default animation thread will run at 60 frames per second,
+ * an embedded PApplet can make the parent sluggish. You can use frameRate()
+ * to make it update less often, or you can use noLoop() and loop() to disable
+ * and then re-enable looping. If you want to only update the sketch
+ * intermittently, use noLoop() inside setup(), and redraw() whenever
+ * the screen needs to be updated once (or loop() to re-enable the animation
+ * thread). The following example embeds a sketch and also uses the noLoop()
  * and redraw() methods. You need not use noLoop() and redraw() when embedding
  * if you want your application to animate continuously.
  * <PRE>
@@ -112,8 +114,8 @@ import java.util.zip.*;
  * </PRE>
  *
  * <H2>Processing on multiple displays</H2>
- * <P>I was asked about P5 with multiple displays, and for lack of a better
- * place to document it, things will go here.</P>
+ * <P>I was asked about Processing with multiple displays, and for lack of a
+ * better place to document it, things will go here.</P>
  * <P>You can address both screens by making a window the width of both,
  * and the height of the maximum of both screens. In this case, do not use
  * present mode, because that's exclusive to one screen. Basically it'll
@@ -2468,6 +2470,15 @@ public class PApplet extends Applet
     setCursor(Cursor.getPredefinedCursor(_cursor_type));
     cursorVisible = true;
     cursorType = _cursor_type;
+  }
+
+
+  /**
+   * Replace the cursor with the specified PImage. The x- and y-
+   * coordinate of the center will be the center of the image.
+   */
+  public void cursor(PImage image) {
+    cursor(image, image.width/2, image.height/2);
   }
 
 
@@ -5407,13 +5418,13 @@ public class PApplet extends Applet
    * character, which is found commonly on files created by or used
    * in conjunction with Mac OS X (character 160, or 0x00A0 in hex).
    * <PRE>
-   * i.e. split("a b") -> { "a", "b" }
-   *      split("a    b") -> { "a", "b" }
-   *      split("a\tb") -> { "a", "b" }
-   *      split("a \t  b  ") -> { "a", "b" }</PRE>
+   * i.e. splitTokens("a b") -> { "a", "b" }
+   *      splitTokens("a    b") -> { "a", "b" }
+   *      splitTokens("a\tb") -> { "a", "b" }
+   *      splitTokens("a \t  b  ") -> { "a", "b" }</PRE>
    */
-  static public String[] split(String what) {
-    return split(what, WHITESPACE);
+  static public String[] splitTokens(String what) {
+    return splitTokens(what, WHITESPACE);
   }
 
 
@@ -5424,14 +5435,14 @@ public class PApplet extends Applet
    * as a separator. The delimeter characters won't appear in
    * the returned String array.
    * <PRE>
-   * i.e. split("a, b", " ,") -> { "a", "b" }
+   * i.e. splitTokens("a, b", " ,") -> { "a", "b" }
    * </PRE>
    * To include all the whitespace possibilities, use the variable
    * WHITESPACE, found in PConstants:
    * <PRE>
-   * i.e. split("a   | b", WHITESPACE + "|");  ->  { "a", "b" }</PRE>
+   * i.e. splitTokens("a   | b", WHITESPACE + "|");  ->  { "a", "b" }</PRE>
    */
-  static public String[] split(String what, String delim) {
+  static public String[] splitTokens(String what, String delim) {
     StringTokenizer toker = new StringTokenizer(what, delim);
     String pieces[] = new String[toker.countTokens()];
 
@@ -5491,6 +5502,14 @@ public class PApplet extends Applet
         new String(chars, startIndex, chars.length-startIndex);
     //}
     return splits;
+  }
+
+
+  /**
+   * FIXME this is only temporary
+   */
+  static public String split(String what, String delim) {
+    return what.split(delim);
   }
 
 
