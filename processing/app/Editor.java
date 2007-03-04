@@ -123,8 +123,6 @@ public class Editor extends JFrame
   // used internally, and only briefly
   CompoundEdit compoundEdit;
 
-  //static public UndoManager undo = new UndoManager(); // editor needs this guy
-
   //
 
   //SketchHistory history;  // TODO re-enable history
@@ -952,9 +950,9 @@ public class Editor extends JFrame
 
   /**
    * A software engineer, somewhere, needs to have his abstraction
-   * taken away. In some countries they jail people for writing the
-   * sort of crappy api that would require a four line helper function
-   * to set the command key for a menu item.
+   * taken away. In some countries they jail or beat people for writing
+   * the sort of API that would require a five line helper function
+   * just to set the command key for a menu item.
    */
   static public JMenuItem newJMenuItem(String title,
                                        int what, boolean shift) {
