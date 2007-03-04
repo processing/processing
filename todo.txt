@@ -21,6 +21,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=492
 X change constructors for Capture, also framerate to frameRate
 _   need to update reference
 
+_ the first time someone hides a tab, put up a msg explaining what it does
+
 _ archive sketch shouldn't include applet or application dirs
 
 _ add to mac reference for present mode
