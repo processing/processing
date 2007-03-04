@@ -26,6 +26,7 @@ X jre 1.5.0_10 is still default at java.com.. blech
 X   http://dev.processing.org/bugs/show_bug.cgi?id=513
 X constant CENTER_RADIUS will be changed to just RADIUS
 X   CENTER_RADIUS is being deprecated, not removed
+_   remove CENTER_RADIUS from any p5 code
 X splitTokens() added
 _   need to add reference for splitTokens
 _   need to edit reference for split (regexp?) 
