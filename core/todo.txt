@@ -24,6 +24,12 @@ X   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
 X   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
 X jre 1.5.0_10 is still default at java.com.. blech
 X   http://dev.processing.org/bugs/show_bug.cgi?id=513
+X constant CENTER_RADIUS will be changed to just RADIUS
+X   CENTER_RADIUS is being deprecated, not removed
+X splitTokens() added
+_   need to add reference for splitTokens
+_   need to edit reference for split (regexp?) 
+_   should we mention String.split?
 X ironed out more of the preproc parseXxxx() functions
 _   update the reference to cover these decisions
 _   also add notes about parseInt/Float(blah, otherwise)
