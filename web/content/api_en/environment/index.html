@@ -294,8 +294,7 @@ rect(30, 20, 50, 50);
       called circles(). The circles() function is not a part of the Processing 
       language, but was written for this example. The code in draw() only runs 
       once because noLoop() is called in setup().</p>
-    <pre>void setup()
-{
+    <pre>void setup() {
   size(200, 200);
   noStroke();
   background(255);
@@ -304,8 +303,7 @@ rect(30, 20, 50, 50);
   noLoop();
 }
 
-void draw()
-{
+void draw() {
   circles(40, 80);
   circles(90, 70);
 }
@@ -315,31 +313,28 @@ void circles(int x, int y) {
   ellipse(x+20, y+20, 60, 60);
 }</pre>
     <p>This example draws rectangles that follow the mouse position (stored in 
-      the system variables mouseX and mouseY). The <strong>draw()</strong> 
+      the system variables mouseX and mouseY). The <b>draw()</b> 
       block runs forever until the program is stopped, thus creating the 
       potential for motion and interaction.</p>
-    <pre>void setup()
-{
+    <pre>void setup() {
   size(200, 200);
   rectMode(CENTER);
   noStroke();
   fill(0, 102, 153, 204);
 }
-void draw()
-{
+
+void draw() {
   background(255);
   rect(width-mouseX, height-mouseY, 50, 50);
   rect(mouseX, mouseY, 50, 50);
 }
 </pre>
     <h6>Java</h6>
-    <p>This mode is the most flexible, allowing complete Java programs to be written 
-      from inside the Processing Environment. Writing in Java Mode removes the 
-      limitations of the Processing Libraries and gives access to the full Java 
-      programming language.</p>
+    <p>This mode is the most flexible, allowing complete Java programs to be written from inside the Processing Environment (as long as they're still subclasses of PApplet). This mode is for advanced users only and is not really recommended. Using this mode means that any additional tabs will no longer be inner classes, meaning that you'll have to do extra work to make them communicate properly with the host PApplet. It is not necessary to use this mode just to get features of the Java language. </p>
+
     <pre>public class MyDemo extends PApplet {
-  void setup()
-  {
+
+  void setup() {
     size(200, 200);
 
     rectMode(CENTER);
@@ -347,8 +342,7 @@ void draw()
     fill(0, 102, 153, 204);
   }
 
-  void draw()
-  {
+  void draw() {
     background(255);
     rect(width-mouseX, height-mouseY, 50, 50);
     rect(mouseX, mouseY, 50, 50);

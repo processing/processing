@@ -66,6 +66,7 @@ get(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
 <related>
 set()
 pixels[]
+color
 </related>
 
 <availability>1.0</availability>
