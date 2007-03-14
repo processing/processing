@@ -2592,10 +2592,12 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
+  /*
   static public void print(double what) {
     System.out.print(what);
     System.out.flush();
   }
+  */
 
   static public void print(String what) {
     System.out.print(what);
@@ -2606,8 +2608,11 @@ public class PApplet extends Applet
     if (what == null) {
       // special case since this does fuggly things on > 1.1
       System.out.print("null");
-
     } else {
+      System.out.println(what.toString());
+    }
+
+    /*
       String name = what.getClass().getName();
       if (name.charAt(0) == '[') {
         switch (name.charAt(1)) {
@@ -2681,7 +2686,7 @@ public class PApplet extends Applet
       } else {
         System.out.print(what); //.toString());
       }
-    }
+    */
   }
 
   //
@@ -2712,9 +2717,11 @@ public class PApplet extends Applet
     print(what); System.out.println();
   }
 
+  /*
   static public void println(double what) {
     print(what); System.out.println();
   }
+  */
 
   static public void println(String what) {
     print(what); System.out.println();
@@ -2739,57 +2746,63 @@ public class PApplet extends Applet
           // print a 1D array of objects as individual elements
           Object poo[] = (Object[]) what;
           for (int i = 0; i < poo.length; i++) {
-            System.out.println(poo[i]);
+            if (poo[i] instanceof String) {
+              System.out.println("[" + i + "] \"" + poo[i] + "\"");
+            } else {
+              System.out.println("[" + i + "] " + poo[i]);
+            }
           }
           break;
 
         case 'Z':  // boolean
           boolean zz[] = (boolean[]) what;
           for (int i = 0; i < zz.length; i++) {
-            System.out.println(zz[i]);
+            System.out.println("[" + i + "] " + zz[i]);
           }
           break;
 
         case 'B':  // byte
           byte bb[] = (byte[]) what;
           for (int i = 0; i < bb.length; i++) {
-            System.out.println(bb[i]);
+            System.out.println("[" + i + "] " + bb[i]);
           }
           break;
 
         case 'C':  // char
           char cc[] = (char[]) what;
           for (int i = 0; i < cc.length; i++) {
-            System.out.println(cc[i]);
+            System.out.println("[" + i + "] '" + cc[i] + "'");
           }
           break;
 
         case 'I':  // int
           int ii[] = (int[]) what;
           for (int i = 0; i < ii.length; i++) {
-            System.out.println(ii[i]);
+            System.out.println("[" + i + "] " + ii[i]);
           }
           break;
 
         case 'F':  // float
           float ff[] = (float[]) what;
           for (int i = 0; i < ff.length; i++) {
-            System.out.println(ff[i]);
+            System.out.println("[" + i + "] " + ff[i]);
           }
           break;
 
+          /*
         case 'D':  // double
           double dd[] = (double[]) what;
           for (int i = 0; i < dd.length; i++) {
-            System.out.println(dd[i]);
+            System.out.println("[" + i + "] " + dd[i]);
           }
           break;
+          */
 
         default:
           System.out.println(what);
         }
-      } else {
-        System.out.println(what); //.toString());
+      } else {  // not an array
+        System.out.println(what);
       }
     }
   }
@@ -2927,41 +2940,41 @@ public class PApplet extends Applet
   }
 
 
-  public final float sin(float angle) {
+  static public final float sin(float angle) {
     //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
-  public final float cos(float angle) {
+  static public final float cos(float angle) {
     //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
-  public final float tan(float angle) {
+  static public final float tan(float angle) {
     //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 
 
-  public final float asin(float value) {
+  static public final float asin(float value) {
     //return ((g != null) && (g.angleMode == DEGREES)) ?
     //((float)Math.asin(value) * RAD_TO_DEG) : (float)Math.asin(value);
     return (float)Math.asin(value);
   }
 
-  public final float acos(float value) {
+  static public final float acos(float value) {
     //return ((g != null) && (g.angleMode == DEGREES)) ?
     //((float)Math.acos(value) * RAD_TO_DEG) : (float)Math.acos(value);
     return (float)Math.acos(value);
   }
 
-  public final float atan(float value) {
+  static public final float atan(float value) {
     //return ((g != null) && (g.angleMode == DEGREES)) ?
     // ((float)Math.atan(value) * RAD_TO_DEG) : (float)Math.atan(value);
     return (float)Math.atan(value);
   }
 
-  public final float atan2(float a, float b) {
+  static public final float atan2(float a, float b) {
     //return ((g != null) && (g.angleMode == DEGREES)) ?
     //((float)Math.atan2(a, b) * RAD_TO_DEG) : (float)Math.atan2(a, b);
     return (float)Math.atan2(a, b);

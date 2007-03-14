@@ -36,13 +36,54 @@ _   update the reference to cover these decisions
 _   also add notes about parseInt/Float(blah, otherwise)
 X deal with targa upside-down and non-rle encoding for tga images
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1171576234
+X change println(array) to be useful 
+_   document using join() for old method
+X   remove print(array) since it's silly?
+[0] "potato"
+[1] "tomato"
+[2] "apple" 
 
-_ split() inconsistency (emailed casey, will discuss later)
-_   make split(String, String) behave like String.split(String)
-_   and make current split(String) into splitTokens(String)
+_ updatePixels ref is wrong
+_   has x/y/w/h version
+_   the reference is also cut off
+
+_ copy() should automatically call updatePixels()
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
+
+_ rect() after strokeWeight(1) gives wrong coords
+_   http://dev.processing.org/bugs/show_bug.cgi?id=535
+
+X split() inconsistency (emailed casey, will discuss later)
+X   make split(String, String) behave like String.split(String)
+X   and make current split(String) into splitTokens(String)
+_   add splitTokens() documentation
+_   document new version of split() and regexp
+
+_ text(char c) with char 0 and undefined should print nothing
+_   perhaps also DEL or other nonprintables?
+_   book example 25-03
+
+_ disable key repeat? http://www.cokeandcode.com/node/9
+KeyEvent nextPress = (KeyEvent) Toolkit.getDefaultToolkit().
+                                    getSystemEventQueue().
+                                    peekEvent(KeyEvent.KEY_PRESSED);
+if ((nextPress == null) || 
+    (nextPress.getWhen() != e.getWhen()) || 
+    (nextPress.getKeyCode() != e.getKeyCode())) {
+	keys[e.getKeyCode()] = false;
+}  	
+
+_ textAlign(CENTER) with P3D and OPENGL produces messy result
+_   probably rounding error with the images
+_   http://dev.processing.org/bugs/show_bug.cgi?id=475
 
 _ set() doesn't bounds check
 _   http://dev.processing.org/bugs/show_bug.cgi?id=522
+
+_ add to open() reference problems with mac
+_   need to use the 'open' command on osx
+_   or need to do this by hand
+_   prolly better to do it by default, since on windows we use cmd?
 
 should be fixed, but needs to be tested
 _ saveFrame() produces a black background because bg not set correctly:
@@ -59,6 +100,21 @@ _   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+
+createGraphics() mess
+_ background() problems with new renderers
+_   P3D from createGraphics needs to be marked RGB not ARGB
+_   http://dev.processing.org/bugs/show_bug.cgi?id=530
+_ set modified to true on endDraw() so that image updates properly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=526
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
+_ problems with depth buffer and createGraphics with P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=482
+_ ARGB problems with createGraphics
+_   http://dev.processing.org/bugs/show_bug.cgi?id=160
+_   http://dev.processing.org/bugs/show_bug.cgi?id=428
+_ fill not working with P3D objects
+_   http://dev.processing.org/bugs/show_bug.cgi?id=527
 
 X begin/endPixels.. change has been made
 _   on PImage, sets a flag that marks it to be updated on next render
@@ -168,10 +224,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-_ textAlign(CENTER) with P3D and OPENGL produces messy result
-_   probably rounding error with the images
-_   http://dev.processing.org/bugs/show_bug.cgi?id=475
-
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
 _ make version of loadBytes that checks length of the stream first
@@ -185,12 +237,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=486
 
 _ Use getContextClassLoader() instead of Class.forName()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=514
-
-_ problems with depth buffer and createGraphics with P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=482
-_ ARGB problems with createGraphics
-_   http://dev.processing.org/bugs/show_bug.cgi?id=160
-_   http://dev.processing.org/bugs/show_bug.cgi?id=428
 
 _ hint(DISABLE_DEPTH_TEST) not behaving consistently
 _   http://dev.processing.org/bugs/show_bug.cgi?id=483
