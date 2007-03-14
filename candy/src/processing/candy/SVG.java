@@ -79,11 +79,11 @@ import processing.xml.*;
  * import processing.xml.*;
  *
  * SVG moo;
- * void setup(){
+ * void setup() {
  *   size(400,400);
  *   moo = new SVG("moo.svg",this);
  * }
- * void draw(){
+ * void draw() {
  *   moo.draw();
  * }
  * </PRE>
@@ -158,8 +158,28 @@ public class SVG {
             throw new RuntimeException("root is not <svg>, it's <" + svg.getName() + ">");
         }
 
-        width = parseUnitSize(svg.getStringAttribute("width"));
-        height = parseUnitSize(svg.getStringAttribute("height"));
+        // not proper parsing of the viewBox, but will cover us for cases where
+        // the width and height of the object is not specified
+        String viewBoxStr = svg.getStringAttribute("viewBox");
+        if (viewBoxStr != null) {
+            int[] viewBox = PApplet.parseInt(PApplet.splitTokens(viewBoxStr));
+            width = viewBox[2];
+            height = viewBox[3];
+        }
+
+        // TODO if viewbox is not same as width/height, then use it to scale
+        // the original objects. for now, viewbox only used when width/height
+        // are empty values (which by the spec means w/h of "100%"
+        String unitWidth = svg.getStringAttribute("width");
+        String unitHeight = svg.getStringAttribute("height");
+        if (unitWidth != null) {
+            width = parseUnitSize(unitWidth);
+            height = parseUnitSize(unitHeight);
+        } else {
+            if ((width == 0) || (height == 0)) {
+                throw new RuntimeException("width/height not specified");
+            }
+        }
 
         /*
         PApplet.println("document has " + document.getChildCount() + " children");
@@ -188,7 +208,7 @@ public class SVG {
         */
 
         //parseChildren(document);
-        root = new Group(svg);
+        root = new Group(null, svg);
 
         /*
         XMLElement graphics = null;
@@ -283,9 +303,8 @@ public class SVG {
         }
 
         if (obj != null) {
-            VectorObject vobj = (VectorObject) obj;
-            if (vobj.fillGradient != null) {
-                return vobj.calcGradientPaint(vobj.fillGradient, cx, cy, r);
+            if (obj.fillGradient != null) {
+                return obj.calcGradientPaint(obj.fillGradient, cx, cy, r);
             }
         }
         throw new RuntimeException("No gradient found for shape " + name);
@@ -300,9 +319,8 @@ public class SVG {
         }
 
         if (obj != null) {
-            VectorObject vobj = (VectorObject) obj;
-            if (vobj.fillGradient != null) {
-                return vobj.calcGradientPaint(vobj.fillGradient, x1, y1, x2, y2);
+            if (obj.fillGradient != null) {
+                return obj.calcGradientPaint(obj.fillGradient, x1, y1, x2, y2);
             }
         }
         throw new RuntimeException("No gradient found for shape " + name);
@@ -360,7 +378,9 @@ public class SVG {
      * Temporary hack for gradient handling. This is not supported
      * and will be removed from future releases.
      */
+    /*
     public void drawStyles() {
+        root.drawStyles();
         //PApplet.println(root);
 
         if (root instanceof VectorObject) {
@@ -369,6 +389,7 @@ public class SVG {
             PApplet.println("Only use drawStyles() on an object, not a group.");
         }
     }
+    */
 
 
     public void draw() {
@@ -501,7 +522,67 @@ public class SVG {
         // set to false if the object is hidden in the layers palette
         boolean display;
 
-        public BaseObject(XMLElement properties) {
+        boolean stroke;
+        int strokeColor;
+        float strokeWeight; // default is 1
+        Gradient strokeGradient;
+        Paint strokeGradientPaint;
+        String strokeName;  // id of another object, gradients only?
+
+        boolean fill;
+        int fillColor;
+        Gradient fillGradient;
+        Paint fillGradientPaint;
+        String fillName;  // id of another object
+
+        boolean hasTransform;
+        float[] transformation;
+
+        float opacity;
+
+        
+        public BaseObject(BaseObject parent, XMLElement properties) {
+            
+            if (parent == null) { 
+                // set values to their defaults according to the SVG spec
+                stroke = false;
+                strokeColor = 0xff000000;
+                strokeWeight = 1;
+                strokeGradient = null;
+                strokeGradientPaint = null;
+                strokeName = null;
+                
+                fill = true;
+                fillColor = 0xff000000;
+                fillGradient = null;
+                fillGradientPaint = null;
+                fillName = null;
+                
+                //hasTransform = false;
+                //transformation = null; //new float[] { 1, 0, 0, 1, 0, 0 };
+                
+                opacity = 1;
+                
+            } else {
+                stroke = parent.stroke;
+                strokeColor = parent.strokeColor;
+                strokeWeight = parent.strokeWeight;
+                strokeGradient = parent.strokeGradient;
+                strokeGradientPaint = parent.strokeGradientPaint;
+                strokeName = parent.strokeName;
+                
+                fill = parent.fill;
+                fillColor = parent.fillColor;
+                fillGradient = parent.fillGradient;
+                fillGradientPaint = parent.fillGradientPaint;
+                fillName = parent.fillName;
+                
+                //hasTransform = parent.hasTransform;
+                //transformation = parent.transformation;
+                
+                opacity = parent.opacity;
+            }
+            
             element = properties;
 
             id = properties.getStringAttribute("id");
@@ -512,150 +593,131 @@ public class SVG {
 
             String displayStr = properties.getStringAttribute("display", "inline");
             display = !displayStr.equals("none");
-        }
-
-        protected abstract void drawShape();
-
-        protected void draw() {
-            drawShape();
-        }
-    }
-
-
-    //Default vector graphics class from which all others will polymorph
-    protected abstract class VectorObject extends BaseObject {
-
-        boolean stroke;
-        int strokeColor; // = transValue;
-        float strokeWeight; // default is 1
-        Gradient strokeGradient;
-        Paint strokeGradientPaint;
-        String strokeName;  // id of another object, gradients only?
-
-        boolean fill;
-        int fillColor; // = transValue;
-        Gradient fillGradient;
-        Paint fillGradientPaint;
-        String fillName;  // id of another object
-
-        boolean hasTransform; //= false;
-        float[] transformation; //= null;
-
-        float opacity;
-
-        //Should we keep these here even when we don't have transforms?
-        float rotation = 0;
-        float translateX = 0;
-        float translateY = 0;
-
-
-        public VectorObject(XMLElement properties) {
-            super(properties);
 
             getColors(properties);
             getTransformation(properties);
         }
 
-
-        private void getTransformation(XMLElement properties){
-            String transform = "";
-            if (properties.hasAttribute("transform")){
+        
+        private void getTransformation(XMLElement properties) {
+            String transform = properties.getStringAttribute("transform");
+            if (transform != null) {
                 this.hasTransform = true;
-                transform = properties.getStringAttribute("transform");
                 transform = transform.substring(7, transform.length() - 2);
                 String tf[] = PApplet.splitTokens(transform);
-
+                this.transformation = PApplet.parseFloat(tf);
+                /*
                 this.transformation = new float[tf.length];
-                for (int i = 0; i < transformation.length; i++)
+                for (int i = 0; i < transformation.length; i++) {
                     this.transformation[i] = Float.valueOf(tf[i]).floatValue();
-            }
-            //Hacky code to get rotation working
-            //Done through the powers of trial and error
-            if (this.hasTransform){
+                }
+                
+                // Hacky code to get rotation working
+                // Done through the powers of trial and error [mchang]
                 float t[] = this.transformation;
                 if (t[0] < 0 && t[1] < 0 && t[2] > 0 && t[3] < 0)
-                    this.rotation = -parent.acos(this.transformation[3]);
+                    this.rotation = -PApplet.acos(this.transformation[3]);
                 if (t[0] > 0 && t[1] < 0 && t[2] > 0 && t[3] > 0)
-                    this.rotation = parent.asin(this.transformation[1]);
+                    this.rotation = PApplet.asin(this.transformation[1]);
                 if (t[0] < 0 && t[1] > 0 && t[2] < 0 && t[3] < 0)
-                    this.rotation = parent.acos(this.transformation[0]);
+                    this.rotation = PApplet.acos(this.transformation[0]);
                 if (t[0] > 0 && t[1] > 0 && t[2] < 0 && t[3] > 0)
-                    this.rotation = parent.acos(this.transformation[0]);
+                    this.rotation = PApplet.acos(this.transformation[0]);
                 this.translateX = this.transformation[4];
                 this.translateY = this.transformation[5];
+                */
             }
         }
 
 
         /*
-        private int colorFromString(String color, String opacity){
-            if (!color.equals("none")){
+        private int colorFromString(String color, String opacity) {
+            if (!color.equals("none")) {
                 color = color.substring(1, 7);
                 color = opacity + color;
                 return PApplet.unhex(color);
-            }else{
+            } else {
                 return transValue;
             }
         }
         */
 
 
-        //We'll need color information like stroke, fill, opacity, stroke-weight
-        protected void getColors(XMLElement properties){
+        protected void getColors(XMLElement properties) {
 
-            // opacity for postscript-derived things like svg affects both stroke and fill
-            //if (properties.hasAttribute("opacity")) {
-            opacity = properties.getFloatAttribute("opacity", 1);
-            //}
+            if (properties.hasAttribute("opacity")) {
+                opacity = properties.getFloatAttribute("opacity");
+            }
             int opacityMask = ((int) (opacity * 255)) << 24;
 
-            String strokeText = properties.getStringAttribute("stroke", "none");
-            if (strokeText.equals("none")) {
-
-            } else if (strokeText.startsWith("#")) {
-                stroke = true;
-                strokeColor = opacityMask |
+            if (properties.hasAttribute("stroke")) {
+                String strokeText = properties.getStringAttribute("stroke");                
+                if (strokeText.equals("none")) {
+                    stroke = false;
+                } else if (strokeText.startsWith("#")) {
+                    stroke = true;
+                    strokeColor = opacityMask | 
                     (Integer.parseInt(strokeText.substring(1), 16)) & 0xFFFFFF;
-            } else if (strokeText.startsWith("url(#")) {
-                strokeName = strokeText.substring(5, strokeText.length() - 1);
-                Object strokeObject = table.get(strokeName);
-                if (strokeObject instanceof Gradient) {
-                    strokeGradient = (Gradient) strokeObject;
-                    strokeGradientPaint = calcGradientPaint(strokeGradient); //, opacity);
-                } else {
-                    System.err.println("url " + strokeName + " refers to unexpected data");
+                } else if (strokeText.startsWith("rgb")) {
+                    stroke = true;
+                    strokeColor = opacityMask | parseRGB(strokeText);
+                } else if (strokeText.startsWith("url(#")) {
+                    strokeName = strokeText.substring(5, strokeText.length() - 1);
+                    Object strokeObject = table.get(strokeName);
+                    if (strokeObject instanceof Gradient) {
+                        strokeGradient = (Gradient) strokeObject;
+                        strokeGradientPaint = calcGradientPaint(strokeGradient); //, opacity);
+                    } else {
+                        System.err.println("url " + strokeName + " refers to unexpected data");
+                    }
                 }
             }
-            // strokeWeight defaults to 1, assuming that a stroke is present
-            strokeWeight = properties.getFloatAttribute("stroke-width", 1);
+            
+            if (properties.hasAttribute("stroke-width")) {
+                strokeWeight = properties.getFloatAttribute("stroke-width");
+            }
 
             // fill defaults to black (though stroke defaults to "none")
             // http://www.w3.org/TR/SVG/painting.html#FillProperties
-            String fillText = properties.getStringAttribute("fill", "#000000");
-            if (fillText.equals("none")) {
-
-            } else if (fillText.startsWith("#")) {
-                fill = true;
-                fillColor = opacityMask |
-                    (Integer.parseInt(fillText.substring(1), 16)) & 0xFFFFFF;
-                //System.out.println("hex for fill is " + PApplet.hex(fillColor));
-            } else if (fillText.startsWith("url(#")) {
-                fillName = fillText.substring(5, fillText.length() - 1);
-                //PApplet.println("looking for " + fillName);
-                Object fillObject = table.get(fillName);
-                //PApplet.println("found " + fillObject);
-                if (fillObject instanceof Gradient) {
+            if (properties.hasAttribute("fill")) {
+                String fillText = properties.getStringAttribute("fill");
+                if (fillText.equals("none")) {
+                    fill = false;
+                } else if (fillText.startsWith("#")) {
                     fill = true;
-                    fillGradient = (Gradient) fillObject;
-                    fillGradientPaint = calcGradientPaint(fillGradient); //, opacity);
-                    //PApplet.println("got filla " + fillObject);
-                } else {
-                    System.err.println("url " + fillName + " refers to unexpected data");
+                    fillColor = opacityMask |
+                    (Integer.parseInt(fillText.substring(1), 16)) & 0xFFFFFF;
+                    //System.out.println("hex for fill is " + PApplet.hex(fillColor));
+                } else if (fillText.startsWith("rgb")) {
+                    fill = true;
+                    fillColor = opacityMask | parseRGB(fillText);
+                } else if (fillText.startsWith("url(#")) {
+                    fillName = fillText.substring(5, fillText.length() - 1);
+                    //PApplet.println("looking for " + fillName);
+                    Object fillObject = table.get(fillName);
+                    //PApplet.println("found " + fillObject);
+                    if (fillObject instanceof Gradient) {
+                        fill = true;
+                        fillGradient = (Gradient) fillObject;
+                        fillGradientPaint = calcGradientPaint(fillGradient); //, opacity);
+                        //PApplet.println("got filla " + fillObject);
+                    } else {
+                        System.err.println("url " + fillName + " refers to unexpected data");
+                    }
                 }
             }
         }
 
 
+        int parseRGB(String what) {
+            int leftParen = what.indexOf('(') + 1;
+            int rightParen = what.indexOf(')');
+            String sub = what.substring(leftParen, rightParen);
+            int[] values = PApplet.parseInt(PApplet.splitTokens(sub, ", "));
+            return (values[0] << 16) | (values[1] << 8) | (values[2]);
+        }
+
+            
         protected Paint calcGradientPaint(Gradient gradient) {
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
@@ -700,22 +762,24 @@ public class SVG {
         protected abstract void drawShape();
 
 
-        protected void draw(){
+        protected void draw() {
             if (!display) return;  // don't display if set invisible
 
             if (!ignoreStyles) {
                 drawStyles();
             }
 
-            if (hasTransform){
+            if (hasTransform) {
                 parent.pushMatrix();
-                parent.translate(translateX, translateY);
-                parent.rotate(rotation);
+                parent.applyMatrix(transformation[0], transformation[1], transformation[2],
+                                   transformation[3], transformation[4], transformation[5]);
+                //parent.translate(translateX, translateY);
+                //parent.rotate(rotation);
             }
 
             drawShape();
 
-            if (hasTransform){
+            if (hasTransform) {
                 parent.popMatrix();
             }
 
@@ -781,50 +845,50 @@ public class SVG {
         int objectCount;
 
 
-        public Group(XMLElement graphics) {
-            super(graphics);
+        public Group(BaseObject parent, XMLElement graphics) {
+            super(parent, graphics);
 
             XMLElement elements[] = graphics.getChildren();
             objects = new BaseObject[elements.length];
 
-            for (int i = 0; i < elements.length; i++){
+            for (int i = 0; i < elements.length; i++) {
                 String name = elements[i].getName(); //getElement();
                 XMLElement elem = elements[i];
 
                 if (name.equals("g")) {
-                    objects[objectCount++] = new Group(elem);
+                    objects[objectCount++] = new Group(this, elem);
 
                 } else if (name.equals("defs")) {
                     // generally this will contain gradient info, so may
                     // as well just throw it into a group element for parsing
-                    objects[objectCount++] = new Group(elem);
+                    objects[objectCount++] = new Group(this, elem);
 
                 } else if (name.equals("line")) {
-                    objects[objectCount++] = new Line(elem);
+                    objects[objectCount++] = new Line(this, elem);
 
                 } else if (name.equals("circle")) {
-                    objects[objectCount++] = new Circle(elem);
+                    objects[objectCount++] = new Circle(this, elem);
 
                 } else if (name.equals("ellipse")) {
-                    objects[objectCount++] = new Ellipse(elem);
+                    objects[objectCount++] = new Ellipse(this, elem);
 
                 } else if (name.equals("rect")) {
-                    objects[objectCount++] = new Rect(elem);
+                    objects[objectCount++] = new Rect(this, elem);
 
                 } else if (name.equals("polygon")) {
-                    objects[objectCount++] = new Poly(elem, true);
+                    objects[objectCount++] = new Poly(this, elem, true);
 
                 } else if (name.equals("polyline")) {
-                    objects[objectCount++] = new Poly(elem, false);
+                    objects[objectCount++] = new Poly(this, elem, false);
 
                 } else if (name.equals("path")) {
-                    objects[objectCount++] = new Path(elem);
+                    objects[objectCount++] = new Path(this, elem);
 
                 } else if (name.equals("radialGradient")) {
-                    objects[objectCount++] = new RadialGradient(elem);
+                    objects[objectCount++] = new RadialGradient(this, elem);
 
                 } else if (name.equals("linearGradient")) {
-                    objects[objectCount++] = new LinearGradient(elem);
+                    objects[objectCount++] = new LinearGradient(this, elem);
 
                 } else if (name.equals("text")) {
                     PApplet.println("Text is not currently handled, " +
@@ -837,7 +901,7 @@ public class SVG {
                     PApplet.println("Masks are not supported.");
 
                 } else {
-                    PApplet.println("not handled " + name);
+                    System.err.println("Ignoring SVG tag " + name);
                 }
             }
         }
@@ -863,15 +927,15 @@ public class SVG {
         int[] color;
         int count;
 
-        public Gradient(XMLElement properties) {
-            super(properties);
+        public Gradient(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
 
             XMLElement elements[] = properties.getChildren();
             offset = new float[elements.length];
             color = new int[elements.length];
 
             // <stop  offset="0" style="stop-color:#967348"/>
-            for (int i = 0; i < elements.length; i++){
+            for (int i = 0; i < elements.length; i++) {
                 XMLElement elem = elements[i];
                 String name = elem.getName();
                 if (name.equals("stop")) {
@@ -919,8 +983,8 @@ public class SVG {
     private class LinearGradient extends Gradient {
         float x1, y1, x2, y2;
 
-        public LinearGradient(XMLElement properties) {
-            super(properties);
+        public LinearGradient(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
 
             this.x1 = properties.getFloatAttribute("x1");
             this.y1 = properties.getFloatAttribute("y1");
@@ -942,7 +1006,7 @@ public class SVG {
             }
         }
 
-        protected void drawShape(){
+        protected void drawShape() {
         }
     }
 
@@ -964,8 +1028,8 @@ public class SVG {
     private class RadialGradient extends Gradient {
         float cx, cy, r;
 
-        public RadialGradient(XMLElement properties) {
-            super(properties);
+        public RadialGradient(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
 
             this.cx = properties.getFloatAttribute("cx");
             this.cy = properties.getFloatAttribute("cy");
@@ -992,19 +1056,19 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Line extends VectorObject {
+    private class Line extends BaseObject {
 
         float x1, y1, x2, y2;
 
-        public Line(XMLElement properties){
-            super(properties);
+        public Line(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
             this.x1 = properties.getFloatAttribute("x1");
             this.y1 = properties.getFloatAttribute("y1");
             this.x2 = properties.getFloatAttribute("x2");
             this.y2 = properties.getFloatAttribute("y2");
         }
 
-        protected void drawShape(){
+        protected void drawShape() {
             parent.line(x1, y1, x2, y2);
         }
     }
@@ -1013,18 +1077,18 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Circle extends VectorObject {
+    private class Circle extends BaseObject {
 
         float x, y, radius;
 
-        public Circle(XMLElement properties){
-            super(properties);
+        public Circle(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
             this.x = properties.getFloatAttribute("cx");
             this.y = properties.getFloatAttribute("cy");
             this.radius = properties.getFloatAttribute("r") * 2;
         }
 
-        protected void drawShape(){
+        protected void drawShape() {
             parent.ellipseMode(PConstants.CENTER);
             parent.ellipse(x, y, radius, radius);
         }
@@ -1034,20 +1098,20 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Ellipse extends VectorObject{
+    private class Ellipse extends BaseObject{
 
         float x, y, rx, ry;
 
 
-        public Ellipse(XMLElement properties){
-            super(properties);
+        public Ellipse(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
             this.x = properties.getFloatAttribute("cx");
             this.y = properties.getFloatAttribute("cy");
             this.rx = properties.getFloatAttribute("rx") * 2;
             this.ry = properties.getFloatAttribute("ry") * 2;
         }
 
-        protected void drawShape(){
+        protected void drawShape() {
             parent.ellipseMode(PConstants.CENTER);
             parent.ellipse(x, y, rx, ry);
         }
@@ -1057,19 +1121,19 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Rect extends VectorObject{
+    private class Rect extends BaseObject{
 
         float x, y, w, h;
 
-        public Rect(XMLElement properties){
-            super(properties);
+        public Rect(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
             this.x = properties.getFloatAttribute("x");
             this.y = properties.getFloatAttribute("y");
             this.w = properties.getFloatAttribute("width");
             this.h = properties.getFloatAttribute("height");
         }
 
-        protected void drawShape(){
+        protected void drawShape() {
             parent.rectMode(PConstants.CORNER);
             parent.rect(x, y, w, h);
         }
@@ -1079,14 +1143,14 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Poly extends VectorObject {
+    private class Poly extends BaseObject {
 
         float points[][] = null;
         /** true if polygon, false if polyline */
         boolean closed;
 
-        public Poly(XMLElement properties, boolean closed){
-            super(properties);
+        public Poly(BaseObject parent, XMLElement properties, boolean closed) {
+            super(parent, properties);
             String pointsBuffer[] = null;
             this.closed = closed;
 
@@ -1095,18 +1159,18 @@ public class SVG {
             }
 
             points = new float[pointsBuffer.length][2];
-            for (int i = 0; i < points.length; i++){
+            for (int i = 0; i < points.length; i++) {
                 String pb[] = PApplet.split(pointsBuffer[i], ',');
                 points[i][0] = Float.valueOf(pb[0]).floatValue();
                 points[i][1] = Float.valueOf(pb[1]).floatValue();
             }
         }
 
-        protected void drawShape(){
+        protected void drawShape() {
             if (points != null)
-                if (points.length > 0){
+                if (points.length > 0) {
                     parent.beginShape();
-                    for (int i = 0; i < points.length; i++){
+                    for (int i = 0; i < points.length; i++) {
                         parent.vertex(points[i][0], points[i][1]);
                     }
                     parent.endShape(closed ? PConstants.CLOSE : PConstants.OPEN);
@@ -1118,7 +1182,7 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Path extends VectorObject {
+    private class Path extends BaseObject {
 
         //Vector points = new Vector();
         boolean closed = false;
@@ -1136,8 +1200,8 @@ public class SVG {
 
         //Hang on! This is going to be meaty.
         //Big and nasty constructor coming up....
-        public Path(XMLElement properties){
-            super(properties);
+        public Path(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
             String pathDataBuffer = "";
 
             if (!properties.hasAttribute("d"))
@@ -1148,7 +1212,7 @@ public class SVG {
 
             boolean lastSeparate = false;
 
-            for (int i = 0; i < pathDataBuffer.length(); i++){
+            for (int i = 0; i < pathDataBuffer.length(); i++) {
                 char c = pathDataBuffer.charAt(i);
                 boolean separate = false;
 
@@ -1197,7 +1261,7 @@ public class SVG {
             float cy = 0;
 
             int i = 0;
-            //for (int i = 0; i < pathDataKeys.length; i++){
+            //for (int i = 0; i < pathDataKeys.length; i++) {
             while (i < pathDataKeys.length) {
                 char c = pathDataKeys[i].charAt(0);
                 switch (c) {
@@ -1456,12 +1520,12 @@ public class SVG {
         }
 
 
-        protected void drawShape(){
+        protected void drawShape() {
             parent.beginShape();
             /*
             float start[] = (float[]) points.get(0);
             parent.vertex(start[0], start[1]);
-            for (int i = 1; i < points.size(); i += 3){
+            for (int i = 1; i < points.size(); i += 3) {
                 float a[] = (float[]) points.get(i);
                 float b[] = (float[]) points.get(i + 1);
                 float e[] = (float[]) points.get(i + 2);
