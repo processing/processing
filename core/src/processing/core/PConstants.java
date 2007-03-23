@@ -259,12 +259,15 @@ public interface PConstants {
   // the esoteric java KeyEvent api and of virtual keys
 
   // both key and keyCode will equal these values
-  static final int BACKSPACE = 8;
-  static final int TAB       = 9;
-  static final int ENTER     = 10;
-  static final int RETURN    = 13;
-  static final int ESC       = 27;
-  static final int DELETE    = 127;
+  // for 0125, these were changed to 'char' values, because they
+  // can be upgraded to ints automatically by Java, but having them
+  // as ints prevented split(blah, TAB) from working
+  static final char BACKSPACE = 8;
+  static final char TAB       = 9;
+  static final char ENTER     = 10;
+  static final char RETURN    = 13;
+  static final char ESC       = 27;
+  static final char DELETE    = 127;
 
   // i.e. if ((key == CODED) && (keyCode == UP))
   static final int CODED     = 0xffff;
