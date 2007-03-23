@@ -42,6 +42,11 @@ import javax.swing.undo.*;
 import processing.core.PApplet;
 
 
+// TODO change this to use the Java Preferences API
+// http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html
+// http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html
+
+
 /**
  * Storage class for user preferences and environment settings.
  * <P>
