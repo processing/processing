@@ -498,17 +498,26 @@ public class PImage implements PConstants, Cloneable {
         break;
 
       case GRAY:
-        // Converts RGB image data into grayscale using
-        // weighted RGB components, and keeps alpha channel intact.
-        // [toxi 040115]
-        for (int i = 0; i < pixels.length; i++) {
-          int col = pixels[i];
-          // luminance = 0.3*red + 0.59*green + 0.11*blue
-          // 0.30 * 256 =  77
-          // 0.59 * 256 = 151
-          // 0.11 * 256 =  28
-          int lum = (77*(col>>16&0xff) + 151*(col>>8&0xff) + 28*(col&0xff))>>8;
-          pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
+        if (format == ALPHA) {
+          // for an alpha image, convert it to an opaque grayscale
+          for (int i = 0; i < pixels.length; i++) {
+            int col = 255 - pixels[i];
+            pixels[i] = 0xff000000 | (col << 16) | (col << 8) | col;
+          }
+
+        } else {
+          // Converts RGB image data into grayscale using
+          // weighted RGB components, and keeps alpha channel intact.
+          // [toxi 040115]
+          for (int i = 0; i < pixels.length; i++) {
+            int col = pixels[i];
+            // luminance = 0.3*red + 0.59*green + 0.11*blue
+            // 0.30 * 256 =  77
+            // 0.59 * 256 = 151
+            // 0.11 * 256 =  28
+            int lum = (77*(col>>16&0xff) + 151*(col>>8&0xff) + 28*(col&0xff))>>8;
+            pixels[i] = (col & ALPHA_MASK) | lum<<16 | lum<<8 | lum;
+          }
         }
         break;
 
@@ -521,7 +530,7 @@ public class PImage implements PConstants, Cloneable {
 
       case POSTERIZE:
         throw new RuntimeException("Use filter(POSTERIZE, int levels) " +
-                                   "instead of filter(POSTERIZE)");
+        "instead of filter(POSTERIZE)");
 
       case RGB:
         for (int i = 0; i < pixels.length; i++) {
@@ -534,7 +543,7 @@ public class PImage implements PConstants, Cloneable {
         filter(THRESHOLD, 0.5f);
         break;
 
-      // [toxi20050728] added new filters
+        // [toxi20050728] added new filters
       case ERODE:
         dilate(true);
         break;
