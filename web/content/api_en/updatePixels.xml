@@ -16,7 +16,7 @@ PImage myImage = loadImage("topanga.jpg");
 image(myImage, 0, 0);
 
 loadPixels();
-for(int i=0; i&lt;halfImage; i++) {
+for (int i = 0; i < halfImage; i++) {
   pixels[i+halfImage] = pixels[i];
 }
 updatePixels();
@@ -31,42 +31,22 @@ PImage myImage = loadImage("towerFlip.jpg");
 image(myImage, 0, 0);
 
 loadPixels();
-for(int i=0; i&lt;halfImage; i++) {
+for (int i = 0; i < halfImage; i++) {
   pixels[i+halfImage] = pixels[i];
 }
-
 updatePixels(50, 0, 50, 100);
 </code>
 </example>
 
 <description>
-Updates the display window with the current data from <b>pixels[]</b>. It's possible to only update a portion of the window by specifying a smaller rectangle with the <b>x1</b>, <b>y1</b>, <b>width</b>, <b>height</b> parameters. The <b>imageMode()</b> function changes the way the parameters work. For example, <b>imageMode(CENTER)</b> will change <b>x</b> and <b>y</b> to define the center of the image. A call to <b>imageMode(CORNERS)</b> will change the <b>width</b> and <b>height</b> parameters to define the x and y coordinates of the opposite corner of the image.
+Updates the display window (or an image) when data in the <b>pixels[]</b> array has been modified. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b> unless there are changes.
+<br/><br/>
+Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
 </description>
 
 <syntax>
 updatePixels()
-updatePixels(<c>x1</c>, <c>y1</c>, <c>width</c>, <c>height</c>)
 </syntax>
-
-<parameter>
-<label>x1</label>
-<description>int: x-coordinate for the upper-left corner</description>
-</parameter>
-
-<parameter>
-<label>y1</label>
-<description>int: y-coordinate for the upper-right corner</description>
-</parameter>
-
-<parameter>
-<label>x2</label>
-<description>int: width or x-coordinate for the opposite corner depending on the current imageMode()</description>
-</parameter>
-
-<parameter>
-<label>y2</label>
-<description>int: height or y-cooordinate for the opposite corner depending on the current imageMode()</description>
-</parameter>
 
 <returns></returns>
 
