@@ -20,10 +20,41 @@ X preprocessor cannot handle L or l added to 'long' values
 X   http://dev.processing.org/bugs/show_bug.cgi?id=492
 X change constructors for Capture, also framerate to frameRate
 _   need to update reference
+X re-architect svg to properly inherit fill/stroke/etc from parents
+X   <g> object can specify fill/stroke for everyone below
+X   need to discern between having a fill specified and one not being present
+
+_ java.extension.dirs has the library/extn stuff
+_   can probably set this blank
+_ the jar from which a class file has been loaded
+_   getClass().getProtectionDomain().getCodeSource().getLocation().getFile() 
+
+_ don't allow for (blah; blah; blah) ;
+_   or if (blah blah blah) ;
+_   it's never useful. students can use { } if they want an empty block
+
+_ "one file added to sketch" should be more descriptive
+_   Added "blah.jpg" to the data folder of the sketch
+_ cmd-w doesn't close window of opened applet (running inside p5)
+_ ESC won't cancel rename
+_   rename location is awkward, do it on the tab?
+_ map() is not colored, neither is norm
+_ pdf examples are shot
+
+_ change pde files to use utf8
+_   1) if file contains binary data and
+_   2) its mod date is earlier than when p5 0125 was installed
+_   offer to convert it, or ignore
+_   then re-save the file to update the mod date
+_   ...or, when first running p5 0125, offer to update sketches
 
 _ the first time someone hides a tab, put up a msg explaining what it does
+_   "don't warn me about this anymore"
+_ add "don't warn me about this" for sketch renaming
+_   make sure renamed version doesn't exist already
 
 _ archive sketch shouldn't include applet or application dirs
+_   or should it? this was how projects were being uploaded for class...
 
 _ add to mac reference for present mode
 _   can make full screen work via Info.plist key
