@@ -43,9 +43,11 @@ X   remove print(array) since it's silly?
 [1] "tomato"
 [2] "apple" 
 
-_ updatePixels ref is wrong
-_   has x/y/w/h version
-_   the reference is also cut off
+0125p2
+X updatePixels ref is wrong
+X   has x/y/w/h version
+X   the reference is also cut off
+X make ENTER, TAB, etc all into char values (instead of int)
 
 _ copy() should automatically call updatePixels()
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
