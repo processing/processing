@@ -504,6 +504,7 @@ public class PImage implements PConstants, Cloneable {
             int col = 255 - pixels[i];
             pixels[i] = 0xff000000 | (col << 16) | (col << 8) | col;
           }
+          format = RGB;
 
         } else {
           // Converts RGB image data into grayscale using

@@ -237,9 +237,9 @@ public interface PConstants {
 
   // stroke modes
 
-  static final int SQUARE   = 1 << 0;
+  static final int SQUARE   = 1 << 0;  // called 'butt' in the svg spec
   static final int ROUND    = 1 << 1;
-  static final int PROJECT  = 1 << 2;
+  static final int PROJECT  = 1 << 2;  // called 'square' in the svg spec
   static final int MITER    = 1 << 3;
   static final int BEVEL    = 1 << 5;
 

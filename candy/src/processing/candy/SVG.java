@@ -126,6 +126,9 @@ import processing.xml.*;
  * <LI> Patterns
  * <LI> Embedded images
  * </UL>
+ * 
+ * For those interested, the SVG specification can be found
+ * <A HREF="http://www.w3.org/TR/SVG">here</A>.
  */
 public class SVG {
 
@@ -458,6 +461,8 @@ public class SVG {
         boolean stroke = parent.g.stroke;
         int strokeColor = parent.g.strokeColor;
         float strokeWeight = parent.g.strokeWeight;
+        int strokeCap = parent.g.strokeCap;
+        int strokeJoin= parent.g.strokeJoin;
 
         boolean fill = parent.g.fill;
         int fillColor = parent.g.fillColor;
@@ -469,6 +474,8 @@ public class SVG {
         parent.g.stroke = stroke;
         parent.g.strokeColor = strokeColor;
         parent.g.strokeWeight = strokeWeight;
+        parent.g.strokeCap = strokeCap;
+        parent.g.strokeJoin = strokeJoin;
 
         parent.g.fill = fill;
         parent.g.fillColor = fillColor;
@@ -525,6 +532,8 @@ public class SVG {
         boolean stroke;
         int strokeColor;
         float strokeWeight; // default is 1
+        int strokeCap;
+        int strokeJoin;
         Gradient strokeGradient;
         Paint strokeGradientPaint;
         String strokeName;  // id of another object, gradients only?
@@ -548,6 +557,8 @@ public class SVG {
                 stroke = false;
                 strokeColor = 0xff000000;
                 strokeWeight = 1;
+                strokeCap = PConstants.SQUARE;  // equivalent to BUTT in svg spec
+                strokeJoin = PConstants.MITER;
                 strokeGradient = null;
                 strokeGradientPaint = null;
                 strokeName = null;
@@ -567,6 +578,8 @@ public class SVG {
                 stroke = parent.stroke;
                 strokeColor = parent.strokeColor;
                 strokeWeight = parent.strokeWeight;
+                strokeCap = parent.strokeCap;
+                strokeJoin = parent.strokeJoin;
                 strokeGradient = parent.strokeGradient;
                 strokeGradientPaint = parent.strokeGradientPaint;
                 strokeName = parent.strokeName;
@@ -674,9 +687,43 @@ public class SVG {
             }
             
             if (properties.hasAttribute("stroke-width")) {
-                strokeWeight = properties.getFloatAttribute("stroke-width");
+                // if NaN (i.e. if it's 'inherit') then default back to the inherit setting
+                strokeWeight = properties.getFloatAttribute("stroke-width", strokeWeight);
             }
 
+            if (properties.hasAttribute("stroke-linejoin")) {
+                String linejoin = properties.getStringAttribute("stroke-linejoin");
+                if (linejoin.equals("inherit")) {
+                    // do nothing, will inherit automatically
+                    
+                } else if (linejoin.equals("miter")) {
+                    strokeJoin = PConstants.MITER;
+
+                } else if (linejoin.equals("round")) {
+                    strokeJoin = PConstants.ROUND;
+                
+                } else if (linejoin.equals("bevel")) {
+                    strokeJoin = PConstants.BEVEL;
+                }
+            }
+
+            if (properties.hasAttribute("stroke-linecap")) {
+                String linecap = properties.getStringAttribute("stroke-linecap");
+                if (linecap.equals("inherit")) {
+                    // do nothing, will inherit automatically
+                    
+                } else if (linecap.equals("butt")) {
+                    strokeCap = PConstants.SQUARE;
+
+                } else if (linecap.equals("round")) {
+                    strokeCap = PConstants.ROUND;
+                
+                } else if (linecap.equals("square")) {
+                    strokeCap = PConstants.PROJECT;
+                }
+            }
+
+            
             // fill defaults to black (though stroke defaults to "none")
             // http://www.w3.org/TR/SVG/painting.html#FillProperties
             if (properties.hasAttribute("fill")) {
@@ -804,6 +851,8 @@ public class SVG {
             if (stroke) {
                 parent.stroke(strokeColor);
                 parent.strokeWeight(strokeWeight);
+                parent.strokeCap(strokeCap);
+                parent.strokeJoin(strokeJoin);
             } else {
                 parent.noStroke();
             }
