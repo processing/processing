@@ -42,6 +42,7 @@ X   remove print(array) since it's silly?
 [0] "potato"
 [1] "tomato"
 [2] "apple" 
+X fix filter(GRAY) on an ALPHA image to produce a good RGB image
 
 0125p2
 X updatePixels ref is wrong
