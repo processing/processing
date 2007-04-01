@@ -41,7 +41,8 @@ $emailwelcome = 1;                                                    # Set to 1
 
 $mailprog = "/usr/lib/sendmail";                                      # Location of your sendmail program
 $smtp_server = "mail.processing.org";                                 # Address of your SMTP-Server
-$webmaster_email = q^admin@processing.org^;                           # Your email address. (eg: $webmaster_email = q^admin@host.com^;)
+#$webmaster_email = q^admin@processing.org^;                           # Your email address. (eg: $webmaster_email = q^admin@host.com^;)
+$webmaster_email = q^discourse@processing.org^;                           # Your email address. (eg: $webmaster_email = q^admin@host.com^;)
 $mailtype = 1;                                                        # Mail program to use: 0 = sendmail, 1 = SMTP, 2 = Net::SMTP
 
 

@@ -36,10 +36,9 @@ td {
 select {
 	font-size: 11px;
 	background-color : #fff; 
-	height: 15px; 
+	height: 18px; 
 	width: 200px; 
 	color: #663; 
-	border: 1px #06c solid
 }
 
 pre {
@@ -134,6 +133,34 @@ a:active {
 	vertical-align: top;
 	width: 560px;
 	padding-bottom: 40px;
+}
+
+
+.proffieldheader {
+	vertical-align: top;
+	width: 140px;
+	padding-right: 20px;
+	padding-bottom: 20px;
+}
+
+.proffield {
+	vertical-align: top;
+	width: 520px;
+	padding-bottom: 20px;
+}
+
+
+.subfieldheader {
+	vertical-align: top;
+	width: 140px;
+	padding-right: 20px;
+	padding-bottom: 10px;
+}
+
+.subfield {
+	vertical-align: top;
+	width: 360px;
+	padding-bottom: 10px;
 }
 
 #head {
