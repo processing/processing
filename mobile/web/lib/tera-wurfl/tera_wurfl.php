@@ -265,7 +265,7 @@ class tera_wurfl {
 				$image = IMAGE_DIR.$device['deviceID'].".gif";
 				// PHP evaluates from left to right, so "file_exists" will not get
 				// called if IMAGE_CHECKING is false
-				if(IMAGE_CHECKING && file_exists($image)){
+				if(IMAGE_CHECKING && file_exists(dirname(__FILE__).'/'.$image)){
 					$this->device_image = $image;
 					$this->_toLog("_getDeviceCapabilitiesFromId","device image found: $image",LOG_INFO);
 				}
