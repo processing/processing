@@ -20,6 +20,8 @@ Mobile Processing sketches run on most mobile phones that support Java games and
 <li>Choose <b>My Phone</b> from the main menu.<br /><br /></li>
 <li>Download a <b>Profiler</b> sketch.<br /><br /></li>
 <li>Run the Profiler and choose <b>Share Results</b> from the menu to upload the results to this website.<br /><br /></li>
+<li>On success, refresh this page. Recent results are displayed on the right.</li>
+</ol>
 </div>
 <div class="column2x">
 <table width="480" cellspacing="0" cellpadding="0" border="0">
@@ -27,7 +29,7 @@ Mobile Processing sketches run on most mobile phones that support Java games and
 <?php
 //// get the latest 20 submissions
 $link = db_connect();
-$query = "SELECT id, useragent, stamp, DATE_FORMAT(stamp, '%e %b %Y') as date FROM profile_summary ORDER BY stamp DESC LIMIT 20";
+$query = "SELECT id, useragent, stamp FROM profile_summary ORDER BY stamp DESC LIMIT 20";
 $result = mysql_query($query);
 $wurfl = new tera_wurfl();
 $devices = array();
@@ -57,13 +59,13 @@ while ($data = mysql_fetch_assoc($result)) {
     }
   }
 }
-for ($i = $count % 3; $i >= 0; $i--) {
+for ($i = $count % 3; ($i % 3) != 0; $i++) {
     echo '<td width="160">&nbsp;</td>';
 }
 ?>
   </tr>
 </table>
-<p align="right"><b><a href="list.php">View complete list...</a></b></p>
+<p align="right"><b><a href="list.php">Browse all submissions...</a></b></p>
 </div>
 </table>
 <?php
