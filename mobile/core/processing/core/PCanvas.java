@@ -65,8 +65,6 @@ public class PCanvas extends Canvas {
     
     private int[]       stack;
     private int         stackIndex;
-    private int         translateX;
-    private int         translateY;
     
     private PFont       textFont;
     private int         textAlign;
@@ -104,7 +102,7 @@ public class PCanvas extends Canvas {
         curveVertex = new int[8];
         curveVertexIndex = 0;
         
-        stack = new int[4];
+        stack = new int[6];
         
         textAlign = PMIDlet.LEFT;
         
@@ -120,8 +118,6 @@ public class PCanvas extends Canvas {
     }
     
     protected void keyRepeated(int keyCode) {
-        midlet.enqueueEvent(PMIDlet.EVENT_KEY_PRESSED, keyCode, null);
-        midlet.enqueueEvent(PMIDlet.EVENT_KEY_RELEASED, keyCode, null);
     }
     
     protected void keyReleased(int keyCode) {
@@ -633,8 +629,6 @@ public class PCanvas extends Canvas {
     }
     
     public void translate(int x, int y) {
-        translateX += x;
-        translateY += y;
         bufferg.translate(x, y);
     }
     
@@ -655,10 +649,7 @@ public class PCanvas extends Canvas {
             int intersectHeight = Math.min(y2, clipY2) - intersectY;
             bufferg.setClip(intersectX, intersectY, intersectWidth, intersectHeight);
         }
-    }
-    
-    public void noClip() {
-        bufferg.setClip(0, 0, width, height);
+        //System.out.println("clip: translation=[" + bufferg.getTranslateX() + ", " + bufferg.getTranslateY() + "], clip=[" + bufferg.getClipX() + ", " + bufferg.getClipY() + ", " + bufferg.getClipWidth() + ", " + bufferg.getClipHeight() + "]");
     }
     
     public void pushMatrix() {
@@ -667,24 +658,33 @@ public class PCanvas extends Canvas {
             stack = new int[stackIndex * 2];
             System.arraycopy(old, 0, stack, 0, stackIndex);
         }
-        stack[stackIndex] = translateX;
-        stack[stackIndex + 1] = translateY;
-        stackIndex += 2;
+        stack[stackIndex++] = bufferg.getTranslateX();
+        stack[stackIndex++] = bufferg.getTranslateY();
+        stack[stackIndex++] = bufferg.getClipX();
+        stack[stackIndex++] = bufferg.getClipY();
+        stack[stackIndex++] = bufferg.getClipWidth();
+        stack[stackIndex++] = bufferg.getClipHeight();
+        //System.out.println("push: translation=[" + bufferg.getTranslateX() + ", " + bufferg.getTranslateY() + "], clip=[" + bufferg.getClipX() + ", " + bufferg.getClipY() + ", " + bufferg.getClipWidth() + ", " + bufferg.getClipHeight() + "]");
     }
     
     public void popMatrix() {
         if (stackIndex > 0) {
-            stackIndex -= 2;
-            translateX = stack[stackIndex];
-            translateY = stack[stackIndex + 1];            
+            stackIndex -= 6;
+            int translateX = stack[stackIndex++];
+            int translateY = stack[stackIndex++];
             bufferg.translate(translateX - bufferg.getTranslateX(), translateY - bufferg.getTranslateY());
+            int clipX = stack[stackIndex++];
+            int clipY = stack[stackIndex++];
+            int clipWidth = stack[stackIndex++];
+            int clipHeight = stack[stackIndex++];
+            bufferg.setClip(clipX, clipY, clipWidth, clipHeight);
+            stackIndex -= 6;
+            //System.out.println("pop: translation=[" + bufferg.getTranslateX() + ", " + bufferg.getTranslateY() + "], clip=[" + bufferg.getClipX() + ", " + bufferg.getClipY() + ", " + bufferg.getClipWidth() + ", " + bufferg.getClipHeight() + "]");
         }
     }
     
     public void resetMatrix() {
         stackIndex = 0;
-        translateX = 0;
-        translateY = 0;
         bufferg.translate(-bufferg.getTranslateX(), -bufferg.getTranslateY());
         bufferg.setClip(0, 0, width, height);
     }
@@ -716,13 +716,10 @@ public class PCanvas extends Canvas {
             swidth = swidth - sx;
             sheight = sheight - sy;
         }
-        int clipX = bufferg.getClipX();
-        int clipY = bufferg.getClipY();
-        int clipWidth = bufferg.getClipWidth();
-        int clipHeight = bufferg.getClipHeight();
+        pushMatrix();
         clip(dx, dy, swidth, sheight);
         img.draw(bufferg, dx - sx, dy - sy);
-        bufferg.setClip(clipX, clipY, clipWidth, clipHeight);
+        popMatrix();
     }
     
     public void imageMode(int mode) {
@@ -947,10 +944,7 @@ public class PCanvas extends Canvas {
         //// for system fonts, set fillcolor
         bufferg.setColor(fillColor);
         //// save current clip and apply clip to bounding area
-        int clipX = bufferg.getClipX();
-        int clipY = bufferg.getClipY();
-        int clipWidth = bufferg.getClipWidth();
-        int clipHeight = bufferg.getClipHeight();
+        pushMatrix();
         clip(x, y, width, height);
         //// adjust starting baseline so that text is _contained_ within the bounds
         int textX = x;
@@ -971,7 +965,7 @@ public class PCanvas extends Canvas {
             y += textLeading;
         }
         //// restore clip
-        bufferg.setClip(clipX, clipY, clipWidth, clipHeight);
+        popMatrix();
     }
     
     public String[] textWrap(String data, int width, int height) {
