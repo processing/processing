@@ -48,6 +48,10 @@ import processing.core.PApplet;
  * This class no longer uses the Properties class, since
  * properties files are iso8859-1, which is highly likely to
  * be a problem when trying to save sketch folders and locations.
+ * <p>
+ * This is very poorly put together, that the prefs panel and the
+ * actual prefs i/o is part of the same code. But there hasn't yet
+ * been a compelling reason to bother with the separation.
  */
 public class Preferences {
 
@@ -85,9 +89,12 @@ public class Preferences {
    * inside a static block.
    */
   static public int BUTTON_HEIGHT = 24;
+  /*
+  // remove this for 0121, because quaqua takes care of it
   static {
     if (Base.isMacOS()) BUTTON_HEIGHT = 29;
   }
+  */
 
   // value for the size bars, buttons, etc
 
@@ -104,7 +111,8 @@ public class Preferences {
 
   // gui elements
 
-  JDialog dialog;
+  //JDialog dialog;
+  JFrame dialog;
   int wide, high;
 
   JTextField sketchbookLocationField;
@@ -112,8 +120,9 @@ public class Preferences {
   JCheckBox sketchPromptBox;
   JCheckBox sketchCleanBox;
   JCheckBox externalEditorBox;
+  JCheckBox memoryOverrideBox;
+  JTextField memoryField;
   JCheckBox checkUpdatesBox;
-
   JTextField fontSizeField;
   
   JTextField wtkLocationField;
@@ -195,7 +204,8 @@ public class Preferences {
   public Preferences() {
 
     // setup dialog for the prefs
-    dialog = new JDialog(editor, "Preferences", true);
+    //dialog = new JDialog(editor, "Preferences", true);
+    dialog = new JFrame("Preferences");
     
     //// create tabs to separate IDE, WTK options
     JTabbedPane tabs = new JTabbedPane();
@@ -250,6 +260,7 @@ public class Preferences {
     button = new JButton(PROMPT_BROWSE);
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          /*
           JFileChooser fc = new JFileChooser();
           fc.setSelectedFile(new File(sketchbookLocationField.getText()));
           fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -257,6 +268,13 @@ public class Preferences {
           int returned = fc.showOpenDialog(new JDialog());
           if (returned == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
+            sketchbookLocationField.setText(file.getAbsolutePath());
+          }
+          */
+          File dflt = new File(sketchbookLocationField.getText());
+          File file =
+            Base.selectFolder("Select new sketchbook location", dflt, dialog);
+          if (file != null) {
             sketchbookLocationField.setText(file.getAbsolutePath());
           }
         }
@@ -271,6 +289,8 @@ public class Preferences {
     Container box = Box.createHorizontalBox();
     label = new JLabel("Editor font size: ");
     box.add(label);
+    label = new JLabel("  (requires restart of Processing)");
+    box.add(label);
     fontSizeField = new JTextField(4);
     box.add(fontSizeField);
     c.gridx = 0; c.gridy = 5;
@@ -282,15 +302,28 @@ public class Preferences {
     fontSizeField.setText(String.valueOf(editorFont.getSize()));
 
 
+    // [ ] Set maximum available memory to [______] MB
+
+    Container memoryBox = Box.createHorizontalBox();
+    memoryOverrideBox = new JCheckBox("Set maximum available memory to ");
+    memoryBox.add(memoryOverrideBox);
+    memoryField = new JTextField(4);
+    memoryBox.add(memoryField);
+    memoryBox.add(new JLabel(" MB"));
+    c.gridx = 0; c.gridy = 6;
+    c.gridwidth = 2;
+    c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
+    pain.add(memoryBox, c);
+
     // [ ] Use external editor
     externalEditorBox = new JCheckBox("Use external editor");
-    c.gridx = 0; c.gridy = 6;
+    c.gridx = 0; c.gridy = 7;
     c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
     pain.add(externalEditorBox, c);
 
     // [ ] Check for updates on startup
     checkUpdatesBox = new JCheckBox("Check for updates on startup");
-    c.gridx = 0; c.gridy = 7;
+    c.gridx = 0; c.gridy = 8;
     pain.add(checkUpdatesBox, c);
 
     tabs.add("General", pain);
@@ -516,6 +549,30 @@ public class Preferences {
     String midp = (String) wtkMidpVer.getSelectedItem();
     set("wtk.midp", "" + midp.charAt(0) + midp.charAt(2));
 
+    setBoolean("run.options.memory", memoryOverrideBox.isSelected());
+    int memoryMin = Preferences.getInteger("run.options.memory.initial");
+    int memoryMax = Preferences.getInteger("run.options.memory.maximum");
+    try {
+      memoryMax = Integer.parseInt(memoryField.getText().trim());
+      // make sure memory setting isn't too small
+      if (memoryMax < memoryMin) memoryMax = memoryMin;
+      setInteger("run.options.memory.maximum", memoryMax);
+    } catch (NumberFormatException e) {
+      System.err.println("Ignoring bad memory setting");
+    }
+
+    /*
+      // was gonna use this to check memory settings,
+      // but it quickly gets much too messy
+    if (getBoolean("run.options.memory")) {
+      Process process = Runtime.getRuntime().exec(new String[] {
+          "java", "-Xms" + memoryMin + "m", "-Xmx" + memoryMax + "m"
+        });
+      processInput = new SystemOutSiphon(process.getInputStream());
+      processError = new MessageSiphon(process.getErrorStream(), this);
+    }
+    */
+
     String newSizeText = fontSizeField.getText();
     try {
       int newSize = Integer.parseInt(newSizeText.trim());
@@ -556,6 +613,9 @@ public class Preferences {
         midp = "10";
     }
     wtkMidpVer.setSelectedItem(midp.charAt(0) + "." + midp.charAt(1));
+
+    memoryOverrideBox.setSelected(getBoolean("run.options.memory"));
+    memoryField.setText(get("run.options.memory.maximum"));
 
     dialog.show();
   }

@@ -69,6 +69,7 @@ public class Sketch {
   static final int JAVA = 1;
 
   public SketchCode current;
+  int currentIndex;
   int codeCount;
   SketchCode code[];
 
@@ -171,7 +172,38 @@ public class Sketch {
     int hiddenCounter = 0;
 
     for (int i = 0; i < list.length; i++) {
-      if (list[i].endsWith(".pde")) {
+      // figure out the name without any extension
+      String base = list[i];
+      // first strip off the .x items
+      if (base.endsWith(".x")) {
+        base = base.substring(0, base.length() - 2);
+      }
+      // now strip off the .pde and .java extensions
+      if (base.endsWith(".pde")) {
+        base = base.substring(0, base.length() - 4);
+      }
+      if (base.endsWith(".java")) {
+        base = base.substring(0, base.length() - 5);
+      }
+
+      if (list[i].startsWith(".")) {
+        // ignoring the dot prefix files is especially important to
+        // ignore ._ files on macosx because they'll have binary mess
+        // in them which can cause a crash.. ouch. [rev 0116]
+        continue;
+
+      } else if (!Sketchbook.isSanitary(base)) {
+        // also don't allow people to use files with invalid names,
+        // since on load, it would be otherwise possible to sneak in
+        // nasty filenames. [rev 0116]
+        //System.out.println("skipping unsanitary " + base + " for " + list[i]);
+        continue;
+
+      } else if (new File(folder, list[i]).isDirectory()) {
+        // don't let some wacko name a directory blah.pde or bling.java.
+        continue;
+
+      } else if (list[i].endsWith(".pde")) {
         code[codeCounter++] =
           new SketchCode(list[i].substring(0, list[i].length() - 4),
                       new File(folder, list[i]),
@@ -197,7 +229,11 @@ public class Sketch {
       }
     }
 
-    // remove any entries that didn't load properly
+    // some of the hidden files may be bad too, so use hiddenCounter
+    // added for rev 0121, fixes bug found by axel
+    hiddenCount = hiddenCounter;
+
+    // remove any entries that didn't load properly from codeCount
     int index = 0;
     while (index < codeCount) {
       if ((code[index] == null) ||
@@ -302,7 +338,7 @@ public class Sketch {
     // ask for new name of file (internal to window)
     // TODO maybe just popup a text area?
     renamingCode = true;
-    String prompt = (current == code[0]) ?
+    String prompt = (currentIndex == 0) ?
       "New name for sketch:" : "New name for file:";
     String oldName =
       (current.flavor == PDE) ? current.name : current.name + ".java";
@@ -399,7 +435,7 @@ public class Sketch {
     }
 
     if (renamingCode) {
-      if (current == code[0]) {
+      if (currentIndex == 0) {
         // get the new folder name/location
         File newFolder = new File(folder.getParentFile(), newName);
         if (newFolder.exists()) {
@@ -457,7 +493,11 @@ public class Sketch {
         // having saved everything and renamed the folder and the main .pde,
         // use the editor to re-open the sketch to re-init state
         // (unfortunately this will kill positions for carets etc)
-        editor.handleOpenUnchecked(mainFilename);
+        editor.handleOpenUnchecked(mainFilename,
+                                   currentIndex,
+                                   editor.textarea.getSelectionStart(),
+                                   editor.textarea.getSelectionEnd(),
+                                   editor.textarea.getScrollPosition());
 
         /*
           // backtrack and don't rename the sketch folder
@@ -493,7 +533,11 @@ public class Sketch {
         load();
         */
 
-      } else {
+        // get the changes into the sketchbook menu
+        // (re-enabled in 0115 to fix bug #332)
+        editor.sketchbook.rebuildMenus();
+
+      } else {  // else if something besides code[0]
         if (!current.file.renameTo(newFile)) {
           Base.showWarning("Error",
                            "Could not rename \"" + current.file.getName() +
@@ -555,7 +599,7 @@ public class Sketch {
 
     // confirm deletion with user, yes/no
     Object[] options = { "OK", "Cancel" };
-    String prompt = (current == code[0]) ?
+    String prompt = (currentIndex == 0) ?
       "Are you sure you want to delete this sketch?" :
       "Are you sure you want to delete \"" + current.name + "\"?";
     int result = JOptionPane.showOptionDialog(editor,
@@ -567,7 +611,7 @@ public class Sketch {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      if (current == code[0]) {
+      if (currentIndex == 0) {
         // need to unset all the modified flags, otherwise tries
         // to do a save on the handleNew()
 
@@ -633,7 +677,7 @@ public class Sketch {
 
     // don't allow hide of the main code
     // TODO maybe gray out the menu on setCurrent(0)
-    if (current == code[0]) {
+    if (currentIndex == 0) {
       Base.showMessage("Can't do that",
                        "You cannot hide the main " +
                        ".pde file from a sketch\n");
@@ -888,11 +932,23 @@ public class Sketch {
       Base.copyDir(codeFolder, newCodeFolder);
     }
 
+    // copy custom applet.html file if one exists
+    // http://dev.processing.org/bugs/show_bug.cgi?id=485
+    File customHtml = new File(folder, "applet.html");
+    if (customHtml.exists()) {
+      File newHtml = new File(newFolder, "applet.html");
+      Base.copyFile(customHtml, newHtml);
+    }
+
     // save the main tab with its new name
     File newFile = new File(newFolder, newName + ".pde");
     code[0].saveAs(newFile);
 
-    editor.handleOpenUnchecked(newFile.getPath());
+    editor.handleOpenUnchecked(newFile.getPath(),
+                               currentIndex,
+                               editor.textarea.getSelectionStart(),
+                               editor.textarea.getSelectionEnd(),
+                               editor.textarea.getScrollPosition());
 
     /*
     // copy the entire contents of the sketch folder
@@ -1108,8 +1164,8 @@ public class Sketch {
    * </OL>
    */
   public void setCurrent(int which) {
-    if (current == code[which]) {
-      //System.out.println("already current, ignoring");
+    // if current is null, then this is the first setCurrent(0)
+    if ((currentIndex == which) && (current != null)) {
       return;
     }
 
@@ -1122,6 +1178,7 @@ public class Sketch {
     }
 
     current = code[which];
+    currentIndex = which;
     editor.setCode(current);
     //editor.setDocument(current.document,
     //                 current.selectionStart, current.selectionStop,
@@ -1357,6 +1414,12 @@ public class Sketch {
       libraryPath = "";
     }
 
+    // if the memory options are set, then use an external runtime
+    // so that the setting can always be honored.
+    if (Preferences.getBoolean("run.options.memory")) {
+      externalRuntime = true;
+    }
+
     // if 'data' folder is large, set to external runtime
     if (dataFolder.exists() &&
         Base.calcFolderSize(dataFolder) > 768 * 1024) {  // if > 768k
@@ -1441,8 +1504,41 @@ public class Sketch {
       }
       errorLine -= code[errorFile].preprocOffset;
 
-      throw new RunnerException(re.getMessage(), errorFile,
-                             errorLine, re.getColumn());
+      //System.out.println("i found this guy snooping around..");
+      //System.out.println("whatcha want me to do with 'im boss?");
+      //System.out.println(errorLine + " " + errorFile);
+
+      String msg = re.getMessage();
+
+      if (msg.equals("expecting RCURLY, found 'null'")) {
+        throw new RunnerException("Found one too many { characters " +
+                                  "without a } to match it.");
+      }
+
+      if (msg.indexOf("expecting RBRACK") != -1) {
+        System.err.println(msg);
+        throw new RunnerException("Syntax error, " +
+                                  "maybe a missing ] character?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      if (msg.indexOf("expecting SEMI") != -1) {
+        System.err.println(msg);
+        throw new RunnerException("Syntax error, " +
+                                  "maybe a missing semicolon?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      if (msg.indexOf("expecting RPAREN") != -1) {
+        System.err.println(msg);
+        throw new RunnerException("Syntax error, " +
+                                  "maybe a missing right parenthesis?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      //System.out.println("msg is " + msg);
+      throw new RunnerException(msg, errorFile,
+                                errorLine, re.getColumn());
 
     } catch (antlr.TokenStreamRecognitionException tsre) {
       // while this seems to store line and column internally,
@@ -1480,7 +1576,7 @@ public class Sketch {
         errorLine -= code[errorFile].preprocOffset;
 
         throw new RunnerException(tsre.getMessage(),
-                               errorFile, errorLine, errorColumn);
+                                  errorFile, errorLine, errorColumn);
 
       } else {
         // this is bad, defaults to the main class.. hrm.
@@ -1606,6 +1702,20 @@ public class Sketch {
     if (!exportMIDlet(true)) {
         return false;
     }
+    //// MOBILE: the following lines are in exportMIDlet, so commented out here
+/*    
+    // make sure the user didn't hide the sketch folder
+    ensureExistence();
+
+    // fix for issue posted on the board. make sure that the code
+    // is reloaded when exporting and an external editor is being used.
+    if (Preferences.getBoolean("editor.external")) {
+      // nuke previous files and settings
+      load();
+    }
+
+    zipFileContents = new Hashtable();
+*/
     // nuke the old applet folder because it can cause trouble
     File appletFolder = new File(folder, "applet");
     Base.removeDir(appletFolder);
@@ -1843,6 +1953,13 @@ public class Sketch {
   public boolean exportApplication(int exportPlatform) throws Exception {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
+
+    // fix for issue posted on the board. make sure that the code
+    // is reloaded when exporting and an external editor is being used.
+    if (Preferences.getBoolean("editor.external")) {
+      // nuke previous files and settings
+      load();
+    }
 
     //int exportPlatform = PApplet.platform; //PConstants.MACOSX;
     String exportPlatformStr = null;
@@ -2150,7 +2267,13 @@ public class Sketch {
       File argsFile = new File(destFolder + "/lib/args.txt");
       PrintStream ps = new PrintStream(new FileOutputStream(argsFile));
 
-      ps.println(Preferences.get("run.options"));
+      ps.print(Preferences.get("run.options") + " ");
+      if (Preferences.getBoolean("run.options.memory")) {
+        ps.print("-Xms" + Preferences.get("run.options.memory.initial") + "m ");
+        ps.print("-Xmx" + Preferences.get("run.options.memory.maximum") + "m ");
+      }
+      ps.println();
+
       ps.println(this.name);
       ps.println(exportClassPath);
 
@@ -2448,6 +2571,14 @@ public class Sketch {
   public boolean exportMIDlet(boolean obfuscate) throws Exception {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
+
+    // fix for issue posted on the board. make sure that the code
+    // is reloaded when exporting and an external editor is being used.
+    if (Preferences.getBoolean("editor.external")) {
+      // nuke previous files and settings
+      load();
+    }
+
     // save any recent changes
     save();
     
@@ -2729,5 +2860,16 @@ public class Sketch {
     Base.removeDir(tmpDir);
     
     return true;
+  }
+
+  public void prevCode() {
+    int prev = currentIndex - 1;
+    if (prev < 0) prev = codeCount-1;
+    setCurrent(prev);
+  }
+
+
+  public void nextCode() {
+    setCurrent((currentIndex + 1) % codeCount);
   }
 }
