@@ -83,6 +83,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     protected char      key;
     protected int       keyCode;
+    protected int       rawKeyCode;
     protected boolean   keyPressed;
     
     public static final int     MULTITAP_KEY_SPACE      = 0;
@@ -119,6 +120,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     private long        lastFrameTime;
     private int         msPerFrame;
     
+    //// references to cached objects (lazily instantiated) for memory/performance optimizations
+    private PFont       defaultFont;
     private Calendar    calendar;
     private Random      random;
         
@@ -229,12 +232,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final void run() {
-        if (!setup) {
-            setup();
-            lastFrameTime = startTime - msPerFrame;
-            setup = true;
-        }        
         try {
+            if (!setup) {
+                setup();
+                lastFrameTime = startTime - msPerFrame;
+                setup = true;
+            }        
             do {
                 long currentTime = System.currentTimeMillis();
                 int elapsed = Math.max(1, (int) (currentTime - lastFrameTime));
@@ -365,7 +368,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
-    private void key(int keyCode) {        
+    private void key(int keyCode) {   
+        this.rawKeyCode = keyCode;
         //// MIDP 1.0 says the KEY_ values map to ASCII values, but I've seen it
         //// different on some foreign (i.e. Korean) handsets
         if ((keyCode >= Canvas.KEY_NUM0) && (keyCode <= Canvas.KEY_NUM9)) {
@@ -415,15 +419,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     private void keyReleased(int keyCode) {
-        char oldKey = key;
-        int oldKeyCode = this.keyCode;        
+        keyPressed = false;
+        
         key(keyCode);
-        if ((this.key == oldKey) && (this.keyCode == oldKeyCode)) {       
-            keyPressed = false;
-        } else {
-            this.key = oldKey;
-            this.keyCode = oldKeyCode;
-        }
         keyReleased();        
     }
 
@@ -472,7 +470,14 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final String getProperty(String property) {
-        return System.getProperty(property);
+        String value;
+        //// first try app property
+        value = getAppProperty(property);
+        //// if none, try system
+        if (value == null) {
+            value = System.getProperty(property);
+        }
+        return value;
     }
     
     public final String textInput() {
@@ -756,10 +761,6 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         canvas.clip(x, y, width, height);
     }
     
-    public final void noClip() {
-        canvas.noClip();
-    }
-    
     public final void pushMatrix() {
         canvas.pushMatrix();
     }
@@ -842,17 +843,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         
     public final PImage loadImage(String filename) {
         try {
-            if (filename.startsWith("http")) {
-                PClient client = new PClient();
-                client.GET(filename);
-                byte[] data = client.readBytes();
-                return new PImage(data);
-            } else {
-                Image img = Image.createImage("/" + filename);
-                return new PImage(img);
-            }
+            Image img = Image.createImage("/" + filename);
+            return new PImage(img);
         } catch(Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PException(e);
         }
     }
     
@@ -876,7 +870,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         try {
             return new PFont(getClass().getResourceAsStream("/" + fontname), color, bgcolor);
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PException(e);
         }
     }
     
@@ -889,7 +883,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     }
     
     public final PFont loadFont() {
-        return new PFont(Font.getDefaultFont());
+        if (defaultFont == null) {
+            defaultFont = new PFont(Font.getDefaultFont());
+        }
+        return defaultFont;
     }
     
     public final PFont loadFont(int face, int style, int size) {
@@ -1033,7 +1030,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PException(e);
         }
         InputStream is = null;
         try {
@@ -1055,7 +1052,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return result;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            throw new PException(e);
         } finally {
             if (is != null) {
                 try {
@@ -1088,7 +1085,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PException(e);
         }
         Vector v = new Vector();
         InputStream is = null;
@@ -1121,7 +1118,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PException(e);
         } finally {
             if (is != null) {
                 try {
@@ -1139,7 +1136,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final void saveBytes(String filename, byte[] data) {
         //// max 32 char names on recordstores
         if (filename.length() > 32) {
-            throw new RuntimeException("filename must be 32 characters or less");
+            throw new PException(new Exception("filename must be 32 characters or less"));
         }
         try {            
             //// delete recordstore, if it exists
@@ -1152,14 +1149,14 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             store.addRecord(data, 0, data.length);
             store.closeRecordStore();
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PException(e);
         }
     }
     
     public final void saveStrings(String filename, String[] strings) {
         //// max 32 char names on recordstores
         if (filename.length() > 32) {
-            throw new RuntimeException("filename must be 32 characters or less");
+            throw new PException(new Exception("filename must be 32 characters or less"));
         }
         try {            
             //// delete recordstore, if it exists
@@ -1177,7 +1174,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
             store.closeRecordStore();
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PException(e);
         }
     }
     
@@ -2276,6 +2273,863 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             synchronized (midlet) {
                 midlet.notifyAll();
             }
+        }
+    }
+        
+    public abstract class PComponent {
+        public static final int DEFAULT_BG_COLOR                  = 0xffffffff;
+        public static final int DEFAULT_FG_FOCUSED_COLOR          = 0xffffffff;
+        public static final int DEFAULT_FG_UNFOCUSED_COLOR        = 0xfff5f5f5;
+        public static final int DEFAULT_FG_PRESSED_COLOR          = 0xffc59931;
+        public static final int DEFAULT_BORDER_FOCUSED_COLOR      = 0xffa77800;
+        public static final int DEFAULT_BORDER_UNFOCUSED_COLOR    = 0xff666666;
+        public static final int DEFAULT_HIGHLIGHT_FOCUSED_COLOR   = 0xfffdc469;
+        public static final int DEFAULT_HIGHLIGHT_UNFOCUSED_COLOR = 0xffd1d1d1;
+        
+        public int x, y, width, height;
+        public int contentX, contentY, contentWidth, contentHeight;
+        public int margin, padding;
+        
+        public boolean acceptsFocus;
+        public boolean focused;
+        public boolean pressed;
+        
+        public int bgColor = DEFAULT_BG_COLOR;
+        
+        public int pressedFgColor = DEFAULT_FG_PRESSED_COLOR;
+        
+        public int focusedFgColor = DEFAULT_FG_FOCUSED_COLOR;
+        public int unfocusedFgColor = DEFAULT_FG_UNFOCUSED_COLOR;
+        
+        public int borderWidth;
+        
+        public int focusedBorderColor = DEFAULT_BORDER_FOCUSED_COLOR;
+        public int unfocusedBorderColor = DEFAULT_BORDER_UNFOCUSED_COLOR;
+        
+        public int highlightWidth;
+        
+        public int focusedHighlightColor = DEFAULT_HIGHLIGHT_FOCUSED_COLOR;
+        public int unfocusedHighlightColor = DEFAULT_HIGHLIGHT_UNFOCUSED_COLOR;
+        
+        public PComponent() {
+        }
+        
+        public boolean acceptFocus() {
+            if (acceptsFocus) {
+                focused = true;
+            }
+            return acceptsFocus;
+        }
+        
+        public void releaseFocus() {
+            focused = false;
+            pressed = false;
+        }
+        
+        public void setBounds(int x, int y, int width, int height) {
+            int t = ((margin >> 24) & 0xff) + borderWidth + highlightWidth + ((padding >> 24) & 0xff);
+            int l = ((margin >> 16) & 0xff) + borderWidth + highlightWidth + ((padding >> 16) & 0xff);
+            int b = ((margin >> 8) & 0xff) + borderWidth + highlightWidth + ((padding >> 8) & 0xff);
+            int r = (margin & 0xff) + borderWidth + highlightWidth + (padding & 0xff);
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            contentX = x + l;
+            contentY = y + t;
+            contentWidth = width - l - r;
+            contentHeight = height - t - b;
+        }
+        
+        public void calculateBounds(int availX, int availY, int availWidth, int availHeight) {
+            int t = ((margin >> 24) & 0xff) + borderWidth + highlightWidth + ((padding >> 24) & 0xff);
+            int l = ((margin >> 16) & 0xff) + borderWidth + highlightWidth + ((padding >> 16) & 0xff);
+            int b = ((margin >> 8) & 0xff) + borderWidth + highlightWidth + ((padding >> 8) & 0xff);
+            int r = (margin & 0xff) + borderWidth + highlightWidth + (padding & 0xff);
+            calculateContentBounds(availX + l, availY + t, availWidth - l - r, availHeight - t - b);
+            setBounds(x - l, y - t, width + l + r, height + t + b);
+        }
+        
+        protected void calculateContentBounds(int availX, int availY, int availWidth, int availHeight) {
+            setBounds(availX, availY, availWidth, availHeight);
+        }
+        
+        public boolean intersects(int x, int y, int width, int height) {
+            int x2 = x + width;
+            int y2 = y + height;
+            return !((x >= (this.x + this.width)) || (x2 <= this.x) || (y >= (this.y + this.height)) || (y2 <= this.y));
+        }
+        
+        public void initialize() {
+        }
+        
+        public void draw() {
+            drawBefore();
+            drawContent();
+            drawAfter();
+        }
+        
+        protected void drawBefore() {
+            noStroke();
+            if (bgColor != 0) {
+                fill(bgColor);
+                rect(x, y, width, height);
+            }
+            int fgColor = pressed ? pressedFgColor : (focused ? focusedFgColor : unfocusedFgColor);
+            if (fgColor != 0) {
+                fill(fgColor);
+                int t = (margin >> 24) & 0xff;
+                int l = (margin >> 16) & 0xff;
+                int b = (margin >> 8) & 0xff;
+                int r = margin & 0xff;
+                rect(x + t, y + l, width - l - r, height - t - b);
+            }
+        }
+        
+        protected abstract void drawContent();
+        
+        protected void drawAfter() {
+            int fgColor;
+            int t = (margin >> 24) & 0xff;
+            int l = (margin >> 16) & 0xff;
+            int b = (margin >> 8) & 0xff;
+            int r = margin & 0xff;
+            if (highlightWidth > 0) {
+                fgColor = focused ? focusedHighlightColor : unfocusedHighlightColor;
+                if (fgColor != 0) {
+                    stroke(fgColor);
+                    noFill();
+                    int x = this.x + l;
+                    int y = this.y + t;
+                    int width = this.width - l - r - 1;
+                    int height = this.height - t - b - 1;
+                    for (int i = highlightWidth - 1; i >= 0; i--) {
+                        rect(x + i, y + i, width - (i << 1), height - (i << 1));
+                    }
+                }
+                t += highlightWidth;
+                l += highlightWidth;
+                b += highlightWidth;
+                r += highlightWidth;
+            }
+            if (borderWidth > 0) {
+                fgColor = focused ? focusedBorderColor : unfocusedBorderColor;
+                if (fgColor != 0) {
+                    stroke(fgColor);
+                    noFill();
+                    int x = this.x + l;
+                    int y = this.y + t;
+                    int width = this.width - l - r - 1;
+                    int height = this.height - t - b - 1;
+                    for (int i = borderWidth - 1; i >= 0; i--) {
+                        rect(x + i, y + i, width - (i << 1), height - (i << 1));
+                    }
+                }
+            }
+        }
+        
+        public boolean keyPressed() {
+            return false;
+        }
+        
+        public boolean keyReleased() {
+            return false;
+        }
+    }
+    
+    public class PContainer extends PComponent {
+        public Vector children;
+        
+        public int focusedChild;
+        
+        public boolean scrolling;
+        public int scrollY;
+        public int scrollHeight;
+        public PScrollBar scrollbar;
+        
+        public PContainer() {
+            acceptsFocus = true;
+            children = new Vector();
+        }
+        
+        public void add(PComponent child) {
+            children.addElement(child);
+        }
+        
+        public void remove(PComponent child) {
+            children.removeElement(child);
+        }
+        
+        public void initialize() {
+            //// find first focusable child, initialize scrolling
+            PComponent child;
+            focusedChild = -1;
+            scrollY = 0;
+            scrollHeight = 0;
+            for (int i = 0, length = children.size(); i < length; i++) {
+                child = (PComponent) children.elementAt(i);
+                child.initialize();
+                scrollHeight = Math.max(scrollHeight, child.y + child.height);
+                if ((focusedChild < 0) && (child.acceptFocus())) {
+                    focusedChild = i;
+                }
+            }
+            scrollHeight -= contentY;
+            if (scrollbar != null) {
+                scrollbar.setRange(0, scrollHeight - 1, contentHeight);
+                scrollbar.initialize();
+            }
+        }
+        
+        public boolean acceptFocus() {
+            super.acceptFocus();
+            if (focused && (children.size() > 0) && (focusedChild >= 0)) {
+                PComponent child = (PComponent) children.elementAt(focusedChild);
+                child.acceptFocus();
+            }
+            return focused;
+        }
+        
+        public void releaseFocus() {
+            super.releaseFocus();
+            if ((children.size() > 0) && (focusedChild >= 0)) {
+                PComponent child = (PComponent) children.elementAt(focusedChild);
+                child.releaseFocus();
+            }
+        }
+        
+        public boolean keyPressed() {
+            boolean result = false;
+            PComponent child;
+            if ((children.size() > 0) && (focusedChild >= 0)) {
+                child = (PComponent) children.elementAt(focusedChild);
+                result = child.keyPressed();
+            }
+            if (!result) {
+                int direction = 0;
+                int bound = children.size();
+                switch (keyCode) {
+                    case UP:
+                        direction = -1;
+                        bound = -1;
+                        break;
+                    case DOWN:
+                        direction = 1;
+                        break;
+                }
+                if (direction != 0) {
+                    int oldScrollY = scrollY;
+                    boolean transferFocus = true;
+                    //// scroll if necessary
+                    if (scrolling && (scrollHeight > contentHeight)) {
+                        if (focusedChild >= 0) {
+                            child = (PComponent) children.elementAt(focusedChild);
+                            if (direction > 0) {
+                                if ((child.y + child.height) > (contentY + scrollY + contentHeight)) {
+                                    scrollY = Math.min(scrollHeight - contentHeight, scrollY + contentHeight - 4);
+                                }
+                            } else {
+                                if (child.y < (contentY + scrollY)) {
+                                    scrollY = Math.max(0, scrollY - contentHeight + 4);
+                                }
+                            }
+                        } else {
+                            if (direction > 0) {
+                                scrollY = Math.min(scrollHeight - contentHeight, scrollY + contentHeight - 4);
+                            } else {
+                                scrollY = Math.max(0, scrollY - contentHeight + 4);
+                            }
+                        }
+                        if (scrollY != oldScrollY) {
+                            transferFocus = false;
+                            result = true;
+                        }
+                    }
+                    if (transferFocus && (focusedChild >= 0)) {
+                        int newFocusedChild = focusedChild + direction;
+                        while (newFocusedChild != bound) {
+                            child = (PComponent) children.elementAt(newFocusedChild);
+                            if (child.acceptFocus()) {
+                                //// scroll if necessary
+                                if (scrolling && (scrollHeight > contentHeight)) {
+                                    if (direction > 0) {
+                                        if ((child.y + child.height) > (contentY + scrollY + contentHeight)) {
+                                            scrollY = Math.min(scrollHeight - contentHeight, scrollY + contentHeight - 4);
+                                        }
+                                    } else {
+                                        if (child.y < (contentY + scrollY)) {
+                                            scrollY = Math.max(0, scrollY - contentHeight + 4);
+                                        }
+                                    }
+                                }
+                                //// release focus on old child
+                                child = (PComponent) children.elementAt(focusedChild);
+                                child.releaseFocus();
+                                //// save new focused child index
+                                focusedChild = newFocusedChild;
+                                result = true;
+                                break;
+                            }
+                            newFocusedChild += direction;
+                        }
+                        if (!result && scrolling && (scrollHeight > contentHeight)) {
+                            if (direction > 0) {
+                                scrollY = Math.min(scrollHeight - contentHeight, scrollY + contentHeight - 4);
+                            } else {
+                                scrollY = Math.max(0, scrollY - contentHeight + 4);
+                            }
+                            result = oldScrollY != scrollY;
+                        }
+                    }
+                    if ((scrollY != oldScrollY) && (scrollbar != null)) {
+                        scrollbar.setValue(scrollY);
+                    }
+                }
+            }
+            return result;
+        }
+        
+        public boolean keyReleased() {
+            boolean result = false;
+            PComponent child;
+            if ((children.size() > 0) && (focusedChild >= 0)) {
+                child = (PComponent) children.elementAt(focusedChild);
+                result = child.keyReleased();
+            }
+            return result;
+        }
+        
+        public void drawContent() {
+            if (scrolling && (scrollHeight > contentHeight)) {
+                pushMatrix();
+                clip(contentX, contentY, contentWidth, contentHeight);
+                translate(0, -scrollY);
+            }
+            Enumeration en = children.elements();
+            PComponent child;
+            while (en.hasMoreElements()) {
+                child = (PComponent) en.nextElement();
+                if (!scrolling || child.intersects(contentX, contentY + scrollY, contentWidth, contentHeight)) {
+                    child.draw();
+                }
+            }
+            if (scrolling && (scrollHeight > contentHeight)) {
+                popMatrix();
+                if (scrollbar != null) {
+                    scrollbar.draw();
+                }
+            }
+        }
+    }
+    
+    public class PRadioButtonGroup {
+        public Vector buttons;
+        
+        public PRadioButtonGroup() {
+            buttons = new Vector();
+        }
+        
+        public void addRadioButton(PRadioButton button) {
+            if (!buttons.contains(button)) {
+                buttons.addElement(button);
+            }
+        }
+        
+        public void removeRadioButton(PRadioButton button) {
+            buttons.removeElement(button);
+        }
+        
+        public void clear() {
+            Enumeration en = buttons.elements();
+            PRadioButton button;
+            while (en.hasMoreElements()) {
+                button = (PRadioButton) en.nextElement();
+                button.selected = false;
+            }
+        }
+    }
+    
+    public class PRadioButton extends PComponent {
+        public boolean selected;
+        public PRadioButtonGroup group;
+        
+        public PRadioButton(boolean selected, PRadioButtonGroup group) {
+            //// set up visual properties
+            highlightWidth = 1;
+            borderWidth = 1;
+            padding = 0x02020202;
+            acceptsFocus = true;
+            //// save selected state
+            this.selected = selected;
+            this.group = group;
+            group.addRadioButton(this);
+        }
+        
+        protected void calculateContentBounds(int availX, int availY, int availWidth, int availHeight) {
+            //// set size of circle based on default font height
+            PFont font  = loadFont();
+            int size = font.height;
+            
+            availWidth = min(availWidth, size);
+            availHeight = min(availHeight, size);
+            setBounds(availX, availY, availWidth, availHeight);
+        }
+        
+        public void initialize() {
+        }
+        
+        protected void drawBefore() {
+            noStroke();
+            if (bgColor != 0) {
+                fill(bgColor);
+                rect(x, y, width, height);
+            }
+            int fgColor;
+            ellipseMode(CORNER);
+            if (highlightWidth > 0) {
+                fgColor = focused ? focusedHighlightColor : unfocusedHighlightColor;
+                if (fgColor != 0) {
+                    fill(fgColor);
+                    ellipse(x, y, width, height);
+                }
+            }
+            if (borderWidth > 0) {
+                fgColor = focused ? focusedBorderColor : unfocusedBorderColor;
+                if (fgColor != 0) {
+                    fill(fgColor);
+                    ellipse(x + highlightWidth, y + highlightWidth, width - (highlightWidth << 1), height - (highlightWidth << 1));
+                }
+            }
+            fgColor = pressed ? pressedFgColor : (focused ? focusedFgColor : unfocusedFgColor);
+            if (fgColor != 0) {
+                fill(fgColor);
+                ellipse(x + highlightWidth + borderWidth, y + highlightWidth + borderWidth, width - ((highlightWidth + borderWidth) << 1), height - ((highlightWidth + borderWidth) << 1));
+            }
+        }
+        
+        protected void drawContent() {
+            if (selected) {
+                noStroke();
+                fill(focused ? focusedBorderColor : unfocusedBorderColor);
+                ellipse(contentX, contentY, contentWidth, contentHeight);
+            }
+        }
+        
+        protected void drawAfter() {
+        }
+        
+        public boolean keyPressed() {
+            boolean result = false;
+            if (keyCode == FIRE) {
+                pressed = true;
+                group.clear();
+                selected = true;
+                result = true;
+            }
+            return result;
+        }
+        
+        public boolean keyReleased() {
+            pressed = false;
+            return false;
+        }
+    }
+    
+    public class PCheckBox extends PComponent {
+        public boolean checked;
+        
+        public PCheckBox(boolean checked) {
+            //// set up visual properties
+            highlightWidth = 1;
+            borderWidth = 1;
+            acceptsFocus = true;
+            //// save initial parameters
+            this.checked = checked;
+        }
+        
+        protected void calculateContentBounds(int availX, int availY, int availWidth, int availHeight) {
+            //// set size of box based on default font height
+            PFont font  = loadFont();
+            int size = font.height;
+            
+            availWidth = min(availWidth, size);
+            availHeight = min(availHeight, size);
+            setBounds(availX, availY, availWidth, availHeight);
+        }
+        
+        protected void drawContent() {
+            if (checked) {
+                stroke(focused ? focusedBorderColor : unfocusedBorderColor);
+                int x2 = contentX + contentWidth - 1;
+                int y2 = contentY + contentHeight - 1;
+                line(contentX, contentY, x2, y2);
+                line(x2, contentY, contentX, y2);
+            }
+        }
+        
+        public boolean keyPressed() {
+            boolean result = false;
+            if (keyCode == FIRE) {
+                pressed = true;
+                checked = !checked;
+                result = true;
+            }
+            return result;
+        }
+        
+        public boolean keyReleased() {
+            pressed = false;
+            return false;
+        }
+    }
+    
+    public class PButton extends PComponent {
+        public PFont font;
+        public int fontColor;
+        public String label;
+        
+        public PButton(String label) {
+            //// set up visual properties
+            highlightWidth = 1;
+            borderWidth = 1;
+            padding = 0x02040204;
+            acceptsFocus = true;
+            focusedFgColor = DEFAULT_HIGHLIGHT_FOCUSED_COLOR;
+            font = loadFont();
+            fontColor = 0xff000000;
+            //// save label string
+            this.label = label;
+        }
+        
+        protected void calculateContentBounds(int availX, int availY, int availWidth, int availHeight) {
+            availWidth = min(availWidth, font.stringWidth(label));
+            availHeight = min(availHeight, font.height);
+            setBounds(availX, availY, availWidth, availHeight);
+        }
+        
+        protected void drawContent() {
+            textFont(font);
+            fill(fontColor);
+            textAlign(CENTER);
+            text(label, contentX + (contentWidth >> 1), contentY + font.baseline);
+        }
+        
+        public boolean keyPressed() {
+            boolean result = false;
+            if (keyCode == FIRE) {
+                pressed = true;
+                result = true;
+            }
+            return result;
+        }
+        
+        public boolean keyReleased() {
+            boolean result = false;
+            pressed = false;
+            if (keyCode == FIRE) {
+                enqueueLibraryEvent(this, 0, label);
+                result = true;
+            }
+            return result;
+        }
+    }
+    
+    public class PImageLabel extends PComponent {
+        public PImage img;
+        
+        public PImageLabel(PImage img) {
+            unfocusedFgColor = 0;
+            this.img = img;
+        }
+        
+        protected void calculateContentBounds(int availX, int availY, int availWidth, int availHeight) {
+            if (img != null) {
+                availWidth = min(availWidth, img.width);
+                availHeight = min(availHeight, img.height);
+                setBounds(availX, availY, availWidth, availHeight);
+            } else {
+                setBounds(availX, availY, min(availWidth, 10), min(availHeight, 10));
+            }
+        }
+        
+        protected void drawContent() {
+            if (img != null) {
+                image(img, contentX, contentY);
+            } else {
+                stroke(focused ? focusedBorderColor : unfocusedBorderColor);
+                noFill();
+                rect(contentX, contentY, contentWidth - 1, contentHeight - 1);
+                line(contentX, contentY, contentX + contentWidth - 1, contentY + contentHeight - 1);
+                line(contentX + contentWidth - 1, contentY, contentX, contentY + contentHeight - 1);
+            }
+        }
+    }
+    
+    public class PLabel extends PComponent {
+        public PFont font;
+        public int fontColor;
+        public int leading;
+        public int align;
+        
+        public String label;
+        public String[] lines;
+        
+        public PLabel(String label) {
+            unfocusedFgColor = 0;
+            font = loadFont();
+            fontColor = 0xff000000;
+            leading = font.height;
+            align = LEFT;
+            
+            this.label = label;
+        }
+        
+        protected void calculateContentBounds(int availX, int availY, int availWidth, int availHeight) {
+            textFont(font);
+            textLeading(leading);
+            int labelWidth = textWidth(label);
+            if ((labelWidth > availWidth) || (label.indexOf('\n') >= 0)) {
+                lines = textWrap(label, availWidth);
+                label = null;
+                setBounds(availX, availY, availWidth, length(lines) * leading);
+            } else {
+                setBounds(availX, availY, labelWidth, leading);
+            }
+        }
+        
+        public void drawContent() {
+            fill(fontColor);
+            textFont(font);
+            textAlign(align);
+            textLeading(leading);
+            if ((label == null) && (lines != null)) {
+                text(lines, contentX, contentY, contentWidth, contentHeight);
+            } else if (label != null) {
+                text(label, contentX, contentY, contentWidth, contentHeight);
+            }
+        }
+    }
+    
+    public class PScrollBar extends PComponent {
+        private int min, max, pageSize, value;
+        private int grabberHeight;
+        
+        public PScrollBar() {
+            highlightWidth = 1;
+        }
+        
+        public void setRange(int min, int max, int pageSize) {
+            this.min = min;
+            this.max = max;
+            this.pageSize = pageSize;
+            value = min;
+        }
+        
+        public void setValue(int value) {
+            this.value = value;
+        }
+        
+        public void initialize() {
+            int pages = 0;
+            if (pageSize == 0) {
+                pageSize = Integer.MAX_VALUE;
+            }
+            if (pageSize > 0) {
+                pages = (max - min + 1) / pageSize;
+                if (((max - min + 1) % pageSize) != 0) {
+                    pages++;
+                }
+                grabberHeight = contentHeight / pages;
+            }
+            grabberHeight = max(4, grabberHeight);
+        }
+        
+        public void drawContent() {
+            if (max >= min) {
+                noStroke();
+                fill(focused ? focusedHighlightColor : unfocusedHighlightColor);
+                rect(contentX, contentY, contentWidth, contentHeight);
+                fill(focused ? focusedBorderColor : unfocusedBorderColor);
+                if ((value + pageSize - 1) >= max) {
+                    rect(contentX, contentY + contentHeight - grabberHeight, contentWidth, grabberHeight);
+                } else {
+                    rect(contentX, contentY + (value - min) * contentHeight / (max - min + 1), contentWidth, grabberHeight);
+                }
+            }
+        }
+    }
+    
+    public class PList extends PComponent {
+        public int selected;
+        public int first;
+        
+        public PFont font;
+        public Vector items;
+        
+        public PScrollBar scrollbar;
+        
+        public boolean marqueeScrolling;
+        public int marqueeStart;
+        public int marqueeWidth;
+        public int marqueeOffset;
+        
+        public PList() {
+            acceptsFocus = true;
+            borderWidth = 1;
+            highlightWidth = 1;
+            font = loadFont();
+            items = new Vector();
+        }
+        
+        public void setScrollBar(PScrollBar scrollbar) {
+            this.scrollbar = scrollbar;
+        }
+        
+        public boolean acceptFocus() {
+            focused = true;
+            resetMarquee();
+            if (scrollbar != null) {
+                scrollbar.focused = true;
+            }
+            return true;
+        }
+        
+        public void releaseFocus() {
+            focused = false;
+            if (scrollbar != null) {
+                scrollbar.focused = false;
+            }
+        }
+        
+        public void add(Object obj) {
+            items.addElement(obj);
+        }
+        
+        public void add(Object[] arr) {
+            for (int i = 0, length = arr.length; i < length; i++) {
+                items.addElement(arr[i]);
+            }
+        }
+        
+        public void initialize() {
+            if (scrollbar != null) {
+                scrollbar.setRange(0, items.size() - 1, contentHeight / getRowHeight());
+                scrollbar.initialize();
+            }
+        }
+        
+        protected void resetMarquee() {
+            if (items.size() > 0) {
+                Object item = items.elementAt(selected);
+                marqueeWidth = font.stringWidth(item.toString());
+                marqueeOffset = 0;
+                if (marqueeWidth > (contentWidth - 2)) {
+                    marqueeScrolling = true;
+                    marqueeStart = millis();
+                } else {
+                    marqueeScrolling = false;
+                }
+            }
+        }
+        
+        protected int getRowHeight() {
+            return font.height + 2;
+        }
+        
+        public boolean keyPressed() {
+            boolean result = false;
+            int oldSelected = selected;
+            switch (keyCode) {
+                case UP:
+                    selected = max(0, selected - 1);
+                    if (selected < first) {
+                        first = max(0, selected);
+                    }
+                    break;
+                case DOWN:
+                    selected = min(items.size() - 1, selected + 1);
+                    int numVisible = contentHeight / getRowHeight();
+                    if (selected >= (first + numVisible)) {
+                        first = min(selected - numVisible + 1, items.size() -  numVisible);
+                    }
+                    break;
+                case FIRE:
+                    pressed = true;
+                    result = true;
+                    break;
+            }
+            if (selected != oldSelected) {
+                resetMarquee();
+                if (scrollbar != null) {
+                    scrollbar.setValue(first);
+                }
+                result = true;
+            }
+            return result;
+        }
+        
+        public boolean keyReleased() {
+            pressed = false;
+            return false;
+        }
+        
+        protected void drawBefore() {
+            //// bypass the normal pressed color selection
+            int fgColor = pressedFgColor;
+            pressedFgColor = focusedFgColor;
+            super.drawBefore();
+            pressedFgColor = fgColor;
+        }
+        
+        protected void drawContent() {
+            textFont(font);
+            textAlign(LEFT);
+            fill(0);
+            //// items
+            int rowHeight = getRowHeight();
+            int numVisible = contentHeight / rowHeight;
+            if ((contentHeight % rowHeight) > 0) {
+                numVisible++;
+            }
+            int rowY = contentY;
+            int endY = contentY + contentHeight;
+            for (int i = first, length = min(items.size(), first + numVisible); i < length; i++) {
+                drawItem(items.elementAt(i), contentX, rowY, contentWidth, min(rowHeight, endY - rowY), (i == selected));
+                rowY += rowHeight;
+            }
+        }
+        
+        protected void drawItem(Object item, int x, int y, int width, int height, boolean selected) {
+            if (selected) {
+                noStroke();
+                fill(pressed ? pressedFgColor : (focused ? focusedHighlightColor : unfocusedHighlightColor));
+                rect(x, y, width, height);
+                fill(0);
+            }
+            pushMatrix();
+            clip(x + 1, y + 1, width - 2, height - 2);
+            if (selected && focused && marqueeScrolling) {
+                int current = millis();
+                int endOffset = marqueeWidth - contentWidth + 2;
+                if (marqueeOffset == endOffset) {
+                    if ((current - marqueeStart) > 750) {
+                        marqueeStart = current;
+                        marqueeOffset = 0;
+                    }
+                } else {
+                    if ((current - marqueeStart) > 750) {
+                        marqueeOffset = (current - marqueeStart - 750) / 20;
+                        if (marqueeOffset >= endOffset) {
+                            marqueeOffset = endOffset;
+                            marqueeStart = current;
+                        }
+                    }
+                }
+                text(item.toString(), x + 1 - marqueeOffset, y + 1 + font.baseline);
+            } else {
+                text(item.toString(), x + 1, y + 1 + font.baseline);
+            }
+            popMatrix();
         }
     }
 }
