@@ -3,7 +3,8 @@ package processing.core;
 import java.io.*;
 import javax.microedition.io.*;
 
-/**
+/** Network client interface for generating HTTP protocol requests.
+ *
  * Part of the Mobile Processing project - http://mobile.processing.org
  *
  * Copyright (c) 2004-05 Francis Li
@@ -25,33 +26,11 @@ import javax.microedition.io.*;
  *
  * @author  Francis Li
  */
-public class PClient extends InputStream implements Runnable {
-    public static final int EVENT_CONNECTED     = 0;
-    public static final int EVENT_ERROR         = 1;
+public class PClient {    
+    private PMIDlet             midlet;
     
-    private PMIDlet         midlet;
-    
-    private String          server;
-    private int             port;
-    
-    private HttpConnection  con;
-    private InputStream     is;
-    private String          url;
-    private String          contentType;
-    private byte[]          request;
-    
-    public PClient() {
-        
-    }
-    
-    public PClient(String server) {
-        this(server, 80);
-    }
-    
-    public PClient(String server, int port) {
-        this.server = server;
-        this.port = port;
-    }
+    private String              server;
+    private int                 port;
     
     public PClient(PMIDlet midlet, String server) {
         this(midlet, server, 80);
@@ -84,9 +63,8 @@ public class PClient extends InputStream implements Runnable {
         return encoded.toString();
     }
     
-    public boolean POST(String file, String[] params, String[] values) {
-        url = "http://" + server + ((port != 80) ? ":" + port : "") + file;
-        contentType = "application/x-www-form-urlencoded";
+    public PRequest POST(String file, String[] params, String[] values) {
+        //// generate request payload
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
         for (int i = 0, length = params.length; i < length; i++) {
@@ -97,16 +75,13 @@ public class PClient extends InputStream implements Runnable {
             ps.print("=");
             ps.print(encode(values[i]));             
         }
-        request = baos.toByteArray();
-        return start();
+        return request(file, "application/x-www-form-urlencoded", baos.toByteArray());
     }
     
-    public boolean POST(String file, String[] params, Object[] values) {
-        url = "http://" + server + ((port != 80) ? ":" + port : "") + file;
-        contentType = "multipart/form-data; boundary=BOUNDARY_185629";
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
+    public PRequest POST(String file, String[] params, Object[] values) {
         try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos);
             for (int i = 0, length = params.length; i < length; i++) {
                 ps.print("--BOUNDARY_185629\r\n");
                 ps.print("Content-Disposition: form-data; name=\"");
@@ -128,14 +103,13 @@ public class PClient extends InputStream implements Runnable {
                 }                
             }
             ps.print("--BOUNDARY_185629--\r\n\r\n");
-            request = baos.toByteArray();
-            return start();
+            return request(file, "multipart/form-data; boundary=BOUNDARY_185629", baos.toByteArray());
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new PException(ioe);
         }
     }
     
-    public boolean GET(String file, String[] params, String[] values) {        
+    public PRequest GET(String file, String[] params, String[] values) {        
         StringBuffer query = new StringBuffer();
         query.append(file);
         query.append("?");
@@ -146,167 +120,29 @@ public class PClient extends InputStream implements Runnable {
             if (i < (length - 1)) {
                 query.append("&");
             }
-        }
+        }        
         return GET(query.toString());
     }
     
-    public boolean GET(String file) {
-        if (file.startsWith("http")) {
-            url = file;
-        } else {
-            url = "http://" + server + ((port != 80) ? ":" + port : "") + file;
-        }
-        contentType = null;
-        request = null;        
-        return start();
+    public PRequest GET(String file) {
+        return request(file, null, null);
     }
     
-    private boolean start() {
-        Thread t = new Thread(this);
-        boolean result = true;
-        if (midlet == null) {
-            //// block until connected
-            synchronized (server) {
-                t.start();
-                try {
-                    server.wait();
-                } catch (InterruptedException ie) { }
-                result = is != null;
-            }
-        } else {
-            t.start();
+    private PRequest request(String file, String contentType, byte[] bytes) {
+        //// create url
+        StringBuffer url = new StringBuffer();
+        url.append("http://");
+        url.append(server);
+        if (port != 80) {
+            url.append(":");
+            url.append(port);
         }
-        return result;
-    }
-    
-    public void run() {
-        close();
-        OutputStream os = null;
-        try {
-            //// open connection to server
-            con = (HttpConnection) Connector.open(url);
-            if (contentType != null) {
-                con.setRequestMethod(HttpConnection.POST);
-                con.setRequestProperty("Content-Type", contentType);
-            } else {
-                con.setRequestMethod(HttpConnection.GET);
-            }
-            con.setRequestProperty("Connection", "close");
-            if (request != null) {
-                os = con.openOutputStream();
-                os.write(request);
-                os.flush();
-                os.close();
-                os = null;
-            }
-            //// now, open inputstream, committing the post
-            is = con.openInputStream();
-            if (midlet != null) {
-                //// done, notify midlet
-                midlet.enqueueLibraryEvent(this, EVENT_CONNECTED, null);
-            }
-        } catch (IOException ioe) {
-            close();
-            if (midlet != null) {
-                midlet.enqueueLibraryEvent(this, EVENT_ERROR, null);
-            }
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (Exception e) {                    
-                }
-                os = null;
-            }            
-        }
-        if (midlet == null) {
-            synchronized (server) {
-                server.notify();
-            }
-        }
-    }
+        url.append(file);
+        //// initiate request
+        PRequest request = new PRequest(midlet, url.toString(), contentType, bytes);
+        Thread t = new Thread(request);
+        t.start();
         
-    public int read() {
-        int result = -1;
-        try {
-            if (is != null) {
-                result = is.read();
-            }
-        } catch (IOException ioe) {
-            close();
-        }
-        return result;
-    }
-    
-    public char readChar() {
-        return (char) read();        
-    }
-        
-    public byte[] readBytes() {
-        byte[] result = null;
-        try {
-            //// read contents
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead = is.read(buffer);
-            while (bytesRead >= 0) {
-                baos.write(buffer, 0, bytesRead);
-                bytesRead = is.read(buffer);
-            }
-            buffer = null;
-            result = baos.toByteArray();
-            baos.close();
-            baos = null;
-        } catch (IOException ioe) {
-            close();
-        }
-        return result;
-    }
-    
-    public int readBytes(byte[] buffer) {
-        int totalBytesRead = -1;
-        if (is != null) {
-            try {
-                totalBytesRead = 0;
-                int length = buffer.length;                
-                int bytesRead = 0;
-                do {
-                    bytesRead = is.read(buffer, totalBytesRead, length - totalBytesRead);
-                    if (bytesRead >= 0) {
-                        totalBytesRead += bytesRead;
-                    }
-                } while ((totalBytesRead < length) && (bytesRead >= 0));
-            } catch (IOException ioe) {
-                close();
-                totalBytesRead = -1;
-            }
-        }
-        return totalBytesRead;
-    }
-    
-    public String readString() {
-        String result = null;
-        byte[] bytes = readBytes();
-        if (bytes != null) {
-            result = new String(bytes);
-        }
-        return result;
-    }
-    
-    public void close() {
-        if (is != null) {
-            try {
-                is.close();
-            } catch (IOException ioe) {
-            }
-            is = null;
-        }
-        if (con != null) {
-            try {
-                con.close();
-            } catch (IOException ioe) {
-            }
-            con = null;
-        }
+        return request;
     }
 }
