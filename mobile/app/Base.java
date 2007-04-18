@@ -107,14 +107,34 @@ public class Base {
     // set the look and feel before opening the window
 
     try {
-      if (Base.isLinux()) {
-        // linux is by default (motif?) even uglier than metal
-        // actually, i'm using native menus, so they're ugly and
-        // motif-looking. ick. need to fix this.
-        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+      if (Base.isMacOS()) {
+        // Use the Quaqua L & F on OS X to make JFileChooser less awful
+        UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+        // undo quaqua trying to fix the margins, since we've already
+        // hacked that in, bit by bit, over the years
+        UIManager.put("Component.visualMargin", new Insets(1, 1, 1, 1));
+
+      } else if (Base.isLinux()) {
+        // Linux is by default even uglier than metal (Motif?).
+        // Actually, i'm using native menus, so they're even uglier
+        // and Motif-looking (Lesstif?). Ick. Need to fix this.
+        //String lfname = UIManager.getCrossPlatformLookAndFeelClassName();
+        //UIManager.setLookAndFeel(lfname);
+
+        // For 0120, trying out the gtk+ look and feel as the default.
+        // This is available in Java 1.4.2 and later, and it can't possibly
+        // be any worse than Metal. (Ocean might also work, but that's for
+        // Java 1.5, and we aren't going there yet)
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+
       } else {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
+    //} catch (ClassNotFoundException cnfe) {
+      // just default to the native look and feel for this platform
+      // i.e. appears that some linux systems don't have the gtk l&f
+      //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -392,9 +412,19 @@ public class Base {
                                                        domainDocuments });
         sketchbookFolder = new File(documentsFolder, "MobileProcessing");
 
-      } catch (Exception e) {
+        /*
+          // more specific version for debugging
+      } catch (InvocationTargetException ite) {
+        Throwable target =
+          ((InvocationTargetException) ite).getTargetException();
         showError("sketch folder problem",
-                  "Could not locate default sketch folder location.", e);
+                  "Could not locate default sketch folder location.", target);
+        */
+
+      } catch (Exception e) {
+        //showError("Could not find folder",
+        //          "Could not locate the Documents folder.", e);
+        sketchbookFolder = promptSketchbookLocation();
       }
 
     } else if (isWindows()) {
@@ -423,11 +453,15 @@ public class Base {
         sketchbookFolder = new File(personalPath, "MobileProcessing");
 
       } catch (Exception e) {
-        showError("Problem getting documents folder",
-                  "Error getting the Processing sketchbook folder.", e);
+        //showError("Problem getting folder",
+        //          "Could not locate the Documents folder.", e);
+        sketchbookFolder = promptSketchbookLocation();
       }
 
     } else {
+      sketchbookFolder = promptSketchbookLocation();
+
+      /*
       // on linux (or elsewhere?) prompt the user for the location
       JFileChooser fc = new JFileChooser();
       fc.setDialogTitle("Select the folder where " +
@@ -444,6 +478,7 @@ public class Base {
       } else {
         System.exit(0);
       }
+      */
     }
 
     // create the folder if it doesn't exist already
@@ -469,6 +504,68 @@ public class Base {
     }
 
     return sketchbookFolder;
+  }
+
+
+  /**
+   * Check for a new sketchbook location.
+   */
+  static protected File promptSketchbookLocation() {
+    File folder = null;
+
+    folder = new File(System.getProperty("user.home"), "sketchbook");
+    if (!folder.exists()) {
+      folder.mkdirs();
+      return folder;
+    }
+
+    folder = Base.selectFolder("Select (or create new) folder for sketches...",
+                               null, null);
+    if (folder == null) {
+      System.exit(0);
+    }
+    return folder;
+  }
+
+
+  /**
+   * Implementation for choosing directories that handles both the
+   * Mac OS X hack to allow the native AWT file dialog, or uses
+   * the JFileChooser on other platforms. Mac AWT trick obtained from
+   * <A HREF="http://lists.apple.com/archives/java-dev/2003/Jul/msg00243.html">this post</A>
+   * on the OS X Java dev archive which explains the cryptic note in
+   * Apple's Java 1.4 release docs about the special System property.
+   */
+  static public File selectFolder(String prompt, File folder, Frame frame) {
+    if (Base.isMacOS()) {
+      if (frame == null) frame = new Frame(); //.pack();
+      FileDialog fd = new FileDialog(frame, prompt, FileDialog.LOAD);
+      if (folder != null) {
+        fd.setDirectory(folder.getParent());
+        //fd.setFile(folder.getName());
+      }
+      System.setProperty("apple.awt.fileDialogForDirectories", "true");
+      fd.show();
+      System.setProperty("apple.awt.fileDialogForDirectories", "false");
+      if (fd.getFile() == null) {
+        return null;
+      }
+      return new File(fd.getDirectory(), fd.getFile());
+
+    } else {
+      JFileChooser fc = new JFileChooser();
+      fc.setDialogTitle(prompt);
+      if (folder != null) {
+        fc.setSelectedFile(folder);
+      }
+      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+      int returned = fc.showOpenDialog(new JDialog());
+      if (returned == JFileChooser.APPROVE_OPTION) {
+        return fc.getSelectedFile();
+      }
+    }
+    return null;
   }
 
 
@@ -552,15 +649,37 @@ public class Base {
   // .................................................................
 
 
+  static public void showReference() {
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + "index.html");
+  }
+
+
   /**
    * Given the reference filename from the keywords list,
    * builds a URL and passes it to openURL.
    */
   static public void showReference(String referenceFile) {
-    String currentDir = System.getProperty("user.dir");
-    openURL(currentDir + File.separator +
-            "reference" + File.separator +
-            referenceFile + ".html");
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + referenceFile + ".html");
+  }
+
+
+  static public void showEnvironment() {
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + "environment" +
+            File.separator + "index.html");
+  }
+
+
+  static public void showTroubleshooting() {
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + "troubleshooting" +
+            File.separator + "index.html");
   }
 
 
@@ -570,10 +689,13 @@ public class Base {
    */
   static public void showFAQ() {
     //Base.openURL("http://processing.org/faq/");
-    String currentDir = System.getProperty("user.dir");
-    openURL(currentDir + File.separator + "faq" +
-            File.separator + "index.html");
+    openURL(System.getProperty("user.dir") +
+            File.separator + "reference" +
+            File.separator + "faq.html");
   }
+
+
+  // .................................................................
 
 
   /**
@@ -713,7 +835,7 @@ public class Base {
    * for errors that allow P5 to continue running.
    */
   static public void showError(String title, String message,
-                               Exception e) {
+                               Throwable e) {
     if (title == null) title = "Error";
     JOptionPane.showMessageDialog(new Frame(), message, title,
                                   JOptionPane.ERROR_MESSAGE);
