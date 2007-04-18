@@ -201,8 +201,7 @@ public class PFont implements PConstants {
 
     images = new PImage[charCount];
     for (int i = 0; i < charCount; i++) {
-      int pixels[] = new int[twidth * theight];
-      images[i] = new PImage(pixels, twidth, theight, ALPHA);
+      images[i] = new PImage(twidth, theight, ALPHA);
       int bitmapSize = height[i] * width[i];
 
       byte temp[] = new byte[bitmapSize];
@@ -228,25 +227,32 @@ public class PFont implements PConstants {
     if (version >= 10) {  // includes the font name at the end of the file
       name = is.readUTF();
       psname = is.readUTF();
-
-      // this font may or may not be installed
-      font = new Font(name, Font.PLAIN, size);
-      // if the ps name matches, then we're in fine shape
-      if (!font.getPSName().equals(psname)) {
-        // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
-        // of the font, so try that in case this .vlw font was created on pc
-        // and the name is different, but the ps name is found on the
-        // java 1.4 mac that's currently running this sketch.
-        font = new Font(psname, Font.PLAIN, size);
-      }
-      // check again, and if still bad, screw em
-      if (!font.getPSName().equals(psname)) {
-        font = null;
-      }
     }
     if (version == 11) {
       smooth = is.readBoolean();
     }
+  }
+
+
+  /**
+   * Try to find the native version of this font.
+   */
+  protected Font findFont() {
+    // this font may or may not be installed
+    font = new Font(name, Font.PLAIN, size);
+    // if the ps name matches, then we're in fine shape
+    if (!font.getPSName().equals(psname)) {
+      // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
+      // of the font, so try that in case this .vlw font was created on pc
+      // and the name is different, but the ps name is found on the
+      // java 1.4 mac that's currently running this sketch.
+      font = new Font(psname, Font.PLAIN, size);
+    }
+    // check again, and if still bad, screw em
+    if (!font.getPSName().equals(psname)) {
+      font = null;
+    }
+    return font;
   }
 
 
@@ -299,17 +305,19 @@ public class PFont implements PConstants {
   public int index(char c) {
     // degenerate case, but the find function will have trouble
     // if there are somehow zero chars in the lookup
-    if (value.length == 0) return -1;
+    //if (value.length == 0) return -1;
+    if (charCount == 0) return -1;
 
     // quicker lookup for the ascii fellers
     if (c < 128) return ascii[c];
 
     // some other unicode char, hunt it out
-    return index_hunt(c, 0, value.length-1);
+    //return index_hunt(c, 0, value.length-1);
+    return indexHunt(c, 0, charCount-1);
   }
 
 
-  protected int index_hunt(int c, int start, int stop) {
+  protected int indexHunt(int c, int start, int stop) {
     int pivot = (start + stop) / 2;
 
     // if this is the char, then return it
@@ -320,10 +328,10 @@ public class PFont implements PConstants {
     if (start >= stop) return -1;
 
     // if it's in the lower half, continue searching that
-    if (c < value[pivot]) return index_hunt(c, start, pivot-1);
+    if (c < value[pivot]) return indexHunt(c, start, pivot-1);
 
     // if it's in the upper half, continue there
-    return index_hunt(c, pivot+1, stop);
+    return indexHunt(c, pivot+1, stop);
   }
 
 
@@ -612,11 +620,10 @@ public class PFont implements PConstants {
   /**
    * The default Processing character set.
    * <P>
-   * This is the union of the Mac Roman and Windows ANSI
-   * character sets. ISO Latin 1 would be Unicode characters
-   * 0x80 -> 0xFF, but in practice, it would seem that most
-   * designers using P5 would rather have the characters
-   * that they expect from their platform's fonts.
+   * This is the union of the Mac Roman and Windows ANSI (CP1250)
+   * character sets. ISO 8859-1 Latin 1 is Unicode characters 0x80 -> 0xFF,
+   * and would seem a good standard, but in practice, most P5 users would
+   * rather have characters that they expect from their platform's fonts.
    * <P>
    * This is more of an interim solution until a much better
    * font solution can be determined. (i.e. create fonts on
@@ -672,6 +679,14 @@ public class PFont implements PConstants {
     psname = font.getPSName();
 
     try {
+      // charset needs to be sorted to make index lookup run more quickly
+      // http://dev.processing.org/bugs/show_bug.cgi?id=494
+      //Arrays.sort(charset);
+      Class arraysClass = Class.forName("java.util.Arrays");
+      Method sortMethod =
+        arraysClass.getMethod("sort", new Class[] { charset.getClass() });
+      sortMethod.invoke(null, new Object[] { charset });
+
       // the count gets reset later based on how many of
       // the chars are actually found inside the font.
       this.charCount = (charset == null) ? 65536 : charset.length;
@@ -744,7 +759,7 @@ public class PFont implements PConstants {
       //PApplet.printarr(renderingHintsClass.getFields());
 
       Field antialiasingKeyField =
-        renderingHintsClass.getDeclaredField("KEY_TEXT_ANTIALIASING");
+        renderingHintsClass.getField("KEY_TEXT_ANTIALIASING");
       Object antialiasingKey =
         antialiasingKeyField.get(renderingHintsClass);
 
@@ -910,8 +925,7 @@ public class PFont implements PConstants {
       g2.setColor(Color.black);
       g2.drawString(String.valueOf(c), size - minX, size * 2 - minY);
 
-      bitmaps[index] = new PImage(new int[width[index] * height[index]],
-                                  width[index], height[index], ALPHA);
+      bitmaps[index] = new PImage(width[index], height[index], ALPHA);
 
       for (int y = minY; y <= maxY; y++) {
         for (int x = minX; x <= maxX; x++) {
@@ -950,7 +964,7 @@ public class PFont implements PConstants {
     // so that this font can be used immediately by p5.
     images = new PImage[charCount];
     for (int i = 0; i < charCount; i++) {
-      images[i] = new PImage(new int[mbox2*mbox2], mbox2, mbox2, ALPHA);
+      images[i] = new PImage(mbox2, mbox2, ALPHA);
       for (int y = 0; y < height[i]; y++) {
         System.arraycopy(bitmaps[i].pixels, y*width[i],
                          images[i].pixels, y*mbox2,
@@ -982,7 +996,18 @@ public class PFont implements PConstants {
    */
   static public String[] list() {
     if (PApplet.javaVersion < 1.3f) {
-      return Toolkit.getDefaultToolkit().getFontList();
+      // make this reflection too, since compilers complain about the
+      // deprecation, and it's bound to stop working in 1.6 or something
+      //return Toolkit.getDefaultToolkit().getFontList();
+      try {
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Method getFontListMethod =
+          tk.getClass().getMethod("getFontList", (Class[]) null);
+        return (String[]) getFontListMethod.invoke(tk, (Object[]) null);
+      } catch (Exception e) {
+        e.printStackTrace();
+        return new String[] { };
+      }
     }
 
     // getFontList is deprecated in 1.4, so this has to be used
@@ -991,11 +1016,12 @@ public class PFont implements PConstants {
       //  GraphicsEnvironment.getLocalGraphicsEnvironment();
       Class geClass = Class.forName("java.awt.GraphicsEnvironment");
       Method glgeMethod =
-        geClass.getMethod("getLocalGraphicsEnvironment", null);
-      Object ge = glgeMethod.invoke(null, null);
+        geClass.getMethod("getLocalGraphicsEnvironment", (Class[]) null);
+      Object ge = glgeMethod.invoke((Class[]) null, (Object[]) null);
 
-      Method gafMethod = geClass.getMethod("getAllFonts", null);
-      Font fonts[] = (Font[]) gafMethod.invoke(ge, null); //ge.getAllFonts();
+      //Font fonts[] = ge.getAllFonts();
+      Method gafMethod = geClass.getMethod("getAllFonts", (Class[]) null);
+      Font fonts[] = (Font[]) gafMethod.invoke(ge, (Object[]) null);
       String list[] = new String[fonts.length];
       for (int i = 0; i < list.length; i++) {
         list[i] = fonts[i].getName();
