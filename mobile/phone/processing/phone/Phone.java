@@ -38,6 +38,10 @@ public class Phone {
         this.display = midlet.display;
     }
     
+    public int numAlphaLevels() {
+        return display.numAlphaLevels();
+    }
+    
     public void fullscreen() {
         canvas.removeCommand(midlet.cmdExit);
         canvas.removeCommand(midlet.cmdCustom);
@@ -49,12 +53,14 @@ public class Phone {
     }      
     
     public void noFullscreen() {
-        canvas.setFullScreenMode(false);
+        canvas.setFullScreenMode(false);        
         midlet.width = canvas.getWidth();
         midlet.height = canvas.getHeight();
         
         canvas.addCommand(midlet.cmdExit);
-        canvas.addCommand(midlet.cmdCustom);
+        if (midlet.cmdCustom != null) {
+            canvas.addCommand(midlet.cmdCustom);
+        }
         canvas.setCommandListener(midlet);
     }
     
