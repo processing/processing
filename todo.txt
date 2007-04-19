@@ -24,6 +24,33 @@ X re-architect svg to properly inherit fill/stroke/etc from parents
 X   <g> object can specify fill/stroke for everyone below
 X   need to discern between having a fill specified and one not being present
 
+_ disallow .java tabs with same name as the sketch
+_   a .java tab with same name as the sketch is allowed (oog!)
+_   particularly look at "save as" scenario
+_   http://dev.processing.org/bugs/show_bug.cgi?id=543
+_   bug report:
+_     create a new sketch, write something in it
+_     create a new tab, name it "something.java", write something into it
+_     rename main tab (sketch) to "something" (without ".java")
+_     the contents in the files are not the same, but the main-tab is 
+_     showing the contents of the .java tab, so if you press save 
+_     you will overwrite your original code from the main-tab. 
+
+_ show progress bar while rebuilding sketch menu
+_   startup is very slow on g4
+
+
+LIBRARIES / Net
+
+_ move the useful serial buffering fxns into net library
+_ make the Client list public
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
+_ add an event to Server that notifies when a Client disconnects
+_ proccessing.net.Client.write(int) terminates sketch when client disconnects.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=537
+_ Server.write(bytes[]) hangs sketch on client disconnect.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=538
+
 _ java.extension.dirs has the library/extn stuff
 _   can probably set this blank
 _ the jar from which a class file has been loaded
@@ -1001,14 +1028,6 @@ _   could instead use texsubimage in opengl, etc
 _   only supports tint() (to set alpha or color) and drawing? just drawing?
 
 
-LIBRARIES / Net
-
-_ add an event to Server that notifies when a Client disconnects
-_ move the useful serial buffering fxns into net library
-_ make the Client list public
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
-
-
 LIBRARIES / Serial
 
 _ port buffering not working properly
@@ -1122,7 +1141,8 @@ _ mac standard key combinations for moving around in the editor
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1093116515
 _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
-
+_ processing cancels shutdown on mac os x
+_   http://dev.processing.org/bugs/show_bug.cgi?id=539
 
 DIST / Linux
 

@@ -7418,6 +7418,12 @@ public class PApplet extends Applet
   }
 
 
+  public void textAlign(int alignX, int alignY) {
+    if (recorder != null) recorder.textAlign(alignX, alignY);
+    g.textAlign(alignX, alignY);
+  }
+
+
   public float textAscent() {
     return g.textAscent();
   }

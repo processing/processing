@@ -314,6 +314,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   /** The current text align (read-only) */
   public int textAlign;
 
+  /** The current vertical text alignment (read-only) */
+  public int textAlignY;
+
   /** The current text mode (read-only) */
   public int textMode;
 
@@ -2105,9 +2108,21 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   /**
    * Sets the alignment of the text to one of LEFT, CENTER, or RIGHT.
+   * This will also reset the vertical text alignment to BASELINE.
    */
   public void textAlign(int align) {
-    textAlign = align;
+    textAlign(align, BASELINE);
+  }
+
+
+  /**
+   * Sets the horizontal and vertical alignment of the text. The horizontal
+   * alignment can be one of LEFT, CENTER, or RIGHT. The vertical alignment
+   * can be TOP, BOTTOM, CENTER, or the BASELINE (the default).
+   */
+  public void textAlign(int alignX, int alignY) {
+    textAlign = alignX;
+    textAlignY = alignY;
   }
 
 
@@ -2208,7 +2223,7 @@ public abstract class PGraphics extends PImage implements PConstants {
                                  "in Processing beta");
     }
     if ((mode != SCREEN) && (mode != MODEL)) {
-      throw new RuntimeException("Only textMode(SCREEN) or textMode(MODEL) " +
+      throw new RuntimeException("Only textMode(SCREEN) and textMode(MODEL) " +
                                  "are available with this renderer.");
     }
 
@@ -2380,6 +2395,30 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
     str.getChars(0, length, textBuffer, 0);
 
+    // If multiple lines, sum the height of the additional lines
+    float high = 0; //-textAscent();
+    for (int i = 0; i < length; i++) {
+      if (textBuffer[i] == '\n') {
+        high += textLeading;
+      }
+    }
+    if (textAlignY == CENTER) {
+      // for a single line, this adds half the textAscent to y
+      // for multiple lines, subtract half the additional height
+      //y += (textAscent() - textDescent() - high)/2;
+      y += (textAscent() - high)/2;
+    } else if (textAlignY == TOP) {
+      // for a single line, need to add textAscent to y
+      // for multiple lines, no different
+      y += textAscent();
+    } else if (textAlignY == BOTTOM) {
+      // for a single line, this is just baseline (unchanged)
+      // for multiple lines, subtract leading for each line
+      y -= high;
+    //} else if (textAlignY == BASELINE) {
+      // do nothing
+    }
+
     int start = 0;
     int index = 0;
     while (index < length) {
@@ -2427,6 +2466,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     } else if (textAlign == RIGHT) {
       x -= textWidthImpl(buffer, start, stop);
     }
+
     textLinePlacedImpl(buffer, start, stop, x, y);
   }
 
