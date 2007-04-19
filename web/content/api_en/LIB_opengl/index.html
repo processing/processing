@@ -138,7 +138,9 @@ As of release 0116, this is JOGL 1.0.
   this works for you great, but if not, we aren't responsible and 
   we will not field questions about it on the board. 
   If you want to write code for Java and JOGL, then find yourself a 
-  good Java IDE and get JOGL installed, Processing is not the way to do it. 
+  good Java IDE and get JOGL installed, Processing is probably 
+  not the way to do it because that's the kind of confusing mess we're trying
+  to insulate you from.
   </p>
 <p>To get access to the GL object, use the following:
 <PRE>GL gl = ((PGraphicsOpenGL)g).gl;</PRE>
@@ -151,12 +153,14 @@ As of release 0116, this is JOGL 1.0.
     Instead, we're using OpenGL graphics for one implementation of the 
     Processing Core API. <BR>
   Because most of the work in drawing is handled by Processing, most OpenGL 
-  calls will not work, because the model and perspective matrices won't be set 
-  up properly. Therefore, using the GL object will mostly only be useful for 
+  calls will not work, because most things won't be set 
+  up properly. Therefore, using the GL object may only be useful for 
   tweaking obscure OpenGL parameters.</p>
+
   <p>Another option for talking directly to OpenGL in release 0116 and later is 
   to use the beginGL() and endGL() methods. These were added against my better 
-  judgement, and handle setting up the camera matrices. Many features still 
+  judgement, and handle setting up the camera matrices
+  (though still no lighting or other parameters). Many features still 
   will not work, but it opens up lots of control for geometry. All the
   above caveats about "don't cry when it breaks" apply. </p>
   <PRE>
@@ -172,8 +176,8 @@ void setup() {
 void draw() {
   background(255);
   
-  PGraphicsOpenGL pgl = (PGraphicsOpenGL) g;
-  GL gl = pgl.beginGL();
+  PGraphicsOpenGL pgl = (PGraphicsOpenGL) g;  // g may change
+  GL gl = pgl.beginGL();  // always use the GL object returned by beginGL
   
   // Do some things with gl.xxx functions here.
   // For example, the program above is translated into:
@@ -191,6 +195,7 @@ void draw() {
 }
 
 </PRE>
+Always do the assignment/cast from g to pgl inside draw(), because 'g' may change from time to time. In addition, use the GL object returned by beginGL() for the same reason, that the GL context itself may have changed. In practice, I've not really seen this happen, but this is strongly encouraged to prevent things from crashing in a bad way (think blue screen, kernel panic kinds of bad ways).
   </p> 
   </div>
   </div>
