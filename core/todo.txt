@@ -27,9 +27,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=513
 X constant CENTER_RADIUS will be changed to just RADIUS
 X   CENTER_RADIUS is being deprecated, not removed
 _   remove CENTER_RADIUS from any p5 code
-X splitTokens() added
-_   need to add reference for splitTokens
-_   need to edit reference for split (regexp?) 
+X split() inconsistency (emailed casey, will discuss later)
+X   make split(String, String) behave like String.split(String)
+X   and make current split(String) into splitTokens(String)
+_   add splitTokens() documentation
+_   document new version of split() and regexp
 _   should we mention String.split?
 X ironed out more of the preproc parseXxxx() functions
 _   update the reference to cover these decisions
@@ -49,18 +51,28 @@ X updatePixels ref is wrong
 X   has x/y/w/h version
 X   the reference is also cut off
 X make ENTER, TAB, etc all into char values (instead of int)
+X some way to vertically center text
+X   either by setting its middle vertical point
+X   or by setting a top/bottom for the rectangle in which it should be placed
+o   maybe textAlign(CENTER | VERTICAL_CENTER);
+X   or TOP, MIDDLE, and BOTTOM
+o   textAlign(CENTER | TOP);
+o   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
+X   or textAlign(LEFT, MIDDLE); -> this one seems best
+X   add reference for new param, and update keywords.txt
+
+
+_ look into capabilities stuff from mike creighton
+_   also sets the aa mode on the pc so it no longer needs control panel bunk
+
+_ when using createFont("xxxx.ttf"), should use textMode(SHAPE)
+_   because ttf files will not be installed on the system when opening pdf
 
 _ copy() should automatically call updatePixels()
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
 
 _ rect() after strokeWeight(1) gives wrong coords
 _   http://dev.processing.org/bugs/show_bug.cgi?id=535
-
-X split() inconsistency (emailed casey, will discuss later)
-X   make split(String, String) behave like String.split(String)
-X   and make current split(String) into splitTokens(String)
-_   add splitTokens() documentation
-_   document new version of split() and regexp
 
 _ text(char c) with char 0 and undefined should print nothing
 _   perhaps also DEL or other nonprintables?
@@ -87,6 +99,8 @@ _ add to open() reference problems with mac
 _   need to use the 'open' command on osx
 _   or need to do this by hand
 _   prolly better to do it by default, since on windows we use cmd?
+_   check to see if the user has 'open' in there already
+_   they can call Runtime.getRuntime().exec() if they want more control
 
 should be fixed, but needs to be tested
 _ saveFrame() produces a black background because bg not set correctly:
@@ -298,6 +312,8 @@ _   check with the a_Displaying example and tint(255, 0, 0, 100);
 _   http://dev.processing.org/bugs/show_bug.cgi?id=90
 _   is fill() not coloring textures properly?
 _     don't need to apply tint() to textures, supposed to use fill color
+Hope this helps:  If you haven't tracked it down yet... it's in PTriangle, when a flat-shaded textured triangle is drawn, then the rgb of the tint isn't used.  So, for example, if the triangle renderer branches to drawsegment_texture32() the tint rgb won't be used, whereas if it branches to drawsegment_gouraud_texture32() then the tint rgb WILL be used.  Alpha gets used from tint, because all alpha has to do is be != 255, but for rgb to get used they values have to differ among vertices (which won't happen via the image() routine for example).  The quick fix might be to insert an additional test in setIntensities() to check if parent.tint is true, and if so then force gouraud shading, INTERPOLATE_RGB=true.
+
 
 add to reference
 _ also parseInt and parseFloat, how they can return another number or NaN
@@ -314,15 +330,6 @@ _   even though the main() wants to keep going
 
 _ cameraXYZ doesn't seem to actually be used for anything
 _   since camera functions don't even look at it or set it
-
-_ some way to vertically center text
-_   either by setting its middle vertical point
-_   or by setting a top/bottom for the rectangle in which it should be placed
-_   maybe textAlign(CENTER | VERTICAL_CENTER);
-_   or TOP, MIDDLE, and BOTTOM
-_   textAlign(CENTER | TOP);
-_   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
-_   or textAlign(LEFT, MIDDLE); -> this one seems best
 
 _ AIOOBE on PLine 757.. halts renderer
 
