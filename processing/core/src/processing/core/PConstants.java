@@ -202,6 +202,16 @@ public interface PConstants {
   static final int CENTER        = 3;
 
 
+  // vertically alignment modes for text
+
+  /** Default vertical alignment for text placement */
+  static final int BASELINE = 0;
+  /** Align text to the top */
+  static final int TOP = 101;
+  /** Align text from the bottom, using the baseline. */
+  static final int BOTTOM = 102;
+
+
   // uv texture orientation modes
 
   static final int NORMALIZED = 1; //_SPACE  = 0;  // 0..1
