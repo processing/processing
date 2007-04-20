@@ -2,6 +2,9 @@
     <devices>
         <!-- Nokia N95, S60 3rd Edition, 240x320 -->
         <device user_agent="Mozilla/5.0 (SymbianOS/9.2; U; Series60/3.1 NokiaN95" actual_device_root="true" id="nokia_n95_ver1" fall_back="nokia_generic_series60_dp30">
+	    <group id="product_info">
+		<capability name="model_name" value="N95"/>
+	    </group>
         </device>
     </devices>
 </wurfl_patch>
