@@ -394,7 +394,21 @@ function apply_patch(){
 	mysql_query($fillhybrid);
 	$queries++;
 	// insert all the patch devices that DON'T already exist in the WURFL into the hybrid table
-	mysql_query("INSERT INTO ".DB_HYBRID_TABLE." SELECT p.* FROM ".DB_PATCH_TABLE." AS p LEFT JOIN ".DB_HYBRID_TABLE." AS d ON p.deviceID = d.deviceID WHERE d.deviceID IS NULL");
+    //// first create a temporary table (for mysql < 4.0)
+	$createtable = "CREATE TEMPORARY TABLE `tera_wurfl_temp` (
+                      `deviceID` varchar(128) binary NOT NULL default '',
+                      `user_agent` varchar(255) default NULL,
+                      `fall_back` varchar(128) default NULL,
+                      `actual_device_root` tinyint(1) default '0',
+                      `capabilities` mediumtext,
+                      PRIMARY KEY  (`deviceID`),
+                      KEY `fallback` (`fall_back`),
+                      KEY `useragent` (`user_agent`))";
+    mysql_query($createtable);
+    //// select into temporary table
+	mysql_query("INSERT INTO tera_wurfl_temp SELECT p.* FROM ".DB_PATCH_TABLE." AS p LEFT JOIN ".DB_HYBRID_TABLE." AS d ON p.deviceID = d.deviceID WHERE d.deviceID IS NULL");
+    //// then from temp to hybrid
+	mysql_query("INSERT INTO ".DB_HYBRID_TABLE." SELECT p.* FROM tera_wurfl_temp AS p");
 	$queries++;
 	$newdevs = mysql_affected_rows();
 	// get all the devices that DO exist in the main WURFL so we can merge them in the hybrid table
