@@ -29,46 +29,46 @@ import java.util.*;
 public class PCanvas extends Canvas {
     //// the following two fields are public static so that PImage and its subclasses can access them
     //// without requiring a reference
-    public static Image buffer;
-    public static int   imageMode;
+    public static Image     buffer;
+    public static int       imageMode;
     
-    private PMIDlet     midlet;
-    private boolean     suspended;
+    protected PMIDlet       midlet;
+    protected boolean       suspended;
     
-    private Graphics    bufferg;
+    protected Graphics      bufferg;
     
-    private int         width;
-    private int         height;
+    protected int           width;
+    protected int           height;
     
-    private int         colorMode;
-    private boolean     colorModeRGB255;
-    private int         colorMaxX;
-    private int         colorMaxY;
-    private int         colorMaxZ;
-    private int         colorMaxA;
+    protected int           colorMode;
+    protected boolean       colorModeRGB255;
+    protected int           colorMaxX;
+    protected int           colorMaxY;
+    protected int           colorMaxZ;
+    protected int           colorMaxA;
     
-    private boolean     stroke;
-    private int         strokeWidth;
-    private int         strokeColor;
+    protected boolean       stroke;
+    protected int           strokeWidth;
+    protected int           strokeColor;
     
-    private boolean     fill;
-    private int         fillColor;
+    protected boolean       fill;
+    protected int           fillColor;
     
-    private int         rectMode;
-    private int         ellipseMode;
+    protected int           rectMode;
+    protected int           ellipseMode;
     
-    private int         shapeMode;
-    private int[]       vertex;
-    private int         vertexIndex;
-    private int[]       curveVertex;
-    private int         curveVertexIndex;
+    protected int           shapeMode;
+    protected int[]         vertex;
+    protected int           vertexIndex;
+    protected int[]         curveVertex;
+    protected int           curveVertexIndex;
     
-    private int[]       stack;
-    private int         stackIndex;
+    protected int[]         stack;
+    protected int           stackIndex;
     
-    private PFont       textFont;
-    private int         textAlign;
-    private int         textLeading;
+    protected PFont         textFont;
+    protected int           textAlign;
+    protected int           textLeading;
         
     /** Creates a new instance of PCanvas */
     public PCanvas(PMIDlet midlet) {
@@ -393,7 +393,7 @@ public class PCanvas extends Canvas {
         vertexIndex = 0;
     }
     
-    private void polygon(int startIndex, int endIndex) {
+    protected void polygon(int startIndex, int endIndex) {
         //// make sure at least 2 vertices
         if (endIndex >= (startIndex + 2)) {
             //// make sure at least 3 vertices for fill
@@ -609,7 +609,7 @@ public class PCanvas extends Canvas {
                           dx0, dx1, dy0, dy1);        
     }
     
-    private void plotCurveVertices(int x0, int y0, int x1, int y1, int dx0, int dx1, int dy0, int dy1) {
+    protected void plotCurveVertices(int x0, int y0, int x1, int y1, int dx0, int dx1, int dy0, int dy1) {
         int x, y, t, t2, t3, h0, h1, h2, h3;
         vertex(x0 >> 8, y0 >> 8);
         for (t = 0; t < 256 /* 1.0f */; t += 26 /* 0.1f */) {
@@ -1096,12 +1096,12 @@ public class PCanvas extends Canvas {
         background(200);
     }
     
-    private static final int EDGE_X             = 0;
-    private static final int EDGE_DX            = 1;
-    private static final int EDGE_DY            = 2;
-    private static final int EDGE_X1            = 3;
-    private static final int EDGE_Y1            = 4;
-    private static final int EDGE_X2            = 5;
-    private static final int EDGE_Y2            = 6;
-    private static final int EDGE_ARRAY_SIZE    = 7;
+    protected static final int EDGE_X           = 0;
+    protected static final int EDGE_DX          = 1;
+    protected static final int EDGE_DY          = 2;
+    protected static final int EDGE_X1          = 3;
+    protected static final int EDGE_Y1          = 4;
+    protected static final int EDGE_X2          = 5;
+    protected static final int EDGE_Y2          = 6;
+    protected static final int EDGE_ARRAY_SIZE  = 7;
 }
