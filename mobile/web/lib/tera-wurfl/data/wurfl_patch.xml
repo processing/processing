@@ -1,10 +1,405 @@
 <wurfl_patch>
     <devices>
+
         <!-- Nokia N95, S60 3rd Edition, 240x320 -->
         <device user_agent="Mozilla/5.0 (SymbianOS/9.2; U; Series60/3.1 NokiaN95" actual_device_root="true" id="nokia_n95_ver1" fall_back="nokia_generic_series60_dp30">
 	    <group id="product_info">
 		<capability name="model_name" value="N95"/>
 	    </group>
         </device>
+
+
+
+
+
+
+		<!-- Original Patch by Darren Luckett -->
+		<!-- Updates by Andrea Trasatti -->
+		<!-- last update 2005 11 15 -->
+		<!-- Version 1.1 -->
+		<!-- Web browsers -->
+		<device user_agent="Mozilla/4.0" fall_back="generic" id="generic_web_browser">
+			<group id="product_info">
+
+				<capability name="is_wireless_device" value="false"/>
+				<capability name="device_claims_web_support" value="true"/>
+			</group>
+			<group id="display">
+				<capability name="resolution_width" value="770"/>
+				<capability name="resolution_height" value="300"/>
+				<capability name="columns" value="77"/>
+				<capability name="rows" value="30"/>
+				<capability name="max_image_width" value="600"/>
+
+				<capability name="max_image_height" value="600"/>
+			</group>
+			<group id="image_format">
+				<capability name="wbmp" value="false"/>
+				<capability name="bmp" value="true"/>
+				<capability name="gif" value="true"/>
+				<capability name="jpg" value="true"/>
+				<capability name="png" value="true"/>
+				<capability name="colors" value="1024"/>
+
+				<capability name="flash_lite" value="true"/>
+				<capability name="flash_lite_download_limit" value="10000"/>
+			</group>
+			<group id="sound_format">
+				<capability name="wav" value="true"/>
+				<capability name="au" value="true"/>
+				<capability name="mp3" value="true"/>
+				<capability name="midi_monophonic" value="true"/>
+
+				<capability name="midi_polyphonic" value="true"/>
+			</group>
+			<group id="storage">
+				<capability name="max_deck_size" value="50000"/>
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_supports_table_for_layout" value="true"/>
+				<capability name="xhtml_supports_css_cell_table_coloring" value="true"/>
+				<capability name="xhtml_format_as_css_property" value="false"/>
+
+			</group>
+			<group id="j2me">
+				<capability name="j2me_storage_size" value="0"/><!-- Darren's test suite -->
+				<capability name="j2me_heap_size" value="0"/><!-- Darren's test suite -->
+			</group>
+			<group id="object_download">
+				<capability name="directdownload_support" value="true"/><!-- Darren's test suite -->
+				<capability name="inline_support" value="true"/><!-- Darren's test suite -->
+				<capability name="ringtone" value="true"/><!-- Darren's test suite -->
+
+				<capability name="video" value="true"/><!-- Darren's test suite -->
+				<capability name="video_df_size_limit" value="10000"/><!-- Darren's test suite -->
+				<capability name="video_real_media_8" value="true"/><!-- Darren's test suite -->
+				<capability name="video_real_media_9" value="true"/><!-- Darren's test suite -->
+				<capability name="wallpaper" value="true"/><!-- Darren's test suite -->
+				<capability name="wallpaper_colors" value="1024"/><!-- Darren's test suite -->
+			</group>
+			<group id="sound_format">
+				<capability name="voices" value="16"/><!-- Darren's test suite -->
+
+			</group>
+			<group id="wml_ui">
+				<capability name="table_support" value="false"/><!-- Darren's test suite -->
+			</group>
+		</device>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 4.0" fall_back="generic_web_browser" id="msie_40"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 4.0; MSN" fall_back="generic_web_browser" id="msie_40_msn"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows 95)" fall_back="generic_web_browser" id="msie401_95"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows 98)" fall_back="generic_web_browser" id="msie401_98"/>
+
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows NT)" fall_back="generic_web_browser" id="msie401_nt"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Win32" fall_back="generic_web_browser" id="msie401_genericwin32"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; AOL" fall_back="generic_web_browser" id="msie401_aol"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; CS" fall_back="generic_web_browser" id="msie401_compuserve"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.00; Windows 98)" fall_back="generic_web_browser" id="msie50_98"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.00; " fall_back="generic_web_browser" id="msie500_anomaly_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0; " fall_back="generic_web_browser" id="msie50_generic"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0; AOL" fall_back="generic_web_browser" id="msie50_aol"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0; CS" fall_back="generic_web_browser" id="msie50_compuserve"/>
+
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0CS" fall_back="generic_web_browser" id="msie50_compuserveB"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0; Linux" fall_back="generic_web_browser" id="msie50_linux_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0; MSN" fall_back="generic_web_browser" id="msie50_msn_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0; SunOS" fall_back="generic_web_browser" id="msie50_sun_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0; Win3.1" fall_back="generic_web_browser" id="msie50_win31_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.0b;" fall_back="generic_web_browser" id="msie50b_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.01; Windows 98)" fall_back="generic_web_browser" id="msie501_98"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 4.0)" fall_back="generic_web_browser" id="msie501_nt4"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)" fall_back="generic_web_browser" id="msie501_nt5"/>
+
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.01; AOL" fall_back="generic_web_browser" id="msie501_aol_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.12; Mac" fall_back="generic_web_browser" id="msie512_mac_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.1" fall_back="generic_web_browser" id="msie51_desktop_browser"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.5; Windows 95)" fall_back="generic_web_browser" id="msie5_95"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)" fall_back="generic_web_browser" id="msie5_98"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 4.0)" fall_back="generic_web_browser" id="msie5_nt4"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows 98)" fall_back="generic_web_browser" id="msie6_98"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows 98; Win 9x 4.90)" fall_back="generic_web_browser" id="msie6_9x"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)" fall_back="generic_web_browser" id="msie6_nt51"/>
+
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)" fall_back="msie6_nt51" id="msie6_nt51_net_114">
+			<group id="image_format">
+				<capability name="flash_lite_1_1" value="true"/>
+			</group>
+		</device>
+		<!-- MSIE 7 -->
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 7.0" fall_back="generic_web_browser" id="msie7"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.1)" fall_back="msie7" id="msie7_beta_nt51"/>
+		
+		<!-- Netscape 4.8 on Windows 2000 -->
+
+		<device user_agent="Mozilla/4.8 [en] (Windows NT 5.0; U)" fall_back="generic_web_browser" id="netscape48_nt50_enus" />
+		<!-- Netscape 4.8 on Windows XP -->
+		<device user_agent="Mozilla/4.8 [en] (Windows NT 5.1; U)" fall_back="generic_web_browser" id="netscape48_nt51_enus" />
+	
+		<!-- Mozilla 4 -->
+		<device user_agent="Mozilla/4.01 " fall_back="generic_web_browser" id="mozilla401_desktop_browser"/>
+		<device user_agent="Mozilla/4.02 " fall_back="generic_web_browser" id="mozilla402_desktop_browser"/>
+		<device user_agent="Mozilla/4.03 " fall_back="generic_web_browser" id="mozilla403_desktop_browser"/>
+		<device user_agent="Mozilla/4.04 " fall_back="generic_web_browser" id="mozilla404_desktop_browser"/>
+		<device user_agent="Mozilla/4.05 " fall_back="generic_web_browser" id="mozilla405_desktop_browser"/>
+
+		<device user_agent="Mozilla/4.06 " fall_back="generic_web_browser" id="mozilla406_desktop_browser"/>
+		<device user_agent="Mozilla/4.07 " fall_back="generic_web_browser" id="mozilla407_desktop_browser"/>
+		<device user_agent="Mozilla/4.08 " fall_back="generic_web_browser" id="mozilla408_desktop_browser"/>
+		<device user_agent="Mozilla/4.08 (Mac" fall_back="generic_web_browser" id="mozilla408_mac_desktop_browser"/>
+		<device user_agent="Mozilla/4.08 [" fall_back="generic_web_browser" id="mozilla408_pc_desktop_browser"/>
+		<device user_agent="Mozilla/4.09 " fall_back="generic_web_browser" id="mozilla409_desktop_browser"/>
+
+		<!-- Mozilla 5 -->
+		<device user_agent="Mozilla/5.0" fall_back="generic_web_browser" id="mozilla_ver5"/>
+
+	
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.4) Gecko/20030624 Netscape/7.1 (ax)" fall_back="mozilla_ver5" id="netscape7_1_nt_us">
+			<group id="product_info">
+				<capability name="brand_name" value="Netscape"/>
+			</group>
+		</device>
+		<device user_agent="Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.7.2) Gecko/20040804 Netscape/7.2 (ax)" fall_back="mozilla_ver5" id="netscape7_1_98_us">
+			<group id="product_info">
+				<capability name="brand_name" value="Mozilla Firefox"/>
+				<capability name="model_name" value="1.0"/>
+
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_nowrap_mode" value="true"/>
+			</group>
+		</device>
+		
+		<!-- Firefox 1.0 -->
+		<device user_agent="Firefox/" fall_back="mozilla_ver5" id="generic_firefox">
+			<group id="product_info">
+				<capability name="brand_name" value="Mozilla Firefox"/>
+
+				<capability name="model_name" value="1.0"/>
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_nowrap_mode" value="true"/><!-- Darren's test suite -->
+			</group>
+			<group id="image_format">
+				<capability name="flash_lite_1_1" value="true"/><!-- Darren's test suite -->
+			</group>
+			<group id="wml_ui">
+
+				<capability name="wml_make_phone_call_string" value="none"/><!-- Darren's test suite -->
+			</group>
+		</device>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0" fall_back="generic_firefox" id="firefox1_nt51_enus"/>
+
+		<!-- Firefox 1.0.1 -->
+		<device user_agent="Firefox/1.0.1" fall_back="generic_firefox" id="generic_firefox_101">
+			<group id="product_info">
+				<capability name="model_name" value="1.0.1"/>
+
+			</group>
+		</device>
+		<device user_agent="Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.7.6) Gecko/20050223 Firefox/1.0.1" fall_back="generic_firefox_101" id="firefox101_98_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows XP; en-US; rv:1.7.6) Gecko/20050223 Firefox/1.0.1" fall_back="generic_firefox_101" id="firefox101_xp_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.6) Gecko/20050223 Firefox/1.0.1" fall_back="generic_firefox_101" id="firefox101_nt5_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.6) Gecko/20050223 Firefox/1.0.1" fall_back="generic_firefox_101" id="firefox101_nt51_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.7.6) Gecko/20050223 Firefox/1.0.1" fall_back="generic_firefox_101" id="firefox101_nt51_engb"/>
+		<device user_agent="Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.6) Gecko/20050223 Firefox/1.0.1" fall_back="generic_firefox_101" id="firefox101_x11_enus"/>
+		<device user_agent="Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; en-US; rv:1.7.6) Gecko/20050223 Firefox/1.0.1" fall_back="generic_firefox_101" id="firefox101_osx_enus"/>
+
+		<!-- Firefox 1.0.2 -->
+		<device user_agent="Firefox/1.0.2" fall_back="generic_firefox_101" id="generic_firefox_102">
+			<group id="product_info">
+				<capability name="model_name" value="1.0.2"/>
+			</group>
+		</device>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.7.6) Gecko/20050321 Firefox/1.0.2" fall_back="generic_firefox_102" id="firefox102_nt51_engb"/>
+		<!-- Firefox 1.0.3 -->
+
+		<device user_agent="Firefox/1.0.3" fall_back="generic_firefox_102" id="generic_firefox_103">
+			<group id="product_info">
+				<capability name="model_name" value="1.0.3"/>
+			</group>
+		</device>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.7) Gecko/20050414 Firefox/1.0.3" fall_back="generic_firefox_103" id="firefox103_nt5_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.7.7) Gecko/20050414 Firefox/1.0.3" fall_back="generic_firefox_103" id="firefox103_nt51_engb"/>
+
+		<!-- Firefox 1.0.4 -->
+
+		<device user_agent="Firefox/1.0.4" fall_back="generic_firefox_103" id="generic_firefox_104">
+			<group id="product_info">
+				<capability name="model_name" value="1.0.4"/>
+			</group>
+		</device>
+		<device user_agent="Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; en-US; rv:1.7.8) Gecko/20050511 Firefox/1.0.4" fall_back="generic_firefox_104" id="firefox104_osx_enus"/>
+
+		<!-- BETA -->
+		<device user_agent="Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.7) Gecko/20040803 Firefox/0.9.3" fall_back="generic_firefox" id="firefox093_98_enus"/>
+
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows XP; rv:1.7.3) Gecko/20041001 Firefox/0.10.1" fall_back="generic_firefox" id="firefox0101_xp"/>
+		
+		<!-- V1 -->
+		<device user_agent="Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0" fall_back="generic_firefox" id="firefox1_osx_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0" fall_back="generic_firefox" id="firefox1_98_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows XP; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0" fall_back="generic_firefox" id="firefox1_xp_enus"/>
+
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0" fall_back="generic_firefox" id="firefox1_nt5_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0" fall_back="generic_firefox" id="firefox1_nt51_enus"/>
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.7.5) Gecko/20041110 Firefox/1.0" fall_back="generic_firefox" id="firefox1_nt51_engb"/>
+
+		<device user_agent="Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.5) Gecko/20041210 Firefox/1.0" fall_back="generic_firefox" id="firefox1_x11_enus"/>
+
+		<!-- Firefox 1.5 -->
+		<device user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8b4) Gecko/20050908 Firefox/1.4" fall_back="firefox1_nt51_enus" id="firefox1_4_nt51_enus">
+			<group id="product_info">
+				<capability name="model_name" value="1.5 Beta 1"/>
+			</group>
+		</device>
+
+		<device user_agent="Mozilla/5.0 (0000" fall_back="generic_web_browser" id="mozilla50_0000_desktop_browser"/>
+
+		<device user_agent="Mozilla/5.0 (1UP " fall_back="generic_web_browser" id="mozilla50_1UP _desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (BeOS" fall_back="generic_web_browser" id="mozilla50_BeOS_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (CCK " fall_back="generic_web_browser" id="mozilla50_CCK _desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (comp" fall_back="generic_web_browser" id="mozilla50_comp_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (CP/M" fall_back="generic_web_browser" id="mozilla50_CPM_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (IBM " fall_back="generic_web_browser" id="mozilla50_IBM _desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Linu" fall_back="generic_web_browser" id="mozilla50_Linu_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Maci" fall_back="generic_web_browser" id="mozilla50_Maci_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (mook" fall_back="generic_web_browser" id="mozilla50_mook_desktop_browser"/>
+
+		<device user_agent="Mozilla/5.0 (Open" fall_back="generic_web_browser" id="mozilla50_Open_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (OS/2" fall_back="generic_web_browser" id="mozilla50_OS2_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Plat" fall_back="generic_web_browser" id="mozilla50_Plat_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Powe" fall_back="generic_web_browser" id="mozilla50_Powe_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Sage" fall_back="generic_web_browser" id="mozilla50_Sage_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Slur" fall_back="generic_web_browser" id="mozilla50_Slur_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Symb" fall_back="generic_web_browser" id="mozilla50_Symb_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Unix" fall_back="generic_web_browser" id="mozilla50_Unix_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Vers" fall_back="generic_web_browser" id="mozilla50_Vers_desktop_browser"/>
+
+		<device user_agent="Mozilla/5.0 (Wind" fall_back="generic_web_browser" id="mozilla50_Wind_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (X11" fall_back="generic_web_browser" id="mozilla50_X11_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 [" fall_back="generic_web_browser" id="mozilla50_basic_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 Galeo " fall_back="generic_web_browser" id="mozilla50_galeo_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 Geco" fall_back="generic_web_browser" id="mozilla50_gecko_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 Netscape " fall_back="generic_web_browser" id="mozilla50_netscape_desktop_browser"/>
+
+		<!-- Konqueror -->
+		<device user_agent="Mozilla/5.0 (compatible; Konqueror" fall_back="generic_web_browser" id="konqueror_desktop_browser"/>
+
+		<device user_agent="Mozilla/5.0 (compatible; Konqueror/2.2.2" fall_back="konqueror_desktop_browser" id="konqueror_desktop_browser_2_2_2"/>
+		<device user_agent="Mozilla/5.0 (compatible; Konqueror/3.1" fall_back="konqueror_desktop_browser" id="konqueror_desktop_browser_3_1"/>
+		<device user_agent="Mozilla/5.0 (compatible; Konqueror/3.2" fall_back="konqueror_desktop_browser" id="konqueror_desktop_browser_3_2"/>
+		<device user_agent="Mozilla/5.0 (compatible; Konqueror/3.3" fall_back="konqueror_desktop_browser" id="konqueror_desktop_browser_3_3"/>
+		<device user_agent="Mozilla/5.0 (compatible; Konqueror/3.4; Linux 2.6.11-gentoo-r11) KHTML/3.4.1 (like Gecko) " fall_back="konqueror_desktop_browser" id="konqueror_desktop_browser_3_4_pioppo"/>
+
+		<!-- Opera 7 -->
+		<device user_agent="Opera 7" fall_back="mozilla_ver5" id="generic_opera_7">
+			<group id="product_info">
+
+				<capability name="brand_name" value="Opera"/>
+				<capability name="model_name" value="7"/>
+			</group>
+			<group id="image_format">
+				<capability name="wbmp" value="true"/>
+			</group>
+		</device>
+		<device user_agent="Mozilla/5.0 (Windows 98; U) Opera 7.23 [en-GB]" fall_back="generic_opera_7" id="opera_723_98">
+			<group id="product_info">
+
+				<capability name="brand_name" value="Opera"/>
+				<capability name="model_name" value="7.23 "/>
+			</group>
+		</device>
+		
+		<!-- begin Opera 7.54 -->
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0) Opera 7.54 [en]" fall_back="generic_opera_7" id="opera_754_nt5_enus_asIE"/>
+		<device user_agent="Mozilla/5.0 (Windows NT 5.0; U) Opera 7.54 [en]" fall_back="generic_opera_7" id="opera_754_nt5_enus_asM5"/>
+		<device user_agent="Mozilla/4.78 (Windows NT 5.0; U) Opera 7.54 [en]" fall_back="generic_opera_7" id="opera_754_nt5_enus_asM478"/>
+		<device user_agent="Mozilla/3.0 (Windows NT 5.0; U) Opera 7.54 [en]" fall_back="generic_opera_7" id="opera_754_nt5_enus_asM3"/>
+
+		<device user_agent="Opera/7.54 (Windows NT 5.0; U) [en]" fall_back="generic_opera_7" id="opera_754_nt5_enus"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1) Opera 7.54 [en]" fall_back="generic_opera_7" id="opera_754_nt51_enus_asIE"/>
+		<device user_agent="Mozilla/5.0 (Windows NT 5.1; U) Opera 7.54 [en]" fall_back="generic_opera_7" id="opera_754_nt51_enus_asM5"/>
+		<device user_agent="Mozilla/4.78 (Windows NT 5.1; U) Opera 7.54 [en]" fall_back="generic_opera_7" id="opera_754_nt51_enus_asM478"/>
+		<device user_agent="Mozilla/3.0 (Windows NT 5.1; U) Opera 7.54 [en]" fall_back="generic_opera_7" id="opera_754_nt51_enus_asM3"/>
+		<device user_agent="Opera/7.54 (Windows NT 5.1; U) [en]" fall_back="generic_opera_7" id="opera_754_nt51_enus"/>
+		<!-- end Opera 7.54 -->
+
+		<!-- Opera 8 -->
+
+		<device user_agent="Opera/8" fall_back="generic_opera_7" id="generic_opera_8"/>
+		<device user_agent="Opera/8.01 (Macintosh; PPC Mac OS X; U; it)" fall_back="generic_opera_8" id="opera_801_osx"/>
+		<device user_agent="Mozilla/5.0 (Macintosh; PPC Mac OS X; U; it) Opera 8.01" fall_back="generic_opera_8" id="opera_801_mozilla_osx"/>
+		<device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Mac_PowerPC Mac OS X; it) Opera 8.01" fall_back="generic_opera_8" id="opera_801_msie6_osx"/>
+		<!-- end Opera 8 -->
+
+		<!-- Safari -->
+		<device user_agent="Mozilla/5.0 (Macintosh" fall_back="generic_web_browser" id="safari_desktop_browser"/>
+		<device user_agent="Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/125.5.5 (KHTML, like Gecko) Safari/125.12" fall_back="mozilla_ver5" id="safari_125_osx_en"/>
+
+		<!-- Lynx -->
+		<device user_agent="Lynx/1" fall_back="generic_web_browser" id="lynx1_desktop_browser"/>
+		<device user_agent="Lynx/2" fall_back="generic_web_browser" id="lynx2_desktop_browser"/><!-- for some reason user_agent="Lynx/" doesn't work, but including another character makes it work -->
+		<device user_agent="Lynx/3" fall_back="generic_web_browser" id="lynx3_desktop_browser"/>
+		<device user_agent="Lynx/4" fall_back="generic_web_browser" id="lynx4_desktop_browser"/>
+
+		<!-- Netfron browser -->
+		<!-- Andrea: netfront inherits from the "generic_web_browser" but we don't want it to inherit capabilies such as
+				screen size and flash support -->
+		<device user_agent="Mozilla/4.0 NetFront/3" fall_back="generic_web_browser" id="netfront_ver3">
+
+			<group id="product_info">
+				<capability name="is_wireless_device" value="true"/>
+				<capability name="device_claims_web_support" value="true"/>
+			</group>
+			<group id="display">
+				<capability name="resolution_width" value="90"/>
+				<capability name="resolution_height" value="40"/>
+				<capability name="rows" value="2"/>
+				<capability name="columns" value="11"/>
+
+				<capability name="max_image_width" value="90"/>
+				<capability name="max_image_height" value="35"/>
+			</group>
+			<group id="image_format">
+				<capability name="colors" value="256"/><!-- depends on the device! -->
+			</group>
+			<group id="sound_format">
+				<capability name="wav" value="false"/>
+				<capability name="au" value="false"/>
+
+				<capability name="mp3" value="false"/>
+				<capability name="midi_monophonic" value="false"/>
+				<capability name="midi_polyphonic" value="false"/>
+			</group>
+			<group id="storage">
+				<capability name="max_deck_size" value="1397"/>
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_supports_table_for_layout" value="false"/>
+
+				<capability name="xhtml_supports_css_cell_table_coloring" value="false"/>
+				<capability name="xhtml_format_as_css_property" value="false"/>
+			</group>
+			<group id="j2me">
+				<capability name="j2me_storage_size" value="0"/><!-- Andrea: restoring data from the generic device -->
+				<capability name="j2me_heap_size" value="0"/><!-- Andrea: restoring data from the generic device -->
+			</group>
+			<group id="object_download">
+				<capability name="directdownload_support" value="false"/><!-- Andrea: restoring data from the generic device -->
+
+				<capability name="inline_support" value="false"/><!-- Andrea: restoring data from the generic device -->
+				<capability name="ringtone" value="false"/><!-- Andrea: restoring data from the generic device -->
+				<capability name="video" value="false"/><!-- Andrea: restoring data from the generic device -->
+				<capability name="video_df_size_limit" value="0"/><!-- Andrea: restoring data from the generic device -->
+				<capability name="video_real_media_8" value="false"/><!-- Andrea: restoring data from the generic device -->
+				<capability name="video_real_media_9" value="false"/><!-- Andrea: restoring data from the generic device -->
+				<capability name="wallpaper" value="false"/><!-- Andrea: restoring data from the generic device -->
+				<capability name="wallpaper_colors" value="1"/><!-- Andrea: restoring data from the generic device -->
+			</group>
+
+			<group id="sound_format">
+				<capability name="voices" value="1"/><!-- Andrea: restoring data from the generic device -->
+			</group>
+		</device>
     </devices>
 </wurfl_patch>
