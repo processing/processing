@@ -1,5 +1,557 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="Interact" by="Rene Christen">
+        <location>http://renechristen.net/wrapped/interact/</location>
+        <date>21 Apr &apos;07</date>
+    </software>
+    <software name="stellar dynamic" by="stephan schulz">
+        <location>http://www.maybevideodoes.de/sites/stellar.html</location>
+        <date>18 Apr &apos;07</date>
+    </software>
+    <software name="SlingStar" by="Benjamin Nelson">
+        <location>http://stanford.edu/~bmnelson/</location>
+        <date>18 Apr &apos;07</date>
+    </software>
+    <software name="E-mail List Conversations Visualization" by="Josh Knowles">
+        <location>http://auscillate.com/post/110</location>
+        <date>18 Apr &apos;07</date>
+    </software>
+    <software name="Fieldlines" by="Florito">
+        <location>http://www.florito.net/content.php?appname=Fieldlines_I</location>
+        <date>14 Apr &apos;07</date>
+    </software>
+    <software name="Roy Block" by="Sebastian Schmieg">
+        <location>http://www.kingcosmonaut.de/royblock/</location>
+        <date>12 Apr &apos;07</date>
+    </software>
+    <software name="GrowthV2" by="Ali Eslami">
+        <location>http://www.arkitus.com/?id=24</location>
+        <date>09 Apr &apos;07</date>
+    </software>
+    <software name="Siehoevet!" by="Philip Mendels">
+        <location>http://www.relmuis.nl/?flink=siehoevet</location>
+        <date>06 Apr &apos;07</date>
+    </software>
+    <software name="Worm Draw" by="Florito">
+        <location>http://www.florito.net/content.php?appname=WormDraw</location>
+        <date>06 Apr &apos;07</date>
+    </software>
+    <software name="Blogroll Graph" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/blog/Blog/2007-04-04/blogroll-graph</location>
+        <date>05 Apr &apos;07</date>
+    </software>
+    <software name="Taylor 1" by="Matthew Conroy">
+        <location>http://www.madandmoonly.com/doctormatt/graphics/taylor01/</location>
+        <date>03 Apr &apos;07</date>
+    </software>
+    <software name="Sphere City III (worms)" by="Florito">
+        <location>http://www.florito.net/content.php?appname=Sphere_City_III_worms</location>
+        <date>02 Apr &apos;07</date>
+    </software>
+    <software name="Game Mod" by="Steph Thirion">
+        <location>http://www.trsp.net/teaching/gamemod/</location>
+        <date>31 Mar &apos;07</date>
+    </software>
+    <software name="Inferred" by="Florito">
+        <location>http://www.florito.net/content.php?appname=Inferred</location>
+        <date>30 Mar &apos;07</date>
+    </software>
+    <software name="Writing3D" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Writing3D/applet/index.html</location>
+        <date>29 Mar &apos;07</date>
+    </software>
+    <software name="Ortonizer" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/p5/ortonizer/</location>
+        <date>28 Mar &apos;07</date>
+    </software>
+    <software name="Return Of The King Social Network" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/blog/Blog/2007-03-27/rotk-social-network</location>
+        <date>27 Mar &apos;07</date>
+    </software>
+    <software name="audrey" by="christian schneider">
+        <location>http://www.christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=50&amp;Itemid=74</location>
+        <date>27 Mar &apos;07</date>
+    </software>
+    <software name="Fludu" by="Individual Pleasure">
+        <location>http://www.fludu.com/fludu/en/</location>
+        <date>27 Mar &apos;07</date>
+    </software>
+    <software name="Fluid Dynamics" by="phagor">
+        <location>http://www.phagor.com/blog/?p=5</location>
+        <date>26 Mar &apos;07</date>
+    </software>
+    <software name="koch fractal" by="Helge Fischer">
+        <location>http://www.hfischer.info/koch.html</location>
+        <date>26 Mar &apos;07</date>
+    </software>
+    <software name="sEcy" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=49&amp;Itemid=73</location>
+        <date>25 Mar &apos;07</date>
+    </software>
+    <software name="gel" by="nick">
+        <location>http://www.coolbubble.com/programs.asp?program_name=gel</location>
+        <date>25 Mar &apos;07</date>
+    </software>
+    <software name="Interactive Document Explorer" by="Jeff Clark">
+        <location>http://www.neoformix.com/2007/ATextExplorer.html</location>
+        <date>22 Mar &apos;07</date>
+    </software>
+    <software name="deux installations interactives" by="Benjamin Déal">
+        <location>http://dbenjamin.chez-alice.fr/fr/dnsep.html</location>
+        <date>22 Mar &apos;07</date>
+    </software>
+    <software name="fluid / smoke" by="nick">
+        <location>http://www.coolbubble.com/programs.asp?program_name=smoke&amp;tag_name=physics</location>
+        <date>19 Mar &apos;07</date>
+    </software>
+    <software name="MobZombies" by="Aaron Meyers &amp; Will Carter">
+        <location>http://www.youtube.com/watch?v=5sJ6L6aKum4</location>
+        <date>16 Mar &apos;07</date>
+    </software>
+    <software name="Mushroom Generator" by="skanaar">
+        <location>http://82.182.180.147/applets/mushroom/</location>
+        <date>15 Mar &apos;07</date>
+    </software>
+    <software name="elle - interactive l-system" by="nick">
+        <location>http://www.coolbubble.com/programs.asp?tag_name=interactive&amp;program_name=elle</location>
+        <date>13 Mar &apos;07</date>
+    </software>
+    <software name="Living Interface" by="Marc Nonnenmacher">
+        <location>http://gestaltung.fh-wuerzburg.de/blogs/exint_ws06/?author=10</location>
+        <date>05 Mar &apos;07</date>
+    </software>
+    <software name="Space Trader ][ - online multiplayer sci-fi" by="sacrebleu">
+        <location>http://sacrebleu.nonlogic.org/</location>
+        <date>26 Feb &apos;07</date>
+    </software>
+    <software name="crystal" by="Frederik Vanhoutte">
+        <location>http://www.wblut.com/constructs.php</location>
+        <date>24 Feb &apos;07</date>
+    </software>
+    <software name="Volumatrix" by="Fredrik Bridell">
+        <location>http://bridell.com/volumatrix.html</location>
+        <date>22 Feb &apos;07</date>
+    </software>
+    <software name="Fine Structure" by="Frederik Vanhoutte">
+        <location>http://www.wblut.com/Constructs/constructs.php</location>
+        <date>18 Feb &apos;07</date>
+    </software>
+    <software name="Flow Field" by="Frederik Vanhoutte">
+        <location>http://www.wblut.com/Constructs/constructs.php</location>
+        <date>18 Feb &apos;07</date>
+    </software>
+    <software name="Windmacher" by="Jens Weber">
+        <location>http://mediaarchitecture.de/projekte/windmacher/</location>
+        <date>14 Feb &apos;07</date>
+    </software>
+    <software name="Name = Name" by="Ekene Ijeoma">
+        <location>http://hypehypehype.net/builddecay/applet</location>
+        <date>13 Feb &apos;07</date>
+    </software>
+    <software name="Lucidty - Wiimote and Processing" by="Jason Laroza">
+        <location>http://jasonlaroza.com/blog/?p=89</location>
+        <date>12 Feb &apos;07</date>
+    </software>
+    <software name="TalkerS" by="xDxD">
+        <location>http://www.artisopensource.net/talkers</location>
+        <date>12 Feb &apos;07</date>
+    </software>
+    <software name="A string of transparent GIFs" by="Cesare Brizio">
+        <location>http://xoomer.alice.it/cebrizio/SpriteString.html</location>
+        <date>11 Feb &apos;07</date>
+    </software>
+    <software name="Art Audience &amp; Skin Color" by="dane picard">
+        <location>http://www.danepicard.com/applet/artaud_new.html</location>
+        <date>09 Feb &apos;07</date>
+    </software>
+    <software name="Hyphae" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/hyphae</location>
+        <date>09 Feb &apos;07</date>
+    </software>
+    <software name="Pollock In Action" by="extrapixel">
+        <location>http://www.extrapixel.ch/2007/02/06/pollock-in-action/</location>
+        <date>09 Feb &apos;07</date>
+    </software>
+    <software name="Multitouch System" by="i2off.org+r3nder.net">
+        <location>http://r3nder.net/resource/archives/categorias/lab/multitouch_system.html</location>
+        <date>06 Feb &apos;07</date>
+    </software>
+    <software name="Trackball" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_TrackBall/applet/index.html</location>
+        <date>02 Feb &apos;07</date>
+    </software>
+    <software name="Teddys" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Teddys/applet/index.html</location>
+        <date>25 Jan &apos;07</date>
+    </software>
+    <software name="Lorenz butterfly" by="Maarten Ambaum">
+        <location>http://www.met.rdg.ac.uk/~sws97mha/Lorenz3/applet/main.html</location>
+        <date>25 Jan &apos;07</date>
+    </software>
+    <software name="scripr" by="aaajiao,yang2">
+        <location>http://www.cornersound.com/_exotic_tech/scripr.html</location>
+        <date>25 Jan &apos;07</date>
+    </software>
+    <software name="memri" by="Hairi Vogel">
+        <location>http://www.your-pgltd.com/sito/memri.home.html</location>
+        <date>23 Jan &apos;07</date>
+    </software>
+    <software name="Population" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Population/applet/index.html</location>
+        <date>23 Jan &apos;07</date>
+    </software>
+    <software name="L-Garden" by="evsc">
+        <location>http://www.evsc.net/v6/htm/lgarden.htm</location>
+        <date>18 Jan &apos;07</date>
+    </software>
+    <software name="Perceptual Pixel Patterns" by="Matt Kozak">
+        <location>http://screamyguy.net/pixgen/index.htm</location>
+        <date>17 Jan &apos;07</date>
+    </software>
+    <software name="Siembra:VideoCode03" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/videocode03</location>
+        <date>17 Jan &apos;07</date>
+    </software>
+    <software name="Wii did something together" by="theDemos">
+        <location>http://www.the-demos.com/?p=130</location>
+        <date>17 Jan &apos;07</date>
+    </software>
+    <software name="Visualizing massive family trees" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/blog/Blog/2007-01-16/rhnav+-+rhizome+navigation+used+to+create+genealogy+motion+graphics</location>
+        <date>15 Jan &apos;07</date>
+    </software>
+    <software name="Movistar_VideoCode" by="estadoLateral">
+        <location>http://r3nder.net/resource/archives/categorias/video/movistar_videocode.html</location>
+        <date>13 Jan &apos;07</date>
+    </software>
+    <software name="InteractiveWalle_MovistarSUMR07" by="estadoLateral">
+        <location>http://http://r3nder.net/resource/archives/categorias/instalacion/interactivewall_movistar_sumr07.html</location>
+        <date>13 Jan &apos;07</date>
+    </software>
+    <software name="f.wish" by="boredomresearch">
+        <location>http://folly.co.uk/wish</location>
+        <date>12 Jan &apos;07</date>
+    </software>
+    <software name="The Logistic Map" by="skanaar">
+        <location>http://82.182.180.147/skanaar/logisticmap.html</location>
+        <date>11 Jan &apos;07</date>
+    </software>
+    <software name="Us is Them" by="mitchell whitelaw">
+        <location>http://creative.canberra.edu.au/mitchell/usisthem</location>
+        <date>05 Jan &apos;07</date>
+    </software>
+    <software name="MixedRealityGame" by="i2of.orgf+r3nder.net">
+        <location>http://r3nder.net/resource/archives/categorias/lab/mixed_reality_game.html</location>
+        <date>05 Jan &apos;07</date>
+    </software>
+    <software name="VJ+PSP[PlayStationPortable]" by="i2of.orgf+r3nder.net">
+        <location>http://r3nder.net/resource/archives/categorias/crafts/vj_system_controled_by_psp_playstation_portable.html</location>
+        <date>05 Jan &apos;07</date>
+    </software>
+    <software name="Tag Clustering" by="Kyle McDonald">
+        <location>http://rpi.edu/~mcdonk/code/tagclustering/</location>
+        <date>05 Jan &apos;07</date>
+    </software>
+    <software name="wiiRemote-&gt;PDA" by="tomyccc">
+        <location>http://www.tomyccc.com/lib/flv/player/?id=wii/20070103_mobile</location>
+        <date>03 Jan &apos;07</date>
+    </software>
+    <software name="fluid2" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=47&amp;Itemid=71</location>
+        <date>03 Jan &apos;07</date>
+    </software>
+    <software name="Tilt SCREAM Pong" by="cw wang">
+        <location>http://futurefeeder.com/index.php/archives/2007/01/02/tilt-scream-pong/</location>
+        <date>01 Jan &apos;07</date>
+    </software>
+    <software name="Weather Art" by="Dwight Owens">
+        <location>http://www.alphapure.net/wxcontest/weather_art.htm</location>
+        <date>31 Dec &apos;06</date>
+    </software>
+    <software name="Angle Interpolation" by="Flux">
+        <location>http://www.ghost-hack.com/p5/interp_angles_app/</location>
+        <date>31 Dec &apos;06</date>
+    </software>
+    <software name="Family Band" by="Tom MacWright">
+        <location>http://lab.workingidea.com/family_band/</location>
+        <date>29 Dec &apos;06</date>
+    </software>
+    <software name="Psikedelia" by="sunart.org">
+        <location>http://www.sun-art.org/public/progetti/processing/psikedelia/index.html</location>
+        <date>26 Dec &apos;06</date>
+    </software>
+    <software name="Psikedelia" by="sun-art.org">
+        <location>http://www.sun-art.org/public/progetti/processing/psikedelia/index.html</location>
+        <date>26 Dec &apos;06</date>
+    </software>
+    <software name="SuperShapes ri pr" by="aaajiao">
+        <location>http://www.cornersound.com/_exotic_tech/supershapes_ri_pr.html</location>
+        <date>23 Dec &apos;06</date>
+    </software>
+    <software name="selenotrope.net" by="Shadi el-Hajj">
+        <location>http://selenotrope.net/</location>
+        <date>23 Dec &apos;06</date>
+    </software>
+    <software name="Dynamicles (particle dynamics)" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/dynamicles</location>
+        <date>23 Dec &apos;06</date>
+    </software>
+    <software name="Bees3" by="David (Doswa)">
+        <location>http://doswa.com/?p=viewwork&amp;which=Bees3</location>
+        <date>22 Dec &apos;06</date>
+    </software>
+    <software name="merry christmas" by="honaya">
+        <location>http://honaya.com/christmas2006/</location>
+        <date>22 Dec &apos;06</date>
+    </software>
+    <software name="Tilt mania" by="W. Xavier Snelgrove">
+        <location>http://www.wxs.ca/tilt-mania</location>
+        <date>21 Dec &apos;06</date>
+    </software>
+    <software name="Circles" by="David (Doswa)">
+        <location>http://doswa.com/?p=viewwork&amp;which=Circles</location>
+        <date>21 Dec &apos;06</date>
+    </software>
+    <software name="Bees2" by="David (Doswa)">
+        <location>http://doswa.com/?p=viewwork&amp;which=Bees2</location>
+        <date>21 Dec &apos;06</date>
+    </software>
+    <software name="Games for GamesFor5Joysticks" by="Travis Kirton">
+        <location>http://www.traviskirton.com/5joy/</location>
+        <date>21 Dec &apos;06</date>
+    </software>
+    <software name="Joshua" by="Scott Lawrence ">
+        <location>http://umlautllama.com/projects/processing/joshua</location>
+        <date>20 Dec &apos;06</date>
+    </software>
+    <software name="Multiplication of the Sectors" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_MultSecteurs/applet/index.html</location>
+        <date>20 Dec &apos;06</date>
+    </software>
+    <software name="Sectors and Quaternions" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Secteurs/applet/index.html</location>
+        <date>20 Dec &apos;06</date>
+    </software>
+    <software name="Surfing" by="Matt Kozak">
+        <location>http://screamyguy.net/surfing/index.htm</location>
+        <date>19 Dec &apos;06</date>
+    </software>
+    <software name="My Experiments using Processing" by="Mike Zellers">
+        <location>http://flickr.com/photos/mikezellers/sets/72157594429011275/</location>
+        <date>19 Dec &apos;06</date>
+    </software>
+    <software name="Drop Drop" by="Byeong Sam Jeon">
+        <location>http://BSJeon.net/drop_drop</location>
+        <date>19 Dec &apos;06</date>
+    </software>
+    <software name="Random drawing" by="sun-art.org">
+        <location>http://www.sun-art.org/public/progetti/processing/random_drawing/index.html</location>
+        <date>18 Dec &apos;06</date>
+    </software>
+    <software name="electronic eye" by="sunart.org">
+        <location>http://www.sun-art.org/public/progetti/processing/occhio/index.html</location>
+        <date>18 Dec &apos;06</date>
+    </software>
+    <software name="kont/" by="aaajiao">
+        <location>http://www.cornersound.com/processing/kont/applet/</location>
+        <date>15 Dec &apos;06</date>
+    </software>
+    <software name="Frustr8tor" by="Toine Heuvelmans">
+        <location>http://www.toine.org/processing/apps/frustr8tor/</location>
+        <date>14 Dec &apos;06</date>
+    </software>
+    <software name="JiiMote" by="Michael Zoellner">
+        <location>http://i.document.m05.de/?p=244</location>
+        <date>14 Dec &apos;06</date>
+    </software>
+    <software name="Similitude and Quaternions" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Arcen3D6/applet/index.html</location>
+        <date>11 Dec &apos;06</date>
+    </software>
+    <software name="cinquefoil" by="aaajiao">
+        <location>http://www.cornersound.com/_exotic_tech/cinquefoil_ri_pr.html</location>
+        <date>10 Dec &apos;06</date>
+    </software>
+    <software name="hairball" by="Xavier Snelgrove">
+        <location>http://www.wxs.ca/applets/hairball</location>
+        <date>09 Dec &apos;06</date>
+    </software>
+    <software name="to spin art history" by="evsc">
+        <location>http://spinner.evsc.net/</location>
+        <date>07 Dec &apos;06</date>
+    </software>
+    <software name="SPYCAMP" by="evsc">
+        <location>http://www.evsc.net/v6/htm/spycamp.htm</location>
+        <date>07 Dec &apos;06</date>
+    </software>
+    <software name="Koch and 3D" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Koch3d/applet/index.html</location>
+        <date>06 Dec &apos;06</date>
+    </software>
+    <software name="Vertigo" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Vertigo/applet/index.html</location>
+        <date>02 Dec &apos;06</date>
+    </software>
+    <software name="Curlicor" by="Fergus Ray Murray">
+        <location>http://oolong.co.uk/curlicor</location>
+        <date>30 Nov &apos;06</date>
+    </software>
+    <software name="Brazil" by="Alcys">
+        <location>http://www.alcys.com/p5/Alcys_Brazil/applet/index.html</location>
+        <date>29 Nov &apos;06</date>
+    </software>
+    <software name="Amazon.com tags" by="Cristian Gramada">
+        <location>http://p10.hostingprod.com/@designfirst.ro/experimental/tags/</location>
+        <date>29 Nov &apos;06</date>
+    </software>
+    <software name="bowels" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=46&amp;Itemid=70</location>
+        <date>29 Nov &apos;06</date>
+    </software>
+    <software name="Iris" by="Matt Kozak">
+        <location>http://screamyguy.net/iris/iris.htm</location>
+        <date>28 Nov &apos;06</date>
+    </software>
+    <software name="Text Analysis: Relational Word Map" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/rhnav_ovp/</location>
+        <date>27 Nov &apos;06</date>
+    </software>
+    <software name="Cubicles" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/cubicles/</location>
+        <date>25 Nov &apos;06</date>
+    </software>
+    <software name="VideoBall" by="charlie mezak">
+        <location>http://www.charliemezak.com/blog/2006/11/22/video-game/</location>
+        <date>23 Nov &apos;06</date>
+    </software>
+    <software name="IFS Voxel" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/ifsvoxel</location>
+        <date>22 Nov &apos;06</date>
+    </software>
+    <software name="Kurve" by="aaajiao">
+        <location>http://www.cornersound.com/processing/arctest/</location>
+        <date>22 Nov &apos;06</date>
+    </software>
+    <software name="Zoobie" by="Fergus Ray Murray">
+        <location>http://www.mimeomai.f2s.com/applet/zoobie/applet/</location>
+        <date>19 Nov &apos;06</date>
+    </software>
+    <software name="Bees" by="David (Doswa)">
+        <location>http://doswa.com/?p=viewwork&amp;which=Bees</location>
+        <date>17 Nov &apos;06</date>
+    </software>
+    <software name="kaleidoscope" by="Dmitry Kirillov">
+        <location>http://www.dmitrykirillov.com/2006/11/proce55ing.html</location>
+        <date>12 Nov &apos;06</date>
+    </software>
+    <software name="Circle Grid" by="Max Williams">
+        <location>http://www.maximile.net/blog/wp-content/uploads/2006/11/circles.html</location>
+        <date>12 Nov &apos;06</date>
+    </software>
+    <software name="glee!" by="Kokoromi Collective">
+        <location>http://www.kokoromi.org/glee</location>
+        <date>11 Nov &apos;06</date>
+    </software>
+    <software name="line_disease" by="christian schneider">
+        <location>http://christianschneider.ch/cs/index.php?option=com_content&amp;task=view&amp;id=39&amp;Itemid=61</location>
+        <date>08 Nov &apos;06</date>
+    </software>
+    <software name="sketchBoard" by="Matt Kozak">
+        <location>http://screamyguy.net/sketchBoard/sketchBoard.htm</location>
+        <date>08 Nov &apos;06</date>
+    </software>
+    <software name="Photo as a Field Display" by="Charlie Mezak">
+        <location>http://www.charliemezak.com/blog/2006/11/05/photo-to-vector-field-display/</location>
+        <date>05 Nov &apos;06</date>
+    </software>
+    <software name="Meta-fishpond" by="tomyccc">
+        <location>http://www.tomyccc.com/meta-fishpond</location>
+        <date>05 Nov &apos;06</date>
+    </software>
+    <software name="Updated: Generative Art Initiative" by="G.A.I">
+        <location>http://generative.co.za/</location>
+        <date>04 Nov &apos;06</date>
+    </software>
+    <software name="Recursive Image Browser" by="charlie">
+        <location>http://www.charliemezak.com/java/phototron_alpha/</location>
+        <date>02 Nov &apos;06</date>
+    </software>
+    <software name="t*3D" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/t3d</location>
+        <date>02 Nov &apos;06</date>
+    </software>
+    <software name="Facebook API Friend Visualization" by="Austin Griffith">
+        <location>http://www.boredonthebook.com/index.php?display=friendvis</location>
+        <date>31 Oct &apos;06</date>
+    </software>
+    <software name="&quot;Déplacements&quot;, a material &quot;Game of life&quot;" by="Manuel BRAUN">
+        <location>http://www.decept.org/nolife/index_english.html</location>
+        <date>31 Oct &apos;06</date>
+    </software>
+    <software name="code.specific(beta);" by="Alessandro Capozzo and Katja Noppes">
+        <location>http://www.abstract-codex.net/codebeta/index.html</location>
+        <date>30 Oct &apos;06</date>
+    </software>
+    <software name="Play with PI" by="Martin Lindkvist">
+        <location>http://www.endofart.net/pi/</location>
+        <date>27 Oct &apos;06</date>
+    </software>
+    <software name="RhNav: Visualizing the Blogosphere" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/wiki/Blog/2006-10-18/Animated+Visualization+Draft+of+the+Blogosphere</location>
+        <date>27 Oct &apos;06</date>
+    </software>
+    <software name="Blossfeldt" by="william">
+        <location>http://www.metaphorical.net/nature/blossfeldt/</location>
+        <date>25 Oct &apos;06</date>
+    </software>
+    <software name="Arkigen" by="Ali Eslami">
+        <location>http://www.arkitus.com/?id=23</location>
+        <date>22 Oct &apos;06</date>
+    </software>
+    <software name="Mobile Brush" by="theDemos">
+        <location>http://www.the-demos.com/?page_id=116</location>
+        <date>18 Oct &apos;06</date>
+    </software>
+    <software name="Satellite" by="Matthew Kozak">
+        <location>http://screamyguy.net/satellite/satellite.htm</location>
+        <date>16 Oct &apos;06</date>
+    </software>
+    <software name="Equinox - MIDI and Audio driven 3D generator" by="MOVAX :::: Kristopher R. Collins">
+        <location>http://www.spacefillingcurve.net/programming/processing/equinox/</location>
+        <date>12 Oct &apos;06</date>
+    </software>
+    <software name="Cross-section of a video" by="Peter Lindkvist">
+        <location>http://www.superkrut.se/moviecube/</location>
+        <date>12 Oct &apos;06</date>
+    </software>
+    <software name="Noun Verber - silly game title screen generator" by="Dave Bollinger">
+        <location>http://www.davebollinger.com/works/nounverber</location>
+        <date>12 Oct &apos;06</date>
+    </software>
+    <software name="Interactive Reddit Story Graph" by="Jeff Clark">
+        <location>http://www.neoformix.com/2006/RedditViz1.html</location>
+        <date>11 Oct &apos;06</date>
+    </software>
+    <software name="Blob" by="Stephen Johnson">
+        <location>http://www.thebiggerbox.com/processing/blob/index.html</location>
+        <date>10 Oct &apos;06</date>
+    </software>
+    <software name="swarm clock" by="skanaar">
+        <location>http://82.182.180.147/skanaar/swarmclock.html</location>
+        <date>09 Oct &apos;06</date>
+    </software>
+    <software name="Slang Anaylsis" by="Ekene Ijeoma">
+        <location>http://hypehypehype.net/work/slang/</location>
+        <date>08 Oct &apos;06</date>
+    </software>
+    <software name="LIFE-LIKE" by="Carl Emil Carlsen">
+        <location>http://moodplug.com/index.php?page=projectsel&amp;id=18</location>
+        <date>08 Oct &apos;06</date>
+    </software>
+    <software name="Generative Art Initiative" by="Francois">
+        <location>http://www.generative.co.za/</location>
+        <date>08 Oct &apos;06</date>
+    </software>
     <software name="Dragoria: 3D Curlicue Fractal" by="Fergus Ray Murray">
         <location>http://www.mimeomai.f2s.com/applet/dragoj3d/applet</location>
         <date>06 Oct &apos;06</date>

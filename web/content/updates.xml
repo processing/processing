@@ -545,5 +545,68 @@ ion</a>.</description>
 		<date>5 October 2006</date>
 		<description>Five new <a href="http://processing.org/reference/libraries/">libraries</a> posted! Introducing Vector3D from Dan Shiffman, xmlrpclib from Burak Arikan, Interfascia from Brendan Berg, SpringGUI from Philipp Seifried, and ID3 from Jorge Cardoso. This brings the total number of community contributed libraries up to forty for a total of forty-seven Processing libraries.</description>
 	</item>
-</updates>
+	<item>
+		<date>10 October 2006</date>
+		<description>Processing (BETA) 119 released. <a href="http://processing.org/download/">Download here</a></description>
+	</item>
+	<item>
+		<date>13 October 2006</date>
+		<description>Grass! New software from The Barbarian Group added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>4 November 2006</date>
+		<description>Four new <a href="http://processing.org/reference/libraries/">libraries</a> posted! Introducing Apple SMS from Dan Shiffman, Candy from Michael Chang, a new addition to the AI Libraries from Aaron Steed, and the reacTIVision TUIO. That brings the total to fifty-one Processing libraries.</description>
+	</item>
+	<item>
+		<date>4 November 2006</date>
+		<description>New software from David Pereira added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+	</item>
+	<item>
+		<date>5 November 2006</date>
+		<description>Processing (BETA) 120 released. <a href="http://processing.org/download/">Download here</a></description>
+	</item>
+	<item>
+		<date>6 November 2006</date>
+		<description>Processing (BETA) 121 released. <a href="http://processing.org/download/">Download here</a></description>
+	</item>
+	<item>
+		<date>28 November 2006</date>
+		<description>Processing (BETA) 122 released. <a href="http://processing.org/download/">Download here</a>. New core libraries for loading SVG (built on the Candy library from Michael Chang) and XML files are added. The EnvironmentXML library from Usman Haque is added to the <a href="http://processing.org/reference/libraries/">libraries</a> index.</description>
+	</item>
 
+	<item>
+		<date>30 November 2006</date>
+		<description>Processing (BETA) 123 released. <a href="http://processing.org/download/">Download here</a></description>
+	</item>
+
+	<item>
+		<date>05 December 2006</date>
+		<description>New software from Lisa Strausfeld and James N. Sears added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+	</item>
+
+	<item>
+		<date>19 December 2006</date>
+		<description>New software from Aleix Fernandez added to the <a href="http://processing.org/exhibition/">exhibition</a> and a Social Networks Library from Todd Holloway added to the contributed libraries.</description>
+	</item>
+
+	<item>
+		<date>11 January 2007</date>
+		<description>New software from rAndom international added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+	</item>
+
+	<item>
+		<date>23 January 2007</date>
+		<description>New software from Brad Borevitz added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+	</item>
+
+	<item>
+		<date>4 February 2007</date>
+		<description>Processing (BETA) 124 released. <a href="http://processing.org/download/">Download here</a></description>
+	</item>
+
+	<item>
+		<date>27 March 2007</date>
+		<description>Mob Zombies and new software from Suzung Kim added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+	</item>
+
+</updates>

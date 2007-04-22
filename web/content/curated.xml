@@ -1,6 +1,80 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+       <software name="Mobzombies" by="Will Carter & Aaron Meyers" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/mz.png</image>
+          <description>
+             Mobzombies is a game where you run away from pixel-art zombies by physically running.  A player's motion data is read into Processing from a compass/accelerometer sensor, which controls an avatar in a virtual world full of zombies. 
+          </description>
+          <location>http://mobzombies.com/</location>
+          <link href="http://www.youtube.com/watch?v=5sJ6L6aKum4">Mobzombies trailer</link>
+        </software>
+
+       <software name="Software Kaleidoscope" by="Suzung Kim" scroll="yes" resize="yes" width="900" height="600">
+        <image>images/suzung.jpg</image>
+          <description>
+             Installation for Samsung that turns images from the environment into symmetrical patterns.
+          </description>
+          <location>http://www.suzung.com/cebit2006/display.htm</location>
+          <link href="http://www.suzung.com/">Studio Site Suzung</link>
+        </software>
+
+       <software name="State of the Union" by="Brad Borevitz" scroll="yes" resize="yes" width="1050" height="800">
+        <image>images/stateoftheunion.gif</image>
+          <description>
+              Provides access to the corpus of all the State of the Union addresses from 1790 to 2006. 
+          </description>
+          <location>http://stateoftheunion.onetwothree.net/</location>
+          <link href="http://www.onetwothree.net">onetwothree</link>
+        </software>
+
+       <software name="PixelRoller" by="rAndom international" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/pixelroller.jpg</image>
+          <description>
+	      PixelRoller is a paint roller that paints pixels, designed as a rapid response printing tool specifically to print digital information such as imagery or text onto a great range of surfaces. 
+          </description>
+          <location>http://www.random-international.com/pixelroller-overview/</location>
+          <link href="http://www.random-international.com/">rAndom international</link>
+        </software>
+
+       <software name="Yo soy la Juani" by="Aleix Fernandez" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/juani.jpg</image>
+          <description>
+	     The title sequence of Bigas Luna's feature film "Yo soy la Juani" (2006) was made using Processing.
+          </description>
+          <location>http://www.onionlab.com/processing/YSLJTitles.html</location>
+          <link href="http://www.onionlab.com/">Onionlab</link>
+          <link href="http://yosoylajuani.com">Yo soy la Juani</link>
+        </software>
+
+       <software name="Spies" by="Lisa Strausfeld and James N. Sears" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/spies.gif</image>
+          <description>
+	      Physics-based modeling of the relationships between key phrases that describe terrorist attacks.
+          </description>
+          <location>http://jamesnsears.com/applets/spies/</location>
+          <link href="http://www.pentagram.com/">Pentagram</link>
+          <link href="http://jamesnsears.com/">JamesNSears.com</link>
+        </software>
+
+       <software name="Mutualism" by="David Pereira" scroll="yes" resize="yes" width="1024" height="620">
+        <image>images/mutualism.jpg</image>
+          <description>
+	      The continuous mutual shape of a shared public server.
+          </description>
+          <location>http://www.davidpereira.com/mutualism/</location>
+          <link href="http://www.davidpereira.com/">DavidPereira.com</link>
+        </software>
+
+	<software name="Grass" by="The Barbarian Group" scroll="yes" resize="yes" width="820" height="700">
+	<image>images/grass.jpg</image>
+	  <description>
+	      Interactive projection wall promoting Saturn for the 2006 Wired NextFest.
+	  </description>
+	  <location>http://portfolio.barbariangroup.com/nextfest/index.html</location>
+	  <link href="http://www.barbariangroup.com/">The Barbarian Group</link>
+	</software>
+
 	<software name="Blinks & Buttons" by="Sascha Pohflepp" scroll="yes" resize="yes" width="1024" height="600">
 	<image>images/buttons.jpg</image>
 	  <description>
@@ -9,7 +83,6 @@
 	  <location>http://www.blinksandbuttons.net/</location>
 	  <link href="http://www.pohflepp.com/">Pohflepp.com</link>
 	</software>
-
 
 	<software name="Shadow Monsters" by="Philip Worthington" scroll="yes" resize="yes" width="1024" height="600">
 	<image>images/shadowmonsters.jpg</image>

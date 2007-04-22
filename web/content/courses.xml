@@ -1,6 +1,586 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
+        <date>12-30 de Marzo</date>
+        <institution>Centro Multimedia - Centro Nacional de Las Artes de México</institution>
+        <title>&lt;br /&gt;&lt;br /&gt;PROGRAMACIÓN DE GRÁFICAS PARA PRINCIPIANTES</title>
+        <description>En este curso se utilizará Processing para explorar los conceptos básicos de la programación aplicados a la síntesis de imagen, animaciones, e interfases interactivas. &lt;br /&gt;Entrada Libre&lt;br /&gt;</description>
+        <contact>
+            <name>Jaime Villarreal</name>
+            <email>jesusjaime at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>http://cmm.cenart.gob.mx/cursos/</title>
+                <url>http://cmm.cenart.gob.mx/cursos/</url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>March 14-16, 2007</date>
+        <institution>F+F Schule für Kunst und Mediendesign Zürich</institution>
+        <title>Processing</title>
+        <description>As an introduction, Andres Wanner makes students draw with digital means. Processing makes it very easy to program lines and forms. Many key issues of programming are learnt and transformed into small visual applications.
+After that, the aim is to use the specific properties of the computer as a medium for visual purposes. What does it mean to draw images by means of an algorithmic code, instead of drawing them by hand? Examples from the history of computer art will be shown and discussed.</description>
+        <contact>
+            <name>Andres Wanner</name>
+            <email>andres dot wanner at fhnw dot ch</email>
+        </contact>
+        <links>
+            <link>
+                <title>F+F Schule</title>
+                <url>http://www.ffzh.ch/</url>
+            </link>
+            <link>
+                <title>Course Page</title>
+                <url>http://www.pixelstorm.ch/processing/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>3/3/2007</date>
+        <institution>Master in Multimedia - University of Florence (Italy)</institution>
+        <title>Programming for non programmers</title>
+        <description>The course&apos;s main objective is to introduce students without a programming background to the basic concepts of structured and object-oriented programming. The course adopts a learning by example approach, thus we start from simple processing applets that show the basic of displaying and drawing graphic primitives, followed by more complex applications where images, videos and sounds are also used.</description>
+        <contact>
+            <name>walter nunziati</name>
+            <email>nunziati at dsi dot unifi dot it</email>
+        </contact>
+        <links>
+            <link>
+                <title>Master in Multimedia home page (in italian)</title>
+                <url>http://www.mastermultimedia.unifi.it/</url>
+            </link>
+            <link>
+                <title>Course description (in italian)</title>
+                <url>http://www.mastermultimedia.unifi.it/coursebox.php?F=nunziati_corso&amp;KeepThis=true&amp;TB_iframe=true&amp;height=400&amp;width=600</url>
+            </link>
+            <link>
+                <title>Teacher\&apos;s home page</title>
+                <url>http://viplab.dsi.unifi.it/~nunziati/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>2006-2007</date>
+        <institution>Faculty of the Arts, Thames Valley University. London. UK.</institution>
+        <title>Experimental Digital Media</title>
+        <description>The MA in Computer Arts at Thames Valley University teaches processing,  arduino and wiring on a couple of courses: Experimental Digital Media and Computer Principles for Artists.</description>
+        <contact>
+            <name>Ian Grant</name>
+            <email>ian dot grant at tvu dot ac dot uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>Thames Valley University</title>
+                <url>http://www.tvu.ac.uk/index.jsp</url>
+            </link>
+            <link>
+                <title>Example Work</title>
+                <url>http://ellington.tvu.ac.uk/ma/category/modules/</url>
+            </link>
+            <link>
+                <title>MA in Computer Arts</title>
+                <url>http://mercury.tvu.ac.uk/ca</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>January 2007</date>
+        <institution>Ecole supérieure des Arts - Mons (Belgium)</institution>
+        <title>Applied Science : Computer Science (part 2)</title>
+        <description>The course is taught in the third year of the Digital Arts section in the continuity of part one of the programming class. This second part explores interactive systems and specific programming techniques with the help of the Arduino interface (www.arduino.cc) in standalone as well as in association with Processing software. Different modules, covering simple sensors, actuators and display systems, to name a few, will be covered and could be assembled into larger projects. Basic electric and electronic knowledge will also given so the students could develop their own systems.</description>
+        <contact>
+            <name>Stephan Delattre</name>
+            <email>stephan dot delattre at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>January 2007</date>
+        <institution>Ecole supérieure des Arts - Mons (Belgium)</institution>
+        <title>Applied Science : Computer Science (part 1)</title>
+        <description>This course is an introduction to computer programming using Processing. Taught in the second year of the Digital Arts section and oriented to an artistic audience, the main focus is about general programming structures, including object oriented programming. The idea is to develop students abilities and skills in computer programming and help them developing their own projects. After a few lectures, the class will be mostly organized as a workshop, each student developing a personal project and evolving his (her) own pace.</description>
+        <contact>
+            <name>Stephan Delattre</name>
+            <email>stephan dot delattre at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>14. Nov. 2006</date>
+        <institution>Interface Culture Linz Austria</institution>
+        <title>Visual Programming</title>
+        <description>Master students explore the concepts of algorithmic art. As a basis the history of illusion (Shadow Play, Laterna Magica, Absolute film by Ruttmann, Fischinger, Richter, McLaren et al. up to modern algorithmic art) is taught.
+Mathematical concepts for generative computer graphics (Noise, Perlin Noise, L-Systems, Recursion, Subdivision, Cellular Automata, Spring – Mass – Damper Systems, ...) will be explained and experimented with.
+Modern techniques like Fragment/Vertex Shaders are integrated in the works to lead to new possibilities in aesthetics.
+Processing will be the tool to enable all this , resulting in a generative 3D stereo art exhibition.
+thx to the proce55ing team !!!</description>
+        <contact>
+            <name>Robert Praxmarer</name>
+            <email>cubic at servus dot at</email>
+        </contact>
+        <links>
+            <link>
+                <title>Interface Culture</title>
+                <url>http://www.ufg.ac.at/portal/DE/institut_fuer_medien/masterstudium_interface_culture/index.html</url>
+            </link>
+            <link>
+                <title>Robert Praxmarer</title>
+                <url>http://www.servus.at/cubic</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>2-3 Dec 2006</date>
+        <institution>Le centre de Ressources Art Sensitif à Mains d&apos;Oeuvres</institution>
+        <title>Initiation à Processing</title>
+        <description>L&apos;atelier permettra de découvrir le logiciel et ses fonctionnalités, et initiera les participants à la création de modules simples.
+
+Il est indispensable d&apos;amener son ordinateur.
+
+Formateurs : Julien Gachadoat, avec la collaboration de Jean-Noël Montagné.</description>
+        <contact>
+            <name>Julien Gachadoat</name>
+            <email>me at v3ga dot net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Le centre de Ressources Art Sensitif</title>
+                <url>http://www.craslab.org/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>03.11.2006</date>
+        <institution>UdK Berlin</institution>
+        <title>Gestalten Mit Code / Spiele für Linus</title>
+        <description>Linus is almost 4 years old and loves reactive objects.
+&lt;br/&gt;
+As long as he can project into these objects he doesn t care whether they are virtual representations, physical objects or mental images.
+&lt;br/&gt;
+Since he can t read, instruction manuals don t mean that much to him. Since he can t count very well, scores don t mean much either.
+&lt;br/&gt;
+He is not afraid of doing something wrong, still his vocabulary of metaphors of digital interaction is limited.
+&lt;br/&gt;
+The course will end with a visit from Linus.
+&lt;br/&gt;
+The objective of the course is to explore and investigate techniques and concepts of how to create game-like and playful situations.</description>
+        <contact>
+            <name>Dennis Paul</name>
+            <email>d3 at magnetspeicher dot de</email>
+        </contact>
+        <links>
+            <link>
+                <title>Gestalten Mit Code</title>
+                <url>http://www.wortwechsel.biz/gestaltenmitcode/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2006</date>
+        <institution>Royal College of Art</institution>
+        <title>MA Design Interactions</title>
+        <description>Processing is being utilised as an introduction to computer programming for students from diverse creative backgrounds. During the progression of the workshop series various topics are being explored, including imagery, sound, animation, networking, data visualisations, digital typography, mobile devices and physical computing. The module also discusses both historical and contemporary examples of computer usage in art and design and encourages a critical approach towards conceptual aspects of the field.</description>
+        <contact>
+            <name>David Muth</name>
+            <email>david at soda dot co dot uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>Royal College of Art</title>
+                <url>http://www.rca.ac.uk/</url>
+            </link>
+            <link>
+                <title>MA Design Interactions</title>
+                <url>http://www.interaction.rca.ac.uk/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2006</date>
+        <institution>Ravensbourne College of Design and Communication</institution>
+        <title>MA Interactive Digital Media</title>
+        <description>During the first semester of the MA programme students will be introduced to computer programming as creative expression. Workshops explore various topics, including imagery, sound, animation, networking, data visualisations, digital typography and interfacing with physical devices. The module also encourages a critical approach towards conceptual aspects of code art culture.</description>
+        <contact>
+            <name>David Muth</name>
+            <email>david at soda dot co dot uk</email>
+        </contact>
+        <links>
+            <link>
+                <title>Ravensbourne College of Design and Communication</title>
+                <url>http://www.rave.ac.uk/</url>
+            </link>
+            <link>
+                <title>MA Interactive Digital Media</title>
+                <url>http://www.maidm.com/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Oct 24 - Nov 24 2006</date>
+        <institution>FHNW, Medienkunst</institution>
+        <title>Programmierung 3.0</title>
+        <description>Processing ist eine Programmiersprache, die speziell für Gestalter und Künstler entwickelt wurde. Sie führt sehr schnell zu visuell ansprechenden Resultaten. Durch den einfachen Aufbau mit einem einzigen Editierfenster wird einen klarer Blick auf das Grundwesen des Programmierens ermöglicht.
+
+Inhalte:
+- Programmieren von Grund auf verstehen lernen
+- effizienter und strukturierter Programmieren
+- Variablen und Datentypen
+- Listen und Schleifen
+- Modularisieren mit Funktionen und Prozeduren</description>
+        <contact>
+            <name>Andres Wanner</name>
+            <email>andres dot wanner at fhnw dot ch</email>
+        </contact>
+        <links>
+            <link>
+                <title>Medienkunst</title>
+                <url>http://www.medienkunst.ch/</url>
+            </link>
+            <link>
+                <title>Computing</title>
+                <url>http://147.86.68.141/~wanner/computing/index.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Oct 1, 2006</date>
+        <institution>Istanbul Technical University Architecture Department</institution>
+        <title>ITE Computational Design Workshop</title>
+        <description>Four day computational design workshop at Istanbul Technical University Architecture Department. An introduction to the fundamentals of computer programming within the context of dynamic visual compositions. Undergraduate students particularly explore macro compositions with details at the micro level.</description>
+        <contact>
+            <name>Burak Arikan</name>
+            <email>arikan at media dot mit dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>ITE</title>
+                <url>http://ite.dugumkume.org/</url>
+            </link>
+            <link>
+                <title>Burak Arikan</title>
+                <url>http://burak-arikan.com/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter Term 2006/07</date>
+        <institution>University of the Arts Bremen</institution>
+        <title>Program &amp; Process. Introduction to Programming Pictures</title>
+        <description>This course is offered to students, third semester and up, of the joint B.A. and B.Sc. program in Digital Media at the University of the Arts, and the University of Bremen, plus two other schools (in German). It is meant as an alternative to the regular introduction to computing. Algorithms, programs, pictures, and aesthetics are its key concepts. Processing is used as the tool to fix ideas and put them onto the machine.
+
+We start from two kinds of elements: algorithms and pictures. From there we approach programs as the syntactically fixed units in which any computable operation must be described if it is to be performed by a computer.
+
+Students will be exposed to the different ways of thinking and conceptualizing in algorithmics and aesthetics – but not to quarrel about one against the other. Rather, examples from the history of algorithmic art should demonstrate that in the field of digital media, it is algorithms and art, and thus familiarity with the two controversial ways of thinking is to the heart of the field.
+
+The dialectics of static programs and dynamic processes will build another thread running through the entire semester. We will see that technical knowledge is enshrined to a large extent in rules. Rules in the formal disciplines, like mathematics, are of a general nature, and request to accept them as valid. Rules in the informal disciplines, like graphic design, are of a special nature. They make situational and context-rich exemplars.
+
+Participants must be active members of the group. There will be frequent assignments plus a term project to be presented at the fine final session.
+
+Starts October 17, 2006, and runs through to February 6,2007.</description>
+        <contact>
+            <name>Frieder Nake</name>
+            <email>nake at informatik dot uni-bremen dot de</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall/Winter 2006/2007</date>
+        <institution>FH W-S / University of Applied Sciences / Fachbereich Gestaltung</institution>
+        <title>Introduction to Processing</title>
+        <description>The course is a step-by-step introduction to the processing language and the principles of computational design. No programming experience is needed.</description>
+        <contact>
+            <name>Daniel Rothaug</name>
+            <email>rothaug at zumkuckuck dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>University Website</title>
+                <url>http://www.fh-wuerzburg.de/gestaltung/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2006</date>
+        <institution>UCLA Design | Media Arts</institution>
+        <title>Programming Media I</title>
+        <description>The theme for this class is Visual Music and each participant will create a live, visual accompaniment for a sound composition. There is one major project for the quarter, but it has many parts. Each participant will select an audio composition from a provided list and will spend the next 10 weeks developing and documenting a live, visual performance.</description>
+        <contact>
+            <name>C.E.B. Reas</name>
+            <email>reas at ucla dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://classes.design.ucla.edu/Fall06/152AC/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2006</date>
+        <institution>UCLA Design | Media Arts</institution>
+        <title>Interactivity</title>
+        <description>This course is an introduction to the concepts and principles of interactivity. In addition to discussing ideas related to interactivity, the class focuses on developing the skills required for creating interactive work, therefore participants will work toward developing their computer programming skills. The concepts and skills taught in the class will enhance each participant\&apos;s ability to excel in future UCLA classes about the Internet, animation, interactive media, and game design.</description>
+        <contact>
+            <name>C.E.B. Reas</name>
+            <email>reas at ucla dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Course website</title>
+                <url>http://classes.design.ucla.edu/Fall06/28/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
         <date>Oct 1, 2006</date>
         <institution>Dugumkume</institution>
         <title>ITE Computational Design Workshop</title>
@@ -19,16 +599,16 @@
                 <url>http://www.dugumkume.org/</url>
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
         </links>
     </course>
@@ -244,38 +824,6 @@ Students in Master 1.</description>
             <link>
                 <title>Fundación de Arte Contemporáneo</title>
                 <url>http://www.facmvd.org/actividades/2006/julio/mvd-digital.htm</url>
-            </link>
-            <link>
-                <title />
-                <url />
-            </link>
-            <link>
-                <title />
-                <url />
-            </link>
-            <link>
-                <title />
-                <url />
-            </link>
-            <link>
-                <title />
-                <url />
-            </link>
-        </links>
-    </course>
-    <course>
-        <date>12/06/2006</date>
-        <institution />
-        <title>Programming for Telemedicine</title>
-        <description>Would like to get a programming language that can best be used for Telemdicine.</description>
-        <contact>
-            <name>MAJEK</name>
-            <email>spacemajek3000 at yahoo dot com</email>
-        </contact>
-        <links>
-            <link>
-                <title />
-                <url />
             </link>
             <link>
                 <title />
