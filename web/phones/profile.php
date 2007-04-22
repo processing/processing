@@ -206,12 +206,16 @@ $prefix = substr($summary['useragent'], 0, strpos($summary['useragent'], '/'));
 $query = "SELECT id, useragent, stamp, DATE_FORMAT(stamp, '%e %b %Y') AS fmt_stamp FROM profile_summary WHERE useragent LIKE '{$prefix}/%' AND id <> {$summary[id]} ORDER BY stamp DESC";
 $result = mysql_query($query);
 while ($submission = mysql_fetch_assoc($result)) {
+  if ($wurfl->getDeviceCapabilitiesFromAgent($submission['useragent'])) {
+    if (strcmp($name, $wurfl->brand .' '. $wurfl->model) == 0) {
 ?>
         <tr>
           <td class="subfieldheader"><?php echo $submission['fmt_stamp'] ?></td>
           <td class="subfield"><a href="profile.php?id=<?php echo $submission['id'] ?>&list=<?php echo $_GET['list'] ?>"><?php echo $submission['useragent'] ?></a></td>
         </tr>     
 <?php
+    }
+  }
 }
 ?>
       </table>

@@ -16,12 +16,16 @@ Mobile Processing sketches run on most mobile phones that support Java games and
 <b>To test your phone:</b><br />
 <br />
 <ol>
-<li>Go to <b>wapmp.at</b> in your phone's mobile web browser.<br /><br /></li>
+<li>Go to <b>wapmp.at</b> in your phone's mobile web browser.*<br /><br /></li>
 <li>Choose <b>My Phone</b> from the main menu.<br /><br /></li>
 <li>Download a <b>Profiler</b> sketch.<br /><br /></li>
 <li>Run the Profiler and choose <b>Share Results</b> from the menu to upload the results to this website.<br /><br /></li>
 <li>On success, refresh this page. Recent results are displayed on the right.</li>
 </ol>
+<br />
+<br />
+<br />
+<span style="font-size: smaller">* The Profiler must be downloaded on your phone in order to properly identify your device upon submission. If you download the Profiler on your computer and transfer it to your phone, your submission will not appear in the list.</span>
 </div>
 <div class="column2x">
 <table width="480" cellspacing="0" cellpadding="0" border="0">
@@ -37,8 +41,9 @@ $count = 0;
 while ($data = mysql_fetch_assoc($result)) {
   //// look up each one in wurfl
   if ($wurfl->getDeviceCapabilitiesFromAgent($data['useragent'])) {
-    $name = $wurfl->brand .' '. $wurfl->model;
-    if (is_null($devices[$name])) {
+    if ($wurfl->capabilities['product_info']['is_wireless_device']) {
+      $name = $wurfl->brand .' '. $wurfl->model;
+      if (is_null($devices[$name])) {
 ?>
   <td width="160" align="center">
       <a href="profile.php?id=<?php echo $data['id'] ?>"><image border="0" src="../lib/tera-wurfl/<?php echo $wurfl->device_image ?>"></a><br />
@@ -49,14 +54,16 @@ while ($data = mysql_fetch_assoc($result)) {
       <br />
   </td>
 <?php
-      $devices[$name] = $data['useragent'];
-      $count++;
-      if (($count % 3) == 0) {
-         echo '</tr><tr>';
-      } else if ($count == 15) {
-          break;
+        $devices[$name] = $data['useragent'];
+        $count++;
+        if (($count % 3) == 0) {
+          echo '</tr><tr>';
+        }
       }
     }
+  }
+  if ($count == 15) {
+    break;
   }
 }
 for ($i = $count % 3; ($i % 3) != 0; $i++) {

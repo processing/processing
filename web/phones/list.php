@@ -23,17 +23,19 @@ $brand = NULL;
 while ($data = mysql_fetch_assoc($result)) {
   //// look up each one in wurfl
   if ($wurfl->getDeviceCapabilitiesFromAgent($data['useragent'])) {
-    if (($brand != NULL) && (strcmp($brand, $wurfl->brand) != 0)) {
-      echo "<br />";
-    }
-    $brand = $wurfl->brand;
-    $name = $brand .' '. $wurfl->model;
-    if (is_null($devices[$name])) {
+    if ($wurfl->capabilities['product_info']['is_wireless_device']) {
+      if (($brand != NULL) && (strcmp($brand, $wurfl->brand) != 0)) {
+        echo "<br />";
+      }
+      $brand = $wurfl->brand;
+      $name = $brand .' '. $wurfl->model;
+      if (is_null($devices[$name])) {
 ?>
       <a href="profile.php?id=<?php echo $data['id'] ?>&list=1"><?php echo $name ?></a><br />
 <?php
-      $devices[$name] = $data['useragent'];
-      $count++;
+        $devices[$name] = $data['useragent'];
+        $count++;
+      }
     }
   }
 }
