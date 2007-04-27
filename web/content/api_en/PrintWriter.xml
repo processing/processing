@@ -59,7 +59,7 @@ Allows characters to print to a text-output stream. A new PrintWriter object is 
 <returns></returns>
 
 <related>
-writer()
+createWriter()
 </related>
 
 <availability>1.0</availability>

@@ -30,7 +30,7 @@ Sets the current alignment for drawing text. The parameters LEFT, CENTER, and RI
 <br/> <br/>
 In Processing 0125 and later, an optional second parameter can be used to vertically align the text. BASELINE is the default, and the vertical alignment will be reset to BASELINE if the second parameter is not used. The TOP and CENTER parameters are straightforward. The BOTTOM parameter is the same as BASELINE when only one line of text is used, but for multiple lines, the final line will be aligned to the baseline, with the previous lines appearing above it.
 <br/> <br/>
-Vertical alignment is ignored with the variation of <b>text()</b> that draws text inside a box.
+The vertical alignment setting is ignored with the variation of <b>text()</b> that draws text inside a box. Text in a box is always drawn with the equivalent of TOP as its vertical alignment. 
 <br/> <br/>
 The vertical alignment is based on the value of <b>textAscent()</b>, which many fonts do not specify correctly. It may be necessary to use a hack and offset by a few pixels by hand so that the offset looks correct. To do this as less of a hack, use some percentage of <b>textAscent()</b> or <b>textDescent()</b> so that the hack works across size changes.
 </description>

@@ -45,7 +45,7 @@ Sets the coordinate space for texture mapping. There are two options, IMAGE, whi
 </description>
 
 <syntax>
-texture(<c>MODE</c>); 
+textureMode(<c>MODE</c>); 
 </syntax>
 
 <parameter>
