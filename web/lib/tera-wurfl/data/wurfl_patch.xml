@@ -1,7 +1,21 @@
 <wurfl_patch>
     <devices>
+        <!-- LG CU-500 Cingular -->
+        <device user_agent="LG-CU500" fall_back="uptext_generic" id="lg_cu500_ver1" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="LG" />
+                <capability name="model_name" value="CU500" />
+            </group>
+        </device>
+
         <!-- Generic Nokia S60 3rd Ed Browser -->
-        <device user_agent="Mozilla/5.0 (SymbianOS/9.1; U; en-us) AppleWebKit/413 (KHTML, like Gecko) Safari/413" id="nokia_generic_series60_dp30_oss" fall_back="nokia_generic_series60_dp30">
+        <device user_agent="Nokia 60 Developer Platform 3.0" fall_back="nokia_generic_series60_dp20" id="nokia_generic_series60_dp30" actual_device_root="true">
+        </device>
+
+        <device user_agent="Mozilla/5.0 (SymbianOS/9.1; U; en-us) AppleWebKit/413 (KHTML, like Gecko) Safari/413" id="nokia_e61_ver1_submozilla50" fall_back="nokia_generic_series60_dp30">
+	    <group id="product_info">
+		<capability name="model_name" value="S60 3rd Ed. Web Browser"/>
+	    </group>
         </device>
 
         <!-- Nokia N95, S60 3rd Edition, 240x320 -->
