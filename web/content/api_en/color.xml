@@ -64,7 +64,7 @@ color(<c>hex</c>, <c>alpha</c>)
 <returns>color</returns>
 
 <related>
-color
+color_datatype
 colorMode()
 </related>
 

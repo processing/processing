@@ -31,17 +31,17 @@ sphere(20);
 </example>
 
 <description>
-Sets the amount of gloss in the surface of shapes. Used in combination with <b>ambient</b>, <b>specular()</b>, and <b>emissive()</b> in setting the materal properties of shapes. The parameter <b>shine</b> ranges from 0.0 to 1.0 to set the shininess of the current material.
+Sets the amount of gloss in the surface of shapes. Used in combination with <b>ambient</b>, <b>specular()</b>, and <b>emissive()</b> in setting the materal properties of shapes.
 </description>
 
 <syntax>
-emissive(<c>shine</c>)
+shininess(<c>shine</c>)
 </syntax>
 
 
 <parameter>
 <label>shine</label>
-<description>float: degree of shininess from 0.0 and 1.0</description>
+<description>float: degree of shininess</description>
 </parameter>
 
 <returns>None</returns>

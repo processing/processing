@@ -23,7 +23,7 @@ void draw()
 </example>
 
 <example>
-<image>noise_2.jar</image>
+<image></image>
 <code>
 float noiseScale=0.02;
 void draw() {

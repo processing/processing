@@ -20,7 +20,7 @@ for(int i=0; i&lt;100; i++) {
 </example>
 
 <example>
-<image>random_2.jar</image>
+<image></image>
 <code>
 for(int i=0; i&lt;100; i++) {
   float r = random(-50, 50);
