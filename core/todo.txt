@@ -26,7 +26,7 @@ X jre 1.5.0_10 is still default at java.com.. blech
 X   http://dev.processing.org/bugs/show_bug.cgi?id=513
 X constant CENTER_RADIUS will be changed to just RADIUS
 X   CENTER_RADIUS is being deprecated, not removed
-_   remove CENTER_RADIUS from any p5 code
+_   remove CENTER_RADIUS from any p5 code (i.e. examples)
 X split() inconsistency (emailed casey, will discuss later)
 X   make split(String, String) behave like String.split(String)
 X   and make current split(String) into splitTokens(String)
@@ -41,6 +41,7 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X change println(array) to be useful 
 _   document using join() for old method
 X   remove print(array) since it's silly?
+_     make sure it's not in the reference
 [0] "potato"
 [1] "tomato"
 [2] "apple" 
@@ -60,7 +61,22 @@ o   textAlign(CENTER | TOP);
 o   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
 X   or textAlign(LEFT, MIDDLE); -> this one seems best
 X   add reference for new param, and update keywords.txt
+X given to andy
 
+0125p3
+_ re-disable P2D before distributing
+
+_ ortho() behaving differently in P3D vs OPENGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=100
+_   only happens on the first round
+
+graphics stuff being sorted out by ewjordan
+_ accuracy in P3D is very low
+_   http://dev.processing.org/bugs/show_bug.cgi?id=95
+_ textured polys throwing a lot of exceptions (ouch)  
+_   http://dev.processing.org/bugs/show_bug.cgi?id=546
+_ polygons in z axis with nonzero x or y not filling properly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=547
 
 _ look into capabilities stuff from mike creighton
 _   also sets the aa mode on the pc so it no longer needs control panel bunk
@@ -862,8 +878,6 @@ _   workaround is to write the code properly, but suggests something bad
 _   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ make a note about the anti-aliasing types in the faq
 _   polygon vs line etc.. may want to enable lines but disable polys
-_ ortho() behaving differently in P3D vs OPENGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _ invocationtargetexception in gl with aioobe:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
 _ resolve ARGB versus RGBA versus just A issues for fonts

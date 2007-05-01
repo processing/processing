@@ -1065,10 +1065,12 @@ public class PApplet extends Applet
       }
     }
 
+    /*
     if (irenderer.equals(P2D)) {
       throw new RuntimeException("P2D is not yet implemented, " +
                                  "use JAVA2D or P3D instead.");
     }
+    */
 
     /*
     // ok when calling size, but not really with createGraphics()
