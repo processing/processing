@@ -49,8 +49,8 @@ Returns the number of children for the element.
 <returns>int</returns>
 
 <related>
-getChild()
-getChildren()
+XMLElement_getChild()
+XMLElement_getChildren()
 </related>
 
 <availability>1.0</availability>
