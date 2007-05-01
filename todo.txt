@@ -24,6 +24,21 @@ X re-architect svg to properly inherit fill/stroke/etc from parents
 X   <g> object can specify fill/stroke for everyone below
 X   need to discern between having a fill specified and one not being present
 
+
+0125p3
+_ moviemaker
+X   moved around constructors (to be on par with other video lib stuff)
+X   cleaned up constant names (i.e. MSVideo -> MS_VIDEO)
+X   added constant for h264 encoding
+_   add documentation
+
+
+_ look into deleting from p5 bugs db
+
+_ ? doesn't work with find in reference
+_   actually came up as 'null'
+_ should we use if() or if in the reference
+
 _ disallow .java tabs with same name as the sketch
 _   a .java tab with same name as the sketch is allowed (oog!)
 _   particularly look at "save as" scenario
@@ -38,6 +53,8 @@ _     you will overwrite your original code from the main-tab.
 
 _ show progress bar while rebuilding sketch menu
 _   startup is very slow on g4
+
+_ "find in ref" on XMLElement brings up ref for null (ha)
 
 
 LIBRARIES / Net
@@ -91,8 +108,6 @@ _   problem with big floats:
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
 _   problem with small floats:
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
-
-_ need to add reference for moviemaker 
 
 _ with additional .pde files, don't allow static mode in front tab
 
@@ -1022,6 +1037,7 @@ _   which will also just give you the last camera
 _   should it be new Camera(PROMPT);
 _ audio stops working after two seconds
 _   http://dev.processing.org/bugs/show_bug.cgi?id=277
+_ or audio won't stop even after hitting stop
 _ include a separate video class to handle just playback
 _   video playback can be much faster if not messing with pixels
 _   could instead use texsubimage in opengl, etc
