@@ -52,8 +52,8 @@ Returns all of the children as an XMLElement array.
 <returns>XMLElement[]</returns>
 
 <related>
-getChildCount()
-getChild()
+XMLElement_getChildCount()
+XMLElement_getChild()
 </related>
 
 <availability>1.0</availability>

@@ -55,8 +55,8 @@ Returns the child XMLElement as specified by the <b>which</b> parameter. The val
 <returns>XMLElement</returns>
 
 <related>
-getChildCount()
-getChildren()
+XMLElement_getChildCount()
+XMLElement_getChildren()
 </related>
 
 <availability>1.0</availability>
