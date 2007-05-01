@@ -42,6 +42,7 @@ import quicktime.std.movies.Movie;
 import quicktime.std.movies.Track;
 import quicktime.std.movies.media.VideoMedia;
 import quicktime.util.QTHandle;
+import quicktime.util.QTUtils;
 import quicktime.util.RawEncodedImage;
 
 import processing.core.*;
@@ -88,21 +89,26 @@ import processing.core.*;
 public class MovieMaker {
 
   public static final int RAW = StdQTConstants.kRawCodecType;
-  public static final int JPEG = StdQTConstants.kJPEGCodecType;
-  public static final int CINEPAK = StdQTConstants.kCinepakCodecType;
-  public static final int SORENSON = StdQTConstants.kSorensonCodecType;
-  public static final int VIDEO = StdQTConstants.kVideoCodecType;
-  public static final int H261 = StdQTConstants.kH261CodecType;
-  public static final int H263 = StdQTConstants.kH263CodecType;
+
+  public static final int ANIMATION = StdQTConstants.kAnimationCodecType;
   public static final int BASE = StdQTConstants.kBaseCodecType;
   public static final int BMP = StdQTConstants.kBMPCodecType;
-  public static final int CMYK = StdQTConstants.kCMYKCodecType;
+  public static final int CINEPAK = StdQTConstants.kCinepakCodecType;
   public static final int COMPONENT = StdQTConstants.kComponentVideoCodecType;
+  public static final int CMYK = StdQTConstants.kCMYKCodecType;
   public static final int GIF = StdQTConstants.kGIFCodecType;
   public static final int GRAPHICS = StdQTConstants.kGraphicsCodecType;
-  public static final int MSVideo = StdQTConstants.kMicrosoftVideo1CodecType;
-  public static final int MOTIONJPEGA = StdQTConstants.kMotionJPEGACodecType;
-  public static final int MOTIONJPEGB = StdQTConstants.kMotionJPEGBCodecType;
+  public static final int JPEG = StdQTConstants.kJPEGCodecType;
+  public static final int MS_VIDEO = StdQTConstants.kMicrosoftVideo1CodecType;
+  public static final int MOTION_JPEG_A = StdQTConstants.kMotionJPEGACodecType;
+  public static final int MOTION_JPEG_B = StdQTConstants.kMotionJPEGBCodecType;
+  public static final int SORENSON = StdQTConstants.kSorensonCodecType;
+  public static final int VIDEO = StdQTConstants.kVideoCodecType;
+
+  public static final int H261 = StdQTConstants.kH261CodecType;
+  public static final int H263 = StdQTConstants.kH263CodecType;
+  // H.264 encoding, added because no constant is available in QTJava
+  public static final int H264 = QTUtils.toOSType ("avc1");
 
   public static final int WORST = StdQTConstants.codecMinQuality;
   public static final int LOW = StdQTConstants.codecLowQuality;
@@ -154,24 +160,40 @@ public class MovieMaker {
     }
   */
 
+  /**
+   * Create a movie with the specified width, height, and filename.
+   * The movie will be created at 15 frames per second.
+   * The codec will be set to RAW and quality set to HIGH.
+   */
   public MovieMaker(PApplet p, int _w, int _h, String _filename) {
-    this(p, _w, _h, _filename, 0, 0, 30, 15);
+    this(p, _w, _h, _filename, 30, RAW, HIGH, 15);
   }
 
-    // For specifying your own width and height
-  public MovieMaker(PApplet p, int _w, int _h, String _filename,
+  /**
+   * Create a movie with the specified width, height, filename, and frame rate.
+   * The codec will be set to RAW and quality set to HIGH.
+   */
+  public MovieMaker(PApplet p, int _w, int _h, String _filename, int _rate) {
+    this(p, _w, _h, _filename, _rate, RAW, HIGH, 15);
+  }
+
+
+  /**
+   * Create a movie with the specified width, height, filename, frame rate,
+   * and codec type and quality. Key frames will be set at 15 frames.
+   */
+  public MovieMaker(PApplet p, int _w, int _h, String _filename, int _rate,
                     int _codecType, int _codecQuality) {
-    this(p, _w, _h, _filename, _codecType, _codecQuality, 30, 15);
+    this(p, _w, _h, _filename, _rate, _codecType, _codecQuality, 15);
   }
 
 
-  public MovieMaker(PApplet p, int _w, int _h, String _filename,
-                    int _codecType, int _codecQuality, int _rate) {
-    this(p, _w, _h, _filename, _codecType, _codecQuality, _rate, 15);
-  }
-
-  public MovieMaker(PApplet p, int _w, int _h, String _filename,
-                    int _codecType, int _codecQuality, int _rate,
+  /**
+   * Create a movie with the specified width, height, filename, frame rate,
+   * codec type and quality, and key frame rate.
+   */
+  public MovieMaker(PApplet p, int _w, int _h, String _filename, int _rate,
+                    int _codecType, int _codecQuality,
                     int _keyFrameRate) {
     parent = p;
 
