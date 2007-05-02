@@ -251,17 +251,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
           }
           reader.close();
           if (serverVersion >= 0) {
-              //// now read local version
-              reader = new BufferedReader(new InputStreamReader(Base.getStream("mobile.properties")));
-              line = reader.readLine();
-              int localVersion = 0;
-              while (line != null) {
-                  pos = line.indexOf('=');
-                  if (!line.startsWith("#") && (pos >= 0)) {
-                      localVersion = Integer.parseInt(line.substring(line.indexOf('=') + 1).trim());
-                  }
-                  line = reader.readLine();
-              }
+              int localVersion = getCoreVersion();
               if (localVersion < serverVersion) {
                   outOfDate = true;
                   //// backup old version
@@ -298,7 +288,32 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       }
   }
   
-  protected void readLibraryVersions(HashMap versions) throws Exception {
+  public static int getCoreVersion() throws Exception {
+      int localVersion = 0;
+      BufferedReader reader = null;
+      try {
+          //// now read local version
+          reader = new BufferedReader(new InputStreamReader(Base.getStream("mobile.properties")));
+          String line = reader.readLine();
+          int pos;
+          while (line != null) {
+              pos = line.indexOf('=');
+              if (!line.startsWith("#") && (pos >= 0)) {
+                  localVersion = Integer.parseInt(line.substring(line.indexOf('=') + 1).trim());
+              }
+              line = reader.readLine();
+          }
+      } finally {
+          if (reader != null) {
+              try {
+                  reader.close();
+              } catch (Exception e) { }
+          }
+      }
+      return localVersion;
+  }
+  
+  protected static void readLibraryVersions(Map versions) throws Exception {
       BufferedReader reader = null;
       try {
           URL url = new URL(libURL + libVersion);
@@ -320,6 +335,30 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
               reader.close();
           }
       }
+  }
+  
+  public static Map getLibraryVersions() throws Exception {
+      TreeMap libs = new TreeMap();
+      if (Sketchbook.librariesFolder.exists()) {
+          File[] files = Sketchbook.librariesFolder.listFiles();
+          for (int i = 0, length = files.length; i < length; i++) {
+              if (files[i].isDirectory()) {
+                  //// open and parse local library version
+                  File f = new File(files[i], libVersion);
+                  if (f.exists()) {
+                      BufferedReader reader = new BufferedReader(new FileReader(f));
+                      //// assume that first line MUST be build version
+                      String version = reader.readLine();
+                      reader.close();
+                      if (version != null) {
+                          version = version.substring(version.indexOf('=') + 1).trim();
+                          libs.put(files[i].getName(), version);
+                      }
+                  }
+              }
+          }
+      }
+      return libs;
   }
   
   protected void compareLibraryVersions(HashMap versions) throws Exception {

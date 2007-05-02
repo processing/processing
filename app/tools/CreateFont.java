@@ -52,6 +52,9 @@ public class CreateFont extends JFrame {
   JTextArea sample;
   JButton okButton;
   JTextField filenameField;
+  
+  JCheckBox[] includes;
+  JTextField includeField;
 
   Hashtable table;
   boolean smooth = true;
@@ -188,6 +191,31 @@ public class CreateFont extends JFrame {
     //panel.add(allBox);
 
     pain.add(panel);
+    
+    includes = new JCheckBox[5];
+    includes[0] = new JCheckBox("A-Z");
+    includes[1] = new JCheckBox("a-z");
+    includes[2] = new JCheckBox("0-9*#");
+    includes[3] = new JCheckBox("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
+    includes[4] = new JCheckBox("Other:");
+    includeField = new JTextField(20);
+    
+    panel = new JPanel();
+    panel.setBorder(BorderFactory.createTitledBorder("Include:"));
+    panel.setLayout(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridy = 0; gbc.weightx = 1; gbc.anchor = GridBagConstraints.WEST; gbc.fill = GridBagConstraints.HORIZONTAL;
+    for (int i = 0; i < 3; i++) {
+        gbc.gridx = i;
+        panel.add(includes[i], gbc);
+    }
+    gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 3; gbc.weightx = 0;
+    panel.add(includes[3], gbc);
+    gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
+    panel.add(includes[4], gbc);
+    gbc.gridx = 1; gbc.gridy = 2; gbc.gridwidth = 2;
+    panel.add(includeField, gbc);
+    pain.add(panel);
 
     JPanel filestuff = new JPanel();
     filestuff.add(new JLabel("Filename:"));
@@ -301,11 +329,93 @@ public class CreateFont extends JFrame {
     if (!filename.endsWith(".mvlw")) {
       filename += ".mvlw";
     }
+    
+    //// build the charset
+    ArrayList charset = new ArrayList();
+    for (int i = 0, length = includes.length; i < length; i++) {
+        if (includes[i].isSelected()) {
+            switch (i) {
+                case 0:
+                    for (char c = 'A'; c <= 'Z'; c++) {
+                        charset.add(new Character(c));
+                    }
+                    break;
+                case 1:
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        charset.add(new Character(c));
+                    }
+                    break;
+                case 2:
+                    for (char c = '0'; c <= '9'; c++) {
+                        charset.add(new Character(c));
+                    }
+                    charset.add(new Character('*'));
+                    charset.add(new Character('#'));
+                    break;
+                case 3:
+                    Character ch;
+                    for (char c = 33; c <= 47; c++) {
+                        ch = new Character(c);
+                        if (!charset.contains(ch)) {
+                            charset.add(ch);
+                        }
+                        charset.add(ch);
+                    }
+                    for (char c = 58; c <= 64; c++) {
+                        ch = new Character(c);
+                        if (!charset.contains(ch)) {
+                            charset.add(ch);
+                        }
+                        charset.add(ch);
+                    }
+                    for (char c = 91; c <= 96; c++) {
+                        ch = new Character(c);
+                        if (!charset.contains(ch)) {
+                            charset.add(ch);
+                        }
+                        charset.add(ch);
+                    }
+                    for (char c = 123; c <= 126; c++) {
+                        ch = new Character(c);
+                        if (!charset.contains(ch)) {
+                            charset.add(ch);
+                        }
+                        charset.add(ch);
+                    }
+                    break;
+                case 4:
+                    String include = includeField.getText().trim();
+                    for (int j = 0, jlength = include.length(); j < jlength; j++) {
+                        ch = new Character(include.charAt(j));
+                        if (!charset.contains(ch)) {
+                            charset.add(ch);
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+    if (charset.size() == 0) {
+        JOptionPane.showMessageDialog(this,
+                                      "Please select or enter the characters to include in this font.",
+                                      "No characters selected",
+                                      JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    //// always include lowercase 'i' which is used for spacing and unknown characters
+    Character ch = new Character('i');
+    if (!charset.contains(ch)) {
+        charset.add(ch);
+    }
+    char[] cs = new char[charset.size()];
+    for (int i = charset.size() - 1; i >= 0; i--) {
+        cs[i] = ((Character) charset.get(i)).charValue();
+    }
 
     try {
       Font instance = (Font) table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
-      PFont f = new PFont(font, smooth, all ? null : PFont.DEFAULT_CHARSET);
+      PFont f = new PFont(font, smooth, cs);//all ? null : PFont.DEFAULT_CHARSET);
 
       // make sure the 'data' folder exists
       if (!targetFolder.exists()) targetFolder.mkdirs();

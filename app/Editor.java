@@ -1090,9 +1090,39 @@ public class Editor extends JFrame
           g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                               RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-          g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+          Font f = new Font("SansSerif", Font.PLAIN, 11);
+          g.setFont(f);
           g.setColor(Color.white);
-          g.drawString(Base.VERSION_NAME, 50, 30);
+          int x = 50;
+          int y = 30;
+          g.drawString(Base.VERSION_NAME + " PDE", x, y);
+          y += 12;
+          try {
+              String lib, ver;
+              ver = Integer.toString(UpdateCheck.getCoreVersion());
+              while (ver.length() < 4) {
+                  ver = "0" + ver;
+              }
+              g.drawString(ver + " Core", x, y);
+              y += 12;              
+              Map libs = UpdateCheck.getLibraryVersions();
+              Iterator i = libs.keySet().iterator();
+              while (i.hasNext()) {
+                  lib = (String) i.next();
+                  ver = (String) libs.get(lib);
+                  lib = Character.toUpperCase(lib.charAt(0)) + lib.substring(1);
+                  while (ver.length() < 4) {
+                      ver = "0" + ver;
+                  }
+                  g.drawString(ver + " " + lib, x, y);
+                  y += 12;
+                  
+                  if (y >= 80) {
+                      x = 212;
+                      y = 30;
+                  }
+              }
+          } catch (Exception e) { };
         }
       };
     window.addMouseListener(new MouseAdapter() {
