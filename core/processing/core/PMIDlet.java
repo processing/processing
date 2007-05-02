@@ -2276,44 +2276,88 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
         
-    public abstract class PComponent {
+    /** The PComponent class defines the fields and methods common to all the
+     * UI components.
+     *
+     * @category UI
+     */
+    public class PComponent {
+        /** Constant value representing the default background color */
         public static final int DEFAULT_BG_COLOR                  = 0xffffffff;
+        /** Constant value representing the default focused foreground color */
         public static final int DEFAULT_FG_FOCUSED_COLOR          = 0xffffffff;
+        /** Constant value representing the default unfocused foreground color */
         public static final int DEFAULT_FG_UNFOCUSED_COLOR        = 0xfff5f5f5;
+        /** Constant value representing the default pressed foreground color */
         public static final int DEFAULT_FG_PRESSED_COLOR          = 0xffc59931;
+        /** Constant value representing the default focused border color */
         public static final int DEFAULT_BORDER_FOCUSED_COLOR      = 0xffa77800;
+        /** Constant value representing the default unfocused border color */
         public static final int DEFAULT_BORDER_UNFOCUSED_COLOR    = 0xff666666;
+        /** Constant value representing the default focused highlight color */
         public static final int DEFAULT_HIGHLIGHT_FOCUSED_COLOR   = 0xfffdc469;
+        /** Constant value representing the default unfocused highlight color */
         public static final int DEFAULT_HIGHLIGHT_UNFOCUSED_COLOR = 0xffd1d1d1;
         
-        public int x, y, width, height;
-        public int contentX, contentY, contentWidth, contentHeight;
-        public int margin, padding;
+        /** Top left x-coordinate value of the component */
+        public int x;
+        /** Top left y-coordinate value of the component */
+        public int y;
+        /** Total width of the component */
+        public int width;
+        /** Total height of the component */
+        public int height;
+        /** Top left x-coordinate value of the content area of the component */
+        public int contentX;
+        /** Top left y-coordinate value of the content area of the component */
+        public int contentY;
+        /** Width of the content area of the component */
+        public int contentWidth;
+        /** Height of the content area of the component */
+        public int contentHeight;
+        /** Size of margin around the outside of the component */
+        public int margin;
+        /** Size of padding inside the component around the content area */
+        public int padding;
         
+        /** True if the component can accept input focus */
         public boolean acceptsFocus;
+        /** True if the component currently has input focus */
         public boolean focused;
+        /** True if the component has been activated/pressed */
         public boolean pressed;
         
+        /** Background color of the entire component */
         public int bgColor = DEFAULT_BG_COLOR;
         
-        public int pressedFgColor = DEFAULT_FG_PRESSED_COLOR;
-        
+        /** Foreground color of the component when pressed */
+        public int pressedFgColor = DEFAULT_FG_PRESSED_COLOR;        
+        /** Foreground color of the component when it has input focus */
         public int focusedFgColor = DEFAULT_FG_FOCUSED_COLOR;
+        /** Foreground color of the component when it does not have input focus */
         public int unfocusedFgColor = DEFAULT_FG_UNFOCUSED_COLOR;
         
-        public int borderWidth;
-        
-        public int focusedBorderColor = DEFAULT_BORDER_FOCUSED_COLOR;
-        public int unfocusedBorderColor = DEFAULT_BORDER_UNFOCUSED_COLOR;
-        
+        /** Width of the highlight border around the component */
         public int highlightWidth;
         
+        /** Color of the highlight border when the component has input focus */
         public int focusedHighlightColor = DEFAULT_HIGHLIGHT_FOCUSED_COLOR;
+        /** Color of the highlight focus when the component doesn't have input focus */
         public int unfocusedHighlightColor = DEFAULT_HIGHLIGHT_UNFOCUSED_COLOR;
         
+        /** Width of the border around the component content area */
+        public int borderWidth;
+        
+        /** Color of the border when the component has input focus */
+        public int focusedBorderColor = DEFAULT_BORDER_FOCUSED_COLOR;
+        /** Color of the border when the component doesn't have input focus */
+        public int unfocusedBorderColor = DEFAULT_BORDER_UNFOCUSED_COLOR;
+        
+        /** @hidden */
         public PComponent() {
         }
         
+        /** @hidden */
         public boolean acceptFocus() {
             if (acceptsFocus) {
                 focused = true;
@@ -2321,11 +2365,19 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return acceptsFocus;
         }
         
+        /** @hidden */
         public void releaseFocus() {
             focused = false;
             pressed = false;
         }
         
+        /** Sets the location and dimensions of the component. The content
+         * area location and dimensions (contentX, contentY, contentWidth,
+         * contentHeight) will be calculated based on the margin, borderWidth,
+         * highlightWidth, and padding.
+         *
+         * @return None
+         */
         public void setBounds(int x, int y, int width, int height) {
             int t = ((margin >> 24) & 0xff) + borderWidth + highlightWidth + ((padding >> 24) & 0xff);
             int l = ((margin >> 16) & 0xff) + borderWidth + highlightWidth + ((padding >> 16) & 0xff);
@@ -2341,6 +2393,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             contentHeight = height - t - b;
         }
         
+        /** Lets the component automatically place and size itself within the 
+         * specified location and dimensions.  The resulting size may be 
+         * smaller, but no bigger, than the specified bounds.
+         *
+         * @return None
+         */
         public void calculateBounds(int availX, int availY, int availWidth, int availHeight) {
             int t = ((margin >> 24) & 0xff) + borderWidth + highlightWidth + ((padding >> 24) & 0xff);
             int l = ((margin >> 16) & 0xff) + borderWidth + highlightWidth + ((padding >> 16) & 0xff);
@@ -2354,15 +2412,27 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             setBounds(availX, availY, availWidth, availHeight);
         }
         
+        /** Returns true if the component intersects the specified bounds.
+         *
+         * @return boolean
+         */
         public boolean intersects(int x, int y, int width, int height) {
             int x2 = x + width;
             int y2 = y + height;
             return !((x >= (this.x + this.width)) || (x2 <= this.x) || (y >= (this.y + this.height)) || (y2 <= this.y));
         }
         
+        /** Initializes the component, should be called after bounds have changed.
+         *
+         * @return None
+         */
         public void initialize() {
         }
         
+        /** Draws the component onto the screen.
+         *
+         * @return None
+         */
         public void draw() {
             drawBefore();
             drawContent();
@@ -2386,7 +2456,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
         }
         
-        protected abstract void drawContent();
+        protected void drawContent() {            
+        }
         
         protected void drawAfter() {
             int fgColor;
@@ -2428,23 +2499,59 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
         }
         
+        /** Called to let the component handle a keypress event. Returns true
+         * if the component consumed the event.
+         *
+         * @return boolean
+         *
+         */
         public boolean keyPressed() {
             return false;
         }
         
+        /** Called to let the component handle a keyrelease event. Returns true
+         * if the component consumed the event.
+         *
+         * @return boolean
+         *
+         */
         public boolean keyReleased() {
             return false;
         }
     }
     
+    /** The PContainer object manages input focus between a collection of
+     * vertically stacked components.  It can also handle scrolling its
+     * children components within its bounds.  Note, however, that unlike
+     * traditional UI toolkits, the PContainer object does not manage
+     * layout of its children.  Each child component should have its
+     * bounds set before the container is initialized.  It is also assumed
+     * that each component will be added in top-to-bottom order.
+     *
+     * @category UI
+     * @example PContainer
+     * @related PComponent
+     */
     public class PContainer extends PComponent {
-        public Vector children;
+        /** Constant value indicating an "unbounded" height, used in calculating
+         * bounds for items in a scrolling container.
+         *
+         * @thisref PContainer
+         * @thisreftext the PContainer class
+         */
+        public static final int     HEIGHT_UNBOUNDED    = Integer.MAX_VALUE;
         
-        public int focusedChild;
+        protected Vector children;
         
+        protected int focusedChild;
+        
+        /** True if this container should scroll its children within its bounds. */
         public boolean scrolling;
+        /** The current scrolling y-offset within its bounds. */
         public int scrollY;
+        /** The total height of the children components */
         public int scrollHeight;
+        /** The scrollbar object to show the current scroll state. */
         public PScrollBar scrollbar;
         
         public PContainer() {
@@ -2452,14 +2559,23 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             children = new Vector();
         }
         
+        /** Adds a component to this container. 
+         * @param child a component to be added to the bottom of the container stack
+         */
         public void add(PComponent child) {
             children.addElement(child);
         }
         
+        /** Removes the specified component from this container.
+         * @param child the component to remove
+         */
         public void remove(PComponent child) {
             children.removeElement(child);
         }
         
+        /** Initializes each of its children components, calculating the
+         * total height of its children and setting up scrolling, if necessary.
+         */
         public void initialize() {
             //// find first focusable child, initialize scrolling
             PComponent child;
@@ -2481,6 +2597,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
         }
         
+        /** @hidden */
         public boolean acceptFocus() {
             super.acceptFocus();
             if (focused && (children.size() > 0) && (focusedChild >= 0)) {
@@ -2490,6 +2607,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return focused;
         }
         
+        /** @hidden */
         public void releaseFocus() {
             super.releaseFocus();
             if ((children.size() > 0) && (focusedChild >= 0)) {
@@ -2498,6 +2616,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
         }
         
+        /** Allows its currently focused child to handle the keypress event.  If
+         * no children handles the keypress, the PContainer may handle it to
+         * change focus or scroll its contents.
+         */
         public boolean keyPressed() {
             boolean result = false;
             PComponent child;
@@ -2554,11 +2676,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                                 if (scrolling && (scrollHeight > contentHeight)) {
                                     if (direction > 0) {
                                         if ((child.y + child.height) > (contentY + scrollY + contentHeight)) {
-                                            scrollY = Math.min(scrollHeight - contentHeight, scrollY + contentHeight - 4);
+                                            scrollY = Math.min(scrollHeight - contentHeight, Math.min(child.y, scrollY + contentHeight - 4));
                                         }
                                     } else {
                                         if (child.y < (contentY + scrollY)) {
-                                            scrollY = Math.max(0, scrollY - contentHeight + 4);
+                                            scrollY = Math.max(0, Math.max(child.y + child.height - contentHeight, scrollY - contentHeight + 4));
                                         }
                                     }
                                 }
@@ -2589,6 +2711,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return result;
         }
         
+        /** Allows its currently focused child to handle the keyrelease event.
+         */
         public boolean keyReleased() {
             boolean result = false;
             PComponent child;
@@ -2599,7 +2723,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return result;
         }
         
-        public void drawContent() {
+        protected void drawContent() {
             if (scrolling && (scrollHeight > contentHeight)) {
                 pushMatrix();
                 clip(contentX, contentY, contentWidth, contentHeight);
@@ -2622,23 +2746,44 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
-    public class PRadioButtonGroup {
-        public Vector buttons;
+    /** A PRadioButtonGroup identifies a set of PRadioButton components such
+     * that only one in the group can be selected at any time.  Create a new
+     * PRadioButtonGroup object for each group and pass it into the constructor
+     * for the individual PRadioButtons it should manage.
+     *
+     * @category UI
+     * @example PRadioButton
+     * @related PComponent
+     */
+    public class PRadioButtonGroup {        
+        protected Vector buttons;
         
         public PRadioButtonGroup() {
             buttons = new Vector();
         }
         
+        /** Adds a radio button to this group. This will be called automatically
+         * when a new PRadioButton is created with this group, so you shouldn't 
+         * have to call this method in your code.
+         *
+         * @param button PRadioButton: any variable of type PRadioButton
+         */
         public void addRadioButton(PRadioButton button) {
             if (!buttons.contains(button)) {
                 buttons.addElement(button);
             }
         }
         
+        /** Removes a radio button from this group.
+         *
+         * @param button PRadioButton: any variable of type PRadioButton
+         */
         public void removeRadioButton(PRadioButton button) {
             buttons.removeElement(button);
         }
         
+        /** De-selects all the radio buttons in this group.
+         */
         public void clear() {
             Enumeration en = buttons.elements();
             PRadioButton button;
@@ -2647,12 +2792,47 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 button.selected = false;
             }
         }
+        
+        /** Returns the selected radio button in the group.  Returns null
+         * if no radio button has been selected.
+         */
+        public PRadioButton getSelected() {
+            Enumeration en = buttons.elements();
+            PRadioButton button = null;
+            while (en.hasMoreElements()) {
+                button = (PRadioButton) en.nextElement();
+                if (button.selected) {
+                    break;
+                }
+            }
+            if ((button != null) && !button.selected) {
+                button = null;
+            }
+            return button;
+        }
     }
     
+    /** A radio button component.  Used with the PRadioButtonGroup object
+     * to present a mutually-exclusive set of selectable options.  Does not
+     * include a label, use a PLabel object to display a textual label next to
+     * it.  The size of the component defines the size of the radio button.
+     *
+     * @category UI
+     * @example PRadioButton
+     * @related PComponent
+     */
     public class PRadioButton extends PComponent {
-        public boolean selected;
-        public PRadioButtonGroup group;
+        /** This can be any id you wish to set to keep track of your radio buttons */
+        public int                      id;
+        /** True if this radio button is selected */
+        public boolean                  selected;        
+        /** The group for this radio button.*/
+        protected PRadioButtonGroup     group;
         
+        /**
+         * @param selected initial state of this button
+         * @param group the group this button is a member of
+         */
         public PRadioButton(boolean selected, PRadioButtonGroup group) {
             //// set up visual properties
             highlightWidth = 1;
@@ -2675,6 +2855,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             setBounds(availX, availY, availWidth, availHeight);
         }
         
+        /** @hidden */
         public void initialize() {
         }
         
@@ -2718,9 +2899,16 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         protected void drawAfter() {
         }
         
+        /** Handles pressing and selecting/de-selecting this radio button
+         * when the FIRE button is pressed.  A library event will be fired
+         * from the group if the selection state has changed.
+         */
         public boolean keyPressed() {
             boolean result = false;
             if (keyCode == FIRE) {
+                if (!selected) {
+                    enqueueLibraryEvent(group, 0, null);
+                }
                 pressed = true;
                 group.clear();
                 selected = true;
@@ -2729,15 +2917,30 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return result;
         }
         
+        /** Releases the pressed state of this button when the FIRE button is
+         * released.
+         */
         public boolean keyReleased() {
             pressed = false;
             return false;
         }
     }
     
+    /** A check box component.  Does not include a text label, use PLabel
+     * to draw a label next to it.  The bounds of the component represent
+     * the size of the checkbox.
+     *
+     * @category UI
+     * @example PCheckBox
+     * @related PComponent
+     */
     public class PCheckBox extends PComponent {
+        /** True if the check box has been "checked" */
         public boolean checked;
-        
+      
+        /**
+         * @param checked the initial state of this checkbox
+         */
         public PCheckBox(boolean checked) {
             //// set up visual properties
             highlightWidth = 1;
@@ -2767,27 +2970,48 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
         }
         
+        /** Handles pressing and selecting/de-selecting this checkbox
+         * when the FIRE button is pressed.  A library event is fired to
+         * notify the sketch that the state has changed.
+         */
         public boolean keyPressed() {
             boolean result = false;
             if (keyCode == FIRE) {
                 pressed = true;
                 checked = !checked;
+                enqueueLibraryEvent(this, 0, null);
                 result = true;
             }
             return result;
         }
         
+        /** Releases the pressed state of this checkbox when the FIRE button is
+         * released.
+         */
         public boolean keyReleased() {
             pressed = false;
             return false;
         }
     }
     
+    /** A button component. A button can calculate its bounds based
+     * on the size of its text label.
+     *
+     * @category UI
+     * @example PButton
+     * @related PComponent
+     */    
     public class PButton extends PComponent {
+        /** The font used to display the button label text. */
         public PFont font;
+        /** Color of the button label text. */
         public int fontColor;
+        /** The button label text. */
         public String label;
         
+        /**
+         * @param label button label text
+         */
         public PButton(String label) {
             //// set up visual properties
             highlightWidth = 1;
@@ -2814,6 +3038,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             text(label, contentX + (contentWidth >> 1), contentY + font.baseline);
         }
         
+        /** Handles pressing the button when the FIRE button is pressed. 
+         */
         public boolean keyPressed() {
             boolean result = false;
             if (keyCode == FIRE) {
@@ -2823,6 +3049,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return result;
         }
         
+        /** Releases the pressed state of this button when the FIRE button is
+         * released.  When released, a library event will be fired to notify
+         * the sketch.
+         */
         public boolean keyReleased() {
             boolean result = false;
             pressed = false;
@@ -2834,9 +3064,20 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
+    /** A PImageLabel component allows an image to be displayed with other
+     * components in a container.
+     *
+     * @category UI
+     * @example PLabel
+     * @related PComponent
+     */
     public class PImageLabel extends PComponent {
-        public PImage img;
+        /** The image to display */
+        protected PImage img;
         
+        /**
+         * @param img the image to display
+         */
         public PImageLabel(PImage img) {
             unfocusedFgColor = 0;
             this.img = img;
@@ -2854,7 +3095,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         
         protected void drawContent() {
             if (img != null) {
+                pushMatrix();
+                clip(contentX, contentY, contentWidth, contentHeight);
                 image(img, contentX, contentY);
+                popMatrix();
             } else {
                 stroke(focused ? focusedBorderColor : unfocusedBorderColor);
                 noFill();
@@ -2865,59 +3109,92 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
+    /** A text label component.  This component can automatically size itself
+     * to fit the text specified.
+     *
+     * @category UI
+     * @example PLabel
+     * @related PComponent
+     */
     public class PLabel extends PComponent {
+        /** The font used to display the text */
         public PFont font;
+        /** The color of the text */
         public int fontColor;
+        /** If multiple lines, the leading of the text */
         public int leading;
+        /** The horizontal alignment of the text */
         public int align;
         
-        public String label;
+        /** The text to display, if a single line */
+        public String text;
+        /** An array of lines of text to display */
         public String[] lines;
         
-        public PLabel(String label) {
+        /**
+         * @param label the text to display
+         */
+        public PLabel(String text) {
             unfocusedFgColor = 0;
             font = loadFont();
             fontColor = 0xff000000;
             leading = font.height;
             align = LEFT;
             
-            this.label = label;
+            this.text = text;
         }
         
         protected void calculateContentBounds(int availX, int availY, int availWidth, int availHeight) {
             textFont(font);
             textLeading(leading);
-            int labelWidth = textWidth(label);
-            if ((labelWidth > availWidth) || (label.indexOf('\n') >= 0)) {
-                lines = textWrap(label, availWidth);
-                label = null;
+            int labelWidth = textWidth(text);
+            if ((labelWidth > availWidth) || (text.indexOf('\n') >= 0)) {
+                lines = textWrap(text, availWidth);
+                text = null;
                 setBounds(availX, availY, availWidth, length(lines) * leading);
             } else {
                 setBounds(availX, availY, labelWidth, leading);
             }
         }
         
-        public void drawContent() {
+        protected void drawContent() {
             fill(fontColor);
             textFont(font);
             textAlign(align);
             textLeading(leading);
-            if ((label == null) && (lines != null)) {
+            if ((text == null) && (lines != null)) {
                 text(lines, contentX, contentY, contentWidth, contentHeight);
-            } else if (label != null) {
-                text(label, contentX, contentY, contentWidth, contentHeight);
+            } else if (text != null) {
+                text(text, contentX, contentY, contentWidth, contentHeight);
             }
         }
     }
     
+    /** A scrollbar component.  Can be used in conjunction with a PContainer
+     * or PList object to represent the scroll position of its children, in
+     * which case it is handled automatically.
+     *
+     * @category UI
+     * @example PScrollBar
+     * @related PComponent
+     * @related PContainer
+     * @related PList
+     */
     public class PScrollBar extends PComponent {
-        private int min, max, pageSize, value;
-        private int grabberHeight;
+        protected int min, max, pageSize, value;
+        protected int grabberHeight;
         
         public PScrollBar() {
             highlightWidth = 1;
         }
         
+        /** Sets the range of values represented by the scrollbar, and 
+         * the size of a "page" used to size the scroller.
+         *
+         * @param min the minimum value
+         * @param max the maximum value
+         * @param pageSize the size of a page
+         */
         public void setRange(int min, int max, int pageSize) {
             this.min = min;
             this.max = max;
@@ -2925,10 +3202,15 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             value = min;
         }
         
+        /** Sets the current value displayed by the scrollbar, should be
+         * between the specified min and max.
+         */
         public void setValue(int value) {
             this.value = value;
         }
         
+        /** Initializes the scrollbar, calculates the size of the scroller/grabber.
+         */
         public void initialize() {
             int pages = 0;
             if (pageSize == 0) {
@@ -2936,15 +3218,16 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
             if (pageSize > 0) {
                 pages = (max - min + 1) / pageSize;
+                grabberHeight = contentHeight / pages;
                 if (((max - min + 1) % pageSize) != 0) {
                     pages++;
+                    grabberHeight += (contentHeight / pages - grabberHeight) / 2;
                 }
-                grabberHeight = contentHeight / pages;
             }
             grabberHeight = max(4, grabberHeight);
         }
         
-        public void drawContent() {
+        protected void drawContent() {
             if (max >= min) {
                 noStroke();
                 fill(focused ? focusedHighlightColor : unfocusedHighlightColor);
@@ -2959,19 +3242,31 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
+    /** A scrollable list.  Each item in the list is represented by a single
+     * line label.  If the label is bigger than the width of the component,
+     * it will scroll horizontally when selected.  Note that the horizontal
+     * scrolling will only animate when the list has the input focus.
+     *
+     * @category UI
+     * @example PList
+     * @related PComponent
+     */
     public class PList extends PComponent {
-        public int selected;
-        public int first;
-        
+        /** The font used to display the item labels */
         public PFont font;
-        public Vector items;
-        
+        /** The scrollbar used to represent the size of the list contents */
         public PScrollBar scrollbar;
         
-        public boolean marqueeScrolling;
-        public int marqueeStart;
-        public int marqueeWidth;
-        public int marqueeOffset;
+        protected Vector items;
+        
+        /** Index of the currently selected item in the list */
+        public int selected;
+        protected int first;        
+        
+        protected boolean marqueeScrolling;
+        protected int marqueeStart;
+        protected int marqueeWidth;
+        protected int marqueeOffset;
         
         public PList() {
             acceptsFocus = true;
@@ -2981,10 +3276,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             items = new Vector();
         }
         
-        public void setScrollBar(PScrollBar scrollbar) {
-            this.scrollbar = scrollbar;
-        }
-        
+        /** @hidden */
         public boolean acceptFocus() {
             focused = true;
             resetMarquee();
@@ -2994,6 +3286,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return true;
         }
         
+        /** @hidden */
         public void releaseFocus() {
             focused = false;
             if (scrollbar != null) {
@@ -3001,16 +3294,30 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
         }
         
+        /** Adds items to this list.
+         *
+         * @param obj Object: an object (such as a String) to display in this list
+         */
         public void add(Object obj) {
             items.addElement(obj);
         }
         
+        /** 
+         * @param arr Object[]: an array of objects to add to this list
+         */
         public void add(Object[] arr) {
             for (int i = 0, length = arr.length; i < length; i++) {
                 items.addElement(arr[i]);
             }
         }
         
+        /** Returns the item in the list at the specified index*/
+        public Object get(int i) {
+            return items.elementAt(i);
+        }
+        
+        
+        /** Initializes the list, sets up its associated scrollbar */
         public void initialize() {
             if (scrollbar != null) {
                 scrollbar.setRange(0, items.size() - 1, contentHeight / getRowHeight());
@@ -3036,6 +3343,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return font.height + 2;
         }
         
+        /** Handles up/down navigation of the list and pressed selection of items in the list */
         public boolean keyPressed() {
             boolean result = false;
             int oldSelected = selected;
@@ -3068,9 +3376,17 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return result;
         }
         
+        /** Releases the pressed state of items in the list, fires a library
+         * event to notify the sketch of the selection.
+         */
         public boolean keyReleased() {
+            boolean result = false;
             pressed = false;
-            return false;
+            if (keyCode == FIRE) {
+                enqueueLibraryEvent(this, 0, items.elementAt(selected));
+                result = true;
+            }
+            return result;
         }
         
         protected void drawBefore() {
@@ -3096,6 +3412,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             for (int i = first, length = min(items.size(), first + numVisible); i < length; i++) {
                 drawItem(items.elementAt(i), contentX, rowY, contentWidth, min(rowHeight, endY - rowY), (i == selected));
                 rowY += rowHeight;
+            }
+            if (scrollbar != null) {
+                scrollbar.draw();
             }
         }
         
