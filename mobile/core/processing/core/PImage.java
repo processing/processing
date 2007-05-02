@@ -1,7 +1,3 @@
-package processing.core;
-
-import javax.microedition.lcdui.*;
-
 /**
  * Part of the Mobile Processing project - http://mobile.processing.org
  *
@@ -22,6 +18,12 @@ import javax.microedition.lcdui.*;
  * Public License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA  02111-1307  USA
+ */
+package processing.core;
+
+import javax.microedition.lcdui.*;
+
+/**
  *
  * @author Francis Li <mail@francisli.com>
  * @author Marlon J. Manrique <marlonj@darkgreenmedia.com>
@@ -78,6 +80,34 @@ public class PImage {
         }
     }
     
+    /**
+     * Copies a region of pixels from one image into another. If the source and
+     * destination regions aren't the same size, it will automatically resize
+     * source pixels to fit the specified target region. No alpha information
+     * is used in the process, however if the source image has an alpha channel
+     * set, it will be copied as well.<br /><br />The <b>imageMode()</b>
+     * function changes the way the parameters work. For example, a call to
+     * <b>imageMode(CORNERS)</b> will change the width and height parameters
+     * to define the x and y values of the opposite corner of the image.
+     *
+     * @thisref img 
+     * @thisreftext PImage: any variable of type PImage
+     * @param sx int: X coordinate of the source's upper left corner
+     * @param sy int: Y coordinate of the source's upper left corner
+     * @param swidth int: source image width
+     * @param sheight int: source image height
+     * @param dx int: X coordinate of the destination's upper left corner
+     * @param dy int: Y coordinate of the destination's upper left corner
+     * @param dwidth int: destination image width
+     * @param dheight int: destination image height
+     * @param source PImage: a image variable referring to the source image.
+     * @return None
+     * @exampleimg PImage_copy.jpg
+     * @examplecode
+     * PImage img = loadImage("tower.jpg");
+     * img.copy(50, 0, 50, 100, 0, 0, 50, 100); 
+     * image(img, 0, 0);
+     */
     public void copy(int sx, int sy, int swidth, int sheight, int dx, int dy, int dwidth, int dheight) {
         if (PCanvas.imageMode == PMIDlet.CORNERS) {
             swidth -= sx;
