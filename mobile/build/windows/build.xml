@@ -173,6 +173,21 @@
             <fileset dir="mobile/docs/reference" includes="**/*"/>
         </delete>
     </target>
+    
+    <target name="makeref" depends="init">
+        <!-- compile reference API doclet -->
+        <javac classpath="${java.home}/lib/tools.jar" srcdir="mobile/doclet" />
+        
+        <!-- run javadoc with the doclet on core and libraries -->
+        <delete includeEmptyDirs="true" failonerror="false" dir="mobile/doclet/core" />
+        <javadoc sourcepath="mobile/core" 
+                 destdir="mobile/doclet/core"
+                 bootclasspath="${wtk.bootClassPath}"
+                 packagenames="processing.core.*"
+                 doclet="ProcessingDoclet"
+                 docletpath="mobile/doclet"
+                 additionalparam="-mainclass PMIDlet" />
+    </target>
         
     <target name="makedocs" depends="init">
         <!-- clean out local docs directories -->
