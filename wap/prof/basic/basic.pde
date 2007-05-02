@@ -291,7 +291,7 @@ void libraryEvent(Object library, int event, Object data) {
       //// handle networking
       if (event == PRequest.EVENT_CONNECTED) {
         //// update status message
-        status.label = "Status: Reading response...\n\n";
+        status.text = "Status: Reading response...\n\n";
         status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
         submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
         
@@ -301,7 +301,7 @@ void libraryEvent(Object library, int event, Object data) {
         //// read response
         request.readBytes();
       } else if (event == PRequest.EVENT_DONE) {        
-        status.label = "Status: Done!\n\n";
+        status.text = "Status: Done!\n\n";
         status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
         submit.label = LABEL_SUBMIT;
         submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
@@ -312,7 +312,7 @@ void libraryEvent(Object library, int event, Object data) {
         request.close();
         softkey(SOFTKEY_BACK);
       } else if (event == PRequest.EVENT_ERROR) {
-        status.label = "Status: An error has occured- " + data + "\n\n";
+        status.text = "Status: An error has occured- " + data + "\n\n";
         status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
         submit.label = LABEL_SUBMIT;
         submit.setBounds(submit.x, status.y + status.height, submit.width, submit.height);
@@ -327,7 +327,7 @@ void libraryEvent(Object library, int event, Object data) {
       //// handle the button ui events
       if (data.equals(LABEL_SUBMIT)) {
         //// set up connection status display and cancel option
-        status.label = ("Status: Connecting...\n\n");
+        status.text = ("Status: Connecting...\n\n");
         status.calculateBounds(4, status.y, width - 8, Integer.MAX_VALUE);
         
         submit.label = LABEL_CANCEL;
