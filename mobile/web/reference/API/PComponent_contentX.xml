@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>contentX</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Top left x-coordinate value of the content area of the component
+</description>
+
+<syntax>
+contentX
+</syntax>
+
+<related>
+</related>
+
+</root>

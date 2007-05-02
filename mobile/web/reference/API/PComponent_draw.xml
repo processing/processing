@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>draw()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Draws the component onto the screen.
+</description>
+
+<syntax>
+draw();
+</syntax>
+
+<returns>
+None
+</returns>
+
+<related>
+</related>
+
+</root>

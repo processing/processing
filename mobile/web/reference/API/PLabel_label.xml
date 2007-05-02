@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>label</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The text to display, if a single line
+</description>
+
+<syntax>
+label
+</syntax>
+
+<related>
+</related>
+
+</root>

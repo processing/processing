@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>PLabel</name>
+
+<category>
+UI
+</category>
+
+<subcategory>
+</subcategory>
+
+<example>
+<image>PLabel.png</image>
+<code>
+PContainer container;
+PImageLabel imglabel;
+PLabel label;
+
+void setup() {
+  container = new PContainer();
+  
+  PImage img = loadImage("mobile.png");
+  imglabel = new PImageLabel(img);
+  imglabel.setBounds((width - img.width) / 2, 
+                     (height - img.height) / 2,
+                     img.width,
+                     img.height);  
+  container.add(imglabel);
+  int y = imglabel.y + imglabel.height;
+  
+  label = new PLabel("Text Label");
+  label.align = CENTER;
+  label.setBounds(0, y, width, height - y);
+  container.add(label);
+}
+
+void draw() {
+  background(255);
+  container.draw();
+}
+</code>
+</example>
+
+<description>
+A text label component.  This component can automatically size itself
+to fit the text specified.
+</description>
+
+<field>
+  <fname>font</fname>
+  <fdescription>The font used to display the text</fdescription>
+</field>
+<field>
+  <fname>fontColor</fname>
+  <fdescription>The color of the text</fdescription>
+</field>
+<field>
+  <fname>leading</fname>
+  <fdescription>If multiple lines, the leading of the text</fdescription>
+</field>
+<field>
+  <fname>align</fname>
+  <fdescription>The horizontal alignment of the text</fdescription>
+</field>
+<field>
+  <fname>label</fname>
+  <fdescription>The text to display, if a single line</fdescription>
+</field>
+<field>
+  <fname>lines</fname>
+  <fdescription>An array of lines of text to display</fdescription>
+</field>
+
+
+<constructor>
+PLabel(<c>label</c>)
+</constructor>
+
+<cparameter>
+  <clabel>label</clabel>
+  <cdescription>the text to display</cdescription>
+</cparameter>
+
+<related>
+PComponent
+</related>
+
+</root>

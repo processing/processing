@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>PContainer</name>
+
+<category>
+UI
+</category>
+
+<subcategory>
+</subcategory>
+
+<example>
+<image>PContainer.png</image>
+<code>
+PScrollBar scrollbar;
+PContainer screen;
+
+void setup() {
+  //// put a scrollbar on the right side of the screen
+  scrollbar = new PScrollBar();
+  scrollbar.setBounds(width - 4, 0, 4, height);
+  
+  //// let the container fill the rest of the screen
+  screen = new PContainer();
+  screen.scrolling = true;
+  screen.scrollbar = scrollbar;
+  screen.setBounds(0, 0, width - 4, height);
+  
+  //// create bunch of labels and buttons, using the
+  //// PContainer.HEIGHT_UNBOUNDED constant to allow them to size
+  //// themselves as tall as they need to be to fit.  the
+  //// container will scroll the contents
+  int y = 0;
+  for (int i = 0; i &lt; 4; i++) {
+    PLabel label = new PLabel("The quick brown" +
+      " fox jumped over the lazy dogs.");
+    label.calculateBounds(4, y, width - 8, PContainer.HEIGHT_UNBOUNDED);
+    y = label.y + label.height + 4;
+    screen.add(label);
+    
+    PButton button = new PButton("Button " + i);
+    button.calculateBounds(4, y, width - 8, PContainer.HEIGHT_UNBOUNDED);
+    y = button.y + button.height + 4;
+    screen.add(button);
+  }
+  
+  //// initialize the container (which initializes
+  //// all of its children and the scrollbar)
+  screen.initialize();
+}
+
+void draw() {
+  //// draw the container (which draws its children)
+  screen.draw();
+}
+
+void keyPressed() {
+  //// let the container handle the input, it will
+  //// pass it down to the focused child
+  screen.keyPressed();
+}
+
+void keyReleased() {
+  //// let the container handle the input, it will
+  //// pass it down to the focused child
+  screen.keyReleased();
+}
+
+</code>
+</example>
+
+<description>
+The PContainer object manages input focus between a collection of
+vertically stacked components.  It can also handle scrolling its
+children components within its bounds.  Note, however, that unlike
+traditional UI toolkits, the PContainer object does not manage
+layout of its children.  Each child component should have its
+bounds set before the container is initialized.  It is also assumed
+that each component will be added in top-to-bottom order.
+</description>
+
+<field>
+  <fname>HEIGHT_UNBOUNDED</fname>
+  <fdescription>Constant value indicating an "unbounded" height, used in calculating
+ bounds for items in a scrolling container.</fdescription>
+</field>
+<field>
+  <fname>scrolling</fname>
+  <fdescription>True if this container should scroll its children within its bounds.</fdescription>
+</field>
+<field>
+  <fname>scrollY</fname>
+  <fdescription>The current scrolling y-offset within its bounds.</fdescription>
+</field>
+<field>
+  <fname>scrollHeight</fname>
+  <fdescription>The total height of the children components</fdescription>
+</field>
+<field>
+  <fname>scrollbar</fname>
+  <fdescription>The scrollbar object to show the current scroll state.</fdescription>
+</field>
+
+<method>
+  <mname>add()</mname>
+  <mdescription>Adds a component to this container.</mdescription>
+</method>
+<method>
+  <mname>remove()</mname>
+  <mdescription>Removes the specified component from this container.</mdescription>
+</method>
+<method>
+  <mname>initialize()</mname>
+  <mdescription>Initializes each of its children components, calculating the
+ total height of its children and setting up scrolling, if necessary.</mdescription>
+</method>
+<method>
+  <mname>keyPressed()</mname>
+  <mdescription>Allows its currently focused child to handle the keypress event.</mdescription>
+</method>
+<method>
+  <mname>keyReleased()</mname>
+  <mdescription>Allows its currently focused child to handle the keyrelease event.</mdescription>
+</method>
+
+<constructor>
+PContainer()
+</constructor>
+
+
+<related>
+PComponent
+</related>
+
+</root>

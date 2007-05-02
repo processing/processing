@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>get()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Returns the item in the list at the specified index
+</description>
+
+<syntax>
+get(<c>i</c>);
+</syntax>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

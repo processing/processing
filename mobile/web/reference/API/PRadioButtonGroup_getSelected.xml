@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>getSelected()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Returns the selected radio button in the group.  Returns null
+if no radio button has been selected.
+</description>
+
+<syntax>
+getSelected();
+</syntax>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

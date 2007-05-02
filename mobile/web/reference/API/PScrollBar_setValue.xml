@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>setValue()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Sets the current value displayed by the scrollbar, should be
+between the specified min and max.
+</description>
+
+<syntax>
+setValue(<c>value</c>);
+</syntax>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

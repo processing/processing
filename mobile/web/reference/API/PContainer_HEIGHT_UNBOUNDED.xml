@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>HEIGHT_UNBOUNDED</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Constant value indicating an "unbounded" height, used in calculating
+bounds for items in a scrolling container.
+</description>
+
+<syntax>
+PContainer.HEIGHT_UNBOUNDED
+</syntax>
+
+<parameter>
+  <label>PContainer</label>
+  <description>the PContainer class</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

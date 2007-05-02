@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>unfocusedHighlightColor</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Color of the highlight focus when the component doesn't have input focus
+</description>
+
+<syntax>
+unfocusedHighlightColor
+</syntax>
+
+<related>
+</related>
+
+</root>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>contentWidth</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Width of the content area of the component
+</description>
+
+<syntax>
+contentWidth
+</syntax>
+
+<related>
+</related>
+
+</root>

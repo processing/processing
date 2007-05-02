@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>initialize()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Initializes the component, should be called after bounds have changed.
+</description>
+
+<syntax>
+initialize();
+</syntax>
+
+<returns>
+None
+</returns>
+
+<related>
+</related>
+
+</root>

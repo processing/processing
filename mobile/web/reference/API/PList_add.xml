@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>add()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Adds items to this list.
+</description>
+
+<syntax>
+add(<c>obj</c>);
+add(<c>arr</c>);
+</syntax>
+
+<parameter>
+  <label>obj</label>
+  <description>an object to display in this list</description>
+</parameter>
+
+<parameter>
+  <label>arr</label>
+  <description>an array of objects to add to this list</description>
+</parameter>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

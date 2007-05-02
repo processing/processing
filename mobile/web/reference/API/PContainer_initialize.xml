@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>initialize()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Initializes each of its children components, calculating the
+total height of its children and setting up scrolling, if necessary.
+</description>
+
+<syntax>
+initialize();
+</syntax>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

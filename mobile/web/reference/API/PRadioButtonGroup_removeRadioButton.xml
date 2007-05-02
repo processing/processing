@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>removeRadioButton()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Removes a radio button from this group.
+</description>
+
+<syntax>
+removeRadioButton(<c>button</c>);
+</syntax>
+
+<parameter>
+  <label>button</label>
+  <description>PRadioButton: any variable of type PRadioButton</description>
+</parameter>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

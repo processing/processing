@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>keyReleased()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Releases the pressed state of items in the list, fires a library
+event to notify the sketch of the selection.
+</description>
+
+<syntax>
+keyReleased();
+</syntax>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

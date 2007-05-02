@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>selected</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Index of the currently selected item in the list
+</description>
+
+<syntax>
+selected
+</syntax>
+
+<related>
+</related>
+
+</root>

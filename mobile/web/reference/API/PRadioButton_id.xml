@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>id</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+This can be any id you wish to set to keep track of your radio buttons
+</description>
+
+<syntax>
+id
+</syntax>
+
+<related>
+</related>
+
+</root>

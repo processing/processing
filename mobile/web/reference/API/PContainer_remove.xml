@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>remove()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Removes the specified component from this container.
+</description>
+
+<syntax>
+remove(<c>child</c>);
+</syntax>
+
+<parameter>
+  <label>child</label>
+  <description>the component to remove</description>
+</parameter>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

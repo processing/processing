@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>keyPressed()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Handles pressing and selecting/de-selecting this radio button
+when the FIRE button is pressed.  A library event will be fired
+from the group if the selection state has changed.
+</description>
+
+<syntax>
+keyPressed();
+</syntax>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

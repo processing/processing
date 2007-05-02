@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>keyPressed()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Allows its currently focused child to handle the keypress event.  If
+no children handles the keypress, the PContainer may handle it to
+change focus or scroll its contents.
+</description>
+
+<syntax>
+keyPressed();
+</syntax>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

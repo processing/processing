@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>addRadioButton()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Adds a radio button to this group. This will be called automatically
+when a new PRadioButton is created with this group, so you shouldn't 
+have to call this method in your code.
+</description>
+
+<syntax>
+addRadioButton(<c>button</c>);
+</syntax>
+
+<parameter>
+  <label>button</label>
+  <description>PRadioButton: any variable of type PRadioButton</description>
+</parameter>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>img</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The image to display
+</description>
+
+<syntax>
+img
+</syntax>
+
+<related>
+</related>
+
+</root>

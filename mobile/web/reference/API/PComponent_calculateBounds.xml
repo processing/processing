@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>calculateBounds()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Lets the component automatically place and size itself within the
+specified location and dimensions.  The resulting size may be
+smaller, but no bigger, than the specified bounds.
+</description>
+
+<syntax>
+calculateBounds(<c>availX</c>, <c>availY</c>, <c>availWidth</c>, <c>availHeight</c>);
+</syntax>
+
+<returns>
+None
+</returns>
+
+<related>
+</related>
+
+</root>

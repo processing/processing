@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>PRequest</name>
+
+<category>
+Net
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The <b>PRequest</b> object represents an active network request. They are
+returned by the methods in the <b>PClient</b> used to initiate network
+requests.  A request object can be in one of the states specified by the
+constant values below.  As the state of the request changes, library
+events are fired to notify the sketch.
+</description>
+
+<field>
+  <fname>STATE_OPENED</fname>
+  <fdescription>Constant value representing that the request is being sent to the server, waiting for reply</fdescription>
+</field>
+<field>
+  <fname>STATE_CONNECTED</fname>
+  <fdescription>Constant value representing that the request has been received and a response is available.</fdescription>
+</field>
+<field>
+  <fname>STATE_FETCHING</fname>
+  <fdescription>Constant value representing that the response is being fetched from the server.</fdescription>
+</field>
+<field>
+  <fname>STATE_DONE</fname>
+  <fdescription>Constant value representing that the entire response has been read.</fdescription>
+</field>
+<field>
+  <fname>STATE_ERROR</fname>
+  <fdescription>Constant value representing that an error occurred and the connection has been closed.</fdescription>
+</field>
+<field>
+  <fname>STATE_CLOSED</fname>
+  <fdescription>Constant value representing that connection has been closed and resources have been released.</fdescription>
+</field>
+<field>
+  <fname>EVENT_CONNECTED</fname>
+  <fdescription>Event fired when the server has received the request and a response is available.</fdescription>
+</field>
+<field>
+  <fname>EVENT_DONE</fname>
+  <fdescription>Event fired when the entire response has been read and is available.</fdescription>
+</field>
+<field>
+  <fname>EVENT_ERROR</fname>
+  <fdescription>Event fired when an error has occurred.</fdescription>
+</field>
+<field>
+  <fname>state</fname>
+  <fdescription>The current state of the connection, as specified by the above constants</fdescription>
+</field>
+
+<method>
+  <mname>read()</mname>
+  <mdescription>Reads the next byte of data and returns it as an int.</mdescription>
+</method>
+<method>
+  <mname>readChar()</mname>
+  <mdescription>Reads the next byte of data and returns it as a char.</mdescription>
+</method>
+<method>
+  <mname>readBytes()</mname>
+  <mdescription>Reads the rest of the response from the server.</mdescription>
+</method>
+<method>
+  <mname>close()</mname>
+  <mdescription>Closes the connection and releases the resources associated with this request to the server.</mdescription>
+</method>
+
+<constructor>
+</constructor>
+
+
+<related>
+PClient
+</related>
+
+</root>

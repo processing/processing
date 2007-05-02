@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>unfocusedBorderColor</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Color of the border when the component doesn't have input focus
+</description>
+
+<syntax>
+unfocusedBorderColor
+</syntax>
+
+<related>
+</related>
+
+</root>

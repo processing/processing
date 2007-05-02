@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>borderWidth</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Width of the border around the component content area
+</description>
+
+<syntax>
+borderWidth
+</syntax>
+
+<related>
+</related>
+
+</root>

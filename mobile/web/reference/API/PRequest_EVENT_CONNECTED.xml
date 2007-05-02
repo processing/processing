@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>EVENT_CONNECTED</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Event fired when the server has received the request and a response is available.
+</description>
+
+<syntax>
+PRequest.EVENT_CONNECTED
+</syntax>
+
+<parameter>
+  <label>PRequest</label>
+  <description>the PRequest class</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

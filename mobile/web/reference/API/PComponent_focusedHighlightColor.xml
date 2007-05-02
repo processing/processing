@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>focusedHighlightColor</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Color of the highlight border when the component has input focus
+</description>
+
+<syntax>
+focusedHighlightColor
+</syntax>
+
+<related>
+</related>
+
+</root>

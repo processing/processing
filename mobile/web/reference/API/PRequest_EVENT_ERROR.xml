@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>EVENT_ERROR</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Event fired when an error has occurred.  The data object will be a String
+containing an error message.
+</description>
+
+<syntax>
+PRequest.EVENT_ERROR
+</syntax>
+
+<parameter>
+  <label>PRequest</label>
+  <description>the PRequest class</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

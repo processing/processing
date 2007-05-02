@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>keyReleased()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Allows its currently focused child to handle the keyrelease event.
+</description>
+
+<syntax>
+keyReleased();
+</syntax>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

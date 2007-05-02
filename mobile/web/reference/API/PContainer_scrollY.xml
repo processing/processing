@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>scrollY</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The current scrolling y-offset within its bounds.
+</description>
+
+<syntax>
+scrollY
+</syntax>
+
+<related>
+</related>
+
+</root>
