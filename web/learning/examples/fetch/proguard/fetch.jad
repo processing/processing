@@ -2,8 +2,8 @@ MIDlet-1: fetch, /icon.png, fetch
 MIDlet-Icon: /icon.png
 MIDlet-Name: fetch
 MIDlet-Version: 1.0.0
-MIDlet-Vendor: Mobile Processing ALPHA - 0004
+MIDlet-Vendor: Mobile Processing ALPHA - 0006
 MicroEdition-Profile: MIDP-1.0
 MicroEdition-Configuration: CLDC-1.0
 MIDlet-Jar-URL: fetch.jar
-MIDlet-Jar-Size: 12472
+MIDlet-Jar-Size: 14027

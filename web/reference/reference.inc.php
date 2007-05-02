@@ -115,7 +115,7 @@ if ($pos !== false) {
                        <img src="API/media/<?php echo $e['image'] ?>">
        <?php         } ?>
                    </td>
-                   <td width="20">&nbsp;</td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
        <?php     } ?>
                  <td valign="top"><pre><?php echo $e['code'] ?></pre></td>
                  </tr>
@@ -195,7 +195,7 @@ if ($pos !== false) {
       <table border="0" cellspacing="0" cellpadding="0">
        <?php foreach ($value['method'] as $m) { ?>
                  <tr>
-                   <td valign="top" width="70">
+                   <td valign="top" width="120">
 <?php
                    $filename = $_GET['name'] ."_". rtrim($m['mname'], "() ");
                    $displayname = $m['mname'];

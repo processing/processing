@@ -1,4 +1,4 @@
-import processing.core.*; import processing.xml.*; public class yahoosonar extends PMIDlet{// Yahoo! Sonar
+import processing.core.*; import processing.phone.*; import processing.xml.*; public class yahoosonar extends PMIDlet{// Yahoo! Sonar
 // by Francis Li
 // http://www.francisli.com/
 //
@@ -24,11 +24,13 @@ import processing.core.*; import processing.xml.*; public class yahoosonar exten
 //
 
 
+
 //// constant parameters for querying the Yahoo! search engine
-final String SEARCH_APPID        = "mobileprocessing";
-final String SEARCH_SERVER       = "api.local.yahoo.com";
-final String SEARCH_FILE         = "/LocalSearchService/V2/localSearch";
-final String SEARCH_PARAMS[]     = { "appid", "query", "zip" };
+final String SEARCH_APPID        = "YcqpwRfV34HsjH29JFxu4vwaV6R_vSU2AwUU1m7EKBALeMHusw7FYQMyDPytmc7pjXMGfA--";
+final String SEARCH_SERVER       = "local.yahooapis.com";
+final String SEARCH_FILE         = "/LocalSearchService/V3/localSearch";
+final String SEARCH_PARAMS[]     = { 
+  "appid", "query", "zip" };
 final int    SEARCH_PARAM_APPID  = 0;
 final int    SEARCH_PARAM_QUERY  = 1;
 final int    SEARCH_PARAM_ZIP    = 2;
@@ -68,11 +70,12 @@ final int    SWEEP_RATE_MS       = 2000;
 //// attribute indexes into attrs array of Result class
 final int    INDEX_TITLE       = 0;
 final int    INDEX_PHONE       = 1;
-final int    INDEX_ADDRESS     = 2;
-final int    INDEX_CITY        = 3;
-final int    INDEX_DISTANCE    = 4;
-final int    INDEX_COUNT       = 5;
-final int    INDEX_COUNT_SHORT = 2;
+final int    INDEX_PROMPT      = 2;
+final int    INDEX_ADDRESS     = 3;
+final int    INDEX_CITY        = 4;
+final int    INDEX_DISTANCE    = 5;
+final int    INDEX_COUNT       = 6;
+final int    INDEX_COUNT_SHORT = 3;
 
 //// data structure to hold result info
 class Result {
@@ -84,8 +87,11 @@ class Result {
 
 //// client network library object
 PClient net;
+PRequest request;
 //// xml parser library object
 XMLParser parser;
+//// phone object for calling numbers
+Phone phone;
 //// fonts used
 PFont fontZip;
 PFont fontInfo;
@@ -119,8 +125,9 @@ int sweepa_fp;
 int sweepstart;
 
 public void setup() {
-  net = new PClient(SEARCH_SERVER);
+  net = new PClient(this, SEARCH_SERVER);
   parser = new XMLParser(this);
+  phone = new Phone(this);
 
   fontZip = loadFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_LARGE);
   fontInfo = loadFont(FACE_PROPORTIONAL, STYLE_PLAIN, SIZE_SMALL);
@@ -131,7 +138,7 @@ public void setup() {
   distance = 1;
   pdistance = 1;
 
-  framerate(30);
+  framerate(20);
 
   noStroke();
 }
@@ -339,59 +346,67 @@ public void drawSweep() {
 }
 
 public void keyPressed() {
-  switch (keyCode) {
-  case UP:
-    pdistance = distance;
-    distance = max(1, distance / 2);
-    if (distance != pdistance) {
-      start = millis();
-      selection = 0;
-      loop();
+  if (key == '*') {
+    if (numSelections > 0) {
+      Result r = selections[selection];
+      phone.call(r.attrs[INDEX_PHONE]);
     }
-    break;
-  case DOWN:
-    pdistance = distance;
-    distance = min(8, distance * 2);
-    if (distance != pdistance) {
-      start = millis();
-      selection = 0;
-      loop();
-    }
-    break;
-  case LEFT:
-    if (numSelections > 1) {
-      pselection = selection;
-      selection = (selection - 1 + numSelections) % numSelections;
-      if (selection != pselection) {
+  } 
+  else {
+    switch (keyCode) {
+    case UP:
+      pdistance = distance;
+      distance = max(1, distance / 2);
+      if (distance != pdistance) {
         start = millis();
-        rotate_fp -= TWO_PI / numSelections;
+        selection = 0;
         loop();
       }
-    }
-    break;
-  case RIGHT:
-    if (numSelections > 1) {
-      pselection = selection;
-      selection = (selection + 1) % numSelections;
-      if (selection != pselection) {
+      break;
+    case DOWN:
+      pdistance = distance;
+      distance = min(8, distance * 2);
+      if (distance != pdistance) {
         start = millis();
-        rotate_fp += TWO_PI / numSelections;
+        selection = 0;
         loop();
       }
-    }
-    break;
-  case FIRE:
-    fulldetail = !fulldetail;
-    redraw();
-    break;
-  default:
-    if ((key >= '0') && (key <= '9')) {
-      ZIP[zipIndex] = key;
-      zipIndex = (zipIndex + 1) % 5;
+      break;
+    case LEFT:
+      if (numSelections > 1) {
+        pselection = selection;
+        selection = (selection - 1 + numSelections) % numSelections;
+        if (selection != pselection) {
+          start = millis();
+          rotate_fp -= TWO_PI / numSelections;
+          loop();
+        }
+      }
+      break;
+    case RIGHT:
+      if (numSelections > 1) {
+        pselection = selection;
+        selection = (selection + 1) % numSelections;
+        if (selection != pselection) {
+          start = millis();
+          rotate_fp += TWO_PI / numSelections;
+          loop();
+        }
+      }
+      break;
+    case FIRE:
+      fulldetail = !fulldetail;
       redraw();
-    }
-    break;      
-  }  
+      break;
+    default:
+      if ((key >= '0') && (key <= '9')) {
+        ZIP[zipIndex] = key;
+        zipIndex = (zipIndex + 1) % 5;
+        redraw();
+      }
+      break;      
+    }  
+  }
 }
 
 public void softkeyPressed(String label) {
@@ -404,20 +419,22 @@ public void softkeyPressed(String label) {
         SEARCH_VALUES[SEARCH_PARAM_APPID] = SEARCH_APPID;
         SEARCH_VALUES[SEARCH_PARAM_QUERY] = query;
         SEARCH_VALUES[SEARCH_PARAM_ZIP] = new String(ZIP);
-        if (net.GET(SEARCH_FILE, SEARCH_PARAMS, SEARCH_VALUES)) {
-          //// http request successful, start background xml parsing of result
-          parser.start(net);
-          sweep = true;
-          sweepstart = millis();
-          loop();
-        }
+        request = net.GET(SEARCH_FILE, SEARCH_PARAMS, SEARCH_VALUES);
+        sweep = true;
+        sweepstart = millis();
+        loop();
       }
     }
   }
 }
 
 public void libraryEvent(Object library, int event, Object data) {
-  if (library == parser) {
+  if (library == request) {
+    if (event == PRequest.EVENT_CONNECTED) {
+      parser.start(request);
+    }
+  } 
+  else if (library == parser) {
     if (event == XMLParser.EVENT_TAG_START) {      
       lastTag = (String) data;
       if (data.equals(TAG_RESULTSET)) {
@@ -433,6 +450,7 @@ public void libraryEvent(Object library, int event, Object data) {
       else if (data.equals(TAG_RESULT)) {
         numResults++;
         results[numResults] = new Result();
+        results[numResults].attrs[INDEX_PROMPT] = "Press * to dial";
       }
     } 
     else if (event == XMLParser.EVENT_TAG_END) {        
@@ -477,6 +495,8 @@ public void libraryEvent(Object library, int event, Object data) {
       numResults++;
       checkSelections();
       sweep = false;
+      request.close();
+      request = null;
       redraw();
     }
   }

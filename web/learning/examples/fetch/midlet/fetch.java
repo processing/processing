@@ -6,32 +6,31 @@ import processing.core.*; public class fetch extends PMIDlet{// Fetch
 // from the Mobile Processing website and then displays it on the
 // screen.
 //
-final int STATE_START       = 0;
-final int STATE_CONNECTING  = 1;
-final int STATE_FETCHING    = 2;
-final int STATE_DONE        = 3;
-final int STATE_ERROR       = 4;
-
-PClient2 client;
+PClient client;
 PRequest request;
 PFont font;
-int state;
 PImage img;
+String msg;
 
 public void setup() {
-  client = new PClient2(this, "localhost");//"mobile.processing.org");
+  // instantiate a new PClient object to connect to the Mobile Procesing website
+  client = new PClient(this, "mobile.processing.org");
+  // set up the font for displaying text
   font = loadFont();
   textFont(font);
-  state = STATE_START;  
+  // create a softkey command for initiating the network request
   softkey("GET");
+  // we're not animating, so turn off draw loop
   noLoop();
 }
 
 public void softkeyPressed(String label) {
   if (label.equals("GET")) {
-    request = client.GET("/processing/images/mobile.png");
-    state = STATE_CONNECTING;
+    // initiate the request
+    request = client.GET("/images/mobile.png");
+    // remove the softkey command
     softkey(null);
+    // update the screen
     redraw();
   }
 }
@@ -39,15 +38,17 @@ public void softkeyPressed(String label) {
 public void libraryEvent(Object library, int event, Object data) {
   if (library == request) {
     if (event == PRequest.EVENT_CONNECTED) {
+      // connected, start reading the data
       request.readBytes();
-      state = STATE_FETCHING;
       redraw();
     } else if (event == PRequest.EVENT_DONE) {
+      // done reading, create the image
       img = loadImage((byte[]) data);
-      state = STATE_DONE;
+      request.close();
       redraw();
     } else if (event == PRequest.EVENT_ERROR) {
-      state = STATE_ERROR;
+      // an error occurred, get the error message
+      msg = (String) data;
       redraw();
     }
   }
@@ -56,22 +57,25 @@ public void libraryEvent(Object library, int event, Object data) {
 public void draw() {
   background(255);
   fill(0);
-  switch (state) {
-    case STATE_START:
-      text("Press GET to start.", 4, 4, width - 8, height - 8);
-      break;
-    case STATE_CONNECTING:
-      text("Connecting...", 4, 4, width - 8, height - 8);
-      break;
-    case STATE_FETCHING:
-      text("Fetching...", 4, 4, width - 8, height - 8);
-      break;
-    case STATE_DONE:
-      image(img, 4, 4);
-      break;
-    case STATE_ERROR:
-      text("An error has occurred.", 4, 4, width - 8, height - 8);
-      break;
+  if (img != null) {
+    // show the image
+    image(img, 4, 4);
+  } else if (request == null) {
+    // prompt for the network request
+    text("Press GET to start.", 4, 4, width - 8, height - 8);    
+  } else {
+    // handle the network states
+    switch (request.state) {
+        case PRequest.STATE_OPENED:
+          text("Connecting...", 4, 4, width - 8, height - 8);
+          break;
+        case PRequest.STATE_FETCHING:
+          text("Fetching...", 4, 4, width - 8, height - 8);
+          break;
+        case PRequest.STATE_ERROR:
+          text("An error has occurred: " + msg, 4, 4, width - 8, height - 8);
+          break;
+    }
   }
 }
 }
