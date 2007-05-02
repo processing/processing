@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>STATE_DONE</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Constant value representing that the entire response has been read.
+</description>
+
+<syntax>
+PRequest.STATE_DONE
+</syntax>
+
+<parameter>
+  <label>PRequest</label>
+  <description>the PRequest class</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

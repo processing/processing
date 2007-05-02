@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>scrolling</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+True if this container should scroll its children within its bounds.
+</description>
+
+<syntax>
+scrolling
+</syntax>
+
+<related>
+</related>
+
+</root>

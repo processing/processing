@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>setRange()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Sets the range of values represented by the scrollbar, and 
+the size of a "page" used to size the scroller.
+</description>
+
+<syntax>
+setRange(<c>min</c>, <c>max</c>, <c>pageSize</c>);
+</syntax>
+
+<parameter>
+  <label>min</label>
+  <description>the minimum value</description>
+</parameter>
+
+<parameter>
+  <label>max</label>
+  <description>the maximum value</description>
+</parameter>
+
+<parameter>
+  <label>pageSize</label>
+  <description>the size of a page</description>
+</parameter>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>x</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Top left x-coordinate value of the component
+</description>
+
+<syntax>
+x
+</syntax>
+
+<related>
+</related>
+
+</root>

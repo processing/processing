@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>focused</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+True if the component currently has input focus
+</description>
+
+<syntax>
+focused
+</syntax>
+
+<related>
+</related>
+
+</root>

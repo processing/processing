@@ -1,67 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
+
 <name>PClient</name>
 
-<category>Net</category>
+<category>
+Net
+</category>
 
-<subcategory></subcategory>
+<subcategory>
+</subcategory>
 
 <description>
-A client connects to a server and sends data back and forth.
+The <b>PClient</b> object is used to initiate network requests to
+web servers on the Internet.  It supports the two most common methods
+of the Hypertext Transfer Protocol (HTTP), <b>GET</b> and <b>POST</b>, allowing it
+to communicate with servers as if it were a desktop web browser.  Both
+methods initiate a new network request and return a <b>PRequest</b> object used
+to track the request and read the returned data.
 </description>
 
-<method>
-<mname>GET()</mname>
-<mdescription>Makes a GET request to the server to retrieve specified content.</mdescription>
-</method>
 
 <method>
-<mname>POST()</mname>
-<mdescription>Makes a POST request to the server.</mdescription>
+  <mname>GET()</mname>
+  <mdescription>The GET method is used to fetch data from a web server.</mdescription>
 </method>
-
 <method>
-<mname>read()</mname>
-<mdescription>Reads one byte from the server.</mdescription>
-</method>
-
-<method>
-<mname>readChar()</mname>
-<mdescription>Reads one byte from the server and returns its character equivalent.</mdescription>
-</method>
-
-<method>
-<mname>readBytes()</mname>
-<mdescription>Returns the response from the server in a byte array.</mdescription>
-</method>
-
-<method>
-<mname>readString()</mname>
-<mdescription>Returns the response from the server as a String.</mdescription>
+  <mname>POST()</mname>
+  <mdescription>The <b>POST</b> method is used to submit data to a web server to be processed.</mdescription>
 </method>
 
 <constructor>
-PClient(<c>server</c>)
-PClient(<c>server</c>, <c>port</c>)
+PClient(<c>midlet</c>, <c>server</c>)
+PClient(<c>midlet</c>, <c>server</c>, <c>port</c>)
 </constructor>
 
 <cparameter>
-<clabel>server</clabel>
-<cdescription>String: name of server to connect to (i.e. "processing.org")</cdescription>
+  <clabel>midlet</clabel>
+  <cdescription>PMIDlet: typically use "this"</cdescription>
 </cparameter>
-
 <cparameter>
-<clabel>port</clabel>
-<cdescription>int: port on which to connect to, defaults to 80</cdescription>
+  <clabel>server</clabel>
+  <cdescription>String: name or IP address of server</cdescription>
 </cparameter>
-
-<returns></returns>
+<cparameter>
+  <clabel>port</clabel>
+  <cdescription>int: optional port number to read/write from on the server</cdescription>
+</cparameter>
 
 <related>
+PRequest
 </related>
-
-<availability>1.0</availability>
-
-<type>Object</type>
 
 </root>

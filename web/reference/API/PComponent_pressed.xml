@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>pressed</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+True if the component has been activated/pressed
+</description>
+
+<syntax>
+pressed
+</syntax>
+
+<related>
+</related>
+
+</root>

@@ -1,42 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
+
 <name>GET()</name>
 
-<category>Net</category>
+<category>
+</category>
 
-<subcategory></subcategory>
+<subcategory>
+</subcategory>
 
 <description>
-Makes a GET request to the server to retreive specified content. This is equivalent to typing a url into a desktop web browser and retreiving the contents of the web page. Note that you can pass parameters to the server if the file you are requesting is a script that will be executed. If the request is successful, the method will return <b>true</b> and the content can be retreived using the <b>read()</b> methods.
+The GET method is used to fetch data from a web server.  It is the method
+used by web browsers most commonly used to fetch the contents of a URL.  It
+can also be used to execute scripts that return data based on parameters
+passed in the URL string.
 </description>
 
 <syntax>
-GET(<c>file</c>)
-GET(<c>file</c>, <c>params</c>, <c>values</c>)
+GET(<c>file</c>);
+GET(<c>file</c>, <c>params</c>, <c>values</c>);
 </syntax>
 
 <parameter>
-<label>file</label>
-<description>String: name of file on server to get</description>
+  <label>file</label>
+  <description>String: name of file to fetch or script to execute on the web server</description>
 </parameter>
 
 <parameter>
-<label>params</label>
-<description>String[]: array of parameter names to pass to server</description>
+  <label>params</label>
+  <description>String[]: an array of String objects representing the names of parameters being passed to a script</description>
 </parameter>
 
 <parameter>
-<label>values</label>
-<description>String[]: array of values corresponding to the names in the params array</description>
+  <label>values</label>
+  <description>String[]: an array of String objects representing the values of parameters being passed to a script</description>
 </parameter>
 
-<returns>boolean</returns>
+<returns>
+PRequest
+</returns>
 
 <related>
 </related>
-
-<availability>1.0</availability>
-
-<type></type>
 
 </root>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>STATE_ERROR</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Constant value representing that an error occurred and the connection has been closed.
+</description>
+
+<syntax>
+PRequest.STATE_ERROR
+</syntax>
+
+<parameter>
+  <label>PRequest</label>
+  <description>the PRequest class</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

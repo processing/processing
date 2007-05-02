@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>scrollHeight</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The total height of the children components
+</description>
+
+<syntax>
+scrollHeight
+</syntax>
+
+<related>
+</related>
+
+</root>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>PList</name>
+
+<category>
+UI
+</category>
+
+<subcategory>
+</subcategory>
+
+<example>
+<image>PList.png</image>
+<code>
+PContainer container;
+PLabel label;
+PList list;
+PScrollBar scrollbar;
+
+void setup() {
+  container = new PContainer();
+  container.setBounds(0, 0, width, height);
+  
+  label = new PLabel("Selected: ");
+  //// let the label calculate its ideal width/height
+  label.calculateBounds(0, 0, width, height);
+  //// set the label to fill the full width of the screen
+  label.setBounds(0, 0, width, label.height);
+  container.add(label);
+  
+  int y = label.y + label.height;
+      
+  //// put a scrollbar on the right side of the screen
+  //// we do not need to explicitly add it to the container
+  //// since it will be linked to the list
+  scrollbar = new PScrollBar();
+  scrollbar.setBounds(width - 4, y, 4, height -y);
+  
+  //// create a new list
+  list = new PList();
+  list.scrollbar = scrollbar;
+  list.setBounds(0, y, width - 4, height - y);
+  for (int i = 0; i &lt; 25; i++) {
+    list.add(i + ". The quick brown fox jumped over the lazy dogs.");
+  }
+  container.add(list);
+  
+  container.initialize();
+}
+
+void draw() {
+  container.draw();
+}
+
+void keyPressed() {
+  container.keyPressed();
+}
+
+void keyReleased() {
+  container.keyReleased();
+}
+
+void libraryEvent(Object library, int event, Object data) {
+  if (library == list) {
+    //// update selection label
+    label.text = "Selected: " + list.selected;
+  }
+}
+</code>
+</example>
+
+<description>
+A scrollable list.  Each item in the list is represented by a single
+line label.  If the label is bigger than the width of the component,
+it will scroll horizontally when selected.  Note that the horizontal
+scrolling will only animate when the list has the input focus.
+</description>
+
+<field>
+  <fname>font</fname>
+  <fdescription>The font used to display the item labels</fdescription>
+</field>
+<field>
+  <fname>scrollbar</fname>
+  <fdescription>The scrollbar used to represent the size of the list contents</fdescription>
+</field>
+<field>
+  <fname>selected</fname>
+  <fdescription>Index of the currently selected item in the list</fdescription>
+</field>
+
+<method>
+  <mname>add()</mname>
+  <mdescription>Adds items to this list.</mdescription>
+</method>
+<method>
+  <mname>get()</mname>
+  <mdescription>Returns the item in the list at the specified index</mdescription>
+</method>
+<method>
+  <mname>initialize()</mname>
+  <mdescription>Initializes the list, sets up its associated scrollbar</mdescription>
+</method>
+<method>
+  <mname>keyPressed()</mname>
+  <mdescription>Handles up/down navigation of the list and pressed selection of items in the list</mdescription>
+</method>
+<method>
+  <mname>keyReleased()</mname>
+  <mdescription>Releases the pressed state of items in the list, fires a library
+ event to notify the sketch of the selection.</mdescription>
+</method>
+
+<constructor>
+PList()
+</constructor>
+
+
+<related>
+PComponent
+</related>
+
+</root>

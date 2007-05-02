@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>focusedFgColor</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Foreground color of the component when it has input focus
+</description>
+
+<syntax>
+focusedFgColor
+</syntax>
+
+<related>
+</related>
+
+</root>

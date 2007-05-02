@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>setBounds()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Sets the location and dimensions of the component. The content
+area location and dimensions (contentX, contentY, contentWidth,
+contentHeight) will be calculated based on the margin, borderWidth,
+highlightWidth, and padding.
+</description>
+
+<syntax>
+setBounds(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>);
+</syntax>
+
+<returns>
+None
+</returns>
+
+<related>
+</related>
+
+</root>

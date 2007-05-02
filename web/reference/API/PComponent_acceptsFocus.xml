@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>acceptsFocus</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+True if the component can accept input focus
+</description>
+
+<syntax>
+acceptsFocus
+</syntax>
+
+<related>
+</related>
+
+</root>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>STATE_OPENED</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Constant value representing that the request is being sent to the server, waiting for reply
+</description>
+
+<syntax>
+PRequest.STATE_OPENED
+</syntax>
+
+<parameter>
+  <label>PRequest</label>
+  <description>the PRequest class</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

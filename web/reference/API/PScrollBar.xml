@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>PScrollBar</name>
+
+<category>
+UI
+</category>
+
+<subcategory>
+</subcategory>
+
+<example>
+<image>PScrollBar.png</image>
+<code>
+PLabel label;
+PScrollBar scrollbar;
+
+int value;
+
+void setup() {
+  label = new PLabel("Value: " + value);
+  label.align = CENTER;
+  label.calculateBounds(4, 4, width - 8, height);
+  label.setBounds(4, 4, width - 8, label.height);
+  label.initialize();
+  
+  int y = label.y + label.height + 4;
+  scrollbar = new PScrollBar();
+  scrollbar.setBounds((width - 4) / 2, y, 4, height - y - 4);
+  scrollbar.setRange(0, 8, 1);
+  scrollbar.initialize();  
+}
+
+void draw() {
+  background(255);
+  label.draw();
+  scrollbar.draw();
+}
+
+void keyPressed() {
+  switch (keyCode) {
+    case UP:
+      value = max(0, value - 1);
+      break;
+    case DOWN:
+      value = min(8, value + 1);
+      break;
+  }
+  label.text = "Value: " + value;
+  scrollbar.setValue(value);
+}
+</code>
+</example>
+
+<description>
+A scrollbar component.  Can be used in conjunction with a PContainer
+or PList object to represent the scroll position of its children, in
+which case it is handled automatically.
+</description>
+
+
+<method>
+  <mname>setRange()</mname>
+  <mdescription>Sets the range of values represented by the scrollbar, and 
+ the size of a "page" used to size the scroller.</mdescription>
+</method>
+<method>
+  <mname>setValue()</mname>
+  <mdescription>Sets the current value displayed by the scrollbar, should be
+ between the specified min and max.</mdescription>
+</method>
+<method>
+  <mname>initialize()</mname>
+  <mdescription>Initializes the scrollbar, calculates the size of the scroller/grabber.</mdescription>
+</method>
+
+<constructor>
+PScrollBar()
+</constructor>
+
+
+<related>
+PComponent
+PContainer
+PList
+</related>
+
+</root>

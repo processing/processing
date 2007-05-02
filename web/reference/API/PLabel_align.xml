@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>align</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The horizontal alignment of the text
+</description>
+
+<syntax>
+align
+</syntax>
+
+<related>
+</related>
+
+</root>

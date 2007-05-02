@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>close()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Closes the connection and releases the resources associated with this request to the server.
+</description>
+
+<syntax>
+request.close();
+</syntax>
+
+<parameter>
+  <label>request</label>
+  <description>any variable of the type PRequest</description>
+</parameter>
+
+<returns>
+None
+</returns>
+
+<related>
+</related>
+
+</root>

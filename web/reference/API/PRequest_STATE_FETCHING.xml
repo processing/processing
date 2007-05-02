@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>STATE_FETCHING</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Constant value representing that the response is being fetched from the server.
+</description>
+
+<syntax>
+PRequest.STATE_FETCHING
+</syntax>
+
+<parameter>
+  <label>PRequest</label>
+  <description>the PRequest class</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

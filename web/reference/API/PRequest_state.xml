@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>state</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The current state of the connection, as specified by the above constants
+</description>
+
+<syntax>
+request.state
+</syntax>
+
+<parameter>
+  <label>request</label>
+  <description>any variable of the type PRequest</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

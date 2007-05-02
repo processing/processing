@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>height</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Total height of the component
+</description>
+
+<syntax>
+height
+</syntax>
+
+<related>
+</related>
+
+</root>

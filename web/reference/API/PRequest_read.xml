@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>read()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Reads the next byte of data and returns it as an int.
+</description>
+
+<syntax>
+request.read();
+</syntax>
+
+<parameter>
+  <label>request</label>
+  <description>any variable of the type PRequest</description>
+</parameter>
+
+<returns>
+int
+</returns>
+
+<related>
+</related>
+
+</root>

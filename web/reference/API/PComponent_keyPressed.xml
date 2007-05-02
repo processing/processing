@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>keyPressed()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Called to let the component handle a keypress event. Returns true
+if the component consumed the event.
+</description>
+
+<syntax>
+keyPressed();
+</syntax>
+
+<returns>
+boolean
+</returns>
+
+<related>
+</related>
+
+</root>

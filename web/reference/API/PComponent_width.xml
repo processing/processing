@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>width</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Total width of the component
+</description>
+
+<syntax>
+width
+</syntax>
+
+<related>
+</related>
+
+</root>

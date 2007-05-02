@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>bgColor</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Background color of the entire component
+</description>
+
+<syntax>
+bgColor
+</syntax>
+
+<related>
+</related>
+
+</root>

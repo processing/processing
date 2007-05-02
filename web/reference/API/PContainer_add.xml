@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>add()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Adds a component to this container.
+</description>
+
+<syntax>
+add(<c>child</c>);
+</syntax>
+
+<parameter>
+  <label>child</label>
+  <description>a component to be added to the bottom of the container stack</description>
+</parameter>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

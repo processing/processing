@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>margin</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Size of margin around the outside of the component
+</description>
+
+<syntax>
+margin
+</syntax>
+
+<related>
+</related>
+
+</root>

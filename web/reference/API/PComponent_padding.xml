@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>padding</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Size of padding inside the component around the content area
+</description>
+
+<syntax>
+padding
+</syntax>
+
+<related>
+</related>
+
+</root>

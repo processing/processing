@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>checked</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+True if the check box has been "checked"
+</description>
+
+<syntax>
+checked
+</syntax>
+
+<related>
+</related>
+
+</root>

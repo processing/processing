@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>STATE_CLOSED</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Constant value representing that connection has been closed and resources have been released.
+</description>
+
+<syntax>
+PRequest.STATE_CLOSED
+</syntax>
+
+<parameter>
+  <label>PRequest</label>
+  <description>the PRequest class</description>
+</parameter>
+
+<related>
+</related>
+
+</root>

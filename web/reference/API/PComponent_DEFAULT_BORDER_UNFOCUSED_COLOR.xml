@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>DEFAULT_BORDER_UNFOCUSED_COLOR</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Constant value representing the default unfocused border color
+</description>
+
+<syntax>
+DEFAULT_BORDER_UNFOCUSED_COLOR
+</syntax>
+
+<related>
+</related>
+
+</root>

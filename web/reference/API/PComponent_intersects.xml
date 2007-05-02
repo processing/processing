@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>intersects()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Returns true if the component intersects the specified bounds.
+</description>
+
+<syntax>
+intersects(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>);
+</syntax>
+
+<returns>
+boolean
+</returns>
+
+<related>
+</related>
+
+</root>

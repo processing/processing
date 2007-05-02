@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>lines</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+An array of lines of text to display
+</description>
+
+<syntax>
+lines
+</syntax>
+
+<related>
+</related>
+
+</root>

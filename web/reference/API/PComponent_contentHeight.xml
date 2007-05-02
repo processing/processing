@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>contentHeight</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Height of the content area of the component
+</description>
+
+<syntax>
+contentHeight
+</syntax>
+
+<related>
+</related>
+
+</root>

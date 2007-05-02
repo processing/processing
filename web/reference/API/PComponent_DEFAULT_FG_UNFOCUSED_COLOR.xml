@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>DEFAULT_FG_UNFOCUSED_COLOR</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Constant value representing the default unfocused foreground color
+</description>
+
+<syntax>
+DEFAULT_FG_UNFOCUSED_COLOR
+</syntax>
+
+<related>
+</related>
+
+</root>

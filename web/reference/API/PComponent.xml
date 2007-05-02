@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>PComponent</name>
+
+<category>
+UI
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The PComponent class defines the fields and methods common to all the
+UI components.
+</description>
+
+<field>
+  <fname>DEFAULT_BG_COLOR</fname>
+  <fdescription>Constant value representing the default background color</fdescription>
+</field>
+<field>
+  <fname>DEFAULT_FG_FOCUSED_COLOR</fname>
+  <fdescription>Constant value representing the default focused foreground color</fdescription>
+</field>
+<field>
+  <fname>DEFAULT_FG_UNFOCUSED_COLOR</fname>
+  <fdescription>Constant value representing the default unfocused foreground color</fdescription>
+</field>
+<field>
+  <fname>DEFAULT_FG_PRESSED_COLOR</fname>
+  <fdescription>Constant value representing the default pressed foreground color</fdescription>
+</field>
+<field>
+  <fname>DEFAULT_BORDER_FOCUSED_COLOR</fname>
+  <fdescription>Constant value representing the default focused border color</fdescription>
+</field>
+<field>
+  <fname>DEFAULT_BORDER_UNFOCUSED_COLOR</fname>
+  <fdescription>Constant value representing the default unfocused border color</fdescription>
+</field>
+<field>
+  <fname>DEFAULT_HIGHLIGHT_FOCUSED_COLOR</fname>
+  <fdescription>Constant value representing the default focused highlight color</fdescription>
+</field>
+<field>
+  <fname>DEFAULT_HIGHLIGHT_UNFOCUSED_COLOR</fname>
+  <fdescription>Constant value representing the default unfocused highlight color</fdescription>
+</field>
+<field>
+  <fname>x</fname>
+  <fdescription>Top left x-coordinate value of the component</fdescription>
+</field>
+<field>
+  <fname>y</fname>
+  <fdescription>Top left y-coordinate value of the component</fdescription>
+</field>
+<field>
+  <fname>width</fname>
+  <fdescription>Total width of the component</fdescription>
+</field>
+<field>
+  <fname>height</fname>
+  <fdescription>Total height of the component</fdescription>
+</field>
+<field>
+  <fname>contentX</fname>
+  <fdescription>Top left x-coordinate value of the content area of the component</fdescription>
+</field>
+<field>
+  <fname>contentY</fname>
+  <fdescription>Top left y-coordinate value of the content area of the component</fdescription>
+</field>
+<field>
+  <fname>contentWidth</fname>
+  <fdescription>Width of the content area of the component</fdescription>
+</field>
+<field>
+  <fname>contentHeight</fname>
+  <fdescription>Height of the content area of the component</fdescription>
+</field>
+<field>
+  <fname>margin</fname>
+  <fdescription>Size of margin around the outside of the component</fdescription>
+</field>
+<field>
+  <fname>padding</fname>
+  <fdescription>Size of padding inside the component around the content area</fdescription>
+</field>
+<field>
+  <fname>acceptsFocus</fname>
+  <fdescription>True if the component can accept input focus</fdescription>
+</field>
+<field>
+  <fname>focused</fname>
+  <fdescription>True if the component currently has input focus</fdescription>
+</field>
+<field>
+  <fname>pressed</fname>
+  <fdescription>True if the component has been activated/pressed</fdescription>
+</field>
+<field>
+  <fname>bgColor</fname>
+  <fdescription>Background color of the entire component</fdescription>
+</field>
+<field>
+  <fname>pressedFgColor</fname>
+  <fdescription>Foreground color of the component when pressed</fdescription>
+</field>
+<field>
+  <fname>focusedFgColor</fname>
+  <fdescription>Foreground color of the component when it has input focus</fdescription>
+</field>
+<field>
+  <fname>unfocusedFgColor</fname>
+  <fdescription>Foreground color of the component when it does not have input focus</fdescription>
+</field>
+<field>
+  <fname>highlightWidth</fname>
+  <fdescription>Width of the highlight border around the component</fdescription>
+</field>
+<field>
+  <fname>focusedHighlightColor</fname>
+  <fdescription>Color of the highlight border when the component has input focus</fdescription>
+</field>
+<field>
+  <fname>unfocusedHighlightColor</fname>
+  <fdescription>Color of the highlight focus when the component doesn't have input focus</fdescription>
+</field>
+<field>
+  <fname>borderWidth</fname>
+  <fdescription>Width of the border around the component content area</fdescription>
+</field>
+<field>
+  <fname>focusedBorderColor</fname>
+  <fdescription>Color of the border when the component has input focus</fdescription>
+</field>
+<field>
+  <fname>unfocusedBorderColor</fname>
+  <fdescription>Color of the border when the component doesn't have input focus</fdescription>
+</field>
+
+<method>
+  <mname>setBounds()</mname>
+  <mdescription>Sets the location and dimensions of the component.</mdescription>
+</method>
+<method>
+  <mname>calculateBounds()</mname>
+  <mdescription>Lets the component automatically place and size itself within the 
+ specified location and dimensions.</mdescription>
+</method>
+<method>
+  <mname>intersects()</mname>
+  <mdescription>Returns true if the component intersects the specified bounds.</mdescription>
+</method>
+<method>
+  <mname>initialize()</mname>
+  <mdescription>Initializes the component, should be called after bounds have changed.</mdescription>
+</method>
+<method>
+  <mname>draw()</mname>
+  <mdescription>Draws the component onto the screen.</mdescription>
+</method>
+<method>
+  <mname>keyPressed()</mname>
+  <mdescription>Called to let the component handle a keypress event.</mdescription>
+</method>
+<method>
+  <mname>keyReleased()</mname>
+  <mdescription>Called to let the component handle a keyrelease event.</mdescription>
+</method>
+
+<constructor>
+</constructor>
+
+
+<related>
+</related>
+
+</root>

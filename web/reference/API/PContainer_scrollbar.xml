@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>scrollbar</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The scrollbar object to show the current scroll state.
+</description>
+
+<syntax>
+scrollbar
+</syntax>
+
+<related>
+</related>
+
+</root>

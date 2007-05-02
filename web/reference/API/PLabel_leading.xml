@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>leading</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+If multiple lines, the leading of the text
+</description>
+
+<syntax>
+leading
+</syntax>
+
+<related>
+</related>
+
+</root>
