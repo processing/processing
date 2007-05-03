@@ -801,7 +801,7 @@ public class Editor extends JFrame
   protected JMenu buildHelpMenu() {
     JMenu menu = new JMenu("Help");
     JMenuItem item;
-
+/*
     item = new JMenuItem("Getting Started");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -817,7 +817,7 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);
-
+*/
     item = new JMenuItem("Reference");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -830,23 +830,23 @@ public class Editor extends JFrame
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (textarea.isSelectionActive()) {
-            String text = textarea.getSelectedText();
+            String text = textarea.getSelectedText().trim();
             if (text.length() == 0) {
               message("First select a word to find in the reference.");
-
             } else {
-              String referenceFile = PdeKeywords.getReference(text);
-              if (referenceFile == null) {
+              String referenceFile = Base.getReferenceFile(text);
+              File f = new File(referenceFile);
+              if (!f.exists()) {
                 message("No reference available for \"" + text + "\"");
               } else {
-                Base.showReference(referenceFile);
+                Base.openURL(referenceFile);
               }
             }
           }
         }
       });
     menu.add(item);
-
+/*
     item = new JMenuItem("Frequently Asked Questions");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -854,7 +854,7 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);
-
+*/
     item = newJMenuItem("Visit Mobile.Processing.org", '5');
     //item = newJMenuItem("Visit Processing.org", '5');
     item.addActionListener(new ActionListener() {

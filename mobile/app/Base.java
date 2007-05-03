@@ -155,8 +155,20 @@ public class Base {
     editor.show();
 
     // check for updates
-    if (Preferences.getBoolean("update.check")) {
-      new UpdateCheck(editor);
+    boolean update = Preferences.getBoolean("update.check");
+    if (update) {
+      String lastString = Preferences.get("update.last");
+      if (lastString != null) {
+        long when = Long.parseLong(lastString);
+        long now = System.currentTimeMillis();
+        if ((now - when) < (7 * UpdateCheck.ONE_DAY)) {
+          update = false;
+        }
+      }
+    }
+    if (update) {
+      UpdateCheck check = new UpdateCheck(editor);
+      check.show();
     }
   }
 
@@ -666,6 +678,11 @@ public class Base {
             File.separator + referenceFile + ".html");
   }
 
+  static public String getReferenceFile(String keyword) {
+    return System.getProperty("user.dir") +
+           File.separator + "reference" +
+           File.separator + keyword + ".html";
+  }
 
   static public void showEnvironment() {
     openURL(System.getProperty("user.dir") +

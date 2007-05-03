@@ -68,7 +68,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
   JLabel label;
   JButton action;
 
-  static final long ONE_DAY = 24 * 60 * 60 * 1000;
+  public static final long ONE_DAY = 24 * 60 * 60 * 1000;
 
   public UpdateCheck(Editor editor) {
     super(editor);
@@ -126,9 +126,9 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       }
   }
 
-
   public void run() {
-    //System.out.println("checking for updates...");
+    // set update time
+    Preferences.set("update.last", String.valueOf(System.currentTimeMillis()));
 
     // generate a random id in case none exists yet
     Random r = new Random();
@@ -156,17 +156,6 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       if (cancelled) {
           return;
       }
-
-      String lastString = Preferences.get("update.last");
-      long now = System.currentTimeMillis();
-      if (lastString != null) {
-        long when = Long.parseLong(lastString);
-        if (now - when < ONE_DAY) {
-          // don't annoy the shit outta people
-          return;
-        }
-      }
-      Preferences.set("update.last", String.valueOf(now));
 
       String prompt =
         "A new version of Mobile Processing is available,\n" +
@@ -213,7 +202,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       }
       //// download any updates
       downloadLibraries(versions);
-      
+            
       if (action != null) {
         action.setText("OK");
       }
