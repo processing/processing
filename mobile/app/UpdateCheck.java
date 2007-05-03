@@ -61,6 +61,9 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
   public static final String coreURL        = "http://mobile.processing.org/download/mobile.jar";
   public static final String coreVersion    = "http://mobile.processing.org/download/mobile.properties";
   
+  public static final String docsURL        = "http://mobile.processing.org/download/docs.zip";
+  public static final String docsVersion    = "http://mobile.processing.org/download/docs.properties";
+  
   public static final String libURL         = "http://mobile.processing.org/download/libraries/";
   public static final String libVersion     = "version.properties";
   boolean cancelled = false;
@@ -202,6 +205,12 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       }
       //// download any updates
       downloadLibraries(versions);
+      //// finally, check for new documentation
+      setMessage("Checking for new documentation...");
+      checkDocs();
+      if (cancelled) {
+          return;
+      }
             
       if (action != null) {
         action.setText("OK");
@@ -227,18 +236,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       BufferedReader reader = null;
       try {
           URL url = new URL(coreVersion);
-          reader = new BufferedReader(new InputStreamReader(url.openStream()));
-          String line = reader.readLine();
-          int pos, serverVersion = -1;
-          while (line != null) {
-              pos = line.indexOf('=');
-              if (!line.startsWith("#") && (pos >= 0)) {
-                  serverVersion = Integer.parseInt(line.substring(line.indexOf('=') + 1).trim());
-                  break;
-              }
-              line = reader.readLine();
-          }
-          reader.close();
+          int serverVersion = getPropVersion(url.openStream());
           if (serverVersion >= 0) {
               int localVersion = getCoreVersion();
               if (localVersion < serverVersion) {
@@ -277,12 +275,77 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       }
   }
   
-  public static int getCoreVersion() throws Exception {
-      int localVersion = 0;
+  protected void checkDocs() throws Exception {
       BufferedReader reader = null;
       try {
-          //// now read local version
-          reader = new BufferedReader(new InputStreamReader(Base.getStream("mobile.properties")));
+          URL url = new URL(docsVersion);
+          int serverVersion = getPropVersion(url.openStream());
+          if (serverVersion >= 0) {
+              int localVersion = getPropVersion(Base.getStream("docs.properties"));
+              if (localVersion < serverVersion) {
+                  outOfDate = true;
+                  //// download new docs
+                  setMessage("Downloading new documentation...");
+                  File f = new File("docs.zip");
+                  url = new URL(docsURL);
+                  writeStreamToFile(url.openStream(), f);
+                  //// extract docs
+                  setMessage("Extracting new documentation...");
+                  ZipFile zip = new ZipFile(f);
+                  Enumeration e = zip.entries();
+                  ZipEntry ze;
+                  ArrayList baks = new ArrayList();
+                  String zn;
+                  while (e.hasMoreElements()) {
+                      ze = (ZipEntry) e.nextElement();
+                      zn = ze.getName();
+                      File zf = new File(zn);
+                      if (ze.isDirectory()) {
+                          if (zf.exists()) {
+                              if (zn.endsWith("/") || zn.endsWith("\\")) {
+                                  zn = zn.substring(0, zn.length() - 1);
+                              }
+                              File bak = new File(zn + "_bak");
+                              Base.copyDir(zf, bak);
+                              baks.add(bak);
+                              Base.removeDir(zf);
+                          }
+                          zf.mkdirs();
+                      } else {
+                          writeStreamToFile(zip.getInputStream(ze), zf);
+                      }
+                  }
+                  //// delete zip file
+                  f.deleteOnExit();
+                  //// delete backups
+                  Iterator i = baks.iterator();
+                  while (i.hasNext()) {
+                      f = (File) i.next();
+                      Base.removeDir(f);
+                  }
+                  //// move new version properties
+                  f = new File("version.properties");
+                  Base.copyFile(f, new File("lib/docs.properties"));
+                  f.deleteOnExit();
+              }
+          }
+      } finally {
+          if (reader != null) {
+              reader.close();
+          }
+      }
+  }
+  
+  public static int getCoreVersion() throws Exception {
+      return getPropVersion(Base.getStream("mobile.properties"));
+  }
+  
+  public static int getPropVersion(InputStream is) throws Exception {
+      int localVersion = -1;
+      BufferedReader reader = null;
+      try {
+          //// read version
+          reader = new BufferedReader(new InputStreamReader(is));
           String line = reader.readLine();
           int pos;
           while (line != null) {

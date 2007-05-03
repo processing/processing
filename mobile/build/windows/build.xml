@@ -231,21 +231,21 @@
         <!-- default target is work folder, can be overridden by call -->
         <property name="target" value="work"/>
         <!-- delete contents of examples folder -->
-        <delete includeemptydirs="true">
+        <delete includeemptydirs="true" failonerror="false">
             <fileset defaultexcludes="no" dir="processing/build/windows/${target}/examples" includes="**/*"/>
         </delete>
         <!-- copy mobile examples -->
-        <copy todir="processing/build/windows/${target}/examples" overwrite="true">
+        <copy todir="processing/build/windows/${target}/examples" overwrite="true" failonerror="false">
             <fileset dir="mobile/docs/examples">
                 <include name="**/*"/>
             </fileset>
         </copy>
         <!-- delete contents of faq folder -->
-        <delete includeemptydirs="true">
+        <delete includeemptydirs="true" failonerror="false">
             <fileset defaultexcludes="no" dir="processing/build/windows/${target}/faq" includes="**/*"/>
         </delete>
         <!-- copy mobile faq -->
-        <copy todir="processing/build/windows/${target}/faq" overwrite="true">
+        <copy todir="processing/build/windows/${target}/faq" overwrite="true" failonerror="false">
             <fileset dir="mobile/docs/faq">
                 <include name="**/*"/>
             </fileset>
@@ -260,6 +260,8 @@
                 <include name="**/*"/>
             </fileset>
         </copy>
+        <!-- copy mobile reference doc version -->
+        <copy overwrite="true" file="mobile/docs/version.properties" tofile="processing/build/windows/${target}/lib/docs.properties"/>
         <!-- copy shared css/image stuff -->
         <copy todir="processing/build/windows/${target}" overwrite="true">
             <fileset dir="mobile/docs">
