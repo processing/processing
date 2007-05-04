@@ -10,6 +10,28 @@ require '../header.inc.php';
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td valign="top" width="224">
+<a href="http://huah.net/snakeonaplane/" target="_new"><img src="images/snake.png"></a><br>
+<br>
+<table width="200" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td>
+<b><a href="http://huah.net/snakeonaplane/" target="_new">SNAKE on a plane!</a></b>
+    </td>
+  </tr>
+  <tr height="5">
+  </tr>
+  <tr>
+    <td>
+<b>by Matthias Shapiro and Jason Alderman</b><br />
+<br />
+I'm a snake, and I'm hungry, yadda yadda, you know the drill. But--get this--this time,  I'm on a plane! I mean, c'mon, how awesome is that? Yeah, pretty awesome. Anyways, now you can play  me on your phone. Snake. On a plane. On a phone. On a plane?(!)<br />
+<br />
+<br />
+    </td>
+  </tr>
+</table>
+    </td>
+    <td valign="top" width="224">
 <a href="http://todbot.com/blog/2006/09/12/roombactrl-drive-your-roomba-with-your-cell-phone/" target="_new"><img src="images/roombactrl.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
@@ -29,6 +51,11 @@ RoombaCtrl works with the build-your-own Bluetooth adapter shown in the book "Ha
   </tr>
 </table>
     </td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr>
     <td valign="top" width="224">
 <a href="http://i.document.m05.de/?p=189" target="_new"><img src="images/pixiebubble.png"></a><br>
 <br>
@@ -50,11 +77,6 @@ pixiebubble is an application for mobile phones where images are processed into 
   </tr>
 </table>
     </td>
-  </tr>
-  <tr>
-    <td colspan="2">&nbsp;</td>
-  </tr>
-  <tr>
     <td valign="top" width="224">
 <a href="mandelbrotMobile/applet/index.html" target="_new"><img src="images/mandelbrotMobile.png"></a><br>
 <br>
@@ -73,6 +95,11 @@ pixiebubble is an application for mobile phones where images are processed into 
   </tr>
 </table>
     </td>
+  </tr>
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr>
     <td valign="top" width="224">
 <a href="http://www.mimeomai.f2s.com/applet/rosalymob/applet/index.html" target="_new"><img src="images/rosaly.png"></a><br>
 <br>
@@ -98,11 +125,6 @@ Use direction arrows for other controls<br>
   </tr>
 </table>
     </td>
-  </tr>
-  <tr>
-    <td colspan="2">&nbsp;</td>
-  </tr>
-  <tr>
     <td valign="top" width="224">
 <a href="http://www.mimeomai.f2s.com/applet/resmob/applet/index.html" target="_new"><img src="images/resonata.png"></a><br>
 <br>
