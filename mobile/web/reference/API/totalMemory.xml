@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>totalMemory()</name>
+<name>reportedMemory()</name>
 
 <category>Environment</category>
 
@@ -12,17 +12,17 @@
 </example>
 
 <description>
-Returns the total amount of memory available. This may change if the operating system is dynamically adjusting the amount of memory available.
+Returns the reported total amount of memory available. This may change if the operating system is dynamically adjusting the amount of memory available.
 </description>
 
 <syntax>
-totalMemory()
+reportedMemory()
 </syntax>
 
 <returns>int</returns>
 
 <related>
-freeMemory()
+currentMemory()
 </related>
 
 <availability>1.0</availability>
