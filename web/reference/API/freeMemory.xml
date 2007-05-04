@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>freeMemory()</name>
+<name>currentMemory()</name>
 
 <category>Environment</category>
 
@@ -12,17 +12,17 @@
 </example>
 
 <description>
-Returns an estimate of the amount of free memory in the system, in bytes.
+Returns an estimate of the current amount of free memory in the system, in bytes.
 </description>
 
 <syntax>
-freeMemory()
+currentMemory()
 </syntax>
 
 <returns>int</returns>
 
 <related>
-totalMemory()
+reportedMemory()
 </related>
 
 <availability>1.0</availability>
