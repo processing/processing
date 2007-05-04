@@ -1,5 +1,5 @@
 <?php
 
-define(SITE_ROOT, '/');
+define(SITE_ROOT, '/processing/');
 
 ?>
