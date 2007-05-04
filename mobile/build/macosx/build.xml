@@ -9,7 +9,6 @@
         
      processing will be checked out into the parent directory, if it doesn't exist -->     
 <project name="mobile-macosx" default="dist" basedir="../../..">
-    
     <!-- set platform -->
     <property name="platform" value="macosx" />
     
@@ -40,23 +39,22 @@
         <!-- delete the zip files- we need to copy our stuff in and re-zip -->
         <delete file="processing/build/macosx/${svn.tag.processing}.zip"/>
         <!-- copy into standard release -->
-        <antcall target="makedocs" />
         <antcall target="copycore">
-            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${processing.version}"/>
         </antcall>
         <antcall target="copylibs">
-            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${processing.version}"/>
         </antcall>
         <antcall target="copydocs">
-            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${processing.version}"/>
         </antcall>
         <!-- rename executable -->
-        <move todir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing}/Mobile.app">
-            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing}/Processing ${svn.tag.processing}.app"/>
+        <move todir="processing/build/macosx/${svn.tag.processing}/Processing ${processing.version}/Mobile.app">
+            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${processing.version}/Processing ${processing.version}.app"/>
         </move>
         <!-- rename directories -->
         <move todir="processing/build/macosx/mobile-${mobile.version}/Mobile-${mobile.version}">
-            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing}"/>
+            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${processing.version}"/>
         </move>
         <!-- move critical files out of the app package and back into lib dir -->
         <move todir="processing/build/macosx/mobile-${mobile.version}/Mobile-${mobile.version}/lib">
