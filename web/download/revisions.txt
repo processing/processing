@@ -1,6 +1,22 @@
 This file reflects the ongoing history of revisions to the Mobile Processing
 software, including its core and library APIs.
 
+Core 0010
+=========
+
+- Renamed freeMemory() and totalMemory() to currentMemory() and 
+  reportedMemory(), respectively, to avoid naming conflicts with hidden
+  methods in the mpowerplayer sdk used on the Mac.
+
+- Added new UI component classes.
+
+- Rewrote the PClient and added the PRequest class for Internet networking.
+
+XML 0002
+========
+
+- Added removeChild() methods to XMLElement class.
+
 Core 0009
 =========
 
