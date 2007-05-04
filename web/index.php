@@ -7,7 +7,7 @@ require 'header.inc.php';
     <img src="exhibition/images/header.png"><br>
 <br>
 <br>
-<a href="hhttp://huah.net/snakeonaplane/" target="_new"><img src="exhibition/images/snake.png"></a><br>
+<a href="http://huah.net/snakeonaplane/" target="_new"><img src="exhibition/images/snake.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
   <tr>
