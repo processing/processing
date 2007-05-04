@@ -1,5 +1,13 @@
 <wurfl_patch>
     <devices>
+        <!-- Sony Ericsson K550 -->
+        <device user_agent="SonyEricssonK550" fall_back="sonyericsson_k750_ver1" id="sonyericsson_k550_ver1" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="SonyEricsson" />
+                <capability name="model_name" value="K550" />
+            </group>
+        </device>
+
         <!-- LG CU-500 Cingular -->
         <device user_agent="LG-CU500" fall_back="uptext_generic" id="lg_cu500_ver1" actual_device_root="true">
             <group id="product_info">

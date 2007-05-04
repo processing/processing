@@ -223,7 +223,7 @@ if($showmarkread) {
     <td>
     <table cellpadding="4" cellspacing="1" border="0" width="100%">
       <tr>
-        <td class="titlebg" bgcolor="$color{'titlebg'}" width="10%" colspan="2"><font size="2">&nbsp;</font></td>
+        <td class="titlebg" bgcolor="$color{'titlebg'}" colspan="2"><font size="2">&nbsp;</font></td>
         <td class="titlebg" bgcolor="$color{'titlebg'}" width="44%"><font size="2" class="text1" color="$color{'titletext'}"><b>$txt{'70'}</b></font></td>
         <td class="titlebg" bgcolor="$color{'titlebg'}" width="14%" align="center"><font size="2" class="text1" color="$color{'titletext'}"><b>$txt{'109'}</b></font></td>
         <td class="titlebg" bgcolor="$color{'titlebg'}" width="4%" align="center"><font size="2" class="text1" color="$color{'titletext'}"><b>$txt{'110'}</b></font></td>
@@ -319,8 +319,8 @@ if($showmarkread) {
 		$mydate = &timeformat($mdate);
 		$yymain .= qq~
       <tr>
-        <td class="windowbg2" valign="middle" align="center" width="6%" bgcolor="$color{'windowbg2'}"><img src="$imagesdir/$threadclass.gif"></td>
-        <td class="windowbg2" valign="middle" align="center" width="4%" bgcolor="$color{'windowbg2'}"><img src="$imagesdir/$micon.gif" alt="" border="0" align="middle"></td>
+        <td class="windowbg2" valign="middle" align="center" width="28" bgcolor="$color{'windowbg2'}"><img src="$imagesdir/$threadclass.gif" align="middle"></td>
+        <td class="windowbg2" valign="middle" align="center" width="21" bgcolor="$color{'windowbg2'}"><img src="$imagesdir/$micon.gif" alt="" border="0" align="middle"></td>
         <td class="windowbg" valign="middle" width="44%" bgcolor="$color{'windowbg'}"><font size="2">$new <a href="$cgi;action=display;num=$mnum"><b>$msub</b></a> $pages</font></td>
         <td class="windowbg2" valign="middle" align="center" width="14%" bgcolor="$color{'windowbg2'}"><font size="1">$mname</font></td>
         <td class="windowbg" valign="middle" width="4%" align="center" bgcolor="$color{'windowbg'}"><font size="2">$mreplies</font></td>

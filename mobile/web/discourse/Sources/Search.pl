@@ -158,7 +158,7 @@ function uncheckAll() {
         <td class="windowbg2" bgcolor="$color{'windowbg2'}"><font size=2><B>$txt{'576'} $txt{'574'}:</B></font></td>
         <td class="windowbg2" bgcolor="$color{'windowbg2'}"><font size=2>
         <input type=text name=maxripe value=0 size=3 maxlength=5> $txt{'578'} +
-        <input type=text name=maxage value=7 size=5 maxlength=5> $txt{'579'}
+        <input type=text name=maxage value=365 size=5 maxlength=5> $txt{'579'}
         </font></td>
       </tr><tr>
         <td class="windowbg" bgcolor="$color{'windowbg'}"><font size=2><b>$txt{'191'}</B></font></td>
