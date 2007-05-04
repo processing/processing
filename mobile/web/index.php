@@ -7,6 +7,23 @@ require 'header.inc.php';
     <img src="exhibition/images/header.png"><br>
 <br>
 <br>
+<a href="hhttp://huah.net/snakeonaplane/" target="_new"><img src="exhibition/images/snake.png"></a><br>
+<br>
+<table width="200" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td>
+<b><a href="http://huah.net/snakeonaplane/" target="_new">SNAKE on a plane!</a></b>
+    </td>
+  </tr>
+  <tr height="5">
+  </tr>
+  <tr>
+    <td>
+<b>by Matthias Shapiro and Jason Alderman</b><br>
+    </td>
+  </tr>
+</table><br>
+<br />
 <a href="http://todbot.com/blog/2006/09/12/roombactrl-drive-your-roomba-with-your-cell-phone/" target="_new"><img src="exhibition/images/roombactrl.png"></a><br>
 <br>
 <table width="200" border="0" cellspacing="0" cellpadding="0">
@@ -23,24 +40,6 @@ require 'header.inc.php';
     </td>
   </tr>
 </table><br>
-<br>
-<a href="http://i.document.m05.de/?p=189" target="_new"><img src="exhibition/images/pixiebubble.png"></a><br>
-<br>
-<table width="200" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-<b><a href="http://i.document.m05.de/?p=189" target="_new">pixiebubble</a></b>
-    </td>
-  </tr>
-  <tr height="5">
-  </tr>
-  <tr>
-    <td>
-<b>by michael</b><br>
-    </td>
-  </tr>
-</table><br>
-<br>
 <br>
 <br>
 <a href="learning/"><img src="images/examples.png"></a><br>
