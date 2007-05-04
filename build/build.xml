@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- base dir set to parent of mobile directory, i.e:
+     parent <- basedir
+        mobile
+            build
+                macosx
+                windows
+        processing
+        
+     processing will be checked out into the parent directory, if it doesn't exist -->     
+<project name="mobile-common" default="dist">
+    <!-- load ant-contrib additional tasks -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="mobile/build/lib/ant-contrib.jar"/>
+        </classpath>
+    </taskdef>
+
+    
+    <!-- first try to read user customized properties -->
+    <property file="build.properties"/>
+    <!-- otherwise, read default properties from platform directory-->
+    <property file="mobile/build/${platform}/build.properties"/>
+    <!-- then shared properties -->
+    <property file="mobile/build/build.properties" />
+
+    <!-- init should always be the first target in a dependency list, it sets up
+         properties necessary for things to work correctly. -->
+    <target name="init">
+        <!-- Check if processing has been checked out and set property accordingly-->
+        <available property="ischeckedout" file="processing" type="dir"/>        
+        <!-- Check if processing has been built at least once -->
+        <available property="isbuilt" file="processing/build/${platform}/work" type="dir"/>        
+    </target>
+       
+    <!-- checks out a tagged copy of processing if it hasn't been done so already. -->
+    <target name="checkout" depends="init" unless="ischeckedout">
+        <!-- perform the svn checkout to get clean files. -->
+        <exec executable="${sh.executable}">
+            <arg value="--login"/>
+            <arg value="-c"/>
+            <arg value="cd ${parent.dir}; ${svn.executable} checkout svn://processing.org/tags/${svn.tag.processing} processing"/>
+        </exec>
+    </target>
+    
+    <!-- gets unmodified tagged source files back into the processing app directory. -->
+    <target name="revert" depends="init, checkout">
+        <!-- perform the cvs update to get clean files. -->
+        <exec executable="${sh.executable}">
+            <arg value="--login"/>
+            <arg value="-c"/>
+            <arg value="cd ${parent.dir}/processing/app; svn revert ."/>
+        </exec>
+    </target>
+    
+    <!-- cleans up temporary files -->
+    <target name="clean" depends="init">
+        <delete dir="mobile/build/${platform}/classes" failonerror="false"/>
+        <delete dir="mobile/build/${platform}/preverified" failonerror="false"/>
+        <delete failonerror="false">
+            <fileset dir="mobile/build/${platform}" includes="*.jar"/>
+        </delete>
+    </target>
+    
+    <!-- copy app source files from mobile into corresponding directory in processing. -->
+    <target name="copyappsrc" depends="checkout">
+        <copy todir="processing/app" overwrite="true">
+            <fileset dir="mobile/app">
+                <include name="**/*.java"/>
+            </fileset>            
+        </copy>
+        <copy todir="processing/core/src/processing/core" overwrite="true">
+            <fileset dir="mobile/appcore">
+                <include name="**/*.java"/>
+            </fileset>            
+        </copy>
+    </target>
+    
+    <!-- if processing not built for the first time yet, copy files to update launcher executable -->
+    <target name="copylaunchersrc" depends="checkout, copyplatformlaunchersrc" unless="isbuilt">
+        <!-- copy icons for application -->
+        <copy todir="processing/build/shared/lib" overwrite="true">
+            <fileset dir="mobile/build/shared/lib">
+                <include name="**/*.gif"/>
+                <include name="**/*.jpg"/>
+            </fileset>
+        </copy>
+        <!-- copy proguard jar and its configuration file into processing lib -->
+        <copy overwrite="true" file="mobile/build/shared/lib/proguard.jar" todir="processing/build/shared/lib"/>
+        <copy overwrite="true" file="mobile/build/shared/lib/proguard.pro" todir="processing/build/shared/lib"/>        
+        <!-- copy applet emulator jars into processing lib -->
+        <copy overwrite="true" file="mobile/build/shared/lib/me-applet.jar" todir="processing/build/shared/lib"/>
+        <copy overwrite="true" file="mobile/build/shared/lib/large.jar" todir="processing/build/shared/lib"/>        
+        <copy overwrite="true" file="mobile/build/shared/lib/qvga.jar" todir="processing/build/shared/lib"/>        
+        <copy overwrite="true" file="mobile/build/shared/lib/export/applet.html" todir="processing/build/shared/lib/export"/>        
+    </target>
+
+    <target name="make" depends="init, copyappsrc, copylaunchersrc">        
+        <!-- execute make.sh shell script in processing build dir. -->
+        <exec executable="${sh.executable}">
+            <arg value="--login"/>
+            <arg value="-c"/>
+            <arg value="cd ${parent.dir}/processing/build/${platform}; ./make.sh"/>
+        </exec>
+        <antcall target="copycore">
+            <param name="target" value="work"/>
+        </antcall>
+        <antcall target="copylibs">
+            <param name="target" value="work"/>
+        </antcall>
+    </target>
+    
+    <target name="cleandocs" depends="init">
+        <!-- clean out local docs directories -->
+        <delete includeEmptyDirs="true">
+            <fileset dir="mobile/docs/css"/>
+            <fileset dir="mobile/docs/images"/>
+            <fileset dir="mobile/docs/reference" includes="**/*"/>
+        </delete>
+    </target>
+    
+    <target name="makeref" depends="init">
+        <!-- compile reference API doclet -->
+        <javac classpath="${java.home}/lib/tools.jar" srcdir="mobile/doclet" />
+        
+        <!-- run javadoc with the doclet on core and libraries -->
+        <delete includeEmptyDirs="true" failonerror="false" dir="mobile/doclet/core" />
+        <javadoc sourcepath="mobile/core" 
+                 destdir="mobile/doclet/core"
+                 bootclasspath="${wtk.bootClassPath}"
+                 packagenames="processing.core.*"
+                 doclet="ProcessingDoclet"
+                 docletpath="mobile/doclet"
+                 additionalparam="-mainclass PMIDlet" />
+    </target>
+        
+    <target name="makedocs" depends="init">
+        <!-- clean out local docs directories -->
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="mobile/docs/css"/>
+            <fileset dir="mobile/docs/images"/>
+            <fileset dir="mobile/docs/reference" includes="**/*"/>
+        </delete>
+        
+        <!-- build documentation -->
+        <exec executable="${php.executable}" dir="mobile/web">
+            <arg value="offline.php"/>
+            <arg value="${php.executable}"/>
+        </exec>
+        <!-- move reference files into docs folder -->
+        <move todir="mobile/docs/reference" overwrite="true">
+            <fileset dir="mobile/web/reference">
+                <include name="**/*.html"/>
+            </fileset>
+        </move>
+        <!-- copy reference images -->
+        <copy todir="mobile/docs/reference" overwrite="true">
+            <fileset dir="mobile/web/reference">
+                <include name="**/*.gif"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.png"/>
+            </fileset>
+        </copy>
+        <!-- copy relevant shared supporting files (css, images, etc) -->
+        <copy todir="mobile/docs" overwrite="true">
+            <fileset dir="mobile/web">
+                <include name="css/mobile.css"/>
+                <include name="images/mobile.png"/>
+                <include name="images/back_off.png"/>
+                <include name="images/nav_bottomarrow.png"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="copydocs" depends="init">
+        <!-- default target is work folder, can be overridden by call -->
+        <property name="target" value="work"/>
+        <!-- delete contents of examples folder -->
+        <delete includeemptydirs="true" failonerror="false">
+            <fileset defaultexcludes="no" dir="processing/build/${platform}/${target}/examples" includes="**/*"/>
+        </delete>
+        <!-- copy mobile examples -->
+        <copy todir="processing/build/${platform}/${target}/examples" overwrite="true" failonerror="false">
+            <fileset dir="mobile/docs/examples">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- delete contents of faq folder -->
+        <delete includeemptydirs="true" failonerror="false">
+            <fileset defaultexcludes="no" dir="processing/build/${platform}/${target}/faq" includes="**/*"/>
+        </delete>
+        <!-- copy mobile faq -->
+        <copy todir="processing/build/${platform}/${target}/faq" overwrite="true" failonerror="false">
+            <fileset dir="mobile/docs/faq">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- delete contents of reference folder -->
+        <delete includeemptydirs="true">
+            <fileset defaultexcludes="no" dir="processing/build/${platform}/${target}/reference" includes="**/*"/>
+        </delete>
+        <!-- copy mobile reference -->
+        <copy todir="processing/build/${platform}/${target}/reference" overwrite="true">
+            <fileset dir="mobile/docs/reference">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <!-- copy mobile reference doc version -->
+        <copy overwrite="true" file="mobile/docs/version.properties" tofile="processing/build/${platform}/${target}/lib/docs.properties"/>
+        <!-- copy shared css/image stuff -->
+        <copy todir="processing/build/${platform}/${target}" overwrite="true">
+            <fileset dir="mobile/docs">
+                <include name="css/mobile.css"/>
+                <include name="images/mobile.png"/>
+                <include name="images/back_off.png"/>
+                <include name="images/nav_bottomarrow.png"/>
+            </fileset>
+        </copy>
+        <!-- copy revisions list -->
+        <copy overwrite="true" file="mobile/build/shared/revisions.txt" tofile="processing/build/${platform}/${target}/revisions.txt"/>
+        
+        <!-- check web download version and update -->
+        <property file="mobile/docs/version.properties" prefix="localdocs"/>
+        <property file="mobile/web/download/docs.properties" prefix="archivedocs"/>
+        <!-- set local and archive versions into comparable properties -->
+        <var name="localversion" value="" unset="true"/>
+        <var name="archiveversion" value="" unset="true"/>
+        <propertycopy property="localversion" from="localdocs.build"/>
+        <propertycopy property="archiveversion" from="archivedocs.build" silent="true"/>
+        <if>
+            <not><equals arg1="${localversion}" arg2="${archiveversion}"/></not>
+            <then>
+                <!-- update archive property file -->
+                <propertyfile file="mobile/web/download/docs.properties">
+                    <entry key="build" value="${localversion}"/>
+                </propertyfile>
+                <!-- zip and copy docs -->
+                <zip destfile="mobile/web/download/docs.zip" basedir="mobile/docs"/>
+            </then>
+        </if>        
+    </target>
+    
+    <target name="run" depends="init">
+        <!-- execute run.sh shell script in processing build dir. -->
+        <exec executable="${sh.executable}">
+            <arg value="--login"/>
+            <arg value="-c"/>
+            <arg value="cd ${parent.dir}/processing/build/${platform}; chmod +x run.sh; ./run.sh"/>
+        </exec>
+    </target>
+
+    <!-- builds the mobile core files and packages them up for inclusion with processing ide-->
+    <target name="makecore" depends="init">
+        <!-- compile core source files into a temporary directory -->
+        <antcall target="compile">
+            <param name="src" value="mobile/core/processing/core"/>
+            <param name="dest" value="mobile/build/${platform}/classes/core"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value=""/>
+        </antcall>
+        <!-- preverify compiled classes into another temporary directory -->
+        <antcall target="preverify">
+            <param name="src" value="mobile/build/${platform}/classes/core"/>
+            <param name="dest" value="mobile/build/${platform}/preverified/core"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value=""/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+        <!-- pack preverified classes into jar -->
+        <antcall target="jar">
+            <param name="src" value="mobile/build/${platform}/preverified/core"/>
+            <param name="dest" value="mobile/build/${platform}"/>
+            <param name="jarname" value="mobile.jar"/>
+        </antcall>
+    </target>
+    
+    <!-- copies core jar and manifest/jad template into processing ide build -->
+    <target name="copycore" depends="makecore">
+        <!-- default target is work folder, can be overridden by call -->
+        <property name="target" value="work"/>
+        <!-- copy jar and jad/manifest template into processing build -->
+        <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/${platform}/${target}/lib"/>
+        <copy file="mobile/build/shared/lib/mobile.properties" todir="processing/build/${platform}/${target}/lib"/>
+        <copy file="mobile/build/${platform}/mobile.jar" todir="processing/build/${platform}/${target}/lib"/>
+        
+        <property file="mobile/build/shared/lib/mobile.properties" prefix="localcore"/>
+        <property file="mobile/web/download/mobile.properties" prefix="archivecore"/>
+        <!-- set local and archive versions into comparable properties -->
+        <var name="localversion" value="" unset="true"/>
+        <var name="archiveversion" value="" unset="true"/>
+        <propertycopy property="localversion" from="localcore.build"/>
+        <propertycopy property="archiveversion" from="archivecore.build" silent="true"/>
+        <if>
+            <not><equals arg1="${localversion}" arg2="${archiveversion}"/></not>
+            <then>
+                <!-- update archive property file -->
+                <propertyfile file="mobile/web/download/mobile.properties">
+                    <entry key="build" value="${localversion}"/>
+                </propertyfile>
+                <!-- copy library -->
+                <copy file="mobile/build/${platform}/mobile.jar" todir="mobile/web/download"/>
+                <!-- and revision history -->
+                <copy file="mobile/build/shared/revisions.txt" todir="mobile/web/download"/>
+            </then>
+        </if>
+    </target>
+
+    <target name="compile">
+        <delete dir="${dest}" failonerror="false"/>
+        <mkdir dir="${dest}"/>
+        <javac srcdir="${src}"
+               destdir="${dest}"
+               bootclasspath="${bootClassPath}"
+               classpath="${classPath}"
+               source="1.3"
+               target="1.1"/>
+    </target>
+        
+    <target name="jar">
+        <mkdir dir="${dest}"/>
+        <jar destfile="${dest}/${jarname}" basedir="${src}">
+            <include name="**/*.class"/>
+        </jar>
+    </target>
+    
+    <target name="makelib">
+        <antcall target="compile">
+            <param name="src" value="mobile/${libname}/processing/${libname}"/>
+            <param name="dest" value="mobile/build/${platform}/classes/${libname}"/>
+            <param name="bootClassPath" value="${bootClassPath}"/>
+            <param name="classPath" value="${classPath}"/>
+        </antcall>
+        <!-- preverify compiled classes into another temporary directory -->
+        <antcall target="preverify">
+            <param name="src" value="mobile/build/${platform}/classes/${libname}"/>
+            <param name="dest" value="mobile/build/${platform}/preverified/${libname}"/>
+            <param name="bootClassPath" value="${bootClassPath}"/>
+            <param name="classPath" value="${classPath}"/>
+            <param name="cldc" value="${cldc}"/>
+        </antcall>
+        <!-- pack preverified classes into jar -->
+        <antcall target="jar">
+            <param name="src" value="mobile/build/${platform}/preverified/${libname}"/>
+            <param name="dest" value="mobile/${libname}/library"/>
+            <param name="jarname" value="${libname}.jar"/>
+        </antcall>
+    </target>
+        
+    <!-- makes core libraries -->
+    <target name="makelibs" depends="init">
+        <!-- next, sound library -->
+        <antcall target="makelib">
+            <param name="libname" value="sound"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="mobile/sound/library/mmapi.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+        <!-- next, phone library -->
+        <antcall target="makelib">
+            <param name="libname" value="phone"/>
+            <param name="bootClassPath" value="mobile/build/lib/cldcapi10.jar;mobile/build/lib/midpapi20.jar"/>
+            <param name="classPath" value="mobile/build/${platform}/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+        <!-- bluetooth library -->
+        <antcall target="makelib">
+            <param name="libname" value="bluetooth"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="mobile/bluetooth/library/jsr082.jar;mobile/build/${platform}/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+        <!-- next, video library -->
+        <antcall target="makelib">
+            <param name="libname" value="video"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="mobile/video/library/mmapi.jar;mobile/build/${platform}/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+        <!-- next, xml library -->
+        <antcall target="makelib">
+            <param name="libname" value="xml"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="mobile/xml/library/kxml.jar;mobile/build/${platform}/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+        <!-- next, messaging library -->
+        <antcall target="makelib">
+            <param name="libname" value="messaging"/>
+            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
+            <param name="classPath" value="mobile/messaging/library/wma11.jar;mobile/build/${platform}/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+        <!-- next, image2 library -->
+        <antcall target="makelib">
+            <param name="libname" value="image2"/>
+            <param name="bootClassPath" value="mobile/build/lib/cldcapi10.jar;mobile/build/lib/midpapi20.jar"/>
+            <param name="classPath" value="mobile/build/${platform}/mobile.jar"/>
+            <param name="cldc" value="CLDC1.0"/>
+        </antcall>
+    </target>
+
+    <target name="copylib">        
+        <!-- copy to build directory -->
+        <mkdir dir="processing/build/${platform}/${target}/libraries/${libname}"/>
+        <copy todir="processing/build/${platform}/${target}/libraries/${libname}">
+            <fileset dir="mobile/${libname}"/>
+        </copy>
+        
+        <!-- load local version property -->
+        <property file="mobile/${libname}/version.properties" prefix="${libname}"/>
+        <!-- set local and archive versions into comparable properties -->
+        <var name="localversion" value="" unset="true"/>
+        <var name="archiveversion" value="" unset="true"/>
+        <propertycopy property="localversion" from="${libname}.build"/>
+        <propertycopy property="archiveversion" from="${libname}" silent="true"/>
+        <if>
+            <not><equals arg1="${localversion}" arg2="${archiveversion}"/></not>
+            <then>
+                <!-- update archive property file -->
+                <propertyfile file="mobile/web/download/libraries/version.properties">
+                    <entry key="${libname}" value="${localversion}"/>
+                </propertyfile>
+                <!-- zip and copy library -->
+                <zip destfile="mobile/web/download/libraries/${libname}.zip" basedir="mobile/${libname}"/>
+                <!-- copy revision history -->
+                <copy file="mobile/build/shared/revisions.txt" todir="mobile/web/download"/>                
+            </then>
+        </if>
+    </target>
+        
+    <!-- copies core libraries over to processing build -->
+    <target name="copylibs" depends="makelibs">
+        <!-- load archive versions -->
+        <property file="mobile/web/download/libraries/version.properties"/>
+        <!-- default target is work folder, can be overridden by call -->
+        <property name="target" value="work"/>
+        <!-- delete contents of libraries folder -->
+        <delete includeemptydirs="true">
+            <fileset defaultexcludes="no" dir="processing/build/${platform}/${target}/libraries" includes="**/*" excludes="howto.txt"/>
+        </delete>
+        <!-- copy sound library -->
+        <antcall target="copylib">
+            <param name="libname" value="sound"/>
+        </antcall>
+        <!-- copy phone library -->
+        <antcall target="copylib">
+            <param name="libname" value="phone"/>
+        </antcall>
+        <!-- copy bluetooth library -->
+        <antcall target="copylib">
+            <param name="libname" value="bluetooth"/>
+        </antcall>
+        <!-- copy video library -->
+        <antcall target="copylib">
+            <param name="libname" value="video"/>
+        </antcall>
+        <!-- copy xml library -->
+        <antcall target="copylib">
+            <param name="libname" value="xml"/>
+        </antcall>
+        <!-- copy messaging library -->
+        <antcall target="copylib">
+            <param name="libname" value="messaging"/>
+        </antcall>
+        <!-- copy image2 library -->
+        <antcall target="copylib">
+            <param name="libname" value="image2"/>
+        </antcall>
+    </target>
+</project>

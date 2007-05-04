@@ -673,11 +673,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
-    public final int freeMemory() {
+    public final int currentMemory() {
         return (int) runtime.freeMemory();
     }
     
-    public final int totalMemory() {
+    public final int reportedMemory() {
         return (int) runtime.totalMemory();
     }
     
