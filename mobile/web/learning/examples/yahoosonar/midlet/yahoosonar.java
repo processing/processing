@@ -17,11 +17,6 @@ import processing.core.*; import processing.phone.*; import processing.xml.*; pu
 // from the center of the zip code.  Use LEFT and RIGHT to cycle between
 // results, and FIRE to toggle showing more/less info.
 //
-// An obvious next feature would be to use the Phone library to allow
-// direct dialing of the phone numbers retrieved.  However, in order to 
-// make this example MIDP 1.0 compliant, I have not implemented this
-// feature (since the Phone library will only run on MIDP 2.0 phones).
-//
 
 
 
