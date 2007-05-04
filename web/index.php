@@ -111,20 +111,15 @@ if ($fp) {
     <a href="discourse/YaBB.cgi?board=news">Previous Updates</a> \ <a href="updates.xml"><img src="images/feed.gif"> RSS</a><br />
     <br />
     <br />
-<!--
     <img src="images/happenings.png"><br>
     <br>
     <br>
-    <i>May 13</i><br>
-Mobile Processing Workshop III, 8 Hours of Mobility at Universidad Autonoma
-de Manizales, Colombia by Marlon J. Manrique. <a href="http://mjs.darkgreenmedia.com/">More info</a><br>
+    <i>28 Apr 2007</i><br>
+Mobile Processing Lecture at FLISOL2007 by Marlon J. Manrique.<br /><a href="http://installfest.info/FLISOL2007/Colombia/Manizales">More info</a><br />
+    <br />
+    <i>6 May 2007</i><br>
+    Mobile Processing Workshop at Mobilized! NYC by Francis Li.<br /><a href="http://www.mobilizednyc.org/">More info</a><br>
     <br>
-    <i>May 15 - May 19</i><br>
-    Mobile Processing Workshop, Interactive Applications for Mobile Phones, Atmosferas Digital Arts Center in Lisbon, Portugal by Francis Li. <a href="http://www.atmosferas.net/mobileprocessing/index_en.html">More info</a><br>
-    <br>
-    <i>June 26 - July 7</i><br>
-    Mobile Processing used in a workshop at the Istituto Universitario di Venezia to prototype concepts for the Venice Biennale.
--->
 </div>
 <?php
 require 'footer.inc.php';

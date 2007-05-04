@@ -213,10 +213,21 @@ sub Display {
     <table cellpadding="3" cellspacing="1" border="0" width="100%">
       <tr>
         <td valign="middle" align="left" width="20%" bgcolor="$color{'titlebg'}" class="titlebg">
-        <font size=2 class="text1" color="$color{'titletext'}">&nbsp;<img src="$imagesdir/$threadclass.gif" alt="">
-        &nbsp;<b>$txt{'29'}</b></font></td>
+        <font size=2 class="text1" color="$color{'titletext'}"><b>&nbsp;$txt{'29'}</b></font></td>
         <td valign="middle" align="left" bgcolor="$color{'titlebg'}" class="titlebg" width="80%">
-        <font size=2 class="text1" color="$color{'titletext'}"><b>&nbsp;$txt{'118'}: $msubthread</b> &nbsp;($txt{'641'} $views $txt{'642'})</font></td>
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr><td>
+            <font size=2 class="text1" color="$color{'titletext'}"><b>&nbsp;$txt{'118'}: $msubthread</b> &nbsp;($txt{'641'} $views $txt{'642'})</font>
+          </td>
+          <td valign="bottom" align="right" bgcolor="$color{'titlebg'}" class="titlebg" style="padding: 6px 0px 0px 0px">
+            <script type="text/javascript">
+              digg_bgcolor = '#999983';
+              digg_skin = 'compact';
+            </script>
+            <script src="http://digg.com/tools/diggthis.js" type="text/javascript"></script>
+          </td></tr>
+          </table>
+        </td>
       </tr>
     </table>
     </td>
