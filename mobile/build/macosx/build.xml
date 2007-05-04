@@ -8,109 +8,24 @@
         processing
         
      processing will be checked out into the parent directory, if it doesn't exist -->     
-<project name="mobile" default="dist" basedir="..\..\..">
-
-    <!-- first try to read customized properties -->
-    <property file="build.properties"/>
-    <!-- otherwise, read default properties from build directory-->
-    <property file="mobile/build/macosx/build.properties"/>
-
-    <!-- init should always be the first target in a dependency list, it sets up
-         properties necessary for things to work correctly. -->
-    <target name="init">
-        <!-- Check if processing has been checked out and set property accordingly-->
-        <available property="ischeckedout" file="processing" type="dir"/>        
-        <!-- Check if processing has been built at least once -->
-        <available property="isbuilt" file="processing/build/macosx/work" type="dir"/>        
-    </target>
-       
-    <!-- checks out a tagged copy of processing if it hasn't been done so already. -->
-    <target name="checkout" depends="init" unless="ischeckedout">
-        <!-- perform the svn checkout to get clean files. -->
-        <exec executable="/bin/bash">
-            <arg value="--login"/>
-            <arg value="-c"/>
-            <arg value="cd ${parent.dir}; svn checkout svn://processing.org/tags/${svn.tag.processing} processing"/>
-        </exec>
-    </target>
+<project name="mobile-macosx" default="dist" basedir="../../..">
     
-    <!-- gets unmodified tagged source files back into the processing app directory. -->
-    <target name="revert" depends="init, checkout">
-        <!-- perform the cvs update to get clean files. -->
-        <exec executable="/bin/bash">
-            <arg value="--login"/>
-            <arg value="-c"/>
-            <arg value="cd ${parent.dir}/processing/app; svn revert ."/>
-        </exec>
-    </target>
+    <!-- set platform -->
+    <property name="platform" value="macosx" />
     
-    <!-- cleans up temporary files -->
-    <target name="clean" depends="init">
-        <delete dir="mobile/build/macosx/classes" failonerror="false"/>
-        <delete dir="mobile/build/macosx/preverified" failonerror="false"/>
-        <delete failonerror="false">
-            <fileset dir="mobile/build/macosx" includes="*.jar"/>
-        </delete>
-    </target>
-    
-    <!-- copy app source files from mobile into corresponding directory in processing. -->
-    <target name="copyappsrc" depends="checkout">
-        <copy todir="processing/app" overwrite="true">
-            <fileset dir="mobile/app">
-                <include name="**/*.java"/>
-            </fileset>            
-        </copy>
-        <copy todir="processing/core" overwrite="true">
-            <fileset dir="mobile/appcore">
-                <include name="**/*.java"/>
-            </fileset>            
-        </copy>
-    </target>
-    
-    <!-- if processing not built for the first time yet, copy files to update launcher executable -->
-    <target name="copylaunchersrc" depends="checkout" unless="isbuilt">
-        <!-- copy icons for application -->
+    <!-- copy platform specific launcher files -->
+    <target name="copyplatformlaunchersrc">
         <copy todir="processing/build/macosx/dist/Processing.app/Contents/Resources" overwrite="true">
             <fileset dir="mobile/build/macosx/dist/Processing.app/Contents/Resources">
                 <include name="**/*.icns"/>
             </fileset>
         </copy>
         <copy overwrite="true" file="mobile/build/macosx/dist/Processing.app/Contents/Info.plist" tofile="processing/build/macosx/dist/Processing.app/Contents/Info.plist" />
-        <!-- copy icons for application -->
-        <copy todir="processing/build/shared/lib" overwrite="true">
-            <fileset dir="mobile/build/shared/lib">
-                <include name="**/*.gif"/>
-                <include name="**/*.jpg"/>
-            </fileset>
-        </copy>
-        <!-- copy proguard jar and its configuration file into processing lib -->
-        <copy overwrite="true" file="mobile/build/shared/lib/proguard.jar" todir="processing/build/shared/lib"/>
-        <copy overwrite="true" file="mobile/build/shared/lib/proguard.pro" todir="processing/build/shared/lib"/>        
-        <!-- copy applet emulator jars into processing lib -->
-        <copy overwrite="true" file="mobile/build/shared/lib/me-applet.jar" todir="processing/build/shared/lib"/>
-        <copy overwrite="true" file="mobile/build/shared/lib/large.jar" todir="processing/build/shared/lib"/>        
-        <copy overwrite="true" file="mobile/build/shared/lib/qvga.jar" todir="processing/build/shared/lib"/>        
-        <copy overwrite="true" file="mobile/build/shared/lib/export/applet.html" todir="processing/build/shared/lib/export"/>        
         <!-- copy cldc/midp jars from Sun WTK for Windows into lib -->
         <copy overwrite="true" file="mobile/build/macosx/lib/cldcapi10.jar" todir="processing/build/shared/lib"/>
         <copy overwrite="true" file="mobile/build/macosx/lib/cldcapi11.jar" todir="processing/build/shared/lib"/>
         <copy overwrite="true" file="mobile/build/macosx/lib/midpapi10.jar" todir="processing/build/shared/lib"/>        
         <copy overwrite="true" file="mobile/build/macosx/lib/midpapi20.jar" todir="processing/build/shared/lib"/>
-    </target>
-
-    <target name="make" depends="init, copyappsrc, copylaunchersrc">        
-        <!-- execute make.sh shell script in processing build dir. -->
-        <exec executable="/bin/bash">
-            <arg value="--login"/>
-            <arg value="-c"/>
-            <arg value="cd ${parent.dir}/processing/build/macosx; ./make.sh"/>
-        </exec>
-        <antcall target="copycore">
-            <param name="target" value="work"/>
-        </antcall>
-        <antcall target="copylibs">
-            <param name="target" value="work"/>
-        </antcall>
     </target>
 
     <target name="dist" depends="init, copyappsrc, copylaunchersrc">     
@@ -125,22 +40,23 @@
         <!-- delete the zip files- we need to copy our stuff in and re-zip -->
         <delete file="processing/build/macosx/${svn.tag.processing}.zip"/>
         <!-- copy into standard release -->
+        <antcall target="makedocs" />
         <antcall target="copycore">
-            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing}"/>
         </antcall>
         <antcall target="copylibs">
-            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing}"/>
         </antcall>
         <antcall target="copydocs">
-            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
+            <param name="target" value="${svn.tag.processing}/Processing ${svn.tag.processing}"/>
         </antcall>
         <!-- rename executable -->
-        <move todir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}/Mobile.app">
-            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}/Processing ${svn.tag.processing.short}.app"/>
+        <move todir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing}/Mobile.app">
+            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing}/Processing ${svn.tag.processing}.app"/>
         </move>
         <!-- rename directories -->
         <move todir="processing/build/macosx/mobile-${mobile.version}/Mobile-${mobile.version}">
-            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing.short}"/>
+            <fileset dir="processing/build/macosx/${svn.tag.processing}/Processing ${svn.tag.processing}"/>
         </move>
         <!-- move critical files out of the app package and back into lib dir -->
         <move todir="processing/build/macosx/mobile-${mobile.version}/Mobile-${mobile.version}/lib">
@@ -158,69 +74,17 @@
         <antcall target="mkdmg"/>
     </target>
     
+    <!-- target for making a Mac OS disk image -->
     <target name="mkdmg" depends="init">
         <!-- execute mkdmg to create archive -->
-        <exec executable="/bin/bash">
+        <exec executable="${sh.executable}">
             <arg value="--login"/>
             <arg value="-c"/>
             <arg value="cd ${parent.dir}/processing/build/macosx; ./mkdmg mobile-${mobile.version}"/>
         </exec>
     </target>
     
-    <target name="run" depends="init">
-        <!-- execute run.sh shell script in processing build dir. -->
-        <exec executable="/bin/bash">
-            <arg value="--login"/>
-            <arg value="-c"/>
-            <arg value="cd ${parent.dir}/processing/build/macosx; ./run.sh"/>
-        </exec>
-    </target>
-
-    <!-- builds the mobile core files and packages them up for inclusion with processing ide-->
-    <target name="makecore" depends="init">
-        <!-- compile core source files into a temporary directory -->
-        <mkdir dir="mobile/build/macosx/classes/core"/>
-        <javac srcdir="mobile/core/processing/core"
-               destdir="mobile/build/macosx/classes/core"
-               bootclasspath="${wtk.bootClassPath}"
-               source="1.3"
-               target="1.1"/>
-        <!-- preverify compiled classes into another temporary directory -->
-        <mkdir dir="mobile/build/macosx/preverified/core"/>
-        <exec executable="${wtk.dir}/osx/preverify/preverify">
-            <arg value="-cldc1.0"/>
-            <arg value="-classpath"/>
-            <arg path="${wtk.bootClassPath}"/>
-            <arg value="-d"/>
-            <arg path="mobile/build/macosx/preverified/core"/>
-            <arg path="mobile/build/macosx/classes/core"/>
-        </exec>
-        <!-- pack preverified classes into jar -->
-        <jar destfile="mobile/build/macosx/mobile.jar" basedir="mobile/build/macosx/preverified/core">
-            <include name="**/*.class"/>
-        </jar>
-    </target>
-    
-    <!-- copies core jar and manifest/jad template into processing ide build -->
-    <target name="copycore" depends="makecore">
-        <!-- default target is work folder, can be overridden by call -->
-        <property name="target" value="work"/>
-        <!-- copy jar and jad/manifest template into processing build -->
-        <copy file="mobile/build/shared/lib/mobile.mf" todir="processing/build/macosx/${target}/lib"/>
-        <copy file="mobile/build/shared/lib/mobile.properties" todir="processing/build/macosx/${target}/lib"/>
-        <copy file="mobile/build/macosx/mobile.jar" todir="processing/build/macosx/${target}/lib"/>
-    </target>
-
-    <target name="compile">
-        <mkdir dir="${dest}"/>
-        <javac srcdir="${src}"
-               destdir="${dest}"
-               bootclasspath="${bootClassPath}"
-               classpath="${classPath}"
-               source="1.3"
-               target="1.1"/>
-    </target>
-    
+    <!-- preverify using the mpp-sdk preverify -->
     <target name="preverify">
         <mkdir dir="${dest}"/>
         <exec executable="${wtk.dir}/osx/preverify/preverify">
@@ -232,157 +96,7 @@
         </exec>
     </target>
     
-    <target name="jar">
-        <mkdir dir="${dest}"/>
-        <jar destfile="${dest}/${jarname}" basedir="${src}">
-            <include name="**/*.class"/>
-        </jar>
-    </target>
+    <!-- import shared build file -->
+    <import file="../build.xml" />
     
-    <target name="makelib">
-        <antcall target="compile">
-            <param name="src" value="mobile/${libname}/processing/${libname}"/>
-            <param name="dest" value="mobile/build/macosx/classes/${libname}"/>
-            <param name="bootClassPath" value="${bootClassPath}"/>
-            <param name="classPath" value="${classPath}"/>
-        </antcall>
-        <!-- preverify compiled classes into another temporary directory -->
-        <antcall target="preverify">
-            <param name="src" value="mobile/build/macosx/classes/${libname}"/>
-            <param name="dest" value="mobile/build/macosx/preverified/${libname}"/>
-            <param name="bootClassPath" value="${bootClassPath}"/>
-            <param name="classPath" value="${classPath}"/>
-            <param name="cldc" value="${cldc}"/>
-        </antcall>
-        <!-- pack preverified classes into jar -->
-        <antcall target="jar">
-            <param name="src" value="mobile/build/macosx/preverified/${libname}"/>
-            <param name="dest" value="mobile/${libname}/library"/>
-            <param name="jarname" value="${libname}.jar"/>
-        </antcall>
-    </target>
-        
-    <!-- makes core libraries -->
-    <target name="makelibs" depends="init">
-        <!-- next, sound library -->
-        <antcall target="makelib">
-            <param name="libname" value="sound"/>
-            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
-            <param name="classPath" value="mobile/sound/library/mmapi.jar"/>
-            <param name="cldc" value="-cldc1.0"/>
-        </antcall>
-        <!-- next, phone library -->
-        <antcall target="makelib">
-            <param name="libname" value="phone"/>
-            <param name="bootClassPath" value="mobile/build/macosx/lib/cldcapi10.jar:mobile/build/macosx/lib/midpapi20.jar"/>
-            <param name="classPath" value="mobile/build/macosx/mobile.jar"/>
-            <param name="cldc" value="-cldc1.0"/>
-        </antcall>
-        <!-- next, video library -->
-        <antcall target="makelib">
-            <param name="libname" value="video"/>
-            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
-            <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/video/library/mmapi.jar"/>
-            <param name="cldc" value="-cldc1.0"/>
-        </antcall>
-        <!-- next, bluetooth library -->
-        <antcall target="makelib">
-            <param name="libname" value="bluetooth"/>
-            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
-            <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/bluetooth/library/jsr082.jar"/>
-            <param name="cldc" value="-cldc1.0"/>
-        </antcall>
-        <!-- xml library -->
-        <antcall target="makelib">
-            <param name="libname" value="xml"/>
-            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
-            <param name="classPath" value="mobile/build/macosx/mobile.jar:mobile/xml/library/kxml.jar"/>
-            <param name="cldc" value="-cldc1.0"/>
-        </antcall>
-        <!-- next, messaging library -->
-        <antcall target="makelib">
-            <param name="libname" value="messaging"/>
-            <param name="bootClassPath" value="${wtk.bootClassPath}"/>
-            <param name="classPath" value="mobile/messaging/library/wma11.jar;mobile/build/macosx/mobile.jar"/>
-            <param name="cldc" value="CLDC1.0"/>
-        </antcall>
-    </target>
-
-    <target name="copylib">
-        <mkdir dir="processing/build/macosx/${target}/libraries/${libname}"/>
-        <copy todir="processing/build/macosx/${target}/libraries/${libname}">
-            <fileset dir="mobile/${libname}"/>
-        </copy>
-    </target>
-        
-    <!-- copies core libraries over to processing build -->
-    <target name="copylibs" depends="makelibs">
-        <!-- default target is work folder, can be overridden by call -->
-        <property name="target" value="work"/>
-        <!-- delete contents of libraries folder -->
-        <delete includeemptydirs="true">
-            <fileset defaultexcludes="no" dir="processing/build/macosx/${target}/libraries" includes="**/*" excludes="howto.txt"/>
-        </delete>
-        <!-- copy sound library -->
-        <antcall target="copylib">
-            <param name="libname" value="sound"/>
-        </antcall>
-        <!-- copy phone library -->
-        <antcall target="copylib">
-            <param name="libname" value="phone"/>
-        </antcall>
-        <!-- copy video library -->
-        <antcall target="copylib">
-            <param name="libname" value="video"/>
-        </antcall>
-        <!-- copy bluetooth library -->
-        <antcall target="copylib">
-            <param name="libname" value="bluetooth"/>
-        </antcall>
-        <!-- copy xml library -->
-        <antcall target="copylib">
-            <param name="libname" value="xml"/>
-        </antcall>
-        <!-- copy messaging library -->
-        <antcall target="copylib">
-            <param name="libname" value="messaging"/>
-        </antcall>
-    </target>
-    
-    <target name="copydocs" depends="init">
-        <!-- default target is work folder, can be overridden by call -->
-        <property name="target" value="work"/>
-        <!-- delete contents of examples folder -->
-        <delete includeemptydirs="true">
-            <fileset defaultexcludes="no" dir="processing/build/macosx/${target}/examples" includes="**/*"/>
-        </delete>
-        <!-- copy mobile examples -->
-        <copy todir="processing/build/macosx/${target}/examples" overwrite="true">
-            <fileset dir="mobile/docs/examples">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
-        <!-- delete contents of faq folder -->
-        <delete includeemptydirs="true">
-            <fileset defaultexcludes="no" dir="processing/build/macosx/${target}/faq" includes="**/*"/>
-        </delete>
-        <!-- copy mobile faq -->
-        <copy todir="processing/build/macosx/${target}/faq" overwrite="true">
-            <fileset dir="mobile/docs/faq">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
-        <!-- delete contents of reference folder -->
-        <delete includeemptydirs="true">
-            <fileset defaultexcludes="no" dir="processing/build/macosx/${target}/reference" includes="**/*"/>
-        </delete>
-        <!-- copy mobile reference -->
-        <copy todir="processing/build/macosx/${target}/reference" overwrite="true">
-            <fileset dir="mobile/docs/reference">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
-        <!-- copy revisions list -->
-        <copy overwrite="true" file="mobile/build/shared/revisions.txt" tofile="processing/build/macosx/${target}/revisions.txt"/>
-    </target>
 </project>
