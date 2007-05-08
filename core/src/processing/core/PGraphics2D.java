@@ -1670,16 +1670,3 @@ public class PGraphics2D extends PGraphics {
       return 0xff000000 | (r << 8) | g | b;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
