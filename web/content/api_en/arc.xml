@@ -24,7 +24,7 @@ Draws an arc in the display window. Arcs are drawn along the outer edge of an el
 </description>
 
 <syntax>
-ellipse(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>, <c>start</c>, <c>stop</c>)
+arc(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>, <c>start</c>, <c>stop</c>)
 </syntax>
 
 <parameter>
