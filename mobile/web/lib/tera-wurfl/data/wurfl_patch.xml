@@ -1,6 +1,22 @@
 <wurfl_patch>
     <devices>
-        <!-- Sony Ericsson K550 -->
+       <!-- Samsung SGH-D807 -->
+       <device user_agent="SEC-SGHD807/1.0 TSS/2.5" id="sec_d807_ver1" fall_back="generic" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="Samsung" />
+                <capability name="model_name" value="SGH-D807" />
+            </group>
+       </device>
+
+       <!-- Sanyo 6600 Katana -->
+       <device user_agent="Mozilla/4.0 (MobilePhone SCP-6600/US/1.0) NetFront/3.1 MMP/2.0" fall_back="netfront_ver3" id="sanyo_scp6600_ver1" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="Sanyo" />
+                <capability name="model_name" value="SCP-6600" />
+            </group>
+       </device> 
+
+       <!-- Sony Ericsson K550 -->
         <device user_agent="SonyEricssonK550" fall_back="sonyericsson_k750_ver1" id="sonyericsson_k550_ver1" actual_device_root="true">
             <group id="product_info">
                 <capability name="brand_name" value="SonyEricsson" />
