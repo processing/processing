@@ -53,7 +53,7 @@ class Curated
     
     function display_piece()
     {
-        $link = sprintf("<a href=\"%s\" onclick=\"javascript:MM_openBrWindow(this.href,'%s','menubar=yes,status=yes,scrollbars=%s,resizable=%s,width=%d,height=%d');return false;\">",
+        $link = sprintf("<a href=\"%s\" onclick=\"javascript:MM_openBrWindow(this.href,'%s','menubar=yes,location=yes,status=yes,scrollbars=%s,resizable=%s,width=%d,height=%d');return false;\">",
                         $this->location, $this->name, $this->scroll, $this->resize, $this->width, $this->height);
         $html  = "<div class=\"curated-item\">\n";
         $html .= "\t$link<img src=\"/exhibition/{$this->image}\" width=\"223\" height=\"72\" alt=\"preview image\" title=\"{$this->name} by {$this->by}\" /></a>\n";
