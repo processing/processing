@@ -609,4 +609,15 @@ ion</a>.</description>
 		<description>Mob Zombies and new software from Suzung Kim added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
 	</item>
 
+	<item>
+                <date>1 May 2007</date>
+                <description>New software from Jonathan Harris added to the <a href="http://processing.org/exhibition/">\
+exhibition</a>.</description>
+        </item>
+
+	<item>
+                <date>24 May 07</date>
+                <description>The Minim sound library by Damien de Fede added to the <a href="http://processing.org/reference/libraries/">contributed libraries</a>.</description>
+        </item>
+
 </updates>

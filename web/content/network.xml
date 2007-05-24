@@ -1,5 +1,61 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="ColorWrist" by="Jean-Baptiste Labrune">
+        <location>http://insitu.lri.fr/~labrune/blog/2007/05/20/colorwrist-wireless-painting-with-witilt/</location>
+        <date>21 May &apos;07</date>
+    </software>
+    <software name="Thought Crimes" by="Zach Gage">
+        <location>http://www.stfj.net/design/Thought%20Crimes%20(Senior%20Thesis)/</location>
+        <date>15 May &apos;07</date>
+    </software>
+    <software name="Audio Mosaic" by="Zach Gage">
+        <location>http://www.stfj.net/design/Audio%20Mosaic%20(Senior%20Thesis).swf</location>
+        <date>15 May &apos;07</date>
+    </software>
+    <software name="Puppet Show" by="Devin Hunt">
+        <location>http://www.egl.gatech.edu/puppetshow/</location>
+        <date>12 May &apos;07</date>
+    </software>
+    <software name="Deterministic Subdivision" by="June">
+        <location>http://www.june-architecture.com/project1/pre.htm</location>
+        <date>09 May &apos;07</date>
+    </software>
+    <software name="plants" by="Florian Gubernator">
+        <location>http://gubbie.de/software/plants/</location>
+        <date>08 May &apos;07</date>
+    </software>
+    <software name="Hairfield 7" by="Florito">
+        <location>http://www.florito.net/content.php?appname=Hairfield7</location>
+        <date>04 May &apos;07</date>
+    </software>
+    <software name="Document Arc Diagrams" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/DocumentArcDiagrams/index.html</location>
+        <date>03 May &apos;07</date>
+    </software>
+    <software name="Processing Gallery" by="Mike Zellers">
+        <location>http://mikezellers.com/processing</location>
+        <date>02 May &apos;07</date>
+    </software>
+    <software name="Burbujometro // Project of Derivart" by="Mar Canet, Daniel Beunza and Jesus Rodriguez">
+        <location>http://www.derivart.info/index.php?s=p5&amp;lang=en</location>
+        <date>01 May &apos;07</date>
+    </software>
+    <software name="forest of imagined beginnings" by="boredomresearch">
+        <location>http://boredomresearch.net/enterforest/</location>
+        <date>01 May &apos;07</date>
+    </software>
+    <software name="Mackson Pollock" by="dan norton">
+        <location>http://www.bradenwheeler.com/mackson</location>
+        <date>30 Apr &apos;07</date>
+    </software>
+    <software name="Ephemeris" by="Matt Kozak">
+        <location>http://screamyguy.net/ephemeris/index.htm</location>
+        <date>29 Apr &apos;07</date>
+    </software>
+    <software name="Bioscope" by="Jean-Baptiste Labrune">
+        <location>http://insitu.lri.fr/~labrune/blog/2007/04/12/shape-from-motion-visualising-immaterial-artefacts/</location>
+        <date>26 Apr &apos;07</date>
+    </software>
     <software name="Interact" by="Rene Christen">
         <location>http://renechristen.net/wrapped/interact/</location>
         <date>21 Apr &apos;07</date>

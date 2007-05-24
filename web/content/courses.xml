@@ -1,6 +1,102 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
+        <date>Mayo 2007</date>
+        <institution>I.U.N.A. Multimedia</institution>
+        <title>Processing: programación para el arte interactivo. Net.Art e instalaciones interactivas con nuevas tecnologías.</title>
+        <description>El objetivo de este curso es capacitar al alumno en la programación con fines artísticos, de forma que este pueda realizar trabajos de Net.Art, con interfaces físicas y de arte interactivo en general. Con tal fin, la meta es enseñar al alumno el lenguaje de programación Processing, el cual fue diseñado para contemplar las necesidades de los artistas relacionados con las nuevas tecnologías.</description>
+        <contact>
+            <name>Emiliano Causa</name>
+            <email>e_causa at yahoo dot com dot ar</email>
+        </contact>
+        <links>
+            <link>
+                <title>I.U.N.A. Multimedia</title>
+                <url>http://iuna.edu.ar/departamentos/multimedia/investiga/cursos-posgrado.htm</url>
+            </link>
+            <link>
+                <title>Emiliano Causa</title>
+                <url>http://www.emiliano-causa.com.ar/</url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2007</date>
+        <institution>UCLA</institution>
+        <title>Interactivity (DESMA 28)</title>
+        <description>This course is an introduction to the concepts and principles of interactivity and to software as a medium for expression and communication. It focuses on developing the skills required for creating interactive work, therefore participants will work toward developing their computer programming skills within the context of visual media. The concepts and skills taught in the class will enhance each participant&apos;s ability to excel in future UCLA classes about the Internet, animation, interactive media, and game design.</description>
+        <contact>
+            <name>Casey Reas</name>
+            <email>reas at ucla dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Class website</title>
+                <url>http://classes.dma.ucla.edu/Spring07/28/</url>
+            </link>
+            <link>
+                <title>UCLA D|MA</title>
+                <url>http://dma.ucla.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Autumn 2007</date>
+        <institution>The College of Fine Arts, UNSW - Australia</institution>
+        <title>Design and Computers 4</title>
+        <description>The course aims to develop a digital design practice, which supports you to integrate technical knowledge and skills with tools, processes and appropriate software/hardware solutions as a standard part of a contemporary digital design discipline. This course is instrumentalist in direction, exploring and developing interactive processes for the screen. Projects will address conceptual, processes and technical understandings of a digital interactive design and layout production.</description>
+        <contact>
+            <name>Paul Jebanasam</name>
+            <email>paul at omnium dot net dot au</email>
+        </contact>
+        <links>
+            <link>
+                <title>Design and Computers 4</title>
+                <url>http://www.staff.cofa.unsw.edu.au/~bradmiller/physical_computing/D&amp;C4_index.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
         <date>12-30 de Marzo</date>
         <institution>Centro Multimedia - Centro Nacional de Las Artes de México</institution>
         <title>&lt;br /&gt;&lt;br /&gt;PROGRAMACIÓN DE GRÁFICAS PARA PRINCIPIANTES</title>
@@ -15,20 +111,20 @@
                 <url>http://cmm.cenart.gob.mx/cursos/</url>
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
         </links>
     </course>

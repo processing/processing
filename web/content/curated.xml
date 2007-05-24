@@ -1,6 +1,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+      <software name="Universe" by="Jonathan Harris" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/universe.gif</image>
+          <description>
+             If we could make new constellations in today's night sky, what would they be?  Universe is a system to help us decide.
+          </description>
+          <location>http://universe.daylife.com</location>
+          <link href="http://www.number27.org">Jonathan Harris</link>
+        </software>
+
        <software name="Mobzombies" by="Will Carter & Aaron Meyers" scroll="yes" resize="yes" width="1024" height="800">
         <image>images/mz.png</image>
           <description>
