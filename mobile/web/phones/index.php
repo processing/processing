@@ -33,7 +33,7 @@ Mobile Processing sketches run on most mobile phones that support Java games and
 <?php
 //// get the latest 20 submissions
 $link = db_connect();
-$query = "SELECT id, useragent, stamp FROM profile_summary ORDER BY stamp DESC LIMIT 20";
+$query = "SELECT id, useragent, stamp FROM profile_summary ORDER BY stamp DESC LIMIT 24";
 $result = mysql_query($query);
 $wurfl = new tera_wurfl();
 $devices = array();
