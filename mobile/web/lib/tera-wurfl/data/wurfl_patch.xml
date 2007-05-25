@@ -16,6 +16,14 @@
             </group>
        </device> 
 
+       <!-- Sony Ericsson K810 -->
+       <device user_agent="SonyEricssonK810" fall_back="sonyericsson_netfront_ver3" id="sonyericsson_k810_ver1" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="SonyEricsson" />
+                <capability name="model_name" value="K810i" />
+            </group>
+        </device>
+
        <!-- Sony Ericsson K550 -->
         <device user_agent="SonyEricssonK550" fall_back="sonyericsson_k750_ver1" id="sonyericsson_k550_ver1" actual_device_root="true">
             <group id="product_info">
@@ -39,6 +47,13 @@
         <device user_agent="Mozilla/5.0 (SymbianOS/9.1; U; en-us) AppleWebKit/413 (KHTML, like Gecko) Safari/413" id="nokia_e61_ver1_submozilla50" fall_back="nokia_generic_series60_dp30">
 	    <group id="product_info">
 		<capability name="model_name" value="S60 3rd Ed. Web Browser"/>
+	    </group>
+        </device>
+
+	<!-- Nokia E62, S60 3rd Edition, 320x240 -->
+	<device user_agent="NokiaE62-1" id="nokia_e62_ver1" fall_back="nokia_generic_series60_dp30" actual_device_root="true">
+	    <group id="product_info">
+		<capability name="model_name" value="E62"/>
 	    </group>
         </device>
 
