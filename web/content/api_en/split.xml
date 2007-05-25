@@ -11,15 +11,6 @@
 <example>
 <image></image>
 <code>
-String men = "Putin Yeltsin Gorbachev";
-String list[] = split(men);
-// list[0] is now Putin, list[1] is now Yeltsin, ...
-</code>
-</example>
-
-<example>
-<image></image>
-<code>
 String men = "Chernenko,Andropov,Brezhnev";
 String list[] = split(men, ',');
 // list[0] is now Chernenko, list[1] is Andropov, ...
@@ -29,24 +20,32 @@ String list[] = split(men, ',');
 <example>
 <image></image>
 <code>
+String men = "Chernenko / Andropov / Brezhnev";
+String list[] = split(men, " / ");
+// list[0] is now Chernenko, list[1] is Andropov, ...
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
 String numbers = "8 67 5 309";
-int list[] = int(split(numbers));
-// list[0] is now 8, list[1] is now 67, ...
+int nums[] = int(split(numbers, ' '));
+// nums[0] is now 8, nums[1] is now 67, ...
 </code>
 </example>
 
 <description>
-A utility function which separates a series of data embedded into a String into an array of Strings. The <b>delim</b> parameter specifies the character or characters which mark the boundaries between each data element. If no <b>delim</b> character is specified, a whitespace character is used as the split character. Whitespace characters include tab (\t), line feed (\n), carriage return (\r), and form feed (\f), and space. To convert a String to an array of integers or floats, use the datatype conversion functions <b>int()</b> and <b>float()</b> to convert the array of Strings (see example above).
+The split() function is used to divide a String into its separate elements. This function splits a string into pieces using a character or string as the divider. The <b>delim</b> parameter specifies the character or characters which mark the boundaries between each data element. To convert a String to an array of integers or floats, use the datatype conversion functions <b>int()</b> and <b>float()</b> to convert the array of Strings (see example above).
 </description>
 
 <syntax>
-split(<c>str</c>)
 split(<c>str</c>, <c>delim</c>)
 </syntax>
 
 <parameter>
 <label>str</label>
-<description>the string to be split</description>
+<description>the String to be split</description>
 </parameter>
 
 <parameter>
@@ -57,6 +56,7 @@ split(<c>str</c>, <c>delim</c>)
 <returns>String[]</returns>
 
 <related>
+splitTokens()
 join()
 trim()
 </related>
@@ -66,8 +66,5 @@ trim()
 <type>Function</type>
 
 <partof>Core</partof>
-
-<level>Extended</level>
-
 
 </root>

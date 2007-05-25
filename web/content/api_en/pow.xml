@@ -23,11 +23,11 @@ Facilitates exponential expressions. The <b>pow()</b> function is an efficient w
 </description>
 
 <syntax>
-pow(<c>base</c>, <c>exponent</c>)
+pow(<c>num</c>, <c>exponent</c>)
 </syntax>
 
 <parameter>
-<label>base</label>
+<label>num</label>
 <description>int or float: base of the exponential expression</description>
 </parameter>
 

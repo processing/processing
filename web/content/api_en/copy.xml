@@ -22,27 +22,27 @@ Copies a region of pixels from the display window to another area of the display
 </description>
 
 <syntax>
-copy(<c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>)
-copy(<c>srcImg</c>, <c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>)
+copy(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>)
+copy(<c>srcImg</c>, <c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>, <c>dx</c>, <c>dy</c>, <c>dwidth</c>, <c>dheight</c>)
 </syntax>
 
 <parameter>
-<label>sx</label>
+<label>x</label>
 <description>int: X coordinate of the source's upper left corner</description>
 </parameter>
 
 <parameter>
-<label>sy</label>
+<label>y</label>
 <description>int: Y coordinate of the source's upper left corner</description>
 </parameter>
 
 <parameter>
-<label>swidth</label>
+<label>width</label>
 <description>int: source image width</description>
 </parameter>
 
 <parameter>
-<label>sheight</label>
+<label>height</label>
 <description>int: source image height</description>
 </parameter>
 

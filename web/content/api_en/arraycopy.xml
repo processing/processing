@@ -75,9 +75,4 @@ arraycopy(<c>src</c>, <c>srcPos</c>, <c>dest</c>, <c>destPos</c>, <c>length</c>)
 
 <partof>Core</partof>
 
-
-<level>Extended</level>
-
-
-
 </root>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>while()</name>
+<name>while</name>
 
 <category>Control</category>
 
@@ -20,11 +20,11 @@ while(i&lt;80) {
 </example>
 
 <description>
-Controls a sequence of repetitions. The <b>while</b> structure executes a series of statements continuously while the <b>expression</b> is <b>true</b>. The expression must be updated during the repetitions or the program will never "break out" of <b>while()</b>.
+Controls a sequence of repetitions. The <b>while</b> structure executes a series of statements continuously while the <b>expression</b> is <b>true</b>. The expression must be updated during the repetitions or the program will never "break out" of <b>while</b>.
 </description>
 
 <syntax>
-while(<c>expression</c>) {
+while (<c>expression</c>) {
   <c>statements</c>
 }
 </syntax>

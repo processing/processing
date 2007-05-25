@@ -17,7 +17,7 @@ Movie myMovie;
 
 void setup() {
   size(200, 200);
-  framerate(30);
+  frameRate(30);
   myMovie = new Movie(this, "totoro.mov");
   myMovie.speed(4.0);
   myMovie.loop();

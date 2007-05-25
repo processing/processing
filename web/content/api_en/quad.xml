@@ -20,7 +20,7 @@ A quad is a quadrilateral, a four sided polygon. It is similar to a rectangle, b
 </description>
 
 <syntax>
-quad(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</c>, <c>y4</c>);
+quad(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</c>, <c>y4</c>)
 </syntax>
 
 <parameter>

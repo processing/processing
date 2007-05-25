@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
 
-<name>framerate()</name>
+<name>frameRate()</name>
 
 <category>Capture</category>
 
@@ -19,8 +19,8 @@ void setup() {
   size(200, 200); 
   String s = "Logitech QuickCam Messenger-WDM"; 
   myCapture = new Capture(this, s, width, height);
-  // Set the framerate to read 4 new images per second 
-  myCapture.framerate(4);
+  // Set the frameRate to read 4 new images per second 
+  myCapture.frameRate(4);
 } 
  
 void draw() { 
@@ -38,7 +38,7 @@ void draw() {
 </description>
 
 <syntax>
-<c>cam</c>.framerate()
+<c>cam</c>.frameRate()
 </syntax>
 
 <parameter>

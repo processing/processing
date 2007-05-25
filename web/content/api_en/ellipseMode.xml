@@ -20,7 +20,7 @@ ellipse(35, 35, 50, 50);
 </example>
 
 <description>
-The origin of the ellipse is modified by the <b>ellipseMode()</b> function. The default configuration is <b>ellipseMode(CENTER)</b>, which specifies the location of the ellipse as the center of the shape. The CENTER_RADIUS mode is the same, but the width and height parameters to <b>ellipse()</b> specify the radius of the ellipse, rather than the diameter. The CORNER mode draws the shape from the upper-left corner of its bounding box. The CORNERS mode uses the four parameters to <b>ellipse()</b> to set two opposing corners of the ellipse's bounding box. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
+The origin of the ellipse is modified by the <b>ellipseMode()</b> function. The default configuration is <b>ellipseMode(CENTER)</b>, which specifies the location of the ellipse as the center of the shape. The RADIUS mode is the same, but the width and height parameters to <b>ellipse()</b> specify the radius of the ellipse, rather than the diameter. The CORNER mode draws the shape from the upper-left corner of its bounding box. The CORNERS mode uses the four parameters to <b>ellipse()</b> to set two opposing corners of the ellipse's bounding box. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language. Note: In version 125, the mode named CENTER_RADIUS was shortened to RADIUS.
 </description>
 
 <syntax>
@@ -29,7 +29,7 @@ ellipseMode(<c>MODE</c>)
 
 <parameter>
 <label>MODE</label>
-<description>Either CENTER, CENTER_RADIUS, CORNER, CORNERS.</description>
+<description>Either CENTER, RADIUS, CORNER, CORNERS.</description>
 </parameter>
 
 <returns>None</returns>

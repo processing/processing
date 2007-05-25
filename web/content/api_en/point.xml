@@ -34,8 +34,8 @@ Draws a point, a coordinate in space at the dimension of one pixel. The first pa
 </description>
 
 <syntax>
-point(<c>x</c>, <c>y</c>); 
-point(<c>x</c>, <c>y</c>, <c>z</c>); 
+point(<c>x</c>, <c>y</c>)
+point(<c>x</c>, <c>y</c>, <c>z</c>)
 </syntax>
 
 <parameter>

@@ -63,7 +63,7 @@ Datatype for storing and manipulating video frames from an attached capture devi
 </method>
 
 <method>
-<mname>framerate()</mname>
+<mname>frameRate()</mname>
 <mdescription>Sets how often new frames are read</mdescription>
 </method>
 

@@ -45,8 +45,8 @@ Draws a line (a direct path between two points) to the screen. The version of <b
 </description>
 
 <syntax>
-line(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>); 
-line(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>); 
+line(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>)
+line(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>)
 </syntax>
 
 <parameter>

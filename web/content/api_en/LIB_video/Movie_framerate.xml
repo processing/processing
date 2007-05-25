@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
 
-<name>framerate()</name>
+<name>frameRate()</name>
 
 <category>Movie</category>
 
@@ -17,9 +17,9 @@ Movie myMovie;
 
 void setup() {
   size(200, 200);
-  framerate(30);
+  frameRate(30);
   myMovie = new Movie(this, "totoro.mov");
-  myMovie.framerate(2);
+  myMovie.frameRate(2);
   myMovie.loop();
 }
 
@@ -38,7 +38,7 @@ Sets how often frames are read from the movie. Setting the <b>fps</b> parameter 
 </description>
 
 <syntax>
-<c>mov</c>.framerate(<c>fps</c>)
+<c>mov</c>.frameRate(<c>fps</c>)
 </syntax>
 
 <parameter>

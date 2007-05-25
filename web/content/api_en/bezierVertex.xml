@@ -35,52 +35,52 @@ Specifies vertex coordinates for Bezier curves. Each call to <b>bezierVertex()</
 </description>
 
 <syntax>
-bezierVertex(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>)
-bezierVertex(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>, <c>x3</c>, <c>y3</c>, <c>z3</c>)
+bezierVertex(<c>cx1</c>, <c>cy1</c>, <c>cx2</c>, <c>cy2</c>, <c>x</c>, <c>y</c>)
+bezierVertex(<c>cx1</c>, <c>cy1</c>, <c>cz1</c>, <c>cx2</c>, <c>cy2</c>, <c>cz2</c>, <c>x</c>, <c>y</c>, <c>z</c>)
 </syntax>
 
 <parameter>
-<label>x1</label>
+<label>cx1</label>
 <description>The x-coordinate of 1st control point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>y1</label>
+<label>cy1</label>
 <description>The y-coordinate of 1st control point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>z1</label>
+<label>cz1</label>
 <description>The z-coordinate of 1st control point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>x2</label>
+<label>cx2</label>
 <description>The x-coordinate of 2nd control point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>y2</label>
+<label>cy2</label>
 <description>The y-coordinate of 2nd control point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>z2</label>
+<label>cz2</label>
 <description>The z-coordinate of 2nd control point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>x3</label>
+<label>x</label>
 <description>The x-coordinate of anchor point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>y3</label>
+<label>y</label>
 <description>The y-coordinate of anchor point, either a float or int</description>
 </parameter>
 
 <parameter>
-<label>z3</label>
+<label>z</label>
 <description>The z-coordinate of anchor point, either a float or int</description>
 </parameter>
 

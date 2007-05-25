@@ -99,7 +99,7 @@ Datatype for storing and playing movies in Apple's QuickTime format. Movies must
 </method>
 
 <method>
-<mname>framerate()</mname>
+<mname>frameRate()</mname>
 <mdescription>Sets how often new frames are read from the movie</mdescription>
 </method>
 

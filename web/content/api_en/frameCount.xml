@@ -12,7 +12,7 @@
 <image></image>
 <code>
 void setup() {
-  framerate(30);
+  frameRate(30);
 }
 
 void draw() {
@@ -27,7 +27,7 @@ The system variable <b>frameCount</b> contains the number of frames displayed si
 </description>
 
 <syntax>
-framerate
+frameRate
 </syntax>
 
 <parameter>

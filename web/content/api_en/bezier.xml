@@ -35,8 +35,8 @@ Draws a Bezier curve on the screen. These curves are defined by a series of anch
 </description>
 
 <syntax>
-bezier(<c>x1</c>, <c>y1</c>, <c>x2</c>, <c>y2</c>, <c>x3</c>, <c>y3</c>, <c>x4</c>, <c>y4</c>);
-bezier(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>, <c>x3</c>, <c>y3</c>, <c>z3</c>, <c>x4</c>, <c>y4</c>, <c>z4</c>);
+bezier(<c>x1</c>, <c>y1</c>, <c>cx1</c>, <c>cy1</c>, <c>cx2</c>, <c>cy2</c>, <c>x2</c>, <c>y2</c>);
+bezier(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>cx1</c>, <c>cy1</c>, <c>cz1</c>, <c>cx2</c>, <c>cy2</c>, <c>cz2</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>);
 </syntax>
 
 <parameter>
@@ -45,17 +45,17 @@ bezier(<c>x1</c>, <c>y1</c>, <c>z1</c>, <c>x2</c>, <c>y2</c>, <c>z2</c>, <c>x3</
 </parameter>
 
 <parameter>
-<label>x2, y2, y3</label>
+<label>cx1, cy1, cz1</label>
 <description>int or float: coordinates for the first control point</description>
 </parameter>
 
 <parameter>
-<label>x3, y3, z3</label>
+<label>cx2, cy2, cz2</label>
 <description>int or float: coordinates for the second control point</description>
 </parameter>
 
 <parameter>
-<label>x4, y4, z4</label>
+<label>x2, y2, z2</label>
 <description>int or float: coordinates for the second anchor point</description>
 </parameter>
 

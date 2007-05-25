@@ -16,7 +16,7 @@ float yPos = 0.0;
 
 void setup() { 
   size(200, 200); 
-  framerate(30);
+  frameRate(30);
 } 
  
 void draw() { 
@@ -49,7 +49,7 @@ void mousePressed() {
 </example>
 
 <description>
-Called directly after <b>setup()</b> and continuously executes the lines of code contained inside its block until the program is stopped or <b>noLoop()</b> is called. <b>draw()</b> is called automatically and should never be called explicitly. It should always be controlled with <b>noLoop()</b>, <b>redraw()</b> and <b>loop()</b>. After <b>noLoop()</b> stops the code in <b>draw()</b> from executing, <b>redraw()</b> causes the code inside <b>draw()</b> to execute once and <b>loop()</b> will causes the code inside <b>draw()</b> to execute continuously again. The number of times <b>draw()</b> executes in each second may be controlled with the <b>delay()</b> and <b>framerate()</b> functions. There can only be one <b>draw()</b> function for each sketch and <b>draw()</b> must exist if you want the code to run continuously or to process events such as <b>mousePressed()</b>. Sometimes, you might have an empty call to <b>draw()</b> in your program as shown in the above example. 
+Called directly after <b>setup()</b> and continuously executes the lines of code contained inside its block until the program is stopped or <b>noLoop()</b> is called. The <b>draw()</b> function is called automatically and should never be called explicitly. It should always be controlled with <b>noLoop()</b>, <b>redraw()</b> and <b>loop()</b>. After <b>noLoop()</b> stops the code in <b>draw()</b> from executing, <b>redraw()</b> causes the code inside <b>draw()</b> to execute once and <b>loop()</b> will causes the code inside <b>draw()</b> to execute continuously again. The number of times <b>draw()</b> executes in each second may be controlled with the <b>delay()</b> and <b>frameRate()</b> functions. There can only be one <b>draw()</b> function for each sketch and <b>draw()</b> must exist if you want the code to run continuously or to process events such as <b>mousePressed()</b>. Sometimes, you might have an empty call to <b>draw()</b> in your program as shown in the above example. 
 </description>
 
 <syntax>

@@ -45,7 +45,7 @@ blendColor(<c>c1</c>, <c>c2</c>, <c>MODE</c>)
 
 <parameter>
 <label>MODE</label>
-<description>Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST</description>
+<description>Either BLEND, ADD, SUBTRACT, DARKEST, LIGHTEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, or BURN</description>
 </parameter>
 
 <returns>float</returns>

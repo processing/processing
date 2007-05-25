@@ -11,14 +11,14 @@
 <example>
 <image></image>
 <code>
-int a;         // Declaration statement
-a = 30;        // Assignment statement
+int a;       // Declaration statement
+a = 30;      // Assignment statement
 println(i);  // Function statement
 </code>
 </example>
 
 <description>
-A statement terminator which separates elements of the program. A statement is a complete instruction to the computer and the semicolon is used to separate instructions (this is similar to the period "." in written English). Semicolons are also used to separate the different elements of a <b>for()</b> structure. 
+A statement terminator which separates elements of the program. A statement is a complete instruction to the computer and the semicolon is used to separate instructions (this is similar to the period "." in written English). Semicolons are also used to separate the different elements of a <b>for</b> structure. 
 </description>
 
 <syntax>
@@ -33,7 +33,7 @@ A statement terminator which separates elements of the program. A statement is a
 <returns></returns>
 
 <related>
-for()
+for
 </related>
 
 <availability>1.0</availability>

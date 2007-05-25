@@ -20,7 +20,7 @@ Draws a rectangle to the screen. A rectangle is a four-sided shape with every an
 </description>
 
 <syntax>
-rect(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>);
+rect(<c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)
 </syntax>
 
 <parameter>
