@@ -7,10 +7,10 @@ $pages = array(
 	'Learning'      => array('/learning/index.html', 1),
     #'Examples'      => array('/learning/index.html', 2),
     #'Tutorials'     => array('/learning/tutorials/index.html', 2),
-	'Books'      => array('/learning/index.html', 2),
-    'Basic Examples'     => array('/learning/basics/index.html', 2),
-	'3D Examples'     => array('/learning/3d/index.html', 2),
-	'Library Examples'     => array('/learning/libraries/index.html', 2),
+	''      => array('/learning/index.html', 2),
+    'Basics'     => array('/learning/basics/index.html', 2),
+	'3D & OpenGL'     => array('/learning/3d/index.html', 2),
+	'Libraries'     => array('/learning/libraries/index.html', 2),
 	
     'Reference'     => array('/reference/index.html', 1),
     'Download'      => array('/download/index.html', 1),
@@ -29,7 +29,7 @@ function navigation($section = '')
 {  
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Comparison', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
-	$learn = array('Learning', 'Books', 'Basic Examples', '3D Examples', 'Library Examples');
+	$learn = array('Learning', 'Publications', 'Basics', '3D & OpenGL', 'Libraries');
     
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
@@ -61,10 +61,10 @@ function navigation($section = '')
     } else if (in_array($section, $learn)) {
         $html .= "\t\t\t\t" . '<div class="navBar learning" id="subNav">' . "\n";
 		
-        $html .= "\t\t\t\t\t" . l('Books', $section == 'Books') . " \\\n";;
-		$html .= "\t\t\t\t\t" . l('Basic Examples', $section == 'Basic Examples') . " \\\n";;
-		$html .= "\t\t\t\t\t" . l('3D Examples', $section == '3D Examples') . " \\\n";;
-		$html .= "\t\t\t\t\t" . l('Library Examples', $section == 'Library Examples') . "\n";
+        $html .= "\t\t\t\t\t" . l('Publications', $section == 'Publications') . " \\\n";;
+		$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";;
+		$html .= "\t\t\t\t\t" . l('3D & OpenGL', $section == '3D & OpenGL') . " \\\n";;
+		$html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . "\n";
         $html .= "\t\t\t\t</div>\n";
     }
 
