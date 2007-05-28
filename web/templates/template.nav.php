@@ -21,7 +21,7 @@ $pages = array(
     'FAQ'           => array('/faq.html', 1),
     'Language'      => array('/reference/index.html', 1),
     'Environment'   	=> array('/reference/environment/index.html', 2),
-    'Libraries'     	=> array('/reference/libraries/index.html', 2),
+    'LibrariesEX'     	=> array('/reference/libraries/index.html', 2),
     'Comparison'    	=> array('/reference/compare/index.html', 2),
 	'Troubleshooting'	=> array('/reference/troubleshooting/index.html', 2)
     
@@ -49,7 +49,7 @@ function navigation($section = '')
        
     $html .= "\t\t\t\t</div>\n";
     
-    if (in_array($section, $ref) && !(in_array($section, $learn))) {  // Hack for the fact that "libraries" is a section in both
+    if (in_array($section, $ref) && !(in_array($section, $learn))) {
         $html .= "\t\t\t\t" . '<div class="navBar" id="subNav">' . "\n";
         
         $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " \\\n";
@@ -67,7 +67,7 @@ function navigation($section = '')
 		$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('3D & OpenGL', $section == '3D & OpenGL') . " \\\n";
-		$html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
+		$html .= "\t\t\t\t\t" . l('Libraries', $section == 'LibrariesEX') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Hacks', $section == 'Hacks') . "\n";
         $html .= "\t\t\t\t</div>\n";
     }
