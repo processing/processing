@@ -67,7 +67,7 @@ function navigation($section = '')
 		$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('3D & OpenGL', $section == '3D & OpenGL') . " \\\n";
-		$html .= "\t\t\t\t\t" . l('Libraries', $section == 'LibrariesEX') . " \\\n";
+		$html .= "\t\t\t\t\t" . l('LibrariesEX', $section == 'LibrariesEX') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Hacks', $section == 'Hacks') . "\n";
         $html .= "\t\t\t\t</div>\n";
     }
