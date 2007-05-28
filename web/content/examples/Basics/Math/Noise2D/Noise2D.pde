@@ -1,8 +1,8 @@
 /**
- * Noise2D
+ * Noise2D 
  * by Daniel Shiffman.  
  * 
- * Using 2D noise to create simple texture
+ * Using 2D noise to create simple texture. 
  * 
  * Created 2 May 2005
  */

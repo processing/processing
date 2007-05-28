@@ -1,5 +1,5 @@
 /**
- * Noise1D
+ * Noise1D. 
  * 
  * Using 1D Perlin Noise to assign location. 
  * 

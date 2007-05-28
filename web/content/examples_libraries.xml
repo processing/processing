@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <examples>
 	<cat label="Video (Capture)">
-		<ex file="GettingStarted.html">GettingStarted</ex>
+		<ex file="GettingStartedCapture.html">Getting Started Capture</ex>
 		<ex file="FrameDifferencing.html">Frame Differencing</ex>
 		<ex file="BackgroundSubtraction.html">Background Subtraction</ex>
-		<ex file="Brightness Thresholding.html">Brightness Thresholding</ex>
-		<ex file="Brightness Tracking.html">Brightness Tracking</ex>
+		<ex file="BrightnessThresholding.html">Brightness Thresholding</ex>
+		<ex file="BrightnessTracking.html">Brightness Tracking</ex>
 		<ex file="Mirror.html">Mirror</ex>
 		<ex file="Mirror2.html">Mirror2</ex>
 		<ex file="ColorSorting.html">Color Sorting</ex>
@@ -21,7 +21,7 @@
 		<ex file="Pixelate.html">Pixelate</ex>
 	</cat>
 	<cat label="Candy (SVG Import)">
-		<ex file="GettingStarted.html">GettingStarted</ex>
+		<ex file="GettingStartedSVG.html">Getting Started SVG</ex>
 		<ex file="Scale.html">Scale</ex>
 		<ex file="IgnoreStyles.html">IgnoreStyles</ex>
 	</cat>

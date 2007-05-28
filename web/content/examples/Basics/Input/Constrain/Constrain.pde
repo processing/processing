@@ -9,7 +9,7 @@
  
 float mx;
 float my;
-float delay = 40.0;
+float easing = 0.05;
 float esize = 25.0;
 int box = 30;
 
@@ -26,10 +26,10 @@ void draw()
   background(51);
   
   if(abs(mouseX - mx) > 0.1) {
-    mx = mx + (mouseX - mx)/delay;
+    mx = mx + (mouseX - mx) * easing;
   }
   if(abs(mouseY - my) > 0.1) {
-    my = my + (mouseY- my)/delay;
+    my = my + (mouseY- my) * easing;
   }
   
   float distance = esize * 2;

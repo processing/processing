@@ -19,6 +19,7 @@ float easing = 0.05;
 void setup() 
 {
   size(200, 200); 
+  smooth();
   noStroke();  
 }
 
@@ -38,27 +39,5 @@ void draw()
     y += dy * easing;
   }
   
-  translate( x, y );
-  plus();
-}
-
-void plus() 
-{
-  int s = 20;
-  int t = 3;
-  // Draw the symbol
-  beginShape();
-  vertex( -t,  s );
-  vertex(  t,  s );
-  vertex(  t,  t );
-  vertex(  s,  t );
-  vertex(  s, -t );
-  vertex(  t, -t );
-  vertex(  t, -s );
-  vertex( -t, -s );
-  vertex( -t, -t );
-  vertex( -s, -t );
-  vertex( -s,  t );
-  vertex( -t,  t );  
-  endShape(CLOSE);
+  ellipse(x, y, 33, 33);
 }

@@ -3,21 +3,15 @@
  * 
  * Move the pointer left and right across the image to change
  * its position. This program overlays one image over another 
- * by modifying the alpha value of the image. 
- * 
- * Created 09 December 2002
+ * by modifying the alpha value of the image with the tint() function. 
  */
 
 PImage a, b;
-boolean once = false;
-int[] buffer;
-float bufferOffset, newBufferOffset;
+float offset;
 
 void setup() 
 {
   size(200, 200);
-  buffer = new int[width*height];
-  bufferOffset = newBufferOffset = 0.0;
   a = loadImage("construct.jpg");  // Load an image into the program 
   b = loadImage("wash.jpg");   // Load an image into the program 
   frameRate(60);
@@ -26,15 +20,10 @@ void setup()
 void draw() 
 { 
   image(a, 0, 0);
-  
-  newBufferOffset = -b.width/2 + (mouseX*2-width/2);
-  float distance = bufferOffset - newBufferOffset;
-  if( abs(distance) > 0.01 ) {
-    bufferOffset -= distance/10.0;
-    bufferOffset = constrain(bufferOffset, -400, 0);
-  }
+  float offsetTarget = map(mouseX, 0, width, -b.width/2 - width/2, 0);
+  offset += (offsetTarget-offset)*0.05; 
   tint(255, 153);
-  image(b, bufferOffset, 20);
+  image(b, offset, 20);
 }
 
 

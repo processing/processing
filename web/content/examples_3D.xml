@@ -41,8 +41,8 @@
 	<cat label="OpenGL">
 		<ex file="Matrix.html">Matrix</ex>
 		<ex file="Geometry.html">Geometry</ex>
-		<ex file="Extrusion.html">Extrusion</ex>
-		<ex file="Lights.html">Lights</ex>
+		<ex file="ExtrusionGL.html">ExtrusionGL</ex>
+		<ex file="LightsGL.html">LightsGL</ex>
 		<ex file="Esfera.html">Esfera</ex>
 		<ex file="Yellowtail.html">Yellowtail</ex>
 		<ex file="FullScreenApp.html">Full Screen Application</ex>

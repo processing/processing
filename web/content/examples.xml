@@ -103,7 +103,7 @@
 	<cat label="Objects">
 		<ex file="Objects.html">Objects</ex>
 		<ex file="MultipleConstructors.html">Multiple Constructors</ex>
-		<ex file="Composite Objects.html">Composite Objects</ex>
+		<ex file="CompositeObjects.html">Composite Objects</ex>
 		<ex file="Inheritance.html">Inheritance</ex>
 	</cat>
 	<cat label="Web">
