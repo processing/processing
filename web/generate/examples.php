@@ -6,7 +6,7 @@ $benchmark_start = microtime_float();
 
 
 $categories = get_examples_list('examples.xml');
-$break_after = array('Math', 'Transform');
+$break_after = array('Control', 'Transform');
 $subdir = 'Basics';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -52,7 +52,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_3D.xml');
-$break_after = array('Transform', 'Typography');
+$break_after = array('Image', 'Camera');
 $subdir = '3D';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -145,7 +145,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_libraries.xml');
-$break_after = array('PDF', 'Serial');
+$break_after = array('Candy (SVG Import)', 'Network');
 $subdir = 'Libraries';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
