@@ -52,9 +52,10 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_3D.xml');
-$break_after = array('Image', 'Camera');
+$break_after = array('Image', 'Textures');
 $subdir = '3D';
-$dir = CONTENTDIR.'examples/'.$subdir.'/';
+$subdir3D = '3D and OpenGL';
+$dir = CONTENTDIR.'examples/'.$subdir3D.'/';
 
 $count = 0;
 foreach ($categories as $cat => $array) {
@@ -98,7 +99,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_topics.xml');
-$break_after = array('File IO', 'Interaction');
+$break_after = array('Fractals', 'Interaction');
 $subdir = 'Topics';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -145,7 +146,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_libraries.xml');
-$break_after = array('Candy (SVG Import)', 'Network');
+$break_after = array('Video (Movie)', 'Network');
 $subdir = 'Libraries';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
