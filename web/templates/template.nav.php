@@ -9,6 +9,7 @@ $pages = array(
     #'Tutorials'     => array('/learning/tutorials/index.html', 2),
 	'Publications'      => array('/learning/index.html', 2),
     'Basics'     		=> array('/learning/basics/index.html', 2),
+    'Topics'     		=> array('/learning/topics/index.html', 2),
 	'3D & OpenGL'		=> array('/learning/3d/index.html', 2),
 	'Core Libraries'	=> array('/learning/libraries/index.html', 2),
 	'Hacks'     		=> array('/learning/libraries/hacks/index.html', 2),
@@ -62,10 +63,11 @@ function navigation($section = '')
     } else if (in_array($section, $learn)) {
         $html .= "\t\t\t\t" . '<div class="navBar learning" id="subNav">' . "\n";
 		
-        $html .= "\t\t\t\t\t" . l('Publications', $section == 'Publications') . " \\\n";;
-		$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";;
-		$html .= "\t\t\t\t\t" . l('3D & OpenGL', $section == '3D & OpenGL') . " \\\n";;
-		$html .= "\t\t\t\t\t" . l('Core Libraries', $section == 'Core Libraries') . "\n";
+        $html .= "\t\t\t\t\t" . l('Publications', $section == 'Publications') . " \\\n";
+		$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
+		$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . " \\\n";
+		$html .= "\t\t\t\t\t" . l('3D & OpenGL', $section == '3D & OpenGL') . " \\\n";
+		$html .= "\t\t\t\t\t" . l('Core Libraries', $section == 'Core Libraries') . "\\\n";
 		$html .= "\t\t\t\t\t" . l('Hacks', $section == 'Hacks') . "\n";
         $html .= "\t\t\t\t</div>\n";
     }
