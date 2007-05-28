@@ -26,7 +26,7 @@ Sets the seed value for <b>random()</b>. By default, <b>random()</b> produces di
 </description>
 
 <syntax>
-random(<c>value</c>);
+randomSeed(<c>value</c>);
 </syntax>
 
 <parameter>

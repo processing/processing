@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <examples>
-	<cat label="Video">
-		<ex file="Movie.html">Movie</ex>
-		<ex file="Pixelate.html">Pixelate</ex>
-		<ex file="UsingCapture.html">Using Capture</ex>
+	<cat label="Video (Capture)">
+		<ex file="GettingStarted.html">GettingStarted</ex>
+		<ex file="FrameDifferencing.html">Frame Differencing</ex>
+		<ex file="BackgroundSubtraction.html">Background Subtraction</ex>
+		<ex file="Brightness Thresholding.html">Brightness Thresholding</ex>
+		<ex file="Brightness Tracking.html">Brightness Tracking</ex>
 		<ex file="Mirror.html">Mirror</ex>
 		<ex file="Mirror2.html">Mirror2</ex>
-		<ex file="BrightnessTracking.html">Brightness Tracking</ex>
+		<ex file="ColorSorting.html">Color Sorting</ex>
 		<ex file="AsciiVideo.html">ASCII Video</ex>
 		<ex file="Disgrand.html">Disgrand</ex>
 		<ex file="Framingham.html">Framingham</ex>
@@ -14,28 +16,44 @@
 		<ex file="LivePocky.html">Live Pocky</ex>
 		<ex file="RadialPocky.html">Radial Pocky</ex>
 	</cat>
-	<cat label="PDF">
+	<cat label="Video (Movie)">
+		<ex file="Loop.html">Loop</ex>
+		<ex file="Pixelate.html">Pixelate</ex>
+	</cat>
+	<cat label="Candy (SVG Import)">
+		<ex file="GettingStarted.html">GettingStarted</ex>
+		<ex file="Scale.html">Scale</ex>
+		<ex file="IgnoreStyles.html">IgnoreStyles</ex>
+	</cat>
+	<cat label="PDF Export">
 		<ex file="OneFrame.html">One Frame</ex>
 		<ex file="MultipleFrames.html">Multiple Frames</ex>
 		<ex file="MousePress.html">Mouse Press</ex>
 		<ex file="LargePage.html">Large Page</ex>
 	    <ex file="ManyPages.html">Many Pages</ex>
-		<ex file="MousePress.html">Mouse Press</ex>
+		<ex file="ManyPDFs.html">Many PDFs</ex>
+		<ex file="RandomBook.html">Random Book</ex>
 		<ex file="Complex3D.html">Complex 3D</ex>
 	</cat>
 	<cat label="Network">
-		<ex file="ValueClient.html">ValueClient</ex>
-		<ex file="ValueServer.html">ValueServer</ex>
+		<ex file="SharedCanvasClient.html">Shared Canvas (Client)</ex>
+		<ex file="SharedCanvasServer.html">Shared Canvas (Server)</ex>
 		<ex file="HTTPClient.html">HTTP Client</ex>
 		<ex file="ChatServer.html">Chat Server</ex>
+		<ex file="YahooSearch.html">Yahoo! Search</ex>
+		<ex file="CarnivoreClient.html">Carnivore Client</ex>
 	</cat>
 	<cat label="Serial">
-		<ex file="BinaryInput.html">Binary input</ex>
-		<ex file="AnalogInput.html">Analog input </ex>
+		<ex file="SimpleRead.html">Simple Read</ex>
+		<ex file="SimpleWrite.html">Simple Write</ex>
 		<ex file="SerialCallResponse.html">Call / Response</ex>
 		<ex file="SerialDuplex.html">Duplex</ex>
 	</cat>
-	<cat label="OpenGL">
-		<ex file="Matrix.html">Matrix</ex>
+	<cat label="Ess (Sound)">
+		<ex file="SamplePlayback.html">Sample Playback</ex>
+		<ex file="Synthesizer1.html">Synthesizer 1</ex>
+		<ex file="Synthesizer2.html">Synthesizer 2</ex>
+		<ex file="AudioAnalysis.html">Audio Analysis</ex>
+		<ex file="EffectsProcessor.html">Effects Processor</ex>
 	</cat>
 </examples>
