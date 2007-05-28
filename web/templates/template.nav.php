@@ -11,7 +11,7 @@ $pages = array(
     'Basics'     		=> array('/learning/basics/index.html', 2),
     'Topics'     		=> array('/learning/topics/index.html', 2),
 	'3D & OpenGL'		=> array('/learning/3d/index.html', 2),
-	'Core Libraries'	=> array('/learning/libraries/index.html', 2),
+	'Libraries'			=> array('/learning/libraries/index.html', 2),
 	'Hacks'     		=> array('/learning/hacks/index.html', 2),
 	
     'Reference'     => array('/reference/index.html', 1),
@@ -31,7 +31,7 @@ function navigation($section = '')
 {  
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Comparison', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
-	$learn = array('Learning', 'Publications', 'Basics', 'Topics', '3D & OpenGL', 'Core Libraries', 'Hacks');
+	$learn = array('Learning', 'Publications', 'Basics', 'Topics', '3D & OpenGL', 'Libraries', 'Hacks');
     
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
@@ -49,7 +49,7 @@ function navigation($section = '')
        
     $html .= "\t\t\t\t</div>\n";
     
-    if (in_array($section, $ref)) {
+    if (in_array($section, $ref) && !(in_array($section, $learn))) {  // Hack for the fact that "libraries" is a section in both
         $html .= "\t\t\t\t" . '<div class="navBar" id="subNav">' . "\n";
         
         $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " \\\n";
@@ -67,12 +67,11 @@ function navigation($section = '')
 		$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('3D & OpenGL', $section == '3D & OpenGL') . " \\\n";
-		$html .= "\t\t\t\t\t" . l('Core Libraries', $section == 'Core Libraries') . "\\\n";
+		$html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Hacks', $section == 'Hacks') . "\n";
         $html .= "\t\t\t\t</div>\n";
     }
 
-    
     return $html . "\t\t\t</div>\n";
 }
 
