@@ -4,8 +4,6 @@
  * Click on one of the shapes to change
  * the background color. This example
  * demonstates a class for buttons.
- * 
- * Created 09 February 2003
  */
 
 color currentcolor;
@@ -18,6 +16,7 @@ boolean locked = false;
 void setup()
 {
   size(200, 200);
+  smooth();
 
   color baseColor = color(102, 102, 102);
   currentcolor = baseColor;

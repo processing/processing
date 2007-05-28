@@ -4,8 +4,6 @@
  * Move the cursor across the screen to draw. 
  * In addition to creating software tools to simulate pens and pencils, 
  * it is possible to create unique tools to draw with. 
- * 
- * Created 23 October 2002
  */
  
 int dots = 1000;

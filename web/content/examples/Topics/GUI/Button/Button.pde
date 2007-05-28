@@ -4,9 +4,6 @@
  * Click on one of the colored squares in the 
  * center of the image to change the color of 
  * the background. 
- * 
- * Updated 09 February 2003. 
- * Created 21 August 2002
  */
  
 int rectX, rectY;      // Position of square button
@@ -22,6 +19,7 @@ boolean circleOver = false;
 void setup()
 {
   size(200, 200);
+  smooth();
   rectColor = color(0);
   rectHighlight = color(51);
   circleColor = color(255);

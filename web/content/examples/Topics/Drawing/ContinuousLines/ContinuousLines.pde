@@ -2,9 +2,6 @@
  * Continuous Lines. 
  * 
  * Click and drag the mouse to draw a line. 
- * 
- * Updated 27 October 2002. 
- * Created 23 October 2002
  */
  
 void setup() {

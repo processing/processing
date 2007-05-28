@@ -1,5 +1,5 @@
 /**
- * Rotate 3D. 
+ * Rotate 1. 
  * 
  * Rotating simultaneously in the X and Y axis. 
  * Transformation functions such as rotate() are additive.

@@ -1,6 +1,6 @@
 /**
  * Geometry
- * by Marius Watz (workshop.evolutionzone.com). 
+ * by Marius Watz. 
  * 
  * Using sin/cos lookup tables, blends colors, and draws a series of 
  * rotating arcs on the screen.

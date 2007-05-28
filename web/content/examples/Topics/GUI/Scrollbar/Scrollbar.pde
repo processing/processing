@@ -2,8 +2,6 @@
  * Scrollbar. 
  * 
  * Move the scrollbars left and right to change the positions of the images. 
- * 
- * Created 09 December 2002
  */
  
 HScrollbar hs1, hs2;

@@ -34,7 +34,7 @@ void setup()
 
 void draw() 
 {
-  background(255);
+  background(0);
   
   // Update and constrain the angle
   angle += 0.005;

@@ -1,11 +1,9 @@
 /**
- * Patterns. 
+ * Pulses. 
  * 
  * Software drawing instruments can follow a rhythm or abide by rules independent
  * of drawn gestures. This is a form of collaborative drawing in which the draftsperson
  * controls some aspects of the image and the software controls others.
- * 
- * Created 27 May 2007 
  */
 
 int angle = 0;

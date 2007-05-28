@@ -1,5 +1,5 @@
 /**
- * Reflection. 
+ * Reflection 
  * by Simon Greenwold. 
  * 
  * Vary the specular reflection component of a material

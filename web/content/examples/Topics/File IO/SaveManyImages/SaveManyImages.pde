@@ -1,12 +1,10 @@
 /**
  * Save Many Images. 
- *
+ * 
  * The saveFrame() function allows you to save images from
  * a program while it is running. This example saves the first
  * 50 frames of a program. These images can be imported into
  * animation software or QuickTime and then saved as a movie.
- * 
- * Created 26 May 2007
  */
 
 float x = 33;

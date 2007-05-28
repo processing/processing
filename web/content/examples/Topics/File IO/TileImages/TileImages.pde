@@ -1,10 +1,8 @@
 /**
  * Tile Images
- *
+ * 
  * Draws an image larger than the screen by tiling it into small sections.
  * The scaleValue variable sets amount of scaling: 1 is 100%, 2 is 200%, etc.
- *
- * Created 27 May 2007
  */
 
 int scaleValue = 3;  // Multiplication factor

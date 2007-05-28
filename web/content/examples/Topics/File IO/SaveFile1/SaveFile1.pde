@@ -1,13 +1,11 @@
 /**
  * SaveFile 1
- *
+ * 
  * Saving files is a useful way to store data so it can be viewed after a 
  * program has stopped running. The saveStrings() function writes an array 
  * of strings to a file, with each string written to a new line. This file 
  * is saved to the sketch’s folder. This example won't work in a web browser
  * because of Java security restrictions.
- *
- * Created 26 May 2007
  */
 
 int[] x = new int[0];

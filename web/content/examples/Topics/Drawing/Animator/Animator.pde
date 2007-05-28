@@ -7,8 +7,6 @@
  * is displayed, itÕs possible to draw directly into it by
  * pressing the mouse and moving the cursor. Start drawing to get
  * it started.
- * 
- * Created 27 May 2007
  */
 
 int currentFrame = 0;

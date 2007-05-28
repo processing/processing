@@ -1,11 +1,10 @@
 /**
- * Lights. 
+ * LightsGL. 
  * Modified by an example by Simon Greenwold. 
- *
+ * 
  * Display a box with three different kinds of lights. 
- *
- * Created 27 May 2007.
  */
+
 
 import processing.opengl.*;
 
