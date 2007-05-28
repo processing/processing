@@ -12,7 +12,7 @@ $pages = array(
     'Topics'     		=> array('/learning/topics/index.html', 2),
 	'3D & OpenGL'		=> array('/learning/3d/index.html', 2),
 	'Core Libraries'	=> array('/learning/libraries/index.html', 2),
-	'Hacks'     		=> array('/learning/libraries/hacks/index.html', 2),
+	'Hacks'     		=> array('/learning/hacks/index.html', 2),
 	
     'Reference'     => array('/reference/index.html', 1),
     'Download'      => array('/download/index.html', 1),
@@ -31,7 +31,7 @@ function navigation($section = '')
 {  
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Comparison', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
-	$learn = array('Learning', 'Publications', 'Basics', '3D & OpenGL', 'Core Libraries', 'Hacks');
+	$learn = array('Learning', 'Publications', 'Basics', 'Topics', '3D & OpenGL', 'Core Libraries', 'Hacks');
     
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
