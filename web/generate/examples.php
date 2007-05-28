@@ -99,7 +99,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_topics.xml');
-$break_after = array('Fractals', 'Interaction');
+$break_after = array('File IO', 'Interaction');
 $subdir = 'Topics';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
