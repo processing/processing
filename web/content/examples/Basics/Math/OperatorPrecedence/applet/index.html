@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+<html>
+<head>
+<title>OperatorPrecedence : Built with Processing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+body {
+  margin: 0px 0px 0px 0px;
+  font-family: verdana, geneva, arial, helvetica, sans-serif; 
+  font-size: 11px; 
+  background-color: #DDDDCC; 
+  text-decoration: none; 
+  font-weight: normal; 
+  line-height: normal; 
+}
+ 
+A          { color: #3399CC; }
+A:link     { color: #3399CC; text-decoration: underline; }
+A:visited  { color: #3399CC; text-decoration: underline; }
+A:active   { color: #3399CC; text-decoration: underline; }
+A:hover    { color: #3399CC; text-decoration: underline; }
+
+#content {
+  position: absolute;
+  left: 55px;
+  top: 60px;
+}
+
+-->
+</style>
+ 
+</head>
+
+<body>
+
+<div id="content">
+ 
+<div>
+<applet code="OperatorPrecedence" archive="OperatorPrecedence.jar"
+width="200" height="200" mayscript="true">
+<param name="image" value="loading.gif">
+<param name="boxmessage" value="Loading Processing software...">
+<param name="boxbgcolor" value="#FFFFFF">
+
+<!-- This is the message that shows up when people don't have
+     Java installed in their browser. Any HTML can go here
+     (i.e. if you wanted to include an image other links, 
+     or an anti-Microsoft diatribe. -->
+To view this content, you need to install Java from <A HREF="http://java.com">java.com</A>
+
+</applet>
+</div>
+
+<p>
+Operator_Precedence
+by REAS <http://reas.com>
+
+If you don't explicitly state the order in which
+an expression is evaluated, they are evaluated based
+on the operator precedence. For example, in the statement
+"4 + 2 * 8", the 2 will first be multiplied by 8 and then the result will
+be added to 4. This is because the "*" has a higher precedence
+than the "+". To avoid ambiguity in reading the program, 
+it is recommended that is statement is written as "4 + (2 * 8)".
+The order of evaluation can be controlled through placement of
+parenthesis in the code. A table of operator precedence follows below.
+
+Created 17 January 2003
+
+</p>
+
+<p>
+Source code: <a href="OperatorPrecedence.pde">OperatorPrecedence</a> 
+</p>
+
+<p>
+Built with <a href="http://processing.org" title="Processing.org">Processing</a>
+</p>
+ 
+</div>
+ 
+</body>
+</html>
