@@ -48,12 +48,13 @@ class Example
                 if(!preg_match("/\/\*\*/", $line)) {
 				  #$doc_lines[] = htmlspecialchars(str_replace(' * ', '', $line)); # Removed to allow arefs - cr
 				  $doc_lines[] = str_replace(' * ', '', $line);
+				  $doc_lines[] = str_replace(' *', '', $line);
                 }
 			} else {
 				$code_lines[] = htmlspecialchars($line);
 			}
 		}
-		$this->doc = implode("\n", $doc_lines);
+		$this->doc = implode(" ", $doc_lines);
 		$this->code = implode("\n", $code_lines);
 	}
 	
