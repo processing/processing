@@ -66,10 +66,10 @@ class Example
 	{
 		$aWidth = 200;
 		$aHeight = 200;
-		if($sub == "Library") {
-			$aWidth = 640;
-			$aHeight = 480;
-		}
+		#if($sub == "Library") {
+		#	$aWidth = 640;
+		#	$aHeight = 480;
+		#}
 		$html = "\n<div class=\"example\">";
 		if (file_exists($this->applet)) {
 			$html .= "\n<div class=\"applet\">\n\t";
