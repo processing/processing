@@ -66,7 +66,7 @@ class Example
 	{
 		$aWidth = 200;
 		$aHeight = 200;
-		if($sub == "Libraries") {
+		if($sub == "Library") {
 			$aWidth = 640;
 			$aHeight = 480;
 		}
