@@ -64,8 +64,8 @@ class Example
 	
 	function display()
 	{
-		var $aWidth;
-		var $aHeight;
+		#var $aWidth;
+		#var $aHeight;
 		if($sub == "Libraries") {
 			$aWidth = 640;
 			$aHeight = 480;
