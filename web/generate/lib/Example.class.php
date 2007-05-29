@@ -10,6 +10,9 @@ class Example
 	var $code;
 	var $sub;
 	
+	var $aWidth;
+	var $aHeight;
+	
 	function Example($name, $cat, $sub)
 	{
 		$this->name = $name;
@@ -64,8 +67,6 @@ class Example
 	
 	function display()
 	{
-		var $aWidth;
-		var $aHeight;
 		if($sub == "Libraries") {
 			$aWidth = 640;
 			$aHeight = 480;
