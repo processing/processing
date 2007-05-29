@@ -69,7 +69,7 @@ class Example
 		$html = "\n<div class=\"example\">";
 		if (file_exists($this->applet)) {
 			$html .= "\n<div class=\"applet\">\n\t";
-			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'$this->aWidth'" height="200"></applet>';
+			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'$aWidth'" height="200"></applet>';
 			$html .= "\n</div>";
 			
 			$html .= "\n<p class=\"doc-float\">";
