@@ -47,8 +47,8 @@ class Example
                 # Change for new comment style - cr<br>
                 if(!preg_match("/\/\*\*/", $line)) {
 				  #$doc_lines[] = htmlspecialchars(str_replace(' * ', '', $line)); # Removed to allow arefs - cr
-				  $line[] = trim($line);
-				  $line[] = str_replace(" * ", "", $line);
+				  $line = trim($line);
+				  $line = str_replace(" * ", "", $line);
 				  if($line == "") {
 					$line = "\n";
 				  }
