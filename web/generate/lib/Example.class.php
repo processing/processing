@@ -36,7 +36,7 @@ class Example
 			#	$doc = false;
 			#}
 			# Change for new comment style - cr
-			if (preg_match("/\*\//", $line) && doc) {
+			if (preg_match("/\*\//", $line) && $doc) {
 			  $doc = false;  # End the documentation
               #echo "$line\n";
 			  #break;
@@ -47,7 +47,11 @@ class Example
                 # Change for new comment style - cr<br>
                 if(!preg_match("/\/\*\*/", $line)) {
 				  #$doc_lines[] = htmlspecialchars(str_replace(' * ', '', $line)); # Removed to allow arefs - cr
-				  $doc_lines[] = str_replace(" * ", "\n", $line);
+				  $doc_lines[] = trim($doc_lines[]);
+				  $doc_lines[] = str_replace(" * ", "", $line);
+				  if($doc_lines[] == "") {
+					$doc_lines[] = "\n";
+				  }
                 }
 			} else {
 				$code_lines[] = htmlspecialchars($line);
