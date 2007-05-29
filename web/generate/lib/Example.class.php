@@ -10,9 +10,6 @@ class Example
 	var $code;
 	var $sub;
 	
-	var $aWidth;
-	var $aHeight;
-	
 	function Example($name, $cat, $sub)
 	{
 		$this->name = $name;
@@ -67,17 +64,10 @@ class Example
 	
 	function display()
 	{
-		if($sub == "Libraries") {
-			$aWidth = "640";
-			$aHeight = "480";
-		} else {
-			$aWidth = "200";
-			$aHeight = "200";
-		}
 		$html = "\n<div class=\"example\">";
 		if (file_exists($this->applet)) {
 			$html .= "\n<div class=\"applet\">\n\t";
-			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'.$this->aWidth.'" height="'.$this->aHeight.'"></applet>';
+			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="200" height="200"></applet>';
 			$html .= "\n</div>";
 			
 			$html .= "\n<p class=\"doc-float\">";
