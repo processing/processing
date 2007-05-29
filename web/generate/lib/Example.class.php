@@ -68,11 +68,11 @@ class Example
 	function display()
 	{
 		if($sub == "Libraries") {
-			$aWidth = 640;
-			$aHeight = 480;
+			$aWidth = "640";
+			$aHeight = "480";
 		} else {
-			$aWidth = 200;
-			$aHeight = 200;
+			$aWidth = "200";
+			$aHeight = "200";
 		}
 		$html = "\n<div class=\"example\">";
 		if (file_exists($this->applet)) {
