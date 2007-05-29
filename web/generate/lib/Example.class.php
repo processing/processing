@@ -64,8 +64,8 @@ class Example
 	
 	function display()
 	{
-		#var $aWidth;
-		#var $aHeight;
+		var $aWidth;
+		var $aHeight;
 		if($sub == "Libraries") {
 			$aWidth = 640;
 			$aHeight = 480;
@@ -76,7 +76,7 @@ class Example
 		$html = "\n<div class=\"example\">";
 		if (file_exists($this->applet)) {
 			$html .= "\n<div class=\"applet\">\n\t";
-			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'.$this->aWidth.'" height="'.this->$aHeight.'"></applet>';
+			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'.$this->aWidth.'" height="'.$this->aHeight.'"></applet>';
 			$html .= "\n</div>";
 			
 			$html .= "\n<p class=\"doc-float\">";
