@@ -64,6 +64,8 @@ class Example
 	
 	function display()
 	{
+		$aWidth = 600;
+		$aHeight = 600;
 		$html = "\n<div class=\"example\">";
 		if (file_exists($this->applet)) {
 			$html .= "\n<div class=\"applet\">\n\t";
