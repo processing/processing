@@ -49,7 +49,7 @@ class Example
 				  #$doc_lines[] = htmlspecialchars(str_replace(' * ', '', $line)); # Removed to allow arefs - cr
 				  $line[] = trim($line);
 				  $line[] = str_replace(" * ", "", $line);
-				  if($line[] == "") {
+				  if($line == "") {
 					$line = "\n";
 				  }
 				  $doc_lines[] = $line;
