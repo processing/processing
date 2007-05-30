@@ -64,7 +64,7 @@ class Example
 	
 	function display()
 	{
-		echo $sub;
+		$html .= $sub;
 		$aWidth = 200;
 		$aHeight = 200;
 		if($sub == "libraries") {
