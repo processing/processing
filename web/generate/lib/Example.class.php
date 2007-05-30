@@ -69,11 +69,11 @@ class Example
 
 			if($this->sub == "3D") {
 				$html .= "\n<div class=\"applet\">\n\t";
-				$html .= "\n<applet code=\"com.sun.opengl.util.JOGLAppletLauncher\"";
+				$html .= "\n<applet code=\"media/com.sun.opengl.util.JOGLAppletLauncher\"";
 				$html .= "\n archive=\"media/$this->name.jar,media/opengl.jar,media/jogl.jar,media/core.jar\" ";
 				$html .= "\n width=\"640\" height=\"480\" ";
 				$html .= "\n mayscript=\"true\">";
-				$html .= "\n<param name=\"image\" value=\"loading.gif\">";
+				$html .= "\n<param name=\"image\" value=\"media/loading.gif\">";
 				$html .= "\n<param name=\"boxmessage\" value=\"Loading Processing software...\">";
 				$html .= "\n<param name=\"boxbgcolor\" value=\"#FFFFFF\">";
 				$html .= "\n<param name=\"progressbar\" value=\"true\">";
