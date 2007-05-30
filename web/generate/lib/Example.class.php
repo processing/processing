@@ -64,7 +64,6 @@ class Example
 	
 	function display()
 	{
-		$html .= $sub;
 		$aWidth = 200;
 		$aHeight = 200;
 		if($sub == "libraries") {
@@ -72,6 +71,7 @@ class Example
 			$aHeight = 480;
 		}
 		$html = "\n<div class=\"example\">";
+		$html .= $sub;
 		if (file_exists($this->applet)) {
 			$html .= "\n<div class=\"applet\">\n\t";
 			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'.$aWidth.'" height="'.$aHeight.'"></applet>';
