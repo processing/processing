@@ -64,19 +64,22 @@ class Example
 	
 	function display()
 	{
-		$aWidth = 200;
-		$aHeight = 200;
-		if($this->sub == "Libraries") {
-			$aWidth = 640;
-			$aHeight = 480;
-		}
 		$html = "\n<div class=\"example\">";
-		#$html .= $this->sub;
 		if (file_exists($this->applet)) {
+			$aWidth = 200;
+			$aHeight = 200;
+			if($this->sub == "Libraries" || $this->sub == "3D") {
+				$aWidth = 640;
+				$aHeight = 480;
+			}
 			$html .= "\n<div class=\"applet\">\n\t";
 			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'.$aWidth.'" height="'.$aHeight.'"></applet>';
 			$html .= "\n</div>";
-			$html .= "\n<p class=\"doc-float\">";
+			if($this->sub == "Libraries" || $this->sub == "3D") {
+				$html .= "\n<p class=\"doc\">";
+			} else {
+				$html .= "\n<p class=\"doc-float\">";
+			}
 		} else {
 			$html .= "\n<p class=\"doc\">";
 		}
