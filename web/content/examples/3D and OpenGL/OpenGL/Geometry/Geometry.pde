@@ -22,7 +22,7 @@ int style[];
 
  
 void setup() {
-  size(800, 600, OPENGL);
+  size(640, 480, OPENGL);
   frameRate(24);
   background(255);
   
@@ -75,7 +75,7 @@ void draw() {
   background(0);
  
   int index=0;
-  translate(width/2,height/2,0);
+  translate(width/2, height/2, 0);
   rotateX(PI/6);
   rotateY(PI/6);
  

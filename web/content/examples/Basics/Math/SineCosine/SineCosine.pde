@@ -22,7 +22,6 @@ void setup()
   size(200, 200);
   noStroke();
   smooth();
-  frameRate(60);
 }
 
 void draw() 

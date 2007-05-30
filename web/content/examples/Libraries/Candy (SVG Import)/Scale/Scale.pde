@@ -1,5 +1,5 @@
 /**
- * Scale
+ * Scale. 
  * Illustration by George Brower
  * 
  * Move the mouse left and right to zoom the SVG file.

@@ -7,7 +7,7 @@
  */
  
 float spin = 0.0; 
-float radius = 42.0; 
+float diameter = 84.0; 
 float angle;
 
 float angle_rot; 
@@ -17,9 +17,7 @@ void setup()
 {
   size(200, 200);
   noStroke();
-  ellipseMode(CENTER_RADIUS);
   smooth();
-  frameRate(30);
 }
 
 void draw() 
@@ -29,7 +27,7 @@ void draw()
   translate(130, 65);
   
   fill(255);
-  ellipse(0, 0, 8, 8);
+  ellipse(0, 0, 16, 16);
   
   angle_rot = 0;
   fill(51);
@@ -37,14 +35,14 @@ void draw()
   for(int i=0; i<5; i++) {
     pushMatrix();
     rotate(angle_rot + -45);
-    ellipse(-116, 0, radius, radius);
+    ellipse(-116, 0, diameter, diameter);
     popMatrix();
     angle_rot += PI*2/5;
   }
 
-  radius = 17 * sin(angle) + 84;
+  diameter = 34 * sin(angle) + 168;
   
-  angle += 0.03;
+  angle += 0.02;
   if (angle > TWO_PI) { angle = 0; }
 }
 

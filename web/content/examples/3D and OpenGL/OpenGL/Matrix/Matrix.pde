@@ -3,15 +3,13 @@
  * by Mixel. 
  * 
  * Simple example utilizing the OpenGL Library for Processing. 
- * 
- * Created 15 April 2005
  */
 
 import processing.opengl.*;
 
 void setup() 
 {
-  size(800, 600, OPENGL);
+  size(640, 480, OPENGL);
   noStroke();
   fill(0, 102, 153, 40);
 }

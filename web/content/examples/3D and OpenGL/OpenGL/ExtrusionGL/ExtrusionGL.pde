@@ -17,7 +17,7 @@ float angle;
 
 void setup() 
 {
-  size(800, 600, OPENGL);
+  size(640, 480, OPENGL);
   
   aPixels = new int[width][height];
   values = new int[width][height];
@@ -48,7 +48,7 @@ void draw()
   // Display the image mass
   for (int i=0; i<a.height; i+=2) {
     for (int j=0; j<a.width; j+=2) {
-      stroke(values[j][i]);
+      stroke(values[j][i], 153);
       line(j-a.width/2, i-a.height/2, -values[j][i], j-a.width/2, i-a.height/2, -values[j][i]-10);
     }
   }

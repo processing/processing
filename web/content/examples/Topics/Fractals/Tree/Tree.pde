@@ -2,8 +2,8 @@
  * Recursive Tree
  * by Daniel Shiffman.  
  * 
- * Renders a simple tree-like structure via recursion
- * Branching angle calculated as a function of horizontal mouse location
+ * Renders a simple tree-like structure via recursion. 
+ * Branching angle calculated as a function of horizontal mouse location. 
  * 
  * Created 2 May 2005
  */

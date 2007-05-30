@@ -16,9 +16,10 @@ float radio = 200;
 float rx = 0;
 float ry =0;
 
-void setup(){
-  size(800, 600, OPENGL);
-  radio = height/4;
+void setup()
+{
+  size(640, 480, OPENGL);
+  radio = height/3.5;
   
   lista = new pelo[cuantos];
   for (int i=0; i<cuantos; i++){
@@ -28,7 +29,8 @@ void setup(){
 
 }
 
-void draw(){
+void draw()
+{
   background(0);
   translate(width/2,height/2);
 
@@ -49,10 +51,11 @@ void draw(){
 }
 
 
-class pelo{
+class pelo
+{
   float z = random(-radio,radio);
   float phi = random(TWO_PI);
-  float largo=random(1.15,1.2);
+  float largo = random(1.15,1.2);
   float theta = asin(z/radio);
 
     void dibujar(){

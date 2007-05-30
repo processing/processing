@@ -1,6 +1,6 @@
 /**
- * Yellowtail. 
- * By Golan Levin. 
+ * Yellowtail 
+ * by Golan Levin. 
  * 
  * Click, drag, and release to create a kinetic gesture.
  */
@@ -22,7 +22,7 @@ int tmpYp[];
 
 void setup()
 {
-  size(800, 600, OPENGL);
+  size(640, 480, OPENGL);
   myW = width;
   myH = height;
   background(0, 0, 0);

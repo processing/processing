@@ -1,12 +1,12 @@
 /**
- * Getting Started
+ * Getting Started. 
  * Illustration by George Brower
- *
+ * 
  * The Candy SVG Import library is used for loading SVG (Scalable Vector Graphics)
  * files into Processing. This library was specifically tested under SVG files created 
  * from Adobe Illustrator. For now, we can't guarantee that it'll work for SVG's 
  * created from anything else. 
- *
+ * 
  * An SVG created under Illustrator must be created in one of two ways:
  *  - File > Save for Web (or control-alt-shift-s on a PC). Under settings, make sure 
  *    the CSS properties is set to "Presentation Attributes"
