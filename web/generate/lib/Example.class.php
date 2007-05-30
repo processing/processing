@@ -70,15 +70,15 @@ class Example
 			if($this->sub == "3D") {
 				$html .= "\n<div class=\"applet\">\n\t";
 				$html .= "\n<applet code=\"com.sun.opengl.util.JOGLAppletLauncher\"";
-				$html .= "\n archive=\"'.$this->name.'.jar,opengl.jar,jogl.jar,core.jar\" ";
+				$html .= "\n archive=\"$this->name.jar,opengl.jar,jogl.jar,core.jar\" ";
 				$html .= "\n width=\"640\" height=\"480\" ";
 				$html .= "\n mayscript=\"true\">";
 				$html .= "\n<param name=\"image\" value=\"loading.gif\">";
 				$html .= "\n<param name=\"boxmessage\" value=\"Loading Processing software...\">";
 				$html .= "\n<param name=\"boxbgcolor\" value=\"#FFFFFF\">";
 				$html .= "\n<param name=\"progressbar\" value=\"true\">";
-				$html .= "\n<param name=\"subapplet.classname\" VALUE=\"'.$this->name.'\"> ";
-				$html .= "\n<param name=\"subapplet.displayname\" VALUE=\"'.$this->name.'\"> ";
+				$html .= "\n<param name=\"subapplet.classname\" VALUE=\"$this->name\"> ";
+				$html .= "\n<param name=\"subapplet.displayname\" VALUE=\"$this->name\"> ";
 
 				$html .= "\nTo view this content, you need to install Java from <A HREF=\"http://java.com\">java.com</A></applet>";
 				
