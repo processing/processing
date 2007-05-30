@@ -66,12 +66,12 @@ class Example
 	{
 		$aWidth = 200;
 		$aHeight = 200;
-		if($sub == "libraries") {
+		if($this->sub == "libraries") {
 			$aWidth = 640;
 			$aHeight = 480;
 		}
 		$html = "\n<div class=\"example\">";
-		$html .= $sub;
+		$html .= $this->sub;
 		if (file_exists($this->applet)) {
 			$html .= "\n<div class=\"applet\">\n\t";
 			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'.$aWidth.'" height="'.$aHeight.'"></applet>';
