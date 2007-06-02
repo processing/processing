@@ -97,7 +97,7 @@ class Example
 				$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="200" height="200"></applet>';
 				$html .= "\n</div>";
 				$html .= "\n<p class=\"doc-float\">";
-			}
+			//}
 
 		} else {
 			$html .= "\n<p class=\"doc\">";
