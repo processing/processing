@@ -18,7 +18,7 @@
 	<cat label="Typography">
 		<ex file="LetterK.html">Letter K</ex>
 		<ex file="KineticType.html">Kinetic Type</ex>
-		<ex file="Typing.html">Typing </ex>
+		<ex file="Typing.html">Typing</ex>
 	</cat>
 	<cat label="Lights">
 		<ex file="Lights1.html">Lights 1</ex>
@@ -37,9 +37,9 @@
 		<ex file="Texture1.html">Texture 1</ex>
 		<ex file="Texture2.html">Texture 2</ex>
 		<ex file="Texture3.html">Texture 3</ex>
+		<ex file="TextureCube.html">Texture Cube</ex>
 	</cat>
 	<cat label="OpenGL">
-		<ex file="Matrix.html">Matrix</ex>
 		<ex file="Geometry.html">Geometry</ex>
 		<ex file="ExtrusionGL.html">ExtrusionGL</ex>
 		<ex file="LightsGL.html">LightsGL</ex>

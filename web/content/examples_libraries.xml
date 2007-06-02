@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <examples>
 	<cat label="Video (Capture)">
-		<ex file="GettingStartedCapture.html">Getting Started Capture</ex>
+		<ex file="GettingStartedCapture.html">Getting Started (Capture)</ex>
 		<ex file="FrameDifferencing.html">Frame Differencing</ex>
 		<ex file="BackgroundSubtraction.html">Background Subtraction</ex>
 		<ex file="BrightnessThresholding.html">Brightness Thresholding</ex>
@@ -21,7 +21,7 @@
 		<ex file="Pixelate.html">Pixelate</ex>
 	</cat>
 	<cat label="Candy (SVG Import)">
-		<ex file="GettingStartedSVG.html">Getting Started SVG</ex>
+		<ex file="GettingStartedSVG.html">Getting Started (SVG)</ex>
 		<ex file="Scale.html">Scale</ex>
 		<ex file="IgnoreStyles.html">IgnoreStyles</ex>
 	</cat>
