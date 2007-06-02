@@ -1,5 +1,16 @@
 <wurfl_patch>
     <devices>
+       <device user_agent="Mozilla/4.0 (MobilePhone SCP-M1/US/1.0) NetFront/3.3 MMP/2.0" id="sanyo_scpm1_ver1" fall_back="netfront_ver3" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="Sanyo" />
+                <capability name="model_name" value="SCP-M1" />
+            </group>
+       </device>
+
+       <!-- Samsung SGH-I607 -->
+       <device user_agent="SAMSUNG-SGH-I607/I607" fall_back="ms_mobile_browser_ver1" id="samsung_i607_ver1" actual_device_root="true">
+       </device>
+
        <!-- Samsung SGH-D807 -->
        <device user_agent="SEC-SGHD807/1.0 TSS/2.5" id="sec_d807_ver1" fall_back="generic" actual_device_root="true">
             <group id="product_info">
