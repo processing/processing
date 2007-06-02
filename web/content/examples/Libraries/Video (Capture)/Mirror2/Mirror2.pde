@@ -3,8 +3,6 @@
  * by Daniel Shiffman. 
  * 
  * Each pixel from the video source is drawn as a rectangle with size based on brightness.  
- * 
- * Created 2 May 2005
  */
  
  

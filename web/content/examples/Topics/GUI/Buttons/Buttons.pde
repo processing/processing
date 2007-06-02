@@ -18,49 +18,34 @@ void setup()
   size(200, 200);
   smooth();
 
-  color baseColor = color(102, 102, 102);
+  color baseColor = color(102);
   currentcolor = baseColor;
 
   // Define and create circle button
-  int x = 30;
-  int y = 100;
-  int size = 100;
-  color buttoncolor = color(153, 153, 102);
-  color highlight = color(102, 102, 51);
+  color buttoncolor = color(204);
+  color highlight = color(153);
   ellipseMode(CENTER);
-  circle1 = new CircleButton(x, y, size, buttoncolor, highlight);
+  circle1 = new CircleButton(30, 100, 100, buttoncolor, highlight);
 
   // Define and create rectangle button
-  x = 130;
-  y = 110; 
-  size = 24;
-  buttoncolor = color(255, 153, 255);
-  highlight = color(204, 153, 204); 
-  circle2 = new CircleButton(x, y, size, buttoncolor, highlight);
+  buttoncolor = color(204);
+  highlight = color(153); 
+  circle2 = new CircleButton(130, 110, 24, buttoncolor, highlight);
 
   // Define and create rectangle button
-  x = 130;
-  y = 140; 
-  size = 24;
-  buttoncolor = color(204, 204, 0);
-  highlight = color(153, 153, 0); 
-  circle3 = new CircleButton(x, y, size, buttoncolor, highlight);
+  buttoncolor = color(153);
+  highlight = color(102); 
+  circle3 = new CircleButton(130, 140, 24, buttoncolor, highlight);
 
   // Define and create rectangle button
-  x = 150;
-  y = 20; 
-  size = 100;
-  buttoncolor = color(153, 102, 102);
-  highlight = color(102, 51, 51); 
-  rect1 = new RectButton(x, y, size, buttoncolor, highlight);
+  buttoncolor = color(102);
+  highlight = color(51); 
+  rect1 = new RectButton(150, 20, 100, buttoncolor, highlight);
 
   // Define and create rectangle button
-  x = 90;
-  y = 20; 
-  size = 50;
-  buttoncolor = color(153, 153, 153);
-  highlight = color(102, 102, 102); 
-  rect2 = new RectButton(x, y, size, buttoncolor, highlight);
+  buttoncolor = color(51);
+  highlight = color(0); 
+  rect2 = new RectButton(90, 20, 50, buttoncolor, highlight);
 }
 
 void draw()

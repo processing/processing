@@ -3,10 +3,7 @@
  * 
  * Saves one PDF with the contents of the display window.
  * Because this example uses beginRecord, the image is shown
- * on the display window and is saved to the file. 
- * 
- * Created 14 June 2006
- * 
+ * on the display window and is saved to the file.  
 */
 
 

@@ -1,6 +1,6 @@
 /**
- * Sample Playback. 
- * By R. Luke DuBois. 
+ * Sample Playback 
+ * by R. Luke DuBois. 
  * 
  * Loads a sound file off disk and plays it in multiple voices at multiple sampling
  * increments (demonstrating voice allocation), panning it back and forth between
@@ -11,6 +11,7 @@
  * http://www.tree-axis.com/Ess/
  */
  
+
 import krister.Ess.*;
 
 AudioChannel[] mySound = new AudioChannel[6]; // Six channels of audio playback

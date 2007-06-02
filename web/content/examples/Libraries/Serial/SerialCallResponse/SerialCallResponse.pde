@@ -6,10 +6,9 @@
  * Sets foregound color, xpos, and ypos of a circle onstage
  * using the values returned from the serial port. 
  * Thanks to Daniel Shiffman for the improvements. 
- * 
- * Updated 21 March 2005
  */
  
+
 import processing.serial.*;
 
 int bgcolor;			     // Background color

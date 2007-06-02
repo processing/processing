@@ -1,11 +1,10 @@
 /**
- * Simple Export
- * by Simon Greenwold
+ * Simple DXF Export
+ * by Simon Greenwold. 
  *
- * Press the 'r' key to export a DXF file.
- * 
- * Created 27 May 2007
+ * Press the 'R' key to export a DXF file.
  */
+
 
 import processing.dxf.*;
 boolean record = false;

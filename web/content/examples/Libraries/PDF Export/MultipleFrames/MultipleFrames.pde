@@ -4,8 +4,6 @@
  * Saves one PDF document of many frames drawn to the screen.
  * Starts the file when the mouse is pressed and end the file
  * when the mouse is released.
- * 
- * Created 14 June 2006
  */
 
 

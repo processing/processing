@@ -5,6 +5,7 @@
  * This example works with the Wiring / Arduino program that follows below.
  */
 
+
 import processing.serial.*;
 
 Serial port; // Create object from Serial class

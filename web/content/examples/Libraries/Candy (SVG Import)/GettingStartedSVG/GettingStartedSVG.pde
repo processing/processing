@@ -1,6 +1,6 @@
 /**
  * Getting Started. 
- * Illustration by George Brower
+ * Illustration by George Brower. 
  * 
  * The Candy SVG Import library is used for loading SVG (Scalable Vector Graphics)
  * files into Processing. This library was specifically tested under SVG files created 
@@ -14,7 +14,7 @@
  *    setting, but the CSS properties set to "Presentation Attributes" 
  * Saving it any other way will most likely break Candy.
  * 
- * For more information, visit this page:
+ * For more information, visit:
  * http://www.processing.org/reference/libraries/candy/
  */
 
@@ -24,7 +24,7 @@ import processing.xml.*;
 SVG bot;
 
 void setup(){
-  size(640, 480);
+  size(200, 200);
   smooth();
   // The file "bot1.svg" must be in the data folder
   // of the current sketch to load successfully
@@ -33,6 +33,6 @@ void setup(){
 
 void draw(){
   background(102);
-  bot.draw(110, 180, 100, 100);  // Draw at coordinate [110,180] at size 100 x 100
-  bot.draw(282, 100);            // Draw at coordinate [282,100] at the default size
+  bot.draw(10, 10, 100, 100);  // Draw at coordinate [10, 10] at size 100 x 100
+  bot.draw(70, 60);            // Draw at coordinate [70, 60] at the default size
 }

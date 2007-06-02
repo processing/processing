@@ -1,12 +1,11 @@
 /**
- * Loading QuickTime. 
+ * Loop. 
  * 
  * Move the cursor across the screen to draw. 
- * Shows how to load and play a QuickTime movie file. 
- *  
- * Updated 27 May 2007. 
+ * Shows how to load and play a QuickTime movie file.  
  */
  
+
 import processing.video.*;
 
 Movie myMovie;

@@ -1,5 +1,5 @@
 /**
- * Color Sorting. 
+ * Color Sorting  
  * by Ben Fry. 
  * 
  * Example that sorts all colors from the incoming video
@@ -100,10 +100,32 @@ public void keyPressed() {
 }
 
 
-/////////////////////////////////////////////////////////////
+// Simple vector class that holds an x,y,z position.
 
-// functions to handle sorting the color data
+class Vec3f {
+  float x, y, z;
 
+  public Vec3f() { }
+
+  public Vec3f(float x, float y, float z) {
+    set(x, y, z);
+  }
+
+  public void set(float x, float y, float z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+
+  public void scale(float amt) {
+    x *= amt;
+    y *= amt;
+    z *= amt;
+  }
+}
+
+
+// Functions to handle sorting the color data
 
 void sort(int length, int a[], Vec3f stuff[]) {
   sortSub(a, stuff, 0, length - 1);

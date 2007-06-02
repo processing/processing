@@ -1,6 +1,6 @@
 /**
- * Synthesizer 1. 
- * By R. Luke DuBois. 
+ * Synthesizer 1 
+ * by R. Luke DuBois. 
  * 
  * Sound is generated in real time by summing together harmonically related
  * sine tones. Overall pitch and harmonic detuning is controlled by the mouse.
@@ -10,6 +10,7 @@
  * the installation instructions:
  * http://www.tree-axis.com/Ess/
  */
+
 
 import krister.Ess.*;
 

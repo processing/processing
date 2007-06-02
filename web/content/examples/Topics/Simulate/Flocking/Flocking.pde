@@ -1,14 +1,12 @@
 /**
- * Multiple Particle Systems
+ * Flocking 
  * by Daniel Shiffman.  
  * 
  * An implementation of Craig Reynold's Boids program to simulate
  * the flocking behavior of birds. Each boid steers itself based on 
  * rules of avoidance, alignment, and coherence.
- *
- * Click the mouse to add a new boid.
  * 
- * Created 27 May 2007
+ * Click the mouse to add a new boid.
  */
 
 Flock flock;

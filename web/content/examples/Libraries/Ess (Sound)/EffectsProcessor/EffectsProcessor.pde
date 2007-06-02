@@ -1,6 +1,6 @@
 /**
- * Effects Processor. 
- * By R. Luke DuBois. 
+ * Effects Processor 
+ * by R. Luke DuBois. 
  *  
  * Applies reverb 10 times to a succession of guitar chords.
  * Inspired by Alvin Lucier's "I am Sitting in a Room."
@@ -10,6 +10,7 @@
  * the installation instructions:
  * http://www.tree-axis.com/Ess/
  */
+ 
  
 import krister.Ess.*;
 

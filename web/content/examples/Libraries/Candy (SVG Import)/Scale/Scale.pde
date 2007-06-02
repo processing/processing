@@ -7,13 +7,14 @@
  * remain smooth at any size.
  */
 
+
 import processing.candy.*;
 import processing.xml.*;
 
 SVG bot;
 
 void setup(){
-  size(640, 480);
+  size(200, 200);
   smooth();
   // The file "bot1.svg" must be in the data folder
   // of the current sketch to load successfully

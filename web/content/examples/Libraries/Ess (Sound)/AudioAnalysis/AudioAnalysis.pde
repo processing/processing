@@ -1,6 +1,6 @@
 /**
- * Audio Analysis. 
- * By R. Luke DuBois. 
+ * Audio Analysis 
+ * by R. Luke DuBois. 
  * 
  * Analyzes a sound file using a Fast Fourier Transform, and plots both the current
  * spectral frame and a "peak-hold" plot of the maximum over time using logarithmic
@@ -10,6 +10,7 @@
  * the installation instructions:
  * http://www.tree-axis.com/Ess/
  */
+
 
 import krister.Ess.*;
 

@@ -9,8 +9,10 @@
  * This example is based on the based on Yahoo! API example. 
  */
 
+
 // Replace this with a developer key from http://developer.yahoo.com
 String appid = "YOUR_DEVELOPER_KEY_HERE";
+
 SearchClient client = new SearchClient(appid);
 String query = "processing.org";
 WebSearchRequest request = new WebSearchRequest(query);

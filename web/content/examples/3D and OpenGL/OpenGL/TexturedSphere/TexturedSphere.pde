@@ -71,7 +71,7 @@ void renderGlobe()
   // Implements mouse control (interaction will be inverse when sphere is  upside down)
   if(mousePressed){
     velocityX += (mouseY-pmouseY) * 0.01;
-    velocityY += (mouseX-pmouseX) * 0.01;
+    velocityY -= (mouseX-pmouseX) * 0.01;
   }
 }
 

@@ -1,9 +1,10 @@
 /**
- * Brightness Tracking. 
- * By Golan Levin. 
+ * Brightness Tracking 
+ * by Golan Levin. 
  * 
  * Tracks the brightest pixel in a live video signal. 
  */
+
 
 import processing.video.*;
 

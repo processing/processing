@@ -3,8 +3,6 @@
  * 
  * Saves one PDF file each each frame while the mouse is pressed.
  * When the mouse is released, the PDF creation stops.
- * 
- * Created 14 June 2006
  */
 
 

@@ -6,10 +6,9 @@
  * listens for bytes received, and displays their ASCII value. 
  * This is just a quick application for testing serial data
  * in both directions. 
- * 
- * Created 20 April 2005
  */
  
+
 import processing.serial.*;
 
 Serial port;        // The serial port

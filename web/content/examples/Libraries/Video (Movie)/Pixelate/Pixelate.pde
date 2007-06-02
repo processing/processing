@@ -1,13 +1,12 @@
 /**
- * Pixelate a movie file.  
- * By hbarragan. 
+ * Pixelate  
+ * by Hernando Barragan. 
  * 
  * Load a QuickTime file and display the video signal 
  * using rectangles as pixels by reading the values stored 
  * in the current video frame pixels array. 
- * 
- * Updated 27 May 2007
  */
+
 
 import processing.video.*;
 

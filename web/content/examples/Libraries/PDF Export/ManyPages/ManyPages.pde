@@ -3,8 +3,6 @@
  * 
  * Saves a new page into a PDF file each loop through draw().
  * Pressing the mouse finishes writing the file and exits the program.
- * 
- * Created 14 June 2006
  */
 
 

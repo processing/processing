@@ -26,7 +26,7 @@ void draw()
   
   for (int i=0; i<num; i++) { 
     springs[i].update(); 
-    springs[i].draw(); 
+    springs[i].display(); 
   }  
 }
 
@@ -134,7 +134,7 @@ class Spring
     return false;
   }
 
-  void draw() 
+  void display() 
   { 
     if (over) { 
       fill(153); 

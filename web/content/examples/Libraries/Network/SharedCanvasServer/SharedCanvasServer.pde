@@ -1,6 +1,6 @@
 /**
- * Shared Drawing Canvas (Server). 
- * By Alexander R. Galloway. 
+ * Shared Drawing Canvas (Server) 
+ * by Alexander R. Galloway. 
  * 
  * A server that shares a drawing canvas between two computers. 
  * In order to open a socket connection, a server must select a 
@@ -10,6 +10,7 @@
  * Get this program running and then start the Shared Drawing
  * Canvas (Client) program so see how they interact.
  */
+
 
 import processing.net.*;
 

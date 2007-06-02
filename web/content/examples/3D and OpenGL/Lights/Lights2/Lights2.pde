@@ -1,7 +1,7 @@
 /**
- * Lights 2. 
- * By Simon Greenwold. 
- *
+ * Lights 2 
+ * by Simon Greenwold. 
+ * 
  * Display a box with three different kinds of lights. 
  *
  * Created 27 May 2007.

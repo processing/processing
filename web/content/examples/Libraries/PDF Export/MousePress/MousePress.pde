@@ -3,8 +3,6 @@
  * 
  * Saves one PDF of the contents of the display window 
  * each time the mouse is pressed.
- * 
- * Created 14 June 2006
  */
 
 

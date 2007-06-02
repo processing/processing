@@ -3,10 +3,9 @@
  * by Tom Igoe. 
  * 
  * Press the mouse to stop the server.
- * 
- * Created 18 March 2005
  */
  
+
 import processing.net.*;
 
 PFont font;

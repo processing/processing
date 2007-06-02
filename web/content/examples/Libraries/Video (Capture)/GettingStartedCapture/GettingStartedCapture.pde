@@ -2,8 +2,6 @@
  * Getting Started. 
  * 
  * Reading and displaying an image from an attached Capture device. 
- * 
- * Updated 8 April 2005
  */
  
  

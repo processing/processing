@@ -1,12 +1,11 @@
 /**
- * HTTP Client
+ * HTTP Client. 
  * 
  * Starts a network client that connects to a server on port 80,
  * sends an HTTP 1.1 GET request, and prints the results. 
- * 
- * Updated 27 May 2007
  */
  
+
 import processing.net.*;
 
 Client c;

@@ -1,6 +1,6 @@
 /**
- * Carnivore Client. 
- * By Alexander R. Galloway. 
+ * Carnivore Client 
+ * by Alexander R. Galloway. 
  
  * The Carnivore library for Processing allows the programmer to run a packet 
  * sniffer from within the Processing environment. A packet sniffer is any 
