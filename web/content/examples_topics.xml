@@ -55,7 +55,7 @@
 	<cat label="Motion">
 		<ex file="Linear.html">Linear</ex>
 		<ex file="Bounce.html">Bounce</ex>
-		<ex file="BouncingBubbles.html">Bouncing Bubbles</ex>
+		<ex file="BouncyBubbles.html">Bouncy Bubbles</ex>
 		<ex file="Collision.html">Collision</ex>
 		<ex file="MovingOnCurves.html">Moving On Curves</ex>
 		<ex file="Brownian.html">Brownian</ex>
@@ -76,7 +76,7 @@
 		<ex file="Mandelbrot.html">Mandelbrot</ex>
 		<ex file="Tree.html">Tree</ex>
 		<ex file="Pentigree.html">Pentigree</ex>
-		<ex file="Penrose Tile.html">Penrose Tile</ex>
-		<ex file="Penrose Snowflake.html">Penrose Snowflake</ex>
+		<ex file="PenroseTile.html">Penrose Tile</ex>
+		<ex file="PenroseSnowflake.html">Penrose Snowflake</ex>
 	</cat>
 </examples>
