@@ -67,7 +67,7 @@ class Example
 		$html = "\n<div class=\"example\">";
 		if (file_exists($this->applet)) {
 
-			if($this->sub == "3D") {
+			/**if($this->sub == "3D") {
 				$html .= "\n<div class=\"applet\">\n\t";
 				$html .= "\n<applet code=\"com.sun.opengl.util.JOGLAppletLauncher\"";
 				$html .= "\n codebase=\"media/\"";
@@ -84,7 +84,7 @@ class Example
 				$html .= "\nTo view this content, you need to install Java from <A HREF=\"http://java.com\">java.com</A></applet>";
 				
 				$html .= "\n</div>";
-				$html .= "\n<p class=\"doc\">";
+				$html .= "\n<p class=\"doc\">";*/
 
 			/**} else if($this->sub == "Libraries") {
 				$html .= "\n<div class=\"applet\">\n\t";
@@ -92,7 +92,7 @@ class Example
 				$html .= "\n</div>";
 				$html .= "\n<p class=\"doc\">";*/
 
-			} else {
+			/**} else {*/
 				$html .= "\n<div class=\"applet\">\n\t";
 				$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="200" height="200"></applet>';
 				$html .= "\n</div>";
