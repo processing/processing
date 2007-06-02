@@ -86,11 +86,11 @@ class Example
 				$html .= "\n</div>";
 				$html .= "\n<p class=\"doc\">";
 
-			} else if($this->sub == "Libraries") {
+			} /**else if($this->sub == "Libraries") {
 				$html .= "\n<div class=\"applet\">\n\t";
 				$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="640" height="480"></applet>';
 				$html .= "\n</div>";
-				$html .= "\n<p class=\"doc\">";
+				$html .= "\n<p class=\"doc\">";*/
 
 			} else {
 				$html .= "\n<div class=\"applet\">\n\t";
