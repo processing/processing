@@ -1,6 +1,6 @@
 /**
  * Follow 1. 
- * Based on code from Keith Peters (www.bit-101.com)
+ * Based on code from Keith Peters (www.bit-101.com). 
  * 
  * A line segment is pushed and pulled by the cursor.
  */

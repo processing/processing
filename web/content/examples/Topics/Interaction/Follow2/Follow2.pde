@@ -1,6 +1,6 @@
 /**
  * Follow 2. 
- * Based on code from Keith Peters (www.bit-101.com)
+ * Based on code from Keith Peters (www.bit-101.com). 
  * 
  * A two-segmented arm follows the cursor position. The relative
  * angle between the segments is calculated with atan2() and the

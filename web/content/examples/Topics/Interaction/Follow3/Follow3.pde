@@ -1,6 +1,6 @@
 /**
  * Follow 3. 
- * Based on code from Keith Peters (www.bit-101.com)
+ * Based on code from Keith Peters (www.bit-101.com). 
  * 
  * A segmented line follows the mouse. The relative angle from
  * each segment to the next is calculated with atan2() and the
