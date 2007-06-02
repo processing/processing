@@ -1,12 +1,11 @@
 /**
- * Background Subtraction. 
- * By Golan Levin. 
- *
+ * Background Subtraction 
+ * by Golan Levin. 
+ * 
  * Detect the presence of people and objects in the frame using a simple
  * background-subtraction technique. To initialize the background, press a key.
- *
- * Created 27 May 2007. 
  */
+
 
 import processing.video.*;
 
