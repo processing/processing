@@ -5,6 +5,7 @@
  * Distribucion aleatoria uniforme sobre la superficie de una esfera. 
  */
 
+
 import processing.opengl.*;
 
 int cuantos = 8000;

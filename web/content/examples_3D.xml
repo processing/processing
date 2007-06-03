@@ -45,6 +45,7 @@
 		<ex file="LightsGL.html">LightsGL</ex>
 		<ex file="Esfera.html">Esfera</ex>
 		<ex file="Yellowtail.html">Yellowtail</ex>
+		<ex file="TexturedSphere.html">Textured Sphere</ex>
 		<ex file="FullScreenApp.html">Full Screen Application</ex>
 	</cat>
 </examples>

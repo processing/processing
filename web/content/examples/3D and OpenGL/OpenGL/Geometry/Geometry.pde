@@ -6,6 +6,7 @@
  * rotating arcs on the screen.
 */
  
+
 import processing.opengl.*;
  
 // Trig lookup tables borrowed from Toxi. Cryptic but effective

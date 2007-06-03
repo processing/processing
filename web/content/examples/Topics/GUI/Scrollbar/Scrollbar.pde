@@ -16,7 +16,10 @@ void setup()
   noStroke();
   hs1 = new HScrollbar(0, 20, width, 10, 3*5+1);
   hs2 = new HScrollbar(0, height-20, width, 10, 3*5+1);
-  setImage();
+  top = loadImage("seedTop.jpg");
+  topWidth = top.width;
+  bottom = loadImage("seedBottom.jpg");
+  bottomWidth = bottom.width;
 }
 
 void draw()
@@ -28,7 +31,7 @@ void draw()
   float topPos = hs1.getPos()-width/2;
   fill(255);
   image(top, width/2-topWidth/2 + topPos*2, 0);
-  //println(hs1.getPos());
+  
   // Get the position of the bottom scrollbar
   // and convert to a value to display the bottom image
   float bottomPos = hs2.getPos()-width/2;
@@ -37,19 +40,10 @@ void draw()
  
   hs1.update();
   hs2.update();
-  hs1.draw();
-  hs2.draw();
-  
-  //println(hs1.getPos());
+  hs1.display();
+  hs2.display();
 }
 
-void setImage() {
-  top = loadImage("seedTop.jpg");
-  topWidth = top.width;
-  bottom = loadImage("seedBottom.jpg");
-  bottomWidth = bottom.width;
-
-}
 
 class HScrollbar
 {
@@ -109,7 +103,7 @@ class HScrollbar
     }
   }
 
-  void draw() {
+  void display() {
     fill(255);
     rect(xpos, ypos, swidth, sheight);
     if(over || locked) {
@@ -121,7 +115,7 @@ class HScrollbar
   }
 
   float getPos() {
-    // convert spos to be values between
+    // Convert spos to be values between
     // 0 and the total width of the scrollbar
     return spos * ratio;
   }
