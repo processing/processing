@@ -10,6 +10,11 @@ $page = new Page("Learning", "Learning");
 $page->content(file_get_contents($source."learning.html"));
 writeFile('learning/index.html', $page->out());
 
+// Make the books page
+$page = new Page("Books", "Books \ Learning");
+$page->content(file_get_contents($source."books.html"));
+writeFile('learning/books.html', $page->out());
+
 
 $categories = get_examples_list('examples.xml');
 $break_after = array('Control', 'Transform');
