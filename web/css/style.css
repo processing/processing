@@ -377,6 +377,8 @@ div.ref-col { width: 30%;
 #Learning .threecol { float: left; width: 200px; margin-right: 30px; }
 #Learning .threecol p { margin-bottom: 2em; }
 
+.doc-float { margin-right: 40px;}
+
 #Learning .content {
         margin-left    : 55px;
         margin-right   : 0px;
