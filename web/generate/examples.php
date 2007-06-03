@@ -4,6 +4,12 @@ require('../config.php');
 require('lib/Example.class.php');
 $benchmark_start = microtime_float();
 
+// Make the intro page
+$source = CONTENTDIR."static/";
+$page = new Page("Learning", "Learning");
+$page->content(file_get_contents($source."learning.html"));
+writeFile('learning/index.html', $page->out());
+
 
 $categories = get_examples_list('examples.xml');
 $break_after = array('Control', 'Transform');

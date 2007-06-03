@@ -1,11 +1,12 @@
 /**
  * TexturedCube
  * by Dave Bollinger.
- *
+ * 
  * Drag mouse to rotate cube. Demonstrates use of u/v coords in 
  * vertex() and effect on texture(). The textures get distorted using
  * the P3D renderer as you can see, but they look great using OPENGL.
 */
+
 
 PImage tex;
 float rotx = PI/4;
