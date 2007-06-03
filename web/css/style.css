@@ -370,7 +370,7 @@ div.ref-col { width: 30%;
         position: relative;
 }
 
-/************************************************************** learning ***/
+/************************************************************** Learning ***/
 
 #Learning h1 { margin-bottom: 0; margin-top: 0;}
 #Learning .message { margin-top: 0; margin-right: 40px; }
@@ -389,7 +389,17 @@ div.ref-col { width: 30%;
 
 #Copyright p { margin-right: 20px; }
 
-/************************************************************** library indices ***/
+
+/************************************************************** Books ***/
+
+#Books h1 { margin-bottom: 0; margin-top: 0;}
+#Books td { vertical-align: top; }
+
+#Learning .text { font-size: 1em; }
+
+/**<div class="text">*/
+
+/************************************************************** Library Indices ***/
 #Library-index .colone {
 	width: 300px;
 	float: left;
