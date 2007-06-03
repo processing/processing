@@ -13,7 +13,7 @@ writeFile('learning/index.html', $page->out());
 // Make the books page
 $page = new Page("Books", "Books");
 $page->content(file_get_contents($source."books.html"));
-writeFile('learning/books.html', $page->out());
+writeFile('learning/books/index.html', $page->out());
 
 
 $categories = get_examples_list('examples.xml');
