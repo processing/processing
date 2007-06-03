@@ -15,6 +15,11 @@ $page = new Page("Books", "Books");
 $page->content(file_get_contents($source."books.html"));
 writeFile('learning/books/index.html', $page->out());
 
+// Make the hacks page
+$page = new Page("Hacks", "Hacks");
+$page->content(file_get_contents($source."hacks.html"));
+writeFile('learning/hacks/index.html', $page->out());
+
 
 $categories = get_examples_list('examples.xml');
 $break_after = array('Control', 'Transform');
