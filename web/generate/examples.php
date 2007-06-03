@@ -21,6 +21,8 @@ $page->content(file_get_contents($source."hacks.html"));
 writeFile('learning/hacks/index.html', $page->out());
 
 
+# --------------------------------- Basics
+
 $categories = get_examples_list('examples.xml');
 $break_after = array('Control', 'Transform');
 $subdir = 'Basics';
@@ -88,7 +90,7 @@ foreach ($categories as $cat => $array) {
 }
 
 $page = new Page('Learning', '3D & OpenGL');
-$page->subtemplate('template.examples.html');
+$page->subtemplate('template.examples-3d.html');
 
 $html = "<div class=\"ref-col\">\n";
 foreach ($categories as $cat => $array) {
@@ -134,7 +136,7 @@ foreach ($categories as $cat => $array) {
 }
 
 $page = new Page('Learning', 'Topics');
-$page->subtemplate('template.examples.html');
+$page->subtemplate('template.examples-topics.html');
 
 $html = "<div class=\"ref-col\">\n";
 foreach ($categories as $cat => $array) {
@@ -181,7 +183,7 @@ foreach ($categories as $cat => $array) {
 }
 
 $page = new Page('Learning', 'Library Examples');
-$page->subtemplate('template.examples.html');
+$page->subtemplate('template.examples-libraries.html');
 
 $html = "<div class=\"ref-col\">\n";
 foreach ($categories as $cat => $array) {
