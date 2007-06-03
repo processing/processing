@@ -393,7 +393,7 @@ div.ref-col { width: 30%;
 /************************************************************** Books ***/
 
 #Books h1 { margin-bottom: 0; margin-top: 0;}
-#Books td { vertical-align: top; }
+#Books td { vertical-align: top; font-size: 1em}
 
 .book-item { font-size: 1em; color: #FF0000}
 
