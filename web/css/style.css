@@ -387,11 +387,7 @@ div.ref-col { width: 30%;
         position: relative;
 }
 
-#Topics h2 { margin-bottom: 0; margin-top: 0;}
-#Basics h2 { margin-bottom: 0; margin-top: 0;}
-#"3D & OpenGL" h2 { margin-bottom: 0; margin-top: 0;}
-#"Library Examples" h2 { margin-bottom: 0; margin-top: 0;}
-
+h2 { margin-bottom: 0; margin-top: 0;}
 
 
 #Copyright p { margin-right: 20px; }
