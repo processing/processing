@@ -2319,7 +2319,7 @@ public class PApplet extends Applet
    * (This avoids the situation of trying to put single or double quotes
    * around different bits).
    */
-  public Process open(String argv[]) {
+  static public Process open(String argv[]) {
     try {
       return Runtime.getRuntime().exec(argv);
     } catch (Exception e) {
@@ -3833,6 +3833,7 @@ public class PApplet extends Applet
       String lower = filename.toLowerCase();
       InputStream input = openStream(filename);
 
+      // For compatability with earlier releases of Processing
       if (lower.endsWith(".vlw.gz")) {
         input = new GZIPInputStream(input);
 
