@@ -35,7 +35,120 @@ import java.awt.image.*;
  * As of beta, this class is semi-disabled.
  */
 public abstract class PGraphics extends PImage implements PConstants {
+  
+  // transformed values
+  // (to be used in rendering)
 
+  static public final int X = 0; // transformed xyzw
+  static public final int Y = 1; // formerly SX SY SZ
+  static public final int Z = 2;
+
+  static public final int R = 3;  // actual rgb, after lighting
+  static public final int G = 4;  // fill stored here, transform in place
+  static public final int B = 5;
+  static public final int A = 6;
+
+  // values that need no transformation
+  // but will be used in rendering
+
+  static public final int U = 7; // texture
+  static public final int V = 8;
+
+  // incoming values, raw and untransformed
+  // (won't be used in rendering)
+
+  static public final int MX = 9; // model coords xyz
+  static public final int MY = 10;
+  static public final int MZ = 11;
+
+  /** stroke argb values */
+  static public final int SR = 12;
+  static public final int SG = 13;
+  static public final int SB = 14;
+  static public final int SA = 15;
+
+  /** stroke weight */
+  static public final int SW = 16;
+
+  // not used in rendering
+  // only used for calculating colors
+
+  static public final int NX = 17; // normal
+  static public final int NY = 18;
+  static public final int NZ = 19;
+
+  static public final int VX = 20; // view space coords
+  static public final int VY = 21;
+  static public final int VZ = 22;
+  static public final int VW = 23;
+
+  // Ambient color (usually to be kept the same as diffuse)
+  // fill(_) sets both ambient and diffuse.
+  static public final int AR = 24;
+  static public final int AG = 25;
+  static public final int AB = 26;
+
+  // Diffuse is shared with fill.
+  static public final int DR = 3;
+  static public final int DG = 4;
+  static public final int DB = 5;
+  static public final int DA = 6;
+
+  //specular (by default kept white)
+  static public final int SPR = 27;
+  static public final int SPG = 28;
+  static public final int SPB = 29;
+  //GL doesn't use a separate specular alpha, but we do (we're better)
+  static public final int SPA = 30;
+
+  static public final int SHINE = 31;
+
+  //emissive (by default kept black)
+  static public final int ER = 32;
+  static public final int EG = 33;
+  static public final int EB = 34;
+
+  //has this vertex been lit yet
+  static public final int BEEN_LIT = 35;
+
+  static final int VERTEX_FIELD_COUNT = 36;
+
+  // line & triangle fields (note how these overlap)
+
+  static public final int INDEX = 0;          // shape index
+  static public final int VERTEX1 = 1;
+  static public final int VERTEX2 = 2;
+  static public final int VERTEX3 = 3;        // (triangles only)
+  static public final int TEXTURE_INDEX = 4;  // (triangles only)
+  static public final int STROKE_MODE = 3;    // (lines only)
+  static public final int STROKE_WEIGHT = 4;  // (lines only)
+
+  static public final int LINE_FIELD_COUNT = 5;
+  static public final int TRIANGLE_FIELD_COUNT = 5;
+
+  static public final int TRI_DIFFUSE_R = 0;
+  static public final int TRI_DIFFUSE_G = 1;
+  static public final int TRI_DIFFUSE_B = 2;
+  static public final int TRI_DIFFUSE_A = 3;
+  static public final int TRI_SPECULAR_R = 4;
+  static public final int TRI_SPECULAR_G = 5;
+  static public final int TRI_SPECULAR_B = 6;
+  static public final int TRI_SPECULAR_A = 7;
+
+  static public final int TRIANGLE_COLOR_COUNT = 8;
+
+
+  // normal modes for lighting, these have the uglier naming
+  // because the constants are never seen by users
+
+  /// normal calculated per triangle
+  static public final int AUTO_NORMAL = 0;
+  /// one normal manually specified per shape
+  static public final int MANUAL_SHAPE_NORMAL = 1;
+  /// normals specified for each shape vertex
+  static public final int MANUAL_VERTEX_NORMAL = 2;
+  
+  
   /// width minus one (useful for many calculations)
   public int width1;
 
@@ -814,10 +927,10 @@ public abstract class PGraphics extends PImage implements PConstants {
     textureV = v;
 
     if (textureU < 0) textureU = 0;
-    else if (textureU > ONE) textureU = ONE;
+    else if (textureU > 1) textureU = 1;
 
     if (textureV < 0) textureV = 0;
-    else if (textureV > ONE) textureV = ONE;
+    else if (textureV > 1) textureV = 1;
   }
 
 
@@ -1241,7 +1354,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     case CORNER:
       x2 += x1; y2 += y1;
       break;
-    case CENTER_RADIUS:
+    case RADIUS:
       hradius = x2;
       vradius = y2;
       x2 = x1 + hradius;
@@ -1296,7 +1409,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       w = c - a;
       h = d - b;
 
-    } else if (ellipseMode == CENTER_RADIUS) {
+    } else if (ellipseMode == RADIUS) {
       x = a - c;
       y = b - d;
       w = c * 2;
@@ -1415,7 +1528,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       w = c - a;
       h = d - b;
 
-    } else if (ellipseMode == CENTER_RADIUS) {
+    } else if (ellipseMode == RADIUS) {
       x = a - c;
       y = b - d;
       w = c * 2;
@@ -2510,7 +2623,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     case CORNER:
       x2 += x1; y2 += y1;
       break;
-    case CENTER_RADIUS:
+    case RADIUS:
       hradius = x2;
       vradius = y2;
       x2 = x1 + hradius;
@@ -3210,7 +3323,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     colorModeA = maxA;
 
     // if color max values are all 1, then no need to scale
-    colorScale = ((maxA != ONE) || (maxX != maxY) ||
+    colorScale = ((maxA != 1) || (maxX != maxY) ||
                   (maxY != maxZ) || (maxZ != maxA));
 
     // if color is rgb/0..255 this will make it easier for the
