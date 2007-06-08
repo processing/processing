@@ -347,6 +347,7 @@ public class PImage implements PConstants, Cloneable {
     if (y + h > height) h = height - y;
 
     PImage newbie = new PImage(w, h, format);
+    newbie.parent = parent;
 
     int index = y*width + x;
     int index2 = 0;
