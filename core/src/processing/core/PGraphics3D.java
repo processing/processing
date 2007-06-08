@@ -707,12 +707,12 @@ public class PGraphics3D extends PGraphics {
         modelview.m32*vertex[MZ] + modelview.m33;
 
       // normalize
-      if (vertex[VW] != 0 && vertex[VW] != ONE) {
+      if (vertex[VW] != 0 && vertex[VW] != 1) {
         vertex[VX] /= vertex[VW];
         vertex[VY] /= vertex[VW];
         vertex[VZ] /= vertex[VW];
       }
-      vertex[VW] = ONE;
+      vertex[VW] = 1;
     }
 
     // ------------------------------------------------------------------
@@ -976,13 +976,13 @@ public class PGraphics3D extends PGraphics {
         projection.m30*vx[VX] + projection.m31*vx[VY] +
         projection.m32*vx[VZ] + projection.m33*vx[VW];
 
-      if (ow != 0 && ow != ONE) {
+      if (ow != 0 && ow != 1) {
         ox /= ow; oy /= ow; oz /= ow;
       }
 
-      vx[X] = width * (ONE + ox) / 2.0f;
-      vx[Y] = height * (ONE + oy) / 2.0f;
-      vx[Z] = (oz + ONE) / 2.0f;
+      vx[X] = width * (1 + ox) / 2.0f;
+      vx[Y] = height * (1 + oy) / 2.0f;
+      vx[Z] = (oz + 1) / 2.0f;
     }
 
 
@@ -1658,14 +1658,14 @@ public class PGraphics3D extends PGraphics {
       modelviewInv.m03*nx + modelviewInv.m13*ny +
       modelviewInv.m23*nz + modelviewInv.m33;
 
-    if (out[3] != 0 && out[3] != ONE) {
+    if (out[3] != 0 && out[3] != 1) {
       // divide by perspective coordinate
       out[0] /= out[3]; out[1] /= out[3]; out[2] /= out[3];
     }
     out[3] = 1;
 
     float nlen = mag(out[0], out[1], out[2]);  // normalize
-    if (nlen != 0 && nlen != ONE) {
+    if (nlen != 0 && nlen != 1) {
       out[0] /= nlen; out[1] /= nlen; out[2] /= nlen;
     }
   }
@@ -2030,7 +2030,7 @@ public class PGraphics3D extends PGraphics {
       //float[] norm = new float[3];
       crossProduct(dv1, dv2, norm);
       float nMag = mag(norm[X], norm[Y], norm[Z]);
-      if (nMag != 0 && nMag != ONE) {
+      if (nMag != 0 && nMag != 1) {
         norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
       }
       vertices[vIndex][NX] = norm[X];
@@ -2098,7 +2098,7 @@ public class PGraphics3D extends PGraphics {
         //float[] norm = new float[3];
         crossProduct(dv1, dv2, norm);
         float nMag = mag(norm[X], norm[Y], norm[Z]);
-        if (nMag != 0 && nMag != ONE) {
+        if (nMag != 0 && nMag != 1) {
           norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
         }
         vertices[vIndex][NX] = norm[X];

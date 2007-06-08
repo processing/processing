@@ -631,6 +631,7 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     if (who.cache == null) {
+      //System.out.println("making new image cache");
       who.cache = new ImageCache(who);
       who.updatePixels();  // mark the whole thing for update
       who.modified = true;
@@ -669,6 +670,7 @@ public class PGraphicsJava2D extends PGraphics {
       // even if RGB, set the image type to ARGB, because the
       // image may have an alpha value for its tint().
       int type = BufferedImage.TYPE_INT_ARGB;
+      //System.out.println("making new buffered image");
       image = new BufferedImage(source.width, source.height, type);
     }
 
@@ -680,6 +682,7 @@ public class PGraphicsJava2D extends PGraphics {
     // original PGraphics will be used.
     public void update(boolean tint, int tintColor) {
       if (tintedPixels == null) {
+        //System.out.println("tinted pixels null");
         tintedPixels = new int[source.width * source.height];
       }
 
@@ -1220,6 +1223,8 @@ public class PGraphicsJava2D extends PGraphics {
     if (y + h > height) h = height - y;
 
     PImage output = new PImage(w, h);
+    output.parent = parent;
+
     // oops, the last parameter is the scan size of the *target* buffer
     //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
     WritableRaster raster = ((BufferedImage) image).getRaster();

@@ -60,7 +60,8 @@ public interface PConstants {
   // for better parity between c++ version (at no speed cost)
 
   static final float EPSILON   = 0.0001f;
-  static final float ONE       = 1.0f;
+  // was around for auto-port to mobile version
+  //static final float ONE       = 1.0f;
 
 
   // useful goodness
@@ -77,8 +78,8 @@ public interface PConstants {
 
   // angle modes
 
-  static final int RADIANS = 0;
-  static final int DEGREES = 1;
+  //static final int RADIANS = 0;
+  //static final int DEGREES = 1;
 
 
   // used by split, all the standard whitespace chars
@@ -317,122 +318,4 @@ public interface PConstants {
   static final int DISABLE_ERROR_REPORT    = 8;
 
   static final int HINT_COUNT              = 9;
-
-
-  //////////////////////////////////////////////////////////////
-
-  // FIELDS
-
-
-  // transformed values
-  // (to be used in rendering)
-
-  static final int X = 0; // transformed xyzw
-  static final int Y = 1; // formerly SX SY SZ
-  static final int Z = 2;
-
-  static final int R = 3;  // actual rgb, after lighting
-  static final int G = 4;  // fill stored here, transform in place
-  static final int B = 5;
-  static final int A = 6;
-
-  // values that need no transformation
-  // but will be used in rendering
-
-  static final int U = 7; // texture
-  static final int V = 8;
-
-  // incoming values, raw and untransformed
-  // (won't be used in rendering)
-
-  static final int MX = 9; // model coords xyz
-  static final int MY = 10;
-  static final int MZ = 11;
-
-  /** stroke argb values */
-  static final int SR = 12;
-  static final int SG = 13;
-  static final int SB = 14;
-  static final int SA = 15;
-
-  /** stroke weight */
-  static final int SW = 16;
-
-  // not used in rendering
-  // only used for calculating colors
-
-  static final int NX = 17; // normal
-  static final int NY = 18;
-  static final int NZ = 19;
-
-  static final int VX = 20; // view space coords
-  static final int VY = 21;
-  static final int VZ = 22;
-  static final int VW = 23;
-
-  // Ambient color (usually to be kept the same as diffuse)
-  // fill(_) sets both ambient and diffuse.
-  static final int AR = 24;
-  static final int AG = 25;
-  static final int AB = 26;
-
-  // Diffuse is shared with fill.
-  static final int DR = 3;
-  static final int DG = 4;
-  static final int DB = 5;
-  static final int DA = 6;
-
-  //specular (by default kept white)
-  static final int SPR = 27;
-  static final int SPG = 28;
-  static final int SPB = 29;
-  //GL doesn't use a separate specular alpha, but we do (we're better)
-  static final int SPA = 30;
-
-  static final int SHINE = 31;
-
-  //emissive (by default kept black)
-  static final int ER = 32;
-  static final int EG = 33;
-  static final int EB = 34;
-
-  //has this vertex been lit yet
-  static final int BEEN_LIT = 35;
-
-  static final int VERTEX_FIELD_COUNT = 36;
-
-  // line & triangle fields (note how these overlap)
-
-  static final int INDEX = 0;          // shape index
-  static final int VERTEX1 = 1;
-  static final int VERTEX2 = 2;
-  static final int VERTEX3 = 3;        // (triangles only)
-  static final int TEXTURE_INDEX = 4;  // (triangles only)
-  static final int STROKE_MODE = 3;    // (lines only)
-  static final int STROKE_WEIGHT = 4;  // (lines only)
-
-  static final int LINE_FIELD_COUNT = 5;
-  static final int TRIANGLE_FIELD_COUNT = 5;
-
-  static final int TRI_DIFFUSE_R = 0;
-  static final int TRI_DIFFUSE_G = 1;
-  static final int TRI_DIFFUSE_B = 2;
-  static final int TRI_DIFFUSE_A = 3;
-  static final int TRI_SPECULAR_R = 4;
-  static final int TRI_SPECULAR_G = 5;
-  static final int TRI_SPECULAR_B = 6;
-  static final int TRI_SPECULAR_A = 7;
-
-  static final int TRIANGLE_COLOR_COUNT = 8;
-
-
-  // normal modes for lighting, these have the uglier naming
-  // because the constants are never seen by users
-
-  /// normal calculated per triangle
-  static final int AUTO_NORMAL = 0;
-  /// one normal manually specified per shape
-  static final int MANUAL_SHAPE_NORMAL = 1;
-  /// normals specified for each shape vertex
-  static final int MANUAL_VERTEX_NORMAL = 2;
 }
