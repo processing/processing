@@ -31,8 +31,25 @@ package processing.core;
  * Likely to be removed before 1.0 as it's no longer particularly used.
  */
 public class PPolygon implements PConstants {
+  
+  // identical to the constants from PGraphics
+  
+  static final int X = 0; // transformed xyzw
+  static final int Y = 1; // formerly SX SY SZ
+  static final int Z = 2;
+
+  static final int R = 3;  // actual rgb, after lighting
+  static final int G = 4;  // fill stored here, transform in place
+  static final int B = 5;
+  static final int A = 6;
+  
+  static final int U = 7; // texture
+  static final int V = 8;
+  
+  //
+
   static final int DEFAULT_SIZE = 64; // this is needed for spheres
-  float vertices[][] = new float[DEFAULT_SIZE][VERTEX_FIELD_COUNT];
+  float vertices[][] = new float[DEFAULT_SIZE][PGraphics.VERTEX_FIELD_COUNT];
   int vertexCount;
 
   // really this is "debug" but..
@@ -119,7 +136,7 @@ public class PPolygon implements PConstants {
     if (vertexCount == vertices.length) {
       //parent.message(CHATTER, "re-allocating for " +
       //             (vertexCount*2) + " vertices");
-      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+      float temp[][] = new float[vertexCount<<1][PGraphics.VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
 
@@ -643,7 +660,7 @@ public class PPolygon implements PConstants {
   private void incrementalize_y(float p1[], float p2[],
                                 float p[], float dp[], int y) {
     float delta = p2[Y] - p1[Y];
-    if (delta == 0) delta = ONE;
+    if (delta == 0) delta = 1;
     float fraction = y + 0.5f - p1[Y];
 
     if (interpX) {
@@ -686,7 +703,7 @@ public class PPolygon implements PConstants {
   private void incrementalize_x(float p1[], float p2[],
                                 float p[], float dp[], int x) {
     float delta = p2[X] - p1[X];
-    if (delta == 0) delta = ONE;
+    if (delta == 0) delta = 1;
     float fraction = x + 0.5f - p1[X];
     if (smooth) {
       delta /= SUBXRES;
