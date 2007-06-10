@@ -1,4 +1,4 @@
-0124 core
+0125 core
 X more blend() modes (the five listed on the thread below?)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=132
 X   figure out what the modes should actually be: 
@@ -63,7 +63,23 @@ X   or textAlign(LEFT, MIDDLE); -> this one seems best
 X   add reference for new param, and update keywords.txt
 X given to andy
 
-0125p3
+0125pX (will be 3)
+X PImage.save() method is not working with get()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=558
+X NullPointerException in Create Font with "All Characters" enabled 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=564
+X added min() and max() for float and int arrays
+_   need to update reference
+X   moved around min/max functions
+
+_ add gluegen-rt back to the applet export
+_   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
+
+_ look into jogl anti-aliasing on osx
+_   smoothMode(2) and smoothMode(4), right after size()?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1175552759
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
+
 _ re-disable P2D before distributing
 
 _ ortho() behaving differently in P3D vs OPENGL
@@ -140,6 +156,9 @@ _   P3D from createGraphics needs to be marked RGB not ARGB
 _   http://dev.processing.org/bugs/show_bug.cgi?id=530
 _ set modified to true on endDraw() so that image updates properly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=526
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
+_ when drawing into a JAVA2D surface, have to call loadPixels()
+_   to draw it later with P3D (or OPENGL prolly)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
 _ problems with depth buffer and createGraphics with P3D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=482
@@ -226,7 +245,9 @@ _   probably need to integrate over a rolling array of 10 frames or so
 _ frameRate() speeds up temporarily if CPU load drops dramatically
 _   http://dev.processing.org/bugs/show_bug.cgi?id=297
 _   perhaps add a hint(DISABLE_FRAMERATE_DAMPER)
-
+_ size of sketch different in setup() and draw() on linux
+_   make sure that the sketch isn't being sized based on bad insets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=341
 
 point()
 _ gl point stuff is a problem
@@ -825,8 +846,6 @@ _   set(x, y, image) y reversed in openGL
 _   background(image) also broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=91
 _   also textMode(SCREEN)
-_ look into jogl anti-aliasing on osx
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
 _ in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
 _   this way we can also implement breakShape() for opengl
