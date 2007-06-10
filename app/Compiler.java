@@ -406,10 +406,13 @@ public class Compiler implements MessageConsumer {
       if (!path.endsWith(File.separator)) {
         path += File.separator;
       }
-      //System.out.println("path is " + path);
 
       String list[] = folder.list();
       for (int i = 0; i < list.length; i++) {
+        // Skip . and ._ files. Prior to 0125p3, .jar files that had
+        // OS X AppleDouble files associated would cause trouble.
+        if (list[i].startsWith(".")) continue;
+
         if (list[i].toLowerCase().endsWith(".jar") ||
             list[i].toLowerCase().endsWith(".zip")) {
           abuffer.append(sep);
@@ -445,6 +448,7 @@ public class Compiler implements MessageConsumer {
 
       if (pieces[i].toLowerCase().endsWith(".jar") ||
           pieces[i].toLowerCase().endsWith(".zip")) {
+        //System.out.println("checking " + pieces[i]);
         packageListFromZip(pieces[i], table);
 
       } else {  // it's another type of file or directory
