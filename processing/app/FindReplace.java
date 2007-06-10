@@ -57,6 +57,7 @@ public class FindReplace extends JFrame implements ActionListener {
 
   JButton replaceButton;
   JButton replaceAllButton;
+  JButton replaceFindButton;
   JButton findButton;
 
   JCheckBox ignoreCaseBox;
@@ -132,12 +133,14 @@ public class FindReplace extends JFrame implements ActionListener {
 
     // ordering is different on mac versus pc
     if (Base.isMacOS()) {
-      buttons.add(replaceButton = new JButton("Replace"));
       buttons.add(replaceAllButton = new JButton("Replace All"));
+      buttons.add(replaceButton = new JButton("Replace"));
+      buttons.add(replaceFindButton = new JButton("Replace & Find"));
       buttons.add(findButton = new JButton("Find"));
 
     } else {
       buttons.add(findButton = new JButton("Find"));
+      buttons.add(replaceFindButton = new JButton("Replace & Find"));
       buttons.add(replaceButton = new JButton("Replace"));
       buttons.add(replaceAllButton = new JButton("Replace All"));
     }
@@ -169,10 +172,12 @@ public class FindReplace extends JFrame implements ActionListener {
 
     replaceButton.addActionListener(this);
     replaceAllButton.addActionListener(this);
+    replaceFindButton.addActionListener(this);
     findButton.addActionListener(this);
 
     // you mustn't replace what you haven't found, my son
     replaceButton.setEnabled(false);
+    replaceFindButton.setEnabled(false);
 
     // so that typing will go straight to this field
     //findField.requestFocus();
@@ -240,6 +245,10 @@ public class FindReplace extends JFrame implements ActionListener {
     if (source == findButton) {
       find(true);
 
+    } else if (source == replaceFindButton) {
+      replace();
+      find(true);
+
     } else if (source == replaceButton) {
       replace();
 
@@ -284,12 +293,14 @@ public class FindReplace extends JFrame implements ActionListener {
       if (nextIndex == -1) {
         found = false;
         replaceButton.setEnabled(false);
+        replaceFindButton.setEnabled(false);
         //Toolkit.getDefaultToolkit().beep();
         return;
       }
     }
     found = true;
     replaceButton.setEnabled(true);
+    replaceFindButton.setEnabled(true);
     editor.textarea.select(nextIndex, nextIndex + search.length());
   }
 
@@ -307,6 +318,7 @@ public class FindReplace extends JFrame implements ActionListener {
     if (sel.equals(replaceField.getText())) {
       found = false;
       replaceButton.setEnabled(false);
+      replaceFindButton.setEnabled(false);
       return;
     }
 
@@ -317,6 +329,7 @@ public class FindReplace extends JFrame implements ActionListener {
 
     // don't allow a double replace
     replaceButton.setEnabled(false);
+    replaceFindButton.setEnabled(false);
   }
 
 
