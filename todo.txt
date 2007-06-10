@@ -31,7 +31,23 @@ X   moved around constructors (to be on par with other video lib stuff)
 X   cleaned up constant names (i.e. MSVideo -> MS_VIDEO)
 X   added constant for h264 encoding
 _   add documentation
+X find/replace - replace should do auto find next(?)
+X   or have a replace & find button
+X   placing "replace" next to "find" ... (hitting "replace all" by accident) 
+X   have a button "replace & find next"
+X   http://dev.processing.org/bugs/show_bug.cgi?id=68
+X only rebuild sketchbook on "save as" or "rename" of sketch
+X   currently it's rebuilding whenever "save" called too
+X   http://dev.processing.org/bugs/show_bug.cgi?id=357
+X ignore ._ files when reading jar and zip
+X   Ignoring /Users/fry/coconut/processing/build/macosx/work/libraries/opengl/library/._jogl-natives-linux-i586.jar (error in opening zip file)
 
+
+_ xml element needs to be readable from other charsets
+_   same with the other methods like loadStrings()
+_   could also be a way to handle gzip too?
+_   tho charset + gzip would be a problem
+_   hint(ENABLE_AUTO_GUNZIP) or rather hint(DISABLE_AUTO_GUNZIP)
 
 _ look into deleting from p5 bugs db
 
@@ -50,9 +66,6 @@ _     rename main tab (sketch) to "something" (without ".java")
 _     the contents in the files are not the same, but the main-tab is 
 _     showing the contents of the .java tab, so if you press save 
 _     you will overwrite your original code from the main-tab. 
-
-_ show progress bar while rebuilding sketch menu
-_   startup is very slow on g4
 
 _ "find in ref" on XMLElement brings up ref for null (ha)
 
@@ -716,15 +729,11 @@ _   .java files are copied to the root folder as well as the source folder
 
 PDE / Find & Replace
 
-_ find/replace - replace should do auto find next(?)
-_   or have a replace & find button
 _ all around very ugly, fix it up
 _   http://dev.processing.org/bugs/show_bug.cgi?id=67
 _ several tweaks
 _   http://dev.processing.org/bugs/show_bug.cgi?id=68
 _   only enable "find next" in menu after a find has happened
-_   placing "replace" next to "find" ... (hitting "replace all" by accident) 
-_   have a button "replace & find next"
 _ allowing to find & replace over multiple tabs 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=69
 
@@ -802,13 +811,15 @@ _   because there's a dash in the name
 _   and instead only loads StemCell.pde
 _ show progress dialog during export and save
 _ slow save/new because of large sketchbook
-_   only rebuild sketchbook on "save as" or "rename" of sketch
-_   currently it's rebuilding whenever "save" called too
 _   this is a total cluster, the rebuild is being called incessantly
+_   startup is very slow on g4
+_   show progress bar while rebuilding sketch menu?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1162801212
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1141126582
-_   http://dev.processing.org/bugs/show_bug.cgi?id=357
 _   even more of a problem becase set modified set true all the time
+_   in 0125, only rebuilding on rename or save as, but still a problem
+_   don't re-scan all jar files whenever rebuilding sketch menu (cache)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=579
 _ in rebuild sketch menu - disable subfolders working as libraries
 _   if a sketch, don't allow subfolders
 o   or maybe just that libraries must be in the root? 
@@ -1162,9 +1173,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=539
 
 DIST / Linux
 
-_ size of sketch different in setup() and draw() on linux
-_   make sure that the sketch isn't being sized based on bad insets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=341
 _ not being able to make a link to the processing app
 _   argh.. more path and shell issues..
 _ computationally intensive stuff runs really slow inside p5

@@ -498,40 +498,6 @@ public class Sketch {
                                    editor.textarea.getSelectionEnd(),
                                    editor.textarea.getScrollPosition());
 
-        /*
-          // backtrack and don't rename the sketch folder
-          success = newFolder.renameTo(folder);
-          if (!success) {
-            String msg =
-              "Started renaming sketch and then ran into\n" +
-              "nasty trouble. Try to salvage with Copy & Paste\n" +
-              "or attempt a \"Save As\" to see if that works.";
-            Base.showWarning("Serious Error", msg, null);
-          }
-          return;
-        }
-        */
-
-        /*
-        // set the sketch name... used by the pde and whatnot.
-        // the name is only set in the sketch constructor,
-        // so it's important here
-        name = newName;
-
-        code[0].name = newName;
-        code[0].file = mainFile;
-        code[0].program = editor.getText();
-        code[0].save();
-
-        folder = newFolder;
-
-        // get the changes into the sketchbook menu
-        editor.sketchbook.rebuildMenus();
-
-        // reload the sketch
-        load();
-        */
-
         // get the changes into the sketchbook menu
         // (re-enabled in 0115 to fix bug #332)
         editor.sketchbook.rebuildMenus();
@@ -949,55 +915,8 @@ public class Sketch {
                                editor.textarea.getSelectionEnd(),
                                editor.textarea.getScrollPosition());
 
-    /*
-    // copy the entire contents of the sketch folder
-    Base.copyDir(folder, newFolder);
-
-    // change the references to the dir location in SketchCode files
-    for (int i = 0; i < codeCount; i++) {
-      code[i].file = new File(newFolder, code[i].file.getName());
-    }
-    for (int i = 0; i < hiddenCount; i++) {
-      hidden[i].file = new File(newFolder, hidden[i].file.getName());
-    }
-
-    // remove the old sketch file from the new dir
-    code[0].file.delete();
-    // name for the new main .pde file
-    code[0].file = new File(newFolder, newName + ".pde");
-    code[0].name = newName;
-    // write the contents to the renamed file
-    // (this may be resaved if the code is modified)
-    code[0].modified = true;
-    //code[0].save();
-    //System.out.println("modified is " + modified);
-
-    // change the other paths
-    String oldName = name;
-    name = newName;
-    File oldFolder = folder;
-    folder = newFolder;
-    dataFolder = new File(folder, "data");
-    codeFolder = new File(folder, "code");
-
-    // remove the 'applet', 'application', 'library' folders
-    // from the copied version.
-    // otherwise their .class and .jar files can cause conflicts.
-    Base.removeDir(new File(folder, "applet"));
-    Base.removeDir(new File(folder, "application"));
-    //Base.removeDir(new File(folder, "library"));
-
-    // do a "save"
-    // this will take care of the unsaved changes in each of the tabs
-    save();
-
-    // get the changes into the sketchbook menu
-    //sketchbook.rebuildMenu();
-    // done inside Editor instead
-
-    // update the tabs for the name change
-    editor.header.repaint();
-    */
+    // Name changed, rebuild the sketch menus
+    editor.sketchbook.rebuildMenusAsync();
 
     // let Editor know that the save was successful
     return true;
@@ -2587,7 +2506,6 @@ public class Sketch {
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;
-      //System.out.println("checking piece " + pieces[i]);
 
       // is it a jar file or directory?
       if (pieces[i].toLowerCase().endsWith(".jar") ||
