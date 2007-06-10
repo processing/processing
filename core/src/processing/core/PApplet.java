@@ -2863,57 +2863,109 @@ public class PApplet extends Applet
   }
 
 
-  static public final float max(float a, float b) {
-    //return Math.max(a, b);
+  static public final int max(int a, int b) {
     return (a > b) ? a : b;
   }
 
-  static public final float max(float a, float b, float c) {
-    //return Math.max(a, Math.max(b, c));
+  static public final float max(float a, float b) {
+    return (a > b) ? a : b;
+  }
+
+
+  static public final int max(int a, int b, int c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
 
-  static public final float min(float a, float b) {
-    //return Math.min(a, b);
+  static public final float max(float a, float b, float c) {
+    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+  }
+
+
+  /**
+   * Find the maximum value in an array.
+   * @param list the source array
+   * @return The maximum value, or 0 if the array is length zero.
+   */
+  static public final int max(int[] list) {
+    if (list.length == 0) {
+      return 0;
+    }
+    int max = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] > max) max = list[i];
+    }
+    return max;
+  }
+
+  /**
+   * Find the maximum value in an array.
+   * @param list the source array
+   * @return The maximum value, or Float.NaN if the array is length zero.
+   */
+  static public final float max(float[] list) {
+    if (list.length == 0) {
+      return Float.NaN;
+    }
+    float max = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] > max) max = list[i];
+    }
+    return max;
+  }
+
+
+  static public final int min(int a, int b) {
     return (a < b) ? a : b;
   }
 
+  static public final float min(float a, float b) {
+    return (a < b) ? a : b;
+  }
+
+
+  static public final int min(int a, int b, int c) {
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  }
+
   static public final float min(float a, float b, float c) {
-    //return Math.min(a, Math.min(b, c));
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
 
 
-  static public final float lerp(float start, float stop, float amt) {
-    return start + (stop-start) * amt;
+  /**
+   * Find the minimum value in an array.
+   * @param list the source array
+   * @return The minimum value, or 0 if the array is length zero.
+   */
+  static public final int min(int[] list) {
+    if (list.length == 0) {
+      return 0;
+    }
+    int min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
+  }
+  /**
+   * Find the minimum value in an array.
+   * @param list the source array
+   * @return The minimum value, or Float.NaN if the array is length zero.
+   */
+  static public final float min(float[] list) {
+    if (list.length == 0) {
+      return Float.NaN;
+    }
+    float min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
   }
 
-  /**
-   * @deprecated Used only in release 0119, will be removed.
-   */
-  /*
-  static public final float unlerp(float start, float stop, float value) {
-    return (value - start) / (stop - start);
-  }
-  */
 
-  /**
-   * Normalize a value to exist between 0 and 1 (inclusive).
-   * Mathematically the opposite of lerp(), figures out what proportion
-   * a particular value is relative to start and stop coordinates.
-   */
-  static public final float norm(float value, float start, float stop) {
-    return (value - start) / (stop - start);
-  }
-
-  /**
-   * Convenience function to map a variable from one coordinate space
-   * to another. Equivalent to unlerp() followed by lerp().
-   */
-  static public final float map(float value,
-                                float istart, float istop,
-                                float ostart, float ostop) {
-    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+  static public final int constrain(int amt, int low, int high) {
+    return (amt < low) ? low : ((amt > high) ? high : amt);
   }
 
   static public final float constrain(float amt, float low, float high) {
@@ -2921,64 +2973,32 @@ public class PApplet extends Applet
   }
 
 
-  static public final int max(int a, int b) {
-    return (a > b) ? a : b;
-  }
-
-  static public final int max(int a, int b, int c) {
-    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
-  }
-
-  static public final int min(int a, int b) {
-    return (a < b) ? a : b;
-  }
-
-  static public final int min(int a, int b, int c) {
-    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
-  }
-
-  static public final int constrain(int amt, int low, int high) {
-    return (amt < low) ? low : ((amt > high) ? high : amt);
-  }
-
-
   static public final float sin(float angle) {
-    //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.sin(angle);
   }
 
   static public final float cos(float angle) {
-    //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.cos(angle);
   }
 
   static public final float tan(float angle) {
-    //if ((g != null) && (g.angleMode == DEGREES)) angle *= DEG_TO_RAD;
     return (float)Math.tan(angle);
   }
 
 
   static public final float asin(float value) {
-    //return ((g != null) && (g.angleMode == DEGREES)) ?
-    //((float)Math.asin(value) * RAD_TO_DEG) : (float)Math.asin(value);
     return (float)Math.asin(value);
   }
 
   static public final float acos(float value) {
-    //return ((g != null) && (g.angleMode == DEGREES)) ?
-    //((float)Math.acos(value) * RAD_TO_DEG) : (float)Math.acos(value);
     return (float)Math.acos(value);
   }
 
   static public final float atan(float value) {
-    //return ((g != null) && (g.angleMode == DEGREES)) ?
-    // ((float)Math.atan(value) * RAD_TO_DEG) : (float)Math.atan(value);
     return (float)Math.atan(value);
   }
 
   static public final float atan2(float a, float b) {
-    //return ((g != null) && (g.angleMode == DEGREES)) ?
-    //((float)Math.atan2(a, b) * RAD_TO_DEG) : (float)Math.atan2(a, b);
     return (float)Math.atan2(a, b);
   }
 
@@ -3021,6 +3041,30 @@ public class PApplet extends Applet
   static public final float dist(float x1, float y1, float z1,
                                  float x2, float y2, float z2) {
     return sqrt(sq(x2-x1) + sq(y2-y1) + sq(z2-z1));
+  }
+
+
+  static public final float lerp(float start, float stop, float amt) {
+    return start + (stop-start) * amt;
+  }
+
+  /**
+   * Normalize a value to exist between 0 and 1 (inclusive).
+   * Mathematically the opposite of lerp(), figures out what proportion
+   * a particular value is relative to start and stop coordinates.
+   */
+  static public final float norm(float value, float start, float stop) {
+    return (value - start) / (stop - start);
+  }
+
+  /**
+   * Convenience function to map a variable from one coordinate space
+   * to another. Equivalent to unlerp() followed by lerp().
+   */
+  static public final float map(float value,
+                                float istart, float istop,
+                                float ostart, float ostop) {
+    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
   }
 
 
@@ -4160,23 +4204,6 @@ public class PApplet extends Applet
   }
 
 
-  static public InputStream openStream(File file) {
-    try {
-      return new FileInputStream(file);
-
-    } catch (IOException e) {
-      if (file == null) {
-        throw new RuntimeException("File passed to openStream() was null");
-
-      } else {
-        e.printStackTrace();
-        throw new RuntimeException("Couldn't openStream() for " +
-                                   file.getAbsolutePath());
-      }
-    }
-  }
-
-
   /**
    * Simplified method to open a Java InputStream.
    * <P>
@@ -4336,6 +4363,45 @@ public class PApplet extends Applet
       e.printStackTrace();
     }
     return null;
+  }
+
+
+  static public InputStream openStream(File file) {
+    try {
+      return new FileInputStream(file);
+
+    } catch (IOException e) {
+      if (file == null) {
+        throw new RuntimeException("File passed to openStream() was null");
+
+      } else {
+        e.printStackTrace();
+        throw new RuntimeException("Couldn't openStream() for " +
+                                   file.getAbsolutePath());
+      }
+    }
+  }
+
+
+  public InputStream openStreamGZ(String filename) {
+    try {
+      return new GZIPInputStream(openStream(filename));
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new RuntimeException("Couldn't openStreamGZ() for " +
+                                 filename);
+    }
+  }
+
+
+  static public InputStream openStreamGZ(File file) {
+    try {
+      return new GZIPInputStream(openStream(file));
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new RuntimeException("Couldn't openStreamGZ() for " +
+                                 file.getAbsolutePath());
+    }
   }
 
 
