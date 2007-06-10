@@ -208,8 +208,13 @@ public class PGraphicsOpenGL extends PGraphics3D {
    */
   protected void allocate() {
     if (canvas == null) {
-      //GLCapabilities capabilities = new GLCapabilities();
-      //canvas = GLDrawableFactory.getFactory().createGLCanvas(capabilities);
+      /*
+      // how to integrate this properly?
+      GLCapabilities capabilities = new GLCapabilities();
+      capabilities.setSampleBuffers(true);
+      capabilities.setNumSamples(4); //2);
+      canvas = new GLCanvas(capabilities);
+      */
       canvas = new GLCanvas();
 
       //System.out.println("creating PGraphicsOpenGL 3");
@@ -468,9 +473,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
     super.handle_lighting();
     for (int i = vertex_start; i < vertex_end; i++) {
       float v[] = vertices[i];
-      v[R] = min(ONE, v[R] + v[SPR]);
-      v[G] = min(ONE, v[G] + v[SPG]);
-      v[B] = min(ONE, v[B] + v[SPB]);
+      v[R] = min(1, v[R] + v[SPR]);
+      v[G] = min(1, v[G] + v[SPG]);
+      v[B] = min(1, v[B] + v[SPB]);
     }
   }
 
@@ -617,7 +622,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
                          c[U] * uscale, c[V] * vscale);
             } else {
               if (reasonablePoint(a[X], a[Y], a[Z]) &&
-                  reasonablePoint(b[X], b[Y], b[Z]) && 
+                  reasonablePoint(b[X], b[Y], b[Z]) &&
                   reasonablePoint(c[X], c[Y], c[Z])) {
                 raw.fill(ar, ag, ab, a[A]);
                 raw.vertex(a[X], a[Y], a[U] * uscale, a[V] * vscale);
@@ -661,7 +666,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
             }
           } else {
             if (reasonablePoint(a[X], a[Y], a[Z]) &&
-                reasonablePoint(b[X], b[Y], b[Z]) && 
+                reasonablePoint(b[X], b[Y], b[Z]) &&
                 reasonablePoint(c[X], c[Y], c[Z])) {
               raw.fill(ar, ag, ab, a[A]);
               raw.vertex(a[X], a[Y]);
@@ -680,9 +685,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }
     report("render_triangles out");
   }
-  
-  
-  // TODO bad clipping, replace me 
+
+
+  // TODO bad clipping, replace me
   private boolean reasonablePoint(float x, float y, float z) {
     return ((z < 1) && (x > -width) && (x < width*2) && (y > -height) && (y < height*2));
   }
@@ -1051,7 +1056,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       graphics.setFont(textFontNative);
 
       // get the metrics info
-      textFontNativeMetrics = graphics.getFontMetrics(textFontNative);      
+      textFontNativeMetrics = graphics.getFontMetrics(textFontNative);
     }
   }
 
@@ -1060,19 +1065,19 @@ public class PGraphicsOpenGL extends PGraphics3D {
     if ((textMode != SHAPE) || (textFontNative == null)) {
       return super.textWidthImpl(buffer, start, stop);
     }
-    
+
     /*
     // maybe should use one of the newer/fancier functions for this?
     int length = stop - start;
     return textFontNativeMetrics.charsWidth(buffer, start, length);
     */
     Graphics2D graphics = (Graphics2D) canvas.getGraphics();
-    // otherwise smaller sizes will be totally crapped up 
+    // otherwise smaller sizes will be totally crapped up
     // seems to need to be before the getFRC, but after the canvas.getGraphics
     // (placing this inside textSize(), even though it was called, wasn't working)
-    graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, 
+    graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
             RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-    
+
     FontRenderContext frc = graphics.getFontRenderContext();
     GlyphVector gv;
 
@@ -1110,8 +1115,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
       super.textCharImpl(ch, x, y);
     }
   }
-  
-  
+
+
   /**
    * This uses the tesselation functions from GLU to handle triangulation
    * to convert the character into a series of shapes.
@@ -1168,7 +1173,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     double vertex[];
 
     final boolean DEBUG_OPCODES = false; //true;
-    
+
     while (!iter.isDone()) {
       int type = iter.currentSegment(textPoints);
       switch (type) {
@@ -1873,7 +1878,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       raw.vertex(0, 0);
       raw.vertex(width, 0);
       raw.vertex(0, height);
-      
+
       raw.vertex(width, 0);
       raw.vertex(width, height);
       raw.vertex(0, height);
@@ -1890,6 +1895,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void smooth() {
+    gl.glEnable(GL.GL_MULTISAMPLE);
     gl.glEnable(GL.GL_POINT_SMOOTH);
     gl.glEnable(GL.GL_LINE_SMOOTH);
     gl.glEnable(GL.GL_POLYGON_SMOOTH);
@@ -1898,6 +1904,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void noSmooth() {
+    gl.glDisable(GL.GL_MULTISAMPLE);
     gl.glDisable(GL.GL_POINT_SMOOTH);
     gl.glDisable(GL.GL_LINE_SMOOTH);
     gl.glDisable(GL.GL_POLYGON_SMOOTH);
