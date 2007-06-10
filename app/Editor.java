@@ -479,7 +479,9 @@ public class Editor extends JFrame
     listener.applyPreferences();
 
     // in case moved to a new location
-    sketchbook.rebuildMenus();
+    // For 0125, changing to async version (to be implemented later)
+    //sketchbook.rebuildMenus();
+    sketchbook.rebuildMenusAsync();
   }
 
 
@@ -1739,8 +1741,11 @@ public class Editor extends JFrame
         message(EMPTY);
       }
       // rebuild sketch menu in case a save-as was forced
+      // Disabling this for 0125, instead rebuild the menu inside
+      // the Save As method of the Sketch object, since that's the
+      // only one who knows whether something was renamed.
       //sketchbook.rebuildMenus();
-      sketchbook.rebuildMenusAsync();
+      //sketchbook.rebuildMenusAsync();
 
     } catch (Exception e) {
       // show the error as a message in the window
@@ -1765,7 +1770,10 @@ public class Editor extends JFrame
           try {
             if (sketch.saveAs()) {
               message("Done Saving.");
-              sketchbook.rebuildMenusAsync();
+              // Disabling this for 0125, instead rebuild the menu inside
+              // the Save As method of the Sketch object, since that's the
+              // only one who knows whether something was renamed.
+              //sketchbook.rebuildMenusAsync();
             } else {
               message("Save Cancelled.");
             }

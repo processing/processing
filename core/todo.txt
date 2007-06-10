@@ -72,6 +72,11 @@ X added min() and max() for float and int arrays
 _   need to update reference
 X   moved around min/max functions
 
+_ loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
+_   this might be a good solution for dealing with the differences
+_   with loadBytes(), they can use gzipInput (or loadBytesGZ?)
+_   although what does openStream do? (doesn't do auto?)
+
 _ add gluegen-rt back to the applet export
 _   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
 
