@@ -810,29 +810,37 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   static int maxTextureSize;
 
+  int[] deleteQueue = new int[10];
+  int deleteQueueCount = 0;
+
   class ImageCache {
     int tindex = -1;  // not yet ready
     int tpixels[];
     IntBuffer tbuffer;
     int twidth, theight;
 
-    /*
-    public ImageCache(PImage image) {
-      tindex = -1;  // mark the texture as uninited
-      prepare(image);
+    int[] tp;
 
-      // first-time binding of entire texture
-      gl.glEnable(GL.GL_TEXTURE_2D);
-
-      gl.glDisable(GL.GL_TEXTURE_2D);
+    protected void finalize() {
+      if (deleteQueue.length == deleteQueueCount) {
+        deleteQueue = (int[]) PApplet.expand(deleteQueue);
+      }
+      if (tindex != -1) {
+        deleteQueue[deleteQueueCount++] = tindex;
+      }
     }
-    */
 
 
     /**
      * Generate a texture ID and do the necessary bitshifting for the image.
      */
     public void rebind(PImage source) {
+      if (deleteQueueCount != 0) {
+        //gl.glDeleteTextures(1, new int[] { tindex }, 0);
+        gl.glDeleteTextures(deleteQueueCount, deleteQueue, 0);
+        deleteQueueCount = 0;
+      }
+
       //System.out.println("rebinding texture for " + source);
       if (tindex != -1) {
         // free up the old memory
@@ -842,6 +850,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       int[] tmp = new int[1];
       gl.glGenTextures(1, tmp, 0);
       tindex = tmp[0];
+      //System.out.println("got index " + tindex);
 
       // bit shifting this might be more efficient
       int width2 = nextPowerOfTwo(source.width);
