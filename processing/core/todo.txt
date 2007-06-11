@@ -71,6 +71,22 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=564
 X added min() and max() for float and int arrays
 _   need to update reference
 X   moved around min/max functions
+X opengl image memory leaking
+X   when creating a new PImage on every frame, slurps a ton of memory
+X   workaround is to write the code properly, but suggests something bad
+X   http://dev.processing.org/bugs/show_bug.cgi?id=150
+
+new bugs (organize later)
+_ opengl crashes when depth sorting more than two textured shapes
+_   http://dev.processing.org/bugs/show_bug.cgi?id=560
+_ replaceAll() not supported by 1.1
+_   http://dev.processing.org/bugs/show_bug.cgi?id=561
+
+ewjordan stuff
+_ Polygons parallel to z-axis not always filling with nonzero x or y
+_   http://dev.processing.org/bugs/show_bug.cgi?id=547
+_ strange texture warping in P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=103
 
 _ loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
 _   this might be a good solution for dealing with the differences
@@ -897,9 +913,6 @@ _   otherwise can crash the whole browser
 _ get rid of some of the sillier IntBuffer stuff where it's not needed
 _   use the version of the prototypes that use an offset into the array
 _   need to test performance either way
-_ when creating a new PImage on every frame, slurps a ton of memory
-_   workaround is to write the code properly, but suggests something bad
-_   http://dev.processing.org/bugs/show_bug.cgi?id=150
 _ make a note about the anti-aliasing types in the faq
 _   polygon vs line etc.. may want to enable lines but disable polys
 _ invocationtargetexception in gl with aioobe:
