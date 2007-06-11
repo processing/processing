@@ -42,6 +42,16 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=357
 X ignore ._ files when reading jar and zip
 X   Ignoring /Users/fry/coconut/processing/build/macosx/work/libraries/opengl/library/._jogl-natives-linux-i586.jar (error in opening zip file)
 
+new bugs
+_ huge jar files from 0124 export
+_   http://dev.processing.org/bugs/show_bug.cgi?id=541
+_ if someone has monaco disabled in font book, the app won't start
+_   http://dev.processing.org/bugs/show_bug.cgi?id=562
+
+
+0126
+_ do the big move to multiple sketches open
+_ finish up debian package support (see the processing.mess folder)
 
 _ xml element needs to be readable from other charsets
 _   same with the other methods like loadStrings()
