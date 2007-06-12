@@ -821,6 +821,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     int[] tp;
 
+
+    /**
+     * Delete any texture memory that had been allocated.
+     * Added for 0125 to deal with memory problems reported in Bug #150.
+     */
     protected void finalize() {
       if (deleteQueue.length == deleteQueueCount) {
         deleteQueue = (int[]) PApplet.expand(deleteQueue);
