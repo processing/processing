@@ -1,5 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="Heads Up Display Slider" by="cw wang">
+        <location>http://cwwang.com/wordpress/2007/06/12/hud-slider-class/</location>
+        <date>12 Jun &apos;07</date>
+    </software>
+    <software name="Configurator 1.0 : Intelligent Audio Reactive 3D" by="movax : kristopher collins">
+        <location>http://www.youtube.com/watch?v=oyF8ZSa5Amo</location>
+        <date>11 Jun &apos;07</date>
+    </software>
+    <software name="Dust &amp; Scratches" by="Petros Raitsidis">
+        <location>http://www.postdivision.net/lab/dustandscratches/index.php</location>
+        <date>08 Jun &apos;07</date>
+    </software>
+    <software name="Boom2" by="David (Doswa)">
+        <location>http://doswa.com/?p=viewwork&amp;which=Boom2</location>
+        <date>07 Jun &apos;07</date>
+    </software>
+    <software name="Boom" by="David (Doswa)">
+        <location>http://doswa.com/?p=viewwork&amp;which=Boom</location>
+        <date>06 Jun &apos;07</date>
+    </software>
+    <software name="eMn4" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/emn4</location>
+        <date>05 Jun &apos;07</date>
+    </software>
+    <software name="UGIS [Urban Graffiti Interactive Instalation]" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/ugis</location>
+        <date>05 Jun &apos;07</date>
+    </software>
+    <software name="processing/sw3d" by="Marcello Falco">
+        <location>http://www.sw3d.net/display.php?model=Jeckyll+processing</location>
+        <date>05 Jun &apos;07</date>
+    </software>
+    <software name="Sasanka" by="kof">
+        <location>http://weirdplace.wz.cz/sasanka/</location>
+        <date>04 Jun &apos;07</date>
+    </software>
+    <software name="www.saitensprung-online.ch" by="Martin Bircher and Eva Borner">
+        <location>http://www.mar.li/works.php#saitensprung</location>
+        <date>01 Jun &apos;07</date>
+    </software>
+    <software name="Isochords" by="Tony Bergstrom">
+        <location>http://social.cs.uiuc.edu/projects/isochords.html</location>
+        <date>01 Jun &apos;07</date>
+    </software>
     <software name="ColorWrist" by="Jean-Baptiste Labrune">
         <location>http://insitu.lri.fr/~labrune/blog/2007/05/20/colorwrist-wireless-painting-with-witilt/</location>
         <date>21 May &apos;07</date>

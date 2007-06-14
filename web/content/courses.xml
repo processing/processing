@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
+        <date>April-June 2007</date>
+        <institution>The Art Institutes international Minnesota</institution>
+        <title>Special Topics in Interactive Media Design: Alternative Input Devices and Human-Computer Interaction</title>
+        <description>This is a seminar class that examines the design issues around new and uncommon modes of interactivity. It introduces students to Processing as a tool for data manipulation and visualization. The course also presents Processing and Arduino for experimenting with input/output hardware.</description>
+        <contact>
+            <name>Tim Armato</name>
+            <email>tarmato at aii dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Class Home Page</title>
+                <url>http://tma362.aisites.com/IM4490/ST-index.html</url>
+            </link>
+            <link>
+                <title>Class Announcements</title>
+                <url>http://tma362.aisites.com/</url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
         <date>Mayo 2007</date>
         <institution>I.U.N.A. Multimedia</institution>
         <title>Processing: programación para el arte interactivo. Net.Art e instalaciones interactivas con nuevas tecnologías.</title>
@@ -19,16 +51,16 @@
                 <url>http://www.emiliano-causa.com.ar/</url>
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
         </links>
     </course>

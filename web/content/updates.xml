@@ -617,7 +617,18 @@ exhibition</a>.</description>
 
 	<item>
                 <date>24 May 07</date>
-                <description>The Minim sound library by Damien de Fede added to the <a href="http://processing.org/reference/libraries/">contributed libraries</a>.</description>
+                <description>New software from Moving Brands added to the <a href="http://processing.org/exhibition/">exhibition</a> and the Minim sound library by Damien de Fede added to the <a href="http://processing.org/reference/libraries/">contributed libraries</a>.</description>
         </item>
+
+	<item>
+                <date>1 June 2007</date>
+                <description>The ImageAdjuster library from Dave Bollinger and the surfaceLib library from Eskimoblood added to the list of <a href="http://processing.org/reference/libraries/">contributed libraries</a>.</description>
+        </item>
+
+	<item>
+                <date>14 June 07</date>
+                <description>New software from Usman Haque and Adam Somlai-Fischer added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+	
 
 </updates>
