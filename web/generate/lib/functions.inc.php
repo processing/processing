@@ -521,7 +521,7 @@ function xml_read( $xmlSource, $from_file=TRUE )
 // chars() converts any text to html with entities
 
 
-/*function chars ( $plain , $endings=TRUE )
+function charsUTF8 ( $plain , $endings=TRUE )
 {
 	$plain = seems_utf8($plain) ? utf8_decode($plain) : $plain;
 	
@@ -535,7 +535,7 @@ function xml_read( $xmlSource, $from_file=TRUE )
 	if ($endings) $plain = preg_replace( '/\r\n|\r|\n/', '<br />', $plain);
 	
 	return $plain;
-}*/
+}
 
 function seems_utf8($Str)
 {
