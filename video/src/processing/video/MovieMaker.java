@@ -52,6 +52,9 @@ import processing.core.*;
  * Library to create a QuickTime movie from a Processing pixel array.
  * Written by <A HREF="http://www.shiffman.net">Daniel Shiffman</A>.
  * Thanks to Dan O'Sullivan and Shawn Van Every.
+ * <BR> <BR>
+ * Please note that some constructors and variable names were altered
+ * slightly when the library was added to the Processing distribution.
  * <PRE>
  * // Declare MovieMaker object
  * MovieMaker mm;
@@ -62,16 +65,17 @@ import processing.core.*;
  *   // Create MovieMaker object with size, filename,
  *   // compression codec and quality, framerate
  *   mm = new MovieMaker(this, width, height, "drawing.mov",
- *                       MovieMaker.H263, MovieMaker.HIGH,30);
+ *                       MovieMaker.H263, MovieMaker.HIGH, 30);
  *   background(160, 32, 32);
  * }
  *
  * void draw() {
- *   stroke(7,146,168);
+ *   stroke(7, 146, 168);
  *   strokeWeight(4);
+ *
  *   // Draw if mouse is pressed
  *   if (mousePressed) {
- *     line(pmouseX,pmouseY,mouseX,mouseY);
+ *     line(pmouseX, pmouseY, mouseX, mouseY);
  *   }
  *
  *   // Add window's pixels to movie
