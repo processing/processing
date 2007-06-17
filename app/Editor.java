@@ -1310,6 +1310,10 @@ public class Editor extends JFrame
   public void handleStop() {  // called by menu or buttons
     if (presenting) {
       doClose();
+    } else if (runtime.window != null) {
+      // When run externally, kill the applet window,
+      // otherwise things may not stop properly with libraries.
+      doClose();
     } else {
       doStop();
     }
