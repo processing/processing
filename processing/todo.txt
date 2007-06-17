@@ -19,18 +19,20 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=515
 X preprocessor cannot handle L or l added to 'long' values
 X   http://dev.processing.org/bugs/show_bug.cgi?id=492
 X change constructors for Capture, also framerate to frameRate
-_   need to update reference
+X   need to update reference
+_   need to update example to use proper ordering
 X re-architect svg to properly inherit fill/stroke/etc from parents
 X   <g> object can specify fill/stroke for everyone below
 X   need to discern between having a fill specified and one not being present
 
 
-0125p3
+0125p3 (in progress)
 _ moviemaker
 X   moved around constructors (to be on par with other video lib stuff)
 X   cleaned up constant names (i.e. MSVideo -> MS_VIDEO)
 X   added constant for h264 encoding
 _   add documentation
+_   add() or addFrame()?
 X find/replace - replace should do auto find next(?)
 X   or have a replace & find button
 X   placing "replace" next to "find" ... (hitting "replace all" by accident) 
@@ -41,6 +43,16 @@ X   currently it's rebuilding whenever "save" called too
 X   http://dev.processing.org/bugs/show_bug.cgi?id=357
 X ignore ._ files when reading jar and zip
 X   Ignoring /Users/fry/coconut/processing/build/macosx/work/libraries/opengl/library/._jogl-natives-linux-i586.jar (error in opening zip file)
+X look into deleting from p5 bugs db
+X stop button kills the sketch window when running externally
+X in Capture, if user cancels prompt, throws a '-128,userCanceledErr'
+X   in which case, need to return null (or ""?) for the prompt
+X   which will also just give you the last camera
+X   should it be new Camera(PROMPT);
+o when passing in 'null' as the capture, dialog pops up fine
+o   but the applet craps out after a few seconds (pinwheel spin)
+X   can't confirm this one
+
 
 new bugs
 _ huge jar files from 0124 export
@@ -51,7 +63,12 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=562
 
 0126
 _ do the big move to multiple sketches open
+
+0127
+_ dynamic tools menu (requires moving files around)
+_   this means can integrate the autoformat stuff
 _ finish up debian package support (see the processing.mess folder)
+
 
 _ xml element needs to be readable from other charsets
 _   same with the other methods like loadStrings()
@@ -59,7 +76,6 @@ _   could also be a way to handle gzip too?
 _   tho charset + gzip would be a problem
 _   hint(ENABLE_AUTO_GUNZIP) or rather hint(DISABLE_AUTO_GUNZIP)
 
-_ look into deleting from p5 bugs db
 
 _ ? doesn't work with find in reference
 _   actually came up as 'null'
@@ -168,15 +184,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=396
 _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
 
-official instructions for removing winvdig
-from http://www.videoscript.com/forum/viewtopic.php?t=21
-First try to Uninstall WinVDIG from the Control Panel. Add/Remove Software.
-If this does not work, or you wish to manually uninstall WinVDIG, try the following steps:
-Remove VsVDIG.qtx (located in System32\QuickTime).
-Remove VsDump.ax (located in System32).
-Delete Program Files\WinVDIG
-Restart you system 
-
 _ don't reload sketch on "save as"
 _   this can result in loss of data
 _   http://dev.processing.org/bugs/show_bug.cgi?id=433
@@ -245,9 +252,6 @@ _   or also add a method for getting the vectors?
 
 _ when running externally, set window frame title to the sketch name
 _   is this only a problem on macosx? 
-
-_ when drawing large video, the two triangles for the rect are out of sync
-_   only shows up in P3D
 
 
 processing wish list 
@@ -619,8 +623,6 @@ _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
 _   to overwrite. i.e. make a change and save in external editor,
 _   don't actually 
-_ stop button won't kill a video sketch (bug 150 example does this) 
-_   although ESC seems to work? (not sure, didn't test)
 _ run/stop button highlight is almost completely broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=396
 _ when running with external editor, hide the editor text area
@@ -1032,6 +1034,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=496
 _ figure out what's up with the qt error handler
 _   is this what's preventing the errors from being caught properly?
 _   shutting these off for 0116 so hopefully the messages improve
+_   (could this be a mac issue with errors not making it through?)
 _ need to prevent multiple QTSession open or close
 _   static method shared across the lib, or some such
 _ reading movie is really really slow (2-3 fps)
@@ -1041,28 +1044,27 @@ _ Movie needs the crop() functions ala Capture
 _ tearing and incomplete updates on capture?
 _   putting read() inside draw() seems to eliminate this?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=114
-_ pause and framerate aren't working
+_   when drawing large video, the two triangles for the rect are out of sync
+_     only shows up in P3D
+_ pause and frameRate aren't working
 _   framerate does set the frequency which movieEvent will be called, 
 _   but it is not setting the "available" field corrrectly. 
+_     in fact, speed() should be used to set the rate, not frameRate
 _   sketch .zip file in casey's email message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=370
 _ wrong device name for video capture will cause a crash
-_ when passing in 'null' as the capture, dialog pops up fine
-_   but the applet craps out after a few seconds (pinwheel spin)
 _ couldn't get req'd component also happens when the capture isn't ready
 _   may also mean that no camera is plugged in
 _   also, don't mention winvdig on the mac
-_ if user cancels prompt, throws a '-128,userCanceledErr'
-_   in which case, need to return null (or ""?) for the prompt
-_   which will also just give you the last camera
-_   should it be new Camera(PROMPT);
 _ audio stops working after two seconds
 _   http://dev.processing.org/bugs/show_bug.cgi?id=277
-_ or audio won't stop even after hitting stop
 _ include a separate video class to handle just playback
 _   video playback can be much faster if not messing with pixels
 _   could instead use texsubimage in opengl, etc
 _   only supports tint() (to set alpha or color) and drawing? just drawing?
+_ stop button won't kill a video sketch (bug 150 example does this) 
+X   although ESC seems to work? (not sure, didn't test)
+_   or audio won't stop even after hitting stop
 
 
 LIBRARIES / Serial

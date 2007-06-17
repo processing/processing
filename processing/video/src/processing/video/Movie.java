@@ -1,10 +1,9 @@
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PMovie - reading from video files
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or

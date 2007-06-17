@@ -28,10 +28,23 @@ Throwing out the baby with the bathwater.
   Capture(PApplet parent, int width, int height, int rate)
   though we'll be leaving it in because it was used so heavily.
 
-+ Changing key command to instead use ctrl/cmd + alt + left/right, 
-  identical to Firefox on Mac, PC and Linux. Also fixes a bug
-  that caused French keyboards to have problems since 0123.
-  http://dev.processing.org/bugs/show_bug.cgi?id=480
++ The split() method has been altered to avoid inconsistency. In fact,
+  it has split itself into two methods. Har har har.
+  split(String s), has been removed, use splitTokens(String s) instead.
+  split(String s, char c) remains unchanged.
+  split(String s, String delim) is now splitTokens(String s, String delim)
+  The new model is that split() breaks a String into pieces given a single
+  delmiter, which can be a single character or many characters. For instance,
+  split("Something<BR>in<BR><BR>HTML.", "<BR>") 
+  now produces the array "Something", "in", "", "HTML". 
+  The split() method breaks the String whenever it sees the delimiter, 
+  so a <BR> next to another <BR> produces an empty String. 
+  On the other hand, splitTokens() takes a list of possible delimiters, 
+  and will consume one or more of any of them. For instance:
+  splitTokens("really, messed ,up with ,,, commas,", ", ");
+  will produce the array "really", "messed", "up", "with", "commas".
+  Because any group of comma or space characters (and in any order) 
+  will simply be consumed as a single break.
 
 + Blending modes have been finalized for 1.0, thanks to the help
   of Dave Bollinger, who contributed code to complete the set:
@@ -41,7 +54,15 @@ Throwing out the baby with the bathwater.
 + At Casey's urging, the "Color Picker" is now called the 
   "Color Selector". 
 
++ The constant CENTER_RADIUS is now simply RADIUS. Both still work, 
+  but CENTER_RADIUS should be avoided.
+
 [ bug fixes ]
+
++ Changing the shortcut keys for switching tabs to instead use 
+  ctrl/cmd + alt + left/right, identical to Firefox on Mac, PC and Linux. 
+  Also fixes a bug that caused French keyboards to have problems since 0123.
+  http://dev.processing.org/bugs/show_bug.cgi?id=480
 
 + Properly refresh code when using an external editor (regression)
   http://dev.processing.org/bugs/show_bug.cgi?id=515
