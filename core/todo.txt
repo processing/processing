@@ -30,6 +30,7 @@ _   remove CENTER_RADIUS from any p5 code (i.e. examples)
 X split() inconsistency (emailed casey, will discuss later)
 X   make split(String, String) behave like String.split(String)
 X   and make current split(String) into splitTokens(String)
+X   that means split(String) no longer exists
 _   add splitTokens() documentation
 _   document new version of split() and regexp
 _   should we mention String.split?
@@ -63,13 +64,13 @@ X   or textAlign(LEFT, MIDDLE); -> this one seems best
 X   add reference for new param, and update keywords.txt
 X given to andy
 
-0125pX (will be 3)
+0125p3 (in progress)
 X PImage.save() method is not working with get()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=558
 X NullPointerException in Create Font with "All Characters" enabled 
 X   http://dev.processing.org/bugs/show_bug.cgi?id=564
 X added min() and max() for float and int arrays
-_   need to update reference
+X   need to update reference
 X   moved around min/max functions
 X opengl image memory leaking
 X   when creating a new PImage on every frame, slurps a ton of memory
@@ -77,6 +78,9 @@ X   workaround is to write the code properly, but suggests something bad
 X   http://dev.processing.org/bugs/show_bug.cgi?id=150
 X registerSize() was registering as pre() instead
 X   http://dev.processing.org/bugs/show_bug.cgi?id=582
+_ set() doesn't bounds check
+_   this shouldn't actually be the case
+_   http://dev.processing.org/bugs/show_bug.cgi?id=522
 
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468
@@ -171,9 +175,6 @@ if ((nextPress == null) ||
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
-
-_ set() doesn't bounds check
-_   http://dev.processing.org/bugs/show_bug.cgi?id=522
 
 _ add to open() reference problems with mac
 _   need to use the 'open' command on osx
