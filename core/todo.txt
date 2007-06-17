@@ -75,6 +75,11 @@ X opengl image memory leaking
 X   when creating a new PImage on every frame, slurps a ton of memory
 X   workaround is to write the code properly, but suggests something bad
 X   http://dev.processing.org/bugs/show_bug.cgi?id=150
+X registerSize() was registering as pre() instead
+X   http://dev.processing.org/bugs/show_bug.cgi?id=582
+
+_ PGraphics problem with fillColor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=468
 
 new bugs (organize later)
 _ opengl crashes when depth sorting more than two textured shapes
@@ -92,6 +97,28 @@ _ loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
 _   this might be a good solution for dealing with the differences
 _   with loadBytes(), they can use gzipInput (or loadBytesGZ?)
 _   although what does openStream do? (doesn't do auto?)
+
+_ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
+_   images with 0x00 in their high bits being drawn transparent
+_   also if transparency set but RGB is setting, still honors transparency
+_   http://dev.processing.org/bugs/show_bug.cgi?id=351
+_ tint() and noTint() switching problem in P2D
+_   this should be a quick fix
+_   http://dev.processing.org/bugs/show_bug.cgi?id=222
+_ related to the fill bugs: when fill is identical, no fill applied
+_   actually tint() should take over for fill as per-vertex color
+_   when textured images are being used
+_   http://dev.processing.org/bugs/show_bug.cgi?id=169
+_ tint() should set texture color, fill() is ignored with textures
+_ fix tint() for PGraphics3 (what could be wrong?)
+_   tint() honoring alpha but not colored tint
+_   maybe not setting fill color when drawing textures
+_   guessing it's an implementation issue in sami's renderer
+_   check with the a_Displaying example and tint(255, 0, 0, 100);
+_   http://dev.processing.org/bugs/show_bug.cgi?id=90
+_   is fill() not coloring textures properly?
+_     don't need to apply tint() to textures, supposed to use fill color
+Hope this helps:  If you haven't tracked it down yet... it's in PTriangle, when a flat-shaded textured triangle is drawn, then the rgb of the tint isn't used.  So, for example, if the triangle renderer branches to drawsegment_texture32() the tint rgb won't be used, whereas if it branches to drawsegment_gouraud_texture32() then the tint rgb WILL be used.  Alpha gets used from tint, because all alpha has to do is be != 255, but for rgb to get used they values have to differ among vertices (which won't happen via the image() routine for example).  The quick fix might be to insert an additional test in setIntensities() to check if parent.tint is true, and if so then force gouraud shading, INTERPOLATE_RGB=true.
 
 _ add gluegen-rt back to the applet export
 _   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
@@ -271,7 +298,6 @@ _   make sure that the sketch isn't being sized based on bad insets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=341
 
 point()
-_ gl point stuff is a problem
 _ gl points not working again
 _   need to implement point() as actual gl points
 _   this means adding points to the pipeline
@@ -349,28 +375,6 @@ _ gradient-painted lines and fills
 _   java2d will do both line and fill, illusfarter only does fills
 _ gradients not supported in java2d
 _   http://dev.processing.org/bugs/show_bug.cgi?id=371
-
-_ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
-_   images with 0x00 in their high bits being drawn transparent
-_   also if transparency set but RGB is setting, still honors transparency
-_   http://dev.processing.org/bugs/show_bug.cgi?id=351
-_ tint() and noTint() switching problem in P2D
-_   this should be a quick fix
-_   http://dev.processing.org/bugs/show_bug.cgi?id=222
-_ related to the fill bugs: when fill is identical, no fill applied
-_   actually tint() should take over for fill as per-vertex color
-_   when textured images are being used
-_   http://dev.processing.org/bugs/show_bug.cgi?id=169
-_ tint() should set texture color, fill() is ignored with textures
-_ fix tint() for PGraphics3 (what could be wrong?)
-_   tint() honoring alpha but not colored tint
-_   maybe not setting fill color when drawing textures
-_   guessing it's an implementation issue in sami's renderer
-_   check with the a_Displaying example and tint(255, 0, 0, 100);
-_   http://dev.processing.org/bugs/show_bug.cgi?id=90
-_   is fill() not coloring textures properly?
-_     don't need to apply tint() to textures, supposed to use fill color
-Hope this helps:  If you haven't tracked it down yet... it's in PTriangle, when a flat-shaded textured triangle is drawn, then the rgb of the tint isn't used.  So, for example, if the triangle renderer branches to drawsegment_texture32() the tint rgb won't be used, whereas if it branches to drawsegment_gouraud_texture32() then the tint rgb WILL be used.  Alpha gets used from tint, because all alpha has to do is be != 255, but for rgb to get used they values have to differ among vertices (which won't happen via the image() routine for example).  The quick fix might be to insert an additional test in setIntensities() to check if parent.tint is true, and if so then force gouraud shading, INTERPOLATE_RGB=true.
 
 
 add to reference
