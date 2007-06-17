@@ -721,7 +721,7 @@ public class PApplet extends Applet
 
   public void registerSize(Object o) {
     Class methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
-    registerWithArgs(preMethods, "size", o, methodArgs);
+    registerWithArgs(sizeMethods, "size", o, methodArgs);
   }
 
   public void registerPre(Object o) {
