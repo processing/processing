@@ -118,7 +118,15 @@ can't be resized), so you should stick with
 1.0.1</A>. 
 <LI>Use the capture application included with the WinVDIG install to make sure that things are working properly (this helps us isolate WinVDIG vs. QuickTime for Java vs. Processing bugs).
 <LI>If you've already installed WinVDIG 1.0.5, do an uninstall, and be sure to say "Yes To All" (or the equivalent for your language) when it asks whether you want to de-install the DLLs. 
-<LI>If you're completely stuck on the WinVDIG problems, some have found happiness with this solution from pandaman: "I deleted the files vsVDIG from system32/quicktime AND program files/quicktime and deleted VSdump from system32- uninstalled vdig - reinstalled vdig 1.01 and things seem to be working now". It always makes us scared to go deleting things in System32, much less Program Files. But depending on your level of frustration, the possibility of hurting your Windows install may even sound enticing. Be sure to follow that line of instructions <EM>carefully</EM>. I spent half an hour trying to reinstall WinVDIG on a student's machine because I missed some of it.
+<LI>If you're completely stuck on the WinVDIG problems, an adaptation of the official instructions for <A HREF="http://www.videoscript.com/forum/viewtopic.php?t=21">uninstalling</A> WinVDIG follows. First, try to uninstall WinVDIG from the Control Panel &rarr; Add/Remove Software. If this does not work, or you wish to manually uninstall WinVDIG, try the following steps:
+<OL>
+<LI>Remove VsVDIG.qtx (located in System32\QuickTime).
+<LI>Remove VsDump.ax (located in System32).
+<LI>Delete WinVDIG from the Program Files folder.
+<LI>Restart you system.
+</OL>
+<!--If you're completely stuck on the WinVDIG problems, some have found happiness with this solution from pandaman: "I deleted the files vsVDIG from system32/quicktime AND program files/quicktime and deleted VSdump from system32- uninstalled vdig - reinstalled vdig 1.01 and things seem to be working now".--> 
+It always makes us scared to go deleting things in System32, much less Program Files. But depending on your level of frustration, the possibility of hurting your Windows install may even sound enticing. Be sure to follow that line of instructions <EM>carefully</EM>. I spent half an hour trying to reinstall WinVDIG on a student's machine because I missed some of it.
 <LI>If you want to avoid QuickTime 7, use the <A
 HREF="http://www.apple.com/support/downloads/quicktime652forwindows.html">QuickTime
 6.5.2</A> installer that's buried on Apple's site. Uninstall QuickTime

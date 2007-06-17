@@ -22,7 +22,7 @@ println(fi);  // Prints "42,525.34"
 </example>
 
 <description>
-Utility function for formatting numbers into strings and placing appropriate commas to mark units of 100. There are two versions, one for formatting ints and one for formatting an array of ints. The value for the <b>digits</b> parameter should always be a positive integer.
+Utility function for formatting numbers into strings and placing appropriate commas to mark units of 1000. There are two versions, one for formatting ints and one for formatting an array of ints. The value for the <b>digits</b> parameter should always be a positive integer.
 </description>
 
 <syntax>

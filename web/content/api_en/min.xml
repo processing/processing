@@ -17,6 +17,14 @@ float f = min(12.3, 230.24);  // Sets "f" to 12.3
 </code>
 </example>
 
+<example>
+<image></image>
+<code>
+int[] list = { 5, 1, 2, -3 };
+int h = min(list);            // Sets "h" to -3
+</code>
+</example>
+
 <description>
 Determines the smallest value in a sequence of numbers.
 </description>
@@ -24,6 +32,7 @@ Determines the smallest value in a sequence of numbers.
 <syntax>
 min(<c>value1</c>, <c>value2</c>)
 min(<c>value1</c>, <c>value2</c>, <c>value 3</c>)
+min(<c>array</c>)
 </syntax>
 
 <parameter>
@@ -39,6 +48,11 @@ min(<c>value1</c>, <c>value2</c>, <c>value 3</c>)
 <parameter>
 <label>value3</label>
 <description>int or float</description>
+</parameter>
+
+<parameter>
+<label>array</label>
+<description>int or float array</description>
 </parameter>
 
 <returns>int or float (depending on the inputs)</returns>

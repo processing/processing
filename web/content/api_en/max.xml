@@ -17,6 +17,14 @@ float c = max(12.3, 230.24);  // Sets "c" to 230.24
 </code>
 </example>
 
+<example>
+<image></image>
+<code>
+int[] list = { 9, -4, 230.24 };
+int h = max(list);            // Sets "h" to 230.24
+</code>
+</example>
+
 <description>
 Determines the largest value in a sequence of numbers.
 </description>
@@ -24,6 +32,7 @@ Determines the largest value in a sequence of numbers.
 <syntax>
 max(<c>value1</c>, <c>value2</c>)
 max(<c>value1</c>, <c>value2</c>, <c>value 3</c>)
+max(<c>array</c>)
 </syntax>
 
 <parameter>
@@ -39,6 +48,11 @@ max(<c>value1</c>, <c>value2</c>, <c>value 3</c>)
 <parameter>
 <label>value3</label>
 <description>int or float</description>
+</parameter>
+
+<parameter>
+<label>array</label>
+<description>int or float array</description>
 </parameter>
 
 <returns>int or float (depending on the inputs)</returns>

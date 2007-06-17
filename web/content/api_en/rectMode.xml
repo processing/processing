@@ -29,7 +29,7 @@ rectMode(<c>MODE</c>)
 
 <parameter>
 <label>MODE</label>
-<description>Either CORNER, CORNERS, CENTER, RADIUS</description>
+<description>Either CORNER, CORNERS, CENTER, or RADIUS</description>
 </parameter>
 
 <returns>None</returns>
