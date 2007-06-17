@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -468,17 +468,23 @@ public class Capture extends PImage implements Runnable {
       // http://dev.processing.org/bugs/show_bug.cgi?id=366
       channel.setBounds(qdrect);
 
-      // open the settings dialog
+      // Open the settings dialog (throws an Exception if canceled)
       channel.settingsDialog();
-      // start the preview again
-      capture.startPreview();
 
     } catch (StdQTException qte) {
       int errorCode = qte.errorCode();
-      if (errorCode != Errors.userCanceledErr) {
+      if (errorCode == Errors.userCanceledErr) {
+        // User only canceled the settings dialog, continue as we were
+      } else {
         qte.printStackTrace();
-        throw new RuntimeException("error inside Capture.settings()");
+        throw new RuntimeException("Error inside Capture.settings()");
       }
+    }
+    try {
+      // Start the preview again (unreachable if newly thrown exception)
+      capture.startPreview();
+    } catch (StdQTException qte) {
+      qte.printStackTrace();
     }
   }
 
