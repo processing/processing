@@ -1257,54 +1257,18 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  // fully debugged
-  /*
-  public void set(int dx, int dy, PImage src) {
-    int sx = 0;
-    int sy = 0;
-    int sw = src.width;
-    int sh = src.height;
-
-    if (dx < 0) {  // off left edge
-      sx -= dx;
-      sw += dx;
-      dx = 0;
-    }
-    if (dy < 0) {  // off top edge
-      sy -= dy;
-      sh += dy;
-      dy = 0;
-    }
-    if (dx + sw > width) {  // off right edge
-      sw = width - dx;
-    }
-    if (dy + sh > height) {  // off bottom edge
-      sh = height - dy;
-    }
-
-    //System.out.println(dx + " " + dy + " " +
-    //                 sx + " " + sy + " " + sw + " " +  sh + " " +
-    //                 src.pixels + " " + 0 + " " + src.width);
-    BufferedImage bi = (BufferedImage) image;
-    bi.setRGB(dx, dy, sw, sh, src.pixels, sy*src.width + sx, src.width);
-  }
-  */
-
-
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
-    //BufferedImage bi = (BufferedImage) image;
-    //bi.setRGB(dx, dy, sw, sh, src.pixels, sy*src.width + sx, src.width);
-
     WritableRaster raster = ((BufferedImage) image).getRaster();
     if ((sx == 0) && (sy == 0) && (sw == src.width) && (sh == src.height)) {
       raster.setDataElements(dx, dy, src.width, src.height, src.pixels);
     } else {
       int mode = src.imageMode;
-      src.imageMode = CORNERS;
+      src.imageMode = CORNER;
+      // TODO Optimize, incredibly inefficient to reallocate this much memory
       PImage temp = src.get(sx, sy, sw, sh);
       src.imageMode = mode;
-      raster.setPixels(dx, dy, temp.width, temp.height, temp.pixels);
+      raster.setDataElements(dx, dy, temp.width, temp.height, temp.pixels);
     }
   }
 
