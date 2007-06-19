@@ -78,9 +78,11 @@ X   workaround is to write the code properly, but suggests something bad
 X   http://dev.processing.org/bugs/show_bug.cgi?id=150
 X registerSize() was registering as pre() instead
 X   http://dev.processing.org/bugs/show_bug.cgi?id=582
-_ set() doesn't bounds check
-_   this shouldn't actually be the case
-_   http://dev.processing.org/bugs/show_bug.cgi?id=522
+X set() doesn't bounds check
+X   this shouldn't actually be the case
+X   http://dev.processing.org/bugs/show_bug.cgi?id=522
+X   get()/set() in PGraphicsJava2D don't bounds check
+X   was actually a dumb error in setDataElements()
 
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468
@@ -415,8 +417,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=346
 
 _ image memory use.. how to handle lots of images
 _   need to figure out exactly how they should/can unload
-
-_ get()/set() in PGraphicsJava2D don't bounds check
 
 _ add better error messages for all built-in renderers
 _   i.e. "import library -> pdf" when pdf is missing
