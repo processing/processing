@@ -166,7 +166,7 @@ public class PGraphicsJava2D extends PGraphics {
     if (!mainDrawingSurface) {
       loadPixels();
     }
-
+    modified = true;
     insideDraw = false;
   }
 
