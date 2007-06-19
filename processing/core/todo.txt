@@ -83,6 +83,9 @@ X   this shouldn't actually be the case
 X   http://dev.processing.org/bugs/show_bug.cgi?id=522
 X   get()/set() in PGraphicsJava2D don't bounds check
 X   was actually a dumb error in setDataElements()
+X set modified to true on endDraw() so that image updates properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=526
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
 
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468
@@ -205,9 +208,6 @@ createGraphics() mess
 _ background() problems with new renderers
 _   P3D from createGraphics needs to be marked RGB not ARGB
 _   http://dev.processing.org/bugs/show_bug.cgi?id=530
-_ set modified to true on endDraw() so that image updates properly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=526
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
 _ when drawing into a JAVA2D surface, have to call loadPixels()
 _   to draw it later with P3D (or OPENGL prolly)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
