@@ -32,7 +32,7 @@ X   moved around constructors (to be on par with other video lib stuff)
 X   cleaned up constant names (i.e. MSVideo -> MS_VIDEO)
 X   added constant for h264 encoding
 _   add documentation
-_   add() or addFrame()?
+X   add() or addFrame()?
 X find/replace - replace should do auto find next(?)
 X   or have a replace & find button
 X   placing "replace" next to "find" ... (hitting "replace all" by accident) 
@@ -52,7 +52,7 @@ X   should it be new Camera(PROMPT);
 o when passing in 'null' as the capture, dialog pops up fine
 o   but the applet craps out after a few seconds (pinwheel spin)
 X   can't confirm this one
-
+X no longer default to sketchbook folder on open
 
 new bugs
 _ huge jar files from 0124 export
