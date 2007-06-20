@@ -312,7 +312,7 @@ public class Sketchbook {
                                    "Open a Processing sketch...",
                                    FileDialog.LOAD);
     //fd.setDirectory(Preferences.get("sketchbook.path"));
-    fd.setDirectory(getSketchbookPath());
+    //fd.setDirectory(getSketchbookPath());
 
     // only show .pde files as eligible bachelors
     // TODO this doesn't seem to ever be used. AWESOME.

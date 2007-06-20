@@ -31,9 +31,9 @@ X split() inconsistency (emailed casey, will discuss later)
 X   make split(String, String) behave like String.split(String)
 X   and make current split(String) into splitTokens(String)
 X   that means split(String) no longer exists
-_   add splitTokens() documentation
-_   document new version of split() and regexp
-_   should we mention String.split?
+o   add splitTokens() documentation
+o   document new version of split() and regexp
+o   should we mention String.split?
 X ironed out more of the preproc parseXxxx() functions
 _   update the reference to cover these decisions
 _   also add notes about parseInt/Float(blah, otherwise)

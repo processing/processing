@@ -79,7 +79,7 @@ import processing.core.*;
  *   }
  *
  *   // Add window's pixels to movie
- *   mm.add();
+ *   mm.addFrame();
  * }
  *
  * void keyPressed() {
@@ -149,20 +149,6 @@ public class MovieMaker {
 
   private PApplet parent;
 
-    // Simple constructors that assume width and height is same as Processing Applet
-  /*
-    public MovieMaker(PApplet p, String _filename) {
-        this(p, p.width, p.height, _filename, 0, 0, 30, 15);
-    }
-
-    public MovieMaker(PApplet p, String _filename, int _codecType, int _codecQuality) {
-        this(p, p.width, p.height,_filename, _codecType, _codecQuality, 30, 15);
-    }
-
-    public MovieMaker(PApplet p, String _filename, int _codecType, int _codecQuality, int _rate) {
-        this(p, p.width, p.height, _filename, _codecType, _codecQuality, _rate, 15);
-    }
-  */
 
   /**
    * Create a movie with the specified width, height, and filename.
@@ -172,6 +158,7 @@ public class MovieMaker {
   public MovieMaker(PApplet p, int _w, int _h, String _filename) {
     this(p, _w, _h, _filename, 30, RAW, HIGH, 15);
   }
+
 
   /**
    * Create a movie with the specified width, height, filename, and frame rate.
@@ -289,13 +276,15 @@ public class MovieMaker {
     }
   }
 
-    // A simple add function to just add whatever is in the parent window
-    public void add() {
-        parent.loadPixels();
-        add(parent.pixels, parent.width, parent.height);
-    }
 
-    public void add(int[] _pixels, int w, int h) {
+  // A simple add function to just add whatever is in the parent window
+  public void addFrame() {
+    parent.loadPixels();
+    addFrame(parent.pixels, parent.width, parent.height);
+  }
+
+
+  public void addFrame(int[] _pixels, int w, int h) {
     // Now that I fixed the intel mac bug in the constructor, I think windows
     // is covered too so the code below is unnecessary.  I think.  I hope.
     //boolean windows = false;
