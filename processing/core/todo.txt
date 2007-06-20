@@ -40,9 +40,9 @@ _   also add notes about parseInt/Float(blah, otherwise)
 X deal with targa upside-down and non-rle encoding for tga images
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1171576234
 X change println(array) to be useful 
-_   document using join() for old method
+o   document using join() for old method
 X   remove print(array) since it's silly?
-_     make sure it's not in the reference
+X     make sure it's not in the reference
 [0] "potato"
 [1] "tomato"
 [2] "apple" 
@@ -64,7 +64,7 @@ X   or textAlign(LEFT, MIDDLE); -> this one seems best
 X   add reference for new param, and update keywords.txt
 X given to andy
 
-0125p3 (in progress)
+0125p3
 X PImage.save() method is not working with get()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=558
 X NullPointerException in Create Font with "All Characters" enabled 
@@ -86,6 +86,9 @@ X   was actually a dumb error in setDataElements()
 X set modified to true on endDraw() so that image updates properly
 X   http://dev.processing.org/bugs/show_bug.cgi?id=526
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
+
+0125p4 (in progress)
+
 
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468

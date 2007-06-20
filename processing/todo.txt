@@ -25,8 +25,7 @@ X re-architect svg to properly inherit fill/stroke/etc from parents
 X   <g> object can specify fill/stroke for everyone below
 X   need to discern between having a fill specified and one not being present
 
-
-0125p3 (in progress)
+0125p3
 _ moviemaker
 X   moved around constructors (to be on par with other video lib stuff)
 X   cleaned up constant names (i.e. MSVideo -> MS_VIDEO)
@@ -53,6 +52,9 @@ o when passing in 'null' as the capture, dialog pops up fine
 o   but the applet craps out after a few seconds (pinwheel spin)
 X   can't confirm this one
 X no longer default to sketchbook folder on open
+
+0125p4 (in progress)
+
 
 new bugs
 _ huge jar files from 0124 export
