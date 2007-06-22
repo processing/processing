@@ -161,7 +161,9 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     if (document == null) {
       document = new Document(new Rectangle(width, height));
       try {
-        writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+        FileOutputStream fos = new FileOutputStream(file);
+        BufferedOutputStream bos = new BufferedOutputStream(fos, 16384);
+        writer = PdfWriter.getInstance(document, bos);
         document.open();
         content = writer.getDirectContent();
 

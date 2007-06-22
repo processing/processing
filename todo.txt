@@ -54,6 +54,15 @@ X   can't confirm this one
 X no longer default to sketchbook folder on open
 
 0125p4 (in progress)
+_ keywords/reference
+_   map is going to null reference, not colored properly
+_   general issue when reference not found, going to 'null' reference
+_   do a trim() on the selection for find in reference
+_ ocd is broken - do a better error message for this
+_ moviemaker is broken
+_ save/saveas should use modal dialog
+_   only use the bottom bar for naming
+_ "Object" example isn't using tabs.. others?
 
 
 new bugs
