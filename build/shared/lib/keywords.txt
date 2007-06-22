@@ -206,6 +206,7 @@ atan2	KEYWORD2	atan2_
 background	KEYWORD2	background_
 beginCamera	KEYWORD2	beginCamera_
 beginRecord	KEYWORD2	beginRecord_
+beginRaw	KEYWORD2	beginRaw_
 beginShape	KEYWORD2	beginShape_
 bezier	KEYWORD2	bezier_
 bezierDetail	KEYWORD2	bezierDetail_
@@ -270,6 +271,7 @@ else	KEYWORD1	else
 emissive	KEYWORD2	emissive_
 endCamera	KEYWORD2	endCamera_
 endRecord	KEYWORD2	endRecord_
+endRaw	KEYWORD2	endRaw_
 endShape	KEYWORD2	endShape_
 ==		equality
 exit	KEYWORD2	exit_
@@ -332,6 +334,7 @@ log	KEYWORD2	log_
 ||		logicalOR
 loop	KEYWORD2	loop_
 mag	KEYWORD2	mag_
+map	KEYWORD2	map_
 max	KEYWORD2	max_
 millis	KEYWORD2	millis_
 min	KEYWORD2	min_
