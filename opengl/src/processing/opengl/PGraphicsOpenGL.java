@@ -999,20 +999,26 @@ public class PGraphicsOpenGL extends PGraphics3D {
                          //GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
                          GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 
-      //int err = glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, 4,
-      //                              image.width, image.height,
-      //                              GL.GL_RGBA,
-      //                              //GL.GL_ALPHA,
-      //                              GL.GL_UNSIGNED_BYTE, image.pixels);
+      //
+
+      int err = glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, 4,
+                                    twidth, theight,
+                                    GL.GL_RGBA,
+                                    //GL.GL_ALPHA,
+                                    GL.GL_UNSIGNED_BYTE, tbuffer);
       //System.out.println("mipmap: " + err);
 
-      //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-      //                 GL.GL_NEAREST_MIPMAP_NEAREST);
-      //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-      //                 GL.GL_NEAREST_MIPMAP_LINEAR);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+                         //GL.GL_NEAREST_MIPMAP_NEAREST);
+                         GL.GL_LINEAR_MIPMAP_LINEAR);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+                         //GL.GL_NEAREST_MIPMAP_LINEAR);
+                         GL.GL_LINEAR_MIPMAP_LINEAR);
 
-      //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
-      //gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
+      gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+
+      //
 
       gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
     }
