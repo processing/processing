@@ -88,6 +88,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=526
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
 
 0125p4 (in progress)
+X significant improvement to text and images in opengl
+X   now using mipmaps to interpolate large and small images
 
 
 _ PGraphics problem with fillColor
