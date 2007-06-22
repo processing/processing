@@ -366,6 +366,7 @@ noise	KEYWORD2	noise_
 noiseDetail	KEYWORD2	noiseDetail_
 noiseSeed	KEYWORD2	noiseSeed_
 noLoop	KEYWORD2	noLoop_
+norm	KEYWORD2	norm_
 normal	KEYWORD2	normal_
 noSmooth	KEYWORD2	noSmooth_
 noStroke	KEYWORD2	noStroke_
