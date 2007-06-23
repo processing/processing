@@ -810,18 +810,7 @@ public class Editor extends JFrame
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (textarea.isSelectionActive()) {
-            String text = textarea.getSelectedText();
-            if (text.length() == 0) {
-              message("First select a word to find in the reference.");
-
-            } else {
-              String referenceFile = PdeKeywords.getReference(text);
-              if (referenceFile == null) {
-                message("No reference available for \"" + text + "\"");
-              } else {
-                Base.showReference(referenceFile + ".html");
-              }
-            }
+            handleReference();
           }
         }
       });
@@ -1974,6 +1963,24 @@ public class Editor extends JFrame
   }
 
 
+  protected void handleReference() {
+    String text = textarea.getSelectedText().trim();
+
+    if (text.length() == 0) {
+      message("First select a word to find in the reference.");
+
+    } else {
+      String referenceFile = PdeKeywords.getReference(text);
+      //System.out.println("reference file is " + referenceFile);
+      if (referenceFile == null) {
+        message("No reference available for \"" + text + "\"");
+      } else {
+        Base.showReference(referenceFile + ".html");
+      }
+    }
+  }
+
+
   public void highlightLine(int lnum) {
     if (lnum < 0) {
       textarea.select(0, 0);
@@ -2142,7 +2149,8 @@ public class Editor extends JFrame
       referenceItem = new JMenuItem("Find in Reference");
       referenceItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            Base.showReference(referenceFile + ".html");
+            //Base.showReference(referenceFile + ".html");
+            handleReference(); //textarea.getSelectedText());
           }
         });
       this.add(referenceItem);
@@ -2154,10 +2162,10 @@ public class Editor extends JFrame
         cutItem.setEnabled(true);
         copyItem.setEnabled(true);
 
-        referenceFile = PdeKeywords.getReference(textarea.getSelectedText());
-        if (referenceFile != null) {
-          referenceItem.setEnabled(true);
-        }
+        String sel = textarea.getSelectedText().trim();
+        referenceFile = PdeKeywords.getReference(sel);
+        referenceItem.setEnabled(referenceFile != null);
+
       } else {
         cutItem.setEnabled(false);
         copyItem.setEnabled(false);
