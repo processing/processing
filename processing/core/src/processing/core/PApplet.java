@@ -4722,6 +4722,7 @@ public class PApplet extends Applet
   static final int INTS    = 3;
   static final int FLOATS  = 4;
   static final int STRINGS = 5;
+  static final int OBJECTS = 6;
 
   byte sort_bytes[];
   char sort_chars[];
@@ -4729,6 +4730,9 @@ public class PApplet extends Applet
   float sort_floats[];
   String sort_strings[];
 
+  Object sortObject;
+  Method swapMethod;
+  Method compareMethod;
 
   public byte[] sort(byte what[]) {
     return sort(what, what.length);
@@ -4797,6 +4801,17 @@ public class PApplet extends Applet
     return sort_strings;
   }
 
+  /*
+  public void sort(Object what, int count) {
+    if (count == 0) return null;
+    sort_mode = OBJECTS;
+    sort_strings = new String[count];
+    System.arraycopy(what, 0, sort_strings, 0, count);
+    sort_internal(0, count-1);
+    return sort_strings;
+  }
+  */
+
   //
 
   protected void sort_internal(int i, int j) {
@@ -4848,10 +4863,18 @@ public class PApplet extends Applet
       sort_strings[a] = sort_strings[b];
       sort_strings[b] = stemp;
       break;
+    case OBJECTS:
+      try {
+        Object[] params = new Object[] { new Integer(a), new Integer(b) };
+        swapMethod.invoke(sortObject, params);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 
-  protected int sort_compare(int a, int b) {
+
+  protected float sort_compare(int a, int b) {
     switch (sort_mode) {
     case BYTES:
       return sort_bytes[a] - sort_bytes[b];
@@ -4862,14 +4885,44 @@ public class PApplet extends Applet
     case FLOATS:
       // can't just cast to an int because 0.2 and 0.4 would
       // just appear to be the same thing. no good.
-      if (sort_floats[a] < sort_floats[b]) return -1;
-      return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
+      //if (sort_floats[a] < sort_floats[b]) return -1;
+      //return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
+      return sort_floats[a] - sort_floats[b];
     case STRINGS:
       return sort_strings[a].compareTo(sort_strings[b]);
+    case OBJECTS:
+      try {
+        Object[] params = new Object[] { new Integer(a), new Integer(b) };
+        Float output = (Float) compareMethod.invoke(sortObject, params);
+        return output.floatValue();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     return 0;
   }
 
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void sort(Object o, int count) {
+    Class c = o.getClass();
+    try {
+      Class[] params = new Class[] { Integer.TYPE, Integer.TYPE };
+      // takes two ints, returns a float
+      compareMethod = c.getMethod("sortCompare", params);
+      // takes two ints, returns void
+      swapMethod = c.getMethod("sortSwap", params);
+      // start the sort
+      sortObject = o;
+      sort_mode = OBJECTS;
+      sort_internal(0, count-1);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
