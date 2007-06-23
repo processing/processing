@@ -14,7 +14,9 @@ int[] backgroundPixels;
 Capture video;
 
 void setup() {
-  size(640, 480); // Change size to 320 x 240 if too slow at 640 x 480
+  // Change size to 320 x 240 if too slow at 640 x 480
+  size(640, 480); 
+  
   video = new Capture(this, width, height, 24);
   numPixels = video.width * video.height;
   // Create array to store the background image

@@ -11,18 +11,21 @@ import processing.video.*;
 
 Capture video;
 int count;
-boolean cheatScreen = false;
+boolean cheatScreen;
 
 float multiplier;
-float dgR[], dgG[], dgB[];
-Vec3f drgb[];
-int value[];
+float[] dgR;
+float[] dgG;
+float[] dgB;
+Vec3f[] drgb;
+int[] value;
 
 
 public void setup() {
   size(800, 600, P3D);
 
   noCursor();
+  // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 80, 60, 15);
   count = video.width * video.height;
 
@@ -78,8 +81,8 @@ public void draw() {
     dgB[i] = dgB[i] * 0.9 + drgb[i].z * 0.1;
     fill(dgR[i], dgG[i], dgB[i]);
 
-    float left = (float)i * multiplier;
-    float right = ((float)(i+1)) * multiplier;
+    float left = i * multiplier;
+    float right = (i+1) * multiplier;
 
     vertex(right, 0);
     vertex(right, height);
@@ -93,46 +96,22 @@ public void draw() {
 
 
 public void keyPressed() {
-  switch (key) {
-  case 'g': saveFrame(); break;
-  case 'c': cheatScreen = !cheatScreen; break;
-  }
-}
-
-
-// Simple vector class that holds an x,y,z position.
-
-class Vec3f {
-  float x, y, z;
-
-  public Vec3f() { }
-
-  public Vec3f(float x, float y, float z) {
-    set(x, y, z);
-  }
-
-  public void set(float x, float y, float z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
-
-  public void scale(float amt) {
-    x *= amt;
-    y *= amt;
-    z *= amt;
+  if (key == 'g') {
+    saveFrame();
+  } else if (key == 'c') {
+    cheatScreen = !cheatScreen;
   }
 }
 
 
 // Functions to handle sorting the color data
 
-void sort(int length, int a[], Vec3f stuff[]) {
+void sort(int length, int[] a, Vec3f[] stuff) {
   sortSub(a, stuff, 0, length - 1);
 }
 
 
-void sortSwap(int a[], Vec3f stuff[], int i, int j) {
+void sortSwap(int[] a, Vec3f[] stuff, int i, int j) {
   int T = a[i];
   a[i] = a[j];
   a[j] = T;
@@ -143,7 +122,7 @@ void sortSwap(int a[], Vec3f stuff[], int i, int j) {
 }
 
 
-void sortSub(int a[], Vec3f stuff[], int lo0, int hi0) {
+void sortSub(int[] a, Vec3f[] stuff, int lo0, int hi0) {
   int lo = lo0;
   int hi = hi0;
   int mid;

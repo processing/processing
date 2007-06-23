@@ -16,7 +16,7 @@ PImage myImage = loadImage("topanga.jpg");
 image(myImage, 0, 0);
 
 loadPixels();
-for (int i = 0; i < halfImage; i++) {
+for (int i = 0; i &lt; halfImage; i++) {
   pixels[i+halfImage] = pixels[i];
 }
 updatePixels();
@@ -31,7 +31,7 @@ PImage myImage = loadImage("towerFlip.jpg");
 image(myImage, 0, 0);
 
 loadPixels();
-for (int i = 0; i < halfImage; i++) {
+for (int i = 0; i &lt; halfImage; i++) {
   pixels[i+halfImage] = pixels[i];
 }
 updatePixels(50, 0, 50, 100);
