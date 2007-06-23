@@ -484,8 +484,13 @@ public class PLine implements PConstants
     int xmax = SCREEN_WIDTH1;
     int ymax = SCREEN_HEIGHT1;
 
-    return ((yi < ymin ? 8 : 0) | (yi > ymax ? 4 : 0) |
-            (xi < xmin ? 2 : 0) | (xi > xmax ? 1 : 0));
+    //return ((yi < ymin ? 8 : 0) | (yi > ymax ? 4 : 0) |
+    //        (xi < xmin ? 2 : 0) | (xi > xmax ? 1 : 0));
+    //(int) added by ewjordan 6/13/07 because otherwise we sometimes clip last pixel when it should actually be displayed.
+	//Currently the min values are okay because values less than 0 should not be rendered; however, bear in mind that
+	//(int) casts towards zero, so without this clipping, values between -1+eps and +1-eps would all be rendered as 0.
+    return ((yi < ymin ? 8 : 0) | ((int)yi > ymax ? 4 : 0) | 
+            (xi < xmin ? 2 : 0) | ((int)xi > xmax ? 1 : 0));
   }
 
 

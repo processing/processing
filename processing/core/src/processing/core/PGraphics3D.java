@@ -87,6 +87,17 @@ public class PGraphics3D extends PGraphics {
   protected PMatrix forwardTransform;
   protected PMatrix reverseTransform;
 
+  // Added by ewjordan for accurate texturing purposes. Screen plane is
+  // not scaled to pixel-size, so these manually keep track of its size
+  // from frustum() calls. Sorry to add public vars, is there a way
+  // to compute these from something publicly available without matrix ops?
+  // (used once per triangle in PTriangle with ENABLE_ACCURATE_TEXTURES)
+  protected float leftScreen;
+  protected float rightScreen;
+  protected float topScreen;
+  protected float bottomScreen;
+  protected float nearPlane; //depth of near clipping plane
+
   // ........................................................
 
   // pos of first vertex of current shape in vertices array
@@ -1341,6 +1352,24 @@ public class PGraphics3D extends PGraphics {
       int tex = triangles[i][TEXTURE_INDEX];
       int index = triangles[i][INDEX];
 
+      float shift = 0.49f;
+          boolean shifted = false;
+          if (drawing2D() && (a[MZ] == 0)) {
+            shifted = true;
+            a[X] += shift;
+                a[Y] += shift;
+                a[VX] += shift*a[VW];
+                a[VY] += shift*a[VW];
+                b[X] += shift;
+                b[Y] += shift;
+                b[VX] += shift*b[VW];
+                b[VY] += shift*b[VW];
+                c[X] += shift;
+                c[Y] += shift;
+                c[VX] += shift*b[VW];
+                c[VY] += shift*b[VW];
+          }
+
       triangle.reset();
 
       // This is only true when not textured. We really should pass SPECULAR
@@ -1377,6 +1406,14 @@ public class PGraphics3D extends PGraphics {
                            b[X], b[Y], b[Z],
                            c[X], c[Y], c[Z]);
 
+      // Need to pass camera-space coordinates to triangle renderer
+      // in order to compute true texture coordinates, else skip it
+      if (hints[ENABLE_ACCURATE_TEXTURES]){
+        triangle.setCamVertices(a[VX], a[VY], a[VZ],
+                                b[VX], b[VY], b[VZ],
+                                c[VX], c[VY], c[VZ]);
+      }
+
       triangle.setIndex(index);
       triangle.render();
 
@@ -1401,35 +1438,27 @@ public class PGraphics3D extends PGraphics {
           raw.vertex(c[X], c[Y]);
         }
       }
+
+      if (drawing2D() && shifted){
+        a[X] -= shift;
+        a[Y] -= shift;
+        a[VX] -= shift*a[VW];
+        a[VY] -= shift*a[VW];
+        b[X] -= shift;
+        b[Y] -= shift;
+        b[VX] -= shift*b[VW];
+        b[VY] -= shift*b[VW];
+        c[X] -= shift;
+        c[Y] -= shift;
+        c[VX] -= shift*b[VW];
+        c[VY] -= shift*b[VW];
+      }
     }
 
     if (raw != null) {
       raw.endShape();
     }
   }
-
-
-  /*
-  public void triangleCallback(float x1, float y1, float z1,
-                               float r1, float g1, float b1, float a1,
-                               float u1, float v1, boolean e1,
-                               float x2, float y2, float z2,
-                               float r2, float g2, float b2, float a2,
-                               float u2, float v2, boolean e2,
-                               float x3, float y3, float z3,
-                               float r3, float g3, float b3, float a3,
-                               float u3, float v3, boolean e3,
-                               PImage texture) {
-  }
-
-
-  public void lineCallback(float x1, float y1, float z1,
-                           float r1, float g1, float b1, float a1,
-                           float x2, float y2, float z2,
-                           float r2, float g2, float b2, float a2,
-                           float weight, int cap, int join) {
-  }
-  */
 
 
   protected void depth_sort_lines() {
@@ -1447,6 +1476,35 @@ public class PGraphics3D extends PGraphics {
       float a[] = vertices[lines[i][VERTEX1]];
       float b[] = vertices[lines[i][VERTEX2]];
       int index = lines[i][INDEX];
+
+      // 2D hack added by ewjordan 6/13/07
+      // Offset coordinates by a little bit if drawing 2D graphics.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=95
+
+      // This hack fixes a bug caused by numerical precision issues when
+      // applying the 3D transformations to coordinates in the screen plane
+      // that should actually not be altered under said transformations.
+      // It will not be applied if any transformations other than translations
+      // are active, nor should it apply in OpenGL mode (PGraphicsOpenGL
+      // overrides render_lines(), so this should be fine).
+      // This fix exposes a last-pixel bug in the lineClipCode() function
+      // of PLine.java, so that fix must remain in place if this one is used.
+
+      // Note: the "true" fix for this bug is to change the pixel coverage
+      // model so that the threshold for display does not lie on an integer
+      // boundary. Search "diamond exit rule" for info the OpenGL approach.
+
+      if (drawing2D() && a[MZ] == 0) {
+        a[X] += 0.01;
+        a[Y] += 0.01;
+        a[VX] += 0.01*a[VW];
+        a[VY] += 0.01*a[VW];
+        b[X] += 0.01;
+        b[Y] += 0.01;
+        b[VX] += 0.01*b[VW];
+        b[VY] += 0.01*b[VW];
+      }
+      // end 2d-hack
 
       line.reset();
 
@@ -1519,19 +1577,21 @@ public class PGraphics3D extends PGraphics {
       // figure out which dimension is the perpendicular axis
       boolean foundValidX = false;
       boolean foundValidY = false;
+
       for (int i = vertex_start; i < vertex_end; i++) {
-        if (vertices[i][MX] != 0) foundValidX = true;
-        if (vertices[i][MY] != 0) foundValidY = true;
+        for (int j = i; j < vertex_end; j++){
+          if ( vertices[i][MX] != vertices[j][MX] ) foundValidX = true;
+          if ( vertices[i][MY] != vertices[j][MY] ) foundValidY = true;
+        }
       }
-      if (foundValidX && !foundValidY) {
+
+      if (foundValidX) {
         //d1 = MX;  // already the case
         d2 = MZ;
-
-      } else if (!foundValidX && foundValidY) {
+      } else if (foundValidY) {
         // ermm.. which is the proper order for cw/ccw here?
         d1 = MY;
         d2 = MZ;
-
       } else {
         // screw it, this polygon is just f-ed up
         return;
@@ -3055,6 +3115,16 @@ public class PGraphics3D extends PGraphics {
    */
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
+
+        //if (hints[ENABLE_ACCURATE_TEXTURES]){
+          //These vars are only needed if accurate textures are used, however,
+          //there is the possibility that accurate texturing will only be turned
+          //on after the perspective matrix has already been set, so we might as
+          //well store these no matter what since it's not much overhead.
+      leftScreen = left; rightScreen = right; bottomScreen = bottom; topScreen = top;
+          nearPlane = znear;
+        //}
+
     //System.out.println(projection);
     projection.set((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
                    0, (2*znear)/(top-bottom), (top+bottom)/(top-bottom), 0,
@@ -3068,6 +3138,41 @@ public class PGraphics3D extends PGraphics {
    */
   public void printProjection() {
     projection.print();
+  }
+
+
+  /*
+   * This function checks if the modelview matrix is set up to likely be
+   * drawing in 2D. It merely checks if the non-translational piece of the
+   * matrix is unity. If this is to be used, it should be coupled with a
+   * check that the raw vertex coordinates lie in the z=0 plane.
+   * Mainly useful for applying sub-pixel shifts to avoid 2d artifacts
+   * in the screen plane.
+   * Added by ewjordan 6/13/07
+   *
+   * TODO need to invert the logic here so that we can simply return
+   * the value, rather than calculating true/false and returning it.
+   */
+  private boolean drawing2D() {
+    if (modelview.m00 != 1.0f ||
+        modelview.m11 != 1.0f ||
+        modelview.m22 != 1.0f || // check scale
+        modelview.m01 != 0.0f ||
+        modelview.m02 != 0.0f || // check rotational pieces
+        modelview.m10 != 0.0f ||
+        modelview.m12 != 0.0f ||
+        modelview.m20 != 0.0f ||
+        modelview.m21 != 0.0f ||
+        !((camera.m23-modelview.m23) <= EPSILON &&
+          (camera.m23-modelview.m23) >= -EPSILON)) { // check for z-translation
+      // Something about the modelview matrix indicates 3d drawing
+      // (or rotated 2d, in which case 2d subpixel fixes probably aren't needed)
+      return false;
+    } else {
+      //The matrix is mapping z=0 vertices to the screen plane,
+      // which means it's likely that 2D drawing is happening.
+      return true;
+    }
   }
 
 
