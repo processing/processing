@@ -7,7 +7,6 @@
  * in the current video frame pixels array. 
  */
 
-
 import processing.video.*;
 
 int numPixels;
@@ -15,8 +14,8 @@ int blockSize = 10;
 Movie myMovie;
 color myMovieColors[];
 
-void setup() 
-{
+
+void setup() {
   size(640, 480, P3D);
   noStroke();
   background(0);
@@ -26,27 +25,26 @@ void setup()
   myMovieColors = new color[numPixels * numPixels];
 }
 
+
 // Read new values from movie
-void movieEvent(Movie myMovie) 
-{
-  myMovie.read();
-  for(int j=0; j<numPixels; j++) {
-    for(int i=0; i<numPixels; i++) {
-      myMovieColors[j*numPixels + i] = myMovie.get(i, j);
+void movieEvent(Movie m) {
+  m.read();
+  m.loadPixels();
+  
+  for (int j = 0; j < numPixels; j++) {
+    for (int i = 0; i < numPixels; i++) {
+      myMovieColors[j*numPixels + i] = m.get(i, j);
     }
   }
 }
 
 
 // Display values from movie
-void draw() 
-{
-  for(int j=0; j<numPixels; j++) {
-    for(int i=0; i<numPixels; i++) {
+void draw()  {
+  for (int j = 0; j < numPixels; j++) {
+    for (int i = 0; i < numPixels; i++) {
       fill(myMovieColors[j*numPixels + i]);
       rect(i*blockSize, j*blockSize, blockSize-1, blockSize-1);
     }
   }
 }
-
-
