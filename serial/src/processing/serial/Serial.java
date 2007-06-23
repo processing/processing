@@ -207,6 +207,14 @@ public class Serial implements SerialPortEventListener {
   }
 
 
+  /**
+  * Set the DTR line. Addition from Tom Hulbert.
+  */
+  public void setDTR(boolean state) {
+	port.setDTR(state);
+  }
+
+
   synchronized public void serialEvent(SerialPortEvent serialEvent) {
     if (serialEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
       try {
@@ -656,6 +664,5 @@ public class Serial implements SerialPortEventListener {
     return list;
   }
   */
-
 
 
