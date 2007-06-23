@@ -14,11 +14,16 @@ class Tuple {
     this.y = y;
     this.z = z;
   }
-
-  public void scale(float amt) {
-    x *= amt;
-    y *= amt;
-    z *= amt;
+  
+  public void target(Tuple another, float amount) {
+    float amount1 = 1.0 - amount;
+    x = x*amount1 + another.x*amount;
+    y = y*amount1 + another.y*amount;
+    z = z*amount1 + another.z*amount;
+  }
+  
+  public void phil() {
+    fill(x, y, z);
   }
 }
 
