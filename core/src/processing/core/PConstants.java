@@ -309,13 +309,14 @@ public interface PConstants {
 
   //static final int SCALE_STROKE_WIDTH      = 0;
   //static final int LIGHTING_AFFECTS_STROKE = 1;
-  static final int ENABLE_NATIVE_FONTS    = 2;
-  static final int DISABLE_TEXT_SMOOTH     = 3;
+  static final int ENABLE_NATIVE_FONTS      = 2;
+  static final int DISABLE_TEXT_SMOOTH      = 3;
   //static final int DISABLE_SMOOTH_HACK     = 4;
-  static final int DISABLE_DEPTH_TEST      = 5;
-  static final int NO_FLYING_POO           = 6;
-  static final int ENABLE_DEPTH_SORT       = 7;
-  static final int DISABLE_ERROR_REPORT    = 8;
+  static final int DISABLE_DEPTH_TEST       = 5;
+  static final int NO_FLYING_POO            = 6;
+  static final int ENABLE_DEPTH_SORT        = 7;
+  static final int DISABLE_ERROR_REPORT     = 8;
+  static final int ENABLE_ACCURATE_TEXTURES = 9;
 
-  static final int HINT_COUNT              = 9;
+  static final int HINT_COUNT              = 10;
 }
