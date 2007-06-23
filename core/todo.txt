@@ -91,6 +91,16 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 X significant improvement to text and images in opengl
 X   now using mipmaps to interpolate large and small images
 
+ewjordan stuff (changes checked in)
+_ rect() changes size as it changes position
+_   http://dev.processing.org/bugs/show_bug.cgi?id=95
+_ strange texture warping in P3D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=103
+_ lines skip on 200x200 surface because of fixed point rounding error
+_   http://dev.processing.org/bugs/show_bug.cgi?id=267
+_   this may be same as 95
+_ Polygons parallel to z-axis not always filling with nonzero x or y
+_   http://dev.processing.org/bugs/show_bug.cgi?id=547
 
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468
@@ -100,12 +110,6 @@ _ opengl crashes when depth sorting more than two textured shapes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=560
 _ replaceAll() not supported by 1.1
 _   http://dev.processing.org/bugs/show_bug.cgi?id=561
-
-ewjordan stuff
-_ Polygons parallel to z-axis not always filling with nonzero x or y
-_   http://dev.processing.org/bugs/show_bug.cgi?id=547
-_ strange texture warping in P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=103
 
 _ loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
 _   this might be a good solution for dealing with the differences
@@ -777,10 +781,6 @@ CORE / PGraphics3D
 
 _ images are losing pixels at the edges
 _   http://dev.processing.org/bugs/show_bug.cgi?id=102
-_ rect() changes size as it changes position
-_   http://dev.processing.org/bugs/show_bug.cgi?id=95
-_ lines skip on 200x200 surface because of fixed point rounding error
-_   http://dev.processing.org/bugs/show_bug.cgi?id=267
 _ P3D not doing bilinear interpolation in text and images 
 _   because smooth() has to be set (and smooth throws an error in P3D)
 _   how should this be handled? a hint? allowing smooth()?
