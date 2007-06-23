@@ -14,14 +14,15 @@ int columnCount;
 int lastRow;
 
 // Buffer used to move all the pixels up
-int scoot[];
+int[] scoot;
 
 
 void setup() {
   size(640, 480, P3D);
 
-  // also try with other video sizes
+  // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 32, 24);
+  // Also try with other video sizes
   
   column = 0;
   columnCount = width / video.width;
@@ -30,7 +31,6 @@ void setup() {
   
   scoot = new int[lastRow*video.height * width];
   background(0);
-  frameRate(10);  // Try different frame rates for different effects
 }
 
 

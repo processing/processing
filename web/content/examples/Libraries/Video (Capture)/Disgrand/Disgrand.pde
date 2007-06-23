@@ -10,118 +10,109 @@
 import processing.video.*;
 
 Capture video;
-int count;
-boolean cheatScreen = false;
+boolean cheatScreen;
 
-float multiplier;
-float dgR[], dgG[], dgB[];
-Vec3f drgb[];
-int value[];
+Tuple[] captureColors;
+Tuple[] drawColors;
+int[] bright;
+
+// How many pixels to skip in either direction
+int increment = 5;
 
 
 public void setup() {
   size(800, 600, P3D);
 
   noCursor();
+  // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 80, 60, 15);
-  count = video.width * video.height;
-
-  value = new int[count];
-  drgb = new Vec3f[count];
+  
+  int count = (video.width * video.height) / (increment * increment);
+  bright = new int[count];
+  captureColors = new Tuple[count];
+  drawColors = new Tuple[count];
   for (int i = 0; i < count; i++) {
-    drgb[i] = new Vec3f();
+    captureColors[i] = new Tuple();
+    drawColors[i] = new Tuple(0.5, 0.5, 0.5);
   }
-  dgR = new float[count];
-  dgG = new float[count];
-  dgB = new float[count];
-  for (int i = 0; i < count; i++) {
-    dgR[i] = 0.5;
-    dgG[i] = 0.5;
-    dgB[i] = 0.5;
-  }
-}
-
-
-public void captureEvent(Capture c) {
-  c.read();
 }
 
 
 public void draw() {
-  background(0);
-  colorMode(RGB, 1);
-  noStroke();
+  if (video.available()) {
+    video.read();
+    
+    background(0);
+    noStroke();
 
-  int index = 0;
-  for (int j = 0; j < video.height; j += 5) {
-    for (int i = 0; i < video.width; i += 5) {
-      int pixelColor = video.pixels[j*video.width + i];
+    int index = 0;
+    for (int j = 0; j < video.height; j += increment) {
+      for (int i = 0; i < video.width; i += increment) {
+        int pixelColor = video.pixels[j*video.width + i];
 
-      int r = (pixelColor >> 16) & 0xff;
-      int g = (pixelColor >> 8) & 0xff;
-      int b = pixelColor & 0xff;
+        int r = (pixelColor >> 16) & 0xff;
+        int g = (pixelColor >> 8) & 0xff;
+        int b = pixelColor & 0xff;
 
-      value[index] = r*r + g*g + b*b;
-      drgb[index].set(r, g, b);
-      drgb[index].scale(1.0 / 255.0);
+        // Technically would be sqrt of the following, but no need to do
+        // sqrt before comparing the elements since we're only ordering
+        bright[index] = r*r + g*g + b*b;
+        captureColors[index].set(r, g, b);
 
-      index++;
+        index++;
+      }
     }
-  }
-  sort(index, value, drgb);
+    sort(index, bright, captureColors);
 
-  multiplier = width / (float)index;
-  beginShape(QUAD_STRIP);
-  for (int i = 0; i < index; i++) {
-    dgR[i] = dgR[i] * 0.9 + drgb[i].x * 0.1;
-    dgG[i] = dgG[i] * 0.9 + drgb[i].y * 0.1;
-    dgB[i] = dgB[i] * 0.9 + drgb[i].z * 0.1;
-    fill(dgR[i], dgG[i], dgB[i]);
+    beginShape(QUAD_STRIP);
+    for (int i = 0; i < index; i++) {
+      drawColors[i].target(captureColors[i], 0.1);
+      drawColors[i].phil();
 
-    float left = (float)i * multiplier;
-    float right = ((float)(i+1)) * multiplier;
+      float x = map(i, 0, index, 0, width);
+      vertex(x, 0);
+      vertex(x, height);
+    }
+    endShape();
 
-    vertex(right, 0);
-    vertex(right, height);
-  }
-  endShape();
-
-  if (cheatScreen) {
-    image(video, 0, height - video.height);
+    if (cheatScreen) {
+      //image(video, 0, height - video.height);
+      // Faster method of displaying pixels array on screen
+      set(0, height - video.height, video);
+    }
   }
 }
 
 
 public void keyPressed() {
-  switch (key) {
-  case 'g': saveFrame(); break;
-  case 'c': cheatScreen = !cheatScreen; break;
+  if (key == 'g') {
+    saveFrame();
+  } else if (key == 'c') {
+    cheatScreen = !cheatScreen;
   }
 }
 
 
-/////////////////////////////////////////////////////////////
-
-// functions to handle sorting the color data
+// Functions to handle sorting the color data
 
 
-void sort(int length, int a[], Vec3f stuff[]) {
+void sort(int length, int[] a, Tuple[] stuff) {
   sortSub(a, stuff, 0, length - 1);
 }
 
 
-void sortSwap(int a[], Vec3f stuff[], int i, int j) {
+void sortSwap(int[] a, Tuple[] stuff, int i, int j) {
   int T = a[i];
   a[i] = a[j];
   a[j] = T;
 
-  Vec3f v = stuff[i];
+  Tuple v = stuff[i];
   stuff[i] = stuff[j];
   stuff[j] = v;
 }
 
 
-void sortSub(int a[], Vec3f stuff[], int lo0, int hi0) {
+void sortSub(int[] a, Tuple[] stuff, int lo0, int hi0) {
   int lo = lo0;
   int hi = hi0;
   int mid;

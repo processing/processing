@@ -8,52 +8,47 @@
  * direct pixel-accessing approach I have used here. 
  * 
  * Created December 2006. 
+ * Updated June 2007 by fry.
  */
-
 import processing.video.*;
-Capture myVideo;
 
-int video_width     = 320;
-int video_height    = 240;
-int video_slice_x   = video_width/2;
-int window_width    = 600;
-int window_height   = video_height;
+Capture video;
 
-int draw_position_x = window_width - 1; 
-boolean b_newFrame  = false;  // fresh-frame flag
+int videoSliceX;
+int drawPositionX;
 
-void setup()
-{
-  myVideo = new Capture(this, video_width, video_height, 30);
-  size(window_width, window_height);
-  background(0,0,0);
+
+void setup() {
+  size(600, 240);
+  
+  // Uses the default video input, see the reference if this causes an error
+  video = new Capture(this, 320, 240, 30);
+  
+  videoSliceX = video.width / 2;
+  drawPositionX = width - 1;
+  background(0);
 }
 
-public void captureEvent(Capture c) 
-{
-  c.read();
-  b_newFrame = true;
-}
 
-void draw() 
-{
-  if (b_newFrame) {
+void draw() {
+  if (video.available()) {
+    video.read();
+    video.loadPixels();
     
     // Copy a column of pixels from the middle of the video 
     // To a location moving slowly across the canvas.
     loadPixels();
-    for (int y=0; y<window_height; y++){
-      int setPixelIndex = y*window_width + draw_position_x;
-      int getPixelIndex = y*video_width  + video_slice_x;
-      pixels[setPixelIndex] = myVideo.pixels[getPixelIndex];
+    for (int y = 0; y < video.height; y++){
+      int setPixelIndex = y*width + drawPositionX;
+      int getPixelIndex = y*video.width  + videoSliceX;
+      pixels[setPixelIndex] = video.pixels[getPixelIndex];
     }
     updatePixels();
     
+    drawPositionX--;
     // Wrap the position back to the beginning if necessary.
-    draw_position_x = (draw_position_x - 1);
-    if (draw_position_x < 0) {
-      draw_position_x = window_width - 1;
+    if (drawPositionX < 0) {
+      drawPositionX = width - 1;
     }
-    b_newFrame = false;
   }
 }

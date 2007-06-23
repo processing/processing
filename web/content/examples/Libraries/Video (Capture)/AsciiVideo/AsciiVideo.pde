@@ -11,7 +11,6 @@ import processing.opengl.*;
 import processing.video.*;
 
 Capture video;
-int count;
 boolean cheatScreen;
 
 // All ASCII characters, sorted according to their visual density
@@ -20,29 +19,21 @@ String letterOrder =
   "nT#JCwfy325Fp6mqSghVd4EgXPGZbYkOA&8U$@KHDBWNMR0Q";
 char[] letters;
 
-// how quickly to update each pixel (see below)
-float STEP = 0.01;
-
-//float dgR[], dgG[], dgB[];
-
-float bright[];
-char chars[];
+float[] bright;
+char[] chars;
 
 PFont font;
-// starting font size
-float fontSize = 1.5f;
-
+float fontSize = 1.5;
 
 
 public void setup() {
-  // Run at the default size
   size(640, 480, P3D);
-  // or run full screen, more fun!
+  // Or run full screen, more fun! Use with Sketch -> Present
   //size(screen.width, screen.height, OPENGL);
 
   // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, 80, 60, 15);
-  count = video.width * video.height;
+  int count = video.width * video.height;
 
   font = loadFont("UniversLTStd-Light-48.vlw");
 
@@ -102,9 +93,9 @@ void draw() {
       // 256*3 elements long instead of just 256.
       int pixelBright = max(r, g, b);
 
-      // The STEP variable is used to damp the changes so that letters flicker less
+      // The 0.1 value is used to damp the changes so that letters flicker less
       float diff = pixelBright - bright[index];
-      bright[index] += diff * STEP;
+      bright[index] += diff * 0.1;
 
       fill(pixelColor);
       int num = int(bright[index]);

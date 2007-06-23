@@ -4,8 +4,6 @@
  * 
  * Arrange the pixels from live video into the HSV Color Cone.
  */
-
-
 import processing.opengl.*;
 import processing.video.*;
 
@@ -20,10 +18,10 @@ static final float ROT_INCREMENT   = 3.0;
 static final float TRANS_INCREMENT = 1;
 static final float STEP_AMOUNT     = 0.1;
 
-Vec3f farbe[];
-Vec3f trans[];
+Tuple[] farbe;
+Tuple[] trans;
 
-float hsb[] = new float[3];
+float[] hsb = new float[3];
 
 float leftRightAngle;
 float upDownAngle;
@@ -32,7 +30,7 @@ float upDownTrans;
 float leftRightTrans;
 boolean motion;
 
-boolean blobby = false; //true;
+boolean blobby = false;
 
 
 public void setup() {
@@ -52,16 +50,16 @@ public void setup() {
   upDownAngle = -180.098694;
   fwdBackTrans = 14.800003;
 
-  farbe = new Vec3f[count];
-  trans = new Vec3f[count];
+  farbe = new Tuple[count];
+  trans = new Tuple[count];
   for (int i = 0; i < count; i++) {
-    farbe[i] = new Vec3f();
-    trans[i] = new Vec3f();
+    farbe[i] = new Tuple();
+    trans[i] = new Tuple();
   }
 }
 
 
-public void draw() {
+void draw() {
   background(0);
 
   if (!blobby) lights();
@@ -98,22 +96,21 @@ public void draw() {
     float nz = hsb[2] * MAX_RADIUS * CONE_HEIGHT;
 
     trans[i].set(trans[i].x - (trans[i].x - nx)*STEP_AMOUNT,
-    trans[i].y - (trans[i].y - ny)*STEP_AMOUNT,
-    trans[i].z - (trans[i].z - nz)*STEP_AMOUNT);
+                 trans[i].y - (trans[i].y - ny)*STEP_AMOUNT,
+                 trans[i].z - (trans[i].z - nz)*STEP_AMOUNT);
 
     farbe[i].set(farbe[i].x - (farbe[i].x - r)*STEP_AMOUNT,
-    farbe[i].y - (farbe[i].y - g)*STEP_AMOUNT,
-    farbe[i].z - (farbe[i].z - b)*STEP_AMOUNT);
+                 farbe[i].y - (farbe[i].y - g)*STEP_AMOUNT,
+                 farbe[i].z - (farbe[i].z - b)*STEP_AMOUNT);
 
     pushMatrix();
-    fill(farbe[i].x, farbe[i].y, farbe[i].z);
-    translate(trans[i].x, trans[i].y, trans[i].z);
+    farbe[i].phil();
+    trans[i].tran();
 
     rotate(radians(45), 1, 1, 0);
     if (blobby) {
       sphere(BOX_SIZE * 2); //, 20, 20);
-    } 
-    else {
+    } else {
       box(BOX_SIZE);
     }
 
@@ -122,8 +119,8 @@ public void draw() {
   popMatrix();
 
   if (motion) {
-    upDownAngle -= 1; //0.3;
-    leftRightAngle -= 1; //0.3;
+    upDownAngle--;
+    leftRightAngle--;
   }
 
   if (cheatScreen) {
@@ -132,12 +129,13 @@ public void draw() {
 }
 
 
-public void captureEvent(Capture c) {
+void captureEvent(Capture c) {
   c.read();
+  c.loadPixels();
 }
 
 
-public void keyPressed() {
+void keyPressed() {
   switch (key) {
   case 'g': 
     saveFrame(); 
@@ -162,20 +160,20 @@ public void keyPressed() {
 }
 
 
-public void mouseDragged() {
+void mouseDragged() {
   float dX, dY;
 
   switch (mouseButton) {
   case LEFT:  // left right up down
-    dX = (float) (pmouseX - mouseX);
-    dY = (float) (pmouseY - mouseY);
+    dX = pmouseX - mouseX;
+    dY = pmouseY - mouseY;
     leftRightAngle -= dX * 0.2;
     upDownAngle += dY * 0.4;
     break;
 
   case CENTER:
-    dX = (float) (pmouseX - mouseX);
-    dY = (float) (pmouseY - mouseY);
+    dX = pmouseX - mouseX;
+    dY = pmouseY - mouseY;
     leftRightTrans -= TRANS_INCREMENT * dX;
     upDownTrans -= TRANS_INCREMENT * dY;
     break;
@@ -192,7 +190,7 @@ void wireCone(float radius, float height, int stepX, int stepY) {
   int steps = 10;
   stroke(40);
   for (int i = 0; i < steps; i++) {
-    float angle = TWO_PI * i / (float)steps;
+    float angle = map(i, 0, steps, 0, TWO_PI);
     float x = radius * cos(angle);
     float y = radius * sin(angle);
     line(x, y, height, 0, 0, 0);
@@ -204,29 +202,3 @@ void wireCone(float radius, float height, int stepX, int stepY) {
   ellipse(0, 0, radius, radius);
   popMatrix();
 }
-
-
-// Simple vector class that holds an x,y,z position.
-
-class Vec3f {
-  float x, y, z;
-
-  public Vec3f() { }
-
-  public Vec3f(float x, float y, float z) {
-    set(x, y, z);
-  }
-
-  public void set(float x, float y, float z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
-
-  public void scale(float amt) {
-    x *= amt;
-    y *= amt;
-    z *= amt;
-  }
-}
-

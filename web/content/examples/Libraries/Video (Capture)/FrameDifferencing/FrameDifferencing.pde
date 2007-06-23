@@ -11,12 +11,15 @@ import processing.video.*;
 int numPixels;
 int[] previousFrame;
 Capture video;
+
 void setup() {
   size(640, 480); // Change size to 320 x 240 if too slow at 640 x 480
+  // Uses the default video input, see the reference if this causes an error
   video = new Capture(this, width, height, 24);
   numPixels = video.width * video.height;
   // Create an array to store the previously captured frame
   previousFrame = new int[numPixels];
+  loadPixels();
 }
 
 void draw() {
@@ -25,8 +28,8 @@ void draw() {
     // video.read() inside the draw() method so that it's safe to draw to the screen
     video.read(); // Read the new frame from the camera
     video.loadPixels(); // Make its pixels[] array available
+    
     int movementSum = 0; // Amount of movement in the frame
-    loadPixels();
     for (int i = 0; i < numPixels; i++) { // For each pixel in the video frame...
       color currColor = video.pixels[i];
       color prevColor = previousFrame[i];

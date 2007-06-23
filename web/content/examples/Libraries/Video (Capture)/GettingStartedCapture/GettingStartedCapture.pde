@@ -1,39 +1,37 @@
 /**
- * Getting Started. 
+ * Getting Started with Capture.
  * 
  * Reading and displaying an image from an attached Capture device. 
- */
- 
- 
+ */ 
 import processing.video.*;
 
 Capture cam;
 
-void setup()
-{
+
+void setup() {
   size(640, 480);
 
-  // List all available capture devices to the console
-  // Use the information printed to the text area to
-  // correctly set the variable "s" below
-  println(Capture.list());
+  // If no device is specified, will just use the default.
+  cam = new Capture(this, 320, 240);
 
-  // Specify your own device by the name of the capture
-  // device returned from the Capture.list() function
-  //String s = "Your Camera Name Here";
-  //camera = new Capture(this, s, width, height, 30);
+  // To use another device (i.e. if the default device causes an error),  
+  // list all available capture devices to the console to find your camera.
+  //String[] devices = Capture.list();
+  //println(devices);
+  // Change devices[0] to the proper index for your camera.
+  //cam = new Capture(this, width, height, devices[0]);
 
-  // If no device is specified, will just use the default
-  cam = new Capture(this, 320, 240, 12);
-
-  // Opens the settings page for this capture device
+  // Opens the settings page for this capture device.
   //camera.settings();
 }
 
-void draw()
-{
+
+void draw() {
   if (cam.available() == true) {
-    cam.read(); 
+    cam.read();
+    image(cam, 160, 100);
+    // The following does the same, and is faster when just drawing the image
+    // without any additional resizing, transformations, or tint.
+    //set(160, 100, cam);
   }
-  image(cam, 160, 100);
 } 
