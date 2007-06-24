@@ -90,6 +90,17 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 0125p4 (in progress)
 X significant improvement to text and images in opengl
 X   now using mipmaps to interpolate large and small images
+_ things not showing up in linux
+X   this may be fixed along with bug #341
+_   probably threading issue, 98 doesn't have any trouble
+_   signs point to Runner or PApplet changes between 98 and 99
+_   commenting out applet.setupFrameResizeListener() 
+_     in line 307 from Runner.java solved the problem
+_   http://dev.processing.org/bugs/show_bug.cgi?id=282
+X size of sketch different in setup() and draw() on linux
+X   make sure that the sketch isn't being sized based on bad insets
+X   problem with resizing the component when the frame wasn't resizable
+X   http://dev.processing.org/bugs/show_bug.cgi?id=341
 
 ewjordan stuff (changes checked in)
 _ rect() changes size as it changes position
@@ -265,12 +276,6 @@ _ major threading overhaul before 1.0 (compendium)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=511
 _ 100x100 issues are exhibited on bh140c PCs, test and fix!
 _   http://dev.processing.org/bugs/show_bug.cgi?id=197
-_ things not showing up in linux
-_   probably threading issue, 98 doesn't have any trouble
-_   signs point to Runner or PApplet changes between 98 and 99
-_   commenting out applet.setupFrameResizeListener() 
-_     in line 307 from Runner.java solved the problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=282
 _ alloc() stuff not fixed because of thread halting
 _   problem where alloc happens inside setup(), so, uh..
 _   http://dev.processing.org/bugs/show_bug.cgi?id=369
@@ -305,9 +310,6 @@ _   probably need to integrate over a rolling array of 10 frames or so
 _ frameRate() speeds up temporarily if CPU load drops dramatically
 _   http://dev.processing.org/bugs/show_bug.cgi?id=297
 _   perhaps add a hint(DISABLE_FRAMERATE_DAMPER)
-_ size of sketch different in setup() and draw() on linux
-_   make sure that the sketch isn't being sized based on bad insets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=341
 
 point()
 _ gl points not working again
