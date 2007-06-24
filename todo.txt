@@ -89,7 +89,6 @@ _     showing the contents of the .java tab, so if you press save
 _     you will overwrite your original code from the main-tab. 
 
 
-
 // from color sorting example
 
 float sortCompare(int a, int b) {
@@ -112,7 +111,10 @@ _ huge jar files from 0124 export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=541
 _ if someone has monaco disabled in font book, the app won't start
 _   http://dev.processing.org/bugs/show_bug.cgi?id=562
-
+_ color picker broken on vista
+_   http://dev.processing.org/bugs/show_bug.cgi?id=584
+_ can't get documents/prefs folder on vista
+_   http://dev.processing.org/bugs/show_bug.cgi?id=585
 
 0126
 _ do the big move to multiple sketches open
@@ -242,9 +244,6 @@ _ install astyle formatter
 _   build on each platform, then "lipo -create astyle.* -output astyle"
 
 _ after sketch -> add file, no confirmation message is shown
-_ applet sizing issues with external vm
-_   could this possibly be related to the linux bug?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=430
 
 Must have for 1.0:
 > a,c) P2D to return, P2D to simply return in its previous form
