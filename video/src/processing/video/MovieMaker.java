@@ -4,6 +4,7 @@
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2006 Daniel Shiffman
+  With minor modifications by Ben Fry for Processing 0125+
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,6 +23,8 @@
 */
 
 package processing.video;
+
+import java.io.File;
 
 import quicktime.Errors;
 import quicktime.QTException;
@@ -64,8 +67,8 @@ import processing.core.*;
  *
  *   // Create MovieMaker object with size, filename,
  *   // compression codec and quality, framerate
- *   mm = new MovieMaker(this, width, height, "drawing.mov",
- *                       MovieMaker.H263, MovieMaker.HIGH, 30);
+ *   mm = new MovieMaker(this, width, height, "drawing.mov", 30,
+ *                       MovieMaker.H263, MovieMaker.HIGH);
  *   background(160, 32, 32);
  * }
  *
@@ -85,7 +88,7 @@ import processing.core.*;
  * void keyPressed() {
  *   // Finish the movie if space bar is pressed!
  *   if (key == ' ') {
- *     mm.stop();
+ *     mm.finish();
  *   }
  * }
  * </PRE>
@@ -93,7 +96,6 @@ import processing.core.*;
 public class MovieMaker {
 
   public static final int RAW = StdQTConstants.kRawCodecType;
-
   public static final int ANIMATION = StdQTConstants.kAnimationCodecType;
   public static final int BASE = StdQTConstants.kBaseCodecType;
   public static final int BMP = StdQTConstants.kBMPCodecType;
@@ -102,17 +104,16 @@ public class MovieMaker {
   public static final int CMYK = StdQTConstants.kCMYKCodecType;
   public static final int GIF = StdQTConstants.kGIFCodecType;
   public static final int GRAPHICS = StdQTConstants.kGraphicsCodecType;
+  public static final int H261 = StdQTConstants.kH261CodecType;
+  public static final int H263 = StdQTConstants.kH263CodecType;
+  // H.264 encoding, added because no constant is available in QTJava
+  public static final int H264 = QTUtils.toOSType("avc1");
   public static final int JPEG = StdQTConstants.kJPEGCodecType;
   public static final int MS_VIDEO = StdQTConstants.kMicrosoftVideo1CodecType;
   public static final int MOTION_JPEG_A = StdQTConstants.kMotionJPEGACodecType;
   public static final int MOTION_JPEG_B = StdQTConstants.kMotionJPEGBCodecType;
   public static final int SORENSON = StdQTConstants.kSorensonCodecType;
   public static final int VIDEO = StdQTConstants.kVideoCodecType;
-
-  public static final int H261 = StdQTConstants.kH261CodecType;
-  public static final int H263 = StdQTConstants.kH263CodecType;
-  // H.264 encoding, added because no constant is available in QTJava
-  public static final int H264 = QTUtils.toOSType ("avc1");
 
   public static final int WORST = StdQTConstants.codecMinQuality;
   public static final int LOW = StdQTConstants.codecLowQuality;
@@ -192,22 +193,14 @@ public class MovieMaker {
     height = _h;
     rate = _rate;
 
-    // Start QT
-    //if (!QTSession.isInitialized()) {  // [fry]
     try {
       QTSession.open();
     } catch (QTException e1) {
       e1.printStackTrace();
     }
-    //}
 
-    // Create GWorld
     try {
-      // Broken on intel?
-      // ImageDescription imgD =
-      //   new ImageDescription(QDConstants.k32ARGBPixelFormat);
       ImageDescription imgD = null;
-      // Intel fix, could it be??  I think this takes care of Windows too?!?!?
       if (quicktime.util.EndianOrder.isNativeLittleEndian()) {
         imgD = new ImageDescription(QDConstants.k32BGRAPixelFormat);
       } else {
@@ -230,20 +223,9 @@ public class MovieMaker {
 
 
   private void initMovie(String filename) {
-    // If nothing has been specified
-    if (codecType == 0) {
-      System.out.println("No code type specified, using default of RAW");
-      codecType = RAW;
-    }
-    if (codecQuality == 0) {
-      System.out.println("No code quality specified, using default of HIGH");
-      codecQuality = HIGH;
-    }
-
     try {
       String path = parent.savePath(filename);
-      System.out.println("Creating movie file: " + path);
-      movFile = new QTFile (new java.io.File(path));
+      movFile = new QTFile(new File(path));
       movie = Movie.createMovieFile(movFile, StdQTConstants.kMoviePlayer, StdQTConstants.createMovieFileDeleteCurFile);
       int timeScale = TIME_SCALE; // 100 units per second
       videoTrack = movie.addTrack(width, height, 0);
@@ -259,16 +241,22 @@ public class MovieMaker {
       readyForFrames = true;
 
     } catch (QTException e) {
-      //  if it's a -8961 error, do it the other way
       if (e.errorCode() == Errors.noCodecErr) {
-        //System.out.println("Temporal compression not supported, switching modes. ");
-        temporalSupported = false;
-        readyForFrames = true;
+        if (imageHandle == null) {
+          // This means QTImage.getMaxCompressionSize() failed
+          System.err.println("The specified codec is not supported, " +
+                             "please ensure that the parameters are valid, " +
+                             "and in the correct order.");
+        } else {
+          // If it's a -8961 error, quietly do it the other way
+          // (this happens when RAW is specified)
+          temporalSupported = false;
+          readyForFrames = true;
+        }
 
       } else if (e.errorCode() == Errors.fBsyErr) {
-        System.err.println("Movie file already exists.  " +
-                           "Please delete it first. " +
-                           "(DS to solve this eventually.)");
+        System.err.println("The movie file already exists.  " +
+                           "Please delete it first.");
 
       } else {
         e.printStackTrace();
@@ -285,11 +273,6 @@ public class MovieMaker {
 
 
   public void addFrame(int[] _pixels, int w, int h) {
-    // Now that I fixed the intel mac bug in the constructor, I think windows
-    // is covered too so the code below is unnecessary.  I think.  I hope.
-    //boolean windows = false;
-    //String os = System.getProperty("os.name");
-    //if (os.charAt(0) == 'w' || os.charAt(0) == 'W') windows = true;
     if (readyForFrames){
       RawEncodedImage pixelData = gw.getPixMap().getPixelData();
       int rowBytes = pixelData.getRowBytes() / 4;
@@ -298,12 +281,9 @@ public class MovieMaker {
         for (int j = 0; j < h; j++) {
           if (i < w) {
             newpixels[i+j*rowBytes] = _pixels[i+j*w];
-            // We can skip this now, right?!?!?!?
-            // On windows, we have to flip the pixels (i think)
-            //if (!windows) newpixels[i+j*rowBytes] = _pixels[i+j*w];
-            //else newpixels[i+j*rowBytes] = EndianOrder.flipBigEndianToNative32(_pixels[i+j*w]);
+          } else {
+            newpixels[i+j*rowBytes] = 0;
           }
-          else newpixels[i+j*rowBytes] = 0;
         }
       }
       pixelData.setInts(0,newpixels);
@@ -332,27 +312,27 @@ public class MovieMaker {
   /**
    * Close out and finish the movie file.
    */
-  public void stop() {
-    System.out.println("Finishing movie file.");
+  public void finish() {
     try {
-      readyForFrames = false;
-      videoMedia.endEdits();
-      videoTrack.insertMedia(0, 0, videoMedia.getDuration(), 1);
-      OpenMovieFile omf = OpenMovieFile.asWrite(movFile);
-      movie.addResource(omf, StdQTConstants.movieInDataForkResID,
-                        movFile.getName());
-    } catch (StdQTException e) {
-      e.printStackTrace();
-    } catch (QTException e) {
-      e.printStackTrace();
+      if (readyForFrames) {
+        //System.out.println("Finishing movie file.");
+        readyForFrames = false;
+        videoMedia.endEdits();
+        videoTrack.insertMedia(0, 0, videoMedia.getDuration(), 1);
+        OpenMovieFile omf = OpenMovieFile.asWrite(movFile);
+        movie.addResource(omf, StdQTConstants.movieInDataForkResID,
+                          movFile.getName());
+      }
+    } catch (StdQTException se) {
+      se.printStackTrace();
+    } catch (QTException qe) {
+      qe.printStackTrace();
     }
-    // Causes windows to hang??
-    //QTSession.close();
   }
 
 
   public void dispose() {
-    if (readyForFrames) stop();
+    if (readyForFrames) finish();
 
     try {
       QTSession.close();
