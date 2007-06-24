@@ -102,6 +102,13 @@ X   make sure that the sketch isn't being sized based on bad insets
 X   problem with resizing the component when the frame wasn't resizable
 X   http://dev.processing.org/bugs/show_bug.cgi?id=341
 
+_ having shut off the defaults reset, background not getting called for java2d
+_   so this will make that other stuff regress again
+_ background not being set properly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=454
+_ why aren't background() / defaults() being called for opengl?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
+
 ewjordan stuff (changes checked in)
 _ rect() changes size as it changes position
 _   http://dev.processing.org/bugs/show_bug.cgi?id=95
@@ -274,6 +281,9 @@ _   leave smooth off, get the gl object, then enable line smooth
 threading [1.0]
 _ major threading overhaul before 1.0 (compendium)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=511
+_ applet sizing issues with external vm
+_   could this possibly be related to the linux bug?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=430
 _ 100x100 issues are exhibited on bh140c PCs, test and fix!
 _   http://dev.processing.org/bugs/show_bug.cgi?id=197
 _ alloc() stuff not fixed because of thread halting
@@ -374,13 +384,6 @@ _   needs to be marked as its cache needs an update, but not its pixels
 _ calling graphics.smooth(), graphics.colorMode() outside begin/endDraw
 _   this causes everything to be reset once the draw occurs
 _   kinda seems problematic and prone to errors?
-
-_ having shut off the defaults reset, background not getting called for java2d
-_   so this will make that other stuff regress again
-_ background not being set properly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=454
-_ why aren't background() / defaults() being called for opengl?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 
 _ gradients
 _   use gradients in a class for the svg lib for now
