@@ -6707,18 +6707,24 @@ public class PApplet extends Applet
     frame.addComponentListener(new ComponentAdapter() {
 
         public void componentResized(ComponentEvent e) {
-          // might be multiple resize calls before visible (i.e. first
-          // when pack() is called, then when it's resized for use).
-          // ignore them because it's not the user resizing things.
-          Frame farm = (Frame) e.getComponent();
-          if (farm.isVisible()) {
-            Insets insets = farm.getInsets();
-            Dimension windowSize = farm.getSize();
-            int usableW = windowSize.width - insets.left - insets.right;
-            int usableH = windowSize.height - insets.top - insets.bottom;
-
-            // the ComponentListener in PApplet will handle calling size()
-            setBounds(insets.left, insets.top, usableW, usableH);
+          // Ignore bad resize events fired during setup to fix
+          // http://dev.processing.org/bugs/show_bug.cgi?id=341
+          // This should also fix the blank screen on Linux bug
+          // http://dev.processing.org/bugs/show_bug.cgi?id=282
+          if (frame.isResizable()) {
+            // might be multiple resize calls before visible (i.e. first
+            // when pack() is called, then when it's resized for use).
+            // ignore them because it's not the user resizing things.
+            Frame farm = (Frame) e.getComponent();
+            if (farm.isVisible()) {
+              Insets insets = farm.getInsets();
+              Dimension windowSize = farm.getSize();
+              int usableW = windowSize.width - insets.left - insets.right;
+              int usableH = windowSize.height - insets.top - insets.bottom;
+              
+              // the ComponentListener in PApplet will handle calling size()
+              setBounds(insets.left, insets.top, usableW, usableH);
+            }
           }
         }
       });
