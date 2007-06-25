@@ -14,9 +14,10 @@ require '../header.inc.php';
 <br />
 <?php
 $link = db_connect();
-$query = "SELECT id, useragent, stamp FROM profile_summary ORDER BY useragent, stamp DESC";
+$query = "SELECT DISTINCT id, useragent, stamp FROM profile_summary ORDER BY useragent, stamp DESC";
 $result = mysql_query($query);
 $devices = array();
+$unrecognized = array();
 $count = 0;
 $brand = NULL;
 while ($data = mysql_fetch_assoc($result)) {
@@ -37,12 +38,28 @@ while ($data = mysql_fetch_assoc($result)) {
         $count++;
       }
     }
+  } else {
+    if (array_search($data['useragent'], $unrecognized) === FALSE) {
+      $unrecognized[] = $data['useragent'];
+    }
   }
 }
 ?>
 <br />
 <br />
-<b>Total:</b> <?php echo $count ?> phones
+<b>Total:</b> <?php echo $count ?> phones<br />
+<br />
+<br />
+<?php
+if (count($unrecognized) > 0) {
+?>
+Unrecognized Phones:<br />
+<?php
+  for ($i = 0; $i < count($unrecognized); $i++) {
+    echo $unrecognized[$i] . "<br />";
+  }
+}
+?>
 <?php
 require '../footer.inc.php';
 ?>
