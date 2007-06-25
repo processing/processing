@@ -16,13 +16,13 @@ require '../header.inc.php';
 $link = db_connect();
 $query = "SELECT id, useragent, stamp FROM profile_summary ORDER BY useragent, stamp DESC";
 $result = mysql_query($query);
-$wurfl = new tera_wurfl();
 $devices = array();
 $count = 0;
 $brand = NULL;
 while ($data = mysql_fetch_assoc($result)) {
   //// look up each one in wurfl
-  if ($wurfl->getDeviceCapabilitiesFromAgent($data['useragent'])) {
+  $wurfl = new tera_wurfl();
+  if ($wurfl->GetDeviceCapabilitiesFromAgent($data['useragent'])) {
     if ($wurfl->capabilities['product_info']['is_wireless_device']) {
       if (($brand != NULL) && (strcmp($brand, $wurfl->brand) != 0)) {
         echo "<br />";

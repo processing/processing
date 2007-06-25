@@ -35,11 +35,11 @@ Mobile Processing sketches run on most mobile phones that support Java games and
 $link = db_connect();
 $query = "SELECT id, useragent, stamp FROM profile_summary ORDER BY stamp DESC LIMIT 24";
 $result = mysql_query($query);
-$wurfl = new tera_wurfl();
 $devices = array();
 $count = 0;
 while ($data = mysql_fetch_assoc($result)) {
   //// look up each one in wurfl
+  $wurfl = new tera_wurfl();
   if ($wurfl->getDeviceCapabilitiesFromAgent($data['useragent'])) {
     if ($wurfl->capabilities['product_info']['is_wireless_device']) {
       $name = $wurfl->brand .' '. $wurfl->model;
