@@ -752,7 +752,12 @@ public class Base {
           Runtime.getRuntime().exec(new String[] { launcher, url });
         }
       } else {
-        System.err.println("Unspecified platform, no launcher available.");
+        String launcher = Preferences.get("launcher");
+        if (launcher != null) {
+          Runtime.getRuntime().exec(new String[] { launcher, url });
+        } else {
+          System.err.println("Unspecified platform, no launcher available.");
+        }
       }
 
     } catch (IOException e) {
