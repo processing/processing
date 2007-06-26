@@ -763,8 +763,17 @@ public class Base {
     if (Base.isWindows() || Base.isMacOS()) return true;
 
     //gnome-open, kde-open
-    if (Preferences.getString("
-    Process p = Runtime.getRuntime.exec(new String[] { "gnome-open" });
+    if (Base.isLinux()) {
+      if (Preferences.get("launcher.linux") != null) {
+        return true;
+      }
+      try {
+        Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
+        int result = p.waitFor();
+        System.out.println("result");
+      } catch (Exception e) { }
+    }
+    return false;
   }
 
 
