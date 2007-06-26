@@ -266,6 +266,9 @@ preproc.imports.jdk14 = javax.xml.parsers,javax.xml.transform,javax.xml.transfor
 # set the browser to be used on linux
 browser.linux = mozilla
 
+# set to the program to be used for launching apps on linux
+#launcher.linux = gnome-open
+
 # coloring for the editor line number status bar at the bottom of the screen
 linestatus.bgcolor = #66665a
 linestatus.font	   = SansSerif,plain,10
