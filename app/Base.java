@@ -759,6 +759,15 @@ public class Base {
   }
 
 
+  static boolean openFolderAvailable() {
+    if (Base.isWindows() || Base.isMacOS()) return true;
+
+    //gnome-open, kde-open
+    if (Preferences.getString("
+    Process p = Runtime.getRuntime.exec(new String[] { "gnome-open" });
+  }
+
+
   /**
    * Implements the other cross-platform headache of opening
    * a folder in the machine's native file browser.
