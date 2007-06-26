@@ -88,6 +88,9 @@ _     the contents in the files are not the same, but the main-tab is
 _     showing the contents of the .java tab, so if you press save 
 _     you will overwrite your original code from the main-tab. 
 
+_ switching into present mode in info.plist
+        <key>LSUIPresentationMode</key>
+        <integer>4</integer> 
 
 // from color sorting example
 
@@ -104,6 +107,24 @@ void sortSwap(int a, int b) {
   captureColors[a] = captureColors[b];
   captureColors[b] = t2;  
 }
+
+
+BOOK
+_ make "show sketch folder" work on linux
+_   add notes to the docs about how to fix if not working
+_   http://processing.org/reference/environment/platforms.html#linux
+_ add for "show sketch folder" option
+_   show the menu but dim if the command is not available
+_   gnome-open, kde-open, "kfmclient exec blah"
+_   also do with PApplet.open()
+_ adding a file to the sketch that already exists gives no confirm
+_   sometimes one item showing up twice
+_   (Table.pde showed twice after failed add)
+_ add open (-a?) on osx to the open() command
+_ also need the "find in reference" to work on linux
+_ find in ref is prolly also why +x may be required for .html on osx
+_ get started on time series chapter
+_ on linux, drag and drop didn't accept
 
 
 new bugs
