@@ -120,6 +120,9 @@ public class Runner implements MessageConsumer {
                File.pathSeparator +
                System.getProperty("java.library.path"));
 
+    // still leaves menubar et al
+    //params.add("-Dapple.awt.fakefullscreen=true");
+
     params.add("-cp");
     params.add(sketch.classPath + Sketchbook.librariesClassPath);
 
