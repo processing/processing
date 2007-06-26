@@ -113,9 +113,9 @@ BOOK
 _ make "show sketch folder" work on linux
 _   add notes to the docs about how to fix if not working
 _   http://processing.org/reference/environment/platforms.html#linux
-_ add for "show sketch folder" option
-_   show the menu but dim if the command is not available
-_   gnome-open, kde-open, "kfmclient exec blah"
+X add for "show sketch folder" option
+X   show the menu but dim if the command is not available
+X   gnome-open, kde-open, "kfmclient exec blah"
 _   also do with PApplet.open()
 _ adding a file to the sketch that already exists gives no confirm
 _   sometimes one item showing up twice

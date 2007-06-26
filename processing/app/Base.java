@@ -745,11 +745,14 @@ public class Base {
       } else if (Base.isLinux()) {
         // how's mozilla sound to ya, laddie?
         //Runtime.getRuntime().exec(new String[] { "mozilla", url });
-        String browser = Preferences.get("browser");
-        Runtime.getRuntime().exec(new String[] { browser, url });
-
+        //String browser = Preferences.get("browser");
+        //Runtime.getRuntime().exec(new String[] { browser, url });
+        String launcher = Preferences.get("launcher.linux");
+        if (launcher != null) {
+          Runtime.getRuntime().exec(new String[] { launcher, url });
+        }
       } else {
-        System.err.println("unspecified platform");
+        System.err.println("Unspecified platform, no launcher available.");
       }
 
     } catch (IOException e) {
@@ -762,15 +765,27 @@ public class Base {
   static boolean openFolderAvailable() {
     if (Base.isWindows() || Base.isMacOS()) return true;
 
-    //gnome-open, kde-open
     if (Base.isLinux()) {
+      // Assume that this is set to something valid
       if (Preferences.get("launcher.linux") != null) {
         return true;
       }
+
+      // Attempt to use gnome-open
       try {
         Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
         int result = p.waitFor();
-        System.out.println("result");
+        // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
+        Preferences.set("launcher.linux", "gnome-open");
+        return true;
+      } catch (Exception e) { }
+
+      // Attempt with kde-open
+      try {
+        Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
+        int result = p.waitFor();
+        Preferences.set("launcher.linux", "kde-open");
+        return true;
       } catch (Exception e) { }
     }
     return false;
@@ -798,6 +813,11 @@ public class Base {
       } else if (Base.isMacOS()) {
         openURL(folder);  // handles char replacement, etc
 
+      } else if (Base.isLinux()) {
+        String launcher = Preferences.get("launcher.linux");
+        if (launcher != null) {
+          Runtime.getRuntime().exec(new String[] { launcher, folder });
+        }
       }
     } catch (IOException e) {
       e.printStackTrace();
