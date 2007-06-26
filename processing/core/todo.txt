@@ -128,6 +128,8 @@ _ opengl crashes when depth sorting more than two textured shapes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=560
 _ replaceAll() not supported by 1.1
 _   http://dev.processing.org/bugs/show_bug.cgi?id=561
+_ draw() called twice in vista with java 1.6
+_   http://dev.processing.org/bugs/show_bug.cgi?id=587
 
 _ loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
 _   this might be a good solution for dealing with the differences
