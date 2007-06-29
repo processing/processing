@@ -95,6 +95,8 @@ public class PRequest extends InputStream implements Runnable {
     protected HttpConnection    con;
     protected InputStream       is;
     
+    protected String            authorization;
+    
     /** The current state of the connection, as specified by the above constants
      * @thisref request
      * @thisreftext any variable of the type PRequest
@@ -102,12 +104,13 @@ public class PRequest extends InputStream implements Runnable {
     public  int                 state;
 
     /** @hidden */
-    public PRequest(PMIDlet midlet, String url, String contentType, byte[] bytes) {
+    public PRequest(PMIDlet midlet, String url, String contentType, byte[] bytes, String authorization) {
         this.midlet = midlet;
         this.url = url;
         this.contentType = contentType;
         this.bytes = bytes;
-    }               
+        this.authorization = authorization;
+    }
 
     /** @hidden */
     public void run() {
@@ -123,6 +126,9 @@ public class PRequest extends InputStream implements Runnable {
                     con.setRequestMethod(HttpConnection.GET);
                 }
                 con.setRequestProperty("Connection", "close");
+                if (authorization != null) {
+                    con.setRequestProperty("Authorization", authorization);
+                }
                 if (bytes != null) {
                     os = con.openOutputStream();
                     os.write(bytes);

@@ -1345,6 +1345,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return tokens;
     }
     
+    public final String[] split(String str, char delim) {
+        return split(str, new String(new char[] { delim }));
+    }
+    
     public final String[] split(String str, String delim) {
         Vector v = new Vector();
         int prevIndex = 0;
@@ -1464,12 +1468,108 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return array;
     }
     
+    public final boolean[] contract(boolean[] array, int newSize) {
+        int length = array.length;
+        if (length > newSize) {
+            boolean[] old = array;
+            array = new boolean[newSize];
+            System.arraycopy(old, 0, array, 0, newSize);
+        }
+        return array;
+    }
+    
+    public final byte[] contract(byte[] array, int newSize) {
+        int length = array.length;
+        if (length > newSize) {
+            byte[] old = array;
+            array = new byte[newSize];
+            System.arraycopy(old, 0, array, 0, newSize);
+        }
+        return array;
+    }
+    
+    public final char[] contract(char[] array, int newSize) {
+        int length = array.length;
+        if (length > newSize) {
+            char[] old = array;
+            array = new char[newSize];
+            System.arraycopy(old, 0, array, 0, newSize);
+        }
+        return array;
+    }
+    
+    public final int[] contract(int[] array, int newSize) {
+        int length = array.length;
+        if (length > newSize) {
+            int[] old = array;
+            array = new int[newSize];
+            System.arraycopy(old, 0, array, 0, newSize);
+        }
+        return array;
+    }
+    
     public final String[] contract(String[] array, int newSize) {
         int length = array.length;
         if (length > newSize) {
             String[] old = array;
             array = new String[newSize];
             System.arraycopy(old, 0, array, 0, newSize);
+        }
+        return array;
+    }
+    
+    public final boolean[] expand(boolean[] array) {
+        return expand(array, array.length * 2);
+    }
+    
+    public final boolean[] expand(boolean[] array, int newSize) {
+        int length = array.length;
+        if (length < newSize) {
+            boolean[] old = array;
+            array = new boolean[newSize];
+            System.arraycopy(old, 0, array, 0, length);
+        }
+        return array;
+    }
+    
+    public final byte[] expand(byte[] array) {
+        return expand(array, array.length * 2);
+    }
+    
+    public final byte[] expand(byte[] array, int newSize) {
+        int length = array.length;
+        if (length < newSize) {
+            byte[] old = array;
+            array = new byte[newSize];
+            System.arraycopy(old, 0, array, 0, length);
+        }
+        return array;
+    }
+    
+    public final char[] expand(char[] array) {
+        return expand(array, array.length * 2);
+    }
+    
+    public final char[] expand(char[] array, int newSize) {
+        int length = array.length;
+        if (length < newSize) {
+            char[] old = array;
+            array = new char[newSize];
+            System.arraycopy(old, 0, array, 0, length);
+        }
+        return array;
+    }
+    
+    public final int[] expand(int[] array) {
+        return expand(array, array.length * 2);
+    }
+    
+    public final int[] expand(int[] array, int newSize) {
+        int length = array.length;
+        if (length < newSize) {
+            int[] old = array;
+            array = new int[newSize];
+            System.arraycopy(old, 0, array, 0, length);
         }
         return array;
     }
@@ -1488,6 +1588,42 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return array;
     }
     
+    public final boolean[] reverse(boolean[] array) {
+        int length = array.length;
+        boolean[] reversed = new boolean[length];
+        for (int i = length - 1; i >= 0; i--) {
+            reversed[i] = array[length - i - 1];
+        }
+        return reversed;
+    }
+    
+    public final byte[] reverse(byte[] array) {
+        int length = array.length;
+        byte[] reversed = new byte[length];
+        for (int i = length - 1; i >= 0; i--) {
+            reversed[i] = array[length - i - 1];
+        }
+        return reversed;
+    }
+    
+    public final char[] reverse(char[] array) {
+        int length = array.length;
+        char[] reversed = new char[length];
+        for (int i = length - 1; i >= 0; i--) {
+            reversed[i] = array[length - i - 1];
+        }
+        return reversed;
+    }
+    
+    public final int[] reverse(int[] array) {
+        int length = array.length;
+        int[] reversed = new int[length];
+        for (int i = length - 1; i >= 0; i--) {
+            reversed[i] = array[length - i - 1];
+        }
+        return reversed;
+    }
+    
     public final String[] reverse(String[] array) {
         int length = array.length;
         String[] reversed = new String[length];
@@ -1495,6 +1631,38 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             reversed[i] = array[length - i - 1];
         }
         return reversed;
+    }
+    
+    public final boolean[] shorten(boolean[] array) {
+        boolean[] old = array;
+        int length = old.length - 1;
+        array = new boolean[length];
+        System.arraycopy(old, 0, array, 0, length);
+        return array;
+    }
+    
+    public final byte[] shorten(byte[] array) {
+        byte[] old = array;
+        int length = old.length - 1;
+        array = new byte[length];
+        System.arraycopy(old, 0, array, 0, length);
+        return array;
+    }
+    
+    public final char[] shorten(char[] array) {
+        char[] old = array;
+        int length = old.length - 1;
+        array = new char[length];
+        System.arraycopy(old, 0, array, 0, length);
+        return array;
+    }
+    
+    public final int[] shorten(int[] array) {
+        int[] old = array;
+        int length = old.length - 1;
+        array = new int[length];
+        System.arraycopy(old, 0, array, 0, length);
+        return array;
     }
     
     public final String[] shorten(String[] array) {
@@ -1505,6 +1673,46 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return array;
     }
     
+    public final boolean[] slice(boolean[] array, int offset) {
+        return slice(array, offset, array.length - offset);
+    }
+    
+    public final boolean[] slice(boolean[] array, int offset, int length) {
+        boolean[] slice = new boolean[length];
+        System.arraycopy(array, offset, slice, 0, length);
+        return slice;
+    }
+    
+    public final byte[] slice(byte[] array, int offset) {
+        return slice(array, offset, array.length - offset);
+    }
+    
+    public final byte[] slice(byte[] array, int offset, int length) {
+        byte[] slice = new byte[length];
+        System.arraycopy(array, offset, slice, 0, length);
+        return slice;
+    }
+    
+    public final char[] slice(char[] array, int offset) {
+        return slice(array, offset, array.length - offset);
+    }
+    
+    public final char[] slice(char[] array, int offset, int length) {
+        char[] slice = new char[length];
+        System.arraycopy(array, offset, slice, 0, length);
+        return slice;
+    }
+    
+    public final int[] slice(int[] array, int offset) {
+        return slice(array, offset, array.length - offset);
+    }
+    
+    public final int[] slice(int[] array, int offset, int length) {
+        int[] slice = new int[length];
+        System.arraycopy(array, offset, slice, 0, length);
+        return slice;
+    }
+    
     public final String[] slice(String[] array, int offset) {
         return slice(array, offset, array.length - offset);
     }
@@ -1513,6 +1721,82 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         String[] slice = new String[length];
         System.arraycopy(array, offset, slice, 0, length);
         return slice;
+    }
+    
+    public final boolean[] splice(boolean[] array, boolean value, int index) {
+        int length = array.length;
+        boolean[] splice = new boolean[length + 1];
+        System.arraycopy(array, 0, splice, 0, index);
+        splice[index] = value;
+        System.arraycopy(array, index, splice, index + 1, length - index);
+        return splice;
+    }
+    
+    public final boolean[] splice(boolean[] array, boolean[] array2, int index) {
+        int length = array.length;
+        int length2 = array2.length;
+        boolean[] splice = new boolean[length + length2];
+        System.arraycopy(array, 0, splice, 0, index);
+        System.arraycopy(array2, 0, splice, index, length2);
+        System.arraycopy(array, index, splice, index + length2, length - index);
+        return splice;
+    }
+    
+    public final byte[] splice(byte[] array, byte value, int index) {
+        int length = array.length;
+        byte[] splice = new byte[length + 1];
+        System.arraycopy(array, 0, splice, 0, index);
+        splice[index] = value;
+        System.arraycopy(array, index, splice, index + 1, length - index);
+        return splice;
+    }
+    
+    public final byte[] splice(byte[] array, byte[] array2, int index) {
+        int length = array.length;
+        int length2 = array2.length;
+        byte[] splice = new byte[length + length2];
+        System.arraycopy(array, 0, splice, 0, index);
+        System.arraycopy(array2, 0, splice, index, length2);
+        System.arraycopy(array, index, splice, index + length2, length - index);
+        return splice;
+    }
+    
+    public final char[] splice(char[] array, char value, int index) {
+        int length = array.length;
+        char[] splice = new char[length + 1];
+        System.arraycopy(array, 0, splice, 0, index);
+        splice[index] = value;
+        System.arraycopy(array, index, splice, index + 1, length - index);
+        return splice;
+    }
+    
+    public final char[] splice(char[] array, char[] array2, int index) {
+        int length = array.length;
+        int length2 = array2.length;
+        char[] splice = new char[length + length2];
+        System.arraycopy(array, 0, splice, 0, index);
+        System.arraycopy(array2, 0, splice, index, length2);
+        System.arraycopy(array, index, splice, index + length2, length - index);
+        return splice;
+    }
+    
+    public final int[] splice(int[] array, int value, int index) {
+        int length = array.length;
+        int[] splice = new int[length + 1];
+        System.arraycopy(array, 0, splice, 0, index);
+        splice[index] = value;
+        System.arraycopy(array, index, splice, index + 1, length - index);
+        return splice;
+    }
+    
+    public final int[] splice(int[] array, int[] array2, int index) {
+        int length = array.length;
+        int length2 = array2.length;
+        int[] splice = new int[length + length2];
+        System.arraycopy(array, 0, splice, 0, index);
+        System.arraycopy(array2, 0, splice, index, length2);
+        System.arraycopy(array, index, splice, index + length2, length - index);
+        return splice;
     }
     
     public final String[] splice(String[] array, String value, int index) {
@@ -3218,6 +3502,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
             if (pageSize > 0) {
                 pages = (max - min + 1) / pageSize;
+                if (pages == 0) {
+                    pages = 1;
+                }
                 grabberHeight = contentHeight / pages;
                 if (((max - min + 1) % pageSize) != 0) {
                     pages++;
