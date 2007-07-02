@@ -1,20 +1,22 @@
-<span class="lib-nav">
-	<a href="../index.html">Libraries</a>
-</span>
+<div class="lib-nav">
+	<a href="../index.html">Libraries</a><br />
+</div>
 
-<div>
+<div class="full">
     <h2>PDF</h2>
     
-  <p>This library makes it possible to write PDF files directly from Processing. 
-    These vector graphics files can be scaled to any size and output at very high 
-    resolutions. There are also contributed libraries for exporting images to 
-    SVG and Adobe Illustrator format, check the <a href="http://www.processing.org/reference/libraries/">libraries</a> 
-    section of the website for more information. </p>
-  <p>A series of examples demonstrating some basic uses of the library appear 
+    <p>This library makes it possible to write PDF files directly from Processing. These vector graphics files can be scaled to any size and output at very high resolutions. There is also a contributed library for exporting images to SVG format; check the <a href="http://www.processing.org/reference/libraries/">libraries</a> section of the website for more information. The PDF library can flatten 3D data into a 2D vector file, but to export 3D data, use the DXF library.<br />
+<br />
+This library is frequently used with the core Processing function <em>size()</em>, with a combination of <em>beginRecord()</em> and <em>endRecord()</em>, or with <em>beginRaw()</em> and <em>endRaw()</em>. The <em>createGraphics()</em> function can also be useful. See the examples below for different techniques.</p> 
+
+</div>
+
+<div class="full">
+<p>A series of examples demonstrating some basic uses of the library appear 
     below:</p>
   
-<p>This example draws a single frame to a PDF file and quits. Note that no window will open, 
-this helps when you're trying to create massive PDF images that are far larger than the screen size.</p>
+<p><em>Single Frame</em><br />
+This example draws a single frame to a PDF file and quits. (Note that no display window will open; this helps when you're trying to create massive PDF images that are far larger than the screen size.)</p>
 
 <pre>import processing.pdf.*;
 
@@ -23,15 +25,16 @@ void setup() {
 }
 
 void draw() {
-  // draw something good here
+  // Draw something good here
 
-  // if this is a single frame, get out
-  println("finished.");
+  // Exit the program 
+  println("Finished.");
   exit();
 }</pre>
 
 
-<p>It's also possible to write every frame as a new page:</p>
+<p><em>Multiple Pages</em><br />
+It's possible to write every frame as a new page in the PDF document. This example creates a 100 page document:</p>
 
 <pre>import processing.pdf.*;
 
@@ -40,17 +43,20 @@ void setup() {
 }
 
 void draw() {
-  // draw something good here
+  // Draw something good here
 
-  PGraphicsPDF pdf = (PGraphicsPDF) g;  // get the renderer
-  pdf.nextPage();  // tell it to go to the next page
+  PGraphicsPDF pdf = (PGraphicsPDF) g;  // Get the renderer
+  pdf.nextPage();  // Tell it to go to the next page
 
-  // when finished drawing, quit and save the file
-  if (frame == 100) exit();
+  // When finished drawing, quit and save the file
+  if (frameCount == 100) {
+    exit();
+  }
 }</pre>
 
 
-<p>To draw to the screen while also saving a PDF, use the beginRecord() 
+<p><em>Drawing to the screen</em><br />
+To draw to the screen while also saving a PDF, use the beginRecord() 
 and endRecord() functions. This is slower, but is useful when you need to 
 see what you're working on as it saves.</p>
 
@@ -64,18 +70,18 @@ void setup() {
 
 void draw() {
   if (record) {
-    // note that #### will be replaced with the frame number. fancy!
+    // Note that #### will be replaced with the frame number. fancy!
     beginRecord(PDF, "frame-####.pdf"); 
   }
 
-  // draw something good here
+  // Draw something good here
 
   if (record) {
     endRecord();
   }
 }
 
-// use a keypress so a million files aren't created
+// Use a keypress so a million files aren't created
 void mousePressed() {
   record = true;
 }</pre>
@@ -199,6 +205,7 @@ void draw() {
 }
 </pre>
 
+<p>
 Additional notes for the PDF renderer:
 
 <UL>
@@ -249,5 +256,6 @@ pdf.nextPage();
 <LI> Again, exit() is really important when using PDF with size(). 
 
 </UL>
-  
+</p>
+
 </div>
