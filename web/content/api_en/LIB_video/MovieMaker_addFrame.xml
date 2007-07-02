@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>addFrame()</name>
+
+<category>MovieMaker</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+import processing.video.*;
+
+MovieMaker mm;  // Declare MovieMaker object
+
+void setup() {
+  size(320, 240);
+  // Create MovieMaker object with size, filename,
+  // compression codec and quality, framerate
+  mm = new MovieMaker(this, width, height, "drawing.mov",
+                       MovieMaker.H263, MovieMaker.HIGH, 30);
+  background(160, 32, 32);
+}
+
+void draw() {
+  line(pmouseX, pmouseY, mouseX, mouseY);
+  mm.addFrame();  // Add window's pixels to movie
+}
+
+void keyPressed() {
+  if (key == ' ') {
+    mm.stop();  // Finish the movie if space bar is pressed!
+  }
+}
+
+</code>
+</example>
+
+<description>
+Adds a new frame to a movie file that is current being created.
+</description>
+
+<syntax>
+<c>mov</c>.addFrame()
+</syntax>
+
+<parameter>
+<label>mov</label>
+<description>any variable of type MovieMaker</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>
