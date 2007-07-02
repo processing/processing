@@ -155,7 +155,7 @@ vertex(40, 40);
 vertex(60, 40);
 vertex(60, 60);
 vertex(20, 60);
-endShape();
+endShape(CLOSE);
 </code>
 </example>
 

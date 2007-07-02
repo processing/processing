@@ -7,7 +7,7 @@
     
     <p>This library makes it possible to write PDF files directly from Processing. These vector graphics files can be scaled to any size and output at very high resolutions. There is also a contributed library for exporting images to SVG format; check the <a href="http://www.processing.org/reference/libraries/">libraries</a> section of the website for more information. The PDF library can flatten 3D data into a 2D vector file, but to export 3D data, use the DXF library.<br />
 <br />
-This library is frequently used with the core Processing function <em>size()</em>, with a combination of <em>beginRecord()</em> and <em>endRecord()</em>, or with <em>beginRaw()</em> and <em>endRaw()</em>. The <em>createGraphics()</em> function can also be useful. See the examples below for different techniques.</p> 
+This library is frequently used with the core Processing function <strong>size()</strong>, with a combination of <strong>beginRecord()</strong> and <strong>endRecord()</strong>, or with <strong>beginRaw()</strong> and <strong>endRaw()</strong>. The <strong>createGraphics()</strong> function can also be useful. See the examples below for different techniques.</p> 
 
 </div>
 
@@ -15,7 +15,7 @@ This library is frequently used with the core Processing function <em>size()</em
 <p>A series of examples demonstrating some basic uses of the library appear 
     below:</p>
   
-<p><em>Single Frame</em><br />
+<p><strong>Single Frame (No Screen Display)</strong><br />
 This example draws a single frame to a PDF file and quits. (Note that no display window will open; this helps when you're trying to create massive PDF images that are far larger than the screen size.)</p>
 
 <pre>import processing.pdf.*;
@@ -33,8 +33,9 @@ void draw() {
 }</pre>
 
 
-<p><em>Multiple Pages</em><br />
-It's possible to write every frame as a new page in the PDF document. This example creates a 100 page document:</p>
+<p><strong>Multiple Pages (No Screen Display)</strong><br />
+It's possible to write every frame as a new page in the PDF document. 
+This example creates a 100 page document:</p>
 
 <pre>import processing.pdf.*;
 
@@ -55,10 +56,29 @@ void draw() {
 }</pre>
 
 
-<p><em>Drawing to the screen</em><br />
+<p><strong>Single Frame (With Screen Display)</strong><br />
 To draw to the screen while also saving a PDF, use the beginRecord() 
 and endRecord() functions. This is slower, but is useful when you need to 
 see what you're working on as it saves.</p>
+
+<pre>import processing.pdf.*;
+
+void setup() {
+  size(400, 400);
+  noLoop();
+  beginRecord(PDF, "filename.pdf"); 
+}
+
+void draw() {
+  // Draw something good here
+
+  endRecord();
+}</pre>
+
+
+<p><strong>Single Frame from an Animation (With Screen Display)</strong><br />
+It's also possible to save one frame from a program with moving elements. 
+Create a boolean variable to turn the PDF recording process on and off</p>
 
 <pre>import processing.pdf.*;
 
@@ -70,7 +90,7 @@ void setup() {
 
 void draw() {
   if (record) {
-    // Note that #### will be replaced with the frame number. fancy!
+    // Note that #### will be replaced with the frame number. Fancy!
     beginRecord(PDF, "frame-####.pdf"); 
   }
 
@@ -78,16 +98,18 @@ void draw() {
 
   if (record) {
     endRecord();
+	record = false;
   }
 }
 
-// Use a keypress so a million files aren't created
+// Use a keypress so thousands of files aren't created
 void mousePressed() {
   record = true;
 }</pre>
 
 
-<p>The following example records absolutely everything that happens 
+<p><strong>Many Frames into One File (With Screen Display)</strong><br />
+The following example records absolutely everything that happens 
 while a sketch is running. Hitting the 'q' key will quit the sketch. 
 The sketch calls exit(), which is necessary to make sure that the file 
 is properly written when complete.</p>
@@ -100,10 +122,10 @@ void setup() {
 }
 
 void draw() {
-  // be sure not to call background, otherwise your file
+  // Be sure not to call background, otherwise your file
   // will just accumulate lots of mess, only to become invisible
    
-  // draw something good here
+  // Draw something good here
 }
 
 void keyPressed() {
@@ -114,7 +136,8 @@ void keyPressed() {
 }</pre>
 
 
-<p>It's also possible to pause/resume recording along the way. 
+<p><strong>Pausing While Recording (With Screen Display)</strong><br />
+It's also possible to pause/resume recording along the way. 
 The following example toggles recording on/off each time you hit the 'r' key. 
 Pressing the 'q' key will quit the sketch.</p>
 
@@ -129,10 +152,10 @@ void setup() {
 }
 
 void draw() {
-  // be sure not to call background, otherwise your file
+  // Be sure not to call background, otherwise your file
   // will just accumulate lots of mess, only to become invisible
    
-  // draw something good here
+  // Draw something good here
 }
 
 void keyPressed() {
@@ -155,9 +178,50 @@ void keyPressed() {
 }</pre>
 
 
-  <p>To write a PDF file using only the createGraphics() command, rather than as 
-    part of a sketch, it's necessary to call dispose() on the PGraphicsPDF object. 
-    This is the same as calling exit(), but it won't quit the sketch.</p>
+<p><strong>PDF Files from 3D Geometry (With Screen Display)</strong><br />
+To create vectors from 3D data, use the beginRaw() and endRaw() commands. 
+These commands will grab the shape data just before it is rendered to the screen. 
+At this stage, your entire scene is nothing but a long list of lines and triangles. 
+This means that a shape created with sphere() method will be made up of hundreds of 
+triangles, rather than a single object.</p>
+
+<p>When using beginRaw() and endRaw(), it's possible to write to either a 2D or 3D renderer. 
+For instance, beginRaw() with the PDF library will write the geometry as flattened triangles 
+and lines.</p>
+
+<pre>import processing.pdf.*;
+
+boolean record;
+
+void setup() {
+  size(500, 500, P3D);
+}
+
+void draw() {
+  if (record) {
+    beginRaw(PDF, "output.pdf");
+  }
+
+  // Do all your drawing here
+
+  if (record) {
+    endRaw();
+    record = false;
+  }
+}
+
+// Hit 'r' to record a single frame
+void keyPressed() {
+  if (key == 'r') {
+    record = true;
+  }
+}
+</pre>
+
+<p><strong>Using createGraphics() to Create a PDF File</strong><br />
+To write a PDF file using only the createGraphics() command, rather than as 
+part of a sketch, it's necessary to call dispose() on the PGraphicsPDF object. 
+This is the same as calling exit(), but it won't quit the sketch.</p>
 
 <pre>import processing.pdf.*;
 
@@ -168,42 +232,6 @@ pdf.line(50, 50, 250, 250);
 pdf.dispose();
 pdf.endDraw();</pre>
 
-<p>To create vectors from 3D data, use the beginRaw() and endRaw() commands. 
-These commands will grab the shape data just before it is rendered to the screen. 
-At this stage, your entire scene is nothing but a long list of lines and triangles. 
-This means that a shape created with sphere() method will be made up of hundreds of 
-triangles, rather than a single object.</p>
-
-<p>When using beginRaw() and endRaw(), it's possible to write to either a 2D or 3D renderer. 
-For instance, beginRaw() with the PDF library will write the geometry as flattened triangles 
-and lines. </p>
-
-<pre>import processing.pdf.*;
-
-boolean record;
-
-void setup() {
-  size(500, 500, P3D);
-}
-
-// hit 'r' to record a single frame
-void keyPressed() {
-  if (key == 'r') record = true;
-}
-
-void draw() {
-  if (record) {
-    beginRaw(PDF, "output.pdf");
-  }
-
-  // do all your drawing here
-
-  if (record) {
-    endRaw();
-    record = false;
-  }
-}
-</pre>
 
 <p>
 Additional notes for the PDF renderer:
