@@ -1,12 +1,12 @@
 /**
-* Textured Sphere 
-* by Mike 'Flux' Chang (cleaned up by Aaron Koblin). 
-* Based on code by Toxi. 
-* 
-* A 3D textured sphere with simple rotation control.
-* Note: Controls will be inverted when sphere is upside down. 
-* Use an "arc ball" to deal with this appropriately.
-*/ 
+ * Textured Sphere 
+ * by Mike 'Flux' Chang (cleaned up by Aaron Koblin). 
+ * Based on code by Toxi. 
+ * 
+ * A 3D textured sphere with simple rotation control.
+ * Note: Controls will be inverted when sphere is upside down. 
+ * Use an "arc ball" to deal with this appropriately.
+ */ 
 
 
 import processing.opengl.*;
