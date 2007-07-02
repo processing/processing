@@ -12,7 +12,7 @@
 <image>for_.gif</image>
 <applet></applet>
 <code>
-for (int i=0; i&lt;40; i=i+1) {
+for (int i = 0; i &lt; 40; i = i+1) {
   line(30, i, 80, i);
 }
 </code>
@@ -22,7 +22,7 @@ for (int i=0; i&lt;40; i=i+1) {
 <image>for_2.gif</image>
 <applet></applet>
 <code>
-for (int i=0; i&lt;80; i=i+5) {
+for (int i = 0; i &lt; 80; i = i+5) {
   line(30, i, 80, i);
 }
 </code>
@@ -42,8 +42,8 @@ for (int i=40; i&lt;80; i=i+5) {
 <image>for_4.gif</image>
 <applet></applet>
 <code>
-for (int i=30; i&lt;80; i=i+5) {
-  for (int j=0; j&lt;80; j=j+5) {
+for (int i = 30; i &lt; 80; i = i+5) {
+  for (int j = 0; j &lt; 80; j = j+5) {
     point(i, j);
   }
 }

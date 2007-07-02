@@ -41,7 +41,7 @@ beginRecord(<c>renderer</c>, <c>filename</c>)
 
 <parameter>
 <label>renderer</label>
-<description>string arra</description>
+<description>For example, PDF or DXF</description>
 </parameter>
 
 <parameter>
