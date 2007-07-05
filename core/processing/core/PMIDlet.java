@@ -243,11 +243,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 int elapsed = Math.max(1, (int) (currentTime - lastFrameTime));
                 dequeueEvents();
                 if (redraw || (running && (elapsed >= msPerFrame))) {
-                    canvas.resetMatrix();
+                    canvas.reset();
                     draw();
                     runtime.gc();
-                    canvas.repaint();
-                    canvas.serviceRepaints();
+                    canvas.flush();
                     lastFrameTime = currentTime;
                     framerate = 1000 / elapsed;
                     frameCount++;
@@ -2857,6 +2856,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             children.removeElement(child);
         }
         
+        /** Removes all components from this containers.
+         */
+        public void clear() {
+            children.removeAllElements();
+        }
+        
         /** Initializes each of its children components, calculating the
          * total height of its children and setting up scrolling, if necessary.
          */
@@ -3736,6 +3741,119 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 text(item.toString(), x + 1, y + 1 + font.baseline);
             }
             popMatrix();
+        }
+    }
+    
+    /** A single line text input component. Allows multitap text input and editing.
+    *
+    * @category UI
+    * @related PComponent
+    */
+    public class PTextField extends PComponent {
+        /** The contents of the text field */
+        public String text;
+        /** The editing index of this text field */
+        public int textIndex;
+        /** The font used to display the button label text. */
+        public PFont font;
+        /** Color of the button label text. */
+        public int fontColor;
+        /** True if this is a password field. */
+        public boolean password;
+        /** Masked contents of the text field for password */
+        public String masked;
+
+        /**
+        * @param initial The initial text to display in the component
+        */
+        public PTextField(String initial) {
+            font = loadFont();
+            fontColor = 0xff000000;
+            highlightWidth = 1;
+            borderWidth = 1;
+            padding = 0x02040204;
+            acceptsFocus = true;
+
+            text = initial;
+            textIndex = text.length();
+        }
+
+        protected void calculateContentBounds(int availX, int availY, int availWidth, int availHeight) {
+            availHeight = min(availHeight, font.height);
+            setBounds(availX, availY, availWidth, availHeight);
+        }
+
+        public boolean acceptFocus() {
+            boolean focused = super.acceptFocus();
+            if (focused) {
+                char[] chars = text.toCharArray();
+                int length = text.length();
+                if (multitapBuffer.length <= length) {
+                    multitapBuffer = new char[length + 1];
+                }
+                System.arraycopy(chars, 0, multitapBuffer, 0, length);
+                multitapBufferLength = length;
+                multitapBufferIndex = textIndex;
+                multitapText = text;
+                multitap();
+            }
+            return focused;
+        }
+
+        public boolean keyPressed() {
+            textIndex = multitapBufferIndex;
+            text = multitapText;
+            return super.keyPressed();
+        }
+
+        protected void drawContent() {
+            textFont(font);
+            fill(fontColor);
+            textAlign(LEFT);
+            int x = contentX;
+            int y = contentY + font.baseline;
+            int editX = x;
+            int millis = millis();
+            if (password) {
+                if ((masked == null) || (masked.length() != text.length())) {
+                    StringBuffer buffer = new StringBuffer();
+                    for (int i = 0, length = text.length(); i < length; i++) {
+                        buffer.append('*');
+                    }
+                    masked = buffer.toString();
+                }
+                if (focused && (multitapLastEdit > 0) && ((millis - multitapLastEdit) < multitapEditDuration)) {
+                    if (multitapBufferIndex > 1) {
+                        String s = masked.substring(0, multitapBufferIndex - 1);
+                        text(s, x, y);
+                        x += textWidth(s);
+                    }
+                    if (multitapBufferIndex > 0) {
+                        String s = text.substring(multitapBufferIndex - 1, multitapBufferIndex);
+                        text(s, x, y);
+                        x += textWidth(s);
+                    }
+                    editX = x;
+                    if (multitapBufferIndex < multitapBufferLength) {
+                        String s = masked.substring(multitapBufferIndex, multitapBufferLength);
+                        text(s, x, y);
+                    }
+                } else {
+                    text(masked, x, y);
+                    if (focused) {
+                        editX = contentX + textWidth(masked.substring(0, multitapBufferIndex));
+                    }
+                }
+            } else {
+                text(text, x, y);
+                if (focused) {
+                    editX = contentX + textWidth(text.substring(0, multitapBufferIndex));
+                }
+            }
+            if (focused && (((millis / 500) % 2) == 0)) {
+                stroke(fontColor);
+                line(editX, contentY, editX, contentY + contentHeight);
+            }
         }
     }
 }

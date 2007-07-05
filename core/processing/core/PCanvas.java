@@ -110,6 +110,15 @@ public class PCanvas extends Canvas {
         
         background(200);
     }
+    
+    protected void reset() {
+        resetMatrix();
+    }
+    
+    protected void flush() {
+        repaint();
+        serviceRepaints();    
+    }
 
     protected void paint(Graphics g) {
         g.drawImage(buffer, 0, 0, Graphics.LEFT | Graphics.TOP);
