@@ -1365,7 +1365,7 @@ public class Sketch {
       // java mode, since that's required
       String className =
         preprocessor.write(bigCode.toString(), buildPath,
-                           suggestedClassName, codeFolderPackages);
+                           suggestedClassName, codeFolderPackages, false);
       if (className == null) {
         throw new RunnerException("Could not find main class");
         // this situation might be perfectly fine,
