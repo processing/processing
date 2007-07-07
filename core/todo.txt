@@ -90,13 +90,13 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 0125p4 (in progress)
 X significant improvement to text and images in opengl
 X   now using mipmaps to interpolate large and small images
-_ things not showing up in linux
+X things not showing up in linux
 X   this may be fixed along with bug #341
-_   probably threading issue, 98 doesn't have any trouble
-_   signs point to Runner or PApplet changes between 98 and 99
-_   commenting out applet.setupFrameResizeListener() 
-_     in line 307 from Runner.java solved the problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=282
+X   probably threading issue, 98 doesn't have any trouble
+X   signs point to Runner or PApplet changes between 98 and 99
+X   commenting out applet.setupFrameResizeListener() 
+X     in line 307 from Runner.java solved the problem
+X   http://dev.processing.org/bugs/show_bug.cgi?id=282
 X size of sketch different in setup() and draw() on linux
 X   make sure that the sketch isn't being sized based on bad insets
 X   problem with resizing the component when the frame wasn't resizable
