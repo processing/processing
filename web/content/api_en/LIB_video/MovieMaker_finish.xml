@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
 
-<name>stop()</name>
+<name>finish()</name>
 
 <category>MovieMaker</category>
 
@@ -26,13 +26,13 @@ void setup() {
 }
 
 void draw() {
-  line(pmouseX, pmouseY, mouseX, mouseY);
+  line(finishmouseX, pmouseY, mouseX, mouseY);
   mm.addFrame();  // Add window's pixels to movie
 }
 
 void keyPressed() {
   if (key == ' ') {
-    mm.stop();  // Finish the movie if space bar is pressed!
+    mm.finish();  // Finish the movie if space bar is pressed!
   }
 }
 
@@ -44,7 +44,7 @@ Finishes and saves a movie file that is current being created.
 </description>
 
 <syntax>
-<c>mov</c>.stop()
+<c>mov</c>.finish()
 </syntax>
 
 <parameter>

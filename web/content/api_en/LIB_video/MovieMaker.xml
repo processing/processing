@@ -31,7 +31,7 @@ void draw() {
 
 void keyPressed() {
   if (key == ' ') {
-    mm.stop();  // Finish the movie if space bar is pressed!
+    mm.finish();  // Finish the movie if space bar is pressed!
   }
 }
 
@@ -39,7 +39,7 @@ void keyPressed() {
 </example>
 
 <description>
-This class can be used to create a QuickTime movie from a Processing program while it's running. Different parameters to the constructor allow the movie to be created at different sizes and formats. Everytime the <b>addFrame()</b> function is run, a new frame is added to the movie. The <b>stop()</b> function is necessary to finish and save the movie file.
+This class can be used to create a QuickTime movie from a Processing program while it's running. Different parameters to the constructor allow the movie to be created at different sizes and formats. Everytime the <b>addFrame()</b> function is run, a new frame is added to the movie. The <b>finish()</b> function is necessary to finish and save the movie file.
 </description>
 
 <syntax>
@@ -54,7 +54,7 @@ This class can be used to create a QuickTime movie from a Processing program whi
 </method>
 
 <method>
-<mname>stop()</mname>
+<mname>finish()</mname>
 <mdescription>Finishes and saves the video file</mdescription>
 </method>
 
