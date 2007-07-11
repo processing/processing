@@ -1352,7 +1352,8 @@ public class PGraphics3D extends PGraphics {
       int tex = triangles[i][TEXTURE_INDEX];
       int index = triangles[i][INDEX];
 
-      float shift = 0.49f;
+	  //ewjordan: hack to 'fix' accuracy issues when drawing in 2d - see also render_lines() where similar hack is employed
+      float shift = 0.15f;//was 0.49f
           boolean shifted = false;
           if (drawing2D() && (a[MZ] == 0)) {
             shifted = true;
@@ -1366,8 +1367,8 @@ public class PGraphics3D extends PGraphics {
                 b[VY] += shift*b[VW];
                 c[X] += shift;
                 c[Y] += shift;
-                c[VX] += shift*b[VW];
-                c[VY] += shift*b[VW];
+            c[VX] += shift*c[VW];
+            c[VY] += shift*c[VW];
           }
 
       triangle.reset();
@@ -1450,8 +1451,8 @@ public class PGraphics3D extends PGraphics {
         b[VY] -= shift*b[VW];
         c[X] -= shift;
         c[Y] -= shift;
-        c[VX] -= shift*b[VW];
-        c[VY] -= shift*b[VW];
+        c[VX] -= shift*c[VW];
+        c[VY] -= shift*c[VW];
       }
     }
 
@@ -1529,6 +1530,19 @@ public class PGraphics3D extends PGraphics {
           raw.vertex(b[X], b[Y]);
         }
       }
+
+	  /* Seems okay to remove this because these vertices are not used again, but if problems arise, this needs to be uncommented
+	     because the above change is destructive and may need to be undone before proceeding.
+	  if (drawing2D() && a[MZ] == 0) {
+        a[X] -= 0.01;
+        a[Y] -= 0.01;
+        a[VX] -= 0.01*a[VW];
+        a[VY] -= 0.01*a[VW];
+        b[X] -= 0.01;
+        b[Y] -= 0.01;
+        b[VX] -= 0.01*b[VW];
+        b[VY] -= 0.01*b[VW];
+      }*/
 
       line.setIndex(index);
       line.draw();
