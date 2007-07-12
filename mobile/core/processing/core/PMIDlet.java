@@ -1322,6 +1322,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 case '\f':
                 case '\t':
                 case ' ':
+                case 160:
                     whitespace = true;
                     break;
                 default:
@@ -2849,6 +2850,13 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             children.addElement(child);
         }
         
+        /** Gets a component in the container by index.
+         * @param index integer index of item in container
+         */
+        public PComponent get(int index) {
+            return (PComponent) children.elementAt(index);
+        }
+        
         /** Removes the specified component from this container.
          * @param child the component to remove
          */
@@ -3762,6 +3770,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         public boolean password;
         /** Masked contents of the text field for password */
         public String masked;
+        /** Horizontal x-offset when scrolling */
+        public int xoffset;
 
         /**
         * @param initial The initial text to display in the component
@@ -3807,6 +3817,10 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
 
         protected void drawContent() {
+            pushMatrix();
+            clip(contentX, contentY, contentWidth, contentHeight);
+            translate(-xoffset, 0);
+            
             textFont(font);
             fill(fontColor);
             textAlign(LEFT);
@@ -3853,6 +3867,20 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             if (focused && (((millis / 500) % 2) == 0)) {
                 stroke(fontColor);
                 line(editX, contentY, editX, contentY + contentHeight);
+            }            
+            popMatrix();
+
+            boolean redraw = false;
+            if (editX < (contentX + xoffset)){
+                xoffset = editX - contentX;
+                redraw = true;
+            } else if (editX > (contentX + xoffset + contentWidth)) {
+                xoffset = editX - contentWidth - contentX + 1;
+                redraw = true;
+            }
+            if (redraw) {
+                drawBefore();
+                drawContent();
             }
         }
     }
