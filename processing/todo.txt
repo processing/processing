@@ -55,6 +55,14 @@ X   can't confirm this one
 X no longer default to sketchbook folder on open
 
 0125p4 (in progress)
+_ book stuff
+_   on linux, drag and drop didn't accept
+_     gets a zillion different items that come in
+_   add gnome-open/kde-open for with PApplet.open()
+_   adding a file to the sketch that already exists gives no confirm
+_     sometimes one item showing up twice
+_     (Table.pde showed twice after failed add)
+_   add open (-a?) on osx to the open() command
 _ move examples folder to top-level menu?
 _ move open menu to its own?
 _ keywords/reference
@@ -149,17 +157,6 @@ void sortSwap(int a, int b) {
   captureColors[a] = captureColors[b];
   captureColors[b] = t2;  
 }
-
-
-BOOK
-_ add gnome-open/kde-open for with PApplet.open()
-_ adding a file to the sketch that already exists gives no confirm
-_   sometimes one item showing up twice
-_   (Table.pde showed twice after failed add)
-_ add open (-a?) on osx to the open() command
-_ get started on time series chapter
-_ on linux, drag and drop didn't accept
-_   gets a zillion different items that come in
 
 
 new bugs
@@ -1110,8 +1107,6 @@ LIBRARIES / General
 
 _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
-_ unregisterXxxx() calls to remove methods from libs
-_   http://dev.processing.org/bugs/show_bug.cgi?id=312
 
 
 LIBRARIES / Video

@@ -1004,15 +1004,17 @@ public class PGraphicsOpenGL extends PGraphics3D {
       int err = glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, 4,
                                     twidth, theight,
                                     GL.GL_RGBA,
-                                    //GL.GL_ALPHA,
                                     GL.GL_UNSIGNED_BYTE, tbuffer);
       //System.out.println("mipmap: " + err);
 
+      // The MAG_FILTER should only be GL_LINEAR or GL_NEAREST.
+      // Some cards are OK with LINEAR_MIPMAP_LINEAR, but not the
+      // Radeon 9700, which is in all the PB G4s.. Not sure if this
+      // is an OpenGL version thing, tho it makes sense MIN_FILTER
+      // is the only one that uses mipmapping.
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                         //GL.GL_NEAREST_MIPMAP_NEAREST);
-                         GL.GL_LINEAR_MIPMAP_LINEAR);
+                         GL.GL_LINEAR);
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                         //GL.GL_NEAREST_MIPMAP_LINEAR);
                          GL.GL_LINEAR_MIPMAP_LINEAR);
 
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
