@@ -76,6 +76,10 @@ X opengl image memory leaking
 X   when creating a new PImage on every frame, slurps a ton of memory
 X   workaround is to write the code properly, but suggests something bad
 X   http://dev.processing.org/bugs/show_bug.cgi?id=150
+X opengl keeping memory around.. 
+X   could this be in vertices that have an image associated
+X   or the image buffer used for textures
+X   that never gets cleared fully?
 X registerSize() was registering as pre() instead
 X   http://dev.processing.org/bugs/show_bug.cgi?id=582
 X set() doesn't bounds check
@@ -90,6 +94,7 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 0125p4 (in progress)
 X significant improvement to text and images in opengl
 X   now using mipmaps to interpolate large and small images
+X fix bug with mipmapping on radeon 9700
 X things not showing up in linux
 X   this may be fixed along with bug #341
 X   probably threading issue, 98 doesn't have any trouble
@@ -101,6 +106,11 @@ X size of sketch different in setup() and draw() on linux
 X   make sure that the sketch isn't being sized based on bad insets
 X   problem with resizing the component when the frame wasn't resizable
 X   http://dev.processing.org/bugs/show_bug.cgi?id=341
+_ unregisterXxxx() calls to remove methods from libs
+_   http://dev.processing.org/bugs/show_bug.cgi?id=312
+
+_ offscreen buffers fail with texture mapping
+_   http://dev.processing.org/bugs/show_bug.cgi?id=594
 
 _ having shut off the defaults reset, background not getting called for java2d
 _   so this will make that other stuff regress again
@@ -912,10 +922,6 @@ _ textSpace(SCREEN) for opengl and java2d
 _   don't use loadPixels for either
 _   use font code to set the cached color of the font, then call set()
 _   although set() with alpha is a little different..
-_ opengl keeping memory around.. 
-_   could this be in vertices that have an image associated
-_   or the image buffer used for textures
-_   that never gets cleared fully?
 _ resizing opengl applet likely to cause big trouble
 _   componentlistener should prolly only do size() command outside of draw
 _ make the opengl textmode shape stuff get better and use PShape
