@@ -442,10 +442,7 @@ public class PdePreprocessor {
     //}
 
     if (programType < JAVA) {
-      if (pretty) {
-        // get a blank line in there
-        out.println();
-      }
+      if (pretty) out.println();
 
       // open the class definition
       out.print("public class " + className + " extends PApplet {");
