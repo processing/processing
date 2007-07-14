@@ -108,6 +108,11 @@ X   problem with resizing the component when the frame wasn't resizable
 X   http://dev.processing.org/bugs/show_bug.cgi?id=341
 _ unregisterXxxx() calls to remove methods from libs
 _   http://dev.processing.org/bugs/show_bug.cgi?id=312
+X major rework of the open() command
+X   add gnome-open/kde-open for with PApplet.open()
+X   add open (-a?) on osx to the open() command
+_   make changes in the javadoc and reference
+
 
 _ offscreen buffers fail with texture mapping
 _   http://dev.processing.org/bugs/show_bug.cgi?id=594

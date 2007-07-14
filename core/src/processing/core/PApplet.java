@@ -2235,7 +2235,9 @@ public class PApplet extends Applet
             e.printStackTrace();
           }
         } else {
-          throw new RuntimeException("Can't open URLs for this platform");
+          //throw new RuntimeException("Can't open URLs for this platform");
+          // Just pass it off to open() and hope for the best
+          open(url);
         }
       } catch (IOException e) {
         e.printStackTrace();
@@ -2249,69 +2251,11 @@ public class PApplet extends Applet
    * Attempt to open a file using the platform's shell.
    */
   public void open(String filename) {
-    if (platform == WINDOWS) {
-      // just launching the .html file via the shell works
-      // but make sure to chmod +x the .html files first
-      // also place quotes around it in case there's a space
-      // in the user.dir part of the url
-      try {
-        Runtime.getRuntime().exec("cmd /c \"" + filename + "\"");
-      } catch (IOException e) {
-        e.printStackTrace();
-        throw new RuntimeException("Could not open " + filename);
-      }
-
-    } else if (platform == MACOSX) {
-      // osx fix contributed by chandler for rev 0113
-      try {
-        // Java on OS X doesn't like to exec commands inside quotes
-        // for some reason.. escape spaces with slashes just in case
-        if (filename.indexOf(' ') != -1) {
-          StringBuffer sb = new StringBuffer();
-          char c[] = filename.toCharArray();
-          for (int i = 0; i < c.length; i++) {
-            if (c[i] == ' ') {
-              sb.append("\\\\ ");
-            } else {
-              sb.append(c[i]);
-            }
-          }
-          filename = sb.toString();
-        }
-        Runtime.getRuntime().exec("open " + filename);
-
-      } catch (IOException e) {
-        e.printStackTrace();
-        throw new RuntimeException("Could not open " + filename);
-      }
-
-    } else if (platform == MACOS9) {
-      // prepend file:// on this guy since it's a file
-      String url = "file://" + filename;
-
-      // replace spaces with %20 for the file url
-      // otherwise the mac doesn't like to open it
-      // can't just use URLEncoder, since that makes slashes into
-      // %2F characters, which is no good. some might say "useless"
-      if (url.indexOf(' ') != -1) {
-        StringBuffer sb = new StringBuffer();
-        char c[] = url.toCharArray();
-        for (int i = 0; i < c.length; i++) {
-          if (c[i] == ' ') {
-            sb.append("%20");
-          } else {
-            sb.append(c[i]);
-          }
-        }
-        url = sb.toString();
-      }
-      link(url);
-
-    } else {  // give up and just pass it to Runtime.exec()
-      open(new String[] { filename });
-    }
+    open(new String[] { filename });
   }
 
+
+  static String openLauncher;
 
   /**
    * Launch a process using a platforms shell. This version uses an array
@@ -2320,6 +2264,63 @@ public class PApplet extends Applet
    * around different bits).
    */
   static public Process open(String argv[]) {
+    String[] params = null;
+
+    if (platform == WINDOWS) {
+      // just launching the .html file via the shell works
+      // but make sure to chmod +x the .html files first
+      // also place quotes around it in case there's a space
+      // in the user.dir part of the url
+      params = new String[] { "cmd", "/c" };
+
+    } else if (platform == MACOSX) {
+      params = new String[] { "open" };
+
+    } else if (platform == LINUX) {
+      if (openLauncher == null) {
+        // Attempt to use gnome-open
+        try {
+          Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
+          /*int result =*/ p.waitFor();
+          // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
+          openLauncher = "gnome-open";
+        } catch (Exception e) { }
+      }
+      if (openLauncher == null) {
+        // Attempt with kde-open
+        try {
+          Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
+          /*int result =*/ p.waitFor();
+          openLauncher = "kde-open";
+        } catch (Exception e) { }
+      }
+      if (openLauncher == null) {
+        System.err.println("Could not find gnome-open or kde-open, " +
+                           "the open() command may not work.");
+      }
+      if (openLauncher != null) {
+        params = new String[] { openLauncher };
+      }
+    //} else {  // give up and just pass it to Runtime.exec()
+      //open(new String[] { filename });
+      //params = new String[] { filename };
+    }
+    if (params != null) {
+      // If the 'open', 'gnome-open' or 'cmd' are already included
+      if (params[0].equals(argv[0])) {
+        // then don't prepend those params again
+        return exec(argv);
+      } else {
+        params = concat(params, argv);
+        return exec(params);
+      }
+    } else {
+      return exec(argv);
+    }
+  }
+
+
+  static public Process exec(String[] argv) {
     try {
       return Runtime.getRuntime().exec(argv);
     } catch (Exception e) {
@@ -2328,6 +2329,47 @@ public class PApplet extends Applet
     }
   }
 
+    /*
+    try {
+      Runtime.getRuntime().exec("cmd /c \"" + filename + "\"");
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new RuntimeException("Could not open " + filename);
+    }
+
+    try {
+      return Runtime.getRuntime().exec(argv);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Could not open " + join(argv, ' '));
+    }
+  }
+
+  /*
+  static protected String findLinuxLauncher() {
+    if (linuxLauncher == null) {
+      // Attempt to use gnome-open
+      try {
+        Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
+        int result = p.waitFor();
+        // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
+        linuxLauncher = "gnome-open";
+      } catch (Exception e) { }
+
+      // Attempt with kde-open
+      try {
+        Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
+        int result = p.waitFor();
+        linuxLauncher = "kde-open";
+      } catch (Exception e) { }
+    }
+    if (linuxLauncher == null) {
+      System.err.println("Could not find gnome-open or kde-open, " +
+                         "the open() command may not work.");
+    }
+    return linuxLauncher;
+  }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -6721,7 +6763,7 @@ public class PApplet extends Applet
               Dimension windowSize = farm.getSize();
               int usableW = windowSize.width - insets.left - insets.right;
               int usableH = windowSize.height - insets.top - insets.bottom;
-              
+
               // the ComponentListener in PApplet will handle calling size()
               setBounds(insets.left, insets.top, usableW, usableH);
             }
