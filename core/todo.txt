@@ -72,7 +72,7 @@ X opengl image memory leaking
 X   when creating a new PImage on every frame, slurps a ton of memory
 X   workaround is to write the code properly, but suggests something bad
 X   http://dev.processing.org/bugs/show_bug.cgi?id=150
-X opengl keeping memory around.. 
+X   opengl keeping memory around.. 
 X   could this be in vertices that have an image associated
 X   or the image buffer used for textures
 X   that never gets cleared fully?
