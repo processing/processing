@@ -683,6 +683,10 @@ public class Base {
 
   /**
    * Implements the cross-platform headache of opening URLs
+   * TODO This code should be replaced by PApplet.link(),
+   * however that's not a static method (because it requires
+   * an AppletContext when used as an applet), so it's mildly
+   * trickier than just removing this method.
    */
   static public void openURL(String url) {
     //System.out.println("opening url " + url);
