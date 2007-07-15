@@ -90,7 +90,7 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 0125p4 (in progress)
 X significant improvement to text and images in opengl
 X   now using mipmaps to interpolate large and small images
-X fix bug with mipmapping on radeon 9700
+X   fix bug with mipmapping on radeon 9700
 X things not showing up in linux
 X   this may be fixed along with bug #341
 X   probably threading issue, 98 doesn't have any trouble
