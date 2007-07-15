@@ -9,7 +9,9 @@ releases will be super crusty.
 
 ABOUT REV 0125 - 15 July 2007
 
-Throwing out the baby with the bathwater.
+Enormous number of bug fixes and additions. Many thanks to ewjordan 
+and fjen, who also contributed fixes for this release.
+
 
 [ api changes ] 
 
@@ -61,6 +63,11 @@ Throwing out the baby with the bathwater.
 + The constants for ENTER, TAB, et al. are now char values, 
   rather than ints.
 
++ The framerate() method in the movie library has been renamed to 
+  frameRate().
+
++ Addition from Tom Hulbert to add setDTR() to the Serial library.
+
 
 [ additions, improvements ]
 
@@ -91,6 +98,18 @@ Throwing out the baby with the bathwater.
 
 + At Casey's urging, the "Color Picker" is now called the 
   "Color Selector". 
+
++ Fix up MovieMaker from Dan Shiffman, also add the library to 
+  the reference pages.
+
++ Re-architect SVG to properly inherit fill/stroke/etc from parents
+  <g> object can specify fill/stroke for everyone below
+  need to discern between having a fill specified and one not being present
+
++ Fix Find/Replace button placement, also add Replace & Find Next option
+  http://dev.processing.org/bugs/show_bug.cgi?id=68
+
++ Make "Find In Reference" and "Show Sketch Folder" work with Linux
 
 
 [ bug fixes ]
@@ -141,6 +160,21 @@ Throwing out the baby with the bathwater.
 
 + Prev/Next tab conflicting with typing brackets on French keyboards
   http://dev.processing.org/bugs/show_bug.cgi?id=480
+
++ PDE does not refresh code when using an External Editor
+  http://dev.processing.org/bugs/show_bug.cgi?id=515
+
++ Fix from fjen for the  preprocessor to handle L added to 'long' values
+  http://dev.processing.org/bugs/show_bug.cgi?id=492
+
++ Only rebuild sketchbook on "save as" or "rename" of sketch
+  http://dev.processing.org/bugs/show_bug.cgi?id=357
+
++ Ignore ._ files from Mac OS X when reading jar and zip files
+
++ When running externally, kill the sketch window
+
++ Deal with user cancel issues with Capture settings
 
 
 [ reference and web ]
