@@ -26,7 +26,7 @@ X jre 1.5.0_10 is still default at java.com.. blech
 X   http://dev.processing.org/bugs/show_bug.cgi?id=513
 X constant CENTER_RADIUS will be changed to just RADIUS
 X   CENTER_RADIUS is being deprecated, not removed
-_   remove CENTER_RADIUS from any p5 code (i.e. examples)
+X   remove CENTER_RADIUS from any p5 code (i.e. examples)
 X split() inconsistency (emailed casey, will discuss later)
 X   make split(String, String) behave like String.split(String)
 X   and make current split(String) into splitTokens(String)
@@ -35,17 +35,13 @@ o   add splitTokens() documentation
 o   document new version of split() and regexp
 o   should we mention String.split?
 X ironed out more of the preproc parseXxxx() functions
-_   update the reference to cover these decisions
-_   also add notes about parseInt/Float(blah, otherwise)
 X deal with targa upside-down and non-rle encoding for tga images
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1171576234
 X change println(array) to be useful 
 o   document using join() for old method
 X   remove print(array) since it's silly?
 X     make sure it's not in the reference
-[0] "potato"
-[1] "tomato"
-[2] "apple" 
+X     [0] "potato", [1] "tomato", [2] "apple" 
 X fix filter(GRAY) on an ALPHA image to produce a good RGB image
 
 0125p2
@@ -106,15 +102,34 @@ X size of sketch different in setup() and draw() on linux
 X   make sure that the sketch isn't being sized based on bad insets
 X   problem with resizing the component when the frame wasn't resizable
 X   http://dev.processing.org/bugs/show_bug.cgi?id=341
-_ unregisterXxxx() calls to remove methods from libs
-_   http://dev.processing.org/bugs/show_bug.cgi?id=312
 X major rework of the open() command
 X   add gnome-open/kde-open for with PApplet.open()
 X   add open (-a?) on osx to the open() command
-_   make changes in the javadoc and reference
+X   make changes in the javadoc and reference
+X opengl crashes when depth sorting more than two textured shapes
+X   http://dev.processing.org/bugs/show_bug.cgi?id=560
+
+ewjordan stuff (changes checked in)
+X rect() changes size as it changes position
+X   http://dev.processing.org/bugs/show_bug.cgi?id=95
+X strange texture warping in P3D
+X   hint(ENABLE_ACCURATE_TEXTURES)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=103
+X lines skip on 200x200 surface because of fixed point rounding error
+X   http://dev.processing.org/bugs/show_bug.cgi?id=267
+X   this may be same as 95
+X Polygons parallel to z-axis not always filling with nonzero x or y
+X   http://dev.processing.org/bugs/show_bug.cgi?id=547
+
+
+_ update the reference to cover parseXxxx() stuff
+_   also add notes about parseInt/Float(blah, otherwise)
+_ unregisterXxxx() calls to remove methods from libs
+_   http://dev.processing.org/bugs/show_bug.cgi?id=312
 
 
 _ offscreen buffers fail with texture mapping
+_   pixels not being set opaque (only with textures?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=594
 
 _ having shut off the defaults reset, background not getting called for java2d
@@ -124,23 +139,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=454
 _ why aren't background() / defaults() being called for opengl?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 
-ewjordan stuff (changes checked in)
-_ rect() changes size as it changes position
-_   http://dev.processing.org/bugs/show_bug.cgi?id=95
-_ strange texture warping in P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=103
-_ lines skip on 200x200 surface because of fixed point rounding error
-_   http://dev.processing.org/bugs/show_bug.cgi?id=267
-_   this may be same as 95
-_ Polygons parallel to z-axis not always filling with nonzero x or y
-_   http://dev.processing.org/bugs/show_bug.cgi?id=547
-
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468
 
 new bugs (organize later)
-_ opengl crashes when depth sorting more than two textured shapes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=560
 _ replaceAll() not supported by 1.1
 _   http://dev.processing.org/bugs/show_bug.cgi?id=561
 _ draw() called twice in vista with java 1.6
