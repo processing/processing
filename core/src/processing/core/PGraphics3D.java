@@ -516,8 +516,7 @@ public class PGraphics3D extends PGraphics {
       if (normalCount == 1) {
         // One normal per begin/end shape
         normalMode = MANUAL_SHAPE_NORMAL;
-      }
-      else {
+      } else {
         // a separate normal for each vertex
         normalMode = MANUAL_VERTEX_NORMAL;
       }
@@ -534,11 +533,9 @@ public class PGraphics3D extends PGraphics {
       textures = temp;
       //message(CHATTER, "allocating more textures " + textures.length);
     }
-
-    if (textures[0] != null) {  // wHY?
+    if (textures[texture_index] != null) {
       texture_index++;
     }
-
     textures[texture_index] = image;
   }
 
@@ -1352,24 +1349,25 @@ public class PGraphics3D extends PGraphics {
       int tex = triangles[i][TEXTURE_INDEX];
       int index = triangles[i][INDEX];
 
-	  //ewjordan: hack to 'fix' accuracy issues when drawing in 2d - see also render_lines() where similar hack is employed
+      // ewjordan: hack to 'fix' accuracy issues when drawing in 2d
+      // see also render_lines() where similar hack is employed
       float shift = 0.15f;//was 0.49f
-          boolean shifted = false;
-          if (drawing2D() && (a[MZ] == 0)) {
-            shifted = true;
-            a[X] += shift;
-                a[Y] += shift;
-                a[VX] += shift*a[VW];
-                a[VY] += shift*a[VW];
-                b[X] += shift;
-                b[Y] += shift;
-                b[VX] += shift*b[VW];
-                b[VY] += shift*b[VW];
-                c[X] += shift;
-                c[Y] += shift;
-            c[VX] += shift*c[VW];
-            c[VY] += shift*c[VW];
-          }
+      boolean shifted = false;
+      if (drawing2D() && (a[MZ] == 0)) {
+        shifted = true;
+        a[X] += shift;
+        a[Y] += shift;
+        a[VX] += shift*a[VW];
+        a[VY] += shift*a[VW];
+        b[X] += shift;
+        b[Y] += shift;
+        b[VX] += shift*b[VW];
+        b[VY] += shift*b[VW];
+        c[X] += shift;
+        c[Y] += shift;
+        c[VX] += shift*c[VW];
+        c[VY] += shift*c[VW];
+      }
 
       triangle.reset();
 
@@ -1531,9 +1529,9 @@ public class PGraphics3D extends PGraphics {
         }
       }
 
-	  /* Seems okay to remove this because these vertices are not used again, but if problems arise, this needs to be uncommented
-	     because the above change is destructive and may need to be undone before proceeding.
-	  if (drawing2D() && a[MZ] == 0) {
+          /* Seems okay to remove this because these vertices are not used again, but if problems arise, this needs to be uncommented
+             because the above change is destructive and may need to be undone before proceeding.
+          if (drawing2D() && a[MZ] == 0) {
         a[X] -= 0.01;
         a[Y] -= 0.01;
         a[VX] -= 0.01*a[VW];
@@ -3130,14 +3128,17 @@ public class PGraphics3D extends PGraphics {
   public void frustum(float left, float right, float bottom,
                       float top, float znear, float zfar) {
 
-        //if (hints[ENABLE_ACCURATE_TEXTURES]){
-          //These vars are only needed if accurate textures are used, however,
-          //there is the possibility that accurate texturing will only be turned
-          //on after the perspective matrix has already been set, so we might as
-          //well store these no matter what since it's not much overhead.
-      leftScreen = left; rightScreen = right; bottomScreen = bottom; topScreen = top;
-          nearPlane = znear;
-        //}
+    //if (hints[ENABLE_ACCURATE_TEXTURES]){
+    //These vars are only needed if accurate textures are used, however,
+    //there is the possibility that accurate texturing will only be turned
+    //on after the perspective matrix has already been set, so we might as
+    //well store these no matter what since it's not much overhead.
+    leftScreen = left;
+    rightScreen = right;
+    bottomScreen = bottom;
+    topScreen = top;
+    nearPlane = znear;
+    //}
 
     //System.out.println(projection);
     projection.set((2*znear)/(right-left), 0, (right+left)/(right-left), 0,
