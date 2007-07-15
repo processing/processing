@@ -1,8 +1,23 @@
 0126 pde
 
+book stuff
+_ on linux, drag and drop didn't accept
+_   gets a zillion different items that come in
+_   http://dev.processing.org/bugs/show_bug.cgi?id=595
+_ adding a file to the sketch that already exists gives no confirm
+_   sometimes one item showing up twice
+_   (Table.pde showed twice after failed add)
+
+_ move examples folder to top-level menu?
+_ move open menu to its own?
+_ show sketch folder on linux
+_   add notes to the docs about how to fix if not working
+_   http://processing.org/reference/environment/platforms.html#linux
+
 
 _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
+_ remove 'patch' designation from bugzilla
 _ ocd is broken in 0125 - do a better error message for this
 X implement sortCompare() and sortSwap()
 _   discuss this with casey
@@ -42,20 +57,6 @@ _ find in reference problems
 _   ? doesn't work with find in reference (actually came up as 'null')
 _   "find in ref" on XMLElement brings up ref for null (ha)
 _ should we use if() or if in the reference
-
-_ book stuff
-_   on linux, drag and drop didn't accept
-_     gets a zillion different items that come in
-_   adding a file to the sketch that already exists gives no confirm
-_     sometimes one item showing up twice
-_     (Table.pde showed twice after failed add)
-_ move examples folder to top-level menu?
-_ move open menu to its own?
-_ show sketch folder on linux
-_   add notes to the docs about how to fix if not working
-_   http://processing.org/reference/environment/platforms.html#linux
-
-_ remove 'patch' designation from bugzilla
 
 charset changes
 _ need to set a default charset for use in files (utf8)
