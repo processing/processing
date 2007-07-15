@@ -1,3 +1,127 @@
+0125 core
+X more blend() modes (the five listed on the thread below?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=132
+X   figure out what the modes should actually be: 
+X     photoshop: normal, dissolve; darken, multiply, color burn, 
+X                linear burn; lighten, screen, color dodge, linear
+X                dodge; overlay, soft light, hard light, vivid light, 
+X                linear light, pin light, hard mix; difference, 
+X                exclusion; hue, saturation, color, luminosity
+X     illustrator: normal; darken, multiply, color burn; lighten,
+X                  screen, color dodge; overlay, soft light, hard light; 
+X                  difference, exclusion; hue, sat, color, luminosity
+X     director: Copy, Transparent, Reverse, Ghost, Not copy, 
+X               Not transparent, Not reverse, Not ghost, Matte, Mask;
+X               (below seems more useful:
+X               Blend, Add pin, Add, Subtract pin, Background transparent,
+X               Lightest, Subtract, Darkest, Lighten, Darken
+X     flash: 
+X   DIFFERENCE: C = abs(A-B);
+X   MULTIPLY: C = (A * B ) / 255
+X   SCREEN: C= 255 - ( (255-A) * (255-B) / 255 )
+X   OVERLAY: C = B < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+X   HARD_LIGHT: C = A < 128 ? (2*A*B/255) : 255-2*(255-A)*(255-B)/255
+X   SOFT_LIGHT: C = B < 128 ? 2*((A>>1)+64)*B/255 : 255-(2*(255-((A>>1)+64))*(255-B)/255)
+X jre 1.5.0_10 is still default at java.com.. blech
+X   http://dev.processing.org/bugs/show_bug.cgi?id=513
+X constant CENTER_RADIUS will be changed to just RADIUS
+X   CENTER_RADIUS is being deprecated, not removed
+X   remove CENTER_RADIUS from any p5 code (i.e. examples)
+X split() inconsistency (emailed casey, will discuss later)
+X   make split(String, String) behave like String.split(String)
+X   and make current split(String) into splitTokens(String)
+X   that means split(String) no longer exists
+o   add splitTokens() documentation
+o   document new version of split() and regexp
+o   should we mention String.split?
+X ironed out more of the preproc parseXxxx() functions
+X deal with targa upside-down and non-rle encoding for tga images
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1171576234
+X change println(array) to be useful 
+o   document using join() for old method
+X   remove print(array) since it's silly?
+X     make sure it's not in the reference
+X     [0] "potato", [1] "tomato", [2] "apple" 
+X fix filter(GRAY) on an ALPHA image to produce a good RGB image
+
+0125p2
+X updatePixels ref is wrong
+X   has x/y/w/h version
+X   the reference is also cut off
+X make ENTER, TAB, etc all into char values (instead of int)
+X some way to vertically center text
+X   either by setting its middle vertical point
+X   or by setting a top/bottom for the rectangle in which it should be placed
+o   maybe textAlign(CENTER | VERTICAL_CENTER);
+X   or TOP, MIDDLE, and BOTTOM
+o   textAlign(CENTER | TOP);
+o   could even have textAlign(CENTER) and textAlign(TOP) not replace each other
+X   or textAlign(LEFT, MIDDLE); -> this one seems best
+X   add reference for new param, and update keywords.txt
+X given to andy
+
+0125p3
+X PImage.save() method is not working with get()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=558
+X NullPointerException in Create Font with "All Characters" enabled 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=564
+X added min() and max() for float and int arrays
+X   need to update reference
+X   moved around min/max functions
+X opengl image memory leaking
+X   when creating a new PImage on every frame, slurps a ton of memory
+X   workaround is to write the code properly, but suggests something bad
+X   http://dev.processing.org/bugs/show_bug.cgi?id=150
+X   opengl keeping memory around.. 
+X   could this be in vertices that have an image associated
+X   or the image buffer used for textures
+X   that never gets cleared fully?
+X registerSize() was registering as pre() instead
+X   http://dev.processing.org/bugs/show_bug.cgi?id=582
+X set() doesn't bounds check
+X   this shouldn't actually be the case
+X   http://dev.processing.org/bugs/show_bug.cgi?id=522
+X   get()/set() in PGraphicsJava2D don't bounds check
+X   was actually a dumb error in setDataElements()
+X set modified to true on endDraw() so that image updates properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=526
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
+
+0125p4 (in progress)
+X significant improvement to text and images in opengl
+X   now using mipmaps to interpolate large and small images
+X   fix bug with mipmapping on radeon 9700
+X things not showing up in linux
+X   this may be fixed along with bug #341
+X   probably threading issue, 98 doesn't have any trouble
+X   signs point to Runner or PApplet changes between 98 and 99
+X   commenting out applet.setupFrameResizeListener() 
+X     in line 307 from Runner.java solved the problem
+X   http://dev.processing.org/bugs/show_bug.cgi?id=282
+X size of sketch different in setup() and draw() on linux
+X   make sure that the sketch isn't being sized based on bad insets
+X   problem with resizing the component when the frame wasn't resizable
+X   http://dev.processing.org/bugs/show_bug.cgi?id=341
+X major rework of the open() command
+X   add gnome-open/kde-open for with PApplet.open()
+X   add open (-a?) on osx to the open() command
+X   make changes in the javadoc and reference
+X opengl crashes when depth sorting more than two textured shapes
+X   http://dev.processing.org/bugs/show_bug.cgi?id=560
+
+ewjordan stuff (changes checked in)
+X rect() changes size as it changes position
+X   http://dev.processing.org/bugs/show_bug.cgi?id=95
+X strange texture warping in P3D
+X   hint(ENABLE_ACCURATE_TEXTURES)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=103
+X lines skip on 200x200 surface because of fixed point rounding error
+X   http://dev.processing.org/bugs/show_bug.cgi?id=267
+X   this may be same as 95
+X Polygons parallel to z-axis not always filling with nonzero x or y
+X   http://dev.processing.org/bugs/show_bug.cgi?id=547
+
+
 0124 core
 X with smooth() turned off, shouldn't be smoothing image on resize
 X   but on osx, apple defaults the image smoothing to true
