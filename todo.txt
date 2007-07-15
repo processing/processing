@@ -77,6 +77,8 @@ o file bug re: qtjava being compiled for 1.5 on the intel macs
 o   because 1.4 isn't available on 10.3.9, this is ridiculous
 
 
+_ move reference folder around so that it matches site organization
+_   otherwise several links break on the main faq page
 _ ocd is broken in 0125 - do a better error message for this
 X implement sortCompare() and sortSwap()
 _   discuss this with casey

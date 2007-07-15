@@ -68,6 +68,11 @@ and fjen, who also contributed fixes for this release.
 
 + Addition from Tom Hulbert to add setDTR() to the Serial library.
 
++ Where possible, more methods inside PApplet have been made static.
+  This may break some library code (the OCD library is one example)
+  until it's updated for 0125. We'll try to add a more informative
+  error message about this in 0126.
+
 
 [ additions, improvements ]
 
