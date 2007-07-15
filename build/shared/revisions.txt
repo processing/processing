@@ -7,11 +7,11 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0125 - XX February 2007
+ABOUT REV 0125 - 15 July 2007
 
 Throwing out the baby with the bathwater.
 
-[ changes ] 
+[ api changes ] 
 
 + Changed the constructors for the Capture class to be more consistent 
   with the rest of the video library. The following constructors:
@@ -46,23 +46,72 @@ Throwing out the baby with the bathwater.
   Because any group of comma or space characters (and in any order) 
   will simply be consumed as a single break.
 
++ The casting functions, e.g. int(), float() boolean(), and friends
+  have now been streamlined a bit to only cover casts that actually
+  make sense.
+
 + Blending modes have been finalized for 1.0, thanks to the help
   of Dave Bollinger, who contributed code to complete the set:
   http://dev.processing.org/bugs/show_bug.cgi?id=132  
   See the reference for blend() for more details. Thanks Dave!
 
-+ At Casey's urging, the "Color Picker" is now called the 
-  "Color Selector". 
-
 + The constant CENTER_RADIUS is now simply RADIUS. Both still work, 
   but CENTER_RADIUS should be avoided.
 
++ The constants for ENTER, TAB, et al. are now char values, 
+  rather than ints.
+
+
+[ additions, improvements ]
+
++ Significant improvement to text and images in OpenGL mode. 
+  Now using mipmaps to interpolate large and small images.
+
++ The println() method with arrays now prints the array indices next 
+  to each element, making it a bit more useful. The print() method
+  no longer supports arrays, since that was a bit silly.
+
++ Major rework of the open() command. This function behaves differently
+  on each platform. On Windows, the parameters are sent to the Windows 
+  shell via "cmd /c". On Mac OS X, the "open" command is used (type 
+  "man open" in Terminal.app for documentation). On Linux, it first tries
+  gnome-open, then kde-open, but if neither are available, it sends the
+   command to the shell without any alterations. For Java users, this 
+  is not quite the same as Runtime.exec(), because the shell command 
+  is prepended. The method exec(String[]) is a shortcut for 
+  Runtime.getRuntime.exec(String[]). This function was also modified 
+  for Mac OS X and Linux support, and to better handle spaces in 
+  command names.
+
++ textAlign() now supports a second parameter that handles vertical 
+  alignment of text. The second parameter can be TOP, CENTER, and 
+  BOTTOM. 
+
++ Added min() and max() for float and int arrays.
+
++ At Casey's urging, the "Color Picker" is now called the 
+  "Color Selector". 
+
+
 [ bug fixes ]
+
++ Fix long-standing memory leaking problem with OpenGL images
+  http://dev.processing.org/bugs/show_bug.cgi?id=150
+
++ Fix problem where sketches were not showing up in Linux
+  http://dev.processing.org/bugs/show_bug.cgi?id=282
+
++ Size of sketch different in setup() and draw() on Linux
+  http://dev.processing.org/bugs/show_bug.cgi?id=341
 
 + Changing the shortcut keys for switching tabs to instead use 
   ctrl/cmd + alt + left/right, identical to Firefox on Mac, PC and Linux. 
   Also fixes a bug that caused French keyboards to have problems since 0123.
   http://dev.processing.org/bugs/show_bug.cgi?id=480
+
++ Improve support for loading TGA (Targa) images. Upside-down and 
+  non-RLE encoded images should be supported better in this release.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1171576234
 
 + Properly refresh code when using an external editor (regression)
   http://dev.processing.org/bugs/show_bug.cgi?id=515
@@ -71,6 +120,59 @@ Throwing out the baby with the bathwater.
   it was causing problems on systems that use , instead of . for their
   decimal separator character.
   http://dev.processing.org/bugs/show_bug.cgi?id=495
+
++ PImage.save() method now fixed to work properly with get()
+  http://dev.processing.org/bugs/show_bug.cgi?id=558
+
++ Fix OpenGL crash with hint(ENABLE_DEPTH_SORT)
+  http://dev.processing.org/bugs/show_bug.cgi?id=560
+
++ Fix NullPointerException in Create Font with "All Characters" enabled 
+  http://dev.processing.org/bugs/show_bug.cgi?id=564
+
++ registerSize() was registering as pre() instead of size()
+  http://dev.processing.org/bugs/show_bug.cgi?id=582
+
++ Fix problem with set() and the JAVA2D renderer
+  http://dev.processing.org/bugs/show_bug.cgi?id=522
+
++ Set modified to true on endDraw() so that images update properly
+  http://dev.processing.org/bugs/show_bug.cgi?id=526
+
++ Prev/Next tab conflicting with typing brackets on French keyboards
+  http://dev.processing.org/bugs/show_bug.cgi?id=480
+
+
+[ reference and web ]
+
++ Significant updates to the examples
+
++ Update JavaDoc reference to include the XML library and Candy
+
++ Several fixes from fjen to applet.html for exported applets
+  Added auto-install of cab file inside applet.html
+  http://dev.processing.org/bugs/show_bug.cgi?id=181
+  Fix character encoding problems with HTML
+  http://dev.processing.org/bugs/show_bug.cgi?id=474
+  Generate XHTML-1.0-strict (standards compliant) code 
+  http://dev.processing.org/bugs/show_bug.cgi?id=490
+
+
+[ ewjordan bug fixes ]
+
++ Workaround for accuracy issues with P3D. (rect() was changing
+  size as it changed position, or lines skipping pixels)
+  http://dev.processing.org/bugs/show_bug.cgi?id=95
+  http://dev.processing.org/bugs/show_bug.cgi?id=267
+
++ Improve strange texture warping in P3D by adding a slower,
+  but more accurate means of drawing textures through use of
+  hint(ENABLE_ACCURATE_TEXTURES)
+  http://dev.processing.org/bugs/show_bug.cgi?id=103
+
++ Polygons parallel to z-axis not always filling with nonzero x or y
+  http://dev.processing.org/bugs/show_bug.cgi?id=547
+
 
 [ java ] 
 
