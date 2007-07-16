@@ -34,7 +34,7 @@ import java.io.*;
 
 import antlr.*;
 import antlr.collections.*;
-import antlr.collections.impl.*;
+//import antlr.collections.impl.*;
 
 import com.oroinc.text.regex.*;
 
