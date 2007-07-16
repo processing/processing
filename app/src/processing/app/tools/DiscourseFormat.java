@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -25,8 +25,8 @@ package processing.app.tools;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.awt.event.*;
-import javax.swing.*;
+//import java.awt.event.*;
+//import javax.swing.*;
 import javax.swing.text.Segment;
 
 import processing.app.*;
@@ -162,7 +162,7 @@ public class DiscourseFormat {
     int segmentCount = lineSegment.count;
     int width = 0; //parent.getHorizontalOffset();
 
-    int x = 0; //parent.getHorizontalOffset();
+    //int x = 0; //parent.getHorizontalOffset();
 
     // If syntax coloring is disabled, do simple translation
     if (tokenMarker == null) {
@@ -194,7 +194,7 @@ public class DiscourseFormat {
       }
 
       int offset = 0;
-      Toolkit toolkit = painter.getToolkit();
+      //Toolkit toolkit = painter.getToolkit();
       Font defaultFont = painter.getFont();
       SyntaxStyle[] styles = painter.getStyles();
 

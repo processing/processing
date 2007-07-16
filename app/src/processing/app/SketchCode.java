@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   SketchCode - data class for a single file inside a sketch
@@ -26,7 +26,6 @@ package processing.app;
 import processing.app.syntax.*;
 
 import java.io.*;
-import javax.swing.text.*;
 import javax.swing.undo.*;
 
 

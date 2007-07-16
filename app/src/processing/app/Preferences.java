@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -23,22 +23,14 @@
 
 package processing.app;
 
-import processing.app.syntax.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
-import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.filechooser.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
 
+import processing.app.syntax.*;
 import processing.core.PApplet;
 
 
@@ -219,10 +211,10 @@ public class Preferences {
     int right = 0;
 
     JLabel label;
-    JButton button, button2;
-    JComboBox combo;
-    Dimension d, d2, d3;
-    int h, v, vmax;
+    JButton button; //, button2;
+    //JComboBox combo;
+    Dimension d, d2; //, d3;
+    int h, vmax;
 
 
     // [ ] Use multiple .jar files when exporting applets
@@ -568,7 +560,7 @@ public class Preferences {
     memoryOverrideBox.setSelected(getBoolean("run.options.memory"));
     memoryField.setText(get("run.options.memory.maximum"));
 
-    dialog.show();
+    dialog.setVisible(true);
   }
 
 

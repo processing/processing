@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Based on Simple1.2ClassLoader.java - simple Java 1.2 class loader
@@ -21,7 +21,6 @@ package processing.app;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.jar.*;
 
 
 /**
