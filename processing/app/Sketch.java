@@ -730,6 +730,8 @@ public class Sketch {
     //new Exception().printStackTrace();
     current.modified = state;
     calcModified();
+    Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
+    getRootPane().putClientProperty(WINDOW_MODIFIED, modifiedParam);
   }
 
 
