@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   PServer - basic network server implementation

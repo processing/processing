@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -110,7 +110,7 @@ public class CreateFont extends JFrame {
 
     int index = 0;
     for (int i = 0; i < fonts.length; i++) {
-      String psname = fonts[i].getPSName();
+      //String psname = fonts[i].getPSName();
       //if (psname == null) System.err.println("ps name is null");
 
       flist[index++] = fonts[i].getPSName();
@@ -199,7 +199,7 @@ public class CreateFont extends JFrame {
     JButton cancelButton = new JButton("Cancel");
     cancelButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          hide();
+          setVisible(false); 
         }
       });
     okButton = new JButton("OK");
@@ -218,7 +218,7 @@ public class CreateFont extends JFrame {
     root.setDefaultButton(okButton);
     ActionListener disposer = new ActionListener() {
         public void actionPerformed(ActionEvent actionEvent) {
-          hide();
+          setVisible(false);
         }
       };
     Base.registerWindowCloseKeys(root, disposer);
@@ -320,6 +320,6 @@ public class CreateFont extends JFrame {
       e.printStackTrace();
     }
 
-    hide();
+    setVisible(false);
   }
 }

@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   PdePreprocessor - wrapper for default ANTLR-generated parser

@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   PdeTextAreaDefaults - grabs font/color settings for the editor

@@ -161,7 +161,7 @@ public class Editor extends JFrame {
         }
       });
 
-    PdeKeywords keywords = new PdeKeywords();
+    //PdeKeywords keywords = new PdeKeywords();
     sketchbook = new Sketchbook(this);
 
     JMenuBar menubar = new JMenuBar();
@@ -691,7 +691,7 @@ public class Editor extends JFrame {
     item = new JMenuItem("Create Font...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          new CreateFont(Editor.this).show();
+          new CreateFont(Editor.this).setVisible(true);
         }
       });
     menu.add(item);
@@ -896,7 +896,7 @@ public class Editor extends JFrame {
             find = new FindReplace(Editor.this);
           }
           //new FindReplace(Editor.this).show();
-          find.show();
+          find.setVisible(true);
           //find.setVisible(true);
         }
       });

@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Compiler - default compiler class that connects to jikes
@@ -29,7 +29,7 @@ import processing.core.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
-import javax.swing.*;
+
 
 public class Compiler implements MessageConsumer {
   static final String BUGS_URL =
@@ -69,7 +69,7 @@ public class Compiler implements MessageConsumer {
     this.buildPath = buildPath;
 
     // the pms object isn't used for anything but storage
-    MessageStream pms = new MessageStream(this);
+    /*MessageStream pms =*/ new MessageStream(this);
 
     String baseCommand[] = new String[] {
       // user.dir is folder containing P5 (and therefore jikes)
