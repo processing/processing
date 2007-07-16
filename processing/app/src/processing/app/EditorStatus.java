@@ -31,7 +31,7 @@ import javax.swing.*;
 /**
  * Panel just below the editing area that contains status messages.
  */
-public class EditorStatus extends JPanel implements ActionListener {
+public class EditorStatus extends JPanel /*implements ActionListener*/ {
   static Color bgcolor[];
   static Color fgcolor[];
 
@@ -117,6 +117,7 @@ public class EditorStatus extends JPanel implements ActionListener {
   }
 
 
+  /*
   public void prompt(String message) {
     mode = PROMPT;
     this.message = message;
@@ -138,6 +139,7 @@ public class EditorStatus extends JPanel implements ActionListener {
     cancelButton.setVisible(false);
     empty();
   }
+  */
 
 
   public void edit(String message, String dflt) {
@@ -238,6 +240,26 @@ public class EditorStatus extends JPanel implements ActionListener {
       cancelButton = new JButton(Preferences.PROMPT_CANCEL);
       okButton     = new JButton(Preferences.PROMPT_OK);
 
+      cancelButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (mode == EDIT) {
+            unedit();
+            editor.buttons.clear();
+          }
+        }
+      });
+      
+      okButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          // answering to rename/new code question
+          if (mode == EDIT) {  // this if() isn't (shouldn't be?) necessary
+            String answer = editField.getText();
+            editor.sketch.nameCode(answer);
+            unedit();
+          }
+        }
+      });
+
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)(
       // os9 seems to work if bg of component is set, but x still a bastard
       if (Base.isMacOS()) {
@@ -248,10 +270,12 @@ public class EditorStatus extends JPanel implements ActionListener {
       }
       setLayout(null);
 
+      /*
       yesButton.addActionListener(this);
       noButton.addActionListener(this);
       cancelButton.addActionListener(this);
       okButton.addActionListener(this);
+      */
 
       add(yesButton);
       add(noButton);
@@ -264,7 +288,8 @@ public class EditorStatus extends JPanel implements ActionListener {
       okButton.setVisible(false);
 
       editField = new JTextField();
-      editField.addActionListener(this);
+      // disabling, was not in use
+      //editField.addActionListener(this);
 
       //if (Base.platform != Base.MACOSX) {
       editField.addKeyListener(new KeyAdapter() {
@@ -407,6 +432,20 @@ public class EditorStatus extends JPanel implements ActionListener {
 
 
   public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == cancelButton) {
+      if (mode == EDIT) unedit();
+      editor.buttons.clear();
+
+    } else if (e.getSource() == okButton) {
+      // answering to rename/new code question
+      if (mode == EDIT) {  // this if() isn't (shouldn't be?) necessary
+        String answer = editField.getText();
+        editor.sketch.nameCode(answer);
+        unedit();
+      }
+    }
+    
+    /*
     if (e.getSource() == noButton) {
       // shut everything down, clear status, and return
       unprompt();
@@ -432,5 +471,6 @@ public class EditorStatus extends JPanel implements ActionListener {
       editor.sketch.nameCode(answer);
       unedit();
     }
+    */
   }
 }

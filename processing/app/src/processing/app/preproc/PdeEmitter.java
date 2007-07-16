@@ -28,7 +28,7 @@ public class PdeEmitter implements PdeTokenTypes
 {
   private PrintStream out = System.out;
   private PrintStream debug = System.err;
-  private static int ALL = -1;
+  //private static int ALL = -1;
   private java.util.Stack stack = new java.util.Stack();
   private static String[] tokenNames;
   private final static int ROOT_ID = 0;

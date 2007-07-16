@@ -248,8 +248,8 @@ public class Runner implements MessageConsumer {
 
     window = new Frame(sketch.name); // use ugly window
     ((Frame)window).setResizable(false);
-    if (editor.icon != null) {
-      ((Frame)window).setIconImage(editor.icon);
+    if (Editor.icon != null) {
+      ((Frame)window).setIconImage(Editor.icon);
     }
     window.pack(); // to get a peer, size set later, need for insets
 

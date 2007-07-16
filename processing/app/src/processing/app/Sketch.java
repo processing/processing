@@ -27,6 +27,7 @@ import processing.app.preproc.*;
 import processing.core.*;
 
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
@@ -59,6 +60,11 @@ public class Sketch {
    * true if any of the files have been modified.
    */
   boolean modified;
+  
+  /**
+   * true if this file has not yet been given a name by the user
+   */
+  boolean untitled;
 
   public File folder;
   public File dataFolder;
@@ -587,7 +593,8 @@ public class Sketch {
         //sketchbook.rebuildMenus();
 
         // make a new sketch, and i think this will rebuild the sketch menu
-        editor.handleNewUnchecked();
+        //editor.handleNewUnchecked();
+        editor.handleClose2();
 
       } else {
         // delete the file
@@ -730,8 +737,12 @@ public class Sketch {
     //new Exception().printStackTrace();
     current.modified = state;
     calcModified();
-    Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
-    getRootPane().putClientProperty(WINDOW_MODIFIED, modifiedParam);
+    
+    if (PApplet.platform == PConstants.MACOSX) {
+      // http://developer.apple.com/qa/qa2001/qa1146.html
+      Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
+      editor.getRootPane().putClientProperty("windowModified", modifiedParam);
+    }
   }
 
 
@@ -948,7 +959,7 @@ public class Sketch {
       "Select an image or other data file to copy to your sketch";
     //FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
     FileDialog fd = new FileDialog(editor, prompt, FileDialog.LOAD);
-    fd.show();
+    fd.setVisible(true);
 
     String directory = fd.getDirectory();
     String filename = fd.getFile();
