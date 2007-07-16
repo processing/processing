@@ -26,17 +26,17 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
+//import java.net.*;
 import java.text.*;
 import java.util.*;
-import java.util.zip.*;
+//import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
+//import javax.swing.event.*;
+//import javax.swing.text.*;
+//import javax.swing.undo.*;
 
-import com.apple.mrj.*;
+//import com.apple.mrj.*;
 
 
 /**
@@ -155,7 +155,7 @@ public class Sketchbook {
                                    "Create sketch folder named:",
                                    FileDialog.SAVE);
     //fd.setDirectory(getSketchbookPath());
-    fd.show();
+    fd.setVisible(true);
 
     String newbieParentDir = fd.getDirectory();
     newbieName = fd.getFile();
@@ -163,7 +163,7 @@ public class Sketchbook {
 
     newbieName = sanitizeName(newbieName);
     newbieDir = new File(newbieParentDir, newbieName);
-    handleNewInternal(newbieDir, newbieName);
+    return handleNewInternal(newbieDir, newbieName);
   }
 
 
@@ -188,11 +188,11 @@ public class Sketchbook {
       newbieDir = new File(newbieParentDir, newbieName);
       index++;
     } while (newbieDir.exists());
-    handleNewInternal(newbieDir, newbieName);
+    return handleNewInternal(newbieDir, newbieName);
   }
 
 
-  protected String handleNewImpl(File newbieDir, String newbieName) {
+  protected String handleNewInternal(File newbieDir, String newbieName) throws FileNotFoundException {
     // make the directory for the new sketch
     newbieDir.mkdirs();
 

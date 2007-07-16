@@ -30,23 +30,23 @@ import processing.core.*;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.awt.dnd.*;
+//import java.awt.dnd.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
-import java.util.zip.*;
+//import java.lang.reflect.*;
+//import java.net.*;
+//import java.util.*;
+//import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
+//import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-import com.apple.mrj.*;
-import com.oroinc.text.regex.*;
+//import com.apple.mrj.*;
+//import com.oroinc.text.regex.*;
 //import de.hunsicker.jalopy.*;
 
 
@@ -129,11 +129,9 @@ public class Editor extends JFrame {
   FindReplace find;
 
 
-  public Editor(Base base, String path) {
+  public Editor(Base ibase, String path) {
     super(WINDOW_TITLE);
-
-    this.base = base;
-
+    this.base = ibase;
 
     // set the window icon
     if (icon == null) {
@@ -159,7 +157,7 @@ public class Editor extends JFrame {
     // When bringing a window to front, let the Base know
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
-          base.setFrontEditor(this);
+          base.handleActivated(Editor.this);
         }
       });
 
@@ -270,7 +268,7 @@ public class Editor extends JFrame {
                     String name = filename.substring(0, filename.length() - 4);
                     File parent = file.getParentFile();
                     if (name.equals(parent.getName())) {
-                      Base.handleOpenFile(file);
+                      base.handleOpen(file);
                       return true;
                     }
                   }
@@ -307,7 +305,7 @@ public class Editor extends JFrame {
     // Open the document that was passed in
     handleOpen(path);
     // show the window
-    show();
+    setVisible(true);
   }
 
 
@@ -1356,19 +1354,19 @@ public class Editor extends JFrame {
 
 
   // @return false if canceling the close/quit operation
-  protected boolean checkModified() {
-    if (!modified) return true;
+  protected boolean checkModified(boolean quitting) {
+    if (!sketch.modified) return true;
 
-    String prompt = "Save changes to " + file.getName() + "?  ";
+    String prompt = "Save changes to " + sketch.name + "?  ";
 
     if (PApplet.platform != PConstants.MACOSX || PApplet.javaVersion < 1.5f) {
       int result =
-        JOptionPane.showConfirmDialog(frame, prompt, "Close",
+        JOptionPane.showConfirmDialog(this, prompt, "Close",
                                       JOptionPane.YES_NO_CANCEL_OPTION,
                                       JOptionPane.QUESTION_MESSAGE);
 
       if (result == JOptionPane.YES_OPTION) {
-        return handleSave();
+        return handleSave(quitting);
 
       } else if (result == JOptionPane.NO_OPTION) {
         return true;  // ok to continue
@@ -1414,12 +1412,12 @@ public class Editor extends JFrame {
       pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
                              new Integer(2));
 
-      JDialog dialog = pane.createDialog(frame, null);
+      JDialog dialog = pane.createDialog(this, null);
       dialog.setVisible(true);
 
       Object result = pane.getValue();
       if (result == options[0]) {  // save (and close/quit)
-        return handleSave();
+        return handleSave(quitting);
 
       } else if (result == options[2]) {  // don't save (still close/quit)
         return true;
@@ -1570,14 +1568,19 @@ public class Editor extends JFrame {
     // a way to get started. shite. now i hate myself.
     //if (disablePrompt) prompt = false;
 
-    String path = null;
-    if (prompt) {
-      path = sketchbook.handleNewPrompt();
-    } else {
-      path = sketchbook.handleNewUntitled();
-    }
-    if (filename != null) {
-      base.handleOpen(path);
+    try {
+      String path = null;
+      if (prompt) {
+        path = sketchbook.handleNewPrompt();
+      } else {
+        path = sketchbook.handleNewUntitled();
+      }
+      if (path != null) {
+        base.handleOpen(path);
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 
@@ -1788,6 +1791,17 @@ public class Editor extends JFrame {
       error(e);
     }
   }
+  
+  
+  /*
+  public boolean handleClose() {
+  }
+  */
+  
+  
+  public void handleClose2() {
+    base.handleClose(this);
+  }
 
 
   /**
@@ -1799,9 +1813,12 @@ public class Editor extends JFrame {
    * won't run properly while a quit is happening. This fixes
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=276">Bug 276</A>.
    */
-  public void handleSave(boolean immediately) {
+  public boolean handleSave(boolean immediately) {
     doStop();
-    buttons.activate(EditorButtons.SAVE);
+    
+    if (sketch.untitled) {
+      // need to get the name, user might also cancel here
+    }
 
     if (immediately) {
       handleSave2();
@@ -1812,10 +1829,12 @@ public class Editor extends JFrame {
           }
         });
     }
+    return true;
   }
 
 
   protected void handleSave2() {
+    buttons.activate(EditorButtons.SAVE);
     message("Saving...");
     try {
       if (sketch.save()) {
@@ -2013,7 +2032,7 @@ public class Editor extends JFrame {
     // instead use doClose() which will kill the external vm
     doClose();
 
-    checkModified(HANDLE_QUIT);
+    checkModified(true);
   }
 
 

@@ -27,14 +27,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.net.*;
+//import java.net.*;
 import java.util.*;
-import java.util.zip.*;
+//import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
+//import javax.swing.event.*;
+//import javax.swing.text.*;
+//import javax.swing.undo.*;
 
 import com.apple.mrj.*;
 import com.ice.jni.registry.*;
@@ -174,7 +174,7 @@ public class Base {
     if (PApplet.platform == PConstants.MACOSX) {
       MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
           public void handleOpenFile(File file) {
-            handleOpen(file.getAbsolutePath());
+            handleOpen(file);
             // this will only get set once.. later will be handled
             // by the Editor version of this fella
             //if (Base.openedAtStartup == null) {
@@ -188,13 +188,13 @@ public class Base {
       // #@$*(@#$ apple.. always gotta think different
       MRJApplicationUtils.registerAboutHandler(new MRJAboutHandler() {
           public void handleAbout() {
-            Editor.handleAbout();
+            activeEditor.handleAbout();
           }
         });
 
       MRJApplicationUtils.registerPrefsHandler(new MRJPrefsHandler() {
           public void handlePrefs() {
-            Editor.handlePrefs();
+            activeEditor.handlePrefs();
           }
         });
 
@@ -276,7 +276,7 @@ public class Base {
     // get the frontmost window frame for placing file dialog
 
     //static public void handleOpen(Frame frame) {
-    FileDialog od = new FileDialog(frame,
+    FileDialog od = new FileDialog(activeEditor,
                                    "Select a file:",
                                    FileDialog.LOAD);
     //od.setDirectory(new File("../2005/").getAbsolutePath());
@@ -286,10 +286,15 @@ public class Base {
     String filename = od.getFile();
     if (filename == null) return;
     File inputFile = new File(directory, filename);
-    handleOpen(inputFile);
+    handleOpen(inputFile.getAbsolutePath());
   }
 
 
+  public void handleOpen(File file) {
+    handleOpen(file.getAbsolutePath());
+  }
+  
+  
   public void handleOpen(String path) {
     new Editor(this, path);
   }
@@ -804,7 +809,7 @@ public class Base {
         //fd.setFile(folder.getName());
       }
       System.setProperty("apple.awt.fileDialogForDirectories", "true");
-      fd.show();
+      fd.setVisible(true);
       System.setProperty("apple.awt.fileDialogForDirectories", "false");
       if (fd.getFile() == null) {
         return null;
@@ -1042,7 +1047,7 @@ public class Base {
       // Attempt to use gnome-open
       try {
         Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
-        int result = p.waitFor();
+        /*int result =*/ p.waitFor();
         // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
         Preferences.set("launcher.linux", "gnome-open");
         return true;
@@ -1051,7 +1056,7 @@ public class Base {
       // Attempt with kde-open
       try {
         Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
-        int result = p.waitFor();
+        /*int result =*/ p.waitFor();
         Preferences.set("launcher.linux", "kde-open");
         return true;
       } catch (Exception e) { }
