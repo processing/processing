@@ -1,5 +1,35 @@
 0126 pde
 
+_ when marking a window as moddifed
+_   getRootPane().putClientProperty(WINDOW_MODIFIED, Boolean.TRUE);
+
+_ move examples folder to top-level menu?
+_ move open menu to its own?
+_ show sketch folder on linux
+_   add notes to the docs about how to fix if not working
+_   http://processing.org/reference/environment/platforms.html#linux
+
+_ move to multiple sketches open at a time
+_   set title of window to the sketch name
+_   on first save, ask for the name of the project (with default)
+_   cmd-opt-r for rename?
+_ save/saveas should use modal dialog
+_   only use the bottom bar for naming
+
+new bugs
+_ huge jar files from 0124 export
+_   http://dev.processing.org/bugs/show_bug.cgi?id=541
+_ if someone has monaco disabled in font book, the app won't start
+_   http://dev.processing.org/bugs/show_bug.cgi?id=562
+_ color picker broken on vista
+_   http://dev.processing.org/bugs/show_bug.cgi?id=584
+_ can't get documents/prefs folder on vista
+_   http://dev.processing.org/bugs/show_bug.cgi?id=585
+_ video problem in qt 7.2 with prepreroll, adding this to java.policy fixes:
+grant {
+  permission java.security.AllPermission;
+};
+
 book stuff
 _ on linux, drag and drop didn't accept
 _   gets a zillion different items that come in
@@ -7,12 +37,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=595
 _ adding a file to the sketch that already exists gives no confirm
 _   sometimes one item showing up twice
 _   (Table.pde showed twice after failed add)
-
-_ move examples folder to top-level menu?
-_ move open menu to its own?
-_ show sketch folder on linux
-_   add notes to the docs about how to fix if not working
-_   http://processing.org/reference/environment/platforms.html#linux
 
 
 _ move reference folder around so that it matches site organization
@@ -86,26 +110,6 @@ void sortSwap(int a, int b) {
   captureColors[a] = captureColors[b];
   captureColors[b] = t2;  
 }
-
-
-new bugs
-_ huge jar files from 0124 export
-_   http://dev.processing.org/bugs/show_bug.cgi?id=541
-_ if someone has monaco disabled in font book, the app won't start
-_   http://dev.processing.org/bugs/show_bug.cgi?id=562
-_ color picker broken on vista
-_   http://dev.processing.org/bugs/show_bug.cgi?id=584
-_ can't get documents/prefs folder on vista
-_   http://dev.processing.org/bugs/show_bug.cgi?id=585
-
-
-0126
-_ move to multiple sketches open at a time
-_   set title of window to the sketch name
-_   on first save, ask for the name of the project (with default)
-_   cmd-opt-r for rename?
-_ save/saveas should use modal dialog
-_   only use the bottom bar for naming
 
 
 0127
@@ -1178,8 +1182,6 @@ DIST / Mac OS X
 
 _ for the .app file, $APP_PACKAGE will give the path
 _   $JAVAROOT will give Contents/Resources/Java location
-_ when marking a window as moddifed
-_   getRootPane().putClientProperty(WINDOW_MODIFIED, Boolean.TRUE);
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
