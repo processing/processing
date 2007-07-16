@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Editor - main editor panel for the processing development environment
@@ -50,15 +50,15 @@ import com.oroinc.text.regex.*;
 //import de.hunsicker.jalopy.*;
 
 
-public class Editor extends JFrame
-  implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler,
-             MRJOpenDocumentHandler //, MRJOpenApplicationHandler
-{
+public class Editor extends JFrame {
+
+  Base base;
+
   // yeah
   static final String WINDOW_TITLE = "Processing" + " - " + Base.VERSION_NAME;
 
   // p5 icon for the window
-  Image icon;
+  static Image icon;
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
@@ -67,8 +67,10 @@ public class Editor extends JFrame
     "                                                                     " +
     "                                                                     ";
 
+  static final int SHORTCUT_KEY_MASK =
+    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
   static public final KeyStroke WINDOW_CLOSE_KEYSTROKE =
-    KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
 
   static final int HANDLE_NEW  = 1;
   static final int HANDLE_OPEN = 2;
@@ -76,7 +78,6 @@ public class Editor extends JFrame
   int checkModifiedMode;
   String handleOpenPath;
   boolean handleNewShift;
-  boolean handleNewLibrary;
 
   PageFormat pageFormat;
   PrinterJob printerJob;
@@ -101,8 +102,6 @@ public class Editor extends JFrame
 
   // runtime information and window placement
   Point appletLocation;
-  //Point presentLocation;
-  //Window presentationWindow;
   RunButtonWatcher watcher;
   Runner runtime;
 
@@ -127,30 +126,24 @@ public class Editor extends JFrame
 
   //SketchHistory history;  // TODO re-enable history
   Sketchbook sketchbook;
-  //Preferences preferences;
   FindReplace find;
 
-  //static Properties keywords; // keyword -> reference html lookup
 
-
-  public Editor() {
+  public Editor(Base base, String path) {
     super(WINDOW_TITLE);
 
-    // #@$*(@#$ apple.. always gotta think different
-    MRJApplicationUtils.registerAboutHandler(this);
-    MRJApplicationUtils.registerPrefsHandler(this);
-    MRJApplicationUtils.registerQuitHandler(this);
-    MRJApplicationUtils.registerOpenDocumentHandler(this);
+    this.base = base;
 
-    // run static initialization that grabs all the prefs
-    Preferences.init();
 
     // set the window icon
-    try {
-      icon = Base.getImage("icon.gif", this);
+    if (icon == null) {
+      try {
+        icon = Base.getImage("icon.gif", this);
+      } catch (Exception e) { } // fail silently, no big whup
+    }
+    if (icon != null) {
       setIconImage(icon);
-    } catch (Exception e) { } // fail silently, no big whup
-
+    }
 
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
@@ -163,6 +156,13 @@ public class Editor extends JFrame
     // http://dev.processing.org/bugs/show_bug.cgi?id=440
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
+    // When bringing a window to front, let the Base know
+    addWindowListener(new WindowAdapter() {
+        public void windowActivated(WindowEvent e) {
+          base.setFrontEditor(this);
+        }
+      });
+
     PdeKeywords keywords = new PdeKeywords();
     sketchbook = new Sketchbook(this);
 
@@ -172,17 +172,10 @@ public class Editor extends JFrame
     menubar.add(buildSketchMenu());
     menubar.add(buildToolsMenu());
     // what platform has their help menu way on the right? motif?
-    //menubar.add(Box.createHorizontalGlue());
     menubar.add(buildHelpMenu());
-
     setJMenuBar(menubar);
 
-    // doesn't matter when this is created, just make it happen at some point
-    //find = new FindReplace(Editor.this);
-
-    //Container pain = getContentPane();
-    //pain.setLayout(new BorderLayout());
-    // for rev 0120, placing things inside a JPanel because
+    // For rev 0120, placing things inside a JPanel
     Container contentPain = getContentPane();
     contentPain.setLayout(new BorderLayout());
     JPanel pain = new JPanel();
@@ -196,12 +189,10 @@ public class Editor extends JFrame
     upper.add(buttons);
 
     header = new EditorHeader(this);
-    //header.setBorder(null);
     upper.add(header);
 
     textarea = new JEditTextArea(new PdeTextAreaDefaults());
     textarea.setRightClickPopup(new TextAreaPopup());
-    //textarea.setTokenMarker(new PdeKeywords());
     textarea.setHorizontalOffset(6);
 
     // assemble console panel, consisting of status area and the console itself
@@ -222,7 +213,6 @@ public class Editor extends JFrame
     upper.add(textarea);
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                upper, consolePanel);
-                               //textarea, consolePanel);
 
     splitPane.setOneTouchExpandable(true);
     // repaint child panes while resizing
@@ -253,41 +243,12 @@ public class Editor extends JFrame
 
         public boolean canImport(JComponent dest, DataFlavor[] flavors) {
           // claim that we can import everything
+          // TODO maybe ask only for file objects?
           return true;
         }
 
         public boolean importData(JComponent src, Transferable transferable) {
           DataFlavor[] flavors = transferable.getTransferDataFlavors();
-
-    /*
-    DropTarget dt = new DropTarget(this, new DropTargetListener() {
-
-        public void dragEnter(DropTargetDragEvent event) {
-          // debug messages for diagnostics
-          //System.out.println("dragEnter " + event);
-          event.acceptDrag(DnDConstants.ACTION_COPY);
-        }
-
-        public void dragExit(DropTargetEvent event) {
-          //System.out.println("dragExit " + event);
-        }
-
-        public void dragOver(DropTargetDragEvent event) {
-          //System.out.println("dragOver " + event);
-          event.acceptDrag(DnDConstants.ACTION_COPY);
-        }
-
-        public void dropActionChanged(DropTargetDragEvent event) {
-          //System.out.println("dropActionChanged " + event);
-        }
-
-        public void drop(DropTargetDropEvent event) {
-          //System.out.println("drop " + event);
-          event.acceptDrop(DnDConstants.ACTION_COPY);
-
-          Transferable transferable = event.getTransferable();
-          DataFlavor flavors[] = transferable.getTransferDataFlavors();
-    */
           int successful = 0;
 
           for (int i = 0; i < flavors.length; i++) {
@@ -309,7 +270,7 @@ public class Editor extends JFrame
                     String name = filename.substring(0, filename.length() - 4);
                     File parent = file.getParentFile();
                     if (name.equals(parent.getName())) {
-                      handleOpenFile(file);
+                      Base.handleOpenFile(file);
                       return true;
                     }
                   }
@@ -338,6 +299,15 @@ public class Editor extends JFrame
           return true;
         }
       });
+
+    // Finish preparing Editor (formerly found in Base)
+    pack();
+    // has to be here to set window size properly
+    restorePreferences();
+    // Open the document that was passed in
+    handleOpen(path);
+    // show the window
+    show();
   }
 
 
@@ -408,6 +378,9 @@ public class Editor extends JFrame
 
     // last sketch that was in use, or used to launch the app
 
+    /*
+      // TODO bring this back
+
     if (Base.openedAtStartup != null) {
       handleOpen2(Base.openedAtStartup);
 
@@ -424,6 +397,7 @@ public class Editor extends JFrame
         handleNew2(true);
       }
     }
+    */
 
 
     // location for the console/editor area divider
@@ -528,7 +502,21 @@ public class Editor extends JFrame
         }
       });
     menu.add(item);
-    menu.add(sketchbook.getOpenMenu());
+
+    item = Editor.newJMenuItem("Open...", 'O', false);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleOpen(null);
+        }
+      });
+    menu.add(item);
+    menu.addSeparator();
+
+    sketchbook.addSketchbookMenu(menu);
+    sketchbook.addExamplesMenu(menu);
+    //menu.add(sketchbook.getSketchbookMenu());
+    //menu.add(sketchbook.getExamplesMenu());
+    //menu.add(sketchbook.getOpenMenu());
 
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
@@ -1035,13 +1023,11 @@ public class Editor extends JFrame
   // ...................................................................
 
 
-  // interfaces for MRJ Handlers, but naming is fine
-  // so used internally for everything else
-
-  public void handleAbout() {
+  /**
+   * Show the About box.
+   */
+  static public void handleAbout() {
     final Image image = Base.getImage("about.jpg", this);
-    int w = image.getWidth(this);
-    int h = image.getHeight(this);
     final Window window = new Window(this) {
         public void paint(Graphics g) {
           g.drawImage(image, 0, 0, null);
@@ -1060,6 +1046,8 @@ public class Editor extends JFrame
           window.dispose();
         }
       });
+    int w = image.getWidth(window);
+    int h = image.getHeight(window);
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     window.setBounds((screen.width-w)/2, (screen.height-h)/2, w, h);
     window.show();
@@ -1069,7 +1057,7 @@ public class Editor extends JFrame
   /**
    * Show the preferences window.
    */
-  public void handlePrefs() {
+  static public void handlePrefs() {
     Preferences preferences = new Preferences();
     preferences.showFrame(this);
 
@@ -1367,12 +1355,89 @@ public class Editor extends JFrame
   }
 
 
+  // @return false if canceling the close/quit operation
+  protected boolean checkModified() {
+    if (!modified) return true;
+
+    String prompt = "Save changes to " + file.getName() + "?  ";
+
+    if (PApplet.platform != PConstants.MACOSX || PApplet.javaVersion < 1.5f) {
+      int result =
+        JOptionPane.showConfirmDialog(frame, prompt, "Close",
+                                      JOptionPane.YES_NO_CANCEL_OPTION,
+                                      JOptionPane.QUESTION_MESSAGE);
+
+      if (result == JOptionPane.YES_OPTION) {
+        return handleSave();
+
+      } else if (result == JOptionPane.NO_OPTION) {
+        return true;  // ok to continue
+
+      } else if (result == JOptionPane.CANCEL_OPTION) {
+        return false;
+      } else {
+        throw new IllegalStateException();
+      }
+
+    } else {
+      // This code is disabled unless Java 1.5 is being used on Mac OS X
+      // because of a Java bug that prevents the initial value of the
+      // dialog from being set properly (at least on my MacBook Pro).
+      // The bug causes the "Don't Save" option to be the highlighted,
+      // blinking, default. This sucks. But I'll tell you what doesn't
+      // suck--workarounds for the Mac and Apple's snobby attitude about it!
+      // I think it's nifty that they treat their developers like dirt.
+
+      // Pane formatting adapted from the quaqua guide
+      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
+      JOptionPane pane =
+        new JOptionPane("<html> " +
+                        "<head> <style type=\"text/css\">"+
+                        "b { font: 13pt \"Lucida Grande\" }"+
+                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                        "</style> </head>" +
+                        "<b>Do you want to save changes to this text<BR>" +
+                        " before closing?</b>" +
+                        "<p>If you don't save, your changes will be lost.",
+                        JOptionPane.QUESTION_MESSAGE);
+
+      String[] options = new String[] {
+        "Save", "Cancel", "Don't Save"
+      };
+      pane.setOptions(options);
+
+      // highlight the safest option ala apple hig
+      pane.setInitialValue(options[0]);
+
+      // on macosx, setting the destructive property places this option
+      // away from the others at the lefthand side
+      pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
+                             new Integer(2));
+
+      JDialog dialog = pane.createDialog(frame, null);
+      dialog.setVisible(true);
+
+      Object result = pane.getValue();
+      if (result == options[0]) {  // save (and close/quit)
+        return handleSave();
+
+      } else if (result == options[2]) {  // don't save (still close/quit)
+        return true;
+
+      } else {  // cancel?
+        return false;
+      }
+    }
+  }
+
+
   /**
    * Check to see if there have been changes. If so, prompt user
    * whether or not to save first. If the user cancels, just ignore.
    * Otherwise, one of the other methods will handle calling
    * checkModified2() which will get on with business.
    */
+  /*
   protected void checkModified(int checkModifiedMode) {
     this.checkModifiedMode = checkModifiedMode;
 
@@ -1452,12 +1517,14 @@ public class Editor extends JFrame
       }
     }
   }
+  */
 
 
   /**
    * Called by EditorStatus to complete the job and re-dispatch
    * to handleNew, handleOpen, handleQuit.
    */
+  /*
   public void checkModified2() {
     switch (checkModifiedMode) {
       case HANDLE_NEW:  handleNew2(false); break;
@@ -1466,6 +1533,7 @@ public class Editor extends JFrame
     }
     checkModifiedMode = 0;
   }
+  */
 
 
   /**
@@ -1475,6 +1543,7 @@ public class Editor extends JFrame
    * If shift is pressed when clicking the toolbar button, then
    * force the opposite behavior from sketchbook.prompt's setting
    */
+  /*
   public void handleNew(final boolean shift) {
     buttons.activate(EditorButtons.NEW);
 
@@ -1482,9 +1551,34 @@ public class Editor extends JFrame
         public void run() {
           doStop();
           handleNewShift = shift;
-          handleNewLibrary = false;
           checkModified(HANDLE_NEW);
         }});
+  }
+  */
+
+
+  public void handleNew(boolean shiftDown) {
+    boolean prompt = Preferences.getBoolean("sketchbook.prompt");
+    if (shiftDown) prompt = !prompt; // reverse behavior if shift is down
+
+    // no sketch has been started, don't prompt for the name if it's
+    // starting up, just make the farker. otherwise if the person hits
+    // 'cancel' i'd have to add a thing to make p5 quit, which is silly.
+    // instead give them an empty sketch, and they can look at examples.
+    // i hate it when imovie makes you start with that goofy dialog box.
+    // unless, ermm, they user tested it and people preferred that as
+    // a way to get started. shite. now i hate myself.
+    //if (disablePrompt) prompt = false;
+
+    String path = null;
+    if (prompt) {
+      path = sketchbook.handleNewPrompt();
+    } else {
+      path = sketchbook.handleNewUntitled();
+    }
+    if (filename != null) {
+      base.handleOpen(path);
+    }
   }
 
 
@@ -1493,25 +1587,13 @@ public class Editor extends JFrame
    * is selected to be deleted, and it won't call checkModified()
    * to prompt for save as.
    */
+  /*
   public void handleNewUnchecked() {
     doStop();
     handleNewShift = false;
-    handleNewLibrary = false;
     handleNew2(true);
   }
-
-
-  /**
-   * User selected "New Library", this will act just like handleNew
-   * but internally set a flag that the new guy is a library,
-   * meaning that a "library" subfolder will be added.
-   */
-  public void handleNewLibrary() {
-    doStop();
-    handleNewShift = false;
-    handleNewLibrary = true;
-    checkModified(HANDLE_NEW);
-  }
+  */
 
 
   /**
@@ -1521,6 +1603,7 @@ public class Editor extends JFrame
    * @param noPrompt true to disable prompting for the sketch
    * name, used when the app is starting (auto-create a sketch)
    */
+  /*
   protected void handleNew2(boolean noPrompt) {
     try {
       String pdePath =
@@ -1537,16 +1620,17 @@ public class Editor extends JFrame
     }
     buttons.clear();
   }
+  */
 
 
   /**
    * This is the implementation of the MRJ open document event,
    * and the Windows XP open document will be routed through this too.
    */
-  public void handleOpenFile(File file) {
+  //public void handleOpenFile(File file) {
     //System.out.println("handling open file: " + file);
-    handleOpen(file.getAbsolutePath());
-  }
+    //handleOpen(file.getAbsolutePath());
+  //}
 
 
   /**
@@ -1562,13 +1646,17 @@ public class Editor extends JFrame
         public void run() {
           String path = ipath;
           if (path == null) {  // "open..." selected from the menu
-            path = sketchbook.handleOpen();
-            if (path == null) return;
+            path = sketchbook.handleOpenPrompt();
           }
-          doClose();
-          handleOpenPath = path;
-          checkModified(HANDLE_OPEN);
+          if (path != null) {
+            base.handleOpen(path);
+          }
+          //doClose();
+          //handleOpenPath = path;
+          //checkModified(HANDLE_OPEN);
         }});
+    // Off in thread land, so don't clear yet
+    //buttons.clear();
   }
 
 
@@ -1702,21 +1790,20 @@ public class Editor extends JFrame
   }
 
 
-  // there is no handleSave1 since there's never a need to prompt
   /**
-   * Actually handle the save command. If 'force' is set to false,
+   * Actually handle the save command. If 'immediately' is set to false,
    * this will happen in another thread so that the message area
    * will update and the save button will stay highlighted while the
-   * save is happening. If 'force' is true, then it will happen
+   * save is happening. If 'immediately' is true, then it will happen
    * immediately. This is used during a quit, because invokeLater()
    * won't run properly while a quit is happening. This fixes
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=276">Bug 276</A>.
    */
-  public void handleSave(boolean force) {
+  public void handleSave(boolean immediately) {
     doStop();
     buttons.activate(EditorButtons.SAVE);
 
-    if (force) {
+    if (immediately) {
       handleSave2();
     } else {
       SwingUtilities.invokeLater(new Runnable() {
@@ -1728,7 +1815,7 @@ public class Editor extends JFrame
   }
 
 
-  public void handleSave2() {
+  protected void handleSave2() {
     message("Saving...");
     try {
       if (sketch.save()) {
@@ -1937,6 +2024,7 @@ public class Editor extends JFrame
    * that requires an exception to be thrown in order to properly cancel
    * a quit message.
    */
+  /*
   public void handleQuit() {
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
@@ -1949,6 +2037,7 @@ public class Editor extends JFrame
     // upon JOptionPane.NO_OPTION
     throw new IllegalStateException("Quit Pending User Confirmation");
   }
+  */
 
 
   /**
