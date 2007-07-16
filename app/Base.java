@@ -50,6 +50,10 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
+  /*
+  implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler,
+             MRJOpenDocumentHandler //, MRJOpenApplicationHandler
+  */
   static final int VERSION = 126;
   static final String VERSION_NAME = "0126 Beta";
 
@@ -65,7 +69,6 @@ public class Base {
   static public void main(String args[]) {
 
     // make sure that this is running on java 1.4
-
     if (PApplet.javaVersion < 1.4f) {
       //System.err.println("no way man");
       Base.showError("Need to install Java 1.4",
@@ -75,17 +78,11 @@ public class Base {
     }
 
 
-    // grab any opened file from the command line
-
-    if (args.length == 1) {
-      Base.openedAtStartup = args[0];
-    }
-
-
     // register a temporary/early version of the mrj open document handler,
     // because the event may be lost (sometimes, not always) by the time
     // that Editor is properly constructed.
 
+    /*
     MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
         public void handleOpenFile(File file) {
           // this will only get set once.. later will be handled
@@ -97,15 +94,9 @@ public class Base {
         }
       };
     MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
-
-    Base app = new Base();
-  }
-
-
-  public Base() {
+    */
 
     // set the look and feel before opening the window
-
     try {
       if (Base.isMacOS()) {
         // Use the Quaqua L & F on OS X to make JFileChooser less awful
@@ -142,6 +133,31 @@ public class Base {
     // use native popups so they don't look so crappy on osx
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
+    Base app = new Base();
+
+    // grab any opened file from the command line
+    /*
+    if (args.length == 1) {
+      Base.openedAtStartup = args[0];
+    }
+    */
+    // TODO loop through args.length and open each
+
+    // run static initialization that grabs all the prefs
+    Preferences.init();
+
+    /*
+      // TODO bring me back!
+    // check for updates
+    if (Preferences.getBoolean("update.check")) {
+      new UpdateCheck(editor);
+    }
+    */
+  }
+
+
+  public Base() {
+    /*
     // build the editor object
     editor = new Editor();
 
@@ -153,15 +169,258 @@ public class Base {
 
     // show the window
     editor.show();
+    */
 
-    // check for updates
-    if (Preferences.getBoolean("update.check")) {
-      new UpdateCheck(editor);
+    if (PApplet.platform == PConstants.MACOSX) {
+      MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
+          public void handleOpenFile(File file) {
+            handleOpen(file.getAbsolutePath());
+            // this will only get set once.. later will be handled
+            // by the Editor version of this fella
+            //if (Base.openedAtStartup == null) {
+            //System.out.println("handling outside open file: " + file);
+            //Base.openedAtStartup = file.getAbsolutePath();
+            //}
+          }
+        };
+      MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
+
+      // #@$*(@#$ apple.. always gotta think different
+      MRJApplicationUtils.registerAboutHandler(new MRJAboutHandler() {
+          public void handleAbout() {
+            Editor.handleAbout();
+          }
+        });
+
+      MRJApplicationUtils.registerPrefsHandler(new MRJPrefsHandler() {
+          public void handlePrefs() {
+            Editor.handlePrefs();
+          }
+        });
+
+      // Method for the MRJQuitHandler, needs to be dealt with differently
+      // than the regular handler because OS X has an annoying implementation
+      // <A HREF="http://developer.apple.com/qa/qa2001/qa1187.html">quirk</A>
+      // that requires an exception to be thrown in order to properly cancel
+      // a quit message.
+      MRJApplicationUtils.registerQuitHandler(new MRJQuitHandler() {
+          public void handleQuit() {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                  handleQuit();
+                }
+              });
+            // Throw IllegalStateException so new thread can execute.
+            // If showing dialog on this thread in 10.2, we would throw
+            // upon JOptionPane.NO_OPTION
+            throw new IllegalStateException("Quit Pending User Confirmation");
+          }
+        });
     }
   }
 
 
   // .................................................................
+
+
+  int editorCount;
+  Editor activeEditor;
+
+  // Because of variations in native windowing systems, no guarantees about
+  // changes to the focused and active Windows can be made. Developers must
+  // never assume that this Window is the focused or active Window until this
+  // Window receives a WINDOW_GAINED_FOCUS or WINDOW_ACTIVATED event.
+  public void handleActivated(Editor whichEditor) {
+    activeEditor = whichEditor;
+  }
+
+
+  /*
+  public void handleNew() {
+    // create a new window
+    // location should be offset from the current frontmost window
+    // name will be sketch_070716a
+    try {
+      String pdePath = sketchbook.handleNew(noPrompt, handleNewShift);
+      //if (pdePath != null) handleOpen2(pdePath);
+      if (pdePath != null) {
+        Editor e = new Editor(pdePath);
+      }
+
+    } catch (IOException e) {
+      // not sure why this would happen, but since there's no way to
+      // recover (outside of creating another new setkch, which might
+      // just cause more trouble), then they've gotta quit.
+      Base.showError("Problem creating a new sketch",
+                     "An error occurred while creating\n" +
+                     "a new sketch. Processing must now quit.", e);
+    }
+  }
+  */
+
+
+  /*
+  public void handleNewPrompt() {
+  }
+  */
+
+
+  public void handleClose(Editor editor) {
+    // check if modified
+    // if not canceled, the check if this is the last open window
+    // if this is the last open window, just do a 'new' instead
+  }
+
+
+  public void handleOpen() {
+    // get the frontmost window frame for placing file dialog
+
+    //static public void handleOpen(Frame frame) {
+    FileDialog od = new FileDialog(frame,
+                                   "Select a file:",
+                                   FileDialog.LOAD);
+    //od.setDirectory(new File("../2005/").getAbsolutePath());
+    od.setVisible(true);
+
+    String directory = od.getDirectory();
+    String filename = od.getFile();
+    if (filename == null) return;
+    File inputFile = new File(directory, filename);
+    handleOpen(inputFile);
+  }
+
+
+  public void handleOpen(String path) {
+    new Editor(this, path);
+  }
+
+
+  /*
+  public void handleClose() {
+    if (checkModified()) {
+      frame.setVisible(false);
+      frame.dispose();
+    }
+  }
+
+
+  // @return true if completed and not canceled
+  public boolean handleSave() {
+    if (untitled) return handleSaveAs();
+
+    try {
+      saveFile(file, textarea.getText());
+      setModified(false);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return true;
+  }
+
+
+  public boolean handleSaveAs() {
+    FileDialog fd = new FileDialog(frame,
+                                   "Save text as...",
+                                   FileDialog.SAVE);
+    fd.setFile(file.getName());
+    fd.setVisible(true);
+
+    String newFolder = fd.getDirectory();
+    String newFilename = fd.getFile();
+    if (newFolder == null) {
+      return false;
+    }
+
+    file = new File(newFolder, newFilename);
+    untitled = false;
+    return handleSave();
+  }
+
+
+  public void handleQuit() {
+    if (checkModified()) {
+      System.exit(0);
+    }
+  }
+
+  // @return false if canceling the close/quit operation
+  protected boolean checkModified() {
+    if (!modified) return true;
+
+    String prompt = "Save changes to " + file.getName() + "?  ";
+
+    if (PApplet.platform != PConstants.MACOSX || PApplet.javaVersion < 1.5f) {
+      int result =
+        JOptionPane.showConfirmDialog(frame, prompt, "Close",
+                                      JOptionPane.YES_NO_CANCEL_OPTION,
+                                      JOptionPane.QUESTION_MESSAGE);
+
+      if (result == JOptionPane.YES_OPTION) {
+        return handleSave();
+
+      } else if (result == JOptionPane.NO_OPTION) {
+        return true;  // ok to continue
+
+      } else if (result == JOptionPane.CANCEL_OPTION) {
+        return false;
+      } else {
+        throw new IllegalStateException();
+      }
+
+    } else {
+      // This code is disabled unless Java 1.5 is being used on Mac OS X
+      // because of a Java bug that prevents the initial value of the
+      // dialog from being set properly (at least on my MacBook Pro).
+      // The bug causes the "Don't Save" option to be the highlighted,
+      // blinking, default. This sucks. But I'll tell you what doesn't
+      // suck--workarounds for the Mac and Apple's snobby attitude about it!
+
+      // adapted from the quaqua guide
+      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
+      JOptionPane pane =
+        new JOptionPane("<html> " +
+                        "<head> <style type=\"text/css\">"+
+                        "b { font: 13pt \"Lucida Grande\" }"+
+                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                        "</style> </head>" +
+                        "<b>Do you want to save changes to this text<BR>" +
+                        " before closing?</b>" +
+                        "<p>If you don't save, your changes will be lost.",
+                        JOptionPane.QUESTION_MESSAGE);
+
+      String[] options = new String[] {
+        "Save", "Cancel", "Don't Save"
+      };
+      pane.setOptions(options);
+
+      // highlight the safest option ala apple hig
+      pane.setInitialValue(options[0]);
+
+      // on macosx, setting the destructive property places this option
+      // away from the others at the lefthand side
+      pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
+                             new Integer(2));
+
+      JDialog dialog = pane.createDialog(frame, null);
+      dialog.setVisible(true);
+
+      Object result = pane.getValue();
+      if (result == options[0]) {  // save (and close/quit)
+        return handleSave();
+
+      } else if (result == options[2]) {  // don't save (still close/quit)
+        return true;
+
+      } else {  // cancel?
+        return false;
+      }
+    }
+  }
+  */
+
+
+  // ...................................................................
+
 
 
   /**
@@ -1092,6 +1351,7 @@ public class Base {
     return listFiles(new File(path), relative);
   }
 
+
   static public String[] listFiles(File folder, boolean relative) {
     String path = folder.getAbsolutePath();
     Vector vector = new Vector();
@@ -1100,6 +1360,7 @@ public class Base {
     vector.copyInto(outgoing);
     return outgoing;
   }
+
 
   static protected void listFiles(String basePath,
                                   String path, Vector vector) {
