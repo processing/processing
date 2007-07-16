@@ -146,65 +146,62 @@ public class Sketchbook {
   }
 
 
-  /**
-   * Handle creating a sketch folder, return its base .pde file
-   * or null if the operation was cancelled.
-   */
-  public String handleNew(boolean noPrompt,
-                          boolean shift,
-                          boolean library) throws IOException {
+  public String handleNewPrompt() throws IOException {
     File newbieDir = null;
     String newbieName = null;
 
-    boolean prompt = Preferences.getBoolean("sketchbook.prompt");
-    if (shift) prompt = !prompt; // reverse behavior if shift is down
+    // prompt for the filename and location for the new sketch
+    FileDialog fd = new FileDialog(editor,
+                                   "Create sketch folder named:",
+                                   FileDialog.SAVE);
+    //fd.setDirectory(getSketchbookPath());
+    fd.show();
 
-    // no sketch has been started, don't prompt for the name if it's
-    // starting up, just make the farker. otherwise if the person hits
-    // 'cancel' i'd have to add a thing to make p5 quit, which is silly.
-    // instead give them an empty sketch, and they can look at examples.
-    // i hate it when imovie makes you start with that goofy dialog box.
-    // unless, ermm, they user tested it and people preferred that as
-    // a way to get started. shite. now i hate myself.
-    //
-    if (noPrompt) prompt = false;
+    String newbieParentDir = fd.getDirectory();
+    newbieName = fd.getFile();
+    if (newbieName == null) return null;
 
-    if (prompt) {
-      // prompt for the filename and location for the new sketch
-      FileDialog fd = new FileDialog(editor,
-                                     "Create sketch folder named:",
-                                     FileDialog.SAVE);
-      fd.setDirectory(getSketchbookPath());
-      fd.show();
+    newbieName = sanitizeName(newbieName);
+    newbieDir = new File(newbieParentDir, newbieName);
+    handleNewInternal(newbieDir, newbieName);
+  }
 
-      String newbieParentDir = fd.getDirectory();
-      newbieName = fd.getFile();
-      if (newbieName == null) return null;
 
-      newbieName = sanitizeName(newbieName);
+  /**
+   * Handle creating a sketch folder, return its base .pde file
+   * or null if the operation was cancelled.
+   * @param shift whether shift is pressed, which will invert prompt setting
+   * @param noPrompt disable prompt, no matter the setting
+   */
+  public String handleNewUntitled() throws IOException {
+    File newbieDir = null;
+    String newbieName = null;
+
+    // use a generic name like sketch_031008a, the date plus a char
+    String newbieParentDir = getSketchbookPath();
+
+    int index = 0;
+    SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+    String purty = formatter.format(new Date());
+    do {
+      newbieName = "sketch_" + purty + ((char) ('a' + index));
       newbieDir = new File(newbieParentDir, newbieName);
+      index++;
+    } while (newbieDir.exists());
+    handleNewInternal(newbieDir, newbieName);
+  }
 
-    } else {
-      // use a generic name like sketch_031008a, the date plus a char
-      String newbieParentDir = getSketchbookPath();
 
-      int index = 0;
-      SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-      String purty = formatter.format(new Date());
-      do {
-        newbieName = "sketch_" + purty + ((char) ('a' + index));
-        newbieDir = new File(newbieParentDir, newbieName);
-        index++;
-      } while (newbieDir.exists());
-    }
-
+  protected String handleNewImpl(File newbieDir, String newbieName) {
     // make the directory for the new sketch
     newbieDir.mkdirs();
 
+    /*
     // if it's a library, make a library subfolder to tag it as such
     if (library) {
       new File(newbieDir, "library").mkdirs();
     }
+    */
 
     // make an empty pde file
     File newbieFile = new File(newbieDir, newbieName + ".pde");
@@ -213,7 +210,10 @@ public class Sketchbook {
     // TODO this wouldn't be needed if i could figure out how to
     // associate document icons via a dot-extension/mime-type scenario
     // help me steve jobs, you're my only hope.
-
+    /*
+    // Disabling this starting in 0125... There's no need for it,
+    // and it's likely to cause more trouble than necessary by
+    // leaving around little ._ boogers.
     // jdk13 on osx, or jdk11
     // though apparently still available for 1.4
     if (Base.isMacOS()) {
@@ -223,6 +223,7 @@ public class Sketchbook {
       // thank you apple, for changing this @#$)(*
       //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
     }
+    */
 
     // make a note of a newly added sketch in the sketchbook menu
     rebuildMenusAsync();
@@ -305,7 +306,7 @@ public class Sketchbook {
   }
 
 
-  public String handleOpen() {
+  public String handleOpenPrompt() {
     // swing's file choosers are ass ugly, so we use the
     // native (awt peered) dialogs where possible
     FileDialog fd = new FileDialog(editor, //new Frame(),
@@ -421,6 +422,7 @@ public class Sketchbook {
       e.printStackTrace();
     }
 
+    /*
     try {
       JMenu examplesMenu = new JMenu("Examples");
       addSketches(examplesMenu, examplesFolder);
@@ -428,6 +430,24 @@ public class Sketchbook {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    */
+    //public JMenu addExamplesInline(JMenu menu) {
+    // Add examples directly to the menu
+    try {
+      //JMenu examplesMenu = new JMenu("Examples");
+      String[] subfolders = examplesFolder.list();
+      for (int i = 0; i < subfolders.length; i++) {
+        if (subfolders[i].startsWith(".")) continue;
+        File dir = new File(examplesFolder, subfolders[i]);
+        if (dir.isDirectory()) {
+          addSketches(menu, dir);
+        }
+      }
+      //menu.add(examplesMenu);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    //}
 
     /*
     // don't do this until it's finished
@@ -445,9 +465,33 @@ public class Sketchbook {
   }
 
 
+  /*
   public JMenu getOpenMenu() {
     if (openMenu == null) rebuildMenus();
     return openMenu;
+  }
+  */
+
+
+  public void addSketchbookMenu(JMenu menu) {
+    try {
+      JMenu smenu = new JMenu("Sketchbook");
+      boolean sketches = addSketches(smenu, new File(getSketchbookPath()));
+      menu.add(smenu);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public void addExamplesMenu(JMenu menu) {
+    try {
+      JMenu examplesMenu = new JMenu("Examples");
+      addSketches(examplesMenu, examplesFolder);
+      menu.add(examplesMenu);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 
