@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="app/src"/>
+	<classpathentry excluding="processing/app/tools/format/src/|processing/app/tools/format/" kind="src" path="app/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="pdf/library/itext-1.4.2.jar" sourcepath="pdf/itext-src-1.4.2.zip"/>
 	<classpathentry kind="output" path="app/bin"/>
 </classpath>
