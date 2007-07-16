@@ -133,7 +133,7 @@ public class Base {
     // use native popups so they don't look so crappy on osx
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
-    Base app = new Base();
+    /*Base app =*/ new Base();
 
     // grab any opened file from the command line
     /*

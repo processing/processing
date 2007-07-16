@@ -1,4 +1,7 @@
 0126 pde
+o support for hashmap<> with 1.5 syntax
+o   http://dev.processing.org/bugs/show_bug.cgi?id=459
+
 
 _ when marking a window as moddifed
 _   getRootPane().putClientProperty(WINDOW_MODIFIED, Boolean.TRUE);
@@ -554,8 +557,8 @@ _   http://processing.org/bugs/show_bug.cgi?id=3
 
 PDE / Compiler & Preprocessor
 
-_ support for hashmap<> with 1.5 syntax
-_   http://dev.processing.org/bugs/show_bug.cgi?id=459
+_ Update ANTLR grammar to support 1.5 syntax
+_   http://dev.processing.org/bugs/show_bug.cgi?id=598
 _ imports inside comments are being included
 _ toInt() needs to go away in time for the book.. fix parser bugs
 _ using a processing keyword as a variable name gives unhelpful error message
