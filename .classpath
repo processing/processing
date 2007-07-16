@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="app/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="core/src"/>
-	<classpathentry kind="src" path="dxf/src"/>
-	<classpathentry kind="src" path="opengl/src"/>
-	<classpathentry sourcepath="opengl/jogl-src-1_0_0-beta05.zip" kind="lib" path="opengl/library/jogl.jar"/>
-	<classpathentry kind="src" path="net/src"/>
-	<classpathentry kind="src" path="pdf/src"/>
-	<classpathentry kind="src" path="serial/src"/>
-	<classpathentry kind="lib" path="serial/library/RXTXcomm.jar"/>
-	<classpathentry kind="lib" path="video/QTJava.zip"/>
-	<classpathentry kind="src" path="video/src"/>
-	<classpathentry sourcepath="pdf/itext-src-1.4.2.zip" kind="lib" path="pdf/library/itext-1.4.2.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="pdf/library/itext-1.4.2.jar" sourcepath="pdf/itext-src-1.4.2.zip"/>
+	<classpathentry kind="output" path="app/bin"/>
 </classpath>
