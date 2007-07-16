@@ -1,5 +1,40 @@
 <wurfl_patch>
     <devices>
+       <device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; Xda orbit; 240x320)" actual_device_root="true" fall_back="ms_mobile_browser_ver1_subceppc240320" id="xda_orbit_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="XDA" />
+                <capability name="model_name" value="Orbit" />
+            </group>
+       </device>
+
+        <device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; Smartphone; 240x320; MOT-Q-UMTS/01.00.60I) Opera 8.65 [en]" actual_device_root="true" fall_back="ms_mobile_browser_ver1" id="mot_q9h_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="Motorola" />
+                <capability name="model_name" value="Q 9h" />
+            </group>
+        </device>
+
+       <device user_agent="HTC-3100" actual_device_root="true" fall_back="generic" id="htc_3100_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="HTC" />
+                <capability name="model_name" value="3100" />
+            </group>
+       </device>
+
+       <device user_agent="MOT-RAZRV3xx" actual_device_root="true" fall_back="mot_v3x_ver1" id="mot_v3xx_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="Motorola" />
+                <capability name="model_name" value="RAZR V3xx" />
+            </group>
+       </device>
+
+       <device user_agent="MOT-MOTORAZRmaxxV3" fall_back="mot_v3xx_ver1" id="mot_v3maxx_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="Motorola" />
+                <capability name="model_name" value="RAZR Maxx V3" />
+            </group>
+       </device>
+
        <device user_agent="Mozilla/4.0 (MobilePhone SCP-M1/US/1.0) NetFront/3.3 MMP/2.0" id="sanyo_scpm1_ver1" fall_back="netfront_ver3" actual_device_root="true">
             <group id="product_info">
                 <capability name="brand_name" value="Sanyo" />
@@ -51,13 +86,28 @@
             </group>
         </device>
 
+	<device user_agent="Nokia6300" fall_back="nokia_generic_series40_dp30" id="nokia_6300_ver1" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="Nokia" />
+                <capability name="model_name" value="6300" />
+            </group>
+	</device>
+
         <!-- Generic Nokia S60 3rd Ed Browser -->
         <device user_agent="Nokia 60 Developer Platform 3.0" fall_back="nokia_generic_series60_dp20" id="nokia_generic_series60_dp30" actual_device_root="true">
         </device>
 
+        <!-- Renaming E61 to generic web browser -->5B
         <device user_agent="Mozilla/5.0 (SymbianOS/9.1; U; en-us) AppleWebKit/413 (KHTML, like Gecko) Safari/413" id="nokia_e61_ver1_submozilla50" fall_back="nokia_generic_series60_dp30">
 	    <group id="product_info">
-		<capability name="model_name" value="S60 3rd Ed. Web Browser"/>
+		<capability name="model_name" value="Web Browser for S60"/>
+	    </group>
+        </device>
+
+	<!-- Nokia N75, S60 3rd Edition, 240x320 -->
+	<device user_agent="NokiaN75-3" id="nokia_n75_ver1" fall_back="nokia_generic_series60_dp30" actual_device_root="true">
+	    <group id="product_info">
+		<capability name="model_name" value="N75"/>
 	    </group>
         </device>
 
@@ -65,6 +115,12 @@
 	<device user_agent="NokiaE62-1" id="nokia_e62_ver1" fall_back="nokia_generic_series60_dp30" actual_device_root="true">
 	    <group id="product_info">
 		<capability name="model_name" value="E62"/>
+	    </group>
+        </device>
+
+        <device user_agent="NokiaE65-1" id="nokia_e65_ver1" fall_back="nokia_generic_series60_dp30" actual_device_root="true">
+	    <group id="product_info">
+		<capability name="model_name" value="E65"/>
 	    </group>
         </device>
 
