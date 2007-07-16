@@ -1026,7 +1026,7 @@ public class Editor extends JFrame {
   /**
    * Show the About box.
    */
-  static public void handleAbout() {
+  public void handleAbout() {
     final Image image = Base.getImage("about.jpg", this);
     final Window window = new Window(this) {
         public void paint(Graphics g) {
@@ -1046,18 +1046,18 @@ public class Editor extends JFrame {
           window.dispose();
         }
       });
-    int w = image.getWidth(window);
-    int h = image.getHeight(window);
+    int w = image.getWidth(this);
+    int h = image.getHeight(this);
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     window.setBounds((screen.width-w)/2, (screen.height-h)/2, w, h);
-    window.show();
+    window.setVisible(true);
   }
 
 
   /**
    * Show the preferences window.
    */
-  static public void handlePrefs() {
+  public void handlePrefs() {
     Preferences preferences = new Preferences();
     preferences.showFrame(this);
 
