@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -25,8 +25,6 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -150,7 +148,7 @@ public class EditorButtons extends JComponent implements MouseInputListener {
         setState(i, INACTIVE, false);
       }
     }
-    Dimension size = size();
+    Dimension size = getSize();
     if ((offscreen == null) ||
         (size.width != width) || (size.height != height)) {
       offscreen = createImage(size.width, size.height);

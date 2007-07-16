@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -211,7 +211,7 @@ public class FindReplace extends JFrame implements ActionListener {
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
           //System.out.println("activating");
-          boolean ok = findField.requestFocusInWindow();
+          /*boolean ok =*/ findField.requestFocusInWindow();
           //System.out.println("got " + ok);
           findField.selectAll();
         }
@@ -225,7 +225,7 @@ public class FindReplace extends JFrame implements ActionListener {
     replaceString = replaceField.getText();
 
     // this object should eventually become dereferenced
-    hide();
+    setVisible(false);
   }
 
 

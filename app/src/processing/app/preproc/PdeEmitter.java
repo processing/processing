@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 package processing.app.preproc;
 
@@ -9,11 +9,11 @@ import processing.app.*;
  * shipped under GPL with permission.
  */
 
-import antlr.*;
+//import antlr.*;
 import antlr.collections.*;
-import antlr.collections.impl.*;
+//import antlr.collections.impl.*;
 import java.io.*;
-import java.util.*;
+//import java.util.*;
 
 /**
  * PDEEmitter: A class that can take an ANTLR Java AST and produce

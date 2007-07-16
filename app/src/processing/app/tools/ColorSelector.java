@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -115,12 +115,12 @@ public class ColorSelector implements DocumentListener {
     frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          frame.hide();
+          frame.setVisible(false);
         }
       });
     Base.registerWindowCloseKeys(frame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent actionEvent) {
-          frame.hide();
+          frame.setVisible(false);
         }
       });
 
@@ -137,8 +137,11 @@ public class ColorSelector implements DocumentListener {
 
 
   public void show() {
-    frame.show();
-    frame.setCursor(Cursor.CROSSHAIR_CURSOR);
+    frame.setVisible(true);
+    // You've got to be f--ing kidding me.. why did the following line get
+    // deprecated in the pile of s-- that follows it?
+    //frame.setCursor(Cursor.CROSSHAIR_CURSOR);
+    frame.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
   }
 
 

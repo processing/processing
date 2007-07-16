@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -24,10 +24,8 @@
 package processing.app.tools;
 
 import processing.app.*;
-import processing.core.*;
 
 import java.io.*;
-import java.util.StringTokenizer;
 
 
 /**
@@ -104,7 +102,7 @@ public class AutoFormat {
         }
         c = string[j++] = getchr();
       }
-      String tmpstr = new String(string);
+      //String tmpstr = new String(string);
       if (j>1 && string[j-2] == '*') {
         done = 1;
         jdoc = 0;
@@ -180,7 +178,7 @@ public class AutoFormat {
   //public void fprintf(int outfil, String out_string) {
   public void fprintf(String out_string) {
     //int out_len = out_string.length();
-    String j_string = new String(string);
+    //String j_string = new String(string);
     strOut.append(out_string);
   }
 
@@ -395,7 +393,7 @@ public class AutoFormat {
   public int lookup (String keyword)
   {
     char r;
-    int  l,kk,k,i;
+    int  l,kk; //,k,i;
     String j_string = new String(string);
 
     if (j<1) return (0);
@@ -417,8 +415,8 @@ public class AutoFormat {
 
   public int lookup_com (String keyword)
   {
-    char r;
-    int  l,kk,k,i;
+    //char r;
+    int  l,kk; //,k,i;
     String j_string = new String(string);
 
     if (j<1) return (0);
@@ -527,7 +525,7 @@ public class AutoFormat {
           {
             break;
           }
-          String j_string = new String(string);
+          //String j_string = new String(string);
 
           e_flg = lookup(w_else);
           if(e_flg == 1) gotelse();
@@ -710,7 +708,7 @@ public class AutoFormat {
           }
           else
           {
-            int double_colon = 0;
+            //int double_colon = 0;
             peek = 1;
           }
 
@@ -878,7 +876,7 @@ public class AutoFormat {
 
         //System.out.println("string len is " + string.length);
         //if (EOF == 1) System.out.println(string);
-        String j_string = new String(string);
+        //String j_string = new String(string);
 
       } // end while not EOF
 
