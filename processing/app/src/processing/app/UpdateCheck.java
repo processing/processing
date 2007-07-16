@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -75,16 +75,16 @@ public class UpdateCheck implements Runnable {
       Preferences.set("update.id", String.valueOf(id));
     }
 
-    String info =
-      URLEncoder.encode(id + "\t" +
+    try {
+      String info;
+      info = URLEncoder.encode(id + "\t" +
                         PApplet.nf(Base.VERSION, 4) + "\t" +
                         System.getProperty("java.version") + "\t" +
                         System.getProperty("java.vendor") + "\t" +
                         System.getProperty("os.name") + "\t" +
                         System.getProperty("os.version") + "\t" +
-                        System.getProperty("os.arch"));
-
-    try {
+                        System.getProperty("os.arch"), "UTF-8");
+      
       int latest = readInt(downloadURL + "?" + info);
 
       String lastString = Preferences.get("update.last");

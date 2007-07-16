@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -325,7 +325,7 @@ public class Sketchbook {
       });
 
     // gimme some money
-    fd.show();
+    fd.setVisible(true);
 
     // what in the hell yu want, boy?
     String directory = fd.getDirectory();
@@ -476,7 +476,7 @@ public class Sketchbook {
   public void addSketchbookMenu(JMenu menu) {
     try {
       JMenu smenu = new JMenu("Sketchbook");
-      boolean sketches = addSketches(smenu, new File(getSketchbookPath()));
+      /*boolean sketches =*/ addSketches(smenu, new File(getSketchbookPath()));
       menu.add(smenu);
     } catch (IOException e) {
       e.printStackTrace();

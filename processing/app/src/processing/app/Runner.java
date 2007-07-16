@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -28,10 +28,7 @@ import processing.core.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.util.*;
-
-import com.oroinc.text.regex.*;
 
 
 /**
@@ -332,7 +329,7 @@ public class Runner implements MessageConsumer {
       window.setLocation(windowLocation);
     }
     if (applet.displayable()) {
-      window.show();
+      window.setVisible(true);
     }
     applet.requestFocus();  // necessary for key events
   }
@@ -480,16 +477,17 @@ java.lang.NullPointerException
         // -> "javatest.<init>" and "(javatest.java:5)"
         int startParen = s.indexOf('(');
         // at javatest.<init>(javatest.java:5)
-        String pkgClassFxn = null;
+        //String pkgClassFxn = null;
         //String fileLine = null;
         int codeIndex = -1;
         int lineNumber = -1;
 
         if (startParen == -1) {
-          pkgClassFxn = s;
+          //pkgClassFxn = s;
 
         } else {
-          pkgClassFxn = s.substring(0, startParen);
+          //pkgClassFxn = s.substring(0, startParen);
+          
           // "(javatest.java:5)"
           String fileAndLine = s.substring(startParen + 1);
           int stopParen = fileAndLine.indexOf(')');

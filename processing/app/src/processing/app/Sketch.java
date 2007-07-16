@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -27,7 +27,6 @@ import processing.app.preproc.*;
 import processing.core.*;
 
 import java.awt.*;
-import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
@@ -815,7 +814,7 @@ public class Sketch {
     }
     fd.setFile(folder.getName());
 
-    fd.show();
+    fd.setVisible(true);
     String newParentDir = fd.getDirectory();
     String newName = fd.getFile();
 

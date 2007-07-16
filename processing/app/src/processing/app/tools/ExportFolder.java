@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   ExportFolder - tool to export all sketches within a certain folder
@@ -26,9 +26,7 @@ package processing.app.tools;
 import processing.app.*;
 
 import java.io.*;
-import java.text.*;
 import java.util.*;
-import java.util.zip.*;
 
 import javax.swing.*;
 
