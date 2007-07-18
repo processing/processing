@@ -772,7 +772,6 @@ public class Preferences {
 
 
   static public Font getFont(String which /*, Font otherwise*/) {
-    //System.out.println("getting font '" + which + "'");
     String str = get(which);
     //if (str == null) return otherwise;  // ENABLE LATER
     StringTokenizer st = new StringTokenizer(str, ",");
