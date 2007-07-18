@@ -86,17 +86,19 @@ cd ..
 
 echo Building PDE for JDK 1.4
 
-cd app/preproc
+cd app/src
 
 # first build the default java goop
 # long path is to avoid requiring java to be in your PATH
 
 ../../build/linux/work/java/bin/java \
-  -cp ../../build/linux/work/lib/antlr.jar antlr.Tool java.g
+  -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
+  antlr/java/java.g
 
 # now build the pde stuff that extends the java classes
 ../../build/linux/work/java/bin/java \
-  -cp ../../build/linux/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
+  -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
+    -glib antlr/java/java.g processing/app/preproc/pde.g
 
 cd ../..
 
@@ -107,7 +109,7 @@ cd app
 
 CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/mrj.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/lib/registry.jar:../build/linux/work/java/lib/rt.jar"
 
-../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes *.java preproc/*.java syntax/*.java tools/*.java
+../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes src/processing/app/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar

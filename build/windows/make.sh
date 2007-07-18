@@ -123,16 +123,17 @@ then
 
 echo Building PDE for JDK 1.4
 
-cd app/preproc
+cd app/src/
 
 # first build the default java goop
 ../../build/windows/work/java/bin/java \
-    -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool java.g
+    -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
+    antlr/java/java.g
 
 # now build the pde stuff that extends the java classes
 ../../build/windows/work/java/bin/java \
     -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
-    -glib java.g pde.g
+    -glib antlr/java/java.g processing/app/preproc/pde.g
 
 # back to base processing dir
 cd ../..
@@ -149,7 +150,7 @@ CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib
 # compile the code as java 1.3, so that the application will run and
 # show the user an error, rather than crapping out with some strange
 # "class not found" crap
-../build/windows/work/jikes -target 1.3 +D -classpath "$CLASSPATH;..\\build\\windows\\work/classes" -d ..\\build\\windows\\work/classes *.java preproc/*.java syntax/*.java tools/*.java
+../build/windows/work/jikes -target 1.3 +D -classpath "$CLASSPATH;..\\build\\windows\\work/classes" -d ..\\build\\windows\\work/classes src/processing/app/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java
 #/cygdrive/c/jdk-1.4.2_05/bin/javac.exe -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/windows/work/classes
