@@ -302,8 +302,16 @@ public class Editor extends JFrame {
     pack();
     // has to be here to set window size properly
     restorePreferences();
+    // if no path passed in, make this an untitled document
+    if (path == null) {
+      try {
+        path = sketchbook.handleNewUntitled();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
     // Open the document that was passed in
-    handleOpen(path);
+    handleOpen2(path);
     // show the window
     setVisible(true);
   }
