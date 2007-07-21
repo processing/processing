@@ -100,14 +100,14 @@ cd ../app
 
 if $BUILD_PREPROC
 then
-  cd preproc
   # build classes/grammar for preprocessor
   echo Building antlr grammar code...
   # first build the default java goop
-  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool java.g
+  java -cp ../build/macosx/work/lib/antlr.jar antlr.Tool \
+  src/antlr/java/java.g
   # now build the pde stuff that extends the java classes
-  java -cp ../../build/macosx/work/lib/antlr.jar antlr.Tool -glib java.g pde.g
-  cd ..
+  java -cp ../build/macosx/work/lib/antlr.jar antlr.Tool \
+  -glib src/antlr/java/java.g src/processing/app/preproc/pde.g
 fi
 
 ### -- BUILD PDE ------------------------------------------------

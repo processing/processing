@@ -89,8 +89,10 @@ public class EditorButtons extends JComponent implements MouseInputListener {
   //int statusY;
 
 
-  public EditorButtons(Editor editor) {
+  public EditorButtons(Editor editor, JPopupMenu popup) {
     this.editor = editor;
+    this.popup = popup;
+    
     buttons = Base.getImage("buttons.gif", this);
 
     buttonCount = 0;
@@ -325,24 +327,13 @@ public class EditorButtons extends JComponent implements MouseInputListener {
       break;
 
     case OPEN:
+      /*
       if (popup == null) {
         //popup = new JPopupMenu();
-        popup = editor.sketchbook.getPopupMenu();
-        // no events properly being fired, so nevermind
-        /*
-        popup.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              System.out.println("action " + e);
-            }
-          });
-        popup.addComponentListener(new ComponentAdapter() {
-            public void componentHidden(ComponentEvent e) {
-              System.out.println("hidden " + e);
-            }
-          });
-        */
+        popup = editor.base.sketchbook.getPopupMenu();
         add(popup);
       }
+      */
       //activate(OPEN);
       //SwingUtilities.invokeLater(new Runnable() {
       //public void run() {
@@ -351,7 +342,7 @@ public class EditorButtons extends JComponent implements MouseInputListener {
       break;
 
     case NEW:
-      editor.handleNew(e.isShiftDown());
+      editor.base.handleNew(e.isShiftDown());
       break;
 
     case SAVE:

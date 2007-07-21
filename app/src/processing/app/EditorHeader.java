@@ -304,9 +304,12 @@ public class EditorHeader extends JComponent {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.sketch.renameCode();
+          /*
+          // this is already being called by nameCode(), the second stage of rename
           if (editor.sketch.current == editor.sketch.code[0]) {
             editor.sketchbook.rebuildMenus();
           }
+          */
         }
       });
     menu.add(item);

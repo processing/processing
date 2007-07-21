@@ -43,10 +43,16 @@ import javax.swing.*;
  * Handles sketchbook mechanics for the sketch menu and file I/O.
  */
 public class Sketchbook {
-  Editor editor;
+  //Editor editor;
+  Base base;
 
-  JMenu openMenu;
-  JMenu popupMenu;
+  /** 
+   * Menu used on the toolbar in each Editor window. 
+   * Contains Open // List of sketches // List of example groups.
+   */
+  //JMenu toolbarMenu;
+  
+  //JMenu openMenu;
   //JMenu examples;
   JMenu importMenu;
 
@@ -77,9 +83,10 @@ public class Sketchbook {
   // found in the sketchbook)
   static String librariesClassPath;
 
-
-  public Sketchbook(Editor editor) {
-    this.editor = editor;
+  
+  public Sketchbook(Base base) { //Editor editor) {
+    //this.editor = editor;
+    this.base = base;
 
     // this shouldn't change throughout.. it may as well be static
     // but only one instance of sketchbook will be built so who cares
@@ -91,9 +98,8 @@ public class Sketchbook {
 
     String sketchbookPath = Preferences.get("sketchbook.path");
 
-    // if a value is at least set, first check to see if the
-    // folder exists. if it doesn't, warn the user that the
-    // sketchbook folder is being reset.
+    // If a value is at least set, first check to see if the folder exists. 
+    // If it doesn't, warn the user that the sketchbook folder is being reset.
     if (sketchbookPath != null) {
       File skechbookFolder = new File(sketchbookPath);
       if (!skechbookFolder.exists()) {
@@ -106,52 +112,31 @@ public class Sketchbook {
     }
 
     if (sketchbookPath == null) {
-      // by default, set default sketchbook path to the user's
-      // home folder with 'sketchbook' as a subdirectory of that
-
-      /*
-      File home = new File(System.getProperty("user.home"));
-
-      if (Base.platform == Base.MACOSX) {
-        // on macosx put the sketchbook in the "Documents" folder
-        home = new File(home, "Documents");
-
-      } else if (Base.platform == Base.WINDOWS) {
-        // on windows put the sketchbook in the "My Documents" folder
-        home = new File(home, "My Documents");
+      File defaultFolder = Base.getDefaultSketchbookFolder();
+      Preferences.set("sketchbook.path", defaultFolder.getAbsolutePath());
+      if (!defaultFolder.exists()) {
+        defaultFolder.mkdirs();
       }
-      */
-
-      // use a subfolder called 'sketchbook'
-      //File home = Preferences.getProcessingHome();
-      //String folderName = Preferences.get("sketchbook.name.default");
-      //File sketchbookFolder = new File(home, folderName);
-
-      //System.out.println("resetting sketchbook path");
-      File sketchbookFolder = Base.getDefaultSketchbookFolder();
-      //System.out.println("default is " + sketchbookFolder);
-      Preferences.set("sketchbook.path",
-                      sketchbookFolder.getAbsolutePath());
-
-      if (!sketchbookFolder.exists()) sketchbookFolder.mkdirs();
     }
-    openMenu = new JMenu("Sketchbook");
-    popupMenu = new JMenu("Sketchbook");
-    importMenu = new JMenu("Import Library");
+    //toolbarMenu = new JMenu("Sketchbook");
+    //importMenu = new JMenu("Import Library");
   }
-
+  
 
   static public String getSketchbookPath() {
     return Preferences.get("sketchbook.path");
   }
 
+  
+  // .................................................................
 
-  public String handleNewPrompt() throws IOException {
+
+  static public String handleNewPrompt(JFrame parent) throws IOException {
     File newbieDir = null;
     String newbieName = null;
 
     // prompt for the filename and location for the new sketch
-    FileDialog fd = new FileDialog(editor,
+    FileDialog fd = new FileDialog(parent,
                                    "Create sketch folder named:",
                                    FileDialog.SAVE);
     //fd.setDirectory(getSketchbookPath());
@@ -173,7 +158,7 @@ public class Sketchbook {
    * @param shift whether shift is pressed, which will invert prompt setting
    * @param noPrompt disable prompt, no matter the setting
    */
-  public String handleNewUntitled() throws IOException {
+  static public String handleNewUntitled() throws IOException {
     File newbieDir = null;
     String newbieName = null;
 
@@ -192,7 +177,7 @@ public class Sketchbook {
   }
 
 
-  protected String handleNewInternal(File newbieDir, String newbieName) throws FileNotFoundException {
+  static protected String handleNewInternal(File newbieDir, String newbieName) throws FileNotFoundException {
     // make the directory for the new sketch
     newbieDir.mkdirs();
 
@@ -207,15 +192,21 @@ public class Sketchbook {
     File newbieFile = new File(newbieDir, newbieName + ".pde");
     new FileOutputStream(newbieFile);  // create the file
 
+    // TODO For 0126, need to check if this is the only way that the doc is 
+    // getting associated, and if so, have we removed the connection between
+    // .pde files and Processing.app
+    
+    //  Disabling this starting in 0125... There's no need for it,
+    // and it's likely to cause more trouble than necessary by
+    // leaving around little ._ boogers.
+
     // TODO this wouldn't be needed if i could figure out how to
     // associate document icons via a dot-extension/mime-type scenario
     // help me steve jobs, you're my only hope.
-    /*
-    // Disabling this starting in 0125... There's no need for it,
-    // and it's likely to cause more trouble than necessary by
-    // leaving around little ._ boogers.
+    
     // jdk13 on osx, or jdk11
     // though apparently still available for 1.4
+    /*
     if (Base.isMacOS()) {
       MRJFileUtils.setFileTypeAndCreator(newbieFile,
                                          MRJOSType.kTypeTEXT,
@@ -226,7 +217,7 @@ public class Sketchbook {
     */
 
     // make a note of a newly added sketch in the sketchbook menu
-    rebuildMenusAsync();
+    //base.rebuildMenusAsync();
 
     // now open it up
     //handleOpen(newbieName, newbieFile, newbieDir);
@@ -234,7 +225,87 @@ public class Sketchbook {
     return newbieFile.getAbsolutePath();
   }
 
+  
+  public String handleOpenPrompt(JFrame editor) {
+    // swing's file choosers are ass ugly, so we use the
+    // native (awt peered) dialogs where possible
+    FileDialog fd = new FileDialog(editor, //new Frame(),
+                                   "Open a Processing sketch...",
+                                   FileDialog.LOAD);
+    //fd.setDirectory(Preferences.get("sketchbook.path"));
+    //fd.setDirectory(getSketchbookPath());
 
+    // only show .pde files as eligible bachelors
+    // TODO this doesn't seem to ever be used. AWESOME.
+    fd.setFilenameFilter(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          //System.out.println("check filter on " + dir + " " + name);
+          return name.toLowerCase().endsWith(".pde");
+        }
+      });
+
+    // gimme some money
+    fd.setVisible(true);
+
+    // what in the hell yu want, boy?
+    String directory = fd.getDirectory();
+    String filename = fd.getFile();
+
+    // user cancelled selection
+    if (filename == null) return null;
+
+    // this may come in handy sometime
+    //handleOpenDirectory = directory;
+
+    File selection = new File(directory, filename);
+    return selection.getAbsolutePath();
+  }
+
+
+  /**
+   * Rebuild the menu full of sketches based on the
+   * contents of the sketchbook.
+   *
+   * Creates a separate JMenu object for the popup,
+   * because it seems that after calling "getPopupMenu"
+   * the menu will disappear from its original location.
+   */
+  /*
+  public void rebuildMenus() {
+    //EditorConsole.systemOut.println("rebuilding menus");
+    try {
+      // rebuild file/open and the toolbar popup menus
+      buildMenu(openMenu);
+      builtOnce = true;  // disable error messages while loading
+      buildMenu(toolbarMenu);
+
+      // rebuild the "import library" menu
+      librariesClassPath = "";
+      importMenu.removeAll();
+      if (addLibraries(importMenu, new File(getSketchbookPath()))) {
+        importMenu.addSeparator();
+      }
+      // removed for rev 0125 because not used
+      //if (addLibraries(importMenu, examplesFolder)) {
+      //  importMenu.addSeparator();
+      //}
+      addLibraries(importMenu, librariesFolder);
+      //System.out.println("libraries cp is now " + librariesClassPath);
+
+    } catch (IOException e) {
+      Base.showWarning("Problem while building sketchbook menu",
+                       "There was a problem with building the\n" +
+                       "sketchbook menu. Things might get a little\n" +
+                       "kooky around here.", e);
+    }
+    //EditorConsole.systemOut.println("done rebuilding menus");
+  }
+  */
+
+
+  // .................................................................
+
+  
   /**
    * Convert to sanitized name and alert the user
    * if changes were made.
@@ -305,205 +376,81 @@ public class Sketchbook {
     return buffer.toString();
   }
 
+  
+  // .................................................................
 
-  public String handleOpenPrompt() {
-    // swing's file choosers are ass ugly, so we use the
-    // native (awt peered) dialogs where possible
-    FileDialog fd = new FileDialog(editor, //new Frame(),
-                                   "Open a Processing sketch...",
-                                   FileDialog.LOAD);
-    //fd.setDirectory(Preferences.get("sketchbook.path"));
-    //fd.setDirectory(getSketchbookPath());
-
-    // only show .pde files as eligible bachelors
-    // TODO this doesn't seem to ever be used. AWESOME.
-    fd.setFilenameFilter(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          //System.out.println("check filter on " + dir + " " + name);
-          return name.toLowerCase().endsWith(".pde");
-        }
-      });
-
-    // gimme some money
-    fd.setVisible(true);
-
-    // what in the hell yu want, boy?
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
-
-    // user cancelled selection
-    if (filename == null) return null;
-
-    // this may come in handy sometime
-    //handleOpenDirectory = directory;
-
-    File selection = new File(directory, filename);
-    return selection.getAbsolutePath();
+  
+  public JPopupMenu createPopup() {
+    JMenu menu = new JMenu();
+    rebuildPopup(menu);
+    return menu.getPopupMenu();
   }
-
-
-  /**
-   * Asynchronous version of menu rebuild to be used on 'new' and 'save',
-   * to prevent the interface from locking up until the menus are done.
-   */
-  public void rebuildMenusAsync() {
-    // disabling the async option for actual release, this hasn't been tested
-    /*
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          rebuildMenus();
-        }
-      });
-    */
-    rebuildMenus();
-  }
-
-
-  /**
-   * Rebuild the menu full of sketches based on the
-   * contents of the sketchbook.
-   *
-   * Creates a separate JMenu object for the popup,
-   * because it seems that after calling "getPopupMenu"
-   * the menu will disappear from its original location.
-   */
-  public void rebuildMenus() {
-    //EditorConsole.systemOut.println("rebuilding menus");
-    try {
-      // rebuild file/open and the toolbar popup menus
-      buildMenu(openMenu);
-      builtOnce = true;  // disable error messages while loading
-      buildMenu(popupMenu);
-
-      // rebuild the "import library" menu
-      librariesClassPath = "";
-      importMenu.removeAll();
-      if (addLibraries(importMenu, new File(getSketchbookPath()))) {
-        importMenu.addSeparator();
-      }
-      // removed for rev 0125 because not used
-      //if (addLibraries(importMenu, examplesFolder)) {
-      //  importMenu.addSeparator();
-      //}
-      addLibraries(importMenu, librariesFolder);
-      //System.out.println("libraries cp is now " + librariesClassPath);
-
-    } catch (IOException e) {
-      Base.showWarning("Problem while building sketchbook menu",
-                       "There was a problem with building the\n" +
-                       "sketchbook menu. Things might get a little\n" +
-                       "kooky around here.", e);
-    }
-    //EditorConsole.systemOut.println("done rebuilding menus");
-  }
-
-
-  public void buildMenu(JMenu menu) {
+  
+  
+  public void rebuildPopup(JMenu menu) {
     JMenuItem item;
-
-    // rebuild the popup menu
     menu.removeAll();
 
-    //item = new JMenuItem("Open...");
+    // Add the single "Open" item
     item = Editor.newJMenuItem("Open...", 'O', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.handleOpen(null);
+          base.handleOpen();
         }
       });
     menu.add(item);
     menu.addSeparator();
 
+    // Add a list of all sketches and subfolders
     try {
-      boolean sketches =
-        addSketches(menu, new File(getSketchbookPath()));
+      boolean sketches = addSketches(menu, new File(getSketchbookPath()));
       if (sketches) menu.addSeparator();
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    /*
+    // Add each of the subfolders of examples directly to the menu
     try {
-      JMenu examplesMenu = new JMenu("Examples");
-      addSketches(examplesMenu, examplesFolder);
-      menu.add(examplesMenu);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    */
-    //public JMenu addExamplesInline(JMenu menu) {
-    // Add examples directly to the menu
-    try {
-      //JMenu examplesMenu = new JMenu("Examples");
       String[] subfolders = examplesFolder.list();
       for (int i = 0; i < subfolders.length; i++) {
-        if (subfolders[i].startsWith(".")) continue;
-        File dir = new File(examplesFolder, subfolders[i]);
-        if (dir.isDirectory()) {
-          addSketches(menu, dir);
+        if (!subfolders[i].startsWith(".")) {
+          File dir = new File(examplesFolder, subfolders[i]);
+          if (dir.isDirectory()) {
+            addSketches(menu, dir);
+          }
         }
       }
-      //menu.add(examplesMenu);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    //}
+  }
 
-    /*
-    // don't do this until it's finished
-    // libraries don't show up as proper sketches anyway
+
+  public void rebuildSketchbookMenu(JMenu menu) {
     try {
-      if (Preferences.getBoolean("export.library")) {
-        JMenu librariesMenu = new JMenu("Libraries");
-        addSketches(librariesMenu, librariesFolder);
-        menu.add(librariesMenu);
-      }
+      menu.removeAll();
+      addSketches(menu, new File(getSketchbookPath()));
     } catch (IOException e) {
       e.printStackTrace();
     }
-    */
+  }
+
+
+  public void rebuildExamplesMenu(JMenu menu) {
+    try {
+      menu.removeAll();
+      addSketches(menu, examplesFolder);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 
   /*
-  public JMenu getOpenMenu() {
-    if (openMenu == null) rebuildMenus();
-    return openMenu;
-  }
-  */
-
-
-  public void addSketchbookMenu(JMenu menu) {
-    try {
-      JMenu smenu = new JMenu("Sketchbook");
-      /*boolean sketches =*/ addSketches(smenu, new File(getSketchbookPath()));
-      menu.add(smenu);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  public void addExamplesMenu(JMenu menu) {
-    try {
-      JMenu examplesMenu = new JMenu("Examples");
-      addSketches(examplesMenu, examplesFolder);
-      menu.add(examplesMenu);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  public JPopupMenu getPopupMenu() {
-    if (popupMenu == null) rebuildMenus();
-    return popupMenu.getPopupMenu();
-  }
-
-
   public JMenu getImportMenu() {
     return importMenu;
   }
+  */
 
 
   protected boolean addSketches(JMenu menu, File folder) throws IOException {
@@ -520,7 +467,7 @@ public class Sketchbook {
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.handleOpen(e.getActionCommand());
+          base.handleOpen(e.getActionCommand());
         }
       };
 
@@ -588,7 +535,8 @@ public class Sketchbook {
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.importLibrary(e.getActionCommand());
+          // TODO ohmigod that's nassssteee!
+          base.activeEditor.sketch.importLibrary(e.getActionCommand());
         }
       };
 
@@ -682,6 +630,7 @@ public class Sketchbook {
           if (Preferences.getBoolean("sketchbook.auto_clean")) {
             Base.removeDir(prey);
 
+            /*
           } else {  // otherwise prompt the user
             String prompt =
               "Remove empty sketch titled \"" + entries[j] + "\"?";
@@ -699,6 +648,7 @@ public class Sketchbook {
             if (result == JOptionPane.YES_OPTION) {
               Base.removeDir(prey);
             }
+            */
           }
         }
       }

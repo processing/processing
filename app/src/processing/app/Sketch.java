@@ -505,7 +505,7 @@ public class Sketch {
 
         // get the changes into the sketchbook menu
         // (re-enabled in 0115 to fix bug #332)
-        editor.sketchbook.rebuildMenus();
+        editor.base.rebuildMenusAsync();
 
       } else {  // else if something besides code[0]
         if (!current.file.renameTo(newFile)) {
@@ -736,12 +736,6 @@ public class Sketch {
     //new Exception().printStackTrace();
     current.modified = state;
     calcModified();
-    
-    if (PApplet.platform == PConstants.MACOSX) {
-      // http://developer.apple.com/qa/qa2001/qa1146.html
-      Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
-      editor.getRootPane().putClientProperty("windowModified", modifiedParam);
-    }
   }
 
 
@@ -754,6 +748,12 @@ public class Sketch {
       }
     }
     editor.header.repaint();
+    
+    if (PApplet.platform == PConstants.MACOSX) {
+      // http://developer.apple.com/qa/qa2001/qa1146.html
+      Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
+      editor.getRootPane().putClientProperty("windowModified", modifiedParam);
+    }
   }
 
 
@@ -928,7 +928,8 @@ public class Sketch {
                                editor.textarea.getScrollPosition());
 
     // Name changed, rebuild the sketch menus
-    editor.sketchbook.rebuildMenusAsync();
+    //editor.sketchbook.rebuildMenusAsync();
+    editor.base.rebuildMenusAsync();
 
     // let Editor know that the save was successful
     return true;
