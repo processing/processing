@@ -10,7 +10,7 @@
 package processing.app.syntax;
 
 import java.awt.*;
-import java.util.StringTokenizer;
+//import java.util.StringTokenizer;
 
 /**
  * A simple text style class. It can specify the color, italic flag,
@@ -99,8 +99,7 @@ public class SyntaxStyle
                               (bold ? Font.BOLD : 0)
                               | (italic ? Font.ITALIC : 0),
                               font.getSize());
-    fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(
-                                                             lastStyledFont);
+    fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(lastStyledFont);
     return fontMetrics;
   }
 

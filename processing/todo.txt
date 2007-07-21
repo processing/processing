@@ -19,6 +19,8 @@ _   cmd-opt-r for rename?
 _ save/saveas should use modal dialog
 _   only use the bottom bar for naming
 
+_ don't bug the user about new release of p5 when they have it
+
 new bugs
 _ huge jar files from 0124 export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=541

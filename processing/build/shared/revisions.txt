@@ -533,7 +533,7 @@ Mostly minor bug fix release.
   loadImage(), were throwing a different exception than Java 1.4.
   http://dev.processing.org/bugs/show_bug.cgi?id=403
 
-+ Added saveStream() and unlerp() methods as testing for teh API. 
++ Added saveStream() and unlerp() methods as testing for the API. 
   Documentation will probably be limited to the developer's reference.
 
 If this is the first release you're using since 0115 or earlier, 
