@@ -83,6 +83,8 @@ public class Editor extends JFrame {
   PrinterJob printerJob;
 
   EditorButtons buttons;
+  JMenu buttonsMenu;
+  
   EditorHeader header;
   EditorStatus status;
   EditorConsole console;
@@ -108,6 +110,9 @@ public class Editor extends JFrame {
   JMenuItem exportAppItem;
   JMenuItem saveMenuItem;
   JMenuItem saveAsMenuItem;
+  
+  // True if the sketchbook has changed since this Editor was last active.
+  boolean sketchbookChanged;
 
   //
 
@@ -125,7 +130,7 @@ public class Editor extends JFrame {
   //
 
   //SketchHistory history;  // TODO re-enable history
-  Sketchbook sketchbook;
+  //Sketchbook sketchbook;
   FindReplace find;
 
 
@@ -162,7 +167,7 @@ public class Editor extends JFrame {
       });
 
     //PdeKeywords keywords = new PdeKeywords();
-    sketchbook = new Sketchbook(this);
+    //sketchbook = new Sketchbook(this);
 
     JMenuBar menubar = new JMenuBar();
     menubar.add(buildFileMenu());
@@ -183,7 +188,8 @@ public class Editor extends JFrame {
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
 
-    buttons = new EditorButtons(this);
+    buttonsMenu = base.sketchbook.createButtonsMenu();
+    buttons = new EditorButtons(this, buttonsMenu);
     upper.add(buttons);
 
     header = new EditorHeader(this);
@@ -303,6 +309,7 @@ public class Editor extends JFrame {
     // has to be here to set window size properly
     restorePreferences();
     // if no path passed in, make this an untitled document
+    /*
     if (path == null) {
       try {
         path = sketchbook.handleNewUntitled();
@@ -310,6 +317,7 @@ public class Editor extends JFrame {
         e.printStackTrace();
       }
     }
+    */
     // Open the document that was passed in
     handleOpen2(path);
     // show the window
@@ -461,7 +469,8 @@ public class Editor extends JFrame {
     // in case moved to a new location
     // For 0125, changing to async version (to be implemented later)
     //sketchbook.rebuildMenus();
-    sketchbook.rebuildMenusAsync();
+    // For 0126, moved into Base, which will notify all editors.
+    base.rebuildMenusAsync();
   }
 
 
@@ -504,7 +513,7 @@ public class Editor extends JFrame {
     item = newJMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleNew(false);
+          base.handleNew(false);
         }
       });
     menu.add(item);
@@ -512,17 +521,12 @@ public class Editor extends JFrame {
     item = Editor.newJMenuItem("Open...", 'O', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleOpen(null);
+          base.handleOpen();
         }
       });
     menu.add(item);
-    menu.addSeparator();
-
-    sketchbook.addSketchbookMenu(menu);
-    sketchbook.addExamplesMenu(menu);
-    //menu.add(sketchbook.getSketchbookMenu());
-    //menu.add(sketchbook.getExamplesMenu());
-    //menu.add(sketchbook.getOpenMenu());
+    base.sketchbook.addSketchbookMenu(menu);
+    base.sketchbook.addExamplesMenu(menu);
 
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
@@ -585,7 +589,7 @@ public class Editor extends JFrame {
       item = newJMenuItem("Preferences", ',');
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            handlePrefs();
+            base.handlePrefs();
           }
         });
       menu.add(item);
@@ -634,7 +638,7 @@ public class Editor extends JFrame {
 
     menu.addSeparator();
 
-    menu.add(sketchbook.getImportMenu());
+    menu.add(base.sketchbook.getImportMenu());
 
     //if (Base.isWindows() || Base.isMacOS()) {
     // no way to do an 'open in file browser' on other platforms
@@ -835,7 +839,7 @@ public class Editor extends JFrame {
       item = new JMenuItem("About Processing");
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            handleAbout();
+            base.handleAbout();
           }
         });
       menu.add(item);
@@ -1023,61 +1027,6 @@ public class Editor extends JFrame {
         putValue(Action.NAME, "Redo");
       }
     }
-  }
-
-
-  // ...................................................................
-
-
-  /**
-   * Show the About box.
-   */
-  public void handleAbout() {
-    final Image image = Base.getImage("about.jpg", this);
-    final Window window = new Window(this) {
-        public void paint(Graphics g) {
-          g.drawImage(image, 0, 0, null);
-
-          Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-          g.setFont(new Font("SansSerif", Font.PLAIN, 11));
-          g.setColor(Color.white);
-          g.drawString(Base.VERSION_NAME, 50, 30);
-        }
-      };
-    window.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          window.dispose();
-        }
-      });
-    int w = image.getWidth(this);
-    int h = image.getHeight(this);
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    window.setBounds((screen.width-w)/2, (screen.height-h)/2, w, h);
-    window.setVisible(true);
-  }
-
-
-  /**
-   * Show the preferences window.
-   */
-  public void handlePrefs() {
-    Preferences preferences = new Preferences();
-    preferences.showFrame(this);
-
-    // since this can't actually block, it'll hide
-    // the editor window while the prefs are open
-    //preferences.showFrame(this);
-    // and then call applyPreferences if 'ok' is hit
-    // and then unhide
-
-    // may need to rebuild sketch and other menus
-    //applyPreferences();
-
-    // next have editor do its thing
-    //editor.appyPreferences();
   }
 
 
@@ -1543,111 +1492,10 @@ public class Editor extends JFrame {
 
 
   /**
-   * New was called (by buttons or by menu), first check modified
-   * and if things work out ok, handleNew2() will be called.
-   * <p/>
-   * If shift is pressed when clicking the toolbar button, then
-   * force the opposite behavior from sketchbook.prompt's setting
-   */
-  /*
-  public void handleNew(final boolean shift) {
-    buttons.activate(EditorButtons.NEW);
-
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          doStop();
-          handleNewShift = shift;
-          checkModified(HANDLE_NEW);
-        }});
-  }
-  */
-
-
-  public void handleNew(boolean shiftDown) {
-    boolean prompt = Preferences.getBoolean("sketchbook.prompt");
-    if (shiftDown) prompt = !prompt; // reverse behavior if shift is down
-
-    // no sketch has been started, don't prompt for the name if it's
-    // starting up, just make the farker. otherwise if the person hits
-    // 'cancel' i'd have to add a thing to make p5 quit, which is silly.
-    // instead give them an empty sketch, and they can look at examples.
-    // i hate it when imovie makes you start with that goofy dialog box.
-    // unless, ermm, they user tested it and people preferred that as
-    // a way to get started. shite. now i hate myself.
-    //if (disablePrompt) prompt = false;
-
-    try {
-      String path = null;
-      if (prompt) {
-        path = sketchbook.handleNewPrompt();
-      } else {
-        path = sketchbook.handleNewUntitled();
-      }
-      if (path != null) {
-        base.handleOpen(path);
-      }
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
-
-
-  /**
-   * Extra public method so that Sketch can call this when a sketch
-   * is selected to be deleted, and it won't call checkModified()
-   * to prompt for save as.
-   */
-  /*
-  public void handleNewUnchecked() {
-    doStop();
-    handleNewShift = false;
-    handleNew2(true);
-  }
-  */
-
-
-  /**
-   * Does all the plumbing to create a new project
-   * then calls handleOpen to load it up.
-   *
-   * @param noPrompt true to disable prompting for the sketch
-   * name, used when the app is starting (auto-create a sketch)
-   */
-  /*
-  protected void handleNew2(boolean noPrompt) {
-    try {
-      String pdePath =
-        sketchbook.handleNew(noPrompt, handleNewShift, handleNewLibrary);
-      if (pdePath != null) handleOpen2(pdePath);
-
-    } catch (IOException e) {
-      // not sure why this would happen, but since there's no way to
-      // recover (outside of creating another new setkch, which might
-      // just cause more trouble), then they've gotta quit.
-      Base.showError("Problem creating a new sketch",
-                     "An error occurred while creating\n" +
-                     "a new sketch. Processing must now quit.", e);
-    }
-    buttons.clear();
-  }
-  */
-
-
-  /**
-   * This is the implementation of the MRJ open document event,
-   * and the Windows XP open document will be routed through this too.
-   */
-  //public void handleOpenFile(File file) {
-    //System.out.println("handling open file: " + file);
-    //handleOpen(file.getAbsolutePath());
-  //}
-
-
-  /**
    * Open a sketch given the full path to the .pde file.
    * Pass in 'null' to prompt the user for the name of the sketch.
    */
+  /*
   public void handleOpen(final String ipath) {
     // haven't run across a case where i can verify that this works
     // because open is usually very fast.
@@ -1669,6 +1517,7 @@ public class Editor extends JFrame {
     // Off in thread land, so don't clear yet
     //buttons.clear();
   }
+  */
 
 
   /**
@@ -1704,7 +1553,8 @@ public class Editor extends JFrame {
           if (Base.calcFolderSize(sketch.folder) == 0) {
             Base.removeDir(sketch.folder);
             //sketchbook.rebuildMenus();
-            sketchbook.rebuildMenusAsync();
+            //sketchbook.rebuildMenusAsync();
+            base.rebuildMenusAsync();
           }
         }
       } catch (Exception e) { }   // oh well
@@ -2070,6 +1920,7 @@ public class Editor extends JFrame {
   /**
    * Actually do the quit action.
    */
+  /*
   protected void handleQuit2() {
     storePreferences();
     Preferences.save();
@@ -2080,6 +1931,7 @@ public class Editor extends JFrame {
     //System.out.println("exiting here");
     System.exit(0);
   }
+  */
 
 
   protected void handleReference() {
