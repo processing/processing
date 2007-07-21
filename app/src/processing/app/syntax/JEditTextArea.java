@@ -20,7 +20,6 @@ import javax.swing.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.*;
-import java.io.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -282,7 +281,7 @@ public class JEditTextArea extends JComponent
 
     //if (horizontal != null && width != 0) {
     if ((horizontal != null) && (painter.getWidth() != 0)) {
-      int value = horizontal.getValue();
+      //int value = horizontal.getValue();
       //System.out.println("updateScrollBars");
       //int width = painter.getWidth();
       int lineCount = getLineCount();
@@ -345,7 +344,7 @@ public class JEditTextArea extends JComponent
   {
     if(firstLine == this.firstLine)
       return;
-    int oldFirstLine = this.firstLine;
+    //int oldFirstLine = this.firstLine;
     this.firstLine = firstLine;
     if(firstLine != vertical.getValue())
       updateScrollBars();
@@ -370,7 +369,7 @@ public class JEditTextArea extends JComponent
       return;
     int height = painter.getHeight();
     int lineHeight = painter.getFontMetrics().getHeight();
-    int oldVisibleLines = visibleLines;
+    //int oldVisibleLines = visibleLines;
     visibleLines = height / lineHeight;
     updateScrollBars();
   }
@@ -408,7 +407,7 @@ public class JEditTextArea extends JComponent
   public boolean setOrigin(int firstLine, int horizontalOffset)
   {
     boolean changed = false;
-    int oldFirstLine = this.firstLine;
+    //int oldFirstLine = this.firstLine;
 
     if(horizontalOffset != this.horizontalOffset)
       {
@@ -569,7 +568,7 @@ public class JEditTextArea extends JComponent
               = tokenMarker.markTokens(lineSegment,line);
           }
 
-        Toolkit toolkit = painter.getToolkit();
+        //Toolkit toolkit = painter.getToolkit();
         Font defaultFont = painter.getFont();
         SyntaxStyle[] styles = painter.getStyles();
 
@@ -668,7 +667,7 @@ public class JEditTextArea extends JComponent
           }
 
         int offset = 0;
-        Toolkit toolkit = painter.getToolkit();
+        //Toolkit toolkit = painter.getToolkit();
         Font defaultFont = painter.getFont();
         SyntaxStyle[] styles = painter.getStyles();
 

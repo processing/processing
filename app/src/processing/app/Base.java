@@ -36,7 +36,7 @@ import javax.swing.*;
 //import javax.swing.text.*;
 //import javax.swing.undo.*;
 
-import com.apple.mrj.*;
+//import com.apple.mrj.*;
 import com.ice.jni.registry.*;
 
 import processing.core.*;
@@ -61,8 +61,9 @@ public class Base {
    * Path of filename opened on the command line,
    * or via the MRJ open document handler.
    */
-  static String openedAtStartup;
+  //static String openedAtStartup;
 
+  Sketchbook sketchbook;
   Editor editor;
 
 
@@ -170,7 +171,12 @@ public class Base {
     // show the window
     editor.show();
     */
+    
+    if (PApplet.platform == PConstants.MACOSX) {
+      registerMacOS();
+    }
 
+    /*
     if (PApplet.platform == PConstants.MACOSX) {
       MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
           public void handleOpenFile(File file) {
@@ -217,9 +223,44 @@ public class Base {
           }
         });
     }
+    */
     
     // Create a new empty window (will be replaced with any files to be opened)
-    new Editor(this, null);
+    //new Editor(this, null);
+    try {
+      String path = Sketchbook.handleNewUntitled();
+      handleOpen(path);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  
+  protected void registerMacOS() {
+    try {
+      Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("BaseMacOS");
+      
+      Class[] defArgs = { Base.class };
+      Method registerMethod = osxAdapter.getDeclaredMethod("register", defArgs);
+      if (registerMethod != null) {
+        Object[] args = { this };
+        registerMethod.invoke(osxAdapter, args);
+      }
+    } catch (NoClassDefFoundError e) {
+      // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
+      // because OSXAdapter extends ApplicationAdapter in its def
+      System.err.println("This version of Mac OS X does not support the Apple EAWT." +
+                         "Application Menu handling has been disabled (" + e + ")");
+      
+    } catch (ClassNotFoundException e) {
+      // This shouldn't be reached; if there's a problem with the OSXAdapter  
+      // we should get the above NoClassDefFoundError first.
+      System.err.println("This version of Mac OS X does not support the Apple EAWT. " +
+                         "Application Menu handling has been disabled (" + e + ")");
+    } catch (Exception e) {
+      System.err.println("Exception while loading BaseOSX:");
+      e.printStackTrace();
+    }
   }
 
 
@@ -227,8 +268,10 @@ public class Base {
 
 
   int editorCount;
+  Editor[] editors;
   Editor activeEditor;
 
+  
   // Because of variations in native windowing systems, no guarantees about
   // changes to the focused and active Windows can be made. Developers must
   // never assume that this Window is the focused or active Window until this
@@ -236,7 +279,36 @@ public class Base {
   public void handleActivated(Editor whichEditor) {
     activeEditor = whichEditor;
   }
+  
+  
+  /*
+  public Editor getActiveEditor() {
+    return activeEditor;
+  }
+  */
+  
+  
+  public boolean handleQuit() {
+    boolean canceled = false;
+    for (int i = 0; i < editorCount; i++) {
+      if (!handleClose(editors[i])) {
+        canceled = true;
+        break;
+      }
+    }
+    return !canceled;
+  }
+  
+  /*
+    storePreferences();
+    Preferences.save();
 
+    sketchbook.clean();
+    console.handleQuit();
+
+    //System.out.println("exiting here");
+    System.exit(0);
+   */
 
   /*
   public void handleNew() {
@@ -266,12 +338,33 @@ public class Base {
   public void handleNewPrompt() {
   }
   */
+  
+  
+  /**
+   * Asynchronous version of menu rebuild to be used on 'new' and 'save',
+   * to prevent the interface from locking up until the menus are done.
+   */
+  public void rebuildMenusAsync() {
+    // disabling the async option for actual release, this hasn't been tested
+    /*
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          rebuildMenus();
+        }
+      });
+    */
+    for (int i = 0; i < editorCount; i++) {
+      editors[i].sketchbookChanged = true; //sketchbook.rebuildMenus();
+    }
+    sketchbook.rebuildMenus();
+  }
 
 
-  public void handleClose(Editor editor) {
+  public boolean handleClose(Editor editor) {
     // check if modified
     // if not canceled, the check if this is the last open window
     // if this is the last open window, just do a 'new' instead
+    return false;
   }
 
 
@@ -426,9 +519,105 @@ public class Base {
   }
   */
 
+  
+  // ...................................................................
+  
+  
+  /**
+   * Show the About box.
+   */
+  public void handleAbout() {
+    final Image image = Base.getImage("about.jpg", activeEditor);
+    final Window window = new Window(activeEditor) {
+        public void paint(Graphics g) {
+          g.drawImage(image, 0, 0, null);
+
+          Graphics2D g2 = (Graphics2D) g;
+          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+
+          g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+          g.setColor(Color.white);
+          g.drawString(Base.VERSION_NAME, 50, 30);
+        }
+      };
+    window.addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent e) {
+          window.dispose();
+        }
+      });
+    int w = image.getWidth(activeEditor);
+    int h = image.getHeight(activeEditor);
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    window.setBounds((screen.width-w)/2, (screen.height-h)/2, w, h);
+    window.setVisible(true);
+  }
+
+
+  /**
+   * Show the preferences window.
+   */
+  public void handlePrefs() {
+    Preferences preferences = new Preferences();
+    preferences.showFrame(activeEditor);
+  }
+  
 
   // ...................................................................
 
+
+  /**
+   * New was called (by buttons or by menu), first check modified
+   * and if things work out ok, handleNew2() will be called.
+   * <p/>
+   * If shift is pressed when clicking the toolbar button, then
+   * force the opposite behavior from sketchbook.prompt's setting
+   * @param editor TODO
+   * @param shiftDown TODO
+   */
+  /*
+  public void handleNew(final boolean shift) {
+    buttons.activate(EditorButtons.NEW);
+  
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          doStop();
+          handleNewShift = shift;
+          checkModified(HANDLE_NEW);
+        }});
+  }
+  */
+  
+  
+  public void handleNew(boolean shiftDown) {
+    boolean prompt = Preferences.getBoolean("sketchbook.prompt");
+    if (shiftDown) prompt = !prompt; // reverse behavior if shift is down
+  
+    // no sketch has been started, don't prompt for the name if it's
+    // starting up, just make the farker. otherwise if the person hits
+    // 'cancel' i'd have to add a thing to make p5 quit, which is silly.
+    // instead give them an empty sketch, and they can look at examples.
+    // i hate it when imovie makes you start with that goofy dialog box.
+    // unless, ermm, they user tested it and people preferred that as
+    // a way to get started. shite. now i hate myself.
+    //if (disablePrompt) prompt = false;
+  
+    try {
+      String path = null;
+      if (prompt) {
+        path = Sketchbook.handleNewPrompt(activeEditor);
+      } else {
+        path = Sketchbook.handleNewUntitled();
+      }
+      if (path != null) {
+        rebuildMenusAsync();
+        handleOpen(path);
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
 
 
   /**
@@ -459,6 +648,7 @@ public class Base {
   // .................................................................
 
 
+  /*
   static final int kDocumentsFolderType =
     ('d' << 24) | ('o' << 16) | ('c' << 8) | 's';
   static final int kPreferencesFolderType =
@@ -466,6 +656,7 @@ public class Base {
   static final int kDomainLibraryFolderType =
     ('d' << 24) | ('l' << 16) | ('i' << 8) | 'b';
   static final short kUserDomain = -32763;
+  */
 
 
   static public File getSettingsFolder() {
@@ -475,7 +666,7 @@ public class Base {
     if (pref != null) {
       dataFolder = new File(pref);
 
-    } else if (Base.isMacOS()) {
+    } else if (PApplet.platform == PConstants.MACOSX) {
       // carbon folder constants
       // http://developer.apple.com/documentation/Carbon/Reference
       //   /Folder_Manager/folder_manager_ref/constant_6.html#/
@@ -500,7 +691,8 @@ public class Base {
         }
         */
 
-        // this method has to be dynamically loaded, because
+        
+        /*
         MRJOSType domainLibrary = new MRJOSType("dlib");
         Method findFolderMethod =
           MRJFileUtils.class.getMethod("findFolder",
@@ -510,6 +702,9 @@ public class Base {
           findFolderMethod.invoke(null, new Object[] { new Short(kUserDomain),
                                                        domainLibrary });
 
+                                                       */ 
+        // TODO load this dynamically
+        File libraryFolder = new File(BaseMacOS.getLibraryFolder());
         dataFolder = new File(libraryFolder, "Processing");
 
       } catch (Exception e) {
@@ -666,6 +861,7 @@ public class Base {
 
       // not clear if i can write to this folder tho..
       try {
+        /*
         MRJOSType domainDocuments = new MRJOSType("docs");
         //File libraryFolder = MRJFileUtils.findFolder(domainDocuments);
 
@@ -677,6 +873,8 @@ public class Base {
         File documentsFolder = (File)
           findFolderMethod.invoke(null, new Object[] { new Short(kUserDomain),
                                                        domainDocuments });
+        */
+        File documentsFolder = new File(BaseMacOS.getDocumentsFolder());
         sketchbookFolder = new File(documentsFolder, "Processing");
 
         /*
@@ -1011,7 +1209,7 @@ public class Base {
             url = sb.toString();
           }
         }
-        com.apple.mrj.MRJFileUtils.openURL(url);
+        com.apple.eio.FileManager.openURL(url);
 
       } else if (Base.isLinux()) {
         // how's mozilla sound to ya, laddie?
