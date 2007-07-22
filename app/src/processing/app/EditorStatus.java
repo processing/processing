@@ -244,7 +244,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
         public void actionPerformed(ActionEvent e) {
           if (mode == EDIT) {
             unedit();
-            editor.buttons.clear();
+            editor.toolbar.clear();
           }
         }
       });
@@ -331,7 +331,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
             } else if (c == KeyEvent.VK_ESCAPE) {
               unedit();
-              editor.buttons.clear();
+              editor.toolbar.clear();
               event.consume();
 
             } else if (c == KeyEvent.VK_SPACE) {
@@ -434,7 +434,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == cancelButton) {
       if (mode == EDIT) unedit();
-      editor.buttons.clear();
+      editor.toolbar.clear();
 
     } else if (e.getSource() == okButton) {
       // answering to rename/new code question

@@ -32,7 +32,7 @@ import javax.swing.event.*;
 /**
  * run/stop/etc buttons for the ide
  */
-public class EditorButtons extends JComponent implements MouseInputListener {
+public class EditorToolbar extends JComponent implements MouseInputListener {
 
   static final String title[] = {
     "Run", "Stop", "New", "Open", "Save", "Export"
@@ -74,6 +74,7 @@ public class EditorButtons extends JComponent implements MouseInputListener {
   //int currentSelection;
 
   JPopupMenu popup;
+  JMenu menu;
 
   int buttonCount;
   int state[] = new int[BUTTON_COUNT];
@@ -89,9 +90,10 @@ public class EditorButtons extends JComponent implements MouseInputListener {
   //int statusY;
 
 
-  public EditorButtons(Editor editor, JPopupMenu popup) {
+  public EditorToolbar(Editor editor, JMenu menu) {  //JPopupMenu popup) {
     this.editor = editor;
-    this.popup = popup;
+    //this.popup = popup;
+    this.menu = menu;
     
     buttons = Base.getImage("buttons.gif", this);
 
@@ -327,18 +329,8 @@ public class EditorButtons extends JComponent implements MouseInputListener {
       break;
 
     case OPEN:
-      /*
-      if (popup == null) {
-        //popup = new JPopupMenu();
-        popup = editor.base.sketchbook.getPopupMenu();
-        add(popup);
-      }
-      */
-      //activate(OPEN);
-      //SwingUtilities.invokeLater(new Runnable() {
-      //public void run() {
-      popup.show(EditorButtons.this, x, y);
-      //}});
+      popup = menu.getPopupMenu();
+      popup.show(EditorToolbar.this, x, y);
       break;
 
     case NEW:
