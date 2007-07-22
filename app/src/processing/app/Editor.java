@@ -84,8 +84,8 @@ public class Editor extends JFrame {
 
   JMenu sketchbookMenu;
   
-  EditorButtons buttons;
-  JMenu buttonsMenu;
+  EditorToolbar toolbar;
+  JMenu toolbarMenu;
   
   EditorHeader header;
   EditorStatus status;
@@ -190,9 +190,10 @@ public class Editor extends JFrame {
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
 
-    //buttonsMenu = base.sketchbook.createButtonsMenu().
-    buttons = new EditorButtons(this, buttonsMenu.getPopupMenu());
-    upper.add(buttons);
+    toolbarMenu = new JMenu();
+    base.rebuildToolbarMenu(toolbarMenu);
+    toolbar = new EditorToolbar(this, toolbarMenu);
+    upper.add(toolbar);
 
     header = new EditorHeader(this);
     upper.add(header);
@@ -647,7 +648,8 @@ public class Editor extends JFrame {
     menu.addSeparator();
 
     JMenu importMenu = new JMenu("Import Library...");
-    //menu.add(base.getImportMenu());
+    base.rebuildImportMenu(importMenu);
+    menu.add(importMenu);
 
     //if (Base.isWindows() || Base.isMacOS()) {
     // no way to do an 'open in file browser' on other platforms
@@ -1139,7 +1141,7 @@ public class Editor extends JFrame {
   public void handleRun(boolean present) {
     doClose();
     running = true;
-    buttons.activate(EditorButtons.RUN);
+    toolbar.activate(EditorToolbar.RUN);
 
     // do this to advance/clear the terminal window / dos prompt / etc
     for (int i = 0; i < 10; i++) System.out.println();
@@ -1245,7 +1247,7 @@ public class Editor extends JFrame {
     }
 
     public void stop() {
-      buttons.running(false);
+      toolbar.running(false);
       thread = null;
     }
   }
@@ -1261,7 +1263,7 @@ public class Editor extends JFrame {
     } else {
       doStop();
     }
-    buttons.clear();
+    toolbar.clear();
   }
 
 
@@ -1275,7 +1277,7 @@ public class Editor extends JFrame {
 
     // the buttons are sometimes still null during the constructor
     // is this still true? are people still hitting this error?
-    /*if (buttons != null)*/ buttons.clear();
+    /*if (buttons != null)*/ toolbar.clear();
 
     running = false;
   }
@@ -1701,7 +1703,7 @@ public class Editor extends JFrame {
 
 
   protected void handleSave2() {
-    buttons.activate(EditorButtons.SAVE);
+    toolbar.activate(EditorToolbar.SAVE);
     message("Saving...");
     try {
       if (sketch.save()) {
@@ -1725,13 +1727,13 @@ public class Editor extends JFrame {
       checkModifiedMode = 0;
       // this is used when another operation calls a save
     }
-    buttons.clear();
+    toolbar.clear();
   }
 
 
   public void handleSaveAs() {
     doStop();
-    buttons.activate(EditorButtons.SAVE);
+    toolbar.activate(EditorToolbar.SAVE);
 
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
@@ -1750,7 +1752,7 @@ public class Editor extends JFrame {
             // show the error as a message in the window
             error(e);
           }
-          buttons.clear();
+          toolbar.clear();
         }});
   }
 
@@ -1764,7 +1766,7 @@ public class Editor extends JFrame {
    */
   synchronized public void handleExport() {
     if (!handleExportCheckModified()) return;
-    buttons.activate(EditorButtons.EXPORT);
+    toolbar.activate(EditorToolbar.EXPORT);
 
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
@@ -1780,14 +1782,14 @@ public class Editor extends JFrame {
           } catch (Exception e) {
             error(e);
           }
-          buttons.clear();
+          toolbar.clear();
         }});
   }
 
 
   synchronized public void handleExportApplication() {
     if (!handleExportCheckModified()) return;
-    buttons.activate(EditorButtons.EXPORT);
+    toolbar.activate(EditorToolbar.EXPORT);
 
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
@@ -1805,7 +1807,7 @@ public class Editor extends JFrame {
             message("Error during export.");
             e.printStackTrace();
           }
-          buttons.clear();
+          toolbar.clear();
         }});
   }
 
@@ -1838,7 +1840,7 @@ public class Editor extends JFrame {
       // but f-- it.. let's get this shite done..
       //} else if (result == JOptionPane.CANCEL_OPTION) {
       message("Export canceled, changes must first be saved.");
-      buttons.clear();
+      toolbar.clear();
       return false;
     }
     return true;
@@ -2064,7 +2066,7 @@ public class Editor extends JFrame {
       mess = mess.substring(javaLang.length());
     }
     error(mess);
-    buttons.clear();
+    toolbar.clear();
   }
 
 
