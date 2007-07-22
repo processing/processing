@@ -133,7 +133,7 @@ public class Editor extends JFrame {
   FindReplace find;
 
 
-  public Editor(Base ibase, String path) {
+  public Editor(Base ibase, String path, int[] location) {
     super(WINDOW_TITLE);
     this.base = ibase;
 
@@ -313,25 +313,46 @@ public class Editor extends JFrame {
 
     // Finish preparing Editor (formerly found in Base)
     pack();
-    // has to be here to set window size properly
-    restorePreferences();
-    // if no path passed in, make this an untitled document
-    /*
-    if (path == null) {
-      try {
-        path = sketchbook.handleNewUntitled();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    */
+    
+    // Set the window bounds and the divider location before setting it visible
+    setPlacement(location);
+    
+    // Bring back the general options for the editor
+    applyPreferences();
+
     // Open the document that was passed in
     handleOpen2(path);
-    // show the window
+    
+    // All set, now show the window
     setVisible(true);
   }
 
+  
+  public void setPlacement(int[] location) {
+    setBounds(location[0], location[1], location[2], location[3]);
+    if (location[4] != 0) {
+      splitPane.setDividerLocation(location[4]);
+    }
+  }
+  
+  
+  public int[] getPlacement() {
+    int[] location = new int[5];
+    
+    // Get the dimensions of the Frame
+    Rectangle bounds = getBounds();
+    location[0] = bounds.x;
+    location[1] = bounds.y;
+    location[2] = bounds.width;
+    location[3] = bounds.height;
 
+    // Get the current placement of the divider
+    location[4] = splitPane.getDividerLocation();
+      
+    return location;
+  }
+
+  
   /**
    * Hack for #@#)$(* Mac OS X 10.2.
    * <p/>
@@ -345,92 +366,6 @@ public class Editor extends JFrame {
 
 
   // ...................................................................
-
-
-  /**
-   * Post-constructor setup for the editor area. Loads the last
-   * sketch that was used (if any), and restores other Editor settings.
-   * The complement to "storePreferences", this is called when the
-   * application is first launched.
-   */
-  public void restorePreferences() {
-    // figure out window placement
-
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    boolean windowPositionValid = true;
-
-    if (Preferences.get("last.screen.height") != null) {
-      // if screen size has changed, the window coordinates no longer
-      // make sense, so don't use them unless they're identical
-      int screenW = Preferences.getInteger("last.screen.width");
-      int screenH = Preferences.getInteger("last.screen.height");
-
-      if ((screen.width != screenW) || (screen.height != screenH)) {
-        windowPositionValid = false;
-      }
-      int windowX = Preferences.getInteger("last.window.x");
-      int windowY = Preferences.getInteger("last.window.y");
-      if ((windowX < 0) || (windowY < 0) ||
-          (windowX > screenW) || (windowY > screenH)) {
-        windowPositionValid = false;
-      }
-
-    } else {
-      windowPositionValid = false;
-    }
-
-    if (!windowPositionValid) {
-      //System.out.println("using default size");
-      int windowH = Preferences.getInteger("default.window.height");
-      int windowW = Preferences.getInteger("default.window.width");
-      setBounds((screen.width - windowW) / 2,
-                (screen.height - windowH) / 2,
-                windowW, windowH);
-      // this will be invalid as well, so grab the new value
-      Preferences.setInteger("last.divider.location",
-                             splitPane.getDividerLocation());
-    } else {
-      setBounds(Preferences.getInteger("last.window.x"),
-                Preferences.getInteger("last.window.y"),
-                Preferences.getInteger("last.window.width"),
-                Preferences.getInteger("last.window.height"));
-    }
-
-
-    // last sketch that was in use, or used to launch the app
-
-    /*
-      // TODO bring this back
-
-    if (Base.openedAtStartup != null) {
-      handleOpen2(Base.openedAtStartup);
-
-    } else {
-      //String sketchName = Preferences.get("last.sketch.name");
-      String sketchPath = Preferences.get("last.sketch.path");
-      //Sketch sketchTemp = new Sketch(sketchPath);
-
-      if ((sketchPath != null) && (new File(sketchPath)).exists()) {
-        // don't check modified because nothing is open yet
-        handleOpen2(sketchPath);
-
-      } else {
-        handleNew2(true);
-      }
-    }
-    */
-
-
-    // location for the console/editor area divider
-
-    int location = Preferences.getInteger("last.divider.location");
-    splitPane.setDividerLocation(location);
-
-
-    // read the preferences that are settable in the preferences window
-
-    applyPreferences();
-  }
 
 
   /**
@@ -481,35 +416,6 @@ public class Editor extends JFrame {
   }
 
 
-  /**
-   * Store preferences about the editor's current state.
-   * Called when the application is quitting.
-   */
-  public void storePreferences() {
-    //System.out.println("storing preferences");
-
-    // window location information
-    Rectangle bounds = getBounds();
-    Preferences.setInteger("last.window.x", bounds.x);
-    Preferences.setInteger("last.window.y", bounds.y);
-    Preferences.setInteger("last.window.width", bounds.width);
-    Preferences.setInteger("last.window.height", bounds.height);
-
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    Preferences.setInteger("last.screen.width", screen.width);
-    Preferences.setInteger("last.screen.height", screen.height);
-
-    // last sketch that was in use
-    //Preferences.set("last.sketch.name", sketchName);
-    //Preferences.set("last.sketch.name", sketch.name);
-    Preferences.set("last.sketch.path", sketch.getMainFilePath());
-
-    // location for the console/editor area divider
-    int location = splitPane.getDividerLocation();
-    Preferences.setInteger("last.divider.location", location);
-  }
-
-
   // ...................................................................
 
 
@@ -528,7 +434,7 @@ public class Editor extends JFrame {
     item = Editor.newJMenuItem("Open...", 'O', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          base.handleOpen();
+          base.handleOpenPrompt();
         }
       });
     menu.add(item);

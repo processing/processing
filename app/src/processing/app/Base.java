@@ -204,7 +204,136 @@ public class Base {
       e.printStackTrace();
     }
   }
+  
+  
+  /**
+   * Post-constructor setup for the editor area. Loads the last
+   * sketch that was used (if any), and restores other Editor settings.
+   * The complement to "storePreferences", this is called when the
+   * application is first launched.
+   */
+  public void restoreSketches() {
+    // figure out window placement
 
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    boolean windowPositionValid = true;
+
+    if (Preferences.get("last.screen.height") != null) {
+      // if screen size has changed, the window coordinates no longer
+      // make sense, so don't use them unless they're identical
+      int screenW = Preferences.getInteger("last.screen.width");
+      int screenH = Preferences.getInteger("last.screen.height");
+
+      if ((screen.width != screenW) || (screen.height != screenH)) {
+        windowPositionValid = false;
+      }
+      /*
+      int windowX = Preferences.getInteger("last.window.x");
+      int windowY = Preferences.getInteger("last.window.y");
+      if ((windowX < 0) || (windowY < 0) ||
+          (windowX > screenW) || (windowY > screenH)) {
+        windowPositionValid = false;
+      }
+      */
+    } else {
+      windowPositionValid = false;
+    }
+    
+    // Iterate through all sketches that were open last time p5 was running.
+    // If !windowPositionValid, then ignore the coordinates found for each.
+    
+    // Save the sketch path and window placement for each open sketch
+    int count = Preferences.getInteger("last.sketch.count");
+    for (int i = 0; i < editorCount; i++) {
+      String path = editors[i].sketch.getMainFilePath();
+      Preferences.set("last.sketch" + i + ".path", path);
+      
+      int[] location = editors[i].getPlacement();
+      String locationStr = PApplet.join(PApplet.str(location), ",");
+      Preferences.set("last.sketch" + i + ".location", locationStr);
+    }
+
+    
+    /*
+    if (!windowPositionValid) {
+      //System.out.println("using default size");
+      int windowH = Preferences.getInteger("default.window.height");
+      int windowW = Preferences.getInteger("default.window.width");
+      setBounds((screen.width - windowW) / 2,
+                (screen.height - windowH) / 2,
+                windowW, windowH);
+      // this will be invalid as well, so grab the new value
+      Preferences.setInteger("last.divider.location",
+                             splitPane.getDividerLocation());
+    } else {
+      setBounds(Preferences.getInteger("last.window.x"),
+                Preferences.getInteger("last.window.y"),
+                Preferences.getInteger("last.window.width"),
+                Preferences.getInteger("last.window.height"));
+    }
+    */
+
+    // last sketch that was in use, or used to launch the app
+
+    /*
+      // TODO bring this back
+
+    if (Base.openedAtStartup != null) {
+      handleOpen2(Base.openedAtStartup);
+
+    } else {
+      //String sketchName = Preferences.get("last.sketch.name");
+      String sketchPath = Preferences.get("last.sketch.path");
+      //Sketch sketchTemp = new Sketch(sketchPath);
+
+      if ((sketchPath != null) && (new File(sketchPath)).exists()) {
+        // don't check modified because nothing is open yet
+        handleOpen2(sketchPath);
+
+      } else {
+        handleNew2(true);
+      }
+    }
+    */
+
+
+    /*
+    // location for the console/editor area divider
+
+    int location = Preferences.getInteger("last.divider.location");
+    splitPane.setDividerLocation(location);
+    */
+
+
+    // read the preferences that are settable in the preferences window
+
+    //applyPreferences();
+  }
+
+  
+  /**
+   * Store list of sketches that are currently open.
+   * Called when the application is quitting and documents are still open.
+   */
+  public void storeSketches() {
+    
+    // Save the width and height of the screen
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    Preferences.setInteger("last.screen.width", screen.width);
+    Preferences.setInteger("last.screen.height", screen.height);
+
+    // Save the sketch path and window placement for each open sketch
+    Preferences.setInteger("last.sketch.count", editorCount);    
+    for (int i = 0; i < editorCount; i++) {
+      String path = editors[i].sketch.getMainFilePath();
+      Preferences.set("last.sketch" + i + ".path", path);
+      
+      int[] location = editors[i].getPlacement();
+      String locationStr = PApplet.join(PApplet.str(location), ",");
+      Preferences.set("last.sketch" + i + ".location", locationStr);
+    }
+  }
+  
 
   // .................................................................
 
@@ -212,131 +341,10 @@ public class Base {
   int editorCount;
   Editor[] editors;
   Editor activeEditor;
+  
+  int nextEditorX;
+  int nextEditorY;
 
-  
-  /*
-  public void handleClose() {
-    if (checkModified()) {
-      frame.setVisible(false);
-      frame.dispose();
-    }
-  }
-  
-  
-  // @return true if completed and not canceled
-  public boolean handleSave() {
-    if (untitled) return handleSaveAs();
-  
-    try {
-      saveFile(file, textarea.getText());
-      setModified(false);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return true;
-  }
-  
-  
-  public boolean handleSaveAs() {
-    FileDialog fd = new FileDialog(frame,
-                                   "Save text as...",
-                                   FileDialog.SAVE);
-    fd.setFile(file.getName());
-    fd.setVisible(true);
-  
-    String newFolder = fd.getDirectory();
-    String newFilename = fd.getFile();
-    if (newFolder == null) {
-      return false;
-    }
-  
-    file = new File(newFolder, newFilename);
-    untitled = false;
-    return handleSave();
-  }
-  
-  
-  public void handleQuit() {
-    if (checkModified()) {
-      System.exit(0);
-    }
-  }
-  
-  // @return false if canceling the close/quit operation
-  protected boolean checkModified() {
-    if (!modified) return true;
-  
-    String prompt = "Save changes to " + file.getName() + "?  ";
-  
-    if (PApplet.platform != PConstants.MACOSX || PApplet.javaVersion < 1.5f) {
-      int result =
-        JOptionPane.showConfirmDialog(frame, prompt, "Close",
-                                      JOptionPane.YES_NO_CANCEL_OPTION,
-                                      JOptionPane.QUESTION_MESSAGE);
-  
-      if (result == JOptionPane.YES_OPTION) {
-        return handleSave();
-  
-      } else if (result == JOptionPane.NO_OPTION) {
-        return true;  // ok to continue
-  
-      } else if (result == JOptionPane.CANCEL_OPTION) {
-        return false;
-      } else {
-        throw new IllegalStateException();
-      }
-  
-    } else {
-      // This code is disabled unless Java 1.5 is being used on Mac OS X
-      // because of a Java bug that prevents the initial value of the
-      // dialog from being set properly (at least on my MacBook Pro).
-      // The bug causes the "Don't Save" option to be the highlighted,
-      // blinking, default. This sucks. But I'll tell you what doesn't
-      // suck--workarounds for the Mac and Apple's snobby attitude about it!
-  
-      // adapted from the quaqua guide
-      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
-      JOptionPane pane =
-        new JOptionPane("<html> " +
-                        "<head> <style type=\"text/css\">"+
-                        "b { font: 13pt \"Lucida Grande\" }"+
-                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-                        "</style> </head>" +
-                        "<b>Do you want to save changes to this text<BR>" +
-                        " before closing?</b>" +
-                        "<p>If you don't save, your changes will be lost.",
-                        JOptionPane.QUESTION_MESSAGE);
-  
-      String[] options = new String[] {
-        "Save", "Cancel", "Don't Save"
-      };
-      pane.setOptions(options);
-  
-      // highlight the safest option ala apple hig
-      pane.setInitialValue(options[0]);
-  
-      // on macosx, setting the destructive property places this option
-      // away from the others at the lefthand side
-      pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
-                             new Integer(2));
-  
-      JDialog dialog = pane.createDialog(frame, null);
-      dialog.setVisible(true);
-  
-      Object result = pane.getValue();
-      if (result == options[0]) {  // save (and close/quit)
-        return handleSave();
-  
-      } else if (result == options[2]) {  // don't save (still close/quit)
-        return true;
-  
-      } else {  // cancel?
-        return false;
-      }
-    }
-  }
-  */
-  
   
   static public String getSketchbookPath() {
     return Preferences.get("sketchbook.path");
@@ -352,13 +360,29 @@ public class Base {
   }
   
   
-  /*
-  public Editor getActiveEditor() {
-    return activeEditor;
+  protected int[] nextEditorLocation() {
+    int[] location = new int[5];
+
+    // Get default window width and height
+    location[2] = Preferences.getInteger("default.window.width");
+    location[3] = Preferences.getInteger("default.window.height");
+
+    // If no position set yet, start with the middle of the screen
+    if (nextEditorX == 0) {  
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+      nextEditorX = (screen.width - location[2]) / 2;
+      nextEditorY = (screen.height - location[3]) / 2;
+    }
+    location[0] = nextEditorX;
+    location[1] = nextEditorY;
+    
+    nextEditorX += 50;
+    nextEditorY += 50;
+    
+    return location;
   }
-  */
   
-  
+
   /**
    * Asynchronous version of menu rebuild to be used on 'new' and 'save',
    * to prevent the interface from locking up until the menus are done.
@@ -379,182 +403,12 @@ public class Base {
   }
 
 
-  public void handleOpen() {
-    // get the frontmost window frame for placing file dialog
+  // .................................................................
 
-    //static public void handleOpen(Frame frame) {
-    FileDialog od = new FileDialog(activeEditor,
-                                   "Select a file:",
-                                   FileDialog.LOAD);
-    //od.setDirectory(new File("../2005/").getAbsolutePath());
-    od.setVisible(true);
-
-    String directory = od.getDirectory();
-    String filename = od.getFile();
-    if (filename == null) return;
-    File inputFile = new File(directory, filename);
-    handleOpen(inputFile.getAbsolutePath());
-  }
-
-
-  public void handleOpen(File file) {
-    handleOpen(file.getAbsolutePath());
-  }
-  
-  
-  public Editor handleOpen(String path) {
-    return new Editor(this, path);
-  }
-
-
-  /*
-  public void handleClose() {
-    if (checkModified()) {
-      frame.setVisible(false);
-      frame.dispose();
-    }
-  }
-
-
-  // @return true if completed and not canceled
-  public boolean handleSave() {
-    if (untitled) return handleSaveAs();
-
-    try {
-      saveFile(file, textarea.getText());
-      setModified(false);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return true;
-  }
-
-
-  public boolean handleSaveAs() {
-    FileDialog fd = new FileDialog(frame,
-                                   "Save text as...",
-                                   FileDialog.SAVE);
-    fd.setFile(file.getName());
-    fd.setVisible(true);
-
-    String newFolder = fd.getDirectory();
-    String newFilename = fd.getFile();
-    if (newFolder == null) {
-      return false;
-    }
-
-    file = new File(newFolder, newFilename);
-    untitled = false;
-    return handleSave();
-  }
-
-
-  public void handleQuit() {
-    if (checkModified()) {
-      System.exit(0);
-    }
-  }
-
-  // @return false if canceling the close/quit operation
-  protected boolean checkModified() {
-    if (!modified) return true;
-
-    String prompt = "Save changes to " + file.getName() + "?  ";
-
-    if (PApplet.platform != PConstants.MACOSX || PApplet.javaVersion < 1.5f) {
-      int result =
-        JOptionPane.showConfirmDialog(frame, prompt, "Close",
-                                      JOptionPane.YES_NO_CANCEL_OPTION,
-                                      JOptionPane.QUESTION_MESSAGE);
-
-      if (result == JOptionPane.YES_OPTION) {
-        return handleSave();
-
-      } else if (result == JOptionPane.NO_OPTION) {
-        return true;  // ok to continue
-
-      } else if (result == JOptionPane.CANCEL_OPTION) {
-        return false;
-      } else {
-        throw new IllegalStateException();
-      }
-
-    } else {
-      // This code is disabled unless Java 1.5 is being used on Mac OS X
-      // because of a Java bug that prevents the initial value of the
-      // dialog from being set properly (at least on my MacBook Pro).
-      // The bug causes the "Don't Save" option to be the highlighted,
-      // blinking, default. This sucks. But I'll tell you what doesn't
-      // suck--workarounds for the Mac and Apple's snobby attitude about it!
-
-      // adapted from the quaqua guide
-      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
-      JOptionPane pane =
-        new JOptionPane("<html> " +
-                        "<head> <style type=\"text/css\">"+
-                        "b { font: 13pt \"Lucida Grande\" }"+
-                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-                        "</style> </head>" +
-                        "<b>Do you want to save changes to this text<BR>" +
-                        " before closing?</b>" +
-                        "<p>If you don't save, your changes will be lost.",
-                        JOptionPane.QUESTION_MESSAGE);
-
-      String[] options = new String[] {
-        "Save", "Cancel", "Don't Save"
-      };
-      pane.setOptions(options);
-
-      // highlight the safest option ala apple hig
-      pane.setInitialValue(options[0]);
-
-      // on macosx, setting the destructive property places this option
-      // away from the others at the lefthand side
-      pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
-                             new Integer(2));
-
-      JDialog dialog = pane.createDialog(frame, null);
-      dialog.setVisible(true);
-
-      Object result = pane.getValue();
-      if (result == options[0]) {  // save (and close/quit)
-        return handleSave();
-
-      } else if (result == options[2]) {  // don't save (still close/quit)
-        return true;
-
-      } else {  // cancel?
-        return false;
-      }
-    }
-  }
-  */
-
-  
-  /**
-   * New was called (by buttons or by menu), first check modified
-   * and if things work out ok, handleNew2() will be called.
-   * <p/>
-   * If shift is pressed when clicking the toolbar button, then
-   * force the opposite behavior from sketchbook.prompt's setting
-   * @param editor TODO
-   * @param shiftDown TODO
-   */
-  /*
-  public void handleNew(final boolean shift) {
-    buttons.activate(EditorButtons.NEW);
-  
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          doStop();
-          handleNewShift = shift;
-          checkModified(HANDLE_NEW);
-        }});
-  }
-  */
-  
   
   public void handleNew(boolean shiftDown) {
+    // buttons.activate(EditorButtons.NEW);
+
     boolean prompt = Preferences.getBoolean("sketchbook.prompt");
     if (shiftDown) prompt = !prompt; // reverse behavior if shift is down
   
@@ -579,7 +433,7 @@ public class Base {
       if (path != null) {
         rebuildMenusAsync();
         Editor editor = handleOpen(path);
-        editor.untitled = true;
+        editor.untitled = untitled;
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -633,7 +487,8 @@ public class Base {
   }
 
 
-  static protected String handleNewInternal(File newbieDir, String newbieName) throws FileNotFoundException {
+  static protected String handleNewInternal(File newbieDir, String newbieName) 
+  throws FileNotFoundException {
     // Make the directory for the new sketch
     newbieDir.mkdirs();
 
@@ -668,23 +523,13 @@ public class Base {
   }
 
   
+  /*
   public String handleOpenPrompt(JFrame editor) {
     // The file chooser in Swing is ass ugly, so we use the
     // native (AWT peered) dialogs where possible
     FileDialog fd = new FileDialog(editor,
                                    "Open a Processing sketch...",
                                    FileDialog.LOAD);
-    //fd.setDirectory(Preferences.get("sketchbook.path"));
-    //fd.setDirectory(getSketchbookPath());
-
-    // Only show .pde files as eligible bachelors
-    fd.setFilenameFilter(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          // TODO this doesn't seem to ever be used. AWESOME.
-          //System.out.println("check filter on " + dir + " " + name);
-          return name.toLowerCase().endsWith(".pde");
-        }
-      });
 
     // gimme some money
     fd.setVisible(true);
@@ -701,6 +546,67 @@ public class Base {
 
     File selection = new File(directory, filename);
     return selection.getAbsolutePath();
+  }
+  */
+
+
+  public void handleOpenPrompt() {
+    // get the frontmost window frame for placing file dialog
+    FileDialog fd = new FileDialog(activeEditor,
+                                   "Open a Processing sketch...",
+                                   FileDialog.LOAD);
+    // This was annoying people, so disabled it in 0125.
+    //fd.setDirectory(Preferences.get("sketchbook.path"));
+    //fd.setDirectory(getSketchbookPath());
+
+    // Only show .pde files as eligible bachelors
+    fd.setFilenameFilter(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          // TODO this doesn't seem to ever be used. AWESOME.
+          //System.out.println("check filter on " + dir + " " + name);
+          return name.toLowerCase().endsWith(".pde");
+        }
+      });
+    
+    fd.setVisible(true);
+
+    String directory = fd.getDirectory();
+    String filename = fd.getFile();
+    
+    // User canceled selection
+    if (filename == null) return;
+    
+    File inputFile = new File(directory, filename);
+    handleOpen(inputFile.getAbsolutePath());
+  }
+
+
+  public void handleOpen(File file) {
+    handleOpen(file.getAbsolutePath());
+  }
+  
+
+  /**
+   * @param path Path to the .pde file for the sketch in question
+   * @return the Editor object, so that properties (like 'untitled')
+   *         can be set by the caller
+   */
+  public Editor handleOpen(String path) {
+    return new Editor(this, path, nextEditorLocation());
+  }
+  
+  
+  public Editor handleOpen(String path, int[] location) {
+    Editor editor = new Editor(this, path, location);
+    
+    if (editors == null) {
+      editors = new Editor[5];
+    }
+    if (editorCount == editors.length) {
+      editors = (Editor[]) PApplet.expand(editors);
+    }
+    editors[editorCount++] = editor;
+    return editor;
   }
 
 
@@ -748,9 +654,10 @@ public class Base {
       // Clean out empty sketches
       Base.cleanSketchbook();
 
-      //if (PApplet.platform != PConstants.MACOSX) {
-      System.exit(0);
-      //}
+      if (PApplet.platform != PConstants.MACOSX) {
+        // macosx will take care of killing itself
+        System.exit(0);
+      }
     }
     return !canceled;      
   }
@@ -817,7 +724,7 @@ public class Base {
     item = Editor.newJMenuItem("Open...", 'O', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleOpen();
+          handleOpenPrompt();
         }
       });
     menu.add(item);
