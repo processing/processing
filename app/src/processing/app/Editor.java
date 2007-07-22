@@ -67,9 +67,8 @@ public class Editor extends JFrame {
   static final int HANDLE_NEW  = 1;
   static final int HANDLE_OPEN = 2;
   static final int HANDLE_QUIT = 3;
-  int checkModifiedMode;
-  String handleOpenPath;
-  boolean handleNewShift;
+  //int checkModifiedMode;
+  //String handleOpenPath;
 
   /**
    * true if this file has not yet been given a name by the user
@@ -1645,7 +1644,7 @@ public class Editor extends JFrame {
 
       // zero out the current action,
       // so that checkModified2 will just do nothing
-      checkModifiedMode = 0;
+      //checkModifiedMode = 0;
       // this is used when another operation calls a save
     }
     toolbar.clear();
