@@ -3,7 +3,7 @@
 
 ### -- SETUP WORK DIR -------------------------------------------
 
-if test -d work 
+if test -d work
 then
   BUILD_PREPROC=false
 else
@@ -98,6 +98,8 @@ cd ../app
 ### -- BUILD PARSER ---------------------------------------------
 
 #BUILD_PREPROC=true
+echo app is now
+ls
 
 if $BUILD_PREPROC
 then
@@ -105,11 +107,16 @@ then
   echo Building antlr grammar code...
   # first build the default java goop
   java -cp ../build/macosx/work/lib/antlr.jar antlr.Tool \
+  -o src/antlr/java \
   src/antlr/java/java.g
   # now build the pde stuff that extends the java classes
   java -cp ../build/macosx/work/lib/antlr.jar antlr.Tool \
+  -o src/processing/app/preproc \
   -glib src/antlr/java/java.g src/processing/app/preproc/pde.g
 fi
+
+echo app is now 
+ls
 
 ### -- BUILD PDE ------------------------------------------------
 
@@ -123,6 +130,9 @@ echo Building the PDE...
 #javac -source 1.3 -target 1.3 -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes *.java syntax/*.java preproc/*.java tools/*.java
 # version that follows includes jalopy.jar and log4j.jar
 #../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/oro.jar:../build/macosx/work/lib/registry.jar:../build/macosx/work/lib/jalopy.jar:../build/macosx/work/lib/log4j.jar:$CLASSPATH -d ../build/macosx/work/classes tools/*.java preproc/*.java syntax/*.java  *.java 
+
+echo app is now 
+ls
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
