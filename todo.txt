@@ -1,25 +1,44 @@
 0126 pde
 o support for hashmap<> with 1.5 syntax
 o   http://dev.processing.org/bugs/show_bug.cgi?id=459
-
-
-_ when marking a window as moddifed
-_   getRootPane().putClientProperty(WINDOW_MODIFIED, Boolean.TRUE);
-
-_ move examples folder to top-level menu?
-_ move open menu to its own?
-_ show sketch folder on linux
-_   add notes to the docs about how to fix if not working
-_   http://processing.org/reference/environment/platforms.html#linux
+X handle open/sketchbook/examples differently
+X   move examples folder to top-level menu
+X   move open menu to its own
 
 _ move to multiple sketches open at a time
+X   basic structural moves to handle multiple sketches
+X   when marking a window as moddifed
+X     getRootPane().putClientProperty(WINDOW_MODIFIED, Boolean.TRUE);
+_   improve speed of "new", which is calling the rebuild menus
+_     keep one static list of all pairs of names/files in sketchbook
+_     tough to do with the multiple directories/submenus
+_     add methods for "add" and "remove" for sketches
+_       also a rename method, which could just be a remove and add
+_     libraries and examples won't be rebuilt during the session
+_   get quit to work properly on macosx
+_   make sure quit being handled properly on windows/linux
+_   open new sketch windows slightly offset from the previous
+_     or start them in the upper-left corner of the screen?
+_   when quitting, save all sketch windows
+_     do this before checkModified, because it'll close them individually
+_   if quitting when zero windows are open, mark as such and use untitled
+_   clean up number of new/open/close functions in editor and in base
+_   make sure drag and drop to open sketch is still working
+_   make sure double-click pde to open is launching in p5
+_   would also help the opening multiple files thing
 _   set title of window to the sketch name
 _   on first save, ask for the name of the project (with default)
 _   cmd-opt-r for rename?
-_ save/saveas should use modal dialog
-_   only use the bottom bar for naming
+_   save/saveas should use modal dialog
+_     only use the bottom bar for name, rename, new tab
 
 _ don't bug the user about new release of p5 when they have it
+_   add prefs option for "latest version run"
+_   something also to track--people going to older releases
+
+_ show sketch folder on linux
+_   add notes to the docs about how to fix if not working
+_   http://processing.org/reference/environment/platforms.html#linux
 
 new bugs
 _ huge jar files from 0124 export
@@ -281,9 +300,6 @@ _   is this only a problem on macosx?
 
 
 processing wish list 
-_ opening multiple versions of p5 at a time
-_   shouldn't actually be a big deal 
-_   would also help the opening multiple files thing
 _ TRIANGLE_STRIP not highlighted for "find in reference"
 _   nor is it listed on the reference page
 _   so students can't find the ref for it

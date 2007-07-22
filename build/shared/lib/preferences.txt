@@ -50,14 +50,21 @@ settings.path.fallback=data
 # but this can be used to set a specific file in case of problems
 #build.path=build
 
+# By default, no sketches currently open
+last.sketch.count=0
+
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 # by default, check the processing server for any updates
 # (please avoid disabling, this also helps us know basic numbers 
 # on how many people are using Processing)
 update.check = true
 
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 # default size for the main window
 default.window.width = 500
@@ -215,6 +222,7 @@ sketchbook.prompt = false
 
 # true if empty sketches should be removed automatically
 sketchbook.auto_clean = true
+
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
