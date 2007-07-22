@@ -801,7 +801,7 @@ public class Sketch {
     FileDialog fd = new FileDialog(editor,
                                    "Save sketch folder as...",
                                    FileDialog.SAVE);
-    if (isReadOnly()) {
+    if (isReadOnly() || isUntitled()) {
       // default to the sketchbook folder
       fd.setDirectory(Preferences.get("sketchbook.path"));
     } else {
@@ -927,6 +927,9 @@ public class Sketch {
     //editor.sketchbook.rebuildMenusAsync();
     editor.base.rebuildMenusAsync();
 
+    // Make sure that it's not an untitled sketch
+    setUntitled(false);
+    
     // let Editor know that the save was successful
     return true;
   }
@@ -2669,6 +2672,16 @@ public class Sketch {
       //return true;
     }
     return false;
+  }
+  
+
+  public void setUntitled(boolean u) {
+    editor.untitled = u;
+  }
+  
+  
+  public boolean isUntitled() {
+    return editor.untitled;
   }
 
 

@@ -65,6 +65,9 @@ public class Base {
   // (both those in the p5/libs folder and those with lib subfolders
   // found in the sketchbook)
   static String librariesClassPath;
+  
+  // Location for untitled items
+  static File untitledFolder;
 
   int editorCount;
   Editor[] editors;
@@ -116,6 +119,10 @@ public class Base {
 
     // Use native popups so they don't look so crappy on osx
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+
+    // Create a location for untitled sketches
+    untitledFolder = createTempFolder("untitled");
+    untitledFolder.deleteOnExit();
 
     // run static initialization that grabs all the prefs
     Preferences.init();
@@ -182,8 +189,9 @@ public class Base {
     // Create a new empty window (will be replaced with any files to be opened)
     if (!opened) {
       try {
-        String path = handleNewUntitled();
-        handleOpen(path);
+        //String path = handleNewUntitled();
+        //handleOpen(path);
+        handleNewUntitled();
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -361,20 +369,12 @@ public class Base {
     // unless, ermm, they user tested it and people preferred that as
     // a way to get started. shite. now i hate myself.
     //if (disablePrompt) prompt = false;
-  
+
     try {
-      String path = null;
-      boolean untitled = false;
       if (prompt) {
-        path = handleNewPrompt(activeEditor);
+        handleNewPrompt(activeEditor);
       } else {
-        path = handleNewUntitled();
-        untitled = true;
-      }
-      if (path != null) {
-        rebuildMenusAsync();
-        Editor editor = handleOpen(path);
-        editor.untitled = untitled;
+        handleNewUntitled();
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -382,7 +382,7 @@ public class Base {
   }
 
 
-  static public String handleNewPrompt(JFrame parent) throws IOException {
+  public void handleNewPrompt(JFrame parent) throws IOException {
     File newbieDir = null;
     String newbieName = null;
 
@@ -395,11 +395,11 @@ public class Base {
 
     String newbieParentDir = fd.getDirectory();
     newbieName = fd.getFile();
-    if (newbieName == null) return null;
-
-    newbieName = Sketch.sanitizeName(newbieName);
-    newbieDir = new File(newbieParentDir, newbieName);
-    return handleNewInternal(newbieDir, newbieName);
+    if (newbieName != null) {
+      newbieName = Sketch.sanitizeName(newbieName);
+      newbieDir = new File(newbieParentDir, newbieName);
+      handleNewInternal(newbieDir, newbieName);
+    }
   }
 
 
@@ -409,13 +409,16 @@ public class Base {
    * @param shift whether shift is pressed, which will invert prompt setting
    * @param noPrompt disable prompt, no matter the setting
    */
-  static public String handleNewUntitled() throws IOException {
+  public void handleNewUntitled() throws IOException {
     File newbieDir = null;
     String newbieName = null;
 
-    // Use a generic name like sketch_031008a, the date plus a char
-    String newbieParentDir = getSketchbookPath();
+    // In 0126, untitled sketches will begin in the temp folder,
+    // and then moved to a new location because Save will default to Save As.
+    File sketchbookDir = new File(getSketchbookPath());
+    File newbieParentDir = untitledFolder;
 
+    // Use a generic name like sketch_031008a, the date plus a char
     int index = 0;
     SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
     String purty = formatter.format(new Date());
@@ -423,12 +426,15 @@ public class Base {
       newbieName = "sketch_" + purty + ((char) ('a' + index));
       newbieDir = new File(newbieParentDir, newbieName);
       index++;
-    } while (newbieDir.exists());
-    return handleNewInternal(newbieDir, newbieName);
+      // Make sure it's not in the temp folder *and* it's not in the sketchbook
+    } while (newbieDir.exists() || new File(sketchbookDir, newbieName).exists());
+    
+    Editor editor = handleNewInternal(newbieDir, newbieName);
+    editor.untitled = true;
   }
 
 
-  static protected String handleNewInternal(File newbieDir, String newbieName) 
+  protected Editor handleNewInternal(File newbieDir, String newbieName) 
   throws FileNotFoundException {
     // Make the directory for the new sketch
     newbieDir.mkdirs();
@@ -460,7 +466,7 @@ public class Base {
       //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
     }
     */
-    return newbieFile.getAbsolutePath();
+    return handleOpen(newbieFile.getAbsolutePath());
   }
 
   
@@ -1172,7 +1178,7 @@ public class Base {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return null;  // TODO could we *really* ever reach this?
+    return null;
   }
 
 
