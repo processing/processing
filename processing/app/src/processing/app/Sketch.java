@@ -196,7 +196,7 @@ public class Sketch {
         // in them which can cause a crash.. ouch. [rev 0116]
         continue;
 
-      } else if (!Sketchbook.isSanitary(base)) {
+      } else if (!Sketch.isSanitary(base)) {
         // also don't allow people to use files with invalid names,
         // since on load, it would be otherwise possible to sneak in
         // nasty filenames. [rev 0116]
@@ -415,7 +415,7 @@ public class Sketch {
     // make sure the user didn't name things poo.time.pde
     // or something like that (nothing against poo time)
     if (newName.indexOf('.') != -1) {
-      newName = Sketchbook.sanitizedName(newName);
+      newName = Sketch.sanitizedName(newName);
       newFilename = newName + ((newFlavor == PDE) ? ".pde" : ".java");
     }
 
@@ -820,7 +820,7 @@ public class Sketch {
 
     // user cancelled selection
     if (newName == null) return false;
-    newName = Sketchbook.sanitizeName(newName);
+    newName = Sketch.sanitizeName(newName);
 
     // make sure there doesn't exist a tab with that name already
     // (but allow it if it's just the main tab resaving itself.. oops)
@@ -1276,7 +1276,7 @@ public class Sketch {
     //PApplet.println(PApplet.split(buildPath, ';'));
     //PApplet.println(PApplet.split(javaClassPath, ';'));
     classPath = buildPath +
-      File.pathSeparator + Sketchbook.librariesClassPath +
+      File.pathSeparator + Base.librariesClassPath +
       File.pathSeparator + javaClassPath;
     //System.out.println("cp = " + classPath);
 
@@ -1512,7 +1512,7 @@ public class Sketch {
       // remove things up to the last dot
       String entry = imports[i].substring(0, imports[i].lastIndexOf('.'));
       //System.out.println("found package " + entry);
-      File libFolder = (File) Sketchbook.importToLibraryTable.get(entry);
+      File libFolder = (File) Base.importToLibraryTable.get(entry);
 
       if (libFolder == null) {
         //throw new RunnerException("Could not find library for " + entry);
@@ -2654,8 +2654,8 @@ public class Sketch {
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
-    if (apath.startsWith(Sketchbook.examplesPath) ||
-        apath.startsWith(Sketchbook.librariesPath)) {
+    if (apath.startsWith(Base.examplesPath) ||
+        apath.startsWith(Base.librariesPath)) {
       return true;
 
       // canWrite() doesn't work on directories
@@ -2693,5 +2693,79 @@ public class Sketch {
 
   public void nextCode() {
     setCurrent((currentIndex + 1) % codeCount);
+  }
+  
+  
+  // .................................................................
+
+  
+  /**
+   * Convert to sanitized name and alert the user
+   * if changes were made.
+   */
+  static public String sanitizeName(String origName) {
+    String newName = sanitizedName(origName);
+
+    if (!newName.equals(origName)) {
+      Base.showMessage("Naming issue",
+                       "The sketch name had to be modified.\n" +
+                       "You can only use basic letters and numbers\n" +
+                       "to name a sketch (ascii only and no spaces,\n" +
+                       "it can't start with a number, and should be\n" +
+                       "less than 64 characters long)");
+    }
+    return newName;
+  }
+
+
+  /**
+   * Return true if the name is valid for a Processing sketch.
+   */
+  static public boolean isSanitary(String name) {
+    return sanitizedName(name).equals(name);
+  }
+
+
+  /**
+   * Produce a sanitized name that fits our standards for likely to work.
+   * <p/>
+   * Java classes have a wider range of names that are technically allowed
+   * (supposedly any Unicode name) than what we support. The reason for
+   * going more narrow is to avoid situations with text encodings and
+   * converting during the process of moving files between operating
+   * systems, i.e. uploading from a Windows machine to a Linux server,
+   * or reading a FAT32 partition in OS X and using a thumb drive.
+   * <p/>
+   * This helper function replaces everything but A-Z, a-z, and 0-9 with
+   * underscores. Also disallows starting the sketch name with a digit.
+   */
+  static public String sanitizedName(String origName) {
+    char c[] = origName.toCharArray();
+    StringBuffer buffer = new StringBuffer();
+
+    // can't lead with a digit, so start with an underscore
+    if ((c[0] >= '0') && (c[0] <= '9')) {
+      buffer.append('_');
+    }
+    for (int i = 0; i < c.length; i++) {
+      if (((c[i] >= '0') && (c[i] <= '9')) ||
+          ((c[i] >= 'a') && (c[i] <= 'z')) ||
+          ((c[i] >= 'A') && (c[i] <= 'Z'))) {
+        buffer.append(c[i]);
+
+      } else {
+        buffer.append('_');
+      }
+    }
+    // let's not be ridiculous about the length of filenames.
+    // in fact, Mac OS 9 can handle 255 chars, though it can't really
+    // deal with filenames longer than 31 chars in the Finder.
+    // but limiting to that for sketches would mean setting the
+    // upper-bound on the character limit here to 25 characters
+    // (to handle the base name + ".class")
+    if (buffer.length() > 63) {
+      buffer.setLength(63);
+    }
+    return buffer.toString();
   }
 }
