@@ -175,11 +175,12 @@ public class Base {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   protected void registerMacOS() {
     try {
-      Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("BaseMacOS");
+      String name = "processing.app.BaseMacOS";
+      Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass(name);
       
       Class[] defArgs = { Base.class };
       Method registerMethod = osxAdapter.getDeclaredMethod("register", defArgs);
@@ -372,17 +373,9 @@ public class Base {
       });
     */
     for (int i = 0; i < editorCount; i++) {
-      editors[i].sketchbookChanged = true; //sketchbook.rebuildMenus();
+      editors[i].sketchbookUpdated = true; //sketchbook.rebuildMenus();
     }
     //rebuildMenus();
-  }
-
-
-  public boolean handleClose(Editor editor) {
-    // check if modified
-    // if not canceled, the check if this is the last open window
-    // if this is the last open window, just do a 'new' instead
-    return false;
   }
 
 
@@ -409,8 +402,8 @@ public class Base {
   }
   
   
-  public void handleOpen(String path) {
-    new Editor(this, path);
+  public Editor handleOpen(String path) {
+    return new Editor(this, path);
   }
 
 
@@ -576,17 +569,19 @@ public class Base {
   
     try {
       String path = null;
+      boolean untitled = false;
       if (prompt) {
         path = handleNewPrompt(activeEditor);
       } else {
         path = handleNewUntitled();
+        untitled = true;
       }
       if (path != null) {
         rebuildMenusAsync();
-        handleOpen(path);
+        Editor editor = handleOpen(path);
+        editor.untitled = true;
       }
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -709,12 +704,37 @@ public class Base {
   }
 
 
-  /*
-  public Editor getActiveEditor() {
-    return activeEditor;
+  public boolean handleClose(Editor editor) {
+    // Check if modified
+    boolean success = editor.checkModified(false);
+
+    // If not canceled, remove the editor window.
+    if (success) {
+      editor.setVisible(false);
+      editor.dispose();
+      
+      for (int i = 0; i < editorCount; i++) {
+        if (editor == editors[i]) {
+          for (int j = i; j < editorCount-1; j++) {
+            editors[j] = editors[j+1];
+          }
+          editorCount--;
+          editors[editorCount] = null;
+        }
+      }
+    
+      // If not canceled, check if this was the last open window.
+      // If it was the last, could either do a new untitled window, 
+      // or could just quit the application.
+      if (editorCount == 0) {
+        handleQuit();
+      }
+      return true;
+    }
+
+    return false;
   }
-  */
-  
+
   
   public boolean handleQuit() {
     boolean canceled = false;
@@ -724,8 +744,19 @@ public class Base {
         break;
       }
     }
-    return !canceled;
+    if (!canceled) {
+      // Clean out empty sketches
+      Base.cleanSketchbook();
+
+      //if (PApplet.platform != PConstants.MACOSX) {
+      System.exit(0);
+      //}
+    }
+    return !canceled;      
   }
+
+  
+  // .................................................................
 
 
   /**
@@ -767,9 +798,6 @@ public class Base {
     //EditorConsole.systemOut.println("done rebuilding menus");
   }
   */
-
-
-  // .................................................................
 
 
   /*
@@ -859,23 +887,15 @@ public class Base {
   }
 
 
-  /*
-  public JMenu getImportMenu() {
-    return importMenu;
-  }
-  */
-
-
   protected boolean addSketches(JMenu menu, File folder) throws IOException {
-    // skip .DS_Store files, etc
+    // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) return false;
 
-    String list[] = folder.list();
-    // if a bad folder or something like that, this might come back null
+    String[] list = folder.list();
+    // If a bad folder or unreadable or whatever, this will come back null
     if (list == null) return false;
 
-    // alphabetize list, since it's not always alpha order
-    // replaced hella slow bubble sort with this feller for 0093
+    // Alphabetize list, since it's not always alpha order
     Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
 
     ActionListener listener = new ActionListener() {
@@ -964,7 +984,7 @@ public class Base {
 
       File exported = new File(subfolder, "library");
       File entry = new File(exported, list[i] + ".jar");
-      // if a .jar file of the same prefix as the folder exists
+      // If a .jar file of the same prefix as the folder exists
       // inside the 'library' subfolder of the sketch
       if (entry.exists()) {
         String sanityCheck = Sketch.sanitizedName(list[i]);
@@ -973,7 +993,7 @@ public class Base {
             "The library \"" + list[i] + "\" cannot be used.\n" +
             "Library names must contain only basic letters and numbers.\n" +
             "(ascii only and no spaces, and it cannot start with a number)";
-          Base.showMessage("Ignoring bad sketch name", mess);
+          Base.showMessage("Ignoring bad library name", mess);
           continue;
         }
 
@@ -1010,62 +1030,6 @@ public class Base {
       }
     }
     return ifound;
-  }
-
-
-  /**
-   * Clear out projects that are empty.
-   */
-  public void clean() {
-    //if (!Preferences.getBoolean("sketchbook.auto_clean")) return;
-
-    File sketchbookFolder = new File(getSketchbookPath());
-    if (!sketchbookFolder.exists()) return;
-
-    //String entries[] = new File(userPath).list();
-    String entries[] = sketchbookFolder.list();
-    if (entries != null) {
-      for (int j = 0; j < entries.length; j++) {
-        //System.out.println(entries[j] + " " + entries.length);
-        if (entries[j].charAt(0) == '.') continue;
-
-        //File prey = new File(userPath, entries[j]);
-        File prey = new File(sketchbookFolder, entries[j]);
-        File pde = new File(prey, entries[j] + ".pde");
-
-        // make sure this is actually a sketch folder with a .pde,
-        // not a .DS_Store file or another random user folder
-
-        if (pde.exists() &&
-            (Base.calcFolderSize(prey) == 0)) {
-          //System.out.println("i want to remove " + prey);
-
-          if (Preferences.getBoolean("sketchbook.auto_clean")) {
-            Base.removeDir(prey);
-
-            /*
-          } else {  // otherwise prompt the user
-            String prompt =
-              "Remove empty sketch titled \"" + entries[j] + "\"?";
-
-            Object[] options = { "Yes", "No" };
-            int result =
-              JOptionPane.showOptionDialog(editor,
-                                           prompt,
-                                           "Housekeeping",
-                                           JOptionPane.YES_NO_OPTION,
-                                           JOptionPane.QUESTION_MESSAGE,
-                                           null,
-                                           options,
-                                           options[0]);
-            if (result == JOptionPane.YES_OPTION) {
-              Base.removeDir(prey);
-            }
-            */
-          }
-        }
-      }
-    }
   }
 
   
@@ -1141,17 +1105,6 @@ public class Base {
 
 
   // .................................................................
-
-
-  /*
-  static final int kDocumentsFolderType =
-    ('d' << 24) | ('o' << 16) | ('c' << 8) | 's';
-  static final int kPreferencesFolderType =
-    ('p' << 24) | ('r' << 16) | ('e' << 8) | 'f';
-  static final int kDomainLibraryFolderType =
-    ('d' << 24) | ('l' << 16) | ('i' << 8) | 'b';
-  static final short kUserDomain = -32763;
-  */
 
 
   static public File getSettingsFolder() {
@@ -1276,6 +1229,11 @@ public class Base {
   }
 
 
+  /**
+   * For now, only used by Preferences to get the preferences.txt file.
+   * @param filename
+   * @return
+   */
   static public File getSettingsFile(String filename) {
     return new File(getSettingsFolder(), filename);
   }
@@ -1486,6 +1444,64 @@ public class Base {
     }
     return folder;
   }
+
+  
+  /**
+   * Clear out projects that are empty.
+   */
+  static public void cleanSketchbook() {
+    if (!Preferences.getBoolean("sketchbook.auto_clean")) return;
+
+    File sketchbookFolder = new File(getSketchbookPath());
+    if (!sketchbookFolder.exists()) return;
+
+    //String entries[] = new File(userPath).list();
+    String entries[] = sketchbookFolder.list();
+    if (entries != null) {
+      for (int j = 0; j < entries.length; j++) {
+        //System.out.println(entries[j] + " " + entries.length);
+        if (entries[j].charAt(0) == '.') continue;
+
+        //File prey = new File(userPath, entries[j]);
+        File prey = new File(sketchbookFolder, entries[j]);
+        File pde = new File(prey, entries[j] + ".pde");
+
+        // make sure this is actually a sketch folder with a .pde,
+        // not a .DS_Store file or another random user folder
+
+        if (pde.exists() && (Base.calcFolderSize(prey) == 0)) {
+          //System.out.println("i want to remove " + prey);
+
+          //if (Preferences.getBoolean("sketchbook.auto_clean")) {
+          Base.removeDir(prey);
+
+            /*
+          } else {  // otherwise prompt the user
+            String prompt =
+              "Remove empty sketch titled \"" + entries[j] + "\"?";
+
+            Object[] options = { "Yes", "No" };
+            int result =
+              JOptionPane.showOptionDialog(editor,
+                                           prompt,
+                                           "Housekeeping",
+                                           JOptionPane.YES_NO_OPTION,
+                                           JOptionPane.QUESTION_MESSAGE,
+                                           null,
+                                           options,
+                                           options[0]);
+            if (result == JOptionPane.YES_OPTION) {
+              Base.removeDir(prey);
+            }
+            */
+          //}
+        }
+      }
+    }
+  }
+
+
+  // .................................................................
 
 
   /**
