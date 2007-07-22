@@ -82,6 +82,8 @@ public class Editor extends JFrame {
   PageFormat pageFormat;
   PrinterJob printerJob;
 
+  JMenu sketchbookMenu;
+  
   EditorButtons buttons;
   JMenu buttonsMenu;
   
@@ -188,8 +190,8 @@ public class Editor extends JFrame {
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
 
-    buttonsMenu = base.sketchbook.createButtonsMenu();
-    buttons = new EditorButtons(this, buttonsMenu);
+    //buttonsMenu = base.sketchbook.createButtonsMenu().
+    buttons = new EditorButtons(this, buttonsMenu.getPopupMenu());
     upper.add(buttons);
 
     header = new EditorHeader(this);
@@ -525,8 +527,14 @@ public class Editor extends JFrame {
         }
       });
     menu.add(item);
-    base.sketchbook.addSketchbookMenu(menu);
-    base.sketchbook.addExamplesMenu(menu);
+
+    sketchbookMenu = new JMenu("Sketchbook");
+    base.rebuildSketchbookMenu(sketchbookMenu);
+    menu.add(sketchbookMenu);
+
+    JMenu examplesMenu = new JMenu("Examples");
+    base.rebuildExamplesMenu(examplesMenu);
+    menu.add(examplesMenu);
 
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
@@ -638,7 +646,8 @@ public class Editor extends JFrame {
 
     menu.addSeparator();
 
-    menu.add(base.sketchbook.getImportMenu());
+    JMenu importMenu = new JMenu("Import Library...");
+    //menu.add(base.getImportMenu());
 
     //if (Base.isWindows() || Base.isMacOS()) {
     // no way to do an 'open in file browser' on other platforms
