@@ -15,9 +15,9 @@ o   or start them in the upper-left corner of the screen?
 X when quitting, save all sketch windows and their locations
 X   do this before checkModified, because it'll close them individually
 X if quitting when zero windows are open, mark as such and use untitled
-_ first untitled sketch not being marked as modified
-_ move untitled sketches to the tmp folder
-_   then on save, do a save as that defaults to the sketch folder
+X first untitled sketch not being marked as modified
+X move untitled sketches to the tmp folder
+X   then on save, do a save as that defaults to the sketch folder
 _ improve speed of "new", which is calling the rebuild menus
 _   keep one static list of all pairs of names/files in sketchbook
 _   tough to do with the multiple directories/submenus
@@ -34,6 +34,7 @@ _ on first save, ask for the name of the project (with default)
 _ cmd-opt-r for rename?
 _ save/saveas should use modal dialog
 _   only use the bottom bar for name, rename, new tab
+_ make editor buttons light up and clear properly 
 
 _ don't bug the user about new release of p5 when they have it
 _   add prefs option for "latest version run"
