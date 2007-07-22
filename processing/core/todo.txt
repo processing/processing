@@ -2,6 +2,8 @@
 o rect() after strokeWeight(1) gives wrong coords
 X   http://dev.processing.org/bugs/show_bug.cgi?id=535
 X   bug in osx java 1.4 vs 1.5
+X fix bug in str() methods that take arrays
+X   method was not working properly, was using the object reference
 
 
 _ update the reference to cover parseXxxx() stuff
