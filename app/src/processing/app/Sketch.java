@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -60,11 +60,6 @@ public class Sketch {
    */
   boolean modified;
   
-  /**
-   * true if this file has not yet been given a name by the user
-   */
-  boolean untitled;
-
   public File folder;
   public File dataFolder;
   public File codeFolder;
@@ -593,7 +588,8 @@ public class Sketch {
 
         // make a new sketch, and i think this will rebuild the sketch menu
         //editor.handleNewUnchecked();
-        editor.handleClose2();
+        //editor.handleClose2();
+        editor.base.handleClose(editor);
 
       } else {
         // delete the file
