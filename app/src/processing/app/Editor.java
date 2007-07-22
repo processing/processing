@@ -150,7 +150,7 @@ public class Editor extends JFrame {
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          base.handleClose(Editor.this);
+          base.handleClose(Editor.this, false);
           //handleClose2();
           //handleQuitInternal();
         }
@@ -442,7 +442,7 @@ public class Editor extends JFrame {
     item = Editor.newJMenuItem("Close", 'W', false);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          base.handleClose(Editor.this);
+          base.handleClose(Editor.this, false);
         }
       });
     menu.add(item);
