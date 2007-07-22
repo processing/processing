@@ -1,10 +1,9 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Editor - main editor panel for the processing development environment
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -30,26 +29,19 @@ import processing.core.*;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-//import java.awt.dnd.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-//import java.lang.reflect.*;
-//import java.net.*;
-//import java.util.*;
-//import java.util.zip.*;
 
 import javax.swing.*;
-//import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-//import com.apple.mrj.*;
-//import com.oroinc.text.regex.*;
-//import de.hunsicker.jalopy.*;
 
-
+/**
+ * Main editor panel for the Processing Development Environment.
+ */
 public class Editor extends JFrame {
 
   Base base;
@@ -78,6 +70,11 @@ public class Editor extends JFrame {
   int checkModifiedMode;
   String handleOpenPath;
   boolean handleNewShift;
+
+  /**
+   * true if this file has not yet been given a name by the user
+   */
+  boolean untitled;
 
   PageFormat pageFormat;
   PrinterJob printerJob;
@@ -114,7 +111,7 @@ public class Editor extends JFrame {
   JMenuItem saveAsMenuItem;
   
   // True if the sketchbook has changed since this Editor was last active.
-  boolean sketchbookChanged;
+  boolean sketchbookUpdated;
 
   //
 
@@ -153,7 +150,9 @@ public class Editor extends JFrame {
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          handleQuitInternal();
+          base.handleClose(Editor.this);
+          //handleClose2();
+          //handleQuitInternal();
         }
       });
     // don't close the window when clicked, the app will take care
@@ -165,6 +164,11 @@ public class Editor extends JFrame {
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
           base.handleActivated(Editor.this);
+          if (sketchbookUpdated) {
+            base.rebuildSketchbookMenu(sketchbookMenu);
+            base.rebuildToolbarMenu(toolbarMenu);
+            sketchbookUpdated = false;
+          }
         }
       });
 
@@ -529,6 +533,14 @@ public class Editor extends JFrame {
       });
     menu.add(item);
 
+    item = Editor.newJMenuItem("Close", 'W', false);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.handleClose(Editor.this);
+        }
+      });
+    menu.add(item);
+
     sketchbookMenu = new JMenu("Sketchbook");
     base.rebuildSketchbookMenu(sketchbookMenu);
     menu.add(sketchbookMenu);
@@ -608,7 +620,7 @@ public class Editor extends JFrame {
       item = newJMenuItem("Quit", 'Q');
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            handleQuitInternal();
+            base.handleQuit();
           }
         });
       menu.add(item);
@@ -1668,9 +1680,11 @@ public class Editor extends JFrame {
   */
   
   
+  /*
   public void handleClose2() {
     base.handleClose(this);
   }
+  */
 
 
   /**
@@ -1685,12 +1699,13 @@ public class Editor extends JFrame {
   public boolean handleSave(boolean immediately) {
     doStop();
     
-    if (sketch.untitled) {
+    if (untitled) {
+      return handleSaveAs();
       // need to get the name, user might also cancel here
-    }
 
-    if (immediately) {
+    } else if (immediately) {
       handleSave2();
+      
     } else {
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
@@ -1731,29 +1746,32 @@ public class Editor extends JFrame {
   }
 
 
-  public void handleSaveAs() {
+  public boolean handleSaveAs() {
     doStop();
     toolbar.activate(EditorToolbar.SAVE);
 
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          message("Saving...");
-          try {
-            if (sketch.saveAs()) {
-              message("Done Saving.");
-              // Disabling this for 0125, instead rebuild the menu inside
-              // the Save As method of the Sketch object, since that's the
-              // only one who knows whether something was renamed.
-              //sketchbook.rebuildMenusAsync();
-            } else {
-              message("Save Cancelled.");
-            }
-          } catch (Exception e) {
-            // show the error as a message in the window
-            error(e);
-          }
-          toolbar.clear();
-        }});
+    //SwingUtilities.invokeLater(new Runnable() {
+    //public void run() {
+    message("Saving...");
+    try {
+      if (sketch.saveAs()) {
+        message("Done Saving.");
+        // Disabling this for 0125, instead rebuild the menu inside
+        // the Save As method of the Sketch object, since that's the
+        // only one who knows whether something was renamed.
+        //sketchbook.rebuildMenusAsync();
+      } else {
+        message("Save Canceled.");
+        return false;
+      }
+    } catch (Exception e) {
+      // show the error as a message in the window
+      error(e);
+    }
+    toolbar.clear();
+    //}});
+    
+    return true;
   }
 
 
@@ -1896,6 +1914,7 @@ public class Editor extends JFrame {
    * to disk just in case they want to quit. Final exit() happens
    * in Editor since it has the callback from EditorStatus.
    */
+  /*
   public void handleQuitInternal() {
     // doStop() isn't sufficient with external vm & quit
     // instead use doClose() which will kill the external vm
@@ -1903,6 +1922,7 @@ public class Editor extends JFrame {
 
     checkModified(true);
   }
+  */
 
 
   /**
