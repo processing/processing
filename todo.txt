@@ -15,11 +15,11 @@ _     tough to do with the multiple directories/submenus
 _     add methods for "add" and "remove" for sketches
 _       also a rename method, which could just be a remove and add
 _     libraries and examples won't be rebuilt during the session
-_   get quit to work properly on macosx
+X   get quit to work properly on macosx
 _   make sure quit being handled properly on windows/linux
-_   open new sketch windows slightly offset from the previous
-_     or start them in the upper-left corner of the screen?
-_   when quitting, save all sketch windows
+X   open new sketch windows slightly offset from the previous
+X     or start them in the upper-left corner of the screen?
+_   when quitting, save all sketch windows and their locations
 _     do this before checkModified, because it'll close them individually
 _   if quitting when zero windows are open, mark as such and use untitled
 _   clean up number of new/open/close functions in editor and in base

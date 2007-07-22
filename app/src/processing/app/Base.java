@@ -66,6 +66,13 @@ public class Base {
   // found in the sketchbook)
   static String librariesClassPath;
 
+  int editorCount;
+  Editor[] editors;
+  Editor activeEditor;
+  
+  int nextEditorX;
+  int nextEditorY;
+
   
   static public void main(String args[]) {
 
@@ -338,14 +345,6 @@ public class Base {
   // .................................................................
 
 
-  int editorCount;
-  Editor[] editors;
-  Editor activeEditor;
-  
-  int nextEditorX;
-  int nextEditorY;
-
-  
   static public String getSketchbookPath() {
     return Preferences.get("sketchbook.path");
   }
@@ -361,24 +360,27 @@ public class Base {
   
   
   protected int[] nextEditorLocation() {
-    int[] location = new int[5];
+    int[] location; 
 
-    // Get default window width and height
-    location[2] = Preferences.getInteger("default.window.width");
-    location[3] = Preferences.getInteger("default.window.height");
-
-    // If no position set yet, start with the middle of the screen
-    if (nextEditorX == 0) {  
+    if (activeEditor == null) {
+      // If no current active editor, use default placement
+      location = new int[5];
+      
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-      nextEditorX = (screen.width - location[2]) / 2;
-      nextEditorY = (screen.height - location[3]) / 2;
+      location[0] = (screen.width - location[2]) / 2;
+      location[1] = (screen.height - location[3]) / 2;
+      
+      // Get default window width and height
+      location[2] = Preferences.getInteger("default.window.width");
+      location[3] = Preferences.getInteger("default.window.height");
+      
+    } else {
+      // With a currently active editor, open the new window 
+      // using the same dimensions, but offset slightly.
+      location = activeEditor.getPlacement();
+      location[0] += 50;
+      location[1] += 50;
     }
-    location[0] = nextEditorX;
-    location[1] = nextEditorY;
-    
-    nextEditorX += 50;
-    nextEditorY += 50;
-    
     return location;
   }
   
@@ -592,7 +594,7 @@ public class Base {
    *         can be set by the caller
    */
   public Editor handleOpen(String path) {
-    return new Editor(this, path, nextEditorLocation());
+    return handleOpen(path, nextEditorLocation());
   }
   
   
@@ -625,6 +627,7 @@ public class Base {
             editors[j] = editors[j+1];
           }
           editorCount--;
+          // Set to null so that garbage collection occurs
           editors[editorCount] = null;
         }
       }
@@ -634,6 +637,12 @@ public class Base {
       // or could just quit the application.
       if (editorCount == 0) {
         handleQuit();
+
+        // Since this wasn't an actual Quit event, 
+        // System.exit() needs to be called for Mac OS X.
+        if (PApplet.platform == PConstants.MACOSX) {
+          System.exit(0);
+        }
       }
       return true;
     }
@@ -655,7 +664,8 @@ public class Base {
       Base.cleanSketchbook();
 
       if (PApplet.platform != PConstants.MACOSX) {
-        // macosx will take care of killing itself
+        // If this was fired from the menu or an AppleEvent (the Finder),
+        // then Mac OS X will send the terminate signal itself.
         System.exit(0);
       }
     }
