@@ -128,16 +128,11 @@ public class Base {
     }
     */
 
-    Base base = new Base();
-    
-    // TODO loop through args.length and open each
-    for (int i = 0; i < args.length; i++) {
-      base.handleOpen(args[i]);
-    }
+    /*Base base =*/ new Base(args);
   }
 
 
-  public Base() {
+  public Base(String[] args) {
     // #@$*(@#$ apple.. always gotta think different
     if (PApplet.platform == PConstants.MACOSX) {
       registerMacOS();
@@ -173,13 +168,25 @@ public class Base {
         defaultFolder.mkdirs();
       }
     }
+    
+    // Check if there were previously opened sketches to be restored
+    boolean opened = restoreSketches();    
+    
+    // Check if any files were passed in on the command line
+    for (int i = 0; i < args.length; i++) {
+      if (handleOpen(args[i]) != null) {
+        opened = true;
+      }
+    }
 
     // Create a new empty window (will be replaced with any files to be opened)
-    try {
-      String path = handleNewUntitled();
-      handleOpen(path);
-    } catch (IOException e) {
-      e.printStackTrace();
+    if (!opened) {
+      try {
+        String path = handleNewUntitled();
+        handleOpen(path);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -219,7 +226,7 @@ public class Base {
    * The complement to "storePreferences", this is called when the
    * application is first launched.
    */
-  public void restoreSketches() {
+  public boolean restoreSketches() {
     // figure out window placement
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -251,70 +258,22 @@ public class Base {
     
     // Save the sketch path and window placement for each open sketch
     int count = Preferences.getInteger("last.sketch.count");
-    for (int i = 0; i < editorCount; i++) {
-      String path = editors[i].sketch.getMainFilePath();
-      Preferences.set("last.sketch" + i + ".path", path);
-      
-      int[] location = editors[i].getPlacement();
-      String locationStr = PApplet.join(PApplet.str(location), ",");
-      Preferences.set("last.sketch" + i + ".location", locationStr);
-    }
-
-    
-    /*
-    if (!windowPositionValid) {
-      //System.out.println("using default size");
-      int windowH = Preferences.getInteger("default.window.height");
-      int windowW = Preferences.getInteger("default.window.width");
-      setBounds((screen.width - windowW) / 2,
-                (screen.height - windowH) / 2,
-                windowW, windowH);
-      // this will be invalid as well, so grab the new value
-      Preferences.setInteger("last.divider.location",
-                             splitPane.getDividerLocation());
-    } else {
-      setBounds(Preferences.getInteger("last.window.x"),
-                Preferences.getInteger("last.window.y"),
-                Preferences.getInteger("last.window.width"),
-                Preferences.getInteger("last.window.height"));
-    }
-    */
-
-    // last sketch that was in use, or used to launch the app
-
-    /*
-      // TODO bring this back
-
-    if (Base.openedAtStartup != null) {
-      handleOpen2(Base.openedAtStartup);
-
-    } else {
-      //String sketchName = Preferences.get("last.sketch.name");
-      String sketchPath = Preferences.get("last.sketch.path");
-      //Sketch sketchTemp = new Sketch(sketchPath);
-
-      if ((sketchPath != null) && (new File(sketchPath)).exists()) {
-        // don't check modified because nothing is open yet
-        handleOpen2(sketchPath);
-
+    int opened = 0;
+    for (int i = 0; i < count; i++) {
+      String path = Preferences.get("last.sketch" + i + ".path");
+      int[] location;
+      if (windowPositionValid) {
+        String locationStr = Preferences.get("last.sketch" + i + ".location");
+        location = PApplet.parseInt(PApplet.split(locationStr, ','));
       } else {
-        handleNew2(true);
+        location = nextEditorLocation();
+      }
+      // If file did not exist, null will be returned for the Editor
+      if (handleOpen(path, location) != null) {
+        opened++;
       }
     }
-    */
-
-
-    /*
-    // location for the console/editor area divider
-
-    int location = Preferences.getInteger("last.divider.location");
-    splitPane.setDividerLocation(location);
-    */
-
-
-    // read the preferences that are settable in the preferences window
-
-    //applyPreferences();
+    return (opened > 0);
   }
 
   
@@ -323,14 +282,14 @@ public class Base {
    * Called when the application is quitting and documents are still open.
    */
   public void storeSketches() {
-    
     // Save the width and height of the screen
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     Preferences.setInteger("last.screen.width", screen.width);
     Preferences.setInteger("last.screen.height", screen.height);
 
     // Save the sketch path and window placement for each open sketch
-    Preferences.setInteger("last.sketch.count", editorCount);    
+    Preferences.setInteger("last.sketch.count", editorCount);
+    //System.out.println("saving sketch count " + editorCount);
     for (int i = 0; i < editorCount; i++) {
       String path = editors[i].sketch.getMainFilePath();
       Preferences.set("last.sketch" + i + ".path", path);
@@ -365,14 +324,14 @@ public class Base {
     if (activeEditor == null) {
       // If no current active editor, use default placement
       location = new int[5];
+
+      // Get default window width and height
+      location[2] = Preferences.getInteger("default.window.width");
+      location[3] = Preferences.getInteger("default.window.height");
       
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
       location[0] = (screen.width - location[2]) / 2;
       location[1] = (screen.height - location[3]) / 2;
-      
-      // Get default window width and height
-      location[2] = Preferences.getInteger("default.window.width");
-      location[3] = Preferences.getInteger("default.window.height");
       
     } else {
       // With a currently active editor, open the new window 
@@ -384,26 +343,6 @@ public class Base {
     return location;
   }
   
-
-  /**
-   * Asynchronous version of menu rebuild to be used on 'new' and 'save',
-   * to prevent the interface from locking up until the menus are done.
-   */
-  public void rebuildMenusAsync() {
-    // disabling the async option for actual release, this hasn't been tested
-    /*
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          rebuildMenus();
-        }
-      });
-    */
-    for (int i = 0; i < editorCount; i++) {
-      editors[i].sketchbookUpdated = true; //sketchbook.rebuildMenus();
-    }
-    //rebuildMenus();
-  }
-
 
   // .................................................................
 
@@ -599,6 +538,9 @@ public class Base {
   
   
   public Editor handleOpen(String path, int[] location) {
+    File file = new File(path);
+    if (!file.exists()) return null;
+
     Editor editor = new Editor(this, path, location);
     
     if (editors == null) {
@@ -612,7 +554,7 @@ public class Base {
   }
 
 
-  public boolean handleClose(Editor editor) {
+  public boolean handleClose(Editor editor, boolean quitting) {
     // Check if modified
     boolean success = editor.checkModified(false);
 
@@ -635,26 +577,38 @@ public class Base {
       // If not canceled, check if this was the last open window.
       // If it was the last, could either do a new untitled window, 
       // or could just quit the application.
-      if (editorCount == 0) {
-        handleQuit();
+      if (!quitting && (editorCount == 0)) {
+        // This will store the sketch count as zero
+        storeSketches();
+
+        // Save out the current prefs state
+        Preferences.save();
+
+        // Clean out empty sketches
+        Base.cleanSketchbook();
+        // can't do handleQuit(), would do weird recursive thing
+        //handleQuit();
 
         // Since this wasn't an actual Quit event, 
         // System.exit() needs to be called for Mac OS X.
-        if (PApplet.platform == PConstants.MACOSX) {
-          System.exit(0);
-        }
+        //if (PApplet.platform == PConstants.MACOSX) {
+        System.exit(0);
+        //}
       }
       return true;
     }
-
     return false;
   }
 
   
   public boolean handleQuit() {
+    // If quit is canceled, this will be replaced anyway 
+    // by a later handleQuit() that is not canceled.
+    storeSketches();
+    
     boolean canceled = false;
     for (int i = 0; i < editorCount; i++) {
-      if (!handleClose(editors[i])) {
+      if (!handleClose(editors[i], true)) {
         canceled = true;
         break;
       }
@@ -662,6 +616,10 @@ public class Base {
     if (!canceled) {
       // Clean out empty sketches
       Base.cleanSketchbook();
+
+      // Save out the current prefs state
+      Preferences.save();
+      //console.handleQuit();
 
       if (PApplet.platform != PConstants.MACOSX) {
         // If this was fired from the menu or an AppleEvent (the Finder),
@@ -674,6 +632,26 @@ public class Base {
 
   
   // .................................................................
+
+
+  /**
+   * Asynchronous version of menu rebuild to be used on 'new' and 'save',
+   * to prevent the interface from locking up until the menus are done.
+   */
+  public void rebuildMenusAsync() {
+    // disabling the async option for actual release, this hasn't been tested
+    /*
+    SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          rebuildMenus();
+        }
+      });
+    */
+    for (int i = 0; i < editorCount; i++) {
+      editors[i].sketchbookUpdated = true; //sketchbook.rebuildMenus();
+    }
+    //rebuildMenus();
+  }
 
 
   /**
