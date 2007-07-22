@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -27,17 +27,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.*;
-//import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-//import java.util.zip.*;
 
 import javax.swing.*;
-//import javax.swing.event.*;
-//import javax.swing.text.*;
-//import javax.swing.undo.*;
 
-//import com.apple.mrj.*;
 import com.ice.jni.registry.*;
 
 import processing.core.*;
@@ -45,30 +39,17 @@ import processing.core.*;
 
 /**
  * The base class for the main processing application.
- * <P>
  * Primary role of this class is for platform identification and
  * general interaction with the system (launching URLs, loading
  * files and images, etc) that comes from that.
  */
 public class Base {
-  /*
-  implements MRJAboutHandler, MRJQuitHandler, MRJPrefsHandler,
-             MRJOpenDocumentHandler //, MRJOpenApplicationHandler
-  */
   static final int VERSION = 126;
   static final String VERSION_NAME = "0126 Beta";
 
   // set to true after the first time it's built.
   // so that the errors while building don't show up again.
   boolean builtOnce;
-
-  //File sketchbookFolder;
-  //String sketchbookPath;  // canonical path
-
-  // last file/directory used for file opening
-  //String handleOpenDirectory;
-  // opted against this.. in imovie, apple always goes
-  // to the "Movies" folder, even if that wasn't the last used
 
   // these are static because they're used by Sketch
   static File examplesFolder;
@@ -86,16 +67,6 @@ public class Base {
   static String librariesClassPath;
 
   
-  /**
-   * Path of filename opened on the command line,
-   * or via the MRJ open document handler.
-   */
-  //static String openedAtStartup;
-
-  //Sketchbook sketchbook;
-  //Editor editor;
-
-
   static public void main(String args[]) {
 
     // make sure that this is running on java 1.4
@@ -107,26 +78,7 @@ public class Base {
                      "Please visit java.com to upgrade.", null);
     }
 
-
-    // register a temporary/early version of the mrj open document handler,
-    // because the event may be lost (sometimes, not always) by the time
-    // that Editor is properly constructed.
-
-    /*
-    MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
-        public void handleOpenFile(File file) {
-          // this will only get set once.. later will be handled
-          // by the Editor version of this fella
-          if (Base.openedAtStartup == null) {
-            //System.out.println("handling outside open file: " + file);
-            Base.openedAtStartup = file.getAbsolutePath();
-          }
-        }
-      };
-    MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
-    */
-
-    // set the look and feel before opening the window
+    // Set the look and feel before opening the window
     try {
       if (Base.isMacOS()) {
         // Use the Quaqua L & F on OS X to make JFileChooser less awful
@@ -151,25 +103,12 @@ public class Base {
       } else {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
-    //} catch (ClassNotFoundException cnfe) {
-      // just default to the native look and feel for this platform
-      // i.e. appears that some linux systems don't have the gtk l&f
-      //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    // use native popups so they don't look so crappy on osx
+    // Use native popups so they don't look so crappy on osx
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-
-    // grab any opened file from the command line
-    /*
-    if (args.length == 1) {
-      Base.openedAtStartup = args[0];
-    }
-    */
-    // TODO loop through args.length and open each
 
     // run static initialization that grabs all the prefs
     Preferences.init();
@@ -181,87 +120,29 @@ public class Base {
       new UpdateCheck(editor);
     }
     */
+
+    Base base = new Base();
     
-    /*Base app =*/ new Base();
+    // TODO loop through args.length and open each
+    for (int i = 0; i < args.length; i++) {
+      base.handleOpen(args[i]);
+    }
   }
 
 
   public Base() {
-    /*
-    // build the editor object
-    editor = new Editor();
-
-    // get things rawkin
-    editor.pack();
-
-    // has to be here to set window size properly
-    editor.restorePreferences();
-
-    // show the window
-    editor.show();
-    */
-    
+    // #@$*(@#$ apple.. always gotta think different
     if (PApplet.platform == PConstants.MACOSX) {
       registerMacOS();
     }
-
-    /*
-    if (PApplet.platform == PConstants.MACOSX) {
-      MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
-          public void handleOpenFile(File file) {
-            handleOpen(file);
-            // this will only get set once.. later will be handled
-            // by the Editor version of this fella
-            //if (Base.openedAtStartup == null) {
-            //System.out.println("handling outside open file: " + file);
-            //Base.openedAtStartup = file.getAbsolutePath();
-            //}
-          }
-        };
-      MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
-
-      // #@$*(@#$ apple.. always gotta think different
-      MRJApplicationUtils.registerAboutHandler(new MRJAboutHandler() {
-          public void handleAbout() {
-            activeEditor.handleAbout();
-          }
-        });
-
-      MRJApplicationUtils.registerPrefsHandler(new MRJPrefsHandler() {
-          public void handlePrefs() {
-            activeEditor.handlePrefs();
-          }
-        });
-
-      // Method for the MRJQuitHandler, needs to be dealt with differently
-      // than the regular handler because OS X has an annoying implementation
-      // <A HREF="http://developer.apple.com/qa/qa2001/qa1187.html">quirk</A>
-      // that requires an exception to be thrown in order to properly cancel
-      // a quit message.
-      MRJApplicationUtils.registerQuitHandler(new MRJQuitHandler() {
-          public void handleQuit() {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                  handleQuit();
-                }
-              });
-            // Throw IllegalStateException so new thread can execute.
-            // If showing dialog on this thread in 10.2, we would throw
-            // upon JOptionPane.NO_OPTION
-            throw new IllegalStateException("Quit Pending User Confirmation");
-          }
-        });
-    }
-    */
-
-    // this shouldn't change throughout.. it may as well be static
-    // but only one instance of sketchbook will be built so who cares
+    
+    // Get paths for the libraries and examples in the Processing folder
     examplesFolder = new File(System.getProperty("user.dir"), "examples");
     examplesPath = examplesFolder.getAbsolutePath();
-
     librariesFolder = new File(System.getProperty("user.dir"), "libraries");
     librariesPath = librariesFolder.getAbsolutePath();
 
+    // Get the sketchbook path, and make sure it's set properly
     String sketchbookPath = Preferences.get("sketchbook.path");
 
     // If a value is at least set, first check to see if the folder exists. 
@@ -277,6 +158,7 @@ public class Base {
       }
     }
 
+    // If not path is set, get the default sketchbook folder for this platform
     if (sketchbookPath == null) {
       File defaultFolder = Base.getDefaultSketchbookFolder();
       Preferences.set("sketchbook.path", defaultFolder.getAbsolutePath());
@@ -284,9 +166,8 @@ public class Base {
         defaultFolder.mkdirs();
       }
     }
-    
+
     // Create a new empty window (will be replaced with any files to be opened)
-    //new Editor(this, null);
     try {
       String path = handleNewUntitled();
       handleOpen(path);
@@ -332,6 +213,135 @@ public class Base {
   Editor activeEditor;
 
   
+  /*
+  public void handleClose() {
+    if (checkModified()) {
+      frame.setVisible(false);
+      frame.dispose();
+    }
+  }
+  
+  
+  // @return true if completed and not canceled
+  public boolean handleSave() {
+    if (untitled) return handleSaveAs();
+  
+    try {
+      saveFile(file, textarea.getText());
+      setModified(false);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return true;
+  }
+  
+  
+  public boolean handleSaveAs() {
+    FileDialog fd = new FileDialog(frame,
+                                   "Save text as...",
+                                   FileDialog.SAVE);
+    fd.setFile(file.getName());
+    fd.setVisible(true);
+  
+    String newFolder = fd.getDirectory();
+    String newFilename = fd.getFile();
+    if (newFolder == null) {
+      return false;
+    }
+  
+    file = new File(newFolder, newFilename);
+    untitled = false;
+    return handleSave();
+  }
+  
+  
+  public void handleQuit() {
+    if (checkModified()) {
+      System.exit(0);
+    }
+  }
+  
+  // @return false if canceling the close/quit operation
+  protected boolean checkModified() {
+    if (!modified) return true;
+  
+    String prompt = "Save changes to " + file.getName() + "?  ";
+  
+    if (PApplet.platform != PConstants.MACOSX || PApplet.javaVersion < 1.5f) {
+      int result =
+        JOptionPane.showConfirmDialog(frame, prompt, "Close",
+                                      JOptionPane.YES_NO_CANCEL_OPTION,
+                                      JOptionPane.QUESTION_MESSAGE);
+  
+      if (result == JOptionPane.YES_OPTION) {
+        return handleSave();
+  
+      } else if (result == JOptionPane.NO_OPTION) {
+        return true;  // ok to continue
+  
+      } else if (result == JOptionPane.CANCEL_OPTION) {
+        return false;
+      } else {
+        throw new IllegalStateException();
+      }
+  
+    } else {
+      // This code is disabled unless Java 1.5 is being used on Mac OS X
+      // because of a Java bug that prevents the initial value of the
+      // dialog from being set properly (at least on my MacBook Pro).
+      // The bug causes the "Don't Save" option to be the highlighted,
+      // blinking, default. This sucks. But I'll tell you what doesn't
+      // suck--workarounds for the Mac and Apple's snobby attitude about it!
+  
+      // adapted from the quaqua guide
+      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
+      JOptionPane pane =
+        new JOptionPane("<html> " +
+                        "<head> <style type=\"text/css\">"+
+                        "b { font: 13pt \"Lucida Grande\" }"+
+                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                        "</style> </head>" +
+                        "<b>Do you want to save changes to this text<BR>" +
+                        " before closing?</b>" +
+                        "<p>If you don't save, your changes will be lost.",
+                        JOptionPane.QUESTION_MESSAGE);
+  
+      String[] options = new String[] {
+        "Save", "Cancel", "Don't Save"
+      };
+      pane.setOptions(options);
+  
+      // highlight the safest option ala apple hig
+      pane.setInitialValue(options[0]);
+  
+      // on macosx, setting the destructive property places this option
+      // away from the others at the lefthand side
+      pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
+                             new Integer(2));
+  
+      JDialog dialog = pane.createDialog(frame, null);
+      dialog.setVisible(true);
+  
+      Object result = pane.getValue();
+      if (result == options[0]) {  // save (and close/quit)
+        return handleSave();
+  
+      } else if (result == options[2]) {  // don't save (still close/quit)
+        return true;
+  
+      } else {  // cancel?
+        return false;
+      }
+    }
+  }
+  */
+  
+  
+  static public String getSketchbookPath() {
+    return Preferences.get("sketchbook.path");
+  }
+
+
   // Because of variations in native windowing systems, no guarantees about
   // changes to the focused and active Windows can be made. Developers must
   // never assume that this Window is the focused or active Window until this
@@ -344,58 +354,6 @@ public class Base {
   /*
   public Editor getActiveEditor() {
     return activeEditor;
-  }
-  */
-  
-  
-  public boolean handleQuit() {
-    boolean canceled = false;
-    for (int i = 0; i < editorCount; i++) {
-      if (!handleClose(editors[i])) {
-        canceled = true;
-        break;
-      }
-    }
-    return !canceled;
-  }
-  
-  /*
-    storePreferences();
-    Preferences.save();
-
-    sketchbook.clean();
-    console.handleQuit();
-
-    //System.out.println("exiting here");
-    System.exit(0);
-   */
-
-  /*
-  public void handleNew() {
-    // create a new window
-    // location should be offset from the current frontmost window
-    // name will be sketch_070716a
-    try {
-      String pdePath = sketchbook.handleNew(noPrompt, handleNewShift);
-      //if (pdePath != null) handleOpen2(pdePath);
-      if (pdePath != null) {
-        Editor e = new Editor(pdePath);
-      }
-
-    } catch (IOException e) {
-      // not sure why this would happen, but since there's no way to
-      // recover (outside of creating another new setkch, which might
-      // just cause more trouble), then they've gotta quit.
-      Base.showError("Problem creating a new sketch",
-                     "An error occurred while creating\n" +
-                     "a new sketch. Processing must now quit.", e);
-    }
-  }
-  */
-
-
-  /*
-  public void handleNewPrompt() {
   }
   */
   
@@ -580,14 +538,6 @@ public class Base {
   */
 
   
-  static public String getSketchbookPath() {
-    return Preferences.get("sketchbook.path");
-  }
-
-  
-  // .................................................................
-
-
   /**
    * New was called (by buttons or by menu), first check modified
    * and if things work out ok, handleNew2() will be called.
@@ -665,7 +615,7 @@ public class Base {
 
   /**
    * Handle creating a sketch folder, return its base .pde file
-   * or null if the operation was cancelled.
+   * or null if the operation was canceled.
    * @param shift whether shift is pressed, which will invert prompt setting
    * @param noPrompt disable prompt, no matter the setting
    */
@@ -673,7 +623,7 @@ public class Base {
     File newbieDir = null;
     String newbieName = null;
 
-    // use a generic name like sketch_031008a, the date plus a char
+    // Use a generic name like sketch_031008a, the date plus a char
     String newbieParentDir = getSketchbookPath();
 
     int index = 0;
@@ -689,17 +639,10 @@ public class Base {
 
 
   static protected String handleNewInternal(File newbieDir, String newbieName) throws FileNotFoundException {
-    // make the directory for the new sketch
+    // Make the directory for the new sketch
     newbieDir.mkdirs();
 
-    /*
-    // if it's a library, make a library subfolder to tag it as such
-    if (library) {
-      new File(newbieDir, "library").mkdirs();
-    }
-    */
-
-    // make an empty pde file
+    // Make an empty pde file
     File newbieFile = new File(newbieDir, newbieName + ".pde");
     new FileOutputStream(newbieFile);  // create the file
 
@@ -711,7 +654,7 @@ public class Base {
     // and it's likely to cause more trouble than necessary by
     // leaving around little ._ boogers.
 
-    // TODO this wouldn't be needed if i could figure out how to
+    // this wouldn't be needed if i could figure out how to
     // associate document icons via a dot-extension/mime-type scenario
     // help me steve jobs, you're my only hope.
     
@@ -726,30 +669,23 @@ public class Base {
       //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
     }
     */
-
-    // make a note of a newly added sketch in the sketchbook menu
-    //base.rebuildMenusAsync();
-
-    // now open it up
-    //handleOpen(newbieName, newbieFile, newbieDir);
-    //return newSketch;
     return newbieFile.getAbsolutePath();
   }
 
   
   public String handleOpenPrompt(JFrame editor) {
-    // swing's file choosers are ass ugly, so we use the
-    // native (awt peered) dialogs where possible
-    FileDialog fd = new FileDialog(editor, //new Frame(),
+    // The file chooser in Swing is ass ugly, so we use the
+    // native (AWT peered) dialogs where possible
+    FileDialog fd = new FileDialog(editor,
                                    "Open a Processing sketch...",
                                    FileDialog.LOAD);
     //fd.setDirectory(Preferences.get("sketchbook.path"));
     //fd.setDirectory(getSketchbookPath());
 
-    // only show .pde files as eligible bachelors
-    // TODO this doesn't seem to ever be used. AWESOME.
+    // Only show .pde files as eligible bachelors
     fd.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
+          // TODO this doesn't seem to ever be used. AWESOME.
           //System.out.println("check filter on " + dir + " " + name);
           return name.toLowerCase().endsWith(".pde");
         }
@@ -770,6 +706,25 @@ public class Base {
 
     File selection = new File(directory, filename);
     return selection.getAbsolutePath();
+  }
+
+
+  /*
+  public Editor getActiveEditor() {
+    return activeEditor;
+  }
+  */
+  
+  
+  public boolean handleQuit() {
+    boolean canceled = false;
+    for (int i = 0; i < editorCount; i++) {
+      if (!handleClose(editors[i])) {
+        canceled = true;
+        break;
+      }
+    }
+    return !canceled;
   }
 
 
@@ -816,15 +771,17 @@ public class Base {
 
   // .................................................................
 
-  
+
+  /*
   public JPopupMenu createPopup() {
     JMenu menu = new JMenu();
     rebuildPopup(menu);
     return menu.getPopupMenu();
   }
+  */
   
   
-  public void rebuildPopup(JMenu menu) {
+  public void rebuildToolbarMenu(JMenu menu) {
     JMenuItem item;
     menu.removeAll();
 
@@ -873,11 +830,22 @@ public class Base {
   }
   
   
-  public void rebuildImportMenu(JMenu importMenu) throws IOException {
+  public void rebuildImportMenu(JMenu importMenu) {
     importMenu.removeAll();
-    boolean found = addLibraries(importMenu, new File(getSketchbookPath()));
-    if (found) importMenu.addSeparator();
-    addLibraries(importMenu, librariesFolder);
+    
+    // Add from the "libraries" subfolder in the Processing directory
+    try {
+      boolean found = addLibraries(importMenu, new File(getSketchbookPath()));
+      if (found) importMenu.addSeparator();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    // Add libraries found in the sketchbook folder
+    try {
+      addLibraries(importMenu, librariesFolder);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 
