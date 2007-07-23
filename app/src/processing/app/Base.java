@@ -295,11 +295,16 @@ public class Base {
     Preferences.setInteger("last.screen.width", screen.width);
     Preferences.setInteger("last.screen.height", screen.height);
 
+    String untitledPath = untitledFolder.getAbsolutePath();
+    
     // Save the sketch path and window placement for each open sketch
     Preferences.setInteger("last.sketch.count", editorCount);
     //System.out.println("saving sketch count " + editorCount);
     for (int i = 0; i < editorCount; i++) {
       String path = editors[i].sketch.getMainFilePath();
+      if (path.startsWith(untitledPath)) {
+        path = "";  // this will prevent it from opening
+      }
       Preferences.set("last.sketch" + i + ".path", path);
       
       int[] location = editors[i].getPlacement();
@@ -307,6 +312,37 @@ public class Base {
       Preferences.set("last.sketch" + i + ".location", locationStr);
     }
   }
+
+
+  // If a sketch is untitled on quit, may need to store the new name
+  // rather than the location from the temp folder.
+  protected void storeSketchPath(Editor editor, int index) {
+    String path = editor.sketch.getMainFilePath();
+    String untitledPath = untitledFolder.getAbsolutePath();
+    if (path.startsWith(untitledPath)) {
+      path = "";
+    }
+    Preferences.set("last.sketch" + index + ".path", path);
+  }
+  
+  
+  /*
+  public void storeSketch(Editor editor) {
+    int index = -1;
+    for (int i = 0; i < editorCount; i++) {
+      if (editors[i] == editor) {
+        index = i;
+        break;
+      }
+    }
+    if (index == -1) {
+      System.err.println("Problem storing sketch " + editor.sketch.name);
+    } else {
+      String path = editor.sketch.getMainFilePath();
+      Preferences.set("last.sketch" + index + ".path", path);
+    }
+  }
+  */
   
 
   // .................................................................
@@ -528,9 +564,11 @@ public class Base {
   }
 
 
+  /*
   public void handleOpen(File file) {
     handleOpen(file.getAbsolutePath());
   }
+  */
   
 
   /**
@@ -614,9 +652,13 @@ public class Base {
     
     boolean canceled = false;
     for (int i = 0; i < editorCount; i++) {
-      if (!handleClose(editors[i], true)) {
+      Editor editor = editors[i];
+      if (!handleClose(editor, true)) {
         canceled = true;
         break;
+      } else {
+        // Update to the new/final sketch path for this fella
+        storeSketchPath(editor, i);
       }
     }
     if (!canceled) {
