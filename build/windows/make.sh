@@ -123,7 +123,7 @@ then
 
 echo Building PDE for JDK 1.4
 
-cd app/src/
+cd app/src
 
 # first build the default java goop
 ../../build/windows/work/java/bin/java \
@@ -132,10 +132,23 @@ cd app/src/
     antlr/java/java.g
 
 # now build the pde stuff that extends the java classes
-../../build/windows/work/java/bin/java \
-    -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
-    -o src/processing/app/preproc \
-    -glib antlr/java/java.g processing/app/preproc/pde.g
+#../../build/windows/work/java/bin/java \
+#    -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
+#    -o src/processing/app/preproc \
+#    -glib antlr/java/java.g processing/app/preproc/pde.g
+
+# this is totally ugly and needs to be fixed
+# the problem is that -glib doesn't set the main path properly, 
+# so it's necessary to cd into the antlr/java folder, otherwise
+# the JavaTokenTypes.txt file won't be found
+cd src/antlr/java
+../../../../build/windows/work/java/bin/java \
+  -cp "..\\..\\..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
+  -o ../../processing/app/preproc \
+  -glib java.g \
+  ../../processing/app/preproc/pde.g
+cd ../../..
+
 
 # back to base processing dir
 cd ../..
