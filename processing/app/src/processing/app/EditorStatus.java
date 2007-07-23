@@ -37,8 +37,9 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
   static final int NOTICE = 0;
   static final int ERR    = 1;
-  static final int PROMPT = 2;
-  static final int EDIT   = 3;
+  //static final int PROMPT = 2;
+  //static final int EDIT   = 3;
+  static final int EDIT   = 2;
 
   static final int YES    = 1;
   static final int NO     = 2;
@@ -60,8 +61,8 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
   int sizeW, sizeH;
   int imageW, imageH;
 
-  JButton yesButton;
-  JButton noButton;
+  //JButton yesButton;
+  //JButton noButton;
   JButton cancelButton;
   JButton okButton;
   JTextField editField;
@@ -75,17 +76,17 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
     empty();
 
     if (bgcolor == null) {
-      bgcolor = new Color[4];
+      bgcolor = new Color[3]; //4];
       bgcolor[0] = Preferences.getColor("status.notice.bgcolor");
       bgcolor[1] = Preferences.getColor("status.error.bgcolor");
-      bgcolor[2] = Preferences.getColor("status.prompt.bgcolor");
-      bgcolor[3] = Preferences.getColor("status.prompt.bgcolor");
+      bgcolor[2] = Preferences.getColor("status.edit.bgcolor");
+      //bgcolor[3] = Preferences.getColor("status.prompt.bgcolor");
 
-      fgcolor = new Color[4];
+      fgcolor = new Color[3]; //4];
       fgcolor[0] = Preferences.getColor("status.notice.fgcolor");
       fgcolor[1] = Preferences.getColor("status.error.fgcolor");
-      fgcolor[2] = Preferences.getColor("status.prompt.fgcolor");
-      fgcolor[3] = Preferences.getColor("status.prompt.fgcolor");
+      fgcolor[2] = Preferences.getColor("status.edit.fgcolor");
+      //fgcolor[3] = Preferences.getColor("status.prompt.fgcolor");
     }
   }
 
@@ -182,7 +183,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
   public void paintComponent(Graphics screen) {
     //if (screen == null) return;
-    if (yesButton == null) setup();
+    if (okButton == null) setup();
 
     //System.out.println("status.paintComponent");
 
@@ -234,9 +235,9 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
 
   protected void setup() {
-    if (yesButton == null) {
-      yesButton    = new JButton(Preferences.PROMPT_YES);
-      noButton     = new JButton(Preferences.PROMPT_NO);
+    if (okButton == null) {
+      //yesButton    = new JButton(Preferences.PROMPT_YES);
+      //noButton     = new JButton(Preferences.PROMPT_NO);
       cancelButton = new JButton(Preferences.PROMPT_CANCEL);
       okButton     = new JButton(Preferences.PROMPT_OK);
 
@@ -263,10 +264,10 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
       // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)(
       // os9 seems to work if bg of component is set, but x still a bastard
       if (Base.isMacOS()) {
-        yesButton.setBackground(bgcolor[PROMPT]);
-        noButton.setBackground(bgcolor[PROMPT]);
-        cancelButton.setBackground(bgcolor[PROMPT]);
-        okButton.setBackground(bgcolor[PROMPT]);
+        //yesButton.setBackground(bgcolor[EDIT]);
+        //noButton.setBackground(bgcolor[EDIT]);
+        cancelButton.setBackground(bgcolor[EDIT]);
+        okButton.setBackground(bgcolor[EDIT]);
       }
       setLayout(null);
 
@@ -277,13 +278,13 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
       okButton.addActionListener(this);
       */
 
-      add(yesButton);
-      add(noButton);
+      //add(yesButton);
+      //add(noButton);
       add(cancelButton);
       add(okButton);
 
-      yesButton.setVisible(false);
-      noButton.setVisible(false);
+      //yesButton.setVisible(false);
+      //noButton.setVisible(false);
       cancelButton.setVisible(false);
       okButton.setVisible(false);
 
@@ -398,13 +399,13 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
     int noLeft     = cancelLeft - eachButton;
     int yesLeft    = noLeft     - eachButton;
 
-    yesButton.setLocation(yesLeft, top);
-    noButton.setLocation(noLeft, top);
+    //yesButton.setLocation(yesLeft, top);
+    //noButton.setLocation(noLeft, top);
     cancelButton.setLocation(cancelLeft, top);
     okButton.setLocation(noLeft, top);
 
-    yesButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-    noButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    //yesButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    //noButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
     cancelButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
     okButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
 

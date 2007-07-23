@@ -47,7 +47,7 @@ public class Editor extends JFrame {
   Base base;
 
   // yeah
-  static final String WINDOW_TITLE = "Processing" + " - " + Base.VERSION_NAME;
+  static final String WINDOW_TITLE = "Processing " + Base.VERSION_NAME;
 
   // p5 icon for the window
   static Image icon;
@@ -59,14 +59,19 @@ public class Editor extends JFrame {
     "                                                                     " +
     "                                                                     ";
 
+  /** Command on Mac OS X, Ctrl on Windows and Linux */
   static final int SHORTCUT_KEY_MASK =
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+  /** Command-W on Mac OS X, Ctrl-W on Windows and Linux */
   static public final KeyStroke WINDOW_CLOSE_KEYSTROKE =
     KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
+  /** Command-Option on Mac OS X, Ctrl-Alt on Windows and Linux */
+  static public final int SHORTCUT_ALT_KEY_MASK = ActionEvent.ALT_MASK |
+    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-  static final int HANDLE_NEW  = 1;
-  static final int HANDLE_OPEN = 2;
-  static final int HANDLE_QUIT = 3;
+  //static final int HANDLE_NEW  = 1;
+  //static final int HANDLE_OPEN = 2;
+  //static final int HANDLE_QUIT = 3;
   //int checkModifiedMode;
   //String handleOpenPath;
 
@@ -112,8 +117,6 @@ public class Editor extends JFrame {
   // True if the sketchbook has changed since this Editor was last active.
   boolean sketchbookUpdated;
 
-  //
-
   boolean running;
   boolean presenting;
 
@@ -124,8 +127,6 @@ public class Editor extends JFrame {
   UndoManager undo;
   // used internally, and only briefly
   CompoundEdit compoundEdit;
-
-  //
 
   //SketchHistory history;  // TODO re-enable history
   //Sketchbook sketchbook;
@@ -280,7 +281,8 @@ public class Editor extends JFrame {
                     String name = filename.substring(0, filename.length() - 4);
                     File parent = file.getParentFile();
                     if (name.equals(parent.getName())) {
-                      base.handleOpen(file);
+                      base.handleOpen(file.getAbsolutePath());
+                      // Only opens the first sketch dragged into the window
                       return true;
                     }
                   }
@@ -883,6 +885,15 @@ public class Editor extends JFrame {
     return menuItem;
   }
 
+  
+  static public JMenuItem newJMenuItemAlt(String title, int what) {
+    JMenuItem menuItem = new JMenuItem(title);
+    //int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    //menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, SHORTCUT_ALT_KEY_MASK));
+    return menuItem;
+  }
+
 
   // ...................................................................
 
@@ -1315,111 +1326,6 @@ public class Editor extends JFrame {
 
 
   /**
-   * Check to see if there have been changes. If so, prompt user
-   * whether or not to save first. If the user cancels, just ignore.
-   * Otherwise, one of the other methods will handle calling
-   * checkModified2() which will get on with business.
-   */
-  /*
-  protected void checkModified(int checkModifiedMode) {
-    this.checkModifiedMode = checkModifiedMode;
-
-    if (!sketch.modified) {
-      checkModified2();
-      return;
-    }
-
-    String prompt = "Save changes to " + sketch.name + "?  ";
-
-    if (checkModifiedMode != HANDLE_QUIT) {
-      // if the user is not quitting, then use simpler nicer
-      // dialog that's actually inside the p5 window.
-      status.prompt(prompt);
-
-    } else {
-      if (!Base.isMacOS() || PApplet.javaVersion < 1.5f) {
-        int result =
-          JOptionPane.showConfirmDialog(this, prompt, "Quit",
-                                        JOptionPane.YES_NO_CANCEL_OPTION,
-                                        JOptionPane.QUESTION_MESSAGE);
-
-        if (result == JOptionPane.YES_OPTION) {
-          handleSave(true);
-          checkModified2();
-
-        } else if (result == JOptionPane.NO_OPTION) {
-          checkModified2();
-        }
-        // cancel is ignored altogether
-
-      } else {
-        // This code is disabled unless Java 1.5 is being used on Mac OS X
-        // because of a Java bug that prevents the initial value of the
-        // dialog from being set properly (at least on my MacBook Pro).
-        // The bug causes the "Don't Save" option to be the highlighted,
-        // blinking, default. This sucks. But I'll tell you what doesn't
-        // suck--workarounds for the Mac and Apple's snobby attitude about it!
-
-        // adapted from the quaqua guide
-        // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
-        JOptionPane pane =
-          new JOptionPane("<html> " +
-                          "<head> <style type=\"text/css\">"+
-                          "b { font: 13pt \"Lucida Grande\" }"+
-                          "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-                          "</style> </head>" +
-                          "<b>Do you want to save changes to this sketch<BR>" +
-                          " before closing?</b>" +
-                          "<p>If you don't save, your changes will be lost.",
-                          JOptionPane.QUESTION_MESSAGE);
-
-        String[] options = new String[] {
-          "Save", "Cancel", "Don't Save"
-        };
-        pane.setOptions(options);
-
-        // highlight the safest option ala apple hig
-        pane.setInitialValue(options[0]);
-
-        // on macosx, setting the destructive property places this option
-        // away from the others at the lefthand side
-        pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
-                               new Integer(2));
-
-        JDialog dialog = pane.createDialog(this, null);
-        dialog.show();
-
-        Object result = pane.getValue();
-        if (result == options[0]) {  // save (and quit)
-          handleSave(true);
-          checkModified2();
-
-        } else if (result == options[2]) {  // don't save (still quit)
-          checkModified2();
-        }
-      }
-    }
-  }
-  */
-
-
-  /**
-   * Called by EditorStatus to complete the job and re-dispatch
-   * to handleNew, handleOpen, handleQuit.
-   */
-  /*
-  public void checkModified2() {
-    switch (checkModifiedMode) {
-      case HANDLE_NEW:  handleNew2(false); break;
-      case HANDLE_OPEN: handleOpen2(handleOpenPath); break;
-      case HANDLE_QUIT: handleQuit2(); break;
-    }
-    checkModifiedMode = 0;
-  }
-  */
-
-
-  /**
    * Open a sketch given the full path to the .pde file.
    * Pass in 'null' to prompt the user for the name of the sketch.
    */
@@ -1452,8 +1358,8 @@ public class Editor extends JFrame {
    * Open a sketch from a particular path, but don't check to save changes.
    * Used by Sketch.saveAs() to re-open a sketch after the "Save As"
    */
-  public void handleOpenUnchecked(String path, int codeIndex,
-                                  int selStart, int selStop, int scrollPos) {
+  protected void handleOpenUnchecked(String path, int codeIndex,
+                                     int selStart, int selStop, int scrollPos) {
     doClose();
     handleOpen2(path);
 
@@ -1512,8 +1418,8 @@ public class Editor extends JFrame {
 
       } else if (!path.endsWith(".pde")) {
         Base.showWarning("Bad file selected",
-                            "Processing can only open its own sketches\n" +
-                            "and other files ending in .pde", null);
+                         "Processing can only open its own sketches\n" +
+                         "and other files ending in .pde", null);
         return;
 
       } else {
@@ -1564,14 +1470,13 @@ public class Editor extends JFrame {
       }
 
       sketch = new Sketch(this, path);
-      // TODO re-enable this once export application works
-      //exportAppItem.setEnabled(false);
-      //exportAppItem.setEnabled(false && !sketch.isLibrary());
-      //buttons.disableRun(sketch.isLibrary());
       header.rebuild();
+      // TODO remove this, it's a moot point for separate windows
       if (Preferences.getBoolean("console.auto_clear")) {
         console.clear();
       }
+      // Set the title of the window to "sketch_070752a - Processing 0126"
+      setTitle(sketch.name + " | " + WINDOW_TITLE);
 
     } catch (Exception e) {
       error(e);
@@ -1579,19 +1484,6 @@ public class Editor extends JFrame {
   }
   
   
-  /*
-  public boolean handleClose() {
-  }
-  */
-  
-  
-  /*
-  public void handleClose2() {
-    base.handleClose(this);
-  }
-  */
-
-
   /**
    * Actually handle the save command. If 'immediately' is set to false,
    * this will happen in another thread so that the message area

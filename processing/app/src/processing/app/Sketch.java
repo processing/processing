@@ -99,11 +99,11 @@ public class Sketch {
 
     // get the name of the sketch by chopping .pde or .java
     // off of the main file name
-    if (mainFilename.endsWith(".pde")) {
-      name = mainFilename.substring(0, mainFilename.length() - 4);
-    } else if (mainFilename.endsWith(".java")) {
-      name = mainFilename.substring(0, mainFilename.length() - 5);
-    }
+    //if (mainFilename.endsWith(".pde")) {
+    name = mainFilename.substring(0, mainFilename.length() - 4);
+    //} else if (mainFilename.endsWith(".java")) {
+    //name = mainFilename.substring(0, mainFilename.length() - 5);
+    //}
 
     // lib/build must exist when the application is started
     // it is added to the CLASSPATH by default, but if it doesn't
