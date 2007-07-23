@@ -78,7 +78,7 @@ else
   find work -name "*.exe" -exec chmod +x {} ';'
   find work -name "*.html" -exec chmod +x {} ';'
 fi
-
+  BUILD_PREPROC=true
 cd ../..
 
 
@@ -123,13 +123,13 @@ then
 
 echo Building PDE for JDK 1.4
 
-cd app/src
+cd app
 
 # first build the default java goop
-../../build/windows/work/java/bin/java \
-    -cp "..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
+../build/windows/work/java/bin/java \
+    -cp "..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
     -o src/antlr/java \
-    antlr/java/java.g
+    src/antlr/java/java.g
 
 # now build the pde stuff that extends the java classes
 #../../build/windows/work/java/bin/java \
@@ -141,17 +141,21 @@ cd app/src
 # the problem is that -glib doesn't set the main path properly, 
 # so it's necessary to cd into the antlr/java folder, otherwise
 # the JavaTokenTypes.txt file won't be found
-cd src/antlr/java
-../../../../build/windows/work/java/bin/java \
-  -cp "..\\..\\..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
-  -o ../../processing/app/preproc \
-  -glib java.g \
-  ../../processing/app/preproc/pde.g
-cd ../../..
+
+# this is the eventual hack to make things work
+# why this is required on windows and not the others is beyond me
+cp src/antlr/java/JavaTokenTypes.txt src/processing/app/preproc/
+
+cd src/processing/app/preproc
+../../../../../build/windows/work/java/bin/java \
+  -cp "..\\..\\..\\..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
+  -glib ../../../antlr/java/java.g \
+  pde.g
+cd ../../../..
 
 
 # back to base processing dir
-cd ../..
+cd ..
 
 fi
 
@@ -165,7 +169,7 @@ CLASSPATH="..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib
 # compile the code as java 1.3, so that the application will run and
 # show the user an error, rather than crapping out with some strange
 # "class not found" crap
-../build/windows/work/jikes -target 1.3 +D -classpath "$CLASSPATH;..\\build\\windows\\work/classes" -d ..\\build\\windows\\work/classes src/processing/app/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java
+../build/windows/work/jikes -target 1.3 +D -classpath "$CLASSPATH;..\\build\\windows\\work/classes" -d ..\\build\\windows\\work/classes src/processing/app/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
 #/cygdrive/c/jdk-1.4.2_05/bin/javac.exe -classpath $CLASSPATH -d ..\\build\\windows\\work/classes *.java jeditsyntax/*.java preprocessor/*.java
 
 cd ../build/windows/work/classes
