@@ -86,23 +86,32 @@ cd ..
 
 echo Building PDE for JDK 1.4
 
-cd app/src
+cd app
 
-# first build the default java goop
 # long path is to avoid requiring java to be in your PATH
+  echo Building antlr grammar code...
 
-../../build/linux/work/java/bin/java \
-  -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
+  # first build the default java goop
+../build/linux/work/java/bin/java \
+  -cp ../build/linux/work/lib/antlr.jar antlr.Tool \
   -o src/antlr/java \
-  antlr/java/java.g
+  src/antlr/java/java.g
 
 # now build the pde stuff that extends the java classes
-../../build/linux/work/java/bin/java \
-  -cp ../../build/linux/work/lib/antlr.jar antlr.Tool \
-  -o src/processing/app/preproc \
-  -glib antlr/java/java.g processing/app/preproc/pde.g
+# this is totally ugly and needs to be fixed
+# the problem is that -glib doesn't set the main path properly, 
+# so it's necessary to cd into the antlr/java folder, otherwise
+# the JavaTokenTypes.txt file won't be found
+cd src/antlr/java
+../../../../build/linux/work/java/bin/java \
+  -cp ../../../../build/linux/work/lib/antlr.jar antlr.Tool \
+  -o ../../processing/app/preproc \
+  -glib java.g \
+  ../../processing/app/preproc/pde.g
+cd ../../..
 
-cd ../..
+# return to the root of the p5 folder
+cd ..
 
 
 ### -- BUILD PDE ------------------------------------------------
@@ -111,7 +120,7 @@ cd app
 
 CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/apple.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/lib/registry.jar:../build/linux/work/java/lib/rt.jar"
 
-../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes src/processing/app/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java
+../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes src/processing/app/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
