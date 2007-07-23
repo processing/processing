@@ -172,8 +172,10 @@ status.notice.fgcolor = #000000
 status.notice.bgcolor = #bbbbaa
 status.error.fgcolor  = #ffffff
 status.error.bgcolor  = #662000
-status.prompt.fgcolor = #000000
-status.prompt.bgcolor = #cc9900
+status.edit.fgcolor = #000000
+status.edit.bgcolor = #cc9900
+#status.prompt.fgcolor = #000000
+#status.prompt.bgcolor = #cc9900
 status.font           = SansSerif,plain,12
 
 # convert tabs to spaces? how many spaces?
