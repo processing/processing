@@ -1,6 +1,6 @@
 /**
- * PushPopCubes. 
- * By Ira Greenberg 
+ * PushPop Cubes  
+ * by Ira Greenberg.  
  * 
  * Array of rotating cubes creates
  * dynamic field patterns. Color

@@ -1,6 +1,6 @@
 /**
- * Crazy Flocking 3D Birds. 
- * By Ira Greenberg 
+ * Crazy Flocking 3D Birds 
+ * by Ira Greenberg. 
  * 
  * Simulates a flock of birds using a Bird class and nested
  * pushMatrix() / popMatrix() functions. 

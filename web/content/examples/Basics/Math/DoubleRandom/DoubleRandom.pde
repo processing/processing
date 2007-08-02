@@ -1,6 +1,6 @@
 /**
  * Double Random 
- * By Ira Greenberg 
+ * by Ira Greenberg.  
  * 
  * Using 2 random() calls the and point() function 
  * to create an irregular sawtooth line.

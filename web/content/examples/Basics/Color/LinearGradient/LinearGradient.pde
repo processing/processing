@@ -1,6 +1,6 @@
 /**
  * Simple Linear Gradient 
- * By Ira Greenberg 
+ * by Ira Greenberg. 
  * 
  * Using the convenient red(), green() 
  * and blue() component functions,

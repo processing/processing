@@ -1,11 +1,9 @@
 /**
- * Non-orthogonal Collision with
- * Multiple Ground Segments 
- * By Ira Greenberg
+ * Non-orthogonal Collision with Multiple Ground Segments 
+ * by Ira Greenberg. 
  * 
  * Based on Keith Peter's Solution in
- * Foundation Actionscript Animation:
- * Making Things Move!
+ * Foundation Actionscript Animation: Making Things Move!
  * http://www.friendsofed.com/book.html?isbn=1590597915
  */
 

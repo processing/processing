@@ -1,6 +1,6 @@
 /**
  * Scribble Plotter  
- * By Ira Greenberg 
+ * by Ira Greenberg. 
  * 
  * Using 2-dimensional arrays, record end points
  * and replot scribbles between points. 

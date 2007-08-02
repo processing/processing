@@ -1,11 +1,10 @@
 /**
- * Cubes Contained Within an 
- * Outer Rotating Cube.
- * By Ira Greenberg 
+ * Cubes Contained Within a Cube 
+ * by Ira Greenberg.  
  *
  * Collision detection against all
  * outer cube's surfaces. 
- * Includes: Point3D and Cube classes
+ * Uses the Point3D and Cube classes. 
  */
 
 Cube stage; // external large cube

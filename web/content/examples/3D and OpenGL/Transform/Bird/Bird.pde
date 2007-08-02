@@ -1,6 +1,6 @@
 /**
- * Simple 3D Bird. 
- * By Ira Greenberg 
+ * Simple 3D Bird 
+ * by Ira Greenberg.  
  * 
  * Using a box and 2 rects to simulate a flying bird. 
  * Trig functions handle the flapping and sinuous movement.

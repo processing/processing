@@ -1,6 +1,6 @@
 /**
- * Hybrid Springy Dude - a polygon with attitude
- * By Ira Greenberg 
+ * Soft Body 
+ * by Ira Greenberg.  
  * 
  * Softbody dynamics simulation using curveVertex() and curveTightness()
  */

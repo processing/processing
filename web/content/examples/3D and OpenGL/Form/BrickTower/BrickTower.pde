@@ -1,10 +1,9 @@
 /**
  * Brick Tower
- * By Ira Greenberg 
+ * by Ira Greenberg. 
  *
- * 3D castle tower constructed 
- * out of individual bricks.
- * Includes: Point3D and Cube classes
+ * 3D castle tower constructed out of individual bricks.
+ * Uses the Point3D and Cube classes. 
  */
 
 // Point3D and Cube classes required.

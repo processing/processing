@@ -1,6 +1,6 @@
 /**
  * Wave Gradient 
- * By Ira Greenberg 
+ * by Ira Greenberg.  
  * 
  * Generate a gradient along a sin() wave.
  */
@@ -14,7 +14,7 @@ float frequency = 0;
 float fillGap = 2.5;
 color c;
 
-for (int i=-75; i<height+75; i++){
+for (int i =- 75; i < height+75; i++){
   // reset angle to 0, so waves stack properly
   angle = 0;
   // increasing frequency causes more gaps

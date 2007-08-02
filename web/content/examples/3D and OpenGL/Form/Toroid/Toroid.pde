@@ -1,6 +1,6 @@
 /**
- * Interactive Toroid. 
- * By Ira Greenberg 
+ * Interactive Toroid
+ * by Ira Greenberg. 
  * 
  * Illustrates the geometric relationship 
  * between Toroid, Sphere, and Helix

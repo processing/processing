@@ -1,6 +1,6 @@
 /**
  * Puff  
- * By Ira Greenberg 
+ * by Ira Greenberg.  
  * 
  * Series of ellipses simulating a multi-segmented 
  * organism, utilizing a follow the leader algorithm.

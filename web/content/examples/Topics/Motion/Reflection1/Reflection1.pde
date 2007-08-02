@@ -1,12 +1,10 @@
  /**
- * Non-orthogonal Reflection
- * By Ira Greenberg 
+ * Non-orthogonal Reflection 
+ * by Ira Greenberg. 
  * 
- * Based on the equation R = 2N(N*L)-L 
- * 
- * R = reflection vector
- * N = normal
- * L = incidence vector
+ * Based on the equation (R = 2N(N*L)-L) where R is the 
+ * reflection vector, N is the normal, and L is the incident
+ * vector.
  */
 
 float baseX1, baseY1, baseX2, baseY2;

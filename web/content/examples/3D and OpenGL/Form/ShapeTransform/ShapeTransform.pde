@@ -1,6 +1,6 @@
 /**
- * Shape Transform. 
- * By Ira Greenberg 
+ * Shape Transform
+ * by Ira Greenberg.  
  * 
  * Illustrates the geometric relationship 
  * between Cube, Pyramid, Cone and 

@@ -1,6 +1,6 @@
 /**
- * Circle Collision - Swapping Velocities
- * By Ira Greenberg
+ * Circle Collision with Swapping Velocities
+ * by Ira Greenberg. 
  * 
  * Based on Keith Peter's Solution in
  * Foundation Actionscript Animation:
