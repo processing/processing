@@ -14,7 +14,7 @@
 		<ex file="Rotate1.html">Rotate 1</ex>
 		<ex file="Rotate2.html">Rotate 2</ex>
 		<ex file="PushPopCubes.html">PushPop Cubes</ex>
-		<ex file="CubesWithinCubes.html">Cubes Within Cubes</ex>
+		<ex file="CubesWithinCube.html">Cubes Within Cube</ex>
 		<ex file="Bird.html">Bird</ex>
 		<ex file="Birds.html">Birds</ex>
 	</cat>
