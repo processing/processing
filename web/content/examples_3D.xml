@@ -4,11 +4,19 @@
 		<ex file="Primitives3D.html">Primitives 3D</ex>
 		<ex file="Vertices.html">Vertices</ex>
 		<ex file="RGBCube.html">RGB Cube</ex>
+		<ex file="CubicGrid.html">Cubic Grid</ex>
+		<ex file="BrickTower.html">Brick Tower</ex>
+		<ex file="ShapeTransform.html">Shape Transform</ex>
+		<ex file="Toroid.html">Toroid</ex>
 	</cat>
 	<cat label="Transform">
 		<ex file="Translate.html">Translate</ex>
 		<ex file="Rotate1.html">Rotate 1</ex>
 		<ex file="Rotate2.html">Rotate 2</ex>
+		<ex file="PushPopCubes.html">PushPop Cubes</ex>
+		<ex file="CubesWithinCubes.html">Cubes Within Cubes</ex>
+		<ex file="Bird.html">Bird</ex>
+		<ex file="Birds.html">Birds</ex>
 	</cat>
 	<cat label="Image">
 		<ex file="Extrusion.html">Extrusion</ex>
@@ -46,6 +54,7 @@
 		<ex file="Esfera.html">Esfera</ex>
 		<ex file="Yellowtail.html">Yellowtail</ex>
 		<ex file="TexturedSphere.html">Textured Sphere</ex>
+		<ex file="SpaceJunk.html">Space Junk</ex>
 		<ex file="FullScreenApp.html">Full Screen Application</ex>
 	</cat>
 </examples>

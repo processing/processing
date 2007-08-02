@@ -16,6 +16,7 @@
 		<ex file="Pattern.html">Pattern</ex>
 		<ex file="Pulses.html">Pulses</ex>
 		<ex file="Animator.html">Animator</ex>
+		<ex file="ScribblePlotter.html">Scribble Plotter</ex>
 	</cat>
 	<cat label="File IO">
 		<ex file="SaveOneImage.html">Save One Image</ex>
@@ -57,13 +58,18 @@
 		<ex file="Bounce.html">Bounce</ex>
 		<ex file="BouncyBubbles.html">Bouncy Bubbles</ex>
 		<ex file="Collision.html">Collision</ex>
+		<ex file="Circle Collision.html">Circle Collision</ex>
 		<ex file="MovingOnCurves.html">Moving On Curves</ex>
 		<ex file="Brownian.html">Brownian</ex>
+		<ex file="Puff.html">Puff</ex>
+		<ex file="Reflection1.html">Reflection 1</ex>
+		<ex file="Reflection2.html">Reflection 2</ex>
 	</cat>
 	<cat label="Simulate">
 		<ex file="Spring.html">Spring</ex>
 		<ex file="Springs.html">Springs</ex>
 		<ex file="Chain.html">Chain</ex>
+		<ex file="SoftBody.html">Soft Body</ex>
 		<ex file="Flocking.html">Flocking</ex>
 		<ex file="SimpleParticleSystem.html">Simple Particle System</ex>
 		<ex file="MultipleParticleSystems.html">Multiple Particle Systems</ex>

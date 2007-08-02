@@ -16,9 +16,12 @@
 	<cat label="Form">
 		<ex file="PointsLines.html">Points and Lines</ex>
 		<ex file="ShapePrimitives.html">Shape Primitives</ex>
-		<ex file="Vertices.html">Vertices</ex>
 		<ex file="SimpleCurves.html">Simple Curves </ex>
+		<ex file="PieChart.html">Pie Chart</ex>
+		<ex file="Vertices.html">Vertices</ex>
+		<ex file="TriangleStrip.html">Triangle Strip</ex>
 		<ex file="Bezier.html">Bezier</ex>
+		<ex file="BezierEllipse.html">Bezier Ellipse</ex>
 	</cat>
 	<cat label="Data">
 		<ex file="Variables.html">Variables</ex>
@@ -49,6 +52,7 @@
 		<ex file="Arctangent.html">Arctangent</ex>
 		<ex file="Graphing2DEquation.html">Graphing 2D Equation</ex>
 		<ex file="Random.html">Random</ex>
+		<ex file="DoubleRandom.html">Double Random</ex>
 		<ex file="Noise1D.html">Noise 1D</ex>
 		<ex file="Noise2D.html">Noise 2D</ex>
 		<ex file="Noise3D.html">Noise 3D</ex>
@@ -71,14 +75,19 @@
 		<ex file="Hue.html">Hue</ex>
 		<ex file="Saturation.html">Saturation</ex>
 		<ex file="Brightness.html">Brightness</ex>
+		<ex file="Color Wheel.html">Color Wheel</ex>
 		<ex file="Reading.html">Reading</ex>
 		<ex file="Creating.html">Creating</ex>
 		<ex file="Relativity.html">Relativity</ex>
+		<ex file="LinearGradient.html">Linear Gradient</ex>
+		<ex file="RadialGradient.html">Radial Gradient</ex>
+		<ex file="WaveGradient.html">Wave Gradient</ex>
 	</cat>
 	<cat label="Transform">
 		<ex file="Translate.html">Translate</ex>
 		<ex file="Scale.html">Scale</ex>
 		<ex file="Rotate.html">Rotate</ex>
+		<ex file="TriangleFlower.html">Triangle Flower</ex>
 		<ex file="Arm.html">Arm</ex>
 	</cat>
 	<cat label="Input">
@@ -105,6 +114,7 @@
 		<ex file="MultipleConstructors.html">Multiple Constructors</ex>
 		<ex file="CompositeObjects.html">Composite Objects</ex>
 		<ex file="Inheritance.html">Inheritance</ex>
+		<ex file="Neighborhood.html">Neighborhood</ex>
 	</cat>
 	<cat label="Web">
 		<ex file="EmbeddedLinks.html">Embedded Links</ex>
