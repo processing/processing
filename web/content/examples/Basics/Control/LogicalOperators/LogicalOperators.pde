@@ -4,8 +4,6 @@
  * The logical operators for AND (&&) and OR (||) are used to 
  * combine simple relational statements into more complex expressions.
  * The NOT (!) operator is used to negate a boolean statement. 
- * 
- * Created 17 January 2003
  */
  
 size(200, 200);

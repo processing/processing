@@ -1,5 +1,5 @@
 /**
- * TRIANGLE_STRIP Mode Example
+ * TRIANGLE_STRIP Mode
  * By Ira Greenberg 
  * 
  * Generate a closed ring using vertex() 

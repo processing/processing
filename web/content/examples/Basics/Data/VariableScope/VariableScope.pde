@@ -10,8 +10,6 @@
  * global variable, the program will use the local variable to make 
  * its calculations within the current scope. Variables may be localized
  * within classes, functions, and iterative statements. 
- * 
- * Created 19 January 2003
  */
  
 int a = 20;  // Create a global variable "a"

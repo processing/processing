@@ -1,10 +1,10 @@
 /**
- * Crazy Flocking 3D Birds
+ * Crazy Flocking 3D Birds. 
  * By Ira Greenberg 
  * 
  * Simulates a flock of birds using a Bird class and nested
- * pushMatrix()/popMatrix() functions. 
- * Trig functions handle the flapping and sinuous movement.
+ * pushMatrix() / popMatrix() functions. 
+ * Trigonometry functions handle the flapping and sinuous movement.
  */
 
 // flock array

@@ -1,6 +1,6 @@
 /**
- * Cubes Contained Within a 
- * an outer rotating cube.
+ * Cubes Contained Within an 
+ * Outer Rotating Cube.
  * By Ira Greenberg 
  *
  * Collision detection against all

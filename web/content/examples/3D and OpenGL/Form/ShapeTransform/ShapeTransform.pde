@@ -1,11 +1,11 @@
 /**
- * Shape Transform
+ * Shape Transform. 
  * By Ira Greenberg 
- *
+ * 
  * Illustrates the geometric relationship 
  * between Cube, Pyramid, Cone and 
  * Cylinder 3D primitives.
- *
+ * 
  * Instructions:
  * Up Arrow - increases points
  * Down Arrow - decreases points

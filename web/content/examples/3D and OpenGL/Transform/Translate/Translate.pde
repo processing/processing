@@ -5,8 +5,6 @@
  * sets the offset in the z-axis. Positive values
  * move shapes toward the viewer and negative values 
  * move shapes away from the viewer.
- * 
- * Created 16 January 2003
  */
  
 float x, y;

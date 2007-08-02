@@ -5,8 +5,6 @@
  * Transformation functions such as rotate() are additive.
  * Successively calling rotate(1.0) and rotate(2.0)
  * is equivalent to calling rotate(3.0). 
- * 
- * Updated 21 August 2002
  */
  
 float a = 0.0;

@@ -1,5 +1,5 @@
 /**
- * Double Random Example  
+ * Double Random 
  * By Ira Greenberg 
  * 
  * Using 2 random() calls the and point() function 

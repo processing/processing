@@ -5,8 +5,6 @@
  * keyword "else". This allows conditionals to ask 
  * two or more sequential questions, each with a different
  * action. 
- * 
- * Created 16 January 2003
  */
  
 size(200, 200);

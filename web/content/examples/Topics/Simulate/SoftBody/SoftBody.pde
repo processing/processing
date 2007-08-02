@@ -1,4 +1,4 @@
- /**
+/**
  * Hybrid Springy Dude - a polygon with attitude
  * By Ira Greenberg 
  * 
@@ -24,7 +24,7 @@ float[]frequency = new float[nodes];
 // soft-body dynamics
 float organicConstant = 1;
 
-void setup(){
+void setup() {
   size(200, 200);
   //center shape in window
   centerX = width/2;
@@ -38,7 +38,7 @@ void setup(){
   frameRate(30);
 }
 
-void draw(){
+void draw() {
   //fade background
   fill(0, 100);
   rect(0,0,width, height);
@@ -46,7 +46,7 @@ void draw(){
   moveShape();
 }
 
-void drawShape(){
+void drawShape() {
   //  calculate node  starting locations
   for (int i=0; i<nodes; i++){
     nodeStartX[i] = centerX+cos(radians(rotAngle))*radius;
@@ -67,7 +67,7 @@ void drawShape(){
   endShape(CLOSE);
 }
 
-void moveShape(){
+void moveShape() {
   //move center point
   float deltaX = mouseX-centerX;
   float deltaY = mouseY-centerY;

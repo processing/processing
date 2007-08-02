@@ -12,8 +12,6 @@
  * a group of letters with double quotes ("Processing"). 
  * Chars and strings are most often used with the keyboard methods, 
  * to display text to the screen, and to load images or files. 
- * 
- * Created 19 January 2003
  */
  
 PImage frog;

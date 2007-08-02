@@ -1,7 +1,7 @@
 /**
- * PushPopCubes
+ * PushPopCubes. 
  * By Ira Greenberg 
- *
+ * 
  * Array of rotating cubes creates
  * dynamic field patterns. Color
  * controlled by light sources. Example 
@@ -15,9 +15,9 @@ int cols = 21;
 int cubeCount = rows*cols;
 int colSpan, rowSpan;
 float rotspd = 4;
-Cube[]cubes = new Cube[cubeCount];
-float[]angs = new float[cubeCount];
-float[]rotvals = new float[cubeCount];
+Cube[] cubes = new Cube[cubeCount];
+float[] angs = new float[cubeCount];
+float[] rotvals = new float[cubeCount];
 
 void setup(){
   size(200, 200, P3D);

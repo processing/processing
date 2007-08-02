@@ -3,8 +3,6 @@
  * 
  * Variables are used for storing values. In this example, changing 
  * the values of variables 'a' and 'b' significantly change the composition. 
- * 
- * Created 2 September 2002
  */
  
 size(200, 200);

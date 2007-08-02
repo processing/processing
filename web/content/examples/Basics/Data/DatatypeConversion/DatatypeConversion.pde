@@ -5,8 +5,6 @@
  * data to another. Each of the conversion functions converts its parameter 
  * to an equivalent representation within its datatype. 
  * The conversion functions include int(), float(), char(), byte(), and others. 
- * 
- * Created 09 December 2002
  */
  
 size(200, 200);

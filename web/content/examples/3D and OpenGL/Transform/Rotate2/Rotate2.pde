@@ -4,8 +4,6 @@
  * The push() and pop() functions allow for more control over transformations.
  * The push function saves the current coordinate system to the stack 
  * and pop() restores the prior coordinate system. 
- * 
- * Created 26 October 2002
  */
  
 float a;                          // Angle of rotation

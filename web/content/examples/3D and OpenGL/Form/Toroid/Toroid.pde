@@ -1,12 +1,12 @@
 /**
- * Interactive Toroid
+ * Interactive Toroid. 
  * By Ira Greenberg 
- *
+ * 
  * Illustrates the geometric relationship 
  * between Toroid, Sphere, and Helix
  * 3D primitives, as well as lathing
  * principal.
- *
+ * 
  * Instructions:
  * UP arrow key pts++;
  * DOWN arrow key pts--;

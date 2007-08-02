@@ -1,5 +1,5 @@
 /**
- * Simple 3D Bird 
+ * Simple 3D Bird. 
  * By Ira Greenberg 
  * 
  * Using a box and 2 rects to simulate a flying bird. 

@@ -2,7 +2,7 @@
  * Pie Chart  
  * By Ira Greenberg 
  * 
- * Using arc() function, generate a pie chart from the data
+ * Uses the arc() function to generate a pie chart from the data
  * stored in an array. 
  */
  
