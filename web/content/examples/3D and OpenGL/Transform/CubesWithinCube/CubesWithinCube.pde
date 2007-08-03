@@ -1,7 +1,7 @@
 /**
  * Cubes Contained Within a Cube 
  * by Ira Greenberg.  
- *
+ * 
  * Collision detection against all
  * outer cube's surfaces. 
  * Uses the Point3D and Cube classes. 
