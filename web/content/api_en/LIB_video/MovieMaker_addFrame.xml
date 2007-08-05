@@ -21,12 +21,12 @@ void setup() {
   // Create MovieMaker object with size, filename,
   // compression codec and quality, framerate
   mm = new MovieMaker(this, width, height, "drawing.mov",
-                       MovieMaker.H263, MovieMaker.HIGH, 30);
-  background(160, 32, 32);
+                       30, MovieMaker.H263, MovieMaker.HIGH);
+  background(204);
 }
 
 void draw() {
-  line(pmouseX, pmouseY, mouseX, mouseY);
+  ellipse(mouseX, mouseY, 20, 20);
   mm.addFrame();  // Add window's pixels to movie
 }
 
