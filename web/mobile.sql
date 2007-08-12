@@ -1,5 +1,18 @@
 USE mobile;
 
+CREATE TABLE IF NOT EXISTS curated (
+	id		int 		auto_increment primary key,
+	name		varchar(255),       
+	title		varchar(255),
+	url		varchar(255),
+	imgurl		varchar(255),
+	mobileurl	varchar(255),
+	mobileimgurl	varchar(255),
+	jadurl		varchar(255),	
+	description	text,
+	submitted	bigint
+);
+
 CREATE TABLE IF NOT EXISTS links (
 	id		int 		auto_increment primary key,
 	name		varchar(255),

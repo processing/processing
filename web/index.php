@@ -7,39 +7,15 @@ require 'header.inc.php';
     <img src="exhibition/images/header.png"><br>
 <br>
 <br>
-<a href="http://huah.net/snakeonaplane/" target="_new"><img src="exhibition/images/snake.png"></a><br>
+<?php 
+$lockfp = fopen('exhibition/curated/lockfile', 'r');
+if ($lockfp !== FALSE) {
+    if (flock($lockfp, LOCK_SH)) {
+        require 'exhibition/curated/generated/home.inc.php';
+    }
+}
+?>
 <br>
-<table width="200" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-<b><a href="http://huah.net/snakeonaplane/" target="_new">SNAKE on a plane!</a></b>
-    </td>
-  </tr>
-  <tr height="5">
-  </tr>
-  <tr>
-    <td>
-<b>by Matthias Shapiro and Jason Alderman</b><br>
-    </td>
-  </tr>
-</table><br>
-<br />
-<a href="http://todbot.com/blog/2006/09/12/roombactrl-drive-your-roomba-with-your-cell-phone/" target="_new"><img src="exhibition/images/roombactrl.png"></a><br>
-<br>
-<table width="200" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-<b><a href="http://todbot.com/blog/2006/09/12/roombactrl-drive-your-roomba-with-your-cell-phone/" target="_new">RoombaCtrl</a></b>
-    </td>
-  </tr>
-  <tr height="5">
-  </tr>
-  <tr>
-    <td>
-<b>by todbot</b><br>
-    </td>
-  </tr>
-</table><br>
 <br>
 <br>
 <a href="learning/"><img src="images/examples.png"></a><br>
