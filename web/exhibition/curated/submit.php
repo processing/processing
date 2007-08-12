@@ -9,11 +9,11 @@ require_once 'generate.inc.php';
 //// validate fields
 $errors = array();
 if (isset($_POST['submit'])) {
-    $_POST['name'] = trim($_POST['name']);
-    $_POST['title'] = trim($_POST['title']);
+    $_POST['name'] = trim(stripslashes($_POST['name']));
+    $_POST['title'] = trim(stripslashes($_POST['title']));
     $_POST['url'] = trim($_POST['url']);
     $_POST['imgurl'] = trim($_POST['imgurl']);
-    $_POST['description'] = trim($_POST['description']);
+    $_POST['description'] = trim(stripslashes($_POST['description']));
     $_POST['mobileurl'] = trim($_POST['mobileurl']);
     $_POST['mobileimgurl'] = trim($_POST['mobileimgurl']);
     $_POST['jadurl'] = trim($_POST['jadurl']);
@@ -45,7 +45,6 @@ if (isset($_POST['submit'])) {
             //// insert into database
             $link = db_connect();
             $query = "INSERT INTO curated (name, title, url, imgurl, description, mobileurl, mobileimgurl, jadurl, submitted) VALUES (\"". $data['name'] ."\", \"". $data['title'] ."\", \"". $data['url'] ."\", \"". $data['imgurl'] ."\", \"". $data['description'] ."\", \"". $data['mobileurl'] ."\", \"". $data['mobileimgurl'] ."\", \"". $data['jadurl'] ."\", ". $data['submitted'] .")";
-            error_log($query);
             $result = mysql_query($query);
 
             //// regenerate links pages
