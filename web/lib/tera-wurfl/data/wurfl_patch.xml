@@ -1,5 +1,30 @@
 <wurfl_patch>
     <devices>
+       <device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; Smartphone; 240x320) Opera 8.65 [en]" fall_back="ms_mobile_browser_ver1_sub240320" id="ms_mobile_browser_ver1_subopera865240320">
+            <group id="product_info">
+                <capability name="brand_name" value="Windows" />
+                <capability name="model_name" value="Mobile" />
+            </group> 
+       </device>
+
+
+       <device user_agent="Mozilla/2.0 (compatible; MSIE 3.02; Windows CE; Smartphone;)" actual_device_root="true" fall_back="generic" id="ms_mobile_browser_ver1">
+       </device>
+
+       <device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; PPC; 240x320)" fall_back="ms_mobile_browser_ver1_sub240320" id="ms_mobile_browser_ver1_submsie401240320">
+            <group id="product_info">
+                <capability name="brand_name" value="Windows" />
+                <capability name="model_name" value="Mobile" />
+            </group> 
+       </device>
+
+       <device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; IEMobile 6.8) PPC; 240x320; HTC_P3600/1.0 Profile/MIDP-2.0 Configuration/CLDC-1.1" actual_device_root="true" fall_back="ms_mobile_ver6" id="htc_p3600_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="HTC" />
+                <capability name="model_name" value="P3600" />
+            </group>
+       </device>
+
        <device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; Xda orbit; 240x320)" actual_device_root="true" fall_back="ms_mobile_browser_ver1_subceppc240320" id="xda_orbit_ver1">
             <group id="product_info">
                 <capability name="brand_name" value="XDA" />
@@ -130,6 +155,13 @@
 		<capability name="model_name" value="N95"/>
 	    </group>
         </device>
+
+	<!-- Nokia 6110 Navigator, S60 3rd, 240x320 -->
+	<device user_agent="Mozilla/5.0 (SymbianOS/9.2; U; Series60/3.1 Nokia6110Navigator" actual_device_root="true" id="nokia_6110nav_ver1" fall_back="nokia_generic_series60_dp30">
+	    <group id="product_info">
+		<capability name="model_name" value="6110 Navigator"/>
+	    </group>
+	</device>
 
 	<!-- MS IE 6.0 with Alexa Toolbar -->
 	<device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0) Alexa Toolbar" id="msie6_nt_alexa" fall_back="msie6_nt">
