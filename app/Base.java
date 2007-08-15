@@ -153,6 +153,38 @@ public class Base {
 
     // show the window
     editor.show();
+    
+    //// set proxy settings, if they exist, before the network update check
+    String proxy = Preferences.get("http.proxyHost");
+    if (proxy != null) {
+        System.setProperty("http.proxyHost", proxy);
+        proxy = Preferences.get("http.proxyPort");
+        if (proxy != null) {
+            System.setProperty("http.proxyPort", proxy);
+        }
+        proxy = Preferences.get("http.proxyNonHosts");
+        if (proxy != null) {
+            System.setProperty("http.proxyNonHosts", proxy);
+        }
+    } else {
+        //// try SOCKS proxy settings
+        proxy = Preferences.get("socksProxyHost");
+        if (proxy != null) {
+            System.setProperty("socksProxyHost", proxy);
+            proxy = Preferences.get("socksProxyPort");
+            if (proxy != null) {
+                System.setProperty("socksProxyPort", proxy);
+            }
+            proxy = Preferences.get("java.net.socks.username");
+            if (proxy != null) {
+                System.setProperty("java.net.socks.username", proxy);
+            }
+            proxy = Preferences.get("java.net.socks.password");
+            if (proxy != null) {
+                System.setProperty("java.net.socks.password", proxy);
+            }
+        }
+    }
 
     // check for updates
     boolean update = Preferences.getBoolean("update.check");
