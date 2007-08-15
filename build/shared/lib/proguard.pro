@@ -15,8 +15,9 @@
 
 # Allow methods with the same signature, except for the return type,
 # to get the same obfuscation name.
-
--overloadaggressively
+# DISABLING this because BlackBerry can't convert the JAR file to its native format,
+# may also affect other VMs...
+#-overloadaggressively
 
 # Put all obfuscated classes into the nameless root package.
 
