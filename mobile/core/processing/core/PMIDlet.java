@@ -845,7 +845,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             Image img = Image.createImage("/" + filename);
             return new PImage(img);
         } catch(Exception e) {
-            throw new PException(e);
+            throw new PException("loadImage(" + filename + ")", e);
         }
     }
     
@@ -869,7 +869,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         try {
             return new PFont(getClass().getResourceAsStream("/" + fontname), color, bgcolor);
         } catch (Exception e) {
-            throw new PException(e);
+            throw new PException("loadFont(" + fontname + ", " + color + ", " + bgcolor + ")", e);
         }
     }
     
@@ -1029,7 +1029,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 }
             }
         } catch (Exception e) {
-            throw new PException(e);
+            throw new PException("loadBytes[RMS](" + filename + ")", e);
         }
         InputStream is = null;
         try {
@@ -1051,7 +1051,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return result;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new PException(e);
+            throw new PException("loadBytes[res](" + filename + ")", e);
         } finally {
             if (is != null) {
                 try {
@@ -1074,7 +1074,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 int numRecords = store.getNumRecords();
                 String[] strings = new String[numRecords];
                 for (int i = 0; i < numRecords; i++) {
-                    strings[i] = new String(store.getRecord(i + 1));
+                    byte[] data = store.getRecord(i + 1);
+                    if (data != null) {
+                        strings[i] = new String(data);
+                    } else {
+                        strings[i] = "";
+                    }
                 }
                 return strings;
             } catch (RecordStoreNotFoundException rsnfe) {                
@@ -1084,7 +1089,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 }
             }
         } catch (Exception e) {
-            throw new PException(e);
+            throw new PException("loadStrings[RMS](" + filename + ")", e);
         }
         Vector v = new Vector();
         InputStream is = null;
@@ -1117,7 +1122,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 }
             }
         } catch (Exception e) {
-            throw new PException(e);
+            throw new PException("loadStrings[res](" + filename + ")", e);
         } finally {
             if (is != null) {
                 try {
@@ -1135,7 +1140,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     public final void saveBytes(String filename, byte[] data) {
         //// max 32 char names on recordstores
         if (filename.length() > 32) {
-            throw new PException(new Exception("filename must be 32 characters or less"));
+            throw new PException("saveBytes(" + filename + ", data[" + data.length + "])", new Exception("filename must be 32 characters or less"));
         }
         try {            
             //// delete recordstore, if it exists
@@ -1148,14 +1153,14 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             store.addRecord(data, 0, data.length);
             store.closeRecordStore();
         } catch (Exception e) {
-            throw new PException(e);
+            throw new PException("saveBytes(" + filename + ", data[" + data.length + "])", e);
         }
     }
     
     public final void saveStrings(String filename, String[] strings) {
         //// max 32 char names on recordstores
         if (filename.length() > 32) {
-            throw new PException(new Exception("filename must be 32 characters or less"));
+            throw new PException("saveStrings(" + filename + ", strings[" + strings.length + "])", new Exception("filename must be 32 characters or less"));
         }
         try {            
             //// delete recordstore, if it exists
@@ -1173,7 +1178,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             }
             store.closeRecordStore();
         } catch (Exception e) {
-            throw new PException(e);
+            throw new PException("saveStrings(" + filename + ", strings[" + strings.length + "])", e);
         }
     }
     
@@ -2825,10 +2830,12 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
          */
         public static final int     HEIGHT_UNBOUNDED    = Integer.MAX_VALUE;
         
-        protected Vector children;
+        protected Vector children;        
         
-        protected int focusedChild;
+        protected boolean horizontal;
         
+        /** The index of the currently focused child, or -1 if none. */
+        public int focusedChild;
         /** True if this container should scroll its children within its bounds. */
         public boolean scrolling;
         /** The current scrolling y-offset within its bounds. */
@@ -2841,6 +2848,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         public PContainer() {
             acceptsFocus = true;
             children = new Vector();
+        }
+        
+        public PContainer(boolean horizontal) {
+            this();
+            this.horizontal = horizontal;
         }
         
         /** Adds a component to this container. 
@@ -2885,6 +2897,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 scrollHeight = Math.max(scrollHeight, child.y + child.height);
                 if ((focusedChild < 0) && (child.acceptFocus())) {
                     focusedChild = i;
+                    child.releaseFocus();
                 }
             }
             scrollHeight -= contentY;
@@ -2927,14 +2940,19 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             if (!result) {
                 int direction = 0;
                 int bound = children.size();
-                switch (keyCode) {
-                    case UP:
-                        direction = -1;
-                        bound = -1;
-                        break;
-                    case DOWN:
-                        direction = 1;
-                        break;
+                int next, prev;
+                if (horizontal) {
+                    next = RIGHT;
+                    prev = LEFT;
+                } else {
+                    next = DOWN;
+                    prev = UP;
+                }
+                if (keyCode == prev) {
+                    direction = -1;
+                    bound = -1;
+                } else if (keyCode == next) {
+                    direction = 1;
                 }
                 if (direction != 0) {
                     int oldScrollY = scrollY;
@@ -3450,6 +3468,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
                 text = null;
                 setBounds(availX, availY, availWidth, length(lines) * leading);
             } else {
+                if (align != LEFT) {
+                    labelWidth = availWidth;
+                }
                 setBounds(availX, availY, labelWidth, leading);
             }
         }

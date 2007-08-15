@@ -12,12 +12,17 @@ public class PException extends RuntimeException {
         this.t = t;
     }
     
+    public PException(String message, Throwable t) {
+        super(message);
+        this.t = t;
+    }
+    
     public String getMessage() {
-        return t.getMessage();
+        return super.getMessage() + ": " + t.getMessage();
     }
 
     public String toString() {
-        return t.toString();
+        return super.toString() + ": " + t.toString();
     }
     
     public void printStackTrace() {
