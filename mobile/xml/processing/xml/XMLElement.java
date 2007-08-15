@@ -324,6 +324,19 @@ public class XMLElement {
     public XMLElement getChild(int i){
         return ((XMLElement)children.elementAt(i));
     }
+    
+    public XMLElement getChild(String name) {
+        XMLElement result = null;
+        Enumeration en = children.elements();
+        while (en.hasMoreElements()) {
+            XMLElement child = (XMLElement) en.nextElement();
+            String element = child.getElement();
+            if ((element != null) && element.equals(name)) {
+                result = child;
+            }
+        }
+        return result;
+    }
 
     /** Looks if the XMLElement has Children.
      * @return boolean, true if the XMLElement has children
