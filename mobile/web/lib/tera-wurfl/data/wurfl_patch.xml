@@ -7,6 +7,11 @@
             </group> 
        </device>
 
+       <device user_agent="BlackBerry8300" actual_device_root="true" fall_back="blackberry_generic_ver4" id="blackberry8300_ver1">
+            <group id="product_info">
+                <capability name="model_name" value="BlackBerry 8300" />
+            </group> 
+       </device>
 
        <device user_agent="Mozilla/2.0 (compatible; MSIE 3.02; Windows CE; Smartphone;)" actual_device_root="true" fall_back="generic" id="ms_mobile_browser_ver1">
        </device>
