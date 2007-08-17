@@ -84,7 +84,7 @@ if ($fp) {
 }
 ?>
     <br />
-    <a href="discourse/YaBB.cgi?board=news">Previous Updates</a> \ <a href="updates.xml"><img src="images/feed.gif"> RSS</a><br />
+    <a href="discourse/YaBB.cgi?board=news">Previous Updates</a> \ <a href="http://feeds.feedburner.com/MobileProcessing" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:bottom;border:0"/></a>&nbsp;<a href="http://feeds.feedburner.com/MobileProcessing" rel="alternate" type="application/rss+xml">Feed</a><br />
     <br />
     <br />
     <img src="images/happenings.png"><br>
