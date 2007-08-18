@@ -4,6 +4,9 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=459
 X handle open/sketchbook/examples differently
 X   move examples folder to top-level menu
 X   move open menu to its own
+X BGraphics, BImage, void loop() -> give an error saying it's old code
+X   better yet, only do this when "not found" errors come up
+_ need to fix changes.html because it lists out of date alpha->beta changes 
 
 multiple sketch support
 X basic structural moves to handle multiple sketches
@@ -37,6 +40,9 @@ _ test on windows
 _ test on linux
 _ make sure quit being handled properly on windows/linux
 _ make editor buttons light up and clear properly 
+
+_ make sure loadStrings(), loadImage(), etc all have security warning in docs
+_ make clear that open() with one param should only have a single param
 
 _ don't bug the user about new release of p5 when they have it
 _   add prefs option for "latest version run"

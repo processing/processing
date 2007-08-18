@@ -275,7 +275,6 @@ public class Compiler implements MessageConsumer {
       //String s2 = s1.substring(colon + 2);
       int err = s1.indexOf("Error:");
       if (err != -1) {
-
         // if the first error has already been found, then this must be
         // (at least) the second error found
         if (firstErrorFound) {
@@ -290,10 +289,32 @@ public class Compiler implements MessageConsumer {
         String description = s1.substring(err + "Error:".length());
         description = description.trim();
 
+        /*
         String hasLoop = "The method \"void loop();\" with default access";
         if (description.indexOf(hasLoop) != -1) {
           description =
             "Rename loop() to draw() in Processing 0070 and higher";
+        }
+        */
+
+        String[] oldCodeMessages = new String[] {
+          "Type \"BFont\" was not found",
+          "Type \"BGraphics\" was not found",
+          "Type \"BImage\" was not found",
+          "No method named \"framerate\"",
+          "No method named \"push\"",
+          "No accessible field named \"LINE_LOOP\"",
+          "No accessible field named \"LINE_STRIP\""
+        };
+
+        for (int i = 0; i < oldCodeMessages.length; i++) {
+          if (description.indexOf(oldCodeMessages[i]) != -1) {
+            description = "This code needs to be updated, " +
+              "please read the changes reference.";
+            Base.showReference("changes.html");
+            // only complain once, and break
+            break;
+          }
         }
 
         String constructorProblem =
