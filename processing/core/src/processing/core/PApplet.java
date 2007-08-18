@@ -4126,6 +4126,9 @@ public class PApplet extends Applet
         System.err.println(filename + " does not exist or could not be read");
         return null;
       }
+      if (filename.endsWith(".gz")) {
+        is = new GZIPInputStream(is);
+      }
       return createReader(is);
 
     } catch (Exception e) {
@@ -4144,7 +4147,11 @@ public class PApplet extends Applet
    */
   static public BufferedReader createReader(File file) {
     try {
-      return createReader(new FileInputStream(file));
+      InputStream is = new FileInputStream(file);
+      if (file.getName().endsWith(".gz")) {
+        is = new GZIPInputStream(is);
+      }
+      return createReader(is);
 
     } catch (Exception e) {
       if (file == null) {
@@ -4557,7 +4564,7 @@ public class PApplet extends Applet
    * in a less confusing manner.
    */
   public void saveStream(String filename, String stream) {
-    saveBytes(filename, loadBytes(stream));
+    saveStream(new File(dataPath(filename)), stream);
   }
 
 
@@ -4566,7 +4573,37 @@ public class PApplet extends Applet
    * object, for greater control over the file location.
    */
   public void saveStream(File file, String stream) {
-    saveBytes(file, loadBytes(stream));
+    //saveBytes(file, loadBytes(stream));
+
+    File tempFile = null;
+    try {
+      File parentDir = file.getParentFile();
+      tempFile = File.createTempFile(file.getName(), null, parentDir);
+
+      InputStream is = openStream(stream);
+      BufferedInputStream bis = new BufferedInputStream(is, 16384);
+      FileOutputStream fos = new FileOutputStream(tempFile);
+      BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+      byte[] buffer = new byte[8192];
+      int bytesRead;
+      while ((bytesRead = bis.read(buffer)) != -1) {
+        bos.write(buffer, 0, bytesRead);
+      }
+      
+      bos.flush();
+      bos.close();
+      bos = null;
+
+      if (!tempFile.renameTo(file)) {
+        System.err.println("Could not rename temporary file " + tempFile.getAbsolutePath());
+      }
+    } catch (IOException e) {
+      if (tempFile != null) {
+        tempFile.delete();
+      }
+      e.printStackTrace();
+    }
   }
 
 
