@@ -29,14 +29,17 @@ a {
 
 #header {
     margin-bottom: 8px;
+    font-size: smaller;
 }
 
 #footer {
     margin-top: 12px;
+    font-size: smaller;
 }
 
 #attribution {
     margin-top: 8px;
+    font-size: smaller;
 }
 
 .accesskey {
@@ -48,6 +51,6 @@ a {
   <body>
     <div id="header">
       <img src="images/mobile.gif" width="57" height="20" alt="Mobile" /><br />
-      <small><?php echo $PAGE_HEADER ?></small><br />
+      <?php echo $PAGE_HEADER ?><br />
     </div>
     <div id="content">
