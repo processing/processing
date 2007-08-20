@@ -7,6 +7,8 @@ X   method was not working properly, was using the object reference
 X new version of saveStream()
 X some auto-gunzip implemented
 _   need to finish auto-gunzip
+X fix bug where sort() on 0 length array would return null
+X   instead, returns an array
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
