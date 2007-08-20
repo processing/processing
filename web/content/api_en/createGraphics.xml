@@ -50,7 +50,7 @@ createGraphics(<c>width</c>, <c>height</c>, <c>renderer</c>, <c>filename</c>)
 
 <parameter>
 <label>renderer</label>
-<description>Either P2D, P3D, JAVA2D, PDF, DXF</description>
+<description>Either P2D (not yet implemented), P3D, JAVA2D, PDF, DXF</description>
 </parameter>
 
 <parameter>

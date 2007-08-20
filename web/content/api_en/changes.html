@@ -24,6 +24,9 @@ changes are presented on this page." /></h1>
 	   If you don't want to download first, you can read the most recent version 
 	   <a href="http://processing.org/download/revisions.txt">here</a>.
     </p>
+<p>
+This page was updated prior to release 0126, to clean up a couple inconsistencies.
+</p>
 	
 	<p>&nbsp;</p>
 	
@@ -114,15 +117,14 @@ and endShape() are the biggest ones.
   It works just like lerp()... but with colors!
 
 <LI> writer() and reader() are now createWriter() and createReader().
-  These weren't really documented, so the change doesn't officially
-  "count" per se, but maybe someone was using 'em.
 
 <LI> toInt() and toFloat() are now parseInt() and parseFloat(), 
   to change to JavaScript syntax. Not sure if anyone was using these.
 
 <LI> Text with the JAVA2D setting no longer uses native fonts by default,
   which means they'll be slower and uglier. See the reference for
-  textFont() for details and how it can be addressed.
+  <A HREF="http://processing.org/reference/textFont_.html">textFont()</A>
+  for details and how it can be addressed.
 
 <LI> Threading has been modified signficantly. Some of these changes 
   had to be undone at the last minute, so further changes are coming.
@@ -137,6 +139,8 @@ and endShape() are the biggest ones.
 
   <LI> PGraphics2D (P2D) contains the former contents of PGraphics that 
     are specific to 2D rendering. This will be P2D once it is complete.
+    As of release 0126, P2D is not currently complete
+    and cannot be used.
 
   <LI> PGraphics3D (P3D), formerly PGraphics3, remains mostly unchanged.
 
@@ -151,15 +155,16 @@ and endShape() are the biggest ones.
 <LI> Do not use "new PGraphics" to create PGraphics objects.
   Instead, use createGraphics(), which will properly handle connecting
   the new graphics object to its parent sketch, and will enable save()
-  to work properly. See the reference for <A HREF="http://processing.org/reference/createGraphics_.html">createGraphics</A>
+  to work properly. See the reference for <A HREF="http://processing.org/reference/createGraphics_.html">createGraphics</A>.
   
 <LI> For the same reasons as above, createImage(width, height, format) 
-  should be used instead of "new PImage" when <A HREF="http://processing.org/reference/createImage_.html">creating images</A>
+  should be used instead of "new PImage" when <A HREF="http://processing.org/reference/createImage_.html">creating images</A>. 
 
-<LI> PImage objects default to ARGB instead of RGB format. This is 
-  helpful for using createImage() or createGraphics() to generate
+<LI> More recent releases include better support for ARGB format images. 
+  This is helpful for using createImage() or createGraphics() to generate
   a transparent surface. Be sure to use PNG or another format that
-  supports alpha.
+  supports alpha. This support is incomplete, however, and there
+  are a handful of bugs.
 
 <LI> beginFrame() and endFrame() are now beginDraw() and endDraw(). 
   Use these around drawing commands to a PGraphics created by
@@ -187,32 +192,36 @@ fill() and stroke(), for instance, will disappear after you call size().
 <LI>2D and 3D graphics are no longer completely mixed. To specify
 3D graphics, instead of size(200, 200), the new way is to use
 size(200, 200, P3D). 
-
+<LI>You may find that by default, your code runs more slowly in a beta release than an alpha release. The new renderers might be slower for some things, faster for others. If you want faster pixel operations, try using P3D (until P2D is available). For high-quality lines and strokeWeight() and strokeCap(), use JAVA2D (the default). 
 <LI>BImage &rarr; PImage, BFont &rarr; PFont, and so on... 
 <LI>For advanced users who were making their own BGraphics objects in
 the previous release:
 <PRE>BGraphics bg = new BGraphics(200, 200);
-// has now become
-PGraphics pg = new PGraphics2(200, 200, null);
-pg.defaults(); // clear the buffer, get it ready</PRE>We didn't realize
-quite how many people were using this, so we'll probably add a
-createGraphics() method because PGraphics2 may be temporary (instead
+</PRE>
+should be changed to:
+<pre>
+<strike>PGraphics pg = new PGraphics2(200, 200, null);
+pg.defaults(); // clear the buffer, get it ready</strike>
+
+PGraphics pg = createGraphics(200, 200);
+pg.beginDraw();
+// drawing commands for pg here
+pg.endDraw();
+</PRE>
+<strike>We didn't realize quite how many people were using this, so we'll probably 
+add a createGraphics() method because PGraphics2 may be temporary (instead
 of just PGraphics), and the "null" thing is pretty weird. Even still,
 this isn't quite working as expected, but it's a high priority to fix
 for the future, see <NOBR><A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=92">Bug 92</A></NOBR>
-for the status.
-<LI>The new renderers might be slower for some things, faster for others.
-If you want faster pixel operations, try using P3D (until P2D is available
-again). For high-quality lines and strokeWeight() and strokeCap(), use
-JAVA2D (the default). 
+for the status.</strike>
 <LI>To use OpenGL rendering, change that to size(200, 200, OPENGL),
 and use Sketch &rarr; Import Library &rarr; opengl. OpenGL support is
 incomplete, but allows for much larger screen sizes and accelerated
 graphics that make use of a decent graphics card. 
 
 <LI>When using the pixels[] array of the main window, or on an image,
-you should first call loadPixels(), and once you're done editing, call
+you should first call loadPixels(). Once you're done editing, call
 updatePixels(). This is because the new JAVA2D and OPENGL renderers both need to post-process the image data before displaying it, which is a time-consuming operation. 
 <LI>Library events are handled differently because more than one
 serial port or video input device can be used with Processing
@@ -240,11 +249,10 @@ href="http://processing.org/reference/libraries/net/index.html">this page</a>.
 <LI>font.width(String s) &rarr; textWidth(String s)
 <LI>font.ascent() &rarr; textAscent()
 <LI>font.descent() &rarr; textDescent()
-<LI>fonts should now be more accurately sized, if your font sizing looks weird, try using "Create Font" to create a new font using the most recent release of Processing. It's strongly suggested that you do this when updated projects from alpha to beta. 
-<LI>the function alpha(), when used to create an alpha mask of an image, is now <A HREF="../reference/PImage_mask_.html">mask()</A>, to remove a conflict with the alpha() function that extracts the alpha value of a color.
-<LI>previous default was ellipseMode(CORNER) &rarr; now it's ellipseMode(CENTER)
+<LI>Fonts should now be more accurately sized, if your font sizing looks weird, try using "Create Font" to create a new font using the most recent release of Processing. It's strongly suggested that you do this when updated projects from alpha to beta. 
+<LI>The function alpha(), when used to create an alpha mask of an image, is now <A HREF="../reference/PImage_mask_.html">mask()</A>, to remove a conflict with the alpha() function that extracts the alpha value of a color.
+<LI>Previous default ellipseMode was CORNER &rarr; now it's ellipseMode(CENTER)
 <LI>RGBA for images &rarr; ARGB (more technically accurate)
-
 <LI>CENTER_DIAMETER &rarr; CENTER
 <LI>objectX, objectY, objectZ &rarr; modelX, modelY, modelZ
 <LI>curveSegments() &rarr; curveDetail()
@@ -255,15 +263,17 @@ href="http://processing.org/reference/libraries/net/index.html">this page</a>.
 <LI>splitFloats() &rarr; toFloat(split()) (changed in rev 0069)
 <LI>angleMode() has been removed. Radians are used for all functions. 
 If you don't like radians, you can convert to radians to degrees via the radians() function, i.e.: sin(radians(90)).
-<LI>four calls to bezierVertex(x, y) should instead be a single call
+<LI>Four calls to bezierVertex(x, y) should instead be a single call
 to vertex(x, y), followed by bezierVertex(cx1, cy1, cx2, cy2, x2, y2)
 (two control points followed by the destination point). 
 <LI>The libraries for serial, video, and network have changed
 completely. Check out the examples or visit the <A HREF="../reference/libraries/index.html">libraries reference</A> for the full details.
 <!--<LI>&hellip;anything else that we've forgotten in our hastiness and we'll be adding over the next few days and weeks. If you find something that we've missed, please <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=WebsiteBugs">let us know</A>.-->
 </UL>
+<!--
 The revisions.txt file also contains the release-by-release
 information for what's incrementally changed from 68 through 85. 
+-->
 </p>
 
 </div>
