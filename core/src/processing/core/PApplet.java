@@ -4836,7 +4836,7 @@ public class PApplet extends Applet
   //
 
   public byte[] sort(byte what[], int count) {
-    if (count == 0) return null;
+    if (count == 0) return what;
     sort_mode = BYTES;
     sort_bytes = new byte[count];
     System.arraycopy(what, 0, sort_bytes, 0, count);
@@ -4845,7 +4845,7 @@ public class PApplet extends Applet
   }
 
   public char[] sort(char what[], int count) {
-    if (count == 0) return null;
+    if (count == 0) return what;
     sort_mode = CHARS;
     sort_chars = new char[count];
     System.arraycopy(what, 0, sort_chars, 0, count);
@@ -4854,7 +4854,7 @@ public class PApplet extends Applet
   }
 
   public int[] sort(int what[], int count) {
-    if (count == 0) return null;
+    if (count == 0) return what;
     sort_mode = INTS;
     sort_ints = new int[count];
     System.arraycopy(what, 0, sort_ints, 0, count);
@@ -4863,7 +4863,7 @@ public class PApplet extends Applet
   }
 
   public float[] sort(float what[], int count) {
-    if (count == 0) return null;
+    if (count == 0) return what;
     sort_mode = FLOATS;
     sort_floats = new float[count];
     System.arraycopy(what, 0, sort_floats, 0, count);
@@ -4872,7 +4872,7 @@ public class PApplet extends Applet
   }
 
   public String[] sort(String what[], int count) {
-    if (count == 0) return null;
+    if (count == 0) return what;
     sort_mode = STRINGS;
     sort_strings = new String[count];
     System.arraycopy(what, 0, sort_strings, 0, count);
