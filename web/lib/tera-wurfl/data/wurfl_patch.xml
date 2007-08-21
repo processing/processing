@@ -51,6 +51,12 @@
             </group>
        </device>
 
+       <device user_agent="MOT-V3t" fall_back="mot_v3_ver1" id="mot_v3t_ver1">
+            <group id="product_info">
+                <capability name="model_name" value="RAZR V3t" />
+            </group>           
+       </device>
+
        <device user_agent="MOT-RAZRV3xx" actual_device_root="true" fall_back="mot_v3x_ver1" id="mot_v3xx_ver1">
             <group id="product_info">
                 <capability name="brand_name" value="Motorola" />
@@ -107,6 +113,14 @@
                 <capability name="model_name" value="K550" />
             </group>
         </device>
+
+	<!-- LG LX570 -->
+	<device user_agent="LG-LX570" actual_device_root="true" fall_back="opwv_v62_generic" id="lg_lx570_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="LG" />
+                <capability name="model_name" value="LX570" />
+            </group>
+	</device>
 
         <!-- LG CU-500 Cingular -->
         <device user_agent="LG-CU500" fall_back="uptext_generic" id="lg_cu500_ver1" actual_device_root="true">
