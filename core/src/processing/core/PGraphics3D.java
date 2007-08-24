@@ -1428,7 +1428,7 @@ public class PGraphics3D extends PGraphics {
             raw.fill(cr, cg, cb, c[A]);
             raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
           }
-        } else {
+        } else {  // otherwise it's a PGraphics2D
           raw.fill(ar, ag, ab, a[A]);
           raw.vertex(a[X], a[Y]);
           raw.fill(br, bg, bb, b[A]);
@@ -1529,9 +1529,11 @@ public class PGraphics3D extends PGraphics {
         }
       }
 
-          /* Seems okay to remove this because these vertices are not used again, but if problems arise, this needs to be uncommented
-             because the above change is destructive and may need to be undone before proceeding.
-          if (drawing2D() && a[MZ] == 0) {
+      /* 
+      // Seems okay to remove this because these vertices are not used again, 
+      // but if problems arise, this needs to be uncommented because the above 
+      // change is destructive and may need to be undone before proceeding.
+      if (drawing2D() && a[MZ] == 0) {
         a[X] -= 0.01;
         a[Y] -= 0.01;
         a[VX] -= 0.01*a[VW];
@@ -1540,7 +1542,8 @@ public class PGraphics3D extends PGraphics {
         b[Y] -= 0.01;
         b[VX] -= 0.01*b[VW];
         b[VY] -= 0.01*b[VW];
-      }*/
+      }
+      */
 
       line.setIndex(index);
       line.draw();
