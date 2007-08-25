@@ -57,6 +57,13 @@
             </group>           
        </device>
 
+       <device user_agent="MOTOROKR Z6" actual_device_root="true" fall_back="generic" id="mot_rokrz6_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="Motorola" />
+                <capability name="model_name" value="MOTOROKR Z6" />
+            </group>
+       </device>
+
        <device user_agent="MOT-RAZRV3xx" actual_device_root="true" fall_back="mot_v3x_ver1" id="mot_v3xx_ver1">
             <group id="product_info">
                 <capability name="brand_name" value="Motorola" />
