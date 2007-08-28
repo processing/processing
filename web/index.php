@@ -22,32 +22,14 @@ if ($lockfp !== FALSE) {
 <a href="learning/"><img src="images/examples.png"></a><br>
 <br>
 <br>
-<table border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-<a href="learning/example.php?name=yahoosonar"><img src="images/examples/yahoosonar.png"></a>
-    </td>
-    <td width="1"></td>
-    <td>
-<a href="learning/example.php?name=bluescan"><img src="images/examples/bluescan.png"></a>
-    </td>
-    <td width="1"></td>
-    <td>
-<a href="learning/example.php?name=photoslider"><img src="images/examples/photoslider.png"></a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-<a href="learning/example.php?name=tictactoe"><img src="images/examples/tictactoe.png"></a>
-    </td>
-    <td width="1"></td>
-    <td>
-    </td>
-    <td width="1"></td>
-    <td>
-    </td>
-  </tr>
-</table>
+<?php 
+$lockfp = fopen('learning/lockfile', 'r');
+if ($lockfp !== FALSE) {
+    if (flock($lockfp, LOCK_SH)) {
+        require 'learning/generated/home.inc.php';
+    }
+}
+?>
 </div>
 <div class="column" style="width: 400px">
     <br>
