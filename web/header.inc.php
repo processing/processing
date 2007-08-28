@@ -42,6 +42,7 @@ if (is_null($argv)) {
                       "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
+<?php if (isset($PAGE_HEAD)) { echo $PAGE_HEAD; } ?>
 <link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
 <title><?php echo $PAGE_TITLE ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
