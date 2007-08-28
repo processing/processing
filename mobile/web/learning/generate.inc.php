@@ -74,7 +74,7 @@ function links_generate() {
                     if (!isset($map[$data['category']])) {
                         $map[$data['category']] = array();
                     }
-                    $map[$data['category']][$data['subcategory']] = $data;
+                    $map[$data['category']][$data['subcategory']][] = $data;
 
                     if (($data['showonhome']) && ($count < 9)) {
                         if (($count % 3) == 0) {
@@ -106,10 +106,15 @@ function links_generate() {
                 fwrite($fp, "<div class=\"column\">");
                 for ($i = 0; $i < count($order); $i++) {
                     $category = $order[$i];
-                    $examples = $map[$category];
                     fwrite($fp, "<img src=\"images/{$category}.png\"><br /><br />");
-                    foreach ($examples as $e) {
-                        fwrite($fp, "<a href=\"example.php?name={$e['filename']}\">{$e['name']}</a><br />");
+                    foreach ($map[$category] as $subcategory => $examples) {
+                        if ($subcategory != "") {
+                            fwrite($fp, "<i>{$subcategory}</i><br />");
+                        }
+                        foreach ($examples as $e) {
+                            fwrite($fp, "<a href=\"example.php?name={$e['filename']}\">{$e['name']}</a><br />");
+                        }
+                        fwrite($fp, "<br />");
                     }
                     fwrite($fp, "<br /><br />");
                     if (($i > 0) && (($i % $catspercol) == 1)) {
