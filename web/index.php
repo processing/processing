@@ -1,5 +1,6 @@
 <?php
 $PAGE_TITLE = "Mobile Processing";
+$PAGE_HEAD = '<link rel="alternate" media="handheld" href="http://wapmp.at/" />';
 
 require 'header.inc.php';
 ?>
