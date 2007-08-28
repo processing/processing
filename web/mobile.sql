@@ -1,5 +1,15 @@
 USE mobile;
 
+CREATE TABLE IF NOT EXISTS examples (
+	id		int 		auto_increment primary key,
+	name		varchar(255),       
+	category	varchar(255),
+	subcategory	varchar(255),
+	filename	varchar(255),
+	showonhome	bool,
+	submitted	bigint
+);
+
 CREATE TABLE IF NOT EXISTS curated (
 	id		int 		auto_increment primary key,
 	name		varchar(255),       
