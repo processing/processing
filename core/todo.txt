@@ -18,6 +18,9 @@ _     the number of cases where this works is small (half of url streams)
 _     and who knows if the value returned will be correct
 _     (i.e. will it be the uncompressed or compressed size of the data?)
 
+_ opengl mipmaps are leaking
+_   http://dev.processing.org/bugs/show_bug.cgi?id=610
+
 _ loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
 X   this might be a good solution for dealing with the differences
 _   with loadBytes(), they can use gzipInput (or loadBytesGZ?)
