@@ -716,6 +716,30 @@ public class PApplet extends Applet
       methods[count] = method;
       count++;
     }
+	
+    
+    /**
+     * Removes first object/method pair matched (and only the first, 
+     * must be called multiple times if object is registered multiple times).
+     * Does not shrink array afterwards, silently returns if method not found.
+     */
+    public void remove(Object object, Method method) {
+      boolean foundMethod = false;
+      for (int i = 0; i < count; i++){
+        if (objects[i] == object && methods[i].equals(method)) {
+          //objects[i].equals() might be overridden, so use == for safety 
+          // since here we do care about actual object identity
+          //methods[i]==method is never true even for same method, so must use 
+          // equals(), this should be safe because of object identity
+          foundMethod = true; 
+        }
+        // shift remaining methods by one to preserve ordering
+        if (foundMethod) { 
+          objects[i] = objects[i+1]; 
+        } 
+      }
+      if (foundMethod) count--;
+    }
   }
 
 
@@ -774,6 +798,62 @@ public class PApplet extends Applet
 
     } catch (Exception e) {
       die("Could not register " + name + " + () for " + o, e);
+    }
+  }
+
+
+  public void unregisterSize(Object o) {
+    Class methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
+    unregisterWithArgs(sizeMethods, "size", o, methodArgs);
+  }
+  
+  public void unregisterPre(Object o) {
+    unregisterNoArgs(preMethods, "pre", o);
+  }
+  
+  public void unregisterDraw(Object o) {
+    unregisterNoArgs(drawMethods, "draw", o);
+  }
+  
+  public void unregisterPost(Object o) {
+    unregisterNoArgs(postMethods, "post", o);
+  }
+  
+  public void unregisterMouseEvent(Object o) {
+    Class methodArgs[] = new Class[] { MouseEvent.class };
+    unregisterWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
+  }      
+  
+  public void unregisterKeyEvent(Object o) {
+    Class methodArgs[] = new Class[] { KeyEvent.class };
+    unregisterWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
+  }
+  
+  public void unregisterDispose(Object o) {
+    unregisterNoArgs(disposeMethods, "dispose", o);
+  }
+  
+  
+  protected void unregisterNoArgs(RegisteredMethods meth,
+                                  String name, Object o) {
+    Class c = o.getClass();
+    try {
+      Method method = c.getMethod(name, new Class[] {});
+      meth.remove(o, method);
+    } catch (Exception e) {
+      die("Could not unregister " + name + "() for " + o, e);
+    }
+  }
+  
+  
+  protected void unregisterWithArgs(RegisteredMethods meth,
+                                    String name, Object o, Class cargs[]) {
+    Class c = o.getClass();
+    try {
+      Method method = c.getMethod(name, cargs);
+      meth.remove(o, method);
+    } catch (Exception e) {
+      die("Could not unregister " + name + "() for " + o, e);
     }
   }
 
