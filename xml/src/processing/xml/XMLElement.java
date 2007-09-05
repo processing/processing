@@ -55,6 +55,11 @@ import processing.core.PApplet;
  * altered, however it should be clear that this code is almost entirely his
  * work, with no connection to the Processing project.
  * <P>
+ * Alterations/additions for the Processing library: <UL>
+ * <LI>a slightly different model for getChild() and getChildren()
+ * <LI>addition of getChild(name or path) and getChildren(name or path)
+ * <LI>slight changes to support the SVG library
+ * </UL>
  * The intent of this library (with regard to Processing) is to provide an
  * extremely simple (and compact) means of reading and writing XML data from a
  * sketch. As such, this is not a full-featured library for handling XML data.
@@ -63,7 +68,7 @@ import processing.core.PApplet;
  * <CODE>
  * import processing.xml.*;
  *
- * XMLElement xml = new XMLElement("filename.xml", this);
+ * XMLElement xml = new XMLElement(this, "filename.xml");
  * int childCount = xml.getChildCount();
  * for (int i = 0; i < childCount; i++) {
  *   XMLElement kid = xml.getChild(i);
@@ -72,13 +77,13 @@ import processing.core.PApplet;
  * }
  * </CODE>
  * @author Marc De Scheemaecker
- *         &lt;<A href="mailto:cyberelf@mac.com">cyberelf@mac.com</A>&gt;
+ * @author Ben Fry 
  */
 public class XMLElement
 {
     static final boolean DEBUG = false;
-    
-    
+
+
     /**
      * The attributes given to the element.
      *
@@ -154,13 +159,13 @@ public class XMLElement
      */
     private boolean ignoreUnknownEntities = true;
 
-    
+
     /**
-     * For attributes such as NOWRAP that aren't set equal to anything, 
+     * For attributes such as NOWRAP that aren't set equal to anything,
      * parse without giving an error, and set their contents to an empty String.
      */
     private boolean ignoreMissingAttributes = true;
-    
+
 
     /**
      * The line number where the element starts.
@@ -464,9 +469,8 @@ public class XMLElement
     /**
      * Begin parsing XML data passed in from a PApplet. This code
      * wraps exception handling, for more advanced exception handling,
-     * use the constructor that takes a Reader or InputStream,
-     * or use the parseFromReader() method.
-     * @author fry
+     * use the constructor that takes a Reader or InputStream.
+     * @author processing.org
      * @param filename
      * @param parent
      */
@@ -474,11 +478,7 @@ public class XMLElement
         this();
         try {
             Reader r = parent.createReader(filename);
-            if (r == null) {
-                System.err.println("The file " + filename +
-                                   " could not be found.");
-                return;
-            }
+            //if (r == null) return;
             parseFromReader(r);
         } catch (IOException e) {
             e.printStackTrace();
@@ -486,24 +486,25 @@ public class XMLElement
     }
 
 
-    /**
-     * Create and parse immediately.
-     * @author fry
-     */
     public XMLElement(Reader r) throws IOException {
         this();
         parseFromReader(r);
     }
 
 
-    /**
-     * Create and parse immediately.
-     * @author fry
-     */
+    public XMLElement(String s) {
+    	try {
+			parseString(s);
+		} catch (XMLParseException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    
     public XMLElement(InputStream input) throws IOException {
-        this();
-        InputStreamReader r = new InputStreamReader(input);
-        parseFromReader(r);
+        this(new InputStreamReader(input, "UTF-8"));
+//        InputStreamReader r = new InputStreamReader(input);
+//        parseFromReader(r);
     }
 
 
@@ -794,13 +795,88 @@ public class XMLElement
 
 
     /**
-     * Quick accessor for a particular element
+     * Quick accessor for an element at a particular index.
      * @author processing.org
      */
     public XMLElement getChild(int which) {
         return (XMLElement) children.elementAt(which);
     }
 
+
+    /**
+     * Get a child by its name or path. 
+     * @param name element name or path/to/element 
+     * @return
+     * @author processing.org
+     */
+    public XMLElement getChild(String name) {
+    	if (name.indexOf('/') != -1) {
+    		return getChild(PApplet.split(name, '/'), 0);
+    	}
+    	int childCount = getChildCount();
+    	for (int i = 0; i < childCount; i++) {
+    		XMLElement kid = getChild(i);
+    		if (kid.getName().equals(name)) {
+    			return kid;
+    		}
+    	}
+    	return null;
+    }
+
+
+    protected XMLElement getChild(String[] items, int offset) {
+    	int childCount = getChildCount();
+    	for (int i = 0; i < childCount; i++) {
+    		XMLElement kid = getChild(i);
+    		if (kid.getName().equals(items[offset])) {
+    			if (offset == items.length-1) {
+    				return kid;
+    			} else {
+    				return kid.getChild(items, offset+1);
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+
+    /**
+     * Get any children that match this name or path. Similar to getChild(), 
+     * but will grab multiple matches rather than only the first.
+     * @param name element name or path/to/element 
+     * @return
+     * @author processing.org
+     */
+    public XMLElement[] getChildren(String name) {
+    	if (name.indexOf('/') != -1) {
+    		return getChildren(PApplet.split(name, '/'), 0);
+    	}
+    	int childCount = getChildCount();
+    	XMLElement[] matches = new XMLElement[childCount];
+    	int matchCount = 0;
+    	for (int i = 0; i < childCount; i++) {
+    		XMLElement kid = getChild(i);
+    		if (kid.getName().equals(name)) {
+    			matches[matchCount++] = kid;
+    		}
+    	}
+    	return (XMLElement[]) PApplet.subset(matches, 0, matchCount);
+    }
+
+
+    protected XMLElement[] getChildren(String[] items, int offset) {
+    	if (offset == items.length-1) {
+    		return getChildren(items[offset]);
+    	}
+    	XMLElement[] matches = getChildren(items[offset]);  
+    	XMLElement[] outgoing = new XMLElement[0];
+    	for (int i = 0; i < matches.length; i++) {
+    		XMLElement[] kidMatches = matches[i].getChildren(items, offset+1);
+    		outgoing = (XMLElement[]) PApplet.concat(outgoing, kidMatches);
+    	}
+    	return outgoing;
+    }
+    
 
     /**
      * Returns the PCDATA content of the object. If there is no such content,
@@ -2203,16 +2279,16 @@ public class XMLElement
             // don't allow delimiters in this case
             for (;;) {
                 char ch = this.readChar();
-                if ((ch == ' ') || 
+                if ((ch == ' ') ||
                     (ch == '\t') || (ch == '\n') || (ch == '\r') ||
-                    (ch == '/') || (ch == '>')) { 
+                    (ch == '/') || (ch == '>')) {
                     unreadChar(ch);
                     return;
                 } else {
                     string.append(ch);
                 }
             }
-            
+
         } else {
             for (;;) {
                 char ch = this.readChar();
@@ -2499,7 +2575,7 @@ public class XMLElement
                 this.scanString(buf);
                 elt.setAttribute(key, buf);
                 if (DEBUG) System.out.println("    value is " + buf);
-            }            
+            }
             ch = this.scanWhitespace();
             if (DEBUG) System.out.println("scan of white produced " + ch);
         }
@@ -2642,9 +2718,9 @@ public class XMLElement
             }
         }
     }
-    
 
-    /** 
+
+    /**
      * Version of resolveEntity that gives up when it hits its ending delimiter.
      * Handles parsing <meta http-equiv> stuff where the URL contains an ampersand.
      */

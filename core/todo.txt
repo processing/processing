@@ -9,6 +9,17 @@ X some auto-gunzip implemented
 _   need to finish auto-gunzip
 X fix bug where sort() on 0 length array would return null
 X   instead, returns an array
+X unregisterXxxx() calls to remove methods from libs
+X   http://dev.processing.org/bugs/show_bug.cgi?id=312
+X   implemented by ewjordan
+
+_ opengl mipmaps are leaking (regression in spite of #150 fix)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=610
+
+_ 100x100 issues are exhibited on bh140c PCs, test and fix!
+_   http://dev.processing.org/bugs/show_bug.cgi?id=197
+_   width/height on problem machine prints out as:
+_   100,200 and 128,200
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
@@ -17,9 +28,6 @@ _   this might not be worth it
 _     the number of cases where this works is small (half of url streams) 
 _     and who knows if the value returned will be correct
 _     (i.e. will it be the uncompressed or compressed size of the data?)
-
-_ opengl mipmaps are leaking
-_   http://dev.processing.org/bugs/show_bug.cgi?id=610
 
 _ loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
 X   this might be a good solution for dealing with the differences
@@ -32,9 +40,6 @@ _   do the same for createWriter() et al
 
 _ update the reference to cover parseXxxx() stuff
 _   also add notes about parseInt/Float(blah, otherwise)
-_ unregisterXxxx() calls to remove methods from libs
-_   http://dev.processing.org/bugs/show_bug.cgi?id=312
-
 
 _ offscreen buffers fail with texture mapping
 _   pixels not being set opaque (only with textures?)
@@ -203,8 +208,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=511
 _ applet sizing issues with external vm
 _   could this possibly be related to the linux bug?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=430
-_ 100x100 issues are exhibited on bh140c PCs, test and fix!
-_   http://dev.processing.org/bugs/show_bug.cgi?id=197
 _ alloc() stuff not fixed because of thread halting
 _   problem where alloc happens inside setup(), so, uh..
 _   http://dev.processing.org/bugs/show_bug.cgi?id=369
