@@ -7,6 +7,8 @@ X   move open menu to its own
 X BGraphics, BImage, void loop() -> give an error saying it's old code
 X   better yet, only do this when "not found" errors come up
 _ need to fix changes.html because it lists out of date alpha->beta changes 
+X added getChild(name/path), getChildren(name/path) to xml library
+_   add notes about these to the reference
 
 multiple sketch support
 X basic structural moves to handle multiple sketches
@@ -36,10 +38,19 @@ _   tough to do with the multiple directories/submenus
 _   add methods for "add" and "remove" for sketches
 _     also a rename method, which could just be a remove and add
 _   libraries and examples won't be rebuilt during the session
+_ editor console is broken, because re-routes System.out
 _ test on windows
 _ test on linux
 _ make sure quit being handled properly on windows/linux
 _ make editor buttons light up and clear properly 
+_ inside sketch.java, don't hardwire the file extension types
+_   arduino uses .c, .cpp, .h instead of .java
+
+You could greatly simplify the creation of disk-images using this cmd-line:
+  hdiutil create  -size 5m -fs HFS+ -volname Fooble  foo
+To mount the disk-image, without having it appear in the Finder:
+  hdiutil attach  -nobrowse  foo.dmg
+The main advantage is that these don't require root privileges
 
 _ make sure loadStrings(), loadImage(), etc all have security warning in docs
 _ make clear that open() with one param should only have a single param
@@ -121,6 +132,7 @@ _ should we use if() or if in the reference
 charset changes
 _ need to set a default charset for use in files (utf8)
 _   add option to change charset or specify as part of loading
+_   need to specify the default encoding
 _ xml element needs to be readable from other charsets
 _   same with the other methods like loadStrings()
 _   could also be a way to handle gzip too?
@@ -151,6 +163,7 @@ void sortSwap(int a, int b) {
 0127
 _ dynamic tools menu (requires moving files around)
 _   this means can integrate the autoformat stuff
+_   processing.mess/tools has chandler's template stuff
 _ finish up debian package support (see the processing.mess folder)
 
 
@@ -645,6 +658,8 @@ _ Blah.class will confuse the preproc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=481
 _ non-matching curly brackets sometimes don't cause an error
 _   http://dev.processing.org/bugs/show_bug.cgi?id=507
+_ syntax highlighting error with // and /*
+_   http://dev.processing.org/bugs/show_bug.cgi?id=609
 
 hacked for fix, needs real fix
 _ NullPointerException on unterminated comment at end of code
@@ -1077,6 +1092,8 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 
 LIBRARIES / Video
 
+_ add more information about multiple camera inputs
+_ add info about "access" errors being quicktime errors
 _ documented in faq, add something to the lib "camera not installed"
 _   quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
 _ need to add resize method to capture object
