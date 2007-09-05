@@ -1,4 +1,31 @@
 <?php
+
+require_once 'settings.inc.php';
+require_once $WEB_ROOT .'/lib/tera-wurfl/tera_wurfl.php';
+
+$wurfl = new tera_wurfl();
+if (!$wurfl->getDeviceCapabilitiesFromAgent($_SERVER['HTTP_USER_AGENT'])) {
+    $wurfl->capabilities['display']['resolution_width'] = 176;
+}
+
+function get_sized_image($url) {
+    global $wurfl;
+
+    $width = $wurfl->capabilities['display']['resolution_width'];
+    if ($width <= 128) {
+        $width = 128;
+    } else if ($width <= 176) {
+        $width = 176;
+    } else {
+        $width = 240;
+    }
+
+    $ext = strrchr($url, '.');
+    $base = substr($url, 0, strlen($url) - strlen($ext));
+    
+    return $base .'_'. $width . $ext;
+}
+
 header("Vary: Accept");
 if (stristr($_SERVER[HTTP_ACCEPT], "application/vnd.wap.xhtml+xml")) {
     header("Content-Type: application/vnd.wap.xhtml+xml");
@@ -45,6 +72,10 @@ a {
 .accesskey {
     background: #d60;
     color: #fff;
+}
+
+.smaller {
+    font-size: smaller;
 }
     </style>
   </head>
