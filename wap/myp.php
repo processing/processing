@@ -1,7 +1,13 @@
 <?php
 
-require_once '../mobile/db.inc.php';
-require_once '../mobile/lib/tera-wurfl/tera_wurfl.php';
+$PAGE_TITLE = "My Phone";
+$PAGE_HEADER = <<<EOF
+<a href="index.php">Cover</a> \ My Phone
+EOF;
+$PAGE_FOOTER = $PAGE_HEADER;
+
+require_once 'header.inc.php';
+require_once $WEB_ROOT .'/lib/tera-wurfl/tera_wurfl.php';
 
 $wurfl = new tera_wurfl();
 $is_nokia = false;
@@ -10,14 +16,6 @@ if ($wurfl->getDeviceCapabilitiesFromAgent($_SERVER['HTTP_USER_AGENT'])) {
     $is_nokia = true;
   }
 }
-
-$PAGE_TITLE = "My Phone";
-$PAGE_HEADER = <<<EOF
-<a href="index.php">Cover</a> \ My Phone
-EOF;
-$PAGE_FOOTER = $PAGE_HEADER;
-
-require_once 'header.inc.php';
 ?>
 <b>Your browser reports:</b><br />
 <?php echo $_SERVER['HTTP_USER_AGENT'] ?><br />
