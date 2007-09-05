@@ -119,14 +119,9 @@ contradictory, since we're doing graphics things, right? but I don't
 have the impression that Java was optimized heavily to use Altivec and
 media hooey that's lost on the Mactels). 
 <LI>The ever-popular <A HREF="http://pitaru.com/sonia/">Sonia</A> library
-does not run on the Intel Macs because jSyn, upon which Sonia is based, 
-is not yet a Universal Binary.
-<LI><!--<STRIKE>The serial library still has not been ported to a Universal Binary.
-I spent some time building rxtx to be a universal binary, but who
-knows what sort of endian issues lurk underneath and I haven't had
-time to test the thing since getting an Intel Mac.</STRIKE>-->
-
-The serial library included with releases 0111 and later is now a 
+needs an update for the new version of jSyn that is a Universal Binary. 
+The default Sonia download includes the PowerPC-only version of jSyn. 
+<LI>The serial library included with releases 0111 and later is now a 
 Universal Binary (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=311">Bug 311</A>).
 You may need to re-run macosx_setup.command script to get serial working
