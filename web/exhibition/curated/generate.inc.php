@@ -48,6 +48,21 @@ EOE;
     return $line;
 }
 
+function format_wappage_link($data) {
+    $line = <<<EOE
+EOE;
+    return $line;
+}
+
+function format_waphome_link($data) {
+    $line = <<<EOE
+<img border="0" src="<?php echo get_sized_image("{$data['mobileimgurl']}") ?>" /><br />
+<a href="ota.php?jad={$data['jadurl']}"><span class="smaller">{$data['title']}</span></a><br />
+<span class="smaller">by {$data['name']}</span>
+EOE;
+    return $line;
+}
+
 function write_header($fp) {
     fwrite($fp, "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
 }
@@ -81,6 +96,7 @@ function links_generate() {
         if (flock($lockfp, LOCK_EX)) {
             $fp = fopen($dirname . '/generated/links.inc.php', 'wb');
             $homefp = fopen($dirname . '/generated/home.inc.php', 'wb');
+            $waphomefp = fopen($dirname . '/generated/waphome.inc.php', 'wb');
             if ($fp !== FALSE) {
                 $link = db_connect();
                 $result = mysql_query("SELECT * FROM curated ORDER BY submitted DESC LIMIT {$linksperpage}");
@@ -99,12 +115,21 @@ function links_generate() {
                     }
                     //// handle homepage include
                     if ($count == 0) {
+                        //// web home
                         $line = format_home_link($data);
                         fwrite($homefp, $line);
+                        //// wap home
+                        $line = format_waphome_link($data);
+                        fwrite($waphomefp, $line);
                     } else if ($count == 1) {
+                        //// web home
                         $line = format_home_link($data);
                         fwrite($homefp, "<br /><br />");
                         fwrite($homefp, $line);
+                        //// wap home
+                        $line = format_waphome_link($data);
+                        fwrite($waphomefp, "<br /><br />");
+                        fwrite($waphomefp, $line);
                     }
 
                     $count++;
@@ -115,6 +140,7 @@ function links_generate() {
                 }
                 write_footer($fp);
                 fclose($homefp);
+                fclose($waphomefp);
                 mysql_free_result($result);
 
                 $result = mysql_query("SELECT COUNT(*) FROM curated");
