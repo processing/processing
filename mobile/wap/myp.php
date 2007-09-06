@@ -7,14 +7,10 @@ EOF;
 $PAGE_FOOTER = $PAGE_HEADER;
 
 require_once 'header.inc.php';
-require_once $WEB_ROOT .'/lib/tera-wurfl/tera_wurfl.php';
 
-$wurfl = new tera_wurfl();
 $is_nokia = false;
-if ($wurfl->getDeviceCapabilitiesFromAgent($_SERVER['HTTP_USER_AGENT'])) {
-  if ($wurfl->model == "Web Browser for S60") {
-    $is_nokia = true;
-  }
+if ($wurfl->model == "Web Browser for S60") {
+  $is_nokia = true;
 }
 ?>
 <b>Your browser reports:</b><br />
