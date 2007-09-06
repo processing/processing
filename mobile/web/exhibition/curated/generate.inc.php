@@ -55,9 +55,10 @@ EOE;
 }
 
 function format_waphome_link($data) {
+    $code = $data['id'] * 2;
     $line = <<<EOE
 <img border="0" src="<?php echo get_sized_image("{$data['mobileimgurl']}") ?>" /><br />
-<a href="ota.php?jad={$data['jadurl']}"><span class="smaller">{$data['title']}</span></a><br />
+<a href="ota.php?code={$code}">{$data['title']}</a><br />
 <span class="smaller">by {$data['name']}</span>
 EOE;
     return $line;
