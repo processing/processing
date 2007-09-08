@@ -7,6 +7,13 @@
             </group> 
        </device>
 
+       <device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows 98; PalmSource/Palm-D050; Blazer/4.3) 16;320x320" fall_back="upg1_ver1_subblazer40" id="upg1_ver_1_subblazer43do50320">
+            <group id="product_info">
+                <capability name="brand_name" value="Palm" />
+                <capability name="model_name" value="Treo 650" />
+            </group> 
+       </device>
+
        <device user_agent="BlackBerry8300" actual_device_root="true" fall_back="blackberry_generic_ver4" id="blackberry8300_ver1">
             <group id="product_info">
                 <capability name="model_name" value="BlackBerry 8300" />
