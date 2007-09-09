@@ -716,10 +716,10 @@ public class PApplet extends Applet
       methods[count] = method;
       count++;
     }
-	
-    
+
+
     /**
-     * Removes first object/method pair matched (and only the first, 
+     * Removes first object/method pair matched (and only the first,
      * must be called multiple times if object is registered multiple times).
      * Does not shrink array afterwards, silently returns if method not found.
      */
@@ -727,16 +727,16 @@ public class PApplet extends Applet
       boolean foundMethod = false;
       for (int i = 0; i < count; i++){
         if (objects[i] == object && methods[i].equals(method)) {
-          //objects[i].equals() might be overridden, so use == for safety 
+          //objects[i].equals() might be overridden, so use == for safety
           // since here we do care about actual object identity
-          //methods[i]==method is never true even for same method, so must use 
+          //methods[i]==method is never true even for same method, so must use
           // equals(), this should be safe because of object identity
-          foundMethod = true; 
+          foundMethod = true;
         }
         // shift remaining methods by one to preserve ordering
-        if (foundMethod) { 
-          objects[i] = objects[i+1]; 
-        } 
+        if (foundMethod) {
+          objects[i] = objects[i+1];
+        }
       }
       if (foundMethod) count--;
     }
@@ -806,34 +806,34 @@ public class PApplet extends Applet
     Class methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
     unregisterWithArgs(sizeMethods, "size", o, methodArgs);
   }
-  
+
   public void unregisterPre(Object o) {
     unregisterNoArgs(preMethods, "pre", o);
   }
-  
+
   public void unregisterDraw(Object o) {
     unregisterNoArgs(drawMethods, "draw", o);
   }
-  
+
   public void unregisterPost(Object o) {
     unregisterNoArgs(postMethods, "post", o);
   }
-  
+
   public void unregisterMouseEvent(Object o) {
     Class methodArgs[] = new Class[] { MouseEvent.class };
     unregisterWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
-  }      
-  
+  }
+
   public void unregisterKeyEvent(Object o) {
     Class methodArgs[] = new Class[] { KeyEvent.class };
     unregisterWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
   }
-  
+
   public void unregisterDispose(Object o) {
     unregisterNoArgs(disposeMethods, "dispose", o);
   }
-  
-  
+
+
   protected void unregisterNoArgs(RegisteredMethods meth,
                                   String name, Object o) {
     Class c = o.getClass();
@@ -844,8 +844,8 @@ public class PApplet extends Applet
       die("Could not unregister " + name + "() for " + o, e);
     }
   }
-  
-  
+
+
   protected void unregisterWithArgs(RegisteredMethods meth,
                                     String name, Object o, Class cargs[]) {
     Class c = o.getClass();
@@ -4105,7 +4105,7 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-  // FILE INPUT
+  // FILE/FOLDER SELECTION
 
 
   public File inputFile() {
@@ -4195,6 +4195,11 @@ public class PApplet extends Applet
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+  // READERS AND WRITERS
+
+
   /**
    * I want to read lines from a file. I have RSI from typing these
    * eight lines of code so many times.
@@ -4205,9 +4210,6 @@ public class PApplet extends Applet
       if (is == null) {
         System.err.println(filename + " does not exist or could not be read");
         return null;
-      }
-      if (filename.endsWith(".gz")) {
-        is = new GZIPInputStream(is);
       }
       return createReader(is);
 
@@ -4228,14 +4230,14 @@ public class PApplet extends Applet
   static public BufferedReader createReader(File file) {
     try {
       InputStream is = new FileInputStream(file);
-      if (file.getName().endsWith(".gz")) {
+      if (file.getName().toLowerCase().endsWith(".gz")) {
         is = new GZIPInputStream(is);
       }
       return createReader(is);
 
     } catch (Exception e) {
       if (file == null) {
-        throw new RuntimeException("File passed to reader() was null");
+        throw new RuntimeException("File passed to createReader() was null");
       } else {
         e.printStackTrace();
         throw new RuntimeException("Couldn't create a reader for " +
@@ -4259,46 +4261,34 @@ public class PApplet extends Applet
   /**
    * decode a gzip input stream
    */
-  static public InputStream gzipInput(InputStream input) {
-    try {
-      return new GZIPInputStream(input);
-    } catch (IOException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Problem with gzip input");
-    }
-    //return null;
-  }
+//  static public InputStream gzipInput(InputStream input) {
+//    try {
+//      return new GZIPInputStream(input);
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//      throw new RuntimeException("Problem with gzip input");
+//    }
+//  }
 
 
   /**
    * decode a gzip output stream
    */
-  static public OutputStream gzipOutput(OutputStream output) {
-    try {
-      return new GZIPOutputStream(output);
-    } catch (IOException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Problem with gzip output");
-    }
-    //return null;
-  }
+//  static public OutputStream gzipOutput(OutputStream output) {
+//    try {
+//      return new GZIPOutputStream(output);
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//      throw new RuntimeException("Problem with gzip output");
+//    }
+//  }
 
 
   /**
    * I want to print lines to a file. Why can't I?
    */
   public PrintWriter createWriter(String filename) {
-    try {
-      return createWriter(new FileOutputStream(savePath(filename)));
-
-    } catch (Exception e) {
-      if (filename == null) {
-        die("Filename passed to writer() was null", e);
-      } else {
-        die("Couldn't create a writer for " + filename, e);
-      }
-    }
-    return null;
+    return createWriter(saveFile(filename));
   }
 
 
@@ -4308,11 +4298,15 @@ public class PApplet extends Applet
    */
   static public PrintWriter createWriter(File file) {
     try {
-      return createWriter(new FileOutputStream(file));
+      OutputStream output = new FileOutputStream(file);
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        output = new GZIPOutputStream(output);
+      }
+      return createWriter(output);
 
     } catch (Exception e) {
       if (file == null) {
-        throw new RuntimeException("File passed to writer() was null");
+        throw new RuntimeException("File passed to createWriter() was null");
       } else {
         e.printStackTrace();
         throw new RuntimeException("Couldn't create a writer for " +
@@ -4331,6 +4325,11 @@ public class PApplet extends Applet
     OutputStreamWriter osw = new OutputStreamWriter(output);
     return new PrintWriter(osw);
   }
+
+
+  //////////////////////////////////////////////////////////////
+
+  // FILE INPUT
 
 
   /**
@@ -4366,6 +4365,7 @@ public class PApplet extends Applet
    */
   public InputStream openStream(String filename) {
     InputStream stream = null;
+    boolean gz = filename.toLowerCase().endsWith(".gz");
 
     if (filename == null) return null;
 
@@ -4380,7 +4380,7 @@ public class PApplet extends Applet
     try {
       URL url = new URL(filename);
       stream = url.openStream();
-      return stream;
+      return gz ? new GZIPInputStream(stream) : stream;
 
     } catch (MalformedURLException mfue) {
       // not a url, that's fine
@@ -4413,7 +4413,12 @@ public class PApplet extends Applet
       // things, this is probably introduced in java 1.5. awesome!
       // http://dev.processing.org/bugs/show_bug.cgi?id=359
       if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
-        return stream;
+        try {
+          return gz ? new GZIPInputStream(stream) : stream;
+        } catch (IOException e) {
+          e.printStackTrace();
+          return null;
+        }
       }
     }
 
@@ -4424,7 +4429,12 @@ public class PApplet extends Applet
     if (stream != null) {
       String cn = stream.getClass().getName();
       if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
-        return stream;
+        try {
+          return gz ? new GZIPInputStream(stream) : stream;
+        } catch (IOException e) {
+          e.printStackTrace();
+          return null;
+        }
       }
     }
 
@@ -4458,7 +4468,9 @@ public class PApplet extends Applet
 
         // if this file is ok, may as well just load it
         stream = new FileInputStream(file);
-        if (stream != null) return stream;
+        if (stream != null) {
+          return gz ? new GZIPInputStream(stream) : stream;
+        }
 
         // have to break these out because a general Exception might
         // catch the RuntimeException being thrown above
@@ -4472,17 +4484,23 @@ public class PApplet extends Applet
       try {  // first try to catch any security exceptions
         try {
           stream = new FileInputStream(dataPath(filename));
-          if (stream != null) return stream;
+          if (stream != null) {
+            return gz ? new GZIPInputStream(stream) : stream;
+          }
         } catch (IOException e2) { }
 
         try {
           stream = new FileInputStream(sketchPath(filename));
-          if (stream != null) return stream;
+          if (stream != null) {
+            return gz ? new GZIPInputStream(stream) : stream;
+          }
         } catch (Exception e) { }  // ignored
 
         try {
           stream = new FileInputStream(filename);
-          if (stream != null) return stream;
+          if (stream != null) {
+            return gz ? new GZIPInputStream(stream) : stream;
+          }
         } catch (IOException e1) { }
 
       } catch (SecurityException se) { }  // online, whups
@@ -4497,6 +4515,9 @@ public class PApplet extends Applet
 
   static public InputStream openStream(File file) {
     try {
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        return new GZIPInputStream(new FileInputStream(file));
+      }
       return new FileInputStream(file);
 
     } catch (IOException e) {
@@ -4508,28 +4529,6 @@ public class PApplet extends Applet
         throw new RuntimeException("Couldn't openStream() for " +
                                    file.getAbsolutePath());
       }
-    }
-  }
-
-
-  public InputStream openStreamGZ(String filename) {
-    try {
-      return new GZIPInputStream(openStream(filename));
-    } catch (IOException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Couldn't openStreamGZ() for " +
-                                 filename);
-    }
-  }
-
-
-  static public InputStream openStreamGZ(File file) {
-    try {
-      return new GZIPInputStream(openStream(file));
-    } catch (IOException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Couldn't openStreamGZ() for " +
-                                 file.getAbsolutePath());
     }
   }
 
@@ -4651,6 +4650,8 @@ public class PApplet extends Applet
   /**
    * Identical to the other saveStream(), but writes to a File
    * object, for greater control over the file location.
+   * Note that unlike other api methods, this will not automatically
+   * uncompress gzip files.
    */
   public void saveStream(File file, String stream) {
     //saveBytes(file, loadBytes(stream));
@@ -4670,7 +4671,7 @@ public class PApplet extends Applet
       while ((bytesRead = bis.read(buffer)) != -1) {
         bos.write(buffer, 0, bytesRead);
       }
-      
+
       bos.flush();
       bos.close();
       bos = null;
@@ -4695,17 +4696,9 @@ public class PApplet extends Applet
    * subfolders don't exist, they'll be created.
    */
   public void saveBytes(String filename, byte buffer[]) {
-    try {
-      String location = savePath(filename);
-      FileOutputStream fos = new FileOutputStream(location);
-      saveBytes(fos, buffer);
-      fos.close();
-
-    } catch (IOException e) {
-      System.err.println("error saving bytes to " + filename);
-      e.printStackTrace();
-    }
+    saveBytes(saveFile(filename), buffer);
   }
+
 
   /**
    * Saves bytes to a specific File location specified by the user.
@@ -4714,9 +4707,12 @@ public class PApplet extends Applet
     try {
       String filename = file.getAbsolutePath();
       createPath(filename);
-      FileOutputStream fos = new FileOutputStream(file);
-      saveBytes(fos, buffer);
-      fos.close();
+      OutputStream output = new FileOutputStream(file);
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        output = new GZIPOutputStream(output);
+      }
+      saveBytes(output, buffer);
+      output.close();
 
     } catch (IOException e) {
       System.err.println("error saving bytes to " + file);
@@ -4730,29 +4726,18 @@ public class PApplet extends Applet
    */
   static public void saveBytes(OutputStream output, byte buffer[]) {
     try {
-      //BufferedOutputStream bos = new BufferedOutputStream(output);
       output.write(buffer);
       output.flush();
 
     } catch (IOException e) {
       e.printStackTrace();
-      throw new RuntimeException("Couldn't save bytes");
     }
   }
 
   //
 
   public void saveStrings(String filename, String strings[]) {
-    try {
-      String location = savePath(filename);
-      FileOutputStream fos = new FileOutputStream(location);
-      saveStrings(fos, strings);
-      fos.close();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-      throw new RuntimeException("saveStrings() failed: " + e.getMessage());
-    }
+    saveStrings(saveFile(filename), strings);
   }
 
 
@@ -4760,20 +4745,21 @@ public class PApplet extends Applet
     try {
       String location = file.getAbsolutePath();
       createPath(location);
-      FileOutputStream fos = new FileOutputStream(location);
-      saveStrings(fos, strings);
-      fos.close();
+      OutputStream output = new FileOutputStream(location);
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        output = new GZIPOutputStream(output);
+      }
+      saveStrings(output, strings);
+      output.close();
 
     } catch (IOException e) {
-      System.err.println("error while saving strings");
       e.printStackTrace();
     }
   }
 
 
   static public void saveStrings(OutputStream output, String strings[]) {
-    PrintWriter writer =
-      new PrintWriter(new OutputStreamWriter(output));
+    PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
     for (int i = 0; i < strings.length; i++) {
       writer.println(strings[i]);
     }
@@ -4816,9 +4802,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Returns a path inside the applet folder to save to,
-   * just like sketchPath(), but also creates any in-between
-   * folders so that things save properly.
+   * Returns a path inside the applet folder to save to. Like sketchPath(),
+   * but creates any in-between folders so that things save properly.
    * <p/>
    * All saveXxxx() functions use the path to the sketch folder, rather than
    * its data folder. Once exported, the data folder will be found inside the
@@ -4833,6 +4818,14 @@ public class PApplet extends Applet
     String filename = sketchPath(where);
     createPath(filename);
     return filename;
+  }
+
+
+  /**
+   * Identical to savePath(), but returns a File object.
+   */
+  public File saveFile(String where) {
+    return new File(savePath(where));
   }
 
 
@@ -4852,6 +4845,14 @@ public class PApplet extends Applet
     if (new File(where).isAbsolute()) return where;
 
     return sketchPath + File.separator + "data" + File.separator + where;
+  }
+
+
+  /**
+   * Return a full path to an item in the data folder as a File object.
+   */
+  public File dataFile(String where) {
+    return new File(dataPath(where));
   }
 
 
@@ -5048,7 +5049,10 @@ public class PApplet extends Applet
       //return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
       return sort_floats[a] - sort_floats[b];
     case STRINGS:
-      return sort_strings[a].compareTo(sort_strings[b]);
+      //return sort_strings[a].compareTo(sort_strings[b]);
+      //return sort_strings[a].compareToIgnoreCase(sort_strings[b]);  // 1.2
+      return sort_strings[a].toLowerCase().
+        compareTo(sort_strings[b].toLowerCase());
     case OBJECTS:
       try {
         Object[] params = new Object[] { new Integer(a), new Integer(b) };
