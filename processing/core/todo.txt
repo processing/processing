@@ -12,6 +12,8 @@ X   instead, returns an array
 X unregisterXxxx() calls to remove methods from libs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=312
 X   implemented by ewjordan
+X sort() on strings ignores case 
+_   mention the change in the reference
 
 _ opengl mipmaps are leaking (regression in spite of #150 fix)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=610
