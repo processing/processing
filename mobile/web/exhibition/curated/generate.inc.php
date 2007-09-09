@@ -49,12 +49,6 @@ EOE;
 }
 
 function format_wappage_link($data) {
-    $line = <<<EOE
-EOE;
-    return $line;
-}
-
-function format_waphome_link($data) {
     $code = $data['id'] * 2;
     $line = <<<EOE
 <img border="0" src="<?php echo get_sized_image("{$data['mobileimgurl']}") ?>" /><br />
@@ -97,6 +91,7 @@ function links_generate() {
         if (flock($lockfp, LOCK_EX)) {
             $fp = fopen($dirname . '/generated/links.inc.php', 'wb');
             $homefp = fopen($dirname . '/generated/home.inc.php', 'wb');
+            $wapfp = fopen($dirname . '/generated/waplinks.inc.php', 'wb');
             $waphomefp = fopen($dirname . '/generated/waphome.inc.php', 'wb');
             if ($fp !== FALSE) {
                 $link = db_connect();
@@ -104,6 +99,7 @@ function links_generate() {
                 $count = 0;
                 write_header($fp);
                 while ($data = mysql_fetch_assoc($result)) {
+                    //// handle exhibition page
                     if (($count % 2) == 0) {
                         write_startrow($fp);
                     } else {
@@ -116,20 +112,24 @@ function links_generate() {
                     }
                     //// handle homepage include
                     if ($count == 0) {
-                        //// web home
                         $line = format_home_link($data);
                         fwrite($homefp, $line);
-                        //// wap home
-                        $line = format_waphome_link($data);
-                        fwrite($waphomefp, $line);
                     } else if ($count == 1) {
-                        //// web home
                         $line = format_home_link($data);
                         fwrite($homefp, "<br /><br />");
                         fwrite($homefp, $line);
-                        //// wap home
-                        $line = format_waphome_link($data);
-                        fwrite($waphomefp, "<br /><br />");
+                    }
+                    //// handle wap exhibition page
+                    $line = format_wappage_link($data);
+                    if ($count > 0) {
+                        fwrite($wapfp, "<br /><br />");
+                    }
+                    fwrite($wapfp, $line);
+                    //// handle wap homepage include
+                    if ($count < 2) { 
+                        if ($count > 0) {
+                            fwrite($waphomefp, "<br /><br />");
+                        }
                         fwrite($waphomefp, $line);
                     }
 
@@ -149,7 +149,10 @@ function links_generate() {
                 mysql_free_result($result);
                 //// add footer link to more pages, if necessary
                 if ($count > $linksperpage) {
+                    //// web
                     fwrite($fp, "<br /><a href=\"curated/index.php?page=2\">Exhibition continues</a>");
+                    //// wap
+                    fwrite($wapfp, "<br /><br />&raquo; <a href=\"exh.php?page=2\">Exhibition continues</a>");
                 }
                 fclose($fp);
 
@@ -167,10 +170,12 @@ function links_generate() {
                     //// generate the file
                     $page = $i + 2;
                     $fp = fopen("{$dirname}/generated/links.{$page}.inc.php", 'wb');
+                    $wapfp = fopen("{$dirname}/generated/waplinks.{$page}.inc.php", 'wb');
 
                     write_header($fp);
                     $count = 0;
                     while ($data = mysql_fetch_assoc($result)) {
+                        //// web
                         if (($count % 2) == 0) {
                             write_startrow($fp);
                         } else {
@@ -181,6 +186,13 @@ function links_generate() {
                         if (($count % 2) == 1) {
                             write_endrow($fp);
                         }
+                        //// wap
+                        if ($count > 0) {
+                            fwrite($wapfp, "<br /><br />");
+                        }
+                        $line = format_wappage_link($data);
+                        fwrite($wapfp, $line);
+
                         $count++;
                     }
                     if (($count % 2) == 1) {
@@ -190,6 +202,8 @@ function links_generate() {
                     write_footer($fp);
 
                     fclose($fp);
+                    fclose($wapfp);
+
                     mysql_free_result($result);
                     $offset += $linksperpage;
                 }
