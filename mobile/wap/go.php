@@ -32,7 +32,7 @@ $PAGE_FOOTER = $PAGE_HEADER;
 
 require_once 'header.inc.php';
 ?>
-The content you are about to download is hosted on another website. This website cannot guarantee that it will run on your phone. This website is also not responsible for any additional charges or fees that may be incurred during its use. By selecting the link below you agree to these terms.<br />
+The content you are about to download is hosted on another website. It is not guaranteed to run on your phone. You are responsible for any additional charges or fees that may be incurred during its use. By selecting the link below you agree to these terms.<br />
 <br />
 <?php
 if (($code % 2) == 0) {
