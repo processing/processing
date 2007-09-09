@@ -40,11 +40,22 @@ if (($code % 2) == 0) {
 <br />
 <?php echo $data['description'] ?><br />
 <br />
-<span class="accesskey">1</span> <a href="go.php?code=<?php echo $code?>" accesskey="1">Download</a><br />
 <?php
+     $accesskey = 1;
+     if (isset($data['jadurl']) && ($data['jadurl'] != "")) {
+?>
+<span class="accesskey"><?php echo $accesskey ?></span> <a href="go.php?code=<?php echo $code?>" accesskey="<?php echo $accesskey ?>">Download</a><br />
+<?php
+         $accesskey++;
+     } else {
+?>
+This sketch is not available for download.<br />
+<br />
+<?php
+     }
      if (isset($data['mobileurl']) && ($data['mobileurl'] != "")) {
 ?>
-<span class="accesskey">2</span> <a href="<?php echo $data['mobileurl'] ?>" accesskey="2">Go to Mobile Homepage</a>
+<span class="accesskey"><?php echo $accesskey ?></span> <a href="<?php echo $data['mobileurl'] ?>" accesskey="<?php echo $accesskey ?>">Go to Mobile Homepage</a>
 <?php
      }
 } else {
