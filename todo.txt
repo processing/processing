@@ -10,6 +10,8 @@ _ need to fix changes.html because it lists out of date alpha->beta changes
 X added getChild(name/path), getChildren(name/path) to xml library
 _   add notes about these to the reference
 
+_ when writing javadoc for p5 sketches, only write from first tab
+
 multiple sketch support
 X basic structural moves to handle multiple sketches
 X properly mark macosx windows as modified
