@@ -9,6 +9,8 @@ X   better yet, only do this when "not found" errors come up
 _ need to fix changes.html because it lists out of date alpha->beta changes 
 X added getChild(name/path), getChildren(name/path) to xml library
 _   add notes about these to the reference
+X fix problem with export.txt files not working
+X   http://dev.processing.org/bugs/show_bug.cgi?id=625
 
 _ when writing javadoc for p5 sketches, only write from first tab
 
