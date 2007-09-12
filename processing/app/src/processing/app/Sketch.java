@@ -2286,7 +2286,7 @@ public class Sketch {
         // otherwise just dump the whole folder
         exportList = libraryFolder.list();
       } else {
-        exportList = PApplet.split(commaList, ", ");
+        exportList = PApplet.splitTokens(commaList, ", ");
       }
 
       // add each item from the library folder / export list to the output
