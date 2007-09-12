@@ -59,7 +59,7 @@ public class Sketch {
    * true if any of the files have been modified.
    */
   boolean modified;
-  
+
   public File folder;
   public File dataFolder;
   public File codeFolder;
@@ -744,7 +744,7 @@ public class Sketch {
       }
     }
     editor.header.repaint();
-    
+
     if (PApplet.platform == PConstants.MACOSX) {
       // http://developer.apple.com/qa/qa2001/qa1146.html
       Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
@@ -929,7 +929,7 @@ public class Sketch {
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);
-    
+
     // let Editor know that the save was successful
     return true;
   }
@@ -1800,7 +1800,7 @@ public class Sketch {
       String appletList = (String) exportTable.get("applet");
       String exportList[] = null;
       if (appletList != null) {
-        exportList = PApplet.split(appletList, ", ");
+        exportList = PApplet.splitTokens(appletList, ", ");
       } else {
         exportList = libraryFolder.list();
       }
@@ -2673,13 +2673,13 @@ public class Sketch {
     }
     return false;
   }
-  
+
 
   public void setUntitled(boolean u) {
     editor.untitled = u;
   }
-  
-  
+
+
   public boolean isUntitled() {
     return editor.untitled;
   }
@@ -2703,11 +2703,11 @@ public class Sketch {
   public void nextCode() {
     setCurrent((currentIndex + 1) % codeCount);
   }
-  
-  
+
+
   // .................................................................
 
-  
+
   /**
    * Convert to sanitized name and alert the user
    * if changes were made.
