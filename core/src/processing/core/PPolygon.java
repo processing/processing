@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -31,9 +31,9 @@ package processing.core;
  * Likely to be removed before 1.0 as it's no longer particularly used.
  */
 public class PPolygon implements PConstants {
-  
+
   // identical to the constants from PGraphics
-  
+
   static final int X = 0; // transformed xyzw
   static final int Y = 1; // formerly SX SY SZ
   static final int Z = 2;
@@ -42,10 +42,10 @@ public class PPolygon implements PConstants {
   static final int G = 4;  // fill stored here, transform in place
   static final int B = 5;
   static final int A = 6;
-  
+
   static final int U = 7; // texture
   static final int V = 8;
-  
+
   //
 
   static final int DEFAULT_SIZE = 64; // this is needed for spheres
