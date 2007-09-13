@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -1529,9 +1529,9 @@ public class PGraphics3D extends PGraphics {
         }
       }
 
-      /* 
-      // Seems okay to remove this because these vertices are not used again, 
-      // but if problems arise, this needs to be uncommented because the above 
+      /*
+      // Seems okay to remove this because these vertices are not used again,
+      // but if problems arise, this needs to be uncommented because the above
       // change is destructive and may need to be undone before proceeding.
       if (drawing2D() && a[MZ] == 0) {
         a[X] -= 0.01;
