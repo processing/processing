@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -58,7 +58,7 @@ public class PTriangle implements PConstants
 
   // the power of 2 that tells how many pixels to interpolate
   // for between  exactly computed texture coordinates
-  private static final int DEFAULT_INTERP_POWER = 3; 
+  private static final int DEFAULT_INTERP_POWER = 3;
   private static int TEX_INTERP_POWER = DEFAULT_INTERP_POWER;
 
   // Vertex coordinates
@@ -201,8 +201,8 @@ public class PTriangle implements PConstants
 
   /** */
   private boolean   m_bilinear;
-  
-  
+
+
   //Vectors needed in accurate texture code
   //We store them as class members to avoid too much code duplication
   private float ax,ay,az;
@@ -213,10 +213,11 @@ public class PTriangle implements PConstants
   private float nearPlaneDepth;
   private float xmult;
   private float ymult;
-  private float newax,newbx,newcx; //optimization vars...not pretty, but save a couple mults per pixel
-  private boolean firstSegment; //are we currently drawing the first piece of the triangle, or have we already done so?
-  
-  
+  // optimization vars...not pretty, but save a couple mults per pixel
+  private float newax,newbx,newcx;
+  // are we currently drawing the first piece of the triangle,
+  // or have we already done so?
+  private boolean firstSegment;
 
 
   public PTriangle(PGraphics3D g) {
@@ -238,14 +239,15 @@ public class PTriangle implements PConstants
     g_array = new float[3];
     b_array = new float[3];
     a_array = new float[3];
-    
-	camX = new float[3];
-	camY = new float[3];
-	camZ = new float[3];
+
+    camX = new float[3];
+    camY = new float[3];
+    camZ = new float[3];
 
     this.parent = g;
     reset();
   }
+
 
   /**
    * Resets polygon attributes
@@ -274,6 +276,7 @@ public class PTriangle implements PConstants
     m_drawFlags = 0;
   }
 
+
   /**
    * Sets backface culling on/off
    */
@@ -301,15 +304,16 @@ public class PTriangle implements PConstants
     z_array[2] = z2;
   }
 
+
   /**
-   * Pass camera-space coordinates for the triangle (needed to render if ENABLE_ACCURATE_TEXTURES is hinted).
+   * Pass camera-space coordinates for the triangle.
+   * Needed to render if hint(ENABLE_ACCURATE_TEXTURES) enabled.
+   * Generally this will not need to be called manually,
+   * currently called from PGraphics3D.render_triangles()
    */
   public void setCamVertices(float x0, float y0, float z0,
                           float x1, float y1, float z1,
                           float x2, float y2, float z2) {
-	//Generally this will not need to be called manually, currently called if hints[ENABLE_ACCURATE_TEXTURES]
-	//from PGraphics3D.render_triangles()
-
     camX[0] = x0;
     camX[1] = x1;
     camX[2] = x2;
@@ -322,6 +326,7 @@ public class PTriangle implements PConstants
     camZ[1] = z1;
     camZ[2] = z2;
   }
+
 
   /**
    * Sets the UV coordinates of the texture
@@ -338,12 +343,13 @@ public class PTriangle implements PConstants
     v_array[2] = (v2 * F_TEX_HEIGHT + 0.5f) * 65536f;
   }
 
+
   /**
    * Sets vertex intensities in 0xRRGGBBAA format
    */
-  public void setIntensities( float r0, float g0, float b0, float a0,
-                float r1, float g1, float b1, float a1,
-                float r2, float g2, float b2, float a2) {
+  public void setIntensities(float r0, float g0, float b0, float a0,
+                             float r1, float g1, float b1, float a1,
+                             float r2, float g2, float b2, float a2) {
     // Check if we need alpha or not?
     if ((a0 != 1.0f) || (a1 != 1.0f) || (a2 != 1.0f)) {
       INTERPOLATE_ALPHA = true;
@@ -387,7 +393,7 @@ public class PTriangle implements PConstants
 
     // for plain triangles
     m_fill = ((int)(255*r0) << 16) | ((int)(255*g0) << 8) | (int)(255*b0);
- }
+  }
 
 
   /**
@@ -421,6 +427,7 @@ public class PTriangle implements PConstants
     m_bilinear = true;
   }
 
+
   /**
    *
    */
@@ -444,9 +451,11 @@ public class PTriangle implements PConstants
     }
   }
 
+
   public void setIndex(int index) {
     m_index = index;
   }
+
 
   /**
    * Renders the polygon
@@ -469,25 +478,18 @@ public class PTriangle implements PConstants
     //}
   }
 
+
   private void draw() {
-    // y-coordinates
-    float x0;
-    float x1;
-    float x2;
+    float x0, x1, x2;
+    float z0, z1, z2;
 
-    //
-    float z0;
-    float z1;
-    float z2;
-
-    //
     float y0 = y_array[0];
     float y1 = y_array[1];
     float y2 = y_array[2];
 
-    // For accurate texture interpolation, need to mark whether 
+    // For accurate texture interpolation, need to mark whether
     // we've already pre-calculated for the triangle
-	firstSegment = true; 
+    firstSegment = true;
 
     // do backface culling?
     if (m_culling) {
@@ -650,14 +652,14 @@ public class PTriangle implements PConstants
         dta = (yi0 + PIXEL_CENTER) - y0;
         xadd1 = (x1 - x0) / dy0;
 
-        // we can determine which side is "single" side by comparing left/right edge adds
+        // we can determine which side is "single" side
+        // by comparing left/right edge adds
         if (xadd2 > xadd1) {
           xleft = x0 + dta * xadd1;
           xrght = x0 + dta * xadd2;
           zleftadd = dz0 / dy0;
           zleft = dta*zleftadd+z0;
 
-          //
           if (INTERPOLATE_UV) {
             uleftadd = du0 / dy0;
             vleftadd = dv0 / dy0;
@@ -665,7 +667,6 @@ public class PTriangle implements PConstants
             vleft = dta*vleftadd+v0;
           }
 
-          //
           if (INTERPOLATE_RGB) {
             rleftadd = dr0 / dy0;
             gleftadd = dg0 / dy0;
@@ -675,7 +676,6 @@ public class PTriangle implements PConstants
             bleft = dta*bleftadd+b0;
           }
 
-          //
           if (INTERPOLATE_ALPHA) {
             aleftadd = da0 / dy0;
             aleft = dta*aleftadd+a0;
@@ -785,12 +785,12 @@ public class PTriangle implements PConstants
         }
 
         // if bottom segment height is zero, return
-        if (yi2 == yi1)
-          return;
+        if (yi2 == yi1) return;
 
         // calculate xadd 1
         dy1 = y2 - y1;
         xadd1 = (x2 - x1) / dy1;
+
       } else {
         // top seg height was zero, calculate & clip single edge X
         dy1 = y2 - y1;
@@ -939,156 +939,171 @@ public class PTriangle implements PConstants
         }
 
 
-  /*
-    Accurate texturing code by ewjordan@gmail.com, April 14, 2007
-    The getColorFromTexture() function should be inlined and optimized so that most of the heavy lifting
-    happens outside the per-pixel loop.  The unoptimized generic algorithm looks like this (unless noted,
-	all of these variables are vectors, so the actual code will look messier):
-	
-	p = camera space vector where u == 0, v == 0;
-	m = vector from p to location where u == TEX_WIDTH;
-	n = vector from p to location where v == TEX_HEIGHT;
-
-	A = p cross n;
-	B = m cross p;
-	C = n cross m;
-    A *= texture.width;
-    B *= texture.height;
-	
-	for (scanlines in triangle){
-      float a = S * A;
-      float b = S * B;
-      float c = S * C;
-      for (pixels in scanline){
-        int u = a/c;
-        int v = b/c;
-        color = texture[v * texture.width + u];
-        a += A.x;
-        b += B.x;
-        c += C.x;
-      }
-    }
-	
-	We don't use this exact algorithm here, however, because of the extra overhead from the divides.
-	Instead we compute the exact u and v (labelled iu and iv in the code) at the start of each scanline
-	and we perform a linear interpolation for every linearInterpLength = 1 << TEX_INTERP_POWER pixels.
-	This means that we only perform the true calculation once in a while, and the rest of the time
-	the algorithm functions exactly as in the fast inaccurate case, at least in theory.  In practice,
-	even if we set linearInterpLength very high we still incur some speed penalty due to the preprocessing
-	that must take place per-scanline.  A similar method could be applied per scanline to avoid this, but
-	it would only be worthwhile in the case that we never compute more than one exact calculation per
-	scanline.  If we want something like this, however, it would be best to create another mode of calculation
-	called "constant-z" interpolation, which could be used for things like floors and ceilings where the
-	distance from the camera plane never changes over the course of a scanline.  We could also add the
-	vertical analogue for drawing vertical walls.  In any case, these are not critical as the current
-	algorithm runs fairly well, perhaps ~10% slower than the default perspective-less one.
-	
-  */
-  
- /**
-   * Solve for camera space coordinates of critical texture points and set up per-triangle variables for accurate texturing
+  /**
+   * Accurate texturing code by ewjordan@gmail.com, April 14, 2007
+   * The getColorFromTexture() function should be inlined and optimized
+   * so that most of the heavy lifting happens outside the per-pixel loop.
+   * The unoptimized generic algorithm looks like this (unless noted,
+   * all of these variables are vectors, so the actual code will look messier):
+   *
+   * p = camera space vector where u == 0, v == 0;
+   * m = vector from p to location where u == TEX_WIDTH;
+   * n = vector from p to location where v == TEX_HEIGHT;
+   *
+   * A = p cross n;
+   * B = m cross p;
+   * C = n cross m;
+   * A *= texture.width;
+   * B *= texture.height;
+   *
+   * for (scanlines in triangle){
+   *   float a = S * A;
+   *   float b = S * B;
+   *   float c = S * C;
+   *   for (pixels in scanline){
+   *     int u = a/c;
+   *     int v = b/c;
+   *     color = texture[v * texture.width + u];
+   *     a += A.x;
+   *     b += B.x;
+   *     c += C.x;
+   *   }
+   * }
+   *
+   * We don't use this exact algorithm here, however, because of the extra
+   * overhead from the divides. Instead we compute the exact u and v (labelled
+   * iu and iv in the code) at the start of each scanline and we perform a
+   * linear interpolation for every linearInterpLength = 1 << TEX_INTERP_POWER
+   * pixels. This means that we only perform the true calculation once in a
+   * while, and the rest of the time the algorithm functions exactly as in the
+   * fast inaccurate case, at least in theory.  In practice, even if we set
+   * linearInterpLength very high we still incur some speed penalty due to the
+   * preprocessing that must take place per-scanline.  A similar method could
+   * be applied per scanline to avoid this, but it would only be worthwhile in
+   * the case that we never compute more than one exact calculation per
+   * scanline.  If we want something like this, however, it would be best to
+   * create another mode of calculation called "constant-z" interpolation,
+   * which could be used for things like floors and ceilings where the
+   * distance from the camera plane never changes over the course of a
+   * scanline.  We could also add the vertical analogue for drawing vertical
+   * walls.  In any case, these are not critical as the current algorithm runs
+   * fairly well, perhaps ~10% slower than the default perspective-less one.
    */
-  private boolean precomputeAccurateTexturing(){
-    //Sets all class variables relevant to accurate texture computation
-	//Should be called once per triangle - checks firstSegment to see if we've already called
-	
-  	float myFact = 65500.0f; //rescale u/v_array values when inverting matrix and performing other calcs
-	float myFact2 = 65500.0f;
 
-	//Matrix inversion to find affine transform between (u,v,(1)) -> (x,y,z)
-	
-	//OPTIMIZE: There should be a way to avoid the inversion here, which is
-	//quite expensive (~150 mults).  Also it might crap out due to loss of precision depending
-	//on the scaling of the u/v_arrays.  Nothing clever currently happens if the inversion
-	//fails, since this means the transformation is degenerate - we just pass false back to
-	//the caller and let it handle the situation. [There is no good solution to this
-	//case from within this function, since the way the calculation proceeds presumes a non-
-	//degenerate transformation matrix between camera space and uv space]
-	
-	//Obvious optimization: if the vertices are actually at the appropriate texture coordinates
-	//(e.g. (0,0), (TEX_WIDTH,0), and (0,TEX_HEIGHT)) then we can immediately return the
-	//right solution without the inversion. This is fairly common, so could speed up
-	//many cases of drawing.  [not implemented]
-	
-	//Furthermore, we could cache the p,resultT0,result0T vectors in the triangle's
-	//basis, since we could then do a look-up and generate the resulting coordinates very simply.
-	//This would include the above optimization as a special case - we could pre-populate the
-	//cache with special cases like that and dynamically add more.  The idea here is
-	//that most people simply paste textures onto triangles and move the triangles from
-	//frame to frame, so any per-triangle-per-frame code is likely wasted effort.
-    //[not implemented]
-	
-	//Note: o0, o1, and o2 vary depending on view angle to triangle, but p, n, and m should not depend on ordering differences
+  /**
+   * Solve for camera space coordinates of critical texture points and
+   * set up per-triangle variables for accurate texturing.
+   * Sets all class variables relevant to accurate texture computation
+   * Should be called once per triangle - checks firstSegment to see if
+   * we've already called.
+   */
+  private boolean precomputeAccurateTexturing() {
+    // rescale u/v_array values when inverting matrix and performing other calcs
+    float myFact = 65500.0f;
+    float myFact2 = 65500.0f;
 
-	if(firstSegment){
-		
-		PMatrix myMatrix = new PMatrix( u_array[o0]/myFact, v_array[o0]/myFact2, 1, 0,
-										u_array[o1]/myFact, v_array[o1]/myFact2, 1, 0,
-										u_array[o2]/myFact, v_array[o2]/myFact2, 1, 0,
-										0,           0,           0, 1);
-		myMatrix = myMatrix.invert(); //A 3x3 inversion would be more efficient here, given that the fourth r/c are unity
-		if (myMatrix == null) {return false;} //if the matrix inversion had trouble, let the caller know
-		float m00, m01, m02, m10, m11, m12, m20, m21, m22;
-		m00 = myMatrix.m00*camX[o0]+myMatrix.m01*camX[o1]+myMatrix.m02*camX[o2];
-		m01 = myMatrix.m10*camX[o0]+myMatrix.m11*camX[o1]+myMatrix.m12*camX[o2];
-		m02 = myMatrix.m20*camX[o0]+myMatrix.m21*camX[o1]+myMatrix.m22*camX[o2];
-		m10 = myMatrix.m00*camY[o0]+myMatrix.m01*camY[o1]+myMatrix.m02*camY[o2];
-		m11 = myMatrix.m10*camY[o0]+myMatrix.m11*camY[o1]+myMatrix.m12*camY[o2];
-		m12 = myMatrix.m20*camY[o0]+myMatrix.m21*camY[o1]+myMatrix.m22*camY[o2];
-		m20 = -(myMatrix.m00*camZ[o0]+myMatrix.m01*camZ[o1]+myMatrix.m02*camZ[o2]);
-		m21 = -(myMatrix.m10*camZ[o0]+myMatrix.m11*camZ[o1]+myMatrix.m12*camZ[o2]);
-		m22 = -(myMatrix.m20*camZ[o0]+myMatrix.m21*camZ[o1]+myMatrix.m22*camZ[o2]);
-		
-		float px = m02;
-		float py = m12;
-		float pz = m22;
-		float resultT0x = m00*TEX_WIDTH+m02; //Bugfix: possibly we should use F_TEX_WIDTH/HEIGHT instead? Seems to read off end of array in that case, though...
-		float resultT0y = m10*TEX_WIDTH+m12;
-		float resultT0z = m20*TEX_WIDTH+m22;
-		float result0Tx = m01*TEX_HEIGHT+m02;
-		float result0Ty = m11*TEX_HEIGHT+m12;
-		float result0Tz = m21*TEX_HEIGHT+m22;	  
-		float mx = resultT0x-m02;
-		float my = resultT0y-m12;
-		float mz = resultT0z-m22;
-		float nx = result0Tx-m02;
-		float ny = result0Ty-m12;
-		float nz = result0Tz-m22;
-		
-		//avec = p x n
-		ax = (py*nz-pz*ny)*TEX_WIDTH; //F_TEX_WIDTH/HEIGHT?
-		ay = (pz*nx-px*nz)*TEX_WIDTH;
-		az = (px*ny-py*nx)*TEX_WIDTH;
-		//bvec = m x p
-		bx = (my*pz-mz*py)*TEX_HEIGHT;
-		by = (mz*px-mx*pz)*TEX_HEIGHT;
-		bz = (mx*py-my*px)*TEX_HEIGHT;
-		//cvec = n x m
-		cx = ny*mz-nz*my;
-		cy = nz*mx-nx*mz;
-		cz = nx*my-ny*mx;
-	}
-	
+    //Matrix inversion to find affine transform between (u,v,(1)) -> (x,y,z)
+
+    // OPTIMIZE: There should be a way to avoid the inversion here, which is
+    // quite expensive (~150 mults).  Also it might crap out due to loss of
+    // precision depending on the scaling of the u/v_arrays.  Nothing clever
+    // currently happens if the inversion fails, since this means the
+    // transformation is degenerate - we just pass false back to the caller
+    // and let it handle the situation. [There is no good solution to this
+    // case from within this function, since the way the calculation proceeds
+    // presumes a non-degenerate transformation matrix between camera space
+    // and uv space]
+
+    // Obvious optimization: if the vertices are actually at the appropriate
+    // texture coordinates (e.g. (0,0), (TEX_WIDTH,0), and (0,TEX_HEIGHT))
+    // then we can immediately return the right solution without the inversion.
+    // This is fairly common, so could speed up many cases of drawing.
+    // [not implemented]
+
+    // Furthermore, we could cache the p,resultT0,result0T vectors in the
+    // triangle's basis, since we could then do a look-up and generate the
+    // resulting coordinates very simply. This would include the above
+    // optimization as a special case - we could pre-populate the cache with
+    // special cases like that and dynamically add more. The idea here is that
+    // most people simply paste textures onto triangles and move the triangles
+    // from frame to frame, so any per-triangle-per-frame code is likely
+    // wasted effort. [not implemented]
+
+    // Note: o0, o1, and o2 vary depending on view angle to triangle,
+    // but p, n, and m should not depend on ordering differences
+
+    if (firstSegment){
+      PMatrix myMatrix = new PMatrix(u_array[o0]/myFact, v_array[o0]/myFact2, 1, 0,
+                                     u_array[o1]/myFact, v_array[o1]/myFact2, 1, 0,
+                                     u_array[o2]/myFact, v_array[o2]/myFact2, 1, 0,
+                                     0,           0,           0, 1);
+      myMatrix = myMatrix.invert(); //A 3x3 inversion would be more efficient here, given that the fourth r/c are unity
+      if (myMatrix == null) {return false;} //if the matrix inversion had trouble, let the caller know
+      float m00, m01, m02, m10, m11, m12, m20, m21, m22;
+      m00 = myMatrix.m00*camX[o0]+myMatrix.m01*camX[o1]+myMatrix.m02*camX[o2];
+      m01 = myMatrix.m10*camX[o0]+myMatrix.m11*camX[o1]+myMatrix.m12*camX[o2];
+      m02 = myMatrix.m20*camX[o0]+myMatrix.m21*camX[o1]+myMatrix.m22*camX[o2];
+      m10 = myMatrix.m00*camY[o0]+myMatrix.m01*camY[o1]+myMatrix.m02*camY[o2];
+      m11 = myMatrix.m10*camY[o0]+myMatrix.m11*camY[o1]+myMatrix.m12*camY[o2];
+      m12 = myMatrix.m20*camY[o0]+myMatrix.m21*camY[o1]+myMatrix.m22*camY[o2];
+      m20 = -(myMatrix.m00*camZ[o0]+myMatrix.m01*camZ[o1]+myMatrix.m02*camZ[o2]);
+      m21 = -(myMatrix.m10*camZ[o0]+myMatrix.m11*camZ[o1]+myMatrix.m12*camZ[o2]);
+      m22 = -(myMatrix.m20*camZ[o0]+myMatrix.m21*camZ[o1]+myMatrix.m22*camZ[o2]);
+
+      float px = m02;
+      float py = m12;
+      float pz = m22;
+      // Bugfix: possibly we should use F_TEX_WIDTH/HEIGHT instead?
+      // Seems to read off end of array in that case, though...
+      float resultT0x = m00*TEX_WIDTH+m02;
+      float resultT0y = m10*TEX_WIDTH+m12;
+      float resultT0z = m20*TEX_WIDTH+m22;
+      float result0Tx = m01*TEX_HEIGHT+m02;
+      float result0Ty = m11*TEX_HEIGHT+m12;
+      float result0Tz = m21*TEX_HEIGHT+m22;
+      float mx = resultT0x-m02;
+      float my = resultT0y-m12;
+      float mz = resultT0z-m22;
+      float nx = result0Tx-m02;
+      float ny = result0Ty-m12;
+      float nz = result0Tz-m22;
+
+      //avec = p x n
+      ax = (py*nz-pz*ny)*TEX_WIDTH; //F_TEX_WIDTH/HEIGHT?
+      ay = (pz*nx-px*nz)*TEX_WIDTH;
+      az = (px*ny-py*nx)*TEX_WIDTH;
+      //bvec = m x p
+      bx = (my*pz-mz*py)*TEX_HEIGHT;
+      by = (mz*px-mx*pz)*TEX_HEIGHT;
+      bz = (mx*py-my*px)*TEX_HEIGHT;
+      //cvec = n x m
+      cx = ny*mz-nz*my;
+      cy = nz*mx-nx*mz;
+      cz = nx*my-ny*mx;
+    }
+
     nearPlaneWidth = parent.rightScreen-parent.leftScreen;
-	nearPlaneHeight = parent.topScreen-parent.bottomScreen;
-	nearPlaneDepth = parent.nearPlane;
-	xmult = nearPlaneWidth / SCREEN_WIDTH; //one pixel width in nearPlane coordinates
-	ymult = nearPlaneHeight / SCREEN_HEIGHT;
-    newax = ax*xmult;//Extra scalings to map screen plane units to pixel units
+    nearPlaneHeight = parent.topScreen-parent.bottomScreen;
+    nearPlaneDepth = parent.nearPlane;
+    // one pixel width in nearPlane coordinates
+    xmult = nearPlaneWidth / SCREEN_WIDTH;
+    ymult = nearPlaneHeight / SCREEN_HEIGHT;
+    // Extra scalings to map screen plane units to pixel units
+    newax = ax*xmult;
     newbx = bx*xmult;
     newcx = cx*xmult;
-	return true;
+    return true;
   }
 
- /**
+
+  /**
    * Set the power of two used for linear interpolation of texture coordinates.
    * A true texture coordinate is computed every 2^pwr pixels along a scanline.
    */
-  static public void setInterpPower(int pwr){
+  static public void setInterpPower(int pwr) {
     //Currently must be invoked from P5 as PTriangle.setInterpPower(...)
     TEX_INTERP_POWER = pwr;
   }
-
 
 
   /**
@@ -1343,7 +1358,7 @@ public class PTriangle implements PConstants
   /**
    * 8-bit plain texture
    */
-   
+
    //THIS IS MESSED UP, NEED TO GRAB ORIGINAL VERSION!!!
   private void drawsegment_texture8
   (
@@ -1352,26 +1367,26 @@ public class PTriangle implements PConstants
     int ytop,
     int ybottom
   ) {
-  
-	//Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+
+        //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
+        int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+        boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+        float screenx = 0; float screeny = 0; float screenz = 0;
+        float a = 0; float b = 0; float c = 0;
+        int linearInterpPower = TEX_INTERP_POWER;
+        int linearInterpLength = 1 << linearInterpPower;
+        if (accurateMode){
+          if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+            newax *= linearInterpLength;
+            newbx *= linearInterpLength;
+            newcx *= linearInterpLength;
+            screenz = nearPlaneDepth;
+            firstSegment = false;
+          } else{
+            accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+          }
+        }
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
     int p = m_index;
@@ -1388,7 +1403,7 @@ public class PTriangle implements PConstants
       if (xstart < 0)
         xstart = 0;
 
-	  int xpixel = xstart;//accurate mode
+          int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -1402,67 +1417,66 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
-        float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
-        float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
-        fv = (b*preoneoverc);
-	  }
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
 
+      if (accurateMode && goingIn) {
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
+        float rightOffset2 = rightOffset / ((float)linearInterpLength);
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
+        float bo = b-leftOffset2*newbx;
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU;
+        iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else {
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
+        fv = (b*preoneoverc);
+      }
 
       for ( ; xstart < xend; xstart++ ) {
-	    if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if (accurateMode) {
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else {
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
         // try-catch just in case pixel offset it out of range
-        try
-        {
+        try {
           if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             //m_zbuffer[xstart] = iz;
 
@@ -1493,13 +1507,13 @@ public class PTriangle implements PConstants
         catch (Exception e) {
         }
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         iz+=izadd;
       }
- 	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
@@ -1521,26 +1535,26 @@ public class PTriangle implements PConstants
     int ytop,
     int ybottom
   ) {
-  
-	//Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+
+    //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
     int p = m_index;
@@ -1558,7 +1572,7 @@ public class PTriangle implements PConstants
       if (xstart < 0)
         xstart = 0;
 
-	  int xpixel = xstart;//accurate mode
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -1573,106 +1587,106 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
+      }
 
 
       for ( ; xstart < xend; xstart++ ) {
-	    if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
         // try-catch just in case pixel offset it out of range
         try
-        {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            //m_zbuffer[xstart] = iz;
+          {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+              //m_zbuffer[xstart] = iz;
 
-            int al0;
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = iu & 0xFFFF;
-              al0 = m_texture[ofs] & 0xFF;
-              int al1 = m_texture[ofs + 1] & 0xFF;
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int al2 = m_texture[ofs] & 0xFF;
-              int al3 = m_texture[ofs + 1] & 0xFF;
-              al0 = al0 + (((al1-al0) * iui) >> 16);
-              al2 = al2 + (((al3-al2) * iui) >> 16);
-              al0 = al0 + (((al2-al0) * (iv & 0xFFFF)) >> 16);
-            } else {
-              al0 = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)] & 0xFF;
+              int al0;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = iu & 0xFFFF;
+                al0 = m_texture[ofs] & 0xFF;
+                int al1 = m_texture[ofs + 1] & 0xFF;
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int al2 = m_texture[ofs] & 0xFF;
+                int al3 = m_texture[ofs + 1] & 0xFF;
+                al0 = al0 + (((al1-al0) * iui) >> 16);
+                al2 = al2 + (((al3-al2) * iui) >> 16);
+                al0 = al0 + (((al2-al0) * (iv & 0xFFFF)) >> 16);
+              } else {
+                al0 = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)] & 0xFF;
+              }
+              al0 = (al0 * (ia >> 16)) >> 8;
+
+              int br = m_pixels[xstart];
+              int bg = (br & 0xFF00);
+              int bb = (br & 0xFF);
+              br = (br & 0xFF0000);
+              m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
+              m_stencil[xstart] = p;
             }
-            al0 = (al0 * (ia >> 16)) >> 8;
-
-            int br = m_pixels[xstart];
-            int bg = (br & 0xFF00);
-            int bb = (br & 0xFF);
-            br = (br & 0xFF0000);
-            m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {
         }
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         iz+=izadd;
         ia+=iaadd;
       }
- 	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
@@ -1687,51 +1701,51 @@ public class PTriangle implements PConstants
    * Plain 24-bit texture
    */
   private void drawsegment_texture24
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-    
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
+
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
     int p = m_index;
     float iuf = iuadd;
     float ivf = ivadd;
 
-	int ypixel = ytop/SCREEN_WIDTH;//ACCTEX
+    int ypixel = ytop/SCREEN_WIDTH;//ACCTEX
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;//If we're past this index, we can't shift down a row w/o throwing an exception
-//	int exCount = 0;//counter for exceptions caught
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES]; //bring this local since it will be accessed often
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	
-	//Interpolation length of 16 tends to look good except at a small angle; 8 looks okay then, except for the
-	//above issue.  When viewing close to flat, as high as 32 is often acceptable.  Could add dynamic interpolation
-	//settings based on triangle angle - currently we just pick a value and leave it (by default I have the
-	//power set at 3, so every 8 pixels a true coordinate is calculated, which seems a decent compromise).
-	
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion gave us garbage, revert to normal rendering (something is degenerate)
-	  }
-	}
-	
+    //      int exCount = 0;//counter for exceptions caught
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES]; //bring this local since it will be accessed often
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
 
-	while (ytop < ybottom) {//scanline loop
+    //Interpolation length of 16 tends to look good except at a small angle; 8 looks okay then, except for the
+    //above issue.  When viewing close to flat, as high as 32 is often acceptable.  Could add dynamic interpolation
+    //settings based on triangle angle - currently we just pick a value and leave it (by default I have the
+    //power set at 3, so every 8 pixels a true coordinate is calculated, which seems a decent compromise).
+
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion gave us garbage, revert to normal rendering (something is degenerate)
+      }
+    }
+
+
+    while (ytop < ybottom) {//scanline loop
       int xstart = (int) (xleft + PIXEL_CENTER);
-	  if (xstart < 0){ xstart = 0; }
-	  
-	  int xpixel = xstart;//accurate mode
+      if (xstart < 0){ xstart = 0; }
+
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH){ xend = SCREEN_WIDTH; }
@@ -1742,149 +1756,149 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-	  if (accurateMode){
-	  //off by one (half, I guess) hack, w/o it the first rows are outside the texture - maybe a mistake somewhere?
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        //off by one (half, I guess) hack, w/o it the first rows are outside the texture - maybe a mistake somewhere?
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;//OPT - some of this could be brought out of the y-loop since
-	    b = screenx*bx+screeny*by+screenz*bz;//xpixel and ypixel just increment by the same numbers each iteration.
-	    c = screenx*cx+screeny*cy+screenz*cz;//Probably not a big bottleneck, though.
-	  }
-	  
-	  //Figure out whether triangle is going further into the screen or not as we move along scanline
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  
+        a = screenx*ax+screeny*ay+screenz*az;//OPT - some of this could be brought out of the y-loop since
+        b = screenx*bx+screeny*by+screenz*bz;//xpixel and ypixel just increment by the same numbers each iteration.
+        c = screenx*cx+screeny*cy+screenz*cz;//Probably not a big bottleneck, though.
+      }
+
+      //Figure out whether triangle is going further into the screen or not as we move along scanline
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+
       //Set up linear interpolation between calculated texture points
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  //float fdeltaU = 0; float fdeltaV = 0;//vars for floating point interpolating version of algorithm
-	  //float fiu = 0; float fiv = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  	
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      //float fdeltaU = 0; float fdeltaV = 0;//vars for floating point interpolating version of algorithm
+      //float fiu = 0; float fiv = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
 
-	//Bugfix (done): it's a Really Bad Thing to interpolate along a scanline when the triangle goes deeper into the screen,
-	//because if the angle is severe enough the last control point for interpolation may cross the vanishing
-	//point.  This leads to some pretty nasty artifacts, and ideally we should scan from right to left if the
-	//triangle is better served that way, or (what we do now) precompute the offset that we'll need so that we end up
-	//with a control point exactly at the furthest edge of the triangle.
 
-	  if (accurateMode&&goingIn){
-	    //IMPORTANT!!!  Results are horrid without this hack!
-	    //If polygon goes into the screen along scan line, we want to match the control point to the furthest point drawn
-		//since the control points are less meaningful the closer you are to the vanishing point.
-		//We'll do this by making the first control point lie before the start of the scanline (safe since it's closer to us)
+      //Bugfix (done): it's a Really Bad Thing to interpolate along a scanline when the triangle goes deeper into the screen,
+      //because if the angle is severe enough the last control point for interpolation may cross the vanishing
+      //point.  This leads to some pretty nasty artifacts, and ideally we should scan from right to left if the
+      //triangle is better served that way, or (what we do now) precompute the offset that we'll need so that we end up
+      //with a control point exactly at the furthest edge of the triangle.
 
-		int rightOffset = (xend-xstart-1)%linearInterpLength; //"off by one" hack...probably means there's a small bug somewhere
-		int leftOffset = linearInterpLength-rightOffset;
+      if (accurateMode&&goingIn){
+        //IMPORTANT!!!  Results are horrid without this hack!
+        //If polygon goes into the screen along scan line, we want to match the control point to the furthest point drawn
+        //since the control points are less meaningful the closer you are to the vanishing point.
+        //We'll do this by making the first control point lie before the start of the scanline (safe since it's closer to us)
+
+        int rightOffset = (xend-xstart-1)%linearInterpLength; //"off by one" hack...probably means there's a small bug somewhere
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
 
         //Take step to control point to the left of start pixel
-		float ao = a-leftOffset2*newax;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		
-		//Now step to right control point
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		
-		//Get deltas for interpolation
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    //Otherwise the left edge is further, and we pin the first control point to it
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+
+        //Now step to right control point
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+
+        //Get deltas for interpolation
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        //Otherwise the left edge is further, and we pin the first control point to it
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
-	  
-	  for ( ; xstart < xend; xstart++ ) {//pixel loop - keep trim, can execute thousands of times per frame
+      }
+
+      for ( ; xstart < xend; xstart++ ) {//pixel loop - keep trim, can execute thousands of times per frame
         //boolean drawBlack = false; //used to display control points
-		if(accurateMode){
-			/*  //Non-interpolating algorithm - slowest version, calculates exact coordinate for each pixel,
-			    //and casts from float->int
-			    float oneoverc = 65536.0f/c;  //a bit faster to pre-divide for next two steps
-				iu = (int)(a*oneoverc);
-                iv = (int)(b*oneoverc);
-			    a += newax;
-                b += newbx;
-                c += newcx;
-		    */
-				
-				//Float while calculating, int while interpolating
-				if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-				    //drawBlack = true;
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv; //ints are used for interpolation, not actual computation
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{        //race through using linear interpolation if we're not at a control point
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-				
-			/* //Floating point interpolating version - slower than int thanks to casts during interpolation steps
-			if (interpCounter == 0) { 
-				interpCounter = linearInterpLength;
-				a += newax;
-				b += newbx;
-				c += newcx;
-				float oneoverc = 65536.0f/c;
-				oldfu = fu; 
-				oldfv = fv;
-				fu = (a*oneoverc); 
-				fv = (b*oneoverc);
-				//oldu = u; oldv = v;
-				fiu = oldfu;
-				fiv = oldfv;
-                fdeltaU = (fu-oldfu)/linearInterpLength;
-				fdeltaV = (fv-oldfv)/linearInterpLength;
-			} 
-			else{
-				fiu += fdeltaU;
-				fiv += fdeltaV;
-			}
-			interpCounter--;
-			iu = (int)(fiu); iv = (int)(fiv);*/
-				
-		}	
-			  
+        if(accurateMode){
+          /*  //Non-interpolating algorithm - slowest version, calculates exact coordinate for each pixel,
+          //and casts from float->int
+          float oneoverc = 65536.0f/c;  //a bit faster to pre-divide for next two steps
+          iu = (int)(a*oneoverc);
+          iv = (int)(b*oneoverc);
+          a += newax;
+          b += newbx;
+          c += newcx;
+          */
+
+          //Float while calculating, int while interpolating
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            //drawBlack = true;
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv; //ints are used for interpolation, not actual computation
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{        //race through using linear interpolation if we're not at a control point
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+
+          /* //Floating point interpolating version - slower than int thanks to casts during interpolation steps
+             if (interpCounter == 0) {
+             interpCounter = linearInterpLength;
+             a += newax;
+             b += newbx;
+             c += newcx;
+             float oneoverc = 65536.0f/c;
+             oldfu = fu;
+             oldfv = fv;
+             fu = (a*oneoverc);
+             fv = (b*oneoverc);
+             //oldu = u; oldv = v;
+             fiu = oldfu;
+             fiv = oldfv;
+             fdeltaU = (fu-oldfu)/linearInterpLength;
+             fdeltaV = (fv-oldfv)/linearInterpLength;
+             }
+             else{
+             fiu += fdeltaU;
+             fiv += fdeltaV;
+             }
+             interpCounter--;
+             iu = (int)(fiu); iv = (int)(fiv);*/
+
+        }
+
         // try-catch just in case pixel offset is out of range
-	    try{
+        try{
           if (noDepthTest || (iz <= m_zbuffer[xstart])) {
             m_zbuffer[xstart] = iz;
             if (m_bilinear) {
-                //We could (should?) add bounds checking on iu and iv here (keep in mind the 16 bit shift!).
-				//This would also be the place to add looping texture mode (bounds check == clamped).
-				//For looping/clamped textures, we'd also need to change PGraphics.textureVertex() to remove
-				//the texture range check there (it constrains normalized texture coordinates from 0->1).
+              //We could (should?) add bounds checking on iu and iv here (keep in mind the 16 bit shift!).
+              //This would also be the place to add looping texture mode (bounds check == clamped).
+              //For looping/clamped textures, we'd also need to change PGraphics.textureVertex() to remove
+              //the texture range check there (it constrains normalized texture coordinates from 0->1).
 
               int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
               int iui = (iu & 0xFFFF) >> 9;
               int ivi = (iv & 0xFFFF) >> 9;
 
-				//if(ofs < 0) { ofs += TEX_WIDTH; }
-				//if(ofs > m_texture.length-2) {ofs -= TEX_WIDTH; }
+              //if(ofs < 0) { ofs += TEX_WIDTH; }
+              //if(ofs > m_texture.length-2) {ofs -= TEX_WIDTH; }
 
               // get texture pixels
               int pix0 = m_texture[ofs];
               int pix1 = m_texture[ofs + 1];
-                if (ofs < lastRowStart) ofs+=TEX_WIDTH; //quick hack to thwart exceptions
+              if (ofs < lastRowStart) ofs+=TEX_WIDTH; //quick hack to thwart exceptions
               int pix2 = m_texture[ofs];
               int pix3 = m_texture[ofs + 1];
 
@@ -1910,63 +1924,63 @@ public class PTriangle implements PConstants
               int blu = up + (((dn-up) * ivi) >> 7);
 
               m_pixels[xstart] = (red & 0xFF0000) | (grn & 0xFF00) | (blu & 0xFF);
-				//if (drawBlack){ m_pixels[xstart] = 0; }
-				
-			} else{
+              //if (drawBlack){ m_pixels[xstart] = 0; }
+
+            } else{
               m_pixels[xstart] = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
             }
             m_stencil[xstart] = p;
           }
         } catch (Exception e) {/*exCount++;*/}
-		iz+=izadd;
-		xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
-	   }
-	   ypixel++;//accurate mode
+        iz+=izadd;
+        xpixel++;//accurate mode
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
+      }
+      ypixel++;//accurate mode
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
-       zleft+=zleftadd;
+      zleft+=zleftadd;
       uleft+=uleftadd;
       vleft+=vleftadd;
-	}
-//	if (exCount>0) System.out.println(exCount+" exceptions in this segment");
+    }
+    //      if (exCount>0) System.out.println(exCount+" exceptions in this segment");
   }
 
- 
+
   /**
    * Alpha 24-bit texture
    */
   private void drawsegment_texture24_alpha
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-  //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
+    //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
-	
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
+
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
     int p = m_index;
@@ -1980,8 +1994,8 @@ public class PTriangle implements PConstants
       if (xstart < 0)
         xstart = 0;
 
-	  int xpixel = xstart;//accurate mode
-	  
+      int xpixel = xstart;//accurate mode
+
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
         xend = SCREEN_WIDTH;
@@ -1994,139 +2008,139 @@ public class PTriangle implements PConstants
 
       xstart+=ytop;
       xend+=ytop;
-      
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
-	  
+      }
+
 
       for ( ; xstart < xend; xstart++ ) {
-		if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
 
         try
-        {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            //m_zbuffer[xstart] = iz;
+          {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+              //m_zbuffer[xstart] = iz;
 
-            // get alpha
-            int al = ia >> 16;
+              // get alpha
+              int al = ia >> 16;
 
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = (iu & 0xFFFF) >> 9;
-              int ivi = (iv & 0xFFFF) >> 9;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = (iu & 0xFFFF) >> 9;
+                int ivi = (iv & 0xFFFF) >> 9;
 
-              // get texture pixels
-              int pix0 = m_texture[ofs];
-              int pix1 = m_texture[ofs + 1];
-			  if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int pix2 = m_texture[ofs];
-              int pix3 = m_texture[ofs + 1];
+                // get texture pixels
+                int pix0 = m_texture[ofs];
+                int pix1 = m_texture[ofs + 1];
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int pix2 = m_texture[ofs];
+                int pix3 = m_texture[ofs + 1];
 
-              // red
-              int red0 = (pix0 & 0xFF0000);
-              int red2 = (pix2 & 0xFF0000);
-              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-              int red = up + (((dn-up) * ivi) >> 7);
+                // red
+                int red0 = (pix0 & 0xFF0000);
+                int red2 = (pix2 & 0xFF0000);
+                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+                int red = up + (((dn-up) * ivi) >> 7);
 
-              // grn
-              red0 = (pix0 & 0xFF00);
-              red2 = (pix2 & 0xFF00);
-              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-              int grn = up + (((dn-up) * ivi) >> 7);
+                // grn
+                red0 = (pix0 & 0xFF00);
+                red2 = (pix2 & 0xFF00);
+                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+                int grn = up + (((dn-up) * ivi) >> 7);
 
-              // blu
-              red0 = (pix0 & 0xFF);
-              red2 = (pix2 & 0xFF);
-              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-              int blu = up + (((dn-up) * ivi) >> 7);
+                // blu
+                red0 = (pix0 & 0xFF);
+                red2 = (pix2 & 0xFF);
+                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+                int blu = up + (((dn-up) * ivi) >> 7);
 
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |( (bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-            } else {
-              int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-              int grn = red & 0xFF00;
-              int blu = red & 0xFF;
-              red&=0xFF0000;
+                // get buffer pixels
+                int bb = m_pixels[xstart];
+                int br = (bb & 0xFF0000);     // 0x00FF0000
+                int bg = (bb & 0xFF00);       // 0x0000FF00
+                bb = (bb & 0xFF);         // 0x000000FF
+                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |( (bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              } else {
+                int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+                int grn = red & 0xFF00;
+                int blu = red & 0xFF;
+                red&=0xFF0000;
 
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                // get buffer pixels
+                int bb = m_pixels[xstart];
+                int br = (bb & 0xFF0000);     // 0x00FF0000
+                int bg = (bb & 0xFF00);       // 0x0000FF00
+                bb = (bb & 0xFF);         // 0x000000FF
+                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              }
+              m_stencil[xstart] = p;
             }
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {}
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         ia+=iaadd;
         iz+=izadd;
       }
-	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
 
       ytop+=SCREEN_WIDTH;
 
@@ -2143,32 +2157,32 @@ public class PTriangle implements PConstants
    * Plain 32-bit texutre
    */
   private void drawsegment_texture32
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
     //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
-	
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
+
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
     int p = m_index;
@@ -2180,8 +2194,8 @@ public class PTriangle implements PConstants
       int xstart = (int) (xleft + PIXEL_CENTER);
       if (xstart < 0)
         xstart = 0;
-		
-	  int xpixel = xstart;//accurate mode
+
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -2195,144 +2209,144 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-	  	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
+      }
 
 
       for ( ; xstart < xend; xstart++ ) {
-	    if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
-	  
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
+
         // try-catch just in case pixel offset it out of range
         try
-        {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            //m_zbuffer[xstart] = iz;
+          {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+              //m_zbuffer[xstart] = iz;
 
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = (iu & 0xFFFF) >> 9;
-              int ivi = (iv & 0xFFFF) >> 9;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = (iu & 0xFFFF) >> 9;
+                int ivi = (iv & 0xFFFF) >> 9;
 
-              // get texture pixels
-              int pix0 = m_texture[ofs];
-              int pix1 = m_texture[ofs + 1];
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int pix2 = m_texture[ofs];
-              int pix3 = m_texture[ofs + 1];
+                // get texture pixels
+                int pix0 = m_texture[ofs];
+                int pix1 = m_texture[ofs + 1];
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int pix2 = m_texture[ofs];
+                int pix3 = m_texture[ofs + 1];
 
-              // red
-              int red0 = (pix0 & 0xFF0000);
-              int red2 = (pix2 & 0xFF0000);
-              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-              int red = up + (((dn-up) * ivi) >> 7);
+                // red
+                int red0 = (pix0 & 0xFF0000);
+                int red2 = (pix2 & 0xFF0000);
+                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+                int red = up + (((dn-up) * ivi) >> 7);
 
-              // grn
-              red0 = (pix0 & 0xFF00);
-              red2 = (pix2 & 0xFF00);
-              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-              int grn = up + (((dn-up) * ivi) >> 7);
+                // grn
+                red0 = (pix0 & 0xFF00);
+                red2 = (pix2 & 0xFF00);
+                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+                int grn = up + (((dn-up) * ivi) >> 7);
 
-              // blu
-              red0 = (pix0 & 0xFF);
-              red2 = (pix2 & 0xFF);
-              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-              int blu = up + (((dn-up) * ivi) >> 7);
+                // blu
+                red0 = (pix0 & 0xFF);
+                red2 = (pix2 & 0xFF);
+                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+                int blu = up + (((dn-up) * ivi) >> 7);
 
-              // alpha
-              pix0>>>=24;
-              pix2>>>=24;
-              up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
-              dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
-              int al = up + (((dn-up) * ivi) >> 7);
+                // alpha
+                pix0>>>=24;
+                pix2>>>=24;
+                up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
+                dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
+                int al = up + (((dn-up) * ivi) >> 7);
 
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-            } else {
-              int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-              int al = red >>> 24;
-              int grn = red & 0xFF00;
-              int blu = red & 0xFF;
-              red&=0xFF0000;
+                // get buffer pixels
+                int bb = m_pixels[xstart];
+                int br = (bb & 0xFF0000);     // 0x00FF0000
+                int bg = (bb & 0xFF00);       // 0x0000FF00
+                bb = (bb & 0xFF);         // 0x000000FF
+                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              } else {
+                int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+                int al = red >>> 24;
+                int grn = red & 0xFF00;
+                int blu = red & 0xFF;
+                red&=0xFF0000;
 
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                // get buffer pixels
+                int bb = m_pixels[xstart];
+                int br = (bb & 0xFF0000);     // 0x00FF0000
+                int bg = (bb & 0xFF00);       // 0x0000FF00
+                bb = (bb & 0xFF);         // 0x000000FF
+                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              }
+              m_stencil[xstart] = p;
             }
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {
         }
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         iz+=izadd;
       }
- 	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
 
       ytop+=SCREEN_WIDTH;
 
@@ -2351,31 +2365,31 @@ public class PTriangle implements PConstants
    * Alpha 32-bit texutre
    */
   private void drawsegment_texture32_alpha
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
     //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
 
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
@@ -2390,7 +2404,7 @@ public class PTriangle implements PConstants
       if (xstart < 0)
         xstart = 0;
 
-	  int xpixel = xstart;//accurate mode
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -2405,149 +2419,149 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-	  	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
-	  
+      }
+
 
 
       for ( ; xstart < xend; xstart++ ) {
-		if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
 
         // try-catch just in case pixel offset it out of range
         try
-        {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            //m_zbuffer[xstart] = iz;
+          {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+              //m_zbuffer[xstart] = iz;
 
-            // get alpha
-            int al = ia >> 16;
+              // get alpha
+              int al = ia >> 16;
 
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = (iu & 0xFFFF) >> 9;
-              int ivi = (iv & 0xFFFF) >> 9;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = (iu & 0xFFFF) >> 9;
+                int ivi = (iv & 0xFFFF) >> 9;
 
-              // get texture pixels
-              int pix0 = m_texture[ofs];
-              int pix1 = m_texture[ofs + 1];
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int pix2 = m_texture[ofs];
-              int pix3 = m_texture[ofs + 1];
+                // get texture pixels
+                int pix0 = m_texture[ofs];
+                int pix1 = m_texture[ofs + 1];
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int pix2 = m_texture[ofs];
+                int pix3 = m_texture[ofs + 1];
 
-              // red
-              int red0 = (pix0 & 0xFF0000);
-              int red2 = (pix2 & 0xFF0000);
-              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-              int red = up + (((dn-up) * ivi) >> 7);
+                // red
+                int red0 = (pix0 & 0xFF0000);
+                int red2 = (pix2 & 0xFF0000);
+                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+                int red = up + (((dn-up) * ivi) >> 7);
 
-              // grn
-              red0 = (pix0 & 0xFF00);
-              red2 = (pix2 & 0xFF00);
-              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-              int grn = up + (((dn-up) * ivi) >> 7);
+                // grn
+                red0 = (pix0 & 0xFF00);
+                red2 = (pix2 & 0xFF00);
+                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+                int grn = up + (((dn-up) * ivi) >> 7);
 
-              // blu
-              red0 = (pix0 & 0xFF);
-              red2 = (pix2 & 0xFF);
-              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-              int blu = up + (((dn-up) * ivi) >> 7);
+                // blu
+                red0 = (pix0 & 0xFF);
+                red2 = (pix2 & 0xFF);
+                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+                int blu = up + (((dn-up) * ivi) >> 7);
 
-              // alpha
-              pix0>>>=24;
-              pix2>>>=24;
-              up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
-              dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
-              al = al * (up + (((dn-up) * ivi) >> 7)) >> 8;
+                // alpha
+                pix0>>>=24;
+                pix2>>>=24;
+                up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
+                dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
+                al = al * (up + (((dn-up) * ivi) >> 7)) >> 8;
 
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-            } else {
-              int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-              al = al * (red >>> 24) >> 8;
-              int grn = red & 0xFF00;
-              int blu = red & 0xFF;
-              red&=0xFF0000;
+                // get buffer pixels
+                int bb = m_pixels[xstart];
+                int br = (bb & 0xFF0000);     // 0x00FF0000
+                int bg = (bb & 0xFF00);       // 0x0000FF00
+                bb = (bb & 0xFF);         // 0x000000FF
+                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              } else {
+                int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+                al = al * (red >>> 24) >> 8;
+                int grn = red & 0xFF00;
+                int blu = red & 0xFF;
+                red&=0xFF0000;
 
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                // get buffer pixels
+                int bb = m_pixels[xstart];
+                int br = (bb & 0xFF0000);     // 0x00FF0000
+                int bg = (bb & 0xFF00);       // 0x0000FF00
+                bb = (bb & 0xFF);         // 0x000000FF
+                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              }
+              m_stencil[xstart] = p;
             }
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {
         }
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         ia+=iaadd;
         iz+=izadd;
       }
-	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
 
       ytop+=SCREEN_WIDTH;
 
@@ -2567,31 +2581,31 @@ public class PTriangle implements PConstants
    * Gouraud blended with 8-bit alpha texture
    */
   private void drawsegment_gouraud_texture8
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
     //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
 
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
@@ -2607,8 +2621,8 @@ public class PTriangle implements PConstants
       int xstart = (int) (xleft + PIXEL_CENTER);
       if (xstart < 0)
         xstart = 0;
-		
-	  int xpixel = xstart;//accurate mode
+
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -2625,118 +2639,118 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
+      }
 
 
       for ( ; xstart < xend; xstart++ ) {
-	    if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
 
         try
-        {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            //m_zbuffer[xstart] = iz;
+          {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+              //m_zbuffer[xstart] = iz;
 
-            int al0;
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = iu & 0xFFFF;
-              al0 = m_texture[ofs] & 0xFF;
-              int al1 = m_texture[ofs + 1] & 0xFF;
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int al2 = m_texture[ofs] & 0xFF;
-              int al3 = m_texture[ofs + 1] & 0xFF;
-              al0 = al0 + (((al1-al0) * iui) >> 16);
-              al2 = al2 + (((al3-al2) * iui) >> 16);
-              al0 = al0 + (((al2-al0) * (iv & 0xFFFF)) >> 16);
-            } else {
-              al0 = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)] & 0xFF;
+              int al0;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = iu & 0xFFFF;
+                al0 = m_texture[ofs] & 0xFF;
+                int al1 = m_texture[ofs + 1] & 0xFF;
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int al2 = m_texture[ofs] & 0xFF;
+                int al3 = m_texture[ofs + 1] & 0xFF;
+                al0 = al0 + (((al1-al0) * iui) >> 16);
+                al2 = al2 + (((al3-al2) * iui) >> 16);
+                al0 = al0 + (((al2-al0) * (iv & 0xFFFF)) >> 16);
+              } else {
+                al0 = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)] & 0xFF;
+              }
+
+              // get RGB colors
+              int red = ir & 0xFF0000;
+              int grn = (ig >> 8) & 0xFF00;
+              int blu = (ib >> 16);
+
+              // get buffer pixels
+              int bb = m_pixels[xstart];
+              int br = (bb & 0xFF0000);     // 0x00FF0000
+              int bg = (bb & 0xFF00);       // 0x0000FF00
+              bb = (bb & 0xFF);         // 0x000000FF
+              m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
+
+              // write stencil
+              m_stencil[xstart] = p;
             }
-
-            // get RGB colors
-            int red = ir & 0xFF0000;
-            int grn = (ig >> 8) & 0xFF00;
-            int blu = (ib >> 16);
-
-            // get buffer pixels
-            int bb = m_pixels[xstart];
-            int br = (bb & 0xFF0000);     // 0x00FF0000
-            int bg = (bb & 0xFF00);       // 0x0000FF00
-            bb = (bb & 0xFF);         // 0x000000FF
-            m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
-
-            // write stencil
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {
 
         }
 
         //
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         ir+=iradd;
         ig+=igadd;
         ib+=ibadd;
         iz+=izadd;
       }
- 	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
@@ -2755,31 +2769,31 @@ public class PTriangle implements PConstants
    * Texture multiplied with gouraud
    */
   private void drawsegment_gouraud_texture8_alpha
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
     //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
 
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
@@ -2797,7 +2811,7 @@ public class PTriangle implements PConstants
       if (xstart < 0)
         xstart = 0;
 
-	  int xpixel = xstart;//accurate mode
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -2815,120 +2829,120 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
+      }
 
 
       for ( ; xstart < xend; xstart++ ) {
-		if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
 
         try
-        {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            //m_zbuffer[xstart] = iz;
+          {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+              //m_zbuffer[xstart] = iz;
 
-            int al0;
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = iu & 0xFFFF;
-              al0 = m_texture[ofs] & 0xFF;
-              int al1 = m_texture[ofs + 1] & 0xFF;
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int al2 = m_texture[ofs] & 0xFF;
-              int al3 = m_texture[ofs + 1] & 0xFF;
-              al0 = al0 + (((al1-al0) * iui) >> 16);
-              al2 = al2 + (((al3-al2) * iui) >> 16);
-              al0 = al0 + (((al2-al0) * (iv & 0xFFFF)) >> 16);
-            } else {
-              al0 = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)] & 0xFF;
+              int al0;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = iu & 0xFFFF;
+                al0 = m_texture[ofs] & 0xFF;
+                int al1 = m_texture[ofs + 1] & 0xFF;
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int al2 = m_texture[ofs] & 0xFF;
+                int al3 = m_texture[ofs + 1] & 0xFF;
+                al0 = al0 + (((al1-al0) * iui) >> 16);
+                al2 = al2 + (((al3-al2) * iui) >> 16);
+                al0 = al0 + (((al2-al0) * (iv & 0xFFFF)) >> 16);
+              } else {
+                al0 = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)] & 0xFF;
+              }
+              al0 = (al0 * (ia >> 16)) >> 8;
+
+              // get RGB colors
+              int red = ir & 0xFF0000;
+              int grn = (ig >> 8) & 0xFF00;
+              int blu = (ib >> 16);
+
+              // get buffer pixels
+              int bb = m_pixels[xstart];
+              int br = (bb & 0xFF0000);     // 0x00FF0000
+              int bg = (bb & 0xFF00);       // 0x0000FF00
+              bb = (bb & 0xFF);         // 0x000000FF
+              m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
+
+              // write stencil
+              m_stencil[xstart] = p;
             }
-            al0 = (al0 * (ia >> 16)) >> 8;
-
-            // get RGB colors
-            int red = ir & 0xFF0000;
-            int grn = (ig >> 8) & 0xFF00;
-            int blu = (ib >> 16);
-
-            // get buffer pixels
-            int bb = m_pixels[xstart];
-            int br = (bb & 0xFF0000);     // 0x00FF0000
-            int bg = (bb & 0xFF00);       // 0x0000FF00
-            bb = (bb & 0xFF);         // 0x000000FF
-            m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
-
-            // write stencil
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {
 
         }
 
         //
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         ir+=iradd;
         ig+=igadd;
         ib+=ibadd;
         ia+=iaadd;
         iz+=izadd;
       }
- 	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
@@ -2947,31 +2961,31 @@ public class PTriangle implements PConstants
    * Texture multiplied with gouraud
    */
   private void drawsegment_gouraud_texture24
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
     //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
 
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
@@ -2988,7 +3002,7 @@ public class PTriangle implements PConstants
       if (xstart < 0)
         xstart = 0;
 
-	  int xpixel = xstart;//accurate mode
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -3005,139 +3019,139 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-      
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
+      }
 
       for ( ; xstart < xend; xstart++ ) {
-		if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
 
         try
-        {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            m_zbuffer[xstart] = iz;
+          {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+              m_zbuffer[xstart] = iz;
 
-            int red;
-            int grn;
-            int blu;
+              int red;
+              int grn;
+              int blu;
 
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = (iu & 0xFFFF) >> 9;
-              int ivi = (iv & 0xFFFF) >> 9;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = (iu & 0xFFFF) >> 9;
+                int ivi = (iv & 0xFFFF) >> 9;
 
-              // get texture pixels
-              int pix0 = m_texture[ofs];
-              int pix1 = m_texture[ofs + 1];
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int pix2 = m_texture[ofs];
-              int pix3 = m_texture[ofs + 1];
+                // get texture pixels
+                int pix0 = m_texture[ofs];
+                int pix1 = m_texture[ofs + 1];
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int pix2 = m_texture[ofs];
+                int pix3 = m_texture[ofs + 1];
 
-              // red
-              int red0 = (pix0 & 0xFF0000);
-              int red2 = (pix2 & 0xFF0000);
-              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-              red = up + (((dn-up) * ivi) >> 7);
+                // red
+                int red0 = (pix0 & 0xFF0000);
+                int red2 = (pix2 & 0xFF0000);
+                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+                red = up + (((dn-up) * ivi) >> 7);
 
-              // grn
-              red0 = (pix0 & 0xFF00);
-              red2 = (pix2 & 0xFF00);
-              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-              grn = up + (((dn-up) * ivi) >> 7);
+                // grn
+                red0 = (pix0 & 0xFF00);
+                red2 = (pix2 & 0xFF00);
+                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+                grn = up + (((dn-up) * ivi) >> 7);
 
-              // blu
-              red0 = (pix0 & 0xFF);
-              red2 = (pix2 & 0xFF);
-              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-              blu = up + (((dn-up) * ivi) >> 7);
-            } else {
-              // get texture pixel color
-              blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-              red = (blu & 0xFF0000);
-              grn = (blu & 0xFF00);
-              blu = blu & 0xFF;
+                // blu
+                red0 = (pix0 & 0xFF);
+                red2 = (pix2 & 0xFF);
+                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+                blu = up + (((dn-up) * ivi) >> 7);
+              } else {
+                // get texture pixel color
+                blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+                red = (blu & 0xFF0000);
+                grn = (blu & 0xFF00);
+                blu = blu & 0xFF;
+              }
+
+              //
+              int r = (ir >> 16);
+              int g = (ig >> 16);
+              int bb2 = (ib >> 16); //oops, namespace collision with accurate texture vector b...sorry [ewjordan]
+
+              //
+              m_pixels[xstart] = ( ((red * r) & 0xFF000000) | ((grn * g) & 0xFF0000) | (blu * bb2) ) >> 8;
+              m_stencil[xstart] = p;
             }
-
-            //
-            int r = (ir >> 16);
-            int g = (ig >> 16);
-            int bb2 = (ib >> 16); //oops, namespace collision with accurate texture vector b...sorry [ewjordan]
-
-            //
-            m_pixels[xstart] = ( ((red * r) & 0xFF000000) | ((grn * g) & 0xFF0000) | (blu * bb2) ) >> 8;
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {
         }
 
         //
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         ir+=iradd;
         ig+=igadd;
         ib+=ibadd;
         iz+=izadd;
       }
-	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
 
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
@@ -3156,32 +3170,32 @@ public class PTriangle implements PConstants
    * Gouraud*texture blended with interpolating alpha
    */
   private void drawsegment_gouraud_texture24_alpha
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
 
-  //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
 
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
@@ -3199,8 +3213,8 @@ public class PTriangle implements PConstants
       if (xstart < 0)
         xstart = 0;
 
-	  int xpixel = xstart;//accurate mode
-	
+      int xpixel = xstart;//accurate mode
+
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
         xend = SCREEN_WIDTH;
@@ -3217,142 +3231,142 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
+      }
 
       for ( ;xstart < xend; xstart++ ) {
-		if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
 
         // get texture pixel color
         try
-        {
-          //if (iz < m_zbuffer[xstart]) {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {  // [fry 041114]
-            //m_zbuffer[xstart] = iz;
+          {
+            //if (iz < m_zbuffer[xstart]) {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {  // [fry 041114]
+              //m_zbuffer[xstart] = iz;
 
-            // blend
-            int al = ia >> 16;
+              // blend
+              int al = ia >> 16;
 
-            int red;
-            int grn;
-            int blu;
+              int red;
+              int grn;
+              int blu;
 
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = (iu & 0xFFFF) >> 9;
-              int ivi = (iv & 0xFFFF) >> 9;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = (iu & 0xFFFF) >> 9;
+                int ivi = (iv & 0xFFFF) >> 9;
 
-              // get texture pixels
-              int pix0 = m_texture[ofs];
-              int pix1 = m_texture[ofs + 1];
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int pix2 = m_texture[ofs];
-              int pix3 = m_texture[ofs + 1];
+                // get texture pixels
+                int pix0 = m_texture[ofs];
+                int pix1 = m_texture[ofs + 1];
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int pix2 = m_texture[ofs];
+                int pix3 = m_texture[ofs + 1];
 
-              // red
-              int red0 = (pix0 & 0xFF0000);
-              int red2 = (pix2 & 0xFF0000);
-              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-              red = (up + (((dn-up) * ivi) >> 7)) >> 16;
+                // red
+                int red0 = (pix0 & 0xFF0000);
+                int red2 = (pix2 & 0xFF0000);
+                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+                red = (up + (((dn-up) * ivi) >> 7)) >> 16;
 
-              // grn
-              red0 = (pix0 & 0xFF00);
-              red2 = (pix2 & 0xFF00);
-              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-              grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
+                // grn
+                red0 = (pix0 & 0xFF00);
+                red2 = (pix2 & 0xFF00);
+                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+                grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
 
-              // blu
-              red0 = (pix0 & 0xFF);
-              red2 = (pix2 & 0xFF);
-              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-              blu = up + (((dn-up) * ivi) >> 7);
-            } else {
-              blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-              red = (blu & 0xFF0000) >> 16; // 0 - 255
-              grn = (blu & 0xFF00) >> 8;    // 0 - 255
-              blu = (blu & 0xFF);       // 0 - 255
+                // blu
+                red0 = (pix0 & 0xFF);
+                red2 = (pix2 & 0xFF);
+                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+                blu = up + (((dn-up) * ivi) >> 7);
+              } else {
+                blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+                red = (blu & 0xFF0000) >> 16; // 0 - 255
+                grn = (blu & 0xFF00) >> 8;    // 0 - 255
+                blu = (blu & 0xFF);       // 0 - 255
+              }
+
+              // multiply with gouraud color
+              red = (red * ir) >>> 8;       // 0x00FF????
+              grn = (grn * ig) >>> 16;      // 0x0000FF??
+              blu = (blu * ib) >>> 24;      // 0x000000FF
+
+              // get buffer pixels
+              int bb = m_pixels[xstart];
+              int br = (bb & 0xFF0000);     // 0x00FF0000
+              int bg = (bb & 0xFF00);       // 0x0000FF00
+              bb = (bb & 0xFF);         // 0x000000FF
+
+              //
+              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              m_stencil[xstart] = p;
             }
-
-            // multiply with gouraud color
-            red = (red * ir) >>> 8;       // 0x00FF????
-            grn = (grn * ig) >>> 16;      // 0x0000FF??
-            blu = (blu * ib) >>> 24;      // 0x000000FF
-
-            // get buffer pixels
-            int bb = m_pixels[xstart];
-            int br = (bb & 0xFF0000);     // 0x00FF0000
-            int bg = (bb & 0xFF00);       // 0x0000FF00
-            bb = (bb & 0xFF);         // 0x000000FF
-
-            //
-            m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {
         }
 
         //
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         ir+=iradd;
         ig+=igadd;
         ib+=ibadd;
@@ -3360,8 +3374,8 @@ public class PTriangle implements PConstants
         iz+=izadd;
       }
 
-	  ypixel++;//accurate mode
-	  
+      ypixel++;//accurate mode
+
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
@@ -3380,32 +3394,32 @@ public class PTriangle implements PConstants
    * Gouraud*texture blended with interpolating alpha
    */
   private void drawsegment_gouraud_texture32
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-  
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
+
     //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
 
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
@@ -3421,8 +3435,8 @@ public class PTriangle implements PConstants
       int xstart = (int) (xleft + PIXEL_CENTER);
       if (xstart < 0)
         xstart = 0;
-    
-	  int xpixel = xstart;//accurate mode
+
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -3438,153 +3452,153 @@ public class PTriangle implements PConstants
 
       xstart+=ytop;
       xend+=ytop;
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
-	  
+      }
+
 
       for ( ; xstart < xend; xstart++ ) {
-		if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
 
         try
-        {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            //m_zbuffer[xstart] = iz;
+          {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+              //m_zbuffer[xstart] = iz;
 
-            int red;
-            int grn;
-            int blu;
-            int al;
+              int red;
+              int grn;
+              int blu;
+              int al;
 
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = (iu & 0xFFFF) >> 9;
-              int ivi = (iv & 0xFFFF) >> 9;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = (iu & 0xFFFF) >> 9;
+                int ivi = (iv & 0xFFFF) >> 9;
 
-              // get texture pixels
-              int pix0 = m_texture[ofs];
-              int pix1 = m_texture[ofs + 1];
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int pix2 = m_texture[ofs];
-              int pix3 = m_texture[ofs + 1];
+                // get texture pixels
+                int pix0 = m_texture[ofs];
+                int pix1 = m_texture[ofs + 1];
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int pix2 = m_texture[ofs];
+                int pix3 = m_texture[ofs + 1];
 
-              // red
-              int red0 = (pix0 & 0xFF0000);
-              int red2 = (pix2 & 0xFF0000);
-              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-              red = (up + (((dn-up) * ivi) >> 7)) >> 16;
+                // red
+                int red0 = (pix0 & 0xFF0000);
+                int red2 = (pix2 & 0xFF0000);
+                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+                red = (up + (((dn-up) * ivi) >> 7)) >> 16;
 
-              // grn
-              red0 = (pix0 & 0xFF00);
-              red2 = (pix2 & 0xFF00);
-              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-              grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
+                // grn
+                red0 = (pix0 & 0xFF00);
+                red2 = (pix2 & 0xFF00);
+                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+                grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
 
-              // blu
-              red0 = (pix0 & 0xFF);
-              red2 = (pix2 & 0xFF);
-              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-              blu = up + (((dn-up) * ivi) >> 7);
+                // blu
+                red0 = (pix0 & 0xFF);
+                red2 = (pix2 & 0xFF);
+                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+                blu = up + (((dn-up) * ivi) >> 7);
 
-              // alpha
-              pix0>>>=24;
-              pix2>>>=24;
-              up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
-              dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
-              al = up + (((dn-up) * ivi) >> 7);
-            } else {
-              // get texture pixel color
-              blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-              al = (blu >>> 24);
-              red = (blu & 0xFF0000) >> 16;
-              grn = (blu & 0xFF00) >> 8;
-              blu = blu & 0xFF;
+                // alpha
+                pix0>>>=24;
+                pix2>>>=24;
+                up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
+                dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
+                al = up + (((dn-up) * ivi) >> 7);
+              } else {
+                // get texture pixel color
+                blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+                al = (blu >>> 24);
+                red = (blu & 0xFF0000) >> 16;
+                grn = (blu & 0xFF00) >> 8;
+                blu = blu & 0xFF;
+              }
+
+              // multiply with gouraud color
+              red = (red * ir) >>> 8;       // 0x00FF????
+              grn = (grn * ig) >>> 16;      // 0x0000FF??
+              blu = (blu * ib) >>> 24;      // 0x000000FF
+
+              // get buffer pixels
+              int bb = m_pixels[xstart];
+              int br = (bb & 0xFF0000);     // 0x00FF0000
+              int bg = (bb & 0xFF00);       // 0x0000FF00
+              bb = (bb & 0xFF);         // 0x000000FF
+
+              //
+              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
             }
-
-            // multiply with gouraud color
-            red = (red * ir) >>> 8;       // 0x00FF????
-            grn = (grn * ig) >>> 16;      // 0x0000FF??
-            blu = (blu * ib) >>> 24;      // 0x000000FF
-
-            // get buffer pixels
-            int bb = m_pixels[xstart];
-            int br = (bb & 0xFF0000);     // 0x00FF0000
-            int bg = (bb & 0xFF00);       // 0x0000FF00
-            bb = (bb & 0xFF);         // 0x000000FF
-
-            //
-            m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
           }
-        }
         catch (Exception e) {
         }
 
         //
-		xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        xpixel++;//accurate mode
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         ir+=iradd;
         ig+=igadd;
         ib+=ibadd;
         iz+=izadd;
       }
-	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
@@ -3602,31 +3616,31 @@ public class PTriangle implements PConstants
    * Gouraud*texture blended with interpolating alpha
    */
   private void drawsegment_gouraud_texture32_alpha
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-  //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-  	int ypixel = ytop;
+    (
+     float leftadd,
+     float rghtadd,
+     int ytop,
+     int ybottom
+     ) {
+    //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-	boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-	float screenx = 0; float screeny = 0; float screenz = 0;
-	float a = 0; float b = 0; float c = 0;
-	int linearInterpPower = TEX_INTERP_POWER;
-	int linearInterpLength = 1 << linearInterpPower;
-	if (accurateMode){
-	  if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-	    newax *= linearInterpLength;
-	    newbx *= linearInterpLength;
-	    newcx *= linearInterpLength;
-	    screenz = nearPlaneDepth;
-	    firstSegment = false;
-	  } else{
-  	    accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-	  }
-	}
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode){
+      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      }
+    }
 
     ytop*=SCREEN_WIDTH;
     ybottom*=SCREEN_WIDTH;
@@ -3644,7 +3658,7 @@ public class PTriangle implements PConstants
       if (xstart < 0)
         xstart = 0;
 
-	  int xpixel = xstart;//accurate mode
+      int xpixel = xstart;//accurate mode
 
       int xend = (int) (xrght + PIXEL_CENTER);
       if (xend > SCREEN_WIDTH)
@@ -3661,157 +3675,157 @@ public class PTriangle implements PConstants
 
       xstart+=ytop;
       xend+=ytop;
-	  if (accurateMode){
-        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f)); 
+      if (accurateMode){
+        screenx = xmult*(xpixel+.5f-(SCREEN_WIDTH/2.0f));
         screeny = ymult*(ypixel+.5f-(SCREEN_HEIGHT/2.0f));
-	    a = screenx*ax+screeny*ay+screenz*az;
-	    b = screenx*bx+screeny*by+screenz*bz;
-	    c = screenx*cx+screeny*cy+screenz*cz;
-	  }
-	  boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
-	  int interpCounter = 0;
-	  int deltaU = 0; int deltaV = 0;
-	  float fu = 0; float fv = 0;
-	  float oldfu = 0; float oldfv = 0;
-	  
-	  if (accurateMode&&goingIn){
-	  	int rightOffset = (xend-xstart-1)%linearInterpLength;
-		int leftOffset = linearInterpLength-rightOffset;
+        a = screenx*ax+screeny*ay+screenz*az;
+        b = screenx*bx+screeny*by+screenz*bz;
+        c = screenx*cx+screeny*cy+screenz*cz;
+      }
+      boolean goingIn = ( (newcx > 0) == (c > 0) )?false:true;
+      int interpCounter = 0;
+      int deltaU = 0; int deltaV = 0;
+      float fu = 0; float fv = 0;
+      float oldfu = 0; float oldfv = 0;
+
+      if (accurateMode&&goingIn){
+        int rightOffset = (xend-xstart-1)%linearInterpLength;
+        int leftOffset = linearInterpLength-rightOffset;
         float rightOffset2 = rightOffset / ((float)linearInterpLength);
-		float leftOffset2 = leftOffset / ((float)linearInterpLength);
-		interpCounter = leftOffset;
-    	float ao = a-leftOffset2*newax;
+        float leftOffset2 = leftOffset / ((float)linearInterpLength);
+        interpCounter = leftOffset;
+        float ao = a-leftOffset2*newax;
         float bo = b-leftOffset2*newbx;
-		float co = c-leftOffset2*newcx;
-		float oneoverc = 65536.0f/co;
-		oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
-		a += rightOffset2*newax;
-		b += rightOffset2*newbx;
-		c += rightOffset2*newcx;
-		oneoverc = 65536.0f/c;
-		fu = a*oneoverc; fv = b*oneoverc;
-		deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-		deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-		iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack		
-	  } else{
-	    float preoneoverc = 65536.0f/c;
-	    fu = (a*preoneoverc);
+        float co = c-leftOffset2*newcx;
+        float oneoverc = 65536.0f/co;
+        oldfu = (ao*oneoverc); oldfv = (bo*oneoverc);
+        a += rightOffset2*newax;
+        b += rightOffset2*newbx;
+        c += rightOffset2*newcx;
+        oneoverc = 65536.0f/c;
+        fu = a*oneoverc; fv = b*oneoverc;
+        deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+        deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+        iu = ( (int)oldfu )+(leftOffset-1)*deltaU; iv = ( (int)oldfv )+(leftOffset-1)*deltaV; //another "off-by-one" hack
+      } else{
+        float preoneoverc = 65536.0f/c;
+        fu = (a*preoneoverc);
         fv = (b*preoneoverc);
-	  }
+      }
 
       for ( ;xstart < xend; xstart++ ) {
-		if(accurateMode){
-			    if (interpCounter == linearInterpLength) interpCounter = 0;
-				if (interpCounter == 0){
-			        a += newax;
-                    b += newbx;
-                    c += newcx;
-					float oneoverc = 65536.0f/c;
-					oldfu = fu; oldfv = fv;
-					fu = (a*oneoverc); fv = (b*oneoverc);
-					iu = (int)oldfu; iv = (int)oldfv;
-					deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
-					deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
-				} else{
-				    iu += deltaU;
-					iv += deltaV;
-				}
-				interpCounter++;
-		}	
+        if(accurateMode){
+          if (interpCounter == linearInterpLength) interpCounter = 0;
+          if (interpCounter == 0){
+            a += newax;
+            b += newbx;
+            c += newcx;
+            float oneoverc = 65536.0f/c;
+            oldfu = fu; oldfv = fv;
+            fu = (a*oneoverc); fv = (b*oneoverc);
+            iu = (int)oldfu; iv = (int)oldfv;
+            deltaU = ((int)(fu - oldfu)) >> linearInterpPower;
+            deltaV = ((int)(fv - oldfv)) >> linearInterpPower;
+          } else{
+            iu += deltaU;
+            iv += deltaV;
+          }
+          interpCounter++;
+        }
 
         // get texture pixel color
         try
-        {
-          //if (iz < m_zbuffer[xstart]) {
-          if (noDepthTest || (iz <= m_zbuffer[xstart])) {  // [fry 041114]
-            //m_zbuffer[xstart] = iz;
+          {
+            //if (iz < m_zbuffer[xstart]) {
+            if (noDepthTest || (iz <= m_zbuffer[xstart])) {  // [fry 041114]
+              //m_zbuffer[xstart] = iz;
 
-            // blend
-            int al = ia >> 16;
+              // blend
+              int al = ia >> 16;
 
-            int red;
-            int grn;
-            int blu;
+              int red;
+              int grn;
+              int blu;
 
-            if (m_bilinear) {
-              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-              int iui = (iu & 0xFFFF) >> 9;
-              int ivi = (iv & 0xFFFF) >> 9;
+              if (m_bilinear) {
+                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+                int iui = (iu & 0xFFFF) >> 9;
+                int ivi = (iv & 0xFFFF) >> 9;
 
-              // get texture pixels
-              int pix0 = m_texture[ofs];
-              int pix1 = m_texture[ofs + 1];
-              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-              int pix2 = m_texture[ofs];
-              int pix3 = m_texture[ofs + 1];
+                // get texture pixels
+                int pix0 = m_texture[ofs];
+                int pix1 = m_texture[ofs + 1];
+                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+                int pix2 = m_texture[ofs];
+                int pix3 = m_texture[ofs + 1];
 
-              // red
-              int red0 = (pix0 & 0xFF0000);
-              int red2 = (pix2 & 0xFF0000);
-              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-              red = (up + (((dn-up) * ivi) >> 7)) >> 16;
+                // red
+                int red0 = (pix0 & 0xFF0000);
+                int red2 = (pix2 & 0xFF0000);
+                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+                red = (up + (((dn-up) * ivi) >> 7)) >> 16;
 
-              // grn
-              red0 = (pix0 & 0xFF00);
-              red2 = (pix2 & 0xFF00);
-              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-              grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
+                // grn
+                red0 = (pix0 & 0xFF00);
+                red2 = (pix2 & 0xFF00);
+                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+                grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
 
-              // blu
-              red0 = (pix0 & 0xFF);
-              red2 = (pix2 & 0xFF);
-              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-              blu = up + (((dn-up) * ivi) >> 7);
+                // blu
+                red0 = (pix0 & 0xFF);
+                red2 = (pix2 & 0xFF);
+                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+                blu = up + (((dn-up) * ivi) >> 7);
 
-              // alpha
-              pix0>>>=24;
-              pix2>>>=24;
-              up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
-              dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
-              al = al * (up + (((dn-up) * ivi) >> 7)) >> 8;
-            } else {
-              blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-              al = al * (blu >>> 24) >> 8;
-              red = (blu & 0xFF0000) >> 16; // 0 - 255
-              grn = (blu & 0xFF00) >> 8;    // 0 - 255
-              blu = (blu & 0xFF);       // 0 - 255
+                // alpha
+                pix0>>>=24;
+                pix2>>>=24;
+                up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
+                dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
+                al = al * (up + (((dn-up) * ivi) >> 7)) >> 8;
+              } else {
+                blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+                al = al * (blu >>> 24) >> 8;
+                red = (blu & 0xFF0000) >> 16; // 0 - 255
+                grn = (blu & 0xFF00) >> 8;    // 0 - 255
+                blu = (blu & 0xFF);       // 0 - 255
+              }
+
+              // multiply with gouraud color
+              red = (red * ir) >>> 8;       // 0x00FF????
+              grn = (grn * ig) >>> 16;      // 0x0000FF??
+              blu = (blu * ib) >>> 24;      // 0x000000FF
+
+              // get buffer pixels
+              int bb = m_pixels[xstart];
+              int br = (bb & 0xFF0000);     // 0x00FF0000
+              int bg = (bb & 0xFF00);       // 0x0000FF00
+              bb = (bb & 0xFF);         // 0x000000FF
+
+              //
+              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              m_stencil[xstart] = p;
             }
-
-            // multiply with gouraud color
-            red = (red * ir) >>> 8;       // 0x00FF????
-            grn = (grn * ig) >>> 16;      // 0x0000FF??
-            blu = (blu * ib) >>> 24;      // 0x000000FF
-
-            // get buffer pixels
-            int bb = m_pixels[xstart];
-            int br = (bb & 0xFF0000);     // 0x00FF0000
-            int bg = (bb & 0xFF00);       // 0x0000FF00
-            bb = (bb & 0xFF);         // 0x000000FF
-
-            //
-            m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-            m_stencil[xstart] = p;
           }
-        }
         catch (Exception e) {
         }
 
         //
         xpixel++;//accurate mode
-		if (!accurateMode){
-        iu+=iuadd;
-        iv+=ivadd;
-		}
+        if (!accurateMode){
+          iu+=iuadd;
+          iv+=ivadd;
+        }
         ir+=iradd;
         ig+=igadd;
         ib+=ibadd;
         ia+=iaadd;
         iz+=izadd;
       }
-	  ypixel++;//accurate mode
+      ypixel++;//accurate mode
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
