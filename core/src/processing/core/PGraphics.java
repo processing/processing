@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ import java.awt.image.*;
  * As of beta, this class is semi-disabled.
  */
 public abstract class PGraphics extends PImage implements PConstants {
-  
+
   // transformed values
   // (to be used in rendering)
 
@@ -147,8 +147,8 @@ public abstract class PGraphics extends PImage implements PConstants {
   static public final int MANUAL_SHAPE_NORMAL = 1;
   /// normals specified for each shape vertex
   static public final int MANUAL_VERTEX_NORMAL = 2;
-  
-  
+
+
   /// width minus one (useful for many calculations)
   public int width1;
 

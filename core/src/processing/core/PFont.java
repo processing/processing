@@ -3,8 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry & Casey Reas
-  Portions Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-07 Ben Fry & Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
