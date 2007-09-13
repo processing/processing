@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -3999,6 +3999,7 @@ public class PApplet extends Applet
       String lower = filename.toLowerCase();
       InputStream input = openStream(filename);
 
+      /*
       // For compatability with earlier releases of Processing
       if (lower.endsWith(".vlw.gz")) {
         input = new GZIPInputStream(input);
@@ -4008,6 +4009,7 @@ public class PApplet extends Applet
         throw new IOException("I don't know how to load a font named " +
                               filename);
       }
+      */
       return new PFont(input);
 
     } catch (Exception e) {
@@ -4364,8 +4366,19 @@ public class PApplet extends Applet
    * </UL>
    */
   public InputStream openStream(String filename) {
+    InputStream input = openStreamRaw(filename);
+    if ((input != null) && filename.toLowerCase().endsWith(".gz")) {
+      return new GZIPInputStream(input);
+    }
+    return input;
+  }
+
+
+  /**
+   * Call openStream() without automatic gzip decompression.
+   */
+  public InputStream openStreamRaw(String filename) {
     InputStream stream = null;
-    boolean gz = filename.toLowerCase().endsWith(".gz");
 
     if (filename == null) return null;
 
@@ -4380,7 +4393,7 @@ public class PApplet extends Applet
     try {
       URL url = new URL(filename);
       stream = url.openStream();
-      return gz ? new GZIPInputStream(stream) : stream;
+      return stream;
 
     } catch (MalformedURLException mfue) {
       // not a url, that's fine
@@ -4413,12 +4426,7 @@ public class PApplet extends Applet
       // things, this is probably introduced in java 1.5. awesome!
       // http://dev.processing.org/bugs/show_bug.cgi?id=359
       if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
-        try {
-          return gz ? new GZIPInputStream(stream) : stream;
-        } catch (IOException e) {
-          e.printStackTrace();
-          return null;
-        }
+        return stream;
       }
     }
 
@@ -4429,12 +4437,7 @@ public class PApplet extends Applet
     if (stream != null) {
       String cn = stream.getClass().getName();
       if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
-        try {
-          return gz ? new GZIPInputStream(stream) : stream;
-        } catch (IOException e) {
-          e.printStackTrace();
-          return null;
-        }
+        return stream;
       }
     }
 
@@ -4468,9 +4471,7 @@ public class PApplet extends Applet
 
         // if this file is ok, may as well just load it
         stream = new FileInputStream(file);
-        if (stream != null) {
-          return gz ? new GZIPInputStream(stream) : stream;
-        }
+        if (stream != null) return stream;
 
         // have to break these out because a general Exception might
         // catch the RuntimeException being thrown above
@@ -4484,23 +4485,17 @@ public class PApplet extends Applet
       try {  // first try to catch any security exceptions
         try {
           stream = new FileInputStream(dataPath(filename));
-          if (stream != null) {
-            return gz ? new GZIPInputStream(stream) : stream;
-          }
+          if (stream != null) return stream;
         } catch (IOException e2) { }
 
         try {
           stream = new FileInputStream(sketchPath(filename));
-          if (stream != null) {
-            return gz ? new GZIPInputStream(stream) : stream;
-          }
+          if (stream != null) return stream;
         } catch (Exception e) { }  // ignored
 
         try {
           stream = new FileInputStream(filename);
-          if (stream != null) {
-            return gz ? new GZIPInputStream(stream) : stream;
-          }
+          if (stream != null) return stream;
         } catch (IOException e1) { }
 
       } catch (SecurityException se) { }  // online, whups
@@ -4515,9 +4510,6 @@ public class PApplet extends Applet
 
   static public InputStream openStream(File file) {
     try {
-      if (file.getName().toLowerCase().endsWith(".gz")) {
-        return new GZIPInputStream(new FileInputStream(file));
-      }
       return new FileInputStream(file);
 
     } catch (IOException e) {
