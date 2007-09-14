@@ -4368,7 +4368,12 @@ public class PApplet extends Applet
   public InputStream openStream(String filename) {
     InputStream input = openStreamRaw(filename);
     if ((input != null) && filename.toLowerCase().endsWith(".gz")) {
-      return new GZIPInputStream(input);
+      try {
+        return new GZIPInputStream(input);
+      } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+      }
     }
     return input;
   }

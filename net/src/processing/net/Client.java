@@ -306,8 +306,11 @@ public class Client implements Runnable {
       byte outgoing[] = new byte[length];
       System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
 
-      bufferIndex = 0;  // rewind
-      bufferLast = 0;
+      bufferIndex += length;
+      if (bufferIndex == bufferLast) {
+        bufferIndex = 0; // rewind
+        bufferLast = 0;
+      }
       return outgoing;
     }
   }
