@@ -15,6 +15,8 @@ X   implemented by ewjordan
 X sort() on strings ignores case 
 _   mention the change in the reference
 
+_ should loadFont() work with ttf files (instead of createFont?)
+
 _ opengl mipmaps are leaking (regression in spite of #150 fix)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=610
 
