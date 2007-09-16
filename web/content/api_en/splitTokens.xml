@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>split()</name>
+<name>splitTokens()</name>
 
 <category>Data</category>
 
