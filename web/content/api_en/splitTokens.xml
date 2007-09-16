@@ -35,8 +35,8 @@ The splitTokens() function allows you to split a String at one or many character
 </description>
 
 <syntax>
-split(<c>str</c>)
-split(<c>str</c>, <c>tokens</c>)
+splitTokens(<c>str</c>)
+splitTokens(<c>str</c>, <c>tokens</c>)
 </syntax>
 
 <parameter>
