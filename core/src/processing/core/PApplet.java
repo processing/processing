@@ -511,6 +511,10 @@ public class PApplet extends Applet
   static public final String EXTERNAL_MOVE = "__MOVE__";
 
 
+  static final String ERROR_MAX = "Cannot use max() on an empty array.";
+  static final String ERROR_MIN = "Cannot use min() on an empty array.";
+
+
   // during rev 0100 dev cycle, working on new threading model,
   // but need to disable and go conservative with changes in order
   // to get pdf and audio working properly first.
@@ -3005,12 +3009,13 @@ public class PApplet extends Applet
 
   /**
    * Find the maximum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
    * @param list the source array
-   * @return The maximum value, or 0 if the array is length zero.
+   * @return The maximum value
    */
   static public final int max(int[] list) {
     if (list.length == 0) {
-      return 0;
+      throw new ArrayIndexOutOfBoundsException(ERROR_MAX);
     }
     int max = list[0];
     for (int i = 1; i < list.length; i++) {
@@ -3021,12 +3026,13 @@ public class PApplet extends Applet
 
   /**
    * Find the maximum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
    * @param list the source array
    * @return The maximum value, or Float.NaN if the array is length zero.
    */
   static public final float max(float[] list) {
     if (list.length == 0) {
-      return Float.NaN;
+      throw new ArrayIndexOutOfBoundsException(ERROR_MAX);
     }
     float max = list[0];
     for (int i = 1; i < list.length; i++) {
@@ -3056,12 +3062,13 @@ public class PApplet extends Applet
 
   /**
    * Find the minimum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
    * @param list the source array
-   * @return The minimum value, or 0 if the array is length zero.
+   * @return The minimum value
    */
   static public final int min(int[] list) {
     if (list.length == 0) {
-      return 0;
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN);
     }
     int min = list[0];
     for (int i = 1; i < list.length; i++) {
@@ -3071,12 +3078,13 @@ public class PApplet extends Applet
   }
   /**
    * Find the minimum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
    * @param list the source array
-   * @return The minimum value, or Float.NaN if the array is length zero.
+   * @return The minimum value
    */
   static public final float min(float[] list) {
     if (list.length == 0) {
-      return Float.NaN;
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN);
     }
     float min = list[0];
     for (int i = 1; i < list.length; i++) {
