@@ -64,6 +64,26 @@ public interface PConstants {
   //static final float ONE       = 1.0f;
 
 
+  // max/min values for numbers
+
+  /**
+   * Same as Float.MAX_VALUE, but included for parity with MIN_VALUE,
+   * and to avoid teaching static methods on the first day.
+   */
+  static final float MAX_FLOAT = Float.MAX_VALUE;
+  /**
+   * Note that Float.MIN_VALUE is the smallest <EM>positive</EM> value
+   * for a floating point number, not actually the minimum (negative) value
+   * for a float. This constant equals 0xFF7FFFFF, the smallest (farthest
+   * negative) value a float can have before it hits NaN.
+   */
+  static final float MIN_FLOAT = -Float.MAX_VALUE;
+  /** Largest possible (positive) integer value */
+  static final int MAX_INT = Integer.MAX_VALUE;
+  /** Smallest possible (negative) integer value */
+  static final int MIN_INT = Integer.MAX_VALUE;
+
+
   // useful goodness
 
   static final float PI = (float) Math.PI;
