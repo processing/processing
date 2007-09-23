@@ -14,6 +14,10 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=312
 X   implemented by ewjordan
 X sort() on strings ignores case 
 _   mention the change in the reference
+X added MIN_FLOAT, MAX_FLOAT, MIN_INT, MAX_INT to PConstants
+_   add them to the syntax highlighting
+X throw AIOOBE when min() or max() called on zero length array
+_ fix lerpColor() to take the shortest route around the HSB scale
 
 _ should loadFont() work with ttf files (instead of createFont?)
 
