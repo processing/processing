@@ -22,8 +22,9 @@ _ on linux, drag and drop didn't accept
 _   gets a zillion different items that come in
 _   http://dev.processing.org/bugs/show_bug.cgi?id=595
 _ adding a file to the sketch that already exists gives no confirm
-_   sometimes one item showing up twice
+_   winds up showing the item twice (if .java file at least)
 _   (Table.pde showed twice after failed add)
+_ after sketch -> add file, no confirmation message is shown
 
 _ libraries should only be placed in the libraries folder
 _ when writing javadoc for p5 sketches, only write from first tab
@@ -286,8 +287,6 @@ _   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuid
 
 _ install astyle formatter
 _   build on each platform, then "lipo -create astyle.* -output astyle"
-
-_ after sketch -> add file, no confirmation message is shown
 
 Must have for 1.0:
 > a,c) P2D to return, P2D to simply return in its previous form
