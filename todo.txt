@@ -9,11 +9,24 @@ X   better yet, only do this when "not found" errors come up
 _ need to fix changes.html because it lists out of date alpha->beta changes 
 X added getChild(name/path), getChildren(name/path) to xml library
 _   add notes about these to the reference
+_   needs a better example that includes subitems
 X fix problem with export.txt files not working
 X   http://dev.processing.org/bugs/show_bug.cgi?id=625
 X readStringUntil broken in net library
 X   http://dev.processing.org/bugs/show_bug.cgi?id=606
 
+book stuff
+_ on linux, drag and drop didn't accept
+_   gets a zillion different items that come in
+_   http://dev.processing.org/bugs/show_bug.cgi?id=595
+_ adding a file to the sketch that already exists gives no confirm
+_   sometimes one item showing up twice
+_   (Table.pde showed twice after failed add)
+
+_ add imageicon for the find dialog (and others?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=627
+
+_ libraries should only be placed in the libraries folder
 _ when writing javadoc for p5 sketches, only write from first tab
 
 multiple sketch support
@@ -82,15 +95,6 @@ _ video problem in qt 7.2 with prepreroll, adding this to java.policy fixes:
 grant {
   permission java.security.AllPermission;
 };
-
-book stuff
-_ on linux, drag and drop didn't accept
-_   gets a zillion different items that come in
-_   http://dev.processing.org/bugs/show_bug.cgi?id=595
-_ adding a file to the sketch that already exists gives no confirm
-_   sometimes one item showing up twice
-_   (Table.pde showed twice after failed add)
-
 
 _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page

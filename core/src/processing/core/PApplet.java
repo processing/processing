@@ -4804,6 +4804,11 @@ public class PApplet extends Applet
 
     return sketchPath + File.separator + where;
   }
+  
+  
+  public File sketchFile(String where) {
+    return new File(sketchPath(where));
+  }
 
 
   /**
