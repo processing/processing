@@ -14,6 +14,8 @@ X fix problem with export.txt files not working
 X   http://dev.processing.org/bugs/show_bug.cgi?id=625
 X readStringUntil broken in net library
 X   http://dev.processing.org/bugs/show_bug.cgi?id=606
+X add imageicon for the find dialog (and others?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=627
 
 book stuff
 _ on linux, drag and drop didn't accept
@@ -22,9 +24,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=595
 _ adding a file to the sketch that already exists gives no confirm
 _   sometimes one item showing up twice
 _   (Table.pde showed twice after failed add)
-
-_ add imageicon for the find dialog (and others?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=627
 
 _ libraries should only be placed in the libraries folder
 _ when writing javadoc for p5 sketches, only write from first tab

@@ -123,6 +123,7 @@ public class ColorSelector implements DocumentListener {
           frame.setVisible(false);
         }
       });
+    Base.setIcon(frame);
 
     hueField.getDocument().addDocumentListener(this);
     saturationField.getDocument().addDocumentListener(this);
