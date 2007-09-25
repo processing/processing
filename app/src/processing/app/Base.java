@@ -65,18 +65,21 @@ public class Base {
   // (both those in the p5/libs folder and those with lib subfolders
   // found in the sketchbook)
   static String librariesClassPath;
-  
+
   // Location for untitled items
   static File untitledFolder;
+
+  // p5 icon for the window
+  static Image icon;
 
   int editorCount;
   Editor[] editors;
   Editor activeEditor;
-  
+
   int nextEditorX;
   int nextEditorY;
 
-  
+
   static public void main(String args[]) {
 
     // make sure that this is running on java 1.4
@@ -144,7 +147,7 @@ public class Base {
     if (PApplet.platform == PConstants.MACOSX) {
       registerMacOS();
     }
-    
+
     // Get paths for the libraries and examples in the Processing folder
     examplesFolder = new File(System.getProperty("user.dir"), "examples");
     examplesPath = examplesFolder.getAbsolutePath();
@@ -154,7 +157,7 @@ public class Base {
     // Get the sketchbook path, and make sure it's set properly
     String sketchbookPath = Preferences.get("sketchbook.path");
 
-    // If a value is at least set, first check to see if the folder exists. 
+    // If a value is at least set, first check to see if the folder exists.
     // If it doesn't, warn the user that the sketchbook folder is being reset.
     if (sketchbookPath != null) {
       File skechbookFolder = new File(sketchbookPath);
@@ -175,10 +178,10 @@ public class Base {
         defaultFolder.mkdirs();
       }
     }
-    
+
     // Check if there were previously opened sketches to be restored
-    boolean opened = restoreSketches();    
-    
+    boolean opened = restoreSketches();
+
     // Check if any files were passed in on the command line
     for (int i = 0; i < args.length; i++) {
       if (handleOpen(args[i]) != null) {
@@ -203,7 +206,7 @@ public class Base {
     try {
       String name = "processing.app.BaseMacOS";
       Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass(name);
-      
+
       Class[] defArgs = { Base.class };
       Method registerMethod = osxAdapter.getDeclaredMethod("register", defArgs);
       if (registerMethod != null) {
@@ -215,9 +218,9 @@ public class Base {
       // because OSXAdapter extends ApplicationAdapter in its def
       System.err.println("This version of Mac OS X does not support the Apple EAWT." +
                          "Application Menu handling has been disabled (" + e + ")");
-      
+
     } catch (ClassNotFoundException e) {
-      // This shouldn't be reached; if there's a problem with the OSXAdapter  
+      // This shouldn't be reached; if there's a problem with the OSXAdapter
       // we should get the above NoClassDefFoundError first.
       System.err.println("This version of Mac OS X does not support the Apple EAWT. " +
                          "Application Menu handling has been disabled (" + e + ")");
@@ -226,8 +229,8 @@ public class Base {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   /**
    * Post-constructor setup for the editor area. Loads the last
    * sketch that was used (if any), and restores other Editor settings.
@@ -260,10 +263,10 @@ public class Base {
     } else {
       windowPositionValid = false;
     }
-    
+
     // Iterate through all sketches that were open last time p5 was running.
     // If !windowPositionValid, then ignore the coordinates found for each.
-    
+
     // Save the sketch path and window placement for each open sketch
     int count = Preferences.getInteger("last.sketch.count");
     int opened = 0;
@@ -284,7 +287,7 @@ public class Base {
     return (opened > 0);
   }
 
-  
+
   /**
    * Store list of sketches that are currently open.
    * Called when the application is quitting and documents are still open.
@@ -296,7 +299,7 @@ public class Base {
     Preferences.setInteger("last.screen.height", screen.height);
 
     String untitledPath = untitledFolder.getAbsolutePath();
-    
+
     // Save the sketch path and window placement for each open sketch
     Preferences.setInteger("last.sketch.count", editorCount);
     //System.out.println("saving sketch count " + editorCount);
@@ -306,7 +309,7 @@ public class Base {
         path = "";  // this will prevent it from opening
       }
       Preferences.set("last.sketch" + i + ".path", path);
-      
+
       int[] location = editors[i].getPlacement();
       String locationStr = PApplet.join(PApplet.str(location), ",");
       Preferences.set("last.sketch" + i + ".location", locationStr);
@@ -324,8 +327,8 @@ public class Base {
     }
     Preferences.set("last.sketch" + index + ".path", path);
   }
-  
-  
+
+
   /*
   public void storeSketch(Editor editor) {
     int index = -1;
@@ -343,7 +346,7 @@ public class Base {
     }
   }
   */
-  
+
 
   // .................................................................
 
@@ -360,10 +363,10 @@ public class Base {
   public void handleActivated(Editor whichEditor) {
     activeEditor = whichEditor;
   }
-  
-  
+
+
   protected int[] nextEditorLocation() {
-    int[] location; 
+    int[] location;
 
     if (activeEditor == null) {
       // If no current active editor, use default placement
@@ -372,13 +375,13 @@ public class Base {
       // Get default window width and height
       location[2] = Preferences.getInteger("default.window.width");
       location[3] = Preferences.getInteger("default.window.height");
-      
+
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
       location[0] = (screen.width - location[2]) / 2;
       location[1] = (screen.height - location[3]) / 2;
-      
+
     } else {
-      // With a currently active editor, open the new window 
+      // With a currently active editor, open the new window
       // using the same dimensions, but offset slightly.
       location = activeEditor.getPlacement();
       location[0] += 50;
@@ -386,17 +389,17 @@ public class Base {
     }
     return location;
   }
-  
+
 
   // .................................................................
 
-  
+
   public void handleNew(boolean shiftDown) {
     // buttons.activate(EditorButtons.NEW);
 
     boolean prompt = Preferences.getBoolean("sketchbook.prompt");
     if (shiftDown) prompt = !prompt; // reverse behavior if shift is down
-  
+
     // no sketch has been started, don't prompt for the name if it's
     // starting up, just make the farker. otherwise if the person hits
     // 'cancel' i'd have to add a thing to make p5 quit, which is silly.
@@ -464,13 +467,13 @@ public class Base {
       index++;
       // Make sure it's not in the temp folder *and* it's not in the sketchbook
     } while (newbieDir.exists() || new File(sketchbookDir, newbieName).exists());
-    
+
     Editor editor = handleNewInternal(newbieDir, newbieName);
     editor.untitled = true;
   }
 
 
-  protected Editor handleNewInternal(File newbieDir, String newbieName) 
+  protected Editor handleNewInternal(File newbieDir, String newbieName)
   throws FileNotFoundException {
     // Make the directory for the new sketch
     newbieDir.mkdirs();
@@ -479,10 +482,10 @@ public class Base {
     File newbieFile = new File(newbieDir, newbieName + ".pde");
     new FileOutputStream(newbieFile);  // create the file
 
-    // TODO For 0126, need to check if this is the only way that the doc is 
+    // TODO For 0126, need to check if this is the only way that the doc is
     // getting associated, and if so, have we removed the connection between
     // .pde files and Processing.app
-    
+
     //  Disabling this starting in 0125... There's no need for it,
     // and it's likely to cause more trouble than necessary by
     // leaving around little ._ boogers.
@@ -490,7 +493,7 @@ public class Base {
     // this wouldn't be needed if i could figure out how to
     // associate document icons via a dot-extension/mime-type scenario
     // help me steve jobs, you're my only hope.
-    
+
     // jdk13 on osx, or jdk11
     // though apparently still available for 1.4
     /*
@@ -505,7 +508,7 @@ public class Base {
     return handleOpen(newbieFile.getAbsolutePath());
   }
 
-  
+
   /*
   public String handleOpenPrompt(JFrame editor) {
     // The file chooser in Swing is ass ugly, so we use the
@@ -550,15 +553,15 @@ public class Base {
           return name.toLowerCase().endsWith(".pde");
         }
       });
-    
+
     fd.setVisible(true);
 
     String directory = fd.getDirectory();
     String filename = fd.getFile();
-    
+
     // User canceled selection
     if (filename == null) return;
-    
+
     File inputFile = new File(directory, filename);
     handleOpen(inputFile.getAbsolutePath());
   }
@@ -569,7 +572,7 @@ public class Base {
     handleOpen(file.getAbsolutePath());
   }
   */
-  
+
 
   /**
    * @param path Path to the .pde file for the sketch in question
@@ -579,14 +582,14 @@ public class Base {
   public Editor handleOpen(String path) {
     return handleOpen(path, nextEditorLocation());
   }
-  
-  
+
+
   public Editor handleOpen(String path, int[] location) {
     File file = new File(path);
     if (!file.exists()) return null;
 
     Editor editor = new Editor(this, path, location);
-    
+
     if (editors == null) {
       editors = new Editor[5];
     }
@@ -606,7 +609,7 @@ public class Base {
     if (success) {
       editor.setVisible(false);
       editor.dispose();
-      
+
       for (int i = 0; i < editorCount; i++) {
         if (editor == editors[i]) {
           for (int j = i; j < editorCount-1; j++) {
@@ -617,9 +620,9 @@ public class Base {
           editors[editorCount] = null;
         }
       }
-    
+
       // If not canceled, check if this was the last open window.
-      // If it was the last, could either do a new untitled window, 
+      // If it was the last, could either do a new untitled window,
       // or could just quit the application.
       if (!quitting && (editorCount == 0)) {
         // This will store the sketch count as zero
@@ -633,7 +636,7 @@ public class Base {
         // can't do handleQuit(), would do weird recursive thing
         //handleQuit();
 
-        // Since this wasn't an actual Quit event, 
+        // Since this wasn't an actual Quit event,
         // System.exit() needs to be called for Mac OS X.
         //if (PApplet.platform == PConstants.MACOSX) {
         System.exit(0);
@@ -644,12 +647,12 @@ public class Base {
     return false;
   }
 
-  
+
   public boolean handleQuit() {
-    // If quit is canceled, this will be replaced anyway 
+    // If quit is canceled, this will be replaced anyway
     // by a later handleQuit() that is not canceled.
     storeSketches();
-    
+
     boolean canceled = false;
     for (int i = 0; i < editorCount; i++) {
       Editor editor = editors[i];
@@ -675,10 +678,10 @@ public class Base {
         System.exit(0);
       }
     }
-    return !canceled;      
+    return !canceled;
   }
 
-  
+
   // .................................................................
 
 
@@ -750,8 +753,8 @@ public class Base {
     return menu.getPopupMenu();
   }
   */
-  
-  
+
+
   public void rebuildToolbarMenu(JMenu menu) {
     JMenuItem item;
     menu.removeAll();
@@ -799,11 +802,11 @@ public class Base {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   public void rebuildImportMenu(JMenu importMenu) {
     importMenu.removeAll();
-    
+
     // Add from the "libraries" subfolder in the Processing directory
     try {
       boolean found = addLibraries(importMenu, new File(getSketchbookPath()));
@@ -975,10 +978,10 @@ public class Base {
     return ifound;
   }
 
-  
+
   // .................................................................
 
-  
+
   /**
    * Show the About box.
    */
@@ -1017,7 +1020,7 @@ public class Base {
     Preferences preferences = new Preferences();
     preferences.showFrame(activeEditor);
   }
-  
+
 
   // ...................................................................
 
@@ -1082,7 +1085,7 @@ public class Base {
         }
         */
 
-        
+
         /*
         MRJOSType domainLibrary = new MRJOSType("dlib");
         Method findFolderMethod =
@@ -1093,7 +1096,7 @@ public class Base {
           findFolderMethod.invoke(null, new Object[] { new Short(kUserDomain),
                                                        domainLibrary });
 
-                                                       */ 
+                                                       */
         // TODO load this dynamically
         File libraryFolder = new File(BaseMacOS.getLibraryFolder());
         dataFolder = new File(libraryFolder, "Processing");
@@ -1388,7 +1391,7 @@ public class Base {
     return folder;
   }
 
-  
+
   /**
    * Clear out projects that are empty.
    */
@@ -1517,6 +1520,19 @@ public class Base {
 
 
   // .................................................................
+
+
+  static public void setIcon(Frame frame) {
+    // set the window icon
+    if (icon == null) {
+      try {
+        icon = Base.getImage("icon.gif", frame);
+      } catch (Exception e) { } // fail silently, no big whup
+    }
+    if (icon != null) {
+      frame.setIconImage(icon);
+    }
+  }
 
 
   // someone needs to be slapped

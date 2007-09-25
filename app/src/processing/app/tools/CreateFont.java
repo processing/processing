@@ -199,7 +199,7 @@ public class CreateFont extends JFrame {
     JButton cancelButton = new JButton("Cancel");
     cancelButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          setVisible(false); 
+          setVisible(false);
         }
       });
     okButton = new JButton("OK");
@@ -222,6 +222,7 @@ public class CreateFont extends JFrame {
         }
       };
     Base.registerWindowCloseKeys(root, disposer);
+    Base.setIcon(this);
 
     pack();
 
