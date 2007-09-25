@@ -248,7 +248,12 @@ public class Editor extends JFrame {
         }
 
         public boolean importData(JComponent src, Transferable transferable) {
+
           DataFlavor[] flavors = transferable.getTransferDataFlavors();
+          //for (int i = 0; i < flavors.length; i++) {
+          //System.out.println(flavors[i]);
+          //}
+
           int successful = 0;
 
           for (int i = 0; i < flavors.length; i++) {
