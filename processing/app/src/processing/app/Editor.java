@@ -32,6 +32,7 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -248,14 +249,44 @@ public class Editor extends JFrame {
         }
 
         public boolean importData(JComponent src, Transferable transferable) {
+          int successful = 0;
 
-          DataFlavor[] flavors = transferable.getTransferDataFlavors();
+          try {
+            DataFlavor uriListFlavor =
+              new DataFlavor("text/uri-list;class=java.lang.String");
+
+            if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+              java.util.List list = (java.util.List)
+                transferable.getTransferData(DataFlavor.javaFileListFlavor);
+              for (int i = 0; i < list.size(); i++) {
+                File file = (File) list.get(i);
+                if (sketch.addFile(file)) {
+                  successful++;
+                }
+              }
+            } else if (transferable.isDataFlavorSupported(uriListFlavor)) {
+              String data = (String)transferable.getTransferData(uriListFlavor);
+              String[] pieces = PApplet.splitTokens(data, "\r\n");
+              for (int i = 0; i < pieces.length; i++) {
+                if (!pieces[i].startsWith("#")) {
+                  if (sketch.addFile(new File(pieces[i]))) {
+                    successful++;
+                  }
+                }
+              }
+            }
+            //          } catch (Exception e) {
+            //            e.printStackTrace();
+            //          }
+
+          //DataFlavor[] flavors = transferable.getTransferDataFlavors();
           //for (int i = 0; i < flavors.length; i++) {
           //System.out.println(flavors[i]);
           //}
 
-          int successful = 0;
+            //int successful = handleImport(list);
 
+            /*
           for (int i = 0; i < flavors.length; i++) {
             try {
               //System.out.println(flavors[i]);
@@ -286,12 +317,11 @@ public class Editor extends JFrame {
                   }
                 }
               }
-
+            */
             } catch (Exception e) {
               e.printStackTrace();
               return false;
             }
-          }
 
           if (successful == 0) {
             error("No files were added to the sketch.");
@@ -304,6 +334,66 @@ public class Editor extends JFrame {
           }
           return true;
         }
+
+        /*
+        private void handleImport(java.util.List list) {
+          for (int j = 0; j < list.size(); j++) {
+            Object item = list.get(j);
+            File file = null;
+            if (item instanceof File) {
+              file = (File) item;
+            } else if (item instanceof String) {
+              file = new File((String) item);
+            }
+
+            // see if this is a .pde file to be opened
+            String filename = file.getName();
+            if (filename.endsWith(".pde")) {
+              String name = filename.substring(0, filename.length() - 4);
+              File parent = file.getParentFile();
+              if (name.equals(parent.getName())) {
+                base.handleOpen(file.getAbsolutePath());
+                // Only opens the first sketch dragged into the window
+                return true;
+              }
+            }
+
+            if (sketch.addFile(file)) {
+              successful++;
+            }
+          }
+        }
+
+
+        private java.util.List textURIListToFileList(String data) {
+          String[] pieces = PApplet.splitTokens(data, "\r\n");
+          return Arrays.asList(pieces);
+          //java.util.List list = new ArrayList(pieces);
+          //return list;
+        */
+
+          /*
+          java.util.List list = new java.util.ArrayList(1);
+          for (java.util.StringTokenizer st = new java.util.StringTokenizer(data, "\r\n");
+               st.hasMoreTokens();) {
+            String s = st.nextToken();
+            if (s.startsWith("#")) {
+              // the line is a comment (as per the RFC 2483)
+              continue;
+            }
+            try {
+              java.net.URI uri = new java.net.URI(s);
+              java.io.File file = new java.io.File(uri);
+              list.add(file);
+            } catch (java.net.URISyntaxException e) {
+              // malformed URI
+            } catch (IllegalArgumentException e) {
+              // the URI is not a valid 'file:' URI
+            }
+          }
+          return list;
+          */
+        //}
       });
 
     // Finish preparing Editor (formerly found in Base)
