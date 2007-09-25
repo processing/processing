@@ -49,9 +49,6 @@ public class Editor extends JFrame {
   // yeah
   static final String WINDOW_TITLE = "Processing " + Base.VERSION_NAME;
 
-  // p5 icon for the window
-  static Image icon;
-
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
   static public final String EMPTY =
@@ -84,10 +81,10 @@ public class Editor extends JFrame {
   PrinterJob printerJob;
 
   JMenu sketchbookMenu;
-  
+
   EditorToolbar toolbar;
   JMenu toolbarMenu;
-  
+
   EditorHeader header;
   EditorStatus status;
   EditorConsole console;
@@ -113,7 +110,7 @@ public class Editor extends JFrame {
   JMenuItem exportAppItem;
   JMenuItem saveMenuItem;
   JMenuItem saveAsMenuItem;
-  
+
   // True if the sketchbook has changed since this Editor was last active.
   boolean sketchbookUpdated;
 
@@ -137,15 +134,7 @@ public class Editor extends JFrame {
     super(WINDOW_TITLE);
     this.base = ibase;
 
-    // set the window icon
-    if (icon == null) {
-      try {
-        icon = Base.getImage("icon.gif", this);
-      } catch (Exception e) { } // fail silently, no big whup
-    }
-    if (icon != null) {
-      setIconImage(icon);
-    }
+    Base.setIcon(this);
 
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
@@ -314,32 +303,32 @@ public class Editor extends JFrame {
 
     // Finish preparing Editor (formerly found in Base)
     pack();
-    
+
     // Set the window bounds and the divider location before setting it visible
     setPlacement(location);
-    
+
     // Bring back the general options for the editor
     applyPreferences();
 
     // Open the document that was passed in
     handleOpen2(path);
-    
+
     // All set, now show the window
     setVisible(true);
   }
 
-  
+
   public void setPlacement(int[] location) {
     setBounds(location[0], location[1], location[2], location[3]);
     if (location[4] != 0) {
       splitPane.setDividerLocation(location[4]);
     }
   }
-  
-  
+
+
   public int[] getPlacement() {
     int[] location = new int[5];
-    
+
     // Get the dimensions of the Frame
     Rectangle bounds = getBounds();
     location[0] = bounds.x;
@@ -349,11 +338,11 @@ public class Editor extends JFrame {
 
     // Get the current placement of the divider
     location[4] = splitPane.getDividerLocation();
-      
+
     return location;
   }
 
-  
+
   /**
    * Hack for #@#)$(* Mac OS X 10.2.
    * <p/>
@@ -885,7 +874,7 @@ public class Editor extends JFrame {
     return menuItem;
   }
 
-  
+
   static public JMenuItem newJMenuItemAlt(String title, int what) {
     JMenuItem menuItem = new JMenuItem(title);
     //int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -1482,8 +1471,8 @@ public class Editor extends JFrame {
       error(e);
     }
   }
-  
-  
+
+
   /**
    * Actually handle the save command. If 'immediately' is set to false,
    * this will happen in another thread so that the message area
@@ -1495,14 +1484,14 @@ public class Editor extends JFrame {
    */
   public boolean handleSave(boolean immediately) {
     doStop();
-    
+
     if (untitled) {
       return handleSaveAs();
       // need to get the name, user might also cancel here
 
     } else if (immediately) {
       handleSave2();
-      
+
     } else {
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
@@ -1567,7 +1556,7 @@ public class Editor extends JFrame {
     }
     toolbar.clear();
     //}});
-    
+
     return true;
   }
 

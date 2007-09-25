@@ -245,9 +245,10 @@ public class Runner implements MessageConsumer {
 
     window = new Frame(sketch.name); // use ugly window
     ((Frame)window).setResizable(false);
-    if (Editor.icon != null) {
-      ((Frame)window).setIconImage(Editor.icon);
-    }
+    Base.setIcon((Frame) window);
+    //if (Editor.icon != null) {
+    //  ((Frame)window).setIconImage(Editor.icon);
+    //}
     window.pack(); // to get a peer, size set later, need for insets
 
     applet.leechErr = leechErr;
@@ -487,7 +488,7 @@ java.lang.NullPointerException
 
         } else {
           //pkgClassFxn = s.substring(0, startParen);
-          
+
           // "(javatest.java:5)"
           String fileAndLine = s.substring(startParen + 1);
           int stopParen = fileAndLine.indexOf(')');

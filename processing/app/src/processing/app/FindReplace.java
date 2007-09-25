@@ -206,6 +206,7 @@ public class FindReplace extends JFrame implements ActionListener {
           handleClose();
         }
       });
+    Base.setIcon(this);
 
     // hack to to get first field to focus properly on osx
     addWindowListener(new WindowAdapter() {
