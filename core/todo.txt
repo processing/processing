@@ -19,6 +19,9 @@ _   add them to the syntax highlighting
 X throw AIOOBE when min() or max() called on zero length array
 _ fix lerpColor() to take the shortest route around the HSB scale
 
+_ fix svg caps/joins for opengl
+_   http://dev.processing.org/bugs/show_bug.cgi?id=628
+
 _ should loadFont() work with ttf files (instead of createFont?)
 
 _ opengl mipmaps are leaking (regression in spite of #150 fix)
