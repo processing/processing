@@ -4142,6 +4142,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Interpolate between two colors, using the current color mode.
+   */
   public int lerpColor(int c1, int c2, float amt) {
     return lerpColor(c1, c2, amt, colorMode);
   }
@@ -4149,6 +4152,10 @@ public abstract class PGraphics extends PImage implements PConstants {
   static float[] lerpColorHSB1;
   static float[] lerpColorHSB2;
 
+  /**
+   * Interpolate between two colors. Like lerp(), but for the
+   * individual color components of a color supplied as an int value.
+   */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
     if (mode == RGB) {
       float a1 = ((c1 >> 24) & 0xff);
@@ -4180,8 +4187,18 @@ public abstract class PGraphics extends PImage implements PConstants {
       Color.RGBtoHSB((c2 >> 16) & 0xff, (c2 >> 8) & 0xff, c2 & 0xff,
                      lerpColorHSB2);
 
+      /* If mode is HSB, this will take the shortest path around the
+       * color wheel to find the new color. For instance, red to blue
+       * will go red violet blue (backwards in hue space) rather than
+       * cycling through ROYGBIV.
+       */
+      // Disabling rollover (wasn't working anyway) for 0126.
+      // Otherwise it makes full spectrum scale impossible for
+      // those who might want it...in spite of how despicable
+      // a full spectrum scale might be.
       // roll around when 0.9 to 0.1
       // more than 0.5 away means that it should roll in the other direction
+      /*
       float h1 = lerpColorHSB1[0];
       float h2 = lerpColorHSB2[0];
       if (Math.abs(h1 - h2) > 0.5f) {
@@ -4194,6 +4211,8 @@ public abstract class PGraphics extends PImage implements PConstants {
         }
       }
       float ho = (PApplet.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt)) % 1.0f;
+      */
+      float ho = PApplet.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt);
       float so = PApplet.lerp(lerpColorHSB1[1], lerpColorHSB2[1], amt);
       float bo = PApplet.lerp(lerpColorHSB1[2], lerpColorHSB2[2], amt);
 
