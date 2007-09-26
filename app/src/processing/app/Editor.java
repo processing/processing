@@ -243,8 +243,6 @@ public class Editor extends JFrame {
     pain.setTransferHandler(new TransferHandler() {
 
         public boolean canImport(JComponent dest, DataFlavor[] flavors) {
-          // claim that we can import everything
-          // TODO maybe ask only for file objects?
           return true;
         }
 
@@ -265,13 +263,21 @@ public class Editor extends JFrame {
                 }
               }
             } else if (transferable.isDataFlavorSupported(uriListFlavor)) {
+              //System.out.println("uri list");
               String data = (String)transferable.getTransferData(uriListFlavor);
               String[] pieces = PApplet.splitTokens(data, "\r\n");
+              //PApplet.println(pieces);
               for (int i = 0; i < pieces.length; i++) {
-                if (!pieces[i].startsWith("#")) {
-                  if (sketch.addFile(new File(pieces[i]))) {
-                    successful++;
-                  }
+                if (pieces[i].startsWith("#")) continue;
+
+                String path = null;
+                if (pieces[i].startsWith("file:///")) {
+                  path = pieces[i].substring(7);
+                } else if (pieces[i].startsWith("file:/")) {
+                  path = pieces[i].substring(5);
+                }
+                if (sketch.addFile(new File(path))) {
+                  successful++;
                 }
               }
             }
