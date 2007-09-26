@@ -223,7 +223,8 @@ public class Preferences {
       new JCheckBox("Use multiple .jar files when exporting applets");
     pain.add(exportSeparateBox);
     d = exportSeparateBox.getPreferredSize();
-    exportSeparateBox.setBounds(left, top, d.width, d.height);
+    // adding +10 because ubuntu + jre 1.5 truncating items
+    exportSeparateBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
@@ -234,7 +235,7 @@ public class Preferences {
       new JCheckBox("Prompt for name when opening or creating a sketch");
     pain.add(sketchPromptBox);
     d = sketchPromptBox.getPreferredSize();
-    sketchPromptBox.setBounds(left, top, d.width, d.height);
+    sketchPromptBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
@@ -244,7 +245,7 @@ public class Preferences {
     sketchCleanBox = new JCheckBox("Delete empty sketches on Quit");
     pain.add(sketchCleanBox);
     d = sketchCleanBox.getPreferredSize();
-    sketchCleanBox.setBounds(left, top, d.width, d.height);
+    sketchCleanBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
@@ -339,7 +340,7 @@ public class Preferences {
     externalEditorBox = new JCheckBox("Use external editor");
     pain.add(externalEditorBox);
     d = externalEditorBox.getPreferredSize();
-    externalEditorBox.setBounds(left, top, d.width, d.height);
+    externalEditorBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
@@ -349,7 +350,7 @@ public class Preferences {
     checkUpdatesBox = new JCheckBox("Check for updates on startup");
     pain.add(checkUpdatesBox);
     d = checkUpdatesBox.getPreferredSize();
-    checkUpdatesBox.setBounds(left, top, d.width, d.height);
+    checkUpdatesBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
