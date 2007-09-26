@@ -17,11 +17,12 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=606
 X add imageicon for the find dialog
 X   also the tools menu items and preferences
 X   http://dev.processing.org/bugs/show_bug.cgi?id=627
+X fix problem with ctrl-, typing a comma on linux
+X on linux, drag and drop didn't accept
+X   gets a zillion different items that come in
+X   http://dev.processing.org/bugs/show_bug.cgi?id=595
 
 book stuff
-_ on linux, drag and drop didn't accept
-_   gets a zillion different items that come in
-_   http://dev.processing.org/bugs/show_bug.cgi?id=595
 _ adding a file to the sketch that already exists gives no confirm
 _   winds up showing the item twice (if .java file at least)
 _   (Table.pde showed twice after failed add)
@@ -52,13 +53,13 @@ X cmd-opt-r for rename, cmd-opt-n for new tab
 X save/saveas should use modal dialog
 X   only use the bottom bar for name, rename, new tab
 X   remove prompt mode (yes/no/cancel) from EditorStatus
+_ editor console is broken, because re-routes System.out
 _ improve speed of "new", which is calling the rebuild menus
 _   keep one static list of all pairs of names/files in sketchbook
 _   tough to do with the multiple directories/submenus
 _   add methods for "add" and "remove" for sketches
 _     also a rename method, which could just be a remove and add
 _   libraries and examples won't be rebuilt during the session
-_ editor console is broken, because re-routes System.out
 _ test on windows
 _ test on linux
 _ make sure quit being handled properly on windows/linux
