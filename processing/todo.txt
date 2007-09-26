@@ -14,8 +14,9 @@ X fix problem with export.txt files not working
 X   http://dev.processing.org/bugs/show_bug.cgi?id=625
 X readStringUntil broken in net library
 X   http://dev.processing.org/bugs/show_bug.cgi?id=606
-X add imageicon for the find dialog (and others?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=627
+X add imageicon for the find dialog
+X   also the tools menu items and preferences
+X   http://dev.processing.org/bugs/show_bug.cgi?id=627
 
 book stuff
 _ on linux, drag and drop didn't accept
