@@ -1642,8 +1642,9 @@ public class JEditTextArea extends JComponent
 
     switch(evt.getID()) {
     case KeyEvent.KEY_TYPED:
-      //if ((editorListener != null) && !editorListener.keyTyped(evt)) {
-      inputHandler.keyTyped(evt);
+      if ((editorListener != null) && !editorListener.keyTyped(evt)) {
+        inputHandler.keyTyped(evt);
+      }
       break;
     case KeyEvent.KEY_PRESSED:
       if ((editorListener != null) && !editorListener.keyPressed(evt)) {
