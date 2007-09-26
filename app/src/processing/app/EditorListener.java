@@ -93,6 +93,7 @@ public class EditorListener {
    * Called by JEditTextArea inside processKeyEvent(). Note that this
    * won't intercept actual characters, because those are fired on
    * keyTyped().
+   * @return true if the event has been handled (to remove it from the queue)
    */
   public boolean keyPressed(KeyEvent event) {
     // don't do things if the textarea isn't editable
@@ -504,11 +505,20 @@ public class EditorListener {
   //static final int CTRL_ALT = ActionEvent.ALT_MASK |
   //  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-  /*
   public boolean keyTyped(KeyEvent event) {
     char c = event.getKeyChar();
     int code = event.getKeyCode();
 
+    if ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+      // on linux, ctrl-comma (prefs) being passed through to the editor
+      if (c == KeyEvent.VK_COMMA) {
+        event.consume();
+        return true;
+      }
+    }
+    return false;
+
+    /*
     if ((event.getModifiers() & CMD_ALT) == CMD_ALT) {
       if (code == KeyEvent.VK_LEFT) {
       //if (c == '[') {
@@ -521,8 +531,9 @@ public class EditorListener {
       }
     }
     return false;
+    */
   }
-  */
+
 
 
   /**
