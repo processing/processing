@@ -6,7 +6,7 @@ X   move examples folder to top-level menu
 X   move open menu to its own
 X BGraphics, BImage, void loop() -> give an error saying it's old code
 X   better yet, only do this when "not found" errors come up
-_ need to fix changes.html because it lists out of date alpha->beta changes 
+X need to fix changes.html because it lists out of date alpha->beta changes 
 X added getChild(name/path), getChildren(name/path) to xml library
 _   add notes about these to the reference
 _   needs a better example that includes subitems
@@ -21,14 +21,28 @@ X fix problem with ctrl-, typing a comma on linux
 X on linux, drag and drop didn't accept
 X   gets a zillion different items that come in
 X   http://dev.processing.org/bugs/show_bug.cgi?id=595
+X show sketch folder on linux
+X   fix for release 0126
+X   add notes to the docs about how to fix if not working
+X   http://processing.org/reference/environment/platforms.html#linux
+X adding a file to the sketch that already exists gives no confirm
+X   winds up showing the item twice (if .java file at least)
+X   (Table.pde showed twice after failed add)
+X after sketch -> add file, no confirmation message is shown
+o "one file added to sketch" should be more descriptive
+o   Added "blah.jpg" to the data folder of the sketch
 
-book stuff
-_ adding a file to the sketch that already exists gives no confirm
-_   winds up showing the item twice (if .java file at least)
-_   (Table.pde showed twice after failed add)
-_ after sketch -> add file, no confirmation message is shown
+_ add server/client notification thing for the nyu guys
+_ add an event to Server that notifies when a Client disconnects
+_ proccessing.net.Client.write(int) terminates sketch when client disconnects.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=537
+_   is this the same issue?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=LibraryProblems;action=display;num=1180713192
+_ Server.write(bytes[]) hangs sketch on client disconnect.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=538
 
 _ libraries should only be placed in the libraries folder
+_   or in the sketchbook in a subfolder named 'libraries'?
 _ when writing javadoc for p5 sketches, only write from first tab
 
 multiple sketch support
@@ -67,7 +81,7 @@ _ make editor buttons light up and clear properly
 _ inside sketch.java, don't hardwire the file extension types
 _   arduino uses .c, .cpp, .h instead of .java
 
-You could greatly simplify the creation of disk-images using this cmd-line:
+_ fix macosx dist script to not require root password
   hdiutil create  -size 5m -fs HFS+ -volname Fooble  foo
 To mount the disk-image, without having it appear in the Finder:
   hdiutil attach  -nobrowse  foo.dmg
@@ -79,10 +93,6 @@ _ make clear that open() with one param should only have a single param
 _ don't bug the user about new release of p5 when they have it
 _   add prefs option for "latest version run"
 _   something also to track--people going to older releases
-
-_ show sketch folder on linux
-_   add notes to the docs about how to fix if not working
-_   http://processing.org/reference/environment/platforms.html#linux
 
 new bugs
 _ huge jar files from 0124 export
@@ -184,13 +194,7 @@ LIBRARIES / Net
 _ move the useful serial buffering fxns into net library
 _ make the Client list public
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
-_ add an event to Server that notifies when a Client disconnects
-_ proccessing.net.Client.write(int) terminates sketch when client disconnects.
-_   http://dev.processing.org/bugs/show_bug.cgi?id=537
-_   is this the same issue?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=LibraryProblems;action=display;num=1180713192
-_ Server.write(bytes[]) hangs sketch on client disconnect.
-_   http://dev.processing.org/bugs/show_bug.cgi?id=538
+
 
 _ java.extension.dirs has the library/extn stuff
 _   can probably set this blank
@@ -201,8 +205,6 @@ _ don't allow for (blah; blah; blah) ;
 _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
 
-_ "one file added to sketch" should be more descriptive
-_   Added "blah.jpg" to the data folder of the sketch
 _ cmd-w doesn't close window of opened applet (running inside p5)
 _ ESC won't cancel rename
 _   rename location is awkward, do it on the tab?
@@ -360,8 +362,6 @@ so perhaps conflicting versions of a library in the sketchbook (solve
 this by setting to an empty sketchbook temporarily) or files might be
 installed in the CLASSPATH variable or something conflicting in
 /System/Library/Extensions. 
-
-_ add server/client notification thing for the nyu guys
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

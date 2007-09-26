@@ -362,6 +362,8 @@ public class Base {
   // Window receives a WINDOW_GAINED_FOCUS or WINDOW_ACTIVATED event.
   public void handleActivated(Editor whichEditor) {
     activeEditor = whichEditor;
+
+    // set the current window to be the console that's getting output
   }
 
 

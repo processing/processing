@@ -266,6 +266,16 @@ public class Sketch {
   }
 
 
+  protected void replaceCode(SketchCode newCode) {
+    for (int i = 0; i < codeCount; i++) {
+      if (code[i].name.equals(newCode.name)) {
+        code[i] = newCode;
+        break;
+      }
+    }
+  }
+  
+  
   protected void insertCode(SketchCode newCode) {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
@@ -969,7 +979,11 @@ public class Sketch {
     File sourceFile = new File(directory, filename);
 
     // now do the work of adding the file
-    addFile(sourceFile);
+    boolean result = addFile(sourceFile);
+
+    if (result) {
+      editor.message("One file added to the sketch.");
+    }
   }
 
 
@@ -990,6 +1004,7 @@ public class Sketch {
     String filename = sourceFile.getName();
     File destFile = null;
     boolean addingCode = false;
+    boolean replacement = false;
 
     // if the file appears to be code related, drop it
     // into the code folder, instead of the data folder
@@ -1013,11 +1028,30 @@ public class Sketch {
       destFile = new File(dataFolder, filename);
     }
 
+    // check whether this file already exists
+    if (destFile.exists()) {
+      Object[] options = { "OK", "Cancel" };
+      String prompt = "Replace the existing version of " + filename + "?";
+      int result = JOptionPane.showOptionDialog(editor,
+                                                prompt,
+                                                "Replace",
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null,
+                                                options,
+                                                options[0]);
+      if (result == JOptionPane.YES_OPTION) {
+        replacement = true;
+      } else {
+        return false;
+      }
+    }
+    
     // make sure they aren't the same file
     if (!addingCode && sourceFile.equals(destFile)) {
       Base.showWarning("You can't fool me",
                        "This file has already been copied to the\n" +
-                       "location where you're trying to add it.\n" +
+                       "location from which where you're trying to add it.\n" +
                        "I ain't not doin nuthin'.", null);
       return false;
     }
@@ -1049,8 +1083,14 @@ public class Sketch {
 
       // see also "nameCode" for identical situation
       SketchCode newCode = new SketchCode(newName, destFile, newFlavor);
-      insertCode(newCode);
-      sortCode();
+      
+      if (replacement) { 
+        replaceCode(newCode);
+
+      } else {
+        insertCode(newCode);
+        sortCode();
+      }
       setCurrent(newName);
       editor.header.repaint();
     }
