@@ -74,9 +74,9 @@ public class Preferences {
 
   /**
    * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
-   * Windows XP needs 66, and Linux needs 76, so 76 seems proper.
+   * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
    */
-  static public int BUTTON_WIDTH  = 76;
+  static public int BUTTON_WIDTH  = 80;
 
   /**
    * Standardized button height. Mac OS X 10.3 (Java 1.4) wants 29,
@@ -431,6 +431,7 @@ public class Preferences {
         }
       };
     Base.registerWindowCloseKeys(dialog.getRootPane(), disposer);
+    Base.setIcon(dialog);
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     dialog.setLocation((screen.width - wide) / 2,
