@@ -242,7 +242,8 @@ public class Movie extends PImage implements PConstants, Runnable {
     // we've got a valid movie! let's rock.
     try {
       // this is probably causing the 2 seconds of audio
-      movie.prePreroll(0, 1.0f);
+      // disabled pre-preroll on 0126 because of security problems
+      //movie.prePreroll(0, 1.0f);
       movie.preroll(0, 1.0f);
 
       // this has a possibility of running forever..
