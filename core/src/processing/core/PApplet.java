@@ -4004,7 +4004,7 @@ public class PApplet extends Applet
     //}
 
     try {
-      String lower = filename.toLowerCase();
+      //String lower = filename.toLowerCase();
       InputStream input = openStream(filename);
 
       /*
