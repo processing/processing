@@ -19,6 +19,11 @@ _   add them to the syntax highlighting
 X throw AIOOBE when min() or max() called on zero length array
 _ fix lerpColor() to take the shortest route around the HSB scale
 
+_ PGraphics problem with fillColor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=468
+
+_ text characters showing up as opaque rectangles in tga files
+
 _ fix svg caps/joins for opengl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
 
@@ -62,9 +67,6 @@ _ background not being set properly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=454
 _ why aren't background() / defaults() being called for opengl?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
-
-_ PGraphics problem with fillColor
-_   http://dev.processing.org/bugs/show_bug.cgi?id=468
 
 new bugs (organize later)
 _ replaceAll() not supported by 1.1
