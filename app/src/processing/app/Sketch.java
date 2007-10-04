@@ -191,7 +191,7 @@ public class Sketch {
         // in them which can cause a crash.. ouch. [rev 0116]
         continue;
 
-      } else if (!Sketch.isSanitary(base)) {
+      } else if (!Sketch.isSanitaryName(base)) {
         // also don't allow people to use files with invalid names,
         // since on load, it would be otherwise possible to sneak in
         // nasty filenames. [rev 0116]
@@ -510,7 +510,7 @@ public class Sketch {
 
         // get the changes into the sketchbook menu
         // (re-enabled in 0115 to fix bug #332)
-        editor.base.rebuildMenusAsync();
+        editor.base.rebuildSketchbookMenu();
 
       } else {  // else if something besides code[0]
         if (!current.file.renameTo(newFile)) {
@@ -763,6 +763,11 @@ public class Sketch {
   }
 
 
+  public boolean isModified() {
+    return modified;
+  }
+
+
   /**
    * Save all code in the current sketch.
    */
@@ -935,7 +940,7 @@ public class Sketch {
 
     // Name changed, rebuild the sketch menus
     //editor.sketchbook.rebuildMenusAsync();
-    editor.base.rebuildMenusAsync();
+    editor.base.rebuildSketchbookMenu();
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);
@@ -2723,8 +2728,8 @@ public class Sketch {
   public boolean isUntitled() {
     return editor.untitled;
   }
-
-
+  
+  
   /**
    * Returns path to the main .pde file for this sketch.
    */
@@ -2770,7 +2775,7 @@ public class Sketch {
   /**
    * Return true if the name is valid for a Processing sketch.
    */
-  static public boolean isSanitary(String name) {
+  static public boolean isSanitaryName(String name) {
     return sanitizedName(name).equals(name);
   }
 

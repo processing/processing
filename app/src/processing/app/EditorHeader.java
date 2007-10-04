@@ -67,7 +67,7 @@ public class EditorHeader extends JComponent {
 
   static final int PIECE_WIDTH = 4;
 
-  Image[][] pieces;
+  static Image[][] pieces;
 
   //
 
@@ -79,11 +79,13 @@ public class EditorHeader extends JComponent {
   public EditorHeader(Editor eddie) {
     this.editor = eddie; // weird name for listener
 
-    pieces = new Image[STATUS.length][WHERE.length];
-    for (int i = 0; i < STATUS.length; i++) {
-      for (int j = 0; j < WHERE.length; j++) {
-        pieces[i][j] = Base.getImage("tab-" + STATUS[i] + "-" +
-                                        WHERE[j] + ".gif", this);
+    if (pieces == null) {
+      pieces = new Image[STATUS.length][WHERE.length];
+      for (int i = 0; i < STATUS.length; i++) {
+        for (int j = 0; j < WHERE.length; j++) {
+          pieces[i][j] = Base.getImage("tab-" + STATUS[i] + "-" +
+              WHERE[j] + ".gif", this);
+        }
       }
     }
 
@@ -135,7 +137,6 @@ public class EditorHeader extends JComponent {
         // who cares, just resize
         sizeW = size.width;
         sizeH = size.height;
-        //userLeft = 0; // reset
       }
     }
 
@@ -412,10 +413,12 @@ public class EditorHeader extends JComponent {
     repaint();
   }
 
+  
   public Dimension getPreferredSize() {
     return getMinimumSize();
   }
 
+  
   public Dimension getMinimumSize() {
     if (Base.isMacOS()) {
       return new Dimension(300, Preferences.GRID_SIZE);
@@ -423,6 +426,7 @@ public class EditorHeader extends JComponent {
     return new Dimension(300, Preferences.GRID_SIZE - 1);
   }
 
+  
   public Dimension getMaximumSize() {
     if (Base.isMacOS()) {
       return new Dimension(3000, Preferences.GRID_SIZE);

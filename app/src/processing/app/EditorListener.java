@@ -507,7 +507,7 @@ public class EditorListener {
 
   public boolean keyTyped(KeyEvent event) {
     char c = event.getKeyChar();
-    int code = event.getKeyCode();
+    //int code = event.getKeyCode();
 
     if ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
       // on linux, ctrl-comma (prefs) being passed through to the editor

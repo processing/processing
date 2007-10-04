@@ -32,7 +32,6 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -81,10 +80,17 @@ public class Editor extends JFrame {
   PageFormat pageFormat;
   PrinterJob printerJob;
 
-  JMenu sketchbookMenu;
-
+  // file and sketch menus for re-inserting items
+  JMenu fileMenu;
+  JMenu sketchMenu;
+  
   EditorToolbar toolbar;
-  JMenu toolbarMenu;
+  // these menus are shared so that they needn't be rebuilt for all windows
+  // each time a sketch is created, renamed, or moved.
+  static JMenu toolbarMenu;
+  static JMenu sketchbookMenu;
+  static JMenu examplesMenu; 
+  static JMenu importMenu; 
 
   EditorHeader header;
   EditorStatus status;
@@ -113,7 +119,7 @@ public class Editor extends JFrame {
   JMenuItem saveAsMenuItem;
 
   // True if the sketchbook has changed since this Editor was last active.
-  boolean sketchbookUpdated;
+//  boolean sketchbookUpdated;
 
   boolean running;
   boolean presenting;
@@ -154,25 +160,18 @@ public class Editor extends JFrame {
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
           base.handleActivated(Editor.this);
-          if (sketchbookUpdated) {
-            base.rebuildSketchbookMenu(sketchbookMenu);
-            base.rebuildToolbarMenu(toolbarMenu);
-            sketchbookUpdated = false;
-          }
+          
+          // re-add the sub-menus that are shared by all windows
+          fileMenu.insert(sketchbookMenu, 2);
+          fileMenu.insert(examplesMenu, 3);
+          sketchMenu.insert(importMenu, 4);
         }
       });
 
     //PdeKeywords keywords = new PdeKeywords();
     //sketchbook = new Sketchbook(this);
 
-    JMenuBar menubar = new JMenuBar();
-    menubar.add(buildFileMenu());
-    menubar.add(buildEditMenu());
-    menubar.add(buildSketchMenu());
-    menubar.add(buildToolsMenu());
-    // what platform has their help menu way on the right? motif?
-    menubar.add(buildHelpMenu());
-    setJMenuBar(menubar);
+    buildMenuBar();
 
     // For rev 0120, placing things inside a JPanel
     Container contentPain = getContentPane();
@@ -184,8 +183,10 @@ public class Editor extends JFrame {
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
 
-    toolbarMenu = new JMenu();
-    base.rebuildToolbarMenu(toolbarMenu);
+    if (toolbarMenu == null) {
+      toolbarMenu = new JMenu();
+      base.rebuildToolbarMenu(toolbarMenu);
+    }
     toolbar = new EditorToolbar(this, toolbarMenu);
     upper.add(toolbar);
 
@@ -402,20 +403,30 @@ public class Editor extends JFrame {
         //}
       });
 
+//    System.out.println("t1");
+    
     // Finish preparing Editor (formerly found in Base)
     pack();
+
+//    System.out.println("t2");
 
     // Set the window bounds and the divider location before setting it visible
     setPlacement(location);
 
+//    System.out.println("t3");
+
     // Bring back the general options for the editor
     applyPreferences();
+
+//    System.out.println("t4");
 
     // Open the document that was passed in
     handleOpen2(path);
 
+//    System.out.println("t5");
+
     // All set, now show the window
-    setVisible(true);
+    //setVisible(true);
   }
 
 
@@ -503,16 +514,28 @@ public class Editor extends JFrame {
     // For 0125, changing to async version (to be implemented later)
     //sketchbook.rebuildMenus();
     // For 0126, moved into Base, which will notify all editors.
-    base.rebuildMenusAsync();
+    //base.rebuildMenusAsync();
   }
 
 
   // ...................................................................
 
 
+  protected void buildMenuBar() {
+    JMenuBar menubar = new JMenuBar();
+    menubar = new JMenuBar();
+    menubar.add(buildFileMenu());
+    menubar.add(buildEditMenu());
+    menubar.add(buildSketchMenu());
+    menubar.add(buildToolsMenu());
+    menubar.add(buildHelpMenu());
+    setJMenuBar(menubar);
+  }
+  
+
   protected JMenu buildFileMenu() {
     JMenuItem item;
-    JMenu menu = new JMenu("File");
+    fileMenu = new JMenu("File");
 
     item = newJMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
@@ -520,7 +543,7 @@ public class Editor extends JFrame {
           base.handleNew(false);
         }
       });
-    menu.add(item);
+    fileMenu.add(item);
 
     item = Editor.newJMenuItem("Open...", 'O', false);
     item.addActionListener(new ActionListener() {
@@ -528,7 +551,19 @@ public class Editor extends JFrame {
           base.handleOpenPrompt();
         }
       });
-    menu.add(item);
+    fileMenu.add(item);
+
+    if (sketchbookMenu == null) {
+      sketchbookMenu = new JMenu("Sketchbook");
+      base.rebuildSketchbookMenu(sketchbookMenu);
+    }
+    fileMenu.add(sketchbookMenu);
+
+    if (examplesMenu == null) {
+      examplesMenu = new JMenu("Examples");
+      base.rebuildExamplesMenu(examplesMenu);
+    }
+    fileMenu.add(examplesMenu);
 
     item = Editor.newJMenuItem("Close", 'W', false);
     item.addActionListener(new ActionListener() {
@@ -536,15 +571,7 @@ public class Editor extends JFrame {
           base.handleClose(Editor.this, false);
         }
       });
-    menu.add(item);
-
-    sketchbookMenu = new JMenu("Sketchbook");
-    base.rebuildSketchbookMenu(sketchbookMenu);
-    menu.add(sketchbookMenu);
-
-    JMenu examplesMenu = new JMenu("Examples");
-    base.rebuildExamplesMenu(examplesMenu);
-    menu.add(examplesMenu);
+    fileMenu.add(item);
 
     saveMenuItem = newJMenuItem("Save", 'S');
     saveMenuItem.addActionListener(new ActionListener() {
@@ -552,7 +579,7 @@ public class Editor extends JFrame {
           handleSave(false);
         }
       });
-    menu.add(saveMenuItem);
+    fileMenu.add(saveMenuItem);
 
     saveAsMenuItem = newJMenuItem("Save As...", 'S', true);
     saveAsMenuItem.addActionListener(new ActionListener() {
@@ -560,7 +587,7 @@ public class Editor extends JFrame {
           handleSaveAs();
         }
       });
-    menu.add(saveAsMenuItem);
+    fileMenu.add(saveAsMenuItem);
 
     item = newJMenuItem("Export", 'E');
     item.addActionListener(new ActionListener() {
@@ -568,7 +595,7 @@ public class Editor extends JFrame {
           handleExport();
         }
       });
-    menu.add(item);
+    fileMenu.add(item);
 
     exportAppItem = newJMenuItem("Export Application", 'E', true);
     exportAppItem.addActionListener(new ActionListener() {
@@ -580,9 +607,9 @@ public class Editor extends JFrame {
           //}});
         }
       });
-    menu.add(exportAppItem);
+    fileMenu.add(exportAppItem);
 
-    menu.addSeparator();
+    fileMenu.addSeparator();
 
     item = newJMenuItem("Page Setup", 'P', true);
     item.addActionListener(new ActionListener() {
@@ -590,7 +617,7 @@ public class Editor extends JFrame {
           handlePageSetup();
         }
       });
-    menu.add(item);
+    fileMenu.add(item);
 
     item = newJMenuItem("Print", 'P');
     item.addActionListener(new ActionListener() {
@@ -598,11 +625,11 @@ public class Editor extends JFrame {
           handlePrint();
         }
       });
-    menu.add(item);
+    fileMenu.add(item);
 
     // macosx already has its own preferences and quit menu
     if (!Base.isMacOS()) {
-      menu.addSeparator();
+      fileMenu.addSeparator();
 
       item = newJMenuItem("Preferences", ',');
       item.addActionListener(new ActionListener() {
@@ -610,9 +637,9 @@ public class Editor extends JFrame {
             base.handlePrefs();
           }
         });
-      menu.add(item);
+      fileMenu.add(item);
 
-      menu.addSeparator();
+      fileMenu.addSeparator();
 
       item = newJMenuItem("Quit", 'Q');
       item.addActionListener(new ActionListener() {
@@ -620,15 +647,15 @@ public class Editor extends JFrame {
             base.handleQuit();
           }
         });
-      menu.add(item);
+      fileMenu.add(item);
     }
-    return menu;
+    return fileMenu;
   }
 
 
   protected JMenu buildSketchMenu() {
     JMenuItem item;
-    JMenu menu = new JMenu("Sketch");
+    sketchMenu = new JMenu("Sketch");
 
     item = newJMenuItem("Run", 'R');
     item.addActionListener(new ActionListener() {
@@ -636,7 +663,7 @@ public class Editor extends JFrame {
           handleRun(false);
         }
       });
-    menu.add(item);
+    sketchMenu.add(item);
 
     item = newJMenuItem("Present", 'R', true);
     item.addActionListener(new ActionListener() {
@@ -644,7 +671,7 @@ public class Editor extends JFrame {
           handleRun(true);
         }
       });
-    menu.add(item);
+    sketchMenu.add(item);
 
     item = new JMenuItem("Stop");
     item.addActionListener(new ActionListener() {
@@ -652,13 +679,15 @@ public class Editor extends JFrame {
           handleStop();
         }
       });
-    menu.add(item);
+    sketchMenu.add(item);
 
-    menu.addSeparator();
+    sketchMenu.addSeparator();
 
-    JMenu importMenu = new JMenu("Import Library...");
-    base.rebuildImportMenu(importMenu);
-    menu.add(importMenu);
+    if (importMenu == null) {
+      importMenu = new JMenu("Import Library...");
+      base.rebuildImportMenu(importMenu);
+    }
+    sketchMenu.add(importMenu);
 
     //if (Base.isWindows() || Base.isMacOS()) {
     // no way to do an 'open in file browser' on other platforms
@@ -670,7 +699,7 @@ public class Editor extends JFrame {
           Base.openFolder(sketch.folder);
         }
       });
-    menu.add(item);
+    sketchMenu.add(item);
     if (!Base.openFolderAvailable()) {
       item.setEnabled(false);
     }
@@ -683,11 +712,11 @@ public class Editor extends JFrame {
           sketch.addFile();
         }
       });
-    menu.add(item);
+    sketchMenu.add(item);
 
     // TODO re-enable history
     //history.attachMenu(menu);
-    return menu;
+    return sketchMenu;
   }
 
 
@@ -1466,6 +1495,8 @@ public class Editor extends JFrame {
    * need to be saved.
    */
   protected void handleOpen2(String path) {
+    // disabling this behavior for 0126
+    /*
     if (sketch != null) {
       // if leaving an empty sketch (i.e. the default) do an
       // auto-clean right away
@@ -1483,6 +1514,7 @@ public class Editor extends JFrame {
         }
       } catch (Exception e) { }   // oh well
     }
+    */
 
     try {
       // check to make sure that this .pde file is

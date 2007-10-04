@@ -351,8 +351,8 @@ public class Base {
   // .................................................................
 
 
-  static public String getSketchbookPath() {
-    return Preferences.get("sketchbook.path");
+  static public File getSketchbookFolder() {
+    return new File(Preferences.get("sketchbook.path"));
   }
 
 
@@ -456,7 +456,7 @@ public class Base {
 
     // In 0126, untitled sketches will begin in the temp folder,
     // and then moved to a new location because Save will default to Save As.
-    File sketchbookDir = new File(getSketchbookPath());
+    File sketchbookDir = getSketchbookFolder();
     File newbieParentDir = untitledFolder;
 
     // Use a generic name like sketch_031008a, the date plus a char
@@ -590,6 +590,18 @@ public class Base {
     File file = new File(path);
     if (!file.exists()) return null;
 
+    Editor markedForClose = null;
+    if (activeEditor != null) {
+      Sketch sketch = activeEditor.sketch;
+      if (sketch.isUntitled() && !sketch.isModified()) {
+        // if it's an untitled, unmodified document, it can be replaced.
+        // except in cases where a second blank window is being opened.
+        if (!path.startsWith(untitledFolder.getAbsolutePath())) {
+          markedForClose = activeEditor;
+        }
+      }
+    }
+    
     Editor editor = new Editor(this, path, location);
 
     if (editors == null) {
@@ -599,6 +611,18 @@ public class Base {
       editors = (Editor[]) PApplet.expand(editors);
     }
     editors[editorCount++] = editor;
+    
+    if (markedForClose != null) {
+      Point p = markedForClose.getLocation();
+      handleClose(markedForClose, false);
+      // open the new window in 
+      editor.setLocation(p);
+    }
+    
+    // now that we're ready, show the window
+    // (don't do earlier, cuz we might move it based on a window being closed)
+    editor.setVisible(true);
+    
     return editor;
   }
 
@@ -688,22 +712,21 @@ public class Base {
 
 
   /**
-   * Asynchronous version of menu rebuild to be used on 'new' and 'save',
+   * Asynchronous version of menu rebuild to be used on save and rename
    * to prevent the interface from locking up until the menus are done.
    */
-  public void rebuildMenusAsync() {
-    // disabling the async option for actual release, this hasn't been tested
-    /*
+  public void rebuildSketchbookMenu() {
+    //System.out.println("async enter");
+    //new Exception().printStackTrace();
     SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          rebuildMenus();
-        }
-      });
-    */
-    for (int i = 0; i < editorCount; i++) {
-      editors[i].sketchbookUpdated = true; //sketchbook.rebuildMenus();
-    }
-    //rebuildMenus();
+      public void run() {
+        //System.out.println("starting rebuild");
+        rebuildSketchbookMenu(Editor.sketchbookMenu);
+        rebuildToolbarMenu(Editor.toolbarMenu);
+        //System.out.println("done with rebuild");
+      }
+    });
+    //System.out.println("async exit");    
   }
 
 
@@ -761,6 +784,7 @@ public class Base {
     JMenuItem item;
     menu.removeAll();
 
+    //System.out.println("rebuilding toolbar menu");
     // Add the single "Open" item
     item = Editor.newJMenuItem("Open...", 'O', false);
     item.addActionListener(new ActionListener() {
@@ -773,23 +797,25 @@ public class Base {
 
     // Add a list of all sketches and subfolders
     try {
-      boolean sketches = addSketches(menu, new File(getSketchbookPath()));
+      boolean sketches = addSketches(menu, getSketchbookFolder());
       if (sketches) menu.addSeparator();
     } catch (IOException e) {
       e.printStackTrace();
     }
 
+    //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
     try {
-      String[] subfolders = examplesFolder.list();
-      for (int i = 0; i < subfolders.length; i++) {
-        if (!subfolders[i].startsWith(".")) {
-          File dir = new File(examplesFolder, subfolders[i]);
-          if (dir.isDirectory()) {
-            addSketches(menu, dir);
-          }
-        }
-      }
+      addSketches(menu, examplesFolder);      
+//      String[] subfolders = examplesFolder.list();
+//      for (int i = 0; i < subfolders.length; i++) {
+//        if (!subfolders[i].startsWith(".")) {
+//          File dir = new File(examplesFolder, subfolders[i]);
+//          if (dir.isDirectory()) {
+//            addSketches(menu, dir);
+//          }
+//        }
+//      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -797,9 +823,11 @@ public class Base {
 
 
   public void rebuildSketchbookMenu(JMenu menu) {
+    //System.out.println("rebuilding sketchbook menu");
+    //new Exception().printStackTrace();
     try {
       menu.removeAll();
-      addSketches(menu, new File(getSketchbookPath()));
+      addSketches(menu, getSketchbookFolder());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -807,11 +835,12 @@ public class Base {
 
 
   public void rebuildImportMenu(JMenu importMenu) {
+    //System.out.println("rebuilding import menu");
     importMenu.removeAll();
 
     // Add from the "libraries" subfolder in the Processing directory
     try {
-      boolean found = addLibraries(importMenu, new File(getSketchbookPath()));
+      boolean found = addLibraries(importMenu, getSketchbookFolder());
       if (found) importMenu.addSeparator();
     } catch (IOException e) {
       e.printStackTrace();
@@ -826,6 +855,8 @@ public class Base {
 
 
   public void rebuildExamplesMenu(JMenu menu) {
+    //System.out.println("rebuilding examples menu");
+
     try {
       menu.removeAll();
       addSketches(menu, examplesFolder);
@@ -834,6 +865,11 @@ public class Base {
     }
   }
 
+  
+  class SketchMenuItem {
+    JMenu item;
+    
+  }
 
   protected boolean addSketches(JMenu menu, File folder) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
@@ -845,6 +881,8 @@ public class Base {
 
     // Alphabetize list, since it's not always alpha order
     Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
+    //processing.core.PApplet.println("adding sketches " + folder.getAbsolutePath());
+    //PApplet.println(list);
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -866,7 +904,7 @@ public class Base {
       if (entry.exists()) {
         //String sanityCheck = sanitizedName(list[i]);
         //if (!sanityCheck.equals(list[i])) {
-        if (!Sketch.isSanitary(list[i])) {
+        if (!Sketch.isSanitaryName(list[i])) {
           if (!builtOnce) {
             String complaining =
               "The sketch \"" + list[i] + "\" cannot be used.\n" +
@@ -1400,7 +1438,7 @@ public class Base {
   static public void cleanSketchbook() {
     if (!Preferences.getBoolean("sketchbook.auto_clean")) return;
 
-    File sketchbookFolder = new File(getSketchbookPath());
+    File sketchbookFolder = getSketchbookFolder();
     if (!sketchbookFolder.exists()) return;
 
     //String entries[] = new File(userPath).list();
