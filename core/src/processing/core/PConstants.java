@@ -45,7 +45,7 @@ public interface PConstants {
   static final String OPENGL = "processing.opengl.PGraphicsOpenGL";
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
-  //static final String SVG    = "processing.dxf.PGraphicsSVG";
+  //static final String SVG    = "processing.svg.PGraphicsSVG";
 
 
   // platform IDs for PApplet.platform
@@ -81,7 +81,7 @@ public interface PConstants {
   /** Largest possible (positive) integer value */
   static final int MAX_INT = Integer.MAX_VALUE;
   /** Smallest possible (negative) integer value */
-  static final int MIN_INT = Integer.MAX_VALUE;
+  static final int MIN_INT = Integer.MIN_VALUE;
 
 
   // useful goodness
