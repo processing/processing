@@ -5,19 +5,27 @@ X   bug in osx java 1.4 vs 1.5
 X fix bug in str() methods that take arrays
 X   method was not working properly, was using the object reference
 X new version of saveStream()
-X some auto-gunzip implemented
-_   need to finish auto-gunzip
+X implement auto-gzip and gunzip
 X fix bug where sort() on 0 length array would return null
 X   instead, returns an array
 X unregisterXxxx() calls to remove methods from libs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=312
 X   implemented by ewjordan
 X sort() on strings ignores case 
-_   mention the change in the reference
+X   mention the change in the reference
 X added MIN_FLOAT, MAX_FLOAT, MIN_INT, MAX_INT to PConstants
-_   add them to the syntax highlighting
 X throw AIOOBE when min() or max() called on zero length array
-_ fix lerpColor() to take the shortest route around the HSB scale
+o fix lerpColor() to take the shortest route around the HSB scale
+o loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
+X   this might be a good solution for dealing with the differences
+o   with loadBytes(), they can use gzipInput (or loadBytesGZ?)
+o   although what does openStream do? (doesn't do auto?)
+X   auto-gunzip on createReader()
+o   add auto-gunzip to loadStrings()
+X   others for auto-gunzip?
+X   do the same for createWriter() et al
+X disable mipmaps in 0126
+X   http://dev.processing.org/bugs/show_bug.cgi?id=610
 
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468
@@ -44,15 +52,6 @@ _   this might not be worth it
 _     the number of cases where this works is small (half of url streams) 
 _     and who knows if the value returned will be correct
 _     (i.e. will it be the uncompressed or compressed size of the data?)
-
-_ loadBytes() doesn't do auto gunzip? but loadStrings and createReader do?
-X   this might be a good solution for dealing with the differences
-_   with loadBytes(), they can use gzipInput (or loadBytesGZ?)
-_   although what does openStream do? (doesn't do auto?)
-X   auto-gunzip on createReader()
-_   add auto-gunzip to loadStrings()
-_   others for auto-gunzip?
-_   do the same for createWriter() et al
 
 _ update the reference to cover parseXxxx() stuff
 _   also add notes about parseInt/Float(blah, otherwise)
