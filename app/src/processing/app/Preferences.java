@@ -505,7 +505,15 @@ public class Preferences {
                exportSeparateBox.isSelected());
     setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
     setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
-    set("sketchbook.path", sketchbookLocationField.getText());
+    
+    // if the sketchbook path has changed, rebuild the menus
+    String oldPath = get("sketchbook.path");
+    String newPath = sketchbookLocationField.getText();
+    if (!newPath.equals(oldPath)) {
+      editor.base.rebuildSketchbookMenu();
+      set("sketchbook.path", newPath);
+    }
+    
     setBoolean("editor.external", externalEditorBox.isSelected());
     setBoolean("update.check", checkUpdatesBox.isSelected());
 
