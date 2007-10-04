@@ -65,6 +65,8 @@ public class EditorConsole extends JScrollPane {
   static OutputStream stdoutFile;
   static OutputStream stderrFile;
 
+  static EditorConsole currentConsole;
+  
 
   public EditorConsole(Editor editor) {
     this.editor = editor;
@@ -142,10 +144,12 @@ public class EditorConsole extends JScrollPane {
       }
       //tempFolder.deleteOnExit();
 
-      consoleOut =
-        new PrintStream(new EditorConsoleStream(this, false, stdoutFile));
-      consoleErr =
-        new PrintStream(new EditorConsoleStream(this, true, stderrFile));
+//      consoleOut =
+//        new PrintStream(new EditorConsoleStream(this, false, stdoutFile));
+//      consoleErr =
+//        new PrintStream(new EditorConsoleStream(this, true, stderrFile));
+      consoleOut = new PrintStream(new EditorConsoleStream(false));
+      consoleErr = new PrintStream(new EditorConsoleStream(true));
 
       if (Preferences.getBoolean("console")) {
         try {
@@ -178,6 +182,11 @@ public class EditorConsole extends JScrollPane {
     }).start();
   }
 
+  
+  static public void setEditor(Editor editor) {
+    currentConsole = editor.console;
+  }
+  
 
   /**
    * Close the streams so that the temporary files can be deleted.
@@ -277,66 +286,74 @@ public class EditorConsole extends JScrollPane {
       // maybe not a good idea in the long run?
     }
   }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
+  class EditorConsoleStream extends OutputStream {
+    //static EditorConsole current;
+    boolean err; // whether stderr or stdout
+    byte single[] = new byte[1];
+
+    public EditorConsoleStream(boolean err) {
+      this.err = err;
+    }
+
+    public void close() { }
+
+    public void flush() { }
+
+    public void write(byte b[]) {  // appears never to be used
+      currentConsole.write(b, 0, b.length, err);
+
+      OutputStream echo = err ? stderrFile : stdoutFile;
+      if (echo != null) {
+        try {
+          echo.write(b);
+          echo.flush();
+        } catch (IOException e) {
+          e.printStackTrace();
+          echo = null;
+        }
+      }
+    }
+
+    public void write(byte b[], int offset, int length) {
+      currentConsole.write(b, offset, length, err);
+      
+      OutputStream echo = err ? stderrFile : stdoutFile;
+      if (echo != null) {
+        try {
+          echo.write(b, offset, length);
+          echo.flush();
+        } catch (IOException e) {
+          e.printStackTrace();
+          echo = null;
+        }
+      }
+    }
+
+    public void write(int b) {
+      single[0] = (byte)b;
+      currentConsole.write(single, 0, 1, err);
+
+      OutputStream echo = err ? stderrFile : stdoutFile;
+      if (echo != null) {
+        try {
+          echo.write(b);
+          echo.flush();
+        } catch (IOException e) {
+          e.printStackTrace();
+          echo = null;
+        }
+      }
+    }
+  }
 }
 
 
-class EditorConsoleStream extends OutputStream {
-  EditorConsole parent;
-  boolean err; // whether stderr or stdout
-  byte single[] = new byte[1];
-  OutputStream echo;
-
-  public EditorConsoleStream(EditorConsole parent,
-                             boolean err, OutputStream echo) {
-    this.parent = parent;
-    this.err = err;
-    this.echo = echo;
-  }
-
-  public void close() { }
-
-  public void flush() { }
-
-  public void write(byte b[]) {  // appears never to be used
-    parent.write(b, 0, b.length, err);
-    if (echo != null) {
-      try {
-        echo.write(b); //, 0, b.length);
-        echo.flush();
-      } catch (IOException e) {
-        e.printStackTrace();
-        echo = null;
-      }
-    }
-  }
-
-  public void write(byte b[], int offset, int length) {
-    parent.write(b, offset, length, err);
-    if (echo != null) {
-      try {
-        echo.write(b, offset, length);
-        echo.flush();
-      } catch (IOException e) {
-        e.printStackTrace();
-        echo = null;
-      }
-    }
-  }
-
-  public void write(int b) {
-    single[0] = (byte)b;
-    parent.write(single, 0, 1, err);
-    if (echo != null) {
-      try {
-        echo.write(b);
-        echo.flush();
-      } catch (IOException e) {
-        e.printStackTrace();
-        echo = null;
-      }
-    }
-  }
-}
+// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
 /**
