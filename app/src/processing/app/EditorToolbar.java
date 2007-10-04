@@ -66,10 +66,10 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
 
   Color bgcolor;
 
-  Image buttons;
-  Image inactive[];
-  Image rollover[];
-  Image active[];
+  static Image buttons;
+  static Image inactive[];
+  static Image rollover[];
+  static Image active[];
   int currentRollover;
   //int currentSelection;
 
@@ -95,7 +95,9 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
     //this.popup = popup;
     this.menu = menu;
     
-    buttons = Base.getImage("buttons.gif", this);
+    if (buttons == null) {
+      buttons = Base.getImage("buttons.gif", this);
+    }
 
     buttonCount = 0;
     which = new int[BUTTON_COUNT];
@@ -125,6 +127,7 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
 
 
   public void paintComponent(Graphics screen) {
+    // this data is shared by all EditorToolbar instances
     if (inactive == null) {
       inactive = new Image[BUTTON_COUNT];
       rollover = new Image[BUTTON_COUNT];
@@ -145,25 +148,27 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
         g = active[i].getGraphics();
         g.drawImage(buttons, -(i*IMAGE_SIZE) - 3, -0*IMAGE_SIZE, null);
       }
-
+    }
+    
+    // this happens once per instance of EditorToolbar
+    if (stateImage == null) {
       state = new int[buttonCount];
       stateImage = new Image[buttonCount];
       for (int i = 0; i < buttonCount; i++) {
         setState(i, INACTIVE, false);
       }
+      y1 = 0;
+      y2 = BUTTON_HEIGHT;
+      x1 = new int[buttonCount];
+      x2 = new int[buttonCount];
     }
+    
     Dimension size = getSize();
     if ((offscreen == null) ||
         (size.width != width) || (size.height != height)) {
       offscreen = createImage(size.width, size.height);
       width = size.width;
       height = size.height;
-
-      y1 = 0;
-      y2 = BUTTON_HEIGHT;
-
-      x1 = new int[buttonCount];
-      x2 = new int[buttonCount];
 
       int offsetX = 3;
       for (int i = 0; i < buttonCount; i++) {
@@ -427,13 +432,12 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
 
 
   public Dimension getPreferredSize() {
-    return new Dimension((BUTTON_COUNT + 1)*BUTTON_WIDTH, BUTTON_HEIGHT);
-    //return new Dimension(BUTTON_WIDTH, (BUTTON_COUNT + 1)*BUTTON_HEIGHT);
+    return getMinimumSize();
   }
 
 
   public Dimension getMinimumSize() {
-    return getPreferredSize();
+    return new Dimension((BUTTON_COUNT + 1)*BUTTON_WIDTH, BUTTON_HEIGHT);
   }
 
 
