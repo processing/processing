@@ -32,8 +32,24 @@ X after sketch -> add file, no confirmation message is shown
 o "one file added to sketch" should be more descriptive
 o   Added "blah.jpg" to the data folder of the sketch
 
+JSyn Installer build 011
+java.vm.version = 1.5.0_07-87
+java.library.path = .:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
+java.ext.dirs = /Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext
+Installing Native library JSynV142
+Copy: http://www.softsynth.com/jsyn/plugins/archives/libJSynV142.jnilib
+  to: /Users/fry/Library/Java/Extensions/libJSynV142.jnilib
+Native component JSynV142 downloaded successfully.
+---
+Installing JAR file JSynClasses.jar
+Copy: http://www.softsynth.com/jsyn/plugins/archives/JSynClasses.jar
+  to: /Users/fry/Library/Java/Extensions/JSynClasses.jar
+JAR file JSynClasses.jar downloaded successfully.
+Note: you must restart your browser before running any JSyn Applets!
+Installation completed.
+
 _ add server/client notification thing for the nyu guys
-_ add an event to Server that notifies when a Client disconnects
+_   add an event to Server that notifies when a Client disconnects
 _ proccessing.net.Client.write(int) terminates sketch when client disconnects.
 _   http://dev.processing.org/bugs/show_bug.cgi?id=537
 _   is this the same issue?
@@ -67,16 +83,17 @@ X cmd-opt-r for rename, cmd-opt-n for new tab
 X save/saveas should use modal dialog
 X   only use the bottom bar for name, rename, new tab
 X   remove prompt mode (yes/no/cancel) from EditorStatus
+X improve speed of "new", which is calling the rebuild menus
+o   keep one static list of all pairs of names/files in sketchbook
+X   tough to do with the multiple directories/submenus
+o   add methods for "add" and "remove" for sketches
+o     also a rename method, which could just be a remove and add
+X   libraries and examples won't be rebuilt during the session
 _ editor console is broken, because re-routes System.out
-_ improve speed of "new", which is calling the rebuild menus
-_   keep one static list of all pairs of names/files in sketchbook
-_   tough to do with the multiple directories/submenus
-_   add methods for "add" and "remove" for sketches
-_     also a rename method, which could just be a remove and add
-_   libraries and examples won't be rebuilt during the session
 _ test on windows
 _ test on linux
 _ make sure quit being handled properly on windows/linux
+
 _ make editor buttons light up and clear properly 
 _ inside sketch.java, don't hardwire the file extension types
 _   arduino uses .c, .cpp, .h instead of .java
