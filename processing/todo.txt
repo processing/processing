@@ -89,7 +89,7 @@ X   tough to do with the multiple directories/submenus
 o   add methods for "add" and "remove" for sketches
 o     also a rename method, which could just be a remove and add
 X   libraries and examples won't be rebuilt during the session
-_ editor console is broken, because re-routes System.out
+X editor console is broken, because re-routes System.out
 _ test on windows
 _ test on linux
 _ make sure quit being handled properly on windows/linux
@@ -890,6 +890,7 @@ PDE / Runner
 
 _ make the p5 icon show up for the window (and in the dock) 
 _   when launching a new sketch
+_   can embed icon.gif as byte array in PApplet, and use Toolkit.createImage
 _ does closing the window call stop()?
 _   need to make sure hitting stop button and closing window explicitly call
 _ stop() not working very well 
