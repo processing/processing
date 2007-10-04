@@ -29,6 +29,9 @@ import java.io.*;
 import javax.swing.undo.*;
 
 
+/**
+ * Represents a single tab of a sketch. 
+ */
 public class SketchCode {
   /** Pretty name (no extension), not the full file name */
   public String name;
