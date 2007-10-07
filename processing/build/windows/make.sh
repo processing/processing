@@ -146,6 +146,7 @@ cd app
 # why this is required on windows and not the others is beyond me
 cp src/antlr/java/JavaTokenTypes.txt src/processing/app/preproc/
 
+# this is a total disaster...fix for next release
 cd src/processing/app/preproc
 ../../../../../build/windows/work/java/bin/java \
   -cp "..\\..\\..\\..\\..\\build\\windows\\work\\lib\\antlr.jar" antlr.Tool \
