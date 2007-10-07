@@ -107,6 +107,10 @@ then
   java -cp ../build/macosx/work/lib/antlr.jar antlr.Tool \
   -o src/antlr/java \
   src/antlr/java/java.g
+
+  # hack to get around path mess
+  cp src/antlr/java/JavaTokenTypes.txt src/processing/app/preproc/
+
   # now build the pde stuff that extends the java classes
   java -cp ../build/macosx/work/lib/antlr.jar antlr.Tool \
   -o src/processing/app/preproc \

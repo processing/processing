@@ -97,6 +97,9 @@ cd app
   -o src/antlr/java \
   src/antlr/java/java.g
 
+  # hack to get around path mess
+  cp src/antlr/java/JavaTokenTypes.txt src/processing/app/preproc/
+
 # now build the pde stuff that extends the java classes
 # this is totally ugly and needs to be fixed
 # the problem is that -glib doesn't set the main path properly, 

@@ -8,8 +8,8 @@ X BGraphics, BImage, void loop() -> give an error saying it's old code
 X   better yet, only do this when "not found" errors come up
 X need to fix changes.html because it lists out of date alpha->beta changes 
 X added getChild(name/path), getChildren(name/path) to xml library
-_   add notes about these to the reference
-_   needs a better example that includes subitems
+o   add notes about these to the reference
+o   needs a better example that includes subitems
 X fix problem with export.txt files not working
 X   http://dev.processing.org/bugs/show_bug.cgi?id=625
 X readStringUntil broken in net library
@@ -31,35 +31,6 @@ X   (Table.pde showed twice after failed add)
 X after sketch -> add file, no confirmation message is shown
 o "one file added to sketch" should be more descriptive
 o   Added "blah.jpg" to the data folder of the sketch
-
-JSyn Installer build 011
-java.vm.version = 1.5.0_07-87
-java.library.path = .:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
-java.ext.dirs = /Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext
-Installing Native library JSynV142
-Copy: http://www.softsynth.com/jsyn/plugins/archives/libJSynV142.jnilib
-  to: /Users/fry/Library/Java/Extensions/libJSynV142.jnilib
-Native component JSynV142 downloaded successfully.
----
-Installing JAR file JSynClasses.jar
-Copy: http://www.softsynth.com/jsyn/plugins/archives/JSynClasses.jar
-  to: /Users/fry/Library/Java/Extensions/JSynClasses.jar
-JAR file JSynClasses.jar downloaded successfully.
-Note: you must restart your browser before running any JSyn Applets!
-Installation completed.
-
-_ add server/client notification thing for the nyu guys
-_   add an event to Server that notifies when a Client disconnects
-_ proccessing.net.Client.write(int) terminates sketch when client disconnects.
-_   http://dev.processing.org/bugs/show_bug.cgi?id=537
-_   is this the same issue?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=LibraryProblems;action=display;num=1180713192
-_ Server.write(bytes[]) hangs sketch on client disconnect.
-_   http://dev.processing.org/bugs/show_bug.cgi?id=538
-
-_ libraries should only be placed in the libraries folder
-_   or in the sketchbook in a subfolder named 'libraries'?
-_ when writing javadoc for p5 sketches, only write from first tab
 
 multiple sketch support
 X basic structural moves to handle multiple sketches
@@ -90,9 +61,51 @@ o   add methods for "add" and "remove" for sketches
 o     also a rename method, which could just be a remove and add
 X   libraries and examples won't be rebuilt during the session
 X editor console is broken, because re-routes System.out
-_ test on windows
-_ test on linux
-_ make sure quit being handled properly on windows/linux
+X test on windows
+X test on linux
+X make sure quit being handled properly on windows/linux
+X make clear that open() with one param should only have a single param
+
+documentation
+_ added getChild(name/path), getChildren(name/path) to xml library
+_   add notes about these to the reference
+_   needs a better example that includes subitems
+_ make sure loadStrings(), loadImage(), etc all have security warning
+_ syntax highlighting
+_   add MIN_FLOAT, MAX_FLOAT, MIN_INT, MAX_INT
+_ libraries should only be placed in the libraries folder
+_   or in the sketchbook in a subfolder named 'libraries'?
+_   what should the policy be?
+_ move reference folder around so that it matches site organization
+_   otherwise several links break on the main faq page
+
+
+JSyn Installer build 011
+java.vm.version = 1.5.0_07-87
+java.library.path = .:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
+java.ext.dirs = /Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext
+Installing Native library JSynV142
+Copy: http://www.softsynth.com/jsyn/plugins/archives/libJSynV142.jnilib
+  to: /Users/fry/Library/Java/Extensions/libJSynV142.jnilib
+Native component JSynV142 downloaded successfully.
+---
+Installing JAR file JSynClasses.jar
+Copy: http://www.softsynth.com/jsyn/plugins/archives/JSynClasses.jar
+  to: /Users/fry/Library/Java/Extensions/JSynClasses.jar
+JAR file JSynClasses.jar downloaded successfully.
+Note: you must restart your browser before running any JSyn Applets!
+Installation completed.
+
+_ add server/client notification thing for the nyu guys
+_   add an event to Server that notifies when a Client disconnects
+_ proccessing.net.Client.write(int) terminates sketch when client disconnects.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=537
+_   is this the same issue?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=LibraryProblems;action=display;num=1180713192
+_ Server.write(bytes[]) hangs sketch on client disconnect.
+_   http://dev.processing.org/bugs/show_bug.cgi?id=538
+
+_ when writing javadoc for p5 sketches, only write from first tab
 
 _ make editor buttons light up and clear properly 
 _ inside sketch.java, don't hardwire the file extension types
@@ -103,9 +116,6 @@ _ fix macosx dist script to not require root password
 To mount the disk-image, without having it appear in the Finder:
   hdiutil attach  -nobrowse  foo.dmg
 The main advantage is that these don't require root privileges
-
-_ make sure loadStrings(), loadImage(), etc all have security warning in docs
-_ make clear that open() with one param should only have a single param
 
 _ don't bug the user about new release of p5 when they have it
 _   add prefs option for "latest version run"
@@ -125,8 +135,6 @@ grant {
   permission java.security.AllPermission;
 };
 
-_ move reference folder around so that it matches site organization
-_   otherwise several links break on the main faq page
 _ remove 'patch' designation from bugzilla
 _ ocd is broken in 0125 - do a better error message for this
 X implement sortCompare() and sortSwap()
@@ -295,7 +303,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=433
 _ 'code' folder being ignored on export to application
 _   http://dev.processing.org/bugs/show_bug.cgi?id=469
 
-_ PApplet.this doesn't work (does it work in javac?)
+_ PApplet.this doesn't work
+_   doesn't work in javac either--needs to be ClassName.this
 _   sketchname.this also doesn't work, because Temporary_NNNN used for name
 _   but since it's another tab/class, will run externally
 _   so should make the external version use the actual sketch name not temp
