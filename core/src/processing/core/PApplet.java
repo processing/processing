@@ -33,6 +33,7 @@ import java.lang.reflect.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
+import java.util.regex.*;
 import java.util.zip.*;
 
 
@@ -5818,6 +5819,32 @@ public class PApplet extends Applet
    */
   static public String[] split(String what, String delim) {
     return what.split(delim);
+  }
+  
+  
+  /**
+   * Match a string with a regular expression, and return matching groups as 
+   * an array. If the sequence matches, but there are no groups, a zero length
+   * (non-null) String array will be returned. Groups are normally 1-indexed
+   * and group 0 is the matching sequence, but in this function the groups
+   * are 0-indexed. If you want matching sequence, just use the Java String
+   * methods for testing matches. 
+   * @param what
+   * @param regexp
+   * @return
+   */
+  static public String[] match(String what, String regexp) {
+    Pattern p = Pattern.compile(regexp);
+    Matcher m = p.matcher(what);
+    if (m.find()) {
+      int count = m.groupCount();
+      String[] groups = new String[count];
+      for (int i = 0; i < count; i++) {
+        groups[i] = m.group(i+1);
+      }
+      return groups;
+    }
+    return null;
   }
 
 
