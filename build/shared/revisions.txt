@@ -7,7 +7,40 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0126 - XX July 2007
+ABOUT REV 0126 - XX October 2007
+
+This should be considered more of an alpha quality release. Please give
+it a try, but We won't be making this the default download unless no
+problems are found. The model for opening and saving sketches has
+changed completely. This is dangerous because if there are bugs it
+can mean lost data. Use carefully, but please test!
+
+The biggest change to this release is that Processing now supports
+multiple sketches open at once. This means that we've dispensed 
+with the single window setup, and have a standard File menu (New, 
+Open, Close, Save, Save As). A blank sketch is treated as an Untitled
+document, and asks that you confirm its name the first time that 
+it's saved. New sketches open in their own window. The sketchbook
+model is still in place, serving as the default location for sketches
+when they are saved the first time, but in the six years since 
+we first released Processing, the single window setup has made less
+and less sense.
+
+That said, there are a handful of bug fixes in this release as well, 
+and a few API changes for cleanup that happened as we worked on the
+Processing book and the forthcoming "Visualizing Data" book.
+
+[ ide changes ] 
+
++ Regular new/open/close/save/saveas model for files. Menus have been 
+  moved around a bit, and Examples and Sketchbook now have their own 
+  section under the File menu.
+
+[ doc updates ] 
+
++ Fixed some errors in the changes.html file that were out of date.
+
++ Lots of additional notes and tidbits in the reference.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
