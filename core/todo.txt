@@ -26,6 +26,7 @@ X   others for auto-gunzip?
 X   do the same for createWriter() et al
 X disable mipmaps in 0126
 X   http://dev.processing.org/bugs/show_bug.cgi?id=610
+X add match() method that returns an array of matched items
 
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468
