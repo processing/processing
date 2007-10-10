@@ -5,6 +5,11 @@ X   set(x, y, image) y reversed in openGL
 X   background(image) also broken
 X   also textMode(SCREEN)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=91
+o replaceAll() not supported by 1.1
+o   http://dev.processing.org/bugs/show_bug.cgi?id=561
+X offscreen buffers fail with texture mapping
+X   pixels not being set opaque (only with textures?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=594
 
 
 _ PGraphics problem with fillColor
@@ -36,10 +41,6 @@ _     (i.e. will it be the uncompressed or compressed size of the data?)
 _ update the reference to cover parseXxxx() stuff
 _   also add notes about parseInt/Float(blah, otherwise)
 
-_ offscreen buffers fail with texture mapping
-_   pixels not being set opaque (only with textures?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=594
-
 _ having shut off the defaults reset, background not getting called for java2d
 _   so this will make that other stuff regress again
 _ background not being set properly
@@ -48,8 +49,6 @@ _ why aren't background() / defaults() being called for opengl?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
 
 new bugs (organize later)
-_ replaceAll() not supported by 1.1
-_   http://dev.processing.org/bugs/show_bug.cgi?id=561
 _ draw() called twice in vista with java 1.6
 _   http://dev.processing.org/bugs/show_bug.cgi?id=587
 
