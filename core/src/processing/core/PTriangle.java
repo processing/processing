@@ -194,17 +194,17 @@ public class PTriangle implements PConstants
   private boolean noDepthTest;
 
   /** */
-  private boolean   m_culling;
+  private boolean m_culling;
 
   /** */
-  private boolean   m_singleRight;
+  private boolean m_singleRight;
 
   /** */
-  private boolean   m_bilinear;
+  private boolean m_bilinear;
 
 
-  //Vectors needed in accurate texture code
-  //We store them as class members to avoid too much code duplication
+  // Vectors needed in accurate texture code
+  // We store them as class members to avoid too much code duplication
   private float ax,ay,az;
   private float bx,by,bz;
   private float cx,cy,cz;
@@ -221,15 +221,6 @@ public class PTriangle implements PConstants
 
 
   public PTriangle(PGraphics3D g) {
-    //SCREEN_WIDTH = g.width;
-    //SCREEN_HEIGHT = g.height;
-    //SCREEN_WIDTH1 = SCREEN_WIDTH-1;
-    //SCREEN_HEIGHT1 = SCREEN_HEIGHT-1;
-
-    //m_pixels = g.pixels;
-    //m_stencil = g.stencil;
-    //m_zbuffer = g.zbuffer;
-
     x_array = new float[3];
     y_array = new float[3];
     z_array = new float[3];
@@ -461,25 +452,6 @@ public class PTriangle implements PConstants
    * Renders the polygon
    */
   public void render() {
-    // removed. done in PGraphics [rocha]
-    // increase polygon offset
-    //m_index = (m_index + 1) & 0xFFFFFFF;
-
-    // draw the polygon
-    draw();
-
-    // removed. replaced by external antialiasing [rocha]
-    // smooth edges?
-    //if (parent.smooth )
-    //{
-     // drawline_blender(x_array[0], y_array[0], x_array[1], y_array[1]);
-     // drawline_blender(x_array[1], y_array[1], x_array[2], y_array[2]);
-     // drawline_blender(x_array[2], y_array[2], x_array[0], y_array[0]);
-    //}
-  }
-
-
-  private void draw() {
     float x0, x1, x2;
     float z0, z1, z2;
 
@@ -499,47 +471,37 @@ public class PTriangle implements PConstants
     }
 
     /* get vertex order from top -> down */
-    if (y0<y1) {
-      if (y2<y1) {
-        if (y2<y0)  // 2,0,1
-        {
-          o0=2;
-          o1=0;
-          o2=1;
+    if (y0 < y1) {
+      if (y2 < y1) {
+        if (y2 < y0) { // 2,0,1
+          o0 = 2;
+          o1 = 0;
+          o2 = 1;
+        } else {  // 0,2,1
+          o0 = 0;
+          o1 = 2;
+          o2 = 1;
         }
-        else  // 0,2,1
-        {
-          o0=0;
-          o1=2;
-          o2=1;
-        }
-      }
-      else  // 0,1,2
-      {
-        o0=0;
-        o1=1;
-        o2=2;
+      } else {  // 0,1,2
+        o0 = 0;
+        o1 = 1;
+        o2 = 2;
       }
     } else {
-      if (y2>y1) {
-        if (y2<y0)  // 1,2,0
-        {
-          o0=1;
-          o1=2;
-          o2=0;
+      if (y2 > y1) {
+        if (y2 < y0) { // 1,2,0
+          o0 = 1;
+          o1 = 2;
+          o2 = 0;
+        } else {  // 1,0,2
+          o0 = 1;
+          o1 = 0;
+          o2 = 2;
         }
-        else  // 1,0,2
-        {
-          o0=1;
-          o1=0;
-          o2=2;
-        }
-      }
-      else  // 2,1,0
-      {
-        o0=2;
-        o1=1;
-        o2=0;
+      } else {  // 2,1,0
+        o0 = 2;
+        o1 = 1;
+        o2 = 0;
       }
     }
 
@@ -583,7 +545,7 @@ public class PTriangle implements PConstants
       dx2 = x2 - x0;
       dy0 = y1 - y0;
       dy2 = y2 - y0;
-      xadd2 = dx2 / dy2;          // xadd for "single" edge
+      xadd2 = dx2 / dy2;  // xadd for "single" edge
       temp = dy0 / dy2;
       width = temp * dx2 + x0 - x1;
 
@@ -935,8 +897,8 @@ public class PTriangle implements PConstants
           }
         }
       }
-          }
-        }
+    }
+  }
 
 
   /**
@@ -1033,12 +995,17 @@ public class PTriangle implements PConstants
     // but p, n, and m should not depend on ordering differences
 
     if (firstSegment){
-      PMatrix myMatrix = new PMatrix(u_array[o0]/myFact, v_array[o0]/myFact2, 1, 0,
-                                     u_array[o1]/myFact, v_array[o1]/myFact2, 1, 0,
-                                     u_array[o2]/myFact, v_array[o2]/myFact2, 1, 0,
-                                     0,           0,           0, 1);
-      myMatrix = myMatrix.invert(); //A 3x3 inversion would be more efficient here, given that the fourth r/c are unity
-      if (myMatrix == null) {return false;} //if the matrix inversion had trouble, let the caller know
+      PMatrix myMatrix = 
+        new PMatrix(u_array[o0]/myFact, v_array[o0]/myFact2, 1, 0,
+                    u_array[o1]/myFact, v_array[o1]/myFact2, 1, 0,
+                    u_array[o2]/myFact, v_array[o2]/myFact2, 1, 0,
+                    0,           0,           0, 1);
+      // A 3x3 inversion would be more efficient here, 
+      // given that the fourth r/c are unity
+      myMatrix = myMatrix.invert();
+      // if the matrix inversion had trouble, let the caller know
+      if (myMatrix == null) return false;
+
       float m00, m01, m02, m10, m11, m12, m20, m21, m22;
       m00 = myMatrix.m00*camX[o0]+myMatrix.m01*camX[o1]+myMatrix.m02*camX[o2];
       m01 = myMatrix.m10*camX[o0]+myMatrix.m11*camX[o1]+myMatrix.m12*camX[o2];
@@ -1109,15 +1076,12 @@ public class PTriangle implements PConstants
   /**
    * Plain color
    */
-  private void drawsegment_plain
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
+  private void drawsegment_plain(float leftadd,
+                                 float rghtadd,
+                                 int ytop,
+                                 int ybottom) {
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
     int f = m_fill;
     int p = m_index;
 
@@ -1154,15 +1118,12 @@ public class PTriangle implements PConstants
   /**
    * Plain color, interpolated alpha
    */
-  private void drawsegment_plain_alpha
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
+  private void drawsegment_plain_alpha(float leftadd,
+                                       float rghtadd,
+                                       int ytop,
+                                       int ybottom) {
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
 
     int pr = m_fill & 0xFF0000;
     int pg = m_fill & 0xFF00;
@@ -1217,19 +1178,16 @@ public class PTriangle implements PConstants
   /**
    * RGB gouraud
    */
-  private void drawsegment_gouraud
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
+  private void drawsegment_gouraud(float leftadd,
+                                   float rghtadd,
+                                   int ytop,
+                                   int ybottom) {
     float irf = iradd;
     float igf = igadd;
     float ibf = ibadd;
 
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
     int p = m_index;
 
     while (ytop < ybottom) {
@@ -1257,7 +1215,6 @@ public class PTriangle implements PConstants
           m_stencil[xstart] = p;
         }
 
-        //
         ir+=iradd;
         ig+=igadd;
         ib+=ibadd;
@@ -1278,15 +1235,12 @@ public class PTriangle implements PConstants
   /**
    * RGB gouraud + interpolated alpha
    */
-  private void drawsegment_gouraud_alpha
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
+  private void drawsegment_gouraud_alpha(float leftadd,
+                                         float rghtadd,
+                                         int ytop,
+                                         int ybottom) {
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
     int p = m_index;
 
     float irf = iradd;
@@ -1323,15 +1277,18 @@ public class PTriangle implements PConstants
 
           // get buffer pixels
           int bb = m_pixels[xstart];
-          int br = (bb & 0xFF0000);     // 0x00FF0000
-          int bg = (bb & 0xFF00);       // 0x0000FF00
-          bb = (bb & 0xFF);         // 0x000000FF
+          int br = (bb & 0xFF0000);  // 0x00FF0000
+          int bg = (bb & 0xFF00);    // 0x0000FF00
+          bb = (bb & 0xFF);          // 0x000000FF
 
           // blend alpha
           int al = ia >> 16;
 
           //
-          m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) | ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+          m_pixels[xstart] = 
+            ((br + (((red - br) * al) >> 8)) & 0xFF0000) | 
+            ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+            ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
           m_stencil[xstart] = p;
         }
 
@@ -1360,35 +1317,35 @@ public class PTriangle implements PConstants
    */
 
    //THIS IS MESSED UP, NEED TO GRAB ORIGINAL VERSION!!!
-  private void drawsegment_texture8
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-
-        //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
-        int ypixel = ytop;
+  private void drawsegment_texture8(float leftadd,
+                                    float rghtadd,
+                                    int ytop,
+                                    int ybottom) {    
+    // Accurate texture mode added - comments stripped from dupe code, 
+    // see drawsegment_texture24() for details
+    int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
-        boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
-        float screenx = 0; float screeny = 0; float screenz = 0;
-        float a = 0; float b = 0; float c = 0;
-        int linearInterpPower = TEX_INTERP_POWER;
-        int linearInterpLength = 1 << linearInterpPower;
-        if (accurateMode){
-          if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
-            newax *= linearInterpLength;
-            newbx *= linearInterpLength;
-            newcx *= linearInterpLength;
-            screenz = nearPlaneDepth;
-            firstSegment = false;
-          } else{
-            accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
-          }
-        }
-    ytop*=SCREEN_WIDTH;
-    ybottom*=SCREEN_WIDTH;
+    boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
+    float screenx = 0; float screeny = 0; float screenz = 0;
+    float a = 0; float b = 0; float c = 0;
+    int linearInterpPower = TEX_INTERP_POWER;
+    int linearInterpLength = 1 << linearInterpPower;
+    if (accurateMode) {
+      // see if the precomputation goes well, if so finish the setup
+      if (precomputeAccurateTexturing()) { 
+        newax *= linearInterpLength;
+        newbx *= linearInterpLength;
+        newcx *= linearInterpLength;
+        screenz = nearPlaneDepth;
+        firstSegment = false;
+      } else{
+        // if the matrix inversion screwed up, revert to normal rendering 
+        // (something is degenerate)
+        accurateMode = false; 
+      }
+    }
+    ytop *= SCREEN_WIDTH;
+    ybottom *= SCREEN_WIDTH;
     int p = m_index;
 
     float iuf = iuadd;
@@ -1500,7 +1457,10 @@ public class PTriangle implements PConstants
             int bg = (br & 0xFF00);
             int bb = (br & 0xFF);
             br = (br & 0xFF0000);
-            m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
+            m_pixels[xstart] = 
+              ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | 
+              ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
+              ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
             m_stencil[xstart] = p;
           }
         }
@@ -1528,15 +1488,13 @@ public class PTriangle implements PConstants
   /**
    * 8-bit texutre + alpha
    */
-  private void drawsegment_texture8_alpha
-  (
-    float leftadd,
-    float rghtadd,
-    int ytop,
-    int ybottom
-  ) {
-
-    //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
+  private void drawsegment_texture8_alpha(float leftadd,
+                                          float rghtadd,
+                                          int ytop,
+                                          int ybottom) {    
+    // Accurate texture mode added - comments stripped from dupe code, 
+    // see drawsegment_texture24() for details
+    
     int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
     boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
@@ -1544,15 +1502,18 @@ public class PTriangle implements PConstants
     float a = 0; float b = 0; float c = 0;
     int linearInterpPower = TEX_INTERP_POWER;
     int linearInterpLength = 1 << linearInterpPower;
-    if (accurateMode){
-      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+    if (accurateMode) {
+      // see if the precomputation goes well, if so finish the setup
+      if (precomputeAccurateTexturing()) { 
         newax *= linearInterpLength;
         newbx *= linearInterpLength;
         newcx *= linearInterpLength;
         screenz = nearPlaneDepth;
         firstSegment = false;
-      } else{
-        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+      } else {
+        // if the matrix inversion screwed up, 
+        // revert to normal rendering (something is degenerate)
+        accurateMode = false; 
       }
     }
     ytop*=SCREEN_WIDTH;
