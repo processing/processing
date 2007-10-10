@@ -2238,14 +2238,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         // and convert ARGB back to opengl RGBA components (big endian)
         for (int x = 0; x < width; x++) {
           int temp = pixels[index];
-          /*
-            pixels[index] =
-            ((pixels[yindex] >> 24) & 0xff) |
-            ((pixels[yindex] << 8) & 0xffffff00);
-          pixels[yindex] =
-            ((temp >> 24) & 0xff) |
-            ((temp << 8) & 0xffffff00);
-          */
+
           pixels[index] = ((pixels[yindex] << 8) & 0xffffff00) | 0xff;
           pixels[yindex] = ((temp << 8) & 0xffffff00) | 0xff;
 
@@ -2281,18 +2274,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         //((pixels[i] << 8) & 0xffffff00);
     //}
 
-    //System.out.println("running glDrawPixels");
-    //gl.glRasterPos2i(width/2, height/2);
-    //gl.glRasterPos2i(width/2, 1); //height/3);
-    //gl.glRasterPos2i(1, height - 1); //1, 1);
-
-    // for some reason, glRasterPos(0, height) won't draw anything.
-    // my guess is that it's getting "clipped", so adding an epsilon
-    // makes it work. also, height-1 would be the logical start,
-    // but apparently that's not how opengl coordinates work
-    //gl.glRasterPos2f(0.0001f, height - 0.0001f);
-    gl.glRasterPos2f(EPSILON, height - EPSILON);
-    //gl.glRasterPos2f(width/2, height/2);
+    setRasterPos(0, 0);  // lower-left corner
 
     pixelBuffer.put(pixels);
     pixelBuffer.rewind();
@@ -2374,7 +2356,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }
     getsetBuffer.put(0, getset);
     getsetBuffer.rewind();
-    gl.glRasterPos2f(x + EPSILON, y + EPSILON);
+    //gl.glRasterPos2f(x + EPSILON, y + EPSILON);
+    setRasterPos(x, (height-y) - 1);
     gl.glDrawPixels(1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
   }
 
@@ -2389,27 +2372,62 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * vertically. Both have their components all swapped to native.
    */
   public void set(int x, int y, PImage source) {
-    /*
-    ImageCache cash = (ImageCache) source.cache;
-    if (cash == null) {
-      // this will flip the bits and make it a power of 2
-      cache(source);
-      cash = (ImageCache) source.cache;
-    }
-    // now draw to the screen but set the scanline length
-    */
     int backup[] = new int[source.pixels.length];
     System.arraycopy(source.pixels, 0, backup, 0, source.pixels.length);
     javaToNativeARGB(source);
 
+    // TODO is this possible without intbuffer?
     IntBuffer setBuffer = BufferUtil.newIntBuffer(source.pixels.length);
     setBuffer.put(source.pixels);
     setBuffer.rewind();
-    gl.glRasterPos2f(x + EPSILON, (height - y) - EPSILON);
+    
+    setRasterPos(x, (height-y) - source.height); //+source.height);
     gl.glDrawPixels(source.width, source.height,
                     GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, setBuffer);
-    //nativeToJavaARGB(source);
+    
     source.pixels = backup;
+  }
+
+
+  /**
+   * Definitive method for setting raster pos, including offscreen locations.
+   * The raster position is tricky because it's affected by the modelview and
+   * projection matrices. Further, offscreen coords won't properly set the 
+   * raster position. This code gets around both issues.
+   * http://www.mesa3d.org/brianp/sig97/gotchas.htm
+   * @param y the Y-coordinate, which is flipped upside down in OpenGL
+   */
+  protected void setRasterPos(float x, float y) {
+    float z = 0;
+    float w = 1;
+
+    float fx, fy;
+
+    // Push current matrix mode and viewport attributes
+    gl.glPushAttrib(GL.GL_TRANSFORM_BIT | GL.GL_VIEWPORT_BIT);
+
+    // Setup projection parameters
+    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glPushMatrix();
+    gl.glLoadIdentity();
+    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glPushMatrix();
+    gl.glLoadIdentity();
+
+    gl.glDepthRange(z, z);
+    gl.glViewport((int) x - 1, (int) y - 1, 2, 2);
+
+    // set the raster (window) position
+    fx = x - (int) x;
+    fy = y - (int) y;
+    gl.glRasterPos4f(fx, fy, 0, w);
+
+    // restore matrices, viewport and matrix mode
+    gl.glPopMatrix();
+    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glPopMatrix();
+
+    gl.glPopAttrib();
   }
 
 
