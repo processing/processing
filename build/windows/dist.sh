@@ -4,7 +4,7 @@ REVISION=`head -c 4 ../../todo.txt`
 
 # check to see if the version number in the app is correct
 # so that mikkel doesn't kick my ass
-VERSIONED=`cat ../../app/Base.java | grep $REVISION`
+VERSIONED=`cat ../../app/src/processing/app/Base.java | grep $REVISION`
 if [ -z "$VERSIONED" ]
 then
   echo Fix the revision number in Base.java
