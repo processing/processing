@@ -44,8 +44,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 126;
-  static final String VERSION_NAME = "0126 Beta";
+  static final int VERSION = 127;
+  static final String VERSION_NAME = "0127 Beta";
 
   // set to true after the first time it's built.
   // so that the errors while building don't show up again.
@@ -602,7 +602,7 @@ public class Base {
         }
       }
     }
-    
+
     Editor editor = new Editor(this, path, location);
 
     if (editors == null) {
@@ -612,18 +612,18 @@ public class Base {
       editors = (Editor[]) PApplet.expand(editors);
     }
     editors[editorCount++] = editor;
-    
+
     if (markedForClose != null) {
       Point p = markedForClose.getLocation();
       handleClose(markedForClose, false);
-      // open the new window in 
+      // open the new window in
       editor.setLocation(p);
     }
-    
+
     // now that we're ready, show the window
     // (don't do earlier, cuz we might move it based on a window being closed)
     editor.setVisible(true);
-    
+
     return editor;
   }
 
@@ -727,7 +727,7 @@ public class Base {
         //System.out.println("done with rebuild");
       }
     });
-    //System.out.println("async exit");    
+    //System.out.println("async exit");
   }
 
 
@@ -807,7 +807,7 @@ public class Base {
     //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
     try {
-      addSketches(menu, examplesFolder);      
+      addSketches(menu, examplesFolder);
 //      String[] subfolders = examplesFolder.list();
 //      for (int i = 0; i < subfolders.length; i++) {
 //        if (!subfolders[i].startsWith(".")) {
@@ -866,10 +866,10 @@ public class Base {
     }
   }
 
-  
+
   class SketchMenuItem {
     JMenu item;
-    
+
   }
 
   protected boolean addSketches(JMenu menu, File folder) throws IOException {
