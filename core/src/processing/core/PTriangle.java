@@ -192,6 +192,7 @@ public class PTriangle implements PConstants
   private PGraphics3D parent;
 
   private boolean noDepthTest;
+  //private boolean argbSurface;
 
   /** */
   private boolean m_culling;
@@ -256,6 +257,7 @@ public class PTriangle implements PConstants
     m_zbuffer = parent.zbuffer;
 
     noDepthTest = parent.hints[DISABLE_DEPTH_TEST];
+    //argbSurface = parent.format == PConstants.ARGB;
 
     // other things to reset
 
@@ -383,7 +385,8 @@ public class PTriangle implements PConstants
     b_array[2] = (b2 * 253f + 1.0f) * 65536f;
 
     // for plain triangles
-    m_fill = ((int)(255*r0) << 16) | ((int)(255*g0) << 8) | (int)(255*b0);
+    m_fill = 0xFF000000 | 
+      ((int)(255*r0) << 16) | ((int)(255*g0) << 8) | (int)(255*b0);
   }
 
 
@@ -458,6 +461,8 @@ public class PTriangle implements PConstants
     float y0 = y_array[0];
     float y1 = y_array[1];
     float y2 = y_array[2];
+
+    //System.out.println(PApplet.hex(m_drawFlags));
 
     // For accurate texture interpolation, need to mark whether
     // we've already pre-calculated for the triangle
@@ -1147,20 +1152,31 @@ public class PTriangle implements PConstants
       xstart+=ytop;
       xend+=ytop;
 
+      //int ma0 = 0xFF000000;
+      
       for ( ; xstart < xend; xstart++ ) {
         if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+          // don't set zbuffer when not fully opaque
           //m_zbuffer[xstart] = iz;
 
           int alpha = ia >> 16;
           int mr0 = m_pixels[xstart];
+          /*
+          if (argbSurface) {
+            ma0 = (((mr0 >>> 24) * alpha) << 16) & 0xFF000000;
+            if (ma0 == 0) ma0 = alpha << 24;
+          }
+          */
           int mg0 = mr0 & 0xFF00;
           int mb0 = mr0 & 0xFF;
           mr0 &= 0xFF0000;
-
+          
           mr0 = mr0 + (((pr - mr0) * alpha) >> 8);
           mg0 = mg0 + (((pg - mg0) * alpha) >> 8);
           mb0 = mb0 + (((pb - mb0) * alpha) >> 8);
-          m_pixels[xstart] = (mr0 & 0xFF0000) | (mg0 & 0xFF00) | (mb0 & 0xFF);
+          
+          m_pixels[xstart] = 0xFF000000 | (mr0 & 0xFF0000) | (mg0 & 0xFF00) | (mb0 & 0xFF);
+          //m_pixels[xstart] = ma0 | (mr0 & 0xFF0000) | (mg0 & 0xFF00) | (mb0 & 0xFF);
 
           m_stencil[xstart] = p;
         }
@@ -1211,7 +1227,8 @@ public class PTriangle implements PConstants
       for ( ; xstart < xend; xstart++ ) {
         if (noDepthTest || (iz <= m_zbuffer[xstart])) {
           m_zbuffer[xstart] = iz;
-          m_pixels[xstart]=((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
+          m_pixels[xstart] = 0xFF000000 | 
+            ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
           m_stencil[xstart] = p;
         }
 
@@ -1285,7 +1302,7 @@ public class PTriangle implements PConstants
           int al = ia >> 16;
 
           //
-          m_pixels[xstart] = 
+          m_pixels[xstart] = 0xFF000000 | 
             ((br + (((red - br) * al) >> 8)) & 0xFF0000) | 
             ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
             ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
@@ -1457,7 +1474,7 @@ public class PTriangle implements PConstants
             int bg = (br & 0xFF00);
             int bb = (br & 0xFF);
             br = (br & 0xFF0000);
-            m_pixels[xstart] = 
+            m_pixels[xstart] = 0xFF000000 |  
               ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | 
               ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
               ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
@@ -1633,7 +1650,10 @@ public class PTriangle implements PConstants
               int bg = (br & 0xFF00);
               int bb = (br & 0xFF);
               br = (br & 0xFF0000);
-              m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
+              m_pixels[xstart] = 0xFF000000 | 
+                ((br + (((red - br) * al0) >> 8)) & 0xFF0000) | 
+                ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
+                ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
               m_stencil[xstart] = p;
             }
           }
@@ -1884,8 +1904,9 @@ public class PTriangle implements PConstants
               dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
               int blu = up + (((dn-up) * ivi) >> 7);
 
-              m_pixels[xstart] = (red & 0xFF0000) | (grn & 0xFF00) | (blu & 0xFF);
-              //if (drawBlack){ m_pixels[xstart] = 0; }
+              //m_pixels[xstart] = (red & 0xFF0000) | (grn & 0xFF00) | (blu & 0xFF);
+              m_pixels[xstart] = 0xFF000000 | 
+                (red & 0xFF0000) | (grn & 0xFF00) | (blu & 0xFF);
 
             } else{
               m_pixels[xstart] = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
@@ -1900,7 +1921,7 @@ public class PTriangle implements PConstants
           iv+=ivadd;
         }
       }
-      ypixel++;//accurate mode
+      ypixel++; //accurate mode
       ytop+=SCREEN_WIDTH;
       xleft+=leftadd;
       xrght+=rghtadd;
@@ -1908,7 +1929,7 @@ public class PTriangle implements PConstants
       uleft+=uleftadd;
       vleft+=vleftadd;
     }
-    //      if (exCount>0) System.out.println(exCount+" exceptions in this segment");
+    //if (exCount>0) System.out.println(exCount+" exceptions in this segment");
   }
 
 
@@ -2072,10 +2093,14 @@ public class PTriangle implements PConstants
 
                 // get buffer pixels
                 int bb = m_pixels[xstart];
-                int br = (bb & 0xFF0000);     // 0x00FF0000
-                int bg = (bb & 0xFF00);       // 0x0000FF00
-                bb = (bb & 0xFF);         // 0x000000FF
-                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |( (bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                int br = (bb & 0xFF0000);  // 0x00FF0000
+                int bg = (bb & 0xFF00);    // 0x0000FF00
+                bb = (bb & 0xFF);          // 0x000000FF
+                m_pixels[xstart] = 0xFF000000 | 
+                  ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+                  ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+                  ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                
               } else {
                 int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
                 int grn = red & 0xFF00;
@@ -2084,24 +2109,27 @@ public class PTriangle implements PConstants
 
                 // get buffer pixels
                 int bb = m_pixels[xstart];
-                int br = (bb & 0xFF0000);     // 0x00FF0000
-                int bg = (bb & 0xFF00);       // 0x0000FF00
-                bb = (bb & 0xFF);         // 0x000000FF
-                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                int br = (bb & 0xFF0000);  // 0x00FF0000
+                int bg = (bb & 0xFF00);    // 0x0000FF00
+                bb = (bb & 0xFF);          // 0x000000FF
+                m_pixels[xstart] = 0xFF000000 | 
+                  ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+                  ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) |
+                  ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
               }
               m_stencil[xstart] = p;
             }
           }
         catch (Exception e) {}
-        xpixel++;//accurate mode
+        xpixel++; // accurate mode
         if (!accurateMode){
-          iu+=iuadd;
-          iv+=ivadd;
+          iu += iuadd;
+          iv += ivadd;
         }
         ia+=iaadd;
         iz+=izadd;
       }
-      ypixel++;//accurate mode
+      ypixel++; // accurate mode
 
       ytop+=SCREEN_WIDTH;
 
@@ -2277,10 +2305,13 @@ public class PTriangle implements PConstants
 
                 // get buffer pixels
                 int bb = m_pixels[xstart];
-                int br = (bb & 0xFF0000);     // 0x00FF0000
-                int bg = (bb & 0xFF00);       // 0x0000FF00
-                bb = (bb & 0xFF);         // 0x000000FF
-                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                int br = (bb & 0xFF0000);  // 0x00FF0000
+                int bg = (bb & 0xFF00);    // 0x0000FF00
+                bb = (bb & 0xFF);          // 0x000000FF
+                m_pixels[xstart] = 0xFF000000 | 
+                  ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+                  ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+                  ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
               } else {
                 int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
                 int al = red >>> 24;
@@ -2290,10 +2321,13 @@ public class PTriangle implements PConstants
 
                 // get buffer pixels
                 int bb = m_pixels[xstart];
-                int br = (bb & 0xFF0000);     // 0x00FF0000
-                int bg = (bb & 0xFF00);       // 0x0000FF00
-                bb = (bb & 0xFF);         // 0x000000FF
-                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                int br = (bb & 0xFF0000);  // 0x00FF0000
+                int bg = (bb & 0xFF00);    // 0x0000FF00
+                bb = (bb & 0xFF);          // 0x000000FF
+                m_pixels[xstart] = 0xFF000000 | 
+                  ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+                  ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+                  ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
               }
               m_stencil[xstart] = p;
             }
@@ -2491,10 +2525,13 @@ public class PTriangle implements PConstants
 
                 // get buffer pixels
                 int bb = m_pixels[xstart];
-                int br = (bb & 0xFF0000);     // 0x00FF0000
-                int bg = (bb & 0xFF00);       // 0x0000FF00
-                bb = (bb & 0xFF);         // 0x000000FF
-                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                int br = (bb & 0xFF0000);  // 0x00FF0000
+                int bg = (bb & 0xFF00);    // 0x0000FF00
+                bb = (bb & 0xFF);          // 0x000000FF
+                m_pixels[xstart] = 0xFF000000 | 
+                  ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+                  ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+                  ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
               } else {
                 int red = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
                 al = al * (red >>> 24) >> 8;
@@ -2504,10 +2541,13 @@ public class PTriangle implements PConstants
 
                 // get buffer pixels
                 int bb = m_pixels[xstart];
-                int br = (bb & 0xFF0000);     // 0x00FF0000
-                int bg = (bb & 0xFF00);       // 0x0000FF00
-                bb = (bb & 0xFF);         // 0x000000FF
-                m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+                int br = (bb & 0xFF0000);  // 0x00FF0000
+                int bg = (bb & 0xFF00);    // 0x0000FF00
+                bb = (bb & 0xFF);          // 0x000000FF
+                m_pixels[xstart] = 0xFF000000 | 
+                  ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+                  ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+                  ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
               }
               m_stencil[xstart] = p;
             }
@@ -2687,10 +2727,13 @@ public class PTriangle implements PConstants
 
               // get buffer pixels
               int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-              m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
+              int br = (bb & 0xFF0000);  // 0x00FF0000
+              int bg = (bb & 0xFF00);    // 0x0000FF00
+              bb = (bb & 0xFF);          // 0x000000FF
+              m_pixels[xstart] = 0xFF000000 |
+                ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |
+                ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
+                ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
 
               // write stencil
               m_stencil[xstart] = p;
@@ -2878,10 +2921,13 @@ public class PTriangle implements PConstants
 
               // get buffer pixels
               int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-              m_pixels[xstart] = ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
+              int br = (bb & 0xFF0000);  // 0x00FF0000
+              int bg = (bb & 0xFF00);    // 0x0000FF00
+              bb = (bb & 0xFF);          // 0x000000FF
+              m_pixels[xstart] = 0xFF000000 | 
+                ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |
+                ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
+                ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
 
               // write stencil
               m_stencil[xstart] = p;
@@ -3091,10 +3137,12 @@ public class PTriangle implements PConstants
               //
               int r = (ir >> 16);
               int g = (ig >> 16);
-              int bb2 = (ib >> 16); //oops, namespace collision with accurate texture vector b...sorry [ewjordan]
+              // oops, namespace collision with accurate 
+              // texture vector b...sorry [ewjordan]
+              int bb2 = (ib >> 16); 
 
-              //
-              m_pixels[xstart] = ( ((red * r) & 0xFF000000) | ((grn * g) & 0xFF0000) | (blu * bb2) ) >> 8;
+              m_pixels[xstart] = 0xFF000000 | 
+                ((((red * r) & 0xFF000000) | ((grn * g) & 0xFF0000) | (blu * bb2)) >> 8);
               m_stencil[xstart] = p;
             }
           }
@@ -3304,18 +3352,21 @@ public class PTriangle implements PConstants
               }
 
               // multiply with gouraud color
-              red = (red * ir) >>> 8;       // 0x00FF????
-              grn = (grn * ig) >>> 16;      // 0x0000FF??
-              blu = (blu * ib) >>> 24;      // 0x000000FF
+              red = (red * ir) >>> 8;   // 0x00FF????
+              grn = (grn * ig) >>> 16;  // 0x0000FF??
+              blu = (blu * ib) >>> 24;  // 0x000000FF
 
               // get buffer pixels
               int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
+              int br = (bb & 0xFF0000); // 0x00FF0000
+              int bg = (bb & 0xFF00);   // 0x0000FF00
               bb = (bb & 0xFF);         // 0x000000FF
 
               //
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              m_pixels[xstart] = 0xFF000000 | 
+                ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+                ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+                ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
               m_stencil[xstart] = p;
             }
           }
@@ -3472,81 +3523,81 @@ public class PTriangle implements PConstants
           interpCounter++;
         }
 
-        try
-          {
-            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-              //m_zbuffer[xstart] = iz;
+        try {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+            //m_zbuffer[xstart] = iz;
 
-              int red;
-              int grn;
-              int blu;
-              int al;
+            int red;
+            int grn;
+            int blu;
+            int al;
 
-              if (m_bilinear) {
-                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-                int iui = (iu & 0xFFFF) >> 9;
-                int ivi = (iv & 0xFFFF) >> 9;
+            if (m_bilinear) {
+              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+              int iui = (iu & 0xFFFF) >> 9;
+              int ivi = (iv & 0xFFFF) >> 9;
 
-                // get texture pixels
-                int pix0 = m_texture[ofs];
-                int pix1 = m_texture[ofs + 1];
-                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-                int pix2 = m_texture[ofs];
-                int pix3 = m_texture[ofs + 1];
+              // get texture pixels
+              int pix0 = m_texture[ofs];
+              int pix1 = m_texture[ofs + 1];
+              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+              int pix2 = m_texture[ofs];
+              int pix3 = m_texture[ofs + 1];
 
-                // red
-                int red0 = (pix0 & 0xFF0000);
-                int red2 = (pix2 & 0xFF0000);
-                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-                red = (up + (((dn-up) * ivi) >> 7)) >> 16;
+              // red
+              int red0 = (pix0 & 0xFF0000);
+              int red2 = (pix2 & 0xFF0000);
+              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+              red = (up + (((dn-up) * ivi) >> 7)) >> 16;
 
-                // grn
-                red0 = (pix0 & 0xFF00);
-                red2 = (pix2 & 0xFF00);
-                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-                grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
+              // grn
+              red0 = (pix0 & 0xFF00);
+              red2 = (pix2 & 0xFF00);
+              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+              grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
 
-                // blu
-                red0 = (pix0 & 0xFF);
-                red2 = (pix2 & 0xFF);
-                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-                blu = up + (((dn-up) * ivi) >> 7);
+              // blu
+              red0 = (pix0 & 0xFF);
+              red2 = (pix2 & 0xFF);
+              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+              blu = up + (((dn-up) * ivi) >> 7);
 
-                // alpha
-                pix0>>>=24;
-                pix2>>>=24;
-                up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
-                dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
-                al = up + (((dn-up) * ivi) >> 7);
-              } else {
-                // get texture pixel color
-                blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-                al = (blu >>> 24);
-                red = (blu & 0xFF0000) >> 16;
-                grn = (blu & 0xFF00) >> 8;
-                blu = blu & 0xFF;
-              }
-
-              // multiply with gouraud color
-              red = (red * ir) >>> 8;       // 0x00FF????
-              grn = (grn * ig) >>> 16;      // 0x0000FF??
-              blu = (blu * ib) >>> 24;      // 0x000000FF
-
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-
-              //
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+              // alpha
+              pix0>>>=24;
+              pix2>>>=24;
+              up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
+              dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
+              al = up + (((dn-up) * ivi) >> 7);
+            } else {
+              // get texture pixel color
+              blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+              al = (blu >>> 24);
+              red = (blu & 0xFF0000) >> 16;
+              grn = (blu & 0xFF00) >> 8;
+              blu = blu & 0xFF;
             }
+
+            // multiply with gouraud color
+            red = (red * ir) >>> 8;   // 0x00FF????
+            grn = (grn * ig) >>> 16;  // 0x0000FF??
+            blu = (blu * ib) >>> 24;  // 0x000000FF
+
+            // get buffer pixels
+            int bb = m_pixels[xstart];
+            int br = (bb & 0xFF0000); // 0x00FF0000
+            int bg = (bb & 0xFF00);   // 0x0000FF00
+            bb = (bb & 0xFF);         // 0x000000FF
+
+            //
+            m_pixels[xstart] = 0xFF000000 | 
+            ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+            ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+            ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
           }
-        catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         //
         xpixel++;//accurate mode
@@ -3695,84 +3746,84 @@ public class PTriangle implements PConstants
         }
 
         // get texture pixel color
-        try
-          {
-            //if (iz < m_zbuffer[xstart]) {
-            if (noDepthTest || (iz <= m_zbuffer[xstart])) {  // [fry 041114]
-              //m_zbuffer[xstart] = iz;
+        try {
+          //if (iz < m_zbuffer[xstart]) {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {  // [fry 041114]
+            //m_zbuffer[xstart] = iz;
 
-              // blend
-              int al = ia >> 16;
+            // blend
+            int al = ia >> 16;
 
-              int red;
-              int grn;
-              int blu;
+            int red;
+            int grn;
+            int blu;
 
-              if (m_bilinear) {
-                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-                int iui = (iu & 0xFFFF) >> 9;
-                int ivi = (iv & 0xFFFF) >> 9;
+            if (m_bilinear) {
+              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+              int iui = (iu & 0xFFFF) >> 9;
+              int ivi = (iv & 0xFFFF) >> 9;
 
-                // get texture pixels
-                int pix0 = m_texture[ofs];
-                int pix1 = m_texture[ofs + 1];
-                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-                int pix2 = m_texture[ofs];
-                int pix3 = m_texture[ofs + 1];
+              // get texture pixels
+              int pix0 = m_texture[ofs];
+              int pix1 = m_texture[ofs + 1];
+              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+              int pix2 = m_texture[ofs];
+              int pix3 = m_texture[ofs + 1];
 
-                // red
-                int red0 = (pix0 & 0xFF0000);
-                int red2 = (pix2 & 0xFF0000);
-                int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
-                int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
-                red = (up + (((dn-up) * ivi) >> 7)) >> 16;
+              // red
+              int red0 = (pix0 & 0xFF0000);
+              int red2 = (pix2 & 0xFF0000);
+              int up = red0 + ((((pix1 & 0xFF0000) - red0) * iui) >> 7);
+              int dn = red2 + ((((pix3 & 0xFF0000) - red2) * iui) >> 7);
+              red = (up + (((dn-up) * ivi) >> 7)) >> 16;
 
-                // grn
-                red0 = (pix0 & 0xFF00);
-                red2 = (pix2 & 0xFF00);
-                up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
-                dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
-                grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
+              // grn
+              red0 = (pix0 & 0xFF00);
+              red2 = (pix2 & 0xFF00);
+              up = red0 + ((((pix1 & 0xFF00) - red0) * iui) >> 7);
+              dn = red2 + ((((pix3 & 0xFF00) - red2) * iui) >> 7);
+              grn = (up + (((dn-up) * ivi) >> 7)) >> 8;
 
-                // blu
-                red0 = (pix0 & 0xFF);
-                red2 = (pix2 & 0xFF);
-                up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
-                dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
-                blu = up + (((dn-up) * ivi) >> 7);
+              // blu
+              red0 = (pix0 & 0xFF);
+              red2 = (pix2 & 0xFF);
+              up = red0 + ((((pix1 & 0xFF) - red0) * iui) >> 7);
+              dn = red2 + ((((pix3 & 0xFF) - red2) * iui) >> 7);
+              blu = up + (((dn-up) * ivi) >> 7);
 
-                // alpha
-                pix0>>>=24;
-                pix2>>>=24;
-                up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
-                dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
-                al = al * (up + (((dn-up) * ivi) >> 7)) >> 8;
-              } else {
-                blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
-                al = al * (blu >>> 24) >> 8;
-                red = (blu & 0xFF0000) >> 16; // 0 - 255
-                grn = (blu & 0xFF00) >> 8;    // 0 - 255
-                blu = (blu & 0xFF);       // 0 - 255
-              }
-
-              // multiply with gouraud color
-              red = (red * ir) >>> 8;       // 0x00FF????
-              grn = (grn * ig) >>> 16;      // 0x0000FF??
-              blu = (blu * ib) >>> 24;      // 0x000000FF
-
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);     // 0x00FF0000
-              int bg = (bb & 0xFF00);       // 0x0000FF00
-              bb = (bb & 0xFF);         // 0x000000FF
-
-              //
-              m_pixels[xstart] = ((br + (((red - br) * al) >> 8)) & 0xFF0000) |((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
-              m_stencil[xstart] = p;
+              // alpha
+              pix0>>>=24;
+              pix2>>>=24;
+              up = pix0 + ((((pix1 >>> 24) - pix0) * iui) >> 7);
+              dn = pix2 + ((((pix3 >>> 24) - pix2) * iui) >> 7);
+              al = al * (up + (((dn-up) * ivi) >> 7)) >> 8;
+            } else {
+              blu = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)];
+              al = al * (blu >>> 24) >> 8;
+              red = (blu & 0xFF0000) >> 16; // 0 - 255
+              grn = (blu & 0xFF00) >> 8;    // 0 - 255
+              blu = (blu & 0xFF);       // 0 - 255
             }
+
+            // multiply with gouraud color
+            red = (red * ir) >>> 8;   // 0x00FF????
+            grn = (grn * ig) >>> 16;  // 0x0000FF??
+            blu = (blu * ib) >>> 24;  // 0x000000FF
+
+            // get buffer pixels
+            int bb = m_pixels[xstart];
+            int br = (bb & 0xFF0000); // 0x00FF0000
+            int bg = (bb & 0xFF00);   // 0x0000FF00
+            bb = (bb & 0xFF);         // 0x000000FF
+
+            //
+            m_pixels[xstart] = 0xFF000000 | 
+              ((br + (((red - br) * al) >> 8)) & 0xFF0000) |
+              ((bg + (((grn - bg) * al) >> 8)) & 0xFF00) | 
+              ((bb + (((blu - bb) * al) >> 8)) & 0xFF);
+            m_stencil[xstart] = p;
           }
-        catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         //
         xpixel++;//accurate mode
