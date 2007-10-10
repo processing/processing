@@ -7,13 +7,13 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0126 - XX October 2007
+ABOUT REV 0126 - 9 October 2007
 
-This should be considered more of an alpha quality release. Please give
-it a try, but We won't be making this the default download unless no
-problems are found. The model for opening and saving sketches has
+** This should be considered more of an alpha quality release. Please 
+give it a try, but We won't be making this the default download unless 
+no problems are found. The model for opening and saving sketches has
 changed completely. This is dangerous because if there are bugs it
-can mean lost data. Use carefully, but please test!
+can mean lost data. Use carefully, but please test! **
 
 The biggest change to this release is that Processing now supports
 multiple sketches open at once. This means that we've dispensed 
@@ -30,17 +30,105 @@ That said, there are a handful of bug fixes in this release as well,
 and a few API changes for cleanup that happened as we worked on the
 Processing book and the forthcoming "Visualizing Data" book.
 
+
 [ ide changes ] 
 
 + Regular new/open/close/save/saveas model for files. Menus have been 
   moved around a bit, and Examples and Sketchbook now have their own 
   section under the File menu.
 
+
+[ api changes ] 
+
++ Added getChild(name/path), getChildren(name/path) to the XML library.
+  These allow you to grab sub-elements of a particular XMLElement by 
+  their name instead of by their index. You can also specify a path
+  to a particular element (a series of XML element names separated by 
+  slashes) so that you can grab an item several levels deep. The 
+  getChild() method grabs the first matching name, the getChildren()
+  method returns an array of XMLElement objects. For the XML heads out 
+  there, think of it as a poor man's XPath. A very poor man. Proper 
+  documentation forthcoming in a future release.
+
++ Added MIN_FLOAT, MAX_FLOAT, MIN_INT, and MAX_INT as built-in 
+  variables. Syntax highlighting and proper documentation coming later.
+
++ Added unregisterXxxxx() methods for libraries, thanks to ewjordan.
+  http://dev.processing.org/bugs/show_bug.cgi?id=312
+
++ Files with .gz extension (when opening or saving) will be automatically
+  gzip uncompressed (or compressed). That means loadStrings("blah.txt.gz")
+  will magically decompress without any additional help. And that
+  saveStrings("blah.txt.gz", data) will compress while saving. This works
+  for all API functions. To use the old openStream() method, and avoid
+  the GZ business, use openStreamRaw().
+
++ Disable mipmapping to fix memory leaking problem with OpenGL. 
+  Bug #150 was fixed, then resurrected in the same release cycle.
+  A better solution (that doesn't leak memory) is coming soon.
+  http://dev.processing.org/bugs/show_bug.cgi?id=610
+
++ Added a match() method. This is a very simple way to use regular
+  expressions (regexp) in your code. Calling match(data, regexp) 
+  will return an array of any matched items (things in parens in
+  the regexp). If you aren't familiar with regular expressions,
+  this will make sense once the documentation for it has properly
+  been added. This requires Java 1.4, see the "status" section below.
+
++ The sort() method that takes String[] arrays now ignores case, 
+  which is usually the desired behavior when sorting strings.
+
+
+[ bug fixes, additions, improvements ]
+
++ Repaired a problem with library export that cause export to break 
+  in recent releases.
+  http://dev.processing.org/bugs/show_bug.cgi?id=625
+
++ Fixed readStringUntil() in the net library.
+  http://dev.processing.org/bugs/show_bug.cgi?id=606
+
++ Added proper icon image for Find, Preferences, and other windows.
+  http://dev.processing.org/bugs/show_bug.cgi?id=627
+
++ Fixed problem with ctrl-, typing a comma in the editor on Linux.
+
++ Fix drag & drop on Linux. This also has led to Java 1.5 being included
+  with the Linux download, because D&D in Java 1.4 was badly broken.
+  http://dev.processing.org/bugs/show_bug.cgi?id=595
+
++ Implement "Show Sketch Folder" and open() for Linux.
+
++ Ask user for confirmation when replacing files with Sketch -> Add File.
+
++ Show confirmation in console when Sketch -> Add File succeeds.
+
++ Mac OS X now has the standard "window modified" indicator (a dot 
+  inside the close box) that indicates that changes are unsaved.
+
++ Improve the speed of the sketchbook menu rebuilding. In most 
+  situations, the menu will be rebuilt asynchronously (so that it does
+  not hold up the rest of the program).
+
++ Fix problem with the version of str() that takes arrays.
+
+
 [ doc updates ] 
 
 + Fixed some errors in the changes.html file that were out of date.
 
 + Lots of additional notes and tidbits in the reference.
+
+
+[ status ]
+
++ Also FYI... We're giving up on Java releases earlier than 1.4. 
+  We don't have the means to test for them, and we're simply better
+  off targeting a larger percentage of users given our resources.
+  Processing has evolved a lot from its early days as a fast 
+  Java 1.1 graphics library, where we need to simplify things for
+  ourselves by relying on Java 1.4 support across the board. 
+  More about this change later.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
