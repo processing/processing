@@ -1,4 +1,11 @@
 0127 core
+X pixel operations are broken in opengl
+X   get(), set(), copy(), blend(), loadPixels, updatePixels() 
+X   set(x, y, image) y reversed in openGL 
+X   background(image) also broken
+X   also textMode(SCREEN)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=91
+
 
 _ PGraphics problem with fillColor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=468
@@ -775,12 +782,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsOpenGL
 
-_ pixel operations are broken in opengl
-_   get(), set(), copy(), blend(), loadPixels, updatePixels() 
-_   set(x, y, image) y reversed in openGL 
-_   background(image) also broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=91
-_   also textMode(SCREEN)
 _ in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
 _   this way we can also implement breakShape() for opengl
