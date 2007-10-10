@@ -1,6 +1,9 @@
 0127 pde
 
 
+_ mark examples as untitled (rather than read-only)
+
+
 documentation
 _ added getChild(name/path), getChildren(name/path) to xml library
 _   add notes about these to the reference
