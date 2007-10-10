@@ -66,6 +66,7 @@ X test on linux
 X make sure quit being handled properly on windows/linux
 X make clear that open() with one param should only have a single param
 
+
 documentation
 _ added getChild(name/path), getChildren(name/path) to xml library
 _   add notes about these to the reference
@@ -78,6 +79,7 @@ _   or in the sketchbook in a subfolder named 'libraries'?
 _   what should the policy be?
 _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
+_ match() method
 
 
 JSyn Installer build 011
