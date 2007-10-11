@@ -60,6 +60,8 @@ public class Sketch {
    */
   boolean modified;
 
+  public String path;
+  
   public File folder;
   public File dataFolder;
   public File codeFolder;
@@ -90,6 +92,7 @@ public class Sketch {
    */
   public Sketch(Editor editor, String path) throws IOException {
     this.editor = editor;
+    this.path = path;
 
     File mainFile = new File(path);
     //System.out.println("main file is " + mainFile);
@@ -985,7 +988,7 @@ public class Sketch {
 
     // now do the work of adding the file
     boolean result = addFile(sourceFile);
-
+    
     if (result) {
       editor.message("One file added to the sketch.");
     }
@@ -1098,6 +1101,16 @@ public class Sketch {
       }
       setCurrent(newName);
       editor.header.repaint();
+      if (editor.untitled) {
+        // Mark the new code as modified so that the sketch is saved
+        current.modified = true;
+      }
+    } else {
+      if (editor.untitled) {
+        // If a file has been added, mark the main code as modified so
+        // that the sketch is properly saved.
+        code[0].modified = true;
+      }
     }
     return true;
   }
