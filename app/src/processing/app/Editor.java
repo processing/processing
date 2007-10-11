@@ -282,53 +282,10 @@ public class Editor extends JFrame {
                 }
               }
             }
-            //          } catch (Exception e) {
-            //            e.printStackTrace();
-            //          }
-
-          //DataFlavor[] flavors = transferable.getTransferDataFlavors();
-          //for (int i = 0; i < flavors.length; i++) {
-          //System.out.println(flavors[i]);
-          //}
-
-            //int successful = handleImport(list);
-
-            /*
-          for (int i = 0; i < flavors.length; i++) {
-            try {
-              //System.out.println(flavors[i]);
-              //System.out.println(transferable.getTransferData(flavors[i]));
-              Object stuff = transferable.getTransferData(flavors[i]);
-              if (!(stuff instanceof java.util.List)) continue;
-              java.util.List list = (java.util.List) stuff;
-
-              for (int j = 0; j < list.size(); j++) {
-                Object item = list.get(j);
-                if (item instanceof File) {
-                  File file = (File) item;
-
-                  // see if this is a .pde file to be opened
-                  String filename = file.getName();
-                  if (filename.endsWith(".pde")) {
-                    String name = filename.substring(0, filename.length() - 4);
-                    File parent = file.getParentFile();
-                    if (name.equals(parent.getName())) {
-                      base.handleOpen(file.getAbsolutePath());
-                      // Only opens the first sketch dragged into the window
-                      return true;
-                    }
-                  }
-
-                  if (sketch.addFile(file)) {
-                    successful++;
-                  }
-                }
-              }
-            */
-            } catch (Exception e) {
-              e.printStackTrace();
-              return false;
-            }
+          } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+          }
 
           if (successful == 0) {
             error("No files were added to the sketch.");
@@ -341,66 +298,6 @@ public class Editor extends JFrame {
           }
           return true;
         }
-
-        /*
-        private void handleImport(java.util.List list) {
-          for (int j = 0; j < list.size(); j++) {
-            Object item = list.get(j);
-            File file = null;
-            if (item instanceof File) {
-              file = (File) item;
-            } else if (item instanceof String) {
-              file = new File((String) item);
-            }
-
-            // see if this is a .pde file to be opened
-            String filename = file.getName();
-            if (filename.endsWith(".pde")) {
-              String name = filename.substring(0, filename.length() - 4);
-              File parent = file.getParentFile();
-              if (name.equals(parent.getName())) {
-                base.handleOpen(file.getAbsolutePath());
-                // Only opens the first sketch dragged into the window
-                return true;
-              }
-            }
-
-            if (sketch.addFile(file)) {
-              successful++;
-            }
-          }
-        }
-
-
-        private java.util.List textURIListToFileList(String data) {
-          String[] pieces = PApplet.splitTokens(data, "\r\n");
-          return Arrays.asList(pieces);
-          //java.util.List list = new ArrayList(pieces);
-          //return list;
-        */
-
-          /*
-          java.util.List list = new java.util.ArrayList(1);
-          for (java.util.StringTokenizer st = new java.util.StringTokenizer(data, "\r\n");
-               st.hasMoreTokens();) {
-            String s = st.nextToken();
-            if (s.startsWith("#")) {
-              // the line is a comment (as per the RFC 2483)
-              continue;
-            }
-            try {
-              java.net.URI uri = new java.net.URI(s);
-              java.io.File file = new java.io.File(uri);
-              list.add(file);
-            } catch (java.net.URISyntaxException e) {
-              // malformed URI
-            } catch (IllegalArgumentException e) {
-              // the URI is not a valid 'file:' URI
-            }
-          }
-          return list;
-          */
-        //}
       });
 
 //    System.out.println("t1");
@@ -421,7 +318,7 @@ public class Editor extends JFrame {
 //    System.out.println("t4");
 
     // Open the document that was passed in
-    handleOpen2(path);
+    handleOpenInternal(path);
 
 //    System.out.println("t5");
 
@@ -483,7 +380,6 @@ public class Editor extends JFrame {
     textarea.setEditable(!external);
     saveMenuItem.setEnabled(!external);
     saveAsMenuItem.setEnabled(!external);
-    //beautifyMenuItem.setEnabled(!external);
 
     TextAreaPainter painter = textarea.getPainter();
     if (external) {
@@ -1445,46 +1341,19 @@ public class Editor extends JFrame {
 
 
   /**
-   * Open a sketch given the full path to the .pde file.
-   * Pass in 'null' to prompt the user for the name of the sketch.
-   */
-  /*
-  public void handleOpen(final String ipath) {
-    // haven't run across a case where i can verify that this works
-    // because open is usually very fast.
-    buttons.activate(EditorButtons.OPEN);
-
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          String path = ipath;
-          if (path == null) {  // "open..." selected from the menu
-            path = sketchbook.handleOpenPrompt();
-          }
-          if (path != null) {
-            base.handleOpen(path);
-          }
-          //doClose();
-          //handleOpenPath = path;
-          //checkModified(HANDLE_OPEN);
-        }});
-    // Off in thread land, so don't clear yet
-    //buttons.clear();
-  }
-  */
-
-
-  /**
    * Open a sketch from a particular path, but don't check to save changes.
    * Used by Sketch.saveAs() to re-open a sketch after the "Save As"
    */
   protected void handleOpenUnchecked(String path, int codeIndex,
                                      int selStart, int selStop, int scrollPos) {
     doClose();
-    handleOpen2(path);
+    handleOpenInternal(path);
+    // Replacing a document that may be untitled. If this is an actual 
+    // untitled document, then editor.untitled will be set by Base.
+    untitled = false;
 
     sketch.setCurrent(codeIndex);
     textarea.select(selStart, selStop);
-    //textarea.updateScrollBars();
     textarea.setScrollPosition(scrollPos);
   }
 
@@ -1494,28 +1363,7 @@ public class Editor extends JFrame {
    * see if the modifications (if any) to the previous sketch
    * need to be saved.
    */
-  protected void handleOpen2(String path) {
-    // disabling this behavior for 0126
-    /*
-    if (sketch != null) {
-      // if leaving an empty sketch (i.e. the default) do an
-      // auto-clean right away
-      try {
-        // don't clean if we're re-opening the same file
-        String oldPath = sketch.code[0].file.getCanonicalPath();
-        String newPath = new File(path).getCanonicalPath();
-        if (!oldPath.equals(newPath)) {
-          if (Base.calcFolderSize(sketch.folder) == 0) {
-            Base.removeDir(sketch.folder);
-            //sketchbook.rebuildMenus();
-            //sketchbook.rebuildMenusAsync();
-            base.rebuildMenusAsync();
-          }
-        }
-      } catch (Exception e) { }   // oh well
-    }
-    */
-
+  protected void handleOpenInternal(String path) {
     try {
       // check to make sure that this .pde file is
       // in a folder of the same name
@@ -1524,10 +1372,6 @@ public class Editor extends JFrame {
       String parentName = parentFile.getName();
       String pdeName = parentName + ".pde";
       File altFile = new File(file.getParent(), pdeName);
-
-      //System.out.println("path = " + file.getParent());
-      //System.out.println("name = " + file.getName());
-      //System.out.println("pname = " + parentName);
 
       if (pdeName.equals(file.getName())) {
         // no beef with this guy

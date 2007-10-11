@@ -591,14 +591,24 @@ public class Base {
     File file = new File(path);
     if (!file.exists()) return null;
 
-    Editor markedForClose = null;
+    // Cycle through open windows to make sure that it's not already open.
+    for (int i = 0; i < editorCount; i++) {
+      if (editors[i].sketch.path.equals(path)) {
+        editors[i].toFront();
+        return editors[i];
+      }
+    }
+    
+    // If the active editor window is an untitled, and un-modified document, 
+    // just replace it with the file that's being opened.
     if (activeEditor != null) {
-      Sketch sketch = activeEditor.sketch;
-      if (sketch.isUntitled() && !sketch.isModified()) {
+      Sketch activeSketch = activeEditor.sketch;
+      if (activeSketch.isUntitled() && !activeSketch.isModified()) {
         // if it's an untitled, unmodified document, it can be replaced.
         // except in cases where a second blank window is being opened.
         if (!path.startsWith(untitledFolder.getAbsolutePath())) {
-          markedForClose = activeEditor;
+          activeEditor.handleOpenUnchecked(path, 0, 0, 0, 0);
+          return activeEditor;
         }
       }
     }
@@ -613,12 +623,12 @@ public class Base {
     }
     editors[editorCount++] = editor;
 
-    if (markedForClose != null) {
-      Point p = markedForClose.getLocation();
-      handleClose(markedForClose, false);
-      // open the new window in
-      editor.setLocation(p);
-    }
+//    if (markedForClose != null) {
+//      Point p = markedForClose.getLocation();
+//      handleClose(markedForClose, false);
+//      // open the new window in
+//      editor.setLocation(p);
+//    }
 
     // now that we're ready, show the window
     // (don't do earlier, cuz we might move it based on a window being closed)
