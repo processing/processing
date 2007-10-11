@@ -1,7 +1,18 @@
 0127 pde
+X mark untitled sketches as modified when adding files
+X opening an already open sketch will result in two identical sketches open
+X   just bring the other window to the front
+X   http://dev.processing.org/bugs/show_bug.cgi?id=636
+X replace untitled windows with opened sketches
+X   but do so without opening a new window and hiding the other
 
+_ closing last sketch window... open an untitled document?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=634
 
+_ remove the "ask for sketch name on create"
+_   also remove shift-click behavior
 _ mark examples as untitled (rather than read-only)
+_ put the "had to rename sketch" message in the msg bar
 
 
 documentation
@@ -17,6 +28,9 @@ _   what should the policy be?
 _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
 _ match() method
+
+_ auto-delete of sketches might be dangerous
+_   and probably no longer necessary
 
 
 JSyn Installer build 011
@@ -577,6 +591,8 @@ PDE / Compiler & Preprocessor
 
 _ Update ANTLR grammar to support 1.5 syntax
 _   http://dev.processing.org/bugs/show_bug.cgi?id=598
+_ preproc cant handle labels to break/continue nested loops
+_   http://dev.processing.org/bugs/show_bug.cgi?id=631
 _ imports inside comments are being included
 _ toInt() needs to go away in time for the book.. fix parser bugs
 _ using a processing keyword as a variable name gives unhelpful error message
