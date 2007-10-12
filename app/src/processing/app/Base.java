@@ -130,14 +130,6 @@ public class Base {
     // run static initialization that grabs all the prefs
     Preferences.init();
 
-    /*
-      // TODO bring me back!
-    // check for updates
-    if (Preferences.getBoolean("update.check")) {
-      new UpdateCheck(editor);
-    }
-    */
-
     /*Base base =*/ new Base(args);
   }
 
@@ -198,6 +190,11 @@ public class Base {
       } catch (IOException e) {
         e.printStackTrace();
       }
+    }
+    
+    // check for updates
+    if (Preferences.getBoolean("update.check")) {
+      new UpdateCheck(this);
     }
   }
 
