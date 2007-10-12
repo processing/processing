@@ -241,6 +241,8 @@ _   probably need to integrate over a rolling array of 10 frames or so
 _ frameRate() speeds up temporarily if CPU load drops dramatically
 _   http://dev.processing.org/bugs/show_bug.cgi?id=297
 _   perhaps add a hint(DISABLE_FRAMERATE_DAMPER)
+_ sketches lock up when system time is changed
+_   http://dev.processing.org/bugs/show_bug.cgi?id=639
 
 point()
 _ gl points not working again

@@ -11,6 +11,11 @@ copies of each library. The code folder is still an option, but the
 use of the new "library" system is encouraged as a simple packaging 
 mechanism for your projects.
 
+Libraries live inside the "libraries" folder of the Processing
+distribution, however users are encouraged to install "contributed"
+libraries in their sketchbook folder, which will prevent them 
+from having to move their libraries with new Processing releases.
+
 A Processing library can be any sort of Java code that's been 
 given a package name and packed into a jar file. It can also register
 itself with the parent applet to get notification of when events 
@@ -474,4 +479,4 @@ official things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 26 June 2006
+Ben Fry, Last updated 12 October 2007
