@@ -20,6 +20,9 @@ saveBytes("numbers.dat", nums);
 
 <description>
 Opposite of <b>loadBytes()</b>, will write an entire array of bytes to a file. The data is saved in binary format. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
+<br/> <br/>
+<br/> <br/>
+It is not possible to use saveXxxxx() methods inside a web browser unless the sketch is <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. To save a file back to a server, see the <A HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to web</A> example.
 </description>
 
 <syntax>

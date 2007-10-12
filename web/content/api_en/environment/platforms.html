@@ -47,17 +47,13 @@ testing on 95/98/ME or supporting it any more than we absolutely must.</p>
 	
 	<h5 id="mac"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Mac OS X</h5>
-	<p>Java on Mac OS X is steadily improving (especially
-when compared to Apple's previous efforts), but it's still far slower
-than Windows and even the older Java that ran on Mac OS Classic.
-We think OS X will be a great bet for the future, and Apple is
-putting all their feeble weight behind it, hopefully it will evolve
-somewhere. Java performance on the Intel Macs is improved significantly. 
-Hopefully improvements in stability and keeping the
-releases up to date are not far behind. Unfortunately Apple seems to
-have a somewhat arrogant attitude about Java and wants everyone to
-code their applications using things like Cocoa, perhaps missing the
-point of their current marketshare.
+	<p>Java on Mac OS X has always dragged behind other platforms.
+Java performance on the Intel Macs is improved significantly over PowerPC
+machines, on which Java ran almost half the speed.
+Unfortunately Apple seems to 
+have a completely arrogant attitude about Java and wants everyone to
+code their applications using things like Cocoa, seemingly unaware 
+of their current marketshare.
 <br> <br>
 <UL>
 <LI>Like all applications that also support the Intel Macs, Processing requires
@@ -67,11 +63,7 @@ Mac OS X 10.3.9 or later. Unfortunately, we cannot support any earlier releases.
 update of Mac OS X 10.4.x. Earlier versions of 10.4 have trouble with OpenGL
 and include other nasty bugs.
 <LI>We will only fix bugs specific to 10.3.9 if there's a specific issue raised 
-and it can be done without too  much trouble. We still intend to support 10.3.9 for a while (but not earlier 10.3.x
-releases). <!--Your mileage may vary if you're running something else. 
-Actually, your mileage will vary no matter what, because who knows what this
-software is gonna do. You're playing with free, beta-quality software. 
-Get psyched!-->
+and it can be done without too  much trouble. We still intend to support 10.3.9 for a while (but not earlier 10.3.x releases).
 <LI>If you're having trouble with Mac OS X, check the console. It's found in Applications &rarr; Utilities &rarr; Console.app. Information posted there may tell you what the problem is, or provide an error message that someone (perhaps from the discourse section of the Processing site) can help with.
 
 <LI>As of January 2006, OS X 10.4 will also be the primary development platform instead of Windows XP. 
@@ -120,6 +112,7 @@ have the impression that Java was optimized heavily to use Altivec and
 media hooey that's lost on the Mactels). 
 <LI>The ever-popular <A HREF="http://pitaru.com/sonia/">Sonia</A> library
 needs an update for the new version of jSyn that is a Universal Binary. 
+This can be found on the jSyn site. 
 The default Sonia download includes the PowerPC-only version of jSyn. 
 <LI>The serial library included with releases 0111 and later is now a 
 Universal Binary (<A
@@ -150,6 +143,9 @@ Replacing (or making a symlink to) the
 contents of the &lsquo;java&rsquo; folder will let you tie in a
 preferred Java VM for your machine.
 <br> <br>
+If you get Processing to run properly, the Sketch &rarr; Show Sketch Folder command may not be available. Processing will attempt to find kde-open and gnome-open, and if neither is available, the menu item will be dimmed. To fix this, you must set a launcher for your platform. Add a line to preferences.txt that specifies its location: <BR>
+<TT>launcher.linux = /path/to/launcher_app</TT> <BR>
+<br> <br>
 Getting Processing to run on Linux can be tricky, mostly because of Jikes. 
 Some information on getting it to work can be found 
 <a href="../troubleshooting.html#wontstart">here</a> under the Linux section. Similar to 
@@ -157,7 +153,6 @@ the Java folder, you can symlink a proper jikes in place of the distributed
 version and you should be all set. However make sure that you're using 
 Jikes 1.22, otherwise things may not work properly.
 <br> <br>
-
 If anyone out there knows how to properly build a version of Jikes that's 
 compatible across all (or at least a wide range of) distros, please 
 <a href="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Collaboration">let us know</a>. We're not Linux gurus so we don't know all the tricks.
@@ -187,61 +182,23 @@ the details</A> for others.
 	<h5 id="java"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Java Versions</h5>
 	<p>
-      There are several versions of Java, each with a different story. The versions 
-      from 1.2 to 1.4 are also referred to with names like "Java 2 SDK 1.2" or 
-      "J2SE 1.4" (Java 2 Standard Edition 1.4). J2SE is different from the trimmed-down 
-      J2ME ("Micro Edition") which runs on mobile devices, and J2EE ("Enterprise 
-      Edition") which contains more "enterprise" related bloat. In a moment of 
-      further anti-user marketing genius, Sun recently decided to call the next 
-      release "Java 5.0" when promoting, but it's Java 1.5 to developers. 
-      Awesome! <UL> 
+There are several versions of Java, each with a different story. 
+The versions from 1.2 to 1.4 are also referred to with names like "Java 2 SDK 1.2" or "J2SE 1.4" (Java 2 Standard Edition 1.4). J2SE is different from the trimmed-down J2ME ("Micro Edition") which runs on mobile devices, and J2EE ("Enterprise Edition") which contains more "enterprise" related bloat. In a moment of further anti-user marketing genius, Sun recently decided to call the next release "Java 5.0" when promoting, but it's Java 1.5 to developers. Proving that they could outdo themselves in idiocy, the release that followed is called JDK 6.
+<UL> 
 
-      <LI>Java 1.0 &mdash; a long, long time ago in 1995&hellip;
+<LI>Java 1.4 (J2SE 1.4) &mdash; As of release 0126, we are no longer supporting versions of Java prior to Java 1.4. We decided that it was better to focus on the future of the project, rather than wasting our time supporting a narrowing user base of people with ancient versions of Java installed. We very much wanted to keep 1.1 support, but we just don't have enough people working on the project to do that.
 
-<LI>Java 1.1 &mdash; this was the first truly usable version of
-Java. It's the last version of Java that was supported by Microsoft,
-but has since been discontinued because of a lawsuit by Sun. Informal
-estimates show that about 40% of web users that are using Java are 
-still using Java 1.1. As of beta, Processing does not support 1.1 (it
-requires 1.3) but we hope that this is only a temporary change,
-because 1.1 support is obviously important.
-
-<LI>Java 1.2 &mdash; was a mess, and was mercifully replaced by 1.3.
-
-<LI>Java 1.3 &mdash; took all the features added in 1.2 and made them
-usable. This is the current minimum required installation for
-applets exported from Processing beta. Java 1.3 (and 1.4) is installed
-on all Mac OS X machines. Windows users must download from 
-<a href="http://java.com">java.com</a>. Because the Java plug-in on
-Windows urges people to upgrade to 1.4 or 1.5, very few people appear
-to be using 1.3 on the web any more. 
-
-<LI>Java 1.4 &mdash; this is required for running the
-Processing environment itself, and the one that receives the most
-testing from us. It is the version of Java that is included with the
-Windows download of Processing.
-Java 1.4 is also installed by default on Mac OS X. 
-Windows users must download from <a
-href="http://java.com">java.com</a>.
-It's used by about a 30%
-of the people with Java installed.
-Most Linux users will have Java 1.4 or later if it is installed.
-<LI>Java 1.5 &mdash; the previous version of Java. We don't support it and recommend that you avoid using it, as we don't test with it and it appears that it may be the slowest (certainly most bloated) release of Java yet. For instance, if you have Java 1.5 installed but are using the Processing download that includes Java, you may be surprised to see that things run more slowly when run in a browser than when run from inside Processing itself. <br/>
-It is also not possible to use any of the new syntax introduced in Java 1.5 within Processing, even if you have 1.5 installed (the preprocessor and compiler used by Processing don't understand the 1.5 syntax). Unfortunately, 1.5 still accounts for about 40% of the people (almost entirely Windows users) who have Java installed. If you would like to help get things running with 1.5 syntax, please see <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=598">this bug</A>. <br/>
-For Mac OS X 10.4, it was (at least initially) released as a separate
-download, and will not be available on anything earlier than 10.4. <br/>
+<LI>Java 1.5 (Java SE 5.0) &mdash; the previous version of Java. We don't support it and recommend that you avoid using it, as we don't test with it and it appears that it may be <strike>the slowest (certainly most bloated) release of Java yet</strike> no longer true, outdone by Java 1.6. 
+If you have Java 1.5 installed but are using the Processing download that includes Java, you may be surprised to see that things run more slowly when run in a browser than when run from inside Processing itself. <br/>
+<B>It is also not possible to use any of the new syntax introduced in Java 1.5 within Processing</B>, even if you have 1.5 installed (the preprocessor and compiler used by Processing don't understand the 1.5 syntax). <B>This includes the enhanced "for" loop, templates, generics, enums, varargs</B>, and <A HREF="http://java.sun.com/j2se/1.5.0/docs/relnotes/features.html">lots of other crap</A> that Sun added because they felt that the older syntax was too simple and usable. A couple of these features are very useful (the for loop, some aspects of generics) so if you would like to help get things running with 1.5 syntax, please see <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=598">this bug</A>. <br/>
+On the Mac, Java 1.5 is only available to users of Mac OS X 10.4. Until people stop using 10.3.x, we probably won't be moving entirely to Java 1.5. Apple's Java support is irritating and wrong-headed. If this bothers you a fraction of as much as it annoys us, <A HREF="http://bugreport.apple.com">complain to Apple</A>.
+<br/>
 To use Java 1.5 (or later) with Processing, you can use the core libraries
 with your favorite IDE. See the <A HREF="../../faq.html#java">FAQ</A> 
 for details.
-
-<LI>Java 1.6 &mdash; We don't plan to support 1.6 any time soon. 
-We'll think about 1.6 support once we get past 1.5 support. <br/>
-Part of this is because a large portion of our audience is on Mac OS X,
-and it appears that Apple will neither be releasing 1.6 (Java SE 6) 
-soon, nor will they be making it available to anyone but users of
-Mac OS X 10.5 (also not yet released). If you have a problem with their
-Java support, please <A HREF="http://bugreport.apple.com/">complain 
-to Apple</A>.
+<LI>Java 1.6 (JDK 6) &mdash; We don't plan to support 1.6 any time soon. We'll think about 1.6 support once we get past 1.5 support. <br/>
+Part of our lack of interest in JDK 6 is that a large portion of our audience is on Mac OS X, and it appears that two years later, once Apple gets around to releasing this version of Java, they'll only be making it available to  users of Mac OS X 10.5 (also not yet released). Again, if you have a problem with their Java support, please <A HREF="http://bugreport.apple.com/">complain to Apple</A>. 
+<!--
 <br/>
 I dreaded the day that this beast, known as
 "Tiger", would leap from his cage in Santa Clara. I feared for the way
@@ -264,4 +221,5 @@ this thing will be, the winner be mooned by either Scott McNealy or James
 Gosling, chosen at the discretion of the losers. Or if they add
 #define to the syntax, that means we all lose and have to switch to C#
 and Visual Studio.<br/>
+-->
 </ul></p>

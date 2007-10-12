@@ -47,7 +47,10 @@ void draw()
 </example>
 
 <description>
-Saves a numbered sequence of images, one image each time the function is run. To save an image that is identical to the display window, run the function at the end of <b>draw()</b> or within mouse and key events such as <b>mousePressed()</b> and <b>keyPressed()</b>. If <b>saveFrame()</b> is called without parameters, it will save the files as screen-0000.tif, screen-0001.tif, etc. It is possible to specify the name of the sequence with the <b>filename</b> parameter and make the choice of saving TIFF, TARGA, PNG, or JPEG files with the <b>ext</b> parameter. These image sequences can be loaded into programs such as Apple's QuickTime software and made into movies. These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu. It is not possible to use <b>saveFrame()</b> while running the program in a web browser.
+Saves a numbered sequence of images, one image each time the function is run. To save an image that is identical to the display window, run the function at the end of <b>draw()</b> or within mouse and key events such as <b>mousePressed()</b> and <b>keyPressed()</b>. If <b>saveFrame()</b> is called without parameters, it will save the files as screen-0000.tif, screen-0001.tif, etc. It is possible to specify the name of the sequence with the <b>filename</b> parameter and make the choice of saving TIFF, TARGA, PNG, or JPEG files with the <b>ext</b> parameter. These image sequences can be loaded into programs such as Apple's QuickTime software and made into movies. These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu. 
+<br/> <br/>
+It is not possible to use saveXxxxx() methods inside a web browser unless the sketch is <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. To save a file back to a server, see the <A HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to web</A> example.
+
 </description>
 
 <syntax>
