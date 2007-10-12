@@ -28,7 +28,7 @@ void setup() {
   size(200, 200);
   xml = new XMLElement(this, "sites.xml");
   XMLElement[] kids = xml.getChildren();
-  for (int i=0; i&#60;kids.length; i++) {
+  for (int i=0; i &#60; kids.length; i++) {
     String site = kids[i].getContent();
     println(site); 
   }
@@ -36,12 +36,32 @@ void setup() {
 </code>
 </example>
 
+<example>
+<image></image>
+<code>
+import processing.xml.*;
+
+void setup() {
+  // Download RSS feed of news stories from yahoo.com
+  String url = "http://rss.news.yahoo.com/rss/topstories";
+  XMLElement rss = new XMLElement(this, url);
+  // Get all &lt;link&gt; elements
+  XMLElement[] links = rss.getChildren("channel/item/link");
+  for (int i = 0; i &#60; links.length; i++) {
+    println(links[i].getContent());
+  }
+}
+</code>
+</example>
+
 <description>
 Returns all of the children as an XMLElement array.
+When the <b>path</b> parameter is specified, then it will return all children that match that path. The path is a series of elements and sub-elements, separated by slashes.
 </description>
 
 <syntax>
 <c>xml</c>.getChildren()
+<c>xml</c>.getChildren(<c>path</c>)
 </syntax>
 
 <parameter>

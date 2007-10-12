@@ -34,12 +34,31 @@ void setup() {
 </code>
 </example>
 
+<example>
+<image></image>
+<code>
+import processing.xml.*;
+
+void setup() {
+  // Download RSS feed of news stories from yahoo.com
+  String url = "http://rss.news.yahoo.com/rss/topstories";
+  XMLElement rss = new XMLElement(this, url);
+  // Get the &#60;description&#62; element from inside &#60;channel&#62;
+  XMLElement desc = rss.getChild("channel/description");
+  println(desc.getContent());
+}
+</code>
+</example>
+
+
 <description>
-Returns the child XMLElement as specified by the <b>which</b> parameter. The value of the <b>which</b> parameter must be less than the total number of children to avoid going out of the array storing the child elements.
+Returns the child XMLElement as specified by the <b>index</b> parameter. The value of the <b>index</b> parameter must be less than the total number of children to avoid going out of the array storing the child elements.
+When the <b>path</b> parameter is specified, then it will return all children that match that path. The path is a series of elements and sub-elements, separated by slashes.
 </description>
 
 <syntax>
-<c>xml</c>.getChild(<c>which</c>)
+<c>xml</c>.getChild(<c>index</c>)
+<c>xml</c>.getChild(<c>path</c>)
 </syntax>
 
 <parameter>
@@ -48,8 +67,13 @@ Returns the child XMLElement as specified by the <b>which</b> parameter. The val
 </parameter>
 
 <parameter>
-<label>which</label>
+<label>index</label>
 <description>int: the element</description>
+</parameter>
+
+<parameter>
+<label>path</label>
+<description>String: path to a particular element</description>
 </parameter>
 
 <returns>XMLElement</returns>
