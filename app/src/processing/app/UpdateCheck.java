@@ -48,14 +48,13 @@ import processing.core.PApplet;
  * proposals and that kind of thing so that we can keep Processing free.
  */
 public class UpdateCheck implements Runnable {
-  Editor editor;
+  Base base;
   String downloadURL = "http://processing.org/download/latest.txt";
 
   static final long ONE_DAY = 24 * 60 * 60 * 1000;
 
 
-  public UpdateCheck(Editor editor) {
-    this.editor = editor;
+  public UpdateCheck(Base base) {
     Thread thread = new Thread(this);
     thread.start();
   }
@@ -102,21 +101,20 @@ public class UpdateCheck implements Runnable {
         "A new version of Processing is available,\n" +
         "would you like to visit the Processing download page?";
 
-      if (latest > Base.VERSION) {
-        Object[] options = { "Yes", "No" };
-        int result = JOptionPane.showOptionDialog(editor,
-                                                  prompt,
-                                                  "Update",
-                                                  JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE,
-                                                  null,
-                                                  options,
-                                                  options[0]);
-
-        if (result == JOptionPane.YES_OPTION) {
-          Base.openURL("http://processing.org/download/");
-
-        //} else if (result == JOptionPane.NO_OPTION) {
+      if (base.activeEditor != null) {
+        if (latest > Base.VERSION) {
+          Object[] options = { "Yes", "No" };
+          int result = JOptionPane.showOptionDialog(base.activeEditor,
+                                                    prompt,
+                                                    "Update",
+                                                    JOptionPane.YES_NO_OPTION,
+                                                    JOptionPane.QUESTION_MESSAGE,
+                                                    null,
+                                                    options,
+                                                    options[0]);
+          if (result == JOptionPane.YES_OPTION) {
+            Base.openURL("http://processing.org/download/");
+          }
         }
       }
     } catch (Exception e) {
