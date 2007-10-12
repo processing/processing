@@ -32,9 +32,11 @@ void setup()
   
   // If you don't want to load each image separately
   // and you know how many frames you have, you
-  // can use create the filenames as the program runs
+  // can create the filenames as the program runs.
+  // The nf() command does number formatting, which will
+  // ensure that the number is (in this case) 4 digits.
   //for(int i=0; i<numFrames; i++) {
-  //  String imageName = "PT_anim00" + ((i < 10) ? "0" : "") + i + ".gif";
+  //  String imageName = "PT_anim" + nf(i, 4) + ".gif";
   //  images[i] = loadImage(imageName);
   //}
 } 
