@@ -1,56 +1,57 @@
 # LITERAL1 specifies constants
 
+# Constants found inside PConstants.java
 ADD	LITERAL1	
-ALIGN_CENTER	LITERAL1	
-ALIGN_LEFT	LITERAL1	
-ALIGN_RIGHT	LITERAL1	
 ALPHA	LITERAL1
-ALPHA_MASK	LITERAL1
 ALT	LITERAL1
 AMBIENT	LITERAL1	
-ARROW	LITERAL1	
 ARGB	LITERAL1
+ARROW	LITERAL1	
 BACKSPACE	LITERAL1
-BASELINE	LITERAL1	
+BASELINE	LITERAL1
 BEVEL	LITERAL1
 BLEND	LITERAL1
-BLUE_MASK	LITERAL1
 BLUR	LITERAL1
-BOTTOM	LITERAL1	
+BOTTOM	LITERAL1
+BURN	LITERAL1
 CENTER	LITERAL1	
 CENTER_RADIUS	LITERAL1
 CHATTER	LITERAL1	
+CLOSE	LITERAL1
 CODED	LITERAL1
 COMPLAINT	LITERAL1
-COMPOSITE	LITERAL1
-COMPONENT	LITERAL1
-CONCAVE_POLYGON	LITERAL1
 CONTROL	LITERAL1
-CONVEX_POLYGON	LITERAL1
 CORNER	LITERAL1
 CORNERS	LITERAL1
 CROSS	LITERAL1
 CUSTOM	LITERAL1
 DARKEST	LITERAL1
-DEGREES	LITERAL1
 DEG_TO_RAD	LITERAL1
 DELETE	LITERAL1
 DIFFERENCE	LITERAL1
-DIFFUSE	LITERAL1
+DILATE	LITERAL1
+DIRECTIONAL	LITERAL1
+DISABLE_AUTO_GZIP	LITERAL1
+DISABLE_DEPTH_TEST	LITERAL1
+DISABLE_ERROR_REPORT	LITERAL1
 DISABLE_TEXT_SMOOTH	LITERAL1	
-DISABLED	LITERAL1
+DODGE	LITERAL1
 DOWN	LITERAL1
+DXF	LITERAL1
+ENABLE_ACCURATE_TEXTURES	LITERAL1
+ENABLE_DEPTH_SORT	LITERAL1
+ENABLE_NATIVE_FONTS	LITERAL1
 ENTER	LITERAL1	
 EPSILON	LITERAL1
+ERODE	LITERAL1
 ESC	LITERAL1
-BLEND	LITERAL1
+EXCLUSION	LITERAL1
 GIF	LITERAL1
-GREEN_MASK	LITERAL1
-GREY	LITERAL1
-HAND	LITERAL1
-HALF	LITERAL1	
+GRAY	LITERAL1
 HALF_PI	LITERAL1
+HAND	LITERAL1
 HARD_LIGHT	LITERAL1
+HINT_COUNT	LITERAL1
 HSB	LITERAL1	
 IMAGE	LITERAL1
 INVERT	LITERAL1
@@ -59,27 +60,32 @@ JPEG	LITERAL1
 LEFT	LITERAL1	
 LIGHTEST	LITERAL1	
 LINES	LITERAL1	
-LINE_LOOP	LITERAL1	
-LINE_STRIP	LITERAL1
+LINUX	LITERAL1
+MACOS9	LITERAL1
+MACOSX	LITERAL1
 MAX_FLOAT	LITERAL1	
+MAX_INT	LITERAL1
+MIN_FLOAT	LITERAL1
+MIN_INT	LITERAL1
 MITER	LITERAL1
 MODEL	LITERAL1
 MOVE	LITERAL1
 MULTIPLY	LITERAL1	
 NORMALIZED	LITERAL1	
-NO_DEPTH_TEST	LITERAL1
-NTSC	LITERAL1	
-ORTHOGRAPHIC	LITERAL1
+NO_FLYING_POO	LITERAL1
 OPAQUE	LITERAL1
+OPEN	LITERAL1
 OPENGL	LITERAL1
-ONE	LITERAL1
+ORTHOGRAPHIC	LITERAL1
+OTHER	LITERAL1
 OVERLAY	LITERAL1
-PAL	LITERAL1
 P2D	LITERAL1
 P3D	LITERAL1
+PDF	LITERAL1
 PERSPECTIVE	LITERAL1
 PI	LITERAL1
 PIXEL_CENTER	LITERAL1
+POINT	LITERAL1
 POINTS	LITERAL1	
 POLYGON	LITERAL1
 POSTERIZE	LITERAL1
@@ -88,35 +94,30 @@ PROJECT	LITERAL1
 QUADS	LITERAL1	
 QUAD_STRIP	LITERAL1	
 QUARTER_PI	LITERAL1	
+RADIUS	LITERAL1
 RAD_TO_DEG	LITERAL1
-RADIANS	LITERAL1
-RED_MASK	LITERAL1
 REPLACE	LITERAL1	
 RETURN	LITERAL1
 RGB	LITERAL1	
 RIGHT	LITERAL1	
 ROUND	LITERAL1	
 SCREEN	LITERAL1
-SECAM	LITERAL1	
+SHAPE	LITERAL1
 SHIFT	LITERAL1	
-SPECULAR	LITERAL1
 SOFT_LIGHT	LITERAL1
+SPOT	LITERAL1
 SQUARE	LITERAL1	
 SUBTRACT	LITERAL1
-SVIDEO	LITERAL1	
 TAB	LITERAL1
 TARGA	LITERAL1
 TEXT	LITERAL1
+THIRD_PI	LITERAL1
+THRESHOLD	LITERAL1
 TIFF	LITERAL1
-TFF	LITERAL1
-THRESHOLD	LITERAL1	
-THIRD_PI	LITERAL1	
-TOP	LITERAL1	
+TOP	LITERAL1
+TRIANGLES	LITERAL1
 TRIANGLE_FAN	LITERAL1
-TRIANGLES	LITERAL1	
 TRIANGLE_STRIP	LITERAL1	
-TUNER	LITERAL1
-TWO	LITERAL1
 TWO_PI	LITERAL1
 UP	LITERAL1	
 WAIT	LITERAL1
@@ -126,6 +127,41 @@ null	LITERAL1
 super	LITERAL1	
 this	LITERAL1	
 true	LITERAL1	
+
+# Capture.java
+COMPOSITE	LITERAL1
+SVIDEO	LITERAL1
+COMPONENT	LITERAL1
+TUNER	LITERAL1
+NTSC	LITERAL1
+PAL	LITERAL1
+SECAM	LITERAL1
+
+# MovieMaker.java
+RAW	LITERAL1
+ANIMATION	LITERAL1
+BASE	LITERAL1
+BMP	LITERAL1
+CINEPAK	LITERAL1
+COMPONENT	LITERAL1
+CMYK	LITERAL1
+GIF	LITERAL1
+GRAPHICS	LITERAL1
+H261	LITERAL1
+H263	LITERAL1
+H264	LITERAL1
+JPEG	LITERAL1
+MS_VIDEO	LITERAL1
+MOTION_JPEG_A	LITERAL1
+MOTION_JPEG_B	LITERAL1
+SORENSON	LITERAL1
+VIDEO	LITERAL1
+WORST	LITERAL1
+LOW	LITERAL1
+MEDIUM	LITERAL1
+HIGH	LITERAL1
+BEST	LITERAL1
+LOSSLESS	LITERAL1
 
 
 # KEYWORD1 specifies datatypes
@@ -188,8 +224,6 @@ unHint	KEYWORD2
 
 abs	KEYWORD2	abs_
 acos	KEYWORD2	acos_
-+=		addassign
-+		addition
 alpha	KEYWORD2	alpha_
 ambient	KEYWORD2	ambient_
 ambientLight	KEYWORD2	ambientLight_
@@ -197,16 +231,13 @@ append	KEYWORD2	append_
 applyMatrix	KEYWORD2	applyMatrix_
 arc	KEYWORD2	arc_
 Array	KEYWORD1	Array
-[]		arrayaccess
 arraycopy	KEYWORD2	arraycopy_
 asin	KEYWORD2	asin_
-=		assign
 atan	KEYWORD2	atan_
 atan2	KEYWORD2	atan2_
 background	KEYWORD2	background_
 beginCamera	KEYWORD2	beginCamera_
 beginRecord	KEYWORD2	beginRecord_
-beginRaw	KEYWORD2	beginRaw_
 beginShape	KEYWORD2	beginShape_
 bezier	KEYWORD2	bezier_
 bezierDetail	KEYWORD2	bezierDetail_
@@ -214,8 +245,6 @@ bezierPoint	KEYWORD2	bezierPoint_
 bezierTangent	KEYWORD2	bezierTangent_
 bezierVertex	KEYWORD2	bezierVertex_
 binary	KEYWORD2	binary_
-binary	KEYWORD2	bitwiseAND_
-|		bitwiseOR
 blend	KEYWORD2	blend_
 blendColor	KEYWORD2	blendColor_
 blue	KEYWORD2	blue_
@@ -231,14 +260,11 @@ case	KEYWORD1	case
 ceil	KEYWORD2	ceil_
 char	KEYWORD1	char
 char	KEYWORD2	char_
-char	KEYWORD2	class_
+class		class
 color	KEYWORD2	color_
-colorMode	KEYWORD2	colorMode_
 color	KEYWORD1	color_datatype
-,		comma
-//		comment
+colorMode	KEYWORD2	colorMode_
 concat	KEYWORD2	concat_
-?:	KEYWORD1	conditional_
 constrain	KEYWORD2	constrain_
 contract	KEYWORD2	contract_
 copy	KEYWORD2	copy_
@@ -247,7 +273,6 @@ createFont	KEYWORD2	createFont_
 createGraphics	KEYWORD2	createGraphics_
 createImage	KEYWORD2	createImage_
 createWriter	KEYWORD2	createWriter_
-{}		curlybraces
 cursor	KEYWORD2	cursor_
 curve	KEYWORD2	curve_
 curveDetail	KEYWORD2	curveDetail_
@@ -255,25 +280,19 @@ curvePoint	KEYWORD2	curvePoint_
 curveTightness	KEYWORD2	curveTightness_
 curveVertex	KEYWORD2	curveVertex_
 day	KEYWORD2	day_
---		decrement
 default	KEYWORD1	default
 degrees	KEYWORD2	degrees_
 delay	KEYWORD2	delay_
 directionalLight	KEYWORD2	directionalLight_
 dist	KEYWORD2	dist_
-/		divide
-/**		doccomment
-.		dot
-draw	KEYWORD3	draw_
+draw		draw
 ellipse	KEYWORD2	ellipse_
 ellipseMode	KEYWORD2	ellipseMode_
 else	KEYWORD1	else
 emissive	KEYWORD2	emissive_
 endCamera	KEYWORD2	endCamera_
 endRecord	KEYWORD2	endRecord_
-endRaw	KEYWORD2	endRaw_
 endShape	KEYWORD2	endShape_
-==		equality
 exit	KEYWORD2	exit_
 exp	KEYWORD2	exp_
 expand	KEYWORD2	expand_
@@ -284,18 +303,15 @@ filter	KEYWORD2	filter_
 float	KEYWORD1	float
 float	KEYWORD2	float_
 floor	KEYWORD2	floor_
-focused	LITERAL2	focused
+focused		focused
 for	KEYWORD1	for_
-frameCount	LITERAL2	frameCount
+frameCount		frameCount
 frameRate	KEYWORD2	frameRate_
-frameRate	LITERAL2	frameRate
+frameRate		frameRate
 frustum	KEYWORD2	frustum_
 get	KEYWORD2	get_
-<		greaterthan
-<=		greaterthanorequalto
 green	KEYWORD2	green_
-HALF_PI	LITERAL1	HALF_PI
-height	LITERAL2	height
+height		height
 hex	KEYWORD2	hex_
 hour	KEYWORD2	hour_
 hue	KEYWORD2	hue_
@@ -303,21 +319,17 @@ if	KEYWORD1	if_
 image	KEYWORD2	image_
 imageMode	KEYWORD2	imageMode_
 implements	KEYWORD1	implements
-++		increment
-!=		inequality
 int	KEYWORD1	int
 int	KEYWORD2	int_
 join	KEYWORD2	join_
-key	LITERAL2	key
-keyCode	LITERAL2	keyCode
+key		key
+keyCode		keyCode
 keyPressed	KEYWORD2	keyPressed_
-keyPressed	LITERAL2	keyPressed
+keyPressed		keyPressed
 keyReleased	KEYWORD2	keyReleased_
-<<		leftshift
+keyTyped	KEYWORD2	keyTyped_
 lerp	KEYWORD2	lerp_
 lerpColor	KEYWORD2	lerpColor_
-<		lessthan
-<=		lessthanorequalto
 lightFalloff	KEYWORD2	lightFalloff_
 lights	KEYWORD2	lights_
 lightSpecular	KEYWORD2	lightSpecular_
@@ -329,32 +341,26 @@ loadImage	KEYWORD2	loadImage_
 loadPixels	KEYWORD2	loadPixels_
 loadStrings	KEYWORD2	loadStrings_
 log	KEYWORD2	log_
-&&		logicalAND
-!		logicalNOT
-||		logicalOR
 loop	KEYWORD2	loop_
 mag	KEYWORD2	mag_
 map	KEYWORD2	map_
 max	KEYWORD2	max_
 millis	KEYWORD2	millis_
 min	KEYWORD2	min_
--		minus
 minute	KEYWORD2	minute_
 modelX	KEYWORD2	modelX_
 modelY	KEYWORD2	modelY_
 modelZ	KEYWORD2	modelZ_
-%		modulo
 month	KEYWORD2	month_
-mouseButton	LITERAL2	mouseButton
+mouseButton		mouseButton
+mouseClicked	KEYWORD2	mouseClicked_
 mouseDragged	KEYWORD2	mouseDragged_
 mouseMoved	KEYWORD2	mouseMoved_
 mousePressed	KEYWORD2	mousePressed_
-mousePressed	LITERAL2	mousePressed
+mousePressed		mousePressed
 mouseReleased	KEYWORD2	mouseReleased_
-mouseX	LITERAL2	mouseX
-mouseY	LITERAL2	mouseY
-/*		multilinecomment
-*		multiply
+mouseX		mouseX
+mouseY		mouseY
 new	KEYWORD1	new
 nf	KEYWORD2	nf_
 nfc	KEYWORD2	nfc_
@@ -373,19 +379,17 @@ noStroke	KEYWORD2	noStroke_
 noTint	KEYWORD2	noTint_
 null	KEYWORD1	null
 Object	KEYWORD1	Object
-online	LITERAL2	online
+online		online
 open	KEYWORD2	open_
 openStream	KEYWORD2	openStream_
 ortho	KEYWORD2	ortho_
 param	KEYWORD2	param_
-()		parentheses
 perspective	KEYWORD2	perspective_
 PFont	KEYWORD1	PFont
 list	KEYWORD2	PFont_list_
 PGraphics	KEYWORD1	PGraphics
 beginDraw	KEYWORD2	PGraphics_beginDraw_
 endDraw	KEYWORD2	PGraphics_endDraw_
-PI	LITERAL1	PI
 PImage	KEYWORD1	PImage
 alpha	KEYWORD2	PImage_alpha_
 blend	KEYWORD2	PImage_blend_
@@ -395,13 +399,14 @@ get	KEYWORD2	PImage_get_
 height	LITERAL2	PImage_height
 mask	KEYWORD2	PImage_mask_
 pixels	LITERAL2	PImage_pixels
+save	KEYWORD2	PImage_save_
 set	KEYWORD2	PImage_set_
 width	LITERAL2	PImage_width
-pixels	LITERAL2	pixels
-pmouseX	LITERAL2	pmouseX
-pmouseY	LITERAL2	pmouseY
+pixels		pixels
+pmouseX		pmouseX
+pmouseY		pmouseY
 point	KEYWORD2	point_
-point	KEYWORD2	pointLight_
+pointLight	KEYWORD2	pointLight_
 popMatrix	KEYWORD2	popMatrix_
 pow	KEYWORD2	pow_
 print	KEYWORD2	print_
@@ -426,7 +431,6 @@ redraw	KEYWORD2	redraw_
 resetMatrix	KEYWORD2	resetMatrix_
 return	KEYWORD1	return
 reverse	KEYWORD2	reverse_
-<<		rightshift
 rotate	KEYWORD2	rotate_
 rotateX	KEYWORD2	rotateX_
 rotateY	KEYWORD2	rotateY_
@@ -438,14 +442,13 @@ saveBytes	KEYWORD2	saveBytes_
 saveFrame	KEYWORD2	saveFrame_
 saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
-screen	LITERAL2	screen
+screen		screen
 screenX	KEYWORD2	screenX_
 screenY	KEYWORD2	screenY_
 screenZ	KEYWORD2	screenZ_
 second	KEYWORD2	second_
-;		semicolon
 set	KEYWORD2	set_
-setup	KEYWORD3	setup_
+setup		setup
 shininess	KEYWORD2	shininess_
 shorten	KEYWORD2	shorten_
 sin	KEYWORD2	sin_
@@ -457,6 +460,7 @@ sphere	KEYWORD2	sphere_
 sphereDetail	KEYWORD2	sphereDetail_
 splice	KEYWORD2	splice_
 split	KEYWORD2	split_
+splitTokens	KEYWORD2	splitTokens_
 spotLight	KEYWORD2	spotLight_
 sq	KEYWORD2	sq_
 sqrt	KEYWORD2	sqrt_
@@ -475,7 +479,6 @@ strokeCap	KEYWORD2	strokeCap_
 strokeJoin	KEYWORD2	strokeJoin_
 strokeWeight	KEYWORD2	strokeWeight_
 subset	KEYWORD2	subset_
--=		subtractassign
 super	KEYWORD1	super
 switch	KEYWORD2	switch_
 tan	KEYWORD2	tan_
@@ -496,12 +499,11 @@ translate	KEYWORD2	translate_
 triangle	KEYWORD2	triangle_
 trim	KEYWORD2	trim_
 true	KEYWORD1	true
-TWO_PI	LITERAL1	TWO_PI
 unbinary	KEYWORD2	unbinary_
 unhex	KEYWORD2	unhex_
 updatePixels	KEYWORD2	updatePixels_
 vertex	KEYWORD2	vertex_
 void	KEYWORD1	void
 while	KEYWORD1	while_
-width	LITERAL2	width
+width		width
 year	KEYWORD2	year_
