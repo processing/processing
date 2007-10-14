@@ -114,6 +114,7 @@ public class Preferences {
 
   JTextField sketchbookLocationField;
   JCheckBox exportSeparateBox;
+  JCheckBox closingLastQuitsBox;
   JCheckBox sketchPromptBox;
   JCheckBox sketchCleanBox;
   JCheckBox externalEditorBox;
@@ -228,6 +229,19 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
+    
+    // [ ] Quit after closing last sketch window
+
+    closingLastQuitsBox =
+      new JCheckBox("Quit after closing last sketch window");
+    pain.add(closingLastQuitsBox);
+    d = closingLastQuitsBox.getPreferredSize();
+    closingLastQuitsBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
+    
+    //sketchbook.closing_last_window_quits
 
     // [ ] Prompt for name and folder when creating new sketch
 
@@ -503,6 +517,8 @@ public class Preferences {
     // put each of the settings into the table
     setBoolean("export.applet.separate_jar_files",
                exportSeparateBox.isSelected());
+    setBoolean("sketchbook.closing_last_window_quits", 
+               closingLastQuitsBox.isSelected());
     setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
     setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
     
@@ -561,14 +577,22 @@ public class Preferences {
     // set all settings entry boxes to their actual status
     exportSeparateBox.
       setSelected(getBoolean("export.applet.separate_jar_files"));
-    sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
-    sketchCleanBox.setSelected(getBoolean("sketchbook.auto_clean"));
-    sketchbookLocationField.setText(get("sketchbook.path"));
-    externalEditorBox.setSelected(getBoolean("editor.external"));
-    checkUpdatesBox.setSelected(getBoolean("update.check"));
-
-    memoryOverrideBox.setSelected(getBoolean("run.options.memory"));
-    memoryField.setText(get("run.options.memory.maximum"));
+    closingLastQuitsBox.
+      setSelected(getBoolean("sketchbook.closing_last_window_quits")); 
+    sketchPromptBox.
+      setSelected(getBoolean("sketchbook.prompt"));
+    sketchCleanBox.
+      setSelected(getBoolean("sketchbook.auto_clean"));
+    sketchbookLocationField.
+      setText(get("sketchbook.path"));
+    externalEditorBox.
+      setSelected(getBoolean("editor.external"));
+    checkUpdatesBox.
+      setSelected(getBoolean("update.check"));
+    memoryOverrideBox.
+      setSelected(getBoolean("run.options.memory"));
+    memoryField.
+      setText(get("run.options.memory.maximum"));
 
     dialog.setVisible(true);
   }

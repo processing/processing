@@ -6,6 +6,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=636
 X replace untitled windows with opened sketches
 X   but do so without opening a new window and hiding the other
 X re-enable update check (0126 wasn't reporting anything.. ugh)
+o remove the "ask for sketch name on create"
+o   also remove shift-click behavior
+X add option to not close the environment when closing the last sketch
 
 documentation
 X make sure loadStrings(), loadImage(), etc all have security warning
@@ -19,16 +22,20 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=637
 X syntax highlighting
 X   add MIN_FLOAT, MAX_FLOAT, MIN_INT, MAX_INT
 X match() method
-_ added getChild(name/path), getChildren(name/path) to xml library
-_   add notes about these to the reference
-_   needs a better example that includes subitems
+X added getChild(name/path), getChildren(name/path) to xml library
+X   add notes about these to the reference
+X   needs a better example that includes subitems
+X fix example that doesn't use nf
 
 fixed in earlier releases
 X undo after "import library" makes a blank screen
 X   http://processing.org/bugs/show_bug.cgi?id=41
 
-_ remove the "ask for sketch name on create"
-_   also remove shift-click behavior
+
+0128 pde
+
+_ change to jdk14 imports rather than 11 and 12 for preproc
+
 _ auto-delete of sketches might be dangerous
 _   and probably no longer necessary
 _ mark examples as untitled (rather than read-only)
@@ -172,7 +179,6 @@ void sortSwap(int a, int b) {
 }
 
 
-0127
 _ dynamic tools menu (requires moving files around)
 _   this means can integrate the autoformat stuff
 _   processing.mess/tools has chandler's template stuff
