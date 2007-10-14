@@ -437,7 +437,15 @@ public class Base {
     if (newbieName != null) {
       newbieName = Sketch.sanitizeName(newbieName);
       newbieDir = new File(newbieParentDir, newbieName);
-      handleNewInternal(newbieDir, newbieName);
+      
+      // Make the directory for the new sketch
+      newbieDir.mkdirs();
+
+      // Make an empty pde file
+      File newbieFile = new File(newbieDir, newbieName + ".pde");
+      new FileOutputStream(newbieFile);  // create the file
+      
+      handleOpen(newbieFile.getAbsolutePath());
     }
   }
 
@@ -448,7 +456,7 @@ public class Base {
    * @param shift whether shift is pressed, which will invert prompt setting
    * @param noPrompt disable prompt, no matter the setting
    */
-  public void handleNewUntitled() throws IOException {
+  protected String createNewUntitled() throws IOException {
     File newbieDir = null;
     String newbieName = null;
 
@@ -468,45 +476,57 @@ public class Base {
       // Make sure it's not in the temp folder *and* it's not in the sketchbook
     } while (newbieDir.exists() || new File(sketchbookDir, newbieName).exists());
 
-    Editor editor = handleNewInternal(newbieDir, newbieName);
-    editor.untitled = true;
-  }
-
-
-  protected Editor handleNewInternal(File newbieDir, String newbieName)
-  throws FileNotFoundException {
     // Make the directory for the new sketch
     newbieDir.mkdirs();
 
     // Make an empty pde file
     File newbieFile = new File(newbieDir, newbieName + ".pde");
     new FileOutputStream(newbieFile);  // create the file
-
-    // TODO For 0126, need to check if this is the only way that the doc is
-    // getting associated, and if so, have we removed the connection between
-    // .pde files and Processing.app
-
-    //  Disabling this starting in 0125... There's no need for it,
-    // and it's likely to cause more trouble than necessary by
-    // leaving around little ._ boogers.
-
-    // this wouldn't be needed if i could figure out how to
-    // associate document icons via a dot-extension/mime-type scenario
-    // help me steve jobs, you're my only hope.
-
-    // jdk13 on osx, or jdk11
-    // though apparently still available for 1.4
-    /*
-    if (Base.isMacOS()) {
-      MRJFileUtils.setFileTypeAndCreator(newbieFile,
-                                         MRJOSType.kTypeTEXT,
-                                         new MRJOSType("Pde1"));
-      // thank you apple, for changing this @#$)(*
-      //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
-    }
-    */
-    return handleOpen(newbieFile.getAbsolutePath());
+    return newbieFile.getAbsolutePath();
   }
+  
+  
+  public void handleNewUntitled() throws IOException {
+    String path = createNewUntitled();
+    Editor editor = handleOpen(path);
+    editor.untitled = true;
+  }
+
+
+//  protected Editor handleNewInternal(File newbieDir, String newbieName)
+//  throws FileNotFoundException {
+//    // Make the directory for the new sketch
+//    newbieDir.mkdirs();
+//
+//    // Make an empty pde file
+//    File newbieFile = new File(newbieDir, newbieName + ".pde");
+//    new FileOutputStream(newbieFile);  // create the file
+//
+//    // TODO For 0126, need to check if this is the only way that the doc is
+//    // getting associated, and if so, have we removed the connection between
+//    // .pde files and Processing.app
+//
+//    //  Disabling this starting in 0125... There's no need for it,
+//    // and it's likely to cause more trouble than necessary by
+//    // leaving around little ._ boogers.
+//
+//    // this wouldn't be needed if i could figure out how to
+//    // associate document icons via a dot-extension/mime-type scenario
+//    // help me steve jobs, you're my only hope.
+//
+//    // jdk13 on osx, or jdk11
+//    // though apparently still available for 1.4
+//    /*
+//    if (Base.isMacOS()) {
+//      MRJFileUtils.setFileTypeAndCreator(newbieFile,
+//                                         MRJOSType.kTypeTEXT,
+//                                         new MRJOSType("Pde1"));
+//      // thank you apple, for changing this @#$)(*
+//      //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
+//    }
+//    */
+//    return handleOpen(newbieFile.getAbsolutePath());
+//  }
 
 
   /*
@@ -637,29 +657,19 @@ public class Base {
 
   public boolean handleClose(Editor editor, boolean quitting) {
     // Check if modified
-    boolean success = editor.checkModified(false);
+    if (!editor.checkModified(quitting)) {  //false)) {  // was false in 0126
+      return false;
+    }
 
-    // If not canceled, remove the editor window.
-    if (success) {
-      editor.setVisible(false);
-      editor.dispose();
-
-      for (int i = 0; i < editorCount; i++) {
-        if (editor == editors[i]) {
-          for (int j = i; j < editorCount-1; j++) {
-            editors[j] = editors[j+1];
-          }
-          editorCount--;
-          // Set to null so that garbage collection occurs
-          editors[editorCount] = null;
-        }
-      }
-
-      // If not canceled, check if this was the last open window.
-      // If it was the last, could either do a new untitled window,
-      // or could just quit the application.
-      if (!quitting && (editorCount == 0)) {
+    // If quitting, this is all that needs to be done
+    if (quitting) {
+      return true;
+    }
+    
+    if (editorCount == 1) {
+      if (Preferences.getBoolean("sketchbook.closing_last_window_quits")) {
         // This will store the sketch count as zero
+        editorCount = 0;
         storeSketches();
 
         // Save out the current prefs state
@@ -674,11 +684,62 @@ public class Base {
         // System.exit() needs to be called for Mac OS X.
         //if (PApplet.platform == PConstants.MACOSX) {
         System.exit(0);
-        //}
+        
+      } else {
+        try {
+          // open an untitled document in the last remaining window
+          String path = createNewUntitled();
+          activeEditor.handleOpenInternal(path);
+          return true;  // or false?
+          
+        } catch (IOException e) {
+          e.printStackTrace();
+          return false;
+        }
       }
-      return true;
+    } else {
+      // More than one editor window open, 
+      // proceed with closing the current window.
+      editor.setVisible(false);
+      editor.dispose();
+
+      for (int i = 0; i < editorCount; i++) {
+        if (editor == editors[i]) {
+          for (int j = i; j < editorCount-1; j++) {
+            editors[j] = editors[j+1];
+          }
+          editorCount--;
+          // Set to null so that garbage collection occurs
+          editors[editorCount] = null;
+        }
+      }
+    }  
+    return true;
+
+    /*
+    // If not canceled, check if this was the last open window.
+    // If it was the last, could either do a new untitled window,
+    // or could just quit the application.
+    if (!quitting && (editorCount == 0)) {
+      // This will store the sketch count as zero
+      storeSketches();
+
+      // Save out the current prefs state
+      Preferences.save();
+
+      // Clean out empty sketches
+      Base.cleanSketchbook();
+      // can't do handleQuit(), would do weird recursive thing
+      //handleQuit();
+
+      // Since this wasn't an actual Quit event,
+      // System.exit() needs to be called for Mac OS X.
+      //if (PApplet.platform == PConstants.MACOSX) {
+      System.exit(0);
+      //}
     }
-    return false;
+    return true;
+    */
   }
 
 
