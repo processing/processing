@@ -219,6 +219,10 @@ run.display = 1
 # set internally
 #run.window.bgcolor=
 
+# set to false to open a new untitled window when closing the last window
+# (otherwise, the environment will quit)
+sketchbook.closing_last_window_quits = true
+
 # prompt for sketch location when 'new' is hit
 sketchbook.prompt = false
 
