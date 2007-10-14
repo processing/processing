@@ -44,8 +44,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 127;
-  static final String VERSION_NAME = "0127 Beta";
+  static final int VERSION = 128;
+  static final String VERSION_NAME = "0128 Beta";
 
   // set to true after the first time it's built.
   // so that the errors while building don't show up again.
@@ -191,7 +191,7 @@ public class Base {
         e.printStackTrace();
       }
     }
-    
+
     // check for updates
     if (Preferences.getBoolean("update.check")) {
       new UpdateCheck(this);
@@ -437,14 +437,14 @@ public class Base {
     if (newbieName != null) {
       newbieName = Sketch.sanitizeName(newbieName);
       newbieDir = new File(newbieParentDir, newbieName);
-      
+
       // Make the directory for the new sketch
       newbieDir.mkdirs();
 
       // Make an empty pde file
       File newbieFile = new File(newbieDir, newbieName + ".pde");
       new FileOutputStream(newbieFile);  // create the file
-      
+
       handleOpen(newbieFile.getAbsolutePath());
     }
   }
@@ -484,8 +484,8 @@ public class Base {
     new FileOutputStream(newbieFile);  // create the file
     return newbieFile.getAbsolutePath();
   }
-  
-  
+
+
   public void handleNewUntitled() throws IOException {
     String path = createNewUntitled();
     Editor editor = handleOpen(path);
@@ -615,8 +615,8 @@ public class Base {
         return editors[i];
       }
     }
-    
-    // If the active editor window is an untitled, and un-modified document, 
+
+    // If the active editor window is an untitled, and un-modified document,
     // just replace it with the file that's being opened.
     if (activeEditor != null) {
       Sketch activeSketch = activeEditor.sketch;
@@ -665,7 +665,7 @@ public class Base {
     if (quitting) {
       return true;
     }
-    
+
     if (editorCount == 1) {
       if (Preferences.getBoolean("sketchbook.closing_last_window_quits")) {
         // This will store the sketch count as zero
@@ -684,21 +684,21 @@ public class Base {
         // System.exit() needs to be called for Mac OS X.
         //if (PApplet.platform == PConstants.MACOSX) {
         System.exit(0);
-        
+
       } else {
         try {
           // open an untitled document in the last remaining window
           String path = createNewUntitled();
           activeEditor.handleOpenInternal(path);
           return true;  // or false?
-          
+
         } catch (IOException e) {
           e.printStackTrace();
           return false;
         }
       }
     } else {
-      // More than one editor window open, 
+      // More than one editor window open,
       // proceed with closing the current window.
       editor.setVisible(false);
       editor.dispose();
@@ -713,7 +713,7 @@ public class Base {
           editors[editorCount] = null;
         }
       }
-    }  
+    }
     return true;
 
     /*

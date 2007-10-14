@@ -1,3 +1,43 @@
+0127 core
+X pixel operations are broken in opengl
+X   get(), set(), copy(), blend(), loadPixels, updatePixels() 
+X   set(x, y, image) y reversed in openGL 
+X   background(image) also broken
+X   also textMode(SCREEN)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=91
+o replaceAll() not supported by 1.1
+o   http://dev.processing.org/bugs/show_bug.cgi?id=561
+o make version of loadBytes that checks length of the stream first
+o   this might not be worth it
+o     the number of cases where this works is small (half of url streams) 
+o     and who knows if the value returned will be correct
+o     (i.e. will it be the uncompressed or compressed size of the data?)
+
+createGraphics() issues
+X offscreen buffers fail with texture mapping
+X   pixels not being set opaque (only with textures?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=594
+X   add note to createGraphics() docs that opacity at edges is binary
+X PGraphics problem with fillColor
+X   http://dev.processing.org/bugs/show_bug.cgi?id=468
+
+fixed earlier
+X add to open() reference problems with mac
+X   need to use the 'open' command on osx
+X   or need to do this by hand
+X   prolly better to do it by default, since on windows we use cmd?
+X   check to see if the user has 'open' in there already
+X   they can call Runtime.getRuntime().exec() if they want more control
+
+fixed earlier (in 0125) by ewjordan
+X accuracy in P3D is very low
+X   http://dev.processing.org/bugs/show_bug.cgi?id=95
+X textured polys throwing a lot of exceptions (ouch)  
+X   http://dev.processing.org/bugs/show_bug.cgi?id=546
+X polygons in z axis with nonzero x or y not filling properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=547
+
+
 0126 core
 o rect() after strokeWeight(1) gives wrong coords
 X   http://dev.processing.org/bugs/show_bug.cgi?id=535
