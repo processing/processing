@@ -17,15 +17,44 @@ createGraphics() issues
 X offscreen buffers fail with texture mapping
 X   pixels not being set opaque (only with textures?)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=594
-_   add note to createGraphics() docs that opacity at edges is binary
+X   add note to createGraphics() docs that opacity at edges is binary
 X PGraphics problem with fillColor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=468
 
+fixed earlier
+X add to open() reference problems with mac
+X   need to use the 'open' command on osx
+X   or need to do this by hand
+X   prolly better to do it by default, since on windows we use cmd?
+X   check to see if the user has 'open' in there already
+X   they can call Runtime.getRuntime().exec() if they want more control
+
+fixed earlier (in 0125) by ewjordan
+X accuracy in P3D is very low
+X   http://dev.processing.org/bugs/show_bug.cgi?id=95
+X textured polys throwing a lot of exceptions (ouch)  
+X   http://dev.processing.org/bugs/show_bug.cgi?id=546
+X polygons in z axis with nonzero x or y not filling properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=547
+
+
+0128 core
+
+_ fix getFontMetrics() warning
+_ remove PFont reflection stuff
+_ remove cursor reflection stuff
+_ key and mouse events delivered out of order
+_   http://dev.processing.org/bugs/show_bug.cgi?id=638
 _ Java2D textLinePlacedImpl should check for ENABLE_NATIVE_FONTS hint
 _   http://dev.processing.org/bugs/show_bug.cgi?id=633
 _ also try to check native font on textFont() commands
 _   in case the hint() has been enabled in the meantime
 _   or rather, always load native font, even w/o the hint() being set
+
+_ text characters showing up as opaque rectangles in tga files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=641
+_   solution is to implement alpha compositing across all of P3D 
+_   http://en.wikipedia.org/wiki/Alpha_compositing
 
 _ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
 _   images with 0x00 in their high bits being drawn transparent
@@ -49,17 +78,7 @@ _   is fill() not coloring textures properly?
 _     don't need to apply tint() to textures, supposed to use fill color
 Hope this helps:  If you haven't tracked it down yet... it's in PTriangle, when a flat-shaded textured triangle is drawn, then the rgb of the tint isn't used.  So, for example, if the triangle renderer branches to drawsegment_texture32() the tint rgb won't be used, whereas if it branches to drawsegment_gouraud_texture32() then the tint rgb WILL be used.  Alpha gets used from tint, because all alpha has to do is be != 255, but for rgb to get used they values have to differ among vertices (which won't happen via the image() routine for example).  The quick fix might be to insert an additional test in setIntensities() to check if parent.tint is true, and if so then force gouraud shading, INTERPOLATE_RGB=true.
 
-fixed in 0125 by ewjordan
-X accuracy in P3D is very low
-X   http://dev.processing.org/bugs/show_bug.cgi?id=95
-X textured polys throwing a lot of exceptions (ouch)  
-X   http://dev.processing.org/bugs/show_bug.cgi?id=546
-X polygons in z axis with nonzero x or y not filling properly
-X   http://dev.processing.org/bugs/show_bug.cgi?id=547
-
-_ text characters showing up as opaque rectangles in tga files
-
-_ fix svg caps/joins for opengl
+_ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
 
 _ should loadFont() work with ttf files (instead of createFont?)
@@ -130,13 +149,6 @@ if ((nextPress == null) ||
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
-
-_ add to open() reference problems with mac
-_   need to use the 'open' command on osx
-_   or need to do this by hand
-_   prolly better to do it by default, since on windows we use cmd?
-_   check to see if the user has 'open' in there already
-_   they can call Runtime.getRuntime().exec() if they want more control
 
 should be fixed, but needs to be tested
 _ saveFrame() produces a black background because bg not set correctly:
