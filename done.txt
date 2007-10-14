@@ -1,3 +1,37 @@
+0127 pde
+X mark untitled sketches as modified when adding files
+X opening an already open sketch will result in two identical sketches open
+X   just bring the other window to the front
+X   http://dev.processing.org/bugs/show_bug.cgi?id=636
+X replace untitled windows with opened sketches
+X   but do so without opening a new window and hiding the other
+X re-enable update check (0126 wasn't reporting anything.. ugh)
+o remove the "ask for sketch name on create"
+o   also remove shift-click behavior
+X add option to not close the environment when closing the last sketch
+
+documentation
+X make sure loadStrings(), loadImage(), etc all have security warning
+X rewrite the section on java versions to reflect 1.4 policy change
+o libraries should only be placed in the libraries folder
+o   or in the sketchbook in a subfolder named 'libraries'?
+o   what should the policy be?
+X keywords.txt needs revamp
+X   CLOSE is missing
+X   http://dev.processing.org/bugs/show_bug.cgi?id=637
+X syntax highlighting
+X   add MIN_FLOAT, MAX_FLOAT, MIN_INT, MAX_INT
+X match() method
+X added getChild(name/path), getChildren(name/path) to xml library
+X   add notes about these to the reference
+X   needs a better example that includes subitems
+X fix example that doesn't use nf
+
+fixed in earlier releases
+X undo after "import library" makes a blank screen
+X   http://processing.org/bugs/show_bug.cgi?id=41
+
+
 0126 pde
 o support for hashmap<> with 1.5 syntax
 o   http://dev.processing.org/bugs/show_bug.cgi?id=459
