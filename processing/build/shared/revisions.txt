@@ -7,6 +7,52 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0127 - 14 October 2007
+
+This release is primarily bug fixes. ** Be sure to read important 
+messages about release 0126 if you have not already **
+
+[ core bug fixes ]
+
++ Fix pixel operations in OpenGL (get, set, copy, blend, loadPixels, 
+  updatePixels, background and the rest).
+  http://dev.processing.org/bugs/show_bug.cgi?id=91
+
++ Fix major createGraphics() issues:
+  http://dev.processing.org/bugs/show_bug.cgi?id=594
+  http://dev.processing.org/bugs/show_bug.cgi?id=468
+  Though not all of them:
+  http://dev.processing.org/bugs/show_bug.cgi?id=641  
+
+[ pde bug fixes ]
+
++ Mark sketches as modified when adding files, so that they are
+  saved properly.
+
++ Replace untitled windows with opened sketches (rather than 
+  closing the old window and opening a new one)
+
++ Re-enable the Update Check in the PDE (was disabled in 0126).
+
++ Add option to not close the environment when closing the last
+  window. Instead, it will open a blank sketch. This is because 
+  it's not possible to keep a Java program open without a Frame
+  (or rather, to have a menubar without a Frame in a Java app).
+
++ Several updates to the keywords.txt file, syntax highlighting
+  should now be much more up to date.
+
++ Added reference for new versions of the XMLElement getChild() 
+  and getChildren() functions that use paths. 
+
++ Add reference for new match() method.
+
++ Fix animation example to use nf().
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0126 - 9 October 2007
 
 ** This should be considered more of an alpha quality release. Please 
