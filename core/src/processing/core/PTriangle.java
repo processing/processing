@@ -192,7 +192,7 @@ public class PTriangle implements PConstants
   private PGraphics3D parent;
 
   private boolean noDepthTest;
-  //private boolean argbSurface;
+  private boolean argbSurface;
 
   /** */
   private boolean m_culling;
@@ -201,7 +201,7 @@ public class PTriangle implements PConstants
   private boolean m_singleRight;
 
   /** */
-  private boolean m_bilinear;
+  private boolean m_bilinear = true;  // always set to true
 
 
   // Vectors needed in accurate texture code
@@ -257,7 +257,7 @@ public class PTriangle implements PConstants
     m_zbuffer = parent.zbuffer;
 
     noDepthTest = parent.hints[DISABLE_DEPTH_TEST];
-    //argbSurface = parent.format == PConstants.ARGB;
+    argbSurface = parent.format == PConstants.ARGB;
 
     // other things to reset
 
@@ -403,22 +403,12 @@ public class PTriangle implements PConstants
     INTERPOLATE_UV = true;
 
     if (image.format == ARGB) {
-      m_drawFlags|=R_TEXTURE32;
+      m_drawFlags |= R_TEXTURE32;
     } else if (image.format == RGB) {
-      m_drawFlags|=R_TEXTURE24;
+      m_drawFlags |= R_TEXTURE24;
     } else if (image.format == ALPHA) {
-      m_drawFlags|=R_TEXTURE8;
+      m_drawFlags |= R_TEXTURE8;
     }
-
-    //if (parent.hints[SMOOTH_IMAGES]) {
-    /*
-    if (parent.smooth) {
-      m_bilinear = true;
-    } else {
-      m_bilinear = false;
-    }
-    */
-    m_bilinear = true;
   }
 
 
@@ -1120,6 +1110,7 @@ public class PTriangle implements PConstants
     }
   }
 
+  
   /**
    * Plain color, interpolated alpha
    */
@@ -1149,8 +1140,8 @@ public class PTriangle implements PConstants
       float xdiff = (xstart + PIXEL_CENTER) - xleft;
       float iz = izadd * xdiff + zleft;
       int ia = (int) (iaf * xdiff + aleft);
-      xstart+=ytop;
-      xend+=ytop;
+      xstart += ytop;
+      xend += ytop;
 
       //int ma0 = 0xFF000000;
       
@@ -1175,8 +1166,8 @@ public class PTriangle implements PConstants
           mg0 = mg0 + (((pg - mg0) * alpha) >> 8);
           mb0 = mb0 + (((pb - mb0) * alpha) >> 8);
           
-          m_pixels[xstart] = 0xFF000000 | (mr0 & 0xFF0000) | (mg0 & 0xFF00) | (mb0 & 0xFF);
-          //m_pixels[xstart] = ma0 | (mr0 & 0xFF0000) | (mg0 & 0xFF00) | (mb0 & 0xFF);
+          m_pixels[xstart] = 0xFF000000 | 
+            (mr0 & 0xFF0000) | (mg0 & 0xFF00) | (mb0 & 0xFF);
 
           m_stencil[xstart] = p;
         }
@@ -2772,14 +2763,12 @@ public class PTriangle implements PConstants
   /**
    * Texture multiplied with gouraud
    */
-  private void drawsegment_gouraud_texture8_alpha
-    (
-     float leftadd,
-     float rghtadd,
-     int ytop,
-     int ybottom
-     ) {
-    //Accurate texture mode added - comments stripped from dupe code, see drawsegment_texture24() for details
+  private void drawsegment_gouraud_texture8_alpha(float leftadd,
+                                                  float rghtadd,
+                                                  int ytop,
+                                                  int ybottom) {
+    // Accurate texture mode added - comments stripped from dupe code, 
+    // see drawsegment_texture24() for details
     int ypixel = ytop;
     int lastRowStart = m_texture.length - TEX_WIDTH - 2;
     boolean accurateMode = parent.hints[ENABLE_ACCURATE_TEXTURES];
@@ -2787,15 +2776,18 @@ public class PTriangle implements PConstants
     float a = 0; float b = 0; float c = 0;
     int linearInterpPower = TEX_INTERP_POWER;
     int linearInterpLength = 1 << linearInterpPower;
-    if (accurateMode){
-      if(precomputeAccurateTexturing()){ //see if the precomputation goes well, if so finish the setup
+    if (accurateMode) {
+      // see if the precomputation goes well, if so finish the setup
+      if (precomputeAccurateTexturing()) { 
         newax *= linearInterpLength;
         newbx *= linearInterpLength;
         newcx *= linearInterpLength;
         screenz = nearPlaneDepth;
         firstSegment = false;
       } else{
-        accurateMode = false; //if the matrix inversion screwed up, revert to normal rendering (something is degenerate)
+        // if the matrix inversion screwed up, 
+        // revert to normal rendering (something is degenerate)
+        accurateMode = false; 
       }
     }
 
@@ -2892,50 +2884,47 @@ public class PTriangle implements PConstants
           interpCounter++;
         }
 
-        try
-          {
-            if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-              //m_zbuffer[xstart] = iz;
+        try {
+          if (noDepthTest || (iz <= m_zbuffer[xstart])) {
+            //m_zbuffer[xstart] = iz;
 
-              int al0;
-              if (m_bilinear) {
-                int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
-                int iui = iu & 0xFFFF;
-                al0 = m_texture[ofs] & 0xFF;
-                int al1 = m_texture[ofs + 1] & 0xFF;
-                if (ofs < lastRowStart) ofs+=TEX_WIDTH;
-                int al2 = m_texture[ofs] & 0xFF;
-                int al3 = m_texture[ofs + 1] & 0xFF;
-                al0 = al0 + (((al1-al0) * iui) >> 16);
-                al2 = al2 + (((al3-al2) * iui) >> 16);
-                al0 = al0 + (((al2-al0) * (iv & 0xFFFF)) >> 16);
-              } else {
-                al0 = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)] & 0xFF;
-              }
-              al0 = (al0 * (ia >> 16)) >> 8;
-
-              // get RGB colors
-              int red = ir & 0xFF0000;
-              int grn = (ig >> 8) & 0xFF00;
-              int blu = (ib >> 16);
-
-              // get buffer pixels
-              int bb = m_pixels[xstart];
-              int br = (bb & 0xFF0000);  // 0x00FF0000
-              int bg = (bb & 0xFF00);    // 0x0000FF00
-              bb = (bb & 0xFF);          // 0x000000FF
-              m_pixels[xstart] = 0xFF000000 | 
-                ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |
-                ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
-                ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
-
-              // write stencil
-              m_stencil[xstart] = p;
+            int al0;
+            if (m_bilinear) {
+              int ofs = (iv >> 16) * TEX_WIDTH + (iu >> 16);
+              int iui = iu & 0xFFFF;
+              al0 = m_texture[ofs] & 0xFF;
+              int al1 = m_texture[ofs + 1] & 0xFF;
+              if (ofs < lastRowStart) ofs+=TEX_WIDTH;
+              int al2 = m_texture[ofs] & 0xFF;
+              int al3 = m_texture[ofs + 1] & 0xFF;
+              al0 = al0 + (((al1-al0) * iui) >> 16);
+              al2 = al2 + (((al3-al2) * iui) >> 16);
+              al0 = al0 + (((al2-al0) * (iv & 0xFFFF)) >> 16);
+            } else {
+              al0 = m_texture[(iv >> 16) * TEX_WIDTH + (iu >> 16)] & 0xFF;
             }
-          }
-        catch (Exception e) {
+            al0 = (al0 * (ia >> 16)) >> 8;
 
-        }
+            // get RGB colors
+            int red = ir & 0xFF0000;
+            int grn = (ig >> 8) & 0xFF00;
+            int blu = (ib >> 16);
+
+            // get buffer pixels
+            int bb = m_pixels[xstart];
+            int br = (bb & 0xFF0000);  // 0x00FF0000
+            int bg = (bb & 0xFF00);    // 0x0000FF00
+            bb = (bb & 0xFF);          // 0x000000FF
+            
+            m_pixels[xstart] = 0xFF000000 |  
+              ((br + (((red - br) * al0) >> 8)) & 0xFF0000) |
+              ((bg + (((grn - bg) * al0) >> 8)) & 0xFF00) | 
+              ((bb + (((blu - bb) * al0) >> 8)) & 0xFF);
+
+            // write stencil
+            m_stencil[xstart] = p;
+          }
+        } catch (Exception e) { }
 
         //
         xpixel++;//accurate mode
