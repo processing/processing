@@ -45,8 +45,13 @@ import java.util.zip.*;
  * problems with redraw of components drawn above it. If you'd like to
  * integrate other Java components, see below.
  * <p/>
- * This class extends Applet instead of JApplet because 1) we will eventually
- * be returning Java 1.1 support, which does not include Swing (without an
+ * As of release 0126 of Processing, we have discontinued support for versions
+ * of Java prior to 1.4. We don't have enough people to support it, and for a
+ * project of our size, we should be focusing on the future, rather than 
+ * working around legacy Java code. 
+ * <p/>
+ * This class extends Applet instead of JApplet because 1) historically, 
+ * we supported Java 1.1, which does not include Swing (without an
  * additional, sizable, download), and 2) Swing is a bloated piece of crap.
  * A Processing applet is a heavyweight AWT component, and can be used the
  * same as any other AWT component, with or without Swing.
@@ -159,12 +164,6 @@ public class PApplet extends Applet
     new Float(javaVersionName.substring(0, 3)).floatValue();
 
   /**
-   * Current platform in use, one of the
-   * PConstants WINDOWS, MACOSX, MACOS9, LINUX or OTHER.
-   */
-  static public int platform;
-
-  /**
    * Current platform in use.
    * <P>
    * Equivalent to System.getProperty("os.name"), just used internally.
@@ -172,31 +171,24 @@ public class PApplet extends Applet
   static public String platformName =
     System.getProperty("os.name");
 
-  static {
-    // figure out which operating system
-    // this has to be first, since editor needs to know
+  /**
+   * Current platform in use, one of the
+   * PConstants WINDOWS, MACOSX, MACOS9, LINUX or OTHER.
+   */
+  static public int platform;
 
-    if (platformName.toLowerCase().indexOf("mac") != -1) {
-      // can only check this property if running on a mac
-      // on a pc it throws a security exception and kills the applet
-      // (but on the mac it does just fine)
-      if (System.getProperty("mrj.version") != null) {  // running on a mac
-        platform = (platformName.equals("Mac OS X")) ?
-          MACOSX : MACOS9;
-      }
+  static {
+    if (platformName.indexOf("Mac") != -1) {
+      platform = MACOSX;
+
+    } else if (platformName.indexOf("Windows") != -1) {
+      platform = WINDOWS;
+
+    } else if (platformName.equals("Linux")) {  // true for the ibm vm
+      platform = LINUX;
 
     } else {
-      String osname = System.getProperty("os.name");
-
-      if (osname.indexOf("Windows") != -1) {
-        platform = WINDOWS;
-
-      } else if (osname.equals("Linux")) {  // true for the ibm vm
-        platform = LINUX;
-
-      } else {
-        platform = OTHER;
-      }
+      platform = OTHER;
     }
   }
 
@@ -528,15 +520,16 @@ public class PApplet extends Applet
     Dimension initialSize = getSize();
 
     // send tab keys through to the PApplet
-    try {
-      if (javaVersion >= 1.4f) {
-        //setFocusTraversalKeysEnabled(false);  // 1.4-only function
-        Method defocus =
-          Component.class.getMethod("setFocusTraversalKeysEnabled",
-                                    new Class[] { Boolean.TYPE });
-        defocus.invoke(this, new Object[] { Boolean.FALSE });
-      }
-    } catch (Exception e) { }  // oh well
+    setFocusTraversalKeysEnabled(false);
+//    try {
+//      if (javaVersion >= 1.4f) {
+//        //setFocusTraversalKeysEnabled(false);  // 1.4-only function
+//        Method defocus =
+//          Component.class.getMethod("setFocusTraversalKeysEnabled",
+//                                    new Class[] { Boolean.TYPE });
+//        defocus.invoke(this, new Object[] { Boolean.FALSE });
+//      }
+//    } catch (Exception e) { }  // oh well
 
     millisOffset = System.currentTimeMillis();
 
@@ -563,19 +556,19 @@ public class PApplet extends Applet
       online = false;
     }
 
-    if (javaVersion < 1.3f) {
-      addMouseListener(new MouseAdapter() {
-          public void mousePressed(MouseEvent e) {
-            link("http://java.com/");
-          }
-        });
-      // no init to do, so don't cause no trouble, boy
-      return;
-      // call this after making the methods to minimize the
-      // number of places needing the javaVersion crap
-      // (also needs to check online first and create empty
-      // stop method register list)
-    }
+//    if (javaVersion < 1.3f) {
+//      addMouseListener(new MouseAdapter() {
+//          public void mousePressed(MouseEvent e) {
+//            link("http://java.com/");
+//          }
+//        });
+//      // no init to do, so don't cause no trouble, boy
+//      return;
+//      // call this after making the methods to minimize the
+//      // number of places needing the javaVersion crap
+//      // (also needs to check online first and create empty
+//      // stop method register list)
+//    }
 
     try {
       if (sketchPath == null) {
@@ -613,7 +606,7 @@ public class PApplet extends Applet
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
-    if (javaVersion < 1.3f) return;
+    //if (javaVersion < 1.3f) return;
 
     if (thread != null) return;
     thread = new Thread(this);
@@ -1264,19 +1257,19 @@ public class PApplet extends Applet
 
 
   synchronized public void paint(Graphics screen) {
-    if (javaVersion < 1.3f) {
-      screen.setColor(new Color(64, 64, 64));
-      Dimension size = getSize();
-      screen.fillRect(0, 0, size.width, size.height);
-      screen.setColor(Color.white);
-      screen.setFont(new Font("Dialog", Font.PLAIN, 9));
-      screen.drawString("You need to install", 3, 15);
-      screen.drawString("Java 1.3 or later", 3, 28);
-      screen.drawString("to view this content.", 3, 41);
-      screen.drawString("Click here to visit", 3, 59);
-      screen.drawString("java.com and install.", 3, 72);
-      return;
-    }
+//    if (javaVersion < 1.3f) {
+//      screen.setColor(new Color(64, 64, 64));
+//      Dimension size = getSize();
+//      screen.fillRect(0, 0, size.width, size.height);
+//      screen.setColor(Color.white);
+//      screen.setFont(new Font("Dialog", Font.PLAIN, 9));
+//      screen.drawString("You need to install", 3, 15);
+//      screen.drawString("Java 1.3 or later", 3, 28);
+//      screen.drawString("to view this content.", 3, 41);
+//      screen.drawString("Click here to visit", 3, 59);
+//      screen.drawString("java.com and install.", 3, 72);
+//      return;
+//    }
 
     //System.out.println("PApplet.paint()");
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
@@ -2595,10 +2588,10 @@ public class PApplet extends Applet
   /**
    * Set the cursor type
    */
-  public void cursor(int _cursor_type) {
-    setCursor(Cursor.getPredefinedCursor(_cursor_type));
+  public void cursor(int cursorType) {
+    setCursor(Cursor.getPredefinedCursor(cursorType));
     cursorVisible = true;
-    cursorType = _cursor_type;
+    this.cursorType = cursorType;
   }
 
 
@@ -2618,45 +2611,20 @@ public class PApplet extends Applet
    * <P>
    * Based on code contributed by Amit Pitaru, plus additional
    * code to handle Java versions via reflection by Jonathan Feinberg.
+   * Reflection removed for release 0128 and later.
    */
   public void cursor(PImage image, int hotspotX, int hotspotY) {
-    if (javaVersion < 1.2f) {
-      System.err.println("Java 1.2 or higher is required to use cursor()");
-      System.err.println("(You're using version " + javaVersionName + ")");
-      return;
-    }
-
     // don't set this as cursor type, instead use cursor_type
     // to save the last cursor used in case cursor() is called
     //cursor_type = Cursor.CUSTOM_CURSOR;
     Image jimage =
       createImage(new MemoryImageSource(image.width, image.height,
                                         image.pixels, 0, image.width));
-
     Point hotspot = new Point(hotspotX, hotspotY);
-    try {
-      Method mCustomCursor =
-        Toolkit.class.getMethod("createCustomCursor",
-                                new Class[] { Image.class,
-                                              Point.class,
-                                              String.class, });
-      Cursor cursor =
-        (Cursor)mCustomCursor.invoke(Toolkit.getDefaultToolkit(),
-                                     new Object[] { jimage,
-                                                    hotspot,
-                                                    "no cursor" });
-      setCursor(cursor);
-      cursorVisible = true;
-
-    } catch (NoSuchMethodError e) {
-      System.err.println("cursor() is not available " +
-                         "when using Java " + javaVersionName);
-    } catch (IndexOutOfBoundsException e) {
-      System.err.println("cursor() error: the hotspot " + hotspot +
-                         " is out of bounds for the given image.");
-    } catch (Exception e) {
-      System.err.println(e);
-    }
+    Toolkit tk = Toolkit.getDefaultToolkit();
+    Cursor cursor = tk.createCustomCursor(jimage, hotspot, "Custom Cursor");
+    setCursor(cursor);
+    cursorVisible = true;
   }
 
 
@@ -2687,8 +2655,8 @@ public class PApplet extends Applet
       invisibleCursor = new PImage(16, 16, ARGB);
     }
     // was formerly 16x16, but the 0x0 was added by jdf as a fix
-    // for macosx, which didn't wasn't honoring the invisible cursor
-    cursor(invisibleCursor, 0, 0);
+    // for macosx, which wasn't honoring the invisible cursor
+    cursor(invisibleCursor, 8, 8);
     cursorVisible = false;
   }
 
@@ -3601,11 +3569,11 @@ public class PApplet extends Applet
 
     // Make sure that PNG images aren't being loaded by Java 1.1
     //if (lower.endsWith(".png") && PApplet.javaVersion < 1.3f) {
-    if (extension.equals("png") && PApplet.javaVersion < 1.3f) {
-      System.err.println("PNG images can only be loaded when " +
-                         "using Java 1.3 and later.");
-      return null;
-    }
+//    if (extension.equals("png") && PApplet.javaVersion < 1.3f) {
+//      System.err.println("PNG images can only be loaded when " +
+//                         "using Java 1.3 and later.");
+//      return null;
+//    }
 
     // For jpeg, gif, and png, load them using createImage(),
     // because the javax.imageio code was found to be much slower, see
@@ -3635,28 +3603,28 @@ public class PApplet extends Applet
       e.printStackTrace();
     }
 
-    if (PApplet.javaVersion >= 1.4f) {
-      if (loadImageFormats == null) {
-        //loadImageFormats = javax.imageio.ImageIO.getReaderFormatNames();
-        try {
-          Class ioClass = Class.forName("javax.imageio.ImageIO");
-          Method getFormatNamesMethod =
-            ioClass.getMethod("getReaderFormatNames", (Class[]) null);
-          loadImageFormats = (String[])
-            getFormatNamesMethod.invoke((Class[]) null, (Object[]) null);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+    //if (PApplet.javaVersion >= 1.4f) {
+    if (loadImageFormats == null) {
+      //loadImageFormats = javax.imageio.ImageIO.getReaderFormatNames();
+      try {
+        Class ioClass = Class.forName("javax.imageio.ImageIO");
+        Method getFormatNamesMethod =
+          ioClass.getMethod("getReaderFormatNames", (Class[]) null);
+        loadImageFormats = (String[])
+        getFormatNamesMethod.invoke((Class[]) null, (Object[]) null);
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-      if (loadImageFormats != null) {
-        for (int i = 0; i < loadImageFormats.length; i++) {
-          //if (filename.endsWith("." + loadImageFormats[i])) {
-          if (extension.equals(loadImageFormats[i])) {
-            return loadImageIO(filename);
-          }
+    }
+    if (loadImageFormats != null) {
+      for (int i = 0; i < loadImageFormats.length; i++) {
+        //if (filename.endsWith("." + loadImageFormats[i])) {
+        if (extension.equals(loadImageFormats[i])) {
+          return loadImageIO(filename);
         }
       }
     }
+    //}
 
     // failed, could not load image after all those attempts
     System.err.println("Could not find a method to load " + filename);
@@ -4061,10 +4029,10 @@ public class PApplet extends Applet
    */
   public PFont createFont(String name, float size,
                           boolean smooth, char charset[]) {
-    if (PApplet.javaVersion < 1.3f) {
-      throw new RuntimeException("Can only create fonts with " +
-                                 "Java 1.3 or higher");
-    }
+//    if (PApplet.javaVersion < 1.3f) {
+//      throw new RuntimeException("Can only create fonts with " +
+//                                 "Java 1.3 or higher");
+//    }
 
     String lowerName = name.toLowerCase();
     Font font = null;

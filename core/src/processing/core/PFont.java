@@ -25,8 +25,11 @@
 package processing.core;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.*;
-import java.lang.reflect.*;
+//import java.lang.reflect.*;
+import java.util.Arrays;
 
 
 /**
@@ -655,18 +658,17 @@ public class PFont implements PConstants {
 
 
   /**
-   * Use reflection to create a new .vlw font on the fly.
-   * This only works with Java 1.3 and higher.
+   * Create a new image-based font on the fly.
    *
    * @param font the font object to create from
    * @param charset array of all unicode chars that should be included
    * @param smooth true to enable smoothing/anti-aliasing
    */
   public PFont(Font font, boolean smooth, char charset[]) {
-    if (PApplet.javaVersion < 1.3f) {
-      throw new RuntimeException("Can only create fonts with " +
-                                 "Java 1.3 or higher");
-    }
+//    if (PApplet.javaVersion < 1.3f) {
+//      throw new RuntimeException("Can only create fonts with " +
+//                                 "Java 1.3 or higher");
+//    }
 
     // save this so that we can use the native version
     this.font = font;
@@ -675,51 +677,49 @@ public class PFont implements PConstants {
     name = font.getName();
     psname = font.getPSName();
 
-    try {
-      // fix regression from sorting (bug #564)
-      if (charset != null) {
-        // charset needs to be sorted to make index lookup run more quickly
-        // http://dev.processing.org/bugs/show_bug.cgi?id=494
-        //Arrays.sort(charset);
-        Class arraysClass = Class.forName("java.util.Arrays");
-        Method sortMethod =
-          arraysClass.getMethod("sort", new Class[] { charset.getClass() });
-        sortMethod.invoke(null, new Object[] { charset });
-      }
+    //try {
+    // fix regression from sorting (bug #564)
+    if (charset != null) {
+      // charset needs to be sorted to make index lookup run more quickly
+      // http://dev.processing.org/bugs/show_bug.cgi?id=494
+      Arrays.sort(charset);
+//    Class arraysClass = Class.forName("java.util.Arrays");
+//    Method sortMethod =
+//    arraysClass.getMethod("sort", new Class[] { charset.getClass() });
+//    sortMethod.invoke(null, new Object[] { charset });
+    }
 
-      // the count gets reset later based on how many of
-      // the chars are actually found inside the font.
-      this.charCount = (charset == null) ? 65536 : charset.length;
-      this.size = font.getSize();
+    // the count gets reset later based on how many of
+    // the chars are actually found inside the font.
+    this.charCount = (charset == null) ? 65536 : charset.length;
+    this.size = font.getSize();
 
-      fwidth = fheight = size;
+    fwidth = fheight = size;
 
-      PImage bitmaps[] = new PImage[charCount];
+    PImage bitmaps[] = new PImage[charCount];
 
-      // allocate enough space for the character info
-      value       = new int[charCount];
-      height      = new int[charCount];
-      width       = new int[charCount];
-      setWidth    = new int[charCount];
-      topExtent   = new int[charCount];
-      leftExtent  = new int[charCount];
+    // allocate enough space for the character info
+    value       = new int[charCount];
+    height      = new int[charCount];
+    width       = new int[charCount];
+    setWidth    = new int[charCount];
+    topExtent   = new int[charCount];
+    leftExtent  = new int[charCount];
 
-      ascii = new int[128];
-      for (int i = 0; i < 128; i++) ascii[i] = -1;
+    ascii = new int[128];
+    for (int i = 0; i < 128; i++) ascii[i] = -1;
 
-      int mbox3 = size * 3;
+    int mbox3 = size * 3;
 
+    BufferedImage playground =
+      new BufferedImage(mbox3, mbox3, BufferedImage.TYPE_INT_RGB);
+
+    Graphics2D g = (Graphics2D) playground.getGraphics();
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                       smooth ?
+                       RenderingHints.VALUE_ANTIALIAS_ON :
+                       RenderingHints.VALUE_ANTIALIAS_OFF);
       /*
-        BufferedImage playground =
-          new BufferedImage(mbox3, mbox3, BufferedImage.TYPE_INT_RGB);
-
-        Graphics2D g = (Graphics2D) playground.getGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                           smooth ?
-                           RenderingHints.VALUE_ANTIALIAS_ON :
-                           RenderingHints.VALUE_ANTIALIAS_OFF);
-      */
-
       Class bufferedImageClass =
         Class.forName("java.awt.image.BufferedImage");
       Constructor bufferedImageConstructor =
@@ -768,15 +768,17 @@ public class PFont implements PConstants {
         antialiasingKey,
         antialiasState
       });
+      */
 
-      g.setFont(font);
-      FontMetrics metrics = g.getFontMetrics();
+    g.setFont(font);
+    FontMetrics metrics = g.getFontMetrics();
 
+    int samples[] = new int[mbox3 * mbox3];
+
+      /*
       Method canDisplayMethod = null;
       Method getDataMethod = null;
       Method getSamplesMethod = null;
-
-      int samples[] = new int[mbox3 * mbox3];
 
       canDisplayMethod =
         Font.class.getMethod("canDisplay", new Class[] { Character.TYPE });
@@ -798,26 +800,27 @@ public class PFont implements PConstants {
       //e.printStackTrace();
       //return;
       //}
-
-    //Array samples = Array.newInstance(Integer.TYPE, mbox3*mbox3);
+      */
 
     int maxWidthHeight = 0;
     int index = 0;
     for (int i = 0; i < charCount; i++) {
       char c = (charset == null) ? (char)i : charset[i];
 
-      //if (!font.canDisplay(c)) {  // skip chars not in the font
-      try {
-        Character ch = new Character(c);
-        Boolean canDisplay = (Boolean)
-          canDisplayMethod.invoke(font, new Object[] { ch });
-        if (canDisplay.booleanValue() == false) {
-          continue;
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-        return;
+      if (!font.canDisplay(c)) {  // skip chars not in the font
+        continue;
       }
+//      try {
+//        Character ch = new Character(c);
+//        Boolean canDisplay = (Boolean)
+//          canDisplayMethod.invoke(font, new Object[] { ch });
+//        if (canDisplay.booleanValue() == false) {
+//          continue;
+//        }
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//        return;
+//      }
 
       g.setColor(Color.white);
       g.fillRect(0, 0, mbox3, mbox3);
@@ -825,11 +828,10 @@ public class PFont implements PConstants {
       g.drawString(String.valueOf(c), size, size * 2);
 
       // grabs copy of the current data.. so no updates (do each time)
-      /*
       Raster raster = playground.getData();
       raster.getSamples(0, 0, mbox3, mbox3, 0, samples);
-      */
 
+      /*
       Object raster = getDataMethod.invoke(playground, new Object[] {});
       getSamplesMethod.invoke(raster, new Object[] {
         new Integer(0),
@@ -839,8 +841,8 @@ public class PFont implements PConstants {
         new Integer(0),
         samples
       });
+      */
 
-      //int w = metrics.charWidth(c);
       int minX = 1000, maxX = 0;
       int minY = 1000, maxY = 0;
       boolean pixelFound = false;
@@ -858,27 +860,15 @@ public class PFont implements PConstants {
             if (x > maxX) maxX = x;
             if (y > maxY) maxY = y;
             pixelFound = true;
-            //System.out.println(x + " " + y + " = " + sample);
           }
         }
       }
 
       if (!pixelFound) {
-        //System.out.println("no pixels found in unicode char " + c +
-        //                 "(" + PApplet.hex(c) + ")");
-        // this was dumb that it was set to 20 & 30, because for small
-        // fonts, those guys don't exist
-        minX = minY = 0; //20;
-        maxX = maxY = 0; //30;
-
+        minX = minY = 0;
+        maxX = maxY = 0;
         // this will create a 1 pixel white (clear) character..
         // maybe better to set one to -1 so nothing is added?
-        /*
-      } else {
-        System.out.println(PApplet.hex(c) + " has bounds " +
-                           minX + ", " + minY + " to " +
-                           maxX + ", " + maxY);
-        */
       }
 
       value[index] = c;
@@ -956,10 +946,10 @@ public class PFont implements PConstants {
       bitmaps[i] = null;
     }
 
-    } catch (Exception e) {  // catch-all for reflection stuff
-      e.printStackTrace();
-      throw new RuntimeException(e.getMessage());
-    }
+//    } catch (Exception e) {  // catch-all for reflection stuff
+//      e.printStackTrace();
+//      throw new RuntimeException(e.getMessage());
+//    }
   }
 
 
@@ -969,7 +959,7 @@ public class PFont implements PConstants {
    * only TrueType fonts. OpenType fonts with CFF data such as Adobe's
    * OpenType fonts seem to have trouble (even though they're sort of
    * TrueType fonts as well, or may have a .ttf extension). Regular
-   * PostScript fonts seem to work O.K. though.
+   * PostScript fonts seem to work OK, however.
    * <P>
    * Not recommended for use in applets, but this is implemented
    * in PFont because the Java methods to access this information
@@ -978,42 +968,42 @@ public class PFont implements PConstants {
    * that the seems to have made its way into the Java API after 1.1.
    */
   static public String[] list() {
-    if (PApplet.javaVersion < 1.3f) {
-      // make this reflection too, since compilers complain about the
-      // deprecation, and it's bound to stop working in 1.6 or something
-      //return Toolkit.getDefaultToolkit().getFontList();
-      try {
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        Method getFontListMethod =
-          tk.getClass().getMethod("getFontList", (Class[]) null);
-        return (String[]) getFontListMethod.invoke(tk, (Object[]) null);
-      } catch (Exception e) {
-        e.printStackTrace();
-        return new String[] { };
-      }
-    }
+//    if (PApplet.javaVersion < 1.3f) {
+//      // make this reflection too, since compilers complain about the
+//      // deprecation, and it's bound to stop working in 1.6 or something
+//      //return Toolkit.getDefaultToolkit().getFontList();
+//      try {
+//        Toolkit tk = Toolkit.getDefaultToolkit();
+//        Method getFontListMethod =
+//          tk.getClass().getMethod("getFontList", (Class[]) null);
+//        return (String[]) getFontListMethod.invoke(tk, (Object[]) null);
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//        return new String[] { };
+//      }
+//    }
 
     // getFontList is deprecated in 1.4, so this has to be used
-    try {
-      //GraphicsEnvironment ge =
-      //  GraphicsEnvironment.getLocalGraphicsEnvironment();
-      Class geClass = Class.forName("java.awt.GraphicsEnvironment");
-      Method glgeMethod =
-        geClass.getMethod("getLocalGraphicsEnvironment", (Class[]) null);
-      Object ge = glgeMethod.invoke((Class[]) null, (Object[]) null);
+    //try {
+      GraphicsEnvironment ge =
+        GraphicsEnvironment.getLocalGraphicsEnvironment();
+//      Class geClass = Class.forName("java.awt.GraphicsEnvironment");
+//      Method glgeMethod =
+//        geClass.getMethod("getLocalGraphicsEnvironment", (Class[]) null);
+//      Object ge = glgeMethod.invoke((Class[]) null, (Object[]) null);
 
-      //Font fonts[] = ge.getAllFonts();
-      Method gafMethod = geClass.getMethod("getAllFonts", (Class[]) null);
-      Font fonts[] = (Font[]) gafMethod.invoke(ge, (Object[]) null);
+      Font fonts[] = ge.getAllFonts();
+//      Method gafMethod = geClass.getMethod("getAllFonts", (Class[]) null);
+//      Font fonts[] = (Font[]) gafMethod.invoke(ge, (Object[]) null);
       String list[] = new String[fonts.length];
       for (int i = 0; i < list.length; i++) {
         list[i] = fonts[i].getName();
       }
       return list;
 
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException("Error inside PFont.list()");
-    }
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      throw new RuntimeException("Error inside PFont.list()");
+//    }
   }
 }
