@@ -1,11 +1,15 @@
 0128 core
 X remove PFont reflection stuff
 X remove cursor reflection stuff
-
-X implement sortCompare() and sortSwap()
-X   discuss this with casey
-_   also could be using Arrays.sort(blah) with Comparable (1.2+)
-_ make sorting functions static?
+X fix up sorting functions
+X   implement sortCompare() and sortSwap()
+X      discuss this with casey
+X   also could be using Arrays.sort(blah) with Comparable (1.2+)
+X   make sorting functions static
+X   use methods from Arrays class, cuts down on code significantly
+o should loadFont() work with ttf files (instead of createFont?)
+X   otherwise loadFont() would work with font names as well, awkward
+X   better to use createFont() for both
 
 _ fix getFontMetrics() warning
 _ key and mouse events delivered out of order
@@ -45,8 +49,6 @@ Hope this helps:  If you haven't tracked it down yet... it's in PTriangle, when 
 
 _ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
-
-_ should loadFont() work with ttf files (instead of createFont?)
 
 _ opengl mipmaps are leaking (regression in spite of #150 fix)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=610

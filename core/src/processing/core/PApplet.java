@@ -4849,222 +4849,77 @@ public class PApplet extends Applet
     }
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
   // SORT
 
-  int sort_mode;
-
-  static final int BYTES   = 1;
-  static final int CHARS   = 2;
-  static final int INTS    = 3;
-  static final int FLOATS  = 4;
-  static final int STRINGS = 5;
-  static final int OBJECTS = 6;
-
-  byte sort_bytes[];
-  char sort_chars[];
-  int sort_ints[];
-  float sort_floats[];
-  String sort_strings[];
-
-  Object sortObject;
-  Method swapMethod;
-  Method compareMethod;
-
-  public byte[] sort(byte what[]) {
+  
+  static public byte[] sort(byte what[]) {
     return sort(what, what.length);
   }
+  
+  
+  static public byte[] sort(byte[] what, int count) {
+    byte[] outgoing = new byte[what.length];
+    System.arraycopy(what, 0, outgoing, 0, what.length);
+    Arrays.sort(outgoing, 0, count);
+    return outgoing;
+  }
 
-  public char[] sort(char what[]) {
+
+  static public char[] sort(char what[]) {
     return sort(what, what.length);
   }
+  
+  
+  static public char[] sort(char[] what, int count) {
+    char[] outgoing = new char[what.length];
+    System.arraycopy(what, 0, outgoing, 0, what.length);
+    Arrays.sort(outgoing, 0, count);
+    return outgoing;
+  }
 
-  public int[] sort(int what[]) {
+  
+  static public int[] sort(int what[]) {
     return sort(what, what.length);
   }
+  
+  
+  static public int[] sort(int[] what, int count) {
+    int[] outgoing = new int[what.length];
+    System.arraycopy(what, 0, outgoing, 0, what.length);
+    Arrays.sort(outgoing, 0, count);
+    return outgoing;
+  }
 
-  public float[] sort(float what[]) {
+  
+  static public float[] sort(float what[]) {
     return sort(what, what.length);
   }
+  
+  
+  static public float[] sort(float[] what, int count) {
+    float[] outgoing = new float[what.length];
+    System.arraycopy(what, 0, outgoing, 0, what.length);
+    Arrays.sort(outgoing, 0, count);
+    return outgoing;
+  }
 
-  public String[] sort(String what[]) {
+
+  static public String[] sort(String what[]) {
     return sort(what, what.length);
   }
-
-  //
-
-  public byte[] sort(byte what[], int count) {
-    if (count == 0) return what;
-    sort_mode = BYTES;
-    sort_bytes = new byte[count];
-    System.arraycopy(what, 0, sort_bytes, 0, count);
-    sort_internal(0, count-1);
-    return sort_bytes;
+  
+  
+  static public String[] sort(String[] what, int count) {
+    String[] outgoing = new String[what.length];
+    System.arraycopy(what, 0, outgoing, 0, what.length);
+    Arrays.sort(outgoing, 0, count);
+    return outgoing;
   }
-
-  public char[] sort(char what[], int count) {
-    if (count == 0) return what;
-    sort_mode = CHARS;
-    sort_chars = new char[count];
-    System.arraycopy(what, 0, sort_chars, 0, count);
-    sort_internal(0, count-1);
-    return sort_chars;
-  }
-
-  public int[] sort(int what[], int count) {
-    if (count == 0) return what;
-    sort_mode = INTS;
-    sort_ints = new int[count];
-    System.arraycopy(what, 0, sort_ints, 0, count);
-    sort_internal(0, count-1);
-    return sort_ints;
-  }
-
-  public float[] sort(float what[], int count) {
-    if (count == 0) return what;
-    sort_mode = FLOATS;
-    sort_floats = new float[count];
-    System.arraycopy(what, 0, sort_floats, 0, count);
-    sort_internal(0, count-1);
-    return sort_floats;
-  }
-
-  public String[] sort(String what[], int count) {
-    if (count == 0) return what;
-    sort_mode = STRINGS;
-    sort_strings = new String[count];
-    System.arraycopy(what, 0, sort_strings, 0, count);
-    sort_internal(0, count-1);
-    return sort_strings;
-  }
-
-  /*
-  public void sort(Object what, int count) {
-    if (count == 0) return null;
-    sort_mode = OBJECTS;
-    sort_strings = new String[count];
-    System.arraycopy(what, 0, sort_strings, 0, count);
-    sort_internal(0, count-1);
-    return sort_strings;
-  }
-  */
-
-  //
-
-  protected void sort_internal(int i, int j) {
-    int pivotIndex = (i+j)/2;
-    sort_swap(pivotIndex, j);
-    int k = sort_partition(i-1, j);
-    sort_swap(k, j);
-    if ((k-i) > 1) sort_internal(i, k-1);
-    if ((j-k) > 1) sort_internal(k+1, j);
-  }
-
-
-  protected int sort_partition(int left, int right) {
-    int pivot = right;
-    do {
-      while (sort_compare(++left, pivot) < 0) { }
-      while ((right != 0) && (sort_compare(--right, pivot) > 0)) { }
-      sort_swap(left, right);
-    } while (left < right);
-    sort_swap(left, right);
-    return left;
-  }
-
-
-  protected void sort_swap(int a, int b) {
-    switch (sort_mode) {
-    case BYTES:
-      byte btemp = sort_bytes[a];
-      sort_bytes[a] = sort_bytes[b];
-      sort_bytes[b] = btemp;
-      break;
-    case CHARS:
-      char ctemp = sort_chars[a];
-      sort_chars[a] = sort_chars[b];
-      sort_chars[b] = ctemp;
-      break;
-    case INTS:
-      int itemp = sort_ints[a];
-      sort_ints[a] = sort_ints[b];
-      sort_ints[b] = itemp;
-      break;
-    case FLOATS:
-      float ftemp = sort_floats[a];
-      sort_floats[a] = sort_floats[b];
-      sort_floats[b] = ftemp;
-      break;
-    case STRINGS:
-      String stemp = sort_strings[a];
-      sort_strings[a] = sort_strings[b];
-      sort_strings[b] = stemp;
-      break;
-    case OBJECTS:
-      try {
-        Object[] params = new Object[] { new Integer(a), new Integer(b) };
-        swapMethod.invoke(sortObject, params);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-
-  protected float sort_compare(int a, int b) {
-    switch (sort_mode) {
-    case BYTES:
-      return sort_bytes[a] - sort_bytes[b];
-    case CHARS:
-      return sort_chars[a] - sort_chars[b];
-    case INTS:
-      return sort_ints[a] - sort_ints[b];
-    case FLOATS:
-      // can't just cast to an int because 0.2 and 0.4 would
-      // just appear to be the same thing. no good.
-      //if (sort_floats[a] < sort_floats[b]) return -1;
-      //return (sort_floats[a] == sort_floats[b]) ? 0 : 1;
-      return sort_floats[a] - sort_floats[b];
-    case STRINGS:
-      //return sort_strings[a].compareTo(sort_strings[b]);
-      //return sort_strings[a].compareToIgnoreCase(sort_strings[b]);  // 1.2
-      return sort_strings[a].toLowerCase().
-        compareTo(sort_strings[b].toLowerCase());
-    case OBJECTS:
-      try {
-        Object[] params = new Object[] { new Integer(a), new Integer(b) };
-        Float output = (Float) compareMethod.invoke(sortObject, params);
-        return output.floatValue();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    return 0;
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void sort(Object o, int count) {
-    Class c = o.getClass();
-    try {
-      Class[] params = new Class[] { Integer.TYPE, Integer.TYPE };
-      // takes two ints, returns a float
-      compareMethod = c.getMethod("sortCompare", params);
-      // takes two ints, returns void
-      swapMethod = c.getMethod("sortSwap", params);
-      // start the sort
-      sortObject = o;
-      sort_mode = OBJECTS;
-      sort_internal(0, count-1);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+  
 
 
   //////////////////////////////////////////////////////////////
@@ -5626,19 +5481,6 @@ public class PApplet extends Applet
    */
   static public String trim(String str) {
     return str.replace('\u00A0', ' ').trim();
-
-    /*
-    int left = 0;
-    int right = str.length() - 1;
-
-    while ((left <= right) &&
-           (WHITESPACE.indexOf(str.charAt(left)) != -1)) left++;
-    if (left == right) return "";
-
-    while (WHITESPACE.indexOf(str.charAt(right)) != -1) --right;
-
-    return str.substring(left, right-left+1);
-    */
   }
 
 
@@ -5733,7 +5575,8 @@ public class PApplet extends Applet
 
   /**
    * Split a string into pieces along a specific character.
-   * Most commonly used to break up a String along tab characters.
+   * Most commonly used to break up a String along a space or a tab 
+   * character.
    * <P>
    * This operates differently than the others, where the
    * single delimeter is the only breaking point, and consecutive
@@ -5783,7 +5626,7 @@ public class PApplet extends Applet
 
 
   /**
-   * FIXME this is only temporary
+   * Split a String on a specific delimiter.
    */
   static public String[] split(String what, String delim) {
     return what.split(delim);
