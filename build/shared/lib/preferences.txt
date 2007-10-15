@@ -265,8 +265,8 @@ preproc.substitute_unicode = true
 # viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
 preproc.output_parse_tree = false
 
-# jdk version to use.. 
-preproc.jdk_version = 1.1
+# jdk version to use.. (changed to 1.4 for release 0128 and later)
+preproc.jdk_version = 1.4
 
 # base imports to include for java 1.1 (or higher)
 preproc.imports.jdk11 = java.applet,java.awt,java.awt.image,java.awt.event,java.io,java.net,java.text,java.util,java.util.zip
