@@ -159,7 +159,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public int pixelCount;
 
   /// true if defaults() has been called a first time
-  protected boolean defaultsInited;
+  public boolean defaultsInited;
 
   /// true if in-between beginDraw() and endDraw()
   protected boolean insideDraw;
@@ -772,10 +772,10 @@ public abstract class PGraphics extends PImage implements PConstants {
     // they have to call background() themselves, otherwise everything gets
     // a gray background (when just a transparent surface or an empty pdf
     // is what's desired)
-    if (mainDrawingSurface) {
-      //System.out.println("main drawing surface");
-      background(backgroundColor);
-    }
+//    if (mainDrawingSurface) {
+//      //System.out.println("main drawing surface");
+//      background(backgroundColor);
+//    }
 
     defaultsInited = true;
   }
