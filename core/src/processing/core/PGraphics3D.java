@@ -27,6 +27,7 @@ package processing.core;
 import java.awt.Toolkit;
 import java.awt.image.DirectColorModel;
 import java.awt.image.MemoryImageSource;
+import java.util.Arrays;
 
 
 /**
@@ -307,12 +308,8 @@ public class PGraphics3D extends PGraphics {
     zbuffer = new float[pixelCount];
 
     if (mainDrawingSurface) {
-      // because of a java 1.1 bug, pixels must be registered as
-      // opaque before their first run, the memimgsrc will flicker
-      // and run very slowly.
-      //backgroundColor |= 0xff000000;  // just for good measure
-      for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
-      //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
+      //for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
+      Arrays.fill(pixels, backgroundColor);
 
       cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
       mis = new MemoryImageSource(width, height, pixels, 0, width);
@@ -323,9 +320,8 @@ public class PGraphics3D extends PGraphics {
     } else {
       // when not the main drawing surface, need to set the zbuffer,
       // because there's a possibility that background() will not be called
-      for (int i = 0; i < pixelCount; i++) {
-        zbuffer[i] = Float.MAX_VALUE;
-      }
+      //for (int i = 0; i < pixelCount; i++) zbuffer[i] = Float.MAX_VALUE;
+      Arrays.fill(zbuffer, Float.MAX_VALUE);
     }
 
     stencil = new int[pixelCount];
@@ -3835,10 +3831,13 @@ public class PGraphics3D extends PGraphics {
   public void background(PImage image) {
     super.background(image);
 
+    /*
     for (int i = 0; i < pixelCount; i++) {
       zbuffer[i] = Float.MAX_VALUE;
       //stencil[i] = 0;
     }
+    */
+    Arrays.fill(zbuffer, Float.MAX_VALUE);
   }
 
 
@@ -3849,11 +3848,15 @@ public class PGraphics3D extends PGraphics {
   protected void clear() {
     //System.out.println("PGraphics3.clear(" +
     //                 PApplet.hex(backgroundColor) + ")");
+    /*
     for (int i = 0; i < pixelCount; i++) {
       pixels[i] = backgroundColor;
       zbuffer[i] = Float.MAX_VALUE;
       //stencil[i] = 0;
     }
+    */
+    Arrays.fill(pixels, backgroundColor);
+    Arrays.fill(zbuffer, Float.MAX_VALUE);
   }
 
 

@@ -26,6 +26,7 @@ package processing.core;
 import java.awt.Toolkit;
 import java.awt.image.DirectColorModel;
 import java.awt.image.MemoryImageSource;
+import java.util.Arrays;
 
 
 /**
@@ -91,14 +92,8 @@ public class PGraphics2D extends PGraphics {
     pixelCount = width * height;
     pixels = new int[pixelCount];
 
-    // because of a java 1.1 bug, pixels must be registered as
-    // opaque before their first run, the memimgsrc will flicker
-    // and run very slowly.
-    backgroundColor |= 0xff000000;  // just for good measure
-    for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
-    //for (int i = 0; i < pixelCount; i++) pixels[i] = 0xffffffff;
+    Arrays.fill(pixels, backgroundColor);
 
-    //if (parent != null) {
     if (mainDrawingSurface) {
       cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
       mis = new MemoryImageSource(width, height, pixels, 0, width);
@@ -1616,9 +1611,10 @@ public class PGraphics2D extends PGraphics {
      * Clear the pixel buffer.
      */
     protected void clear() {
-      for (int i = 0; i < pixelCount; i++) {
-        pixels[i] = backgroundColor;
-      }
+      Arrays.fill(pixels, backgroundColor);
+//      for (int i = 0; i < pixelCount; i++) {
+//        pixels[i] = backgroundColor;
+//      }
     }
 
 
