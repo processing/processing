@@ -63,7 +63,8 @@ fi
 DEVMASTER=`echo $DEVICES| awk '{ print $1 }'`
 DEVHFS=`echo $DEVICES| awk '{ print $5 }'`
 echo Copying $FOLDER to /Volumes/$NAME on $DEVMASTER
-sudo ditto -rsrcFork "$FOLDER" "/Volumes/$NAME"
+#sudo ditto -rsrcFork "$FOLDER" "/Volumes/$NAME"
+ditto -rsrcFork "$FOLDER" "/Volumes/$NAME"
 if [ $? -ne 0 ]; then
 hdiutil eject $DEVMASTER
 rm -f $TMPFILE
