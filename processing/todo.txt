@@ -1,5 +1,12 @@
 0128 pde
 
+X fix macosx dist script to not require root password
+X   was just a matter of not using sudo to write the image
+o   hdiutil create  -size 5m -fs HFS+ -volname Fooble  foo
+o   To mount the disk-image, without having it appear in the Finder:
+o     hdiutil attach  -nobrowse  foo.dmg
+o   The main advantage is that these don't require root privileges
+
 _ change to jdk14 imports rather than 11 and 12 for preproc
 
 _ auto-delete of sketches might be dangerous
@@ -48,12 +55,6 @@ _ when writing javadoc for p5 sketches, only write from first tab
 _ make editor buttons light up and clear properly 
 _ inside sketch.java, don't hardwire the file extension types
 _   arduino uses .c, .cpp, .h instead of .java
-
-_ fix macosx dist script to not require root password
-  hdiutil create  -size 5m -fs HFS+ -volname Fooble  foo
-To mount the disk-image, without having it appear in the Finder:
-  hdiutil attach  -nobrowse  foo.dmg
-The main advantage is that these don't require root privileges
 
 _ don't bug the user about new release of p5 when they have it
 _   add prefs option for "latest version run"
