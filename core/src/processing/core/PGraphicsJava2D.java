@@ -814,7 +814,7 @@ public class PGraphicsJava2D extends PGraphics {
    * will get recorded properly.
    */
   public void textSize(float size) {
-    // if a native version available, subset this font
+    // if a native version available, derive this font
     if (textFontNative != null) {
       textFontNative = textFontNative.deriveFont(size);
       g2.setFont(textFontNative);

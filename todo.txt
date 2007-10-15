@@ -1,13 +1,17 @@
 0128 pde
-
 X fix macosx dist script to not require root password
 X   was just a matter of not using sudo to write the image
 o   hdiutil create  -size 5m -fs HFS+ -volname Fooble  foo
 o   To mount the disk-image, without having it appear in the Finder:
 o     hdiutil attach  -nobrowse  foo.dmg
 o   The main advantage is that these don't require root privileges
+X change to jdk14 imports rather than 11 and 12 for preproc
+X   though this will only happen when the prefs file is deleted
 
-_ change to jdk14 imports rather than 11 and 12 for preproc
+X implement sortCompare() and sortSwap()
+X   discuss this with casey
+_   also could be using Arrays.sort(blah) with Comparable (1.2+)
+_ make sorting functions static?
 
 _ auto-delete of sketches might be dangerous
 _   and probably no longer necessary
@@ -76,10 +80,7 @@ grant {
 
 _ remove 'patch' designation from bugzilla
 _ ocd is broken in 0125 - do a better error message for this
-X implement sortCompare() and sortSwap()
-_   discuss this with casey
-_   also could be using Arrays.sort(blah) with Comparable (1.2+)
-_ make sorting functions static?
+
 _ disallow .java tabs with same name as the sketch
 _   a .java tab with same name as the sketch is allowed (oog!)
 _   particularly look at "save as" scenario
