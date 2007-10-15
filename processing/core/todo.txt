@@ -1,8 +1,13 @@
 0128 core
+X remove PFont reflection stuff
+X remove cursor reflection stuff
+
+X implement sortCompare() and sortSwap()
+X   discuss this with casey
+_   also could be using Arrays.sort(blah) with Comparable (1.2+)
+_ make sorting functions static?
 
 _ fix getFontMetrics() warning
-_ remove PFont reflection stuff
-_ remove cursor reflection stuff
 _ key and mouse events delivered out of order
 _   http://dev.processing.org/bugs/show_bug.cgi?id=638
 _ Java2D textLinePlacedImpl should check for ENABLE_NATIVE_FONTS hint

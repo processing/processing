@@ -2294,6 +2294,8 @@ public abstract class PGraphics extends PImage implements PConstants {
         // as recommended by the @deprecated flag.
         textFontNativeMetrics =
           Toolkit.getDefaultToolkit().getFontMetrics(textFontNative);
+        
+        // float w = font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
       }
       textSize(which.size);
 
@@ -2365,8 +2367,6 @@ public abstract class PGraphics extends PImage implements PConstants {
                                    "textMode(SCREEN)");
       }
       textSize = size;
-      //textLeading = textSize *
-      //  ((textFont.ascent() + textFont.descent()) * 1.275f);
       textLeading = (textAscent() + textDescent()) * 1.275f;
 
     } else {
