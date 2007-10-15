@@ -1044,7 +1044,6 @@ public class PApplet extends Applet
   /**
    * Create an offscreen PGraphics object for drawing. This can be used
    * for bitmap or vector images drawing or rendering.
-   *
    * <UL>
    * <LI>Do not use "new PGraphicsXxxx()", use this method. This method
    * ensures that internal variables are set up properly that tie the
