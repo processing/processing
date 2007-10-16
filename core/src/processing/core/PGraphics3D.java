@@ -309,7 +309,10 @@ public class PGraphics3D extends PGraphics {
 
     if (mainDrawingSurface) {
       //for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
-      Arrays.fill(pixels, backgroundColor);
+      // Not necessary because background() will be called w/ defaults(), 
+      // and we're no longer subject to the Java 1.1 bug for transparent
+      // pixels in MemoryImageSource.
+      //Arrays.fill(pixels, backgroundColor);
 
       cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
       mis = new MemoryImageSource(width, height, pixels, 0, width);
@@ -330,7 +333,7 @@ public class PGraphics3D extends PGraphics {
     triangle = new PTriangle(this);
 
     // can't un-set this because this may be only a resize (Bug #463)
-    //defaultsInited = false;
+    defaultsInited = false;
     //System.out.println(this + " done allocating");
   }
 

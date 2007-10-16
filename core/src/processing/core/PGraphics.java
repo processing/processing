@@ -636,7 +636,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * set to opaque (given a default gray background) and listeners for
    * the mouse and keyboard added.
    * <p/>
-   * This should only be used by subclasses of PGraphics.
+   * This should only be called by subclasses of PGraphics.
    */
   public void setMainDrawingSurface() {  // ignore
     mainDrawingSurface = true;
@@ -771,11 +771,12 @@ public abstract class PGraphics extends PImage implements PConstants {
     // if it's been created by someone else through createGraphics,
     // they have to call background() themselves, otherwise everything gets
     // a gray background (when just a transparent surface or an empty pdf
-    // is what's desired)
-//    if (mainDrawingSurface) {
-//      //System.out.println("main drawing surface");
-//      background(backgroundColor);
-//    }
+    // is what's desired).
+    // this background() call is for the Java 2D and OpenGL renderers.
+    if (mainDrawingSurface) {
+      //System.out.println("main drawing surface " + getClass().getName());
+      background(backgroundColor);
+    }
 
     defaultsInited = true;
   }
@@ -3826,10 +3827,11 @@ public abstract class PGraphics extends PImage implements PConstants {
       background((float) rgb);
 
     } else {
+      rgb |= 0xff000000;
       colorCalcARGB(rgb, colorModeA);
       backgroundFromCalc();
+      clear();
     }
-    clear();
   }
 
 
@@ -3837,19 +3839,19 @@ public abstract class PGraphics extends PImage implements PConstants {
    * See notes about alpha in background(x, y, z, a).
    */
   public void background(int rgb, float alpha) {
-    if (mainDrawingSurface) {
-      background(rgb);  // don't allow people to set alpha
+//    if (mainDrawingSurface) {
+    background(rgb);  // don't allow people to set alpha
 
-    } else {
-      if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-        background((float) rgb, alpha);
-
-      } else {
-        colorCalcARGB(rgb, alpha);
-        backgroundFromCalc();
-        clear();
-      }
-    }
+//    } else {
+//      if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+//        background((float) rgb, alpha);
+//
+//      } else {
+//        colorCalcARGB(rgb, alpha);
+//        backgroundFromCalc();
+//        clear();
+//      }
+//    }
   }
 
 
@@ -3868,14 +3870,14 @@ public abstract class PGraphics extends PImage implements PConstants {
    * See notes about alpha in background(x, y, z, a).
    */
   public void background(float gray, float alpha) {
-    if (mainDrawingSurface) {
-      background(gray);  // don't allow people to set alpha
+//    if (mainDrawingSurface) {
+    background(gray);  // don't allow people to set alpha
 
-    } else {
-      colorCalc(gray, alpha);
-      backgroundFromCalc();
-      clear();
-    }
+//    } else {
+//      colorCalc(gray, alpha);
+//      backgroundFromCalc();
+//      clear();
+//    }
   }
 
 
@@ -3901,14 +3903,14 @@ public abstract class PGraphics extends PImage implements PConstants {
    * overlay, use fill() with alpha and draw a rectangle.
    */
   public void background(float x, float y, float z, float a) {
-    if (mainDrawingSurface) {
-      background(x, y, z);  // don't allow people to set alpha
+//    if (mainDrawingSurface) {
+    background(x, y, z);  // don't allow people to set alpha
 
-    } else {
-      colorCalc(x, y, z, a);
-      backgroundFromCalc();
-      clear();
-    }
+//    } else {
+//      colorCalc(x, y, z, a);
+//      backgroundFromCalc();
+//      clear();
+//    }
   }
 
 

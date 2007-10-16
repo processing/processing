@@ -92,7 +92,8 @@ public class PGraphics2D extends PGraphics {
     pixelCount = width * height;
     pixels = new int[pixelCount];
 
-    Arrays.fill(pixels, backgroundColor);
+    // Not necessary because background will be called almost immediately
+    //Arrays.fill(pixels, backgroundColor);
 
     if (mainDrawingSurface) {
       cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
