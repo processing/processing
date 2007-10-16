@@ -3838,6 +3838,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * See notes about alpha in background(x, y, z, a).
    */
+  /*
   public void background(int rgb, float alpha) {
 //    if (mainDrawingSurface) {
     background(rgb);  // don't allow people to set alpha
@@ -3853,6 +3854,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 //      }
 //    }
   }
+  */
 
 
   /**
@@ -3869,6 +3871,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * See notes about alpha in background(x, y, z, a).
    */
+  /*
   public void background(float gray, float alpha) {
 //    if (mainDrawingSurface) {
     background(gray);  // don't allow people to set alpha
@@ -3879,6 +3882,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 //      clear();
 //    }
   }
+  */
 
 
   /**
@@ -3902,6 +3906,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * that have that level of transparency. To do a semi-transparent
    * overlay, use fill() with alpha and draw a rectangle.
    */
+  /*
   public void background(float x, float y, float z, float a) {
 //    if (mainDrawingSurface) {
     background(x, y, z);  // don't allow people to set alpha
@@ -3912,6 +3917,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 //      clear();
 //    }
   }
+  */
 
 
   protected void backgroundFromCalc() {
