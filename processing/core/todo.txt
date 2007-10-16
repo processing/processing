@@ -16,7 +16,6 @@ X   otherwise loadFont() would work with font names as well, awkward
 X   better to use createFont() for both
 o jogl issues with some cards on linux, might be fixed with newer jogl
 X   http://dev.processing.org/bugs/show_bug.cgi?id=367
-X 404 error because first searches applet directory in isometricblocks
 X remove methods for background() to include an alpha value
 X   this is undefined territory because of zbuffer and all
 X   if you want that effect, use a rect()

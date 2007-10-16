@@ -7,6 +7,62 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0128 - 16 October 2007
+
+This release contains major changes to how size() is handled. 
+It fixes two major bugs, but because size() is so fundamental, 
+it may cause problems on other systems. Please test!
+
+[ bug fixes ] 
+
++ Window sometimes fixed at 100x100 pixels. I *think* I've managed
+  to track this guy down and finally kill it. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=197
+
++ Fix problem where background was not being set when using 
+  the default (Java2D) renderer and with OpenGL.
+  http://dev.processing.org/bugs/show_bug.cgi?id=454
+
++ Sometimes the draw() method would be called twice: no more.
+  http://dev.processing.org/bugs/show_bug.cgi?id=587
+
+[ changes ] 
+
++ Removed a lot of code (mostly reflection API mess) related to 
+  making processing.core work with Java releases earlier than 1.4.
+  This is probably the first time processing.core has gotten
+  *smaller* in a while. This includes changes to PFont, the 
+  cursor commands, the sort() methods, and some others
+
++ Removed versions of background() that take an alpha value. 
+  Not sure why these were implemented in the first place. If you
+  want background() with alpha, draw a rectangle. The problem is
+  that supporting alpha for background() introduces several 
+  inconsistencies with other renderers, for instance OpenGL. 
+  Do you clear the zbuffer when the alpha is too low? How about
+  the other buffers?
+
++ The sort() methods are now static.
+
++ Change to JDK 1.4 imports rather than Java 1.1 imports in the 
+  preprocessor.
+
++ Fix so that Mac OS X dist script doesn't require root password.
+
+[ additional bug fixes in 0127 ] 
+
++ Several bugs were fixed with createGraphics() in the last release, 
+  but not all the bug reports were noted. Here are more:
+  http://dev.processing.org/bugs/show_bug.cgi?id=160
+  http://dev.processing.org/bugs/show_bug.cgi?id=428
+  http://dev.processing.org/bugs/show_bug.cgi?id=482
+  http://dev.processing.org/bugs/show_bug.cgi?id=530
+  http://dev.processing.org/bugs/show_bug.cgi?id=527
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0127 - 14 October 2007
 
 This release is primarily bug fixes. ** Be sure to read important 
