@@ -8,11 +8,6 @@ o   The main advantage is that these don't require root privileges
 X change to jdk14 imports rather than 11 and 12 for preproc
 X   though this will only happen when the prefs file is deleted
 
-X implement sortCompare() and sortSwap()
-X   discuss this with casey
-_   also could be using Arrays.sort(blah) with Comparable (1.2+)
-_ make sorting functions static?
-
 _ auto-delete of sketches might be dangerous
 _   and probably no longer necessary
 _ mark examples as untitled (rather than read-only)
@@ -28,22 +23,6 @@ _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
 _ update keywords generator script on the site
 
-
-JSyn Installer build 011
-java.vm.version = 1.5.0_07-87
-java.library.path = .:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
-java.ext.dirs = /Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext
-Installing Native library JSynV142
-Copy: http://www.softsynth.com/jsyn/plugins/archives/libJSynV142.jnilib
-  to: /Users/fry/Library/Java/Extensions/libJSynV142.jnilib
-Native component JSynV142 downloaded successfully.
----
-Installing JAR file JSynClasses.jar
-Copy: http://www.softsynth.com/jsyn/plugins/archives/JSynClasses.jar
-  to: /Users/fry/Library/Java/Extensions/JSynClasses.jar
-JAR file JSynClasses.jar downloaded successfully.
-Note: you must restart your browser before running any JSyn Applets!
-Installation completed.
 
 _ add server/client notification thing for the nyu guys
 _   add an event to Server that notifies when a Client disconnects
@@ -130,23 +109,6 @@ _ switching into present mode in info.plist
         <key>LSUIPresentationMode</key>
         <integer>4</integer> 
 
-// from color sorting example
-
-float sortCompare(int a, int b) {
-  return bright[a] - bright[b];
-}
-
-void sortSwap(int a, int b) {
-  int t1 = bright[a];
-  bright[a] = bright[b];
-  bright[b] = t1;
-  
-  Tuple t2 = captureColors[a];
-  captureColors[a] = captureColors[b];
-  captureColors[b] = t2;  
-}
-
-
 _ dynamic tools menu (requires moving files around)
 _   this means can integrate the autoformat stuff
 _   processing.mess/tools has chandler's template stuff
@@ -164,10 +126,6 @@ _ java.extension.dirs has the library/extn stuff
 _   can probably set this blank
 _ the jar from which a class file has been loaded
 _   getClass().getProtectionDomain().getCodeSource().getLocation().getFile() 
-
-_ don't allow for (blah; blah; blah) ;
-_   or if (blah blah blah) ;
-_   it's never useful. students can use { } if they want an empty block
 
 _ cmd-w doesn't close window of opened applet (running inside p5)
 _ ESC won't cancel rename
@@ -228,6 +186,23 @@ _   need to make classpath code be less promiscuous
 _   the order of adding libraries to classpath should be opposite
 _     the important local libraries should be first in cp, user contrib later
 _   http://dev.processing.org/bugs/show_bug.cgi?id=321
+_ example from jsyn
+JSyn Installer build 011
+java.vm.version = 1.5.0_07-87
+java.library.path = .:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
+java.ext.dirs = /Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home/lib/ext
+Installing Native library JSynV142
+Copy: http://www.softsynth.com/jsyn/plugins/archives/libJSynV142.jnilib
+  to: /Users/fry/Library/Java/Extensions/libJSynV142.jnilib
+Native component JSynV142 downloaded successfully.
+---
+Installing JAR file JSynClasses.jar
+Copy: http://www.softsynth.com/jsyn/plugins/archives/JSynClasses.jar
+  to: /Users/fry/Library/Java/Extensions/JSynClasses.jar
+JAR file JSynClasses.jar downloaded successfully.
+Note: you must restart your browser before running any JSyn Applets!
+Installation completed.
+
 
 _ stop button needs to update itself and work properly [1.0]
 _   http://dev.processing.org/bugs/show_bug.cgi?id=396
@@ -575,6 +550,9 @@ _   http://processing.org/bugs/show_bug.cgi?id=3
 
 PDE / Compiler & Preprocessor
 
+_ don't allow "for (blah; blah; blah) ;"
+_   or if (blah blah blah) ;
+_   it's never useful. students can use { } if they want an empty block
 _ Update ANTLR grammar to support 1.5 syntax
 _   http://dev.processing.org/bugs/show_bug.cgi?id=598
 _ preproc cant handle labels to break/continue nested loops
@@ -1041,6 +1019,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=259
 _ crash on particular string
 _   http://dev.processing.org/bugs/show_bug.cgi?id=363
 
+
 TOOLS / Create Font
 
 _ loading is very slow on the first time (getting all font names)
@@ -1225,6 +1204,7 @@ _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _ processing cancels shutdown on mac os x
 _   http://dev.processing.org/bugs/show_bug.cgi?id=539
+
 
 DIST / Linux
 

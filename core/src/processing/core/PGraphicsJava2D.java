@@ -132,7 +132,7 @@ public class PGraphicsJava2D extends PGraphics {
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     g2 = (Graphics2D) image.getGraphics();
     // can't un-set this because this may be only a resize (Bug #463)
-    //defaultsInited = false;
+    defaultsInited = false;
   }
 
 

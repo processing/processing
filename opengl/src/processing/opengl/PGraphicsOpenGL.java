@@ -68,7 +68,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public GLU glu;
   public GLCanvas canvas;
 
-  protected FloatBuffer projectionFloatBuffer;
+  //protected FloatBuffer projectionFloatBuffer;
   protected float[] projectionFloats;
 
   protected GLUtessellator tobj;
@@ -288,6 +288,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // changing for 0100, need to resize rather than re-allocate
       canvas.setSize(width, height);
     }
+    defaultsInited = false;
   }
 
 
@@ -343,7 +344,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // not sure the difference on these two,
       // but this is what most jogl apps seem to be using
       //projectionFloatBuffer = FloatBuffer.wrap(projectionFloats);
-      projectionFloatBuffer = BufferUtil.newFloatBuffer(16);
+      //projectionFloatBuffer = BufferUtil.newFloatBuffer(16);
 
     } else {
       projectionFloats[0] = projection.m00;
@@ -367,12 +368,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
       projectionFloats[15] = projection.m33;
     }
     //gl.glLoadMatrixf(projectionFloats);
-    projectionFloatBuffer.put(projectionFloats);
-    projectionFloatBuffer.rewind();
-    gl.glLoadMatrixf(projectionFloatBuffer);
+    //projectionFloatBuffer.put(projectionFloats);
+    //projectionFloatBuffer.rewind();
+    //gl.glLoadMatrixf(projectionFloatBuffer);
+    gl.glLoadMatrixf(projectionFloats, 0);
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
+    // Flip Y-axis to make y count from 0 downwards
     gl.glScalef(1, -1, 1);
 
     // these are necessary for alpha (i.e. fonts) to work
