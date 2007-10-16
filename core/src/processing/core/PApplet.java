@@ -8202,33 +8202,15 @@ in   */
   }
 
 
-  public void background(int rgb, float alpha) {
-    if (recorder != null) recorder.background(rgb, alpha);
-    g.background(rgb, alpha);
-  }
-
-
   public void background(float gray) {
     if (recorder != null) recorder.background(gray);
     g.background(gray);
   }
 
 
-  public void background(float gray, float alpha) {
-    if (recorder != null) recorder.background(gray, alpha);
-    g.background(gray, alpha);
-  }
-
-
   public void background(float x, float y, float z) {
     if (recorder != null) recorder.background(x, y, z);
     g.background(x, y, z);
-  }
-
-
-  public void background(float x, float y, float z, float a) {
-    if (recorder != null) recorder.background(x, y, z, a);
-    g.background(x, y, z, a);
   }
 
 
