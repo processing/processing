@@ -1,3 +1,88 @@
+0128 core
+X remove PFont reflection stuff
+X remove cursor reflection stuff
+X fix up sorting functions
+X   implement sortCompare() and sortSwap()
+X      discuss this with casey
+X   also could be using Arrays.sort(blah) with Comparable (1.2+)
+X   make sorting functions static
+X   use methods from Arrays class, cuts down on code significantly
+X   implement sortCompare() and sortSwap()
+X     discuss this with casey
+o     also could be using Arrays.sort(blah) with Comparable (1.2+)
+X   make sorting functions static?
+o should loadFont() work with ttf files (instead of createFont?)
+X   otherwise loadFont() would work with font names as well, awkward
+X   better to use createFont() for both
+o jogl issues with some cards on linux, might be fixed with newer jogl
+X   http://dev.processing.org/bugs/show_bug.cgi?id=367
+X remove methods for background() to include an alpha value
+X   this is undefined territory because of zbuffer and all
+X   if you want that effect, use a rect()
+X saveFrame() produces a black background because bg not set correctly:
+X   http://dev.processing.org/bugs/show_bug.cgi?id=421
+X background not being set properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=454
+X   having shut off the defaults reset, background not getting called for java2d
+X   so this will make that other stuff regress again
+X   in particular, when the applet is resized, but renderer not changed
+X why aren't background() / defaults() being called for opengl?
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
+o simon reports borders on P3D and OPENGL if background() not called
+X window fixed at 100x100 pixels
+X   http://dev.processing.org/bugs/show_bug.cgi?id=197
+X   width/height on problem machine prints out as:
+X   100x100 issues are exhibited on bh140c PCs, test and fix!
+X   100,200 and 128,200
+o AIOOBE on PLine 757.. halts renderer
+o fix erik's problems with export (also in bugs db)
+X draw() called twice in vista with java 1.6
+X   http://dev.processing.org/bugs/show_bug.cgi?id=587
+
+cleanup from previous releases
+X P3D not doing bilinear interpolation in text and images 
+X   because smooth() has to be set (and smooth throws an error in P3D)
+X   how should this be handled? a hint? allowing smooth()?
+X   probably just allow smooth() but don't smooth anything
+o pdf export ignoring transparency on linux
+o   check to see if this is the case on other linux machines
+o   seems to be working fine on windows
+o   http://dev.processing.org/bugs/show_bug.cgi?id=345
+X change how java version is determined on mac
+X   http://developer.apple.com/technotes/tn2002/tn2110.html
+X   (this tn provides no guidance for macos8/9.. gah)
+o little window showing up on macosx when running
+X   never able to confirm, probably just old java bug
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
+o flicker happening on osx java 1.4, but not 1.3:
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297
+o don't let users on < 1.3 load JAVA2D
+X set upper bound on framerate so as not to completely hose things?
+
+fixed in 0127
+X ARGB problems with createGraphics
+o   P3D from createGraphics needs to be marked RGB not ARGB
+X   http://dev.processing.org/bugs/show_bug.cgi?id=160
+X   http://dev.processing.org/bugs/show_bug.cgi?id=428
+X   http://dev.processing.org/bugs/show_bug.cgi?id=482
+X   http://dev.processing.org/bugs/show_bug.cgi?id=530
+X   http://dev.processing.org/bugs/show_bug.cgi?id=527
+
+reasons to drop 1.1 support (and support 1.3+)
+X remove reflection from createFont() constructor/methods in PFont
+X   this would make PFont much smaller
+X array functions could be done through Arrays.xxx class
+X   although some of these may be built in
+X sorting could be done through built-in sort() class
+X split() function could echo the built in split/regexp setup
+X   and add features for regexp
+X could introduce use of Timer class in examples
+X also use SwingWorker to launch things on other threads
+X weirdness of two modes of handling font metrics
+X   textFontNativeMetrics gives deprecation error
+X   getFontList stuff in PFont causes problems
+
+
 0127 core
 X pixel operations are broken in opengl
 X   get(), set(), copy(), blend(), loadPixels, updatePixels() 
