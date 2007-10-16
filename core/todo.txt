@@ -7,12 +7,58 @@ X      discuss this with casey
 X   also could be using Arrays.sort(blah) with Comparable (1.2+)
 X   make sorting functions static
 X   use methods from Arrays class, cuts down on code significantly
+X   implement sortCompare() and sortSwap()
+X     discuss this with casey
+o     also could be using Arrays.sort(blah) with Comparable (1.2+)
+X   make sorting functions static?
 o should loadFont() work with ttf files (instead of createFont?)
 X   otherwise loadFont() would work with font names as well, awkward
 X   better to use createFont() for both
 o jogl issues with some cards on linux, might be fixed with newer jogl
 X   http://dev.processing.org/bugs/show_bug.cgi?id=367
 X 404 error because first searches applet directory in isometricblocks
+X remove methods for background() to include an alpha value
+X   this is undefined territory because of zbuffer and all
+X   if you want that effect, use a rect()
+X saveFrame() produces a black background because bg not set correctly:
+X   http://dev.processing.org/bugs/show_bug.cgi?id=421
+X background not being set properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=454
+X   having shut off the defaults reset, background not getting called for java2d
+X   so this will make that other stuff regress again
+X   in particular, when the applet is resized, but renderer not changed
+X why aren't background() / defaults() being called for opengl?
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
+o simon reports borders on P3D and OPENGL if background() not called
+X window fixed at 100x100 pixels
+X   http://dev.processing.org/bugs/show_bug.cgi?id=197
+X   width/height on problem machine prints out as:
+X   100x100 issues are exhibited on bh140c PCs, test and fix!
+X   100,200 and 128,200
+o AIOOBE on PLine 757.. halts renderer
+o fix erik's problems with export (also in bugs db)
+X draw() called twice in vista with java 1.6
+X   http://dev.processing.org/bugs/show_bug.cgi?id=587
+
+cleanup from previous releases
+X P3D not doing bilinear interpolation in text and images 
+X   because smooth() has to be set (and smooth throws an error in P3D)
+X   how should this be handled? a hint? allowing smooth()?
+X   probably just allow smooth() but don't smooth anything
+o pdf export ignoring transparency on linux
+o   check to see if this is the case on other linux machines
+o   seems to be working fine on windows
+o   http://dev.processing.org/bugs/show_bug.cgi?id=345
+X change how java version is determined on mac
+X   http://developer.apple.com/technotes/tn2002/tn2110.html
+X   (this tn provides no guidance for macos8/9.. gah)
+o little window showing up on macosx when running
+X   never able to confirm, probably just old java bug
+X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
+o flicker happening on osx java 1.4, but not 1.3:
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297
+o don't let users on < 1.3 load JAVA2D
+X set upper bound on framerate so as not to completely hose things?
 
 fixed in 0127
 X ARGB problems with createGraphics
@@ -23,15 +69,38 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=482
 X   http://dev.processing.org/bugs/show_bug.cgi?id=530
 X   http://dev.processing.org/bugs/show_bug.cgi?id=527
 
-_ having shut off the defaults reset, background not getting called for java2d
-_   so this will make that other stuff regress again
-_   in particular, when the applet is resized, but renderer not changed
-_ background not being set properly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=454
-_ why aren't background() / defaults() being called for opengl?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Contribution_3DOpenGL;action=display;num=1118784331
+reasons to drop 1.1 support (and support 1.3+)
+X remove reflection from createFont() constructor/methods in PFont
+X   this would make PFont much smaller
+X array functions could be done through Arrays.xxx class
+X   although some of these may be built in
+X sorting could be done through built-in sort() class
+X split() function could echo the built in split/regexp setup
+X   and add features for regexp
+X could introduce use of Timer class in examples
+X also use SwingWorker to launch things on other threads
+X weirdness of two modes of handling font metrics
+X   textFontNativeMetrics gives deprecation error
+X   getFontList stuff in PFont causes problems
+
+
+add to reference
+_ update the reference to cover parseXxxx() stuff
+_   also add notes about parseInt/Float(blah, otherwise)
+_ also parseInt and parseFloat, how they can return another number or NaN
+_   should the default be NaN or 0?
+_ background() with an image ignores the tint.. it's basically like set()
+_ get/set are faster way draw screen space images, but no tint, no translations
+_ make sure the docs include "beginShape() cannot be nested"
+_   also add error messages to the renderers
+_   also note that ellipse() et al use beginShape()
+_   and that java2d should complain if people try it
 
 createGraphics() mess
+_ text characters showing up as opaque rectangles in tga files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=641
+_   solution is to implement alpha compositing across all of P3D 
+_   http://en.wikipedia.org/wiki/Alpha_compositing
 _ when drawing into a JAVA2D surface, have to call loadPixels()
 _   to draw it later with P3D (or OPENGL prolly)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
@@ -84,43 +153,21 @@ _     don't need to apply tint() to textures, supposed to use fill color
 Hope this helps:  If you haven't tracked it down yet... it's in PTriangle, when a flat-shaded textured triangle is drawn, then the rgb of the tint isn't used.  So, for example, if the triangle renderer branches to drawsegment_texture32() the tint rgb won't be used, whereas if it branches to drawsegment_gouraud_texture32() then the tint rgb WILL be used.  Alpha gets used from tint, because all alpha has to do is be != 255, but for rgb to get used they values have to differ among vertices (which won't happen via the image() routine for example).  The quick fix might be to insert an additional test in setIntensities() to check if parent.tint is true, and if so then force gouraud shading, INTERPOLATE_RGB=true.
 
 
-_ fix getFontMetrics() warning
 _ key and mouse events delivered out of order
 _   http://dev.processing.org/bugs/show_bug.cgi?id=638
+
+rework some text/font code
+_ fix getFontMetrics() warning
 _ Java2D textLinePlacedImpl should check for ENABLE_NATIVE_FONTS hint
 _   http://dev.processing.org/bugs/show_bug.cgi?id=633
 _ also try to check native font on textFont() commands
 _   in case the hint() has been enabled in the meantime
 _   or rather, always load native font, even w/o the hint() being set
 
-_ text characters showing up as opaque rectangles in tga files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=641
-_   solution is to implement alpha compositing across all of P3D 
-_   http://en.wikipedia.org/wiki/Alpha_compositing
-
 _ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
-
-_ opengl mipmaps are leaking (regression in spite of #150 fix)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=610
-
-_ 100x100 issues are exhibited on bh140c PCs, test and fix!
-_   http://dev.processing.org/bugs/show_bug.cgi?id=197
-_   width/height on problem machine prints out as:
-_   100,200 and 128,200
-
-_ loadBytes() and saveStream() functions badly need optimization!
-_   don't bother using a buffering stream, just handle internally. gah!
-
-_ update the reference to cover parseXxxx() stuff
-_   also add notes about parseInt/Float(blah, otherwise)
-
-_ draw() called twice in vista with java 1.6
-_   http://dev.processing.org/bugs/show_bug.cgi?id=587
-
 _ add gluegen-rt back to the applet export
 _   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
-
 _ look into jogl anti-aliasing on osx
 _   smoothMode(2) and smoothMode(4), right after size()?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1175552759
@@ -128,7 +175,10 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=displ
 _ look into capabilities stuff from mike creighton
 _   also sets the aa mode on the pc so it no longer needs control panel bunk
 
-_ when using createFont("xxxx.ttf"), should use textMode(SHAPE)
+_ loadBytes() and saveStream() functions badly need optimization!
+_   don't bother using a buffering stream, just handle internally. gah!
+
+_ when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
 _   because ttf files will not be installed on the system when opening pdf
 
 _ copy() should automatically call updatePixels()
@@ -153,8 +203,6 @@ _   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
 
 should be fixed, but needs to be tested
-_ saveFrame() produces a black background because bg not set correctly:
-_   http://dev.processing.org/bugs/show_bug.cgi?id=421
 _ "this file is named" errors don't like subdirectories
 _   need to strip off past the file separator or something
 _ figure out why 1024x768 image takes 3.5 seconds to load
@@ -175,6 +223,7 @@ _   leave smooth off, get the gl object, then enable line smooth
 
 
 threading [1.0]
+_ introduce calc()
 _ major threading overhaul before 1.0 (compendium)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=511
 _ applet sizing issues with external vm
@@ -248,19 +297,11 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 _ modelX/Y/Z still having trouble
 _   http://dev.processing.org/bugs/show_bug.cgi?id=486
 
-_ Use getContextClassLoader() instead of Class.forName()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=514
-
 _ hint(DISABLE_DEPTH_TEST) not behaving consistently
 _   http://dev.processing.org/bugs/show_bug.cgi?id=483
 
 _ Stroking a rect() leaves off the upper right pixel
 _   http://dev.processing.org/bugs/show_bug.cgi?id=501
-
-_ make sure the docs include "beginShape() cannot be nested"
-_   also add error messages to the renderers
-_   also note that ellipse() et al use beginShape()
-_   and that java2d should complain if people try it
 
 _ 1.5.0_07 and 1.4.2_12 contain the -XX:+HeapDumpOnOutOfMemoryError switch 
 _   invaluable for tracking down memory leaks 
@@ -268,21 +309,6 @@ _   invaluable for tracking down memory leaks
 _ calling graphics.smooth(), graphics.colorMode() outside begin/endDraw
 _   this causes everything to be reset once the draw occurs
 _   kinda seems problematic and prone to errors?
-
-_ gradients
-_   use gradients in a class for the svg lib for now
-_   don't add api to main p5 stuff (though maybe setPaint/noPaint api?)
-_ gradient-painted lines and fills
-_   java2d will do both line and fill, illusfarter only does fills
-_ gradients not supported in java2d
-_   http://dev.processing.org/bugs/show_bug.cgi?id=371
-
-
-add to reference
-_ also parseInt and parseFloat, how they can return another number or NaN
-_   should the default be NaN or 0?
-_ background() with an image ignores the tint.. it's basically like set()
-_ get/set are faster way draw screen space images, but no tint, no translations
 
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
@@ -294,8 +320,6 @@ _   even though the main() wants to keep going
 _ cameraXYZ doesn't seem to actually be used for anything
 _   since camera functions don't even look at it or set it
 
-_ AIOOBE on PLine 757.. halts renderer
-
 _ add notes about fixing serial on the mac to the faq (and link to bug)
 
 _ beginFrame()/beginDraw() and defaults()
@@ -306,7 +330,7 @@ _   defaults() gets called by the size() command in PApplet
 _ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
 _   because the triangles won't be rendered by the time endRaw() is called
 _   force depth sorted triangles to flush
-_ fix erik's problems with export (also in bugs db)
+
 _ check into ricard's problems with beginRecord()
 _ should beginRecord inherit settings from its parent renderer?
 _   textFont() is null on beginRecord
@@ -345,21 +369,6 @@ _   something weird happening with one of the streams shutting down?
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-reasons to drop 1.1 support (and support 1.3+)
-_ remove reflection from createFont() constructor/methods in PFont
-_   this would make PFont much smaller
-_ array functions could be done through Arrays.xxx class
-_   although some of these may be built in
-_ sorting could be done through built-in sort() class
-_ split() function could echo the built in split/regexp setup
-_   and add features for regexp
-_ could introduce use of Timer class in examples
-_ also use SwingWorker to launch things on other threads
-_ weirdness of two modes of handling font metrics
-_   textFontNativeMetrics gives deprecation error
-_   getFontList stuff in PFont causes problems
-
-
 _ ArrayIndexOutOfBoundsException in PLine
 _   http://dev.processing.org/bugs/show_bug.cgi?id=246
 _   http://dev.processing.org/bugs/show_bug.cgi?id=462
@@ -384,9 +393,6 @@ _   need to track this stuff down a bit
 
 _ clipboard implementation as example or as part of api
 _   http://dev.processing.org/bugs/show_bug.cgi?id=167
-
-_ some optimizations from zach
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
 
 _ bspline or nurbs before 1.0? 
 _   probably later, want to do the 3D/arch stuff correctly
@@ -650,14 +656,14 @@ _       huge geometry slows things way down
 
 CORE / PGraphicsJava2D
 
+_ some optimizations from zach
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
 _ make get/getImpl for PGraphics/PGraphics2
 _   make sure there's a loadPixels/updatePixels in PGraphics2
 _ slow on java2d, fast on p3d
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115276250;start=3
 _ set(x, y, image)
 _   x, y not setting with processing
-_ don't let users on < 1.3 load JAVA2D
-_ set upper bound on framerate so as not to completely hose things?
 _ textSpace(SCREEN_SPACE) needs to be faster
 _   need flat image implementation that takes no transforms
 _   along with 90, 180 and 270 versions of it as well
@@ -670,16 +676,11 @@ CORE / PGraphics3D
 
 _ images are losing pixels at the edges
 _   http://dev.processing.org/bugs/show_bug.cgi?id=102
-_ P3D not doing bilinear interpolation in text and images 
-_   because smooth() has to be set (and smooth throws an error in P3D)
-_   how should this be handled? a hint? allowing smooth()?
-_   probably just allow smooth() but don't smooth anything
 _ ortho() is doing things strangely
 _   seems to be mapping to 0, 0 - width/2, height/2
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
 _ odd error with some pixels from images not drawing properly
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
-_ simon reports borders on P3D and OPENGL if background() not called
 _ clipping not yet completely implemented
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
 _ PPolygon no longer in use and PLine is a mess
@@ -729,17 +730,11 @@ _ also when drawing an image, sense whether drawn rotated
 _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 
+
 CORE / Mac OS X
 
 _ first line of applets is missing on java 1.4+ on the mac
 _   http://dev.processing.org/bugs/show_bug.cgi?id=283
-_ change how java version is determined on mac
-_   http://developer.apple.com/technotes/tn2002/tn2110.html
-_   (this tn provides no guidance for macos8/9.. gah)
-_ little window showing up on macosx when running
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081284410
-_ flicker happening on osx java 1.4, but not 1.3:
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083184297
 _ cursor() broken in applets on macosx?
 _   or is it a java 1.4 versus java 1.3 problem?
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
@@ -760,6 +755,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsOpenGL
 
+_ opengl mipmaps are leaking (regression in spite of #150 fix)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=610
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _   only happens on the first round
@@ -842,14 +839,6 @@ _   better lighting model to show darkness at various depths
 _     maybe just ultra-high res bitmaps from gl
 
 
-PGraphicsPDF
-
-_ pdf export ignoring transparency on linux
-_   check to see if this is the case on other linux machines
-_   seems to be working fine on windows
-_   http://dev.processing.org/bugs/show_bug.cgi?id=345
-
-
 PShape
 _ for subclasses, make it easy to grab the structure of vertices
 _   actually, just use PShape internally and this will be easier
@@ -858,13 +847,15 @@ _ for PShape, need to be able to set the origin (flash people)
 
 LATER
 
+_ Use getContextClassLoader() instead of Class.forName()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=514
 _ add a timer("functionname", 45) method
 _   this can be used to schedule something to happen at a specific time
 _   or import the swing timer (for actionPerformed)
 X   look into javascript timers to see how they work
 _   also add interval("functionname", 40)
 _   and thread("functionname");
-_ introduce calc()
+_   problem is that this will 
 _ cmyk version of tiff encoder code?
 _ because 'color' isn't a real data type
 _   color(0, 0, 0, 0) produces black
@@ -878,3 +869,10 @@ _   gray that's greater than the colorMode() can produce strange colors
 _     http://dev.processing.org/bugs/show_bug.cgi?id=432
 _ add stroke() to type
 _   more for doing outlines-only and that sort of business
+_ gradients
+_   use gradients in a class for the svg lib for now
+_   don't add api to main p5 stuff (though maybe setPaint/noPaint api?)
+_   gradient-painted lines and fills
+_     java2d will do both line and fill, illusfarter only does fills
+_   gradients not supported in java2d
+_     http://dev.processing.org/bugs/show_bug.cgi?id=371

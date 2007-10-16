@@ -210,6 +210,12 @@ public class PApplet extends Applet
    */
   static final String NEW_RENDERER = "new renderer";
 
+  /** Renderer to use next time the component is updated */ 
+  //String nextRenderer = JAVA2D;
+  /** Path for the renderer next time the component is updated */
+  //String nextRendererPath;
+  
+  
   /**
    * The screen size when the applet was started.
    * <P>
@@ -417,7 +423,7 @@ public class PApplet extends Applet
 
   /**
    * true if this applet has had it.
-   */
+in   */
   public boolean finished;
 
   /**
@@ -576,19 +582,20 @@ public class PApplet extends Applet
       }
     } catch (Exception e) { }  // may be a security problem
 
-    // create a dummy graphics context
     if ((initialSize.width != 0) && (initialSize.height != 0)) {
-      size(initialSize.width, initialSize.height);
+      // When this PApplet is embedded inside a Java application with other
+      // Component objects, its size() may already be set externally (perhaps
+      // by a LayoutManager). In this case, honor that size as the default.
+      // Size of the component is set, just create a renderer.
+      g = PApplet.createGraphics(initialSize.width, initialSize.height, 
+                                 JAVA2D, null, this);
     } else {
-      //System.out.println("setting default");
-      size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      // Set the default size, until the user specifies otherwise
       this.defaultSize = true;
-      //System.out.println("zeroing");
-      //this.width = 0;  // use this to flag whether the width/height are valid
-      //this.height = 0;
-      // need to set width/height otherwise
-      // they won't work for static mode apps
-      //defaultSize = true;
+      g = PApplet.createGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT, 
+                                 JAVA2D, null, this);
+      // Fire component resize event
+      setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
     // this is automatically called in applets
@@ -874,6 +881,24 @@ public class PApplet extends Applet
 
 
   /**
+   * Resize the current renderer that's in use. This will be called after the
+   * Component has been resized (by an event) and the renderer needs an update.
+   */
+  protected void setRendererSize(int w, int h) {
+    if (w != g.width || h != g.height) {
+      g.resize(w, h);
+    }
+    /*
+    if (g == null) {
+      g = PApplet.createGraphics(w, h, nextRenderer, nextRendererPath, this);
+    } else {
+      g.resize(w, h);
+    }
+    */
+  }
+  
+  
+  /**
    * Starts up and creates a two-dimensional drawing surface,
    * or resizes the current drawing surface.
    * <P>
@@ -889,6 +914,13 @@ public class PApplet extends Applet
    * use the previous renderer and simply resize it.
    */
   public void size(int iwidth, int iheight) {
+    size(iwidth, iheight, JAVA2D, null);
+    //setSize(iwidth, iheight);
+    //defaultSize = false;
+    
+//    setRendererSize(iwidth, iheight);
+//    defaultSize = false;
+    /*
     if (g != null) {
       // just resize the current renderer
       size(iwidth, iheight, g.getClass().getName());
@@ -896,19 +928,8 @@ public class PApplet extends Applet
     } else {
       // create a JAVA2D renderer (the current default)
       size(iwidth, iheight, JAVA2D);
-
-      /*
-      if (PApplet.javaVersion >= 1.3f) {
-        try {
-          Class c = Class.forName(JAVA2D);
-          size(iwidth, iheight, JAVA2D);
-          return;
-
-        } catch (ClassNotFoundException e) { }
-        size(iwidth, iheight, P2D);  // fall-through case
-      }
-      */
     }
+    */
   }
 
 
@@ -930,40 +951,32 @@ public class PApplet extends Applet
    */
   public void size(int iwidth, int iheight,
                    String irenderer, String ipath) {
-    String currentRenderer =
-      (g == null) ? null : g.getClass().getName();
-    // ensure that this is an absolute path
-    if (ipath != null) ipath = savePath(ipath);
+    if (g == null) {
+      // no renderer exists, just create a freshy
+      g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
+      //updateSize(iwidth, iheight);
+      //setSize(iwidth, iheight);
+      //nextRenderer = irenderer;
+      //nextRendererPath = ipath;
+      // fire resize event to make sure the applet is the proper size
+      setSize(iwidth, iheight);
+      
+    } else {      
+      // ensure that this is an absolute path
+      if (ipath != null) ipath = savePath(ipath);
 
-    if (currentRenderer != null) {
+      String currentRenderer = g.getClass().getName();
       if (currentRenderer.equals(irenderer)) {
-        if ((iwidth == g.width) && (iheight == g.height)) {
-          // in this case, size() is being called a second time because
-          // setup() is being called a second time, since the first time
-          // that setup was called, the renderer was changed so an
-          // exception was thrown and setup() didn't complete. but this
-          // time around, g is the proper size and the proper class.
-
-          // that or size() is being called again for no good reason,
-          // in which case we just ignore it anyway.
-
-          // so all that needs to be done is to set the defaults
-          // (clear the background, set default strokeWeight, etc).
-          //g.defaults();
-          // removed this in favor of calling defaults() from beginDraw()
-
-          // this will happen when P3D or OPENGL are used with size()
-          // inside of setup. it's also safe to call defaults() now,
-          // because it's happening inside setup, which is just frame 0,
-          // meaning that the graphics context is proper and visible.
-
-        } else {  // just resizing, no need to create new graphics object
-          g.resize(iwidth, iheight);
-          updateSize(iwidth, iheight);
-          redraw(); // changed for rev 0100
-        }
-        // in either case, the renderer is unchanged, so return
-        //return;
+//        println("calling setRendererSize from size() " + iwidth + " " + iheight);
+        setRendererSize(iwidth, iheight);
+        setSize(iwidth, iheight);
+//        if ((iwidth != g.width) || (iheight != g.height)) {
+//          // resizing, no need to create new graphics object
+//          g.resize(iwidth, iheight);
+//          //updateSize(iwidth, iheight);
+//          //redraw(); // changed for rev 0100
+//          // removed redraw for 0128, might be problem with double draw()
+//        } // else this is just the 2nd trip through setup (w/o the exception)
 
       } else {  // renderer is being changed
         if (frameCount > 0) {
@@ -973,10 +986,15 @@ public class PApplet extends Applet
         // otherwise ok to fall through and create renderer below
         // the renderer is changing, so need to create a new object
         g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
-        //g.setMainDrawingSurface();
-        //if (g != null) {
-        updateSize(iwidth, iheight);
-        //}
+        //updateSize(iwidth, iheight);
+        //nextRenderer = irenderer;
+        //nextRendererPath = ipath;
+        
+        // fire resize event to make sure the applet is the proper size
+        setSize(iwidth, iheight);
+        // this is the function that will run if the user does their own
+        // size() command inside setup, so set defaultSize to false.
+        defaultSize = false;
 
         // throw an exception so that setup() is called again
         // but with a properly sized render
@@ -984,29 +1002,7 @@ public class PApplet extends Applet
         // display before calling anything inside setup().
         throw new RuntimeException(NEW_RENDERER);
       }
-    } else {  // none exists, just create a freshy
-      g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
-      //g.setMainDrawingSurface();
-      updateSize(iwidth, iheight);
     }
-
-    /*
-    // the renderer is changing, so need to create a new object
-    g = createGraphics(iwidth, iheight, irenderer);
-    //if (g != null) {
-    updateSize(iwidth, iheight);
-    //}
-
-    //if ((currentRenderer != null) &&
-    //  !currentRenderer.equals(irenderer)) {
-    if (currentRenderer != null) {
-      // throw an exception so that setup() is called again
-      // but with a properly sized render
-      // this is for opengl, which needs a valid, properly sized
-      // display before calling anything inside setup().
-      throw new RuntimeException(NEW_RENDERER);
-    }
-    */
   }
 
 
@@ -1014,9 +1010,12 @@ public class PApplet extends Applet
    * Sets this.width and this.height, unsets defaultSize, and calls
    * the size() methods inside any libraries.
    */
+  /*
   protected void updateSize(int iwidth, int iheight) {
     this.width = iwidth;
     this.height = iheight;
+    System.out.println("set default false updateSize " + iwidth + " " + iheight);
+    new Exception().printStackTrace();
     defaultSize = false;
 
     // make the applet itself larger.. it's a subclass of Component,
@@ -1039,6 +1038,7 @@ public class PApplet extends Applet
       new Object[] { new Integer(width), new Integer(height) };
     sizeMethods.handle(methodArgs);
   }
+  */
 
 
   /**
@@ -1389,6 +1389,7 @@ public class PApplet extends Applet
           // now for certain that we've got a valid size
           this.width = g.width;
           this.height = g.height;
+          //System.out.println("frame complete, set default false");
           this.defaultSize = false;
 
         } else {  // frameCount > 0, meaning an actual draw()
@@ -1528,7 +1529,12 @@ public class PApplet extends Applet
     try {
       while ((Thread.currentThread() == thread) && !finished) {
         // render a single frame
-        g.requestDisplay(this);
+        if (g != null) {
+          //println("requesting display");
+          g.requestDisplay(this);
+        } else {
+          println("no renderer");
+        }
 
         // wait for update & paint to happen before drawing next frame
         // this is necessary since the drawing is sometimes in a
@@ -1720,27 +1726,15 @@ public class PApplet extends Applet
           public void componentResized(ComponentEvent e) {
             Component c = e.getComponent();
             Rectangle bounds = c.getBounds();
-            //System.out.println("componentResized()");
-            //System.out.println("  " + c.getClass().getName());
-            //println("  visible " + isVisible());
-            //System.out.println("  " + e);
-            //System.out.println("  bounds: " + bounds);
-            //int newWidth = bounds.width - bounds.x * 2;
-            //int newHeight = bounds.height - (bounds.y + bounds.x);
-            //System.out.println("  new: " + newWidth + " " + newHeight);
-
-            size(bounds.width, bounds.height);
-
-            //if (c == PApplet.this) {
-            //Container con = (Container) c;
-            //Dimension newSize = getSize();
-            //System.out.println("resizing to " + newSize + " ");
-            //System.out.println(c.getBounds());
-            //System.out.println(e);
-            //System.out.println(c);
-            //System.out.println("insets " + con.getInsets());
-            //size(newSize.width, newSize.height);
-            //}
+            setRendererSize(bounds.width, bounds.height);
+            width = bounds.width;
+            height = bounds.height;
+            
+            // this has to be called after the exception is thrown,
+            // otherwise the supporting libs won't have a valid context to draw to
+            Object methodArgs[] =
+              new Object[] { new Integer(width), new Integer(height) };
+            sizeMethods.handle(methodArgs);
           }
         });
 
@@ -6919,11 +6913,16 @@ public class PApplet extends Applet
       // wait until the applet has figured out its width
       // hoping that this won't hang if the applet has an exception
       while (applet.defaultSize && !applet.finished) {
+        //System.out.println("default size");
         try {
           Thread.sleep(5);
 
-        } catch (InterruptedException e) { }
+        } catch (InterruptedException e) { 
+          //System.out.println("interrupt");
+        }
       }
+      //println("not default size " + applet.width + " " + applet.height);
+      //println("  (g width/height is " + applet.g.width + "x" + applet.g.height + ")");
 
       if (present) {
         frame.setUndecorated(true);
