@@ -13,12 +13,11 @@ _   and probably no longer necessary
 _ mark examples as untitled (rather than read-only)
 _ put the "had to rename sketch" message in the msg bar
 
-questions for casey
+
+with casey
 _ closing last sketch window... open an untitled document?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=634
 _ make loadFont() work properly with regular fonts?
-
-later work with casey
 _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
 _ update keywords generator script on the site
