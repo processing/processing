@@ -2295,7 +2295,7 @@ public abstract class PGraphics extends PImage implements PConstants {
         // as recommended by the @deprecated flag.
         textFontNativeMetrics =
           Toolkit.getDefaultToolkit().getFontMetrics(textFontNative);
-        
+
         // float w = font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
       }
       textSize(which.size);
@@ -3815,19 +3815,24 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the background to a gray or ARGB color.
-   * <P>
-   * Note that background() should be called before any
-   * transformations occur, because some implementations may
-   * require the current transformation matrix to be identity
-   * before drawing.
+   * Set the background to a gray or ARGB color. 
+   * <p>
+   * For the main drawing surface, the alpha value will be ignored. However, 
+   * alpha can be used on PGraphics objects from createGraphics(). This is 
+   * the only way to set all the pixels partially transparent, for instance.
+   * <p>
+   * Note that background() should be called before any transformations occur, 
+   * because some implementations may require the current transformation matrix 
+   * to be identity before drawing.
    */
   public void background(int rgb) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
       background((float) rgb);
 
     } else {
-      rgb |= 0xff000000;
+      if (mainDrawingSurface) {
+        rgb |= 0xff000000;  // ignore alpha for main drawing surface
+      }
       colorCalcARGB(rgb, colorModeA);
       backgroundFromCalc();
       clear();
@@ -3838,23 +3843,21 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * See notes about alpha in background(x, y, z, a).
    */
-  /*
   public void background(int rgb, float alpha) {
-//    if (mainDrawingSurface) {
-    background(rgb);  // don't allow people to set alpha
+    if (mainDrawingSurface) {
+      background(rgb);  // ignore alpha for main drawing surface
 
-//    } else {
-//      if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-//        background((float) rgb, alpha);
-//
-//      } else {
-//        colorCalcARGB(rgb, alpha);
-//        backgroundFromCalc();
-//        clear();
-//      }
-//    }
+    } else {
+      if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+        background((float) rgb, alpha);
+
+      } else {
+        colorCalcARGB(rgb, alpha);
+        backgroundFromCalc();
+        clear();
+      }
+    }
   }
-  */
 
 
   /**
@@ -3871,18 +3874,16 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * See notes about alpha in background(x, y, z, a).
    */
-  /*
   public void background(float gray, float alpha) {
-//    if (mainDrawingSurface) {
-    background(gray);  // don't allow people to set alpha
+    if (mainDrawingSurface) {
+      background(gray);  // ignore alpha for main drawing surface
 
-//    } else {
-//      colorCalc(gray, alpha);
-//      backgroundFromCalc();
-//      clear();
-//    }
+    } else {
+      colorCalc(gray, alpha);
+      backgroundFromCalc();
+      clear();
+    }
   }
-  */
 
 
   /**
@@ -3897,27 +3898,26 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Clear the background with a color that includes an alpha value.
-   * This should only be used with objects created by createGraphics(),
-   * setting the main drawing surface transparent may cause problems.
-   * It might be tempting to use this function to partially clear the
-   * screen on each frame, however that's not how this function works.
-   * When calling background(), the pixels will be replaced with pixels
-   * that have that level of transparency. To do a semi-transparent
-   * overlay, use fill() with alpha and draw a rectangle.
+   * Clear the background with a color that includes an alpha value. This can 
+   * only be used with objects created by createGraphics(), because the main 
+   * drawing surface cannot be set transparent. 
+   * <p>
+   * It might be tempting to use this function to partially clear the screen  
+   * on each frame, however that's not how this function works. When calling 
+   * background(), the pixels will be replaced with pixels that have that level 
+   * of transparency. To do a semi-transparent overlay, use fill() with alpha 
+   * and draw a rectangle.
    */
-  /*
   public void background(float x, float y, float z, float a) {
-//    if (mainDrawingSurface) {
-    background(x, y, z);  // don't allow people to set alpha
+    if (mainDrawingSurface) {
+      background(x, y, z);  // don't allow people to set alpha
 
-//    } else {
-//      colorCalc(x, y, z, a);
-//      backgroundFromCalc();
-//      clear();
-//    }
+    } else {
+      colorCalc(x, y, z, a);
+      backgroundFromCalc();
+      clear();
+    }
   }
-  */
 
 
   protected void backgroundFromCalc() {
