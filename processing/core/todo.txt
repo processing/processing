@@ -1,4 +1,6 @@
 0129 core
+X width and height not always set properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=642
 
 
 add to reference
