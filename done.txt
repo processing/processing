@@ -1,3 +1,7 @@
+0129 pde
+X fixed up the reference for color commands, updated version
+
+
 0128 pde
 X fix macosx dist script to not require root password
 X   was just a matter of not using sudo to write the image
