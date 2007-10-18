@@ -1,5 +1,6 @@
-0129 pde
-X fixed up the reference for color commands, updated version
+0130 pde
+_ call handleClose() when closing sketch window
+_   otherwise it's leaving lots of windows around
 
 
 _ auto-delete of sketches might be dangerous

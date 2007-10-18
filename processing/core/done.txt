@@ -1,3 +1,9 @@
+0129 core
+X width and height not always set properly
+X   http://dev.processing.org/bugs/show_bug.cgi?id=642
+X bring back background() with alpha
+
+
 0128 core
 X remove PFont reflection stuff
 X remove cursor reflection stuff
