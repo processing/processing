@@ -47,10 +47,10 @@ import java.util.zip.*;
  * <p/>
  * As of release 0126 of Processing, we have discontinued support for versions
  * of Java prior to 1.4. We don't have enough people to support it, and for a
- * project of our size, we should be focusing on the future, rather than 
- * working around legacy Java code. 
+ * project of our size, we should be focusing on the future, rather than
+ * working around legacy Java code.
  * <p/>
- * This class extends Applet instead of JApplet because 1) historically, 
+ * This class extends Applet instead of JApplet because 1) historically,
  * we supported Java 1.1, which does not include Swing (without an
  * additional, sizable, download), and 2) Swing is a bloated piece of crap.
  * A Processing applet is a heavyweight AWT component, and can be used the
@@ -210,12 +210,12 @@ public class PApplet extends Applet
    */
   static final String NEW_RENDERER = "new renderer";
 
-  /** Renderer to use next time the component is updated */ 
+  /** Renderer to use next time the component is updated */
   //String nextRenderer = JAVA2D;
   /** Path for the renderer next time the component is updated */
   //String nextRendererPath;
-  
-  
+
+
   /**
    * The screen size when the applet was started.
    * <P>
@@ -587,13 +587,15 @@ in   */
       // Component objects, its size() may already be set externally (perhaps
       // by a LayoutManager). In this case, honor that size as the default.
       // Size of the component is set, just create a renderer.
-      g = PApplet.createGraphics(initialSize.width, initialSize.height, 
-                                 JAVA2D, null, this);
+      setRendererSize(initialSize.width, initialSize.height);
+      //g = PApplet.createGraphics(initialSize.width, initialSize.height,
+      //                         JAVA2D, null, this);
     } else {
       // Set the default size, until the user specifies otherwise
       this.defaultSize = true;
-      g = PApplet.createGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT, 
-                                 JAVA2D, null, this);
+      //g = PApplet.createGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT,
+      //                           JAVA2D, null, this);
+      setRendererSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
       // Fire component resize event
       setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
@@ -885,9 +887,14 @@ in   */
    * Component has been resized (by an event) and the renderer needs an update.
    */
   protected void setRendererSize(int w, int h) {
-    if (w != g.width || h != g.height) {
+    if (g == null) {
+      g = PApplet.createGraphics(w, h, JAVA2D, null, this);
+
+    } else  if (w != g.width || h != g.height) {
       g.resize(w, h);
     }
+    width = w;
+    height = h;
     /*
     if (g == null) {
       g = PApplet.createGraphics(w, h, nextRenderer, nextRendererPath, this);
@@ -896,8 +903,8 @@ in   */
     }
     */
   }
-  
-  
+
+
   /**
    * Starts up and creates a two-dimensional drawing surface,
    * or resizes the current drawing surface.
@@ -917,7 +924,7 @@ in   */
     size(iwidth, iheight, JAVA2D, null);
     //setSize(iwidth, iheight);
     //defaultSize = false;
-    
+
 //    setRendererSize(iwidth, iheight);
 //    defaultSize = false;
     /*
@@ -954,14 +961,16 @@ in   */
     if (g == null) {
       // no renderer exists, just create a freshy
       g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
+      width = iwidth;
+      height = iheight;
       //updateSize(iwidth, iheight);
       //setSize(iwidth, iheight);
       //nextRenderer = irenderer;
       //nextRendererPath = ipath;
       // fire resize event to make sure the applet is the proper size
       setSize(iwidth, iheight);
-      
-    } else {      
+
+    } else {
       // ensure that this is an absolute path
       if (ipath != null) ipath = savePath(ipath);
 
@@ -986,10 +995,12 @@ in   */
         // otherwise ok to fall through and create renderer below
         // the renderer is changing, so need to create a new object
         g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
+        width = iwidth;
+        height = iheight;
         //updateSize(iwidth, iheight);
         //nextRenderer = irenderer;
         //nextRendererPath = ipath;
-        
+
         // fire resize event to make sure the applet is the proper size
         setSize(iwidth, iheight);
         // this is the function that will run if the user does their own
@@ -1387,8 +1398,8 @@ in   */
 
           //this.pixels = g.pixels;  // make em call loadPixels
           // now for certain that we've got a valid size
-          this.width = g.width;
-          this.height = g.height;
+          //this.width = g.width;
+          //this.height = g.height;
           //System.out.println("frame complete, set default false");
           this.defaultSize = false;
 
@@ -1727,9 +1738,7 @@ in   */
             Component c = e.getComponent();
             Rectangle bounds = c.getBounds();
             setRendererSize(bounds.width, bounds.height);
-            width = bounds.width;
-            height = bounds.height;
-            
+
             // this has to be called after the exception is thrown,
             // otherwise the supporting libs won't have a valid context to draw to
             Object methodArgs[] =
@@ -4766,8 +4775,8 @@ in   */
 
     return sketchPath + File.separator + where;
   }
-  
-  
+
+
   public File sketchFile(String where) {
     return new File(sketchPath(where));
   }
@@ -4842,18 +4851,18 @@ in   */
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
   // SORT
 
-  
+
   static public byte[] sort(byte what[]) {
     return sort(what, what.length);
   }
-  
-  
+
+
   static public byte[] sort(byte[] what, int count) {
     byte[] outgoing = new byte[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -4865,8 +4874,8 @@ in   */
   static public char[] sort(char what[]) {
     return sort(what, what.length);
   }
-  
-  
+
+
   static public char[] sort(char[] what, int count) {
     char[] outgoing = new char[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -4874,12 +4883,12 @@ in   */
     return outgoing;
   }
 
-  
+
   static public int[] sort(int what[]) {
     return sort(what, what.length);
   }
-  
-  
+
+
   static public int[] sort(int[] what, int count) {
     int[] outgoing = new int[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -4887,12 +4896,12 @@ in   */
     return outgoing;
   }
 
-  
+
   static public float[] sort(float what[]) {
     return sort(what, what.length);
   }
-  
-  
+
+
   static public float[] sort(float[] what, int count) {
     float[] outgoing = new float[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -4904,15 +4913,15 @@ in   */
   static public String[] sort(String what[]) {
     return sort(what, what.length);
   }
-  
-  
+
+
   static public String[] sort(String[] what, int count) {
     String[] outgoing = new String[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
     Arrays.sort(outgoing, 0, count);
     return outgoing;
   }
-  
+
 
 
   //////////////////////////////////////////////////////////////
@@ -5568,7 +5577,7 @@ in   */
 
   /**
    * Split a string into pieces along a specific character.
-   * Most commonly used to break up a String along a space or a tab 
+   * Most commonly used to break up a String along a space or a tab
    * character.
    * <P>
    * This operates differently than the others, where the
@@ -5624,15 +5633,15 @@ in   */
   static public String[] split(String what, String delim) {
     return what.split(delim);
   }
-  
-  
+
+
   /**
-   * Match a string with a regular expression, and return matching groups as 
+   * Match a string with a regular expression, and return matching groups as
    * an array. If the sequence matches, but there are no groups, a zero length
    * (non-null) String array will be returned. Groups are normally 1-indexed
    * and group 0 is the matching sequence, but in this function the groups
    * are 0-indexed. If you want matching sequence, just use the Java String
-   * methods for testing matches. 
+   * methods for testing matches.
    * @param what
    * @param regexp
    * @return
@@ -6917,7 +6926,7 @@ in   */
         try {
           Thread.sleep(5);
 
-        } catch (InterruptedException e) { 
+        } catch (InterruptedException e) {
           //System.out.println("interrupt");
         }
       }
@@ -8202,15 +8211,33 @@ in   */
   }
 
 
+  public void background(int rgb, float alpha) {
+    if (recorder != null) recorder.background(rgb, alpha);
+    g.background(rgb, alpha);
+  }
+
+
   public void background(float gray) {
     if (recorder != null) recorder.background(gray);
     g.background(gray);
   }
 
 
+  public void background(float gray, float alpha) {
+    if (recorder != null) recorder.background(gray, alpha);
+    g.background(gray, alpha);
+  }
+
+
   public void background(float x, float y, float z) {
     if (recorder != null) recorder.background(x, y, z);
     g.background(x, y, z);
+  }
+
+
+  public void background(float x, float y, float z, float a) {
+    if (recorder != null) recorder.background(x, y, z, a);
+    g.background(x, y, z, a);
   }
 
 
