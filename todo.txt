@@ -1,4 +1,6 @@
 0129 pde
+X fixed up the reference for color commands, updated version
+
 
 _ auto-delete of sketches might be dangerous
 _   and probably no longer necessary

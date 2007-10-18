@@ -7,6 +7,21 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0129 - 18 October 2007
+
+Fixes two issues from release 0128. 
+
++ Variables for width and height not always set properly
+  http://dev.processing.org/bugs/show_bug.cgi?id=642
+
++ Brought back the background() methods that take alpha when used
+  with createGraphics(). They're necessary because it's the only 
+  way to clear the pixel buffer with transparent color.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0128 - 16 October 2007
 
 This release contains major changes to how size() is handled. 
