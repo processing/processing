@@ -1,10 +1,10 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PServer - basic network server implementation
+  Server - basic network server implementation
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004 Ben Fry
+  Copyright (c) 2004-2007 Ben Fry and Casey Reas
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -29,7 +29,6 @@ import processing.core.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.util.*;
 
 
 public class Server implements Runnable {
@@ -40,18 +39,19 @@ public class Server implements Runnable {
   Thread thread;
   ServerSocket server;
   int port;
-  Vector clients;  // people payin the bills
+  //Vector clients;  // people payin the bills
+  Client[] clients;
+  int clientCount;
 
 
   public Server(PApplet parent, int port) {
     this.parent = parent;
     this.port = port;
 
-    //parent.attach(this);
-
     try {
       server = new ServerSocket(this.port);
-      clients = new Vector();
+      //clients = new Vector();
+      clients = new Client[10];
 
       thread = new Thread(this);
       thread.start();
@@ -71,7 +71,9 @@ public class Server implements Runnable {
       }
 
     } catch (IOException e) {
-      errorMessage("<init>", e);
+      e.printStackTrace();
+      thread = null;
+      //errorMessage("<init>", e);
     }
   }
 
@@ -82,7 +84,39 @@ public class Server implements Runnable {
   public void disconnect(Client client) {
     //client.stop();
     client.dispose();
-    clients.removeElement(client);
+    int index = clientIndex(client);
+    if (index != -1) {
+      removeIndex(index);
+    }
+  }
+  
+  
+  protected void removeIndex(int index) {
+    clientCount--;
+    // shift down the remaining clients
+    for (int i = index; i < clientCount; i++) {
+      clients[i] = clients[i+1];
+    }
+    // mark last empty var for garbage collection
+    clients[clientCount] = null;
+  }
+  
+  
+  protected void addClient(Client client) {
+    if (clientCount == clients.length) {
+      clients = (Client[]) PApplet.expand(clients);
+    }
+    clients[clientCount++] = client;
+  }
+  
+  
+  protected int clientIndex(Client client) {
+    for (int i = 0; i < clientCount; i++) {
+      if (clients[i] == client) {
+        return i;
+      }
+    }
+    return -1;
   }
 
 
@@ -96,13 +130,12 @@ public class Server implements Runnable {
    */
   public Client available() {
     synchronized (clients) {
-      int clientCount = clients.size();
       int index = lastAvailable + 1;
       if (index >= clientCount) index = 0;
 
       for (int i = 0; i < clientCount; i++) {
         int which = (index + i) % clientCount;
-        Client client = (Client) clients.elementAt(which);
+        Client client = clients[which];
         if (client.available() > 0) {
           lastAvailable = which;
           return client;
@@ -115,11 +148,10 @@ public class Server implements Runnable {
 
   /**
    * Disconnect all clients and stop the server.
-   * <P>
-   * Use this to shut down the server if you finish using it
-   * while your applet is still running. Otherwise, it will be
-   * automatically be shut down by the host PApplet
-   * (using dispose, which is identical)
+   * <p/>
+   * Use this to shut down the server if you finish using it while your applet 
+   * is still running. Otherwise, it will be automatically be shut down by the 
+   * host PApplet using dispose(), which is identical. 
    */
   public void stop() {
     dispose();
@@ -134,10 +166,10 @@ public class Server implements Runnable {
       thread = null;
 
       if (clients != null) {
-        Enumeration en = clients.elements();
-        while (en.hasMoreElements()) {
-          disconnect((Client) en.nextElement());
+        for (int i = 0; i < clientCount; i++) {
+          disconnect(clients[i]);
         }
+        clientCount = 0;
         clients = null;
       }
 
@@ -147,7 +179,8 @@ public class Server implements Runnable {
       }
 
     } catch (IOException e) {
-      errorMessage("stop", e);
+      e.printStackTrace();
+      //errorMessage("stop", e);
     }
   }
 
@@ -158,20 +191,21 @@ public class Server implements Runnable {
         Socket socket = server.accept();
         Client client = new Client(parent, socket);
         synchronized (clients) {
-          clients.addElement(client);
+          addClient(client);
           if (serverEventMethod != null) {
             try {
               serverEventMethod.invoke(parent, new Object[] { this, client });
             } catch (Exception e) {
-              System.err.println("error, disabling serverEvent() " +
-                                 " for port " + port);
+              System.err.println("Disabling serverEvent() for port " + port);
               e.printStackTrace();
               serverEventMethod = null;
             }
           }
         }
       } catch (IOException e) {
-        errorMessage("run", e);
+        //errorMessage("run", e);
+        e.printStackTrace();
+        thread = null;
       }
       try {
         Thread.sleep(8);
@@ -185,10 +219,14 @@ public class Server implements Runnable {
    * See Client.write() for operational details.
    */
   public void write(int what) {  // will also cover char
-    Enumeration en = clients.elements();
-    while (en.hasMoreElements()) {
-      Client client = (Client) en.nextElement();
-      client.write(what);
+    int index = 0;
+    while (index < clientCount) {
+      clients[index].write(what);
+      if (clients[index].active()) {
+        index++;
+      } else {
+        removeIndex(index);
+      }
     }
   }
 
@@ -197,11 +235,15 @@ public class Server implements Runnable {
    * Write a byte array to all the connected clients.
    * See Client.write() for operational details.
    */
-  public void write(byte bytes[]) {
-    Enumeration en = clients.elements();
-    while (en.hasMoreElements()) {
-      Client client = (Client) en.nextElement();
-      client.write(bytes);
+  public void write(byte what[]) {
+    int index = 0;
+    while (index < clientCount) {
+      clients[index].write(what);
+      if (clients[index].active()) {
+        index++;
+      } else {
+        removeIndex(index);
+      }
     }
   }
 
@@ -211,10 +253,14 @@ public class Server implements Runnable {
    * See Client.write() for operational details.
    */
   public void write(String what) {
-    Enumeration en = clients.elements();
-    while (en.hasMoreElements()) {
-      Client client = (Client) en.nextElement();
-      client.write(what);
+    int index = 0;
+    while (index < clientCount) {
+      clients[index].write(what);
+      if (clients[index].active()) {
+        index++;
+      } else {
+        removeIndex(index);
+      }
     }
   }
 
@@ -223,9 +269,9 @@ public class Server implements Runnable {
    * General error reporting, all corraled here just in case
    * I think of something slightly more intelligent to do.
    */
-  public void errorMessage(String where, Exception e) {
-    parent.die("Error inside Server." + where + "()", e);
-    //System.err.println("Error inside Server." + where + "()");
-    //e.printStackTrace(System.err);
-  }
+//  public void errorMessage(String where, Exception e) {
+//    parent.die("Error inside Server." + where + "()", e);
+//    //System.err.println("Error inside Server." + where + "()");
+//    //e.printStackTrace(System.err);
+//  }
 }
