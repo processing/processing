@@ -147,8 +147,6 @@ public class Editor extends JFrame {
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           base.handleClose(Editor.this, false);
-          //handleClose2();
-          //handleQuitInternal();
         }
       });
     // don't close the window when clicked, the app will take care

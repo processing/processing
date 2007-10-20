@@ -1,3 +1,14 @@
+0130 core
+X fixed problem with size() and the default renderer
+X   the renderer was being reset after setup(), 
+X   so anything that occurred inside setup() was completely ignored.
+X   http://dev.processing.org/bugs/show_bug.cgi?id=646
+X   http://dev.processing.org/bugs/show_bug.cgi?id=648
+X   http://dev.processing.org/bugs/show_bug.cgi?id=649
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1192873557
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1192731014
+
+
 0129 core
 X width and height not always set properly
 X   http://dev.processing.org/bugs/show_bug.cgi?id=642

@@ -1,9 +1,4 @@
-0130 pde
-X fix keywords.txt problems with some constants being left out
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1192873557
-X call doClose() when closing sketch window
-X   otherwise it's leaving lots of windows around
-
+0131 pde
 
 _ auto-delete of sketches might be dangerous
 _   and probably no longer necessary
