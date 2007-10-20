@@ -1,10 +1,10 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  PClient - basic network client implementation
+  Client - basic network client implementation
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004 Ben Fry
+  Copyright (c) 2004-2007 Ben Fry and Casey Reas
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@ public class Client implements Runnable {
 
   PApplet parent;
   Method clientEventMethod;
+  Method disconnectEventMethod;
 
   Thread thread;
   Socket socket;
@@ -58,8 +59,6 @@ public class Client implements Runnable {
     this.host = host;
     this.port = port;
 
-    //parent.attach(this);
-
     try {
       socket = new Socket(this.host, this.port);
       input = socket.getInputStream();
@@ -71,7 +70,7 @@ public class Client implements Runnable {
       parent.registerDispose(this);
 
       // reflection to check whether host applet has a call for
-      // public void serialEvent(processing.serial.Serial)
+      // public void clientEvent(processing.net.Client)
       // which would be called each time an event comes in
       try {
         clientEventMethod =
@@ -80,9 +79,18 @@ public class Client implements Runnable {
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
       }
+      // do the same for disconnectEvent(Client c);
+      try {
+        disconnectEventMethod =
+          parent.getClass().getMethod("disconnectEvent",
+                                      new Class[] { Client.class });
+      } catch (Exception e) {
+        // no such method, or an error.. which is fine, just ignore
+      }
 
     } catch (IOException e) {
-      errorMessage("<init>", e);
+    	e.printStackTrace();
+    	dispose();
     }
   }
 
@@ -99,8 +107,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Disconnect from the server.
-   * <P>
+   * Disconnect from the server and calls disconnectEvent(Client c)
+   * in the host PApplet.
+   * <P/>
    * Use this to shut the connection if you're finished with it
    * while your applet is still running. Otherwise, it will be
    * automatically be shut down by the host PApplet
@@ -108,6 +117,14 @@ public class Client implements Runnable {
    */
   public void stop() {
     dispose();
+    if (disconnectEventMethod != null) {
+      try {
+        disconnectEventMethod.invoke(parent, new Object[] { this });
+      } catch (Exception e) {
+        e.printStackTrace();
+        disconnectEventMethod = null;
+      }
+    }
   }
 
 
@@ -118,6 +135,7 @@ public class Client implements Runnable {
    * use stop() instead from within your own applets.
    */
   public void dispose() {
+    thread = null;
     try {
       // do io streams need to be closed first?
       if (input != null) input.close();
@@ -126,7 +144,6 @@ public class Client implements Runnable {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    thread = null;
     input = null;
     output = null;
 
@@ -173,9 +190,19 @@ public class Client implements Runnable {
         } catch (InterruptedException ex) { }
 
       } catch (IOException e) {
-        errorMessage("run", e);
+        //errorMessage("run", e);
+        e.printStackTrace();
       }
     }
+  }
+
+
+  /**
+   * Return true if this client is still active and hasn't run
+   * into any trouble.
+   */
+  public boolean active() {
+    return (thread != null);
   }
 
 
@@ -378,7 +405,7 @@ public class Client implements Runnable {
    * Combination of readBytesUntil and readString. See caveats in
    * each function. Returns null if it still hasn't found what
    * you're looking for.
-   *
+   * <p/>
    * If you want to move Unicode data, you can first convert the
    * String to a byte stream in the representation of your choice
    * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
@@ -391,7 +418,7 @@ public class Client implements Runnable {
 
 
   /**
-   * This will handle both ints, bytes and chars transparently.
+   * This will handle ints, bytes and chars transparently.
    */
   public void write(int what) {  // will also cover char
     try {
@@ -399,7 +426,12 @@ public class Client implements Runnable {
       output.flush();   // hmm, not sure if a good idea
 
     } catch (Exception e) { // null pointer or serial port dead
-      errorMessage("write", e);
+      //errorMessage("write", e);
+      //e.printStackTrace();
+      //dispose();
+      //disconnect(e);
+      e.printStackTrace();
+      stop();
     }
   }
 
@@ -411,7 +443,10 @@ public class Client implements Runnable {
 
     } catch (Exception e) { // null pointer or serial port dead
       //errorMessage("write", e);
+      //e.printStackTrace();
+      //disconnect(e);
       e.printStackTrace();
+      stop();
     }
   }
 
@@ -434,11 +469,24 @@ public class Client implements Runnable {
 
 
   /**
+   * Handle disconnect due to an Exception being thrown.
+   */
+  /*
+  protected void disconnect(Exception e) {
+    dispose();
+    if (e != null) {
+      e.printStackTrace();
+    }
+  }
+  */
+
+
+  /**
    * General error reporting, all corraled here just in case
    * I think of something slightly more intelligent to do.
    */
-  public void errorMessage(String where, Exception e) {
-    parent.die("Error inside Client." + where + "()", e);
+  //public void errorMessage(String where, Exception e) {
+  //parent.die("Error inside Client." + where + "()", e);
     //e.printStackTrace(System.err);
-  }
+  //}
 }
