@@ -3,6 +3,9 @@
 _ add warning system for pgraphics, rather than runtime exceptions
 _   keep array of warning strings, and booleans for whether they've called
 
+_ chooseFile() and chooseFolder() with named fxn callbacks
+_   the function must take a File object as a parameter
+
 add to reference
 _ update the reference to cover parseXxxx() stuff
 _   also add notes about parseInt/Float(blah, otherwise)
