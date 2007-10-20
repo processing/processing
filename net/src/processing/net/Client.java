@@ -43,11 +43,8 @@ public class Client implements Runnable {
   int port;
   String host;
 
-
-  // read buffer and streams
-
-  InputStream input;
-  OutputStream output;
+  public InputStream input;
+  public OutputStream output;
 
   byte buffer[] = new byte[32768];
   int bufferIndex;
