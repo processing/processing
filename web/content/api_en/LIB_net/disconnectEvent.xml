@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>clientEvent()</name>
+<name>disconnectEvent()</name>
 
 <category>Net</category>
 
@@ -23,9 +23,8 @@ void setup() {
 
 void draw() { }  // Empty draw keeps the program running
 
-// ClientEvent message is generated when the server 
-// sends data to an existing client.
-void clientEvent(Client someClient) {
+// ClientEvent message is generated when a client disconnects.
+void disconnectEvent(Client someClient) {
   print("Server Says:  ");
   dataIn = myClient.read();
   println(dataIn);
@@ -37,11 +36,11 @@ void clientEvent(Client someClient) {
 </example>
 
 <description>
-This function is called when a server sends a byte to an existing Client object.
+This function is called when a client disconnects.
 </description>
 
 <syntax>
-void clientEvent(<c>client</c>) {
+void disconnectEvent(<c>client</c>) {
   <c>statements</c>
 }
 </syntax>
@@ -53,12 +52,13 @@ void clientEvent(<c>client</c>) {
 
 <parameter>
 <label>client</label>
-<description>the client with new data</description>
+<description>the client that has disconnected</description>
 </parameter>
 
 <returns></returns>
 
 <related>
+Client
 Server
 </related>
 
