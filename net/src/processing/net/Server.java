@@ -39,9 +39,11 @@ public class Server implements Runnable {
   Thread thread;
   ServerSocket server;
   int port;
-  //Vector clients;  // people payin the bills
-  Client[] clients;
-  int clientCount;
+  
+  /** Number of clients currently connected. */
+  public int clientCount;
+  /** Array of client objects, useful length is determined by clientCount. */
+  public Client[] clients;
 
 
   public Server(PApplet parent, int port) {
