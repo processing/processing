@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-07 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -256,6 +256,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // need to get proper opengl context since will be needed below
       gl = canvas.getGL();
       glu = new GLU(); //canvas.getGLU();
+
+      //System.out.println("swap mode is " + canvas.getAutoSwapBufferMode());
+      //canvas.setAutoSwapBufferMode(false);
 
       //System.out.println("creating PGraphicsOpenGL 7");
 
@@ -2383,11 +2386,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
     IntBuffer setBuffer = BufferUtil.newIntBuffer(source.pixels.length);
     setBuffer.put(source.pixels);
     setBuffer.rewind();
-    
+
     setRasterPos(x, (height-y) - source.height); //+source.height);
     gl.glDrawPixels(source.width, source.height,
                     GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, setBuffer);
-    
     source.pixels = backup;
   }
 
@@ -2395,7 +2397,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   /**
    * Definitive method for setting raster pos, including offscreen locations.
    * The raster position is tricky because it's affected by the modelview and
-   * projection matrices. Further, offscreen coords won't properly set the 
+   * projection matrices. Further, offscreen coords won't properly set the
    * raster position. This code gets around both issues.
    * http://www.mesa3d.org/brianp/sig97/gotchas.htm
    * @param y the Y-coordinate, which is flipped upside down in OpenGL
