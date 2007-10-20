@@ -208,14 +208,17 @@ public class PGraphicsOpenGL extends PGraphics3D {
    */
   protected void allocate() {
     if (canvas == null) {
-      /*
-      // how to integrate this properly?
       GLCapabilities capabilities = new GLCapabilities();
-      capabilities.setSampleBuffers(true);
-      capabilities.setNumSamples(4); //2);
-      canvas = new GLCanvas(capabilities);
-      */
-      canvas = new GLCanvas();
+    	if (hints[ENABLE_OPENGL_2X_SMOOTH]) {
+    	  capabilities.setSampleBuffers(true);
+    	  capabilities.setNumSamples(2);
+      } else if (hints[ENABLE_OPENGL_4X_SMOOTH]) {
+        capabilities.setSampleBuffers(true);
+        capabilities.setNumSamples(4);
+      }
+      //canvas = new GLCanvas();
+    	canvas = new GLCanvas(capabilities);
+
 
       //System.out.println("creating PGraphicsOpenGL 3");
       canvas.addGLEventListener(new GLEventListener() {
@@ -295,34 +298,22 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  // public void defaults() { }
+  public void hint(int which) {
+    super.hint(which);
 
-  /*
-  private void syncMatrices()
-  {
-    gl.glMatrixMode(GL.GL_PROJECTION);
-    gl.glLoadMatrixf(new float[] {
-      projection.m00, projection.m10, projection.m20, projection.m30,
-      projection.m01, projection.m11, projection.m21, projection.m31,
-      projection.m02, projection.m12, projection.m22, projection.m32,
-      projection.m03, projection.m13, projection.m23, projection.m33
-    });
-
-    gl.glMatrixMode(GL.GL_MODELVIEW);
-    gl.glLoadIdentity();
-    gl.glScalef(1, -1, 1);
-  }
-  */
-
-
-  /*
-  public void clearLights() {
-    super.clearLights();
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-      lightDisable(i);
+    if (which == DISABLE_DEPTH_TEST) {
+      gl.glDisable(GL.GL_DEPTH_TEST);
     }
   }
-  */
+
+
+  public void unhint(int which) {
+    hints[which] = false;
+
+    if (which == DISABLE_DEPTH_TEST) {
+      gl.glEnable(GL.GL_DEPTH_TEST);
+    }
+  }
 
 
   public void beginDraw() {
