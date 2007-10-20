@@ -223,7 +223,7 @@ public class PPolygon implements PConstants {
     }
 
     // hack to not make polygons fly into the screen
-    if (parent.hints[NO_FLYING_POO]) {
+    if (parent.hints[DISABLE_FLYING_POO]) {
       float nwidth2 = -width * 2;
       float nheight2 = -height * 2;
       float width2 = width * 2;

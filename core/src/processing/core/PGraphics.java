@@ -191,8 +191,18 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // needs to happen before background() is called
-  // and resize.. so it's gotta be outside
+  /**
+   * Array of hint[] items. These are hacks to get around various 
+   * temporary workarounds inside the environment. 
+   * <p/>
+   * Note that this array cannot be static, as a hint() may result in a 
+   * runtime change specific to a renderer. For instance, calling
+   * hint(DISABLE_DEPTH_TEST) has to call glDisable() right away on an 
+   * instance of PGraphicsOpenGL.
+   * <p/>
+   * The hints[] array is allocated early on because it might 
+   * be used inside beginDraw(), allocate(), etc.
+   */
   protected boolean hints[] = new boolean[HINT_COUNT];
 
   // ........................................................
@@ -816,9 +826,9 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Disable a hint.
+   * Disable a hint() setting.
    */
-  public void noHint(int which) {
+  public void unhint(int which) {
     hints[which] = false;
   }
 
@@ -3815,14 +3825,14 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the background to a gray or ARGB color. 
+   * Set the background to a gray or ARGB color.
    * <p>
-   * For the main drawing surface, the alpha value will be ignored. However, 
-   * alpha can be used on PGraphics objects from createGraphics(). This is 
+   * For the main drawing surface, the alpha value will be ignored. However,
+   * alpha can be used on PGraphics objects from createGraphics(). This is
    * the only way to set all the pixels partially transparent, for instance.
    * <p>
-   * Note that background() should be called before any transformations occur, 
-   * because some implementations may require the current transformation matrix 
+   * Note that background() should be called before any transformations occur,
+   * because some implementations may require the current transformation matrix
    * to be identity before drawing.
    */
   public void background(int rgb) {
@@ -3898,14 +3908,14 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Clear the background with a color that includes an alpha value. This can 
-   * only be used with objects created by createGraphics(), because the main 
-   * drawing surface cannot be set transparent. 
+   * Clear the background with a color that includes an alpha value. This can
+   * only be used with objects created by createGraphics(), because the main
+   * drawing surface cannot be set transparent.
    * <p>
-   * It might be tempting to use this function to partially clear the screen  
-   * on each frame, however that's not how this function works. When calling 
-   * background(), the pixels will be replaced with pixels that have that level 
-   * of transparency. To do a semi-transparent overlay, use fill() with alpha 
+   * It might be tempting to use this function to partially clear the screen
+   * on each frame, however that's not how this function works. When calling
+   * background(), the pixels will be replaced with pixels that have that level
+   * of transparency. To do a semi-transparent overlay, use fill() with alpha
    * and draw a rectangle.
    */
   public void background(float x, float y, float z, float a) {
