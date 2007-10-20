@@ -1,3 +1,10 @@
+0130 pde
+X fix keywords.txt problems with some constants being left out
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1192873557
+X call doClose() when closing sketch window
+X   otherwise it's leaving lots of windows around
+
+
 0129 pde
 X fixed up the reference for color commands, updated version
 
