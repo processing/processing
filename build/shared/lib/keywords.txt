@@ -224,6 +224,8 @@ unHint	KEYWORD2
 
 abs	KEYWORD2	abs_
 acos	KEYWORD2	acos_
++=		addassign
++		addition
 alpha	KEYWORD2	alpha_
 ambient	KEYWORD2	ambient_
 ambientLight	KEYWORD2	ambientLight_
@@ -231,8 +233,10 @@ append	KEYWORD2	append_
 applyMatrix	KEYWORD2	applyMatrix_
 arc	KEYWORD2	arc_
 Array	KEYWORD1	Array
+[]		arrayaccess
 arraycopy	KEYWORD2	arraycopy_
 asin	KEYWORD2	asin_
+=		assign
 atan	KEYWORD2	atan_
 atan2	KEYWORD2	atan2_
 background	KEYWORD2	background_
@@ -245,6 +249,8 @@ bezierPoint	KEYWORD2	bezierPoint_
 bezierTangent	KEYWORD2	bezierTangent_
 bezierVertex	KEYWORD2	bezierVertex_
 binary	KEYWORD2	binary_
+&		bitwiseAND
+|		bitwiseOR
 blend	KEYWORD2	blend_
 blendColor	KEYWORD2	blendColor_
 blue	KEYWORD2	blue_
@@ -264,7 +270,10 @@ class		class
 color	KEYWORD2	color_
 color	KEYWORD1	color_datatype
 colorMode	KEYWORD2	colorMode_
+,		comma
+//		comment
 concat	KEYWORD2	concat_
+?:	KEYWORD1	conditional_
 constrain	KEYWORD2	constrain_
 contract	KEYWORD2	contract_
 copy	KEYWORD2	copy_
@@ -273,6 +282,7 @@ createFont	KEYWORD2	createFont_
 createGraphics	KEYWORD2	createGraphics_
 createImage	KEYWORD2	createImage_
 createWriter	KEYWORD2	createWriter_
+{}		curlybraces
 cursor	KEYWORD2	cursor_
 curve	KEYWORD2	curve_
 curveDetail	KEYWORD2	curveDetail_
@@ -280,12 +290,16 @@ curvePoint	KEYWORD2	curvePoint_
 curveTightness	KEYWORD2	curveTightness_
 curveVertex	KEYWORD2	curveVertex_
 day	KEYWORD2	day_
+--		decrement
 default	KEYWORD1	default
 degrees	KEYWORD2	degrees_
 delay	KEYWORD2	delay_
 directionalLight	KEYWORD2	directionalLight_
 dist	KEYWORD2	dist_
-draw		draw
+/		divide
+/**		doccomment
+.		dot
+draw	KEYWORD2	draw_
 ellipse	KEYWORD2	ellipse_
 ellipseMode	KEYWORD2	ellipseMode_
 else	KEYWORD1	else
@@ -293,6 +307,7 @@ emissive	KEYWORD2	emissive_
 endCamera	KEYWORD2	endCamera_
 endRecord	KEYWORD2	endRecord_
 endShape	KEYWORD2	endShape_
+==		equality
 exit	KEYWORD2	exit_
 exp	KEYWORD2	exp_
 expand	KEYWORD2	expand_
@@ -303,15 +318,18 @@ filter	KEYWORD2	filter_
 float	KEYWORD1	float
 float	KEYWORD2	float_
 floor	KEYWORD2	floor_
-focused		focused
+focused	LITERAL2	focused
 for	KEYWORD1	for_
-frameCount		frameCount
+frameCount	LITERAL2	frameCount
 frameRate	KEYWORD2	frameRate_
-frameRate		frameRate
+frameRate	LITERAL2	frameRate
 frustum	KEYWORD2	frustum_
 get	KEYWORD2	get_
+<		greaterthan
+<=		greaterthanorequalto
 green	KEYWORD2	green_
-height		height
+HALF_PI	LITERAL1	HALF_PI
+height	LITERAL2	height
 hex	KEYWORD2	hex_
 hour	KEYWORD2	hour_
 hue	KEYWORD2	hue_
@@ -319,17 +337,22 @@ if	KEYWORD1	if_
 image	KEYWORD2	image_
 imageMode	KEYWORD2	imageMode_
 implements	KEYWORD1	implements
+++		increment
+!=		inequality
 int	KEYWORD1	int
 int	KEYWORD2	int_
 join	KEYWORD2	join_
-key		key
-keyCode		keyCode
+key	LITERAL2	key
+keyCode	LITERAL2	keyCode
 keyPressed	KEYWORD2	keyPressed_
-keyPressed		keyPressed
+keyPressed	LITERAL2	keyPressed
 keyReleased	KEYWORD2	keyReleased_
 keyTyped	KEYWORD2	keyTyped_
+<<		leftshift
 lerp	KEYWORD2	lerp_
 lerpColor	KEYWORD2	lerpColor_
+<		lessthan
+<=		lessthanorequalto
 lightFalloff	KEYWORD2	lightFalloff_
 lights	KEYWORD2	lights_
 lightSpecular	KEYWORD2	lightSpecular_
@@ -341,26 +364,34 @@ loadImage	KEYWORD2	loadImage_
 loadPixels	KEYWORD2	loadPixels_
 loadStrings	KEYWORD2	loadStrings_
 log	KEYWORD2	log_
+&&		logicalAND
+!		logicalNOT
+||		logicalOR
 loop	KEYWORD2	loop_
 mag	KEYWORD2	mag_
 map	KEYWORD2	map_
+match	KEYWORD2	match_
 max	KEYWORD2	max_
 millis	KEYWORD2	millis_
 min	KEYWORD2	min_
+-		minus
 minute	KEYWORD2	minute_
 modelX	KEYWORD2	modelX_
 modelY	KEYWORD2	modelY_
 modelZ	KEYWORD2	modelZ_
+%		modulo
 month	KEYWORD2	month_
-mouseButton		mouseButton
+mouseButton	LITERAL2	mouseButton
 mouseClicked	KEYWORD2	mouseClicked_
 mouseDragged	KEYWORD2	mouseDragged_
 mouseMoved	KEYWORD2	mouseMoved_
 mousePressed	KEYWORD2	mousePressed_
-mousePressed		mousePressed
+mousePressed	LITERAL2	mousePressed
 mouseReleased	KEYWORD2	mouseReleased_
-mouseX		mouseX
-mouseY		mouseY
+mouseX	LITERAL2	mouseX
+mouseY	LITERAL2	mouseY
+/*		multilinecomment
+*		multiply
 new	KEYWORD1	new
 nf	KEYWORD2	nf_
 nfc	KEYWORD2	nfc_
@@ -379,17 +410,19 @@ noStroke	KEYWORD2	noStroke_
 noTint	KEYWORD2	noTint_
 null	KEYWORD1	null
 Object	KEYWORD1	Object
-online		online
+online	LITERAL2	online
 open	KEYWORD2	open_
 openStream	KEYWORD2	openStream_
 ortho	KEYWORD2	ortho_
 param	KEYWORD2	param_
+()		parentheses
 perspective	KEYWORD2	perspective_
 PFont	KEYWORD1	PFont
 list	KEYWORD2	PFont_list_
 PGraphics	KEYWORD1	PGraphics
 beginDraw	KEYWORD2	PGraphics_beginDraw_
 endDraw	KEYWORD2	PGraphics_endDraw_
+PI	LITERAL1	PI
 PImage	KEYWORD1	PImage
 alpha	KEYWORD2	PImage_alpha_
 blend	KEYWORD2	PImage_blend_
@@ -402,9 +435,9 @@ pixels	LITERAL2	PImage_pixels
 save	KEYWORD2	PImage_save_
 set	KEYWORD2	PImage_set_
 width	LITERAL2	PImage_width
-pixels		pixels
-pmouseX		pmouseX
-pmouseY		pmouseY
+pixels	LITERAL2	pixels
+pmouseX	LITERAL2	pmouseX
+pmouseY	LITERAL2	pmouseY
 point	KEYWORD2	point_
 pointLight	KEYWORD2	pointLight_
 popMatrix	KEYWORD2	popMatrix_
@@ -431,6 +464,7 @@ redraw	KEYWORD2	redraw_
 resetMatrix	KEYWORD2	resetMatrix_
 return	KEYWORD1	return
 reverse	KEYWORD2	reverse_
+<<		rightshift
 rotate	KEYWORD2	rotate_
 rotateX	KEYWORD2	rotateX_
 rotateY	KEYWORD2	rotateY_
@@ -442,13 +476,14 @@ saveBytes	KEYWORD2	saveBytes_
 saveFrame	KEYWORD2	saveFrame_
 saveStrings	KEYWORD2	saveStrings_
 scale	KEYWORD2	scale_
-screen		screen
+screen	LITERAL2	screen
 screenX	KEYWORD2	screenX_
 screenY	KEYWORD2	screenY_
 screenZ	KEYWORD2	screenZ_
 second	KEYWORD2	second_
+;		semicolon
 set	KEYWORD2	set_
-setup		setup
+setup	KEYWORD2	setup_
 shininess	KEYWORD2	shininess_
 shorten	KEYWORD2	shorten_
 sin	KEYWORD2	sin_
@@ -479,6 +514,7 @@ strokeCap	KEYWORD2	strokeCap_
 strokeJoin	KEYWORD2	strokeJoin_
 strokeWeight	KEYWORD2	strokeWeight_
 subset	KEYWORD2	subset_
+-=		subtractassign
 super	KEYWORD1	super
 switch	KEYWORD2	switch_
 tan	KEYWORD2	tan_
@@ -499,11 +535,12 @@ translate	KEYWORD2	translate_
 triangle	KEYWORD2	triangle_
 trim	KEYWORD2	trim_
 true	KEYWORD1	true
+TWO_PI	LITERAL1	TWO_PI
 unbinary	KEYWORD2	unbinary_
 unhex	KEYWORD2	unhex_
 updatePixels	KEYWORD2	updatePixels_
 vertex	KEYWORD2	vertex_
 void	KEYWORD1	void
 while	KEYWORD1	while_
-width		width
+width	LITERAL2	width
 year	KEYWORD2	year_
