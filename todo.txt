@@ -12,6 +12,16 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=537
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=LibraryProblems;action=display;num=1180713192
 X Server.write(bytes[]) hangs sketch on client disconnect.
 X   http://dev.processing.org/bugs/show_bug.cgi?id=538
+o move the useful serial buffering fxns into net library
+X make the Client list public
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
+
+cleaning
+o video problem in qt 7.2 with prepreroll, adding this to java.policy fixes:
+X   just removed prepreroll in 0126
+grant {
+  permission java.security.AllPermission;
+};
 
 
 _ auto-delete of sketches might be dangerous
@@ -39,7 +49,6 @@ _ don't bug the user about new release of p5 when they have it
 _   add prefs option for "latest version run"
 _   something also to track--people going to older releases
 
-new bugs
 _ huge jar files from 0124 export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=541
 _ if someone has monaco disabled in font book, the app won't start
@@ -48,10 +57,6 @@ _ color picker broken on vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=584
 _ can't get documents/prefs folder on vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=585
-_ video problem in qt 7.2 with prepreroll, adding this to java.policy fixes:
-grant {
-  permission java.security.AllPermission;
-};
 
 _ remove 'patch' designation from bugzilla
 _ ocd is broken in 0125 - do a better error message for this
@@ -109,14 +114,6 @@ _ dynamic tools menu (requires moving files around)
 _   this means can integrate the autoformat stuff
 _   processing.mess/tools has chandler's template stuff
 _ finish up debian package support (see the processing.mess folder)
-
-
-LIBRARIES / Net
-
-_ move the useful serial buffering fxns into net library
-_ make the Client list public
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
-
 
 _ java.extension.dirs has the library/extn stuff
 _   can probably set this blank
@@ -207,7 +204,7 @@ _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
 
 _ don't reload sketch on "save as"
-_   this can result in loss of data
+_   this can result in loss of data (undo is lost)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=433
 
 _ 'code' folder being ignored on export to application
