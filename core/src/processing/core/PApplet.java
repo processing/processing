@@ -7264,9 +7264,9 @@ in   */
   }
 
 
-  public void noHint(int which) {
-    if (recorder != null) recorder.noHint(which);
-    g.noHint(which);
+  public void unhint(int which) {
+    if (recorder != null) recorder.unhint(which);
+    g.unhint(which);
   }
 
 

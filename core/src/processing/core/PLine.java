@@ -234,7 +234,7 @@ public class PLine implements PConstants
     }
 
     // line hack
-    if (parent.hints[NO_FLYING_POO]) {
+    if (parent.hints[DISABLE_FLYING_POO]) {
       float nwidth2 = -SCREEN_WIDTH;
       float nheight2 = -SCREEN_HEIGHT;
       float width2 = SCREEN_WIDTH * 2;

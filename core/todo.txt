@@ -1,4 +1,8 @@
 0131 core
+X hint(DISABLE_DEPTH_TEST) not behaving consistently
+X   http://dev.processing.org/bugs/show_bug.cgi?id=483
+X make hints static
+
 
 _ add warning system for pgraphics, rather than runtime exceptions
 _   keep array of warning strings, and booleans for whether they've called
@@ -17,6 +21,9 @@ _ make sure the docs include "beginShape() cannot be nested"
 _   also add error messages to the renderers
 _   also note that ellipse() et al use beginShape()
 _   and that java2d should complain if people try it
+_ add hint() and unhint()
+_   also add unhint() to the keywords file
+_   and maybe remove hint() from keywords_base?
 
 createGraphics() mess
 _ text characters showing up as opaque rectangles in tga files
@@ -218,9 +225,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 
 _ modelX/Y/Z still having trouble
 _   http://dev.processing.org/bugs/show_bug.cgi?id=486
-
-_ hint(DISABLE_DEPTH_TEST) not behaving consistently
-_   http://dev.processing.org/bugs/show_bug.cgi?id=483
 
 _ Stroking a rect() leaves off the upper right pixel
 _   http://dev.processing.org/bugs/show_bug.cgi?id=501
