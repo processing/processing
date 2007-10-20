@@ -774,7 +774,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     // is what's desired).
     // this background() call is for the Java 2D and OpenGL renderers.
     if (mainDrawingSurface) {
-      //System.out.println("main drawing surface " + getClass().getName());
+      //System.out.println("main drawing surface bg " + getClass().getName());
       background(backgroundColor);
     }
 
