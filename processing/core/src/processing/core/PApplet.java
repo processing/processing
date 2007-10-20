@@ -977,6 +977,9 @@ in   */
       String currentRenderer = g.getClass().getName();
       if (currentRenderer.equals(irenderer)) {
 //        println("calling setRendererSize from size() " + iwidth + " " + iheight);
+        // Avoid infinite loop of throwing exception to reset renderer
+        if (width == iwidth && height == iheight) return;
+
         setRendererSize(iwidth, iheight);
         setSize(iwidth, iheight);
 //        if ((iwidth != g.width) || (iheight != g.height)) {
@@ -1006,13 +1009,12 @@ in   */
         // this is the function that will run if the user does their own
         // size() command inside setup, so set defaultSize to false.
         defaultSize = false;
-
-        // throw an exception so that setup() is called again
-        // but with a properly sized render
-        // this is for opengl, which needs a valid, properly sized
-        // display before calling anything inside setup().
-        throw new RuntimeException(NEW_RENDERER);
       }
+      // throw an exception so that setup() is called again
+      // but with a properly sized render
+      // this is for opengl, which needs a valid, properly sized
+      // display before calling anything inside setup().
+      throw new RuntimeException(NEW_RENDERER);
     }
   }
 
