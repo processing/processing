@@ -665,6 +665,9 @@ public class Base {
     if (quitting) {
       return true;
     }
+    
+    // Close the running window, avoid window boogers with multiple sketches
+    editor.doClose();
 
     if (editorCount == 1) {
       if (Preferences.getBoolean("sketchbook.closing_last_window_quits")) {
