@@ -7,6 +7,31 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0130 - 20 October 2007
+
+Bug fixes for 0126-0129. If you haven't read revisions.txt for
+those versions, please do so, major changes were introduced.
+
++ Fixed major issue introduced in 0128 that screws up size() 
+  and the default renderer. The renderer was being reset after
+  setup(), so any commands used inside setup() would not stick.
+  http://dev.processing.org/bugs/show_bug.cgi?id=646
+  http://dev.processing.org/bugs/show_bug.cgi?id=648
+  http://dev.processing.org/bugs/show_bug.cgi?id=649
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1192873557
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1192731014
+
++ Fix problem with new keywords.txt file missing some constants.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1192873557
+
++ Close sketch window when its parent editor is closed. This was
+  leaving lots of running sketch window boogers around when 
+  switching between lots of sketches.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0129 - 18 October 2007
 
 Fixes two issues from release 0128. 
