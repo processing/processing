@@ -209,16 +209,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
   protected void allocate() {
     if (canvas == null) {
       GLCapabilities capabilities = new GLCapabilities();
-    	if (hints[ENABLE_OPENGL_2X_SMOOTH]) {
-    	  capabilities.setSampleBuffers(true);
-    	  capabilities.setNumSamples(2);
+        if (hints[ENABLE_OPENGL_2X_SMOOTH]) {
+          capabilities.setSampleBuffers(true);
+          capabilities.setNumSamples(2);
       } else if (hints[ENABLE_OPENGL_4X_SMOOTH]) {
         capabilities.setSampleBuffers(true);
         capabilities.setNumSamples(4);
       }
-      //canvas = new GLCanvas();
-    	canvas = new GLCanvas(capabilities);
-
+        canvas = new GLCanvas(capabilities);
 
       //System.out.println("creating PGraphicsOpenGL 3");
       canvas.addGLEventListener(new GLEventListener() {
@@ -299,10 +297,31 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void hint(int which) {
+    // make note of whether these are set, if they are,
+    // then will prevent the new renderer exception from being thrown.
+    boolean opengl2X = hints[ENABLE_OPENGL_2X_SMOOTH];
+    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];
     super.hint(which);
 
     if (which == DISABLE_DEPTH_TEST) {
       gl.glDisable(GL.GL_DEPTH_TEST);
+
+    } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
+      if (!opengl2X) {
+        parent.remove(canvas);
+        //canvas.setLocation(width, 0);
+        canvas = null;
+        allocate();
+        throw new RuntimeException(PApplet.NEW_RENDERER);
+      }
+    } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
+      if (!opengl4X) {
+        //canvas.setLocation(width, 0);
+        parent.remove(canvas);
+        canvas = null;
+        allocate();
+        throw new RuntimeException(PApplet.NEW_RENDERER);
+      }
     }
   }
 
@@ -487,6 +506,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
       float a[] = vertices[triangles[i][VERTEX1]];
       float b[] = vertices[triangles[i][VERTEX2]];
       float c[] = vertices[triangles[i][VERTEX3]];
+      //System.out.println(triangles[i][VERTEX1] + " " +
+      //                 triangles[i][VERTEX2] + " " +
+      //                 triangles[i][VERTEX3] + " " + vertexCount);
 
       // This is only true when not textured. We really should pass SPECULAR
       // straight through to triangle rendering.
@@ -587,16 +609,19 @@ public class PGraphicsOpenGL extends PGraphics3D {
         gl.glColor4f(ar, ag, ab, a[A]);
         gl.glTexCoord2f(a[U] * uscale, a[V] * vscale);
         gl.glNormal3f(a[NX], a[NY], a[NZ]);
+        //gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
 
         gl.glColor4f(br, bg, bb, b[A]);
         gl.glTexCoord2f(b[U] * uscale, b[V] * vscale);
         gl.glNormal3f(b[NX], b[NY], b[NZ]);
+        //gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
         gl.glColor4f(cr, cg, cb, c[A]);
         gl.glTexCoord2f(c[U] * uscale, c[V] * vscale);
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
+        //gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
         gl.glEnd();
@@ -641,14 +666,17 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
         gl.glColor4f(ar, ag, ab, a[A]);
         gl.glNormal3f(a[NX], a[NY], a[NZ]);
+        //gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(a[VX], a[VY], a[VZ]);
 
         gl.glColor4f(br, bg, bb, b[A]);
         gl.glNormal3f(b[NX], b[NY], b[NZ]);
+        //gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
 
         gl.glColor4f(cr, cg, cb, c[A]);
         gl.glNormal3f(c[NX], c[NY], c[NZ]);
+        //gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(c[VX], c[VY], c[VZ]);
 
         if (raw != null) {
@@ -746,6 +774,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // always draw a first point
       float a[] = vertices[lines[i][VERTEX1]];
       gl.glColor4f(a[SR], a[SG], a[SB], a[SA]);
+      //gl.glEdgeFlag(a[EDGE] == 1);
       gl.glVertex3f(a[VX], a[VY], a[VZ]);
       //System.out.println("First point: " + a[VX] +", "+ a[VY] +", "+ a[VZ]);
 
@@ -771,6 +800,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       for (int k = 0; k < pathLength[j]; k++) {
         float b[] = vertices[lines[i][VERTEX2]];
         gl.glColor4f(b[SR], b[SG], b[SB], b[SA]);
+        //gl.glEdgeFlag(a[EDGE] == 1);
         gl.glVertex3f(b[VX], b[VY], b[VZ]);
         if (raw != null) {
           if (raw instanceof PGraphics3D) {
@@ -1340,6 +1370,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
       //gl.glEnd();
       endShape();
     }
+
+//    public void edge(boolean e) {
+//      PGraphicsOpenGL.this.edge(e);
+//    }
 
     public void vertex(Object data) {
       if (data instanceof double[]) {

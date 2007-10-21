@@ -1,8 +1,28 @@
 0131 core
 X hint(DISABLE_DEPTH_TEST) not behaving consistently
 X   http://dev.processing.org/bugs/show_bug.cgi?id=483
-X make hints static
+o make hints static - cannot do that
+X clean up hinting mechanism a bit
+X look into jogl anti-aliasing on osx
+o   smoothMode(2) and smoothMode(4), right after size()?
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1175552759
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
+X look into capabilities stuff from mike creighton
+X   also sets the aa mode on the pc so it no longer needs control panel bunk
+X update to JOGL 1.1.0
+X add gluegen-rt back to the applet export
+X   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
+X add print() and println() for long and double
+X   http://dev.processing.org/bugs/show_bug.cgi?id=652
 
+cleaning
+X "this file is named" errors don't like subdirectories
+X   need to strip off past the file separator or something
+
+_ fix svg caps/joins for opengl with svg library
+_   http://dev.processing.org/bugs/show_bug.cgi?id=628
+_ key and mouse events delivered out of order
+_   http://dev.processing.org/bugs/show_bug.cgi?id=638
 
 _ add warning system for pgraphics, rather than runtime exceptions
 _   keep array of warning strings, and booleans for whether they've called
@@ -81,10 +101,6 @@ _   is fill() not coloring textures properly?
 _     don't need to apply tint() to textures, supposed to use fill color
 Hope this helps:  If you haven't tracked it down yet... it's in PTriangle, when a flat-shaded textured triangle is drawn, then the rgb of the tint isn't used.  So, for example, if the triangle renderer branches to drawsegment_texture32() the tint rgb won't be used, whereas if it branches to drawsegment_gouraud_texture32() then the tint rgb WILL be used.  Alpha gets used from tint, because all alpha has to do is be != 255, but for rgb to get used they values have to differ among vertices (which won't happen via the image() routine for example).  The quick fix might be to insert an additional test in setIntensities() to check if parent.tint is true, and if so then force gouraud shading, INTERPOLATE_RGB=true.
 
-
-_ key and mouse events delivered out of order
-_   http://dev.processing.org/bugs/show_bug.cgi?id=638
-
 rework some text/font code
 _ fix getFontMetrics() warning
 _ Java2D textLinePlacedImpl should check for ENABLE_NATIVE_FONTS hint
@@ -92,17 +108,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=633
 _ also try to check native font on textFont() commands
 _   in case the hint() has been enabled in the meantime
 _   or rather, always load native font, even w/o the hint() being set
-
-_ fix svg caps/joins for opengl with svg library
-_   http://dev.processing.org/bugs/show_bug.cgi?id=628
-_ add gluegen-rt back to the applet export
-_   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
-_ look into jogl anti-aliasing on osx
-_   smoothMode(2) and smoothMode(4), right after size()?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1175552759
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
-_ look into capabilities stuff from mike creighton
-_   also sets the aa mode on the pc so it no longer needs control panel bunk
 
 _ loadBytes() and saveStream() functions badly need optimization!
 _   don't bother using a buffering stream, just handle internally. gah!
@@ -132,8 +137,6 @@ _   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
 
 should be fixed, but needs to be tested
-_ "this file is named" errors don't like subdirectories
-_   need to strip off past the file separator or something
 _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
@@ -196,6 +199,8 @@ _ sketches lock up when system time is changed
 _   http://dev.processing.org/bugs/show_bug.cgi?id=639
 
 point()
+_ java2d - if strokeWeight is 1, do screenX/Y and set()
+_   if strokeWeight larger, should work ok with line()
 _ gl points not working again
 _   need to implement point() as actual gl points
 _   this means adding points to the pipeline
