@@ -285,7 +285,7 @@ public class Runner implements MessageConsumer {
     window.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           stop();
-          editor.doClose();
+          editor.closeRunner();
         }
       });
 
@@ -293,7 +293,7 @@ public class Runner implements MessageConsumer {
         public void keyPressed(KeyEvent e) {
           if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             stop();
-            editor.doClose();
+            editor.closeRunner();
           }
         }
       });
@@ -402,7 +402,7 @@ public class Runner implements MessageConsumer {
     // that signals that the applet has been quit.
     if (s.indexOf(PApplet.EXTERNAL_QUIT) == 0) {
       //System.out.println("external: quit");
-      editor.doClose();
+      editor.closeRunner();
       return;
     }
 
