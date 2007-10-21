@@ -208,7 +208,7 @@ public class PApplet extends Applet
    * when the renderer is changed. This is the only way for us to handle
    * invoking the new renderer while also in the midst of rendering.
    */
-  static final String NEW_RENDERER = "new renderer";
+  static public final String NEW_RENDERER = "new renderer";
 
   /** Renderer to use next time the component is updated */
   //String nextRenderer = JAVA2D;
@@ -2693,13 +2693,6 @@ in   */
     System.out.flush();
   }
 
-  /*
-  static public void print(double what) {
-    System.out.print(what);
-    System.out.flush();
-  }
-  */
-
   static public void print(String what) {
     System.out.print(what);
     System.out.flush();
@@ -2817,12 +2810,6 @@ in   */
   static public void println(float what) {
     print(what); System.out.println();
   }
-
-  /*
-  static public void println(double what) {
-    print(what); System.out.println();
-  }
-  */
 
   static public void println(String what) {
     print(what); System.out.println();

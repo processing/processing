@@ -2,6 +2,8 @@
 o make loadFont() work properly with regular fonts?
 X   no, because some renderers really need to create, not load it
 X   would have to cache opengl fonts at different sizes, etc
+X document hint() commands for advanced reference
+X add note about gcj/gij to the platform notes
 
 server/client stuff
 X add server/client notification thing for the nyu guys
@@ -58,7 +60,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=584
 _ can't get documents/prefs folder on vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=585
 
-_ remove 'patch' designation from bugzilla
 _ ocd is broken in 0125 - do a better error message for this
 
 _ disallow .java tabs with same name as the sketch
@@ -1126,7 +1127,6 @@ _ need more comprehensive list of 'known bugs'
 _ need more comprehensive list of 'known suggestions'
 _ javadoc "advanced" reference by beta
 _   and then finalizing it towards 1.0
-_   document hint() commands for advanced reference
 _ write notes about running p5 on another platforms 
 _   this was some feedback from running on bsd:
 _     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 

@@ -200,8 +200,7 @@ public class PPolygon implements PConstants {
     // by default, text turns on smooth for the textures
     // themselves. but this should be shut off if the hint
     // for DISABLE_TEXT_SMOOTH is set.
-    texture_smooth = (//parent.drawing_text &&
-                      !parent.hints[DISABLE_TEXT_SMOOTH]);
+    texture_smooth = true;
 
     width = smooth ? parent.width*SUBXRES : parent.width;
     height = smooth ? parent.height*SUBYRES : parent.height;
