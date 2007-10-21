@@ -434,7 +434,8 @@ public class Editor extends JFrame {
     item = newJMenuItem("New", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          base.handleNew(false);
+          //base.handleNew(false);
+          base.handleNew();
         }
       });
     fileMenu.add(item);
@@ -1080,7 +1081,7 @@ public class Editor extends JFrame {
 
 
   public void handleRun(boolean present) {
-    doClose();
+    closeRunner();
     running = true;
     toolbar.activate(EditorToolbar.RUN);
 
@@ -1196,13 +1197,13 @@ public class Editor extends JFrame {
 
   public void handleStop() {  // called by menu or buttons
     if (presenting) {
-      doClose();
+      closeRunner();
     } else if (runtime.window != null) {
       // When run externally, kill the applet window,
       // otherwise things may not stop properly with libraries.
-      doClose();
+      closeRunner();
     } else {
-      doStop();
+      stopRunner();
     }
     toolbar.clear();
   }
@@ -1211,7 +1212,7 @@ public class Editor extends JFrame {
   /**
    * Stop the applet but don't kill its window.
    */
-  public void doStop() {
+  public void stopRunner() {
     if (runtime != null) runtime.stop();
     if (watcher != null) watcher.stop();
     message(EMPTY);
@@ -1228,7 +1229,7 @@ public class Editor extends JFrame {
    * Stop the applet and kill its window. When running in presentation
    * mode, this will always be called instead of doStop().
    */
-  public void doClose() {
+  public void closeRunner() {
     //if (presenting) {
     //presentationWindow.hide();
     //} else {
@@ -1244,7 +1245,7 @@ public class Editor extends JFrame {
     //}
 
     //if (running) doStop();
-    doStop();  // need to stop if runtime error
+    stopRunner();  // need to stop if runtime error
 
     try {
       if (runtime != null) {
@@ -1262,8 +1263,13 @@ public class Editor extends JFrame {
   }
 
 
-  // @return false if canceling the close/quit operation
-  protected boolean checkModified(boolean quitting) {
+  /**
+   * Check if the sketch is modified and ask user to save changes.
+   * Immediately should be set true when quitting, or when the save should
+   * not happen asynchronously. Come to think of it, that's always now?
+   * @return false if canceling the close/quit operation
+   */
+  protected boolean checkModified(boolean immediately) {
     if (!sketch.modified) return true;
 
     String prompt = "Save changes to " + sketch.name + "?  ";
@@ -1275,7 +1281,7 @@ public class Editor extends JFrame {
                                       JOptionPane.QUESTION_MESSAGE);
 
       if (result == JOptionPane.YES_OPTION) {
-        return handleSave(quitting);
+        return handleSave(immediately);
 
       } else if (result == JOptionPane.NO_OPTION) {
         return true;  // ok to continue
@@ -1326,7 +1332,7 @@ public class Editor extends JFrame {
 
       Object result = pane.getValue();
       if (result == options[0]) {  // save (and close/quit)
-        return handleSave(quitting);
+        return handleSave(immediately);
 
       } else if (result == options[2]) {  // don't save (still close/quit)
         return true;
@@ -1344,7 +1350,7 @@ public class Editor extends JFrame {
    */
   protected void handleOpenUnchecked(String path, int codeIndex,
                                      int selStart, int selStop, int scrollPos) {
-    doClose();
+    closeRunner();
     handleOpenInternal(path);
     // Replacing a document that may be untitled. If this is an actual 
     // untitled document, then editor.untitled will be set by Base.
@@ -1458,7 +1464,7 @@ public class Editor extends JFrame {
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=276">Bug 276</A>.
    */
   public boolean handleSave(boolean immediately) {
-    doStop();
+    stopRunner();
 
     if (untitled) {
       return handleSaveAs();
@@ -1508,7 +1514,7 @@ public class Editor extends JFrame {
 
 
   public boolean handleSaveAs() {
-    doStop();
+    stopRunner();
     toolbar.activate(EditorToolbar.SAVE);
 
     //SwingUtilities.invokeLater(new Runnable() {

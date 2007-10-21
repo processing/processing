@@ -310,27 +310,14 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
     ///if (sel == -1) return false;
     if (sel == -1) return;
     currentRollover = -1;
-    //int currentSelection = sel;
-    //if (!(disableRun && ((sel == RUN) || (sel == STOP)))) {
-    // moving the handling of this over into the editor
-    //setState(sel, ACTIVE, true);
-    //}
 
-    //if (currentSelection == OPEN) {
-    //switch (currentSelection) {
     switch (sel) {
     case RUN:
-      //if (!disableRun) {
       editor.handleRun(e.isShiftDown());
-      //}
       break;
 
     case STOP:
-      //if (!disableRun) {
-      //setState(RUN, INACTIVE, true);
-      //setInactive();
       editor.handleStop();
-      //}
       break;
 
     case OPEN:
@@ -339,7 +326,8 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
       break;
 
     case NEW:
-      editor.base.handleNew(e.isShiftDown());
+      //editor.base.handleNew(e.isShiftDown());
+      editor.base.handleNewReplace();
       break;
 
     case SAVE:

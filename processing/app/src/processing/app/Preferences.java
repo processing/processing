@@ -115,8 +115,8 @@ public class Preferences {
   JTextField sketchbookLocationField;
   JCheckBox exportSeparateBox;
   JCheckBox closingLastQuitsBox;
-  JCheckBox sketchPromptBox;
-  JCheckBox sketchCleanBox;
+  //JCheckBox sketchPromptBox;
+  //JCheckBox sketchCleanBox;
   JCheckBox externalEditorBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
@@ -243,6 +243,7 @@ public class Preferences {
     
     //sketchbook.closing_last_window_quits
 
+    /*
     // [ ] Prompt for name and folder when creating new sketch
 
     sketchPromptBox =
@@ -252,16 +253,19 @@ public class Preferences {
     sketchPromptBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
+    */
 
 
     // [ ] Delete empty sketches on Quit
 
+    /*
     sketchCleanBox = new JCheckBox("Delete empty sketches on Quit");
     pain.add(sketchCleanBox);
     d = sketchCleanBox.getPreferredSize();
     sketchCleanBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
+    */
 
 
     // Sketchbook location:
@@ -519,8 +523,8 @@ public class Preferences {
                exportSeparateBox.isSelected());
     setBoolean("sketchbook.closing_last_window_quits", 
                closingLastQuitsBox.isSelected());
-    setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
-    setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
+    //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
+    //setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
     
     // if the sketchbook path has changed, rebuild the menus
     String oldPath = get("sketchbook.path");
@@ -579,10 +583,10 @@ public class Preferences {
       setSelected(getBoolean("export.applet.separate_jar_files"));
     closingLastQuitsBox.
       setSelected(getBoolean("sketchbook.closing_last_window_quits")); 
-    sketchPromptBox.
-      setSelected(getBoolean("sketchbook.prompt"));
-    sketchCleanBox.
-      setSelected(getBoolean("sketchbook.auto_clean"));
+    //sketchPromptBox.
+    //  setSelected(getBoolean("sketchbook.prompt"));
+    //sketchCleanBox.
+    //  setSelected(getBoolean("sketchbook.auto_clean"));
     sketchbookLocationField.
       setText(get("sketchbook.path"));
     externalEditorBox.
