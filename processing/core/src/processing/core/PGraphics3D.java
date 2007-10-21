@@ -309,7 +309,7 @@ public class PGraphics3D extends PGraphics {
 
     if (mainDrawingSurface) {
       //for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
-      // Not necessary because background() will be called w/ defaults(), 
+      // Not necessary because background() will be called w/ defaults(),
       // and we're no longer subject to the Java 1.1 bug for transparent
       // pixels in MemoryImageSource.
       //Arrays.fill(pixels, backgroundColor);
