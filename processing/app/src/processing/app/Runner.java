@@ -121,7 +121,9 @@ public class Runner implements MessageConsumer {
     //params.add("-Dapple.awt.fakefullscreen=true");
 
     params.add("-cp");
-    params.add(sketch.classPath + Base.librariesClassPath);
+    params.add(sketch.classPath +
+               File.pathSeparator +
+               Base.librariesClassPath);
 
     params.add("processing.core.PApplet");
 
@@ -203,7 +205,18 @@ public class Runner implements MessageConsumer {
                System.getProperty("java.library.path"));
 
     params.add("-cp");
-    params.add(sketch.classPath + Base.librariesClassPath);
+    params.add(sketch.classPath +
+               File.pathSeparator +
+               Base.librariesClassPath);
+
+    /*
+    System.out.println("sketch class path");
+    PApplet.println(PApplet.split(sketch.classPath, ';'));
+    System.out.println();
+    System.out.println("libraries class path");
+    PApplet.println(PApplet.split(Base.librariesClassPath, ';'));
+    System.out.println();
+    */
 
     params.add("processing.core.PApplet");
 
