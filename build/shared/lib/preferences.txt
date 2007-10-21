@@ -221,13 +221,10 @@ run.display = 1
 
 # set to false to open a new untitled window when closing the last window
 # (otherwise, the environment will quit)
+# default to the relative norm for the different platforms, 
+# but the setting can be changed in the prefs dialog anyway
 sketchbook.closing_last_window_quits = true
-
-# prompt for sketch location when 'new' is hit
-sketchbook.prompt = false
-
-# true if empty sketches should be removed automatically
-sketchbook.auto_clean = true
+sketchbook.closing_last_window_quits.macosx = false
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
