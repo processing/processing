@@ -183,13 +183,7 @@ public class Base {
 
     // Create a new empty window (will be replaced with any files to be opened)
     if (!opened) {
-      try {
-        //String path = handleNewUntitled();
-        //handleOpen(path);
-        handleNewUntitled();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      handleNew();
     }
 
     // check for updates
@@ -394,6 +388,7 @@ public class Base {
   // .................................................................
 
 
+  /*
   public void handleNew(boolean shiftDown) {
     // buttons.activate(EditorButtons.NEW);
 
@@ -448,6 +443,7 @@ public class Base {
       handleOpen(newbieFile.getAbsolutePath());
     }
   }
+  */
 
 
   /**
@@ -486,10 +482,36 @@ public class Base {
   }
 
 
-  public void handleNewUntitled() throws IOException {
-    String path = createNewUntitled();
-    Editor editor = handleOpen(path);
-    editor.untitled = true;
+  public void handleNew() {
+    try {
+      String path = createNewUntitled();
+      Editor editor = handleOpen(path);
+      editor.untitled = true;
+      
+    } catch (IOException e) {
+      if (activeEditor != null) {
+        activeEditor.error(e);
+      }
+    }
+  }
+  
+  
+  public void handleNewReplace() {
+    if (!activeEditor.checkModified(false)) {
+      return;  // sketch was modified, and user canceled
+    }
+    // Close the running window, avoid window boogers with multiple sketches
+    activeEditor.closeRunner();
+
+    try {
+      String path = createNewUntitled();
+      activeEditor.handleOpenInternal(path);
+      
+    } catch (IOException e) {
+      if (activeEditor != null) {
+        activeEditor.error(e);
+      }
+    }
   }
 
 
@@ -556,6 +578,24 @@ public class Base {
   */
 
 
+  public void handleOpenReplace(String path) {
+    if (!activeEditor.checkModified(false)) {
+      return;  // sketch was modified, and user canceled
+    }
+    // Close the running window, avoid window boogers with multiple sketches
+    activeEditor.closeRunner();
+
+//    try {
+    activeEditor.handleOpenInternal(path);
+      
+//    } catch (IOException e) {
+//      if (activeEditor != null) {
+//        activeEditor.error(e);
+//      }
+//    }
+  }
+
+
   public void handleOpenPrompt() {
     // get the frontmost window frame for placing file dialog
     FileDialog fd = new FileDialog(activeEditor,
@@ -618,17 +658,17 @@ public class Base {
 
     // If the active editor window is an untitled, and un-modified document,
     // just replace it with the file that's being opened.
-    if (activeEditor != null) {
-      Sketch activeSketch = activeEditor.sketch;
-      if (activeSketch.isUntitled() && !activeSketch.isModified()) {
-        // if it's an untitled, unmodified document, it can be replaced.
-        // except in cases where a second blank window is being opened.
-        if (!path.startsWith(untitledFolder.getAbsolutePath())) {
-          activeEditor.handleOpenUnchecked(path, 0, 0, 0, 0);
-          return activeEditor;
-        }
-      }
-    }
+//    if (activeEditor != null) {
+//      Sketch activeSketch = activeEditor.sketch;
+//      if (activeSketch.isUntitled() && !activeSketch.isModified()) {
+//        // if it's an untitled, unmodified document, it can be replaced.
+//        // except in cases where a second blank window is being opened.
+//        if (!path.startsWith(untitledFolder.getAbsolutePath())) {
+//          activeEditor.handleOpenUnchecked(path, 0, 0, 0, 0);
+//          return activeEditor;
+//        }
+//      }
+//    }
 
     Editor editor = new Editor(this, path, location);
 
@@ -667,7 +707,7 @@ public class Base {
     }
     
     // Close the running window, avoid window boogers with multiple sketches
-    editor.doClose();
+    editor.closeRunner();
 
     if (editorCount == 1) {
       if (Preferences.getBoolean("sketchbook.closing_last_window_quits")) {
@@ -679,9 +719,7 @@ public class Base {
         Preferences.save();
 
         // Clean out empty sketches
-        Base.cleanSketchbook();
-        // can't do handleQuit(), would do weird recursive thing
-        //handleQuit();
+        //Base.cleanSketchbook();
 
         // Since this wasn't an actual Quit event,
         // System.exit() needs to be called for Mac OS X.
@@ -764,7 +802,7 @@ public class Base {
     }
     if (!canceled) {
       // Clean out empty sketches
-      Base.cleanSketchbook();
+      //Base.cleanSketchbook();
 
       // Save out the current prefs state
       Preferences.save();
@@ -958,7 +996,15 @@ public class Base {
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleOpen(e.getActionCommand());
+          //System.out.println(e);
+          Component source = (Component) e.getSource();
+          Component parent = source.getParent();
+          if (parent.isValid()) {
+            // parent component (the menu) will be valid when it's a popup 
+            handleOpenReplace(e.getActionCommand());
+          } else {
+            handleOpen(e.getActionCommand());
+          }
         }
       };
 
@@ -1507,56 +1553,56 @@ public class Base {
   /**
    * Clear out projects that are empty.
    */
-  static public void cleanSketchbook() {
-    if (!Preferences.getBoolean("sketchbook.auto_clean")) return;
-
-    File sketchbookFolder = getSketchbookFolder();
-    if (!sketchbookFolder.exists()) return;
-
-    //String entries[] = new File(userPath).list();
-    String entries[] = sketchbookFolder.list();
-    if (entries != null) {
-      for (int j = 0; j < entries.length; j++) {
-        //System.out.println(entries[j] + " " + entries.length);
-        if (entries[j].charAt(0) == '.') continue;
-
-        //File prey = new File(userPath, entries[j]);
-        File prey = new File(sketchbookFolder, entries[j]);
-        File pde = new File(prey, entries[j] + ".pde");
-
-        // make sure this is actually a sketch folder with a .pde,
-        // not a .DS_Store file or another random user folder
-
-        if (pde.exists() && (Base.calcFolderSize(prey) == 0)) {
-          //System.out.println("i want to remove " + prey);
-
-          //if (Preferences.getBoolean("sketchbook.auto_clean")) {
-          Base.removeDir(prey);
-
-            /*
-          } else {  // otherwise prompt the user
-            String prompt =
-              "Remove empty sketch titled \"" + entries[j] + "\"?";
-
-            Object[] options = { "Yes", "No" };
-            int result =
-              JOptionPane.showOptionDialog(editor,
-                                           prompt,
-                                           "Housekeeping",
-                                           JOptionPane.YES_NO_OPTION,
-                                           JOptionPane.QUESTION_MESSAGE,
-                                           null,
-                                           options,
-                                           options[0]);
-            if (result == JOptionPane.YES_OPTION) {
-              Base.removeDir(prey);
-            }
-            */
-          //}
-        }
-      }
-    }
-  }
+//  static public void cleanSketchbook() {
+//    if (!Preferences.getBoolean("sketchbook.auto_clean")) return;
+//
+//    File sketchbookFolder = getSketchbookFolder();
+//    if (!sketchbookFolder.exists()) return;
+//
+//    //String entries[] = new File(userPath).list();
+//    String entries[] = sketchbookFolder.list();
+//    if (entries != null) {
+//      for (int j = 0; j < entries.length; j++) {
+//        //System.out.println(entries[j] + " " + entries.length);
+//        if (entries[j].charAt(0) == '.') continue;
+//
+//        //File prey = new File(userPath, entries[j]);
+//        File prey = new File(sketchbookFolder, entries[j]);
+//        File pde = new File(prey, entries[j] + ".pde");
+//
+//        // make sure this is actually a sketch folder with a .pde,
+//        // not a .DS_Store file or another random user folder
+//
+//        if (pde.exists() && (Base.calcFolderSize(prey) == 0)) {
+//          //System.out.println("i want to remove " + prey);
+//
+//          //if (Preferences.getBoolean("sketchbook.auto_clean")) {
+//          Base.removeDir(prey);
+//
+//            /*
+//          } else {  // otherwise prompt the user
+//            String prompt =
+//              "Remove empty sketch titled \"" + entries[j] + "\"?";
+//
+//            Object[] options = { "Yes", "No" };
+//            int result =
+//              JOptionPane.showOptionDialog(editor,
+//                                           prompt,
+//                                           "Housekeeping",
+//                                           JOptionPane.YES_NO_OPTION,
+//                                           JOptionPane.QUESTION_MESSAGE,
+//                                           null,
+//                                           options,
+//                                           options[0]);
+//            if (result == JOptionPane.YES_OPTION) {
+//              Base.removeDir(prey);
+//            }
+//            */
+//          //}
+//        }
+//      }
+//    }
+//  }
 
 
   // .................................................................
