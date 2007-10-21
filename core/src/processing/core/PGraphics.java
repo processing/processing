@@ -192,15 +192,15 @@ public abstract class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   /**
-   * Array of hint[] items. These are hacks to get around various 
-   * temporary workarounds inside the environment. 
+   * Array of hint[] items. These are hacks to get around various
+   * temporary workarounds inside the environment.
    * <p/>
-   * Note that this array cannot be static, as a hint() may result in a 
+   * Note that this array cannot be static, as a hint() may result in a
    * runtime change specific to a renderer. For instance, calling
-   * hint(DISABLE_DEPTH_TEST) has to call glDisable() right away on an 
+   * hint(DISABLE_DEPTH_TEST) has to call glDisable() right away on an
    * instance of PGraphicsOpenGL.
    * <p/>
-   * The hints[] array is allocated early on because it might 
+   * The hints[] array is allocated early on because it might
    * be used inside beginDraw(), allocate(), etc.
    */
   protected boolean hints[] = new boolean[HINT_COUNT];
