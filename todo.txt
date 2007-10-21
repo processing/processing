@@ -4,6 +4,10 @@ X   no, because some renderers really need to create, not load it
 X   would have to cache opengl fonts at different sizes, etc
 X document hint() commands for advanced reference
 X add note about gcj/gij to the platform notes
+o when writing javadoc for p5 sketches, only write from first tab
+X   already was using code[0]
+X processing.video not working on windows in 126 through 130
+X   http://dev.processing.org/bugs/show_bug.cgi?id=654
 
 server/client stuff
 X add server/client notification thing for the nyu guys
@@ -39,9 +43,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=634
 _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
 _ update keywords generator script on the site
-
-
-_ when writing javadoc for p5 sketches, only write from first tab
 
 _ make editor buttons light up and clear properly 
 _ inside sketch.java, don't hardwire the file extension types
