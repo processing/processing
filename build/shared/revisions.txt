@@ -7,6 +7,76 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0131 - 22 October 2007
+
+More bug fixes, and ironing out the New/Open behavior. 
+
+[ bug fixes ]
+
++ Fixed "java.lang.NoClassDefFoundError: quicktime/std/StdQTException"
+  error when using video code on Windows with releases 0126 and later.
+  http://dev.processing.org/bugs/show_bug.cgi?id=654
+
++ Finally fixed problems with the net library, where disconnecting
+  a client would hose the server. Also cleaned up some other nastiness
+  in the networking code.
+  http://dev.processing.org/bugs/show_bug.cgi?id=537
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=LibraryProblems;action=display;num=1180713192
+  http://dev.processing.org/bugs/show_bug.cgi?id=538
+
++ Fixed hint(DISABLE_DEPTH_TEST) with OpenGL.
+
++ Fix minor bug in saveStream() (not a documented function).
+
+[ changes ] 
+
++ When used from the toolbar in a Processing window, New and Open will
+  replace the sketch in the current window. When used from the menu
+  (or via key commands) they'll open a new window. This seems to be a 
+  better in-between from our old sketchbook model, and the way most
+  applications behave.
+
++ On Mac OS X, a blank sketch will open after the last sketch is 
+  closed. On Windows, closing the last sketch will quit the program. 
+  These default behaviors can be overridden in the Preferences dialog.
+  There is no way to have a menu bar without an open window in a 
+  Java application, which is what's expected for Mac OS X apps. 
+  (Java comes from the X11 world, where menu bars are inside windows)
+  This split behavior (with a preference to override) is our best 
+  attempt at a compromise. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=634
+
++ Added support for full-screen anti-aliasing with OpenGL. This is
+  enabled via the hint() mechanism because it has several tradeoffs
+  and its behavior across video cards varies. Use the options
+  hint(ENABLE_OPENGL_2X_SMOOTH) or hint(ENABLE_OPENGL_4X_SMOOTH)
+  immediately after the size() command to get lovely smooth results.
+  Read the caveats in the documentation for hint(). Thanks to Mike
+  Creighton and others who figured out this method earlier.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1175552759
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
+
++ Updated the JOGL release to 1.1.0 (with 1.1.1 probably on the way 
+  in the next few days or weeks).
+
++ Add gluegen-rt back to the applet export for OpenGL.
+
++ Added documentation for hint() and unhint().
+
++ Removed auto-delete of empty sketches from the sketchbook. This is
+  no longer necessary with the regular New/Open/Save model, so it's
+  best to leave it out, rather than have it go awry in some way.
+
++ Added a disconnectEvent() for the net library Client class, which 
+  is fired whenever a client...disconnects.
+
++ Made a few more fields public in the Client and Server classes.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0130 - 20 October 2007
 
 Bug fixes for 0126-0129. If you haven't read revisions.txt for
