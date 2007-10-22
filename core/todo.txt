@@ -14,6 +14,7 @@ X add gluegen-rt back to the applet export
 X   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
 X add print() and println() for long and double
 X   http://dev.processing.org/bugs/show_bug.cgi?id=652
+X fix minor bug in saveStream() (undocumented)
 
 cleaning
 X "this file is named" errors don't like subdirectories
