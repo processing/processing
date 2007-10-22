@@ -1,22 +1,5 @@
-0131 core
-X hint(DISABLE_DEPTH_TEST) not behaving consistently
-X   http://dev.processing.org/bugs/show_bug.cgi?id=483
-o make hints static - cannot do that
-X clean up hinting mechanism a bit
-X look into jogl anti-aliasing on osx
-o   smoothMode(2) and smoothMode(4), right after size()?
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1175552759
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1164236069
-X look into capabilities stuff from mike creighton
-X   also sets the aa mode on the pc so it no longer needs control panel bunk
-X update to JOGL 1.1.0
-X add gluegen-rt back to the applet export
-X   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
-X add print() and println() for long and double
-X   http://dev.processing.org/bugs/show_bug.cgi?id=652
-X fix minor bug in saveStream() (undocumented)
-X "this file is named" errors don't like subdirectories
-X   need to strip off past the file separator or something
+0132 core
+
 
 _ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628

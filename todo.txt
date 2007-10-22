@@ -1,47 +1,4 @@
-0131 pde
-o make loadFont() work properly with regular fonts?
-X   no, because some renderers really need to create, not load it
-X   would have to cache opengl fonts at different sizes, etc
-X document hint() commands for advanced reference
-X add note about gcj/gij to the platform notes
-o when writing javadoc for p5 sketches, only write from first tab
-X   already was using code[0]
-X processing.video not working on windows in 126 through 130
-X   http://dev.processing.org/bugs/show_bug.cgi?id=654
-X auto-delete of sketches might be dangerous
-X   and probably no longer necessary
-X should toolbar new/open replace the items in the current window?
-X closing last sketch window... open an untitled document?
-X   http://dev.processing.org/bugs/show_bug.cgi?id=634
-X when opening from the toolbar, replaces items in that window
-X   when new/open from menu, creates a new window
-o don't bug the user about new release of p5 when they have it
-o   add prefs option for "latest version run"
-o   something also to track--people going to older releases
-X   keeping this behavior, it's also the only way to know you're 
-X   running the wrong version when you accidentally open an oldie
-X createFont() needs to run 1.3+, and not in applets
-X   where is the bug reference for this.. and can it be fixed?
-
-server/client stuff
-X add server/client notification thing for the nyu guys
-X   add an event to Server that notifies when a Client disconnects
-X add docs for disconnectEvent for Client
-X proccessing.net.Client.write(int) terminates sketch when client disconnects.
-X   http://dev.processing.org/bugs/show_bug.cgi?id=537
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=LibraryProblems;action=display;num=1180713192
-X Server.write(bytes[]) hangs sketch on client disconnect.
-X   http://dev.processing.org/bugs/show_bug.cgi?id=538
-o move the useful serial buffering fxns into net library
-X make the Client list public
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1116056805
-
-cleaning
-o video problem in qt 7.2 with prepreroll, adding this to java.policy fixes:
-X   just removed prepreroll in 0126
-grant {
-  permission java.security.AllPermission;
-};
+0132 pde
 
 
 with casey
