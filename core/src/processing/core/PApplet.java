@@ -4604,11 +4604,11 @@ in   */
 
   /**
    * Save the contents of a stream to a file in the sketch folder.
-   * This is basically saveBytes(loadBytes(), blah), but done
+   * This is basically saveBytes(blah, loadBytes()), but done
    * in a less confusing manner.
    */
   public void saveStream(String filename, String stream) {
-    saveStream(new File(dataPath(filename)), stream);
+    saveStream(saveFile(filename), stream);
   }
 
 
@@ -4619,8 +4619,6 @@ in   */
    * uncompress gzip files.
    */
   public void saveStream(File file, String stream) {
-    //saveBytes(file, loadBytes(stream));
-
     File tempFile = null;
     try {
       File parentDir = file.getParentFile();
@@ -4642,7 +4640,8 @@ in   */
       bos = null;
 
       if (!tempFile.renameTo(file)) {
-        System.err.println("Could not rename temporary file " + tempFile.getAbsolutePath());
+        System.err.println("Could not rename temporary file " +
+                           tempFile.getAbsolutePath());
       }
     } catch (IOException e) {
       if (tempFile != null) {
