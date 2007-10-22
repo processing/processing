@@ -143,6 +143,11 @@ Replacing (or making a symlink to) the
 contents of the &lsquo;java&rsquo; folder will let you tie in a
 preferred Java VM for your machine.
 <br> <br>
+Note that the GNU Classpath, GCJ, GIJ combination will not work with 
+Processing. You'll need a regular Java release downloaded from Sun.
+OpenJDK and IcedTea are also unlikely to work, however we'll update
+this as those projects progress.
+<br> <br>
 If you get Processing to run properly, the Sketch &rarr; Show Sketch Folder command may not be available. Processing will attempt to find kde-open and gnome-open, and if neither is available, the menu item will be dimmed. To fix this, you must set a launcher for your platform. Add a line to preferences.txt that specifies its location: <BR>
 <TT>launcher.linux = /path/to/launcher_app</TT> <BR>
 <br> <br>
