@@ -44,8 +44,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 131;
-  static final String VERSION_NAME = "0131 Beta";
+  static final int VERSION = 132;
+  static final String VERSION_NAME = "0132 Beta";
 
   // set to true after the first time it's built.
   // so that the errors while building don't show up again.
@@ -487,15 +487,15 @@ public class Base {
       String path = createNewUntitled();
       Editor editor = handleOpen(path);
       editor.untitled = true;
-      
+
     } catch (IOException e) {
       if (activeEditor != null) {
         activeEditor.error(e);
       }
     }
   }
-  
-  
+
+
   public void handleNewReplace() {
     if (!activeEditor.checkModified(false)) {
       return;  // sketch was modified, and user canceled
@@ -506,7 +506,7 @@ public class Base {
     try {
       String path = createNewUntitled();
       activeEditor.handleOpenInternal(path);
-      
+
     } catch (IOException e) {
       if (activeEditor != null) {
         activeEditor.error(e);
@@ -587,7 +587,7 @@ public class Base {
 
 //    try {
     activeEditor.handleOpenInternal(path);
-      
+
 //    } catch (IOException e) {
 //      if (activeEditor != null) {
 //        activeEditor.error(e);
@@ -705,7 +705,7 @@ public class Base {
     if (quitting) {
       return true;
     }
-    
+
     // Close the running window, avoid window boogers with multiple sketches
     editor.closeRunner();
 
@@ -981,14 +981,14 @@ public class Base {
 
   }
 
-  
+
   /**
-   * Scan a folder recursively, and add any sketches found to the menu 
+   * Scan a folder recursively, and add any sketches found to the menu
    * specified. Set the openReplaces parameter to true when opening the sketch
    * should replace the sketch in the current window, or false when the
    * sketch should open in a new window.
    */
-  protected boolean addSketches(JMenu menu, File folder, 
+  protected boolean addSketches(JMenu menu, File folder,
                                 final boolean openReplaces) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) return false;
@@ -1007,7 +1007,7 @@ public class Base {
 //          Component source = (Component) e.getSource();
 //          Component parent = source.getParent();
 //          if (parent.isValid()) {
-//            // parent component (the menu) will be valid when it's a popup 
+//            // parent component (the menu) will be valid when it's a popup
           if (openReplaces) {
             handleOpenReplace(e.getActionCommand());
           } else {
