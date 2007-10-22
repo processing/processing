@@ -907,7 +907,7 @@ public class Base {
 
     // Add a list of all sketches and subfolders
     try {
-      boolean sketches = addSketches(menu, getSketchbookFolder());
+      boolean sketches = addSketches(menu, getSketchbookFolder(), true);
       if (sketches) menu.addSeparator();
     } catch (IOException e) {
       e.printStackTrace();
@@ -916,7 +916,7 @@ public class Base {
     //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
     try {
-      addSketches(menu, examplesFolder);
+      addSketches(menu, examplesFolder, true);
 //      String[] subfolders = examplesFolder.list();
 //      for (int i = 0; i < subfolders.length; i++) {
 //        if (!subfolders[i].startsWith(".")) {
@@ -937,7 +937,7 @@ public class Base {
     //new Exception().printStackTrace();
     try {
       menu.removeAll();
-      addSketches(menu, getSketchbookFolder());
+      addSketches(menu, getSketchbookFolder(), false);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -969,7 +969,7 @@ public class Base {
 
     try {
       menu.removeAll();
-      addSketches(menu, examplesFolder);
+      addSketches(menu, examplesFolder, false);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -981,7 +981,15 @@ public class Base {
 
   }
 
-  protected boolean addSketches(JMenu menu, File folder) throws IOException {
+  
+  /**
+   * Scan a folder recursively, and add any sketches found to the menu 
+   * specified. Set the openReplaces parameter to true when opening the sketch
+   * should replace the sketch in the current window, or false when the
+   * sketch should open in a new window.
+   */
+  protected boolean addSketches(JMenu menu, File folder, 
+                                final boolean openReplaces) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) return false;
 
@@ -996,11 +1004,11 @@ public class Base {
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //System.out.println(e);
-          Component source = (Component) e.getSource();
-          Component parent = source.getParent();
-          if (parent.isValid()) {
-            // parent component (the menu) will be valid when it's a popup 
+//          Component source = (Component) e.getSource();
+//          Component parent = source.getParent();
+//          if (parent.isValid()) {
+//            // parent component (the menu) will be valid when it's a popup 
+          if (openReplaces) {
             handleOpenReplace(e.getActionCommand());
           } else {
             handleOpen(e.getActionCommand());
@@ -1047,7 +1055,7 @@ public class Base {
         JMenu submenu = new JMenu(list[i]);
         // needs to be separate var
         // otherwise would set ifound to false
-        boolean found = addSketches(submenu, subfolder); //, false);
+        boolean found = addSketches(submenu, subfolder, openReplaces); //, false);
         if (found) {
           menu.add(submenu);
           ifound = true;
