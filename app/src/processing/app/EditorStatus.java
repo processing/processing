@@ -236,10 +236,8 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
   protected void setup() {
     if (okButton == null) {
-      //yesButton    = new JButton(Preferences.PROMPT_YES);
-      //noButton     = new JButton(Preferences.PROMPT_NO);
       cancelButton = new JButton(Preferences.PROMPT_CANCEL);
-      okButton     = new JButton(Preferences.PROMPT_OK);
+      okButton = new JButton(Preferences.PROMPT_OK);
 
       cancelButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -294,12 +292,15 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
       //if (Base.platform != Base.MACOSX) {
       editField.addKeyListener(new KeyAdapter() {
-          // no-op implemented because of a jikes bug
-          //protected void noop() { }
-
-          //public void keyPressed(KeyEvent event) {
-          //System.out.println("pressed " + event + "  " + KeyEvent.VK_SPACE);
-          //}
+        
+          // Grab ESC with keyPressed, because it's not making it to keyTyped
+          public void keyPressed(KeyEvent event) {
+            if (event.getKeyChar() == KeyEvent.VK_ESCAPE) {
+              unedit();
+              editor.toolbar.clear();
+              event.consume();
+            }
+          }
 
           // use keyTyped to catch when the feller is actually
           // added to the text field. with keyTyped, as opposed to
@@ -307,8 +308,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
           // enter or backspace or whatever, so the keychar should
           // be used instead. grr.
           public void keyTyped(KeyEvent event) {
-            //System.out.println("got event " + event + "  " +
-            // KeyEvent.VK_SPACE);
+            //System.out.println("got event " + event);
             int c = event.getKeyChar();
 
             if (c == KeyEvent.VK_ENTER) {  // accept the input
@@ -327,45 +327,29 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
                        (c == KeyEvent.VK_HOME) ||
                        (c == KeyEvent.VK_END) ||
                        (c == KeyEvent.VK_SHIFT)) {
-              //System.out.println("nothing to see here");
-              //noop();
+              // these events are ignored
 
+              /*
             } else if (c == KeyEvent.VK_ESCAPE) {
               unedit();
               editor.toolbar.clear();
               event.consume();
+              */
 
             } else if (c == KeyEvent.VK_SPACE) {
-              //System.out.println("got a space");
-              // if a space, insert an underscore
-              //editField.insert("_", editField.getCaretPosition());
-              /* tried to play nice and see where it got me
-                 editField.dispatchEvent(new KeyEvent(editField,
-                 KeyEvent.KEY_PRESSED,
-                 System.currentTimeMillis(),
-                 0, 45, '_'));
-              */
-              //System.out.println("start/end = " +
-              //                 editField.getSelectionStart() + " " +
-              //                 editField.getSelectionEnd());
               String t = editField.getText();
-              //int p = editField.getCaretPosition();
-              //editField.setText(t.substring(0, p) + "_" + t.substring(p));
-              //editField.setCaretPosition(p+1);
               int start = editField.getSelectionStart();
               int end = editField.getSelectionEnd();
               editField.setText(t.substring(0, start) + "_" +
                                 t.substring(end));
               editField.setCaretPosition(start+1);
-              //System.out.println("consuming event");
               event.consume();
 
             } else if ((c == '_') || (c == '.') ||  // allow .pde and .java
                        ((c >= 'A') && (c <= 'Z')) ||
                        ((c >= 'a') && (c <= 'z'))) {
-              // everything fine, catches upper and lower
-              //noop();
-
+              // these are ok, allow them through
+              
             } else if ((c >= '0') && (c <= '9')) {
               // getCaretPosition == 0 means that it's the first char
               // and the field is empty.
@@ -445,33 +429,5 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
         unedit();
       }
     }
-    
-    /*
-    if (e.getSource() == noButton) {
-      // shut everything down, clear status, and return
-      unprompt();
-      // don't need to save changes
-      editor.checkModified2();
-
-    } else if (e.getSource() == yesButton) {
-      // answer was in response to "save changes?"
-      unprompt();
-      editor.handleSave(true);
-      editor.checkModified2();
-
-    } else if (e.getSource() == cancelButton) {
-      // don't do anything, don't continue with checkModified2
-      if (mode == PROMPT) unprompt();
-      else if (mode == EDIT) unedit();
-      editor.buttons.clear();
-
-    } else if (e.getSource() == okButton) {
-      // answering to "save as..." question
-      String answer = editField.getText();
-      //editor.handleSaveAs2(answer);
-      editor.sketch.nameCode(answer);
-      unedit();
-    }
-    */
   }
 }

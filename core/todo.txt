@@ -34,6 +34,7 @@ o get tiff exporter for p5 to support argb and gray
 X   would also need to modify the tiff loading code, 
 X   because the header would be different
 X   http://dev.processing.org/bugs/show_bug.cgi?id=343
+X map() is not colored, neither is norm
 
 
 _ fix svg caps/joins for opengl with svg library
