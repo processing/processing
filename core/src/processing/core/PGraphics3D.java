@@ -601,10 +601,24 @@ public class PGraphics3D extends PGraphics {
     vertex[MZ] = z;
 
     if (fill) {
-      vertex[R] = fillR;
-      vertex[G] = fillG;
-      vertex[B] = fillB;
-      vertex[A] = fillA;
+      if (textureImage != null) {
+        if (tint) {
+          vertex[R] = tintR;
+          vertex[G] = tintG;
+          vertex[B] = tintB;
+          vertex[A] = tintA;
+        } else {
+          vertex[R] = 1;
+          vertex[G] = 1;
+          vertex[B] = 1;
+          vertex[A] = 1;
+        }
+      } else {
+        vertex[R] = fillR;
+        vertex[G] = fillG;
+        vertex[B] = fillB;
+        vertex[A] = fillA;
+      }
 
       vertex[AR] = ambientR;
       vertex[AG] = ambientG;
