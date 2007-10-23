@@ -292,6 +292,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // changing for 0100, need to resize rather than re-allocate
       canvas.setSize(width, height);
     }
+    canvas.requestFocus();
     defaultsInited = false;
   }
 
