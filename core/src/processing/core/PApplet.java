@@ -7061,7 +7061,7 @@ in   */
 
       //System.out.println("showing frame");
       //System.out.println("applet requesting focus");
-      //applet.requestFocus(); // ask for keydowns
+      applet.requestFocus(); // ask for keydowns
       //System.out.println("exiting main()");
 
     } catch (Exception e) {

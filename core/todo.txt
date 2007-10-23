@@ -3,6 +3,13 @@ X fix problem with "export to application" and opengl
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193142573
 X add focus requests so that better chance of keys etc working
 X   http://dev.processing.org/bugs/show_bug.cgi?id=645
+_   argh, these make things worse (P3D run internal)
+X add stuff about classversionerrors to the reference
+X   also update the libraries page
+X fix background() with P3D and beginRaw()
+X endRaw() has a problem with hint(ENABLE_DEPTH_SORT)
+X   because the triangles won't be rendered by the time endRaw() is called
+X   force depth sorted triangles to flush
 
 _ image outofmemoryerror for casey's students
 _   http://dev.processing.org/bugs/show_bug.cgi?id=355
@@ -19,6 +26,10 @@ o finish implementation so 1.1 support can return
 X   http://dev.processing.org/bugs/show_bug.cgi?id=125
 o check into ricard's problems with beginRecord()
 X   i believe these were caused by linux java2d issues
+X beginFrame()/beginDraw() and defaults()
+X   when should these be called, when not?
+X   seems as though the begin/end should happen inside beginRaw/Record
+X   defaults() gets called by the size() command in PApplet
 
 fixed earlier
 X is the texture[] array in PGraphics3D causing the problems with memory?
@@ -64,7 +75,7 @@ _   also add unhint() to the keywords file
 _   and maybe remove hint() from keywords_base?
 _ method to go from function name to the included examples where used?
 
-createGraphics() mess
+createGraphics() and load/updatePixels() mess
 _ text characters showing up as opaque rectangles in tga files
 _   http://dev.processing.org/bugs/show_bug.cgi?id=641
 _   solution is to implement alpha compositing across all of P3D 
@@ -98,6 +109,8 @@ _   or it's the PGraphics object, which does an updatePixels() immediately
 _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
+_ copy() should automatically call updatePixels()
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
 
 rework some text/font code
 _ fix getFontMetrics() warning
@@ -114,22 +127,6 @@ _   because ttf files will not be installed on the system when opening pdf
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
-
-_ loadBytes() needs optimization
-_   don't bother using a buffering stream, just handle internally. gah!
-
-_ copy() should automatically call updatePixels()
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
-
-_ disable key repeat? http://www.cokeandcode.com/node/9
-KeyEvent nextPress = (KeyEvent) Toolkit.getDefaultToolkit().
-                                    getSystemEventQueue().
-                                    peekEvent(KeyEvent.KEY_PRESSED);
-if ((nextPress == null) || 
-    (nextPress.getWhen() != e.getWhen()) || 
-    (nextPress.getKeyCode() != e.getKeyCode())) {
-	keys[e.getKeyCode()] = false;
-}  	
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -218,6 +215,9 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+_ loadBytes() needs optimization
+_   don't bother using a buffering stream, just handle internally. gah!
+
 _ modelX/Y/Z still having trouble
 _   http://dev.processing.org/bugs/show_bug.cgi?id=486
 
@@ -235,15 +235,6 @@ _ cameraXYZ doesn't seem to actually be used for anything
 _   since camera functions don't even look at it or set it
 
 _ add notes about fixing serial on the mac to the faq (and link to bug)
-
-_ beginFrame()/beginDraw() and defaults()
-_   when should these be called, when not?
-_   seems as though the begin/end should happen inside beginRaw/Record
-_   defaults() gets called by the size() command in PApplet
-
-_ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
-_   because the triangles won't be rendered by the time endRaw() is called
-_   force depth sorted triangles to flush
 
 _ should beginRecord inherit settings from its parent renderer?
 _   textFont() is null on beginRecord
