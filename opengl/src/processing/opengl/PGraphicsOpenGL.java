@@ -340,9 +340,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     // On the first frame that's guaranteed to be on screen,
     // and the component valid and all that, ask for focus.
-    //if (frameCount == 1) {
-    //  canvas.requestFocus();
-    //}
+    if (parent.frameCount == 1) {
+      canvas.requestFocus();
+    }
 
     report("top beginDraw()");
 
