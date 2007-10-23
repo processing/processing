@@ -1,3 +1,10 @@
+0132 pde
+X sketch marked as untitled if opened into an untitled window from toolbar
+X when renaming an untitled sketch, need to save
+X   otherwise it just renames, but leaves it in the temp folder
+o   maybe disable rename when read-only or untitled?
+
+
 0131 pde
 o make loadFont() work properly with regular fonts?
 X   no, because some renderers really need to create, not load it
