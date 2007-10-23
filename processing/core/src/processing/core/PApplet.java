@@ -600,14 +600,9 @@ in   */
       setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
-    // Try to get focus into this component. Done up here so that OpenGL 
-    // can call it on its own canvas object later (one the gfx is set up)
-    // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
-    requestFocus();
-    
     // this is automatically called in applets
     // though it's here for applications anyway
-    start();    
+    start();
   }
 
 
@@ -1553,6 +1548,13 @@ in   */
         } else {
           println("no renderer");
         }
+
+        //if (frameCount == 1) {
+          // Call the request focus event once the image is sure to be
+          // on screen and the component is valid.
+          // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
+          //requestFocus();
+        //}
 
         // wait for update & paint to happen before drawing next frame
         // this is necessary since the drawing is sometimes in a
