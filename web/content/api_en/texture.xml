@@ -26,6 +26,8 @@ endShape();
 
 <description>
 Sets a texture to be applied to vertex points. The <b>texture()</b> function must be called between <b>beginShape()</b> and <b>endShape()</b> and before any calls to <b>vertex()</b>.
+<br/> <br/>
+When textures are in use, the fill color is ignored. Instead, use tint() to specify the color of the texture as it is applied to the shape.
 </description>
 
 <syntax>

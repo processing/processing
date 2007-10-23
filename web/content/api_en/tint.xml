@@ -41,6 +41,8 @@ To make an image transparent, but not change it's color, use white as the tint c
 When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
 <br/> <br/>
 The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+<br/> <br/>
+The tint() method is also used to control the coloring of textures in 3D. 
 </description>
 
 <syntax>
@@ -86,7 +88,7 @@ tint(<c>hex</c>, <c>alpha</c>)
 
 <parameter>
 <label>hex</label>
-<description>int: color value in hexadecimal notation (i.e. #FFCC00 or 0xFFCC00)</description>
+<description>int: color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)</description>
 </parameter>
 
 <returns>None</returns>

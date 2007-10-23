@@ -30,6 +30,8 @@ Sets the color used to fill shapes. For example, if you run <b>fill(204, 102, 0)
 When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
 <br/> <br/>
 The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+<br/> <br/>
+To change the color of an image (or a texture), use tint().
 </description>
 
 <syntax>
@@ -93,12 +95,5 @@ colorMode()
 <type>Function</type>
 
 <partof>Core</partof>
-
-
-
-
-
-
-
 
 </root>
