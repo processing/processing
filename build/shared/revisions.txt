@@ -7,6 +7,45 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0132 - 22 October 2007
+
+The bug fixes continue. Didn't plan to release so soon, but found a 
+problem where sketches were being marked as untitled, forcing users
+to save to a new location (and causing confusion in the process).
+
+[ bug fixes ] 
+
++ Fix bug introduced in 0131 where sketches opened from the toolbar
+  into an untitled window were marked as untitled themselves.
+
++ Disallow the user from renaming unsaved sketches.
+
++ Fix problems with JAVA2D image drawing not properly handling RGB
+  images, or tint() not working properly in JAVA2D.
+  http://dev.processing.org/bugs/show_bug.cgi?id=351
+
++ Significantly improve memory requirements for handling tinted 
+  images with the JAVA2D renderer.
+
++ Fix inconsistencies between tint() and fill() with P3D and OPENGL.
+  From now on, tint() is always used to color images, and fill is 
+  ignored when textures are in use. Prior, P3D ignored both fill() 
+  and tint() settings with textures, and OPENGL used the fill color.
+  http://dev.processing.org/bugs/show_bug.cgi?id=222
+
++ Fix a problem with fill in P3D where no color would be applied to
+  textures (especially when the color was unchaged across the shape)
+  http://dev.processing.org/bugs/show_bug.cgi?id=169
+  http://dev.processing.org/bugs/show_bug.cgi?id=90
+
++ Add focus requests to PApplet.init() in the hope of improving
+  focused state of applets when they open.
+  http://dev.processing.org/bugs/show_bug.cgi?id=645
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0131 - 22 October 2007
 
 More bug fixes, and ironing out the New/Open behavior. 

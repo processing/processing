@@ -1,8 +1,8 @@
 0132 pde
 X sketch marked as untitled if opened into an untitled window from toolbar
-_ when renaming an untitled sketch, need to save
-_   otherwise it just renames, but leaves it in the temp folder
-_   maybe disable rename when read-only or untitled?
+X when renaming an untitled sketch, need to save
+X   otherwise it just renames, but leaves it in the temp folder
+o   maybe disable rename when read-only or untitled?
 
 
 with casey
