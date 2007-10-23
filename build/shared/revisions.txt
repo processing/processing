@@ -38,10 +38,6 @@ to save to a new location (and causing confusion in the process).
   http://dev.processing.org/bugs/show_bug.cgi?id=169
   http://dev.processing.org/bugs/show_bug.cgi?id=90
 
-+ Add focus requests to PApplet.init() in the hope of improving
-  focused state of applets when they open.
-  http://dev.processing.org/bugs/show_bug.cgi?id=645
-
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
