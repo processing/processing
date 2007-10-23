@@ -12,10 +12,9 @@
     input devices connected to the computer. Video can be loaded from 
     QuickTime files located on your computer or anywhere on the Internet.</p> 
     
-    <p>For this library to work, it is necessary to have QuickTime for Java 
-    installed on your computer. Download and install QuickTime and do 
-    a custom installation, making sure the <em>QuickTime for Java</em> option 
-    is selected.</p>
+    <p>For this library to work, it is necessary to have QuickTime
+    installed on your computer. Download and install QuickTime (or iTunes, 
+    which includes QuickTime). </p>
     
     <p>You also need video driver software for translating from the proprietary 
     format of your video source into commonly used video functions. You 
@@ -95,8 +94,9 @@ circumvent this mess.
 <br> <br>
 All Platforms
 <UL>
-<LI>The video library is only supported on Windows and Mac OS, because it relies on QuickTime for Java. There has been discussion of using other libraries (such as JMF) to bring support to Linux, search <A HREF="http://processing.org/discourse">discourse</A> for more information.
+<LI>The video library is only supported on Windows and Mac OS, because it relies on QuickTime for Java. There has been discussion of using other libraries (such as JMF) to bring support to Linux, search <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Video">discourse</A> for more information.
 <LI>An error that reads <TT>quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror</TT> when trying to capture video probably means that 1) no camera is plugged in 2) the camera is not turned on or 3) on Windows, the VDIG for the camera (see below) is not installed.
+<!--
 <LI>The QuickTime 7 upgrade released April 29, 2005 (and now included with
 iTunes 6) introduces its own unique set of problems. See caveats and fun
 below for your platform.
@@ -105,13 +105,14 @@ is an Apple bug, and is fixed in the version of QuickTime that is
 included with iTunes 6.0.1 (or later), or, as of 20 October 2005, 
 is available separate from iTunes <A
 HREF="http://www.apple.com/quicktime/download/standalone.html">here</A>.
+-->
 <LI>Video performance is not particularly great. The library is simply not built (and Java is not currently capable) of moving around 640x480 video on most machines, much less doing analysis on the video. The library was intended as a way to get pixels and manipulate them (either small pixel buffers interactively, or large ones for non real-time use). There are better tools for real-time, large screen analysis. It is my estimate that a 2x performance increase can probably be obtained by making better use of the QuickTime for Java library, but this still may not be enough to do analysis of 640x480 pixels at 30 frames per second, so it remains a lower priority. As always <A HREF="http://dev.processing.org/">contributions are welcome</A>, in case you're a video hacker who wants to help improve the library. (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=40">Bug 40</A>)
 <LI>It's important to keep in mind that video capture and screen updates happen on separate threads. It's possible for captureEvent() to be called in the middle of draw(), which can cause trouble if manipulations are happening to the video image while it's also being drawn. This is particularly problematic on multiprocessor machines or older machines (or right before deadlines and graduate crits). There are two ways to handle it. First, you can read about how Java handles threads, and set up proper synchronization between the videoEvent and draw methods. The second solution is to use this rule of thumb: handle your heavy video computation inside captureEvent(), and then copy the pixels when they're ready into the image that you'll be drawing inside draw(). In other situations, when you're just drawing the video picture, use the available() method (instead of captureEvent).
 <LI><STRIKE>Projects that use video cannot (currently?) be exported to the
 web. (<A HREF="http://processing.org/bugs/show_bug.cgi?id=44">Bug 44</A>)</STRIKE> As of release 0116, video playback runs just fine from the web, but video capture requires a signed applet (for security reasons). See the applet applet troubleshooting section for information about signed applets. 
-<LI>QuickTime movies are treated as nothing but pixel data in Processing. This means that none of the interaction features (fancy "click here to start movie" buttons and the like) are supported, and that other features such as QTVR won't work either. 
+<LI>QuickTime movies are treated as nothing but pixel data in Processing. This means that none of the interaction features (fancy "click here to start movie" buttons or embedded Flash data) are supported, and that other features such as QTVR won't work either. 
 <LI>You can find more discussion about video and problems that people have
-had over in the <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera">Video & Movies</A> section of the discourse board. And if you find a bug, please use the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
+had over in the <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Video">Video & Movies</A> section of the discourse board. And if you find a bug, please use the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
 
 </UL>
 Windows
@@ -150,13 +151,17 @@ checkbox next to "QuickTime for Java" is marked. You will also need to
 follow this process if you have already installed QuickTime 6, and did
 not use the "Custom" or "Full" install. To remedy this, use the
 QuickTime Updater from the QuickTime folder that's added to the Start
-menu.
+menu. 
+<LI>In QuickTime 7 (or the iTunes + QuickTime installer) there is
+no "Custom" install, and QuickTime for Java is installed by default.
+<!--
 <LI>For QuickTime 7 (iTunes 6 and later), you'll need to use release
 0093 (or later) of Processing. QuickTime 7 causes 0092 and earlier to
 break because Apple decided to move the location of several installed
 files.
 <LI>Better yet, you should use release 0102 (or later) of
 Processing, which also fixes a number of QuickTime-related issues.
+-->
 <LI>If you're still having trouble, sometimes a full uninstall/reinstall 
 of Quicktime will do the trick. This may take a good bit of
 work. First try using Add/Remove Programs to uninstall. At some point
