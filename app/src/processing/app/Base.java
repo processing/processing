@@ -502,7 +502,12 @@ public class Base {
     }
     // Close the running window, avoid window boogers with multiple sketches
     activeEditor.closeRunner();
-
+    // Actually replace things
+    handleNewReplaceImpl();
+  }
+  
+  
+  protected void handleNewReplaceImpl() {
     try {
       String path = createNewUntitled();
       activeEditor.handleOpenInternal(path);
@@ -586,14 +591,11 @@ public class Base {
     // Close the running window, avoid window boogers with multiple sketches
     activeEditor.closeRunner();
 
-//    try {
-    activeEditor.handleOpenInternal(path);
-
-//    } catch (IOException e) {
-//      if (activeEditor != null) {
-//        activeEditor.error(e);
-//      }
-//    }
+    boolean loaded = activeEditor.handleOpenInternal(path);
+    if (!loaded) {
+      // replace the document without checking if that's ok
+      handleNewReplaceImpl();
+    }
   }
 
 
@@ -672,6 +674,11 @@ public class Base {
 //    }
 
     Editor editor = new Editor(this, path, location);
+    
+    // Make sure that the sketch actually loaded
+    if (editor.sketch == null) {
+      return null;  // Just walk away quietly
+    }
 
     if (editors == null) {
       editors = new Editor[5];
