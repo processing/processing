@@ -53,7 +53,9 @@ void mouseReleased() {
 </example>
 
 <description>
-Stops Processing from continuously executing the code within <b>draw()</b>. If <b>loop()</b> is called, the code in <b>draw()</b> is executed continuously. If using <b>noLoop()</b> in <b>setup()</b>, it should be the last line inside the block.
+Stops Processing from continuously executing the code within <b>draw()</b>. If <b>loop()</b> is called, the code in <b>draw()</b> begin to run continuously again. If using <b>noLoop()</b> in <b>setup()</b>, it should be the last line inside the block.
+<br/> <br/>
+When <b>noLoop()</b> is used, it's not possible to draw to the screen inside event handling functions such as <b>mousePressed()</b> or <b>keyPressed()</b>. Instead, use those functions to call <b>redraw()</b> or <b>loop()</b>, which will run <b>draw()</b>, which can update the screen properly.
 </description>
 
 <syntax>
