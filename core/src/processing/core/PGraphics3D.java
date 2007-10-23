@@ -423,6 +423,11 @@ public class PGraphics3D extends PGraphics {
       }
       render_lines();
     }
+    // Clear this out in case flush() is called again. 
+    // For instance, with hint(ENABLE_DEPTH_SORT), it will be called 
+    // once on endRaw(), and once again at endDraw().
+    triangleCount = 0;
+    lineCount = 0;
   }
 
 
@@ -1347,8 +1352,6 @@ public class PGraphics3D extends PGraphics {
 
 
   protected void render_triangles() {
-    //System.out.println("rendering " + triangleCount + " triangles");
-
     if (raw != null) {
       raw.colorMode(RGB, 1);
       raw.noStroke();
@@ -3874,7 +3877,30 @@ public class PGraphics3D extends PGraphics {
     */
     Arrays.fill(pixels, backgroundColor);
     Arrays.fill(zbuffer, Float.MAX_VALUE);
+    
+    clearRaw();
   }
+  
+  
+  protected void clearRaw() {
+    if (raw != null) {
+      raw.colorMode(RGB, 1);
+      raw.noStroke();
+      raw.fill(backgroundR, backgroundG, backgroundB);
+      raw.beginShape(TRIANGLES);
+
+      raw.vertex(0, 0);
+      raw.vertex(width, 0);
+      raw.vertex(0, height);
+
+      raw.vertex(width, 0);
+      raw.vertex(width, height);
+      raw.vertex(0, height);
+
+      raw.endShape();
+    }
+  }
+
 
 
 
