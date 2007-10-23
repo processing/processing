@@ -1447,6 +1447,8 @@ public class Editor extends JFrame {
       }
       // Set the title of the window to "sketch_070752a - Processing 0126"
       setTitle(sketch.name + " | " + WINDOW_TITLE);
+      // Disable untitled setting from previous document, if any
+      untitled = false;
 
     } catch (Exception e) {
       error(e);
