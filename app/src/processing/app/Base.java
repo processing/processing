@@ -506,6 +506,7 @@ public class Base {
     try {
       String path = createNewUntitled();
       activeEditor.handleOpenInternal(path);
+      activeEditor.untitled = true;
 
     } catch (IOException e) {
       if (activeEditor != null) {
