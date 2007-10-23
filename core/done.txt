@@ -1,3 +1,29 @@
+0132 core
+X an image marked RGB but with 0s for the alpha won't draw in JAVA2D
+X   images with 0x00 in their high bits being drawn transparent
+X   also if transparency set but RGB is setting, still honors transparency
+X   http://dev.processing.org/bugs/show_bug.cgi?id=351
+X improve memory requirements for drawing images with JAVA2D
+X   now using significantly less memory
+
+tint/textures
+X tint() and noTint() switching problem in P2D
+X   this should be a quick fix
+X   http://dev.processing.org/bugs/show_bug.cgi?id=222
+X related to the fill bugs: when fill is identical, no fill applied
+X   actually tint() should take over for fill as per-vertex color
+X   when textured images are being used
+X   http://dev.processing.org/bugs/show_bug.cgi?id=169
+X tint() should set texture color, fill() is ignored with textures
+X   add to the reference
+X fix tint() for PGraphics3 (what could be wrong?)
+X   tint() honoring alpha but not colored tint
+X   maybe not setting fill color when drawing textures
+X   guessing it's an implementation issue in sami's renderer
+X   check with the a_Displaying example and tint(255, 0, 0, 100);
+X   http://dev.processing.org/bugs/show_bug.cgi?id=90
+
+
 0131 core
 X hint(DISABLE_DEPTH_TEST) not behaving consistently
 X   http://dev.processing.org/bugs/show_bug.cgi?id=483
