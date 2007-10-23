@@ -24,9 +24,10 @@
 
 package processing.core;
 
+import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
-import java.lang.reflect.*;
+import javax.imageio.ImageIO;
 
 
 /**
@@ -60,8 +61,8 @@ public class PImage implements PConstants, Cloneable {
   public int imageMode = CORNER;
   public boolean smooth = false;
 
-  /** native storage for java 1.3 image object */
-  //public Object image;
+  /** Native Java image object */
+  //public Image image;
 
   /** for subclasses that need to store info about the image */
   public Object cache;
@@ -230,6 +231,7 @@ public class PImage implements PConstants, Cloneable {
    * this should copy all data into the pixels[] array
    */
   public void loadPixels() {  // ignore
+    
   }
 
 
@@ -2445,10 +2447,11 @@ public class PImage implements PConstants, Cloneable {
    */
   protected void saveImageIO(String path) throws IOException {
     try {
-      //BufferedImage bimage =
-      //  new BufferedImage(width, height, (format == ARGB) ?
-      //                    BufferedImage.TYPE_INT_ARGB :
-      //                    BufferedImage.TYPE_INT_RGB);
+      BufferedImage bimage =
+        new BufferedImage(width, height, (format == ARGB) ?
+                          BufferedImage.TYPE_INT_ARGB :
+                          BufferedImage.TYPE_INT_RGB);
+      /*
       Class bufferedImageClass =
         Class.forName("java.awt.image.BufferedImage");
       Constructor bufferedImageConstructor =
@@ -2466,8 +2469,10 @@ public class PImage implements PConstants, Cloneable {
             new Integer(height),
             new Integer((format == ARGB) ? typeIntArgb : typeIntRgb)
           });
+      */
 
-      //bimage.setRGB(0, 0, width, height, pixels, 0, width);
+      bimage.setRGB(0, 0, width, height, pixels, 0, width);
+      /*
       Method setRgbMethod =
         bufferedImageClass.getMethod("setRGB", new Class[] {
             Integer.TYPE, Integer.TYPE,
@@ -2480,11 +2485,13 @@ public class PImage implements PConstants, Cloneable {
           new Integer(width), new Integer(height),
           pixels, new Integer(0), new Integer(width)
         });
+      */
 
       File file = new File(path);
       String extension = path.substring(path.lastIndexOf('.') + 1);
 
-      //ImageIO.write(bimage, extension, file);
+      ImageIO.write(bimage, extension, file);
+      /*
       Class renderedImageClass =
         Class.forName("java.awt.image.RenderedImage");
       Class ioClass = Class.forName("javax.imageio.ImageIO");
@@ -2493,6 +2500,7 @@ public class PImage implements PConstants, Cloneable {
             renderedImageClass, String.class, File.class
           });
       writeMethod.invoke(null, new Object[] { bimage, extension, file });
+      */
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -2509,6 +2517,9 @@ public class PImage implements PConstants, Cloneable {
    * As of revision 0100, this function requires an absolute path,
    * in order to avoid confusion. To save inside the sketch folder,
    * use the function savePath() from PApplet, or use saveFrame() instead.
+   * As of revision 0116, savePath() is not needed if this object has been
+   * created (as recommended) via createImage() or createGraphics() or
+   * one of its neighbors.
    * <p>
    * As of revision 0115, when using Java 1.4 and later, you can write
    * to several formats besides tga and tiff. If Java 1.4 is installed
@@ -2517,16 +2528,13 @@ public class PImage implements PConstants, Cloneable {
    * To get a list of the supported formats for writing, use: <BR>
    * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
    * <p>
-   * To use the original built-in image writers, use .tga as the extension,
-   * or don't include an extension, in which case .tif will be added.
+   * To use the original built-in image writers, use .tga or .tif as the 
+   * extension, or don't include an extension. When no extension is used, 
+   * the extension .tif will be added to the file name.
    * <p>
    * The ImageIO API claims to support wbmp files, however they probably
    * require a black and white image. Basic testing produced a zero-length
    * file with no error.
-   * <p>
-   * As of revision 0116, savePath() is not needed if this object has been
-   * created (as recommended) via createImage() or createGraphics() or
-   * one of its neighbors.
    */
   public void save(String path) {  // ignore
     boolean success = false;
@@ -2548,16 +2556,16 @@ public class PImage implements PConstants, Cloneable {
 
       if (PApplet.javaVersion >= 1.4f) {
         if (saveImageFormats == null) {
-          //saveImageFormats = javax.imageio.ImageIO.getWriterFormatNames();
-          try {
-            Class ioClass = Class.forName("javax.imageio.ImageIO");
-            Method getFormatNamesMethod =
-              ioClass.getMethod("getWriterFormatNames", (Class[]) null);
-            saveImageFormats = (String[])
-              getFormatNamesMethod.invoke((Class[]) null, (Object[]) null);
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+          saveImageFormats = javax.imageio.ImageIO.getWriterFormatNames();
+//          try {
+//            Class ioClass = Class.forName("javax.imageio.ImageIO");
+//            Method getFormatNamesMethod =
+//              ioClass.getMethod("getWriterFormatNames", (Class[]) null);
+//            saveImageFormats = (String[])
+//              getFormatNamesMethod.invoke((Class[]) null, (Object[]) null);
+//          } catch (Exception e) {
+//            e.printStackTrace();
+//          }
         }
         if (saveImageFormats != null) {
           for (int i = 0; i < saveImageFormats.length; i++) {
