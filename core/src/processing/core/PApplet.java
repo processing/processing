@@ -600,9 +600,14 @@ in   */
       setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
+    // Try to get focus into this component. Done up here so that OpenGL 
+    // can call it on its own canvas object later (one the gfx is set up)
+    // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
+    requestFocus();
+    
     // this is automatically called in applets
     // though it's here for applications anyway
-    start();
+    start();    
   }
 
 
