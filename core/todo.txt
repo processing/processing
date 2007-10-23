@@ -1,5 +1,11 @@
 0132 core
-
+X an image marked RGB but with 0s for the alpha won't draw in JAVA2D
+X   images with 0x00 in their high bits being drawn transparent
+X   also if transparency set but RGB is setting, still honors transparency
+X   http://dev.processing.org/bugs/show_bug.cgi?id=351
+X tint() and noTint() switching problem in P2D
+X   this should be a quick fix
+X   http://dev.processing.org/bugs/show_bug.cgi?id=222
 
 _ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
@@ -26,6 +32,7 @@ _   and that java2d should complain if people try it
 _ add hint() and unhint()
 _   also add unhint() to the keywords file
 _   and maybe remove hint() from keywords_base?
+_ method to go from function name to the included examples where used?
 
 createGraphics() mess
 _ text characters showing up as opaque rectangles in tga files
@@ -61,13 +68,6 @@ _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
 
 tint/textures
-_ an image marked RGB but with 0s for the alpha won't draw in JAVA2D
-_   images with 0x00 in their high bits being drawn transparent
-_   also if transparency set but RGB is setting, still honors transparency
-_   http://dev.processing.org/bugs/show_bug.cgi?id=351
-_ tint() and noTint() switching problem in P2D
-_   this should be a quick fix
-_   http://dev.processing.org/bugs/show_bug.cgi?id=222
 _ related to the fill bugs: when fill is identical, no fill applied
 _   actually tint() should take over for fill as per-vertex color
 _   when textured images are being used
