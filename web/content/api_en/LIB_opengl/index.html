@@ -5,24 +5,28 @@
 <div class="full">
     <h2>OpenGL</h2>
     
-    <p>OpenGL (Open Graphics Library) is a cross-platform graphics interface for 
-      3D and 2D graphics. This library allows Processing programs to utilize the 
-      speed of an OpenGL accelerated graphics card. This expands the potential 
-      for drawing more to the screen and creating larger windows. Processing interfaces 
-      with OpenGL through JOGL, an initiative from the Game Technology Group at 
-      Sun. You need to have an OpenGL accelerated graphics card installed on your 
-      computer to fully utilize this library. For more information, please visit 
+    <p>
+OpenGL (Open Graphics Library) is a cross-platform graphics interface for 
+3D and 2D graphics. This library allows Processing programs to utilize the 
+speed of an OpenGL accelerated graphics card. This expands the potential 
+for drawing more to the screen and creating larger windows. 
+Processing interfaces with OpenGL through JOGL, an initiative from the 
+Game Technology Group at Sun. You need to have an OpenGL accelerated graphics 
+card installed on your computer to fully utilize this library. 
+For more information, please visit 
       the <a href="http://www.opengl.org/" target="_new">OpenGL</a> and <a href="https://jogl.dev.java.net/" target="_new">JOGL</a> websites.</p>
-      
-    <p>There are no additional methods or fields for this library. It uses the 
-        Processing language, but exports the geometry differently. Programs must 
-        import the library using the line <em>import processing.opengl.*</em> and 
-        the OpenGL renderer must be specified as the third parameter to the size() 
-        function. Software using this library may appear different on varying graphics 
-        cards. Some cards support OpenGL better than others.</p>
-        
-          
-    <pre>import processing.opengl.*;
+</p> <p>
+There are no additional methods or fields for this library. 
+It uses the Processing language, but renders geometry differently. 
+Processing is not an IDE for using the JOGL API. 
+We're using OpenGL graphics for one implementation of the Processing Core API.
+</p> <p>
+Programs must import the library using the line 
+<em>import processing.opengl.*</em> and the OpenGL renderer must be 
+specified as the third parameter to the size() function. 
+Software using this library may appear different on varying graphics 
+cards. Some cards support OpenGL better than others.</p>
+<pre>import processing.opengl.*;
 
 float a; 
 
@@ -77,7 +81,7 @@ clear whether this is something that we can fix for the future.</STRIKE>
 OpenGL sketches run on the web starting with release 0113.
 (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=166">Bug 166</A>)
 
-<LI>OpenGL requires Java 1.4 or later. 
+<!--<LI>OpenGL requires Java 1.4 or later. -->
 
 <LI>If you're getting a blank screen or strange graphics on Windows, 
 try messing with your graphics card settings (or even with a different
@@ -118,11 +122,16 @@ Mac OS X (PPC and Universal), and Linux (i586). There are versions of
 JOGL that will run on other platforms, such as variants of SunOS or 
 Linux on other platforms (such as amd64). Adding the "JOGL natives" for 
 these platforms along with the default native .jar files that are included
-with your sketch will enable support for those platforms. The other
-native binaries can be found on the JOGL web site. Do not use the 
+with your sketch will enable support for those platforms. 
+More recent releases of JOGL include the JOGL natives files with the
+web start installation. Download that to get the JAR files for many 
+platforms. 
+The other native binaries can be found on the JOGL web site. Do not use the 
 nightly downloads (they are not "signed", so they won't run in a browser),
 and make sure that the version matches what's being used with Processing.
-As of release 0116, this is JOGL 1.0.
+As of release 0131, this is JOGL 1.1.0.
+
+<LI>The integrated graphics chipsets that Apple has been using on their "low end" machines (such Intel GMA 950) really stink for OpenGL. Some don't support anti-aliasing at all. These cards are found in the Mac Mini (the Intel version only, the PPC versions had nice graphics), some iMacs, and the MacBook (but no the MacBook Pro). The same chipsets are used in many budget PCs, to which the same disclaimer applies.
 
 </ul>
 </p>
@@ -146,13 +155,11 @@ As of release 0116, this is JOGL 1.0.
 <PRE>GL gl = ((PGraphicsOpenGL)g).gl;</PRE>
   <p>This will give you <a href="https://jogl.dev.java.net/">JOGL's</a> GL 
     object that talks directly to OpenGL and will let you make OpenGL 
-    calls directly. 
-    Again, <em>this is not supported</em>, in the sense that if you 
+    calls directly. </p>
+<p>   Again, <em>this is not supported</em>, in the sense that if you 
     get weird problems with a GL-based sketch that uses this method, you're on 
-    your own. Processing is not intended as a nice wrapper on top of OpenGL. 
-    Instead, we're using OpenGL graphics for one implementation of the 
-    Processing Core API. <BR>
-  Because most of the work in drawing is handled by Processing, most OpenGL 
+    your own. </p>
+<p>  Because most of the work in drawing is handled by Processing, most OpenGL 
   calls will not work, because most things won't be set 
   up properly. Therefore, using the GL object may only be useful for 
   tweaking obscure OpenGL parameters.</p>
@@ -196,7 +203,7 @@ void draw() {
 }
 
 </PRE>
-Always do the assignment/cast from g to pgl inside draw(), because 'g' may change from time to time. In addition, use the GL object returned by beginGL() for the same reason, that the GL context itself may have changed. In practice, I've not really seen this happen, but this is strongly encouraged to prevent things from crashing in a bad way (think blue screen, kernel panic kinds of bad ways).
+Always do the assignment/cast from g to pgl inside draw(), because 'g' may change from time to time. In addition, use the GL object returned by beginGL() for the same reason, that the GL context itself may have changed. In practice, I've not really seen this happen, but this is strongly encouraged to prevent things from crashing in a bad way (think blue screen/kernel panic kinds of bad ways).
   </p> 
   </div>
   </div>
