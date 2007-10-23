@@ -66,12 +66,6 @@ public class Editor extends JFrame {
   static public final int SHORTCUT_ALT_KEY_MASK = ActionEvent.ALT_MASK |
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-  //static final int HANDLE_NEW  = 1;
-  //static final int HANDLE_OPEN = 2;
-  //static final int HANDLE_QUIT = 3;
-  //int checkModifiedMode;
-  //String handleOpenPath;
-
   /**
    * true if this file has not yet been given a name by the user
    */
@@ -316,7 +310,8 @@ public class Editor extends JFrame {
 //    System.out.println("t4");
 
     // Open the document that was passed in
-    handleOpenInternal(path);
+    boolean loaded = handleOpenInternal(path);
+    if (!loaded) sketch = null;
 
 //    System.out.println("t5");
 
@@ -1363,11 +1358,10 @@ public class Editor extends JFrame {
 
 
   /**
-   * Second stage of open, occurs after having checked to
-   * see if the modifications (if any) to the previous sketch
-   * need to be saved.
+   * Second stage of open, occurs after having checked to see if the 
+   * modifications (if any) to the previous sketch need to be saved.
    */
-  protected void handleOpenInternal(String path) {
+  protected boolean handleOpenInternal(String path) {
     try {
       // check to make sure that this .pde file is
       // in a folder of the same name
@@ -1390,7 +1384,7 @@ public class Editor extends JFrame {
         Base.showWarning("Bad file selected",
                          "Processing can only open its own sketches\n" +
                          "and other files ending in .pde", null);
-        return;
+        return false;
 
       } else {
         String properParent =
@@ -1416,9 +1410,9 @@ public class Editor extends JFrame {
           File properFolder = new File(file.getParent(), properParent);
           if (properFolder.exists()) {
             Base.showWarning("Error",
-                                "A folder named \"" + properParent + "\" " +
-                                "already exists. Can't open sketch.", null);
-            return;
+                             "A folder named \"" + properParent + "\" " +
+                             "already exists. Can't open sketch.", null);
+            return false;
           }
           if (!properFolder.mkdirs()) {
             throw new IOException("Couldn't create sketch folder");
@@ -1435,7 +1429,7 @@ public class Editor extends JFrame {
           path = properPdeFile.getAbsolutePath();
 
         } else if (result == JOptionPane.NO_OPTION) {
-          return;
+          return false;
         }
       }
 
@@ -1450,8 +1444,12 @@ public class Editor extends JFrame {
       // Disable untitled setting from previous document, if any
       untitled = false;
 
+      // opening was successful
+      return true;
+      
     } catch (Exception e) {
       error(e);
+      return false;
     }
   }
 
