@@ -61,7 +61,7 @@ public class Sketch {
   boolean modified;
 
   public String path;
-  
+
   public File folder;
   public File dataFolder;
   public File codeFolder;
@@ -277,8 +277,8 @@ public class Sketch {
       }
     }
   }
-  
-  
+
+
   protected void insertCode(SketchCode newCode) {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
@@ -337,6 +337,13 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
+    if (currentIndex == 0 && editor.untitled) {
+      Base.showMessage("Sketch is Untitled",
+                       "How about saving the sketch first \n" +
+                       "before trying to rename it?");
+      return;
+    }
+    
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
@@ -988,7 +995,7 @@ public class Sketch {
 
     // now do the work of adding the file
     boolean result = addFile(sourceFile);
-    
+
     if (result) {
       editor.message("One file added to the sketch.");
     }
@@ -1054,7 +1061,7 @@ public class Sketch {
         return false;
       }
     }
-    
+
     // make sure they aren't the same file
     if (!addingCode && sourceFile.equals(destFile)) {
       Base.showWarning("You can't fool me",
@@ -1091,8 +1098,8 @@ public class Sketch {
 
       // see also "nameCode" for identical situation
       SketchCode newCode = new SketchCode(newName, destFile, newFlavor);
-      
-      if (replacement) { 
+
+      if (replacement) {
         replaceCode(newCode);
 
       } else {
@@ -2741,8 +2748,8 @@ public class Sketch {
   public boolean isUntitled() {
     return editor.untitled;
   }
-  
-  
+
+
   /**
    * Returns path to the main .pde file for this sketch.
    */
