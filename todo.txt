@@ -1,11 +1,10 @@
 0133 pde
 o archive sketch shouldn't include applet or application dirs
 o   or should it? this was how projects were being uploaded for class...
+X ESC won't cancel rename
 
 _ cmd-w doesn't close window of opened applet (running inside p5)
-_ ESC won't cancel rename
-_   rename location is awkward, do it on the tab?
-_ map() is not colored, neither is norm
+_ rename location is awkward, do it on the tab?
 _ pdf examples are shot
 
 _ make note of new/open behavior (and toolbar) in the getting started ref
