@@ -5,6 +5,8 @@ X   also if transparency set but RGB is setting, still honors transparency
 X   http://dev.processing.org/bugs/show_bug.cgi?id=351
 X improve memory requirements for drawing images with JAVA2D
 X   now using significantly less memory
+X add focus requests so that better chance of keys etc working
+X   http://dev.processing.org/bugs/show_bug.cgi?id=645
 
 tint/textures
 X tint() and noTint() switching problem in P2D
@@ -22,6 +24,7 @@ X   maybe not setting fill color when drawing textures
 X   guessing it's an implementation issue in sami's renderer
 X   check with the a_Displaying example and tint(255, 0, 0, 100);
 X   http://dev.processing.org/bugs/show_bug.cgi?id=90
+
 
 _ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
