@@ -164,6 +164,10 @@ Installation completed.
 _ stop button needs to update itself and work properly [1.0]
 _   also editor buttons to light up and clear properly 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=396
+_ on osx, System.err isn't writing in things like createGraphics()
+_   but doing a printStackTrace(System.out) works
+_   something weird happening with one of the streams shutting down?
+_   probably, need to fix this by using the remote launcher/debug api
 
 _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
