@@ -1549,12 +1549,13 @@ in   */
           println("no renderer");
         }
 
-        //if (frameCount == 1) {
-          // Call the request focus event once the image is sure to be
-          // on screen and the component is valid.
+        if (frameCount == 1) {
+          // Call the request focus event once the image is sure to be on 
+          // screen and the component is valid. The OpenGL renderer will 
+          // request focus for its canvas inside beginDraw().
           // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
-          //requestFocus();
-        //}
+          requestFocus();
+        }
 
         // wait for update & paint to happen before drawing next frame
         // this is necessary since the drawing is sometimes in a
@@ -7044,7 +7045,7 @@ in   */
 
       //System.out.println("showing frame");
       //System.out.println("applet requesting focus");
-      applet.requestFocus(); // ask for keydowns
+      //applet.requestFocus(); // ask for keydowns
       //System.out.println("exiting main()");
 
     } catch (Exception e) {

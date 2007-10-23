@@ -1,11 +1,14 @@
-0132 pde
-X sketch marked as untitled if opened into an untitled window from toolbar
-X when renaming an untitled sketch, need to save
-X   otherwise it just renames, but leaves it in the temp folder
-o   maybe disable rename when read-only or untitled?
-
 0133 pde
+o archive sketch shouldn't include applet or application dirs
+o   or should it? this was how projects were being uploaded for class...
 
+_ cmd-w doesn't close window of opened applet (running inside p5)
+_ ESC won't cancel rename
+_   rename location is awkward, do it on the tab?
+_ map() is not colored, neither is norm
+_ pdf examples are shot
+
+_ make note of new/open behavior (and toolbar) in the getting started ref
 
 with casey
 _ move reference folder around so that it matches site organization
@@ -83,12 +86,6 @@ _   this means can integrate the autoformat stuff
 _   processing.mess/tools has chandler's template stuff
 _ finish up debian package support (see the processing.mess folder)
 
-_ cmd-w doesn't close window of opened applet (running inside p5)
-_ ESC won't cancel rename
-_   rename location is awkward, do it on the tab?
-_ map() is not colored, neither is norm
-_ pdf examples are shot
-
 _ change pde files to use utf8
 _   1) if file contains binary data and
 _   2) its mod date is earlier than when p5 0125 was installed
@@ -100,9 +97,6 @@ _ the first time someone hides a tab, put up a msg explaining what it does
 _   "don't warn me about this anymore"
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
-
-_ archive sketch shouldn't include applet or application dirs
-_   or should it? this was how projects were being uploaded for class...
 
 _ add to mac reference for present mode
 _   can make full screen work via Info.plist key
