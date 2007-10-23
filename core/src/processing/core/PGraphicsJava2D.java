@@ -29,8 +29,7 @@ import java.awt.image.*;
 
 
 /**
- * Subclass for PGraphics that implements the graphics API
- * in Java 1.3+ using Java 2D.
+ * Subclass for PGraphics that implements the graphics API using Java2D.
  *
  * <p>Pixel operations too slow? As of release 0085 (the first beta),
  * the default renderer uses Java2D. It's more accurate than the renderer

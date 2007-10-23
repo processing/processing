@@ -1930,25 +1930,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void clear() {
-    if (raw != null) {
-      raw.colorMode(RGB, 1);
-      raw.noStroke();
-      raw.fill(backgroundR, backgroundG, backgroundB);
-      raw.beginShape(TRIANGLES);
-
-      raw.vertex(0, 0);
-      raw.vertex(width, 0);
-      raw.vertex(0, height);
-
-      raw.vertex(width, 0);
-      raw.vertex(width, height);
-      raw.vertex(0, height);
-
-      raw.endShape();
-    }
-
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    
+    clearRaw();
   }
 
 

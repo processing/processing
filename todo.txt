@@ -6,6 +6,9 @@ X cmd-w doesn't close window of opened applet
 X   both when running inside p5, or elsewhere
 X add variable 'external' set to true when running tethered
 X make note of new/open behavior (and toolbar) in the getting started ref
+o make more fixes to the key bindings
+o   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnacc/html/atg_keyboardshortcuts.asp
+o   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGUserInput/chapter_11_section_3.html#//apple_ref/doc/uid/TP30000361-TPXREF61
 
 _ pdf examples are shot
 
@@ -180,23 +183,8 @@ _   so should make the external version use the actual sketch name not temp
 _   can't use PApplet.this, doesn't seem to like that
 _   instead, must pass variable to inner class
 
-_ make more fixes to the key bindings
-_   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnacc/html/atg_keyboardshortcuts.asp
-_   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGUserInput/chapter_11_section_3.html#//apple_ref/doc/uid/TP30000361-TPXREF61
-
 _ install astyle formatter
 _   build on each platform, then "lipo -create astyle.* -output astyle"
-
-Must have for 1.0:
-> a,c) P2D to return, P2D to simply return in its previous form
-> f) Java 1.5 support (jikes won't let you use Java 1.5 constructs)
-> h) fix auto-format
-
-For 2.0
-> b) P2D to be accurate like JAVA2D
-> e) Java 1.1 support (we're now limited to 1.3)
-> g) support for running with user accounts that have umlauts/accents/etc
-> d) strokeWeight() for 3D objects, even if it's ugly 
 
 
 LIBRARIES / svg
