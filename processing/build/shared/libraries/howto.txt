@@ -350,7 +350,7 @@ there's no need to use "Import Library".
 //////////////////////////////////////////////////////////////
 
 
-Getting a UnsupportedClassVersionError? (especially with Java 1.5)
+Getting a UnsupportedClassVersionError? (Java 1.5 and later)
 
 When I compiled blah.jar (using the successful method mentioned
 earlier) under Java 1.5, I get the following error from Processing:
@@ -359,25 +359,11 @@ java.lang.UnsupportedClassVersionError: blah/SomeClass
  (Unsupported major.minor version 49.0) 
 
 This is because more recent versions of Java like to use their own
-class file format that's not backwards compatible. Pretty annoying,
-since it's rare that newer language features are actually used (and
-shouldn't be with Processing anyway, since most likely you want to
-make things work on Java 1.1)
+class file format that's not backwards compatible. 
 
-The fix is to compile with "-target 1.1" which will create class
-files that are compatible with Java 1.1. This is necessary for any 
-code that will run in a browser, since approximately 30-40% of web 
-users are still using Microsoft's Java 1.1.4 JVM (as of April 2005).
-
-K. Damkjer adds: Depending on the version of Java that you're using, 
-specifying -target 1.1 when compiling libraries for distribution may 
-not be enough to get a 1.1 compatible class file. You may also need to 
-indicate source compatibility. It seems that -source 1.3 is the most 
-recent Java release that is capable of creating 1.1 targeted .class 
-files. All that said, here's a typical compile string for me: 
-
-javac -source 1.3 -target 1.1 -d . 
-  -classpath %P5_HOME%\lib\core.jar  package/dirs/*.java
+When compiling a library, use somtehing like:
+  javac -source 1.4 -target 1.4 -d . \ 
+    -classpath /path/to/core.jar path/to/java/source/*.java
 
 
 //////////////////////////////////////////////////////////////
@@ -479,4 +465,4 @@ official things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 12 October 2007
+Ben Fry, Last updated 23 October 2007
