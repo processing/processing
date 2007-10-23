@@ -24,7 +24,7 @@
 
 package processing.core;
 
-import java.awt.Image;
+//import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
 import javax.imageio.ImageIO;
