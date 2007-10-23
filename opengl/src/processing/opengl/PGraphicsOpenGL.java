@@ -292,7 +292,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // changing for 0100, need to resize rather than re-allocate
       canvas.setSize(width, height);
     }
-    canvas.requestFocus();
     defaultsInited = false;
   }
 
@@ -338,6 +337,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   public void beginDraw() {
     super.beginDraw();
+
+    // On the first frame that's guaranteed to be on screen,
+    // and the component valid and all that, ask for focus.
+    //if (frameCount == 1) {
+    //  canvas.requestFocus();
+    //}
 
     report("top beginDraw()");
 
