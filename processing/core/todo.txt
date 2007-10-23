@@ -1,18 +1,48 @@
 0133 core
-_ add focus requests so that better chance of keys etc working
+X fix problem with "export to application" and opengl
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193142573
+X add focus requests so that better chance of keys etc working
 X   http://dev.processing.org/bugs/show_bug.cgi?id=645
-+ Add focus requests to PApplet.init() in the hope of improving
-  focused state of applets when they open.
-  http://dev.processing.org/bugs/show_bug.cgi?id=645
+
+_ image outofmemoryerror for casey's students
+_   http://dev.processing.org/bugs/show_bug.cgi?id=355
+_   this may be related to a ton of other memory bugs
+_   1.5.0_07 and 1.4.2_12 contain the -XX:+HeapDumpOnOutOfMemoryError switch 
+_     invaluable for tracking down memory leaks 
+
+cleaning
+o calling graphics.smooth(), graphics.colorMode() outside begin/endDraw
+o   this causes everything to be reset once the draw occurs
+o   kinda seems problematic and prone to errors?
+X   nope, just need to say to do all commands inside begin/endDraw
+o finish implementation so 1.1 support can return
+X   http://dev.processing.org/bugs/show_bug.cgi?id=125
+o check into ricard's problems with beginRecord()
+X   i believe these were caused by linux java2d issues
+
+fixed earlier
+X is the texture[] array in PGraphics3D causing the problems with memory?
+X   actually it's a PGraphicsGL problem.. 
+X   maybe the image binding not getting unbound?
+o should image i/o be moved into PImage?
+o   still needs applet object, so it's not like this is very useful
+o   external PImage methods could take stream, i suppose..
+X   relevant parts were moved in, others not
+o loadImage() using spaces in the name
+o   if loadImage() with spaces when online(), throw an error
+o get tiff exporter for p5 to support argb and gray
+X   would also need to modify the tiff loading code, 
+X   because the header would be different
+X   http://dev.processing.org/bugs/show_bug.cgi?id=343
 
 
 _ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
-_ key and mouse events delivered out of order
-_   http://dev.processing.org/bugs/show_bug.cgi?id=638
-
 _ add warning system for pgraphics, rather than runtime exceptions
 _   keep array of warning strings, and booleans for whether they've called
+
+_ key and mouse events delivered out of order
+_   http://dev.processing.org/bugs/show_bug.cgi?id=638
 
 _ chooseFile() and chooseFolder() with named fxn callbacks
 _   the function must take a File object as a parameter
@@ -38,6 +68,8 @@ _ text characters showing up as opaque rectangles in tga files
 _   http://dev.processing.org/bugs/show_bug.cgi?id=641
 _   solution is to implement alpha compositing across all of P3D 
 _   http://en.wikipedia.org/wiki/Alpha_compositing
+_ alpha not set on saveFrame, so can't be used in photoshop as a layer
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623
 _ when drawing into a JAVA2D surface, have to call loadPixels()
 _   to draw it later with P3D (or OPENGL prolly)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
@@ -73,19 +105,20 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=633
 _ also try to check native font on textFont() commands
 _   in case the hint() has been enabled in the meantime
 _   or rather, always load native font, even w/o the hint() being set
-
-_ loadBytes() and saveStream() functions badly need optimization!
-_   don't bother using a buffering stream, just handle internally. gah!
-
-_ when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
-_   because ttf files will not be installed on the system when opening pdf
-
-_ copy() should automatically call updatePixels()
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
-
 _ text(char c) with char 0 and undefined should print nothing
 _   perhaps also DEL or other nonprintables?
 _   book example 25-03
+_ when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
+_   because ttf files will not be installed on the system when opening pdf
+_ textAlign(CENTER) with P3D and OPENGL produces messy result
+_   probably rounding error with the images
+_   http://dev.processing.org/bugs/show_bug.cgi?id=475
+
+_ loadBytes() needs optimization
+_   don't bother using a buffering stream, just handle internally. gah!
+
+_ copy() should automatically call updatePixels()
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
 
 _ disable key repeat? http://www.cokeandcode.com/node/9
 KeyEvent nextPress = (KeyEvent) Toolkit.getDefaultToolkit().
@@ -96,15 +129,6 @@ if ((nextPress == null) ||
     (nextPress.getKeyCode() != e.getKeyCode())) {
 	keys[e.getKeyCode()] = false;
 }  	
-
-_ textAlign(CENTER) with P3D and OPENGL produces messy result
-_   probably rounding error with the images
-_   http://dev.processing.org/bugs/show_bug.cgi?id=475
-
-should be fixed, but needs to be tested
-_ figure out why 1024x768 image takes 3.5 seconds to load
-_   would using a BufferedImage work better?
-_   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -199,13 +223,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=486
 _ Stroking a rect() leaves off the upper right pixel
 _   http://dev.processing.org/bugs/show_bug.cgi?id=501
 
-_ 1.5.0_07 and 1.4.2_12 contain the -XX:+HeapDumpOnOutOfMemoryError switch 
-_   invaluable for tracking down memory leaks 
-
-_ calling graphics.smooth(), graphics.colorMode() outside begin/endDraw
-_   this causes everything to be reset once the draw occurs
-_   kinda seems problematic and prone to errors?
-
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
 _   make sure the main() doesn't exit until the applet has finished
@@ -227,7 +244,6 @@ _ endRaw() is a problem with hint(ENABLE_DEPTH_SORT)
 _   because the triangles won't be rendered by the time endRaw() is called
 _   force depth sorted triangles to flush
 
-_ check into ricard's problems with beginRecord()
 _ should beginRecord inherit settings from its parent renderer?
 _   textFont() is null on beginRecord
 _   same would be the case for strokeWeight, background, etc.
@@ -314,6 +330,9 @@ The graphics library was formerly called Bagel.
 
 CORE / PApplet
 
+_ figure out why 1024x768 image takes 3.5 seconds to load
+_   would using a BufferedImage work better?
+_   is the image actually a BufferedImage so PixelGrabber is a waste?
 _ detect when using full screen
 _   and if so, remove decoration and don't bother with bg present frame
 _   frame.setUndecorated(true);
@@ -341,9 +360,6 @@ _ saveFrame() at the end of a draw mode program is problematic
 _   app might exit before the file has finished writing to disk
 _   need to block other activity inside screenGrab until finished
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
-_ problems with defining fill(255) vs fill(0xff808080)
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891
 _ test winding polygons in different directions
 _ test lighting to see how it compares with gl
 _ is quad strip broken or not behaving as expected?
@@ -461,8 +477,6 @@ _   http://citeseer.ist.psu.edu/hobby93practical.html
 _ possible leads re: rendering stuff
 _   http://people.csail.mit.edu/bmcutler/
 _   http://people.csail.mit.edu/fredo/
-_ finish implementation so 1.1 support can return
-_   http://dev.processing.org/bugs/show_bug.cgi?id=125
 _ alter bezier and curve matrices to use PMatrix
 _   float array stuff is redundant with code that's in PMatrix
 _   and PMatrix has to be included even w/o P3D so...
@@ -589,40 +603,22 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=103
 
 CORE / PImage
 
-_ image outofmemoryerror for casey's students
-_   http://dev.processing.org/bugs/show_bug.cgi?id=355
-_   this may be related to a ton of other memory bugs
 _ for a PGraphics2D, should its image cache object be the memoryimagesource?
-_ is the texture[] array in PGraphics3D causing the problems with memory?
-_   actually it's a PGraphicsGL problem.. 
-_   maybe the image binding not getting unbound?
 _ loading lots of images is a problem, describe how to unload
 _   is it possible? necessary to call delay(5) or something?
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
 _   http://dev.processing.org/bugs/show_bug.cgi?id=356
-_ alpha not set on saveFrame, so can't be used in photoshop as a layer
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623
-_ should image i/o be moved into PImage?
-_   still needs applet object, so it's not like this is very useful
-_   external PImage methods could take stream, i suppose..
 _ figure out why tiff images won't open with after effects
 _   http://dev.processing.org/bugs/show_bug.cgi?id=153
 _   open with photoshop, resave, see which tags change
 _     specifically, which tags that were in the original image file
 _     perhaps something gets corrected? 
-_ loadImage() using spaces in the name
-_   if loadImage() with spaces when online(), throw an error
-_ get tiff exporter for p5 to support argb and gray
-_   would also need to modify the tiff loading code, 
-_   because the header would be different
-_   http://dev.processing.org/bugs/show_bug.cgi?id=343
-
-enhancements
 _ add ability to control jpeg compression level with save() and saveFrame()
+_   or just write a better example for this one?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=342
-_ also when drawing an image, sense whether drawn rotated
+_ when drawing an image, sense whether drawn rotated
 _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 
@@ -668,6 +664,7 @@ _   disabling error reporting (what's taking it so long?)
 _     maybe use a hint() to enable it? or a getError() function?
 _   make cached display list of filled/non-filled ellipse.. rect.. etc
 _     these don't work when the vertex colors change, but..
+_   http://dev.processing.org/bugs/show_bug.cgi?id=657
 _   or maybe should be using vertex arrays?
 _ maybe break out a separate timage object in textures?
 _   needs tindex and tbuffer, both gl specific
@@ -724,16 +721,6 @@ _   but that makes things messy because the glu calls make calls to vertex()
 _   and i don't want an additional "pathVertex()" function
 
 
-PGraphicsAI
-
-_ illustrator export / rendering mode
-_   also postscript or pdf export?
-_   update illustrator code to use core api
-_     even if not actually working properly.. just in naming of things
-_   sorting of polygons/lines on simple painters algorithm
-_   better lighting model to show darkness at various depths
-_     maybe just ultra-high res bitmaps from gl
-
 
 PShape
 _ for subclasses, make it easy to grab the structure of vertices
@@ -745,7 +732,7 @@ LATER
 
 _ Use getContextClassLoader() instead of Class.forName()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=514
-_ add a timer("functionname", 45) method
+_ add a timer(obj, "functionname", 45) method
 _   this can be used to schedule something to happen at a specific time
 _   or import the swing timer (for actionPerformed)
 X   look into javascript timers to see how they work
@@ -763,6 +750,8 @@ _   should fill(c) instead be fillColor(c)?
 _   should color(123, 4, 99) instead be createColor()?
 _   gray that's greater than the colorMode() can produce strange colors
 _     http://dev.processing.org/bugs/show_bug.cgi?id=432
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891
 _ add stroke() to type
 _   more for doing outlines-only and that sort of business
 _ gradients
@@ -772,3 +761,10 @@ _   gradient-painted lines and fills
 _     java2d will do both line and fill, illusfarter only does fills
 _   gradients not supported in java2d
 _     http://dev.processing.org/bugs/show_bug.cgi?id=371
+_ illustrator export / rendering mode
+_   also postscript or pdf export?
+_   update illustrator code to use core api
+_     even if not actually working properly.. just in naming of things
+_   sorting of polygons/lines on simple painters algorithm
+_   better lighting model to show darkness at various depths
+_     maybe just ultra-high res bitmaps from gl
