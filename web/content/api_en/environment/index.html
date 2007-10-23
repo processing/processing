@@ -43,14 +43,13 @@
         <td valign="top"><img src="images/stop.gif" height="23" width="23"></td>
         <td>&nbsp;</td>
         <td valign="top"><em>Stop</em><br />
-			Terminates a running program, but does not close 
-          	the display window.</td>
+			Terminates a running program.</td>
       </tr>
       <tr> 
         <td valign="top"><img src="images/new.gif" height="21" width="21"></td>
         <td>&nbsp;</td>
         <td valign="top"><em>New</em><br />
-			Creates a new sketch (project).</td>
+			Creates a new sketch (project) in the current window. To create a new sketch in its own window, use File &rarr; New.</td>
       </tr>
       <tr> 
         <td valign="top"><img src="images/open.gif" height="21" width="21"></td>
@@ -58,7 +57,7 @@
         <td valign="top"><em>Open</em><br />
 			Provides a menu with options to open files from 
           	the sketchbook, open an example, or open a sketch from anywhere on your 
-          	computer or network.</td>
+          	computer. Opening a sketch from the toolbar will replace the sketch in the current window. To open a sketch in a new window, use File &rarr; Open. </td>
       </tr>
       <tr> 
         <td valign="top"><img src="images/save.gif" height="21" width="21"></td>
@@ -84,10 +83,15 @@
     <h6>File</h6>
 	<ul>
     <li><em>New (Ctrl+N)</em><br />
-      Creates a new sketch, named as the current date is the format "sketch_YYMMDDa".</li>
+      Creates a new sketch in a new window, named as the current date is the format "sketch_YYMMDDa".</li>
+    <li><em>Open (Ctrl+O)</em><br />
+      Open a sketch in a new window.
     <li><em>Sketchbook</em><br />
-      Gives the option to open a sketch from anywhere on the local computer or 
-      network, the sketchbook, or to open an example.</li>
+      Open a sketch from the sketchbook folder.</li>
+    <li><em>Examples</em><br />
+      Open one of the examples included with Processing.</li>
+    <li><em>Close (Ctrl+W)</em><br />
+      Close the frontmost sketch window .</li>
     <li><em>Save (Ctrl+S)</em><br />
       Saves the open sketch in it's current state.</li>
     <li><em>Save as... (Ctrl+Shift+S)</em><br />
@@ -242,17 +246,11 @@ sub-programs.</p>
 	managed with tabs. The arrow button in the upper-right corner of the Processing Development 
 	Environment is used to manage these files. Click this button to reveal options to create a 
 	new tab, rename the current tab, and delete the current tab. If a project has more than one tab, 
-	they can also be hidden and revealed. Hiding a tab temporarily removes that code from the sketch.</p>
+	they can also be hidden and revealed. Hiding a tab temporarily removes that code from the sketch (it will not be compiled with the program when you press Run).</p>
 	
-	<p>Tabs are for advanced users, and are "hidden" for a reason. When a program with multiple tabs
-	is run, the code is grouped together and the classes in other tabs become inner classes.  
-	Because they're inner classes, you cannot use static variables. Simply place the "static" variable 
-	outside the class itself to do the same thing (it need not be explicitly named "static" once you 
-	list it in this manner). If you don't want code to be an inner class, you can also create a tab 
-	with a .java suffix, which means it will be interpreted as straight java code. If you do this, 
-	you'll need to pass the PApplet object to that object in that tab in order to get PApplet functions 
-	like line(), loadStrings() or saveFrame() to work. 
-	
+	<p>Tabs are for advanced users, and for this reason, the menu that controls the tabs is intentionally made less prominent. </p>
+<p>When a program with multiple tabs is run, the code is grouped together and the classes in other tabs become inner classes.  Because they're inner classes, you cannot use static variables. Simply place the "static" variable outside the class itself to do the same thing (it need not be explicitly named "static" once you list it in this manner). If you don't want code to be an inner class, you can also create a tab with a .java suffix, which means it will be interpreted as straight java code. If you do this, you'll need to pass the PApplet object to that object in that tab in order to get PApplet functions like line(), loadStrings() or saveFrame() to work.</p>
+
 	<p>Currently, the tabs get truncated when there are too many (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=54">Bug 54</a>).</p>
 	
    
