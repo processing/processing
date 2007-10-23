@@ -192,6 +192,12 @@ public class PApplet extends Applet
     }
   }
 
+  /** 
+   * Modifier flags for the shortcut key used to trigger menus.
+   * (Cmd on Mac OS X, Ctrl on Linux and Windows)
+   */ 
+  static public final int MENU_SHORTCUT = 
+    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
@@ -501,13 +507,16 @@ in   */
   static public final String EXTERNAL_QUIT = "__QUIT__";
 
   /**
-   * When run externally to a PdeEditor, this is sent by the applet
+   * When run externally to a PDE Editor, this is sent by the applet
    * whenever the window is moved.
    * <P>
    * This is used so that the editor can re-open the sketch window
    * in the same position as the user last left it.
    */
   static public final String EXTERNAL_MOVE = "__MOVE__";
+
+  /** true if this sketch is being run by the PDE */
+  boolean external = false;
 
 
   static final String ERROR_MAX = "Cannot use max() on an empty array.";
@@ -2011,13 +2020,23 @@ in   */
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the ESC).
-    if ((event.getID() == KeyEvent.KEY_PRESSED) &&
-        (key == KeyEvent.VK_ESCAPE)) {
-      exit();
+    if (event.getID() == KeyEvent.KEY_PRESSED) {
+      if (key == KeyEvent.VK_ESCAPE) {
+        exit(); 
+      }
+      // When running tethered to the Processing application, respond to 
+      // Ctrl-W (or Cmd-W) events by closing the sketch. Disable this behavior
+      // when running independently, because this sketch may be one component
+      // embedded inside an application that has its own close behavior.
+      if (external &&
+          event.getModifiers() == MENU_SHORTCUT &&
+          event.getKeyCode() == 'W') {
+        exit();
+      }
     }
   }
 
-
+  
   protected void checkKeyEvent(KeyEvent event) {
     if (looping) {
       enqueueKeyEvent(event);
@@ -6684,10 +6703,8 @@ in   */
    * (so that it will be saved by the PDE for the next run) and
    * notify on quit. See more notes in the Worker class.
    */
-  public void setupExternalMessages() {  //Frame parentFrame) {
-    //final Worker worker = new Worker();
-
-    //parentFrame.addComponentListener(new ComponentAdapter() {
+  public void setupExternalMessages() {
+    
     frame.addComponentListener(new ComponentAdapter() {
         public void componentMoved(ComponentEvent e) {
           Point where = ((Frame) e.getSource()).getLocation();
@@ -6697,12 +6714,12 @@ in   */
         }
       });
 
-    //parentFrame.addWindowListener(new WindowAdapter() {
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          System.err.println(PApplet.EXTERNAL_QUIT);
-          System.err.flush();  // important
-          System.exit(0);
+//          System.err.println(PApplet.EXTERNAL_QUIT);
+//          System.err.flush();  // important
+//          System.exit(0);
+          exit();  // don't quit, need to just everything down (0133)
         }
       });
   }
@@ -6801,7 +6818,6 @@ in   */
     }
 
     try {
-      // true if this sketch is being run by the PDE
       boolean external = false;
       int location[] = null;
       int editorLocation[] = null;
@@ -6898,7 +6914,6 @@ in   */
         frame = new Frame();
       }
       */
-
       Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
       // remove the grow box by default
@@ -6912,6 +6927,7 @@ in   */
       applet.frame = frame;
       applet.sketchPath = folder;
       applet.args = PApplet.subset(args, 1);
+      applet.external = external;
 
       applet.init();
 
