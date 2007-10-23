@@ -30,6 +30,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
+import javax.swing.KeyStroke;
+
 
 /**
  * Runs a compiled java applet, whether as an external application
@@ -289,9 +291,13 @@ public class Runner implements MessageConsumer {
         }
       });
 
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    final KeyStroke closeWindowKeyStroke = KeyStroke.getKeyStroke('W', modifiers);
+    
     applet.addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent e) {
-          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+          if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
+              KeyStroke.getKeyStrokeForEvent(e).equals(closeWindowKeyStroke)) {
             stop();
             editor.closeRunner();
           }
