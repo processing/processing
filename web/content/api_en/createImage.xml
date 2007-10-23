@@ -34,6 +34,8 @@ image(img, 34, 34);
 
 <description>
 Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
+<br/> <br/>
+Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
 </description>
 
 <syntax>
