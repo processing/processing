@@ -44,8 +44,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 133;
-  static final String VERSION_NAME = "0133 Beta";
+  static final int VERSION = 134;
+  static final String VERSION_NAME = "0134 Beta";
 
   // set to true after the first time it's built.
   // so that the errors while building don't show up again.
@@ -505,8 +505,8 @@ public class Base {
     // Actually replace things
     handleNewReplaceImpl();
   }
-  
-  
+
+
   protected void handleNewReplaceImpl() {
     try {
       String path = createNewUntitled();
@@ -674,7 +674,7 @@ public class Base {
 //    }
 
     Editor editor = new Editor(this, path, location);
-    
+
     // Make sure that the sketch actually loaded
     if (editor.sketch == null) {
       return null;  // Just walk away quietly
