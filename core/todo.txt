@@ -243,6 +243,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=297
 _   perhaps add a hint(DISABLE_FRAMERATE_DAMPER)
 _ sketches lock up when system time is changed
 _   http://dev.processing.org/bugs/show_bug.cgi?id=639
+_ can draw() not be run on awt event thread?
+_   look into opengl stuff for dealing with this
 
 
 point() [1.0]
@@ -502,8 +504,11 @@ _ implement curveTangent
 _   fix-up the curve_init() and the rest to use matrices
 _     and not have ugly names (i.e. just g.curveDetail is good)
 
+
 CORE / PGraphics2D
 
+_ should noSmooth() disable image smoothing consistently (does for Java2D)
+_   may need to bring back a hint, or use smoothMode() or smooth(IMAGES)
 _ lines are conflicting with type in 2D
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094174791;start=0
 _ mgorbet stroke transparency problem
