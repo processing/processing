@@ -7,15 +7,39 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0133 - XX October 2007
+ABOUT REV 0133 - 26 October 2007
+
+An important bug fix that was breaking "Export to Application" with
+OpenGL sketches, plus some smaller fixes.
 
 [ bug fixes ] 
 
++ Fix problem with "Export to Application" with OpenGL sketches.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193142573
+
++ Fix problem that occurred when user canceled the "Create the 
+  folder, move the sketch, and continue?" message.
+  http://dev.processing.org/bugs/show_bug.cgi?id=658
+
++ Make the ESC key cancel rename when renaming a sketch or a tab.
+
++ Make Cmd-W (or Ctrl-W) close a running applet window.
+
++ Fix background() with beginRaw() and P3D.
+
++ Fix hint(ENABLE_DEPTH_SORT) when used with begin/endRaw()
+
 [ changes ] 
 
-+ Add focus requests to PApplet.init() in the hope of improving
++ Add focus requests to PApplet in the hope of improving
   focused state of applets when they open.
   http://dev.processing.org/bugs/show_bug.cgi?id=645
+
++ Updated reference for new menu/toolbar setup.
+
++ Add notes about ClassVersionErrors to the reference.
+
++ Notes about mousePressed() and noLoop() to the reference.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
