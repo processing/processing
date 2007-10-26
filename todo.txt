@@ -1,16 +1,5 @@
-0133 pde
-X fix problem with 'cancel' on "move sketch, create folder, continue"? msg
-X   http://dev.processing.org/bugs/show_bug.cgi?id=658
-o archive sketch shouldn't include applet or application dirs
-o   or should it? this was how projects were being uploaded for class...
-X ESC won't cancel rename
-X cmd-w doesn't close window of opened applet
-X   both when running inside p5, or elsewhere
-X add variable 'external' set to true when running tethered
-X make note of new/open behavior (and toolbar) in the getting started ref
-o make more fixes to the key bindings
-o   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnacc/html/atg_keyboardshortcuts.asp
-o   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGUserInput/chapter_11_section_3.html#//apple_ref/doc/uid/TP30000361-TPXREF61
+0134 pde
+_ deal with opengl applet export changes
 
 
 _ fix syntax highlighting of focusGained and others
