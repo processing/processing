@@ -10,7 +10,8 @@ o make more fixes to the key bindings
 o   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnacc/html/atg_keyboardshortcuts.asp
 o   http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGUserInput/chapter_11_section_3.html#//apple_ref/doc/uid/TP30000361-TPXREF61
 
-_ pdf examples are shot
+_ pdf examples are shot (?)
+_ remove patch designation from bugzilla
 
 
 with casey
@@ -169,9 +170,6 @@ _   but doing a printStackTrace(System.out) works
 _   something weird happening with one of the streams shutting down?
 _   probably, need to fix this by using the remote launcher/debug api
 
-_ can draw() not be run on awt event thread?
-_   look into opengl stuff for dealing with this
-
 _ don't reload sketch on "save as"
 _   this can result in loss of data (undo is lost)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=433
@@ -256,6 +254,7 @@ installed in the CLASSPATH variable or something conflicting in
 
 DOC / Bugzilla 
 
+_ explanation of P1 through P5
 _ goes to bugs page
 _   longer description of "i found a bug"
 _   what was the unfinished bullet item?
@@ -286,6 +285,17 @@ X   move p5 site bug reporting to bugzilla
 _   do the same for suggestions
 _     and detail the suggestions policy on the dev site: diy
 _   post a page explaining the bug reporting system
+
+
+DOC / Frequent
+
+_ arrays
+_   using arraylist (avoid vector)
+_   cannot use generics
+_   using mod to avoid shifting an array
+_   append is slow, arraycopy is fast
+_   whether arraycopy works to copy array to itself
+_   using expand and arrays to move quickly
 
 
 DOC / Text
