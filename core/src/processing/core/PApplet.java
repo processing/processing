@@ -896,14 +896,18 @@ in   */
    * Component has been resized (by an event) and the renderer needs an update.
    */
   protected void setRendererSize(int w, int h) {
+    boolean changed = false;
     if (g == null) {
       g = PApplet.createGraphics(w, h, JAVA2D, null, this);
 
     } else  if (w != g.width || h != g.height) {
       g.resize(w, h);
+      changed = true;
     }
     width = w;
     height = h;
+    if (changed) redraw();
+    //redraw = true;
     /*
     if (g == null) {
       g = PApplet.createGraphics(w, h, nextRenderer, nextRendererPath, this);
@@ -8166,6 +8170,12 @@ in   */
   public void lights() {
     if (recorder != null) recorder.lights();
     g.lights();
+  }
+
+
+  public void noLights() {
+    if (recorder != null) recorder.noLights();
+    g.noLights();
   }
 
 
