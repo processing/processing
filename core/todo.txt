@@ -1,4 +1,6 @@
 0134 core
+X add noLights() method
+X   http://dev.processing.org/bugs/show_bug.cgi?id=666
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
