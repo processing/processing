@@ -126,7 +126,7 @@ import processing.xml.*;
  * <LI> Patterns
  * <LI> Embedded images
  * </UL>
- * 
+ *
  * For those interested, the SVG specification can be found
  * <A HREF="http://www.w3.org/TR/SVG">here</A>.
  */
@@ -262,6 +262,8 @@ public class SVG {
         } else if (text.endsWith("cm")) {
             return PApplet.parseFloat(text.substring(0, len)) * 35.43307f;
         } else if (text.endsWith("in")) {
+            return PApplet.parseFloat(text.substring(0, len)) * 90;
+        } else if (text.endsWith("px")) {
             return PApplet.parseFloat(text.substring(0, len));
         } else {
             return PApplet.parseFloat(text);
@@ -549,10 +551,10 @@ public class SVG {
 
         float opacity;
 
-        
+
         public BaseObject(BaseObject parent, XMLElement properties) {
-            
-            if (parent == null) { 
+
+            if (parent == null) {
                 // set values to their defaults according to the SVG spec
                 stroke = false;
                 strokeColor = 0xff000000;
@@ -562,18 +564,18 @@ public class SVG {
                 strokeGradient = null;
                 strokeGradientPaint = null;
                 strokeName = null;
-                
+
                 fill = true;
                 fillColor = 0xff000000;
                 fillGradient = null;
                 fillGradientPaint = null;
                 fillName = null;
-                
+
                 //hasTransform = false;
                 //transformation = null; //new float[] { 1, 0, 0, 1, 0, 0 };
-                
+
                 opacity = 1;
-                
+
             } else {
                 stroke = parent.stroke;
                 strokeColor = parent.strokeColor;
@@ -583,19 +585,19 @@ public class SVG {
                 strokeGradient = parent.strokeGradient;
                 strokeGradientPaint = parent.strokeGradientPaint;
                 strokeName = parent.strokeName;
-                
+
                 fill = parent.fill;
                 fillColor = parent.fillColor;
                 fillGradient = parent.fillGradient;
                 fillGradientPaint = parent.fillGradientPaint;
                 fillName = parent.fillName;
-                
+
                 //hasTransform = parent.hasTransform;
                 //transformation = parent.transformation;
-                
+
                 opacity = parent.opacity;
             }
-            
+
             element = properties;
 
             id = properties.getStringAttribute("id");
@@ -611,7 +613,7 @@ public class SVG {
             getTransformation(properties);
         }
 
-        
+
         private void getTransformation(XMLElement properties) {
             String transform = properties.getStringAttribute("transform");
             if (transform != null) {
@@ -624,7 +626,7 @@ public class SVG {
                 for (int i = 0; i < transformation.length; i++) {
                     this.transformation[i] = Float.valueOf(tf[i]).floatValue();
                 }
-                
+
                 // Hacky code to get rotation working
                 // Done through the powers of trial and error [mchang]
                 float t[] = this.transformation;
@@ -664,12 +666,12 @@ public class SVG {
             int opacityMask = ((int) (opacity * 255)) << 24;
 
             if (properties.hasAttribute("stroke")) {
-                String strokeText = properties.getStringAttribute("stroke");                
+                String strokeText = properties.getStringAttribute("stroke");
                 if (strokeText.equals("none")) {
                     stroke = false;
                 } else if (strokeText.startsWith("#")) {
                     stroke = true;
-                    strokeColor = opacityMask | 
+                    strokeColor = opacityMask |
                     (Integer.parseInt(strokeText.substring(1), 16)) & 0xFFFFFF;
                 } else if (strokeText.startsWith("rgb")) {
                     stroke = true;
@@ -685,7 +687,7 @@ public class SVG {
                     }
                 }
             }
-            
+
             if (properties.hasAttribute("stroke-width")) {
                 // if NaN (i.e. if it's 'inherit') then default back to the inherit setting
                 strokeWeight = properties.getFloatAttribute("stroke-width", strokeWeight);
@@ -695,13 +697,13 @@ public class SVG {
                 String linejoin = properties.getStringAttribute("stroke-linejoin");
                 if (linejoin.equals("inherit")) {
                     // do nothing, will inherit automatically
-                    
+
                 } else if (linejoin.equals("miter")) {
                     strokeJoin = PConstants.MITER;
 
                 } else if (linejoin.equals("round")) {
                     strokeJoin = PConstants.ROUND;
-                
+
                 } else if (linejoin.equals("bevel")) {
                     strokeJoin = PConstants.BEVEL;
                 }
@@ -711,19 +713,19 @@ public class SVG {
                 String linecap = properties.getStringAttribute("stroke-linecap");
                 if (linecap.equals("inherit")) {
                     // do nothing, will inherit automatically
-                    
+
                 } else if (linecap.equals("butt")) {
                     strokeCap = PConstants.SQUARE;
 
                 } else if (linecap.equals("round")) {
                     strokeCap = PConstants.ROUND;
-                
+
                 } else if (linecap.equals("square")) {
                     strokeCap = PConstants.PROJECT;
                 }
             }
 
-            
+
             // fill defaults to black (though stroke defaults to "none")
             // http://www.w3.org/TR/SVG/painting.html#FillProperties
             if (properties.hasAttribute("fill")) {
@@ -764,7 +766,7 @@ public class SVG {
             return (values[0] << 16) | (values[1] << 8) | (values[2]);
         }
 
-            
+
         protected Paint calcGradientPaint(Gradient gradient) {
             if (gradient instanceof LinearGradient) {
                 LinearGradient grad = (LinearGradient) gradient;
