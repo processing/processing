@@ -1,6 +1,8 @@
 0134 core
 X add noLights() method
 X   http://dev.processing.org/bugs/show_bug.cgi?id=666
+X redraw the screen after resize events (even with noLoop)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=664
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
