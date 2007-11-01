@@ -66,6 +66,7 @@ ambientLight()
 directionalLight()
 pointLight()
 spotLight()
+noLights();
 </related>
 
 <availability>1.0</availability>
