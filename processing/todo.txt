@@ -1,6 +1,13 @@
 0134 pde
+X fix problem with fractional px sizes and adobe cs3
+X   http://dev.processing.org/bugs/show_bug.cgi?id=667
+
 _ deal with opengl applet export changes
 
+
+_ problems with serial on leopard
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Electronics;action=display;num=1193459849
+_ add notes about expand() and objects to the reference
 
 _ fix syntax highlighting of focusGained and others
 _   http://dev.processing.org/bugs/show_bug.cgi?id=659
@@ -32,7 +39,7 @@ _ if someone has monaco disabled in font book, the app won't start
 _   http://dev.processing.org/bugs/show_bug.cgi?id=562
 _ color selector not drawing properly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=656
-_ color selector broken on vista
+_ color selector broken on vista (no colors at all)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=584
 
 _ can't get documents/prefs folder on vista
