@@ -3784,6 +3784,10 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void lights() {
     depthError("lights");
   }
+  
+  public void noLights() {
+    depthError("noLights");
+  }
 
   public void ambientLight(float red, float green, float blue) {
     depthError("ambientLight");

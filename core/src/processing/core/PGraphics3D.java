@@ -3657,6 +3657,17 @@ public class PGraphics3D extends PGraphics {
 
     lightingDependsOnVertexPosition = false;
   }
+  
+  
+  /** 
+   * Turn off all lights.
+   */
+  public void noLights() {
+    // write any queued geometry, because lighting will be goofed after
+    flush();
+    // set the light count back to zero
+    lightCount = 0;
+  }
 
 
   /**
