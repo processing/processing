@@ -45,8 +45,8 @@ splitTokens(<c>str</c>, <c>tokens</c>)
 </parameter>
 
 <parameter>
-<label>delim</label>
-<description>the String used to separate the data</description>
+<label>tokens</label>
+<description>list of individual characters that will be used as separators</description>
 </parameter>
 
 <returns>String[]</returns>
