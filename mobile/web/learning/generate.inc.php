@@ -63,6 +63,7 @@ function links_generate() {
         if (flock($lockfp, LOCK_EX)) {
             $fp = fopen($dirname . '/generated/links.inc.php', 'wb');
             $homefp = fopen($dirname . '/generated/home.inc.php', 'wb');
+            $wapfp = fopen($dirname . '/generated/waplinks.inc.php', 'wb');
             if ($fp !== FALSE) {
                 $link = db_connect();
                 $result = mysql_query("SELECT * FROM examples ORDER BY submitted DESC");
@@ -107,14 +108,18 @@ function links_generate() {
                 for ($i = 0; $i < count($order); $i++) {
                     $category = $order[$i];
                     fwrite($fp, "<img src=\"images/{$category}.png\"><br /><br />");
+                    fwrite($wapfp, ucfirst($category) ."<br />");
                     foreach ($map[$category] as $subcategory => $examples) {
                         if ($subcategory != "") {
                             fwrite($fp, "<i>{$subcategory}</i><br />");
+                            fwrite($wapfp, "<span class=\"smaller\">{$subcategory}</span><br />");
                         }
                         foreach ($examples as $e) {
                             fwrite($fp, "<a href=\"example.php?name={$e['filename']}\">{$e['name']}</a><br />");
+                            fwrite($wapfp, "<a class=\"smaller\" href=\"ota.php?code=". (2*$e['id']+1) ."\">{$e['name']}</a><br />");
                         }
                         fwrite($fp, "<br />");
+                        fwrite($wapfp, "<br />");
                     }
                     fwrite($fp, "<br /><br />");
                     if (($i > 0) && (($i % $catspercol) == 1)) {
@@ -123,6 +128,7 @@ function links_generate() {
                 }
                 fwrite($fp, "</div>");
                 fclose($fp);
+                fclose($wapfp);
             }
             flock($lockfp, LOCK_UN);
             fclose($lockfp);
