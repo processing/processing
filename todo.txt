@@ -1,14 +1,47 @@
 0134 pde
 X fix problem with fractional px sizes and adobe cs3
 X   http://dev.processing.org/bugs/show_bug.cgi?id=667
+X shortcuts in tab menu should use shift
+X   remove shortcut for rename, and use ctrl-shift-n for new tab
+X   http://dev.processing.org/bugs/show_bug.cgi?id=665
+
+_ "Fatal exception occurred. Program will exit." on startup
+_   http://dev.processing.org/bugs/show_bug.cgi?id=688
+
+_ opening a file from right-click in osx 
+_   opens the new thing directly behind an untitled document
+_ if too many errors come through during setup, app will terminate
+_   printStackTrace() throttles on osx and poops out
+
+_ missing a /* from the end of a comment
+_   even though things are inside a quoted txt block
+_   "multipart/*" produces the error
+
+_ more recent versions of the PDE lock up during setup() (no window shown)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=687
+
+_ after fixing name of sketch, a sketch of that name does not exist
+_ quicktime problems (when no QTJAVA is set?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=669
+_ say that quicktime 6 is no longer supported
+_   winvdig issues?
 
 _ deal with opengl applet export changes
+_   what is deployment suggestion for all the different platforms?
+_     can the jar files actually provide the DLLs properly?
+_   add notes about JOGLAppletLauncher
+_   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
+_ add note that "quicktime alternative" is not sufficient
+_ specifically add "eclipse" to integration description
 
+_ see how platform is determined by jogl / use for lib import
 
 _ problems with serial on leopard
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Electronics;action=display;num=1193459849
 _ add notes about expand() and objects to the reference
 
+_ method of threading but queue an event to be run when safe
+_   e.g. queueing items like mouse/keybd, but generic fxns
 _ fix syntax highlighting of focusGained and others
 _   http://dev.processing.org/bugs/show_bug.cgi?id=659
 _ verify (and document) public access members of PApplet
@@ -21,6 +54,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=662
 _ pdf examples are shot (?)
 _ remove patch designation from bugzilla
 
+_ method of including/excluding data files in the JAR
+_   or at least a boolean for the whole folder?
 
 with casey
 _ move reference folder around so that it matches site organization
@@ -180,6 +215,8 @@ _ on osx, System.err isn't writing in things like createGraphics()
 _   but doing a printStackTrace(System.out) works
 _   something weird happening with one of the streams shutting down?
 _   probably, need to fix this by using the remote launcher/debug api
+_ use proper external launcher via debugger api
+_   http://java.sun.com/javase/technologies/core/toolsapis/jpda/
 
 _ don't reload sketch on "save as"
 _   this can result in loss of data (undo is lost)
@@ -1122,6 +1159,7 @@ _   and include an md5hash to see if the file is correct
 DIST / Windows
 
 _ make .pde files double-clickable from windows
+_   http://dev.processing.org/bugs/show_bug.cgi?id=683
 X   on drag, are these already passed to argv[]?
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getcommandline.asp
 _   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_basics/shell_basics_extending/fileassociations/fa_intro.asp
