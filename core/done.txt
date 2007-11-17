@@ -1,3 +1,22 @@
+0134 core
+X add noLights() method
+X   http://dev.processing.org/bugs/show_bug.cgi?id=666
+X redraw the screen after resize events (even with noLoop)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=664
+o problem with transparency in mask()
+o   http://dev.processing.org/bugs/show_bug.cgi?id=674
+X   mark bug as invalid, using fill() instead of tint()
+X move to UTF-8 as native format for core file i/o operations
+X   update reference to document the change
+o jogl glibc 2.4 problem on linux
+o   move back to previous jogl until 1.1.1 is released
+X   http://dev.processing.org/bugs/show_bug.cgi?id=675
+o deal with opengl applet export changes
+o   what is deployment suggestion for all the different platforms?
+o   can the jar files actually provide the DLLs properly?
+X revert back to jogl 1.0
+
+
 0133 core
 X fix problem with "export to application" and opengl
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193142573
