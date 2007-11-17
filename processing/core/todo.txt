@@ -3,6 +3,32 @@ X add noLights() method
 X   http://dev.processing.org/bugs/show_bug.cgi?id=666
 X redraw the screen after resize events (even with noLoop)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=664
+o problem with transparency in mask()
+o   http://dev.processing.org/bugs/show_bug.cgi?id=674
+X   mark bug as invalid, using fill() instead of tint()
+
+_ we can do hit testing now that we rely on java2d
+
+_ make sure that images with alpha still have alpha in current code
+
+_ remove unhint(), add opposite hints for those that need to be disabled
+o   maybe update hint() ref to be more clear about screen not accumulating
+X   no, it's explicitly stated as such
+
+_ modelX/Y/Z still having trouble
+_   http://dev.processing.org/bugs/show_bug.cgi?id=486
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1186614415
+_ add some sort of unprojectX/Y/Z method (based on glu fxn)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1176483247
+_ add docs for model/screen/unprojectX/Y/Z
+
+_ jogl glibc 2.4 problem on linux
+_   move back to previous jogl until 1.1.1 is released
+_   http://dev.processing.org/bugs/show_bug.cgi?id=675
+
+_ opengl mipmaps are leaking (regression in spite of #150 fix)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=610
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193967684
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -175,9 +201,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=638
 
 _ chooseFile() and chooseFolder() with named fxn callbacks
 _   the function must take a File object as a parameter
-
-_ modelX/Y/Z still having trouble
-_   http://dev.processing.org/bugs/show_bug.cgi?id=486
 
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
@@ -530,8 +553,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 PGraphicsOpenGL
 
 _ strokeWeight() doesn't work in opengl or p3d
-_ opengl mipmaps are leaking (regression in spite of #150 fix)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=610
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _   only happens on the first round
@@ -602,6 +623,8 @@ _ for PShape, need to be able to set the origin (flash people)
 
 LATER
 
+_ implement method for lightweight components with processing applets
+_   http://dev.processing.org/bugs/show_bug.cgi?id=686
 _ Use getContextClassLoader() instead of Class.forName()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=514
 _ add a timer(obj, "functionname", 45) method
