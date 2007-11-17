@@ -830,16 +830,18 @@ public class Sketch {
       fc.setDialogTitle("Save sketch folder as...");
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
-        fc.setCurrentDirectory(Preferences.get("sketchbook.path"));
+        fc.setCurrentDirectory(new File(Preferences.get("sketchbook.path")));
       } else {
         // default to the parent folder of where this was
-        fc.setCurrentDirectory(folder.getParent());
+        fc.setCurrentDirectory(folder.getParentFile());
       }
-      fc.setSelectedFile(folder.getName());
+      // can't do this, will try to save into itself by default
+      //fc.setSelectedFile(folder);
       int result = fc.showSaveDialog(editor);
       if (result == JFileChooser.APPROVE_OPTION) {
-        newParentDir = folder.getDirectory();
-        newName = folder.getName();
+        File selection = fc.getSelectedFile();
+        newParentDir = selection.getParent();
+        newName = selection.getName();
       }
 
     } else {
