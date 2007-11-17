@@ -16,11 +16,11 @@ o   what is deployment suggestion for all the different platforms?
 o   can the jar files actually provide the DLLs properly?
 X revert back to jogl 1.0
 
+
 reference/online
 _ add notes about JOGLAppletLauncher
 _   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
 _ specifically add "eclipse" to integration description
-
 
 _ image smoothing 
 _   straighten out default vs. ACCURATE vs. whatever

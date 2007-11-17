@@ -7,6 +7,64 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0134 - 17 November 2007
+
+Several bug fixes in this release, and one major change: all text 
+files loaded and saved with Processing are now considered UTF-8
+format. This prevents problems when moving files between different
+platforms or locales. For instance, this means that any file used 
+with loadStrings() should now be in either plain ASCII format, or
+UTF-8 coded if not ASCII.
+
+[ bug fixes ] 
+
++ Reverted back to using JOGL 1.0 instead of 1.1 because of 
+  incompatabilities that it caused. A release of JOGL 1.1.1 
+  appears to be imminent, and we'll change to that once it's ready.
+  In the meantime, applet export with OpenGL is working again.
+
++ Fixed a problem with SVG files that use "px" when specifying the 
+  width and height (this includes Adobe Illustrator CS 3).
+  http://dev.processing.org/bugs/show_bug.cgi?id=667
+
++ Fixed a problem with "Save As" under Linux. A bug in the native
+  Java "Save" dialog was not properly handling cases where the user
+  hit "enter" to accept a new name. Changed to use the Swing
+  dialog on Linux instead.
+
++ Changed to another version of RXTX that should be compatible
+  with Mac OS X 10.5. This version also removes the requirement for
+  running macosx_setup.command. Thanks to Dave Mellis of the Arduino
+  project for the help.
+  http://dev.processing.org/bugs/show_bug.cgi?id=227
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Electronics;action=display;num=1193459849
+
++ Add an extra redraw call to update the screen after resize events 
+  on Mac OS X, even when noLoop() is used.
+  http://dev.processing.org/bugs/show_bug.cgi?id=664
+
+[ changes ] 
+
++ Removed shortcut for "Rename", and changed "New Tab" back to 
+  Ctrl-Shift-N, because it was causing problems on some 
+  non-English keyboards.
+  http://dev.processing.org/bugs/show_bug.cgi?id=665
+
++ Dozens of documentation updates to video, array functions, the
+  default behavior for close & quit, etc.
+
++ Added a noLights() method for P3D and OpenGL.  
+  http://dev.processing.org/bugs/show_bug.cgi?id=666
+
+[ upcoming ] 
+
++ The hint() and unhint() methods are a bit goofy. The unhint() 
+  method will probably be removed or another solution pursued.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0133 - 26 October 2007
 
 An important bug fix that was breaking "Export to Application" with
