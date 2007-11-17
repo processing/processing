@@ -294,7 +294,7 @@ public class EditorHeader extends JComponent {
     */
 
     //item = new JMenuItem("New Tab");
-    item = Editor.newJMenuItemAlt("New Tab", 'N');
+    item = Editor.newJMenuItem("New Tab", 'N', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.sketch.newCode();
@@ -302,7 +302,7 @@ public class EditorHeader extends JComponent {
       });
     menu.add(item);
 
-    item = Editor.newJMenuItemAlt("Rename", 'R');
+    item = new JMenuItem("Rename");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.sketch.renameCode();
@@ -362,7 +362,7 @@ public class EditorHeader extends JComponent {
     //item = Editor.newJMenuItem("Previous Tab", '[', true);
     item = new JMenuItem("Previous Tab");
     //int shortcut = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    KeyStroke ctrlAltLeft = 
+    KeyStroke ctrlAltLeft =
       KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Editor.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltLeft);
     //int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -380,7 +380,7 @@ public class EditorHeader extends JComponent {
 
     //item = Editor.newJMenuItem("Next Tab", ']', true);
     item = new JMenuItem("Next Tab");
-    KeyStroke ctrlAltRight = 
+    KeyStroke ctrlAltRight =
       KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Editor.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltRight);
     /*
@@ -413,12 +413,12 @@ public class EditorHeader extends JComponent {
     repaint();
   }
 
-  
+
   public Dimension getPreferredSize() {
     return getMinimumSize();
   }
 
-  
+
   public Dimension getMinimumSize() {
     if (Base.isMacOS()) {
       return new Dimension(300, Preferences.GRID_SIZE);
@@ -426,7 +426,7 @@ public class EditorHeader extends JComponent {
     return new Dimension(300, Preferences.GRID_SIZE - 1);
   }
 
-  
+
   public Dimension getMaximumSize() {
     if (Base.isMacOS()) {
       return new Dimension(3000, Preferences.GRID_SIZE);
