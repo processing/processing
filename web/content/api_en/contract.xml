@@ -32,7 +32,7 @@ contract(<c>array</c>, <c>newSize</c>)
 
 <parameter>
 <label>array</label>
-<description>booleans[], bytes[], chars[], ints[], floats[], or Strings[]</description>
+<description>boolean[], byte[], char[], int[], float[], or String[]</description>
 </parameter>
 
 <parameter>

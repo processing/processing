@@ -14,15 +14,17 @@
 <code>
 String sa1[] = { "OH ", "NY ", "CA "}; 
 String sa2[] = shorten(sa1); 
-print(sa1);  // Prints "OH NY CA " 
+println(sa1);  // Prints OH, NY, CA
 println();
 sa2 = shorten(sa2); 
-print(sa2);  // Prints "OH " 
+println(sa2);  // Prints OH
 </code>
 </example>
 
 <description>
 Decreases an array by one element and returns the shortened array.
+<br/> <br/>
+When using an array of objects, the data returned from the function must be cast to the object array's data type. For example: <em>SomeClass[] items = (SomeClass[]) shorten(originalArray)</em>.
 </description>
 
 <syntax>
@@ -31,7 +33,7 @@ shorten(<c>array</c>)
 
 <parameter>
 <label>array</label>
-<description>boolean[], byte[], char[], int[], float[], or String[]</description>
+<description>boolean[], byte[], char[], int[], float[], or String[], or an array of objects</description>
 </parameter>
 
 <returns>Array (the same datatype as the input)</returns>
