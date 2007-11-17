@@ -7,12 +7,27 @@ o problem with transparency in mask()
 o   http://dev.processing.org/bugs/show_bug.cgi?id=674
 X   mark bug as invalid, using fill() instead of tint()
 X move to UTF-8 as native format for core file i/o operations
+X   update reference to document the change
+o jogl glibc 2.4 problem on linux
+o   move back to previous jogl until 1.1.1 is released
+X   http://dev.processing.org/bugs/show_bug.cgi?id=675
+o deal with opengl applet export changes
+o   what is deployment suggestion for all the different platforms?
+o   can the jar files actually provide the DLLs properly?
+X revert back to jogl 1.0
+
+reference/online
+_ add notes about JOGLAppletLauncher
+_   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
+_ specifically add "eclipse" to integration description
+
 
 _ image smoothing 
 _   straighten out default vs. ACCURATE vs. whatever
 _   Java2D and P3D and OpenGL are all inconsistent
 _   need to be able to do hint() to do nearest neighbor filtering
 _   http://dev.processing.org/bugs/show_bug.cgi?id=685
+_   imageDetail(), textDetail(), etc?
 
 _ we can do hit testing (at least in 2D) now that we rely on java2d
 
@@ -28,10 +43,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=
 _ add some sort of unprojectX/Y/Z method (based on glu fxn)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1176483247
 _ add docs for model/screen/unprojectX/Y/Z
-
-_ jogl glibc 2.4 problem on linux
-_   move back to previous jogl until 1.1.1 is released
-_   http://dev.processing.org/bugs/show_bug.cgi?id=675
 
 _ bring back opengl mipmaps (create them myself? try w/ newer jogl?)
 _ opengl mipmaps are leaking (regression in spite of #150 fix)
