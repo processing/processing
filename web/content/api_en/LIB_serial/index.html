@@ -72,13 +72,15 @@ javax.comm.properties. (additional notes from stendahl)
 Mac OS X
 <UL>
 <LI>
-We use <a href="http://rxtx.org">rxtx</A> (formerly version 2.1_6, as of 0111 using version 2.1_7) to handle
-serial I/O, which is included with the Processing release. If this is
+We use <a href="http://rxtx.org">rxtx</A> (formerly version 2.1_6, 
+as of Processing 0111, we're using rxtx 2.1_7) to handle
+serial I/O, which is included with the Processing release. <STRIKE>If this is
 the first time you're using rxtx, you'll need to make your way to the
 "libraries" folder, find "serial", and inside, and run
 macosx_setup.command (double-click it and follow the instructions).
 This will make sure that things are properly set up (a few permissions
-need to be changed). 
+need to be changed).</STRIKE> As of release 0134, running macosx_setup.command is no longer necessary, thanks to help from the Arduino guys.
+<!--
 <LI>For Intel Macs, you'll need to use Processing release 0111 or later, this is the first version to have a Universal Binary for RXTX. 
 <LI>If you ran the setup script on an earlier version of Processing, 
 you'll need to re-run it (once) with release 0111 and later.
@@ -87,6 +89,7 @@ use by another application" it's possible that you haven't run the
 setup script. On my machine, I installed the keyspan driver for my
 usb-serial converter, ran the script, and then rebooted in order for
 things to work (a reboot does the body good). 
+-->
 <LI>In the past, I've used a keyspan 28X dual port adapter, 
 and Serial.list() returns things like
 <tt>/dev/cu.USA28X21P1.1</tt>. You'll probably have something
@@ -100,6 +103,7 @@ your adapter is plugged into a USB keyboard, and you have the
 keyboard plugged into a monitor/keyboard switcher. You know, those cheap
 KVMs that everyone likes to talk about in relation to the Mac Minis? 
 The ones that actually cost ~$150 and up?
+<!--
 <LI>The OS X 10.4 (Tiger) installer wipes out your permissions and groups
 on /var/spool/uucp, so you'll have to run the setup command
 again. However, running it returns:
@@ -112,7 +116,7 @@ macosx_setup.command, Shut down the machine and restart. <BR> <BR>
 &ldquo;Don't logout then log back in.  Don't just restart.  Shut down and restart.  I don't care that you've got a record uptime you're trying to preserve. SHUT DOWN AND RESTART! Don't be an idiot like I was.  This will free up the old lock files, which apparently carry over from the previous systems, and your serial devices will be happy.
 <BR> <BR> 
 &ldquo;And on that note, Tiger and Processing are playing happily together with a serial port, like kittens with a ball of string.&rdquo;
-
+-->
 </UL>
 Linux
 <UL>
