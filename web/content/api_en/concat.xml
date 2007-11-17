@@ -11,9 +11,9 @@
 <example>
 <image></image>
 <code>
-String sa1[] = { "OH ", "NY ", "CA "};
-String sa2[] = { "KY ", "IN ", "MA "};
-String sa3[] = concat(sa1, sa2);
+String[] sa1 = { "OH ", "NY ", "CA "};
+String[] sa2 = { "KY ", "IN ", "MA "};
+String[] sa3 = concat(sa1, sa2);
 println(sa3);  // Prints OH, NY, CA, KY, IN, MA
 </code>
 </example>

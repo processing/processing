@@ -11,8 +11,8 @@
 <example>
 <image></image>
 <code>
-String sa1[] = { "OH ", "NY ", "CA "}; 
-String sa2[] = append(sa1, "MA "); 
+String[] sa1 = { "OH ", "NY ", "CA "}; 
+String[] sa2 = append(sa1, "MA "); 
 println(sa2);  // Prints OH, NY, CA, MA
 </code>
 </example>
@@ -29,7 +29,7 @@ append(<c>array</c>, <c>element</c>)
 
 <parameter>
 <label>array</label>
-<description>boolean[], byte[], char[], int[], float[], or String[]</description>
+<description>boolean[], byte[], char[], int[], float[], or String[], or an array of objects</description>
 </parameter>
 
 <parameter>

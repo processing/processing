@@ -12,8 +12,8 @@
 <example>
 <image></image>
 <code>
-String sa1[] = { "OH ", "NY ", "CA "}; 
-String sa2[] = shorten(sa1); 
+String[] sa1 = { "OH ", "NY ", "CA "}; 
+String[] sa2 = shorten(sa1); 
 println(sa1);  // Prints OH, NY, CA
 println();
 sa2 = shorten(sa2); 

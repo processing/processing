@@ -11,10 +11,10 @@
 <example>
 <image></image>
 <code>
-String north[] = { "OH", "IN", "MI"};
-String south[] = { "GA", "FL", "NC"}; 
+String[] north = { "OH", "IN", "MI"};
+String[] south = { "GA", "FL", "NC"}; 
 arraycopy(north, south);
-print(south);  // Prints "OH IN MI" 
+print(south);  // Prints OH, IN, MI
 
 </code>
 </example>
@@ -22,10 +22,10 @@ print(south);  // Prints "OH IN MI"
 <example>
 <image></image>
 <code>
-String north[] = { "OH", "IN", "MI"};
-String south[] = { "GA", "FL", "NC"}; 
+String[] north = { "OH", "IN", "MI"};
+String[] south = { "GA", "FL", "NC"}; 
 arraycopy(north, 1, south, 0, 2);
-print(south);  // Prints "IN MI NC" 
+println(south);  // Prints IN, MI, NC
 
 </code>
 </example>
@@ -42,12 +42,12 @@ arraycopy(<c>src</c>, <c>srcPos</c>, <c>dest</c>, <c>destPos</c>, <c>length</c>)
 
 <parameter>
 <label>src</label>
-<description>boolean[], byte[], char[], int[], float[], or String[]: the source array</description>
+<description>an array of any data type: the source array</description>
 </parameter>
 
 <parameter>
 <label>dest</label>
-<description>boolean[], byte[], char[], int[], float[], or String[]: the destination array</description>
+<description>an array of any data type (as long as it's the same as src): the destination array</description>
 </parameter>
 
 <parameter>

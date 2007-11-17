@@ -11,31 +11,27 @@
 <example>
 <image></image>
 <code>
-float a[] = { 3.4, 3.6, 2, 0, 7.1 };
+float[] a = { 3.4, 3.6, 2, 0, 7.1 };
 a = sort(a);
-for (int i = 0; i &lt; a.length; i++) {
-  println(a[i]);
-}
-
+println(a);
 </code>
 </example>
 
 <example>
 <image></image>
 <code>
-String s[] = { "deer", "elephant", "bear", "aardvark", "cat" };
+String[] s = { "deer", "elephant", "bear", "aardvark", "cat" };
 s = sort(s);
-print(s);  // Prints "aardvark bear cat deer elephant"
+println(s);  // Prints aardvark, bear, cat, deer, elephant on separate lines
 </code>
 </example>
 
 <example>
 <image></image>
 <code>
-String s[] = { "deer", "elephant", "bear", "aardvark", "cat" };
+String[] s = { "deer", "elephant", "bear", "aardvark", "cat" };
 s = sort(s, 3);
-print(s);  // Prints "bear dear elephant"
-
+println(s);  // Prints bear, dear, elephant on separate lines
 </code>
 </example>
 
