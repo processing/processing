@@ -272,7 +272,6 @@ colorMode	KEYWORD2	colorMode_
 concat	KEYWORD2	concat_
 ?:	KEYWORD1	conditional_
 constrain	KEYWORD2	constrain_
-contract	KEYWORD2	contract_
 copy	KEYWORD2	copy_
 cos	KEYWORD2	cos_
 createFont	KEYWORD2	createFont_
