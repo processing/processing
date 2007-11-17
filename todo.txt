@@ -4,6 +4,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=667
 X shortcuts in tab menu should use shift
 X   remove shortcut for rename, and use ctrl-shift-n for new tab
 X   http://dev.processing.org/bugs/show_bug.cgi?id=665
+X fix problem with "save as" under linux
 
 _ "Fatal exception occurred. Program will exit." on startup
 _   http://dev.processing.org/bugs/show_bug.cgi?id=688
