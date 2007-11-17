@@ -4254,7 +4254,10 @@ in   */
    * following lines any more I'm gonna send Sun my medical bills.
    */
   static public BufferedReader createReader(InputStream input) {
-    InputStreamReader isr = new InputStreamReader(input, "UTF-8");
+    InputStreamReader isr = null;
+    try {
+      isr = new InputStreamReader(input, "UTF-8");
+    } catch (UnsupportedEncodingException e) { }  // not gonna happen
     return new BufferedReader(isr);
   }
 
@@ -4323,8 +4326,11 @@ in   */
    * It's the JavaSoft API engineers who need to explain themselves.
    */
   static public PrintWriter createWriter(OutputStream output) {
-    OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
-    return new PrintWriter(osw);
+    try {
+      OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
+      return new PrintWriter(osw);
+    } catch (UnsupportedEncodingException e) { }  // not gonna happen
+    return null;
   }
 
 
@@ -4754,12 +4760,14 @@ in   */
 
 
   static public void saveStrings(OutputStream output, String strings[]) {
-    OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8")
-    PrintWriter writer = new PrintWriter(osw);
-    for (int i = 0; i < strings.length; i++) {
-      writer.println(strings[i]);
-    }
-    writer.flush();
+    try {
+      OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
+      PrintWriter writer = new PrintWriter(osw);
+      for (int i = 0; i < strings.length; i++) {
+        writer.println(strings[i]);
+      }
+      writer.flush();
+    } catch (UnsupportedEncodingException e) { }  // will not happen
   }
 
 
