@@ -1,14 +1,19 @@
 0134 pde
 X fix problem with fractional px sizes and adobe cs3
 X   http://dev.processing.org/bugs/show_bug.cgi?id=667
+X   fix candy bug where width/height were undefined if "px" was used
+X   some svg files include "px" in the width/height parameters
 X shortcuts in tab menu should use shift
 X   remove shortcut for rename, and use ctrl-shift-n for new tab
 X   http://dev.processing.org/bugs/show_bug.cgi?id=665
 X fix problem with "save as" under linux
+X say that quicktime 6 is no longer supported
+X   winvdig issues?
+
 
 _ "Fatal exception occurred. Program will exit." on startup
+_   seems to be font related, deleting prefs will fix it
 _   http://dev.processing.org/bugs/show_bug.cgi?id=688
-
 _ opening a file from right-click in osx 
 _   opens the new thing directly behind an untitled document
 _ if too many errors come through during setup, app will terminate
@@ -21,11 +26,9 @@ _   "multipart/*" produces the error
 _ more recent versions of the PDE lock up during setup() (no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 
-_ after fixing name of sketch, a sketch of that name does not exist
+_ after fixing name of sketch, a sketch of that name does not exist (?)
 _ quicktime problems (when no QTJAVA is set?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=669
-_ say that quicktime 6 is no longer supported
-_   winvdig issues?
 
 _ deal with opengl applet export changes
 _   what is deployment suggestion for all the different platforms?
@@ -35,9 +38,8 @@ _   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/op
 _ add note that "quicktime alternative" is not sufficient
 _ specifically add "eclipse" to integration description
 
-_ see how platform is determined by jogl / use for lib import
-
 _ problems with serial on leopard
+_   grab rxtx libraries from arduino, they've disabled locking
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Electronics;action=display;num=1193459849
 _ add notes about expand() and objects to the reference
 
@@ -162,6 +164,7 @@ _ with additional .pde files, don't allow static mode in front tab
 
 
 libraries and classpaths [1.0]
+X see how platform is determined by jogl / use for lib import
 _ add control for dependencies (i.e. svg needs xml), needed for export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=518
 _ add "pretty menu name" to the export.txt file
