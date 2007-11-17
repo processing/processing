@@ -1,3 +1,25 @@
+0134 pde
+X fix problem with fractional px sizes and adobe cs3
+X   http://dev.processing.org/bugs/show_bug.cgi?id=667
+X   fix candy bug where width/height were undefined if "px" was used
+X   some svg files include "px" in the width/height parameters
+X shortcuts in tab menu should use shift
+X   remove shortcut for rename, and use ctrl-shift-n for new tab
+X   http://dev.processing.org/bugs/show_bug.cgi?id=665
+X fix problem with "save as" under linux
+X say that quicktime 6 is no longer supported
+X   winvdig issues?
+X add note that "quicktime alternative" is not sufficient
+X problems with serial on leopard
+X   grab rxtx libraries from arduino, they've disabled locking
+X   http://dev.processing.org/bugs/show_bug.cgi?id=227
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Electronics;action=display;num=1193459849
+X add note to reference about close/quit behavior
+X   also add note that export will delete folders
+X add notes about expand() and objects to the reference
+X   lots of additional ref changes for array functions
+
+
 0133 pde
 X fix problem with 'cancel' on "move sketch, create folder, continue"? msg
 X   http://dev.processing.org/bugs/show_bug.cgi?id=658
