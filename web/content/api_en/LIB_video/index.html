@@ -8,23 +8,29 @@
     <p>The video library allows Processing to display QuickTime video 
     files, grab video data from a camera, and make QuickTime videos directly
 	from a running program. Video can be captured from 
-    USB Cameras, IEEE 1394 Cameras, or Video Cards with composite or S-video 
+    USB Cameras, IEEE 1394 (Firewire) Cameras, or Video Cards with composite or S-video 
     input devices connected to the computer. Video can be loaded from 
     QuickTime files located on your computer or anywhere on the Internet.</p> 
     
     <p>For this library to work, it is necessary to have QuickTime
     installed on your computer. Download and install QuickTime (or iTunes, 
-    which includes QuickTime). </p>
+    which includes QuickTime).</p>
+
+    Other solutions such as QuickTime Alternative or QT Lite 
+    will not work and should be avoided. </p>
+
+    <p>Because Apple only supports QuickTime on Mac OS and Windows, 
+    other platforms (such as Linux) are not able to use the video library.</p>
     
     <p>You also need video driver software for translating from the proprietary 
     format of your video source into commonly used video functions. You 
     can get this software from the makers of the video hardware.</p>
     
     
-  <p>If you are not using an Apple computer, you will also need a VDIG, a video 
+  <p>If you are not using Mac OS X, you will also need a VDIG, a video 
     driver that translates from your hardware to the video functions used by QuickTime. 
     This software may be included in the software provided by the maker of your 
-    hardware, or you can download the free VDIG available at http://www.vdig.com 
+    hardware, or you can download the free VDIG available at <A HREF="http://www.vdig.com/" TARGET="another">www.vdig.com</A>.
     and check if it is compatible with your video camera. The free VDIG is slower 
     than many you pay for. There's more information about this below...</p>
 </div>
@@ -88,9 +94,8 @@ Problems with Video (Quicktime for Java)
 </b> <br> <br>
 
 Getting video to work can be kind of a cluster, particularly on
-Windows. We use QuickTime for Java, which is sometimes difficult to
-install or can be flakey. Someday in the future perhaps we can
-circumvent this mess.
+Windows. We use QuickTime for Java, which can be flakey. 
+Someday in the future perhaps we can circumvent this mess.
 <br> <br>
 All Platforms
 <UL>
@@ -137,21 +142,22 @@ can't be resized), so you should stick with
 </OL>
 <!--If you're completely stuck on the WinVDIG problems, some have found happiness with this solution from pandaman: "I deleted the files vsVDIG from system32/quicktime AND program files/quicktime and deleted VSdump from system32- uninstalled vdig - reinstalled vdig 1.01 and things seem to be working now".--> 
 It always makes us scared to go deleting things in System32, much less Program Files. But depending on your level of frustration, the possibility of hurting your Windows install may even sound enticing. Be sure to follow that line of instructions <EM>carefully</EM>. I spent half an hour trying to reinstall WinVDIG on a student's machine because I missed some of it.
-<LI>If you want to avoid QuickTime 7, use the <A
+
+<LI><STRIKE>If you want to avoid QuickTime 7, use the <A
 HREF="http://www.apple.com/support/downloads/quicktime652forwindows.html">QuickTime
 6.5.2</A> installer that's buried on Apple's site. Uninstall QuickTime
 7 before installing 6.5 (see below). You will also have to use a
 version of iTunes that's compatible with QuickTime 6 (anything earlier
-than iTunes 6).
+than iTunes 6).</STRIKE> QuickTime 6 is no longer recommended, use QuickTime 7 instead.
 
-<LI>If you're installing QuickTime 6.5, you must make sure that
+<LI><STRIKE>If you're installing QuickTime 6.5, you must make sure that
 "QuickTime for Java" is included. During the
 installation, use the "Custom" install, scroll down, and make sure the
 checkbox next to "QuickTime for Java" is marked. You will also need to
 follow this process if you have already installed QuickTime 6, and did
 not use the "Custom" or "Full" install. To remedy this, use the
 QuickTime Updater from the QuickTime folder that's added to the Start
-menu. 
+menu.</STRIKE>
 <LI>In QuickTime 7 (or the iTunes + QuickTime installer) there is
 no "Custom" install, and QuickTime for Java is installed by default.
 <!--
@@ -185,7 +191,7 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=171">Bug 171</A>.
 Mac OS X
 <UL>
 
-<LI>If you're having problems since the QuickTime 7 update, one option
+<LI><STRIKE>If you're having problems since the QuickTime 7 update, one option
 is to reinstall QuickTime 6. Apple has provided a QuickTime 6.5.2
 reinstallers for <a
 href="http://www.apple.com/support/downloads/quicktime652reinstallerforquicktime701.html">QuickTime 7.0.1</a> and <a
@@ -195,13 +201,13 @@ you're using QuickTime 7.0.3 or 7.0.4, you'll have to first downgrade
 to 7.0.1, using the QuickTime 7.0.1 reinstaller for <A
 HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime703.html">QuickTime
 7.0.3</A> or <A
-HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime704.html">QuickTime 7.0.4</A>.
-<LI>On Mac OS X 10.2 (Jaguar, or Jagwyre if you like black turtlenecks),
+HREF="http://www.apple.com/support/downloads/quicktime701reinstallerforquicktime704.html">QuickTime 7.0.4</A>.</STRIKE> QuickTime 6 is no longer supported, please use QuickTime 7 instead.
+<LI><STRIKE>On Mac OS X 10.2 (Jaguar, or Jagwyre if you like black turtlenecks),
 QuickTime for Java was missing from the initial release of QuickTime
 6.4. An upgrade to QuickTime 6.4 that includes QuickTime for Java is
 available from software update. We don't recommend using 10.2 (we
 don't have time to support it), so if you can move to Panther or
-later, it's highly recommended.
+later, it's highly recommended.</STRIKE> Mac OS X 10.2 is not supported, please use 10.3.9 or later.
 <LI>If you get the following error:
 <tt>Exception in thread "main" java.lang.NoClassDefFoundError: 
   com/apple/mrj/macos/carbon/CarbonLock</tt>

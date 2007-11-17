@@ -25,6 +25,8 @@ Reads the contents of a file or url and creates a String array of its individual
 The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
 <br/> <br/>
 If the file is not available or an error occurs, <b>null</b> will be returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned is null.
+<br/> <br/>
+Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
 </description>
 
 <syntax>
