@@ -9,6 +9,15 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=665
 X fix problem with "save as" under linux
 X say that quicktime 6 is no longer supported
 X   winvdig issues?
+X add note that "quicktime alternative" is not sufficient
+o deal with opengl applet export changes
+o   what is deployment suggestion for all the different platforms?
+o   can the jar files actually provide the DLLs properly?
+
+reference/online
+_ add notes about JOGLAppletLauncher
+_   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
+_ specifically add "eclipse" to integration description
 
 
 _ "Fatal exception occurred. Program will exit." on startup
@@ -19,9 +28,9 @@ _   opens the new thing directly behind an untitled document
 _ if too many errors come through during setup, app will terminate
 _   printStackTrace() throttles on osx and poops out
 
-_ missing a /* from the end of a comment
-_   even though things are inside a quoted txt block
+_ "missing a /* from the end of a comment" message
 _   "multipart/*" produces the error
+_   even though things are inside a quoted txt block
 
 _ more recent versions of the PDE lock up during setup() (no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
@@ -29,14 +38,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 _ after fixing name of sketch, a sketch of that name does not exist (?)
 _ quicktime problems (when no QTJAVA is set?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=669
-
-_ deal with opengl applet export changes
-_   what is deployment suggestion for all the different platforms?
-_     can the jar files actually provide the DLLs properly?
-_   add notes about JOGLAppletLauncher
-_   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
-_ add note that "quicktime alternative" is not sufficient
-_ specifically add "eclipse" to integration description
 
 _ problems with serial on leopard
 _   grab rxtx libraries from arduino, they've disabled locking
