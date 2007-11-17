@@ -77,7 +77,7 @@ import processing.core.PApplet;
  * }
  * </CODE>
  * @author Marc De Scheemaecker
- * @author Ben Fry 
+ * @author Ben Fry
  */
 public class XMLElement
 {
@@ -493,18 +493,16 @@ public class XMLElement
 
 
     public XMLElement(String s) {
-    	try {
-			parseString(s);
-		} catch (XMLParseException e) {
-			e.printStackTrace();
-		}
+        try {
+                        parseString(s);
+                } catch (XMLParseException e) {
+                        e.printStackTrace();
+                }
     }
-    
-    
+
+
     public XMLElement(InputStream input) throws IOException {
         this(new InputStreamReader(input, "UTF-8"));
-//        InputStreamReader r = new InputStreamReader(input);
-//        parseFromReader(r);
     }
 
 
@@ -804,79 +802,79 @@ public class XMLElement
 
 
     /**
-     * Get a child by its name or path. 
-     * @param name element name or path/to/element 
+     * Get a child by its name or path.
+     * @param name element name or path/to/element
      * @return
      * @author processing.org
      */
     public XMLElement getChild(String name) {
-    	if (name.indexOf('/') != -1) {
-    		return getChild(PApplet.split(name, '/'), 0);
-    	}
-    	int childCount = getChildCount();
-    	for (int i = 0; i < childCount; i++) {
-    		XMLElement kid = getChild(i);
-    		if (kid.getName().equals(name)) {
-    			return kid;
-    		}
-    	}
-    	return null;
+        if (name.indexOf('/') != -1) {
+                return getChild(PApplet.split(name, '/'), 0);
+        }
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+                XMLElement kid = getChild(i);
+                if (kid.getName().equals(name)) {
+                        return kid;
+                }
+        }
+        return null;
     }
 
 
     protected XMLElement getChild(String[] items, int offset) {
-    	int childCount = getChildCount();
-    	for (int i = 0; i < childCount; i++) {
-    		XMLElement kid = getChild(i);
-    		if (kid.getName().equals(items[offset])) {
-    			if (offset == items.length-1) {
-    				return kid;
-    			} else {
-    				return kid.getChild(items, offset+1);
-    			}
-    		}
-    	}
-    	return null;
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+                XMLElement kid = getChild(i);
+                if (kid.getName().equals(items[offset])) {
+                        if (offset == items.length-1) {
+                                return kid;
+                        } else {
+                                return kid.getChild(items, offset+1);
+                        }
+                }
+        }
+        return null;
     }
-    
+
 
     /**
-     * Get any children that match this name or path. Similar to getChild(), 
+     * Get any children that match this name or path. Similar to getChild(),
      * but will grab multiple matches rather than only the first.
-     * @param name element name or path/to/element 
+     * @param name element name or path/to/element
      * @return
      * @author processing.org
      */
     public XMLElement[] getChildren(String name) {
-    	if (name.indexOf('/') != -1) {
-    		return getChildren(PApplet.split(name, '/'), 0);
-    	}
-    	int childCount = getChildCount();
-    	XMLElement[] matches = new XMLElement[childCount];
-    	int matchCount = 0;
-    	for (int i = 0; i < childCount; i++) {
-    		XMLElement kid = getChild(i);
-    		if (kid.getName().equals(name)) {
-    			matches[matchCount++] = kid;
-    		}
-    	}
-    	return (XMLElement[]) PApplet.subset(matches, 0, matchCount);
+        if (name.indexOf('/') != -1) {
+                return getChildren(PApplet.split(name, '/'), 0);
+        }
+        int childCount = getChildCount();
+        XMLElement[] matches = new XMLElement[childCount];
+        int matchCount = 0;
+        for (int i = 0; i < childCount; i++) {
+                XMLElement kid = getChild(i);
+                if (kid.getName().equals(name)) {
+                        matches[matchCount++] = kid;
+                }
+        }
+        return (XMLElement[]) PApplet.subset(matches, 0, matchCount);
     }
 
 
     protected XMLElement[] getChildren(String[] items, int offset) {
-    	if (offset == items.length-1) {
-    		return getChildren(items[offset]);
-    	}
-    	XMLElement[] matches = getChildren(items[offset]);  
-    	XMLElement[] outgoing = new XMLElement[0];
-    	for (int i = 0; i < matches.length; i++) {
-    		XMLElement[] kidMatches = matches[i].getChildren(items, offset+1);
-    		outgoing = (XMLElement[]) PApplet.concat(outgoing, kidMatches);
-    	}
-    	return outgoing;
+        if (offset == items.length-1) {
+                return getChildren(items[offset]);
+        }
+        XMLElement[] matches = getChildren(items[offset]);
+        XMLElement[] outgoing = new XMLElement[0];
+        for (int i = 0; i < matches.length; i++) {
+                XMLElement[] kidMatches = matches[i].getChildren(items, offset+1);
+                outgoing = (XMLElement[]) PApplet.concat(outgoing, kidMatches);
+        }
+        return outgoing;
     }
-    
+
 
     /**
      * Returns the PCDATA content of the object. If there is no such content,

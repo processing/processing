@@ -192,11 +192,11 @@ public class PApplet extends Applet
     }
   }
 
-  /** 
+  /**
    * Modifier flags for the shortcut key used to trigger menus.
    * (Cmd on Mac OS X, Ctrl on Linux and Windows)
-   */ 
-  static public final int MENU_SHORTCUT = 
+   */
+  static public final int MENU_SHORTCUT =
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
   /** The PGraphics renderer associated with this PApplet */
@@ -1563,8 +1563,8 @@ in   */
         }
 
         if (frameCount == 1) {
-          // Call the request focus event once the image is sure to be on 
-          // screen and the component is valid. The OpenGL renderer will 
+          // Call the request focus event once the image is sure to be on
+          // screen and the component is valid. The OpenGL renderer will
           // request focus for its canvas inside beginDraw().
           // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
           requestFocus();
@@ -2026,9 +2026,9 @@ in   */
     // set key to zero (or something besides the ESC).
     if (event.getID() == KeyEvent.KEY_PRESSED) {
       if (key == KeyEvent.VK_ESCAPE) {
-        exit(); 
+        exit();
       }
-      // When running tethered to the Processing application, respond to 
+      // When running tethered to the Processing application, respond to
       // Ctrl-W (or Cmd-W) events by closing the sketch. Disable this behavior
       // when running independently, because this sketch may be one component
       // embedded inside an application that has its own close behavior.
@@ -2040,7 +2040,7 @@ in   */
     }
   }
 
-  
+
   protected void checkKeyEvent(KeyEvent event) {
     if (looping) {
       enqueueKeyEvent(event);
@@ -4254,7 +4254,7 @@ in   */
    * following lines any more I'm gonna send Sun my medical bills.
    */
   static public BufferedReader createReader(InputStream input) {
-    InputStreamReader isr = new InputStreamReader(input);
+    InputStreamReader isr = new InputStreamReader(input, "UTF-8");
     return new BufferedReader(isr);
   }
 
@@ -4323,7 +4323,7 @@ in   */
    * It's the JavaSoft API engineers who need to explain themselves.
    */
   static public PrintWriter createWriter(OutputStream output) {
-    OutputStreamWriter osw = new OutputStreamWriter(output);
+    OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8");
     return new PrintWriter(osw);
   }
 
@@ -4595,7 +4595,7 @@ in   */
   static public String[] loadStrings(InputStream input) {
     try {
       BufferedReader reader =
-        new BufferedReader(new InputStreamReader(input));
+        new BufferedReader(new InputStreamReader(input, "UTF-8"));
 
       String lines[] = new String[100];
       int lineCount = 0;
@@ -4754,7 +4754,8 @@ in   */
 
 
   static public void saveStrings(OutputStream output, String strings[]) {
-    PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
+    OutputStreamWriter osw = new OutputStreamWriter(output, "UTF-8")
+    PrintWriter writer = new PrintWriter(osw);
     for (int i = 0; i < strings.length; i++) {
       writer.println(strings[i]);
     }
@@ -6708,7 +6709,7 @@ in   */
    * notify on quit. See more notes in the Worker class.
    */
   public void setupExternalMessages() {
-    
+
     frame.addComponentListener(new ComponentAdapter() {
         public void componentMoved(ComponentEvent e) {
           Point where = ((Frame) e.getSource()).getLocation();

@@ -6,8 +6,15 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=664
 o problem with transparency in mask()
 o   http://dev.processing.org/bugs/show_bug.cgi?id=674
 X   mark bug as invalid, using fill() instead of tint()
+X move to UTF-8 as native format for core file i/o operations
 
-_ we can do hit testing now that we rely on java2d
+_ image smoothing 
+_   straighten out default vs. ACCURATE vs. whatever
+_   Java2D and P3D and OpenGL are all inconsistent
+_   need to be able to do hint() to do nearest neighbor filtering
+_   http://dev.processing.org/bugs/show_bug.cgi?id=685
+
+_ we can do hit testing (at least in 2D) now that we rely on java2d
 
 _ make sure that images with alpha still have alpha in current code
 
@@ -26,6 +33,7 @@ _ jogl glibc 2.4 problem on linux
 _   move back to previous jogl until 1.1.1 is released
 _   http://dev.processing.org/bugs/show_bug.cgi?id=675
 
+_ bring back opengl mipmaps (create them myself? try w/ newer jogl?)
 _ opengl mipmaps are leaking (regression in spite of #150 fix)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=610
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193967684
