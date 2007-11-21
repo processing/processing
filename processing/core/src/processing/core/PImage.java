@@ -231,7 +231,6 @@ public class PImage implements PConstants, Cloneable {
    * this should copy all data into the pixels[] array
    */
   public void loadPixels() {  // ignore
-    
   }
 
 
@@ -256,7 +255,6 @@ public class PImage implements PConstants, Cloneable {
    * the x2 and y2 positions are non-inclusive.
    */
   public void updatePixels(int x1, int y1, int x2, int y2) {
-
     if (imageMode == CORNER) {  // x2, y2 are w/h
       x2 += x1;
       y2 += y1;
@@ -1047,7 +1045,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public void copy(int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
-    copy(this, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+    blend(this, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, REPLACE);
   }
 
 
@@ -1057,6 +1055,9 @@ public class PImage implements PConstants, Cloneable {
   public void copy(PImage src,
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
+    blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, REPLACE);
+    
+    /*
     if (imageMode == CORNER) {  // if CORNERS, do nothing
       sx2 += sx1;
       sy2 += sy1;
@@ -1068,16 +1069,24 @@ public class PImage implements PConstants, Cloneable {
       //dx2 /= 2f; dy2 /= 2f;
     }
 
-    if ((src == this) &&
-        intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
-      // if src is me, and things intersect, make a copy of the data
-      blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1),
-                  0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
-                  pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
+    loadPixels();
+    if (src == this) {
+      if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
+        // if src is 'this', and things intersect, make a copy of the data
+        blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1),
+                    0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
+                    pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
+      } else {
+        blit_resize(src, sx1, sy1, sx2, sy2,
+                    pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
+      }
     } else {
+      src.loadPixels();
       blit_resize(src, sx1, sy1, sx2, sy2,
                   pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
     }
+    updatePixels();
+    */
   }
 
 
@@ -1199,15 +1208,29 @@ public class PImage implements PConstants, Cloneable {
       //dx2 /= 2f; dy2 /= 2f;
     }
 
-    if ((src == this) &&
-        intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
-      blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1),
-                  0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
-                  pixels, width, height, dx1, dy1, dx2, dy2, mode);
+//    if ((src == this) &&
+//        intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
+//      blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1),
+//                  0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
+//                  pixels, width, height, dx1, dy1, dx2, dy2, mode);
+    loadPixels();
+    if (src == this) {
+      if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
+        blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1),
+                    0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
+                    pixels, width, height, dx1, dy1, dx2, dy2, mode);
+      } else {
+        // same as below, except skip the loadPixels() because it'd be redundant
+        blit_resize(src, sx1, sy1, sx2, sy2,
+                    pixels, width, height, dx1, dy1, dx2, dy2, mode);
+      }
     } else {
+      src.loadPixels();
       blit_resize(src, sx1, sy1, sx2, sy2,
                   pixels, width, height, dx1, dy1, dx2, dy2, mode);
+      //src.updatePixels();
     }
+    updatePixels();
   }
 
 
