@@ -1,4 +1,37 @@
 0135 core
+X modelX/Y/Z still having trouble
+_   http://dev.processing.org/bugs/show_bug.cgi?id=486
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1186614415
+X add docs for model/screen/Y/Z
+X   added for model, along with example. 
+X   screen was already complete
+_ bring back opengl mipmaps (create them myself? try w/ newer jogl?)
+_   opengl mipmaps are leaking (regression in spite of #150 fix)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=610
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193967684
+_   seems to not actually be a problem on mbp, try desktop?
+_ copy() should automatically call updatePixels() - it does
+_   check on the bug report for this one as well
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
+
+
+earlier 
+o add notes about fixing serial on the mac to the faq (and link to bug)
+X   not necessary, hopefuly things working better now
+X utf8 and encodings
+X   createWriter() and createReader() that take encodings
+X   xml files seem to be a lot of UTF-8
+X xml stuff
+X   getItem("name");
+X   getItems("name"); (same, but looks for multiple matches
+X   getItem("path/to/item");
+o   or could use getItem and getItemList? getItemArray()?
+o   read more about xpath
+X parse xml from a string object
+X   not have to just use Reader
+X   add mention of this to the board
+o update to new version of jogl
+X fix mini p5 bugs for eugene
 
 
 reference/online
@@ -13,25 +46,11 @@ _   need to be able to do hint() to do nearest neighbor filtering
 _   http://dev.processing.org/bugs/show_bug.cgi?id=685
 _   imageDetail(), textDetail(), etc?
 
-_ we can do hit testing (at least in 2D) now that we rely on java2d
-
 _ make sure that images with alpha still have alpha in current code
 
 _ remove unhint(), add opposite hints for those that need to be disabled
 o   maybe update hint() ref to be more clear about screen not accumulating
 X   no, it's explicitly stated as such
-
-_ modelX/Y/Z still having trouble
-_   http://dev.processing.org/bugs/show_bug.cgi?id=486
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1186614415
-_ add some sort of unprojectX/Y/Z method (based on glu fxn)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1176483247
-_ add docs for model/screen/unprojectX/Y/Z
-
-_ bring back opengl mipmaps (create them myself? try w/ newer jogl?)
-_ opengl mipmaps are leaking (regression in spite of #150 fix)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=610
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193967684
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -89,8 +108,6 @@ _   or it's the PGraphics object, which does an updatePixels() immediately
 _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
-_ copy() should automatically call updatePixels()
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
 
 
 rework some text/font code [1.0]
@@ -201,6 +218,8 @@ _   keep array of warning strings, and booleans for whether they've called
 
 _ key and mouse events delivered out of order
 _   http://dev.processing.org/bugs/show_bug.cgi?id=638
+_ method of threading but queue an event to be run when safe
+_   e.g. queueing items like mouse/keybd, but generic fxns
 
 _ chooseFile() and chooseFolder() with named fxn callbacks
 _   the function must take a File object as a parameter
@@ -211,11 +230,6 @@ _   make sure the main() doesn't exit until the applet has finished
 _   i.e. problem with main calling itself multiple times in Alpheus
 _   if exit() (or stop) is called, then System.exit() gets called,
 _   even though the main() wants to keep going
-
-_ cameraXYZ doesn't seem to actually be used for anything
-_   since camera functions don't even look at it or set it
-
-_ add notes about fixing serial on the mac to the faq (and link to bug)
 
 _ should beginRecord inherit settings from its parent renderer?
 _   textFont() is null on beginRecord
@@ -507,6 +521,8 @@ _     or at least that things get ridiculously slow
 _     clipping issues here.. but also something in scan converter
 _     not clipping areas from offscreen
 _       huge geometry slows things way down
+_ cameraXYZ doesn't seem to actually be used for anything
+_   since camera functions don't even look at it or set it
 
 
 CORE / PImage
@@ -619,13 +635,17 @@ _   and i don't want an additional "pathVertex()" function
 
 
 PShape
+
+_ we can do hit testing (at least in 2D) now that we rely on java2d
 _ for subclasses, make it easy to grab the structure of vertices
 _   actually, just use PShape internally and this will be easier
 _ for PShape, need to be able to set the origin (flash people)
 
 
-LATER
+LATER (post 1.0)
 
+_ add some sort of unprojectX/Y/Z method (based on glu fxn)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1176483247
 _ implement method for lightweight components with processing applets
 _   http://dev.processing.org/bugs/show_bug.cgi?id=686
 _ Use getContextClassLoader() instead of Class.forName()
