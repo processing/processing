@@ -108,15 +108,12 @@ public class Preferences {
 
   // gui elements
 
-  //JDialog dialog;
   JFrame dialog;
   int wide, high;
 
   JTextField sketchbookLocationField;
   JCheckBox exportSeparateBox;
   JCheckBox closingLastQuitsBox;
-  //JCheckBox sketchPromptBox;
-  //JCheckBox sketchCleanBox;
   JCheckBox externalEditorBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
@@ -125,11 +122,13 @@ public class Preferences {
 
 
   // the calling editor, so updates can be applied
+  
   Editor editor;
 
 
   // data model
 
+  static Hashtable defaults;
   static Hashtable table = new Hashtable();;
   static File preferencesFile;
 
@@ -138,42 +137,36 @@ public class Preferences {
 
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
-
     try {
       load(Base.getStream("preferences.txt"));
 
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
-                     "You'll need to reinstall Processing.", e);
+                           "You'll need to reinstall Processing.", e);
     }
 
     // check for platform-specific properties in the defaults
-
-    String platformExtension = "." +
-      platforms[processing.core.PApplet.platform];
-    int extensionLength = platformExtension.length();
-
-    Enumeration e = table.keys(); //properties.propertyNames();
+    String platformExt = "." + platforms[PApplet.platform];
+    int platformExtLength = platformExt.length();
+    Enumeration e = table.keys();
     while (e.hasMoreElements()) {
       String key = (String) e.nextElement();
-      if (key.endsWith(platformExtension)) {
+      if (key.endsWith(platformExt)) {
         // this is a key specific to a particular platform
-        String actualKey = key.substring(0, key.length() - extensionLength);
+        String actualKey = key.substring(0, key.length() - platformExtLength);
         String value = get(key);
         table.put(actualKey, value);
       }
     }
 
+    // clone the hash table    
+    defaults = (Hashtable) table.clone();
 
     // other things that have to be set explicitly for the defaults
-
     setColor("run.window.bgcolor", SystemColor.control);
 
-
     // next load user preferences file
-
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
-
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
@@ -229,7 +222,7 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
-    
+
     // [ ] Quit after closing last sketch window
 
     closingLastQuitsBox =
@@ -240,7 +233,7 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
-    
+
     //sketchbook.closing_last_window_quits
 
     /*
@@ -521,11 +514,11 @@ public class Preferences {
     // put each of the settings into the table
     setBoolean("export.applet.separate_jar_files",
                exportSeparateBox.isSelected());
-    setBoolean("sketchbook.closing_last_window_quits", 
+    setBoolean("sketchbook.closing_last_window_quits",
                closingLastQuitsBox.isSelected());
     //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
     //setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
-    
+
     // if the sketchbook path has changed, rebuild the menus
     String oldPath = get("sketchbook.path");
     String newPath = sketchbookLocationField.getText();
@@ -533,7 +526,7 @@ public class Preferences {
       editor.base.rebuildSketchbookMenu();
       set("sketchbook.path", newPath);
     }
-    
+
     setBoolean("editor.external", externalEditorBox.isSelected());
     setBoolean("update.check", checkUpdatesBox.isSelected());
 
@@ -582,7 +575,7 @@ public class Preferences {
     exportSeparateBox.
       setSelected(getBoolean("export.applet.separate_jar_files"));
     closingLastQuitsBox.
-      setSelected(getBoolean("sketchbook.closing_last_window_quits")); 
+      setSelected(getBoolean("sketchbook.closing_last_window_quits"));
     //sketchPromptBox.
     //  setSelected(getBoolean("sketchbook.prompt"));
     //sketchCleanBox.
@@ -726,6 +719,11 @@ public class Preferences {
       defaultValue : value;
     */
   }
+  
+  
+  static public String getDefault(String attribute) {
+    return (String) defaults.get(attribute);
+  }
 
 
   static public void set(String attribute, String value) {
@@ -809,9 +807,47 @@ public class Preferences {
   }
 
 
-  static public Font getFont(String which /*, Font otherwise*/) {
-    String str = get(which);
-    //if (str == null) return otherwise;  // ENABLE LATER
+  static public Font getFont(String attr) {
+    boolean replace = false;
+    String value = get(attr);
+    if (value == null) {
+      //System.out.println("reset 1");
+      value = getDefault(attr);
+      replace = true;
+    }
+
+    String[] pieces = PApplet.split(value, ',');
+    if (pieces.length != 3) {
+      value = getDefault(attr);
+      //System.out.println("reset 2 for " + attr);
+      pieces = PApplet.split(value, ',');
+      //PApplet.println(pieces);
+      replace = true;
+    }
+
+    String name = pieces[0];
+    int style = Font.PLAIN;  // equals zero
+    if (pieces[1].indexOf("bold") != -1) {
+      style |= Font.BOLD;
+    }
+    if (pieces[1].indexOf("italic") != -1) {
+      style |= Font.ITALIC;
+    }
+    int size = PApplet.parseInt(pieces[2], 12);
+    Font font = new Font(name, style, size);
+    //System.out.println(f);
+    
+    // replace bad font with the default
+    if (replace) {
+      //System.out.println(attr + " > " + value);
+      //setString(attr, font.getName() + ",plain," + font.getSize());
+      set(attr, value);
+    }
+    
+    return font;
+    //return new Font(name, style, size);
+
+    /*
     StringTokenizer st = new StringTokenizer(str, ",");
     String fontname = st.nextToken();
     String fontstyle = st.nextToken();
@@ -819,6 +855,7 @@ public class Preferences {
                     ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) |
                     ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
                     Integer.parseInt(st.nextToken()));
+     */
   }
 
 
