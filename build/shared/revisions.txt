@@ -7,6 +7,39 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0135 - 21 November 2007
+
+Fairly innocuous but helpful bug fix release.
+
+[ bug fixes ] 
+
++ Fixed modelX(), modelY(), and modelZ().
+  http://dev.processing.org/bugs/show_bug.cgi?id=486
+  Also wrote documentation for modelX(), modelY(), and modelZ().
+
++ Brought back mipmapping for OpenGL (this helps textures look 
+  better when they're resized significantly). Turns out that I was
+  on a goose chase, that things were working properly in rev 0125.
+  http://dev.processing.org/bugs/show_bug.cgi?id=610
+
++ Fixed copy() so that it doesn't need an updatePixels() call when 
+  used with OPENGL and JAVA2D. You should only have to call
+  loadPixels() and updatePixels() when you're actually messing with 
+  the pixels[] array of an image (or the main drawing surface).
+  http://dev.processing.org/bugs/show_bug.cgi?id=681
+
++ Improved how fonts are handled in the preferences file to ensure
+  against errors. Some strange things popping up with Processing
+  not starting up properly and giving ominous "Fatal Exception" or
+  "Failed Startup" messages. Though it's still not clear how the file
+  was getting corrupted (whether operator error or something that 
+  a recent Java release is doing).
+  http://dev.processing.org/bugs/show_bug.cgi?id=688
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0134 - 17 November 2007
 
 Several bug fixes in this release, and one major change: all text 
