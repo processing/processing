@@ -9,7 +9,7 @@
     <p>
       <a href="#PDE">Processing Development Environment (PDE)</a><br />
       <a href="#Sketchbook">Sketchbook</a><br />
-      <a href="#Tabs">Tabs (Multiple Files)</a><br />
+      <a href="#Tabs">Tabs, Multiple Files, and Classes</a><br />
       <a href="#Coordinates">Coordinates</a><br />
       <a href="#Programming_modes">Programming Modes</a><br />
       <a href="#Rendering_modes">Rendering Modes</a><br />
@@ -241,20 +241,27 @@ sub-programs.</p>
 
 
     <h5 id="Tabs"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
-      Tabs (Multiple Files)</h5>
-    <p>It can be inconvenient to write a long program within a single file. When programs grow to 
-	hundreds and thousands of lines, breaking them into modular units helps manage the different parts. 
- 	Processing manages files with the Sketchbook and each sketch can have multiple files that are 
-	managed with tabs. The arrow button in the upper-right corner of the Processing Development 
-	Environment is used to manage these files. Click this button to reveal options to create a 
-	new tab, rename the current tab, and delete the current tab. If a project has more than one tab, 
-	they can also be hidden and revealed. Hiding a tab temporarily removes that code from the sketch (it will not be compiled with the program when you press Run).</p>
+      Tabs, Multiple Files, and Classes</h5>
+    <p>
+It can be inconvenient to write a long program within a single file. 
+When programs grow to hundreds or thousands of lines, breaking them into modular units helps manage the different parts. 
+Processing manages files with the Sketchbook and each sketch can have multiple files that are managed with tabs. 
+The arrow button in the upper-right corner of the Processing Development Environment is used to manage these files. 
+Click this button to reveal options to create a new tab, rename the current tab, and delete the current tab. If a project has more than one tab, they can also be hidden and revealed. 
+Hiding a tab temporarily removes that code from the sketch (it will not be compiled with the program when you press Run).</p>
 	
-	<p>Tabs are for advanced users, and for this reason, the menu that controls the tabs is intentionally made less prominent. </p>
-<p>When a program with multiple tabs is run, the code is grouped together and the classes in other tabs become inner classes.  Because they're inner classes, you cannot use static variables. Simply place the "static" variable outside the class itself to do the same thing (it need not be explicitly named "static" once you list it in this manner). If you don't want code to be an inner class, you can also create a tab with a .java suffix, which means it will be interpreted as straight java code. If you do this, you'll need to pass the PApplet object to that object in that tab in order to get PApplet functions like line(), loadStrings() or saveFrame() to work.</p>
+<p>Tabs are intended for more advanced users, and for this reason, the menu that controls the tabs is intentionally made less prominent. </p>
+
+<p><em>For programmers familiar with Java</em>. 
+When a program with multiple tabs is run, the code is grouped together and the classes in other tabs become inner classes.  
+Because they're inner classes, they cannot have static variables. 
+Simply place the "static" variable outside the class itself to do the same thing (it need not be explicitly named "static" once you list it in this manner). 
+If you don't want code to be an inner class, you can also create a tab with a .java suffix, which means it will be interpreted as straight java code. 
+It is also not possible to use static classes in separate tabs.
+If you do this, however, you'll need to pass the PApplet object to that object in that tab in order to get PApplet functions like line(), loadStrings() or saveFrame() to work.</p>
 
 	<p>Currently, the tabs get truncated when there are too many (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=54">Bug 54</a>).</p>
-	
+
    
     <h5 id="Coordinates"><a href="#top"><img src="images/up_arrow.gif" alt="Top" /></a> 
       Coordinates</h5>
