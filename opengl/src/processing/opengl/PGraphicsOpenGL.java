@@ -905,12 +905,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
         //System.out.println("max texture size is " + maxTextureSize);
       }
       if ((width2 > maxTextureSize) || (height2 > maxTextureSize)) {
-        /*
-        System.err.println("Maximum texture size for your graphics " +
-                           "card is " + maxTextureSize + ". " +
-                           "A " + image.width + "x" + image.height +
-                           " image is too large to be displayed.");
-        */
         throw new RuntimeException("Image width and height cannot be" +
                                    " larger than " + maxTextureSize +
                                    " with your graphics card.");
@@ -1034,7 +1028,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
       //
 
-      /*
       int err = glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, 4,
                                     twidth, theight,
                                     GL.GL_RGBA,
@@ -1053,7 +1046,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
       gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
-      */
 
       //
 
@@ -1932,7 +1924,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public void clear() {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-    
+
     clearRaw();
   }
 
