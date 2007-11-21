@@ -1,19 +1,19 @@
 0135 core
 X modelX/Y/Z still having trouble
-_   http://dev.processing.org/bugs/show_bug.cgi?id=486
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1186614415
+X   http://dev.processing.org/bugs/show_bug.cgi?id=486
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1186614415
 X add docs for model/screen/Y/Z
 X   added for model, along with example. 
 X   screen was already complete
-_ bring back opengl mipmaps (create them myself? try w/ newer jogl?)
-_   opengl mipmaps are leaking (regression in spite of #150 fix)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=610
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193967684
-_   seems to not actually be a problem on mbp, try desktop?
-_ copy() should automatically call updatePixels() - it does
-_   check on the bug report for this one as well
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
-
+X bring back opengl mipmaps (create them myself? try w/ newer jogl?)
+X   opengl mipmaps are leaking (regression in spite of #150 fix)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=610
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193967684
+X   seems to not actually be a problem on mbp, try desktop?
+X copy() was needing updatePixels() when used with OPENGL or JAVA2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=681
+X   check on the bug report for this one as well
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
 
 earlier 
 o add notes about fixing serial on the mac to the faq (and link to bug)
@@ -108,6 +108,10 @@ _   or it's the PGraphics object, which does an updatePixels() immediately
 _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
+_ filter() doesn't need a loadPixels
+_   but if you want to filter *and* mess w/ pixels (avoid double load)
+_   then do loadPixels() /before/ filter, and updatePixels after messing
+_   same will go for blend()
 
 
 rework some text/font code [1.0]
@@ -571,6 +575,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsOpenGL
 
+_ updatePixels wth OpenGL requires a lot of memory, need better texture update
+_   http://dev.processing.org/bugs/show_bug.cgi?id=610
 _ strokeWeight() doesn't work in opengl or p3d
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
