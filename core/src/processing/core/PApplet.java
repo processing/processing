@@ -36,6 +36,8 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.zip.*;
 
+import javax.imageio.ImageIO;
+
 
 /**
  * Base class for all sketches that use processing.core.
@@ -3613,7 +3615,6 @@ in   */
           Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
           PImage image = loadImageSync(awtImage);
           // if it's a .gif image, test to see if it has transparency
-          //if ((lower.endsWith(".gif")) || (lower.endsWith(".png"))) {
           if (extension.equals("gif") || extension.equals("png")) {
             image.checkAlpha();
           }
@@ -3627,7 +3628,8 @@ in   */
 
     //if (PApplet.javaVersion >= 1.4f) {
     if (loadImageFormats == null) {
-      //loadImageFormats = javax.imageio.ImageIO.getReaderFormatNames();
+      loadImageFormats = ImageIO.getReaderFormatNames();
+      /*
       try {
         Class ioClass = Class.forName("javax.imageio.ImageIO");
         Method getFormatNamesMethod =
@@ -3637,6 +3639,7 @@ in   */
       } catch (Exception e) {
         e.printStackTrace();
       }
+      */
     }
     if (loadImageFormats != null) {
       for (int i = 0; i < loadImageFormats.length; i++) {
@@ -3673,8 +3676,7 @@ in   */
 
 
   /**
-   * Use Java 1.4 ImageIO methods to load an image. All done via reflection
-   * in order to maintain compatability with previous releases.
+   * Use Java 1.4 ImageIO methods to load an image. 
    */
   protected PImage loadImageIO(String filename) {
     InputStream stream = openStream(filename);
@@ -3682,49 +3684,55 @@ in   */
       System.err.println("The image " + filename + " could not be found.");
       return null;
     }
-
+    
     try {
-      Class ioClass = Class.forName("javax.imageio.ImageIO");
-      Method readMethod =
-        ioClass.getMethod("read", new Class[] { InputStream.class });
-      Object bimage = readMethod.invoke(null, new Object[] { stream });
+//      Class ioClass = Class.forName("javax.imageio.ImageIO");
+//      Method readMethod =
+//        ioClass.getMethod("read", new Class[] { InputStream.class });
+//      Object bimage = readMethod.invoke(null, new Object[] { stream });
 
       // need to get width and height, then create pixels[] at that size
       //int px[] = null;
 
-      Class biClass =
-        Class.forName("java.awt.image.BufferedImage");
+//      Class biClass =
+//        Class.forName("java.awt.image.BufferedImage");
+//
+//      Method getHeightMethod =
+//        biClass.getMethod("getHeight", (Class[]) null);
+//      Integer hi = (Integer) getHeightMethod.invoke(bimage, (Object[]) null);
+//
+//      Method getWidthMethod =
+//        biClass.getMethod("getWidth", (Class[]) null);
+//      Integer wi = (Integer) getWidthMethod.invoke(bimage, (Object[]) null);
 
-      Method getHeightMethod =
-        biClass.getMethod("getHeight", (Class[]) null);
-      Integer hi = (Integer) getHeightMethod.invoke(bimage, (Object[]) null);
+//      PImage outgoing = new PImage(wi.intValue(), hi.intValue());
+//      outgoing.parent = this;
 
-      Method getWidthMethod =
-        biClass.getMethod("getWidth", (Class[]) null);
-      Integer wi = (Integer) getWidthMethod.invoke(bimage, (Object[]) null);
+      BufferedImage bi = ImageIO.read(stream);
+      PImage outgoing = new PImage(bi.getWidth(), bi.getHeight());
+      outgoing.parent = this;
 
+      bi.getRGB(0, 0, outgoing.width, outgoing.height, 
+                outgoing.pixels, 0, outgoing.width);
+
+//      Method getRgbMethod =
+//        biClass.getMethod("getRGB", new Class[] {
+//            Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE,
+//            outgoing.pixels.getClass(), Integer.TYPE, Integer.TYPE
+//          });
+//      getRgbMethod.invoke(bimage, new Object[] {
+//          new Integer(0), new Integer(0),
+//          new Integer(outgoing.width), new Integer(outgoing.height),
+//          outgoing.pixels, new Integer(0), new Integer(outgoing.width)
+//        });
+
+      // check the alpha for this image
       // was gonna call getType() on the image to see if RGB or ARGB,
       // but it's not actually useful, since gif images will come through
       // as TYPE_BYTE_INDEXED, which means it'll still have to check for
       // the transparency. also, would have to iterate through all the other
       // types and guess whether alpha was in there, so.. just gonna stick
       // with the old method.
-
-      PImage outgoing = new PImage(wi.intValue(), hi.intValue());
-      outgoing.parent = this;
-
-      Method getRgbMethod =
-        biClass.getMethod("getRGB", new Class[] {
-            Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE,
-            outgoing.pixels.getClass(), Integer.TYPE, Integer.TYPE
-          });
-      getRgbMethod.invoke(bimage, new Object[] {
-          new Integer(0), new Integer(0),
-          new Integer(outgoing.width), new Integer(outgoing.height),
-          outgoing.pixels, new Integer(0), new Integer(outgoing.width)
-        });
-
-      // check the alpha for this image
       outgoing.checkAlpha();
 
       // return the image
@@ -4057,13 +4065,13 @@ in   */
 //    }
 
     String lowerName = name.toLowerCase();
-    Font font = null;
+    Font baseFont = null;
 
     try {
-      Method deriveFontMethod =
-        Font.class.getMethod("deriveFont",
-                             new Class[] { Float.TYPE });
-      Float floatSize = new Float(size);
+//      Method deriveFontMethod =
+//        Font.class.getMethod("deriveFont",
+//                             new Class[] { Float.TYPE });
+//      Float floatSize = new Float(size);
 
       if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
         InputStream stream = openStream(name);
@@ -4075,31 +4083,29 @@ in   */
           return null;
         }
 
-        //font = Font.createFont(Font.TRUETYPE_FONT, openStream(name));
-        Method createFontMethod =
-          Font.class.getMethod("createFont",
-                               new Class[] { Integer.TYPE,
-                                             InputStream.class });
-        Field ttf = Font.class.getField("TRUETYPE_FONT");
-        Integer ttfInteger = new Integer(ttf.getInt(ttf));
-        Font baseFont = (Font)
-          createFontMethod.invoke(name,
-                                  new Object[] { ttfInteger,
-                                                 openStream(name) });
-        font = (Font) deriveFontMethod.invoke(baseFont,
-                                              new Object[] { floatSize });
+        baseFont = Font.createFont(Font.TRUETYPE_FONT, openStream(name));
+//        Method createFontMethod =
+//          Font.class.getMethod("createFont",
+//                               new Class[] { Integer.TYPE,
+//                                             InputStream.class });
+//        Field ttf = Font.class.getField("TRUETYPE_FONT");
+//        Integer ttfInteger = new Integer(ttf.getInt(ttf));
+//        Font baseFont = (Font)
+//          createFontMethod.invoke(name,
+//                                  new Object[] { ttfInteger,
+//                                                 openStream(name) });
+//        font = (Font) deriveFontMethod.invoke(baseFont,
+//                                              new Object[] { floatSize });
       } else {
-        Font baseFont = new Font(name, Font.PLAIN, 1);
-        font = (Font)
-          deriveFontMethod.invoke(baseFont, new Object[] { floatSize });
+        baseFont = new Font(name, Font.PLAIN, 1);
       }
+      //return baseFont.deriveFont(size);
 
     } catch (Exception e) {
+      System.err.println("Problem using createFont() with " + name);
       e.printStackTrace();
-      throw new RuntimeException("Problem using createFont() " +
-                                 "with the file " + name);
     }
-    return new PFont(font, smooth, charset);
+    return new PFont(baseFont.deriveFont(size), smooth, charset);
   }
 
 
