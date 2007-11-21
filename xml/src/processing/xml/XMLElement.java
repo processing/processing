@@ -65,6 +65,9 @@ import processing.core.PApplet;
  * sketch. As such, this is not a full-featured library for handling XML data.
  * For those who need it, more sophisticated libraries are available, and there
  * are no plans to add significant new features to this library.
+ * <P>
+ * The encoding parameter inside XML files is ignored, all files are
+ * parsed with UTF-8 encoding (as of release 0134).
  * <CODE>
  * import processing.xml.*;
  *
@@ -494,10 +497,10 @@ public class XMLElement
 
     public XMLElement(String s) {
         try {
-                        parseString(s);
-                } catch (XMLParseException e) {
-                        e.printStackTrace();
-                }
+                parseString(s);
+        } catch (XMLParseException e) {
+                e.printStackTrace();
+        }
     }
 
 
