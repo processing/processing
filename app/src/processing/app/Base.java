@@ -128,7 +128,11 @@ public class Base {
     untitledFolder.deleteOnExit();
 
     // run static initialization that grabs all the prefs
-    Preferences.init();
+    try {
+      Preferences.init();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     /*Base base =*/ new Base(args);
   }
@@ -984,12 +988,6 @@ public class Base {
   }
 
 
-  class SketchMenuItem {
-    JMenu item;
-
-  }
-
-
   /**
    * Scan a folder recursively, and add any sketches found to the menu
    * specified. Set the openReplaces parameter to true when opening the sketch
@@ -1200,7 +1198,7 @@ public class Base {
 
 
   /**
-   * returns true if the Processing is running on a Mac OS machine,
+   * returns true if Processing is running on a Mac OS machine,
    * specifically a Mac OS X machine because it doesn't un on OS 9 anymore.
    */
   static public boolean isMacOS() {
