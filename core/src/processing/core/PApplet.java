@@ -4650,8 +4650,8 @@ in   */
    * This is basically saveBytes(blah, loadBytes()), but done
    * in a less confusing manner.
    */
-  public void saveStream(String filename, String stream) {
-    saveStream(saveFile(filename), stream);
+  public void saveStream(String targetFilename, String sourceLocation) {
+    saveStream(saveFile(targetFilename), sourceLocation);
   }
 
 
@@ -4661,14 +4661,18 @@ in   */
    * Note that unlike other api methods, this will not automatically
    * uncompress gzip files.
    */
-  public void saveStream(File file, String stream) {
+  public void saveStream(File targetFile, String sourceLocation) {
+    saveStream(targetFile, openStreamRaw(sourceLocation));
+  }
+  
+  
+  static public void saveStream(File targetFile, InputStream sourceStream) {
     File tempFile = null;
     try {
-      File parentDir = file.getParentFile();
-      tempFile = File.createTempFile(file.getName(), null, parentDir);
+      File parentDir = targetFile.getParentFile();
+      tempFile = File.createTempFile(targetFile.getName(), null, parentDir);
 
-      InputStream is = openStream(stream);
-      BufferedInputStream bis = new BufferedInputStream(is, 16384);
+      BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);
       FileOutputStream fos = new FileOutputStream(tempFile);
       BufferedOutputStream bos = new BufferedOutputStream(fos);
 
@@ -4682,7 +4686,7 @@ in   */
       bos.close();
       bos = null;
 
-      if (!tempFile.renameTo(file)) {
+      if (!tempFile.renameTo(targetFile)) {
         System.err.println("Could not rename temporary file " +
                            tempFile.getAbsolutePath());
       }
