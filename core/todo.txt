@@ -1,6 +1,11 @@
 0136 core
+X add static version of saveStream() (uses a File and InputStream object)
+
+_ can loadBytes() be improved by querying file size first?
+_   loadBytes() is used for images.. ouch
 
 _ can bug 77 be fixed with a finalizer? 
+_ remove gzip-related hint()
 
 
 reference/online
