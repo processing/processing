@@ -20,12 +20,12 @@ void setup(){
   orb = new Orb(50, 50, 3);
   velocity = new Vect2D(.5, 0);
 
-  // calculate ground peak heights 
+  // Calculate ground peak heights 
   for (int i=0; i<peakHeights.length; i++){
     peakHeights[i] = random(height-40, height-30);
   }
 
-  /* float value required for segment width (segs)
+  /* Float value required for segment width (segs)
    calculations so the ground spans the entire 
    display window, regardless of segment number. */
   float segs = segments;
@@ -37,17 +37,17 @@ void setup(){
 
 
 void draw(){
-  // background
+  // Background
   noStroke();
   fill(0, 15);
   rect(0, 0, width, height);
 
-  // move orb
+  // Move orb
   orb.x += velocity.vx;
   velocity.vy += gravity;
   orb.y += velocity.vy;
 
-  // draw ground
+  // Draw ground
   fill(127);
   beginShape();
   for (int i=0; i<segments; i++){
@@ -58,12 +58,12 @@ void draw(){
   vertex(ground[0].x1, height);
   endShape(CLOSE);
 
-  // draw orb
+  // Draw orb
   noStroke();
   fill(200);
   ellipse(orb.x, orb.y, orb.r*2, orb.r*2);
 
-  // collision detection
+  // Collision detection
   checkWallCollision();
   for (int i=0; i<segments; i++){
     checkGroundCollision(ground[i]);
@@ -87,22 +87,22 @@ void checkWallCollision(){
 
 void checkGroundCollision(Ground groundSegment) {
 
-  // get difference between orb and ground
+  // Get difference between orb and ground
   float deltaX = orb.x - groundSegment.x;
   float deltaY = orb.y - groundSegment.y;
 
-  // precalculate trig values
+  // Precalculate trig values
   float cosine = cos(groundSegment.rot);
   float sine = sin(groundSegment.rot);
 
-  /* rotate ground and velocity to allow 
+  /* Rotate ground and velocity to allow 
    orthogonal collision calculations */
   float groundXTemp = cosine * deltaX + sine * deltaY;
   float groundYTemp = cosine * deltaY - sine * deltaX;
   float velocityXTemp = cosine * velocity.vx + sine * velocity.vy;
   float velocityYTemp = cosine * velocity.vy - sine * velocity.vx;
 
-  /* ground collision - check for surface 
+  /* Ground collision - check for surface 
    collision and also that orb is within 
    left/rights bounds of ground segment */
   if (groundYTemp > -orb.r &&
@@ -115,7 +115,7 @@ void checkGroundCollision(Ground groundSegment) {
     velocityYTemp *= damping;
   }
 
-  // reset ground, velocity and orb
+  // Reset ground, velocity and orb
   deltaX = cosine * groundXTemp - sine * groundYTemp;
   deltaY = cosine * groundYTemp + sine * groundXTemp;
   velocity.vx = cosine * velocityXTemp - sine * velocityYTemp;
@@ -129,11 +129,11 @@ class Ground {
   float x1, y1, x2, y2;  
   float x, y, len, rot;
 
-  // default constructor
+  // Default constructor
   Ground(){
   }
 
-  // constructor
+  // Constructor
   Ground(float x1, float y1, float x2, float y2) {
     this.x1 = x1;
     this.y1 = y1;
@@ -150,7 +150,7 @@ class Ground {
 class Orb{
   float x, y, r;
 
-  // default constructor
+  // Default constructor
   Orb() {
   }
 
@@ -164,7 +164,7 @@ class Orb{
 class Vect2D{
   float vx, vy;
 
-  // default constructor
+  // Default constructor
   Vect2D() {
   }
 

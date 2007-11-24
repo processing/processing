@@ -3,7 +3,7 @@
  * by Simon Greenwold. 
  * 
  * Vary the specular reflection component of a material
- * with vertical position of the mouse. 
+ * with the horizontal position of the mouse. 
  */
 
 void setup() {

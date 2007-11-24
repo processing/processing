@@ -27,12 +27,12 @@ void setup()
   ellipseMode(CENTER);
   circle1 = new CircleButton(30, 100, 100, buttoncolor, highlight);
 
-  // Define and create rectangle button
+  // Define and create circle button
   buttoncolor = color(204);
   highlight = color(153); 
   circle2 = new CircleButton(130, 110, 24, buttoncolor, highlight);
 
-  // Define and create rectangle button
+  // Define and create circle button
   buttoncolor = color(153);
   highlight = color(102); 
   circle3 = new CircleButton(130, 140, 24, buttoncolor, highlight);
