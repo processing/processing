@@ -23,8 +23,7 @@ text(lines, 3, 70);
 </example>
 
 <description>
-Sets the way text draws to the screen. In the default configuration, it's possible to rotate, scale, and place letters in three dimensional space. Changing to SCREEN mode draws letters directly to the front of the windows and increases the rendering quality of the letters. The letters draw at the actual size of the font (in pixels) and therefore calls to <b>textSize()</b> will not affect the size of the letters. To create a font at the size you desire, use the "Create font..." option in the Tools menu.
-</description>
+Sets the way text draws to the screen. In the default configuration (the MODEL mode), it's possible to rotate, scale, and place letters in three dimensional space. Changing to SCREEN mode draws letters directly to the front of the window and increases the rendering quality. The letters draw at the actual size of the font (in pixels) and therefore calls to <b>textSize()</b> will not affect the size of the letters. To create a font at the size you desire, use the "Create font..." option in the Tools menu. <br /><br />The SHAPE mode draws text using the the glyph outlines of individual characters rather than as textures. If the outlines are not available, then <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will be used instead. For this reason, be sure to call <b>textMode()</b> after calling <b>textFont()</b>. Currently, textMode(SHAPE) is only supported by OPENGL rendering mode.</description>
 
 <syntax>
 textMode(<c>MODE</c>)
@@ -32,7 +31,7 @@ textMode(<c>MODE</c>)
 
 <parameter>
 <label>MODE</label>
-<description>either MODEL or SCREEN</description>
+<description>either MODEL, SCREEN, or SHAPE</description>
 </parameter>
 
 <returns>None</returns>

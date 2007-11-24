@@ -38,7 +38,7 @@ frameRate
 <returns></returns>
 
 <related>
-framerate()
+frameRate()
 </related>
 
 <availability>1.0</availability>
