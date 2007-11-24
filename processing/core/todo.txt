@@ -1,37 +1,6 @@
-0135 core
-X modelX/Y/Z still having trouble
-X   http://dev.processing.org/bugs/show_bug.cgi?id=486
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1186614415
-X add docs for model/screen/Y/Z
-X   added for model, along with example. 
-X   screen was already complete
-X bring back opengl mipmaps (create them myself? try w/ newer jogl?)
-X   opengl mipmaps are leaking (regression in spite of #150 fix)
-X   http://dev.processing.org/bugs/show_bug.cgi?id=610
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1193967684
-X   seems to not actually be a problem on mbp, try desktop?
-X copy() was needing updatePixels() when used with OPENGL or JAVA2D
-X   http://dev.processing.org/bugs/show_bug.cgi?id=681
-X   check on the bug report for this one as well
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1173394373
+0136 core
 
-earlier 
-o add notes about fixing serial on the mac to the faq (and link to bug)
-X   not necessary, hopefuly things working better now
-X utf8 and encodings
-X   createWriter() and createReader() that take encodings
-X   xml files seem to be a lot of UTF-8
-X xml stuff
-X   getItem("name");
-X   getItems("name"); (same, but looks for multiple matches
-X   getItem("path/to/item");
-o   or could use getItem and getItemList? getItemArray()?
-o   read more about xpath
-X parse xml from a string object
-X   not have to just use Reader
-X   add mention of this to the board
-o update to new version of jogl
-X fix mini p5 bugs for eugene
+_ can bug 77 be fixed with a finalizer? 
 
 
 reference/online
