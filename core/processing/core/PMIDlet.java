@@ -2092,12 +2092,17 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
     
     public final int atan(int value1) {
         int result;
+        int sign = 1;
+        if (value1 < 0) {
+            sign = -1;
+            value1 = -value1;
+        }
         if (value1 <= ONE) {
             result = div(value1, ONE + mul(((int) (0.28f * ONE)), mul(value1, value1)));
         } else {
             result = HALF_PI - div(value1, (mul(value1, value1) + ((int) (0.28f * ONE))));
         }
-        return result;
+        return sign * result;
     }
     
     public final int atan2(int y, int x) {
