@@ -27,8 +27,7 @@ rotate(<c>angle</c>);
 
 <parameter>
 <label>angle</label>
-<description>float: angle of rotation specified in radians or degrees depending on the current angle mode
-</description>
+<description>float: angle of rotation specified in radians</description>
 </parameter>
 
 <returns>None</returns>
