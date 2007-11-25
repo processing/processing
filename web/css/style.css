@@ -314,6 +314,8 @@ hr.noShade { height: 0px; color: #ccc; background: #ccc; margin-bottom: 15px; cl
 /*** ref index ***/
 .abridged-notice { margin: 0 50px 30px 0; }
 
+.libraries { margin: 0 50px 5px 0; }
+
 div.ref-col { width: 30%; 
     margin-right: 2%; 
     float: left; 
