@@ -5387,15 +5387,16 @@ in   */
 
   static public Object subset(Object list, int start) {
     int length = Array.getLength(list);
-    int count = length - start;
+    return subset(list, start, length - start);
+    /*
     Class type = list.getClass().getComponentType();
     Object outgoing = Array.newInstance(type, count);
-    System.arraycopy(list, 0, outgoing, 0, count);
+    System.arraycopy(list, start, outgoing, 0, count);
     return outgoing;
+    */
   }
 
   static public Object subset(Object list, int start, int count) {
-    //int length = Array.getLength(list);
     Class type = list.getClass().getComponentType();
     Object outgoing = Array.newInstance(type, count);
     System.arraycopy(list, start, outgoing, 0, count);
