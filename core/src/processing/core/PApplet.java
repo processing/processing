@@ -2533,8 +2533,19 @@ in   */
       }
     } else {
       finished = true;  // stop() will be called as the thread exits
-      //stop();
       exit = true;
+
+      if (!looping) {
+        // if not looping, need to call stop explicitly,
+        // because the main thread will be sleeping
+        stop();
+
+        if ((leechErr == null) && !online) {
+          // don't want to call System.exit() when an applet,
+          // or running inside the PDE (would kill the PDE)
+          System.exit(0);
+        }
+      }
     }
   }
 
@@ -3676,7 +3687,7 @@ in   */
 
 
   /**
-   * Use Java 1.4 ImageIO methods to load an image. 
+   * Use Java 1.4 ImageIO methods to load an image.
    */
   protected PImage loadImageIO(String filename) {
     InputStream stream = openStream(filename);
@@ -3684,7 +3695,7 @@ in   */
       System.err.println("The image " + filename + " could not be found.");
       return null;
     }
-    
+
     try {
 //      Class ioClass = Class.forName("javax.imageio.ImageIO");
 //      Method readMethod =
@@ -3712,7 +3723,7 @@ in   */
       PImage outgoing = new PImage(bi.getWidth(), bi.getHeight());
       outgoing.parent = this;
 
-      bi.getRGB(0, 0, outgoing.width, outgoing.height, 
+      bi.getRGB(0, 0, outgoing.width, outgoing.height,
                 outgoing.pixels, 0, outgoing.width);
 
 //      Method getRgbMethod =
@@ -4526,7 +4537,11 @@ in   */
 
   static public InputStream openStream(File file) {
     try {
-      return new FileInputStream(file);
+      InputStream input = new FileInputStream(file);
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        return new GZIPInputStream(input);
+      }
+      return input;
 
     } catch (IOException e) {
       if (file == null) {
@@ -4664,8 +4679,8 @@ in   */
   public void saveStream(File targetFile, String sourceLocation) {
     saveStream(targetFile, openStreamRaw(sourceLocation));
   }
-  
-  
+
+
   static public void saveStream(File targetFile, InputStream sourceStream) {
     File tempFile = null;
     try {
