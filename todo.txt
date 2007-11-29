@@ -1,6 +1,9 @@
 0136 pde
 
 documentation
+_ errors in pdf/index.html examples
+_   probably remove these, move the useful ones to the examples folder
+_   that way people will read the reference
 _ i can't fix these:
 An unexpected error has been detected by HotSpot Virtual Machine:
 # EXCEPTION_ACCESS_VIOLATION
