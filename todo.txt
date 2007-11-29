@@ -1,5 +1,13 @@
 0136 pde
 
+documentation
+_ i can't fix these:
+An unexpected error has been detected by HotSpot Virtual Machine:
+# EXCEPTION_ACCESS_VIOLATION
+all i can do is find things that might trigger them, but it's more likely
+than not to be a java problem, and not something that can be fixed
+_ notes about getting best results from text in each renderer
+_   http://dev.processing.org/bugs/show_bug.cgi?id=466
 
 eclipse
 _ document how to properly integrate with eclipse
@@ -152,7 +160,9 @@ _   avoid garbage that people have installed on their machines
 _   antlr.jar in the classpath will cause trouble.. 
 _     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
 _   jogl jar files, or jogl install will cause trouble
-_     /System/Library/Extensions or /Library/Extensions
+_     /System/Library/Java/Extensions or /Library/Java/Extensions
+_     the /System one contains qtjava
+_     the /Library one is empty (by default), maybe skip it?
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases
