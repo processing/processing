@@ -1,5 +1,7 @@
 0136 core
 X add static version of saveStream() (uses a File and InputStream object)
+X A "noLoop()" sketch may be unresponsive to exit request
+X   http://dev.processing.org/bugs/show_bug.cgi?id=694
 
 _ can loadBytes() be improved by querying file size first?
 _   loadBytes() is used for images.. ouch
