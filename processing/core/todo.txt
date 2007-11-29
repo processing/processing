@@ -2,6 +2,12 @@
 X add static version of saveStream() (uses a File and InputStream object)
 X A "noLoop()" sketch may be unresponsive to exit request
 X   http://dev.processing.org/bugs/show_bug.cgi?id=694
+X Fixed bug with subset() when no length parameter was specified
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1196366408
+_ ENABLE_DEPTH_SORT causing trouble with MovieMaker
+_   need to make the flush() api accessible
+_   http://dev.processing.org/bugs/show_bug.cgi?id=692
+
 
 _ can loadBytes() be improved by querying file size first?
 _   loadBytes() is used for images.. ouch
