@@ -565,9 +565,8 @@ void keyPressed() {
 </PRE>
 </li>
 
-<li>An UnsupportedClassVersionError means that you're using code that was compiled for a later version of Java than is supported by Processing. Processing <A HREF="../environment/platforms.html#java">supports</A> Java 1.4. A message such as <PRE>
-<PRE> java.lang.UnsupportedClassVersionError: (Unsupported major.minor version 49.0)</PRE>
-means that the code was compiled for Java 1.5.
+<li>An UnsupportedClassVersionError means that you're using code that was compiled for a later version of Java than is supported by Processing. Processing <A HREF="../environment/platforms.html#java">supports</A> Java 1.4. A message like <PRE> java.lang.UnsupportedClassVersionError: (Unsupported major.minor version 49.0)</PRE>
+means that the code was compiled for Java 1.5, for instance.
 
 <li>Any code that accesses the pixels[] array should be placed 
 inside <TT>loadPixels()</TT> and <TT>updatePixels()</TT>. This can be 
