@@ -28,7 +28,9 @@ void draw() {
 </example>
 
 <description>
-The system variable <b>key</b> always contains the value of the most recently pressed key on the keyboard. For detecting the arrow keys, the <b>keyCode</b> variable is set to either UP, DOWN, LEFT, or RIGHT.
+The system variable <b>key</b> always contains the value of the most recent key on the keyboard that was used (either pressed or released). 
+<br/> <br/>
+For non-ASCII keys, use the <b>keyCode</b> variable. The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b> If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make sure your program will work for all platforms.
 </description>
 
 <syntax>

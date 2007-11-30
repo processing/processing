@@ -21,9 +21,8 @@ void draw() {
   rect(25, 25, 50, 50);
 }
 
-void keyReleased() 
-{
-  if(value == 0) {
+void keyReleased() {
+  if (value == 0) {
     value = 255;
   } else {
     value = 0;
@@ -33,7 +32,7 @@ void keyReleased()
 </example>
 
 <description>
-The <b>keyReleased()</b> function is called once every time a key is released.
+The <b>keyReleased()</b> function is called once every time a key is released. The key that was released will be stored in the <b>key</b> variable. See <b>key</b> and <b>keyReleased</b> for more information.
 </description>
 
 <syntax>

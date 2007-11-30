@@ -116,16 +116,16 @@ Windows
 
 <UL>
 <li>If you're using the "without Java" download, try downloading the version that includes Java. 
-Chances are, your machine has Java 1.5 installed, which is <A HREF="../environment/platforms.html#java">not supported</A> 
-and causes lots of headaches. For instance, it won't play nice with some 
-graphics cards and causes the Processing window to come up mostly blank.
-<li> Processing seems to have trouble starting when run from a user 
-account that contains non-ascii characters. For instance, if your name 
-contains Japanese characters or umlauts, it's likely to have trouble. 
-Sometimes using run.bat instead will fix this. Another fix is to
-create a user account that uses only ascii characters. In the meantime, 
-we're looking for a fix. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=49">Bug 49</A>)
+Chances are, your machine has another version of Java installed that is <A HREF="../environment/platforms.html#java">not supported</A>. 
+We only test with the version of Java that's included with the Processing download.
+<li> Processing sometimes has trouble when run from a user account that contains non-ASCII characters. 
+For instance, if your name contains umlauts or Japanese characters, it may not start, or may give errors whenever a sketch is run.
+The fix is to create a user account that uses only ASCII characters, but we're looking for a more permanent solution.
+Unfortunately it's taking a while because the US English version of Windows does not have this problem, and we don't own any international editions of Windows.
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=49">Bug 49</A>)
+<li>Try deleting your preferences file (located in Documents and Settings &rarr; Application Data &rarr; Processing &rarr; preferences.txt)
+Sometimes a bad preferences file can prevent the application from running.
+If you've recently hand-edited preferences.txt, that's also a likely suspect. 
 <li>If you have lots of garbage in your CLASSPATH environment
   variable, that might cause trouble starting up a sketch. You might
   get "Couldn't find package xxx.xxx" errors. Clean things up by avoiding
@@ -134,14 +134,11 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=49">Bug 49</A>)
   future, we'd like to detect errors like this before they cause
   trouble. That issue is being tracked at <A
   HREF="http://dev.processing.org/bugs/show_bug.cgi?id=112">Bug 112</A>.
-<!--<li>You might also try using run.bat to start processing. Lots
-  of people seem to have a better time with this method.-->
 <li>Some graphics cards have conflicts with Java applications and
 therefore Processing, which can cause the application to hang or
 freeze. Under one scenario, disabling anti-aliasing on the card will
 get rid of these problems (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=232">Bug 232</A>).
-
 <li>If you're still having trouble, try disabling any overly
   protective virus scanning software. It might be holding things up,
   especially when libraries have been imported.
