@@ -30,7 +30,7 @@ function get_curated($curated, $start = 0, $num = 12)
 
 function get_curated_short()
 {
-    $curated = curated_xml(1);
+    $curated = curated_xml(2);
     
     // output html
     foreach ($curated as $c) {
