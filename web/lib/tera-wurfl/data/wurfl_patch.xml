@@ -30,12 +30,27 @@
             </group> 
        </device>
 
+       <device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; PPC; 240x320;SPV M3100; OpVer 14.123.2.733)" actual_device_root="true" fall_back="ms_mobile_browser_ver1" id="orange_m3100_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="Orange" />
+                <capability name="model_name" value="SPV M3100" />
+            </group>
+       </device>
+
        <device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; IEMobile 6.8) PPC; 240x320; HTC_P3600/1.0 Profile/MIDP-2.0 Configuration/CLDC-1.1" actual_device_root="true" fall_back="ms_mobile_ver6" id="htc_p3600_ver1">
             <group id="product_info">
                 <capability name="brand_name" value="HTC" />
                 <capability name="model_name" value="P3600" />
             </group>
        </device>
+
+
+       <device user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; IEMobile 6.12) PPC; 240x320; HTC_P3600i/1.0 Profile/MIDP-2.0 Configuration/CLDC-1.1" fall_back="htc_p3600_ver1" id="htc_p3600i_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="HTC" />
+                <capability name="model_name" value="P3600i" />
+            </group>
+       </device>       
 
        <device user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; Xda orbit; 240x320)" actual_device_root="true" fall_back="ms_mobile_browser_ver1_subceppc240320" id="xda_orbit_ver1">
             <group id="product_info">
@@ -112,6 +127,32 @@
             </group>
        </device> 
 
+       <device user_agent="SonyEricssonP1i/R100 Mozilla/4.0 (compatible; MSIE 6.0; Symbian OS; 598) Opera 8.65 [en-US]" actual_device_root="true" id="sonyericsson_p1i_ver1" fall_back="sonyericsson_netfront_ver3">
+            <group id="product_info">
+                <capability name="brand_name" value="SonyEricsson" />
+                <capability name="model_name" value="P1i" />
+            </group>
+       </device>
+
+       <device user_agent="SonyEricssonW580i/R6BC Browser/NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1" fall_back="sonyericsson_netfront_ver3" id="sonyericsson_w580i_ver1" actual_device_root="true">
+       </device>
+
+       <!-- Sony Ericsson T650i -->
+       <device user_agent="SonyEricssonT650i" fall_back="sonyericsson_netfront_ver3" id="sonyericsson_t650i_ver1" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="SonyEricsson" />
+                <capability name="model_name" value="T650i" />
+            </group>
+        </device>
+
+       <!-- Sony Ericsson Z750i -->
+       <device user_agent="SonyEricssonZ750i" fall_back="sonyericsson_netfront_ver3" id="sonyericsson_z750i_ver1" actual_device_root="true">
+            <group id="product_info">
+                <capability name="brand_name" value="SonyEricsson" />
+                <capability name="model_name" value="Z750i" />
+            </group>
+        </device>
+
        <!-- Sony Ericsson K810 -->
        <device user_agent="SonyEricssonK810" fall_back="sonyericsson_netfront_ver3" id="sonyericsson_k810_ver1" actual_device_root="true">
             <group id="product_info">
@@ -127,6 +168,14 @@
                 <capability name="model_name" value="K550" />
             </group>
         </device>
+
+	<!-- LG 800 -->
+	<device user_agent="LGE-LG800" actual_device_root="true" fall_back="generic" id="lg_800_ver1">
+            <group id="product_info">
+                <capability name="brand_name" value="LG" />
+                <capability name="model_name" value="800" />
+            </group>
+	</device>
 
 	<!-- LG LX570 -->
 	<device user_agent="LG-LX570" actual_device_root="true" fall_back="opwv_v62_generic" id="lg_lx570_ver1">

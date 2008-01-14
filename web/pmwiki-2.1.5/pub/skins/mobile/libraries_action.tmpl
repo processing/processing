@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-  <title>$WikiTitle - {$Group} - {$Title} $Action</title>
+  <title>Mobile Processing &raquo; {$Group} - {$Title} $Action</title>
   <meta http-equiv='Content-Style-Type' content='text/css' />
   <link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" 
         type="image/x-icon" />
@@ -41,34 +41,32 @@
     <a href="$SITE_ROOTdiscourse/index.php">Discourse</a>
 
     <span class="backslash">\</span>
-    Wiki
+    <a href="$SITE_ROOTwiki/">Wiki</a>
 </div>
-<!--markup:
-(:if group 'Learning':)
-This is a TEST.
-(:if:)
--->
-<div id="subnavigation" style="padding-left: 506px;">
+<div id="subnavigation" style="padding-left: 208px">
     <img src="$SITE_ROOTimages/nav_bottomarrow.png" align="absmiddle">
-    <a href="{$ScriptUrl}">Home</a>
+
+    <a href="$SITE_ROOTreference/index.php">Language</a>
 
     <span class="backslash">\</span>
-    <a href="{$ScriptUrl}/$[{$SiteGroup}/AllRecentChanges]">$[Recent Changes]</a>
+    <a href="$SITE_ROOTreference/environment/index.php">Environment</a> 
 
     <span class="backslash">\</span>
-    <a href="{$ScriptUrl}/$[{$SiteGroup}/Search]">$[Search]</a>
-
-    <span class="backslash">\</span>
-    <a href="{$PageUrl}?action=logout">$[Logout]</a>
+    Libraries
 </div>
 <div class="content">
-  <!--PageTitleFmt-->
-  <h3>{$Title}</h3>
-  <br>
-  <br>
-  <!--/PageTitleFmt-->
+  <img src="$SITE_ROOTreference/libraries/images/header.png"><br />
+  <br />
+  <br />
+  <img src="$SITE_ROOTreference/libraries/images/core.png"><br />
+  <br />
+  <a href="$SITE_ROOTreference/libraries/index.php">Click here to return to the Core library reference.</a><br />
+  <br />
+  <br />
+  <img src="$SITE_ROOTreference/libraries/images/contributions.png"><br />
+  <br />
   <!--PageText-->
-  <div style="margin-top: 40px">
+  <div style="margin-top: 40px; clear: both;">
     <a rel="nofollow" href='{$PageUrl}?action=edit'>$[Edit]</a> -
     <a rel="nofollow" href='{$PageUrl}?action=upload'>$[Uploads]</a> -
     <a rel="nofollow" href='{$PageUrl}?action=diff'>$[History]</a> -
