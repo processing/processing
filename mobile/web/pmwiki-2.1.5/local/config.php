@@ -32,14 +32,14 @@ $Skin = 'mobile';
 $AuthUser['yabb'] = '/var/www/processing/discourse/yabb_beta/Members';
 include_once("$FarmD/scripts/authuser.php");
 $Author = $AuthId;
-$GroupPattern = '(?:Site|PmWiki|Main|Profiles)';
+$GroupPattern = '(?:Site|PmWiki|Main|Profiles|FAQ|Tutorials|Libraries)';
 
 ## You'll probably want to set an administrative password that you
 ## can use to get into password-protected pages.  Also, by default 
 ## the "attr" passwords for the PmWiki and Main groups are locked, so
 ## an admin password is a good way to unlock those.  See PmWiki.Passwords
 ## and PmWiki.PasswordsAdmin.
-$DefaultPasswords['admin'] = '$1$m2Hkmzj/$BXMH2jxwYlYXBBVkPvuaA.';
+$DefaultPasswords['admin'] = 'id:fli';//'$1$m2Hkmzj/$BXMH2jxwYlYXBBVkPvuaA.';
 $DefaultPasswords['edit'] = 'id:*';
 
 ##  PmWiki comes with graphical user interface buttons for editing;
@@ -50,8 +50,10 @@ $DefaultPasswords['edit'] = 'id:*';
 ##  You'll also need to set a default upload password, or else set
 ##  passwords on individual groups and pages.  For more information
 ##  see PmWiki.UploadsAdmin.
-# $EnableUpload = 1;                       
-# $DefaultPasswords['upload'] = crypt('secret');
+$EnableUpload = 1;
+$EnableUploadVersions=1;
+$UploadMaxSize=1048576;
+$DefaultPasswords['upload'] = 'id:*';
 
 ##  Setting $EnableDiag turns on the ?action=diag and ?action=phpinfo
 ##  actions, which often helps the PmWiki authors to troubleshoot 

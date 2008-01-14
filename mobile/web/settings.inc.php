@@ -1,5 +1,6 @@
 <?php
 
-define(SITE_ROOT, '/processing/');
+define(URL_ROOT, 'http://mobile.processing.org/');
+define(SITE_ROOT, '/');
 
 ?>
