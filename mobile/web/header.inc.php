@@ -103,17 +103,19 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
     Phones
 <?php     } ?>
     <span class="backslash">\</span>
-<?php if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'faq/') === false) { ?>
+<?php     if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'faq/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>faq/index.<?php echo $ext ?>">FAQ</a>
-<?php } else { ?>
+<?php     } else { ?>
     FAQ
-<?php } ?>
+<?php     } ?>
     <span class="backslash">\</span>
 <?php     if (strstr($_SERVER['PHP_SELF'], SITE_ROOT . 'discourse/') === false) { ?>
     <a href="<?php echo SITE_ROOT ?>discourse/index.php">Discourse</a>
 <?php     } else { ?>
     Discourse
 <?php     } ?>
+    <span class="backslash">\</span>
+    <a href="<?php echo SITE_ROOT ?>wiki/index.php">Wiki</a>
 <?php } ?>
 </div>
 <?php 
