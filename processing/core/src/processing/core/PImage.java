@@ -1056,7 +1056,7 @@ public class PImage implements PConstants, Cloneable {
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
     blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, REPLACE);
-    
+
     /*
     if (imageMode == CORNER) {  // if CORNERS, do nothing
       sx2 += sx1;
@@ -2188,34 +2188,6 @@ public class PImage implements PConstants, Cloneable {
   };
 
 
-  /*
-  protected boolean saveHeaderTIFF(OutputStream output) {
-    try {
-      byte tiff[] = new byte[768];
-      System.arraycopy(tiff_header, 0, tiff, 0, tiff_header.length);
-
-      tiff[30] = (byte) ((width >> 8) & 0xff);
-      tiff[31] = (byte) ((width) & 0xff);
-      tiff[42] = tiff[102] = (byte) ((height >> 8) & 0xff);
-      tiff[43] = tiff[103] = (byte) ((height) & 0xff);
-
-      int count = width*height*3;
-      tiff[114] = (byte) ((count >> 24) & 0xff);
-      tiff[115] = (byte) ((count >> 16) & 0xff);
-      tiff[116] = (byte) ((count >> 8) & 0xff);
-      tiff[117] = (byte) ((count) & 0xff);
-
-      output.write(tiff);
-      return true;
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return false;
-  }
-  */
-
-
   static final String TIFF_ERROR =
     "Error: Processing can only read its own TIFF files.";
 
@@ -2551,8 +2523,8 @@ public class PImage implements PConstants, Cloneable {
    * To get a list of the supported formats for writing, use: <BR>
    * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
    * <p>
-   * To use the original built-in image writers, use .tga or .tif as the 
-   * extension, or don't include an extension. When no extension is used, 
+   * To use the original built-in image writers, use .tga or .tif as the
+   * extension, or don't include an extension. When no extension is used,
    * the extension .tif will be added to the file name.
    * <p>
    * The ImageIO API claims to support wbmp files, however they probably
