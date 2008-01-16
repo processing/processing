@@ -114,6 +114,7 @@ public interface PConstants {
   static final int ARGB  = 2;  // image
   static final int HSB   = 3;  // color
   static final int ALPHA = 4;  // image
+  static final int CMYK  = 5;  // image & color (someday)
 
 
   // image file types
