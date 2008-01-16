@@ -4,10 +4,25 @@ X A "noLoop()" sketch may be unresponsive to exit request
 X   http://dev.processing.org/bugs/show_bug.cgi?id=694
 X Fixed bug with subset() when no length parameter was specified
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1196366408
+X   http://dev.processing.org/bugs/show_bug.cgi?id=707
+X figure out why tiff images won't open with after effects
+X   http://dev.processing.org/bugs/show_bug.cgi?id=153
+X   open with photoshop, resave, see which tags change
+X     specifically, which tags that were in the original image file
+X     perhaps something gets corrected? 
+X   had a fix, but decided not to re-implement the loadTIFF stuff too
+X fix for bezierTangent() problem from dave bollinger
+X   http://dev.processing.org/bugs/show_bug.cgi?id=710
+
 _ ENABLE_DEPTH_SORT causing trouble with MovieMaker
 _   need to make the flush() api accessible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=692
 
+_ set() requires updatePixels() with OpenGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=705
+
+_ resize window will nuke font setting
+_ get() in java2d not honoring imageMode or rectMode
 
 _ can loadBytes() be improved by querying file size first?
 _   loadBytes() is used for images.. ouch
@@ -59,6 +74,8 @@ _ text characters showing up as opaque rectangles in tga files
 _   http://dev.processing.org/bugs/show_bug.cgi?id=641
 _   solution is to implement alpha compositing across all of P3D 
 _   http://en.wikipedia.org/wiki/Alpha_compositing
+_ text() not setting zbuffer in P3D because not fully opaque
+_   http://dev.processing.org/bugs/show_bug.cgi?id=696
 _ alpha not set on saveFrame, so can't be used in photoshop as a layer
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623
 _ when drawing into a JAVA2D surface, have to call loadPixels()
@@ -420,6 +437,20 @@ _       flat_line_retribution is a hack, can go away
 _ implement curveTangent
 _   fix-up the curve_init() and the rest to use matrices
 _     and not have ugly names (i.e. just g.curveDetail is good)
+_ ellipse scaling method isn't great
+_   http://dev.processing.org/bugs/show_bug.cgi?id=695
+_   weird ellipse bug with an alpha line in same image
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
+_   scaled ellipse showing up as a hexagon
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1084652597;start=0
+_   problem with the fill
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
+_   z values not set properly on ellipses?
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
+_   ellipses are just plain ugly
+_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
+_   toxi ellipses don't adapt properly with transformations
 
 
 CORE / PGraphics2D
@@ -442,19 +473,6 @@ _   rotateY(0.5);
 _   box(40);
 _ line endcaps and line joins. strokeMode()
 _   lower priority, but at least leave room
-_ ellipse problems
-_   weird ellipse bug with an alpha line in same image
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
-_   scaled ellipse showing up as a hexagon
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1084652597;start=0
-_   problem with the fill
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
-_   z values not set properly on ellipses?
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
-_   ellipses are just plain ugly
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
-_   toxi ellipses don't adapt properly with transformations
 
 
 CORE / PGraphicsJava2D
@@ -520,11 +538,6 @@ _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
 _   http://dev.processing.org/bugs/show_bug.cgi?id=356
-_ figure out why tiff images won't open with after effects
-_   http://dev.processing.org/bugs/show_bug.cgi?id=153
-_   open with photoshop, resave, see which tags change
-_     specifically, which tags that were in the original image file
-_     perhaps something gets corrected? 
 _ add ability to control jpeg compression level with save() and saveFrame()
 _   or just write a better example for this one?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=342
