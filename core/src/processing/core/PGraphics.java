@@ -1692,15 +1692,12 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   /**
    * Provide the tangent at the given point on the bezier curve.
-   * Based on code from v3ga's wordstree sketch.
+   * Fix from davbol for 0136.
    */
   public float bezierTangent(float a, float b, float c, float d, float t) {
-    float t1 = 1.0f - t;
-
-    return (a *  3 * t*t +
-            b *  3 * t * (2 - 3*t) +
-            c *  3 * (3*t*t - 4*t + 1) +
-            d * -3 * t1*t1);
+    return (3*t*t * (-a+3*b-3*c+d) +
+            6*t * (a-2*b+c) +
+            3 * (-a+b));
   }
 
 
@@ -3784,7 +3781,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void lights() {
     depthError("lights");
   }
-  
+
   public void noLights() {
     depthError("noLights");
   }
@@ -4314,7 +4311,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void endRaw() {
     if (raw != null) {
       // for 3D, need to flush any geometry that's been stored for sorting
-      // (particularly if the ENABLE_DEPTH_SORT hint is set) 
+      // (particularly if the ENABLE_DEPTH_SORT hint is set)
       flush();
 
       // just like beginDraw, this will have to be called because
