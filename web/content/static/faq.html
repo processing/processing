@@ -2,12 +2,15 @@
 	There are many questions surrounding the enigmatic and youthful Processing project 
 	and we don't have all the answers, but we have many." /></h3>
 
-	
+
 <p>
-    <a href="#faq">Where's the old FAQ!?!</a> <br />
-    <a href="#download">When can I download Processing and how much does it cost?</a> <br />
+    <a href="#troubleshooting">This is broken! I found a bug! Nothing is happening!</a>
+<!--    <a href="#faq">Where's the old FAQ!?!</a> <br />-->
+    <a href="#download">How can I obtain Processing and how much does it cost?</a> <br />
     <a href="#start">How do I get started?</a> <br />
     <a href="#learn">How do I learn to use Processing?</a> <br />
+    <a href="#revisions">I downloaded a new version and my code no longer works!</a> <br />
+    <a href="#changes">I'm trying to run some code I found on the web, and it doesn't work</a> <br />
     <a href="#platforms">On which platforms does Processing run?</a><br />
     <a href="#opensource">Is Processing open source?</a> <br />
     <a href="#attribution">Do I have to cite Processing or share my code? Can I distribute my sketches?</a> <br />
@@ -23,15 +26,23 @@
 </p>
 
 
+<h5 id="troubleshooting"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
+This is broken! I found a bug! Nothing is happening!
+</h5>
+<p>Most common answers can be found on the <a href="troubleshooting/index.html">troubleshooting</A> page.</p>
+
+
+<!--
 <h5 id="faq"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Where's the old FAQ!?!</h5>
 <p>The former multi-page FAQ grew too large, and for release 0116, it has been dispersed throughout the <A HREF="reference/index.html">reference</A>. The <A HREF="reference/troubleshooting/">troubleshooting</A> page is perhaps the most important, it contains most of the former bugs.html, which had outgrown its title. The sections relating to library issues (video, OpenGL, serial) have moved to the web pages for those libraries. Changes between releases has <A HREF="reference/changes.html">its own page</A>, as do the sections that cover specific <A HREF="reference/environment/platforms.html">platforms</A> and the how and why of <A HREF="reference/environment/export.html">exporting</A> your code.</p>
+-->
 
 
 <h5 id="download"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
-      When can I download Processing and how much does it cost?</h5>
+      How can I obtain Processing and how much does it cost?</h5>
    
-    <p>The software is free to download.
+    <p>The software is free to download and use.
 If you are interested in testing the BETA version of the software, 
 visit the <a href="http://processing.org/download/">download</a> 
 page and follow the instructions.</p>
@@ -41,19 +52,19 @@ than selling it for a million dollars under some godawful yearly
 contract update scheme. To that end, we encourage people to spread
 the word and refer them to the <a href="http://processing.org">processing.org</a> site.</p>
 
+
 <h5 id="start"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       How do I get started?</h5>
    
-     <p>Double click the 'Processing' application, and select something from
-the examples menu: File &rarr; Open &rarr; Examples. Hit the 'run' button
-(which looks like the play button on a vcr or tape deck). 
+     <p>Double click the 'Processing' application (on Linux, type <TT>./processing</TT>). Select something from File &rarr; Examples. Hit the Run button
+(which looks like the play button on a VCR or tape deck). 
 Lather, rinse, repeat as necessary.</p>
-    
+
     <p>More information on using Processing itself is can be found in the 
 <a href="http://processing.org/reference/environment/index.html">environment</a>
 section of the reference.</p>
 
-    <p>If you're having trouble getting Processing to start, check the
+    <p>Again, if you're having trouble getting Processing to start, check the
 <a href="reference/troubleshooting/index.html#nostart">troubleshooting</a> 
 section of the reference for possible solutions.</p>
 
@@ -74,6 +85,20 @@ programs work.</p>
 open minds and helpful peers.</p>
 
 <p>Once you've graduated beyond the examples and devoured the <A HREF="reference/index_ext.html">"complete"</A> reference, also check out the <A HREF="http://processinghacks.com">Processing Hacks</A> site: it's not quite reference, not quite examples, and not as developed as a library. These mutants are known as hacks, and there's lots of good stuff to be found.</p>
+
+
+<h5 id="revisions"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
+I downloaded a new version and my code no longer works!
+</h5>
+<p>Read the <A HREF="download/revisions.txt">revisions.txt</A> file that's included with the download (or use that link to read the online version). Things change between releases, and something may have broken your code, or your code may be using something unsupported, which no longer behaves.</p>
+
+
+<h5 id="changes"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
+I'm trying to run some code I found on the web, and it doesn't work
+</h5>
+<p>The code may be using syntax from an older release of Processing. Information about updating your code can be found on the <A HREF="reference/changes.html">changes between releases</A> page.
+<p>Also, check <A HREF="download/revisions.txt">revisions.txt</A> to make sure it's not something that's covered there.</p>
+
 
 <h5 id="platforms"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       On what platforms can I run Processing?</h5>
@@ -151,17 +176,17 @@ can help give back to us.</p>
 but in the spirit of the Processing project overall, we include it by
 default so as to encourage sharing and learning from one another.</p>
 
-    <p>You can distribute your sketches all you want, and commercial projects should 
-be just fine too, however we place no warranty on the software (see the 
+    <p>You can distribute your sketches all you want, and commercial projects  
+are just fine too, however we place no warranty on the software (see the 
 download page for the license shenanigans). </p>
 
 <h5 id="versions"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       What's with the version numbers?</h5>
 	  
-    <p>This is not 1.0 software.. It's buggy and may kill people.* That's part
-of why we used to make everyone sign up to download, so that we know that you 
-care enough to bother and have more of an inkling of what you're 
-getting into.</p>
+    <p>Processing is not yet 1.0 software.. It's buggy and may kill people.* 
+That's part of why we used to make everyone sign up to download, 
+so that we know that you care enough to bother and have more of an 
+inkling of what you're getting into.</p>
 
     <p>At least until the final 1.0 version, we'll be using four digit
 numbers for the release. Revision 0085 was the first "beta" release, 
@@ -171,12 +196,12 @@ that will need to be sorted out before we're comfortable calling
 a release an actual final 1.0.</p>
 
     <p>The numbered releases aren't always heavily tested, so don't be surprised 
-if/when something breaks. Check the <a href="http://processing.org/bugs/">bugs</a> 
+if/when something breaks. Check the <a href="http://dev.processing.org/bugs/">bugs</a> 
 section of the site and report the problem if it's new, and in the meantime, 
 you can go back to the previous numbered release until there's a fix. </p>
 
-<p>* <EM>please note that Processing is not yet known to be responsible 
-for any actual deaths</EM></p>
+<p>* <EM>Please note that Processing is not yet known to be responsible 
+for any confirmed deaths.</EM></p>
 
 <h5 id="naming"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Why is it called &ldquo;Processing&rdquo;?</h5>
@@ -296,11 +321,11 @@ I know Java, is this Java? How do I use it that way?
 <p>Processing code is converted to straight Java code (using the "preprocessor") when you hit the Run button. This also makes it possible to embed other Java code in your sketches, or use the core.jar file from the Processing distribution to develop your own sketches with other environments. For instance, if you want to use <A HREF="http://eclipse.org">Eclipse</A>, there are instructions on the <A HREF="http://processing.org/discourse/">discourse</A> section of the site.
 </p>
 
-<p>The main rule when using Java code: You cannot use anything from the AWT or Swing (which is built on the AWT), because it will interfere with our graphics model If you want to add scroll bars and buttons to your projects, you should make them using Processing code, or embed your Processing applet inside another Swing or AWT application (see below). Even if they appear to work, such sketches are likely to break when you try to run on other operating systems or other versions of Java. </p>
+<p>The main rule when using Java code: You cannot use most of the AWT or Swing (which is built on the AWT), because it will interfere with the graphics model. If you want to add scroll bars and buttons to your projects, you should make them using Processing code, or embed your Processing applet inside another Swing or AWT application (see below). Even if they appear to work, such sketches will usually break when you try to run on other operating systems or other versions of Java.</p>
 
-<p>Another point to note when using Java code is that we only support Java 1.4 and earlier. You cannot currently use 1.5 syntax in the Processing Development Environment. This means no generics, templates, enums, varargs, foreach, <A HREF="http://java.sun.com/developer/technicalArticles/releases/j2se15langfeat/">and the rest</A>. If you want to use Java 1.5 (or later), take core.jar and develop your project with another Java IDE (again, see below). More about Java 1.5 and the rationale for why we don't support it can be found <A HREF="reference/environment/platforms.html#java">here</A>. A couple of these features are very useful (the for loop, some aspects of generics) so if you would like to help get things running with 1.5 syntax, please see <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=598">this bug</A>.</p>
+<p><em>We currently only support Java 1.4 and earlier.</em> You cannot currently use 1.5 syntax in the Processing Development Environment. This means no generics, templates, enum, varargs, foreach, <A HREF="http://java.sun.com/developer/technicalArticles/releases/j2se15langfeat/">and the rest</A>. If you want to use Java 1.5 (or later), take core.jar and develop your project with another Java IDE (again, see below). More about Java 1.5 and why we don't support it can be found on the <A HREF="reference/environment/platforms.html#java">platforms</A> page. A couple of these features are very useful (the enhanced for loop, some aspects of generics) so if you would like to help get things running with 1.5 syntax, please contribute. You can start by visiting <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=598">this bug</A> which describes the obstacles to 1.5 support.</p>
 
-<p>Since we can't really support anything and everything that you might want to do when interfacing with Java or using core.jar inside a Java environment, we have a separate <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate">discussion area</A> on the discourse board for asking questions about it. This is mostly a peer supported area.</p>
+<p>Since we can't really support anything and everything that you might want to do when interfacing with Java or using core.jar inside a Java environment, we have a separate <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate">discussion area</A> on the discourse board for asking questions relatd to using Processing to interface with regular Java code.</p>
 
 <p>If you want to embed Processing into another Java application, visit the developer's reference for <A HREF="http://dev.processing.org/reference/core/javadoc/processing/core/PApplet.html">PApplet</A>. A discussion of how to use Processing with Eclipse is found <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1117133941">here</A>.</p>
 
@@ -330,6 +355,7 @@ writing grants so that we can keep Processing free.</p>
 
     <p>If the network connection causes you trouble, it can be shut off
 inside the Preferences window.</p>
+
 
 <h5 id="typeface"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       What is that fantastic typeface used for the page headers?</h5>
