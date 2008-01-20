@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>frameRate()</name>
+
+<category>Capture</category>
+
+<subcategory></subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code>
+import processing.video.*; 
+Capture myCapture; 
+ 
+void setup() { 
+  size(200, 200); 
+  String s = "Logitech QuickCam Messenger-WDM"; 
+  myCapture = new Capture(this, s, width, height);
+  // Set the frameRate to read 4 new images per second 
+  myCapture.frameRate(4);
+} 
+ 
+void draw() { 
+  if(myCapture.available()) { 
+    myCapture.read(); 
+  } 
+  image(myCapture, 0, 0); 
+} 
+ 
+</code>
+</example>
+
+<description>
+ Sets how often frames are read from a capture device such as a camera. Setting the fps parameter to 4, for example, will cause 4 frames to be read per second.
+</description>
+
+<syntax>
+<c>cam</c>.frameRate()
+</syntax>
+
+<parameter>
+<label>cam</label>
+<description>any variable of type Capture</description>
+</parameter>
+
+<returns></returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>
