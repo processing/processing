@@ -1,5 +1,305 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="clumpwork" by="nakai yusuke">
+        <location>http://homepage3.nifty.com/clumpwork/exploratorium.html</location>
+        <date>16 Jan &apos;08</date>
+    </software>
+    <software name="Digg Election Story Analyzer" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/DiggViz3/index.html</location>
+        <date>15 Jan &apos;08</date>
+    </software>
+    <software name="Home" by="Sam Salem">
+        <location>http://osamahsalem.co.uk/</location>
+        <date>14 Jan &apos;08</date>
+    </software>
+    <software name="sinks and fountains" by="jeremy awon">
+        <location>http://jeremyawon.info/saf</location>
+        <date>10 Jan &apos;08</date>
+    </software>
+    <software name="Newsknitter" by="Mahir M. Yavuz / Ebru Kurbak">
+        <location>http://casualdata.com/newsknitter</location>
+        <date>07 Jan &apos;08</date>
+    </software>
+    <software name="rgb petri" by="jeremy awon">
+        <location>http://jeremyawon.info/rgbp/</location>
+        <date>31 Dec &apos;07</date>
+    </software>
+    <software name="Visualizing National Football League Wins" by="Anthony Starks">
+        <location>http://home.comcast.net/~ajstarks/nfl/index.html</location>
+        <date>23 Dec &apos;07</date>
+    </software>
+    <software name="genPunk:generative music system" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/genpunk</location>
+        <date>22 Dec &apos;07</date>
+    </software>
+    <software name="cubism" by="dogbert">
+        <location>http://www.bairdy.com/processing/cubism</location>
+        <date>19 Dec &apos;07</date>
+    </software>
+    <software name="Oscilloscope" by="Basil Stotz">
+        <location>http://www.amxa.ch/skope/applet/index0.html</location>
+        <date>18 Dec &apos;07</date>
+    </software>
+    <software name="Text Snowflake Creator" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/TextFlake/index.html</location>
+        <date>17 Dec &apos;07</date>
+    </software>
+    <software name="Psynthtronic [synth console]" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/psynthtronic</location>
+        <date>14 Dec &apos;07</date>
+    </software>
+    <software name="livEcircus on TRIMARCHI DG 2007" by="i2off.org+r3nder.net">
+        <location>http://r3nder.net/resource/archives/categorias/all_projects/livecircus_en_tmdg.html</location>
+        <date>12 Dec &apos;07</date>
+    </software>
+    <software name="Family Name Snowflake Generator" by="Go flight!">
+        <location>http://321goflight.com/project/snowflake/</location>
+        <date>12 Dec &apos;07</date>
+    </software>
+    <software name="GODMODE - making drawings come to life" by="Tim Knapen">
+        <location>http://www.pacesetter2000.be/tk/v2/?project=37</location>
+        <date>10 Dec &apos;07</date>
+    </software>
+    <software name="textour - text visualization" by="tim walter">
+        <location>http://www.timwalter.de/?page_id=13</location>
+        <date>09 Dec &apos;07</date>
+    </software>
+    <software name="Digg Story Graph" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/DiggViz2/index.html</location>
+        <date>07 Dec &apos;07</date>
+    </software>
+    <software name="is3s El jardin de las delicias" by="i2off.org+r3nder.net">
+        <location>http://www.i2off.org/is3s/</location>
+        <date>06 Dec &apos;07</date>
+    </software>
+    <software name="Big text made from small text" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/BigSmall/index.html</location>
+        <date>26 Nov &apos;07</date>
+    </software>
+    <software name="PredRay" by="Yonas Kolb">
+        <location>http://people.arch.usyd.edu.au/~ykol3681/Predray/index.html</location>
+        <date>22 Nov &apos;07</date>
+    </software>
+    <software name="TXTris - obstacle &apos;aware&apos; SMS wall" by="Patrick Dinnen">
+        <location>http://medialabtoronto.ca/2007/11/media-lab-toronto-launches-with-txtris</location>
+        <date>21 Nov &apos;07</date>
+    </software>
+    <software name="Interactive Survey applicaion" by="indaeHwang">
+        <location>http://www.experiencecode.com/contents/interactive_survey.php</location>
+        <date>20 Nov &apos;07</date>
+    </software>
+    <software name="Digg Explorer" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/DiggViz1/index.html</location>
+        <date>20 Nov &apos;07</date>
+    </software>
+    <software name="NASA World Wind Applet" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/processing.org/worldwind/</location>
+        <date>20 Nov &apos;07</date>
+    </software>
+    <software name="Resizable Applet" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/processing.org/applet_resize/</location>
+        <date>19 Nov &apos;07</date>
+    </software>
+    <software name="Ambient Occlusion" by="Matt Kozak">
+        <location>http://www.screamyguy.net/ambientOcclusion/index.htm</location>
+        <date>18 Nov &apos;07</date>
+    </software>
+    <software name="In Popular Terms: Evolving Language of Ecology" by="The Studio for Urban Projects">
+        <location>http://www.inpopularterms.net/</location>
+        <date>14 Nov &apos;07</date>
+    </software>
+    <software name="Race Results Analyzer" by="Jeff Clark">
+        <location>http://www.neoformix.com/2007/RaceResultsAnalyzer.html</location>
+        <date>08 Nov &apos;07</date>
+    </software>
+    <software name="071106_sharp" by="sharp">
+        <location>http://stereotheism.org/071106/</location>
+        <date>06 Nov &apos;07</date>
+    </software>
+    <software name="Interactive Transcript Analyzer" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/TranscriptAnalyzer/index.html</location>
+        <date>02 Nov &apos;07</date>
+    </software>
+    <software name="Maschandraht Rounded" by="Paul Hoepner">
+        <location>http://spotstop.de/processing/maschendraht_rounded.html</location>
+        <date>31 Oct &apos;07</date>
+    </software>
+    <software name="OpenGL Game running as Applet in Browser" by="Thomas Brand">
+        <location>http://lowres.ch/bm/index.html</location>
+        <date>29 Oct &apos;07</date>
+    </software>
+    <software name="Mengenlehre &amp; Klassenkampf - Galton" by="Thomas Feuerstein, Peter Chiochetti">
+        <location>http://myzel.net/Mengenlehre/galton_GL/index.html</location>
+        <date>28 Oct &apos;07</date>
+    </software>
+    <software name="Ontario votes visualisation" by="Patrick Dinnen">
+        <location>http://hogtownconsulting.com/ontario_election_visualisation/</location>
+        <date>26 Oct &apos;07</date>
+    </software>
+    <software name="theTrees" by="George Shaw">
+        <location>http://www.divinepenguin.com/processing/theTrees/</location>
+        <date>23 Oct &apos;07</date>
+    </software>
+    <software name="DLA Crystal Simulation" by="Wally Glutton">
+        <location>http://stungeye.com/processing/1007/</location>
+        <date>20 Oct &apos;07</date>
+    </software>
+    <software name="Viral Blocks" by="Diego Baca">
+        <location>http://diegobaca.co.uk/viralblocks/main.html</location>
+        <date>19 Oct &apos;07</date>
+    </software>
+    <software name="I, ball" by="Florito">
+        <location>http://www.youtube.com/watch?v=ptRsUJU7Q7c</location>
+        <date>15 Oct &apos;07</date>
+    </software>
+    <software name="processing-extended package" by="vjpalm">
+        <location>http://estudiolivre.org/processing_extended</location>
+        <date>29 Sep &apos;07</date>
+    </software>
+    <software name="Closer - a parametric URL applet" by="Frederik Vanhoutte (W:Blut)">
+        <location>http://www.wblut.com/constructs.php</location>
+        <date>27 Sep &apos;07</date>
+    </software>
+    <software name="reconstrucidades - rebuild your city" by="vjpalm">
+        <location>http://estudiolivre.org/reconstructable</location>
+        <date>27 Sep &apos;07</date>
+    </software>
+    <software name="big visuals (sin)" by="Andreas">
+        <location>http://www.gysin-vanetti.com/show.php?id=121</location>
+        <date>24 Sep &apos;07</date>
+    </software>
+    <software name="Cyclops ( Interactive Square )" by="Lee Byron">
+        <location>http://megamu.com/processing/cyclops/</location>
+        <date>11 Sep &apos;07</date>
+    </software>
+    <software name="Cinematic Particles" by="evsc">
+        <location>http://www.evsc.net/v6/htm/cinematic.htm</location>
+        <date>08 Sep &apos;07</date>
+    </software>
+    <software name="Better Fire" by="David (Doswa)">
+        <location>http://doswa.com/?p=viewwork&amp;which=betterfire</location>
+        <date>07 Sep &apos;07</date>
+    </software>
+    <software name="bloodstream" by="averagejackal">
+        <location>http://www.averagejackal.net/bloodstream/index.html</location>
+        <date>06 Sep &apos;07</date>
+    </software>
+    <software name="folding" by="averagejackal">
+        <location>http://www.averagejackal.net/folding/index.html</location>
+        <date>06 Sep &apos;07</date>
+    </software>
+    <software name="Seam Carving for Processing" by="woo &amp; sil">
+        <location>http://everyware.cc/blog/200</location>
+        <date>05 Sep &apos;07</date>
+    </software>
+    <software name="Lego Mindstorms NXT + Processing" by="Diego Baca">
+        <location>http://www.diegobaca.co.uk/NXT/nxt.html</location>
+        <date>27 Aug &apos;07</date>
+    </software>
+    <software name="Computational Drawings" by="David Lu">
+        <location>http://computationaldrawings.com/</location>
+        <date>26 Aug &apos;07</date>
+    </software>
+    <software name="Elektrohase (electric bunny)" by="Elektrohase">
+        <location>http://www.elektrohase.de/</location>
+        <date>25 Aug &apos;07</date>
+    </software>
+    <software name="DBA(interfaces fisicas)" by="esteban gutierrez">
+        <location>http://www.flickr.com/photos/stbn_gtrrz/</location>
+        <date>21 Aug &apos;07</date>
+    </software>
+    <software name="Home Planet Defense (Game)" by="Jeff Clark">
+        <location>http://www.neoformix.com/games/HomePlanetDefense/index.html</location>
+        <date>20 Aug &apos;07</date>
+    </software>
+    <software name="wii_H" by="Diego Baca">
+        <location>http://diegobaca.co.uk/wii/wii.html</location>
+        <date>19 Aug &apos;07</date>
+    </software>
+    <software name="Text Comparison Using Relational TagClouds" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/blog/Blog/2007-08-10/text-comparison-using-relational-tagclouds</location>
+        <date>14 Aug &apos;07</date>
+    </software>
+    <software name="SketchCam" by="Jean-Baptiste">
+        <location>http://insitu.lri.fr/~labrune/blog/2007/05/24/sketchcam/</location>
+        <date>29 Jul &apos;07</date>
+    </software>
+    <software name="wink" by="rolf herter">
+        <location>http://rolfherter.de/processing/wink/applet/</location>
+        <date>12 Jul &apos;07</date>
+    </software>
+    <software name="Rorschach" by="Andy Doro">
+        <location>http://www.sheepish.org/itp/rorschach/</location>
+        <date>10 Jul &apos;07</date>
+    </software>
+    <software name="Möbius inversion transform" by="Stephen">
+        <location>http://www.cs.ubc.ca/~sfingram/inversion/</location>
+        <date>10 Jul &apos;07</date>
+    </software>
+    <software name="Lichter (Installation)" by="Mikael Konttinen">
+        <location>http://www.mknart.net/Lichter</location>
+        <date>10 Jul &apos;07</date>
+    </software>
+    <software name="Graffiti Wall" by="Thomas Plesko">
+        <location>http://www.silicongames.com/gw/wall/</location>
+        <date>09 Jul &apos;07</date>
+    </software>
+    <software name="When Seals Collide [Game]" by="Mkn.">
+        <location>http://game.mknart.net/seals/</location>
+        <date>09 Jul &apos;07</date>
+    </software>
+    <software name="Fluid Forms" by="Florito">
+        <location>http://www.florito.net/content.php?appname=FluidForms_VII</location>
+        <date>02 Jul &apos;07</date>
+    </software>
+    <software name="Community Topographies" by="Christian Marc Schmidt">
+        <location>http://www.adaptivelandscapes.com/index.php?template=piece&amp;id=28</location>
+        <date>01 Jul &apos;07</date>
+    </software>
+    <software name="shibshib" by="rolf herter">
+        <location>http://www.rolfherter.de/processing/shibshib/applet/</location>
+        <date>29 Jun &apos;07</date>
+    </software>
+    <software name="Cat Sudoku" by="Daniel Yang">
+        <location>http://catsudoku.googlepages.com/index.html</location>
+        <date>28 Jun &apos;07</date>
+    </software>
+    <software name="Water Lilies" by="Thomas Michalak">
+        <location>http://sosobering.free.fr/art/?p=172</location>
+        <date>27 Jun &apos;07</date>
+    </software>
+    <software name="TinyTetris - World&apos;s smallest game of Tetris" by="Martin Lindkvist">
+        <location>http://endofart.net/tinytetris/</location>
+        <date>26 Jun &apos;07</date>
+    </software>
+    <software name="TinyTetris - World&apos;s smallest game of Tetris" by="Martin Lindkvist">
+        <location>http://endofart.net/tinytetris/</location>
+        <date>26 Jun &apos;07</date>
+    </software>
+    <software name="inversion" by="rolf herter">
+        <location>http://www.rolfherter.de/processing/inversion/applet/</location>
+        <date>22 Jun &apos;07</date>
+    </software>
+    <software name="dynamicAttractor" by="dogbert">
+        <location>http://www.bairdy.com/processing/dynamicAttractor</location>
+        <date>20 Jun &apos;07</date>
+    </software>
+    <software name="Similar Diversity" by="Andreas Koller and Philipp Steinweber">
+        <location>http://similardiversity.net/</location>
+        <date>20 Jun &apos;07</date>
+    </software>
+    <software name="Circle Packing" by="Sean McCullough">
+        <location>http://www.cricketschirping.com/processing/CirclePacking1/</location>
+        <date>18 Jun &apos;07</date>
+    </software>
+    <software name="Circle Packing" by="Sean McCullough">
+        <location>http://www.cricketschirping.com/processing/CirclePacking1/</location>
+        <date>18 Jun &apos;07</date>
+    </software>
+    <software name="Boom3" by="David (Doswa)">
+        <location>http://doswa.com/?p=viewwork&amp;which=Boom3</location>
+        <date>16 Jun &apos;07</date>
+    </software>
     <software name="Heads Up Display Slider" by="cw wang">
         <location>http://cwwang.com/wordpress/2007/06/12/hud-slider-class/</location>
         <date>12 Jun &apos;07</date>

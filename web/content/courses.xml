@@ -1,6 +1,443 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
+        <date>Spring 2008 (beginning 1/14/2008)</date>
+        <institution>North Lake College (Irving, TX)</institution>
+        <title>Programming for Artists</title>
+        <description>Are you creative or artistic but afraid of learning a computer programming language? Learn to use Processing (processing.org) and Java to create computer programs that explore the elements and principles of design - color, space, line, etc. Finished web application will resemble modern art.  Online semester-length credit class.  No previous programming experience required.  (ITSE 1411.7428 Programming for Artists)</description>
+        <contact>
+            <name>Sharon Huston</name>
+            <email>sharonhuston at dcccd dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Sample Class Calendar</title>
+                <url>http://nlecommerce1.dcccd.edu/instructors/richard/classes/p4a/calendar.html</url>
+            </link>
+            <link>
+                <title>NLC Home Page</title>
+                <url>http://www.northlakecollege.edu/</url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>4-5 February 2008</date>
+        <institution>?stanbul Bilgi University, Department of Visual Communication Design</institution>
+        <title>Designing with Code</title>
+        <description>The goal of this workshop is to learn fundamentals of computer programming in the context of the image/video processing. In this case, Undergraduate students will explore computational concepts in print. We will use the Proce55ing programming language to practice the discussed concepts. Previous programming experience is not required.</description>
+        <contact>
+            <name>Mustafa Ercan Z?rh</name>
+            <email>mezirh at bilgi dot edu dot tr</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Fall 2007</date>
+        <institution>Georgia Tech</institution>
+        <title>The Computer as an Expressive Medium</title>
+        <description>The goal of this course is to learn Java programming in the context of an art and design practice, that is, to understand computation as an expressive medium. We juxtapose reading and discussion of seminal articles in computational media with Java programming projects designed to exercise specific technical skills as well as encourage conceptual explorations in computational art and design.</description>
+        <contact>
+            <name>Ali Mazalek</name>
+            <email>mazalek at gatech dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>Coure Webpage</title>
+                <url>http://dm.lcc.gatech.edu/~mazalek/courses/fall07/lcc6310/</url>
+            </link>
+            <link>
+                <title>Georgia Tech Digital Media Program</title>
+                <url>http://dm.lcc.gatech.edu/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2008</date>
+        <institution>University of Advancing Technology</institution>
+        <title>Introduction to Processing</title>
+        <description>Processing is an open source programming language and environment for people who want to program images, animation and sound. It is used by students, artists, designers, architects, researchers and hobbyists for learning, prototyping and production. It is created to teach fundamentals of computer programming within a visual context and to serve as a software sketchbook and professional production tool. Processing is developed by artists and designers as an alternative to proprietary software tools in the same domain. Mobile Processing is a programming environment and library for writing software for mobile phones.</description>
+        <contact>
+            <name>Todd Spencer</name>
+            <email>tspencer at uat dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>University of Advancing Technology</title>
+                <url>http://www.uat.edu/</url>
+            </link>
+            <link>
+                <title>Robotics and Embedded Systems</title>
+                <url>http://www.uat.edu/majors/robotics_and_embedded_systems.aspx</url>
+            </link>
+            <link>
+                <title>Artificial Life Programming</title>
+                <url>http://www.uat.edu/majors/a-life_programming.aspx</url>
+            </link>
+            <link>
+                <title>Digital Art and Design</title>
+                <url>http://www.uat.edu/majors/digital_art_and_design.aspx</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2008</date>
+        <institution>Royal College of Art, MA Design Interactions</institution>
+        <title>Processing</title>
+        <description>Processing will be utilised as an introduction to computer programming for students from diverse creative backgrounds. The workshop will explore various aspects of the platform, including imagery, sound, animation, networking, data visualisation, mobile devices and physical computing. It also discusses both historical and contemporary examples of computer usage in art and design and encourages a critical approach towards conceptual aspects of the field.</description>
+        <contact>
+            <name>David Muth</name>
+            <email>david at test dot at</email>
+        </contact>
+        <links>
+            <link>
+                <title>Royal College of Art</title>
+                <url>http://www.rca.ac.uk/</url>
+            </link>
+            <link>
+                <title>MA Design Interactions</title>
+                <url>http://www.interaction.rca.ac.uk/</url>
+            </link>
+            <link>
+                <title>David Muth</title>
+                <url>http://www.davidmuth.net/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>26-27 October 2007</date>
+        <institution>Stetson University, Deland, Florida</institution>
+        <title>physical gaming workshop using computer vision</title>
+        <description>This workshop will give participants an opportunity to design their own games using a camera as an input device. It will introduce them to both physical computing using computer vision techniques and game design. Each participant will have the opportunity to work with sample computer vision algorithms. All games will be written in the Processing programming language.</description>
+        <contact>
+            <name>andrew hieronymi</name>
+            <email>andrew at rhizome dot org</email>
+        </contact>
+        <links>
+            <link>
+                <title>workshop documentation</title>
+                <url>http://ahieronymi.net/workshops/stetson/index.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Oct 2007 - Jan 2008</date>
+        <institution>Institut Medienkunst, FHNW, Aarau, Switzerland</institution>
+        <title>Grundkurs Processing</title>
+        <description>Processing wurde als Programmiersprache speziell für Gestalter und Künstler entwickelt. Sie eignet sich speziell für die Programmierung von Bildern, Animation und Sound und führt sehr schnell zu visuell ansprechenden Resultaten. Durch den einfachen Aufbau mit einem einzigen Editierfenster wird einen klarer Blick auf das Grundwesen des Programmierens ermöglicht. &lt;br /&gt;Im Grundkurs von Andres Wanner geht es um ein Verständnis der elementaren Strukturen, die für das Programmieren notwendig sind.&lt;br /&gt;&lt;br /&gt;Inhalte:&lt;br /&gt;- Programmieren von Grund auf verstehen lernen&lt;br /&gt;- effizient und strukturiert programmieren  &lt;br /&gt;- Variablen und Datentypen &lt;br /&gt;- Arrays und Schleifen &lt;br /&gt;- Modularisieren mit Functions</description>
+        <contact>
+            <name>Andres Wanner</name>
+            <email>andres dot wanner at fhnw dot ch</email>
+        </contact>
+        <links>
+            <link>
+                <title>Institut Medienkunst, FHNW</title>
+                <url>http://www.medienkunst.ch/</url>
+            </link>
+            <link>
+                <title>Processing-Kurspage</title>
+                <url>http://www.pixelstorm.ch/processing/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>October 1st to December 7th 2007</date>
+        <institution>Latin-American Institute of Communication Technology</institution>
+        <title>Tut, tut, tut: yo ordeno, tú dibujas</title>
+        <description>This is an online Processing course in Spanish. Anyone can enroll, but it was specially designed for teenagers studying in public schools in Mexico. It is being implemented at the national School-Web (Red Escolar) project of Mexico&apos;s Ministry of Education. At present 3938 students in 566 different public schools from all over the country are taking the course.&lt;br /&gt;</description>
+        <contact>
+            <name>Annabel Castro</name>
+            <email>annabel dot castro at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Tut, tut, tut: yo ordeno, tú dibujas</title>
+                <url>http://redescolar.ilce.edu.mx/redescolar/proyectos/tut_oto07/index.htm#</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Winter 2008</date>
+        <institution>Concordia University</institution>
+        <title>The Languages of Programming</title>
+        <description>An introduction to programming with a strong emphasis on new media art practices.&lt;br /&gt;&lt;br /&gt;The theoretical part of the course will outline the evolution of computing and its cultural implications, and will highlight various possibilities for integrating programming into multimedia projects and installations. While gaining a deeper understanding of computing in general, students will acquire knowledge of the basic object-oriented programming techniques, and will apply these using the Processing language. Processing is a derivative of the Java object-oriented language which is created by/for artists and designers. As such, it will enable the students to focus directly on graphical and interactive applications.&lt;br /&gt;&lt;br /&gt;The course will consist of lectures, readings, discussions, in-class exercises and bi-weekly assignments. About ten practical exercises, addressing particular programming concepts, and one or two theory questions will constitute an assignment. Certain practical exercises will be straightforward while others will leave room for creativity.</description>
+        <contact>
+            <name>Elie Zananiri</name>
+            <email>ez at silentlycrashing dot net</email>
+        </contact>
+        <links>
+            <link>
+                <title>CART 253</title>
+                <url>http://hybrid.concordia.ca/~cart253/</url>
+            </link>
+            <link>
+                <title>Computation Arts</title>
+                <url>http://computationarts.concordia.ca/</url>
+            </link>
+            <link>
+                <title>Concordia University</title>
+                <url>http://concordia.ca/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 2008</date>
+        <institution>L&apos;école supérieure d&apos;art d&apos;Aix-en-Provence</institution>
+        <title>Objets orientés-objet</title>
+        <description>Depuis plusieurs années, L&apos;atelier hypermédia réfléchit sur les rapports entre art + code en explorant les concepts et idéologies sous-jacants dans les nouveaux materiaux algorithmiques. Parallèlement, l&apos;atelier assure une veille technologique avec ses mêmes matières mais de façon totalement pragmatique en suivant le principe de « Just-Fuck-Around® ». Quelque part entre ces deux pratiques -- analytique d&apos;une côté et joyeusement bordellique de l&apos;autre -- l&apos;atelier dispense un savoir-faire technique rigoureuse. Le but de ce seminaire est d&apos;approfondir cette approche en se donnant les moyens d&apos;explorer des outils et techniques les plus avancés de la programmation. Le but, comme toujours, sera de former des artistes sachant utiliser la modularité des ordinateurs à leur avantage en inventant leurs propres dispositifs artistiques et médiatiques (c&apos;est-à-dire leurs propres média, d&apos;où le terme « hypermédia »). De ce point de vue, le seminaire s&apos;appuyera sur les travaux de ses participants, où nous chercherons à identifier les différentes stratégies possibles de la programmation, tout en identifiant les outils et logiques récurrentes entre les divers projets.</description>
+        <contact>
+            <name>Douglas Edric Stanley</name>
+            <email>douglas at abstractmachine dot net</email>
+        </contact>
+        <links>
+            <link>
+                <title>objets-orientés objet</title>
+                <url>http://www.ecole-art-aix.fr/article2548.html</url>
+            </link>
+            <link>
+                <title>Atelier hypermédia</title>
+                <url>http://www.ecole-art-aix.fr/rubrique11.html</url>
+            </link>
+            <link>
+                <title>L&apos;école supérieure d&apos;art d&apos;Aix-en-Provence</title>
+                <url>http://www.ecole-art-aix.fr/</url>
+            </link>
+            <link>
+                <title>abstractmachine</title>
+                <url>http://www.abstractmachine.net/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Autumn 2007</date>
+        <institution>L&apos;école supérieure d&apos;art d&apos;Aix-en-Provence</institution>
+        <title>Objets orientés-image</title>
+        <description>- Année : 2007-2008
+- Intitulé : « Objets orientés-image : Introduction à la programmation avec Processing »
+- Enseignant (s) : Douglas Edric Stanley (http://www.abstractmachine.net]
+- Date et heure : 10 x Jeudi matin, de 9h30 à 12h30, Semestre 1
+
+Objectifs
+- Découvrir les possibilités de l&apos;algorithme dans la création de dispositifs artistiques
+- Bien connaître l&apos;environement de programmation « Processing »
+- Acquisition des techniques de base permettant de gérer seul ou à plusieurs un projet d&apos;œuvre interactive ou évolutive
+
+Contenu
+L&apos;objet classique, qu&apos;il soit fabriqué de façon artisanal ou en série, est désormé hanté par une toute nouvelle catégorie d&apos;objet : celle des objets de programmation. L&apos; « objet » en programmation s&apos;empare de plus en plus des objets matériels, introduisant en ceux-ci des logiques d&apos;abstraction, de modularité, de communications hybrides, de collectivation des savoirs et de la partage des sensations.
+
+Pour accéder à ce monde en transformation, et sortir de l&apos;impasse des « utilisateurs », on doit à un moment donnée passer par la programmation informatique. Souvent on sous-estime le rôle de la programmation dans les oeuvres interactives, oubliant que l&apos;interactivité nécessite en réalité la création d&apos;un programmes. Malheureusement, l&apos;ordinateur ne créera pas ce programme à notre place. HAL9000 n&apos;existe pas encore, ce qui est plutôt rassurant, mais la plupart du temps embettant pour l&apos;étudiant en « arts plastiques » qui n&apos;a pas forcément envie de devenir ingénieur informatique pour créer des oeuvres artistiques. Heureusement de nombreux artistes ont déjà traversé cette difficulté et ont laissé derrière eux de puissants outils à la fois collectives (le fameux « open-source »), pas chers ($0.00 = 0 euros), et conçus spécifiquement pour des étudiants en art.
+
+Ce cours utilisera le logiciel de programmation artistique Processing. Tous les cours seront basés sur des cours en-ligne du site de l&apos;école (http://www.ecole-art-aix.fr/rubrique81.html), permettant à l&apos;étudiant de revenir à n&apos;importe quel moment sur les concepts et techniques enseignés, mais à son propre rythme. Les cours en-ligne seront révisés sur place, accompagnés d&apos;expérimentations artistiques. La base de Processing est la création d&apos;images et nous accenterons le cours sur ces aspect de l&apos;environement. Mais Processing peut manipuler de nombreuses autres matières : nous traiterons par exemple les entrées audio et vidéo, des programmes en-ligne, et l&apos;interfaçage avec le monde physique via les cartes Arduino (cf. http://arduino.cc).
+
+Méthode d&apos;enseignement
+Cours en atelier et cours en-ligne. Démonstration et explication des concepts de base de la programmation, exemples et analyses d&apos;oeuvres interactives, exercises pratiques (individuels et collectifs) en atelier.
+
+Nous devons noter ici qu&apos;aucune connaissance préalable est nécessaire pour suivre ce cours, et rapellons à tout ceux qui auraient fuit les mathématiques en s&apos;inscrivant dans une école d&apos;art, que la programmation n&apos;est pas de la mathématique et peut être un lieu fertile pour l&apos;exploration artistique.</description>
+        <contact>
+            <name>Douglas Edric Stanley</name>
+            <email>douglas at abstractmachine dot net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Objets orientés-image</title>
+                <url>http://www.ecole-art-aix.fr/rubrique661.html</url>
+            </link>
+            <link>
+                <title>Atelier hypermédia</title>
+                <url>http://www.ecole-art-aix.fr/rubrique11.html</url>
+            </link>
+            <link>
+                <title>Processing (cours en ligne)</title>
+                <url>http://www.ecole-art-aix.fr/article1215.html</url>
+            </link>
+            <link>
+                <title>abstractmachine</title>
+                <url>http://www.abstractmachine.net/</url>
+            </link>
+            <link>
+                <title>L&apos;école supérieure d&apos;art d&apos;Aix-en-Provence</title>
+                <url>http://www.ecole-art-aix.fr/</url>
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Septembre - décembre 2007</date>
+        <institution>Université du Québec à Montréal</institution>
+        <title>Baccalauréat en médias interactifs</title>
+        <description>EDM 4610 : Image de synthèse et interactivité&lt;br /&gt;Atelier abordant la conception d&apos;images fixes ou cinétiques à travers des stratégies de production qui ne recourent peu ou pas à la captation. Génération, organisation et construction des éléments picturaux par la synthèse en vue d&apos;une représentation figurée, schématisée ou abstraite et d&apos;une intégration interactive (graphisme ou typographisme, illustration, modélisation, imagerie computationnelle, animation 2D ou 3D). De plus, l&apos;étudiant est appelé à poursuivre sa familiarisation au langage de l&apos;image et à l&apos;organisation picturale en fonction d&apos;un usage interactif, en prêtant attention à la caractérisation des objets formels et à leur mise en espace pour l&apos;écran.</description>
+        <contact>
+            <name>Jean-François Renaud</name>
+            <email>renaud dot jean-francois at uqam dot ca</email>
+        </contact>
+        <links>
+            <link>
+                <title>EDM4610</title>
+                <url>http://multimedia.uqam.ca/cours/edm4610/</url>
+            </link>
+            <link>
+                <title>Médias interactifs</title>
+                <url>http://www.edm.uqam.ca/mi/</url>
+            </link>
+            <link>
+                <title>École des médias</title>
+                <url>http://www.edm.uqam.ca/</url>
+            </link>
+            <link>
+                <title>UQAM</title>
+                <url>http://www.uqam.ca/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>April - July 2007</date>
+        <institution>Fachhochschule Nordwestschweiz, Institut Medienkunst</institution>
+        <title>Aufbaukurs Processing</title>
+        <description>Processing wurde als Programmiersprache speziell für Gestalter und Künstler entwickelt. Sie eignet sich speziell für die Programmierung von Bildern, Animation und Sound und führt sehr schnell zu visuell ansprechenden Resultaten. Durch den einfachen Aufbau mit einem einzigen Editierfenster wird einen klarer Blick auf das Grundwesen des Programmierens ermöglicht.
+Im Aufbaukurs von Andres Wanner geht es um fortgeschrittene Programmstrukturen, objektorientierte Programmierung, externe Libraries. Der Grundkurs Processing wird vorausgesetzt.</description>
+        <contact>
+            <name>Andres Wanner</name>
+            <email>andres dot wanner at fhnw dot ch</email>
+        </contact>
+        <links>
+            <link>
+                <title>Aufbaukurs Processing</title>
+                <url>http://www.pixelstorm.ch/processing/</url>
+            </link>
+            <link>
+                <title>Institut Medienkunst</title>
+                <url>http://www.medienkunst.ch/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
         <date>April-June 2007</date>
         <institution>The Art Institutes international Minnesota</institution>
         <title>Special Topics in Interactive Media Design: Alternative Input Devices and Human-Computer Interaction</title>
@@ -19,16 +456,16 @@
                 <url>http://tma362.aisites.com/</url>
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
         </links>
     </course>

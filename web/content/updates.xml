@@ -462,7 +462,7 @@
 	</item>
 	<item>
 		<date>9 February 2006</date>
-		<description>Processing selected for the Cooper-Hewitt National Design Triennial exhibition on view 8 December 2006 to 26 August 2007.</description>
+		<description>Processing selected for the Cooper-Hewitt National Design Triennial exhibition on view 8 December 2006 to 26 August 2007</description>
 	</item>
 	<item>
 		<date>14 February 2006</date>
@@ -626,9 +626,96 @@ exhibition</a>.</description>
         </item>
 
 	<item>
-                <date>14 June 07</date>
+                <date>14 June 2007</date>
                 <description>New software from Usman Haque and Adam Somlai-Fischer added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
         </item>
 	
+<item>
+                <date>2 July 2007</date>
+                <description>New software from Universal Everything and Toxi added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
 
+        <item>
+                <date>16 July 2007</date>
+                <description>Processing (BETA) 125 released. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+
+	<item>
+                <date>31 July 2007</date>
+                <description>New software from Protohaus added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+
+	<item>
+                <date>31 July 2007</date>
+		<description>The NextText library from Elie Zananiri, the JTablet library from Cellosoft, and the QRCode library from Dan Shiffman added to the list of <a href="http://processing.org/reference/libraries/">contributed libraries</a>.</description>
+        </item>
+
+	<item>
+                <date>1 August 2007</date>
+                <description>Twenty-six new examples from Ira Greenberg added to <a href="learning/">Learning</a>. These examples come from Ira's book Processing: Creative Coding and Computational Art, published in May by Friends of Ed.</description>
+        </item>
+
+	<item>
+                <date>15 August 2007</date>
+                <description>New software from Tom Carden added to the <a href="http://processing.org/exh\
+ibition/">exhibition</a>. Two new <a href="http://processing.org/reference\
+/libraries/">contributed libraries</a> added from the prolific Dan Shiffman: Yahoo! Search and SFTP.</description>
+        </item>
+
+	<item>
+                <date>9 September 2007</date>
+                <description>The book Processing: A Programming Handbook for Visual Designers and Artists by Casey Reas and Ben Fry is now on sale! There's more information <a href="http://www.processing.org/learning/books/">here</a>.</description>
+        </item>
+
+	<item>
+                <date>16 September 2007</date>
+                <description>New software from HeHe added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+	<item>
+                <date>8 October 2007</date>
+                <description>New software from Carolin Horn added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+
+	<item>
+                <date>9 October 2007</date>
+                <description>Seven new libraries added to the <a href="http://processing.org/reference/libraries/">contributed libraries</a>: unlekkerLib by Marius Watz, Most Pixels Ever by Dan Shiffman and Chris Kairalla, Ambient Light Sensor by Martin R&auml;dlinger, Shapetween by Lee Byron and Golan Levin, MatrixMath by Francis Bitonti, COLLADA Export by Marcus Wendt, and NXTComm by Jorge Cardoso.</description>
+        </item>
+
+	<item>
+                <date>26 October 2007</date>
+                <description>In an intense Herculean effort, Processing versions 127 - 133 were released from the 14th to the 26th of October. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+
+	<item>
+                <date>1 November 2007</date>
+                <description>New software from Paul Catanese added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+
+	<item>
+                <date>21 November 2007</date>
+                <description>Processing version 135 was released today and 134 was released on the 17th. Both include bug fixes. Enjoy and <a href="http://processing.org/download/">download here</a>.</description>
+        </item>
+
+	<item>
+                <date>24 November 2007</date>
+                <description>Software from Aaron Koblin added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+
+	<item>
+                <date>24 November 2007</date>
+                <description>Five new libraries added to the <a href="http://processing.org/reference/libraries/\
+">contributed libraries</a>:  FaceDetect by Jaegon Lee, P5SunFlow by Mark Chadwick, p5_sc (SuperCollider) by Daniel Jones, Eliza by Andres Colubri, and Broadcaster by Chandler McWilliams.</description>
+        </item>
+
+	<item>
+                <date>1 December 2007</date>
+                <description>Software from the Yahoo! Design Innovation Team added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+
+	<item>
+                <date>7 January 2008</date>
+                <description>Software from Firstborn and the team of Philipp Steinweber and Andreas Koller added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
 </updates>
+
+

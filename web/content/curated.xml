@@ -1,5 +1,108 @@
+
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
+
+<software name="Microsoft Live / Operation Smile" by="Firstborn" scroll="yes" resize="yes" width="1024" height="900">
+        <image>images/firstborn.jpg</image>
+          <description>
+A generative art exhibition projected onto a seven-story sphere located at New York's South Street Seaport.
+          </description>
+          <location>http://www.firstbornmultimedia.com/#/our-portfolio/1007/</location>
+          <link href="http://www.firstbornmultimedia.com/">Firstborn</link>
+        </software>
+
+<software name="Similar Diversity" by="Philipp Steinweber & Andreas Koller" scroll="yes" resize="yes" width="900" height="900">
+        <image>images/simdiv.jpg</image>
+          <description>
+ A data visualization based on the Holy Books of five world religions.
+          </description>
+          <location>http://similardiversity.net</location>
+          <link href="http://phl.kontxt.net">Philipp Steinweber</link>
+	  <link href="http://andreaskoller.com">Andreas Koller</link>
+        </software>
+
+<software name="Query Burst Visualizer" by="Yahoo! Design Innovation Team" scroll="yes" resize="yes"\
+ width="1024" height="900">
+        <image>images/yahoo.jpg</image>
+          <description>
+ Shows global locations of popular Yahoo! search queries related to current events. 
+          </description>
+          <location>http://design.yahoo.com/project.php?pid=9</location>
+          <link href="http://design.yahoo.com/">Yahoo! Design Innovation Team</link>
+        </software>
+
+<software name="The Sheep Market" by="Aaron Koblin" scroll="yes" resize="yes"\
+ width="1024" height="900">
+        <image>images/sheep.gif</image>
+          <description>
+The Sheep Market is a collection of 10,000 sheep made by workers on Amazon's Mechanical Turk. Workers were paid $0.02 (USD) to &quot;draw a sheep facing to the left.&quot;
+          </description>
+          <location>http://www.aaronkoblin.com/work/thesheepmarket/</location>
+          <link href="http://www.thesheepmarket.com">TheSheepMarket.com</link>
+          <link href="http://www.aaronkoblin.com">Aaron Koblin</link>
+        </software>
+
+ 
+<software name="Celestial Workshops" by="Paul Catanese" scroll="yes" resize="yes"\
+ width="800" height="900">
+        <image>images/catanese.jpg</image>
+          <description>
+Celestial Workshops is a suite of drawing tools created in Processing that
+control CNC milling machinery as a method of carving relief blocks for
+printmaking.
+          </description>
+          <location>http://www.paulcatanese.com/artwork/celestial/process.html</location>
+          <link href="http://www.paulcatanese.com">PaulCatanese.com</link>
+        </software>
+
+<software name="Anymails" by="Carolin Horn" scroll="yes" resize="yes"\
+ width="1024" height="900">
+        <image>images/any.gif</image>
+          <description>
+Email visualization that uses the visual language of microbes to show mail structure and attributes.
+          </description>
+          <location>http://carohorn.de/anymails/</location>
+          <link href="http://carohorn.de/">CaroHorn.de</link>
+        </software>
+
+<software name="Champs d'Ozone" by="HeHe" scroll="yes" resize="yes"\
+ width="1024" height="900">
+        <image>images/hehe.jpg</image>
+          <description>
+A moving cloud that hangs above the skyline of Paris and changes color with the
+actual air quality.
+          </description>
+          <location>http://www.hehe.org/hehe/champsdozone/</location>
+          <link href="http://www.hehe.org">HeHe</link>
+        </software>
+
+<software name="Time Travel Tube Map" by="Tom Carden" scroll="yes" resize="yes" width="1024" height="900">
+        <image>images/carden.jpg</image>
+          <description>
+             Reorganizes the London Underground map to visualize travel times from station to station.
+          </description>
+          <location>http://www.tom-carden.co.uk/p5/tube_map_travel_times/applet/</location>
+          <link href="http://www.tom-carden.co.uk/">Tom Carden</link>
+        </software>
+
+<software name="Fidg't Visualizer" by="Protohaus" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/proto.jpg</image>
+          <description>
+	     Visualize social networks through Flickr and LastFM tags.
+          </description>
+          <location>http://www.fidgt.com/visualize/</location>
+          <link href="http://protohaus.com">Protohaus</link>
+        </software>
+
+<software name="Lovebytes 2007" by="Universal Everything / Toxi" scroll="yes\
+" resize="yes" width="900" height="700">
+        <image>images/lovebytes.png</image>
+          <description>
+	  A population of unique friendly furry faces to appear across all festival literature  for Lovebytes 2007.	  
+          </description>
+          <location>http://universaleverything.com/recent_activity/205</location>
+          <link href="http://universaleverything.com">Universal Everything</link>
+        </software>
 
       <software name="Reconfigurable House" by="Usman Haque & Adam Somlai-Fischer" scroll="yes" resize="yes" width="900" height="700">
         <image>images/house.jpg</image>
