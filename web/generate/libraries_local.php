@@ -17,7 +17,7 @@ $libraries = array('net', 'serial', 'video', 'opengl', 'dxf', 'pdf', 'xml', 'can
 $lib_dir = DISTDIR.'libraries';
 
 // get library index
-$index = CONTENTDIR."api_$lang/libraries.html";
+$index = CONTENTDIR."api_$lang/libraries/index.html";
 $page = new LocalPage('Libraries \\ Processing 1.0 (BETA)', 'Libraries', 'Libraries', '../');
 $page->content(file_get_contents($index));
 make_necessary_directories(DISTDIR.'libraries/images/include.php');

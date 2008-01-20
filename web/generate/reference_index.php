@@ -6,7 +6,7 @@ require('lib/Translation.class.php');
 $benchmark_start = microtime_float();
 
 // arguments
-$lang = isSet($_GET['lang']) ? $_GET['lang'] : 'en';
+$lang = isSet($_POST['lang']) ? $_POST['lang'] : 'en';
 
 // make changes file
 $lib_dir = 'reference/';

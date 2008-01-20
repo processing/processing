@@ -45,30 +45,8 @@ li { margin-bottom: 1em; }
 
 <div id="body">
 <p>&nbsp;</p>
-<p>
-<strong>Generate for Distribution</strong>
-</p>
-<p>		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a> \ 
-		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a> \ 
-		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a> \ 
-		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a> \ <br />
-		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (FAQ, Copyright, People)</a>
-</p>
-<p>&nbsp;</p>
-<strong>Generate Site Files</strong>
-<p>	
-    <a href="#" onclick="remote_link('cover.php');return false;">Cover</a> \ 
-	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a> \ 
-	<a href="#" onclick="remote_link('examples.php'); return false;">Examples</a> \ 
-	<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">Libraries</a> \ 
-	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a> \ 
-	<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a> \ 
-    <a href="#" onclick="remote_link('courses.php'); return false;">Courses</a> \ 
-  	<a href="#" onclick="remote_link('happenings.php'); return false;">Happenings</a> \ 
-    <a href="#" onclick="remote_link('updates.php'); return false;">Updates</a> \ 
-	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
-	</p>
-    <p>Generate Reference:<br />
+
+    <p><b>Generate Reference</b><br />
 			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference.php', 
 			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 				<select name="lang">
@@ -108,7 +86,41 @@ li { margin-bottom: 1em; }
 				<input type="submit" value="Generate" />
 			</form>
     </p>
-    <p>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></p>
+
+   <p>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></p>
+
+
+<p>&nbsp;</p>
+
+
+<strong>Generate Site Files</strong>
+<p>	
+    <a href="#" onclick="remote_link('cover.php');return false;">Cover</a> \ 
+	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a> \ 
+	<a href="#" onclick="remote_link('examples.php'); return false;">Examples</a> \ 
+	<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">Libraries</a> \ 
+	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a> \ 
+	<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a> \ 
+    <a href="#" onclick="remote_link('courses.php'); return false;">Courses</a> \ 
+  	<a href="#" onclick="remote_link('happenings.php'); return false;">Happenings</a> \ 
+    <a href="#" onclick="remote_link('updates.php'); return false;">Updates</a> \ 
+	<a href="#" onclick="remote_link('staticpages.php'); return false;">Static Pages (FAQ, Copyright, Contribute, People)</a>
+	</p>
+
+<p>&nbsp;</p>
+
+<p>
+<strong>Generate for Distribution</strong>
+</p>
+<p>		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a> \ 
+		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a> \ 
+		<a href="#" onclick="remote_link('environment_local.php'); return false;">Environment and Troubleshooting</a> \ 
+		<a href="#" onclick="remote_link('compare_local.php'); return false;">Compare</a> \ <br />
+		<a href="#" onclick="remote_link('staticpages_local.php'); return false;">Static Pages (FAQ, Copyright, People)</a>
+</p>
+
+<p>&nbsp;</p>
+
 
 <!--
 	<p>Generate Library References:
@@ -145,7 +157,7 @@ foreach ($LANGUAGES as $code => $array) {
 		</p>
 -->
 
-
+<!--
 <p>&nbsp;</p>
 <p>
 <strong>Generate Template</strong>
@@ -156,7 +168,8 @@ foreach ($LANGUAGES as $code => $array) {
     <input type="submit" value="Generate" />
 </form>
 </p>
-<p>&nbsp;</p>
+
+-->
 
 <div id="status-container">
     <h3>Status</h3>
