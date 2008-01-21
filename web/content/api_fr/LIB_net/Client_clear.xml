@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>clear()</name>
+
+<category>Client</category>
+
+<subcategory>Client</subcategory>
+
+<usage>Application</usage>
+
+<example>
+<image></image>
+<code>
+// Example by Tom Igoe
+
+// Creates a client that listens for input until it gets a 
+// linefeed and then throws the rest of the input away
+
+import processing.net.*; 
+Client myClient; 
+String inString;
+byte interesting = 10;
+
+void setup() { 
+  size (300, 100);
+  // Connect to the local machine at port 10002.
+  // This example will not run if you haven't
+  // previously started a server on this port
+  myClient = new Client(this, "127.0.0.1", 10002); 
+} 
+
+void draw() { 
+  if (myClient.available() &gt; 0) { 
+    background(0); 
+    // Read input until we get a byte of value 10 (ASCII linefeed):
+    inString = myClient.readStringUntil(interesting); 
+    println(inString); 
+    // Throw away the rest of the input:
+    myClient.clear();
+  }
+} 
+
+</code>
+</example>
+
+<description>
+Empty the buffer, removes all the data stored there.
+</description>
+
+<syntax>
+<c>client</c>.clear()
+</syntax>
+
+<parameter>
+<label>client</label>
+<description>any variable of type Client</description>
+</parameter>
+
+<returns>None</returns>
+
+<related></related>
+
+<availability>1.0</availability>
+
+<type>Method</type>
+
+<partof>Library</partof>
+
+
+</root>
