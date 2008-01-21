@@ -4,16 +4,16 @@ $pages = array(
     'Cover'         => array('/', 0),
     'Exhibition'    => array('/exhibition/index.html', 1),
     
-	'Learning'      => array('/learning/index.html', 1),
+    'Learning'      => array('/learning/index.html', 1),
     #'Examples'      => array('/learning/index.html', 2),
     #'Tutorials'     => array('/learning/tutorials/index.html', 2),
-	'Overview'			=> array('/learning/index.html', 2),
+    'Overview'			=> array('/learning/index.html', 2),
     'Basics'     		=> array('/learning/basics/index.html', 2),
     'Topics'     		=> array('/learning/topics/index.html', 2),
-	'3D & OpenGL'		=> array('/learning/3d/index.html', 2),
-	'Library Examples'	=> array('/learning/libraries/index.html', 2),
-	'Books'		        => array('/learning/books/index.html', 2),
-	'Hacks'     		=> array('/learning/hacks/index.html', 2),
+    '3D & OpenGL'		=> array('/learning/3d/index.html', 2),
+    'Library Examples'	=> array('/learning/libraries/index.html', 2),
+    'Books'		        => array('/learning/books/index.html', 2),
+    'Hacks'     		=> array('/learning/hacks/index.html', 2),
 	
     'Reference'     => array('/reference/index.html', 1),
     'Download'      => array('/download/index.html', 1),
@@ -23,16 +23,16 @@ $pages = array(
     'Language'      => array('/reference/index.html', 1),
     'Environment'   	=> array('/reference/environment/index.html', 2),
     'Libraries'     	=> array('/reference/libraries/index.html', 2),
-    'Comparison'    	=> array('/reference/compare/index.html', 2),
-	'Troubleshooting'	=> array('/reference/troubleshooting/index.html', 2)
+    'Compare'    	=> array('/reference/compare/index.html', 2),
+    'Troubleshooting'	=> array('/reference/troubleshooting/index.html', 2)
     
     );
 
 function navigation($section = '')
 {  
-    $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Comparison', 'Troubleshooting');
+    $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
-	$learn = array('Learning', 'Overview', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
+    $learn = array('Learning', 'Overview', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
     
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
@@ -56,7 +56,7 @@ function navigation($section = '')
         $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " \\\n";
         $html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
         $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \\\n";
-		$html .= "\t\t\t\t\t" . l('Comparison', $section == 'Comparison') . " \\\n";
+	$html .= "\t\t\t\t\t" . l('Compare', $section == 'Compare') . " \\\n";
         $html .= "\t\t\t\t\t" . l('Troubleshooting', $section == 'Troubleshooting') . "\n";
         
         $html .= "\t\t\t\t</div>\n";
@@ -92,7 +92,7 @@ function short_nav($section)
     $html .= "\t\t\t\t\t<a href=\"/reference/index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">Language</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">Libraries</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"/reference/compare/index.html\"" . ($section == 'Comparison' ? 'class="active"' : '') . ">Comparison</a> \\ \n";
+    $html .= "\t\t\t\t\t<a href=\"/reference/compare/index.html\"" . ($section == 'Compare' ? 'class="active"' : '') . ">Compare</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">Troubleshooting</a>\n";
 	   
     $html .= "\t\t\t\t</div>\n";
@@ -109,9 +109,9 @@ function local_nav($section, $rel_path='')
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">Language</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">Libraries</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"{$rel_path}environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">Environment</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"{$rel_path}compare/index.html\"" . ($section == 'Comparison' ? 'class="active"' : '') . ">Comparison</a> \\ \n";
-	$html .= "\t\t\t\t\t<a href=\"{$rel_path}troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">Troubleshooting</a>\n";
- 	$html .= "\t\t\t\t\t<a href=\"{$rel_path}faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
+    $html .= "\t\t\t\t\t<a href=\"{$rel_path}compare/index.html\"" . ($section == 'Compare' ? 'class="active"' : '') . ">Compare</a> \\ \n";
+    $html .= "\t\t\t\t\t<a href=\"{$rel_path}troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">Troubleshooting</a>\n";
+    #$html .= "\t\t\t\t\t<a href=\"{$rel_path}faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
     
     $html .= "\t\t\t\t</div>\n";
     $html .= "\t\t\t</div>\n";
@@ -132,8 +132,8 @@ function navigation_tr($section)
     $html .= "\t\t\t\t\t<a href=\"/reference/$lang/index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">$tr[language]</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/$lang/libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">$tr[libraries]</a> \\ \n";
     $html .= "\t\t\t\t\t<a href=\"/reference/$lang/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">$tr[environment]</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"/reference/$lang/compare/index.html\"" . ($section == 'Comparison' ? 'class="active"' : '') . ">$tr[comparison]</a> \\ \n";
-    $html .= "\t\t\t\t\t<a href=\"/reference/$lang/troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">$tr[troublesooting]</a>\n";
+    $html .= "\t\t\t\t\t<a href=\"/reference/$lang/compare/index.html\"" . ($section == 'Compare' ? 'class="active"' : '') . ">$tr[comparison]</a> \\ \n";
+    $html .= "\t\t\t\t\t<a href=\"/reference/$lang/troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">$tr[troubleshooting]</a>\n";
    
     $html .= "\t\t\t\t</div>\n";
     $html .= "\t\t\t</div>\n";
