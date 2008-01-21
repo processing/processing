@@ -24,6 +24,10 @@ make_necessary_directories(BASEDIR.$lib_dir.'/images/include.php');
 writeFile($lib_dir.'/index.html', $page->out());
 copydirr(CONTENTDIR."api_$lang/LIB_images", BASEDIR.$lib_dir.'/images');
 
+// copy over the files for the contributed libraries
+copy(CONTENTDIR."static/libraries.html", BASEDIR.$lib_dir.'/libraries.html');
+
+
 // foreach lib
 foreach ($libraries as $lib) {
 	$source = "api_$lang/LIB_$lib";
