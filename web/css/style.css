@@ -270,7 +270,7 @@ dl.network dt { font-style: normal; }
 dl.network dd { margin: 0; }
 dl.network dd.date { color: #999966; margin-bottom: 1em; }
 
-p.network { margin: 0 0 1em 0; }
+p.network { margin: 0 23px 1em 0; width:200px; }
 p.network span.date { color: #999966; }
 
 p.exhibition-nav { margin-top: 0; }
@@ -450,6 +450,8 @@ h2 { margin-bottom: 0; margin-top: 0;}
 #Libraries h5 a { font-weight: bold; }
 #Libraries h3 { clear: both; margin-bottom: 0; }
 #Libraries h4 { font-size: 1em; margin-bottom: .5em; }
+#Libraries h4 a {float:left; margin-left:-30px; martin-top:-5px; }
+
 
 #Libraries .threecol { float: left; width: 210px; margin-right: 20px; }
 #Libraries .threecol p { margin-top: 0; margin-bottom: 2em; }
@@ -467,13 +469,13 @@ ul.nostyle { margin: 0; padding: 0; list-style: none outside; }
 }
 
 /************************************************************** comparison ***/
-#Comparison h1 { margin-top: 2em; }
-#Comparison h2 { margin-bottom: 0; }
-#Comparison .threecol { float: left; width: 210px; margin-right: 20px; }
-#Comparison .threecol p { margin-top: 0; }
+#Compare h1 { margin-top: 2em; }
+#Compare h2 { margin-bottom: 0; }
+#Compare .threecol { float: left; width: 210px; margin-right: 20px; }
+#Compare .threecol p { margin-top: 0; }
 
 
-#Comparison .content {
+#Compare .content {
         margin-left    : 55px;
         margin-right   : 0px;
         position: relative;
