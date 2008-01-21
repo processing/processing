@@ -14,6 +14,7 @@ X   had a fix, but decided not to re-implement the loadTIFF stuff too
 X fix for bezierTangent() problem from dave bollinger
 X   http://dev.processing.org/bugs/show_bug.cgi?id=710
 
+test
 _ ENABLE_DEPTH_SORT causing trouble with MovieMaker
 _   need to make the flush() api accessible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=692
