@@ -123,6 +123,7 @@ class Example
 		$page->set('examples_nav', $this->make_nav($menu_array));
 		writeFile("learning/".strtolower($this->sub)."/".strtolower($this->name).".html", $page->out());
 		$this->copy_media();
+		echo $this->name;
 		#echo "learning/examples/".strtolower($this->sub)."/".strtolower($this->name).".html\n";
 	}
 	
@@ -180,7 +181,10 @@ class Example
 				echo "Could not copy {$this->applet} to .";
 			}
 			#echo EXAMPLESDIR.strtolower($this->sub).'/media/'.$this->name.'.jar';
-		}
+			echo EXAMPLESDIR.strtolower($this->sub).'/media/'.$this->name.'.jar';
+		} else {
+		  echo " | ";
+		}			
 	}
 }
 

@@ -17,7 +17,7 @@ make_necessary_directories($path."images/file");
 $files = array('index.html','java.html','actionscript.html', 'lingo.html', 'python.html', 'dbn.html');
 
 foreach ($files as $file) {
-	$page = new Page('Comparison', 'Comparison');
+	$page = new Page('Compare', 'Compare');
 	$page->content(file_get_contents($source.$file));
 	$page->language($lang);
 	writeFile('reference/'.($lang=='en'?'':"$lang/")."compare/$file", $page->out());

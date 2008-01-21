@@ -1,3 +1,8 @@
-RewriteEngine on
-RewriteCond %{REQUEST_URI}  \.css$
-RewriteRule ^(.+)$ http://sandbox/processing/%{REQUEST_URI}
+AuthUserFile /var/www/processing/generate/.htpasswd
+AuthGroupFile /dev/null
+AuthName "You can't handle the generate"
+AuthType Basic
+
+<Limit GET>
+require user w3b
+</Limit>
