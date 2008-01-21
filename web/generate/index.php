@@ -23,7 +23,7 @@ function showloading()
     </script>
     
     <style type="text/css">
-body { margin: 0; font: small Helvetica, Arial, sans-serif; }
+    body { margin: 0; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 12px; }
 
 h1 { margin: 0; width: 750px; background: #000; }
 
@@ -34,19 +34,31 @@ li { margin-bottom: 1em; }
 
 #status-container { display: none; background: #efefff; border: 1px solid #c8c8ff; padding: 5px; width: 95%; overflow-x: hidden; }
 #status-container h3 { margin: 0; }
-#status { font-size: .7em; }
+#status { font-size: 12px; }
 
 .inline { display: inline; }
     </style>
 </head>
 
 <body>
-<h1><img src="img/processing_beta_cover.gif" alt="Processing (BETA)" /></h1>
+<h1><img src="../img/processing_beta_cover.gif" alt="Processing" /></h1>
 
 <div id="body">
 <p>&nbsp;</p>
-
-    <p><b>Generate Reference</b><br />
+     <p><b>Generate reference files</b></p>
+     <p><form action="#" method="post" onsubmit="new Ajax.Updater('status', 'svn_update.php',                      
+                    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
+                        <select name="lang">
+     <?
+      foreach ($LANGUAGES as $code => $array) {
+        echo "\t\t\t\t<option value=\"$code\">$array[0]</option>\n";
+      }
+      ?>
+                        </select> 
+                        <input type="submit" value="Update XML files from SVN" />
+                </form>
+        </p>
+    <p>
 			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference.php', 
 			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 				<select name="lang">
@@ -56,11 +68,10 @@ li { margin-bottom: 1em; }
 					}
 				?>
 				</select>
-				<input type="submit" value="Generate" />
+				<input type="submit" value="Generate all reference files" />
 			</form>
     </p>
-	<p>Generate One Reference file: 
-		<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_one.php', 
+	<p>	<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_one.php', 
 		    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 			<select name="lang">
 <?
@@ -70,11 +81,10 @@ li { margin-bottom: 1em; }
 ?>
 			</select> / 
 			<label><input type="text" name="file" size="35" value="abs.xml" /></label>
-			<input type="submit" value="Generate" />
+			<input type="submit" value="Generate one reference file" />
 		</form>
 	</p>
-    <p>Generate Reference Indices:<br />
-			<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_index.php', 
+    <p>	<form action="#" method="post" onsubmit="new Ajax.Updater('status', 'reference_index.php', 
 			    { asynchronous: true, parameters: Form.serialize(this), onLoading: showloading }); return false;">
 				<select name="lang">
 				<?
@@ -83,17 +93,18 @@ li { margin-bottom: 1em; }
 					}
 				?>
 				</select>
-				<input type="submit" value="Generate" />
+				<input type="submit" value="Generate reference indices" />
 			</form>
     </p>
-
-   <p>Copy <a href="#" onclick="remote_link('reference_media.php'); return false;">Reference Media files to public directory</a></p>
-
+				<p>&nbsp;</p>  
+<p><a href="#" onclick="remote_link('reference_media.php'); return false;">Copy reference media to public directory</a></p>
 
 <p>&nbsp;</p>
+<strong>Generate non-English static pages (Libraries, Environment, Comparison, Troubleshooting )</strong><br />
+<i>Coming soon...</i>
+<p>&nbsp;</p>
 
-
-<strong>Generate Site Files</strong>
+<strong>Generate English site files</strong>
 <p>	
     <a href="#" onclick="remote_link('cover.php');return false;">Cover</a> \ 
 	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a> \ 
@@ -110,7 +121,7 @@ li { margin-bottom: 1em; }
 <p>&nbsp;</p>
 
 <p>
-<strong>Generate for Distribution</strong>
+<strong>Generate English files for distribution</strong>
 </p>
 <p>		<a href="#" onclick="remote_link('reference_local.php'); return false;">Reference</a> \ 
 		<a href="#" onclick="remote_link('libraries_local.php'); return false;">Libraries</a> \ 
