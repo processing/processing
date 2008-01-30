@@ -1796,10 +1796,23 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Calculate the tangent at a t value (0..1) on a Catmull-Rom curve.
+   * Code thanks to Dave Bollinger (Bug #715)
+   */
   public float curveTangent(float a, float b, float c, float d,
                             float t) {
-    System.err.println("curveTangent not yet implemented");
-    return 0;
+    if (!curve_inited) curve_init();
+
+    float tt3 = t * t * 3;
+    float t2 = t * 2;
+    float m[][] = curve_basis;
+
+    // not optimized (and probably need not be)
+    return (a * (tt3*m[0][0] + t2*m[1][0] + m[2][0]) +
+            b * (tt3*m[0][1] + t2*m[1][1] + m[2][1]) +
+            c * (tt3*m[0][2] + t2*m[1][2] + m[2][2]) +
+            d * (tt3*m[0][3] + t2*m[1][3] + m[2][3]) );
   }
 
 

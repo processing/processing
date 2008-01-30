@@ -13,8 +13,13 @@ X     perhaps something gets corrected?
 X   had a fix, but decided not to re-implement the loadTIFF stuff too
 X fix for bezierTangent() problem from dave bollinger
 X   http://dev.processing.org/bugs/show_bug.cgi?id=710
+X implement curveTangent (thanks to davbol)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=715
 
-test
+_ loadStrings(".") should not list directory contents
+_   http://dev.processing.org/bugs/show_bug.cgi?id=716
+
+_ remove saveFile() methods?
 _ ENABLE_DEPTH_SORT causing trouble with MovieMaker
 _   need to make the flush() api accessible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=692
@@ -435,9 +440,8 @@ _   rewrite line and stroke code, it's a buggy mess
 _     lines become 2 pixels thick after a 3D transform 
 _     better handling of single-pixel special case
 _       flat_line_retribution is a hack, can go away
-_ implement curveTangent
-_   fix-up the curve_init() and the rest to use matrices
-_     and not have ugly names (i.e. just g.curveDetail is good)
+_ fix-up the curve_init() and the rest to use matrices
+_   and not have ugly names (i.e. just g.curveDetail is good)
 _ ellipse scaling method isn't great
 _   http://dev.processing.org/bugs/show_bug.cgi?id=695
 _   weird ellipse bug with an alpha line in same image
