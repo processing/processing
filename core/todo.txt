@@ -15,6 +15,13 @@ X fix for bezierTangent() problem from dave bollinger
 X   http://dev.processing.org/bugs/show_bug.cgi?id=710
 X implement curveTangent (thanks to davbol)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=715
+X fix problem with get() when imageMode(CORNERS) was in use
+
+_ for begin/endRecord, use a piggyback mechanism
+_   that way won't have to pass a PApplet around
+_   this has a big impact on the SVG library
+_   in fact, this maybe should be a library that does it
+_     so that the file size can be much smaller
 
 _ loadStrings(".") should not list directory contents
 _   http://dev.processing.org/bugs/show_bug.cgi?id=716
