@@ -331,7 +331,7 @@ public class PImage implements PConstants, Cloneable {
       //x2 += x1; y2 += y1;
       // w/h are x2/y2 in this case, bring em down to size
       w = (w - x);
-      h = (h - x);
+      h = (h - y);
     }
 
     if (x < 0) {

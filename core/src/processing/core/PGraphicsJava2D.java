@@ -651,7 +651,7 @@ public class PGraphicsJava2D extends PGraphics {
       who.modified = false;
     }
 
-    g2.drawImage(((ImageCache) who.cache).image, 
+    g2.drawImage(((ImageCache) who.cache).image,
                  (int) x1, (int) y1, (int) x2, (int) y2,
                  u1, v1, u2, v2, null);
   }
@@ -673,9 +673,9 @@ public class PGraphicsJava2D extends PGraphics {
 //      image = new BufferedImage(source.width, source.height, type);
     }
 
-    /** 
+    /**
      * Update the pixels of the cache image. Already determined that the tint
-     * has changed, or the pixels have changed, so should just go through 
+     * has changed, or the pixels have changed, so should just go through
      * with the update without further checks.
      */
     public void update(boolean tint, int tintColor) {
@@ -687,7 +687,7 @@ public class PGraphicsJava2D extends PGraphics {
         }
       }
       boolean wrongType = (image != null) && (image.getType() != bufferType);
-      if ((image == null) || wrongType) { 
+      if ((image == null) || wrongType) {
         image = new BufferedImage(source.width, source.height, bufferType);
       }
 
@@ -700,7 +700,7 @@ public class PGraphicsJava2D extends PGraphics {
         int r2 = (tintColor >> 16) & 0xff;
         int g2 = (tintColor >> 8) & 0xff;
         int b2 = (tintColor) & 0xff;
-        
+
         if (bufferType == BufferedImage.TYPE_INT_RGB) {
           //int alpha = tintColor & 0xFF000000;
           int index = 0;
@@ -723,7 +723,7 @@ public class PGraphicsJava2D extends PGraphics {
 //          float[] offsets = new float[3];
 //          RescaleOp op = new RescaleOp(scales, offsets, null);
 //          op.filter(image, image);
-          
+
         } else if (bufferType == BufferedImage.TYPE_INT_ARGB) {
           int index = 0;
           for (int y = 0; y < source.height; y++) {
@@ -734,11 +734,11 @@ public class PGraphicsJava2D extends PGraphics {
                 int r1 = (argb1 >> 16) & 0xff;
                 int g1 = (argb1 >> 8) & 0xff;
                 int b1 = (argb1) & 0xff;
-                tintedPixels[x] = alpha | 
+                tintedPixels[x] = alpha |
                   (((r2 * r1) & 0xff00) << 8) |
                   ((g2 * g1) & 0xff00) |
                   (((b2 * b1) & 0xff00) >> 8);
-              }            
+              }
             } else if (source.format == ARGB) {
               for (int x = 0; x < source.width; x++) {
                 int argb1 = source.pixels[index++];
@@ -751,17 +751,17 @@ public class PGraphicsJava2D extends PGraphics {
                   (((r2 * r1) & 0xff00) << 8) |
                   ((g2 * g1) & 0xff00) |
                   (((b2 * b1) & 0xff00) >> 8);
-              }                          
+              }
             } else if (source.format == ALPHA) {
               int lower = tintColor & 0xFFFFFF;
               for (int x = 0; x < source.width; x++) {
                 int a1 = source.pixels[index++];
                 tintedPixels[x] =
                   (((a2 * a1) & 0xff00) << 16) | lower;
-              }            
+              }
             }
             wr.setDataElements(0, y, source.width, 1, tintedPixels);
-          }          
+          }
           // Not sure why ARGB images take the scales in this order...
 //          float[] scales = { tintR, tintG, tintB, tintA };
 //          float[] offsets = new float[4];
@@ -772,10 +772,10 @@ public class PGraphicsJava2D extends PGraphics {
         wr.setDataElements(0, 0, source.width, source.height, source.pixels);
       }
       this.tinted = tint;
-      this.tintedColor = tintColor;      
+      this.tintedColor = tintColor;
     }
   }
-  
+
     /*
     // for rev 0124, passing the tintColor in here. the problem is that
     // the 'parent' PGraphics object of this inner class may not be
@@ -1310,7 +1310,7 @@ public class PGraphicsJava2D extends PGraphics {
     if (imageMode == CORNERS) {  // if CORNER, do nothing
       // w/h are x2/y2 in this case, bring em down to size
       w = (w - x);
-      h = (h - x);
+      h = (h - y);
     }
 
     if (x < 0) {
