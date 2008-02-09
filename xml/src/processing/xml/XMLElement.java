@@ -496,10 +496,12 @@ public class XMLElement
 
 
     public XMLElement(String s) {
+        this();
+
         try {
-                parseString(s);
+            parseString(s);
         } catch (XMLParseException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
