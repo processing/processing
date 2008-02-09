@@ -30,6 +30,10 @@ $pages = array(
 
 function navigation($section = '')
 {  
+    global $lang;
+    global $translation;
+    $tr = $translation->navigation;
+
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
     $learn = array('Learning', 'Overview', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
@@ -52,13 +56,25 @@ function navigation($section = '')
     
     if (in_array($section, $ref)) {
         $html .= "\t\t\t\t" . '<div class="navBar" id="subNav">' . "\n";
+    
+        if ($lang == 'en') {
+
+          $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " \\\n";
+          $html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
+          $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \\\n";
+	  $html .= "\t\t\t\t\t" . l('Compare', $section == 'Compare') . " \\\n";
+          $html .= "\t\t\t\t\t" . l('Troubleshooting', $section == 'Troubleshooting') . "\n";
         
-        $html .= "\t\t\t\t\t" . l('Language', $section == 'Language') . " \\\n";
-        $html .= "\t\t\t\t\t" . l('Libraries', $section == 'Libraries') . " \\\n";
-        $html .= "\t\t\t\t\t" . l('Environment', $section == 'Environment') . " \\\n";
-	$html .= "\t\t\t\t\t" . l('Compare', $section == 'Compare') . " \\\n";
-        $html .= "\t\t\t\t\t" . l('Troubleshooting', $section == 'Troubleshooting') . "\n";
-        
+	} else {
+
+          $html .= "\t\t\t\t\t<a href=\"/reference/$lang/index.html\"" . ($section == 'Language' ? ' class="active"' : '') . ">$tr[language]</a> \\ \n";
+          $html .= "\t\t\t\t\t<a href=\"/reference/$lang/libraries/index.html\"" . ($section == 'Libraries' ? ' class="active"' : '') . ">$tr[libraries]</a> \\ \n";
+          $html .= "\t\t\t\t\t<a href=\"/reference/$lang/environment/index.html\"" . ($section == 'Environment' ? ' class="active"' : '') . ">$tr[environment]</a> \\ \n";
+          $html .= "\t\t\t\t\t<a href=\"/reference/$lang/compare/index.html\"" . ($section == 'Compare' ? 'class="active"' : '') . ">$tr[comparison]</a> \\ \n";
+          $html .= "\t\t\t\t\t<a href=\"/reference/$lang/troubleshooting/index.html\"" . ($section == 'Troubleshooting' ? 'class="active"' : '') . ">$tr[troubleshooting]</a>\n";
+
+	}
+    
         $html .= "\t\t\t\t</div>\n";
 		
     } else if (in_array($section, $learn)) {
@@ -163,7 +179,7 @@ function reference_nav($current = '')
 function language_nav($current)
 {
     global $LANGUAGES;
-	global $FINISHED;
+    global $FINISHED;
     if (count($FINISHED) < 2) { return ''; }
     
     $html = "\t".'Language: <select name="nav" size="1" class="refnav" onChange="javascript:gogo(this)">'."\n";

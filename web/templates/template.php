@@ -57,8 +57,10 @@ class Page
         $this->lang = $lang;
         $this->xhtml->set('charset', $LANGUAGES[$lang][1]);
         $this->xhtml->set('lang', $lang);
-        if ($lang != 'en')
-            $this->xhtml->set('navigation', navigation_tr($this->section));
+	  if ($lang != 'en') {
+            #$this->xhtml->set('navigation', navigation_tr($this->section));
+            $this->xhtml->set('navigation', navigation($this->section));
+	  }
     }
     
     function out()
@@ -91,7 +93,8 @@ class ReferencePage
         $xhtml->set('title', $title);
         $xhtml->set('bodyid', 'Langauge-'.$lang);
         
-        $xhtml->set('navigation', ($lang == 'en') ? navigation('Language') : navigation_tr('Language'));
+        #$xhtml->set('navigation', ($lang == 'en') ? navigation('Language') : navigation_tr('Language'));
+        $xhtml->set('navigation', ($lang == 'en') ? navigation('Language') : navigation('Language'));
 
         $piece = new xhtml_piece(TEMPLATEDIR.'template.reference.item.html');
         $xhtml->set('content_for_layout', $piece->out());
