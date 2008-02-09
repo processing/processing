@@ -5,7 +5,7 @@
   http://www.ghost-hack.com/
 
   Revised and expanded by Ben Fry for inclusion as a core library
-  Copyright (c) 2006- Ben Fry and Casey Reas
+  Copyright (c) 2006-08 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package processing.candy;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import processing.core.*;
@@ -88,7 +89,7 @@ import processing.xml.*;
  * }
  * </PRE>
  *
- * <EM>Note that processing.xml is imported as well.</EM>
+ * <EM>Note that processing.xml needs to be imported as well.</EM>
  * This may not be required when running code within the Processing
  * environment, but when exported it may cause a NoClassDefError.
  * This will be fixed in later releases of Processing
@@ -96,6 +97,12 @@ import processing.xml.*;
  *
  * <p> <hr noshade> <p>
  *
+ * February 2008 revisions by fry (Processing 0136)
+ * <UL>
+ * <LI> Added support for quadratic curves in paths (Q, q, T, and t operators)
+ * <LI> Support for reading SVG font data (though not rendering it yet) 
+ * </UL>
+ *  
  * Revisions for "Candy 2" November 2006 by fry
  * <UL>
  * <LI> Switch to the new processing.xml library
@@ -108,7 +115,7 @@ import processing.xml.*;
  *
  * Revision 10/31/06 by flux
  * <UL>
- * <LI> Now properly supports Processing-0118
+ * <LI> Now properly supports Processing 0118
  * <LI> Fixed a bunch of things for Casey's students and general buggity.
  * <LI> Will now properly draw #FFFFFFFF colors (were being represented as -1)
  * <LI> SVGs without <g> tags are now properly caught and loaded
@@ -139,7 +146,7 @@ public class SVG {
 
     protected Hashtable table = new Hashtable();
     protected XMLElement svg;
-    protected BaseObject root;
+    public BaseObject root;
 
     protected boolean ignoreStyles = false;
 
@@ -180,7 +187,14 @@ public class SVG {
             height = parseUnitSize(unitHeight);
         } else {
             if ((width == 0) || (height == 0)) {
-                throw new RuntimeException("width/height not specified");
+                //throw new RuntimeException("width/height not specified");
+            	System.err.println("The width and/or height is not " +
+            			           "readable in the <svg> tag of this file.");
+            	// For the spec, the default is 100% and 100%. For purposes 
+            	// here, insert a dummy value because this is prolly just a 
+            	// font or something for which the w/h doesn't matter.
+            	width = 1;
+            	height = 1;
             }
         }
 
@@ -923,6 +937,9 @@ public class SVG {
                 } else if (name.equals("ellipse")) {
                     objects[objectCount++] = new Ellipse(this, elem);
 
+                } else if (name.equals("font")) {
+                	objects[objectCount++] = new Font(this, elem); 
+                		
                 } else if (name.equals("rect")) {
                     objects[objectCount++] = new Rect(this, elem);
 
@@ -952,7 +969,7 @@ public class SVG {
                     PApplet.println("Masks are not supported.");
 
                 } else {
-                    System.err.println("Ignoring SVG tag " + name);
+                    System.err.println("Ignoring  <" + name + "> tag.");
                 }
             }
         }
@@ -1233,24 +1250,21 @@ public class SVG {
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    private class Path extends BaseObject {
+    public class Path extends BaseObject {
 
-        //Vector points = new Vector();
-        boolean closed = false;
+        public int count = 0;
+        public float[] x = new float[4];
+        public float[] y = new float[4];
 
-        int count = 0;
-        float[] x = new float[4];
-        float[] y = new float[4];
-        //boolean[] bezier = new boolean[4];
+        static public final int MOVETO = 0;
+        static public final int LINETO = 1;
+        static public final int CURVETO = 2;
+        static public final int QCURVETO = 3;
+        public int[] kind = new int[4];
 
-        static final int MOVETO = 0;
-        static final int LINETO = 1;
-        static final int CURVETO = 2;
-        int[] kind = new int[4];
+        public boolean closed = false;
 
 
-        //Hang on! This is going to be meaty.
-        //Big and nasty constructor coming up....
         public Path(BaseObject parent, XMLElement properties) {
             super(parent, properties);
             String pathDataBuffer = "";
@@ -1271,9 +1285,11 @@ public class SVG {
                     c == 'L' || c == 'l' ||
                     c == 'H' || c == 'h' ||
                     c == 'V' || c == 'v' ||
-                    c == 'C' || c == 'c' ||
+                    c == 'C' || c == 'c' ||  // beziers
                     c == 'S' || c == 's' ||
-                    c == 'Z' || c == 'z' ||
+                    c == 'Q' || c == 'q' ||  // quadratic beziers
+                    c == 'T' || c == 't' ||
+                    c == 'Z' || c == 'z' ||  // closepath 
                     c == ',') {
                     separate = true;
                     if (i != 0) {
@@ -1395,19 +1411,8 @@ public class SVG {
                     break;
 
 
-                //C - curve to (absolute)
+                // C - curve to (absolute)
                 case 'C': {
-                    /*
-                    float curvePA[] = {PApplet.parseFloat(pathDataKeys[i + 1]), PApplet.parseFloat(pathDataKeys[i + 2])};
-                    float curvePB[] = {PApplet.parseFloat(pathDataKeys[i + 3]), PApplet.parseFloat(pathDataKeys[i + 4])};
-                    float endP[] = {PApplet.parseFloat(pathDataKeys[i + 5]), PApplet.parseFloat(pathDataKeys[i + 6])};
-                    cp[0] = endP[0];
-                    cp[1] = endP[1];
-                    i += 6;
-                    points.add(curvePA);
-                    points.add(curvePB);
-                    points.add(endP);
-                    */
                     float ctrlX1 = PApplet.parseFloat(pathDataKeys[i + 1]);
                     float ctrlY1 = PApplet.parseFloat(pathDataKeys[i + 2]);
                     float ctrlX2 = PApplet.parseFloat(pathDataKeys[i + 3]);
@@ -1421,19 +1426,8 @@ public class SVG {
                 }
                 break;
 
-                //c - curve to (relative)
+                // c - curve to (relative)
                 case 'c': {
-                    /*
-                    float curvePA[] = {cp[0] + PApplet.parseFloat(pathDataKeys[i + 1]), cp[1] + PApplet.parseFloat(pathDataKeys[i + 2])};
-                    float curvePB[] = {cp[0] + PApplet.parseFloat(pathDataKeys[i + 3]), cp[1] + PApplet.parseFloat(pathDataKeys[i + 4])};
-                    float endP[] = {cp[0] + PApplet.parseFloat(pathDataKeys[i + 5]), cp[1] + PApplet.parseFloat(pathDataKeys[i + 6])};
-                    cp[0] = endP[0];
-                    cp[1] = endP[1];
-                    i += 6;
-                    points.add(curvePA);
-                    points.add(curvePB);
-                    points.add(endP);
-                    */
                     float ctrlX1 = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
                     float ctrlY1 = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
                     float ctrlX2 = cx + PApplet.parseFloat(pathDataKeys[i + 3]);
@@ -1447,23 +1441,8 @@ public class SVG {
                 }
                 break;
 
-                //S - curve to shorthand (absolute)
+                // S - curve to shorthand (absolute)
                 case 'S': {
-                    /*
-                    float lastPoint[] = (float[]) points.get(points.size() - 1);
-                    float lastLastPoint[] = (float[]) points.get(points.size() - 2);
-                    float curvePA[] = {cp[0] + (lastPoint[0] - lastLastPoint[0]),
-                                       cp[1] + (lastPoint[1] - lastLastPoint[1])};
-                    float curvePB[] = {PApplet.parseFloat(pathDataKeys[i + 1]),
-                                       PApplet.parseFloat(pathDataKeys[i + 2])};
-                    float e[] = {PApplet.parseFloat(pathDataKeys[i + 3]), PApplet.parseFloat(pathDataKeys[i + 4])};
-                    cp[0] = e[0];
-                    cp[1] = e[1];
-                    points.add(curvePA);
-                    points.add(curvePB);
-                    points.add(e);
-                    i += 4;
-                    */
                     float ppx = x[count-2];
                     float ppy = y[count-2];
                     float px = x[count-1];
@@ -1481,21 +1460,8 @@ public class SVG {
                 }
                 break;
 
-                //s - curve to shorthand (relative)
+                // s - curve to shorthand (relative)
                 case 's': {
-                    /*
-                    float lastPoint[] = (float[]) points.get(points.size() - 1);
-                    float lastLastPoint[] = (float[]) points.get(points.size() - 2);
-                    float curvePA[] = {cp[0] + (lastPoint[0] - lastLastPoint[0]), cp[1] + (lastPoint[1] - lastLastPoint[1])};
-                    float curvePB[] = {cp[0] + PApplet.parseFloat(pathDataKeys[i + 1]), cp[1] + PApplet.parseFloat(pathDataKeys[i + 2])};
-                    float e[] = {cp[0] + PApplet.parseFloat(pathDataKeys[i + 3]), cp[1] + PApplet.parseFloat(pathDataKeys[i + 4])};
-                    cp[0] = e[0];
-                    cp[1] = e[1];
-                    points.add(curvePA);
-                    points.add(curvePB);
-                    points.add(e);
-                    i += 4;
-                    */
                     float ppx = x[count-2];
                     float ppy = y[count-2];
                     float px = x[count-1];
@@ -1513,6 +1479,71 @@ public class SVG {
                 }
                 break;
 
+                // Q - quadratic curve to (absolute)
+                case 'Q': {
+                    float ctrlX = PApplet.parseFloat(pathDataKeys[i + 1]);
+                    float ctrlY = PApplet.parseFloat(pathDataKeys[i + 2]);
+                    float endX = PApplet.parseFloat(pathDataKeys[i + 3]);
+                    float endY = PApplet.parseFloat(pathDataKeys[i + 4]);
+                    curveto(ctrlX, ctrlY, endX, endY);
+                    cx = endX;
+                    cy = endY;
+                    i += 5;
+                }
+                break;
+
+                // q - quadratic curve to (relative)
+                case 'q': {
+                    float ctrlX = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
+                    float ctrlY = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
+                    float endX = cx + PApplet.parseFloat(pathDataKeys[i + 3]);
+                    float endY = cy + PApplet.parseFloat(pathDataKeys[i + 4]);
+                    curveto(ctrlX, ctrlY, endX, endY);
+                    cx = endX;
+                    cy = endY;
+                    i += 5;
+                }
+                break;
+
+                // T - quadratic curve to shorthand (absolute)
+                // The control point is assumed to be the reflection of the 
+                // control point on the previous command relative to the 
+                // current point. (If there is no previous command or if the 
+                // previous command was not a Q, q, T or t, assume the control 
+                // point is coincident with the current point.) 
+                case 'T': {
+                    float ppx = x[count-2];
+                    float ppy = y[count-2];
+                    float px = x[count-1];
+                    float py = y[count-1];
+                    float ctrlX = px + (px - ppx);
+                    float ctrlY = py + (py - ppy);
+                    float endX = PApplet.parseFloat(pathDataKeys[i + 1]);
+                    float endY = PApplet.parseFloat(pathDataKeys[i + 2]);
+                    curveto(ctrlX, ctrlY, endX, endY);
+                    cx = endX;
+                    cy = endY;
+                    i += 3;
+                }
+                break;
+
+                // t - quadratic curve to shorthand (relative)
+                case 't': {
+                    float ppx = x[count-2];
+                    float ppy = y[count-2];
+                    float px = x[count-1];
+                    float py = y[count-1];
+                    float ctrlX = px + (px - ppx);
+                    float ctrlY = py + (py - ppy);
+                    float endX = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
+                    float endY = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
+                    curveto(ctrlX, ctrlY, endX, endY);
+                    cx = endX;
+                    cy = endY;
+                    i += 3;
+                }
+                break;
+
                 case 'Z':
                 case 'z':
                     closed = true;
@@ -1520,6 +1551,12 @@ public class SVG {
                     break;
 
                 default:
+                	String parsed = 
+                		PApplet.join(PApplet.subset(pathDataKeys, 0, i), ",");
+                	String unparsed = 
+                		PApplet.join(PApplet.subset(pathDataKeys, i), ",");
+                	System.err.println("parsed: " + parsed);
+                	System.err.println("unparsed: " + unparsed);
                     throw new RuntimeException("shape command not handled: " + pathDataKeys[i]);
                 }
             }
@@ -1552,6 +1589,24 @@ public class SVG {
         }
 
 
+        /** Quadratic curveto command. */
+        protected void curveto(float x1, float y1, float x2, float y2) {
+            if (count + 2 >= x.length) {
+                x = PApplet.expand(x);
+                y = PApplet.expand(y);
+                kind = PApplet.expand(kind);
+            }
+            kind[count] = QCURVETO;
+            x[count] = x1;
+            y[count] = y1;
+            count++;
+            x[count] = x2;
+            y[count] = y2;
+            count++;
+        }
+
+
+        /** Cubic curveto command. */
         protected void curveto(float x1, float y1, float x2, float y2, float x3, float y3) {
             if (count + 2 >= x.length) {
                 x = PApplet.expand(x);
@@ -1573,36 +1628,12 @@ public class SVG {
 
         protected void drawShape() {
             parent.beginShape();
-            /*
-            float start[] = (float[]) points.get(0);
-            parent.vertex(start[0], start[1]);
-            for (int i = 1; i < points.size(); i += 3) {
-                float a[] = (float[]) points.get(i);
-                float b[] = (float[]) points.get(i + 1);
-                float e[] = (float[]) points.get(i + 2);
-                parent.bezierVertex(a[0], a[1], b[0], b[1], e[0], e[1]);
-            }
-            */
-
-            /*
-            for (int i = 0; i < count; i++) {
-                PApplet.println(i + "\t" + x[i] + "\t" + y[i] + "\t" + bezier[i]);
-            }
-            PApplet.println();
-            */
 
             parent.vertex(x[0], y[0]);
             int i = 1;  // moveto has the first point
             while (i < count) {
                 switch (kind[i]) {
                 case MOVETO:
-                    /*
-                    //if (i != 0) {
-                    parent.endShape(closed ? PConstants.CLOSE : PConstants.OPEN);
-                    closed = false;
-                    parent.beginShape();
-                    //}
-                     */
                     parent.breakShape();
                     parent.vertex(x[i], y[i]);
                     i++;
@@ -1613,6 +1644,11 @@ public class SVG {
                     i++;
                     break;
 
+                case QCURVETO:  // doubles the control point
+                    parent.bezierVertex(x[i], y[i], x[i+1], y[i+1], x[i+1], y[i+1]);
+                    i += 2;
+                    break;
+
                 case CURVETO:
                     parent.bezierVertex(x[i], y[i], x[i+1], y[i+1], x[i+2], y[i+2]);
                     i += 3;
@@ -1620,13 +1656,214 @@ public class SVG {
                 }
             }
             parent.endShape(closed ? PConstants.CLOSE : PConstants.OPEN);
-            /*
-            if (closed)
-                parent.endShape(PConstants.CLOSE);
-            else
-                parent.beginShape();
-            //      p.endShape();
-             */
+        }
+        
+        
+        public void draw() {
+        	drawShape();
+        }
+        
+        
+        public void draw(PApplet tp) {
+        	PApplet p = parent;
+        	parent = tp;
+        	drawShape();
+        	parent = p;
+        }
+
+
+        public void draw(PGraphics parent) {
+            parent.beginShape();
+
+            parent.vertex(x[0], y[0]);
+            int i = 1;  // moveto has the first point
+            while (i < count) {
+                switch (kind[i]) {
+                case MOVETO:
+                    parent.breakShape();
+                    parent.vertex(x[i], y[i]);
+                    i++;
+                    break;
+
+                case LINETO:
+                    parent.vertex(x[i], y[i]);
+                    i++;
+                    break;
+
+                case QCURVETO:  // doubles the control point
+                    parent.bezierVertex(x[i], y[i], x[i+1], y[i+1], x[i+1], y[i+1]);
+                    i += 2;
+                    break;
+
+                case CURVETO:
+                    parent.bezierVertex(x[i], y[i], x[i+1], y[i+1], x[i+2], y[i+2]);
+                    i += 3;
+                    break;
+                }
+            }
+            parent.endShape(closed ? PConstants.CLOSE : PConstants.OPEN);
+        }
+    }
+    
+    
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+    
+    // http://www.w3.org/TR/SVG11/fonts.html
+    public class Font extends BaseObject {
+//        String id;
+//        XMLElement element;
+
+    	public FontFace face;
+
+    	public HashMap namedGlyphs;
+    	public HashMap unicodeGlyphs;
+        
+    	public int glyphCount;
+    	public FontGlyph[] glyphs;
+    	public FontGlyph missingGlyph;
+    	
+        
+    	public Font(BaseObject parent, XMLElement properties) {
+    		super(parent, properties);
+
+            XMLElement[] elements = properties.getChildren();
+
+            namedGlyphs = new HashMap();
+            unicodeGlyphs = new HashMap();
+            glyphCount = 0;
+            glyphs = new FontGlyph[elements.length];
+
+            for (int i = 0; i < elements.length; i++) {
+                String name = elements[i].getName();
+                XMLElement elem = elements[i];
+                if (name.equals("glyph")) {
+                	FontGlyph fg = new FontGlyph(this, elem);
+                	if (fg.count != 0) {
+                		if (fg.name != null) {
+                			namedGlyphs.put(fg.name, fg);
+                		}
+                		if (fg.unicode != 0) {
+                			unicodeGlyphs.put(new Character(fg.unicode), fg);
+                		}
+                	}
+                	glyphs[glyphCount++] = fg;
+                	
+                } else if (name.equals("missing-glyph")) {
+                	missingGlyph = new FontGlyph(this, elem);
+                } else if (name.equals("font-face")) {
+                	face = new FontFace(this, elem);
+                } else {
+                	System.err.println("Ignoring " + name + " inside <font>");
+                }
+            }
+    	}
+
+
+		protected void drawShape() {
+			// does nothing for fonts
+		}
+		
+		
+		public void drawString(String str, float x, float y, float size) {
+			// 1) scale by the 1.0/unitsPerEm
+			// 2) scale up by a font size
+			parent.pushMatrix();
+			float s =  size / (float) face.unitsPerEm;
+			//System.out.println("scale is " + s);
+			// swap y coord at the same time, since fonts have y=0 at baseline
+			parent.translate(x, y);
+			parent.scale(s, -s);
+			char[] c = str.toCharArray();
+			for (int i = 0; i < c.length; i++) {
+				// call draw on each char (pulling it w/ the unicode table)
+				FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c[i]));
+				if (fg != null) {
+					fg.draw();
+					// add horizAdvX/unitsPerEm to the x coordinate along the way
+					parent.translate(fg.horizAdvX, 0);
+				} else {
+					System.err.println("'" + c[i] + "' not available.");
+				}
+			}
+			parent.popMatrix();
+		}
+		
+		
+		public void drawChar(char c, float x, float y, float size) {
+			parent.pushMatrix();
+			float s =  size / (float) face.unitsPerEm;
+			parent.translate(x, y);
+			parent.scale(s, -s);
+			FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c));
+			if (fg != null) fg.draw();
+			parent.popMatrix();
+		}
+    }
+    
+    
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+    
+    public class FontFace extends BaseObject {
+    	int horizOriginX;  // dflt 0
+    	int horizOriginY;  // dflt 0
+    	int horizAdvX;     // no dflt?
+    	int vertOriginX;   // dflt horizAdvX/2
+    	int vertOriginY;   // dflt ascent
+    	int vertAdvY;      // dflt 1em (unitsPerEm value)
+
+    	String fontFamily;
+    	int fontWeight;    // can also be normal or bold (also comma separated)
+    	String fontStretch;
+    	int unitsPerEm;    // dflt 1000
+    	int[] panose1;     // dflt "0 0 0 0 0 0 0 0 0 0"
+    	int ascent;
+    	int descent;
+    	int[] bbox;        // spec says comma separated, tho not w/ forge
+    	int underlineThickness;
+    	int underlinePosition;
+    	//String unicodeRange; // gonna ignore for now
+
+    	
+    	public FontFace(BaseObject parent, XMLElement properties) {
+    		super(parent, properties);
+    		
+    		unitsPerEm = properties.getIntAttribute("units-per-em", 1000);
+    	}
+    	
+    	
+		protected void drawShape() {
+			// nothing to draw in the font face attribute
+		}
+    }
+    
+    
+    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+    public class FontGlyph extends Path {
+    	String name;
+    	//String unicode;
+    	char unicode; //c;
+    	int horizAdvX;
+    	
+        public FontGlyph(BaseObject parent, XMLElement properties) {
+            super(parent, properties);
+            
+            name = properties.getStringAttribute("glyph-name");
+            String u = properties.getStringAttribute("unicode");
+            unicode = 0;
+            if (u != null) {
+            	if (u.length() == 1) {
+            		unicode = u.charAt(0);
+            		//System.out.println("unicode for " + name + " is " + u);
+            	} else {
+            		System.err.println("unicode for " + name + 
+            					       " is more than one char: " + u);
+            	}
+            }
+            horizAdvX = properties.getIntAttribute("horiz-adv-x", 0);
         }
     }
 }
