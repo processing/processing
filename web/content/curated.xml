@@ -2,6 +2,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Birds!" by="Robert Hodgin" scroll="yes" resize="yes" width="1024" height="900">
+        <image>images/foxmovies.jpg</image>
+          <description>
+Exploration of flocking behavior used to collaborate with Nando Costa in producing telvision spots for FOX Japan.
+          </description>
+          <location>http://www.flight404.com/blog/?p=99</location>
+          <link href="http://www.flight404.com/">Flight404</link>
+          <link href="http://nervo.tv/index.html?sect=5&proj=foxmovies">Nervo</link>
+        </software>
+
 <software name="Microsoft Live / Operation Smile" by="Firstborn" scroll="yes" resize="yes" width="1024" height="900">
         <image>images/firstborn.jpg</image>
           <description>

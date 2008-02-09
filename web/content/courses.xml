@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
+        <date>February 2008</date>
+        <institution>Master Multimedia - University of Florence, Italy</institution>
+        <title>Fundamentals of Digital Media and Programming</title>
+        <description>The course presents the fundamentals of digital audio, images, video and 3D. &lt;br /&gt;Students with various background, mostly creative, learn how to realize Processing programs that generate and manipulate such media. Several examples and exercises of increasing complexity are presented throughout the course, together with the most influent creative works of software art of the past and present.</description>
+        <contact>
+            <name>Walter Nunziati</name>
+            <email>nunziati at dsi dot unifi dot it</email>
+        </contact>
+        <links>
+            <link>
+                <title>Master Multimedia</title>
+                <url>http://www.mmm.unifi.it/</url>
+            </link>
+            <link>
+                <title>Pietro Pala</title>
+                <url>http://viplab.dsi.unifi.it/~pala/</url>
+            </link>
+            <link>
+                <title>Walter Nunziati</title>
+                <url>http://viplab.dsi.unifi.it/~nunziati</url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
         <date>Spring 2008 (beginning 1/14/2008)</date>
         <institution>North Lake College (Irving, TX)</institution>
         <title>Programming for Artists</title>
@@ -19,16 +51,16 @@
                 <url>http://www.northlakecollege.edu/</url>
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
         </links>
     </course>

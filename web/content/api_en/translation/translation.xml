@@ -8,7 +8,8 @@
 		<language>Language</language>
 		<environment>Environment</environment>
 		<libraries>Libraries</libraries>
-		<comparison>Comparison</comparison>
+		<comparison>Compare</comparison>
+		<troubleshooting>Troubleshooting</troubleshooting>
 		<changes>Changes</changes>
 		<technotes>TechNotes</technotes>
 		<abridged>Abridged</abridged>

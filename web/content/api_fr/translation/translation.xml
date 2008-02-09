@@ -9,6 +9,7 @@
 		<environment>Environment</environment>
 		<libraries>Libraries</libraries>
 		<comparison>Comparison</comparison>
+		<troubleshooting>Troubleshooting</troubleshooting>
 		<changes>Changes</changes>
 		<technotes>TechNotes</technotes>
 		<abridged>Abridged</abridged>
@@ -38,7 +39,7 @@
 	</attributes>
 	
 	<categories>
-        <cat name="Structure">Structure</cat>
+        <cat name="Structure">TestStructure</cat>
         <cat name="Environment">Environment</cat>
         <cat name="Data">Data
 		    <sub name="Primitive">Primitive</sub>

@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="ARMSFLOW" by="Jeffrey Warren">
+        <location>http://www.armsflow.org/</location>
+        <date>08 Feb &apos;08</date>
+    </software>
+    <software name="jogo de capoeira" by="gary james stilwell">
+        <location>http://myweb.polyu.edu.hk/~06768140g/stilwell-capoeira.htm</location>
+        <date>07 Feb &apos;08</date>
+    </software>
+    <software name="RECEPTOR" by="vertikalist">
+        <location>http://www.mydisk.se/tgn380/webpage/RECEPTOR/</location>
+        <date>06 Feb &apos;08</date>
+    </software>
+    <software name="TableExplorer - a Reactivision experiment" by="Patrick Dinnen">
+        <location>http://www.hogtownconsulting.com/wordpress/archives/the-all-knowing-table/</location>
+        <date>04 Feb &apos;08</date>
+    </software>
+    <software name="automat (image destruction)" by="kaubonschen">
+        <location>http://kaubonschen.com/automat/</location>
+        <date>04 Feb &apos;08</date>
+    </software>
+    <software name="BARCODE PLANTAGE" by="Daniel A. Becker">
+        <location>http://www.barcode-plantage.com/</location>
+        <date>03 Feb &apos;08</date>
+    </software>
+    <software name="Synth" by="Mike Lawrie">
+        <location>http://imagearts.ryerson.ca/mlawrie/site/index.php?page=synth</location>
+        <date>01 Feb &apos;08</date>
+    </software>
+    <software name="Moving Mario" by="theDemos">
+        <location>http://www.the-demos.com/?page_id=192</location>
+        <date>30 Jan &apos;08</date>
+    </software>
+    <software name="Digg Trends" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/DiggViz4/index.html</location>
+        <date>29 Jan &apos;08</date>
+    </software>
+    <software name="dotsnot" by="mm">
+        <location>http://www.madmerv.com/portfolio</location>
+        <date>27 Jan &apos;08</date>
+    </software>
+    <software name="san jose airport expansion proposal" by="saltandonion">
+        <location>http://iamtoosadtotellyou.blogspot.com/2008/01/san-jose-airport-expansion-proposal.html</location>
+        <date>23 Jan &apos;08</date>
+    </software>
+    <software name="Honeycomb Navigator" by="Jeff Clark">
+        <location>http://www.neoformix.com/2008/ButterBeeHappy.html</location>
+        <date>22 Jan &apos;08</date>
+    </software>
     <software name="clumpwork" by="nakai yusuke">
         <location>http://homepage3.nifty.com/clumpwork/exploratorium.html</location>
         <date>16 Jan &apos;08</date>
