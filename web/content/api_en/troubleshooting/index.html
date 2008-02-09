@@ -321,19 +321,37 @@ however you still cannot capture video without a signed applet (see above).</li>
 
 
 	<h5 id="memory"><a href="#top"><img src="images/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
-      Out Of Memory Errors</h5>
+      Out Of Memory Errors (java.lang.OutOfMemoryError)</h5>
 	<p>
-If you get an OutOfMemoryError while running your program, use the
+If you get a OutOfMemoryError while running your program, use the
 Preferences window to increase the amount of available memory.
+Check the box next to "Increase maximum available memory" 
+and enter an amount.
 <br /> <br />
 Depending on your OS and available RAM, there are limits on how much
-memory you can ask for. Use this preference with caution, 
+memory you can ask for. 
+</p>
+
+<p>
+32-bit operating systems and software are usually limited to addressing 
+somewhere around either 2GB and 4GB of RAM at a time. This means that
+even if you have 8GB of RAM installed in your machine, you may only be
+able to use shy of 2GB per application. Most Windows systems seem to be
+limited to 2GB, while Mac OS X and Linux can usually access shy of 4GB. 
+Upcoming 64-bit operating systems get around this restriction and increase 
+the amount of available memory significantly. However, even if you're 
+running a 64-bit OS like Mac OS 10.5, or a 64-bit Linux, a combination of
+factors (version of Java, etc.) may mean that you're still limited by the
+32-bit boundary of 2GB or 4GB.
+</p>
+
+<p>
+<em>Use this preference with caution</em>, 
 because if you set the memory too high, 
 programs will no longer run in Processing. 
 When you hit run, you'll get error messages. <br /> <br />
 
-This message means that you're trying to use more memory than the 
-machine has installed:
+If this message appears after you hit Run, then you're trying to use more memory than the machine has installed:
 <pre>
 
 Error occurred during initialization of VM
@@ -341,7 +359,7 @@ Could not reserve enough space for object heap
 
 </pre>
 
-These mean that you're trying to use more memory than the
+The following messages mean that you're trying to use more memory than the
 Operating System allows (regardless of how much RAM you have):
 
 <pre>
@@ -355,13 +373,14 @@ Could not create the Java virtual machine.
 
 </pre>
 
-On Windows with 1G of RAM, it seems to be in
+On Windows with 1G of RAM, the limit seems to be in
 the neighborhood of 1.5 GB. Mac OS X and Linux seem to allow up to 
 just shy of 4 GB, depending on how much RAM you have installed. 
 Usually you can allocate 50% more RAM than you have installed. 
 i.e. for a machine with 1 GB of physical memory, about 1.5 GB is
 the maximum that can be used. Your mileage will also vary with 
-different versions of Java (1.3, 1.4, 1.5, 1.6...)
+different versions of Java (1.3, 1.4, 1.5, 1.6...) 
+and your operating system.
 <br /> <br />
 Unfortunately the memory limitations of Java set an upper bound 
 that is outside our control. If you're having trouble creating very 
