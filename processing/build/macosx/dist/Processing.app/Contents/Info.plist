@@ -75,6 +75,8 @@
 			<string>true</string>
 			<key>apple.awt.use-file-dialog-packages</key>
 			<string>false</string>
+			<key>apple.awt.graphics.UseQuartz</key>
+			<string>true</string>
 		</dict>
 	</dict>
 </dict>
