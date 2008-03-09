@@ -12,7 +12,7 @@
 <image></image>
 <code>
 String s = "Inside a tag, you will find <tag>content</tag>.";
-String[] m = match(s, "<tag>(\\S+)</tag>");
+String[] m = match(s, "<tag>(\\\\S+)</tag>");
 println("Found " + m[0] + " inside the tag.");
 // Prints "Found content inside the tag." to the console
 </code>
