@@ -92,12 +92,11 @@ public class Runner implements MessageConsumer {
   public Runner(Editor editor, boolean presenting) throws RunnerException {
     this.editor = editor;
     this.sketch = editor.sketch;
-    this.presenting = presenting;
-    
-//  }
-//  
-//  
-//  public void go2() {
+    this.presenting = presenting;    
+  }
+  
+  
+  public void poo() {
     
     // this as prefix made the code folder bug go away, but killed stdio
     //"cmd", "/c", "start",
@@ -121,13 +120,14 @@ public class Runner implements MessageConsumer {
     vm = launch(vmParamList, appletParamList);
     
 //    PrintWriter writer = new PrintWriter(System.out);
-    PrintWriter writer = null;
-    try {
-      writer = new PrintWriter(new FileWriter("/Users/fry/Desktop/runner.txt"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    generateTrace(writer);
+//    PrintWriter writer = null;
+//    try {
+//      writer = new PrintWriter(new FileWriter("/Users/fry/Desktop/runner.txt"));
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+    //generateTrace(writer);
+    generateTrace(null);
         
 //    String[] guiParams = PApplet.concat(vmParamList, appletParamList);
 //    for (int i = 0; i < guiParams.length; i++) {
@@ -342,21 +342,26 @@ public class Runner implements MessageConsumer {
    */
   void generateTrace(PrintWriter writer) {
     vm.setDebugTraceMode(debugTraceMode);
-    EventThread eventThread = new EventThread(vm, excludes, writer); 
-    eventThread.setEventRequests(watchFields);
-    eventThread.start();
+    
+    EventThread eventThread = null;
+    if (writer != null) {
+      eventThread = new EventThread(vm, excludes, writer); 
+      eventThread.setEventRequests(watchFields);
+      eventThread.start();
+    }
+    
     redirectOutput();
     vm.resume();
 
     // Shutdown begins when event thread terminates
     try {
-      eventThread.join();
+      if (eventThread != null) eventThread.join();
       errThread.join(); // Make sure output is forwarded 
       outThread.join(); // before we exit
     } catch (InterruptedException exc) {
       // we don't interrupt
     }
-    writer.close();
+    if (writer != null) writer.close();
   }
   
 
@@ -714,7 +719,7 @@ public class Runner implements MessageConsumer {
 
 
   public void stop() {
-    System.out.println("external stop not implemented");
+    //System.out.println("external stop not implemented");
     close();
     
     //EventQueue eq = vm.eventQueue();
@@ -780,7 +785,7 @@ public class Runner implements MessageConsumer {
         
       } catch (com.sun.jdi.VMDisconnectedException vmde) {
         // if the vm has disconnected on its own, ignore message 
-        System.out.println("harmless disconnect " + vmde.getMessage());
+        //System.out.println("harmless disconnect " + vmde.getMessage());
         // TODO shouldn't need to do this, need to do more cleanup
       }
       vm = null;
