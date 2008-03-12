@@ -21,7 +21,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.debug;
 
 import java.io.*;
 
@@ -43,7 +43,7 @@ class MessageSiphon implements Runnable {
     // don't set priority too low, otherwise exceptions won't
     // bubble up in time (i.e. compile errors have a weird delay)
     //thread.setPriority(Thread.MIN_PRIORITY);
-    thread.start();
+    //thread.start();
   }
 
 
