@@ -121,7 +121,7 @@ cd ..
 
 cd app
 
-CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/apple.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/lib/registry.jar:../build/linux/work/java/lib/rt.jar"
+CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/apple.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/oro.jar:../build/linux/work/lib/registry.jar:../build/linux/work/lib/tools.jar:../build/linux/work/java/lib/rt.jar"
 
 ../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
 
