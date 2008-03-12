@@ -22,8 +22,11 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.debug;
 
+import processing.app.Base;
+import processing.app.Preferences;
+import processing.app.Sketch;
 import processing.core.*;
 
 import java.io.*;
@@ -100,7 +103,7 @@ public class Compiler implements MessageConsumer {
       // also for windows because qtjava will most likely be here
       // and for linux, it just doesn't hurt
       "-classpath",
-      sketch.classPath, //calcClassPath(includeFolder),
+      sketch.getClassPath(), //calcClassPath(includeFolder),
 
       "-nowarn", // we're not currently interested in warnings
       "+E", // output errors in machine-parsable format
@@ -110,11 +113,11 @@ public class Compiler implements MessageConsumer {
 
     // make list of code files that need to be compiled
     // (some files are skipped if they contain no class)
-    String preprocNames[] = new String[sketch.codeCount];
+    String preprocNames[] = new String[sketch.getCodeCount()];
     int preprocCount = 0;
-    for (int i = 0; i < sketch.codeCount; i++) {
-      if (sketch.code[i].preprocName != null) {
-        preprocNames[preprocCount++] = sketch.code[i].preprocName;
+    for (int i = 0; i < sketch.getCodeCount(); i++) {
+      if (sketch.getCode(i).preprocName != null) {
+        preprocNames[preprocCount++] = sketch.getCode(i).preprocName;
       }
     }
     String command[] = new String[baseCommand.length + preprocCount];
@@ -231,10 +234,10 @@ public class Compiler implements MessageConsumer {
     int fileIndex = -1;  // use this to build a better exception
 
     // iterate through the project files to see who's causing the trouble
-    for (int i = 0; i < sketch.codeCount; i++) {
-      if (sketch.code[i].preprocName == null) continue;
+    for (int i = 0; i < sketch.getCodeCount(); i++) {
+      if (sketch.getCode(i).preprocName == null) continue;
 
-      partialTempPath = buildPathSubst + sketch.code[i].preprocName;
+      partialTempPath = buildPathSubst + sketch.getCode(i).preprocName;
       partialStartIndex = s.indexOf(partialTempPath);
       if (partialStartIndex != -1) {
         fileIndex = i;
@@ -258,16 +261,16 @@ public class Compiler implements MessageConsumer {
       //System.out.println("pde / line number: " + lineNumber);
 
       if (fileIndex == 0) {  // main class, figure out which tab
-        for (int i = 1; i < sketch.codeCount; i++) {
-          if (sketch.code[i].flavor == Sketch.PDE) {
-            if (sketch.code[i].preprocOffset < lineNumber) {
+        for (int i = 1; i < sketch.getCodeCount(); i++) {
+          if (sketch.getCode(i).flavor == Sketch.PDE) {
+            if (sketch.getCode(i).preprocOffset < lineNumber) {
               fileIndex = i;
               //System.out.println("i'm thinkin file " + i);
             }
           }
         }
         if (fileIndex != 0) {  // if found another culprit
-          lineNumber -= sketch.code[fileIndex].preprocOffset;
+          lineNumber -= sketch.getCode(fileIndex).preprocOffset;
           //System.out.println("i'm sayin line " + lineNumber);
         }
       }
