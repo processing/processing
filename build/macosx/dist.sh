@@ -24,6 +24,8 @@ rm -rf processing-*
 
 # use 'shared' files as starting point
 cp -r ../shared processing
+# tools.jar not needed on osx
+rm -f processing/lib/tools.jar
 
 # add the libraries folder with source
 cp -r ../../net processing/libraries/
