@@ -23,6 +23,8 @@
 
 package processing.app;
 
+import processing.app.debug.Runner;
+import processing.app.debug.RunnerException;
 import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
@@ -104,8 +106,8 @@ public class Editor extends JFrame {
   EditorListener listener;
 
   // runtime information and window placement
-  Point appletLocation;
-  RunButtonWatcher watcher;
+  Point sketchWindowLocation;
+  //RunButtonWatcher watcher;
   Runner runtime;
 
   JMenuItem exportAppItem;
@@ -1106,19 +1108,28 @@ public class Editor extends JFrame {
     }
 
     try {
-      if (!sketch.handleRun()) return;
+      if (!sketch.handleCompile()) return;
 
-      runtime = new Runner(sketch, Editor.this);
-      runtime.start(appletLocation);
+      //SwingUtilities.invokeLater(new Runnable() {
+      Thread t = new Thread(new Runnable() {
+        public void run() {
+          try {
+            runtime = new Runner(Editor.this, presenting);
+            //runtime.go();
+          } catch (RunnerException e) {
+            error(e);
+          }
+        }
+      });
+      t.start();
+      //runtime.start(appletLocation);
 
       // run button watcher not currently enabled
       // it was contributing to the external vm hanging
-      watcher = new RunButtonWatcher();
-
-    } catch (RunnerException e) {
-      error(e);
+      //watcher = new RunButtonWatcher();
 
     } catch (Exception e) {
+      System.err.println("exception reached editor");
       e.printStackTrace();
     }
 
@@ -1147,7 +1158,18 @@ public class Editor extends JFrame {
     //sketch.cleanup();  // where does this go?
   }
 
+  
+  public void setSketchLocation(Point p) {
+    sketchWindowLocation = p;
+  }
+  
+  
+  public Point getSketchLocation() {
+    return sketchWindowLocation;
+  }
 
+  
+  /*
   class RunButtonWatcher implements Runnable {
     Thread thread;
 
@@ -1188,19 +1210,26 @@ public class Editor extends JFrame {
       thread = null;
     }
   }
+  */
 
 
   public void handleStop() {  // called by menu or buttons
+//    System.out.println("stopping");
+    toolbar.activate(EditorToolbar.STOP);
+
     if (presenting) {
       closeRunner();
-    } else if (runtime.window != null) {
-      // When run externally, kill the applet window,
-      // otherwise things may not stop properly with libraries.
-      closeRunner();
+//    } else if (runtime.window != null) {
+//      // When run externally, kill the applet window,
+//      // otherwise things may not stop properly with libraries.
+//      closeRunner();
     } else {
       stopRunner();
     }
-    toolbar.clear();
+    //System.out.println("clearing toolbar");
+    //toolbar.clear();
+    toolbar.deactivate(EditorToolbar.RUN);
+    toolbar.deactivate(EditorToolbar.STOP);
   }
 
 
@@ -1208,13 +1237,15 @@ public class Editor extends JFrame {
    * Stop the applet but don't kill its window.
    */
   public void stopRunner() {
+    //System.out.println("stopRunner 1");
     if (runtime != null) runtime.stop();
-    if (watcher != null) watcher.stop();
+    //System.out.println("stopRunner 2");
+    //if (watcher != null) watcher.stop();
     message(EMPTY);
 
     // the buttons are sometimes still null during the constructor
     // is this still true? are people still hitting this error?
-    /*if (buttons != null)*/ toolbar.clear();
+    /*if (buttons != null)*/ //toolbar.clear();
 
     running = false;
   }
@@ -1225,19 +1256,21 @@ public class Editor extends JFrame {
    * mode, this will always be called instead of doStop().
    */
   public void closeRunner() {
+    //System.out.println("closing runner");
+    
     //if (presenting) {
     //presentationWindow.hide();
     //} else {
-    try {
-      // the window will also be null the process was running
-      // externally. so don't even try setting if window is null
-      // since Runner will set the appletLocation when an
-      // external process is in use.
-      if (runtime.window != null) {
-        appletLocation = runtime.window.getLocation();
-      }
-    } catch (NullPointerException e) { }
-    //}
+//    try {
+//      // the window will also be null the process was running
+//      // externally. so don't even try setting if window is null
+//      // since Runner will set the appletLocation when an
+//      // external process is in use.
+//      if (runtime.window != null) {
+//        appletLocation = runtime.window.getLocation();
+//      }
+//    } catch (NullPointerException e) { }
+//    //}
 
     //if (running) doStop();
     stopRunner();  // need to stop if runtime error
@@ -1252,8 +1285,7 @@ public class Editor extends JFrame {
 
     sketch.cleanup();
 
-    // [toxi 030903]
-    // focus the PDE again after quitting presentation mode
+    // focus the PDE again after quitting presentation mode [toxi 030903]
     toFront();
   }
 
@@ -1464,7 +1496,8 @@ public class Editor extends JFrame {
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=276">Bug 276</A>.
    */
   public boolean handleSave(boolean immediately) {
-    stopRunner();
+    //stopRunner();
+    handleStop();  // 0136
 
     if (untitled) {
       return handleSaveAs();
@@ -1509,12 +1542,15 @@ public class Editor extends JFrame {
       //checkModifiedMode = 0;
       // this is used when another operation calls a save
     }
-    toolbar.clear();
+    //toolbar.clear();
+    toolbar.deactivate(EditorToolbar.SAVE);
   }
 
 
   public boolean handleSaveAs() {
-    stopRunner();
+    //stopRunner();  // formerly from 0135
+    handleStop(); 
+    
     toolbar.activate(EditorToolbar.SAVE);
 
     //SwingUtilities.invokeLater(new Runnable() {
@@ -1534,9 +1570,11 @@ public class Editor extends JFrame {
     } catch (Exception e) {
       // show the error as a message in the window
       error(e);
+      
+    } finally {
+      // make sure the toolbar button deactivates
+      toolbar.deactivate(EditorToolbar.SAVE);
     }
-    toolbar.clear();
-    //}});
 
     return true;
   }
@@ -1567,7 +1605,8 @@ public class Editor extends JFrame {
           } catch (Exception e) {
             error(e);
           }
-          toolbar.clear();
+          //toolbar.clear();
+          toolbar.deactivate(EditorToolbar.EXPORT);
         }});
   }
 
@@ -1592,7 +1631,8 @@ public class Editor extends JFrame {
             message("Error during export.");
             e.printStackTrace();
           }
-          toolbar.clear();
+          //toolbar.clear();
+          toolbar.deactivate(EditorToolbar.EXPORT);
         }});
   }
 
@@ -1625,7 +1665,7 @@ public class Editor extends JFrame {
       // but f-- it.. let's get this shite done..
       //} else if (result == JOptionPane.CANCEL_OPTION) {
       message("Export canceled, changes must first be saved.");
-      toolbar.clear();
+      //toolbar.clear();
       return false;
     }
     return true;
@@ -1853,7 +1893,7 @@ public class Editor extends JFrame {
       mess = mess.substring(javaLang.length());
     }
     error(mess);
-    toolbar.clear();
+    //toolbar.clear();
   }
 
 
