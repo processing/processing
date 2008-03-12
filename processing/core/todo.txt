@@ -16,6 +16,20 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=710
 X implement curveTangent (thanks to davbol)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=715
 X fix problem with get() when imageMode(CORNERS) was in use
+X fix bug with splice() and arrays
+X   http://dev.processing.org/bugs/show_bug.cgi?id=734
+X 'screen' is now static
+_   undo this--may need to be better about specifying screen and all
+
+_ change openStream() to createInput()
+_   add createOutput() (and raw versions of the same, err.. no raw)
+_   deprecate openStream() naming
+
+_ Duplicate 3d faces in beginRaw() export
+_   http://dev.processing.org/bugs/show_bug.cgi?id=737
+
+_ textFont() used in setup() is null once draw() arrives
+_   http://dev.processing.org/bugs/show_bug.cgi?id=726
 
 _ for begin/endRecord, use a piggyback mechanism
 _   that way won't have to pass a PApplet around
@@ -198,6 +212,7 @@ _ sketches lock up when system time is changed
 _   http://dev.processing.org/bugs/show_bug.cgi?id=639
 _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
+_ "is there a better way to do this" thread in lists folder
 
 
 point() [1.0]
