@@ -122,7 +122,7 @@ public class Preferences {
 
 
   // the calling editor, so updates can be applied
-  
+
   Editor editor;
 
 
@@ -159,7 +159,7 @@ public class Preferences {
       }
     }
 
-    // clone the hash table    
+    // clone the hash table
     defaults = (Hashtable) table.clone();
 
     // other things that have to be set explicitly for the defaults
@@ -332,10 +332,10 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
 
 
-    // [ ] Set maximum available memory to [______] MB
+    // [ ] Increase maximum available memory to [______] MB
 
     Container memoryBox = Box.createHorizontalBox();
-    memoryOverrideBox = new JCheckBox("Set maximum available memory to ");
+    memoryOverrideBox = new JCheckBox("Increase maximum available memory to ");
     memoryBox.add(memoryOverrideBox);
     memoryField = new JTextField(4);
     memoryBox.add(memoryField);
@@ -719,8 +719,8 @@ public class Preferences {
       defaultValue : value;
     */
   }
-  
-  
+
+
   static public String getDefault(String attribute) {
     return (String) defaults.get(attribute);
   }
@@ -836,14 +836,14 @@ public class Preferences {
     int size = PApplet.parseInt(pieces[2], 12);
     Font font = new Font(name, style, size);
     //System.out.println(f);
-    
+
     // replace bad font with the default
     if (replace) {
       //System.out.println(attr + " > " + value);
       //setString(attr, font.getName() + ",plain," + font.getSize());
       set(attr, value);
     }
-    
+
     return font;
     //return new Font(name, style, size);
 
