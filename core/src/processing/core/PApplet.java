@@ -238,6 +238,9 @@ public class PApplet extends Applet
    * <P>
    * Note that this won't update if you change the resolution
    * of your screen once the the applet is running.
+   * <p>
+   * This variable is not static, because future releases need to be better
+   * at handling multiple displays.
    */
   public Dimension screen =
     Toolkit.getDefaultToolkit().getScreenSize();
@@ -438,7 +441,7 @@ in   */
    * true if exit() has been called so that things shut down
    * once the main thread kicks off.
    */
-  protected boolean exit;
+  protected boolean exitCalled;
 
   Thread thread;
 
@@ -458,7 +461,7 @@ in   */
   // this text isn't seen unless PApplet is used on its
   // own and someone takes advantage of leechErr.. not likely
   static public final String LEECH_WAKEUP = "Error while running applet.";
-  public PrintStream leechErr;
+  //public PrintStream leechErr;
 
   // messages to send if attached as an external vm
 
@@ -500,13 +503,14 @@ in   */
   /**
    * Message from parent editor (when run as external) to quit.
    */
-  static public final char EXTERNAL_STOP = 's';
+  //static public final char EXTERNAL_STOP = 's';
 
   /**
    * When run externally to a PdeEditor,
    * this is sent by the applet when it quits.
    */
-  static public final String EXTERNAL_QUIT = "__QUIT__";
+  //static public final String EXTERNAL_QUIT = "__QUIT__";
+  static public final String EXTERNAL_STOP = "__STOP__";
 
   /**
    * When run externally to a PDE Editor, this is sent by the applet
@@ -642,14 +646,9 @@ in   */
    * when or if stop() will be called (i.e. on browser quit,
    * or when moving between web pages), and it's not always called.
    */
-   public void stop() {
-     // maybe start should also be used as the method for kicking
-     // the thread on, instead of doing it inside paint()
-
-     // bringing this back for 0111, hoping it'll help opengl shutdown
-     finished = true;  // why did i comment this out?
-
-     //System.out.println("stopping applet " + thread);
+  public void stop() {
+    // bringing this back for 0111, hoping it'll help opengl shutdown
+    finished = true;  // why did i comment this out?
 
     // don't run stop and disposers twice
     if (thread == null) return;
@@ -1359,8 +1358,9 @@ in   */
 
   synchronized public void handleDisplay() {
     if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      " formerly nextFrame()");
+                                      " handleDisplay()");
     if (looping || redraw) {
+      //System.out.println(frameCount);
       /*
         if (frameCount == 0) {  // needed here for the sync
         //createGraphics();
@@ -1407,6 +1407,7 @@ in   */
             } else {
               //e.printStackTrace(System.out);
               //System.out.println("re-throwing");
+              //System.out.println(e.getClass().getName());
               throw e;
             }
           }
@@ -1556,12 +1557,13 @@ in   */
   public void run() {  // not good to make this synchronized, locks things up
     try {
       while ((Thread.currentThread() == thread) && !finished) {
+        //System.out.println("entering run");
         // render a single frame
         if (g != null) {
           //println("requesting display");
           g.requestDisplay(this);
-        } else {
-          println("no renderer");
+//        } else {
+//          println("no renderer");
         }
 
         if (frameCount == 1) {
@@ -1633,6 +1635,7 @@ in   */
             }
           }
         } catch (InterruptedException e) { }
+        //System.out.println("exiting run");
       }
 
     } catch (Exception e) {
@@ -1649,18 +1652,18 @@ in   */
       exception = e;
       //e.printStackTrace(System.out);
 
-      if (leechErr != null) {
-        // if draw() mode, make sure that ui stops waiting
-        // and the run button quits out
-        leechErr.println(LEECH_WAKEUP);
-        e.printStackTrace(leechErr);
-        e.printStackTrace(System.out);
-
-      } else {
-        System.err.println(LEECH_WAKEUP);
-        e.printStackTrace();
-        e.printStackTrace(System.out);
-      }
+//      if (leechErr != null) {
+//        // if draw() mode, make sure that ui stops waiting
+//        // and the run button quits out
+//        leechErr.println(LEECH_WAKEUP);
+//        e.printStackTrace(leechErr);
+//        //e.printStackTrace(System.out);
+//
+//      } else {
+      System.err.println(LEECH_WAKEUP);
+      e.printStackTrace();
+      //e.printStackTrace(System.out);
+//      }
     }
     if (THREAD_DEBUG) println(Thread.currentThread().getName() +
                               " thread finished");
@@ -1674,12 +1677,10 @@ in   */
     //System.out.println("exiting run " + finished);
     stop();  // call to shutdown libs?
 
-    if (exit) {  // user called exit() function
-      if ((leechErr == null) && !online) {
-        // don't want to call System.exit() when an applet,
-        // or running inside the PDE (would kill the PDE)
-        System.exit(0);
-      }
+    // If the user called the exit() function, the window should close,
+    // rather than the sketch just halting.
+    if (exitCalled) {
+      exit2();
     }
   }
 
@@ -2526,26 +2527,44 @@ in   */
     if (thread == null) {
       // exit immediately, stop() has already been called,
       // meaning that the main thread has long since exited
-      if ((leechErr == null) && !online) {
-        // don't want to call System.exit() when an applet,
-        // or running inside the PDE (would kill the PDE)
-        System.exit(0);
-      }
-    } else {
-      finished = true;  // stop() will be called as the thread exits
-      exit = true;
+      //if ((leechErr == null) && !online) {
+//      if (!external && !online) {
+//        // don't want to call System.exit() when an applet,
+//        // or running inside the PDE (would kill the PDE)
+//        System.exit(0);
+//      }
+      exit2();
 
-      if (!looping) {
-        // if not looping, need to call stop explicitly,
-        // because the main thread will be sleeping
-        stop();
+    } else if (looping) {
+      // stop() will be called as the thread exits
+      finished = true;
+      // tell the code to call exit2() to do a System.exit()
+      // once the next draw() has completed
+      exitCalled = true;
 
-        if ((leechErr == null) && !online) {
-          // don't want to call System.exit() when an applet,
-          // or running inside the PDE (would kill the PDE)
-          System.exit(0);
-        }
-      }
+    } else if (!looping) {
+      // if not looping, need to call stop explicitly,
+      // because the main thread will be sleeping
+      stop();
+
+      // now get out
+      exit2();
+    }
+  }
+
+
+  void exit2() {
+    //if ((leechErr == null) && !online) {
+
+//    if (!external && !online) {
+//      // don't want to call System.exit() when an applet,
+//      // or running inside the PDE (would kill the PDE)
+//      System.exit(0);
+//    }
+    try {
+      System.exit(0);
+    } catch (SecurityException e) {
+      // don't care about applet security exceptions
     }
   }
 
@@ -5300,8 +5319,8 @@ in   */
     Object[] outgoing = null;
     int length = Array.getLength(list);
 
-    // check whether is an array or not, and if so, treat as such
-    if (list.getClass().getName().charAt(0) == '[') {
+    // check whether item being spliced in is an array
+    if (v.getClass().getName().charAt(0) == '[') {
       int vlength = Array.getLength(v);
       outgoing = new Object[length + vlength];
       System.arraycopy(list, 0, outgoing, 0, index);
@@ -5388,12 +5407,6 @@ in   */
   static public Object subset(Object list, int start) {
     int length = Array.getLength(list);
     return subset(list, start, length - start);
-    /*
-    Class type = list.getClass().getComponentType();
-    Object outgoing = Array.newInstance(type, count);
-    System.arraycopy(list, start, outgoing, 0, count);
-    return outgoing;
-    */
   }
 
   static public Object subset(Object list, int start, int count) {
@@ -6629,12 +6642,12 @@ in   */
   // MAIN
 
 
-  private static class WorkerVar {
-    private Thread thread;
-    WorkerVar(Thread t) { thread = t; }
-    synchronized Thread get() { return thread; }
-    synchronized void clear() { thread = null; }
-  }
+//  private static class WorkerVar {
+//    private Thread thread;
+//    WorkerVar(Thread t) { thread = t; }
+//    synchronized Thread get() { return thread; }
+//    synchronized void clear() { thread = null; }
+//  }
 
   /**
    * Class to help external communication run as a separate class.
@@ -6647,92 +6660,92 @@ in   */
    * through the use of this class, however it remains a tenuous
    * situation that could perhaps break in a future JDK release.
    */
-  class Worker {
-    private Object value;
-    private WorkerVar workerVar;
-
-    protected synchronized Object getValue() {
-      return value;
-    }
-
-    private synchronized void setValue(Object x) {
-      value = x;
-    }
-
-    public Object construct() {
-      try {
-        int anything = System.in.read();
-        if (anything == EXTERNAL_STOP) {
-
-          // adding this for 0073.. need to stop libraries
-          // when the stop button is hit.
-          PApplet.this.stop();
-          finished = true;
-        }
-      } catch (IOException e) {
-        finished = true;
-      }
-      try {
-        Thread.sleep(250);
-        //Thread.sleep(100);  // kick up latency for 0075?
-      } catch (InterruptedException e) { }
-      return null;
-    }
-
-    // removing this from SwingWorker
-    //public void finished() { }
-
-    public void interrupt() {
-      Thread t = workerVar.get();
-      if (t != null) {
-        t.interrupt();
-      }
-      workerVar.clear();
-    }
-
-    public Object get() {
-      while (true) {
-        Thread t = workerVar.get();
-        if (t == null) {
-          return getValue();
-        }
-        try {
-          t.join();
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt(); // propagate
-          return null;
-        }
-      }
-    }
-
-    public Worker() {
-      // removing this from SwingWorker
-      //final Runnable doFinished = new Runnable() {
-      //    public void run() { finished(); }
-      //  };
-
-      Runnable doConstruct = new Runnable() {
-          public void run() {
-            try {
-              setValue(construct());
-
-            } finally {
-              workerVar.clear();
-            }
-            // removing this from SwingWorker to avoid swing
-            //javax.swing.SwingUtilities.invokeLater(doFinished);
-          }
-        };
-
-      Thread t = new Thread(doConstruct);
-      workerVar = new WorkerVar(t);
-    }
-
-    public void start() {
-      Thread t = workerVar.get();
-      if (t != null) t.start();
-    }
-  }
+//  class Worker {
+//    private Object value;
+//    private WorkerVar workerVar;
+//
+//    protected synchronized Object getValue() {
+//      return value;
+//    }
+//
+//    private synchronized void setValue(Object x) {
+//      value = x;
+//    }
+//
+//    public Object construct() {
+//      try {
+//        int anything = System.in.read();
+//        if (anything == EXTERNAL_STOP) {
+//
+//          // adding this for 0073.. need to stop libraries
+//          // when the stop button is hit.
+//          PApplet.this.stop();
+//          finished = true;
+//        }
+//      } catch (IOException e) {
+//        finished = true;
+//      }
+//      try {
+//        Thread.sleep(250);
+//        //Thread.sleep(100);  // kick up latency for 0075?
+//      } catch (InterruptedException e) { }
+//      return null;
+//    }
+//
+//    // removing this from SwingWorker
+//    //public void finished() { }
+//
+//    public void interrupt() {
+//      Thread t = workerVar.get();
+//      if (t != null) {
+//        t.interrupt();
+//      }
+//      workerVar.clear();
+//    }
+//
+//    public Object get() {
+//      while (true) {
+//        Thread t = workerVar.get();
+//        if (t == null) {
+//          return getValue();
+//        }
+//        try {
+//          t.join();
+//        } catch (InterruptedException e) {
+//          Thread.currentThread().interrupt(); // propagate
+//          return null;
+//        }
+//      }
+//    }
+//
+//    public Worker() {
+//      // removing this from SwingWorker
+//      //final Runnable doFinished = new Runnable() {
+//      //    public void run() { finished(); }
+//      //  };
+//
+//      Runnable doConstruct = new Runnable() {
+//          public void run() {
+//            try {
+//              setValue(construct());
+//
+//            } finally {
+//              workerVar.clear();
+//            }
+//            // removing this from SwingWorker to avoid swing
+//            //javax.swing.SwingUtilities.invokeLater(doFinished);
+//          }
+//        };
+//
+//      Thread t = new Thread(doConstruct);
+//      workerVar = new WorkerVar(t);
+//    }
+//
+//    public void start() {
+//      Thread t = workerVar.get();
+//      if (t != null) t.start();
+//    }
+//  }
 
 
   /**
@@ -6758,7 +6771,7 @@ in   */
 //          System.err.println(PApplet.EXTERNAL_QUIT);
 //          System.err.flush();  // important
 //          System.exit(0);
-          exit();  // don't quit, need to just everything down (0133)
+          exit();  // don't quit, need to just shut everything down (0133)
         }
       });
   }
@@ -6953,7 +6966,7 @@ in   */
         frame = new Frame();
       }
       */
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+      //Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
       // remove the grow box by default
       // users who want it back can call frame.setResizable(true)
@@ -7051,17 +7064,17 @@ in   */
             locationX = editorLocation[0] + 66;
             locationY = editorLocation[1] + 66;
 
-            if ((locationX + windowW > screen.width - 33) ||
-                (locationY + windowH > screen.height - 33)) {
+            if ((locationX + windowW > applet.screen.width - 33) ||
+                (locationY + windowH > applet.screen.height - 33)) {
               // otherwise center on screen
-              locationX = (screen.width - windowW) / 2;
-              locationY = (screen.height - windowH) / 2;
+              locationX = (applet.screen.width - windowW) / 2;
+              locationY = (applet.screen.height - windowH) / 2;
             }
             frame.setLocation(locationX, locationY);
           }
         } else {  // just center on screen
-          frame.setLocation((screen.width - applet.width) / 2,
-                            (screen.height - applet.height) / 2);
+          frame.setLocation((applet.screen.width - applet.width) / 2,
+                            (applet.screen.height - applet.height) / 2);
         }
 
         frame.setLayout(null);
