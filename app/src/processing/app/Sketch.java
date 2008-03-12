@@ -23,6 +23,8 @@
 
 package processing.app;
 
+import processing.app.debug.Compiler;
+import processing.app.debug.RunnerException;
 import processing.app.preproc.*;
 import processing.core.*;
 
@@ -66,8 +68,8 @@ public class Sketch {
   public File dataFolder;
   public File codeFolder;
 
-  static final int PDE = 0;
-  static final int JAVA = 1;
+  static public final int PDE = 0;
+  static public final int JAVA = 1;
 
   public SketchCode current;
   int currentIndex;
@@ -1278,7 +1280,7 @@ public class Sketch {
    *    X. afterwards, some of these steps need a cleanup function
    * </PRE>
    */
-  public boolean handleRun() throws RunnerException {
+  public boolean handleCompile() throws RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -2791,6 +2793,37 @@ public class Sketch {
 
   public void nextCode() {
     setCurrent((currentIndex + 1) % codeCount);
+  }
+  
+  
+  // .................................................................
+
+  // Additional accessors added in 0136 because of package work.
+  // These will also be helpful for tool developers.
+  
+  
+  public String getClassPath() {
+    return classPath;
+  }
+  
+  
+  public String getLibraryPath() {
+    return libraryPath;
+  }
+  
+  
+  public int getCodeCount() {
+    return codeCount;
+  }
+  
+  
+  public SketchCode getCode(int index) {
+    return code[index];
+  }
+  
+  
+  public String getMainClassName() {
+    return mainClassName;
   }
 
 

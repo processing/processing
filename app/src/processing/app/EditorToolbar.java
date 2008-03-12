@@ -374,15 +374,16 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
   }
   */
 
-  public void running(boolean yesno) {
-    setState(RUN, yesno ? ACTIVE : INACTIVE, true);
-  }
+//  public void running(boolean yesno) {
+//    setState(RUN, yesno ? ACTIVE : INACTIVE, true);
+//  }
 
 
   /**
    * Set a particular button to be active.
    */
   public void activate(int what) {
+    //System.out.println("activating " + what);
     if (inactive == null) return;
     setState(what, ACTIVE, true);
   }
@@ -394,17 +395,26 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
 
 
   /**
+   * Set a particular button to be active.
+   */
+  public void deactivate(int what) {
+    if (inactive == null) return;  // don't draw if not ready
+    setState(what, INACTIVE, true);
+  }
+
+  /**
    * Clear all the state of all buttons.
    */
-  public void clear() { // (int button) {
-    if (inactive == null) return;
-
-    // skip the run button, do the others
-    for (int i = 1; i < buttonCount; i++) {
-      setState(i, INACTIVE, false);
-    }
-    repaint(); // changed for swing from update();
-  }
+//  public void clear() { // (int button) {
+//    if (inactive == null) return;
+//
+//    System.out.println("clearing state of buttons");
+//    // skip the run button, do the others
+//    for (int i = 1; i < buttonCount; i++) {
+//      setState(i, INACTIVE, false);
+//    }
+//    repaint(); // changed for swing from update();
+//  }
 
 
   public void message(String msg) {

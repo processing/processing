@@ -34,6 +34,7 @@ import javax.swing.*;
 
 import com.ice.jni.registry.*;
 
+import processing.app.debug.Compiler;
 import processing.core.*;
 
 
@@ -64,7 +65,7 @@ public class Base {
   // classpath for all known libraries for p5
   // (both those in the p5/libs folder and those with lib subfolders
   // found in the sketchbook)
-  static String librariesClassPath;
+  static public String librariesClassPath;
 
   // Location for untitled items
   static File untitledFolder;

@@ -3,6 +3,7 @@
 package processing.app.preproc;
 
 import processing.app.*;
+import processing.app.debug.RunnerException;
 
 
 /* Based on original code copyright (c) 2003 Andy Tripp <atripp@comcast.net>.
