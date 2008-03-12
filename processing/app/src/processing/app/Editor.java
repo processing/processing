@@ -1111,14 +1111,15 @@ public class Editor extends JFrame {
       if (!sketch.handleCompile()) return;
 
       //SwingUtilities.invokeLater(new Runnable() {
+      runtime = new Runner(Editor.this, presenting);
       Thread t = new Thread(new Runnable() {
         public void run() {
-          try {
-            runtime = new Runner(Editor.this, presenting);
+//          try {
+            runtime.poo();
             //runtime.go();
-          } catch (RunnerException e) {
-            error(e);
-          }
+//          } catch (RunnerException e) {
+//            error(e);
+//          }
         }
       });
       t.start();
@@ -1129,7 +1130,7 @@ public class Editor extends JFrame {
       //watcher = new RunButtonWatcher();
 
     } catch (Exception e) {
-      System.err.println("exception reached editor");
+//      System.err.println("exception reached editor");
       e.printStackTrace();
     }
 
@@ -1237,7 +1238,7 @@ public class Editor extends JFrame {
    * Stop the applet but don't kill its window.
    */
   public void stopRunner() {
-    //System.out.println("stopRunner 1");
+//    System.out.println("stopRunner " + runtime);
     if (runtime != null) runtime.stop();
     //System.out.println("stopRunner 2");
     //if (watcher != null) watcher.stop();
@@ -1256,7 +1257,7 @@ public class Editor extends JFrame {
    * mode, this will always be called instead of doStop().
    */
   public void closeRunner() {
-    //System.out.println("closing runner");
+//    System.out.println("closing runner");
     
     //if (presenting) {
     //presentationWindow.hide();
@@ -1277,6 +1278,7 @@ public class Editor extends JFrame {
 
     try {
       if (runtime != null) {
+//        System.out.println("runtime closing");
         runtime.close();  // kills the window
         runtime = null; // will this help?
       }
