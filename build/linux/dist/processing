@@ -8,7 +8,7 @@ APPDIR=$(dirname "$0")
 # help, but doesn't work in cases where there are spaces in the name 
 # of the folder that contains processing itself.
 
-CLASSPATH=java/lib/rt.jar:lib:lib/build:lib/pde.jar:lib/core.jar:lib/antlr.jar:lib/oro.jar:lib/registry.jar:lib/mrj.jar
+CLASSPATH=java/lib/rt.jar:lib:lib/build:lib/pde.jar:lib/core.jar:lib/antlr.jar:lib/oro.jar:lib/registry.jar:lib/mrj.jar:lib/tools.jar
 export CLASSPATH
 
 # put the directory where this file lives in the front of the path, 
