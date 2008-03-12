@@ -45,7 +45,7 @@ fi
 # includes jaws.jar
 #CLASSPATH=\"java\\lib\\rt.jar\;java\\lib\\jaws.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\kjc.jar\;lib\\antlr.jar\;lib\\oro.jar\;lib\\comm.jar\;lib\\RXTXcomm.jar\;${QT_JAVA_PATH}\"
 
-CLASSPATH=\"java\\lib\\rt.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\core.jar\;lib\\mrj.jar\;lib\\antlr.jar\;lib\\oro.jar\;lib\\registry.jar\;${QTJAVA}\"
+CLASSPATH=\"java\\lib\\rt.jar\;lib\;lib\\build\;lib\\pde.jar\;lib\\core.jar\;lib\\mrj.jar\;lib\\antlr.jar\;lib\\oro.jar\;lib\\registry.jar\;lib\\tools.jar\;${QTJAVA}\"
 export CLASSPATH
 
 #cd work && ./java/bin/java -Xint PdeBase

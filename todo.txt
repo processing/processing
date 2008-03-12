@@ -1,4 +1,137 @@
 0136 pde
+X fix XMLElement(String s), had a bad constructor
+X added fonts, quadratic curves to svg
+_   need to remove the font stuff, also the changes for 'public'
+_   move my edits into a subclass
+
+_ possible projects for soc
+_   make new antlr thing (for preproc, autoformat, eclipsse integration)
+_   better video support (emphasis on cross platform)
+_   better sound support (same as video)
+_   windows integration (file assocs, drag and drop)
+
+_ make editor nicer
+_   tab on selection indents whole block
+_   shift-tab outdents whole block
+_   ctrl-t to format selection
+_     if no selection, indents line?
+_   ctrl-/ to comment block
+
+_ do quick fix for tab bar
+_   don't show tabs when there are too many
+_   maybe move the list of files to the top?
+_   or indicate which are visible somehow
+_   slightly longer.. rearrange?
+_     or just show tabs in (alpha?) order based on what's most recently used
+_   have some indicator that shows the tabs when they've disappeared
+_   or little mini tabs that expand/contract?
+_     and a way to control who's expanded and not
+
+_ make sure that export is using utf8 for writing the .pde files etc
+_ change pde files to use utf8
+_   1) if file contains binary data and
+_   2) its mod date is earlier than when p5 0125 was installed
+_   offer to convert it, or ignore
+_   then re-save the file to update the mod date
+_   ...or, when first running p5 0125, offer to update sketches
+_ need to set a default charset for use in files (utf8)
+_   add option to change charset or specify as part of loading
+_   need to specify the default encoding
+_ http://dev.processing.org/bugs/show_bug.cgi?id=743
+
+_ eeepc support for environment:
+_   splitPane.setMinimumSize(new Dimension(600, 600)); 
+_   change to: splitPane.setMinimumSize(new Dimension(600, 400));
+_   prolly need to have a param for this guy
+
+_ pdf not rendering unicode (though it renders to screen)
+_   try updating to newer itext
+_   http://dev.processing.org/bugs/show_bug.cgi?id=727
+
+_ switch to nanoxml instead of nanoxml-lite (29k vs. 5k)
+_   check against ods
+
+_ add to p5 app bundle (and mention re: apple slowness)
+-Dapple.awt.graphics.UseQuartz=true 
+apple.awt.graphics.UseQuartz
+
+_ huge jar files from 0124 export
+_   http://dev.processing.org/bugs/show_bug.cgi?id=541
+_ applet export fails with opengl/code folder
+_   http://dev.processing.org/bugs/show_bug.cgi?id=714
+_ applet export with multiple jars having trouble (related?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=701
+
+_ improvements to linux script for debian
+_   http://dev.processing.org/bugs/show_bug.cgi?id=596
+_   more info on the script
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1202689238
+
+... 
+
+0137 or later
+
+_ implement windows registry lookups via reflection
+_   http://dev.processing.org/bugs/show_bug.cgi?id=723
+_   or move to jna for registry?
+_   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
+
+_ look into workshop bugs
+_   too many NPEs on loadimage may freeze the app
+
+_ add auto-save to the editor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=739
+
+_ weird error when dragging a folder to the sketch window (macosx?)
+_ on mac, window opens to prevent quit on close
+_   but the window is not properly set as untitled
+_   http://dev.processing.org/bugs/show_bug.cgi?id=700
+
+_ switch to java 1.4.2_16 on linux and windows (now that osx is there?)
+
+_ when opening from double-click on the mac, doesn't replace untitled
+_ since adding tools.jar, jikes can be removed
+
+_ need a halt() method which will kill but not quit app (sets finished?)
+_   exit() will actually leave the application
+_   this may in fact only be internal
+
+_ editors opening up at the same time on load?
+_   either synchronize the open (at a minimum)
+_   or wait for mac handlers to register an open event
+_ can also cause problems with opening multiple copies of same sketch
+
+_ debugger will also help getting better exceptions
+_   and getting the error to show up in the window inside p5
+_   also highlighting the correct line
+
+_ no error message if sketchbook folder is set to bad location
+_ says that it's gonna create new sketchbook in default loc
+_   even though that location might exist already (just word it better)
+
+_ initiate external stop and close events to the vm
+_ see if stop() has same 'finished' problem with not immediate quit
+_ use exceptions from the vm instead of parsing stdout
+_   this can come later, since the parsing is working (more or less)
+_ respond to stop/close events sent by the vm
+_ change output/error streams to properly write to the selected console
+_   though out/err stream for current app should append to current console(?)
+_ add debug/*.java to linux build
+_ remove debug/gui/*.java from windows build
+_ add tools.jar to windows and linux builds
+_   make sure the version is the same as the jvm for each
+_ remove oro.jar dependency (not needed with PApplet.match)
+_   this is kind of messy and requires a bit of testing to ensure proper
+_ refactor code to use more getter/setter methods
+_   move the debug classes back into processing.app.debug
+_   this will help the library stuff
+_ rework Sketch.build(), it's what's going library crazy
+_   will this speed up launch of external jvm?
+_ only support .jar files (not .class files) in code and lib folders
+
+_ remove unused libraries from default run path
+_   note that this will hose svg b/c xml not available
+_   so when this change is made, the lib depends needs to be implemented too
 
 documentation
 _ errors in pdf/index.html examples
@@ -50,7 +183,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=661
 _ constants that are not highlighting (WINDOWS the only one?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=662
 
-_ pdf examples are shot (?)
 _ remove patch designation from bugzilla
 
 with casey
@@ -63,7 +195,7 @@ _   perhaps move this closer to the dev process?
 _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
 _ discuss i18n issues and proper system
-
+_ look through 404 issues on the site
 
 _ mark examples as untitled (rather than read-only)
 _ put the "had to rename sketch" message in the msg bar
@@ -71,8 +203,6 @@ _   it's ugly/annoying/intrusive
 _ inside sketch.java, don't hardwire the file extension types
 _   arduino uses .c, .cpp, .h instead of .java
 
-_ huge jar files from 0124 export
-_   http://dev.processing.org/bugs/show_bug.cgi?id=541
 _ if someone has monaco disabled in font book, the app won't start
 _   http://dev.processing.org/bugs/show_bug.cgi?id=562
 _ color selector not drawing properly
@@ -108,15 +238,6 @@ _   6. read revisions.txt
 
 
 charset changes
-_ change pde files to use utf8
-_   1) if file contains binary data and
-_   2) its mod date is earlier than when p5 0125 was installed
-_   offer to convert it, or ignore
-_   then re-save the file to update the mod date
-_   ...or, when first running p5 0125, offer to update sketches
-_ need to set a default charset for use in files (utf8)
-_   add option to change charset or specify as part of loading
-_   need to specify the default encoding
 _ xml element needs to be readable from other charsets
 _   same with the other methods like loadStrings()
 _   could also be a way to handle gzip too?
@@ -199,6 +320,8 @@ JAR file JSynClasses.jar downloaded successfully.
 Note: you must restart your browser before running any JSyn Applets!
 Installation completed.
 
+_ set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
+_   java.library.path will only handle .jnilib stuff
 
 _ stop button needs to update itself and work properly [1.0]
 _   also editor buttons to light up and clear properly 
@@ -558,7 +681,6 @@ _ using a processing keyword as a variable name gives unhelpful error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=213
 _ web colors < 6 chars produce bizarre error:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=196
-_   http://dev.processing.org/bugs/show_bug.cgi?id=228
 _ synchronized (something) { } is horking up the preproc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=136
 _ casting problems in the parser
