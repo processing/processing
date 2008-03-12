@@ -813,6 +813,10 @@ public class Base {
         storeSketchPath(editor, i);
       }
     }
+    // make sure running sketches close before quitting
+    for (int i = 0; i < editorCount; i++) {
+      editors[i].closeRunner();
+    }
     if (!canceled) {
       // Clean out empty sketches
       //Base.cleanSketchbook();
