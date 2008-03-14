@@ -1366,7 +1366,7 @@ public class Sketch {
     //PApplet.println(PApplet.split(buildPath, ';'));
     //PApplet.println(PApplet.split(javaClassPath, ';'));
     classPath = buildPath +
-      File.pathSeparator + Base.librariesClassPath +
+      //File.pathSeparator + Base.librariesClassPath +
       File.pathSeparator + javaClassPath;
     //System.out.println("cp = " + classPath);
 

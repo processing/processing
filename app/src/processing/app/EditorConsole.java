@@ -56,8 +56,8 @@ public class EditorConsole extends JScrollPane {
   static File outFile;
   static File tempFolder;
 
-  static PrintStream systemOut;
-  static PrintStream systemErr;
+  public PrintStream systemOut;
+  public PrintStream systemErr;
 
   static PrintStream consoleOut;
   static PrintStream consoleErr;
