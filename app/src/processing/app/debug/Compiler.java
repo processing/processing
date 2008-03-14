@@ -72,7 +72,7 @@ public class Compiler implements MessageConsumer {
     this.buildPath = buildPath;
 
     // the pms object isn't used for anything but storage
-    /*MessageStream pms =*/ new MessageStream(this);
+    /*MessageStream pms =*/ //new MessageStream(this);
 
     String baseCommand[] = new String[] {
       // user.dir is folder containing P5 (and therefore jikes)
@@ -174,7 +174,7 @@ public class Compiler implements MessageConsumer {
         Base.showWarning("Compiler error",
                             "Could not find the compiler.\n" +
                             "jikes is missing from your PATH,\n" +
-                            "see readme.txt for help.", null);
+                            "see the troubleshooting page for help.", null);
         return false;
 
       } else {
@@ -344,10 +344,13 @@ public class Compiler implements MessageConsumer {
               "you must first install QuickTime for Java.";
 
           } else {
-            int nextSentence = description.indexOf(". Package") + 2;
-            description =
-              description.substring(nextSentence, description.indexOf(':')) +
-              " the code folder or in any libraries.";
+            // modified for 0136, why was this different? jikes msgs changed?
+            //int nextSentence = description.indexOf(". Package") + 2;
+            int nextSentence = description.indexOf("could not find ") + 1;
+            description = "C" +
+              //description.substring(nextSentence, description.indexOf(':')) +
+              description.substring(nextSentence, description.lastIndexOf('\"') + 1) +
+              " in the code folder or in any libraries.";
           }
         }
 

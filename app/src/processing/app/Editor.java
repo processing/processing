@@ -1108,8 +1108,10 @@ public class Editor extends JFrame {
     }
 
     try {
+      //System.out.println("ed compiling");
       if (!sketch.handleCompile()) return;
 
+      //System.out.println("ed running");
       //SwingUtilities.invokeLater(new Runnable() {
       runtime = new Runner(Editor.this, presenting);
       Thread t = new Thread(new Runnable() {
@@ -1130,8 +1132,9 @@ public class Editor extends JFrame {
       //watcher = new RunButtonWatcher();
 
     } catch (Exception e) {
-//      System.err.println("exception reached editor");
-      e.printStackTrace();
+      //System.err.println("exception reached editor");
+      //e.printStackTrace();
+      error(e);
     }
 
     // this doesn't seem to help much or at all
