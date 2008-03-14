@@ -152,8 +152,10 @@ public class Compiler implements MessageConsumer {
       // with the input and error streams
       //
       Process process = Runtime.getRuntime().exec(command);
-      new MessageSiphon(process.getInputStream(), this);
-      new MessageSiphon(process.getErrorStream(), this);
+      MessageSiphon msi = new MessageSiphon(process.getInputStream(), this);
+      MessageSiphon mse = new MessageSiphon(process.getErrorStream(), this);
+      msi.thread.start();  // this is getting reeeally ugly
+      mse.thread.start();
 
       // wait for the process to finish.  if interrupted
       // before waitFor returns, continue waiting
