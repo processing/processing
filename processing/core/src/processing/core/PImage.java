@@ -352,10 +352,9 @@ public class PImage implements PConstants, Cloneable {
     int index = y*width + x;
     int index2 = 0;
     for (int row = y; row < y+h; row++) {
-      System.arraycopy(pixels, index,
-                       newbie.pixels, index2, w);
-      index+=width;
-      index2+=w;
+      System.arraycopy(pixels, index, newbie.pixels, index2, w);
+      index += width;
+      index2 += w;
     }
     return newbie;
   }
@@ -455,6 +454,7 @@ public class PImage implements PConstants, Cloneable {
    * performing a proper luminance-based conversion.
    */
   public void mask(int alpha[]) {
+    loadPixels();
     // don't execute if mask image is different size
     if (alpha.length != pixels.length) {
       throw new RuntimeException("The PImage used with mask() must be " +
