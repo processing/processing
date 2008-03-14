@@ -379,6 +379,7 @@ public class PImage implements PConstants, Cloneable {
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
     pixels[y*width + x] = c;
+    updatePixels(x, y, x+1, y+1);  // slow?
   }
 
 
@@ -426,6 +427,11 @@ public class PImage implements PConstants, Cloneable {
       srcOffset += src.width;
       dstOffset += width;
     }
+    if (imageMode == CORNER) {
+      updatePixels(sx, sy, sw, sh);
+    } else {
+      updatePixels(sx, sy, sx+sw, sy+sh);
+    }
   }
 
 
@@ -458,6 +464,7 @@ public class PImage implements PConstants, Cloneable {
       pixels[i] = ((alpha[i] & 0xff) << 24) | (pixels[i] & 0xffffff);
     }
     format = ARGB;
+    updatePixels();
   }
 
 
