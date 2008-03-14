@@ -20,6 +20,8 @@ X fix bug with splice() and arrays
 X   http://dev.processing.org/bugs/show_bug.cgi?id=734
 X 'screen' is now static
 _   undo this--may need to be better about specifying screen and all
+X PImage mask doesn't work after first call
+X   http://dev.processing.org/bugs/show_bug.cgi?id=744
 
 _ change openStream() to createInput()
 _   add createOutput() (and raw versions of the same, err.. no raw)
