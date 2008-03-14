@@ -92,7 +92,9 @@ public class Runner implements MessageConsumer {
   public Runner(Editor editor, boolean presenting) throws RunnerException {
     this.editor = editor;
     this.sketch = editor.sketch;
-    this.presenting = presenting;    
+    this.presenting = presenting;   
+    //EditorConsole.systemOut.println("clear");
+    //System.out.println("clear");
   }
   
   
@@ -109,6 +111,7 @@ public class Runner implements MessageConsumer {
     // get around Apple's Java 1.5 bugs
     //params.add("/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java");
     //params.add("java");
+    //System.out.println("0");
 
     String[] vmParamList = getVirtualMachineParams();
     String[] appletParamList = getSketchParams();
@@ -117,7 +120,9 @@ public class Runner implements MessageConsumer {
 //    String[] appletParamList = (String[]) PApplet.subset(command, command.length-6);
     //new Trace(new String[] { vmparamString, sketch.mainClassName });
     //new Trace(vmParamList, appletParamList);
+    //System.out.println("1");
     vm = launch(vmParamList, appletParamList);
+    //System.out.println("2");
     
 //    PrintWriter writer = new PrintWriter(System.out);
 //    PrintWriter writer = null;
@@ -128,7 +133,8 @@ public class Runner implements MessageConsumer {
 //    }
     //generateTrace(writer);
     generateTrace(null);
-        
+    //System.out.println("3");
+
 //    String[] guiParams = PApplet.concat(vmParamList, appletParamList);
 //    for (int i = 0; i < guiParams.length; i++) {
 //      if (guiParams[i].equals("-cp")) {
@@ -173,14 +179,15 @@ public class Runner implements MessageConsumer {
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
     params.add("-Djava.library.path=" +
-        sketch.getLibraryPath() +
-        File.pathSeparator +
-        System.getProperty("java.library.path"));
+               sketch.getLibraryPath() +
+               File.pathSeparator +
+               System.getProperty("java.library.path"));
 
     params.add("-cp");
-    params.add(sketch.getClassPath() +
-        File.pathSeparator +
-        Base.librariesClassPath);
+    params.add(sketch.getClassPath());
+//    params.add(sketch.getClassPath() +
+//        File.pathSeparator +
+//        Base.librariesClassPath);
     
     //PApplet.println(PApplet.split(sketch.classPath, ':'));
 
@@ -249,6 +256,7 @@ public class Runner implements MessageConsumer {
     //Map arguments = connectorArguments(connector, mainArgs);
     
     Map arguments = connector.defaultArguments();
+    //System.out.println(arguments);
     Connector.Argument mainArg = 
       (Connector.Argument)arguments.get("main");
     if (mainArg == null) {
@@ -285,10 +293,17 @@ public class Runner implements MessageConsumer {
     Connector.Argument optionArg = 
       (Connector.Argument)arguments.get("options");
     optionArg.setValue(optionArgs);
+    
+    //arguments.put("address", "localhost");
+    
+//    Connector.Argument addressArg = 
+//      (Connector.Argument)arguments.get("address");
+//    addressArg.setValue("localhost");
 
 //    System.out.println("option args are: ");
 //    System.out.println(arguments.get("options"));
     
+    //System.out.println("args are " + arguments);
     try {
       return connector.launch(arguments);
     } catch (IOException exc) {
@@ -404,6 +419,7 @@ public class Runner implements MessageConsumer {
     while (iter.hasNext()) {
       Connector connector = (Connector)iter.next();
       if (connector.name().equals("com.sun.jdi.CommandLineLaunch")) {
+      //if (connector.name().equals("com.sun.jdi.RawCommandLineLaunch")) {
         return (LaunchingConnector)connector;
       }
     }
