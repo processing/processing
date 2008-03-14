@@ -3841,6 +3841,8 @@ in   */
     int h = ((header[15] & 0xff) << 8) + (header[14] & 0xff);
     PImage outgoing = createImage(w, h, format);
 
+    // where "reversed" means upper-left corner (normal for most of
+    // the modernized world, but "reversed" for the tga spec)
     boolean reversed = (header[17] & 0x20) != 0;
 
     if ((header[2] == 2) || (header[2] == 3)) {  // not RLE encoded
@@ -3954,7 +3956,7 @@ in   */
         }
       }
 
-      if (reversed) {
+      if (!reversed) {
         int[] temp = new int[w];
         for (int y = 0; y < h/2; y++) {
           int z = (h-1) - y;
