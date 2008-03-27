@@ -1,11 +1,9 @@
 /**
- * Re-draw. 
+ * Redraw. 
  * 
  * The redraw() function makes draw() execute once.  
  * In this example, draw() is executed once every time 
  * the mouse is clicked. 
- * 
- * Created 09 December 2002
  */
  
 // The statements in the setup() function 

@@ -1,11 +1,9 @@
 /**
  * Functions. 
  * 
- * The draw_target() function makes it easy to draw many distinct targets. 
- * Each call to draw_target() specifies the position, size, and number of 
+ * The drawTarget() function makes it easy to draw many distinct targets. 
+ * Each call to drawTarget() specifies the position, size, and number of 
  * rings for each target. 
- * 
- * Updated 21 August 2002
  */
 
 void setup() 
@@ -19,12 +17,12 @@ void setup()
 
 void draw() 
 {
-  draw_target(68, 34, 200, 10);
-  draw_target(152, 16, 100, 3);
-  draw_target(100, 144, 80, 5);
+  drawTarget(68, 34, 200, 10);
+  drawTarget(152, 16, 100, 3);
+  drawTarget(100, 144, 80, 5);
 }
 
-void draw_target(int xloc, int yloc, int size, int num) 
+void drawTarget(int xloc, int yloc, int size, int num) 
 {
   float grayvalues = 255/num;
   float steps = size/num;

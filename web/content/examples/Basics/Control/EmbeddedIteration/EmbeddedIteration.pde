@@ -14,12 +14,14 @@ noStroke();
  
 // Draw gray boxes 
  
-for(int i = margin; i < width-margin; i += box_space) { 
-  for(int j = margin; j < height-margin; j += box_space) { 
-    fill(255 - box_size*10); 
-    rect(j, i, box_size, box_size); 
-  } 
-  box_size = box_size - 0.6; 
-} 
+for (int i = margin; i < height-margin; i += box_space){
+  if(box_size > 0){
+    for(int j = margin; j < width-margin; j+= box_space){
+      fill(255-box_size*10);
+      rect(j, i, box_size, box_size);
+    }
+    box_size = box_size - 0.6;
+  }
+}
 
 		

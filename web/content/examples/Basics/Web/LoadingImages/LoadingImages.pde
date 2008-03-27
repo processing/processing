@@ -13,6 +13,6 @@
  
 size(200, 200);
 PImage img1;
-img1 = loadImage("http://iwin.nws.noaa.gov/iwin/images/ecir.jpg");
-image(img1, 0, 0);
+img1 = loadImage("http://www.processing.org/img/processing_beta_cover.gif");
+image(img1, 0, 45);
 

@@ -2,7 +2,7 @@
  * Convolution
  * by <a href="http://www.shiffman.net">Daniel Shiffman</a>.  
  * 
- * Applys a convolution matrix to a portion of the index.  
+ * Applies a convolution matrix to a portion of the index.  
  * Move mouse to apply filter to different parts of the image. 
  */
 

@@ -9,17 +9,14 @@
 // Point3D and Cube classes required.
 float bricksPerLayer = 16.0; // value must be even
 float brickLayers = 18.0;
-Cube[]bricks = new Cube[int(bricksPerLayer*brickLayers)];
+Cube brick;
 float brickWidth = 60, brickHeight = 25, brickDepth = 25;
 float radius = 175.0;
 float angle = 0;
 
 void setup(){
   size(200, 200, P3D);
-  //instantiate bricks
-  for (int i=0; i<bricks.length; i++){
-    bricks[i] = new Cube(brickWidth, brickHeight, brickDepth);
-  }
+  brick = new Cube(brickWidth, brickHeight, brickDepth);
 }
 
 void draw(){
@@ -34,12 +31,12 @@ void draw(){
   rotateX(radians(-45));
   // slowly rotate tower
   rotateY(frameCount*PI/600);
-  for (int i=0; i<brickLayers; i++){
+  for (int i = 0; i < brickLayers; i++){
     // increment rows
     tempY-=brickHeight;
     // alternate brick seams
     angle = 360.0/bricksPerLayer*i/2;
-    for (int j=0; j<bricksPerLayer; j++){
+    for (int j = 0; j < bricksPerLayer; j++){
       tempZ = cos(radians(angle))*radius;
       tempX = sin(radians(angle))*radius;
       pushMatrix();
@@ -48,18 +45,19 @@ void draw(){
       // add crenelation
       if (i==brickLayers-1){
         if (j%2 == 0){
-          bricks[j].create();
+          brick.create();
         }
       }
       // create main tower
       else {
-        bricks[j].create();
+        brick.create();
       }
       popMatrix();
       angle += 360.0/bricksPerLayer;
     }
   }
 }
+
 
 class Point3D{
   float x, y, z;
@@ -106,7 +104,7 @@ class Cube{
     vertices[10] = new Point3D(w/2,h/2,-d/2);
     vertices[11] = new Point3D(w/2,h/2,d/2);
     //back
-    vertices[12] = new Point3D(-w/2,-h/2,-d/2); 
+    vertices[12] = new Point3D(-w/2,-h/2,-d/2);  
     vertices[13] = new Point3D(w/2,-h/2,-d/2);
     vertices[14] = new Point3D(w/2,h/2,-d/2);
     vertices[15] = new Point3D(-w/2,h/2,-d/2);
@@ -132,8 +130,4 @@ class Cube{
       endShape();
     }
   }
-}
-
-
-
-
+} 

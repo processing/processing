@@ -4,7 +4,7 @@
  * The basic shape primitive functions are triangle(),
  * rect(), quad(), and ellipse(). Squares are made
  * with rect() and circles are made with
- * ellise(). Each of these functions requires a number
+ * ellipse(). Each of these functions requires a number
  * of parameters which determines their position and size. 
  * 
  * Created 19 January 2003
