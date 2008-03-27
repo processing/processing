@@ -52,6 +52,7 @@ random(<c>low</c>, <c>high</c>);
 <returns>float</returns>
 
 <related>
+randomSeed()
 noise()
 </related>
 

@@ -15,9 +15,9 @@
 // This example is a code fragment, 
 // it will not compile on its own.
 
-// Create the Button subclass from
-// the DragDrop class. DragDrop becomes
-// the superclass of Button.
+// Create the DragDrop subclass from
+// the Button class. Button becomes
+// the superclass of DragDrop.
 class DragDrop extends Button {
   int xoff, yoff;
   DragDrop(int x, int y) {

@@ -39,13 +39,13 @@ void draw() {
 PImage online;
 
 void setup() {
-  String url = "http://mt0.google.com/mt?n=404&v=w2.61&x=9913&y=12119&zoom=2";
+  String url = "http://processing.org/img/processing_beta_cover.gif";
   online = loadImage(url, "png");
   noLoop();
 }
 
 void draw() {
-  image(b, 0, 0);
+  image(online, 0, 0);
 }
 </code>
 </example>
