@@ -44,7 +44,7 @@ while (<c>expression</c>) {
 <returns></returns>
 
 <related>
-for()
+for
 </related>
 
 <availability>1.0</availability>
