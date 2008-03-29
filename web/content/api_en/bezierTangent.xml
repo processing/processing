@@ -58,7 +58,7 @@ Calculates the tangent of a point on a Bezier curve. There is a good definition 
 </description>
 
 <syntax>
-bezierPoint(<c>a</c>, <c>b</c>, <c>c</c>, <c>d</c>, <c>t</c>)
+bezierTangent(<c>a</c>, <c>b</c>, <c>c</c>, <c>d</c>, <c>t</c>)
 </syntax>
 
 <parameter>
