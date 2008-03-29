@@ -69,7 +69,7 @@ if(<c>expression</c>) {
 <returns></returns>
 
 <related>
-if()
+if
 </related>
 
 <availability>1.0</availability>
