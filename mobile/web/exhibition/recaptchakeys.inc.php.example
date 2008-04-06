@@ -1,0 +1,7 @@
+<?php
+
+//// get the keys from the account settings at http://recaptcha.net/
+$publickey = '';
+$privatekey = '';
+
+?>

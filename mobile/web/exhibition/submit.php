@@ -6,6 +6,10 @@ require_once '../db.inc.php';
 //// code to handle network link page regeneration
 require_once 'network/generate.inc.php';
 
+//// code for anti-spam image
+require_once 'recaptchalib.php';
+require_once 'recaptchakeys.inc.php';
+
 //// validate fields
 $errors = array();
 if (isset($_POST['submit'])) {
@@ -24,11 +28,12 @@ if (isset($_POST['submit'])) {
         $errors['url'] = 'URL is not well formatted. http://somedomain.abc/';
     }
     if ($_POST['submit'] == 'Submit') {
-        require_once '../lib/securimage/securimage.php';
-        $img = new securimage();
-        $img->data_directory = '../lib/securimage/image_data';
-        if ($img->check($_POST['code']) !== TRUE) {
-            $errors['code'] = 'Please enter the 5-letter code above.';
+        $resp = recaptcha_check_answer ($privatekey,
+                                        $_SERVER["REMOTE_ADDR"],
+                                        $_POST["recaptcha_challenge_field"],
+                                        $_POST["recaptcha_response_field"]);
+        if (!$resp->is_valid) {
+            $errors['code'] = "The reCAPTCHA wasn't entered correctly. Please try again.";
         }
         if (count($errors) == 0) {
             //// format data to save
@@ -122,10 +127,9 @@ if (isset($_POST['submit'])) {
 ?>
 <input type="submit" name="submit" value="Refresh Preview" /><br />
 <br />
-<label>Enter the following code to submit:</label><br />
-<img src="../lib/securimage/securimage_show.php"><br />
-<input name="code" type="text" size="5" /><br />
+<label>Type the two words below to submit:</label><br />
 <?php
+echo recaptcha_get_html($publickey);
 if (isset($errors['code'])) {
 ?>
 <p class="error"><?php echo $errors['code'] ?></p>
