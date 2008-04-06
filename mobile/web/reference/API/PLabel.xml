@@ -27,8 +27,8 @@ void setup() {
                      img.width,
                      img.height);  
   container.add(imglabel);
-  int y = imglabel.y + imglabel.height;
   
+  int y = imglabel.y + imglabel.height;  
   label = new PLabel("Text Label");
   label.align = CENTER;
   label.setBounds(0, y, width, height - y);
@@ -64,7 +64,7 @@ to fit the text specified.
   <fdescription>The horizontal alignment of the text</fdescription>
 </field>
 <field>
-  <fname>label</fname>
+  <fname>text</fname>
   <fdescription>The text to display, if a single line</fdescription>
 </field>
 <field>
@@ -74,7 +74,7 @@ to fit the text specified.
 
 
 <constructor>
-PLabel(<c>label</c>)
+PLabel(<c>text</c>)
 </constructor>
 
 <cparameter>

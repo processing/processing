@@ -49,6 +49,7 @@ void setup() {
   container.add(orange);
   
   container.initialize();
+  container.acceptFocus();
 }
 
 void draw() {

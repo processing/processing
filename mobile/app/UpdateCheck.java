@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -22,23 +22,41 @@
 
 package processing.app;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
-import java.util.zip.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
-import com.apple.mrj.*;
-import com.ice.jni.registry.*;
-
-import processing.core.*;
+import processing.core.PApplet;
 
 
 /**
@@ -55,7 +73,7 @@ import processing.core.*;
  * proposals and that kind of thing so that we can keep Processing free.
  */
 public class UpdateCheck extends JDialog implements ActionListener, Runnable {
-  Editor editor;
+  Base base;
   public static final String downloadURL = "http://mobile.processing.org/download/latest.txt";
   
   public static final String coreURL        = "http://mobile.processing.org/download/mobile.jar";
@@ -73,9 +91,8 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
 
   public static final long ONE_DAY = 24 * 60 * 60 * 1000;
 
-  public UpdateCheck(Editor editor) {
-    super(editor);
-    this.editor = editor;
+  public UpdateCheck(Base base) {
+    this.base = base;
     Thread thread = new Thread(this);
     thread.start();
   }
@@ -102,7 +119,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       content.add(panel, BorderLayout.SOUTH);      
       pack();
       
-      Rectangle bounds = editor.getBounds();
+      Rectangle bounds = base.activeEditor.getBounds();
       setLocation(bounds.x + ((bounds.width - 400) >> 1), bounds.y + ((bounds.height - 100) >> 1));
       setSize(400, 100);
       setResizable(false);
@@ -144,16 +161,16 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
       Preferences.set("update.id", String.valueOf(id));
     }
 
-    String info =
-      URLEncoder.encode(id + "\t" +
+    try {
+      String info;
+      info = URLEncoder.encode(id + "\t" +
                         PApplet.nf(Base.VERSION, 4) + "\t" +
                         System.getProperty("java.version") + "\t" +
                         System.getProperty("java.vendor") + "\t" +
                         System.getProperty("os.name") + "\t" +
                         System.getProperty("os.version") + "\t" +
-                        System.getProperty("os.arch"));
-
-    try {
+                        System.getProperty("os.arch"), "UTF-8");
+      
       setMessage("Checking latest version of PDE...");
       int latest = readInt(downloadURL + "?" + info);
       if (cancelled) {
@@ -164,22 +181,22 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
         "A new version of Mobile Processing is available,\n" +
         "would you like to visit the Mobile Processing download page?";
 
-      if (latest > Base.VERSION) {
-        outOfDate = true;
-        Object[] options = { "Yes", "No" };
-        int result = JOptionPane.showOptionDialog(editor,
-                                                  prompt,
-                                                  "Update",
-                                                  JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE,
-                                                  null,
-                                                  options,
-                                                  options[0]);
-
-        if (result == JOptionPane.YES_OPTION) {
-          Base.openURL("http://mobile.processing.org/download/");
-          dispose();
-          return;
+      if (base.activeEditor != null) {
+        if (latest > Base.VERSION) {
+          Object[] options = { "Yes", "No" };
+          int result = JOptionPane.showOptionDialog(base.activeEditor,
+                                                    prompt,
+                                                    "Update",
+                                                    JOptionPane.YES_NO_OPTION,
+                                                    JOptionPane.QUESTION_MESSAGE,
+                                                    null,
+                                                    options,
+                                                    options[0]);
+          if (result == JOptionPane.YES_OPTION) {
+            Base.openURL("http://mobile.processing.org/download/");
+            dispose();
+            return;
+          }
         }
       }
       if (cancelled) {
@@ -391,8 +408,8 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
   
   public static Map getLibraryVersions() throws Exception {
       TreeMap libs = new TreeMap();
-      if (Sketchbook.librariesFolder.exists()) {
-          File[] files = Sketchbook.librariesFolder.listFiles();
+      if (Base.librariesFolder.exists()) {
+          File[] files = Base.librariesFolder.listFiles();
           for (int i = 0, length = files.length; i < length; i++) {
               if (files[i].isDirectory()) {
                   //// open and parse local library version
@@ -423,7 +440,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
               lib = (String) keys.next();
               serverVersion = Integer.parseInt((String) versions.get(lib));
               //// open and parse local library version
-              File f = new File(Sketchbook.librariesFolder, lib + File.separator + libVersion);
+              File f = new File(Base.librariesFolder, lib + File.separator + libVersion);
               if (f.exists()) {
                   reader = new BufferedReader(new FileReader(f));
                   //// assume that first line MUST be build version
@@ -466,7 +483,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
           }
           if (updated) {
               setMessage("Downloading new " + lib + " library...");
-              File f = new File(Sketchbook.librariesFolder, lib + ".zip");
+              File f = new File(Base.librariesFolder, lib + ".zip");
               //// check if any previous download exists, and delete if so
               if (f.exists()) {
                   f.delete();
@@ -475,8 +492,8 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
               writeStreamToFile(url.openStream(), f);
               
               //// rename old library folder as a backup
-              File folder = new File(Sketchbook.librariesFolder, lib);
-              File backup = new File(Sketchbook.librariesFolder, lib + "_bak");
+              File folder = new File(Base.librariesFolder, lib);
+              File backup = new File(Base.librariesFolder, lib + "_bak");
               if (folder.exists()) { 
                   if (!folder.renameTo(backup)) {
                       throw new Exception("Directory rename failed.");
@@ -493,7 +510,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
               ZipEntry ze;
               while (e.hasMoreElements()) {
                   ze = (ZipEntry) e.nextElement();
-                  File zf = new File(Sketchbook.librariesFolder, lib + File.separator + ze.getName());
+                  File zf = new File(Base.librariesFolder, lib + File.separator + ze.getName());
                   if (ze.isDirectory()) {
                       zf.mkdirs();
                   } else {

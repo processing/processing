@@ -56,16 +56,26 @@ public class PClient {
         this.port = port;
     }
     
+    /** Sets up HTTP Basic authentication.  This is NOT secure!  HTTP Basic
+     * simply concats the username and password together, then Base64 encodes
+     * it.
+     * 
+     * @param username String: username to send
+     * @param password String: password to send
+     */
     public void setAuthorization(String username, String password) {
         String concat = username + ":" + password;
         authorization = "Basic " + encode(concat.getBytes());        
     }
     
-    /** 
-     * Minimal URL encoding implementation 
+    /** Minimal URL encoding implementation. Replaces disallowed characters
+     * with corresponding escape codes. This is a static method that can
+     * be accessed anywhere without instantiating a PClient object.
+     * 
+     * @returns String: url encoded version of String
      * @hidden
      */
-    public static String encode(String str) {
+    public static String urlencode(String str) {
         StringBuffer encoded = new StringBuffer();
         char c;
         for (int i = 0, length = str.length(); i < length; i++) {
@@ -106,7 +116,7 @@ public class PClient {
         for (int i = 0, length = params.length; i < length; i++) {
             query.append(params[i]);
             query.append("=");
-            query.append(encode(values[i]));
+            query.append(urlencode(values[i]));
             if (i < (length - 1)) {
                 query.append("&");
             }
@@ -137,9 +147,9 @@ public class PClient {
             if (i > 0) {
                 ps.print("&");
             }
-            ps.print(encode(params[i]));
+            ps.print(urlencode(params[i]));
             ps.print("=");
-            ps.print(encode(values[i]));             
+            ps.print(urlencode(values[i]));             
         }
         return request(file, "application/x-www-form-urlencoded", baos.toByteArray());
     }
@@ -214,6 +224,8 @@ public class PClient {
      * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
      * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
      * IN THE SOFTWARE. 
+     * 
+     * @hidden
      */
     public static String encode(byte[] data) {
         return encode(data, 0, data.length, null).toString();
@@ -225,7 +237,11 @@ public class PClient {
      * len to the Base64 format.  The encoded data is appended to the
      * given StringBuffer. If no StringBuffer is given, a new one is
      * created automatically. The StringBuffer is the return value of
-     * this method. 
+     * this method. This is a static method that can
+     * be accessed anywhere without instantiating a PClient object.
+     * 
+     * @returns StringBuffer
+     * @hidden
      */
     public static StringBuffer encode(byte[] data, int start, int len, StringBuffer buf) {
         if (buf == null) {

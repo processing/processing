@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>text</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The contents of the text field
+</description>
+
+<syntax>
+text
+</syntax>
+
+<related>
+</related>
+
+</root>

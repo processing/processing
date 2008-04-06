@@ -29,7 +29,7 @@ public class Obfuscator implements MessageConsumer {
     boolean isWindows = Base.isWindows();
     //// process library path to only include jar files
     StringBuffer libraries = new StringBuffer();
-    String[] tokens = Sketchbook.librariesClassPath.split(File.pathSeparator);
+    String[] tokens = Base.librariesClassPath.split(File.pathSeparator);
     for (int i = 0, length = tokens.length; i < length; i++) {
         if (tokens[i].toLowerCase().endsWith(".jar")) {
             libraries.append(File.pathSeparator);

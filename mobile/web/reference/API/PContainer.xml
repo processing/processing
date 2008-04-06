@@ -48,6 +48,7 @@ void setup() {
   //// initialize the container (which initializes
   //// all of its children and the scrollbar)
   screen.initialize();
+  screen.acceptFocus();
 }
 
 void draw() {
@@ -86,6 +87,10 @@ that each component will be added in top-to-bottom order.
  bounds for items in a scrolling container.</fdescription>
 </field>
 <field>
+  <fname>focusedChild</fname>
+  <fdescription>The index of the currently focused child, or -1 if none.</fdescription>
+</field>
+<field>
   <fname>scrolling</fname>
   <fdescription>True if this container should scroll its children within its bounds.</fdescription>
 </field>
@@ -107,8 +112,16 @@ that each component will be added in top-to-bottom order.
   <mdescription>Adds a component to this container.</mdescription>
 </method>
 <method>
+  <mname>get()</mname>
+  <mdescription>Gets a component in the container by index.</mdescription>
+</method>
+<method>
   <mname>remove()</mname>
   <mdescription>Removes the specified component from this container.</mdescription>
+</method>
+<method>
+  <mname>clear()</mname>
+  <mdescription>Removes all components from this containers.</mdescription>
 </method>
 <method>
   <mname>initialize()</mname>
@@ -126,6 +139,7 @@ that each component will be added in top-to-bottom order.
 
 <constructor>
 PContainer()
+PContainer(<c>horizontal</c>)
 </constructor>
 
 

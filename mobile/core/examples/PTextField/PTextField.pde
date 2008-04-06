@@ -12,23 +12,27 @@ void setup() {
   screen.scrollbar = scrollbar;
   screen.setBounds(0, 0, width - 4, height);
   
-  //// create bunch of labels and buttons, using the
-  //// PContainer.HEIGHT_UNBOUNDED constant to allow them to size
-  //// themselves as tall as they need to be to fit.  the
-  //// container will scroll the contents
   int y = 0;
-  for (int i = 0; i < 4; i++) {
-    PLabel label = new PLabel("The quick brown" +
-      " fox jumped over the lazy dogs.");
-    label.calculateBounds(4, y, width - 8, PContainer.HEIGHT_UNBOUNDED);
-    y = label.y + label.height + 4;
-    screen.add(label);
+  
+  PLabel label = new PLabel("Nickname:");
+  label.calculateBounds(4, y, width - 12, PContainer.HEIGHT_UNBOUNDED);
+  screen.add(label);  
+  y = label.y + label.height + 4;
+  
+  PTextField textfield = new PTextField("");
+  textfield.calculateBounds(4, y, width - 12, PContainer.HEIGHT_UNBOUNDED);
+  screen.add(textfield);  
+  y = textfield.y + textfield.height + 8;
     
-    PButton button = new PButton("Button " + i);
-    button.calculateBounds(4, y, width - 8, PContainer.HEIGHT_UNBOUNDED);
-    y = button.y + button.height + 4;
-    screen.add(button);
-  }
+  label = new PLabel("Password:");
+  label.calculateBounds(4, y, width - 12, PContainer.HEIGHT_UNBOUNDED);
+  screen.add(label);  
+  y = label.y + label.height + 4;
+  
+  textfield = new PTextField("");
+  textfield.password = true;
+  textfield.calculateBounds(4, y, width - 12, PContainer.HEIGHT_UNBOUNDED);
+  screen.add(textfield);  
   
   //// initialize the container (which initializes
   //// all of its children and the scrollbar)
@@ -52,4 +56,3 @@ void keyReleased() {
   //// pass it down to the focused child
   screen.keyReleased();
 }
-

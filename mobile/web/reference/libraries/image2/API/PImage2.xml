@@ -39,7 +39,7 @@ PImage2(<c>pixels[]</c>, <c>width</c>, <c>height</c>)
 
 <cparameter>
 <clabel>img</clabel>
-<cdescription>PImage: an image to copy into this pixel buffer</cdescription>
+<cdescription>PImage or PImage2: an image to copy into this pixel buffer</cdescription>
 </cparameter>
 
 <cparameter>
