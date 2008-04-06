@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -23,23 +23,20 @@
 
 package processing.app;
 
-import processing.app.syntax.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
-import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.filechooser.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
 
+import processing.app.syntax.*;
 import processing.core.PApplet;
+
+
+// TODO change this to use the Java Preferences API
+// http://www.onjava.com/pub/a/onjava/synd/2001/10/17/j2se.html
+// http://www.particle.kth.se/~lindsey/JavaCourse/Book/Part1/Java/Chapter10/Preferences.html
 
 
 /**
@@ -77,9 +74,9 @@ public class Preferences {
 
   /**
    * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
-   * Windows XP needs 66, and Linux needs 76, so 76 seems proper.
+   * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
    */
-  static public int BUTTON_WIDTH  = 76;
+  static public int BUTTON_WIDTH  = 80;
 
   /**
    * Standardized button height. Mac OS X 10.3 (Java 1.4) wants 29,
@@ -111,14 +108,12 @@ public class Preferences {
 
   // gui elements
 
-  //JDialog dialog;
   JFrame dialog;
   int wide, high;
 
   JTextField sketchbookLocationField;
   JCheckBox exportSeparateBox;
-  JCheckBox sketchPromptBox;
-  JCheckBox sketchCleanBox;
+  JCheckBox closingLastQuitsBox;
   JCheckBox externalEditorBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
@@ -130,11 +125,13 @@ public class Preferences {
   JComboBox wtkMidpVer;
 
   // the calling editor, so updates can be applied
+  
   Editor editor;
 
 
   // data model
 
+  static Hashtable defaults;
   static Hashtable table = new Hashtable();;
   static File preferencesFile;
 
@@ -143,42 +140,36 @@ public class Preferences {
 
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
-
     try {
       load(Base.getStream("preferences.txt"));
 
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
-                     "You'll need to reinstall Processing.", e);
+                           "You'll need to reinstall Processing.", e);
     }
 
     // check for platform-specific properties in the defaults
-
-    String platformExtension = "." +
-      platforms[processing.core.PApplet.platform];
-    int extensionLength = platformExtension.length();
-
-    Enumeration e = table.keys(); //properties.propertyNames();
+    String platformExt = "." + platforms[PApplet.platform];
+    int platformExtLength = platformExt.length();
+    Enumeration e = table.keys();
     while (e.hasMoreElements()) {
       String key = (String) e.nextElement();
-      if (key.endsWith(platformExtension)) {
+      if (key.endsWith(platformExt)) {
         // this is a key specific to a particular platform
-        String actualKey = key.substring(0, key.length() - extensionLength);
+        String actualKey = key.substring(0, key.length() - platformExtLength);
         String value = get(key);
         table.put(actualKey, value);
       }
     }
 
+    // clone the hash table    
+    defaults = (Hashtable) table.clone();
 
     // other things that have to be set explicitly for the defaults
-
     setColor("run.window.bgcolor", SystemColor.control);
 
-
     // next load user preferences file
-
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
-
     if (!preferencesFile.exists()) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
@@ -215,8 +206,8 @@ public class Preferences {
     Container pain = new JPanel(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
     JLabel label;
-    JButton button, button2;
-    JComboBox combo;
+    JButton button; //, button2;
+    //JComboBox combo;
 
     // [ ] Use multiple .jar files when exporting applets
 
@@ -228,29 +219,42 @@ public class Preferences {
     c.insets = new Insets(GUI_BIG, GUI_BIG, GUI_BETWEEN, GUI_BIG);
     pain.add(exportSeparateBox, c);
 
+    // [ ] Quit after closing last sketch window
 
+    closingLastQuitsBox =
+      new JCheckBox("Quit after closing last sketch window");
+    c.gridx = 0; c.gridy = 1;
+    c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
+    pain.add(closingLastQuitsBox, c);
+
+    //sketchbook.closing_last_window_quits
+
+    /*
     // [ ] Prompt for name and folder when creating new sketch
     sketchPromptBox =
       new JCheckBox("Prompt for name when opening or creating a sketch");
     c.gridx = 0; c.gridy = 1;
     c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
     pain.add(sketchPromptBox, c);
+    */
 
     // [ ] Delete empty sketches on Quit
+    /*
     sketchCleanBox = new JCheckBox("Delete empty sketches on Quit");
     c.gridx = 0; c.gridy = 2;
     c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_BIG);
     pain.add(sketchCleanBox, c);
+    */
 
     // Sketchbook location:
     // [...............................]  [ Browse ]
     label = new JLabel("Sketchbook location:");
-    c.gridx = 0; c.gridy = 3;
+    c.gridx = 0; c.gridy = 2;
     c.insets = new Insets(0, GUI_BIG, 0, GUI_BIG);
     pain.add(label, c);
 
     sketchbookLocationField = new JTextField(40);
-    c.gridx = 0; c.gridy = 4;
+    c.gridx = 0; c.gridy = 3;
     c.gridwidth = 1;
     c.weightx = 1;
     c.insets = new Insets(0, GUI_BIG, GUI_BETWEEN, GUI_SMALL);
@@ -469,6 +473,7 @@ public class Preferences {
         }
       };
     Base.registerWindowCloseKeys(dialog.getRootPane(), disposer);
+    Base.setIcon(dialog);
 
     dialog.pack();
     
@@ -536,9 +541,19 @@ public class Preferences {
     // put each of the settings into the table
     setBoolean("export.applet.separate_jar_files",
                exportSeparateBox.isSelected());
-    setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
-    setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
-    set("sketchbook.path", sketchbookLocationField.getText());
+    setBoolean("sketchbook.closing_last_window_quits",
+               closingLastQuitsBox.isSelected());
+    //setBoolean("sketchbook.prompt", sketchPromptBox.isSelected());
+    //setBoolean("sketchbook.auto_clean", sketchCleanBox.isSelected());
+
+    // if the sketchbook path has changed, rebuild the menus
+    String oldPath = get("sketchbook.path");
+    String newPath = sketchbookLocationField.getText();
+    if (!newPath.equals(oldPath)) {
+      editor.base.rebuildSketchbookMenu();
+      set("sketchbook.path", newPath);
+    }
+
     setBoolean("editor.external", externalEditorBox.isSelected());
     setBoolean("update.check", checkUpdatesBox.isSelected());
     
@@ -593,11 +608,22 @@ public class Preferences {
     // set all settings entry boxes to their actual status
     exportSeparateBox.
       setSelected(getBoolean("export.applet.separate_jar_files"));
-    sketchPromptBox.setSelected(getBoolean("sketchbook.prompt"));
-    sketchCleanBox.setSelected(getBoolean("sketchbook.auto_clean"));
-    sketchbookLocationField.setText(get("sketchbook.path"));
-    externalEditorBox.setSelected(getBoolean("editor.external"));
-    checkUpdatesBox.setSelected(getBoolean("update.check"));
+    closingLastQuitsBox.
+      setSelected(getBoolean("sketchbook.closing_last_window_quits"));
+    //sketchPromptBox.
+    //  setSelected(getBoolean("sketchbook.prompt"));
+    //sketchCleanBox.
+    //  setSelected(getBoolean("sketchbook.auto_clean"));
+    sketchbookLocationField.
+      setText(get("sketchbook.path"));
+    externalEditorBox.
+      setSelected(getBoolean("editor.external"));
+    checkUpdatesBox.
+      setSelected(getBoolean("update.check"));
+    memoryOverrideBox.
+      setSelected(getBoolean("run.options.memory"));
+    memoryField.
+      setText(get("run.options.memory.maximum"));
     
     //// mobile specific
     wtkLocationField.setText(get("wtk.path"));
@@ -614,10 +640,7 @@ public class Preferences {
     }
     wtkMidpVer.setSelectedItem(midp.charAt(0) + "." + midp.charAt(1));
 
-    memoryOverrideBox.setSelected(getBoolean("run.options.memory"));
-    memoryField.setText(get("run.options.memory.maximum"));
-
-    dialog.show();
+    dialog.setVisible(true);
   }
 
 
@@ -745,6 +768,11 @@ public class Preferences {
       defaultValue : value;
     */
   }
+  
+  
+  static public String getDefault(String attribute) {
+    return (String) defaults.get(attribute);
+  }
 
 
   static public void set(String attribute, String value) {
@@ -828,10 +856,47 @@ public class Preferences {
   }
 
 
-  static public Font getFont(String which /*, Font otherwise*/) {
-    //System.out.println("getting font '" + which + "'");
-    String str = get(which);
-    //if (str == null) return otherwise;  // ENABLE LATER
+  static public Font getFont(String attr) {
+    boolean replace = false;
+    String value = get(attr);
+    if (value == null) {
+      //System.out.println("reset 1");
+      value = getDefault(attr);
+      replace = true;
+    }
+
+    String[] pieces = PApplet.split(value, ',');
+    if (pieces.length != 3) {
+      value = getDefault(attr);
+      //System.out.println("reset 2 for " + attr);
+      pieces = PApplet.split(value, ',');
+      //PApplet.println(pieces);
+      replace = true;
+    }
+
+    String name = pieces[0];
+    int style = Font.PLAIN;  // equals zero
+    if (pieces[1].indexOf("bold") != -1) {
+      style |= Font.BOLD;
+    }
+    if (pieces[1].indexOf("italic") != -1) {
+      style |= Font.ITALIC;
+    }
+    int size = PApplet.parseInt(pieces[2], 12);
+    Font font = new Font(name, style, size);
+    //System.out.println(f);
+    
+    // replace bad font with the default
+    if (replace) {
+      //System.out.println(attr + " > " + value);
+      //setString(attr, font.getName() + ",plain," + font.getSize());
+      set(attr, value);
+    }
+    
+    return font;
+    //return new Font(name, style, size);
+
+    /*
     StringTokenizer st = new StringTokenizer(str, ",");
     String fontname = st.nextToken();
     String fontstyle = st.nextToken();
@@ -839,6 +904,7 @@ public class Preferences {
                     ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 0) |
                     ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC : 0),
                     Integer.parseInt(st.nextToken()));
+     */
   }
 
 

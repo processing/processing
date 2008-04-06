@@ -32,6 +32,7 @@ void setup() {
   container.add(list);
   
   container.initialize();
+  container.acceptFocus();
 }
 
 void draw() {

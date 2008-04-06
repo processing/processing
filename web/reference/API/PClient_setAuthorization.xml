@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>setAuthorization()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Sets up HTTP Basic authentication.  This is NOT secure!  HTTP Basic
+simply concats the username and password together, then Base64 encodes
+it.
+</description>
+
+<syntax>
+setAuthorization(<c>username</c>, <c>password</c>);
+</syntax>
+
+<parameter>
+  <label>username</label>
+  <description>String: username to send</description>
+</parameter>
+
+<parameter>
+  <label>password</label>
+  <description>String: password to send</description>
+</parameter>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

@@ -10,6 +10,8 @@ $ext = "php";
 if (is_null($argv)) {
     require 'settings.inc.php';
 } else {
+    //// define URL ROOT for any wiki generated stuff
+    define("URL_ROOT", 'http://mobile.processing.org/');
     //// define the site root, passed in as a relative path on the command line
     define("SITE_ROOT", $argv[1]);
     //// get working directory

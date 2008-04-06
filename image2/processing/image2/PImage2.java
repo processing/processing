@@ -28,6 +28,12 @@ import javax.microedition.lcdui.*;
 public class PImage2 extends PImage {    
     public int[] pixels;
     
+    public PImage2(PImage2 img) {
+        super(img.width, img.height, true);
+        pixels = new int[img.pixels.length];
+        System.arraycopy(img.pixels, 0, pixels, 0, pixels.length);
+    }
+    
     public PImage2(PImage img) {
         this(img.image);
     }

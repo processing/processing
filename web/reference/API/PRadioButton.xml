@@ -64,6 +64,7 @@ void setup() {
   container.add(orange);
   
   container.initialize();
+  container.acceptFocus();
 }
 
 void draw() {
@@ -120,12 +121,12 @@ PRadioButton(<c>selected</c>, <c>group</c>)
 </constructor>
 
 <cparameter>
-  <clabel>group</clabel>
-  <cdescription>the group this button is a member of</cdescription>
-</cparameter>
-<cparameter>
   <clabel>selected</clabel>
   <cdescription>initial state of this button</cdescription>
+</cparameter>
+<cparameter>
+  <clabel>group</clabel>
+  <cdescription>the group this button is a member of</cdescription>
 </cparameter>
 
 <related>

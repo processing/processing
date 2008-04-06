@@ -50,7 +50,7 @@
         <exec executable="${sh.executable}">
             <arg value="--login"/>
             <arg value="-c"/>
-            <arg value="cd ${parent.dir}/processing/app; svn revert ."/>
+            <arg value="cd ${parent.dir}/processing/app; svn revert -R ."/>
         </exec>
     </target>
     
@@ -65,7 +65,7 @@
     
     <!-- copy app source files from mobile into corresponding directory in processing. -->
     <target name="copyappsrc" depends="checkout">
-        <copy todir="processing/app" overwrite="true">
+        <copy todir="processing/app/src/processing/app" overwrite="true">
             <fileset dir="mobile/app">
                 <include name="**/*.java"/>
             </fileset>            
@@ -95,14 +95,17 @@
         <copy overwrite="true" file="mobile/build/shared/lib/qvga.jar" todir="processing/build/shared/lib"/>        
         <copy overwrite="true" file="mobile/build/shared/lib/export/applet.html" todir="processing/build/shared/lib/export"/>        
     </target>
-
-    <target name="make" depends="init, copyappsrc, copylaunchersrc">        
+    
+    <target name="makeide" depends="init, copyappsrc, copylaunchersrc">
         <!-- execute make.sh shell script in processing build dir. -->
         <exec executable="${sh.executable}">
             <arg value="--login"/>
             <arg value="-c"/>
             <arg value="cd ${parent.dir}/processing/build/${platform}; ./make.sh"/>
         </exec>
+    </target>
+    
+    <target name="make" depends="init, copyappsrc, copylaunchersrc, makeide">        
         <antcall target="copycore">
             <param name="target" value="work"/>
         </antcall>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>get()</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+Gets a component in the container by index.
+</description>
+
+<syntax>
+get(<c>index</c>);
+</syntax>
+
+<parameter>
+  <label>index</label>
+  <description>integer index of item in container</description>
+</parameter>
+
+<returns>
+</returns>
+
+<related>
+</related>
+
+</root>

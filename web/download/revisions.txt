@@ -1,6 +1,32 @@
 This file reflects the ongoing history of revisions to the Mobile Processing
 software, including its core and library APIs.
 
+Core 0011
+=========
+
+- More verbose error messages on selected API methods.
+
+- Added more overloaded array methods- contract(), expand(), reverse(), 
+  shorten(), slice(), splice().
+
+- Fixed bug with atan().
+
+- Added horizontal focus handling to PContainer, ability to get a child
+  UI component by index.
+
+- Fixed PScrollbar init bug crash.
+
+- Added PTextField input component.
+
+- Added openStream().
+
+Mobile 0007
+===========
+
+- Merged Mobile PDE with Processing PDE 0135.
+
+- Fixed Color Selector tool on Windows (possibly also on Linux)
+
 Core 0010
 =========
 

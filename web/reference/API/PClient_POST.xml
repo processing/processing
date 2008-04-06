@@ -13,8 +13,8 @@
 The <b>POST</b> method is used to submit data to a web server to be processed.
 This is the method most commonly used by web browsers to send data from
 forms when the user clicks on a "Submit" button.  The <b>params</b> array
-contains the names of the form fields.  The <b>values</b> array must be
-the same size as and contain the values corresponding, in order, to the
+contains the names of the form fields.  The <b>values</b> array must be 
+the same size as and contain the values corresponding, in order, to the 
 names specified in the <b>params</b> array.  If you need to submit
 binary data, create an array of Objects that can contain either String
 values or byte array (byte[]) objects containing the binary data.

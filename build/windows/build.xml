@@ -27,7 +27,7 @@
     
     <target name="dist" depends="init, copyappsrc, copylaunchersrc">        
         <!-- execute dist.sh shell script in processing build dir. -->
-        <exec executable="${cygwin.dir}/bin/bash.exe">
+        <exec executable="${sh.executable}">
             <arg value="--login"/>
             <arg value="-c"/>
             <arg value="cd ${parent.dir}/processing/build/windows; ./dist.sh"/>

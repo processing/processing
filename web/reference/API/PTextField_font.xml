@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>font</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+The font used to display the button label text.
+</description>
+
+<syntax>
+font
+</syntax>
+
+<related>
+</related>
+
+</root>

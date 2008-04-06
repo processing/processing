@@ -16,7 +16,10 @@ if ($offline) {
 <img src="images/header.png"><br>
 <br>
 <br>
-<?php require 'core.inc.php' ?>
+<?php 
+require 'core.inc.php';
+if (!$offline) {
+?>
 <div style="clear: left">
 <br />
 <br />
@@ -24,5 +27,6 @@ if ($offline) {
 <?php require URL_ROOT .'wiki/index.php?n=Libraries.HomePage&include=1' ?>
 </div>
 <?php
+}
 require '../../footer.inc.php';
 ?>

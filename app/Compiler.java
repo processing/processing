@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Compiler - default compiler class that connects to jikes
@@ -29,7 +29,7 @@ import processing.core.*;
 import java.io.*;
 import java.util.*;
 import java.util.zip.*;
-import javax.swing.*;
+
 
 public class Compiler implements MessageConsumer {
   static final String BUGS_URL =
@@ -69,7 +69,7 @@ public class Compiler implements MessageConsumer {
     this.buildPath = buildPath;
 
     // the pms object isn't used for anything but storage
-    MessageStream pms = new MessageStream(this);
+    /*MessageStream pms =*/ new MessageStream(this);
 
     String baseCommand[] = new String[] {
       // user.dir is folder containing P5 (and therefore jikes)
@@ -277,7 +277,6 @@ public class Compiler implements MessageConsumer {
       //String s2 = s1.substring(colon + 2);
       int err = s1.indexOf("Error:");
       if (err != -1) {
-
         // if the first error has already been found, then this must be
         // (at least) the second error found
         if (firstErrorFound) {
@@ -293,10 +292,32 @@ public class Compiler implements MessageConsumer {
         String description = s1.substring(err + "Error:".length());
         description = description.trim();
 
+        /*
         String hasLoop = "The method \"void loop();\" with default access";
         if (description.indexOf(hasLoop) != -1) {
           description =
             "Rename loop() to draw() in Processing 0070 and higher";
+        }
+        */
+
+        String[] oldCodeMessages = new String[] {
+          "Type \"BFont\" was not found",
+          "Type \"BGraphics\" was not found",
+          "Type \"BImage\" was not found",
+          "No method named \"framerate\"",
+          "No method named \"push\"",
+          "No accessible field named \"LINE_LOOP\"",
+          "No accessible field named \"LINE_STRIP\""
+        };
+
+        for (int i = 0; i < oldCodeMessages.length; i++) {
+          if (description.indexOf(oldCodeMessages[i]) != -1) {
+            description = "This code needs to be updated, " +
+              "please read the changes reference.";
+            Base.showReference("changes.html");
+            // only complain once, and break
+            break;
+          }
         }
 
         String constructorProblem =
@@ -426,10 +447,13 @@ public class Compiler implements MessageConsumer {
       if (!path.endsWith(File.separator)) {
         path += File.separator;
       }
-      //System.out.println("path is " + path);
 
       String list[] = folder.list();
       for (int i = 0; i < list.length; i++) {
+        // Skip . and ._ files. Prior to 0125p3, .jar files that had
+        // OS X AppleDouble files associated would cause trouble.
+        if (list[i].startsWith(".")) continue;
+
         if (list[i].toLowerCase().endsWith(".jar") ||
             list[i].toLowerCase().endsWith(".zip")) {
           abuffer.append(sep);
@@ -465,6 +489,7 @@ public class Compiler implements MessageConsumer {
 
       if (pieces[i].toLowerCase().endsWith(".jar") ||
           pieces[i].toLowerCase().endsWith(".zip")) {
+        //System.out.println("checking " + pieces[i]);
         packageListFromZip(pieces[i], table);
 
       } else {  // it's another type of file or directory

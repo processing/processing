@@ -1182,6 +1182,14 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
+    public InputStream openStream(String fileName) { 
+        try { 
+            return getClass().getResourceAsStream("/" + fileName); 
+        } catch(Exception e) { 
+            throw new PException("openStream(" + fileName + ")", e); 
+        } 
+    } 
+     
     public final void print(boolean data) {
         System.out.print(String.valueOf(data));
     }
@@ -1678,54 +1686,54 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         return array;
     }
     
-    public final boolean[] slice(boolean[] array, int offset) {
-        return slice(array, offset, array.length - offset);
+    public final boolean[] subset(boolean[] array, int offset) {
+        return subset(array, offset, array.length - offset);
     }
     
-    public final boolean[] slice(boolean[] array, int offset, int length) {
-        boolean[] slice = new boolean[length];
-        System.arraycopy(array, offset, slice, 0, length);
-        return slice;
+    public final boolean[] subset(boolean[] array, int offset, int length) {
+        boolean[] subset = new boolean[length];
+        System.arraycopy(array, offset, subset, 0, length);
+        return subset;
     }
     
-    public final byte[] slice(byte[] array, int offset) {
-        return slice(array, offset, array.length - offset);
+    public final byte[] subset(byte[] array, int offset) {
+        return subset(array, offset, array.length - offset);
     }
     
-    public final byte[] slice(byte[] array, int offset, int length) {
-        byte[] slice = new byte[length];
-        System.arraycopy(array, offset, slice, 0, length);
-        return slice;
+    public final byte[] subset(byte[] array, int offset, int length) {
+        byte[] subset = new byte[length];
+        System.arraycopy(array, offset, subset, 0, length);
+        return subset;
     }
     
-    public final char[] slice(char[] array, int offset) {
-        return slice(array, offset, array.length - offset);
+    public final char[] subset(char[] array, int offset) {
+        return subset(array, offset, array.length - offset);
     }
     
-    public final char[] slice(char[] array, int offset, int length) {
-        char[] slice = new char[length];
-        System.arraycopy(array, offset, slice, 0, length);
-        return slice;
+    public final char[] subset(char[] array, int offset, int length) {
+        char[] subset = new char[length];
+        System.arraycopy(array, offset, subset, 0, length);
+        return subset;
     }
     
-    public final int[] slice(int[] array, int offset) {
-        return slice(array, offset, array.length - offset);
+    public final int[] subset(int[] array, int offset) {
+        return subset(array, offset, array.length - offset);
     }
     
-    public final int[] slice(int[] array, int offset, int length) {
-        int[] slice = new int[length];
-        System.arraycopy(array, offset, slice, 0, length);
-        return slice;
+    public final int[] subset(int[] array, int offset, int length) {
+        int[] subset = new int[length];
+        System.arraycopy(array, offset, subset, 0, length);
+        return subset;
     }
     
-    public final String[] slice(String[] array, int offset) {
-        return slice(array, offset, array.length - offset);
+    public final String[] subset(String[] array, int offset) {
+        return subset(array, offset, array.length - offset);
     }
     
-    public final String[] slice(String[] array, int offset, int length) {
-        String[] slice = new String[length];
-        System.arraycopy(array, offset, slice, 0, length);
-        return slice;
+    public final String[] subset(String[] array, int offset, int length) {
+        String[] subset = new String[length];
+        System.arraycopy(array, offset, subset, 0, length);
+        return subset;
     }
     
     public final boolean[] splice(boolean[] array, boolean value, int index) {
@@ -3778,15 +3786,18 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         }
     }
     
-    /** A single line text input component. Allows multitap text input and editing.
-    *
-    * @category UI
-    * @related PComponent
-    */
+    /** A single line text input component. Allows for basic multitap text 
+     * input and editing- essentially a UI front-end to the multitap API
+     * functions. A work-in-progress.
+     *
+     * @category UI
+     * @example PTextField
+     * @related PComponent
+     */
     public class PTextField extends PComponent {
         /** The contents of the text field */
         public String text;
-        /** The editing index of this text field */
+        /** @hidden The editing index of this text field */
         public int textIndex;
         /** The font used to display the button label text. */
         public PFont font;
@@ -3794,9 +3805,9 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         public int fontColor;
         /** True if this is a password field. */
         public boolean password;
-        /** Masked contents of the text field for password */
+        /** @hidden Masked contents of the text field for password */
         public String masked;
-        /** Horizontal x-offset when scrolling */
+        /** @hidden Horizontal x-offset when scrolling */
         public int xoffset;
 
         /**
@@ -3819,6 +3830,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             setBounds(availX, availY, availWidth, availHeight);
         }
 
+        /** @hidden */
         public boolean acceptFocus() {
             boolean focused = super.acceptFocus();
             if (focused) {
@@ -3836,6 +3848,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
             return focused;
         }
 
+        /** @hidden */
         public boolean keyPressed() {
             textIndex = multitapBufferIndex;
             text = multitapText;

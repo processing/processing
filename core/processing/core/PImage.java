@@ -38,6 +38,14 @@ public class PImage {
     /** If true, this is a mutable image */
     public final boolean mutable;
     
+    /** This constructor is intended only for use by PImage2, so it can set 
+     * the properties without instantiating an actual Image object, which it
+     * doesn't need since it uses an array of pixels instead.
+     * 
+     * @param width
+     * @param height
+     * @param mutable
+     */
     protected PImage(int width, int height, boolean mutable) {
         this.width = width;
         this.height = height;

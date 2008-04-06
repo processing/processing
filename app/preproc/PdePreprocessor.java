@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   PdePreprocessor - wrapper for default ANTLR-generated parser
@@ -34,7 +34,7 @@ import java.io.*;
 
 import antlr.*;
 import antlr.collections.*;
-import antlr.collections.impl.*;
+//import antlr.collections.impl.*;
 
 import com.oroinc.text.regex.*;
 
@@ -193,12 +193,13 @@ public class PdePreprocessor {
 
   /**
    * preprocesses a pde file and write out a java file
+   * @param pretty true if should also space out/indent lines
    * @return the classname of the exported Java
    */
   //public String write(String program, String buildPath, String name,
   //                  String extraImports[]) throws java.lang.Exception {
   public String write(String program, String buildPath,
-                      String name, String codeFolderPackages[])
+                      String name, String codeFolderPackages[], boolean pretty)
     throws java.lang.Exception {
     // need to reset whether or not this has a main()
     foundMain = false;
@@ -206,10 +207,10 @@ public class PdePreprocessor {
     // if the program ends with no CR or LF an OutOfMemoryError will happen.
     // not gonna track down the bug now, so here's a hack for it:
     // bug filed at http://dev.processing.org/bugs/show_bug.cgi?id=5
-    if ((program.length() > 0) &&
-        program.charAt(program.length()-1) != '\n') {
-      program += "\n";
-    }
+    //if ((program.length() > 0) &&
+    //program.charAt(program.length()-1) != '\n') {
+    program += "\n";
+    //}
 
     // if the program ends with an unterminated multiline comment,
     // an OutOfMemoryError or NullPointerException will happen.
@@ -374,12 +375,12 @@ public class PdePreprocessor {
     PrintStream stream = new PrintStream(new FileOutputStream(streamFile));
 
     //writeHeader(stream, extraImports, name);
-    writeHeader(stream, name);
+    writeHeader(stream, name, pretty);
 
     emitter.setOut(stream);
     emitter.print(rootNode);
 
-    writeFooter(stream, name);
+    writeFooter(stream, name, pretty);
     stream.close();
 
     // if desired, serialize the parse tree to an XML file.  can
@@ -410,21 +411,24 @@ public class PdePreprocessor {
    * @param exporting           Is this being exported from PDE?
    * @param name                Name of the class being created.
    */
-  void writeHeader(PrintStream out, String className) {
+  void writeHeader(PrintStream out, String className, boolean pretty) {
 
     // must include processing.core
     out.print("import processing.core.*; ");
+    if (pretty) out.println();
 
     // emit emports that are needed for classes from the code folder
     if (extraImports != null) {
       for (int i = 0; i < extraImports.length; i++) {
         out.print("import " + extraImports[i] + "; ");
+        if (pretty) out.println();
       }
     }
 
     if (codeFolderImports != null) {
       for (int i = 0; i < codeFolderImports.length; i++) {
         out.print("import " + codeFolderImports[i] + "; ");
+        if (pretty) out.println();
       }
     }
 
@@ -440,6 +444,7 @@ public class PdePreprocessor {
       int length = baseImports.length;
       for (int i = 0; i < length; i++) {
         out.print("import " + baseImports[i] + ";");
+        if (pretty) out.println();
       }
     } else {
       for (int i = 0; i <= jdkVersion; i++) {
@@ -455,11 +460,15 @@ public class PdePreprocessor {
     //}
 
     if (programType < JAVA) {
+      if (pretty) out.println();
+
       if (baseClass != null) {
         out.print("public class " + className + " extends " + baseClass + "{");
       } else {
         out.print("public class " + className + " extends PApplet {");
       }
+      
+      if (pretty) out.println();
 
       if (programType == STATIC) {
         // now that size() and background() can go inside of draw()
@@ -468,6 +477,15 @@ public class PdePreprocessor {
         // meaning that after setup() things need to be ducky.
         //out.print("public void draw() {");
         out.print("public void setup() {");
+        if (pretty) out.println();
+
+        // split up lines to indent four spaces
+        //String[] lines = PApplet.split(program, '\n');
+        //program = "    " + PApplet.join(lines, "\n    ");
+      //} else {
+        // indent only two spaces
+        //String[] lines = PApplet.split(program, '\n');
+        //program = "    " + PApplet.join(lines, "\n    ");
       }
     }
   }
@@ -475,22 +493,28 @@ public class PdePreprocessor {
   /**
    * Write any necessary closing text.
    *
-   * @param out         PrintStream to write it to.
+   * @param out PrintStream to write it to.
    */
-  void writeFooter(PrintStream out, String className) {
+  void writeFooter(PrintStream out, String className, boolean pretty) {
 
     if (programType == STATIC) {
       // close off draw() definition
+      if (pretty) out.print("  ");
       out.print("noLoop(); ");
+      if (pretty) out.println();
       out.print("} ");
+      if (pretty) out.println();
     }
 //// mobile: no main function
 /*    
     if ((programType == STATIC) || (programType < JAVA)) {
       if (!PdePreprocessor.foundMain) {
-        out.print("static public void main(String args[]) { ");
-        out.print("  PApplet.main(new String[] { \"" + className + "\" });");
-        out.print("}");
+        out.print("  static public void main(String args[]) { ");
+        if (pretty) out.println();
+        out.print("    PApplet.main(new String[] { \"" + className + "\" });");
+        if (pretty) out.println();
+        out.print("  }");
+        if (pretty) out.println();
       }
     }
  */

@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 package processing.app.preproc;
 
@@ -9,11 +9,11 @@ import processing.app.*;
  * shipped under GPL with permission.
  */
 
-import antlr.*;
+//import antlr.*;
 import antlr.collections.*;
-import antlr.collections.impl.*;
+//import antlr.collections.impl.*;
 import java.io.*;
-import java.util.*;
+//import java.util.*;
 
 /**
  * PDEEmitter: A class that can take an ANTLR Java AST and produce
@@ -28,7 +28,7 @@ public class PdeEmitter implements PdeTokenTypes
 {
   private PrintStream out = System.out;
   private PrintStream debug = System.err;
-  private static int ALL = -1;
+  //private static int ALL = -1;
   private java.util.Stack stack = new java.util.Stack();
   private static String[] tokenNames;
   private final static int ROOT_ID = 0;
@@ -635,6 +635,7 @@ public class PdeEmitter implements PdeTokenTypes
     case CHAR_LITERAL:
     case STRING_LITERAL:
     case NUM_FLOAT:
+    case NUM_LONG:
       out.print(ast.getText());
       dumpHiddenAfter(ast);
       break;

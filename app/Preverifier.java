@@ -76,7 +76,7 @@ public class Preverifier implements MessageConsumer {
     command.append(File.separator);
     command.append("mobile.jar");
     command.append(File.pathSeparator);
-    command.append(Sketchbook.librariesClassPath);
+    command.append(Base.librariesClassPath);
     if (Base.isWindows()) {
         command.append("\" -d \"");
         command.append(output.getPath());

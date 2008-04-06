@@ -11,7 +11,7 @@ Net
 </subcategory>
 
 <description>
-The <b>PClient</b> object is used to initiate network requests to
+The <b>PClient</b> object is used to initiate network requests to 
 web servers on the Internet.  It supports the two most common methods
 of the Hypertext Transfer Protocol (HTTP), <b>GET</b> and <b>POST</b>, allowing it
 to communicate with servers as if it were a desktop web browser.  Both
@@ -20,6 +20,10 @@ to track the request and read the returned data.
 </description>
 
 
+<method>
+  <mname>setAuthorization()</mname>
+  <mdescription>Sets up HTTP Basic authentication.</mdescription>
+</method>
 <method>
   <mname>GET()</mname>
   <mdescription>The GET method is used to fetch data from a web server.</mdescription>
@@ -35,16 +39,16 @@ PClient(<c>midlet</c>, <c>server</c>, <c>port</c>)
 </constructor>
 
 <cparameter>
+  <clabel>port</clabel>
+  <cdescription>int: optional port number to read/write from on the server</cdescription>
+</cparameter>
+<cparameter>
   <clabel>midlet</clabel>
   <cdescription>PMIDlet: typically use "this"</cdescription>
 </cparameter>
 <cparameter>
   <clabel>server</clabel>
   <cdescription>String: name or IP address of server</cdescription>
-</cparameter>
-<cparameter>
-  <clabel>port</clabel>
-  <cdescription>int: optional port number to read/write from on the server</cdescription>
 </cparameter>
 
 <related>

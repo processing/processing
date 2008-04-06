@@ -1,4 +1,4 @@
-/* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -25,8 +25,6 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -34,7 +32,7 @@ import javax.swing.event.*;
 /**
  * run/stop/etc buttons for the ide
  */
-public class EditorButtons extends JComponent implements MouseInputListener {
+public class EditorToolbar extends JComponent implements MouseInputListener {
 
   static final String title[] = {
     "Run", "Stop", "New", "Open", "Save", "Export"
@@ -68,14 +66,15 @@ public class EditorButtons extends JComponent implements MouseInputListener {
 
   Color bgcolor;
 
-  Image buttons;
-  Image inactive[];
-  Image rollover[];
-  Image active[];
+  static Image buttons;
+  static Image inactive[];
+  static Image rollover[];
+  static Image active[];
   int currentRollover;
   //int currentSelection;
 
   JPopupMenu popup;
+  JMenu menu;
 
   int buttonCount;
   int state[] = new int[BUTTON_COUNT];
@@ -91,9 +90,14 @@ public class EditorButtons extends JComponent implements MouseInputListener {
   //int statusY;
 
 
-  public EditorButtons(Editor editor) {
+  public EditorToolbar(Editor editor, JMenu menu) {  //JPopupMenu popup) {
     this.editor = editor;
-    buttons = Base.getImage("buttons.gif", this);
+    //this.popup = popup;
+    this.menu = menu;
+    
+    if (buttons == null) {
+      buttons = Base.getImage("buttons.gif", this);
+    }
 
     buttonCount = 0;
     which = new int[BUTTON_COUNT];
@@ -123,6 +127,7 @@ public class EditorButtons extends JComponent implements MouseInputListener {
 
 
   public void paintComponent(Graphics screen) {
+    // this data is shared by all EditorToolbar instances
     if (inactive == null) {
       inactive = new Image[BUTTON_COUNT];
       rollover = new Image[BUTTON_COUNT];
@@ -143,25 +148,27 @@ public class EditorButtons extends JComponent implements MouseInputListener {
         g = active[i].getGraphics();
         g.drawImage(buttons, -(i*IMAGE_SIZE) - 3, -0*IMAGE_SIZE, null);
       }
-
+    }
+    
+    // this happens once per instance of EditorToolbar
+    if (stateImage == null) {
       state = new int[buttonCount];
       stateImage = new Image[buttonCount];
       for (int i = 0; i < buttonCount; i++) {
         setState(i, INACTIVE, false);
       }
+      y1 = 0;
+      y2 = BUTTON_HEIGHT;
+      x1 = new int[buttonCount];
+      x2 = new int[buttonCount];
     }
-    Dimension size = size();
+    
+    Dimension size = getSize();
     if ((offscreen == null) ||
         (size.width != width) || (size.height != height)) {
       offscreen = createImage(size.width, size.height);
       width = size.width;
       height = size.height;
-
-      y1 = 0;
-      y2 = BUTTON_HEIGHT;
-
-      x1 = new int[buttonCount];
-      x2 = new int[buttonCount];
 
       int offsetX = 3;
       for (int i = 0; i < buttonCount; i++) {
@@ -303,58 +310,25 @@ public class EditorButtons extends JComponent implements MouseInputListener {
     ///if (sel == -1) return false;
     if (sel == -1) return;
     currentRollover = -1;
-    //int currentSelection = sel;
-    //if (!(disableRun && ((sel == RUN) || (sel == STOP)))) {
-    // moving the handling of this over into the editor
-    //setState(sel, ACTIVE, true);
-    //}
 
-    //if (currentSelection == OPEN) {
-    //switch (currentSelection) {
     switch (sel) {
     case RUN:
-      //if (!disableRun) {
       //// if shift is down, don't re-build midlet
       editor.handleRunEmulator(!e.isShiftDown());
-      //}
       break;
 
     case STOP:
-      //if (!disableRun) {
-      //setState(RUN, INACTIVE, true);
-      //setInactive();
       editor.handleStop();
-      //}
       break;
 
     case OPEN:
-      if (popup == null) {
-        //popup = new JPopupMenu();
-        popup = editor.sketchbook.getPopupMenu();
-        // no events properly being fired, so nevermind
-        /*
-        popup.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              System.out.println("action " + e);
-            }
-          });
-        popup.addComponentListener(new ComponentAdapter() {
-            public void componentHidden(ComponentEvent e) {
-              System.out.println("hidden " + e);
-            }
-          });
-        */
-        add(popup);
-      }
-      //activate(OPEN);
-      //SwingUtilities.invokeLater(new Runnable() {
-      //public void run() {
-      popup.show(EditorButtons.this, x, y);
-      //}});
+      popup = menu.getPopupMenu();
+      popup.show(EditorToolbar.this, x, y);
       break;
 
     case NEW:
-      editor.handleNew(e.isShiftDown());
+      //editor.base.handleNew(e.isShiftDown());
+      editor.base.handleNewReplace();
       break;
 
     case SAVE:
@@ -376,6 +350,15 @@ public class EditorButtons extends JComponent implements MouseInputListener {
 
 
   public void mouseReleased(MouseEvent e) {
+    /*
+    switch (currentSelection) {
+
+      case OPEN:
+        setState(OPEN, INACTIVE, true);
+        break;
+    }
+    currentSelection = -1;
+    */
   }
 
 
@@ -384,11 +367,13 @@ public class EditorButtons extends JComponent implements MouseInputListener {
   //}
 
 
+  /*
   public void run() {
     if (inactive == null) return;
     clear();
     setState(RUN, ACTIVE, true);
   }
+  */
 
   public void running(boolean yesno) {
     setState(RUN, yesno ? ACTIVE : INACTIVE, true);
@@ -436,13 +421,12 @@ public class EditorButtons extends JComponent implements MouseInputListener {
 
 
   public Dimension getPreferredSize() {
-    return new Dimension((BUTTON_COUNT + 1)*BUTTON_WIDTH, BUTTON_HEIGHT);
-    //return new Dimension(BUTTON_WIDTH, (BUTTON_COUNT + 1)*BUTTON_HEIGHT);
+    return getMinimumSize();
   }
 
 
   public Dimension getMinimumSize() {
-    return getPreferredSize();
+    return new Dimension((BUTTON_COUNT + 1)*BUTTON_WIDTH, BUTTON_HEIGHT);
   }
 
 
