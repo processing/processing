@@ -6,7 +6,7 @@ REVISION=`head -1 ../../todo.txt | cut -c 1-4`
 # as of 100, just use 0100 everywhere to avoid confusion
 SHORT_REVISION=$REVISION
 
-VERSIONED=`cat ../../app/Base.java | grep $REVISION`
+VERSIONED=`cat ../../app/src/processing/app/Base.java | grep $REVISION`
 if [ -z "$VERSIONED" ]
 then
   echo Fix the revision number in Base.java
