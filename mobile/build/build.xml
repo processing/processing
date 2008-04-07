@@ -45,12 +45,22 @@
     </target>
     
     <!-- gets unmodified tagged source files back into the processing app directory. -->
-    <target name="revert" depends="init, checkout">
-        <!-- perform the cvs update to get clean files. -->
+    <target name="revert" depends="init, checkout">   
+        <!-- delete entire app src directory, so even added files are gone (since revert won't delete them) -->
+        <delete dir="processing/app/src/processing/app" failonerror="false"/>
+        <!-- delete entire app src directory, so even added files are gone (since revert won't delete them) -->
+        <delete dir="processing/build/shared/lib" failonerror="false"/>
+        <!-- update to restore the missing files -->
         <exec executable="${sh.executable}">
             <arg value="--login"/>
             <arg value="-c"/>
-            <arg value="cd ${parent.dir}/processing/app; svn revert -R ."/>
+            <arg value="cd ${parent.dir}/processing; svn update"/>
+        </exec>
+        <!-- revert to clean any remaining changed files -->
+        <exec executable="${sh.executable}">
+            <arg value="--login"/>
+            <arg value="-c"/>
+            <arg value="cd ${parent.dir}/processing; svn revert -R ."/>
         </exec>
     </target>
     
