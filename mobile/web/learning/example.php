@@ -33,11 +33,11 @@ if (file_exists('examples/'. $name .'/'. $name .'.png')) {
 <?php
 } else {
 ?>
-<applet code="com.barteo.emulator.applet.Main"
-        width="260" height="509"
-        archive="../me-applet.jar,../large.jar,examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jar">
+<applet code="org.microemu.applet.Main"
+        width="296" height="621"
+        archive="../microemu-javase-applet.jar,../microemu-device-large.jar,examples/<?php echo $name ?>/midlet/<?php echo $name ?>.jar">
     <param name="midlet" value="<?php echo $name ?>">
-    <param name="device" value="net.barteo.me.device.large.LargeDevice">
+    <param name="device" value="org/microemu/device/large/device.xml">
 </applet>
 <?php
 }
