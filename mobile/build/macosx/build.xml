@@ -38,6 +38,8 @@
         </exec>
         <!-- delete the zip files- we need to copy our stuff in and re-zip -->
         <delete file="processing/build/macosx/${svn.tag.processing}.zip"/>
+        <!-- remake documentation -->
+        <antcall target="makedocs" />
         <!-- copy into standard release -->
         <antcall target="copycore">
             <param name="target" value="${svn.tag.processing}/Processing ${processing.version}"/>
