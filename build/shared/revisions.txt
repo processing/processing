@@ -36,6 +36,8 @@ Mobile 0007
 
 - Updated MicroEmulator applet used for web page export.
 
+- Experimental network proxy support for update checks.
+
 Core 0010
 =========
 

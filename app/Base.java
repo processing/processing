@@ -1224,6 +1224,12 @@ public class Base {
               }
               g.drawString(ver + " Core", x, y);
               y += 12;              
+              ver = Integer.toString(UpdateCheck.getDocsVersion());
+              while (ver.length() < 4) {
+                  ver = "0" + ver;
+              }
+              g.drawString(ver + " Documentation", x, y);
+              y += 12;              
               Map libs = UpdateCheck.getLibraryVersions();
               Iterator i = libs.keySet().iterator();
               while (i.hasNext()) {

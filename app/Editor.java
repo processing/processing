@@ -1777,13 +1777,22 @@ public class Editor extends JFrame {
       message("First select a word to find in the reference.");
 
     } else {
-      String referenceFile = PdeKeywords.getReference(text);
+      String referenceFile = Base.getReferenceFile(text);
+      File f = new File(referenceFile);
+      if (!f.exists()) {
+        message("No reference available for \"" + text + "\"");
+      } else {
+        Base.openURL(referenceFile);
+      }
+      /*
+       String referenceFile = PdeKeywords.getReference(text);
       //System.out.println("reference file is " + referenceFile);
       if (referenceFile == null) {
         message("No reference available for \"" + text + "\"");
       } else {
         Base.showReference(referenceFile + ".html");
       }
+       */
     }
   }
 
