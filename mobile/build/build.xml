@@ -148,14 +148,7 @@
                  additionalparam="-mainclass PMIDlet" />
     </target>
         
-    <target name="makedocs" depends="init">
-        <!-- clean out local docs directories -->
-        <delete includeEmptyDirs="true" failonerror="false">
-            <fileset dir="mobile/docs/css"/>
-            <fileset dir="mobile/docs/images"/>
-            <fileset dir="mobile/docs/reference" includes="**/*"/>
-        </delete>
-        
+    <target name="makedocs" depends="init, cleandocs">
         <!-- build documentation -->
         <exec executable="${php.executable}" dir="mobile/web">
             <arg value="offline.php"/>
