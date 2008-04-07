@@ -1920,8 +1920,6 @@ public class Sketch {
     //// copy the applet emulator jars into the applet folder
     Base.copyFile(new File("lib", "me-applet.jar"), new File(appletFolder, "me-applet.jar"));
     Base.copyFile(new File("lib", "qvga.jar"), new File(appletFolder, "qvga.jar"));
-    
-    Base.openFolder(appletFolder);
 
     // convert the applet template
     // @@sketch@@, @@width@@, @@height@@, @@archive@@, @@source@@

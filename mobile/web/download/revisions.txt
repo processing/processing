@@ -1,13 +1,18 @@
 This file reflects the ongoing history of revisions to the Mobile Processing
 software, including its core and library APIs.
 
+Image2 0003
+===========
+
+- Added new constructor for copying from other PImage2 objects.
+
 Core 0011
 =========
 
 - More verbose error messages on selected API methods.
 
 - Added more overloaded array methods- contract(), expand(), reverse(), 
-  shorten(), slice(), splice().
+  shorten(), subset(), splice().
 
 - Fixed bug with atan().
 
@@ -18,6 +23,8 @@ Core 0011
 
 - Added PTextField input component.
 
+- PClient supports HTTP Basic authentication scheme.
+
 - Added openStream().
 
 Mobile 0007
@@ -25,7 +32,9 @@ Mobile 0007
 
 - Merged Mobile PDE with Processing PDE 0135.
 
-- Fixed Color Selector tool on Windows (possibly also on Linux)
+- Fixed Color Selector tool on Windows (possibly also on Linux).
+
+- Updated MicroEmulator applet used for web page export.
 
 Core 0010
 =========

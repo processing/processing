@@ -40,13 +40,14 @@ A:hover	   { color: #3399CC; text-decoration: underline; }
 <div id="content">
  
 <div>
-<applet code="com.barteo.emulator.applet.Main" archive="me-applet.jar,qvga.jar,../midlet/@@archive@@"
+<applet code="org.microemu.applet.Main" archive="me-applet.jar,qvga.jar,../midlet/@@archive@@"
 width="296" height="621">
 <param name="image" value="loading.gif">
 <param name="boxmessage" value="Loading Mobile Processing software...">
 <param name="boxbgcolor" value="#FFFFFF">
 <param name="midlet" value="@@sketch@@">
-<param name="device" value="net.barteo.me.device.qvga.QVGADevice">
+<param name="device" value="org/microemu/device/large/device.xml">
+
 
 <!-- This is the message that shows up when people don't have
      Java installed in their browser. Any HTML can go here
@@ -77,6 +78,10 @@ Obfuscated JAD/JAR files: <a href="../proguard/@@sketch@@.jad">@@sketch@@.jad</a
 Built with <a href="http://mobile.processing.org" title="Mobile.Processing.org">Mobile Processing</a>
 </p>
  
+<p>
+Running in <a href="http://www.microemu.org" title="MicroEmulator">MicroEmulator</a>
+</p>
+
 </div>
  
 </body>
