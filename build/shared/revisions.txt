@@ -32,7 +32,9 @@ Mobile 0007
 
 - Merged Mobile PDE with Processing PDE 0135.
 
-- Fixed Color Selector tool on Windows (possibly also on Linux)
+- Fixed Color Selector tool on Windows (possibly also on Linux).
+
+- Updated MicroEmulator applet used for web page export.
 
 Core 0010
 =========
