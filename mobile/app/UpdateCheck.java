@@ -298,7 +298,7 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
           URL url = new URL(docsVersion);
           int serverVersion = getPropVersion(url.openStream());
           if (serverVersion >= 0) {
-              int localVersion = getPropVersion(Base.getStream("docs.properties"));
+              int localVersion = getDocsVersion();
               if (localVersion < serverVersion) {
                   outOfDate = true;
                   //// download new docs
@@ -355,6 +355,10 @@ public class UpdateCheck extends JDialog implements ActionListener, Runnable {
   
   public static int getCoreVersion() throws Exception {
       return getPropVersion(Base.getStream("mobile.properties"));
+  }
+  
+  public static int getDocsVersion() throws Exception {
+      return getPropVersion(Base.getStream("docs.properties"));      
   }
   
   public static int getPropVersion(InputStream is) throws Exception {
