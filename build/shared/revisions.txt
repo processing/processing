@@ -27,6 +27,8 @@ Core 0011
 
 - Added openStream().
 
+- Added rawKeyCode system variable.
+
 Mobile 0007
 ===========
 

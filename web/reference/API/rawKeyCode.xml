@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+<name>rawKeyCode</name>
+
+<category>Input/Output</category>
+
+<subcategory>Keyboard</subcategory>
+
+<usage>Web &amp; Application</usage>
+
+<example>
+<image></image>
+<code></code>
+</example>
+
+<description>
+The system variable <b>rawKeyCode</b> represents the value of the last key pressed, as reported directly from the phone. This is useful when a phone has non-standard keys that do not map to characters (as with the <b>key</b> variable) or to standard defined actions (as with the <b>keyCode</b> variable).
+</description>
+
+<syntax>
+rawKeyCode
+</syntax>
+
+<parameter>
+<label></label>
+<description></description>
+</parameter>
+
+<returns></returns>
+
+<related>
+key
+keyCode
+keyPressed 
+keyPressed() 
+keyReleased() 
+</related>
+
+<availability>1.0</availability>
+
+<type>System variable</type>
+
+<partof>Core</partof>
+
+</root>
