@@ -2709,7 +2709,9 @@ public class Sketch {
     }
 
     // save any recent changes
-    save();
+    if (isModified()) {
+        save();
+    }
     
     zipFileContents = new Hashtable();
 

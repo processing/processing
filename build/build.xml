@@ -185,8 +185,11 @@
         </delete>
         <!-- copy mobile examples -->
         <copy todir="processing/build/${platform}/${target}/examples" overwrite="true" failonerror="false">
-            <fileset dir="mobile/docs/examples">
+            <fileset dir="mobile/web/learning/examples">
                 <include name="**/*"/>
+                <exclude name="**/midlet/**"/>
+                <exclude name="**/proguard/**"/>
+                <exclude name="*/*.png"/>
             </fileset>
         </copy>
         <!-- delete contents of faq folder -->
