@@ -1,0 +1,9 @@
+MIDlet-1: etch, /icon.png, etch
+MIDlet-Icon: /icon.png
+MIDlet-Name: etch
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: Mobile Processing ALPHA - 0006
+MicroEdition-Profile: MIDP-1.0
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Jar-URL: etch.jar
+MIDlet-Jar-Size: 7793
