@@ -35,8 +35,6 @@
         <!-- delete the zip files- we need to copy our stuff in and re-zip -->
         <delete file="processing/build/windows/${svn.tag.processing}.zip"/>
         <delete file="processing/build/windows/${svn.tag.processing}-expert.zip"/>
-        <!-- build the documentation -->
-        <antcall target="makedocs"/>
         <!-- copy into standard release -->
         <antcall target="copycore">
             <param name="target" value="${svn.tag.processing}"/>
