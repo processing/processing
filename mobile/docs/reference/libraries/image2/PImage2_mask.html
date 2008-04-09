@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Image2 &raquo; Libraries &raquo; Mobile Processing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../../../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../../../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../../../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../../../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../../../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../../../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../../../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="PImage2.html">
+          <img src="../../../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="PImage2.html">
+          PImage2 class        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>mask()</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/mask_.jpg">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PImage2 img = new PImage2(loadImage("test.png"));
+PImage2 maskImg = new PImage2(loadImage("mask.png"));
+img.mask(maskImg);
+image(img, 0, 0);
+image(img, 25, 0);</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      Masks part of an image from displaying by loading another image and using it as an alpha channel. This mask image should only contain grayscale data, but only the blue color channel is used. The mask image needs to be the same size as the image to which it is applied.<br /><br />In addition to using a mask image, an integer array containing the alpha channel data can be specified directly. This method is useful for creating dynamically generated alpha masks. This array must be of the same length as the target image's pixels array and should contain only grayscale data of values between 0-255.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Syntax</td>
+    <td class="reffield">
+      <pre><c>img</c>.mask(<c>maskImg</c>)
+<c>img</c>.mask(<c>maskArray</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">img</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">any variable of type PImage2<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">maskImg</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">PImage2: any PImage2 object used as the alpha channel for "img", needs to be same size as "img"<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">maskArray</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int[]: any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../../../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

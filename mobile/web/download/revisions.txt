@@ -16,6 +16,8 @@ Core 0011
 
 - Fixed bug with atan().
 
+- Added visible field to PComponent to allow for showing/hiding components.
+
 - Added horizontal focus handling to PContainer, ability to get a child
   UI component by index.
 
@@ -27,6 +29,8 @@ Core 0011
 
 - Added openStream().
 
+- Added rawKeyCode system variable.
+
 Mobile 0007
 ===========
 
@@ -35,6 +39,8 @@ Mobile 0007
 - Fixed Color Selector tool on Windows (possibly also on Linux).
 
 - Updated MicroEmulator applet used for web page export.
+
+- Experimental network proxy support for update checks.
 
 Core 0010
 =========

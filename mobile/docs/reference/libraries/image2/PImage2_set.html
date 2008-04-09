@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Image2 &raquo; Libraries &raquo; Mobile Processing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../../../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../../../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../../../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../../../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../../../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../../../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../../../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="PImage2.html">
+          <img src="../../../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="PImage2.html">
+          PImage2 class        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>set()</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/PImage_set.jpg">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PImage2 img = new PImage2(loadImage("tower.png"));
+color black = color(0, 0, 0);
+img.set(30, 20, black); 
+img.set(85, 20, black); 
+img.set(85, 75, black); 
+img.set(30, 75, black); 
+image(img, 0, 0);</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      Changes the color of any pixel or writes an image directly into the image. The <b>x</b> and <b>y</b> parameter specify the pixel or the upper-left corner of the image. The <b>color</b> parameter specifies the color value.<br /><br />Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". The (BETA) version of Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values and calling <b>updatePixels()</b> to update the window.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Syntax</td>
+    <td class="reffield">
+      <pre><c>img</c>.set(<c>x</c>, <c>y</c>, <c>color</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">img</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">PImage2: any variable of type PImage2<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">x</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: x-coordinate of the pixel or upper-left corner of the image<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">y</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: y-coordinate of the pixel or upper-left corner of the image<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">color</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">color: any value of the color datatype<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Returns</td>
+    <td class="reffield">None</td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../../../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

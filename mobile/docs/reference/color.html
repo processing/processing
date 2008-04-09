@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>color()</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/color_.gif">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>color c1 = color(102, 102, 0);
+fill(c1);
+rect(30, 20, 55, 55);</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      Creates colors for storing in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. The <b>color()</b> function packs the information input through its parameters into a 32 bit number in the following order AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB where R is the red/hue value, G is green/saturation, and B is blue/brightness.<br /><br />Color can also be created using hexadecimal notation. For example, "color(0, 102, 153)" is equivalent to "color(#006699)" and "color(0x006699)".<br />
+<br />
+Although the <b>color</b> function accepts values for alpha, note that phones currently do not support drawing directly to the screen using alpha. When passing a <b>color</b> to the <b>fill()</b> or <b>stroke()</b> functions, the alpha will be ignored.<br />
+<br />
+However, alpha is supported in <b>PImage2</b> objects in the Image2 library. If pixels are set to a <b>color</b> with alpha in a <b>PImage2</b> object, they will be blended with the current output when the image is drawn to the screen using <b>image()</b>.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Syntax</td>
+    <td class="reffield">
+      <pre>color(<c>gray</c>)
+color(<c>gray</c>, <c>alpha</c>)
+color(<c>value1</c>, <c>value2</c>, <c>value3</c>, <c>alpha</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">gray</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: number specifying value between white and black<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">alpha</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: number specifying opacity<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">value1</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: red or hue values relative to the current color range<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">value2</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: green or saturation values relative to the current color range<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">value3</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: blue or brightness values relative to the current color range<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Returns</td>
+    <td class="reffield">color</td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="color.html">color</a><br>
+         <a href="colorMode.html">colorMode()</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

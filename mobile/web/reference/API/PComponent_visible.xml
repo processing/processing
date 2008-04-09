@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+
+<name>visible</name>
+
+<category>
+</category>
+
+<subcategory>
+</subcategory>
+
+<description>
+True if the component is rendered visible
+</description>
+
+<syntax>
+visible
+</syntax>
+
+<related>
+</related>
+
+</root>

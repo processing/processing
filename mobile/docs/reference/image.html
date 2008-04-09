@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>image()</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/image_.jpg">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PImage b;
+// Images must be in the "data" directory to load correctly
+b = loadImage("laDefense.jpg");
+image(b, 0, 0);</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      Diplays images to the screen. The images must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the image. Mobile Processing currently works with <b>.png</b> images. If an image has transparency, it will maintain its transparency. However, support for alpha depends upon the target device. The <b>img</b> parameter specifies the image to display and the <b>x</b> and <b>y</b> parameters define the location of the image from its upper-left corner.<br /><br />To display only a sub-area of the image, specify the upper-left corner and dimensions of the sub-area. The <b>imageMode()</b> function changes the way the parameters work. For example, a call to <b>imageMode(CORNERS)</b> will change the width and height parameters to define the x and y values of the opposite corner of the image.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Syntax</td>
+    <td class="reffield">
+      <pre>image(<c>img</c>, <c>x</c>, <c>y</c>)
+image(<c>img</c>, <c>sx</c>, <c>sy</c>, <c>swidth</c>, <c>sheight</c>, <c>x</c>, <c>y</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">img</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">PImage: the image to display<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">x</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: destination x-coordinate of the image<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">y</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: destination y-coordinate of the image<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">sx</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: x-coordinate of the sub-area in the image<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">sy</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: y-coordinate of the sub-area in the image<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">swidth</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: width of the sub-area in the image<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">sheight</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: height of the sub-area in the image<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="loadImage.html">loadImage()</a><br>
+         <a href="PImage.html">PImage</a><br>
+         <a href="background.html">background()</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

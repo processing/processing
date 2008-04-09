@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>PContainer</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/PContainer.png">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PScrollBar scrollbar;
+PContainer screen;
+
+void setup() {
+  //// put a scrollbar on the right side of the screen
+  scrollbar = new PScrollBar();
+  scrollbar.setBounds(width - 4, 0, 4, height);
+  
+  //// let the container fill the rest of the screen
+  screen = new PContainer();
+  screen.scrolling = true;
+  screen.scrollbar = scrollbar;
+  screen.setBounds(0, 0, width - 4, height);
+  
+  //// create bunch of labels and buttons, using the
+  //// PContainer.HEIGHT_UNBOUNDED constant to allow them to size
+  //// themselves as tall as they need to be to fit.  the
+  //// container will scroll the contents
+  int y = 0;
+  for (int i = 0; i < 4; i++) {
+    PLabel label = new PLabel("The quick brown" +
+      " fox jumped over the lazy dogs.");
+    label.calculateBounds(4, y, width - 8, PContainer.HEIGHT_UNBOUNDED);
+    y = label.y + label.height + 4;
+    screen.add(label);
+    
+    PButton button = new PButton("Button " + i);
+    button.calculateBounds(4, y, width - 8, PContainer.HEIGHT_UNBOUNDED);
+    y = button.y + button.height + 4;
+    screen.add(button);
+  }
+  
+  //// initialize the container (which initializes
+  //// all of its children and the scrollbar)
+  screen.initialize();
+  screen.acceptFocus();
+}
+
+void draw() {
+  //// draw the container (which draws its children)
+  screen.draw();
+}
+
+void keyPressed() {
+  //// let the container handle the input, it will
+  //// pass it down to the focused child
+  screen.keyPressed();
+}
+
+void keyReleased() {
+  //// let the container handle the input, it will
+  //// pass it down to the focused child
+  screen.keyReleased();
+}</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      The PContainer object manages input focus between a collection of
+vertically stacked components.  It can also handle scrolling its
+children components within its bounds.  Note, however, that unlike
+traditional UI toolkits, the PContainer object does not manage
+layout of its children.  Each child component should have its
+bounds set before the container is initialized.  It is also assumed
+that each component will be added in top-to-bottom order.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Fields</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PContainer_HEIGHT_UNBOUNDED.html">HEIGHT_UNBOUNDED</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Constant value indicating an "unbounded" height, used in calculating
+ bounds for items in a scrolling container.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PContainer_focusedChild.html">focusedChild</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The index of the currently focused child, or -1 if none.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PContainer_scrolling.html">scrolling</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>True if this container should scroll its children within its bounds.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PContainer_scrollY.html">scrollY</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The current scrolling y-offset within its bounds.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PContainer_scrollHeight.html">scrollHeight</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The total height of the children components<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PContainer_scrollbar.html">scrollbar</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The scrollbar object to show the current scroll state.<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Methods</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PContainer_add.html">add()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Adds a component to this container.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PContainer_get.html">get()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Gets a component in the container by index.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PContainer_remove.html">remove()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Removes the specified component from this container.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PContainer_clear.html">clear()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Removes all components from this containers.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PContainer_initialize.html">initialize()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Initializes each of its children components, calculating the
+ total height of its children and setting up scrolling, if necessary.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PContainer_keyPressed.html">keyPressed()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Allows its currently focused child to handle the keypress event.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PContainer_keyReleased.html">keyReleased()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Allows its currently focused child to handle the keyrelease event.<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre>PContainer()
+PContainer(<c>horizontal</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="PComponent.html">PComponent</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

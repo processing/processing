@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>PRadioButton</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/PRadioButton.png">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PContainer container;
+PRadioButtonGroup applegroup, orangegroup;
+PRadioButton[] radios;
+PLabel[] labels;
+PLabel apple, orange;
+
+void setup() {
+  container = new PContainer();
+  container.setBounds(0, 0, width, height);
+  
+  applegroup = new PRadioButtonGroup();
+  orangegroup = new PRadioButtonGroup();
+  
+  radios = new PRadioButton[4];
+  labels = new PLabel[4];
+  int x, y = 4;  
+  PRadioButton radio;
+  PLabel label;
+  for (int i = 0; i < 4; i++) {
+    if (i < 2) {
+      radio = new PRadioButton(false, applegroup);
+      label = new PLabel("Apple " + i);      
+    } else {
+      radio = new PRadioButton(false, orangegroup);
+      label = new PLabel("Orange " + (i - 2));
+    }
+    radio.id = i;
+    radio.calculateBounds(4, y, 16, 16);
+    
+    x = radio.x + radio.width + 2;
+    label.calculateBounds(x, y, width - x, height - y);
+    
+    radios[i] = radio;
+    labels[i] = label;
+    container.add(radio);
+    container.add(label);
+    
+    y = max(radio.y + radio.height + 2, label.y + label.height + 2);
+  }
+  apple = new PLabel("No apple");
+  apple.calculateBounds(4, y, width - 8, height - y);
+  apple.setBounds(4, y, width - 8, apple.height);
+  container.add(apple);
+  
+  y = apple.y + apple.height + 2;
+  orange = new PLabel("No orange");
+  orange.calculateBounds(4, y, width - 8, height - y);
+  orange.setBounds(4, y, width - 8, apple.height);
+  container.add(orange);
+  
+  container.initialize();
+  container.acceptFocus();
+}
+
+void draw() {
+  container.draw();
+}
+
+void keyPressed() {
+  container.keyPressed();
+}
+
+void keyReleased() {
+  container.keyReleased();
+}
+
+void libraryEvent(Object library, int event, Object data) {
+  if (library == applegroup) {
+    apple.text = labels[applegroup.getSelected().id].text;
+  } else if (library == orangegroup) {
+    orange.text = labels[orangegroup.getSelected().id].text;
+  }
+}</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      A radio button component.  Used with the PRadioButtonGroup object
+to present a mutually-exclusive set of selectable options.  Does not
+include a label, use a PLabel object to display a textual label next to
+it.  The size of the component defines the size of the radio button.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Fields</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PRadioButton_id.html">id</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>This can be any id you wish to set to keep track of your radio buttons<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PRadioButton_selected.html">selected</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>True if this radio button is selected<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Methods</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PRadioButton_keyPressed.html">keyPressed()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Handles pressing and selecting/de-selecting this radio button
+ when the FIRE button is pressed.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PRadioButton_keyReleased.html">keyReleased()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Releases the pressed state of this button when the FIRE button is
+ released.<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre>PRadioButton(<c>selected</c>, <c>group</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">selected</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     initial state of this button<br><br>
+                   </td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">group</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     the group this button is a member of<br><br>
+                   </td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="PComponent.html">PComponent</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

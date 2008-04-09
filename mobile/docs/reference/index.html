@@ -1,0 +1,370 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Language (API) \ Mobile Processing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    Language
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="content">
+<img src="images/header.png"><br>
+<br>
+<br>
+<div class="column">
+    <img src="images/structure.gif"><br>
+<br>
+    <a href="arrayaccess.html">[] (array access)</a><br>
+    <a href="assign.html">= (assign)</a><br>
+    <a href="comma.html">, (comma)</a><br>
+    <a href="comment.html">// (comment)</a><br>
+    <a href="dot.html">. (dot)</a><br>
+    <a href="multilinecomment.html">/* */ (multiline comment)</a><br>
+    <a href="new.html">new</a><br>
+    <a href="null.html">null</a><br>
+    <a href="parentheses.html">() (parentheses)</a><br>
+    <a href="return.html">return</a><br>
+    <a href="semicolon.html">; (semicolon)</a><br>
+    <a href="this.html">this</a><br>
+    <a href="void.html">void</a><br>
+    <br>
+    <i>Execution</i><br>
+    <a href="destroy.html">destroy()</a><br>
+    <a href="draw.html">draw()</a><br>
+    <a href="exit.html">exit()</a><br>
+    <a href="loop.html">loop()</a><br>
+    <a href="noLoop.html">noLoop()</a><br>
+    <a href="redraw.html">redraw()</a><br>
+    <a href="resume.html">resume()</a><br>
+    <a href="setup.html">setup()</a><br>
+    <a href="suspend.html">suspend()</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/environment.gif"><br>
+<br>
+    <a href="currentMemory.html">currentMemory()</a><br>
+    <a href="framerate.html">framerate()</a><br>
+    <a href="height.html">height</a><br>
+    <a href="isColor.html">isColor()</a><br>
+    <a href="numColors.html">numColors()</a><br>
+    <a href="reportedMemory.html">reportedMemory()</a><br>
+    <a href="width.html">width</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/data.gif"><br>
+<br>
+    <i>Primitive</i><br>
+    <a href="boolean.html">boolean</a><br>
+    <a href="byte.html">byte</a><br>
+    <a href="char.html">char</a><br>
+    <a href="int.html">int</a><br>
+    <br>
+    <i>Composite</i><br>
+    <a href="Array.html">Array</a><br>
+    <a href="Object.html">Object</a><br>
+    <a href="String.html">String</a><br>
+    <br>
+    <i>Conversion</i><br>
+    <a href="strconvert.html">str()</a><br>
+    <br>
+    <i>String Functions</i><br>
+    <a href="join.html">join()</a><br>
+    <a href="nf.html">nf()</a><br>
+    <a href="nfp.html">nfp()</a><br>
+    <a href="nfs.html">nfs()</a><br>
+    <a href="split.html">split()</a><br>
+    <a href="trim.html">trim()</a><br>
+    <br>
+    <i>Array Functions</i><br>
+    <a href="append.html">append()</a><br>
+    <a href="concat.html">concat()</a><br>
+    <a href="contract.html">contract()</a><br>
+    <a href="expand.html">expand()</a><br>
+    <a href="length.html">length()</a><br>
+    <a href="reverse.html">reverse()</a><br>
+    <a href="shorten.html">shorten()</a><br>
+    <a href="splice.html">splice()</a><br>
+    <a href="subset.html">subset()</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/control.gif"><br>
+<br>
+    <i>Relational Operators</i><br>
+    <a href="equality.html">== (equality)</a><br>
+    <br>
+    <i>Iteration</i><br>
+    <a href="while.html">while()</a><br>
+    <br>
+    <i>Conditionals</i><br>
+    <a href="else.html">else</a><br>
+    <a href="if.html">if()</a><br>
+    <br>
+    <i>Logical Operators</i><br>
+    <a href="logicalAND.html">&& (logical AND)</a><br>
+    <a href="logicalNOT.html">! (logical NOT)</a><br>
+    <a href="logicalOR.html">|| (logical OR)</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/transform.gif"><br>
+<br>
+    <a href="popMatrix.html">popMatrix()</a><br>
+    <a href="pushMatrix.html">pushMatrix()</a><br>
+    <a href="resetMatrix.html">resetMatrix()</a><br>
+    <a href="translate.html">translate()</a><br>
+    <br>
+    <br>
+    <br>
+</div>
+<div class="column">
+    <img src="images/shape.gif"><br>
+<br>
+    <i>2D Primitives</i><br>
+    <a href="ellipse.html">ellipse()</a><br>
+    <a href="ellipseMode.html">ellipseMode()</a><br>
+    <a href="line.html">line()</a><br>
+    <a href="point.html">point()</a><br>
+    <a href="quad.html">quad()</a><br>
+    <a href="rect.html">rect()</a><br>
+    <a href="rectMode.html">rectMode()</a><br>
+    <a href="triangle.html">triangle()</a><br>
+    <br>
+    <i>Curves</i><br>
+    <a href="bezier.html">bezier()</a><br>
+    <a href="curve.html">curve()</a><br>
+    <br>
+    <i>Stroke attributes</i><br>
+    <a href="strokeWeight.html">strokeWeight()</a><br>
+    <br>
+    <i>Vertex</i><br>
+    <a href="beginShape.html">beginShape()</a><br>
+    <a href="bezierVertex.html">bezierVertex()</a><br>
+    <a href="curveVertex.html">curveVertex()</a><br>
+    <a href="endShape.html">endShape()</a><br>
+    <a href="vertex.html">vertex()</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/color.gif"><br>
+<br>
+    <i>Setting</i><br>
+    <a href="background.html">background()</a><br>
+    <a href="colorMode.html">colorMode()</a><br>
+    <a href="fill.html">fill()</a><br>
+    <a href="noFill.html">noFill()</a><br>
+    <a href="noStroke.html">noStroke()</a><br>
+    <a href="stroke.html">stroke()</a><br>
+    <br>
+    <i>Creating & Reading</i><br>
+    <a href="color.html">color()</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/inputoutput.gif"><br>
+<br>
+    <i>Keyboard</i><br>
+    <a href="key.html">key</a><br>
+    <a href="keyCode.html">keyCode</a><br>
+    <a href="keyPressed.html">keyPressed()</a><br>
+    <a href="keyReleased.html">keyReleased()</a><br>
+    <a href="rawKeyCode.html">rawKeyCode</a><br>
+    <a href="softkey.html">softkey()</a><br>
+    <a href="softkeyPressed.html">softkeyPressed()</a><br>
+    <br>
+    <i>Touchscreen</i><br>
+    <a href="pointerDragged.html">pointerDragged()</a><br>
+    <a href="pointerPressed.html">pointerPressed()</a><br>
+    <a href="pointerReleased.html">pointerReleased()</a><br>
+    <a href="pointerX.html">pointerX</a><br>
+    <a href="pointerY.html">pointerY</a><br>
+    <br>
+    <i>Text Input</i><br>
+    <a href="multitap.html">multitap()</a><br>
+    <a href="multitapBuffer.html">multitapBuffer</a><br>
+    <a href="multitapBufferIndex.html">multitapBufferIndex</a><br>
+    <a href="multitapBufferLength.html">multitapBufferLength</a><br>
+    <a href="multitapClear.html">multitapClear()</a><br>
+    <a href="multitapDeleteChar.html">multitapDeleteChar()</a><br>
+    <a href="noMultitap.html">noMultitap()</a><br>
+    <a href="textInput.html">textInput()</a><br>
+    <br>
+    <i>Text Output</i><br>
+    <a href="print.html">print()</a><br>
+    <a href="println.html">println()</a><br>
+    <br>
+    <i>Time & Date</i><br>
+    <a href="day.html">day()</a><br>
+    <a href="hour.html">hour()</a><br>
+    <a href="millis.html">millis()</a><br>
+    <a href="minute.html">minute()</a><br>
+    <a href="month.html">month()</a><br>
+    <a href="second.html">second()</a><br>
+    <a href="year.html">year()</a><br>
+    <br>
+    <i>Files</i><br>
+    <a href="loadBytes.html">loadBytes()</a><br>
+    <a href="loadStrings.html">loadStrings()</a><br>
+    <a href="openStream.html">openStream()</a><br>
+    <a href="saveBytes.html">saveBytes()</a><br>
+    <a href="saveStrings.html">saveStrings()</a><br>
+    <br>
+    <i>Libraries</i><br>
+    <a href="libraryEvent.html">libraryEvent()</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/net.gif"><br>
+<br>
+    <a href="PClient.html">PClient</a><br>
+    <a href="PRequest.html">PRequest</a><br>
+    <br>
+    <br>
+    <br>
+</div>
+<div class="column">
+    <img src="images/image.gif"><br>
+<br>
+    <a href="PImage.html">PImage</a><br>
+    <br>
+    <i>Loading & Displaying</i><br>
+    <a href="image.html">image()</a><br>
+    <a href="loadImage.html">loadImage()</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/typography.gif"><br>
+<br>
+    <a href="PFont.html">PFont</a><br>
+    <br>
+    <i>Loading & Displaying</i><br>
+    <a href="loadFont.html">loadFont()</a><br>
+    <a href="text.html">text()</a><br>
+    <a href="textFont.html">textFont()</a><br>
+    <a href="textWrap.html">textWrap()</a><br>
+    <br>
+    <i>Attributes</i><br>
+    <a href="textAlign.html">textAlign()</a><br>
+    <a href="textWidth.html">textWidth()</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/ui.gif"><br>
+<br>
+    <a href="PButton.html">PButton</a><br>
+    <a href="PCheckBox.html">PCheckBox</a><br>
+    <a href="PComponent.html">PComponent</a><br>
+    <a href="PContainer.html">PContainer</a><br>
+    <a href="PImageLabel.html">PImageLabel</a><br>
+    <a href="PLabel.html">PLabel</a><br>
+    <a href="PList.html">PList</a><br>
+    <a href="PRadioButton.html">PRadioButton</a><br>
+    <a href="PRadioButtonGroup.html">PRadioButtonGroup</a><br>
+    <a href="PScrollBar.html">PScrollBar</a><br>
+    <a href="PTextField.html">PTextField</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/math.gif"><br>
+<br>
+    <i>Operators</i><br>
+    <a href="addassign.html">+= (add assign)</a><br>
+    <a href="addition.html">+ (addition)</a><br>
+    <a href="decrement.html">-- (decrement)</a><br>
+    <a href="divide.html">/ (divide)</a><br>
+    <a href="increment.html">++ (increment)</a><br>
+    <a href="minus.html">- (minus)</a><br>
+    <a href="modulo.html">% (modulo)</a><br>
+    <a href="multiply.html">* (multiply)</a><br>
+    <a href="subtractassign.html">-= (subtract assign)</a><br>
+    <br>
+    <i>Bitwise Operators</i><br>
+    <a href="bitwiseAND.html">& (bitwise AND)</a><br>
+    <a href="bitwiseOR.html">| (bitwise OR)</a><br>
+    <a href="leftshift.html"><< (left shift)</a><br>
+    <a href="rightshift.html">>> (right shift)</a><br>
+    <br>
+    <i>Calculation</i><br>
+    <a href="abs.html">abs()</a><br>
+    <a href="constrain.html">constrain()</a><br>
+    <a href="dist.html">dist()</a><br>
+    <a href="max.html">max()</a><br>
+    <a href="min.html">min()</a><br>
+    <a href="pow.html">pow()</a><br>
+    <a href="sq.html">sq()</a><br>
+    <br>
+    <i>Random</i><br>
+    <a href="random.html">random()</a><br>
+    <br>
+    <i>Fixed Point - Trigonometry</i><br>
+    <a href="atan.html">atan()</a><br>
+    <a href="atan2.html">atan2()</a><br>
+    <a href="cos.html">cos()</a><br>
+    <a href="radians.html">radians()</a><br>
+    <a href="sin.html">sin()</a><br>
+    <br>
+    <i>Fixed Point - Calculation</i><br>
+    <a href="ceil.html">ceil()</a><br>
+    <a href="div.html">div()</a><br>
+    <a href="floor.html">floor()</a><br>
+    <a href="mul.html">mul()</a><br>
+    <a href="round.html">round()</a><br>
+    <a href="sqrt.html">sqrt()</a><br>
+    <br>
+    <i>Fixed Point - Conversion</i><br>
+    <a href="fptoi.html">fptoi()</a><br>
+    <a href="itofp.html">itofp()</a><br>
+    <br>
+    <br>
+    <br>
+    <img src="images/constants.gif"><br>
+<br>
+    <a href="FP_PRECISION.html">FP_PRECISION</a><br>
+    <br>
+    <i>Fixed Point</i><br>
+    <a href="HALF_PI.html">HALF_PI (1.57079...)</a><br>
+    <a href="ONE.html">ONE (1.0)</a><br>
+    <a href="PI.html">PI (3.14159...)</a><br>
+    <a href="TWO_PI.html">TWO_PI (6.28318...)</a><br>
+    <br>
+    <br>
+    <br>
+</div>
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

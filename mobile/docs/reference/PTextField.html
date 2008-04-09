@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>PTextField</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/PTextField.png">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PScrollBar scrollbar;
+PContainer screen;
+
+void setup() {
+  //// put a scrollbar on the right side of the screen
+  scrollbar = new PScrollBar();
+  scrollbar.setBounds(width - 4, 0, 4, height);
+  
+  //// let the container fill the rest of the screen
+  screen = new PContainer();
+  screen.scrolling = true;
+  screen.scrollbar = scrollbar;
+  screen.setBounds(0, 0, width - 4, height);
+  
+  int y = 0;
+  
+  PLabel label = new PLabel("Nickname:");
+  label.calculateBounds(4, y, width - 12, PContainer.HEIGHT_UNBOUNDED);
+  screen.add(label);  
+  y = label.y + label.height + 4;
+  
+  PTextField textfield = new PTextField("");
+  textfield.calculateBounds(4, y, width - 12, PContainer.HEIGHT_UNBOUNDED);
+  screen.add(textfield);  
+  y = textfield.y + textfield.height + 8;
+    
+  label = new PLabel("Password:");
+  label.calculateBounds(4, y, width - 12, PContainer.HEIGHT_UNBOUNDED);
+  screen.add(label);  
+  y = label.y + label.height + 4;
+  
+  textfield = new PTextField("");
+  textfield.password = true;
+  textfield.calculateBounds(4, y, width - 12, PContainer.HEIGHT_UNBOUNDED);
+  screen.add(textfield);  
+  
+  //// initialize the container (which initializes
+  //// all of its children and the scrollbar)
+  screen.initialize();
+  screen.acceptFocus();
+}
+
+void draw() {
+  //// draw the container (which draws its children)
+  screen.draw();
+}
+
+void keyPressed() {
+  //// let the container handle the input, it will
+  //// pass it down to the focused child
+  screen.keyPressed();
+}
+
+void keyReleased() {
+  //// let the container handle the input, it will
+  //// pass it down to the focused child
+  screen.keyReleased();
+}</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      A single line text input component. Allows for basic multitap text 
+input and editing- essentially a UI front-end to the multitap API
+functions. A work-in-progress.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Fields</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PTextField_text.html">text</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The contents of the text field<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PTextField_font.html">font</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The font used to display the button label text.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PTextField_fontColor.html">fontColor</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Color of the button label text.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PTextField_password.html">password</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>True if this is a password field.<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre>PTextField(<c>initial</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">initial</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     The initial text to display in the component<br><br>
+                   </td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="PComponent.html">PComponent</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>
