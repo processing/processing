@@ -52,7 +52,7 @@
             <fileset dir="processing/build/windows/${svn.tag.processing}-expert"/>
         </move>
         <!-- zip up expert release -->
-        <zip destfile="processing/build/windows/mobile-${mobile.version}.zip" 
+        <zip destfile="processing/build/windows/mobile-${mobile.version}-windows.zip" 
              basedir="processing/build/windows/mobile-${mobile.version}"/>
     </target>
     

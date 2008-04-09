@@ -70,7 +70,7 @@
             </fileset>
         </move>
         <!-- zip up release -->
-        <zip destfile="processing/build/macosx/mobile-${mobile.version}.zip" 
+        <zip destfile="processing/build/macosx/mobile-${mobile.version}-macosx.zip" 
              basedir="processing/build/macosx/mobile-${mobile.version}"/>
     </target>
     
