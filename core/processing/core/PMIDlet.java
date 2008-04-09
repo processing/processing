@@ -2628,6 +2628,8 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         public boolean focused;
         /** True if the component has been activated/pressed */
         public boolean pressed;
+        /** True if the component is rendered visible */
+        public boolean visible;
         
         /** Background color of the entire component */
         public int bgColor = DEFAULT_BG_COLOR;
@@ -2657,14 +2659,16 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         
         /** @hidden */
         public PComponent() {
+            visible = true;
         }
         
         /** @hidden */
         public boolean acceptFocus() {
-            if (acceptsFocus) {
+            if (acceptsFocus && visible) {
                 focused = true;
+                return true;
             }
-            return acceptsFocus;
+            return false;
         }
         
         /** @hidden */
@@ -2736,9 +2740,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
          * @return None
          */
         public void draw() {
-            drawBefore();
-            drawContent();
-            drawAfter();
+            if (visible) {
+                drawBefore();
+                drawContent();
+                drawAfter();
+            }
         }
         
         protected void drawBefore() {
@@ -2922,10 +2928,11 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         
         /** @hidden */
         public boolean acceptFocus() {
-            super.acceptFocus();
-            if (focused && (children.size() > 0) && (focusedChild >= 0)) {
-                PComponent child = (PComponent) children.elementAt(focusedChild);
-                child.acceptFocus();
+            if (super.acceptFocus()) {
+                if (focused && (children.size() > 0) && (focusedChild >= 0)) {
+                    PComponent child = (PComponent) children.elementAt(focusedChild);
+                    child.acceptFocus();
+                }
             }
             return focused;
         }
@@ -3612,12 +3619,13 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
         
         /** @hidden */
         public boolean acceptFocus() {
-            focused = true;
-            resetMarquee();
-            if (scrollbar != null) {
-                scrollbar.focused = true;
+            if (super.acceptFocus()) {
+                resetMarquee();
+                if (scrollbar != null) {
+                    scrollbar.focused = true;
+                }
             }
-            return true;
+            return focused;
         }
         
         /** @hidden */
@@ -3832,8 +3840,7 @@ public abstract class PMIDlet extends MIDlet implements Runnable, CommandListene
 
         /** @hidden */
         public boolean acceptFocus() {
-            boolean focused = super.acceptFocus();
-            if (focused) {
+            if (super.acceptFocus()) {
                 char[] chars = text.toCharArray();
                 int length = text.length();
                 if (multitapBuffer.length <= length) {
