@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>String</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                        <td valign="top"><pre>String str1 = "CCCP";
+char data[] = {'C', 'C', 'C', 'P'};
+String str2 = new String(data);
+println(str1);  // Prints "CCCP" to the console
+println(str2);  // Prints "CCCP" to the console</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      A string is a sequence of characters. The class <b>String</b> includes methods for examining individual characters, comparing strings, searching strings, extracting parts of strings, and for converting an entire string uppercase and lowercase. Strings are always defined inside double quotes ("Abc") and characters are always defined inside single quotes('A'). <br /> <br />There are more string methods than those linked from this page. Additional <b>String</b> documentation is located at http://java.sun.com/j2se/1.4.2/docs/api/    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Methods</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="String_charAt.html">charAt()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Returns the character at the specified index<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="String_equals.html">equals()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Compares a string to a specified object<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="String_indexOf.html">indexOf()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Returns the index value of the first occurance of a character within the input string<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="String_length.html">length()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Returns the number of characters in the input string<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="String_substring.html">substring()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Returns a new string that is part of the input string<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="String_toLowerCase.html">toLowerCase()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Converts all the characters to lower case<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="String_toUpperCase.html">toUpperCase()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Converts all the characters to upper case<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre>String(<c>data</c>)
+String(<c>data</c>, <c>offset</c>, <c>length</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">data</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     byte[] or char[]: array of bytes to be decoded into characters or array of characters to be combined into a string<br><br>
+                   </td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">offset</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     int: index of the first character<br><br>
+                   </td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">length</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     int: number of characters<br><br>
+                   </td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="char.html">char</a><br>
+         <a href="text.html">text()</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

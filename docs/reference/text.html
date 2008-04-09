@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>text()</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/textFont_.gif">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PFont metaBold;
+// The font "Meta-Bold.mvlw" must be located in the 
+// current sketch's "data" directory to load successfully
+metaBold = loadFont("Meta-Bold.mvlw");
+textFont(metaBold); 
+text("word", 15, 50);</pre></td>
+                 </tr>
+               </table>
+                      <hr size="1">
+                      <br>
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/text_3.gif">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PFont font;
+font = loadFont("FFScala-Bold-12.vlw"); 
+textFont(font, 12); 
+String s = "The quick brown fox jumped over the lazy dog.";
+text(s, 15, 20, 70, 70);</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      Draws text to the screen. Displays the information specified in the <b>stringdata</b> parameter on the screen in the position specified by the <b>x</b> and <b>y</b> parameters. A font must be set with the <b>textFont()</b> function before <b>text()</b> may be called. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. If the font was loaded from the mobile phone (not a bitmap font created with Mobile Processing), you can change the color of the text with the <b>fill()</b> function. To change the color of a bitmap font, you must reload it with the color specified in <b>loadFont()</b>.<br />
+<br />
+The <b>width</b> and <b>height</b> parameters define a rectangular area to display within. Text will automatically be wrapped and clipped to fit within the area.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Syntax</td>
+    <td class="reffield">
+      <pre>text(<c>stringdata</c>, <c>x</c>, <c>y</c>)
+text(<c>stringdata</c>, <c>x</c>, <c>y</c>, <c>width</c>, <c>height</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">x</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: x-coordinate of text<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">y</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: y-coordinate of text baseline (if no width and height specified) or the top of the text box (if width and height specified)<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">stringdata</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">String: letters to be displayed<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">width</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: width of text box<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">height</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">int: height of text box<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Returns</td>
+    <td class="reffield">None</td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="textAlign.html">textAlign()</a><br>
+         <a href="loadFont.html">loadFont()</a><br>
+         <a href="PFont.html">PFont</a><br>
+         <a href="textFont.html">textFont()</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

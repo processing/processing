@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>PScrollBar</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/PScrollBar.png">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PLabel label;
+PScrollBar scrollbar;
+
+int value;
+
+void setup() {
+  label = new PLabel("Value: " + value);
+  label.align = CENTER;
+  label.calculateBounds(4, 4, width - 8, height);
+  label.setBounds(4, 4, width - 8, label.height);
+  label.initialize();
+  
+  int y = label.y + label.height + 4;
+  scrollbar = new PScrollBar();
+  scrollbar.setBounds((width - 4) / 2, y, 4, height - y - 4);
+  scrollbar.setRange(0, 8, 1);
+  scrollbar.initialize();  
+}
+
+void draw() {
+  background(255);
+  label.draw();
+  scrollbar.draw();
+}
+
+void keyPressed() {
+  switch (keyCode) {
+    case UP:
+      value = max(0, value - 1);
+      break;
+    case DOWN:
+      value = min(8, value + 1);
+      break;
+  }
+  label.text = "Value: " + value;
+  scrollbar.setValue(value);
+}</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      A scrollbar component.  Can be used in conjunction with a PContainer
+or PList object to represent the scroll position of its children, in
+which case it is handled automatically.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Methods</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PScrollBar_setRange.html">setRange()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Sets the range of values represented by the scrollbar, and 
+ the size of a "page" used to size the scroller.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PScrollBar_setValue.html">setValue()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Sets the current value displayed by the scrollbar, should be
+ between the specified min and max.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PScrollBar_initialize.html">initialize()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Initializes the scrollbar, calculates the size of the scroller/grabber.<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre>PScrollBar()</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="PComponent.html">PComponent</a><br>
+         <a href="PContainer.html">PContainer</a><br>
+         <a href="PList.html">PList</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

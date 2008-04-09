@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>loadBytes()</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                        <td valign="top"><pre>// open a file and read its binary data 
+byte b[] = loadBytes("something.dat"); 
+ 
+// print each value, from 0 to 255 
+for (int i = 0; i < b.length; i++) { 
+  // every tenth number, start a new line 
+  if ((i % 10) == 0) { 
+    println(); 
+  } 
+ 
+  // bytes are from -128 to 127, this converts to 0 to 255 
+  int a = b[i] & 0xff; 
+  print(a + " "); 
+} 
+// print a blank line at the end 
+println();</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      Reads the contents of a file and places it in a byte array. The file must be located in the sketch's "data" directory/folder or have been previously saved with <b>saveBytes()</b>.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Syntax</td>
+    <td class="reffield">
+      <pre>loadBytes(<c>filename</c>);</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">filename</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">String: name of a file in the data folder or persistent store.<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Returns</td>
+    <td class="reffield">byte[]</td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="loadStrings.html">loadStrings()</a><br>
+         <a href="saveStrings.html">saveStrings()</a><br>
+         <a href="saveBytes.html">saveBytes()</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

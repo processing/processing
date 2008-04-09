@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Image2 &raquo; Libraries &raquo; Mobile Processing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../../../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../../../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../../../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../../../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../../../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../../../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../../../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../../../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Image2 library        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>PImage2</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      This class provides a PImage-compatible image with an editable pixel buffer. It can be used wherever a PImage is used, such as with the <b>image()</b> function to draw it to the screen. It also supports all of the PImage fields and methods, such as <b>width</b>, <b>height</b>, and <b>copy()</b>.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Fields</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PImage2_pixels.html">pixels[]</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>array containing the color of every pixel in the image<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Methods</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PImage2_get.html">get()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Reads the clor of any pixel or grabs a rectangle of pixels.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PImage2_set.html">set()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Writes a color to any pixel or writes an image into another.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PImage2_mask.html">mask()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Masks part of the image from displaying<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PImage2_loadPixels.html">loadPixels()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Loads the current contents of the screen<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre>PImage2(<c>img</c>)
+PImage2(<c>width</c>, <c>height</c>)
+PImage2(<c>pixels[]</c>, <c>width</c>, <c>height</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">img</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     PImage or PImage2: an image to copy into this pixel buffer<br><br>
+                   </td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">width</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     int: image width<br><br>
+                   </td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">height</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     int: image height<br><br>
+                   </td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">pixels[]</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     int[] or color[]: array of integers or colors, must have width*height number of elements<br><br>
+                   </td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../../../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

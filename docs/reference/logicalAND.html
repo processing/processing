@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>&& (logical AND)</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/logicalAND.gif">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>for(int i=5; i<=95; i+=5) {
+  if((i > 35) && (i < 60)) {
+    stroke(0);    //Set color to black
+  } else {
+    stroke(255);  //Set color to white
+  }
+  line(30, i, 80, i);
+}</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      Compares two expressions and returns <b>true</b> only if both evaluate to <b>true</b>. Returns <b>false</b> if one or both evaluate to <b>false</b>. The following list shows all possible combinations:<br /><br /><tt>true && false   // Evaluates false because the second is false <br />false && true   // Evaluates false because the first is false <br />true && true    // Evaluates true because both are true <br />false && false  // Evaluates false because both are false</tt>    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Syntax</td>
+    <td class="reffield">
+      <pre><c>expression1</c> && <c>expression2</c></pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">expression1</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">any valid expression<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">expression2</td>
+                   <td width="20">&nbsp;</td>
+                   <td valign="top">any valid expression<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="if.html">if()</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

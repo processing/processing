@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>PList</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Examples</td>
+    <td class="reffield">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                 <tr>
+                          <td valign="top">
+                              <img src="API/media/PList.png">
+                          </td>
+                   <td width="20"><img src="" width="20" height="0" /></td>
+                        <td valign="top"><pre>PContainer container;
+PLabel label;
+PList list;
+PScrollBar scrollbar;
+
+void setup() {
+  container = new PContainer();
+  container.setBounds(0, 0, width, height);
+  
+  label = new PLabel("Selected: ");
+  //// let the label calculate its ideal width/height
+  label.calculateBounds(0, 0, width, height);
+  //// set the label to fill the full width of the screen
+  label.setBounds(0, 0, width, label.height);
+  container.add(label);
+  
+  int y = label.y + label.height;
+      
+  //// put a scrollbar on the right side of the screen
+  //// we do not need to explicitly add it to the container
+  //// since it will be linked to the list
+  scrollbar = new PScrollBar();
+  scrollbar.setBounds(width - 4, y, 4, height -y);
+  
+  //// create a new list
+  list = new PList();
+  list.scrollbar = scrollbar;
+  list.setBounds(0, y, width - 4, height - y);
+  for (int i = 0; i < 25; i++) {
+    list.add(i + ". The quick brown fox jumped over the lazy dogs.");
+  }
+  container.add(list);
+  
+  container.initialize();
+  container.acceptFocus();
+}
+
+void draw() {
+  container.draw();
+}
+
+void keyPressed() {
+  container.keyPressed();
+}
+
+void keyReleased() {
+  container.keyReleased();
+}
+
+void libraryEvent(Object library, int event, Object data) {
+  if (library == list) {
+    //// update selection label
+    label.text = "Selected: " + list.selected;
+  }
+}</pre></td>
+                 </tr>
+               </table>
+                      <br>
+           </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      A scrollable list.  Each item in the list is represented by a single
+line label.  If the label is bigger than the width of the component,
+it will scroll horizontally when selected.  Note that the horizontal
+scrolling will only animate when the list has the input focus.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Fields</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PList_font.html">font</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The font used to display the item labels<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PList_scrollbar.html">scrollbar</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The scrollbar used to represent the size of the list contents<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">
+                     <a href="PList_selected.html">selected</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Index of the currently selected item in the list<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Methods</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PList_add.html">add()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Adds items to this list.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PList_get.html">get()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Returns the item in the list at the specified index<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PList_initialize.html">initialize()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Initializes the list, sets up its associated scrollbar<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PList_keyPressed.html">keyPressed()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Handles up/down navigation of the list and pressed selection of items in the list<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PList_keyReleased.html">keyReleased()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Releases the pressed state of items in the list, fires a library
+ event to notify the sketch of the selection.<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre>PList()</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="PComponent.html">PComponent</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>

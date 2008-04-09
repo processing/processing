@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="shortcut icon" href="http://mobile.processing.org/favicon.ico" type="image/x-icon" />
+<title>Mobile Processing &raquo; Language (API)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="javascript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<link rel="stylesheet" href="../css/mobile.css" type="text/css">
+</head>
+<body>
+<div id="head"> 
+    <img src="../images/mobile.png">
+</div>
+<div id="navigation"> 
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+    Reference
+</div>
+<div id="subnavigation" style="padding-left: 30px">
+    <img src="../images/nav_bottomarrow.png" align="absmiddle">
+
+    <a href="../reference/index.html">Language</a>
+
+    <span class="backslash">\</span>
+    <a href="../reference/environment/index.html">Environment</a> 
+
+    <span class="backslash">\</span>
+    <a href="../reference/libraries/index.html">Libraries</a>
+
+</div>
+<div class="backnavigation">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right" width="50">
+        <a href="index.html">
+          <img src="../images/back_off.png" border="0" align="middle">
+        </a>
+      </td>
+      <td valign="middle">
+        <a href="index.html">
+          Index        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="content">
+    
+
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="reffieldheader">Name</td>
+    <td class="reffield">
+      <h3>PClient</h3>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Description</td>
+    <td class="reffield">
+      The <b>PClient</b> object is used to initiate network requests to 
+web servers on the Internet.  It supports the two most common methods
+of the Hypertext Transfer Protocol (HTTP), <b>GET</b> and <b>POST</b>, allowing it
+to communicate with servers as if it were a desktop web browser.  Both
+methods initiate a new network request and return a <b>PRequest</b> object used
+to track the request and read the returned data.    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Methods</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PClient_setAuthorization.html">setAuthorization()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>Sets up HTTP Basic authentication.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PClient_GET.html">GET()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The GET method is used to fetch data from a web server.<br><br></td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="120">
+                   <a href="PClient_POST.html">POST()</a>
+                   </td>
+                   <td valign="top" width="20">&nbsp;</td>
+                   <td>The POST method is used to submit data to a web server to be processed.<br><br></td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Constructors</td>
+    <td class="reffield">
+      <pre>PClient(<c>midlet</c>, <c>server</c>)
+PClient(<c>midlet</c>, <c>server</c>, <c>port</c>)</pre>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Parameters</td>
+    <td class="reffield">
+      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                   <td valign="top" width="70">port</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     int: optional port number to read/write from on the server<br><br>
+                   </td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">midlet</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     PMIDlet: typically use "this"<br><br>
+                   </td>
+                 </tr>
+                        <tr>
+                   <td valign="top" width="70">server</td>
+                   <td width="20">&nbsp;</td>
+                   <td vakugb="top">
+                     String: name or IP address of server<br><br>
+                   </td>
+                 </tr>
+             </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="reffieldheader">Related</td>
+    <td class="reffield">
+         <a href="PRequest.html">PRequest</a><br>
+    </td>
+  </tr>
+</table>
+
+</div>
+<div id="footer"> 
+    Mobile Processing is an open project initiated by <a href="http://www.francisli.com/">Francis Li</a><br>
+    <br>
+    <a href="../copyright.php">&copy; Info</p>
+</div>
+</body>
+</html>
