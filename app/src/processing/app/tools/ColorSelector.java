@@ -77,22 +77,20 @@ public class ColorSelector implements DocumentListener {
 
     range = new ColorRange();
     range.init();
-    JPanel rangePanel = new JPanel();
-    rangePanel.setLayout(new BorderLayout());
-    rangePanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    rangePanel.add(range, BorderLayout.CENTER);
-    //range.setSize(256, 256);  // doesn't help, pack() trashes
-    box.add(rangePanel);
+    Box rangeBox = new Box(BoxLayout.Y_AXIS);
+    rangeBox.setAlignmentY(0);
+    rangeBox.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+    rangeBox.add(range);
+    box.add(rangeBox);
     box.add(Box.createHorizontalStrut(10));
 
     slider = new ColorSlider();
     slider.init();
-    JPanel sliderPanel = new JPanel();
-    sliderPanel.setLayout(new BorderLayout());
-    sliderPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    //slider.setSize(256, 20);  // doesn't help, pack() trashes
-    sliderPanel.add(slider, BorderLayout.CENTER);
-    box.add(sliderPanel);
+    Box sliderBox = new Box(BoxLayout.Y_AXIS);
+    sliderBox.setAlignmentY(0);
+    sliderBox.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+    sliderBox.add(slider);
+    box.add(sliderBox);
     box.add(Box.createHorizontalStrut(10));
 
     box.add(createColorFields());
@@ -292,6 +290,7 @@ public class ColorSelector implements DocumentListener {
 
   protected Container createColorFields() {
     Box box = Box.createVerticalBox();
+    box.setAlignmentY(0);
 
     colorPanel = new JPanel() {
         public void paintComponent(Graphics g) {
