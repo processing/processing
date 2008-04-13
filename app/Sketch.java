@@ -2861,7 +2861,7 @@ public class Sketch {
           if (info[i].startsWith("midlet")) {
             int idx = info[i].indexOf('=');  // get applet= or applet =
             String commas = info[i].substring(idx+1).trim();
-            exportList = PApplet.split(commas, ", ");
+            exportList = PApplet.splitTokens(commas, ", ");
           }
         }
       } else {
