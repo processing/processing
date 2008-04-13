@@ -22,7 +22,7 @@ The Mobile Processing environment is based on original Processing Environment an
 <br />
 <img src="images/about.png" /><br />
 <br />
-  5. EXPERIMENTAL: If you are being a proxy and cannot run "Check for updates...", you can set additional properties in your preferences file.  Find the location of your preferences file by opening "Preferences" from the "File" menu and looking at the path specified at the bottom of the dialog.  Add the following properties to your preferences file, depending upon your proxy configuration:<br />
+  5. EXPERIMENTAL: If you are behind a proxy and cannot run "Check for updates...", you can set additional properties in your preferences file.  Find the location of your preferences file by opening "Preferences" from the "File" menu and looking at the path specified at the bottom of the dialog.  Add the following properties to your preferences file, depending upon your proxy configuration:<br />
 <br />
 http.proxyHost<br />
 http.proxyPort<br />

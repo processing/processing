@@ -16,7 +16,7 @@ require '../header.inc.php';
 <a href="http://www.mpowerplayer.com/products-sdk.php">http://www.mpowerplayer.com/products-sdk.php</a><br>&nbsp;</li>
   <li>Download and install the Mobile Processing IDE.<br><br>
 <a href="mobile-0007-windows.zip"><img border="0" src="images/windows.png"></a><a href="mobile-0007-macosx.zip"><img border="0" src="images/mac.png"></a><br><br>
-0007&nbsp;&nbsp|&nbsp;&nbsp;08 04 2008&nbsp;&nbsp;<a href="mobile-0007-windows.zip">Windows</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="mobile-0007-macosx.zip">Mac OS X</a><br><br>
+0007&nbsp;&nbsp|&nbsp;&nbsp;13 04 2008&nbsp;&nbsp;<a href="mobile-0007-windows.zip">Windows</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="mobile-0007-macosx.zip">Mac OS X</a><br><br>
 <a href="revisions.txt">Changes</a> for the latest release as well as core and library API updates.<br><br>
   </li>
   <li>Run Mobile Processing. Choose <b>Preferences</b> from the main drop-down menu. In the <b>Preferences</b> dialog box, go to the <b>Mobile</b> tab, and enter the location of the WTK.<br>
@@ -51,6 +51,18 @@ if ($fp) {
     }
     fclose($fp);
 }
+$fp = fopen("docs.properties", 'r');
+if ($fp) {
+    while (!feof($fp)) {
+        $line = fgets($fp);
+        if ($line[0] == "#") {
+            $date = parse_date($line);
+        } else if (strstr($line, "build=") !== false) {
+            $build['documentation'] = substr($line, strpos($line, "=") + 1);
+        }
+    }
+    fclose($fp);
+}
 $fp = fopen('libraries/version.properties', 'r');
 if ($fp) {
     while (!feof($fp)) {
@@ -65,26 +77,7 @@ if ($fp) {
     fclose($fp);
 }
 foreach ($build as $lib => $ver) {
-    echo sprintf("%04d", $ver) . " ALPHA&nbsp;&nbsp;|&nbsp;&nbsp;". ucfirst($lib) ."<br />";
-}
-?>
-<?php
-$fp = fopen("docs.properties", 'r');
-if ($fp) {
-    while (!feof($fp)) {
-        $line = fgets($fp);
-        if ($line[0] == "#") {
-            $date = parse_date($line);
-        } else if (strstr($line, "build=") !== false) {
-            $build = substr($line, strpos($line, "=") + 1);
-        }
-    }
-    fclose($fp);
-?>
-<br />
-Latest documentation:<br/>
-<?php
-    echo sprintf("%04d", $build) . " ALPHA&nbsp;&nbsp;|&nbsp;&nbsp;". $date ."&nbsp;&nbsp;<a href=\"docs.zip\">Documentation (.zip)</a><br />";
+    echo sprintf("%04d", $ver) . "&nbsp;&nbsp;". ucfirst($lib) ."<br />";
 }
 ?>
 <br>
