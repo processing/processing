@@ -30,7 +30,7 @@
 # On Windows, you can't use mixed case class names,
 # for the sake of the preverify tool.
 #
-# -dontusemixedcaseclassnames
+-dontusemixedcaseclassnames
 
 # Preserve all public midlets.
 
