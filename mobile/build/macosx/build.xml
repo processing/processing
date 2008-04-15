@@ -69,10 +69,18 @@
                 <include name="midpapi20.jar"/>
             </fileset>
         </move>
-        <!-- zip up release -->
-        <zip destfile="processing/build/macosx/mobile-${mobile.version}-macosx.zip" 
-             basedir="processing/build/macosx/mobile-${mobile.version}"/>
+        <!-- finally, zip up the release -->
+        <antcall target="mkzip" />
     </target>
+    
+    <target name="mkzip" depends="init">
+        <!-- zip up release, using command-line zip to preserve file permissions (execute bit in particular) -->
+        <exec executable="zip" dir="processing/build/macosx/mobile-${mobile.version}">
+            <arg value="-R" />
+            <arg value="../mobile-${mobile.version}-macosx.zip" />
+            <arg value="*" />
+        </exec>
+   </target>
     
     <!-- target for making a Mac OS disk image -->
     <target name="mkdmg" depends="init">
