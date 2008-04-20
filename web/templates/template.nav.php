@@ -5,19 +5,20 @@ $pages = array(
     'Exhibition'    => array('/exhibition/index.html', 1),
     
     'Learning'      => array('/learning/index.html', 1),
-    #'Examples'      => array('/learning/index.html', 2),
-    #'Tutorials'     => array('/learning/tutorials/index.html', 2),
-    'Overview'			=> array('/learning/index.html', 2),
-    'Basics'     		=> array('/learning/basics/index.html', 2),
-    'Topics'     		=> array('/learning/topics/index.html', 2),
-    '3D & OpenGL'		=> array('/learning/3d/index.html', 2),
+    #'Examples'     => array('/learning/index.html', 2),
+    #'Tutorials'    => array('/learning/tutorials/index.html', 2),
+    'Overview'	    => array('/learning/index.html', 2),
+    'Basics'        => array('/learning/basics/index.html', 2),
+    'Topics'        => array('/learning/topics/index.html', 2),
+    '3D & OpenGL'   => array('/learning/3d/index.html', 2),
     'Library Examples'	=> array('/learning/libraries/index.html', 2),
-    'Books'		        => array('/learning/books/index.html', 2),
-    'Hacks'     		=> array('/learning/hacks/index.html', 2),
+    'Books'	     => array('/learning/books/index.html', 2),
+    #'Hacks'          => array('/learning/hacks/index.html', 2),
 	
     'Reference'     => array('/reference/index.html', 1),
     'Download'      => array('/download/index.html', 1),
     'Discourse'     => array('/discourse/index.html', 1),
+    'Hacks'    => array('/hacks/', 1),
     'Contribute'    => array('/contribute/index.html', 1),
     'FAQ'           => array('/faq.html', 1),
     'Language'      => array('/reference/index.html', 1),
@@ -49,6 +50,7 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . l('Reference', in_array($section, $ref)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Download', $section == 'Download') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Discourse', $section == 'Discourse') . " \\\n";
+    $html .= "\t\t\t\t\t" . l('Hacks', $section == 'Hacks') . " \\\n";
     $html .= "\t\t\t\t\t" . l('Contribute', $section == 'Contribute') . "\n";
     $html .= "\t\t\t\t\t" . "<a href=\"/faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
        
