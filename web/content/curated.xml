@@ -2,6 +2,36 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="MYPOCKET" by="Burak Arikan" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/mypocket.jpg</image>
+          <description>
+          Discloses the artist's personal financial records by exploring and revealing essential   
+	  patterns in daily transactions.
+          </description>
+          <location>http://transition.turbulence.org/Works/mypocket/</location>
+          <link href="http://burak-arikan.com/">Burak-Arikan.com</link>
+        </software>
+
+<software name="Michael Fakesch Vidos" by="Danny Franzreb (Taobot)" scroll="yes" resize="yes" width="1024" height="900">
+        <image>images/taobot.jpg</image>
+          <description>
+	  Music video for Michael Fakesch's upcoming DVD release Vidos that accompanies his album Dos.
+          </description>
+          <location>http://www.taobot.com/projects/various/michael-fakesch-vidos</location>
+          <link href="http://www.taobot.com/">Taobot</link>
+          <link href="http://www.michaelfakesch.com/">Michael Fakesch</link>
+        </software>
+
+<software name="White Glove Tracking" by="Evan Roth & Ben Engebreth" scroll="yes" resize="yes" width="1024" height="900">
+        <image>images/whiteglove.jpg</image>
+          <description>
+Internet users isolated and then visualized Michael Jackson's white glove in all 10,060 frames of his nationally televised landmark performance of Billy Jean.
+          </description>
+          <location>http://whiteglovetracking.com/</location>
+          <link href="http://ni9e.com">Evan Roth</link>
+          <link href="http://www.benengebreth.org/">Ben Engebreth</link>
+        </software>
+
 <software name="Birds!" by="Robert Hodgin" scroll="yes" resize="yes" width="1024" height="900">
         <image>images/foxmovies.jpg</image>
           <description>

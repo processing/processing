@@ -1,5 +1,133 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="No ball game" by="TM">
+        <location>http://sosobering.free.fr/art/?p=135</location>
+        <date>16 Apr &apos;08</date>
+    </software>
+    <software name="involution flamer" by="rce12">
+        <location>http://openprocessing.org/visuals/?visualID=192</location>
+        <date>15 Apr &apos;08</date>
+    </software>
+    <software name="point involute" by="rce12">
+        <location>http://openprocessing.org/visuals/?visualID=176</location>
+        <date>15 Apr &apos;08</date>
+    </software>
+    <software name="Nude Studies in Aleatoric Environments" by="Pall Thayer">
+        <location>http://pallit.lhi.is/nude_studies</location>
+        <date>14 Apr &apos;08</date>
+    </software>
+    <software name="Algorithmic Mirror" by="Luke Cyca">
+        <location>http://lukecyca.com/2008/04/06/algorithmic-mirror/</location>
+        <date>13 Apr &apos;08</date>
+    </software>
+    <software name="3D Trees + Tutorial" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/tutorial-2-recursive-trees/</location>
+        <date>11 Apr &apos;08</date>
+    </software>
+    <software name="arca" by="Fernandox">
+        <location>http://arcagame.wordpress.com/</location>
+        <date>01 Apr &apos;08</date>
+    </software>
+    <software name="48 hour code: Voronoi Fractal" by="Frederik Vanhoutte (WBlut)">
+        <location>http://www.wblut.com/</location>
+        <date>31 Mar &apos;08</date>
+    </software>
+    <software name="troxlerizer" by="Andreas">
+        <location>http://www.ertdfgcvb.ch/p1/troxlerizer.html</location>
+        <date>31 Mar &apos;08</date>
+    </software>
+    <software name="Poster (1/4)" by="Andreas">
+        <location>http://www.ertdfgcvb.ch/npc/p1.html</location>
+        <date>31 Mar &apos;08</date>
+    </software>
+    <software name="Color Name Explorer" by="Jeff Clark">
+        <location>http://www.neoformix.com/2008/ColorNamesExplorer.html</location>
+        <date>28 Mar &apos;08</date>
+    </software>
+    <software name="Expressive Computation" by="Widianto Nugroho">
+        <location>http://computation.xploitdesign.com/</location>
+        <date>28 Mar &apos;08</date>
+    </software>
+    <software name="strange symmetry revisited" by="Frederik Vanhoutte (WBlut)">
+        <location>http://www.wblut.com/</location>
+        <date>27 Mar &apos;08</date>
+    </software>
+    <software name="Pynocchio&apos;s Pyrrhusmite" by="depart">
+        <location>http://vimeo.com/809494</location>
+        <date>27 Mar &apos;08</date>
+    </software>
+    <software name="3D spirograph" by="Franco Buffa">
+        <location>http://laser3.ca.astro.it/applets/spiro5/index.html</location>
+        <date>26 Mar &apos;08</date>
+    </software>
+    <software name="OpenVisuals - Open Source Visualization Framewrk" by="Sinan Ascioglu">
+        <location>http://www.openvisuals.org/</location>
+        <date>25 Mar &apos;08</date>
+    </software>
+    <software name="FigGen - A Figure-Generator" by="Linse &amp; Fixxel">
+        <location>http://figgen.kilu.de/</location>
+        <date>23 Mar &apos;08</date>
+    </software>
+    <software name="earth.1OOOLieues" by="Cédric Doutriaux">
+        <location>http://earth.1000lieues.net/</location>
+        <date>17 Mar &apos;08</date>
+    </software>
+    <software name="funnelweb" by="Frederik Vanhoutte (WBlut)">
+        <location>http://www.wblut.com/</location>
+        <date>13 Mar &apos;08</date>
+    </software>
+    <software name="Umps Unzin" by="depart">
+        <location>http://vimeo.com/769480</location>
+        <date>11 Mar &apos;08</date>
+    </software>
+    <software name="PointOfView" by="Ali Eslami">
+        <location>http://arkitus.com/Play/</location>
+        <date>08 Mar &apos;08</date>
+    </software>
+    <software name="simple ripple" by="Woo">
+        <location>http://designeer.net/files/java/ripple/</location>
+        <date>06 Mar &apos;08</date>
+    </software>
+    <software name="YMYI - You Move You Interact" by="Joao Martinho Moura / Jorge Sousa">
+        <location>http://ymyi.org/</location>
+        <date>06 Mar &apos;08</date>
+    </software>
+    <software name="superplonk" by="Michael Zoellner">
+        <location>http://i.document.m05.de/?p=454</location>
+        <date>29 Feb &apos;08</date>
+    </software>
+    <software name="FACES of the Day (JP)" by="Nao Tokui">
+        <location>http://facesoftheday.jp/</location>
+        <date>28 Feb &apos;08</date>
+    </software>
+    <software name="Forgotten code: tangle" by="Frederik Vanhoutte (WBlut)">
+        <location>http://www.wblut.com/</location>
+        <date>27 Feb &apos;08</date>
+    </software>
+    <software name="Zuk Invaders" by="Tomasz Kolinko">
+        <location>http://inwazja.soy.pl/?p=74</location>
+        <date>25 Feb &apos;08</date>
+    </software>
+    <software name="Zuk Invaders" by="Tomasz Kolinko">
+        <location>http://inwazja.soy.pl/?p=74</location>
+        <date>25 Feb &apos;08</date>
+    </software>
+    <software name="Green Goo" by="David Brunton">
+        <location>http://www.davidbrunton.com/2008/02/green-goo-in-processing-0135.html</location>
+        <date>22 Feb &apos;08</date>
+    </software>
+    <software name="cloth simulation for games" by="peter blaskovic [stones]">
+        <location>http://www.escapemotions.com/experiments/processing/clothsim_skirt/applet/index.html</location>
+        <date>20 Feb &apos;08</date>
+    </software>
+    <software name="ImageMapper" by="Eric Decker">
+        <location>http://flickr.com/photos/ericdecker/sets/72157603450890500/</location>
+        <date>12 Feb &apos;08</date>
+    </software>
+    <software name="Word Hearts" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/WordHearts/index.html</location>
+        <date>10 Feb &apos;08</date>
+    </software>
     <software name="ARMSFLOW" by="Jeffrey Warren">
         <location>http://www.armsflow.org/</location>
         <date>08 Feb &apos;08</date>

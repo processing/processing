@@ -1,6 +1,172 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
+        <date>Fecha inicio: 30 de Abril 2008</date>
+        <institution>IUNA Multimedia - Argentina -</institution>
+        <title>Processing: programación para el arte interactivo. Net.Art e instalaciones interactivas con nuevas tecnologías.</title>
+        <description>El objetivo de este curso es capacitar al alumno en la programación con fines artísticos, de forma que este pueda realizar trabajos de Net.Art, con interfaces físicas y de arte interactivo en general. Con tal fin, la meta es enseñar al alumno el lenguaje de programación Processing, el cual fue diseñado para contemplar las necesidades de los artistas relacionados con las nuevas tecnologías.</description>
+        <contact>
+            <name>Emiliano Causa</name>
+            <email>e_causa at yahoo dot com dot ar</email>
+        </contact>
+        <links>
+            <link>
+                <title>Curso Processing</title>
+                <url>http://iuna.edu.ar/departamentos/multimedia/investiga/cursos/2008-post-processing.htm</url>
+            </link>
+            <link>
+                <title>IUNA Multimedia</title>
+                <url>http://multimedia.iuna.edu.ar/</url>
+            </link>
+            <link>
+                <title>Tutorial del Curso</title>
+                <url>http://www.biopus.com.ar/emiliano/tutorial_programacion/index.html</url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>3-5 April 2008</date>
+        <institution>Alberta College of Art + Design</institution>
+        <title>Processing Workshop</title>
+        <description>Variables. Functions. Ifs. Loops. Arrays. Classes. All in 3 days.
+
+Day 1: Through short lectures and practical exercises, the workshop will cover programming fundamentals while keeping a footing in aesthetic explorations.
+Day 2: Participants will build their own projects to appropriate the material first hand.
+Day 3: We will push the limits and step outside the programming box, towards a more generalized understanding of the stakes and possibilities code offers.
+
+Come with ideas.</description>
+        <contact>
+            <name>Elie Zananiri</name>
+            <email>ez at silentlycrashing dot net</email>
+        </contact>
+        <links>
+            <link>
+                <title>Workshop notes</title>
+                <url>http://www.silentlycrashing.net/p5/</url>
+            </link>
+            <link>
+                <title>ACAD</title>
+                <url>http://www.acad.ab.ca/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 08</date>
+        <institution>Sabanci University, Istanbul</institution>
+        <title>VA546 - Sound Projects</title>
+        <description>Surround mixing, Midi technologies, Microphone techniques, Studio Recording, ,Creating Audio-Visual Interactive Environments will be the focus of this course. It will involve the selection and use of prerecorded material, as well as the creation of music and audio content. This course deals with learning how to use Max/MSP/Jitter and Processing to create interactive environments with physical computing methods.</description>
+        <contact>
+            <name>Selcuk ARTUT</name>
+            <email>sartut at sabanciuniv dot edu</email>
+        </contact>
+        <links>
+            <link>
+                <title>course website</title>
+                <url>http://people.sabanciuniv.edu/~sartut/courses/va546.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>14 of January 2008 - 10 of May 2008</date>
+        <institution>Universidad Icesi - Cali - Colombia</institution>
+        <title>Fundamentos de programación para el diseño</title>
+        <description>Fundamental course of programming for designers using Procesing.</description>
+        <contact>
+            <name>Juan Carlos Muñoz</name>
+            <email>jcmunoz at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Programa del curso</title>
+                <url>http://stan.desarrollo.icesi.edu.co/pls/portal/psiaepre.pprecon_contactual?pdescripmat_codigo=09686</url>
+            </link>
+            <link>
+                <title>Diseño de medios interactivos</title>
+                <url>http://www.icesi.edu.co/dmi/</url>
+            </link>
+            <link>
+                <title>Universidad Icesi</title>
+                <url>http://www.icesi.edu.co/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Del 12 de febrero al 13 de marzo del 2008</date>
+        <institution>Centro Multimedia, CENART, Mexico</institution>
+        <title>Libre y Abierto: Taller de software y hardware libre</title>
+        <description>El propósito del curso es explorar el uso de plataformas de código abierto (open source) para la creación artística. Para ello aprenderemos a instalar el sistema operativo Linux, los principios de la programación de gráficas con el software Processing y los principios de la electrónica y programación de microcontroladores con la plataforma Arduino. Así, revisaremos técnicas para integrar y usar estas aplicaciones de modo conjunto. El curso se enfocará en realizar una serie de ejercicios y experimentos orientados a la creación de interactivos, instalaciones, performance y otras formas artísticas.</description>
+        <contact>
+            <name>Jaime Villarreal</name>
+            <email>jesusjaime at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Libre y Abierto</title>
+                <url>http://cmm.cenart.gob.mx/cartelera/cursos.html</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
         <date>February 2008</date>
         <institution>Master Multimedia - University of Florence, Italy</institution>
         <title>Fundamentals of Digital Media and Programming</title>
@@ -23,12 +189,12 @@
                 <url>http://viplab.dsi.unifi.it/~nunziati</url>
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
         </links>
     </course>
