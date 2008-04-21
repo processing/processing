@@ -2,8 +2,6 @@
  * Bounce. 
  * 
  * When the shape hits the edge of the window, it reverses its direction. 
- * 
- * Updated 1 September 2002
  */
  
 int size = 60;       // Width of the shape

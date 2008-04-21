@@ -5,8 +5,6 @@
  * Sometimes it's beneficial to specify every aspect of an object’s data by assigning 
  * parameters to the fields, but other times it might be appropriate to define only 
  * one or a few.
- * 
- * Updated 27 May 2007
  */
 
 Spot sp1, sp2;

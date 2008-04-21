@@ -6,9 +6,7 @@
  * A vertex is a location in space specified by X, Y, 
  * and sometimes Z coordinates. After calling the beginShape() function, 
  * a series of vertex() functions must follow.  
- * To stop drawing the shape, call the endShape() functions.  
- * 
- * Created 2 September 2002
+ * To stop drawing the shape, call the endShape() functions.
  */
  
 size(200, 200);

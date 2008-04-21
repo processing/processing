@@ -3,8 +3,6 @@
  * by Daniel Shiffman. 
  * 
  * Create a more complex wave by adding two waves together. 
- * 
- * Created 2 May 2005
  */
  
 int xspacing = 8;   // How far apart should each horizontal location be spaced

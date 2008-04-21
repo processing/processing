@@ -6,8 +6,6 @@
  * with rect() and circles are made with
  * ellipse(). Each of these functions requires a number
  * of parameters which determines their position and size. 
- * 
- * Created 19 January 2003
  */
  
 size(200, 200);

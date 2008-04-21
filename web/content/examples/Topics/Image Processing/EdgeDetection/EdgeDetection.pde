@@ -3,8 +3,6 @@
  * 
  * Exposing areas of contrast within an image 
  * by processing it through a high-pass filter. 
- * 
- * Created 9 December 2002
  */
 
 float[][] kernel = { { -1, -1, -1 },

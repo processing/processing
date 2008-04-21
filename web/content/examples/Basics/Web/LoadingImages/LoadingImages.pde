@@ -7,8 +7,6 @@
  * while running in the Processing environment. This example will 
  * not run in a web broswer and will only work when the computer
  * is connected to the Internet. 
- * 
- * Created 21 June 2003
  */
  
 size(200, 200);

@@ -4,8 +4,6 @@
  * A demonstration of recursion, which means functions call themselves. 
  * Notice how the drawCircle() function calls itself at the end of its block. 
  * It continues to do this until the variable "level" is equal to 1. 
- * 
- * Updated 26 October 2004
  */
  
 void setup() 

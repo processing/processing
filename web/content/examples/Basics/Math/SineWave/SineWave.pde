@@ -3,8 +3,6 @@
  * by Daniel Shiffman.  
  * 
  * Render a simple sine wave. 
- * 
- * Created 2 May 2005
  */
  
 int xspacing = 8;   // How far apart should each horizontal location be spaced

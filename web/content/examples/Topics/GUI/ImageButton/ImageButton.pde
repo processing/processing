@@ -2,8 +2,6 @@
  * Image button. 
  * 
  * Loading images and using them to create a button. 
- * 
- * Created 10 February 2003
  */
  
 ImageButtons button;

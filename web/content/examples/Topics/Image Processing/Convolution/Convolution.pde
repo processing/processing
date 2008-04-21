@@ -1,6 +1,6 @@
 /**
  * Convolution
- * by <a href="http://www.shiffman.net">Daniel Shiffman</a>.  
+ * by Daniel Shiffman.  
  * 
  * Applies a convolution matrix to a portion of the index.  
  * Move mouse to apply filter to different parts of the image. 

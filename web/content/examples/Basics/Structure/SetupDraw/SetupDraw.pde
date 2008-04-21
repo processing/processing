@@ -3,8 +3,6 @@
  * 
  * The draw() function creates a structure in which
  * to write programs that change with time. 
- * 
- * Created 09 December 2002
  */
 
 // The statements in the setup() function 

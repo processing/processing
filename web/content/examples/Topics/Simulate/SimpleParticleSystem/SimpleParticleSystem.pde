@@ -6,8 +6,6 @@
  * fall with gravity and fade out over time
  * A ParticleSystem object manages a variable size (ArrayList) 
  * list of particles. 
- * 
- * Created 2 May 2005
  */
  
 ParticleSystem ps;

@@ -4,9 +4,6 @@
  * Move the mouse to change the direction of the eyes. 
  * The atan2() function computes the angle from each eye 
  * to the cursor. 
- * 
- * Created 1 September 2002
- * Updated 6 July 2004
  */
  
 Eye e1, e2, e3, e4, e5;

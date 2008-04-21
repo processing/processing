@@ -5,8 +5,6 @@
  * Numbers between 0 and PI*2 (TWO_PI which is roughly 6.28) 
  * are put into these functions and numbers between -1 and 1 are 
  * returned. These values are then scaled to produce larger movements. 
- * 
- * Updated 21 August 2002
  */
  
 int i = 45;

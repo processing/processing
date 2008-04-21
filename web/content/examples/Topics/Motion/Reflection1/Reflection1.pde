@@ -67,8 +67,8 @@ void draw(){
   float normalY = baseDeltaX;
 
   // draw ellipse
-  noFill();
-  stroke(200);
+  noStroke();
+  fill(255);
   ellipse(ellipseX, ellipseY, ellipseRadius*2, ellipseRadius*2);
 
   // calculate ellipse velocity

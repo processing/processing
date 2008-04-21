@@ -5,8 +5,6 @@
  * press and hold any key to see the current pixel being read. 
  * This program sequentially reads the color of every pixel of an image
  * and displays this color to fill the window.  
- * 
- * Created 10 August 2002
  */
  
 PImage a;

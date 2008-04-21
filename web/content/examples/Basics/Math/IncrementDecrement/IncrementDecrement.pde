@@ -1,10 +1,8 @@
 /**
- * Increment_Decrement. 
+ * Increment Decrement. 
  * 
  * Writing "a++" is equivalent to "a = a + 1".  
  * Writing "a--" is equivalent to "a = a - 1".   
- * 
- * Created 09 December 2002
  */
  
 int a;

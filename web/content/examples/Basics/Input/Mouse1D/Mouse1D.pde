@@ -4,8 +4,6 @@
  * Move the mouse left and right to shift the balance. 
  * The "mouseX" variable is used to control both the 
  * size and color of the rectangles. 
- * 
- * Updated 16 September 2002
  */
  
 int gx = 15;

@@ -1,6 +1,7 @@
 /** 
  * Penrose Snowflake L-System 
- * by Geraldine Sarmiento (Interactive Telecommunications Program, NYU). 
+ * by Geraldine Sarmiento (NYU ITP). 
+ * 
  * This code was based on Patrick Dwyer's L-System class. 
  */
 

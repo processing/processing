@@ -4,8 +4,6 @@
  * 
  * A basic smoke effect using a particle system. 
  * Each particle is rendered as an alpha masked image. 
- * 
- * Created 2 May 2005
  */
  
 ParticleSystem ps;

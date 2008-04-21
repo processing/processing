@@ -3,8 +3,6 @@
  * 
  * Move the mouse to position the shape. 
  * Press the mouse button to invert the color. 
- * 
- * Updated 21 August 2002
  */
 
 

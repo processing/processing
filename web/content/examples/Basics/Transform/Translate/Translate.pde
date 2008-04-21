@@ -5,8 +5,6 @@
  * to any location within the window. The first parameter
  * sets the x-axis offset and the second parameter sets the
  * y-axis offset. 
- * 
- * Created 16 January 2003
  */
  
 float x, y;

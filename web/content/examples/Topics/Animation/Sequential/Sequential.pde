@@ -1,11 +1,9 @@
 /**
  * Sequential
- * by <a href="http://www.presstube.com">James Patterson</a>.  
+ * by James Patterson.  
  * 
  * Displaying a sequence of images creates the illusion of motion. 
  * Twelve images are loaded and each is displayed individually in a loop. 
- * 
- * Created 13 January 2003
  */
   
 int numFrames = 12;  // The number of frames in the animation

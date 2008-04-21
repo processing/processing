@@ -7,8 +7,6 @@
  * the array 'cells'. Each cell has a run() method, which performs actions
  * based on the cell's surroundings.  Cells run one at a time (to avoid conflicts
  * like wanting to move to the same space) and in random order.
- * 
- * Updated 25 May 2007
  */
 
 World w;

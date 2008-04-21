@@ -4,8 +4,6 @@
  * Each color is perceived in relation to other colors. 
  * The top and bottom bars each contain the same component colors,
  * but a different display order causes individual colors to appear differently. 
- * 
- * Created 23 October 2002
  */
  
 color a, b, c, d, e;

@@ -5,8 +5,6 @@
  * first point in the curve and the last two parameters specify 
  * the last point. The middle parameters set the control points
  * that define the shape of the curve. 
- * 
- * Created 16 January 2003
  */
  
 size(200, 200); 

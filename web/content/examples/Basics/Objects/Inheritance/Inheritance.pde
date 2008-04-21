@@ -5,8 +5,6 @@
  * programming terminology, one class can inherit fi elds and methods from another. 
  * An object that inherits from another is called a subclass, and the object it 
  * inherits from is called a superclass. A subclass extends the superclass.
- * 
- * Updated 27 May 2007
  */
 
 SpinSpots spots;

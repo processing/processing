@@ -2,8 +2,6 @@
  * Sine. 
  * 
  * Smoothly scaling size with the sin() function. 
- * 
- * Updated 21 August 2002
  */
  
 float spin = 0.0; 

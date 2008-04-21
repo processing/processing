@@ -5,8 +5,6 @@
  * amount of gray in proportion to the hue. A "saturated" color is pure 
  * and an "unsaturated" color has a large percentage of gray. 
  * Move the cursor vertically over each bar to alter its saturation. 
- * 
- * Updated 8 May 2007
  */
  
 int barWidth = 5;

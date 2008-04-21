@@ -1,11 +1,8 @@
 /**
  * Sprite (Teddy)
- * by <a href="http://www.presstube.com">James Patterson</a>. 
+ * by James Patterson. 
  * 
  * Demonstrates loading and displaying a transparent GIF image. 
- * 
- * Created 27 January 2003. 
- * Updated 8 July 2004
  */
  
 PImage teddy;

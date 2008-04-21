@@ -3,8 +3,6 @@
  * by Daniel Shiffman.  
  * 
  * Using Perlin Noise to generate a wave-like pattern. 
- * 
- * Created 2 May 2005
  */
  
 int xspacing = 8;   // How far apart should each horizontal location be spaced

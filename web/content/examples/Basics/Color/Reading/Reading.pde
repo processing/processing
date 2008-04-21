@@ -4,8 +4,6 @@
  * An image is recreated from its individual component colors.
  * The many colors of the image are created through modulating the 
  * red, green, and blue values. This is an exageration of an LCD display. 
- * 
- * Created 27 October 2002
  */
  
 size(200, 200);

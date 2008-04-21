@@ -2,8 +2,6 @@
  * Collision (Pong). 
  * 
  * Move the mouse up and down to move the paddle.  
- * 
- * Updated 13 January 2003 by K Pfeiffer
  */
 
 // Global variables for the ball
@@ -22,8 +20,8 @@ int dist_wall = 15;
 void setup()
 {
   size(200, 200);
-  rectMode(CENTER_RADIUS);
-  ellipseMode(CENTER_RADIUS);
+  rectMode(RADIUS);
+  ellipseMode(RADIUS);
   noStroke();
   smooth();
   ball_y = height/2;

@@ -2,8 +2,6 @@
  * Spring. 
  * 
  * Click, drag, and release the horizontal bar to start the spring. 
- * 
- * Updated 1 September 2001
  */
  
 // Spring drawing constants for top bar

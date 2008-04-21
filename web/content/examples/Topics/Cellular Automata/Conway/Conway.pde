@@ -9,8 +9,6 @@
  * are exactly three lit neighbors.  The 'density' 
  * parameter determines how much of the board will 
  * start out lit.  
- * 
- * Created 3 August 2002
  */
  
 int sx, sy; 

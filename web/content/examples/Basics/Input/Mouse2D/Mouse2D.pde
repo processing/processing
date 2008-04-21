@@ -2,8 +2,6 @@
  * Mouse 2D. 
  * 
  * Moving the mouse changes the position and size of each box. 
- * 
- * Updated 21 August 2002
  */
  
 void setup() 
@@ -20,6 +18,8 @@ void draw()
   fill(255, 80);
   rect(mouseX, height/2, mouseY/2+10, mouseY/2+10);
   fill(255, 80);
-  rect(width-mouseX, height/2, ((height-mouseY)/2)+10, ((height-mouseY)/2)+10);
+  int inverseX = width-mouseX;
+  int inverseY = height-mouseY;
+  rect(inverseX, height/2, (inverseY/2)+10, (inverseY/2)+10);
 }
 

@@ -5,8 +5,6 @@
  * Mouse horizontal location controls size of dots. 
  * Creates a simple pointillist effect using ellipses colored
  * according to pixels in an image. 
- * 
- * Created 2 May 2005
  */
  
 PImage a;

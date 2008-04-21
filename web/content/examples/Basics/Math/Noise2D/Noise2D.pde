@@ -3,8 +3,6 @@
  * by Daniel Shiffman.  
  * 
  * Using 2D noise to create simple texture. 
- * 
- * Created 2 May 2005
  */
  
 float increment = 0.02;

@@ -4,8 +4,6 @@
  * 
  * Brightness is the relative lightness or darkness of a color.
  * Move the cursor vertically over each bar to alter its brightness. 
- * 
- * Updated 8 May 2007
  */
  
 int barWidth = 5;

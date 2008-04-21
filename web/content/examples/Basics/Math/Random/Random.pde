@@ -3,8 +3,6 @@
  * 
  * Random numbers create the basis of this image. 
  * Each time the program is loaded the result is different. 
- * 
- * Created 1 September 2002
  */
  
 size(200, 200);

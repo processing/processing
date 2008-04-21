@@ -4,8 +4,6 @@
  * 
  * Renders a simple fractal, the Koch snowflake. 
  * Each recursive level drawn in sequence. 
- * 
- * Created 2 May 2005
  */
  
 KochFractal k;

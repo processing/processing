@@ -3,8 +3,6 @@
  * 
  * Using 3D noise to create simple animated texture. 
  * Here, the third dimension ('z') is treated as time. 
- * 
- * Created 2 May 2005
  */
  
 float increment = 0.01;

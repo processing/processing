@@ -5,8 +5,6 @@
  * to create forms in time and space. Each key has a unique identifying 
  * number called it's ASCII value. These numbers can be used to position 
  * shapes in space. 
- * 
- * Created 27 October 2002
  */
  
 int numChars = 26;

@@ -1,9 +1,8 @@
 /**
  * Distance 1D. 
  * 
- * Move the mouse left and right to control the speed and direction of the moving shapes. 
- * 
- * Updated 21 August 2002
+ * Move the mouse left and right to control the 
+ * speed and direction of the moving shapes. 
  */
  
 int thin = 8;

@@ -3,8 +3,6 @@
  * 
  * Bluring half of an image by processing it through a
  * low-pass filter. 
- * 
- * Created 9 December 2002
  */
 
 size(200, 200); 

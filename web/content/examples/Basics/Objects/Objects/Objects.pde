@@ -4,8 +4,6 @@
  * 
  * Move the cursor across the image to change the speed and positions
  * of the geometry. The class MRect defines a group of lines.
- * 
- * Updated 27 May 2007
  */
 
 MRect r1, r2, r3, r4;

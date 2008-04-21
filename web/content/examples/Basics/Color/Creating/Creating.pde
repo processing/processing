@@ -1,10 +1,8 @@
 /**
- * Creating (Homage to Albers). 
+ * Creating Colors (Homage to Albers). 
  * 
  * Creating variables for colors that may be referred to 
  * in the program by their name, rather than a number. 
- * 
- * Updated 8 May 2007
  */
 
 size(200, 200);

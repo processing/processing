@@ -7,8 +7,6 @@
  * think about angles as degrees (0-360), you can use the radians() 
  * method to convert your values. For example: scale(radians(90))
  * is identical to the statement scale(PI/2). 
- * 
- * Created 12 January 2003
  */
  
 void setup()

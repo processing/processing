@@ -7,8 +7,6 @@
  * The keyboard function keyPressed() is called whenever
  * a key is pressed. keyReleased() is another keyboard
  * function that is called when a key is released.
- * 
- * Created 27 October 2002
  */
  
 int max_height = 20;

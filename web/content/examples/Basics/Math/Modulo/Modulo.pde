@@ -4,9 +4,6 @@
  * The modulo operator (%) returns the remainder of a number 
  * divided by another. As in this example, it is often used 
  * to keep numerical values within a set range. 
- * 
- * Created 12 January 2003. 
- * Updated 6 July 2004
  */
  
 int num = 20;

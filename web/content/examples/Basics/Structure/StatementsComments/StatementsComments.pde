@@ -6,8 +6,6 @@
  * It is called the "statement terminator." 
  * Comments are used for making notes to help people better understand programs. 
  * A comment begins with two forward slashes ("//"). 
- * 
- * Created 1 September 2002
  */
 
 // The size function is a statement that tells the computer 

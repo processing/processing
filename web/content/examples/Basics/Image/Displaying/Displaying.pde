@@ -3,8 +3,6 @@
  * 
  * Images can be displayed to the screen at their actual size
  * or any other size. 
- * 
- * Created 2 November 2002
  */
  
 size(200, 200);

@@ -4,8 +4,6 @@
  * An object can include several other objects. Creating such composite objects 
  * is a good way to use the principles of modularity and build higher levels of 
  * abstraction within a program.
- * 
- * Updated 27 May 2007
  */
 
 EggRing er1, er2;

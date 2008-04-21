@@ -1,13 +1,10 @@
 /**
  * Triangle Flower 
- * By Ira Greenberg 
+ * By Ira Greenberg. 
  * 
- * Using rotate() and triangle() 
- * functions generate a pretty 
- * flower. Uncomment the line
- * // rotate(rot+=radians(spin));
- * in the triBlur() function for 
- * a nice variation.
+ * Using rotate() and triangle() functions generate a pretty 
+ * flower. Uncomment the line "// rotate(rot+=radians(spin));"
+ * in the triBlur() function for a nice variation.
  */
 
 Point[]p = new Point[3];

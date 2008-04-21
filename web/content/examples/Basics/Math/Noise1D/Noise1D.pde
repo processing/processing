@@ -2,8 +2,6 @@
  * Noise1D. 
  * 
  * Using 1D Perlin Noise to assign location. 
- * 
- * Created 2 May 2005
  */
  
 float xoff = 0.0;

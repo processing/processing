@@ -5,8 +5,6 @@
  * The top row is the signal from "mouseX", 
  * the middle row is the signal from "mouseY",
  * and the bottom row is the signal from "mousePressed". 
- * 
- * Created 15 January 2003
  */
  
 int[] xvals;

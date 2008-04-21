@@ -5,8 +5,6 @@
  * A histogram is the frequency distribution 
  * of the gray levels with the number of pure black values
  * displayed on the left and number of pure white values on the right. 
- * 
- * Created 10 August 2002
  */
  
 size(200, 200);
