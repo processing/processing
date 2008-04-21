@@ -3709,7 +3709,7 @@ in   */
    * Use Java 1.4 ImageIO methods to load an image.
    */
   protected PImage loadImageIO(String filename) {
-    InputStream stream = openStream(filename);
+    InputStream stream = createInput(filename);
     if (stream == null) {
       System.err.println("The image " + filename + " could not be found.");
       return null;
@@ -3783,7 +3783,7 @@ in   */
    * images whose y-order is reversed (which is standard for TGA files).
    */
   protected PImage loadImageTGA(String filename) throws IOException {
-    InputStream is = openStream(filename);
+    InputStream is = createInput(filename);
     if (is == null) return null;
 
     byte header[] = new byte[18];
@@ -4036,7 +4036,7 @@ in   */
 
     try {
       //String lower = filename.toLowerCase();
-      InputStream input = openStream(filename);
+      InputStream input = createInput(filename);
 
       /*
       // For compatability with earlier releases of Processing
@@ -4106,7 +4106,7 @@ in   */
 //      Float floatSize = new Float(size);
 
       if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
-        InputStream stream = openStream(name);
+        InputStream stream = createInput(name);
         if (stream == null) {
           System.err.println("The font \"" + name + "\" " +
                              "is missing or inaccessible, make sure " +
@@ -4115,7 +4115,7 @@ in   */
           return null;
         }
 
-        baseFont = Font.createFont(Font.TRUETYPE_FONT, openStream(name));
+        baseFont = Font.createFont(Font.TRUETYPE_FONT, createInput(name));
 //        Method createFontMethod =
 //          Font.class.getMethod("createFont",
 //                               new Class[] { Integer.TYPE,
@@ -4245,7 +4245,7 @@ in   */
    */
   public BufferedReader createReader(String filename) {
     try {
-      InputStream is = openStream(filename);
+      InputStream is = createInput(filename);
       if (is == null) {
         System.err.println(filename + " does not exist or could not be read");
         return null;
@@ -4378,6 +4378,14 @@ in   */
 
 
   /**
+   * @deprecated As of release 0136, use createInput() instead.
+   */
+  public InputStream openStream(String filename) {
+    return createInput(filename);
+  }
+  
+  
+  /**
    * Simplified method to open a Java InputStream.
    * <P>
    * This method is useful if you want to use the facilities provided
@@ -4408,8 +4416,8 @@ in   */
    * <LI>Another file to be opened locally (when running as an application)
    * </UL>
    */
-  public InputStream openStream(String filename) {
-    InputStream input = openStreamRaw(filename);
+  public InputStream createInput(String filename) {
+    InputStream input = createInputRaw(filename);
     if ((input != null) && filename.toLowerCase().endsWith(".gz")) {
       try {
         return new GZIPInputStream(input);
@@ -4425,7 +4433,7 @@ in   */
   /**
    * Call openStream() without automatic gzip decompression.
    */
-  public InputStream openStreamRaw(String filename) {
+  public InputStream createInputRaw(String filename) {
     InputStream stream = null;
 
     if (filename == null) return null;
@@ -4556,7 +4564,7 @@ in   */
   }
 
 
-  static public InputStream openStream(File file) {
+  static public InputStream createInput(File file) {
     try {
       InputStream input = new FileInputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
@@ -4578,7 +4586,7 @@ in   */
 
 
   public byte[] loadBytes(String filename) {
-    InputStream is = openStream(filename);
+    InputStream is = createInput(filename);
     if (is != null) return loadBytes(is);
 
     System.err.println("The file \"" + filename + "\" " +
@@ -4610,7 +4618,7 @@ in   */
 
 
   static public String[] loadStrings(File file) {
-    InputStream is = openStream(file);
+    InputStream is = createInput(file);
     if (is != null) return loadStrings(is);
     return null;
   }
@@ -4629,7 +4637,7 @@ in   */
    * use Java methods for I/O.
    */
   public String[] loadStrings(String filename) {
-    InputStream is = openStream(filename);
+    InputStream is = createInput(filename);
     if (is != null) return loadStrings(is);
 
     System.err.println("The file \"" + filename + "\" " +
@@ -4682,6 +4690,36 @@ in   */
 
 
   /**
+   * Similar to createInput() (formerly openStream), this creates a Java 
+   * OutputStream for a given filename or path. The file will be created in 
+   * the sketch folder, or in the same folder as an exported application.
+   * <p/>
+   * If the path does not exist, intermediate folders will be created. If an
+   * exception occurs, it will be printed to the console, and null will be
+   * returned.  
+   * <p/> 
+   * Future releases may also add support for handling HTTP POST via this 
+   * method (for better symmetry with createInput), however that's maybe a 
+   * little too clever (and then we'd have to add the same features to the
+   * other file functions like createWriter). Who you callin' bloated?
+   */
+  public OutputStream createOutput(String filename) {
+    return createOutput(saveFile(filename));
+  }
+  
+  
+  static public OutputStream createOutput(File file) { 
+    try {
+      return new FileOutputStream(file);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  
+  /**
    * Save the contents of a stream to a file in the sketch folder.
    * This is basically saveBytes(blah, loadBytes()), but done
    * in a less confusing manner.
@@ -4698,7 +4736,7 @@ in   */
    * uncompress gzip files.
    */
   public void saveStream(File targetFile, String sourceLocation) {
-    saveStream(targetFile, openStreamRaw(sourceLocation));
+    saveStream(targetFile, createInputRaw(sourceLocation));
   }
 
 
