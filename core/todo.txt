@@ -19,18 +19,30 @@ X fix problem with get() when imageMode(CORNERS) was in use
 X fix bug with splice() and arrays
 X   http://dev.processing.org/bugs/show_bug.cgi?id=734
 X 'screen' is now static
-_   undo this--may need to be better about specifying screen and all
+X   undo this--may need to be better about specifying screen and all
 X PImage mask doesn't work after first call
 X   http://dev.processing.org/bugs/show_bug.cgi?id=744
 X load and save tga results in upside down tga
 X   http://dev.processing.org/bugs/show_bug.cgi?id=742
 
+_ textures truly did get worse in P3D
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
+
+_ bezierVertex YZ Plane fill problem
+_   http://dev.processing.org/bugs/show_bug.cgi?id=752
+
+_ make sure docs for PImage use createImage
+
+_ writing image file (missing a flush() call?) on exit() fails
+_   lots of zero length files
+
 _ work through loadPixels in PImage, how consistent do we need to be?
 _   with get() and set() methods, this gets really tricky (too slow)
 
-_ change openStream() to createInput()
-_   add createOutput() (and raw versions of the same, err.. no raw)
-_   deprecate openStream() naming
+X change openStream() to createInput()
+X   add createOutput() 
+_   add raw/gz versions of the same (err.. no raw) (eh?)
+X   deprecate openStream() naming
 
 _ Duplicate 3d faces in beginRaw() export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=737
