@@ -1677,8 +1677,7 @@ public class XMLElement
      * @throws processing.xml.XMLParseException
      *     If an error occured while parsing the string.
      */
-    public void parseString(String string)
-        throws XMLParseException
+    public void parseString(String string) throws XMLParseException
     {
         try {
             this.parseFromReader(new StringReader(string),
