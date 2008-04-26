@@ -12,7 +12,7 @@
 <image></image>
 <code>
 String words = "apple bear cat dog";
-String list[] = splitStrings(words);
+String[] list = split(words, ' ');
 
 // now write the strings to a file, each on a separate line
 saveStrings("nouns.txt", list);
