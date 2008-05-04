@@ -85,9 +85,13 @@ public class Client implements Runnable {
         // no such method, or an error.. which is fine, just ignore
       }
 
+    } catch (ConnectException ce) {
+      ce.printStackTrace();
+      dispose();
+
     } catch (IOException e) {
-    	e.printStackTrace();
-    	dispose();
+      e.printStackTrace();
+      dispose();
     }
   }
 
@@ -469,12 +473,12 @@ public class Client implements Runnable {
    * Handle disconnect due to an Exception being thrown.
    */
   /*
-  protected void disconnect(Exception e) {
+    protected void disconnect(Exception e) {
     dispose();
     if (e != null) {
-      e.printStackTrace();
+    e.printStackTrace();
     }
-  }
+    }
   */
 
 
@@ -484,6 +488,6 @@ public class Client implements Runnable {
    */
   //public void errorMessage(String where, Exception e) {
   //parent.die("Error inside Client." + where + "()", e);
-    //e.printStackTrace(System.err);
+  //e.printStackTrace(System.err);
   //}
 }
