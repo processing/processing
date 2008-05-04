@@ -193,6 +193,7 @@ public class Runner implements MessageConsumer {
 
     String outgoing[] = new String[params.size()];
     params.toArray(outgoing);
+    //PApplet.println(outgoing);
     return outgoing;
     //return (String[]) params.toArray();
 

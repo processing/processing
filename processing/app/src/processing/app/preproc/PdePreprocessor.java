@@ -136,10 +136,9 @@ public class PdePreprocessor {
 
   static String defaultImports[][] = new String[3][];
 
-  // these ones have the .* at the end, since a class name
-  // might be at the end instead of .* whcih would make trouble
-  // other classes using this can lop of the . and anything after
-  // it to produce a package name consistently.
+  // these ones have the .* at the end, since a class name might be at the end 
+  // instead of .* which would make trouble other classes using this can lop 
+  // off the . and anything after it to produce a package name consistently.
   public String extraImports[];
 
   // imports just from the code folder, treated differently

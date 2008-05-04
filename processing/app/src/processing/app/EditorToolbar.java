@@ -277,7 +277,12 @@ public class EditorToolbar extends JComponent implements MouseInputListener {
       message(title[which[slot]]);
       break;
     }
-    if (updateAfter) repaint(); // changed for swing from update();
+    if (updateAfter) {
+      //System.out.println("trying to update " + slot + " " + state[slot]);
+      //new Exception("setting slot " + slot + " to " + state[slot]).printStackTrace();
+      repaint(); // changed for swing from update();
+      //Toolkit.getDefaultToolkit().sync();
+    }
   }
 
 
