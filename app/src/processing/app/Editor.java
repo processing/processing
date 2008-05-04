@@ -79,14 +79,14 @@ public class Editor extends JFrame {
   // file and sketch menus for re-inserting items
   JMenu fileMenu;
   JMenu sketchMenu;
-  
+
   EditorToolbar toolbar;
   // these menus are shared so that they needn't be rebuilt for all windows
   // each time a sketch is created, renamed, or moved.
   static JMenu toolbarMenu;
   static JMenu sketchbookMenu;
-  static JMenu examplesMenu; 
-  static JMenu importMenu; 
+  static JMenu examplesMenu;
+  static JMenu importMenu;
 
   EditorHeader header;
   EditorStatus status;
@@ -154,7 +154,7 @@ public class Editor extends JFrame {
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
           base.handleActivated(Editor.this);
-          
+
           // re-add the sub-menus that are shared by all windows
           fileMenu.insert(sketchbookMenu, 2);
           fileMenu.insert(examplesMenu, 3);
@@ -227,7 +227,7 @@ public class Editor extends JFrame {
       splitPane.setDividerSize(dividerSize);
     }
 
-    splitPane.setMinimumSize(new Dimension(600, 600));
+    splitPane.setMinimumSize(new Dimension(600, 400));
     box.add(splitPane);
 
     // hopefully these are no longer needed w/ swing
@@ -295,7 +295,7 @@ public class Editor extends JFrame {
       });
 
 //    System.out.println("t1");
-    
+
     // Finish preparing Editor (formerly found in Base)
     pack();
 
@@ -422,7 +422,7 @@ public class Editor extends JFrame {
     menubar.add(buildHelpMenu());
     setJMenuBar(menubar);
   }
-  
+
 
   protected JMenu buildFileMenu() {
     JMenuItem item;
@@ -841,12 +841,12 @@ public class Editor extends JFrame {
     menu.add(item);
 
     menu.addSeparator();
-    
+
     item = newJMenuItem("Comment/Uncomment", '/');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           beginCompoundEdit();
-          
+
           //textarea.selectAll();
           int startLine = textarea.getSelectionStartLine();
           int stopLine = textarea.getSelectionEndLine();
@@ -855,7 +855,7 @@ public class Editor extends JFrame {
           //System.out.println("pos is " + pos + " and line is " + startLine);
           //System.out.println("doc length is " + length);
           if (pos + 2 > length) return;
-          
+
           String begin = textarea.getText(pos, 2);
           //System.out.println("begin is '" + begin + "'");
           boolean commented = begin.equals("//");
@@ -876,8 +876,8 @@ public class Editor extends JFrame {
             //System.out.println(line);
           }
           // Subtract one from the end, otherwise selects past the current line.
-          // (Which causes subsequent calls to keep expanding the selection) 
-          textarea.select(textarea.getLineStartOffset(startLine), 
+          // (Which causes subsequent calls to keep expanding the selection)
+          textarea.select(textarea.getLineStartOffset(startLine),
                           textarea.getLineEndOffset(stopLine) - 1);
           endCompoundEdit();
         }
@@ -1209,17 +1209,17 @@ public class Editor extends JFrame {
     //sketch.cleanup();  // where does this go?
   }
 
-  
+
   public void setSketchLocation(Point p) {
     sketchWindowLocation = p;
   }
-  
-  
+
+
   public Point getSketchLocation() {
     return sketchWindowLocation;
   }
 
-  
+
   /*
   class RunButtonWatcher implements Runnable {
     Thread thread;
@@ -1308,7 +1308,7 @@ public class Editor extends JFrame {
    */
   public void closeRunner() {
 //    System.out.println("closing runner");
-    
+
     //if (presenting) {
     //presentationWindow.hide();
     //} else {
@@ -1431,7 +1431,7 @@ public class Editor extends JFrame {
                                      int selStart, int selStop, int scrollPos) {
     closeRunner();
     handleOpenInternal(path);
-    // Replacing a document that may be untitled. If this is an actual 
+    // Replacing a document that may be untitled. If this is an actual
     // untitled document, then editor.untitled will be set by Base.
     untitled = false;
 
@@ -1442,7 +1442,7 @@ public class Editor extends JFrame {
 
 
   /**
-   * Second stage of open, occurs after having checked to see if the 
+   * Second stage of open, occurs after having checked to see if the
    * modifications (if any) to the previous sketch need to be saved.
    */
   protected boolean handleOpenInternal(String path) {
@@ -1530,7 +1530,7 @@ public class Editor extends JFrame {
 
       // opening was successful
       return true;
-      
+
     } catch (Exception e) {
       error(e);
       return false;
@@ -1601,8 +1601,8 @@ public class Editor extends JFrame {
 
   public boolean handleSaveAs() {
     //stopRunner();  // formerly from 0135
-    handleStop(); 
-    
+    handleStop();
+
     toolbar.activate(EditorToolbar.SAVE);
 
     //SwingUtilities.invokeLater(new Runnable() {
@@ -1622,7 +1622,7 @@ public class Editor extends JFrame {
     } catch (Exception e) {
       // show the error as a message in the window
       error(e);
-      
+
     } finally {
       // make sure the toolbar button deactivates
       toolbar.deactivate(EditorToolbar.SAVE);
@@ -1844,11 +1844,11 @@ public class Editor extends JFrame {
 
   public void highlightLine(int line) {
     // subtract one from the end so that the \n ain't included
-    textarea.select(textarea.getLineStartOffset(line), 
-                    textarea.getLineEndOffset(line) - 1); 
+    textarea.select(textarea.getLineStartOffset(line),
+                    textarea.getLineEndOffset(line) - 1);
   }
-  
-  
+
+
   /*
   // wow! this is old code. bye bye!
   public void highlightLine(int lnum) {
