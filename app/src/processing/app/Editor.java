@@ -841,6 +841,50 @@ public class Editor extends JFrame {
     menu.add(item);
 
     menu.addSeparator();
+    
+    item = newJMenuItem("Comment/Uncomment", '/');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          beginCompoundEdit();
+          
+          //textarea.selectAll();
+          int startLine = textarea.getSelectionStartLine();
+          int stopLine = textarea.getSelectionEndLine();
+          int length = textarea.getDocumentLength();
+          int pos = textarea.getLineStartOffset(startLine);
+          //System.out.println("pos is " + pos + " and line is " + startLine);
+          //System.out.println("doc length is " + length);
+          if (pos + 2 > length) return;
+          
+          String begin = textarea.getText(pos, 2);
+          //System.out.println("begin is '" + begin + "'");
+          boolean commented = begin.equals("//");
+
+          for (int line = startLine; line <= stopLine; line++) {
+            int location = textarea.getLineStartOffset(line);
+            if (commented) {
+              // remove a comment
+              textarea.select(location, location+2);
+              if (textarea.getSelectedText().equals("//")) {
+                textarea.setSelectedText("");
+              }
+            } else {
+              // add a comment
+              textarea.select(location, location);
+              textarea.setSelectedText("//");
+            }
+            //System.out.println(line);
+          }
+          // Subtract one from the end, otherwise selects past the current line.
+          // (Which causes subsequent calls to keep expanding the selection) 
+          textarea.select(textarea.getLineStartOffset(startLine), 
+                          textarea.getLineEndOffset(stopLine) - 1);
+          endCompoundEdit();
+        }
+    });
+    menu.add(item);
+
+    menu.addSeparator();
 
     item = newJMenuItem("Find...", 'F');
     item.addActionListener(new ActionListener() {
@@ -1109,7 +1153,10 @@ public class Editor extends JFrame {
 
     try {
       //System.out.println("ed compiling");
-      if (!sketch.handleCompile()) return;
+      if (!sketch.handleCompile()) {
+        System.out.println("compile failed");
+        return;
+      }
 
       //System.out.println("ed running");
       //SwingUtilities.invokeLater(new Runnable() {
@@ -1795,6 +1842,15 @@ public class Editor extends JFrame {
   }
 
 
+  public void highlightLine(int line) {
+    // subtract one from the end so that the \n ain't included
+    textarea.select(textarea.getLineStartOffset(line), 
+                    textarea.getLineEndOffset(line) - 1); 
+  }
+  
+  
+  /*
+  // wow! this is old code. bye bye!
   public void highlightLine(int lnum) {
     if (lnum < 0) {
       textarea.select(0, 0);
@@ -1843,6 +1899,7 @@ public class Editor extends JFrame {
 
     textarea.select(st, end);
   }
+  */
 
 
   // ...................................................................
@@ -1853,6 +1910,8 @@ public class Editor extends JFrame {
    */
   public void error(String what) {
     status.error(what);
+    //new Exception("deactivating RUN").printStackTrace();
+    toolbar.deactivate(EditorToolbar.RUN);
   }
 
 
@@ -1874,7 +1933,10 @@ public class Editor extends JFrame {
       if (mess.indexOf(javaLang) == 0) {
         mess = mess.substring(javaLang.length());
       }
+      //System.out.println("message not null");
       error(mess);
+//    } else {
+//      System.out.println("message is null");
     }
     e.printStackTrace();
   }
@@ -1898,7 +1960,6 @@ public class Editor extends JFrame {
       mess = mess.substring(javaLang.length());
     }
     error(mess);
-    //toolbar.clear();
   }
 
 
