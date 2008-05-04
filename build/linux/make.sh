@@ -38,7 +38,10 @@ else
   rm reference.zip
   cd ..
 
-  tar --extract --file=jre.tgz --ungzip --directory=work
+  #tar --extract --file=jre.tgz --ungzip --directory=work
+  #chmod +x jre.sfx
+  #./jre.sfx
+  #mv jre1.5.0_15 work/java
 
   #mkdir work/lib/export
   mkdir work/lib/build
