@@ -26,8 +26,7 @@ void draw() {
 
 <description>
 Forces the program to stop running for a specified time. Delay times are specified in thousandths of a second. The function call <b>delay(3000)</b> will stop the program for three seconds. <br/><br/>
-Because the screen is updated only at the end of <b>draw()</b>, the program may appear to "freeze" until the <b>delay()</b> has elapsed.<br/><br/>
-This function causes the program to stop as soon as it is called, except if the program is running the <b>draw()</b> for the first time, it will complete the loop before stopping.
+Because the screen is updated only at the end of <b>draw()</b>, the program may appear to "freeze", because the screen will not update when the <b>delay()</b> method is used.<br/><br/>
 </description>
 
 <syntax>
