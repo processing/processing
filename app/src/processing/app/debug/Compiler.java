@@ -103,13 +103,16 @@ public class Compiler implements MessageConsumer {
       // also for windows because qtjava will most likely be here
       // and for linux, it just doesn't hurt
       "-classpath",
-      sketch.getClassPath(), //calcClassPath(includeFolder),
+    //calcClassPath(includeFolder),  // removed sometime after 135?
+      sketch.getClassPath(),
+      //sketch.getClassPath() + File.pathSeparator + sketch.getLibraryPath(),
 
       "-nowarn", // we're not currently interested in warnings
       "+E", // output errors in machine-parsable format
       "-d", buildPath // output the classes in the buildPath
       //buildPath + File.separator + className + ".java" // file to compile
     };
+//    PApplet.println(baseCommand);
 
     // make list of code files that need to be compiled
     // (some files are skipped if they contain no class)

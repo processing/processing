@@ -84,6 +84,11 @@ public class Sketch {
   // all these set each time build() is called
   String mainClassName;
   String classPath;
+  /** 
+   * This is *not* the "Processing" libraries path, this is the Java libraries
+   * path, as in java.library.path=BlahBlah, which identifies search paths for
+   * DLLs or JNILIBs.
+   */ 
   String libraryPath;
   boolean externalRuntime;
   Vector importedLibraries; // vec of File objects
@@ -1378,9 +1383,9 @@ public class Sketch {
 
       //classPath += File.pathSeparator +
       //Compiler.contentsToClassPath(codeFolder);
-      classPath =
-        Compiler.contentsToClassPath(codeFolder) +
-        File.pathSeparator + classPath;
+//      classPath =
+//        Compiler.contentsToClassPath(codeFolder) +
+//        File.pathSeparator + classPath;
 
       //codeFolderPackages = Compiler.packageListFromClassPath(classPath);
       //codeFolderPackages = Compiler.packageListFromClassPath(codeFolder);
@@ -1390,9 +1395,12 @@ public class Sketch {
       // (class files in subfolders should also be picked up)
       String codeFolderClassPath =
         Compiler.contentsToClassPath(codeFolder);
+      // prepend the jar files in the code folder to the class path
+      classPath = codeFolderClassPath + File.pathSeparator + classPath; 
       // get list of packages found in those jars
       codeFolderPackages =
         Compiler.packageListFromClassPath(codeFolderClassPath);
+      
       //PApplet.println(libraryPath);
       //PApplet.println("packages:");
       //PApplet.printarr(codeFolderPackages);
@@ -1607,10 +1615,13 @@ public class Sketch {
       if (libFolder == null) {
         //throw new RunnerException("Could not find library for " + entry);
         continue;
+      //} else {
+        //System.out.println("found library folder " + libFolder.getAbsolutePath());
       }
 
       importedLibraries.add(libFolder);
-      libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+      classPath += Compiler.contentsToClassPath(libFolder);
+      //libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
 
       /*
       String list[] = libFolder.list();
