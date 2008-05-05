@@ -75,6 +75,8 @@ class XMLUtil
                if (dashesRead == 2) {
                   return;
                }
+               dashesRead = 0;
+               break;
 
             default:
                dashesRead = 0;
