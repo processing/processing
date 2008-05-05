@@ -54,6 +54,9 @@ else
   #cp ../../bagel/serial/librxtxSerial.so work/lib/i386/libSerial.so
   #chmod +x work/librxtxSerial.so
 
+  # get linux version of tools.jar
+  cp dist/tools.jar work/lib/
+
   # get jikes and depedencies
   cp dist/jikes work/
   chmod +x work/jikes

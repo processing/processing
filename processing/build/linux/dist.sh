@@ -49,6 +49,8 @@ install -m 755 dist/processing processing/processing
 cp dist/jikes processing/
 chmod +x processing/jikes
 
+cp dist/tools.jar processing/lib/
+
 # make sure notes.txt is unix LFs
 # the 2> is because the app is a little chatty
 dos2unix processing/revisions.txt 2> /dev/null

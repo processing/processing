@@ -67,6 +67,9 @@ else
   make application.exe
   cd ..
 
+  # get windows version of tools.jar
+  cp dist/tools.jar work/lib/
+
   # get jikes and depedencies
   cp dist/jikes.exe work/
   #chmod +x work/jikes.exe
