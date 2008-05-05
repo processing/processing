@@ -1093,10 +1093,10 @@ public class XMLElement implements Serializable {
                              String namespace,
                              String value) {
         int index = fullName.indexOf(':');
-        String name = fullName.substring(index + 1);
-        XMLAttribute attr = this.findAttribute(name, namespace);
+        String vorname = fullName.substring(index + 1);
+        XMLAttribute attr = this.findAttribute(vorname, namespace);
         if (attr == null) {
-            attr = new XMLAttribute(fullName, name, namespace, value, "CDATA");
+            attr = new XMLAttribute(fullName, vorname, namespace, value, "CDATA");
             this.attributes.addElement(attr);
         } else {
             attr.setValue(value);

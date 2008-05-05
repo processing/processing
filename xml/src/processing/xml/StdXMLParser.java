@@ -298,13 +298,13 @@ public class StdXMLParser {
       XMLUtil.skipWhitespace(this.reader, null);
       String target = XMLUtil.scanIdentifier(this.reader);
       XMLUtil.skipWhitespace(this.reader, null);
-      Reader reader = new PIReader(this.reader);
-
-      if (! target.equalsIgnoreCase("xml")) {
-         this.builder.newProcessingInstruction(target, reader);
+      Reader r = new PIReader(this.reader);
+      
+      if (!target.equalsIgnoreCase("xml")) {
+         this.builder.newProcessingInstruction(target, r);
       }
 
-      reader.close();
+      r.close();
    }
 
 
@@ -356,9 +356,7 @@ public class StdXMLParser {
     * @throws java.lang.Exception
     *     if something went wrong
     */
-   protected void processCDATA()
-      throws Exception
-   {
+   protected void processCDATA() throws Exception {
       if (! XMLUtil.checkLiteral(this.reader, "CDATA[")) {
          XMLUtil.errorExpectedInput(reader.getSystemID(),
                                     reader.getLineNr(),
@@ -367,10 +365,10 @@ public class StdXMLParser {
 
       this.validator.PCDataAdded(this.reader.getSystemID(),
                                  this.reader.getLineNr());
-      Reader reader = new CDATAReader(this.reader);
-      this.builder.addPCData(reader, this.reader.getSystemID(),
+      Reader r = new CDATAReader(this.reader);
+      this.builder.addPCData(r, this.reader.getSystemID(),
                              this.reader.getLineNr());
-      reader.close();
+      r.close();
    }
 
 
@@ -389,7 +387,7 @@ public class StdXMLParser {
       }
 
       XMLUtil.skipWhitespace(this.reader, null);
-      String systemID = null;
+//      String systemID = null;
       StringBuffer publicID = new StringBuffer();
       /*String rootElement =*/ XMLUtil.scanIdentifier(this.reader);
       //System.out.println("rootElement is " + rootElement);
@@ -397,11 +395,11 @@ public class StdXMLParser {
       char ch = this.reader.read();
 
       if (ch == 'P') {
-         systemID = XMLUtil.scanPublicID(publicID, reader);
+//         systemID = XMLUtil.scanPublicID(publicID, reader);
          XMLUtil.skipWhitespace(this.reader, null);
          ch = this.reader.read();
       } else if (ch == 'S') {
-         systemID = XMLUtil.scanSystemID(reader);
+//         systemID = XMLUtil.scanSystemID(reader);
          XMLUtil.skipWhitespace(this.reader, null);
          ch = this.reader.read();
       }
@@ -421,19 +419,18 @@ public class StdXMLParser {
                                     "`>'");
       }
 
-      if (false) {  // TODO currently disabled
-    	  if (systemID != null) {
-    		  Reader reader = this.reader.openStream(publicID.toString(),
-    				  systemID);
-    		  this.reader.startNewStream(reader);
-    		  this.reader.setSystemID(systemID);
-    		  this.reader.setPublicID(publicID.toString());
-    		  this.validator.parseDTD(publicID.toString(),
-    				  			      this.reader,	
-    				  			      this.entityResolver,
-    				  			      true);
-    	  }
-      }
+//      if (false) {  // TODO currently disabled
+//    	  if (systemID != null) {
+//    		  Reader r = this.reader.openStream(publicID.toString(), systemID);
+//    		  this.reader.startNewStream(r);
+//    		  this.reader.setSystemID(systemID);
+//    		  this.reader.setPublicID(publicID.toString());
+//    		  this.validator.parseDTD(publicID.toString(),
+//    				  			      this.reader,	
+//    				  			      this.entityResolver,
+//    				  			      true);
+//    	  }
+//      }
    }
 
 
