@@ -126,26 +126,26 @@ public class XMLElement implements Serializable {
     public XMLElement() {
         this(null, null, null, NO_LINE);
     }
-    
-    
+
+
     protected void set(String fullName,
-    		           String namespace,
-    		           String systemID,
-    		           int lineNr) {
-    	this.fullName = fullName;
-    	if (namespace == null) {
-    		this.name = fullName;
-    	} else {
-    		int index = fullName.indexOf(':');
-    		if (index >= 0) {
-    			this.name = fullName.substring(index + 1);
-    		} else {
-    			this.name = fullName;
-    		}
-    	}
-    	this.namespace = namespace;
-    	this.lineNr = lineNr;
-    	this.systemID = systemID;
+                           String namespace,
+                           String systemID,
+                           int lineNr) {
+        this.fullName = fullName;
+        if (namespace == null) {
+                this.name = fullName;
+        } else {
+                int index = fullName.indexOf(':');
+                if (index >= 0) {
+                        this.name = fullName.substring(index + 1);
+                } else {
+                        this.name = fullName;
+                }
+        }
+        this.namespace = namespace;
+        this.lineNr = lineNr;
+        this.systemID = systemID;
     }
 
 
@@ -228,13 +228,8 @@ public class XMLElement implements Serializable {
      */
     public XMLElement(PApplet parent, String filename) {
         this();
-//        try {
         Reader r = parent.createReader(filename);
-            //if (r == null) return;
         parseFromReader(r);
-        //} catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
 
@@ -242,43 +237,43 @@ public class XMLElement implements Serializable {
         this();
         parseFromReader(r);
     }
-    
-    
+
+
     public XMLElement(String xml) {
-    	this();
-    	StringReader r = new StringReader(xml);
-    	parseFromReader(r);
-    }
-    
-    
-    protected void parseFromReader(Reader r) {
-        try {
-        	StdXMLParser parser = new StdXMLParser();
-        	parser.setBuilder(new StdXMLBuilder(this));
-        	parser.setValidator(new XMLValidator());
-        	parser.setReader(new StdXMLReader(r));
-        	//System.out.println(parser.parse().getName());
-        	/*XMLElement xm = (XMLElement)*/ parser.parse();
-        	//System.out.println("xm name is " + xm.getName());
-        	//System.out.println(xm + " " + this);
-        	//parser.parse();
-		} catch (XMLException e) {
-			e.printStackTrace();
-		}
+        this();
+        StringReader r = new StringReader(xml);
+        parseFromReader(r);
     }
 
-    
+
+    protected void parseFromReader(Reader r) {
+        try {
+            StdXMLParser parser = new StdXMLParser();
+            parser.setBuilder(new StdXMLBuilder(this));
+            parser.setValidator(new XMLValidator());
+            parser.setReader(new StdXMLReader(r));
+            //System.out.println(parser.parse().getName());
+            /*XMLElement xm = (XMLElement)*/ parser.parse();
+            //System.out.println("xm name is " + xm.getName());
+            //System.out.println(xm + " " + this);
+            //parser.parse();
+        } catch (XMLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 //    static public XMLElement parse(Reader r) {
 //        try {
-//        	StdXMLParser parser = new StdXMLParser();
-//        	parser.setBuilder(new StdXMLBuilder());
-//        	parser.setValidator(new XMLValidator());
-//        	parser.setReader(new StdXMLReader(r));
-//        	return (XMLElement) parser.parse();        	
-//		} catch (XMLException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
+//              StdXMLParser parser = new StdXMLParser();
+//              parser.setBuilder(new StdXMLBuilder());
+//              parser.setValidator(new XMLValidator());
+//              parser.setReader(new StdXMLReader(r));
+//              return (XMLElement) parser.parse();
+//              } catch (XMLException e) {
+//                      e.printStackTrace();
+//                      return null;
+//              }
 //    }
 
 
@@ -311,7 +306,7 @@ public class XMLElement implements Serializable {
 //                                    String systemID,
 //                                    int lineNr) {
 //        //return new XMLElement(fullName, systemID, lineNr);
-//    	return new XMLElement(fullName, null, systemID, lineNr);
+//      return new XMLElement(fullName, null, systemID, lineNr);
 //    }
 
 
@@ -324,7 +319,7 @@ public class XMLElement implements Serializable {
     public XMLElement createElement(String fullName,
                                     String namespace) {
         //return new XMLElement(fullName, namespace);
-    	return new XMLElement(fullName, namespace, null, NO_LINE);
+        return new XMLElement(fullName, namespace, null, NO_LINE);
     }
 
 
@@ -551,7 +546,10 @@ public class XMLElement implements Serializable {
 //        return this.children;
 //    }
 
-    
+
+    /**
+     * Returns an array containing all the child elements.
+     */
     public XMLElement[] getChildren() {
         int childCount = getChildCount();
         XMLElement[] kids = new XMLElement[childCount];
@@ -572,49 +570,49 @@ public class XMLElement implements Serializable {
     /**
      * Get a child by its name or path.
      * @param name element name or path/to/element
-     * @return
+     * @return the element
      * @author processing.org
      */
     public XMLElement getChild(String name) {
         if (name.indexOf('/') != -1) {
-                return getChildRecursive(PApplet.split(name, '/'), 0);
+            return getChildRecursive(PApplet.split(name, '/'), 0);
         }
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
-                XMLElement kid = getChild(i);
-                if (kid.getName().equals(name)) {
-                        return kid;
-                }
+            XMLElement kid = getChild(i);
+            if (kid.getName().equals(name)) {
+                return kid;
+            }
         }
         return null;
     }
 
 
     protected XMLElement getChildRecursive(String[] items, int offset) {
-    	// if it's a number, do an index instead
-    	if (Character.isDigit(items[offset].charAt(0))) {
-    		XMLElement kid = getChild(Integer.parseInt(items[offset]));
-			if (offset == items.length-1) {
-				return kid;
-			} else {
-				return kid.getChildRecursive(items, offset+1);
-			}
-    	}
-    	int childCount = getChildCount();
-    	for (int i = 0; i < childCount; i++) {
-    		XMLElement kid = getChild(i);
-    		if (kid.getName().equals(items[offset])) {
-    			if (offset == items.length-1) {
-    				return kid;
-    			} else {
-    				return kid.getChildRecursive(items, offset+1);
-    			}
-    		}
-    	}
-    	return null;
+        // if it's a number, do an index instead
+        if (Character.isDigit(items[offset].charAt(0))) {
+            XMLElement kid = getChild(Integer.parseInt(items[offset]));
+            if (offset == items.length-1) {
+                return kid;
+            } else {
+                return kid.getChildRecursive(items, offset+1);
+            }
+        }
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            XMLElement kid = getChild(i);
+            if (kid.getName().equals(items[offset])) {
+                if (offset == items.length-1) {
+                    return kid;
+                } else {
+                    return kid.getChildRecursive(items, offset+1);
+                }
+            }
+        }
+        return null;
     }
-    
-    
+
+
     /**
      * Returns the child at a specific index.
      *
@@ -623,13 +621,13 @@ public class XMLElement implements Serializable {
      * @return the non-null child
      *
      * @throws java.lang.ArrayIndexOutOfBoundsException
-     *		if the index is out of bounds.
+     *          if the index is out of bounds.
      */
     public XMLElement getChildAtIndex(int index)
     throws ArrayIndexOutOfBoundsException {
         return (XMLElement) this.children.elementAt(index);
     }
-    
+
 
     /**
      * Searches a child element.
@@ -688,36 +686,36 @@ public class XMLElement implements Serializable {
      * @author processing.org
      */
     public XMLElement[] getChildren(String name) {
-    	if (name.indexOf('/') != -1) {
-    		return getChildrenRecursive(PApplet.split(name, '/'), 0);
-    	}
-    	// if it's a number, do an index instead
-    	// (returns a single element array, since this will be a single match
-    	if (Character.isDigit(name.charAt(0))) {
-    		return new XMLElement[] { getChild(Integer.parseInt(name)) };
-    	}
-    	int childCount = getChildCount();
-    	XMLElement[] matches = new XMLElement[childCount];
-    	int matchCount = 0;
-    	for (int i = 0; i < childCount; i++) {
-    		XMLElement kid = getChild(i);
-    		if (kid.getName().equals(name)) {
-    			matches[matchCount++] = kid;
-    		}
-    	}
-    	return (XMLElement[]) PApplet.subset(matches, 0, matchCount);
+        if (name.indexOf('/') != -1) {
+                return getChildrenRecursive(PApplet.split(name, '/'), 0);
+        }
+        // if it's a number, do an index instead
+        // (returns a single element array, since this will be a single match
+        if (Character.isDigit(name.charAt(0))) {
+                return new XMLElement[] { getChild(Integer.parseInt(name)) };
+        }
+        int childCount = getChildCount();
+        XMLElement[] matches = new XMLElement[childCount];
+        int matchCount = 0;
+        for (int i = 0; i < childCount; i++) {
+                XMLElement kid = getChild(i);
+                if (kid.getName().equals(name)) {
+                        matches[matchCount++] = kid;
+                }
+        }
+        return (XMLElement[]) PApplet.subset(matches, 0, matchCount);
     }
 
 
     protected XMLElement[] getChildrenRecursive(String[] items, int offset) {
         if (offset == items.length-1) {
-        	return getChildren(items[offset]);
+                return getChildren(items[offset]);
         }
         XMLElement[] matches = getChildren(items[offset]);
         XMLElement[] outgoing = new XMLElement[0];
         for (int i = 0; i < matches.length; i++) {
-        	XMLElement[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
-        	outgoing = (XMLElement[]) PApplet.concat(outgoing, kidMatches);
+                XMLElement[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
+                outgoing = (XMLElement[]) PApplet.concat(outgoing, kidMatches);
         }
         return outgoing;
     }
@@ -831,8 +829,6 @@ public class XMLElement implements Serializable {
 
 
     /**
-     * @deprecated As of NanoXML/Java 2.1, replaced by
-     *             {@link #getAttribute(java.lang.String,java.lang.String)}
      * Returns the value of an attribute.
      *
      * @param name the non-null name of the attribute.
@@ -882,8 +878,30 @@ public class XMLElement implements Serializable {
             return attr.getValue();
         }
     }
+    
+    
+    public String getStringAttribute(String name) {
+        return getAttribute(name);
+    }
+
+    
+    public String getStringAttribute(String name, String defaultValue) {
+        return getAttribute(name, defaultValue);
+    }
 
 
+    public String getStringAttribute(String name,
+                                     String namespace,
+                                     String defaultValue) {
+        return getAttribute(name, namespace, defaultValue);
+    }
+
+
+    public float getIntAttribute(String name) {
+        return getIntAttribute(name, 0);
+    }
+    
+    
     /**
      * Returns the value of an attribute.
      *
@@ -892,8 +910,8 @@ public class XMLElement implements Serializable {
      *
      * @return the value, or defaultValue if the attribute does not exist.
      */
-    public int getAttribute(String name,
-                            int    defaultValue) {
+    public int getIntAttribute(String name,
+                               int defaultValue) {
         String value = this.getAttribute(name, Integer.toString(defaultValue));
         return Integer.parseInt(value);
     }
@@ -908,12 +926,88 @@ public class XMLElement implements Serializable {
      *
      * @return the value, or defaultValue if the attribute does not exist.
      */
-    public int getAttribute(String name,
-                            String namespace,
-                            int    defaultValue) {
+    public int getIntAttribute(String name,
+                               String namespace,
+                               int defaultValue) {
         String value = this.getAttribute(name, namespace,
                                          Integer.toString(defaultValue));
         return Integer.parseInt(value);
+    }
+
+
+    public float getFloatAttribute(String name) {
+        return getFloatAttribute(name, 0);
+    }
+    
+    
+    /**
+     * Returns the value of an attribute.
+     *
+     * @param name the non-null full name of the attribute.
+     * @param defaultValue the default value of the attribute.
+     *
+     * @return the value, or defaultValue if the attribute does not exist.
+     */
+    public float getFloatAttribute(String name,
+                                   float defaultValue) {
+        String value = this.getAttribute(name, Float.toString(defaultValue));
+        return Float.parseFloat(value);
+    }
+
+
+    /**
+     * Returns the value of an attribute.
+     *
+     * @param name the non-null name of the attribute.
+     * @param namespace the namespace URI, which may be null.
+     * @param defaultValue the default value of the attribute.
+     *
+     * @return the value, or defaultValue if the attribute does not exist.
+     */
+    public float getFloatAttribute(String name,
+                                   String namespace,
+                                   float defaultValue) {
+        String value = this.getAttribute(name, namespace,
+                                         Float.toString(defaultValue));
+        return Float.parseFloat(value);
+    }
+
+
+    public double getDoubleAttribute(String name) {
+        return getDoubleAttribute(name, 0);
+    }
+    
+    
+    /**
+     * Returns the value of an attribute.
+     *
+     * @param name the non-null full name of the attribute.
+     * @param defaultValue the default value of the attribute.
+     *
+     * @return the value, or defaultValue if the attribute does not exist.
+     */
+    public double getDoubleAttribute(String name,
+                                     double defaultValue) {
+        String value = this.getAttribute(name, Double.toString(defaultValue));
+        return Double.parseDouble(value);
+    }
+
+
+    /**
+     * Returns the value of an attribute.
+     *
+     * @param name the non-null name of the attribute.
+     * @param namespace the namespace URI, which may be null.
+     * @param defaultValue the default value of the attribute.
+     *
+     * @return the value, or defaultValue if the attribute does not exist.
+     */
+    public double getDoubleAttribute(String name,
+                                     String namespace,
+                                     double defaultValue) {
+        String value = this.getAttribute(name, namespace,
+                                         Double.toString(defaultValue));
+        return Double.parseDouble(value);
     }
 
 
@@ -1237,16 +1331,16 @@ public class XMLElement implements Serializable {
         return true;
     }
 
-    
+
     public String toString() {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	OutputStreamWriter osw = new OutputStreamWriter(baos);
-    	XMLWriter writer = new XMLWriter(osw);
-    	try {
-			writer.write(this, true, 2, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return baos.toString();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OutputStreamWriter osw = new OutputStreamWriter(baos);
+        XMLWriter writer = new XMLWriter(osw);
+        try {
+            writer.write(this, true, 2, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return baos.toString();
     }
 }
