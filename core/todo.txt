@@ -28,6 +28,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=742
 _ textures truly did get worse in P3D
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
 
+_ repeating texture support
+
 _ bezierVertex YZ Plane fill problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=752
 
@@ -186,6 +188,8 @@ _   leave smooth off, get the gl object, then enable line smooth
 
 
 threading [1.0]
+_ Frame skipping with processor intensive applets using 1.6
+_   http://dev.processing.org/bugs/show_bug.cgi?id=766
 _ introduce calc()
 _ major threading overhaul before 1.0 (compendium)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=511

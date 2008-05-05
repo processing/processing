@@ -20,7 +20,7 @@ else
 
   cp -r ../shared work
   # tools.jar not needed on osx
-  rm -f work/lib/tools.jar
+  #rm -f work/lib/tools.jar
   rm -rf work/.svn
 
   # needs to make the dir because of packaging goofiness
