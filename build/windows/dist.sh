@@ -69,6 +69,8 @@ chmod +x processing/jikes.exe
 cp dist/ICE_JNIRegistry.dll processing/
 chmod +x processing/ICE_JNIRegistry.dll
 
+cp dist/tools.jar processing/lib/
+
 # get platform-specific goodies from the dist dir
 cp launcher/processing.exe processing/
 #cp dist/run.bat processing/

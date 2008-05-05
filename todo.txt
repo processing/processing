@@ -1,21 +1,65 @@
 0136 pde
 X fix XMLElement(String s), had a bad constructor
+X color selector not drawing properly (fix thanks to fli)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=656
+X color selector broken on vista (no colors at all)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=584
+X updated linux to java 1.5.0_15
 X added fonts, quadratic curves to svg
 _   need to remove the font stuff, also the changes for 'public'
 _   move my edits into a subclass
+o Capture.settings() mangles external iSight image
+X   fixed in newer qtjava
+o   http://dev.processing.org/bugs/show_bug.cgi?id=496
+X add to p5 app bundle
+X   mention re: apple slowness
+X   -Dapple.awt.graphics.UseQuartz=true 
+X net library dies unceremoniously on "Connection Refused"
+X   just need to catch another exception
+X   http://dev.processing.org/bugs/show_bug.cgi?id=751
+X ctrl-/ to comment block
+X eeepc support for environment:
+X   splitPane.setMinimumSize(new Dimension(600, 600)); 
+X   change to: splitPane.setMinimumSize(new Dimension(600, 400));
+o   prolly need to have a param for this guy
+X switch to nanoxml instead of nanoxml-lite (29k vs. 5k)
+X   check against ods
+X   http://dev.processing.org/bugs/show_bug.cgi?id=757
 
-_ possible projects for soc
-_   make new antlr thing (for preproc, autoformat, eclipsse integration)
-_   better video support (emphasis on cross platform)
-_   better sound support (same as video)
-_   windows integration (file assocs, drag and drop)
+_ make.sh creating work/lib dirs.. no longer necessary?
+_ don't copy hidden files (.svn especially) on export/save as
+
+reference
+X random() is up to and not including, also add randomSeed link
+_ top links in the faq are broken (use full url?)
+_   need to re-arrange the reference location (faq.html in root, etc)
+_ don't include faq in download
+_   split contributed/core libraries
+_ change software to point at correct reference locations
+
+new debugger/runner setup
+X wire in new debugging classes, get sys.out and sys.err working
+X quitting p5 doesn't shut down the runner
+_ make out/err streams go to the correct window
+_ sketch stopping on its own won't shut down the run button
+_   check 'finished' via objectreference
+_ see if window re-positioning is broken
+_   could actually do this with objectreference
+_ make the run button highlight immediately
+_   or maybe show an animation for starting up
+_   rather than post-compile
+
+_ synchronized (something) { } is horking up the preproc
+_   http://dev.processing.org/bugs/show_bug.cgi?id=136
+
+_ need to make up a priorities/todo page for processing
+_   that includes projects for people to help out on
 
 _ make editor nicer
 _   tab on selection indents whole block
 _   shift-tab outdents whole block
 _   ctrl-t to format selection
 _     if no selection, indents line?
-_   ctrl-/ to comment block
 
 _ do quick fix for tab bar
 _   don't show tabs when there are too many
@@ -39,21 +83,9 @@ _   add option to change charset or specify as part of loading
 _   need to specify the default encoding
 _ http://dev.processing.org/bugs/show_bug.cgi?id=743
 
-_ eeepc support for environment:
-_   splitPane.setMinimumSize(new Dimension(600, 600)); 
-_   change to: splitPane.setMinimumSize(new Dimension(600, 400));
-_   prolly need to have a param for this guy
-
 _ pdf not rendering unicode (though it renders to screen)
 _   try updating to newer itext
 _   http://dev.processing.org/bugs/show_bug.cgi?id=727
-
-_ switch to nanoxml instead of nanoxml-lite (29k vs. 5k)
-_   check against ods
-
-_ add to p5 app bundle (and mention re: apple slowness)
--Dapple.awt.graphics.UseQuartz=true 
-apple.awt.graphics.UseQuartz
 
 _ huge jar files from 0124 export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=541
@@ -205,10 +237,6 @@ _   arduino uses .c, .cpp, .h instead of .java
 
 _ if someone has monaco disabled in font book, the app won't start
 _   http://dev.processing.org/bugs/show_bug.cgi?id=562
-_ color selector not drawing properly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=656
-_ color selector broken on vista (no colors at all)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=584
 
 _ can't get documents/prefs folder on vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=585
@@ -681,8 +709,6 @@ _ using a processing keyword as a variable name gives unhelpful error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=213
 _ web colors < 6 chars produce bizarre error:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=196
-_ synchronized (something) { } is horking up the preproc
-_   http://dev.processing.org/bugs/show_bug.cgi?id=136
 _ casting problems in the parser
 _   straighten out int() -> toInt() conversions
 _   float u = float(x)/width; works.
@@ -1178,8 +1204,6 @@ _ documented in faq, add something to the lib "camera not installed"
 _   quicktime.std.stdQTException(QTjava:6.1.3gl),-9405=couldntgetrequiredcomponent,qtversion:7108000 at quicktime.std.stdQTExceptionchekcerror
 _ need to add resize method to capture object
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1150227643
-_ Capture.settings() mangles external iSight image
-_   http://dev.processing.org/bugs/show_bug.cgi?id=496
 _ figure out what's up with the qt error handler
 _   is this what's preventing the errors from being caught properly?
 _   shutting these off for 0116 so hopefully the messages improve
@@ -1239,6 +1263,8 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ use pack200/unpack200 to make p5 download smaller
+_   http://dev.processing.org/bugs/show_bug.cgi?id=765
 _ drag and drop
 _   including the number of items would be especially nice
 _ implement automatic update
