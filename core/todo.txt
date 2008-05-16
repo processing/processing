@@ -24,9 +24,19 @@ X PImage mask doesn't work after first call
 X   http://dev.processing.org/bugs/show_bug.cgi?id=744
 X load and save tga results in upside down tga
 X   http://dev.processing.org/bugs/show_bug.cgi?id=742
+X fix problem with g.smooth always returning false in JAVA2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=762
+
+_ should we do joins when alpha is turned off?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
 
 _ textures truly did get worse in P3D
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
+
+_ PGraphicsOpenGL.java:
+_   directionalLight() and .pointLight() are both calling
+_   glLightNoAmbient() which then creates a new FloatBuffer 
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
 
 _ repeating texture support
 
@@ -51,6 +61,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=737
 
 _ textFont() used in setup() is null once draw() arrives
 _   http://dev.processing.org/bugs/show_bug.cgi?id=726
+_ colorMode() set inside setup() sometimes not set once draw() arrives
+_   http://dev.processing.org/bugs/show_bug.cgi?id=767
 
 _ for begin/endRecord, use a piggyback mechanism
 _   that way won't have to pass a PApplet around

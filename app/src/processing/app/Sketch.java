@@ -84,11 +84,11 @@ public class Sketch {
   // all these set each time build() is called
   String mainClassName;
   String classPath;
-  /** 
+  /**
    * This is *not* the "Processing" libraries path, this is the Java libraries
    * path, as in java.library.path=BlahBlah, which identifies search paths for
    * DLLs or JNILIBs.
-   */ 
+   */
   String libraryPath;
   boolean externalRuntime;
   Vector importedLibraries; // vec of File objects
@@ -350,7 +350,7 @@ public class Sketch {
                        "before trying to rename it?");
       return;
     }
-    
+
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
@@ -831,7 +831,7 @@ public class Sketch {
   public boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
-    
+
     if (PApplet.platform == PConstants.LINUX) {
       JFileChooser fc = new JFileChooser();
       fc.setDialogTitle("Save sketch folder as...");
@@ -1396,11 +1396,11 @@ public class Sketch {
       String codeFolderClassPath =
         Compiler.contentsToClassPath(codeFolder);
       // prepend the jar files in the code folder to the class path
-      classPath = codeFolderClassPath + File.pathSeparator + classPath; 
+      classPath = codeFolderClassPath + File.pathSeparator + classPath;
       // get list of packages found in those jars
       codeFolderPackages =
         Compiler.packageListFromClassPath(codeFolderClassPath);
-      
+
       //PApplet.println(libraryPath);
       //PApplet.println("packages:");
       //PApplet.printarr(codeFolderPackages);
@@ -1756,7 +1756,7 @@ public class Sketch {
     // modified for 83 to match size(XXX, ddd so that it'll
     // properly handle size(200, 200) and size(200, 200, P3D)
     String sizing =
-      // match the renderer string as well
+      // match width, height and renderer string as well
       "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
       // match just the width and height
       //"[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)(.*)\\)";
@@ -1774,7 +1774,8 @@ public class Sketch {
         wide = Integer.parseInt(result.group(1).toString());
         high = Integer.parseInt(result.group(2).toString());
 
-        renderer = result.group(3).toString(); //.trim();
+        // Adding back the trim() for 0136 to handle Bug #769
+        renderer = result.group(3).toString().trim();
 
       } catch (NumberFormatException e) {
         // found a reference to size, but it didn't
@@ -2805,34 +2806,34 @@ public class Sketch {
   public void nextCode() {
     setCurrent((currentIndex + 1) % codeCount);
   }
-  
-  
+
+
   // .................................................................
 
   // Additional accessors added in 0136 because of package work.
   // These will also be helpful for tool developers.
-  
-  
+
+
   public String getClassPath() {
     return classPath;
   }
-  
-  
+
+
   public String getLibraryPath() {
     return libraryPath;
   }
-  
-  
+
+
   public int getCodeCount() {
     return codeCount;
   }
-  
-  
+
+
   public SketchCode getCode(int index) {
     return code[index];
   }
-  
-  
+
+
   public String getMainClassName() {
     return mainClassName;
   }
