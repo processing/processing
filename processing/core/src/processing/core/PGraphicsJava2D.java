@@ -1211,6 +1211,7 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   public void smooth() {
+    smooth = true;
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -1219,6 +1220,7 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   public void noSmooth() {
+    smooth = false;
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_OFF);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,

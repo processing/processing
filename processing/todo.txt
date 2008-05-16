@@ -25,7 +25,10 @@ o   prolly need to have a param for this guy
 X switch to nanoxml instead of nanoxml-lite (29k vs. 5k)
 X   check against ods
 X   http://dev.processing.org/bugs/show_bug.cgi?id=757
+X Space after OPENGL param breaks export
+X   http://dev.processing.org/bugs/show_bug.cgi?id=769
 
+_ change export to point to java 1.5 installation
 _ make.sh creating work/lib dirs.. no longer necessary?
 _ don't copy hidden files (.svn especially) on export/save as
 
@@ -48,6 +51,9 @@ _   could actually do this with objectreference
 _ make the run button highlight immediately
 _   or maybe show an animation for starting up
 _   rather than post-compile
+
+_ occasional exception in "copy for discourse"
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1193068786
 
 _ synchronized (something) { } is horking up the preproc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=136
@@ -240,6 +246,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=562
 
 _ can't get documents/prefs folder on vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=585
+_ vista disables aero theme when p5 is run
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 
 _ ocd is broken in 0125 - do a better error message for this
 
