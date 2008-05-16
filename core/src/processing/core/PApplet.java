@@ -2366,7 +2366,7 @@ in   */
   /**
    * Attempt to open a file using the platform's shell.
    */
-  public void open(String filename) {
+  static public void open(String filename) {
     open(new String[] { filename });
   }
 
