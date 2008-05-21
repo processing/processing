@@ -26,6 +26,8 @@ X load and save tga results in upside down tga
 X   http://dev.processing.org/bugs/show_bug.cgi?id=742
 X fix problem with g.smooth always returning false in JAVA2D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=762
+X add XMLElement (not filename) constructor to SVG lib
+X   http://dev.processing.org/bugs/show_bug.cgi?id=773
 
 _ should we do joins when alpha is turned off?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
