@@ -157,12 +157,18 @@ public class SVG {
      * Initializes a new SVG Object with the given filename.
      */
     public SVG(PApplet parent, String filename) {
-        this.parent = parent;
-        //this.filename = filename;
-
         // this will grab the root document, starting <svg ...>
         // the xml version and initial comments are ignored
-        svg = new XMLElement(parent, filename);
+    	this(parent, new XMLElement(parent, filename));
+    }
+    
+    
+    /**
+     * Initializes a new SVG Object with the given filename.
+     */
+    public SVG(PApplet parent, XMLElement svg) {
+        this.parent = parent;
+        this.svg = svg;
 
         if (!svg.getName().equals("svg")) {
             throw new RuntimeException("root is not <svg>, it's <" + svg.getName() + ">");
