@@ -139,7 +139,6 @@ public class Preferences {
     // important was deleted from the user prefs
     try {
       load(Base.getStream("preferences.txt"));
-
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
                            "You'll need to reinstall Processing.", e);
