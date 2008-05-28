@@ -7,10 +7,17 @@
   <h2>XML</h2>
     
 <p>
-The intent of this library is to provide an extremely simple (and compact) means 
-of reading and writing XML data from a sketch. As such, this is not a full-featured 
-library for handling XML data. For those who need it, more sophisticated libraries 
-are available. There are no plans to add significant new features to this library.
+The intent of this library is to provide a simple (and compact) means 
+of reading and writing XML data from a sketch. As such, this is not a
+full-featured library for handling XML data. For those who need it,
+more sophisticated libraries are available. There are no plans to add
+significant new features to this library.
+</p>
+<p>
+In beta release 0136, the XML library grew from 6k to 29k as we moved 
+to NanoXML instead of NanoXML Lite. We found that the Lite version,
+while useful for many cases, could not handle many documents that 
+we wanted to support (e.g. those with certain kinds of CDATA sections).
 </p>
 <p>
 The code is from NanoXML 2.2.3 Lite from Marc De Scheemaecker. His project is
