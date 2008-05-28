@@ -1361,42 +1361,24 @@ public class Sketch {
 
     String codeFolderPackages[] = null;
 
-    String javaClassPath = System.getProperty("java.class.path");
-    // remove quotes if any.. this is an annoying thing on windows
-    if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\"")) {
-      javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
-    }
-
     //PApplet.println(PApplet.split(Sketchbook.librariesClassPath, ';'));
     //PApplet.println(PApplet.split(buildPath, ';'));
     //PApplet.println(PApplet.split(javaClassPath, ';'));
-    classPath = buildPath +
-      //File.pathSeparator + Base.librariesClassPath +
-      File.pathSeparator + javaClassPath;
-    //System.out.println("cp = " + classPath);
+    classPath = buildPath;
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
     //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
       externalRuntime = true;
-
-      //classPath += File.pathSeparator +
-      //Compiler.contentsToClassPath(codeFolder);
-//      classPath =
-//        Compiler.contentsToClassPath(codeFolder) +
-//        File.pathSeparator + classPath;
-
-      //codeFolderPackages = Compiler.packageListFromClassPath(classPath);
-      //codeFolderPackages = Compiler.packageListFromClassPath(codeFolder);
       libraryPath = codeFolder.getAbsolutePath();
 
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
       String codeFolderClassPath =
         Compiler.contentsToClassPath(codeFolder);
-      // prepend the jar files in the code folder to the class path
-      classPath = codeFolderClassPath + File.pathSeparator + classPath;
+      // append the jar files in the code folder to the class path
+      classPath += File.pathSeparator + codeFolderClassPath;
       // get list of packages found in those jars
       codeFolderPackages =
         Compiler.packageListFromClassPath(codeFolderClassPath);
@@ -1406,22 +1388,21 @@ public class Sketch {
       //PApplet.printarr(codeFolderPackages);
 
     } else {
+      externalRuntime = false;
+      libraryPath = "";
+
       // since using the special classloader,
       // run externally whenever there are extra classes defined
       //externalRuntime = (codeCount > 1);
       // this no longer appears to be true.. so scrapping for 0088
 
       // check to see if multiple files that include a .java file
-      externalRuntime = false;
       for (int i = 0; i < codeCount; i++) {
         if (code[i].flavor == JAVA) {
           externalRuntime = true;
           break;
         }
       }
-
-      //codeFolderPackages = null;
-      libraryPath = "";
     }
 
     // if the memory options are set, then use an external runtime
@@ -1621,7 +1602,7 @@ public class Sketch {
 
       importedLibraries.add(libFolder);
       classPath += Compiler.contentsToClassPath(libFolder);
-      //libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+      libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
 
       /*
       String list[] = libFolder.list();
@@ -1637,6 +1618,14 @@ public class Sketch {
       }
       */
     }
+
+    // Finally, add the regular Java CLASSPATH
+    String javaClassPath = System.getProperty("java.class.path");
+    // Remove quotes if any.. An annoying (and frequent) Windows problem
+    if (javaClassPath.startsWith("\"") && javaClassPath.endsWith("\"")) {
+      javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
+    }
+    classPath += File.pathSeparator + javaClassPath;
 
 
     // 3. then loop over the code[] and save each .java file

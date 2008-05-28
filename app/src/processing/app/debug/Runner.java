@@ -189,7 +189,13 @@ public class Runner implements MessageConsumer {
 
     String outgoing[] = new String[params.size()];
     params.toArray(outgoing);
-    PApplet.println(outgoing);
+    
+    //PApplet.println(outgoing);
+//    PApplet.println(PApplet.split(outgoing[0], ":"));
+//    PApplet.println();
+//    PApplet.println("class path");
+//    PApplet.println(PApplet.split(outgoing[2], ":"));
+    
     return outgoing;
     //return (String[]) params.toArray();
 
@@ -393,7 +399,9 @@ public class Runner implements MessageConsumer {
       errThread.join(); // Make sure output is forwarded
       outThread.join(); // before we exit
       
-      // at this point, disable the run button
+      // At this point, disable the run button.
+      // This happens when the sketch is exited by hitting ESC,
+      // or the user manually closes the sketch window.
       // TODO this should be handled better, should it not?
       editor.handleStopped();
       
@@ -401,11 +409,6 @@ public class Runner implements MessageConsumer {
       // we don't interrupt
     }
     if (writer != null) writer.close();
-  }
-
-
-  void redirectOutput() {
-
   }
 
 
