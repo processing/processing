@@ -37,8 +37,8 @@ import com.sun.jdi.connect.*;
 /**
  * Runs a compiled sketch. As of release 0136, all sketches are run externally
  * to the environment so that a debugging interface can be used. This opens up
- * future options for a decent debugger, but in the meantime fixes several 
- * problems with output and error streams, messages getting lost on Mac OS X, 
+ * future options for a decent debugger, but in the meantime fixes several
+ * problems with output and error streams, messages getting lost on Mac OS X,
  * the run/stop buttons not working, libraries not shutting down, exceptions
  * not coming through, exceptions being printed twice, having to force quit
  * if you make a bad while() loop, and so on.
@@ -46,7 +46,7 @@ import com.sun.jdi.connect.*;
 public class Runner implements MessageConsumer {
 
   private boolean presenting;
-  
+
   // Running remote VM
   //private final VirtualMachine vm;
   private VirtualMachine vm;
@@ -92,17 +92,16 @@ public class Runner implements MessageConsumer {
   public Runner(Editor editor, boolean presenting) throws RunnerException {
     this.editor = editor;
     this.sketch = editor.sketch;
-    this.presenting = presenting;   
+    this.presenting = presenting;
     //EditorConsole.systemOut.println("clear");
     //System.out.println("clear");
   }
-  
-  
-  public void poo() {
-    
-    // this as prefix made the code folder bug go away, but killed stdio
-    //"cmd", "/c", "start",
 
+
+  public void launch() {
+    // TODO this code is a total mess as of release 0136. 
+    // This will be cleaned up significantly over the next couple months.
+    
     // all params have to be stored as separate items,
     // so a growable array needs to be used. i.e. -Xms128m -Xmx1024m
     // will throw an error if it's shoved into a single array element
@@ -120,10 +119,8 @@ public class Runner implements MessageConsumer {
 //    String[] appletParamList = (String[]) PApplet.subset(command, command.length-6);
     //new Trace(new String[] { vmparamString, sketch.mainClassName });
     //new Trace(vmParamList, appletParamList);
-    //System.out.println("1");
     vm = launch(vmParamList, appletParamList);
-    //System.out.println("2");
-    
+
 //    PrintWriter writer = new PrintWriter(System.out);
 //    PrintWriter writer = null;
 //    try {
@@ -133,7 +130,6 @@ public class Runner implements MessageConsumer {
 //    }
     //generateTrace(writer);
     generateTrace(null);
-    //System.out.println("3");
 
 //    String[] guiParams = PApplet.concat(vmParamList, appletParamList);
 //    for (int i = 0; i < guiParams.length; i++) {
@@ -148,17 +144,17 @@ public class Runner implements MessageConsumer {
 //    processError = new MessageSiphon(process.getErrorStream(), this);
 //    processOutput = process.getOutputStream();
   }
-  
-  
+
+
   protected String[] getVirtualMachineParams() {
     ArrayList params = new ArrayList();
-    
+
     //params.add("-Xint"); // interpreted mode
     //params.add("-Xprof");  // profiler
     //params.add("-Xaprof");  // allocation profiler
     //params.add("-Xrunhprof:cpu=samples");  // old-style profiler
 
-    // TODO change this to use run.args = true, run.args.0, run.args.1, etc. 
+    // TODO change this to use run.args = true, run.args.0, run.args.1, etc.
     // so that spaces can be included in the arg names
     String options = Preferences.get("run.options");
     if (options.length() > 0) {
@@ -188,12 +184,12 @@ public class Runner implements MessageConsumer {
 //    params.add(sketch.getClassPath() +
 //        File.pathSeparator +
 //        Base.librariesClassPath);
-    
+
     //PApplet.println(PApplet.split(sketch.classPath, ':'));
 
     String outgoing[] = new String[params.size()];
     params.toArray(outgoing);
-    //PApplet.println(outgoing);
+    PApplet.println(outgoing);
     return outgoing;
     //return (String[]) params.toArray();
 
@@ -204,19 +200,19 @@ public class Runner implements MessageConsumer {
 //  PApplet.println(PApplet.split(Base.librariesClassPath, ';'));
 //  System.out.println();
   }
-  
-  
+
+
   protected String[] getSketchParams() {
     ArrayList params = new ArrayList();
-    
+
     params.add("processing.core.PApplet");
 
-    // If there was a saved location (this guy has been run more than once) 
-    // then the location will be set to the last position of the sketch window. 
-    // This will be passed to the PApplet runner using something like 
-    // --location=30,20 
-    // Otherwise, the editor location will be passed, and the applet will 
-    // figure out where to place itself based on the editor location. 
+    // If there was a saved location (this guy has been run more than once)
+    // then the location will be set to the last position of the sketch window.
+    // This will be passed to the PApplet runner using something like
+    // --location=30,20
+    // Otherwise, the editor location will be passed, and the applet will
+    // figure out where to place itself based on the editor location.
     // --editor-location=150,20
     Point windowLocation = editor.getSketchLocation();
     if (windowLocation != null) {
@@ -249,16 +245,16 @@ public class Runner implements MessageConsumer {
     params.toArray(outgoing);
     return outgoing;
   }
-  
-  
+
+
   protected VirtualMachine launch(String[] vmParams, String[] classParams) {
     //vm = launchTarget(sb.toString());
     LaunchingConnector connector = findLaunchingConnector();
     //Map arguments = connectorArguments(connector, mainArgs);
-    
+
     Map arguments = connector.defaultArguments();
     //System.out.println(arguments);
-    Connector.Argument mainArg = 
+    Connector.Argument mainArg =
       (Connector.Argument)arguments.get("main");
     if (mainArg == null) {
       throw new Error("Bad launching connector");
@@ -271,14 +267,14 @@ public class Runner implements MessageConsumer {
       }
     }
     mainArg.setValue(mainArgs);
-    
+
     //System.out.println("main args are: ");
     //System.out.println(mainArgs);
 
     /*
-    if (watchFields) { 
+    if (watchFields) {
       // We need a VM that supports watchpoints
-      Connector.Argument optionArg = 
+      Connector.Argument optionArg =
         (Connector.Argument)arguments.get("options");
       if (optionArg == null) {
         throw new Error("Bad launching connector");
@@ -290,20 +286,20 @@ public class Runner implements MessageConsumer {
     for (int i = 0; i < vmParams.length; i++) {
       optionArgs = addArgument(optionArgs, vmParams[i], ' ');
     }
-    
-    Connector.Argument optionArg = 
+
+    Connector.Argument optionArg =
       (Connector.Argument)arguments.get("options");
     optionArg.setValue(optionArgs);
-    
+
     //arguments.put("address", "localhost");
-    
-//    Connector.Argument addressArg = 
+
+//    Connector.Argument addressArg =
 //      (Connector.Argument)arguments.get("address");
 //    addressArg.setValue("localhost");
 
 //    System.out.println("option args are: ");
 //    System.out.println(arguments.get("options"));
-    
+
     //System.out.println("args are " + arguments);
     try {
       return connector.launch(arguments);
@@ -316,8 +312,8 @@ public class Runner implements MessageConsumer {
       exc.getMessage());
     }
   }
-  
-  
+
+
   private static boolean hasWhitespace(String string) {
     int length = string.length();
     for (int i = 0; i < length; i++) {
@@ -331,7 +327,7 @@ public class Runner implements MessageConsumer {
 
   private static String addArgument(String string, String argument, char sep) {
     if (hasWhitespace(argument) || argument.indexOf(',') != -1) {
-      // Quotes were stripped out for this argument, add 'em back. 
+      // Quotes were stripped out for this argument, add 'em back.
       StringBuffer buffer = new StringBuffer(string);
       buffer.append('"');
       for (int i = 0; i < argument.length(); i++) {
@@ -352,63 +348,73 @@ public class Runner implements MessageConsumer {
 
   /**
    * Generate the trace.
-   * Enable events, start thread to display events, 
+   * Enable events, start thread to display events,
    * start threads to forward remote error and output streams,
    * resume the remote VM, wait for the final event, and shutdown.
    */
   void generateTrace(PrintWriter writer) {
     vm.setDebugTraceMode(debugTraceMode);
-    
+
     EventThread eventThread = null;
     if (writer != null) {
-      eventThread = new EventThread(vm, excludes, writer); 
+      eventThread = new EventThread(vm, excludes, writer);
       eventThread.setEventRequests(watchFields);
       eventThread.start();
     }
+
+    //redirectOutput();
     
-    redirectOutput();
-    vm.resume();
-
-    // Shutdown begins when event thread terminates
-    try {
-      if (eventThread != null) eventThread.join();
-      errThread.join(); // Make sure output is forwarded 
-      outThread.join(); // before we exit
-    } catch (InterruptedException exc) {
-      // we don't interrupt
-    }
-    if (writer != null) writer.close();
-  }
-  
-
-  void redirectOutput() {
     Process process = vm.process();
 
 //  processInput = new SystemOutSiphon(process.getInputStream());
 //  processError = new MessageSiphon(process.getErrorStream(), this);
-    
+
     // Copy target's output and error to our output and error.
 //    errThread = new StreamRedirectThread("error reader",
 //        process.getErrorStream(),
 //        System.err);
     MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
     errThread = ms.thread;
-    
+
     outThread = new StreamRedirectThread("output reader",
         process.getInputStream(),
         System.out);
-    
+
     errThread.start();
     outThread.start();
+    
+    vm.resume();
+
+    // Shutdown begins when event thread terminates
+    try {
+      if (eventThread != null) eventThread.join();
+      // Bug #775 tracked to this next line in the code. 
+      // http://dev.processing.org/bugs/show_bug.cgi?id=775
+      errThread.join(); // Make sure output is forwarded
+      outThread.join(); // before we exit
+      
+      // at this point, disable the run button
+      // TODO this should be handled better, should it not?
+      editor.handleStopped();
+      
+    } catch (InterruptedException exc) {
+      // we don't interrupt
+    }
+    if (writer != null) writer.close();
   }
-  
+
+
+  void redirectOutput() {
+
+  }
+
 
   /**
    * Find a com.sun.jdi.CommandLineLaunch connector
    */
   LaunchingConnector findLaunchingConnector() {
     List connectors = Bootstrap.virtualMachineManager().allConnectors();
-    
+
     // code to list available connectors
 //    Iterator iter2 = connectors.iterator();
 //    while (iter2.hasNext()) {
@@ -426,8 +432,8 @@ public class Runner implements MessageConsumer {
     }
     throw new Error("No launching connector");
   }
-  
-  
+
+
   /*
   public void start(Point windowLocation) throws RunnerException {
     //System.out.println(" externalRuntime is " +  sketch.externalRuntime);
@@ -597,12 +603,12 @@ public class Runner implements MessageConsumer {
     String command[] = new String[params.size()];
     params.copyInto(command);
     //PApplet.println(command);
-    
+
     String[] vmParamList = (String[]) PApplet.subset(command, 1, command.length-7);
     String[] appletParamList = (String[]) PApplet.subset(command, command.length-6);
     //new Trace(new String[] { vmparamString, sketch.mainClassName });
     new Trace(vmParamList, appletParamList);
-    
+
 //    String[] guiParams = PApplet.concat(vmParamList, appletParamList);
 //    for (int i = 0; i < guiParams.length; i++) {
 //      if (guiParams[i].equals("-cp")) {
@@ -672,7 +678,7 @@ public class Runner implements MessageConsumer {
 
     int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     final KeyStroke closeWindowKeyStroke = KeyStroke.getKeyStroke('W', modifiers);
-    
+
     applet.addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent e) {
           if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
@@ -738,32 +744,32 @@ public class Runner implements MessageConsumer {
   public void stop() {
     //System.out.println("external stop not implemented");
     close();
-    
+
     //EventQueue eq = vm.eventQueue();
     //EventRequestManager rm = vm.eventRequestManager();
-    
+
     // TODO call sketch.stop() (or dispose()) here
-    
+
     // need to get the instance of the main class
-    
+
     // then need to call getMethod() on that (or its superclass PApplet?)
-    
+
 //    List list = vm.allClasses();
 //    System.out.println("all classes");
 //    System.out.println(list);
 
     //vm.getClass();
-    
+
     /*
     try {
       System.out.println("gonna suspend");
       vm.suspend();  // TODO need to call PApplet.stop()
       System.out.println("done suspending");
-      
+
     } catch (com.sun.jdi.VMDisconnectedException vmde) {
       // TODO do nothing.. is this ok?
       System.out.println("harmless disconnect " + vmde.getMessage());
-      
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -794,20 +800,20 @@ public class Runner implements MessageConsumer {
 
   public void close() {
     // TODO make sure stop() has already been called to exit the sketch
-    
+
     // TODO actually kill off the vm here
     if (vm != null) {
       try {
         vm.exit(0);
-        
+
       } catch (com.sun.jdi.VMDisconnectedException vmde) {
-        // if the vm has disconnected on its own, ignore message 
+        // if the vm has disconnected on its own, ignore message
         //System.out.println("harmless disconnect " + vmde.getMessage());
         // TODO shouldn't need to do this, need to do more cleanup
       }
       vm = null;
     }
-    
+
     //if (window != null) window.hide();
 //    if (window != null) {
 //      //System.err.println("disposing window");
@@ -830,6 +836,8 @@ public class Runner implements MessageConsumer {
 
 
   // made synchronized for rev 87
+  // attempted to remove synchronized for 0136 to fix bug #775 (no luck tho)
+  // http://dev.processing.org/bugs/show_bug.cgi?id=775
   synchronized public void message(String s) {
     //System.out.println("M" + s.length() + ":" + s.trim()); // + "MMM" + s.length());
 
