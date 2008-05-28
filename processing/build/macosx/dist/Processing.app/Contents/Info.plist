@@ -53,7 +53,7 @@
 		<key>MainClass</key>
 		<string>processing.app.Base</string>
 		<key>JVMVersion</key>
-		<string>1.4*</string>
+		<string>1.5+</string>
 		<key>ClassPath</key>
 <!--			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/log4j.jar:$JAVAROOT/jalopy.jar:$JAVAROOT/oro.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar:/System/Library/Java</string>-->
 			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/oro.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar:/System/Library/Java</string>
