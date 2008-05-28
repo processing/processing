@@ -4,7 +4,6 @@ X color selector not drawing properly (fix thanks to fli)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=656
 X color selector broken on vista (no colors at all)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=584
-X updated linux to java 1.5.0_15
 X added fonts, quadratic curves to svg
 _   need to remove the font stuff, also the changes for 'public'
 _   move my edits into a subclass
@@ -27,8 +26,21 @@ X   check against ods
 X   http://dev.processing.org/bugs/show_bug.cgi?id=757
 X space after OPENGL param breaks export
 X   http://dev.processing.org/bugs/show_bug.cgi?id=769
+X svg demos are broken 
+X   because of weird ENTITY setup
+X   because of weird (default?) filling problem
+X remove support for random .class files in code and library folders
+X   need to put everything in jar files
+X opengl currently broken in svn (probably the native libs not included?)
+X   mistakes wrt 'library.path' 
+X   also, don't add /library/ for each lib to the classpath
+_ update to jogl 1.1.1
 
-_ change export to point to java 1.5 installation
+X changing to java 1.5 
+X   change to 1.5+ (instead of 1.4*) in Info.plist for Processing.app
+X   updated linux to java 1.5.0_15
+_   change export.html to point to java 1.5 cab file
+
 _ make.sh creating work/lib dirs.. no longer necessary?
 _ don't copy hidden files (.svn especially) on export/save as
 
@@ -39,11 +51,13 @@ _   need to re-arrange the reference location (faq.html in root, etc)
 _ don't include faq in download
 _   split contributed/core libraries
 _ change software to point at correct reference locations
+_ noLoop() isn't the same as "finished", though it's sometimes used that way
+_   to finish, use exit() (though that will make the window close)
 
 new debugger/runner setup
 X wire in new debugging classes, get sys.out and sys.err working
 X quitting p5 doesn't shut down the runner
-_ make out/err streams go to the correct window
+X make out/err streams go to the correct window
 _ sketch stopping on its own won't shut down the run button
 _   check 'finished' via objectreference
 _ see if window re-positioning is broken
@@ -108,6 +122,10 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=
 ... 
 
 0137 or later
+
+_ sometimes not launching
+_   (in particular while cpu load is a little higher on g5?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=775
 
 _ implement windows registry lookups via reflection
 _   http://dev.processing.org/bugs/show_bug.cgi?id=723
