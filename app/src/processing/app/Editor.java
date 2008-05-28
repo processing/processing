@@ -1137,38 +1137,19 @@ public class Editor extends JFrame {
     }
 
     presenting = present;
-    if (presenting && Base.isMacOS()) {
-      // check to see if osx 10.2, if so, show a warning
-      String osver = System.getProperty("os.version").substring(0, 4);
-      if (osver.equals("10.2")) {
-        Base.showWarning("Time for an OS Upgrade",
-                         "The \"Present\" feature may not be available on\n" +
-                         "Mac OS X 10.2, because of what appears to be\n" +
-                         "a bug in the Java 1.4 implementation on 10.2.\n" +
-                         "In case it works on your machine, present mode\n" +
-                         "will start, but if you get a flickering white\n" +
-                         "window, using Command-Q to quit the sketch", null);
-      }
-    }
 
     try {
-      //System.out.println("ed compiling");
       if (!sketch.handleCompile()) {
-        System.out.println("compile failed");
+        System.out.println("Compile failed.");  // TODO remove this
         return;
       }
 
-      //System.out.println("ed running");
-      //SwingUtilities.invokeLater(new Runnable() {
       runtime = new Runner(Editor.this, presenting);
+      // Cannot use invokeLater() here, otherwise it gets 
+      // placed on the event thread--bad idea all around.
       Thread t = new Thread(new Runnable() {
         public void run() {
-//          try {
-            runtime.poo();
-            //runtime.go();
-//          } catch (RunnerException e) {
-//            error(e);
-//          }
+            runtime.launch();
         }
       });
       t.start();
@@ -1277,8 +1258,12 @@ public class Editor extends JFrame {
     } else {
       stopRunner();
     }
-    //System.out.println("clearing toolbar");
-    //toolbar.clear();
+    handleStopped();
+  }
+  
+  
+  /** Used by handleStop() above, and by Runner to clear the Run button */
+  public void handleStopped() {
     toolbar.deactivate(EditorToolbar.RUN);
     toolbar.deactivate(EditorToolbar.STOP);
   }
