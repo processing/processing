@@ -416,12 +416,14 @@ public class Compiler implements MessageConsumer {
   /**
    * Return the path for a folder, with appended paths to
    * any .jar or .zip files inside that folder.
+   * 
    * This will prepend a colon (or whatever the path separator is)
    * so that it can be directly appended to another path string.
    *
-   * This will always add the root folder as well, and doesn't bother
-   * checking to see if there are any .class files in the folder or
-   * within a subfolder.
+   * This function doesn't bother checking to see if there are any .class 
+   * files in the folder or within a subfolder.
+   * 
+   * As of 0136, this will no longer add the root folder as well.
    */
   static public String contentsToClassPath(File folder) {
     if (folder == null) return "";
@@ -430,11 +432,15 @@ public class Compiler implements MessageConsumer {
     String sep = System.getProperty("path.separator");
 
     try {
-      // add the folder itself in case any unzipped files
       String path = folder.getCanonicalPath();
-      abuffer.append(sep);
-      abuffer.append(path);
 
+//    disabled as of 0136
+      // add the folder itself in case any unzipped files
+//      abuffer.append(sep);
+//      abuffer.append(path);
+//
+      // When getting the name of this folder, make sure it has a slash
+      // after it, so that the names of sub-items can be added.
       if (!path.endsWith(File.separator)) {
         path += File.separator;
       }
