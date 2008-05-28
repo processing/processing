@@ -387,7 +387,7 @@ public class StdXMLParser {
       }
 
       XMLUtil.skipWhitespace(this.reader, null);
-//      String systemID = null;
+      String systemID = null;
       StringBuffer publicID = new StringBuffer();
       /*String rootElement =*/ XMLUtil.scanIdentifier(this.reader);
       //System.out.println("rootElement is " + rootElement);
@@ -395,11 +395,11 @@ public class StdXMLParser {
       char ch = this.reader.read();
 
       if (ch == 'P') {
-//         systemID = XMLUtil.scanPublicID(publicID, reader);
+         systemID = XMLUtil.scanPublicID(publicID, reader);
          XMLUtil.skipWhitespace(this.reader, null);
          ch = this.reader.read();
       } else if (ch == 'S') {
-//         systemID = XMLUtil.scanSystemID(reader);
+         systemID = XMLUtil.scanSystemID(reader);
          XMLUtil.skipWhitespace(this.reader, null);
          ch = this.reader.read();
       }
@@ -419,18 +419,21 @@ public class StdXMLParser {
                                     "`>'");
       }
 
-//      if (false) {  // TODO currently disabled
-//    	  if (systemID != null) {
-//    		  Reader r = this.reader.openStream(publicID.toString(), systemID);
-//    		  this.reader.startNewStream(r);
-//    		  this.reader.setSystemID(systemID);
-//    		  this.reader.setPublicID(publicID.toString());
-//    		  this.validator.parseDTD(publicID.toString(),
-//    				  			      this.reader,	
-//    				  			      this.entityResolver,
-//    				  			      true);
-//    	  }
-//      }
+      // TODO DTD checking is currently disabled, because it breaks 
+      //      applications that don't have access to a net connection 
+      //      (since it insists on going and checking out the DTD).
+      if (false) {
+    	  if (systemID != null) {
+    		  Reader r = this.reader.openStream(publicID.toString(), systemID);
+    		  this.reader.startNewStream(r);
+    		  this.reader.setSystemID(systemID);
+    		  this.reader.setPublicID(publicID.toString());
+    		  this.validator.parseDTD(publicID.toString(),
+    				  			      this.reader,	
+    				  			      this.entityResolver,
+    				  			      true);
+    	  }
+      }
    }
 
 
