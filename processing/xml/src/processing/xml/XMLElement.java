@@ -228,8 +228,7 @@ public class XMLElement implements Serializable {
      */
     public XMLElement(PApplet parent, String filename) {
         this();
-        Reader r = parent.createReader(filename);
-        parseFromReader(r);
+        parseFromReader(parent.createReader(filename));
     }
 
 
@@ -241,8 +240,7 @@ public class XMLElement implements Serializable {
 
     public XMLElement(String xml) {
         this();
-        StringReader r = new StringReader(xml);
-        parseFromReader(r);
+        parseFromReader(new StringReader(xml));
     }
 
 
