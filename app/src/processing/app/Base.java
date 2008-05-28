@@ -118,6 +118,8 @@ public class Base {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       }
     } catch (Exception e) {
+      System.err.println("Non-fatal error while setting the Look & Feel.");
+      System.err.println("The error message follows, however Processing should run fine.");
       e.printStackTrace();
     }
 
@@ -1989,6 +1991,10 @@ public class Base {
 
   // ...................................................................
 
+  
+  // "contents" refers to the Mac OS X style way of handling Processing
+  // applications. 
+
 
   static public String getContents(String what) {
     String basePath = System.getProperty("user.dir");
@@ -2003,7 +2009,18 @@ public class Base {
 
 
   static public String getLibContents(String what) {
-    return getContents("lib" + File.separator + what);
+    String libPath = getContents("lib/" + what);
+    File libDir = new File(libPath);
+    if (libDir.exists()) {
+      return libPath;
+    }
+//    was looking into making this run from Eclipse, but still too much mess
+//    libPath = getContents("build/shared/lib/" + what);
+//    libDir = new File(libPath);
+//    if (libDir.exists()) {
+//      return libPath;
+//    }
+    return null;
   }
 
 
