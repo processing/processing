@@ -1221,7 +1221,7 @@ in   */
       String msg = ite.getTargetException().getMessage();
       if ((msg != null) &&
           (msg.indexOf("no jogl in java.library.path") != -1)) {
-        throw new RuntimeException(openglError);
+        throw new RuntimeException(openglError + " (Native library missing.)");
 
       } else {
         ite.getTargetException().printStackTrace();
@@ -1236,7 +1236,7 @@ in   */
 
     } catch (ClassNotFoundException cnfe) {
       if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsGL") != -1) {
-        throw new RuntimeException(openglError);
+        throw new RuntimeException(openglError + " (Library code missing.)");
       } else {
         throw new RuntimeException("You need to use \"Import Library\" " +
                                    "to add " + irenderer + " to your sketch.");
@@ -4383,8 +4383,8 @@ in   */
   public InputStream openStream(String filename) {
     return createInput(filename);
   }
-  
-  
+
+
   /**
    * Simplified method to open a Java InputStream.
    * <P>
@@ -4690,25 +4690,25 @@ in   */
 
 
   /**
-   * Similar to createInput() (formerly openStream), this creates a Java 
-   * OutputStream for a given filename or path. The file will be created in 
+   * Similar to createInput() (formerly openStream), this creates a Java
+   * OutputStream for a given filename or path. The file will be created in
    * the sketch folder, or in the same folder as an exported application.
    * <p/>
    * If the path does not exist, intermediate folders will be created. If an
    * exception occurs, it will be printed to the console, and null will be
-   * returned.  
-   * <p/> 
-   * Future releases may also add support for handling HTTP POST via this 
-   * method (for better symmetry with createInput), however that's maybe a 
+   * returned.
+   * <p/>
+   * Future releases may also add support for handling HTTP POST via this
+   * method (for better symmetry with createInput), however that's maybe a
    * little too clever (and then we'd have to add the same features to the
    * other file functions like createWriter). Who you callin' bloated?
    */
   public OutputStream createOutput(String filename) {
     return createOutput(saveFile(filename));
   }
-  
-  
-  static public OutputStream createOutput(File file) { 
+
+
+  static public OutputStream createOutput(File file) {
     try {
       return new FileOutputStream(file);
 
@@ -4717,8 +4717,8 @@ in   */
     }
     return null;
   }
-  
-  
+
+
   /**
    * Save the contents of a stream to a file in the sketch folder.
    * This is basically saveBytes(blah, loadBytes()), but done
