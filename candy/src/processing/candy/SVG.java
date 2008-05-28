@@ -22,7 +22,6 @@ package processing.candy;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 import processing.core.*;
@@ -146,7 +145,7 @@ public class SVG {
 
     protected Hashtable table = new Hashtable();
     protected XMLElement svg;
-    public BaseObject root;
+    protected BaseObject root;
 
     protected boolean ignoreStyles = false;
 
@@ -943,8 +942,10 @@ public class SVG {
                 } else if (name.equals("ellipse")) {
                     objects[objectCount++] = new Ellipse(this, elem);
 
+/*
                 } else if (name.equals("font")) {
                 	objects[objectCount++] = new Font(this, elem); 
+*/
                 		
                 } else if (name.equals("rect")) {
                     objects[objectCount++] = new Rect(this, elem);
@@ -1663,8 +1664,9 @@ public class SVG {
             }
             parent.endShape(closed ? PConstants.CLOSE : PConstants.OPEN);
         }
-        
-        
+    }
+    
+    /*
         public void draw() {
         	drawShape();
         }
@@ -1709,12 +1711,13 @@ public class SVG {
             }
             parent.endShape(closed ? PConstants.CLOSE : PConstants.OPEN);
         }
-    }
+    */
     
     
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     
+    /*
     // http://www.w3.org/TR/SVG11/fonts.html
     public class Font extends BaseObject {
 //        String id;
@@ -1872,4 +1875,5 @@ public class SVG {
             horizAdvX = properties.getIntAttribute("horiz-adv-x", 0);
         }
     }
+    */
 }
