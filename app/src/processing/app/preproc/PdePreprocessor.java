@@ -34,9 +34,6 @@ import java.io.*;
 
 import antlr.*;
 import antlr.collections.*;
-//import antlr.collections.impl.*;
-
-import com.oroinc.text.regex.*;
 
 
 /**
@@ -247,31 +244,18 @@ public class PdePreprocessor {
 
     // if this guy has his own imports, need to remove them
     // just in case it's not an advanced mode sketch
-    PatternMatcher matcher = new Perl5Matcher();
-    PatternCompiler compiler = new Perl5Compiler();
-    String mess = "^\\s*(import\\s+)(\\S+)(\\s*;)";
+    String importRegexp = "[\\s^](import\\s+)(\\S+)(\\s*;)";
     java.util.Vector imports = new java.util.Vector();
 
-    Pattern pattern = null;
-    try {
-      pattern = compiler.compile(mess);
-    } catch (MalformedPatternException e) {
-      e.printStackTrace();
-      return null;
-    }
-
     do {
-      PatternMatcherInput input = new PatternMatcherInput(program);
-      if (!matcher.contains(input, pattern)) break;
+      String[] pieces = PApplet.match(program, importRegexp);
+      // Stop the loop if we've removed all the importy lines
+      if (pieces == null) break;
 
-      MatchResult result = matcher.getMatch();
-      String piece1 = result.group(1).toString();
-      String piece2 = result.group(2).toString();  // the package name
-      String piece3 = result.group(3).toString();
-      String piece = piece1 + piece2 + piece3;
-      int len = piece.length();
+      String piece = pieces[0] + pieces[1] + pieces[2];
+      int len = piece.length();  // how much to trim out
 
-      imports.add(piece2);
+      imports.add(pieces[1]);  // the package name
       int idx = program.indexOf(piece);
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);
