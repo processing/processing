@@ -761,7 +761,7 @@ public class Editor extends JFrame {
     item = new JMenuItem("Frequently Asked Questions");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://processing.org/");
+          Base.openURL("http://processing.org/faq.html");
         }
       });
     menu.add(item);
@@ -769,7 +769,7 @@ public class Editor extends JFrame {
     item = newJMenuItem("Visit Processing.org", '5');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://processing.org/faq.html");
+          Base.openURL("http://processing.org/");
         }
       });
     menu.add(item);
