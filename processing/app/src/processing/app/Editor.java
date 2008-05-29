@@ -1146,7 +1146,7 @@ public class Editor extends JFrame {
 
       runtime = new Runner(Editor.this, presenting);
       // Cannot use invokeLater() here, otherwise it gets
-      // placed on the event thread--bad idea all around.
+      // placed on the event thread and causes a hang--bad idea all around.
       Thread t = new Thread(new Runnable() {
         public void run() {
             runtime.launch();
@@ -1628,7 +1628,8 @@ public class Editor extends JFrame {
     if (!handleExportCheckModified()) return;
     toolbar.activate(EditorToolbar.EXPORT);
 
-    SwingUtilities.invokeLater(new Runnable() {
+    //SwingUtilities.invokeLater(new Runnable() {
+    Thread t = new Thread(new Runnable() {
         public void run() {
           try {
             boolean success = sketch.exportApplet();
@@ -1645,6 +1646,7 @@ public class Editor extends JFrame {
           //toolbar.clear();
           toolbar.deactivate(EditorToolbar.EXPORT);
         }});
+    t.start();
   }
 
 
@@ -1652,6 +1654,7 @@ public class Editor extends JFrame {
     if (!handleExportCheckModified()) return;
     toolbar.activate(EditorToolbar.EXPORT);
 
+    //SwingUtilities.invokeLater(new Runnable() {
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           message("Exporting application...");

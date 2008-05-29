@@ -6,6 +6,5 @@
 	<classpathentry kind="lib" path="build/shared/lib/antlr.jar"/>
 	<classpathentry kind="lib" path="build/shared/lib/registry.jar"/>
 	<classpathentry kind="lib" path="build/shared/lib/apple.jar"/>
-	<classpathentry kind="lib" path="build/shared/lib/oro.jar"/>
 	<classpathentry kind="output" path="app/bin"/>
 </classpath>

@@ -35,7 +35,7 @@ import java.util.zip.*;
 
 import javax.swing.*;
 
-import com.oroinc.text.regex.*;
+//import com.oroinc.text.regex.*;
 
 
 /**
@@ -1348,7 +1348,7 @@ public class Sketch {
   /**
    * Build all the code for this sketch.
    *
-   * In an advanced program, the returned classname could be different,
+   * In an advanced program, the returned class name could be different,
    * which is why the className is set based on the return value.
    * A compilation error will burp up a RunnerException.
    *
@@ -1532,28 +1532,15 @@ public class Sketch {
       // while this seems to store line and column internally,
       // there doesn't seem to be a method to grab it..
       // so instead it's done using a regexp
-      PatternMatcher matcher = new Perl5Matcher();
-      PatternCompiler compiler = new Perl5Compiler();
-      // line 3:1: unexpected char: 0xA0
-      String mess = "^line (\\d+):(\\d+):\\s";
 
-      Pattern pattern = null;
-      try {
-        pattern = compiler.compile(mess);
-      } catch (MalformedPatternException e) {
-        Base.showWarning("Internal Problem",
-                         "An internal error occurred while trying\n" +
-                         "to compile the sketch. Please report\n" +
-                         "this online at http://processing.org/bugs", e);
-      }
+      // TODO not tested since removing ORO matcher.. ^ could be a problem 
+      String mess = "^line (\\d+):(\\d+):\\s";  
 
-      PatternMatcherInput input =
-        new PatternMatcherInput(tsre.toString());
-      if (matcher.contains(input, pattern)) {
-        MatchResult result = matcher.getMatch();
+      String[] matches = PApplet.match(tsre.toString(), mess);
+      if (matches != null) {
+        int errorLine = Integer.parseInt(matches[0]) - 1;
+        int errorColumn = Integer.parseInt(matches[1]);
 
-        int errorLine = Integer.parseInt(result.group(1).toString()) - 1;
-        int errorColumn = Integer.parseInt(result.group(2).toString());
         int errorFile = 0;
         for (int i = 1; i < codeCount; i++) {
           if ((code[i].flavor == PDE) &&
@@ -1669,51 +1656,25 @@ public class Sketch {
 
 
   /**
-   * Initiate export to applet.
-   * <PRE>
-   * +-------------------------------------------------------+
-   * +                                                       +
-   * + Export to:  [ Applet (for the web)   + ]    [  OK  ]  +
-   * +                                                       +
-   * + > Advanced                                            +
-   * +                                                       +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Version: [ Java 1.1   + ]                           +
-   * +                                                       +
-   * +   Recommended version of Java when exporting applets. +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Version: [ Java 1.3   + ]                           +
-   * +                                                       +
-   * +   Java 1.3 is not recommended for applets,            +
-   * +   unless you are using features that require it.      +
-   * +   Using a version of Java other than 1.1 will require +
-   * +   your Windows users to install the Java Plug-In,     +
-   * +   and your Macintosh users to be running OS X.        +
-   * + - - - - - - - - - - - - - - - - - - - - - - - - - - - +
-   * +   Version: [ Java 1.4   + ]                           +
-   * +                                                       +
-   * +   identical message as 1.3 above...                   +
-   * +                                                       +
-   * +-------------------------------------------------------+
-   * </PRE>
+   * Handle export to applet.
    */
   public boolean exportApplet() throws Exception {
-    // make sure the user didn't hide the sketch folder
+    // Make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    // fix for issue posted on the board. make sure that the code
-    // is reloaded when exporting and an external editor is being used.
+    // Reload the code when an external editor is being used
     if (Preferences.getBoolean("editor.external")) {
       // nuke previous files and settings
       load();
     }
 
-    zipFileContents = new Hashtable();
-
-    // nuke the old applet folder because it can cause trouble
     File appletFolder = new File(folder, "applet");
+    // Nuke the old applet folder because it can cause trouble
     Base.removeDir(appletFolder);
+    // Create a fresh applet folder (needed before preproc is run below)
     appletFolder.mkdirs();
+    
+    zipFileContents = new Hashtable();
 
     // build the sketch
     String foundName = build(appletFolder.getPath(), name);
@@ -1721,7 +1682,7 @@ public class Sketch {
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
 
-    // if name != exportSketchName, then that's weirdness
+    // If name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
     if (!name.equals(foundName)) {
       Base.showWarning("Error during export",
@@ -1734,37 +1695,23 @@ public class Sketch {
     int high = PApplet.DEFAULT_HEIGHT;
     String renderer = "";
 
-    PatternMatcher matcher = new Perl5Matcher();
-    PatternCompiler compiler = new Perl5Compiler();
+    // This matches against any uses of the size() function, whether numbers 
+    // or variables or whatever. This way, no warning is shown if size() isn't 
+    // actually used in the applet, which is the case especially for beginners 
+    // that are cutting/pasting from the reference.
+    String sizeRegex =
+      "[\\s\\;^]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
 
-    // this matches against any uses of the size() function,
-    // whether they contain numbers of variables or whatever.
-    // this way, no warning is shown if size() isn't actually
-    // used in the applet, which is the case especially for
-    // beginners that are cutting/pasting from the reference.
-    // modified for 83 to match size(XXX, ddd so that it'll
-    // properly handle size(200, 200) and size(200, 200, P3D)
-    String sizing =
-      // match width, height and renderer string as well
-      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
-      // match just the width and height
-      //"[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+)(.*)\\)";
-    Pattern pattern = compiler.compile(sizing);
+    String scrubbed = scrubComments(code[0].program);
+    String[] matches = PApplet.match(scrubbed, sizeRegex);
 
-    // adds a space at the beginning, in case size() is the very
-    // first thing in the program (very common), since the regexp
-    // needs to check for things in front of it.
-    PatternMatcherInput input =
-      new PatternMatcherInput(" " + scrubComments(code[0].program));
-    if (matcher.contains(input, pattern)) {
-      MatchResult result = matcher.getMatch();
-
+    if (matches != null) {
       try {
-        wide = Integer.parseInt(result.group(1).toString());
-        high = Integer.parseInt(result.group(2).toString());
+        wide = Integer.parseInt(matches[0]);
+        high = Integer.parseInt(matches[1]);
 
         // Adding back the trim() for 0136 to handle Bug #769
-        renderer = result.group(3).toString().trim();
+        if (matches.length == 3) renderer = matches[2].trim();
 
       } catch (NumberFormatException e) {
         // found a reference to size, but it didn't
@@ -1778,10 +1725,10 @@ public class Sketch {
       }
     }  // else no size() command found
 
-    // originally tried to grab this with a regexp matcher,
-    // but it wouldn't span over multiple lines for the match.
-    // this could prolly be forced, but since that's the case
-    // better just to parse by hand.
+    // Grab the Javadoc-style description from the main code.
+    // Originally tried to grab this with a regexp matcher, but it wouldn't
+    // span over multiple lines for the match. This could prolly be forced,
+    // but since that's the case better just to parse by hand.
     StringBuffer dbuffer = new StringBuffer();
     String lines[] = PApplet.split(code[0].program, '\n');
     for (int i = 0; i < lines.length; i++) {
@@ -1810,71 +1757,73 @@ public class Sketch {
     }
     String description = dbuffer.toString();
 
+    // Add links to all the code
     StringBuffer sources = new StringBuffer();
     for (int i = 0; i < codeCount; i++) {
       sources.append("<a href=\"" + code[i].file.getName() + "\">" +
                      code[i].name + "</a> ");
     }
 
-    //
-
-    // determine whether to use one jar file or several
-    StringBuffer archives = new StringBuffer();
-    boolean separateJar =
-      Preferences.getBoolean("export.applet.separate_jar_files");
-    if (renderer.equals("OPENGL")) {
-      separateJar = true;
+    // Copy the source files to the target, since we like
+    // to encourage people to share their code
+    for (int i = 0; i < codeCount; i++) {
+      try {
+        File exportedSource = new File(appletFolder, code[i].file.getName());
+        Base.copyFile(code[i].file, exportedSource);
+      } catch (IOException e) {
+        e.printStackTrace();  // ho hum, just move on...
+      }
     }
 
-    // copy the loading gif to the applet
+    // Use separate jarfiles whenever a library or code folder is in use.
+    boolean separateJar =
+      Preferences.getBoolean("export.applet.separate_jar_files") ||
+      codeFolder.exists() ||
+      (libraryPath.length() != 0);
+
+    // Copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
+    // Check if the user already has their own loader image
     File loadingImage = new File(folder, LOADING_IMAGE);
     if (!loadingImage.exists()) {
       loadingImage = new File("lib", LOADING_IMAGE);
     }
     Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
 
-    // copy the source files to the target, since we like
-    // to encourage people to share their code
-    for (int i = 0; i < codeCount; i++) {
-      try {
-        Base.copyFile(code[i].file,
-                      new File(appletFolder, code[i].file.getName()));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-
-    // create new .jar file
+    // Create new .jar file
     FileOutputStream zipOutputFile =
       new FileOutputStream(new File(appletFolder, name + ".jar"));
     ZipOutputStream zos = new ZipOutputStream(zipOutputFile);
     ZipEntry entry;
+
+    StringBuffer archives = new StringBuffer();
     archives.append(name + ".jar");
 
-    // add the manifest file
+    // Add the manifest file
     addManifest(zos);
 
     // add the contents of the code folder to the jar
     // unpacks all jar files, unless multi jar files selected in prefs
     if (codeFolder.exists()) {
       String includes = Compiler.contentsToClassPath(codeFolder);
-      if (separateJar) {
-        String codeList[] = PApplet.split(includes, File.separatorChar);
-        String cp = "";
-        for (int i = 0; i < codeList.length; i++) {
-          if (codeList[i].toLowerCase().endsWith(".jar") ||
-              codeList[i].toLowerCase().endsWith(".zip")) {
+      System.out.println(includes);
+      String codeList[] = PApplet.split(includes, File.separatorChar);
+      String cp = "";
+      for (int i = 0; i < codeList.length; i++) {
+        if (codeList[i].toLowerCase().endsWith(".jar") ||
+            codeList[i].toLowerCase().endsWith(".zip")) {
+          if (separateJar) {
             File exportFile = new File(codeFolder, codeList[i]);
             String exportFilename = exportFile.getName();
             Base.copyFile(exportFile, new File(appletFolder, exportFilename));
           } else {
-            cp += codeList[i] + File.separatorChar;
-            packClassPathIntoZipFile(cp, zos);
+            cp += codeList[i] + File.pathSeparatorChar;
+            //packClassPathIntoZipFile(cp, zos);
           }
         }
-      } else {
-        packClassPathIntoZipFile(includes, zos);
+      }
+      if (!separateJar) {
+        packClassPathIntoZipFile(cp, zos);
       }
     }
 
@@ -1943,7 +1892,6 @@ public class Sketch {
     if (dataFolder.exists()) {
       String dataFiles[] = Base.listFiles(dataFolder, false);
       int offset = folder.getAbsolutePath().length() + 1;
-      //int offset = dataFolder.getAbsolutePath().length() + 1;
       for (int i = 0; i < dataFiles.length; i++) {
         if (PApplet.platform == PApplet.WINDOWS) {
           dataFiles[i] = dataFiles[i].replace('\\', '/');
@@ -2607,6 +2555,9 @@ public class Sketch {
                                        ZipOutputStream zos)
     throws IOException {
     String pieces[] = PApplet.split(path, File.pathSeparatorChar);
+    new Exception().printStackTrace();
+    PApplet.println(pieces);
+    PApplet.println();
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;
