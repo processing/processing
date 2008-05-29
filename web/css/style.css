@@ -380,11 +380,11 @@ div.ref-col { width: 30%;
 #Learning .threecol { float: left; width: 200px; margin-right: 30px; margin-top: 0px;}
 #Learning .threecol p { margin-bottom: 2em; }
 
-#Learning .leftcol { margin-right: 150px; 
+#Learning .leftcol { float: left; margin-right: 150px; 
     top: 55px; 
     width: 400px; 
 }
-#Learning .rightcol { float: right; 
+#Learning .rightcol { float: left; 
     top: 55px; 
     left: 480px; 
     width: 180px;
