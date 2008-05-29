@@ -381,8 +381,9 @@ div.ref-col { width: 30%;
 #Learning .threecol p { margin-bottom: 2em; }
 
 #Learning .leftcol { margin-right: 150px; 
-    top: 55px; 
-    width: 400px; 
+    /* top: 55px; */
+    top: 10px; 
+    width: 300px; 
 }
 #Learning .rightcol { float: right; margin-right: 30; margin-top: 0; 
     top: 55px; 
