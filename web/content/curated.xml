@@ -2,6 +2,36 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="Nervous System, Play + Learn" by="Jessica Rosenkrantz and Jesse Louis-Rosenberg" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/nervous.jpg</image>
+          <description>
+          Shows the global exchange of information by visualizing volumes of data flowing
+         in and out of New York City.
+          </description>
+          <location>http://www.n-e-r-v-o-u-s.com/play_and_learn.php</location>
+          <link href="http://www.n-e-r-v-o-u-s.com/">Nervous System</link>
+        </software>
+
+<software name="NYTE" by="SENSEable City Lab" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/mit.jpg</image>
+          <description>
+          Shows the global exchange of information by visualizing volumes of data flowing 
+         in and out of New York City.
+          </description>
+          <location>http://senseable.mit.edu/nyte/</location>
+          <link href="http://senseable.mit.edu/">SENSEable City Lab</link>
+	  <link href="http://www.aaronkoblin.com/">AaronKoblin.com</link>
+        </software>
+
+<software name="Cascade on Wheels" by="Steph Thirion et al." scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/cascade.jpg</image>
+          <description>
+          Two visualizations of traffic patterns in Madrid.
+          </description>
+          <location>http://www.trsp.net/cow/</location>
+          <link href="http://www.trsp.net/">Transparent</link>
+        </software>
+
 <software name="MYPOCKET" by="Burak Arikan" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/mypocket.jpg</image>
           <description>

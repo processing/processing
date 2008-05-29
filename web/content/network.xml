@@ -1,5 +1,117 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="Colour Economy Vimeo Channel" by="blprnt">
+        <location>http://www.vimeo.com/coloureconomy</location>
+        <date>28 May &apos;08</date>
+    </software>
+    <software name="Seed Wind Blossom" by="Rob Weinberg">
+        <location>http://www.spindrift.org/processing/seed_wind_blossom/applet/</location>
+        <date>27 May &apos;08</date>
+    </software>
+    <software name="Ghost Nautilus" by="Rob Weinberg">
+        <location>http://www.spindrift.org/processing/ghost_nautilus2/applet/</location>
+        <date>27 May &apos;08</date>
+    </software>
+    <software name="Pie" by="Alan Woo">
+        <location>http://alanwoo.ca/project/pie</location>
+        <date>27 May &apos;08</date>
+    </software>
+    <software name="Animated Voronoi 2" by="Eduardo Omine">
+        <location>http://blog.omine.net/2008/05/25/animated-voronoi-2/</location>
+        <date>26 May &apos;08</date>
+    </software>
+    <software name="abstraction flap" by="rce12">
+        <location>http://openprocessing.org/visuals/?visualID=254</location>
+        <date>25 May &apos;08</date>
+    </software>
+    <software name="3D math function plotter" by="dRbiG">
+        <location>http://www.drbig.one.pl/my/show/1211454218</location>
+        <date>23 May &apos;08</date>
+    </software>
+    <software name="towards the within" by="Frederik Vanhoutte">
+        <location>http://www.wblut.com/</location>
+        <date>21 May &apos;08</date>
+    </software>
+    <software name="splat gravity" by="rce12">
+        <location>http://openprocessing.org/visuals/?visualID=252</location>
+        <date>20 May &apos;08</date>
+    </software>
+    <software name="code_swarm" by="Michael Ogawa">
+        <location>http://vis.cs.ucdavis.edu/~ogawa/codeswarm/</location>
+        <date>18 May &apos;08</date>
+    </software>
+    <software name="Voronoi Diagram + Tutorial" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/tutorial-7-voronoi-diagrams/</location>
+        <date>15 May &apos;08</date>
+    </software>
+    <software name="News Spectrum" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/NewsSpectrum/NewsSpectrum.html</location>
+        <date>13 May &apos;08</date>
+    </software>
+    <software name="Barrel &amp; Pincushion" by="Matt Kozak">
+        <location>http://www.screamyguy.net/pincushion/index.htm</location>
+        <date>11 May &apos;08</date>
+    </software>
+    <software name="Demoscene Inspired Effects" by="Luis Gonzalez">
+        <location>http://luis.net/projects/processing/final</location>
+        <date>10 May &apos;08</date>
+    </software>
+    <software name="Processing ported to JavaScript by John Resig" by="Chris Yorel">
+        <location>http://ejohn.org/blog/processingjs</location>
+        <date>09 May &apos;08</date>
+    </software>
+    <software name="&quot;moving hypercube&quot; " by="art-works by Frank Richter">
+        <location>http://www.4d-screen.de/art-gal/video01.htm</location>
+        <date>08 May &apos;08</date>
+    </software>
+    <software name="Literature Doner Kebab" by="Patrick Schwab">
+        <location>http://literaturdoener.de/en</location>
+        <date>08 May &apos;08</date>
+    </software>
+    <software name="Bubble bath" by="Alexander Sorokin">
+        <location>http://gromoblog.blogspot.com/2008/05/bubble-bath-with-processing.html</location>
+        <date>07 May &apos;08</date>
+    </software>
+    <software name="Artefacts / Laval Virtual 2008" by="P.Mugnier">
+        <location>http://itr.ensad.fr/index.php?page=artefacts_laval_en</location>
+        <date>07 May &apos;08</date>
+    </software>
+    <software name="IP mapping globe" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/tutorial-5-the-ip-mapping-globe/</location>
+        <date>29 Apr &apos;08</date>
+    </software>
+    <software name="Políssonos" by="Rui Penha">
+        <location>http://www.ruipenha.pt/en/Software.html</location>
+        <date>29 Apr &apos;08</date>
+    </software>
+    <software name="Lettertree + Tutorial" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/tutorial-4-a-tree-made-of-letters/</location>
+        <date>25 Apr &apos;08</date>
+    </software>
+    <software name="Zebra Stripes" by="David Brunton">
+        <location>http://www.davidbrunton.com/2008/04/zebra-stripes-in-processing-0135.html</location>
+        <date>24 Apr &apos;08</date>
+    </software>
+    <software name="Nokia Trends MobJam @ Sao Paulo - Brazil" by="Thiago Avancini">
+        <location>http://www.thiagoavancini.com/</location>
+        <date>23 Apr &apos;08</date>
+    </software>
+    <software name="Photo, Processing and so on" by="Charley Shin">
+        <location>http://www.cyworld.com/char76</location>
+        <date>23 Apr &apos;08</date>
+    </software>
+    <software name="Image Lerping Example" by="Mikkel Koser">
+        <location>http://blog.okdeluxe.co.uk/?p=53</location>
+        <date>22 Apr &apos;08</date>
+    </software>
+    <software name="Icosahedron-based Sphere + Tutorial" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/tutorial-3-the-icosahedron-sphere/</location>
+        <date>21 Apr &apos;08</date>
+    </software>
+    <software name="Electronsphere + Tutorial" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/tutorial-1-more-than-one-way-to-skin-a-sphere/</location>
+        <date>21 Apr &apos;08</date>
+    </software>
     <software name="No ball game" by="TM">
         <location>http://sosobering.free.fr/art/?p=135</location>
         <date>16 Apr &apos;08</date>

@@ -1,6 +1,102 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
+        <date>Monday, June 9th 2008</date>
+        <institution>Flashbelt Conference - Minneapolis, MN</institution>
+        <title>Learning Processing</title>
+        <description>This two-hour presentation will cover both basic and intermediate Processing topics. Hour One will focus on getting started with Processing and programming basic interactivity. Hour Two will introduce options for integrating Processing with more traditional applications. Raster, vector, text, Quicktime and 3-D output will be covered.&lt;br /&gt;&lt;br /&gt;&quot;The annual Flashbelt conference brings a few hundred designers and developers together in Minneapolis to get their geek on.  Attendees mix, mingle and learn from a cadre of rock-star designers, whiz-kid developers, and best-selling authors.  These industry leaders give presentations and lead workshops on an array of timely technology topics.  They teach tangible skills, inspire by example and answer lots of questions from attendees.  As you might have guessed most of these topics revolve around Adobe Flash and related technologies.&quot;</description>
+        <contact>
+            <name>Tim Armato</name>
+            <email>tim at armatodesign dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Flashbelt</title>
+                <url>http://flashbelt.com/</url>
+            </link>
+            <link>
+                <title>p{three-sixty}5</title>
+                <url>http://p365.armatodesign.com/</url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>23,24 Mayo</date>
+        <institution>niu , espacio artístico contemporáneo. (Barcelona. Spain)</institution>
+        <title>PROCESSING:  Introducción</title>
+        <description>Primeros pasos en Processing. El lenguaje de los esbozos electrónicos.&lt;br /&gt;&lt;br /&gt;Este curso de iniciación servirá para tener el primer contacto con la herramienta, para conocer trabajos actuales en los que se esté utilizando y empezar a escribir las primeras lineas de código.</description>
+        <contact>
+            <name>Alba G. Corral</name>
+            <email>alba at albagcorral dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>niu</title>
+                <url>http://www.niubcn.com/</url>
+            </link>
+            <link>
+                <title>albagcorral.com</title>
+                <url>http://www.albagcorral.com/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>Spring 08</date>
+        <institution>UDK Berlin</institution>
+        <title>Digital Fabrication</title>
+        <description>Digital technologies like rapid prototyping, laser cutting and CNC milling help to change industrial production processes from mass production to mass customization and manufacturing-on-demand. Using this technolgies code-based design strategies can now be extended to physical form and allow to leave the limitations of virtual space.&lt;br /&gt;&lt;br /&gt;The course will teach the technical basics for the computational production of physical Objects. It will examine new strategies of creating unique design in form and function using parameterized processes and modularized structures.&lt;br /&gt;</description>
+        <contact>
+            <name>Christian Riekoff</name>
+            <email>info at texone dot org</email>
+        </contact>
+        <links>
+            <link>
+                <title>gestalten mit code</title>
+                <url>http://entropie.digital.udk-berlin.de/wiki/GestaltenMitCode</url>
+            </link>
+            <link>
+                <title>digital fabrication</title>
+                <url>http://entropie.digital.udk-berlin.de/wiki/Digital_fabrication</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
         <date>Fecha inicio: 30 de Abril 2008</date>
         <institution>IUNA Multimedia - Argentina -</institution>
         <title>Processing: programación para el arte interactivo. Net.Art e instalaciones interactivas con nuevas tecnologías.</title>
@@ -23,12 +119,12 @@
                 <url>http://www.biopus.com.ar/emiliano/tutorial_programacion/index.html</url>
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
         </links>
     </course>
