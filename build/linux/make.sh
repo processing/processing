@@ -7,7 +7,7 @@ if test -d work
 then
   BUILD_PREPROC=false
 else
-  echo Setting up directories to build for linux...
+  echo Setting up directories to build for Linux...
   BUILD_PREPROC=true
   cp -r ../shared work
   rm -rf work/.svn
@@ -38,7 +38,8 @@ else
   rm reference.zip
   cd ..
 
-  #tar --extract --file=jre.tgz --ungzip --directory=work
+  echo Extracting JRE...
+  tar --extract --file=jre.tgz --ungzip --directory=work
   #chmod +x jre.sfx
   #./jre.sfx
   #mv jre1.5.0_15 work/java
