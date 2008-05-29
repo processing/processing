@@ -388,7 +388,8 @@ div.ref-col { width: 30%;
     top: 55px; 
     left: 480px; 
     width: 180px;
-    bottom: 20px; 
+    bottom: 20px;
+    margin-bottom: 20px; 
 }
 
 #Learning td { vertical-align: top; }
