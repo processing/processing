@@ -380,11 +380,14 @@ div.ref-col { width: 30%;
 #Learning .threecol { float: left; width: 200px; margin-right: 30px; margin-top: 0px;}
 #Learning .threecol p { margin-bottom: 2em; }
 
-#Learning .leftcol { margin-right: 250px; }
+#Learning .leftcol { margin-right: 180px; position: absolute; 
+    top: 55px; 
+    width: 400px; 
+}
 #Learning .rightcol { position: absolute; 
     top: 55px; 
     right: 10px; 
-    width: 175px; 
+    width: 170px; 
 }
 
 #Learning td { vertical-align: top; }
