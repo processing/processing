@@ -9,9 +9,15 @@ X applet export with multiple jars having trouble (related?)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=701
 X applet export fails with opengl/code folder
 X   http://dev.processing.org/bugs/show_bug.cgi?id=714
+X synchronized (something) { } is horking up the preproc
+X   http://dev.processing.org/bugs/show_bug.cgi?id=136
+o inside the preproc 
+o   change the arrays of default imports (now using 1.5+, so no 1.1,1.3,1.4)
+X   don't bother, they're cumulative
+X improvements to the linux startup script
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1202689238
 
-_ synchronized (something) { } is horking up the preproc
-_   http://dev.processing.org/bugs/show_bug.cgi?id=136
+_ two-tiered dialogs for everything - use osx style throughout
 
 _ disallow .java tabs with same name as the sketch
 _   a .java tab with same name as the sketch is allowed (oog!)
@@ -24,9 +30,9 @@ _     rename main tab (sketch) to "something" (without ".java")
 _     the contents in the files are not the same, but the main-tab is 
 _     showing the contents of the .java tab, so if you press save 
 _     you will overwrite your original code from the main-tab. 
-
-_ inside the preproc 
-_   change the arrays of default imports (now using 1.5+, so no 1.1,1.3,1.4)
+_ after fixing name of sketch, ensure sketch of that name does not exist
+_ put the "had to rename sketch" message in the msg bar
+_   it's ugly/annoying/intrusive
 
 _ prompt user before nuking applet or application folders
 _   along with a "don't ask me later"
@@ -37,15 +43,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=61
 _ update preferences.txt whenever opening/closing
 _   otherwise recovery from restart can be annoying
 
-_ improvements to linux script for debian
-_   http://dev.processing.org/bugs/show_bug.cgi?id=596
-_   more info on the script
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1202689238
-
 _ make.sh creating work/lib dirs.. no longer necessary?
 _ don't copy hidden files (.svn especially) on export/save as
 
 _ make .java files and friends go to correct locations on export (app)
+
+_ on first OutOfMemoryError, offer to send to the docs
+_   again, a warning checkbox
 
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
@@ -186,12 +190,6 @@ _ "Fatal exception occurred. Program will exit." on startup
 _   seems to be font related, deleting prefs will fix it
 _   http://dev.processing.org/bugs/show_bug.cgi?id=688
 
-_ "missing a /* from the end of a comment" message
-_   enter a bug for this, it's bound to be found
-_   "multipart/*" produces the error
-_   even though things are inside a quoted txt block
-
-_ after fixing name of sketch, ensure sketch of that name does not exist
 _ quicktime problems (when no QTJAVA is set?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=669
 
@@ -210,13 +208,8 @@ _ discuss i18n issues and proper system
 _ look through 404 issues on the site
 
 _ mark examples as untitled (rather than read-only)
-_ put the "had to rename sketch" message in the msg bar
-_   it's ugly/annoying/intrusive
 _ inside sketch.java, don't hardwire the file extension types
 _   arduino uses .c, .cpp, .h instead of .java
-
-_ if someone has monaco disabled in font book, the app won't start
-_   http://dev.processing.org/bugs/show_bug.cgi?id=562
 
 _ can't get documents/prefs folder on vista
 _   http://dev.processing.org/bugs/show_bug.cgi?id=585
@@ -721,17 +714,21 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=507
 _ syntax highlighting error with // and /*
 _   http://dev.processing.org/bugs/show_bug.cgi?id=609
 
+_ "missing a /* from the end of a comment" message
+_   enter a bug for this, it's bound to be found
+_   "multipart/*" produces the error
+_   even though things are inside a quoted txt block
+
 hacked for fix, needs real fix
 _ NullPointerException on unterminated comment at end of code
 _   and OutOfMemoryError and weird lockup
 _   http://dev.processing.org/bugs/show_bug.cgi?id=16
 _ also OutOfMemoryError if a quote is not terminated
-_   
+_   http://dev.processing.org/bugs/show_bug.cgi?id=763
 _ preprocessor error if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError wants to happen, 
 _   but right now there's a hack to add a CR in PdePreprocessor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=5
-
 
 PDE / Editor
 
@@ -1299,6 +1296,8 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 DIST / Mac OS X
 
+_ if someone has monaco disabled in font book, the app won't start
+_   http://dev.processing.org/bugs/show_bug.cgi?id=562
 _ for the .app file, $APP_PACKAGE will give the path
 _   $JAVAROOT will give Contents/Resources/Java location
 _ we're breaking some mac human interface guidelines
@@ -1322,6 +1321,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=539
 
 DIST / Linux
 
+_ improvements to linux script for debian
+_   http://dev.processing.org/bugs/show_bug.cgi?id=596
+_   these bits need to be checked to ensure that they work on other distros
 _ not being able to make a link to the processing app
 _   argh.. more path and shell issues..
 _ computationally intensive stuff runs really slow inside p5
