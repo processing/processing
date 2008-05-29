@@ -45,8 +45,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 136;
-  static final String VERSION_NAME = "0136 Beta";
+  static final int VERSION = 137;
+  static final String VERSION_NAME = "0137 Beta";
 
   // set to true after the first time it's built.
   // so that the errors while building don't show up again.
