@@ -1,34 +1,11 @@
-0136 core
-X add static version of saveStream() (uses a File and InputStream object)
-X A "noLoop()" sketch may be unresponsive to exit request
-X   http://dev.processing.org/bugs/show_bug.cgi?id=694
-X Fixed bug with subset() when no length parameter was specified
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1196366408
-X   http://dev.processing.org/bugs/show_bug.cgi?id=707
-X figure out why tiff images won't open with after effects
-X   http://dev.processing.org/bugs/show_bug.cgi?id=153
-X   open with photoshop, resave, see which tags change
-X     specifically, which tags that were in the original image file
-X     perhaps something gets corrected? 
-X   had a fix, but decided not to re-implement the loadTIFF stuff too
-X fix for bezierTangent() problem from dave bollinger
-X   http://dev.processing.org/bugs/show_bug.cgi?id=710
-X implement curveTangent (thanks to davbol)
-X   http://dev.processing.org/bugs/show_bug.cgi?id=715
-X fix problem with get() when imageMode(CORNERS) was in use
-X fix bug with splice() and arrays
-X   http://dev.processing.org/bugs/show_bug.cgi?id=734
-X 'screen' is now static
-X   undo this--may need to be better about specifying screen and all
-X PImage mask doesn't work after first call
-X   http://dev.processing.org/bugs/show_bug.cgi?id=744
-X load and save tga results in upside down tga
-X   http://dev.processing.org/bugs/show_bug.cgi?id=742
-X fix problem with g.smooth always returning false in JAVA2D
-X   http://dev.processing.org/bugs/show_bug.cgi?id=762
-X add XMLElement (not filename) constructor to SVG lib
-X   http://dev.processing.org/bugs/show_bug.cgi?id=773
+0137 core
 
+
+done in 0136
+X change openStream() to createInput()
+X   add createOutput() 
+_   add raw/gz versions of the same (err.. no raw) (eh?)
+X   deprecate openStream() naming
 
 _ Add support style attribute for path tag to Candy SVG (ricard)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=771
@@ -56,11 +33,6 @@ _   lots of zero length files
 
 _ work through loadPixels in PImage, how consistent do we need to be?
 _   with get() and set() methods, this gets really tricky (too slow)
-
-X change openStream() to createInput()
-X   add createOutput() 
-_   add raw/gz versions of the same (err.. no raw) (eh?)
-X   deprecate openStream() naming
 
 _ Duplicate 3d faces in beginRaw() export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=737
