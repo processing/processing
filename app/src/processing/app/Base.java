@@ -1783,15 +1783,6 @@ public class Base {
   }
 
 
-  /**
-   * Opens the local copy of the FAQ that's included
-   * with the Processing download.
-   */
-  static public void showFAQ() {
-    showReference("faq.html");
-  }
-
-
   // .................................................................
 
 
@@ -1991,9 +1982,9 @@ public class Base {
 
   // ...................................................................
 
-  
+
   // "contents" refers to the Mac OS X style way of handling Processing
-  // applications. 
+  // applications.
 
 
   static public String getContents(String what) {
