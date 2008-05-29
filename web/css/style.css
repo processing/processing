@@ -382,11 +382,11 @@ div.ref-col { width: 30%;
 
 #Learning .leftcol { margin-right: 180px; position: absolute; 
     top: 55px; 
-    width: 300px; 
+    width: 450px; 
 }
 #Learning .rightcol { position: absolute; 
     top: 55px; 
-    right: 10px; 
+    left: 500px; 
     width: 170px; 
 }
 
