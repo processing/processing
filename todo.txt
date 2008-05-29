@@ -1,5 +1,4 @@
 0137 pde
-
 X move to multiple jars whenever 
 X   1) a lib is in use, 2) code folder, 3) multiple files
 X remove oro.jar dependency (not needed with PApplet.match)
@@ -11,11 +10,29 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=701
 X applet export fails with opengl/code folder
 X   http://dev.processing.org/bugs/show_bug.cgi?id=714
 
+_ synchronized (something) { } is horking up the preproc
+_   http://dev.processing.org/bugs/show_bug.cgi?id=136
+
+_ disallow .java tabs with same name as the sketch
+_   a .java tab with same name as the sketch is allowed (oog!)
+_   particularly look at "save as" scenario
+_   http://dev.processing.org/bugs/show_bug.cgi?id=543
+_   bug report:
+_     create a new sketch, write something in it
+_     create a new tab, name it "something.java", write something into it
+_     rename main tab (sketch) to "something" (without ".java")
+_     the contents in the files are not the same, but the main-tab is 
+_     showing the contents of the .java tab, so if you press save 
+_     you will overwrite your original code from the main-tab. 
+
 _ inside the preproc 
 _   change the arrays of default imports (now using 1.5+, so no 1.1,1.3,1.4)
 
 _ prompt user before nuking applet or application folders
 _   along with a "don't ask me later"
+_ include a note that 'applet' folder will get emptied/rewritten
+_   or rename the old applet folder to something else? (too messy)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=61
 
 _ update preferences.txt whenever opening/closing
 _   otherwise recovery from restart can be annoying
@@ -28,7 +45,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=
 _ make.sh creating work/lib dirs.. no longer necessary?
 _ don't copy hidden files (.svn especially) on export/save as
 
-
 _ make .java files and friends go to correct locations on export (app)
 
 _ native lib stuff, use native.txt in lib folder, then:
@@ -37,9 +53,6 @@ _   String osArch = System.getProperty("os.arch");
 
 _ update to jogl 1.1.1
 _   do this with enhanced library/platform support
-
-_ synchronized (something) { } is horking up the preproc
-_   http://dev.processing.org/bugs/show_bug.cgi?id=136
 
 _ need to make up a priorities/todo page for processing
 _   that includes projects for people to help out on
@@ -212,17 +225,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 
 _ ocd is broken in 0125 - do a better error message for this
 
-_ disallow .java tabs with same name as the sketch
-_   a .java tab with same name as the sketch is allowed (oog!)
-_   particularly look at "save as" scenario
-_   http://dev.processing.org/bugs/show_bug.cgi?id=543
-_   bug report:
-_     create a new sketch, write something in it
-_     create a new tab, name it "something.java", write something into it
-_     rename main tab (sketch) to "something" (without ".java")
-_     the contents in the files are not the same, but the main-tab is 
-_     showing the contents of the .java tab, so if you press save 
-_     you will overwrite your original code from the main-tab. 
 _ add present mode bgcolor to prefs
 _ add basic guidelines for posting to the board
 _   0. be polite. going on about how much something "sucks" or is "stupid" will make you look like an eight-year-old.
@@ -851,9 +853,6 @@ _ show error when no main() is included but class extends PApplet
 _   error can happen or be checked 
 _ errors during export don't show up properly (no red status bar)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=194
-_ include a note that 'applet' folder will get emptied/rewritten
-_   or rename the old applet folder to something else? (too messy)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=61
 _ need to decide how to handle "stop" button in present mode
 _   http://dev.processing.org/bugs/show_bug.cgi?id=63
 _   when running externally, people need to write their own stop function
