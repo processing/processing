@@ -34,15 +34,17 @@ X   need to put everything in jar files
 X opengl currently broken in svn (probably the native libs not included?)
 X   mistakes wrt 'library.path' 
 X   also, don't add /library/ for each lib to the classpath
+X remove unused libraries from default run path
+X   note that this will hose svg b/c xml not available
+X   so when this change is made, the lib depends needs to be implemented too
 _ update to jogl 1.1.1
 
 X changing to java 1.5 
+o   switch to java 1.4.2_16 on linux and windows (now that osx is there?)
 X   change to 1.5+ (instead of 1.4*) in Info.plist for Processing.app
 X   updated linux to java 1.5.0_15
-_   change export.html to point to java 1.5 cab file
-
-_ make.sh creating work/lib dirs.. no longer necessary?
-_ don't copy hidden files (.svn especially) on export/save as
+X   updated windows java to 1.5.0_15
+X   change export.html to point to java 1.5 cab file
 
 reference
 X random() is up to and not including, also add randomSeed link
@@ -53,21 +55,58 @@ _   split contributed/core libraries
 _ change software to point at correct reference locations
 _ noLoop() isn't the same as "finished", though it's sometimes used that way
 _   to finish, use exit() (though that will make the window close)
+_   add this to ref once halt() is finished
+_ errors in pdf/index.html examples
+_   probably remove these, move the useful ones to the examples folder
+_   that way people will read the reference
+_ i can't fix these:
+An unexpected error has been detected by HotSpot Virtual Machine:
+# EXCEPTION_ACCESS_VIOLATION
+all i can do is find things that might trigger them, but it's more likely
+than not to be a java problem, and not something that can be fixed
+_ notes about getting best results from text in each renderer
+_   http://dev.processing.org/bugs/show_bug.cgi?id=466
+_ add to mac reference for present mode
+_   can make full screen work via Info.plist key
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
+_ add to troubleshooting
+_   problem with big floats:
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
+_   problem with small floats:
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
+_ fix syntax highlighting of focusGained and others
+_   http://dev.processing.org/bugs/show_bug.cgi?id=659
+_ verify (and document) public access members of PApplet
+_   http://dev.processing.org/bugs/show_bug.cgi?id=660
+_ some docs missing (therefore not syntax highlighting)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=661
+_ constants that are not highlighting (WINDOWS the only one?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=662
 
 new debugger/runner setup
 X wire in new debugging classes, get sys.out and sys.err working
 X quitting p5 doesn't shut down the runner
 X make out/err streams go to the correct window
-_ sketch stopping on its own won't shut down the run button
-_   check 'finished' via objectreference
-_ see if window re-positioning is broken
-_   could actually do this with objectreference
-_ make the run button highlight immediately
-_   or maybe show an animation for starting up
-_   rather than post-compile
+X see if window re-positioning is broken
+o   could actually do this with objectreference
+X change output/error streams to properly write to the selected console
+X   though out/err stream for current app should append to current console(?)
+X add tools.jar to windows and linux builds
+X   make sure the version is the same as the jvm for each
+X initiate external stop and close events to the vm
+o see if stop() has same 'finished' problem with not immediate quit
+_ add debug/*.java to linux build
+_ remove debug/gui/*.java from windows build
+X rework Sketch.build(), it's what's going library crazy
+o   will this speed up launch of external jvm?
+X only support .jar files (not .class files) in code and lib folders
 
-_ occasional exception in "copy for discourse"
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1193068786
+completed earlier (or removed)
+X make the export to the board just copy to clipboard
+X   also make it insert &nbsp; for extra spaces
+
+
+0137 or later
 
 _ synchronized (something) { } is horking up the preproc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=136
@@ -119,13 +158,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=596
 _   more info on the script
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1202689238
 
-... 
-
-0137 or later
+_ make.sh creating work/lib dirs.. no longer necessary?
+_ don't copy hidden files (.svn especially) on export/save as
 
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=775
+_   this may just be a macosx (ppc?) bug
 
 _ implement windows registry lookups via reflection
 _   http://dev.processing.org/bugs/show_bug.cgi?id=723
@@ -134,6 +173,7 @@ _   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/sr
 
 _ look into workshop bugs
 _   too many NPEs on loadimage may freeze the app
+_   hopefully this should be fixed with 0136 changes
 
 _ add auto-save to the editor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=739
@@ -143,63 +183,33 @@ _ on mac, window opens to prevent quit on close
 _   but the window is not properly set as untitled
 _   http://dev.processing.org/bugs/show_bug.cgi?id=700
 
-_ switch to java 1.4.2_16 on linux and windows (now that osx is there?)
-
 _ when opening from double-click on the mac, doesn't replace untitled
 _ since adding tools.jar, jikes can be removed
 
 _ need a halt() method which will kill but not quit app (sets finished?)
 _   exit() will actually leave the application
 _   this may in fact only be internal
+_   maybe this is stop()?
 
 _ editors opening up at the same time on load?
 _   either synchronize the open (at a minimum)
 _   or wait for mac handlers to register an open event
 _ can also cause problems with opening multiple copies of same sketch
 
-_ debugger will also help getting better exceptions
-_   and getting the error to show up in the window inside p5
-_   also highlighting the correct line
-
 _ no error message if sketchbook folder is set to bad location
 _ says that it's gonna create new sketchbook in default loc
 _   even though that location might exist already (just word it better)
 
-_ initiate external stop and close events to the vm
-_ see if stop() has same 'finished' problem with not immediate quit
-_ use exceptions from the vm instead of parsing stdout
-_   this can come later, since the parsing is working (more or less)
+_ use debugger to get better exceptions
+_   and getting the error to show up in the window inside p5
+_   also highlighting the correct line
 _ respond to stop/close events sent by the vm
-_ change output/error streams to properly write to the selected console
-_   though out/err stream for current app should append to current console(?)
-_ add debug/*.java to linux build
-_ remove debug/gui/*.java from windows build
-_ add tools.jar to windows and linux builds
-_   make sure the version is the same as the jvm for each
 _ remove oro.jar dependency (not needed with PApplet.match)
 _   this is kind of messy and requires a bit of testing to ensure proper
 _ refactor code to use more getter/setter methods
 _   move the debug classes back into processing.app.debug
 _   this will help the library stuff
-_ rework Sketch.build(), it's what's going library crazy
-_   will this speed up launch of external jvm?
-_ only support .jar files (not .class files) in code and lib folders
 
-_ remove unused libraries from default run path
-_   note that this will hose svg b/c xml not available
-_   so when this change is made, the lib depends needs to be implemented too
-
-documentation
-_ errors in pdf/index.html examples
-_   probably remove these, move the useful ones to the examples folder
-_   that way people will read the reference
-_ i can't fix these:
-An unexpected error has been detected by HotSpot Virtual Machine:
-# EXCEPTION_ACCESS_VIOLATION
-all i can do is find things that might trigger them, but it's more likely
-than not to be a java problem, and not something that can be fixed
-_ notes about getting best results from text in each renderer
-_   http://dev.processing.org/bugs/show_bug.cgi?id=466
 
 eclipse
 _ document how to properly integrate with eclipse
@@ -209,13 +219,11 @@ _   make a src folder, data folder location
 _ export to eclipse
 _   how to do this with subclipse instructions?
 
-
-_ classpath fixes (disable aiexport and built-in tools that include core.jar)
-
 _ more recent versions of the PDE lock up during setup() (no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 _ if too many errors come through during setup, app will terminate
 _   printStackTrace() throttles on osx and poops out
+_   seen especially on old mac laptops (slow ppc garbage) 
 
 _ "Fatal exception occurred. Program will exit." on startup
 _   seems to be font related, deleting prefs will fix it
@@ -229,15 +237,6 @@ _   even though things are inside a quoted txt block
 _ after fixing name of sketch, ensure sketch of that name does not exist
 _ quicktime problems (when no QTJAVA is set?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=669
-
-_ fix syntax highlighting of focusGained and others
-_   http://dev.processing.org/bugs/show_bug.cgi?id=659
-_ verify (and document) public access members of PApplet
-_   http://dev.processing.org/bugs/show_bug.cgi?id=660
-_ some docs missing (therefore not syntax highlighting)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=661
-_ constants that are not highlighting (WINDOWS the only one?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=662
 
 _ remove patch designation from bugzilla
 
@@ -311,15 +310,6 @@ _ the first time someone hides a tab, put up a msg explaining what it does
 _   "don't warn me about this anymore"
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
-
-_ add to mac reference for present mode
-_   can make full screen work via Info.plist key
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
-_ add to troubleshooting
-_   problem with big floats:
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
-_   problem with small floats:
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
 
 _ with additional .pde files, don't allow static mode in front tab
 
@@ -864,15 +854,20 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=295
 
 PDE / Editor Buttons
 
-_ when holding down shift, show the alternate behavior for EditorHeader
-_   http://dev.processing.org/bugs/show_bug.cgi?id=37
 _ run button not properly unhighlighting
 _   does it unhighlight after compile or runtime errors?
 _   also when using draw() instead of loop()
 _     applet needs to notify runner that it has terminated
 _   http://dev.processing.org/bugs/show_bug.cgi?id=38
+_   check 'finished' via objectreference?
+_ make the run button highlight immediately
+_   or maybe show an animation for starting up
+_   rather than post-compile
+_   http://dev.processing.org/bugs/show_bug.cgi?id=776
 _ if export fails (compile error) need to un-highlight the export button
 _   http://dev.processing.org/bugs/show_bug.cgi?id=39
+_ when holding down shift, show the alternate behavior for EditorHeader
+_   http://dev.processing.org/bugs/show_bug.cgi?id=37
 
 
 PDE / Editor Header
@@ -1075,8 +1070,8 @@ _   maybe just open from a zip file, since psk doesn't help anything
 
 TOOLS / General
 
-_ make the export to the board just copy to clipboard
-_   also make it insert &nbsp; for extra spaces
+_ occasional exception in "copy for discourse"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=729
 _ need to write converter that will handle syntax changes
 _   basically find & replace with regexps
 _   framerate() -> frameRate()
