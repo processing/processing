@@ -386,7 +386,7 @@ div.ref-col { width: 30%;
 }
 #Learning .rightcol { float: right; 
     top: 55px; 
-    /* left: 480px; */ 
+    left: 480px; 
     width: 180px;
     /* bottom: 20px; */
     /* margin-bottom: 20px; */ 
