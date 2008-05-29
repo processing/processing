@@ -7,27 +7,129 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0136 - XX May 2008
+ABOUT REV 0136 - 29 May 2008
 
 This release represents the first of a set of major (internal) 
 changes as we head to release 1.0 at the end of the Summer. 
-This release will not be made the default download, but please test 
-the release for problems on your platform, and file bugs 
+This release will not be made the default download, but please 
+test the release for problems on your platform, and file bugs 
 (dev.processing.org/bugs) when you find them.
 
-The most significant change in this release is the introduction of 
-a new runner system. This means that we'll be able to make the stop 
-button behave properly, shut down sketches correctly, have better 
-error handling, and eventually add debugger support. On the downside, 
-sketches may start a little more slowly, and it may be a bumpy 
-transition as we get things working (strange errors when you hit Run).
+[ major changes, please read ] 
 
-[ known problems ] 
++ New Runner
+  The most significant change in this release is the introduction
+  of a new runner system. This means that we'll be able to make the 
+  stop button behave properly, shut down sketches correctly, have 
+  better error handling, and eventually add debugger support. 
+  On the downside, sketches may start a little more slowly, and it 
+  may be a bumpy transition as we get things working (strange errors 
+  when you hit Run).
+
++ Switching to Java 1.5
+  We are moving to Java 1.5 as a minimum requirement for running 
+  Processing, as well as sketches created with it. This is an 
+  attempt at self-preservation as we try to limit the number of 
+  platforms that we support. Note, however that we *still do not*
+  support Java 1.5 language extensions (enum, enhanced for loop,
+  generics, etc.) More info about that can be found here:
+  http://dev.processing.org/bugs/show_bug.cgi?id=598
+  If you find places in the code or reference that refer to Java 
+  1.4 support, please let us know via dev.processing.org/bugs.
+
++ New XML Library
+  We've switched to NanoXML instead of NanoXML-Lite. This means that 
+  the export size of the XML library has changed from ~6k to ~30k. 
+  The new version is much better at handling a broader range of XML
+  content. The API should be the same and your code should work 
+  without changes (unless you're playing with namespaces, in which 
+  case those have to be specified differently). 
+  http://dev.processing.org/bugs/show_bug.cgi?id=757
+
++ Changes to how libraries are found
+  Major bug fixing happened in handling the class path issues and 
+  dealing with how libraries are loaded. With any luck, this should
+  fix the dreaded aiexport bug. It should also give better results
+  when multiple libraries are installed on the system. However, it 
+  may mean that some libraries (or jarfiles) that shouldn't have 
+  been working before will now (properly) no longer work.
+
+
+[ minor enhancements ]
+
++ curveTangent() implemented by Dave Bollinger. (Thank you!)
+  http://dev.processing.org/bugs/show_bug.cgi?id=715
+
++ Added support for quadratic (as opposed to just cubic) curves to 
+  the Candy SVG library.
+
++ Altered Processing.app on Mac OS X to use the Quartz rendering 
+  engine. In OS X 10.5, Apple switched renderers, which made most
+  Processing sketches run considerably slower. Thanks Apple!
+
++ Added ctrl-/ to comment a block of code
+
++ Minor change to default window dimensions to support the Eee PC
+
++ Updated reference and slight reorganization to fix a handful of
+  broken links. Moved the FAQ to the Processing site (no longer
+  included in the download.)
+
++ Added a static version of saveStream() that uses a File object.
+
++ Add XMLElement (not filename) constructor to SVG lib
+  http://dev.processing.org/bugs/show_bug.cgi?id=773
+
+
+[ bug fixes ]
+
++ Color selector fixed by Francis Li. (Thanks!)
+  http://dev.processing.org/bugs/show_bug.cgi?id=656
+  http://dev.processing.org/bugs/show_bug.cgi?id=584
+
++ Net library no longer dies unceremoniously on "Connection Refused"
+  http://dev.processing.org/bugs/show_bug.cgi?id=751
+
++ Space after OPENGL param no longer breaks export
+  http://dev.processing.org/bugs/show_bug.cgi?id=769
+
++ Fix "noLoop()" sketches unresponsive to exit request
+  http://dev.processing.org/bugs/show_bug.cgi?id=694
+
++ Fixed bug with subset() when no length parameter was specified
+  http://dev.processing.org/bugs/show_bug.cgi?id=707
+
++ Retired the long-standing TIFF in After Effects bug
+  http://dev.processing.org/bugs/show_bug.cgi?id=153
+
++ Fix for bezierTangent() problem from Dave Bollinger (Thanks!)
+  http://dev.processing.org/bugs/show_bug.cgi?id=710
+
++ Fix problem with get() when imageMode(CORNERS) was in use
+
++ Fix bug with splice() and arrays
+  http://dev.processing.org/bugs/show_bug.cgi?id=734
+
++ PImage mask now works after first call
+  http://dev.processing.org/bugs/show_bug.cgi?id=744
+
++ Fix upside-down TGA files
+  http://dev.processing.org/bugs/show_bug.cgi?id=742
+
++ Fix problem with g.smooth always returning false in JAVA2D
+  http://dev.processing.org/bugs/show_bug.cgi?id=762
+
+
+[ known new problems ] 
 
 + With the new runner setup, sketches sometimes won't start every 
   ~10th time or so (this will vary depending on your machine). 
   Hitting Run again should make things start up.
   http://dev.processing.org/bugs/show_bug.cgi?id=775
+  This may actually be a problem with Mac OS X sometimes not 
+  launching Java. More recent Java releases for Mac OS X have 
+  become less stable. If you see this on Windows, please let us
+  know at the bug report.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
