@@ -84,11 +84,11 @@ public class Base {
   static public void main(String args[]) {
 
     // make sure that this is running on java 1.4
-    if (PApplet.javaVersion < 1.4f) {
+    if (PApplet.javaVersion < 1.5f) {
       //System.err.println("no way man");
-      Base.showError("Need to install Java 1.4",
+      Base.showError("Need to install Java 1.5",
                      "This version of Processing requires    \n" +
-                     "Java 1.4 or later to run properly.\n" +
+                     "Java 1.5 or later to run properly.\n" +
                      "Please visit java.com to upgrade.", null);
     }
 
