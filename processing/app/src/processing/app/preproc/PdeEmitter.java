@@ -641,6 +641,12 @@ public class PdeEmitter implements PdeTokenTypes
       dumpHiddenAfter(ast);
       break;
 
+    case LITERAL_synchronized:  // 0137 to fix bug #136
+      out.print(name(ast));
+      dumpHiddenAfter(ast);
+      printChildren(ast);
+      break;
+
     case LITERAL_private:
     case LITERAL_public:
     case LITERAL_protected:
@@ -648,7 +654,7 @@ public class PdeEmitter implements PdeTokenTypes
     case LITERAL_transient:
     case LITERAL_native:
     case LITERAL_threadsafe:
-    case LITERAL_synchronized:
+    //case LITERAL_synchronized:  // 0137 to fix bug #136
     case LITERAL_volatile:
     case FINAL:
     case ABSTRACT:
