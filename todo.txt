@@ -5,8 +5,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=656
 X color selector broken on vista (no colors at all)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=584
 X added fonts, quadratic curves to svg
-_   need to remove the font stuff, also the changes for 'public'
-_   move my edits into a subclass
+X   need to remove the font stuff, also the changes for 'public'
+X   move my edits into a subclass
 o Capture.settings() mangles external iSight image
 X   fixed in newer qtjava
 o   http://dev.processing.org/bugs/show_bug.cgi?id=496
@@ -37,7 +37,6 @@ X   also, don't add /library/ for each lib to the classpath
 X remove unused libraries from default run path
 X   note that this will hose svg b/c xml not available
 X   so when this change is made, the lib depends needs to be implemented too
-_ update to jogl 1.1.1
 
 X changing to java 1.5 
 o   switch to java 1.4.2_16 on linux and windows (now that osx is there?)
@@ -45,14 +44,51 @@ X   change to 1.5+ (instead of 1.4*) in Info.plist for Processing.app
 X   updated linux to java 1.5.0_15
 X   updated windows java to 1.5.0_15
 X   change export.html to point to java 1.5 cab file
+X   update things for java 1.5 since it's inevitable
+
+new debugger/runner setup
+X wire in new debugging classes, get sys.out and sys.err working
+X quitting p5 doesn't shut down the runner
+X make out/err streams go to the correct window
+X see if window re-positioning is broken
+o   could actually do this with objectreference
+X change output/error streams to properly write to the selected console
+X   though out/err stream for current app should append to current console(?)
+X add tools.jar to windows and linux builds
+X   make sure the version is the same as the jvm for each
+X initiate external stop and close events to the vm
+o see if stop() has same 'finished' problem with not immediate quit
+X add debug/*.java to linux build
+X remove debug/gui/*.java from windows build
+X rework Sketch.build(), it's what's going library crazy
+o   will this speed up launch of external jvm?
+X only support .jar files (not .class files) in code and lib folders
+
+completed earlier (or removed)
+X make the export to the board just copy to clipboard
+X   also make it insert &nbsp; for extra spaces
 
 reference
 X random() is up to and not including, also add randomSeed link
-_ top links in the faq are broken (use full url?)
-_   need to re-arrange the reference location (faq.html in root, etc)
-_ don't include faq in download
-_   split contributed/core libraries
-_ change software to point at correct reference locations
+X top links in the faq are broken (use full url?)
+X   need to re-arrange the reference location (faq.html in root, etc)
+X don't include faq in download
+X   split contributed/core libraries
+X change software to point at correct reference locations
+
+
+0137 or later
+
+_ update to jogl 1.1.1
+_   do this with enhanced library/platform support
+
+_ synchronized (something) { } is horking up the preproc
+_   http://dev.processing.org/bugs/show_bug.cgi?id=136
+
+_ need to make up a priorities/todo page for processing
+_   that includes projects for people to help out on
+
+reference
 _ noLoop() isn't the same as "finished", though it's sometimes used that way
 _   to finish, use exit() (though that will make the window close)
 _   add this to ref once halt() is finished
@@ -82,37 +118,6 @@ _ some docs missing (therefore not syntax highlighting)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=661
 _ constants that are not highlighting (WINDOWS the only one?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=662
-
-new debugger/runner setup
-X wire in new debugging classes, get sys.out and sys.err working
-X quitting p5 doesn't shut down the runner
-X make out/err streams go to the correct window
-X see if window re-positioning is broken
-o   could actually do this with objectreference
-X change output/error streams to properly write to the selected console
-X   though out/err stream for current app should append to current console(?)
-X add tools.jar to windows and linux builds
-X   make sure the version is the same as the jvm for each
-X initiate external stop and close events to the vm
-o see if stop() has same 'finished' problem with not immediate quit
-_ add debug/*.java to linux build
-_ remove debug/gui/*.java from windows build
-X rework Sketch.build(), it's what's going library crazy
-o   will this speed up launch of external jvm?
-X only support .jar files (not .class files) in code and lib folders
-
-completed earlier (or removed)
-X make the export to the board just copy to clipboard
-X   also make it insert &nbsp; for extra spaces
-
-
-0137 or later
-
-_ synchronized (something) { } is horking up the preproc
-_   http://dev.processing.org/bugs/show_bug.cgi?id=136
-
-_ need to make up a priorities/todo page for processing
-_   that includes projects for people to help out on
 
 _ make editor nicer
 _   tab on selection indents whole block
@@ -1294,7 +1299,6 @@ _ move build scripts to something better like ant
 _   too much to maintain the multiple versions, too much code
 _   http://dev.processing.org/bugs/show_bug.cgi?id=151
 _   also update build/howto.txt (of course) because it says no ant
-_ update things for java 1.5 since it's inevitable
 _ need .pde document icons
 _ need .psk file icon
 _ need exported application icons
