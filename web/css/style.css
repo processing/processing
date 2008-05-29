@@ -384,12 +384,12 @@ div.ref-col { width: 30%;
     top: 55px; 
     width: 450px; 
 }
-#Learning .rightcol { 
+#Learning .rightcol { float: left; 
     top: 55px; 
-    left: 480px; 
+    /* left: 480px; */ 
     width: 180px;
-    bottom: 20px;
-    margin-bottom: 20px; 
+    /* bottom: 20px; */
+    /* margin-bottom: 20px; */ 
 }
 
 #Learning td { vertical-align: top; }
