@@ -249,13 +249,13 @@ td img { margin: 0; display: block; }
 
 /**************************************************************** Exhibition ***/
 
-#Exhibition #Index .colone { width: 224px; float: left; margin-right: 35px; }
-#Exhibition #Index .coltwo { width: 165px; float: left; margin-right: 25px; }
-#Exhibition #Index .colthree { width: 224px; float: left; margin-right: 20px; }
-#Exhibition #Index h2 { margin: 0 0 20px 0; font-size: 1em; }
-#Exhibition #Index h2.with-nav { margin-bottom: 0; }
-#Exhibition #Index .onecol { clear: both; }
-#Exhibition #Index td { vertical-align: top; }
+#Exhibition .colone { width: 224px; float: left; margin-right: 35px; }
+#Exhibition .coltwo { width: 165px; float: left; margin-right: 25px; }
+#Exhibition .colthree { width: 224px; float: left; margin-right: 20px; }
+#Exhibition h2 { margin: 0 0 20px 0; font-size: 1em; }
+#Exhibition h2.with-nav { margin-bottom: 0; }
+#Exhibition .onecol { clear: both; }
+#Exhibition td { vertical-align: top; }
 
 #Exhibition #Index .content {
         margin-left    : 55px;
@@ -272,6 +272,20 @@ td img { margin: 0; display: block; }
 #Collection td { vertical-align: top; }
 
 #Collection .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
+#Index .colone { width: 224px; float: left; margin-right: 35px; }
+#Index .coltwo { width: 165px; float: left; margin-right: 25px; }
+#Index .colthree { width: 224px; float: left; margin-right: 20px; }
+#Index h2 { margin: 0 0 20px 0; font-size: 1em; }
+#Index h2.with-nav { margin-bottom: 0; }
+#Index .onecol { clear: both; }
+#Index td { vertical-align: top; }
+
+#Index .content {
         margin-left    : 55px;
         margin-right   : 0px;
         position: relative;
