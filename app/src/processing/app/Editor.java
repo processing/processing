@@ -1503,15 +1503,16 @@ public class Editor extends JFrame {
       }
 
       sketch = new Sketch(this, path);
-      header.rebuild();
-      // TODO remove this, it's a moot point for separate windows
-      if (Preferences.getBoolean("console.auto_clear")) {
-        console.clear();
-      }
+      header.rebuild();      
       // Set the title of the window to "sketch_070752a - Processing 0126"
       setTitle(sketch.name + " | " + WINDOW_TITLE);
       // Disable untitled setting from previous document, if any
       untitled = false;
+
+      // Store information on who's open and running
+      // (in case there's a crash or something that can't be recovered)
+      base.storeSketches();
+      Preferences.save();
 
       // opening was successful
       return true;
