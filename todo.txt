@@ -18,6 +18,9 @@ X improvements to the linux startup script
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1202689238
 X update preferences.txt whenever opening/closing
 X   otherwise recovery from restart can be annoying
+X fix classpath problem with processing.exe
+X   http://dev.processing.org/bugs/show_bug.cgi?id=780
+
 
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
@@ -67,6 +70,7 @@ _ need to make up a priorities/todo page for processing
 _   that includes projects for people to help out on
 
 reference
+_ createInput, createInputRaw, createOutput
 _ noLoop() isn't the same as "finished", though it's sometimes used that way
 _   to finish, use exit() (though that will make the window close)
 _   add this to ref once halt() is finished
