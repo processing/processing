@@ -108,7 +108,7 @@ a:link:visited {
 #subNav { margin-left: 220px; 
 	background: #5a5a46 url(../img/nav_bottomarrow.gif) no-repeat; 
 	padding-left: 33px;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 }
 #subNav.learning { margin-left: 157px; }
 .active { color: #ccccbe !important; }
