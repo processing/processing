@@ -245,8 +245,8 @@ td img { margin: 0; display: block; }
 
 /**************************************************************** Exhibition ***/
 
-#Exhibition .colone { width: 460px; float: left; margin-right: 40px; }
-#Exhibition .coltwo { width: 170px; float: right; margin-right: 20px; }
+#Exhibition .colone { width: 236px; float: left; margin-right: 40px; }
+#Exhibition .coltwo { width: 170px; float: left; margin-right: 20px; }
 #Exhibition h2 { margin: 0 0 20px 0; font-size: 1em; }
 #Exhibition h2.with-nav { margin-bottom: 0; }
 #Exhibition .onecol { clear: both; }
