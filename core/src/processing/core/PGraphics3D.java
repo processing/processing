@@ -1692,15 +1692,26 @@ public class PGraphics3D extends PGraphics {
       int w = v + 1; if (vc <= w) w = 0; // next
 
       // triangle A B C
+      /*
       float Ax = -vertices[vertex_order[u]][d1];
       float Ay =  vertices[vertex_order[u]][d2];
       float Bx = -vertices[vertex_order[v]][d1];
       float By =  vertices[vertex_order[v]][d2];
       float Cx = -vertices[vertex_order[w]][d1];
       float Cy =  vertices[vertex_order[w]][d2];
+      */
+      double Ax = -10 * vertices[vertex_order[u]][d1];
+      double Ay =  10 * vertices[vertex_order[u]][d2];
+      double Bx = -10 * vertices[vertex_order[v]][d1];
+      double By =  10 * vertices[vertex_order[v]][d2];
+      double Cx = -10 * vertices[vertex_order[w]][d1];
+      double Cy =  10 * vertices[vertex_order[w]][d2];
+
+      // 4235.0 on 0135, 5894.0 with this
+      //double E10 = EPSILON * 10;
 
       // first we check if <u,v,w> continues going ccw
-      if (E > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
+      if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
         continue;
       }
 
@@ -1709,6 +1720,25 @@ public class PGraphics3D extends PGraphics {
           continue;
         }
 
+        double Px = -10 * vertices[vertex_order[p]][d1];
+        double Py =  10 * vertices[vertex_order[p]][d2];
+
+        double ax  = Cx - Bx;  double ay  = Cy - By;
+        double bx  = Ax - Cx;  double by  = Ay - Cy;
+        double cx  = Bx - Ax;  double cy  = By - Ay;
+        double apx = Px - Ax;  double apy = Py - Ay;
+        double bpx = Px - Bx;  double bpy = Py - By;
+        double cpx = Px - Cx;  double cpy = Py - Cy;
+
+        double aCROSSbp = ax * bpy - ay * bpx;
+        double cCROSSap = cx * apy - cy * apx;
+        double bCROSScp = bx * cpy - by * cpx;
+
+        if ((aCROSSbp >= 0.0) && (bCROSScp >= 0.0) && (cCROSSap >= 0.0)) {
+          snip = false;
+        }
+
+        /*
         float Px = -vertices[vertex_order[p]][d1];
         float Py =  vertices[vertex_order[p]][d2];
 
@@ -1726,6 +1756,7 @@ public class PGraphics3D extends PGraphics {
         if ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f)) {
           snip = false;
         }
+        */
       }
 
       if (snip) {
