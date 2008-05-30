@@ -1691,24 +1691,20 @@ public class PGraphics3D extends PGraphics {
       v = u + 1; if (vc <= v) v = 0;     // current
       int w = v + 1; if (vc <= w) w = 0; // next
 
+      // Upgrade values to doubles, and multiply by 10 so that we can have
+      // some better accuracy as we tessellate. This seems to have negligible
+      // speed differences on Windows and Intel Macs, but causes a 50% speed
+      // drop for PPC Macs with the bug's example code that draws ~200 points
+      // in a concave polygon. Apple has abandoned PPC so we may as well too.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=774
+
       // triangle A B C
-      /*
-      float Ax = -vertices[vertex_order[u]][d1];
-      float Ay =  vertices[vertex_order[u]][d2];
-      float Bx = -vertices[vertex_order[v]][d1];
-      float By =  vertices[vertex_order[v]][d2];
-      float Cx = -vertices[vertex_order[w]][d1];
-      float Cy =  vertices[vertex_order[w]][d2];
-      */
       double Ax = -10 * vertices[vertex_order[u]][d1];
       double Ay =  10 * vertices[vertex_order[u]][d2];
       double Bx = -10 * vertices[vertex_order[v]][d1];
       double By =  10 * vertices[vertex_order[v]][d2];
       double Cx = -10 * vertices[vertex_order[w]][d1];
       double Cy =  10 * vertices[vertex_order[w]][d2];
-
-      // 4235.0 on 0135, 5894.0 with this
-      //double E10 = EPSILON * 10;
 
       // first we check if <u,v,w> continues going ccw
       if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
@@ -1737,26 +1733,6 @@ public class PGraphics3D extends PGraphics {
         if ((aCROSSbp >= 0.0) && (bCROSScp >= 0.0) && (cCROSSap >= 0.0)) {
           snip = false;
         }
-
-        /*
-        float Px = -vertices[vertex_order[p]][d1];
-        float Py =  vertices[vertex_order[p]][d2];
-
-        float ax  = Cx - Bx;  float ay  = Cy - By;
-        float bx  = Ax - Cx;  float by  = Ay - Cy;
-        float cx  = Bx - Ax;  float cy  = By - Ay;
-        float apx = Px - Ax;  float apy = Py - Ay;
-        float bpx = Px - Bx;  float bpy = Py - By;
-        float cpx = Px - Cx;  float cpy = Py - Cy;
-
-        float aCROSSbp = ax * bpy - ay * bpx;
-        float cCROSSap = cx * apy - cy * apx;
-        float bCROSScp = bx * cpy - by * cpx;
-
-        if ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f)) {
-          snip = false;
-        }
-        */
       }
 
       if (snip) {
