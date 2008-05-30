@@ -1,3 +1,10 @@
+0137 core
+X add gz handling for createOutput()
+X change openStream() to createInput() (done in 0136)
+X   add createOutput() 
+X   deprecate openStream() naming
+
+
 0136 core
 X add static version of saveStream() (uses a File and InputStream object)
 X A "noLoop()" sketch may be unresponsive to exit request
