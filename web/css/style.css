@@ -263,6 +263,10 @@ td img { margin: 0; display: block; }
         position: relative;
 }
 
+#Index .colone { width: 224px; float: left; margin-right: 35px; }
+#Index .coltwo { width: 165px; float: left; margin-right: 25px; }
+#Index .colthree { width: 224px; float: left; margin-right: 20px; }
+
 #Collection .colone { width: 224px; float: left; margin-right: 35px; }
 #Collection .coltwo { width: 165px; float: left; margin-right: 25px; }
 #Collection .colthree { width: 224px; float: left; margin-right: 20px; }
