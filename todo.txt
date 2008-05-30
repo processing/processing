@@ -21,7 +21,6 @@ X   otherwise recovery from restart can be annoying
 X fix classpath problem with processing.exe
 X   http://dev.processing.org/bugs/show_bug.cgi?id=780
 
-
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=775
