@@ -265,7 +265,7 @@ td img { margin: 0; display: block; }
 .curated-item p {  padding-right: 2em; }
 
 #Network h2 { position: relative; }
-#Network h2 a.addalink { position: absolute; left: 455px; }
+#Network h2 a.addalink { position: absolute; left: 455px;}
 
 dl.network dt { font-style: normal; }
 dl.network dd { margin: 0; }
