@@ -273,7 +273,7 @@ dl.network dd.date { color: #999966; margin-bottom: 1em; }
 p.network { margin: 0 23px 1em 0; width:200px; }
 p.network span.date { color: #999966; }
 
-p.exhibition-nav { margin-top: 0; }
+p.exhibition-nav { margin-top: 20px; margin-bottom: 10px; }
 
 /**************************************************************** Reference ***/
 
