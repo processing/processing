@@ -23,6 +23,7 @@ _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=775
 _   this may just be a macosx (ppc?) bug
+_   seems on some machines to just never launch at all
 
 _ two-tiered dialogs for everything - use big font/little font style throughout
 
