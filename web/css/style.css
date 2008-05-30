@@ -114,6 +114,10 @@ a:link:visited {
 .active { color: #ccccbe !important; }
 .faq { position: absolute; right: 10px; color: #ccccbe }
 
+#subNav.exhib { margin-left: 92px; }
+.active { color: #ccccbe !important; }
+.faq { position: absolute; right: 10px; color: #ccccbe }
+
 /* ================ CONTENT ================== */
 
 .content {
