@@ -47,10 +47,11 @@ import javax.imageio.ImageIO;
  * problems with redraw of components drawn above it. If you'd like to
  * integrate other Java components, see below.
  * <p/>
- * As of release 0126 of Processing, we have discontinued support for versions
- * of Java prior to 1.4. We don't have enough people to support it, and for a
+ * As of release 0136 of Processing, we have discontinued support for versions
+ * of Java prior to 1.5. We don't have enough people to support it, and for a
  * project of our size, we should be focusing on the future, rather than
- * working around legacy Java code.
+ * working around legacy Java code. In addition, Java 1.5 gives us access to 
+ * better timing facilities which will improve the steadiness of animation.
  * <p/>
  * This class extends Applet instead of JApplet because 1) historically,
  * we supported Java 1.1, which does not include Swing (without an
@@ -4710,7 +4711,11 @@ in   */
 
   static public OutputStream createOutput(File file) {
     try {
-      return new FileOutputStream(file);
+      FileOutputStream fos = new FileOutputStream(file);    
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        return new GZIPOutputStream(fos);
+      }
+      return fos;
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -4722,7 +4727,7 @@ in   */
   /**
    * Save the contents of a stream to a file in the sketch folder.
    * This is basically saveBytes(blah, loadBytes()), but done
-   * in a less confusing manner.
+   * more efficiently (and with less confusing syntax).
    */
   public void saveStream(String targetFilename, String sourceLocation) {
     saveStream(saveFile(targetFilename), sourceLocation);
@@ -4733,7 +4738,7 @@ in   */
    * Identical to the other saveStream(), but writes to a File
    * object, for greater control over the file location.
    * Note that unlike other api methods, this will not automatically
-   * uncompress gzip files.
+   * compress or uncompress gzip files.
    */
   public void saveStream(File targetFile, String sourceLocation) {
     saveStream(targetFile, createInputRaw(sourceLocation));
