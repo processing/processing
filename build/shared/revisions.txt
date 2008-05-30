@@ -7,6 +7,67 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0137 - 30 May 2008 
+
+This release is an addendum to 0136, please read the notes on that
+version if you have not already.
+
+To be clear, we're moving to Java 1.5 for everything: the Processing 
+environment and for sketches created with it. We don't have enough 
+people to support it, and for a project of our size, we should be 
+focusing on the future, rather than working around legacy Java code. 
+In addition, Java 1.5 gives us access to better timing facilities 
+which will improve the steadiness of animation.
+
+The "expert" version for Windows has been discontinued temporarily, 
+while we work out issues with the new runner setup. It may return
+for a future release, but require a full JDK download, instead of 
+just JRE as in the past.
+
+[ bug fixes ] 
+
++ Fix classpath problem with processing.exe. This was a 
+  major flaw in 0136 prevented applications from running. 
+  Not sure how this one made it out of Quality Control. 
+  Today I'm gonna have to fire the guy who runs the 
+  Processing Release Testing And Quality Assurance Center.
+  http://dev.processing.org/bugs/show_bug.cgi?id=780
+
++ Huge jar files when exporting with a code folder. 
+  (Huge like the PDE trying to zip up everything on your disk.) 
+  http://dev.processing.org/bugs/show_bug.cgi?id=541
+  http://dev.processing.org/bugs/show_bug.cgi?id=701
+  http://dev.processing.org/bugs/show_bug.cgi?id=714
+
++ Fix support for the "synchronized" keyword in the preprocessor.
+  http://dev.processing.org/bugs/show_bug.cgi?id=136
+
+[ changes ] 
+
++ Use multiple JAR files whenever
+  1) a lib is in use, 2) code folder, 3) multiple files
+  This will prevent MANIFEST collisions, especially when used
+  with the code folder. 
+
++ Removed oro.jar dependency (not needed with PApplet.match())
+
++ Added improvements to the linux startup script contributed 
+  by forum user 'neitsch'. (Thanks neitsch!)
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1202689238
+
++ Update preferences.txt whenever opening sketches. If you have
+  to forcibly quit the application (as a certain P5 developer often 
+  does), it will at least remember which sketches were running.
+
++ The openStream() method has been renamed to createInput(), and
+  openStream() itself has been deprecated. This was actually done
+  in 0136. In addition, a createOutput() method has been added 
+  that creates an OutputStream.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0136 - 29 May 2008
 
 This release represents the first of a set of major (internal) 
