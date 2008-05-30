@@ -1,25 +1,5 @@
-0137 pde
-X move to multiple jars whenever 
-X   1) a lib is in use, 2) code folder, 3) multiple files
-X remove oro.jar dependency (not needed with PApplet.match)
-X   this is kind of messy and requires a bit of testing to ensure proper
-X sometimes huge jar files when exporting with a code folder
-X   http://dev.processing.org/bugs/show_bug.cgi?id=541
-X applet export with multiple jars having trouble (related?)
-X   http://dev.processing.org/bugs/show_bug.cgi?id=701
-X applet export fails with opengl/code folder
-X   http://dev.processing.org/bugs/show_bug.cgi?id=714
-X synchronized (something) { } is horking up the preproc
-X   http://dev.processing.org/bugs/show_bug.cgi?id=136
-o inside the preproc 
-o   change the arrays of default imports (now using 1.5+, so no 1.1,1.3,1.4)
-X   don't bother, they're cumulative
-X improvements to the linux startup script
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1202689238
-X update preferences.txt whenever opening/closing
-X   otherwise recovery from restart can be annoying
-X fix classpath problem with processing.exe
-X   http://dev.processing.org/bugs/show_bug.cgi?id=780
+0138 pde
+
 
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
