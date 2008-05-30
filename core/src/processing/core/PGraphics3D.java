@@ -423,8 +423,8 @@ public class PGraphics3D extends PGraphics {
       }
       render_lines();
     }
-    // Clear this out in case flush() is called again. 
-    // For instance, with hint(ENABLE_DEPTH_SORT), it will be called 
+    // Clear this out in case flush() is called again.
+    // For instance, with hint(ENABLE_DEPTH_SORT), it will be called
     // once on endRaw(), and once again at endDraw().
     triangleCount = 0;
     lineCount = 0;
@@ -1595,6 +1595,20 @@ public class PGraphics3D extends PGraphics {
     // like that.. will wait to see if this is in fact a problem before
     // hurting my head on the math.
 
+    /*
+    // trying to track down bug #774
+    for (int i = vertex_start; i < vertex_end; i++) {
+      if (i > vertex_start) {
+        if (vertices[i-1][MX] == vertices[i][MX] &&
+            vertices[i-1][MY] == vertices[i][MY]) {
+          System.out.print("**** " );
+        }
+      }
+      System.out.println(i + " " + vertices[i][MX] + " " + vertices[i][MY]);
+    }
+    System.out.println();
+    */
+
     // first we check if the polygon goes clockwise or counterclockwise
     float area = 0;
     for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
@@ -1686,15 +1700,12 @@ public class PGraphics3D extends PGraphics {
       float Cy =  vertices[vertex_order[w]][d2];
 
       // first we check if <u,v,w> continues going ccw
-      if (EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
+      if (E > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
         continue;
       }
 
       for (int p = 0; p < vc; p++) {
-        //float ax, ay, bx, by, cx, cy, apx, apy, bpx, bpy, cpx, cpy;
-        //float cCROSSap, bCROSScp, aCROSSbp;
-
-        if( (p == u) || (p == v) || (p == w) ) {
+        if ((p == u) || (p == v) || (p == w)) {
           continue;
         }
 
@@ -3353,19 +3364,19 @@ public class PGraphics3D extends PGraphics {
 
     return (ow != 0) ? oz / ow : oz;
   }
-  
+
 
   /*
   float unprojectInputX = Float.NaN;
   float unprojectInputY = Float.NaN;
-  float unprojectInputZ = Float.NaN; 
-  float unprojectOutputX, unprojectOutputY, unprojectOutputZ; 
-  
+  float unprojectInputZ = Float.NaN;
+  float unprojectOutputX, unprojectOutputY, unprojectOutputZ;
+
   public float unprojectX(float x, float y, float z) {
-    if ((x != unprojectInputX) || 
-        (y != unprojectInputY) || 
+    if ((x != unprojectInputX) ||
+        (y != unprojectInputY) ||
         (z != unprojectInputZ)) {
-      
+
     }
   }
   */
@@ -3672,9 +3683,9 @@ public class PGraphics3D extends PGraphics {
 
     lightingDependsOnVertexPosition = false;
   }
-  
-  
-  /** 
+
+
+  /**
    * Turn off all lights.
    */
   public void noLights() {
@@ -3903,11 +3914,11 @@ public class PGraphics3D extends PGraphics {
     */
     Arrays.fill(pixels, backgroundColor);
     Arrays.fill(zbuffer, Float.MAX_VALUE);
-    
+
     clearRaw();
   }
-  
-  
+
+
   protected void clearRaw() {
     if (raw != null) {
       raw.colorMode(RGB, 1);
