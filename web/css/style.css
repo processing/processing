@@ -263,6 +263,20 @@ td img { margin: 0; display: block; }
         position: relative;
 }
 
+#Collection .colone { width: 224px; float: left; margin-right: 35px; }
+#Collection .coltwo { width: 165px; float: left; margin-right: 25px; }
+#Collection .colthree { width: 224px; float: left; margin-right: 20px; }
+#Collection h2 { margin: 0 0 20px 0; font-size: 1em; }
+#Collection h2.with-nav { margin-bottom: 0; }
+#Collection .onecol { clear: both; }
+#Collection td { vertical-align: top; }
+
+#Collection .content {
+        margin-left    : 55px;
+        margin-right   : 0px;
+        position: relative;
+}
+
 .curated-item { margin-bottom: 25px; }
 .curated-item h5 { margin-top: 1em; color: #666; font-size: 1em; }
 .curated-item h5 a { font-weight: bold; }
