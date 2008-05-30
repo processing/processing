@@ -624,6 +624,11 @@ public class Preferences {
 
   static public void save() {
     try {
+      // on startup, don't worry about it
+      // this is trying to update the prefs for who is open 
+      // before Preferences.init() has been called.
+      if (preferencesFile == null) return;  
+      
       FileOutputStream output = new FileOutputStream(preferencesFile);
       PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
 

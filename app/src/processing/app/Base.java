@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -393,64 +393,6 @@ public class Base {
 
 
   // .................................................................
-
-
-  /*
-  public void handleNew(boolean shiftDown) {
-    // buttons.activate(EditorButtons.NEW);
-
-    boolean prompt = Preferences.getBoolean("sketchbook.prompt");
-    if (shiftDown) prompt = !prompt; // reverse behavior if shift is down
-
-    // no sketch has been started, don't prompt for the name if it's
-    // starting up, just make the farker. otherwise if the person hits
-    // 'cancel' i'd have to add a thing to make p5 quit, which is silly.
-    // instead give them an empty sketch, and they can look at examples.
-    // i hate it when imovie makes you start with that goofy dialog box.
-    // unless, ermm, they user tested it and people preferred that as
-    // a way to get started. shite. now i hate myself.
-    //if (disablePrompt) prompt = false;
-
-    try {
-      if (prompt) {
-        handleNewPrompt(activeEditor);
-      } else {
-        handleNewUntitled();
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  public void handleNewPrompt(JFrame parent) throws IOException {
-    File newbieDir = null;
-    String newbieName = null;
-
-    // prompt for the filename and location for the new sketch
-    FileDialog fd = new FileDialog(parent,
-                                   "Create sketch folder named:",
-                                   FileDialog.SAVE);
-    //fd.setDirectory(getSketchbookPath());
-    fd.setVisible(true);
-
-    String newbieParentDir = fd.getDirectory();
-    newbieName = fd.getFile();
-    if (newbieName != null) {
-      newbieName = Sketch.sanitizeName(newbieName);
-      newbieDir = new File(newbieParentDir, newbieName);
-
-      // Make the directory for the new sketch
-      newbieDir.mkdirs();
-
-      // Make an empty pde file
-      File newbieFile = new File(newbieDir, newbieName + ".pde");
-      new FileOutputStream(newbieFile);  // create the file
-
-      handleOpen(newbieFile.getAbsolutePath());
-    }
-  }
-  */
 
 
   /**
