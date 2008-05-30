@@ -7,6 +7,23 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0138 - ?? ???? 2008
+
+[ bug fixes ]
+
++ Fix tessellation problems with concave 3D geometry that has many 
+  nearby points (e.g. filled bezier polygons like fonts).
+  Upgrade values to doubles, and multiply by 10 so that we can have
+  some better accuracy as we tessellate. This seems to have negligible
+  speed differences on Windows and Intel Macs, but causes a 50% speed
+  drop for PPC Macs with the bug's example code that draws ~200 points
+  in a concave polygon. Apple has abandoned PPC so we may as well too.
+  http://dev.processing.org/bugs/show_bug.cgi?id=774
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0137 - 30 May 2008 
 
 This release is an addendum to 0136, please read the notes on that
