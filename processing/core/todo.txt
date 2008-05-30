@@ -1,8 +1,4 @@
-0137 core
-X add gz handling for createOutput()
-X change openStream() to createInput() (done in 0136)
-X   add createOutput() 
-X   deprecate openStream() naming
+0138 core
 
 
 _ Add support style attribute for path tag to Candy SVG (ricard)
