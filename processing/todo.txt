@@ -1,22 +1,28 @@
 0138 pde
 X importing a library results in "expecting EOF, found ..." error
 X   http://dev.processing.org/bugs/show_bug.cgi?id=788
-
-_ run only works with primary window in 0136, 0137
-_   http://dev.processing.org/bugs/show_bug.cgi?id=784
+X remove console variable from preferences.txt 
+X run only works with primary window in 0136, 0137
+X   http://dev.processing.org/bugs/show_bug.cgi?id=784
+X   throwing a stackoverflowexception because the console is broken
 
 _ slow response on file, sketchbook, and examples menus
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
 _   could be all the listeners?
+_   actually it's prolly just the insertMenu() garbage
+_     need to have a better way of dealing with this
 
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=775
 _   this may just be a macosx (ppc?) bug
-_   seems on some machines to just never launch at all
-_   only happens with windows that aren't the original/main window
 
 _ since adding tools.jar, jikes can be removed
+
+_ implement windows registry lookups via reflection
+_   http://dev.processing.org/bugs/show_bug.cgi?id=723
+_   or move to jna for registry?
+_   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
 
 _ two-tiered dialogs for everything - use big font/little font style throughout
 
@@ -90,6 +96,8 @@ _ some docs missing (therefore not syntax highlighting)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=661
 _ constants that are not highlighting (WINDOWS the only one?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=662
+_ consoleXxxx and untitledXxxx folders in /tmp
+_   console may be useful for debugging
 
 _ make editor nicer
 _   tab on selection indents whole block
@@ -122,11 +130,6 @@ _ http://dev.processing.org/bugs/show_bug.cgi?id=743
 _ pdf not rendering unicode (though it renders to screen)
 _   try updating to newer itext
 _   http://dev.processing.org/bugs/show_bug.cgi?id=727
-
-_ implement windows registry lookups via reflection
-_   http://dev.processing.org/bugs/show_bug.cgi?id=723
-_   or move to jna for registry?
-_   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
 
 _ look into workshop bugs
 _   too many NPEs on loadimage may freeze the app
