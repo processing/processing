@@ -141,7 +141,8 @@ public class CreateFont extends JFrame {
 
     // see http://rinkworks.com/words/pangrams.shtml
     sample = new JTextArea("The quick brown fox blah blah.") {
-        //"Forsaking monastic tradition, twelve jovial friars gave up their vocation for a questionable existence on the flying trapeze.") {
+        // Forsaking monastic tradition, twelve jovial friars gave up their
+        // vocation for a questionable existence on the flying trapeze.
         public void paintComponent(Graphics g) {
           //System.out.println("disabling aa");
           Graphics2D g2 = (Graphics2D) g;
