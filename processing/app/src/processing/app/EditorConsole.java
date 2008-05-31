@@ -49,15 +49,18 @@ public class EditorConsole extends JScrollPane {
 
   boolean cerror;
 
-  //int maxCharCount;
   int maxLineCount;
 
   static File errFile;
   static File outFile;
   static File tempFolder;
 
-  public PrintStream systemOut;
-  public PrintStream systemErr;
+  // Single static instance shared because there's only one real System.out.
+  // Within the input handlers, the currentConsole variable will be used to
+  // echo things to the correct location.
+  
+  static public PrintStream systemOut;
+  static public PrintStream systemErr;
 
   static PrintStream consoleOut;
   static PrintStream consoleErr;
@@ -122,35 +125,32 @@ public class EditorConsole extends JScrollPane {
       systemOut = System.out;
       systemErr = System.err;
 
+      // Create a temporary folder which will have a randomized name. Has to 
+      // be randomized otherwise another instance of Processing (or one of its 
+      // sister IDEs) might collide with the file causing permissions problems. 
+      // The files and folders are not deleted on exit because they may be 
+      // needed for debugging or bug reporting.
       tempFolder = Base.createTempFolder("console");
       try {
         String outFileName = Preferences.get("console.output.file");
         if (outFileName != null) {
           outFile = new File(tempFolder, outFileName);
           stdoutFile = new FileOutputStream(outFile);
-          //outFile.deleteOnExit();
         }
 
         String errFileName = Preferences.get("console.error.file");
         if (errFileName != null) {
           errFile = new File(tempFolder, errFileName);
           stderrFile = new FileOutputStream(errFile);
-          //errFile.deleteOnExit();
         }
       } catch (IOException e) {
         Base.showWarning("Console Error",
                          "A problem occurred while trying to open the\n" +
                          "files used to store the console output.", e);
       }
-      //tempFolder.deleteOnExit();
-
-//      consoleOut =
-//        new PrintStream(new EditorConsoleStream(this, false, stdoutFile));
-//      consoleErr =
-//        new PrintStream(new EditorConsoleStream(this, true, stderrFile));
       consoleOut = new PrintStream(new EditorConsoleStream(false));
       consoleErr = new PrintStream(new EditorConsoleStream(true));
-
+    
       if (Preferences.getBoolean("console")) {
         try {
           System.setOut(consoleOut);
@@ -262,7 +262,7 @@ public class EditorConsole extends JScrollPane {
 
 
   /**
-   * append a piece of text to the console.
+   * Append a piece of text to the console.
    * <P>
    * Swing components are NOT thread-safe, and since the MessageSiphon
    * instantiates new threads, and in those callbacks, they often print
