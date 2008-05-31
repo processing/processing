@@ -53,14 +53,12 @@
 		<key>MainClass</key>
 		<string>processing.app.Base</string>
 		<key>JVMVersion</key>
-		<string>1.5+</string>
+		<string>1.5*</string>
 		<key>ClassPath</key>
-<!--			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/log4j.jar:$JAVAROOT/jalopy.jar:$JAVAROOT/oro.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar:/System/Library/Java</string>-->
-			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/oro.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar:/System/Library/Java</string>
-
-<!-- http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
+			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar:/System/Library/Java</string>
 		<key>Properties</key>
 		<dict>
+		  <!-- http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
 			<key>apple.laf.useScreenMenuBar</key>
 			<string>true</string>
 			<key>apple.awt.showGrowBox</key>
