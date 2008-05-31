@@ -2555,9 +2555,9 @@ public class Sketch {
                                        ZipOutputStream zos)
     throws IOException {
     String pieces[] = PApplet.split(path, File.pathSeparatorChar);
-    new Exception().printStackTrace();
-    PApplet.println(pieces);
-    PApplet.println();
+    //new Exception().printStackTrace();
+    //PApplet.println(pieces);
+    //PApplet.println();
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;
