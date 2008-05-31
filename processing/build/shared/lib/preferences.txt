@@ -149,7 +149,6 @@ header.text.selected.color   = #1A1A00
 header.text.unselected.color = #ffffff
 header.text.font             = SansSerif,plain,12
 
-console                  = true
 console.color            = #000000
 console.output.color     = #ccccbb
 console.output.file      = stdout.txt
