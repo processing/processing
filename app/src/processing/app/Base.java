@@ -970,7 +970,9 @@ public class Base {
           }
         }
       };
-
+    // offers no speed improvement
+    //menu.addActionListener(listener);
+      
     boolean ifound = false;
 
     for (int i = 0; i < list.length; i++) {
