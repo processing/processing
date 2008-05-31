@@ -5,6 +5,12 @@ X remove console variable from preferences.txt
 X run only works with primary window in 0136, 0137
 X   http://dev.processing.org/bugs/show_bug.cgi?id=784
 X   throwing a stackoverflowexception because the console is broken
+o hint(ENABLE_AUTO_GUNZIP) or rather hint(DISABLE_AUTO_GUNZIP)
+X   cannot do this because hint() lives in PGraphics, this is PApplet
+X code folder being ignored on export to application
+X   http://dev.processing.org/bugs/show_bug.cgi?id=469
+X   fixed in release 0137
+X remove debug messages from export
 
 _ slow response on file, sketchbook, and examples menus
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
@@ -17,14 +23,31 @@ _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=775
 _   this may just be a macosx (ppc?) bug
 
+further cleanup for simpler building
 _ since adding tools.jar, jikes can be removed
-
 _ implement windows registry lookups via reflection
 _   http://dev.processing.org/bugs/show_bug.cgi?id=723
 _   or move to jna for registry?
 _   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
+_   try to find someone
+_ properly handle non-ascii chars in p5 folder name
+_   use javac? 
+_     the eclipse jdt compiler may be even better
+X   ask japanese students about whether jikes is working ok
+_   http://dev.processing.org/bugs/show_bug.cgi?id=49
+_   or at least warn the user to install somehwere else
+_   perhaps the get around this by building into sketch folder
+_     when non-ascii chars in use, just launch everything externally
+_   also fails with export-to-application
+_     http://dev.processing.org/bugs/show_bug.cgi?id=252
+_ can't get documents/prefs folder on vista
+_   http://dev.processing.org/bugs/show_bug.cgi?id=585
+_ vista disables aero theme when p5 is run
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 
-_ two-tiered dialogs for everything - use big font/little font style throughout
+
+_ update to jogl 1.1.1
+_   do this with enhanced library/platform support
 
 _ disallow .java tabs with same name as the sketch
 _   a .java tab with same name as the sketch is allowed (oog!)
@@ -41,26 +64,14 @@ _ after fixing name of sketch, ensure sketch of that name does not exist
 _ put the "had to rename sketch" message in the msg bar
 _   it's ugly/annoying/intrusive
 
-_ prompt user before nuking applet or application folders
-_   along with a "don't ask me later"
-_ include a note that 'applet' folder will get emptied/rewritten
-_   or rename the old applet folder to something else? (too messy)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=61
-
 _ make.sh creating work/lib dirs.. no longer necessary?
 _ don't copy hidden files (.svn especially) on export/save as
 
 _ make .java files and friends go to correct locations on export (app)
 
-_ on first OutOfMemoryError, offer to send to the docs
-_   again, a warning checkbox
-
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
-
-_ update to jogl 1.1.1
-_   do this with enhanced library/platform support
 
 _ need to make up a priorities/todo page for processing
 _   that includes projects for people to help out on
@@ -98,6 +109,17 @@ _ constants that are not highlighting (WINDOWS the only one?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=662
 _ consoleXxxx and untitledXxxx folders in /tmp
 _   console may be useful for debugging
+_ untitled folders are stored in temp folder
+_ switching into present mode in info.plist
+        <key>LSUIPresentationMode</key>
+        <integer>4</integer> 
+_ PApplet.this doesn't work
+_   doesn't work in javac either--needs to be ClassName.this
+_   sketchname.this also doesn't work, because Temporary_NNNN used for name
+_   but since it's another tab/class, will run externally
+_   so should make the external version use the actual sketch name not temp
+_   can't use PApplet.this, doesn't seem to like that
+_   instead, must pass variable to inner class
 
 _ make editor nicer
 _   tab on selection indents whole block
@@ -158,6 +180,7 @@ _ can also cause problems with opening multiple copies of same sketch
 _ no error message if sketchbook folder is set to bad location
 _ says that it's gonna create new sketchbook in default loc
 _   even though that location might exist already (just word it better)
+_   "changing back to default sketchbook location"
 
 _ use debugger to get better exceptions
 _   and getting the error to show up in the window inside p5
@@ -207,11 +230,6 @@ _ mark examples as untitled (rather than read-only)
 _ inside sketch.java, don't hardwire the file extension types
 _   arduino uses .c, .cpp, .h instead of .java
 
-_ can't get documents/prefs folder on vista
-_   http://dev.processing.org/bugs/show_bug.cgi?id=585
-_ vista disables aero theme when p5 is run
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
-
 _ ocd is broken in 0125 - do a better error message for this
 
 _ add present mode bgcolor to prefs
@@ -230,21 +248,11 @@ _ xml element needs to be readable from other charsets
 _   same with the other methods like loadStrings()
 _   could also be a way to handle gzip too?
 _   tho charset + gzip would be a problem
-_   hint(ENABLE_AUTO_GUNZIP) or rather hint(DISABLE_AUTO_GUNZIP)
-
-_ switching into present mode in info.plist
-        <key>LSUIPresentationMode</key>
-        <integer>4</integer> 
 
 _ dynamic tools menu (requires moving files around)
 _   this means can integrate the autoformat stuff
 _   processing.mess/tools has chandler's template stuff
 _ finish up debian package support (see the processing.mess folder)
-
-_ the first time someone hides a tab, put up a msg explaining what it does
-_   "don't warn me about this anymore"
-_ add "don't warn me about this" for sketch renaming
-_   make sure renamed version doesn't exist already
 
 _ with additional .pde files, don't allow static mode in front tab
 
@@ -315,17 +323,6 @@ _   http://java.sun.com/javase/technologies/core/toolsapis/jpda/
 _ don't reload sketch on "save as"
 _   this can result in loss of data (undo is lost)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=433
-
-_ 'code' folder being ignored on export to application
-_   http://dev.processing.org/bugs/show_bug.cgi?id=469
-
-_ PApplet.this doesn't work
-_   doesn't work in javac either--needs to be ClassName.this
-_   sketchname.this also doesn't work, because Temporary_NNNN used for name
-_   but since it's another tab/class, will run externally
-_   so should make the external version use the actual sketch name not temp
-_   can't use PApplet.this, doesn't seem to like that
-_   instead, must pass variable to inner class
 
 _ install astyle formatter
 _   build on each platform, then "lipo -create astyle.* -output astyle"
@@ -619,16 +616,6 @@ PDE - Processing Development Environment
 
 PDE / Base
 
-_ properly handle non-ascii chars in p5 folder name
-_   use javac? 
-_     the eclipse jdt compiler may be even better
-X   ask japanese students about whether jikes is working ok
-_   http://dev.processing.org/bugs/show_bug.cgi?id=49
-_   or at least warn the user to install somehwere else
-_   perhaps the get around this by building into sketch folder
-_     when non-ascii chars in use, just launch everything externally
-_   also fails with export-to-application
-_     http://dev.processing.org/bugs/show_bug.cgi?id=252
 _ command line support
 _   http://dev.processing.org/bugs/show_bug.cgi?id=219
 _   would still require awt, but would take a sketch on cmd line
@@ -640,9 +627,25 @@ _   need to check the mkdirs() to make sure it's not going too deep
 _   really important for intl versions that are having trouble
 _   or ask for the sketch folder name.. why isn't it?
 _   http://processing.org/bugs/show_bug.cgi?id=1
+
+
+PDE / Warnings
+
+_ two-tiered dialogs for everything - use big font/little font style throughout
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 _   http://processing.org/bugs/show_bug.cgi?id=3
+_ the first time someone hides a tab, put up a msg explaining what it does
+_   "don't warn me about this anymore"
+_ add "don't warn me about this" for sketch renaming
+_   make sure renamed version doesn't exist already
+_ prompt user before nuking applet or application folders
+_   along with a "don't ask me later"
+_ include a note that 'applet' folder will get emptied/rewritten
+_   or rename the old applet folder to something else? (too messy)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=61
+_ on first OutOfMemoryError, offer to send to the docs
+_   again, a warning checkbox
 
 
 PDE / Compiler & Preprocessor
