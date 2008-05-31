@@ -1130,8 +1130,6 @@ public class Editor extends JFrame {
     for (int i = 0; i < 10; i++) System.out.println();
 
     // clear the console on each run, unless the user doesn't want to
-    //if (Base.getBoolean("console.auto_clear", true)) {
-    //if (Preferences.getBoolean("console.auto_clear", true)) {
     if (Preferences.getBoolean("console.auto_clear")) {
       console.clear();
     }
