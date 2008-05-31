@@ -154,7 +154,7 @@ public class Editor extends JFrame {
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
           base.handleActivated(Editor.this);
-
+          
           // re-add the sub-menus that are shared by all windows
           fileMenu.insert(sketchbookMenu, 2);
           fileMenu.insert(examplesMenu, 3);
