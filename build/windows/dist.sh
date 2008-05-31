@@ -109,18 +109,13 @@ zip -rq $P5.zip $P5
 #rm -rf $P5
 
 # zip up another for experts
-echo Packaging expert release...
-echo
-
-cp -a $P5 $P5-expert
-
-# can't use the run.bat that's tied to a local jre
-#rm $P5-expert/run.bat
-#cp dist/run-expert.bat $P5-expert/
-
-# remove enormous java runtime
-rm -rf $P5-expert/java
-zip -rq $P5-expert.zip $P5-expert
+echo Expert release is disabled until further notice.
+#echo Packaging expert release...
+#echo
+#cp -a $P5 $P5-expert
+## remove enormous java runtime
+#rm -rf $P5-expert/java
+#zip -rq $P5-expert.zip $P5-expert
 
 echo Done.
 
