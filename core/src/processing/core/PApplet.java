@@ -5760,6 +5760,7 @@ in   */
    */
   static public String[] match(String what, String regexp) {
     Pattern p = Pattern.compile(regexp);
+    //Pattern p = Pattern.compile(regexp, Pattern.MULTILINE);
     Matcher m = p.matcher(what);
     if (m.find()) {
       int count = m.groupCount();
