@@ -1,5 +1,13 @@
 0138 pde
+X importing a library results in "expecting EOF, found ..." error
+X   http://dev.processing.org/bugs/show_bug.cgi?id=788
 
+_ run only works with primary window in 0136, 0137
+_   http://dev.processing.org/bugs/show_bug.cgi?id=784
+
+_ slow response on file, sketchbook, and examples menus
+_   http://dev.processing.org/bugs/show_bug.cgi?id=786
+_   could be all the listeners?
 
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
@@ -7,6 +15,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=775
 _   this may just be a macosx (ppc?) bug
 _   seems on some machines to just never launch at all
 _   only happens with windows that aren't the original/main window
+
+_ since adding tools.jar, jikes can be removed
 
 _ two-tiered dialogs for everything - use big font/little font style throughout
 
@@ -131,7 +141,6 @@ _   but the window is not properly set as untitled
 _   http://dev.processing.org/bugs/show_bug.cgi?id=700
 
 _ when opening from double-click on the mac, doesn't replace untitled
-_ since adding tools.jar, jikes can be removed
 
 _ need a halt() method which will kill but not quit app (sets finished?)
 _   exit() will actually leave the application
