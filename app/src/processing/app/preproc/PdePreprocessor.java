@@ -241,11 +241,16 @@ public class PdePreprocessor {
 
     // if this guy has his own imports, need to remove them
     // just in case it's not an advanced mode sketch
-    String importRegexp = "[\\s^](import\\s+)(\\S+)(\\s*;)";
+    // TODO not sure why [\\s\\A^] won't work for me, but if someone is a Java
+    // regexp guru, please fill me in. In the interim, using a hack by adding
+    // a space to the beginning of 'program' so that the matcher works.
+    //String importRegexp = "[\\s\\A](import\\s+)(\\S+)(\\s*;)";
+    //String importRegexp = "[\\s^](import\\s+)(\\S+)(\\s*;)";
+    String importRegexp = "\\s(import\\s+)(\\S+)(\\s*;)";
     java.util.Vector imports = new java.util.Vector();
 
     do {
-      String[] pieces = PApplet.match(program, importRegexp);
+      String[] pieces = PApplet.match(" " + program, importRegexp);
       // Stop the loop if we've removed all the importy lines
       if (pieces == null) break;
 
