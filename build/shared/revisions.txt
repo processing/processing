@@ -7,9 +7,25 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0138 - ?? ???? 2008
+ABOUT REV 0138 - 31 May 2008
 
-[ bug fixes ]
+Continuing on the > 0135 crazy train.
+
+[ regression repair ]
+
++ This fixes a major regression since 0135 where code would only run
+  from the first sketch window opened. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=784
+
++ Fix "expecting EOF, found ..." error when importing a library.
+  http://dev.processing.org/bugs/show_bug.cgi?id=788
+
++ Remove debug spew when Export is used.
+
++ Switched to use Java 1.5 (not 1.5 or 1.6) for Processing.app 
+  on Mac OS X. Hopefully this may avoid additional quirkiness.
+
+[ graphics fix ]
 
 + Fix tessellation problems with concave 3D geometry that has many 
   nearby points (e.g. filled bezier polygons like fonts).
@@ -19,6 +35,19 @@ ABOUT REV 0138 - ?? ???? 2008
   drop for PPC Macs with the bug's example code that draws ~200 points
   in a concave polygon. Apple has abandoned PPC so we may as well too.
   http://dev.processing.org/bugs/show_bug.cgi?id=774
+
+[ fixed earlier ] 
+
++ The code folder was being ignored on export to application.
+  http://dev.processing.org/bugs/show_bug.cgi?id=469
+  Fixed along with the changes in 0137.
+
+[ new known issues ] 
+
++ Slow response on file, sketchbook, and examples menus
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+  This may be limited to Mac OS X. The problem is more or less 
+  known, just need to get a workaround in.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
