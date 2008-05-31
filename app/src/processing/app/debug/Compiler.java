@@ -65,7 +65,118 @@ public class Compiler implements MessageConsumer {
   public Compiler() { }  // consider this a warning, you werkin soon.
 
 
-  public boolean compile(Sketch sketch, String buildPath)
+  /**
+   * Fire up 'ole javac based on 
+   * <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/solaris/javac.html#proginterface">this interface</a>.
+   *
+   * @param sketch
+   * @param buildPath
+   * @return
+   * @throws RunnerException
+   */
+  public boolean compile(Sketch sketch, 
+                         String buildPath) throws RunnerException {
+//    com.sun.tools.javac.Main javac = new com.sun.tools.javac.Main();
+    
+    this.sketch = sketch;
+    this.buildPath = buildPath;    
+      
+    String baseCommand[] = new String[] {
+          // this doesn't help much.. also java 1.4 seems to not support
+          // -source 1.1 for javac, and jikes seems to also have dropped it.
+          // for versions of jikes that don't complain, "final int" inside
+          // a function doesn't throw an error, so it could just be a
+          // ms jvm error that this sort of thing doesn't work. blech.
+          //"-source",
+          //"1.1",
+
+          // necessary to make output classes compatible with 1.1
+          // i.e. so that exported applets can work with ms jvm on the web
+//          "-target",
+//          Preferences.get("preproc.jdk_version"),  //"1.1",
+          // let the incompatibility headache begin
+//        for javac, we'll shut these off, and hope for the best so that ppl
+//        can use 1.5 code inside .java tabs
+
+          // used when run without a vm ("expert" mode)
+//          "-bootclasspath",
+//          calcBootClassPath(),
+          // with javac, let's try and trust the system to do the right thing
+
+          "-classpath", sketch.getClassPath(),
+
+          "-nowarn", // we're not currently interested in warnings
+          
+          //"+E", // output errors in machine-parsable format
+//          @#$)(*@#$ why doesn't javac have this option?
+          
+          "-d", buildPath // output the classes in the buildPath
+          //buildPath + File.separator + className + ".java" // file to compile
+    };
+//  PApplet.println(baseCommand);
+
+    // make list of code files that need to be compiled
+    // (some files are skipped if they contain no class)
+    String[] preprocNames = new String[sketch.getCodeCount()];
+    int preprocCount = 0;
+    for (int i = 0; i < sketch.getCodeCount(); i++) {
+      if (sketch.getCode(i).preprocName != null) {
+        preprocNames[preprocCount++] = sketch.getCode(i).preprocName;
+      }
+    }
+    String[] command = new String[baseCommand.length + preprocCount];
+    System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
+    // append each of the files to the command string
+    for (int i = 0; i < preprocCount; i++) {
+      command[baseCommand.length + i] =
+        buildPath + File.separator + preprocNames[i];
+    }
+    //PApplet.println(command);
+
+    firstErrorFound = false;  // haven't found any errors yet
+    secondErrorFound = false;
+
+    PipedWriter pipedWriter = new PipedWriter();
+    PrintWriter writer = new PrintWriter(pipedWriter);
+    PipedReader pipedReader = new PipedReader();
+    BufferedReader reader = new BufferedReader(pipedReader);
+    int result = 0;
+    
+    try {
+      pipedWriter.connect(pipedReader);    
+      //result = javac.compile(command, writer);
+      result = com.sun.tools.javac.Main.compile(command, writer);
+
+      while (pipedReader.ready()) {
+        System.out.println("got line " + reader.readLine());
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
+    
+      // an error was queued up by message(), barf this back to build()
+    // which will barf it back to Editor. if you're having trouble
+    // discerning the imagery, consider how cows regurgitate their food
+    // to digest it, and the fact that they have five stomaches.
+    //
+    //System.out.println("throwing up " + exception);
+    if (exception != null) throw exception;
+
+    // if the result isn't a known, expected value it means that something
+    // is fairly wrong, one possibility is that jikes has crashed.
+    //
+//    if (result != 0 && result != 1 ) {
+//      Base.openURL(BUGS_URL);
+//      throw new RunnerException(SUPER_BADNESS);
+//    }
+
+    // success would mean that 'result' is set to zero
+    return (result == 0); // ? true : false;
+  }
+
+
+  public boolean compileJikes(Sketch sketch, String buildPath)
     throws RunnerException {
 
     this.sketch = sketch;
