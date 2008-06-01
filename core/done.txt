@@ -1,3 +1,8 @@
+0138 core
+X improve tessellation accuracy by using doubles internally
+X   http://dev.processing.org/bugs/show_bug.cgi?id=774
+
+
 0137 core
 X add gz handling for createOutput()
 X change openStream() to createInput() (done in 0136)
