@@ -1,6 +1,4 @@
-0138 core
-X improve tessellation accuracy by using doubles internally
-X   http://dev.processing.org/bugs/show_bug.cgi?id=774
+0139 core
 
 
 _ Add support style attribute for path tag to Candy SVG (ricard)
