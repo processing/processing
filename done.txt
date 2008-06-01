@@ -1,3 +1,18 @@
+0138 pde
+X importing a library results in "expecting EOF, found ..." error
+X   http://dev.processing.org/bugs/show_bug.cgi?id=788
+X remove console variable from preferences.txt 
+X run only works with primary window in 0136, 0137
+X   http://dev.processing.org/bugs/show_bug.cgi?id=784
+X   throwing a stackoverflowexception because the console is broken
+o hint(ENABLE_AUTO_GUNZIP) or rather hint(DISABLE_AUTO_GUNZIP)
+X   cannot do this because hint() lives in PGraphics, this is PApplet
+X code folder being ignored on export to application
+X   http://dev.processing.org/bugs/show_bug.cgi?id=469
+X   fixed in release 0137
+X remove debug messages from export
+
+
 0137 pde
 X move to multiple jars whenever 
 X   1) a lib is in use, 2) code folder, 3) multiple files
