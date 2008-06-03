@@ -1492,9 +1492,9 @@ public class Sketch {
       }
       errorLine -= code[errorFile].preprocOffset;
 
-      //System.out.println("i found this guy snooping around..");
-      //System.out.println("whatcha want me to do with 'im boss?");
-      //System.out.println(errorLine + " " + errorFile);
+//      System.out.println("i found this guy snooping around..");
+//      System.out.println("whatcha want me to do with 'im boss?");
+//      System.out.println(errorLine + " " + errorFile);
 
       String msg = re.getMessage();
 
@@ -1533,6 +1533,7 @@ public class Sketch {
       // there doesn't seem to be a method to grab it..
       // so instead it's done using a regexp
 
+//      System.err.println("and then she tells me " + tsre.toString());
       // TODO not tested since removing ORO matcher.. ^ could be a problem
       String mess = "^line (\\d+):(\\d+):\\s";
 
