@@ -1,5 +1,13 @@
 0139 pde
+X update quaqua to 3.9.5 on macosx (http://www.randelshofer.ch/quaqua/)
+X xml.getIntAttribute() returns a float
+X   http://dev.processing.org/bugs/show_bug.cgi?id=790
 
+_ error highlighting broken 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=795
+
+_ "Target VM failed to initialize: VM initialization failed" when trying to run
+_   http://dev.processing.org/bugs/show_bug.cgi?id=796
 
 _ slow response on file, sketchbook, and examples menus
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
@@ -66,6 +74,8 @@ _ need to make up a priorities/todo page for processing
 _   that includes projects for people to help out on
 
 reference
+_ quicktime likes to crash (not just on windows)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=791
 _ createInput, createInputRaw, createOutput
 _ noLoop() isn't the same as "finished", though it's sometimes used that way
 _   to finish, use exit() (though that will make the window close)
