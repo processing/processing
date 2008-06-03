@@ -876,13 +876,13 @@ public class XMLElement implements Serializable {
             return attr.getValue();
         }
     }
-    
-    
+
+
     public String getStringAttribute(String name) {
         return getAttribute(name);
     }
 
-    
+
     public String getStringAttribute(String name, String defaultValue) {
         return getAttribute(name, defaultValue);
     }
@@ -895,11 +895,11 @@ public class XMLElement implements Serializable {
     }
 
 
-    public float getIntAttribute(String name) {
+    public int getIntAttribute(String name) {
         return getIntAttribute(name, 0);
     }
-    
-    
+
+
     /**
      * Returns the value of an attribute.
      *
@@ -936,8 +936,8 @@ public class XMLElement implements Serializable {
     public float getFloatAttribute(String name) {
         return getFloatAttribute(name, 0);
     }
-    
-    
+
+
     /**
      * Returns the value of an attribute.
      *
@@ -974,8 +974,8 @@ public class XMLElement implements Serializable {
     public double getDoubleAttribute(String name) {
         return getDoubleAttribute(name, 0);
     }
-    
-    
+
+
     /**
      * Returns the value of an attribute.
      *
