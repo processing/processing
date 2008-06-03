@@ -1908,8 +1908,14 @@ public class Editor extends JFrame {
       return;
     }
 
-    // not sure if any RuntimeExceptions will actually arrive
-    // through here, but gonna check for em just in case.
+    if (e instanceof RunnerException) {
+      RunnerException re = (RunnerException) e;
+      if (re.file >= 0) sketch.setCurrent(re.file);
+      if (re.line >= 0) highlightLine(re.line);
+    }
+
+    // Since this will catch all Exception types, spend some time figuring 
+    // out which kind and try to give a better error message to the user.
     String mess = e.getMessage();
     if (mess != null) {
       String rxString = "RuntimeException: ";
@@ -1920,33 +1926,9 @@ public class Editor extends JFrame {
       if (mess.indexOf(javaLang) == 0) {
         mess = mess.substring(javaLang.length());
       }
-      //System.out.println("message not null");
       error(mess);
-//    } else {
-//      System.out.println("message is null");
     }
     e.printStackTrace();
-  }
-
-
-  public void error(RunnerException e) {
-    //System.out.println("file and line is " + e.file + " " + e.line);
-    if (e.file >= 0) sketch.setCurrent(e.file);
-    if (e.line >= 0) highlightLine(e.line);
-
-    // remove the RuntimeException: message since it's not
-    // really all that useful to the user
-    //status.error(e.getMessage());
-    String mess = e.getMessage();
-    String rxString = "RuntimeException: ";
-    if (mess.indexOf(rxString) == 0) {
-      mess = mess.substring(rxString.length());
-    }
-    String javaLang = "java.lang.";
-    if (mess.indexOf(javaLang) == 0) {
-      mess = mess.substring(javaLang.length());
-    }
-    error(mess);
   }
 
 

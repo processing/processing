@@ -2,9 +2,10 @@
 X update quaqua to 3.9.5 on macosx (http://www.randelshofer.ch/quaqua/)
 X xml.getIntAttribute() returns a float
 X   http://dev.processing.org/bugs/show_bug.cgi?id=790
-
-_ error highlighting broken 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=795
+X include memory settings with exported applications on macosx
+X   http://dev.processing.org/bugs/show_bug.cgi?id=803
+X error highlighting broken 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=795
 
 _ "Target VM failed to initialize: VM initialization failed" when trying to run
 _   http://dev.processing.org/bugs/show_bug.cgi?id=796
