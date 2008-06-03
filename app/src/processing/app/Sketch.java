@@ -1533,8 +1533,8 @@ public class Sketch {
       // there doesn't seem to be a method to grab it..
       // so instead it's done using a regexp
 
-      // TODO not tested since removing ORO matcher.. ^ could be a problem 
-      String mess = "^line (\\d+):(\\d+):\\s";  
+      // TODO not tested since removing ORO matcher.. ^ could be a problem
+      String mess = "^line (\\d+):(\\d+):\\s";
 
       String[] matches = PApplet.match(tsre.toString(), mess);
       if (matches != null) {
@@ -1673,7 +1673,7 @@ public class Sketch {
     Base.removeDir(appletFolder);
     // Create a fresh applet folder (needed before preproc is run below)
     appletFolder.mkdirs();
-    
+
     zipFileContents = new Hashtable();
 
     // build the sketch
@@ -1695,9 +1695,9 @@ public class Sketch {
     int high = PApplet.DEFAULT_HEIGHT;
     String renderer = "";
 
-    // This matches against any uses of the size() function, whether numbers 
-    // or variables or whatever. This way, no warning is shown if size() isn't 
-    // actually used in the applet, which is the case especially for beginners 
+    // This matches against any uses of the size() function, whether numbers
+    // or variables or whatever. This way, no warning is shown if size() isn't
+    // actually used in the applet, which is the case especially for beginners
     // that are cutting/pasting from the reference.
     String sizeRegex =
       "[\\s\\;^]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
@@ -2388,6 +2388,16 @@ public class Sketch {
     }
 
 
+    /// figure out run options for the VM
+
+    String runOptions = Preferences.get("run.options");
+    if (Preferences.getBoolean("run.options.memory")) {
+      runOptions += " -Xms" +
+        Preferences.get("run.options.memory.initial") + "m";
+      runOptions += " -Xmx" +
+        Preferences.get("run.options.memory.maximum") + "m";
+    }
+
     /// macosx: write out Info.plist (template for classpath, etc)
 
     if (exportPlatform == PConstants.MACOSX) {
@@ -2404,6 +2414,10 @@ public class Sketch {
         if (lines[i].indexOf("@@") != -1) {
           StringBuffer sb = new StringBuffer(lines[i]);
           int index = 0;
+          while ((index = sb.indexOf("@@vmoptions@@")) != -1) {
+            sb.replace(index, index + "@@vmoptions@@".length(),
+                       runOptions);
+          }
           while ((index = sb.indexOf("@@sketch@@")) != -1) {
             sb.replace(index, index + "@@sketch@@".length(),
                        name);
@@ -2424,12 +2438,15 @@ public class Sketch {
       File argsFile = new File(destFolder + "/lib/args.txt");
       PrintStream ps = new PrintStream(new FileOutputStream(argsFile));
 
+      /*
       ps.print(Preferences.get("run.options") + " ");
       if (Preferences.getBoolean("run.options.memory")) {
         ps.print("-Xms" + Preferences.get("run.options.memory.initial") + "m ");
         ps.print("-Xmx" + Preferences.get("run.options.memory.maximum") + "m ");
       }
       ps.println();
+      */
+      ps.println(runOptions);
 
       ps.println(this.name);
       ps.println(exportClassPath);
