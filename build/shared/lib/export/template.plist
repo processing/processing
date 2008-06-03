@@ -25,11 +25,11 @@
 	<key>Java</key>
 	<dict>
 		<key>VMOptions</key>
-		<string>-Xms128M -Xmx256M</string>
+		<string>@@vmoptions@@</string>
 		<key>MainClass</key>
 		<string>@@sketch@@</string>
 		<key>JVMVersion</key>
-		<string>1.3+</string>
+		<string>1.5*</string>
 		<key>ClassPath</key>
 		<string>@@classpath@@</string>
 
