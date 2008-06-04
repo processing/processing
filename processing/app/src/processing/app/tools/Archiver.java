@@ -157,7 +157,7 @@ public class Archiver {
         ZipEntry entry = new ZipEntry(nowfar);
         entry.setTime(sub.lastModified());
         zos.putNextEntry(entry);
-        zos.write(Base.grabFile(sub));
+        zos.write(Base.loadBytesRaw(sub));
         zos.closeEntry();
       }
     }

@@ -1906,7 +1906,7 @@ public class Sketch {
 
         entry = new ZipEntry(dataFiles[i].substring(offset));
         zos.putNextEntry(entry);
-        zos.write(Base.grabFile(dataFile));
+        zos.write(Base.loadBytesRaw(dataFile));
         zos.closeEntry();
       }
     }
@@ -1921,7 +1921,7 @@ public class Sketch {
       if (classfiles[i].endsWith(".class")) {
         entry = new ZipEntry(classfiles[i]);
         zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(appletFolder, classfiles[i])));
+        zos.write(Base.loadBytesRaw(new File(appletFolder, classfiles[i])));
         zos.closeEntry();
       }
     }
@@ -2239,7 +2239,7 @@ public class Sketch {
       if (classfiles[i].endsWith(".class")) {
         entry = new ZipEntry(classfiles[i]);
         zos.putNextEntry(entry);
-        zos.write(Base.grabFile(new File(destFolder, classfiles[i])));
+        zos.write(Base.loadBytesRaw(new File(destFolder, classfiles[i])));
         zos.closeEntry();
       }
     }
@@ -2261,7 +2261,7 @@ public class Sketch {
 
         entry = new ZipEntry(dataFiles[i].substring(offset));
         zos.putNextEntry(entry);
-        zos.write(Base.grabFile(dataFile));
+        zos.write(Base.loadBytesRaw(dataFile));
         zos.closeEntry();
       }
     }
@@ -2664,7 +2664,7 @@ public class Sketch {
             files[i].charAt(0) != '.') {
           ZipEntry entry = new ZipEntry(nowfar);
           zos.putNextEntry(entry);
-          zos.write(Base.grabFile(sub));
+          zos.write(Base.loadBytesRaw(sub));
           zos.closeEntry();
         }
       }
