@@ -20,9 +20,11 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.macosx;
 
 import java.io.FileNotFoundException;
+
+import processing.app.Base;
 
 import com.apple.eawt.*;
 import com.apple.eio.FileManager;
@@ -36,11 +38,11 @@ import com.apple.eio.FileManager;
  * because it is hit by only two accessor methods in processing.app.Base that
  * are now called via reflection.  
  */
-public class BaseMacOS implements ApplicationListener {
+public class ThinkDifferent implements ApplicationListener {
 
   // pseudo-singleton model; no point in making multiple instances
   // of the EAWT application or our adapter
-  private static BaseMacOS adapter;
+  private static ThinkDifferent adapter;
   // http://developer.apple.com/documentation/Java/Reference/1.4.2/appledoc/api/com/apple/eawt/Application.html
   private static Application application;
 
@@ -48,7 +50,7 @@ public class BaseMacOS implements ApplicationListener {
   private Base base;
 
   
-  private BaseMacOS(Base base) {
+  private ThinkDifferent(Base base) {
     this.base = base;
   }
   
@@ -120,7 +122,7 @@ public class BaseMacOS implements ApplicationListener {
       application = new com.apple.eawt.Application();
     }
     if (adapter == null) {
-      adapter = new BaseMacOS(base);
+      adapter = new ThinkDifferent(base);
     }
     application.addApplicationListener(adapter);
     application.setEnabledAboutMenu(true);

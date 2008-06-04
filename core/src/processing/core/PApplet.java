@@ -4616,6 +4616,12 @@ in   */
     }
     return null;
   }
+  
+  
+  static public byte[] loadBytes(File file) {
+    InputStream is = createInput(file);
+    return loadBytes(is);
+  }
 
 
   static public String[] loadStrings(File file) {

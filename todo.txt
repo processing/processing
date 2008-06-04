@@ -38,6 +38,19 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=585
 _ vista disables aero theme when p5 is run
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 
+_ make sure that export is using utf8 for writing the .pde files etc
+_   should be primarily loadFile() and saveFile() inside Base
+_ change pde files to use utf8
+_   1) if file contains binary data and
+_   2) its mod date is earlier than when p5 0125 was installed
+_   offer to convert it, or ignore
+_   then re-save the file to update the mod date
+_   ...or, when first running p5 0125, offer to update sketches
+_ need to set a default charset for use in files (utf8)
+_   add option to change charset or specify as part of loading
+_   need to specify the default encoding
+_ http://dev.processing.org/bugs/show_bug.cgi?id=743
+
 _ update to jogl 1.1.1
 _   do this with enhanced library/platform support
 
@@ -130,18 +143,6 @@ _     or just show tabs in (alpha?) order based on what's most recently used
 _   have some indicator that shows the tabs when they've disappeared
 _   or little mini tabs that expand/contract?
 _     and a way to control who's expanded and not
-
-_ make sure that export is using utf8 for writing the .pde files etc
-_ change pde files to use utf8
-_   1) if file contains binary data and
-_   2) its mod date is earlier than when p5 0125 was installed
-_   offer to convert it, or ignore
-_   then re-save the file to update the mod date
-_   ...or, when first running p5 0125, offer to update sketches
-_ need to set a default charset for use in files (utf8)
-_   add option to change charset or specify as part of loading
-_   need to specify the default encoding
-_ http://dev.processing.org/bugs/show_bug.cgi?id=743
 
 _ pdf not rendering unicode (though it renders to screen)
 _   try updating to newer itext
@@ -963,8 +964,6 @@ _ in rebuild sketch menu - disable subfolders working as libraries
 _   if a sketch, don't allow subfolders
 o   or maybe just that libraries must be in the root? 
 o   nah, cuz that would mean can't make subfolder called "libraries"
-_ write prefs when opening/saving/etc a file
-_   when p5 crashes, want to re-open file easily
 _ is the 'hide' option for code dumb? i've never used it
 _   should it just hide the code, not actually remove it?
 _ do we finish the tabs thing for 1.0? yes
