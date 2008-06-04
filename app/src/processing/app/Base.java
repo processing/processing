@@ -32,9 +32,9 @@ import java.util.*;
 
 import javax.swing.*;
 
-import com.ice.jni.registry.*;
-
 import processing.app.debug.Compiler;
+import processing.app.windows.Registry;
+import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 import processing.core.*;
 
 
@@ -203,7 +203,7 @@ public class Base {
 
   protected void registerMacOS() {
     try {
-      String name = "processing.app.BaseMacOS";
+      String name = "processing.app.macosx.ThinkDifferent";
       Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass(name);
 
       Class[] defArgs = { Base.class };
@@ -1186,7 +1186,7 @@ public class Base {
 
     } else if (PApplet.platform == PConstants.MACOSX) {
       try {
-        Class clazz = Class.forName("processing.app.BaseMacOS");
+        Class clazz = Class.forName("processing.app.macosx.ThinkDifferent");
         Method m = clazz.getMethod("getLibraryFolder", new Class[] { });
         String libraryPath = (String) m.invoke(null, new Object[] { });
         //String libraryPath = BaseMacOS.getLibraryFolder();
@@ -1208,21 +1208,23 @@ public class Base {
       // Value Name: AppData
       // Value Type: REG_SZ
       // Value Data: path
-      
-      try {
-        //RegistryKey topKey = Registry.getTopLevelKey("HKCU");
-        RegistryKey topKey = Registry.HKEY_CURRENT_USER;
 
-        String localKeyPath =
+      try {
+//        RegistryKey topKey = Registry.getTopLevelKey("HKCU");
+
+        String keyPath =
           "Software\\Microsoft\\Windows\\CurrentVersion" +
           "\\Explorer\\Shell Folders";
-        RegistryKey localKey = topKey.openSubKey(localKeyPath);
-        String appDataPath = cleanKey(localKey.getStringValue("AppData"));
+//        RegistryKey localKey = topKey.openSubKey(localKeyPath);
+//        String appDataPath = cleanKey(localKey.getStringValue("AppData"));
         //System.out.println("app data path is " + appDataPath);
         //System.exit(0);
         //topKey.closeKey();  // necessary?
         //localKey.closeKey();
 
+        String appDataPath = 
+          Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "AppData");
+        
         dataFolder = new File(appDataPath, "Processing");
 
       } catch (Exception e) {
@@ -1364,44 +1366,27 @@ public class Base {
       // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
 
       try {
-        RegistryKey topKey = Registry.HKEY_CURRENT_USER;
-
-        String localKeyPath =
+//        RegistryKey topKey = Registry.HKEY_CURRENT_USER;
+//        int topKey = Registry.openKey(REGISTRY_ROOT_KEY.CURRENT_USER);
+        String keyPath =
           "Software\\Microsoft\\Windows\\CurrentVersion" +
           "\\Explorer\\Shell Folders";
-        RegistryKey localKey = topKey.openSubKey(localKeyPath);
-        String personalPath = cleanKey(localKey.getStringValue("Personal"));
-        //topKey.closeKey();  // necessary?
-        //localKey.closeKey();
+//        RegistryKey localKey = topKey.openSubKey(localKeyPath);        
+//        String personalPath = cleanKey(localKey.getStringValue("Personal"));
+        String personalPath = 
+          Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "Personal");
+
+//        //topKey.closeKey();  // necessary?
+//        //localKey.closeKey();
+
         sketchbookFolder = new File(personalPath, "Processing");
 
       } catch (Exception e) {
-        //showError("Problem getting folder",
-        //          "Could not locate the Documents folder.", e);
         sketchbookFolder = promptSketchbookLocation();
       }
 
     } else {
       sketchbookFolder = promptSketchbookLocation();
-
-      /*
-      // on linux (or elsewhere?) prompt the user for the location
-      JFileChooser fc = new JFileChooser();
-      fc.setDialogTitle("Select the folder where " +
-                        "Processing sketches should be stored...");
-      //fc.setSelectedFile(new File(sketchbookLocationField.getText()));
-      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-      int returned = fc.showOpenDialog(new JDialog());
-      if (returned == JFileChooser.APPROVE_OPTION) {
-        //File file = fc.getSelectedFile();
-        //sketchbookLocationField.setText(file.getAbsolutePath());
-        sketchbookFolder = fc.getSelectedFile();
-
-      } else {
-        System.exit(0);
-      }
-      */
     }
 
     // create the folder if it doesn't exist already
@@ -1549,33 +1534,35 @@ public class Base {
     return null;
   }
 
-
-  static public String cleanKey(String what) {
-    // jnireg seems to be reading the chars as bytes
-    // so maybe be as simple as & 0xff and then running through decoder
-
-    char c[] = what.toCharArray();
-
-    // if chars are in the tooHigh range, it's prolly because
-    // a byte from the jni registry was turned into a char
-    // and there was a sign extension.
-    // e.g. 0xFC (252, umlaut u) became 0xFFFC (65532).
-    // but on a japanese system, maybe this is two-byte and ok?
-    int tooHigh = 65536 - 128;
-    for (int i = 0; i < c.length; i++) {
-      if (c[i] >= tooHigh) c[i] &= 0xff;
-
-      /*
-      if ((c[i] >= 32) && (c[i] < 128)) {
-        System.out.print(c[i]);
-      } else {
-        System.out.print("[" + PApplet.hex(c[i]) + "]");
-      }
-      */
-    }
-    //System.out.println();
-    return new String(c);
-  }
+  
+// this is a nasty hack to deal with a bug in jnireg
+// removing it for 0140 since we're moving to jna for reg lookups 
+//  static public String cleanKey(String what) {
+//    // jnireg seems to be reading the chars as bytes
+//    // so maybe be as simple as & 0xff and then running through decoder
+//
+//    char c[] = what.toCharArray();
+//
+//    // if chars are in the tooHigh range, it's prolly because
+//    // a byte from the jni registry was turned into a char
+//    // and there was a sign extension.
+//    // e.g. 0xFC (252, umlaut u) became 0xFFFC (65532).
+//    // but on a japanese system, maybe this is two-byte and ok?
+//    int tooHigh = 65536 - 128;
+//    for (int i = 0; i < c.length; i++) {
+//      if (c[i] >= tooHigh) c[i] &= 0xff;
+//
+//      /*
+//      if ((c[i] >= 32) && (c[i] < 128)) {
+//        System.out.print(c[i]);
+//      } else {
+//        System.out.print("[" + PApplet.hex(c[i]) + "]");
+//      }
+//      */
+//    }
+//    //System.out.println();
+//    return new String(c);
+//  }
 
 
   // .................................................................
@@ -1917,7 +1904,10 @@ public class Base {
   // ...................................................................
 
 
-  static public byte[] grabFile(File file) throws IOException {
+  /**
+   * Same as PApplet.loadBytes(), however never does gzip decoding.
+   */
+  static public byte[] loadBytesRaw(File file) throws IOException {
     int size = (int) file.length();
     FileInputStream input = new FileInputStream(file);
     byte buffer[] = new byte[size];
