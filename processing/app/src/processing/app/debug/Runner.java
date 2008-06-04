@@ -254,12 +254,22 @@ public class Runner implements MessageConsumer {
 
 
   protected VirtualMachine launch(String[] vmParams, String[] classParams) {
+    
     //vm = launchTarget(sb.toString());
     LaunchingConnector connector = findLaunchingConnector();
     //Map arguments = connectorArguments(connector, mainArgs);
 
     Map arguments = connector.defaultArguments();
     //System.out.println(arguments);
+    
+//    for (Iterator itr = arguments.keySet().iterator(); itr.hasNext(); ) {
+//      Connector.Argument argument = 
+//        (Connector.Argument) arguments.get(itr.next());
+//      System.out.println(argument);
+//    }
+    
+    //connector.transport().
+
     Connector.Argument mainArg =
       (Connector.Argument)arguments.get("main");
     if (mainArg == null) {
@@ -292,11 +302,20 @@ public class Runner implements MessageConsumer {
     for (int i = 0; i < vmParams.length; i++) {
       optionArgs = addArgument(optionArgs, vmParams[i], ' ');
     }
-
+    // prevent any incorrect transport address b.s. from being added 
+    // -Xrunjdwp:transport=dt_socket,address=cincinnati118.ipcorporate.com:55422,suspend=y
+    //optionArgs = addArgument(optionArgs, "-agentlib:jdwp=transport=dt_socket,address=localhost:12345,suspend=y", ' ');
+    //optionArgs += " -Xrunjdwp:transport=dt_socket,address=localhost:55422,suspend=y";
+    //optionArgs = optionArgs + " -agentlib:jdwp=transport=dt_socket";
+    //optionArgs = addArgument(optionArgs, "-Xrunjdwp:transport=dt_socket,address=localhost:55422,suspend=y", ' ');
+    
+    //optionArgs = addArgument(optionArgs, "address=127.0.0.1:54321", ' ');
+    //optionArgs = addArgument(optionArgs, "localAddress", ' ');
+    
     Connector.Argument optionArg =
       (Connector.Argument)arguments.get("options");
     optionArg.setValue(optionArgs);
-
+    
     //arguments.put("address", "localhost");
 
 //    Connector.Argument addressArg =
@@ -306,7 +325,11 @@ public class Runner implements MessageConsumer {
 //    System.out.println("option args are: ");
 //    System.out.println(arguments.get("options"));
 
-    //System.out.println("args are " + arguments);
+//    System.out.println("args are " + arguments);
+    
+    // com.sun.tools.jdi.SunCommandLineLauncher
+    
+    // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#sunlaunch
     try {
       return connector.launch(arguments);
     } catch (IOException exc) {
@@ -314,8 +337,11 @@ public class Runner implements MessageConsumer {
     } catch (IllegalConnectorArgumentsException exc) {
       throw new Error("Internal error: " + exc);
     } catch (VMStartException exc) {
-      throw new Error("Target VM failed to initialize: " +
-      exc.getMessage());
+      System.err.println("Target VM failed to initialize:");
+      exc.printStackTrace();
+      //throw new Error("Target VM failed to initialize: " +
+      //exc.getMessage());
+      throw new Error(exc.getMessage());
     }
   }
 
@@ -416,6 +442,13 @@ public class Runner implements MessageConsumer {
    * Find a com.sun.jdi.CommandLineLaunch connector
    */
   LaunchingConnector findLaunchingConnector() {
+    //VirtualMachineManager mgr = Bootstrap.virtualMachineManager();
+    
+//    if (true) {
+//      System.out.println(Bootstrap.virtualMachineManager().defaultConnector());
+//      return Bootstrap.virtualMachineManager().defaultConnector();
+//    }
+    
     List connectors = Bootstrap.virtualMachineManager().allConnectors();
 
     // code to list available connectors
@@ -429,7 +462,6 @@ public class Runner implements MessageConsumer {
     while (iter.hasNext()) {
       Connector connector = (Connector)iter.next();
       if (connector.name().equals("com.sun.jdi.CommandLineLaunch")) {
-      //if (connector.name().equals("com.sun.jdi.RawCommandLineLaunch")) {
         return (LaunchingConnector)connector;
       }
     }

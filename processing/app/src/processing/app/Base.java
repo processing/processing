@@ -120,7 +120,8 @@ public class Base {
     } catch (Exception e) {
       System.err.println("Non-fatal error while setting the Look & Feel.");
       System.err.println("The error message follows, however Processing should run fine.");
-      e.printStackTrace();
+      System.err.println(e.getMessage());
+      //e.printStackTrace();
     }
 
     // Use native popups so they don't look so crappy on osx
