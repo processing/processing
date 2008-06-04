@@ -1,14 +1,11 @@
 package processing.app.windows;
 
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import com.sun.jna.ptr.IntByReference;
 
 /**
  * Methods for accessing the Windows Registry. Only String and DWORD values supported at the moment.
@@ -211,7 +208,11 @@ public class Registry {
     byte[] data;
     boolean ret = false;
     
-    data = Arrays.copyOf(value.getBytes("UTF-16LE"), value.length() * 2 + 2);
+    // appears to be Java 1.6 syntax, removing [fry]
+    //data = Arrays.copyOf(value.getBytes("UTF-16LE"), value.length() * 2 + 2);
+    data = new byte[value.length() * 2 + 2];
+    System.arraycopy(value.getBytes("UTF-16LE"), 0, data, 0, data.length);
+    
     advapi32 = Advapi32.INSTANCE;
     handle = openKey(rootKey, subKeyName, WINNT.KEY_READ | WINNT.KEY_WRITE);
     
