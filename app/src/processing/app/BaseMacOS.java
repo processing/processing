@@ -31,6 +31,10 @@ import com.apple.eio.FileManager;
 /**
  * Deal with issues connected to thinking different.
  * Based on OSXAdapter.java from Apple DTS.
+ * 
+ * As of 0140, this code need not be built on platforms other than OS X, 
+ * because it is hit by only two accessor methods in processing.app.Base that
+ * are now called via reflection.  
  */
 public class BaseMacOS implements ApplicationListener {
 
@@ -123,6 +127,9 @@ public class BaseMacOS implements ApplicationListener {
     application.setEnabledPreferencesMenu(true);
   }  
   
+
+  // Some of these are supposedly constants in com.apple.eio.FileManager, 
+  // however they don't seem to link properly from Eclipse.
   
   static final int kDocumentsFolderType =
     ('d' << 24) | ('o' << 16) | ('c' << 8) | 's';
@@ -133,8 +140,20 @@ public class BaseMacOS implements ApplicationListener {
   static final short kUserDomain = -32763;
 
   
-  // http://developer.apple.com/documentation/Java/Reference/1.4.2/appledoc/api/com/apple/eio/FileManager.html
+  // apple java extensions documentation
+  // http://developer.apple.com/documentation/Java/Reference/1.5.0
+  //   /appledoc/api/com/apple/eio/FileManager.html
   
+  // carbon folder constants
+  // http://developer.apple.com/documentation/Carbon/Reference
+  //   /Folder_Manager/folder_manager_ref/constant_6.html#/
+  //   /apple_ref/doc/uid/TP30000238/C006889
+
+  // additional information found int the local file:
+  // /System/Library/Frameworks/CoreServices.framework
+  //   /Versions/Current/Frameworks/CarbonCore.framework/Headers/
+
+
   static public String getLibraryFolder() {
     try {
       return FileManager.findFolder(kUserDomain, kDomainLibraryFolderType);

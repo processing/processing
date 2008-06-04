@@ -1185,51 +1185,15 @@ public class Base {
       dataFolder = new File(pref);
 
     } else if (PApplet.platform == PConstants.MACOSX) {
-      // carbon folder constants
-      // http://developer.apple.com/documentation/Carbon/Reference
-      //   /Folder_Manager/folder_manager_ref/constant_6.html#/
-      //   /apple_ref/doc/uid/TP30000238/C006889
-
-      // additional information found int the local file:
-      // /System/Library/Frameworks/CoreServices.framework
-      //   /Versions/Current/Frameworks/CarbonCore.framework/Headers/
-
-      // this is the 1.4 version.. but using 1.3 since i have the stubs
-      // import com.apple.eio.*
-      //println(FileManager.findFolder(kUserDomain,
-      //        kDomainLibraryFolderType));
-
-      // not clear if i can write to this folder tho..
       try {
-        /*
-        if (false) {
-          // this is because the mrjtoolkit stubs don't have the
-          // thows exception around them
-          new FileInputStream("ignored");
-        }
-        */
-
-
-        /*
-        MRJOSType domainLibrary = new MRJOSType("dlib");
-        Method findFolderMethod =
-          MRJFileUtils.class.getMethod("findFolder",
-                                       new Class[] { Short.TYPE,
-                                                     MRJOSType.class });
-        File libraryFolder = (File)
-          findFolderMethod.invoke(null, new Object[] { new Short(kUserDomain),
-                                                       domainLibrary });
-
-                                                       */
-        // TODO load this dynamically
-        File libraryFolder = new File(BaseMacOS.getLibraryFolder());
+        Class clazz = Class.forName("processing.app.BaseMacOS");
+        Method m = clazz.getMethod("getLibraryFolder", new Class[] { });
+        String libraryPath = (String) m.invoke(null, new Object[] { });
+        //String libraryPath = BaseMacOS.getLibraryFolder();
+        File libraryFolder = new File(libraryPath);
         dataFolder = new File(libraryFolder, "Processing");
 
       } catch (Exception e) {
-        // this could be FileNotFound or NoSuchMethod
-        //} catch (FileNotFoundException e) {
-        //e.printStackTrace();
-        //System.exit(1);
         showError("Problem getting data folder",
                   "Error getting the Processing data folder.", e);
       }
@@ -1244,7 +1208,7 @@ public class Base {
       // Value Name: AppData
       // Value Type: REG_SZ
       // Value Data: path
-
+      
       try {
         //RegistryKey topKey = Registry.getTopLevelKey("HKCU");
         RegistryKey topKey = Registry.HKEY_CURRENT_USER;
@@ -1370,63 +1334,34 @@ public class Base {
 
     if (Base.isMacOS()) {
       // looking for /Users/blah/Documents/Processing
-
-      // carbon folder constants
-      // http://developer.apple.com/documentation/Carbon/Reference/Folder_Manager/folder_manager_ref/constant_6.html#//apple_ref/doc/uid/TP30000238/C006889
-
-      // additional information found int the local file:
-      // /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Headers/
-
-      // this is the 1.4 version.. but using 1.3 since i have the stubs
-      // import com.apple.eio.*
-      //println(FileManager.findFolder(kUserDomain,
-      //        kDomainLibraryFolderType));
-
-      // not clear if i can write to this folder tho..
+      
       try {
-        /*
-        MRJOSType domainDocuments = new MRJOSType("docs");
-        //File libraryFolder = MRJFileUtils.findFolder(domainDocuments);
-
-        // for 77, try switching this to the user domain, just to be sure
-        Method findFolderMethod =
-          MRJFileUtils.class.getMethod("findFolder",
-                                       new Class[] { Short.TYPE,
-                                                     MRJOSType.class });
-        File documentsFolder = (File)
-          findFolderMethod.invoke(null, new Object[] { new Short(kUserDomain),
-                                                       domainDocuments });
-        */
-        File documentsFolder = new File(BaseMacOS.getDocumentsFolder());
-        sketchbookFolder = new File(documentsFolder, "Processing");
-
-        /*
-          // more specific version for debugging
-      } catch (InvocationTargetException ite) {
-        Throwable target =
-          ((InvocationTargetException) ite).getTargetException();
-        showError("sketch folder problem",
-                  "Could not locate default sketch folder location.", target);
-        */
+        Class clazz = Class.forName("processing.app.BaseMacOS");
+        Method m = clazz.getMethod("getDocumentsFolder", new Class[] { });
+        String documentsPath = (String) m.invoke(null, new Object[] { });        
+        sketchbookFolder = new File(documentsPath, "Processing");
 
       } catch (Exception e) {
-        //showError("Could not find folder",
-        //          "Could not locate the Documents folder.", e);
         sketchbookFolder = promptSketchbookLocation();
       }
 
     } else if (isWindows()) {
+      // http://support.microsoft.com/kb/242557/en-us
+      
       // looking for Documents and Settings/blah/My Documents/Processing
       // (though using a reg key since it's different on other platforms)
 
       // http://support.microsoft.com/?kbid=221837&sd=RMVP
-      // The path to the My Documents folder is stored in the
-      // following registry key, where path is the complete path
-      // to your storage location:
+      // The path to the My Documents folder is stored in the following 
+      // registry key, where path is the complete path to your storage location
+      
       // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
       // Value Name: Personal
       // Value Type: REG_SZ
       // Value Data: path
+
+      // in some instances, this may be overridden by a policy, in which case check:
+      // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
 
       try {
         RegistryKey topKey = Registry.HKEY_CURRENT_USER;
