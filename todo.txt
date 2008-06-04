@@ -43,7 +43,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=585
 _ vista disables aero theme when p5 is run
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 
-
 _ update to jogl 1.1.1
 _   do this with enhanced library/platform support
 
@@ -1141,7 +1140,8 @@ _   may help solve: http://dev.processing.org/bugs/show_bug.cgi?id=98
 _ when resizing window, only resize the text display area
 _   just a matter of moving around the panels and BorderLayout
 _ remember previous font selection when returning to the window
-
+_ occasional division by zero on windows
+_   http://dev.processing.org/bugs/show_bug.cgi?id=777
 
 
 ////////////////////////////////////////////////////////////////////
@@ -1290,6 +1290,8 @@ _   event first goes to the applet listener, needs to consume the event
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1061802316
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077058974
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451
+_ icon is skewed on vista 64
+_   http://dev.processing.org/bugs/show_bug.cgi?id=801
 
 
 DIST / Mac OS X

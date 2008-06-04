@@ -7,6 +7,49 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0139 - 4 June 2008
+
+Stuck on a couple larger problems, this is an interim release to 
+patch up some problems in the 0136+ series. If this is the first 
+release you've downloaded since 0135, please read the "ABOUT 013X"
+sections for each of the releases since.
+
+[ mixed bag of fixes ]
+
++ Highlighting of syntax errors was broken.
+  http://dev.processing.org/bugs/show_bug.cgi?id=795
+
++ The getIntAttribute() method from the XML library was 
+  returning a float instead of an int.
+  http://dev.processing.org/bugs/show_bug.cgi?id=790
+
++ Include memory settings from preferences when exporting 
+  a Mac OS X application.
+  http://dev.processing.org/bugs/show_bug.cgi?id=803
+
++ Updated to a newer version of Quaqua (OS X lib for GUI)
+  http://www.randelshofer.ch/quaqua/
+
+[ top priorities (not fixed) ]
+
++ "Target VM failed to initialize: VM initialization failed" on run
+  This happens because Java is not properly getting the machine's 
+  internet address. Workaround is to shut off networking:
+  http://dev.processing.org/bugs/show_bug.cgi?id=796
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5.
+  There appears to be an Apple bug in Java 1.5 and 1.6 on 
+  Mac OS X 10.5 (but not 10.4) causing these menus to be extremely 
+  slow. Workarounds described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+
++ Sometimes, nothing happens when you hit Run (no error displayed)
+  http://dev.processing.org/bugs/show_bug.cgi?id=775
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0138 - 31 May 2008
 
 Continuing on the > 0135 crazy train.
