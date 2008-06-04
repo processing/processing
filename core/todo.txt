@@ -1,4 +1,4 @@
-0139 core
+0140 core
 
 
 _ Add support style attribute for path tag to Candy SVG (ricard)
