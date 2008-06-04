@@ -1346,12 +1346,12 @@ public class Base {
       }
 
     } else if (isWindows()) {
-      // http://support.microsoft.com/kb/242557/en-us
-      
       // looking for Documents and Settings/blah/My Documents/Processing
       // (though using a reg key since it's different on other platforms)
 
       // http://support.microsoft.com/?kbid=221837&sd=RMVP
+      // http://support.microsoft.com/kb/242557/en-us
+      
       // The path to the My Documents folder is stored in the following 
       // registry key, where path is the complete path to your storage location
       

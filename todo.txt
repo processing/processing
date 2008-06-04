@@ -1,6 +1,5 @@
 0140 pde
 
-
 _ "Target VM failed to initialize: VM initialization failed" when trying to run
 _   http://dev.processing.org/bugs/show_bug.cgi?id=796
 
@@ -16,6 +15,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=775
 _   this may just be a macosx (ppc?) bug
 
 further cleanup for simpler building
+_ remove libs from build/shared that are in app/lib
+_   update scripts to copy from app/lib
 _ since adding tools.jar, jikes can be removed
 _ implement windows registry lookups via reflection
 _   http://dev.processing.org/bugs/show_bug.cgi?id=723
