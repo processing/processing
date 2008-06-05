@@ -1,7 +1,19 @@
 0140 pde
 X fallback locations for sketchbook and data folders are disabled
+X move openFolder, openFolderAvailable, openURL to Platform classes
+_ implement windows registry lookups via reflection
+_   http://dev.processing.org/bugs/show_bug.cgi?id=723
+_   or move to jna for registry?
+_   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
+_   try to find someone
+X can't get documents/prefs folder on vista
+X   http://dev.processing.org/bugs/show_bug.cgi?id=585
+X   closing until further notice
+o vista disables aero theme when p5 is run
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
+X   can't seem to verify this
 
-_ move openFolder, openFolderAvailable, openURL to Platform classes
+_ move tools.jar into jre/lib folder
 
 _ "Target VM failed to initialize: VM initialization failed" when trying to run
 _   http://dev.processing.org/bugs/show_bug.cgi?id=796
@@ -21,11 +33,6 @@ further cleanup for simpler building
 _ remove libs from build/shared that are in app/lib
 _   update scripts to copy from app/lib
 _ since adding tools.jar, jikes can be removed
-_ implement windows registry lookups via reflection
-_   http://dev.processing.org/bugs/show_bug.cgi?id=723
-_   or move to jna for registry?
-_   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
-_   try to find someone
 _ properly handle non-ascii chars in p5 folder name
 _   use javac? 
 _     the eclipse jdt compiler may be even better
@@ -36,10 +43,6 @@ _   perhaps the get around this by building into sketch folder
 _     when non-ascii chars in use, just launch everything externally
 _   also fails with export-to-application
 _     http://dev.processing.org/bugs/show_bug.cgi?id=252
-_ can't get documents/prefs folder on vista
-_   http://dev.processing.org/bugs/show_bug.cgi?id=585
-_ vista disables aero theme when p5 is run
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 
 _ make sure that export is using utf8 for writing the .pde files etc
 _   should be primarily loadFile() and saveFile() inside Base
