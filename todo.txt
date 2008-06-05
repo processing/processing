@@ -1,11 +1,6 @@
 0140 pde
 X fallback locations for sketchbook and data folders are disabled
 X move openFolder, openFolderAvailable, openURL to Platform classes
-_ implement windows registry lookups via reflection
-_   http://dev.processing.org/bugs/show_bug.cgi?id=723
-_   or move to jna for registry?
-_   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
-_   try to find someone
 X can't get documents/prefs folder on vista
 X   http://dev.processing.org/bugs/show_bug.cgi?id=585
 X   closing until further notice
@@ -13,7 +8,31 @@ o vista disables aero theme when p5 is run
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 X   can't seem to verify this
 
-_ move tools.jar into jre/lib folder
+further cleanup for simpler building
+X move tools.jar into jre/lib folder
+X implement windows registry lookups via reflection
+X   http://dev.processing.org/bugs/show_bug.cgi?id=723
+X   or move to jna for registry?
+X   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
+X remove libs from build/shared that are in app/lib
+_   update scripts to copy from app/lib
+_ since adding tools.jar, jikes can be removed
+_ properly handle non-ascii chars in p5 folder name
+X switch to javac (in code)
+_   re-wire error handling to handle javac error messages
+_     seem to be primarily 2 kinds?
+_     how to ignore warning stuff?
+_ finish osx build script to make the libraries
+_ make.sh creating work/lib dirs.. no longer necessary?
+
+_ check to see whether this bug is fixed once 0140 is released
+_   http://dev.processing.org/bugs/show_bug.cgi?id=49
+_   (could also just warn user to install elsewhere)
+o   perhaps the get around this by building into sketch folder
+o     when non-ascii chars in use, just launch everything externally
+_   also fails with export-to-application
+_     http://dev.processing.org/bugs/show_bug.cgi?id=252
+
 
 _ "Target VM failed to initialize: VM initialization failed" when trying to run
 _   http://dev.processing.org/bugs/show_bug.cgi?id=796
@@ -28,21 +47,6 @@ _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=775
 _   this may just be a macosx (ppc?) bug
-
-further cleanup for simpler building
-_ remove libs from build/shared that are in app/lib
-_   update scripts to copy from app/lib
-_ since adding tools.jar, jikes can be removed
-_ properly handle non-ascii chars in p5 folder name
-_   use javac? 
-_     the eclipse jdt compiler may be even better
-X   ask japanese students about whether jikes is working ok
-_   http://dev.processing.org/bugs/show_bug.cgi?id=49
-_   or at least warn the user to install somehwere else
-_   perhaps the get around this by building into sketch folder
-_     when non-ascii chars in use, just launch everything externally
-_   also fails with export-to-application
-_     http://dev.processing.org/bugs/show_bug.cgi?id=252
 
 _ make sure that export is using utf8 for writing the .pde files etc
 _   should be primarily loadFile() and saveFile() inside Base
@@ -75,7 +79,6 @@ _ after fixing name of sketch, ensure sketch of that name does not exist
 _ put the "had to rename sketch" message in the msg bar
 _   it's ugly/annoying/intrusive
 
-_ make.sh creating work/lib dirs.. no longer necessary?
 _ don't copy hidden files (.svn especially) on export/save as
 
 _ make .java files and friends go to correct locations on export (app)
