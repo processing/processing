@@ -30,6 +30,17 @@ import javax.swing.UIManager;
 /**
  * Used by Base for platform-specific tweaking, for instance finding the
  * sketchbook location using the Windows registry, or OS X event handling.
+ * 
+ * The methods in this implementation are used by default, and can be 
+ * overridden by a subclass, if loaded by Base.main(). 
+ * 
+ * These methods throw vanilla-flavored Exceptions, so that error handling
+ * occurs inside Base. 
+ * 
+ * There is currently no mechanism for adding new platforms, as the setup is 
+ * not automated. We could use getProperty("os.arch") perhaps, but that's 
+ * debatable (could be upper/lowercase, have spaces, etc.. basically we don't 
+ * know if name is proper Java package syntax.)
  */
 public class Platform {
   Base base;

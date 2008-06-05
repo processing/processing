@@ -12,7 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/video"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xml"/>
 	<classpathentry kind="lib" path="lib/antlr.jar"/>
-	<classpathentry kind="lib" path="lib/registry.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
