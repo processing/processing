@@ -79,12 +79,50 @@ public class Platform {
     */
   }
   
-  
+
   /**
    * @return null if not overridden, which will cause a prompt to show instead. 
    * @throws Exception
    */
   public File getDefaultSketchbookFolder() throws Exception {
     return null;
+  }
+  
+  
+  public void openURL(String url) throws Exception {
+    String launcher = Preferences.get("launcher");
+    if (launcher != null) {
+      Runtime.getRuntime().exec(new String[] { launcher, url });
+    } else {
+      showLauncherWarning();
+    } 
+  }
+
+
+  public boolean openFolderAvailable() {
+    return Preferences.get("launcher") != null;
+  }
+  
+  
+  public void openFolder(File file) throws Exception {
+    String launcher = Preferences.get("launcher");
+    if (launcher != null) {
+      String folder = file.getAbsolutePath();
+      Runtime.getRuntime().exec(new String[] { launcher, folder });
+    } else {
+      showLauncherWarning();
+    }
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+  
+
+  protected void showLauncherWarning() {
+    Base.showWarning("No launcher available", 
+                     "Unspecified platform, no launcher available.\n" + 
+                     "To enable opening URLs or folders, add a \n" +
+                     "\"launcher=/path/to/app\" line to preferences.txt", 
+                     null);
   }
 }

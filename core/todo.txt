@@ -160,6 +160,8 @@ _   because ttf files will not be installed on the system when opening pdf
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
+_ text position is quantized in JAVA2D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=806
 
 
 gledgeflag [1.0]

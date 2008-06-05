@@ -22,7 +22,7 @@
 
 package processing.app.windows;
 
-import java.io.File;
+import java.io.*;
 
 import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 
@@ -73,5 +73,55 @@ public class Platform {
       Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "Personal");
 
     return new File(personalPath, "Processing");
+  }
+
+
+  public void openURL(String url) throws Exception {
+    // this is not guaranteed to work, because who knows if the
+    // path will always be c:\progra~1 et al. also if the user has
+    // a different browser set as their default (which would
+    // include me) it'd be annoying to be dropped into ie.
+    //Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "
+    // + currentDir
+
+    // the following uses a shell execute to launch the .html file
+    // note that under cygwin, the .html files have to be chmodded +x
+    // after they're unpacked from the zip file. i don't know why,
+    // and don't understand what this does in terms of windows
+    // permissions. without the chmod, the command prompt says
+    // "Access is denied" in both cygwin and the "dos" prompt.
+    //Runtime.getRuntime().exec("cmd /c " + currentDir + "\\reference\\" +
+    //                    referenceFile + ".html");
+    if (url.startsWith("http://")) {
+      // open dos prompt, give it 'start' command, which will
+      // open the url properly. start by itself won't work since
+      // it appears to need cmd
+      Runtime.getRuntime().exec("cmd /c start " + url);
+    } else {
+      // just launching the .html file via the shell works
+      // but make sure to chmod +x the .html files first
+      // also place quotes around it in case there's a space
+      // in the user.dir part of the url
+      Runtime.getRuntime().exec("cmd /c \"" + url + "\"");
+    }
+  }
+  
+  
+  public boolean openFolderAvailable() {
+    return true;
+  }
+  
+  
+  public void openFolder(File file) throws Exception {
+    String folder = file.getAbsolutePath();
+    
+    // doesn't work
+    //Runtime.getRuntime().exec("cmd /c \"" + folder + "\"");
+
+    // works fine on winxp, prolly win2k as well
+    Runtime.getRuntime().exec("explorer \"" + folder + "\"");
+
+    // not tested
+    //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
   }
 }
