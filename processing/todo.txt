@@ -17,6 +17,11 @@ X   something weird happening with one of the streams shutting down?
 X   probably, need to fix this by using the remote launcher/debug api
 X use proper external launcher via debugger api
 X   http://java.sun.com/javase/technologies/core/toolsapis/jpda/
+X small gray gap shows up in color picker
+X   getMaximumSize() not being respected on Windows (Linux?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=310
+X   same as bug #656
+X   http://dev.processing.org/bugs/show_bug.cgi?id=656
 
 further cleanup for simpler building (refactor lots of Base)
 o settings.path.fallback not being used
@@ -1022,9 +1027,6 @@ TOOLS / Color Picker
 
 _ pasting into color picker doesn't update the color values
 _   http://dev.processing.org/bugs/show_bug.cgi?id=503
-_ small gray gap shows up in color picker
-_   getMaximumSize() not being respected on Windows (Linux?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=310
 
 
 TOOLS / Courseware
