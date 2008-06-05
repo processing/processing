@@ -74,8 +74,8 @@ public class Compiler implements MessageConsumer {
    * @return
    * @throws RunnerException
    */
-  public boolean compileJavac(Sketch sketch, 
-                              String buildPath) throws RunnerException {
+  public boolean compile(Sketch sketch, 
+                         String buildPath) throws RunnerException {
 //    com.sun.tools.javac.Main javac = new com.sun.tools.javac.Main();
     
     this.sketch = sketch;
@@ -176,7 +176,7 @@ public class Compiler implements MessageConsumer {
   }
 
 
-  public boolean compile(Sketch sketch, String buildPath)
+  public boolean compileJikes(Sketch sketch, String buildPath)
     throws RunnerException {
 
     this.sketch = sketch;

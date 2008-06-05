@@ -48,9 +48,7 @@ public class ThinkDifferent implements ApplicationListener {
   private Base base;
 
   
-  ThinkDifferent(Base base) {
-    this.base = base;
-    
+  static protected void init(Base base) {    
     if (application == null) {
       application = new com.apple.eawt.Application();
     }
@@ -60,6 +58,11 @@ public class ThinkDifferent implements ApplicationListener {
     application.addApplicationListener(adapter);
     application.setEnabledAboutMenu(true);
     application.setEnabledPreferencesMenu(true);
+  }
+  
+  
+  public ThinkDifferent(Base base) {
+    this.base = base;
   }
   
   
