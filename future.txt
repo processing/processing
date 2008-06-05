@@ -144,6 +144,8 @@ not necessary for 1.0 release
 PDE / science fiction
 features we love, but probably won't be implemented 2048
 
+2 _ code as columns (screen is wide, code is not)
+
 3 _ toggle for showing a function name each time its hit
 3 _ toggle for showing line numbers within a function
 3 _   i'm here messages, tie in with breakpoints for debugger
