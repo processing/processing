@@ -7,14 +7,6 @@ if test -d work
 then
   BUILD_PREPROC=false
 else
-#  if test -f /sw/bin/cp
-#  then
-#    echo
-#  else
-#    echo You need to install fink with fileutils, textutils, etc
-#    exit
-#  fi
-
   echo Setting up directories to build under Mac OS X
   BUILD_PREPROC=true
 
@@ -26,22 +18,9 @@ else
 
   echo Extracting examples...
   unzip -q -d work/ ../shared/examples.zip
-#  cd work
-#  unzip -q examples.zip
-#  rm examples.zip
-#  cd ..
 
   echo Extracting reference...
   unzip -q -d work/ ../shared/reference.zip
-#  cd work
-#  unzip -q reference.zip
-#  rm reference.zip
-#  cd ..
-
-  # needs to make the dir because of packaging goofiness
-#  mkdir -p work/classes/processing/app/preproc
-#  mkdir -p work/classes/processing/app/syntax
-#  mkdir -p work/classes/processing/app/tools
 
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -52,8 +31,6 @@ else
   cp -r ../../xml work/libraries/
   cp -r ../../candy work/libraries/
 
-#  mkdir work/lib/build
-
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
   #cp -a dist/Processing.app work/   # #@$(* bsd switches
@@ -61,11 +38,6 @@ else
   cp -pR dist/Processing.app work/
   # cvs doesn't seem to want to honor the +x bit 
   chmod +x work/Processing.app/Contents/MacOS/JavaApplicationStub
-
-  # get jikes and depedencies
-#  echo Copying jikes...
-#  cp dist/jikes work/
-#  chmod +x work/jikes
 fi
 
 
