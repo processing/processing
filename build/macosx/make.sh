@@ -18,15 +18,30 @@ else
   echo Setting up directories to build under Mac OS X
   BUILD_PREPROC=true
 
-  cp -r ../shared work
-  # tools.jar not needed on osx
-  #rm -f work/lib/tools.jar
-  rm -rf work/.svn
+  mkdir work
+  cp -r ../shared/lib work/
+
+  cp ../../app/lib/antlr.jar work/lib/
+  cp ../../app/lib/jna.jar work/lib/
+
+  echo Extracting examples...
+  unzip -q -d work/ ../shared/examples.zip
+#  cd work
+#  unzip -q examples.zip
+#  rm examples.zip
+#  cd ..
+
+  echo Extracting reference...
+  unzip -q -d work/ ../shared/reference.zip
+#  cd work
+#  unzip -q reference.zip
+#  rm reference.zip
+#  cd ..
 
   # needs to make the dir because of packaging goofiness
-  mkdir -p work/classes/processing/app/preproc
-  mkdir -p work/classes/processing/app/syntax
-  mkdir -p work/classes/processing/app/tools
+#  mkdir -p work/classes/processing/app/preproc
+#  mkdir -p work/classes/processing/app/syntax
+#  mkdir -p work/classes/processing/app/tools
 
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -37,19 +52,7 @@ else
   cp -r ../../xml work/libraries/
   cp -r ../../candy work/libraries/
 
-  echo Extracting examples...
-  cd work
-  unzip -q examples.zip
-  rm examples.zip
-  cd ..
-
-  echo Extracting reference...
-  cd work
-  unzip -q reference.zip
-  rm reference.zip
-  cd ..
-
-  mkdir work/lib/build
+#  mkdir work/lib/build
 
   # to have a copy of this guy around for messing with
   echo Copying Processing.app...
@@ -60,9 +63,9 @@ else
   chmod +x work/Processing.app/Contents/MacOS/JavaApplicationStub
 
   # get jikes and depedencies
-  echo Copying jikes...
-  cp dist/jikes work/
-  chmod +x work/jikes
+#  echo Copying jikes...
+#  cp dist/jikes work/
+#  chmod +x work/jikes
 fi
 
 
@@ -79,20 +82,19 @@ echo Building processing.core...
 cd core
 
 # rxtx comm.jar will be included by the build script
-#CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip:/System/Library/Java/Extensions/MRJToolkit.jar
+
 CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip
 export CLASSPATH
 
 perl preproc.pl
 
 mkdir -p bin
-../build/macosx/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
-#javac -d bin -source 1.3 -target 1.1 src/processing/core/*.java
-find bin -name "*~" -exec rm -f {} ';'
+#../build/macosx/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
+javac -source 1.5 -target 1.5 -d bin src/processing/core/*.java
 rm -f ../build/macosx/work/lib/core.jar
 cd bin && zip -r0q ../../build/macosx/work/lib/core.jar processing && cd ..
 
-# head back to root "processing" dir
+# head back to "processing/app"
 cd ../app
 
 
@@ -123,23 +125,39 @@ fi
 
 echo Building the PDE...
 
-# compile the code as java 1.3, so that the application will run and
-# show the user an error, rather than crapping out with some strange
-# "class not found" crap
-../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/syntax/*.java src/processing/app/preproc/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
+#../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/syntax/*.java src/processing/app/preproc/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
+
+# For some reason, javac really wants this folder to exist beforehand.
+mkdir -p ../build/macosx/work/classes
+# Intentionally keeping this separate from the 'bin' folder
+# used by eclipse so that they don't cause conflicts.
+
+javac \
+    -source 1.5 -target 1.5 \
+    -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/jna.jar \
+    -d ../build/macosx/work/classes \
+    src/processing/app/*.java \
+    src/processing/app/debug/*.java \
+    src/processing/app/macosx/*.java \
+    src/processing/app/syntax/*.java \
+    src/processing/app/preproc/*.java \
+    src/processing/app/tools/*.java \
+    src/antlr/*.java \
+    src/antlr/java/*.java 
 
 cd ../build/macosx/work/classes
 rm -f ../lib/pde.jar
 zip -0rq ../lib/pde.jar .
 cd ../..
 
-# get the libs
+# get updated core.jar and pde.jar; also antlr.jar and others
 mkdir -p work/Processing.app/Contents/Resources/Java/
 cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
 
 
 ### -- BUILD LIBRARIES ------------------------------------------------
 
+exit
 
 PLATFORM=macosx
 
