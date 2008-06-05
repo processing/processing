@@ -22,7 +22,11 @@
 
 package processing.app.linux;
 
+import java.io.File;
+
 import javax.swing.UIManager;
+
+import processing.app.Preferences;
 
 
 /**
@@ -45,5 +49,44 @@ public class Platform {
     // be any worse than Metal. (Ocean might also work, but that's for
     // Java 1.5, and we aren't going there yet)
     UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+  }
+
+
+  public void openURL(String url) throws Exception {
+    String launcher = Preferences.get("launcher.linux");
+    if (launcher != null) {
+      Runtime.getRuntime().exec(new String[] { launcher, url });
+    }
+  }
+  
+  
+  public boolean openFolderAvailable() {
+    if (Preferences.get("launcher") != null) {
+      return true;
+    }
+
+    // Attempt to use gnome-open
+    try {
+      Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
+      /*int result =*/ p.waitFor();
+      // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
+      Preferences.set("launcher.linux", "gnome-open");
+      return true;
+    } catch (Exception e) { }
+
+    // Attempt with kde-open
+    try {
+      Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
+      /*int result =*/ p.waitFor();
+      Preferences.set("launcher.linux", "kde-open");
+      return true;
+    } catch (Exception e) { }
+    
+    return false;
+  }
+  
+  
+  public void openFolder(File file) throws Exception {
+    
   }
 }

@@ -161,7 +161,7 @@ public class Base {
 
     // If not path is set, get the default sketchbook folder for this platform
     if (sketchbookPath == null) {
-      File defaultFolder = Base.getDefaultSketchbookFolder();
+      File defaultFolder = getDefaultSketchbookFolder();
       Preferences.set("sketchbook.path", defaultFolder.getAbsolutePath());
       if (!defaultFolder.exists()) {
         defaultFolder.mkdirs();
@@ -308,11 +308,6 @@ public class Base {
 
 
   // .................................................................
-
-
-  static public File getSketchbookFolder() {
-    return new File(Preferences.get("sketchbook.path"));
-  }
 
 
   // Because of variations in native windowing systems, no guarantees about
@@ -604,31 +599,6 @@ public class Base {
       }
     }
     return true;
-
-    /*
-    // If not canceled, check if this was the last open window.
-    // If it was the last, could either do a new untitled window,
-    // or could just quit the application.
-    if (!quitting && (editorCount == 0)) {
-      // This will store the sketch count as zero
-      storeSketches();
-
-      // Save out the current prefs state
-      Preferences.save();
-
-      // Clean out empty sketches
-      Base.cleanSketchbook();
-      // can't do handleQuit(), would do weird recursive thing
-      //handleQuit();
-
-      // Since this wasn't an actual Quit event,
-      // System.exit() needs to be called for Mac OS X.
-      //if (PApplet.platform == PConstants.MACOSX) {
-      System.exit(0);
-      //}
-    }
-    return true;
-    */
   }
 
 
@@ -1088,24 +1058,15 @@ public class Base {
   }
 
 
-  /*
-  static public void addBuildFolderToClassPath() {
-    String path = getBuildFolder().getAbsolutePath();
-    String jcp = System.getProperty("java.class.path");
-    if (jcp.indexOf(path) == -1) {
-      System.setProperty("java.class.path", path + File.pathSeparator + jcp);
-      //return new File(getProcessingDataFolder(), "build");
-      System.out.println("jcp is now " +
-                         System.getProperty("java.class.path"));
-    }
+  public File getSketchbookFolder() {
+    return new File(Preferences.get("sketchbook.path"));
   }
-  */
 
 
-  static public File getDefaultSketchbookFolder() {
+  public File getDefaultSketchbookFolder() {
     File sketchbookFolder = null; 
     try {
-      platform.getDefaultSketchbookFolder();
+      sketchbookFolder = platform.getDefaultSketchbookFolder();
     } catch (Exception e) { }
     
     if (sketchbookFolder == null) {
@@ -1117,18 +1078,6 @@ public class Base {
     if (!sketchbookFolder.exists()) {
       result = sketchbookFolder.mkdirs();
     }
-
-    /*
-    if (!result) {
-      // try the fallback location
-      System.out.println("Using fallback path for sketchbook.");
-      String fallback = Preferences.get("sketchbook.path.fallback");
-      sketchbookFolder = new File(fallback);
-      if (!sketchbookFolder.exists()) {
-        result = sketchbookFolder.mkdirs();
-      }
-    }
-    */
 
     if (!result) {
       showError("You forgot your sketchbook",
@@ -1152,8 +1101,8 @@ public class Base {
       return folder;
     }
 
-    folder = Base.selectFolder("Select (or create new) folder for sketches...",
-                               null, null);
+    String prompt = "Select (or create new) folder for sketches...";
+    folder = Base.selectFolder(prompt, null, null);
     if (folder == null) {
       System.exit(0);
     }
@@ -1161,6 +1110,51 @@ public class Base {
   }
 
 
+  // .................................................................
+
+  
+  /**
+   * Implements the cross-platform headache of opening URLs
+   * TODO This code should be replaced by PApplet.link(),
+   * however that's not a static method (because it requires
+   * an AppletContext when used as an applet), so it's mildly
+   * trickier than just removing this method.
+   */
+  static public void openURL(String url) {
+    try {
+      platform.openURL(url);
+
+    } catch (Exception e) {
+      showWarning("Problem Opening URL", 
+                  "Could not open the URL\n" + url, e);
+    }
+  }
+
+
+  /**
+   * Used to determine whether to disable the "Show Sketch Folder" option.
+   * @return true If a means of opening a folder is known to be available.
+   */
+  static boolean openFolderAvailable() {
+    return platform.openFolderAvailable();
+  }
+
+
+  /**
+   * Implements the other cross-platform headache of opening
+   * a folder in the machine's native file browser.
+   */
+  static public void openFolder(File file) {
+    try {
+      platform.openFolder(file);
+
+    } catch (Exception e) {
+      showWarning("Problem Opening Folder", 
+                  "Could not open the folder\n" + file.getAbsolutePath(), e);
+    }
+  }
+
+  
   // .................................................................
 
 
@@ -1289,165 +1283,8 @@ public class Base {
     showReference("troubleshooting" + File.separator + "index.html");
   }
 
-
+  
   // .................................................................
-
-
-  /**
-   * Implements the cross-platform headache of opening URLs
-   * TODO This code should be replaced by PApplet.link(),
-   * however that's not a static method (because it requires
-   * an AppletContext when used as an applet), so it's mildly
-   * trickier than just removing this method.
-   */
-  static public void openURL(String url) {
-    //System.out.println("opening url " + url);
-    try {
-      if (Base.isWindows()) {
-        // this is not guaranteed to work, because who knows if the
-        // path will always be c:\progra~1 et al. also if the user has
-        // a different browser set as their default (which would
-        // include me) it'd be annoying to be dropped into ie.
-        //Runtime.getRuntime().exec("c:\\progra~1\\intern~1\\iexplore "
-        // + currentDir
-
-        // the following uses a shell execute to launch the .html file
-        // note that under cygwin, the .html files have to be chmodded +x
-        // after they're unpacked from the zip file. i don't know why,
-        // and don't understand what this does in terms of windows
-        // permissions. without the chmod, the command prompt says
-        // "Access is denied" in both cygwin and the "dos" prompt.
-        //Runtime.getRuntime().exec("cmd /c " + currentDir + "\\reference\\" +
-        //                    referenceFile + ".html");
-        if (url.startsWith("http://")) {
-          // open dos prompt, give it 'start' command, which will
-          // open the url properly. start by itself won't work since
-          // it appears to need cmd
-          Runtime.getRuntime().exec("cmd /c start " + url);
-        } else {
-          // just launching the .html file via the shell works
-          // but make sure to chmod +x the .html files first
-          // also place quotes around it in case there's a space
-          // in the user.dir part of the url
-          Runtime.getRuntime().exec("cmd /c \"" + url + "\"");
-        }
-
-      } else if (Base.isMacOS()) {
-        //com.apple.eio.FileManager.openURL(url);
-
-        if (!url.startsWith("http://")) {
-          // prepend file:// on this guy since it's a file
-          url = "file://" + url;
-
-          // replace spaces with %20 for the file url
-          // otherwise the mac doesn't like to open it
-          // can't just use URLEncoder, since that makes slashes into
-          // %2F characters, which is no good. some might say "useless"
-          if (url.indexOf(' ') != -1) {
-            StringBuffer sb = new StringBuffer();
-            char c[] = url.toCharArray();
-            for (int i = 0; i < c.length; i++) {
-              if (c[i] == ' ') {
-                sb.append("%20");
-              } else {
-                sb.append(c[i]);
-              }
-            }
-            url = sb.toString();
-          }
-        }
-        com.apple.eio.FileManager.openURL(url);
-
-      } else if (Base.isLinux()) {
-        // how's mozilla sound to ya, laddie?
-        //Runtime.getRuntime().exec(new String[] { "mozilla", url });
-        //String browser = Preferences.get("browser");
-        //Runtime.getRuntime().exec(new String[] { browser, url });
-        String launcher = Preferences.get("launcher.linux");
-        if (launcher != null) {
-          Runtime.getRuntime().exec(new String[] { launcher, url });
-        }
-      } else {
-        String launcher = Preferences.get("launcher");
-        if (launcher != null) {
-          Runtime.getRuntime().exec(new String[] { launcher, url });
-        } else {
-          System.err.println("Unspecified platform, no launcher available.");
-        }
-      }
-
-    } catch (IOException e) {
-      Base.showWarning("Could not open URL",
-                       "An error occurred while trying to open\n" + url, e);
-    }
-  }
-
-
-  /**
-   * Used to determine whether to disable the "Show Sketch Folder" option.
-   * @return true If a means of opening a folder is known to be available.
-   */
-  static boolean openFolderAvailable() {
-    if (Base.isWindows() || Base.isMacOS()) return true;
-
-    if (Base.isLinux()) {
-      // Assume that this is set to something valid
-      if (Preferences.get("launcher.linux") != null) {
-        return true;
-      }
-
-      // Attempt to use gnome-open
-      try {
-        Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
-        /*int result =*/ p.waitFor();
-        // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
-        Preferences.set("launcher.linux", "gnome-open");
-        return true;
-      } catch (Exception e) { }
-
-      // Attempt with kde-open
-      try {
-        Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
-        /*int result =*/ p.waitFor();
-        Preferences.set("launcher.linux", "kde-open");
-        return true;
-      } catch (Exception e) { }
-    }
-    return false;
-  }
-
-
-  /**
-   * Implements the other cross-platform headache of opening
-   * a folder in the machine's native file browser.
-   */
-  static public void openFolder(File file) {
-    try {
-      String folder = file.getAbsolutePath();
-
-      if (Base.isWindows()) {
-        // doesn't work
-        //Runtime.getRuntime().exec("cmd /c \"" + folder + "\"");
-
-        // works fine on winxp, prolly win2k as well
-        Runtime.getRuntime().exec("explorer \"" + folder + "\"");
-
-        // not tested
-        //Runtime.getRuntime().exec("start explorer \"" + folder + "\"");
-
-      } else if (Base.isMacOS()) {
-        openURL(folder);  // handles char replacement, etc
-
-      } else if (Base.isLinux()) {
-        String launcher = Preferences.get("launcher.linux");
-        if (launcher != null) {
-          Runtime.getRuntime().exec(new String[] { launcher, folder });
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
 
 
   /**
