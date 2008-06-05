@@ -8,7 +8,27 @@ o vista disables aero theme when p5 is run
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 X   can't seem to verify this
 
-further cleanup for simpler building
+cleaning
+o respond to stop/close events sent by the vm
+X   not sure what we're doing here
+X on osx, System.err isn't writing in things like createGraphics()
+X   but doing a printStackTrace(System.out) works
+X   something weird happening with one of the streams shutting down?
+X   probably, need to fix this by using the remote launcher/debug api
+X use proper external launcher via debugger api
+X   http://java.sun.com/javase/technologies/core/toolsapis/jpda/
+
+further cleanup for simpler building (refactor lots of Base)
+o settings.path.fallback not being used
+o   need to check the mkdirs() to make sure it's not going too deep
+o   really important for intl versions that are having trouble
+o   or ask for the sketch folder name.. why isn't it?
+o   http://processing.org/bugs/show_bug.cgi?id=1
+X   remove settings.path.fallback
+X no error message if sketchbook folder is set to bad location
+X   says that it's gonna create new sketchbook in default loc
+X   even though that location might exist already (just word it better)
+X   "changing back to default sketchbook location"
 X move tools.jar into jre/lib folder
 X implement windows registry lookups via reflection
 X   http://dev.processing.org/bugs/show_bug.cgi?id=723
@@ -25,6 +45,28 @@ _     how to ignore warning stuff?
 _ finish osx build script to make the libraries
 _ make.sh creating work/lib dirs.. no longer necessary?
 
+_ make sure that export is using utf8 for writing the .pde files etc
+_   should be primarily loadFile() and saveFile() inside Base
+_   http://dev.processing.org/bugs/show_bug.cgi?id=743
+_ change pde files to use utf8
+_   1) if file contains binary data and
+_   2) its mod date is earlier than when p5 0125 was installed
+_   point the user to Tools -> Reload sketch with local encoding
+_   then re-save the file to update the mod date
+_   ...or, when first running p5 0125, offer to update sketches
+_     this is a bad idea--since it's probably 
+_ need to set a default charset for use in files (utf8)
+_   add option to change charset or specify as part of loading
+_   need to specify the default encoding
+_ xml element needs to be readable from other charsets
+_   same with the other methods like loadStrings()
+_   could also be a way to handle gzip too?
+_   tho charset + gzip would be a problem
+
+_ inside Sketch.java, don't hardwire the file extension types
+_   arduino uses .c, .cpp, .h instead of .java
+_   http://dev.processing.org/bugs/show_bug.cgi?id=807
+
 _ check to see whether this bug is fixed once 0140 is released
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   (could also just warn user to install elsewhere)
@@ -33,6 +75,11 @@ o     when non-ascii chars in use, just launch everything externally
 _   also fails with export-to-application
 _     http://dev.processing.org/bugs/show_bug.cgi?id=252
 
+
+. . . 
+
+
+[ known bugs ]
 
 _ "Target VM failed to initialize: VM initialization failed" when trying to run
 _   http://dev.processing.org/bugs/show_bug.cgi?id=796
@@ -48,22 +95,29 @@ _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=775
 _   this may just be a macosx (ppc?) bug
 
-_ make sure that export is using utf8 for writing the .pde files etc
-_   should be primarily loadFile() and saveFile() inside Base
-_ change pde files to use utf8
-_   1) if file contains binary data and
-_   2) its mod date is earlier than when p5 0125 was installed
-_   offer to convert it, or ignore
-_   then re-save the file to update the mod date
-_   ...or, when first running p5 0125, offer to update sketches
-_ need to set a default charset for use in files (utf8)
-_   add option to change charset or specify as part of loading
-_   need to specify the default encoding
-_ http://dev.processing.org/bugs/show_bug.cgi?id=743
+_ stop button needs to update itself and work properly [1.0]
+_   also editor buttons to light up and clear properly 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=396
+_   need someone to go out and test all scenarios of this
 
-_ update to jogl 1.1.1
-_   do this with enhanced library/platform support
 
+. . . 
+
+
+new/open/close/save
+_ don't copy hidden files (.svn especially) on export/save as
+_ make .java files and friends go to correct locations on export (app)
+_ on mac, window opens to prevent quit on close
+_   but the window is not properly set as untitled
+_   http://dev.processing.org/bugs/show_bug.cgi?id=700
+_ when opening from double-click on the mac, doesn't replace untitled
+_   or in general, issues between opening new window and another launching
+_   probably need to synchronize the file open methods inside Base
+_   (could in fact cause nastiness with editors[] access)
+_ editors opening up at the same time on load?
+_   either synchronize the open (at a minimum)
+_   or wait for mac handlers to register an open event
+_   can also cause problems with opening multiple copies of same sketch
 _ disallow .java tabs with same name as the sketch
 _   a .java tab with same name as the sketch is allowed (oog!)
 _   particularly look at "save as" scenario
@@ -79,146 +133,11 @@ _ after fixing name of sketch, ensure sketch of that name does not exist
 _ put the "had to rename sketch" message in the msg bar
 _   it's ugly/annoying/intrusive
 
-_ don't copy hidden files (.svn especially) on export/save as
-
-_ make .java files and friends go to correct locations on export (app)
-
-_ native lib stuff, use native.txt in lib folder, then:
-_   String osName = System.getProperty("os.name");
-_   String osArch = System.getProperty("os.arch");
-
-_ need to make up a priorities/todo page for processing
-_   that includes projects for people to help out on
-
-reference
-_ quicktime likes to crash (not just on windows)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=791
-_ createInput, createInputRaw, createOutput
-_ noLoop() isn't the same as "finished", though it's sometimes used that way
-_   to finish, use exit() (though that will make the window close)
-_   add this to ref once halt() is finished
-_ errors in pdf/index.html examples
-_   probably remove these, move the useful ones to the examples folder
-_   that way people will read the reference
-_ i can't fix these:
-An unexpected error has been detected by HotSpot Virtual Machine:
-# EXCEPTION_ACCESS_VIOLATION
-all i can do is find things that might trigger them, but it's more likely
-than not to be a java problem, and not something that can be fixed
-_ notes about getting best results from text in each renderer
-_   http://dev.processing.org/bugs/show_bug.cgi?id=466
-_ add to mac reference for present mode
-_   can make full screen work via Info.plist key
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
-_ add to troubleshooting
-_   problem with big floats:
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
-_   problem with small floats:
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
-_ fix syntax highlighting of focusGained and others
-_   http://dev.processing.org/bugs/show_bug.cgi?id=659
-_ verify (and document) public access members of PApplet
-_   http://dev.processing.org/bugs/show_bug.cgi?id=660
-_ some docs missing (therefore not syntax highlighting)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=661
-_ constants that are not highlighting (WINDOWS the only one?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=662
-_ consoleXxxx and untitledXxxx folders in /tmp
-_   console may be useful for debugging
-_ untitled folders are stored in temp folder
-_ switching into present mode in info.plist
-        <key>LSUIPresentationMode</key>
-        <integer>4</integer> 
-_ PApplet.this doesn't work
-_   doesn't work in javac either--needs to be ClassName.this
-_   sketchname.this also doesn't work, because Temporary_NNNN used for name
-_   but since it's another tab/class, will run externally
-_   so should make the external version use the actual sketch name not temp
-_   can't use PApplet.this, doesn't seem to like that
-_   instead, must pass variable to inner class
-
-_ make editor nicer
-_   tab on selection indents whole block
-_   shift-tab outdents whole block
-_   ctrl-t to format selection
-_     if no selection, indents line?
-
-_ do quick fix for tab bar
-_   don't show tabs when there are too many
-_   maybe move the list of files to the top?
-_   or indicate which are visible somehow
-_   slightly longer.. rearrange?
-_     or just show tabs in (alpha?) order based on what's most recently used
-_   have some indicator that shows the tabs when they've disappeared
-_   or little mini tabs that expand/contract?
-_     and a way to control who's expanded and not
-
-_ pdf not rendering unicode (though it renders to screen)
-_   try updating to newer itext
-_   http://dev.processing.org/bugs/show_bug.cgi?id=727
-
-_ look into workshop bugs
-_   too many NPEs on loadimage may freeze the app
-_   hopefully this should be fixed with 0136 changes
-
-_ add auto-save to the editor
-_   http://dev.processing.org/bugs/show_bug.cgi?id=739
-
-_ weird error when dragging a folder to the sketch window (macosx?)
-_ on mac, window opens to prevent quit on close
-_   but the window is not properly set as untitled
-_   http://dev.processing.org/bugs/show_bug.cgi?id=700
-
-_ when opening from double-click on the mac, doesn't replace untitled
-
-_ need a halt() method which will kill but not quit app (sets finished?)
-_   exit() will actually leave the application
-_   this may in fact only be internal
-_   maybe this is stop()?
-
-_ editors opening up at the same time on load?
-_   either synchronize the open (at a minimum)
-_   or wait for mac handlers to register an open event
-_ can also cause problems with opening multiple copies of same sketch
-
-_ no error message if sketchbook folder is set to bad location
-_ says that it's gonna create new sketchbook in default loc
-_   even though that location might exist already (just word it better)
-_   "changing back to default sketchbook location"
-
-_ use debugger to get better exceptions
-_   and getting the error to show up in the window inside p5
-_   also highlighting the correct line
-_ respond to stop/close events sent by the vm
-_ refactor code to use more getter/setter methods
-_   move the debug classes back into processing.app.debug
-_   this will help the library stuff
-
-
-eclipse
-_ document how to properly integrate with eclipse
-_ add runtime args to opengl library so that it sets path properly
-_ add explanation for using subclipse to get p5
-_   make a src folder, data folder location
-_ export to eclipse
-_   how to do this with subclipse instructions?
-
-_ more recent versions of the PDE lock up during setup() (no window shown)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=687
-_ if too many errors come through during setup, app will terminate
-_   printStackTrace() throttles on osx and poops out
-_   seen especially on old mac laptops (slow ppc garbage) 
-
-_ "Fatal exception occurred. Program will exit." on startup
-_   seems to be font related, deleting prefs will fix it
-_   http://dev.processing.org/bugs/show_bug.cgi?id=688
-
-_ quicktime problems (when no QTJAVA is set?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=669
-
-_ remove patch designation from bugzilla
 
 with casey
+_ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
+_   mark examples as untitled (rather than read-only)
+_   maybe even pull these directly from the zip file?
 _ find in reference issues
 _   if() and for() don't work, they look for for_.html instead of for.html
 _   XMLElement is not linked for find in ref
@@ -229,39 +148,18 @@ _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
 _ discuss i18n issues and proper system
 _ look through 404 issues on the site
-
-_ mark examples as untitled (rather than read-only)
-_ inside sketch.java, don't hardwire the file extension types
-_   arduino uses .c, .cpp, .h instead of .java
-
-_ ocd is broken in 0125 - do a better error message for this
-
-_ add present mode bgcolor to prefs
-_ add basic guidelines for posting to the board
-_   0. be polite. going on about how much something "sucks" or is "stupid" will make you look like an eight-year-old.
-_   1. don't double (or triple) post
-_   2. if you're having trouble, first see the troubleshooting page
-_   3. if you have a bug, first search the bugs database
-_   4. first check the FAQ
-_   5. use the search bar at the top of every page
-_   6. read revisions.txt
-
-
-charset changes
-_ xml element needs to be readable from other charsets
-_   same with the other methods like loadStrings()
-_   could also be a way to handle gzip too?
-_   tho charset + gzip would be a problem
-
-_ dynamic tools menu (requires moving files around)
-_   this means can integrate the autoformat stuff
-_   processing.mess/tools has chandler's template stuff
-_ finish up debian package support (see the processing.mess folder)
-
-_ with additional .pde files, don't allow static mode in front tab
+_ TRIANGLE_STRIP not highlighted for "find in reference"
+_   nor is it listed on the reference page
+_   so students can't find the ref for it
+_   needs to link TRIANGLE_STRIP to the beginShape() reference
 
 
 libraries and classpaths [1.0]
+_ native lib stuff, use native.txt in lib folder, then:
+_   String osName = System.getProperty("os.name");
+_   String osArch = System.getProperty("os.arch");
+_ update to jogl 1.1.1
+_   do this with enhanced library/platform support
 X see how platform is determined by jogl / use for lib import
 _ add control for dependencies (i.e. svg needs xml), needed for export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=518
@@ -310,86 +208,10 @@ Copy: http://www.softsynth.com/jsyn/plugins/archives/JSynClasses.jar
 JAR file JSynClasses.jar downloaded successfully.
 Note: you must restart your browser before running any JSyn Applets!
 Installation completed.
-
 _ set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
 _   java.library.path will only handle .jnilib stuff
-
-_ stop button needs to update itself and work properly [1.0]
-_   also editor buttons to light up and clear properly 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=396
-_ on osx, System.err isn't writing in things like createGraphics()
-_   but doing a printStackTrace(System.out) works
-_   something weird happening with one of the streams shutting down?
-_   probably, need to fix this by using the remote launcher/debug api
-_ use proper external launcher via debugger api
-_   http://java.sun.com/javase/technologies/core/toolsapis/jpda/
-
-_ don't reload sketch on "save as"
-_   this can result in loss of data (undo is lost)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=433
-
-_ install astyle formatter
-_   build on each platform, then "lipo -create astyle.* -output astyle"
-
-
-LIBRARIES / svg
-_ when using get(), reset the bounds for the objects
-_   otherwise it's always relative to the original document
-_ save/restore more of the p5 graphics drawing state
-_   not setting colorMode(), strokeCap, etc.
-_ support for text (shouldn't be too bad, use createFont)
-_   implement text spans for svg output
-_ get entity tags working in xml library
-_ try enabling blending modes
-_ add better support for attributes buried in styles (support ai9/10/11)
-_ test what happens when transparency is used with gradient fill
-_ look into transformation issues... guessing this is probably wrong
-_   this may be what's throwing off the radial radius transform
-_ implement A and a (arcs)
-_ check for any other pieces of missing path api
-_   multiple sets of coordinates after a command not supported
-_   i.e. M with several coords means moveto followed by many linetos
-_   also curveto with multiple sets of points is ignored
-_ document somehow.. svg viewer will be discontinued
-_   http://www.adobe.com/svg/eol.html
-
-
-LIBRARIES / xml
-_ need to handle how save() works inside xml lib
-_ need to handle <!ENTITY tags for svg documents
-_ vectors shouldn't be exposed, need to expose attr lists as arrays
-_   or also add a method for getting the vectors?
-
-_ when running externally, set window frame title to the sketch name
-_   is this only a problem on macosx? 
-
-
-processing wish list 
-_ TRIANGLE_STRIP not highlighted for "find in reference"
-_   nor is it listed on the reference page
-_   so students can't find the ref for it
-_   needs to link TRIANGLE_STRIP to the beginShape() reference
-_ stop button not stopping anything
-_ copy running code from /tmp/buildXXxxx on crash of p5
-_   should probably make a way to save/recover code
-_ code as columns (screen is wide, code is not)
-
-_ lots of runtime exceptions still being lost on osx
-_   particularly with multi-threaded applications
-_ macosx dropping exceptions all the time.. grr
-_   solution is to export, and then see how it runs
-_   this is particularly bad with threaded applications
-
-Exception in thread "Thread-2" java.lang.NoClassDefFoundError:
-processing/core/PApplet
-    at processing.serial.Serial.<init>(Serial.java:156) 
-generally, that error means that something is missing from the
-CLASSPATH. the NoClassDefError gives erroneous feedback about *what*
-class is actually missing, as of java 1.3+ (yay!)
-so perhaps conflicting versions of a library in the sketchbook (solve
-this by setting to an empty sketchbook temporarily) or files might be
-installed in the CLASSPATH variable or something conflicting in
-/System/Library/Extensions. 
+_ need better error messages for broken api / library troubles
+_   e.g. ocd is broken in 0125 because of method signature changes
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -397,6 +219,14 @@ installed in the CLASSPATH variable or something conflicting in
 
 DOC / Bugzilla 
 
+_ * disable changes to a bug (except by admin) after closed *
+_ fix "reply" garbage added
+_ fix "back to bug# 778"
+_ remove patch designation
+_ make severity a radio button (people aren't using it)
+_   change to just ( ) Problem ( ) Feature Request (remove 'severity') 
+_ remove 'platform' dropdown
+_ specify some versions? also add back a "target version" for fix?
 _ explanation of P1 through P5
 _ goes to bugs page
 _   longer description of "i found a bug"
@@ -441,6 +271,65 @@ _   whether arraycopy works to copy array to itself
 _   using expand and arrays to move quickly
 
 
+DOC / Write Me
+_ quicktime likes to crash (not just on windows)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=791
+_ createInput, createInputRaw, createOutput
+_ noLoop() isn't the same as "finished", though it's sometimes used that way
+_   to finish, use exit() (though that will make the window close)
+_   add this to ref once halt() is finished
+_ errors in pdf/index.html examples
+_   probably remove these, move the useful ones to the examples folder
+_   that way people will read the reference
+_ i can't fix these:
+An unexpected error has been detected by HotSpot Virtual Machine:
+# EXCEPTION_ACCESS_VIOLATION
+all i can do is find things that might trigger them, but it's more likely
+than not to be a java problem, and not something that can be fixed
+_ notes about getting best results from text in each renderer
+_   http://dev.processing.org/bugs/show_bug.cgi?id=466
+_ add to mac reference for present mode
+_   can make full screen work via Info.plist key
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
+_ add to troubleshooting
+_   problem with big floats:
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1061302380
+_   problem with small floats:
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
+_ fix syntax highlighting of focusGained and others
+_   http://dev.processing.org/bugs/show_bug.cgi?id=659
+_ verify (and document) public access members of PApplet
+_   http://dev.processing.org/bugs/show_bug.cgi?id=660
+_ some docs missing (therefore not syntax highlighting)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=661
+_ constants that are not highlighting (WINDOWS the only one?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=662
+_ consoleXxxx and untitledXxxx folders in /tmp
+_   console may be useful for debugging
+_ untitled folders are stored in temp folder
+_ switching into present mode in info.plist
+        <key>LSUIPresentationMode</key>
+        <integer>4</integer> 
+_ PApplet.this doesn't work
+_   doesn't work in javac either--needs to be ClassName.this
+_   sketchname.this also doesn't work, because Temporary_NNNN used for name
+_   but since it's another tab/class, will run externally
+_   so should make the external version use the actual sketch name not temp
+_   can't use PApplet.this, doesn't seem to like that
+_   instead, must pass variable to inner class
+_ errors with serial and libraries
+Exception in thread "Thread-2" java.lang.NoClassDefFoundError:
+processing/core/PApplet
+    at processing.serial.Serial.<init>(Serial.java:156) 
+generally, that error means that something is missing from the
+CLASSPATH. the NoClassDefError gives erroneous feedback about *what*
+class is actually missing, as of java 1.3+ (yay!)
+so perhaps conflicting versions of a library in the sketchbook (solve
+this by setting to an empty sketchbook temporarily) or files might be
+installed in the CLASSPATH variable or something conflicting in
+/System/Library/Extensions. 
+
+
 DOC / Text
 
 _ how to use textMode(SHAPE) with opengl
@@ -476,10 +365,25 @@ _   use JPopupMenu.setDefaultLightWeightPopupEnabled(false); for zorder
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1147670059
 _ write documentation on general use of processing.core
 _   note that applet is itself a Component
+_ eclipse
+_   document how to properly integrate with eclipse
+_   add runtime args to opengl library so that it sets path properly
+_   add explanation for using subclipse to get p5
+_     make a src folder, data folder location
+_   export to eclipse
+_     how to do this with subclipse instructions?
 
 
 DOC / Discourse Board
 
+_ add basic guidelines for posting to the board
+_   0. be polite. going on about how much something "sucks" or is "stupid" will make you look like an eight-year-old.
+_   1. don't double (or triple) post
+_   2. if you're having trouble, first see the troubleshooting page
+_   3. if you have a bug, first search the bugs database
+_   4. first check the FAQ
+_   5. use the search bar at the top of every page
+_   6. read revisions.txt
 _ someone wrote up an initial version of this
 _ how to put [code] around blocks of code
 _   also mention contributed plugin for formatting
@@ -626,11 +530,6 @@ _   would still require awt, but would take a sketch on cmd line
 _   build it and then exit
 _   also an option to launch p5, load a sketch and run it
 _   notations have been added to the bug report that cover the plw changes
-_ settings.path.fallback not being used
-_   need to check the mkdirs() to make sure it's not going too deep
-_   really important for intl versions that are having trouble
-_   or ask for the sketch folder name.. why isn't it?
-_   http://processing.org/bugs/show_bug.cgi?id=1
 
 
 PDE / Warnings
@@ -654,6 +553,7 @@ _   again, a warning checkbox
 
 PDE / Compiler & Preprocessor
 
+_ with additional .pde files, don't allow static mode in front tab
 _ don't allow "for (blah; blah; blah) ;"
 _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
@@ -720,6 +620,9 @@ _ "missing a /* from the end of a comment" message
 _   enter a bug for this, it's bound to be found
 _   "multipart/*" produces the error
 _   even though things are inside a quoted txt block
+_ copy running code from /tmp/buildXXxxx on crash of p5
+_   should probably make a way to save/recover code
+_   make the buildXxxx folders relate to time/date?
 
 hacked for fix, needs real fix
 _ NullPointerException on unterminated comment at end of code
@@ -732,10 +635,27 @@ _   an OutOfMemoryError wants to happen,
 _   but right now there's a hack to add a CR in PdePreprocessor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=5
 
+
 PDE / Editor
 
 _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
+_ make editor nicer
+_   tab on selection indents whole block
+_   shift-tab outdents whole block
+_   ctrl-t to format selection
+_     if no selection, indents line?
+_ do quick fix for tab bar
+_   don't show tabs when there are too many
+_   maybe move the list of files to the top?
+_   or indicate which are visible somehow
+_   slightly longer.. rearrange?
+_     or just show tabs in (alpha?) order based on what's most recently used
+_   have some indicator that shows the tabs when they've disappeared
+_   or little mini tabs that expand/contract?
+_     and a way to control who's expanded and not
+_ add auto-save to the editor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=739
 _ dragging title bar while sketch running causes strange selection behavior
 _   http://dev.processing.org/bugs/show_bug.cgi?id=504
 _ should really be doing the 'right' thing with sketch file handling
@@ -795,6 +715,9 @@ _ implement emacs keybindings (list is at the bug report)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=401
 _ implement better method of showing curly brace closure
 _   http://dev.processing.org/bugs/show_bug.cgi?id=295
+_ refactor code to use more getter/setter methods
+_   move the debug classes back into processing.app.debug
+_   this will help the library stuff
 
 
 PDE / Editor Buttons
@@ -913,9 +836,12 @@ _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
 _   http://dev.processing.org/bugs/show_bug.cgi?id=73
 _ make available the background colors for present mode, stop button color
+_   isolate color chooser into a simpler/smaller class outside tools
+_   then can also use from inside processing applications as well
 _   http://dev.processing.org/bugs/show_bug.cgi?id=75
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130781367;start=2#2
 _ add ability to set the display where present mode makes things start
+_   code is already in, need to add window and test with multi-monitor setup
 _ option in preferences to set the jvm used to run? (osx only?)
 _   this would take care of nasty macosx 1.4 vs 1.5 issues
 _   /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Commands/java
@@ -928,6 +854,16 @@ _   will return 1.5.0 (or maybe 1.6 for others?)
 
 PDE / Runner 
 
+_ too many NPEs on loadimage may freeze the app (visualizar example?)
+_   hopefully this should be fixed with 0136 changes
+_   lots of runtime exceptions still being lost on osx
+_     particularly with multi-threaded applications
+_   macosx dropping exceptions all the time.. grr
+_     solution is to export, and then see how it runs
+_     this is particularly bad with threaded applications
+_ use debugger to get better exceptions
+_   and getting the error to show up in the window inside p5
+_   also highlighting the correct line
 _ make the p5 icon show up for the window (and in the dock) 
 _   when launching a new sketch
 _   can embed icon.gif as byte array in PApplet, and use Toolkit.createImage
@@ -950,10 +886,15 @@ _   the program resize(200, 200); just does nothing (doesn't complain)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=81
 _ weird exception in the run button watcher
 _   http://processing.org/bugs/show_bug.cgi?id=42
+_ when running externally, set window frame title to the sketch name
+_   is this only a problem on macosx? 
 
 
 PDE / Sketch & Sketchbook
 
+_ don't reload sketch on "save as"
+_   this can result in loss of data (undo is lost)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=433
 _ ArticulatePrint-070103a.pde from ArticulatePrint-070103a loads ok
 _   but when opening the sketch, it leaves out the file
 _   because there's a dash in the name
@@ -1010,6 +951,9 @@ _   maybe just open from a zip file, since psk doesn't help anything
 
 TOOLS / General
 
+_ dynamic tools menu (requires moving files around)
+_   this means can integrate the autoformat stuff
+_   processing.mess/tools has chandler's template stuff
 _ occasional exception in "copy for discourse"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=729
 _ need to write converter that will handle syntax changes
@@ -1090,7 +1034,7 @@ _ save sketch zip files, have a means to load them from "teacher" version of p5
 _ figure out how to use the 
 
 
-TOOLS / libraries
+TOOLS / Libraries
 
 _ could have library developers update compatability note
 _   so they would need to test library and say "compatible with 0110"
@@ -1109,6 +1053,8 @@ _   and enable it for "find in reference"
 
 TOOLS / Auto Format
 
+_ install astyle formatter
+_   build on each platform, then "lipo -create astyle.* -output astyle"
 _ do a better job of maintaining cursor during beautify 
 _ only auto format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
@@ -1160,6 +1106,11 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 
 LIBRARIES / Video
 
+_ java.lang.NoClassDefFoundError: quicktime/std/StdQTException
+_   people not installing qt? no QTJAVA set?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=669
+_   simulate this by removing qtjava.zip, then make a handler for it
+_   then close the bug because nobody ever responds
 _ add more information about multiple camera inputs
 _ add info about "access" errors being quicktime errors
 _ documented in faq, add something to the lib "camera not installed"
@@ -1200,6 +1151,36 @@ _   only supports tint() (to set alpha or color) and drawing? just drawing?
 _ stop button won't kill a video sketch (bug 150 example does this) 
 X   although ESC seems to work? (not sure, didn't test)
 _   or audio won't stop even after hitting stop
+
+
+LIBRARIES / Candy 
+
+_ when using get(), reset the bounds for the objects
+_   otherwise it's always relative to the original document
+_ save/restore more of the p5 graphics drawing state
+_   not setting colorMode(), strokeCap, etc.
+_ support for text (shouldn't be too bad, use createFont)
+_   implement text spans for svg output
+_ get entity tags working in xml library
+_ try enabling blending modes
+_ add better support for attributes buried in styles (support ai9/10/11)
+_ test what happens when transparency is used with gradient fill
+_ look into transformation issues... guessing this is probably wrong
+_   this may be what's throwing off the radial radius transform
+_ implement A and a (arcs)
+_ check for any other pieces of missing path api
+_   multiple sets of coordinates after a command not supported
+_   i.e. M with several coords means moveto followed by many linetos
+_   also curveto with multiple sets of points is ignored
+_ document somehow.. svg viewer will be discontinued
+_   http://www.adobe.com/svg/eol.html
+
+
+LIBRARIES / XML
+_ need to handle how save() works inside xml lib
+_ need to handle <!ENTITY tags for svg documents
+_ vectors shouldn't be exposed, need to expose attr lists as arrays
+_   or also add a method for getting the vectors?
 
 
 LIBRARIES / Serial
@@ -1295,6 +1276,9 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081751451
 _ icon is skewed on vista 64
 _   http://dev.processing.org/bugs/show_bug.cgi?id=801
+_ "Fatal exception occurred. Program will exit." on startup
+_   seems to be font related, deleting prefs will fix it
+_   http://dev.processing.org/bugs/show_bug.cgi?id=688
 
 
 DIST / Mac OS X
@@ -1324,7 +1308,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=539
 
 DIST / Linux
 
-_ improvements to linux script for debian
+_ finish up debian package support (see the processing.mess folder)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=596
 _   these bits need to be checked to ensure that they work on other distros
 _ not being able to make a link to the processing app

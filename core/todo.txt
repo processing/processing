@@ -1,6 +1,15 @@
 0140 core
 
 
+_ pdf not rendering unicode (though it renders to screen)
+_   try updating to newer itext
+_   http://dev.processing.org/bugs/show_bug.cgi?id=727
+
+_ need a halt() method which will kill but not quit app (sets finished?)
+_   exit() will actually leave the application
+_   this may in fact only be internal
+_   maybe this is stop()?
+
 _ Add support style attribute for path tag to Candy SVG (ricard)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=771
 
@@ -174,6 +183,11 @@ _   leave smooth off, get the gl object, then enable line smooth
 
 
 threading [1.0]
+_ PDE locks up during setup() (since no window shown)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=687
+_ if too many errors come through during setup, app will terminate
+_   printStackTrace() throttles on osx and poops out
+_   seen especially on old mac laptops (slow ppc garbage) 
 _ Frame skipping with processor intensive applets using 1.6
 _   http://dev.processing.org/bugs/show_bug.cgi?id=766
 _ introduce calc()
