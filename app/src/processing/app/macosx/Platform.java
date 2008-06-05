@@ -48,7 +48,7 @@ public class Platform extends processing.app.Platform {
 
   
   public void init(Base base) {
-    new ThinkDifferent(base);
+    ThinkDifferent.init(base);
     /*
     try {
       String name = "processing.app.macosx.ThinkDifferent";
