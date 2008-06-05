@@ -101,6 +101,42 @@ public class Platform extends processing.app.Platform {
   }
   
   
+  public void openURL(String url) throws Exception {
+    if (!url.startsWith("http://")) {
+      // prepend file:// on this guy since it's a file
+      url = "file://" + url;
+
+      // replace spaces with %20 for the file url
+      // otherwise the mac doesn't like to open it
+      // can't just use URLEncoder, since that makes slashes into
+      // %2F characters, which is no good. some might say "useless"
+      if (url.indexOf(' ') != -1) {
+        StringBuffer sb = new StringBuffer();
+        char c[] = url.toCharArray();
+        for (int i = 0; i < c.length; i++) {
+          if (c[i] == ' ') {
+            sb.append("%20");
+          } else {
+            sb.append(c[i]);
+          }
+        }
+        url = sb.toString();
+      }
+    }
+    com.apple.eio.FileManager.openURL(url);
+  }
+  
+  
+  public boolean openFolderAvailable() {
+    return true;
+  }
+  
+  
+  public void openFolder(File file) throws Exception {
+    openURL(file.getAbsolutePath());  // handles char replacement, etc
+  }
+  
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
   
 
