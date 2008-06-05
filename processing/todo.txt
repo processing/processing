@@ -1,4 +1,7 @@
 0140 pde
+X fallback locations for sketchbook and data folders are disabled
+
+_ move openFolder, openFolderAvailable, openURL to Platform classes
 
 _ "Target VM failed to initialize: VM initialization failed" when trying to run
 _   http://dev.processing.org/bugs/show_bug.cgi?id=796

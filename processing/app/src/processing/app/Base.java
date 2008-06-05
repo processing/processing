@@ -26,15 +26,12 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.lang.reflect.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.swing.*;
 
 import processing.app.debug.Compiler;
-import processing.app.windows.Registry;
-import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 import processing.core.*;
 
 
@@ -48,7 +45,9 @@ public class Base {
   static final int VERSION = 140;
   static final String VERSION_NAME = "0140 Beta";
 
-  // set to true after the first time it's built.
+  static Platform platform;
+  
+  // set to true after the first time the menu is built.
   // so that the errors while building don't show up again.
   boolean builtOnce;
 
@@ -91,32 +90,23 @@ public class Base {
                      "Java 1.5 or later to run properly.\n" +
                      "Please visit java.com to upgrade.", null);
     }
+    
+    try {
+      Class platformClass = Class.forName("processing.app.Platform");
+      if (Base.isMacOS()) {
+        platformClass = Class.forName("processing.app.macosx.Platform");
+      } else if (Base.isWindows()) {
+        platformClass = Class.forName("processing.app.windows.Platform");
+      }
+      platform = (Platform) platformClass.newInstance();
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
 
     // Set the look and feel before opening the window
     try {
-      if (Base.isMacOS()) {
-        // Use the Quaqua L & F on OS X to make JFileChooser less awful
-        UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-        // undo quaqua trying to fix the margins, since we've already
-        // hacked that in, bit by bit, over the years
-        UIManager.put("Component.visualMargin", new Insets(1, 1, 1, 1));
-
-      } else if (Base.isLinux()) {
-        // Linux is by default even uglier than metal (Motif?).
-        // Actually, i'm using native menus, so they're even uglier
-        // and Motif-looking (Lesstif?). Ick. Need to fix this.
-        //String lfname = UIManager.getCrossPlatformLookAndFeelClassName();
-        //UIManager.setLookAndFeel(lfname);
-
-        // For 0120, trying out the gtk+ look and feel as the default.
-        // This is available in Java 1.4.2 and later, and it can't possibly
-        // be any worse than Metal. (Ocean might also work, but that's for
-        // Java 1.5, and we aren't going there yet)
-        UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-
-      } else {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      }
+      platform.setLookAndFeel();
     } catch (Exception e) {
       System.err.println("Non-fatal error while setting the Look & Feel.");
       System.err.println("The error message follows, however Processing should run fine.");
@@ -143,10 +133,7 @@ public class Base {
 
 
   public Base(String[] args) {
-    // #@$*(@#$ apple.. always gotta think different
-    if (PApplet.platform == PConstants.MACOSX) {
-      registerMacOS();
-    }
+    platform.init(this);
 
     // Get paths for the libraries and examples in the Processing folder
     examplesFolder = new File(System.getProperty("user.dir"), "examples");
@@ -163,9 +150,11 @@ public class Base {
       File skechbookFolder = new File(sketchbookPath);
       if (!skechbookFolder.exists()) {
         Base.showWarning("Sketchbook folder disappeared",
-                         "The sketchbook folder no longer exists,\n" +
-                         "so a new sketchbook will be created in the\n" +
-                         "default location.", null);
+                         "The sketchbook folder no longer exists.\n" +
+                         "Processing will switch to the default sketchbook\n" + 
+                         "location, and create a new sketchbook folder if\n" +
+                         "necessary. Procesing will then stop talking about\n" + 
+                         "himself in the third person.", null);
         sketchbookPath = null;
       }
     }
@@ -197,35 +186,6 @@ public class Base {
     // check for updates
     if (Preferences.getBoolean("update.check")) {
       new UpdateCheck(this);
-    }
-  }
-
-
-  protected void registerMacOS() {
-    try {
-      String name = "processing.app.macosx.ThinkDifferent";
-      Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass(name);
-
-      Class[] defArgs = { Base.class };
-      Method registerMethod = osxAdapter.getDeclaredMethod("register", defArgs);
-      if (registerMethod != null) {
-        Object[] args = { this };
-        registerMethod.invoke(osxAdapter, args);
-      }
-    } catch (NoClassDefFoundError e) {
-      // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
-      // because OSXAdapter extends ApplicationAdapter in its def
-      System.err.println("This version of Mac OS X does not support the Apple EAWT." +
-                         "Application Menu handling has been disabled (" + e + ")");
-
-    } catch (ClassNotFoundException e) {
-      // This shouldn't be reached; if there's a problem with the OSXAdapter
-      // we should get the above NoClassDefFoundError first.
-      System.err.println("This version of Mac OS X does not support the Apple EAWT. " +
-                         "Application Menu handling has been disabled (" + e + ")");
-    } catch (Exception e) {
-      System.err.println("Exception while loading BaseOSX:");
-      e.printStackTrace();
     }
   }
 
@@ -471,69 +431,6 @@ public class Base {
   }
 
 
-//  protected Editor handleNewInternal(File newbieDir, String newbieName)
-//  throws FileNotFoundException {
-//    // Make the directory for the new sketch
-//    newbieDir.mkdirs();
-//
-//    // Make an empty pde file
-//    File newbieFile = new File(newbieDir, newbieName + ".pde");
-//    new FileOutputStream(newbieFile);  // create the file
-//
-//    // TODO For 0126, need to check if this is the only way that the doc is
-//    // getting associated, and if so, have we removed the connection between
-//    // .pde files and Processing.app
-//
-//    //  Disabling this starting in 0125... There's no need for it,
-//    // and it's likely to cause more trouble than necessary by
-//    // leaving around little ._ boogers.
-//
-//    // this wouldn't be needed if i could figure out how to
-//    // associate document icons via a dot-extension/mime-type scenario
-//    // help me steve jobs, you're my only hope.
-//
-//    // jdk13 on osx, or jdk11
-//    // though apparently still available for 1.4
-//    /*
-//    if (Base.isMacOS()) {
-//      MRJFileUtils.setFileTypeAndCreator(newbieFile,
-//                                         MRJOSType.kTypeTEXT,
-//                                         new MRJOSType("Pde1"));
-//      // thank you apple, for changing this @#$)(*
-//      //com.apple.eio.setFileTypeAndCreator(String filename, int, int)
-//    }
-//    */
-//    return handleOpen(newbieFile.getAbsolutePath());
-//  }
-
-
-  /*
-  public String handleOpenPrompt(JFrame editor) {
-    // The file chooser in Swing is ass ugly, so we use the
-    // native (AWT peered) dialogs where possible
-    FileDialog fd = new FileDialog(editor,
-                                   "Open a Processing sketch...",
-                                   FileDialog.LOAD);
-
-    // gimme some money
-    fd.setVisible(true);
-
-    // what in the hell yu want, boy?
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
-
-    // user cancelled selection
-    if (filename == null) return null;
-
-    // this may come in handy sometime
-    //handleOpenDirectory = directory;
-
-    File selection = new File(directory, filename);
-    return selection.getAbsolutePath();
-  }
-  */
-
-
   public void handleOpenReplace(String path) {
     if (!activeEditor.checkModified(false)) {
       return;  // sketch was modified, and user canceled
@@ -578,13 +475,6 @@ public class Base {
     File inputFile = new File(directory, filename);
     handleOpen(inputFile.getAbsolutePath());
   }
-
-
-  /*
-  public void handleOpen(File file) {
-    handleOpen(file.getAbsolutePath());
-  }
-  */
 
 
   /**
@@ -802,56 +692,6 @@ public class Base {
   }
 
 
-  /**
-   * Rebuild the menu full of sketches based on the
-   * contents of the sketchbook.
-   *
-   * Creates a separate JMenu object for the popup,
-   * because it seems that after calling "getPopupMenu"
-   * the menu will disappear from its original location.
-   */
-  /*
-  public void rebuildMenus() {
-    //EditorConsole.systemOut.println("rebuilding menus");
-    try {
-      // rebuild file/open and the toolbar popup menus
-      buildMenu(openMenu);
-      builtOnce = true;  // disable error messages while loading
-      buildMenu(toolbarMenu);
-
-      // rebuild the "import library" menu
-      librariesClassPath = "";
-      importMenu.removeAll();
-      if (addLibraries(importMenu, new File(getSketchbookPath()))) {
-        importMenu.addSeparator();
-      }
-      // removed for rev 0125 because not used
-      //if (addLibraries(importMenu, examplesFolder)) {
-      //  importMenu.addSeparator();
-      //}
-      addLibraries(importMenu, librariesFolder);
-      //System.out.println("libraries cp is now " + librariesClassPath);
-
-    } catch (IOException e) {
-      Base.showWarning("Problem while building sketchbook menu",
-                       "There was a problem with building the\n" +
-                       "sketchbook menu. Things might get a little\n" +
-                       "kooky around here.", e);
-    }
-    //EditorConsole.systemOut.println("done rebuilding menus");
-  }
-  */
-
-
-  /*
-  public JPopupMenu createPopup() {
-    JMenu menu = new JMenu();
-    rebuildPopup(menu);
-    return menu.getPopupMenu();
-  }
-  */
-
-
   public void rebuildToolbarMenu(JMenu menu) {
     JMenuItem item;
     menu.removeAll();
@@ -879,15 +719,6 @@ public class Base {
     // Add each of the subfolders of examples directly to the menu
     try {
       addSketches(menu, examplesFolder, true);
-//      String[] subfolders = examplesFolder.list();
-//      for (int i = 0; i < subfolders.length; i++) {
-//        if (!subfolders[i].startsWith(".")) {
-//          File dir = new File(examplesFolder, subfolders[i]);
-//          if (dir.isDirectory()) {
-//            addSketches(menu, dir);
-//          }
-//        }
-//      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1178,90 +1009,30 @@ public class Base {
 
 
   static public File getSettingsFolder() {
-    File dataFolder = null;
+    File settingsFolder = null;
 
-    String pref = Preferences.get("settings.path");
-    if (pref != null) {
-      dataFolder = new File(pref);
-
-    } else if (PApplet.platform == PConstants.MACOSX) {
-      try {
-        Class clazz = Class.forName("processing.app.macosx.ThinkDifferent");
-        Method m = clazz.getMethod("getLibraryFolder", new Class[] { });
-        String libraryPath = (String) m.invoke(null, new Object[] { });
-        //String libraryPath = BaseMacOS.getLibraryFolder();
-        File libraryFolder = new File(libraryPath);
-        dataFolder = new File(libraryFolder, "Processing");
-
-      } catch (Exception e) {
-        showError("Problem getting data folder",
-                  "Error getting the Processing data folder.", e);
-      }
-
-    } else if (Base.isWindows()) {
-      // looking for Documents and Settings/blah/Application Data/Processing
-
-      // this is just based on the other documentation, and eyeballing
-      // that part of the registry.. not confirmed by any msft/msdn docs.
-      // HKEY_CURRENT_USER\Software\Microsoft
-      //   \Windows\CurrentVersion\Explorer\Shell Folders
-      // Value Name: AppData
-      // Value Type: REG_SZ
-      // Value Data: path
-
-      try {
-//        RegistryKey topKey = Registry.getTopLevelKey("HKCU");
-
-        String keyPath =
-          "Software\\Microsoft\\Windows\\CurrentVersion" +
-          "\\Explorer\\Shell Folders";
-//        RegistryKey localKey = topKey.openSubKey(localKeyPath);
-//        String appDataPath = cleanKey(localKey.getStringValue("AppData"));
-        //System.out.println("app data path is " + appDataPath);
-        //System.exit(0);
-        //topKey.closeKey();  // necessary?
-        //localKey.closeKey();
-
-        String appDataPath = 
-          Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "AppData");
-        
-        dataFolder = new File(appDataPath, "Processing");
-
-      } catch (Exception e) {
-        showError("Problem getting data folder",
-                  "Error getting the Processing data folder.", e);
-      }
-      //return null;
+    String preferencesPath = Preferences.get("settings.path");
+    if (preferencesPath != null) {
+      settingsFolder = new File(preferencesPath);
 
     } else {
-      // otherwise make a .processing directory int the user's home dir
-      File home = new File(System.getProperty("user.home"));
-      dataFolder = new File(home, ".processing");
+      try {
+        settingsFolder = platform.getSettingsFolder();
+      } catch (Exception e) {
+        showError("Problem getting data folder",
+                  "Error getting the Processing data folder.", e);
+      }
     }
 
     // create the folder if it doesn't exist already
-    boolean result = true;
-    if (!dataFolder.exists()) {
-      result = dataFolder.mkdirs();
-    }
-
-    if (!result) {
-      // try the fallback location
-      System.out.println("Using fallback path for settings.");
-      String fallback = Preferences.get("settings.path.fallback");
-      dataFolder = new File(fallback);
-      if (!dataFolder.exists()) {
-        result = dataFolder.mkdirs();
+    if (!settingsFolder.exists()) {
+      if (!settingsFolder.mkdirs()) {
+        showError("Settings issues",
+                  "Processing cannot run because it could not\n" +
+                  "create a folder to store your settings.", null);
       }
     }
-
-    if (!result) {
-      showError("Settings issues",
-                "Processing cannot run because it could not\n" +
-                "create a folder to store your settings.", null);
-    }
-
-    return dataFolder;
+    return settingsFolder;
   }
 
 
@@ -1332,60 +1103,12 @@ public class Base {
 
 
   static public File getDefaultSketchbookFolder() {
-    File sketchbookFolder = null;
-
-    if (Base.isMacOS()) {
-      // looking for /Users/blah/Documents/Processing
-      
-      try {
-        Class clazz = Class.forName("processing.app.BaseMacOS");
-        Method m = clazz.getMethod("getDocumentsFolder", new Class[] { });
-        String documentsPath = (String) m.invoke(null, new Object[] { });        
-        sketchbookFolder = new File(documentsPath, "Processing");
-
-      } catch (Exception e) {
-        sketchbookFolder = promptSketchbookLocation();
-      }
-
-    } else if (isWindows()) {
-      // looking for Documents and Settings/blah/My Documents/Processing
-      // (though using a reg key since it's different on other platforms)
-
-      // http://support.microsoft.com/?kbid=221837&sd=RMVP
-      // http://support.microsoft.com/kb/242557/en-us
-      
-      // The path to the My Documents folder is stored in the following 
-      // registry key, where path is the complete path to your storage location
-      
-      // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
-      // Value Name: Personal
-      // Value Type: REG_SZ
-      // Value Data: path
-
-      // in some instances, this may be overridden by a policy, in which case check:
-      // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
-
-      try {
-//        RegistryKey topKey = Registry.HKEY_CURRENT_USER;
-//        int topKey = Registry.openKey(REGISTRY_ROOT_KEY.CURRENT_USER);
-        String keyPath =
-          "Software\\Microsoft\\Windows\\CurrentVersion" +
-          "\\Explorer\\Shell Folders";
-//        RegistryKey localKey = topKey.openSubKey(localKeyPath);        
-//        String personalPath = cleanKey(localKey.getStringValue("Personal"));
-        String personalPath = 
-          Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "Personal");
-
-//        //topKey.closeKey();  // necessary?
-//        //localKey.closeKey();
-
-        sketchbookFolder = new File(personalPath, "Processing");
-
-      } catch (Exception e) {
-        sketchbookFolder = promptSketchbookLocation();
-      }
-
-    } else {
+    File sketchbookFolder = null; 
+    try {
+      platform.getDefaultSketchbookFolder();
+    } catch (Exception e) { }
+    
+    if (sketchbookFolder == null) {
       sketchbookFolder = promptSketchbookLocation();
     }
 
@@ -1395,6 +1118,7 @@ public class Base {
       result = sketchbookFolder.mkdirs();
     }
 
+    /*
     if (!result) {
       // try the fallback location
       System.out.println("Using fallback path for sketchbook.");
@@ -1404,9 +1128,10 @@ public class Base {
         result = sketchbookFolder.mkdirs();
       }
     }
+    */
 
     if (!result) {
-      showError("error",
+      showError("You forgot your sketchbook",
                 "Processing cannot run because it could not\n" +
                 "create a folder to store your sketchbook.", null);
     }
@@ -1434,61 +1159,6 @@ public class Base {
     }
     return folder;
   }
-
-
-  /**
-   * Clear out projects that are empty.
-   */
-//  static public void cleanSketchbook() {
-//    if (!Preferences.getBoolean("sketchbook.auto_clean")) return;
-//
-//    File sketchbookFolder = getSketchbookFolder();
-//    if (!sketchbookFolder.exists()) return;
-//
-//    //String entries[] = new File(userPath).list();
-//    String entries[] = sketchbookFolder.list();
-//    if (entries != null) {
-//      for (int j = 0; j < entries.length; j++) {
-//        //System.out.println(entries[j] + " " + entries.length);
-//        if (entries[j].charAt(0) == '.') continue;
-//
-//        //File prey = new File(userPath, entries[j]);
-//        File prey = new File(sketchbookFolder, entries[j]);
-//        File pde = new File(prey, entries[j] + ".pde");
-//
-//        // make sure this is actually a sketch folder with a .pde,
-//        // not a .DS_Store file or another random user folder
-//
-//        if (pde.exists() && (Base.calcFolderSize(prey) == 0)) {
-//          //System.out.println("i want to remove " + prey);
-//
-//          //if (Preferences.getBoolean("sketchbook.auto_clean")) {
-//          Base.removeDir(prey);
-//
-//            /*
-//          } else {  // otherwise prompt the user
-//            String prompt =
-//              "Remove empty sketch titled \"" + entries[j] + "\"?";
-//
-//            Object[] options = { "Yes", "No" };
-//            int result =
-//              JOptionPane.showOptionDialog(editor,
-//                                           prompt,
-//                                           "Housekeeping",
-//                                           JOptionPane.YES_NO_OPTION,
-//                                           JOptionPane.QUESTION_MESSAGE,
-//                                           null,
-//                                           options,
-//                                           options[0]);
-//            if (result == JOptionPane.YES_OPTION) {
-//              Base.removeDir(prey);
-//            }
-//            */
-//          //}
-//        }
-//      }
-//    }
-//  }
 
 
   // .................................................................
@@ -1533,36 +1203,6 @@ public class Base {
     }
     return null;
   }
-
-  
-// this is a nasty hack to deal with a bug in jnireg
-// removing it for 0140 since we're moving to jna for reg lookups 
-//  static public String cleanKey(String what) {
-//    // jnireg seems to be reading the chars as bytes
-//    // so maybe be as simple as & 0xff and then running through decoder
-//
-//    char c[] = what.toCharArray();
-//
-//    // if chars are in the tooHigh range, it's prolly because
-//    // a byte from the jni registry was turned into a char
-//    // and there was a sign extension.
-//    // e.g. 0xFC (252, umlaut u) became 0xFFFC (65532).
-//    // but on a japanese system, maybe this is two-byte and ok?
-//    int tooHigh = 65536 - 128;
-//    for (int i = 0; i < c.length; i++) {
-//      if (c[i] >= tooHigh) c[i] &= 0xff;
-//
-//      /*
-//      if ((c[i] >= 32) && (c[i] < 128)) {
-//        System.out.print(c[i]);
-//      } else {
-//        System.out.print("[" + PApplet.hex(c[i]) + "]");
-//      }
-//      */
-//    }
-//    //System.out.println();
-//    return new String(c);
-//  }
 
 
   // .................................................................
@@ -1743,6 +1383,10 @@ public class Base {
   }
 
 
+  /**
+   * Used to determine whether to disable the "Show Sketch Folder" option.
+   * @return true If a means of opening a folder is known to be available.
+   */
   static boolean openFolderAvailable() {
     if (Base.isWindows() || Base.isMacOS()) return true;
 

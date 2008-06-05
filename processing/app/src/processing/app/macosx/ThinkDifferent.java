@@ -22,21 +22,19 @@
 
 package processing.app.macosx;
 
-import java.io.FileNotFoundException;
-
 import processing.app.Base;
 
 import com.apple.eawt.*;
-import com.apple.eio.FileManager;
 
 
 /**
- * Deal with issues connected to thinking different.
+ * Deal with issues related to thinking different. This handles the basic
+ * Mac OS X menu commands (and apple events) for open, about, prefs, etc.
+ *  
  * Based on OSXAdapter.java from Apple DTS.
  * 
  * As of 0140, this code need not be built on platforms other than OS X, 
- * because it is hit by only two accessor methods in processing.app.Base that
- * are now called via reflection.  
+ * because of the new platform structure which isolates through reflection.
  */
 public class ThinkDifferent implements ApplicationListener {
 
@@ -50,8 +48,18 @@ public class ThinkDifferent implements ApplicationListener {
   private Base base;
 
   
-  private ThinkDifferent(Base base) {
+  ThinkDifferent(Base base) {
     this.base = base;
+    
+    if (application == null) {
+      application = new com.apple.eawt.Application();
+    }
+    if (adapter == null) {
+      adapter = new ThinkDifferent(base);
+    }
+    application.addApplicationListener(adapter);
+    application.setEnabledAboutMenu(true);
+    application.setEnabledPreferencesMenu(true);
   }
   
   
@@ -111,67 +119,5 @@ public class ThinkDifferent implements ApplicationListener {
   
   
   public void handleReOpenApplication(ApplicationEvent arg0) {
-  }
-
-  
-  // The main entry-point for this functionality.  This is the only method
-  // that needs to be called at runtime, and it can easily be done using
-  // reflection (see Base.java) 
-  public static void register(Base base) {
-    if (application == null) {
-      application = new com.apple.eawt.Application();
-    }
-    if (adapter == null) {
-      adapter = new ThinkDifferent(base);
-    }
-    application.addApplicationListener(adapter);
-    application.setEnabledAboutMenu(true);
-    application.setEnabledPreferencesMenu(true);
-  }  
-  
-
-  // Some of these are supposedly constants in com.apple.eio.FileManager, 
-  // however they don't seem to link properly from Eclipse.
-  
-  static final int kDocumentsFolderType =
-    ('d' << 24) | ('o' << 16) | ('c' << 8) | 's';
-  //static final int kPreferencesFolderType =
-  //  ('p' << 24) | ('r' << 16) | ('e' << 8) | 'f';
-  static final int kDomainLibraryFolderType =
-    ('d' << 24) | ('l' << 16) | ('i' << 8) | 'b';
-  static final short kUserDomain = -32763;
-
-  
-  // apple java extensions documentation
-  // http://developer.apple.com/documentation/Java/Reference/1.5.0
-  //   /appledoc/api/com/apple/eio/FileManager.html
-  
-  // carbon folder constants
-  // http://developer.apple.com/documentation/Carbon/Reference
-  //   /Folder_Manager/folder_manager_ref/constant_6.html#/
-  //   /apple_ref/doc/uid/TP30000238/C006889
-
-  // additional information found int the local file:
-  // /System/Library/Frameworks/CoreServices.framework
-  //   /Versions/Current/Frameworks/CarbonCore.framework/Headers/
-
-
-  static public String getLibraryFolder() {
-    try {
-      return FileManager.findFolder(kUserDomain, kDomainLibraryFolderType);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-  
-  
-  static public String getDocumentsFolder() {
-    try {
-      return FileManager.findFolder(kUserDomain, kDocumentsFolderType);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-    return null;
   }
 }
