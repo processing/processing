@@ -153,6 +153,9 @@ public class CreateFont extends JFrame {
           super.paintComponent(g2);
         }
       };
+    // Seems that in some instances, no default font is set
+    // http://dev.processing.org/bugs/show_bug.cgi?id=777
+    sample.setFont(new Font("Dialog", Font.PLAIN, 12));
 
     pain.add(sample);
 

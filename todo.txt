@@ -7,6 +7,9 @@ X   closing until further notice
 o vista disables aero theme when p5 is run
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 X   can't seem to verify this
+X occasional division by zero on windows
+_   http://dev.processing.org/bugs/show_bug.cgi?id=777
+_   should be fixed, but need to verify once a release candidate is ready
 
 cleaning
 o respond to stop/close events sent by the vm
@@ -1091,8 +1094,6 @@ _   may help solve: http://dev.processing.org/bugs/show_bug.cgi?id=98
 _ when resizing window, only resize the text display area
 _   just a matter of moving around the panels and BorderLayout
 _ remember previous font selection when returning to the window
-_ occasional division by zero on windows
-_   http://dev.processing.org/bugs/show_bug.cgi?id=777
 
 
 ////////////////////////////////////////////////////////////////////
