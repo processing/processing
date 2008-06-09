@@ -10,6 +10,9 @@ X   can't seem to verify this
 X occasional division by zero on windows
 _   http://dev.processing.org/bugs/show_bug.cgi?id=777
 _   should be fixed, but need to verify once a release candidate is ready
+X two fixes for readBytesUntil() and bufferUntil() 
+X   also not calling serialEvent()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=96
 
 cleaning
 o respond to stop/close events sent by the vm
@@ -52,6 +55,10 @@ _     seem to be primarily 2 kinds?
 _     how to ignore warning stuff?
 _ finish osx build script to make the libraries
 _ make.sh creating work/lib dirs.. no longer necessary?
+
+wontfix
+X Programs run with release 0136+ are sometimes slower due to Java 1.5
+X   http://dev.processing.org/bugs/show_bug.cgi?id=798
 
 _ make sure that export is using utf8 for writing the .pde files etc
 _   should be primarily loadFile() and saveFile() inside Base
@@ -227,6 +234,7 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 DOC / Bugzilla 
 
+_ 
 _ * disable changes to a bug (except by admin) after closed *
 _ fix "reply" garbage added
 _ fix "back to bug# 778"
@@ -384,6 +392,7 @@ _     how to do this with subclipse instructions?
 
 DOC / Discourse Board
 
+_ auto-close threads when not posted to for 30(?) days
 _ add basic guidelines for posting to the board
 _   0. be polite. going on about how much something "sucks" or is "stupid" will make you look like an eight-year-old.
 _   1. don't double (or triple) post
@@ -1081,6 +1090,8 @@ _ arrays are reformatted on each autoformat
 _   http://dev.processing.org/bugs/show_bug.cgi?id=259
 _ crash on particular string
 _   http://dev.processing.org/bugs/show_bug.cgi?id=363
+_ autoformat screws up with color arrays
+_   http://dev.processing.org/bugs/show_bug.cgi?id=760
 
 
 TOOLS / Create Font
