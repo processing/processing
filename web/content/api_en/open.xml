@@ -56,7 +56,9 @@ The <b>args</b> parameter is a String or String array which is passed to the com
 <br/> <br/>
 If args is a String (not an array), then it can only be a single file or application with no parameters. It's not the same as executing that String using a shell. For instance, open("jikes -help") will not work properly.
 <br/> <br/>
-This function behaves differently on each platform. On Windows, the parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the "open" command is used (type "man open" in Terminal.app for documentation). On Linux, it first tries gnome-open, then kde-open, but if neither are available, it sends the command to the shell without any alterations. For Java users, this is not quite the same as Runtime.exec(), because the launcher command is prepended. The method <b>exec(String[])</b> is a shortcut for Runtime.getRuntime.exec(String[]). In release 0125, this function was modified for Mac OS X and Linux support, and to better handle spaces in command names.
+This function behaves differently on each platform. On Windows, the parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the "open" command is used (type "man open" in Terminal.app for documentation). On Linux, it first tries gnome-open, then kde-open, but if neither are available, it sends the command to the shell without any alterations. In release 0125, this function was modified for Mac OS X and Linux support, and to better handle spaces in command names.
+<br/> <br/>
+For Java users, this is not quite the same as Runtime.exec(), because the launcher command is prepended. The method <b>exec(String[])</b> is a shortcut for Runtime.getRuntime.exec(String[]). 
 </description>
 
 <syntax>
