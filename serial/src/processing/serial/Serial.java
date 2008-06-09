@@ -211,7 +211,7 @@ public class Serial implements SerialPortEventListener {
   * Set the DTR line. Addition from Tom Hulbert.
   */
   public void setDTR(boolean state) {
-	port.setDTR(state);
+        port.setDTR(state);
   }
 
 
@@ -227,8 +227,10 @@ public class Serial implements SerialPortEventListener {
             }
             buffer[bufferLast++] = (byte) input.read();
             if (serialEventMethod != null) {
-              if ((bufferUntil && (buffer[bufferLast-1] == bufferUntilByte)) ||
-                  ((bufferLast - bufferIndex) >= bufferSize)) {
+              if ((bufferUntil &&
+                   (buffer[bufferLast-1] == bufferUntilByte)) ||
+                  (!bufferUntil &&
+                   ((bufferLast - bufferIndex) >= bufferSize))) {
                 try {
                   serialEventMethod.invoke(parent, new Object[] { this });
                 } catch (Exception e) {
@@ -413,8 +415,11 @@ public class Serial implements SerialPortEventListener {
       byte outgoing[] = new byte[length];
       System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
 
-      bufferIndex = 0;  // rewind
-      bufferLast = 0;
+      bufferIndex += length;
+      if (bufferIndex == bufferLast) {
+        bufferIndex = 0;  // rewind
+        bufferLast = 0;
+      }
       return outgoing;
     }
   }

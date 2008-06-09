@@ -5,6 +5,8 @@ _ pdf not rendering unicode (though it renders to screen)
 _   try updating to newer itext
 _   http://dev.processing.org/bugs/show_bug.cgi?id=727
 
+_ pdf sketches exiting before writing has finished
+
 _ need a halt() method which will kill but not quit app (sets finished?)
 _   exit() will actually leave the application
 _   this may in fact only be internal
