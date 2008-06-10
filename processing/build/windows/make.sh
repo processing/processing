@@ -61,16 +61,17 @@ echo Building processing.core...
 
 cd core
 
-CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\tools.jar"
-export CLASSPATH
+#CLASSPATH="..\\build\\windows\\work\\java\\lib\\rt.jar;..\\build\\windows\\work\\java\\lib\\tools.jar"
+#CLASSPATH="..\\build\\windows\\work\\java\\lib\\tools.jar"
+#export CLASSPATH
 
 perl preproc.pl
 
 mkdir -p bin
-../build/windows/work/java/bin/java sun.tools.javac.Main \
-    -d bin -source 1.5 -target 1.5 src/processing/core/*.java
-
-exit
+../build/windows/work/java/bin/java \
+    -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" com.sun.tools.javac.Main \
+    -source 1.5 -target 1.5 \
+    -d bin src/processing/core/*.java
 
 rm -f ../build/windows/work/lib/core.jar
 find bin -name "*~" -exec rm -f {} ';'
@@ -80,7 +81,6 @@ cd bin && zip -rq ../../build/windows/work/lib/core.jar processing && cd ..
 
 # back to base processing dir
 cd ..
-
 
 ### -- BUILD PREPROC ---------------------------------------------
 
@@ -131,12 +131,16 @@ fi
 
 cd app
 
-CLASSPATH=
+#CLASSPATH=
 
-../build/windows/work/java/bin/java sun.tools.javac.Main 
+# has to be present, otherwise javac will complain of file writing errors
+mkdir -p ../build/windows/work/classes
+
+../build/windows/work/java/bin/java \
+    -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
-    -classpath "..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\\apple.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\registry.jar;..\\build\\windows\\work\\lib\\tools.jar;..\\build\\windows\\work\\java\\lib\\rt.jar" \
-    -d ..\\build\\windows\\work/classes \
+    -classpath "..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\jna.jar;..\\build\\windows\\work\\java\\lib\\tools.jar" \
+    -d ..\\build\\windows\\work\\classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
     src/processing/app/syntax/*.java \
@@ -157,8 +161,10 @@ cd ../..
 PLATFORM=windows
 
 
-CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar;..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
-JAVAC="../build/windows/work/java/bin/java sun.tools.javac.Main -source 1.5 -target 1.5"
+#CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar;..\\build\\$PLATFORM\\work\\java\\lib\\rt.jar"
+#CLASSPATH="..\\build\\$PLATFORM\\work\\lib\\core.jar"
+
+JAVAC="../build/windows/work/java/bin/java -classpath ..\\build\\windows\\work\\java\\lib\\tools.jar com.sun.tools.javac.Main -source 1.5 -target 1.5"
 CORE="..\\build\\$PLATFORM\\work\\lib\\core.jar"
 LIBRARIES="..\\build\\$PLATFORM\\work\\libraries"
 
@@ -171,7 +177,7 @@ echo Building serial library...
 cd ../serial
 mkdir -p bin
 $JAVAC \
-    -classpath "library\\RXTXcomm.jar;$CORE;$CLASSPATH" \
+    -classpath "library\\RXTXcomm.jar;$CORE" \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 find bin -name "*~" -exec rm -f {} ';'
@@ -179,12 +185,13 @@ cd bin && zip -r0q ../library/serial.jar processing/serial/*.class && cd ..
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
 
-
 # NET LIBRARY
 echo Building net library...
 cd ../net
 mkdir -p bin
-$JAVAC -d bin src/processing/net/*.java 
+$JAVAC \
+    -classpath "$CORE" \
+    -d bin src/processing/net/*.java 
 rm -f library/net.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
@@ -211,7 +218,7 @@ fi
 cd ../video
 mkdir -p bin
 $JAVAC \
-    -classpath "$QTJAVA;$CLASSPATH" \
+    -classpath "$QTJAVA;$CORE" \
     -d bin src/processing/video/*.java 
 rm -f library/video.jar
 find bin -name "*~" -exec rm -f {} ';'
@@ -225,7 +232,7 @@ echo Building OpenGL library...
 cd ../opengl
 mkdir -p bin
 $JAVAC \
-    -classpath "library\\jogl.jar;$CLASSPATH" \
+    -classpath "library\\jogl.jar;$CORE" \
     -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
 find bin -name "*~" -exec rm -f {} ';'
@@ -239,7 +246,7 @@ echo Building PDF library...
 cd ../pdf
 mkdir -p bin
 $JAVAC \
-    -classpath "library\\itext.jar;$CLASSPATH" \
+    -classpath "library\\itext.jar;$CORE" \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
 find bin -name "*~" -exec rm -f {} ';'
@@ -252,7 +259,9 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 echo Building DXF library...
 cd ../dxf
 mkdir -p bin
-$JAVAC -d bin src/processing/dxf/*.java 
+$JAVAC \
+    -classpath "$CORE" \
+    -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
@@ -264,7 +273,9 @@ cp library/dxf.jar $LIBRARIES/dxf/library/
 echo Building XML library...
 cd ../xml
 mkdir -p bin
-$JAVAC -d bin src/processing/xml/*.java 
+$JAVAC \
+    -classpath "$CORE" \
+    -d bin src/processing/xml/*.java 
 rm -f library/xml.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/xml.jar processing/xml/*.class && cd ..
@@ -278,7 +289,7 @@ echo Building Candy SVG library...
 cd ../candy
 mkdir -p bin
 $JAVAC \
-    -classpath "..\\xml\\library\\xml.jar;$CLASSPATH" \
+    -classpath "..\\xml\\library\\xml.jar;$CORE" \
     -d bin src/processing/candy/*.java 
 rm -f library/candy.jar
 find bin -name "*~" -exec rm -f {} ';'

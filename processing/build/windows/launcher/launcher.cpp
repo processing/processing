@@ -223,15 +223,11 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
   strcpy(cp, app_classpath);
   if (local_jre_installed) {
-    char *local_jre = mallocChars(32 + strlen(exe_directory));
-    sprintf(local_jre, "%s\\java\\lib\\rt.jar;", exe_directory);
+    char *local_jre = mallocChars(64 + strlen(exe_directory) * 2);
+    sprintf(local_jre, "%s\\java\\lib\\rt.jar;%s\\java\\lib\\tools.jar;", exe_directory, exe_directory);
     strcat(cp, local_jre);
   }
   strcat(cp, qtjava_path);
-  //strcat(cp, env_classpath);
-
-  //MessageBox(NULL, "scrubbing classpath", "scrubbing classpath", MB_OK);
-  //MessageBox(NULL, cp, "before scrubbing classpath", MB_OK);
 
   char *clean_cp = scrubPath(cp);
   //if (!SetEnvironmentVariable("CLASSPATH", cp)) {
