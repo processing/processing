@@ -8,8 +8,8 @@ o vista disables aero theme when p5 is run
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
 X   can't seem to verify this
 X occasional division by zero on windows
-_   http://dev.processing.org/bugs/show_bug.cgi?id=777
-_   should be fixed, but need to verify once a release candidate is ready
+X   http://dev.processing.org/bugs/show_bug.cgi?id=777
+X   should be fixed, but need to verify once a release candidate is ready
 X two fixes for readBytesUntil() and bufferUntil() 
 X   also not calling serialEvent()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=96
@@ -50,12 +50,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=723
 X   or move to jna for registry?
 X   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
 X remove libs from build/shared that are in app/lib
-_   update scripts to copy from app/lib
-_ since adding tools.jar, jikes can be removed
-_ properly handle non-ascii chars in p5 folder name
+X   update scripts to copy from app/lib
+X since adding tools.jar, jikes can be removed
 X switch to javac (in code)
 X   re-wire error handling to handle javac error messages
-_     seem to be primarily 2 kinds?
+o     seem to be primarily 2 kinds?
 X finish osx build script to make the libraries
 X make.sh creating work/lib dirs.. no longer necessary?
 
@@ -86,6 +85,7 @@ _   arduino uses .c, .cpp, .h instead of .java
 _   http://dev.processing.org/bugs/show_bug.cgi?id=807
 
 _ check to see whether this bug is fixed once 0140 is released
+_   properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   (could also just warn user to install elsewhere)
 o   perhaps the get around this by building into sketch folder

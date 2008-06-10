@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 */
 
 package processing.app.debug;
+
 
 /**
  * An exception with a line number attached that occurs
@@ -44,23 +45,6 @@ public class RunnerException extends Exception {
   }
 
 
-  /*
-  public RunnerException(String message, int line) {
-    //super(massage(message));
-    this.message = message;
-    this.line = line;
-  }
-
-  
-  public RunnerException(String message, int line, int column) {
-    //super(massage(message));
-    this.message = message;
-    this.line = line;
-    this.column = column;
-  }
-  */
-
-  
   public RunnerException(String message, int file, int line, int column) {
     //super(massage(message));
     this.message = message;
@@ -75,6 +59,10 @@ public class RunnerException extends Exception {
   }
   
   
+  /** 
+   * Override getMessage() in Throwable, so that I can set 
+   * the message text outside the constructor.
+   */
   public String getMessage() {
     return message;
   }
@@ -97,6 +85,7 @@ public class RunnerException extends Exception {
    * This function must be static to be used with super()
    * in each of the constructors above.
    */
+  /*
   static public final String massage(String msg) {
     if (msg.indexOf("java.lang.") == 0) {
       //int dot = msg.lastIndexOf('.');
@@ -105,6 +94,7 @@ public class RunnerException extends Exception {
     return msg;
     //return (dot == -1) ? msg : msg.substring(dot+1);
   }
+  */
 
 
   public void printStackTrace() {
