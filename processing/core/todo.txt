@@ -1,4 +1,6 @@
 0140 core
+X add static version of loadBytes() that reads from a File object
+X slightly clearer error messages when OpenGL stuff is missing
 
 
 _ pdf not rendering unicode (though it renders to screen)
