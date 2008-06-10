@@ -1918,13 +1918,13 @@ public class Editor extends JFrame {
     // out which kind and try to give a better error message to the user.
     String mess = e.getMessage();
     if (mess != null) {
-      String rxString = "RuntimeException: ";
-      if (mess.indexOf(rxString) == 0) {
-        mess = mess.substring(rxString.length());
-      }
       String javaLang = "java.lang.";
       if (mess.indexOf(javaLang) == 0) {
         mess = mess.substring(javaLang.length());
+      }
+      String rxString = "RuntimeException: ";
+      if (mess.indexOf(rxString) == 0) {
+        mess = mess.substring(rxString.length());
       }
       error(mess);
     }
