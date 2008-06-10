@@ -1,4 +1,4 @@
-// $ANTLR 2.7.7 (2006-11-01): "java.g" -> "JavaLexer.java"$
+// $ANTLR 2.7.7 (2006-11-01): "src/antlr/java/java.g" -> "JavaLexer.java"$
 
 package antlr.java;
 

@@ -1,4 +1,4 @@
-// $ANTLR 2.7.7 (2006-11-01): "java.g" -> "JavaRecognizer.java"$
+// $ANTLR 2.7.7 (2006-11-01): "src/antlr/java/java.g" -> "JavaRecognizer.java"$
 
 package antlr.java;
 
