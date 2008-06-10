@@ -1,9 +1,6 @@
 #!/bin/sh
 
 
-ARCH=`uname -m`
-
-
 ### -- SETUP WORK DIR -------------------------------------------
 
 if test -d work
@@ -21,10 +18,10 @@ else
   cp ../../app/lib/jna.jar work/lib/
 
   echo Extracting examples...
-#  unzip -q -d work/ ../shared/examples.zip
+  unzip -q -d work/ ../shared/examples.zip
 
   echo Extracting reference...
-#  unzip -q -d work/ ../shared/reference.zip
+  unzip -q -d work/ ../shared/reference.zip
 
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -37,6 +34,7 @@ else
 
   install -m 755 dist/processing work/processing
 
+  ARCH=`uname -m`
   if [ $ARCH = "i686" ]
   then
     echo Extracting JRE...
