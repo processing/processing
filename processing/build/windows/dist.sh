@@ -20,8 +20,20 @@ echo
 rm -rf processing
 rm -rf processing-*
 
-# use 'shared' files as starting point
-cp -r ../shared processing
+mkdir processing
+cp -r ../shared/lib processing/
+cp -r ../shared/libraries processing/
+
+cp ../../app/lib/antlr.jar processing/lib/
+cp ../../app/lib/jna.jar processing/lib/
+
+cp ../shared/revisions.txt processing/
+
+echo Extracting examples...
+unzip -q -d processing/ ../shared/examples.zip
+
+echo Extracting reference...
+unzip -q -d processing/ ../shared/reference.zip
 
 # add the libraries folder with source
 cp -r ../../net processing/libraries/
@@ -33,63 +45,31 @@ cp -r ../../dxf processing/libraries/
 cp -r ../../xml processing/libraries/
 cp -r ../../candy processing/libraries/
 
-# new style examples thing ala reas
-cd processing
-unzip -q examples.zip
-rm examples.zip
-cd ..
-
-# new style reference
-cd processing
-unzip -q reference.zip
-# necessary for launching reference from shell/command prompt
-# which is done internally to view reference
-find reference -name "*.html" -exec chmod +x {} ';'
-# get rid of the zip file
-rm reference.zip
-cd ..
-
 # add java (jre) files
 unzip -q -d processing jre.zip
 
-# directories used by the app
-#mkdir processing/lib/build
+# get platform-specific goodies from the dist dir
+cp launcher/processing.exe processing/
 
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar processing/lib/
 cp work/lib/core.jar processing/lib/
-#cp -r work/lib/export processing/lib/
-#rm -rf processing/lib/export/CVS
 
-# get jikes and depedencies
-#gunzip < dist/jikes.gz > processing/jikes.exe
-cp dist/jikes.exe processing/
-chmod +x processing/jikes.exe
-
-cp dist/ICE_JNIRegistry.dll processing/
-chmod +x processing/ICE_JNIRegistry.dll
-
-cp dist/tools.jar processing/lib/
-
-# get platform-specific goodies from the dist dir
-cp launcher/processing.exe processing/
-#cp dist/run.bat processing/
-
-# convert notes.txt to windows LFs
+# convert revisions.txt to windows LFs
 # the 2> is because the app is a little chatty
 unix2dos processing/revisions.txt 2> /dev/null
 unix2dos processing/lib/preferences.txt 2> /dev/null
 unix2dos processing/lib/keywords.txt 2> /dev/null
-rm -f processing/*.bak
-rm -f processing/lib/*.bak
 
 # remove boogers
+find processing -name "*.bak" -exec rm -f {} ';'
 find processing -name "*~" -exec rm -f {} ';'
 find processing -name ".DS_Store" -exec rm -f {} ';'
 find processing -name "._*" -exec rm -f {} ';'
 find processing -name "Thumbs.db" -exec rm -f {} ';'
 
 # chmod +x the crew
+find processing -name "*.html" -exec chmod +x {} ';'
 find processing -name "*.dll" -exec chmod +x {} ';'
 find processing -name "*.exe" -exec chmod +x {} ';'
 find processing -name "*.html" -exec chmod +x {} ';'

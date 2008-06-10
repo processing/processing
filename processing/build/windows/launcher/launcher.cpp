@@ -71,12 +71,9 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     strcpy(java_main_class, "processing.app.Base");
     sprintf(app_classpath, 
             "%s\\lib;"
-            "%s\\lib\\build;"
             "%s\\lib\\pde.jar;"
             "%s\\lib\\core.jar;"
-            "%s\\lib\\mrj.jar;"
-            "%s\\lib\\tools.jar;"
-            "%s\\lib\\registry.jar;"
+            "%s\\lib\\jna.jar;"
             "%s\\lib\\antlr.jar;",
             exe_directory, exe_directory, exe_directory, exe_directory, 
             exe_directory, exe_directory, exe_directory, exe_directory);
