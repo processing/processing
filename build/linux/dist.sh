@@ -17,8 +17,18 @@ echo Creating linux distribution for revision $REVISION...
 rm -rf processing
 rm -rf processing-*
 
-# use 'shared' files as starting point
-cp -r ../shared processing
+mkdir processing
+cp -r ../shared/lib processing/
+cp -r ../shared/libraries processing/
+cp ../../app/lib/antlr.jar processing/lib/
+cp ../../app/lib/jna.jar processing/lib/
+cp ../shared/revisions.txt processing/
+
+echo Extracting examples...
+unzip -q -d processing/ ../shared/examples.zip
+
+echo Extracting reference...
+unzip -q -d processing/ ../shared/reference.zip
 
 # add the libraries folder with source
 cp -r ../../net processing/libraries/
@@ -29,23 +39,8 @@ cp -r ../../dxf processing/libraries/
 cp -r ../../xml processing/libraries/
 cp -r ../../candy processing/libraries/
 
-# new style examples thing ala reas
-cd processing
-unzip -q examples.zip
-rm examples.zip
-cd ..
-
-cd processing
-unzip -q reference.zip
-rm reference.zip
-cd ..
-
 # add java (jre) files
-#tar --extract --verbose --file=jre.tgz --ungzip --directory=processing
 tar --extract --file=jre.tgz --ungzip --directory=processing
-
-# directories used by the app
-#mkdir processing/lib/build
 
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar processing/lib/
@@ -53,10 +48,6 @@ cp work/lib/core.jar processing/lib/
 
 # get platform-specific goodies from the dist dir
 install -m 755 dist/processing processing/processing
-cp dist/jikes processing/
-chmod +x processing/jikes
-
-cp dist/tools.jar processing/lib/
 
 # make sure notes.txt is unix LFs
 # the 2> is because the app is a little chatty
@@ -72,7 +63,7 @@ find processing -name "Thumbs.db" -exec rm -f {} ';'
 # clean out the cvs entries
 find processing -name "CVS" -exec rm -rf {} ';' 2> /dev/null
 find processing -name ".cvsignore" -exec rm -rf {} ';'
-find processing -name ".svn" -exec rm -rf {} ';'
+find processing -name ".svn" -exec rm -rf {} 2> /dev/null ';'
 
 # zip it all up for release
 echo Creating tarball and finishing...
