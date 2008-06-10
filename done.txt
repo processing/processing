@@ -1,3 +1,68 @@
+0140 pde
+X fallback locations for sketchbook and data folders are disabled
+X move openFolder, openFolderAvailable, openURL to Platform classes
+X can't get documents/prefs folder on vista
+X   http://dev.processing.org/bugs/show_bug.cgi?id=585
+X   closing until further notice
+o vista disables aero theme when p5 is run
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1196016889
+X   can't seem to verify this
+X occasional division by zero on windows
+X   http://dev.processing.org/bugs/show_bug.cgi?id=777
+X   should be fixed, but need to verify once a release candidate is ready
+X two fixes for readBytesUntil() and bufferUntil() 
+X   also not calling serialEvent()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=96
+X fix goof with console preference in preferences.txt
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1213042400
+X need to add usequartz when running externally? 
+X   no, tested and it seems to be working
+
+cleaning
+o respond to stop/close events sent by the vm
+X   not sure what we're doing here
+X on osx, System.err isn't writing in things like createGraphics()
+X   but doing a printStackTrace(System.out) works
+X   something weird happening with one of the streams shutting down?
+X   probably, need to fix this by using the remote launcher/debug api
+X use proper external launcher via debugger api
+X   http://java.sun.com/javase/technologies/core/toolsapis/jpda/
+X small gray gap shows up in color picker
+X   getMaximumSize() not being respected on Windows (Linux?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=310
+X   same as bug #656
+X   http://dev.processing.org/bugs/show_bug.cgi?id=656
+
+further cleanup for simpler building (refactor lots of Base)
+o settings.path.fallback not being used
+o   need to check the mkdirs() to make sure it's not going too deep
+o   really important for intl versions that are having trouble
+o   or ask for the sketch folder name.. why isn't it?
+o   http://processing.org/bugs/show_bug.cgi?id=1
+X   remove settings.path.fallback
+X no error message if sketchbook folder is set to bad location
+X   says that it's gonna create new sketchbook in default loc
+X   even though that location might exist already (just word it better)
+X   "changing back to default sketchbook location"
+X move tools.jar into jre/lib folder
+X implement windows registry lookups via reflection
+X   http://dev.processing.org/bugs/show_bug.cgi?id=723
+X   or move to jna for registry?
+X   https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/ntservice/src/jnacontrib/win32/Registry.java?rev=293&view=markup
+X remove libs from build/shared that are in app/lib
+X   update scripts to copy from app/lib
+X since adding tools.jar, jikes can be removed
+X switch to javac (in code)
+X   re-wire error handling to handle javac error messages
+o     seem to be primarily 2 kinds?
+X finish osx build script to make the libraries
+X make.sh creating work/lib dirs.. no longer necessary?
+
+wontfix
+X Programs run with release 0136+ are sometimes slower due to Java 1.5
+X   http://dev.processing.org/bugs/show_bug.cgi?id=798
+
+
 0139 pde
 X update quaqua to 3.9.5 on macosx (http://www.randelshofer.ch/quaqua/)
 X xml.getIntAttribute() returns a float

@@ -1,5 +1,10 @@
+0140 core
+X add static version of loadBytes() that reads from a File object
+X slightly clearer error messages when OpenGL stuff is missing
+
+
 0139 core
-X no changes for 0139
+X no changes to core in 0139
 
 
 0138 core
