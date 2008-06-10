@@ -69,7 +69,8 @@ perl preproc.pl
 
 mkdir -p bin
 ../build/windows/work/java/bin/java \
-    -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" com.sun.tools.javac.Main \
+    -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" \
+    com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
     -d bin src/processing/core/*.java
 
@@ -131,13 +132,12 @@ fi
 
 cd app
 
-#CLASSPATH=
-
 # has to be present, otherwise javac will complain of file writing errors
 mkdir -p ../build/windows/work/classes
 
 ../build/windows/work/java/bin/java \
-    -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" com.sun.tools.javac.Main \
+    -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" \
+    com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
     -classpath "..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\jna.jar;..\\build\\windows\\work\\java\\lib\\tools.jar" \
     -d ..\\build\\windows\\work\\classes \
