@@ -13,6 +13,10 @@ _   should be fixed, but need to verify once a release candidate is ready
 X two fixes for readBytesUntil() and bufferUntil() 
 X   also not calling serialEvent()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=96
+X fix goof with console preference in preferences.txt
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1213042400
+X need to add usequartz when running externally? 
+X   no, tested and it seems to be working
 
 cleaning
 o respond to stop/close events sent by the vm
@@ -50,11 +54,10 @@ _   update scripts to copy from app/lib
 _ since adding tools.jar, jikes can be removed
 _ properly handle non-ascii chars in p5 folder name
 X switch to javac (in code)
-_   re-wire error handling to handle javac error messages
+X   re-wire error handling to handle javac error messages
 _     seem to be primarily 2 kinds?
-_     how to ignore warning stuff?
-_ finish osx build script to make the libraries
-_ make.sh creating work/lib dirs.. no longer necessary?
+X finish osx build script to make the libraries
+X make.sh creating work/lib dirs.. no longer necessary?
 
 wontfix
 X Programs run with release 0136+ are sometimes slower due to Java 1.5
@@ -120,6 +123,8 @@ _   need someone to go out and test all scenarios of this
 
 
 new/open/close/save
+_ file-save stops running sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=810
 _ don't copy hidden files (.svn especially) on export/save as
 _ make .java files and friends go to correct locations on export (app)
 _ on mac, window opens to prevent quit on close
@@ -234,7 +239,7 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 DOC / Bugzilla 
 
-_ 
+_ set default reported bug priority to 4 or 5
 _ * disable changes to a bug (except by admin) after closed *
 _ fix "reply" garbage added
 _ fix "back to bug# 778"
@@ -570,6 +575,10 @@ _   again, a warning checkbox
 
 PDE / Compiler & Preprocessor
 
+_ add support for multiple errors from the compiler
+_   actual error may be 4th of 5
+_   maybe a dropdown list thing, with the first just shown?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=58
 _ with additional .pde files, don't allow static mode in front tab
 _ don't allow "for (blah; blah; blah) ;"
 _   or if (blah blah blah) ;
@@ -640,8 +649,6 @@ _   even though things are inside a quoted txt block
 _ copy running code from /tmp/buildXXxxx on crash of p5
 _   should probably make a way to save/recover code
 _   make the buildXxxx folders relate to time/date?
-
-hacked for fix, needs real fix
 _ NullPointerException on unterminated comment at end of code
 _   and OutOfMemoryError and weird lockup
 _   http://dev.processing.org/bugs/show_bug.cgi?id=16
@@ -768,10 +775,6 @@ PDE / Editor Status
 
 _ error messages run off the edge and go invisible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=57
-_ multiple errors a mess in jikes
-_   actual error may be 4th of 5
-_   maybe a dropdown list thing, with the first just shown?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=58
 _ move all prompts to modal dialog showError/Message/Warning/Prompt
 _   nicely design dialog boxes to go with visual of p5
 _   maybe something that shows stack trace?
@@ -1220,6 +1223,8 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ shut off javac warnings
+_   http://dev.processing.org/bugs/show_bug.cgi?id=812
 _ use pack200/unpack200 to make p5 download smaller
 _   http://dev.processing.org/bugs/show_bug.cgi?id=765
 _ drag and drop
