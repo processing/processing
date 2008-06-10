@@ -102,7 +102,7 @@ public class Compiler {
       writer.close();
 
       BufferedReader reader = 
-        new BufferedReader(new StringReader(errorBuffer.toString()))
+        new BufferedReader(new StringReader(errorBuffer.toString()));
       
       String line = null;
       while ((line = reader.readLine()) != null) {
