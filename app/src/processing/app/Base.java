@@ -42,11 +42,11 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 140;
-  static final String VERSION_NAME = "0140 Beta";
+  static final int VERSION = 141;
+  static final String VERSION_NAME = "0141 Beta";
 
   static Platform platform;
-  
+
   // set to true after the first time the menu is built.
   // so that the errors while building don't show up again.
   boolean builtOnce;
@@ -90,7 +90,7 @@ public class Base {
                      "Java 1.5 or later to run properly.\n" +
                      "Please visit java.com to upgrade.", null);
     }
-    
+
     try {
       Class platformClass = Class.forName("processing.app.Platform");
       if (Base.isMacOS()) {
@@ -151,9 +151,9 @@ public class Base {
       if (!skechbookFolder.exists()) {
         Base.showWarning("Sketchbook folder disappeared",
                          "The sketchbook folder no longer exists.\n" +
-                         "Processing will switch to the default sketchbook\n" + 
+                         "Processing will switch to the default sketchbook\n" +
                          "location, and create a new sketchbook folder if\n" +
-                         "necessary. Procesing will then stop talking about\n" + 
+                         "necessary. Procesing will then stop talking about\n" +
                          "himself in the third person.", null);
         sketchbookPath = null;
       }
@@ -1064,11 +1064,11 @@ public class Base {
 
 
   public File getDefaultSketchbookFolder() {
-    File sketchbookFolder = null; 
+    File sketchbookFolder = null;
     try {
       sketchbookFolder = platform.getDefaultSketchbookFolder();
     } catch (Exception e) { }
-    
+
     if (sketchbookFolder == null) {
       sketchbookFolder = promptSketchbookLocation();
     }
@@ -1112,7 +1112,7 @@ public class Base {
 
   // .................................................................
 
-  
+
   /**
    * Implements the cross-platform headache of opening URLs
    * TODO This code should be replaced by PApplet.link(),
@@ -1125,7 +1125,7 @@ public class Base {
       platform.openURL(url);
 
     } catch (Exception e) {
-      showWarning("Problem Opening URL", 
+      showWarning("Problem Opening URL",
                   "Could not open the URL\n" + url, e);
     }
   }
@@ -1149,12 +1149,12 @@ public class Base {
       platform.openFolder(file);
 
     } catch (Exception e) {
-      showWarning("Problem Opening Folder", 
+      showWarning("Problem Opening Folder",
                   "Could not open the folder\n" + file.getAbsolutePath(), e);
     }
   }
 
-  
+
   // .................................................................
 
 
@@ -1283,7 +1283,7 @@ public class Base {
     showReference("troubleshooting" + File.separator + "index.html");
   }
 
-  
+
   // .................................................................
 
 
