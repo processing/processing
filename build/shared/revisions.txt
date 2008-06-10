@@ -7,6 +7,87 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0140 - 10 June 2008
+
+Major changes (some might say improvements) to compilation and
+platform-specific support. As with all releases later than 0135, 
+this is essentially an alpha-quality release. We won't be making
+them the default download until the series stabilizes. Please help
+us out by testing this releases, and filing bugs in the bugs
+database if you run into problems. 
+
+If this is your first release since 0135, be sure to read *ALL* 
+the releases notes in this file since that release. A lot has 
+changed, and there are several known issues.
+
+[ jikes/javac ] 
+
++ Jikes has been removed, and we are using Javac as the compiler. 
+  The negative side of this is that compilation is a little slower,
+  because Javac is kind of a dog. But that's outweighed by:
+  - better compatability (avoiding quirky Jikes bugs)
+  - ability to support Java 1.5 syntax (only in tabs that end in .java!)
+  - no more Jikes binary problems on Linux (or elsewhere)
+  - removing a binary from the download (less moving parts)
+
++ Error messages from Javac are very different, and it's quite
+  likely that some aren't being handled properly. If you run into 
+  this situation (on error messages--not warnings), please file
+  a bug report, so that we can provide a better message to the 
+  user about what's going on.
+
++ It is still not possible to use Java 1.5 syntax in Processing code
+  from within the environment. You won't be able to use 1.5 syntax 
+  until someone rewrites the preprocessor, which is a significant 
+  undertaking. We want to do it soon, but it's a lot of work.
+  http://dev.processing.org/bugs/show_bug.cgi?id=598
+  What has changed in release 0140 is that if you give a tab a name
+  ending in ".java", you'll be able to use 1.5 syntax, because that
+  tab will not be run through the preprocessor. However, you'll also
+  lose all Processing-specific syntax, and you'll have to pass the 
+  PApplet object to any such class in order to use Processing API.
+  (This is described in Help -> Getting Started.) And no, you cannot 
+  make the main tab a .java file. You can always use Eclipse to do
+  that, or better yet, give us a hand fixing Bug #598.
+
+[ platform classes ]
+
++ Platform-specific code has been moved to separate sections of the 
+  codebase. This simplifies how we connect to Mac OS X, Windows,
+  and Linux. You no longer need the Apple support stubs to compile on 
+  Windows and Linux, for one.
+
++ Windows registry calls are now handled using JNA, which is behaving
+  far better than the old JNI Registry code that we had been using.
+  This should also help internationalization significantly (the old
+  code didn't properly handle Unicode, or multi-byte characters).
+
++ I have added Windows Vista and Ubuntu 8.04 on AMD64 to my testing
+  routine. The apartment is really starting to look ridiculous, 
+  and dinner guests probably won't be happening this Summer.
+
+[ features/changes/fixes ]
+
++ With any luck we may have fixed the long-standing bug that prevents
+  Processing from running on non-English systems with user accounts
+  that contain non-ASCII characters. This is the target
+  http://dev.processing.org/bugs/show_bug.cgi?id=49
+  However this has not yet been verified. Please test!
+
++ Added a static version of loadBytes() that reads from a File object.
+
++ Slightly clearer error messages when OpenGL stuff is missing.
+
++ Removed sketchbook.fallback and settings.fallback from preferences.
+  These cause more confusion/chaos/trouble than necessary.
+
++ Avoid an occasional division by zero when using the Create Font tool.
+  http://dev.processing.org/bugs/show_bug.cgi?id=777
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0139 - 4 June 2008
 
 Stuck on a couple larger problems, this is an interim release to 

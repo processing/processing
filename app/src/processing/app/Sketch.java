@@ -35,8 +35,6 @@ import java.util.zip.*;
 
 import javax.swing.*;
 
-//import com.oroinc.text.regex.*;
-
 
 /**
  * Stores information about files in the current sketch
