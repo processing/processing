@@ -22,10 +22,18 @@ rm -rf processing
 rm -rf Processing*
 rm -rf processing-*
 
-# use 'shared' files as starting point
-cp -r ../shared processing
-# tools.jar not needed on osx
-#rm -f processing/lib/tools.jar
+mkdir processing
+cp -r ../shared/lib processing/
+cp -r ../shared/libraries processing/
+cp ../../app/lib/antlr.jar processing/lib/
+cp ../../app/lib/jna.jar processing/lib/
+cp ../shared/revisions.txt processing/
+
+echo Extracting examples...
+unzip -q -d processing/ ../shared/examples.zip
+
+echo Extracting reference...
+unzip -q -d processing/ ../shared/reference.zip
 
 # add the libraries folder with source
 cp -r ../../net processing/libraries/
@@ -36,18 +44,6 @@ cp -r ../../pdf processing/libraries/
 cp -r ../../dxf processing/libraries/
 cp -r ../../xml processing/libraries/
 cp -r ../../candy processing/libraries/
-
-# new style examples thing ala reas
-cd processing
-unzip -q examples.zip
-rm examples.zip
-cd ..
-
-# new style reference
-cd processing
-unzip -q reference.zip
-rm reference.zip
-cd ..
 
 # get ds_store file (!)
 cp dist/DS_Store processing/.DS_Store
@@ -61,24 +57,12 @@ RES=processing/Processing.app/Contents/Resources/Java
 mkdir -p $RES
 mv processing/lib/*.jar $RES/
 
-# directories used by the app
-#mkdir processing/lib/build
-
 # grab pde.jar and export from the working dir
 cp work/lib/pde.jar $RES/
 cp work/lib/core.jar processing/lib/
 
 # get platform-specific goodies from the dist dir
-#cp `which jikes` processing
-#gunzip < dist/jikes.gz > processing/jikes
-cp dist/jikes processing/
-chmod a+x processing/jikes
-
 chmod a+x processing/Processing.app/Contents/MacOS/JavaApplicationStub
-
-#cd ../..
-#javadoc -public -d doc app/*.java app/preproc/*.java app/syntax/*.java core/*.java opengl/*.java net/*.java video/*.java serial/*.java
-#cd build/macosx
 
 # remove boogers
 find processing -name "*~" -exec rm -f {} ';'
@@ -93,16 +77,6 @@ find processing -name ".cvsignore" -exec rm -rf {} ';'
 find processing -name ".svn" -exec rm -rf {} ';'
 
 mv processing/Processing.app "processing/Processing $SHORT_REVISION.app"
-#mv processing processing-$REVISION
-#mv processing "Processing $SHORT_REVISION"
-
-# don't have deluxe on my laptop right now
-#stuff -f sitx processing-$REVISION
-
-#NICE_FOLDER="Processing $SHORT_REVISION"
-#mv processing "$NICE_FOLDER"
-#chmod +x mkdmg2
-#./mkdmg2 "$NICE_FOLDER"
 
 NICE_FOLDER="Processing $SHORT_REVISION"
 mv processing "$NICE_FOLDER"
@@ -112,11 +86,5 @@ mv "$NICE_FOLDER" processing-$REVISION/
 chmod +x mkdmg
 ./mkdmg processing-$REVISION
 rm -rf processing-$REVISION
-
-# actually, could probably use:
-# open processing-uncomp.dmg
-# rm -rf /Volumes/Processing/Processing*
-# mv "Processing $REVISION" /Volumes/Processing
-# umount /Volumes/Processing
 
 echo Done.
