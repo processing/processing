@@ -42,12 +42,10 @@ it again, and select the items above. it's also useful to run the
 installer every few months to keep things fresh.
 
 
-1b. On Mac OS X, install Apple's Developer Tools. Should work with 
-    everything from the December 2002 Tools for Jaguar on OS X 10.2, 
-    up through the more recent Xcode stuff. 
+1b. On Mac OS X, install Apple's Developer Tools (Xcode).
 
     You'll also need subversion: http://subversion.tigris.org/
-    Which can be downloaded through Fink, or as a package from:
+    Install it from Fink, Darwinports, or download as a package:
     http://metissian.com/projects/macosx/subversion/
 
 
@@ -65,7 +63,9 @@ To get the code, type this from a prompt:
 svn co svn://processing.org/trunk/processing
 
 That part may take a while, especially for people outside the US or
-who have a slow internet connection.
+who have a slow internet connection. (The JRE binaries are stored in 
+SVN so that we can properly test on the exact platform/runtime setup
+that we'll be releasing.)
 
 
 3. INSTALL QUICKTIME FOR JAVA (Windows users only)
@@ -77,11 +77,8 @@ who have a slow internet connection.
   As of QuickTime 7 (iTunes 6), QuickTime for Java is mercifully
   included by default. 
 
-* If you're already using QuickTime 6, just make sure that
-  QuickTime for Java has already been installed, use the QuickTime
-  Updater (Program Files -> QuickTime -> QuickTime Updater) hit the
-  'Details' button in the updater, and if it lists "Not installed" 
-  for "QuickTime for Java", well, take care of that.
+* QuickTime 6 is no longer supported. QuickTime Alternative has 
+  never been supported. Just use QuickTime 7.
 
 
 4. BUILD IT
@@ -92,7 +89,7 @@ cd /path/to/processing/build/windows
 # or if you're on linux
 cd /path/to/processing/build/linux
 
-# for the followers of goatee man
+# let's say you're into black turtlenecks and jeans
 cd /path/to/processing/build/macosx
 
 # and then..
@@ -113,7 +110,7 @@ cd /path/to/processing/build/macosx
 //// Updating to the Latest Version
 
 
-5a. Each time you want to update to latest version from cvs:
+5a. Each time you want to update to latest version:
 
 cd /path/to/processing
 svn update
@@ -121,7 +118,9 @@ svn update
 
 5b. If you're getting strange errors when you try to build, especially
     if new folders have been added to the Processing repository, remove
-    your 'work' folder and rebuild.
+    your 'work' folder and rebuild. Generally, this is a good idea to 
+    do whenever a new release has been made, since that will involve
+    files that may have been changed (or folders that have been moved).
 
 # get to the processing folder
 cd /path/to/processing
@@ -133,7 +132,7 @@ rm -rf work
 # and try again
 ./make.sh
 
-Unfortunately there isn't a way to know (?) if new folders have
+Unfortunately there isn't a way to know if new folders have
 since been added. but if you're getting "class not found" errors
 while building, then that's a good indicator that something is
 missing from a subfolder.
@@ -141,22 +140,21 @@ missing from a subfolder.
 
 ////////////////////////////////////////////////////////////////////
 
-//// Frequently Asked Questions
+//// The Frequently Asked Question
 
-- What about eclipse? What about ant? Command line sucks.
+- What about Eclipse? What about Ant? Command line sucks.
 
 The command line stuff isn't as scary as it might initially
 seem. Hopefully it's just a matter of following the instructions above
 (and being patient). If not, let us know (via the discourse board)
 where you have trouble so we can fix things.
 
-Conceivably, it wouldn't take much to make Processing build under
-Eclipse or any other IDE, but we don't do it by default. Same goes for 
-ANT. We don't use it, but if someone were to make build scripts that 
-emulated everything that the current build scripts do (not just build
-the code, but all the other annoying crap that the build scripts do) 
-then maybe we could switch to it. It's all about reaching some kind 
-of critical mass. 
+We're slowly moving development over to Eclipse, which will probably
+include Ant because of cross-platform dependencies. As of release 0140,
+major changes are being implemented to simplify the build process, 
+which should mean that we're pretty close. The environment and all
+the libraries build properly with Eclipse, however we won't be 
+documenting it until the dust has settled.
 
 Some progress has been made by John Houck to get the scripts working
 under ANT, progress can be tracked here:
@@ -166,4 +164,4 @@ http://dev.processing.org/bugs/show_bug.cgi?id=151
 ////////////////////////////////////////////////////////////////////
 
 
-Ben Fry - Updated 30 November 2005
+Ben Fry - Updated 10 June 2008
