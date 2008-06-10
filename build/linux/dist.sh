@@ -2,6 +2,13 @@
 
 REVISION=`head -c 4 ../../todo.txt`
 
+ARCH=`uname -m`
+if [ $ARCH != "i686" ]
+then
+  echo At present, the Linux distribution can only be built on i686 \(32-bit\).
+  exit
+fi
+
 ./make.sh
 
 echo Creating linux distribution for revision $REVISION...
