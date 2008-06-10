@@ -27,6 +27,7 @@ package processing.app.debug;
 import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.Sketch;
+import processing.app.SketchCode;
 import processing.core.*;
 
 import java.io.*;
@@ -136,32 +137,99 @@ public class Compiler implements MessageConsumer {
     firstErrorFound = false;  // haven't found any errors yet
     secondErrorFound = false;
 
-    PipedWriter pipedWriter = new PipedWriter();
-    PrintWriter writer = new PrintWriter(pipedWriter);
-    PipedReader pipedReader = new PipedReader();
-    BufferedReader reader = new BufferedReader(pipedReader);
-    int result = 0;
+    int result = -1;  // needs to be set bad by default, in case hits IOE below
     
     try {
-      pipedWriter.connect(pipedReader);    
-      //result = javac.compile(command, writer);
-      result = com.sun.tools.javac.Main.compile(command, writer);
+      PipedWriter pipedWriter = new PipedWriter();
+      PipedReader pipedReader = new PipedReader();
+      pipedWriter.connect(pipedReader);
 
-      while (pipedReader.ready()) {
-        System.out.println("got line " + reader.readLine());
+      PrintWriter writer = new PrintWriter(pipedWriter);
+      BufferedReader reader = new BufferedReader(pipedReader);
+      
+      result = com.sun.tools.javac.Main.compile(command, writer);
+      
+      // Need to close out the stream, otherwise readLine() will run forever.
+      writer.flush();
+      writer.close();
+      
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        //System.out.println("got line " + line);
+
+        String[] pieces = PApplet.match(line, "([\\w\\d_]+.java):(\\d+):\\s*(.*)\\s*");
+        if (pieces == null) {
+          exception = new RunnerException("Cannot parse error text: " + line);
+          exception.hideStackTrace();
+          // Send out the rest of the error message to the console. 
+          System.err.println(line);
+          while ((line = reader.readLine()) != null) {
+            System.err.println(line);
+          }
+          break;
+        }
+        String dotJavaFilename = pieces[0];
+        // Line numbers are 1-indexed from javac
+        int dotJavaLineIndex = PApplet.parseInt(pieces[1]) - 1;
+        String errorMessage = pieces[2];
+        
+        int codeIndex = -1;
+        int codeLine = -1;
+        for (int i = 0; i < sketch.getCodeCount(); i++) {
+          String name = sketch.getCode(i).preprocName;
+          if ((name != null) && dotJavaFilename.equals(name)) {
+            codeIndex = i;
+          }
+        }
+        //System.out.println("code index/line are " + codeIndex + " " + codeLine);
+        //System.out.println("java line number " + dotJavaLineIndex + " from " + dotJavaFilename);
+
+        if (codeIndex == 0) {  // main class, figure out which tab
+          for (int i = 1; i < sketch.getCodeCount(); i++) {
+            SketchCode code = sketch.getCode(i); 
+
+            if (code.flavor == Sketch.PDE) {
+              if (code.preprocOffset <= dotJavaLineIndex) {
+                codeIndex = i;
+                //System.out.println("i'm thinkin file " + i);
+              }
+            }
+          }
+        }
+        //System.out.println("preproc offset is " + sketch.getCode(codeIndex).preprocOffset);
+        codeLine = dotJavaLineIndex - sketch.getCode(codeIndex).preprocOffset;
+        //System.out.println("code line now " + codeLine);
+        exception = new RunnerException(errorMessage, codeIndex, codeLine, -1);
+        exception.hideStackTrace();
+
+        if (errorMessage.equals("cannot find symbol")) {
+          handleCannotFindSymbol(reader, exception);
+          
+        } else if (errorMessage.startsWith("package") &&
+                   errorMessage.endsWith("does not exist")) {
+          exception = new RunnerException("P" + errorMessage.substring(1) + 
+                                          ". You might be missing a library.");
+          exception.hideStackTrace();
+
+        } else {
+          exception = new RunnerException(errorMessage); 
+        }
+        
+        if (exception != null) throw exception;
       }
     } catch (IOException e) {
+      String bigSigh = "Error while compiling. (" + e.getMessage() + ")";
+      exception = new RunnerException(bigSigh);
       e.printStackTrace();
-      return false;
     }
     
-      // an error was queued up by message(), barf this back to build()
+    // an error was queued up by message(), barf this back to build()
     // which will barf it back to Editor. if you're having trouble
     // discerning the imagery, consider how cows regurgitate their food
     // to digest it, and the fact that they have five stomaches.
     //
     //System.out.println("throwing up " + exception);
-    if (exception != null) throw exception;
+//    if (exception != null) throw exception;
 
     // if the result isn't a known, expected value it means that something
     // is fairly wrong, one possibility is that jikes has crashed.
@@ -174,6 +242,86 @@ public class Compiler implements MessageConsumer {
     // success would mean that 'result' is set to zero
     return (result == 0); // ? true : false;
   }
+  
+  
+
+  /// tell-tale signs of code copied and pasted from the web
+  // detect classes BFont, BGraphics, BImage
+  // or methods framerate, push
+  // and variables LINE_LOOP and LINE_STRIP
+  static HashMap crusties = new HashMap();
+  static {
+    crusties.put("BFont", new Object());
+    crusties.put("BGraphics", new Object());
+    crusties.put("BImage", new Object());
+    crusties.put("framerate", new Object());
+    crusties.put("push", new Object());
+    crusties.put("LINE_LOOP", new Object());
+    crusties.put("LINE_STRIP", new Object());
+  }
+  
+  
+  void handleCannotFindSymbol(BufferedReader reader, 
+                              RunnerException rex) throws IOException {
+    String symbolLine = reader.readLine();
+    /*String locationLine =*/ reader.readLine();
+    /*String codeLine =*/ reader.readLine();
+    String caretLine = reader.readLine();
+    rex.setColumn(caretColumn(caretLine));
+
+    String[] pieces = 
+      PApplet.match(symbolLine, "symbol\\s*:\\s*(\\w+)\\s+(.*)");
+    if (pieces != null) {
+      if (pieces[0].equals("class") ||
+          pieces[0].equals("variable")) {
+        rex.setMessage("Cannot find a " + pieces[0] + " " +  
+                       "named \u201C" + pieces[1] + "\u201D");
+        if (crusties.get(pieces[1]) != null) {
+          handleCrustyCode(rex);
+        }
+
+      } else if (pieces[0].equals("method")) {
+        int leftParen = pieces[1].indexOf("(");
+        int rightParen = pieces[1].indexOf(")");
+
+        String methodName = pieces[1].substring(0, leftParen);
+        String methodParams = pieces[1].substring(leftParen + 1, rightParen);
+        
+        String message = 
+          "Cannot find a function named \u201C" + methodName + "\u201D";
+        if (methodParams.length() > 0) {
+          message += "with parameters " + methodParams + ".";
+        }
+        rex.setMessage(message);
+
+        // On second thought, make sure this isn't just some alpha/beta code
+        if (crusties.get(methodName) != null) {
+          handleCrustyCode(rex);
+        }
+
+      } else {
+        System.out.println(symbolLine);
+      }
+    }
+  }
+  
+  
+  void handleCrustyCode(RunnerException rex) {
+    rex.setMessage("This code needs to be updated, " +
+                   "please read the \u201Cchanges\u201D reference.");
+    Base.showReference("changes.html");
+  }
+  
+  
+  protected int caretColumn(String caretLine) {
+    return caretLine.indexOf("^");
+  }
+  
+  
+//  protected RunnerException fillException(String message, String reportLine) {
+  // iterate through the project files to see who's causing the trouble
+  
+
 
 
   public boolean compileJikes(Sketch sketch, String buildPath)

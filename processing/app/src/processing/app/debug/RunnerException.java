@@ -28,32 +28,64 @@ package processing.app.debug;
  * during either compile time or run time.
  */
 public class RunnerException extends Exception {
+  protected String message;
   public int file = -1;
   public int line = -1;
   public int column = -1;
-  public boolean hideStackTrace;
+  protected boolean hideStackTrace;
 
+  
   public RunnerException() { }
 
+  
   public RunnerException(String message) {
-    super(massage(message));
+    //super(massage(message));
+    this.message = message; 
   }
 
+
+  /*
   public RunnerException(String message, int line) {
-    super(massage(message));
+    //super(massage(message));
+    this.message = message;
     this.line = line;
   }
 
+  
   public RunnerException(String message, int line, int column) {
-    super(massage(message));
+    //super(massage(message));
+    this.message = message;
     this.line = line;
     this.column = column;
   }
+  */
 
+  
   public RunnerException(String message, int file, int line, int column) {
-    super(massage(message));
+    //super(massage(message));
+    this.message = message;
     this.file = file;
     this.line = line;
+    this.column = column;
+  }
+  
+  
+  public void hideStackTrace() {
+    hideStackTrace = true;
+  }
+  
+  
+  public String getMessage() {
+    return message;
+  }
+  
+  
+  public void setMessage(String message) {
+    this.message = message;
+  }
+  
+  
+  public void setColumn(int column) {
     this.column = column;
   }
 
