@@ -27,7 +27,7 @@ import java.io.*;
 import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 
 
-public class Platform {
+public class Platform extends processing.app.Platform {
 
   // looking for Documents and Settings/blah/Application Data/Processing
   public File getSettingsFolder() throws Exception {
@@ -40,7 +40,7 @@ public class Platform {
     String keyPath =
       "Software\\Microsoft\\Windows\\CurrentVersion" +
       "\\Explorer\\Shell Folders";
-    String appDataPath = 
+    String appDataPath =
       Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "AppData");
 
     File dataFolder = new File(appDataPath, "Processing");
@@ -54,10 +54,10 @@ public class Platform {
 
     // http://support.microsoft.com/?kbid=221837&sd=RMVP
     // http://support.microsoft.com/kb/242557/en-us
-    
-    // The path to the My Documents folder is stored in the following 
+
+    // The path to the My Documents folder is stored in the following
     // registry key, where path is the complete path to your storage location
-    
+
     // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
     // Value Name: Personal
     // Value Type: REG_SZ
@@ -69,7 +69,7 @@ public class Platform {
     String keyPath =
       "Software\\Microsoft\\Windows\\CurrentVersion" +
       "\\Explorer\\Shell Folders";
-    String personalPath = 
+    String personalPath =
       Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "Personal");
 
     return new File(personalPath, "Processing");
@@ -105,16 +105,16 @@ public class Platform {
       Runtime.getRuntime().exec("cmd /c \"" + url + "\"");
     }
   }
-  
-  
+
+
   public boolean openFolderAvailable() {
     return true;
   }
-  
-  
+
+
   public void openFolder(File file) throws Exception {
     String folder = file.getAbsolutePath();
-    
+
     // doesn't work
     //Runtime.getRuntime().exec("cmd /c \"" + folder + "\"");
 
