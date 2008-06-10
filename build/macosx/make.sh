@@ -54,8 +54,8 @@ echo Building processing.core...
 
 cd core
 
-CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip
-export CLASSPATH
+#CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip
+#export CLASSPATH
 
 perl preproc.pl
 
@@ -109,8 +109,8 @@ javac \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
     src/processing/app/macosx/*.java \
-    src/processing/app/syntax/*.java \
     src/processing/app/preproc/*.java \
+    src/processing/app/syntax/*.java \
     src/processing/app/tools/*.java \
     src/antlr/*.java \
     src/antlr/java/*.java 
@@ -130,9 +130,8 @@ cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
 PLATFORM=macosx
 
 
-CLASSPATH=../build/$PLATFORM/work/lib/core.jar:$CLASSPATH
+CLASSPATH=../build/$PLATFORM/work/lib/core.jar
 JAVAC="javac -source 1.5 -target 1.5"
-CORE=../build/$PLATFORM/work/lib/core.jar
 LIBRARIES=../build/$PLATFORM/work/libraries
 
 # move to processing/build 
@@ -144,7 +143,7 @@ echo Building serial library...
 cd ../serial
 mkdir -p bin
 $JAVAC \
-    -classpath "library/RXTXcomm.jar:$CORE:$CLASSPATH" \
+    -classpath "library/RXTXcomm.jar:$CLASSPATH" \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 find bin -name "*~" -exec rm -f {} ';'
