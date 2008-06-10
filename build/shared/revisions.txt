@@ -74,6 +74,11 @@ changed, and there are several known issues.
   http://dev.processing.org/bugs/show_bug.cgi?id=49
   However this has not yet been verified. Please test!
 
++ Apply two patches for ancient bugs in readBytesUntil() and bufferUntil() 
+  in the serial library. Also fixes calls to serialEvent().
+  http://dev.processing.org/bugs/show_bug.cgi?id=96
+  (Thanks to stendahl and jmuhlich for the patches!)
+
 + Added a static version of loadBytes() that reads from a File object.
 
 + Slightly clearer error messages when OpenGL stuff is missing.
