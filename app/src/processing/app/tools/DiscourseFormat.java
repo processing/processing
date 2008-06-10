@@ -1,9 +1,9 @@
-/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+﻿/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-06 Ignacio Manuel Gonz�lez Moreta
+  Copyright (c) 2005-06 Ignacio Manuel González Moreta
   Copyright (c) 2006 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
