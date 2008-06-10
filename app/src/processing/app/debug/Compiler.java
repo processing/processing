@@ -138,26 +138,38 @@ public class Compiler implements MessageConsumer {
     secondErrorFound = false;
 
     int result = -1;  // needs to be set bad by default, in case hits IOE below
-    
-    try {
-      PipedWriter pipedWriter = new PipedWriter();
-      PipedReader pipedReader = new PipedReader();
-      pipedWriter.connect(pipedReader);
 
-      PrintWriter writer = new PrintWriter(pipedWriter);
-      BufferedReader reader = new BufferedReader(pipedReader);
+    try {
+      // Load errors into a local StringBuffer
+      final StringBuffer errorBuffer = new StringBuffer();
+
+      // Create single method dummy writer class to slurp errors from javac
+      Writer internalWriter = new Writer() {
+          public void write(char[] buf, int off, int len) {
+            errorBuffer.append(buf, off, len);
+          }
+
+          public void flush() { }
+
+          public void close() { }
+        };
+      // Wrap as a PrintWriter since that's what compile() wants
+      PrintWriter writer = new PrintWriter(internalWriter);
       
       result = com.sun.tools.javac.Main.compile(command, writer);
       
-      // Need to close out the stream, otherwise readLine() will run forever.
+      // Close out the stream for good measure
       writer.flush();
       writer.close();
+
+      BufferedReader reader = 
+        new BufferedReader(new StringReader(errorBuffer.toString()));
       
       String line = null;
       while ((line = reader.readLine()) != null) {
         //System.out.println("got line " + line);
-
-        String[] pieces = PApplet.match(line, "([\\w\\d_]+.java):(\\d+):\\s*(.*)\\s*");
+        String errorFormat = "([\\w\\d_]+.java):(\\d+):\\s*(.*)\\s*";
+        String[] pieces = PApplet.match(line, errorFormat);
         if (pieces == null) {
           exception = new RunnerException("Cannot parse error text: " + line);
           exception.hideStackTrace();
@@ -290,8 +302,14 @@ public class Compiler implements MessageConsumer {
         String message = 
           "Cannot find a function named \u201C" + methodName + "\u201D";
         if (methodParams.length() > 0) {
-          message += "with parameters " + methodParams + ".";
+          if (methodParams.indexOf(',') != -1) {
+            message += " with parameters ";
+          } else {
+            message += " with parameter ";
+          }
+          message += methodParams;
         }
+        message += ".";
         rex.setMessage(message);
 
         // On second thought, make sure this isn't just some alpha/beta code
