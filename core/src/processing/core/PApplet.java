@@ -1222,7 +1222,8 @@ in   */
       String msg = ite.getTargetException().getMessage();
       if ((msg != null) &&
           (msg.indexOf("no jogl in java.library.path") != -1)) {
-        throw new RuntimeException(openglError + " (Native library missing.)");
+        throw new RuntimeException(openglError + 
+                                   " (The native library is missing.)");
 
       } else {
         ite.getTargetException().printStackTrace();
@@ -1237,7 +1238,8 @@ in   */
 
     } catch (ClassNotFoundException cnfe) {
       if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsGL") != -1) {
-        throw new RuntimeException(openglError + " (Library code missing.)");
+        throw new RuntimeException(openglError + 
+                                   " (The library .jar file is missing.)");
       } else {
         throw new RuntimeException("You need to use \"Import Library\" " +
                                    "to add " + irenderer + " to your sketch.");
