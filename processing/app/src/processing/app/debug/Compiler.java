@@ -102,10 +102,21 @@ public class Compiler {
       writer.close();
 
       BufferedReader reader = 
-        new BufferedReader(new StringReader(errorBuffer.toString()));
+        new BufferedReader(new StringReader(errorBuffer.toString()))
       
       String line = null;
       while ((line = reader.readLine()) != null) {
+        // Check to see if this is the last line.
+        String lastFormat = "\\d+ error[s]?";
+        if (PApplet.match(line, lastFormat) != null) {
+          break;
+        }
+
+        if (line.startsWith("Note: ")) {
+          System.err.println(line);
+          continue;
+        }
+
         //System.out.println("got line " + line);
         String errorFormat = "([\\w\\d_]+.java):(\\d+):\\s*(.*)\\s*";
         String[] pieces = PApplet.match(line, errorFormat);
