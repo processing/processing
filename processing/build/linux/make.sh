@@ -1,6 +1,9 @@
 #!/bin/sh
 
 
+ARCH=`uname -m`
+
+
 ### -- SETUP WORK DIR -------------------------------------------
 
 if test -d work
@@ -18,10 +21,10 @@ else
   cp ../../app/lib/jna.jar work/lib/
 
   echo Extracting examples...
-  unzip -q -d work/ ../shared/examples.zip
+#  unzip -q -d work/ ../shared/examples.zip
 
   echo Extracting reference...
-  unzip -q -d work/ ../shared/reference.zip
+#  unzip -q -d work/ ../shared/reference.zip
 
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -32,10 +35,26 @@ else
   cp -r ../../xml work/libraries/
   cp -r ../../candy work/libraries/
 
-  echo Extracting JRE...
-  tar --extract --file=jre.tgz --ungzip --directory=work
-
   install -m 755 dist/processing work/processing
+
+  if [ $ARCH = "i686" ]
+  then
+    echo Extracting JRE...
+    tar --extract --file=jre.tgz --ungzip --directory=work
+  else 
+#    echo This is not my beautiful house.
+#    if [ $ARCH = "x86_64" ]
+#    then 
+#      echo You gots the 64.
+#    fi
+    echo "
+The Java bundle that is included with Processing supports only i686 by default.
+To build the code, you will need to install the Java 1.5.0_15 JDK (not a JRE,
+and not any other version), and create a symlink to the directory where it is
+installed. Create the symlink in the \"work\" directory, and named it \"java\":
+ln -s /path/to/jdk1.5.0_15 `pwd`/work/java"
+    exit
+  fi
 fi
 
 cd ../..
