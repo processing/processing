@@ -4,6 +4,7 @@ APPDIR="$(dirname -- "${0}")"
  
 for LIB in \
     java/lib/rt.jar \
+    java/lib/tools.jar \
     lib \
     lib/build \
     lib/*.jar \
@@ -12,39 +13,5 @@ do
     CLASSPATH="${CLASSPATH}:${APPDIR}/${LIB}"
 done
 export CLASSPATH
- 
-# put the directory where this file lives in the front of the path,
-# because that directory also contains jikes, which we will need at runtime.
-export PATH="${APPDIR}:${APPDIR}/java/bin:${PATH}"
- 
-if jikes -version > /dev/null 2> /dev/null
-then
-  java processing.app.Base
-else
-  echo "It appears that the version of Jikes distributed with Processing
-cannot properly run on this system.
- 
-Possible solutions:
- 
-+ If you already have Jikes installed on your system, you may
-  just need to remove the version that is included with Processing.
- 
-+ You probably just need to track down a version of Jikes that will
-  work with your distribution.
- 
-+ You may need to install the rpm/package for compat-libstdc++
-  This is what it takes to get things running on most versions
-  of RedHat Linux or Fedora Core.
- 
-+ If all else fails, or if you just like building stuff yourself,
-  you can download the source for Jikes from SourceForge:
-  http://sourceforge.net/project/showfiles.php?group_id=128803
-  And it just takes a simple ./configure and make, followed by
-  copying src/jikes to the processing-XXXX folder and you should
-  be all set.
- 
-If you get stuck, ask questions online from the helpful folks via
-the Processing discussion board: http://processing.org/discourse/
- 
-Good luck!"
-fi 
+
+${APPDIR}/java/bin/java processing.app.Base

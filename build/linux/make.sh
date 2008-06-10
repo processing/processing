@@ -52,7 +52,9 @@ cd core
 #export CLASSPATH
 
 perl preproc.pl
-../build/linux/work/java/bin/java sun.tools.javac.Main \
+../build/linux/work/java/bin/java \
+    -cp ../build/linux/work/java/lib/tools.jar \
+    com.sun.tools.javac.Main \
     -d bin -source 1.5 -target 1.5 src/processing/core/*.java
 find bin -name "*~" -exec rm -f {} ';'
 rm -f ../build/linux/work/lib/core.jar
@@ -101,12 +103,12 @@ cd ..
 
 cd app
 
-#CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/rt.jar"
-
-#../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
-javac \
+mkdir -p ../build/linux/work/classes
+../build/linux/work/java/bin/java \
+    -cp ../build/linux/work/java/lib/tools.jar \
+    com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
-    -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/jna.jar \
+    -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/tools.jar \
     -d ../build/linux/work/classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
@@ -129,24 +131,19 @@ cd build/linux
 
 PLATFORM=linux
 
-CLASSPATH=../build/$PLATFORM/work/lib/core.jar
-#CLASSPATH="../../build/linux/work/lib/core.jar:../../build/linux/work/java/lib/rt.jar"
-#CLASSPATH=../build/$PLATFORM/work/lib/core.jar:$CLASSPATH
-#JIKES=../build/$PLATFORM/work/jikes
-JAVAC="../build/linux/work/java/bin/java sun.tools.javac.Main javac -source 1.5 -target 1.5"
-#CORE=../build/$PLATFORM/work/lib/core.jar
+JAVAC="../build/linux/work/java/bin/java -cp ../build/linux/work/java/lib/tools.jar com.sun.tools.javac.Main -source 1.5 -target 1.5"
+CORE=../build/$PLATFORM/work/lib/core.jar
 LIBRARIES=../build/$PLATFORM/work/libraries
 
 # move to processing/build 
 cd ..
 
-
 # SERIAL LIBRARY
 echo Building serial library...
 cd ../serial
 mkdir -p bin
-$JIKES -target 1.1 +D \
-    -classpath "library/RXTXcomm.jar:$CLASSPATH" \
+$JAVAC \
+    -classpath "library/RXTXcomm.jar:$CORE" \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 find bin -name "*~" -exec rm -f {} ';'
@@ -159,7 +156,9 @@ cp library/serial.jar $LIBRARIES/serial/library/
 echo Building net library...
 cd ../net
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin src/processing/net/*.java 
+$JAVAC \
+    -classpath "$CORE" \
+    -d bin src/processing/net/*.java 
 rm -f library/net.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
@@ -171,8 +170,8 @@ cp library/net.jar $LIBRARIES/net/library/
 echo Building OpenGL library...
 cd ../opengl
 mkdir -p bin
-$JIKES -target 1.1 +D \
-    -classpath "library/jogl.jar:$CLASSPATH" \
+$JAVAC \
+    -classpath "library/jogl.jar:$CORE" \
     -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
 find bin -name "*~" -exec rm -f {} ';'
@@ -185,8 +184,8 @@ cp library/opengl.jar $LIBRARIES/opengl/library/
 echo Building PDF library...
 cd ../pdf
 mkdir -p bin
-$JIKES -target 1.1 +D \
-    -classpath "library/itext.jar:$CLASSPATH" \
+$JAVAC \
+    -classpath "library/itext.jar:$CORE" \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
 find bin -name "*~" -exec rm -f {} ';'
@@ -199,7 +198,9 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 echo Building DXF library...
 cd ../dxf
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin src/processing/dxf/*.java 
+$JAVAC \
+    -classpath "$CORE" \
+    -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
@@ -211,7 +212,9 @@ cp library/dxf.jar $LIBRARIES/dxf/library/
 echo Building XML library...
 cd ../xml
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin src/processing/xml/*.java 
+$JAVAC \
+    -classpath "$CORE" \
+    -d bin src/processing/xml/*.java 
 rm -f library/xml.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/xml.jar processing/xml/*.class && cd ..
@@ -223,8 +226,8 @@ cp library/xml.jar $LIBRARIES/xml/library/
 echo Building Candy SVG library...
 cd ../candy
 mkdir -p bin
-$JIKES -target 1.1 +D \
-    -classpath "../xml/library/xml.jar:$CLASSPATH" \
+$JAVAC \
+    -classpath "../xml/library/xml.jar:$CORE" \
     -d bin src/processing/candy/*.java 
 rm -f library/candy.jar
 find bin -name "*~" -exec rm -f {} ';'
