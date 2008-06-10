@@ -9,13 +9,19 @@ then
 else
   echo Setting up directories to build for Linux...
   BUILD_PREPROC=true
-  cp -r ../shared work
-  rm -rf work/.svn
 
-  # needs to make the dir because of packaging goofiness
-  mkdir -p work/classes/processing/app/preproc
-  mkdir -p work/classes/processing/app/syntax
-  mkdir -p work/classes/processing/app/tools
+  mkdir work
+  cp -r ../shared/lib work/
+  cp -r ../shared/libraries work/
+
+  cp ../../app/lib/antlr.jar work/lib/
+  cp ../../app/lib/jna.jar work/lib/
+
+  echo Extracting examples...
+  unzip -q -d work/ ../shared/examples.zip
+
+  echo Extracting reference...
+  unzip -q -d work/ ../shared/reference.zip
 
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -26,41 +32,8 @@ else
   cp -r ../../xml work/libraries/
   cp -r ../../candy work/libraries/
 
-  echo Extracting examples...
-  cd work
-  unzip -q examples.zip
-  rm examples.zip
-  cd ..
-
-  echo Extracting reference...
-  cd work
-  unzip -q reference.zip
-  rm reference.zip
-  cd ..
-
   echo Extracting JRE...
   tar --extract --file=jre.tgz --ungzip --directory=work
-  #chmod +x jre.sfx
-  #./jre.sfx
-  #mv jre1.5.0_15 work/java
-
-  #mkdir work/lib/export
-  mkdir work/lib/build
-  #mkdir work/classes
-
-  # get the serial stuff
-  #echo Copying serial support from bagel dir
-  #cp ../../bagel/serial/RXTXcomm.jar work/lib/
-  #mkdir work/lib/i386
-  #cp ../../bagel/serial/librxtxSerial.so work/lib/i386/libSerial.so
-  #chmod +x work/librxtxSerial.so
-
-  # get linux version of tools.jar
-  cp dist/tools.jar work/lib/
-
-  # get jikes and depedencies
-  cp dist/jikes work/
-  chmod +x work/jikes
 
   install -m 755 dist/processing work/processing
 fi
@@ -75,15 +48,15 @@ echo Building processing.core
 
 cd core
 
-CLASSPATH="../build/linux/work/java/lib/rt.jar"
-export CLASSPATH
+#CLASSPATH="../build/linux/work/java/lib/rt.jar"
+#export CLASSPATH
 
 perl preproc.pl
-../build/linux/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
+../build/linux/work/java/bin/java sun.tools.javac.Main \
+    -d bin -source 1.5 -target 1.5 src/processing/core/*.java
 find bin -name "*~" -exec rm -f {} ';'
 rm -f ../build/linux/work/lib/core.jar
 cd bin && zip -rq ../../build/linux/work/lib/core.jar processing && cd ..
-
 
 # back to base processing dir
 cd ..
@@ -91,7 +64,7 @@ cd ..
 
 ### -- BUILD PREPROC ------------------------------------------------
 
-echo Building PDE for JDK 1.4
+echo Building PDE for JDK 1.5...
 
 cd app
 
@@ -128,9 +101,21 @@ cd ..
 
 cd app
 
-CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/apple.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/registry.jar:../build/linux/work/lib/tools.jar:../build/linux/work/java/lib/rt.jar"
+#CLASSPATH="../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/rt.jar"
 
-../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
+#../build/linux/work/jikes -target 1.3 +D -classpath $CLASSPATH:../build/linux/work/classes -d ../build/linux/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/preproc/*.java src/processing/app/syntax/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
+javac \
+    -source 1.5 -target 1.5 \
+    -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/jna.jar \
+    -d ../build/linux/work/classes \
+    src/processing/app/*.java \
+    src/processing/app/debug/*.java \
+    src/processing/app/linux/*.java \
+    src/processing/app/preproc/*.java \
+    src/processing/app/syntax/*.java \
+    src/processing/app/tools/*.java \
+    src/antlr/*.java \
+    src/antlr/java/*.java 
 
 cd ../build/linux/work/classes
 rm -f ../lib/pde.jar
@@ -144,10 +129,12 @@ cd build/linux
 
 PLATFORM=linux
 
+CLASSPATH=../build/$PLATFORM/work/lib/core.jar
 #CLASSPATH="../../build/linux/work/lib/core.jar:../../build/linux/work/java/lib/rt.jar"
-CLASSPATH=../build/$PLATFORM/work/lib/core.jar:$CLASSPATH
-JIKES=../build/$PLATFORM/work/jikes
-CORE=../build/$PLATFORM/work/lib/core.jar
+#CLASSPATH=../build/$PLATFORM/work/lib/core.jar:$CLASSPATH
+#JIKES=../build/$PLATFORM/work/jikes
+JAVAC="../build/linux/work/java/bin/java sun.tools.javac.Main javac -source 1.5 -target 1.5"
+#CORE=../build/$PLATFORM/work/lib/core.jar
 LIBRARIES=../build/$PLATFORM/work/libraries
 
 # move to processing/build 
@@ -159,7 +146,7 @@ echo Building serial library...
 cd ../serial
 mkdir -p bin
 $JIKES -target 1.1 +D \
-    -classpath "library/RXTXcomm.jar:$CORE:$CLASSPATH" \
+    -classpath "library/RXTXcomm.jar:$CLASSPATH" \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 find bin -name "*~" -exec rm -f {} ';'
