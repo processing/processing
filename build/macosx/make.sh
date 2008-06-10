@@ -12,6 +12,7 @@ else
 
   mkdir work
   cp -r ../shared/lib work/
+  cp -r ../shared/libraries work/
 
   cp ../../app/lib/antlr.jar work/lib/
   cp ../../app/lib/jna.jar work/lib/
@@ -53,15 +54,12 @@ echo Building processing.core...
 
 cd core
 
-# rxtx comm.jar will be included by the build script
-
 CLASSPATH=/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar:/System/Library/Java/Extensions/QTJava.zip
 export CLASSPATH
 
 perl preproc.pl
 
 mkdir -p bin
-#../build/macosx/work/jikes -d bin +D -target 1.1 src/processing/core/*.java
 javac -source 1.5 -target 1.5 -d bin src/processing/core/*.java
 rm -f ../build/macosx/work/lib/core.jar
 cd bin && zip -r0q ../../build/macosx/work/lib/core.jar processing && cd ..
@@ -129,13 +127,11 @@ cp work/lib/*.jar work/Processing.app/Contents/Resources/Java/
 
 ### -- BUILD LIBRARIES ------------------------------------------------
 
-exit
-
 PLATFORM=macosx
 
 
 CLASSPATH=../build/$PLATFORM/work/lib/core.jar:$CLASSPATH
-JIKES=../build/$PLATFORM/work/jikes
+JAVAC="javac -source 1.5 -target 1.5"
 CORE=../build/$PLATFORM/work/lib/core.jar
 LIBRARIES=../build/$PLATFORM/work/libraries
 
@@ -147,7 +143,7 @@ cd ..
 echo Building serial library...
 cd ../serial
 mkdir -p bin
-$JIKES -target 1.1 +D \
+$JAVAC \
     -classpath "library/RXTXcomm.jar:$CORE:$CLASSPATH" \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
@@ -161,7 +157,7 @@ cp library/serial.jar $LIBRARIES/serial/library/
 echo Building net library...
 cd ../net
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin src/processing/net/*.java 
+$JAVAC -d bin src/processing/net/*.java 
 rm -f library/net.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
@@ -181,7 +177,7 @@ else
 fi
 cd ../video
 mkdir -p bin
-$JIKES -target 1.1 +D \
+$JAVAC \
     -classpath "$QTJAVA:$CLASSPATH" \
     -d bin src/processing/video/*.java 
 rm -f library/video.jar
@@ -195,7 +191,7 @@ cp library/video.jar $LIBRARIES/video/library/
 echo Building OpenGL library...
 cd ../opengl
 mkdir -p bin
-$JIKES -target 1.1 +D \
+$JAVAC \
     -classpath "library/jogl.jar:$CLASSPATH" \
     -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
@@ -209,7 +205,7 @@ cp library/opengl.jar $LIBRARIES/opengl/library/
 echo Building PDF library...
 cd ../pdf
 mkdir -p bin
-$JIKES -target 1.1 +D \
+$JAVAC \
     -classpath "library/itext.jar:$CLASSPATH" \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
@@ -223,7 +219,7 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 echo Building DXF library...
 cd ../dxf
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin src/processing/dxf/*.java 
+$JAVAC -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
@@ -235,7 +231,7 @@ cp library/dxf.jar $LIBRARIES/dxf/library/
 echo Building XML library...
 cd ../xml
 mkdir -p bin
-$JIKES -target 1.1 +D -d bin src/processing/xml/*.java 
+$JAVAC -d bin src/processing/xml/*.java 
 rm -f library/xml.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/xml.jar processing/xml/*.class && cd ..
@@ -247,7 +243,7 @@ cp library/xml.jar $LIBRARIES/xml/library/
 echo Building Candy SVG library...
 cd ../candy
 mkdir -p bin
-$JIKES -target 1.1 +D \
+$JAVAC \
     -classpath "../xml/library/xml.jar:$CLASSPATH" \
     -d bin src/processing/candy/*.java 
 rm -f library/candy.jar
