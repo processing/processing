@@ -75,7 +75,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
             "%s\\lib\\core.jar;"
             "%s\\lib\\jna.jar;"
             "%s\\lib\\antlr.jar;",
-            exe_directory, exe_directory, exe_directory, exe_directory, 
+            exe_directory, 
             exe_directory, exe_directory, exe_directory, exe_directory);
   } else {
     fgets(java_args, 511, argsfile);

@@ -70,6 +70,8 @@ mkdir -p bin
 ../build/windows/work/java/bin/java sun.tools.javac.Main \
     -d bin -source 1.5 -target 1.5 src/processing/core/*.java
 
+exit
+
 rm -f ../build/windows/work/lib/core.jar
 find bin -name "*~" -exec rm -f {} ';'
 
