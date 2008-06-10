@@ -33,7 +33,7 @@ import processing.app.Preferences;
  * Used by Base for platform-specific tweaking, for instance finding the
  * sketchbook location using the Windows registry, or OS X event handling.
  */
-public class Platform {
+public class Platform extends processing.app.Platform {
 
   // TODO Need to be smarter here since KDE people ain't gonna like that GTK.
   //      It may even throw a weird exception at 'em for their trouble.
@@ -58,8 +58,8 @@ public class Platform {
       Runtime.getRuntime().exec(new String[] { launcher, url });
     }
   }
-  
-  
+
+
   public boolean openFolderAvailable() {
     if (Preferences.get("launcher") != null) {
       return true;
@@ -81,12 +81,12 @@ public class Platform {
       Preferences.set("launcher.linux", "kde-open");
       return true;
     } catch (Exception e) { }
-    
+
     return false;
   }
-  
-  
+
+
   public void openFolder(File file) throws Exception {
-    
+
   }
 }
