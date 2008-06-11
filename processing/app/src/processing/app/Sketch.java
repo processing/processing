@@ -58,7 +58,7 @@ public class Sketch {
   /**
    * true if any of the files have been modified.
    */
-  boolean modified;
+  protected boolean modified;
 
   public String path;
 

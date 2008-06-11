@@ -55,10 +55,12 @@ public class Archiver {
 
 
   public void show() {
+    Sketch sketch = editor.getSketch();
+    
     // first save the sketch so that things don't archive strangely
     boolean success = false;
     try {
-      success = editor.sketch.save();
+      success = sketch.save();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -69,7 +71,7 @@ public class Archiver {
       return;
     }
 
-    File location = editor.sketch.folder;
+    File location = sketch.folder;
     String name = location.getName();
     File parent = new File(location.getParent());
 

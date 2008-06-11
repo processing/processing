@@ -7,8 +7,8 @@ _ nanoxml getChildren() et al should use getFullName() not getName()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=813
 
 charset changes
-_ make sure that export is using utf8 for writing the .pde files etc
-_   should be primarily loadFile() and saveFile() inside Base
+X make sure that export is using utf8 for writing the .pde files etc
+X   should be primarily loadFile() and saveFile() inside Base
 X change pde files to use utf8
 X   http://dev.processing.org/bugs/show_bug.cgi?id=743
 o   1) if file contains binary data and
@@ -31,6 +31,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=126
 
 [ needs verification ] 
 
+_ look through the code for any places where UTF-8 not used
 _ check to see whether this bug is fixed once 0140 is released
 _   properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
@@ -79,6 +80,8 @@ _ make .java files and friends go to correct locations on export (app)
 _ on mac, window opens to prevent quit on close
 _   but the window is not properly set as untitled
 _   http://dev.processing.org/bugs/show_bug.cgi?id=700
+_ strange NullPointerException problem prevents launch
+_   some kind of NPE in handleOpenInternal and friends
 _ when opening from double-click on the mac, doesn't replace untitled
 _   or in general, issues between opening new window and another launching
 _   probably need to synchronize the file open methods inside Base
