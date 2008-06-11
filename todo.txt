@@ -1,4 +1,11 @@
 0141 pde
+X hide javac warning messages
+X   "xxxx xxxx uses unsafe operations.", "recompile with -Xlint:xxxx"
+X   http://dev.processing.org/bugs/show_bug.cgi?id=817
+
+_ nanoxml getChildren() et al should use getFullName() not getName()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=813
+
 
 charset changes
 _ make sure that export is using utf8 for writing the .pde files etc
@@ -14,10 +21,10 @@ o     this is a bad idea--since it's probably
 X need to set a default charset for use in files (utf8)
 X   add option to change charset or specify as part of loading
 X   need to specify the default encoding
-_ xml element needs to be readable from other charsets
-_   same with the other methods like loadStrings()
-_   could also be a way to handle gzip too?
-_   tho charset + gzip would be a problem
+
+fixed earlier
+X stop button sometimes causes lockups when libraries or code folder is in use
+X   http://dev.processing.org/bugs/show_bug.cgi?id=126
 
 
 . . . 
@@ -31,8 +38,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=49
 _   (could also just warn user to install elsewhere)
 o   perhaps the get around this by building into sketch folder
 o     when non-ascii chars in use, just launch everything externally
-_   also fails with export-to-application
-_     http://dev.processing.org/bugs/show_bug.cgi?id=252
+_ export and export to application fail with umlauts in folder name
+_   http://dev.processing.org/bugs/show_bug.cgi?id=252
 _ too many NPEs on loadimage may freeze the app (visualizar example?)
 _   hopefully this should be fixed with 0136 changes
 _   lots of runtime exceptions still being lost on osx
@@ -40,28 +47,25 @@ _     particularly with multi-threaded applications
 _   macosx dropping exceptions all the time.. grr
 _     solution is to export, and then see how it runs
 _     this is particularly bad with threaded applications
+_ stop button needs to update itself and work properly [1.0]
+_   also editor buttons to light up and clear properly 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=396
+_   need someone to go out and test all scenarios of this
 
 
 [ known bugs ]
 
 _ "Target VM failed to initialize: VM initialization failed" when trying to run
 _   http://dev.processing.org/bugs/show_bug.cgi?id=796
-
 _ slow response on file, sketchbook, and examples menus
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
 _   could be all the listeners?
 _   actually it's prolly just the insertMenu() garbage
 _     need to have a better way of dealing with this
-
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=775
 _   this may just be a macosx (ppc?) bug
-
-_ stop button needs to update itself and work properly [1.0]
-_   also editor buttons to light up and clear properly 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=396
-_   need someone to go out and test all scenarios of this
 
 
 . . . 
@@ -71,6 +75,7 @@ new/open/close/save
 _ file-save stops running sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=810
 _ don't copy hidden files (.svn especially) on export/save as
+_   http://dev.processing.org/bugs/show_bug.cgi?id=761
 _ make .java files and friends go to correct locations on export (app)
 _ on mac, window opens to prevent quit on close
 _   but the window is not properly set as untitled
@@ -184,6 +189,7 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 DOC / Bugzilla 
 
+_ remove LATER, REMIND, WORKSFORME as categories; add VERIFY
 _ set default reported bug priority to 4 or 5
 _ * disable changes to a bug (except by admin) after closed *
 _ fix "reply" garbage added
@@ -600,7 +606,8 @@ _ preprocessor error if last line of code is a comment with no CR after it,
 _   an OutOfMemoryError wants to happen, 
 _   but right now there's a hack to add a CR in PdePreprocessor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=5
-
+_ Parsing error when using char literals
+_   http://dev.processing.org/bugs/show_bug.cgi?id=281
 
 PDE / Editor
 
@@ -637,8 +644,6 @@ _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
 _   to overwrite. i.e. make a change and save in external editor,
 _   don't actually 
-_ run/stop button highlight is almost completely broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=396
 _ when running with external editor, hide the editor text area
 _   http://dev.processing.org/bugs/show_bug.cgi?id=20
 _ horizontal scroller gets weird sometimes
@@ -1065,7 +1070,7 @@ _ java.lang.NoClassDefFoundError: quicktime/std/StdQTException
 _   people not installing qt? no QTJAVA set?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=669
 _   simulate this by removing qtjava.zip, then make a handler for it
-_   then close the bug because nobody ever responds
+_   which will open the reference for it
 _ add more information about multiple camera inputs
 _ add info about "access" errors being quicktime errors
 _ documented in faq, add something to the lib "camera not installed"
@@ -1132,6 +1137,11 @@ _   http://www.adobe.com/svg/eol.html
 
 
 LIBRARIES / XML
+
+_ handle charset decoding in xml element parser?
+_   same with the other methods like loadStrings()
+_   could also be a way to handle gzip too?
+_   tho charset + gzip would be a problem
 _ need to handle how save() works inside xml lib
 _ need to handle <!ENTITY tags for svg documents
 _ vectors shouldn't be exposed, need to expose attr lists as arrays
