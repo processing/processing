@@ -1,5 +1,11 @@
 0141 core
 
+_ P3D smooshes the top row of pixels when drawing text (or images)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=466
+_ textAlign(CENTER) with P3D and OPENGL produces messy result
+_   probably rounding error with the images
+_   http://dev.processing.org/bugs/show_bug.cgi?id=475
+
 
 _ pdf not rendering unicode (though it renders to screen)
 _   try updating to newer itext
@@ -168,9 +174,6 @@ _   perhaps also DEL or other nonprintables?
 _   book example 25-03
 _ when using createFont("xxxx.ttf"), should use textMode(SHAPE) with PDF
 _   because ttf files will not be installed on the system when opening pdf
-_ textAlign(CENTER) with P3D and OPENGL produces messy result
-_   probably rounding error with the images
-_   http://dev.processing.org/bugs/show_bug.cgi?id=475
 _ text position is quantized in JAVA2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=806
 
@@ -185,6 +188,8 @@ _   leave smooth off, get the gl object, then enable line smooth
 
 
 threading [1.0]
+_ major threading overhaul before 1.0 (compendium)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=511
 _ PDE locks up during setup() (since no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 _ if too many errors come through during setup, app will terminate
@@ -193,8 +198,6 @@ _   seen especially on old mac laptops (slow ppc garbage)
 _ Frame skipping with processor intensive applets using 1.6
 _   http://dev.processing.org/bugs/show_bug.cgi?id=766
 _ introduce calc()
-_ major threading overhaul before 1.0 (compendium)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=511
 _ applet sizing issues with external vm
 _   could this possibly be related to the linux bug?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=430
@@ -411,12 +414,12 @@ _   is there a way to catch cmd-q when running a sketch?
 _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
+_ --display not working on osx
+_   http://dev.processing.org/bugs/show_bug.cgi?id=531
 
 
 CORE / PFont and text()
 
-_ P3D smooshes the top row of pixels when drawing text (or images)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=466
 _ some fonts broken in java 1.5 on osx have changed again
 _   http://dev.processing.org/bugs/show_bug.cgi?id=407
 _   filed as bug #4769141 with apple

@@ -44,16 +44,16 @@ public class Compiler {
    * @return
    * @throws RunnerException Only if there's a problem. Only then.
    */
-  public boolean compile(Sketch sketch, 
+  public boolean compile(Sketch sketch,
                          String buildPath) throws RunnerException {
     // This will be filled in if anyone gets angry
     RunnerException exception = null;
-    
+
     String baseCommand[] = new String[] {
       "-source", "1.5",
-      "-target", "1.5",         
+      "-target", "1.5",
       "-classpath", sketch.getClassPath(),
-      "-nowarn", // we're not currently interested in warnings (ignored?)          
+      "-nowarn", // we're not currently interested in warnings (ignored?)
       "-d", buildPath // output the classes in the buildPath
     };
     //PApplet.println(baseCommand);
@@ -94,36 +94,51 @@ public class Compiler {
         };
       // Wrap as a PrintWriter since that's what compile() wants
       PrintWriter writer = new PrintWriter(internalWriter);
-      
+
       result = com.sun.tools.javac.Main.compile(command, writer);
-      
+
       // Close out the stream for good measure
       writer.flush();
       writer.close();
 
-      BufferedReader reader = 
+      BufferedReader reader =
         new BufferedReader(new StringReader(errorBuffer.toString()));
-      
+
       String line = null;
       while ((line = reader.readLine()) != null) {
+        //System.out.println("got line " + line);  // debug
+
         // Check to see if this is the last line.
-        String lastFormat = "\\d+ error[s]?";
-        if (PApplet.match(line, lastFormat) != null) {
+        if ((PApplet.match(line, "\\d+ error[s]?") != null) ||
+            (PApplet.match(line, "\\d+ warning[s]?") != null)) {
           break;
         }
 
+        // Hide these because people are getting confused
+        // http://dev.processing.org/bugs/show_bug.cgi?id=817
+        // com/sun/tools/javac/resources/compiler.properties
         if (line.startsWith("Note: ")) {
+          // if you mention serialVersionUID one more time, i'm kickin' you out
+          if (line.indexOf("serialVersionUID") != -1) continue;
+          // {0} uses unchecked or unsafe operations.
+          // Some input files use unchecked or unsafe operations.
+          if (line.indexOf("or unsafe operations") != -1) continue;
+          // {0} uses or overrides a deprecated API.
+          // Some input files use or override a deprecated API.
+          if (line.indexOf("or override") != -1) continue;
+          // Recompile with -Xlint:deprecation for details.
+          // Recompile with -Xlint:unchecked for details.
+          if (line.indexOf("Recompile with -Xlint:") != -1) continue;
           System.err.println(line);
           continue;
         }
 
-        //System.out.println("got line " + line);
         String errorFormat = "([\\w\\d_]+.java):(\\d+):\\s*(.*)\\s*";
         String[] pieces = PApplet.match(line, errorFormat);
         if (pieces == null) {
           exception = new RunnerException("Cannot parse error text: " + line);
           exception.hideStackTrace();
-          // Send out the rest of the error message to the console. 
+          // Send out the rest of the error message to the console.
           System.err.println(line);
           while ((line = reader.readLine()) != null) {
             System.err.println(line);
@@ -134,7 +149,7 @@ public class Compiler {
         // Line numbers are 1-indexed from javac
         int dotJavaLineIndex = PApplet.parseInt(pieces[1]) - 1;
         String errorMessage = pieces[2];
-        
+
         int codeIndex = -1;
         int codeLine = -1;
         for (int i = 0; i < sketch.getCodeCount(); i++) {
@@ -148,7 +163,7 @@ public class Compiler {
 
         if (codeIndex == 0) {  // main class, figure out which tab
           for (int i = 1; i < sketch.getCodeCount(); i++) {
-            SketchCode code = sketch.getCode(i); 
+            SketchCode code = sketch.getCode(i);
 
             if (code.flavor == Sketch.PDE) {
               if (code.preprocOffset <= dotJavaLineIndex) {
@@ -166,16 +181,16 @@ public class Compiler {
 
         if (errorMessage.equals("cannot find symbol")) {
           handleCannotFindSymbol(reader, exception);
-          
+
         } else if (errorMessage.startsWith("package") &&
                    errorMessage.endsWith("does not exist")) {
-          exception = new RunnerException("P" + errorMessage.substring(1) + 
+          exception = new RunnerException("P" + errorMessage.substring(1) +
                                           ". You might be missing a library.");
           exception.hideStackTrace();
 
         } else {
-          exception = new RunnerException(errorMessage); 
-        }        
+          exception = new RunnerException(errorMessage);
+        }
       }
     } catch (IOException e) {
       String bigSigh = "Error while compiling. (" + e.getMessage() + ")";
@@ -189,10 +204,10 @@ public class Compiler {
     // Success means that 'result' is set to zero
     return (result == 0);
   }
-    
 
-  // Tell-tale signs of old code copied and pasted from the web. 
-  // Detect classes BFont, BGraphics, BImage; methods framerate, push; 
+
+  // Tell-tale signs of old code copied and pasted from the web.
+  // Detect classes BFont, BGraphics, BImage; methods framerate, push;
   // and variables LINE_LOOP and LINE_STRIP.
   static HashMap crusties = new HashMap();
   static {
@@ -206,7 +221,7 @@ public class Compiler {
   }
 
 
-  void handleCannotFindSymbol(BufferedReader reader, 
+  void handleCannotFindSymbol(BufferedReader reader,
                               RunnerException rex) throws IOException {
     String symbolLine = reader.readLine();
     /*String locationLine =*/ reader.readLine();
@@ -214,12 +229,12 @@ public class Compiler {
     String caretLine = reader.readLine();
     rex.setColumn(caretColumn(caretLine));
 
-    String[] pieces = 
+    String[] pieces =
       PApplet.match(symbolLine, "symbol\\s*:\\s*(\\w+)\\s+(.*)");
     if (pieces != null) {
       if (pieces[0].equals("class") ||
           pieces[0].equals("variable")) {
-        rex.setMessage("Cannot find a " + pieces[0] + " " +  
+        rex.setMessage("Cannot find a " + pieces[0] + " " +
                        "named \u201C" + pieces[1] + "\u201D");
         if (crusties.get(pieces[1]) != null) {
           handleCrustyCode(rex);
@@ -231,8 +246,8 @@ public class Compiler {
 
         String methodName = pieces[1].substring(0, leftParen);
         String methodParams = pieces[1].substring(leftParen + 1, rightParen);
-        
-        String message = 
+
+        String message =
           "Cannot find a function named \u201C" + methodName + "\u201D";
         if (methodParams.length() > 0) {
           if (methodParams.indexOf(',') != -1) {
@@ -255,15 +270,15 @@ public class Compiler {
       }
     }
   }
-  
-  
+
+
   void handleCrustyCode(RunnerException rex) {
     rex.setMessage("This code needs to be updated, " +
                    "please read the \u201Cchanges\u201D reference.");
     Base.showReference("changes.html");
   }
-  
-  
+
+
   protected int caretColumn(String caretLine) {
     return caretLine.indexOf("^");
   }
