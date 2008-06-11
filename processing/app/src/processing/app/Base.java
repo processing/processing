@@ -1432,7 +1432,8 @@ public class Base {
     // empty code file.. no worries, might be getting filled up later
     if (file.length() == 0) return "";
 
-    InputStreamReader isr = new InputStreamReader(new FileInputStream(file));
+    FileInputStream fis = new FileInputStream(file);
+    InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
     BufferedReader reader = new BufferedReader(isr);
 
     StringBuffer buffer = new StringBuffer();
@@ -1449,15 +1450,14 @@ public class Base {
   /**
    * Spew the contents of a String object out to a file.
    */
-  static public void saveFile(String str,
-                              File file) throws IOException {
-
+  static public void saveFile(String str, File file) throws IOException {
     ByteArrayInputStream bis = new ByteArrayInputStream(str.getBytes());
     InputStreamReader isr = new InputStreamReader(bis);
     BufferedReader reader = new BufferedReader(isr);
 
-    FileWriter fw = new FileWriter(file);
-    PrintWriter writer = new PrintWriter(new BufferedWriter(fw));
+    FileOutputStream fos = new FileOutputStream(file);
+    OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+    PrintWriter writer = new PrintWriter(osw);
 
     String line = null;
     while ((line = reader.readLine()) != null) {
