@@ -61,7 +61,6 @@ public class SketchCode {
   public int scrollPosition;
 
   public boolean modified;
-  //SketchHistory history;  // TODO add history information
 
   public String preprocName;  // name of .java file after preproc
   public int preprocOffset;  // where this code starts relative to the concat'd code
@@ -75,7 +74,7 @@ public class SketchCode {
     try {
       load();
     } catch (IOException e) {
-      System.err.println("error while loading code " + name);
+      System.err.println("Error while loading code " + name);
     }
   }
 
