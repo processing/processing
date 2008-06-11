@@ -98,7 +98,7 @@ public class Editor extends JFrame {
   JLabel lineNumberComponent;
 
   // currently opened program
-  public Sketch sketch;
+  protected Sketch sketch;
 
   EditorLineStatus lineStatus;
 
@@ -684,47 +684,12 @@ public class Editor extends JFrame {
       });
     menu.add(item);
     
-    item = new JMenuItem("Fix encoding and reload file");
+    item = new JMenuItem("Fix Encoding & Reload");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            SketchCode code = sketch.current;
-            if (code.modified) {
-              int result = 
-                JOptionPane.showConfirmDialog(Editor.this, 
-                                              "Discard changes and reload?", 
-                                              "Reload",
-                                              JOptionPane.YES_NO_OPTION,
-                                              JOptionPane.QUESTION_MESSAGE);
-              
-              if (result == JOptionPane.NO_OPTION) {
-                return;
-              }
-            }
-            File file = code.file;
-
-            // empty code file.. no worries, might be getting filled up later
-            if (file.length() != 0) {
-              try {
-                FileReader fr = new FileReader(file);
-                BufferedReader reader = new BufferedReader(fr);
-
-                StringBuffer buffer = new StringBuffer();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                  buffer.append(line);
-                  buffer.append('\n');
-                }
-                reader.close();
-                beginCompoundEdit();
-                textarea.setText(buffer.toString());
-                endCompoundEdit();
-
-              } catch (IOException e) {
-                e.printStackTrace();
-              }
-            }
+            new FixEncoding(Editor.this).show();
           }
         });
       }
@@ -1073,6 +1038,13 @@ public class Editor extends JFrame {
 
   // ...................................................................
 
+  
+  /**
+   * Gets the current sketch object.
+   */
+  public Sketch getSketch() {
+    return sketch;
+  }
 
   /**
    * Get the contents of the current buffer. Used by the Sketch class.
@@ -1081,6 +1053,16 @@ public class Editor extends JFrame {
     return textarea.getText();
   }
 
+
+  /**
+   * Replace the entire contents of the frontmost tab.
+   * @param what with what?
+   */
+  public void setText(String what) {
+    beginCompoundEdit();
+    textarea.setText(what);
+    endCompoundEdit();
+  }
 
   /**
    * Called to update the text but not switch to a different
@@ -1563,6 +1545,7 @@ public class Editor extends JFrame {
       return true;
 
     } catch (Exception e) {
+      e.printStackTrace();
       error(e);
       return false;
     }

@@ -84,6 +84,16 @@ public class SketchCode {
    */
   public void load() throws IOException {
     program = Base.loadFile(file);
+
+    if (program.indexOf('\uFFFD') != -1) {
+      System.err.println(file.getName() + " contains unrecognized characters."); 
+      System.err.println("If this code was created with an older version of Processing,");
+      System.err.println("you may need to use Tools -> Fix Encoding & Reload to update");
+      System.err.println("the sketch to use UTF-8 encoding. If not, you may need to");
+      System.err.println("delete the bad characters to get rid of this warning.");
+      System.err.println();
+    }
+    
     modified = false;
   }
 
