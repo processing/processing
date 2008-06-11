@@ -1950,9 +1950,8 @@ public class Sketch {
     // and now @@description@@
 
     File htmlOutputFile = new File(appletFolder, "index.html");
-    FileOutputStream fos = new FileOutputStream(htmlOutputFile);
     // UTF-8 fixes http://dev.processing.org/bugs/show_bug.cgi?id=474
-    PrintStream ps = new PrintStream(fos, false, "UTF-8");
+    PrintWriter htmlWriter = PApplet.createWriter(htmlOutputFile);
 
     InputStream is = null;
     // if there is an applet.html file in the sketch folder, use that
@@ -1967,8 +1966,7 @@ public class Sketch {
         is = Base.getStream("export/applet.html");
       }
     }
-    InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-    BufferedReader reader = new BufferedReader(isr);
+    BufferedReader reader = PApplet.createReader(is);
 
     String line = null;
     while ((line = reader.readLine()) != null) {
@@ -2001,12 +1999,12 @@ public class Sketch {
         }
         line = sb.toString();
       }
-      ps.println(line);
+      htmlWriter.println(line);
     }
 
     reader.close();
-    ps.flush();
-    ps.close();
+    htmlWriter.flush();
+    htmlWriter.close();
 
     return true;
   }
@@ -2175,17 +2173,17 @@ public class Sketch {
       // will work on osx or *nix, but just dies on windows, oh well..
       if (PApplet.platform == PConstants.WINDOWS) {
         File warningFile = new File(destFolder, "readme.txt");
-        PrintStream ps = new PrintStream(new FileOutputStream(warningFile));
-        ps.println("This application was created on Windows, which doesn't");
-        ps.println("properly support setting files as \"executable\",");
-        ps.println("a necessity for applications on Mac OS X.");
-        ps.println();
-        ps.println("To fix this, use the Terminal on Mac OS X, and from this");
-        ps.println("directory, type the following:");
-        ps.println();
-        ps.println("chmod +x " + dotAppFolder.getName() + "/" + stubName);
-        ps.flush();
-        ps.close();
+        PrintWriter pw = PApplet.createWriter(warningFile);
+        pw.println("This application was created on Windows, which doesn't");
+        pw.println("properly support setting files as \"executable\",");
+        pw.println("a necessity for applications on Mac OS X.");
+        pw.println();
+        pw.println("To fix this, use the Terminal on Mac OS X, and from this");
+        pw.println("directory, type the following:");
+        pw.println();
+        pw.println("chmod +x " + dotAppFolder.getName() + "/" + stubName);
+        pw.flush();
+        pw.close();
 
       } else {
         File stubFile = new File(dotAppFolder, stubName);
@@ -2406,7 +2404,7 @@ public class Sketch {
         plistTemplate = new File("lib/export/" + PLIST_TEMPLATE);
       }
       File plistFile = new File(dotAppFolder, "Contents/Info.plist");
-      PrintStream ps = new PrintStream(new FileOutputStream(plistFile));
+      PrintWriter pw = PApplet.createWriter(plistFile);
 
       String lines[] = PApplet.loadStrings(plistTemplate);
       for (int i = 0; i < lines.length; i++) {
@@ -2428,49 +2426,41 @@ public class Sketch {
           lines[i] = sb.toString();
         }
         // explicit newlines to avoid Windows CRLF
-        ps.print(lines[i] + "\n");
+        pw.print(lines[i] + "\n");
       }
-      ps.flush();
-      ps.close();
+      pw.flush();
+      pw.close();
 
     } else if (exportPlatform == PConstants.WINDOWS) {
       File argsFile = new File(destFolder + "/lib/args.txt");
-      PrintStream ps = new PrintStream(new FileOutputStream(argsFile));
+      PrintWriter pw = PApplet.createWriter(argsFile);
 
-      /*
-      ps.print(Preferences.get("run.options") + " ");
-      if (Preferences.getBoolean("run.options.memory")) {
-        ps.print("-Xms" + Preferences.get("run.options.memory.initial") + "m ");
-        ps.print("-Xmx" + Preferences.get("run.options.memory.maximum") + "m ");
-      }
-      ps.println();
-      */
-      ps.println(runOptions);
+      pw.println(runOptions);
 
-      ps.println(this.name);
-      ps.println(exportClassPath);
+      pw.println(this.name);
+      pw.println(exportClassPath);
 
-      ps.flush();
-      ps.close();
+      pw.flush();
+      pw.close();
 
     } else {
       File shellScript = new File(destFolder, this.name);
-      PrintStream ps = new PrintStream(new FileOutputStream(shellScript));
+      PrintWriter pw = PApplet.createWriter(shellScript);
 
       // do the newlines explicitly so that windows CRLF
       // isn't used when exporting for unix
-      ps.print("#!/bin/sh\n\n");
+      pw.print("#!/bin/sh\n\n");
       //ps.print("APPDIR=`dirname $0`\n");
-      ps.print("APPDIR=$(dirname \"$0\")\n");  // more posix compliant
+      pw.print("APPDIR=$(dirname \"$0\")\n");  // more posix compliant
       // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
-      ps.print("java " + Preferences.get("run.options") +
+      pw.print("java " + Preferences.get("run.options") +
                " -Djava.library.path=\"$APPDIR\"" +
                " -cp \"" + exportClassPath + "\"" +
                " " + this.name + "\n");
 
-      ps.flush();
-      ps.close();
+      pw.flush();
+      pw.close();
 
       String shellPath = shellScript.getAbsolutePath();
       // will work on osx or *nix, but just dies on windows, oh well..
