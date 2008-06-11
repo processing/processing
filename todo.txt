@@ -1,27 +1,29 @@
 0141 pde
 
-
+charset changes
 _ make sure that export is using utf8 for writing the .pde files etc
 _   should be primarily loadFile() and saveFile() inside Base
-_   http://dev.processing.org/bugs/show_bug.cgi?id=743
-_ change pde files to use utf8
-_   1) if file contains binary data and
-_   2) its mod date is earlier than when p5 0125 was installed
-_   point the user to Tools -> Reload sketch with local encoding
-_   then re-save the file to update the mod date
-_   ...or, when first running p5 0125, offer to update sketches
-_     this is a bad idea--since it's probably 
-_ need to set a default charset for use in files (utf8)
-_   add option to change charset or specify as part of loading
-_   need to specify the default encoding
+X   http://dev.processing.org/bugs/show_bug.cgi?id=743
+X change pde files to use utf8
+o   1) if file contains binary data and
+o   2) its mod date is earlier than when p5 0125 was installed
+o   point the user to Tools -> Reload sketch with local encoding
+o   then re-save the file to update the mod date
+o   ...or, when first running p5 0125, offer to update sketches
+o     this is a bad idea--since it's probably 
+X need to set a default charset for use in files (utf8)
+X   add option to change charset or specify as part of loading
+X   need to specify the default encoding
 _ xml element needs to be readable from other charsets
 _   same with the other methods like loadStrings()
 _   could also be a way to handle gzip too?
 _   tho charset + gzip would be a problem
 
-_ inside Sketch.java, don't hardwire the file extension types
-_   arduino uses .c, .cpp, .h instead of .java
-_   http://dev.processing.org/bugs/show_bug.cgi?id=807
+
+. . . 
+
+
+[ needs verification ] 
 
 _ check to see whether this bug is fixed once 0140 is released
 _   properly handle non-ascii chars in p5 folder name
@@ -31,9 +33,13 @@ o   perhaps the get around this by building into sketch folder
 o     when non-ascii chars in use, just launch everything externally
 _   also fails with export-to-application
 _     http://dev.processing.org/bugs/show_bug.cgi?id=252
-
-
-. . . 
+_ too many NPEs on loadimage may freeze the app (visualizar example?)
+_   hopefully this should be fixed with 0136 changes
+_   lots of runtime exceptions still being lost on osx
+_     particularly with multi-threaded applications
+_   macosx dropping exceptions all the time.. grr
+_     solution is to export, and then see how it runs
+_     this is particularly bad with threaded applications
 
 
 [ known bugs ]
@@ -218,11 +224,7 @@ X   move p5 site bug reporting to bugzilla
 _   do the same for suggestions
 _     and detail the suggestions policy on the dev site: diy
 _   post a page explaining the bug reporting system
-
-
-DOC / Frequent
-
-_ arrays
+_ arrays (frequent questions)
 _   using arraylist (avoid vector)
 _   cannot use generics
 _   using mod to avoid shifting an array
@@ -232,6 +234,7 @@ _   using expand and arrays to move quickly
 
 
 DOC / Write Me
+
 _ quicktime likes to crash (not just on windows)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=791
 _ createInput, createInputRaw, createOutput
@@ -813,13 +816,6 @@ _   will return 1.5.0 (or maybe 1.6 for others?)
 
 PDE / Runner 
 
-_ too many NPEs on loadimage may freeze the app (visualizar example?)
-_   hopefully this should be fixed with 0136 changes
-_   lots of runtime exceptions still being lost on osx
-_     particularly with multi-threaded applications
-_   macosx dropping exceptions all the time.. grr
-_     solution is to export, and then see how it runs
-_     this is particularly bad with threaded applications
 _ use debugger to get better exceptions
 _   and getting the error to show up in the window inside p5
 _   also highlighting the correct line
@@ -851,6 +847,9 @@ _   is this only a problem on macosx?
 
 PDE / Sketch & Sketchbook
 
+_ inside Sketch.java, don't hardwire the file extension types
+_   arduino uses .c, .cpp, .h instead of .java
+_   http://dev.processing.org/bugs/show_bug.cgi?id=807
 _ don't reload sketch on "save as"
 _   this can result in loss of data (undo is lost)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=433

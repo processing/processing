@@ -683,7 +683,54 @@ public class Editor extends JFrame {
         }
       });
     menu.add(item);
+    
+    item = new JMenuItem("Fix encoding and reload file");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            SketchCode code = sketch.current;
+            if (code.modified) {
+              int result = 
+                JOptionPane.showConfirmDialog(Editor.this, 
+                                              "Discard changes and reload?", 
+                                              "Reload",
+                                              JOptionPane.YES_NO_OPTION,
+                                              JOptionPane.QUESTION_MESSAGE);
+              
+              if (result == JOptionPane.NO_OPTION) {
+                return;
+              }
+            }
+            File file = code.file;
 
+            // empty code file.. no worries, might be getting filled up later
+            if (file.length() != 0) {
+              try {
+                FileReader fr = new FileReader(file);
+                BufferedReader reader = new BufferedReader(fr);
+
+                StringBuffer buffer = new StringBuffer();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                  buffer.append(line);
+                  buffer.append('\n');
+                }
+                reader.close();
+                beginCompoundEdit();
+                textarea.setText(buffer.toString());
+                endCompoundEdit();
+
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+            }
+          }
+        });
+      }
+    });
+    menu.add(item);
+  
     /*
     item = new JMenuItem("Export Folder...");
     item.addActionListener(new ActionListener() {
