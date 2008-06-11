@@ -1432,13 +1432,20 @@ public class Base {
     // empty code file.. no worries, might be getting filled up later
     if (file.length() == 0) return "";
 
-    FileInputStream fis = new FileInputStream(file);
-    InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-    BufferedReader reader = new BufferedReader(isr);
+    //FileInputStream fis = new FileInputStream(file);
+    //InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+    //BufferedReader reader = new BufferedReader(isr);
+    BufferedReader reader = PApplet.createReader(file);
 
     StringBuffer buffer = new StringBuffer();
     String line = null;
     while ((line = reader.readLine()) != null) {
+//      char[] cc = line.toCharArray();
+//      for (int i = 0; i < cc.length; i++) {
+//        char c = cc[i];
+//        if (c < 32 || c > 126) System.out.println("found " + c + " " + ((int) c));
+//      }
+//      
       buffer.append(line);
       buffer.append('\n');
     }

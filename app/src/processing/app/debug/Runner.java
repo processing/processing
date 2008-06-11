@@ -91,7 +91,7 @@ public class Runner implements MessageConsumer {
 
   public Runner(Editor editor, boolean presenting) throws RunnerException {
     this.editor = editor;
-    this.sketch = editor.sketch;
+    this.sketch = editor.getSketch();
     this.presenting = presenting;
     //EditorConsole.systemOut.println("clear");
     //System.out.println("clear");

@@ -73,7 +73,7 @@ public class CreateFont extends JFrame {
   public CreateFont(Editor editor) {
     super("Create Font");
 
-    targetFolder = editor.sketch.dataFolder;
+    targetFolder = editor.getSketch().dataFolder;
 
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));

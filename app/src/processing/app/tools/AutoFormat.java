@@ -928,7 +928,7 @@ public class AutoFormat {
         // replace with new bootiful text
         // selectionEnd hopefully at least in the neighborhood
         editor.setText(formattedText, selectionEnd, selectionEnd);
-        editor.sketch.setModified(true);
+        editor.getSketch().setModified(true);
         // mark as finished
         editor.message("Auto Format finished.");
       }
