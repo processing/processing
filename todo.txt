@@ -6,12 +6,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=817
 _ nanoxml getChildren() et al should use getFullName() not getName()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=813
 
-
 charset changes
 _ make sure that export is using utf8 for writing the .pde files etc
 _   should be primarily loadFile() and saveFile() inside Base
-X   http://dev.processing.org/bugs/show_bug.cgi?id=743
 X change pde files to use utf8
+X   http://dev.processing.org/bugs/show_bug.cgi?id=743
 o   1) if file contains binary data and
 o   2) its mod date is earlier than when p5 0125 was installed
 o   point the user to Tools -> Reload sketch with local encoding
