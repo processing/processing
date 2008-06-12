@@ -3,9 +3,8 @@ X hide javac warning messages
 X   "xxxx xxxx uses unsafe operations.", "recompile with -Xlint:xxxx"
 X   http://dev.processing.org/bugs/show_bug.cgi?id=817
 X move copy for discourse into the edit menu (ctrl-shift-c)
-
-_ nanoxml getChildren() et al should use getFullName() not getName()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=813
+X nanoxml getChildren() et al should use getFullName() not getName()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=813
 
 charset changes
 X make sure that export is using utf8 for writing the .pde files etc

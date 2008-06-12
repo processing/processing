@@ -1,9 +1,5 @@
 /* XMLElement.java                                                 NanoXML/Java
  *
- * $Revision: 1.5 $
- * $Date: 2002/02/06 18:50:12 $
- * $Name: RELEASE_2_2_1 $
- *
  * This file is part of NanoXML 2 for Java.
  * Copyright (C) 2000-2002 Marc De Scheemaecker, All Rights Reserved.
  *
@@ -28,37 +24,22 @@
 
 package processing.xml;
 
-
-//import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 import processing.core.PApplet;
 
 
 /**
- * XMLElement is an XML element. The standard NanoXML builder generates a
- * tree of such elements.
- *
- * @see net.n3.nanoxml.StdXMLBuilder
+ * XMLElement is an XML element. This is the base class used for the 
+ * Processing XML library, representing a single node of an XML tree.
+ * 
+ * This code is based on a modified version of NanoXML by Marc De Scheemaecker.
  *
  * @author Marc De Scheemaecker
- * @version $Name: RELEASE_2_2_1 $, $Revision: 1.5 $
+ * @author processing.org
  */
 public class XMLElement implements Serializable {
-
-    /**
-     * Necessary for serialization.
-     */
-    static final long serialVersionUID = -2383376380548624920L;
-
 
     /**
      * No line number defined.
@@ -578,7 +559,7 @@ public class XMLElement implements Serializable {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             XMLElement kid = getChild(i);
-            if (kid.getName().equals(name)) {
+            if (kid.getFullName().equals(name)) {
                 return kid;
             }
         }
@@ -586,6 +567,13 @@ public class XMLElement implements Serializable {
     }
 
 
+    /**
+     * Internal helper function for getChild(String).
+     * @param items result of splitting the query on slashes
+     * @param offset where in the items[] array we're currently looking
+     * @return matching element or null if no match
+     * @author processing.org
+     */
     protected XMLElement getChildRecursive(String[] items, int offset) {
         // if it's a number, do an index instead
         if (Character.isDigit(items[offset].charAt(0))) {
@@ -599,7 +587,7 @@ public class XMLElement implements Serializable {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             XMLElement kid = getChild(i);
-            if (kid.getName().equals(items[offset])) {
+            if (kid.getFullName().equals(items[offset])) {
                 if (offset == items.length-1) {
                     return kid;
                 } else {
@@ -685,37 +673,37 @@ public class XMLElement implements Serializable {
      */
     public XMLElement[] getChildren(String name) {
         if (name.indexOf('/') != -1) {
-                return getChildrenRecursive(PApplet.split(name, '/'), 0);
+        	return getChildrenRecursive(PApplet.split(name, '/'), 0);
         }
         // if it's a number, do an index instead
         // (returns a single element array, since this will be a single match
         if (Character.isDigit(name.charAt(0))) {
-                return new XMLElement[] { getChild(Integer.parseInt(name)) };
+        	return new XMLElement[] { getChild(Integer.parseInt(name)) };
         }
         int childCount = getChildCount();
         XMLElement[] matches = new XMLElement[childCount];
         int matchCount = 0;
         for (int i = 0; i < childCount; i++) {
-                XMLElement kid = getChild(i);
-                if (kid.getName().equals(name)) {
-                        matches[matchCount++] = kid;
-                }
+        	XMLElement kid = getChild(i);
+        	if (kid.getFullName().equals(name)) {
+        		matches[matchCount++] = kid;
+        	}
         }
         return (XMLElement[]) PApplet.subset(matches, 0, matchCount);
     }
 
 
     protected XMLElement[] getChildrenRecursive(String[] items, int offset) {
-        if (offset == items.length-1) {
-                return getChildren(items[offset]);
-        }
-        XMLElement[] matches = getChildren(items[offset]);
-        XMLElement[] outgoing = new XMLElement[0];
-        for (int i = 0; i < matches.length; i++) {
-                XMLElement[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
-                outgoing = (XMLElement[]) PApplet.concat(outgoing, kidMatches);
-        }
-        return outgoing;
+    	if (offset == items.length-1) {
+    		return getChildren(items[offset]);
+    	}
+    	XMLElement[] matches = getChildren(items[offset]);
+    	XMLElement[] outgoing = new XMLElement[0];
+    	for (int i = 0; i < matches.length; i++) {
+    		XMLElement[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
+    		outgoing = (XMLElement[]) PApplet.concat(outgoing, kidMatches);
+    	}
+    	return outgoing;
     }
 
 
