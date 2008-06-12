@@ -1498,7 +1498,8 @@ public class Sketch {
 
       if (msg.equals("expecting RCURLY, found 'null'")) {
         throw new RunnerException("Found one too many { characters " +
-                                  "without a } to match it.");
+                                  "without a } to match it.", 
+                                  errorFile, errorLine, re.getColumn());
       }
 
       if (msg.indexOf("expecting RBRACK") != -1) {
@@ -1520,6 +1521,12 @@ public class Sketch {
         throw new RunnerException("Syntax error, " +
                                   "maybe a missing right parenthesis?",
                                   errorFile, errorLine, re.getColumn());
+      }
+      
+      if (msg.indexOf("preproc.web_colors") != -1) {
+        throw new RunnerException("A web color (such as #ffcc00) " +
+                                  "must be six digits.",
+                                  errorFile, errorLine, re.getColumn(), false);
       }
 
       //System.out.println("msg is " + msg);
@@ -1554,7 +1561,8 @@ public class Sketch {
 
       } else {
         // this is bad, defaults to the main class.. hrm.
-        throw new RunnerException(tsre.toString(), 0, -1, -1);
+        String msg = tsre.toString();
+        throw new RunnerException(msg, 0, -1, -1);
       }
 
     } catch (RunnerException pe) {
