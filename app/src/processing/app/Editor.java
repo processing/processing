@@ -661,18 +661,6 @@ public class Editor extends JFrame {
       });
     menu.add(item);
 
-    item = new JMenuItem("Copy for Discourse");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                new DiscourseFormat(Editor.this).show();
-              }
-            });
-        }
-      });
-    menu.add(item);
-
     item = new JMenuItem("Archive Sketch");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -831,6 +819,18 @@ public class Editor extends JFrame {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           textarea.copy();
+        }
+      });
+    menu.add(item);
+    
+    item = newJMenuItem("Copy for Discourse", 'C', true);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                new DiscourseFormat(Editor.this).show();
+              }
+            });
         }
       });
     menu.add(item);
