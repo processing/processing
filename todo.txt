@@ -1,29 +1,39 @@
-0141 pde
-X hide javac warning messages
-X   "xxxx xxxx uses unsafe operations.", "recompile with -Xlint:xxxx"
-X   http://dev.processing.org/bugs/show_bug.cgi?id=817
-X move copy for discourse into the edit menu (ctrl-shift-c)
-X nanoxml getChildren() et al should use getFullName() not getName()
-X   http://dev.processing.org/bugs/show_bug.cgi?id=813
+0142 pde
 
-charset changes
-X make sure that export is using utf8 for writing the .pde files etc
-X   should be primarily loadFile() and saveFile() inside Base
-X change pde files to use utf8
-X   http://dev.processing.org/bugs/show_bug.cgi?id=743
-o   1) if file contains binary data and
-o   2) its mod date is earlier than when p5 0125 was installed
-o   point the user to Tools -> Reload sketch with local encoding
-o   then re-save the file to update the mod date
-o   ...or, when first running p5 0125, offer to update sketches
-o     this is a bad idea--since it's probably 
-X need to set a default charset for use in files (utf8)
-X   add option to change charset or specify as part of loading
-X   need to specify the default encoding
 
-fixed earlier
-X stop button sometimes causes lockups when libraries or code folder is in use
-X   http://dev.processing.org/bugs/show_bug.cgi?id=126
+new/open/close/save
+_ file-save stops running sketch
+_   http://dev.processing.org/bugs/show_bug.cgi?id=810
+_ don't copy hidden files (.svn especially) on export/save as
+_   http://dev.processing.org/bugs/show_bug.cgi?id=761
+_ make .java files and friends go to correct locations on export (app)
+_ on mac, window opens to prevent quit on close
+_   but the window is not properly set as untitled
+_   http://dev.processing.org/bugs/show_bug.cgi?id=700
+_ strange NullPointerException problem prevents launch
+_   some kind of NPE in handleOpenInternal and friends
+_ when opening from double-click on the mac, doesn't replace untitled
+_   or in general, issues between opening new window and another launching
+_   probably need to synchronize the file open methods inside Base
+_   (could in fact cause nastiness with editors[] access)
+_ editors opening up at the same time on load?
+_   either synchronize the open (at a minimum)
+_   or wait for mac handlers to register an open event
+_   can also cause problems with opening multiple copies of same sketch
+_ disallow .java tabs with same name as the sketch
+_   a .java tab with same name as the sketch is allowed (oog!)
+_   particularly look at "save as" scenario
+_   http://dev.processing.org/bugs/show_bug.cgi?id=543
+_   bug report:
+_     create a new sketch, write something in it
+_     create a new tab, name it "something.java", write something into it
+_     rename main tab (sketch) to "something" (without ".java")
+_     the contents in the files are not the same, but the main-tab is 
+_     showing the contents of the .java tab, so if you press save 
+_     you will overwrite your original code from the main-tab. 
+_ after fixing name of sketch, ensure sketch of that name does not exist
+_ put the "had to rename sketch" message in the msg bar
+_   it's ugly/annoying/intrusive
 
 
 . . . 
@@ -69,41 +79,6 @@ _   this may just be a macosx (ppc?) bug
 
 
 . . . 
-
-
-new/open/close/save
-_ file-save stops running sketch
-_   http://dev.processing.org/bugs/show_bug.cgi?id=810
-_ don't copy hidden files (.svn especially) on export/save as
-_   http://dev.processing.org/bugs/show_bug.cgi?id=761
-_ make .java files and friends go to correct locations on export (app)
-_ on mac, window opens to prevent quit on close
-_   but the window is not properly set as untitled
-_   http://dev.processing.org/bugs/show_bug.cgi?id=700
-_ strange NullPointerException problem prevents launch
-_   some kind of NPE in handleOpenInternal and friends
-_ when opening from double-click on the mac, doesn't replace untitled
-_   or in general, issues between opening new window and another launching
-_   probably need to synchronize the file open methods inside Base
-_   (could in fact cause nastiness with editors[] access)
-_ editors opening up at the same time on load?
-_   either synchronize the open (at a minimum)
-_   or wait for mac handlers to register an open event
-_   can also cause problems with opening multiple copies of same sketch
-_ disallow .java tabs with same name as the sketch
-_   a .java tab with same name as the sketch is allowed (oog!)
-_   particularly look at "save as" scenario
-_   http://dev.processing.org/bugs/show_bug.cgi?id=543
-_   bug report:
-_     create a new sketch, write something in it
-_     create a new tab, name it "something.java", write something into it
-_     rename main tab (sketch) to "something" (without ".java")
-_     the contents in the files are not the same, but the main-tab is 
-_     showing the contents of the .java tab, so if you press save 
-_     you will overwrite your original code from the main-tab. 
-_ after fixing name of sketch, ensure sketch of that name does not exist
-_ put the "had to rename sketch" message in the msg bar
-_   it's ugly/annoying/intrusive
 
 
 with casey

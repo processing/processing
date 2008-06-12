@@ -42,8 +42,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 141;
-  static final String VERSION_NAME = "0141 Beta";
+  static final int VERSION = 142;
+  static final String VERSION_NAME = "0142 Beta";
 
   static Platform platform;
 
@@ -1445,7 +1445,7 @@ public class Base {
 //        char c = cc[i];
 //        if (c < 32 || c > 126) System.out.println("found " + c + " " + ((int) c));
 //      }
-//      
+//
       buffer.append(line);
       buffer.append('\n');
     }
