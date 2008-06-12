@@ -934,7 +934,7 @@ public class Runner implements MessageConsumer {
     //if (newMessage && s.length() > 2) {
     if (newMessage) {
       exception = new RunnerException(s);  // type of java ex
-      exception.hideStackTrace = true;
+      exception.hideStackTrace();
       //System.out.println("setting ex type to " + s);
       newMessage = false;
       foundMessageSource = false;
@@ -1040,7 +1040,7 @@ java.lang.NullPointerException
               exception =
                 new RunnerException(exception.getMessage(),
                                     codeIndex, lineNumber, -1);
-              exception.hideStackTrace = true;
+              exception.hideStackTrace();
               foundMessageSource = true;
             }
           }
@@ -1096,7 +1096,7 @@ java.lang.NullPointerException
         // so if five lines have gone past, might as well signal
         messageLineCount = -100;
         exception = new RunnerException(exception.getMessage());
-        exception.hideStackTrace = true;
+        exception.hideStackTrace();
         editor.error(exception);
 
       } else {

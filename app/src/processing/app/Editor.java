@@ -1940,8 +1940,12 @@ public class Editor extends JFrame {
 
     if (e instanceof RunnerException) {
       RunnerException re = (RunnerException) e;
-      if (re.file >= 0) sketch.setCurrent(re.file);
-      if (re.line >= 0) highlightLine(re.line);
+      if (re.hasCodeIndex()) {
+        sketch.setCurrent(re.getCodeIndex());
+      }
+      if (re.hasCodeLine()) {
+        highlightLine(re.getCodeLine());
+      }
     }
 
     // Since this will catch all Exception types, spend some time figuring 
