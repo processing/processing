@@ -103,6 +103,7 @@ public class Compiler {
 
       BufferedReader reader =
         new BufferedReader(new StringReader(errorBuffer.toString()));
+      System.out.println(errorBuffer.toString());
 
       String line = null;
       while ((line = reader.readLine()) != null) {
@@ -181,15 +182,27 @@ public class Compiler {
 
         if (errorMessage.equals("cannot find symbol")) {
           handleCannotFindSymbol(reader, exception);
+          
+        } else if (errorMessage.indexOf("is already defined") != -1) {
+          reader.readLine();  // repeats the line of code w/ error
+          int codeColumn = caretColumn(reader.readLine());
+          exception = new RunnerException(errorMessage, 
+                                          codeIndex, codeLine, codeColumn);
 
         } else if (errorMessage.startsWith("package") &&
                    errorMessage.endsWith("does not exist")) {
+          // Because imports are stripped out and re-added to the 0th line of
+          // the preprocessed code, codeLine will always be wrong for imports.
           exception = new RunnerException("P" + errorMessage.substring(1) +
                                           ". You might be missing a library.");
-          exception.hideStackTrace();
-
         } else {
           exception = new RunnerException(errorMessage);
+        }
+        if (exception != null) {
+          // The stack trace just shows that this happened inside the compiler,
+          // which is a red herring. Don't ever show it for compiler stuff.
+          exception.hideStackTrace();
+          break;
         }
       }
     } catch (IOException e) {

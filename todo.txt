@@ -1,4 +1,7 @@
 0142 pde
+X fix "cannot parse error text" with duplicate var declaration
+X   also found that errors were continuing to process after the first
+X   http://dev.processing.org/bugs/show_bug.cgi?id=820
 
 
 new/open/close/save
