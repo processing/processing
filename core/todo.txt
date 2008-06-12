@@ -1,5 +1,6 @@
 0141 core
 
+
 _ P3D smooshes the top row of pixels when drawing text (or images)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=466
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
