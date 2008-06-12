@@ -30,32 +30,29 @@ package processing.app.debug;
  */
 public class RunnerException extends Exception {
   protected String message;
-  public int file = -1;
-  public int line = -1;
-  public int column = -1;
-  protected boolean hideStackTrace;
-
-  
-  public RunnerException() { }
+  protected int codeIndex;
+  protected int codeLine;
+  protected int codeColumn;
+  protected boolean showStackTrace;
 
   
   public RunnerException(String message) {
-    //super(massage(message));
-    this.message = message; 
+    this(message, -1, -1, -1, true);
   }
 
 
   public RunnerException(String message, int file, int line, int column) {
-    //super(massage(message));
-    this.message = message;
-    this.file = file;
-    this.line = line;
-    this.column = column;
+    this(message, file, line, column, true);
   }
   
   
-  public void hideStackTrace() {
-    hideStackTrace = true;
+  public RunnerException(String message, int file, int line, int column, 
+                         boolean showStackTrace) {
+    this.message = message;
+    this.codeIndex = file;
+    this.codeLine = line;
+    this.codeColumn = column;
+    this.showStackTrace = showStackTrace;
   }
   
   
@@ -73,10 +70,55 @@ public class RunnerException extends Exception {
   }
   
   
-  public void setColumn(int column) {
-    this.column = column;
+  public int getCodeIndex() {
+    return codeIndex;
+  }
+  
+  
+  public void setCodeIndex(int index) {
+    codeIndex = index;
+  }
+  
+  
+  public boolean hasCodeIndex() {
+    return codeIndex != -1;
+  }
+  
+  
+  public int getCodeLine() {
+    return codeLine;
+  }
+  
+  
+  public void setCodeLine(int line) {
+    this.codeLine = line;
+  }
+  
+  
+  public boolean hasCodeLine() {
+    return codeLine != -1;
+  }
+  
+  
+  public void setCodeColumn(int column) {
+    this.codeColumn = column;
+  }
+  
+  
+  public int getCodeColumn() {
+    return codeColumn;
   }
 
+  
+  public void showStackTrace() {
+    showStackTrace = true;
+  }
+  
+  
+  public void hideStackTrace() {
+    showStackTrace = false;
+  }
+  
 
   /**
    * Nix the java.lang crap out of an exception message
@@ -98,7 +140,7 @@ public class RunnerException extends Exception {
 
 
   public void printStackTrace() {
-    if (!hideStackTrace) {
+    if (showStackTrace) {
       super.printStackTrace();
     }
   }
