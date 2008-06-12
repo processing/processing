@@ -1,7 +1,6 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Compiler - default compiler class that connects to jikes
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2004-08 Ben Fry and Casey Reas
@@ -177,8 +176,7 @@ public class Compiler {
         //System.out.println("preproc offset is " + sketch.getCode(codeIndex).preprocOffset);
         codeLine = dotJavaLineIndex - sketch.getCode(codeIndex).preprocOffset;
         //System.out.println("code line now " + codeLine);
-        exception = new RunnerException(errorMessage, codeIndex, codeLine, -1);
-        exception.hideStackTrace();
+        exception = new RunnerException(errorMessage, codeIndex, codeLine, -1, false);
 
         if (errorMessage.equals("cannot find symbol")) {
           handleCannotFindSymbol(reader, exception);
@@ -240,7 +238,7 @@ public class Compiler {
     /*String locationLine =*/ reader.readLine();
     /*String codeLine =*/ reader.readLine();
     String caretLine = reader.readLine();
-    rex.setColumn(caretColumn(caretLine));
+    rex.setCodeColumn(caretColumn(caretLine));
 
     String[] pieces =
       PApplet.match(symbolLine, "symbol\\s*:\\s*(\\w+)\\s+(.*)");

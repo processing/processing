@@ -2,6 +2,8 @@
 X fix "cannot parse error text" with duplicate var declaration
 X   also found that errors were continuing to process after the first
 X   http://dev.processing.org/bugs/show_bug.cgi?id=820
+X web colors < 6 chars produce bizarre error:
+X   http://dev.processing.org/bugs/show_bug.cgi?id=196
 
 
 new/open/close/save
@@ -519,8 +521,6 @@ _ imports inside comments are being included
 _ toInt() needs to go away in time for the book.. fix parser bugs
 _ using a processing keyword as a variable name gives unhelpful error message
 _   http://dev.processing.org/bugs/show_bug.cgi?id=213
-_ web colors < 6 chars produce bizarre error:
-_   http://dev.processing.org/bugs/show_bug.cgi?id=196
 _ casting problems in the parser
 _   straighten out int() -> toInt() conversions
 _   float u = float(x)/width; works.
@@ -588,6 +588,7 @@ _   but right now there's a hack to add a CR in PdePreprocessor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=5
 _ Parsing error when using char literals
 _   http://dev.processing.org/bugs/show_bug.cgi?id=281
+
 
 PDE / Editor
 
