@@ -7,6 +7,50 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0141 - 11 June 2008
+
+This release fixes some issues found in the previous release, 
+and changes to UTF-8 encoding when loading and saving sketches.
+The latter is a major change, please read below.
+
+While this release should be more stable than 0140, releases since
+0135 may be closer to alpha quality. If this is your first release
+since 0135, ** please read all the release notes below ** as there
+have been many changes, and there are a handful of known bugs.
+
+[ utf8 encoding ]
+
++ For better internationalization support, we've changed to UTF-8
+  encoding when loading and saving sketches. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=743
+
++ Sketches that contain non-ASCII characters and were saved 
+  with Processing 0140 and earlier may look strange when opened. 
+  Garbled text and odd characters may appear where umlauts, 
+  cedillas, and Japanese formerly lived. If this happens, 
+  use the "Fix Encoding & Reload" option under the Tools menu. 
+  This will reload your sketch using the same method as previous
+  versions of Processing, at which point you can re-save it
+  which will write a proper UTF-8 version.
+
++ Once you've converted a sketch to UTF-8, it will look similarly
+  garbled if you use a release of Processing earlier than 0141. 
+
+[ fixes and changes ] 
+
++ Hiding some unncessary warnings when compiling since they looked
+  too much like errors. For instance, "xxxx uses unsafe operations", 
+  and "recompile with -Xlint:xxxx".
+  http://dev.processing.org/bugs/show_bug.cgi?id=817
+
++ Fix getChild() and getChildren() to properly handle namespaces 
+  in the XML library.
+  http://dev.processing.org/bugs/show_bug.cgi?id=813
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0140 - 10 June 2008
 
 Major changes (some might say improvements) to compilation and
