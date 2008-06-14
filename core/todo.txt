@@ -1,18 +1,29 @@
 0142 core
+X update iText in PDF library to 2.1.2u
+X loadStrings(".") should not list directory contents
+X   http://dev.processing.org/bugs/show_bug.cgi?id=716
 
+
+_ option to have renderer errors show up
+_   1) as text warnings 2) as runtime exceptions 3) never
+_ enable() and disable() instead of hint()/unhint()
+_   should these use text strings? how will that be compiled?
+_ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
+_   maybe need to add properties to the size() command?
+_   or use a getXxxx() method?
 
 _ P3D smooshes the top row of pixels when drawing text (or images)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=466
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   probably rounding error with the images
 _   http://dev.processing.org/bugs/show_bug.cgi?id=475
+_ textures truly did get worse in P3D
+_   problem is that bilinear is turned on by default starting in 0124(?)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
 
-
-_ pdf not rendering unicode (though it renders to screen)
-_   try updating to newer itext
+_ pdf not rendering unicode with beginRecord()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=727
 
-_ pdf sketches exiting before writing has finished
 
 _ need a halt() method which will kill but not quit app (sets finished?)
 _   exit() will actually leave the application
@@ -24,9 +35,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=771
 
 _ should we do joins when alpha is turned off?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
-
-_ textures truly did get worse in P3D
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
 
 _ PGraphicsOpenGL.java:
 _   directionalLight() and .pointLight() are both calling
@@ -59,9 +67,6 @@ _   that way won't have to pass a PApplet around
 _   this has a big impact on the SVG library
 _   in fact, this maybe should be a library that does it
 _     so that the file size can be much smaller
-
-_ loadStrings(".") should not list directory contents
-_   http://dev.processing.org/bugs/show_bug.cgi?id=716
 
 _ remove saveFile() methods?
 _ ENABLE_DEPTH_SORT causing trouble with MovieMaker
@@ -164,7 +169,11 @@ _   same will go for blend()
 
 
 rework some text/font code [1.0]
+_ textMode(SHAPE) and textMode(IMAGE)?
+_   textMode(SCREEN) is out of its league?
 _ fix getFontMetrics() warning
+_   need to have a getGraphics() to get the actual Graphics object
+_   where drawing is happening. parent.getGraphics() works except for OpenGL
 _ Java2D textLinePlacedImpl should check for ENABLE_NATIVE_FONTS hint
 _   http://dev.processing.org/bugs/show_bug.cgi?id=633
 _ also try to check native font on textFont() commands
@@ -242,6 +251,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=639
 _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
 _ "is there a better way to do this" thread in lists folder
+_ pdf sketches exiting before writing has finished
 
 
 point() [1.0]
