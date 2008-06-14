@@ -323,7 +323,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       } else if (mode == SCREEN) {
         throw new RuntimeException("textMode(SCREEN) not supported with PDF");
       } else {
-        throw new RuntimeException("That textMode() doesn't exist");
+        throw new RuntimeException("That textMode() does not exist");
       }
     }
   }
