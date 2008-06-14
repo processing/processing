@@ -4444,7 +4444,51 @@ in   */
       //throw new RuntimeException("Error downloading from URL " + filename);
     }
 
-    // using getClassLoader() prevents java from converting dots
+    // Moved this earlier than the getResourceAsStream() checks, because
+    // calling getResourceAsStream() on a directory lists its contents.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=716
+    if (!online) {
+      try {
+        // first see if it's in a data folder
+        File file = new File(dataPath(filename));
+        if (!file.exists()) {
+          // next see if it's just in the sketch folder
+          file = new File(sketchPath, filename);
+        }
+        if (file.isDirectory()) {
+          return null;
+        }
+        if (file.exists()) {
+          try {
+            // handle case sensitivity check
+            String filePath = file.getCanonicalPath();
+            String filenameActual = new File(filePath).getName();
+            // make sure there isn't a subfolder prepended to the name
+            String filenameShort = new File(filename).getName();
+            // if the actual filename is the same, but capitalized
+            // differently, warn the user.
+            //if (filenameActual.equalsIgnoreCase(filenameShort) &&
+            //!filenameActual.equals(filenameShort)) {
+            if (!filenameActual.equals(filenameShort)) {
+              throw new RuntimeException("This file is named " +
+                                         filenameActual + " not " +
+                                         filename + ". Rename the file " +
+                                         "or change your code.");
+            }
+          } catch (IOException e) { }
+        }
+
+        // if this file is ok, may as well just load it
+        stream = new FileInputStream(file);
+        if (stream != null) return stream;
+
+        // have to break these out because a general Exception might
+        // catch the RuntimeException being thrown above
+      } catch (IOException ioe) {
+      } catch (SecurityException se) { }
+    }
+
+    // Using getClassLoader() prevents java from converting dots
     // to slashes or requiring a slash at the beginning.
     // (a slash as a prefix means that it'll load from the root of
     // the jar, rather than trying to dig into the package location)
@@ -4464,8 +4508,8 @@ in   */
       }
     }
 
-    // when used with an online script, also need to check without the
-    // data folder, in case it's not in a subfolder called 'data'
+    // When used with an online script, also need to check without the
+    // data folder, in case it's not in a subfolder called 'data'.
     // http://dev.processing.org/bugs/show_bug.cgi?id=389
     stream = cl.getResourceAsStream(filename);
     if (stream != null) {
@@ -4473,44 +4517,6 @@ in   */
       if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
         return stream;
       }
-    }
-
-    // handle case sensitivity check
-    if (!online) {
-      try {
-        // first see if it's in a data folder
-        File file = new File(dataPath(filename));
-        if (!file.exists()) {
-          // next see if it's just in this folder
-          file = new File(sketchPath, filename);
-        }
-        if (file.exists()) {
-          try {
-            String filePath = file.getCanonicalPath();
-            String filenameActual = new File(filePath).getName();
-            // make sure there isn't a subfolder prepended to the name
-            String filenameShort = new File(filename).getName();
-            // if the actual filename is the same, but capitalized
-            // differently, warn the user.
-            //if (filenameActual.equalsIgnoreCase(filenameShort) &&
-            //!filenameActual.equals(filenameShort)) {
-            if (!filenameActual.equals(filenameShort)) {
-              throw new RuntimeException("This file is named " +
-                                         filenameActual + " not " +
-                                         filename + ". Re-name it " +
-                                         "or change your code.");
-            }
-          } catch (IOException e) { }
-        }
-
-        // if this file is ok, may as well just load it
-        stream = new FileInputStream(file);
-        if (stream != null) return stream;
-
-        // have to break these out because a general Exception might
-        // catch the RuntimeException being thrown above
-      } catch (IOException ioe) {
-      } catch (SecurityException se) { }
     }
 
     try {
