@@ -1861,6 +1861,16 @@ public class Editor extends JFrame {
 
   public void highlightLine(int line) {
     // subtract one from the end so that the \n ain't included
+    if (line >= textarea.getLineCount()) {
+      // The error is at the end of this current chunk of code, 
+      // so the last line needs to be selected. 
+      line = textarea.getLineCount() - 1;
+      if (textarea.getLineText(line).length() == 0) {
+        // The last line may be zero length, meaning nothing to select. 
+        // If so, back up one more line.
+        line--;
+      }
+    }
     textarea.select(textarea.getLineStartOffset(line),
                     textarea.getLineEndOffset(line) - 1);
   }
@@ -1933,6 +1943,7 @@ public class Editor extends JFrame {
 
 
   public void error(Exception e) {
+    e.printStackTrace();
     if (e == null) {
       System.err.println("Editor.error() was passed a null exception.");
       return;
