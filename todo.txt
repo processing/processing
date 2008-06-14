@@ -4,7 +4,10 @@ X   also found that errors were continuing to process after the first
 X   http://dev.processing.org/bugs/show_bug.cgi?id=820
 X web colors < 6 chars produce bizarre error:
 X   http://dev.processing.org/bugs/show_bug.cgi?id=196
+X fix a problem with errors that are at the end of the code 
 
+_ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
+_   http://dev.processing.org/bugs/show_bug.cgi?id=821
 
 new/open/close/save
 _ file-save stops running sketch
@@ -1096,6 +1099,8 @@ _   or audio won't stop even after hitting stop
 
 LIBRARIES / Candy 
 
+_ Add support style attribute for path tag to Candy SVG (ricard)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=771
 _ when using get(), reset the bounds for the objects
 _   otherwise it's always relative to the original document
 _ save/restore more of the p5 graphics drawing state

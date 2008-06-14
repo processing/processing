@@ -1497,6 +1497,11 @@ public class Sketch {
       String msg = re.getMessage();
 
       if (msg.equals("expecting RCURLY, found 'null'")) {
+        // This can be a problem since the error is sometimes listed as a line
+        // that's actually past the number of lines. For instance, it might 
+        // report "line 15" of a 14 line program. Added code to highlightLine()
+        // inside Editor to deal with this situation (since that code is also
+        // useful for other similar situations).
         throw new RunnerException("Found one too many { characters " +
                                   "without a } to match it.", 
                                   errorFile, errorLine, re.getColumn());
