@@ -102,7 +102,7 @@ public class Compiler {
 
       BufferedReader reader =
         new BufferedReader(new StringReader(errorBuffer.toString()));
-      //System.err.println(errorBuffer.toString());
+      System.err.println(errorBuffer.toString());
 
       String line = null;
       while ((line = reader.readLine()) != null) {
@@ -235,7 +235,7 @@ public class Compiler {
   void handleCannotFindSymbol(BufferedReader reader,
                               RunnerException rex) throws IOException {
     String symbolLine = reader.readLine();
-    /*String locationLine =*/ reader.readLine();
+    String locationLine = reader.readLine();
     /*String codeLine =*/ reader.readLine();
     String caretLine = reader.readLine();
     rex.setCodeColumn(caretColumn(caretLine));
@@ -267,6 +267,22 @@ public class Compiler {
             message += " with parameter ";
           }
           message += methodParams;
+        }
+        
+        String locationClass = "location: class ";
+        if (locationLine.startsWith(locationClass) &&
+            // don't include the class name when it's a temp class
+            locationLine.indexOf("Temporary_") == -1) {
+          String className = locationLine.substring(locationClass.length());
+          // If no dot exists, -1 + 1 is 0, so this will have no effect.
+          className = className.substring(className.lastIndexOf('.') + 1);
+          int bracket = className.indexOf('[');
+          if (bracket == -1) {
+            message += " in class " + className;
+          } else {
+            className = className.substring(0, bracket);
+            message += " for an array of " + className + " objects";
+          }
         }
         message += ".";
         rex.setMessage(message);
