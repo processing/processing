@@ -543,15 +543,6 @@ in   */
 
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
-//    try {
-//      if (javaVersion >= 1.4f) {
-//        //setFocusTraversalKeysEnabled(false);  // 1.4-only function
-//        Method defocus =
-//          Component.class.getMethod("setFocusTraversalKeysEnabled",
-//                                    new Class[] { Boolean.TYPE });
-//        defocus.invoke(this, new Object[] { Boolean.FALSE });
-//      }
-//    } catch (Exception e) { }  // oh well
 
     millisOffset = System.currentTimeMillis();
 
@@ -577,20 +568,6 @@ in   */
     } catch (NullPointerException e) {
       online = false;
     }
-
-//    if (javaVersion < 1.3f) {
-//      addMouseListener(new MouseAdapter() {
-//          public void mousePressed(MouseEvent e) {
-//            link("http://java.com/");
-//          }
-//        });
-//      // no init to do, so don't cause no trouble, boy
-//      return;
-//      // call this after making the methods to minimize the
-//      // number of places needing the javaVersion crap
-//      // (also needs to check online first and create empty
-//      // stop method register list)
-//    }
 
     try {
       if (sketchPath == null) {
@@ -631,8 +608,6 @@ in   */
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
-    //if (javaVersion < 1.3f) return;
-
     if (thread != null) return;
     thread = new Thread(this);
     thread.start();
@@ -6694,112 +6669,6 @@ in   */
   //////////////////////////////////////////////////////////////
 
   // MAIN
-
-
-//  private static class WorkerVar {
-//    private Thread thread;
-//    WorkerVar(Thread t) { thread = t; }
-//    synchronized Thread get() { return thread; }
-//    synchronized void clear() { thread = null; }
-//  }
-
-  /**
-   * Class to help external communication run as a separate class.
-   * <p/>
-   * From a software engineering standpoint, using the stderr stream
-   * is highly problematic because of its tendency to die or act
-   * funny, especially on Windows. Threading issues can cause the
-   * buffers to get full or the applet to not run properly.
-   * Formerly known as the "code folder bug", this has been fixed
-   * through the use of this class, however it remains a tenuous
-   * situation that could perhaps break in a future JDK release.
-   */
-//  class Worker {
-//    private Object value;
-//    private WorkerVar workerVar;
-//
-//    protected synchronized Object getValue() {
-//      return value;
-//    }
-//
-//    private synchronized void setValue(Object x) {
-//      value = x;
-//    }
-//
-//    public Object construct() {
-//      try {
-//        int anything = System.in.read();
-//        if (anything == EXTERNAL_STOP) {
-//
-//          // adding this for 0073.. need to stop libraries
-//          // when the stop button is hit.
-//          PApplet.this.stop();
-//          finished = true;
-//        }
-//      } catch (IOException e) {
-//        finished = true;
-//      }
-//      try {
-//        Thread.sleep(250);
-//        //Thread.sleep(100);  // kick up latency for 0075?
-//      } catch (InterruptedException e) { }
-//      return null;
-//    }
-//
-//    // removing this from SwingWorker
-//    //public void finished() { }
-//
-//    public void interrupt() {
-//      Thread t = workerVar.get();
-//      if (t != null) {
-//        t.interrupt();
-//      }
-//      workerVar.clear();
-//    }
-//
-//    public Object get() {
-//      while (true) {
-//        Thread t = workerVar.get();
-//        if (t == null) {
-//          return getValue();
-//        }
-//        try {
-//          t.join();
-//        } catch (InterruptedException e) {
-//          Thread.currentThread().interrupt(); // propagate
-//          return null;
-//        }
-//      }
-//    }
-//
-//    public Worker() {
-//      // removing this from SwingWorker
-//      //final Runnable doFinished = new Runnable() {
-//      //    public void run() { finished(); }
-//      //  };
-//
-//      Runnable doConstruct = new Runnable() {
-//          public void run() {
-//            try {
-//              setValue(construct());
-//
-//            } finally {
-//              workerVar.clear();
-//            }
-//            // removing this from SwingWorker to avoid swing
-//            //javax.swing.SwingUtilities.invokeLater(doFinished);
-//          }
-//        };
-//
-//      Thread t = new Thread(doConstruct);
-//      workerVar = new WorkerVar(t);
-//    }
-//
-//    public void start() {
-//      Thread t = workerVar.get();
-//      if (t != null) t.start();
-//    }
-//  }
 
 
   /**
