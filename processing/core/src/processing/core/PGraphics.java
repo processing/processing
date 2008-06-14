@@ -2315,6 +2315,13 @@ public abstract class PGraphics extends PImage implements PConstants {
         // as recommended by the @deprecated flag.
         textFontNativeMetrics =
           Toolkit.getDefaultToolkit().getFontMetrics(textFontNative);
+        // The following is what needs to be done, however we need to be able
+        // to get the actual graphics context where the drawing is happening.
+        // For instance, parent.getGraphics() doesn't work for OpenGL since
+        // an OpenGL drawing surface is an embedded component. 
+//        if (parent != null) {
+//          textFontNativeMetrics = parent.getGraphics().getFontMetrics(textFontNative);
+//        }
 
         // float w = font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
       }
