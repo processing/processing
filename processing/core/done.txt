@@ -1,3 +1,9 @@
+0142 core
+X update iText in PDF library to 2.1.2u
+X loadStrings(".") should not list directory contents
+X   http://dev.processing.org/bugs/show_bug.cgi?id=716
+
+
 0141 core
 X no changes to core in 0141
 
