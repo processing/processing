@@ -1,10 +1,5 @@
-0142 pde
-X fix "cannot parse error text" with duplicate var declaration
-X   also found that errors were continuing to process after the first
-X   http://dev.processing.org/bugs/show_bug.cgi?id=820
-X web colors < 6 chars produce bizarre error:
-X   http://dev.processing.org/bugs/show_bug.cgi?id=196
-X fix a problem with errors that are at the end of the code
+0143 pde
+
 
 _ try LSMinimumSystemVersion in Info.plist
 
