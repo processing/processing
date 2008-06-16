@@ -105,6 +105,7 @@ public class CreateFont extends JFrame {
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
     Font fonts[] = ge.getAllFonts();
+    
     String flist[] = new String[fonts.length];
     table = new Hashtable();
 
