@@ -7,6 +7,51 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0142 - 16 June 2008
+
+A couple minor changes from 0141, though they have a big impact on
+reducing the "cannot parse error message" text from the compiler.
+Please read the "about" notes from 0136 through 0141 before using 
+this release.
+
+[ fixes/changes ] 
+
++ Fixed "cannot parse error text" for many, many situations.
+  http://dev.processing.org/bugs/show_bug.cgi?id=820
+
++ Fixed a problem with errors that are at the end of the code.
+  For instance, a missing } put the error /after/ the code, 
+  which itself produced another error.
+
++ Web colors with more or less than 6 chars produced bizarre error.
+  http://dev.processing.org/bugs/show_bug.cgi?id=196
+
++ Update iText in PDF library to 2.1.2u, in a failed attempt to fix
+  http://dev.processing.org/bugs/show_bug.cgi?id=727
+
++ loadStrings(".") no longer lists directory contents.
+  http://dev.processing.org/bugs/show_bug.cgi?id=716
+
+[ not yet fixed ]
+
++ "Target VM failed to initialize: VM initialization failed" on run
+  This happens because Java is not properly getting the machine's 
+  internet address. Workaround is to shut off networking:
+  http://dev.processing.org/bugs/show_bug.cgi?id=796
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5.
+  There appears to be an Apple bug in Java 1.5 and 1.6 on 
+  Mac OS X 10.5 (but not 10.4) causing these menus to be extremely 
+  slow. Workarounds described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+
++ Sometimes, nothing happens when you hit Run (no error displayed)
+  http://dev.processing.org/bugs/show_bug.cgi?id=775
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0141 - 11 June 2008
 
 This release fixes some issues found in the previous release, 
