@@ -624,8 +624,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       //System.out.println(entry.getKey() + "-->" + entry.getValue());
       list[count++] = (String) entry.getKey();
     }
-    //return PApplet.sort(list);
-    return list;
+    return PApplet.sort(list);
   }
 
 
