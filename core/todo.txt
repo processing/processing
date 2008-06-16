@@ -30,9 +30,6 @@ _   exit() will actually leave the application
 _   this may in fact only be internal
 _   maybe this is stop()?
 
-_ Add support style attribute for path tag to Candy SVG (ricard)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=771
-
 _ should we do joins when alpha is turned off?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
 
