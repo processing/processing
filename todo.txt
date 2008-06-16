@@ -4,12 +4,13 @@ X   also found that errors were continuing to process after the first
 X   http://dev.processing.org/bugs/show_bug.cgi?id=820
 X web colors < 6 chars produce bizarre error:
 X   http://dev.processing.org/bugs/show_bug.cgi?id=196
-X fix a problem with errors that are at the end of the code 
+X fix a problem with errors that are at the end of the code
 
-_ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
-_   http://dev.processing.org/bugs/show_bug.cgi?id=821
+_ try LSMinimumSystemVersion in Info.plist
 
 new/open/close/save
+_ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
+_   http://dev.processing.org/bugs/show_bug.cgi?id=821
 _ file-save stops running sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=810
 _ don't copy hidden files (.svn especially) on export/save as
