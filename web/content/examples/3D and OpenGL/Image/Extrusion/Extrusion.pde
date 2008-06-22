@@ -6,34 +6,28 @@
  * 
  * Created 18 August 2002
  */
- 
-PImage a;
-boolean onetime = true;
-int[][] aPixels;
+
+PImage extrude;
 int[][] values;
 float angle;
 
-void setup() 
-{
+void setup() {
   size(200, 200, P3D);
   
-  aPixels = new int[width][height];
-  values = new int[width][height];
-  noFill();
-
   // Load the image into a new array
-  // Extract the values and store in an array
-  a = loadImage("ystone08.jpg");
-  for (int i=0; i<height; i++) {
-    for (int j=0; j<width; j++) {
-      aPixels[j][i] = a.pixels[i*width + j];
-      values[j][i] = int(blue(aPixels[j][i]));
+  extrude = loadImage("ystone08.jpg");
+  extrude.loadPixels();
+  values = new int[extrude.width][extrude.height];
+  for (int y = 0; y < extrude.height; y++) {
+    for (int x = 0; x < extrude.width; x++) {
+      int pixel = extrude.pixels[y*width + x];
+      values[x][y] = int(brightness(pixel));
     }
   }
 }
 
-void draw() 
-{
+
+void draw() {
   background(0);
   
   // Update and constrain the angle
@@ -46,10 +40,10 @@ void draw()
   translate(-width/2, 0, 128);
   
   // Display the image mass
-  for (int i=0; i<height; i+=2) {
-    for (int j=0; j<width; j+=2) {
-      stroke(values[j][i]);
-      point(j, i, -values[j][i]);
+  for (int y = 0; y < extrude.height; y++) {
+    for (int x = 0; x < extrude.width; x++) {
+      stroke(values[x][y]);
+      point(x, y, -values[x][y]);
     }
   }
 }
