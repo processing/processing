@@ -145,22 +145,22 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=232">Bug 232</A>).
 Mac OS X
 
 <UL>
-<li>Processing requires Mac OS X 10.3.9 or later, see the <a href="../environment/platforms.html#mac">platforms</a> section for more information.
+<li>Processing requires Mac OS X 10.4 or later, see the <a href="../environment/platforms.html#mac">platforms</a> section for more information.
 <li>First be sure that you're not trying to run Processing from the disk image. As with most programs, Processing needs to be copied to the Applications folder in order for it to run properly.
 <li>If it's still not working, open Console.app, found in Applications &rarr; Utilities &rarr; Console and see if there are any messages. If you don't know what they mean, post them to the discourse board where someone can help you out.
-<li>An error such as this one visible in Console.app:
+<li>On startup, an error such as this one: (visible in Console.app)
 <PRE>
 #
 # The exception above was detected in native code outside the VM
 #
-# Java VM: Java HotSpot(TM) Client VM (1.4.2-50 mixed mode)
+# Java VM: Java HotSpot(TM) Client VM (build 1.5.0_13-121, mixed mode, sharing)
 #
 /Applications/Processing 0123.app/Contents/MacOS/JavaApplicationStub: 
 An unexpected Java error has been detected by HotSpot Virtual Machine: 
 </PRE>
 may be the result of a partially failed Java update. First try entering this with Terminal.app:
 <PRE>
- /System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java -version
+ /System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Commands/java -version
 </PRE>
 If that results in a message like:
 <PRE>
@@ -168,20 +168,20 @@ update_sharing command failed to execute
 </PRE>
 followed by more text, then your install is messed up. To fix it, enter this:
 <PRE>
- /System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/update_sharing 1.4
+ /System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Commands/update_sharing 1.5
 </PRE>
 and then try the -version command again. Hopefully, the "update_sharing command failed to execute" message will no longer be there, meaning that Processing and other Java applications should run again. (This problem was first tracked down
 <A HREF="http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1166189461">here</A>)
 <li>Using developer releases of Java is strongly discouraged. These can often cause problems and we can't possibly support them.
-<li>Fink users might see the following error: <br />
+<li><strike>Fink users might see the following error: <br />
 <TT>dyld: /Applications/processing/jikes version mismatch for library:<br />/sw/lib/libiconv.2.dylib (compatibility version of user: <br />
 5.0.0 greater than library's version: 3.0.0)</TT> <br />
-It seems that this happens when an older version of <a href="http://fink.sourceforge.net">Fink</A> is installed. In this case, you should either update or uninstall Fink. (thanks to Ryan Govostes for tracking this down)
+It seems that this happens when an older version of <a href="http://fink.sourceforge.net">Fink</A> is installed. In this case, you should either update or uninstall Fink. (thanks to Ryan Govostes for tracking this down)</strike> As of release 0140, we're no longer using Jikes, so this problem has gone away.
 </UL>
 Linux
 
 <UL>
-<li>If you get an error reading <TT>jikes: error while loading 
+<li><strike>If you get an error reading <TT>jikes: error while loading 
 shared libraries: libstdc++.so.5: cannot open shared object file: 
 No such file or directory</TT>,
 It's because Processing requires libstdc++-libc6.2-2.so.3 for jikes. 
@@ -195,7 +195,8 @@ HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)
 error: /opt/processing-0087/./jikes: undefined symbol:
 __dynamic_cast_2</TT>, then that also means that jikes is incompatible
 with your distro. (Also <A
-HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)
+HREF="http://as.processing.org/bugs/show_bug.cgi?id=47">Bug 47</A>)</strike>
+As of release 0140, we're no longer using Jikes, so this problem has gone away.
 </UL>
 Any Platform
 
@@ -410,60 +411,6 @@ long maximum = Runtime.getRuntime().maxMemory();
 There are also some known bugs that eat memory that can be found
 in the <A HREF="http://dev.processing.org/bugs/">bugs database</A>.
 
-<!--
-There are two types of programs in Processing. Some are run from
-inside the environment, but whenever you import a library, include a
-code folder, or use "Present" to view your sketch, it will be run
-as a separate Java program, which we sometimes call running "externally".
-<br /> <br />
-To increase the amount of memory available to those programs, open
-your preferences.txt file and edit the run.options line to include
-something like:
-<pre>-Xms128m -Xmx1024m</pre>
-This will increase the amount of RAM to 128 megabytes of stack, and
-1024 megabytes of heap (the latter being effectively usable RAM).
-This will eventually be a setting that's added to the preferences
-window (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=233">Bug 233</A>).
-<br /> <br />
-Depending on your OS and available RAM, there are limits on how much
-memory you can ask for. On Windows with 1G of RAM, it seems to be in
-the neighborhood of 1.5 GB. Mac OS X seems to be somewhat similar, but
-you mileage will vary with different versions of Java (1.3, 1.4,
-1.5). Unfortunately this does place an upper bound on things that is
-outside our control. You might look into the contributed Illustrator
-or SVG vector export libraries that can be found on the libraries page
-as another alternative for creating large format images.
-<br /> <br />
-The preferences.txt file is stored in different locations on each
-platform:
-<UL>
-<li> Windows: Documents and Settings &rarr; (your user name) &rarr;
-Application Data &rarr; Processing &rarr; preferences.txt
-<li> Mac OS X: Users &rarr; (your user name) &rarr; Library &rarr; 
-Processing &rarr; preferences.txt
-<li> Linux and others: ~/.processing &rarr; preferences.txt
-</UL>
-To increase the amount of memory for Processing itself and for
-sketches that are not running externally: 
-<UL>
-<li>On Windows, try adjusting the parameters in the file 'run.bat' and
-use that to run instead of Processing.exe. Short instructions can be
-found inside that file. It appears that the maximum amount of RAM that
-can be used on Windows is around 1.4 GB.
-<br /> <br />
-<li>On Mac OS X, right-click on Processing, select Show Package
-Contents, then edit "Info.plist" inside "Contents". Change these
-lines:
-<pre>&lt;key&gt;VMOptions&lt;/key&gt;
-&lt;string&gt;-Xms128M -Xmx256M&lt;/string&gt;</pre>
-to set to something higher than 128M and 256M (128 and 256 megabytes
-of ram) as you need to (and at your own risk).
-<br /> <br />
-<li>On Linux, adjust the Processing shell script as needed.
-</UL>
---></p>
-
 	
 <!-- NEXT SECTION -->
 
@@ -582,8 +529,7 @@ void keyPressed() {
 </PRE>
 </li>
 
-<li>An UnsupportedClassVersionError means that you're using code that was compiled for a later version of Java than is supported by Processing. Processing <A HREF="../environment/platforms.html#java">supports</A> Java 1.4. A message like <PRE> java.lang.UnsupportedClassVersionError: (Unsupported major.minor version 49.0)</PRE>
-means that the code was compiled for Java 1.5, for instance.
+<li>An UnsupportedClassVersionError means that you're using code that was compiled for a later version of Java than is supported by Processing. As of release 0136, Processing <A HREF="../environment/platforms.html#java">supports</A> Java 1.5. A message like <PRE> java.lang.UnsupportedClassVersionError: (Unsupported major.minor version 50.0)</PRE> means that the code was compiled for Java 1.6, which is not currently used with Processing.
 
 <li>Any code that accesses the pixels[] array should be placed 
 inside <TT>loadPixels()</TT> and <TT>updatePixels()</TT>. This can be 
@@ -754,7 +700,7 @@ Windows
 <LI>An error starting with <tt>"hs_err_pid10XX.txt"</tt> 
 sometimes shows up. This is something within the Sun's Java VM that
 we can't fix. It's not clear what the problem is, but it seems to have
-shown up with java 1.4.
+shown up with Java 1.4.
 </UL>
 Mac OS X
 <UL>
@@ -798,51 +744,14 @@ Automatically updated <A HREF="http://dev.processing.org/bugs/buglist.cgi?bug_st
 And of course, if these and others give you a burr in the
 saddle, <A HREF="http://dev.processing.org">join us</A> and help!
 <UL>
-<LI>Java 1.1 support has been (temporarily) removed from this
-release. We hope to bring it back, but it will take some time and we
-didn't want to hold up beta any longer. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=125">Bug 125</A>)
-<LI>The stop button sometimes doesn't stop things properly (especially
-when using libraries). Closing the window to shut things down usually
-works fine, though even that might lock up sometimes. Make sure you
-save your sketches before you run, in case you have to force-quit. If
-this happens to you, please post information about it at <A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=126">Bug 126</A>.
-<LI><STRIKE> &ldquo;Export to Application&rdquo; remains unimplemented, 
-though we're hoping to have it complete soon. (<A
-HREF="http://as.processing.org/bugs/show_bug.cgi?id=60">Bug
-60</A>)</STRIKE> Export to Application works in 0097.
-
-<LI><STRIKE>Pixel operations (get(), set(), blend(), loadPixels(), updatePixels(), 
-filter(), etc. there are others) are fairly broken when using OpenGL. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=91">Bug 91</A>)</STRIKE>
-Pixel operations in OpenGL are fixed in release 0127.
-<LI>The size of exported applets is larger than we would like, but
-we'll get things smaller and more optimize again. Having separated the
-2D and 3D libraries, eventually we won't have to include the 3D code
-when using 2D. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=127">Bug 127</A>).
-<LI><STRIKE>println() can be super slow and often locks things
-up</STRIKE> println() issues fixed for Processing release 93.
-<LI><STRIKE>Dragging the applet window around will often make
-Processing lock up</STRIKE> Fixed in a recent release.
 <LI>2D graphics might be a bit flickery sometimes, try setting the
-frameRate() to get things under control (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=122">Bug 122</A>)
+frameRate() to get things under control
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=122">Bug 122</A> and 
+<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=511">Bug 511</A>)
 <LI>strokeWeight() is disabled in P3D and OPENGL. Not really a bug
 per se (how do you define a stroke in 3D?), but something we'd like to
-fix someday. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=123">Bug 123</A>)
-
-<LI>The placement of applets that are 100x100 is sometimes weird. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=128">Bug 128</A>)
-<LI><STRIKE>Sometimes things lock up when there are errors in code,
-for instance, when using libraries like OpenGL, video, or
-net.</STRIKE> (fixed in the early 90s releases, please re-file a bug
-if you run into it)
-<LI><STRIKE>Errors sometimes don't come through, or are
-InvocationTargetExceptions, particularly on the Mac.</STRIKE> (if this
-hasn't been fixed please re-file a new bug)
+fix someday. 
+(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=123">Bug 123</A>)
 <LI>int() and float() don't always work, use ((int) blah) or ((float)
 blah) instead for the time being. or toInt(blah) and toFloat(blah). (<A
 HREF="http://as.processing.org/bugs/show_bug.cgi?id=4">Bug 4</A>)
@@ -852,18 +761,11 @@ HREF="http://dev.processing.org/bugs/show_bug.cgi?id=71">Bug 71</A>)
 <LI>Need to complete the "Tools" menu, which will be a way for people
 to develop their own editor plug-ins. (<A
 HREF="http://dev.processing.org/bugs/show_bug.cgi?id=124">Bug 124</A>)
-
 <LI>When you have too many tabs, things get ugly (<A
 HREF="http://processing.org/bugs/show_bug.cgi?id=54">Bug 54</A>)
-<LI><strike>Save changes before quitting needs a "Cancel" button. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=32">Bug 32</A>)</strike>
-Fixed in release 0120.
 <LI>Error messages after you hit Run are often too long to read or too
 weird to understand
 (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=57">Bug 57</A>)
-<LI><STRIKE>updatePixels() seems to stink on the Mac. It can sometimes
-cause the screen to not update properly, or for video to contain weird
-bands of mixed frames.</STRIKE> Fixed in release 0091.
 <LI>Lots of little UI things like proper focus or key shortcuts 
 (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=26">Bug 26</A> 
 and many others)
