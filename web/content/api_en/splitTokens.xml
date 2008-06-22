@@ -21,8 +21,12 @@ println(q[1]); // Prints "b"
 <example>
 <image></image>
 <code>
-String s = "a, b c ,,d "; // Despite the bad formatting,
-String[] p = splitTokens(s, ", "); // the data is parsed correctly
+// Despite the bad formatting, the data is parsed correctly.
+// The ", " as delimiter means to break whenever a comma *or*
+// a space is found in the String. Unlike the split() function, 
+// multiple adjacent delimiters are treated as a single break.
+String s = "a, b c ,,d "; 
+String[] p = splitTokens(s, ", ");
 println(p[0]); // Prints "a"
 println(p[1]); // Prints "b"
 println(p[2]); // Prints "c"
@@ -31,7 +35,9 @@ println(p[3]); // Prints "d"
 </example>
 
 <description>
-The splitTokens() function allows you to split a String at one or many character "tokens." The <b>tokens</b> parameter specifies the character or characters that mark the boundaries between each data element. If no <b>tokens</b> character is specified, a whitespace character is used as the split character. Whitespace characters include tab (\t), line feed (\n), carriage return (\r), and form feed (\f), and space. To convert a String to an array of integers or floats, use the datatype conversion functions <b>int()</b> and <b>float()</b> to convert the array of Strings.
+The splitTokens() function splits a String at one or many character "tokens." The <b>tokens</b> parameter specifies the character or characters to be used as a boundary.
+<br/> <br/>
+If no <b>tokens</b> character is specified, any whitespace character is used to split. Whitespace characters include tab (\\t), line feed (\\n), carriage return (\\r), form feed (\\f), and space. To convert a String to an array of integers or floats, use the datatype conversion functions <b>int()</b> and <b>float()</b> to convert the array of Strings.
 </description>
 
 <syntax>

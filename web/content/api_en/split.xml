@@ -12,7 +12,7 @@
 <image></image>
 <code>
 String men = "Chernenko,Andropov,Brezhnev";
-String list[] = split(men, ',');
+String[] list = split(men, ',');
 // list[0] is now Chernenko, list[1] is Andropov, ...
 </code>
 </example>
@@ -21,7 +21,7 @@ String list[] = split(men, ',');
 <image></image>
 <code>
 String men = "Chernenko / Andropov / Brezhnev";
-String list[] = split(men, " / ");
+String[] list = split(men, " / ");
 // list[0] is now Chernenko, list[1] is Andropov, ...
 </code>
 </example>
@@ -30,13 +30,17 @@ String list[] = split(men, " / ");
 <image></image>
 <code>
 String numbers = "8 67 5 309";
-int nums[] = int(split(numbers, ' '));
+int[] nums = int(split(numbers, ' '));
 // nums[0] is now 8, nums[1] is now 67, ...
 </code>
 </example>
 
 <description>
-The split() function is used to divide a String into its separate elements. This function splits a string into pieces using a character or string as the divider. The <b>delim</b> parameter specifies the character or characters which mark the boundaries between each data element. To convert a String to an array of integers or floats, use the datatype conversion functions <b>int()</b> and <b>float()</b> to convert the array of Strings (see example above).
+The split() function breaks a string into pieces using a character or string as the divider. The <b>delim</b> parameter specifies the character or characters that mark the boundaries between each piece. A String[] array is returned that contains each of the pieces.
+<br/> <br/>
+If the result is a set of numbers, you can convert the String[] array to to a float[] or int[] array using the datatype conversion functions <b>int()</b> and <b>float()</b> (see example above).
+<br/> <br/> 
+The <b>splitTokens()</b> function works in a similar fashion, except that it splits using a range of characters instead of a specific character or sequence.
 </description>
 
 <syntax>

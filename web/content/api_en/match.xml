@@ -11,15 +11,15 @@
 <example>
 <image></image>
 <code>
-String s = "Inside a tag, you will find <tag>content</tag>.";
-String[] m = match(s, "<tag>(\\\\S+)</tag>");
+String s = "Inside a tag, you will find &lt;tag&gt;content&lt;/tag&gt;.";
+String[] m = match(s, "&lt;tag&gt;(\\\\S+)&lt;/tag&gt;");
 println("Found " + m[0] + " inside the tag.");
 // Prints "Found content inside the tag." to the console
 </code>
 </example>
 
 <description>
-The match() function is used to apply a regular expression to a piece of text, and return matching groups (elements found inside parentheses) as a String array. No match will null. If no groups are specified in the regexp, but the sequence matches, a zero length (non-null) array will be returned.
+The match() function is used to apply a regular expression to a piece of text, and return matching groups (elements found inside parentheses) as a String array. No match will return null. If no groups are specified in the regexp, but the sequence matches, a zero length (non-null) array will be returned.
 <br/>
 The syntax can be found in the reference for Java's <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Pattern</A> class. For regular expression syntax, read the <A HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java Tutorial</A> on the topic. 
 </description>
