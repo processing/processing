@@ -113,6 +113,8 @@ public class PFont implements PConstants {
   // shared by the text() functions to avoid incessant allocation of memory
   //protected char textBuffer[] = new char[8 * 1024];
   //protected char widthBuffer[] = new char[8 * 1024];
+  
+  static public Font[] fonts;
 
 
   public PFont() { }  // for subclasses
@@ -968,42 +970,38 @@ public class PFont implements PConstants {
    * that the seems to have made its way into the Java API after 1.1.
    */
   static public String[] list() {
-//    if (PApplet.javaVersion < 1.3f) {
-//      // make this reflection too, since compilers complain about the
-//      // deprecation, and it's bound to stop working in 1.6 or something
-//      //return Toolkit.getDefaultToolkit().getFontList();
-//      try {
-//        Toolkit tk = Toolkit.getDefaultToolkit();
-//        Method getFontListMethod =
-//          tk.getClass().getMethod("getFontList", (Class[]) null);
-//        return (String[]) getFontListMethod.invoke(tk, (Object[]) null);
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//        return new String[] { };
-//      }
-//    }
+    loadFonts();
+    String list[] = new String[fonts.length];
+    for (int i = 0; i < list.length; i++) {
+      list[i] = fonts[i].getName();
+    }
+    return list;
+  }
+  
 
-    // getFontList is deprecated in 1.4, so this has to be used
-    //try {
+  static public void loadFonts() {
+    if (fonts == null) {
       GraphicsEnvironment ge =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
-//      Class geClass = Class.forName("java.awt.GraphicsEnvironment");
-//      Method glgeMethod =
-//        geClass.getMethod("getLocalGraphicsEnvironment", (Class[]) null);
-//      Object ge = glgeMethod.invoke((Class[]) null, (Object[]) null);
+      fonts = ge.getAllFonts();
+    }
+  }
 
-      Font fonts[] = ge.getAllFonts();
-//      Method gafMethod = geClass.getMethod("getAllFonts", (Class[]) null);
-//      Font fonts[] = (Font[]) gafMethod.invoke(ge, (Object[]) null);
-      String list[] = new String[fonts.length];
-      for (int i = 0; i < list.length; i++) {
-        list[i] = fonts[i].getName();
+
+  /** 
+   * Starting with Java 1.5, Apple broke the ability to specify most fonts.
+   * This has been filed as bug #4769141 at bugreporter.apple.com.
+   * More information at <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>
+  */   
+  static public Font findFont(String name) {
+    loadFonts();
+    if (PApplet.platform == PConstants.MACOSX) {
+      for (int i = 0; i < fonts.length; i++) {
+        if (name.equals(fonts[i].getName())) {
+          return fonts[i];
+        }
       }
-      return list;
-
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      throw new RuntimeException("Error inside PFont.list()");
-//    }
+    }
+    return new Font(name, Font.PLAIN, 1);
   }
 }
