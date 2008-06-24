@@ -4069,20 +4069,10 @@ in   */
    */
   public PFont createFont(String name, float size,
                           boolean smooth, char charset[]) {
-//    if (PApplet.javaVersion < 1.3f) {
-//      throw new RuntimeException("Can only create fonts with " +
-//                                 "Java 1.3 or higher");
-//    }
-
     String lowerName = name.toLowerCase();
     Font baseFont = null;
 
     try {
-//      Method deriveFontMethod =
-//        Font.class.getMethod("deriveFont",
-//                             new Class[] { Float.TYPE });
-//      Float floatSize = new Float(size);
-
       if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
         InputStream stream = createInput(name);
         if (stream == null) {
@@ -4092,25 +4082,12 @@ in   */
                              "added to your sketch and is readable.");
           return null;
         }
-
         baseFont = Font.createFont(Font.TRUETYPE_FONT, createInput(name));
-//        Method createFontMethod =
-//          Font.class.getMethod("createFont",
-//                               new Class[] { Integer.TYPE,
-//                                             InputStream.class });
-//        Field ttf = Font.class.getField("TRUETYPE_FONT");
-//        Integer ttfInteger = new Integer(ttf.getInt(ttf));
-//        Font baseFont = (Font)
-//          createFontMethod.invoke(name,
-//                                  new Object[] { ttfInteger,
-//                                                 openStream(name) });
-//        font = (Font) deriveFontMethod.invoke(baseFont,
-//                                              new Object[] { floatSize });
+        
       } else {
-        baseFont = new Font(name, Font.PLAIN, 1);
+        //baseFont = new Font(name, Font.PLAIN, 1);
+        baseFont = PFont.findFont(name);
       }
-      //return baseFont.deriveFont(size);
-
     } catch (Exception e) {
       System.err.println("Problem using createFont() with " + name);
       e.printStackTrace();
