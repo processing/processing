@@ -1,5 +1,23 @@
 0143 core
-
+X some fonts broken in java 1.5 on osx have changed again
+X   http://dev.processing.org/bugs/show_bug.cgi?id=407
+X   filed as bug #4769141 with apple http://bugreport.apple.com/
+X   appears that asking for the postscript name no longer works
+o   fix "create font" and associated font stuff to straighten it out
+X   was grabbing the wrong native font with ico sketch 
+X   seems that the psname is no longer a good way to grab the font? related?
+X available font issues
+X   is getFontList returning a different set of fonts from device2d?
+X     try it out on java 1.3 versus 1.4
+X   getAllFonts() not quite working for many fonts
+X   i.e. Orator Std on windows.. macosx seems to be ok
+X   is getFamilyNames() any different/better?
+X   when did this break? 1.4.1? 1.4.x vs 1.3?
+X   may be that cff fonts won't work?
+X   or is it only those with ps names?
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
+o leading looks too big, at least in PGraphics2 with news gothic
+X   though prolly the converted version of the .ttf?
 
 _ option to have renderer errors show up
 _   1) as text warnings 2) as runtime exceptions 3) never
@@ -63,6 +81,11 @@ _   in fact, this maybe should be a library that does it
 _     so that the file size can be much smaller
 
 _ remove saveFile() methods?
+
+_ ENABLE_DEPTH_SORT no really working for GL
+_   because the zbuffer is still there, it's still calculating
+_   actually, this is probably because it happens after the frame
+_   so really, flush is required whenever the depth sort is called
 _ ENABLE_DEPTH_SORT causing trouble with MovieMaker
 _   need to make the flush() api accessible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=692
@@ -425,26 +448,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=531
 
 CORE / PFont and text()
 
-_ some fonts broken in java 1.5 on osx have changed again
-_   http://dev.processing.org/bugs/show_bug.cgi?id=407
-_   filed as bug #4769141 with apple
-_   http://bugreport.apple.com/
-_   appears that asking for the postscript name no longer works
-o   fix "create font" and associated font stuff to straighten it out
-X   was grabbing the wrong native font with ico sketch 
-X   seems that the psname is no longer a good way to grab the font? related?
-_ available font issues
-_   is getFontList returning a different set of fonts from device2d?
-_     try it out on java 1.3 versus 1.4
-_   getAllFonts() not quite working for many fonts
-_   i.e. Orator Std on windows.. macosx seems to be ok
-_   is getFamilyNames() any different/better?
-_   when did this break? 1.4.1? 1.4.x vs 1.3?
-_   may be that cff fonts won't work?
-_   or is it only those with ps names?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
-_ leading looks too big, at least in PGraphics2 with news gothic
-_   though it may be the converted version of the .ttf?
 _ font encoding issues 
 _   java seems to force straight windows encoding.. (problem for pi fonts)
 _   opentype/cff fonts don't work with live loading from the app
