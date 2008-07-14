@@ -69,6 +69,7 @@ cd core
 #export CLASSPATH
 
 perl preproc.pl
+mkdir -p bin
 ../build/linux/work/java/bin/java \
     -cp ../build/linux/work/java/lib/tools.jar \
     com.sun.tools.javac.Main \
