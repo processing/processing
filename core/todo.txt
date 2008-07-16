@@ -18,6 +18,14 @@ X   or is it only those with ps names?
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
 o leading looks too big, at least in PGraphics2 with news gothic
 X   though prolly the converted version of the .ttf?
+X add a fix so that negative angle values won't hork up arc() command
+X add resize() method to PImage
+
+
+_ incorporate changes from andres colubri into PGraphicsOpenGL
+
+_ if loading an image in p5 and the image is bad, no error msg shown
+_   that is, if a loadImage() turns up an access denied page
 
 _ option to have renderer errors show up
 _   1) as text warnings 2) as runtime exceptions 3) never
@@ -27,18 +35,8 @@ _ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
 _   maybe need to add properties to the size() command?
 _   or use a getXxxx() method?
 
-_ P3D smooshes the top row of pixels when drawing text (or images)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=466
-_ textAlign(CENTER) with P3D and OPENGL produces messy result
-_   probably rounding error with the images
-_   http://dev.processing.org/bugs/show_bug.cgi?id=475
-_ textures truly did get worse in P3D
-_   problem is that bilinear is turned on by default starting in 0124(?)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
-
 _ pdf not rendering unicode with beginRecord()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=727
-
 
 _ need a halt() method which will kill but not quit app (sets finished?)
 _   exit() will actually leave the application
@@ -52,8 +50,9 @@ _ PGraphicsOpenGL.java:
 _   directionalLight() and .pointLight() are both calling
 _   glLightNoAmbient() which then creates a new FloatBuffer 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
-
-_ repeating texture support
+_ odd-size height will make blue line across image in saveFrame()
+_   probably the pixel flipping code (and endian sorting) not happening
+_   because the blue comes from the byte order flip
 
 _ bezierVertex YZ Plane fill problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=752
@@ -205,18 +204,37 @@ _ text position is quantized in JAVA2D
 _   http://dev.processing.org/bugs/show_bug.cgi?id=806
 
 
-gledgeflag [1.0]
+P2D, P3D, PPolygon [1.0]
+_ P3D smooshes the top row of pixels when drawing text (or images)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=466
+_ textAlign(CENTER) with P3D and OPENGL produces messy result
+_   probably rounding error with the images
+_   http://dev.processing.org/bugs/show_bug.cgi?id=475
+_ textures truly did get worse in P3D
+_   problem is that bilinear is turned on by default starting in 0124(?)
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
 _ when turning smoothing on, internal lines of shapes are visible
+_   add an edge flag when tesselating 
+_   mind the opengl tesselation flags
 _   need to turn off smoothing for the interior of shapes
 _   http://dev.processing.org/bugs/show_bug.cgi?id=200
+_ use opengl tesselator when in opengl mode
 _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
+_ repeating texture support
+_ DISABLE_DEPTH_TEST bad results
+_   have to clear the zbuffer to make it work
+_   this may be specific to lines
+_   http://dev.processing.org/bugs/show_bug.cgi?id=827
+_   though it also seems to be a problem with opengl
+_   also make a note of disabling as a way to help font appearance
 
 
 threading [1.0]
 _ major threading overhaul before 1.0 (compendium)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=511
+_   ewjordan has added a good trace of the badness
 _ PDE locks up during setup() (since no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 _ if too many errors come through during setup, app will terminate
