@@ -662,7 +662,12 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Called in repsonse to a resize event, handles setting the
    * new width and height internally, as well as re-allocating
    * the pixel buffer for the new size.
-   * <P>
+   *
+   * Unlike the inherited version of this function from PImage, calling
+   * resize() on a PGraphics will clear its contents. To resize an image
+   * taken from a PGraphics object, first all get(), and resize() that
+   * copy of the image.
+   *
    * Note that this will nuke any camera settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
@@ -2321,7 +2326,7 @@ public abstract class PGraphics extends PImage implements PConstants {
         // The following is what needs to be done, however we need to be able
         // to get the actual graphics context where the drawing is happening.
         // For instance, parent.getGraphics() doesn't work for OpenGL since
-        // an OpenGL drawing surface is an embedded component. 
+        // an OpenGL drawing surface is an embedded component.
 //        if (parent != null) {
 //          textFontNativeMetrics = parent.getGraphics().getFontMetrics(textFontNative);
 //        }
