@@ -156,7 +156,9 @@ cp library/serial.jar $LIBRARIES/serial/library/
 echo Building net library...
 cd ../net
 mkdir -p bin
-$JAVAC -d bin src/processing/net/*.java 
+$JAVAC \
+    -classpath "$CLASSPATH" \
+    -d bin src/processing/net/*.java 
 rm -f library/net.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
@@ -218,7 +220,9 @@ cp library/pdf.jar $LIBRARIES/pdf/library/
 echo Building DXF library...
 cd ../dxf
 mkdir -p bin
-$JAVAC -d bin src/processing/dxf/*.java 
+$JAVAC \
+    -classpath "$CLASSPATH" \
+    -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
@@ -230,7 +234,9 @@ cp library/dxf.jar $LIBRARIES/dxf/library/
 echo Building XML library...
 cd ../xml
 mkdir -p bin
-$JAVAC -d bin src/processing/xml/*.java 
+$JAVAC \
+    -classpath "$CLASSPATH" \
+    -d bin src/processing/xml/*.java 
 rm -f library/xml.jar
 find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/xml.jar processing/xml/*.class && cd ..
