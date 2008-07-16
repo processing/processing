@@ -1590,6 +1590,8 @@ public abstract class PGraphics extends PImage implements PConstants {
       int increment = 1; // what's a good algorithm? stopLUT - startLUT;
       for (int i = startLUT; i < stopLUT; i += increment) {
         int ii = i % SINCOS_LENGTH;
+        // modulo won't make the value positive
+        if (ii < 0) ii += SINCOS_LENGTH;
         vertex(centerX + cosLUT[ii] * hr,
                centerY + sinLUT[ii] * vr);
       }
@@ -1615,6 +1617,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       int increment = 1; // what's a good algorithm? stopLUT - startLUT;
       for (int i = startLUT; i < stopLUT; i += increment) {
         int ii = i % SINCOS_LENGTH;
+        if (ii < 0) ii += SINCOS_LENGTH;
         vertex(centerX + cosLUT[ii] * hr,
                centerY + sinLUT[ii] * vr);
       }

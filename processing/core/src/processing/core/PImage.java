@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -1301,6 +1301,38 @@ public class PImage implements PConstants, Cloneable {
 
     // return the goods
     return c;
+  }
+
+
+  /**
+   * Resize this image to a new width and height.
+   * Use 0 for wide or high to make that dimension scale proportionally.
+   */
+  public void resize(int wide, int high) {  // ignore
+    // Make sure that the pixels[] array is valid 
+    loadPixels();
+
+    if (wide <= 0 && high <= 0) {
+      width = 0;  // Gimme a break, don't waste my time
+      height = 0;
+      pixels = new int[0];
+      
+    } else {
+      if (wide == 0) {  // Use height to determine relative size
+        float diff = (float) high / (float) height;
+        wide = (int) (width * diff);
+      } else if (high == 0) {  // Use the width to determine relative size
+        float diff = (float) wide / (float) width;
+        high = (int) (height * diff);
+      }
+      PImage temp = new PImage(wide, high, this.format);
+      temp.copy(this, 0, 0, width, height, 0, 0, wide, high);
+      this.width = wide;
+      this.height = high;
+      this.pixels = temp.pixels;
+    }
+    // Mark the pixels array as altered
+    updatePixels();
   }
 
 
