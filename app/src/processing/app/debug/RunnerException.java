@@ -28,7 +28,7 @@ package processing.app.debug;
  * An exception with a line number attached that occurs
  * during either compile time or run time.
  */
-public class RunnerException extends Exception {
+public class RunnerException extends RuntimeException {
   protected String message;
   protected int codeIndex;
   protected int codeLine;
