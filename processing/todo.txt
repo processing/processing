@@ -1,7 +1,24 @@
 0143 pde
+X fixed build problems with macosx and linux
 
+_ draw mode apps do not shut off the run button when finished
 
-_ try LSMinimumSystemVersion in Info.plist
+_ remove namespace stuff from xml lib?
+
+_ Closing the last window doesn't cause PDE to save its position/contents/etc
+_   http://dev.processing.org/bugs/show_bug.cgi?id=835
+
+_ opengl.jar with eclipse
+_   auto-extract native libs from opengl.jar 
+_   to remove java.library.path problems (!)
+
+_ need to compare with localized version of javac strings 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=828
+
+_ preproc code showing through since it's on line 0:
+_   http://dev.processing.org/bugs/show_bug.cgi?id=831
+_   also need to handle "unexpected type" error in that example
+
 
 new/open/close/save
 _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
@@ -38,6 +55,10 @@ _     you will overwrite your original code from the main-tab.
 _ after fixing name of sketch, ensure sketch of that name does not exist
 _ put the "had to rename sketch" message in the msg bar
 _   it's ugly/annoying/intrusive
+
+_ dialogs are not modal
+_   or at least, shouldn't open more than one copy of prefs
+_   http://dev.processing.org/bugs/show_bug.cgi?id=830
 
 
 . . . 
@@ -78,7 +99,7 @@ _   actually it's prolly just the insertMenu() garbage
 _     need to have a better way of dealing with this
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=775
+_   http://dev.processing.org/bugs/show_bug.cgi?id=852
 _   this may just be a macosx (ppc?) bug
 
 
@@ -222,6 +243,12 @@ _   using expand and arrays to move quickly
 
 DOC / Write Me
 
+
+_ moviemaker video sizes / usability
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
+_ other projects on which p5 is built 
+_   no longer oro matcher and jikes
+_   add: quaqua, jna, registry stuff, .. ?
 _ quicktime likes to crash (not just on windows)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=791
 _ createInput, createInputRaw, createOutput
@@ -504,6 +531,8 @@ _   again, a warning checkbox
 
 PDE / Compiler & Preprocessor
 
+_ need better error messages in general
+_   some means to link out to further documentation (e.g. AIOOBE, NPE)
 _ add support for multiple errors from the compiler
 _   actual error may be 4th of 5
 _   maybe a dropdown list thing, with the first just shown?
@@ -1253,6 +1282,7 @@ _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _ processing cancels shutdown on mac os x
 _   http://dev.processing.org/bugs/show_bug.cgi?id=539
+_ try LSMinimumSystemVersion in Info.plist
 
 
 DIST / Linux

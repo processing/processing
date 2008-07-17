@@ -35,6 +35,29 @@ import java.util.zip.*;
 
 public class Compiler {
 
+  private static final String javacBundleName =
+    "com.sun.tools.javac.resources.javac";
+  private static ResourceBundle javacResources;
+
+  private static final String compilerBundleName =
+    "com.sun.tools.javac.resources.compiler";
+  private static ResourceBundle compilerResources;
+
+
+  public Compiler() {
+    try {
+        javacResources = ResourceBundle.getBundle(javacBundleName);
+        compilerResources = ResourceBundle.getBundle(compilerBundleName);
+
+    } catch (MissingResourceException e) {
+      e.printStackTrace();
+      //throw new Error("Resources for javac could not be found.");
+      throw new RuntimeException("The JDK is not installed properly. " +
+                                 "Please use the version of Processing " +
+                                 "that includes Java.");
+    }
+  }
+
   /**
    * Fire up 'ole javac based on <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/solaris/javac.html#proginterface">this interface</a>.
    *
@@ -102,12 +125,22 @@ public class Compiler {
 
       BufferedReader reader =
         new BufferedReader(new StringReader(errorBuffer.toString()));
-      System.err.println(errorBuffer.toString());
+      //System.err.println(errorBuffer.toString());
 
       String line = null;
       while ((line = reader.readLine()) != null) {
         //System.out.println("got line " + line);  // debug
 
+        /*
+compiler.misc.count.error=\
+    {0} error
+compiler.misc.count.error.plural=\
+    {0} errors
+compiler.misc.count.warn=\
+    {0} warning
+compiler.misc.count.warn.plural=\
+    {0} warnings
+         */
         // Check to see if this is the last line.
         if ((PApplet.match(line, "\\d+ error[s]?") != null) ||
             (PApplet.match(line, "\\d+ warning[s]?") != null)) {
@@ -117,7 +150,11 @@ public class Compiler {
         // Hide these because people are getting confused
         // http://dev.processing.org/bugs/show_bug.cgi?id=817
         // com/sun/tools/javac/resources/compiler.properties
-        if (line.startsWith("Note: ")) {
+        //if (line.startsWith("Note: ")) {
+        String compilerNote = compilerResources.getString("compiler.note.note");
+        if (line.startsWith(compilerNote)) {
+          //System.out.println("found a compiler note");
+          
           // if you mention serialVersionUID one more time, i'm kickin' you out
           if (line.indexOf("serialVersionUID") != -1) continue;
           // {0} uses unchecked or unsafe operations.
@@ -178,6 +215,9 @@ public class Compiler {
         //System.out.println("code line now " + codeLine);
         exception = new RunnerException(errorMessage, codeIndex, codeLine, -1, false);
 
+        // for a test case once message parsing is implemented, 
+        // use new Font(...) since that wasn't getting picked up properly.
+        
         if (errorMessage.equals("cannot find symbol")) {
           handleCannotFindSymbol(reader, exception);
           
