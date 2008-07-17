@@ -255,7 +255,7 @@ public class EditorConsole extends JScrollPane {
       }
     }
 
-    // to console display
+    // to console display    
     appendText(what, err);
     // moved down here since something is punting
   }
