@@ -67,12 +67,12 @@ void init_particle(float _mass, float _drag, float ox, float oy)
 {
   p_x = ox;
   p_y = oy;
-  p_v2 = 0.0f;
-  p_vx = 0.0f;
-  p_vy = 0.0f;
-  p_a2 = 0.0f;
-  p_ax = 0.0f;
-  p_ay = 0.0f;
+  p_v2 = 0.0;
+  p_vx = 0.0;
+  p_vy = 0.0;
+  p_a2 = 0.0;
+  p_ax = 0.0;
+  p_ay = 0.0;
   p_mass = _mass;
   p_drag = _drag;
 }

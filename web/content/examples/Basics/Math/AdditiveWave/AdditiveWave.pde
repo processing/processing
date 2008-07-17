@@ -9,17 +9,17 @@ int xspacing = 8;   // How far apart should each horizontal location be spaced
 int w;              // Width of entire wave
 int maxwaves = 4;   // total # of waves to add together
 
-float theta = 0.0f;
+float theta = 0.0;
 float[] amplitude = new float[maxwaves];   // Height of wave
 float[] dx = new float[maxwaves];          // Value for incrementing X, to be calculated as a function of period and xspacing
 float[] yvalues;                           // Using an array to store height values for the wave (not entirely necessary)
 
 void setup() {
-  size(200,200);
+  size(200, 200);
   frameRate(30);
-  colorMode(RGB,255,255,255,100);
+  colorMode(RGB, 255, 255, 255, 100);
   smooth();
-  w = width+16;
+  w = width + 16;
 
   for (int i = 0; i < maxwaves; i++) {
     amplitude[i] = random(10,30);
@@ -42,7 +42,7 @@ void calcWave() {
 
   // Set all height values to zero
   for (int i = 0; i < yvalues.length; i++) {
-    yvalues[i] = 0.0f;
+    yvalues[i] = 0;
   }
  
   // Accumulate wave height values

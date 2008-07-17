@@ -14,7 +14,7 @@ import processing.opengl.*;
 PImage bg;
 PImage texmap;
 
-int sDetail = 35;  //Sphere detail setting
+int sDetail = 35;  // Sphere detail setting
 float rotationX = 0;
 float rotationY = 0;
 float velocityX = 0;
@@ -22,10 +22,10 @@ float velocityY = 0;
 float globeRadius = 300;
 float pushBack = 0;
 
-float[] cx,cz,sphereX,sphereY,sphereZ;
+float[] cx, cz, sphereX, sphereY, sphereZ;
 float sinLUT[];
 float cosLUT[];
-float SINCOS_PRECISION = 0.5f;
+float SINCOS_PRECISION = 0.5;
 int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 
