@@ -173,7 +173,6 @@ void texturedSphere(float r, PImage t)
     vertex(0, r, 0,u,v+iv);    
     u+=iu;
   }
-  vertex(0, r, 0,u, v+iv);
   vertex(sphereX[voff]*r, sphereY[voff]*r, sphereZ[voff]*r, u, v);
   endShape();
   
