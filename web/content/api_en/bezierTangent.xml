@@ -25,6 +25,7 @@ for (int i = 0; i &lt;= steps; i++) {
   float ty = bezierTangent(20, 10, 90, 80, t);
   // Calculate an angle from the tangent points
   float a = atan2(ty, tx);
+  a += PI;
   stroke(255, 102, 0);
   line(x, y, cos(a)*30 + x, sin(a)*30 + y);
   // This follwing line of code makes a line 
@@ -50,7 +51,7 @@ for (int i = 0; i &lt;= steps; i++) {
   float tx = bezierTangent(85, 10, 90, 15, t);
   float ty = bezierTangent(20, 10, 90, 80, t);
   float a = atan2(ty, tx);
-  a += PI/2.0;
+  a -= HALF_PI;
   line(x, y, cos(a)*8 + x, sin(a)*8 + y);
 }
 </code>

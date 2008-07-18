@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
-<name>bezierPoint()</name>
+<name>curveTangent()</name>
 
 <category>Shape</category>
 
@@ -9,27 +9,31 @@
 <usage>Web &amp; Application</usage>
 
 <example>
-<image>bezierPoint_.gif</image>
+<image>curveTangent_.gif</image>
 <code>
 noFill();
-bezier(85, 20, 10, 10, 90, 90, 15, 80);
-fill(255);
-int steps = 10;
+curve(5, 26, 73, 24, 73, 61, 15, 65); 
+int steps = 6;
 for (int i = 0; i &lt;= steps; i++) {
   float t = i / float(steps);
-  float x = bezierPoint(85, 10, 90, 15, t);
-  float y = bezierPoint(20, 10, 90, 80, t);
-  ellipse(x, y, 5, 5);
+  float x = curvePoint(5, 73, 73, 15, t);
+  float y = curvePoint(26, 24, 61, 65, t);
+  //ellipse(x, y, 5, 5);
+  float tx = curveTangent(5, 73, 73, 15, t);
+  float ty = curveTangent(26, 24, 61, 65, t);
+  float a = atan2(ty, tx);
+  a -= PI/2.0;
+  line(x, y, cos(a)*8 + x, sin(a)*8 + y);
 }
 </code>
 </example>
 
 <description>
-Evalutes the Bezier at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a bezier curve at t.
+Calculates the tangent of a point on a curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
 </description>
 
 <syntax>
-bezierPoint(<c>a</c>, <c>b</c>, <c>c</c>, <c>d</c>, <c>t</c>)
+curveTangent(<c>a</c>, <c>b</c>, <c>c</c>, <c>d</c>, <c>t</c>)
 </syntax>
 
 <parameter>
@@ -44,7 +48,7 @@ bezierPoint(<c>a</c>, <c>b</c>, <c>c</c>, <c>d</c>, <c>t</c>)
 
 <parameter>
 <label>c</label>
-<description>int or float: coordinate of first control point</description>
+<description>int or float: coordinate of second control point</description>
 </parameter>
 
 <parameter>
@@ -60,9 +64,10 @@ bezierPoint(<c>a</c>, <c>b</c>, <c>c</c>, <c>d</c>, <c>t</c>)
 <returns></returns>
 
 <related>
-bezier()
-bezierVertex()
+curve()
+curveVertex()
 curvePoint()
+bezierTangent()
 </related>
 
 <availability>1.0</availability>
@@ -72,7 +77,5 @@ curvePoint()
 <partof>Core</partof>
 
 <level>Extended</level>
-
-
 
 </root>
