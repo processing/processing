@@ -20,7 +20,7 @@ void draw()
   background(51);
 
   for(int i = 0; i <= width; i += 20) {
-    for(int j = 0; j <= width; j += 20) {
+    for(int j = 0; j <= height; j += 20) {
       float size = dist(mouseX, mouseY, i, j);
       size = size/max_distance * 66;
       ellipse(i, j, size, size);
