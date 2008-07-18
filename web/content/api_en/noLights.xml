@@ -24,7 +24,7 @@ noLights()
 <returns>None</returns>
 
 <related>
-lights();
+lights()
 </related>
 
 <availability>1.0</availability>

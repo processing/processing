@@ -11,6 +11,7 @@
 <example>
 <image>ortho_.gif</image>
 <code>
+size(100, 100, P3D)
 noFill();
 ortho(0, width, 0, height, -10, 10);
 translate(100, 100, 0);

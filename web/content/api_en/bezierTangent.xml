@@ -11,8 +11,10 @@
 <example>
 <image>bezierTangent_.gif</image>
 <code>
+noFill();
 bezier(85, 20, 10, 10, 90, 90, 15, 80);
 int steps = 6;
+fill(255);
 for (int i = 0; i &lt;= steps; i++) {
   float t = i / float(steps);
   // Get the location of the point
@@ -37,6 +39,7 @@ for (int i = 0; i &lt;= steps; i++) {
 <example>
 <image>bezierTangent_2.gif</image>
 <code>
+noFill();
 bezier(85, 20, 10, 10, 90, 90, 15, 80);
 stroke(255, 102, 0);
 int steps = 16;

@@ -31,7 +31,7 @@ println(a + " : " + s + " : " +  as);
 </example>
 
 <description>
-The inverse of <b>sin()</b>, returns the arc sine of a value. This function expects the values in the range of -1 to 1 and values are returned in the range <b>0</b> to <b>PI (3.1415927)</b>.
+The inverse of <b>sin()</b>, returns the arc sine of a value. This function expects the values in the range of -1 to 1 and values are returned in the range <b>-PI/2</b> to <b>PI/2</b>.
 </description>
 
 <syntax>
@@ -40,7 +40,7 @@ asin(<c>value</c>)
 
 <parameter>
 <label>value</label>
-<description>float: numbers between -1 and 1</description>
+<description>float: the value whose arc sine is to be returned</description>
 </parameter>
 
 <returns>float</returns>
