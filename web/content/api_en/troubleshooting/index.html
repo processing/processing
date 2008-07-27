@@ -50,10 +50,6 @@ First, read through this page and maybe the <A HREF="../environment/platforms.ht
 	<br />
 		If you don't find your bug, enter it as a new bug in
 		the database, this will help us keep track of the issue. 
-<!--If you're having
-      	trouble or find it confusing (or the word "database" gives you
-      	the willies), please post on the
-      	discourse board so that we can get you straightened out. -->
 	<br /> <br />
 	When reporting please include information about
 <ol>
@@ -72,17 +68,6 @@ from the 'lib' folder. </li>
         Mac OS X and Linux, or on Windows, in one of its many "TEMP" folders,
 	inside a buildNNNN folder (the Ns will be numbers or letters).
 
-<!--
-        The build folder is in the same location as preferences.txt:
-
-	<UL>
-	<li> Windows: Documents and Settings &rarr; (your user name) &rarr;
-		Application Data &rarr; Processing &rarr; build</li>
-	<li> Mac OS X: Users &rarr; (your user name) &rarr; Library &rarr; 
-		Processing &rarr; build</li>
-	<li> Linux and others: ~/.processing &rarr; build</li>
-	</UL>
--->
 	The more details you can post, the better, because it helps us figure
 	out what's going on. Useful things when reporting:
 
@@ -121,9 +106,10 @@ For instance, if your name contains umlauts or Japanese characters, it may not s
 The fix is to create a user account that uses only ASCII characters, but we're looking for a more permanent solution.
 Unfortunately it's taking a while because the US English version of Windows does not have this problem, and we don't own any international editions of Windows.
 (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=49">Bug 49</A>)
-<li>Try deleting your preferences file (located in Documents and Settings &rarr; Application Data &rarr; Processing &rarr; preferences.txt)
+<li>Try deleting your preferences file. On Windows XP this is located in Documents and Settings &rarr; <em>username</em> &rarr; Application Data &rarr; Processing &rarr; preferences.txt. On Windows Vista, it's in Users &rarr; <em>username</em> &rarr; AppData &rarr; Roaming &rarr; preferences.txt.
 Sometimes a bad preferences file can prevent the application from running.
 If you've recently hand-edited preferences.txt, that's also a likely suspect. 
+Only delete the preferences file when Processing is not running. And <em>do not</em> modify the preferences.txt file inside the Processing "lib" folder.
 <li>If you have lots of garbage in your CLASSPATH environment
   variable, that might cause trouble starting up a sketch. You might
   get "Couldn't find package xxx.xxx" errors. Clean things up by avoiding
