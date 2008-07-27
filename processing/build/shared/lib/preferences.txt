@@ -4,12 +4,22 @@
 # These are the default preferences. If you want to modify 
 # them directly, use the per-user local version of the file:
 
-# Documents and Settings -> Application Data -> 
-#    Processing -> preferences.txt (on windows)
+# Documents and Settings -> [username] -> Application Data -> 
+#    Processing -> preferences.txt (on Windows XP)
 
-# ~/Library -> Processing -> preferences.txt (on macosx)
+# Users -> [username] -> AppData -> Roaming -> 
+#    Processing -> preferences.txt (on Windows Vista)
 
-# ~/.processing -> preferences.txt (on linux)
+# ~/Library -> Processing -> preferences.txt (on Mac OS X)
+
+# ~/.processing -> preferences.txt (on Linux)
+
+# The exact location of your preferences file can be found at
+# the bottom of the Preferences window inside Processing.
+
+# Because AppData and Application Data may be considered 
+# hidden or system folders on Windows, you'll have to ensure
+# that they're visible in order to get at preferences.txt
 
 # You'll have problems running Processing if you incorrectly 
 # modify lines in this file.
