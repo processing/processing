@@ -68,11 +68,6 @@ _   with get() and set() methods, this gets really tricky (too slow)
 _ Duplicate 3d faces in beginRaw() export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=737
 
-_ textFont() used in setup() is null once draw() arrives
-_   http://dev.processing.org/bugs/show_bug.cgi?id=726
-_ colorMode() set inside setup() sometimes not set once draw() arrives
-_   http://dev.processing.org/bugs/show_bug.cgi?id=767
-
 _ for begin/endRecord, use a piggyback mechanism
 _   that way won't have to pass a PApplet around
 _   this has a big impact on the SVG library
@@ -185,6 +180,8 @@ _   same will go for blend()
 
 
 rework some text/font code [1.0]
+_ text in rectangle is drawing outside the box
+_   http://dev.processing.org/bugs/show_bug.cgi?id=844
 _ textMode(SHAPE) and textMode(IMAGE)?
 _   textMode(SCREEN) is out of its league?
 _ fix getFontMetrics() warning
@@ -235,6 +232,10 @@ threading [1.0]
 _ major threading overhaul before 1.0 (compendium)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=511
 _   ewjordan has added a good trace of the badness
+_ textFont() used in setup() is null once draw() arrives
+_   http://dev.processing.org/bugs/show_bug.cgi?id=726
+_ colorMode() set inside setup() sometimes not set once draw() arrives
+_   http://dev.processing.org/bugs/show_bug.cgi?id=767
 _ PDE locks up during setup() (since no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 _ if too many errors come through during setup, app will terminate
