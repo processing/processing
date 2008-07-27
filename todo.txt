@@ -1,5 +1,5 @@
 0143 pde
-X fixed build problems with macosx and linux
+X fixed build problems with macosx and linux, thanks to reports
 
 _ draw mode apps do not shut off the run button when finished
 
@@ -19,8 +19,15 @@ _ preproc code showing through since it's on line 0:
 _   http://dev.processing.org/bugs/show_bug.cgi?id=831
 _   also need to handle "unexpected type" error in that example
 
+_ add block comment to right-click menu
+_   http://dev.processing.org/bugs/show_bug.cgi?id=840
+_ add increase/decrease indent to edit and right-click edit menu
+_   http://dev.processing.org/bugs/show_bug.cgi?id=841
+
 
 new/open/close/save
+_ not remembering window size/placement preferences
+_   http://dev.processing.org/bugs/show_bug.cgi?id=837
 _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
 _   http://dev.processing.org/bugs/show_bug.cgi?id=821
 _ file-save stops running sketch
@@ -55,6 +62,7 @@ _     you will overwrite your original code from the main-tab.
 _ after fixing name of sketch, ensure sketch of that name does not exist
 _ put the "had to rename sketch" message in the msg bar
 _   it's ugly/annoying/intrusive
+
 
 _ dialogs are not modal
 _   or at least, shouldn't open more than one copy of prefs
@@ -242,7 +250,6 @@ _   using expand and arrays to move quickly
 
 
 DOC / Write Me
-
 
 _ moviemaker video sizes / usability
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
