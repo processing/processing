@@ -1,29 +1,13 @@
-0143 core
-X some fonts broken in java 1.5 on osx have changed again
-X   http://dev.processing.org/bugs/show_bug.cgi?id=407
-X   filed as bug #4769141 with apple http://bugreport.apple.com/
-X   appears that asking for the postscript name no longer works
-o   fix "create font" and associated font stuff to straighten it out
-X   was grabbing the wrong native font with ico sketch 
-X   seems that the psname is no longer a good way to grab the font? related?
-X available font issues
-X   is getFontList returning a different set of fonts from device2d?
-X     try it out on java 1.3 versus 1.4
-X   getAllFonts() not quite working for many fonts
-X   i.e. Orator Std on windows.. macosx seems to be ok
-X   is getFamilyNames() any different/better?
-X   when did this break? 1.4.1? 1.4.x vs 1.3?
-X   may be that cff fonts won't work?
-X   or is it only those with ps names?
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1117445969
-o leading looks too big, at least in PGraphics2 with news gothic
-X   though prolly the converted version of the .ttf?
-X add a fix so that negative angle values won't hork up arc() command
-X add resize() method to PImage
+0144 core
 
-_ use gluErrorString() for glError() stuff
 
+opengl fixes 
 _ incorporate changes from andres colubri into PGraphicsOpenGL
+_ use gluErrorString() for glError() stuff
+_ PGraphicsOpenGL.java:
+_   directionalLight() and .pointLight() are both calling
+_   glLightNoAmbient() which then creates a new FloatBuffer 
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
 
 _ if loading an image in p5 and the image is bad, no error msg shown
 _   that is, if a loadImage() turns up an access denied page
@@ -47,10 +31,6 @@ _   maybe this is stop()?
 _ should we do joins when alpha is turned off?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
 
-_ PGraphicsOpenGL.java:
-_   directionalLight() and .pointLight() are both calling
-_   glLightNoAmbient() which then creates a new FloatBuffer 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
 _ odd-size height will make blue line across image in saveFrame()
 _   probably the pixel flipping code (and endian sorting) not happening
 _   because the blue comes from the byte order flip
@@ -77,7 +57,7 @@ _     so that the file size can be much smaller
 
 _ remove saveFile() methods?
 
-_ ENABLE_DEPTH_SORT no really working for GL
+_ ENABLE_DEPTH_SORT not really working for GL
 _   because the zbuffer is still there, it's still calculating
 _   actually, this is probably because it happens after the frame
 _   so really, flush is required whenever the depth sort is called
