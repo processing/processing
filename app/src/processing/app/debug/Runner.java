@@ -350,7 +350,7 @@ public class Runner implements MessageConsumer {
 
     Connector.Argument commandArg =
       (Connector.Argument)arguments.get("command");
-    String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
+    String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
     String commandArgs = "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
     for (int i = 0; i < vmParams.length; i++) {
       commandArgs = addArgument(commandArgs, vmParams[i], ' ');
