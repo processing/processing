@@ -7,6 +7,42 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0143 - 27 July 2008
+
+Now using ECJ (the Eclipse Compiler for Java) instead of Javac. The
+Eclipse compiler is more easily pluggable in the more basic ways
+that we'd like to use it. Also moving toward removing the requirement
+(since release 0136+) for a full JDK. 
+
+[ fixes ] 
+
++ The new compiler fixes (or avoids) a handful of compiler-related bugs.
+  http://dev.processing.org/bugs/show_bug.cgi?id=828
+  http://dev.processing.org/bugs/show_bug.cgi?id=831
+
++ A handful of fixes for the build scripts, submitted by helpful users.
+  http://dev.processing.org/bugs/show_bug.cgi?id=851
+  http://dev.processing.org/bugs/show_bug.cgi?id=842
+
++ Giving up on Apple ever fixing their font specification bug, 
+  and just built in a workaround so that fonts are more likely to 
+  work on Mac OS X.
+  http://dev.processing.org/bugs/show_bug.cgi?id=407
+  (Filed as bug #4769141 with Apple http://bugreport.apple.com/)
+
++ Properly handle negative values passed to the arc() command. 
+
+[ changes ] 
+
++ Add a resize(int width, int height) method to PImage. 
+  Not yet documented in the reference, but allows you to resize 
+  a PImage in place. Setting width or height to zero will resize 
+  that dimension in proportion to the other.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0142 - 16 June 2008
 
 A couple minor changes from 0141, though they have a big impact on

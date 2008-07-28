@@ -55,7 +55,7 @@
 		<key>JVMVersion</key>
 		<string>1.5*</string>
 		<key>ClassPath</key>
-			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar:/System/Library/Java</string>
+			<string>$JAVAROOT/pde.jar:lib/core.jar:$JAVAROOT/antlr.jar:$JAVAROOT/ecj.jar:$JAVAROOT/registry.jar:$JAVAROOT/quaqua.jar:/System/Library/Java</string>
 		<key>Properties</key>
 		<dict>
 		  <!-- http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->

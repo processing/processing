@@ -74,9 +74,11 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
             "%s\\lib\\pde.jar;"
             "%s\\lib\\core.jar;"
             "%s\\lib\\jna.jar;"
+            "%s\\lib\\ecj.jar;"
             "%s\\lib\\antlr.jar;",
             exe_directory, 
-            exe_directory, exe_directory, exe_directory, exe_directory);
+            exe_directory, exe_directory, 
+            exe_directory, exe_directory. exe_directory);
   } else {
     fgets(java_args, 511, argsfile);
     removeLineEndings(java_args);
