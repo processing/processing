@@ -366,6 +366,9 @@ public class Runner implements MessageConsumer {
       (Connector.Argument)arguments.get("address");
     addressArg.setValue(addr);
     
+    //com.sun.tools.jdi.AbstractLauncher al;
+    //com.sun.tools.jdi.RawCommandLineLauncher rcll;
+    
     // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#sunlaunch
     try {
       return connector.launch(arguments);
@@ -374,6 +377,15 @@ public class Runner implements MessageConsumer {
     } catch (IllegalConnectorArgumentsException exc) {
       throw new Error("Internal error: " + exc);
     } catch (VMStartException exc) {
+      Process p = exc.process();
+      //System.out.println(p);
+      String[] errorStrings = PApplet.loadStrings(p.getErrorStream());
+      String[] inputStrings = PApplet.loadStrings(p.getInputStream());
+      System.out.println("error:");
+      PApplet.println(errorStrings);
+      System.out.println("input:");
+      PApplet.println(inputStrings);
+      
       exc.printStackTrace();
       System.err.println("Could not run the sketch (Target VM failed to initialize).");
       System.err.println("Make sure that you haven't set the maximum available memory too high.");
