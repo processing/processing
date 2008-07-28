@@ -1,33 +1,33 @@
 0143 pde
 X fixed build problems with macosx and linux, thanks to reports
+o need to compare with localized version of javac strings 
+X   http://dev.processing.org/bugs/show_bug.cgi?id=828
+X   just moving to ecj instead of javac
+X preproc code showing through since it's on line 0:
+X   http://dev.processing.org/bugs/show_bug.cgi?id=831
+X   also need to handle "unexpected type" error in that example
 
 _ draw mode apps do not shut off the run button when finished
 
 _ remove namespace stuff from xml lib?
 
-_ Closing the last window doesn't cause PDE to save its position/contents/etc
-_   http://dev.processing.org/bugs/show_bug.cgi?id=835
-
 _ opengl.jar with eclipse
 _   auto-extract native libs from opengl.jar 
 _   to remove java.library.path problems (!)
-
-_ need to compare with localized version of javac strings 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=828
-
-_ preproc code showing through since it's on line 0:
-_   http://dev.processing.org/bugs/show_bug.cgi?id=831
-_   also need to handle "unexpected type" error in that example
 
 _ add block comment to right-click menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=840
 _ add increase/decrease indent to edit and right-click edit menu
 _   http://dev.processing.org/bugs/show_bug.cgi?id=841
+_ block comment - don't bother with last line if starting it
+_   (same behavior as eclipse)
 
 
 new/open/close/save
 _ not remembering window size/placement preferences
 _   http://dev.processing.org/bugs/show_bug.cgi?id=837
+_ Closing the last window doesn't cause PDE to save its position/contents/etc
+_   http://dev.processing.org/bugs/show_bug.cgi?id=835
 _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
 _   http://dev.processing.org/bugs/show_bug.cgi?id=821
 _ file-save stops running sketch
