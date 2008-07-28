@@ -99,9 +99,9 @@ public class Runner implements MessageConsumer {
 
 
   public void launch() {
-    // TODO entire class is a total mess as of release 0136. 
+    // TODO entire class is a total mess as of release 0136.
     // This will be cleaned up significantly over the next couple months.
-    
+
     // all params have to be stored as separate items,
     // so a growable array needs to be used. i.e. -Xms128m -Xmx1024m
     // will throw an error if it's shoved into a single array element
@@ -165,13 +165,13 @@ public class Runner implements MessageConsumer {
 
     String outgoing[] = new String[params.size()];
     params.toArray(outgoing);
-    
+
     //PApplet.println(outgoing);
 //    PApplet.println(PApplet.split(outgoing[0], ":"));
 //    PApplet.println();
 //    PApplet.println("class path");
 //    PApplet.println(PApplet.split(outgoing[2], ":"));
-    
+
     return outgoing;
     //return (String[]) params.toArray();
 
@@ -230,23 +230,23 @@ public class Runner implements MessageConsumer {
 
 
   /*
-  protected VirtualMachine launch_old(String[] vmParams, String[] classParams) {
+  protected VirtualMachine launchVirtualMachine_sun(String[] vmParams, String[] classParams) {
     //vm = launchTarget(sb.toString());
-    LaunchingConnector connector = 
+    LaunchingConnector connector =
       findLaunchingConnector("com.sun.jdi.CommandLineLaunch");
     //Map arguments = connectorArguments(connector, mainArgs);
 
     PApplet.println(connector);  // gets the defaults
-    
+
     Map arguments = connector.defaultArguments();
     //System.out.println(arguments);
-    
+
 //    for (Iterator itr = arguments.keySet().iterator(); itr.hasNext(); ) {
-//      Connector.Argument argument = 
+//      Connector.Argument argument =
 //        (Connector.Argument) arguments.get(itr.next());
 //      System.out.println(argument);
 //    }
-    
+
     //connector.transport().
 
     Connector.Argument mainArg =
@@ -279,16 +279,16 @@ public class Runner implements MessageConsumer {
     for (int i = 0; i < vmParams.length; i++) {
       optionArgs = addArgument(optionArgs, vmParams[i], ' ');
     }
-    // prevent any incorrect transport address b.s. from being added 
+    // prevent any incorrect transport address b.s. from being added
     // -Xrunjdwp:transport=dt_socket,address=cincinnati118.ipcorporate.com:55422,suspend=y
     //optionArgs = addArgument(optionArgs, "-agentlib:jdwp=transport=dt_socket,address=localhost:12345,suspend=y", ' ');
     //optionArgs += " -Xrunjdwp:transport=dt_socket,address=localhost:55422,suspend=y";
     //optionArgs = optionArgs + " -agentlib:jdwp=transport=dt_socket";
     //optionArgs = addArgument(optionArgs, "-Xrunjdwp:transport=dt_socket,address=localhost:55422,suspend=y", ' ');
-    
+
     //optionArgs = addArgument(optionArgs, "address=127.0.0.1:54321", ' ');
     //optionArgs = addArgument(optionArgs, "localAddress", ' ');
-    
+
     Connector.Argument optionArg =
       (Connector.Argument)arguments.get("options");
     optionArg.setValue(optionArgs);
@@ -297,7 +297,7 @@ public class Runner implements MessageConsumer {
 //      (Connector.Argument)arguments.get("address");
     //arguments.put("raw.address", new Connector.Argument("blah"));
     //PApplet.println("it's gonna be " + addressArg);
-    
+
     //arguments.put("address", "localhost");
 
 //    Connector.Argument addressArg =
@@ -308,9 +308,9 @@ public class Runner implements MessageConsumer {
 //    System.out.println(arguments.get("options"));
 
     System.out.println("args are " + arguments);
-    
+
     // com.sun.tools.jdi.SunCommandLineLauncher
-    
+
     // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#sunlaunch
     try {
       return connector.launch(arguments);
@@ -337,21 +337,27 @@ public class Runner implements MessageConsumer {
     }
   }
   */
-  
-  
+
+
   protected VirtualMachine launchVirtualMachine(String[] vmParams, String[] classParams) {
     //vm = launchTarget(sb.toString());
-    LaunchingConnector connector = 
+    LaunchingConnector connector =
       findLaunchingConnector("com.sun.jdi.RawCommandLineLaunch");
-//    PApplet.println(connector);  // gets the defaults
-    
+    //PApplet.println(connector);  // gets the defaults
+
     //Map arguments = connectorArguments(connector, mainArgs);
     Map arguments = connector.defaultArguments();
 
     Connector.Argument commandArg =
       (Connector.Argument)arguments.get("command");
-    String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
-    String commandArgs = "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
+    //String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
+    //String addr = "" + (8000 + (int) (Math.random() * 1000));
+    String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
+    String commandArgs = (PApplet.platform == PConstants.WINDOWS) ?
+      "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y " :
+      "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
+    //String commandArgs = "java -agentlib:jdwp=transport=dt_socket,address=" + addr + ",suspend=y ";
+    //String commandArgs = "java -agentlib:jdwp=transport=dt_socket,address=" + addr + ",server=n,suspend=y ";
     for (int i = 0; i < vmParams.length; i++) {
       commandArgs = addArgument(commandArgs, vmParams[i], ' ');
     }
@@ -365,10 +371,12 @@ public class Runner implements MessageConsumer {
     Connector.Argument addressArg =
       (Connector.Argument)arguments.get("address");
     addressArg.setValue(addr);
-    
+
+    //PApplet.println(connector);  // prints the current
     //com.sun.tools.jdi.AbstractLauncher al;
     //com.sun.tools.jdi.RawCommandLineLauncher rcll;
-    
+
+    //System.out.println(PApplet.javaVersion);
     // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#sunlaunch
     try {
       return connector.launch(arguments);
@@ -381,18 +389,18 @@ public class Runner implements MessageConsumer {
       //System.out.println(p);
       String[] errorStrings = PApplet.loadStrings(p.getErrorStream());
       String[] inputStrings = PApplet.loadStrings(p.getInputStream());
-      System.out.println("error:");
+      //System.out.println("error:");
       PApplet.println(errorStrings);
-      System.out.println("input:");
-      PApplet.println(inputStrings);
-      
+      //System.out.println("input:");
+      //PApplet.println(inputStrings);
+
       exc.printStackTrace();
       System.err.println("Could not run the sketch (Target VM failed to initialize).");
       System.err.println("Make sure that you haven't set the maximum available memory too high.");
       System.err.println("For more information, read revisions.txt and Help -> Troubleshooting.");
 
       //System.err.println("Target VM failed to initialize:");
-      
+
       //System.err.println("msg is " + exc.getMessage());
       //exc.printStackTrace();
       //throw new Error("Target VM failed to initialize: " +
@@ -457,7 +465,7 @@ public class Runner implements MessageConsumer {
     }
 
     //redirectOutput();
-    
+
     Process process = vm.process();
 
 //  processInput = new SystemOutSiphon(process.getInputStream());
@@ -482,17 +490,17 @@ public class Runner implements MessageConsumer {
     // Shutdown begins when event thread terminates
     try {
       if (eventThread != null) eventThread.join();
-      // Bug #852 tracked to this next line in the code. 
+      // Bug #852 tracked to this next line in the code.
       // http://dev.processing.org/bugs/show_bug.cgi?id=852
       errThread.join(); // Make sure output is forwarded
       outThread.join(); // before we exit
-      
+
       // At this point, disable the run button.
       // This happens when the sketch is exited by hitting ESC,
       // or the user manually closes the sketch window.
       // TODO this should be handled better, should it not?
       editor.handleStopped();
-      
+
     } catch (InterruptedException exc) {
       // we don't interrupt
     }
@@ -506,11 +514,11 @@ public class Runner implements MessageConsumer {
   LaunchingConnector findLaunchingConnector(String connectorName) {
     //VirtualMachineManager mgr = Bootstrap.virtualMachineManager();
 
-    // Get the default connector. 
+    // Get the default connector.
     // Not useful here since they all need different args.
 //      System.out.println(Bootstrap.virtualMachineManager().defaultConnector());
 //      return Bootstrap.virtualMachineManager().defaultConnector();
-    
+
     List connectors = Bootstrap.virtualMachineManager().allConnectors();
 
     // code to list available connectors
