@@ -167,10 +167,11 @@ public class Compiler {
         }
         
         // pieces[2] will contain "error" or "warning" (others?)
-        if (pieces[2].equals("warning")) {
-          System.out.println("nah, nevermind: " + pieces[3]);
-          continue;
-        }
+        // (but all warnings currently suppressed.)
+//        if (pieces[2].equals("warning")) {
+//          System.out.println("nah, nevermind: " + pieces[3]);
+//          continue;
+//        }
         
         // translate the java filename and line number into a un-preprocessed 
         // location inside a source file or tab in the environment.
