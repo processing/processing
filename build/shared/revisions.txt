@@ -14,11 +14,17 @@ Eclipse compiler is more easily pluggable in the more basic ways
 that we'd like to use it. Also moving toward removing the requirement
 (since release 0136+) for a full JDK. 
 
+** IF THIS IS YOUR FIRST RELEASE SINCE 0135, PLEASE READ THE "ABOUT" **
+**  ENTRIES FOR 0136 TO 0142 BELOW FOR MAJOR CHANGES AND KNOWN BUGS  **
+
 [ fixes ] 
 
 + The new compiler fixes (or avoids) a handful of compiler-related bugs.
   http://dev.processing.org/bugs/show_bug.cgi?id=828
   http://dev.processing.org/bugs/show_bug.cgi?id=831
+
++ "Target VM failed to initialize: VM initialization failed" now fixed.
+  http://dev.processing.org/bugs/show_bug.cgi?id=796
 
 + A handful of fixes for the build scripts, submitted by helpful users.
   http://dev.processing.org/bugs/show_bug.cgi?id=851
@@ -26,9 +32,11 @@ that we'd like to use it. Also moving toward removing the requirement
 
 + Giving up on Apple ever fixing their font specification bug, 
   and just built in a workaround so that fonts are more likely to 
-  work on Mac OS X.
+  work on Mac OS X. With the workaround, using createFont() in code 
+  (on OS X) may cause a lag (on my machine it's 150 ms with 800 fonts) 
+  or in some cases when using hint(ENABLE_NATIVE_FONTS).
   http://dev.processing.org/bugs/show_bug.cgi?id=407
-  (Filed as bug #4769141 with Apple http://bugreport.apple.com/)
+  Filed as bug #4769141 with Apple http://bugreport.apple.com/
 
 + Properly handle negative values passed to the arc() command. 
 
@@ -38,6 +46,14 @@ that we'd like to use it. Also moving toward removing the requirement
   Not yet documented in the reference, but allows you to resize 
   a PImage in place. Setting width or height to zero will resize 
   that dimension in proportion to the other.
+
+[ cannot fix ]
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5.
+  This is an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 
+  (but not 10.4) causing these menus to be extremely slow. 
+  Workarounds described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
