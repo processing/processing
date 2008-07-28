@@ -7,7 +7,7 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0143 - 27 July 2008
+ABOUT REV 0143 - 28 July 2008
 
 Now using ECJ (the Eclipse Compiler for Java) instead of Javac. The
 Eclipse compiler is more easily pluggable in the more basic ways
@@ -25,6 +25,9 @@ that we'd like to use it. Also moving toward removing the requirement
 
 + "Target VM failed to initialize: VM initialization failed" now fixed.
   http://dev.processing.org/bugs/show_bug.cgi?id=796
+
++ Added a proper error message for cases where "maximum available memory"
+  is set too high.
 
 + A handful of fixes for the build scripts, submitted by helpful users.
   http://dev.processing.org/bugs/show_bug.cgi?id=851

@@ -21,6 +21,7 @@ X   though prolly the converted version of the .ttf?
 X add a fix so that negative angle values won't hork up arc() command
 X add resize() method to PImage
 
+_ use gluErrorString() for glError() stuff
 
 _ incorporate changes from andres colubri into PGraphicsOpenGL
 

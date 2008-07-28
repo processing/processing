@@ -8,6 +8,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=831
 X   also need to handle "unexpected type" error in that example
 X "Target VM failed to initialize: VM initialization failed" when trying to run
 X   http://dev.processing.org/bugs/show_bug.cgi?id=796
+X add better error message for memory too high
 
 _ draw mode apps do not shut off the run button when finished
 
