@@ -388,28 +388,25 @@ public class Runner implements MessageConsumer {
       Process p = exc.process();
       //System.out.println(p);
       String[] errorStrings = PApplet.loadStrings(p.getErrorStream());
-      String[] inputStrings = PApplet.loadStrings(p.getInputStream());
+      /*String[] inputStrings =*/ PApplet.loadStrings(p.getInputStream());
       //System.out.println("error:");
       PApplet.println(errorStrings);
       //System.out.println("input:");
       //PApplet.println(inputStrings);
-
-      exc.printStackTrace();
-      System.err.println("Could not run the sketch (Target VM failed to initialize).");
-      System.err.println("Make sure that you haven't set the maximum available memory too high.");
-      System.err.println("For more information, read revisions.txt and Help -> Troubleshooting.");
-
-      //System.err.println("Target VM failed to initialize:");
-
-      //System.err.println("msg is " + exc.getMessage());
-      //exc.printStackTrace();
-      //throw new Error("Target VM failed to initialize: " +
-      //exc.getMessage());
-      //throw new Error(exc.getMessage());
-//      Process p = exc.process();
-//      String[] em = PApplet.loadStrings(p.getErrorStream());
-//      PApplet.println(em);
-      //throw new RunnerException(exc.getMessage());
+      
+      if (errorStrings != null && errorStrings.length > 1) {
+        if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
+          Base.showWarning("Way Too High", 
+                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" + 
+                           "Preferences window. For more information, read Help \u2192 Troubleshooting.",
+                           exc);
+        }
+      } else {
+        exc.printStackTrace();
+        System.err.println("Could not run the sketch (Target VM failed to initialize).");
+        System.err.println("Make sure that you haven't set the maximum available memory too high.");
+        System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
+      }
       editor.error("Could not run the sketch.");
       return null;
     }
