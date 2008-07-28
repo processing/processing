@@ -6,6 +6,8 @@ X   just moving to ecj instead of javac
 X preproc code showing through since it's on line 0:
 X   http://dev.processing.org/bugs/show_bug.cgi?id=831
 X   also need to handle "unexpected type" error in that example
+X "Target VM failed to initialize: VM initialization failed" when trying to run
+X   http://dev.processing.org/bugs/show_bug.cgi?id=796
 
 _ draw mode apps do not shut off the run button when finished
 
@@ -98,8 +100,6 @@ _   need someone to go out and test all scenarios of this
 
 [ known bugs ]
 
-_ "Target VM failed to initialize: VM initialization failed" when trying to run
-_   http://dev.processing.org/bugs/show_bug.cgi?id=796
 _ slow response on file, sketchbook, and examples menus
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
 _   could be all the listeners?
