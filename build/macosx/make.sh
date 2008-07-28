@@ -15,6 +15,7 @@ else
   cp -r ../shared/libraries work/
 
   cp ../../app/lib/antlr.jar work/lib/
+  cp ../../app/lib/ecj.jar work/lib/
   cp ../../app/lib/jna.jar work/lib/
 
   echo Extracting examples...
@@ -104,7 +105,7 @@ mkdir -p ../build/macosx/work/classes
 
 javac \
     -source 1.5 -target 1.5 \
-    -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/jna.jar \
+    -classpath ../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/ecj.jar:../build/macosx/work/lib/jna.jar \
     -d ../build/macosx/work/classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \

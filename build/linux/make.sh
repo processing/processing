@@ -15,6 +15,7 @@ else
   cp -r ../shared/libraries work/
 
   cp ../../app/lib/antlr.jar work/lib/
+  cp ../../app/lib/ecj.jar work/lib/
   cp ../../app/lib/jna.jar work/lib/
 
   echo Extracting examples...
@@ -126,7 +127,7 @@ mkdir -p ../build/linux/work/classes
     -cp ../build/linux/work/java/lib/tools.jar \
     com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
-    -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/tools.jar \
+    -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/ecj.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/tools.jar \
     -d ../build/linux/work/classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
