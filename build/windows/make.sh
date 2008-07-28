@@ -15,6 +15,7 @@ else
   cp -r ../shared/libraries work/
 
   cp ../../app/lib/antlr.jar work/lib/
+  cp ../../app/lib/ecj.jar work/lib/
   cp ../../app/lib/jna.jar work/lib/
 
   echo Extracting examples...
@@ -139,7 +140,7 @@ mkdir -p ../build/windows/work/classes
     -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" \
     com.sun.tools.javac.Main \
     -source 1.5 -target 1.5 \
-    -classpath "..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\jna.jar;..\\build\\windows\\work\\java\\lib\\tools.jar" \
+    -classpath "..\\build\\windows\\work\\lib\\core.jar;..\\build\\windows\\work\\lib\antlr.jar;..\\build\\windows\\work\\lib\\ecj.jar;..\\build\\windows\\work\\lib\\jna.jar;..\\build\\windows\\work\\java\\lib\\tools.jar" \
     -d ..\\build\\windows\\work\\classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
