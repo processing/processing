@@ -7,7 +7,7 @@ EOF;
 $PAGE_FOOTER = $PAGE_HEADER;
 
 require_once 'header.inc.php';
-
+$BANGO_REF = $BANGO_REF .'?page='. $_GET['page'];
 
 $pages = 0;
 

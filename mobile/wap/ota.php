@@ -42,6 +42,7 @@ EOF;
 $PAGE_FOOTER = $PAGE_HEADER;
 
 require_once 'header.inc.php';
+$BANGO_REF = $BANGO_REF .'?code='. $code;
 if (($code % 2) == 0) {
     //// exhibition item
 ?>

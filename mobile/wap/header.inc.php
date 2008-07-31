@@ -1,5 +1,7 @@
 <?php
 
+$BANGO_REF=$_SERVER['SCRIPT_NAME'];
+
 require_once 'settings.inc.php';
 require_once $WEB_ROOT .'/lib/tera-wurfl/tera_wurfl.php';
 

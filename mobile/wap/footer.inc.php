@@ -12,5 +12,6 @@ if (isset($PAGE_FOOTER)) {
         Mobile Processing<br />
         <a href="http://wapmp.at">http://wapmp.at/</a>
     </div>
+<img src="http://bango.net/id/111555000202.gif?ref=<?php echo urlencode($BANGO_REF); ?>" alt="" height="1" width="1" />
   </body>
 </html>

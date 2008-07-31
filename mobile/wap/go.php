@@ -31,6 +31,7 @@ EOF;
 $PAGE_FOOTER = $PAGE_HEADER;
 
 require_once 'header.inc.php';
+$BANGO_REF = $BANGO_REF .'?code='. $_GET['code'];
 ?>
 The content you are about to download is hosted on another website. It is not guaranteed to run on your phone. You are responsible for any additional charges or fees that may be incurred by its use. By selecting the link below you agree to these terms.<br />
 <br />
