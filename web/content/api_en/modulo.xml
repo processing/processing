@@ -31,7 +31,7 @@ void draw() {
 </example>
 
 <description>
-Calculates the remainer when one number is divided by another. It is extremely useful for keeping numbers within a boundary such as keeping a shape on the screen.
+Calculates the remainder when one number is divided by another. It is extremely useful for keeping numbers within a boundary such as keeping a shape on the screen.
 </description>
 
 <syntax>
