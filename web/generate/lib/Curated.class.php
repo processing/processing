@@ -36,11 +36,17 @@ class Curated
     function display()
     {
         $html = $this->display_piece();
-        $html .= "\t<p>{$this->description}</p>\n";
-        foreach ($this->links as $link) {
-            $html .= sprintf("<a href=\"%s\">%s</a><br />", $link['href'], $link['title']);
+        $html .= "\t<p>{$this->description}</p><p>Links: \n";
+	$linkcount = count($links);
+	$ii = 0;
+	foreach ($this->links as $link) {
+           if ($ii > 0) {
+              $html .= sprintf(", ");
+            } 
+            $html .= sprintf("<a href=\"%s\">%s</a>", $link['href'], $link['title']);
+	    $ii++;
         }
-        $html .= "</div>\n\n";
+        $html .= "</p></div>\n\n";
         return $html;
     }
     
@@ -57,8 +63,8 @@ class Curated
                         $this->location, $this->name, $this->scroll, $this->resize, $this->width, $this->height);
         $html  = "<div class=\"curated-item\">\n";
         $html .= "\t$link<img src=\"/exhibition/{$this->image}\" width=\"223\" height=\"72\" alt=\"preview image\" title=\"{$this->name} by {$this->by}\" /></a>\n";
-        $html .= "\t<h5>$link{$this->name}</a><br />\n";
-        $html .= "\tby {$this->by}</h5>\n";
+        $html .= "\t<p><br />$link{$this->name}</a><br />\n";
+        $html .= "\tby {$this->by}</p>\n";
         return $html;
     }
 }
