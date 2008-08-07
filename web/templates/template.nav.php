@@ -2,7 +2,12 @@
 
 $pages = array(
     'Cover'         => array('/', 0),
+
     'Exhibition'    => array('/exhibition/index.html', 1),
+    'Index'        => array('/exhibition/index.html', 2),
+    'Collection'    => array('/exhibition/curated_page_1.html', 2),
+    'Network Links'    => array('/exhibition/network_page_1.html', 2),
+    #'Features'    => array('/exhibition/index.html', 2),
     
     'Learning'      => array('/learning/index.html', 1),
     #'Examples'     => array('/learning/index.html', 2),
@@ -21,6 +26,7 @@ $pages = array(
     'Hacks'    => array('/hacks/', 1),
     'Contribute'    => array('/contribute/index.html', 1),
     'FAQ'           => array('/faq.html', 1),
+
     'Language'      => array('/reference/index.html', 1),
     'Environment'   	=> array('/reference/environment/index.html', 2),
     'Libraries'     	=> array('/reference/libraries/index.html', 2),
@@ -38,14 +44,17 @@ function navigation($section = '')
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
     $learn = array('Learning', 'Overview', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
-    
+    #$exhib = array('Exhibition', 'Index', 'Collection', 'Network Links', 'Features');    
+    $exhib = array('Exhibition', 'Index', 'Collection', 'Network Links');    
+
     $html = "\t\t\t".'<div id="navigation">'."\n";
 
-    $id = (in_array($section, $ref) || in_array($section, $learn)) ? 'mainnav' : 'mainnav_noSub';    
+    $id = (in_array($section, $ref) || in_array($section, $learn) || in_array($section, $exhib)) ? 'mainnav' : 'mainnav_noSub';    
     $html .= "\t\t\t\t".'<div class="navBar" id="'.$id.'">'."\n";
     
     $html .= "\t\t\t\t\t" . l('Cover', $section == 'Cover') . " \\\n";
-    $html .= "\t\t\t\t\t" . l('Exhibition', $section == 'Exhibition') . " \\\n";
+    #$html .= "\t\t\t\t\t" . l('Exhibition', $section == 'Exhibition') . " \\\n";
+    $html .= "\t\t\t\t\t" . l('Exhibition', in_array($section, $exhib)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Learning', in_array($section, $learn)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Reference', in_array($section, $ref)) . " \\\n";
     $html .= "\t\t\t\t\t" . l('Download', $section == 'Download') . " \\\n";
@@ -55,8 +64,17 @@ function navigation($section = '')
     $html .= "\t\t\t\t\t" . "<a href=\"/faq.html\"" . ($section == 'FAQ' ? ' class="active faq"' : 'class="faq"') . ">FAQ</a>\n";
        
     $html .= "\t\t\t\t</div>\n";
-    
-    if (in_array($section, $ref)) {
+
+    if (in_array($section, $exhib)) {
+         $html .= "\t\t\t\t" . '<div class="navBar exhib" id="subNav">' . "\n";
+	
+         $html .= "\t\t\t\t\t" . l('Index', $section == 'Index') . " \\\n";
+         $html .= "\t\t\t\t\t" . l('Collection', $section == 'Collection') . " \\\n";
+	 $html .= "\t\t\t\t\t" . l('Network Links', $section == 'Network Links') . " \n";
+	 #$html .= "\t\t\t\t\t" . l('Interviews', $section == 'Interviews') . " \n";
+	 $html .= "\t\t\t\t</div>\n";    
+   
+     } else if (in_array($section, $ref)) {
         $html .= "\t\t\t\t" . '<div class="navBar" id="subNav">' . "\n";
     
         if ($lang == 'en') {
