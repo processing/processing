@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -752,7 +752,7 @@ public class Editor extends JFrame {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (textarea.isSelectionActive()) {
-            handleReference();
+            handleFindReference();
           }
         }
       });
@@ -809,8 +809,7 @@ public class Editor extends JFrame {
     item = newJMenuItem("Cut", 'X');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          textarea.cut();
-          sketch.setModified(true);
+          handleCut();
         }
       });
     menu.add(item);
@@ -826,11 +825,11 @@ public class Editor extends JFrame {
     item = newJMenuItem("Copy for Discourse", 'C', true);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                new DiscourseFormat(Editor.this).show();
-              }
-            });
+//          SwingUtilities.invokeLater(new Runnable() {
+//              public void run() {
+          new DiscourseFormat(Editor.this).show();
+//              }
+//            });
         }
       });
     menu.add(item);
@@ -857,47 +856,23 @@ public class Editor extends JFrame {
     item = newJMenuItem("Comment/Uncomment", '/');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          beginCompoundEdit();
+          handleCommentUncomment();
+        }
+    });
+    menu.add(item);
 
-          int startLine = textarea.getSelectionStartLine();
-          int stopLine = textarea.getSelectionStopLine();
-          
-          // If the selection ends at the beginning of the last line, 
-          // then don't (un)comment that line. 
-          int lastLineStart = textarea.getLineStartOffset(stopLine);
-          int selectionStop = textarea.getSelectionStop();
-          if (selectionStop == lastLineStart) {
-            stopLine--;
-          }
-          
-          // If the text is empty, ignore the user. 
-          int length = textarea.getDocumentLength();
-          int pos = textarea.getLineStartOffset(startLine);
-          if (pos + 2 > length) return;
-          // Check the first two characters to see if it's already a comment.
-          String begin = textarea.getText(pos, 2);
-          //System.out.println("begin is '" + begin + "'");
-          boolean commented = begin.equals("//");
+    item = newJMenuItem("Increase Indent", ']');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleIndentOutdent(true);
+        }
+    });
+    menu.add(item);
 
-          for (int line = startLine; line <= stopLine; line++) {
-            int location = textarea.getLineStartOffset(line);
-            if (commented) {
-              // remove a comment
-              textarea.select(location, location+2);
-              if (textarea.getSelectedText().equals("//")) {
-                textarea.setSelectedText("");
-              }
-            } else {
-              // add a comment
-              textarea.select(location, location);
-              textarea.setSelectedText("//");
-            }
-          }
-          // Subtract one from the end, otherwise selects past the current line.
-          // (Which causes subsequent calls to keep expanding the selection)
-          textarea.select(textarea.getLineStartOffset(startLine),
-                          textarea.getLineStopOffset(stopLine) - 1);
-          endCompoundEdit();
+    item = newJMenuItem("Decrease Indent", '[');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleIndentOutdent(false);
         }
     });
     menu.add(item);
@@ -1152,6 +1127,139 @@ public class Editor extends JFrame {
     compoundEdit = null;
   }
 
+  
+  // ...................................................................
+
+
+  public void handleCut() {
+    textarea.cut();
+    sketch.setModified(true);
+  }
+  
+  
+  public void handleCopy() {
+    textarea.copy();
+  }
+  
+  
+  protected void handleDiscourseCopy() {
+    new DiscourseFormat(Editor.this).show();
+  }
+
+
+  public void handlePaste() {
+    textarea.paste();
+    sketch.setModified(true);
+  }
+  
+  
+  public void handleSelectAll() {
+    textarea.selectAll();
+  }
+
+  
+  protected void handleCommentUncomment() {
+    beginCompoundEdit();
+
+    int startLine = textarea.getSelectionStartLine();
+    int stopLine = textarea.getSelectionStopLine();
+
+    // If the selection ends at the beginning of the last line, 
+    // then don't (un)comment that line. 
+    int lastLineStart = textarea.getLineStartOffset(stopLine);
+    int selectionStop = textarea.getSelectionStop();
+    if (selectionStop == lastLineStart) {
+      stopLine--;
+    }
+
+    // If the text is empty, ignore the user. 
+    int length = textarea.getDocumentLength();
+    int pos = textarea.getLineStartOffset(startLine);
+    if (pos + 2 > length) return;
+    // Check the first two characters to see if it's already a comment.
+    String begin = textarea.getText(pos, 2);
+    //System.out.println("begin is '" + begin + "'");
+    boolean commented = begin.equals("//");
+
+    for (int line = startLine; line <= stopLine; line++) {
+      int location = textarea.getLineStartOffset(line);
+      if (commented) {
+        // remove a comment
+        textarea.select(location, location+2);
+        if (textarea.getSelectedText().equals("//")) {
+          textarea.setSelectedText("");
+        }
+      } else {
+        // add a comment
+        textarea.select(location, location);
+        textarea.setSelectedText("//");
+      }
+    }
+    // Subtract one from the end, otherwise selects past the current line.
+    // (Which causes subsequent calls to keep expanding the selection)
+    textarea.select(textarea.getLineStartOffset(startLine),
+                    textarea.getLineStopOffset(stopLine) - 1);
+    endCompoundEdit();
+  }
+  
+  
+  protected void handleIndentOutdent(boolean indent) {
+    int tabSize = Preferences.getInteger("editor.tabs.size");
+    String tabString = Editor.EMPTY.substring(0, tabSize);
+
+    beginCompoundEdit();
+
+    int startLine = textarea.getSelectionStartLine();
+    int stopLine = textarea.getSelectionStopLine();
+
+    // If the selection ends at the beginning of the last line, 
+    // then don't (un)comment that line. 
+    int lastLineStart = textarea.getLineStartOffset(stopLine);
+    int selectionStop = textarea.getSelectionStop();
+    if (selectionStop == lastLineStart) {
+      stopLine--;
+    }
+
+    for (int line = startLine; line <= stopLine; line++) {
+      int location = textarea.getLineStartOffset(line);
+
+      if (indent) {
+        textarea.select(location, location);
+        textarea.setSelectedText(tabString);
+
+      } else {  // outdent
+        textarea.select(location, location + tabSize);
+        // Don't eat code if it's not indented
+        if (textarea.getSelectedText().equals(tabString)) {
+          textarea.setSelectedText("");
+        }
+      }
+    }
+    // Subtract one from the end, otherwise selects past the current line.
+    // (Which causes subsequent calls to keep expanding the selection)
+    textarea.select(textarea.getLineStartOffset(startLine),
+                    textarea.getLineStopOffset(stopLine) - 1);
+    endCompoundEdit();
+  }
+
+
+  protected void handleFindReference() {
+    String text = textarea.getSelectedText().trim();
+
+    if (text.length() == 0) {
+      message("First select a word to find in the reference.");
+
+    } else {
+      String referenceFile = PdeKeywords.getReference(text);
+      //System.out.println("reference file is " + referenceFile);
+      if (referenceFile == null) {
+        message("No reference available for \"" + text + "\"");
+      } else {
+        Base.showReference(referenceFile + ".html");
+      }
+    }
+  }  
+
 
   // ...................................................................
 
@@ -1197,30 +1305,6 @@ public class Editor extends JFrame {
       //e.printStackTrace();
       error(e);
     }
-
-    // this doesn't seem to help much or at all
-    /*
-    final SwingWorker worker = new SwingWorker() {
-        public Object construct() {
-          try {
-            if (!sketch.handleRun()) return null;
-
-            runtime = new Runner(sketch, Editor.this);
-            runtime.start(presenting ? presentLocation : appletLocation);
-            watcher = new RunButtonWatcher();
-
-          } catch (RunnerException e) {
-            error(e);
-
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-          return null;  // needn't return anything
-        }
-      };
-    worker.start();
-    */
-    //sketch.cleanup();  // where does this go?
   }
 
 
@@ -1232,50 +1316,6 @@ public class Editor extends JFrame {
   public Point getSketchLocation() {
     return sketchWindowLocation;
   }
-
-
-  /*
-  class RunButtonWatcher implements Runnable {
-    Thread thread;
-
-    public RunButtonWatcher() {
-      thread = new Thread(this, "run button watcher");
-      thread.setPriority(Thread.MIN_PRIORITY);
-      thread.start();
-    }
-
-    public void run() {
-      while (Thread.currentThread() == thread) {
-        if (runtime == null) {
-          stop();
-
-        } else {
-          if (runtime.applet != null) {
-            if (runtime.applet.finished) {
-              stop();
-            }
-            //buttons.running(!runtime.applet.finished);
-
-          } else if (runtime.process != null) {
-            //buttons.running(true);  // ??
-
-          } else {
-            stop();
-          }
-        }
-        try {
-          Thread.sleep(250);
-        } catch (InterruptedException e) { }
-        //System.out.println("still inside runner thread");
-      }
-    }
-
-    public void stop() {
-      toolbar.running(false);
-      thread = null;
-    }
-  }
-  */
 
 
   public void handleStop() {  // called by menu or buttons
@@ -1791,78 +1831,7 @@ public class Editor extends JFrame {
   }
 
 
-  /**
-   * Quit, but first ask user if it's ok. Also store preferences
-   * to disk just in case they want to quit. Final exit() happens
-   * in Editor since it has the callback from EditorStatus.
-   */
-  /*
-  public void handleQuitInternal() {
-    // doStop() isn't sufficient with external vm & quit
-    // instead use doClose() which will kill the external vm
-    doClose();
-
-    checkModified(true);
-  }
-  */
-
-
-  /**
-   * Method for the MRJQuitHandler, needs to be dealt with differently
-   * than the regular handler because OS X has an annoying implementation
-   * <A HREF="http://developer.apple.com/qa/qa2001/qa1187.html">quirk</A>
-   * that requires an exception to be thrown in order to properly cancel
-   * a quit message.
-   */
-  /*
-  public void handleQuit() {
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          handleQuitInternal();
-        }
-      });
-
-    // Throw IllegalStateException so new thread can execute.
-    // If showing dialog on this thread in 10.2, we would throw
-    // upon JOptionPane.NO_OPTION
-    throw new IllegalStateException("Quit Pending User Confirmation");
-  }
-  */
-
-
-  /**
-   * Actually do the quit action.
-   */
-  /*
-  protected void handleQuit2() {
-    storePreferences();
-    Preferences.save();
-
-    sketchbook.clean();
-    console.handleQuit();
-
-    //System.out.println("exiting here");
-    System.exit(0);
-  }
-  */
-
-
-  protected void handleReference() {
-    String text = textarea.getSelectedText().trim();
-
-    if (text.length() == 0) {
-      message("First select a word to find in the reference.");
-
-    } else {
-      String referenceFile = PdeKeywords.getReference(text);
-      //System.out.println("reference file is " + referenceFile);
-      if (referenceFile == null) {
-        message("No reference available for \"" + text + "\"");
-      } else {
-        Base.showReference(referenceFile + ".html");
-      }
-    }
-  }
+  // ...................................................................
 
 
   public void highlightLine(int line) {
@@ -1880,62 +1849,6 @@ public class Editor extends JFrame {
     textarea.select(textarea.getLineStartOffset(line),
                     textarea.getLineStopOffset(line) - 1);
   }
-
-
-  /*
-  // wow! this is old code. bye bye!
-  public void highlightLine(int lnum) {
-    if (lnum < 0) {
-      textarea.select(0, 0);
-      return;
-    }
-    //System.out.println(lnum);
-    String s = textarea.getText();
-    int len = s.length();
-    int st = -1;
-    int ii = 0;
-    int end = -1;
-    int lc = 0;
-    if (lnum == 0) st = 0;
-    for (int i = 0; i < len; i++) {
-      ii++;
-      //if ((s.charAt(i) == '\n') || (s.charAt(i) == '\r')) {
-      boolean newline = false;
-      if (s.charAt(i) == '\r') {
-        if ((i != len-1) && (s.charAt(i+1) == '\n')) {
-          i++; //ii--;
-        }
-        lc++;
-        newline = true;
-      } else if (s.charAt(i) == '\n') {
-        lc++;
-        newline = true;
-      }
-      if (newline) {
-        if (lc == lnum)
-          st = ii;
-        else if (lc == lnum+1) {
-          //end = ii;
-          // to avoid selecting entire, because doing so puts the
-          // cursor on the next line [0090]
-          end = ii - 1;
-          break;
-        }
-      }
-    }
-    if (end == -1) end = len;
-
-    // sometimes KJC claims that the line it found an error in is
-    // the last line in the file + 1.  Just highlight the last line
-    // in this case. [dmose]
-    if (st == -1) st = len;
-
-    textarea.select(st, end);
-  }
-  */
-
-
-  // ...................................................................
 
 
   /**
@@ -1998,7 +1911,9 @@ public class Editor extends JFrame {
     //String currentDir = System.getProperty("user.dir");
     String referenceFile = null;
 
-    JMenuItem cutItem, copyItem;
+    JMenuItem cutItem;
+    JMenuItem copyItem;
+    JMenuItem discourseItem;
     JMenuItem referenceItem;
 
 
@@ -2008,8 +1923,7 @@ public class Editor extends JFrame {
       cutItem = new JMenuItem("Cut");
       cutItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            textarea.cut();
-            sketch.setModified(true);
+            handleCut();
           }
       });
       this.add(cutItem);
@@ -2017,16 +1931,23 @@ public class Editor extends JFrame {
       copyItem = new JMenuItem("Copy");
       copyItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            textarea.copy();
+            handleCopy();
           }
         });
       this.add(copyItem);
 
+      discourseItem = new JMenuItem("Copy for Discourse");
+      discourseItem.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleDiscourseCopy();
+          }
+        });
+      this.add(discourseItem);
+
       item = new JMenuItem("Paste");
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            textarea.paste();
-            sketch.setModified(true);
+            handlePaste();
           }
         });
       this.add(item);
@@ -2034,8 +1955,34 @@ public class Editor extends JFrame {
       item = new JMenuItem("Select All");
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          textarea.selectAll();
+          handleSelectAll();
         }
+      });
+      this.add(item);
+      
+      this.addSeparator();
+
+      item = new JMenuItem("Comment/Uncomment");
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleCommentUncomment();
+          }
+      });
+      this.add(item);
+
+      item = new JMenuItem("Increase Indent");
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleIndentOutdent(true);
+          }
+      });
+      this.add(item);
+
+      item = new JMenuItem("Decrease Indent");
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            handleIndentOutdent(false);
+          }
       });
       this.add(item);
 
@@ -2044,8 +1991,7 @@ public class Editor extends JFrame {
       referenceItem = new JMenuItem("Find in Reference");
       referenceItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            //Base.showReference(referenceFile + ".html");
-            handleReference(); //textarea.getSelectedText());
+            handleFindReference();
           }
         });
       this.add(referenceItem);
@@ -2056,6 +2002,7 @@ public class Editor extends JFrame {
       if (textarea.isSelectionActive()) {
         cutItem.setEnabled(true);
         copyItem.setEnabled(true);
+        discourseItem.setEnabled(true);
 
         String sel = textarea.getSelectedText().trim();
         referenceFile = PdeKeywords.getReference(sel);
@@ -2064,6 +2011,7 @@ public class Editor extends JFrame {
       } else {
         cutItem.setEnabled(false);
         copyItem.setEnabled(false);
+        discourseItem.setEnabled(false);
         referenceItem.setEnabled(false);
       }
       super.show(component, x, y);

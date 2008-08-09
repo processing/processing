@@ -68,9 +68,10 @@ public class DiscourseFormat {
   }
 
 
+  /**
+   * Format and render sketch code.
+   */
   public void show() {
-    // Format and render sketchcode
-
     // [code] tag cancels other tags, using [quote]
     StringBuffer cf = new StringBuffer("[quote]\n");
 
