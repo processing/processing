@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -80,6 +80,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
   /// Used to hold color values to be sent to OpenGL
   protected FloatBuffer colorBuffer;
 
+  /// Used to store empty values to be passed when a light has no ambient value 
+  protected FloatBuffer zeroBuffer;  
+  
   /// IntBuffer to go with the pixels[] array
   protected IntBuffer pixelBuffer;
 
@@ -110,6 +113,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
+  public PGraphicsOpenGL(int width, int height) {
+    super(width, height, null);
+  }
+  
+  
   /**
    * Overridden from base PGraphics, because this subclass
    * will set its own listeners.
@@ -340,7 +348,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     // On the first frame that's guaranteed to be on screen,
     // and the component valid and all that, ask for focus.
-    if (parent.frameCount == 1) {
+    if ((parent != null) && parent.frameCount == 1) {
       canvas.requestFocus();
     }
 
@@ -360,10 +368,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
         projection.m02, projection.m12, projection.m22, projection.m32,
         projection.m03, projection.m13, projection.m23, projection.m33
       };
-      // not sure the difference on these two,
-      // but this is what most jogl apps seem to be using
-      //projectionFloatBuffer = FloatBuffer.wrap(projectionFloats);
-      //projectionFloatBuffer = BufferUtil.newFloatBuffer(16);
 
     } else {
       projectionFloats[0] = projection.m00;
@@ -386,10 +390,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
       projectionFloats[14] = projection.m23;
       projectionFloats[15] = projection.m33;
     }
-    //gl.glLoadMatrixf(projectionFloats);
-    //projectionFloatBuffer.put(projectionFloats);
-    //projectionFloatBuffer.rewind();
-    //gl.glLoadMatrixf(projectionFloatBuffer);
     gl.glLoadMatrixf(projectionFloats, 0);
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
@@ -719,7 +719,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   // TODO bad clipping, replace me
-  private boolean reasonablePoint(float x, float y, float z) {
+  protected boolean reasonablePoint(float x, float y, float z) {
     return ((z < 1) && (x > -width) && (x < width*2) && (y > -height) && (y < height*2));
   }
 
@@ -846,11 +846,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
   int[] deleteQueue = new int[10];
   int deleteQueueCount = 0;
 
-  class ImageCache {
+  protected class ImageCache {
     int tindex = -1;  // not yet ready
     int tpixels[];
     IntBuffer tbuffer;
-    int twidth, theight;
+    public int twidth, theight;
 
     int[] tp;
 
@@ -1696,9 +1696,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   protected void glLightNoAmbient(int num) {
-    // hopefully buffers are filled with zeroes..
+    if (zeroBuffer == null) {
+      // hopefully buffers are filled with zeroes..
+      zeroBuffer = BufferUtil.newFloatBuffer(3);
+    }
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_AMBIENT, BufferUtil.newFloatBuffer(3));
+                 GL.GL_AMBIENT, zeroBuffer);
   }
 
 
@@ -2555,7 +2558,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //////////////////////////////////////////////////////////////
 
 
-  private final float min(float a, float b) {
+  protected final float min(float a, float b) {
     return (a < b) ? a : b;
   }
 
@@ -2571,6 +2574,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public void report(String where) {
     if (!hints[DISABLE_ERROR_REPORT]) {
       int err = gl.glGetError();
+      String errString = glu.gluErrorString(err);
+      /*
       if (err != 0) {
         System.out.print("GL_ERROR at " + where + ": ");
         System.out.print(PApplet.hex(err, 4) + "  ");
@@ -2585,6 +2590,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
         }
         System.out.println();
       }
+      */
+      System.err.println("OpenGL error: " + errString);
     }
   }
 
