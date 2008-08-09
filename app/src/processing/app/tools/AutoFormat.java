@@ -900,7 +900,7 @@ public class AutoFormat {
       */
 
       // save current (rough) selection point
-      int selectionEnd = editor.textarea.getSelectionEnd();
+      int selectionEnd = editor.textarea.getSelectionStop();
 
       // make sure the caret would be past the end of the text
       if (strOut.length() < selectionEnd - 1) {
