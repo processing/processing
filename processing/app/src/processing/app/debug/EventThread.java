@@ -75,6 +75,7 @@ import com.sun.jdi.request.StepRequest;
  */
 public class EventThread extends Thread {
 
+  private final Runner parent;
   private final VirtualMachine vm;   // Running VM
   private final String[] excludes;   // Packages to exclude
   private final PrintWriter writer;  // Where output goes
@@ -87,8 +88,9 @@ public class EventThread extends Thread {
   // Maps ThreadReference to ThreadTrace instances
   private Map traceMap = new HashMap();
 
-  EventThread(VirtualMachine vm, String[] excludes, PrintWriter writer) {
+  EventThread(Runner parent, VirtualMachine vm, String[] excludes, PrintWriter writer) {
     super("event-handler");
+    this.parent = parent;
     this.vm = vm;
     this.excludes = excludes;
     this.writer = writer;
@@ -127,6 +129,10 @@ public class EventThread extends Thread {
   void setEventRequests(boolean watchFields) {
     EventRequestManager mgr = vm.eventRequestManager();
 
+//    VMDeathRequest deathReq = mgr.createVMDeathRequest();
+//    deathReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+//    deathReq.enable();
+    
     // want all exceptions
     ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
     //ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true);
@@ -187,8 +193,10 @@ public class EventThread extends Thread {
     }
 
     private void println(String str) {
-      writer.print(indent);
-      writer.println(str);
+      if (writer != null) {
+        writer.print(indent);
+        writer.println(str);
+      }
     }
 
     void methodEntryEvent(MethodEntryEvent event)  {
@@ -314,7 +322,7 @@ public class EventThread extends Thread {
   }
 
   private void vmStartEvent(VMStartEvent event)  {
-    writer.println("-- VM Started --");
+    if (writer != null) writer.println("-- VM Started --");
   }
 
   // Forward event for thread specific processing
@@ -370,8 +378,11 @@ public class EventThread extends Thread {
   }
 
   private void exceptionEvent(ExceptionEvent event) {
-    ObjectReference  or = event.exception();
-    System.out.println("exceptionEvent() fired a " + or);
+    ObjectReference or = event.exception();
+    //System.out.println("exceptionEvent() fired " + or);
+    //System.out.println(event.catchLocation());
+    
+    parent.exception(or);
     
     ThreadTrace trace = (ThreadTrace)traceMap.get(event.thread());
     if (trace != null) {  // only want threads we care about
@@ -380,14 +391,19 @@ public class EventThread extends Thread {
   }
 
   public void vmDeathEvent(VMDeathEvent event) {
+    //System.err.println("vm is dead! dead!");
     vmDied = true;
-    writer.println("-- The application exited --");
+    if (writer != null) {
+      writer.println("-- The application exited --");
+    }
   }
 
   public void vmDisconnectEvent(VMDisconnectEvent event) {
     connected = false;
     if (!vmDied) {
-      writer.println("-- The application has been disconnected --");
+      if (writer != null) {
+        writer.println("-- The application has been disconnected --");
+      }
     }
   }
 }
