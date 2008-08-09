@@ -156,7 +156,7 @@ public class XMLWriter
          }
       }
 
-      if (xml.getName() == null) {
+      if (xml.getLocalName() == null) {
          if (xml.getContent() != null) {
             if (prettyPrint) {
                this.writeEncoded(xml.getContent().trim());
@@ -167,14 +167,14 @@ public class XMLWriter
          }
       } else {
          this.writer.print('<');
-         this.writer.print(xml.getFullName());
+         this.writer.print(xml.getName());
          Vector nsprefixes = new Vector();
 
          if (xml.getNamespace() != null) {
-            if (xml.getName().equals(xml.getFullName())) {
+            if (xml.getLocalName().equals(xml.getName())) {
                this.writer.print(" xmlns=\"" + xml.getNamespace() + '"');
             } else {
-               String prefix = xml.getFullName();
+               String prefix = xml.getName();
                prefix = prefix.substring(0, prefix.indexOf(':'));
                nsprefixes.addElement(prefix);
                this.writer.print(" xmlns:" + prefix);
@@ -217,7 +217,7 @@ public class XMLWriter
              && (xml.getContent().length() > 0)) {
             writer.print('>');
             this.writeEncoded(xml.getContent());
-            writer.print("</" + xml.getFullName() + '>');
+            writer.print("</" + xml.getName() + '>');
 
             if (prettyPrint) {
                writer.println();
@@ -243,7 +243,7 @@ public class XMLWriter
                }
             }
 
-            this.writer.print("</" + xml.getFullName() + ">");
+            this.writer.print("</" + xml.getName() + ">");
 
             if (prettyPrint) {
                writer.println();

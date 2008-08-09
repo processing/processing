@@ -234,7 +234,7 @@ public class StdXMLBuilder
       if (elt.getChildCount() == 1) {
          XMLElement child = elt.getChildAtIndex(0);
 
-         if (child.getName() == null) {
+         if (child.getLocalName() == null) {
             elt.setContent(child.getContent());
             elt.removeChildAtIndex(0);
          }
