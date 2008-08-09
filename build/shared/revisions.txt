@@ -10,15 +10,22 @@ releases will be super crusty.
 ABOUT REV 0144 - 9 August 2008
 
 This is the first default download since release 0135. It represents 
-several significant changes, so PLEASE READ THE RELEASE NOTES FOR
-REVISIONS 0136 through 0143 if this is the first version you're using. 
-We've also tried to update the documentation on processing.org, 
-however with the number of things that have changed, some things 
-might be missed.
+several significant changes, so PLEASE READ ALL THE INFO BELOW FOR
+REVISIONS 0136 through 0143 if this is the first version you're using
+since 0135. We've also tried to update the documentation on 
+processing.org, however with the number of things that have changed,
+some things might be missed.
 
 [ changes ] 
 
 + Updated reference and examples.
+
++ Unlike release 0135 and earlier, a full JDK (not just a JRE) is 
+  required. I've added a test to see whether a proper JDK is installed.
+  If not, it presents an error message and berates you for not heeding
+  the repeated warnings to actually read this document. It also 
+  permanently disables your privileges for downloading the "expert" 
+  release of Processing that doesn't include Java. 
 
 + Added loadImageAsync(filename) and loadImageAsync(filename, ext).
   These functions load images on a separate thread so that your 
@@ -65,10 +72,6 @@ might be missed.
 
 + Improve efficiency of directionalLight and pointLight with OpenGL.
   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
-
-+ Added a test to see whether a proper JDK is installed on startup, 
-  because a full JDK (not JRE) is now required. If not, presents an 
-  error message to the user.
 
 + Incorporate changes to better support Andres Colubri's improved
   OpenGL graphics library.
