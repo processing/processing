@@ -92,6 +92,16 @@ public class Base {
     }
 
     try {
+      /*Class vmClass =*/ Class.forName("com.sun.jdi.VirtualMachine");
+    } catch (ClassNotFoundException cnfe) {
+      Base.showPlatforms();
+      Base.showError("Please install JDK 1.5 or later", 
+                     "Processing requires a full JDK (not just a JRE)\n" +
+                     "to run. Please install JDK 1.5 or later.\n" +
+                     "More information can be found in the reference.", cnfe);
+    }
+
+    try {
       Class platformClass = Class.forName("processing.app.Platform");
       if (Base.isMacOS()) {
         platformClass = Class.forName("processing.app.macosx.Platform");
@@ -100,8 +110,9 @@ public class Base {
       }
       platform = (Platform) platformClass.newInstance();
     } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
+      Base.showError("Problem Setting the Platform", 
+                     "An unknown error occurred while trying to load\n" +
+                     "platform-specific code for your machine.", e);
     }
 
     // Set the look and feel before opening the window
@@ -1279,6 +1290,11 @@ public class Base {
   }
 
 
+  static public void showPlatforms() {
+    showReference("environment" + File.separator + "platforms.html");
+  }
+
+  
   static public void showTroubleshooting() {
     showReference("troubleshooting" + File.separator + "index.html");
   }
