@@ -3406,82 +3406,6 @@ in   */
 
 
 
-  //////////////////////////////////////////////////////////////
-
-  // SOUND I/O
-
-  /*
-  public PSound loadSound(String filename) {
-    if (PApplet.javaVersion >= 1.3f) {
-      return new PSound2(this, openStream(filename));
-    }
-    return new PSound(this, openStream(filename));
-  }
-  */
-
-
-  //////////////////////////////////////////////////////////////
-
-  // IMAGE I/O
-
-
-  /*
-  Hashtable imageTable;
-  */
-
-  /**
-   * Draw an image based on its filename. This is less efficient than
-   * using loadImage because there's no way to unload it from memory,
-   * but it's useful for beginners.
-   */
-  /*
-  public void image(String filename, float x, float y) {
-    image(tableImage(filename), x, y);
-  }
-  */
-
-  /**
-   * Draw an image based on its filename. This is less than efficient
-   * than using loadImage because there's no way to unload it from memory,
-   * but it's useful for beginners.
-   */
-  /*
-  public void image(String filename,
-                    float x, float y, float c, float d) {
-    image(tableImage(filename), x, y, c, d);
-  }
-  */
-
-  /**
-   * Draw an image based on its filename. This is less than efficient
-   * than using loadImage because there's no way to unload it from memory,
-   * but it's useful for beginners.
-   */
-  /*
-  public void image(String filename,
-                    float a, float b, float c, float d,
-                    int u1, int v1, int u2, int v2) {
-    image(tableImage(filename), a, b, c, d, u1, v1, u2, v2);
-  }
-  */
-
-
-  /**
-   * Load an image and store it in a table based on its name.
-   */
-  /*
-  protected PImage tableImage(String filename) {
-    if (imageTable == null) imageTable = new Hashtable();
-
-    PImage image = (PImage) imageTable.get(filename);
-    if (image != null) return image;
-
-    image = loadImage(filename);
-    return image;
-  }
-  */
-
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -3553,22 +3477,7 @@ in   */
    * actual culprit, which may still be a threading issue.
    */
   public PImage loadImage(String filename) {
-    String lower = filename.toLowerCase();
-    int dot = filename.lastIndexOf('.');
-    if (dot == -1) {
-      // no extension found
-      return loadImage(filename, "unknown");
-    }
-    String extension = lower.substring(dot + 1);
-
-    // check for, and strip any parameters on the url, i.e.
-    // filename.jpg?blah=blah&something=that
-    int question = extension.indexOf('?');
-    if (question != -1) {
-      extension = extension.substring(0, question);
-    }
-
-    return loadImage(filename, extension);
+    return loadImage(filename, null);
   }
 
 
@@ -3581,6 +3490,22 @@ in   */
    * image loader that handles gif, jpg, and png.
    */
   public PImage loadImage(String filename, String extension) {
+    if (extension == null) {
+      String lower = filename.toLowerCase();
+      int dot = filename.lastIndexOf('.');
+      if (dot == -1) {
+        extension = "unknown";  // no extension found
+      }
+      extension = lower.substring(dot + 1);
+
+      // check for, and strip any parameters on the url, i.e.
+      // filename.jpg?blah=blah&something=that
+      int question = extension.indexOf('?');
+      if (question != -1) {
+        extension = extension.substring(0, question);
+      }
+    }
+    
     // just in case. them users will try anything!
     extension = extension.toLowerCase();
 
@@ -3611,8 +3536,6 @@ in   */
     // because the javax.imageio code was found to be much slower, see
     // <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=392">Bug 392</A>.
     try {
-      //if (lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
-      //  lower.endsWith(".gif") || lower.endsWith(".png")) {
       if (extension.equals("jpg") || extension.equals("jpeg") ||
           extension.equals("gif") || extension.equals("png") ||
           extension.equals("unknown")) {
@@ -3621,7 +3544,11 @@ in   */
           return null;
         } else {
           Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
-          PImage image = loadImageSync(awtImage);
+          PImage image = loadImageMT(awtImage);
+          if (image.width == -1) {
+            System.err.println("The file " + filename + 
+                               " contains bad image data, or may not be an image.");
+          }
           // if it's a .gif image, test to see if it has transparency
           if (extension.equals("gif") || extension.equals("png")) {
             image.checkAlpha();
@@ -3664,11 +3591,66 @@ in   */
     return null;
   }
 
+  
+  public PImage loadImageAsync(String filename) {
+    return loadImageAsync(filename, null);
+  }
+  
+  
+  public PImage loadImageAsync(String filename, String extension) {
+    PImage vessel = createImage(0, 0, ARGB);
+    AsyncImageLoader ail = 
+      new AsyncImageLoader(filename, extension, vessel);
+    ail.start();
+    return vessel;
+  }
+  
+  
+  public int asyncLoaderMax = 4;
+  volatile int asyncLoaderCount;
+  
+  class AsyncImageLoader extends Thread {
+    String filename;
+    String extension;
+    PImage vessel;
+    
+    public AsyncImageLoader(String filename, String extension, PImage vessel) {
+      this.filename = filename;
+      this.extension = extension;
+      this.vessel = vessel;
+    }
 
+    public void run() {
+      while (asyncLoaderCount == asyncLoaderMax) {
+        try {
+          Thread.sleep(10);
+        } catch (InterruptedException e) { }
+      }
+      asyncLoaderCount++;
+
+      PImage actual = loadImage(filename, extension);
+
+      // An error message should have already printed
+      if (actual == null) {
+        vessel.width = -1;
+        vessel.height = -1;
+
+      } else {
+        vessel.width = actual.width;
+        vessel.height = actual.height;
+        vessel.format = actual.format;
+        vessel.pixels = actual.pixels;
+      }
+      asyncLoaderCount--;
+    }
+  }
+
+  
   /**
-   * Load an AWT image synchronously.
+   * Load an AWT image synchronously by setting up a MediaTracker for
+   * a single image, and blocking until it has loaded.
    */
-  public PImage loadImageSync(Image awtImage) {
+  public PImage loadImageMT(Image awtImage) {
     MediaTracker tracker = new MediaTracker(this);
     tracker.addImage(awtImage, 0);
     try {
