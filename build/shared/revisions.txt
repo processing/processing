@@ -7,7 +7,46 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0144 - XX July 2008
+ABOUT REV 0144 - 9 August 2008
+
+This is the first default download since release 0135. It represents 
+several significant changes, so please read the release notes for 
+revisions 0136 through 0143 if this is the first version you're using.
+We've also tried to update the documentation on processing.org, 
+however with the number of things that have changed, some things 
+might be missed.
+
+[ changes ] 
+
++ Update reference and examples.
+
++ Fixed a problem where OutOfMemoryErrors (as well as other more 
+  catastrophic/complicated errors like StackOverflowError) were not 
+  reported. These are now reported along with additional explanation
+  in the editor console.
+
++ Better error messages for OpenGL quirks. 
+
++ Improve efficiency of directionalLight and pointLight with OpenGL.
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
+
++ Incorporate changes to better support Andres Colubri's improved
+  OpenGL graphics library.
+
+[ known problems ]
+
++ Intermittent problem where sketches will not start when the Run 
+  button is pressed some fraction of the time. On a single try, 
+  it may not work, but subsequent clicks to the Run button will bring 
+  things back.. So far, this is limited to Mac OS X, but it's
+  known to be a threading issue, and is likely to show up elsewhere.
+  http://dev.processing.org/bugs/show_bug.cgi?id=852
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5.
+  This is an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 
+  (but not 10.4) causing these menus to be extremely slow. 
+  Workarounds described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
