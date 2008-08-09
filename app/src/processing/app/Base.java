@@ -42,8 +42,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 144;
-  static final String VERSION_NAME = "0144 Beta";
+  static final int VERSION = 145;
+  static final String VERSION_NAME = "0145 Beta";
 
   static Platform platform;
 
