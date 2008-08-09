@@ -2574,9 +2574,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public void report(String where) {
     if (!hints[DISABLE_ERROR_REPORT]) {
       int err = gl.glGetError();
-      String errString = glu.gluErrorString(err);
-      /*
       if (err != 0) {
+        String errString = glu.gluErrorString(err);
+        System.err.println("OpenGL error: " + errString + " " + err);
+      /*
         System.out.print("GL_ERROR at " + where + ": ");
         System.out.print(PApplet.hex(err, 4) + "  ");
         switch (err) {
@@ -2591,7 +2592,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         System.out.println();
       }
       */
-      System.err.println("OpenGL error: " + errString);
+      }
     }
   }
 
