@@ -2712,7 +2712,8 @@ public abstract class PGraphics extends PImage implements PConstants {
     int lineStart = 0;
     int index = 0;
     while (index < length) {
-      if ((textBuffer[index] == ' ') || (index == length-1)) {
+      if ((textBuffer[index] == ' ') ||
+          (index == length-1)) {
         // boundary of a word
         float wordWidth = textWidthImpl(textBuffer, wordStart, index);
 
@@ -2751,9 +2752,8 @@ public abstract class PGraphics extends PImage implements PConstants {
           lineStart = index;
           wordStart = index;
           wordStop = index;
-          runningX = x1; //boxX1;
+          runningX = x1;
           currentY += textLeading;
-          //if (currentY > boxY2) return;  // box is now full
           if (currentY > y2) return;  // box is now full
 
         } else {

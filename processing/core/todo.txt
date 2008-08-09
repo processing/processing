@@ -1,16 +1,20 @@
 0144 core
 
-
 opengl fixes 
-_ incorporate changes from andres colubri into PGraphicsOpenGL
-_ use gluErrorString() for glError() stuff
-_ PGraphicsOpenGL.java:
-_   directionalLight() and .pointLight() are both calling
-_   glLightNoAmbient() which then creates a new FloatBuffer 
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
+X incorporate changes from andres colubri into PGraphicsOpenGL
+X   most of the changes incorporated, something weird with constructors
+X use gluErrorString() for glError() stuff
+X PGraphicsOpenGL.java:
+X   directionalLight() and .pointLight() are both calling
+X   glLightNoAmbient() which then creates a new FloatBuffer 
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
+
 
 _ if loading an image in p5 and the image is bad, no error msg shown
 _   that is, if a loadImage() turns up an access denied page
+
+_ separate x/y axis on sphereDetail() params
+_ http://dev.processing.org/bugs/show_bug.cgi?id=856
 
 _ option to have renderer errors show up
 _   1) as text warnings 2) as runtime exceptions 3) never
@@ -161,6 +165,8 @@ _   same will go for blend()
 
 
 rework some text/font code [1.0]
+_ text placement is ugly, seems like fractional metrics problem
+_   http://dev.processing.org/bugs/show_bug.cgi?id=866
 _ text in rectangle is drawing outside the box
 _   http://dev.processing.org/bugs/show_bug.cgi?id=844
 _ textMode(SHAPE) and textMode(IMAGE)?
@@ -448,6 +454,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=531
 
 CORE / PFont and text()
 
+_ improve font metrics
+_   http://java.sun.com/products/java-media/2D/reference/faqs/index.html#Q_How_do_I_obtain_font_metrics
 _ font encoding issues 
 _   java seems to force straight windows encoding.. (problem for pi fonts)
 _   opentype/cff fonts don't work with live loading from the app
