@@ -464,7 +464,7 @@ implements TabExpander, Printable
   public final void invalidateSelectedLines()
   {
     invalidateLineRange(textArea.getSelectionStartLine(),
-                        textArea.getSelectionEndLine());
+                        textArea.getSelectionStopLine());
   }
 
   /**
@@ -633,7 +633,7 @@ implements TabExpander, Printable
   {
     if (!printing) {
       if (line >= textArea.getSelectionStartLine()
-          && line <= textArea.getSelectionEndLine())
+          && line <= textArea.getSelectionStopLine())
         paintLineHighlight(gfx,line,y);
 
       if (highlights != null)
@@ -653,7 +653,7 @@ implements TabExpander, Printable
     y += fm.getLeading() + fm.getMaxDescent();
 
     int selectionStart = textArea.getSelectionStart();
-    int selectionEnd = textArea.getSelectionEnd();
+    int selectionEnd = textArea.getSelectionStop();
 
     if (selectionStart == selectionEnd) {
       if (lineHighlight) {
@@ -664,7 +664,7 @@ implements TabExpander, Printable
       gfx.setColor(selectionColor);
 
       int selectionStartLine = textArea.getSelectionStartLine();
-      int selectionEndLine = textArea.getSelectionEndLine();
+      int selectionEndLine = textArea.getSelectionStopLine();
       int lineStart = textArea.getLineStartOffset(line);
 
       int x1, x2;

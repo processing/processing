@@ -841,7 +841,7 @@ public class JEditTextArea extends JComponent
    * @return The end offset of the specified line, or -1 if the line is
    * invalid.
    */
-  public int getLineEndOffset(int line)
+  public int getLineStopOffset(int line)
   {
     Element lineElement = document.getDefaultRootElement()
       .getElement(line);
@@ -949,7 +949,7 @@ public class JEditTextArea extends JComponent
   public final String getLineText(int lineIndex)
   {
     int start = getLineStartOffset(lineIndex);
-    return getText(start,getLineEndOffset(lineIndex) - start - 1);
+    return getText(start,getLineStopOffset(lineIndex) - start - 1);
   }
 
   /**
@@ -960,7 +960,7 @@ public class JEditTextArea extends JComponent
   public final void getLineText(int lineIndex, Segment segment)
   {
     int start = getLineStartOffset(lineIndex);
-    getText(start,getLineEndOffset(lineIndex) - start - 1,segment);
+    getText(start,getLineStopOffset(lineIndex) - start - 1,segment);
   }
 
   /**
@@ -1016,7 +1016,7 @@ public class JEditTextArea extends JComponent
   /**
    * Returns the selection end offset.
    */
-  public final int getSelectionEnd()
+  public final int getSelectionStop()
   {
     return selectionEnd;
   }
@@ -1041,13 +1041,13 @@ public class JEditTextArea extends JComponent
         return Math.min(lineEnd,lineStart + end);
       }
     else
-      return getLineEndOffset(line) - 1;
+      return getLineStopOffset(line) - 1;
   }
 
   /**
    * Returns the selection end line.
    */
-  public final int getSelectionEndLine()
+  public final int getSelectionStopLine()
   {
     return selectionEndLine;
   }
@@ -1447,7 +1447,7 @@ public class JEditTextArea extends JComponent
     // Don't overstrike if we're on the end of
     // the line
     int caret = getCaretPosition();
-    int caretLineEnd = getLineEndOffset(getCaretLine());
+    int caretLineEnd = getLineStopOffset(getCaretLine());
     if(caretLineEnd - caret <= str.length())
       {
         setSelectedText(str);
@@ -2228,7 +2228,7 @@ public class JEditTextArea extends JComponent
     private void doTripleClick(MouseEvent evt, int line,
                                int offset, int dot)
     {
-      select(getLineStartOffset(line),getLineEndOffset(line)-1);
+      select(getLineStartOffset(line),getLineStopOffset(line)-1);
     }
   }
 

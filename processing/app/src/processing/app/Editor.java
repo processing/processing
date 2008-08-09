@@ -859,15 +859,22 @@ public class Editor extends JFrame {
         public void actionPerformed(ActionEvent e) {
           beginCompoundEdit();
 
-          //textarea.selectAll();
           int startLine = textarea.getSelectionStartLine();
-          int stopLine = textarea.getSelectionEndLine();
+          int stopLine = textarea.getSelectionStopLine();
+          
+          // If the selection ends at the beginning of the last line, 
+          // then don't (un)comment that line. 
+          int lastLineStart = textarea.getLineStartOffset(stopLine);
+          int selectionStop = textarea.getSelectionStop();
+          if (selectionStop == lastLineStart) {
+            stopLine--;
+          }
+          
+          // If the text is empty, ignore the user. 
           int length = textarea.getDocumentLength();
           int pos = textarea.getLineStartOffset(startLine);
-          //System.out.println("pos is " + pos + " and line is " + startLine);
-          //System.out.println("doc length is " + length);
           if (pos + 2 > length) return;
-
+          // Check the first two characters to see if it's already a comment.
           String begin = textarea.getText(pos, 2);
           //System.out.println("begin is '" + begin + "'");
           boolean commented = begin.equals("//");
@@ -885,12 +892,11 @@ public class Editor extends JFrame {
               textarea.select(location, location);
               textarea.setSelectedText("//");
             }
-            //System.out.println(line);
           }
           // Subtract one from the end, otherwise selects past the current line.
           // (Which causes subsequent calls to keep expanding the selection)
           textarea.select(textarea.getLineStartOffset(startLine),
-                          textarea.getLineEndOffset(stopLine) - 1);
+                          textarea.getLineStopOffset(stopLine) - 1);
           endCompoundEdit();
         }
     });
@@ -1068,7 +1074,7 @@ public class Editor extends JFrame {
    * Called to update the text but not switch to a different
    * set of code (which would affect the undo manager).
    */
-  public void setText(String what, int selectionStart, int selectionEnd) {
+  public void setText(String what, int selectionStart, int selectionStop) {
     beginCompoundEdit();
     textarea.setText(what);
     endCompoundEdit();
@@ -1076,9 +1082,9 @@ public class Editor extends JFrame {
     // make sure that a tool isn't asking for a bad location
     selectionStart =
       Math.max(0, Math.min(selectionStart, textarea.getDocumentLength()));
-    selectionEnd =
+    selectionStop =
       Math.max(0, Math.min(selectionStart, textarea.getDocumentLength()));
-    textarea.select(selectionStart, selectionEnd);
+    textarea.select(selectionStart, selectionStop);
 
     textarea.requestFocus();  // get the caret blinking
   }
@@ -1872,7 +1878,7 @@ public class Editor extends JFrame {
       }
     }
     textarea.select(textarea.getLineStartOffset(line),
-                    textarea.getLineEndOffset(line) - 1);
+                    textarea.getLineStopOffset(line) - 1);
   }
 
 
