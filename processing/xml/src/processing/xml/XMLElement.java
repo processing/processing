@@ -350,7 +350,7 @@ public class XMLElement implements Serializable {
      *
      * @return the name, or null if the element only contains #PCDATA.
      */
-    public String getFullName() {
+    public String getName() {
         return this.fullName;
     }
 
@@ -360,7 +360,7 @@ public class XMLElement implements Serializable {
      *
      * @return the name, or null if the element only contains #PCDATA.
      */
-    public String getName() {
+    public String getLocalName() {
         return this.name;
     }
 
@@ -416,10 +416,10 @@ public class XMLElement implements Serializable {
         if (child == null) {
             throw new IllegalArgumentException("child must not be null");
         }
-        if ((child.getName() == null) && (! this.children.isEmpty())) {
+        if ((child.getLocalName() == null) && (! this.children.isEmpty())) {
             XMLElement lastChild = (XMLElement) this.children.lastElement();
 
-            if (lastChild.getName() == null) {
+            if (lastChild.getLocalName() == null) {
                 lastChild.setContent(lastChild.getContent()
                                      + child.getContent());
                 return;
@@ -440,9 +440,9 @@ public class XMLElement implements Serializable {
         if (child == null) {
             throw new IllegalArgumentException("child must not be null");
         }
-        if ((child.getName() == null) && (! this.children.isEmpty())) {
+        if ((child.getLocalName() == null) && (! this.children.isEmpty())) {
             XMLElement lastChild = (XMLElement) this.children.lastElement();
-            if (lastChild.getName() == null) {
+            if (lastChild.getLocalName() == null) {
                 lastChild.setContent(lastChild.getContent()
                                      + child.getContent());
                 return;
@@ -559,7 +559,7 @@ public class XMLElement implements Serializable {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             XMLElement kid = getChild(i);
-            if (kid.getFullName().equals(name)) {
+            if (kid.getName().equals(name)) {
                 return kid;
             }
         }
@@ -587,7 +587,7 @@ public class XMLElement implements Serializable {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             XMLElement kid = getChild(i);
-            if (kid.getFullName().equals(items[offset])) {
+            if (kid.getName().equals(items[offset])) {
                 if (offset == items.length-1) {
                     return kid;
                 } else {
@@ -685,7 +685,7 @@ public class XMLElement implements Serializable {
         int matchCount = 0;
         for (int i = 0; i < childCount; i++) {
         	XMLElement kid = getChild(i);
-        	if (kid.getFullName().equals(name)) {
+        	if (kid.getName().equals(name)) {
         		matches[matchCount++] = kid;
         	}
         }
@@ -1279,7 +1279,7 @@ public class XMLElement implements Serializable {
      * @param rawElement the element to compare to
      */
     public boolean equalsXMLElement(XMLElement elt) {
-        if (! this.name.equals(elt.getName())) {
+        if (! this.name.equals(elt.getLocalName())) {
             return false;
         }
         if (this.attributes.size() != elt.getAttributeCount()) {
