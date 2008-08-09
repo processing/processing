@@ -2139,6 +2139,10 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   public void image(PImage image, float x, float y) {
+    // Starting in release 0144, image errors are simply ignored.
+    // loadImageAsync() sets width and height to -1 when loading fails.
+    if (image.width == -1 || image.height == -1) return;
+
     imageImpl(image,
               x, y, x+image.width, y+image.height,
               0, 0, image.width, image.height);
@@ -2158,6 +2162,10 @@ public abstract class PGraphics extends PImage implements PConstants {
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
+    // Starting in release 0144, image errors are simply ignored.
+    // loadImageAsync() sets width and height to -1 when loading fails.
+    if (image.width == -1 || image.height == -1) return;
+
     if (imageMode == CORNER) {
       if (c < 0) {  // reset a negative width
         a += c; c = -c;
