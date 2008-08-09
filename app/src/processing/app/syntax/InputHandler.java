@@ -407,7 +407,7 @@ public abstract class InputHandler extends KeyAdapter
                         }
 
                         if(textArea.getSelectionStart()
-                           != textArea.getSelectionEnd())
+                           != textArea.getSelectionStop())
                         {
                                 textArea.setSelectedText("");
                         }
@@ -437,7 +437,7 @@ public abstract class InputHandler extends KeyAdapter
                 {
                         JEditTextArea textArea = getTextArea(evt);
                         int start = textArea.getSelectionStart();
-                        if(start != textArea.getSelectionEnd())
+                        if(start != textArea.getSelectionStop())
                         {
                                 textArea.setSelectedText("");
                         }
@@ -490,7 +490,7 @@ public abstract class InputHandler extends KeyAdapter
                         }
 
                         if(textArea.getSelectionStart()
-                           != textArea.getSelectionEnd())
+                           != textArea.getSelectionStop())
                         {
                                 textArea.setSelectedText("");
                         }
@@ -520,7 +520,7 @@ public abstract class InputHandler extends KeyAdapter
                 {
                         JEditTextArea textArea = getTextArea(evt);
                         int start = textArea.getSelectionStart();
-                        if(start != textArea.getSelectionEnd())
+                        if(start != textArea.getSelectionStop())
                         {
                                 textArea.setSelectedText("");
                         }
@@ -574,7 +574,7 @@ public abstract class InputHandler extends KeyAdapter
 
                         int caret = textArea.getCaretPosition();
 
-                        int lastOfLine = textArea.getLineEndOffset(
+                        int lastOfLine = textArea.getLineStopOffset(
                                 textArea.getCaretLine()) - 1;
                         int lastVisibleLine = textArea.getFirstLine()
                                 + textArea.getVisibleLines();
@@ -586,7 +586,7 @@ public abstract class InputHandler extends KeyAdapter
                         else
                                 lastVisibleLine -= (textArea.getElectricScroll() + 1);
 
-                        int lastVisible = textArea.getLineEndOffset(lastVisibleLine) - 1;
+                        int lastVisible = textArea.getLineStopOffset(lastVisibleLine) - 1;
                         int lastDocument = textArea.getDocumentLength();
 
                         if(caret == lastDocument)
@@ -746,7 +746,7 @@ public abstract class InputHandler extends KeyAdapter
                         if(caret == textArea.getDocumentLength())
                         {
                           if (textArea.getSelectionStart() !=
-                              textArea.getSelectionEnd()) {
+                              textArea.getSelectionStop()) {
                             // just move to the end of the selection
                             textArea.select(caret, caret);
                           } else {
@@ -759,7 +759,7 @@ public abstract class InputHandler extends KeyAdapter
 
                         } else {
                           int start = textArea.getSelectionStart();
-                          int end = textArea.getSelectionEnd();
+                          int end = textArea.getSelectionStop();
                           if (start != end) {
                             textArea.select(end, end);
                           } else {
@@ -923,7 +923,7 @@ public abstract class InputHandler extends KeyAdapter
                           textArea.select(textArea.getMarkPosition(), caret-1);
                         } else {
                           int start = textArea.getSelectionStart();
-                          int end = textArea.getSelectionEnd();
+                          int end = textArea.getSelectionStop();
                           if (start != end) {
                             textArea.select(start, start);
                           } else {
