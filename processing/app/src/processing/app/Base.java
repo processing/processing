@@ -46,6 +46,9 @@ public class Base {
   static final String VERSION_NAME = "0144 Beta";
 
   static Platform platform;
+  
+  // A single instance of the preferences window
+  Preferences preferencesFrame;
 
   // set to true after the first time the menu is built.
   // so that the errors while building don't show up again.
@@ -953,8 +956,8 @@ public class Base {
    * Show the preferences window.
    */
   public void handlePrefs() {
-    Preferences preferences = new Preferences();
-    preferences.showFrame(activeEditor);
+    if (preferencesFrame == null) preferencesFrame = new Preferences();
+    preferencesFrame.showFrame(activeEditor);
   }
 
 
