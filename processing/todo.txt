@@ -1,6 +1,30 @@
 0144 pde
 X add new reference and examples
 X write revisions.txt entry that covers changes since 0135
+X format for discourse is ignoring the selection
+X   also shouldn't add (so much) extra space to the beginning and end
+o add tool for running in jview
+o   http://dev.processing.org/bugs/show_bug.cgi?id=142
+o   calls export, or only available after export (or when an applet dir exists)
+o   warn user that applet html will be over-written
+X   no longer supporting 1.1
+X on startup, make sure that the jdi classes are available
+X   if not, tell the user to install a friggin jdk
+X   this way we can release a windows version w/o java
+X don't open more than one copy of the preferences window
+X   http://dev.processing.org/bugs/show_bug.cgi?id=830
+X modify namespace handling in xml lib
+X   changed getFullName() to getName()
+X   changed getName() to getLocalName()
+o look through the code for any places where UTF-8 not used
+
+text handling
+X block comment - don't bother with last line if starting it
+X   (same behavior as eclipse)
+X add block comment to right-click menu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=840
+X add increase/decrease indent to edit and right-click edit menu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=841
 
 fix problems with vm crashing errors (OutOfMemoryError, etc)
 o too many NPEs on loadimage may freeze the app (visualizar example?)
@@ -12,22 +36,7 @@ o     solution is to export, and then see how it runs
 o     this is particularly bad with threaded applications
 
 
-_ remove namespace stuff from xml lib
-
-_ link books and sample chapters from the "getting started" portion of the faq
-
 _ draw mode apps do not shut off the run button when finished
-
-_ opengl.jar with eclipse
-_   auto-extract native libs from opengl.jar 
-_   to remove java.library.path problems (!)
-
-_ add block comment to right-click menu
-_   http://dev.processing.org/bugs/show_bug.cgi?id=840
-_ add increase/decrease indent to edit and right-click edit menu
-_   http://dev.processing.org/bugs/show_bug.cgi?id=841
-_ block comment - don't bother with last line if starting it
-_   (same behavior as eclipse)
 
 
 new/open/close/save
@@ -71,17 +80,11 @@ _ put the "had to rename sketch" message in the msg bar
 _   it's ugly/annoying/intrusive
 
 
-_ dialogs are not modal
-_   or at least, shouldn't open more than one copy of prefs
-_   http://dev.processing.org/bugs/show_bug.cgi?id=830
-
-
 . . . 
 
 
 [ needs verification ] 
 
-_ look through the code for any places where UTF-8 not used
 _ check to see whether this bug is fixed once 0140 is released
 _   properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
@@ -113,6 +116,7 @@ _   this may just be a macosx (ppc?) bug
 
 
 with casey
+_ link books and sample chapters from the "getting started" portion of the faq
 _ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
 _   mark examples as untitled (rather than read-only)
 _   maybe even pull these directly from the zip file?
@@ -931,8 +935,8 @@ TOOLS / General
 _ dynamic tools menu (requires moving files around)
 _   this means can integrate the autoformat stuff
 _   processing.mess/tools has chandler's template stuff
-_ occasional exception in "copy for discourse"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=729
+_ don't open more than one "create font" or "color selector"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=830
 _ need to write converter that will handle syntax changes
 _   basically find & replace with regexps
 _   framerate() -> frameRate()
@@ -980,10 +984,6 @@ _ need a proper means to handle command keys for tools
 _   http://dev.processing.org/bugs/show_bug.cgi?id=140
 _ external editor -> add a command to launch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=141
-_ add tool for running in jview
-_   http://dev.processing.org/bugs/show_bug.cgi?id=142
-_   calls export, or only available after export (or when an applet dir exists)
-_   warn user that applet html will be over-written
 _ add tool to "Add custom html to sketch"
 _   that copies applet.html, 
 _   opens sketch folder, 
@@ -1006,6 +1006,13 @@ TOOLS / Courseware
 _ export sketch as applet when uploading
 _ save sketch zip files, have a means to load them from "teacher" version of p5
 _ figure out how to use the 
+
+
+TOOLS / Discourse Format
+
+_ discourse format needs nbsp (or similar) to insert spaces properly
+_ occasional exception in "copy for discourse"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=729
 
 
 TOOLS / Libraries
