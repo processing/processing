@@ -3,8 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-06 Ignacio Manuel González Moreta
-  Copyright (c) 2006 Ben Fry and Casey Reas
+  Copyright (c) 2005-06 Ignacio Manuel González Moreta.
+  Copyright (c) 2006-08 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,8 +25,6 @@ package processing.app.tools;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-//import java.awt.event.*;
-//import javax.swing.*;
 import javax.swing.text.Segment;
 
 import processing.app.*;
@@ -38,11 +36,13 @@ import processing.core.PApplet;
  * <p/>
  * Original code by <A HREF="http://usuarios.iponet.es/imoreta">owd</A>.
  * Revised and updated for revision 0108 by Ben Fry (10 March 2006).
- * This code will later be removed but is included with release 0108+
- * while features for the "Tools" menu are in testing.
+ * This code may later be moved to its own 'Tool' plugin, but is included  
+ * with release 0108+ while features for the "Tools" menu are in testing.
  * <p/>
  * Updated for 0122 to simply copy the code directly to the clipboard,
  * rather than opening a new window.
+ * <p/>
+ * Updated for 0144 to only format the selected lines.
  * <p/>
  * Notes from the original source:
  * Discourse.java This is a dirty-mix source.
@@ -52,19 +52,11 @@ import processing.core.PApplet;
  */
 public class DiscourseFormat {
 
-  //static final String WINDOW_TITLE = "Format for Discourse by owd";
-
-  // p5 icon for the window
-  //static Image icon;
-
   Editor editor;
-  //JEditTextArea textarea;
-
   // JTextArea of the actual Editor
-  JEditTextArea parent;
+  JEditTextArea textarea;
 
-  //JFrame frame;
-
+  
   /**
    * Creates a new window with the formated (YaBB tags) sketchcode
    * from the actual Processing Tab ready to send to the processing discourse
@@ -72,37 +64,7 @@ public class DiscourseFormat {
    */
   public DiscourseFormat(Editor editor) {
     this.editor = editor;
-    this.parent = editor.textarea;
-
-    /*
-    textarea = new JEditTextArea(new PdeTextAreaDefaults());
-    textarea.setRightClickPopup(new DiscourseTextAreaPopup());
-    textarea.setTokenMarker(new PdeKeywords());
-    textarea.setHorizontalOffset(6);
-
-    textarea.setEditable(false);
-
-    // Create and set up the window.
-    frame = new JFrame(WINDOW_TITLE);
-    frame.setSize(500, 500);
-
-    // set the window icon
-    try {
-      icon = Base.getImage("icon.gif", frame);
-      frame.setIconImage(icon);
-    } catch (Exception e) {  } // fail silently, no big whup
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-    Container pain = frame.getContentPane();
-    pain.setLayout(new BorderLayout());
-    pain.add(textarea, BorderLayout.CENTER);
-
-    frame.setResizable(true);
-
-    frame.pack();
-    frame.setLocation(100, 100);
-    //frame.setVisible(true);
-    */
+    this.textarea = editor.textarea;
   }
 
 
@@ -112,19 +74,19 @@ public class DiscourseFormat {
     // [code] tag cancels other tags, using [quote]
     StringBuffer cf = new StringBuffer("[quote]\n");
 
-    int selStart = parent.getSelectionStart();
-    int selStop = parent.getSelectionEnd();
+    int selStart = textarea.getSelectionStart();
+    int selStop = textarea.getSelectionStop();
     
-    int startLine = parent.getSelectionStartLine();
-    int stopLine = parent.getSelectionEndLine();
+    int startLine = textarea.getSelectionStartLine();
+    int stopLine = textarea.getSelectionStopLine();
     
     // If no selection, convert all the lines
     if (selStart == selStop) {
       startLine = 0;
-      stopLine = parent.getLineCount() - 1;
+      stopLine = textarea.getLineCount() - 1;
     } else {
       // Make sure the selection doesn't end at the beginning of the last line
-      if (parent.getLineStartOffset(stopLine) == selStop) {
+      if (textarea.getLineStartOffset(stopLine) == selStop) {
         stopLine--;
       }
     }
@@ -153,28 +115,26 @@ public class DiscourseFormat {
   public void appendFormattedLine(StringBuffer cf, int line) {
     Segment segment = new Segment();
 
-    TextAreaPainter painter = parent.getPainter();
-    TokenMarker tokenMarker = parent.getTokenMarker();
+    TextAreaPainter painter = textarea.getPainter();
+    TokenMarker tokenMarker = textarea.getTokenMarker();
 
     // Use painter's cached info for speed
     FontMetrics fm = painter.getFontMetrics();
 
-    // get line text from parent textarea
-    parent.getLineText(line, segment);
+    // get line text from parent text area
+    textarea.getLineText(line, segment);
 
     char[] segmentArray = segment.array;
     int limit = segment.getEndIndex();
     int segmentOffset = segment.offset;
     int segmentCount = segment.count;
-    int width = 0; //parent.getHorizontalOffset();
-
-    //int x = 0; //parent.getHorizontalOffset();
+    int width = 0;
 
     // If syntax coloring is disabled, do simple translation
     if (tokenMarker == null) {
       for (int j = 0; j < segmentCount; j++) {
         char c = segmentArray[j + segmentOffset];
-        cf = cf.append(c); //concat(character(c));
+        cf = cf.append(c);
         int charWidth;
         if (c == '\t') {
           charWidth = (int) painter.nextTabStop(width, j) - width;
@@ -194,13 +154,11 @@ public class DiscourseFormat {
 
       } else {
         painter.setCurrentLineIndex(line);
-        //painter.currentLineIndex = line;
         painter.setCurrentLineTokens(tokenMarker.markTokens(segment, line));
         tokens = painter.getCurrentLineTokens();
       }
 
       int offset = 0;
-      //Toolkit toolkit = painter.getToolkit();
       Font defaultFont = painter.getFont();
       SyntaxStyle[] styles = painter.getStyles();
 
@@ -219,7 +177,6 @@ public class DiscourseFormat {
           fm = painter.getFontMetrics();
         } else {
           // Place open tags []
-          //cf.append("[color=" + color() + "]");
           cf.append("[color=#");
           cf.append(PApplet.hex(styles[id].getColor().getRGB() & 0xFFFFFF, 6));
           cf.append("]");
@@ -253,67 +210,5 @@ public class DiscourseFormat {
         tokens = tokens.next;
       }
     }
-    //return cf.toString();
   }
-
-
-  /**
-   * Returns the discourse popup menu. Another features can be added: format
-   * selected text with a determinated tag (I'm thinking about [url]selected
-   * text[/url])
-   */
-  /*
-  class DiscourseTextAreaPopup extends JPopupMenu {
-    JMenuItem copyItem;
-
-    public DiscourseTextAreaPopup() {
-      JMenuItem item;
-
-      copyItem = new JMenuItem("Copy");
-      copyItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            textarea.copy();
-          }
-        });
-      this.add(copyItem);
-
-      item = new JMenuItem("Select All");
-      item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            textarea.selectAll();
-          }
-        });
-      this.add(item);
-    }
-
-    // if no text is selected, disable copy menu item
-    public void show(Component component, int x, int y) {
-      if (textarea.isSelectionActive()) {
-        copyItem.setEnabled(true);
-
-      } else {
-        copyItem.setEnabled(false);
-      }
-      super.show(component, x, y);
-    }
-  }
-  */
-
-
-  /*
-  // A false listener (use the mouse)
-  public class DiscourseListener {
-
-    public DiscourseListener(JEditTextArea thisTextarea) {
-      // I'm a... I know this gives peoblems, but all this code
-      // is a funny hacking experiment
-      thisTextarea.editorListener = parent.editorListener;
-    }
-
-    public boolean keyPressed(KeyEvent event) {
-      System.out.println("Is your mouse lone some tonight...");
-      return false;
-    }
-  }
-  */
 }

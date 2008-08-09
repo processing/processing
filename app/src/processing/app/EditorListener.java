@@ -368,7 +368,7 @@ public class EditorListener {
         if (spaceCount < 0) {
           // for rev 0122, actually delete extra space
           //textarea.setSelectionStart(origIndex + 1);
-          textarea.setSelectionEnd(textarea.getSelectionEnd() - spaceCount);
+          textarea.setSelectionEnd(textarea.getSelectionStop() - spaceCount);
           textarea.setSelectedText("\n");
         } else {
           String insertion = "\n" + Editor.EMPTY.substring(0, spaceCount);
@@ -403,7 +403,7 @@ public class EditorListener {
         // first remove anything that was there (in case this multiple
         // characters are selected, so that it's not in the way of the
         // spaces for the auto-indent
-        if (textarea.getSelectionStart() != textarea.getSelectionEnd()) {
+        if (textarea.getSelectionStart() != textarea.getSelectionStop()) {
           textarea.setSelectedText("");
         }
 

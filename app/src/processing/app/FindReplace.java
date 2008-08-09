@@ -282,7 +282,7 @@ public class FindReplace extends JFrame implements ActionListener {
     }
 
     //int selectionStart = editor.textarea.getSelectionStart();
-    int selectionEnd = editor.textarea.getSelectionEnd();
+    int selectionEnd = editor.textarea.getSelectionStop();
 
     int nextIndex = text.indexOf(search, selectionEnd);
     if (nextIndex == -1) {

@@ -520,7 +520,7 @@ public class Sketch {
         editor.handleOpenUnchecked(mainFilename,
                                    currentIndex,
                                    editor.textarea.getSelectionStart(),
-                                   editor.textarea.getSelectionEnd(),
+                                   editor.textarea.getSelectionStop(),
                                    editor.textarea.getScrollPosition());
 
         // get the changes into the sketchbook menu
@@ -974,7 +974,7 @@ public class Sketch {
     editor.handleOpenUnchecked(newFile.getPath(),
                                currentIndex,
                                editor.textarea.getSelectionStart(),
-                               editor.textarea.getSelectionEnd(),
+                               editor.textarea.getSelectionStop(),
                                editor.textarea.getScrollPosition());
 
     // Name changed, rebuild the sketch menus
@@ -1197,7 +1197,7 @@ public class Sketch {
     if (current != null) {
       current.program = editor.getText();
       current.selectionStart = editor.textarea.getSelectionStart();
-      current.selectionStop = editor.textarea.getSelectionEnd();
+      current.selectionStop = editor.textarea.getSelectionStop();
       current.scrollPosition = editor.textarea.getScrollPosition();
     }
 
