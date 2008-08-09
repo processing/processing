@@ -1,9 +1,22 @@
 0144 pde
+X add new reference and examples
+X write revisions.txt entry that covers changes since 0135
 
+fix problems with vm crashing errors (OutOfMemoryError, etc)
+o too many NPEs on loadimage may freeze the app (visualizar example?)
+o   hopefully this should be fixed with 0136 changes
+o   lots of runtime exceptions still being lost on osx
+o     particularly with multi-threaded applications
+o   macosx dropping exceptions all the time.. grr
+o     solution is to export, and then see how it runs
+o     this is particularly bad with threaded applications
+
+
+_ remove namespace stuff from xml lib
+
+_ link books and sample chapters from the "getting started" portion of the faq
 
 _ draw mode apps do not shut off the run button when finished
-
-_ remove namespace stuff from xml lib?
 
 _ opengl.jar with eclipse
 _   auto-extract native libs from opengl.jar 
@@ -77,13 +90,6 @@ o   perhaps the get around this by building into sketch folder
 o     when non-ascii chars in use, just launch everything externally
 _ export and export to application fail with umlauts in folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=252
-_ too many NPEs on loadimage may freeze the app (visualizar example?)
-_   hopefully this should be fixed with 0136 changes
-_   lots of runtime exceptions still being lost on osx
-_     particularly with multi-threaded applications
-_   macosx dropping exceptions all the time.. grr
-_     solution is to export, and then see how it runs
-_     this is particularly bad with threaded applications
 _ stop button needs to update itself and work properly [1.0]
 _   also editor buttons to light up and clear properly 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=396
@@ -466,8 +472,8 @@ X   registerDispose() does the trick
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
 _ write a timer class/example library
-_ write an example that uses Hashtable
-_ write an example that uses Vector
+_ write an example that uses HashMap (or Hashtable)
+_ write an example that uses ArrayList properly
 _ get an xml library and example in there
 _   xquery and xpath (latter in particular) for dealing with xml
 _   jeff uses saxon for switchboard.. saxon also part of nux
@@ -1046,6 +1052,8 @@ _ crash on particular string
 _   http://dev.processing.org/bugs/show_bug.cgi?id=363
 _ autoformat screws up with color arrays
 _   http://dev.processing.org/bugs/show_bug.cgi?id=760
+_ too many right parens error when there are not
+_   http://dev.processing.org/bugs/show_bug.cgi?id=867
 
 
 TOOLS / Create Font
