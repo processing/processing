@@ -90,13 +90,13 @@ zip -rq $P5.zip $P5
 #rm -rf $P5
 
 # zip up another for experts
-echo Expert release is disabled until further notice.
-#echo Packaging expert release...
-#echo
-#cp -a $P5 $P5-expert
-## remove enormous java runtime
-#rm -rf $P5-expert/java
-#zip -rq $P5-expert.zip $P5-expert
+#echo Expert release is disabled until further notice.
+echo Packaging expert release...
+echo
+cp -a $P5 $P5-expert
+# remove enormous java runtime
+rm -rf $P5-expert/java
+zip -rq $P5-expert.zip $P5-expert
 
 echo Done.
 
