@@ -1,39 +1,4 @@
-0144 pde
-X add new reference and examples
-X write revisions.txt entry that covers changes since 0135
-X format for discourse is ignoring the selection
-X   also shouldn't add (so much) extra space to the beginning and end
-o add tool for running in jview
-o   http://dev.processing.org/bugs/show_bug.cgi?id=142
-o   calls export, or only available after export (or when an applet dir exists)
-o   warn user that applet html will be over-written
-X   no longer supporting 1.1
-X on startup, make sure that the jdi classes are available
-X   if not, tell the user to install a friggin jdk
-X   this way we can release a windows version w/o java
-X don't open more than one copy of the preferences window
-X   http://dev.processing.org/bugs/show_bug.cgi?id=830
-X modify namespace handling in xml lib
-X   changed getFullName() to getName()
-X   changed getName() to getLocalName()
-o look through the code for any places where UTF-8 not used
-
-text handling
-X block comment - don't bother with last line if starting it
-X   (same behavior as eclipse)
-X add block comment to right-click menu
-X   http://dev.processing.org/bugs/show_bug.cgi?id=840
-X add increase/decrease indent to edit and right-click edit menu
-X   http://dev.processing.org/bugs/show_bug.cgi?id=841
-
-fix problems with vm crashing errors (OutOfMemoryError, etc)
-o too many NPEs on loadimage may freeze the app (visualizar example?)
-o   hopefully this should be fixed with 0136 changes
-o   lots of runtime exceptions still being lost on osx
-o     particularly with multi-threaded applications
-o   macosx dropping exceptions all the time.. grr
-o     solution is to export, and then see how it runs
-o     this is particularly bad with threaded applications
+0145 pde
 
 
 _ draw mode apps do not shut off the run button when finished

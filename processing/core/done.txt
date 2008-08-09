@@ -1,3 +1,19 @@
+0144 core
+X if loading an image in p5 and the image is bad, no error msg shown
+X   that is, if a loadImage() turns up an access denied page
+X   added an error message for this, and the image width and height will be -1
+X added loadImageAsync() for threaded image loading
+
+opengl fixes 
+X incorporate changes from andres colubri into PGraphicsOpenGL
+X   most of the changes incorporated, something weird with constructors
+X use gluErrorString() for glError() stuff
+X PGraphicsOpenGL.java:
+X   directionalLight() and .pointLight() are both calling
+X   glLightNoAmbient() which then creates a new FloatBuffer 
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
+
+
 0143 core
 X some fonts broken in java 1.5 on osx have changed again
 X   http://dev.processing.org/bugs/show_bug.cgi?id=407
