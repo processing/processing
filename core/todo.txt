@@ -1,4 +1,8 @@
 0144 core
+X if loading an image in p5 and the image is bad, no error msg shown
+X   that is, if a loadImage() turns up an access denied page
+X   added an error message for this, and the image width and height will be -1
+X added loadImageAsync() for threaded image loading
 
 opengl fixes 
 X incorporate changes from andres colubri into PGraphicsOpenGL
@@ -9,12 +13,14 @@ X   directionalLight() and .pointLight() are both calling
 X   glLightNoAmbient() which then creates a new FloatBuffer 
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1199376364
 
-
-_ if loading an image in p5 and the image is bad, no error msg shown
-_   that is, if a loadImage() turns up an access denied page
+_ resize window will nuke font setting
+_ textFont() used in setup() is null once draw() arrives
+_   http://dev.processing.org/bugs/show_bug.cgi?id=726
+_ colorMode() set inside setup() sometimes not set once draw() arrives
+_   http://dev.processing.org/bugs/show_bug.cgi?id=767
 
 _ separate x/y axis on sphereDetail() params
-_ http://dev.processing.org/bugs/show_bug.cgi?id=856
+_   http://dev.processing.org/bugs/show_bug.cgi?id=856
 
 _ option to have renderer errors show up
 _   1) as text warnings 2) as runtime exceptions 3) never
@@ -72,7 +78,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=692
 _ set() requires updatePixels() with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=705
 
-_ resize window will nuke font setting
 _ get() in java2d not honoring imageMode or rectMode
 
 _ can loadBytes() be improved by querying file size first?
@@ -219,10 +224,6 @@ threading [1.0]
 _ major threading overhaul before 1.0 (compendium)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=511
 _   ewjordan has added a good trace of the badness
-_ textFont() used in setup() is null once draw() arrives
-_   http://dev.processing.org/bugs/show_bug.cgi?id=726
-_ colorMode() set inside setup() sometimes not set once draw() arrives
-_   http://dev.processing.org/bugs/show_bug.cgi?id=767
 _ PDE locks up during setup() (since no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 _ if too many errors come through during setup, app will terminate
@@ -641,6 +642,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 PGraphicsOpenGL
 
+_ opengl.jar with eclipse
+_   auto-extract native libs from opengl.jar 
+_   to remove java.library.path problems (!)
 _ updatePixels wth OpenGL requires a lot of memory, need better texture update
 _   http://dev.processing.org/bugs/show_bug.cgi?id=610
 _ strokeWeight() doesn't work in opengl or p3d

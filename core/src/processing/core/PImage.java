@@ -35,7 +35,7 @@ import javax.imageio.ImageIO;
  * pixel information, such as PGraphics and the video library classes.
  * <P>
  * Code for copying, resizing, scaling, and blending contributed
- * by <A HREF="http://www.toxi.co.uk">toxi</A>
+ * by <A HREF="http://www.toxi.co.uk">toxi</A>.
  * <P>
  */
 public class PImage implements PConstants, Cloneable {
