@@ -170,6 +170,7 @@ public class PImage implements PConstants, Cloneable {
   public PImage(java.awt.Image img) {
     width = img.getWidth(null);
     height = img.getHeight(null);
+    //System.out.println(width + " " + height + " " + img.getClass().getName());
 
     pixels = new int[width*height];
     PixelGrabber pg =
@@ -1309,14 +1310,14 @@ public class PImage implements PConstants, Cloneable {
    * Use 0 for wide or high to make that dimension scale proportionally.
    */
   public void resize(int wide, int high) {  // ignore
-    // Make sure that the pixels[] array is valid 
+    // Make sure that the pixels[] array is valid
     loadPixels();
 
     if (wide <= 0 && high <= 0) {
       width = 0;  // Gimme a break, don't waste my time
       height = 0;
       pixels = new int[0];
-      
+
     } else {
       if (wide == 0) {  // Use height to determine relative size
         float diff = (float) high / (float) height;

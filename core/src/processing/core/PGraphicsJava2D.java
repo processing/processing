@@ -981,16 +981,22 @@ public class PGraphicsJava2D extends PGraphics {
                         RenderingHints.VALUE_ANTIALIAS_ON :
                         RenderingHints.VALUE_ANTIALIAS_OFF);
 
+    //System.out.println("setting frac metrics");
+    //g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+    //                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
     g2.setColor(fillColorObject);
-    // better to use drawString(float, float)?
     int length = stop - start;
     g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
+    // better to use drawString() with floats? (nope, draws the same)
+    //g2.drawString(new String(buffer, start, length), x, y);
 
     // this didn't seem to help the scaling issue
     // and creates garbage because of the new temporary object
     //java.awt.font.GlyphVector gv = textFontNative.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop));
     //g2.drawGlyphVector(gv, x, y);
+    
+    //System.out.println(new String(buffer, start, stop));
 
     // return to previous smoothing state if it was changed
     //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
