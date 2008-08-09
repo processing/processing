@@ -110,22 +110,31 @@ public class DiscourseFormat {
     // Format and render sketchcode
 
     // [code] tag cancels other tags, using [quote]
-    StringBuffer cf = new StringBuffer("[quote] \n \n");
+    StringBuffer cf = new StringBuffer("[quote]");
 
-    // Line by line
-    for (int i = 0; i < parent.getLineCount(); i++) {
-      cf.append(formatCode(i));
+    int selStart = parent.getSelectionStart();
+    int selStop = parent.getSelectionEnd();
+    
+    int startLine = parent.getSelectionStartLine();
+    int stopLine = parent.getSelectionEndLine();
+    
+    // If no selection, convert all the lines
+    if (selStart == selStop) {
+      startLine = 0;
+      stopLine = parent.getLineCount() - 1;
+    } else {
+      // Make sure the selection doesn't end at the beginning of the last line
+      if (parent.getLineStartOffset(stopLine) == selStop) {
+        stopLine--;
+      }
+    }
+    
+    // Read the code line by line
+    for (int i = startLine; i <= stopLine; i++) {
+      appendFormattedLine(cf, i);
     }
 
-    cf.append("\n [/quote]");
-
-    /*
-    // Send the text to the textarea
-    textarea.setText(cf.toString());
-    textarea.select(0, 0);
-
-    frame.show();
-    */
+    cf.append("[/quote]");
 
     StringSelection formatted = new StringSelection(cf.toString());
     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -135,17 +144,14 @@ public class DiscourseFormat {
         }
       });
 
-    editor.message("Discourse-formatted code has been " +
-                   "copied to the clipboard.");
+    editor.message("Code formatted for processing.org/discourse " +
+                   "has been copied to the clipboard.");
   }
 
 
   // A terrible headache...
-  public String formatCode(int line) {
-    StringBuffer cf = new StringBuffer();
-
-    // Segment
-    Segment lineSegment = new Segment();
+  public void appendFormattedLine(StringBuffer cf, int line) {
+    Segment segment = new Segment();
 
     TextAreaPainter painter = parent.getPainter();
     TokenMarker tokenMarker = parent.getTokenMarker();
@@ -154,12 +160,12 @@ public class DiscourseFormat {
     FontMetrics fm = painter.getFontMetrics();
 
     // get line text from parent textarea
-    parent.getLineText(line, lineSegment);
+    parent.getLineText(line, segment);
 
-    char[] segmentArray = lineSegment.array;
-    int limit = lineSegment.getEndIndex();
-    int segmentOffset = lineSegment.offset;
-    int segmentCount = lineSegment.count;
+    char[] segmentArray = segment.array;
+    int limit = segment.getEndIndex();
+    int segmentOffset = segment.offset;
+    int segmentCount = segment.count;
     int width = 0; //parent.getHorizontalOffset();
 
     //int x = 0; //parent.getHorizontalOffset();
@@ -189,7 +195,7 @@ public class DiscourseFormat {
       } else {
         painter.setCurrentLineIndex(line);
         //painter.currentLineIndex = line;
-        painter.setCurrentLineTokens(tokenMarker.markTokens(lineSegment, line));
+        painter.setCurrentLineTokens(tokenMarker.markTokens(segment, line));
         tokens = painter.getCurrentLineTokens();
       }
 
@@ -207,7 +213,7 @@ public class DiscourseFormat {
           } else {
             cf.append('\n');
           }
-          return cf.toString();
+          return; // cf.toString();
         }
         if (id == Token.NULL) {
           fm = painter.getFontMetrics();
@@ -247,7 +253,7 @@ public class DiscourseFormat {
         tokens = tokens.next;
       }
     }
-    return cf.toString();
+    //return cf.toString();
   }
 
 
