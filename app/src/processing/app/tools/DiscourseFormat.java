@@ -110,7 +110,7 @@ public class DiscourseFormat {
     // Format and render sketchcode
 
     // [code] tag cancels other tags, using [quote]
-    StringBuffer cf = new StringBuffer("[quote]");
+    StringBuffer cf = new StringBuffer("[quote]\n");
 
     int selStart = parent.getSelectionStart();
     int selStop = parent.getSelectionEnd();
@@ -134,7 +134,7 @@ public class DiscourseFormat {
       appendFormattedLine(cf, i);
     }
 
-    cf.append("[/quote]");
+    cf.append("\n[/quote]");
 
     StringSelection formatted = new StringSelection(cf.toString());
     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
