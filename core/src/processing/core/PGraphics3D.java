@@ -2429,25 +2429,35 @@ public class PGraphics3D extends PGraphics {
 
   // SPHERE
 
-
-  // [toxi031031] used by the new sphere code below
-  // precompute vertices along unit sphere with new detail setting
-
+  
   public void sphereDetail(int res) {
-    if (res < 3) res = 3; // force a minimum res
-    if (res == sphereDetail) return;
+    sphereDetail(res, res);
+  }
 
-    float delta = (float)SINCOS_LENGTH/res;
-    float[] cx = new float[res];
-    float[] cz = new float[res];
+
+  /**
+   * Set the detail level for approximating a sphere. The ures and vres params
+   * control the horizontal and vertical resolution. 
+   * 
+   * Code for sphereDetail() submitted by toxi [031031].
+   * Code for enhanced u/v version from davbol [080801]. 
+   */
+  public void sphereDetail(int ures, int vres) {
+    if (ures < 3) ures = 3; // force a minimum res
+    if (vres < 2) vres = 2; // force a minimum res
+    if ((ures == sphereDetailU) && (vres == sphereDetailV)) return;
+
+    float delta = (float)SINCOS_LENGTH/ures;
+    float[] cx = new float[ures];
+    float[] cz = new float[ures];
     // calc unit circle in XZ plane
-    for (int i = 0; i < res; i++) {
+    for (int i = 0; i < ures; i++) {
       cx[i] = cosLUT[(int) (i*delta) % SINCOS_LENGTH];
       cz[i] = sinLUT[(int) (i*delta) % SINCOS_LENGTH];
     }
     // computing vertexlist
     // vertexlist starts at south pole
-    int vertCount = res * (res-1) + 2;
+    int vertCount = ures * (vres-1) + 2;
     int currVert = 0;
 
     // re-init arrays to store vertices
@@ -2455,24 +2465,25 @@ public class PGraphics3D extends PGraphics {
     sphereY = new float[vertCount];
     sphereZ = new float[vertCount];
 
-    float angle_step = (SINCOS_LENGTH*0.5f)/res;
+    float angle_step = (SINCOS_LENGTH*0.5f)/vres;
     float angle = angle_step;
 
     // step along Y axis
-    for (int i = 1; i < res; i++) {
+    for (int i = 1; i < vres; i++) {
       float curradius = sinLUT[(int) angle % SINCOS_LENGTH];
       float currY = -cosLUT[(int) angle % SINCOS_LENGTH];
-      for (int j = 0; j < res; j++) {
+      for (int j = 0; j < ures; j++) {
         sphereX[currVert] = cx[j] * curradius;
         sphereY[currVert] = currY;
         sphereZ[currVert++] = cz[j] * curradius;
       }
       angle += angle_step;
     }
-    sphereDetail = res;
+    sphereDetailU = ures;
+    sphereDetailV = vres;
   }
 
-
+  
   /**
    * Draw a sphere with radius r centered at coordinate 0, 0, 0.
    * <P>
@@ -2485,12 +2496,14 @@ public class PGraphics3D extends PGraphics {
    * sphere is a series of concentric circles who radii vary
    * along the shape, based on, er.. cos or something
    * <PRE>
-   * [toxi031031] new sphere code. removed all multiplies with
+   * [toxi 031031] new sphere code. removed all multiplies with
    * radius, as scale() will take care of that anyway
    *
-   * [toxi031223] updated sphere code (removed modulos)
+   * [toxi 031223] updated sphere code (removed modulos)
    * and introduced sphereAt(x,y,z,r)
    * to avoid additional translate()'s on the user/sketch side
+   *
+   * [davbol 080801] now using separate sphereDetailU/V
    * </PRE>
    */
   public void sphere(float r) {
@@ -2498,13 +2511,13 @@ public class PGraphics3D extends PGraphics {
     float y = 0;
     float z = 0;
 
-    if (sphereDetail == 0) {
+    if ((sphereDetailU < 3) || (sphereDetailV < 2)) {
       sphereDetail(30);
     }
 
     int v1,v11,v2;
     pushMatrix();
-    if (x!=0f && y!=0f && z!=0f) translate(x,y,z);
+    if (x != 0f && y != 0f && z != 0f) translate(x,y,z);
     scale(r);
 
     if (triangle != null) {  // triangle is null in gl
@@ -2513,7 +2526,7 @@ public class PGraphics3D extends PGraphics {
 
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
-    for (int i = 0; i < sphereDetail; i++) {
+    for (int i = 0; i < sphereDetailU; i++) {
       normal(0, -1, 0);
       vertex(0, -1, 0);
       normal(sphereX[i], sphereY[i], sphereZ[i]);
@@ -2527,20 +2540,20 @@ public class PGraphics3D extends PGraphics {
 
     // middle rings
     int voff = 0;
-    for(int i = 2; i < sphereDetail; i++) {
-      v1=v11=voff;
-      voff += sphereDetail;
-      v2=voff;
+    for(int i = 2; i < sphereDetailV; i++) {
+      v1 = v11 = voff;
+      voff += sphereDetailU;
+      v2 = voff;
       beginShape(TRIANGLE_STRIP);
-      for (int j = 0; j < sphereDetail; j++) {
+      for (int j = 0; j < sphereDetailU; j++) {
         normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
         vertex(sphereX[v1], sphereY[v1], sphereZ[v1++]);
         normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
         vertex(sphereX[v2], sphereY[v2], sphereZ[v2++]);
       }
       // close each ring
-      v1=v11;
-      v2=voff;
+      v1 = v11;
+      v2 = voff;
       normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
       vertex(sphereX[v1], sphereY[v1], sphereZ[v1]);
       normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
@@ -2550,12 +2563,12 @@ public class PGraphics3D extends PGraphics {
 
     // add the northern cap
     beginShape(TRIANGLE_STRIP);
-    for (int i = 0; i < sphereDetail; i++) {
+    for (int i = 0; i < sphereDetailU; i++) {
       v2 = voff + i;
       normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
       vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
       normal(0, 1, 0);
-    vertex(0, 1, 0);
+      vertex(0, 1, 0);
     }
     normal(sphereX[voff], sphereY[voff], sphereZ[voff]);
     vertex(sphereX[voff], sphereY[voff], sphereZ[voff]);

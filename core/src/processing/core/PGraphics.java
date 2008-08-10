@@ -594,7 +594,9 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  public int sphereDetail = 0;
+  // [davbol 2008-08-01] split into sphereDetailU and sphereDetailV
+  public int sphereDetailU = 0; // # of U steps (aka "theta") around longitudinally spanning 2pi
+  public int sphereDetailV = 0; // # of V steps (aka "phi") along latitudinally top-to-bottom spanning pi
 
 
 
@@ -1651,6 +1653,11 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
   public void sphereDetail(int res) {
+    depthError("sphereDetail");
+  }
+
+  // [davbol 2008-08-01]
+  public void sphereDetail(int ures, int vres) {
     depthError("sphereDetail");
   }
 
