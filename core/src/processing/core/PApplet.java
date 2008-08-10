@@ -7408,6 +7408,12 @@ in   */
   }
 
 
+  public void sphereDetail(int ures, int vres) {
+    if (recorder != null) recorder.sphereDetail(ures, vres);
+    g.sphereDetail(ures, vres);
+  }
+
+
   public void sphere(float r) {
     if (recorder != null) recorder.sphere(r);
     g.sphere(r);

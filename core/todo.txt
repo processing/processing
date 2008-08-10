@@ -1,4 +1,6 @@
 0145 core
+_ separate x/y axis on sphereDetail() params
+_   http://dev.processing.org/bugs/show_bug.cgi?id=856
 
 
 _ resize window will nuke font setting
@@ -6,9 +8,6 @@ _ textFont() used in setup() is null once draw() arrives
 _   http://dev.processing.org/bugs/show_bug.cgi?id=726
 _ colorMode() set inside setup() sometimes not set once draw() arrives
 _   http://dev.processing.org/bugs/show_bug.cgi?id=767
-
-_ separate x/y axis on sphereDetail() params
-_   http://dev.processing.org/bugs/show_bug.cgi?id=856
 
 _ option to have renderer errors show up
 _   1) as text warnings 2) as runtime exceptions 3) never
