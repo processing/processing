@@ -59,15 +59,18 @@ The filename parameter can also be a URL to a file found online. For security re
 The extension of the filename parameter is used to determine the image type. In cases where the image filename does not end with a proper extension, specify the extension as the second parameter to loadImage(), as shown in the third example on this page.
 <br/> <br/>
 If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from loadImage() is null.
+<br/> <br/>
+Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
 </description>
 
 <syntax>
 loadImage(<c>filename</c>)
+loadImage(<c>filename</c>, <c>extension</c>)
 </syntax>
 
 <parameter>
 <label>filename</label>
-<description>string: name of file to load, must be either .gif, .jpg, or .tga</description>
+<description>string: name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform.</description>
 </parameter>
 
 <returns>PImage or null</returns>

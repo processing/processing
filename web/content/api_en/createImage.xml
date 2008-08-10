@@ -25,7 +25,7 @@ image(img, 17, 17);
 <code>
 PImage img = createImage(66, 66, ARGB);
 for(int i=0; i &lt; img.pixels.length; i++) {
-  img.pixels[i] = color(0, 90, 102, i%img.width * 2); 
+  img.pixels[i] = color(0, 90, 102, i % img.width * 2); 
 }
 image(img, 17, 17);
 image(img, 34, 34);
@@ -36,6 +36,8 @@ image(img, 34, 34);
 Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
 <br/> <br/>
 Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
+<br/> <br/>
+Advanced users please note that createImage() should be used instead of the syntax <tt>new PImage()</tt>. 
 </description>
 
 <syntax>
