@@ -11,6 +11,8 @@ o   this may in fact only be internal
 X   this is just the stop() method, though maybe we need to document it
 X text(String, float, float, float, float) draws text outside box
 X   http://dev.processing.org/bugs/show_bug.cgi?id=844
+X implement textAlign() for y coords in text rect
+X   need to add reference for this
 
 
 _ resize window will nuke font setting

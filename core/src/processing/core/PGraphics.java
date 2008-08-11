@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -457,8 +457,11 @@ public abstract class PGraphics extends PImage implements PConstants {
    * because the String object is slow
    */
   protected char[] textBuffer = new char[8 * 1024];
-  protected int[] textBreakBuffer = new int[8 * 1024];
   protected char[] textWidthBuffer = new char[8 * 1024];
+
+  protected int textBreakCount;
+  protected int[] textBreakStart;
+  protected int[] textBreakStop;
 
 
   //////////////////////////////////////////////////////////////
@@ -2577,9 +2580,9 @@ public abstract class PGraphics extends PImage implements PConstants {
       // for multiple lines, no different
       y += textAscent();
     } else if (textAlignY == BOTTOM) {
-      // for a single line, this is just baseline (unchanged)
+      // for a single line, this is just offset by the descent
       // for multiple lines, subtract leading for each line
-      y -= high;
+      y -= textDescent() + high;
     //} else if (textAlignY == BASELINE) {
       // do nothing
     }
@@ -2698,8 +2701,43 @@ public abstract class PGraphics extends PImage implements PConstants {
       float temp = y1; y1 = y2; y2 = temp;
     }
 
-    float currentY = y1;
+//    float currentY = y1;
     float boxWidth = x2 - x1;
+
+//    // ala illustrator, the text itself must fit inside the box
+//    currentY += textAscent(); //ascent() * textSize;
+//    // if the box is already too small, tell em to f off
+//    if (currentY > y2) return;
+
+    float spaceWidth = textWidth(' ');
+
+    if (textBreakStart == null) {
+      textBreakStart = new int[20];
+      textBreakStop = new int[20];
+    }
+    textBreakCount = 0;
+
+    int length = str.length();
+    if (length + 1 > textBuffer.length) {
+      textBuffer = new char[length + 1];
+    }
+    str.getChars(0, length, textBuffer, 0);
+    // add a fake newline to simplify calculations
+    textBuffer[length++] = '\n';
+
+    int sentenceStart = 0;
+    for (int i = 0; i < length; i++) {
+      if (textBuffer[i] == '\n') {
+//        currentY = textSentence(textBuffer, sentenceStart, i,
+//                                lineX, boxWidth, currentY, y2, spaceWidth);
+        boolean legit =
+          textSentence(textBuffer, sentenceStart, i, boxWidth, spaceWidth);
+        if (!legit) break;
+//      if (Float.isNaN(currentY)) break;  // word too big (or error)
+//      if (currentY > y2) break;  // past the box
+        sentenceStart = i + 1;
+      }
+    }
 
     // lineX is the position where the text starts, which is adjusted
     // to left/center/right based on the current textAlign
@@ -2710,44 +2748,44 @@ public abstract class PGraphics extends PImage implements PConstants {
       lineX = x2; //boxX2;
     }
 
-    // ala illustrator, the text itself must fit inside the box
-    currentY += textAscent(); //ascent() * textSize;
-    // if the box is already too small, tell em to f off
-    if (currentY > y2) return;
+    float boxHeight = y2 - y1;
+    int lineFitCount = 1 + PApplet.floor((boxHeight - textAscent()) / textLeading);
 
-    float spaceWidth = textWidth(' ');
-    
-    int length = str.length();
-    if (length + 1 > textBuffer.length) {
-      textBuffer = new char[length + 1];
-      textBreakBuffer = new int[length + 1];
-    }
-    str.getChars(0, length, textBuffer, 0);
-    // add a fake newline to simplify calculations
-    textBuffer[length++] = '\n';
+    if (textAlignY == CENTER) {
+      int lineCount = Math.min(textBreakCount, lineFitCount);
+      float lineHigh = textAscent() + textLeading * (lineCount - 1);
+      float y = y1 + textAscent() + (boxHeight - lineHigh) / 2;
+      for (int i = 0; i < lineCount; i++) {
+        textLineImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
+        y += textLeading;
+      }
 
-    int sentenceStart = 0;
-    for (int i = 0; i < length; i++) {
-      if (textBuffer[i] == '\n') {
-        currentY = textSentence(textBuffer, sentenceStart, i, 
-                                lineX, boxWidth, currentY, y2, spaceWidth);
-        if (Float.isNaN(currentY)) break;  // word too big (or error)
-        if (currentY > y2) break;  // past the box
-        sentenceStart = i + 1;
+    } else if (textAlignY == BOTTOM) {
+      int lineCount = Math.min(textBreakCount, lineFitCount);
+      float y = y2 - textDescent() - textLeading * (lineCount - 1);
+      for (int i = 0; i < lineCount; i++) {
+        textLineImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
+        y += textLeading;
+      }
+
+    } else {  // TOP or BASELINE just go to the default
+      float y = y1 + textAscent();
+      for (int i = 0; i < lineFitCount; i++) {
+        textLineImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
+        y += textLeading;
       }
     }
 
     if (textMode == SCREEN) updatePixels();
   }
-  
-  
+
+
   /**
    * Emit a sentence of text, defined as a chunk of text without any newlines.
-   * @param stop non-inclusive, the end of the text in question 
-   */ 
-  float textSentence(char[] buffer, int start, int stop, 
-                     float x, float boxWidth, float y, float y2, 
-                     float spaceWidth) {
+   * @param stop non-inclusive, the end of the text in question
+   */
+  protected boolean textSentence(char[] buffer, int start, int stop,
+                                 float boxWidth, float spaceWidth) {
     float runningX = 0;
 
     // Keep track of this separately from index, since we'll need to back up
@@ -2757,50 +2795,53 @@ public abstract class PGraphics extends PImage implements PConstants {
     int index = start;
     while (index <= stop) {
       // boundary of a word or end of this sentence
-      if ((buffer[index] == ' ') || (index == stop)) {  
+      if ((buffer[index] == ' ') || (index == stop)) {
         float wordWidth = textWidthImpl(buffer, wordStart, index);
 
         if (runningX + wordWidth > boxWidth) {
           if (runningX != 0) {
             // Next word is too big, output the current line and advance
-            textLineImpl(buffer, lineStart, index, x, y);
+            //textLineImpl(buffer, lineStart, index, x, y);
+            textSentenceBreak(lineStart, index);
             // only increment index if a word wasn't broken inside the
-            // do/while loop below.. 
-            
-            // Eat whitespace because multiple spaces don't count for s* 
+            // do/while loop below..
+
+            // Eat whitespace because multiple spaces don't count for s*
             // when they're at the end of a line.
             //index = wordStop;  // back that azz up
-            while ((index < stop) && (buffer[index] == ' ')) { 
+            while ((index < stop) && (buffer[index] == ' ')) {
               index++;
             }
           } else {  // (runningX == 0)
-            // If this is the first word on the line, and its width is greater 
-            // than the width of the text box, then break the word where at the 
+            // If this is the first word on the line, and its width is greater
+            // than the width of the text box, then break the word where at the
             // max width, and send the rest of the word to the next line.
             do {
               index--;
               if (index == wordStart) {
                 // Not a single char will fit on this line. screw 'em.
                 //System.out.println("screw you");
-                return Float.NaN;
+                return false; //Float.NaN;
               }
               wordWidth = textWidthImpl(buffer, wordStart, index);
             } while (wordWidth > boxWidth);
-            
-            textLineImpl(buffer, lineStart, index, x, y);
+
+            //textLineImpl(buffer, lineStart, index, x, y);
+            textSentenceBreak(lineStart, index);
           }
           lineStart = index;
           wordStart = index;
           runningX = 0;
-          y += textLeading;
-          if (y > y2) return y;  // box is now full
-        
+//          y += textLeading;
+//          if (y > y2) return y;  // box is now full
+
         } else if (index == stop) {
           // last line in the block, time to unload
-          textLineImpl(buffer, lineStart, index, x, y);
-          y += textLeading;
+          //textLineImpl(buffer, lineStart, index, x, y);
+          textSentenceBreak(lineStart, index);
+//          y += textLeading;
           index++;
-          
+
         } else {  // this word will fit, just add it to the line
           runningX += wordWidth + spaceWidth;
           wordStart = index + 1;  // move on to the next word
@@ -2810,10 +2851,22 @@ public abstract class PGraphics extends PImage implements PConstants {
         index++;  // this is just another letter
       }
     }
-    return y;
+//    return y;
+    return true;
   }
-  
-  
+
+
+  protected void textSentenceBreak(int start, int stop) {
+    if (textBreakCount == textBreakStart.length) {
+      textBreakStart = PApplet.expand(textBreakStart);
+      textBreakStop = PApplet.expand(textBreakStop);
+    }
+    textBreakStart[textBreakCount] = start;
+    textBreakStop[textBreakCount] = stop;
+    textBreakCount++;
+  }
+
+
   public void text(String s, float x1, float y1, float x2, float y2, float z) {
     if ((z != 0) && (textMode == SCREEN)) {
       String msg = "textMode(SCREEN) cannot have a z coordinate";
