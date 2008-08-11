@@ -1,5 +1,6 @@
 <?
 
+/**
 //require('../generate/exhibition.php');
 
 //require(GENERATEDIR.'lib/Curated.class.php');
@@ -59,15 +60,17 @@ function network_xml2($num)
     return $softwares;   
 }
 
-
+*/
 
 $pages = array(
     'Cover'         => array('/', 0),
 
     'Exhibition'    => array('/exhibition/index.html', 1),
     'Index'        => array('/exhibition/index.html', 2),
-    'Collection'    => array($curatedPages, 2),
-    'Network Links'    => array($networkPages, 2),
+    #'Collection'    => array($curatedPages, 2),
+    'Collection'    => array('/exhibition/curated_page_new.html', 2),
+    #'Network Links'    => array($networkPages, 2),
+    'Network Links'    => array('/exhibition/network_page_new.html', 2),
     #'Features'    => array('/exhibition/index.html', 2),
     
     'Learning'      => array('/learning/index.html', 1),
