@@ -1,16 +1,18 @@
 <?
 
-require('../generate/exhibition.php');
+//require('../generate/exhibition.php');
 
-$curated = curated_xml('all');
-$network = network_xml('all');
-// count number of items
-$ctotal = count($curated);
-$ntotal = count($network);
-// count number of pages needed
-$cnum_pages = ceil($ctotal / CURATED_PER_PAGE);
-$nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
-    
+//$curated = curated_xml('all');
+//$network = network_xml('all');
+// Count number of items
+//$ctotal = count($curated);
+//$ntotal = count($network);
+// Count number of pages needed
+//$cnum_pages = ceil($ctotal / CURATED_PER_PAGE);
+//$nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
+
+$helloCasey = $cnum_pages;
+
 $pages = array(
     'Cover'         => array('/', 0),
 
