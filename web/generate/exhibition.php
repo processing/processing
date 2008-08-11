@@ -11,6 +11,7 @@ require(GENERATEDIR.'lib/Curated.class.php');
 require(GENERATEDIR.'lib/Network.class.php');
 
 /******************************************** CURATED ***/
+
 function get_curated($curated, $start = 0, $num = 12)
 {
     // output html
@@ -154,7 +155,7 @@ if (!defined('COVER')) {
     $ntotal = count($network);
     // count number of pages needed
     $cnum_pages = ceil($ctotal / CURATED_PER_PAGE);
-    $nnum_pages = ceil($ntotal / NETWORK_PER_PAGE)+1;
+    $nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
     
     // create and write the first page
     $page = new Page('Exhibition', 'Index');
@@ -170,7 +171,11 @@ if (!defined('COVER')) {
         $page->set('curated_nav', curated_nav($cnum_pages, $i+1));
         $page->set('exhibition', get_curated_three($curated, CURATED_PER_PAGE*$i, CURATED_PER_PAGE));
         //$pagename = sprintf("curated_page_%d.html", $i+1);
-        $pagename = sprintf("curated_page_%d.html", $cnum_pages-$i);
+        if ($i == 0 ) {
+          $pagename = sprintf("curated_page_new.html");
+        } else {
+          $pagename = sprintf("curated_page_%d.html", $cnum_pages-$i);
+        }
         writeFile("exhibition/".$pagename, $page->out());
     }
     
