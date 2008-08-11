@@ -1,5 +1,14 @@
 <?
 
+$curated = curated_xml('all');
+$network = network_xml('all');
+// count number of items
+$ctotal = count($curated);
+$ntotal = count($network);
+// count number of pages needed
+$cnum_pages = ceil($ctotal / CURATED_PER_PAGE);
+$nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
+    
 $pages = array(
     'Cover'         => array('/', 0),
 
