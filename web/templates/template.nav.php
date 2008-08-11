@@ -2,14 +2,14 @@
 
 //require('../generate/exhibition.php');
 
-//$curated = curated_xml('all');
-//$network = network_xml('all');
+$curated = curated_xml('all');
+$network = network_xml('all');
 // Count number of items
-//$ctotal = count($curated);
-//$ntotal = count($network);
+$ctotal = count($curated);
+$ntotal = count($network);
 // Count number of pages needed
-//$cnum_pages = ceil($ctotal / CURATED_PER_PAGE);
-//$nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
+$cnum_pages = ceil($ctotal / CURATED_PER_PAGE);
+$nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
 
 $curatedPages = '/exhibition/curated_page_' . $cnum_pages . '.html';
 $networkPages = '/exhibition/network_page_' . $nnum_pages . '.html';
