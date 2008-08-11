@@ -11,15 +11,16 @@
 //$cnum_pages = ceil($ctotal / CURATED_PER_PAGE);
 //$nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
 
-$helloCasey = $cnum_pages;
+$curatedPages = $cnum_pages;
+$networkPages = $nnum_pages;
 
 $pages = array(
     'Cover'         => array('/', 0),
 
     'Exhibition'    => array('/exhibition/index.html', 1),
     'Index'        => array('/exhibition/index.html', 2),
-    'Collection'    => array('/exhibition/curated_page_1.html', 2),
-    'Network Links'    => array('/exhibition/network_page_1.html', 2),
+    'Collection'    => array('/exhibition/curated_page_$cnum_pages.html', 2),
+    'Network Links'    => array('/exhibition/network_page_$nnum_pages.html', 2),
     #'Features'    => array('/exhibition/index.html', 2),
     
     'Learning'      => array('/learning/index.html', 1),
