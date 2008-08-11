@@ -49,7 +49,11 @@ text(s, 15, 20, 70, 70);
 </example>
 
 <description>
-Draws text to the screen. Displays the information specified in the <b>data</b> or <b>stringdata</b> parameters on the screen in the position specified by the <b>x</b> and <b>y</b> parameters and the optional <b>z</b> parameter. A font must be set with the <b>textFont()</b> function before <b>text()</b> may be called. The <b>width</b> and <b>height</b> parameters define a rectangular area to display within and may only be used with string data. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. Use the <b>textMode()</b> function with the <b>SCREEN</b> parameter to display text in 2D at the surface of the window. Change the color of the text with the <b>fill()</b> function. Also, the parameters for this function are affected by <b>rectMode()</b>.
+Draws text to the screen. Displays the information specified in the <b>data</b> or <b>stringdata</b> parameters on the screen in the position specified by the <b>x</b> and <b>y</b> parameters and the optional <b>z</b> parameter. A font must be set with the <b>textFont()</b> function before <b>text()</b> may be called. Change the color of the text with the <b>fill()</b> function. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. 
+<br/> <br/>
+The <b>width</b> and <b>height</b> parameters define a rectangular area to display within and may only be used with string data. For text drawn inside a rectangle, the coordinates are interpreted based on the current <b>rectMode()</b> setting.
+<br/> <br/>
+Use the <b>textMode()</b> function with the <b>SCREEN</b> parameter to display text in 2D at the surface of the window. 
 </description>
 
 <syntax>
