@@ -1,5 +1,7 @@
 <?
 
+require('../generate/exhibition.php');
+
 $curated = curated_xml('all');
 $network = network_xml('all');
 // count number of items
