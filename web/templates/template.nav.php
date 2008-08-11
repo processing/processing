@@ -2,6 +2,9 @@
 
 //require('../generate/exhibition.php');
 
+require(GENERATEDIR.'lib/Curated.class.php');
+require(GENERATEDIR.'lib/Network.class.php');
+
 $curated = curated_xml('all');
 $network = network_xml('all');
 // Count number of items
