@@ -27,14 +27,15 @@ function curated_xml2($num)
     $softwares = $softwares->toArray();
     
     // create curated objects
-    $i = 1;
-    foreach ($softwares as $software) {
-        $curated[] = new Curated($software);
-        if ($i >= $num && $num != 'all') { break; }
-        $i++;
-    }
+    //$i = 1;
+    //foreach ($softwares as $software) {
+    //    $curated[] = new Curated($software);
+    //    if ($i >= $num && $num != 'all') { break; }
+    //    $i++;
+    //}
        
-    return $curated;
+    //return $curated;
+    return $softwares
 }
 
 function network_xml2($num)
@@ -47,14 +48,15 @@ function network_xml2($num)
     $softwares = $softwares->toArray();
     
     // create network objects
-    $i = 1;
-    foreach ($softwares as $software) {
-        $network[] = new Network($software);
-        if ($i >= $num && $num != 'all') { break; }
-        $i++;
-    }
+    //$i = 1;
+    //foreach ($softwares as $software) {
+    //    $network[] = new Network($software);
+    //    if ($i >= $num && $num != 'all') { break; }
+    //    $i++;
+    //}
     
-    return $network;   
+    //return $network;
+    return $softwares;   
 }
 
 
