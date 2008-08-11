@@ -2,8 +2,8 @@
 
 //require('../generate/exhibition.php');
 
-require(GENERATEDIR.'lib/Curated.class.php');
-require(GENERATEDIR.'lib/Network.class.php');
+//require(GENERATEDIR.'lib/Curated.class.php');
+//require(GENERATEDIR.'lib/Network.class.php');
 
 $curated = curated_xml2('all');
 $network = network_xml2('all');
