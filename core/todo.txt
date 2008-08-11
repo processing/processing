@@ -1,6 +1,16 @@
 0145 core
-_ separate x/y axis on sphereDetail() params
-_   http://dev.processing.org/bugs/show_bug.cgi?id=856
+X separate x/y axis on sphereDetail() params
+X   http://dev.processing.org/bugs/show_bug.cgi?id=856
+X make sure docs for PImage use createImage
+X add notes about JOGLAppletLauncher
+X   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
+X   added to javadoc
+o need a halt() method which will kill but not quit app (sets finished?)
+o   exit() will actually leave the application
+o   this may in fact only be internal
+X   this is just the stop() method, though maybe we need to document it
+X text(String, float, float, float, float) draws text outside box
+X   http://dev.processing.org/bugs/show_bug.cgi?id=844
 
 
 _ resize window will nuke font setting
@@ -11,19 +21,14 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=767
 
 _ option to have renderer errors show up
 _   1) as text warnings 2) as runtime exceptions 3) never
+_ add warning system for pgraphics, rather than runtime exceptions
+_   keep array of warning strings, and booleans for whether they've called
+
 _ enable() and disable() instead of hint()/unhint()
 _   should these use text strings? how will that be compiled?
 _ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
 _   maybe need to add properties to the size() command?
 _   or use a getXxxx() method?
-
-_ pdf not rendering unicode with beginRecord()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=727
-
-_ need a halt() method which will kill but not quit app (sets finished?)
-_   exit() will actually leave the application
-_   this may in fact only be internal
-_   maybe this is stop()?
 
 _ should we do joins when alpha is turned off?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
@@ -34,11 +39,6 @@ _   because the blue comes from the byte order flip
 
 _ bezierVertex YZ Plane fill problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=752
-
-_ make sure docs for PImage use createImage
-
-_ writing image file (missing a flush() call?) on exit() fails
-_   lots of zero length files
 
 _ work through loadPixels in PImage, how consistent do we need to be?
 _   with get() and set() methods, this gets really tricky (too slow)
@@ -67,17 +67,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=705
 
 _ get() in java2d not honoring imageMode or rectMode
 
-_ can loadBytes() be improved by querying file size first?
-_   loadBytes() is used for images.. ouch
-
 _ can bug 77 be fixed with a finalizer? 
 _ remove gzip-related hint()
-
-
-reference/online
-_ add notes about JOGLAppletLauncher
-_   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
-_ specifically add "eclipse" to integration description
 
 _ image smoothing 
 _   straighten out default vs. ACCURATE vs. whatever
@@ -94,22 +85,6 @@ X   no, it's explicitly stated as such
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-add to reference
-_ update the reference to cover parseXxxx() stuff
-_   also add notes about parseInt/Float(blah, otherwise)
-_ also parseInt and parseFloat, how they can return another number or NaN
-_   should the default be NaN or 0?
-_ background() with an image ignores the tint.. it's basically like set()
-_ get/set are faster way draw screen space images, but no tint, no translations
-_ make sure the docs include "beginShape() cannot be nested"
-_   also add error messages to the renderers
-_   also note that ellipse() et al use beginShape()
-_   and that java2d should complain if people try it
-_ method to go from function name to the included examples where used?
-_ encourage use of set() instead of point() in the drawing api
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116
 
 
 createGraphics() and load/updatePixels() mess [1.0]
@@ -263,6 +238,8 @@ _ can draw() not be run on awt event thread?
 _   look into opengl stuff for dealing with this
 _ "is there a better way to do this" thread in lists folder
 _ pdf sketches exiting before writing has finished
+_ writing image file (missing a flush() call?) on exit() fails
+_   lots of zero length files
 
 
 point() [1.0]
@@ -294,8 +271,6 @@ for(int i=0; i<100; i++) {
 
 _ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
-_ add warning system for pgraphics, rather than runtime exceptions
-_   keep array of warning strings, and booleans for whether they've called
 
 _ key and mouse events delivered out of order
 _   http://dev.processing.org/bugs/show_bug.cgi?id=638
@@ -605,6 +580,14 @@ _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 
 
+CORE / PShape
+
+_ we can do hit testing (at least in 2D) now that we rely on java2d
+_ for subclasses, make it easy to grab the structure of vertices
+_   actually, just use PShape internally and this will be easier
+_ for PShape, need to be able to set the origin (flash people)
+
+
 CORE / Mac OS X
 
 _ first line of applets is missing on java 1.4+ on the mac
@@ -627,7 +610,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 ////////////////////////////////////////////////////////////////////
 
 
-PGraphicsOpenGL
+LIBS / PGraphicsOpenGL
 
 _ opengl.jar with eclipse
 _   auto-extract native libs from opengl.jar 
@@ -697,12 +680,25 @@ _   but that makes things messy because the glu calls make calls to vertex()
 _   and i don't want an additional "pathVertex()" function
 
 
-PShape
+LIBS / PGraphicsPDF
 
-_ we can do hit testing (at least in 2D) now that we rely on java2d
-_ for subclasses, make it easy to grab the structure of vertices
-_   actually, just use PShape internally and this will be easier
-_ for PShape, need to be able to set the origin (flash people)
+_ pdf not rendering unicode with beginRecord()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=727
+
+
+LATER / Optimize
+
+_ can loadBytes() be improved by querying file size first?
+_   background 
+_     this would require a new version of createInput(), which would query
+_     the URL (or file) for an actual file size. the size is not always
+_     available, so it can't be relied upon, but would help in some cases.
+_   loadBytes() is used for images.. ouch
+_   might be worth doing a test to see if it actually would help at all 
+_     before rewriting all of createInput()
+_   another option would be to create a wrapper InputStream class
+_     that actually has some notion of the length of its input
+_     that way, methods could use the information when reading
 
 
 LATER (post 1.0)
