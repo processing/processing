@@ -456,8 +456,9 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Internal buffer used by the text() functions
    * because the String object is slow
    */
-  protected char textBuffer[] = new char[8 * 1024];
-  protected char textWidthBuffer[] = new char[8 * 1024];
+  protected char[] textBuffer = new char[8 * 1024];
+  protected int[] textBreakBuffer = new int[8 * 1024];
+  protected char[] textWidthBuffer = new char[8 * 1024];
 
 
   //////////////////////////////////////////////////////////////
@@ -2430,8 +2431,8 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   public float textWidth(char c) {
-    textBuffer[0] = c;
-    return textWidthImpl(textBuffer, 0, 1);
+    textWidthBuffer[0] = c;
+    return textWidthImpl(textWidthBuffer, 0, 1);
   }
 
 
@@ -2638,7 +2639,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   protected void textLinePlacedImpl(char buffer[], int start, int stop,
                                     float x, float y) {
     for (int index = start; index < stop; index++) {
-      textCharImpl(buffer[index], x, y); //, 0); //z);
+      textCharImpl(buffer[index], x, y);
 
       // this doesn't account for kerning
       x += textWidth(buffer[index]);
@@ -2697,10 +2698,8 @@ public abstract class PGraphics extends PImage implements PConstants {
       float temp = y1; y1 = y2; y2 = temp;
     }
 
-    float spaceWidth = textWidth(' ');
-    float runningX = x1; //boxX1;
-    float currentY = y1; //boxY1;
-    float boxWidth = x2 - x1; //boxX2 - boxX1;
+    float currentY = y1;
+    float boxWidth = x2 - x1;
 
     // lineX is the position where the text starts, which is adjusted
     // to left/center/right based on the current textAlign
@@ -2714,91 +2713,107 @@ public abstract class PGraphics extends PImage implements PConstants {
     // ala illustrator, the text itself must fit inside the box
     currentY += textAscent(); //ascent() * textSize;
     // if the box is already too small, tell em to f off
-    if (currentY > y2) return; //boxY2) return;
+    if (currentY > y2) return;
 
+    float spaceWidth = textWidth(' ');
+    
     int length = str.length();
-    if (length > textBuffer.length) {
-      textBuffer = new char[length + 10];
+    if (length + 1 > textBuffer.length) {
+      textBuffer = new char[length + 1];
+      textBreakBuffer = new int[length + 1];
     }
     str.getChars(0, length, textBuffer, 0);
+    // add a fake newline to simplify calculations
+    textBuffer[length++] = '\n';
 
-    int wordStart = 0;
-    int wordStop = 0;
-    int lineStart = 0;
-    int index = 0;
-    while (index < length) {
-      if ((textBuffer[index] == ' ') ||
-          (index == length-1)) {
-        // boundary of a word
-        float wordWidth = textWidthImpl(textBuffer, wordStart, index);
-
-        if (runningX + wordWidth > x2) { //boxX2) {
-          if (runningX == x1) { //boxX1) {
-            // if this is the first word, and its width is
-            // greater than the width of the text box,
-            // then break the word where at the max width,
-            // and send the rest of the word to the next line.
-            do {
-              index--;
-              if (index == wordStart) {
-                // not a single char will fit on this line. screw 'em.
-                //System.out.println("screw you");
-                return;
-              }
-              wordWidth = textWidthImpl(textBuffer, wordStart, index);
-            } while (wordWidth > boxWidth);
-            textLineImpl(textBuffer, lineStart, index, lineX, currentY);
-
-          } else {
-            // next word is too big, output current line
-            // and advance to the next line
-            textLineImpl(textBuffer, lineStart, wordStop, lineX, currentY);
-            // only increment index if a word wasn't broken inside the
-            // do/while loop above.. also, this is a while() loop too,
-            // because multiple spaces don't count for shit when they're
-            // at the end of a line like this.
-
-            index = wordStop;  // back that ass up
-            while ((index < length) &&
-                   (textBuffer[index] == ' ')) {
-              index++;
-            }
-          }
-          lineStart = index;
-          wordStart = index;
-          wordStop = index;
-          runningX = x1;
-          currentY += textLeading;
-          if (currentY > y2) return;  // box is now full
-
-        } else {
-          runningX += wordWidth + spaceWidth;
-          // on to the next word
-          wordStop = index;
-          wordStart = index + 1;
-        }
-
-      } else if (textBuffer[index] == '\n') {
-        if (lineStart != index) {  // if line is not empty
-          textLineImpl(textBuffer, lineStart, index, lineX, currentY);
-        }
-        lineStart = index + 1;
-        wordStart = lineStart;
-        runningX = x1;  // fix for bug 188
-        currentY += textLeading;
-        //if (currentY > boxY2) return;  // box is now full
-        if (currentY > y2) return;  // box is now full
+    int sentenceStart = 0;
+    for (int i = 0; i < length; i++) {
+      if (textBuffer[i] == '\n') {
+        currentY = textSentence(textBuffer, sentenceStart, i, 
+                                lineX, boxWidth, currentY, y2, spaceWidth);
+        if (Float.isNaN(currentY)) break;  // word too big (or error)
+        if (currentY > y2) break;  // past the box
+        sentenceStart = i + 1;
       }
-      index++;
-    }
-    if ((lineStart < length) && (lineStart != index)) {
-      textLineImpl(textBuffer, lineStart, index, lineX, currentY);
     }
 
     if (textMode == SCREEN) updatePixels();
   }
+  
+  
+  /**
+   * Emit a sentence of text, defined as a chunk of text without any newlines.
+   * @param stop non-inclusive, the end of the text in question 
+   */ 
+  float textSentence(char[] buffer, int start, int stop, 
+                     float x, float boxWidth, float y, float y2, 
+                     float spaceWidth) {
+    float runningX = 0;
 
+    // Keep track of this separately from index, since we'll need to back up
+    // from index when breaking words that are too long to fit.
+    int lineStart = start;
+    int wordStart = start;
+    int index = start;
+    while (index <= stop) {
+      // boundary of a word or end of this sentence
+      if ((buffer[index] == ' ') || (index == stop)) {  
+        float wordWidth = textWidthImpl(buffer, wordStart, index);
 
+        if (runningX + wordWidth > boxWidth) {
+          if (runningX != 0) {
+            // Next word is too big, output the current line and advance
+            textLineImpl(buffer, lineStart, index, x, y);
+            // only increment index if a word wasn't broken inside the
+            // do/while loop below.. 
+            
+            // Eat whitespace because multiple spaces don't count for s* 
+            // when they're at the end of a line.
+            //index = wordStop;  // back that azz up
+            while ((index < stop) && (buffer[index] == ' ')) { 
+              index++;
+            }
+          } else {  // (runningX == 0)
+            // If this is the first word on the line, and its width is greater 
+            // than the width of the text box, then break the word where at the 
+            // max width, and send the rest of the word to the next line.
+            do {
+              index--;
+              if (index == wordStart) {
+                // Not a single char will fit on this line. screw 'em.
+                //System.out.println("screw you");
+                return Float.NaN;
+              }
+              wordWidth = textWidthImpl(buffer, wordStart, index);
+            } while (wordWidth > boxWidth);
+            
+            textLineImpl(buffer, lineStart, index, x, y);
+          }
+          lineStart = index;
+          wordStart = index;
+          runningX = 0;
+          y += textLeading;
+          if (y > y2) return y;  // box is now full
+        
+        } else if (index == stop) {
+          // last line in the block, time to unload
+          textLineImpl(buffer, lineStart, index, x, y);
+          y += textLeading;
+          index++;
+          
+        } else {  // this word will fit, just add it to the line
+          runningX += wordWidth + spaceWidth;
+          wordStart = index + 1;  // move on to the next word
+          index++;
+        }
+      } else {  // not a space or the last character
+        index++;  // this is just another letter
+      }
+    }
+    return y;
+  }
+  
+  
   public void text(String s, float x1, float y1, float x2, float y2, float z) {
     if ((z != 0) && (textMode == SCREEN)) {
       String msg = "textMode(SCREEN) cannot have a z coordinate";
