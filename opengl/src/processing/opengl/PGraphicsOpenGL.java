@@ -62,6 +62,9 @@ import com.sun.opengl.util.*;
  * removed rapidly as we head towards 1.0. Things got particularly ugly
  * as we approached beta while both Simon and I were working on it.
  * Relax, we'll get it fixed up later.
+ * <p/>
+ * When exporting applets, the JOGL Applet Launcher is used. More information
+ * about the launcher can be found at its <A HREF="http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html">documentation page</A>.
  */
 public class PGraphicsOpenGL extends PGraphics3D {
   public GL gl;
@@ -80,9 +83,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
   /// Used to hold color values to be sent to OpenGL
   protected FloatBuffer colorBuffer;
 
-  /// Used to store empty values to be passed when a light has no ambient value 
-  protected FloatBuffer zeroBuffer;  
-  
+  /// Used to store empty values to be passed when a light has no ambient value
+  protected FloatBuffer zeroBuffer;
+
   /// IntBuffer to go with the pixels[] array
   protected IntBuffer pixelBuffer;
 
@@ -116,8 +119,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public PGraphicsOpenGL(int width, int height) {
     super(width, height, null);
   }
-  
-  
+
+
   /**
    * Overridden from base PGraphics, because this subclass
    * will set its own listeners.
