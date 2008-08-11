@@ -5,8 +5,8 @@
 require(GENERATEDIR.'lib/Curated.class.php');
 require(GENERATEDIR.'lib/Network.class.php');
 
-$curated = curated_xml('all');
-$network = network_xml('all');
+$curated = curated_xml2('all');
+$network = network_xml2('all');
 // Count number of items
 $ctotal = count($curated);
 $ntotal = count($network);
@@ -16,6 +16,47 @@ $nnum_pages = ceil($ntotal / NETWORK_PER_PAGE);
 
 $curatedPages = '/exhibition/curated_page_' . $cnum_pages . '.html';
 $networkPages = '/exhibition/network_page_' . $nnum_pages . '.html';
+
+function curated_xml2($num)
+{
+    // open and parse curated.xml
+    $xml =& openXML('curated.xml');
+    
+    // get software nodes
+    $softwares = $xml->getElementsByTagName('software');
+    $softwares = $softwares->toArray();
+    
+    // create curated objects
+    $i = 1;
+    foreach ($softwares as $software) {
+        $curated[] = new Curated($software);
+        if ($i >= $num && $num != 'all') { break; }
+        $i++;
+    }
+       
+    return $curated;
+}
+
+function network_xml2($num)
+{
+    // open and parse network.xml
+    $xml =& openXML('network.xml');
+    
+    // get software nodes
+    $softwares = $xml->getElementsByTagName('software');
+    $softwares = $softwares->toArray();
+    
+    // create network objects
+    $i = 1;
+    foreach ($softwares as $software) {
+        $network[] = new Network($software);
+        if ($i >= $num && $num != 'all') { break; }
+        $i++;
+    }
+    
+    return $network;   
+}
+
 
 
 $pages = array(
