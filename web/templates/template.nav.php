@@ -35,7 +35,7 @@ function curated_xml2($num)
     //}
        
     //return $curated;
-    return $softwares
+    return $softwares;
 }
 
 function network_xml2($num)
