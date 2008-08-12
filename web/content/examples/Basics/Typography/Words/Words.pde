@@ -4,6 +4,7 @@
  * The text() function is used for writing words to the screen. 
  * 
  * Created 15 January 2003
+ * Updated 11 August 2008
  */
 
 
@@ -16,12 +17,16 @@ void setup()
   background(102);
 
   // Load the font. Fonts must be placed within the data 
-  // directory of your sketch. A font must first be created
-  // using the 'Create Font...' option in the Tools menu.
+  // directory of your sketch. Use Tools > Create Font 
+  // to create a distributable bitmap font. 
+  // For vector fonts, use the createFont() function. 
   fontA = loadFont("Ziggurat-HTF-Black-32.vlw");
 
   // Set the font and its size (in units of pixels)
   textFont(fontA, 32);
+
+  // Only draw once
+  noLoop();
 }
 
 void draw() {
