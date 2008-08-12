@@ -214,7 +214,11 @@ function curated_nav($num, $current)
     //  $links[] = sprintf("<a href=\"curated_page_%d.html\">%d</a>", $num, $num);
     //}
     for ($i = $num; $i > 0; $i--) {
-        $links[] = (($num-$i+1) == $current) ? $i : sprintf("<a href=\"curated_page_%d.html\">%d</a>", $i, $i);
+    	if ($1 == $num) {
+    	  $links[] = sprintf("<a href=\"curated_page_new.html\">%d</a>", $i);
+    	} else {
+          $links[] = (($num-$i+1) == $current) ? $i : sprintf("<a href=\"curated_page_%d.html\">%d</a>", $i, $i);
+    	}
     }
     $html .= implode(' \\ ', $links);
     $html .= '</p>&nbsp;';
@@ -238,9 +242,9 @@ function curated_nav($num, $current)
 function network_nav($num, $current)
 {
     $html = '<p class="exhibition-nav">';
-    $links[] = '<a href="network_page_1.html">1</a>';
-    for ($i = 2; $i <= $num; $i++) {
-        $links[] = ($i == $current) ? $i : sprintf("<a href=\"network_page_%d.html\">%d</a>", $i, $i);
+    //$links[] = '<a href="network_page_1.html">1</a>';
+    for ($i = $num; $i > 0; $i--) {
+        $links[] = (($num-$i+1) == $current) ? $i : sprintf("<a href=\"network_page_%d.html\">%d</a>", $i, $i);
     }
     $html .= implode(' \\ ', $links);
     $html .= '</p>&nbsp;';
