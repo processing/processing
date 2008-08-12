@@ -182,7 +182,7 @@ if (!defined('COVER')) {
     for ($i = 0; $i <= $nnum_pages; $i++) {
         $page = new Page('Network Archives', 'Network Links');
         $page->subtemplate('template.network.archive.html');
-        $page->set('network_nav', network_nav($nnum_pages, $i));
+        $page->set('network_nav', network_nav($nnum_pages, $i+1));
         //$page->set('network', get_network_table($network, NETWORK_PER_PAGE*($i-2)+NETWORK_FIRST_PAGE, NETWORK_PER_PAGE));
         $page->set('network', get_network_table($network, NETWORK_PER_PAGE*$i, NETWORK_PER_PAGE));
         //$pagename = sprintf("network_page_%d.html", $i);
@@ -244,7 +244,11 @@ function network_nav($num, $current)
     $html = '<p class="exhibition-nav">';
     //$links[] = '<a href="network_page_1.html">1</a>';
     for ($i = $num; $i > 0; $i--) {
-        $links[] = (($num-$i+1) == $current) ? $i : sprintf("<a href=\"network_page_%d.html\">%d</a>", $i, $i);
+    	if ($i == $num) {
+    	  $links[] = sprintf("<a href=\"network_page_new.html\">%d</a>", $i);
+    	} else {
+          $links[] = (($num-$i+1) == $current) ? $i : sprintf("<a href=\"network_page_%d.html\">%d</a>", $i, $i);
+    	}
     }
     $html .= implode(' \\ ', $links);
     $html .= '</p>&nbsp;';
