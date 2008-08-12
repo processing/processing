@@ -184,8 +184,13 @@ if (!defined('COVER')) {
         $page->subtemplate('template.network.archive.html');
         $page->set('network_nav', network_nav($nnum_pages, $i));
         //$page->set('network', get_network_table($network, NETWORK_PER_PAGE*($i-2)+NETWORK_FIRST_PAGE, NETWORK_PER_PAGE));
-        $page->set('network', get_network_table($network, NETWORK_PER_PAGE*($i-1), NETWORK_PER_PAGE));
-        $pagename = sprintf("network_page_%d.html", $i);
+        $page->set('network', get_network_table($network, NETWORK_PER_PAGE*$i, NETWORK_PER_PAGE));
+        //$pagename = sprintf("network_page_%d.html", $i);
+        if ($i == 0 ) {
+          $pagename = sprintf("network_page_new.html");
+        } else {
+          $pagename = sprintf("network_page_%d.html", $nnum_pages-$i);
+        }
         writeFile("exhibition/".$pagename, $page->out());
     }
     
