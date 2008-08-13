@@ -691,8 +691,15 @@ in   */
 //  public Dimension getPreferredSize() {
 //    return new Dimension(width, height);
 //  }
+  
+  
+  public void addNotify() {
+    super.addNotify();
+    println("addNotify()");
+  }
 
-
+  
+  
   //////////////////////////////////////////////////////////////
 
 
@@ -994,10 +1001,11 @@ in   */
       //redraw();  // will only be called insize draw()
       
     } else {  // renderer is being changed
-      if (frameCount > 0) {
-        throw new RuntimeException("size() cannot be called to change " +
-        "the renderer outside of setup()");
-      }
+//      if (frameCount > 0) {
+//        throw new RuntimeException("size() cannot be called to change " +
+//        "the renderer outside of setup()");
+//      }
+      
       // otherwise ok to fall through and create renderer below
       // the renderer is changing, so need to create a new object
       g = PApplet.makeGraphics(iwidth, iheight, irenderer, ipath, this);
@@ -1294,6 +1302,8 @@ in   */
      */
     
     while ((Thread.currentThread() == thread) && !finished) {
+      // Don't resize the renderer from the EDT (i.e. from a ComponentEvent), 
+      // otherwise it may attempt a resize mid-render. 
       if (resizeRequest) {
         resizeRenderer(resizeWidth, resizeHeight);
         resizeRequest = false;
@@ -1423,12 +1433,6 @@ in   */
   }
 
   
-  public void addNotify() {
-    super.addNotify();
-    println("addNotify()");
-  }
-
-
   //////////////////////////////////////////////////////////////
 
   
@@ -4579,6 +4583,7 @@ in   */
    * use <TT>saveXxxx("data/blah.dat")</TT>.
    */
   public String savePath(String where) {
+    if (where == null) return null;
     String filename = sketchPath(where);
     createPath(filename);
     return filename;
