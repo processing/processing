@@ -250,6 +250,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   protected void allocate() {
     if (context == null) {
       System.out.println("PGraphicsOpenGL.allocate() for " + width + " " + height);
+      new Exception().printStackTrace(System.out);
       // If OpenGL 2X or 4X smoothing is enabled, setup caps object for them
       GLCapabilities capabilities = new GLCapabilities();
       if (hints[ENABLE_OPENGL_2X_SMOOTH]) {
@@ -303,13 +304,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
       // need to get proper opengl context since will be needed below
       gl = context.getGL();
+      settingsInited = false;
+      System.out.println("allocated.");
 
     } else {
       // changing for 0100, need to resize rather than re-allocate
       //canvas.setSize(width, height);
       System.out.println("PGraphicsOpenGL.allocate() again for " + width + " " + height);
+      reapplySettings();
     }
-    settingsInited = false;
   }
 
 
@@ -358,20 +361,22 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-
   /**
    * Make the OpenGL rendering context current for this thread.
    */
   private void detainContext() {
     try {
       while (context.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT) {
-        //System.out.println("Context not yet current...");
+//        System.out.println("Context not yet current...");
+//        new Exception().printStackTrace(System.out);
+//        Thread.sleep(1000);
         Thread.sleep(10);
       }
     } catch (InterruptedException e) { 
       e.printStackTrace(); 
     }
   }
+  
   
   /**
    * Release the context, otherwise the AWT lock on X11 will not be released 
@@ -382,6 +387,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   
   public void beginDraw() {
+    drawable.setRealized(true);
     detainContext();
     
     // On the first frame that's guaranteed to be on screen,
