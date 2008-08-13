@@ -13,6 +13,7 @@ X text(String, float, float, float, float) draws text outside box
 X   http://dev.processing.org/bugs/show_bug.cgi?id=844
 X implement textAlign() for y coords in text rect
 X   need to add reference for this
+X textAlign() bottom now takes textDescent() into account
 
 
 _ resize window will nuke font setting
@@ -20,6 +21,8 @@ _ textFont() used in setup() is null once draw() arrives
 _   http://dev.processing.org/bugs/show_bug.cgi?id=726
 _ colorMode() set inside setup() sometimes not set once draw() arrives
 _   http://dev.processing.org/bugs/show_bug.cgi?id=767
+
+_ switch to requestImage()
 
 _ option to have renderer errors show up
 _   1) as text warnings 2) as runtime exceptions 3) never
@@ -55,6 +58,8 @@ _   in fact, this maybe should be a library that does it
 _     so that the file size can be much smaller
 
 _ remove saveFile() methods?
+_   write up examples for these instead?
+_   start an integration section?
 
 _ ENABLE_DEPTH_SORT not really working for GL
 _   because the zbuffer is still there, it's still calculating
@@ -690,6 +695,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=727
 
 LATER / Optimize
 
+_ put a wrapper around InputStream returned by createInput
+_   that actually has some notion of the length of its input
+_   that way, methods could use the information when reading
 _ can loadBytes() be improved by querying file size first?
 _   background 
 _     this would require a new version of createInput(), which would query
@@ -698,9 +706,6 @@ _     available, so it can't be relied upon, but would help in some cases.
 _   loadBytes() is used for images.. ouch
 _   might be worth doing a test to see if it actually would help at all 
 _     before rewriting all of createInput()
-_   another option would be to create a wrapper InputStream class
-_     that actually has some notion of the length of its input
-_     that way, methods could use the information when reading
 
 
 LATER (post 1.0)

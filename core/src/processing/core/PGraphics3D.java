@@ -233,8 +233,8 @@ public class PGraphics3D extends PGraphics {
    * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
-    insideDrawWait();
-    insideResize = true;
+//    insideDrawWait();
+//    insideResize = true;
 
     width = iwidth;
     height = iheight;
@@ -295,7 +295,7 @@ public class PGraphics3D extends PGraphics {
     // this helps the people who haven't set up their own projection.
     perspective();
 
-    insideResize = false;  // ok to draw again
+//    insideResize = false;  // ok to draw again
   }
 
 
@@ -333,19 +333,19 @@ public class PGraphics3D extends PGraphics {
     triangle = new PTriangle(this);
 
     // can't un-set this because this may be only a resize (Bug #463)
-    defaultsInited = false;
+    settingsInited = false;
     //System.out.println(this + " done allocating");
   }
 
 
   public void beginDraw() {
-    insideResizeWait();
-    insideDraw = true;
+//    insideResizeWait();
+//    insideDraw = true;
 
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
     // beginDraw/endDraw).
-    if (!defaultsInited) defaults();
+    if (!settingsInited) defaultSettings();
 
     resetMatrix(); // reset model matrix
 
@@ -403,7 +403,7 @@ public class PGraphics3D extends PGraphics {
     updatePixels();
 
     //System.out.println(this + " end draw");
-    insideDraw = false;
+//    insideDraw = false;
   }
 
 
@@ -431,8 +431,8 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  public void defaults() {
-    super.defaults();
+  public void defaultSettings() {
+    super.defaultSettings();
 
     manipulatingCamera = false;
     forwardTransform = modelview;

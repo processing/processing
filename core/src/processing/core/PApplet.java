@@ -37,6 +37,7 @@ import java.util.regex.*;
 import java.util.zip.*;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -211,21 +212,6 @@ public class PApplet extends Applet
   public Frame frame;
 
   /**
-   * Message of the Exception thrown when size() is called the first time.
-   * <P>
-   * This is used internally so that setup() is forced to run twice
-   * when the renderer is changed. This is the only way for us to handle
-   * invoking the new renderer while also in the midst of rendering.
-   */
-  static public final String NEW_RENDERER = "new renderer";
-
-  /** Renderer to use next time the component is updated */
-  //String nextRenderer = JAVA2D;
-  /** Path for the renderer next time the component is updated */
-  //String nextRendererPath;
-
-
-  /**
    * The screen size when the applet was started.
    * <P>
    * Access this via screen.width and screen.height. To make an applet
@@ -281,11 +267,30 @@ public class PApplet extends Applet
   static public final int MIN_WINDOW_HEIGHT = 128;
 
   /**
+   * Exception thrown when size() is called the first time.
+   * <P>
+   * This is used internally so that setup() is forced to run twice
+   * when the renderer is changed. This is the only way for us to handle
+   * invoking the new renderer while also in the midst of rendering.
+   */
+  static public class RendererChangeException extends RuntimeException { }
+  //static public final String NEW_RENDERER = "new renderer";
+
+  /** Renderer to use next time the component is updated */
+  //String nextRenderer = JAVA2D;
+  /** Path for the renderer next time the component is updated */
+  //String nextRendererPath;
+
+  /**
    * true if no size() command has been executed. This is used to wait until
    * a size has been set before placing in the window and showing it.
    */
   public boolean defaultSize;
 
+  volatile boolean resizeRequest;
+  volatile int resizeWidth;
+  volatile int resizeHeight;
+  
   /**
    * Pixel buffer from this applet's PGraphics.
    * <P>
@@ -299,7 +304,7 @@ public class PApplet extends Applet
 
   /** height of this applet's associated PGraphics */
   public int height;
-
+  
   /** current x position of the mouse */
   public int mouseX;
 
@@ -410,12 +415,13 @@ public class PApplet extends Applet
    * As such, this value won't be valid until after 5-10 frames.
    */
   public float frameRate = 10;
-  protected long frameRateLastMillis = 0;
+  protected long frameRateLastNanos = 0;
 
   /** Last time in milliseconds that a frameRate delay occurred */
-  protected long frameRateLastDelayTime = 0;
+  //protected long frameRateLastDelayTime = 0;
   /** As of release 0116, frameRate(60) is called as a default */
   protected float frameRateTarget = 60;
+  protected long frameRatePeriod = 1000000000L / 60L;
 
   protected boolean looping;
 
@@ -538,8 +544,7 @@ in   */
 
 
   public void init() {
-    // first get placed size in case it's non-zero
-    Dimension initialSize = getSize();
+    println("Calling init()");
 
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
@@ -575,30 +580,51 @@ in   */
       }
     } catch (Exception e) { }  // may be a security problem
 
-    if ((initialSize.width != 0) && (initialSize.height != 0)) {
+    Dimension size = getSize();
+    if ((size.width != 0) && (size.height != 0)) {
       // When this PApplet is embedded inside a Java application with other
       // Component objects, its size() may already be set externally (perhaps
       // by a LayoutManager). In this case, honor that size as the default.
       // Size of the component is set, just create a renderer.
-      setRendererSize(initialSize.width, initialSize.height);
-      //g = PApplet.createGraphics(initialSize.width, initialSize.height,
-      //                         JAVA2D, null, this);
+      //resizeRenderer(initialSize.width, initialSize.height);
+      //createRenderer(initialSize.width, initialSize.height);
+      
+      g = PApplet.makeGraphics(size.width, size.height, JAVA2D, null, this);
+      // This doesn't call setSize() or setPreferredSize() because the fact
+      // that a size was already set means that someone is already doing it.
+//      width = size.width;
+//      height = size.height;
+
     } else {
       // Set the default size, until the user specifies otherwise
       this.defaultSize = true;
-      //g = PApplet.createGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT,
-      //                           JAVA2D, null, this);
-      setRendererSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      //resizeRenderer(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      //createRenderer(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      g = PApplet.makeGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D, null, this);
+//      width = DEFAULT_WIDTH;
+//      height = DEFAULT_HEIGHT;
       // Fire component resize event
       setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
+    width = g.width;
+    height = g.height;
 
     // this is automatically called in applets
     // though it's here for applications anyway
     start();
   }
 
+  
+//  protected void createRenderer(int w, int h) {
+//    g = PApplet.makeGraphics(w, h, JAVA2D, null, this);
+//    Dimension size = getSize();
+//    if (size.width != w || size.height != h) {
+//      setSize(w, h);
+//    }
+//  }
 
+  
   /**
    * Called by the browser or applet viewer to inform this applet that it
    * should start its execution. It is called after the init method and
@@ -609,7 +635,7 @@ in   */
    */
   public void start() {
     if (thread != null) return;
-    thread = new Thread(this);
+    thread = new Thread(this, "Processing Animation Thread");
     thread.start();
   }
 
@@ -662,9 +688,9 @@ in   */
    * This returns the last width and height specified by the user
    * via the size() command.
    */
-  public Dimension getPreferredSize() {
-    return new Dimension(width, height);
-  }
+//  public Dimension getPreferredSize() {
+//    return new Dimension(width, height);
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -872,29 +898,32 @@ in   */
    * Resize the current renderer that's in use. This will be called after the
    * Component has been resized (by an event) and the renderer needs an update.
    */
-  protected void setRendererSize(int w, int h) {
-    boolean changed = false;
-    if (g == null) {
-      g = PApplet.createGraphics(w, h, JAVA2D, null, this);
+//  protected void resizeRenderer(int w, int h) {
+//    if (g == null) {
+//      g = PApplet.makeGraphics(w, h, JAVA2D, null, this);
+//      width = w;
+//      height = h;
+//
+//    } else  if (w != g.width || h != g.height) {
+//      g.resize(w, h);
+//      width = w;
+//      height = h;
+//      redraw();
+//    }
+//  }
+  
 
-    } else  if (w != g.width || h != g.height) {
-      g.resize(w, h);
-      changed = true;
+  protected void resizeRenderer(int iwidth, int iheight) {
+    println("resizeRenderer request for " + iwidth + " " + iheight);
+    if (width != iwidth || height != iheight) {
+      println("  former size was " + width + " " + height);
+      g.resize(iwidth, iheight);
+      width = iwidth;
+      height = iheight;
     }
-    width = w;
-    height = h;
-    if (changed) redraw();
-    //redraw = true;
-    /*
-    if (g == null) {
-      g = PApplet.createGraphics(w, h, nextRenderer, nextRendererPath, this);
-    } else {
-      g.resize(w, h);
-    }
-    */
   }
-
-
+  
+  
   /**
    * Starts up and creates a two-dimensional drawing surface,
    * or resizes the current drawing surface.
@@ -912,21 +941,6 @@ in   */
    */
   public void size(int iwidth, int iheight) {
     size(iwidth, iheight, JAVA2D, null);
-    //setSize(iwidth, iheight);
-    //defaultSize = false;
-
-//    setRendererSize(iwidth, iheight);
-//    defaultSize = false;
-    /*
-    if (g != null) {
-      // just resize the current renderer
-      size(iwidth, iheight, g.getClass().getName());
-
-    } else {
-      // create a JAVA2D renderer (the current default)
-      size(iwidth, iheight, JAVA2D);
-    }
-    */
   }
 
 
@@ -937,111 +951,72 @@ in   */
 
   /**
    * Creates a new PGraphics object and sets it to the specified size.
-   * <P>
+   * 
    * Note that you cannot change the renderer once outside of setup().
    * In most cases, you can call size() to give it a new size,
    * but you need to always ask for the same renderer, otherwise
    * you're gonna run into trouble.
-   * <P>
-   * XXXX Also note that this calls defaults(), which will reset any
-   * XXXX settings for the font, stroke, fill, colorMode, lights, etc.
+   * 
+   * The size() method should *only* be called from inside the setup() or 
+   * draw() methods, so that it is properly run on the main animation thread. 
+   * To change the size of a PApplet externally, use setSize(), which will
+   * update the component size, and queue a resize of the renderer as well.  
    */
-  public void size(int iwidth, int iheight,
+  public void size(final int iwidth, final int iheight,
                    String irenderer, String ipath) {
-    if (g == null) {
-      // no renderer exists, just create a freshy
-      g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
+    // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        // Set the preferred size so that the layout managers can handle it
+        setPreferredSize(new Dimension(iwidth, iheight));
+        setSize(iwidth, iheight);
+      }
+    });
+
+    // g should never be null, since it should always be set inside init()
+//    if (g == null) {
+//      // no renderer exists, just create a freshy
+//      g = PApplet.makeGraphics(iwidth, iheight, irenderer, ipath, this);
+//      width = iwidth;
+//      height = iheight;
+//      // fire resize event to make sure the applet is the proper size
+//      setSize(iwidth, iheight);
+//
+//    } else {
+    
+    // ensure that this is an absolute path
+    if (ipath != null) ipath = savePath(ipath);
+
+    String currentRenderer = g.getClass().getName();
+    if (currentRenderer.equals(irenderer)) {
+      // Avoid infinite loop of throwing exception to reset renderer
+      resizeRenderer(iwidth, iheight);
+      //redraw();  // will only be called insize draw()
+      
+    } else {  // renderer is being changed
+      if (frameCount > 0) {
+        throw new RuntimeException("size() cannot be called to change " +
+        "the renderer outside of setup()");
+      }
+      // otherwise ok to fall through and create renderer below
+      // the renderer is changing, so need to create a new object
+      g = PApplet.makeGraphics(iwidth, iheight, irenderer, ipath, this);
       width = iwidth;
       height = iheight;
-      //updateSize(iwidth, iheight);
-      //setSize(iwidth, iheight);
-      //nextRenderer = irenderer;
-      //nextRendererPath = ipath;
+
       // fire resize event to make sure the applet is the proper size
-      setSize(iwidth, iheight);
+//      setSize(iwidth, iheight);
+      // this is the function that will run if the user does their own
+      // size() command inside setup, so set defaultSize to false.
+      defaultSize = false;
 
-    } else {
-      // ensure that this is an absolute path
-      if (ipath != null) ipath = savePath(ipath);
-
-      String currentRenderer = g.getClass().getName();
-      if (currentRenderer.equals(irenderer)) {
-//        println("calling setRendererSize from size() " + iwidth + " " + iheight);
-        // Avoid infinite loop of throwing exception to reset renderer
-        if (width == iwidth && height == iheight) return;
-
-        setRendererSize(iwidth, iheight);
-        setSize(iwidth, iheight);
-//        if ((iwidth != g.width) || (iheight != g.height)) {
-//          // resizing, no need to create new graphics object
-//          g.resize(iwidth, iheight);
-//          //updateSize(iwidth, iheight);
-//          //redraw(); // changed for rev 0100
-//          // removed redraw for 0128, might be problem with double draw()
-//        } // else this is just the 2nd trip through setup (w/o the exception)
-
-      } else {  // renderer is being changed
-        if (frameCount > 0) {
-          throw new RuntimeException("size() cannot be called to change " +
-                                     "the renderer outside of setup()");
-        }
-        // otherwise ok to fall through and create renderer below
-        // the renderer is changing, so need to create a new object
-        g = PApplet.createGraphics(iwidth, iheight, irenderer, ipath, this);
-        width = iwidth;
-        height = iheight;
-        //updateSize(iwidth, iheight);
-        //nextRenderer = irenderer;
-        //nextRendererPath = ipath;
-
-        // fire resize event to make sure the applet is the proper size
-        setSize(iwidth, iheight);
-        // this is the function that will run if the user does their own
-        // size() command inside setup, so set defaultSize to false.
-        defaultSize = false;
-      }
       // throw an exception so that setup() is called again
       // but with a properly sized render
       // this is for opengl, which needs a valid, properly sized
       // display before calling anything inside setup().
-      throw new RuntimeException(NEW_RENDERER);
+      throw new RendererChangeException();
     }
   }
-
-
-  /**
-   * Sets this.width and this.height, unsets defaultSize, and calls
-   * the size() methods inside any libraries.
-   */
-  /*
-  protected void updateSize(int iwidth, int iheight) {
-    this.width = iwidth;
-    this.height = iheight;
-    System.out.println("set default false updateSize " + iwidth + " " + iheight);
-    new Exception().printStackTrace();
-    defaultSize = false;
-
-    // make the applet itself larger.. it's a subclass of Component,
-    // so this is important for when it's embedded inside another app.
-    setSize(width, height);
-
-    // probably needs to mess with the parent frame here?
-    // TODO wait for a "legitimate size" flag to be set
-    // (meaning that setup has finished properly)
-    // at which time the parent frame will do its thing.
-
-    // if the default renderer is just being resized,
-    // restore it to its default values
-    //g.defaults();
-    // no, otherwise fonts that were set in setup() will go away
-
-    // this has to be called after the exception is thrown,
-    // otherwise the supporting libs won't have a valid context to draw to
-    Object methodArgs[] =
-      new Object[] { new Integer(width), new Integer(height) };
-    sizeMethods.handle(methodArgs);
-  }
-  */
 
 
   /**
@@ -1097,7 +1072,7 @@ in   */
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer) {
     PGraphics pg =
-      PApplet.createGraphics(iwidth, iheight, irenderer, null, null);
+      PApplet.makeGraphics(iwidth, iheight, irenderer, null, null);
     pg.parent = this;  // make save() work
     return pg;
   }
@@ -1114,7 +1089,7 @@ in   */
       ipath = savePath(ipath);
     }
     PGraphics pg =
-      PApplet.createGraphics(iwidth, iheight, irenderer, ipath, null);
+      PApplet.makeGraphics(iwidth, iheight, irenderer, ipath, null);
     pg.parent = this;  // make save() work
     return pg;
   }
@@ -1127,9 +1102,9 @@ in   */
    * @oaram applet the parent applet object, this should only be non-null
    *               in cases where this is the main drawing surface object.
    */
-  static protected PGraphics createGraphics(int iwidth, int iheight,
-                                            String irenderer, String ipath,
-                                            PApplet applet) {
+  static protected PGraphics makeGraphics(int iwidth, int iheight,
+                                          String irenderer, String ipath,
+                                          PApplet applet) {
     if (irenderer.equals(OPENGL)) {
       if (PApplet.platform == WINDOWS) {
         String s = System.getProperty("java.version");
@@ -1144,21 +1119,6 @@ in   */
         }
       }
     }
-
-    /*
-    if (irenderer.equals(P2D)) {
-      throw new RuntimeException("P2D is not yet implemented, " +
-                                 "use JAVA2D or P3D instead.");
-    }
-    */
-
-    /*
-    // ok when calling size, but not really with createGraphics()
-    if (renderer.equals(OPENGL)) {
-      throw new RuntimeException("createGraphics() with OPENGL is not " +
-                                 "supported. Use P3D instead.");
-    }
-    */
 
     String openglError =
       "Before using OpenGL, first select " +
@@ -1252,46 +1212,23 @@ in   */
     return image;
   }
 
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
   public void update(Graphics screen) {
-    //System.out.println("PApplet.update()");
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                              "    4 update() external");
     paint(screen);
   }
 
 
-  synchronized public void paint(Graphics screen) {
-//    if (javaVersion < 1.3f) {
-//      screen.setColor(new Color(64, 64, 64));
-//      Dimension size = getSize();
-//      screen.fillRect(0, 0, size.width, size.height);
-//      screen.setColor(Color.white);
-//      screen.setFont(new Font("Dialog", Font.PLAIN, 9));
-//      screen.drawString("You need to install", 3, 15);
-//      screen.drawString("Java 1.3 or later", 3, 28);
-//      screen.drawString("to view this content.", 3, 41);
-//      screen.drawString("Click here to visit", 3, 59);
-//      screen.drawString("java.com and install.", 3, 72);
-//      return;
-//    }
-
-    //System.out.println("PApplet.paint()");
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                              "     5a enter paint");
-
+  //synchronized public void paint(Graphics screen) {  // shutting off for 0146
+  public void paint(Graphics screen) {
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
-    //if (firstFrame) return;
     if (frameCount == 0) {
+      println("Skipping frame");
       // paint() may be called more than once before things
       // are finally painted to the screen and the thread gets going
-      //System.out.println("not painting");
-      /*
-      if (thread == null) {
-        initGraphics();
-        start();
-      }
-      */
       return;
     }
 
@@ -1304,227 +1241,34 @@ in   */
     // try to fight over it. this was causing a randomized slowdown
     // that would cut the frameRate into a third on macosx,
     // and is probably related to the windows sluggishness bug too
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                              "     5b enter paint sync");
 
-    //synchronized (g) {
-    //synchronized (glock) {
-      if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                "     5c inside paint sync");
-      //System.out.println("5b paint has sync");
-      //Exception e = new Exception();
-      //e.printStackTrace();
-
-      // moving this into PGraphics caused weird sluggishness on win2k
-      //g.mis.newPixels(pixels, g.cm, 0, width); // must call this
-
-      // make sure the screen is visible and usable
-      // (also prevents over-drawing when using PGraphicsGL)
-      if ((g != null) && (g.image != null)) {
-        screen.drawImage(g.image, 0, 0, null);
-      }
-      //if (THREAD_DEBUG) println("notifying all");
-      //notifyAll();
-      //thread.notify();
-      //System.out.println("      6 exit paint");
-    //}
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                              "      6 exit paint");
-    //updated = true;
+    // make sure the screen is visible and usable
+    // (also prevents over-drawing when using PGraphicsOpenGL)
+    if ((g != null) && (g.image != null)) {
+      println("inside paint(), screen.drawImage()");
+      screen.drawImage(g.image, 0, 0, null);
+    }
   }
-
-
-  synchronized public void handleDisplay() {
-    if (PApplet.THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                      " handleDisplay()");
-    if (looping || redraw) {
-      //System.out.println(frameCount);
-      /*
-        if (frameCount == 0) {  // needed here for the sync
-        //createGraphics();
-        // set up a dummy graphics in case size() is never
-        // called inside setup
-        size(INITIAL_WIDTH, INITIAL_HEIGHT);
+  
+  
+  // active paint method
+  protected void paint() {
+    try {
+      Graphics screen = this.getGraphics();
+      if (screen != null) { 
+        if ((g != null) && (g.image != null)) {
+          screen.drawImage(g.image, 0, 0, null);
         }
-      */
-
-      // g may be rebuilt inside here, so turning of the sync
-      //synchronized (g) {
-      // use a different sync object
-      //synchronized (glock) {
-        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                  " 1a beginDraw");
-        g.beginDraw();
-        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                  " 1b draw");
-
-        //boolean recorderNull = true;
-        //boolean recorderRawNull = true;
-
-        if (frameCount == 0) {
-          try {
-            //System.out.println("attempting setup");
-            //System.out.println("into try");
-            setup();
-            //g.defaults();
-
-            //System.out.println("done attempting setup");
-            //System.out.println("out of try");
-            //g.postSetup();  // FIXME
-
-          } catch (RuntimeException e) {
-            //System.out.println("runtime extends " + e);
-            //System.out.println("catching a cold " + e.getMessage());
-            String msg = e.getMessage();
-            if ((msg != null) &&
-                (e.getMessage().indexOf(NEW_RENDERER) != -1)) {
-              //System.out.println("got new renderer");
-              return;
-              //continue;  // will this work?
-
-            } else {
-              //e.printStackTrace(System.out);
-              //System.out.println("re-throwing");
-              //System.out.println(e.getClass().getName());
-              throw e;
-            }
-          }
-          // if depth() is called inside setup, pixels/width/height
-          // will be ok by the time it's back out again
-
-          //this.pixels = g.pixels;  // make em call loadPixels
-          // now for certain that we've got a valid size
-          //this.width = g.width;
-          //this.height = g.height;
-          //System.out.println("frame complete, set default false");
-          this.defaultSize = false;
-
-        } else {  // frameCount > 0, meaning an actual draw()
-          // update the current frameRate
-          if (frameRateLastMillis != 0) {
-            float elapsed = (float)
-              (System.currentTimeMillis() - frameRateLastMillis);
-            if (elapsed != 0) {
-              frameRate =
-                (frameRate * 0.9f) + ((1.0f / (elapsed / 1000.0f)) * 0.1f);
-            }
-          }
-          frameRateLastMillis = System.currentTimeMillis();
-
-          /*
-          if (frameRateTarget != 0) {
-            //System.out.println("delaying");
-            if (frameRateLastDelayTime == 0) {
-              frameRateLastDelayTime = System.currentTimeMillis();
-
-            } else {
-              long timeToLeave =
-                frameRateLastDelayTime + (long)(1000.0f / frameRateTarget);
-              long now = System.currentTimeMillis();
-              int napTime = (int) (timeToLeave - now);
-              if (napTime > 0) {
-                frameRateLastDelayTime = timeToLeave;
-                delay(napTime);
-              } else {
-                // nap time is negative, need to reset clock (bug #336)
-                frameRateLastDelayTime = now;
-              }
-            }
-          }
-          */
-
-          preMethods.handle();
-
-          pmouseX = dmouseX;
-          pmouseY = dmouseY;
-
-          //synchronized (glock) {
-          //synchronized (this) {
-          //try {
-          draw();
-            /*
-              // seems to catch, but then blanks out
-          } catch (Exception e) {
-            if (e instanceof InvocationTargetException) {
-              System.out.println("found poo");
-              ((InvocationTargetException)e).getTargetException().printStackTrace(System.out);
-            }
-          }
-            */
-          //}
-          //}
-
-          // set a flag regarding whether the recorders were non-null
-          // as of draw().. this will prevent the recorder from being
-          // reset if recordShape() is called in an event method, such
-          // as mousePressed()
-          //recorderNull = (recorder == null);
-          //recorderRawNull = (g.recorderRaw == null);
-
-          // dmouseX/Y is updated only once per frame
-          dmouseX = mouseX;
-          dmouseY = mouseY;
-
-          // these are called *after* loop so that valid
-          // drawing commands can be run inside them. it can't
-          // be before, since a call to background() would wipe
-          // out anything that had been drawn so far.
-          dequeueMouseEvents();
-
-          dequeueKeyEvents();
-          if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                    " 2b endDraw");
-
-          drawMethods.handle();
-          //for (int i = 0; i < libraryCount; i++) {
-          //if (libraryCalls[i][PLibrary.DRAW]) libraries[i].draw();
-          //}
-
-          redraw = false;  // unset 'redraw' flag in case it was set
-          // (only do this once draw() has run, not just setup())
-        }
-
-        g.endDraw();
-        /*
-        if (!recorderNull) {
-          if (recorder != null) {
-            recorder.endDraw();
-            recorder = null;
-          }
-        }
-        if (!recorderRawNull) {
-          if (g.recorderRaw != null) {
-            g.recorderRaw.endDraw();
-            g.recorderRaw = null;
-          }
-        }
-        */
-
-        //}  // older end sync
-
-        //update();
-        // formerly 'update'
-        //if (firstFrame) firstFrame = false;
-        // internal frame counter
-        frameCount++;
-        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                  "   3a calling repaint() " + frameCount);
-        repaint();
-        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                  "   3b calling Toolkit.sync " + frameCount);
-        getToolkit().sync();  // force repaint now (proper method)
-        if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                                  "   3c done " + frameCount);
-        //if (THREAD_DEBUG) println("   3d waiting");
-        //wait();
-        //if (THREAD_DEBUG) println("   3d out of wait");
-        //frameCount++;
-
-        postMethods.handle();
-        //for (int i = 0; i < libraryCount; i++) {
-        //if (libraryCalls[i][PLibrary.POST]) libraries[i].post();
-        //}
-        //}  // end of synchronize
+        Toolkit.getDefaultToolkit().sync();
+      }
+    } catch (Exception e) {
+      // Seen on applet destroy, maybe can ignore?
+      e.printStackTrace();
+      
+    } finally {
+      if (g != null) {
+        g.dispose();
+      }
     }
   }
 
@@ -1533,126 +1277,73 @@ in   */
 
 
   public void run() {  // not good to make this synchronized, locks things up
-    try {
-      while ((Thread.currentThread() == thread) && !finished) {
-        //System.out.println("entering run");
-        // render a single frame
-        if (g != null) {
-          //println("requesting display");
-          g.requestDisplay(this);
-//        } else {
-//          println("no renderer");
-        }
+    long beforeTime = System.nanoTime();
+    long overSleepTime = 0L;
+    
+    int noDelays = 0;
+    // Number of frames with a delay of 0 ms before the 
+    // animation thread yields to other running threads.
+    final int NO_DELAYS_PER_YIELD = 15;
 
-        if (frameCount == 1) {
-          // Call the request focus event once the image is sure to be on
-          // screen and the component is valid. The OpenGL renderer will
-          // request focus for its canvas inside beginDraw().
-          // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
-          requestFocus();
-        }
+    /*
+      // this has to be called after the exception is thrown,
+      // otherwise the supporting libs won't have a valid context to draw to
+      Object methodArgs[] =
+        new Object[] { new Integer(width), new Integer(height) };
+      sizeMethods.handle(methodArgs);
+     */
+    
+    while ((Thread.currentThread() == thread) && !finished) {
+      if (resizeRequest) {
+        resizeRenderer(resizeWidth, resizeHeight);
+        resizeRequest = false;
+      }
+      
+      // render a single frame
+      handleDraw();
 
-        // wait for update & paint to happen before drawing next frame
-        // this is necessary since the drawing is sometimes in a
-        // separate thread, meaning that the next frame will start
-        // before the update/paint is completed
+      if (frameCount == 1) {
+        // Call the request focus event once the image is sure to be on
+        // screen and the component is valid. The OpenGL renderer will
+        // request focus for its canvas inside beginDraw().
+        // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
+        //println("requesting focus");
+        requestFocus();
+      }
 
+      // wait for update & paint to happen before drawing next frame
+      // this is necessary since the drawing is sometimes in a
+      // separate thread, meaning that the next frame will start
+      // before the update/paint is completed
+
+      long afterTime = System.nanoTime();
+      long timeDiff = afterTime - beforeTime;
+      //System.out.println("time diff is " + timeDiff);
+      long sleepTime = (frameRatePeriod - timeDiff) - overSleepTime;
+
+      if (sleepTime > 0) {  // some time left in this cycle
         try {
-          // Windows doesn't like Thread.yield(), acts as though it hasn't
-          // even been called and starves the CPU anyway. So have to sleep
-          // (or wait) at least for some small amount of time (below).
-          //Thread.yield();
+//          Thread.sleep(sleepTime / 1000000L);  // nanoseconds -> milliseconds
+          Thread.sleep(sleepTime / 1000000L, (int) (sleepTime % 1000000L));
+          noDelays = 0;  // Got some sleep, not delaying anymore
+        } catch (InterruptedException ex) { }
+        
+        overSleepTime = (System.nanoTime() - afterTime) - sleepTime;
+        //System.out.println("  oversleep is " + overSleepTime);
+        
+      } else {    // sleepTime <= 0; the frame took longer than the period
+//        excess -= sleepTime;  // store excess time value
+        overSleepTime = 0L;
 
-          // Can't remember when/why I changed the generic nap time to '1'
-          // (rather than 3 or 5, like back in the day), but I have a feeling
-          // that some platforms aren't gonna like that.
-
-          // If !looping, sleeps for a nice long time, or until an
-          // interrupt or notify from a call to loop/noLoop/redraw
-
-          int nap = (looping || finished) ? 1 : 10000;
-
-          // don't nap after setup, because if noLoop() is called this
-          // will make the first draw wait 10 seconds before showing up
-          if (frameCount == 1) {
-            nap = 1;
-
-          } else if (finished) {
-            nap = 0;
-
-          } else if (looping) {
-            if (frameRateTarget != 0) {
-              if (frameRateLastDelayTime == 0) {
-                frameRateLastDelayTime = System.currentTimeMillis();
-
-              } else {
-                long timeToLeave =
-                  frameRateLastDelayTime + (long)(1000.0f / frameRateTarget);
-                long now = System.currentTimeMillis();
-                nap = (int) (timeToLeave - now);
-                if (nap > 0) {
-                  frameRateLastDelayTime = timeToLeave;
-                  //delay(napTime);
-                  //nap = napTime;
-
-                } else {
-                  // nap time is negative, need to reset clock (bug #336)
-                  frameRateLastDelayTime = now;
-                }
-              }
-            } else {
-              nap = 1;
-            }
-          }
-
-          if (CRUSTY_THREADS) {
-            Thread.sleep(nap);
-          } else {
-            synchronized (blocker) {
-              if (nap > 0) blocker.wait(nap);
-            }
-          }
-        } catch (InterruptedException e) { }
-        //System.out.println("exiting run");
+        if (noDelays > NO_DELAYS_PER_YIELD) {
+          Thread.yield();   // give another thread a chance to run
+          noDelays = 0;
+        }
       }
 
-    } catch (Exception e) {
-      // note that this will not catch errors inside setup()
-      // those are caught by the PdeRuntime
-
-      //System.out.println("exception occurred (if you don't see a stack " +
-      //                 "trace below this message, we've got a bug)");
-      finished = true;
-      if (e instanceof InvocationTargetException) {
-        //System.out.println("target problem");
-        e = (Exception) (((InvocationTargetException) e).getTargetException());
-      }
-      exception = e;
-      //e.printStackTrace(System.out);
-
-//      if (leechErr != null) {
-//        // if draw() mode, make sure that ui stops waiting
-//        // and the run button quits out
-//        leechErr.println(LEECH_WAKEUP);
-//        e.printStackTrace(leechErr);
-//        //e.printStackTrace(System.out);
-//
-//      } else {
-      System.err.println(LEECH_WAKEUP);
-      e.printStackTrace();
-      //e.printStackTrace(System.out);
-//      }
+      beforeTime = System.nanoTime();
     }
-    if (THREAD_DEBUG) println(Thread.currentThread().getName() +
-                              " thread finished");
 
-    // this may not be safe? this will get triggered with exit()
-    // but need to see if this is it
-    //if ((leechErr == null) && !online) {
-    //System.exit(0);
-    //}
-
-    //System.out.println("exiting run " + finished);
     stop();  // call to shutdown libs?
 
     // If the user called the exit() function, the window should close,
@@ -1663,20 +1354,99 @@ in   */
   }
 
 
+  //synchronized public void handleDisplay() {
+  public void handleDraw() {
+    if (g != null && (looping || redraw)) {
+      g.beginDraw();
+
+      long now = System.nanoTime();
+
+      if (frameCount == 0) {
+        try {
+          println("Calling setup()");
+          setup();
+          println("Done with setup()");
+
+        } catch (RendererChangeException e) {
+          // Give up, instead set the new renderer and re-attempt setup()
+          return;
+        }
+        this.defaultSize = false;
+
+      } else {  // frameCount > 0, meaning an actual draw()
+        // update the current frameRate
+        double rate = 1000000.0 / ((now - frameRateLastNanos) / 1000000.0);
+        float instantaneousRate = (float) rate / 1000.0f;
+        frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
+
+        preMethods.handle();
+
+        // use dmouseX/Y as previous mouse pos, since this is the 
+        // last position the mouse was in during the previous draw. 
+        pmouseX = dmouseX;
+        pmouseY = dmouseY;
+
+        println("Calling draw()");
+        draw();
+        println("Done calling draw()");
+
+        // dmouseX/Y is updated only once per frame
+        dmouseX = mouseX;
+        dmouseY = mouseY;
+
+        // these are called *after* loop so that valid
+        // drawing commands can be run inside them. it can't
+        // be before, since a call to background() would wipe
+        // out anything that had been drawn so far.
+        dequeueMouseEvents();
+        dequeueKeyEvents();
+
+        drawMethods.handle();
+
+        redraw = false;  // unset 'redraw' flag in case it was set
+        // (only do this once draw() has run, not just setup())
+        
+      }
+
+      g.endDraw();
+
+      frameRateLastNanos = now;
+      frameCount++;
+
+      paint();
+
+//    repaint();
+//    getToolkit().sync();  // force repaint now (proper method)
+
+      postMethods.handle();
+    }
+  }
+
+  
+  public void addNotify() {
+    super.addNotify();
+    println("addNotify()");
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+  
+  
   synchronized public void redraw() {
     if (!looping) {
       redraw = true;
-      if (thread != null) {
-        // wake from sleep (necessary otherwise it'll be
-        // up to 10 seconds before update)
-        if (CRUSTY_THREADS) {
-          thread.interrupt();
-        } else {
-          synchronized (blocker) {
-            blocker.notifyAll();
-          }
-        }
-      }
+//      if (thread != null) {
+//        // wake from sleep (necessary otherwise it'll be
+//        // up to 10 seconds before update)
+//        if (CRUSTY_THREADS) {
+//          thread.interrupt();
+//        } else {
+//          synchronized (blocker) {
+//            blocker.notifyAll();
+//          }
+//        }
+//      }
     }
   }
 
@@ -1684,17 +1454,17 @@ in   */
   synchronized public void loop() {
     if (!looping) {
       looping = true;
-      if (thread != null) {
-        // wake from sleep (necessary otherwise it'll be
-        // up to 10 seconds before update)
-        if (CRUSTY_THREADS) {
-          thread.interrupt();
-        } else {
-          synchronized (blocker) {
-            blocker.notifyAll();
-          }
-        }
-      }
+//      if (thread != null) {
+//        // wake from sleep (necessary otherwise it'll be
+//        // up to 10 seconds before update)
+//        if (CRUSTY_THREADS) {
+//          thread.interrupt();
+//        } else {
+//          synchronized (blocker) {
+//            blocker.notifyAll();
+//          }
+//        }
+//      }
     }
   }
 
@@ -1703,24 +1473,24 @@ in   */
     if (looping) {
       looping = false;
 
-      // reset frameRate delay times
-      frameRateLastDelayTime = 0;
-      frameRateLastMillis = 0;
-
-      if (thread != null) {
-        if (CRUSTY_THREADS) {
-          thread.interrupt();  // wake from sleep
-        } else {
-          synchronized (blocker) {
-            blocker.notifyAll();
-          }
-          /*
-            try {
-              wait();  // until a notify
-            } catch (InterruptedException e) { }
-          */
-        }
-      }
+//      // reset frameRate delay times
+//      frameRateLastDelayTime = 0;
+//      frameRateLastMillis = 0;
+//
+//      if (thread != null) {
+//        if (CRUSTY_THREADS) {
+//          thread.interrupt();  // wake from sleep
+//        } else {
+//          synchronized (blocker) {
+//            blocker.notifyAll();
+//          }
+//          /*
+//            try {
+//              wait();  // until a notify
+//            } catch (InterruptedException e) { }
+//          */
+//        }
+//      }
     }
   }
 
@@ -1739,15 +1509,13 @@ in   */
 
       addComponentListener(new ComponentAdapter() {
           public void componentResized(ComponentEvent e) {
+            //System.out.println("component resize " + Thread.currentThread().getName());
             Component c = e.getComponent();
             Rectangle bounds = c.getBounds();
-            setRendererSize(bounds.width, bounds.height);
-
-            // this has to be called after the exception is thrown,
-            // otherwise the supporting libs won't have a valid context to draw to
-            Object methodArgs[] =
-              new Object[] { new Integer(width), new Integer(height) };
-            sizeMethods.handle(methodArgs);
+            //resizeRenderer(bounds.width, bounds.height);
+            resizeRequest = true;
+            resizeWidth = bounds.width;
+            resizeHeight = bounds.height;
           }
         });
 
@@ -2232,7 +2000,8 @@ in   */
    * maximum speed.
    */
   public void frameRate(float newRateTarget) {
-    this.frameRateTarget = newRateTarget;
+    frameRateTarget = newRateTarget;
+    frameRatePeriod = (long) (1000000000.0 / frameRateTarget);
   }
 
 
@@ -3592,20 +3361,20 @@ in   */
   }
 
   
-  public PImage loadImageAsync(String filename) {
-    return loadImageAsync(filename, null);
+  public PImage requestImage(String filename) {
+    return requestImage(filename, null);
   }
   
   
-  public PImage loadImageAsync(String filename, String extension) {
+  public PImage requestImage(String filename, String extension) {
     PImage vessel = createImage(0, 0, ARGB);
     AsyncImageLoader ail = 
       new AsyncImageLoader(filename, extension, vessel);
     ail.start();
     return vessel;
   }
-  
-  
+
+
   public int asyncLoaderMax = 4;
   volatile int asyncLoaderCount;
   
@@ -3937,58 +3706,6 @@ in   */
   // FONT I/O
 
 
-  /*
-  Hashtable fontTable;
-  */
-
-  /**
-   * Set the font based on its filename. This is less than efficient
-   * than using loadFont because there's no way to unload it from memory,
-   * but it's useful for beginners.
-   */
-  /*
-  public void textFont(String filename) {
-    if (filename.toLowerCase().indexOf(".vlw") == -1) {
-      System.err.println("textFont() needs the filename of a .vlw font");
-    } else {
-      textFont(tableFont(filename));
-    }
-  }
-  */
-
-
-  /**
-   * Set the font based on its filename. This is less than efficient
-   * than using loadFont because there's no way to unload it from memory,
-   * but it's useful for beginners.
-   */
-  /*
-  public void textFont(String filename, float size) {
-    if (filename.toLowerCase().indexOf(".vlw") == -1) {
-      System.err.println("textFont() needs the filename of a .vlw font");
-    } else {
-      textFont(tableFont(filename), size);
-    }
-  }
-  */
-
-
-  /*
-  protected PFont tableFont(String filename) {
-    if (fontTable == null) fontTable = new Hashtable();
-
-    PFont font = (PFont) fontTable.get(filename);
-    if (font != null) return font;
-
-    font = loadFont(filename);
-    return font;
-  }
-  */
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
   public PFont loadFont(String filename) {
     //if (g == null) {  // just for good measure
     //die("loadFont() only be used inside setup() or draw()");
@@ -4171,6 +3888,7 @@ in   */
   }
 
 
+  
   //////////////////////////////////////////////////////////////
 
   // READERS AND WRITERS
@@ -6871,8 +6589,10 @@ in   */
 
       applet.init();
 
-      // wait until the applet has figured out its width
-      // hoping that this won't hang if the applet has an exception
+      // Wait until the applet has figured out its width.
+      // In a static mode app, this will be after setup() has completed, 
+      // and the empty draw() has set "finished" to true.
+      // TODO make sure this won't hang if the applet has an exception.
       while (applet.defaultSize && !applet.finished) {
         //System.out.println("default size");
         try {
