@@ -112,14 +112,14 @@ public class PGraphics2D extends PGraphics {
 
 
   public void beginDraw() {
-    insideResizeWait();
-    insideDraw = true;
+//    insideResizeWait();
+//    insideDraw = true;
 
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
     // beginDraw/endDraw).
-    if (!defaultsInited) {
-      defaults();
+    if (!settingsInited) {
+      defaultSettings();
 
       polygon  = new PPolygon(this);
       fpolygon = new PPolygon(this);
@@ -144,7 +144,7 @@ public class PGraphics2D extends PGraphics {
     // when this PGraphics is drawn using image().
     updatePixels();
 
-    insideDraw = false;
+//    insideDraw = false;
   }
 
 

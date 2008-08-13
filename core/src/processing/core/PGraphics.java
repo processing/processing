@@ -159,13 +159,15 @@ public abstract class PGraphics extends PImage implements PConstants {
   public int pixelCount;
 
   /// true if defaults() has been called a first time
-  public boolean defaultsInited;
+  public boolean settingsInited;
+  /// true if defaults need to be reapplied
+  //public boolean reapplySettings;
 
   /// true if in-between beginDraw() and endDraw()
-  protected boolean insideDraw;
+//  protected boolean insideDraw;
 
   /// true if in the midst of resize (no drawing can take place)
-  boolean insideResize;
+//  boolean insideResize;
 
   // ........................................................
 
@@ -596,11 +598,15 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // [toxi031031] new & faster sphere code w/ support flexibile resolutions
+  // [toxi 031031] 
+  // new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  // [davbol 2008-08-01] split into sphereDetailU and sphereDetailV
-  public int sphereDetailU = 0; // # of U steps (aka "theta") around longitudinally spanning 2pi
-  public int sphereDetailV = 0; // # of V steps (aka "phi") along latitudinally top-to-bottom spanning pi
+  // [davbol 080801] 
+  // split into sphereDetailU and sphereDetailV
+  /// Number of U steps (aka "theta") around longitudinally spanning 2*pi
+  public int sphereDetailU = 0; 
+  /// Number of V steps (aka "phi") along latitudinally top-to-bottom spanning pi
+  public int sphereDetailV = 0; 
 
 
 
@@ -665,7 +671,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Called in repsonse to a resize event, handles setting the
+   * Called in response to a resize event, handles setting the
    * new width and height internally, as well as re-allocating
    * the pixel buffer for the new size.
    *
@@ -678,8 +684,8 @@ public abstract class PGraphics extends PImage implements PConstants {
    */
   public void resize(int iwidth, int iheight) {  // ignore
     //System.out.println("resize " + iwidth + " " + iheight);
-    insideDrawWait();
-    insideResize = true;
+//    insideDrawWait();
+    //insideResize = true;
 
     width = iwidth;
     height = iheight;
@@ -687,8 +693,9 @@ public abstract class PGraphics extends PImage implements PConstants {
     height1 = height - 1;
 
     allocate();
-
-    insideResize = false;  // ok to draw again
+    reapplySettings();
+    //reapplySettings = true;
+//    insideResize = false;  // ok to draw again
   }
 
 
@@ -697,9 +704,9 @@ public abstract class PGraphics extends PImage implements PConstants {
    * This is broken out like this because the OpenGL library
    * handles updates in a very different way.
    */
-  public void requestDisplay(PApplet pa) {  // ignore
-    pa.handleDisplay();
-  }
+//  public void requestDisplay(PApplet pa) {  // ignore
+//    pa.handleDisplay();
+//  }
 
 
   // broken out because of subclassing
@@ -712,28 +719,36 @@ public abstract class PGraphics extends PImage implements PConstants {
   // FRAME
 
 
-  protected void insideResizeWait() {
-    /*
-    while (insideResize) {
-      //System.out.println("waiting");
-      try {
-        Thread.sleep(5);
-      } catch (InterruptedException e) { }
-    }
-    */
-  }
+//  protected void insideResizeWait() {
+//    if (insideResize) {
+//      System.out.println("insideResizeWait " + Thread.currentThread().getName());
+//      //new Exception().printStackTrace();
+//    }
+//    /*
+//    while (insideResize) {
+//      //System.out.println("waiting");
+//      try {
+//        Thread.sleep(5);
+//      } catch (InterruptedException e) { }
+//    }
+//    */
+//  }
 
 
-  protected void insideDrawWait() {
-    /*
-    while (insideDraw) {
-      //System.out.println("waiting");
-      try {
-        Thread.sleep(5);
-      } catch (InterruptedException e) { }
-    }
-    */
-  }
+//  protected void insideDrawWait() {
+//    if (insideDraw) {
+//      System.out.println("insideDrawWait " + Thread.currentThread().getName());
+//      //new Exception().printStackTrace();
+//    }
+//    /*
+//    while (insideDraw) {
+//      //System.out.println("waiting");
+//      try {
+//        Thread.sleep(5);
+//      } catch (InterruptedException e) { }
+//    }
+//    */
+//  }
 
 
   /**
@@ -754,6 +769,12 @@ public abstract class PGraphics extends PImage implements PConstants {
   abstract public void endDraw();  // ignore
 
 
+  protected void checkSettings() {
+    if (!settingsInited) defaultSettings();
+    //if (reapplySettings) reapplySettings();
+  }
+  
+  
   /**
    * Set engine's default values. This has to be called by PApplet,
    * somewhere inside setup() or draw() because it talks to the
@@ -761,8 +782,8 @@ public abstract class PGraphics extends PImage implements PConstants {
    * needs to be a valid graphics context to mess with otherwise
    * you'll get some good crashing action.
    */
-  public void defaults() {  // ignore
-    //System.out.println("PGraphics.defaults() " + width + " " + height);
+  protected void defaultSettings() {  // ignore
+    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
 
     colorMode(RGB, 255);
     fill(255);
@@ -799,7 +820,63 @@ public abstract class PGraphics extends PImage implements PConstants {
       background(backgroundColor);
     }
 
-    defaultsInited = true;
+    settingsInited = true;
+    // defaultSettings() overlaps reapplySettings(), don't do both 
+    //reapplySettings = false;
+  }
+  
+  
+  /**
+   * Re-apply current settings. Some methods, such as textFont(), require that
+   * their methods be called (rather than simply setting the textFont variable)
+   * because they affect the graphics context, or they require parameters from 
+   * the context (e.g. getting native fonts for text). 
+   * 
+   * This will only be called from an allocate(), which is only called from 
+   * size(), which is safely called from inside beginDraw(). And it cannot be
+   * called before defaultSettings(), so we should be safe.
+   */
+  protected void reapplySettings() {
+    if (!settingsInited) return;  // if this is the initial setup, no need to reapply
+    
+    System.out.println("reapplySettings");
+    new Exception().printStackTrace(System.out);
+    
+    colorMode(colorMode, colorModeX, colorModeY, colorModeZ);
+    if (fill) {
+      PApplet.println("  fill " + PApplet.hex(fillColor));
+      fill(fillColor);
+    } else {
+      noFill();
+    }
+    if (stroke) {
+      stroke(strokeColor);
+      strokeWeight(strokeWeight);
+      strokeCap(strokeCap);
+      strokeJoin(strokeJoin);
+    } else {
+      noStroke();
+    }
+    if (tint) {
+      tint(tintColor);
+    } else {
+      noTint();
+    }
+    if (smooth) {
+      smooth();
+    } else {
+      noSmooth();
+    }
+    if (textFont != null) {
+      System.out.println("  textFont is " + textFont);
+      // textFont() resets the leading, so save it in case it's changed
+      float saveLeading = textLeading; 
+      textFont(textFont, textSize);
+      textLeading(saveLeading);
+    }
+    background(backgroundColor);
+    
+    //reapplySettings = false;
   }
 
 

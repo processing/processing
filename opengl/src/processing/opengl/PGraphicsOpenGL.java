@@ -235,7 +235,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
           public void display(GLAutoDrawable drawable) {
             // need to get a fresh opengl object here
             gl = drawable.getGL();
-            parent.handleDisplay();  // this means it's time to go
+            parent.handleDraw();  // this means it's time to go
           }
 
           public void init(GLAutoDrawable drawable) { }
@@ -303,7 +303,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // changing for 0100, need to resize rather than re-allocate
       canvas.setSize(width, height);
     }
-    defaultsInited = false;
+    settingsInited = false;
   }
 
 
@@ -323,7 +323,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         //canvas.setLocation(width, 0);
         canvas = null;
         allocate();
-        throw new RuntimeException(PApplet.NEW_RENDERER);
+        throw new PApplet.RendererChangeException();
       }
     } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
       if (!opengl4X) {
@@ -331,7 +331,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         parent.remove(canvas);
         canvas = null;
         allocate();
-        throw new RuntimeException(PApplet.NEW_RENDERER);
+        throw new PApplet.RendererChangeException();
       }
     }
   }
@@ -444,7 +444,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       flush();
     }
 
-    insideDraw = false;
+    //insideDraw = false;
     report("bot endDraw()");
   }
 
@@ -1031,10 +1031,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
       //
 
-      int err = glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, 4,
-                                    twidth, theight,
-                                    GL.GL_RGBA,
-                                    GL.GL_UNSIGNED_BYTE, tbuffer);
+      /*int err =*/ glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, 4,
+                                          twidth, theight,
+                                          GL.GL_RGBA,
+                                          GL.GL_UNSIGNED_BYTE, tbuffer);
       //System.out.println("mipmap: " + err);
 
       // The MAG_FILTER should only be GL_LINEAR or GL_NEAREST.

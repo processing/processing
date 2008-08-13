@@ -103,16 +103,21 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   /**
-   * Called in repsonse to a resize event, handles setting the
+   * Called in response to a resize event, handles setting the
    * new width and height internally, as well as re-allocating
    * the pixel buffer for the new size.
    *
    * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
+//    String thr = Thread.currentThread().getName();
+//    System.out.println("resize " + thr);
+//    if (thr.indexOf("AWT-EventQueue") == -1) {
+//      new Exception().printStackTrace();
+//    }
     //System.out.println("resize " + iwidth + " " + iheight);
-    insideDrawWait();
-    insideResize = true;
+//    insideDrawWait();
+//    insideResize = true;
 
     width = iwidth;
     height = iheight;
@@ -120,19 +125,24 @@ public class PGraphicsJava2D extends PGraphics {
     height1 = height - 1;
 
     allocate();
+    reapplySettings();
 
     // ok to draw again
-    insideResize = false;
+//    insideResize = false;
   }
 
 
   // broken out because of subclassing for opengl
   protected void allocate() {
+    System.out.println("PGraphicsJava2D allocate()");
+//    System.out.println("allocate " + Thread.currentThread().getName());
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     g2 = (Graphics2D) image.getGraphics();
     // can't un-set this because this may be only a resize
     // http://dev.processing.org/bugs/show_bug.cgi?id=463
-    defaultsInited = false;
+    //defaultsInited = false;
+    //checkSettings();
+    //reapplySettings = true;
   }
 
 
@@ -143,13 +153,14 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   public void beginDraw() {
-    insideResizeWait();
-    insideDraw = true;
+//    insideResizeWait();
+//    insideDraw = true;
 
     // need to call defaults(), but can only be done when it's ok
     // to draw (i.e. for opengl, no drawing can be done outside
     // beginDraw/endDraw).
-    if (!defaultsInited) defaults();
+//    if (!settingsInited) defaultSettings();
+    checkSettings();
 
     resetMatrix(); // reset model matrix
 
@@ -167,7 +178,7 @@ public class PGraphicsJava2D extends PGraphics {
       loadPixels();
     }
     modified = true;
-    insideDraw = false;
+//    insideDraw = false;
   }
 
 
@@ -996,7 +1007,7 @@ public class PGraphicsJava2D extends PGraphics {
     //java.awt.font.GlyphVector gv = textFontNative.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop));
     //g2.drawGlyphVector(gv, x, y);
     
-    //System.out.println(new String(buffer, start, stop));
+//    System.out.println("text() " + new String(buffer, start, stop));
 
     // return to previous smoothing state if it was changed
     //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
@@ -1193,18 +1204,17 @@ public class PGraphicsJava2D extends PGraphics {
       if ((clearPixels == null) || (clearPixels.length < width)) {
         clearPixels = new int[width];
       }
-      for (int i = 0; i < width; i++) {
-        clearPixels[i] = backgroundColor;
-      }
+      java.util.Arrays.fill(clearPixels, backgroundColor);      
       for (int i = 0; i < height; i++) {
         raster.setDataElements(0, i, width, 1, clearPixels);
       }
     } else {
+      new Exception().printStackTrace(System.out);
       // in case people do transformations before background(),
       // need to handle this with a push/reset/pop
       pushMatrix();
       resetMatrix();
-      g2.setColor(new Color(backgroundColor, backgroundAlpha));
+      g2.setColor(new Color(backgroundColor)); //, backgroundAlpha));
       g2.fillRect(0, 0, width, height);
       popMatrix();
     }

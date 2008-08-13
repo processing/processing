@@ -2,6 +2,7 @@
 
 
 _ draw mode apps do not shut off the run button when finished
+_   need to talk to VM and read when 'finished' var is set
 
 
 new/open/close/save
@@ -45,9 +46,6 @@ _ put the "had to rename sketch" message in the msg bar
 _   it's ugly/annoying/intrusive
 
 
-. . . 
-
-
 [ needs verification ] 
 
 _ check to see whether this bug is fixed once 0140 is released
@@ -77,10 +75,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=852
 _   this may just be a macosx (ppc?) bug
 
 
-. . . 
-
-
 with casey
+_ specifically add "eclipse" to integration description
 _ link books and sample chapters from the "getting started" portion of the faq
 _ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
 _   mark examples as untitled (rather than read-only)
@@ -218,6 +214,22 @@ _   using expand and arrays to move quickly
 
 DOC / Write Me
 
+_ stop() to shut down a sketch (but not quit/close window)
+_ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
+_   also MIN_INT and MAX_INT, even though those are more similar
+_ update the reference to cover parseXxxx() stuff
+_   also add notes about parseInt/Float(blah, otherwise)
+_ also parseInt and parseFloat, how they can return another number or NaN
+_   should the default be NaN or 0?
+_ background() with an image ignores the tint.. it's basically like set()
+_ get/set are faster way draw screen space images, but no tint, no translations
+_ make sure the docs include "beginShape() cannot be nested"
+_   also add error messages to the renderers
+_   also note that ellipse() et al use beginShape()
+_   and that java2d should complain if people try it
+_ method to go from function name to the included examples where used?
+_ encourage use of set() instead of point() in the drawing api
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116
 _ moviemaker video sizes / usability
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
 _ other projects on which p5 is built 
@@ -926,6 +938,7 @@ _   get/setSelText
 _   get/setText
 _   setCurrentTab(int index or String filename)
 _   getTabs() ? maybe these are interface to the code class
+_   clean up API for JEditTextArea before exposing the object
 _ need method for showing prefs for the tools
 _   add pref to handle date vs. increment on archive sketch
 _ make dynamically loaded plugins and "tools" menu
@@ -1054,6 +1067,10 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 
 LIBRARIES / Video
 
+_ threading problems with video
+_   http://dev.processing.org/bugs/show_bug.cgi?id=868
+_ audio stops working after two seconds
+_   http://dev.processing.org/bugs/show_bug.cgi?id=277
 _ java.lang.NoClassDefFoundError: quicktime/std/StdQTException
 _   people not installing qt? no QTJAVA set?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=669
@@ -1090,8 +1107,6 @@ _ wrong device name for video capture will cause a crash
 _ couldn't get req'd component also happens when the capture isn't ready
 _   may also mean that no camera is plugged in
 _   also, don't mention winvdig on the mac
-_ audio stops working after two seconds
-_   http://dev.processing.org/bugs/show_bug.cgi?id=277
 _ include a separate video class to handle just playback
 _   video playback can be much faster if not messing with pixels
 _   could instead use texsubimage in opengl, etc
