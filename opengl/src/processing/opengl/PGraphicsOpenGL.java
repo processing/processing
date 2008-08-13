@@ -27,8 +27,7 @@ import processing.core.*;
 import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
-import java.lang.reflect.*;
-import java.nio.*;  // FloatBuffer and friends
+import java.nio.*;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
@@ -67,9 +66,12 @@ import com.sun.opengl.util.*;
  * about the launcher can be found at its <A HREF="http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html">documentation page</A>.
  */
 public class PGraphicsOpenGL extends PGraphics3D {
+  protected GLDrawable drawable;   // the rendering 'surface'
+  protected GLContext context;     // the rendering context (holds rendering state info)
+  
   public GL gl;
   public GLU glu;
-  public GLCanvas canvas;
+  //public GLCanvas canvas;
 
   //protected FloatBuffer projectionFloatBuffer;
   protected float[] projectionFloats;
@@ -109,10 +111,34 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public PGraphicsOpenGL(int width, int height, PApplet iparent) {
     super(width, height, iparent);
 
-    if (parent == null) {
-      throw new RuntimeException("PGraphicsOpenGL can only be used " +
-                                 "as the main drawing surface");
-    }
+//    if (parent == null) {
+//      throw new RuntimeException("PGraphicsOpenGL can only be used " +
+//                                 "as the main drawing surface");
+//    }
+    
+    glu = new GLU();
+
+    tobj = glu.gluNewTess();
+    
+    // unfortunately glu.gluDeleteTess(tobj); is never called
+    //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
+    //                  GLU.GLU_TESS_WINDING_NONZERO);
+    //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
+    //                  GLU.GLU_TESS_WINDING_POSITIVE);
+    //GLU.GLU_TESS_WINDING_ODD);
+    //glu.gluTessProperty(tobj, GLU.GLU_TESS_BOUNDARY_ONLY,
+    //                  GL.GL_TRUE);
+
+    tessCallback = new TessCallback();
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
+    glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
+
+    lightBuffer = BufferUtil.newFloatBuffer(4);
+    lightBuffer.put(3, 1.0f);
+    lightBuffer.rewind();    
   }
 
 
@@ -125,12 +151,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * Overridden from base PGraphics, because this subclass
    * will set its own listeners.
    */
+  /*
   public void setMainDrawingSurface() {  // ignore
     mainDrawingSurface = true;
     format = RGB;
   }
+  */
 
 
+  /*
   //protected boolean displayed = false;
 
   // main applet thread requests an update,
@@ -186,6 +215,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       throw new RuntimeException(e);
     }
   }
+  */
 
 
   /*
@@ -218,17 +248,22 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * because OpenGL's pixel buffer is all handled internally.
    */
   protected void allocate() {
-    if (canvas == null) {
+    if (context == null) {
+      System.out.println("PGraphicsOpenGL.allocate() for " + width + " " + height);
+      // If OpenGL 2X or 4X smoothing is enabled, setup caps object for them
       GLCapabilities capabilities = new GLCapabilities();
-        if (hints[ENABLE_OPENGL_2X_SMOOTH]) {
-          capabilities.setSampleBuffers(true);
-          capabilities.setNumSamples(2);
+      if (hints[ENABLE_OPENGL_2X_SMOOTH]) {
+        capabilities.setSampleBuffers(true);
+        capabilities.setNumSamples(2);
       } else if (hints[ENABLE_OPENGL_4X_SMOOTH]) {
         capabilities.setSampleBuffers(true);
         capabilities.setNumSamples(4);
       }
-        canvas = new GLCanvas(capabilities);
+      // get a rendering surface and a context for this canvas
+      drawable = GLDrawableFactory.getFactory().getGLDrawable(parent, capabilities, null);
+      context = drawable.createContext(null);
 
+      /*
       //System.out.println("creating PGraphicsOpenGL 3");
       canvas.addGLEventListener(new GLEventListener() {
 
@@ -247,9 +282,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
           public void reshape(GLAutoDrawable drawable,
                               int x, int y, int w, int h) { }
         });
-
+       */
+      
       //System.out.println("creating PGraphicsOpenGL 4");
 
+      /*
       if ((parent != null) && mainDrawingSurface) {
         parent.setLayout(null);
         parent.add(canvas);
@@ -262,46 +299,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
         canvas.addKeyListener(parent);
         canvas.addFocusListener(parent);
       }
-
-      //System.out.println("creating PGraphicsOpenGL 6");
+      */
 
       // need to get proper opengl context since will be needed below
-      gl = canvas.getGL();
-      glu = new GLU(); //canvas.getGLU();
-
-      //System.out.println("swap mode is " + canvas.getAutoSwapBufferMode());
-      //canvas.setAutoSwapBufferMode(false);
-
-      //System.out.println("creating PGraphicsOpenGL 7");
-
-      // this sets width/height and calls allocate() in PGraphics
-      //resize(width, height);
-      //defaults();  // call this just before setup instead
-
-      tobj = glu.gluNewTess();
-      // unfortunately glu.gluDeleteTess(tobj); is never called
-      //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
-      //                  GLU.GLU_TESS_WINDING_NONZERO);
-      //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
-      //                  GLU.GLU_TESS_WINDING_POSITIVE);
-      //GLU.GLU_TESS_WINDING_ODD);
-      //glu.gluTessProperty(tobj, GLU.GLU_TESS_BOUNDARY_ONLY,
-      //                  GL.GL_TRUE);
-
-      tessCallback = new TessCallback(); //gl, glu);
-      glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
-      glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
-      glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
-      glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
-      glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
-
-      lightBuffer = BufferUtil.newFloatBuffer(4);
-      lightBuffer.put(3, 1.0f);
-      lightBuffer.rewind();
+      gl = context.getGL();
 
     } else {
       // changing for 0100, need to resize rather than re-allocate
-      canvas.setSize(width, height);
+      //canvas.setSize(width, height);
+      System.out.println("PGraphicsOpenGL.allocate() again for " + width + " " + height);
     }
     settingsInited = false;
   }
@@ -319,17 +325,23 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
       if (!opengl2X) {
-        parent.remove(canvas);
+        //parent.remove(canvas);
         //canvas.setLocation(width, 0);
-        canvas = null;
+        //canvas = null;
+        //releaseContext();
+        //drawable = null;
+        context.destroy();
+        context = null;
         allocate();
         throw new PApplet.RendererChangeException();
       }
     } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
       if (!opengl4X) {
         //canvas.setLocation(width, 0);
-        parent.remove(canvas);
-        canvas = null;
+        //parent.remove(canvas);
+        //canvas = null;
+        context.destroy();
+        context = null;
         allocate();
         throw new PApplet.RendererChangeException();
       }
@@ -346,23 +358,47 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  public void beginDraw() {
-    super.beginDraw();
 
+  /**
+   * Make the OpenGL rendering context current for this thread.
+   */
+  private void detainContext() {
+    try {
+      while (context.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT) {
+        //System.out.println("Context not yet current...");
+        Thread.sleep(10);
+      }
+    } catch (InterruptedException e) { 
+      e.printStackTrace(); 
+    }
+  }
+  
+  /**
+   * Release the context, otherwise the AWT lock on X11 will not be released 
+   */
+  private void releaseContext() {
+    context.release();
+  }
+
+  
+  public void beginDraw() {
+    detainContext();
+    
     // On the first frame that's guaranteed to be on screen,
     // and the component valid and all that, ask for focus.
-    if ((parent != null) && parent.frameCount == 1) {
-      canvas.requestFocus();
-    }
+//    if ((parent != null) && parent.frameCount == 1) {
+//      canvas.requestFocus();
+//    }
+
+    super.beginDraw();
 
     report("top beginDraw()");
-
+    
     gl.glDisable(GL.GL_LIGHTING);
     for (int i = 0; i < MAX_LIGHTS; i++) {
       gl.glDisable(GL.GL_LIGHT0 + i);
     }
 
-    //syncMatrices();
     gl.glMatrixMode(GL.GL_PROJECTION);
     if (projectionFloats == null) {
       projectionFloats = new float[] {
@@ -431,7 +467,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     report("bot beginDraw()");
     // are there other things to do here?
-    //System.out.println("beginDraw() stop error " + PApplet.hex(gl.glGetError()));
+    //System.out.println("beginDraw() stop error " + PApplet.hex(gl.glGetError()));    
   }
 
 
@@ -444,8 +480,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
       flush();
     }
 
+    drawable.swapBuffers();
+    releaseContext();
+
     //insideDraw = false;
-    report("bot endDraw()");
+    report("bot endDraw()");    
   }
 
 
@@ -726,17 +765,19 @@ public class PGraphicsOpenGL extends PGraphics3D {
     return ((z < 1) && (x > -width) && (x < width*2) && (y > -height) && (y < height*2));
   }
 
-
+  // TODO need to remove this
   public float uscale(PImage texture) {
     ImageCache cash = (ImageCache) texture.cache;
     return (float) texture.width / (float) cash.twidth;
   }
 
+  // TODO need to remove this
   public float vscale(PImage texture) {
     ImageCache cash = (ImageCache) texture.cache;
     return (float) texture.height / (float) cash.theight;
   }
 
+  // TODO need to remove this
   public void bindTexture(PImage texture) {
     ImageCache cash = (ImageCache) texture.cache;  // as in johnny
     if (cash == null) {
@@ -1104,7 +1145,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     // textMode(SHAPE) afterwards
     if (textFontNative != null) {
       textFontNative = textFontNative.deriveFont(size);
-      Graphics2D graphics = (Graphics2D) canvas.getGraphics();
+      Graphics2D graphics = (Graphics2D) parent.getGraphics();
       graphics.setFont(textFontNative);
 
       // get the metrics info
@@ -1123,7 +1164,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     int length = stop - start;
     return textFontNativeMetrics.charsWidth(buffer, start, length);
     */
-    Graphics2D graphics = (Graphics2D) canvas.getGraphics();
+    Graphics2D graphics = (Graphics2D) parent.getGraphics();
     // otherwise smaller sizes will be totally crapped up
     // seems to need to be before the getFRC, but after the canvas.getGraphics
     // (placing this inside textSize(), even though it was called, wasn't working)
@@ -1204,7 +1245,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     // array passed to createGylphVector
     char textArray[] = new char[] { ch };
 
-    Graphics2D graphics = (Graphics2D) canvas.getGraphics();
+    Graphics2D graphics = (Graphics2D) parent.getGraphics();
     FontRenderContext frc = graphics.getFontRenderContext();
     GlyphVector gv = textFontNative.createGlyphVector(frc, textArray);
     Shape shp = gv.getOutline();
