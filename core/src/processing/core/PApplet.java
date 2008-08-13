@@ -1367,6 +1367,7 @@ in   */
   //synchronized public void handleDisplay() {
   public void handleDraw() {
     if (g != null && (looping || redraw)) {
+      System.out.println("handleDraw() " + frameCount);
       g.beginDraw();
 
       long now = System.nanoTime();
