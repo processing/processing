@@ -1209,7 +1209,7 @@ public class PGraphicsJava2D extends PGraphics {
         raster.setDataElements(0, i, width, 1, clearPixels);
       }
     } else {
-      new Exception().printStackTrace(System.out);
+      //new Exception().printStackTrace(System.out);
       // in case people do transformations before background(),
       // need to handle this with a push/reset/pop
       pushMatrix();
