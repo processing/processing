@@ -1,6 +1,9 @@
 0145 pde
 
 
+_ need to add local java folder to path on linux
+_   otherwise if no linux installed, complaining that no java found
+
 _ draw mode apps do not shut off the run button when finished
 _   need to talk to VM and read when 'finished' var is set
 
