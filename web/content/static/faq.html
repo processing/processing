@@ -11,7 +11,7 @@
     <a href="#revisions">I downloaded a new version and my code no longer works!</a> <br />
     <a href="#changes">I'm trying to run some code I found on the web, and it doesn't work</a> <br />
     <a href="#platforms">On which platforms does Processing run?</a><br />
-    <a href="#opensource">Is Processing open source?</a> <br />
+    <a href="#opensource">Is Processing open source? How 'bout some code?</a> <br />
     <a href="#attribution">Do I have to cite Processing or share my code? Can I distribute my sketches?</a> <br />
     <a href="#versions">What's with the version numbers?</a> <br />
     <a href="#naming">Why is it called &ldquo;Processing&rdquo;?</a> <br />
@@ -106,7 +106,7 @@ Development Environment on <a href="/reference/environment/platforms.html#other"
 platforms</a>.</p>
 
 <h5 id="opensource"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
-      Is Processing Open Source?</h5>
+      Is Processing Open Source? How 'bout some code?</h5>
 
     <p>The Processing development environment is released as open source
 under the GPL. The export libraries (also known as 'core') are
@@ -117,30 +117,16 @@ you make changes to core, you have to submit back to us.
 More information about the GNU Public License can be found at <a
 href="http://www.gnu.org/copyleft/gpl.html">www.gnu.org/copyleft/gpl.html</a>.</p>
 
-    <p>Processing also relies on other open projects, namely:</p>
-    
-<ul>
-    <li>the older <a href="http://www.savarese.org/oro/">ORO Matcher</a>, 
-distributed under a BSD-style license as part of the 
-<a href="http://jakarta.apache.org/">Apache Jakarta</a> project</li>
-
-    <li>the <a href="http://sourceforge.net/projects/jikes/">Jikes</a>
-compiler, which is covered by the <a href="http://www.ibm.com/developerworks/library/os-ipl.html">
-IBM Public License</a>.</li>
-
-    <li>the <a href="http://syntax.jedit.org">jEdit Syntax</a> package,
-which is public domain</li>
-
-    <li>com.ice.jni.registry from the <a href="http://www.gjt.org/">Giant
-Java Tree</a> (GPL license) </li>
-
-    <li>perhaps others, but that's all I can think of right now while we're
-cramming for the beta release</li>
-</ul>
-
     <p>The source code is stored on our <a
 href="http://dev.processing.org/">developer site</a>, and more
 information about its use can be found over there.</p>
+
+    <p>We need help! Having shared all the code and made it available for
+free, doesn't it just make you want to pitch in and help? We have too much work
+to do and can't keep up with things. We love to see bug fixes, new
+libraries, etc. If you're interested, contact us via the <a
+href="/discourse/">discourse</a> section of the
+site.</p>
 
     <p>The source code for the libraries is also included with the Processing
 software itself, should you want to modify them for your own use. If you
@@ -148,12 +134,32 @@ want to modify the library for your own use, you can include the .java file
 as part of your sketch. Just be sure to remove the "package processing.xx;" 
 line at the beginning. The Processing environment does not allow packages.
 
-    <p>We need help! Having shared all the code and made it available for
-free, doesn't it just make you want to pitch in? We have too much work
-to do and can't keep up with things. We love to see bug fixes, new
-libraries, etc. If you're interested, contact us via the <a
-href="/discourse/">discourse</a> section of the
-site.</p>
+    <p>Processing also relies on (and is indebted to) other open projects, namely:</p>
+    
+<ul>
+
+    <li>the <a href="http://syntax.jedit.org">jEdit Syntax</a> package, which is public domain</li>
+
+    <li>the ECJ Compiler from the <A HREF="http://eclipse.org">Eclipse project</a>, which uses the Eclipse license.</li>
+
+    <li>the <A HREF="https://jna.dev.java.net/">Java Native Access (JNA)</A> project, released under the LGPL. 
+
+    <li>...perhaps others, let us know if we're missing something.</li>
+</ul>
+
+The following are no longer in use, but we still owe them because they helped us along in earlier releases:
+
+<ul>
+    <li>the older <a href="http://www.savarese.org/oro/">ORO Matcher</a>, 
+distributed under a BSD-style license as part of the 
+<a href="http://jakarta.apache.org/">Apache Jakarta</a> project</li>
+
+    <li>the <a href="http://sourceforge.net/projects/jikes/">Jikes</a>
+compiler, which is covered by the <a href="http://www.ibm.com/developerworks/library/os-ipl.html">IBM Public License</a>.</li>
+
+    <li>com.ice.jni.registry from the <a href="http://www.gjt.org/">Giant
+Java Tree</a> (GPL license) </li>
+</ul>
 
 <h5 id="attribution"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Do I have to cite Processing? Do I have to share my code? 
@@ -193,8 +199,8 @@ if/when something breaks. Check the <a href="http://dev.processing.org/bugs/">bu
 section of the site and report the problem if it's new, and in the meantime, 
 you can go back to the previous numbered release until there's a fix. </p>
 
-<p>* <EM>Please note that Processing is not yet known to be responsible 
-for any confirmed deaths.</EM></p>
+<p>* <EM>Processing is not yet known to be responsible 
+for any </EM>confirmed<EM> deaths.</EM></p>
 
 <h5 id="naming"><a href="#top"><img src="img/up_arrow.gif" width="26" height="19" alt="Top" /></a> 
       Why is it called &ldquo;Processing&rdquo;?</h5>
@@ -311,8 +317,7 @@ Application" and more).</p>
 I know Java, is this Java? How do I use it that way?
 </h5>
 
-<p>Processing code is converted to straight Java code (using the "preprocessor") when you hit the Run button. This also makes it possible to embed other Java code in your sketches, or use the core.jar file from the Processing distribution to develop your own sketches with other environments. For instance, if you want to use <A HREF="http://eclipse.org">Eclipse</A>, there are instructions on the <A HREF="http://processing.org/discourse/">discourse</A> section of the site.
-</p>
+<p>Processing code is converted to straight Java code (using the "preprocessor") when you hit the Run button. This also makes it possible to embed other Java code in your sketches, or use the core.jar file from the Processing distribution to develop your own sketches with other environments. For instance, if you want to use <A HREF="http://eclipse.org">Eclipse</A>, there are instructions on the <A HREF="http://processing.org/discourse/">discourse</A> section of the site.</p>
 
 <p>The main rule when using Java code: You cannot use most of the AWT or Swing (which is built on the AWT), because it will interfere with the graphics model. If you want to add scroll bars and buttons to your projects, you should make them using Processing code, or embed your Processing applet inside another Swing or AWT application (see below). Even if they appear to work, such sketches will usually break when you try to run on other operating systems or other versions of Java.</p>
 
