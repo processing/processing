@@ -1,5 +1,10 @@
 0145 pde
+X insert &nbsp; characters instead of spaces on DiscourseFormat
+X   works on safari (though not camino/firefox) on osx
 
+_ getMessage() not sufficient for exceptions coming through
+_   (it's not including the type of exception)
+_ autoformat fails when there's no newline
 
 _ need to add local java folder to path on linux
 _   otherwise if no linux installed, complaining that no java found
