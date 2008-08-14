@@ -134,7 +134,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   // broken out because of subclassing for opengl
   protected void allocate() {
-    System.out.println("PGraphicsJava2D allocate()");
+//    System.out.println("PGraphicsJava2D allocate() " + width + " " + height);
 //    System.out.println("allocate " + Thread.currentThread().getName());
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     g2 = (Graphics2D) image.getGraphics();

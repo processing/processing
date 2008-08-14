@@ -791,7 +791,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * you'll get some good crashing action.
    */
   protected void defaultSettings() {  // ignore
-    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
+//    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
 
     colorMode(RGB, 255);
     fill(255);
@@ -847,12 +847,12 @@ public abstract class PGraphics extends PImage implements PConstants {
   protected void reapplySettings() {
     if (!settingsInited) return;  // if this is the initial setup, no need to reapply
     
-    System.out.println("reapplySettings");
-    new Exception().printStackTrace(System.out);
+//    System.out.println("reapplySettings");
+//    new Exception().printStackTrace(System.out);
     
     colorMode(colorMode, colorModeX, colorModeY, colorModeZ);
     if (fill) {
-      PApplet.println("  fill " + PApplet.hex(fillColor));
+//      PApplet.println("  fill " + PApplet.hex(fillColor));
       fill(fillColor);
     } else {
       noFill();
@@ -876,7 +876,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       noSmooth();
     }
     if (textFont != null) {
-      System.out.println("  textFont is " + textFont);
+//      System.out.println("  textFont is " + textFont);
       // textFont() resets the leading, so save it in case it's changed
       float saveLeading = textLeading; 
       textFont(textFont, textSize);
