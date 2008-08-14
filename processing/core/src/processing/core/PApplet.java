@@ -603,6 +603,8 @@ in   */
     }
     width = g.width;
     height = g.height;
+    
+    addListeners();
 
     // this is automatically called in applets
     // though it's here for applications anyway
@@ -1505,28 +1507,28 @@ in   */
   //////////////////////////////////////////////////////////////
 
 
-  protected boolean listenersAdded;
+  //protected boolean listenersAdded;
 
   public void addListeners() {
-    if (!listenersAdded) {
-      addMouseListener(this);
-      addMouseMotionListener(this);
-      addKeyListener(this);
-      addFocusListener(this);
+    //if (!listenersAdded) {
+    addMouseListener(this);
+    addMouseMotionListener(this);
+    addKeyListener(this);
+    addFocusListener(this);
 
-      addComponentListener(new ComponentAdapter() {
-          public void componentResized(ComponentEvent e) {
-            //System.out.println("component resize " + Thread.currentThread().getName());
-            Component c = e.getComponent();
-            Rectangle bounds = c.getBounds();
-            resizeRequest = true;
-            resizeWidth = bounds.width;
-            resizeHeight = bounds.height;
-          }
-        });
+    addComponentListener(new ComponentAdapter() {
+      public void componentResized(ComponentEvent e) {
+        //System.out.println("component resize " + Thread.currentThread().getName());
+        Component c = e.getComponent();
+        Rectangle bounds = c.getBounds();
+        resizeRequest = true;
+        resizeWidth = bounds.width;
+        resizeHeight = bounds.height;
+      }
+    });
 
-      listenersAdded = true;
-    }
+//      listenersAdded = true;
+//    }
   }
 
 

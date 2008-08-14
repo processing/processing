@@ -299,26 +299,30 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  static final float DEFAULT_STROKE_WEIGHT = 1;
+  static final int DEFAULT_STROKE_JOIN = MITER;
+  static final int DEFAULT_STROKE_CAP = ROUND;
+  
   /**
    * Last value set by strokeWeight() (read-only). This has a default
    * setting, rather than fighting with renderers about whether that
    * renderer supports thick lines.
    */
-  public float strokeWeight = 1;
+  public float strokeWeight = DEFAULT_STROKE_WEIGHT;
 
   /**
    * Set by strokeJoin() (read-only). This has a default setting
    * so that strokeJoin() need not be called by defaults,
    * because subclasses may not implement it (i.e. PGraphicsGL)
    */
-  public int strokeJoin = MITER;
+  public int strokeJoin = DEFAULT_STROKE_JOIN;
 
   /**
    * Set by strokeCap() (read-only). This has a default setting
    * so that strokeCap() need not be called by defaults,
    * because subclasses may not implement it (i.e. PGraphicsGL)
    */
-  public int strokeCap = ROUND;
+  public int strokeCap = DEFAULT_STROKE_CAP;
 
   // ........................................................
 
@@ -666,7 +670,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     // headache reasons.. argh, a semi-transparent opengl surface?)
     // use createGraphics() if you want a transparent surface.
     format = RGB;
-    parent.addListeners();
+    //parent.addListeners();
   }
 
 
@@ -683,7 +687,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Note that this will nuke any camera settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
-    //System.out.println("resize " + iwidth + " " + iheight);
+    System.out.println("PGraphics.resize() " + iwidth + " " + iheight);
 //    insideDrawWait();
     //insideResize = true;
 
@@ -845,9 +849,10 @@ public abstract class PGraphics extends PImage implements PConstants {
    * called before defaultSettings(), so we should be safe.
    */
   protected void reapplySettings() {
+//    System.out.println("attempting reapplySettings()");
     if (!settingsInited) return;  // if this is the initial setup, no need to reapply
     
-//    System.out.println("reapplySettings");
+//    System.out.println("  doing reapplySettings");
 //    new Exception().printStackTrace(System.out);
     
     colorMode(colorMode, colorModeX, colorModeY, colorModeZ);
@@ -859,9 +864,15 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
     if (stroke) {
       stroke(strokeColor);
-      strokeWeight(strokeWeight);
-      strokeCap(strokeCap);
-      strokeJoin(strokeJoin);
+      if (strokeWeight != DEFAULT_STROKE_WEIGHT) {
+        strokeWeight(strokeWeight);
+      }
+      if (strokeCap != DEFAULT_STROKE_CAP) {
+        strokeCap(strokeCap);
+      }
+      if (strokeJoin != DEFAULT_STROKE_JOIN) {
+        strokeJoin(strokeJoin);
+      }
     } else {
       noStroke();
     }
@@ -873,10 +884,11 @@ public abstract class PGraphics extends PImage implements PConstants {
     if (smooth) {
       smooth();
     } else {
-      noSmooth();
+      // Don't bother setting this, cuz it'll anger P3D.
+      //noSmooth();
     }
     if (textFont != null) {
-//      System.out.println("  textFont is " + textFont);
+//      System.out.println("  textFont in reapply is " + textFont);
       // textFont() resets the leading, so save it in case it's changed
       float saveLeading = textLeading; 
       textFont(textFont, textSize);
