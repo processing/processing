@@ -120,7 +120,7 @@ public class DiscourseFormat {
     TokenMarker tokenMarker = textarea.getTokenMarker();
 
     // Use painter's cached info for speed
-    FontMetrics fm = painter.getFontMetrics();
+//    FontMetrics fm = painter.getFontMetrics();
 
     // get line text from parent text area
     textarea.getLineText(line, segment);
@@ -129,20 +129,20 @@ public class DiscourseFormat {
     int limit = segment.getEndIndex();
     int segmentOffset = segment.offset;
     int segmentCount = segment.count;
-    int width = 0;
+//    int width = 0;
 
     // If syntax coloring is disabled, do simple translation
     if (tokenMarker == null) {
       for (int j = 0; j < segmentCount; j++) {
         char c = segmentArray[j + segmentOffset];
         cf = cf.append(c);
-        int charWidth;
-        if (c == '\t') {
-          charWidth = (int) painter.nextTabStop(width, j) - width;
-        } else {
-          charWidth = fm.charWidth(c);
-        }
-        width += charWidth;
+//        int charWidth;
+//        if (c == '\t') {
+//          charWidth = (int) painter.nextTabStop(width, j) - width;
+//        } else {
+//          charWidth = fm.charWidth(c);
+//        }
+//        width += charWidth;
       }
 
     } else {
@@ -160,7 +160,7 @@ public class DiscourseFormat {
       }
 
       int offset = 0;
-      Font defaultFont = painter.getFont();
+//      Font defaultFont = painter.getFont();
       SyntaxStyle[] styles = painter.getStyles();
 
       for (;;) {
@@ -175,7 +175,7 @@ public class DiscourseFormat {
           return; // cf.toString();
         }
         if (id == Token.NULL) {
-          fm = painter.getFontMetrics();
+//          fm = painter.getFontMetrics();
         } else {
           // Place open tags []
           cf.append("[color=#");
@@ -185,27 +185,37 @@ public class DiscourseFormat {
           if (styles[id].isBold())
             cf.append("[b]");
 
-          fm = styles[id].getFontMetrics(defaultFont);
+//          fm = styles[id].getFontMetrics(defaultFont);
         }
         int length = tokens.length;
 
         for (int j = 0; j < length; j++) {
           char c = segmentArray[segmentOffset + offset + j];
-          cf.append(c);
+          if (offset == 0 && c == ' ') {
+            // Works on Safari but not Camino 1.6.3 or Firefox 2.x on OS X.
+            cf.append('\u00A0');  // &nbsp;
+//            if ((j % 2) == 1) {
+//              cf.append("[b]\u00A0[/b]");
+//            } else {
+//              cf.append(' ');
+//            }
+          } else {
+            cf.append(c);
+          }
           // Place close tags [/]
           if (j == (length - 1) && id != Token.NULL && styles[id].isBold())
             cf.append("[/b]");
           if (j == (length - 1) && id != Token.NULL)
             cf.append("[/color]");
-          int charWidth;
-          if (c == '\t') {
-            charWidth = (int) painter
-              .nextTabStop(width, offset + j)
-              - width;
-          } else {
-            charWidth = fm.charWidth(c);
-          }
-          width += charWidth;
+//          int charWidth;
+//          if (c == '\t') {
+//            charWidth = (int) painter
+//              .nextTabStop(width, offset + j)
+//              - width;
+//          } else {
+//            charWidth = fm.charWidth(c);
+//          }
+//          width += charWidth;
         }
         offset += length;
         tokens = tokens.next;
