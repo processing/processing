@@ -68,7 +68,7 @@ import com.sun.opengl.util.*;
 public class PGraphicsOpenGL extends PGraphics3D {
   protected GLDrawable drawable;   // the rendering 'surface'
   protected GLContext context;     // the rendering context (holds rendering state info)
-  
+
   public GL gl;
   public GLU glu;
   //public GLCanvas canvas;
@@ -115,11 +115,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
 //      throw new RuntimeException("PGraphicsOpenGL can only be used " +
 //                                 "as the main drawing surface");
 //    }
-    
+
     glu = new GLU();
 
     tobj = glu.gluNewTess();
-    
+
     // unfortunately glu.gluDeleteTess(tobj); is never called
     //glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE,
     //                  GLU.GLU_TESS_WINDING_NONZERO);
@@ -138,7 +138,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     lightBuffer = BufferUtil.newFloatBuffer(4);
     lightBuffer.put(3, 1.0f);
-    lightBuffer.rewind();    
+    lightBuffer.rewind();
   }
 
 
@@ -284,7 +284,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
                               int x, int y, int w, int h) { }
         });
        */
-      
+
       //System.out.println("creating PGraphicsOpenGL 4");
 
       /*
@@ -370,14 +370,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
 //        Thread.sleep(1000);
         Thread.sleep(10);
       }
-    } catch (InterruptedException e) { 
-      e.printStackTrace(); 
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
-  
-  
+
+
   /**
-   * Release the context, otherwise the AWT lock on X11 will not be released 
+   * Release the context, otherwise the AWT lock on X11 will not be released
    */
   private void releaseContext() {
     context.release();
@@ -387,22 +387,23 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public boolean canDraw() {
     return parent.isDisplayable();
   }
-  
-  
+
+
   public void beginDraw() {
     //if (!parent.isDisplayable()) return;
-    
+
     // Call setRealized() after addNotify() has been called
     drawable.setRealized(parent.isDisplayable());
-    System.out.println("OpenGL beginDraw() setting realized " + parent.isDisplayable());
+    //System.out.println("OpenGL beginDraw() setting realized " + parent.isDisplayable());
     if (parent.isDisplayable()) {
-      System.out.println("  we'll realize it alright");
+      //System.out.println("  we'll realize it alright");
       drawable.setRealized(true);
     } else {
-      System.out.println("  not yet ready to be realized");
+      //System.out.println("  not yet ready to be realized");
+      return;  // Should have called canDraw() anyway
     }
     detainContext();
-    
+
     // On the first frame that's guaranteed to be on screen,
     // and the component valid and all that, ask for focus.
 //    if ((parent != null) && parent.frameCount == 1) {
@@ -412,7 +413,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     super.beginDraw();
 
     report("top beginDraw()");
-    
+
     gl.glDisable(GL.GL_LIGHTING);
     for (int i = 0; i < MAX_LIGHTS; i++) {
       gl.glDisable(GL.GL_LIGHT0 + i);
@@ -486,7 +487,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     report("bot beginDraw()");
     // are there other things to do here?
-    //System.out.println("beginDraw() stop error " + PApplet.hex(gl.glGetError()));    
+    //System.out.println("beginDraw() stop error " + PApplet.hex(gl.glGetError()));
   }
 
 
@@ -500,10 +501,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }
 
     drawable.swapBuffers();
-    releaseContext();
 
     //insideDraw = false;
-    report("bot endDraw()");    
+    report("bot endDraw()");
+
+    releaseContext();
   }
 
 
@@ -2639,7 +2641,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
       int err = gl.glGetError();
       if (err != 0) {
         String errString = glu.gluErrorString(err);
-        System.err.println("OpenGL error: " + errString + " " + err);
+        System.err.println("OpenGL error " + err +
+                           " at " + where +
+                           ": " + errString);
       /*
         System.out.print("GL_ERROR at " + where + ": ");
         System.out.print(PApplet.hex(err, 4) + "  ");
