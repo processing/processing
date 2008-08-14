@@ -76,8 +76,6 @@ _   seen especially on old mac laptops (slow ppc garbage)
 _   can this be confirmed properly?
 _ Frame skipping with processor intensive applets using 1.6
 _   http://dev.processing.org/bugs/show_bug.cgi?id=766
-_ too much object creation in java2d
-_   causes inconsistency/hiccups as the gc runs?
 
 _ pdf sketches exiting before writing has finished
 _ writing image file (missing a flush() call?) on exit() fails
@@ -715,6 +713,8 @@ _     available, so it can't be relied upon, but would help in some cases.
 _   loadBytes() is used for images.. ouch
 _   might be worth doing a test to see if it actually would help at all 
 _     before rewriting all of createInput()
+_ too much object creation in java2d
+_   causes inconsistency/hiccups as the gc runs?
 
 
 LATER (post 1.0)
