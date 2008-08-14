@@ -304,6 +304,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
       // need to get proper opengl context since will be needed below
       gl = context.getGL();
+      // Flag defaults to be reset on the next trip into beginDraw().
       settingsInited = false;
       System.out.println("allocated.");
 
@@ -385,9 +386,24 @@ public class PGraphicsOpenGL extends PGraphics3D {
     context.release();
   }
 
+
+  public boolean canDraw() {
+    return parent.isDisplayable();
+  }
+  
   
   public void beginDraw() {
-    drawable.setRealized(true);
+    //if (!parent.isDisplayable()) return;
+    
+    // Call setRealized() after addNotify() has been called
+    drawable.setRealized(parent.isDisplayable());
+    System.out.println("OpenGL beginDraw() setting realized " + parent.isDisplayable());
+    if (parent.isDisplayable()) {
+      System.out.println("  we'll realize it alright");
+      drawable.setRealized(true);
+    } else {
+      System.out.println("  not yet ready to be realized");
+    }
     detainContext();
     
     // On the first frame that's guaranteed to be on screen,

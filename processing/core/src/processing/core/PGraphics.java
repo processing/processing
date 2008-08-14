@@ -752,6 +752,14 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * Some renderers have requirements re: when they are ready to draw.
+   */
+  public boolean canDraw() {
+    return true;
+  }
+  
+  
+  /**
    * Prepares the PGraphics for drawing.
    * <p/>
    * When creating your own PGraphics, you should call this before
