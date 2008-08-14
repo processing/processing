@@ -274,7 +274,6 @@ public class PApplet extends Applet
    * invoking the new renderer while also in the midst of rendering.
    */
   static public class RendererChangeException extends RuntimeException { }
-  //static public final String NEW_RENDERER = "new renderer";
 
   /** Renderer to use next time the component is updated */
   //String nextRenderer = JAVA2D;
@@ -506,11 +505,6 @@ in   */
    * and all that stuff should write things.
    */
   static public final String ARGS_SKETCH_FOLDER = "--sketch-path";
-
-  /**
-   * Message from parent editor (when run as external) to quit.
-   */
-  //static public final char EXTERNAL_STOP = 's';
 
   /**
    * When run externally to a PdeEditor,
@@ -1367,7 +1361,14 @@ in   */
   //synchronized public void handleDisplay() {
   public void handleDraw() {
     if (g != null && (looping || redraw)) {
+      if (!g.canDraw()) {
+        // Don't draw if the renderer is not yet ready.
+        // (e.g. OpenGL has to wait for a peer to be on screen)
+        return;
+      }
+
       System.out.println("handleDraw() " + frameCount);
+      
       g.beginDraw();
 
       long now = System.nanoTime();
@@ -1401,7 +1402,7 @@ in   */
         draw();
         println("Done calling draw()");
 
-        // dmouseX/Y is updated only once per frame
+        // dmouseX/Y is updated only once per frame (unlike emouseX/Y)
         dmouseX = mouseX;
         dmouseY = mouseY;
 
@@ -1424,6 +1425,7 @@ in   */
       frameRateLastNanos = now;
       frameCount++;
 
+      // Actively render the screen
       paint();
 
 //    repaint();
@@ -1517,7 +1519,6 @@ in   */
             //System.out.println("component resize " + Thread.currentThread().getName());
             Component c = e.getComponent();
             Rectangle bounds = c.getBounds();
-            //resizeRenderer(bounds.width, bounds.height);
             resizeRequest = true;
             resizeWidth = bounds.width;
             resizeHeight = bounds.height;
@@ -1754,13 +1755,6 @@ in   */
     keyCode = event.getKeyCode();
 
     keyEventMethods.handle(new Object[] { event });
-    /*
-    for (int i = 0; i < libraryCount; i++) {
-      if (libraryCalls[i][PLibrary.KEY]) {
-        libraries[i].key(event);  // endNet/endSerial etc
-      }
-    }
-    */
 
     switch (event.getID()) {
     case KeyEvent.KEY_PRESSED:
@@ -2197,49 +2191,7 @@ in   */
     }
   }
 
-    /*
-    try {
-      Runtime.getRuntime().exec("cmd /c \"" + filename + "\"");
-    } catch (IOException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Could not open " + filename);
-    }
-
-    try {
-      return Runtime.getRuntime().exec(argv);
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException("Could not open " + join(argv, ' '));
-    }
-  }
-
-  /*
-  static protected String findLinuxLauncher() {
-    if (linuxLauncher == null) {
-      // Attempt to use gnome-open
-      try {
-        Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
-        int result = p.waitFor();
-        // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
-        linuxLauncher = "gnome-open";
-      } catch (Exception e) { }
-
-      // Attempt with kde-open
-      try {
-        Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
-        int result = p.waitFor();
-        linuxLauncher = "kde-open";
-      } catch (Exception e) { }
-    }
-    if (linuxLauncher == null) {
-      System.err.println("Could not find gnome-open or kde-open, " +
-                         "the open() command may not work.");
-    }
-    return linuxLauncher;
-  }
-  */
-
-
+  
   //////////////////////////////////////////////////////////////
 
 
@@ -2374,20 +2326,6 @@ in   */
     }
 
     g.save(savePath(insertFrame(what)));
-    /*
-    int first = what.indexOf('#');
-    int last = what.lastIndexOf('#');
-
-    if (first == -1) {
-      g.save(savePath(what));
-
-    } else {
-      String prefix = what.substring(0, first);
-      int count = last - first + 1;
-      String suffix = what.substring(last + 1);
-      g.save(savePath(prefix + nf(frameCount, count) + suffix));
-    }
-    */
   }
 
 
@@ -2520,82 +2458,6 @@ in   */
     } else {
       System.out.println(what.toString());
     }
-
-    /*
-      String name = what.getClass().getName();
-      if (name.charAt(0) == '[') {
-        switch (name.charAt(1)) {
-        case '[':
-          // don't even mess with multi-dimensional arrays (case '[')
-          // or anything else that's not int, float, boolean, char
-          System.out.print(what);
-          System.out.print(' ');
-          break;
-
-        case 'L':
-          // print a 1D array of objects as individual elements
-          Object poo[] = (Object[]) what;
-          for (int i = 0; i < poo.length; i++) {
-            System.out.print(poo[i]);
-            System.out.print(' ');
-          }
-          break;
-
-        case 'Z':  // boolean
-          boolean zz[] = (boolean[]) what;
-          for (int i = 0; i < zz.length; i++) {
-            System.out.print(zz[i]);
-            System.out.print(' ');
-          }
-          break;
-
-        case 'B':  // byte
-          byte bb[] = (byte[]) what;
-          for (int i = 0; i < bb.length; i++) {
-            System.out.print(bb[i]);
-            System.out.print(' ');
-          }
-          break;
-
-        case 'C':  // char
-          char cc[] = (char[]) what;
-          for (int i = 0; i < cc.length; i++) {
-            System.out.print(cc[i]);
-            System.out.print(' ');
-          }
-          break;
-
-        case 'I':  // int
-          int ii[] = (int[]) what;
-          for (int i = 0; i < ii.length; i++) {
-            System.out.print(ii[i]);
-            System.out.print(' ');
-          }
-          break;
-
-        case 'F':  // float
-          float ff[] = (float[]) what;
-          for (int i = 0; i < ff.length; i++) {
-            System.out.print(ff[i]);
-            System.out.print(' ');
-          }
-          break;
-
-        case 'D':  // double
-          double dd[] = (double[]) what;
-          for (int i = 0; i < dd.length; i++) {
-            System.out.print(dd[i]);
-            System.out.print(' ');
-          }
-          break;
-
-        default:
-          System.out.print(what);
-        }
-      } else {
-        System.out.print(what); //.toString());
-      }
-    */
   }
 
   //
