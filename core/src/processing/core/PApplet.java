@@ -6796,6 +6796,11 @@ in   */
   }
 
 
+  public boolean canDraw() {
+    return g.canDraw();
+  }
+
+
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
