@@ -538,7 +538,7 @@ in   */
 
 
   public void init() {
-    println("Calling init()");
+//    println("Calling init()");
 
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
@@ -687,10 +687,10 @@ in   */
 //  }
   
   
-  public void addNotify() {
-    super.addNotify();
-    println("addNotify()");
-  }
+//  public void addNotify() {
+//    super.addNotify();
+//    println("addNotify()");
+//  }
 
   
   
@@ -915,9 +915,9 @@ in   */
   
 
   protected void resizeRenderer(int iwidth, int iheight) {
-    println("resizeRenderer request for " + iwidth + " " + iheight);
+//    println("resizeRenderer request for " + iwidth + " " + iheight);
     if (width != iwidth || height != iheight) {
-      println("  former size was " + width + " " + height);
+//      println("  former size was " + width + " " + height);
       g.resize(iwidth, iheight);
       width = iwidth;
       height = iheight;
@@ -1228,7 +1228,7 @@ in   */
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
     if (frameCount == 0) {
-      println("Skipping frame");
+//      println("Skipping frame");
       // paint() may be called more than once before things
       // are finally painted to the screen and the thread gets going
       return;
@@ -1247,7 +1247,7 @@ in   */
     // make sure the screen is visible and usable
     // (also prevents over-drawing when using PGraphicsOpenGL)
     if ((g != null) && (g.image != null)) {
-      println("inside paint(), screen.drawImage()");
+//      println("inside paint(), screen.drawImage()");
       screen.drawImage(g.image, 0, 0, null);
     }
   }
