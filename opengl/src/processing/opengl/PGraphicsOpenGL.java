@@ -249,8 +249,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
    */
   protected void allocate() {
     if (context == null) {
-      System.out.println("PGraphicsOpenGL.allocate() for " + width + " " + height);
-      new Exception().printStackTrace(System.out);
+//      System.out.println("PGraphicsOpenGL.allocate() for " + width + " " + height);
+//      new Exception().printStackTrace(System.out);
       // If OpenGL 2X or 4X smoothing is enabled, setup caps object for them
       GLCapabilities capabilities = new GLCapabilities();
       if (hints[ENABLE_OPENGL_2X_SMOOTH]) {
@@ -306,7 +306,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       gl = context.getGL();
       // Flag defaults to be reset on the next trip into beginDraw().
       settingsInited = false;
-      System.out.println("allocated.");
+//      System.out.println("allocated.");
 
     } else {
       // changing for 0100, need to resize rather than re-allocate
