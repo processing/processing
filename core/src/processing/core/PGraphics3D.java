@@ -233,6 +233,7 @@ public class PGraphics3D extends PGraphics {
    * Note that this will nuke any cameraMode() settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
+//    System.out.println("PGraphics3D.resize() " + iwidth + " " + iheight);
 //    insideDrawWait();
 //    insideResize = true;
 
@@ -242,6 +243,7 @@ public class PGraphics3D extends PGraphics {
     height1 = height - 1;
 
     allocate();
+    reapplySettings();
 
     // clear the screen with the old background color
     //background(backgroundColor);
@@ -333,7 +335,7 @@ public class PGraphics3D extends PGraphics {
     triangle = new PTriangle(this);
 
     // can't un-set this because this may be only a resize (Bug #463)
-    settingsInited = false;
+    //settingsInited = false;
     //System.out.println(this + " done allocating");
   }
 

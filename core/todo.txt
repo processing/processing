@@ -16,7 +16,8 @@ X   need to add reference for this
 X textAlign() bottom now takes textDescent() into account
 
 
-_ move addListeners() calls back out of PGraphics
+X move addListeners() calls back out of PGraphics
+
 _ clean up setMainDrawingSurface()
 _   should instead be inside size(), and init(), no?
 
