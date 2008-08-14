@@ -16,6 +16,11 @@ X   need to add reference for this
 X textAlign() bottom now takes textDescent() into account
 
 
+_ move addListeners() calls back out of PGraphics
+_ clean up setMainDrawingSurface()
+_   should instead be inside size(), and init(), no?
+
+
 _ resize window will nuke font setting
 _ textFont() used in setup() is null once draw() arrives
 _   http://dev.processing.org/bugs/show_bug.cgi?id=726
