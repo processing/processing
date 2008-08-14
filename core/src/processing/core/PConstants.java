@@ -336,7 +336,7 @@ public interface PConstants {
   static final int ENABLE_DEPTH_SORT        = 7;
   static final int DISABLE_ERROR_REPORT     = 8;
   static final int ENABLE_ACCURATE_TEXTURES = 9;
-  static final int DISABLE_AUTO_GZIP        = 10;
+  //static final int DISABLE_AUTO_GZIP        = 10;
 
   static final int HINT_COUNT              = 11;
 }

@@ -329,11 +329,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
       if (!opengl2X) {
-        //parent.remove(canvas);
-        //canvas.setLocation(width, 0);
-        //canvas = null;
-        //releaseContext();
-        //drawable = null;
+        releaseContext();
         context.destroy();
         context = null;
         allocate();
@@ -344,6 +340,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         //canvas.setLocation(width, 0);
         //parent.remove(canvas);
         //canvas = null;
+        releaseContext();
         context.destroy();
         context = null;
         allocate();

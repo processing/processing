@@ -1367,7 +1367,7 @@ in   */
         return;
       }
 
-      System.out.println("handleDraw() " + frameCount);
+      //System.out.println("handleDraw() " + frameCount);
       
       g.beginDraw();
 
@@ -1375,9 +1375,9 @@ in   */
 
       if (frameCount == 0) {
         try {
-          println("Calling setup()");
+          //println("Calling setup()");
           setup();
-          println("Done with setup()");
+          //println("Done with setup()");
 
         } catch (RendererChangeException e) {
           // Give up, instead set the new renderer and re-attempt setup()
@@ -1398,9 +1398,9 @@ in   */
         pmouseX = dmouseX;
         pmouseY = dmouseY;
 
-        println("Calling draw()");
+        //println("Calling draw()");
         draw();
-        println("Done calling draw()");
+        //println("Done calling draw()");
 
         // dmouseX/Y is updated only once per frame (unlike emouseX/Y)
         dmouseX = mouseX;
