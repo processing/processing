@@ -2297,6 +2297,17 @@ public abstract class PGraphics extends PImage implements PConstants {
       imageImpl(image,
                 a, b, c, d,
                 u1, v1, u2, v2);
+    
+    } else if (imageMode == CENTER) {
+      // c and d are width/height
+      if (c < 0) c = -c;
+      if (d < 0) d = -d;
+      float x1 = a - c/2;
+      float y1 = b - d/2;
+      
+      imageImpl(image, 
+                x1, y1, x1 + c, y1 + d, 
+                u1, v1, u2, v2);
     }
   }
 

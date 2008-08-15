@@ -188,15 +188,16 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * The mode can only be set to CORNERS or CORNER, because the others are
-   * just too weird for the other functions. Do you really want to use
-   * get() or copy() with imageMode(CENTER)?
+   * The mode can only be set to CORNERS, CORNER, and CENTER.
+   * <p/>
+   * Support for CENTER was added in release 0146.
    */
   public void imageMode(int mode) {
-    if ((mode == CORNER) || (mode == CORNERS)) {
+    if ((mode == CORNER) || (mode == CORNERS) || (mode == CENTER)) {
       imageMode = mode;
     } else {
-      String msg = "imageMode() only works with CORNER or CORNERS";
+      String msg = 
+        "imageMode() only works with CORNER, CORNERS, or CENTER";
       throw new RuntimeException(msg);
     }
   }
@@ -241,7 +242,7 @@ public class PImage implements PConstants, Cloneable {
    * Mark all pixels as needing update.
    */
   public void updatePixels() {
-    updatePixels(0, 0, width, height);
+    updatePixelsImpl(0, 0, width, height);
   }
 
 
@@ -251,16 +252,23 @@ public class PImage implements PConstants, Cloneable {
    * This is not currently used by any of the renderers, however the api
    * is structured this way in the hope of being able to use this to
    * speed things up in the future.
-   * <P>
-   * Note that when using imageMode(CORNERS),
-   * the x2 and y2 positions are non-inclusive.
    */
   public void updatePixels(int x1, int y1, int x2, int y2) {
     if (imageMode == CORNER) {  // x2, y2 are w/h
       x2 += x1;
       y2 += y1;
+      
+    } else if (imageMode == CENTER) {
+      x1 -= x2 / 2;
+      y1 -= y2 / 2;
+      x2 += x1;
+      y2 += y1;
     }
-
+    updatePixelsImpl(x1, y1, x2, y2);
+  }
+  
+  
+  public void updatePixelsImpl(int x1, int y1, int x2, int y2) {
     if (!modified) {
       mx1 = x1;
       mx2 = x2;
@@ -333,6 +341,9 @@ public class PImage implements PConstants, Cloneable {
       // w/h are x2/y2 in this case, bring em down to size
       w = (w - x);
       h = (h - y);
+    } else if (imageMode == CENTER) {
+      x -= w/2;
+      y -= h/2;
     }
 
     if (x < 0) {
@@ -379,7 +390,7 @@ public class PImage implements PConstants, Cloneable {
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
     pixels[y*width + x] = c;
-    updatePixels(x, y, x+1, y+1);  // slow?
+    updatePixelsImpl(x, y, x+1, y+1);  // slow?
   }
 
 
@@ -427,11 +438,7 @@ public class PImage implements PConstants, Cloneable {
       srcOffset += src.width;
       dstOffset += width;
     }
-    if (imageMode == CORNER) {
-      updatePixels(sx, sy, sw, sh);
-    } else {
-      updatePixels(sx, sy, sx+sw, sy+sh);
-    }
+    updatePixelsImpl(sx, sy, sx+sw, sy+sh);
   }
 
 
@@ -1064,37 +1071,6 @@ public class PImage implements PConstants, Cloneable {
                    int sx1, int sy1, int sx2, int sy2,
                    int dx1, int dy1, int dx2, int dy2) {
     blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, REPLACE);
-
-    /*
-    if (imageMode == CORNER) {  // if CORNERS, do nothing
-      sx2 += sx1;
-      sy2 += sy1;
-      dx2 += dx1;
-      dy2 += dy1;
-
-    //} else if (imageMode == CENTER) {
-      //sx2 /= 2f; sy2 /= 2f;
-      //dx2 /= 2f; dy2 /= 2f;
-    }
-
-    loadPixels();
-    if (src == this) {
-      if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
-        // if src is 'this', and things intersect, make a copy of the data
-        blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1),
-                    0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
-                    pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
-      } else {
-        blit_resize(src, sx1, sy1, sx2, sy2,
-                    pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
-      }
-    } else {
-      src.loadPixels();
-      blit_resize(src, sx1, sy1, sx2, sy2,
-                  pixels, width, height, dx1, dy1, dx2, dy2, REPLACE);
-    }
-    updatePixels();
-    */
   }
 
 
@@ -1208,19 +1184,22 @@ public class PImage implements PConstants, Cloneable {
                     int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     if (imageMode == CORNER) {  // if CORNERS, do nothing
-      sx2 += sx1; sy2 += sy1;
-      dx2 += dx1; dy2 += dy1;
+      sx2 += sx1; 
+      sy2 += sy1;
+      dx2 += dx1; 
+      dy2 += dy1;
 
-    //} else if (imageMode == CENTER) {
-      //sx2 /= 2f; sy2 /= 2f;
-      //dx2 /= 2f; dy2 /= 2f;
+    } else if (imageMode == CENTER) {
+      sx1 -= sx2 / 2f;
+      sy1 -= sy2 / 2f;
+      sx2 += sx1;
+      sy2 += sy1;
+      dx1 -= dx2 / 2f;
+      dy1 -= dy2 / 2f;
+      dx2 += dx1;
+      dy2 += dy1;
     }
-
-//    if ((src == this) &&
-//        intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
-//      blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1),
-//                  0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
-//                  pixels, width, height, dx1, dy1, dx2, dy2, mode);
+    
     loadPixels();
     if (src == this) {
       if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {

@@ -5,12 +5,17 @@ X   dynamically load swingworker?
 o   remove saveFile() methods?
 o     write up examples for these instead?
 o     start an integration section?
-
+X get() in java2d not honoring imageMode or rectMode
+X add imageMode(CENTER) implementation
 
 cleanup
 X switch to requestImage() (done in 0145)
 o can bug 77 be fixed with a finalizer? (no, it cannot)
 X make sure that images with alpha still have alpha in current code
+X text in rectangle is drawing outside the box
+X   http://dev.processing.org/bugs/show_bug.cgi?id=844
+X points missing in part of screen
+X   http://dev.processing.org/bugs/show_bug.cgi?id=269
 
 
 [ need problem sketch ] 
@@ -19,7 +24,7 @@ _ if too many errors come through during setup, app will terminate
 _   printStackTrace() throttles on osx and poops out
 _   seen especially on old mac laptops (slow ppc garbage) 
 _   can this be confirmed properly?
-_   * this may just be the 
+_   * this may just be an OutOfMemoryError happening
 
 
 [ needs verification ] 
@@ -54,7 +59,8 @@ _   this has a big impact on the SVG library
 _   in fact, this maybe should be a library that does it
 _     so that the file size can be much smaller
 
-_ get() in java2d not honoring imageMode or rectMode
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 hint/unhint/enable/disable
@@ -83,10 +89,6 @@ _   Java2D and P3D and OpenGL are all inconsistent
 _   need to be able to do hint() to do nearest neighbor filtering
 _   http://dev.processing.org/bugs/show_bug.cgi?id=685
 _   imageDetail(), textDetail(), etc?
-
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 createGraphics() and load/updatePixels() mess [1.0]
@@ -136,8 +138,6 @@ _   same will go for blend()
 rework some text/font code [1.0]
 _ text placement is ugly, seems like fractional metrics problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=866
-_ text in rectangle is drawing outside the box
-_   http://dev.processing.org/bugs/show_bug.cgi?id=844
 _ textMode(SHAPE) and textMode(IMAGE)?
 _   textMode(SCREEN) is out of its league?
 _ fix getFontMetrics() warning
@@ -187,13 +187,13 @@ _   also make a note of disabling as a way to help font appearance
 point() [1.0]
 _ java2d - if strokeWeight is 1, do screenX/Y and set()
 _   if strokeWeight larger, should work ok with line()
+_   no, use an ellipse if strokeWeight is larger
 _ gl points not working again
 _   need to implement point() as actual gl points
 _   this means adding points to the pipeline
 _ point() doesn't work with some graphics card setups
 _   particularly with opengl and java2d
 _   http://dev.processing.org/bugs/show_bug.cgi?id=121
-X   http://dev.processing.org/bugs/show_bug.cgi?id=269
 _ point() issues
 _   point() being funneled through beginShape is terribly slow
 _     go the other way 'round
