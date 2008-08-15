@@ -1,3 +1,72 @@
+0145 core
+X separate x/y axis on sphereDetail() params
+X   http://dev.processing.org/bugs/show_bug.cgi?id=856
+X make sure docs for PImage use createImage
+X add notes about JOGLAppletLauncher
+X   http://download.java.net/media/jogl/builds/nightly/javadoc_public/com/sun/opengl/util/JOGLAppletLauncher.html
+X   added to javadoc
+o need a halt() method which will kill but not quit app (sets finished?)
+o   exit() will actually leave the application
+o   this may in fact only be internal
+X   this is just the stop() method, though maybe we need to document it
+X text(String, float, float, float, float) draws text outside box
+X   http://dev.processing.org/bugs/show_bug.cgi?id=844
+X implement textAlign() for y coords in text rect
+X   need to add reference for this
+X textAlign() bottom now takes textDescent() into account
+X remove gzip-related hint()
+
+threading
+X major threading overhaul before 1.0 (compendium)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=511
+X   ewjordan has added a good trace of the badness
+X need to move off anim off the main event thread
+X   move away from using method like display
+X   look into opengl stuff for dealing with this
+X move addListeners() calls back out of PGraphics
+X resize window will nuke font setting
+X textFont() used in setup() is null once draw() arrives
+X   http://dev.processing.org/bugs/show_bug.cgi?id=726
+X colorMode() set inside setup() sometimes not set once draw() arrives
+X   http://dev.processing.org/bugs/show_bug.cgi?id=767
+X applet sizing issues with external vm
+X   could this possibly be related to the linux bug?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=430
+X alloc() stuff not fixed because of thread halting
+X   problem where alloc happens inside setup(), so, uh..
+X   http://dev.processing.org/bugs/show_bug.cgi?id=369
+X   should instead create new buffer, and swap it in next time through
+X sonia (and anything awt) is locking up on load in rev 91
+X   prolly something w/ the threading issues
+X   paint is synchronized in 0091
+X     however this is a necessity, otherwise nasty flickering ensues
+X     and using a "glock" object seems to completely deadlock
+X   http://dev.processing.org/bugs/show_bug.cgi?id=46
+o claim that things are much slower in 107 vs 92
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1141763531
+X   hopefully this is cleaned up by removing some of the synchronization
+X sketches lock up when system time is changed
+X   http://dev.processing.org/bugs/show_bug.cgi?id=639
+X can draw() not be run on awt event thread?
+X   look into opengl stuff for dealing with this
+o "is there a better way to do this" thread in lists folder
+X framerate that's reported is out of joint with actual
+X   http://dev.processing.org/bugs/show_bug.cgi?id=512
+X   accuracy of frame timer is incorrect
+X   seems to be aliasing effect of low resolution on millis()
+X   so rates coming out double or half of their actual
+X   probably need to integrate over a rolling array of 10 frames or so
+X frameRate() speeds up temporarily if CPU load drops dramatically
+X   http://dev.processing.org/bugs/show_bug.cgi?id=297
+o   perhaps add a hint(DISABLE_FRAMERATE_DAMPER)
+X fix the flicker in java2d mode
+X   http://dev.processing.org/bugs/show_bug.cgi?id=122
+X   framerate(30) is still flickery and jumpy..
+X   not clear what's happening here
+X   appears to be much worse (unfinished drawing) on macosx
+X     try turning off hw accel on the mac to see if that's the problem
+
+
 0144 core
 X if loading an image in p5 and the image is bad, no error msg shown
 X   that is, if a loadImage() turns up an access denied page
