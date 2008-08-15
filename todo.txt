@@ -14,9 +14,6 @@ _   otherwise if no linux installed, complaining that no java found
 _ draw mode apps do not shut off the run button when finished
 _   need to talk to VM and read when 'finished' var is set
 
-_ java.ext.dirs for /System/Library/Java/Extensions
-_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
-
 
 new/open/close/save
 _ not remembering window size/placement preferences
@@ -113,6 +110,8 @@ _   needs to link TRIANGLE_STRIP to the beginShape() reference
 
 
 libraries and classpaths [1.0]
+_ java.ext.dirs for /System/Library/Java/Extensions
+_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
