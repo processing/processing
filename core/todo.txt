@@ -1,61 +1,49 @@
 0146 core
+X fix the internal file chooser so that people don't need to make their own
+X   threading is a problem with inputFile() and inputFolder()
+X   dynamically load swingworker?
+o   remove saveFile() methods?
+o     write up examples for these instead?
+o     start an integration section?
 
 
-threading [1.0]
-_ PDE locks up during setup() (since no window shown)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=687
-_   maybe better to do an example of running code on another thread
-_   when it's done as a script
+cleanup
+X switch to requestImage() (done in 0145)
+o can bug 77 be fixed with a finalizer? (no, it cannot)
+X make sure that images with alpha still have alpha in current code
 
 
-need a problem case
+[ need problem sketch ] 
+
 _ if too many errors come through during setup, app will terminate
 _   printStackTrace() throttles on osx and poops out
 _   seen especially on old mac laptops (slow ppc garbage) 
 _   can this be confirmed properly?
 _   * this may just be the 
 
-should be fixed, needs confirmation
+
+[ needs verification ] 
+
 _ Frame skipping with processor intensive applets using 1.6
 _   http://dev.processing.org/bugs/show_bug.cgi?id=766
 _   may be fixed, but not verified
+
+
+. . . 
 
 
 _ pdf sketches exiting before writing has finished
 _ writing image file (missing a flush() call?) on exit() fails
 _   lots of zero length files
 
-
-_ fix the internal file chooser so that people don't need to make their own
-_   threading is a problem with inputFile() and inputFolder()
-_   dynamically load swingworker?
-
-
 _ clean up setMainDrawingSurface()
 _   should instead be inside size(), and init(), no?
-
-
-_ switch to requestImage()
-
-_ option to have renderer errors show up
-_   1) as text warnings 2) as runtime exceptions 3) never
-_ add warning system for pgraphics, rather than runtime exceptions
-_   keep array of warning strings, and booleans for whether they've called
-
-_ enable() and disable() instead of hint()/unhint()
-_   should these use text strings? how will that be compiled?
-_ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
-_   maybe need to add properties to the size() command?
-_   or use a getXxxx() method?
 
 _ should we do joins when alpha is turned off?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
 
 _ bezierVertex YZ Plane fill problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=752
-
-_ work through loadPixels in PImage, how consistent do we need to be?
-_   with get() and set() methods, this gets really tricky (too slow)
 
 _ Duplicate 3d faces in beginRaw() export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=737
@@ -66,10 +54,19 @@ _   this has a big impact on the SVG library
 _   in fact, this maybe should be a library that does it
 _     so that the file size can be much smaller
 
-_ remove saveFile() methods?
-_   write up examples for these instead?
-_   start an integration section?
+_ get() in java2d not honoring imageMode or rectMode
 
+
+hint/unhint/enable/disable
+_ option to have renderer errors show up
+_   1) as text warnings 2) as runtime exceptions 3) never
+_ add warning system for pgraphics, rather than runtime exceptions
+_   keep array of warning strings, and booleans for whether they've called
+_ enable() and disable() instead of hint()/unhint()
+_   should these use text strings? how will that be compiled?
+_ remove unhint(), add opposite hints for those that need to be disabled
+o   maybe update hint() ref to be more clear about screen not accumulating
+X   no, it's explicitly stated as such
 _ ENABLE_DEPTH_SORT not really working for GL
 _   because the zbuffer is still there, it's still calculating
 _   actually, this is probably because it happens after the frame
@@ -77,17 +74,9 @@ _   so really, flush is required whenever the depth sort is called
 _ ENABLE_DEPTH_SORT causing trouble with MovieMaker
 _   need to make the flush() api accessible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=692
-
-_ set() requires updatePixels() with OpenGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=705
-_ odd-size height will make blue line across image in saveFrame()
-_   probably the pixel flipping code (and endian sorting) not happening
-_   because the blue comes from the byte order flip
-
-_ get() in java2d not honoring imageMode or rectMode
-
-_ can bug 77 be fixed with a finalizer? 
-
+_ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
+_   maybe need to add properties to the size() command?
+_   or use a getXxxx() method?
 _ image smoothing 
 _   straighten out default vs. ACCURATE vs. whatever
 _   Java2D and P3D and OpenGL are all inconsistent
@@ -95,11 +84,6 @@ _   need to be able to do hint() to do nearest neighbor filtering
 _   http://dev.processing.org/bugs/show_bug.cgi?id=685
 _   imageDetail(), textDetail(), etc?
 
-_ make sure that images with alpha still have alpha in current code
-
-_ remove unhint(), add opposite hints for those that need to be disabled
-o   maybe update hint() ref to be more clear about screen not accumulating
-X   no, it's explicitly stated as such
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -570,6 +554,11 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 LIBS / PGraphicsOpenGL
 
+_ set() requires updatePixels() with OpenGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=705
+_ odd-size height will make blue line across image in saveFrame()
+_   probably the pixel flipping code (and endian sorting) not happening
+_   because the blue comes from the byte order flip
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ updatePixels wth OpenGL requires a lot of memory, need better texture update
@@ -658,6 +647,10 @@ _   might be worth doing a test to see if it actually would help at all
 _     before rewriting all of createInput()
 _ too much object creation in java2d
 _   causes inconsistency/hiccups as the gc runs?
+_ work through loadPixels in PImage, how consistent do we need to be?
+_   with get() and set() methods, this gets really tricky (too slow)
+_   could optimize by keeping a java image around, but table for later
+_     it's too significant a change, and not enough time to test
 
 
 LATER (post 1.0)

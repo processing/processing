@@ -37,6 +37,7 @@ import java.util.regex.*;
 import java.util.zip.*;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 
@@ -261,8 +262,6 @@ public class PApplet extends Applet
   /** When debugging headaches */
   static final boolean THREAD_DEBUG = false;
 
-  private Object blocker = new Object();
-
   /** Default width and height for applet when not specified */
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
@@ -285,11 +284,6 @@ public class PApplet extends Applet
    * invoking the new renderer while also in the midst of rendering.
    */
   static public class RendererChangeException extends RuntimeException { }
-
-  /** Renderer to use next time the component is updated */
-  //String nextRenderer = JAVA2D;
-  /** Path for the renderer next time the component is updated */
-  //String nextRendererPath;
 
   /**
    * true if no size() command has been executed. This is used to wait until
@@ -425,10 +419,9 @@ public class PApplet extends Applet
    * As such, this value won't be valid until after 5-10 frames.
    */
   public float frameRate = 10;
+  /** Last time in nanoseconds that frameRate was checked */
   protected long frameRateLastNanos = 0;
 
-  /** Last time in milliseconds that a frameRate delay occurred */
-  //protected long frameRateLastDelayTime = 0;
   /** As of release 0116, frameRate(60) is called as a default */
   protected float frameRateTarget = 60;
   protected long frameRatePeriod = 1000000000L / 60L;
@@ -451,7 +444,7 @@ public class PApplet extends Applet
 
   /**
    * true if this applet has had it.
-in   */
+   */
   public boolean finished;
 
   /**
@@ -462,23 +455,10 @@ in   */
 
   Thread thread;
 
-  /**
-   * Set to the an exception that occurs inside run() and is not
-   * caught. <P> Used by PdeRuntime to determine what happened and
-   * report back to the user.
-   */
-  public Exception exception;
-  //public Throwable exception;
-
   protected RegisteredMethods sizeMethods;
   protected RegisteredMethods preMethods, drawMethods, postMethods;
   protected RegisteredMethods mouseEventMethods, keyEventMethods;
   protected RegisteredMethods disposeMethods;
-
-  // this text isn't seen unless PApplet is used on its
-  // own and someone takes advantage of leechErr.. not likely
-  static public final String LEECH_WAKEUP = "Error while running applet.";
-  //public PrintStream leechErr;
 
   // messages to send if attached as an external vm
 
@@ -537,8 +517,8 @@ in   */
   boolean external = false;
 
 
-  static final String ERROR_MAX = "Cannot use max() on an empty array.";
-  static final String ERROR_MIN = "Cannot use min() on an empty array.";
+  static final String ERROR_MIN_MAX = 
+    "Cannot use min() or max() on an empty array.";
 
 
   // during rev 0100 dev cycle, working on new threading model,
@@ -1474,17 +1454,6 @@ in   */
   synchronized public void loop() {
     if (!looping) {
       looping = true;
-//      if (thread != null) {
-//        // wake from sleep (necessary otherwise it'll be
-//        // up to 10 seconds before update)
-//        if (CRUSTY_THREADS) {
-//          thread.interrupt();
-//        } else {
-//          synchronized (blocker) {
-//            blocker.notifyAll();
-//          }
-//        }
-//      }
     }
   }
 
@@ -1492,25 +1461,6 @@ in   */
   synchronized public void noLoop() {
     if (looping) {
       looping = false;
-
-//      // reset frameRate delay times
-//      frameRateLastDelayTime = 0;
-//      frameRateLastMillis = 0;
-//
-//      if (thread != null) {
-//        if (CRUSTY_THREADS) {
-//          thread.interrupt();  // wake from sleep
-//        } else {
-//          synchronized (blocker) {
-//            blocker.notifyAll();
-//          }
-//          /*
-//            try {
-//              wait();  // until a notify
-//            } catch (InterruptedException e) { }
-//          */
-//        }
-//      }
     }
   }
 
@@ -1518,10 +1468,7 @@ in   */
   //////////////////////////////////////////////////////////////
 
 
-  //protected boolean listenersAdded;
-
   public void addListeners() {
-    //if (!listenersAdded) {
     addMouseListener(this);
     addMouseMotionListener(this);
     addKeyListener(this);
@@ -1529,17 +1476,14 @@ in   */
 
     addComponentListener(new ComponentAdapter() {
       public void componentResized(ComponentEvent e) {
-        //System.out.println("component resize " + Thread.currentThread().getName());
         Component c = e.getComponent();
+        //System.out.println("componentResized() " + c);
         Rectangle bounds = c.getBounds();
         resizeRequest = true;
         resizeWidth = bounds.width;
         resizeHeight = bounds.height;
       }
     });
-
-//      listenersAdded = true;
-//    }
   }
 
 
@@ -2314,10 +2258,6 @@ in   */
       System.err.println("Can't use saveFrame() when running in a browser.");
       return;
     }
-
-    //File file = new File(folder, "screen-" + nf(frame, 4) + ".tif");
-    //save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
-    //save("screen-" + nf(frame, 4) + ".tif");
     g.save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
   }
 
@@ -2337,7 +2277,6 @@ in   */
       System.err.println("Can't use saveFrame() when running in a browser.");
       return;
     }
-
     g.save(savePath(insertFrame(what)));
   }
 
@@ -2665,7 +2604,7 @@ in   */
    */
   static public final int max(int[] list) {
     if (list.length == 0) {
-      throw new ArrayIndexOutOfBoundsException(ERROR_MAX);
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
     }
     int max = list[0];
     for (int i = 1; i < list.length; i++) {
@@ -2678,11 +2617,11 @@ in   */
    * Find the maximum value in an array.
    * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
    * @param list the source array
-   * @return The maximum value, or Float.NaN if the array is length zero.
+   * @return The maximum value
    */
   static public final float max(float[] list) {
     if (list.length == 0) {
-      throw new ArrayIndexOutOfBoundsException(ERROR_MAX);
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
     }
     float max = list[0];
     for (int i = 1; i < list.length; i++) {
@@ -2718,7 +2657,7 @@ in   */
    */
   static public final int min(int[] list) {
     if (list.length == 0) {
-      throw new ArrayIndexOutOfBoundsException(ERROR_MIN);
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
     }
     int min = list[0];
     for (int i = 1; i < list.length; i++) {
@@ -2734,7 +2673,7 @@ in   */
    */
   static public final float min(float[] list) {
     if (list.length == 0) {
-      throw new ArrayIndexOutOfBoundsException(ERROR_MIN);
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
     }
     float min = list[0];
     for (int i = 1; i < list.length; i++) {
@@ -3114,16 +3053,6 @@ in   */
    * with the limitations of getImage() (the headache of dealing with
    * online/offline use). Set up your own MediaTracker, and pass the resulting
    * java.awt.Image to the PImage constructor that takes an AWT image.
-   * You can also use the loadImageSync() function (added in 0116) that
-   * takes an AWT image and loads it synchronously inside PApplet.
-   * <PRE>
-   * public PImage loadImageAlt(String filename) {
-   *   java.awt.Image img = getImage(getCodeBase(), filename);
-   *   return loadImageSync(img);
-   * }
-   * </PRE>
-   * This isn't much fun, but this will have to do unless we find the
-   * actual culprit, which may still be a threading issue.
    */
   public PImage loadImage(String filename) {
     return loadImage(filename, null);
@@ -3167,19 +3096,10 @@ in   */
       }
     }
 
-    //if (lower.endsWith(".tif") || lower.endsWith(".tiff")) {
     if (extension.equals("tif") || extension.equals("tiff")) {
       byte bytes[] = loadBytes(filename);
       return (bytes == null) ? null : PImage.loadTIFF(bytes);
     }
-
-    // Make sure that PNG images aren't being loaded by Java 1.1
-    //if (lower.endsWith(".png") && PApplet.javaVersion < 1.3f) {
-//    if (extension.equals("png") && PApplet.javaVersion < 1.3f) {
-//      System.err.println("PNG images can only be loaded when " +
-//                         "using Java 1.3 and later.");
-//      return null;
-//    }
 
     // For jpeg, gif, and png, load them using createImage(),
     // because the javax.imageio code was found to be much slower, see
@@ -3210,30 +3130,16 @@ in   */
       e.printStackTrace();
     }
 
-    //if (PApplet.javaVersion >= 1.4f) {
     if (loadImageFormats == null) {
       loadImageFormats = ImageIO.getReaderFormatNames();
-      /*
-      try {
-        Class ioClass = Class.forName("javax.imageio.ImageIO");
-        Method getFormatNamesMethod =
-          ioClass.getMethod("getReaderFormatNames", (Class[]) null);
-        loadImageFormats = (String[])
-        getFormatNamesMethod.invoke((Class[]) null, (Object[]) null);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      */
     }
     if (loadImageFormats != null) {
       for (int i = 0; i < loadImageFormats.length; i++) {
-        //if (filename.endsWith("." + loadImageFormats[i])) {
         if (extension.equals(loadImageFormats[i])) {
           return loadImageIO(filename);
         }
       }
     }
-    //}
 
     // failed, could not load image after all those attempts
     System.err.println("Could not find a method to load " + filename);
@@ -3255,8 +3161,17 @@ in   */
   }
 
 
-  public int asyncLoaderMax = 4;
-  volatile int asyncLoaderCount;
+  /**
+   * By trial and error, four image loading threads seem to work best when 
+   * loading images from online. This is consistent with the number of open
+   * connections that web browsers will maintain. The variable is made public
+   * (however no accessor has been added since it's esoteric) if you really
+   * want to have control over the value used. For instance, when loading local
+   * files, it might be better to only have a single thread (or two) loading
+   * images so that you're disk isn't simply jumping around.
+   */
+  public int requestImageMax = 4;
+  volatile int requestImageCount;
 
   class AsyncImageLoader extends Thread {
     String filename;
@@ -3270,12 +3185,12 @@ in   */
     }
 
     public void run() {
-      while (asyncLoaderCount == asyncLoaderMax) {
+      while (requestImageCount == requestImageMax) {
         try {
           Thread.sleep(10);
         } catch (InterruptedException e) { }
       }
-      asyncLoaderCount++;
+      requestImageCount++;
 
       PImage actual = loadImage(filename, extension);
 
@@ -3290,7 +3205,7 @@ in   */
         vessel.format = actual.format;
         vessel.pixels = actual.pixels;
       }
-      asyncLoaderCount--;
+      requestImageCount--;
     }
   }
 
@@ -3299,7 +3214,7 @@ in   */
    * Load an AWT image synchronously by setting up a MediaTracker for
    * a single image, and blocking until it has loaded.
    */
-  public PImage loadImageMT(Image awtImage) {
+  protected PImage loadImageMT(Image awtImage) {
     MediaTracker tracker = new MediaTracker(this);
     tracker.addImage(awtImage, 0);
     try {
@@ -3325,45 +3240,12 @@ in   */
     }
 
     try {
-//      Class ioClass = Class.forName("javax.imageio.ImageIO");
-//      Method readMethod =
-//        ioClass.getMethod("read", new Class[] { InputStream.class });
-//      Object bimage = readMethod.invoke(null, new Object[] { stream });
-
-      // need to get width and height, then create pixels[] at that size
-      //int px[] = null;
-
-//      Class biClass =
-//        Class.forName("java.awt.image.BufferedImage");
-//
-//      Method getHeightMethod =
-//        biClass.getMethod("getHeight", (Class[]) null);
-//      Integer hi = (Integer) getHeightMethod.invoke(bimage, (Object[]) null);
-//
-//      Method getWidthMethod =
-//        biClass.getMethod("getWidth", (Class[]) null);
-//      Integer wi = (Integer) getWidthMethod.invoke(bimage, (Object[]) null);
-
-//      PImage outgoing = new PImage(wi.intValue(), hi.intValue());
-//      outgoing.parent = this;
-
       BufferedImage bi = ImageIO.read(stream);
       PImage outgoing = new PImage(bi.getWidth(), bi.getHeight());
       outgoing.parent = this;
 
       bi.getRGB(0, 0, outgoing.width, outgoing.height,
                 outgoing.pixels, 0, outgoing.width);
-
-//      Method getRgbMethod =
-//        biClass.getMethod("getRGB", new Class[] {
-//            Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE,
-//            outgoing.pixels.getClass(), Integer.TYPE, Integer.TYPE
-//          });
-//      getRgbMethod.invoke(bimage, new Object[] {
-//          new Integer(0), new Integer(0),
-//          new Integer(outgoing.width), new Integer(outgoing.height),
-//          outgoing.pixels, new Integer(0), new Integer(outgoing.width)
-//        });
 
       // check the alpha for this image
       // was gonna call getType() on the image to see if RGB or ARGB,
@@ -3587,25 +3469,8 @@ in   */
 
 
   public PFont loadFont(String filename) {
-    //if (g == null) {  // just for good measure
-    //die("loadFont() only be used inside setup() or draw()");
-    //}
-
     try {
-      //String lower = filename.toLowerCase();
       InputStream input = createInput(filename);
-
-      /*
-      // For compatability with earlier releases of Processing
-      if (lower.endsWith(".vlw.gz")) {
-        input = new GZIPInputStream(input);
-
-      } else if (!lower.endsWith(".vlw")) {
-        // this gets thrown down below
-        throw new IOException("I don't know how to load a font named " +
-                              filename);
-      }
-      */
       return new PFont(input);
 
     } catch (Exception e) {
@@ -3680,94 +3545,114 @@ in   */
 
   // FILE/FOLDER SELECTION
 
+  
+  protected File selectedFile;
+  protected Frame parentFrame;
 
-  public File inputFile() {
-    return inputFile("Select a file...");
-  }
 
-
-  public File inputFile(String prompt) {
-    Frame parentFrame = null;
-    Component comp = getParent();
-    while (comp != null) {
-      if (comp instanceof Frame) {
-        parentFrame = (Frame) comp;
-        break;
+  protected void checkParentFrame() {    
+    if (parentFrame == null) {
+      Component comp = getParent();
+      while (comp != null) {
+        if (comp instanceof Frame) {
+          parentFrame = (Frame) comp;
+          break;
+        }
+        comp = comp.getParent();
       }
-      comp = comp.getParent();
-    }
-    return inputFile(prompt, parentFrame);
-  }
-
-
-  static public File inputFile(Frame parent) {
-    return inputFile("Select a file...", parent);
-  }
-
-
-  /**
-   * static version of inputFile usable by external classes.
-   * <P>
-   * The parentFrame is the Frame that will guide the placement of
-   * the prompt window. If no Frame is available, just pass in null.
-   */
-  // can't be static because it wants a host component
-  static public File inputFile(String prompt, Frame parentFrame) {
-    if (parentFrame == null) parentFrame = new Frame();
-    FileDialog fd = new FileDialog(parentFrame, prompt, FileDialog.LOAD);
-    fd.setVisible(true);
-
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
-    if (filename == null) return null;
-    return new File(directory, filename);
-  }
-
-
-  public File outputFile() {
-    return outputFile("Save as...");
-  }
-
-
-  public File outputFile(String prompt) {
-    Frame parentFrame = null;
-    Component comp = getParent();
-    while (comp != null) {
-      //System.out.println(comp + " " + comp.getClass());
-      if (comp instanceof Frame) {
-        parentFrame = (Frame) comp;
-        break;
+      // Who you callin' a hack?
+      if (parentFrame == null) {
+        parentFrame = new Frame();
       }
-      comp = comp.getParent();
     }
-    return outputFile(prompt, parentFrame);
+  }
+
+  
+  public File selectInput() {
+    return selectInput("Select a file...");
   }
 
 
+  public File selectInput(final String prompt) {
+    return selectFileImpl(prompt, FileDialog.LOAD);
+  }
+  
 
-  static public File outputFile(Frame parentFrame) {
-    return outputFile("Save as...", parentFrame);
+  public File selectOutput() {
+    return selectOutput("Save as...");
   }
 
 
-  /**
-   * static version of outputFile usable by external classes.
-   * <P>
-   * The parentFrame is the Frame that will guide the placement of
-   * the prompt window. If no Frame is available, just pass in null.
-   */
-  static public File outputFile(String prompt, Frame parentFrame) {
-    if (parentFrame == null) parentFrame = new Frame();
-    FileDialog fd = new FileDialog(parentFrame, prompt, FileDialog.SAVE);
-    fd.setVisible(true);
-
-    String directory = fd.getDirectory();
-    String filename = fd.getFile();
-    if (filename == null) return null;
-    return new File(directory, filename);
+  public File selectOutput(String prompt) {
+    return selectFileImpl(prompt, FileDialog.SAVE);
   }
 
+  
+  protected File selectFileImpl(final String prompt, final int mode) {
+    checkParentFrame();
 
+    try {
+      SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          FileDialog fileDialog = 
+            new FileDialog(parentFrame, prompt, mode);
+          fileDialog.setVisible(true);
+          String directory = fileDialog.getDirectory();
+          String filename = fileDialog.getFile();
+          selectedFile = 
+            (filename == null) ? null : new File(directory, filename);
+        }
+      });
+      return selectedFile;
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+    
+
+  public File selectFolder() {
+    return selectFolder("Select a folder...");
+  }
+  
+  
+  public File selectFolder(final String prompt) {
+    checkParentFrame();
+
+    try {
+      SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          if (platform == MACOSX) {
+            FileDialog fileDialog = 
+              new FileDialog(parentFrame, prompt, FileDialog.LOAD);
+            System.setProperty("apple.awt.fileDialogForDirectories", "true");
+            fileDialog.setVisible(true);
+            System.setProperty("apple.awt.fileDialogForDirectories", "false");
+
+          } else {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle(prompt);
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+            int returned = fileChooser.showOpenDialog(parentFrame);
+            if (returned == JFileChooser.APPROVE_OPTION) {
+              selectedFile = fileChooser.getSelectedFile();
+            } else {
+              selectedFile = null;
+            }
+          }
+        }
+      });
+      return selectedFile;
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -3833,32 +3718,6 @@ in   */
     } catch (UnsupportedEncodingException e) { }  // not gonna happen
     return new BufferedReader(isr);
   }
-
-
-  /**
-   * decode a gzip input stream
-   */
-//  static public InputStream gzipInput(InputStream input) {
-//    try {
-//      return new GZIPInputStream(input);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//      throw new RuntimeException("Problem with gzip input");
-//    }
-//  }
-
-
-  /**
-   * decode a gzip output stream
-   */
-//  static public OutputStream gzipOutput(OutputStream output) {
-//    try {
-//      return new GZIPOutputStream(output);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//      throw new RuntimeException("Problem with gzip output");
-//    }
-//  }
 
 
   /**
