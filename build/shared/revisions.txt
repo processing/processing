@@ -40,6 +40,28 @@ been ironed out.
 + There are many other known problems, these are only a few that you're
   likely to run into because they have appeared in recent releases.
 
+[ changes ] 
+
++ Now using JOGL 1.1.1 instead of 1.0. This should bring us out of the
+  dark ages for JOGL, but may require some people to upgrade the drivers
+  on their graphics cards.
+
++ Don't say I didn't warn ya: loadImageAsync() is now requestImage(), 
+  which is its final naming. Documentation has not yet been added, 
+  but will be added soon. For syntax, see the notes for 0144 (below).
+
++ Added sphereDetail(u, v) function contributed by davbol (Thanks Dave!)
+  http://dev.processing.org/bugs/show_bug.cgi?id=856
+
++ Implemented textAlign() for y coordinates with text(str, x, y, w, h)
+
++ textAlign(BOTTOM) now takes textDescent() into account.
+
++ Fix indentation problems in "Copy for Discourse" by inserting unicode
+  non-breaking space characters (\u00A0) at the beginning of lines.
+  This works on many (Internet Explorer, Safari) but not all (Firefox
+  and Camino on Mac OS X) browsers.
+
 [ bug fixes ]
 
 + "Use textFont() before text" message (see the link for fixes)
@@ -88,24 +110,6 @@ been ironed out.
 
 + text(String, float, float, float, float) drawing text outside box
   http://dev.processing.org/bugs/show_bug.cgi?id=844
-
-[ changes ] 
-
-+ Don't say I didn't warn ya: loadImageAsync() is now requestImage(), 
-  which is its final naming. Documentation has not yet been added, 
-  but will be added soon. For syntax, see the notes for 0144 (below).
-
-+ Added sphereDetail(u, v) function contributed by davbol (Thanks Dave!)
-  http://dev.processing.org/bugs/show_bug.cgi?id=856
-
-+ Implemented textAlign() for y coordinates with text(str, x, y, w, h)
-
-+ textAlign(BOTTOM) now takes textDescent() into account.
-
-+ Fix indentation problems in "Copy for Discourse" by inserting unicode
-  non-breaking space characters (\u00A0) at the beginning of lines.
-  This works on many (Internet Explorer, Safari) but not all (Firefox
-  and Camino on Mac OS X) browsers.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
