@@ -1012,6 +1012,9 @@ public class Runner implements MessageConsumer {
       return;
     }
 
+    // Removed while doing cleaning for 0145, 
+    // it seems that this is never actually printed out.
+    /*
     // this is PApplet sending a message saying "i'm about to spew
     // a stack trace because an error occurred during PApplet.run()"
     if (s.indexOf(PApplet.LEECH_WAKEUP) == 0) {
@@ -1021,6 +1024,7 @@ public class Runner implements MessageConsumer {
       newMessage = true;
       return;  // this line ignored
     }
+    */
 
     // these are used for debugging, in case there are concerns
     // that some errors aren't coming through properly

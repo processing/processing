@@ -7,6 +7,8 @@ _ autoformat fails when there's no newline
 
 _ need to add local java folder to path on linux
 _   otherwise if no linux installed, complaining that no java found
+_ windows jdk sometimes not getting picked up, even if it's there
+_   notes somewhere about choosing the right jvm...
 
 _ draw mode apps do not shut off the run button when finished
 _   need to talk to VM and read when 'finished' var is set
@@ -104,6 +106,7 @@ _ TRIANGLE_STRIP not highlighted for "find in reference"
 _   nor is it listed on the reference page
 _   so students can't find the ref for it
 _   needs to link TRIANGLE_STRIP to the beginShape() reference
+_ selectInput(), selectOutput(), selectFolder()
 
 
 libraries and classpaths [1.0]
@@ -225,6 +228,10 @@ _   using expand and arrays to move quickly
 
 DOC / Write Me
 
+_ PDE locks up during setup() (since no window shown)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=687
+_   maybe better to do an example of running code on another thread
+_   when it's done as a script
 _ stop() to shut down a sketch (but not quit/close window)
 _ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
 _   also MIN_INT and MAX_INT, even though those are more similar
