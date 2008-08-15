@@ -1330,6 +1330,11 @@ public class PGraphicsJava2D extends PGraphics {
       // w/h are x2/y2 in this case, bring em down to size
       w = (w - x);
       h = (h - y);
+
+    } else if (imageMode == CENTER) {
+      // x and y are the center, so subtract half of width and height
+      x -= w/2;
+      y -= h/2;
     }
 
     if (x < 0) {
@@ -1435,9 +1440,13 @@ public class PGraphicsJava2D extends PGraphics {
       copy(this, sx, sy, sw, sh, dx, dy, dw, dh);
 
     } else {
+      // don't need to adjust dw and dh since dx/dy are just a delta (not dest) 
       if (imageMode == CORNERS) {
         sw -= sx;
         sh -= sy;
+      } else if (imageMode == CENTER) {
+        sx -= sw / 2;
+        sy -= sh / 2;
       }
       dx = dx - sx;  // java2d's "dx" is the delta, not dest
       dy = dy - sy;
