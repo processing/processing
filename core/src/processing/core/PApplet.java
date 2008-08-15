@@ -48,10 +48,21 @@ import javax.swing.SwingUtilities;
  * problems with redraw of components drawn above it. If you'd like to
  * integrate other Java components, see below.
  * <p/>
+ * As of release 0145, Processing uses active mode rendering in all cases.
+ * All animation tasks happen on the "Processing Animation Thread". The
+ * setup() and draw() methods are handled by that thread, and events (like
+ * mouse movement and key presses, which are fired by the event dispatch
+ * thread or EDT) are queued to be (safely) handled at the end of draw().
+ * For code that needs to run on the EDT, use SwingUtilities.invokeLater().
+ * When doing so, be careful to synchronize between that code (since
+ * invokeLater() will make your code run from the EDT) and the Processing
+ * animation thread. Use of a callback function or the registerXxx() methods
+ * in PApplet can help ensure that your code doesn't do something naughty.
+ * <p/>
  * As of release 0136 of Processing, we have discontinued support for versions
  * of Java prior to 1.5. We don't have enough people to support it, and for a
  * project of our size, we should be focusing on the future, rather than
- * working around legacy Java code. In addition, Java 1.5 gives us access to 
+ * working around legacy Java code. In addition, Java 1.5 gives us access to
  * better timing facilities which will improve the steadiness of animation.
  * <p/>
  * This class extends Applet instead of JApplet because 1) historically,
@@ -71,7 +82,7 @@ import javax.swing.SwingUtilities;
  * this also allows you to embed a Processing drawing area into another Java
  * application. This means you can use standard GUI controls with a Processing
  * sketch. Because AWT and Swing GUI components cannot be used on top of a
- * PApplet, you can instead embed the PApplet inside another GUI the wayyou
+ * PApplet, you can instead embed the PApplet inside another GUI the way you
  * would any other Component.
  * <p/>
  * Because the default animation thread will run at 60 frames per second,
@@ -289,7 +300,7 @@ public class PApplet extends Applet
   volatile boolean resizeRequest;
   volatile int resizeWidth;
   volatile int resizeHeight;
-  
+
   /**
    * Pixel buffer from this applet's PGraphics.
    * <P>
@@ -303,7 +314,7 @@ public class PApplet extends Applet
 
   /** height of this applet's associated PGraphics */
   public int height;
-  
+
   /** current x position of the mouse */
   public int mouseX;
 
@@ -582,7 +593,7 @@ in   */
       // Size of the component is set, just create a renderer.
       //resizeRenderer(initialSize.width, initialSize.height);
       //createRenderer(initialSize.width, initialSize.height);
-      
+
       g = PApplet.makeGraphics(size.width, size.height, JAVA2D, null, this);
       // This doesn't call setSize() or setPreferredSize() because the fact
       // that a size was already set means that someone is already doing it.
@@ -603,7 +614,7 @@ in   */
     }
     width = g.width;
     height = g.height;
-    
+
     addListeners();
 
     // this is automatically called in applets
@@ -611,7 +622,7 @@ in   */
     start();
   }
 
-  
+
 //  protected void createRenderer(int w, int h) {
 //    g = PApplet.makeGraphics(w, h, JAVA2D, null, this);
 //    Dimension size = getSize();
@@ -620,7 +631,7 @@ in   */
 //    }
 //  }
 
-  
+
   /**
    * Called by the browser or applet viewer to inform this applet that it
    * should start its execution. It is called after the init method and
@@ -687,15 +698,15 @@ in   */
 //  public Dimension getPreferredSize() {
 //    return new Dimension(width, height);
 //  }
-  
-  
+
+
 //  public void addNotify() {
 //    super.addNotify();
 //    println("addNotify()");
 //  }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
 
@@ -914,7 +925,7 @@ in   */
 //      redraw();
 //    }
 //  }
-  
+
 
   protected void resizeRenderer(int iwidth, int iheight) {
 //    println("resizeRenderer request for " + iwidth + " " + iheight);
@@ -925,8 +936,8 @@ in   */
       height = iheight;
     }
   }
-  
-  
+
+
   /**
    * Starts up and creates a two-dimensional drawing surface,
    * or resizes the current drawing surface.
@@ -954,16 +965,16 @@ in   */
 
   /**
    * Creates a new PGraphics object and sets it to the specified size.
-   * 
+   *
    * Note that you cannot change the renderer once outside of setup().
    * In most cases, you can call size() to give it a new size,
    * but you need to always ask for the same renderer, otherwise
    * you're gonna run into trouble.
-   * 
-   * The size() method should *only* be called from inside the setup() or 
-   * draw() methods, so that it is properly run on the main animation thread. 
+   *
+   * The size() method should *only* be called from inside the setup() or
+   * draw() methods, so that it is properly run on the main animation thread.
    * To change the size of a PApplet externally, use setSize(), which will
-   * update the component size, and queue a resize of the renderer as well.  
+   * update the component size, and queue a resize of the renderer as well.
    */
   public void size(final int iwidth, final int iheight,
                    String irenderer, String ipath) {
@@ -986,7 +997,7 @@ in   */
 //      setSize(iwidth, iheight);
 //
 //    } else {
-    
+
     // ensure that this is an absolute path
     if (ipath != null) ipath = savePath(ipath);
 
@@ -995,13 +1006,13 @@ in   */
       // Avoid infinite loop of throwing exception to reset renderer
       resizeRenderer(iwidth, iheight);
       //redraw();  // will only be called insize draw()
-      
+
     } else {  // renderer is being changed
 //      if (frameCount > 0) {
 //        throw new RuntimeException("size() cannot be called to change " +
 //        "the renderer outside of setup()");
 //      }
-      
+
       // otherwise ok to fall through and create renderer below
       // the renderer is changing, so need to create a new object
       g = PApplet.makeGraphics(iwidth, iheight, irenderer, ipath, this);
@@ -1161,7 +1172,7 @@ in   */
       String msg = ite.getTargetException().getMessage();
       if ((msg != null) &&
           (msg.indexOf("no jogl in java.library.path") != -1)) {
-        throw new RuntimeException(openglError + 
+        throw new RuntimeException(openglError +
                                    " (The native library is missing.)");
 
       } else {
@@ -1177,7 +1188,7 @@ in   */
 
     } catch (ClassNotFoundException cnfe) {
       if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsGL") != -1) {
-        throw new RuntimeException(openglError + 
+        throw new RuntimeException(openglError +
                                    " (The library .jar file is missing.)");
       } else {
         throw new RuntimeException("You need to use \"Import Library\" " +
@@ -1216,10 +1227,10 @@ in   */
     return image;
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-  
+
+
   public void update(Graphics screen) {
     paint(screen);
   }
@@ -1253,13 +1264,13 @@ in   */
       screen.drawImage(g.image, 0, 0, null);
     }
   }
-  
-  
+
+
   // active paint method
   protected void paint() {
     try {
       Graphics screen = this.getGraphics();
-      if (screen != null) { 
+      if (screen != null) {
         if ((g != null) && (g.image != null)) {
           screen.drawImage(g.image, 0, 0, null);
         }
@@ -1268,7 +1279,7 @@ in   */
     } catch (Exception e) {
       // Seen on applet destroy, maybe can ignore?
       e.printStackTrace();
-      
+
     } finally {
       if (g != null) {
         g.dispose();
@@ -1283,9 +1294,9 @@ in   */
   public void run() {  // not good to make this synchronized, locks things up
     long beforeTime = System.nanoTime();
     long overSleepTime = 0L;
-    
+
     int noDelays = 0;
-    // Number of frames with a delay of 0 ms before the 
+    // Number of frames with a delay of 0 ms before the
     // animation thread yields to other running threads.
     final int NO_DELAYS_PER_YIELD = 15;
 
@@ -1296,15 +1307,15 @@ in   */
         new Object[] { new Integer(width), new Integer(height) };
       sizeMethods.handle(methodArgs);
      */
-    
+
     while ((Thread.currentThread() == thread) && !finished) {
-      // Don't resize the renderer from the EDT (i.e. from a ComponentEvent), 
-      // otherwise it may attempt a resize mid-render. 
+      // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
+      // otherwise it may attempt a resize mid-render.
       if (resizeRequest) {
         resizeRenderer(resizeWidth, resizeHeight);
         resizeRequest = false;
       }
-      
+
       // render a single frame
       handleDraw();
 
@@ -1333,10 +1344,10 @@ in   */
           Thread.sleep(sleepTime / 1000000L, (int) (sleepTime % 1000000L));
           noDelays = 0;  // Got some sleep, not delaying anymore
         } catch (InterruptedException ex) { }
-        
+
         overSleepTime = (System.nanoTime() - afterTime) - sleepTime;
         //System.out.println("  oversleep is " + overSleepTime);
-        
+
       } else {    // sleepTime <= 0; the frame took longer than the period
 //        excess -= sleepTime;  // store excess time value
         overSleepTime = 0L;
@@ -1370,7 +1381,7 @@ in   */
       }
 
       //System.out.println("handleDraw() " + frameCount);
-      
+
       g.beginDraw();
 
       long now = System.nanoTime();
@@ -1395,8 +1406,8 @@ in   */
 
         preMethods.handle();
 
-        // use dmouseX/Y as previous mouse pos, since this is the 
-        // last position the mouse was in during the previous draw. 
+        // use dmouseX/Y as previous mouse pos, since this is the
+        // last position the mouse was in during the previous draw.
         pmouseX = dmouseX;
         pmouseY = dmouseY;
 
@@ -1419,7 +1430,7 @@ in   */
 
         redraw = false;  // unset 'redraw' flag in case it was set
         // (only do this once draw() has run, not just setup())
-        
+
       }
 
       g.endDraw();
@@ -1437,11 +1448,11 @@ in   */
     }
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
-  
-  
+
+
   synchronized public void redraw() {
     if (!looping) {
       redraw = true;
@@ -2193,7 +2204,7 @@ in   */
     }
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
 
@@ -3143,7 +3154,7 @@ in   */
         extension = extension.substring(0, question);
       }
     }
-    
+
     // just in case. them users will try anything!
     extension = extension.toLowerCase();
 
@@ -3184,7 +3195,7 @@ in   */
           Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
           PImage image = loadImageMT(awtImage);
           if (image.width == -1) {
-            System.err.println("The file " + filename + 
+            System.err.println("The file " + filename +
                                " contains bad image data, or may not be an image.");
           }
           // if it's a .gif image, test to see if it has transparency
@@ -3229,15 +3240,15 @@ in   */
     return null;
   }
 
-  
+
   public PImage requestImage(String filename) {
     return requestImage(filename, null);
   }
-  
-  
+
+
   public PImage requestImage(String filename, String extension) {
     PImage vessel = createImage(0, 0, ARGB);
-    AsyncImageLoader ail = 
+    AsyncImageLoader ail =
       new AsyncImageLoader(filename, extension, vessel);
     ail.start();
     return vessel;
@@ -3246,12 +3257,12 @@ in   */
 
   public int asyncLoaderMax = 4;
   volatile int asyncLoaderCount;
-  
+
   class AsyncImageLoader extends Thread {
     String filename;
     String extension;
     PImage vessel;
-    
+
     public AsyncImageLoader(String filename, String extension, PImage vessel) {
       this.filename = filename;
       this.extension = extension;
@@ -3283,7 +3294,7 @@ in   */
     }
   }
 
-  
+
   /**
    * Load an AWT image synchronously by setting up a MediaTracker for
    * a single image, and blocking until it has loaded.
@@ -3651,7 +3662,7 @@ in   */
           return null;
         }
         baseFont = Font.createFont(Font.TRUETYPE_FONT, createInput(name));
-        
+
       } else {
         //baseFont = new Font(name, Font.PLAIN, 1);
         baseFont = PFont.findFont(name);
@@ -3757,7 +3768,7 @@ in   */
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // READERS AND WRITERS
@@ -4145,8 +4156,8 @@ in   */
     }
     return null;
   }
-  
-  
+
+
   static public byte[] loadBytes(File file) {
     InputStream is = createInput(file);
     return loadBytes(is);
@@ -4246,7 +4257,7 @@ in   */
 
   static public OutputStream createOutput(File file) {
     try {
-      FileOutputStream fos = new FileOutputStream(file);    
+      FileOutputStream fos = new FileOutputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
         return new GZIPOutputStream(fos);
       }
@@ -6460,7 +6471,7 @@ in   */
       applet.init();
 
       // Wait until the applet has figured out its width.
-      // In a static mode app, this will be after setup() has completed, 
+      // In a static mode app, this will be after setup() has completed,
       // and the empty draw() has set "finished" to true.
       // TODO make sure this won't hang if the applet has an exception.
       while (applet.defaultSize && !applet.finished) {

@@ -7,6 +7,110 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0145 - 15 August 2008
+
+This release contains several changes to fix issues related to timing
+in sketches. The animation loop has been tuned and several bugs have
+been ironed out.
+
+* RECENT RELEASES CONTAIN MANY SIGNIFICANT CHANGES, PLEASE READ THE *
+*    NOTES IN THIS FILE FOR ANY RELEASE THAT YOU'VE NOT YET USED.   *
+
+[ known problems ]
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5.
+  This is an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 
+  (but not 10.4) causing these menus to be extremely slow. 
+  Workarounds described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+  If you find this annoying, please file a bug at bugreporter.apple.com.
+
++ Intermittent problem where sketches will not start when the Run 
+  button is pressed some fraction of the time. On a single try, 
+  it may not work, but subsequent clicks to the Run button will bring 
+  things back.. So far, this is limited to Mac OS X, but it's
+  known to be a threading issue, and is likely to show up elsewhere.
+  http://dev.processing.org/bugs/show_bug.cgi?id=852
+
++ This release will be incompatible with other libraries that create
+  their own PGraphics objects, such as the current release (0.8.1) 
+  of Andres Colubri's GLGraphics library. (Though by the time you read 
+  this, it may be updated.)
+
++ There are many other known problems, these are only a few that you're
+  likely to run into because they have appeared in recent releases.
+
+[ bug fixes ]
+
++ "Use textFont() before text" message (see the link for fixes)
+  http://dev.processing.org/bugs/show_bug.cgi?id=726
+
++ fill(), stroke(), strokeWeight(), colorMode(), smooth() and any other
+  drawing state set inside setup() sometimes not set once draw() arrives
+  http://dev.processing.org/bugs/show_bug.cgi?id=767
+  This is related to the previous issue (Bug #726)
+
++ Implement major threading overhaul
+  http://dev.processing.org/bugs/show_bug.cgi?id=511
+
++ Window resize no longer nukes settings (stroke, font, etc.)
+
++ Inconsistent "Use textFont() before text()" errors.
+  textFont() used in setup() is null once draw() arrives
+  http://dev.processing.org/bugs/show_bug.cgi?id=726
+
++ fill(), stroke(), strokeWeight(), colorMode(), smooth() and others 
+  set inside setup() sometimes not set once draw() arrives.
+  http://dev.processing.org/bugs/show_bug.cgi?id=767
+
++ Applet sizing issues with external vm
+  http://dev.processing.org/bugs/show_bug.cgi?id=430
+
++ ArrayIndexOutOfBoundsException in P3D inside defaults/background/clear
+  http://dev.processing.org/bugs/show_bug.cgi?id=369
+
++ Clear up EDT vs. Processing Animation Thread issues
+  http://dev.processing.org/bugs/show_bug.cgi?id=46
+
++ Sketches lock up when system time is changed (e.g. by speedstep and 
+  other processor throttling utilities). No longer using the system clock.
+  http://dev.processing.org/bugs/show_bug.cgi?id=639
+
++ frameRate that's reported is out of joint with actual.
+  http://dev.processing.org/bugs/show_bug.cgi?id=512
+  Now using a nanosecond (rather than millisecond) timer.
+
++ frameRate() speeds up temporarily if CPU load drops dramatically.
+  http://dev.processing.org/bugs/show_bug.cgi?id=297
+
++ Fix the flicker with the default renderer (JAVA2D)
+  http://dev.processing.org/bugs/show_bug.cgi?id=122
+
++ text(String, float, float, float, float) drawing text outside box
+  http://dev.processing.org/bugs/show_bug.cgi?id=844
+
+[ changes ] 
+
++ Don't say I didn't warn ya: loadImageAsync() is now requestImage(), 
+  which is its final naming. Documentation has not yet been added, 
+  but will be added soon. For syntax, see the notes for 0144 (below).
+
++ Added sphereDetail(u, v) function contributed by davbol (Thanks Dave!)
+  http://dev.processing.org/bugs/show_bug.cgi?id=856
+
++ Implemented textAlign() for y coordinates with text(str, x, y, w, h)
+
++ textAlign(BOTTOM) now takes textDescent() into account.
+
++ Fix indentation problems in "Copy for Discourse" by inserting unicode
+  non-breaking space characters (\u00A0) at the beginning of lines.
+  This works on many (Internet Explorer, Safari) but not all (Firefox
+  and Camino on Mac OS X) browsers.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0144 - 9 August 2008
 
 This is the first default download since release 0135. It represents 

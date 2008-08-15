@@ -17,8 +17,8 @@ X textAlign() bottom now takes textDescent() into account
 X remove gzip-related hint()
 
 threading
-_ major threading overhaul before 1.0 (compendium)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=511
+X major threading overhaul before 1.0 (compendium)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=511
 X   ewjordan has added a good trace of the badness
 X need to move off anim off the main event thread
 X   move away from using method like display
@@ -26,9 +26,9 @@ X   look into opengl stuff for dealing with this
 X move addListeners() calls back out of PGraphics
 X resize window will nuke font setting
 X textFont() used in setup() is null once draw() arrives
-_   http://dev.processing.org/bugs/show_bug.cgi?id=726
+X   http://dev.processing.org/bugs/show_bug.cgi?id=726
 X colorMode() set inside setup() sometimes not set once draw() arrives
-_   http://dev.processing.org/bugs/show_bug.cgi?id=767
+X   http://dev.processing.org/bugs/show_bug.cgi?id=767
 X applet sizing issues with external vm
 X   could this possibly be related to the linux bug?
 X   http://dev.processing.org/bugs/show_bug.cgi?id=430
@@ -626,9 +626,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 LIBS / PGraphicsOpenGL
 
-_ opengl.jar with eclipse
-_   auto-extract native libs from opengl.jar 
-_   to remove java.library.path problems (!)
+_ first few frames of OpenGL sketches on Windows run slowly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ updatePixels wth OpenGL requires a lot of memory, need better texture update
 _   http://dev.processing.org/bugs/show_bug.cgi?id=610
 _ strokeWeight() doesn't work in opengl or p3d
@@ -719,6 +718,9 @@ _   causes inconsistency/hiccups as the gc runs?
 
 LATER (post 1.0)
 
+_ opengl.jar with eclipse
+_   auto-extract native libs from opengl.jar 
+_   to remove java.library.path problems (!)
 _ introduce calc()
 _   semantics of this are just too tricky, especially when it's not clear
 _   what's actually gained by the split--would have to do weird hacks
