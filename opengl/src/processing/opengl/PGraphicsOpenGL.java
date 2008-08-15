@@ -2457,6 +2457,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * vertically. Both have their components all swapped to native.
    */
   public void set(int x, int y, PImage source) {
+    if (imageMode == CENTER) {
+      x -= source.width / 2;
+      y -= source.height / 2;
+    }
     int backup[] = new int[source.pixels.length];
     System.arraycopy(source.pixels, 0, backup, 0, source.pixels.length);
     javaToNativeARGB(source);

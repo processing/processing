@@ -7,6 +7,7 @@ o     write up examples for these instead?
 o     start an integration section?
 X get() in java2d not honoring imageMode or rectMode
 X add imageMode(CENTER) implementation
+X   add a bunch of changes to the reference to support this
 
 cleanup
 X switch to requestImage() (done in 0145)
