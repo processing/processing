@@ -1,6 +1,8 @@
 0145 pde
-X insert &nbsp; characters instead of spaces on DiscourseFormat
+X insert non-breaking space characters instead of spaces on DiscourseFormat
 X   works on safari (though not camino/firefox) on osx
+X   works on internet explorer w/ windows
+
 
 _ getMessage() not sufficient for exceptions coming through
 _   (it's not including the type of exception)
@@ -75,7 +77,9 @@ _   need someone to go out and test all scenarios of this
 
 [ known bugs ]
 
-_ slow response on file, sketchbook, and examples menus
+_ first few frames of OpenGL sketches on Windows run slowly
+_   http://dev.processing.org/bugs/show_bug.cgi?id=874
+_ Slow response or spinning wheel from the menu bar on Mac OS X
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
 _   could be all the listeners?
 _   actually it's prolly just the insertMenu() garbage
@@ -999,7 +1003,6 @@ _ figure out how to use the
 
 TOOLS / Discourse Format
 
-_ discourse format needs nbsp (or similar) to insert spaces properly
 _ occasional exception in "copy for discourse"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=729
 
@@ -1018,7 +1021,8 @@ _   this would check the something.version to see if it's newer
 _ document how to add libraries: put in sketchbook (not libraries folder)
 _ library/download.url and library/home.url
 _ if there's a reference subfolder, add that to the help menu
-_   and enable it for "find in reference"
+o   and enable it for "find in reference"
+X   nice idea but too error-prone
 
 
 TOOLS / Auto Format
@@ -1050,6 +1054,8 @@ _ autoformat screws up with color arrays
 _   http://dev.processing.org/bugs/show_bug.cgi?id=760
 _ too many right parens error when there are not
 _   http://dev.processing.org/bugs/show_bug.cgi?id=867
+_ code without a new line at end crashes
+_ 
 
 
 TOOLS / Create Font
