@@ -2392,6 +2392,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
     if (imageMode == CORNERS) {  // if CORNER, do nothing
       w = (w - x);
       h = (h - x);
+    } else if (imageMode == CENTER) {
+      x -= w/2;
+      y -= h/2;
     }
 
     if (x < 0) {
