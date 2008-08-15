@@ -1386,6 +1386,11 @@ public class PGraphicsJava2D extends PGraphics {
 
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
+    if (imageMode == CENTER) {
+      dx -= src.width/2;  // not sw, since it's already cropped
+      dy -= src.height/2;
+    }
+
     WritableRaster raster = ((BufferedImage) image).getRaster();
     if ((sx == 0) && (sy == 0) && (sw == src.width) && (sh == src.height)) {
       raster.setDataElements(dx, dy, src.width, src.height, src.pixels);

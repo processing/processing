@@ -400,6 +400,10 @@ public class PImage implements PConstants, Cloneable {
     int sw = src.width;
     int sh = src.height;
 
+    if (imageMode == CENTER) {
+      dx -= src.width/2;
+      dy -= src.height/2;
+    }
     if (dx < 0) {  // off left edge
       sx -= dx;
       sw += dx;
