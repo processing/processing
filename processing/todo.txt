@@ -1,7 +1,4 @@
-0145 pde
-X insert non-breaking space characters instead of spaces on DiscourseFormat
-X   works on safari (though not camino/firefox) on osx
-X   works on internet explorer w/ windows
+0146 pde
 
 
 _ getMessage() not sufficient for exceptions coming through
