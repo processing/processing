@@ -32,6 +32,7 @@ import java.util.*;
 
 import com.sun.jdi.*;
 import com.sun.jdi.connect.*;
+import com.sun.jdi.event.ExceptionEvent;
 
 
 /**
@@ -119,8 +120,7 @@ public class Runner implements MessageConsumer {
     if (vm != null) {
       generateTrace(null);
 //      try {
-//        PrintWriter writer = new PrintWriter("/Users/fry/Desktop/output.txt");
-//        generateTrace(writer);
+//        generateTrace(new PrintWriter("/Users/fry/Desktop/output.txt"));
 //      } catch (Exception e) {
 //        e.printStackTrace();
 //      }
@@ -410,7 +410,10 @@ public class Runner implements MessageConsumer {
       } else {
         exc.printStackTrace();
         System.err.println("Could not run the sketch (Target VM failed to initialize).");
-        System.err.println("Make sure that you haven't set the maximum available memory too high.");
+        if (Preferences.getBoolean("run.options.memory")) {
+          // Only mention this if they've even altered the memory setup
+          System.err.println("Make sure that you haven't set the maximum available memory too high.");
+        }
         System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
       }
       editor.error("Could not run the sketch.");
@@ -545,319 +548,32 @@ public class Runner implements MessageConsumer {
   }
 
 
-  /*
-  public void start(Point windowLocation) throws RunnerException {
-    //System.out.println(" externalRuntime is " +  sketch.externalRuntime);
-    this.leechErr = new PrintStream(new MessageStream(this));
-
-    try {
-      if (editor.presenting) {
-        startPresenting();
-
-      } else if (sketch.externalRuntime) {
-        startExternalRuntime(windowLocation);
-
-      } else {
-        startInternal(windowLocation);
+  public void exception(ExceptionEvent event) {
+    ObjectReference or = event.exception();
+    ReferenceType rt = or.referenceType(); 
+    String exceptionName = rt.name();
+    //Field messageField = Throwable.class.getField("detailMessage");
+    Field messageField = rt.fieldByName("detailMessage");
+//    System.out.println("field " + messageField);
+    Value messageValue = or.getValue(messageField);
+//    System.out.println("mess val " + messageValue);
+    
+    int last = exceptionName.lastIndexOf('.');
+    String message = exceptionName.substring(last + 1);
+    if (messageValue != null) {
+      String messageStr = messageValue.toString();
+      if (messageStr.startsWith("\"")) {
+        messageStr = messageStr.substring(1, messageStr.length() - 1);
       }
-
-    } catch (Exception e) {
-      // this will pass through to the first part of message
-      // this handles errors that happen inside setup()
-      e.printStackTrace();
-
-      // make sure applet is in use
-      if (applet != null) applet.finished = true;
-
-      leechErr.println(PApplet.LEECH_WAKEUP);
-      e.printStackTrace(this.leechErr);
+      message += ": " + messageStr;
     }
-  }
-
-
-  public void startPresenting() throws Exception {
-    Vector params = new Vector();
-
-    params.add("java");
-
-    String options = Preferences.get("run.options");
-    if (options.length() > 0) {
-      String pieces[] = PApplet.split(options, ' ');
-      for (int i = 0; i < pieces.length; i++) {
-        String p = pieces[i].trim();
-        if (p.length() > 0) {
-          params.add(p);
-        }
-      }
-    }
-
-    if (Preferences.getBoolean("run.options.memory")) {
-      params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
-      params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
-    }
-
-    params.add("-Djava.library.path=" +
-               sketch.libraryPath +
-               File.pathSeparator +
-               System.getProperty("java.library.path"));
-
-    // still leaves menubar et al
-    //params.add("-Dapple.awt.fakefullscreen=true");
-
-    params.add("-cp");
-    params.add(sketch.classPath +
-               File.pathSeparator +
-               Base.librariesClassPath);
-
-    params.add("processing.core.PApplet");
-
-    params.add(PApplet.ARGS_EXTERNAL);
-    params.add(PApplet.ARGS_PRESENT);
-    params.add(PApplet.ARGS_STOP_COLOR + "=" +
-               Preferences.get("run.present.stop.color"));
-    params.add(PApplet.ARGS_BGCOLOR + "=" +
-               Preferences.get("run.present.bgcolor"));
-    params.add(PApplet.ARGS_DISPLAY + "=" +
-               Preferences.get("run.display"));
-    params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
-               sketch.folder.getAbsolutePath());
-    params.add(sketch.mainClassName);
-
-    String command[] = new String[params.size()];
-    params.copyInto(command);
-    //PApplet.println(command);
-
-    process = Runtime.getRuntime().exec(command);
-    processInput = new SystemOutSiphon(process.getInputStream());
-    processError = new MessageSiphon(process.getErrorStream(), this);
-    processOutput = process.getOutputStream();
-  }
-
-
-  public void startExternalRuntime(Point windowLocation) throws Exception {
-    // if there was a saved location (this guy has been run more than
-    // once) then windowLocation will be set to the last position of
-    // the sketch window. this will be passed to the PApplet runner
-    // using something like --external=e30,20 where the e stands for
-    // exact. otherwise --external=x,y for just the regular positioning.
-    Point editorLocation = editor.getLocation();
-    String location =
-      (windowLocation != null) ?
-      (PApplet.ARGS_LOCATION + "=" +
-       windowLocation.x + "," + windowLocation.y) :
-      (PApplet.ARGS_EDITOR_LOCATION + "=" +
-       editorLocation.x + "," + editorLocation.y);
-
-    // this as prefix made the code folder bug go away, but killed stdio
-    //"cmd", "/c", "start",
-
-    // all params have to be stored as separate items,
-    // so a growable array needs to be used. i.e. -Xms128m -Xmx1024m
-    // will throw an error if it's shoved into a single array element
-    Vector params = new Vector();
-
-    // get around Apple's Java 1.5 bugs
-    //params.add("/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java");
-    params.add("java");
-
-    //params.add("-Xint"); // interpreted mode
-    //params.add("-Xprof");  // profiler
-    //params.add("-Xaprof");  // allocation profiler
-    //params.add("-Xrunhprof:cpu=samples");  // old-style profiler
-
-    String options = Preferences.get("run.options");
-    if (options.length() > 0) {
-      String pieces[] = PApplet.split(options, ' ');
-      for (int i = 0; i < pieces.length; i++) {
-        String p = pieces[i].trim();
-        if (p.length() > 0) {
-          params.add(p);
-        }
-      }
-    }
-
-    if (Preferences.getBoolean("run.options.memory")) {
-      params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
-      params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
-    }
-
-    // sketch.libraryPath might be ""
-    // librariesClassPath will always have sep char prepended
-    params.add("-Djava.library.path=" +
-               sketch.libraryPath +
-               File.pathSeparator +
-               System.getProperty("java.library.path"));
-
-    params.add("-cp");
-    params.add(sketch.classPath +
-               File.pathSeparator +
-               Base.librariesClassPath);
-
-//    System.out.println("sketch class path");
-//    PApplet.println(PApplet.split(sketch.classPath, ';'));
-//    System.out.println();
-//    System.out.println("libraries class path");
-//    PApplet.println(PApplet.split(Base.librariesClassPath, ';'));
-//    System.out.println();
-
-    params.add("processing.core.PApplet");
-
-    params.add(location);
-    params.add(PApplet.ARGS_EXTERNAL);
-    params.add(PApplet.ARGS_DISPLAY + "=" +
-               Preferences.get("run.display"));
-    params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
-               sketch.folder.getAbsolutePath());
-    params.add(sketch.mainClassName);
-
-    //String command[] = (String[]) params.toArray();
-    String command[] = new String[params.size()];
-    params.copyInto(command);
-    //PApplet.println(command);
-
-    String[] vmParamList = (String[]) PApplet.subset(command, 1, command.length-7);
-    String[] appletParamList = (String[]) PApplet.subset(command, command.length-6);
-    //new Trace(new String[] { vmparamString, sketch.mainClassName });
-    new Trace(vmParamList, appletParamList);
-
-//    String[] guiParams = PApplet.concat(vmParamList, appletParamList);
-//    for (int i = 0; i < guiParams.length; i++) {
-//      if (guiParams[i].equals("-cp")) {
-//        guiParams[i] = "-classpath";
-//      }
-//    }
-//    processing.app.debug.gui.GUI.main(guiParams);
-
-    process = Runtime.getRuntime().exec(command);
-    processInput = new SystemOutSiphon(process.getInputStream());
-    processError = new MessageSiphon(process.getErrorStream(), this);
-    processOutput = process.getOutputStream();
-  }
-*/
-
-
-  /**
-   * Begin running this sketch internally to the editor.
-   * This code needs to be refactored with the semi-identical code
-   * in PApplet.main() as outlined in
-   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=245">Bug 245</A>
-   */
-  /*
-  public void startInternal(Point windowLocation) throws Exception {
-    Point editorLocation = editor.getLocation();
-    //Insets editorInsets = editor.getInsets();
-
-    int windowX = editorLocation.x;
-    int windowY = editorLocation.y + editor.getInsets().top;
-
-    RunnerClassLoader loader = new RunnerClassLoader();
-    Class c = loader.loadClass(sketch.mainClassName);
-    applet = (PApplet) c.newInstance();
-
-    window = new Frame(sketch.name); // use ugly window
-    ((Frame)window).setResizable(false);
-    Base.setIcon((Frame) window);
-    //if (Editor.icon != null) {
-    //  ((Frame)window).setIconImage(Editor.icon);
-    //}
-    window.pack(); // to get a peer, size set later, need for insets
-
-    applet.leechErr = leechErr;
-    //applet.folder = sketch.folder.getAbsolutePath();
-    applet.sketchPath = sketch.folder.getAbsolutePath();
-    applet.frame = (Frame) window;
-
-    applet.init();
-    //applet.start();
-
-    //while ((applet.width == 0) && !applet.finished) {
-    while ((applet.defaultSize) && !applet.finished) {
-      try {
-        if (applet.exception != null) {
-          throw new RunnerException(applet.exception.getMessage());
-        }
-        Thread.sleep(5);
-      } catch (InterruptedException e) { }
-    }
-
-    window.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          stop();
-          editor.closeRunner();
-        }
-      });
-
-    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    final KeyStroke closeWindowKeyStroke = KeyStroke.getKeyStroke('W', modifiers);
-
-    applet.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
-              KeyStroke.getKeyStrokeForEvent(e).equals(closeWindowKeyStroke)) {
-            stop();
-            editor.closeRunner();
-          }
-        }
-      });
-
-    window.add(applet);
-
-    Dimension screen =
-      Toolkit.getDefaultToolkit().getScreenSize();
-
-    window.setLayout(null);
-    Insets insets = window.getInsets();
-
-    int windowW = Math.max(applet.width, PApplet.MIN_WINDOW_WIDTH) +
-      insets.left + insets.right;
-    int windowH = Math.max(applet.height, PApplet.MIN_WINDOW_HEIGHT) +
-      insets.top + insets.bottom;
-
-    if (windowX - windowW > 10) {  // if it fits to the left of the window
-      window.setBounds(windowX - windowW, windowY, windowW, windowH);
-
-    } else { // if it fits inside the editor window
-      windowX = editorLocation.x + Preferences.GRID_SIZE * 2;  // 66
-      windowY = editorLocation.y + Preferences.GRID_SIZE * 2;  // 66
-
-      if ((windowX + windowW > screen.width - Preferences.GRID_SIZE) ||
-          (windowY + windowH > screen.height - Preferences.GRID_SIZE)) {
-        // otherwise center on screen
-        windowX = (screen.width - windowW) / 2;
-        windowY = (screen.height - windowH) / 2;
-      }
-      window.setBounds(windowX, windowY, windowW, windowH); //ww, wh);
-    }
-
-    Color windowBgColor = Preferences.getColor("run.window.bgcolor");
-    window.setBackground(windowBgColor);
-
-    int usableH = windowH - insets.top - insets.bottom;
-    applet.setBounds((windowW - applet.width)/2,
-                     insets.top + (usableH - applet.height) / 2,
-                     applet.width, applet.height);
-
-    // handle frame resizing events
-    applet.setupFrameResizeListener();
-
-    applet.setVisible(true);  // no effect
-    if (windowLocation != null) {
-      window.setLocation(windowLocation);
-    }
-    if (applet.displayable()) {
-      window.setVisible(true);
-    }
-    applet.requestFocus();  // necessary for key events
-  }
-  */
-
-
-  public void exception(ObjectReference or) {
-    String name = or.referenceType().name();
+//    System.out.println("mess type " + messageValue.type());
+    //StringReference messageReference = (StringReference) messageValue.type();
+    
 //    System.out.println(or.referenceType().fields());
 //    if (name.startsWith("java.lang.")) {
 //      name = name.substring(10);
-    if (name.equals("java.lang.OutOfMemoryError")) {
+    if (exceptionName.equals("java.lang.OutOfMemoryError")) {
       editor.error("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
       System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
       System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
@@ -865,27 +581,67 @@ public class Runner implements MessageConsumer {
       System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
       System.err.println("you can increase the memory available to your sketch using the Preferences window.");
       
-    } else if (name.equals("java.lang.StackOverflowError")) {
+    } else if (exceptionName.equals("java.lang.StackOverflowError")) {
       editor.error("StackOverflowError: This sketch is attempting too much recursion.");
       System.err.println("A StackOverflowError means that you have a bug that's causing a function");
       System.err.println("to be called recursively (it's calling itself and going in circles),");
       System.err.println("or you're intentionally calling a recursive function too much,");
       System.err.println("and your code should be rewritten in a more efficient manner.");
       
-    } else if (name.equals("java.lang.UnsupportedClassVersionError")) {
+    } else if (exceptionName.equals("java.lang.UnsupportedClassVersionError")) {
       editor.error("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
       System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.5.");
       System.err.println("A library used by this sketch was compiled for Java 1.6 or later, ");
       System.err.println("and needs to be recompiled to be compatible with Java 1.5.");
 
-    } else if (name.equals("java.lang.NoSuchMethodError") || name.equals("java.lang.NoSuchFieldError")) {
-      editor.error(name.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
+    } else if (exceptionName.equals("java.lang.NoSuchMethodError") || exceptionName.equals("java.lang.NoSuchFieldError")) {
+      editor.error(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
 
     } else {
-      editor.error(name);
+      ThreadReference thread = event.thread();
+      try {
+        int codeIndex = -1;
+        int lineNumber = -1;
+        
+        List<StackFrame> frames = thread.frames();
+        for (StackFrame frame : frames) {
+//        System.out.println("frame: " + item);
+          Location location = frame.location();
+          String filename = null;
+          try {
+            filename = location.sourceName();
+            lineNumber = location.lineNumber();
+
+            for (int i = 0; i < sketch.getCodeCount(); i++) {
+              SketchCode code = sketch.getCode(i);
+              //System.out.println(code.preprocName + " " + lineNumber + " " +
+              //                 code.preprocOffset);
+              if (((code.preprocName == null) && (lineNumber >= code.preprocOffset)) ||
+                  ((code.preprocName != null) && code.preprocName.equals(filename))) {
+                codeIndex = i;
+                break;
+              }
+            }
+          } catch (AbsentInformationException e) {
+            e.printStackTrace();  // do i really want to print a trace?
+          }
+        }
+        if (codeIndex != -1) {
+          //System.out.println("got line num " + lineNumber);
+          // in case this was a tab that got embedded into the main .java
+          lineNumber -= sketch.getCode(codeIndex).preprocOffset;
+        }
+        // lineNumber is 1-indexed, but editor wants zero-indexed
+        // getMessage() will be what's shown in the editor
+        exception = new RunnerException(message, codeIndex, lineNumber, -1);
+        exception.hideStackTrace();
+        editor.error(exception);
+
+      } catch (IncompatibleThreadStateException e) {
+        e.printStackTrace();
+      }
     }
     editor.handleStopped();
-    //stop();
   }
 
   

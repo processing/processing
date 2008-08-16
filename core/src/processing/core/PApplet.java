@@ -622,7 +622,7 @@ public class PApplet extends Applet
    */
   public void start() {
     if (thread != null) return;
-    thread = new Thread(this, "Processing Animation Thread");
+    thread = new Thread(this, "Animation Thread");
     thread.start();
   }
 
