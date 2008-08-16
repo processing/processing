@@ -268,7 +268,7 @@ public class PImage implements PConstants, Cloneable {
   }
   
   
-  public void updatePixelsImpl(int x1, int y1, int x2, int y2) {
+  protected void updatePixelsImpl(int x1, int y1, int x2, int y2) {
     if (!modified) {
       mx1 = x1;
       mx2 = x2;
