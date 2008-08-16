@@ -1417,7 +1417,8 @@ public class Editor extends JFrame {
 
     String prompt = "Save changes to " + sketch.name + "?  ";
 
-    if (PApplet.platform != PConstants.MACOSX || PApplet.javaVersion < 1.5f) {
+    /*
+    if (PApplet.platform != PConstants.MACOSX) {
       int result =
         JOptionPane.showConfirmDialog(this, prompt, "Close",
                                       JOptionPane.YES_NO_CANCEL_OPTION,
@@ -1435,7 +1436,7 @@ public class Editor extends JFrame {
         throw new IllegalStateException();
       }
 
-    } else {
+    } else*/ {
       // This code is disabled unless Java 1.5 is being used on Mac OS X
       // because of a Java bug that prevents the initial value of the
       // dialog from being set properly (at least on my MacBook Pro).
@@ -1452,7 +1453,7 @@ public class Editor extends JFrame {
                         "b { font: 13pt \"Lucida Grande\" }"+
                         "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
                         "</style> </head>" +
-                        "<b>Do you want to save changes to this text<BR>" +
+                        "<b>Do you want to save changes to this sketch<BR>" +
                         " before closing?</b>" +
                         "<p>If you don't save, your changes will be lost.",
                         JOptionPane.QUESTION_MESSAGE);
