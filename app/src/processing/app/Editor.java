@@ -1176,13 +1176,21 @@ public class Editor extends JFrame {
     }
 
     // If the text is empty, ignore the user. 
+    // Also ensure that all lines are commented (not just the first) 
+    // when determining whether to comment or uncomment.
     int length = textarea.getDocumentLength();
-    int pos = textarea.getLineStartOffset(startLine);
-    if (pos + 2 > length) return;
-    // Check the first two characters to see if it's already a comment.
-    String begin = textarea.getText(pos, 2);
-    //System.out.println("begin is '" + begin + "'");
-    boolean commented = begin.equals("//");
+    boolean commented = true;
+    for (int i = startLine; commented && (i <= stopLine); i++) {
+      int pos = textarea.getLineStartOffset(i);
+      if (pos + 2 > length) {
+        commented = false;
+      } else {
+        // Check the first two characters to see if it's already a comment.
+        String begin = textarea.getText(pos, 2);
+        //System.out.println("begin is '" + begin + "'");
+        commented = begin.equals("//");
+      }
+    }
 
     for (int line = startLine; line <= stopLine; line++) {
       int location = textarea.getLineStartOffset(line);

@@ -1,6 +1,8 @@
 0146 pde
 X fix problem with comment/uncomment and indent/outdent 
 X   when no selection, and on the first pos of the line
+X on comment/uncomment, need to check if *all* lines are commented
+X   otherwise should be comment (never uncomment unless all selected)
 
 runner
 X use debugger to get better exceptions
@@ -13,9 +15,6 @@ X   was ok in 0144, but 0145 things broke
 X   probably b/c not catching ex inside the run() method
 X getMessage() not sufficient for exceptions coming through
 X   get actual message text, plus the exception itself
-
-_ on comment/uncomment, need to check if *all* lines are commented
-_   otherwise should be comment (never uncomment unless all selected)
 
 cleaning
 X NullPointerException inside setup() comes up weird
