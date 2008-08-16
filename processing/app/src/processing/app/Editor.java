@@ -1164,12 +1164,15 @@ public class Editor extends JFrame {
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
 
-    // If the selection ends at the beginning of the last line, 
-    // then don't (un)comment that line. 
     int lastLineStart = textarea.getLineStartOffset(stopLine);
     int selectionStop = textarea.getSelectionStop();
+    // If the selection ends at the beginning of the last line, 
+    // then don't (un)comment that line. 
     if (selectionStop == lastLineStart) {
-      stopLine--;
+      // Though if there's no selection, don't do that 
+      if (textarea.isSelectionActive()) {
+        stopLine--;
+      }
     }
 
     // If the text is empty, ignore the user. 
@@ -1217,7 +1220,10 @@ public class Editor extends JFrame {
     int lastLineStart = textarea.getLineStartOffset(stopLine);
     int selectionStop = textarea.getSelectionStop();
     if (selectionStop == lastLineStart) {
-      stopLine--;
+      // Though if there's no selection, don't do that 
+      if (textarea.isSelectionActive()) {
+        stopLine--;
+      }
     }
 
     for (int line = startLine; line <= stopLine; line++) {
