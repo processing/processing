@@ -777,6 +777,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     if (raw != null) {
       raw.endShape();
     }
+    triangleCount = 0;
     report("render_triangles out");
   }
 
