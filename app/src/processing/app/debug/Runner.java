@@ -154,6 +154,11 @@ public class Runner implements MessageConsumer {
       params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
 
+    if (Base.isMacOS()) {
+      params.add("-Xdock:name=" + sketch.getMainClassName());
+//      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" + 
+//                 sketch.getMainClassName());
+    }
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
     params.add("-Djava.library.path=" +

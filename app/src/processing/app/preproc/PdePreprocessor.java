@@ -4,7 +4,7 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-05 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   ANTLR-generated parser and several supporting classes written
