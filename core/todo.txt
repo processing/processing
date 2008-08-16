@@ -8,6 +8,9 @@ o     start an integration section?
 X get() in java2d not honoring imageMode or rectMode
 X add imageMode(CENTER) implementation
 X   add a bunch of changes to the reference to support this
+X Duplicate 3d faces in beginRaw() export
+X   this was actually doubling geometry, potentially a bit of a disaster
+X   http://dev.processing.org/bugs/show_bug.cgi?id=737
 
 cleanup
 X switch to requestImage() (done in 0145)
@@ -50,9 +53,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=displ
 
 _ bezierVertex YZ Plane fill problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=752
-
-_ Duplicate 3d faces in beginRaw() export
-_   http://dev.processing.org/bugs/show_bug.cgi?id=737
 
 _ for begin/endRecord, use a piggyback mechanism
 _   that way won't have to pass a PApplet around
