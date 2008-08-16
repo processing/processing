@@ -1,5 +1,9 @@
 0146 pde
+X fix problem with comment/uncomment and indent/outdent 
+X   when no selection, and on the first pos of the line
 
+_ use macosx dialogs for all of the editor stuff
+_   see about doing the same on windows, linux?
 
 _ getMessage() not sufficient for exceptions coming through
 _   (it's not including the type of exception)
