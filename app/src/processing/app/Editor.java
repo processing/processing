@@ -1425,7 +1425,6 @@ public class Editor extends JFrame {
 
     String prompt = "Save changes to " + sketch.name + "?  ";
 
-    /*
     if (PApplet.platform != PConstants.MACOSX) {
       int result =
         JOptionPane.showConfirmDialog(this, prompt, "Close",
@@ -1444,7 +1443,7 @@ public class Editor extends JFrame {
         throw new IllegalStateException();
       }
 
-    } else*/ {
+    } else {
       // This code is disabled unless Java 1.5 is being used on Mac OS X
       // because of a Java bug that prevents the initial value of the
       // dialog from being set properly (at least on my MacBook Pro).
