@@ -940,6 +940,7 @@ public class PGraphics3D extends PGraphics {
         case QUADS:
         {
           stop = vertexCount-3;
+
           for (int i = vertex_start; i < stop; i += 4) {
             // first triangle
             add_triangle(i, i+1, i+2);
@@ -952,6 +953,7 @@ public class PGraphics3D extends PGraphics {
         case QUAD_STRIP:
         {
           stop = vertexCount-3;
+          
           for (int i = vertex_start; i < stop; i += 2) {
             // first triangle
             add_triangle(i+0, i+2, i+1);
@@ -1270,7 +1272,6 @@ public class PGraphics3D extends PGraphics {
 
 
   protected final void add_triangle_no_clip(int a, int b, int c) {
-    //System.out.println("adding triangle " + triangleCount);
     if (triangleCount == triangles.length) {
       int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
       System.arraycopy(triangles, 0, temp, 0, triangleCount);
@@ -1341,7 +1342,7 @@ public class PGraphics3D extends PGraphics {
         Float.isNaN(vertices[triangles[b][VERTEX1]][Z]) ||
         Float.isNaN(vertices[triangles[b][VERTEX2]][Z]) ||
         Float.isNaN(vertices[triangles[b][VERTEX3]][Z])) {
-      throw new RuntimeException("nan triangle");
+      System.err.println("NaN values in triangle");
     }
     return
       (vertices[triangles[b][VERTEX1]][Z] +
@@ -1446,7 +1447,7 @@ public class PGraphics3D extends PGraphics {
             raw.fill(cr, cg, cb, c[A]);
             raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
           }
-        } else {  // otherwise it's a PGraphics2D
+        } else {  // raw instanceof PGraphics2D
           raw.fill(ar, ag, ab, a[A]);
           raw.vertex(a[X], a[Y]);
           raw.fill(br, bg, bb, b[A]);
@@ -1471,6 +1472,7 @@ public class PGraphics3D extends PGraphics {
         c[VY] -= shift*c[VW];
       }
     }
+    triangleCount = 0;
 
     if (raw != null) {
       raw.endShape();
