@@ -1,3 +1,48 @@
+0146 pde
+X fix problem with comment/uncomment and indent/outdent 
+X   when no selection, and on the first pos of the line
+X on comment/uncomment, need to check if *all* lines are commented
+X   otherwise should be comment (never uncomment unless all selected)
+
+runner
+X use debugger to get better exceptions
+X   and getting the error to show up in the window inside p5
+X   also highlighting the correct line
+X Exceptions not being reported properly to the PDE
+X   lines with errors not highlighting
+X   http://dev.processing.org/bugs/show_bug.cgi?id=877
+X   was ok in 0144, but 0145 things broke 
+X   probably b/c not catching ex inside the run() method
+X getMessage() not sufficient for exceptions coming through
+X   get actual message text, plus the exception itself
+X now using actual sketch name (instead of temp name) 
+X   this should be safe since launching an external vm to run
+X make the p5 icon show up for the window
+X   when launching a new sketch
+X   can embed icon.gif as byte array in PApplet, and use Toolkit.createImage
+
+cleaning
+X NullPointerException inside setup() comes up weird
+X   because NullPointerException is a RuntimeException
+X   maybe the renderer exception is something different? newrendex?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=78
+o weird exception in the run button watcher
+X   http://processing.org/bugs/show_bug.cgi?id=42
+X exceptions in draw() apps aren't caught
+X   the program resize(200, 200); just does nothing (doesn't complain)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=81
+X exception in setup() on external app doesn't kill run button 
+X   also doesn't kill external vm
+X   http://dev.processing.org/bugs/show_bug.cgi?id=79
+X   fixed in the 0140s
+o make editor nicer
+o   tab on selection indents whole block
+o   shift-tab outdents whole block
+o   ctrl-t to format selection
+o     if no selection, indents line?
+X   addressed these in other ways
+
+
 0145 pde
 X insert non-breaking space characters instead of spaces on DiscourseFormat
 X   works on safari (though not camino/firefox) on osx
