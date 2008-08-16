@@ -1,3 +1,30 @@
+0146 core
+X fix the internal file chooser so that people don't need to make their own
+X   threading is a problem with inputFile() and inputFolder()
+X   dynamically load swingworker?
+o   remove saveFile() methods?
+o     write up examples for these instead?
+o     start an integration section?
+X get() in java2d not honoring imageMode or rectMode
+X add imageMode(CENTER) implementation
+X   add a bunch of changes to the reference to support this
+X Duplicate 3d faces in beginRaw() export
+X   this was actually doubling geometry, potentially a bit of a disaster
+X   http://dev.processing.org/bugs/show_bug.cgi?id=737
+o bezierVertex YZ Plane fill problem
+X   http://dev.processing.org/bugs/show_bug.cgi?id=752
+X   weird coplanar stuff, shouldn't be doing 3D anyway
+
+cleanup
+X switch to requestImage() (done in 0145)
+o can bug 77 be fixed with a finalizer? (no, it cannot)
+X make sure that images with alpha still have alpha in current code
+X text in rectangle is drawing outside the box
+X   http://dev.processing.org/bugs/show_bug.cgi?id=844
+X points missing in part of screen
+X   http://dev.processing.org/bugs/show_bug.cgi?id=269
+
+
 0145 core
 X separate x/y axis on sphereDetail() params
 X   http://dev.processing.org/bugs/show_bug.cgi?id=856
