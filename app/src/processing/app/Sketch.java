@@ -1315,12 +1315,11 @@ public class Sketch {
 
     // make up a temporary class name to suggest.
     // name will only be used if the code is not in ADVANCED mode.
-    String suggestedClassName =
-      ("Temporary_" + String.valueOf((int) (Math.random() * 10000)) +
-       "_" + String.valueOf((int) (Math.random() * 10000)));
+    String suggestedClassName = name;  // starting in 0146, use actual name
+//      ("Temporary_" + String.valueOf((int) (Math.random() * 10000)) +
+//       "_" + String.valueOf((int) (Math.random() * 10000)));
 
     // handle preprocessing the main file's code
-    //mainClassName = build(TEMP_BUILD_PATH, suggestedClassName);
     mainClassName =
       build(tempBuildFolder.getAbsolutePath(), suggestedClassName);
     // externalPaths is magically set by build()

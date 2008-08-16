@@ -6165,7 +6165,7 @@ public class PApplet extends Applet
     80, -45, -15, 90, -75, 92, -115, -126, -54, 49, -89, -44, -63, -17, 74, 
     5, 90, 80, 88, 87, -80, -94, 112, -104, 23, -123, 4, 0, 59
   };
-  
+
   /**
    * main() method for running this class from the command line.
    * <P>
@@ -6208,7 +6208,6 @@ public class PApplet extends Applet
    *
    * --display=n           set what display should be used by this applet.
    *                       displays are numbered starting from 1.
-   *
    *
    * Parameters used by Processing when running via the PDE
    *
@@ -6307,6 +6306,11 @@ public class PApplet extends Applet
         }
         argIndex++;
       }
+
+      // Set this property before getting into any GUI init code
+      //System.setProperty("com.apple.mrj.application.apple.menu.about.name", name);
+      // This )*)(*@#$ Apple crap don't work no matter where you put it 
+      // (static method of the class, at the top of main, wherever)
 
       if (displayDevice == null) {
         GraphicsEnvironment environment =
