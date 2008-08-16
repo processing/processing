@@ -6155,6 +6155,17 @@ public class PApplet extends Applet
   }
 
 
+  static final byte[] ICON_IMAGE = {
+    71, 73, 70, 56, 57, 97, 16, 0, 16, 0, -94, 0, 0, 99, 97, 99, 49, 48, 
+    49, -100, -98, -100, 99, 97, 49, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 
+    0, 33, -7, 4, 1, 0, 0, 5, 0, 44, 0, 0, 0, 0, 16, 0, 16, 0, 0, 3, 75, 88, 
+    -77, -36, -83, 33, -54, 57, 87, 16, -124, -120, -112, 9, -88, 3, -121, 
+    17, 92, 68, 74, -106, -122, -107, 108, 100, -115, -37, 121, -70, 33, 37, 
+    75, -128, 5, 100, 95, -9, 5, -97, 20, 96, -41, 2, -46, 56, 67, -46, 44, 
+    80, -45, -15, 90, -75, 92, -115, -126, -54, 49, -89, -44, -63, -17, 74, 
+    5, 90, 80, 88, 87, -80, -94, 112, -104, 23, -123, 4, 0, 59
+  };
+  
   /**
    * main() method for running this class from the command line.
    * <P>
@@ -6317,6 +6328,11 @@ public class PApplet extends Applet
       // remove the grow box by default
       // users who want it back can call frame.setResizable(true)
       frame.setResizable(false);
+      
+      // Set the trimmings around the image
+      Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
+      frame.setIconImage(image);
+      frame.setTitle(name);
 
       Class c = Class.forName(name);
       PApplet applet = (PApplet) c.newInstance();
