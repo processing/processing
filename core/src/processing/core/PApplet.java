@@ -3546,7 +3546,7 @@ public class PApplet extends Applet
   // FILE/FOLDER SELECTION
 
   
-  protected File selectedFile;
+  public File selectedFile;
   protected Frame parentFrame;
 
 
@@ -3568,27 +3568,27 @@ public class PApplet extends Applet
   }
 
   
-  public File selectInput() {
+  public String selectInput() {
     return selectInput("Select a file...");
   }
 
 
-  public File selectInput(final String prompt) {
+  public String selectInput(final String prompt) {
     return selectFileImpl(prompt, FileDialog.LOAD);
   }
   
 
-  public File selectOutput() {
+  public String selectOutput() {
     return selectOutput("Save as...");
   }
 
 
-  public File selectOutput(String prompt) {
+  public String selectOutput(String prompt) {
     return selectFileImpl(prompt, FileDialog.SAVE);
   }
 
   
-  protected File selectFileImpl(final String prompt, final int mode) {
+  protected String selectFileImpl(final String prompt, final int mode) {
     checkParentFrame();
 
     try {
@@ -3603,7 +3603,7 @@ public class PApplet extends Applet
             (filename == null) ? null : new File(directory, filename);
         }
       });
-      return selectedFile;
+      return selectedFile.getAbsolutePath();
       
     } catch (Exception e) {
       e.printStackTrace();
@@ -3612,12 +3612,12 @@ public class PApplet extends Applet
   }
     
 
-  public File selectFolder() {
+  public String selectFolder() {
     return selectFolder("Select a folder...");
   }
   
   
-  public File selectFolder(final String prompt) {
+  public String selectFolder(final String prompt) {
     checkParentFrame();
 
     try {
@@ -3644,7 +3644,7 @@ public class PApplet extends Applet
           }
         }
       });
-      return selectedFile;
+      return selectedFile.getAbsolutePath();
       
     } catch (Exception e) {
       e.printStackTrace();

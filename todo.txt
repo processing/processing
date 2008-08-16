@@ -634,6 +634,13 @@ _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
 _ not remembering window size/placement preferences
 _   http://dev.processing.org/bugs/show_bug.cgi?id=837
+_ saved window positions.. if displays has changed, becomes a problem
+_   record the display that it was on?
+_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
+_   make sure that the application is within the bounds of the current display?
+_   (from 0, 0 to width, height)
+_   messy since some displays have negative coords
+_   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _ Closing the last window doesn't cause PDE to save its position/contents/etc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=835
 _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
@@ -838,13 +845,6 @@ PDE / Preferences
 
 _ prefs window not visible on windows taskbar
 _   http://dev.processing.org/bugs/show_bug.cgi?id=438
-_ saved window positions.. if displays has changed, becomes a problem
-_   record the display that it was on?
-_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
-_   make sure that the application is within the bounds of the current display?
-_   (from 0, 0 to width, height)
-_   messy since some displays have negative coords
-_   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _ split Preferences and PreferencesFrame?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=74
 _ preferences window has been hit with the ugly stick

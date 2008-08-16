@@ -7,6 +7,60 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0146 - 16 August 2008
+
+Bug fixes, regression repair, and fun features.
+
+* RELEASES SINCE 0135 CONTAIN MANY SIGNIFICANT CHANGES, PLEASE READ *
+*  THE NOTES IN THIS FILE FOR ANY RELEASE THAT YOU'VE NOT YET USED. *
+
+[ bug fixes ] 
+
++ get() and set() sometimes not honoring imageMode() setting with 
+  the JAVA2D renderer setting.
+
++ Fix problem with comment/uncomment and indent/outdent in cases 
+  where no selection is active.
+
++ When un-commenting lines, first ensure that *all* the lines are 
+  commented out, otherwise default to adding comment markers to them.
+
++ Fix (semi-major) regression in 145 (as compared to 0144) where exception
+  lines were not highlighting properly.
+  http://dev.processing.org/bugs/show_bug.cgi?id=877
+
++ Improve exception error messages (regression since 0135) by including
+  their full message rather than just their type.
+
++ Fix problem with 3D geometry drawing multiple times in P3D. 
+  http://dev.processing.org/bugs/show_bug.cgi?id=737
+
+[ changes ]
+
++ Added imageMode(CENTER). Or rather, brought it back from the 0070s.
+
++ Greatly improve exception handling and parsing through the use of a 
+  proper implementation and the removal of a large amount of duct tape.
+
++ Fix and finalize previously unannounced, unmentioned (untouchable)
+  functions that prompt the user for a file to open, a location to save 
+  a file, or select a folder. The functions each return a String object 
+  (or null for no selection) and are called selectInput(), selectOutput(), 
+  and selectFolder(). No parameters are necessary, but an optional 
+  parameter allows you to specify the user prompt. For instance:
+  String loadPath = selectInput("What file ya want?");
+  String savePath = selectOutput("Save this masterpiece as...");
+  String folderPath = selectFolder("Which folder has the good stuff?");
+
++ Use actual sketch name when running instead of Temporary_NNNN_NNNN.
+
++ Make the Processing icon show up in external windows (Windows and Linux).
+  Also set the window title (and dock title on OS X) for sketches.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0145 - 15 August 2008
 
 This release contains several changes to fix issues related to timing
