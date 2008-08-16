@@ -1025,7 +1025,7 @@ public class JEditTextArea extends JComponent
    * Returns the offset where the selection ends on the specified
    * line.
    */
-  public int getSelectionEnd(int line)
+  public int getSelectionStop(int line)
   {
     if(line == selectionEndLine)
       return selectionEnd;
@@ -1062,7 +1062,8 @@ public class JEditTextArea extends JComponent
   {
     select(selectionStart,selectionEnd);
   }
-
+  
+  
   public final boolean isSelectionActive()
   {
     return(selectionStart != selectionEnd);

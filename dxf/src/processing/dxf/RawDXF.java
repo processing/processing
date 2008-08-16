@@ -387,10 +387,10 @@ public class RawDXF extends PGraphics3D {
     if (shape == POLYGON) {
       for (int i = 0; i < vertexCount - 1; i++) {
         writeLine(i, i+1);
-        }
-        if (mode == CLOSE) {
-            writeLine(vertexCount - 1, 0);
-        }
+      }
+      if (mode == CLOSE) {
+        writeLine(vertexCount - 1, 0);
+      }
     }
     /*
     if ((vertexCount != 0) &&
