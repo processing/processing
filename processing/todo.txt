@@ -2,20 +2,49 @@
 X fix problem with comment/uncomment and indent/outdent 
 X   when no selection, and on the first pos of the line
 
+runner
+X use debugger to get better exceptions
+X   and getting the error to show up in the window inside p5
+X   also highlighting the correct line
+X Exceptions not being reported properly to the PDE
+X   lines with errors not highlighting
+X   http://dev.processing.org/bugs/show_bug.cgi?id=877
+X   was ok in 0144, but 0145 things broke 
+X   probably b/c not catching ex inside the run() method
+X getMessage() not sufficient for exceptions coming through
+X   get actual message text, plus the exception itself
+
+_ on comment/uncomment, need to check if *all* lines are commented
+_   otherwise should be comment (never uncomment unless all selected)
+
+cleaning
+X NullPointerException inside setup() comes up weird
+X   because NullPointerException is a RuntimeException
+X   maybe the renderer exception is something different? newrendex?
+X   http://dev.processing.org/bugs/show_bug.cgi?id=78
+o weird exception in the run button watcher
+X   http://processing.org/bugs/show_bug.cgi?id=42
+X exceptions in draw() apps aren't caught
+X   the program resize(200, 200); just does nothing (doesn't complain)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=81
+
+
 _ use macosx dialogs for all of the editor stuff
 _   see about doing the same on windows, linux?
-
-_ getMessage() not sufficient for exceptions coming through
-_   (it's not including the type of exception)
+_   the others seem to respond ok to the lucida grande since they use defaults
+_   vista style dialogs
+_     http://msdn.microsoft.com/en-us/library/bb328626.aspx
+_   confirmation dialogs (save and don't save.. who'd a thunk it)
+_     http://msdn.microsoft.com/en-us/library/aa511273.aspx
+_     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
+_   scrollable stack trace
+_     http://www.javalobby.org/java/forums/t19012.html
 _ autoformat fails when there's no newline
 
 _ need to add local java folder to path on linux
 _   otherwise if no linux installed, complaining that no java found
 _ windows jdk sometimes not getting picked up, even if it's there
 _   notes somewhere about choosing the right jvm...
-
-_ draw mode apps do not shut off the run button when finished
-_   need to talk to VM and read when 'finished' var is set
 
 
 new/open/close/save
@@ -703,9 +732,6 @@ _ implement emacs keybindings (list is at the bug report)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=401
 _ implement better method of showing curly brace closure
 _   http://dev.processing.org/bugs/show_bug.cgi?id=295
-_ refactor code to use more getter/setter methods
-_   move the debug classes back into processing.app.debug
-_   this will help the library stuff
 
 
 PDE / Editor Buttons
@@ -838,31 +864,22 @@ _   will return 1.5.0 (or maybe 1.6 for others?)
 
 PDE / Runner 
 
-_ use debugger to get better exceptions
-_   and getting the error to show up in the window inside p5
-_   also highlighting the correct line
+_ draw mode apps do not shut off the run button when finished
+_   need to talk to VM and read when 'finished' var is set
 _ make the p5 icon show up for the window (and in the dock) 
 _   when launching a new sketch
 _   can embed icon.gif as byte array in PApplet, and use Toolkit.createImage
 _ does closing the window call stop()?
 _   need to make sure hitting stop button and closing window explicitly call
+_   set finished to true, then join() the animation thread
 _ stop() not working very well 
 _   as a result, dispose() methods aren't being called on libraries
 _   http://dev.processing.org/bugs/show_bug.cgi?id=77
-_ NullPointerException inside setup() comes up weird
-_   because NullPointerException is a RuntimeException
-_   maybe the renderer exception is something different? newrendex?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=78
 _ exception in setup() on external app doesn't kill run button 
 _   also doesn't kill external vm
 _   http://dev.processing.org/bugs/show_bug.cgi?id=79
 _ quitting from present mode doesn't kill run button
 _   http://dev.processing.org/bugs/show_bug.cgi?id=80
-_ exceptions in draw() apps aren't caught
-_   the program resize(200, 200); just does nothing (doesn't complain)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=81
-_ weird exception in the run button watcher
-_   http://processing.org/bugs/show_bug.cgi?id=42
 _ when running externally, set window frame title to the sketch name
 _   is this only a problem on macosx? 
 
@@ -931,6 +948,9 @@ _   maybe just open from a zip file, since psk doesn't help anything
 
 TOOLS / General
 
+_ refactor code to use more getter/setter methods
+_   move the debug classes back into processing.app.debug
+_   this will help the library stuff
 _ dynamic tools menu (requires moving files around)
 _   this means can integrate the autoformat stuff
 _   processing.mess/tools has chandler's template stuff

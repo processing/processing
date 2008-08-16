@@ -196,6 +196,7 @@ public class EventThread extends Thread {
       if (writer != null) {
         writer.print(indent);
         writer.println(str);
+        writer.flush();
       }
     }
 
@@ -218,6 +219,8 @@ public class EventThread extends Thread {
     void exceptionEvent(ExceptionEvent event) {
       println("Exception: " + event.exception() + 
           " catch: " + event.catchLocation());
+//      System.out.println("Exception: " + event.exception() + 
+//                         " catch: " + event.catchLocation());
 
       // Step to the catch
       EventRequestManager mgr = vm.eventRequestManager();
@@ -378,16 +381,29 @@ public class EventThread extends Thread {
   }
 
   private void exceptionEvent(ExceptionEvent event) {
+//    ObjectReference or = event.exception();
+//    System.out.println("exceptionEvent() fired " + or);
+//    System.out.println("catch location " + event.catchLocation());
+    
+    parent.exception(event);
+    
+    /*
     ObjectReference or = event.exception();
-    //System.out.println("exceptionEvent() fired " + or);
-    //System.out.println(event.catchLocation());
-    
-    parent.exception(or);
-    
-    ThreadTrace trace = (ThreadTrace)traceMap.get(event.thread());
+    ThreadReference thread = event.thread();
+    ThreadTrace trace = (ThreadTrace)traceMap.get(thread);
     if (trace != null) {  // only want threads we care about
-      trace.exceptionEvent(event);      // Forward event
+      trace.exceptionEvent(event);  // Forward event
     }
+    try {
+      List frames = thread.frames();
+      for (Object item : frames) {
+        System.out.println("got " + item);
+      }
+      //System.out.println(frames);
+    } catch (IncompatibleThreadStateException e) {
+      e.printStackTrace();
+    }
+    */
   }
 
   public void vmDeathEvent(VMDeathEvent event) {
