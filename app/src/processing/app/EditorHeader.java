@@ -107,9 +107,10 @@ public class EditorHeader extends JComponent {
             popup.show(EditorHeader.this, x, y);
 
           } else {
-            for (int i = 0; i < editor.sketch.codeCount; i++) {
+            Sketch sketch = editor.getSketch();
+            for (int i = 0; i < sketch.codeCount; i++) {
               if ((x > tabLeft[i]) && (x < tabRight[i])) {
-                editor.sketch.setCurrent(i);
+                sketch.setCurrent(i);
                 repaint();
               }
             }
@@ -122,7 +123,7 @@ public class EditorHeader extends JComponent {
   public void paintComponent(Graphics screen) {
     if (screen == null) return;
 
-    Sketch sketch = editor.sketch;
+    Sketch sketch = editor.getSketch();
     if (sketch == null) return;  // ??
 
     Dimension size = getSize();
@@ -299,7 +300,7 @@ public class EditorHeader extends JComponent {
     item = Editor.newJMenuItemShift("New Tab", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.handleNewCode();
+          editor.getSketch().handleNewCode();
         }
       });
     menu.add(item);
@@ -307,7 +308,7 @@ public class EditorHeader extends JComponent {
     item = new JMenuItem("Rename");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.handleRenameCode();
+          editor.getSketch().handleRenameCode();
           /*
           // this is already being called by nameCode(), the second stage of rename
           if (editor.sketch.current == editor.sketch.code[0]) {
@@ -321,7 +322,7 @@ public class EditorHeader extends JComponent {
     item = new JMenuItem("Delete");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.handleDeleteCode();
+          editor.getSketch().handleDeleteCode();
         }
       });
     menu.add(item);
@@ -329,7 +330,7 @@ public class EditorHeader extends JComponent {
     item = new JMenuItem("Hide");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.handleHideCode();
+          editor.getSketch().handleHideCode();
         }
       });
     menu.add(item);
@@ -339,11 +340,11 @@ public class EditorHeader extends JComponent {
     ActionListener unhideListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           String which = (String) e.getActionCommand();
-          editor.sketch.handleUnhideCode(which);
+          editor.getSketch().handleUnhideCode(which);
           rebuildMenu();
         }
       };
-    Sketch sketch = editor.sketch;
+    Sketch sketch = editor.getSketch();
     if (sketch != null) {
       for (int i = 0; i < sketch.hiddenCount; i++) {
         item = new JMenuItem(sketch.hidden[i].getPrettyName());
@@ -399,7 +400,7 @@ public class EditorHeader extends JComponent {
 
       ActionListener jumpListener = new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            editor.sketch.setCurrent(e.getActionCommand());
+            editor.getSketch().setCurrent(e.getActionCommand());
           }
         };
       for (int i = 0; i < sketch.codeCount; i++) {
