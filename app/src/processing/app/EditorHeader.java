@@ -294,7 +294,7 @@ public class EditorHeader extends JComponent {
     */
 
     //item = new JMenuItem("New Tab");
-    item = Editor.newJMenuItem("New Tab", 'N', true);
+    item = Editor.newJMenuItemShift("New Tab", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.sketch.newCode();
