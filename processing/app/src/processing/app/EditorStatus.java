@@ -253,7 +253,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
           // answering to rename/new code question
           if (mode == EDIT) {  // this if() isn't (shouldn't be?) necessary
             String answer = editField.getText();
-            editor.sketch.nameCode(answer);
+            editor.getSketch().nameCode(answer);
             unedit();
           }
         }
@@ -313,7 +313,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
 
             if (c == KeyEvent.VK_ENTER) {  // accept the input
               String answer = editField.getText();
-              editor.sketch.nameCode(answer);
+              editor.getSketch().nameCode(answer);
               unedit();
               event.consume();
 
@@ -425,7 +425,7 @@ public class EditorStatus extends JPanel /*implements ActionListener*/ {
       // answering to rename/new code question
       if (mode == EDIT) {  // this if() isn't (shouldn't be?) necessary
         String answer = editField.getText();
-        editor.sketch.nameCode(answer);
+        editor.getSketch().nameCode(answer);
         unedit();
       }
     }
