@@ -71,7 +71,7 @@ public class Archiver {
       return;
     }
 
-    File location = sketch.folder;
+    File location = sketch.getFolder();
     String name = location.getName();
     File parent = new File(location.getParent());
 

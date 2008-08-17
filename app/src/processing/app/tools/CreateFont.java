@@ -40,7 +40,8 @@ import javax.swing.event.*;
  * gui interface to font creation heaven/hell.
  */
 public class CreateFont extends JFrame {
-  File targetFolder;
+  //File targetFolder;
+  Sketch sketch;
 
   Dimension windowSize;
 
@@ -59,7 +60,7 @@ public class CreateFont extends JFrame {
 
   Font font;
 
-  String list[];
+  String[] list;
   int selection = -1;
 
   //static {
@@ -73,7 +74,8 @@ public class CreateFont extends JFrame {
   public CreateFont(Editor editor) {
     super("Create Font");
 
-    targetFolder = editor.getSketch().dataFolder;
+    //targetFolder = editor.getSketch().getDataFolder();
+    sketch = editor.getSketch();
 
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));
@@ -314,9 +316,9 @@ public class CreateFont extends JFrame {
       PFont f = new PFont(font, smooth, all ? null : PFont.DEFAULT_CHARSET);
 
       // make sure the 'data' folder exists
-      if (!targetFolder.exists()) targetFolder.mkdirs();
-
-      f.save(new FileOutputStream(new File(targetFolder, filename)));
+      //if (!targetFolder.exists()) targetFolder.mkdirs();
+      File folder = sketch.prepareDataFolder();
+      f.save(new FileOutputStream(new File(folder, filename)));
 
     } catch (IOException e) {
       JOptionPane.showMessageDialog(this,

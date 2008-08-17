@@ -827,6 +827,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=75
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130781367;start=2#2
 _ add ability to set the display where present mode makes things start
 _   code is already in, need to add window and test with multi-monitor setup
+_   some code already written in PresentMode.java
 _ option in preferences to set the jvm used to run? (osx only?)
 _   this would take care of nasty macosx 1.4 vs 1.5 issues
 _   /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Commands/java
