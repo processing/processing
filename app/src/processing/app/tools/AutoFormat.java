@@ -435,7 +435,7 @@ public class AutoFormat {
   public void show() {
     StringBuffer onechar;
 
-    String originalText = editor.textarea.getText();
+    String originalText = editor.getText();
     strOut = new StringBuffer();
     indentValue = Preferences.getInteger("editor.tabs.size");
     indentChar = new String(" ");
@@ -900,7 +900,7 @@ public class AutoFormat {
       */
 
       // save current (rough) selection point
-      int selectionEnd = editor.textarea.getSelectionStop();
+      int selectionEnd = editor.getSelectionStop();
 
       // make sure the caret would be past the end of the text
       if (strOut.length() < selectionEnd - 1) {
@@ -927,7 +927,8 @@ public class AutoFormat {
       } else {
         // replace with new bootiful text
         // selectionEnd hopefully at least in the neighborhood
-        editor.setText(formattedText, selectionEnd, selectionEnd);
+        editor.setText(formattedText);
+        editor.setSelection(selectionEnd, selectionEnd);
         editor.getSketch().setModified(true);
         // mark as finished
         editor.statusNotice("Auto Format finished.");
