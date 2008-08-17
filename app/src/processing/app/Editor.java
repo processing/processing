@@ -282,13 +282,13 @@ public class Editor extends JFrame {
           }
 
           if (successful == 0) {
-            error("No files were added to the sketch.");
+            statusError("No files were added to the sketch.");
 
           } else if (successful == 1) {
-            message("One file added to the sketch.");
+            statusNotice("One file added to the sketch.");
 
           } else {
-            message(successful + " files added to the sketch.");
+            statusNotice(successful + " files added to the sketch.");
           }
           return true;
         }
@@ -322,7 +322,7 @@ public class Editor extends JFrame {
   }
 
 
-  public void setPlacement(int[] location) {
+  protected void setPlacement(int[] location) {
     setBounds(location[0], location[1], location[2], location[3]);
     if (location[4] != 0) {
       splitPane.setDividerLocation(location[4]);
@@ -330,7 +330,7 @@ public class Editor extends JFrame {
   }
 
 
-  public int[] getPlacement() {
+  protected int[] getPlacement() {
     int[] location = new int[5];
 
     // Get the dimensions of the Frame
@@ -367,7 +367,7 @@ public class Editor extends JFrame {
    * the app is just starting up, or the user just finished messing
    * with things in the Preferences window.
    */
-  public void applyPreferences() {
+  protected void applyPreferences() {
 
     // apply the setting for 'use external editor'
     boolean external = Preferences.getBoolean("editor.external");
@@ -790,7 +790,7 @@ public class Editor extends JFrame {
   }
 
 
-  public JMenu buildEditMenu() {
+  protected JMenu buildEditMenu() {
     JMenu menu = new JMenu("Edit");
     JMenuItem item;
 
@@ -934,6 +934,10 @@ public class Editor extends JFrame {
   }
 
 
+  /**
+   * Same as newJMenuItem, but adds the ALT (on Linux and Windows) 
+   * or OPTION (on Mac OS X) key as a modifier.
+   */
   static public JMenuItem newJMenuItemAlt(String title, int what) {
     JMenuItem menuItem = new JMenuItem(title);
     //int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -1036,8 +1040,7 @@ public class Editor extends JFrame {
 
 
   /**
-   * Replace the entire contents of the frontmost tab.
-   * @param what with what?
+   * Replace the entire contents of the front-most tab.
    */
   public void setText(String what) {
     beginCompoundEdit();
@@ -1114,11 +1117,18 @@ public class Editor extends JFrame {
   }
 
 
+  /**
+   * Use before a manipulating text to group editing operations together as a 
+   * single undo. Use endCompoundEdit() once finished. 
+   */
   public void beginCompoundEdit() {
     compoundEdit = new CompoundEdit();
   }
 
 
+  /**
+   * Use with beginCompoundEdit() to group edit operations in a single undo.
+   */
   public void endCompoundEdit() {
     compoundEdit.end();
     undo.addEdit(compoundEdit);
@@ -1131,12 +1141,18 @@ public class Editor extends JFrame {
   // ...................................................................
 
 
+  /**
+   * Implements Edit &rarr; Cut.
+   */
   public void handleCut() {
     textarea.cut();
     sketch.setModified(true);
   }
   
   
+  /**
+   * Implements Edit &rarr; Copy.
+   */
   public void handleCopy() {
     textarea.copy();
   }
@@ -1147,12 +1163,18 @@ public class Editor extends JFrame {
   }
 
 
+  /**
+   * Implements Edit &rarr; Paste.
+   */
   public void handlePaste() {
     textarea.paste();
     sketch.setModified(true);
   }
   
   
+  /**
+   * Implements Edit &rarr; Select All.
+   */
   public void handleSelectAll() {
     textarea.selectAll();
   }
@@ -1261,13 +1283,13 @@ public class Editor extends JFrame {
     String text = textarea.getSelectedText().trim();
 
     if (text.length() == 0) {
-      message("First select a word to find in the reference.");
+      statusNotice("First select a word to find in the reference.");
 
     } else {
       String referenceFile = PdeKeywords.getReference(text);
       //System.out.println("reference file is " + referenceFile);
       if (referenceFile == null) {
-        message("No reference available for \"" + text + "\"");
+        statusNotice("No reference available for \"" + text + "\"");
       } else {
         Base.showReference(referenceFile + ".html");
       }
@@ -1278,8 +1300,12 @@ public class Editor extends JFrame {
   // ...................................................................
 
 
+  /**
+   * Implements Sketch &rarr; Run.
+   * @param present Set true to run in full screen (present mode).
+   */
   public void handleRun(boolean present) {
-    closeRunner();
+    internalCloseRunner();
     running = true;
     toolbar.activate(EditorToolbar.RUN);
 
@@ -1317,100 +1343,69 @@ public class Editor extends JFrame {
     } catch (Exception e) {
       //System.err.println("exception reached editor");
       //e.printStackTrace();
-      error(e);
+      statusError(e);
     }
   }
 
 
+  /**
+   * Set the location of the sketch run window. Used by Runner to update the 
+   * Editor about window drag events while the sketch is running. 
+   */
   public void setSketchLocation(Point p) {
     sketchWindowLocation = p;
   }
 
 
+  /**
+   * Get the last location of the sketch's run window. Used by Runner to make
+   * the window show up in the same location as when it was last closed.
+   */
   public Point getSketchLocation() {
     return sketchWindowLocation;
   }
 
 
+  /**
+   * Implements Sketch &rarr; Stop, or pressing Stop on the toolbar. 
+   */
   public void handleStop() {  // called by menu or buttons
-//    System.out.println("stopping");
     toolbar.activate(EditorToolbar.STOP);
-
-    if (presenting) {
-      closeRunner();
-//    } else if (runtime.window != null) {
-//      // When run externally, kill the applet window,
-//      // otherwise things may not stop properly with libraries.
-//      closeRunner();
-    } else {
-      stopRunner();
-    }
-    handleStopped();
-  }
-
-
-  /** Used by handleStop() above, and by Runner to clear the Run button */
-  public void handleStopped() {
+    
+    internalCloseRunner();
+    
     toolbar.deactivate(EditorToolbar.RUN);
     toolbar.deactivate(EditorToolbar.STOP);
+
+    // focus the PDE again after quitting presentation mode [toxi 030903]
+    toFront();
+  }
+
+
+  /** 
+   * Called by Runner to notify that the sketch has stopped running.
+   * Tools should not call this function, use handleStop() instead. 
+   */
+  public void internalRunnerClosed() {
+    running = false;    
+    toolbar.deactivate(EditorToolbar.RUN);
   }
 
 
   /**
-   * Stop the applet but don't kill its window.
+   * Handle internal shutdown of the runner. 
    */
-  public void stopRunner() {
-//    System.out.println("stopRunner " + runtime);
-    if (runtime != null) runtime.stop();
-    //System.out.println("stopRunner 2");
-    //if (watcher != null) watcher.stop();
-    message(EMPTY);
-
-    // the buttons are sometimes still null during the constructor
-    // is this still true? are people still hitting this error?
-    /*if (buttons != null)*/ //toolbar.clear();
-
+  public void internalCloseRunner() {
     running = false;
-  }
-
-
-  /**
-   * Stop the applet and kill its window. When running in presentation
-   * mode, this will always be called instead of doStop().
-   */
-  public void closeRunner() {
-//    System.out.println("closing runner");
-
-    //if (presenting) {
-    //presentationWindow.hide();
-    //} else {
-//    try {
-//      // the window will also be null the process was running
-//      // externally. so don't even try setting if window is null
-//      // since Runner will set the appletLocation when an
-//      // external process is in use.
-//      if (runtime.window != null) {
-//        appletLocation = runtime.window.getLocation();
-//      }
-//    } catch (NullPointerException e) { }
-//    //}
-
-    //if (running) doStop();
-    stopRunner();  // need to stop if runtime error
 
     try {
       if (runtime != null) {
-//        System.out.println("runtime closing");
         runtime.close();  // kills the window
         runtime = null; // will this help?
       }
     } catch (Exception e) { }
-    //buttons.clear();  // done by doStop
 
     sketch.cleanup();
-
-    // focus the PDE again after quitting presentation mode [toxi 030903]
-    toFront();
   }
 
 
@@ -1501,7 +1496,7 @@ public class Editor extends JFrame {
    */
   protected void handleOpenUnchecked(String path, int codeIndex,
                                      int selStart, int selStop, int scrollPos) {
-    closeRunner();
+    internalCloseRunner();
     handleOpenInternal(path);
     // Replacing a document that may be untitled. If this is an actual
     // untitled document, then editor.untitled will be set by Base.
@@ -1606,7 +1601,7 @@ public class Editor extends JFrame {
 
     } catch (Exception e) {
       e.printStackTrace();
-      error(e);
+      statusError(e);
       return false;
     }
   }
@@ -1645,12 +1640,12 @@ public class Editor extends JFrame {
 
   protected void handleSave2() {
     toolbar.activate(EditorToolbar.SAVE);
-    message("Saving...");
+    statusNotice("Saving...");
     try {
       if (sketch.save()) {
-        message("Done Saving.");
+        statusNotice("Done Saving.");
       } else {
-        message(EMPTY);
+        statusNotice(EMPTY);
       }
       // rebuild sketch menu in case a save-as was forced
       // Disabling this for 0125, instead rebuild the menu inside
@@ -1661,7 +1656,7 @@ public class Editor extends JFrame {
 
     } catch (Exception e) {
       // show the error as a message in the window
-      error(e);
+      statusError(e);
 
       // zero out the current action,
       // so that checkModified2 will just do nothing
@@ -1681,21 +1676,21 @@ public class Editor extends JFrame {
 
     //SwingUtilities.invokeLater(new Runnable() {
     //public void run() {
-    message("Saving...");
+    statusNotice("Saving...");
     try {
       if (sketch.saveAs()) {
-        message("Done Saving.");
+        statusNotice("Done Saving.");
         // Disabling this for 0125, instead rebuild the menu inside
         // the Save As method of the Sketch object, since that's the
         // only one who knows whether something was renamed.
         //sketchbook.rebuildMenusAsync();
       } else {
-        message("Save Canceled.");
+        statusNotice("Save Canceled.");
         return false;
       }
     } catch (Exception e) {
       // show the error as a message in the window
-      error(e);
+      statusError(e);
 
     } finally {
       // make sure the toolbar button deactivates
@@ -1725,12 +1720,12 @@ public class Editor extends JFrame {
             if (success) {
               File appletFolder = new File(sketch.folder, "applet");
               Base.openFolder(appletFolder);
-              message("Done exporting.");
+              statusNotice("Done exporting.");
             } else {
               // error message will already be visible
             }
           } catch (Exception e) {
-            error(e);
+            statusError(e);
           }
           //toolbar.clear();
           toolbar.deactivate(EditorToolbar.EXPORT);
@@ -1746,18 +1741,18 @@ public class Editor extends JFrame {
     //SwingUtilities.invokeLater(new Runnable() {
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          message("Exporting application...");
+          statusNotice("Exporting application...");
           try {
             if (sketch.exportApplication(PConstants.WINDOWS) &&
                 sketch.exportApplication(PConstants.MACOSX) &&
                 sketch.exportApplication(PConstants.LINUX)) {
               Base.openFolder(sketch.folder);
-              message("Done exporting.");
+              statusNotice("Done exporting.");
             } else {
               // error message will already be visible
             }
           } catch (Exception e) {
-            message("Error during export.");
+            statusNotice("Error during export.");
             e.printStackTrace();
           }
           //toolbar.clear();
@@ -1773,7 +1768,7 @@ public class Editor extends JFrame {
    * would be exported, and is a fix for
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=157">Bug 157</A>
    */
-  public boolean handleExportCheckModified() {
+  protected boolean handleExportCheckModified() {
     if (!sketch.modified) return true;
 
     Object[] options = { "OK", "Cancel" };
@@ -1793,7 +1788,7 @@ public class Editor extends JFrame {
       // why it's not CANCEL_OPTION is beyond me (at least on the mac)
       // but f-- it.. let's get this shite done..
       //} else if (result == JOptionPane.CANCEL_OPTION) {
-      message("Export canceled, changes must first be saved.");
+      statusNotice("Export canceled, changes must first be saved.");
       //toolbar.clear();
       return false;
     }
@@ -1815,7 +1810,7 @@ public class Editor extends JFrame {
 
 
   public void handlePrint() {
-    message("Printing...");
+    statusNotice("Printing...");
     //printerJob = null;
     if (printerJob == null) {
       printerJob = PrinterJob.getPrinterJob();
@@ -1832,14 +1827,14 @@ public class Editor extends JFrame {
     if (printerJob.printDialog()) {
       try {
         printerJob.print();
-        message("Done printing.");
+        statusNotice("Done printing.");
 
       } catch (PrinterException pe) {
-        error("Error while printing.");
+        statusError("Error while printing.");
         pe.printStackTrace();
       }
     } else {
-      message("Printing canceled.");
+      statusNotice("Printing canceled.");
     }
     //printerJob = null;  // clear this out?
   }
@@ -1848,37 +1843,23 @@ public class Editor extends JFrame {
   // ...................................................................
 
 
-  public void highlightLine(int line) {
-    // subtract one from the end so that the \n ain't included
-    if (line >= textarea.getLineCount()) {
-      // The error is at the end of this current chunk of code, 
-      // so the last line needs to be selected. 
-      line = textarea.getLineCount() - 1;
-      if (textarea.getLineText(line).length() == 0) {
-        // The last line may be zero length, meaning nothing to select. 
-        // If so, back up one more line.
-        line--;
-      }
-    }
-    textarea.select(textarea.getLineStartOffset(line),
-                    textarea.getLineStopOffset(line) - 1);
-  }
-
-
   /**
    * Show an error int the status bar.
    */
-  public void error(String what) {
+  public void statusError(String what) {
     status.error(what);
     //new Exception("deactivating RUN").printStackTrace();
     toolbar.deactivate(EditorToolbar.RUN);
   }
 
 
-  public void error(Exception e) {
+  /**
+   * Show an exception in the editor status bar.
+   */
+  public void statusError(Exception e) {
     e.printStackTrace();
     if (e == null) {
-      System.err.println("Editor.error() was passed a null exception.");
+      System.err.println("Editor.statusError() was passed a null exception.");
       return;
     }
 
@@ -1888,7 +1869,20 @@ public class Editor extends JFrame {
         sketch.setCurrent(re.getCodeIndex());
       }
       if (re.hasCodeLine()) {
-        highlightLine(re.getCodeLine());
+        int line = re.getCodeLine();
+        // subtract one from the end so that the \n ain't included
+        if (line >= textarea.getLineCount()) {
+          // The error is at the end of this current chunk of code, 
+          // so the last line needs to be selected. 
+          line = textarea.getLineCount() - 1;
+          if (textarea.getLineText(line).length() == 0) {
+            // The last line may be zero length, meaning nothing to select. 
+            // If so, back up one more line.
+            line--;
+          }
+        }
+        textarea.select(textarea.getLineStartOffset(line),
+                        textarea.getLineStopOffset(line) - 1);
       }
     }
 
@@ -1904,13 +1898,16 @@ public class Editor extends JFrame {
       if (mess.indexOf(rxString) == 0) {
         mess = mess.substring(rxString.length());
       }
-      error(mess);
+      statusError(mess);
     }
     e.printStackTrace();
   }
 
 
-  public void message(String msg) {
+  /**
+   * Show a notice message in the editor status bar.
+   */
+  public void statusNotice(String msg) {
     status.notice(msg);
   }
 

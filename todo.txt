@@ -12,11 +12,17 @@ _     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
 _   scrollable stack trace
 _     http://www.javalobby.org/java/forums/t19012.html
 
-
 _ need to add local java folder to path on linux
 _   otherwise if no linux installed, complaining that no java found
+_   http://dev.processing.org/bugs/show_bug.cgi?id=879
+
 _ windows jdk sometimes not getting picked up, even if it's there
 _   notes somewhere about choosing the right jvm...
+_   http://dev.processing.org/bugs/show_bug.cgi?id=878
+_ finding older versions of java on windows
+_   http://dev.processing.org/bugs/show_bug.cgi?id=545
+_ eclipse launcher for windows
+_   http://dev.eclipse.org/viewcvs/index.cgi/platform-launcher/library/win32/eclipseWin.c?view=markup&content-type=text%2Fvnd.viewcvs-markup&revision=1.12
 
 
 [ needs verification ] 
@@ -74,8 +80,12 @@ _ selectInput(), selectOutput(), selectFolder()
 
 
 libraries and classpaths [1.0]
+_ versioning info 
+_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
 _ java.ext.dirs for /System/Library/Java/Extensions
 _   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
+_   can set java.ext.dirs to something else 
+_   on osx, just ignore anything in /Library/Java/Extensions (but not others)?
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
@@ -85,7 +95,7 @@ X see how platform is determined by jogl / use for lib import
 _ add control for dependencies (i.e. svg needs xml), needed for export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=518
 _ add "pretty menu name" to the export.txt file
-_ more export.txt to xml? (nah, it's only flat information)
+_ move export.txt to xml? (nah, it's only flat information)
 _ need better platform designation setup for libs
 _ library installation should use the sketchbook folder, not the p5 folder
 _   actually enforce this, give users a warning about other libs
@@ -590,6 +600,9 @@ PDE / Editor
 
 _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
+_ Closing the last window doesn't cause PDE to save its position/contents/etc
+_   (when the pref for close last window = quit is set)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=835
 _ not remembering window size/placement preferences
 _   http://dev.processing.org/bugs/show_bug.cgi?id=837
 _ saved window positions.. if displays has changed, becomes a problem
@@ -599,8 +612,6 @@ _   make sure that the application is within the bounds of the current display?
 _   (from 0, 0 to width, height)
 _   messy since some displays have negative coords
 _   http://dev.processing.org/bugs/show_bug.cgi?id=72
-_ Closing the last window doesn't cause PDE to save its position/contents/etc
-_   http://dev.processing.org/bugs/show_bug.cgi?id=835
 _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
 _   http://dev.processing.org/bugs/show_bug.cgi?id=821
 _ file-save stops running sketch
@@ -1014,6 +1025,8 @@ X   nice idea but too error-prone
 TOOLS / Auto Format
 
 _ autoformat fails when there's no newline
+_ Auto Format says "too many right parentheses" when last line is a comment
+_   http://dev.processing.org/bugs/show_bug.cgi?id=754
 _ install astyle formatter
 _   build on each platform, then "lipo -create astyle.* -output astyle"
 _ do a better job of maintaining cursor during beautify 
@@ -1294,6 +1307,8 @@ _ computationally intensive stuff runs really slow inside p5
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1116872745
 _ some reports of it not quitting properly, but not confirmed
 _ splash screen
+_ can't launch from a symlink in /usr/bin
+_   http://dev.processing.org/bugs/show_bug.cgi?id=825
 
 
 LATER

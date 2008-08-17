@@ -107,7 +107,7 @@ public class DiscourseFormat {
         }
       });
 
-    editor.message("Code formatted for processing.org/discourse " +
+    editor.statusNotice("Code formatted for processing.org/discourse " +
                    "has been copied to the clipboard.");
   }
 

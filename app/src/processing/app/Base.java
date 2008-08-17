@@ -411,7 +411,7 @@ public class Base {
 
     } catch (IOException e) {
       if (activeEditor != null) {
-        activeEditor.error(e);
+        activeEditor.statusError(e);
       }
     }
   }
@@ -422,7 +422,7 @@ public class Base {
       return;  // sketch was modified, and user canceled
     }
     // Close the running window, avoid window boogers with multiple sketches
-    activeEditor.closeRunner();
+    activeEditor.internalCloseRunner();
     // Actually replace things
     handleNewReplaceImpl();
   }
@@ -436,7 +436,7 @@ public class Base {
 
     } catch (IOException e) {
       if (activeEditor != null) {
-        activeEditor.error(e);
+        activeEditor.statusError(e);
       }
     }
   }
@@ -447,7 +447,7 @@ public class Base {
       return;  // sketch was modified, and user canceled
     }
     // Close the running window, avoid window boogers with multiple sketches
-    activeEditor.closeRunner();
+    activeEditor.internalCloseRunner();
 
     boolean loaded = activeEditor.handleOpenInternal(path);
     if (!loaded) {
@@ -566,7 +566,7 @@ public class Base {
     }
 
     // Close the running window, avoid window boogers with multiple sketches
-    editor.closeRunner();
+    editor.internalCloseRunner();
 
     if (editorCount == 1) {
       if (Preferences.getBoolean("sketchbook.closing_last_window_quits")) {
@@ -636,7 +636,7 @@ public class Base {
     }
     // make sure running sketches close before quitting
     for (int i = 0; i < editorCount; i++) {
-      editors[i].closeRunner();
+      editors[i].internalCloseRunner();
     }
     if (!canceled) {
       // Clean out empty sketches
