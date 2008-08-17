@@ -4,7 +4,7 @@
   SketchCode - data class for a single file inside a sketch
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
