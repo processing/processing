@@ -64,7 +64,7 @@ public class DiscourseFormat {
    */
   public DiscourseFormat(Editor editor) {
     this.editor = editor;
-    this.textarea = editor.textarea;
+    this.textarea = editor.getTextArea();
   }
 
 
