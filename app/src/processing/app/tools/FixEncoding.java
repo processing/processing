@@ -60,7 +60,7 @@ public class FixEncoding {
     try {
       for (int i = 0; i < sketch.getCodeCount(); i++) {
         SketchCode code = sketch.getCode(i);
-        code.program = loadWithLocalEncoding(code.file);
+        code.program = loadWithLocalEncoding(code.getFile());
         code.modified = true;  // yes, because we want them to save this
       }
       // Update the currently visible program with its code
