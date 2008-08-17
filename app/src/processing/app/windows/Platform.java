@@ -27,6 +27,12 @@ import java.io.*;
 import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 
 
+// http://developer.apple.com/documentation/QuickTime/Conceptual/QT7Win_Update_Guide/Chapter03/chapter_3_section_1.html
+// HKEY_LOCAL_MACHINE\SOFTWARE\Apple Computer, Inc.\QuickTime\QTSysDir
+
+// HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion -> 1.6 (String)
+// HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion\1.6\JavaHome -> c:\jdk-1.6.0_05
+
 public class Platform extends processing.app.Platform {
 
   // looking for Documents and Settings/blah/Application Data/Processing

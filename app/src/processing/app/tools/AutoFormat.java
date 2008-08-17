@@ -911,16 +911,16 @@ public class AutoFormat {
 
       String formattedText = strOut.toString();
       if (formattedText.equals(originalText)) {
-        editor.message("No changes necessary for Auto Format.");
+        editor.statusNotice("No changes necessary for Auto Format.");
 
       } else if (paren != 0) {
         // warn user if there are too many parens in either direction
-        editor.error("Auto Format Canceled: Too many " +
+        editor.statusError("Auto Format Canceled: Too many " +
                      ((paren < 0) ? "right" : "left") +
                      " parentheses.");
 
       } else if (c_level != 0) {  // check braces only if parens are ok
-        editor.error("Auto Format Canceled: Too many " +
+        editor.statusError("Auto Format Canceled: Too many " +
                      ((c_level < 0) ? "right" : "left") +
                      " curly braces.");
 
@@ -930,11 +930,11 @@ public class AutoFormat {
         editor.setText(formattedText, selectionEnd, selectionEnd);
         editor.getSketch().setModified(true);
         // mark as finished
-        editor.message("Auto Format finished.");
+        editor.statusNotice("Auto Format finished.");
       }
 
     } catch (Exception e) {
-      editor.error(e);
+      editor.statusError(e);
     }
   }
 }

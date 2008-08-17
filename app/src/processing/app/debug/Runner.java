@@ -49,7 +49,6 @@ public class Runner implements MessageConsumer {
   private boolean presenting;
 
   // Running remote VM
-  //private final VirtualMachine vm;
   private VirtualMachine vm;
 
   // Thread transferring remote error stream to our error stream
@@ -149,6 +148,8 @@ public class Runner implements MessageConsumer {
       }
     }
 
+//    params.add("-Djava.ext.dirs=nuffing");
+    
     if (Preferences.getBoolean("run.options.memory")) {
       params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
       params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
@@ -421,7 +422,7 @@ public class Runner implements MessageConsumer {
         }
         System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
       }
-      editor.error("Could not run the sketch.");
+      editor.statusError("Could not run the sketch.");
       return null;
     }
   }
@@ -512,7 +513,7 @@ public class Runner implements MessageConsumer {
       // This happens when the sketch is exited by hitting ESC,
       // or the user manually closes the sketch window.
       // TODO this should be handled better, should it not?
-      editor.handleStopped();
+      editor.internalRunnerClosed();
 
     } catch (InterruptedException exc) {
       // we don't interrupt
@@ -579,7 +580,7 @@ public class Runner implements MessageConsumer {
 //    if (name.startsWith("java.lang.")) {
 //      name = name.substring(10);
     if (exceptionName.equals("java.lang.OutOfMemoryError")) {
-      editor.error("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
+      editor.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
       System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
       System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
       System.err.println("loading thousands of images), or that your sketch may need more memory to run.");
@@ -587,20 +588,20 @@ public class Runner implements MessageConsumer {
       System.err.println("you can increase the memory available to your sketch using the Preferences window.");
       
     } else if (exceptionName.equals("java.lang.StackOverflowError")) {
-      editor.error("StackOverflowError: This sketch is attempting too much recursion.");
+      editor.statusError("StackOverflowError: This sketch is attempting too much recursion.");
       System.err.println("A StackOverflowError means that you have a bug that's causing a function");
       System.err.println("to be called recursively (it's calling itself and going in circles),");
       System.err.println("or you're intentionally calling a recursive function too much,");
       System.err.println("and your code should be rewritten in a more efficient manner.");
       
     } else if (exceptionName.equals("java.lang.UnsupportedClassVersionError")) {
-      editor.error("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
+      editor.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
       System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.5.");
       System.err.println("A library used by this sketch was compiled for Java 1.6 or later, ");
       System.err.println("and needs to be recompiled to be compatible with Java 1.5.");
 
     } else if (exceptionName.equals("java.lang.NoSuchMethodError") || exceptionName.equals("java.lang.NoSuchFieldError")) {
-      editor.error(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
+      editor.statusError(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
 
     } else {
       ThreadReference thread = event.thread();
@@ -640,73 +641,16 @@ public class Runner implements MessageConsumer {
         // getMessage() will be what's shown in the editor
         exception = new RunnerException(message, codeIndex, lineNumber, -1);
         exception.hideStackTrace();
-        editor.error(exception);
+        editor.statusError(exception);
 
       } catch (IncompatibleThreadStateException e) {
         e.printStackTrace();
       }
     }
-    editor.handleStopped();
+    editor.internalRunnerClosed();
   }
 
   
-  public void stop() {
-    //System.out.println("external stop not implemented");
-    close();
-
-    //EventQueue eq = vm.eventQueue();
-    //EventRequestManager rm = vm.eventRequestManager();
-
-    // TODO call sketch.stop() (or dispose()) here
-
-    // need to get the instance of the main class
-
-    // then need to call getMethod() on that (or its superclass PApplet?)
-
-//    List list = vm.allClasses();
-//    System.out.println("all classes");
-//    System.out.println(list);
-
-    //vm.getClass();
-
-    /*
-    try {
-      System.out.println("gonna suspend");
-      vm.suspend();  // TODO need to call PApplet.stop()
-      System.out.println("done suspending");
-
-    } catch (com.sun.jdi.VMDisconnectedException vmde) {
-      // TODO do nothing.. is this ok?
-      System.out.println("harmless disconnect " + vmde.getMessage());
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    */
-
-    /*
-    // check for null in case stop is called during compilation
-    if (applet != null) {
-      applet.stop();
-
-      // above avoids NullPointerExceptions
-      // but still threading is too complex, and so
-      // some boogers are being left behind
-      applet = null;
-
-    } else if (process != null) {  // running externally
-      try {
-        processOutput.write(PApplet.EXTERNAL_STOP);
-        processOutput.flush();
-
-      } catch (IOException e) {
-        close();
-      }
-    }
-    */
-  }
-
-
   public void close() {
     // TODO make sure stop() has already been called to exit the sketch
 
@@ -757,7 +701,7 @@ public class Runner implements MessageConsumer {
     // that signals that the applet has been quit.
     if (s.indexOf(PApplet.EXTERNAL_STOP) == 0) {
       //System.out.println("external: quit");
-      editor.closeRunner();
+      editor.internalCloseRunner();
       return;
     }
 
@@ -801,187 +745,187 @@ public class Runner implements MessageConsumer {
     //System.err.println("[" + s.length() + "] " + s);
     System.err.flush();
 
-    // exit here because otherwise the exception name
-    // may be titled with a blank string
-    if (s.trim().length() == 0) return;
-
-    // annoying, because it seems as though the terminators
-    // aren't being sent properly
-    //System.err.println(s);
-
-    //if (newMessage && s.length() > 2) {
-    if (newMessage) {
-      exception = new RunnerException(s);  // type of java ex
-      exception.hideStackTrace();
-      //System.out.println("setting ex type to " + s);
-      newMessage = false;
-      foundMessageSource = false;
-      messageLineCount = 0;
-
-    } else {
-      messageLineCount++;
-
-      /*
-java.lang.NullPointerException
-        at javatest.<init>(javatest.java:5)
-        at Temporary_2425_1153.draw(Temporary_2425_1153.java:11)
-        at PApplet.nextFrame(PApplet.java:481)
-        at PApplet.run(PApplet.java:428)
-        at java.lang.Thread.run(Unknown Source)
-      */
-
-      if (!foundMessageSource) {
-        //    "     at javatest.<init>(javatest.java:5)"
-        // -> "javatest.<init>(javatest.java:5)"
-        int atIndex = s.indexOf("at ");
-        if (atIndex == -1) {
-          //System.err.println(s);  // stop double-printing exceptions
-          return;
-        }
-        s = s.substring(atIndex + 3);
-
-        // added for 0124 to improve error handling
-        // not highlighting lines if it's in the p5 code
-        if (s.startsWith("processing.")) return;
-        // no highlight if it's java.lang.whatever
-        if (s.startsWith("java.")) return;
-
-        //    "javatest.<init>(javatest.java:5)"
-        // -> "javatest.<init>" and "(javatest.java:5)"
-        int startParen = s.indexOf('(');
-        // at javatest.<init>(javatest.java:5)
-        //String pkgClassFxn = null;
-        //String fileLine = null;
-        int codeIndex = -1;
-        int lineNumber = -1;
-
-        if (startParen == -1) {
-          //pkgClassFxn = s;
-
-        } else {
-          //pkgClassFxn = s.substring(0, startParen);
-
-          // "(javatest.java:5)"
-          String fileAndLine = s.substring(startParen + 1);
-          int stopParen = fileAndLine.indexOf(')');
-          //fileAndLine = fileAndLine.substring(0, fileAndLine.length() - 1);
-          fileAndLine = fileAndLine.substring(0, stopParen);
-          //System.out.println("file 'n line " + fileAndLine);
-
-          //if (!fileAndLine.equals("Unknown Source")) {
-          // "javatest.java:5"
-          int colonIndex = fileAndLine.indexOf(':');
-          if (colonIndex != -1) {
-            String filename = fileAndLine.substring(0, colonIndex);
-            // "javatest.java" and "5"
-            //System.out.println("filename = " + filename);
-            //System.out.println("pre0 = " + sketch.code[0].preprocName);
-            //for (int i = 0; i < sketch.codeCount; i++) {
-            //System.out.println(i + " " + sketch.code[i].lineOffset + " " +
-            //                   sketch.code[i].preprocName);
-            //}
-            lineNumber =
-              Integer.parseInt(fileAndLine.substring(colonIndex + 1)) - 1;
-
-            for (int i = 0; i < sketch.getCodeCount(); i++) {
-              SketchCode code = sketch.getCode(i);
-              //System.out.println(code.preprocName + " " + lineNumber + " " +
-              //                 code.preprocOffset);
-              if (((code.preprocName == null) &&
-                   (lineNumber >= code.preprocOffset)) ||
-                  ((code.preprocName != null) &&
-                   code.preprocName.equals(filename))) {
-                codeIndex = i;
-                //System.out.println("got codeindex " + codeIndex);
-                //break;
-                //} else if (
-              }
-            }
-
-            if (codeIndex != -1) {
-              //System.out.println("got line num " + lineNumber);
-              // in case this was a tab that got embedded into the main .java
-              lineNumber -= sketch.getCode(codeIndex).preprocOffset;
-
-              // this may have a paren on the end, if so need to strip
-              // down to just the digits
-              /*
-              int lastNumberIndex = colonIndex + 1;
-              while ((lastNumberIndex < fileAndLine.length()) &&
-                     Character.isDigit(fileAndLine.charAt(lastNumberIndex))) {
-                lastNumberIndex++;
-              }
-              */
-
-              // lineNumber is 1-indexed, but editor wants zero-indexed
-              // getMessage() will be what's shown in the editor
-              exception =
-                new RunnerException(exception.getMessage(),
-                                    codeIndex, lineNumber, -1);
-              exception.hideStackTrace();
-              foundMessageSource = true;
-            }
-          }
-        }
-        editor.error(exception);
-
-      /*
-      int index = s.indexOf(className + ".java");
-      if (index != -1) {
-        int len = (className + ".java").length();
-        String lineNumberStr = s.substring(index + len + 1);
-        index = lineNumberStr.indexOf(')');
-        lineNumberStr = lineNumberStr.substring(0, index);
-        try {
-          exception.line = Integer.parseInt(lineNumberStr) - 1; //2;
-        } catch (NumberFormatException e) { }
-          //e.printStackTrace();  // a recursive error waiting to happen?
-        // if nfe occurs, who cares, still send the error on up
-        editor.error(exception);
-      */
-
-        /*
-          // WARNING THESE ARE DISABLED!!
-      } else if ((index = s.indexOf(className + ".class")) != -1) {
-        // code to check for:
-        // at Temporary_484_3845.loop(Compiled Code)
-        // would also probably get:
-        // at Temporary_484_3845.loop
-        // which (i believe) is used by the mac and/or jview
-        String functionStr = s.substring(index +
-                                         (className + ".class").length() + 1);
-        index = functionStr.indexOf('(');
-        if (index != -1) {
-          functionStr = functionStr.substring(0, index);
-        }
-        exception = new RunnerException(//"inside \"" + functionStr + "()\": " +
-                                     exception.getMessage() +
-                                     " inside " + functionStr + "() " +
-                                     "[add Compiler.disable() to setup()]");
-        editor.error(exception);
-        // this will fall through in tihs example:
-        // at Temporary_4636_9696.pootie(Compiled Code)
-        // at Temporary_4636_9696.loop(Temporary_4636_9696.java:24)
-        // because pootie() (re)sets the exception title
-        // and throws it, but then the line number gets set
-        // because of the line that comes after
-        */
-
-      } else if (messageLineCount > 10) {  // 5 -> 10 for 0088
-        // this means the class name may not be mentioned
-        // in the stack trace.. this is just a general purpose
-        // error, but needs to make it through anyway.
-        // so if five lines have gone past, might as well signal
-        messageLineCount = -100;
-        exception = new RunnerException(exception.getMessage());
-        exception.hideStackTrace();
-        editor.error(exception);
-
-      } else {
-        //System.err.print(s);
-      }
-      //System.out.println("got it " + s);
-    }
+//    // exit here because otherwise the exception name
+//    // may be titled with a blank string
+//    if (s.trim().length() == 0) return;
+//
+//    // annoying, because it seems as though the terminators
+//    // aren't being sent properly
+//    //System.err.println(s);
+//
+//    //if (newMessage && s.length() > 2) {
+//    if (newMessage) {
+//      exception = new RunnerException(s);  // type of java ex
+//      exception.hideStackTrace();
+//      //System.out.println("setting ex type to " + s);
+//      newMessage = false;
+//      foundMessageSource = false;
+//      messageLineCount = 0;
+//
+//    } else {
+//      messageLineCount++;
+//
+//      /*
+//java.lang.NullPointerException
+//        at javatest.<init>(javatest.java:5)
+//        at Temporary_2425_1153.draw(Temporary_2425_1153.java:11)
+//        at PApplet.nextFrame(PApplet.java:481)
+//        at PApplet.run(PApplet.java:428)
+//        at java.lang.Thread.run(Unknown Source)
+//      */
+//
+//      if (!foundMessageSource) {
+//        //    "     at javatest.<init>(javatest.java:5)"
+//        // -> "javatest.<init>(javatest.java:5)"
+//        int atIndex = s.indexOf("at ");
+//        if (atIndex == -1) {
+//          //System.err.println(s);  // stop double-printing exceptions
+//          return;
+//        }
+//        s = s.substring(atIndex + 3);
+//
+//        // added for 0124 to improve error handling
+//        // not highlighting lines if it's in the p5 code
+//        if (s.startsWith("processing.")) return;
+//        // no highlight if it's java.lang.whatever
+//        if (s.startsWith("java.")) return;
+//
+//        //    "javatest.<init>(javatest.java:5)"
+//        // -> "javatest.<init>" and "(javatest.java:5)"
+//        int startParen = s.indexOf('(');
+//        // at javatest.<init>(javatest.java:5)
+//        //String pkgClassFxn = null;
+//        //String fileLine = null;
+//        int codeIndex = -1;
+//        int lineNumber = -1;
+//
+//        if (startParen == -1) {
+//          //pkgClassFxn = s;
+//
+//        } else {
+//          //pkgClassFxn = s.substring(0, startParen);
+//
+//          // "(javatest.java:5)"
+//          String fileAndLine = s.substring(startParen + 1);
+//          int stopParen = fileAndLine.indexOf(')');
+//          //fileAndLine = fileAndLine.substring(0, fileAndLine.length() - 1);
+//          fileAndLine = fileAndLine.substring(0, stopParen);
+//          //System.out.println("file 'n line " + fileAndLine);
+//
+//          //if (!fileAndLine.equals("Unknown Source")) {
+//          // "javatest.java:5"
+//          int colonIndex = fileAndLine.indexOf(':');
+//          if (colonIndex != -1) {
+//            String filename = fileAndLine.substring(0, colonIndex);
+//            // "javatest.java" and "5"
+//            //System.out.println("filename = " + filename);
+//            //System.out.println("pre0 = " + sketch.code[0].preprocName);
+//            //for (int i = 0; i < sketch.codeCount; i++) {
+//            //System.out.println(i + " " + sketch.code[i].lineOffset + " " +
+//            //                   sketch.code[i].preprocName);
+//            //}
+//            lineNumber =
+//              Integer.parseInt(fileAndLine.substring(colonIndex + 1)) - 1;
+//
+//            for (int i = 0; i < sketch.getCodeCount(); i++) {
+//              SketchCode code = sketch.getCode(i);
+//              //System.out.println(code.preprocName + " " + lineNumber + " " +
+//              //                 code.preprocOffset);
+//              if (((code.preprocName == null) &&
+//                   (lineNumber >= code.preprocOffset)) ||
+//                  ((code.preprocName != null) &&
+//                   code.preprocName.equals(filename))) {
+//                codeIndex = i;
+//                //System.out.println("got codeindex " + codeIndex);
+//                //break;
+//                //} else if (
+//              }
+//            }
+//
+//            if (codeIndex != -1) {
+//              //System.out.println("got line num " + lineNumber);
+//              // in case this was a tab that got embedded into the main .java
+//              lineNumber -= sketch.getCode(codeIndex).preprocOffset;
+//
+//              // this may have a paren on the end, if so need to strip
+//              // down to just the digits
+//              /*
+//              int lastNumberIndex = colonIndex + 1;
+//              while ((lastNumberIndex < fileAndLine.length()) &&
+//                     Character.isDigit(fileAndLine.charAt(lastNumberIndex))) {
+//                lastNumberIndex++;
+//              }
+//              */
+//
+//              // lineNumber is 1-indexed, but editor wants zero-indexed
+//              // getMessage() will be what's shown in the editor
+//              exception =
+//                new RunnerException(exception.getMessage(),
+//                                    codeIndex, lineNumber, -1);
+//              exception.hideStackTrace();
+//              foundMessageSource = true;
+//            }
+//          }
+//        }
+//        editor.error(exception);
+//
+//      /*
+//      int index = s.indexOf(className + ".java");
+//      if (index != -1) {
+//        int len = (className + ".java").length();
+//        String lineNumberStr = s.substring(index + len + 1);
+//        index = lineNumberStr.indexOf(')');
+//        lineNumberStr = lineNumberStr.substring(0, index);
+//        try {
+//          exception.line = Integer.parseInt(lineNumberStr) - 1; //2;
+//        } catch (NumberFormatException e) { }
+//          //e.printStackTrace();  // a recursive error waiting to happen?
+//        // if nfe occurs, who cares, still send the error on up
+//        editor.error(exception);
+//      */
+//
+//        /*
+//          // WARNING THESE ARE DISABLED!!
+//      } else if ((index = s.indexOf(className + ".class")) != -1) {
+//        // code to check for:
+//        // at Temporary_484_3845.loop(Compiled Code)
+//        // would also probably get:
+//        // at Temporary_484_3845.loop
+//        // which (i believe) is used by the mac and/or jview
+//        String functionStr = s.substring(index +
+//                                         (className + ".class").length() + 1);
+//        index = functionStr.indexOf('(');
+//        if (index != -1) {
+//          functionStr = functionStr.substring(0, index);
+//        }
+//        exception = new RunnerException(//"inside \"" + functionStr + "()\": " +
+//                                     exception.getMessage() +
+//                                     " inside " + functionStr + "() " +
+//                                     "[add Compiler.disable() to setup()]");
+//        editor.error(exception);
+//        // this will fall through in tihs example:
+//        // at Temporary_4636_9696.pootie(Compiled Code)
+//        // at Temporary_4636_9696.loop(Temporary_4636_9696.java:24)
+//        // because pootie() (re)sets the exception title
+//        // and throws it, but then the line number gets set
+//        // because of the line that comes after
+//        */
+//
+//      } else if (messageLineCount > 10) {  // 5 -> 10 for 0088
+//        // this means the class name may not be mentioned
+//        // in the stack trace.. this is just a general purpose
+//        // error, but needs to make it through anyway.
+//        // so if five lines have gone past, might as well signal
+//        messageLineCount = -100;
+//        exception = new RunnerException(exception.getMessage());
+//        exception.hideStackTrace();
+//        editor.error(exception);
+//
+//      } else {
+//        //System.err.print(s);
+//      }
+//      //System.out.println("got it " + s);
+//    }
   }
 
 
