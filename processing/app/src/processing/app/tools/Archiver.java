@@ -125,13 +125,13 @@ public class Archiver {
         zos.flush();
         zos.close();
 
-        editor.message("Created archive " + newbie.getName() + ".");
+        editor.statusNotice("Created archive " + newbie.getName() + ".");
 
       } catch (IOException e) {
         e.printStackTrace();
       }
     } else {
-      editor.message("Archive sketch canceled.");
+      editor.statusNotice("Archive sketch canceled.");
     }
   }
 

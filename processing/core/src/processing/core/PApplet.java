@@ -621,6 +621,11 @@ public class PApplet extends Applet
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
+    // When running inside a browser, start() will be called when someone
+    // returns to a page containing this applet. 
+    // http://dev.processing.org/bugs/show_bug.cgi?id=581
+    finished = false;
+    
     if (thread != null) return;
     thread = new Thread(this, "Animation Thread");
     thread.start();
