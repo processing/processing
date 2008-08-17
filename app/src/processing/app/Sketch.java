@@ -1026,7 +1026,7 @@ public class Sketch {
     boolean result = addFile(sourceFile);
 
     if (result) {
-      editor.message("One file added to the sketch.");
+      editor.statusNotice("One file added to the sketch.");
     }
   }
 
