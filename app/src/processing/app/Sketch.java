@@ -1174,7 +1174,8 @@ public class Sketch {
     }
     buffer.append('\n');
     buffer.append(editor.getText());
-    editor.setText(buffer.toString(), 0, 0);  // scroll to start
+    editor.setText(buffer.toString());
+    editor.setSelection(0, 0);  // scroll to start
     setModified(true);
   }
 

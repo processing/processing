@@ -53,7 +53,7 @@ public class Editor extends JFrame {
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
-  static public final String EMPTY =
+  static protected final String EMPTY = 
     "                                                                     " +
     "                                                                     " +
     "                                                                     ";
@@ -62,10 +62,10 @@ public class Editor extends JFrame {
   static final int SHORTCUT_KEY_MASK =
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
   /** Command-W on Mac OS X, Ctrl-W on Windows and Linux */
-  static public final KeyStroke WINDOW_CLOSE_KEYSTROKE =
+  static final KeyStroke WINDOW_CLOSE_KEYSTROKE =
     KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
   /** Command-Option on Mac OS X, Ctrl-Alt on Windows and Linux */
-  static public final int SHORTCUT_ALT_KEY_MASK = ActionEvent.ALT_MASK |
+  static final int SHORTCUT_ALT_KEY_MASK = ActionEvent.ALT_MASK |
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
   /**
@@ -102,7 +102,7 @@ public class Editor extends JFrame {
 
   EditorLineStatus lineStatus;
 
-  public JEditTextArea textarea;
+  protected JEditTextArea textarea;
   EditorListener listener;
 
   // runtime information and window placement
@@ -1031,14 +1031,32 @@ public class Editor extends JFrame {
     return sketch;
   }
 
+
+  /**
+   * Get the JEditTextArea object for use. This should only be used in obscure
+   * cases that really need to hack the internals of the JEditTextArea. Most
+   * tools should only interface via the get/set functions found in this class.
+   * This will maintain compatibility with future releases, which may not use
+   * JEditTextArea.
+   */
+  public JEditTextArea getTextArea() {
+    return textarea;
+  }
+  
+  
   /**
    * Get the contents of the current buffer. Used by the Sketch class.
    */
   public String getText() {
     return textarea.getText();
   }
-
-
+  
+  
+  public String getText(int start, int stop) {
+    return textarea.getText(start, stop - start);
+  }
+  
+  
   /**
    * Replace the entire contents of the front-most tab.
    */
@@ -1048,25 +1066,81 @@ public class Editor extends JFrame {
     endCompoundEdit();
   }
 
+  
   /**
-   * Called to update the text but not switch to a different
-   * set of code (which would affect the undo manager).
+   * Called to update the text but not switch to a different set of code 
+   * (which would affect the undo manager).
    */
-  public void setText(String what, int selectionStart, int selectionStop) {
-    beginCompoundEdit();
-    textarea.setText(what);
-    endCompoundEdit();
+//  public void setText2(String what, int start, int stop) {
+//    beginCompoundEdit();
+//    textarea.setText(what);
+//    endCompoundEdit();
+//
+//    // make sure that a tool isn't asking for a bad location
+//    start = Math.max(0, Math.min(start, textarea.getDocumentLength()));
+//    stop = Math.max(0, Math.min(start, textarea.getDocumentLength()));
+//    textarea.select(start, stop);
+//
+//    textarea.requestFocus();  // get the caret blinking
+//  }
 
-    // make sure that a tool isn't asking for a bad location
-    selectionStart =
-      Math.max(0, Math.min(selectionStart, textarea.getDocumentLength()));
-    selectionStop =
-      Math.max(0, Math.min(selectionStart, textarea.getDocumentLength()));
-    textarea.select(selectionStart, selectionStop);
 
-    textarea.requestFocus();  // get the caret blinking
+  public String getSelectedText() {
+    return textarea.getSelectedText();
   }
+  
+  
+  public void setSelectedText(String what) {
+    textarea.setSelectedText(what);
+  }
+  
+  
+  public void setSelection(int start, int stop) {
+    // make sure that a tool isn't asking for a bad location
+    start = PApplet.constrain(start, 0, textarea.getDocumentLength());
+    stop = PApplet.constrain(stop, 0, textarea.getDocumentLength());
 
+    textarea.select(start, stop);
+  }
+  
+  
+  public int getSelectionStart() {
+    return textarea.getSelectionStart();
+  }
+  
+  
+  public int getSelectionStop() {
+    return textarea.getSelectionStop();
+  }
+  
+
+  public String getLineText(int line) {
+    return textarea.getLineText(line);
+  }
+  
+  
+  public void setLineText(int line, String what) {
+    beginCompoundEdit();
+    textarea.select(getLineStartOffset(line), getLineStopOffset(line));
+    textarea.setSelectedText(what);
+    endCompoundEdit();
+  }
+  
+  
+  public int getLineStartOffset(int line) {
+    return textarea.getLineStartOffset(line);
+  }
+  
+  
+  public int getLineStopOffset(int line) {
+    return textarea.getLineStopOffset(line);
+  }
+  
+  
+  public int getLineCount() {
+    return textarea.getLineCount();
+  }
+  
 
   /**
    * Switch between tabs, this swaps out the Document object

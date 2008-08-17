@@ -115,21 +115,6 @@ public class JEditTextArea extends JComponent
     // We don't seem to get the initial focus event?
     focusedComponent = this;
 
-    // no more need for reflection, pde requires use of java 1.4
-    /*
-    if (System.getProperty("java.version").startsWith("1.4")) {
-    try {
-        Class kWheelHandler =
-          Class.forName("processing.app.syntax.WheelHandler");
-        java.lang.reflect.Constructor konstructor =
-          kWheelHandler.getConstructor(new Class[] { getClass() });
-        konstructor.newInstance(new Object[] { this });
-      } catch (Exception e) {
-        System.err.println(e);
-      }
-    }
-    */
-    //new WheelHandler(this);
     addMouseWheelListener(new MouseWheelListener() {
         public void mouseWheelMoved(MouseWheelEvent e) {
           if (!scrollBarsInitialized) return;
@@ -160,24 +145,21 @@ public class JEditTextArea extends JComponent
    * Returns if this component can be traversed by pressing
    * the Tab key. This returns false.
    */
-  public final boolean isManagingFocus()
-  {
+  public final boolean isManagingFocus() {
     return true;
   }
 
   /**
    * Returns the object responsible for painting this text area.
    */
-  public final TextAreaPainter getPainter()
-  {
+  public final TextAreaPainter getPainter() {
     return painter;
   }
 
   /**
    * Returns the input handler.
    */
-  public final InputHandler getInputHandler()
-  {
+  public final InputHandler getInputHandler() {
     return inputHandler;
   }
 
@@ -185,16 +167,14 @@ public class JEditTextArea extends JComponent
    * Sets the input handler.
    * @param inputHandler The new input handler
    */
-  public void setInputHandler(InputHandler inputHandler)
-  {
+  public void setInputHandler(InputHandler inputHandler) {
     this.inputHandler = inputHandler;
   }
 
   /**
    * Returns true if the caret is blinking, false otherwise.
    */
-  public final boolean isCaretBlinkEnabled()
-  {
+  public final boolean isCaretBlinkEnabled() {
     return caretBlinks;
   }
 
@@ -202,8 +182,7 @@ public class JEditTextArea extends JComponent
    * Toggles caret blinking.
    * @param caretBlinks True if the caret should blink, false otherwise
    */
-  public void setCaretBlinkEnabled(boolean caretBlinks)
-  {
+  public void setCaretBlinkEnabled(boolean caretBlinks) {
     this.caretBlinks = caretBlinks;
     if(!caretBlinks)
       blink = false;
@@ -214,8 +193,7 @@ public class JEditTextArea extends JComponent
   /**
    * Returns true if the caret is visible, false otherwise.
    */
-  public final boolean isCaretVisible()
-  {
+  public final boolean isCaretVisible() {
     return (!caretBlinks || blink) && caretVisible;
   }
 
@@ -224,8 +202,7 @@ public class JEditTextArea extends JComponent
    * @param caretVisible True if the caret should be visible, false
    * otherwise
    */
-  public void setCaretVisible(boolean caretVisible)
-  {
+  public void setCaretVisible(boolean caretVisible) {
     this.caretVisible = caretVisible;
     blink = true;
 
@@ -235,23 +212,20 @@ public class JEditTextArea extends JComponent
   /**
    * Blinks the caret.
    */
-  public final void blinkCaret()
-  {
-    if(caretBlinks)
-      {
-        blink = !blink;
-        painter.invalidateSelectedLines();
-      }
-    else
+  public final void blinkCaret() {
+    if (caretBlinks)  {
+      blink = !blink;
+      painter.invalidateSelectedLines();
+    } else {
       blink = true;
+    }
   }
 
   /**
    * Returns the number of lines from the top and button of the
    * text area that are always visible.
    */
-  public final int getElectricScroll()
-  {
+  public final int getElectricScroll() {
     return electricScroll;
   }
 
@@ -261,8 +235,7 @@ public class JEditTextArea extends JComponent
    * @param electricScroll The number of lines always visible from
    * the top or bottom
    */
-  public final void setElectricScroll(int electricScroll)
-  {
+  public final void setElectricScroll(int electricScroll) {
     this.electricScroll = electricScroll;
   }
 
@@ -327,12 +300,10 @@ public class JEditTextArea extends JComponent
     }
   }
 
-
   /**
    * Returns the line displayed at the text area's origin.
    */
-  public final int getFirstLine()
-  {
+  public final int getFirstLine() {
     return firstLine;
   }
 
@@ -340,22 +311,20 @@ public class JEditTextArea extends JComponent
    * Sets the line displayed at the text area's origin without
    * updating the scroll bars.
    */
-  public void setFirstLine(int firstLine)
-  {
-    if(firstLine == this.firstLine)
-      return;
-    //int oldFirstLine = this.firstLine;
+  public void setFirstLine(int firstLine) {
+    if (firstLine == this.firstLine) return;
+
     this.firstLine = firstLine;
-    if(firstLine != vertical.getValue())
+    if (firstLine != vertical.getValue()) {
       updateScrollBars();
+    }
     painter.repaint();
   }
 
   /**
    * Returns the number of lines visible in this text area.
    */
-  public final int getVisibleLines()
-  {
+  public final int getVisibleLines() {
     return visibleLines;
   }
 
@@ -363,13 +332,11 @@ public class JEditTextArea extends JComponent
    * Recalculates the number of visible lines. This should not
    * be called directly.
    */
-  public final void recalculateVisibleLines()
-  {
-    if(painter == null)
-      return;
+  public final void recalculateVisibleLines() {
+    if (painter == null) return;
+
     int height = painter.getHeight();
     int lineHeight = painter.getFontMetrics().getHeight();
-    //int oldVisibleLines = visibleLines;
     visibleLines = height / lineHeight;
     updateScrollBars();
   }
@@ -377,8 +344,7 @@ public class JEditTextArea extends JComponent
   /**
    * Returns the horizontal offset of drawn lines.
    */
-  public final int getHorizontalOffset()
-  {
+  public final int getHorizontalOffset() {
     return horizontalOffset;
   }
 
