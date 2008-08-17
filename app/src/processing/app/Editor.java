@@ -437,7 +437,7 @@ public class Editor extends JFrame {
       });
     fileMenu.add(item);
 
-    item = Editor.newJMenuItem("Open...", 'O', false);
+    item = Editor.newJMenuItem("Open...", 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleOpenPrompt();
@@ -457,7 +457,7 @@ public class Editor extends JFrame {
     }
     fileMenu.add(examplesMenu);
 
-    item = Editor.newJMenuItem("Close", 'W', false);
+    item = Editor.newJMenuItem("Close", 'W');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleClose(Editor.this, false);
@@ -473,7 +473,7 @@ public class Editor extends JFrame {
       });
     fileMenu.add(saveMenuItem);
 
-    saveAsMenuItem = newJMenuItem("Save As...", 'S', true);
+    saveAsMenuItem = newJMenuItemShift("Save As...", 'S');
     saveAsMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleSaveAs();
@@ -489,7 +489,7 @@ public class Editor extends JFrame {
       });
     fileMenu.add(item);
 
-    exportAppItem = newJMenuItem("Export Application", 'E', true);
+    exportAppItem = newJMenuItemShift("Export Application", 'E');
     exportAppItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           //buttons.activate(EditorButtons.EXPORT);
@@ -503,7 +503,7 @@ public class Editor extends JFrame {
 
     fileMenu.addSeparator();
 
-    item = newJMenuItem("Page Setup", 'P', true);
+    item = newJMenuItemShift("Page Setup", 'P');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handlePageSetup();
@@ -557,7 +557,7 @@ public class Editor extends JFrame {
       });
     sketchMenu.add(item);
 
-    item = newJMenuItem("Present", 'R', true);
+    item = newJMenuItemShift("Present", 'R');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleRun(true);
@@ -584,7 +584,7 @@ public class Editor extends JFrame {
     //if (Base.isWindows() || Base.isMacOS()) {
     // no way to do an 'open in file browser' on other platforms
     // since there isn't any sort of standard
-    item = newJMenuItem("Show Sketch Folder", 'K', false);
+    item = newJMenuItem("Show Sketch Folder", 'K');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           //Base.openFolder(sketchDir);
@@ -616,7 +616,7 @@ public class Editor extends JFrame {
     JMenuItem item;
     JMenu menu = new JMenu("Tools");
 
-    item = newJMenuItem("Auto Format", 'T', false);
+    item = newJMenuItem("Auto Format", 'T');
     item.addActionListener(new ActionListener() {
         synchronized public void actionPerformed(ActionEvent e) {
           new AutoFormat(Editor.this).show();
@@ -748,7 +748,7 @@ public class Editor extends JFrame {
       });
     menu.add(item);
 
-    item = newJMenuItem("Find in Reference", 'F', true);
+    item = newJMenuItemShift("Find in Reference", 'F');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (textarea.isSelectionActive()) {
@@ -822,7 +822,7 @@ public class Editor extends JFrame {
       });
     menu.add(item);
     
-    item = newJMenuItem("Copy for Discourse", 'C', true);
+    item = newJMenuItemShift("Copy for Discourse", 'C');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
 //          SwingUtilities.invokeLater(new Runnable() {
@@ -911,31 +911,33 @@ public class Editor extends JFrame {
 
 
   /**
-   * Convenience method, see below.
-   */
-  static public JMenuItem newJMenuItem(String title, int what) {
-    return newJMenuItem(title, what, false);
-  }
-
-
-  /**
    * A software engineer, somewhere, needs to have his abstraction
    * taken away. In some countries they jail or beat people for writing
    * the sort of API that would require a five line helper function
    * just to set the command key for a menu item.
    */
-  static public JMenuItem newJMenuItem(String title,
-                                       int what, boolean shift) {
+  static public JMenuItem newJMenuItem(String title, int what) {
     JMenuItem menuItem = new JMenuItem(title);
     int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    if (shift) modifiers |= ActionEvent.SHIFT_MASK;
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
+    return menuItem;
+  }
+
+
+  /** 
+   * Like newJMenuItem() but adds shift as a modifier for the key command.
+   */
+  static public JMenuItem newJMenuItemShift(String title, int what) {
+    JMenuItem menuItem = new JMenuItem(title);
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    modifiers |= ActionEvent.SHIFT_MASK;
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
     return menuItem;
   }
 
 
   /**
-   * Same as newJMenuItem, but adds the ALT (on Linux and Windows) 
+   * Same as newJMenuItem(), but adds the ALT (on Linux and Windows) 
    * or OPTION (on Mac OS X) key as a modifier.
    */
   static public JMenuItem newJMenuItemAlt(String title, int what) {
@@ -1776,6 +1778,7 @@ public class Editor extends JFrame {
 
 
   /**
+   * Called by Sketch &rarr; Export.
    * Handles calling the export() function on sketch, and
    * queues all the gui status stuff that comes along with it.
    * <p/>
@@ -1808,6 +1811,9 @@ public class Editor extends JFrame {
   }
 
 
+  /**
+   * Handler for Sketch &rarr; Export Application
+   */
   synchronized public void handleExportApplication() {
     if (!handleExportCheckModified()) return;
     toolbar.activate(EditorToolbar.EXPORT);

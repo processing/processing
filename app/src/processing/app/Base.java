@@ -684,7 +684,7 @@ public class Base {
 
     //System.out.println("rebuilding toolbar menu");
     // Add the single "Open" item
-    item = Editor.newJMenuItem("Open...", 'O', false);
+    item = Editor.newJMenuItem("Open...", 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleOpenPrompt();
