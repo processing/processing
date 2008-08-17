@@ -222,7 +222,7 @@ public class Runner implements MessageConsumer {
     params.add(PApplet.ARGS_DISPLAY + "=" +
                Preferences.get("run.display"));
     params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
-               sketch.folder.getAbsolutePath());
+               sketch.getFolder().getAbsolutePath());
 
     if (presenting) {
       params.add(PApplet.ARGS_PRESENT);

@@ -504,7 +504,7 @@ public class Base {
 
     // Cycle through open windows to make sure that it's not already open.
     for (int i = 0; i < editorCount; i++) {
-      if (editors[i].sketch.path.equals(path)) {
+      if (editors[i].getSketch().getMainFilePath().equals(path)) {
         editors[i].toFront();
         return editors[i];
       }
@@ -874,7 +874,7 @@ public class Base {
       // If a .jar file of the same prefix as the folder exists
       // inside the 'library' subfolder of the sketch
       if (entry.exists()) {
-        String sanityCheck = Sketch.sanitizedName(list[i]);
+        String sanityCheck = Sketch.sanitizeName(list[i]);
         if (!sanityCheck.equals(list[i])) {
           String mess =
             "The library \"" + list[i] + "\" cannot be used.\n" +

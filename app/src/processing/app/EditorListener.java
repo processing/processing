@@ -108,10 +108,10 @@ public class EditorListener {
 
     if ((event.getModifiers() & CTRL_ALT) == CTRL_ALT) {
       if (code == KeyEvent.VK_LEFT) {
-        editor.sketch.prevCode();
+        editor.sketch.handlePrevCode();
         return true;
       } else if (code == KeyEvent.VK_RIGHT) {
-        editor.sketch.nextCode();
+        editor.sketch.handleNextCode();
         return true;
       }
     }
@@ -122,7 +122,7 @@ public class EditorListener {
     }
 
     // TODO i don't like these accessors. clean em up later.
-    if (!editor.sketch.modified) {
+    if (!editor.getSketch().isModified()) {
       if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
           (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
         editor.sketch.setModified(true);
