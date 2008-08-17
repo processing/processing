@@ -195,7 +195,8 @@ public class Compiler {
           for (int i = 1; i < sketch.getCodeCount(); i++) {
             SketchCode code = sketch.getCode(i);
 
-            if (code.flavor == Sketch.PDE) {
+            //if (code.flavor == Sketch.PDE) {
+            if (code.isExtension("pde")) {
               if (code.preprocOffset <= dotJavaLineIndex) {
                 codeIndex = i;
                 //System.out.println("i'm thinkin file " + i);

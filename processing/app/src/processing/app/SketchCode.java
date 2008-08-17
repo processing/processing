@@ -26,6 +26,7 @@ package processing.app;
 import processing.app.syntax.*;
 
 import java.io.*;
+
 import javax.swing.undo.*;
 
 
@@ -34,13 +35,19 @@ import javax.swing.undo.*;
  */
 public class SketchCode {
   /** Pretty name (no extension), not the full file name */
-  public String name;
+  private String prettyName;
 
   /** File object for where this code is located */
-  public File file;
+  private File file;
 
   /** Type of code in this tab, Sketch.PDE or Sketch.JAVA */
-  public int flavor;
+//  public int flavor;
+  
+  /** 
+   * Extension for this file (in lowercase). If hidden and the extension is
+   * .java.x or .pde.x, then this will still be set to .java or .pde 
+   */ 
+  private String extension;
 
   /** Text of the program text for this tab */
   public String program;
@@ -66,19 +73,106 @@ public class SketchCode {
   public int preprocOffset;  // where this code starts relative to the concat'd code
 
 
-  public SketchCode(String name, File file, int flavor) {
-    this.name = name;
+  public SketchCode(File file, String extension) {
+//    this.name = name;
     this.file = file;
-    this.flavor = flavor;
+    this.extension = extension;
+//    this.flavor = flavor;
+
+    makePrettyName();
 
     try {
       load();
     } catch (IOException e) {
-      System.err.println("Error while loading code " + name);
+      System.err.println("Error while loading code " + file.getName());
     }
   }
 
 
+  protected void makePrettyName() {
+    prettyName = file.getName();
+    int dot = prettyName.indexOf('.');
+    prettyName = prettyName.substring(0, dot);
+  }
+
+
+  public File getFile() {
+    return file;
+  }
+  
+  
+  protected boolean fileExists() {
+    return file.exists();
+  }
+  
+  
+  protected boolean fileReadOnly() {
+    return !file.canWrite();
+  }
+  
+  
+  protected boolean deleteFile() {
+    return file.delete();
+  }
+  
+  
+  protected boolean renameTo(File what, String ext) {
+    boolean success = file.renameTo(what);
+    if (success) {
+      this.file = what;  // necessary?
+      this.extension = ext;
+      makePrettyName();
+    }
+    return success;
+  }
+  
+  
+  protected void copyTo(File dest) throws IOException {
+    Base.saveFile(program, dest);
+  }
+  
+
+  protected boolean hideFile() {
+    File newFile = new File(file.getAbsolutePath() + ".x");
+    boolean success = file.renameTo(newFile);
+    if (success) {
+      file = newFile;
+    }
+    return success;
+  }
+  
+
+  protected boolean unhideFile() {
+    String path = file.getAbsolutePath();
+    File newFile = new File(path.substring(0, path.length() - 2));
+    boolean success = file.renameTo(newFile);
+    if (success) {
+      file = newFile;
+    }
+    return success;
+  }
+  
+  
+  public String getFileName() {
+    return file.getName();
+  }
+  
+  
+  public String getPrettyName() {
+    return prettyName;
+  }
+  
+  
+  public String getExtension() {
+    return extension;
+  }
+  
+  
+  public boolean isExtension(String what) {
+    return extension.equals(what);
+  }
+  
+  
   /**
    * Load this piece of code from a file.
    */

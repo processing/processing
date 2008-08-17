@@ -588,7 +588,7 @@ public class Editor extends JFrame {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           //Base.openFolder(sketchDir);
-          Base.openFolder(sketch.folder);
+          Base.openFolder(sketch.getFolder());
         }
       });
     sketchMenu.add(item);
@@ -601,7 +601,7 @@ public class Editor extends JFrame {
     item = new JMenuItem("Add File...");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          sketch.addFile();
+          sketch.handleAddFile();
         }
       });
     sketchMenu.add(item);
@@ -1035,11 +1035,11 @@ public class Editor extends JFrame {
 
 
   /**
-   * Get the JEditTextArea object for use. This should only be used in obscure
-   * cases that really need to hack the internals of the JEditTextArea. Most
-   * tools should only interface via the get/set functions found in this class.
-   * This will maintain compatibility with future releases, which may not use
-   * JEditTextArea.
+   * Get the JEditTextArea object for use (not recommended). This should only 
+   * be used in obscure cases that really need to hack the internals of the 
+   * JEditTextArea. Most tools should only interface via the get/set functions 
+   * found in this class. This will maintain compatibility with future releases, 
+   * which will not use JEditTextArea. 
    */
   public JEditTextArea getTextArea() {
     return textarea;
@@ -1054,6 +1054,9 @@ public class Editor extends JFrame {
   }
   
   
+  /**
+   * Get a range of text from the current buffer. 
+   */
   public String getText(int start, int stop) {
     return textarea.getText(start, stop - start);
   }
@@ -1063,9 +1066,9 @@ public class Editor extends JFrame {
    * Replace the entire contents of the front-most tab.
    */
   public void setText(String what) {
-    beginCompoundEdit();
+    startCompoundEdit();
     textarea.setText(what);
-    endCompoundEdit();
+    stopCompoundEdit();
   }
 
   
@@ -1106,39 +1109,79 @@ public class Editor extends JFrame {
   }
   
   
+  /**
+   * Get the position (character offset) of the caret. With text selected, 
+   * this will be the last character actually selected, no matter the direction 
+   * of the selection. That is, if the user clicks and drags to select lines 
+   * 7 up to 4, then the caret position will be somewhere on line four.
+   */
+  public int getCaretOffset() {
+    return textarea.getCaretPosition();
+  }
+  
+  
+  /**
+   * True if some text is currently selected.
+   */
+  public boolean isSelectionActive() {
+    return textarea.isSelectionActive();
+  }
+  
+  
+  /**
+   * Get the beginning point of the current selection. 
+   */
   public int getSelectionStart() {
     return textarea.getSelectionStart();
   }
   
   
+  /**
+   * Get the end point of the current selection. 
+   */
   public int getSelectionStop() {
     return textarea.getSelectionStop();
   }
   
 
+  /**
+   * Get text for a specified line.
+   */
   public String getLineText(int line) {
     return textarea.getLineText(line);
   }
   
   
+  /**
+   * Replace the text on a specified line.
+   */
   public void setLineText(int line, String what) {
-    beginCompoundEdit();
+    startCompoundEdit();
     textarea.select(getLineStartOffset(line), getLineStopOffset(line));
     textarea.setSelectedText(what);
-    endCompoundEdit();
+    stopCompoundEdit();
   }
   
   
+  /**
+   * Get character offset for the start of a given line of text.
+   */
   public int getLineStartOffset(int line) {
     return textarea.getLineStartOffset(line);
   }
   
-  
+
+  /**
+   * Get character offset for end of a given line of text.
+   */
   public int getLineStopOffset(int line) {
     return textarea.getLineStopOffset(line);
   }
   
   
+  /**
+   * Get the number of lines in the currently displayed buffer.
+   */
   public int getLineCount() {
     return textarea.getLineCount();
   }
@@ -1195,17 +1238,17 @@ public class Editor extends JFrame {
 
   /**
    * Use before a manipulating text to group editing operations together as a 
-   * single undo. Use endCompoundEdit() once finished. 
+   * single undo. Use stopCompoundEdit() once finished. 
    */
-  public void beginCompoundEdit() {
+  public void startCompoundEdit() {
     compoundEdit = new CompoundEdit();
   }
 
 
   /**
-   * Use with beginCompoundEdit() to group edit operations in a single undo.
+   * Use with startCompoundEdit() to group edit operations in a single undo.
    */
-  public void endCompoundEdit() {
+  public void stopCompoundEdit() {
     compoundEdit.end();
     undo.addEdit(compoundEdit);
     undoAction.updateUndoState();
@@ -1257,7 +1300,7 @@ public class Editor extends JFrame {
 
   
   protected void handleCommentUncomment() {
-    beginCompoundEdit();
+    startCompoundEdit();
 
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
@@ -1308,7 +1351,7 @@ public class Editor extends JFrame {
     // (Which causes subsequent calls to keep expanding the selection)
     textarea.select(textarea.getLineStartOffset(startLine),
                     textarea.getLineStopOffset(stopLine) - 1);
-    endCompoundEdit();
+    stopCompoundEdit();
   }
   
   
@@ -1316,7 +1359,7 @@ public class Editor extends JFrame {
     int tabSize = Preferences.getInteger("editor.tabs.size");
     String tabString = Editor.EMPTY.substring(0, tabSize);
 
-    beginCompoundEdit();
+    startCompoundEdit();
 
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
@@ -1351,7 +1394,7 @@ public class Editor extends JFrame {
     // (Which causes subsequent calls to keep expanding the selection)
     textarea.select(textarea.getLineStartOffset(startLine),
                     textarea.getLineStopOffset(stopLine) - 1);
-    endCompoundEdit();
+    stopCompoundEdit();
   }
 
 
@@ -1396,7 +1439,7 @@ public class Editor extends JFrame {
     presenting = present;
 
     try {
-      if (!sketch.handleCompile()) {
+      if (!sketch.compile()) {
         System.out.println("Compile failed.");  // TODO remove this
         return;
       }
@@ -1492,9 +1535,9 @@ public class Editor extends JFrame {
    * @return false if canceling the close/quit operation
    */
   protected boolean checkModified(boolean immediately) {
-    if (!sketch.modified) return true;
+    if (!sketch.isModified()) return true;
 
-    String prompt = "Save changes to " + sketch.name + "?  ";
+    String prompt = "Save changes to " + sketch.getName() + "?  ";
 
     if (PApplet.platform != PConstants.MACOSX) {
       int result =
@@ -1663,7 +1706,7 @@ public class Editor extends JFrame {
       sketch = new Sketch(this, path);
       header.rebuild();      
       // Set the title of the window to "sketch_070752a - Processing 0126"
-      setTitle(sketch.name + " | " + WINDOW_TITLE);
+      setTitle(sketch.getName() + " | " + WINDOW_TITLE);
       // Disable untitled setting from previous document, if any
       untitled = false;
 
@@ -1795,7 +1838,7 @@ public class Editor extends JFrame {
           try {
             boolean success = sketch.exportApplet();
             if (success) {
-              File appletFolder = new File(sketch.folder, "applet");
+              File appletFolder = new File(sketch.getFolder(), "applet");
               Base.openFolder(appletFolder);
               statusNotice("Done exporting.");
             } else {
@@ -1826,7 +1869,7 @@ public class Editor extends JFrame {
             if (sketch.exportApplication(PConstants.WINDOWS) &&
                 sketch.exportApplication(PConstants.MACOSX) &&
                 sketch.exportApplication(PConstants.LINUX)) {
-              Base.openFolder(sketch.folder);
+              Base.openFolder(sketch.getFolder());
               statusNotice("Done exporting.");
             } else {
               // error message will already be visible
@@ -1849,7 +1892,7 @@ public class Editor extends JFrame {
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=157">Bug 157</A>
    */
   protected boolean handleExportCheckModified() {
-    if (!sketch.modified) return true;
+    if (!sketch.isModified()) return true;
 
     Object[] options = { "OK", "Cancel" };
     int result = JOptionPane.showOptionDialog(this,
@@ -1876,6 +1919,9 @@ public class Editor extends JFrame {
   }
 
 
+  /**
+   * Handler for File &rarr; Page Setup.
+   */
   public void handlePageSetup() {
     //printerJob = null;
     if (printerJob == null) {
@@ -1889,6 +1935,9 @@ public class Editor extends JFrame {
   }
 
 
+  /**
+   * Handler for File &rarr; Print.
+   */
   public void handlePrint() {
     statusNotice("Printing...");
     //printerJob = null;
@@ -1902,7 +1951,7 @@ public class Editor extends JFrame {
       printerJob.setPrintable(textarea.getPainter());
     }
     // set the name of the job to the code name
-    printerJob.setJobName(sketch.current.name);
+    printerJob.setJobName(sketch.current.getPrettyName());
 
     if (printerJob.printDialog()) {
       try {
