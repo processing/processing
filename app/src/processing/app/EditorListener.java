@@ -106,12 +106,14 @@ public class EditorListener {
     //System.out.println((int)c + " " + code + " " + event);
     //System.out.println();
 
+    Sketch sketch = editor.getSketch();
+    
     if ((event.getModifiers() & CTRL_ALT) == CTRL_ALT) {
       if (code == KeyEvent.VK_LEFT) {
-        editor.sketch.handlePrevCode();
+        sketch.handlePrevCode();
         return true;
       } else if (code == KeyEvent.VK_RIGHT) {
-        editor.sketch.handleNextCode();
+        sketch.handleNextCode();
         return true;
       }
     }
@@ -125,7 +127,7 @@ public class EditorListener {
     if (!editor.getSketch().isModified()) {
       if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
           (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
-        editor.sketch.setModified(true);
+        sketch.setModified(true);
       }
     }
 

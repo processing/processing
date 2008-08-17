@@ -526,9 +526,9 @@ public class Sketch {
         // (unfortunately this will kill positions for carets etc)
         editor.handleOpenUnchecked(newMainFilePath,
                                    currentIndex,
-                                   editor.textarea.getSelectionStart(),
-                                   editor.textarea.getSelectionStop(),
-                                   editor.textarea.getScrollPosition());
+                                   editor.getSelectionStart(),
+                                   editor.getSelectionStop(),
+                                   editor.getScrollPosition());
 
         // get the changes into the sketchbook menu
         // (re-enabled in 0115 to fix bug #332)
@@ -999,9 +999,9 @@ public class Sketch {
 
     editor.handleOpenUnchecked(newFile.getPath(),
                                currentIndex,
-                               editor.textarea.getSelectionStart(),
-                               editor.textarea.getSelectionStop(),
-                               editor.textarea.getScrollPosition());
+                               editor.getSelectionStart(),
+                               editor.getSelectionStop(),
+                               editor.getScrollPosition());
 
     // Name changed, rebuild the sketch menus
     //editor.sketchbook.rebuildMenusAsync();
@@ -1234,9 +1234,9 @@ public class Sketch {
     // get the text currently being edited
     if (current != null) {
       current.program = editor.getText();
-      current.selectionStart = editor.textarea.getSelectionStart();
-      current.selectionStop = editor.textarea.getSelectionStop();
-      current.scrollPosition = editor.textarea.getScrollPosition();
+      current.selectionStart = editor.getSelectionStart();
+      current.selectionStop = editor.getSelectionStop();
+      current.scrollPosition = editor.getScrollPosition();
     }
 
     current = code[which];
