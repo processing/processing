@@ -98,24 +98,20 @@ public class Editor extends JFrame {
   JLabel lineNumberComponent;
 
   // currently opened program
-  protected Sketch sketch;
+  Sketch sketch;
 
   EditorLineStatus lineStatus;
 
-  protected JEditTextArea textarea;
+  JEditTextArea textarea;
   EditorListener listener;
 
   // runtime information and window placement
   Point sketchWindowLocation;
-  //RunButtonWatcher watcher;
   Runner runtime;
 
   JMenuItem exportAppItem;
   JMenuItem saveMenuItem;
   JMenuItem saveAsMenuItem;
-
-  // True if the sketchbook has changed since this Editor was last active.
-//  boolean sketchbookUpdated;
 
   boolean running;
   boolean presenting;
@@ -128,8 +124,6 @@ public class Editor extends JFrame {
   // used internally, and only briefly
   CompoundEdit compoundEdit;
 
-  //SketchHistory history;  // TODO re-enable history
-  //Sketchbook sketchbook;
   FindReplace find;
 
 
@@ -359,7 +353,7 @@ public class Editor extends JFrame {
   }
 
 
-  // ...................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
   /**
@@ -409,7 +403,7 @@ public class Editor extends JFrame {
   }
 
 
-  // ...................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
   protected void buildMenuBar() {
@@ -949,7 +943,7 @@ public class Editor extends JFrame {
   }
 
 
-  // ...................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
   class UndoAction extends AbstractAction {
@@ -1023,7 +1017,7 @@ public class Editor extends JFrame {
   }
 
 
-  // ...................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
   
   /**
@@ -1032,8 +1026,8 @@ public class Editor extends JFrame {
   public Sketch getSketch() {
     return sketch;
   }
-
-
+  
+  
   /**
    * Get the JEditTextArea object for use (not recommended). This should only 
    * be used in obscure cases that really need to hack the internals of the 
@@ -1188,10 +1182,39 @@ public class Editor extends JFrame {
   
 
   /**
+   * Use before a manipulating text to group editing operations together as a 
+   * single undo. Use stopCompoundEdit() once finished. 
+   */
+  public void startCompoundEdit() {
+    compoundEdit = new CompoundEdit();
+  }
+
+
+  /**
+   * Use with startCompoundEdit() to group edit operations in a single undo.
+   */
+  public void stopCompoundEdit() {
+    compoundEdit.end();
+    undo.addEdit(compoundEdit);
+    undoAction.updateUndoState();
+    redoAction.updateRedoState();
+    compoundEdit = null;
+  }
+
+  
+  public int getScrollPosition() {
+    return textarea.getScrollPosition();
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  
+  
+  /**
    * Switch between tabs, this swaps out the Document object
    * that's currently being manipulated.
    */
-  public void setCode(SketchCode code) {
+  protected void setCode(SketchCode code) {
     if (code.document == null) {  // this document not yet inited
       code.document = new SyntaxDocument();
 
@@ -1236,28 +1259,7 @@ public class Editor extends JFrame {
   }
 
 
-  /**
-   * Use before a manipulating text to group editing operations together as a 
-   * single undo. Use stopCompoundEdit() once finished. 
-   */
-  public void startCompoundEdit() {
-    compoundEdit = new CompoundEdit();
-  }
-
-
-  /**
-   * Use with startCompoundEdit() to group edit operations in a single undo.
-   */
-  public void stopCompoundEdit() {
-    compoundEdit.end();
-    undo.addEdit(compoundEdit);
-    undoAction.updateUndoState();
-    redoAction.updateRedoState();
-    compoundEdit = null;
-  }
-
-  
-  // ...................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
   /**
@@ -1416,7 +1418,7 @@ public class Editor extends JFrame {
   }  
 
 
-  // ...................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
   /**
@@ -1969,7 +1971,7 @@ public class Editor extends JFrame {
   }
 
 
-  // ...................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
   /**
@@ -2041,7 +2043,7 @@ public class Editor extends JFrame {
   }
 
 
-  // ...................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
   /**

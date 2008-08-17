@@ -274,7 +274,7 @@ public class FindReplace extends JFrame implements ActionListener {
     // this will catch "find next" being called when no search yet
     if (search.length() == 0) return;
 
-    String text = editor.textarea.getText();
+    String text = editor.getText();
 
     if (ignoreCase) {
     search = search.toLowerCase();
@@ -282,7 +282,7 @@ public class FindReplace extends JFrame implements ActionListener {
     }
 
     //int selectionStart = editor.textarea.getSelectionStart();
-    int selectionEnd = editor.textarea.getSelectionStop();
+    int selectionEnd = editor.getSelectionStop();
 
     int nextIndex = text.indexOf(search, selectionEnd);
     if (nextIndex == -1) {
@@ -302,7 +302,7 @@ public class FindReplace extends JFrame implements ActionListener {
     found = true;
     replaceButton.setEnabled(true);
     replaceFindButton.setEnabled(true);
-    editor.textarea.select(nextIndex, nextIndex + search.length());
+    editor.setSelection(nextIndex, nextIndex + search.length());
   }
 
 
@@ -315,7 +315,7 @@ public class FindReplace extends JFrame implements ActionListener {
 
     // check to see if the document has wrapped around
     // otherwise this will cause an infinite loop
-    String sel = editor.textarea.getSelectedText();
+    String sel = editor.getSelectedText();
     if (sel.equals(replaceField.getText())) {
       found = false;
       replaceButton.setEnabled(false);
@@ -323,10 +323,10 @@ public class FindReplace extends JFrame implements ActionListener {
       return;
     }
 
-    editor.textarea.setSelectedText(replaceField.getText());
+    editor.setSelectedText(replaceField.getText());
     //editor.setSketchModified(true);
     //editor.sketch.setCurrentModified(true);
-    editor.sketch.setModified(true);
+    editor.getSketch().setModified(true);  // TODO is this necessary?
 
     // don't allow a double replace
     replaceButton.setEnabled(false);
@@ -340,7 +340,7 @@ public class FindReplace extends JFrame implements ActionListener {
    */
   public void replaceAll() {
     // move to the beginning
-    editor.textarea.select(0, 0);
+    editor.setSelection(0, 0);
 
     do {
       find(false);

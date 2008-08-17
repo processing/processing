@@ -279,7 +279,7 @@ public class Base {
     Preferences.setInteger("last.sketch.count", editorCount);
     //System.out.println("saving sketch count " + editorCount);
     for (int i = 0; i < editorCount; i++) {
-      String path = editors[i].sketch.getMainFilePath();
+      String path = editors[i].getSketch().getMainFilePath();
       if (path.startsWith(untitledPath)) {
         path = "";  // this will prevent it from opening
       }
@@ -295,7 +295,7 @@ public class Base {
   // If a sketch is untitled on quit, may need to store the new name
   // rather than the location from the temp folder.
   protected void storeSketchPath(Editor editor, int index) {
-    String path = editor.sketch.getMainFilePath();
+    String path = editor.getSketch().getMainFilePath();
     String untitledPath = untitledFolder.getAbsolutePath();
     if (path.startsWith(untitledPath)) {
       path = "";
@@ -527,7 +527,7 @@ public class Base {
     Editor editor = new Editor(this, path, location);
 
     // Make sure that the sketch actually loaded
-    if (editor.sketch == null) {
+    if (editor.getSketch() == null) {
       return null;  // Just walk away quietly
     }
 
@@ -856,7 +856,7 @@ public class Base {
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           // TODO ohmigod that's nassssteee!
-          activeEditor.sketch.importLibrary(e.getActionCommand());
+          activeEditor.getSketch().importLibrary(e.getActionCommand());
         }
       };
 
