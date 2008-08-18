@@ -34,6 +34,8 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
+import java.net.*;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -607,8 +609,112 @@ public class Editor extends JFrame {
 
 
   protected JMenu buildToolsMenu() {
-    JMenuItem item;
     JMenu menu = new JMenu("Tools");
+
+    addInternalTools(menu);
+    addTools(menu, Base.getToolsFolder());
+    addTools(menu, base.getSketchbookFolder());
+    System.out.println("done.");
+    
+    return menu;
+  }
+  
+  
+  protected void addTools(JMenu menu, File sourceFolder) {
+    HashMap toolItems = new HashMap();
+
+    File[] folders = sourceFolder.listFiles(new FileFilter() {
+      public boolean accept(File folder) {
+        if (folder.isDirectory()) {
+//          System.out.println("checking " + folder);
+          File subfolder = new File(folder, "tool");
+          return subfolder.exists();
+        }
+        return false;
+      }
+    });
+
+    if (folders == null || folders.length == 0) {
+      return;
+    }
+
+    for (int i = 0; i < folders.length; i++) {
+      File toolDirectory = new File(folders[i], "tool");
+
+      try {
+        // add dir to classpath for .classes
+        //urlList.add(toolDirectory.toURL());
+
+        // add .jar files to classpath
+        File[] archives = toolDirectory.listFiles(new FilenameFilter() {
+          public boolean accept(File dir, String name) {
+            return (name.toLowerCase().endsWith(".jar") ||
+                    name.toLowerCase().endsWith(".zip"));
+          }
+        });
+
+        URL[] urlList = new URL[archives.length];
+        for (int j = 0; j < urlList.length; j++) {
+          urlList[j] = archives[j].toURL();
+        }
+        URLClassLoader loader = new URLClassLoader(urlList);
+
+        // Alternatively, could use manifest files with special attributes:
+        // http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html
+        // Example code for loading from a manifest file:
+        // http://forums.sun.com/thread.jspa?messageID=3791501
+        File infoFile = new File(toolDirectory, "tool.txt");
+        if (!infoFile.exists()) continue; 
+        
+        String[] info = PApplet.loadStrings(infoFile); 
+        //Main-Class: org.poo.shoe.AwesomerTool
+        //String className = folders[i].getName();
+        String className = null;
+        for (int k = 0; k < info.length; k++) {
+          if (info[k].startsWith(";")) continue;
+
+          String[] pieces = PApplet.splitTokens(info[k], ": ");
+          if (pieces.length == 2) {
+            if (pieces[0].equals("Main-Class")) {
+              className = pieces[1];
+            }
+          }
+        }
+        // If no class name found, just move on.
+        if (className == null) continue;
+
+        Class toolClass = Class.forName(className, true, loader);
+        final Tool tool = (Tool) toolClass.newInstance();
+
+        tool.init(Editor.this);
+
+        String title = tool.getMenuTitle();
+        JMenuItem item = new JMenuItem(title);
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            SwingUtilities.invokeLater(tool);
+          }
+        });
+        //menu.add(item);
+        toolItems.put(title, item);
+        
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    ArrayList<String> toolList = new ArrayList(toolItems.keySet());
+    if (toolList.size() == 0) return;
+    
+    menu.addSeparator();
+    Collections.sort(toolList);
+    for (String title : toolList) {
+      menu.add((JMenuItem) toolItems.get(title));
+    }
+  }
+
+  
+  protected JMenu addInternalTools(JMenu menu) {
+    JMenuItem item;
 
     item = newJMenuItem("Auto Format", 'T');
     item.addActionListener(new ActionListener() {
@@ -1634,97 +1740,109 @@ public class Editor extends JFrame {
    * modifications (if any) to the previous sketch need to be saved.
    */
   protected boolean handleOpenInternal(String path) {
-    try {
-      // check to make sure that this .pde file is
-      // in a folder of the same name
-      File file = new File(path);
-      File parentFile = new File(file.getParent());
-      String parentName = parentFile.getName();
-      String pdeName = parentName + ".pde";
-      File altFile = new File(file.getParent(), pdeName);
+    // check to make sure that this .pde file is
+    // in a folder of the same name
+    File file = new File(path);
+    File parentFile = new File(file.getParent());
+    String parentName = parentFile.getName();
+    String pdeName = parentName + ".pde";
+    File altFile = new File(file.getParent(), pdeName);
 
-      if (pdeName.equals(file.getName())) {
-        // no beef with this guy
+    if (pdeName.equals(file.getName())) {
+      // no beef with this guy
 
-      } else if (altFile.exists()) {
-        // user selected a .java from the same sketch,
-        // but open the .pde instead
-        path = altFile.getAbsolutePath();
-        //System.out.println("found alt file in same folder");
+    } else if (altFile.exists()) {
+      // user selected a .java from the same sketch,
+      // but open the .pde instead
+      path = altFile.getAbsolutePath();
+      //System.out.println("found alt file in same folder");
 
-      } else if (!path.endsWith(".pde")) {
-        Base.showWarning("Bad file selected",
-                         "Processing can only open its own sketches\n" +
-                         "and other files ending in .pde", null);
-        return false;
+    } else if (!path.endsWith(".pde")) {
+      Base.showWarning("Bad file selected",
+                       "Processing can only open its own sketches\n" +
+                       "and other files ending in .pde", null);
+      return false;
 
-      } else {
-        String properParent =
-          file.getName().substring(0, file.getName().length() - 4);
+    } else {
+      String properParent =
+        file.getName().substring(0, file.getName().length() - 4);
 
-        Object[] options = { "OK", "Cancel" };
-        String prompt =
-          "The file \"" + file.getName() + "\" needs to be inside\n" +
-          "a sketch folder named \"" + properParent + "\".\n" +
-          "Create this folder, move the file, and continue?";
+      Object[] options = { "OK", "Cancel" };
+      String prompt =
+        "The file \"" + file.getName() + "\" needs to be inside\n" +
+        "a sketch folder named \"" + properParent + "\".\n" +
+        "Create this folder, move the file, and continue?";
 
-        int result = JOptionPane.showOptionDialog(this,
-                                                  prompt,
-                                                  "Moving",
-                                                  JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE,
-                                                  null,
-                                                  options,
-                                                  options[0]);
+      int result = JOptionPane.showOptionDialog(this,
+                                                prompt,
+                                                "Moving",
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null,
+                                                options,
+                                                options[0]);
 
-        if (result == JOptionPane.YES_OPTION) {
-          // create properly named folder
-          File properFolder = new File(file.getParent(), properParent);
-          if (properFolder.exists()) {
-            Base.showWarning("Error",
-                             "A folder named \"" + properParent + "\" " +
-                             "already exists. Can't open sketch.", null);
-            return false;
-          }
-          if (!properFolder.mkdirs()) {
-            throw new IOException("Couldn't create sketch folder");
-          }
-          // copy the sketch inside
-          File properPdeFile = new File(properFolder, file.getName());
-          File origPdeFile = new File(path);
-          Base.copyFile(origPdeFile, properPdeFile);
-
-          // remove the original file, so user doesn't get confused
-          origPdeFile.delete();
-
-          // update with the new path
-          path = properPdeFile.getAbsolutePath();
-
-        } else if (result == JOptionPane.NO_OPTION) {
+      if (result == JOptionPane.YES_OPTION) {
+        // create properly named folder
+        File properFolder = new File(file.getParent(), properParent);
+        if (properFolder.exists()) {
+          Base.showWarning("Error",
+                           "A folder named \"" + properParent + "\" " +
+                           "already exists. Can't open sketch.", null);
           return false;
         }
+        if (!properFolder.mkdirs()) {
+          //throw new IOException("Couldn't create sketch folder");
+          Base.showWarning("Error",
+                           "Could not create the sketch folder.", null);
+          return false;
+        }
+        // copy the sketch inside
+        File properPdeFile = new File(properFolder, file.getName());
+        File origPdeFile = new File(path);
+        try {
+          Base.copyFile(origPdeFile, properPdeFile);
+        } catch (IOException e) {
+          Base.showWarning("Error", "Could not copy to a proper location.", e);
+          return false;
+        }
+
+        // remove the original file, so user doesn't get confused
+        origPdeFile.delete();
+
+        // update with the new path
+        path = properPdeFile.getAbsolutePath();
+
+      } else if (result == JOptionPane.NO_OPTION) {
+        return false;
       }
+    }
 
+    try {
       sketch = new Sketch(this, path);
-      header.rebuild();      
-      // Set the title of the window to "sketch_070752a - Processing 0126"
-      setTitle(sketch.getName() + " | " + WINDOW_TITLE);
-      // Disable untitled setting from previous document, if any
-      untitled = false;
-
-      // Store information on who's open and running
-      // (in case there's a crash or something that can't be recovered)
-      base.storeSketches();
-      Preferences.save();
-
-      // opening was successful
-      return true;
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      statusError(e);
+    } catch (IOException e) {
+      Base.showWarning("Error", "Could not create the sketch.", e);
       return false;
     }
+    header.rebuild();      
+    // Set the title of the window to "sketch_070752a - Processing 0126"
+    setTitle(sketch.getName() + " | " + WINDOW_TITLE);
+    // Disable untitled setting from previous document, if any
+    untitled = false;
+
+    // Store information on who's open and running
+    // (in case there's a crash or something that can't be recovered)
+    base.storeSketches();
+    Preferences.save();
+
+    // opening was successful
+    return true;
+
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      statusError(e);
+//      return false;
+//    }
   }
 
 

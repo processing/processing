@@ -55,11 +55,9 @@ public class Base {
   boolean builtOnce;
 
   // these are static because they're used by Sketch
-  static File examplesFolder;
-  static String examplesPath;  // canonical path (for comparison)
-
-  static File librariesFolder;
-  static String librariesPath;
+  static private File examplesFolder;
+  static private File librariesFolder;
+  static private File toolsFolder;
 
   // maps imported packages to their library folder
   static Hashtable importToLibraryTable = new Hashtable();
@@ -152,10 +150,10 @@ public class Base {
     platform.init(this);
 
     // Get paths for the libraries and examples in the Processing folder
-    examplesFolder = new File(System.getProperty("user.dir"), "examples");
-    examplesPath = examplesFolder.getAbsolutePath();
-    librariesFolder = new File(System.getProperty("user.dir"), "libraries");
-    librariesPath = librariesFolder.getAbsolutePath();
+    String workingDirectory = System.getProperty("user.dir");
+    examplesFolder = new File(workingDirectory, "examples");
+    librariesFolder = new File(workingDirectory, "libraries");
+    toolsFolder = new File(workingDirectory, "tools");
 
     // Get the sketchbook path, and make sure it's set properly
     String sketchbookPath = Preferences.get("sketchbook.path");
@@ -663,7 +661,7 @@ public class Base {
    * Asynchronous version of menu rebuild to be used on save and rename
    * to prevent the interface from locking up until the menus are done.
    */
-  public void rebuildSketchbookMenu() {
+  protected void rebuildSketchbookMenus() {
     //System.out.println("async enter");
     //new Exception().printStackTrace();
     SwingUtilities.invokeLater(new Runnable() {
@@ -678,7 +676,7 @@ public class Base {
   }
 
 
-  public void rebuildToolbarMenu(JMenu menu) {
+  protected void rebuildToolbarMenu(JMenu menu) {
     JMenuItem item;
     menu.removeAll();
 
@@ -711,7 +709,7 @@ public class Base {
   }
 
 
-  public void rebuildSketchbookMenu(JMenu menu) {
+  protected void rebuildSketchbookMenu(JMenu menu) {
     //System.out.println("rebuilding sketchbook menu");
     //new Exception().printStackTrace();
     try {
@@ -1074,12 +1072,32 @@ public class Base {
   }
 
 
+  static public String getExamplesPath() {
+    return examplesFolder.getAbsolutePath();
+  }
+  
+ 
+  static public String getLibrariesPath() {
+    return librariesFolder.getAbsolutePath();
+  }
+  
+
+  static public File getToolsFolder() {
+    return toolsFolder;
+  }
+  
+  
+  static public String getToolsPath() {
+    return toolsFolder.getAbsolutePath();
+  }
+  
+
   public File getSketchbookFolder() {
     return new File(Preferences.get("sketchbook.path"));
   }
-
-
-  public File getDefaultSketchbookFolder() {
+  
+  
+  protected File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
     try {
       sketchbookFolder = platform.getDefaultSketchbookFolder();

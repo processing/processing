@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2006 Ben Fry and Casey Reas
+  Copyright (c) 2006-08 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,12 +40,6 @@ import javax.swing.text.*;
  * colors and paste them into your program. We didn't do any sort of
  * auto-insert of colorMode() or fill() or stroke() code cuz we couldn't
  * decide on a good way to do this.. your contributions welcome).
- * <p/>
- * There is currently a bug that causes the drawing area to show up
- * slightly large on Windows and Linux. This is an annoyance but less
- * important than me fixing some other stuff. If someone were to track
- * down what's going wrong, I'd be super grateful.
- * (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=310">Bug 310</A>)
  */
 public class ColorSelector implements DocumentListener {
 
@@ -137,8 +131,8 @@ public class ColorSelector implements DocumentListener {
 
   public void show() {
     frame.setVisible(true);
-    // You've got to be f--ing kidding me.. why did the following line get
-    // deprecated in the pile of s-- that follows it?
+    // You've got to be f--ing kidding me.. why did the following line 
+    // get deprecated for the pile of s-- that follows it?
     //frame.setCursor(Cursor.CROSSHAIR_CURSOR);
     frame.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
   }

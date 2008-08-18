@@ -177,8 +177,8 @@ public class Sketch {
     code = new SketchCode[list.length]; //codeCount];
     hidden = new SketchCode[list.length]; //hiddenCount];
 
-    int codeCounter = 0;
-    int hiddenCounter = 0;
+//    int codeCounter = 0;
+//    int hiddenCounter = 0;
 
     String[] extensions = getExtensions();
     
@@ -211,10 +211,10 @@ public class Sketch {
           // it would be otherwise possible to sneak in nasty filenames. [0116]
           if (Sketch.isSanitaryName(base)) {
             if (hiddenX) {
-              hidden[hiddenCounter++] = 
+              hidden[hiddenCount++] = 
                 new SketchCode(new File(folder, filename), extension);
             } else {
-              code[codeCounter++] =
+              code[codeCount++] =
                 new SketchCode(new File(folder, filename), extension);
             } 
           }
@@ -222,13 +222,14 @@ public class Sketch {
       }
     }
 
-    codeCount = codeCounter;
+//    codeCount = codeCounter;
     // some of the hidden files may be bad too, so use hiddenCounter
     // added for rev 0121, fixes bug found by axel
-    hiddenCount = hiddenCounter;
-    
-    code = (SketchCode[]) PApplet.subset(0, codeCount);
-    hidden = (SketchCode[]) PApplet.subset(0, hiddenCount);
+//    hiddenCount = hiddenCounter;
+
+//    System.out.println(codeCount + " " + hiddenCount);
+    code = (SketchCode[]) PApplet.subset(code, 0, codeCount);
+    hidden = (SketchCode[]) PApplet.subset(hidden, 0, hiddenCount);
 
     // remove any entries that didn't load properly from codeCount
 //    int index = 0;
@@ -532,7 +533,7 @@ public class Sketch {
 
         // get the changes into the sketchbook menu
         // (re-enabled in 0115 to fix bug #332)
-        editor.base.rebuildSketchbookMenu();
+        editor.base.rebuildSketchbookMenus();
 
       } else {  // else if something besides code[0]
         if (!current.renameTo(newFile, newExtension)) {
@@ -1005,7 +1006,7 @@ public class Sketch {
 
     // Name changed, rebuild the sketch menus
     //editor.sketchbook.rebuildMenusAsync();
-    editor.base.rebuildSketchbookMenu();
+    editor.base.rebuildSketchbookMenus();
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);
@@ -2762,8 +2763,8 @@ public class Sketch {
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
-    if (apath.startsWith(Base.examplesPath) ||
-        apath.startsWith(Base.librariesPath)) {
+    if (apath.startsWith(Base.getExamplesPath()) ||
+        apath.startsWith(Base.getLibrariesPath())) {
       return true;
 
       // canWrite() doesn't work on directories
