@@ -12,4 +12,6 @@ do
 done
 export CLASSPATH
 
-${APPDIR}/java/bin/java processing.app.Base
+export PATH="${APPDIR}/java/bin:${PATH}"
+
+java processing.app.Base
