@@ -2,7 +2,6 @@
 X processing sketches not restarting after switching pages in safari
 X   http://dev.processing.org/bugs/show_bug.cgi?id=581
 
-
 cleaning
 X misshapen fonts on osx (apple fixed their bug)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=404

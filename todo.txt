@@ -2,16 +2,15 @@
 X inside Sketch.java, don't hardwire the file extension types
 X   arduino uses .c, .cpp, .h instead of .java
 X   http://dev.processing.org/bugs/show_bug.cgi?id=807
+X major changes to save/save as/rename setup - keep an eye out
 
 tools
-_ refactor code to use more getter/setter methods
+X refactor code to use more getter/setter methods
 X   move the debug classes back into processing.app.debug
 X   this will help the library stuff
 X dynamic tools menu (requires moving files around)
 o   this means can integrate the autoformat stuff
-_   processing.mess/tools has chandler's template stuff
-_ don't open more than one "create font" or "color selector"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=830
+X   processing.mess/tools has chandler's template stuff
 o need to write converter that will handle syntax changes
 o   convert from alpha to 1.0 syntax
 o   framerate() -> frameRate()
@@ -33,9 +32,6 @@ X   getEditor()
 X   get/setSelStart/End
 X   get/setSelText
 X   get/setText
-_   setCurrentTab(int index or String filename)
-_   getTabs() ? maybe these are interface to the code class
-_   clean up API for JEditTextArea before exposing the object
 X make dynamically loaded plugins and "tools" menu
 X   http://dev.processing.org/bugs/show_bug.cgi?id=124
 X tools api:
@@ -53,7 +49,17 @@ X   needs to be able to get current sketch code
 X   look at the pretty-formatting code to see what else needs to be in api
 o   getMenu() -> return non-null the tool is a submenu
 X       no, bad idea.. don't want a zillion submenus on things
-_ write basic documentation for how it's handled
+
+
+tools
+_ clean up some of the api naming for tab changes, etc.
+_   setCurrentTab(int index or String filename)
+_   getTabs() ? maybe these are interface to the code class
+_   clean up API for JEditTextArea before exposing the object
+_ add tools folder to make and dist scripts
+_ write basic documentation for how it's handled (tools/howto.txt)
+_ don't open more than one "create font" or "color selector"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=830
 
 
 _ use macosx dialogs for all of the editor stuff
