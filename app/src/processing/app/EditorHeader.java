@@ -108,9 +108,9 @@ public class EditorHeader extends JComponent {
 
           } else {
             Sketch sketch = editor.getSketch();
-            for (int i = 0; i < sketch.codeCount; i++) {
+            for (int i = 0; i < sketch.getCodeCount(); i++) {
               if ((x > tabLeft[i]) && (x < tabRight[i])) {
-                sketch.setCurrent(i);
+                sketch.setCurrentCode(i);
                 repaint();
               }
             }
@@ -166,30 +166,25 @@ public class EditorHeader extends JComponent {
     g.setColor(backgroundColor);
     g.fillRect(0, 0, imageW, imageH);
 
-    if ((tabLeft == null) ||
-        (tabLeft.length < sketch.codeCount)) {
-      tabLeft = new int[sketch.codeCount];
-      tabRight = new int[sketch.codeCount];
+    int codeCount = sketch.getCodeCount();
+    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
+      tabLeft = new int[codeCount];
+      tabRight = new int[codeCount];
     }
 
     // disable hide on the first tab
-    hideItem.setEnabled(sketch.current != sketch.code[0]);
+    hideItem.setEnabled(sketch.getCurrentCode() != sketch.getCode(0));
 
-    //int x = 0; //Preferences.GUI_SMALL;
-    //int x = (Base.platform == Base.MACOSX) ? 0 : 1;
     int x = 6; // offset from left edge of the component
-    for (int i = 0; i < sketch.codeCount; i++) {
-      SketchCode code = sketch.code[i];
+    for (int i = 0; i < sketch.getCodeCount(); i++) {
+      SketchCode code = sketch.getCode(i);
 
-//      String codeName = (code.flavor == Sketch.PDE) ?
-//        code.name : code.file.getName();
       String codeName = sketch.hideExtension(code.getExtension()) ? 
         code.getPrettyName() : code.getFileName();
 
       // if modified, add the li'l glyph next to the name
       String text = "  " + codeName + (code.modified ? " \u00A7" : "  ");
 
-      //int textWidth = metrics.stringWidth(text);
       Graphics2D g2 = (Graphics2D) g;
       int textWidth = (int)
         font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
@@ -197,7 +192,7 @@ public class EditorHeader extends JComponent {
       int pieceCount = 2 + (textWidth / PIECE_WIDTH);
       int pieceWidth = pieceCount * PIECE_WIDTH;
 
-      int state = (code == sketch.current) ? SELECTED : UNSELECTED;
+      int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
       g.drawImage(pieces[state][LEFT], x, 0, null);
       x += PIECE_WIDTH;
 
@@ -400,11 +395,11 @@ public class EditorHeader extends JComponent {
 
       ActionListener jumpListener = new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            editor.getSketch().setCurrent(e.getActionCommand());
+            editor.getSketch().setCurrentCode(e.getActionCommand());
           }
         };
-      for (int i = 0; i < sketch.codeCount; i++) {
-        item = new JMenuItem(sketch.code[i].getPrettyName());
+      for (SketchCode code : sketch.getCode()) {
+        item = new JMenuItem(code.getPrettyName());
         item.addActionListener(jumpListener);
         menu.add(item);
       }
