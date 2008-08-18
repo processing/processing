@@ -36,8 +36,7 @@ import java.awt.print.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -1778,7 +1777,7 @@ public class Editor extends JFrame {
     // untitled document, then editor.untitled will be set by Base.
     untitled = false;
 
-    sketch.setCurrent(codeIndex);
+    sketch.setCurrentCode(codeIndex);
     textarea.select(selStart, selStop);
     textarea.setScrollPosition(scrollPos);
   }
@@ -2120,7 +2119,7 @@ public class Editor extends JFrame {
       printerJob.setPrintable(textarea.getPainter());
     }
     // set the name of the job to the code name
-    printerJob.setJobName(sketch.current.getPrettyName());
+    printerJob.setJobName(sketch.getCurrentCode().getPrettyName());
 
     if (printerJob.printDialog()) {
       try {
@@ -2164,7 +2163,7 @@ public class Editor extends JFrame {
     if (e instanceof RunnerException) {
       RunnerException re = (RunnerException) e;
       if (re.hasCodeIndex()) {
-        sketch.setCurrent(re.getCodeIndex());
+        sketch.setCurrentCode(re.getCodeIndex());
       }
       if (re.hasCodeLine()) {
         int line = re.getCodeLine();
