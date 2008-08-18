@@ -54,6 +54,8 @@ public class Base {
   // so that the errors while building don't show up again.
   boolean builtOnce;
 
+  static File buildFolder;
+
   // these are static because they're used by Sketch
   static private File examplesFolder;
   static private File librariesFolder;
@@ -210,7 +212,7 @@ public class Base {
    * The complement to "storePreferences", this is called when the
    * application is first launched.
    */
-  public boolean restoreSketches() {
+  protected boolean restoreSketches() {
     // figure out window placement
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -265,7 +267,7 @@ public class Base {
    * Store list of sketches that are currently open.
    * Called when the application is quitting and documents are still open.
    */
-  public void storeSketches() {
+  protected void storeSketches() {
     // Save the width and height of the screen
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     Preferences.setInteger("last.screen.width", screen.width);
@@ -328,7 +330,7 @@ public class Base {
   // changes to the focused and active Windows can be made. Developers must
   // never assume that this Window is the focused or active Window until this
   // Window receives a WINDOW_GAINED_FOCUS or WINDOW_ACTIVATED event.
-  public void handleActivated(Editor whichEditor) {
+  protected void handleActivated(Editor whichEditor) {
     activeEditor = whichEditor;
 
     // set the current window to be the console that's getting output
@@ -401,6 +403,9 @@ public class Base {
   }
 
 
+  /**
+   * Create a new untitled document in a new sketch window.
+   */
   public void handleNew() {
     try {
       String path = createNewUntitled();
@@ -415,6 +420,9 @@ public class Base {
   }
 
 
+  /**
+   * Replace the sketch in the current window with a new untitled document. 
+   */
   public void handleNewReplace() {
     if (!activeEditor.checkModified(false)) {
       return;  // sketch was modified, and user canceled
@@ -440,6 +448,10 @@ public class Base {
   }
 
 
+  /**
+   * Open a sketch, replacing the sketch in the current window.
+   * @param path Location of the primary pde file for the sketch.
+   */
   public void handleOpenReplace(String path) {
     if (!activeEditor.checkModified(false)) {
       return;  // sketch was modified, and user canceled
@@ -455,6 +467,9 @@ public class Base {
   }
 
 
+  /**
+   * Prompt for a sketch to open, and open it in a new window.
+   */
   public void handleOpenPrompt() {
     // get the frontmost window frame for placing file dialog
     FileDialog fd = new FileDialog(activeEditor,
@@ -487,7 +502,8 @@ public class Base {
 
 
   /**
-   * @param path Path to the .pde file for the sketch in question
+   * Open a sketch in a new window.
+   * @param path Path to the pde file for the sketch in question
    * @return the Editor object, so that properties (like 'untitled')
    *         can be set by the caller
    */
@@ -496,7 +512,7 @@ public class Base {
   }
 
 
-  public Editor handleOpen(String path, int[] location) {
+  protected Editor handleOpen(String path, int[] location) {
     File file = new File(path);
     if (!file.exists()) return null;
 
@@ -552,6 +568,12 @@ public class Base {
   }
 
 
+  /**
+   * Close a sketch as specified by its editor window. 
+   * @param editor Editor object of the sketch to be closed.
+   * @param quitting True if this is being called by File &rarr; Quit.
+   * @return true if succeeded in closing, false if canceled.
+   */
   public boolean handleClose(Editor editor, boolean quitting) {
     // Check if modified
     if (!editor.checkModified(quitting)) {  //false)) {  // was false in 0126
@@ -616,6 +638,10 @@ public class Base {
   }
 
 
+  /**
+   * Handler for File &rarr; Quit.
+   * @return false if canceled, true otherwise. 
+   */
   public boolean handleQuit() {
     // If quit is canceled, this will be replaced anyway
     // by a later handleQuit() that is not canceled.
@@ -925,7 +951,7 @@ public class Base {
    * Show the About box.
    */
   public void handleAbout() {
-    final Image image = Base.getImage("about.jpg", activeEditor);
+    final Image image = Base.getLibImage("about.jpg", activeEditor);
     final Window window = new Window(activeEditor) {
         public void paint(Graphics g) {
           g.drawImage(image, 0, 0, null);
@@ -953,7 +979,7 @@ public class Base {
 
 
   /**
-   * Show the preferences window.
+   * Show the Preferences window.
    */
   public void handlePrefs() {
     if (preferencesFrame == null) preferencesFrame = new Preferences();
@@ -965,8 +991,7 @@ public class Base {
 
 
   /**
-   * returns true if Processing is running on a Mac OS machine,
-   * specifically a Mac OS X machine because it doesn't un on OS 9 anymore.
+   * returns true if Processing is running on a Mac OS X machine.
    */
   static public boolean isMacOS() {
     return PApplet.platform == PConstants.MACOSX;
@@ -1021,16 +1046,16 @@ public class Base {
 
 
   /**
+   * Convenience method to get a File object for the specified filename inside 
+   * the settings folder. 
    * For now, only used by Preferences to get the preferences.txt file.
-   * @param filename
-   * @return
+   * @param filename A file inside the settings folder.
+   * @return filename wrapped as a File object inside the settings folder
    */
   static public File getSettingsFile(String filename) {
     return new File(getSettingsFolder(), filename);
   }
 
-
-  static File buildFolder;
 
   static public File getBuildFolder() {
     if (buildFolder == null) {
@@ -1169,7 +1194,7 @@ public class Base {
    * Used to determine whether to disable the "Show Sketch Folder" option.
    * @return true If a means of opening a folder is known to be available.
    */
-  static boolean openFolderAvailable() {
+  static protected boolean openFolderAvailable() {
     return platform.openFolderAvailable();
   }
 
@@ -1193,6 +1218,7 @@ public class Base {
 
 
   /**
+   * Prompt for a fodler and return it as a File object (or null).
    * Implementation for choosing directories that handles both the
    * Mac OS X hack to allow the native AWT file dialog, or uses
    * the JFileChooser on other platforms. Mac AWT trick obtained from
@@ -1236,11 +1262,14 @@ public class Base {
   // .................................................................
 
 
+  /**
+   * Give this Frame a Processing icon.
+   */
   static public void setIcon(Frame frame) {
     // set the window icon
     if (icon == null) {
       try {
-        icon = Base.getImage("icon.gif", frame);
+        icon = Base.getLibImage("icon.gif", frame);
       } catch (Exception e) { } // fail silently, no big whup
     }
     if (icon != null) {
@@ -1299,7 +1328,7 @@ public class Base {
 
 
   static public void showReference(String referenceFile) {
-    openURL(Base.getContents("reference" + File.separator + referenceFile));
+    openURL(Base.getContentsPath("reference" + File.separator + referenceFile));
   }
 
 
@@ -1370,11 +1399,12 @@ public class Base {
   // ...................................................................
 
 
-  // "contents" refers to the Mac OS X style way of handling Processing
-  // applications.
-
-
-  static public String getContents(String what) {
+  /**
+   * Retrieve a path to something in the Processing folder. Eventually this
+   * may refer to the Contents subfolder of Processing.app, if we bundle things
+   * up as a single .app file with no additional folders. 
+   */
+  static public String getContentsPath(String filename) {
     String basePath = System.getProperty("user.dir");
     /*
       // do this later, when moving to .app package
@@ -1382,12 +1412,15 @@ public class Base {
       basePath = System.getProperty("processing.contents");
     }
     */
-    return basePath + File.separator + what;
+    return basePath + File.separator + filename;
   }
 
 
-  static public String getLibContents(String what) {
-    String libPath = getContents("lib/" + what);
+  /**
+   * Get a path for something in the Processing lib folder.
+   */
+  static public String getLibContentsPath(String filename) {
+    String libPath = getContentsPath("lib/" + filename);
     File libDir = new File(libPath);
     if (libDir.exists()) {
       return libPath;
@@ -1402,11 +1435,14 @@ public class Base {
   }
 
 
-  static public Image getImage(String name, Component who) {
+  /** 
+   * Return an Image object from inside the Processing lib folder.
+   */
+  static public Image getLibImage(String name, Component who) {
     Image image = null;
     Toolkit tk = Toolkit.getDefaultToolkit();
 
-    image = tk.getImage(getLibContents(name));
+    image = tk.getImage(getLibContentsPath(name));
     MediaTracker tracker = new MediaTracker(who);
     tracker.addImage(image, 0);
     try {
@@ -1416,8 +1452,11 @@ public class Base {
   }
 
 
+  /**
+   * Return an InputStream for a file inside the Processing lib folder.
+   */
   static public InputStream getStream(String filename) throws IOException {
-    return new FileInputStream(getLibContents(filename));
+    return new FileInputStream(getLibContentsPath(filename));
   }
 
 
@@ -1443,9 +1482,12 @@ public class Base {
   }
 
 
-  static public void copyFile(File afile, File bfile) throws IOException {
-    InputStream from = new BufferedInputStream(new FileInputStream(afile));
-    OutputStream to = new BufferedOutputStream(new FileOutputStream(bfile));
+  static public void copyFile(File sourceFile, 
+                              File targetFile) throws IOException {
+    InputStream from = 
+      new BufferedInputStream(new FileInputStream(sourceFile));
+    OutputStream to = 
+      new BufferedOutputStream(new FileOutputStream(targetFile));
     byte[] buffer = new byte[16 * 1024];
     int bytesRead;
     while ((bytesRead = from.read(buffer)) != -1) {
@@ -1457,10 +1499,7 @@ public class Base {
     to.close(); // ??
     to = null;
 
-    bfile.setLastModified(afile.lastModified());  // jdk13+ required
-  //} catch (IOException e) {
-  //  e.printStackTrace();
-  //}
+    targetFile.setLastModified(sourceFile.lastModified());
   }
 
 
@@ -1468,6 +1507,9 @@ public class Base {
    * Grab the contents of a file as a string.
    */
   static public String loadFile(File file) throws IOException {
+    return PApplet.join(PApplet.loadStrings(file), "\n");
+    
+    /*
     // empty code file.. no worries, might be getting filled up later
     if (file.length() == 0) return "";
 
@@ -1490,6 +1532,7 @@ public class Base {
     }
     reader.close();
     return buffer.toString();
+    */
   }
 
 
@@ -1497,6 +1540,8 @@ public class Base {
    * Spew the contents of a String object out to a file.
    */
   static public void saveFile(String str, File file) throws IOException {
+    PApplet.saveStrings(file, new String[] { str });
+    /*
     ByteArrayInputStream bis = new ByteArrayInputStream(str.getBytes());
     InputStreamReader isr = new InputStreamReader(bis);
     BufferedReader reader = new BufferedReader(isr);
@@ -1511,6 +1556,7 @@ public class Base {
     }
     writer.flush();
     writer.close();
+    */
   }
 
 
@@ -1601,8 +1647,8 @@ public class Base {
 
 
   /**
-   * Gets a list of all files within the specified folder,
-   * and returns a list of their relative paths.
+   * Recursively creates a list of all files within the specified folder,
+   * and returns a list of their relative paths. 
    * Ignores any files/folders prefixed with a dot.
    */
   static public String[] listFiles(String path, boolean relative) {
