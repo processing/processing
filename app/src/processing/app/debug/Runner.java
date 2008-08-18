@@ -622,8 +622,8 @@ public class Runner implements MessageConsumer {
               SketchCode code = sketch.getCode(i);
               //System.out.println(code.preprocName + " " + lineNumber + " " +
               //                 code.preprocOffset);
-              if (((code.preprocName == null) && (lineNumber >= code.preprocOffset)) ||
-                  ((code.preprocName != null) && code.preprocName.equals(filename))) {
+              if (((code.getPreprocName() == null) && (lineNumber >= code.getPreprocOffset())) ||
+                  ((code.getPreprocName() != null) && code.getPreprocName().equals(filename))) {
                 codeIndex = i;
                 break;
               }
@@ -635,7 +635,7 @@ public class Runner implements MessageConsumer {
         if (codeIndex != -1) {
           //System.out.println("got line num " + lineNumber);
           // in case this was a tab that got embedded into the main .java
-          lineNumber -= sketch.getCode(codeIndex).preprocOffset;
+          lineNumber -= sketch.getCode(codeIndex).getPreprocOffset();
         }
         // lineNumber is 1-indexed, but editor wants zero-indexed
         // getMessage() will be what's shown in the editor

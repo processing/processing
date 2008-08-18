@@ -55,7 +55,7 @@ public class EditorLineStatus extends JComponent {
     high = Preferences.getInteger("linestatus.height");
 
     if (Base.isMacOS()) {
-      resize = Base.getImage("resize.gif", this);
+      resize = Base.getLibImage("resize.gif", this);
     }
     //linestatus.bgcolor = #000000
     //linestatus.font    = SansSerif,plain,10
