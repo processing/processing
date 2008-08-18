@@ -23,10 +23,10 @@
 */
 
 package processing.app;
-import processing.app.syntax.*;
 
 import java.io.*;
 
+import javax.swing.text.Document;
 import javax.swing.undo.*;
 
 
@@ -40,44 +40,38 @@ public class SketchCode {
   /** File object for where this code is located */
   private File file;
 
-  /** Type of code in this tab, Sketch.PDE or Sketch.JAVA */
-//  public int flavor;
-  
-  /** 
-   * Extension for this file (in lowercase). If hidden and the extension is
-   * .java.x or .pde.x, then this will still be set to .java or .pde 
-   */ 
+  /** Extension for this file (no dots, and in lowercase). */ 
   private String extension;
 
   /** Text of the program text for this tab */
-  public String program;
+  private String program;
 
-  /** Document object for this tab */
-  public SyntaxDocument document;
+  /** Document object for this tab. Currently this is a SyntaxDocument. */
+  private Document document;
 
   /**
    * Undo Manager for this tab, each tab keeps track of their own
    * Editor.undo will be set to this object when this code is the tab
    * that's currently the front.
    */
-  public UndoManager undo; // = new UndoManager();
+  private UndoManager undo = new UndoManager();
 
   // saved positions from last time this tab was used
-  public int selectionStart;
-  public int selectionStop;
-  public int scrollPosition;
+  private int selectionStart;
+  private int selectionStop;
+  private int scrollPosition;
 
-  public boolean modified;
+  private boolean modified;
 
-  public String preprocName;  // name of .java file after preproc
-  public int preprocOffset;  // where this code starts relative to the concat'd code
+  /** name of .java file after preproc */
+  private String preprocName; 
+  /** where this code starts relative to the concat'd code */
+  private int preprocOffset;  
 
 
   public SketchCode(File file, String extension) {
-//    this.name = name;
     this.file = file;
     this.extension = extension;
-//    this.flavor = flavor;
 
     makePrettyName();
 
@@ -132,27 +126,6 @@ public class SketchCode {
   }
   
 
-  protected boolean hideFile() {
-    File newFile = new File(file.getAbsolutePath() + ".x");
-    boolean success = file.renameTo(newFile);
-    if (success) {
-      file = newFile;
-    }
-    return success;
-  }
-  
-
-  protected boolean unhideFile() {
-    String path = file.getAbsolutePath();
-    File newFile = new File(path.substring(0, path.length() - 2));
-    boolean success = file.renameTo(newFile);
-    if (success) {
-      file = newFile;
-    }
-    return success;
-  }
-  
-  
   public String getFileName() {
     return file.getName();
   }
@@ -173,6 +146,94 @@ public class SketchCode {
   }
   
   
+  public String getProgram() {
+    return program;
+  }
+  
+  
+  public void setProgram(String replacement) {
+    program = replacement;
+  }
+  
+  
+  public void setModified(boolean modified) {
+    this.modified = modified;
+  }
+
+
+  public boolean isModified() {
+    return modified;
+  }
+
+
+  public void setPreprocName(String preprocName) {
+    this.preprocName = preprocName;
+  }
+
+
+  public String getPreprocName() {
+    return preprocName;
+  }
+
+
+  public void setPreprocOffset(int preprocOffset) {
+    this.preprocOffset = preprocOffset;
+  }
+
+
+  public int getPreprocOffset() {
+    return preprocOffset;
+  }
+
+
+  public Document getDocument() {
+    return document;
+  }
+  
+  
+  public void setDocument(Document d) {
+    document = d;
+  }
+  
+  
+  public UndoManager getUndo() {
+    return undo;
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+  
+  // TODO these could probably be handled better, since it's a general state
+  // issue that's read/write from only one location in Editor (on tab switch.)
+  
+  
+  public int getSelectionStart() {
+    return selectionStart;
+  }
+  
+  
+  public int getSelectionStop() {
+    return selectionStop;
+  }
+  
+  
+  public int getScrollPosition() {
+    return scrollPosition;
+  }
+  
+  
+  protected void setState(String p, int start, int stop, int pos) {
+    program = p;
+    selectionStart = start;
+    selectionStop = stop;
+    scrollPosition = pos;
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  
+  
   /**
    * Load this piece of code from a file.
    */
@@ -188,7 +249,7 @@ public class SketchCode {
       System.err.println();
     }
     
-    modified = false;
+    setModified(false);
   }
 
 
@@ -201,7 +262,7 @@ public class SketchCode {
     //history.record(s, SketchHistory.SAVE);
 
     Base.saveFile(program, file);
-    modified = false;
+    setModified(false);
   }
 
 

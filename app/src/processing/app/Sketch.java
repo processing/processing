@@ -405,8 +405,8 @@ public class Sketch {
         // however this *will* first save the sketch, then rename
 
         // first get the contents of the editor text area
-        if (current.modified) {
-          current.program = editor.getText();
+        if (current.isModified()) {
+          current.setProgram(editor.getText());
           try {
             // save this new SketchCode
             current.save();
@@ -607,7 +607,7 @@ public class Sketch {
   public void setModified(boolean state) {
     //System.out.println("setting modified to " + state);
     //new Exception().printStackTrace();
-    current.modified = state;
+    current.setModified(state);
     calcModified();
   }
 
@@ -615,7 +615,7 @@ public class Sketch {
   protected void calcModified() {
     modified = false;
     for (int i = 0; i < codeCount; i++) {
-      if (code[i].modified) {
+      if (code[i].isModified()) {
         modified = true;
         break;
       }
@@ -643,8 +643,8 @@ public class Sketch {
     ensureExistence();
 
     // first get the contents of the editor text area
-    if (current.modified) {
-      current.program = editor.getText();
+    if (current.isModified()) {
+      current.setProgram(editor.getText());
     }
 
     // don't do anything if not actually modified
@@ -660,7 +660,7 @@ public class Sketch {
     }
 
     for (int i = 0; i < codeCount; i++) {
-      if (code[i].modified) code[i].save();
+      if (code[i].isModified()) code[i].save();
     }
     calcModified();
     return true;
@@ -783,8 +783,8 @@ public class Sketch {
 
     // grab the contents of the current tab before saving
     // first get the contents of the editor text area
-    if (current.modified) {
-      current.program = editor.getText();
+    if (current.isModified()) {
+      current.setProgram(editor.getText());
     }
 
     // save the other tabs to their new location
@@ -977,14 +977,14 @@ public class Sketch {
       editor.header.repaint();
       if (editor.untitled) {  // TODO probably not necessary? problematic?
         // Mark the new code as modified so that the sketch is saved
-        current.modified = true;
+        current.setModified(true);
       }
       
     } else {
       if (editor.untitled) {  // TODO probably not necessary? problematic?
         // If a file has been added, mark the main code as modified so
         // that the sketch is properly saved.
-        code[0].modified = true;
+        code[0].setModified(true);
       }
     }
     return true;
@@ -1040,10 +1040,10 @@ public class Sketch {
 
     // get the text currently being edited
     if (current != null) {
-      current.program = editor.getText();
-      current.selectionStart = editor.getSelectionStart();
-      current.selectionStop = editor.getSelectionStop();
-      current.scrollPosition = editor.getScrollPosition();
+      current.setState(editor.getText(), 
+                       editor.getSelectionStart(), 
+                       editor.getSelectionStop(), 
+                       editor.getScrollPosition());
     }
 
     current = code[which];
@@ -1133,7 +1133,7 @@ public class Sketch {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    current.program = editor.getText();
+    current.setProgram(editor.getText());
 
     // TODO record history here
     //current.history.record(program, SketchHistory.RUN);
@@ -1264,16 +1264,17 @@ public class Sketch {
     // 1. concatenate all .pde files to the 'main' pde
     //    store line number for starting point of each code bit
 
-    StringBuffer bigCode = new StringBuffer(code[0].program);
-    int bigCount = countLines(code[0].program);
+    String program = code[0].getProgram();
+    StringBuffer bigCode = new StringBuffer(program);
+    int bigCount = countLines(program);
 
     for (int i = 1; i < codeCount; i++) {
       if (code[i].isExtension("pde")) {
-        code[i].preprocOffset = ++bigCount;
+        code[i].setPreprocOffset(++bigCount);
         bigCode.append('\n');
-        bigCode.append(code[i].program);
-        bigCount += countLines(code[i].program);
-        code[i].preprocName = null;  // don't compile me
+        bigCode.append(code[i].getProgram());
+        bigCount += countLines(code[i].getProgram());
+        code[i].setPreprocName(null);  // don't compile me
       }
     }
 
@@ -1310,7 +1311,7 @@ public class Sketch {
         //System.out.println();
 
       } else {
-        code[0].preprocName = className + ".java";
+        code[0].setPreprocName(className + ".java");
       }
 
       // store this for the compiler and the runtime
@@ -1329,11 +1330,11 @@ public class Sketch {
       int errorLine = re.getLine() - 1;
       for (int i = 1; i < codeCount; i++) {
         if (code[i].isExtension("pde") &&
-            (code[i].preprocOffset < errorLine)) {
+            (code[i].getPreprocOffset() < errorLine)) {
           errorFile = i;
         }
       }
-      errorLine -= code[errorFile].preprocOffset;
+      errorLine -= code[errorFile].getPreprocOffset();
 
 //      System.out.println("i found this guy snooping around..");
 //      System.out.println("whatcha want me to do with 'im boss?");
@@ -1400,11 +1401,11 @@ public class Sketch {
         int errorFile = 0;
         for (int i = 1; i < codeCount; i++) {
           if (code[i].isExtension("pde") &&
-              (code[i].preprocOffset < errorLine)) {
+              (code[i].getPreprocOffset() < errorLine)) {
             errorFile = i;
           }
         }
-        errorLine -= code[errorFile].preprocOffset;
+        errorLine -= code[errorFile].getPreprocOffset();
 
         throw new RunnerException(tsre.getMessage(),
                                   errorFile, errorLine, errorColumn);
@@ -1482,13 +1483,13 @@ public class Sketch {
         // shtuff so that unicode bunk is properly handled
         String filename = code[i].getFileName(); //code[i].name + ".java";
         try {
-          Base.saveFile(code[i].program, new File(buildPath, filename));
+          Base.saveFile(code[i].getProgram(), new File(buildPath, filename));
         } catch (IOException e) {
           e.printStackTrace();
           throw new RunnerException("Problem moving " + filename +
                                  " to the build folder");
         }
-        code[i].preprocName = filename;
+        code[i].setPreprocName(filename);
       }
     }
 
@@ -1559,7 +1560,7 @@ public class Sketch {
     String sizeRegex =
       "[\\s\\;^]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
 
-    String scrubbed = scrubComments(code[0].program);
+    String scrubbed = scrubComments(code[0].getProgram());
     String[] matches = PApplet.match(scrubbed, sizeRegex);
 
     if (matches != null) {
@@ -1587,7 +1588,7 @@ public class Sketch {
     // span over multiple lines for the match. This could prolly be forced,
     // but since that's the case better just to parse by hand.
     StringBuffer dbuffer = new StringBuffer();
-    String lines[] = PApplet.split(code[0].program, '\n');
+    String lines[] = PApplet.split(code[0].getProgram(), '\n');
     for (int i = 0; i < lines.length; i++) {
       if (lines[i].trim().startsWith("/**")) {  // this is our comment
         // some smartass put the whole thing on the same line
@@ -2577,7 +2578,7 @@ public class Sketch {
     } else {
       // check to see if each modified code file can be written to
       for (int i = 0; i < codeCount; i++) {
-        if (code[i].modified &&
+        if (code[i].isModified() &&
             code[i].fileReadOnly() &&
             code[i].fileExists()) {
           //System.err.println("found a read-only file " + code[i].file);

@@ -29,9 +29,6 @@ import processing.app.SketchCode;
 import processing.core.*;
 
 import java.io.*;
-//import java.text.MessageFormat;
-//import java.text.ParseException;
-//import java.text.ParsePosition;
 import java.util.*;
 import java.util.zip.*;
 
@@ -40,28 +37,7 @@ import org.eclipse.jdt.core.compiler.CompilationProgress;
 
 public class Compiler {
 
-//  private static final String javacBundleName =
-//    "com.sun.tools.javac.resources.javac";
-//  private static ResourceBundle javacResources;
-//
-//  private static final String compilerBundleName =
-//    "com.sun.tools.javac.resources.compiler";
-//  private static ResourceBundle compilerResources;
-
-
-  public Compiler() {
-//    try {
-//        javacResources = ResourceBundle.getBundle(javacBundleName);
-//        compilerResources = ResourceBundle.getBundle(compilerBundleName);
-//
-//    } catch (MissingResourceException e) {
-//      e.printStackTrace();
-//      //throw new Error("Resources for javac could not be found.");
-//      throw new RuntimeException("The JDK is not installed properly. " +
-//                                 "Please use the version of Processing " +
-//                                 "that includes Java.");
-//    }
-  }
+  public Compiler() { }
 
   /**
    * Compile with ECJ.
@@ -93,8 +69,8 @@ public class Compiler {
     String[] preprocNames = new String[sketch.getCodeCount()];
     int preprocCount = 0;
     for (int i = 0; i < sketch.getCodeCount(); i++) {
-      if (sketch.getCode(i).preprocName != null) {
-        preprocNames[preprocCount++] = sketch.getCode(i).preprocName;
+      if (sketch.getCode(i).getPreprocName() != null) {
+        preprocNames[preprocCount++] = sketch.getCode(i).getPreprocName();
       }
     }
     String[] command = new String[baseCommand.length + preprocCount];
@@ -183,7 +159,7 @@ public class Compiler {
         int codeIndex = -1;
         int codeLine = -1;
         for (int i = 0; i < sketch.getCodeCount(); i++) {
-          String name = sketch.getCode(i).preprocName;
+          String name = sketch.getCode(i).getPreprocName();
           if ((name != null) && dotJavaFilename.equals(name)) {
             codeIndex = i;
           }
@@ -197,7 +173,7 @@ public class Compiler {
 
             //if (code.flavor == Sketch.PDE) {
             if (code.isExtension("pde")) {
-              if (code.preprocOffset <= dotJavaLineIndex) {
+              if (code.getPreprocOffset() <= dotJavaLineIndex) {
                 codeIndex = i;
                 //System.out.println("i'm thinkin file " + i);
               }
@@ -205,7 +181,7 @@ public class Compiler {
           }
         }
         //System.out.println("preproc offset is " + sketch.getCode(codeIndex).preprocOffset);
-        codeLine = dotJavaLineIndex - sketch.getCode(codeIndex).preprocOffset;
+        codeLine = dotJavaLineIndex - sketch.getCode(codeIndex).getPreprocOffset();
         //System.out.println("code line now " + codeLine);
         exception = new RunnerException(errorMessage, codeIndex, codeLine, -1, false);
 

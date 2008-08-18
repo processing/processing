@@ -1369,24 +1369,27 @@ public class Editor extends JFrame {
    * that's currently being manipulated.
    */
   protected void setCode(SketchCode code) {
-    if (code.document == null) {  // this document not yet inited
-      code.document = new SyntaxDocument();
+    SyntaxDocument document = (SyntaxDocument) code.getDocument();
+    
+    if (document == null) {  // this document not yet inited
+      document = new SyntaxDocument();
+      code.setDocument(document);
 
       // turn on syntax highlighting
-      code.document.setTokenMarker(new PdeKeywords());
+      document.setTokenMarker(new PdeKeywords());
 
       // insert the program text into the document object
       try {
-        code.document.insertString(0, code.program, null);
+        document.insertString(0, code.getProgram(), null);
       } catch (BadLocationException bl) {
         bl.printStackTrace();
       }
 
       // set up this guy's own undo manager
-      code.undo = new UndoManager();
+//      code.undo = new UndoManager();
 
       // connect the undo listener to the editor
-      code.document.addUndoableEditListener(new UndoableEditListener() {
+      document.addUndoableEditListener(new UndoableEditListener() {
           public void undoableEditHappened(UndoableEditEvent e) {
             if (compoundEdit != null) {
               compoundEdit.addEdit(e.getEdit());
@@ -1401,13 +1404,13 @@ public class Editor extends JFrame {
     }
 
     // update the document object that's in use
-    textarea.setDocument(code.document,
-                         code.selectionStart, code.selectionStop,
-                         code.scrollPosition);
+    textarea.setDocument(document,
+                         code.getSelectionStart(), code.getSelectionStop(),
+                         code.getScrollPosition());
 
     textarea.requestFocus();  // get the caret blinking
 
-    this.undo = code.undo;
+    this.undo = code.getUndo();
     undoAction.updateUndoState();
     redoAction.updateRedoState();
   }
