@@ -1,3 +1,59 @@
+0147 pde
+X inside Sketch.java, don't hardwire the file extension types
+X   arduino uses .c, .cpp, .h instead of .java
+X   http://dev.processing.org/bugs/show_bug.cgi?id=807
+X major changes to save/save as/rename setup - keep an eye out
+X need to add local java folder to path on linux
+X   otherwise if no linux installed, complaining that no java found
+X   http://dev.processing.org/bugs/show_bug.cgi?id=879
+
+tools
+X refactor code to use more getter/setter methods
+X   move the debug classes back into processing.app.debug
+X   this will help the library stuff
+X dynamic tools menu (requires moving files around)
+o   this means can integrate the autoformat stuff
+X   processing.mess/tools has chandler's template stuff
+o need to write converter that will handle syntax changes
+o   convert from alpha to 1.0 syntax
+o   framerate() -> frameRate()
+o   basically find & replace with regexps
+o   acts just like find/replace.. go through and do by hand
+o   3 column input file
+o   regexp to find, to replace, human readable description
+o   (void\s+)loop(\s+{) -> $1draw$2 (maintain all whitespace stuff)
+o   "The loop() method is now called draw() as of beta"
+o   "angleMode no longer exists, use radians() around your angles" 
+o   (comment out the line)
+X   this would only fix the minor stuff, not the important stuff
+X   it also has a lot of potential problems and corner cases
+X   just not worth the effort
+X tools api
+X   need to support the basic set of functions that are expected 
+X   to be used, otherwise it's gonna be total hell when we make a real api
+X   getEditor()
+X   get/setSelStart/End
+X   get/setSelText
+X   get/setText
+X make dynamically loaded plugins and "tools" menu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=124
+X tools api:
+X   init() -> run when p5 is first launched
+o   isAvailable() -> true/false whether the option should be dimmed
+X     skip this for now, not sending events to tools all the time
+o   show() and hide() -> open the window or run the tool
+o     is there a better name than show() since not all will be visible?
+o     maybe it's just a run() method launched via invokeLater()?
+X     can't really do show/hide from editor, make the tool handle this
+o   getDefaultShortcut() -> returns the default shortcut this tools wants
+o       store this in the data file instead
+X       not bothering with this for now, since can't handle overlaps
+X   needs to be able to get current sketch code
+X   look at the pretty-formatting code to see what else needs to be in api
+o   getMenu() -> return non-null the tool is a submenu
+X       no, bad idea.. don't want a zillion submenus on things
+
+
 0146 pde
 X fix problem with comment/uncomment and indent/outdent 
 X   when no selection, and on the first pos of the line
