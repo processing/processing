@@ -42,8 +42,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 147;
-  static final String VERSION_NAME = "0147 Beta";
+  static final int VERSION = 148;
+  static final String VERSION_NAME = "0148 Beta";
 
   static Platform platform;
 
@@ -1075,28 +1075,28 @@ public class Base {
   static public String getExamplesPath() {
     return examplesFolder.getAbsolutePath();
   }
-  
- 
+
+
   static public String getLibrariesPath() {
     return librariesFolder.getAbsolutePath();
   }
-  
+
 
   static public File getToolsFolder() {
     return toolsFolder;
   }
-  
-  
+
+
   static public String getToolsPath() {
     return toolsFolder.getAbsolutePath();
   }
-  
+
 
   public File getSketchbookFolder() {
     return new File(Preferences.get("sketchbook.path"));
   }
-  
-  
+
+
   protected File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
     try {
