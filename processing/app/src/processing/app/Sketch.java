@@ -44,10 +44,8 @@ public class Sketch {
 
   private Editor editor;
 
-  /** 
-   * Main pde file for this sketch.
-   */
-  private File mainFile;
+  /** main pde file for this sketch. */
+  private File primaryFile;
   
   /**
    * Name of sketch, which is the name of main file
@@ -55,49 +53,37 @@ public class Sketch {
    */
   private String name;
 
-  /**
-   * Name of 'main' file, used by load(), such as sketch_04040.pde
-   */
-  //private String mainFilename;
-
-  /**
-   * true if any of the files have been modified.
-   */
+  /** true if any of the files have been modified. */
   private boolean modified;
 
-  /**
-   * Path to the main PDE file for this sketch.
-   */
-//  private String path;
-
+  /** folder that contains this sketch */
   private File folder;
+  
+  /** data folder location for this sketch (may not exist yet) */
   private File dataFolder;
+
+  /** code folder location for this sketch (may not exist yet) */
   private File codeFolder;
 
-  //static public final int PDE = 0;
-  static public final int JAVA = 1;
-
-  public SketchCode current;
-  int currentIndex;
-  int codeCount;
-  SketchCode code[];
+  private SketchCode current;
+  private int currentIndex;
+  private int codeCount;
+  private SketchCode[] code;
 
   int hiddenCount;
   SketchCode hidden[];
 
-  //Hashtable zipFileContents;
-
   // all these set each time build() is called
-  String mainClassName;
-  String classPath;
+  private String appletClassName;
+  private String classPath;
+  
   /**
    * This is *not* the "Processing" libraries path, this is the Java libraries
    * path, as in java.library.path=BlahBlah, which identifies search paths for
    * DLLs or JNILIBs.
    */
-  String libraryPath;
-//  boolean externalRuntime;
-  Vector importedLibraries; // vec of File objects
+  private String libraryPath;
+  ArrayList<File> importedLibraries;
 
   /**
    * path is location of the main .pde file, because this is also
@@ -107,11 +93,11 @@ public class Sketch {
     this.editor = editor;
 //    this.path = path;
 
-    mainFile = new File(path);
+    primaryFile = new File(path);
 
     // get the name of the sketch by chopping .pde or .java
     // off of the main file name
-    String mainFilename = mainFile.getName();
+    String mainFilename = primaryFile.getName();
     int suffixLength = getDefaultExtension().length() + 1;
     name = mainFilename.substring(0, mainFilename.length() - suffixLength);
 
@@ -250,7 +236,7 @@ public class Sketch {
     // start at 1, if it's at zero, don't bother
     for (int i = 1; i < codeCount; i++) {
       //if (code[i].file.getName().equals(mainFilename)) {
-      if (code[i].getFile().equals(mainFile)) {
+      if (code[i].getFile().equals(primaryFile)) {
         SketchCode temp = code[0];
         code[0] = code[i];
         code[i] = temp;
@@ -262,7 +248,7 @@ public class Sketch {
     sortCode();
 
     // set the main file to be the current tab
-    setCurrent(0);
+    setCurrentCode(0);
   }
   
   
@@ -564,7 +550,7 @@ public class Sketch {
     sortCode();
 
     // set the new guy as current
-    setCurrent(newName);
+    setCurrentCode(newName);
 
     // update the tabs
     //editor.header.repaint();
@@ -635,7 +621,7 @@ public class Sketch {
         removeCode(current);
 
         // just set current tab to the main tab
-        setCurrent(0);
+        setCurrentCode(0);
 
         // update the tabs
         editor.header.repaint();
@@ -706,7 +692,7 @@ public class Sketch {
     removeCode(current);
 
     // update the tabs
-    setCurrent(0);
+    setCurrentCode(0);
     editor.header.repaint();
   }
 
@@ -753,7 +739,7 @@ public class Sketch {
 //    unhideCode.file = unhideFile;
     insertCode(unhideCode);
     sortCode();
-    setCurrent(unhideCode.getFileName());
+    setCurrentCode(unhideCode.getFileName());
     editor.header.repaint();
   }
   
@@ -764,7 +750,7 @@ public class Sketch {
   public void handlePrevCode() {
     int prev = currentIndex - 1;
     if (prev < 0) prev = codeCount-1;
-    setCurrent(prev);
+    setCurrentCode(prev);
   }
 
 
@@ -772,7 +758,7 @@ public class Sketch {
    * Move to the next tab.
    */
   public void handleNextCode() {
-    setCurrent((currentIndex + 1) % codeCount);
+    setCurrentCode((currentIndex + 1) % codeCount);
   }
 
 
@@ -1160,7 +1146,7 @@ public class Sketch {
         insertCode(newCode);
         sortCode();
       }
-      setCurrent(filename);
+      setCurrentCode(filename);
       editor.header.repaint();
       if (editor.untitled) {  // TODO probably not necessary? problematic?
         // Mark the new code as modified so that the sketch is saved
@@ -1199,7 +1185,7 @@ public class Sketch {
     // if the current code is a .java file, insert into current
     //if (current.flavor == PDE) {
     if (hasDefaultExtension(current)) {
-      setCurrent(0);
+      setCurrentCode(0);
     }
     // could also scan the text in the file to see if each import
     // statement is already in there, but if the user has the import
@@ -1226,7 +1212,7 @@ public class Sketch {
    * <LI> change the text that's visible in the text area
    * </OL>
    */
-  public void setCurrent(int which) {
+  public void setCurrentCode(int which) {
     // if current is null, then this is the first setCurrent(0)
     if ((currentIndex == which) && (current != null)) {
       return;
@@ -1270,17 +1256,17 @@ public class Sketch {
    * Internal helper function to set the current tab based on a name.
    * @param findName the file name (not pretty name) to be shown
    */
-  protected void setCurrent(String findName) {
+  protected void setCurrentCode(String findName) {
     for (int i = 0; i < codeCount; i++) {
       if (findName.equals(code[i].getFileName()) ||
           findName.equals(code[i].getPrettyName())) {
-        setCurrent(i);
+        setCurrentCode(i);
         return;
       }
     }
   }
-
-
+  
+  
   /**
    * Cleanup temporary files used during a build/run.
    */
@@ -1360,7 +1346,7 @@ public class Sketch {
 //       "_" + String.valueOf((int) (Math.random() * 10000)));
 
     // handle preprocessing the main file's code
-    mainClassName =
+    appletClassName =
       build(tempBuildFolder.getAbsolutePath(), suggestedClassName);
     // externalPaths is magically set by build()
 
@@ -1378,7 +1364,7 @@ public class Sketch {
 //        }
 //      }
 //    }
-    return (mainClassName != null);
+    return (appletClassName != null);
   }
 
 
@@ -1623,7 +1609,7 @@ public class Sketch {
 
     // grab the imports from the code just preproc'd
 
-    importedLibraries = new Vector();
+    importedLibraries = new ArrayList<File>();
     String imports[] = preprocessor.extraImports;
     for (int i = 0; i < imports.length; i++) {
       // remove things up to the last dot
@@ -1884,11 +1870,12 @@ public class Sketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    Enumeration en = importedLibraries.elements();
-    while (en.hasMoreElements()) {
+    for (File libraryFolder : importedLibraries) {
+//    Enumeration en = importedLibraries.elements();
+//    while (en.hasMoreElements()) {
       // in the list is a File object that points the
       // library sketch's "library" folder
-      File libraryFolder = (File)en.nextElement();
+//      File libraryFolder = (File)en.nextElement();
       File exportSettings = new File(libraryFolder, "export.txt");
       Hashtable exportTable = readSettings(exportSettings);
       String appletList = (String) exportTable.get("applet");
@@ -2358,9 +2345,10 @@ public class Sketch {
     // if a file called 'export.txt' is in there, it contains
     // a list of the files that should be exported.
     // otherwise, all files are exported.
-    Enumeration en = importedLibraries.elements();
-    while (en.hasMoreElements()) {
-      File libraryFolder = (File)en.nextElement();
+    for (File libraryFolder : importedLibraries) {
+//    Enumeration en = importedLibraries.elements();
+//    while (en.hasMoreElements()) {
+//      File libraryFolder = (File)en.nextElement();
 
       // in the list is a File object that points the
       // library sketch's "library" folder
@@ -2862,8 +2850,8 @@ public class Sketch {
   /**
    * Returns a file object for the primary .pde of this sketch.
    */
-  public File getMainFile() {
-    return mainFile;
+  public File getPrimaryFile() {
+    return primaryFile;
   }
   
   
@@ -2871,7 +2859,7 @@ public class Sketch {
    * Returns path to the main .pde file for this sketch.
    */
   public String getMainFilePath() {
-    return mainFile.getAbsolutePath();
+    return primaryFile.getAbsolutePath();
     //return code[0].file.getAbsolutePath();
   }
 
@@ -2934,6 +2922,11 @@ public class Sketch {
   }
 
 
+  public SketchCode[] getCode() {
+    return code;
+  }
+  
+  
   public int getCodeCount() {
     return codeCount;
   }
@@ -2942,7 +2935,12 @@ public class Sketch {
   public SketchCode getCode(int index) {
     return code[index];
   }
-
+  
+  
+  public SketchCode getCurrentCode() {
+    return current;
+  }
+    
 
   public void setUntitled(boolean u) {
     editor.untitled = u;
@@ -2954,8 +2952,8 @@ public class Sketch {
   }
 
 
-  public String getMainClassName() {
-    return mainClassName;
+  public String getAppletClassName() {
+    return appletClassName;
   }
   
 
