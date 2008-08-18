@@ -156,7 +156,7 @@ public class Runner implements MessageConsumer {
     }
 
     if (Base.isMacOS()) {
-      params.add("-Xdock:name=" + sketch.getMainClassName());
+      params.add("-Xdock:name=" + sketch.getAppletClassName());
 //      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" + 
 //                 sketch.getMainClassName());
     }
@@ -232,7 +232,7 @@ public class Runner implements MessageConsumer {
           Preferences.get("run.present.bgcolor"));
     }
 
-    params.add(sketch.getMainClassName());
+    params.add(sketch.getAppletClassName());
 
     //String command[] = (String[]) params.toArray();
     String outgoing[] = new String[params.size()];

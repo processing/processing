@@ -64,7 +64,7 @@ public class FixEncoding {
         code.modified = true;  // yes, because we want them to save this
       }
       // Update the currently visible program with its code
-      editor.setText(sketch.current.program);
+      editor.setText(sketch.getCurrentCode().program);
       
     } catch (IOException e) {
       String msg = 
