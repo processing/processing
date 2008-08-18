@@ -614,7 +614,6 @@ public class Editor extends JFrame {
     addInternalTools(menu);
     addTools(menu, Base.getToolsFolder());
     addTools(menu, base.getSketchbookFolder());
-    System.out.println("done.");
     
     return menu;
   }
@@ -626,7 +625,7 @@ public class Editor extends JFrame {
     File[] folders = sourceFolder.listFiles(new FileFilter() {
       public boolean accept(File folder) {
         if (folder.isDirectory()) {
-//          System.out.println("checking " + folder);
+          //System.out.println("checking " + folder);
           File subfolder = new File(folder, "tool");
           return subfolder.exists();
         }
@@ -1168,6 +1167,15 @@ public class Editor extends JFrame {
   public void setText(String what) {
     startCompoundEdit();
     textarea.setText(what);
+    stopCompoundEdit();
+  }
+  
+  
+  public void insertText(String what) {
+    startCompoundEdit();
+    int caret = getCaretOffset();
+    setSelection(caret, caret);
+    textarea.setSelectedText(what);
     stopCompoundEdit();
   }
 
