@@ -83,7 +83,7 @@ public class EditorHeader extends JComponent {
       pieces = new Image[STATUS.length][WHERE.length];
       for (int i = 0; i < STATUS.length; i++) {
         for (int j = 0; j < WHERE.length; j++) {
-          pieces[i][j] = Base.getImage("tab-" + STATUS[i] + "-" +
+          pieces[i][j] = Base.getLibImage("tab-" + STATUS[i] + "-" +
               WHERE[j] + ".gif", this);
         }
       }
@@ -183,7 +183,7 @@ public class EditorHeader extends JComponent {
         code.getPrettyName() : code.getFileName();
 
       // if modified, add the li'l glyph next to the name
-      String text = "  " + codeName + (code.modified ? " \u00A7" : "  ");
+      String text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
 
       Graphics2D g2 = (Graphics2D) g;
       int textWidth = (int)

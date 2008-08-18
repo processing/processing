@@ -1,5 +1,9 @@
 0148 pde
-X clean up accessors inside Sketch
+X clean up accessors inside Sketch and SketchCode
+X   Editor, Sketch, and SketchCode are now fair game
+X clean up Base a bit
+X   public methods in Base are now also fair game
+X remove hide/unhide code and menu options
 
 
 tools
