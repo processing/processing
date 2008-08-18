@@ -305,7 +305,16 @@ public class EditorConsole extends JScrollPane {
     public void flush() { }
 
     public void write(byte b[]) {  // appears never to be used
+//      if (currentConsole.isDisplayable()) {
       currentConsole.write(b, 0, b.length, err);
+//      } else {
+//        systemOut.println("not displayable");
+//        if (err) {
+//          systemErr.write(b, 0, b.length);
+//        } else {
+//          systemOut.write(b, 0, b.length);
+//        }
+//      }
 
       OutputStream echo = err ? stderrFile : stdoutFile;
       if (echo != null) {
@@ -321,7 +330,18 @@ public class EditorConsole extends JScrollPane {
 
     public void write(byte b[], int offset, int length) {
       currentConsole.write(b, offset, length, err);
-      
+//      if (currentConsole.isDisplayable()) {
+//        systemOut.println("is displayable");
+//        currentConsole.write(b, offset, length, err);
+//      } else {
+//        systemOut.println("not displayable");
+//        if (err) {
+//          systemErr.write(b, offset, length);
+//        } else {
+//          systemOut.write(b, offset, length);
+//        }
+//      }
+
       OutputStream echo = err ? stderrFile : stdoutFile;
       if (echo != null) {
         try {
