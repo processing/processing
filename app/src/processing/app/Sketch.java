@@ -40,7 +40,7 @@ import javax.swing.*;
  * Stores information about files in the current sketch
  */
 public class Sketch {
-  static File tempBuildFolder;
+  static private File tempBuildFolder;
 
   private Editor editor;
 
@@ -70,11 +70,9 @@ public class Sketch {
   private int codeCount;
   private SketchCode[] code;
 
-  int hiddenCount;
-  SketchCode hidden[];
-
-  // all these set each time build() is called
+  /** Class name for the PApplet, as determined by the preprocessor. */
   private String appletClassName;
+  /** Class path determined during build. */
   private String classPath;
   
   /**
@@ -83,7 +81,7 @@ public class Sketch {
    * DLLs or JNILIBs.
    */
   private String libraryPath;
-  ArrayList<File> importedLibraries;
+  private ArrayList<File> importedLibraries;
 
   /**
    * path is location of the main .pde file, because this is also
@@ -91,7 +89,6 @@ public class Sketch {
    */
   public Sketch(Editor editor, String path) throws IOException {
     this.editor = editor;
-//    this.path = path;
 
     primaryFile = new File(path);
 
@@ -151,26 +148,12 @@ public class Sketch {
     // reset these because load() may be called after an
     // external editor event. (fix for 0099)
     codeCount = 0;
-    hiddenCount = 0;
 
-//    for (int i = 0; i < list.length; i++) {
-//      if (list[i].endsWith(".pde")) codeCount++;
-//      else if (list[i].endsWith(".java")) codeCount++;
-//      else if (list[i].endsWith(".pde.x")) hiddenCount++;
-//      else if (list[i].endsWith(".java.x")) hiddenCount++;
-//    }
-
-    code = new SketchCode[list.length]; //codeCount];
-    hidden = new SketchCode[list.length]; //hiddenCount];
-
-//    int codeCounter = 0;
-//    int hiddenCounter = 0;
+    code = new SketchCode[list.length];
 
     String[] extensions = getExtensions();
     
-    for (int i = 0; i < list.length; i++) {
-      String filename = list[i];
-
+    for (String filename : list) {
       // Ignoring the dot prefix files is especially important to avoid files 
       // with the ._ prefix on Mac OS X. (You'll see this with Mac files on 
       // non-HFS drives, i.e. a thumb drive formatted FAT32.)
@@ -181,56 +164,22 @@ public class Sketch {
       
       // figure out the name without any extension
       String base = filename;
-      // first strip off the .x items
-      boolean hiddenX = base.endsWith(".x"); 
-      if (hiddenX) {
-        base = base.substring(0, base.length() - 2);
-      }
-      String extension = null;
       // now strip off the .pde and .java extensions
-      for (int j = 0; j < extensions.length; j++) {
-        if (base.toLowerCase().endsWith("." + extensions[j])) {
-          base = base.substring(0, base.length() - (extensions[j].length() + 1));
-          extension = extensions[j];
+      for (String extension : extensions) {
+        if (base.toLowerCase().endsWith("." + extension)) {
+          base = base.substring(0, base.length() - (extension.length() + 1));
           
           // Don't allow people to use files with invalid names, since on load, 
           // it would be otherwise possible to sneak in nasty filenames. [0116]
           if (Sketch.isSanitaryName(base)) {
-            if (hiddenX) {
-              hidden[hiddenCount++] = 
-                new SketchCode(new File(folder, filename), extension);
-            } else {
-              code[codeCount++] =
-                new SketchCode(new File(folder, filename), extension);
-            } 
+            code[codeCount++] =
+              new SketchCode(new File(folder, filename), extension);
           }
         }
       }
     }
-
-//    codeCount = codeCounter;
-    // some of the hidden files may be bad too, so use hiddenCounter
-    // added for rev 0121, fixes bug found by axel
-//    hiddenCount = hiddenCounter;
-
-//    System.out.println(codeCount + " " + hiddenCount);
+    // Remove any code that wasn't proper
     code = (SketchCode[]) PApplet.subset(code, 0, codeCount);
-    hidden = (SketchCode[]) PApplet.subset(hidden, 0, hiddenCount);
-
-    // remove any entries that didn't load properly from codeCount
-//    int index = 0;
-//    while (index < codeCount) {
-//      if ((code[index] == null) ||
-//          (code[index].program == null)) {
-//        for (int i = index+1; i < codeCount; i++) {
-//          code[i-1] = code[i];
-//        }
-//        codeCount--;
-//
-//      } else {
-//        index++;
-//      }
-//    }
 
     // move the main class to the first tab
     // start at 1, if it's at zero, don't bother
@@ -271,18 +220,6 @@ public class Sketch {
       code = (SketchCode[]) PApplet.expand(code);
     }
     code[codeCount++] = newCode;
-  }
-
-
-  protected void insertHidden(SketchCode newCode) {
-    // make sure the user didn't hide the sketch folder
-    ensureExistence();
-
-    // add file to the code/codeCount list, resort the list
-    if (hiddenCount == hidden.length) {
-      hidden = (SketchCode[]) PApplet.expand(hidden);
-    }
-    hidden[hiddenCount++] = newCode;
   }
 
 
@@ -645,104 +582,6 @@ public class Sketch {
     System.err.println("removeCode: internal error.. could not find code");
   }
 
-
-  /**
-   * Handler for the Hide Code menu option. Removes the current tab from the 
-   * sketch by renaming it with a .x at the end. 
-   */
-  public void handleHideCode() {
-    // make sure the user didn't hide the sketch folder
-    ensureExistence();
-
-    // if read-only, give an error
-    if (isReadOnly()) {
-      // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
-      return;
-    }
-
-    // don't allow hide of the main code
-    // TODO maybe gray out the menu on setCurrent(0)
-    if (currentIndex == 0) {
-      Base.showMessage("Can't do that",
-                       "You cannot hide the main " +
-                       "." + getDefaultExtension() + 
-                       " file from a sketch\n");
-      return;
-    }
-
-    // rename the file
-    if (!current.hideFile()) {
-      Base.showWarning("Error",
-                       "Could not hide " +
-                       "\"" + current.getFileName() + "\".", null);
-      return;
-    }
-
-    // move it to the hidden list
-    if (hiddenCount == hidden.length) {
-      hidden = (SketchCode[]) PApplet.expand(hidden);
-    }
-    hidden[hiddenCount++] = current;
-
-    // remove it from the main list
-    removeCode(current);
-
-    // update the tabs
-    setCurrentCode(0);
-    editor.header.repaint();
-  }
-
-
-  /**
-   * Handler for the Unhide Code menu option. 
-   */
-  public void handleUnhideCode(String what) {
-    SketchCode unhideCode = null;
-
-    for (int i = 0; i < hiddenCount; i++) {
-      if (hidden[i].getPrettyName().equals(what)) {
-        unhideCode = hidden[i];
-
-        // remove from the 'hidden' list
-        for (int j = i; j < hiddenCount-1; j++) {
-          hidden[j] = hidden[j+1];
-        }
-        hiddenCount--;
-        break;
-      }
-    }
-    //if (unhideIndex == -1) {
-    if (unhideCode == null) {
-      System.err.println("internal error: could find " + what + " to unhide.");
-      return;
-    }
-    if (!unhideCode.getFile().exists()) {
-      Base.showMessage("Can't unhide",
-                       "The file \"" + what + "\" no longer exists.");
-      return;
-    }
-//    String unhidePath = unhideCode.file.getAbsolutePath();
-//    File unhideFile =
-//      new File(unhidePath.substring(0, unhidePath.length() - 2));
-//
-//    if (!unhideCode.file.renameTo(unhideFile)) {
-    if (!unhideCode.unhideFile()) {
-      Base.showMessage("Can't unhide",
-                       "The file \"" + what + "\" could not be" +
-                       "renamed and unhidden.");
-      return;
-    }
-//    unhideCode.file = unhideFile;
-    insertCode(unhideCode);
-    sortCode();
-    setCurrentCode(unhideCode.getFileName());
-    editor.header.repaint();
-  }
-  
   
   /**
    * Move to the previous tab.
@@ -954,12 +793,6 @@ public class Sketch {
       code[i].saveAs(newFile);
     }
 
-    // save the hidden code to its new location
-    for (int i = 0; i < hiddenCount; i++) {
-      File newFile = new File(newFolder, hidden[i].getFileName());
-      hidden[i].saveAs(newFile);
-    }
-
     // re-copy the data folder (this may take a while.. add progress bar?)
     if (dataFolder.exists()) {
       File newDataFolder = new File(newFolder, "data");
@@ -1060,8 +893,7 @@ public class Sketch {
   public boolean addFile(File sourceFile) {
     String filename = sourceFile.getName();
     File destFile = null;
-    String addingCodeExt = null;
-    String addingHiddenExt = null;
+    String codeExtension = null;
     boolean replacement = false;
 
     // if the file appears to be code related, drop it
@@ -1077,18 +909,14 @@ public class Sketch {
       destFile = new File(codeFolder, filename);
 
     } else {
-      String[] ext = getExtensions();
-      for (int i = 0; i < ext.length; i++) {
+      for (String extension : getExtensions()) {
         String lower = filename.toLowerCase();
-        if (lower.endsWith("." + ext[i])) {
+        if (lower.endsWith("." + extension)) {
           destFile = new File(this.folder, filename);
-          addingCodeExt = ext[i];
-        } else if (lower.endsWith("." + ext[i] + ".x")) {
-          destFile = new File(this.folder, filename);
-          addingHiddenExt = ext[i];
+          codeExtension = extension;
         }
       }
-      if (addingCodeExt == null && addingHiddenExt == null) {
+      if (codeExtension == null) {
         prepareDataFolder();
         destFile = new File(dataFolder, filename);
       }
@@ -1114,8 +942,7 @@ public class Sketch {
     }
 
     // make sure they aren't the same file
-    if ((addingCodeExt == null) && (addingHiddenExt == null) && 
-        sourceFile.equals(destFile)) {
+    if ((codeExtension == null) && sourceFile.equals(destFile)) {
       Base.showWarning("You can't fool me",
                        "This file has already been copied to the\n" +
                        "location from which where you're trying to add it.\n" +
@@ -1136,8 +963,8 @@ public class Sketch {
       }
     }
 
-    if (addingCodeExt != null) {
-      SketchCode newCode = new SketchCode(destFile, addingCodeExt);
+    if (codeExtension != null) {
+      SketchCode newCode = new SketchCode(destFile, codeExtension);
       
       if (replacement) {
         replaceCode(newCode);
@@ -1151,13 +978,6 @@ public class Sketch {
       if (editor.untitled) {  // TODO probably not necessary? problematic?
         // Mark the new code as modified so that the sketch is saved
         current.modified = true;
-      }
-      
-    } else if (addingHiddenExt != null) {
-      SketchCode newHidden = new SketchCode(destFile, addingHiddenExt);
-      
-      if (!replacement) {
-        insertHidden(newHidden);
       }
       
     } else {
@@ -2728,9 +2548,6 @@ public class Sketch {
 
       for (int i = 0; i < codeCount; i++) {
         code[i].save();  // this will force a save
-      }
-      for (int i = 0; i < hiddenCount; i++) {
-        hidden[i].save();  // this will force a save
       }
       calcModified();
 
