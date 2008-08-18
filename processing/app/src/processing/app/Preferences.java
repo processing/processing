@@ -522,7 +522,7 @@ public class Preferences {
     String oldPath = get("sketchbook.path");
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
-      editor.base.rebuildSketchbookMenu();
+      editor.base.rebuildSketchbookMenus();
       set("sketchbook.path", newPath);
     }
 
