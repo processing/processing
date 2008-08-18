@@ -3,6 +3,9 @@ X inside Sketch.java, don't hardwire the file extension types
 X   arduino uses .c, .cpp, .h instead of .java
 X   http://dev.processing.org/bugs/show_bug.cgi?id=807
 X major changes to save/save as/rename setup - keep an eye out
+X need to add local java folder to path on linux
+X   otherwise if no linux installed, complaining that no java found
+X   http://dev.processing.org/bugs/show_bug.cgi?id=879
 
 tools
 X refactor code to use more getter/setter methods
@@ -72,10 +75,6 @@ _     http://msdn.microsoft.com/en-us/library/aa511273.aspx
 _     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
 _   scrollable stack trace
 _     http://www.javalobby.org/java/forums/t19012.html
-
-_ need to add local java folder to path on linux
-_   otherwise if no linux installed, complaining that no java found
-_   http://dev.processing.org/bugs/show_bug.cgi?id=879
 
 _ windows jdk sometimes not getting picked up, even if it's there
 _   notes somewhere about choosing the right jvm...
