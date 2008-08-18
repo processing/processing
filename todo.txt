@@ -1,4 +1,59 @@
 0147 pde
+X inside Sketch.java, don't hardwire the file extension types
+X   arduino uses .c, .cpp, .h instead of .java
+X   http://dev.processing.org/bugs/show_bug.cgi?id=807
+
+tools
+_ refactor code to use more getter/setter methods
+X   move the debug classes back into processing.app.debug
+X   this will help the library stuff
+X dynamic tools menu (requires moving files around)
+o   this means can integrate the autoformat stuff
+_   processing.mess/tools has chandler's template stuff
+_ don't open more than one "create font" or "color selector"
+_   http://dev.processing.org/bugs/show_bug.cgi?id=830
+o need to write converter that will handle syntax changes
+o   convert from alpha to 1.0 syntax
+o   framerate() -> frameRate()
+o   basically find & replace with regexps
+o   acts just like find/replace.. go through and do by hand
+o   3 column input file
+o   regexp to find, to replace, human readable description
+o   (void\s+)loop(\s+{) -> $1draw$2 (maintain all whitespace stuff)
+o   "The loop() method is now called draw() as of beta"
+o   "angleMode no longer exists, use radians() around your angles" 
+o   (comment out the line)
+X   this would only fix the minor stuff, not the important stuff
+X   it also has a lot of potential problems and corner cases
+X   just not worth the effort
+X tools api
+X   need to support the basic set of functions that are expected 
+X   to be used, otherwise it's gonna be total hell when we make a real api
+X   getEditor()
+X   get/setSelStart/End
+X   get/setSelText
+X   get/setText
+_   setCurrentTab(int index or String filename)
+_   getTabs() ? maybe these are interface to the code class
+_   clean up API for JEditTextArea before exposing the object
+X make dynamically loaded plugins and "tools" menu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=124
+X tools api:
+X   init() -> run when p5 is first launched
+o   isAvailable() -> true/false whether the option should be dimmed
+X     skip this for now, not sending events to tools all the time
+o   show() and hide() -> open the window or run the tool
+o     is there a better name than show() since not all will be visible?
+o     maybe it's just a run() method launched via invokeLater()?
+X     can't really do show/hide from editor, make the tool handle this
+o   getDefaultShortcut() -> returns the default shortcut this tools wants
+o       store this in the data file instead
+X       not bothering with this for now, since can't handle overlaps
+X   needs to be able to get current sketch code
+X   look at the pretty-formatting code to see what else needs to be in api
+o   getMenu() -> return non-null the tool is a submenu
+X       no, bad idea.. don't want a zillion submenus on things
+_ write basic documentation for how it's handled
 
 
 _ use macosx dialogs for all of the editor stuff
@@ -143,6 +198,20 @@ _ set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
 _   java.library.path will only handle .jnilib stuff
 _ need better error messages for broken api / library troubles
 _   e.g. ocd is broken in 0125 because of method signature changes
+_ could have library developers update compatability note
+_   so they would need to test library and say "compatible with 0110"
+_   before it would automatically update or show as an update
+_ tools -> get library
+_   library url: [ http://blahblah.org/something ]
+_   this would grab something.version, and something.zip
+_   maybe something.xml that would include a bunch of background
+_ tools -> update libraries
+_   this would check the something.version to see if it's newer
+_ document how to add libraries: put in sketchbook (not libraries folder)
+_ library/download.url and library/home.url
+_ if there's a reference subfolder, add that to the help menu
+o   and enable it for "find in reference"
+X   nice idea but too error-prone
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -857,9 +926,6 @@ _ need to set dock icon title on osx
 
 PDE / Sketch & Sketchbook
 
-_ inside Sketch.java, don't hardwire the file extension types
-_   arduino uses .c, .cpp, .h instead of .java
-_   http://dev.processing.org/bugs/show_bug.cgi?id=807
 _ don't reload sketch on "save as"
 _   this can result in loss of data (undo is lost)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=433
@@ -919,61 +985,16 @@ _   maybe just open from a zip file, since psk doesn't help anything
 
 TOOLS / General
 
-_ refactor code to use more getter/setter methods
-_   move the debug classes back into processing.app.debug
-_   this will help the library stuff
-_ dynamic tools menu (requires moving files around)
-_   this means can integrate the autoformat stuff
-_   processing.mess/tools has chandler's template stuff
-_ don't open more than one "create font" or "color selector"
-_   http://dev.processing.org/bugs/show_bug.cgi?id=830
-_ need to write converter that will handle syntax changes
-_   basically find & replace with regexps
-_   framerate() -> frameRate()
-_ convert from alpha to 1.0 syntax
-_   acts just like find/replace.. go through and do by hand
-_   3 column input file
-_   regexp to find, to replace, human readable description
-_   (void\s+)loop(\s+{) -> $1draw$2 (maintain all whitespace stuff)
-_   "The loop() method is now called draw() as of beta"
-_   "angleMode no longer exists, use radians() around your angles" 
-_   (comment out the line)
-_ tools -> shared code
-_   Integrator / FloatThing / CameraStuff -- Update
-_   to pull code from a local folder
-_   update will update classes from shared in the current folder
-_ tools api
-_   need to support the basic set of functions that are expected 
-_   to be used, otherwise it's gonna be total hell when we make a real api
-_   getEditor()
-_   get/setSelStart/End
-_   get/setSelText
-_   get/setText
-_   setCurrentTab(int index or String filename)
-_   getTabs() ? maybe these are interface to the code class
-_   clean up API for JEditTextArea before exposing the object
-_ need method for showing prefs for the tools
-_   add pref to handle date vs. increment on archive sketch
-_ make dynamically loaded plugins and "tools" menu
-_   http://dev.processing.org/bugs/show_bug.cgi?id=124
-_   break out beautify as its own plugin
-_   tools api:
-_     init() -> run when p5 is first launched
-_     isAvailable() -> true/false whether the option should be dimmed
-_       skip this for now, not sending events to tools all the time
-_     show() -> open the window or run the tool
-_       is there a better name than show() since not all will be visible?
-_       maybe it's just a run() method launched via invokeLater()?
-_     hide() -> hide the tool's frame
-_     getDefaultShortcut() -> returns the default shortcut this tools wants
-_       store this in the data file instead
-_     needs to be able to get current sketch code
-_     look at the pretty-formatting code to see what else needs to be in api
-o     getMenu() -> return non-null the tool is a submenu
-o       no, bad idea.. don't want a zillion submenus on things
-_ need a proper means to handle command keys for tools
+_ need a proper means to handle command keys for tools (?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=140
-_ external editor -> add a command to launch
+_ need method for showing prefs for the tools
+_   i.e. add pref to handle date vs. increment on archive sketch
+_   tools that need prefs will show their own GUI anyway
+
+
+TOOLS / Ideas 
+
+_ add a command to launch an external editor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=141
 _ add tool to "Add custom html to sketch"
 _   that copies applet.html, 
@@ -984,6 +1005,15 @@ _ tool to run in appletviewer? sun.applet.Main is appletviewer
 _ import sketch from url (takes a zip from archive sketch)
 _ ftp upload sketch
 _ archive sketch direct to bug report
+_ courseware
+_   export sketch as applet when uploading
+_   save sketch zip files
+_   have a means to load them from "teacher" version of p5
+_   figure out how to use the 
+_ shared code
+_   Integrator / FloatThing / CameraStuff -- Update
+_   to pull code from a local folder
+_   update will update classes from shared in the current folder
 
 
 TOOLS / Color Picker
@@ -992,35 +1022,10 @@ _ pasting into color picker doesn't update the color values
 _   http://dev.processing.org/bugs/show_bug.cgi?id=503
 
 
-TOOLS / Courseware
-
-_ export sketch as applet when uploading
-_ save sketch zip files, have a means to load them from "teacher" version of p5
-_ figure out how to use the 
-
-
-TOOLS / Discourse Format
+TOOLS / Copy for Discourse
 
 _ occasional exception in "copy for discourse"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=729
-
-
-TOOLS / Libraries
-
-_ could have library developers update compatability note
-_   so they would need to test library and say "compatible with 0110"
-_   before it would automatically update or show as an update
-_ tools -> get library
-_   library url: [ http://blahblah.org/something ]
-_   this would grab something.version, and something.zip
-_   maybe something.xml that would include a bunch of background
-_ tools -> update libraries
-_   this would check the something.version to see if it's newer
-_ document how to add libraries: put in sketchbook (not libraries folder)
-_ library/download.url and library/home.url
-_ if there's a reference subfolder, add that to the help menu
-o   and enable it for "find in reference"
-X   nice idea but too error-prone
 
 
 TOOLS / Auto Format
@@ -1056,7 +1061,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=760
 _ too many right parens error when there are not
 _   http://dev.processing.org/bugs/show_bug.cgi?id=867
 _ code without a new line at end crashes
-_ 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=880
+_ break out as its own plugin
 
 
 TOOLS / Create Font
