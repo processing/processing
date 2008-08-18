@@ -36,6 +36,8 @@ import java.awt.print.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -658,6 +660,14 @@ public class Editor extends JFrame {
         }
         URLClassLoader loader = new URLClassLoader(urlList);
 
+        String className = null;
+        for (int j = 0; j < archives.length; j++) {
+          className = findClassInZipFile(folders[i].getName(), archives[j]);
+          if (className != null) break;
+        }
+        if (className == null) return;
+        
+        /*
         // Alternatively, could use manifest files with special attributes:
         // http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html
         // Example code for loading from a manifest file:
@@ -679,6 +689,7 @@ public class Editor extends JFrame {
             }
           }
         }
+        */
         // If no class name found, just move on.
         if (className == null) continue;
 
@@ -711,6 +722,36 @@ public class Editor extends JFrame {
     }
   }
 
+
+  protected String findClassInZipFile(String base, File file) {
+    // Class file to search for
+    String classFileName = "/" + base + ".class";
+    
+    try {
+      ZipFile zipFile = new ZipFile(file);
+      Enumeration entries = zipFile.entries();
+      while (entries.hasMoreElements()) {
+        ZipEntry entry = (ZipEntry) entries.nextElement();
+
+        if (!entry.isDirectory()) {
+          String name = entry.getName();
+          System.out.println("entry: " + name);
+
+          if (name.endsWith(classFileName)) {
+            //int slash = name.lastIndexOf('/');
+            //String packageName = (slash == -1) ? "" : name.substring(0, slash);
+            // Remove .class and convert slashes to periods.
+            return name.substring(0, name.length() - 6).replace('/', '.');
+          }
+        }
+      }
+    } catch (IOException e) {
+      //System.err.println("Ignoring " + filename + " (" + e.getMessage() + ")");
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
   
   protected JMenu addInternalTools(JMenu menu) {
     JMenuItem item;
