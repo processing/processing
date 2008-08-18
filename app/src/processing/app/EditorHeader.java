@@ -322,50 +322,14 @@ public class EditorHeader extends JComponent {
       });
     menu.add(item);
 
-    item = new JMenuItem("Hide");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.getSketch().handleHideCode();
-        }
-      });
-    menu.add(item);
-    hideItem = item;
-
-    JMenu unhide = new JMenu("Unhide");
-    ActionListener unhideListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          String which = (String) e.getActionCommand();
-          editor.getSketch().handleUnhideCode(which);
-          rebuildMenu();
-        }
-      };
-    Sketch sketch = editor.getSketch();
-    if (sketch != null) {
-      for (int i = 0; i < sketch.hiddenCount; i++) {
-        item = new JMenuItem(sketch.hidden[i].getPrettyName());
-        item.setActionCommand(sketch.hidden[i].getPrettyName());
-        item.addActionListener(unhideListener);
-        unhide.add(item);
-      }
-    }
-    if (unhide.getItemCount() == 0) {
-      unhide.setEnabled(false);
-    }
-
-    menu.add(unhide);
     menu.addSeparator();
 
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
 
-    //item = Editor.newJMenuItem("Previous Tab", '[', true);
     item = new JMenuItem("Previous Tab");
-    //int shortcut = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     KeyStroke ctrlAltLeft =
       KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Editor.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltLeft);
-    //int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    //KeyStroke tabby = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, modifiers);
-
     // this didn't want to work consistently
     /*
     item.addActionListener(new ActionListener() {
@@ -376,7 +340,6 @@ public class EditorHeader extends JComponent {
     */
     menu.add(item);
 
-    //item = Editor.newJMenuItem("Next Tab", ']', true);
     item = new JMenuItem("Next Tab");
     KeyStroke ctrlAltRight =
       KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Editor.SHORTCUT_ALT_KEY_MASK);
@@ -390,6 +353,7 @@ public class EditorHeader extends JComponent {
     */
     menu.add(item);
 
+    Sketch sketch = editor.getSketch();
     if (sketch != null) {
       menu.addSeparator();
 
