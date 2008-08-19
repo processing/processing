@@ -38,7 +38,7 @@ import java.util.Stack;
  * StdXMLBuilder is a concrete implementation of IXMLBuilder which creates a
  * tree of IXMLElement from an XML data source.
  *
- * @see net.n3.nanoxml.XMLElement
+ * @see processing.xml.XMLElement
  *
  * @author Marc De Scheemaecker
  * @version $Name: RELEASE_2_2_1 $, $Revision: 1.3 $
@@ -344,9 +344,7 @@ public class StdXMLBuilder
 
    /**
     * Returns the result of the building process. This method is called just
-    * before the <I>parse</I> method of IXMLParser returns.
-    *
-    * @see net.n3.nanoxml.IXMLParser#parse
+    * before the <I>parse</I> method of StdXMLParser returns.
     *
     * @return the result of the building process.
     */

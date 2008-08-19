@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -5165,9 +5165,6 @@ public class PApplet extends Applet
    * and group 0 is the matching sequence, but in this function the groups
    * are 0-indexed. If you want matching sequence, just use the Java String
    * methods for testing matches.
-   * @param what
-   * @param regexp
-   * @return
    */
   static public String[] match(String what, String regexp) {
     Pattern p = Pattern.compile(regexp);

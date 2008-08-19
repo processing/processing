@@ -40,11 +40,7 @@ import java.util.Vector;
 /**
  * An XMLWriter writes XML data to a stream.
  *
- * @see net.n3.nanoxml.IXMLElement
- * @see java.io.Writer
- *
  * @author Marc De Scheemaecker
- * @version $Name: RELEASE_2_2_1 $, $Revision: 1.4 $
  */
 public class XMLWriter
 {
