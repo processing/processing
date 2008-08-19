@@ -1,4 +1,5 @@
 0148 core
+X tweaks to PGraphicsOpenGL to support GLGraphics
 
 
 [ need problem sketch ] 
