@@ -1,13 +1,13 @@
 #!/bin/sh
 
-javadoc -public -d core \
+javadoc -public -notimestamp -d core \
     ../../core/src/processing/core/*.java
 
 # These have to be done in a certain order... Most classes need to know about
 # core, and SVG needs to have the XML library opened earler. I'm probably not
 # setting this up right, so if anyone knows how to do it without specifying
 # all the directories like this, please let us know.
-javadoc  -public -d everything \
+javadoc -public -notimestamp -d everything \
     -classpath ../../app/lib/antlr.jar:../../app/lib/jna.jar:../../serial/library/RXTXcomm.jar:../../opengl/library/jogl.jar:../../pdf/library/itext.jar:../../app/lib/ecj.jar \
     ../../core/src/processing/core/*.java \
     ../../app/src/antlr/*.java \
