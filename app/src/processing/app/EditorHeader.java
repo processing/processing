@@ -48,8 +48,6 @@ public class EditorHeader extends JComponent {
   JMenu menu;
   JPopupMenu popup;
 
-  JMenuItem hideItem;
-
   int menuLeft;
   int menuRight;
 
@@ -171,9 +169,6 @@ public class EditorHeader extends JComponent {
       tabLeft = new int[codeCount];
       tabRight = new int[codeCount];
     }
-
-    // disable hide on the first tab
-    hideItem.setEnabled(sketch.getCurrentCode() != sketch.getCode(0));
 
     int x = 6; // offset from left edge of the component
     for (int i = 0; i < sketch.getCodeCount(); i++) {
