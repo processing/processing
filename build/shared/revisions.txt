@@ -7,6 +7,57 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0148 - 19 August 2008
+
+* RELEASES SINCE 0135 CONTAIN MANY SIGNIFICANT CHANGES, PLEASE READ *
+*  THE NOTES IN THIS FILE FOR ANY RELEASE THAT YOU'VE NOT YET USED. *
+
+This release contains fixes for compatability with the GLGraphics
+library and documentation about the Tools menu.
+
+With any luck, this will be the last release for at least a week.
+
+[ changes ] 
+
++ Some additions have been made to the internal API to support the
+  GLGraphics library, which is incompatible with the last few releases. 
+  You'll still need to download a new version of the library that's 
+  compatible with this release (0148) of Processing.
+
++ Cleaned up internal API for proper interfaces with user-contributed
+  items for the Tools menu. 
+
++ A "tools" folder has been added, which includes a howto.txt file that
+  explains how to build your own tools. Note that like libraries, 
+  contributed tools should be stored in the sketchbook. (See the
+  howto.txt files in "libraries" and "tools" for more information.)
+
++ An example Tool with source and a build script is included. (However
+  it's not compiled by default, so you won't see it in the menu.) 
+  Future releases may put all items from the Tools menu into the 
+  default "tools" folder with source (just like the libraries).
+
+[ known problems ]
+
++ Slow response on file/sketchbook/examples menus on OS X 10.5.
+  This is an Apple bug in Java 1.5 and 1.6 on Mac OS X 10.5 
+  (but not 10.4) causing these menus to be extremely slow. 
+  Workarounds described in the bug report:
+  http://dev.processing.org/bugs/show_bug.cgi?id=786
+  Please file a bug report with Apple if you want this fixed!
+
++ In the current Windows release, Processing may not be able to find 
+  the JDK even if you have one installed. If this happens on your machine, 
+  copy the contents of your JDK installation to a new folder titled "java"
+  inside the Processing folder. This fill be fixed in a future release.
+  http://dev.processing.org/bugs/show_bug.cgi?id=878
+
++ See dev.processing.org/bugs for more.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0147 - 18 August 2008
 
 * RELEASES SINCE 0135 CONTAIN MANY SIGNIFICANT CHANGES, PLEASE READ *
