@@ -159,87 +159,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
   */
 
 
-  /*
-  //protected boolean displayed = false;
-
-  // main applet thread requests an update,
-  // but PGraphics has to respond back by calling PApplet.display()
-  public void requestDisplay(PApplet applet) {
-    //System.out.println("requesting display");
-
-    //if (!displayed) {
-      // these two method calls (and explanations) were taken from
-      // the FpsAnimator implementation from the jogl hoo-ha
-
-      // Try to get OpenGL context optimization since we know we
-      // will be rendering this one drawable continually from
-      // this thread; make the context current once instead of
-      // making it current and freeing it each frame.
-      //canvas.setRenderingThread(Thread.currentThread());
-      //System.out.println(Thread.currentThread());
-
-      // Since setRenderingThread is currently advisory (because
-      // of the poor JAWT implementation in the Motif AWT, which
-      // performs excessive locking) we also prevent repaint(),
-      // which is called from the AWT thread, from having an
-      // effect for better multithreading behavior. This call is
-      // not strictly necessary, but if end users write their
-      // own animation loops which update multiple drawables per
-      // tick then it may be necessary to enforce the order of
-      // updates.
-      //canvas.setNoAutoRedrawMode(true);
-
-      // maybe this will help?
-      //canvas.requestFocus();
-
-      // done with this business
-      //displayed = true;
-    //}
-    // request a display from the gl canvas. when it happens,
-    // we'll hear about it from the GLEventListener, which will
-    // in turn call PApplet.display()... hold your breath...
-    try {
-      canvas.display();
-      //System.out.println("out of canvas display");
-
-    } catch (GLException e) {
-      Throwable t = e.getCause();
-      // if InvocationTargetException, need to unpack one level first
-      if (t instanceof InvocationTargetException) {
-        Throwable target = ((InvocationTargetException) t).getTargetException();
-        throw new RuntimeException(target);
-      } else {
-        throw new RuntimeException(t);
-      }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-  */
-
-
-  /*
-  // this was additional stuff used when the animator
-  // thread was being shut down.. how to handle this..
-  // (doesn't seem to be needed?)
-
-        drawable.setNoAutoRedrawMode(false);
-        try {
-          // The surface is already unlocked and rendering
-          // thread is already null if an exception occurred
-          // during display(), so don't disable the rendering
-          // thread again.
-          if (noException) {
-            drawable.setRenderingThread(null);
-          }
-        } finally {
-          synchronized (PAppletThreadGL.this) {
-            thread = null;
-            PAppletThreadGL.this.notify();
-          }
-        }
-  */
-
 
   /**
    * Called by resize(), this handles creating the actual GLCanvas the
@@ -392,17 +311,21 @@ public class PGraphicsOpenGL extends PGraphics3D {
   public void beginDraw() {
     //if (!parent.isDisplayable()) return;
 
-    // Call setRealized() after addNotify() has been called
-    drawable.setRealized(parent.isDisplayable());
-    //System.out.println("OpenGL beginDraw() setting realized " + parent.isDisplayable());
-    if (parent.isDisplayable()) {
-      //System.out.println("  we'll realize it alright");
-      drawable.setRealized(true);
-    } else {
-      //System.out.println("  not yet ready to be realized");
-      return;  // Should have called canDraw() anyway
+    // When using an offscreen buffer, the drawable instance will be null.
+    // The offscreen buffer uses the drawing context of the main PApplet.
+    if (drawable != null) {
+      // Call setRealized() after addNotify() has been called
+      drawable.setRealized(parent.isDisplayable());
+      //System.out.println("OpenGL beginDraw() setting realized " + parent.isDisplayable());
+      if (parent.isDisplayable()) {
+        //System.out.println("  we'll realize it alright");
+        drawable.setRealized(true);
+      } else {
+        //System.out.println("  not yet ready to be realized");
+        return;  // Should have called canDraw() anyway
+      }
+      detainContext();
     }
-    detainContext();
 
     // On the first frame that's guaranteed to be on screen,
     // and the component valid and all that, ask for focus.
@@ -500,12 +423,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
       flush();
     }
 
-    drawable.swapBuffers();
+    if (drawable != null) {
+      drawable.swapBuffers();
+    }
 
     //insideDraw = false;
     report("bot endDraw()");
 
-    releaseContext();
+    if (drawable != null) {
+      releaseContext();
+    }
   }
 
 
