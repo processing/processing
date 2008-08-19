@@ -13,6 +13,7 @@ else
   mkdir work
   cp -r ../shared/lib work/
   cp -r ../shared/libraries work/
+  cp -r ../shared/tools work/
 
   cp ../../app/lib/antlr.jar work/lib/
   cp ../../app/lib/ecj.jar work/lib/
