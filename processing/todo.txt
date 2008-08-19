@@ -4,19 +4,16 @@ X   Editor, Sketch, and SketchCode are now fair game
 X clean up Base a bit
 X   public methods in Base are now also fair game
 X remove hide/unhide code and menu options
-_ create a local version of javadoc, and send to server
+X create a local version of javadoc, and send to server
+X clean up some of the api naming for tab changes, etc.
+X   setCurrentTab(int index or String filename)
+X   getTabs() ? maybe these are interface to the code class
+X   clean up API for JEditTextArea before exposing the object
+X write basic documentation for how it's handled (tools/howto.txt)
+X add tools folder to make and dist scripts
 
-
-tools
-_ clean up some of the api naming for tab changes, etc.
-_   setCurrentTab(int index or String filename)
-_   getTabs() ? maybe these are interface to the code class
-_   clean up API for JEditTextArea before exposing the object
-_ add tools folder to make and dist scripts
-_ write basic documentation for how it's handled (tools/howto.txt)
 _ don't open more than one "create font" or "color selector"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=830
-
 
 _ use macosx dialogs for all of the editor stuff
 _   see about doing the same on windows, linux?
