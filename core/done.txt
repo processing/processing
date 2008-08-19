@@ -1,3 +1,7 @@
+0148 core
+X tweaks to PGraphicsOpenGL to support GLGraphics
+
+
 0147 core
 X processing sketches not restarting after switching pages in safari
 X   http://dev.processing.org/bugs/show_bug.cgi?id=581

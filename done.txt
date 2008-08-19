@@ -1,3 +1,18 @@
+0148 pde
+X clean up accessors inside Sketch and SketchCode
+X   Editor, Sketch, and SketchCode are now fair game
+X clean up Base a bit
+X   public methods in Base are now also fair game
+X remove hide/unhide code and menu options
+X create a local version of javadoc, and send to server
+X clean up some of the api naming for tab changes, etc.
+X   setCurrentTab(int index or String filename)
+X   getTabs() ? maybe these are interface to the code class
+X   clean up API for JEditTextArea before exposing the object
+X write basic documentation for how it's handled (tools/howto.txt)
+X add tools folder to make and dist scripts
+
+
 0147 pde
 X inside Sketch.java, don't hardwire the file extension types
 X   arduino uses .c, .cpp, .h instead of .java
