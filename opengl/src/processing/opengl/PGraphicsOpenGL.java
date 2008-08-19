@@ -108,8 +108,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * that is visible on screen in order to work properly.
    * @param parent the host applet
    */
-  public PGraphicsOpenGL(int width, int height, PApplet iparent) {
-    super(width, height, iparent);
+  public PGraphicsOpenGL(int width, int height, PApplet parent) {
+    super(width, height, parent);
 
 //    if (parent == null) {
 //      throw new RuntimeException("PGraphicsOpenGL can only be used " +
@@ -278,6 +278,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
+  /**
+   * Get the current context, for use by libraries that need to talk to it.
+   * @return 
+   */
+  public GLContext getContext() {
+    return context;
+  }
+  
+  
   /**
    * Make the OpenGL rendering context current for this thread.
    */
