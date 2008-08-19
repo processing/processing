@@ -280,13 +280,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   /**
    * Get the current context, for use by libraries that need to talk to it.
-   * @return 
    */
   public GLContext getContext() {
     return context;
   }
-  
-  
+
+
   /**
    * Make the OpenGL rendering context current for this thread.
    */
