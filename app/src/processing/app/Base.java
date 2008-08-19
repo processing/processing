@@ -42,8 +42,8 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int VERSION = 148;
-  static final String VERSION_NAME = "0148 Beta";
+  static final int VERSION = 149;
+  static final String VERSION_NAME = "0149 Beta";
 
   static Platform platform;
 
@@ -421,7 +421,7 @@ public class Base {
 
 
   /**
-   * Replace the sketch in the current window with a new untitled document. 
+   * Replace the sketch in the current window with a new untitled document.
    */
   public void handleNewReplace() {
     if (!activeEditor.checkModified(false)) {
@@ -569,7 +569,7 @@ public class Base {
 
 
   /**
-   * Close a sketch as specified by its editor window. 
+   * Close a sketch as specified by its editor window.
    * @param editor Editor object of the sketch to be closed.
    * @param quitting True if this is being called by File &rarr; Quit.
    * @return true if succeeded in closing, false if canceled.
@@ -640,7 +640,7 @@ public class Base {
 
   /**
    * Handler for File &rarr; Quit.
-   * @return false if canceled, true otherwise. 
+   * @return false if canceled, true otherwise.
    */
   public boolean handleQuit() {
     // If quit is canceled, this will be replaced anyway
@@ -1046,8 +1046,8 @@ public class Base {
 
 
   /**
-   * Convenience method to get a File object for the specified filename inside 
-   * the settings folder. 
+   * Convenience method to get a File object for the specified filename inside
+   * the settings folder.
    * For now, only used by Preferences to get the preferences.txt file.
    * @param filename A file inside the settings folder.
    * @return filename wrapped as a File object inside the settings folder
@@ -1402,7 +1402,7 @@ public class Base {
   /**
    * Retrieve a path to something in the Processing folder. Eventually this
    * may refer to the Contents subfolder of Processing.app, if we bundle things
-   * up as a single .app file with no additional folders. 
+   * up as a single .app file with no additional folders.
    */
   static public String getContentsPath(String filename) {
     String basePath = System.getProperty("user.dir");
@@ -1435,7 +1435,7 @@ public class Base {
   }
 
 
-  /** 
+  /**
    * Return an Image object from inside the Processing lib folder.
    */
   static public Image getLibImage(String name, Component who) {
@@ -1482,11 +1482,11 @@ public class Base {
   }
 
 
-  static public void copyFile(File sourceFile, 
+  static public void copyFile(File sourceFile,
                               File targetFile) throws IOException {
-    InputStream from = 
+    InputStream from =
       new BufferedInputStream(new FileInputStream(sourceFile));
-    OutputStream to = 
+    OutputStream to =
       new BufferedOutputStream(new FileOutputStream(targetFile));
     byte[] buffer = new byte[16 * 1024];
     int bytesRead;
@@ -1508,7 +1508,7 @@ public class Base {
    */
   static public String loadFile(File file) throws IOException {
     return PApplet.join(PApplet.loadStrings(file), "\n");
-    
+
     /*
     // empty code file.. no worries, might be getting filled up later
     if (file.length() == 0) return "";
@@ -1648,7 +1648,7 @@ public class Base {
 
   /**
    * Recursively creates a list of all files within the specified folder,
-   * and returns a list of their relative paths. 
+   * and returns a list of their relative paths.
    * Ignores any files/folders prefixed with a dot.
    */
   static public String[] listFiles(String path, boolean relative) {
