@@ -11,11 +11,6 @@ copies of each library. The code folder is still an option, but the
 use of the new "library" system is encouraged as a simple packaging 
 mechanism for your projects.
 
-Libraries live inside the "libraries" folder of the Processing
-distribution, however users are encouraged to install "contributed"
-libraries in their sketchbook folder, which will prevent them 
-from having to move their libraries with new Processing releases.
-
 A Processing library can be any sort of Java code that's been 
 given a package name and packed into a jar file. It can also register
 itself with the parent applet to get notification of when events 
@@ -41,6 +36,24 @@ that is quickly too general for our target audience. Users who are
 advanced enough in their programming skills to build libraries will 
 almost always be skilled enough to use another IDE like Eclipse 
 (if they aren't already) to build their library.
+
+
+//////////////////////////////////////////////////////////////
+
+
+Where to put Libraries
+
+Core libraries live inside the "libraries" folder of the Processing
+distribution, however users should install "contributed" libraries 
+in their sketchbook folder, which will prevent them from having to 
+move their libraries with new Processing releases. 
+
+If a library works only with a particular release of Processing, 
+then it may make sense for the user to put things into the
+Processing libraries folder, however we'd like to keep users 
+out of there as much as possible. In fact, it may not be visible
+in future releases of Processing (for instance, on Mac OS X it
+may live inside a .app bundle).
 
 
 //////////////////////////////////////////////////////////////
@@ -78,8 +91,8 @@ the Processing project and have an enormous impact on how people
 understand Processing. Libraries have been designed into the larger 
 Processing plan to enable simple extensions of the core API in new, 
 innovative, and unexpected directions. The libraries are the future 
-of the project as we plan for processing.core.* to remain very 
-minimal.
+of the project as we plan for processing.core.* to remain as minimal
+as possible.
 
 
 //////////////////////////////////////////////////////////////
@@ -465,4 +478,4 @@ official things as well.
 //////////////////////////////////////////////////////////////
 
 
-Ben Fry, Last updated 23 October 2007
+Ben Fry, last updated 19 August 2008
