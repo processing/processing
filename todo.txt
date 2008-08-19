@@ -4,6 +4,7 @@ X   Editor, Sketch, and SketchCode are now fair game
 X clean up Base a bit
 X   public methods in Base are now also fair game
 X remove hide/unhide code and menu options
+_ create a local version of javadoc, and send to server
 
 
 tools
@@ -35,6 +36,11 @@ _ finding older versions of java on windows
 _   http://dev.processing.org/bugs/show_bug.cgi?id=545
 _ eclipse launcher for windows
 _   http://dev.eclipse.org/viewcvs/index.cgi/platform-launcher/library/win32/eclipseWin.c?view=markup&content-type=text%2Fvnd.viewcvs-markup&revision=1.12
+
+_ should open() not return a Process object? (exec() instead?)
+_   pro: can write out error messages (or output)
+_   con: loses cross platform ability
+_   but: open() is platform specific anyway, ppl can use exec()
 
 
 [ needs verification ] 
