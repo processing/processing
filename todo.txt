@@ -950,9 +950,12 @@ TOOLS / General
 
 _ need a proper means to handle command keys for tools (?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=140
-_ need method for showing prefs for the tools
+_ need method for showing prefs for the tools (?)
 _   i.e. add pref to handle date vs. increment on archive sketch
 _   tools that need prefs will show their own GUI anyway
+_   http://dev.processing.org/bugs/show_bug.cgi?id=883
+_ handle native code for tools menu (?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=884
 
 
 TOOLS / Ideas 
