@@ -133,7 +133,7 @@ public class Preferences {
   static File preferencesFile;
 
 
-  static public void init() {
+  static protected void init() {
 
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
@@ -500,7 +500,7 @@ public class Preferences {
   /**
    * Close the window after an OK or Cancel.
    */
-  public void disposeFrame() {
+  protected void disposeFrame() {
     dialog.dispose();
   }
 
@@ -509,7 +509,7 @@ public class Preferences {
    * Change internal settings based on what was chosen in the prefs,
    * then send a message to the editor saying that it's time to do the same.
    */
-  public void applyFrame() {
+  protected void applyFrame() {
     // put each of the settings into the table
     setBoolean("export.applet.separate_jar_files",
                exportSeparateBox.isSelected());
@@ -567,7 +567,7 @@ public class Preferences {
   }
 
 
-  public void showFrame(Editor editor) {
+  protected void showFrame(Editor editor) {
     this.editor = editor;
 
     // set all settings entry boxes to their actual status
@@ -597,7 +597,7 @@ public class Preferences {
   // .................................................................
 
 
-  static public void load(InputStream input) throws IOException {
+  static protected void load(InputStream input) throws IOException {
     BufferedReader reader =
       new BufferedReader(new InputStreamReader(input));
 
@@ -622,7 +622,7 @@ public class Preferences {
   // .................................................................
 
 
-  static public void save() {
+  static protected void save() {
     try {
       // on startup, don't worry about it
       // this is trying to update the prefs for who is open 
@@ -880,66 +880,3 @@ public class Preferences {
     return new SyntaxStyle(color, italic, bold);
   }
 }
-
-
-    // Default serial port:  [ COM1 + ]
-
-    /*
-    label = new JLabel("Default serial port:");
-    pain.add(label);
-    d = label.getPreferredSize();
-
-    Vector list = buildPortList();
-    combo = new JComboBox(list);
-    pain.add(combo);
-    d2 = combo.getPreferredSize();
-
-    if (list.size() == 0) {
-      label.setEnabled(false);
-      combo.setEnabled(false);
-
-    } else {
-      String defaultName = Preferences.get("serial.port", "unspecified");
-      combo.setSelectedItem(defaultName);
-    }
-
-    vmax = Math.max(d.height, d2.height);
-    label.setBounds(left, top + (vmax-d.height)/2,
-                    d.width, d.height);
-    h = left + d.width + BETWEEN;
-    combo.setBounds(h, top + (vmax-d2.height)/2,
-                    d2.width, d2.height);
-    right = Math.max(right, h + d2.width + BIG);
-    top += vmax + BETWEEN;
-    */
-
-  // open the last-used sketch, etc
-
-  //public void init() {
-
-    //String what = path + File.separator + name + ".pde";
-
-    ///String serialPort = skprops.getProperty("serial.port");
-    //if (serialPort != null) {
-    //  properties.put("serial.port", serialPort);
-    //}
-
-    //boolean ee = new Boolean(skprops.getProperty("editor.external", "false")).booleanValue();
-    //editor.setExternalEditor(ee);
-
-    ///} catch (Exception e) {
-      // this exception doesn't matter, it's just the normal course of things
-      // the app reaches here when no sketch.properties file exists
-      //e.printStackTrace();
-
-      // indicator that this is the first time this feller has used p5
-    //firstTime = true;
-
-      // even if folder for 'default' user doesn't exist, or
-      // sketchbook itself is missing, mkdirs() will make it happy
-      //userName = "default";
-
-      // doesn't exist, not available, make my own
-      //skNew();
-      //}
-  //}
