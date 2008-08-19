@@ -1278,37 +1278,37 @@ public class XMLElement implements Serializable {
      *
      * @param rawElement the element to compare to
      */
-    public boolean equalsXMLElement(XMLElement elt) {
-        if (! this.name.equals(elt.getLocalName())) {
+    public boolean equalsXMLElement(XMLElement rawElement) {
+        if (! this.name.equals(rawElement.getLocalName())) {
             return false;
         }
-        if (this.attributes.size() != elt.getAttributeCount()) {
+        if (this.attributes.size() != rawElement.getAttributeCount()) {
             return false;
         }
         Enumeration en = this.attributes.elements();
         while (en.hasMoreElements()) {
             XMLAttribute attr = (XMLAttribute) en.nextElement();
-            if (! elt.hasAttribute(attr.getName(), attr.getNamespace())) {
+            if (! rawElement.hasAttribute(attr.getName(), attr.getNamespace())) {
                 return false;
             }
-            String value = elt.getAttribute(attr.getName(),
+            String value = rawElement.getAttribute(attr.getName(),
                                             attr.getNamespace(),
                                             null);
             if (! attr.getValue().equals(value)) {
                 return false;
             }
-            String type = elt.getAttributeType(attr.getName(),
+            String type = rawElement.getAttributeType(attr.getName(),
                                                attr.getNamespace());
             if (! attr.getType().equals(type)) {
                 return false;
             }
         }
-        if (this.children.size() != elt.getChildCount()) {
+        if (this.children.size() != rawElement.getChildCount()) {
             return false;
         }
         for (int i = 0; i < this.children.size(); i++) {
             XMLElement child1 = this.getChildAtIndex(i);
-            XMLElement child2 = elt.getChildAtIndex(i);
+            XMLElement child2 = rawElement.getChildAtIndex(i);
 
             if (! child1.equalsXMLElement(child2)) {
                 return false;

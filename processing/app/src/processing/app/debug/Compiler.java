@@ -44,7 +44,7 @@ public class Compiler {
    *
    * @param sketch Sketch object to be compiled.
    * @param buildPath Where the temporary files live and will be built from.
-   * @return
+   * @return true if successful.
    * @throws RunnerException Only if there's a problem. Only then.
    */
   public boolean compile(Sketch sketch,

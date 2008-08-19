@@ -24,7 +24,6 @@ import java.awt.print.*;
  * The text area repaint manager. It performs double buffering and paints
  * lines of text.
  * @author Slava Pestov
- * @version $Id$
  */
 public class TextAreaPainter extends JComponent
 implements TabExpander, Printable
@@ -82,7 +81,7 @@ implements TabExpander, Printable
   /**
    * Returns the syntax styles used to paint colorized text. Entry <i>n</i>
    * will be used to paint tokens with id = <i>n</i>.
-   * @see org.gjt.sp.jedit.syntax.Token
+   * @see processing.app.syntax.Token
    */
   public final SyntaxStyle[] getStyles()
   {
@@ -93,7 +92,7 @@ implements TabExpander, Printable
    * Sets the syntax styles used to paint colorized text. Entry <i>n</i>
    * will be used to paint tokens with id = <i>n</i>.
    * @param styles The syntax styles
-   * @see org.gjt.sp.jedit.syntax.Token
+   * @see processing.app.syntax.Token
    */
   public final void setStyles(SyntaxStyle[] styles)
   {
@@ -363,7 +362,7 @@ implements TabExpander, Printable
 
   /**
    * Repaints the text.
-   * @param g The graphics context
+   * @param gfx The graphics context
    */
   public void paint(Graphics gfx)
   {
