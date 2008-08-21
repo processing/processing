@@ -1,5 +1,22 @@
 0149 pde
+X fix problem with error line highlighting
+X   http://dev.processing.org/bugs/show_bug.cgi?id=888
+X additional cleanup to various Sketch, Runner, Compiler classes
+X preproc cleanup
+X   remove various preproc imports
+X   simplify preprocessor handling to make way for command line
+X   use accurate line numbering internally rather than mashing lines in preproc
+X   remove preprocName
+X   remove appletClassName
+X command line support
+_   http://dev.processing.org/bugs/show_bug.cgi?id=219
+o   would still require awt, but would take a sketch on cmd line
+X   modify showError() et al to not use awt when running from command line
+_   build it and then exit
+X   notations have been added to the bug report that cover the plw changes
 
+_ add local variables to PdeRecognizer
+_   remove static methods in PdePreprocessor, instead pull things from recog
 
 _ don't open more than one "create font" or "color selector"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=830
@@ -500,12 +517,10 @@ PDE - Processing Development Environment
 
 PDE / Base
 
-_ command line support
-_   http://dev.processing.org/bugs/show_bug.cgi?id=219
-_   would still require awt, but would take a sketch on cmd line
-_   build it and then exit
-_   also an option to launch p5, load a sketch and run it
-_   notations have been added to the bug report that cover the plw changes
+_ also an option to launch p5, load a sketch and run it
+_   command to launch p5, load sketch and run in present mode
+_   not that useful because users should just use export application
+_   http://dev.processing.org/bugs/show_bug.cgi?id=889
 
 
 PDE / Warnings

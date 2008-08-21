@@ -31,6 +31,7 @@ import processing.app.*;
 import processing.core.*;
 
 import java.io.*;
+import java.util.*;
 
 import antlr.*;
 import antlr.collections.*;
@@ -127,65 +128,60 @@ import antlr.collections.*;
  */
 public class PdePreprocessor {
 
-  static final int JDK11 = 0;
-  static final int JDK13 = 1;
-  static final int JDK14 = 2;
-
-  static String defaultImports[][] = new String[3][];
+  String[] defaultImports;
 
   // these ones have the .* at the end, since a class name might be at the end 
   // instead of .* which would make trouble other classes using this can lop 
   // off the . and anything after it to produce a package name consistently.
-  public String extraImports[];
+  //public String extraImports[];
+  ArrayList<String> programImports;
 
   // imports just from the code folder, treated differently
   // than the others, since the imports are auto-generated.
-  public String codeFolderImports[];
+  ArrayList<String> codeFolderImports;
 
   static public final int STATIC = 0;  // formerly BEGINNER
   static public final int ACTIVE = 1;  // formerly INTERMEDIATE
   static public final int JAVA   = 2;  // formerly ADVANCED
+
   // static to make it easier for the antlr preproc to get at it
   static public int programType;
   static public boolean foundMain;
 
+  String indent;
+  
+  PrintStream stream; 
   Reader programReader;
   String buildPath;
+  String name;
 
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
-
-
-  /**
-   * These may change in-between (if the prefs panel adds this option)
-   * so grab them here on construction.
-   */
-  public PdePreprocessor() {
-    defaultImports[JDK11] =
-      PApplet.split(Preferences.get("preproc.imports.jdk11"), ',');
-    defaultImports[JDK13] =
-      PApplet.split(Preferences.get("preproc.imports.jdk13"), ',');
-    defaultImports[JDK14] =
-      PApplet.split(Preferences.get("preproc.imports.jdk14"), ',');
-  }
-
 
   /**
    * Used by PdeEmitter.dumpHiddenTokens()
    */
   public static TokenStreamCopyingHiddenTokenFilter filter;
 
+  static String advClassName = "";
+
 
   /**
-   * preprocesses a pde file and write out a java file
-   * @param pretty true if should also space out/indent lines
-   * @return the classname of the exported Java
+   * Setup a new preprocessor.
    */
-  //public String write(String program, String buildPath, String name,
-  //                  String extraImports[]) throws java.lang.Exception {
-  public String write(String program, String buildPath,
-                      String name, String codeFolderPackages[], boolean pretty)
-    throws java.lang.Exception {
+  public PdePreprocessor() { }
+
+
+  public int writePrefix(String program, String buildPath,
+                         String name, String codeFolderPackages[]) throws FileNotFoundException {
+    this.buildPath = buildPath;
+    this.name = name;
+
+    int tabSize = Preferences.getInteger("editor.tabs.size");
+    char[] indentChars = new char[tabSize];
+    Arrays.fill(indentChars, ' ');
+    indent = new String(indentChars);
+    
     // need to reset whether or not this has a main()
     foundMain = false;
 
@@ -239,6 +235,11 @@ public class PdePreprocessor {
       }
     }
 
+    // These may change in-between (if the prefs panel adds this option)
+    // so grab them here on construction.
+    String prefsLine = Preferences.get("preproc.imports");
+    defaultImports = PApplet.splitTokens(prefsLine, ", ");
+
     // if this guy has his own imports, need to remove them
     // just in case it's not an advanced mode sketch
     // TODO not sure why [\\s\\A^] won't work for me, but if someone is a Java
@@ -247,7 +248,8 @@ public class PdePreprocessor {
     //String importRegexp = "[\\s\\A](import\\s+)(\\S+)(\\s*;)";
     //String importRegexp = "[\\s^](import\\s+)(\\S+)(\\s*;)";
     String importRegexp = "\\s(import\\s+)(\\S+)(\\s*;)";
-    java.util.Vector imports = new java.util.Vector();
+    //java.util.Vector imports = new java.util.Vector();
+    programImports = new ArrayList<String>();
 
     do {
       String[] pieces = PApplet.match(" " + program, importRegexp);
@@ -257,29 +259,39 @@ public class PdePreprocessor {
       String piece = pieces[0] + pieces[1] + pieces[2];
       int len = piece.length();  // how much to trim out
 
-      imports.add(pieces[1]);  // the package name
+      programImports.add(pieces[1]);  // the package name
       int idx = program.indexOf(piece);
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);
 
     } while (true);
 
-    extraImports = new String[imports.size()];
-    imports.copyInto(extraImports);
-
+    codeFolderImports = new ArrayList<String>();
     if (codeFolderPackages != null) {
-      codeFolderImports = new String[codeFolderPackages.length];
-      for (int i = 0; i < codeFolderPackages.length; i++) {
-        codeFolderImports[i] = codeFolderPackages[i] + ".*";
+      for (String item : codeFolderPackages) {
+        codeFolderImports.add(item + ".*");
       }
-    } else {
-      codeFolderImports = null;
     }
-
     // do this after the program gets re-combobulated
     this.programReader = new StringReader(program);
-    this.buildPath = buildPath;
 
+    File streamFile = new File(buildPath, name + ".java");
+    stream = new PrintStream(new FileOutputStream(streamFile));
+    int importsLength = writeImports(stream);
+    
+    // return the length of the imports plus the extra lines for declarations
+    return importsLength + 2;
+  }
+
+
+  /**
+   * preprocesses a pde file and write out a java file
+   * @param pretty true if should also space out/indent lines
+   * @return the classname of the exported Java
+   */
+  //public String write(String program, String buildPath, String name,
+  //                  String extraImports[]) throws java.lang.Exception {
+  public String write() throws java.lang.Exception {
     // create a lexer with the stream reader, and tell it to handle
     // hidden tokens (eg whitespace, comments) since we want to pass these
     // through so that the line numbers when the compiler reports errors
@@ -345,39 +357,74 @@ public class PdePreprocessor {
     // output the code
     //
     PdeEmitter emitter = new PdeEmitter();
-    File streamFile = new File(buildPath, name + ".java");
-    PrintStream stream = new PrintStream(new FileOutputStream(streamFile));
-
     //writeHeader(stream, extraImports, name);
-    writeHeader(stream, name, pretty);
+    writeDeclaration(stream, name);
 
     emitter.setOut(stream);
     emitter.print(rootNode);
 
-    writeFooter(stream, name, pretty);
+    writeFooter(stream, name);
     stream.close();
 
     // if desired, serialize the parse tree to an XML file.  can
     // be viewed usefully with Mozilla or IE
 
     if (Preferences.getBoolean("preproc.output_parse_tree")) {
-
-      stream = new PrintStream(new FileOutputStream("parseTree.xml"));
-      stream.println("<?xml version=\"1.0\"?>");
-      stream.println("<document>");
-      OutputStreamWriter writer = new OutputStreamWriter(stream);
-      if (parserAST != null) {
-        ((CommonAST)parserAST).xmlSerialize(writer);
-      }
-      writer.flush();
-      stream.println("</document>");
-      writer.close();
+      writeParseTree("parseTree.xml", parserAST);
     }
 
     return name;
   }
 
+  
+  protected void writeParseTree(String filename, AST ast) {
+    try {
+    PrintStream stream = new PrintStream(new FileOutputStream(filename));
+    stream.println("<?xml version=\"1.0\"?>");
+    stream.println("<document>");
+    OutputStreamWriter writer = new OutputStreamWriter(stream);
+    if (ast != null) {
+      ((CommonAST) ast).xmlSerialize(writer);
+    }
+    writer.flush();
+    stream.println("</document>");
+    writer.close();
+    } catch (IOException e) {
+      
+    }
+  }
 
+  int writeImports(PrintStream out) {
+    out.println("import processing.core.*; ");
+    out.println();
+    int count = 2;
+
+    if (programImports.size() != 0) {
+      for (String item : programImports) {
+        out.println("import " + item + "; ");
+      }
+      out.println();
+      count += programImports.size() + 1;
+    }
+
+    if (codeFolderImports.size() != 0) {
+      for (String item : codeFolderImports) {
+        out.println("import " + item + "; ");
+      }
+      out.println();
+      count += codeFolderImports.size() + 1;
+    }
+
+    for (String item : defaultImports) {
+      out.println("import " + item + ".*; ");
+    }
+    out.println();
+    count += defaultImports.length + 1;
+    
+    return count;
+  }
+  
+  
   /**
    * Write any required header material (eg imports, class decl stuff)
    *
@@ -385,72 +432,24 @@ public class PdePreprocessor {
    * @param exporting           Is this being exported from PDE?
    * @param name                Name of the class being created.
    */
-  void writeHeader(PrintStream out, String className, boolean pretty) {
+  void writeDeclaration(PrintStream out, String className) {
 
-    // must include processing.core
-    out.print("import processing.core.*; ");
-    if (pretty) out.println();
-
-    // emit emports that are needed for classes from the code folder
-    if (extraImports != null) {
-      for (int i = 0; i < extraImports.length; i++) {
-        out.print("import " + extraImports[i] + "; ");
-        if (pretty) out.println();
-      }
-    }
-
-    if (codeFolderImports != null) {
-      for (int i = 0; i < codeFolderImports.length; i++) {
-        out.print("import " + codeFolderImports[i] + "; ");
-        if (pretty) out.println();
-      }
-    }
-
-    // emit standard imports (read from pde.properties)
-    // for each language level that's being used.
-    String jdkVersionStr = Preferences.get("preproc.jdk_version");
-
-    int jdkVersion = JDK11;  // default
-    if (jdkVersionStr.equals("1.3")) { jdkVersion = JDK13; };
-    if (jdkVersionStr.equals("1.4")) { jdkVersion = JDK14; };
-
-    for (int i = 0; i <= jdkVersion; i++) {
-      for (int j = 0; j < defaultImports[i].length; j++) {
-        out.print("import " + defaultImports[i][j] + ".*; ");
-        if (pretty) out.println();
-      }
-    }
-
-    //boolean opengl = Preferences.get("renderer").equals("opengl");
-    //if (opengl) {
-    //out.println("import processing.opengl.*; ");
-    //}
-
-    if (programType < JAVA) {
-      if (pretty) out.println();
-
-      // open the class definition
-      out.print("public class " + className + " extends PApplet {");
-      if (pretty) out.println();
-
-      if (programType == STATIC) {
-        // now that size() and background() can go inside of draw()
-        // actually, use setup(), because when running externally
-        // the applet size needs to be set before the window is drawn,
-        // meaning that after setup() things need to be ducky.
-        //out.print("public void draw() {");
-        out.print("public void setup() {");
-        if (pretty) out.println();
-
-        // split up lines to indent four spaces
-        //String[] lines = PApplet.split(program, '\n');
-        //program = "    " + PApplet.join(lines, "\n    ");
-      //} else {
-        // indent only two spaces
-        //String[] lines = PApplet.split(program, '\n');
-        //program = "    " + PApplet.join(lines, "\n    ");
-      }
-    }
+    String indent = "  ";
+    
+    if (programType == JAVA) {
+      // Print two blank lines so that the offset doesn't change
+      out.println();
+      out.println();
+      
+    } else if (programType == ACTIVE) {
+      // Print an extra blank line so the offset is identical to the others
+      out.println("public class " + className + " extends PApplet {");
+      out.println();
+      
+    } else if (programType == STATIC) {
+      out.println("public class " + className + " extends PApplet {");
+      out.print(indent + "public void setup() {");
+    }    
   }
 
   /**
@@ -458,42 +457,37 @@ public class PdePreprocessor {
    *
    * @param out PrintStream to write it to.
    */
-  void writeFooter(PrintStream out, String className, boolean pretty) {
+  void writeFooter(PrintStream out, String className) {
 
     if (programType == STATIC) {
       // close off draw() definition
-      if (pretty) out.print("  ");
-      out.print("noLoop(); ");
-      if (pretty) out.println();
-      out.print("} ");
-      if (pretty) out.println();
+      out.println(indent + "noLoop();");
+      out.println("} ");
     }
 
-    if ((programType == STATIC) || (programType < JAVA)) {
+    if ((programType == STATIC) || (programType == ACTIVE)) {
       if (!PdePreprocessor.foundMain) {
-        out.print("  static public void main(String args[]) { ");
-        if (pretty) out.println();
-        out.print("    PApplet.main(new String[] { \"" + className + "\" });");
-        if (pretty) out.println();
-        out.print("  }");
-        if (pretty) out.println();
+        out.println(indent + "static public void main(String args[]) {");
+        out.println(indent + indent + "PApplet.main(new String[] { \"" + className + "\" });");
+        out.println(indent + "}");
       }
-    }
 
-    if (programType < JAVA) {
       // close off the class definition
-      out.print("}");
+      out.println("}");
     }
   }
+  
+  
+  public ArrayList<String> getExtraImports() {
+    return programImports;
+  }
 
-
-  static String advClassName = "";
 
   /**
    * Find the first CLASS_DEF node in the tree, and return the name of the
    * class in question.
    *
-   * XXXdmose right now, we're using a little hack to the grammar to get
+   * TODO [dmose] right now, we're using a little hack to the grammar to get
    * this info.  In fact, we should be descending the AST passed in.
    */
   String getFirstClassName(AST ast) {
@@ -503,5 +497,4 @@ public class PdePreprocessor {
 
     return t;
   }
-
 }
