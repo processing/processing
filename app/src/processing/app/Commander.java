@@ -24,8 +24,13 @@
 package processing.app;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+
+import processing.app.debug.RunnerException;
+import processing.core.PApplet;
+import processing.core.PConstants;
 
 
 public class Commander {
@@ -36,6 +41,7 @@ public class Commander {
   static final String outputArg = "--output=";
   static final String exportAppletArg = "--export-applet";
   static final String exportApplicationArg = "--export-application";
+  static final String platformArg = "--platform=";
 
   static final int HELP = -1;
   static final int PREPROCESS = 0;
@@ -47,6 +53,8 @@ public class Commander {
   public Commander(String[] args) {
     String sketchPath = null;
     String outputPath = null;
+    //int[] platforms = null;
+    String[] platforms = null;
     int mode = HELP;
 
     for (String arg : args) {
@@ -64,13 +72,34 @@ public class Commander {
 
       } else if (arg.equals(exportApplicationArg)) {
         mode = EXPORT_APPLICATION;
-
+        
+      } else if (arg.equals(platformArg)) {
+        String platformStr = arg.substring(platformArg.length());
+//        String[] pieces = PApplet.splitTokens(platformStr, ", ");
+//        platforms = new int[pieces.length];
+//        for (int i = 0; i < platforms.length; i++) {
+//          if (pieces[i].equals("macosx")) {
+//            platforms[i] = PConstants.MACOSX;
+//          } else if (pieces[i].equals("windows")) {
+//            platforms[i] = PConstants.WINDOWS;
+//          } else if (pieces[i].equals("linux")) {
+//            platforms[i] = PConstants.LINUX;
+//          } else {
+//            complainAndQuit("Platform \"" + pieces[i] + "\" does not exist.");
+//          }
+//        }
+        platforms = PApplet.splitTokens(platformStr, ", ");
+        
       } else if (arg.startsWith(sketchArg)) {
         sketchPath = arg.substring(sketchArg.length());
 
       } else if (arg.startsWith(outputArg)) {
         outputPath = arg.substring(outputArg.length());
       }
+    }
+    
+    if (platforms == null) {
+      platforms = new String[] { "macosx", "windows", "linux" };
     }
 
     if (mode == HELP) {
@@ -89,20 +118,56 @@ public class Commander {
     } else if (!sketchPath.toLowerCase().endsWith(".pde")) {
       complainAndQuit("Sketch path must point to the main .pde file.");
       
-    } else if (mode == PREPROCESS) {
+    } else {
       try {
         Sketch sketch = new Sketch(null, sketchPath);
+        boolean success = false;
+        
+        if (mode == PREPROCESS) {
+          success = sketch.preprocess(outputPath) != null;
+
+        } else if (mode == BUILD) {
+          success = sketch.build(outputPath) != null;
+
+        } else if (mode == EXPORT_APPLET) {
+          success = sketch.exportApplet(outputPath);
+
+        } else if (mode == EXPORT_APPLICATION) {
+          if (platforms.length == 1) {
+            if (platforms[0].equals("macosx")) {
+              success = sketch.exportApplication(outputPath, PConstants.MACOSX);
+            } else if (platforms[0].equals("windows")) {
+              success = sketch.exportApplication(outputPath, PConstants.WINDOWS);
+            } else if (platforms[0].equals("linux")) {
+              success = sketch.exportApplication(outputPath, PConstants.LINUX);
+            } else {
+              complainAndQuit("Platform \"" + platforms[0] + "\" does not exist.");
+            }
+          } else {
+            for (String platform : platforms) {
+              File folder = new File(outputPath, "application." + platform);
+              String path = folder.getAbsolutePath();
+              if (platform.equals("macosx")) {
+                success = sketch.exportApplication(path, PConstants.MACOSX);
+              } else if (platform.equals("windows")) {
+                success = sketch.exportApplication(path, PConstants.WINDOWS);
+              } else if (platform.equals("linux")) {
+                success = sketch.exportApplication(path, PConstants.LINUX);
+              } else {
+                complainAndQuit("Platform \"" + platform + "\" does not exist.");
+              }
+              if (!success) break;
+            }
+          }
+        }
+        System.exit(success ? 0 : 1);
+        
+      } catch (RunnerException re) {
         
       } catch (IOException e) {
         e.printStackTrace();
         System.exit(1);
       }
-    } else if (mode == BUILD) {
-      
-    } else if (mode == EXPORT_APPLET) {
-      
-    } else if (mode == EXPORT_APPLICATION) {
-      
     }
   }
 
