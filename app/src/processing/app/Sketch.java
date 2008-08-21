@@ -1473,14 +1473,14 @@ public class Sketch {
 
 
   protected boolean exportApplet() throws Exception {
-    return exportApplet(folder.getAbsolutePath());
+    return exportApplet(new File(folder, "applet").getAbsolutePath());
   }
 
   
   /**
    * Handle export to applet.
    */
-  public boolean exportApplet(String parentFolder) throws RunnerException, IOException {
+  public boolean exportApplet(String appletPath) throws RunnerException, IOException {
     // Make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -1490,7 +1490,7 @@ public class Sketch {
       load();
     }
 
-    File appletFolder = new File(parentFolder, "applet");
+    File appletFolder = new File(appletPath);
     // Nuke the old applet folder because it can cause trouble
     Base.removeDir(appletFolder);
     // Create a fresh applet folder (needed before preproc is run below)
@@ -1608,7 +1608,7 @@ public class Sketch {
     // Copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
     // Check if the user already has their own loader image
-    File loadingImage = new File(parentFolder, LOADING_IMAGE);
+    File loadingImage = new File(folder, LOADING_IMAGE);
     if (!loadingImage.exists()) {
       loadingImage = new File("lib", LOADING_IMAGE);
     }
@@ -1717,7 +1717,7 @@ public class Sketch {
 
     if (dataFolder.exists()) {
       String dataFiles[] = Base.listFiles(dataFolder, false);
-      int offset = parentFolder.length() + 1;
+      int offset = folder.getAbsolutePath().length() + 1;
       for (int i = 0; i < dataFiles.length; i++) {
         if (PApplet.platform == PApplet.WINDOWS) {
           dataFiles[i] = dataFiles[i].replace('\\', '/');
@@ -1782,7 +1782,7 @@ public class Sketch {
 
     InputStream is = null;
     // if there is an applet.html file in the sketch folder, use that
-    File customHtml = new File(parentFolder, "applet.html");
+    File customHtml = new File(folder, "applet.html");
     if (customHtml.exists()) {
       is = new FileInputStream(customHtml);
     }
