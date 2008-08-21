@@ -1598,25 +1598,20 @@ public class Editor extends JFrame {
     presenting = present;
 
     try {
-      if (!sketch.compile()) {
-        System.out.println("Compile failed.");  // TODO remove this
-        return;
-      }
-
-      runtime = new Runner(Editor.this, presenting);
-      // Cannot use invokeLater() here, otherwise it gets
-      // placed on the event thread and causes a hang--bad idea all around.
-      Thread t = new Thread(new Runnable() {
-        public void run() {
+      String appletClassName = sketch.compile(); 
+      if (appletClassName != null) {
+        runtime = new Runner(Editor.this, appletClassName, presenting);
+        
+        // Cannot use invokeLater() here, otherwise it gets
+        // placed on the event thread and causes a hang--bad idea all around.
+        Thread t = new Thread(new Runnable() {
+          public void run() {
             runtime.launch();
-        }
-      });
-      t.start();
-      //runtime.start(appletLocation);
-
-      // run button watcher not currently enabled
-      // it was contributing to the external vm hanging
-      //watcher = new RunButtonWatcher();
+          }
+        });
+        t.start();
+        //runtime.start(appletLocation);
+      }
 
     } catch (Exception e) {
       //System.err.println("exception reached editor");

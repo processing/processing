@@ -47,6 +47,8 @@ public class Base {
 
   static Platform platform;
 
+  static private boolean commandLine;
+  
   // A single instance of the preferences window
   Preferences preferencesFrame;
 
@@ -62,7 +64,7 @@ public class Base {
   static private File toolsFolder;
 
   // maps imported packages to their library folder
-  static Hashtable importToLibraryTable = new Hashtable();
+  static HashMap<String, File> importToLibraryTable;
 
   // classpath for all known libraries for p5
   // (both those in the p5/libs folder and those with lib subfolders
@@ -84,8 +86,13 @@ public class Base {
 
 
   static public void main(String args[]) {
+    commandLine = false;
+    if (args.length >= 2) {
+      if (args[0].startsWith("--")) {
+        commandLine = true;
+      }
+    }
 
-    // make sure that this is running on java 1.4
     if (PApplet.javaVersion < 1.5f) {
       //System.err.println("no way man");
       Base.showError("Need to install Java 1.5",
@@ -108,19 +115,21 @@ public class Base {
                      "platform-specific code for your machine.", e);
     }
 
-    // Set the look and feel before opening the window
-    try {
-      platform.setLookAndFeel();
-    } catch (Exception e) {
-      System.err.println("Non-fatal error while setting the Look & Feel.");
-      System.err.println("The error message follows, however Processing should run fine.");
-      System.err.println(e.getMessage());
-      //e.printStackTrace();
+    if (!commandLine) {
+      // Set the look and feel before opening the window
+      try {
+        platform.setLookAndFeel();
+      } catch (Exception e) {
+        System.err.println("Non-fatal error while setting the Look & Feel.");
+        System.err.println("The error message follows, however Processing should run fine.");
+        System.err.println(e.getMessage());
+        //e.printStackTrace();
+      }
+
+      // Use native popups so they don't look so crappy on osx
+      JPopupMenu.setDefaultLightWeightPopupEnabled(false);
     }
-
-    // Use native popups so they don't look so crappy on osx
-    JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-
+    
     // Don't put anything above this line that might make GUI.
 
     try {
@@ -133,10 +142,6 @@ public class Base {
                      "More information can be found in the reference.", cnfe);
     }
 
-    // Create a location for untitled sketches
-    untitledFolder = createTempFolder("untitled");
-    untitledFolder.deleteOnExit();
-
     // run static initialization that grabs all the prefs
     try {
       Preferences.init();
@@ -144,10 +149,19 @@ public class Base {
       e.printStackTrace();
     }
 
-    /*Base base =*/ new Base(args);
+    if (commandLine) {
+      new Commander(args);
+      
+    } else {
+      // Create a location for untitled sketches
+      untitledFolder = createTempFolder("untitled");
+      untitledFolder.deleteOnExit();
+
+      /*Base base =*/ new Base(args);
+    }
   }
-
-
+  
+  
   public Base(String[] args) {
     platform.init(this);
 
@@ -751,6 +765,9 @@ public class Base {
     //System.out.println("rebuilding import menu");
     importMenu.removeAll();
 
+    // reset the table mapping imports to libraries
+    importToLibraryTable = new HashMap<String, File>();
+    
     // Add from the "libraries" subfolder in the Processing directory
     try {
       boolean found = addLibraries(importMenu, getSketchbookFolder());
@@ -866,10 +883,16 @@ public class Base {
 
 
   protected boolean addLibraries(JMenu menu, File folder) throws IOException {
-    // skip .DS_Store files, etc
     if (!folder.isDirectory()) return false;
 
-    String list[] = folder.list();
+    String list[] = folder.list(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        // skip .DS_Store files, .svn folders, etc
+        if (name.charAt(0) == '.') return false;
+        if (name.equals("CVS")) return false;
+        return (new File(dir, name).isDirectory());
+      }
+    });
     // if a bad folder or something like that, this might come back null
     if (list == null) return false;
 
@@ -879,29 +902,23 @@ public class Base {
 
     ActionListener listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          // TODO ohmigod that's nassssteee!
           activeEditor.getSketch().importLibrary(e.getActionCommand());
         }
       };
 
     boolean ifound = false;
 
-    for (int i = 0; i < list.length; i++) {
-      if ((list[i].charAt(0) == '.') ||
-          list[i].equals("CVS")) continue;
-
-      File subfolder = new File(folder, list[i]);
-      if (!subfolder.isDirectory()) continue;
-
-      File exported = new File(subfolder, "library");
-      File entry = new File(exported, list[i] + ".jar");
+    for (String libraryName : list) {
+      File subfolder = new File(folder, libraryName);
+      File libraryFolder = new File(subfolder, "library");
+      File libraryJar = new File(libraryFolder, libraryName + ".jar");
       // If a .jar file of the same prefix as the folder exists
       // inside the 'library' subfolder of the sketch
-      if (entry.exists()) {
-        String sanityCheck = Sketch.sanitizeName(list[i]);
-        if (!sanityCheck.equals(list[i])) {
+      if (libraryJar.exists()) {
+        String sanityCheck = Sketch.sanitizeName(libraryName);
+        if (!sanityCheck.equals(libraryName)) {
           String mess =
-            "The library \"" + list[i] + "\" cannot be used.\n" +
+            "The library \"" + libraryName + "\" cannot be used.\n" +
             "Library names must contain only basic letters and numbers.\n" +
             "(ascii only and no spaces, and it cannot start with a number)";
           Base.showMessage("Ignoring bad library name", mess);
@@ -910,7 +927,7 @@ public class Base {
 
         // get the path for all .jar files in this code folder
         String libraryClassPath =
-          Compiler.contentsToClassPath(exported);
+          Compiler.contentsToClassPath(libraryFolder);
         // grab all jars and classes from this folder,
         // and append them to the library classpath
         librariesClassPath +=
@@ -918,20 +935,18 @@ public class Base {
         // need to associate each import with a library folder
         String packages[] =
           Compiler.packageListFromClassPath(libraryClassPath);
-        for (int k = 0; k < packages.length; k++) {
-          //System.out.println(packages[k] + " -> " + exported);
-          //String already = (String) importToLibraryTable.get(packages[k]);
-          importToLibraryTable.put(packages[k], exported);
+        for (String pkg : packages) {
+          importToLibraryTable.put(pkg, libraryFolder);
         }
 
-        JMenuItem item = new JMenuItem(list[i]);
+        JMenuItem item = new JMenuItem(libraryName);
         item.addActionListener(listener);
-        item.setActionCommand(entry.getAbsolutePath());
+        item.setActionCommand(libraryJar.getAbsolutePath());
         menu.add(item);
         ifound = true;
 
       } else {  // not a library, but is still a folder, so recurse
-        JMenu submenu = new JMenu(list[i]);
+        JMenu submenu = new JMenu(libraryName);
         // needs to be separate var, otherwise would set ifound to false
         boolean found = addLibraries(submenu, subfolder);
         if (found) {
@@ -1361,21 +1376,30 @@ public class Base {
    */
   static public void showMessage(String title, String message) {
     if (title == null) title = "Message";
-    JOptionPane.showMessageDialog(new Frame(), message, title,
-                                  JOptionPane.INFORMATION_MESSAGE);
+    
+    if (commandLine) {
+      System.out.println(title + ": " + message);
+      
+    } else {
+      JOptionPane.showMessageDialog(new Frame(), message, title,
+                                    JOptionPane.INFORMATION_MESSAGE);
+    }
   }
 
 
   /**
    * Non-fatal error message with optional stack trace side dish.
    */
-  static public void showWarning(String title, String message,
-                                 Exception e) {
+  static public void showWarning(String title, String message, Exception e) {
     if (title == null) title = "Warning";
-    JOptionPane.showMessageDialog(new Frame(), message, title,
-                                  JOptionPane.WARNING_MESSAGE);
 
-    //System.err.println(e.toString());
+    if (commandLine) {
+      System.out.println(title + ": " + message);
+      
+    } else {
+      JOptionPane.showMessageDialog(new Frame(), message, title,
+                                    JOptionPane.WARNING_MESSAGE);
+    }
     if (e != null) e.printStackTrace();
   }
 
@@ -1385,12 +1409,16 @@ public class Base {
    * This is an error that can't be recovered. Use showWarning()
    * for errors that allow P5 to continue running.
    */
-  static public void showError(String title, String message,
-                               Throwable e) {
+  static public void showError(String title, String message, Throwable e) {
     if (title == null) title = "Error";
-    JOptionPane.showMessageDialog(new Frame(), message, title,
-                                  JOptionPane.ERROR_MESSAGE);
-
+    
+    if (commandLine) {
+      System.err.println(title + ": " + message);
+      
+    } else {
+      JOptionPane.showMessageDialog(new Frame(), message, title,
+                                    JOptionPane.ERROR_MESSAGE);
+    }
     if (e != null) e.printStackTrace();
     System.exit(1);
   }
@@ -1462,6 +1490,19 @@ public class Base {
 
   // ...................................................................
 
+  
+  /**
+   * Get the number of lines in a file by counting the number of newline 
+   * characters inside a String (and adding 1).
+   */
+  static public int countLines(String what) {
+    int count = 1;
+    for (char c : what.toCharArray()) {
+      if (c == '\n') count++;
+    }
+    return count;
+  }
+  
 
   /**
    * Same as PApplet.loadBytes(), however never does gzip decoding.

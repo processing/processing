@@ -48,7 +48,8 @@ public class Compiler {
    * @throws RunnerException Only if there's a problem. Only then.
    */
   public boolean compile(Sketch sketch,
-                         String buildPath) throws RunnerException {
+                         String buildPath, 
+                         String primaryClassName) throws RunnerException {
     // This will be filled in if anyone gets angry
     RunnerException exception = null;
     boolean success = false;
@@ -66,23 +67,23 @@ public class Compiler {
 
     // make list of code files that need to be compiled
     // (some files are skipped if they contain no class)
-    String[] preprocNames = new String[sketch.getCodeCount()];
-    int preprocCount = 0;
-    for (int i = 0; i < sketch.getCodeCount(); i++) {
-      if (sketch.getCode(i).getPreprocName() != null) {
-        preprocNames[preprocCount++] = sketch.getCode(i).getPreprocName();
+    String[] sourceFiles = new String[sketch.getCodeCount()];
+    int sourceCount = 0;
+    sourceFiles[sourceCount++] = 
+      new File(buildPath, primaryClassName + ".java").getAbsolutePath();
+    
+    for (SketchCode code : sketch.getCode()) {
+      if (code.isExtension("java")) {
+        String path = new File(buildPath, code.getFileName()).getAbsolutePath();
+        sourceFiles[sourceCount++] = path;
       }
     }
-    String[] command = new String[baseCommand.length + preprocCount];
+    String[] command = new String[baseCommand.length + sourceCount];
     System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
     // append each of the files to the command string
-    for (int i = 0; i < preprocCount; i++) {
-      command[baseCommand.length + i] =
-        buildPath + File.separator + preprocNames[i];
-    }
+    System.arraycopy(sourceFiles, 0, command, baseCommand.length, sourceCount);
+    
     //PApplet.println(command);
-
-//    int result = -1;  // needs to be set bad by default, in case hits IOE below
 
     try {
       // Load errors into a local StringBuffer
@@ -156,12 +157,16 @@ public class Compiler {
         int dotJavaLineIndex = PApplet.parseInt(pieces[1]) - 1;
         String errorMessage = pieces[3];
 
-        int codeIndex = -1;
+        int codeIndex = 0; //-1;
         int codeLine = -1;
+
+        // first check to see if it's a .java file
         for (int i = 0; i < sketch.getCodeCount(); i++) {
-          String name = sketch.getCode(i).getPreprocName();
-          if ((name != null) && dotJavaFilename.equals(name)) {
-            codeIndex = i;
+          SketchCode code = sketch.getCode(i);
+          if (code.isExtension("java")) {
+            if (dotJavaFilename.equals(code.getFileName())) {
+              codeIndex = i;
+            }
           }
         }
         //System.out.println("code index/line are " + codeIndex + " " + codeLine);

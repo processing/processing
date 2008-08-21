@@ -64,7 +64,7 @@ public class SketchCode {
   private boolean modified;
 
   /** name of .java file after preproc */
-  private String preprocName; 
+//  private String preprocName; 
   /** where this code starts relative to the concat'd code */
   private int preprocOffset;  
 
@@ -156,6 +156,11 @@ public class SketchCode {
   }
   
   
+  public int getLineCount() {
+    return Base.countLines(program);
+  }
+  
+  
   public void setModified(boolean modified) {
     this.modified = modified;
   }
@@ -166,14 +171,14 @@ public class SketchCode {
   }
 
 
-  public void setPreprocName(String preprocName) {
-    this.preprocName = preprocName;
-  }
-
-
-  public String getPreprocName() {
-    return preprocName;
-  }
+//  public void setPreprocName(String preprocName) {
+//    this.preprocName = preprocName;
+//  }
+//
+//
+//  public String getPreprocName() {
+//    return preprocName;
+//  }
 
 
   public void setPreprocOffset(int preprocOffset) {
@@ -183,6 +188,11 @@ public class SketchCode {
 
   public int getPreprocOffset() {
     return preprocOffset;
+  }
+  
+  
+  public void addPreprocOffset(int extra) {
+    preprocOffset += extra;
   }
 
 
