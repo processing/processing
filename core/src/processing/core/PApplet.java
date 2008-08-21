@@ -1553,7 +1553,7 @@ public class PApplet extends Applet
       mouseButton = RIGHT;
     }
     // if running on macos, allow ctrl-click as right mouse
-    if ((platform == MACOSX) || (platform == MACOS9)) {
+    if (platform == MACOSX) {
       if (mouseEvent.isPopupTrigger()) {
         mouseButton = RIGHT;
       }
@@ -2048,7 +2048,7 @@ public class PApplet extends Applet
           // it appears to need cmd
           Runtime.getRuntime().exec("cmd /c start " + url);
 
-        } else if ((platform == MACOSX) || (platform == MACOS9)) {
+        } else if (platform == MACOSX) {
           //com.apple.mrj.MRJFileUtils.openURL(url);
           try {
             Class mrjFileUtils = Class.forName("com.apple.mrj.MRJFileUtils");
