@@ -1129,7 +1129,7 @@ public class Sketch {
    *    X. afterwards, some of these steps need a cleanup function
    * </PRE>
    */
-  protected boolean compile() throws RunnerException {
+  protected String compile() throws RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -1159,32 +1159,8 @@ public class Sketch {
     // better connected to the dataFolder stuff below.
     cleanup();
 
-    // make up a temporary class name to suggest.
-    // name will only be used if the code is not in ADVANCED mode.
-    String suggestedClassName = name;  // starting in 0146, use actual name
-//      ("Temporary_" + String.valueOf((int) (Math.random() * 10000)) +
-//       "_" + String.valueOf((int) (Math.random() * 10000)));
-
     // handle preprocessing the main file's code
-    appletClassName =
-      build(tempBuildFolder.getAbsolutePath(), suggestedClassName);
-    // externalPaths is magically set by build()
-
-//    if (!externalRuntime) {  // only if not running externally already
-//      // copy contents of data dir into lib/build
-//      if (dataFolder.exists()) {
-//        // just drop the files in the build folder (pre-68)
-//        //Base.copyDir(dataDir, buildDir);
-//        // drop the files into a 'data' subfolder of the build dir
-//        try {
-//          Base.copyDir(dataFolder, new File(tempBuildFolder, "data"));
-//        } catch (IOException e) {
-//          e.printStackTrace();
-//          throw new RunnerException("Problem copying files from data folder");
-//        }
-//      }
-//    }
-    return (appletClassName != null);
+    return build(tempBuildFolder.getAbsolutePath());
   }
 
 
@@ -1194,26 +1170,26 @@ public class Sketch {
    * In an advanced program, the returned class name could be different,
    * which is why the className is set based on the return value.
    * A compilation error will burp up a RunnerException.
+   * 
+   * Setting purty to 'true' will cause exception line numbers to be incorrect.
+   * Unless you know the code compiles, you should first run the preprocessor 
+   * with purty set to false to make sure there are no errors, then once 
+   * successful, re-export with purty set to true. 
    *
+   * @param buildPath Location to copy all the .java files
+   * @param purty true if output should use indents and newlines
    * @return null if compilation failed, main class name if not
    */
-  protected String build(String buildPath, String suggestedClassName)
-    throws RunnerException {
+  public String preprocess(String buildPath) throws RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
-    String codeFolderPackages[] = null;
-
-    //PApplet.println(PApplet.split(Sketchbook.librariesClassPath, ';'));
-    //PApplet.println(PApplet.split(buildPath, ';'));
-    //PApplet.println(PApplet.split(javaClassPath, ';'));
+    String[] codeFolderPackages = null;
     classPath = buildPath;
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
-    //File codeFolder = new File(folder, "code");
     if (codeFolder.exists()) {
-//      externalRuntime = true;
       libraryPath = codeFolder.getAbsolutePath();
 
       // get a list of .jar files in the "code" folder
@@ -1226,82 +1202,77 @@ public class Sketch {
       codeFolderPackages =
         Compiler.packageListFromClassPath(codeFolderClassPath);
 
-      //PApplet.println(libraryPath);
-      //PApplet.println("packages:");
-      //PApplet.printarr(codeFolderPackages);
-
     } else {
-//      externalRuntime = false;
       libraryPath = "";
-
-      // since using the special classloader,
-      // run externally whenever there are extra classes defined
-      //externalRuntime = (codeCount > 1);
-      // this no longer appears to be true.. so scrapping for 0088
-
-//      // check to see if multiple files that include a .java file
-//      for (int i = 0; i < codeCount; i++) {
-//        if (code[i].flavor == JAVA) {
-//          externalRuntime = true;
-//          break;
-//        }
-//      }
     }
-
-    // if the memory options are set, then use an external runtime
-    // so that the setting can always be honored.
-//    if (Preferences.getBoolean("run.options.memory")) {
-//      externalRuntime = true;
-//    }
-
-    // if 'data' folder is large, set to external runtime
-//    if (dataFolder.exists() &&
-//        Base.calcFolderSize(dataFolder) > 768 * 1024) {  // if > 768k
-//      externalRuntime = true;
-//    }
-
 
     // 1. concatenate all .pde files to the 'main' pde
     //    store line number for starting point of each code bit
 
-    String program = code[0].getProgram();
-    StringBuffer bigCode = new StringBuffer(program);
-    int bigCount = countLines(program);
+    // Unfortunately, the header has to be written on a single line, because 
+    // there's no way to determine how long it will be until the code has 
+    // already been preprocessed. The header will vary in length based on 
+    // the programming mode (STATIC, ACTIVE, or JAVA), which is determined 
+    // by the preprocessor. So the preprocOffset for the primary class remains
+    // zero, even though it'd be nice to have a legitimate offset, and be able
+    // to remove the 'pretty' boolean for preproc.write().
 
-    for (int i = 1; i < codeCount; i++) {
-      if (code[i].isExtension("pde")) {
-        code[i].setPreprocOffset(++bigCount);
+    StringBuffer bigCode = new StringBuffer();
+    int bigCount = 0;
+    for (SketchCode sc : code) {
+      if (sc.isExtension("pde")) {
+        sc.setPreprocOffset(bigCount);
+        bigCode.append(sc.getProgram());
         bigCode.append('\n');
-        bigCode.append(code[i].getProgram());
-        bigCount += countLines(code[i].getProgram());
-        code[i].setPreprocName(null);  // don't compile me
+        bigCount += sc.getLineCount();
+//        if (sc != code[0]) {
+//          sc.setPreprocName(null);  // don't compile me
+//        }
       }
     }
 
-    // since using the special classloader,
-    // run externally whenever there are extra classes defined
-//    if ((bigCode.indexOf(" class ") != -1) ||
-//        (bigCode.indexOf("\nclass ") != -1)) {
-//      externalRuntime = true;
-//    }
+    /*
+    String program = code[0].getProgram();
+    StringBuffer bigCode = new StringBuffer(program);
+    int bigCount = code[0].getLineCount();
+    bigCode.append('\n');
 
-    // if running in opengl mode, this is gonna be external
-    //if (Preferences.get("renderer").equals("opengl")) {
-    //externalRuntime = true;
-    //}
+    for (int i = 1; i < codeCount; i++) {
+      if (code[i].isExtension("pde")) {
+        code[i].setPreprocOffset(bigCount);
+        bigCode.append(code[i].getProgram());
+        bigCode.append('\n');
+        bigCount += code[i].getLineCount();
+        code[i].setPreprocName(null);  // don't compile me
+      }
+    }
+    */
+
+    // Note that the headerOffset isn't applied until compile and run, because
+    // it only applies to the code after it's been written to the .java file. 
+    int headerOffset = 0;
+    PdePreprocessor preprocessor = new PdePreprocessor();
+    try {
+      headerOffset = preprocessor.writePrefix(bigCode.toString(), 
+                                              buildPath, 
+                                              name, 
+                                              codeFolderPackages);
+    } catch (FileNotFoundException fnfe) {
+      fnfe.printStackTrace();
+      String msg = "Build folder disappeared or could not be written";
+      throw new RunnerException(msg);
+    }
 
     // 2. run preproc on that code using the sugg class name
     //    to create a single .java file and write to buildpath
 
     String primaryClassName = null;
 
-    PdePreprocessor preprocessor = new PdePreprocessor();
     try {
       // if (i != 0) preproc will fail if a pde file is not
       // java mode, since that's required
-      String className =
-        preprocessor.write(bigCode.toString(), buildPath,
-                           suggestedClassName, codeFolderPackages, false);
+      String className = preprocessor.write();
+      
       if (className == null) {
         throw new RunnerException("Could not find main class");
         // this situation might be perfectly fine,
@@ -1310,27 +1281,26 @@ public class Sketch {
         //System.out.println("(any code in that file will be ignored)");
         //System.out.println();
 
-      } else {
-        code[0].setPreprocName(className + ".java");
+//      } else {
+//        code[0].setPreprocName(className + ".java");
       }
 
       // store this for the compiler and the runtime
       primaryClassName = className;
-      //System.out.println("primary class " + primaryClassName);
-
-      // check if the 'main' file is in java mode
-//      if ((PdePreprocessor.programType == PdePreprocessor.JAVA) ||
-//          (preprocessor.extraImports.length != 0)) {
-//        externalRuntime = true; // we in advanced mode now, boy
-//      }
 
     } catch (antlr.RecognitionException re) {
-      // this even returns a column
+      // re also returns a column that we're not bothering with for now
+      
+      // first assume that it's the main file
       int errorFile = 0;
       int errorLine = re.getLine() - 1;
+
+      // then search through for anyone else whose preprocName is null, 
+      // since they've also been combined into the main pde.
       for (int i = 1; i < codeCount; i++) {
         if (code[i].isExtension("pde") &&
             (code[i].getPreprocOffset() < errorLine)) {
+          // keep looping until the errorLine is past the offset
           errorFile = i;
         }
       }
@@ -1338,7 +1308,7 @@ public class Sketch {
 
 //      System.out.println("i found this guy snooping around..");
 //      System.out.println("whatcha want me to do with 'im boss?");
-//      System.out.println(errorLine + " " + errorFile);
+//      System.out.println(errorLine + " " + errorFile + " " + code[errorFile].getPreprocOffset());
 
       String msg = re.getMessage();
 
@@ -1431,37 +1401,16 @@ public class Sketch {
     // grab the imports from the code just preproc'd
 
     importedLibraries = new ArrayList<File>();
-    String imports[] = preprocessor.extraImports;
-    for (int i = 0; i < imports.length; i++) {
+    for (String item : preprocessor.getExtraImports()) {
       // remove things up to the last dot
-      String entry = imports[i].substring(0, imports[i].lastIndexOf('.'));
-      //System.out.println("found package " + entry);
+      String entry = item.substring(0, item.lastIndexOf('.'));
       File libFolder = (File) Base.importToLibraryTable.get(entry);
 
-      if (libFolder == null) {
-        //throw new RunnerException("Could not find library for " + entry);
-        continue;
-      //} else {
-        //System.out.println("found library folder " + libFolder.getAbsolutePath());
+      if (libFolder != null) {
+        importedLibraries.add(libFolder);
+        classPath += Compiler.contentsToClassPath(libFolder);
+        libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
       }
-
-      importedLibraries.add(libFolder);
-      classPath += Compiler.contentsToClassPath(libFolder);
-      libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
-
-      /*
-      String list[] = libFolder.list();
-      if (list != null) {
-        for (int j = 0; j < list.length; j++) {
-          // this might have a dll/jnilib/so packed,
-          // so add it to the library path
-          if (list[j].toLowerCase().endsWith(".jar")) {
-            libraryPath += File.pathSeparator +
-              libFolder.getAbsolutePath() + File.separator + list[j];
-          }
-        }
-      }
-      */
     }
 
     // Finally, add the regular Java CLASSPATH
@@ -1475,41 +1424,51 @@ public class Sketch {
 
     // 3. then loop over the code[] and save each .java file
 
-    for (int i = 0; i < codeCount; i++) {
-      if (code[i].isExtension("java")) {
+    for (SketchCode sc : code) {
+      if (sc.isExtension("java")) {
         // no pre-processing services necessary for java files
         // just write the the contents of 'program' to a .java file
         // into the build directory. uses byte stream and reader/writer
         // shtuff so that unicode bunk is properly handled
-        String filename = code[i].getFileName(); //code[i].name + ".java";
+        String filename = sc.getFileName(); //code[i].name + ".java";
         try {
-          Base.saveFile(code[i].getProgram(), new File(buildPath, filename));
+          Base.saveFile(sc.getProgram(), new File(buildPath, filename));
         } catch (IOException e) {
           e.printStackTrace();
           throw new RunnerException("Problem moving " + filename +
-                                 " to the build folder");
+                                    " to the build folder");
         }
-        code[i].setPreprocName(filename);
+//        sc.setPreprocName(filename);
+        
+      } else if (sc.isExtension("pde")) {
+        // The compiler and runner will need this to have a proper offset
+        sc.addPreprocOffset(headerOffset);
       }
     }
-
+    return primaryClassName;
+  }
+  
+  
+  /**
+   * Preprocess and compile all the code for this sketch.
+   *
+   * In an advanced program, the returned class name could be different,
+   * which is why the className is set based on the return value.
+   * A compilation error will burp up a RunnerException.
+   *
+   * @return null if compilation failed, main class name if not
+   */
+  public String build(String buildPath) throws RunnerException {
+    // run the preprocessor
+    String primaryClassName = preprocess(buildPath);
+    
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
-    //
     Compiler compiler = new Compiler();
-    boolean success = compiler.compile(this, buildPath);
-    //System.out.println("success = " + success + " ... " + primaryClassName);
-    return success ? primaryClassName : null;
-  }
-
-
-  protected int countLines(String what) {
-    char c[] = what.toCharArray();
-    int count = 0;
-    for (int i = 0; i < c.length; i++) {
-      if (c[i] == '\n') count++;
+    if (compiler.compile(this, buildPath, primaryClassName)) {
+      return primaryClassName;
     }
-    return count;
+    return null;
   }
 
 
@@ -1535,7 +1494,7 @@ public class Sketch {
     Hashtable zipFileContents = new Hashtable();
 
     // build the sketch
-    String foundName = build(appletFolder.getPath(), name);
+    String foundName = build(appletFolder.getPath());
 
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
@@ -2005,7 +1964,7 @@ public class Sketch {
     destFolder.mkdirs();
 
     // build the sketch
-    String foundName = build(destFolder.getPath(), name);
+    String foundName = build(destFolder.getPath());
 
     // (already reported) error during export, exit this function
     if (foundName == null) return false;
@@ -2755,6 +2714,16 @@ public class Sketch {
   }
   
   
+  public int getCodeIndex(SketchCode who) {
+    for (int i = 0; i < codeCount; i++) {
+      if (who == code[i]) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  
+  
   public SketchCode getCurrentCode() {
     return current;
   }
@@ -2770,7 +2739,7 @@ public class Sketch {
   }
 
 
-  public String getAppletClassName() {
+  public String getAppletClassName2() {
     return appletClassName;
   }
   

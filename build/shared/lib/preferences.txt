@@ -265,17 +265,8 @@ preproc.substitute_unicode = true
 # viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
 preproc.output_parse_tree = false
 
-# jdk version to use.. (changed to 1.4 for release 0128 and later)
-preproc.jdk_version = 1.4
-
-# base imports to include for java 1.1 (or higher)
-preproc.imports.jdk11 = java.applet,java.awt,java.awt.image,java.awt.event,java.io,java.net,java.text,java.util,java.util.zip
-
-# additional imports when exporting to java 1.3 or higher
-preproc.imports.jdk13 = javax.sound.midi,javax.sound.midi.spi,javax.sound.sampled,javax.sound.sampled.spi,java.util.regex
-
-# additional imports when exporting to java 1.4 or higher
-preproc.imports.jdk14 = javax.xml.parsers,javax.xml.transform,javax.xml.transform.dom,javax.xml.transform.sax,javax.xml.transform.stream,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers
+# imports to use by default (changed for 0149, some imports removed)
+preproc.imports = java.applet,java.awt,java.awt.image,java.awt.event,java.io,java.net,java.text,java.util,java.util.zip,java.util.regex
 
 # set the browser to be used on linux
 browser.linux = mozilla

@@ -7,6 +7,25 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
+ABOUT REV 0149 - XX August 2008
+
++ Removed some items from the default imports because they're 1) likely
+  to cause naming collisions and 2) more likely to be used by advanced 
+  users (who can add 'em themselves anyway). The removed items include:
+  javax.sound.midi,javax.sound.midi.spi,
+  javax.sound.sampled,javax.sound.sampled.spi,
+  javax.xml.parsers,javax.xml.transform,javax.xml.transform.dom,
+  javax.xml.transform.sax,javax.xml.transform.stream,
+  org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers
+  You can add default imports to your preferences.txt file by adding to
+  the preproc.imports line. But keep in mind that this will make your 
+  code incompatible with Processing on any machine that doesn't have 
+  its preferences.txt mangled in the same manner.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 ABOUT REV 0148 - 19 August 2008
 
 * RELEASES SINCE 0135 CONTAIN MANY SIGNIFICANT CHANGES, PLEASE READ *
