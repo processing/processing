@@ -1472,10 +1472,15 @@ public class Sketch {
   }
 
 
+  protected boolean exportApplet() throws Exception {
+    return exportApplet(folder.getAbsolutePath());
+  }
+
+  
   /**
    * Handle export to applet.
    */
-  protected boolean exportApplet() throws Exception {
+  public boolean exportApplet(String parentFolder) throws RunnerException, IOException {
     // Make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -1485,7 +1490,7 @@ public class Sketch {
       load();
     }
 
-    File appletFolder = new File(folder, "applet");
+    File appletFolder = new File(parentFolder, "applet");
     // Nuke the old applet folder because it can cause trouble
     Base.removeDir(appletFolder);
     // Create a fresh applet folder (needed before preproc is run below)
@@ -1603,7 +1608,7 @@ public class Sketch {
     // Copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
     // Check if the user already has their own loader image
-    File loadingImage = new File(folder, LOADING_IMAGE);
+    File loadingImage = new File(parentFolder, LOADING_IMAGE);
     if (!loadingImage.exists()) {
       loadingImage = new File("lib", LOADING_IMAGE);
     }
@@ -1712,7 +1717,7 @@ public class Sketch {
 
     if (dataFolder.exists()) {
       String dataFiles[] = Base.listFiles(dataFolder, false);
-      int offset = folder.getAbsolutePath().length() + 1;
+      int offset = parentFolder.length() + 1;
       for (int i = 0; i < dataFiles.length; i++) {
         if (PApplet.platform == PApplet.WINDOWS) {
           dataFiles[i] = dataFiles[i].replace('\\', '/');
@@ -1777,7 +1782,7 @@ public class Sketch {
 
     InputStream is = null;
     // if there is an applet.html file in the sketch folder, use that
-    File customHtml = new File(folder, "applet.html");
+    File customHtml = new File(parentFolder, "applet.html");
     if (customHtml.exists()) {
       is = new FileInputStream(customHtml);
     }
@@ -1930,18 +1935,33 @@ public class Sketch {
    * +-------------------------------------------------------+
    * </PRE>
    */
-  protected boolean exportApplication(int exportPlatform) throws Exception {
+  protected boolean exportApplication() throws IOException, RunnerException {
+    String windowsPath = new File(folder, "application.windows").getAbsolutePath();
+    String macosxPath = new File(folder, "application.macosx").getAbsolutePath();
+    String linuxPath = new File(folder, "application.linux").getAbsolutePath();
+    
+    return (exportApplication(windowsPath, PConstants.WINDOWS) &&
+            exportApplication(macosxPath, PConstants.MACOSX) &&
+            exportApplication(linuxPath, PConstants.LINUX));
+  }
+
+
+  public boolean exportApplication(String destPath, 
+                                   int exportPlatform) throws IOException, RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
     // fix for issue posted on the board. make sure that the code
     // is reloaded when exporting and an external editor is being used.
     if (Preferences.getBoolean("editor.external")) {
-      // nuke previous files and settings
-      load();
+      // don't do from the command line
+      if (editor != null) {
+        // nuke previous files and settings
+        load();
+      }
     }
 
-    //int exportPlatform = PApplet.platform; //PConstants.MACOSX;
+    /*
     String exportPlatformStr = null;
     if (exportPlatform == PConstants.WINDOWS) {
       exportPlatformStr = "windows";
@@ -1960,6 +1980,8 @@ public class Sketch {
 
     // nuke the old folder because it can cause trouble
     File destFolder = new File(folder, folderName);
+    */
+    File destFolder = new File(destPath);
     Base.removeDir(destFolder);
     destFolder.mkdirs();
 
@@ -2126,10 +2148,6 @@ public class Sketch {
     // a list of the files that should be exported.
     // otherwise, all files are exported.
     for (File libraryFolder : importedLibraries) {
-//    Enumeration en = importedLibraries.elements();
-//    while (en.hasMoreElements()) {
-//      File libraryFolder = (File)en.nextElement();
-
       // in the list is a File object that points the
       // library sketch's "library" folder
       File exportSettings = new File(libraryFolder, "export.txt");
@@ -2137,12 +2155,14 @@ public class Sketch {
       String commaList = null;
       String exportList[] = null;
 
-      if (exportPlatform != -1) {
-        // first check to see if there's something like application.macosx
-        commaList = (String)
-          exportTable.get("application." + exportPlatformStr);
-      }
-      if (commaList == null) {
+      // first check to see if there's something like application.blargh
+      if (exportPlatform == PConstants.MACOSX) {
+        commaList = (String) exportTable.get("application.macosx");
+      } else if (exportPlatform == PConstants.WINDOWS) {
+        commaList = (String) exportTable.get("application.windows");
+      } else if (exportPlatform == PConstants.LINUX) {
+        commaList = (String) exportTable.get("application.linux");
+      } else {
         // next check to see if something for 'application' is specified
         commaList = (String) exportTable.get("application");
       }

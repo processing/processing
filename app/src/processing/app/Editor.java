@@ -2032,9 +2032,7 @@ public class Editor extends JFrame {
         public void run() {
           statusNotice("Exporting application...");
           try {
-            if (sketch.exportApplication(PConstants.WINDOWS) &&
-                sketch.exportApplication(PConstants.MACOSX) &&
-                sketch.exportApplication(PConstants.LINUX)) {
+            if (sketch.exportApplication()) {
               Base.openFolder(sketch.getFolder());
               statusNotice("Done exporting.");
             } else {
