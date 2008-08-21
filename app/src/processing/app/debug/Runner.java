@@ -70,28 +70,26 @@ public class Runner implements MessageConsumer {
       "processing.*"
   };
 
-  //PApplet applet;
-  RunnerException exception;
-  //Window window;
-  PrintStream leechErr;
+  private RunnerException exception;
+  //private PrintStream leechErr;
 
-  Editor editor;
-  // TODO remove this, and use only getters and setters in the sketch class
-  Sketch sketch;
+  private Editor editor;
+  private Sketch sketch;
+  private String appletClassName;
 
-  boolean newMessage;
-  int messageLineCount;
-  boolean foundMessageSource;
-
-  //Process process;
-  SystemOutSiphon processInput;
-  OutputStream processOutput;
-  MessageSiphon processError;
+//  private boolean newMessage;
+//  private int messageLineCount;
+//  private boolean foundMessageSource;
+//
+//  private SystemOutSiphon processInput;
+//  private OutputStream processOutput;
+//  private MessageSiphon processError;
 
 
-  public Runner(Editor editor, boolean presenting) throws RunnerException {
+  public Runner(Editor editor, String appletClassName, boolean presenting) throws RunnerException {
     this.editor = editor;
     this.sketch = editor.getSketch();
+    this.appletClassName = appletClassName; 
     this.presenting = presenting;
     //EditorConsole.systemOut.println("clear");
     //System.out.println("clear");
@@ -112,10 +110,10 @@ public class Runner implements MessageConsumer {
     //params.add("java");
     //System.out.println("0");
 
-    String[] vmParamList = getVirtualMachineParams();
-    String[] appletParamList = getSketchParams();
+    String[] machineParamList = getMachineParams();
+    String[] sketchParamList = getSketchParams();
 
-    vm = launchVirtualMachine(vmParamList, appletParamList);
+    vm = launchVirtualMachine(machineParamList, sketchParamList);
     if (vm != null) {
       generateTrace(null);
 //      try {
@@ -127,7 +125,7 @@ public class Runner implements MessageConsumer {
   }
 
 
-  protected String[] getVirtualMachineParams() {
+  protected String[] getMachineParams() {
     ArrayList params = new ArrayList();
 
     //params.add("-Xint"); // interpreted mode
@@ -156,7 +154,7 @@ public class Runner implements MessageConsumer {
     }
 
     if (Base.isMacOS()) {
-      params.add("-Xdock:name=" + sketch.getAppletClassName());
+      params.add("-Xdock:name=" + appletClassName);
 //      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" + 
 //                 sketch.getMainClassName());
     }
@@ -197,7 +195,7 @@ public class Runner implements MessageConsumer {
 
 
   protected String[] getSketchParams() {
-    ArrayList params = new ArrayList();
+    ArrayList<String> params = new ArrayList<String>();
 
     params.add("processing.core.PApplet");
 
@@ -231,13 +229,13 @@ public class Runner implements MessageConsumer {
       params.add(PApplet.ARGS_BGCOLOR + "=" +
           Preferences.get("run.present.bgcolor"));
     }
-
-    params.add(sketch.getAppletClassName());
-
-    //String command[] = (String[]) params.toArray();
-    String outgoing[] = new String[params.size()];
-    params.toArray(outgoing);
-    return outgoing;
+    
+    params.add(appletClassName);
+    
+//    String outgoing[] = new String[params.size()];
+//    params.toArray(outgoing);
+//    return outgoing;
+    return (String[]) params.toArray(new String[0]);
   }
 
 
@@ -351,7 +349,8 @@ public class Runner implements MessageConsumer {
   */
 
 
-  protected VirtualMachine launchVirtualMachine(String[] vmParams, String[] classParams) {
+  protected VirtualMachine launchVirtualMachine(String[] vmParams, 
+                                                String[] classParams) {
     //vm = launchTarget(sb.toString());
     LaunchingConnector connector =
       findLaunchingConnector("com.sun.jdi.RawCommandLineLaunch");
@@ -604,50 +603,70 @@ public class Runner implements MessageConsumer {
       editor.statusError(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
 
     } else {
-      ThreadReference thread = event.thread();
-      try {
-        int codeIndex = -1;
-        int lineNumber = -1;
-        
-        List<StackFrame> frames = thread.frames();
-        for (StackFrame frame : frames) {
-//        System.out.println("frame: " + item);
-          Location location = frame.location();
-          String filename = null;
-          try {
-            filename = location.sourceName();
-            lineNumber = location.lineNumber();
-
-            for (int i = 0; i < sketch.getCodeCount(); i++) {
-              SketchCode code = sketch.getCode(i);
-              //System.out.println(code.preprocName + " " + lineNumber + " " +
-              //                 code.preprocOffset);
-              if (((code.getPreprocName() == null) && (lineNumber >= code.getPreprocOffset())) ||
-                  ((code.getPreprocName() != null) && code.getPreprocName().equals(filename))) {
-                codeIndex = i;
-                break;
-              }
-            }
-          } catch (AbsentInformationException e) {
-            e.printStackTrace();  // do i really want to print a trace?
-          }
-        }
-        if (codeIndex != -1) {
-          //System.out.println("got line num " + lineNumber);
-          // in case this was a tab that got embedded into the main .java
-          lineNumber -= sketch.getCode(codeIndex).getPreprocOffset();
-        }
-        // lineNumber is 1-indexed, but editor wants zero-indexed
-        // getMessage() will be what's shown in the editor
-        exception = new RunnerException(message, codeIndex, lineNumber, -1);
-        exception.hideStackTrace();
-        editor.statusError(exception);
-
-      } catch (IncompatibleThreadStateException e) {
-        e.printStackTrace();
-      }
+      reportException(message, event.thread());
     }
     editor.internalRunnerClosed();
+  }
+  
+  
+  protected void reportException(String message, ThreadReference thread) {
+    try {
+      int codeIndex = -1;
+      int lineNumber = -1;
+      
+//      System.out.println("reporting ex");
+      List<StackFrame> frames = thread.frames();
+      for (StackFrame frame : frames) {
+      System.out.println("frame: " + frame);
+        Location location = frame.location();
+        String filename = null;
+        try {
+          filename = location.sourceName();
+          lineNumber = location.lineNumber();
+//          System.out.println("file/line " + filename + "/" + lineNumber);
+
+          String appletJavaFile = appletClassName + ".java";
+          SketchCode errorCode = null;
+          if (filename.equals(appletJavaFile)) {
+            for (SketchCode code : sketch.getCode()) {
+              if (code.isExtension("pde")) {
+                if (lineNumber >= code.getPreprocOffset()) {
+                  errorCode = code;
+                }
+              }
+            }
+          } else {
+            for (SketchCode code : sketch.getCode()) {
+              if (code.isExtension("java")) {
+                if (filename.equals(code.getFileName())) {
+                  errorCode = code;
+                }
+              }
+            }
+          }
+          codeIndex = sketch.getCodeIndex(errorCode);
+
+          if (codeIndex != -1) {
+            //System.out.println("got line num " + lineNumber);
+            // in case this was a tab that got embedded into the main .java
+            lineNumber -= sketch.getCode(codeIndex).getPreprocOffset();
+
+            // lineNumber is 1-indexed, but editor wants zero-indexed
+            lineNumber--;
+            
+            // getMessage() will be what's shown in the editor
+            exception = new RunnerException(message, codeIndex, lineNumber, -1);
+            exception.hideStackTrace();
+            editor.statusError(exception);
+            return;
+          }
+        } catch (AbsentInformationException e) {
+          e.printStackTrace();  // do i really want to print a trace?
+        }
+      }
+    } catch (IncompatibleThreadStateException e) {
+      e.printStackTrace();
+    }
   }
 
   
