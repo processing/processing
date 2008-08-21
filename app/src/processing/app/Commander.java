@@ -24,6 +24,7 @@
 package processing.app;
 
 
+import java.io.IOException;
 import java.io.PrintStream;
 
 
@@ -33,8 +34,8 @@ public class Commander {
   static final String preprocArg = "--preprocess";
   static final String sketchArg = "--sketch=";
   static final String outputArg = "--output=";
-  static final String exportAppletArg = "--export=";
-  static final String exportApplicationArg = "--export-application=";
+  static final String exportAppletArg = "--export-applet";
+  static final String exportApplicationArg = "--export-application";
 
   static final int HELP = -1;
   static final int PREPROCESS = 0;
@@ -50,7 +51,7 @@ public class Commander {
 
     for (String arg : args) {
       if (arg.equals(helpArg)) {
-        //mode = -1;
+        // mode already set to HELP
 
       } else if (arg.equals(buildArg)) {
         mode = BUILD;
@@ -77,18 +78,39 @@ public class Commander {
       System.exit(0);
 
     } else if (sketchPath == null) {
-      printCommandLine(System.err);
-      System.err.println("No sketch path specified.");
-      System.exit(1);
+      complainAndQuit("No sketch path specified.");
       
     } else if (outputPath == null) {
-      printCommandLine(System.err);
-      System.err.println("No output path specified.");
-      System.exit(1);
+      complainAndQuit("No output path specified.");
 
-    } else {
+    } else if (outputPath.equals(sketchPath)) {
+      complainAndQuit("The sketch path and output path cannot be identical.");
+      
+    } else if (!sketchPath.toLowerCase().endsWith(".pde")) {
+      complainAndQuit("Sketch path must point to the main .pde file.");
+      
+    } else if (mode == PREPROCESS) {
+      try {
+        Sketch sketch = new Sketch(null, sketchPath);
+        
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
+    } else if (mode == BUILD) {
+      
+    } else if (mode == EXPORT_APPLET) {
+      
+    } else if (mode == EXPORT_APPLICATION) {
       
     }
+  }
+
+
+  static void complainAndQuit(String lastWords) {
+    printCommandLine(System.err);
+    System.err.println(lastWords);
+    System.exit(1);
   }
 
 
