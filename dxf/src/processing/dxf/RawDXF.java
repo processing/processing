@@ -57,7 +57,7 @@ import processing.core.*;
  *
  * void draw() {
  *   if (record) {
- *     beginRaw(DXF, "output.dxf");
+ *     beginRaw(width, height, DXF, "output.dxf");
  *   }
  *
  *   // do all your drawing here
@@ -86,7 +86,7 @@ import processing.core.*;
  *
  * void draw() {
  *   if (record) {
- *     dxf = (RawDXF) createGraphics(DXF, "output.dxf");
+ *     dxf = (RawDXF) createGraphics(width, height, DXF, "output.dxf");
  *     beginRaw(dxf);
  *   }
  *
