@@ -190,9 +190,6 @@ for(int i=0; i<100; i++) {
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-_ fix svg caps/joins for opengl with svg library
-_   http://dev.processing.org/bugs/show_bug.cgi?id=628
-
 _ key and mouse events delivered out of order
 _   http://dev.processing.org/bugs/show_bug.cgi?id=638
 _ method of threading but queue an event to be run when safe
@@ -262,15 +259,9 @@ _   the fix would be to use the following as the call to main()
 _   PApplet.main(append(new String[] { "classname }, args));
 
 
-
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
-
-GRAPHICS LIBRARY
-
-A hybrid of OpenGL (3D Graphics) and some aspects of Postscript (Fill, Stroke)
-The graphics library was formerly called Bagel.
 
 
 CORE / PApplet
@@ -531,7 +522,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=127
 ////////////////////////////////////////////////////////////////////
 
 
-LIBS / PGraphicsOpenGL
+LIBRARIES / PGraphicsOpenGL
 
 _ set() requires updatePixels() with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=705
@@ -605,10 +596,43 @@ _   but that makes things messy because the glu calls make calls to vertex()
 _   and i don't want an additional "pathVertex()" function
 
 
-LIBS / PGraphicsPDF
+LIBRARIES / PGraphicsPDF
 
 _ pdf not rendering unicode with beginRecord()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=727
+
+
+LIBRARIES / Candy 
+
+_ fix svg caps/joins for opengl with svg library
+_   http://dev.processing.org/bugs/show_bug.cgi?id=628
+_ breaking up classes / figure out how to handle fonts subclass
+_ Add support style attribute for path tag to Candy SVG (ricard)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=771
+_ when using get(), reset the bounds for the objects
+_   otherwise it's always relative to the original document
+_ save/restore more of the p5 graphics drawing state
+_   not setting colorMode(), strokeCap, etc.
+_ support for text (shouldn't be too bad, use createFont)
+_   implement text spans for svg output
+_ get entity tags working in xml library
+_ try enabling blending modes
+_ add better support for attributes buried in styles (support ai9/10/11)
+_ test what happens when transparency is used with gradient fill
+_ look into transformation issues... guessing this is probably wrong
+_   this may be what's throwing off the radial radius transform
+_ implement A and a (arcs)
+_ check for any other pieces of missing path api
+_   multiple sets of coordinates after a command not supported
+_   i.e. M with several coords means moveto followed by many linetos
+_   also curveto with multiple sets of points is ignored
+_ document somehow.. svg viewer will be discontinued
+_   http://www.adobe.com/svg/eol.html
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 
 LATER / Optimize
