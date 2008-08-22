@@ -12,7 +12,7 @@ X command line support
 _   http://dev.processing.org/bugs/show_bug.cgi?id=219
 o   would still require awt, but would take a sketch on cmd line
 X   modify showError() et al to not use awt when running from command line
-_   build it and then exit
+X   build it and then exit
 X   notations have been added to the bug report that cover the plw changes
 
 _ add local variables to PdeRecognizer
@@ -112,8 +112,8 @@ _   on osx, just ignore anything in /Library/Java/Extensions (but not others)?
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
-_ update to jogl 1.1.1
-_   do this with enhanced library/platform support
+X update to jogl 1.1.1
+X   do this with enhanced library/platform support
 X see how platform is determined by jogl / use for lib import
 _ add control for dependencies (i.e. svg needs xml), needed for export
 _   http://dev.processing.org/bugs/show_bug.cgi?id=518
@@ -1107,31 +1107,6 @@ _   only supports tint() (to set alpha or color) and drawing? just drawing?
 _ stop button won't kill a video sketch (bug 150 example does this) 
 X   although ESC seems to work? (not sure, didn't test)
 _   or audio won't stop even after hitting stop
-
-
-LIBRARIES / Candy 
-
-_ Add support style attribute for path tag to Candy SVG (ricard)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=771
-_ when using get(), reset the bounds for the objects
-_   otherwise it's always relative to the original document
-_ save/restore more of the p5 graphics drawing state
-_   not setting colorMode(), strokeCap, etc.
-_ support for text (shouldn't be too bad, use createFont)
-_   implement text spans for svg output
-_ get entity tags working in xml library
-_ try enabling blending modes
-_ add better support for attributes buried in styles (support ai9/10/11)
-_ test what happens when transparency is used with gradient fill
-_ look into transformation issues... guessing this is probably wrong
-_   this may be what's throwing off the radial radius transform
-_ implement A and a (arcs)
-_ check for any other pieces of missing path api
-_   multiple sets of coordinates after a command not supported
-_   i.e. M with several coords means moveto followed by many linetos
-_   also curveto with multiple sets of points is ignored
-_ document somehow.. svg viewer will be discontinued
-_   http://www.adobe.com/svg/eol.html
 
 
 LIBRARIES / XML
