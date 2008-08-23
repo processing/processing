@@ -15,7 +15,7 @@ float roty = PI/4;
 void setup() 
 {
   size(200, 200, P3D);
-  tex = loadImage("uvtex.jpg");
+  tex = loadImage("berlin-1.jpg");
   textureMode(NORMALIZED);
   fill(255);
   stroke(color(44,48,32));
