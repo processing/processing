@@ -142,22 +142,25 @@ The following example toggles recording on/off each time you hit the 'r' key.
 Pressing the 'q' key will quit the sketch.</p>
 
 <pre>import processing.pdf.*;
-
+ 
 boolean recording;
 PGraphicsPDF pdf;
-
+ 
 void setup() {
   size(400, 400);
-  pdf = createGraphics(PDF, "pause-resume.pdf");
+  pdf = (PGraphicsPDF) createGraphics(width, height, PDF, "pause-resume.pdf");
 }
-
+ 
 void draw() {
   // Be sure not to call background, otherwise your file
   // will just accumulate lots of mess, only to become invisible
    
   // Draw something good here
+  if (mousePressed) {
+    line(pmouseX, pmouseY, mouseX, mouseY);
+  }
 }
-
+ 
 void keyPressed() {
   if (key == 'r') {
     if (recording) {
@@ -169,13 +172,14 @@ void keyPressed() {
       println("Recording started.");
       recording = true;
     }
-  } else if (key == q') {
+  } else if (key == 'q') {
     if (recording) {
       endRecord();
     }
     exit();
-  } 
-}</pre>
+  }  
+}
+</pre>
 
 
 <p><strong>PDF Files from 3D Geometry (With Screen Display)</strong><br />
