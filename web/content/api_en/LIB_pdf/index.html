@@ -26,6 +26,7 @@ void setup() {
 
 void draw() {
   // Draw something good here
+  line(0, 0, width/2, height);
 
   // Exit the program 
   println("Finished.");
@@ -45,7 +46,8 @@ void setup() {
 
 void draw() {
   // Draw something good here
-
+  line(0, 0, frameCount * 4, height);
+    
   PGraphicsPDF pdf = (PGraphicsPDF) g;  // Get the renderer
   pdf.nextPage();  // Tell it to go to the next page
 
@@ -71,6 +73,7 @@ void setup() {
 
 void draw() {
   // Draw something good here
+  line(0, 0, width/2, height);
 
   endRecord();
 }</pre>
@@ -95,6 +98,8 @@ void draw() {
   }
 
   // Draw something good here
+  background(255);
+  line(mouseX, mouseY, width/2, height/2);
 
   if (record) {
     endRecord();
@@ -126,6 +131,7 @@ void draw() {
   // will just accumulate lots of mess, only to become invisible
    
   // Draw something good here
+  line(mouseX, mouseY, width/2, height/2);
 }
 
 void keyPressed() {
@@ -207,6 +213,11 @@ void draw() {
   }
 
   // Do all your drawing here
+  background(204);
+  translate(width/2, height/2, -200);
+  rotateZ(0.2);
+  rotateY(mouseX/500.0);
+  box(200);
 
   if (record) {
     endRaw();
