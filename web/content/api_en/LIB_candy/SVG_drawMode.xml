@@ -56,7 +56,6 @@ Modifies the location from which the SVG draws. The default mode is <b>drawMode(
 <returns>none</returns>
 
 <related>
-draw()
 </related>
 
 <availability>1.0</availability>

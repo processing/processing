@@ -69,7 +69,6 @@ Draws the SVG file to the display window. By default, shapes are drawn to the up
 <returns>none</returns>
 
 <related>
-drawMode()
 </related>
 
 <availability>1.0</availability>
