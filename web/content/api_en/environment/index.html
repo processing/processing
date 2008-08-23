@@ -129,12 +129,24 @@
       Removes and copies selected text to the clipboard (an off-screen text buffer)</li>
     <li><em>Copy (Ctrl+C)</em><br />
       Copies selected text to the clipboard.</li>
+    <li><em>Copy for Discourse (Shift+Ctrl+C)</em><br />
+      Formats code so that it will appear in the <a href="http://www.processing.org/discourse/">Processing 
+	  Discourse</a> the same way it appears in the Processing environment and copies it to the clipboard so
+	  it can be pasted somewhere else.</li>
     <li><em>Paste (Ctrl+V)</em><br />
       Inserts the contents of the clipboard at the location of the cursor, and 
       replaces any selected text.</li>
     <li><em>Select All (Ctrl+A)</em><br />
       Selects all of the text in the file which is currently open in the text 
       editor.</li>
+      
+    <li><em>Comment/Uncomment (Ctrl+/)</em><br />
+      Comments the selected text. If the selected text is already commented, it uncomments it.</li>
+    <li><em>Increase Indent (Ctrl+])</em><br />
+      Indents the selected text two spaces.</li>
+    <li><em>Decrease Indent (Ctrl+[)</em><br />
+      If the text is indented, removes two spaces from the indent.</li>
+      
     <li><em>Find (Ctrl+F)</em><br />
       Finds an occurance of a text string within the file open in the text editor 
       and gives the option to replace it with a different text.</li>
@@ -156,9 +168,6 @@
       If the code is running, stops the execution. Programs written with the Basic 
       Mode or using the draw() structure are stopped automatically after they 
       draw. </li>
-    <li><em>Add File</em><br />
-      Opens a file navigator. Select an image, font, or other media files to add 
-      it to the sketches "data" directory. </li>
     <li><em>Import Library</em><br />
       Adds the necessary import statements to the top of the current sketch. For 
       example, selecting Sketch » Import Library » video adds the statement "import 
@@ -166,6 +175,9 @@
       necessary for using the Libraries.</li>
     <li><em>Show Sketch Folder</em><br />
       Opens the directory for the current sketch.</li>
+    <li><em>Add File</em><br />
+      Opens a file navigator. Select an image, font, or other media files to add 
+      it to the sketches "data" directory. </li>
 	</ul>
 	
 
@@ -182,25 +194,26 @@
       are generated, but the font file is larger in size. The amount of memory 
       required for the font is also determined by the size selected. Processing 
       fonts are textures, so larger fonts require more image data.</li>
-	<li><em>Color Picker</em><br />
+	<li><em>Color Selector</em><br />
       Interface for selecting colors.</li>
-	<li><em>Format for Discourse</em><br />
-      Formats code so that it will appear in the <a href="http://www.processing.org/discourse/">Processing 
-	  Discourse</a> the same way it appears in the Processing environment. Opens a new 
-	  windows from which the code can be copied and then pasted into the Discourse.</li>
     <li><em>Archive Sketch</em><br />
       Archives a copy of the current sketch in .zip format. The archive is placed 
       in the same directory as the sketch.</li>
-	<li><em>Export Folder</em><br />
-      Exports an entire folder/directory full of Processing sketches. 
-	  Select the folder you wish to export from the file browser that opens when you
-	  select this option.</li>
+    <li><em>Fix Encoding and Reload</em><br />
+      Sketches that contain non-ASCII characters and were saved with Processing 0140 and 
+      earlier may look strange when opened. Garbled text and odd characters may appear where umlauts, 
+      cedillas, and Japanese formerly lived. This will reload your sketch using the same method 
+      as previous versions of Processing, at which point you can re-save it which will write a 
+      proper UTF-8 version.
+</li>
 	</ul>
 	  
     <h6>Help</h6>
 	<ul>
     <li><em>Getting Started</em><br />
       Opens the reference for the Processing Environment in the default Web browser.</li>
+    <li><em>Troubleshooting</em><br />
+      Opens the troubleshooting information in the default Web browser.</li>
     <li><em>Reference </em><br />
       Opens the reference in the default Web browser. Includes reference for the 
       language, programming environment, libraries, and a language comparison.</li>
