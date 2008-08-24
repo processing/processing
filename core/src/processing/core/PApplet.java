@@ -6340,7 +6340,8 @@ public class PApplet extends Applet
       frame.setIconImage(image);
       frame.setTitle(name);
 
-      Class c = Class.forName(name);
+//    Class c = Class.forName(name);
+      Class c = Thread.currentThread().getContextClassLoader().loadClass(name);
       PApplet applet = (PApplet) c.newInstance();
 
       // these are needed before init/start
