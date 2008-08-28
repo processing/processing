@@ -14,6 +14,15 @@ o   would still require awt, but would take a sketch on cmd line
 X   modify showError() et al to not use awt when running from command line
 X   build it and then exit
 X   notations have been added to the bug report that cover the plw changes
+X Toolmenu won't show until I compile Mangler
+X   http://dev.processing.org/bugs/show_bug.cgi?id=892
+
+_ transport error 208
+_   http://dev.processing.org/bugs/show_bug.cgi?id=895
+_   possible http://www.jetbrains.net/jira/browse/IDEADEV-4268
+
+X update quaqua to 4.4.7 on macosx (http://www.randelshofer.ch/quaqua/)
+X   now supports 10.5 an 64 bit jnilib
 
 _ add local variables to PdeRecognizer
 _   remove static methods in PdePreprocessor, instead pull things from recog
@@ -70,9 +79,7 @@ _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ Slow response or spinning wheel from the menu bar on Mac OS X
 _   http://dev.processing.org/bugs/show_bug.cgi?id=786
-_   could be all the listeners?
-_   actually it's prolly just the insertMenu() garbage
-_     need to have a better way of dealing with this
+_   bug 6034650
 _ sometimes not launching
 _   (in particular while cpu load is a little higher on g5?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=852
