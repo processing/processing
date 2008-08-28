@@ -664,7 +664,6 @@ public class Editor extends JFrame {
           className = findClassInZipFile(folders[i].getName(), archives[j]);
           if (className != null) break;
         }
-        if (className == null) return;
         
         /*
         // Alternatively, could use manifest files with special attributes:

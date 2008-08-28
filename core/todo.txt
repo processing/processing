@@ -2,6 +2,9 @@
 X remove MACOS9 constant from processing.core.*
 X   because code no longer runs on os9 since dropping 1.1 support
 
+_ delay() is broken
+_   http://dev.processing.org/bugs/show_bug.cgi?id=894
+
 
 [ need problem sketch ] 
 

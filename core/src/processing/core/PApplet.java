@@ -517,7 +517,7 @@ public class PApplet extends Applet
   boolean external = false;
 
 
-  static final String ERROR_MIN_MAX = 
+  static final String ERROR_MIN_MAX =
     "Cannot use min() or max() on an empty array.";
 
 
@@ -622,10 +622,10 @@ public class PApplet extends Applet
    */
   public void start() {
     // When running inside a browser, start() will be called when someone
-    // returns to a page containing this applet. 
+    // returns to a page containing this applet.
     // http://dev.processing.org/bugs/show_bug.cgi?id=581
     finished = false;
-    
+
     if (thread != null) return;
     thread = new Thread(this, "Animation Thread");
     thread.start();
@@ -1276,6 +1276,11 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Main method for the primary animation thread.
+   *
+   * <A HREF="http://java.sun.com/products/jfc/tsc/articles/painting/">Painting in AWT and Swing</A>
+   */
   public void run() {  // not good to make this synchronized, locks things up
     long beforeTime = System.nanoTime();
     long overSleepTime = 0L;
@@ -3167,7 +3172,7 @@ public class PApplet extends Applet
 
 
   /**
-   * By trial and error, four image loading threads seem to work best when 
+   * By trial and error, four image loading threads seem to work best when
    * loading images from online. This is consistent with the number of open
    * connections that web browsers will maintain. The variable is made public
    * (however no accessor has been added since it's esoteric) if you really
@@ -3550,12 +3555,12 @@ public class PApplet extends Applet
 
   // FILE/FOLDER SELECTION
 
-  
+
   public File selectedFile;
   protected Frame parentFrame;
 
 
-  protected void checkParentFrame() {    
+  protected void checkParentFrame() {
     if (parentFrame == null) {
       Component comp = getParent();
       while (comp != null) {
@@ -3572,7 +3577,7 @@ public class PApplet extends Applet
     }
   }
 
-  
+
   public String selectInput() {
     return selectInput("Select a file...");
   }
@@ -3581,7 +3586,7 @@ public class PApplet extends Applet
   public String selectInput(final String prompt) {
     return selectFileImpl(prompt, FileDialog.LOAD);
   }
-  
+
 
   public String selectOutput() {
     return selectOutput("Save as...");
@@ -3592,36 +3597,36 @@ public class PApplet extends Applet
     return selectFileImpl(prompt, FileDialog.SAVE);
   }
 
-  
+
   protected String selectFileImpl(final String prompt, final int mode) {
     checkParentFrame();
 
     try {
       SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
-          FileDialog fileDialog = 
+          FileDialog fileDialog =
             new FileDialog(parentFrame, prompt, mode);
           fileDialog.setVisible(true);
           String directory = fileDialog.getDirectory();
           String filename = fileDialog.getFile();
-          selectedFile = 
+          selectedFile =
             (filename == null) ? null : new File(directory, filename);
         }
       });
       return selectedFile.getAbsolutePath();
-      
+
     } catch (Exception e) {
       e.printStackTrace();
       return null;
     }
   }
-    
+
 
   public String selectFolder() {
     return selectFolder("Select a folder...");
   }
-  
-  
+
+
   public String selectFolder(final String prompt) {
     checkParentFrame();
 
@@ -3629,7 +3634,7 @@ public class PApplet extends Applet
       SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
           if (platform == MACOSX) {
-            FileDialog fileDialog = 
+            FileDialog fileDialog =
               new FileDialog(parentFrame, prompt, FileDialog.LOAD);
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
             fileDialog.setVisible(true);
@@ -3650,14 +3655,14 @@ public class PApplet extends Applet
         }
       });
       return selectedFile.getAbsolutePath();
-      
+
     } catch (Exception e) {
       e.printStackTrace();
       return null;
     }
   }
 
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -6158,13 +6163,13 @@ public class PApplet extends Applet
 
 
   static final byte[] ICON_IMAGE = {
-    71, 73, 70, 56, 57, 97, 16, 0, 16, 0, -94, 0, 0, 99, 97, 99, 49, 48, 
-    49, -100, -98, -100, 99, 97, 49, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 
-    0, 33, -7, 4, 1, 0, 0, 5, 0, 44, 0, 0, 0, 0, 16, 0, 16, 0, 0, 3, 75, 88, 
-    -77, -36, -83, 33, -54, 57, 87, 16, -124, -120, -112, 9, -88, 3, -121, 
-    17, 92, 68, 74, -106, -122, -107, 108, 100, -115, -37, 121, -70, 33, 37, 
-    75, -128, 5, 100, 95, -9, 5, -97, 20, 96, -41, 2, -46, 56, 67, -46, 44, 
-    80, -45, -15, 90, -75, 92, -115, -126, -54, 49, -89, -44, -63, -17, 74, 
+    71, 73, 70, 56, 57, 97, 16, 0, 16, 0, -94, 0, 0, 99, 97, 99, 49, 48,
+    49, -100, -98, -100, 99, 97, 49, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0,
+    0, 33, -7, 4, 1, 0, 0, 5, 0, 44, 0, 0, 0, 0, 16, 0, 16, 0, 0, 3, 75, 88,
+    -77, -36, -83, 33, -54, 57, 87, 16, -124, -120, -112, 9, -88, 3, -121,
+    17, 92, 68, 74, -106, -122, -107, 108, 100, -115, -37, 121, -70, 33, 37,
+    75, -128, 5, 100, 95, -9, 5, -97, 20, 96, -41, 2, -46, 56, 67, -46, 44,
+    80, -45, -15, 90, -75, 92, -115, -126, -54, 49, -89, -44, -63, -17, 74,
     5, 90, 80, 88, 87, -80, -94, 112, -104, 23, -123, 4, 0, 59
   };
 
@@ -6311,7 +6316,7 @@ public class PApplet extends Applet
 
       // Set this property before getting into any GUI init code
       //System.setProperty("com.apple.mrj.application.apple.menu.about.name", name);
-      // This )*)(*@#$ Apple crap don't work no matter where you put it 
+      // This )*)(*@#$ Apple crap don't work no matter where you put it
       // (static method of the class, at the top of main, wherever)
 
       if (displayDevice == null) {
@@ -6334,7 +6339,7 @@ public class PApplet extends Applet
       // remove the grow box by default
       // users who want it back can call frame.setResizable(true)
       frame.setResizable(false);
-      
+
       // Set the trimmings around the image
       Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
       frame.setIconImage(image);
