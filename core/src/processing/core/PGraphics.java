@@ -302,7 +302,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   static final float DEFAULT_STROKE_WEIGHT = 1;
   static final int DEFAULT_STROKE_JOIN = MITER;
   static final int DEFAULT_STROKE_CAP = ROUND;
-  
+
   /**
    * Last value set by strokeWeight() (read-only). This has a default
    * setting, rather than fighting with renderers about whether that
@@ -602,15 +602,15 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // [toxi 031031] 
+  // [toxi 031031]
   // new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  // [davbol 080801] 
+  // [davbol 080801]
   // split into sphereDetailU and sphereDetailV
   /// Number of U steps (aka "theta") around longitudinally spanning 2*pi
-  public int sphereDetailU = 0; 
+  public int sphereDetailU = 0;
   /// Number of V steps (aka "phi") along latitudinally top-to-bottom spanning pi
-  public int sphereDetailV = 0; 
+  public int sphereDetailV = 0;
 
 
 
@@ -761,8 +761,8 @@ public abstract class PGraphics extends PImage implements PConstants {
   public boolean canDraw() {
     return true;
   }
-  
-  
+
+
   /**
    * Prepares the PGraphics for drawing.
    * <p/>
@@ -785,8 +785,8 @@ public abstract class PGraphics extends PImage implements PConstants {
     if (!settingsInited) defaultSettings();
     //if (reapplySettings) reapplySettings();
   }
-  
-  
+
+
   /**
    * Set engine's default values. This has to be called by PApplet,
    * somewhere inside setup() or draw() because it talks to the
@@ -833,28 +833,28 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
 
     settingsInited = true;
-    // defaultSettings() overlaps reapplySettings(), don't do both 
+    // defaultSettings() overlaps reapplySettings(), don't do both
     //reapplySettings = false;
   }
-  
-  
+
+
   /**
    * Re-apply current settings. Some methods, such as textFont(), require that
    * their methods be called (rather than simply setting the textFont variable)
-   * because they affect the graphics context, or they require parameters from 
-   * the context (e.g. getting native fonts for text). 
-   * 
-   * This will only be called from an allocate(), which is only called from 
+   * because they affect the graphics context, or they require parameters from
+   * the context (e.g. getting native fonts for text).
+   *
+   * This will only be called from an allocate(), which is only called from
    * size(), which is safely called from inside beginDraw(). And it cannot be
    * called before defaultSettings(), so we should be safe.
    */
   protected void reapplySettings() {
 //    System.out.println("attempting reapplySettings()");
     if (!settingsInited) return;  // if this is the initial setup, no need to reapply
-    
+
 //    System.out.println("  doing reapplySettings");
 //    new Exception().printStackTrace(System.out);
-    
+
     colorMode(colorMode, colorModeX, colorModeY, colorModeZ);
     if (fill) {
 //      PApplet.println("  fill " + PApplet.hex(fillColor));
@@ -890,12 +890,12 @@ public abstract class PGraphics extends PImage implements PConstants {
     if (textFont != null) {
 //      System.out.println("  textFont in reapply is " + textFont);
       // textFont() resets the leading, so save it in case it's changed
-      float saveLeading = textLeading; 
+      float saveLeading = textLeading;
       textFont(textFont, textSize);
       textLeading(saveLeading);
     }
     background(backgroundColor);
-    
+
     //reapplySettings = false;
   }
 
@@ -2297,16 +2297,16 @@ public abstract class PGraphics extends PImage implements PConstants {
       imageImpl(image,
                 a, b, c, d,
                 u1, v1, u2, v2);
-    
+
     } else if (imageMode == CENTER) {
       // c and d are width/height
       if (c < 0) c = -c;
       if (d < 0) d = -d;
       float x1 = a - c/2;
       float y1 = b - d/2;
-      
-      imageImpl(image, 
-                x1, y1, x1 + c, y1 + d, 
+
+      imageImpl(image,
+                x1, y1, x1 + c, y1 + d,
                 u1, v1, u2, v2);
     }
   }
@@ -2858,9 +2858,9 @@ public abstract class PGraphics extends PImage implements PConstants {
 
     float boxHeight = y2 - y1;
     int lineFitCount = 1 + PApplet.floor((boxHeight - textAscent()) / textLeading);
+    int lineCount = Math.min(textBreakCount, lineFitCount);
 
     if (textAlignY == CENTER) {
-      int lineCount = Math.min(textBreakCount, lineFitCount);
       float lineHigh = textAscent() + textLeading * (lineCount - 1);
       float y = y1 + textAscent() + (boxHeight - lineHigh) / 2;
       for (int i = 0; i < lineCount; i++) {
@@ -2869,7 +2869,6 @@ public abstract class PGraphics extends PImage implements PConstants {
       }
 
     } else if (textAlignY == BOTTOM) {
-      int lineCount = Math.min(textBreakCount, lineFitCount);
       float y = y2 - textDescent() - textLeading * (lineCount - 1);
       for (int i = 0; i < lineCount; i++) {
         textLineImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
@@ -2878,7 +2877,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
     } else {  // TOP or BASELINE just go to the default
       float y = y1 + textAscent();
-      for (int i = 0; i < lineFitCount; i++) {
+      for (int i = 0; i < lineCount; i++) {
         textLineImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
         y += textLeading;
       }
