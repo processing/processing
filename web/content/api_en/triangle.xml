@@ -11,7 +11,7 @@
 <example>
 <image>triangle_.gif</image>
 <code>
-triangle(30, 75, 58, 20, 86, 75)
+triangle(30, 75, 58, 20, 86, 75);
 </code>
 </example>
 

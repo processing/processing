@@ -25,7 +25,7 @@ for (int i = 0; i &lt;= steps; i++) {
 </example>
 
 <description>
-Evalutes the Bezier at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a bezier curve at t.
+Evaluates the Bezier at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a bezier curve at t.
 </description>
 
 <syntax>
@@ -44,7 +44,7 @@ bezierPoint(<c>a</c>, <c>b</c>, <c>c</c>, <c>d</c>, <c>t</c>)
 
 <parameter>
 <label>c</label>
-<description>int or float: coordinate of first control point</description>
+<description>int or float: coordinate of second control point</description>
 </parameter>
 
 <parameter>
