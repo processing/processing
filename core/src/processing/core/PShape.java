@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2006-07 Ben Fry and Casey Reas
+  Copyright (c) 2006-08 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@
 
 package processing.core;
 
-
 // take a look at the obj loader to see how this fits with things
 
 // PShape.line() PShape.ellipse()?
@@ -33,8 +32,27 @@ package processing.core;
 
 public class PShape {
 
+  public String name;
+
+  // set to false if the object is hidden in the layers palette
+  public boolean display;
+
+  public boolean stroke;
+  public int strokeColor;
+  public float strokeWeight; // default is 1
+  public int strokeCap;
+  public int strokeJoin;
+
+  public boolean fill;
+  public int fillColor;
+  
+  //public boolean hasTransform;
+  public float[] transformation;
+
+  //
+  
   int kind;
-  PMatrix matrix;
+  PMatrix3D matrix;
 
   int[] opcode;
   int opcodeCount;
@@ -253,7 +271,7 @@ public class PShape {
 
   protected void checkMatrix() {
     if (matrix == null) {
-      matrix = new PMatrix();
+      matrix = new PMatrix3D();
     }
   }
 

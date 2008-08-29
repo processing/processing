@@ -762,7 +762,7 @@ public class PApplet extends Applet
 
 
   public void registerSize(Object o) {
-    Class methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
+    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
     registerWithArgs(sizeMethods, "size", o, methodArgs);
   }
 
@@ -779,13 +779,13 @@ public class PApplet extends Applet
   }
 
   public void registerMouseEvent(Object o) {
-    Class methodArgs[] = new Class[] { MouseEvent.class };
+    Class<?> methodArgs[] = new Class[] { MouseEvent.class };
     registerWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
   }
 
 
   public void registerKeyEvent(Object o) {
-    Class methodArgs[] = new Class[] { KeyEvent.class };
+    Class<?> methodArgs[] = new Class[] { KeyEvent.class };
     registerWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
   }
 
@@ -796,7 +796,7 @@ public class PApplet extends Applet
 
   protected void registerNoArgs(RegisteredMethods meth,
                                 String name, Object o) {
-    Class c = o.getClass();
+    Class<?> c = o.getClass();
     try {
       Method method = c.getMethod(name, new Class[] {});
       meth.add(o, method);
@@ -808,8 +808,8 @@ public class PApplet extends Applet
 
 
   protected void registerWithArgs(RegisteredMethods meth,
-                                  String name, Object o, Class cargs[]) {
-    Class c = o.getClass();
+                                  String name, Object o, Class<?> cargs[]) {
+    Class<?> c = o.getClass();
     try {
       Method method = c.getMethod(name, cargs);
       meth.add(o, method);
@@ -821,7 +821,7 @@ public class PApplet extends Applet
 
 
   public void unregisterSize(Object o) {
-    Class methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
+    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
     unregisterWithArgs(sizeMethods, "size", o, methodArgs);
   }
 
@@ -838,12 +838,12 @@ public class PApplet extends Applet
   }
 
   public void unregisterMouseEvent(Object o) {
-    Class methodArgs[] = new Class[] { MouseEvent.class };
+    Class<?> methodArgs[] = new Class[] { MouseEvent.class };
     unregisterWithArgs(mouseEventMethods, "mouseEvent", o, methodArgs);
   }
 
   public void unregisterKeyEvent(Object o) {
-    Class methodArgs[] = new Class[] { KeyEvent.class };
+    Class<?> methodArgs[] = new Class[] { KeyEvent.class };
     unregisterWithArgs(keyEventMethods, "keyEvent", o, methodArgs);
   }
 
@@ -854,7 +854,7 @@ public class PApplet extends Applet
 
   protected void unregisterNoArgs(RegisteredMethods meth,
                                   String name, Object o) {
-    Class c = o.getClass();
+    Class<?> c = o.getClass();
     try {
       Method method = c.getMethod(name, new Class[] {});
       meth.remove(o, method);
@@ -865,8 +865,8 @@ public class PApplet extends Applet
 
 
   protected void unregisterWithArgs(RegisteredMethods meth,
-                                    String name, Object o, Class cargs[]) {
-    Class c = o.getClass();
+                                    String name, Object o, Class<?> cargs[]) {
+    Class<?> c = o.getClass();
     try {
       Method method = c.getMethod(name, cargs);
       meth.remove(o, method);
@@ -1125,8 +1125,8 @@ public class PApplet extends Applet
       "Import Library > opengl from the Sketch menu.";
 
     try {
-      Class rendererClass = Class.forName(irenderer);
-      Class constructorParams[] = null;
+      Class<?> rendererClass = Class.forName(irenderer);
+      Class<?> constructorParams[] = null;
       Object constructorValues[] = null;
 
       if (ipath == null) {
@@ -1148,7 +1148,7 @@ public class PApplet extends Applet
         };
       }
 
-      Constructor constructor =
+      Constructor<?> constructor =
         rendererClass.getConstructor(constructorParams);
       PGraphics pg = (PGraphics) constructor.newInstance(constructorValues);
       return pg;
@@ -2056,7 +2056,7 @@ public class PApplet extends Applet
         } else if (platform == MACOSX) {
           //com.apple.mrj.MRJFileUtils.openURL(url);
           try {
-            Class mrjFileUtils = Class.forName("com.apple.mrj.MRJFileUtils");
+            Class<?> mrjFileUtils = Class.forName("com.apple.mrj.MRJFileUtils");
             Method openMethod =
               mrjFileUtils.getMethod("openURL", new Class[] { String.class });
             openMethod.invoke(null, new Object[] { url });
@@ -4566,7 +4566,7 @@ public class PApplet extends Applet
   }
 
   static public Object expand(Object list, int newSize) {
-    Class type = list.getClass().getComponentType();
+    Class<?> type = list.getClass().getComponentType();
     Object temp = Array.newInstance(type, newSize);
     System.arraycopy(list, 0, temp, 0,
                      Math.min(Array.getLength(list), newSize));
@@ -4871,7 +4871,7 @@ public class PApplet extends Applet
   }
 
   static public Object subset(Object list, int start, int count) {
-    Class type = list.getClass().getComponentType();
+    Class<?> type = list.getClass().getComponentType();
     Object outgoing = Array.newInstance(type, count);
     System.arraycopy(list, start, outgoing, 0, count);
     return outgoing;
@@ -4922,7 +4922,7 @@ public class PApplet extends Applet
   }
 
   static public Object concat(Object a, Object b) {
-    Class type = a.getClass().getComponentType();
+    Class<?> type = a.getClass().getComponentType();
     int alength = Array.getLength(a);
     int blength = Array.getLength(b);
     Object outgoing = Array.newInstance(type, alength + blength);
@@ -4988,7 +4988,7 @@ public class PApplet extends Applet
   }
 
   static public Object reverse(Object list) {
-    Class type = list.getClass().getComponentType();
+    Class<?> type = list.getClass().getComponentType();
     int length = Array.getLength(list);
     Object outgoing = Array.newInstance(type, length);
     for (int i = 0; i < length; i++) {
@@ -6346,7 +6346,7 @@ public class PApplet extends Applet
       frame.setTitle(name);
 
 //    Class c = Class.forName(name);
-      Class c = Thread.currentThread().getContextClassLoader().loadClass(name);
+      Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(name);
       PApplet applet = (PApplet) c.newInstance();
 
       // these are needed before init/start
@@ -7222,16 +7222,16 @@ public class PApplet extends Applet
 
 
   public void applyMatrix(float n00, float n01, float n02,
-                          float n10, float n11, float n12) {
+                                   float n10, float n11, float n12) {
     if (recorder != null) recorder.applyMatrix(n00, n01, n02, n10, n11, n12);
     g.applyMatrix(n00, n01, n02, n10, n11, n12);
   }
 
 
   public void applyMatrix(float n00, float n01, float n02, float n03,
-                          float n10, float n11, float n12, float n13,
-                          float n20, float n21, float n22, float n23,
-                          float n30, float n31, float n32, float n33) {
+                                   float n10, float n11, float n12, float n13,
+                                   float n20, float n21, float n22, float n23,
+                                   float n30, float n31, float n32, float n33) {
     if (recorder != null) recorder.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
     g.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
   }

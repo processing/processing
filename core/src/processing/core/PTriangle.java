@@ -995,14 +995,14 @@ public class PTriangle implements PConstants
     // but p, n, and m should not depend on ordering differences
 
     if (firstSegment){
-      PMatrix myMatrix = 
-        new PMatrix(u_array[o0]/myFact, v_array[o0]/myFact2, 1, 0,
+      PMatrix3D myMatrix = 
+        new PMatrix3D(u_array[o0]/myFact, v_array[o0]/myFact2, 1, 0,
                     u_array[o1]/myFact, v_array[o1]/myFact2, 1, 0,
                     u_array[o2]/myFact, v_array[o2]/myFact2, 1, 0,
                     0,           0,           0, 1);
       // A 3x3 inversion would be more efficient here, 
       // given that the fourth r/c are unity
-      myMatrix = myMatrix.invert();
+      myMatrix.invert();
       // if the matrix inversion had trouble, let the caller know
       if (myMatrix == null) return false;
 
