@@ -78,30 +78,38 @@ while ($line = shift(@contents)) {
         } else {
             $returns = '';
         }
-	if ($line =~ /^(\s+)abstract\s+([^;]+);/) {
-	    $line = $1 . $2 . " {\n";
-	    #print "found $1\n";
-	    # hrm
-	}
+
+#	if ($line =~ /^(\s+)abstract\s+([^;]+);/) {
+#	    $line = $1 . $2 . " {\n";
+#	    #print "found $1\n";
+#	    # hrm
+#	}
+	# remove the 'abstract' modifier
+	$line =~ s/\sabstract\s/ /;
+
+	# replace semicolons with a start def
+	$line =~ s/\;\s*$/ {\n/;
+
         print OUT "\n\n$line";
 
-	if ($got_interface == 1) {
-	    $iline = $line;
-	    $iline =~ s/ \{/\;/;
-#	    print INTF "\n$iline";
-	}
+#	if ($got_interface == 1) {
+#	    $iline = $line;
+#	    $iline =~ s/ \{/\;/;
+##	    print INTF "\n$iline";
+#	}
 
         $decl .= $line;
         while (!($line =~ /\)/)) {
             $line = shift (@contents);
             $decl .= $line;
+	    $line =~ s/\;\s*$/ {\n/;
             print OUT $line;
 
-	    if ($got_interface == 1) {
-		$iline = $line;
-		$iline =~ s/ \{/\;/;
-#		print INTF $iline;
-	    }
+#	    if ($got_interface == 1) {
+#		$iline = $line;
+#		$iline =~ s/ \{/\;/;
+##		print INTF $iline;
+#	    }
         }
 	
 	#$g_line = '';
