@@ -47,7 +47,7 @@ import java.awt.image.*;
  * any way shape or form. Which just means "have fun, but don't complain
  * if it breaks."</p>
  */
-public class PGraphicsJava2D extends PGraphics {
+public class PGraphicsJava2D extends PGraphics2D {
 
   public Graphics2D g2;
   GeneralPath gpath;
@@ -416,8 +416,8 @@ public class PGraphicsJava2D extends PGraphics {
       curveX[3] = x;
       curveY[3] = y;
 
-      curveToBezierMatrix.mult(curveX, curveX);
-      curveToBezierMatrix.mult(curveY, curveY);
+      curveToBezierMatrix.multiply(curveX, curveX);
+      curveToBezierMatrix.multiply(curveY, curveY);
 
       // since the paths are continuous,
       // only the first point needs the actual moveto
