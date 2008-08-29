@@ -337,6 +337,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   static final int MATRIX_STACK_DEPTH = 32;
   float matrixStack[][] = new float[MATRIX_STACK_DEPTH][16];
+  float matrixInvStack[][] = new float[MATRIX_STACK_DEPTH][16];
   int matrixStackDepth;
 
   // ........................................................
@@ -370,8 +371,8 @@ public abstract class PGraphics extends PImage implements PConstants {
     {  1,  0,  0,  0}
   };
 
-  protected PMatrix bezierBasis =
-    new PMatrix(-1,  3, -3,  1,
+  protected PMatrix3D bezierBasis =
+    new PMatrix3D(-1,  3, -3,  1,
                  3, -6,  3,  0,
                 -3,  3,  0,  0,
                  1,  0,  0,  0);
@@ -389,8 +390,8 @@ public abstract class PGraphics extends PImage implements PConstants {
   protected float curve_forward[][]; // = new float[4][4];
   protected float curve_draw[][];
 
-  protected PMatrix bezierBasisInverse;
-  protected PMatrix curveToBezierMatrix;
+  protected PMatrix3D bezierBasisInverse;
+  protected PMatrix3D curveToBezierMatrix;
 
   // ........................................................
 
@@ -476,18 +477,22 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /** The modelview matrix. */
-  public PMatrix modelview;
+  public PMatrix3D modelview;
 
   /** Inverse modelview matrix, used for lighting. */
-  public PMatrix modelviewInv;
+  public PMatrix3D modelviewInv;
+  
+  protected float[][] modelviewStack;
+  protected float[][] modelviewInvStack;
+  protected int modelviewStackPointer; 
 
   /**
    * The camera matrix, the modelview will be set to this on beginDraw.
    */
-  public PMatrix camera;
+  public PMatrix3D camera;
 
   /** Inverse camera matrix */
-  public PMatrix cameraInv;
+  public PMatrix3D cameraInv;
 
   // ........................................................
 
@@ -510,7 +515,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   public float cameraAspect;
 
   // projection matrix
-  public PMatrix projection; // = new PMatrix();
+  public PMatrix3D projection; // = new PMatrix();
 
   // ........................................................
 
@@ -1984,11 +1989,12 @@ public abstract class PGraphics extends PImage implements PConstants {
     setup_spline_forward(segments, curve_forward);
 
     if (bezierBasisInverse == null) {
-      bezierBasisInverse = new PMatrix(bezierBasis).invert();
+      bezierBasisInverse = bezierBasis.get();
+      bezierBasisInverse.invert();
     }
 
     // hack here to get PGraphics2 working
-    curveToBezierMatrix = new PMatrix(c[0][0], c[0][1], c[0][2], c[0][3],
+    curveToBezierMatrix = new PMatrix3D(c[0][0], c[0][1], c[0][2], c[0][3],
                                       c[1][0], c[1][1], c[1][2], c[1][3],
                                       c[2][0], c[2][1], c[2][2], c[2][3],
                                       c[3][0], c[3][1], c[3][2], c[3][3]);
@@ -3155,79 +3161,78 @@ public abstract class PGraphics extends PImage implements PConstants {
   // MATRIX TRANSFORMATIONS
 
 
-  public void translate(float tx, float ty) {
-    m02 += tx*m00 + ty*m01 + m02;
-    m12 += tx*m10 + ty*m11 + m12;
-  }
+  /**
+   * Translate in X and Y.
+   */
+  abstract public void translate(float tx, float ty);
 
-
-  public void translate(float tx, float ty, float tz) {
-    depthErrorXYZ("translate");
-  }
+  
+  /**
+   * Translate in X, Y, and Z.
+   */
+  abstract public void translate(float tx, float ty, float tz);
 
 
   /**
    * Two dimensional rotation.
-   * <br/> <br/>
-   * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
-   * <br/> <br/>
+   * 
    * Same as rotateZ (this is identical to a 3D rotation along the z-axis)
    * but included for clarity. It'd be weird for people drawing 2D graphics
    * to be using rotateZ. And they might kick our a-- for the confusion.
+   * 
+   * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
    */
-  public void rotate(float angle) {
-    float c = (float) Math.cos(angle);
-    float s = (float) Math.sin(angle);
-
-    applyMatrix(c, -s, 0,  s, c, 0);
-  }
-
-
-  public void rotateX(float angle) {
-    depthError("rotateX");
-  }
-
-  public void rotateY(float angle) {
-    depthError("rotateY");
-  }
+  abstract public void rotate(float angle);
 
 
   /**
-   * Rotate around the z axis. The functions rotate() and rotateZ() are
-   * the same, it's just that it make sense to have rotate() and then rotateX()
-   * and rotateY() when running in 3D; nor does it make sense to use
-   * a function called rotateZ() if you're only doing things in 2D.
-   * so we just decided to have them both be the same.
+   * Rotate around the X axis.
    */
-  public void rotateZ(float angle) {
-    depthError("rotateZ");
-  }
+  abstract public void rotateX(float angle);
+
+  
+  /** 
+   * Rotate around the Y axis.
+   */
+  abstract public void rotateY(float angle);
+
+
+  /**
+   * Rotate around the Z axis. 
+   * 
+   * The functions rotate() and rotateZ() are identical, it's just that it make 
+   * sense to have rotate() and then rotateX() and rotateY() when using 3D; 
+   * nor does it make sense to use a function called rotateZ() if you're only 
+   * doing things in 2D. so we just decided to have them both be the same.
+   */
+  abstract public void rotateZ(float angle);
 
 
   /**
    * Rotate about a vector in space. Same as the glRotatef() function.
    */
-  public void rotate(float angle, float vx, float vy, float vz) {
-    throw new RuntimeException("rotate(angle, x, y, z) " +
-                               "can only be used with P3D or OPENGL");
-  }
+  abstract public void rotate(float angle, float vx, float vy, float vz);
+
+  
+  /**
+   * Scale in all dimensions.
+   */
+  abstract public void scale(float s);
+
+  
+  /**
+   * Scale in X and Y. Equivalent to scale(sx, sy, 1).
+   * 
+   * Not recommended for use in 3D, because the z-dimension is just
+   * scaled by 1, since there's no way to know what else to scale it by.
+   */
+  abstract public void scale(float sx, float sy);
 
 
-  public void scale(float s) {
-    applyMatrix(s, 0, 0,
-                0, s, 0);
-  }
-
-
-  public void scale(float sx, float sy) {
-    applyMatrix(sx, 0, 0,
-                0, sy, 0);
-  }
-
-
-  public void scale(float x, float y, float z) {
-    depthErrorXYZ("scale");
-  }
+  /**
+   * Scale in X, Y, and Z.
+   */
+  abstract public void scale(float x, float y, float z);
 
 
 
@@ -3236,65 +3241,44 @@ public abstract class PGraphics extends PImage implements PConstants {
   // TRANSFORMATION MATRIX
 
 
-  public void pushMatrix() {
-    if (matrixStackDepth+1 == MATRIX_STACK_DEPTH) {
-      throw new RuntimeException("too many calls to pushMatrix()");
-    }
-    float mat[] = matrixStack[matrixStackDepth];
-    mat[0] = m00; mat[1] = m01; mat[2] = m02;
-    mat[3] = m10; mat[4] = m11; mat[5] = m12;
-    matrixStackDepth++;
-  }
+  static final String ERROR_PUSHMATRIX_OVERFLOW = 
+    "Too many calls to pushMatrix(), the maximum is " + MATRIX_STACK_DEPTH + ".";
+  static final String ERROR_PUSHMATRIX_UNDERFLOW = 
+    "Too many calls to popMatrix(), and not enough to pushMatrix().";
 
-
-  public void popMatrix() {
-    if (matrixStackDepth == 0) {
-      throw new RuntimeException("too many calls to popMatrix() " +
-                                 "(and not enough to pushMatrix)");
-    }
-    matrixStackDepth--;
-    float mat[] = matrixStack[matrixStackDepth];
-    m00 = mat[0]; m01 = mat[1]; m02 = mat[2];
-    m10 = mat[3]; m11 = mat[4]; m12 = mat[5];
-  }
-
-
+  
   /**
-   * Load identity as the transform/model matrix.
-   * Same as glLoadIdentity().
+   * Push a copy of the current transformation matrix onto the stack.
    */
-  public void resetMatrix() {
-    m00 = 1; m01 = 0; m02 = 0;
-    m10 = 0; m11 = 1; m12 = 0;
-  }
+  abstract public void pushMatrix();
+
+  
+  /**
+   * Replace the current transformation matrix with the top of the stack.
+   */
+  abstract public void popMatrix();
+
+  
+  /**
+   * Set the current transformation matrix to identity.
+   */
+  abstract public void resetMatrix();
 
 
   /**
    * Apply a 3x2 affine transformation matrix.
    */
-  public void applyMatrix(float n00, float n01, float n02,
-                          float n10, float n11, float n12) {
+  abstract public void applyMatrix(float n00, float n01, float n02,
+                                   float n10, float n11, float n12);
 
-    float r00 = m00*n00 + m01*n10;
-    float r01 = m00*n01 + m01*n11;
-    float r02 = m00*n02 + m01*n12 + m02;
-
-    float r10 = m10*n00 + m11*n10;
-    float r11 = m10*n01 + m11*n11;
-    float r12 = m10*n02 + m11*n12 + m12;
-
-    m00 = r00; m01 = r01; m02 = r02;
-    m10 = r10; m11 = r11; m12 = r12;
-  }
-
-
-  public void applyMatrix(float n00, float n01, float n02, float n03,
-                          float n10, float n11, float n12, float n13,
-                          float n20, float n21, float n22, float n23,
-                          float n30, float n31, float n32, float n33) {
-    throw new RuntimeException("applyMatrix() with a 4x4 matrix " +
-                               "can only be used with OPENGL or P3D");
-  }
+ 
+  /**
+   * Apply a 4x4 transformation matrix.
+   */
+  abstract public void applyMatrix(float n00, float n01, float n02, float n03,
+                                   float n10, float n11, float n12, float n13,
+                                   float n20, float n21, float n22, float n23,
+                                   float n30, float n31, float n32, float n33);
 
 
   /**
@@ -3304,43 +3288,13 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Note that there is no "updateMatrix" because that gets too
    * complicated (unnecessary) when considering the 3D matrices.
    */
-  public void loadMatrix() {
-    // no-op on base PGraphics because they're used directly
-  }
+  abstract public void loadMatrix();
 
 
   /**
    * Print the current model (or "transformation") matrix.
    */
-  public void printMatrix() {
-    loadMatrix();  // just to make sure
-
-    float big = Math.abs(m00);
-    if (Math.abs(m01) > big) big = Math.abs(m01);
-    if (Math.abs(m02) > big) big = Math.abs(m02);
-    if (Math.abs(m10) > big) big = Math.abs(m10);
-    if (Math.abs(m11) > big) big = Math.abs(m11);
-    if (Math.abs(m12) > big) big = Math.abs(m12);
-
-    // avoid infinite loop
-    if (Float.isNaN(big) || Float.isInfinite(big)) {
-      big = 1000000; // set to something arbitrary
-    }
-
-    int d = 1;
-    int bigi = (int) big;
-    while ((bigi /= 10) != 0) d++;  // cheap log()
-
-    System.out.println(PApplet.nfs(m00, d, 4) + " " +
-                       PApplet.nfs(m01, d, 4) + " " +
-                       PApplet.nfs(m02, d, 4));
-
-    System.out.println(PApplet.nfs(m10, d, 4) + " " +
-                       PApplet.nfs(m11, d, 4) + " " +
-                       PApplet.nfs(m12, d, 4));
-
-    System.out.println();
-  }
+  abstract public void printMatrix();
 
 
 

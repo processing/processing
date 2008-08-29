@@ -25,9 +25,8 @@
 package processing.core;
 
 import java.awt.Toolkit;
-import java.awt.image.DirectColorModel;
-import java.awt.image.MemoryImageSource;
-import java.util.Arrays;
+import java.awt.image.*;
+import java.util.*;
 
 
 /**
@@ -83,10 +82,10 @@ public class PGraphics3D extends PGraphics {
 
   // These two matrices always point to either the modelview
   // or the modelviewInv, but they are swapped during
-  // when in camera maniuplation mode. That way camera transforms
+  // when in camera manipulation mode. That way camera transforms
   // are automatically accumulated in inverse on the modelview matrix.
-  protected PMatrix forwardTransform;
-  protected PMatrix reverseTransform;
+  protected PMatrix3D forwardTransform;
+  protected PMatrix3D reverseTransform;
 
   // Added by ewjordan for accurate texturing purposes. Screen plane is
   // not scaled to pixel-size, so these manually keep track of its size
@@ -188,25 +187,6 @@ public class PGraphics3D extends PGraphics {
 
 
   /**
-   * Constructor for the PGraphics3 object.
-   * This prototype only exists because of annoying
-   * java compilers, and should not be used.
-   */
-  /*
-  public PGraphics3D() {
-    forwardTransform = modelview;
-    reverseTransform = modelviewInv;
-  }
-  */
-
-  /*
-  public PGraphics3D(int iwidth, int iheight) {
-    this(iwidth, iheight, null);
-  }
-  */
-
-
-  /**
    * Constructor for the PGraphics3 object. Use this to ensure that
    * the defaults get set properly. In a subclass, use this(w, h)
    * as the first line of a subclass' constructor to properly set
@@ -279,15 +259,19 @@ public class PGraphics3D extends PGraphics {
     //if (this.cameraMode != CUSTOM) cameraMode(this.cameraMode);
 
     // making this again here because things are weird
-    projection = new PMatrix();
+    projection = new PMatrix3D();
 
-    modelview = new PMatrix(MATRIX_STACK_DEPTH);
-    modelviewInv = new PMatrix(MATRIX_STACK_DEPTH);
+    modelview = new PMatrix3D();
+    //modelviewStack = new float[MATRIX_STACK_DEPTH][16];
+    modelviewInv = new PMatrix3D();
+    //modelviewInvStack = new float[MATRIX_STACK_DEPTH][16];
+    //modelviewStackPointer = 0;    
+
     forwardTransform = modelview;
     reverseTransform = modelviewInv;
 
-    camera = new PMatrix();
-    cameraInv = new PMatrix();
+    camera = new PMatrix3D();
+    cameraInv = new PMatrix3D();
 
     // set up the default camera
     camera();
@@ -2672,9 +2656,6 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  // OPT could save several multiplies for the 0s and 1s by just
-  //     putting the multMatrix code here and removing uneccessary terms
-
   public void rotateX(float angle) {
     forwardTransform.rotateX(angle);
     reverseTransform.invRotateX(angle);
@@ -2687,13 +2668,6 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  /**
-   * Rotate in the XY plane by an angle.
-   *
-   * Note that this doesn't internally set the number of
-   * dimensions to three, since rotateZ() is the same as a
-   * 2D rotate in the XY plane.
-   */
   public void rotateZ(float angle) {
     forwardTransform.rotateZ(angle);
     reverseTransform.invRotateZ(angle);
@@ -2719,9 +2693,6 @@ public class PGraphics3D extends PGraphics {
 
 
   /**
-   * Not recommended for use in 3D, because the z-dimension is just
-   * scaled by 1, since there's no way to know what else to scale it by.
-   * Equivalent to scale(sx, sy, 1);
    */
   public void scale(float sx, float sy) {
     scale(sx, sy, 1);
@@ -2744,30 +2715,25 @@ public class PGraphics3D extends PGraphics {
 
 
   public void pushMatrix() {
-    if (!modelview.push()) {
-      throw new RuntimeException("Too many calls to pushMatrix()");
+    if (matrixStackDepth == MATRIX_STACK_DEPTH) {
+      throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
     }
-    // Do this to the inverse regardless of the lights
-    // to keep stack pointers in sync
-    modelviewInv.push();
+    modelview.get(modelviewStack[modelviewStackPointer]);    
+    modelviewInv.get(modelviewInvStack[modelviewStackPointer]);
+    matrixStackDepth++;
   }
 
 
   public void popMatrix() {
-    if (!modelview.pop()) {
-      throw new RuntimeException("Too many calls to popMatrix() " +
-                                 "(and not enough to pushMatrix)");
+    if (matrixStackDepth == 0) {
+      throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
     }
-    // Do this to the inverse regardless of the lights
-    // to keep stack pointers in sync
-    modelviewInv.pop();
+    matrixStackDepth--;
+    modelview.set(modelviewStack[modelviewStackPointer]);    
+    modelviewInv.set(modelviewInvStack[modelviewStackPointer]);
   }
 
 
-  /**
-   * Load identity as the transform/model matrix.
-   * Same as glLoadIdentity().
-   */
   public void resetMatrix() {
     forwardTransform.reset();
     reverseTransform.reset();
@@ -2776,10 +2742,13 @@ public class PGraphics3D extends PGraphics {
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    throw new RuntimeException("Use applyMatrix() with a 4x4 matrix " +
-                               "when using OPENGL or P3D");
+    applyMatrix(n00, n01, n02, 0,
+                n10, n11, n12, 0,
+                0,   0,   1,   0,
+                0,   0,   0,   1);
   }
 
+  
   /**
    * Apply a 4x4 transformation matrix. Same as glMultMatrix().
    * This call will be slow because it will try to calculate the
@@ -3085,7 +3054,7 @@ public class PGraphics3D extends PGraphics {
                        y0, y1, y2, 0,
                        z0, z1, z2, 0,
                        0,  0,  0,  1);
-    cameraInv.invTranslate(-eyeX, -eyeY, -eyeZ);
+    cameraInv.translate(eyeX, eyeY, eyeZ);
 
     modelview.set(camera);
     modelviewInv.set(cameraInv);
@@ -3388,22 +3357,6 @@ public class PGraphics3D extends PGraphics {
 
     return (ow != 0) ? oz / ow : oz;
   }
-
-
-  /*
-  float unprojectInputX = Float.NaN;
-  float unprojectInputY = Float.NaN;
-  float unprojectInputZ = Float.NaN;
-  float unprojectOutputX, unprojectOutputY, unprojectOutputZ;
-
-  public float unprojectX(float x, float y, float z) {
-    if ((x != unprojectInputX) ||
-        (y != unprojectInputY) ||
-        (z != unprojectInputZ)) {
-
-    }
-  }
-  */
 
 
   //////////////////////////////////////////////////////////////
