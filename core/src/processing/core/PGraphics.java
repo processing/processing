@@ -481,10 +481,10 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   /** Inverse modelview matrix, used for lighting. */
   public PMatrix3D modelviewInv;
-  
+
   protected float[][] modelviewStack;
   protected float[][] modelviewInvStack;
-  protected int modelviewStackPointer; 
+  protected int modelviewStackPointer;
 
   /**
    * The camera matrix, the modelview will be set to this on beginDraw.
@@ -692,7 +692,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Note that this will nuke any camera settings.
    */
   public void resize(int iwidth, int iheight) {  // ignore
-    System.out.println("PGraphics.resize() " + iwidth + " " + iheight);
+    //System.out.println("PGraphics.resize() " + iwidth + " " + iheight);
 //    insideDrawWait();
     //insideResize = true;
 
@@ -3166,7 +3166,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    */
   abstract public void translate(float tx, float ty);
 
-  
+
   /**
    * Translate in X, Y, and Z.
    */
@@ -3175,11 +3175,11 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   /**
    * Two dimensional rotation.
-   * 
+   *
    * Same as rotateZ (this is identical to a 3D rotation along the z-axis)
    * but included for clarity. It'd be weird for people drawing 2D graphics
    * to be using rotateZ. And they might kick our a-- for the confusion.
-   * 
+   *
    * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
    */
   abstract public void rotate(float angle);
@@ -3190,19 +3190,19 @@ public abstract class PGraphics extends PImage implements PConstants {
    */
   abstract public void rotateX(float angle);
 
-  
-  /** 
+
+  /**
    * Rotate around the Y axis.
    */
   abstract public void rotateY(float angle);
 
 
   /**
-   * Rotate around the Z axis. 
-   * 
-   * The functions rotate() and rotateZ() are identical, it's just that it make 
-   * sense to have rotate() and then rotateX() and rotateY() when using 3D; 
-   * nor does it make sense to use a function called rotateZ() if you're only 
+   * Rotate around the Z axis.
+   *
+   * The functions rotate() and rotateZ() are identical, it's just that it make
+   * sense to have rotate() and then rotateX() and rotateY() when using 3D;
+   * nor does it make sense to use a function called rotateZ() if you're only
    * doing things in 2D. so we just decided to have them both be the same.
    */
   abstract public void rotateZ(float angle);
@@ -3213,16 +3213,16 @@ public abstract class PGraphics extends PImage implements PConstants {
    */
   abstract public void rotate(float angle, float vx, float vy, float vz);
 
-  
+
   /**
    * Scale in all dimensions.
    */
   abstract public void scale(float s);
 
-  
+
   /**
    * Scale in X and Y. Equivalent to scale(sx, sy, 1).
-   * 
+   *
    * Not recommended for use in 3D, because the z-dimension is just
    * scaled by 1, since there's no way to know what else to scale it by.
    */
@@ -3241,24 +3241,24 @@ public abstract class PGraphics extends PImage implements PConstants {
   // TRANSFORMATION MATRIX
 
 
-  static final String ERROR_PUSHMATRIX_OVERFLOW = 
+  static final String ERROR_PUSHMATRIX_OVERFLOW =
     "Too many calls to pushMatrix(), the maximum is " + MATRIX_STACK_DEPTH + ".";
-  static final String ERROR_PUSHMATRIX_UNDERFLOW = 
+  static final String ERROR_PUSHMATRIX_UNDERFLOW =
     "Too many calls to popMatrix(), and not enough to pushMatrix().";
 
-  
+
   /**
    * Push a copy of the current transformation matrix onto the stack.
    */
   abstract public void pushMatrix();
 
-  
+
   /**
    * Replace the current transformation matrix with the top of the stack.
    */
   abstract public void popMatrix();
 
-  
+
   /**
    * Set the current transformation matrix to identity.
    */
@@ -3271,7 +3271,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   abstract public void applyMatrix(float n00, float n01, float n02,
                                    float n10, float n11, float n12);
 
- 
+
   /**
    * Apply a 4x4 transformation matrix.
    */
