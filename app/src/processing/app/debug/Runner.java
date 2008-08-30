@@ -89,7 +89,7 @@ public class Runner implements MessageConsumer {
   public Runner(Editor editor, String appletClassName, boolean presenting) throws RunnerException {
     this.editor = editor;
     this.sketch = editor.getSketch();
-    this.appletClassName = appletClassName; 
+    this.appletClassName = appletClassName;
     this.presenting = presenting;
     //EditorConsole.systemOut.println("clear");
     //System.out.println("clear");
@@ -147,7 +147,7 @@ public class Runner implements MessageConsumer {
     }
 
 //    params.add("-Djava.ext.dirs=nuffing");
-    
+
     if (Preferences.getBoolean("run.options.memory")) {
       params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
       params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
@@ -155,7 +155,7 @@ public class Runner implements MessageConsumer {
 
     if (Base.isMacOS()) {
       params.add("-Xdock:name=" + appletClassName);
-//      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" + 
+//      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" +
 //                 sketch.getMainClassName());
     }
     // sketch.libraryPath might be ""
@@ -229,9 +229,9 @@ public class Runner implements MessageConsumer {
       params.add(PApplet.ARGS_BGCOLOR + "=" +
           Preferences.get("run.present.bgcolor"));
     }
-    
+
     params.add(appletClassName);
-    
+
 //    String outgoing[] = new String[params.size()];
 //    params.toArray(outgoing);
 //    return outgoing;
@@ -349,7 +349,7 @@ public class Runner implements MessageConsumer {
   */
 
 
-  protected VirtualMachine launchVirtualMachine(String[] vmParams, 
+  protected VirtualMachine launchVirtualMachine(String[] vmParams,
                                                 String[] classParams) {
     //vm = launchTarget(sb.toString());
     LaunchingConnector connector =
@@ -361,9 +361,9 @@ public class Runner implements MessageConsumer {
 
     Connector.Argument commandArg =
       (Connector.Argument)arguments.get("command");
-    //String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
+    String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
     //String addr = "" + (8000 + (int) (Math.random() * 1000));
-    String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
+    //String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
     String commandArgs = (PApplet.platform == PConstants.WINDOWS) ?
       "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y " :
       "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
@@ -404,11 +404,11 @@ public class Runner implements MessageConsumer {
       PApplet.println(errorStrings);
       //System.out.println("input:");
       //PApplet.println(inputStrings);
-      
+
       if (errorStrings != null && errorStrings.length > 1) {
         if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
-          Base.showWarning("Way Too High", 
-                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" + 
+          Base.showWarning("Way Too High",
+                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
                            "Preferences window. For more information, read Help \u2192 Troubleshooting.",
                            exc);
         }
@@ -555,14 +555,14 @@ public class Runner implements MessageConsumer {
 
   public void exception(ExceptionEvent event) {
     ObjectReference or = event.exception();
-    ReferenceType rt = or.referenceType(); 
+    ReferenceType rt = or.referenceType();
     String exceptionName = rt.name();
     //Field messageField = Throwable.class.getField("detailMessage");
     Field messageField = rt.fieldByName("detailMessage");
 //    System.out.println("field " + messageField);
     Value messageValue = or.getValue(messageField);
 //    System.out.println("mess val " + messageValue);
-    
+
     int last = exceptionName.lastIndexOf('.');
     String message = exceptionName.substring(last + 1);
     if (messageValue != null) {
@@ -574,7 +574,7 @@ public class Runner implements MessageConsumer {
     }
 //    System.out.println("mess type " + messageValue.type());
     //StringReference messageReference = (StringReference) messageValue.type();
-    
+
 //    System.out.println(or.referenceType().fields());
 //    if (name.startsWith("java.lang.")) {
 //      name = name.substring(10);
@@ -585,14 +585,14 @@ public class Runner implements MessageConsumer {
       System.err.println("loading thousands of images), or that your sketch may need more memory to run.");
       System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
       System.err.println("you can increase the memory available to your sketch using the Preferences window.");
-      
+
     } else if (exceptionName.equals("java.lang.StackOverflowError")) {
       editor.statusError("StackOverflowError: This sketch is attempting too much recursion.");
       System.err.println("A StackOverflowError means that you have a bug that's causing a function");
       System.err.println("to be called recursively (it's calling itself and going in circles),");
       System.err.println("or you're intentionally calling a recursive function too much,");
       System.err.println("and your code should be rewritten in a more efficient manner.");
-      
+
     } else if (exceptionName.equals("java.lang.UnsupportedClassVersionError")) {
       editor.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
       System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.5.");
@@ -607,13 +607,13 @@ public class Runner implements MessageConsumer {
     }
     editor.internalRunnerClosed();
   }
-  
-  
+
+
   protected void reportException(String message, ThreadReference thread) {
     try {
       int codeIndex = -1;
       int lineNumber = -1;
-      
+
 //      System.out.println("reporting ex");
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
@@ -653,7 +653,7 @@ public class Runner implements MessageConsumer {
 
             // lineNumber is 1-indexed, but editor wants zero-indexed
             lineNumber--;
-            
+
             // getMessage() will be what's shown in the editor
             exception = new RunnerException(message, codeIndex, lineNumber, -1);
             exception.hideStackTrace();
@@ -669,7 +669,7 @@ public class Runner implements MessageConsumer {
     }
   }
 
-  
+
   public void close() {
     // TODO make sure stop() has already been called to exit the sketch
 
@@ -736,7 +736,7 @@ public class Runner implements MessageConsumer {
       return;
     }
 
-    // Removed while doing cleaning for 0145, 
+    // Removed while doing cleaning for 0145,
     // it seems that this is never actually printed out.
     /*
     // this is PApplet sending a message saying "i'm about to spew
