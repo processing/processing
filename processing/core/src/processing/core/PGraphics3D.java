@@ -198,10 +198,9 @@ public class PGraphics3D extends PGraphics {
   public PGraphics3D(int iwidth, int iheight, PApplet parent) {
     // super will add the listeners to the applet, and call resize()
     super(iwidth, iheight, parent);
+
     forwardTransform = modelview;
     reverseTransform = modelviewInv;
-    //resize(iwidth, iheight);
-    //projection = new PMatrix();
   }
 
 
@@ -214,8 +213,6 @@ public class PGraphics3D extends PGraphics {
    */
   public void resize(int iwidth, int iheight) {  // ignore
 //    System.out.println("PGraphics3D.resize() " + iwidth + " " + iheight);
-//    insideDrawWait();
-//    insideResize = true;
 
     width = iwidth;
     height = iheight;
@@ -224,20 +221,6 @@ public class PGraphics3D extends PGraphics {
 
     allocate();
     reapplySettings();
-
-    // clear the screen with the old background color
-    //background(backgroundColor);
-
-    // init perspective projection based on new dimensions
-    cameraFOV = 60 * DEG_TO_RAD; // at least for now
-    cameraX = width / 2.0f;
-    cameraY = height / 2.0f;
-    //cameraZ = cameraY / ((float) tan(PI * cameraFOV / 360f));
-    cameraZ = cameraY / ((float) tan(cameraFOV / 2.0f));
-    cameraNear = cameraZ / 10.0f;
-    cameraFar = cameraZ * 10.0f;
-
-    cameraAspect = (float)width / (float)height;
 
     // init lights (in resize() instead of allocate() b/c needed by opengl)
     lightType = new int[MAX_LIGHTS];
@@ -253,22 +236,25 @@ public class PGraphics3D extends PGraphics {
     lightSpotConcentration = new float[MAX_LIGHTS];
     currentLightSpecular = new float[3];
 
-    // reset the cameraMode if PERSPECTIVE or ORTHOGRAPHIC
-    // will just be ignored if CUSTOM, the user's hosed anyways
-    //System.out.println("setting cameraMode to " + cameraMode);
-    //if (this.cameraMode != CUSTOM) cameraMode(this.cameraMode);
-
-    // making this again here because things are weird
     projection = new PMatrix3D();
-
     modelview = new PMatrix3D();
-    //modelviewStack = new float[MATRIX_STACK_DEPTH][16];
     modelviewInv = new PMatrix3D();
-    //modelviewInvStack = new float[MATRIX_STACK_DEPTH][16];
-    //modelviewStackPointer = 0;    
+
+    modelviewStack = new float[MATRIX_STACK_DEPTH][16];
+    modelviewInvStack = new float[MATRIX_STACK_DEPTH][16];
+    modelviewStackPointer = 0;
 
     forwardTransform = modelview;
     reverseTransform = modelviewInv;
+
+    // init perspective projection based on new dimensions
+    cameraFOV = 60 * DEG_TO_RAD; // at least for now
+    cameraX = width / 2.0f;
+    cameraY = height / 2.0f;
+    cameraZ = cameraY / ((float) tan(cameraFOV / 2.0f));
+    cameraNear = cameraZ / 10.0f;
+    cameraFar = cameraZ * 10.0f;
+    cameraAspect = (float)width / (float)height;
 
     camera = new PMatrix3D();
     cameraInv = new PMatrix3D();
@@ -280,8 +266,6 @@ public class PGraphics3D extends PGraphics {
     // own projection, they'll need to fix it after resize anyway.
     // this helps the people who haven't set up their own projection.
     perspective();
-
-//    insideResize = false;  // ok to draw again
   }
 
 
@@ -937,7 +921,7 @@ public class PGraphics3D extends PGraphics {
         case QUAD_STRIP:
         {
           stop = vertexCount-3;
-          
+
           for (int i = vertex_start; i < stop; i += 2) {
             // first triangle
             add_triangle(i+0, i+2, i+1);
@@ -2417,7 +2401,7 @@ public class PGraphics3D extends PGraphics {
 
   // SPHERE
 
-  
+
   public void sphereDetail(int res) {
     sphereDetail(res, res);
   }
@@ -2425,10 +2409,10 @@ public class PGraphics3D extends PGraphics {
 
   /**
    * Set the detail level for approximating a sphere. The ures and vres params
-   * control the horizontal and vertical resolution. 
-   * 
+   * control the horizontal and vertical resolution.
+   *
    * Code for sphereDetail() submitted by toxi [031031].
-   * Code for enhanced u/v version from davbol [080801]. 
+   * Code for enhanced u/v version from davbol [080801].
    */
   public void sphereDetail(int ures, int vres) {
     if (ures < 3) ures = 3; // force a minimum res
@@ -2471,7 +2455,7 @@ public class PGraphics3D extends PGraphics {
     sphereDetailV = vres;
   }
 
-  
+
   /**
    * Draw a sphere with radius r centered at coordinate 0, 0, 0.
    * <P>
@@ -2718,7 +2702,7 @@ public class PGraphics3D extends PGraphics {
     if (matrixStackDepth == MATRIX_STACK_DEPTH) {
       throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
     }
-    modelview.get(modelviewStack[modelviewStackPointer]);    
+    modelview.get(modelviewStack[modelviewStackPointer]);
     modelviewInv.get(modelviewInvStack[modelviewStackPointer]);
     matrixStackDepth++;
   }
@@ -2729,7 +2713,7 @@ public class PGraphics3D extends PGraphics {
       throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
     }
     matrixStackDepth--;
-    modelview.set(modelviewStack[modelviewStackPointer]);    
+    modelview.set(modelviewStack[modelviewStackPointer]);
     modelviewInv.set(modelviewInvStack[modelviewStackPointer]);
   }
 
@@ -2748,7 +2732,7 @@ public class PGraphics3D extends PGraphics {
                 0,   0,   0,   1);
   }
 
-  
+
   /**
    * Apply a 4x4 transformation matrix. Same as glMultMatrix().
    * This call will be slow because it will try to calculate the
