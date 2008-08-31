@@ -20,6 +20,11 @@
 #                                                                             #
 ###############################################################################
 
+use Captcha::reCAPTCHA;
+use CGI::Simple;
+my $q = CGI::Simple->new;
+my $c = Captcha::reCAPTCHA->new;
+
 $registerplver = "1 Gold - SP 1.4";
 
 sub Register {
@@ -62,6 +67,10 @@ $yymain .= qq~
       </tr>
 ~;
 }
+$c_html = $c->get_html('6LcdfQEAAAAAAHqEialflGMBdOsX_7PrR1PW_Zyf');
+$yymain .= qq~
+      <tr><td>&nbsp;</td><td>$c_html</td></tr>
+~;
 $yymain .= qq~
     </table>
     </font></td>
@@ -122,6 +131,9 @@ sub Register2 {
 	&fatal_error("$txt{'240'}") if($member{'username'} =~ /,/);
 	&fatal_error("($member{'username'}) $txt{'76'}") if($member{'email'} eq "");
 	&fatal_error("($member{'username'}) $txt{'100'}") if(-e ("$memberdir/$member{'username'}.dat"));
+
+        my $c_result = $c->check_answer('6LcdfQEAAAAAANsRYEfe9mkSwU0viF6587uPmckq', $ENV{'REMOTE_ADDR'}, $member{'recaptcha_challenge_field'}, $member{'recaptcha_response_field'});
+        &fatal_error("Please enter the two words in the image to register.") if (not $c_result->{is_valid});
 
 	if( $emailpassword ) {
 		srand();

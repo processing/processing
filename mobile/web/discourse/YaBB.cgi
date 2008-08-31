@@ -1,5 +1,6 @@
 #!/usr/bin/perl --
 
+use lib '/var/www/mobile/discourse/recaptcha';
 
 ###############################################################################
 # YaBB.pl                                                                     #
