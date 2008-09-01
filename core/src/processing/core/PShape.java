@@ -23,6 +23,8 @@
 
 package processing.core;
 
+import java.util.HashMap;
+
 // take a look at the obj loader to see how this fits with things
 
 // PShape.line() PShape.ellipse()?
@@ -30,57 +32,67 @@ package processing.core;
 // line()
 // endShape(s)
 
-public class PShape {
+abstract public class PShape implements PConstants {
 
-  public String name;
+  protected String name;
+
+  protected int kind;
+  protected int drawMode;
+  protected PMatrix3D matrix;
+
+  // setAxis -> .x and .y to move x and y coords of origin
+  protected float x;
+  protected float y;
+  protected float width;
+  protected float height;
 
   // set to false if the object is hidden in the layers palette
-  public boolean display;
+  protected boolean visible;
 
-  public boolean stroke;
-  public int strokeColor;
-  public float strokeWeight; // default is 1
-  public int strokeCap;
-  public int strokeJoin;
+  protected boolean stroke;
+  protected int strokeColor;
+  protected float strokeWeight; // default is 1
+  protected int strokeCap;
+  protected int strokeJoin;
 
-  public boolean fill;
-  public int fillColor;
+  protected boolean fill;
+  protected int fillColor;
   
+  protected boolean styles;
+
   //public boolean hasTransform;
-  public float[] transformation;
-
-  //
-  
-  int kind;
-  PMatrix3D matrix;
+  //protected float[] transformation;
 
   int[] opcode;
   int opcodeCount;
   // need to reorder vertex fields to make a VERTEX_SHORT_COUNT
   // that puts all the non-rendering fields into later indices
+  int dataCount;
   float[][] data;  // second param is the VERTEX_FIELD_COUNT
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
 
-  int childCount;
-  PShape[] children;
+  protected PShape parent;
+  protected int childCount;
+  protected PShape[] children;
+  protected HashMap<String,PShape> table;
 
   // POINTS, LINES, xLINE_STRIP, xLINE_LOOP
   // TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN
   // QUADS, QUAD_STRIP
   // xPOLYGON
-  static final int PATH = 1;  // POLYGON, LINE_LOOP, LINE_STRIP
-  static final int GROUP = 2;
+//  static final int PATH = 1;  // POLYGON, LINE_LOOP, LINE_STRIP
+//  static final int GROUP = 2;
 
   // how to handle rectmode/ellipsemode?
   // are they bitshifted into the constant?
   // CORNER, CORNERS, CENTER, (CENTER_RADIUS?)
-  static final int RECT = 3; // could just be QUAD, but would be x1/y1/x2/y2
-  static final int ELLIPSE = 4;
-
-  static final int VERTEX = 7;
-  static final int CURVE = 5;
-  static final int BEZIER = 6;
+//  static final int RECT = 3; // could just be QUAD, but would be x1/y1/x2/y2
+//  static final int ELLIPSE = 4;
+//
+//  static final int VERTEX = 7;
+//  static final int CURVE = 5;
+//  static final int BEZIER = 6;
 
 
   // fill and stroke functions will need a pointer to the parent
@@ -92,37 +104,93 @@ public class PShape {
   // material parameters will be thrown out,
   // except those currently supported (kinds of lights)
 
-  // setAxis -> .x and .y to move x and y coords of origin
-  public float x;
-  public float y;
-
   // pivot point for transformations
-  public float px;
-  public float py;
+//  public float px;
+//  public float py;
 
 
   public PShape() {
+    this.kind = GROUP;
+  }
+  
+  
+  public PShape(int kind) {
+    this.kind = kind;
   }
 
 
-  public PShape(float x, float y) {
-    this.x = x;
-    this.y = y;
+  public void setName(String name) {
+    this.name = name;
+  }
+  
+  
+  public String getName() {
+    return name;
+  }
+  
+  
+  public boolean isVisible() {
+    return visible;
+  }
+  
+  
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
+
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  protected void checkBounds() {
+    if (width == 0 || height == 0) {
+      // calculate bounds here (also take kids into account)
+      width = 1;
+      height = 1;
+    }
+  }
+  
+  
+  public float getWidth() {
+    checkBounds();
+    return width;
+  }
+  
+  
+  public float getHeight() {
+    checkBounds();
+    return height;
   }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+  
   /**
-   * Called by the following (the shape() command adds the g)
-   * PShape s = loadShapes("blah.svg");
-   * shape(s);
+   * Set the orientation for drawn objects, similar to PImage.imageMode().
+   * @param which Either CORNER, CORNERS, or CENTER.
    */
-  public void draw(PGraphics g) {
-    boolean flat = g instanceof PGraphics3D;
+  public void drawMode(int which) {
+      drawMode = which;
+  }
 
+
+  boolean strokeSaved;
+  int strokeColorSaved;
+  float strokeWeightSaved;
+  int strokeCapSaved;
+  int strokeJoinSaved;
+  
+  boolean fillSaved;
+  int fillColorSaved;
+
+  int ellipseModeSaved;
+  
+
+  protected void pre(PGraphics g) {
     if (matrix != null) {
+      boolean flat = g instanceof PGraphics3D;
+
       g.pushMatrix();
       if (flat) {
         g.applyMatrix(matrix.m00, matrix.m01, matrix.m02,
@@ -135,50 +203,217 @@ public class PShape {
       }
     }
 
-    // if g subclasses PGraphics2, ignore all lighting stuff and z coords
-    // otherwise if PGraphics3, need to call diffuse() etc
+    strokeSaved = g.stroke;
+    strokeColorSaved = g.strokeColor;
+    strokeWeightSaved = g.strokeWeight;
+    strokeCapSaved = g.strokeCap;
+    strokeJoinSaved = g.strokeJoin;
 
-    // unfortunately, also a problem with no way to encode stroke/fill
-    // being enabled/disabled.. this quickly gets into just having opcodes
-    // for the entire api, to deal with things like textures and images
+    fillSaved = g.fill;
+    fillColorSaved = g.fillColor;
 
-    switch (kind) {
-    case PATH:
-      for (int i = 0; i < opcodeCount; i++) {
-        switch (opcode[i]) {
-        case VERTEX:
-          break;
-        }
-      }
-      break;
+    ellipseModeSaved = g.ellipseMode;
 
-    case GROUP:
-      break;
-
-    case RECT:
-      break;
+    if (styles) {
+      styles(g);
     }
+  }
+  
+  
+  protected void styles(PGraphics g) {
+    // should not be necessary because using only the int version of color
+    //parent.colorMode(PConstants.RGB, 255);
+
+    if (stroke) {
+      g.stroke(strokeColor);
+      g.strokeWeight(strokeWeight);
+      g.strokeCap(strokeCap);
+      g.strokeJoin(strokeJoin);
+    } else {
+      g.noStroke();
+    }
+
+    if (fill) {
+      //System.out.println("filling " + PApplet.hex(fillColor));
+      g.fill(fillColor);
+    } else {
+      g.noFill();
+    }
+  }
+
+
+  public void post(PGraphics g) {
+    for (int i = 0; i < childCount; i++) {
+      children[i].draw(g);
+    }
+    
+    // TODO this is not sufficient, since not saving fillR et al.
+    g.stroke = strokeSaved;
+    g.strokeColor = strokeColorSaved;
+    g.strokeWeight = strokeWeightSaved;
+    g.strokeCap = strokeCapSaved;
+    g.strokeJoin = strokeJoinSaved;
+
+    g.fill = fillSaved;
+    g.fillColor = fillColorSaved;
+
+    g.ellipseMode = ellipseModeSaved;
 
     if (matrix != null) {
       g.popMatrix();
     }
   }
+  
+  
+  /**
+   * Called by the following (the shape() command adds the g)
+   * PShape s = loadShapes("blah.svg");
+   * shape(s);
+   */
+  public void draw(PGraphics g) {
+    if (!visible) return;
+    
+    if (drawMode == PConstants.CENTER) {
+      g.pushMatrix();
+      g.translate(-width/2, -height/2);
+    }
+    
+    pre(g);
+    drawImpl(g);
+    post(g);
+    
+    if (drawMode == PConstants.CENTER) {
+      g.popMatrix();
+    }
+  }
+
+
+  /**
+   * Convenience method to draw at a particular location.
+   */
+  public void draw(PGraphics g, float x, float y) {
+    if (!visible) return;
+    
+    g.pushMatrix();
+
+    if (drawMode == PConstants.CENTER) {
+      g.translate(x - width/2, y - height/2);
+
+    } else if ((drawMode == PConstants.CORNER) ||
+        (drawMode == PConstants.CORNERS)) {
+      g.translate(x, y);
+    }
+    pre(g);
+    drawImpl(g);
+    post(g);
+
+    g.popMatrix();
+  }
+
+
+  public void draw(PGraphics g, float x, float y, float c, float d) {
+    if (!visible) return;
+    
+      g.pushMatrix();
+
+      if (drawMode == PConstants.CENTER) {
+          // x and y are center, c and d refer to a diameter
+          g.translate(x - c/2f, y - d/2f);
+          g.scale(c / width, d / height);
+
+      } else if (drawMode == PConstants.CORNER) {
+          g.translate(x, y);
+          g.scale(c / width, d / height);
+
+      } else if (drawMode == PConstants.CORNERS) {
+          // c and d are x2/y2, make them into width/height
+          c -= x;
+          d -= y;
+          // then same as above
+          g.translate(x, y);
+          g.scale(c / width, d / height);
+      }
+      pre(g);
+      drawImpl(g);
+      post(g);
+
+      g.popMatrix();
+  }
+
+
+  /**
+   * Draws the SVG document.
+   */
+  abstract public void drawImpl(PGraphics g);
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  
+  public int getChildCount() {
+    return childCount;
+  }
+  
+  
+  public PShape getChild(int index) {
+    return children[index];
+  }
+  
+  
+  public PShape getChild(String name) {
+    if (table != null) {
+      for (String n : table.keySet()) {
+        if (n.equals(name)) {
+          return table.get(name);
+        }
+      }
+    }
+    for (int i = 0; i < childCount; i++) {
+      PShape found = children[i].getChild(name);
+      if (found != null) return found;
+    }
+    return null;
+  }
+  
+  
+  /**
+   * Same as getChild(name), except that it first walks all the way up the 
+   * hierarchy to the farthest parent, so that children can be found anywhere. 
+   */
+  public PShape findChild(String name) {
+    if (parent == null) {
+      return getChild(name);
+      
+    } else {
+      return parent.findChild(name);
+    }
+  }
 
+  
   // can't be 'add' because that suggests additive geometry
   public void addChild(PShape who) {
+    if (children == null) {
+      children = new PShape[2];
+    }
+    if (childCount == children.length) {
+      children = (PShape[]) PApplet.expand(children);
+    }
+    children[childCount++] = who;
+    who.parent = this;
+    
+    if (table == null) {
+      table = new HashMap<String,PShape>();
+    }
+    table.put(who.getName(), who);
   }
 
 
-  public PShape createGroup() {
-    PShape group = new PShape();
-    group.kind = GROUP;
-    addChild(group);
-    return group;
-  }
+//  public PShape createGroup() {
+//    PShape group = new PShape();
+//    group.kind = GROUP;
+//    addChild(group);
+//    return group;
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -198,9 +433,6 @@ public class PShape {
     checkMatrix();
     matrix.translate(tx, ty, 0);
   }
-
-
-  //
 
 
   public void rotateX(float angle) {
@@ -232,10 +464,12 @@ public class PShape {
     scale(s, s, s);
   }
 
+  
   public void scale(float sx, float sy) {
     scale(sx, sy, 1);
   }
 
+  
   public void scale(float x, float y, float z) {
     checkMatrix();
     matrix.scale(x, y, z);
@@ -245,6 +479,10 @@ public class PShape {
   //
 
 
+  public void resetMatrix() {
+  }
+  
+  
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     checkMatrix();
@@ -254,6 +492,7 @@ public class PShape {
                  0,   0,   0,   1);
   }
 
+  
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
@@ -287,17 +526,17 @@ public class PShape {
    * This will also need to flip the y axis (scale(1, -1)) in cases
    * like Adobe Illustrator where the coordinates start at the bottom.
    */
-  public void center() {
-  }
+//  public void center() {
+//  }
 
 
   /**
    * Set the pivot point for all transformations.
    */
-  public void pivot(float x, float y) {
-    px = x;
-    py = y;
-  }
+//  public void pivot(float x, float y) {
+//    px = x;
+//    py = y;
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
