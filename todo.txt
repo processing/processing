@@ -16,13 +16,13 @@ X   build it and then exit
 X   notations have been added to the bug report that cover the plw changes
 X Toolmenu won't show until I compile Mangler
 X   http://dev.processing.org/bugs/show_bug.cgi?id=892
-
-_ transport error 208
-_   http://dev.processing.org/bugs/show_bug.cgi?id=895
-_   possible http://www.jetbrains.net/jira/browse/IDEADEV-4268
-
 X update quaqua to 4.4.7 on macosx (http://www.randelshofer.ch/quaqua/)
 X   now supports 10.5 an 64 bit jnilib
+
+_ video capture problems with opengl
+_   http://dev.processing.org/bugs/show_bug.cgi?id=882
+_ serial.available() broken with video
+_   http://dev.processing.org/bugs/show_bug.cgi?id=829
 
 _ add local variables to PdeRecognizer
 _   remove static methods in PdePreprocessor, instead pull things from recog
@@ -59,6 +59,8 @@ _   but: open() is platform specific anyway, ppl can use exec()
 
 [ needs verification ] 
 
+_ transport error 202
+_   http://dev.processing.org/bugs/show_bug.cgi?id=895
 _ check to see whether this bug is fixed once 0140 is released
 _   properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49

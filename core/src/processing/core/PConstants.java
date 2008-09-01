@@ -187,9 +187,11 @@ public interface PConstants {
   // the low four bits set the variety,
   // higher bits set the specific shape type
 
-  static final int POINTS          = (1 << 4) | 0;
+  static final int GROUP           = (1 << 2);
+  
+  static final int POINTS          = (1 << 4);
 
-  static final int LINES           = (1 << 5) | 0;
+  static final int LINES           = (1 << 5);
   //static final int LINE_STRIP      = (1 << 5) | 1;
   //static final int LINE_LOOP       = (1 << 5) | 2;
 
