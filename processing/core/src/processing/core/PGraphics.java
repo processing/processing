@@ -108,46 +108,10 @@ public abstract class PGraphics extends PImage implements PConstants {
   static public final int EG = 33;
   static public final int EB = 34;
 
-  //has this vertex been lit yet
+  // has this vertex been lit yet
   static public final int BEEN_LIT = 35;
 
   static final int VERTEX_FIELD_COUNT = 36;
-
-  // line & triangle fields (note how these overlap)
-
-  static public final int INDEX = 0;          // shape index
-  static public final int VERTEX1 = 1;
-  static public final int VERTEX2 = 2;
-  static public final int VERTEX3 = 3;        // (triangles only)
-  static public final int TEXTURE_INDEX = 4;  // (triangles only)
-  static public final int STROKE_MODE = 3;    // (lines only)
-  static public final int STROKE_WEIGHT = 4;  // (lines only)
-
-  static public final int LINE_FIELD_COUNT = 5;
-  static public final int TRIANGLE_FIELD_COUNT = 5;
-
-  static public final int TRI_DIFFUSE_R = 0;
-  static public final int TRI_DIFFUSE_G = 1;
-  static public final int TRI_DIFFUSE_B = 2;
-  static public final int TRI_DIFFUSE_A = 3;
-  static public final int TRI_SPECULAR_R = 4;
-  static public final int TRI_SPECULAR_G = 5;
-  static public final int TRI_SPECULAR_B = 6;
-  static public final int TRI_SPECULAR_A = 7;
-
-  static public final int TRIANGLE_COLOR_COUNT = 8;
-
-
-  // normal modes for lighting, these have the uglier naming
-  // because the constants are never seen by users
-
-  /// normal calculated per triangle
-  static public final int AUTO_NORMAL = 0;
-  /// one normal manually specified per shape
-  static public final int MANUAL_SHAPE_NORMAL = 1;
-  /// normals specified for each shape vertex
-  static public final int MANUAL_VERTEX_NORMAL = 2;
-
 
   /// width minus one (useful for many calculations)
   public int width1;
@@ -982,24 +946,9 @@ public abstract class PGraphics extends PImage implements PConstants {
    * that's how things are implemented.
    */
   abstract public void beginShape(int kind);
-    /*
-    shape = kind;
-
-    // reset vertex, line and triangle information
-    // every shape is rendered at endShape();
-    vertexCount = 0;
-
-    splineVertexCount = 0;
-    //spline_vertices_flat = true;
-
-    //strokeChanged = false;
-    //fillChanged = false;
-    //normalChanged = false;
-     */
 
 
   public void normal(float nx, float ny, float nz) {
-    //depthError("normal");
   }
 
 

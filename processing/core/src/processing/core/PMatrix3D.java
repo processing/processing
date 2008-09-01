@@ -57,7 +57,7 @@ public final class PMatrix3D implements PConstants {
 
 
   public PMatrix3D(float m00, float m01, float m02, 
-                 float m10, float m11, float m12) {
+                   float m10, float m11, float m12) {
     set(m00, m01, m02, 0,
         m10, m11, m12, 0,
         0,   0,   1,   0,
@@ -67,9 +67,9 @@ public final class PMatrix3D implements PConstants {
   
   
   public PMatrix3D(float m00, float m01, float m02, float m03,
-                 float m10, float m11, float m12, float m13,
-                 float m20, float m21, float m22, float m23,
-                 float m30, float m31, float m32, float m33) {
+                   float m10, float m11, float m12, float m13,
+                   float m20, float m21, float m22, float m23,
+                   float m30, float m31, float m32, float m33) {
     set(m00, m01, m02, m03,
         m10, m11, m12, m13,
         m20, m21, m22, m23,
@@ -640,33 +640,32 @@ public final class PMatrix3D implements PConstants {
                                      max(max(abs(m30), abs(m31)),
                                          max(abs(m32), abs(m33))))));
 
-    // avoid infinite loop
-    if (Float.isNaN(big) || Float.isInfinite(big)) {
-      big = 1000000; // set to something arbitrary
+    int digits = 1;
+    if (Float.isNaN(big) || Float.isInfinite(big)) {  // avoid infinite loop
+      digits = 5;
+    } else {
+      while ((big /= 10) != 0) digits++;  // cheap log()
     }
 
-    int d = 1;
-    while ((big /= 10) != 0) d++;  // cheap log()
+    System.out.println(PApplet.nfs(m00, digits, 4) + " " +
+                       PApplet.nfs(m01, digits, 4) + " " +
+                       PApplet.nfs(m02, digits, 4) + " " +
+                       PApplet.nfs(m03, digits, 4));
 
-    System.out.println(PApplet.nfs(m00, d, 4) + " " +
-                       PApplet.nfs(m01, d, 4) + " " +
-                       PApplet.nfs(m02, d, 4) + " " +
-                       PApplet.nfs(m03, d, 4));
+    System.out.println(PApplet.nfs(m10, digits, 4) + " " +
+                       PApplet.nfs(m11, digits, 4) + " " +
+                       PApplet.nfs(m12, digits, 4) + " " +
+                       PApplet.nfs(m13, digits, 4));
 
-    System.out.println(PApplet.nfs(m10, d, 4) + " " +
-                       PApplet.nfs(m11, d, 4) + " " +
-                       PApplet.nfs(m12, d, 4) + " " +
-                       PApplet.nfs(m13, d, 4));
+    System.out.println(PApplet.nfs(m20, digits, 4) + " " +
+                       PApplet.nfs(m21, digits, 4) + " " +
+                       PApplet.nfs(m22, digits, 4) + " " +
+                       PApplet.nfs(m23, digits, 4));
 
-    System.out.println(PApplet.nfs(m20, d, 4) + " " +
-                       PApplet.nfs(m21, d, 4) + " " +
-                       PApplet.nfs(m22, d, 4) + " " +
-                       PApplet.nfs(m23, d, 4));
-
-    System.out.println(PApplet.nfs(m30, d, 4) + " " +
-                       PApplet.nfs(m31, d, 4) + " " +
-                       PApplet.nfs(m32, d, 4) + " " +
-                       PApplet.nfs(m33, d, 4));
+    System.out.println(PApplet.nfs(m30, digits, 4) + " " +
+                       PApplet.nfs(m31, digits, 4) + " " +
+                       PApplet.nfs(m32, digits, 4) + " " +
+                       PApplet.nfs(m33, digits, 4));
 
     System.out.println();
   }

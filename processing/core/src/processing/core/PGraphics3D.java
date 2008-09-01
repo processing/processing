@@ -41,6 +41,41 @@ import java.util.*;
  */
 public class PGraphics3D extends PGraphics {
 
+  // line & triangle fields (note how these overlap)
+
+  static public final int INDEX = 0;          // shape index
+  static public final int VERTEX1 = 1;
+  static public final int VERTEX2 = 2;
+  static public final int VERTEX3 = 3;        // (triangles only)
+  static public final int TEXTURE_INDEX = 4;  // (triangles only)
+  static public final int STROKE_MODE = 3;    // (lines only)
+  static public final int STROKE_WEIGHT = 4;  // (lines only)
+
+  static public final int LINE_FIELD_COUNT = 5;
+  static public final int TRIANGLE_FIELD_COUNT = 5;
+
+  static public final int TRI_DIFFUSE_R = 0;
+  static public final int TRI_DIFFUSE_G = 1;
+  static public final int TRI_DIFFUSE_B = 2;
+  static public final int TRI_DIFFUSE_A = 3;
+  static public final int TRI_SPECULAR_R = 4;
+  static public final int TRI_SPECULAR_G = 5;
+  static public final int TRI_SPECULAR_B = 6;
+  static public final int TRI_SPECULAR_A = 7;
+
+  static public final int TRIANGLE_COLOR_COUNT = 8;
+
+
+  // normal modes for lighting, these have the uglier naming
+  // because the constants are never seen by users
+
+  /// normal calculated per triangle
+  static public final int AUTO_NORMAL = 0;
+  /// one normal manually specified per shape
+  static public final int MANUAL_SHAPE_NORMAL = 1;
+  /// normals specified for each shape vertex
+  static public final int MANUAL_VERTEX_NORMAL = 2;
+
   // ........................................................
 
   // Lighting-related variables
@@ -251,7 +286,7 @@ public class PGraphics3D extends PGraphics {
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
     cameraX = width / 2.0f;
     cameraY = height / 2.0f;
-    cameraZ = cameraY / ((float) tan(cameraFOV / 2.0f));
+    cameraZ = cameraY / ((float) Math.tan(cameraFOV / 2.0f));
     cameraNear = cameraZ / 10.0f;
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float)width / (float)height;
@@ -502,12 +537,9 @@ public class PGraphics3D extends PGraphics {
     textureImage = image;
 
     if (texture_index == textures.length - 1) {
-      PImage temp[] = new PImage[texture_index<<1];
-      System.arraycopy(textures, 0, temp, 0, texture_index);
-      textures = temp;
-      //message(CHATTER, "allocating more textures " + textures.length);
+      textures = (PImage[]) PApplet.expand(textures);
     }
-    if (textures[texture_index] != null) {
+    if (textures[texture_index] != null) {  // ???
       texture_index++;
     }
     textures[texture_index] = image;
@@ -2038,13 +2070,6 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  private void crossProduct(float[] u, float[] v, float[] out) {
-    out[0] = u[1]*v[2] - u[2]*v[1];
-    out[1] = u[2]*v[0] - u[0]*v[2];
-    out[2] = u[0]*v[1] - u[1]*v[0];
-  }
-
-
   private void light_triangle(int triIndex) {
     int vIndex;
 
@@ -2109,7 +2134,7 @@ public class PGraphics3D extends PGraphics {
       dv2[2] = vertices[vIndex3][VZ] - vertices[vIndex][VZ];
 
       //float[] norm = new float[3];
-      crossProduct(dv1, dv2, norm);
+      cross(dv1, dv2, norm);
       float nMag = mag(norm[X], norm[Y], norm[Z]);
       if (nMag != 0 && nMag != 1) {
         norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
@@ -2177,7 +2202,7 @@ public class PGraphics3D extends PGraphics {
         dv2[2] = vertices[vIndex3][VZ] - vertices[vIndex][VZ];
 
         //float[] norm = new float[3];
-        crossProduct(dv1, dv2, norm);
+        cross(dv1, dv2, norm);
         float nMag = mag(norm[X], norm[Y], norm[Z]);
         if (nMag != 0 && nMag != 1) {
           norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
@@ -3116,7 +3141,7 @@ public class PGraphics3D extends PGraphics {
    */
   public void perspective(float fov, float aspect, float zNear, float zFar) {
     //float ymax = zNear * tan(fovy * PI / 360.0f);
-    float ymax = zNear * tan(fov / 2.0f);
+    float ymax = zNear * (float) Math.tan(fov / 2);
     float ymin = -ymax;
 
     float xmin = ymin * aspect;
@@ -3758,7 +3783,7 @@ public class PGraphics3D extends PGraphics {
     lightPosition(lightCount, x, y, z);
     lightDirection(lightCount, nx, ny, nz);
     lightSpotAngle[lightCount] = angle;
-    lightSpotAngleCos[lightCount] = max(0, cos(angle));
+    lightSpotAngleCos[lightCount] = max(0, (float) Math.cos(angle));
     lightSpotConcentration[lightCount] = concentration;
     lightCount++;
 
@@ -3848,13 +3873,6 @@ public class PGraphics3D extends PGraphics {
    */
   public void background(PImage image) {
     super.background(image);
-
-    /*
-    for (int i = 0; i < pixelCount; i++) {
-      zbuffer[i] = Float.MAX_VALUE;
-      //stencil[i] = 0;
-    }
-    */
     Arrays.fill(zbuffer, Float.MAX_VALUE);
   }
 
@@ -3864,18 +3882,8 @@ public class PGraphics3D extends PGraphics {
    * Stencil buffer should also be cleared, but for now is ignored in P3D.
    */
   protected void clear() {
-    //System.out.println("PGraphics3.clear(" +
-    //                 PApplet.hex(backgroundColor) + ")");
-    /*
-    for (int i = 0; i < pixelCount; i++) {
-      pixels[i] = backgroundColor;
-      zbuffer[i] = Float.MAX_VALUE;
-      //stencil[i] = 0;
-    }
-    */
     Arrays.fill(pixels, backgroundColor);
     Arrays.fill(zbuffer, Float.MAX_VALUE);
-
     clearRaw();
   }
 
@@ -3928,18 +3936,12 @@ public class PGraphics3D extends PGraphics {
   // MATH (internal use only)
 
 
-  /*
-  private final float mag(float a, float b) {
-    return (float)Math.sqrt(a*a + b*b);
-  }
-  */
-
   private final float mag(float a, float b, float c) {
-    return (float)Math.sqrt(a*a + b*b + c*c);
+    return (float) Math.sqrt(a*a + b*b + c*c);
   }
 
   private final float mag(float abc[]) {
-    return (float)Math.sqrt(abc[0]*abc[0] + abc[1]*abc[1] + abc[2]*abc[2]);
+    return (float) Math.sqrt(abc[0]*abc[0] + abc[1]*abc[1] + abc[2]*abc[2]);
   }
 
   private final float min(float a, float b) {
@@ -3950,41 +3952,23 @@ public class PGraphics3D extends PGraphics {
     return (a > b) ? a : b;
   }
 
-  /*
-  private final float max(float a, float b, float c) {
-    return Math.max(a, Math.max(b, c));
-  }
-
-  private final float sq(float a) {
-    return a*a;
-  }
-  */
-
   private final float pow(float a, float b) {
-    return (float)Math.pow(a, b);
+    return (float) Math.pow(a, b);
   }
 
   private final float abs(float a) {
     return (a < 0) ? -a : a;
   }
 
-  /*
-  private final float sin(float angle) {
-    return (float)Math.sin(angle);
-  }
-  */
-
-  private final float cos(float angle) {
-    return (float)Math.cos(angle);
-  }
-
-  private final float tan(float angle) {
-    return (float)Math.tan(angle);
-  }
-
   private float dot(float ax, float ay, float az,
                     float bx, float by, float bz) {
     return ax * bx + ay * by + az * bz;
+  }
+
+  private final void cross(float[] a, float[] b, float[] out) {
+    out[0] = a[1]*b[2] - a[2]*b[1];
+    out[1] = a[2]*b[0] - a[0]*b[2];
+    out[2] = a[0]*b[1] - a[1]*b[0];
   }
 }
 
