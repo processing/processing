@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -41,19 +41,6 @@ import java.util.*;
  */
 public class PGraphics3D extends PGraphics {
 
-  // line & triangle fields (note how these overlap)
-
-  static public final int INDEX = 0;          // shape index
-  static public final int VERTEX1 = 1;
-  static public final int VERTEX2 = 2;
-  static public final int VERTEX3 = 3;        // (triangles only)
-  static public final int TEXTURE_INDEX = 4;  // (triangles only)
-  static public final int STROKE_MODE = 3;    // (lines only)
-  static public final int STROKE_WEIGHT = 4;  // (lines only)
-
-  static public final int LINE_FIELD_COUNT = 5;
-  static public final int TRIANGLE_FIELD_COUNT = 5;
-
   static public final int TRI_DIFFUSE_R = 0;
   static public final int TRI_DIFFUSE_G = 1;
   static public final int TRI_DIFFUSE_B = 2;
@@ -61,24 +48,9 @@ public class PGraphics3D extends PGraphics {
   static public final int TRI_SPECULAR_R = 4;
   static public final int TRI_SPECULAR_G = 5;
   static public final int TRI_SPECULAR_B = 6;
-  static public final int TRI_SPECULAR_A = 7;
-
-  static public final int TRIANGLE_COLOR_COUNT = 8;
-
-
-  // normal modes for lighting, these have the uglier naming
-  // because the constants are never seen by users
-
-  /// normal calculated per triangle
-  static public final int AUTO_NORMAL = 0;
-  /// one normal manually specified per shape
-  static public final int MANUAL_SHAPE_NORMAL = 1;
-  /// normals specified for each shape vertex
-  static public final int MANUAL_VERTEX_NORMAL = 2;
+  static public final int TRI_COLOR_COUNT = 7;
 
   // ........................................................
-
-  // Lighting-related variables
 
   // Whether or not we have to worry about vertex position for lighting calcs
   private boolean lightingDependsOnVertexPosition;
@@ -92,7 +64,6 @@ public class PGraphics3D extends PGraphics {
   static final int LIGHT_SPECULAR_R = 6;
   static final int LIGHT_SPECULAR_G = 7;
   static final int LIGHT_SPECULAR_B = 8;
-
   static final int LIGHT_COLOR_COUNT = 9;
 
   // Used to shuttle lighting calcs around
@@ -102,8 +73,8 @@ public class PGraphics3D extends PGraphics {
 
   // Used in light_triangle(). Allocated here once to
   // avoid re-allocating each time
-  protected float[] dv1 = new float[3];
-  protected float[] dv2 = new float[3];
+  //protected float[] dv1 = new float[3];
+  //protected float[] dv2 = new float[3];
   protected float[] norm = new float[3];
 
   // ........................................................
@@ -158,21 +129,31 @@ public class PGraphics3D extends PGraphics {
 
   // ........................................................
 
+  // line & triangle fields (note that these overlap)
+  static protected final int INDEX = 0;          // shape index
+  static protected final int VERTEX1 = 1;
+  static protected final int VERTEX2 = 2;
+  static protected final int VERTEX3 = 3;        // (triangles only)
+  static protected final int TEXTURE_INDEX = 4;  // (triangles only)
+  static protected final int STROKE_MODE = 3;    // (lines only)
+  static protected final int STROKE_WEIGHT = 4;  // (lines only)
+
+  static protected final int LINE_FIELD_COUNT = 5;
+  static protected final int TRIANGLE_FIELD_COUNT = 5;
+
   // lines
   static final int DEFAULT_LINES = 512;
   public PLine line;  // used for drawing
-  protected int lines[][] = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
+  protected int[][] lines = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
   protected int lineCount;
-
-  // ........................................................
 
   // triangles
   static final int DEFAULT_TRIANGLES = 256;
   public PTriangle triangle;
-  protected int triangles[][] =
+  protected int[][] triangles =
     new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
   protected float triangleColors[][][] =
-    new float[DEFAULT_TRIANGLES][3][TRIANGLE_COLOR_COUNT];
+    new float[DEFAULT_TRIANGLES][3][TRI_COLOR_COUNT];
   protected int triangleCount;   // total number of triangles
 
   // cheap picking someday
@@ -180,23 +161,20 @@ public class PGraphics3D extends PGraphics {
 
   // ........................................................
 
-  /**
-   * Sets whether texture coordinates passed to
-   * vertex() calls will be based on coordinates that are
-   * based on the IMAGE or NORMALIZED.
-   */
-  //public int textureMode;
+  /// normal calculated per triangle
+  static protected final int NORMAL_MODE_AUTO = 0;
+  /// one normal manually specified per shape
+  static protected final int NORMAL_MODE_SHAPE = 1;
+  /// normals specified for each shape vertex
+  static protected final int NORMAL_MODE_VERTEX = 2;
 
-  /**
-   * Current horizontal coordinate for texture, will always
-   * be between 0 and 1, even if using textureMode(IMAGE).
-   */
-  //public float textureU;
+  /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
+  protected int normalMode;
 
-  /** Current vertical coordinate for texture, see above. */
-  //public float textureV;
+  /// Keep track of how many calls to normal, to determine the mode. 
+  protected int normalCount;
 
-  //public PImage textureImage;
+  // ........................................................
 
   static final int DEFAULT_TEXTURES = 3;
   protected PImage textures[] = new PImage[DEFAULT_TEXTURES];
@@ -204,19 +182,9 @@ public class PGraphics3D extends PGraphics {
 
   // ........................................................
 
-  /**
-   * Normals
-   */
-  //public float normalX, normalY, normalZ;
-  //public int normalMode;
-  //public int normalCount;
-
-  // ........................................................
-
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
   float sphereX[], sphereY[], sphereZ[];
-  //public int sphereDetail = 0;
 
   // ........................................................
 
@@ -484,7 +452,7 @@ public class PGraphics3D extends PGraphics {
     textureImage = null;
 
     splineVertexCount = 0;
-    normalMode = AUTO_NORMAL;
+    normalMode = NORMAL_MODE_AUTO;
     normalCount = 0;
   }
 
@@ -524,10 +492,10 @@ public class PGraphics3D extends PGraphics {
       normalCount++;
       if (normalCount == 1) {
         // One normal per begin/end shape
-        normalMode = MANUAL_SHAPE_NORMAL;
+        normalMode = NORMAL_MODE_SHAPE;
       } else {
         // a separate normal for each vertex
-        normalMode = MANUAL_VERTEX_NORMAL;
+        normalMode = NORMAL_MODE_VERTEX;
       }
     }
   }
@@ -634,7 +602,7 @@ public class PGraphics3D extends PGraphics {
       vertex[SPR] = specularR;
       vertex[SPG] = specularG;
       vertex[SPB] = specularB;
-      vertex[SPA] = specularA;
+      //vertex[SPA] = specularA;
 
       vertex[SHINE] = shininess;
 
@@ -1257,7 +1225,7 @@ public class PGraphics3D extends PGraphics {
     rv[SPR] = pa * va[SPR] + pb * vb[SPR];
     rv[SPG] = pa * va[SPG] + pb * vb[SPG];
     rv[SPB] = pa * va[SPB] + pb * vb[SPB];
-    rv[SPA] = pa * va[SPA] + pb * vb[SPA];
+    //rv[SPA] = pa * va[SPA] + pb * vb[SPA];
 
     rv[ER] = pa * va[ER] + pb * vb[ER];
     rv[EG] = pa * va[EG] + pb * vb[EG];
@@ -1277,7 +1245,7 @@ public class PGraphics3D extends PGraphics {
       System.arraycopy(triangles, 0, temp, 0, triangleCount);
       triangles = temp;
       //message(CHATTER, "allocating more triangles " + triangles.length);
-      float ftemp[][][] = new float[triangleCount<<1][3][TRIANGLE_COLOR_COUNT];
+      float ftemp[][][] = new float[triangleCount<<1][3][TRI_COLOR_COUNT];
       System.arraycopy(triangleColors, 0, ftemp, 0, triangleCount);
       triangleColors = ftemp;
     }
@@ -1392,24 +1360,15 @@ public class PGraphics3D extends PGraphics {
 
       // This is only true when not textured. We really should pass SPECULAR
       // straight through to triangle rendering.
-      float ar = min(1, triangleColors[i][0][TRI_DIFFUSE_R] +
-                     triangleColors[i][0][TRI_SPECULAR_R]);
-      float ag = min(1, triangleColors[i][0][TRI_DIFFUSE_G] +
-                     triangleColors[i][0][TRI_SPECULAR_G]);
-      float ab = min(1, triangleColors[i][0][TRI_DIFFUSE_B] +
-                     triangleColors[i][0][TRI_SPECULAR_B]);
-      float br = min(1, triangleColors[i][1][TRI_DIFFUSE_R] +
-                     triangleColors[i][1][TRI_SPECULAR_R]);
-      float bg = min(1, triangleColors[i][1][TRI_DIFFUSE_G] +
-                     triangleColors[i][1][TRI_SPECULAR_G]);
-      float bb = min(1, triangleColors[i][1][TRI_DIFFUSE_B] +
-                     triangleColors[i][1][TRI_SPECULAR_B]);
-      float cr = min(1, triangleColors[i][2][TRI_DIFFUSE_R] +
-                     triangleColors[i][2][TRI_SPECULAR_R]);
-      float cg = min(1, triangleColors[i][2][TRI_DIFFUSE_G] +
-                     triangleColors[i][2][TRI_SPECULAR_G]);
-      float cb = min(1, triangleColors[i][2][TRI_DIFFUSE_B] +
-                     triangleColors[i][2][TRI_SPECULAR_B]);
+      float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
+      float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
+      float ab = clamp(triangleColors[i][0][TRI_DIFFUSE_B] + triangleColors[i][0][TRI_SPECULAR_B]);
+      float br = clamp(triangleColors[i][1][TRI_DIFFUSE_R] + triangleColors[i][1][TRI_SPECULAR_R]);
+      float bg = clamp(triangleColors[i][1][TRI_DIFFUSE_G] + triangleColors[i][1][TRI_SPECULAR_G]);
+      float bb = clamp(triangleColors[i][1][TRI_DIFFUSE_B] + triangleColors[i][1][TRI_SPECULAR_B]);
+      float cr = clamp(triangleColors[i][2][TRI_DIFFUSE_R] + triangleColors[i][2][TRI_SPECULAR_R]);
+      float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
+      float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
 
       if (tex > -1 && textures[tex] != null) {
         triangle.setTexture(textures[tex]);
@@ -1912,7 +1871,7 @@ public class PGraphics3D extends PGraphics {
             if (lightDir_dot_li <= lightSpotAngleCos[i]) {
               continue;
             }
-            spotTerm = pow(lightDir_dot_li, lightSpotConcentration[i]);
+            spotTerm = (float) Math.pow(lightDir_dot_li, lightSpotConcentration[i]);
           }
 
           if (lightFalloffQuadratic[i] != 0 || lightFalloffLinear[i] != 0) {
@@ -1959,7 +1918,7 @@ public class PGraphics3D extends PGraphics {
           float s_dot_n = (sx * nx + sy * ny + sz * nz);
 
           if (s_dot_n > 0) {
-            s_dot_n = pow(s_dot_n, shine);
+            s_dot_n = (float) Math.pow(s_dot_n, shine);
             mul = s_dot_n * spotTerm / denom;
             contribution[LIGHT_SPECULAR_R] += lightSpecular[i][0] * mul;
             contribution[LIGHT_SPECULAR_G] += lightSpecular[i][1] * mul;
@@ -1969,13 +1928,6 @@ public class PGraphics3D extends PGraphics {
         }
       }
     }
-    /*target[toffset + 0] = min(1, er + dr * diffuse_r);
-    target[toffset + 1] = min(1, eg + dg * diffuse_g);
-    target[toffset + 2] = min(1, eb + db * diffuse_b);
-
-    target[SPR] = min(1, sr * specular_r);
-    target[SPG] = min(1, sg * specular_g);
-    target[SPB] = min(1, sb * specular_b);*/
     return;
   }
 
@@ -1986,18 +1938,15 @@ public class PGraphics3D extends PGraphics {
   private void apply_lighting_contribution(int vIndex, float[] contribution) {
     float[] v = vertices[vIndex];
 
-    v[R] = min(1, v[ER] + v[AR] * contribution[LIGHT_AMBIENT_R] +
-               v[DR] * contribution[LIGHT_DIFFUSE_R]);
-    v[G] = min(1, v[EG] + v[AG] * contribution[LIGHT_AMBIENT_G] +
-               v[DG] * contribution[LIGHT_DIFFUSE_G]);
-    v[B] = min(1, v[EB] + v[AB] * contribution[LIGHT_AMBIENT_B] +
-               v[DB] * contribution[LIGHT_DIFFUSE_B]);
-    v[A] = min(1, v[DA]);
+    v[R] = clamp(v[ER] + v[AR] * contribution[LIGHT_AMBIENT_R] + v[DR] * contribution[LIGHT_DIFFUSE_R]);
+    v[G] = clamp(v[EG] + v[AG] * contribution[LIGHT_AMBIENT_G] + v[DG] * contribution[LIGHT_DIFFUSE_G]);
+    v[B] = clamp(v[EB] + v[AB] * contribution[LIGHT_AMBIENT_B] + v[DB] * contribution[LIGHT_DIFFUSE_B]);
+    v[A] = clamp(v[DA]);
 
-    v[SPR] = min(1, v[SPR] * contribution[LIGHT_SPECULAR_R]);
-    v[SPG] = min(1, v[SPG] * contribution[LIGHT_SPECULAR_G]);
-    v[SPB] = min(1, v[SPB] * contribution[LIGHT_SPECULAR_B]);
-    v[SPA] = min(1, v[SPA]);
+    v[SPR] = clamp(v[SPR] * contribution[LIGHT_SPECULAR_R]);
+    v[SPG] = clamp(v[SPG] * contribution[LIGHT_SPECULAR_G]);
+    v[SPB] = clamp(v[SPB] * contribution[LIGHT_SPECULAR_B]);
+    //v[SPA] = min(1, v[SPA]);
 
     v[BEEN_LIT] = 1;
   }
@@ -2029,7 +1978,7 @@ public class PGraphics3D extends PGraphics {
     triColor[TRI_SPECULAR_R] = v[SPR];
     triColor[TRI_SPECULAR_G] = v[SPG];
     triColor[TRI_SPECULAR_B] = v[SPB];
-    triColor[TRI_SPECULAR_A] = v[SPA];
+    //triColor[TRI_SPECULAR_A] = v[SPA];
   }
 
 
@@ -2040,23 +1989,19 @@ public class PGraphics3D extends PGraphics {
     float[] v = vertices[vIndex];
 
     triColor[TRI_DIFFUSE_R] =
-      min(1, v[ER] + v[AR] * lightContribution[LIGHT_AMBIENT_R] +
-          v[DR] * lightContribution[LIGHT_DIFFUSE_R]);
+      clamp(v[ER] + v[AR] * lightContribution[LIGHT_AMBIENT_R] +
+             v[DR] * lightContribution[LIGHT_DIFFUSE_R]);
     triColor[TRI_DIFFUSE_G] =
-      min(1, v[EG] + v[AG] * lightContribution[LIGHT_AMBIENT_G] +
-          v[DG] * lightContribution[LIGHT_DIFFUSE_G]);
+      clamp(v[EG] + v[AG] * lightContribution[LIGHT_AMBIENT_G] +
+             v[DG] * lightContribution[LIGHT_DIFFUSE_G]);
     triColor[TRI_DIFFUSE_B] =
-      min(1, v[EB] + v[AB] * lightContribution[LIGHT_AMBIENT_B] +
-          v[DB] * lightContribution[LIGHT_DIFFUSE_B]);
-    triColor[TRI_DIFFUSE_A] = min(1, v[DA]);
+      clamp(v[EB] + v[AB] * lightContribution[LIGHT_AMBIENT_B] +
+             v[DB] * lightContribution[LIGHT_DIFFUSE_B]);
+    triColor[TRI_DIFFUSE_A] = clamp(v[DA]);
 
-    triColor[TRI_SPECULAR_R] =
-      min(1, v[SPR] * lightContribution[LIGHT_SPECULAR_R]);
-    triColor[TRI_SPECULAR_G] =
-      min(1, v[SPG] * lightContribution[LIGHT_SPECULAR_G]);
-    triColor[TRI_SPECULAR_B] =
-      min(1, v[SPB] * lightContribution[LIGHT_SPECULAR_B]);
-    triColor[TRI_SPECULAR_A] = min(1, v[SPA]);
+    triColor[TRI_SPECULAR_R] = clamp(v[SPR] * lightContribution[LIGHT_SPECULAR_R]);
+    triColor[TRI_SPECULAR_G] = clamp(v[SPG] * lightContribution[LIGHT_SPECULAR_G]);
+    triColor[TRI_SPECULAR_B] = clamp(v[SPB] * lightContribution[LIGHT_SPECULAR_B]);
   }
 
 
@@ -2092,7 +2037,7 @@ public class PGraphics3D extends PGraphics {
     // for each vertex. In that case, we light any verts that
     // haven't already been lit and copy their colors straight
     // into the triangle.
-    if (normalMode == MANUAL_VERTEX_NORMAL) {
+    if (normalMode == NORMAL_MODE_VERTEX) {
       vIndex = triangles[triIndex][VERTEX1];
       light_vertex_if_not_already_lit(vIndex, tempLightingContribution);
       copy_prelit_vertex_color_to_triangle(triIndex, vIndex, 0);
@@ -2108,9 +2053,9 @@ public class PGraphics3D extends PGraphics {
     }
 
     // If the lighting doesn't depend on the vertex position, do the
-    // following: We've already dealt with MANUAL_SHAPE_NORMAL mode before
+    // following: We've already dealt with NORMAL_MODE_SHAPE mode before
     // we got into this function, so here we only have to deal with
-    // AUTO_NORMAL mode. So we calculate the normal for this triangle,
+    // NORMAL_MODE_AUTO. So we calculate the normal for this triangle,
     // and use that for the lighting.
     else if (!lightingDependsOnVertexPosition) {
       vIndex = triangles[triIndex][VERTEX1];
@@ -2118,13 +2063,6 @@ public class PGraphics3D extends PGraphics {
       int vIndex3 = triangles[triIndex][VERTEX3];
 
       /*
-      float[] dv1 = new float[] {vertices[vIndex2][VX] - vertices[vIndex][VX],
-                               vertices[vIndex2][VY] - vertices[vIndex][VY],
-                               vertices[vIndex2][VZ] - vertices[vIndex][VZ]};
-      float[] dv2 = new float[] {vertices[vIndex3][VX] - vertices[vIndex][VX],
-                               vertices[vIndex3][VY] - vertices[vIndex][VY],
-                               vertices[vIndex3][VZ] - vertices[vIndex][VZ]};
-      */
       dv1[0] = vertices[vIndex2][VX] - vertices[vIndex][VX];
       dv1[1] = vertices[vIndex2][VY] - vertices[vIndex][VY];
       dv1[2] = vertices[vIndex2][VZ] - vertices[vIndex][VZ];
@@ -2133,8 +2071,16 @@ public class PGraphics3D extends PGraphics {
       dv2[1] = vertices[vIndex3][VY] - vertices[vIndex][VY];
       dv2[2] = vertices[vIndex3][VZ] - vertices[vIndex][VZ];
 
-      //float[] norm = new float[3];
       cross(dv1, dv2, norm);
+      */
+      
+      cross(vertices[vIndex2][VX] - vertices[vIndex][VX], 
+            vertices[vIndex2][VY] - vertices[vIndex][VY], 
+            vertices[vIndex2][VZ] - vertices[vIndex][VZ],
+            vertices[vIndex3][VX] - vertices[vIndex][VX],
+            vertices[vIndex3][VY] - vertices[vIndex][VY],
+            vertices[vIndex3][VZ] - vertices[vIndex][VZ], norm);
+      
       float nMag = mag(norm[X], norm[Y], norm[Z]);
       if (nMag != 0 && nMag != 1) {
         norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
@@ -2155,7 +2101,7 @@ public class PGraphics3D extends PGraphics {
 
     // If lighting is position-dependent
     else {
-      if (normalMode == MANUAL_SHAPE_NORMAL) {
+      if (normalMode == NORMAL_MODE_SHAPE) {
         vIndex = triangles[triIndex][VERTEX1];
         vertices[vIndex][NX] = vertices[vertex_start][NX];
         vertices[vIndex][NY] = vertices[vertex_start][NY];
@@ -2186,26 +2132,28 @@ public class PGraphics3D extends PGraphics {
         vIndex = triangles[triIndex][VERTEX1];
         int vIndex2 = triangles[triIndex][VERTEX2];
         int vIndex3 = triangles[triIndex][VERTEX3];
+        
         /*
-        float[] dv1 = new float[] {vertices[vIndex2][VX] - vertices[vIndex][VX],
-                                 vertices[vIndex2][VY] - vertices[vIndex][VY],
-                                 vertices[vIndex2][VZ] - vertices[vIndex][VZ]};
-        float[] dv2 = new float[] {vertices[vIndex3][VX] - vertices[vIndex][VX],
-                                 vertices[vIndex3][VY] - vertices[vIndex][VY],
-                                 vertices[vIndex3][VZ] - vertices[vIndex][VZ]};
-        */
         dv1[0] = vertices[vIndex2][VX] - vertices[vIndex][VX];
         dv1[1] = vertices[vIndex2][VY] - vertices[vIndex][VY];
         dv1[2] = vertices[vIndex2][VZ] - vertices[vIndex][VZ];
+        
         dv2[0] = vertices[vIndex3][VX] - vertices[vIndex][VX];
         dv2[1] = vertices[vIndex3][VY] - vertices[vIndex][VY];
         dv2[2] = vertices[vIndex3][VZ] - vertices[vIndex][VZ];
 
-        //float[] norm = new float[3];
         cross(dv1, dv2, norm);
-        float nMag = mag(norm[X], norm[Y], norm[Z]);
-        if (nMag != 0 && nMag != 1) {
-          norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
+        */
+        
+        cross(vertices[vIndex2][VX] - vertices[vIndex][VX],
+              vertices[vIndex2][VY] - vertices[vIndex][VY],
+              vertices[vIndex2][VZ] - vertices[vIndex][VZ],
+              vertices[vIndex3][VX] - vertices[vIndex][VX],
+              vertices[vIndex3][VY] - vertices[vIndex][VY],
+              vertices[vIndex3][VZ] - vertices[vIndex][VZ], norm);
+        float nmag = mag(norm[X], norm[Y], norm[Z]);
+        if (nmag != 0 && nmag != 1) {
+          norm[X] /= nmag; norm[Y] /= nmag; norm[Z] /= nmag;
         }
         vertices[vIndex][NX] = norm[X];
         vertices[vIndex][NY] = norm[Y];
@@ -2240,7 +2188,7 @@ public class PGraphics3D extends PGraphics {
     // If the lighting does not depend on vertex position and there is a single
     // normal specified for this shape, go ahead and apply the same lighting
     // contribution to every vertex in this shape (one lighting calc!)
-    if (!lightingDependsOnVertexPosition && normalMode == MANUAL_SHAPE_NORMAL) {
+    if (!lightingDependsOnVertexPosition && normalMode == NORMAL_MODE_SHAPE) {
       calc_lighting_contribution(vertex_start, tempLightingContribution);
       for (int tri = 0; tri < triangleCount; tri++) {
         light_triangle(tri, tempLightingContribution);
@@ -3450,10 +3398,10 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  public void specular(float gray, float alpha) {
-    colorCalc(gray, alpha);
-    specularFromCalc();
-  }
+//  public void specular(float gray, float alpha) {
+//    colorCalc(gray, alpha);
+//    specularFromCalc();
+//  }
 
 
   public void specular(float x, float y, float z) {
@@ -3462,17 +3410,17 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  public void specular(float x, float y, float z, float a) {
-    colorCalc(x, y, z, a);
-    specularFromCalc();
-  }
+//  public void specular(float x, float y, float z, float a) {
+//    colorCalc(x, y, z, a);
+//    specularFromCalc();
+//  }
 
 
   protected void specularFromCalc() {
     specularR = calcR;
     specularG = calcG;
     specularB = calcB;
-    specularA = calcA;
+    //specularA = calcA;
     //specularRi = calcRi;
     //specularGi = calcGi;
     //specularBi = calcBi;
@@ -3783,7 +3731,7 @@ public class PGraphics3D extends PGraphics {
     lightPosition(lightCount, x, y, z);
     lightDirection(lightCount, nx, ny, nz);
     lightSpotAngle[lightCount] = angle;
-    lightSpotAngleCos[lightCount] = max(0, (float) Math.cos(angle));
+    lightSpotAngleCos[lightCount] = Math.max(0, (float) Math.cos(angle));
     lightSpotConcentration[lightCount] = concentration;
     lightCount++;
 
@@ -3847,7 +3795,7 @@ public class PGraphics3D extends PGraphics {
       modelviewInv.m02*x + modelviewInv.m12*y +
       modelviewInv.m22*z + modelviewInv.m32;
 
-    float n = mag(lightNormal[num]);
+    float n = mag(lightNormal[num][0], lightNormal[num][1], lightNormal[num][2]);
     if (n == 0 || n == 1) return;
 
     lightNormal[num][0] /= n;
@@ -3940,35 +3888,38 @@ public class PGraphics3D extends PGraphics {
     return (float) Math.sqrt(a*a + b*b + c*c);
   }
 
-  private final float mag(float abc[]) {
-    return (float) Math.sqrt(abc[0]*abc[0] + abc[1]*abc[1] + abc[2]*abc[2]);
+  
+  private final float clamp(float a) {
+    return (a < 1) ? a : 1;
   }
-
-  private final float min(float a, float b) {
-    return (a < b) ? a : b;
-  }
-
-  private final float max(float a, float b) {
-    return (a > b) ? a : b;
-  }
-
-  private final float pow(float a, float b) {
-    return (float) Math.pow(a, b);
-  }
-
+  
+  
   private final float abs(float a) {
     return (a < 0) ? -a : a;
   }
 
+  
   private float dot(float ax, float ay, float az,
                     float bx, float by, float bz) {
-    return ax * bx + ay * by + az * bz;
+    return ax*bx + ay*by + az*bz;
   }
 
+  
+  private final void cross(float a0, float a1, float a2,
+                           float b0, float b1, float b2, 
+                           float[] out) {
+    out[0] = a1*b2 - a2*b1;
+    out[1] = a2*b0 - a0*b2;
+    out[2] = a0*b1 - a1*b0;
+  }
+  
+
+  /*
   private final void cross(float[] a, float[] b, float[] out) {
     out[0] = a[1]*b[2] - a[2]*b[1];
     out[1] = a[2]*b[0] - a[0]*b[2];
     out[2] = a[0]*b[1] - a[1]*b[0];
   }
+  */
 }
 

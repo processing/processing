@@ -36,31 +36,34 @@ import java.awt.image.*;
  */
 public abstract class PGraphics extends PImage implements PConstants {
 
-  // transformed values
-  // (to be used in rendering)
-
-  static public final int X = 0; // transformed xyzw
-  static public final int Y = 1; // formerly SX SY SZ
-  static public final int Z = 2;
+  static public final int MX = 17;  // model coords xyz
+  static public final int MY = 18;
+  static public final int MZ = 19;
 
   static public final int R = 3;  // actual rgb, after lighting
-  static public final int G = 4;  // fill stored here, transform in place
-  static public final int B = 5;
+  static public final int G = 4;  // fill stored here, transform in place 
+  static public final int B = 5;  // TODO don't do that anymore
   static public final int A = 6;
-
-  // values that need no transformation
-  // but will be used in rendering
 
   static public final int U = 7; // texture
   static public final int V = 8;
 
+  static public final int NX = 9; // normal
+  static public final int NY = 10;
+  static public final int NZ = 11;
+  
+  static public final int EDGE = 30;
+
   // incoming values, raw and untransformed
   // (won't be used in rendering)
 
-  static public final int MX = 9; // model coords xyz
-  static public final int MY = 10;
-  static public final int MZ = 11;
-
+  
+  //
+  
+  static public final int X = 0; // transformed xyzw
+  static public final int Y = 1; // formerly SX SY SZ
+  static public final int Z = 2;
+  
   /** stroke argb values */
   static public final int SR = 12;
   static public final int SG = 13;
@@ -72,10 +75,6 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // not used in rendering
   // only used for calculating colors
-
-  static public final int NX = 17; // normal
-  static public final int NY = 18;
-  static public final int NZ = 19;
 
   static public final int VX = 20; // view space coords
   static public final int VY = 21;
@@ -99,7 +98,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   static public final int SPG = 28;
   static public final int SPB = 29;
   //GL doesn't use a separate specular alpha, but we do (we're better)
-  static public final int SPA = 30;
+  //static public final int SPA = 30;
 
   static public final int SHINE = 31;
 
@@ -337,9 +336,9 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   protected PMatrix3D bezierBasis =
     new PMatrix3D(-1,  3, -3,  1,
-                 3, -6,  3,  0,
-                -3,  3,  0,  0,
-                 1,  0,  0,  0);
+                   3, -6,  3,  0,
+                  -3,  3,  0,  0,
+                   1,  0,  0,  0);
 
   protected float bezierForwardMatrix[][]; // = new float[4][4];
   protected float bezierDrawMatrix[][]; // = new float[4][4];
@@ -463,7 +462,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   // Material properties
 
   public float ambientR, ambientG, ambientB;
-  public float specularR, specularG, specularB, specularA;
+  public float specularR, specularG, specularB; /*, specularA;*/
   public float emissiveR, emissiveG, emissiveB;
   public float shininess;
 
@@ -566,8 +565,6 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Normals
    */
   public float normalX, normalY, normalZ;
-  public int normalMode;
-  public int normalCount;
 
   // ........................................................
 
@@ -3860,17 +3857,17 @@ public abstract class PGraphics extends PImage implements PConstants {
     depthError("specular");
   }
 
-  public void specular(float gray, float alpha) {
-    depthError("specular");
-  }
+//  public void specular(float gray, float alpha) {
+//    depthError("specular");
+//  }
 
   public void specular(float x, float y, float z) {
     depthError("specular");
   }
 
-  public void specular(float x, float y, float z, float a) {
-    depthError("specular");
-  }
+//  public void specular(float x, float y, float z, float a) {
+//    depthError("specular");
+//  }
 
   public void shininess(float shine) {
     depthError("shininess");
