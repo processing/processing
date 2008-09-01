@@ -7560,21 +7560,9 @@ public class PApplet extends Applet
   }
 
 
-  public void specular(float gray, float alpha) {
-    if (recorder != null) recorder.specular(gray, alpha);
-    g.specular(gray, alpha);
-  }
-
-
   public void specular(float x, float y, float z) {
     if (recorder != null) recorder.specular(x, y, z);
     g.specular(x, y, z);
-  }
-
-
-  public void specular(float x, float y, float z, float a) {
-    if (recorder != null) recorder.specular(x, y, z, a);
-    g.specular(x, y, z, a);
   }
 
 
