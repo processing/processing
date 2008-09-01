@@ -80,7 +80,7 @@ The naming of jar and zip files in the tool/* directory doesn't matter.
 
 When Processing loads, the jar and zip files will be searched for 
 Mangler.class. Even though this tool is found in package poos.shoe, 
-it will be sussed out. Package names are encouraged/recommended/required.
+it will be sussed out. Package names are required.
 
 Loose .class files are not supported, use only jar and zip files.
 
