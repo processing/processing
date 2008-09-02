@@ -24,7 +24,6 @@
 
 package processing.core;
 
-//import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
 import javax.imageio.ImageIO;
@@ -100,7 +99,6 @@ public class PImage implements PConstants, Cloneable {
    * The pixel array is not allocated.
    */
   public PImage() {
-    //format = RGB;  // makes sure that this guy is useful
     format = ARGB;  // default to ARGB images for release 0116
     cache = null;
   }
@@ -113,8 +111,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage(int width, int height) {
     init(width, height, RGB);
-    //init(width, height, RGB);
-    //this(new int[width * height], width, height, ARGB);
+
     // toxi: is it maybe better to init the image with max alpha enabled?
     //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
     // fry: i'm opting for the full transparent image, which is how
@@ -168,16 +165,24 @@ public class PImage implements PConstants, Cloneable {
    * to fully download the data and that the img is valid.
    */
   public PImage(java.awt.Image img) {
-    width = img.getWidth(null);
-    height = img.getHeight(null);
-    //System.out.println(width + " " + height + " " + img.getClass().getName());
+    if (img instanceof BufferedImage) {
+      BufferedImage bi = (BufferedImage) img; 
+      width = bi.getWidth();
+      height = bi.getHeight();
+      pixels = new int[width * height];
+      WritableRaster raster = bi.getRaster();
+      raster.getDataElements(0, 0, width, height, pixels);
 
-    pixels = new int[width*height];
-    PixelGrabber pg =
-      new PixelGrabber(img, 0, 0, width, height, pixels, 0, width);
-    try {
-      pg.grabPixels();
-    } catch (InterruptedException e) { }
+    } else {  // go the old school java 1.0 route
+      width = img.getWidth(null);
+      height = img.getHeight(null);
+      pixels = new int[width * height];
+      PixelGrabber pg =
+        new PixelGrabber(img, 0, 0, width, height, pixels, 0, width);
+      try {
+        pg.grabPixels();
+      } catch (InterruptedException e) { }
+    }
 
     format = RGB;
     cache = null;
@@ -185,22 +190,6 @@ public class PImage implements PConstants, Cloneable {
 
 
   //////////////////////////////////////////////////////////////
-
-
-  /**
-   * The mode can only be set to CORNERS, CORNER, and CENTER.
-   * <p/>
-   * Support for CENTER was added in release 0146.
-   */
-  public void imageMode(int mode) {
-    if ((mode == CORNER) || (mode == CORNERS) || (mode == CENTER)) {
-      imageMode = mode;
-    } else {
-      String msg = 
-        "imageMode() only works with CORNER, CORNERS, or CENTER";
-      throw new RuntimeException(msg);
-    }
-  }
 
 
   /**
@@ -219,6 +208,22 @@ public class PImage implements PConstants, Cloneable {
     smooth = false;
   }
 
+
+
+  /**
+   * The mode can only be set to CORNERS, CORNER, and CENTER.
+   * <p/>
+   * Support for CENTER was added in release 0146.
+   */
+  public void imageMode(int mode) {
+    if ((mode == CORNER) || (mode == CORNERS) || (mode == CENTER)) {
+      imageMode = mode;
+    } else {
+      String msg = 
+        "imageMode() only works with CORNER, CORNERS, or CENTER";
+      throw new RuntimeException(msg);
+    }
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -241,7 +246,7 @@ public class PImage implements PConstants, Cloneable {
    * <p/>
    * Mark all pixels as needing update.
    */
-  public void updatePixels() {
+  public void updatePixels() {  // ignore
     updatePixelsImpl(0, 0, width, height);
   }
 
@@ -253,7 +258,7 @@ public class PImage implements PConstants, Cloneable {
    * is structured this way in the hope of being able to use this to
    * speed things up in the future.
    */
-  public void updatePixels(int x1, int y1, int x2, int y2) {
+  public void updatePixels(int x1, int y1, int x2, int y2) {  // ignore
     if (imageMode == CORNER) {  // x2, y2 are w/h
       x2 += x1;
       y2 += y1;
@@ -1292,7 +1297,7 @@ public class PImage implements PConstants, Cloneable {
    * Resize this image to a new width and height.
    * Use 0 for wide or high to make that dimension scale proportionally.
    */
-  public void resize(int wide, int high) {  // ignore
+  public void resizeSurface(int wide, int high) {  // ignore
     // Make sure that the pixels[] array is valid
     loadPixels();
 

@@ -571,23 +571,14 @@ public class PApplet extends Applet
       // Component objects, its size() may already be set externally (perhaps
       // by a LayoutManager). In this case, honor that size as the default.
       // Size of the component is set, just create a renderer.
-      //resizeRenderer(initialSize.width, initialSize.height);
-      //createRenderer(initialSize.width, initialSize.height);
-
-      g = PApplet.makeGraphics(size.width, size.height, JAVA2D, null, this);
+      g = makeGraphics(size.width, size.height, JAVA2D, null, true);
       // This doesn't call setSize() or setPreferredSize() because the fact
       // that a size was already set means that someone is already doing it.
-//      width = size.width;
-//      height = size.height;
 
     } else {
       // Set the default size, until the user specifies otherwise
       this.defaultSize = true;
-      //resizeRenderer(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-      //createRenderer(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-      g = PApplet.makeGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D, null, this);
-//      width = DEFAULT_WIDTH;
-//      height = DEFAULT_HEIGHT;
+      g = makeGraphics(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D, null, true);
       // Fire component resize event
       setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
       setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
@@ -601,15 +592,6 @@ public class PApplet extends Applet
     // though it's here for applications anyway
     start();
   }
-
-
-//  protected void createRenderer(int w, int h) {
-//    g = PApplet.makeGraphics(w, h, JAVA2D, null, this);
-//    Dimension size = getSize();
-//    if (size.width != w || size.height != h) {
-//      setSize(w, h);
-//    }
-//  }
 
 
   /**
@@ -893,30 +875,11 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-  /**
-   * Resize the current renderer that's in use. This will be called after the
-   * Component has been resized (by an event) and the renderer needs an update.
-   */
-//  protected void resizeRenderer(int w, int h) {
-//    if (g == null) {
-//      g = PApplet.makeGraphics(w, h, JAVA2D, null, this);
-//      width = w;
-//      height = h;
-//
-//    } else  if (w != g.width || h != g.height) {
-//      g.resize(w, h);
-//      width = w;
-//      height = h;
-//      redraw();
-//    }
-//  }
-
-
   protected void resizeRenderer(int iwidth, int iheight) {
 //    println("resizeRenderer request for " + iwidth + " " + iheight);
     if (width != iwidth || height != iheight) {
 //      println("  former size was " + width + " " + height);
-      g.resize(iwidth, iheight);
+      g.resizeSurface(iwidth, iheight);
       width = iwidth;
       height = iheight;
     }
@@ -972,17 +935,6 @@ public class PApplet extends Applet
       }
     });
 
-    // g should never be null, since it should always be set inside init()
-//    if (g == null) {
-//      // no renderer exists, just create a freshy
-//      g = PApplet.makeGraphics(iwidth, iheight, irenderer, ipath, this);
-//      width = iwidth;
-//      height = iheight;
-//      // fire resize event to make sure the applet is the proper size
-//      setSize(iwidth, iheight);
-//
-//    } else {
-
     // ensure that this is an absolute path
     if (ipath != null) ipath = savePath(ipath);
 
@@ -993,14 +945,9 @@ public class PApplet extends Applet
       //redraw();  // will only be called insize draw()
 
     } else {  // renderer is being changed
-//      if (frameCount > 0) {
-//        throw new RuntimeException("size() cannot be called to change " +
-//        "the renderer outside of setup()");
-//      }
-
       // otherwise ok to fall through and create renderer below
       // the renderer is changing, so need to create a new object
-      g = PApplet.makeGraphics(iwidth, iheight, irenderer, ipath, this);
+      g = makeGraphics(iwidth, iheight, irenderer, ipath, true);
       width = iwidth;
       height = iheight;
 
@@ -1071,9 +1018,8 @@ public class PApplet extends Applet
    */
   public PGraphics createGraphics(int iwidth, int iheight,
                                   String irenderer) {
-    PGraphics pg =
-      PApplet.makeGraphics(iwidth, iheight, irenderer, null, null);
-    pg.parent = this;  // make save() work
+    PGraphics pg = makeGraphics(iwidth, iheight, irenderer, null, false);
+    //pg.parent = this;  // make save() work
     return pg;
   }
 
@@ -1088,8 +1034,7 @@ public class PApplet extends Applet
     if (ipath != null) {
       ipath = savePath(ipath);
     }
-    PGraphics pg =
-      PApplet.makeGraphics(iwidth, iheight, irenderer, ipath, null);
+    PGraphics pg = makeGraphics(iwidth, iheight, irenderer, ipath, false);
     pg.parent = this;  // make save() work
     return pg;
   }
@@ -1102,9 +1047,9 @@ public class PApplet extends Applet
    * @oaram applet the parent applet object, this should only be non-null
    *               in cases where this is the main drawing surface object.
    */
-  static protected PGraphics makeGraphics(int iwidth, int iheight,
-                                          String irenderer, String ipath,
-                                          PApplet applet) {
+  protected PGraphics makeGraphics(int iwidth, int iheight,
+                                   String irenderer, String ipath,
+                                   boolean iprimary) {
     if (irenderer.equals(OPENGL)) {
       if (PApplet.platform == WINDOWS) {
         String s = System.getProperty("java.version");
@@ -1125,7 +1070,9 @@ public class PApplet extends Applet
       "Import Library > opengl from the Sketch menu.";
 
     try {
+      /*
       Class<?> rendererClass = Class.forName(irenderer);
+      
       Class<?> constructorParams[] = null;
       Object constructorValues[] = null;
 
@@ -1134,23 +1081,34 @@ public class PApplet extends Applet
           Integer.TYPE, Integer.TYPE, PApplet.class
         };
         constructorValues = new Object[] {
-          new Integer(iwidth), new Integer(iheight), applet
+          new Integer(iwidth), new Integer(iheight), this
         };
       } else {
-        // first make sure that this in a nice, full, absolute path
-        //ipath = applet.savePath(ipath);
-
         constructorParams = new Class[] {
           Integer.TYPE, Integer.TYPE, PApplet.class, String.class
         };
         constructorValues = new Object[] {
-          new Integer(iwidth), new Integer(iheight), applet, ipath
+          new Integer(iwidth), new Integer(iheight), this, ipath
         };
       }
 
       Constructor<?> constructor =
         rendererClass.getConstructor(constructorParams);
       PGraphics pg = (PGraphics) constructor.newInstance(constructorValues);
+      */
+      
+      Class<?> rendererClass = 
+        Thread.currentThread().getContextClassLoader().loadClass(irenderer);
+      
+      Constructor<?> constructor = rendererClass.getConstructor();
+      PGraphics pg = (PGraphics) constructor.newInstance();
+
+      pg.setParent(this);
+      pg.setPrimary(iprimary);
+      if (ipath != null) pg.setPath(ipath);
+      pg.setSize(iwidth, iheight);
+      
+      // everything worked, return it
       return pg;
 
     } catch (InvocationTargetException ite) {
@@ -1186,11 +1144,15 @@ public class PApplet extends Applet
           (e instanceof NoSuchMethodException) ||
           (e instanceof IllegalAccessException)) {
 
+        /*
         String msg = "public " +
           irenderer.substring(irenderer.lastIndexOf('.') + 1) +
           "(int width, int height, PApplet parent" +
           ((ipath == null) ? "" : ", String filename") +
           ") does not exist.";
+          */
+        String msg = "This renderer needs to be updated " +
+          "for the current release of Processing."; 
         throw new RuntimeException(msg);
 
       } else {
@@ -2288,6 +2250,27 @@ public class PApplet extends Applet
       return;
     }
     g.save(savePath(insertFrame(what)));
+  }
+
+
+  /**
+   * Check a string for #### signs to see if the frame number should be
+   * inserted. Used for functions like saveFrame() and beginRecord() to
+   * replace the # marks with the frame number. If only one # is used,
+   * it will be ignored, under the assumption that it's probably not
+   * intended to be the frame number.
+   */
+  protected String insertFrame(String what) {
+    int first = what.indexOf('#');
+    int last = what.lastIndexOf('#');
+
+    if ((first != -1) && (last - first > 0)) {
+      String prefix = what.substring(0, first);
+      int count = last - first + 1;
+      String suffix = what.substring(last + 1);
+      return prefix + nf(frameCount, count) + suffix;
+    }
+    return what;  // no change
   }
 
 
@@ -6502,15 +6485,21 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Begin recording to a new renderer of the specified type, using the width 
+   * and height of the main drawing surface.
+   */
   public PGraphics beginRecord(String renderer, String filename) {
     filename = insertFrame(filename);
-    //filename = savePath(filename);
     PGraphics rec = createGraphics(width, height, renderer, filename);
     beginRecord(rec);
     return rec;
   }
 
 
+  /**
+   * Begin recording (echoing) commands to the specified PGraphics object.
+   */
   public void beginRecord(PGraphics recorder) {
     this.recorder = recorder;
     recorder.beginDraw();
@@ -6518,10 +6507,7 @@ public class PApplet extends Applet
 
 
   public void endRecord() {
-    //println("endRecord()");
-    //if (!recorderNull) {
     if (recorder != null) {
-      //recorder.endRecord();
       recorder.endDraw();
       recorder.dispose();
       recorder = null;
@@ -6529,34 +6515,42 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Begin recording raw shape data to a renderer of the specified type, 
+   * using the width and height of the main drawing surface.
+   * 
+   * If hashmarks (###) are found in the filename, they'll be replaced 
+   * by the current frame number (frameCount). 
+   */
   public PGraphics beginRaw(String renderer, String filename) {
     filename = insertFrame(filename);
-    //filename = savePath(filename);  // ensure an absolute path
     PGraphics rec = createGraphics(width, height, renderer, filename);
-    //g.recordRaw(rec);
     g.beginRaw(rec);
     return rec;
   }
 
+  
+  /**
+   * Begin recording raw shape data to the specified renderer.
+   *  
+   * This simply echoes to g.beginRaw(), but since is placed here (rather than
+   * generated by preproc.pl) for clarity and so that it doesn't echo the 
+   * command should beginRecord() be in use.
+   */
+  public void beginRaw(PGraphics rawGraphics) {
+    g.beginRaw(rawGraphics);
+  }
+
 
   /**
-   * Check a string for #### signs to see if the frame number should be
-   * inserted. Used for functions like saveFrame() and beginRecord() to
-   * replace the # marks with the frame number. If only one # is used,
-   * it will be ignored, under the assumption that it's probably not
-   * intended to be the frame number.
+   * Stop recording raw shape data to the specified renderer.
+   *  
+   * This simply echoes to g.beginRaw(), but since is placed here (rather than
+   * generated by preproc.pl) for clarity and so that it doesn't echo the 
+   * command should beginRecord() be in use.
    */
-  public String insertFrame(String what) {
-    int first = what.indexOf('#');
-    int last = what.lastIndexOf('#');
-
-    if ((first != -1) && (last - first > 0)) {
-      String prefix = what.substring(0, first);
-      int count = last - first + 1;
-      String suffix = what.substring(last + 1);
-      return prefix + nf(frameCount, count) + suffix;
-    }
-    return what;  // no change
+  public void endRaw() {
+    g.endRaw();
   }
 
 
@@ -6572,133 +6566,22 @@ public class PApplet extends Applet
     g.loadPixels();
     pixels = g.pixels;
   }
+  
+  
+  public void updatePixels() {
+    g.updatePixels();
+  }
+  
+  
+  public void updatePixels(int x1, int y1, int x2, int y2) {
+    g.updatePixels(x1, y1, x2, y2);
+  }
 
 
   //////////////////////////////////////////////////////////////
 
   // everything below this line is automatically generated. no touch.
   // public functions for processing.core
-
-
-  public void imageMode(int mode) {
-    if (recorder != null) recorder.imageMode(mode);
-    g.imageMode(mode);
-  }
-
-
-  public void smooth() {
-    if (recorder != null) recorder.smooth();
-    g.smooth();
-  }
-
-
-  public void noSmooth() {
-    if (recorder != null) recorder.noSmooth();
-    g.noSmooth();
-  }
-
-
-  public void updatePixels() {
-    if (recorder != null) recorder.updatePixels();
-    g.updatePixels();
-  }
-
-
-  public void updatePixels(int x1, int y1, int x2, int y2) {
-    if (recorder != null) recorder.updatePixels(x1, y1, x2, y2);
-    g.updatePixels(x1, y1, x2, y2);
-  }
-
-
-  public int get(int x, int y) {
-    return g.get(x, y);
-  }
-
-
-  public PImage get(int x, int y, int w, int h) {
-    return g.get(x, y, w, h);
-  }
-
-
-  public PImage get() {
-    return g.get();
-  }
-
-
-  public void set(int x, int y, int c) {
-    if (recorder != null) recorder.set(x, y, c);
-    g.set(x, y, c);
-  }
-
-
-  public void set(int dx, int dy, PImage src) {
-    if (recorder != null) recorder.set(dx, dy, src);
-    g.set(dx, dy, src);
-  }
-
-
-  public void mask(int alpha[]) {
-    if (recorder != null) recorder.mask(alpha);
-    g.mask(alpha);
-  }
-
-
-  public void mask(PImage alpha) {
-    if (recorder != null) recorder.mask(alpha);
-    g.mask(alpha);
-  }
-
-
-  public void filter(int kind) {
-    if (recorder != null) recorder.filter(kind);
-    g.filter(kind);
-  }
-
-
-  public void filter(int kind, float param) {
-    if (recorder != null) recorder.filter(kind, param);
-    g.filter(kind, param);
-  }
-
-
-  public void copy(int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    if (recorder != null) recorder.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-  }
-
-
-  public void copy(PImage src,
-                   int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    if (recorder != null) recorder.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-  }
-
-
-  static public int blendColor(int c1, int c2, int mode) {
-    return PGraphics.blendColor(c1, c2, mode);
-  }
-
-
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    if (recorder != null) recorder.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-  }
-
-
-  public void blend(PImage src,
-                    int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    if (recorder != null) recorder.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-  }
-
-
-  public boolean canDraw() {
-    return g.canDraw();
-  }
 
 
   public void hint(int which) {
@@ -7737,19 +7620,111 @@ public class PApplet extends Applet
   }
 
 
-  public void beginRaw(PGraphics rawGraphics) {
-    if (recorder != null) recorder.beginRaw(rawGraphics);
-    g.beginRaw(rawGraphics);
-  }
-
-
-  public void endRaw() {
-    if (recorder != null) recorder.endRaw();
-    g.endRaw();
-  }
-
-
   public boolean displayable() {
     return g.displayable();
+  }
+
+
+  public void smooth() {
+    if (recorder != null) recorder.smooth();
+    g.smooth();
+  }
+
+
+  public void noSmooth() {
+    if (recorder != null) recorder.noSmooth();
+    g.noSmooth();
+  }
+
+
+  public void imageMode(int mode) {
+    if (recorder != null) recorder.imageMode(mode);
+    g.imageMode(mode);
+  }
+
+
+  public int get(int x, int y) {
+    return g.get(x, y);
+  }
+
+
+  public PImage get(int x, int y, int w, int h) {
+    return g.get(x, y, w, h);
+  }
+
+
+  public PImage get() {
+    return g.get();
+  }
+
+
+  public void set(int x, int y, int c) {
+    if (recorder != null) recorder.set(x, y, c);
+    g.set(x, y, c);
+  }
+
+
+  public void set(int dx, int dy, PImage src) {
+    if (recorder != null) recorder.set(dx, dy, src);
+    g.set(dx, dy, src);
+  }
+
+
+  public void mask(int alpha[]) {
+    if (recorder != null) recorder.mask(alpha);
+    g.mask(alpha);
+  }
+
+
+  public void mask(PImage alpha) {
+    if (recorder != null) recorder.mask(alpha);
+    g.mask(alpha);
+  }
+
+
+  public void filter(int kind) {
+    if (recorder != null) recorder.filter(kind);
+    g.filter(kind);
+  }
+
+
+  public void filter(int kind, float param) {
+    if (recorder != null) recorder.filter(kind, param);
+    g.filter(kind, param);
+  }
+
+
+  public void copy(int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2) {
+    if (recorder != null) recorder.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+    g.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+  }
+
+
+  public void copy(PImage src,
+                   int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2) {
+    if (recorder != null) recorder.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+    g.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+  }
+
+
+  static public int blendColor(int c1, int c2, int mode) {
+    return PGraphics.blendColor(c1, c2, mode);
+  }
+
+
+  public void blend(int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode) {
+    if (recorder != null) recorder.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+    g.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+  }
+
+
+  public void blend(PImage src,
+                    int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode) {
+    if (recorder != null) recorder.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+    g.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
   }
 }
