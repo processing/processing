@@ -6340,6 +6340,13 @@ public class PApplet extends Applet
       applet.args = PApplet.subset(args, 1);
       applet.external = external;
 
+      // For 0149, moving this code (up to the pack() method) before init(). 
+      // For OpenGL (and perhaps other renderers in the future), a peer is 
+      // needed before a GLDrawable can be created. So pack() needs to be 
+      // called on the Frame before applet.init(), which itself calls size(), 
+      // and launches the Thread that will kick off setup().
+      // http://dev.processing.org/bugs/show_bug.cgi?id=891
+      // http://dev.processing.org/bugs/show_bug.cgi?id=908
       if (present) {
         frame.setUndecorated(true);
         frame.setBackground(backgroundColor);
