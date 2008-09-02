@@ -145,21 +145,24 @@ public class PGraphicsOpenGL extends PGraphics3D {
         capabilities.setSampleBuffers(true);
         capabilities.setNumSamples(4);
       }
+      
       // get a rendering surface and a context for this canvas
       GLDrawableFactory factory = GLDrawableFactory.getFactory();
       
-      GraphicsConfiguration pconfig = parent.getGraphicsConfiguration();
-      System.out.println("parent config is " + pconfig);
-      
-//      GraphicsDevice device = config.getDevice();
-      //AbstractGraphicsDevice agd = new AbstractGraphicsDevice(device); 
-      //AbstractGraphicsConfiguration agc = factory.chooseGraphicsConfiguration(capabilities, null, null);
-      
-      AWTGraphicsConfiguration agc = (AWTGraphicsConfiguration) 
+      if (PApplet.platform == PConstants.LINUX) {
+        GraphicsConfiguration pconfig = parent.getGraphicsConfiguration();
+        System.out.println("parent config is " + pconfig);
+
+        //      GraphicsDevice device = config.getDevice();
+        //AbstractGraphicsDevice agd = new AbstractGraphicsDevice(device); 
+        //AbstractGraphicsConfiguration agc = factory.chooseGraphicsConfiguration(capabilities, null, null);
+
+        AWTGraphicsConfiguration agc = (AWTGraphicsConfiguration) 
         factory.chooseGraphicsConfiguration(capabilities, null, null);
-      GraphicsConfiguration config = agc.getGraphicsConfiguration();
-      System.out.println("agc config is " + config);
-      
+        GraphicsConfiguration config = agc.getGraphicsConfiguration();
+        System.out.println("agc config is " + config);
+      }
+
       drawable = factory.getGLDrawable(parent, capabilities, null);
       context = drawable.createContext(null);
 
@@ -1797,8 +1800,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
   protected void fillFromCalc() {
     super.fillFromCalc();
     calcColorBuffer();
+//    String nom = Thread.currentThread().getName();
+//    System.out.println("fill in " + nom);
+//    if (!nom.equals("Animation Thread")) {
+//      new Exception().printStackTrace();
+//    }
     gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE,
                     colorBuffer);
+//    System.out.println("fill out");
   }
 
 

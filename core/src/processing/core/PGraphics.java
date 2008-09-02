@@ -617,7 +617,18 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
   
   
-  public void setSize(int iwidth, int iheight) {    
+  /**
+   * The final step in setting up a renderer, set its size of this renderer. 
+   * This was formerly handled by the constructor, but instead it's been broken
+   * out so that setParent/setPrimary/setPath can be handled differently. 
+   * 
+   * Important that this is ignored by preproc.pl because otherwise it will 
+   * override setSize() in PApplet/Applet/Component, which will 1) not call
+   * super.setSize(), and 2) will cause the renderer to be resized from the 
+   * event thread (EDT), causing a nasty crash as it collides with the 
+   * animation thread.
+   */
+  public void setSize(int iwidth, int iheight) {  // ignore    
     resizeSurface(iwidth, iheight);
 //  }
 
