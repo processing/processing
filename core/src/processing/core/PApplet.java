@@ -6613,12 +6613,6 @@ public class PApplet extends Applet
   }
 
 
-  public void setSize(int iwidth, int iheight) {    
-    if (recorder != null) recorder.setSize(iwidth, iheight);
-    g.setSize(iwidth, iheight);
-  }
-
-
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
