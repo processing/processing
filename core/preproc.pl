@@ -2,17 +2,18 @@
 
 $basedir = 'src/processing/core';
 
-# PGraphics subclasses PImage.. so first get methods from bimage
-open(F, "$basedir/PImage.java") || die $!;
-@contents = <F>;
-close(F);
+@contents = ();
 
 # next slurp methods from PGraphics
 open(F, "$basedir/PGraphics.java") || die $!;
-#@contents = <F>;
 foreach $line (<F>) {
-    # can't remember perl right now.. there must be a better way
-    #$contents[$#contents++] = $line;
+    push @contents, $line;
+}
+close(F);
+
+# PGraphics subclasses PImage.. now get those methods
+open(F, "$basedir/PImage.java") || die $!;
+foreach $line (<F>) {
     push @contents, $line;
 }
 close(F);

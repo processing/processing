@@ -99,23 +99,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
 
-  /**
-   * Create a new PGraphicsOpenGL at the specified size.
-   * <P/>
-   * Unlike other PGraphics objects, the PApplet object passed in cannot
-   * be null for this renderer because OpenGL uses a special Canvas
-   * object that must be added to a component (the host PApplet, in this case)
-   * that is visible on screen in order to work properly.
-   * @param parent the host applet
-   */
-  public PGraphicsOpenGL(int width, int height, PApplet parent) {
-    super(width, height, parent);
-
-//    if (parent == null) {
-//      throw new RuntimeException("PGraphicsOpenGL can only be used " +
-//                                 "as the main drawing surface");
-//    }
-
+  public PGraphicsOpenGL() { 
     glu = new GLU();
 
     tobj = glu.gluNewTess();
@@ -140,25 +124,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     lightBuffer.put(3, 1.0f);
     lightBuffer.rewind();
   }
-
-
-  public PGraphicsOpenGL(int width, int height) {
-    super(width, height, null);
-  }
-
-
-  /**
-   * Overridden from base PGraphics, because this subclass
-   * will set its own listeners.
-   */
-  /*
-  public void setMainDrawingSurface() {  // ignore
-    mainDrawingSurface = true;
-    format = RGB;
-  }
-  */
-
-
+  
 
   /**
    * Called by resize(), this handles creating the actual GLCanvas the
@@ -256,9 +222,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
       }
     } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
       if (!opengl4X) {
-        //canvas.setLocation(width, 0);
-        //parent.remove(canvas);
-        //canvas = null;
         releaseContext();
         context.destroy();
         context = null;
@@ -289,7 +252,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   /**
    * Make the OpenGL rendering context current for this thread.
    */
-  private void detainContext() {
+  protected void detainContext() {
     try {
       while (context.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT) {
 //        System.out.println("Context not yet current...");
@@ -306,7 +269,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   /**
    * Release the context, otherwise the AWT lock on X11 will not be released
    */
-  private void releaseContext() {
+  protected void releaseContext() {
     context.release();
   }
 
@@ -493,9 +456,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
     super.handle_lighting();
     for (int i = vertex_start; i < vertex_end; i++) {
       float v[] = vertices[i];
-      v[R] = min(1, v[R] + v[SPR]);
-      v[G] = min(1, v[G] + v[SPG]);
-      v[B] = min(1, v[B] + v[SPB]);
+      v[R] = clamp(v[R] + v[SPR]);
+      v[G] = clamp(v[G] + v[SPG]);
+      v[B] = clamp(v[B] + v[SPB]);
     }
   }
 
@@ -514,26 +477,17 @@ public class PGraphicsOpenGL extends PGraphics3D {
       //                 triangles[i][VERTEX2] + " " +
       //                 triangles[i][VERTEX3] + " " + vertexCount);
 
-      // This is only true when not textured. We really should pass SPECULAR
-      // straight through to triangle rendering.
-      float ar = min(1, triangleColors[i][0][TRI_DIFFUSE_R] +
-                     triangleColors[i][0][TRI_SPECULAR_R]);
-      float ag = min(1, triangleColors[i][0][TRI_DIFFUSE_G] +
-                     triangleColors[i][0][TRI_SPECULAR_G]);
-      float ab = min(1, triangleColors[i][0][TRI_DIFFUSE_B] +
-                     triangleColors[i][0][TRI_SPECULAR_B]);
-      float br = min(1, triangleColors[i][1][TRI_DIFFUSE_R] +
-                     triangleColors[i][1][TRI_SPECULAR_R]);
-      float bg = min(1, triangleColors[i][1][TRI_DIFFUSE_G] +
-                     triangleColors[i][1][TRI_SPECULAR_G]);
-      float bb = min(1, triangleColors[i][1][TRI_DIFFUSE_B] +
-                     triangleColors[i][1][TRI_SPECULAR_B]);
-      float cr = min(1, triangleColors[i][2][TRI_DIFFUSE_R] +
-                     triangleColors[i][2][TRI_SPECULAR_R]);
-      float cg = min(1, triangleColors[i][2][TRI_DIFFUSE_G] +
-                     triangleColors[i][2][TRI_SPECULAR_G]);
-      float cb = min(1, triangleColors[i][2][TRI_DIFFUSE_B] +
-                     triangleColors[i][2][TRI_SPECULAR_B]);
+      // This is only true when not textured. 
+      // We really should pass specular straight through to triangle rendering.
+      float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
+      float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
+      float ab = clamp(triangleColors[i][0][TRI_DIFFUSE_B] + triangleColors[i][0][TRI_SPECULAR_B]);
+      float br = clamp(triangleColors[i][1][TRI_DIFFUSE_R] + triangleColors[i][1][TRI_SPECULAR_R]);
+      float bg = clamp(triangleColors[i][1][TRI_DIFFUSE_G] + triangleColors[i][1][TRI_SPECULAR_G]);
+      float bb = clamp(triangleColors[i][1][TRI_DIFFUSE_B] + triangleColors[i][1][TRI_SPECULAR_B]);
+      float cr = clamp(triangleColors[i][2][TRI_DIFFUSE_R] + triangleColors[i][2][TRI_SPECULAR_R]);
+      float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
+      float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
 
       if (raw != null) {
         raw.colorMode(RGB, 1);
@@ -647,15 +601,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
               raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW],
                          c[U] * uscale, c[V] * vscale);
             } else {
-              if (reasonablePoint(a[X], a[Y], a[Z]) &&
-                  reasonablePoint(b[X], b[Y], b[Z]) &&
-                  reasonablePoint(c[X], c[Y], c[Z])) {
+              if (reasonablePoint(a[TX], a[TY], a[TZ]) &&
+                  reasonablePoint(b[TX], b[TY], b[TZ]) &&
+                  reasonablePoint(c[TX], c[TY], c[TZ])) {
                 raw.fill(ar, ag, ab, a[A]);
-                raw.vertex(a[X], a[Y], a[U] * uscale, a[V] * vscale);
+                raw.vertex(a[TX], a[TY], a[U] * uscale, a[V] * vscale);
                 raw.fill(br, bg, bb, b[A]);
-                raw.vertex(b[X], b[Y], b[U] * uscale, b[V] * vscale);
+                raw.vertex(b[TX], b[TY], b[U] * uscale, b[V] * vscale);
                 raw.fill(cr, cg, cb, c[A]);
-                raw.vertex(c[X], c[Y], c[U] * uscale, c[V] * vscale);
+                raw.vertex(c[TX], c[TY], c[U] * uscale, c[V] * vscale);
               }
             }
           }
@@ -694,15 +648,15 @@ public class PGraphicsOpenGL extends PGraphics3D {
               raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
             }
           } else {
-            if (reasonablePoint(a[X], a[Y], a[Z]) &&
-                reasonablePoint(b[X], b[Y], b[Z]) &&
-                reasonablePoint(c[X], c[Y], c[Z])) {
+            if (reasonablePoint(a[TX], a[TY], a[TZ]) &&
+                reasonablePoint(b[TX], b[TY], b[TZ]) &&
+                reasonablePoint(c[TX], c[TY], c[TZ])) {
               raw.fill(ar, ag, ab, a[A]);
-              raw.vertex(a[X], a[Y]);
+              raw.vertex(a[TX], a[TY]);
               raw.fill(br, bg, bb, b[A]);
-              raw.vertex(b[X], b[Y]);
+              raw.vertex(b[TX], b[TY]);
               raw.fill(cr, cg, cb, c[A]);
-              raw.vertex(c[X], c[Y]);
+              raw.vertex(c[TX], c[TY]);
             }
           }
         }
@@ -797,7 +751,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
             }
           } else {
             raw.stroke(a[SR], a[SG], a[SB], a[SA]);
-            raw.vertex(a[X], a[Y]);
+            raw.vertex(a[TX], a[TY]);
           }
         }
       }
@@ -818,7 +772,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
           } else {
             //System.out.println("writing 2d vertex");
             raw.stroke(b[SR], b[SG], b[SB], b[SA]);
-            raw.vertex(b[X], b[Y]);
+            raw.vertex(b[TX], b[TY]);
           }
         }
         i++;
@@ -837,6 +791,18 @@ public class PGraphicsOpenGL extends PGraphics3D {
    */
   //protected void light_and_transform() {
   //}
+
+  
+  //GL will do the clipping for us
+  protected void add_line(int a, int b) {
+    add_line_no_clip(a, b);
+  }
+
+
+  // GL will do the clipping for us
+  protected void add_triangle(int a, int b, int c) {
+    add_triangle_no_clip(a, b, c);
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1862,11 +1828,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  public void specular(float gray, float alpha) {
-    super.specular(gray, alpha);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
-  }
+//  public void specular(float gray, float alpha) {
+//    super.specular(gray, alpha);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
+//  }
 
 
   public void specular(float x, float y, float z) {
@@ -1876,11 +1842,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  public void specular(float x, float y, float z, float a) {
-    super.specular(x, y, z, a);
-    calcColorBuffer();
-    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
-  }
+//  public void specular(float x, float y, float z, float a) {
+//    super.specular(x, y, z, a);
+//    calcColorBuffer();
+//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -2566,14 +2532,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //////////////////////////////////////////////////////////////
 
 
-  protected final float min(float a, float b) {
-    return (a < b) ? a : b;
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
   /**
    * Report on anything from glError().
    * Don't use this inside glBegin/glEnd otherwise it'll
@@ -2607,14 +2565,13 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  //GL will do the clipping for us
-  protected void add_line(int a, int b) {
-    add_line_no_clip(a, b);
-  }
+  //////////////////////////////////////////////////////////////
 
 
-  // GL will do the clipping for us
-  protected void add_triangle(int a, int b, int c) {
-    add_triangle_no_clip(a, b, c);
+  //protected final float min(float a, float b) {
+  //  return (a < b) ? a : b;
+  //}
+  private final float clamp(float a) {
+    return (a < 1) ? a : 1;
   }
 }

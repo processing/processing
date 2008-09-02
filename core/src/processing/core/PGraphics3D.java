@@ -71,10 +71,7 @@ public class PGraphics3D extends PGraphics {
   protected float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
   protected float[] worldNormal = new float[4];
 
-  // Used in light_triangle(). Allocated here once to
-  // avoid re-allocating each time
-  //protected float[] dv1 = new float[3];
-  //protected float[] dv2 = new float[3];
+  /// Used in light_triangle(). Allocated here once to avoid re-allocating
   protected float[] norm = new float[3];
 
   // ........................................................
@@ -189,22 +186,7 @@ public class PGraphics3D extends PGraphics {
   // ........................................................
 
 
-  /**
-   * Constructor for the PGraphics3 object. Use this to ensure that
-   * the defaults get set properly. In a subclass, use this(w, h)
-   * as the first line of a subclass' constructor to properly set
-   * the internal fields and defaults.
-   *
-   * @param iwidth  viewport width
-   * @param iheight viewport height
-   */
-  public PGraphics3D(int iwidth, int iheight, PApplet parent) {
-    // super will add the listeners to the applet, and call resize()
-    super(iwidth, iheight, parent);
-
-    forwardTransform = modelview;
-    reverseTransform = modelviewInv;
-  }
+  public PGraphics3D() { }
 
 
   /**
@@ -214,7 +196,7 @@ public class PGraphics3D extends PGraphics {
    *
    * Note that this will nuke any cameraMode() settings.
    */
-  public void resize(int iwidth, int iheight) {  // ignore
+  public void setSize(int iwidth, int iheight) {  // ignore
 //    System.out.println("PGraphics3D.resize() " + iwidth + " " + iheight);
 
     width = iwidth;
@@ -280,7 +262,7 @@ public class PGraphics3D extends PGraphics {
     pixels = new int[pixelCount];
     zbuffer = new float[pixelCount];
 
-    if (mainDrawingSurface) {
+    if (primarySurface) {
       //for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
       // Not necessary because background() will be called w/ defaults(),
       // and we're no longer subject to the Java 1.1 bug for transparent
@@ -556,9 +538,9 @@ public class PGraphics3D extends PGraphics {
     if (shape == POLYGON) {
       if (vertexCount > 0) {
         float pvertex[] = vertices[vertexCount-1];
-        if ((abs(pvertex[MX] - x) < EPSILON) &&
-            (abs(pvertex[MY] - y) < EPSILON) &&
-            (abs(pvertex[MZ] - z) < EPSILON)) {
+        if ((abs(pvertex[X] - x) < EPSILON) &&
+            (abs(pvertex[Y] - y) < EPSILON) &&
+            (abs(pvertex[Z] - z) < EPSILON)) {
           // this vertex is identical, don't add it,
           // because it will anger the triangulator
           return;
@@ -571,9 +553,9 @@ public class PGraphics3D extends PGraphics {
     // spline_segment, then splineVertexCount will be saved and restored.
     splineVertexCount = 0;
 
-    vertex[MX] = x;
-    vertex[MY] = y;
-    vertex[MZ] = z;
+    vertex[X] = x;
+    vertex[Y] = y;
+    vertex[Z] = z;
 
     if (fill) {
       if (textureImage != null) {
@@ -652,12 +634,12 @@ public class PGraphics3D extends PGraphics {
                            float x4, float y4, float z4) {
     if (splineVertexCount > 0) {
       float vertex[] = splineVertices[splineVertexCount-1];
-      splineVertex(vertex[MX], vertex[MY], vertex[MZ], true);
+      splineVertex(vertex[X], vertex[Y], vertex[Z], true);
 
     } else if (vertexCount > 0) {
       // make sure there's at least a call to vertex()
       float vertex[] = vertices[vertexCount-1];
-      splineVertex(vertex[MX], vertex[MY], vertex[MZ], true);
+      splineVertex(vertex[X], vertex[Y], vertex[Z], true);
 
     } else {
       throw new RuntimeException("A call to vertex() must be used " +
@@ -690,17 +672,17 @@ public class PGraphics3D extends PGraphics {
       float vertex[] = vertices[i];
 
       vertex[VX] =
-        modelview.m00*vertex[MX] + modelview.m01*vertex[MY] +
-        modelview.m02*vertex[MZ] + modelview.m03;
+        modelview.m00*vertex[X] + modelview.m01*vertex[Y] +
+        modelview.m02*vertex[Z] + modelview.m03;
       vertex[VY] =
-        modelview.m10*vertex[MX] + modelview.m11*vertex[MY] +
-        modelview.m12*vertex[MZ] + modelview.m13;
+        modelview.m10*vertex[X] + modelview.m11*vertex[Y] +
+        modelview.m12*vertex[Z] + modelview.m13;
       vertex[VZ] =
-        modelview.m20*vertex[MX] + modelview.m21*vertex[MY] +
-        modelview.m22*vertex[MZ] + modelview.m23;
+        modelview.m20*vertex[X] + modelview.m21*vertex[Y] +
+        modelview.m22*vertex[Z] + modelview.m23;
       vertex[VW] =
-        modelview.m30*vertex[MX] + modelview.m31*vertex[MY] +
-        modelview.m32*vertex[MZ] + modelview.m33;
+        modelview.m30*vertex[X] + modelview.m31*vertex[Y] +
+        modelview.m32*vertex[Z] + modelview.m33;
 
       // normalize
       if (vertex[VW] != 0 && vertex[VW] != 1) {
@@ -978,9 +960,9 @@ public class PGraphics3D extends PGraphics {
         ox /= ow; oy /= ow; oz /= ow;
       }
 
-      vx[X] = width * (1 + ox) / 2.0f;
-      vx[Y] = height * (1 + oy) / 2.0f;
-      vx[Z] = (oz + 1) / 2.0f;
+      vx[TX] = width * (1 + ox) / 2.0f;
+      vx[TY] = height * (1 + oy) / 2.0f;
+      vx[TZ] = (oz + 1) / 2.0f;
     }
 
 
@@ -1183,16 +1165,17 @@ public class PGraphics3D extends PGraphics {
     float pa = (cameraNear - bz) / dz;
     float pb = 1 - pa;
 
-    vertex(pa * va[MX] + pb * vb[MX],
-           pa * va[MY] + pb * vb[MY],
-           pa * va[MZ] + pb * vb[MZ]);
+    vertex(pa * va[X] + pb * vb[X],
+           pa * va[Y] + pb * vb[Y],
+           pa * va[Z] + pb * vb[Z]);
     int irv = vertexCount - 1;
     vertex_end_including_clip_verts++;
+    
     float[] rv = vertices[irv];
 
-    rv[X] = pa * va[X] + pb * vb[X];
-    rv[Y] = pa * va[Y] + pb * vb[Y];
-    rv[Z] = pa * va[Z] + pb * vb[Z];
+    rv[TX] = pa * va[TX] + pb * vb[TX];
+    rv[TY] = pa * va[TY] + pb * vb[TY];
+    rv[TZ] = pa * va[TZ] + pb * vb[TZ];
 
     rv[VX] = pa * va[VX] + pb * vb[VX];
     rv[VY] = pa * va[VY] + pb * vb[VY];
@@ -1304,21 +1287,21 @@ public class PGraphics3D extends PGraphics {
 
 
   protected float depth_sort_triangles_compare(int a, int b) {
-    if (Float.isNaN(vertices[triangles[a][VERTEX1]][Z]) ||
-        Float.isNaN(vertices[triangles[a][VERTEX2]][Z]) ||
-        Float.isNaN(vertices[triangles[a][VERTEX3]][Z]) ||
-        Float.isNaN(vertices[triangles[b][VERTEX1]][Z]) ||
-        Float.isNaN(vertices[triangles[b][VERTEX2]][Z]) ||
-        Float.isNaN(vertices[triangles[b][VERTEX3]][Z])) {
+    if (Float.isNaN(vertices[triangles[a][VERTEX1]][TZ]) ||
+        Float.isNaN(vertices[triangles[a][VERTEX2]][TZ]) ||
+        Float.isNaN(vertices[triangles[a][VERTEX3]][TZ]) ||
+        Float.isNaN(vertices[triangles[b][VERTEX1]][TZ]) ||
+        Float.isNaN(vertices[triangles[b][VERTEX2]][TZ]) ||
+        Float.isNaN(vertices[triangles[b][VERTEX3]][TZ])) {
       System.err.println("NaN values in triangle");
     }
     return
-      (vertices[triangles[b][VERTEX1]][Z] +
-       vertices[triangles[b][VERTEX2]][Z] +
-       vertices[triangles[b][VERTEX3]][Z]) -
-      (vertices[triangles[a][VERTEX1]][Z] +
-       vertices[triangles[a][VERTEX2]][Z] +
-       vertices[triangles[a][VERTEX3]][Z]);
+      (vertices[triangles[b][VERTEX1]][TZ] +
+       vertices[triangles[b][VERTEX2]][TZ] +
+       vertices[triangles[b][VERTEX3]][TZ]) -
+      (vertices[triangles[a][VERTEX1]][TZ] +
+       vertices[triangles[a][VERTEX2]][TZ] +
+       vertices[triangles[a][VERTEX3]][TZ]);
   }
 
 
@@ -1340,26 +1323,26 @@ public class PGraphics3D extends PGraphics {
       // see also render_lines() where similar hack is employed
       float shift = 0.15f;//was 0.49f
       boolean shifted = false;
-      if (drawing2D() && (a[MZ] == 0)) {
+      if (drawing2D() && (a[Z] == 0)) {
         shifted = true;
-        a[X] += shift;
-        a[Y] += shift;
+        a[TX] += shift;
+        a[TY] += shift;
         a[VX] += shift*a[VW];
         a[VY] += shift*a[VW];
-        b[X] += shift;
-        b[Y] += shift;
+        b[TX] += shift;
+        b[TY] += shift;
         b[VX] += shift*b[VW];
         b[VY] += shift*b[VW];
-        c[X] += shift;
-        c[Y] += shift;
+        c[TX] += shift;
+        c[TY] += shift;
         c[VX] += shift*c[VW];
         c[VY] += shift*c[VW];
       }
 
       triangle.reset();
 
-      // This is only true when not textured. We really should pass SPECULAR
-      // straight through to triangle rendering.
+      // This is only true when not textured. 
+      // We really should pass specular straight through to triangle rendering.
       float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
       float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
       float ab = clamp(triangleColors[i][0][TRI_DIFFUSE_B] + triangleColors[i][0][TRI_SPECULAR_B]);
@@ -1379,9 +1362,9 @@ public class PGraphics3D extends PGraphics {
                               br, bg, bb, b[A],
                               cr, cg, cb, c[A]);
 
-      triangle.setVertices(a[X], a[Y], a[Z],
-                           b[X], b[Y], b[Z],
-                           c[X], c[Y], c[Z]);
+      triangle.setVertices(a[TX], a[TY], a[TZ],
+                           b[TX], b[TY], b[TZ],
+                           c[TX], c[TY], c[TZ]);
 
       // Need to pass camera-space coordinates to triangle renderer
       // in order to compute true texture coordinates, else skip it
@@ -1408,25 +1391,25 @@ public class PGraphics3D extends PGraphics {
           }
         } else {  // raw instanceof PGraphics2D
           raw.fill(ar, ag, ab, a[A]);
-          raw.vertex(a[X], a[Y]);
+          raw.vertex(a[TX], a[TY]);
           raw.fill(br, bg, bb, b[A]);
-          raw.vertex(b[X], b[Y]);
+          raw.vertex(b[TX], b[TY]);
           raw.fill(cr, cg, cb, c[A]);
-          raw.vertex(c[X], c[Y]);
+          raw.vertex(c[TX], c[TY]);
         }
       }
 
       if (drawing2D() && shifted){
-        a[X] -= shift;
-        a[Y] -= shift;
+        a[TX] -= shift;
+        a[TY] -= shift;
         a[VX] -= shift*a[VW];
         a[VY] -= shift*a[VW];
-        b[X] -= shift;
-        b[Y] -= shift;
+        b[TX] -= shift;
+        b[TY] -= shift;
         b[VX] -= shift*b[VW];
         b[VY] -= shift*b[VW];
-        c[X] -= shift;
-        c[Y] -= shift;
+        c[TX] -= shift;
+        c[TY] -= shift;
         c[VX] -= shift*c[VW];
         c[VY] -= shift*c[VW];
       }
@@ -1472,13 +1455,13 @@ public class PGraphics3D extends PGraphics {
       // model so that the threshold for display does not lie on an integer
       // boundary. Search "diamond exit rule" for info the OpenGL approach.
 
-      if (drawing2D() && a[MZ] == 0) {
-        a[X] += 0.01;
-        a[Y] += 0.01;
+      if (drawing2D() && a[Z] == 0) {
+        a[TX] += 0.01;
+        a[TY] += 0.01;
         a[VX] += 0.01*a[VW];
         a[VY] += 0.01*a[VW];
-        b[X] += 0.01;
-        b[Y] += 0.01;
+        b[TX] += 0.01;
+        b[TY] += 0.01;
         b[VX] += 0.01*b[VW];
         b[VY] += 0.01*b[VW];
       }
@@ -1489,8 +1472,8 @@ public class PGraphics3D extends PGraphics {
       line.setIntensities(a[SR], a[SG], a[SB], a[SA],
                           b[SR], b[SG], b[SB], b[SA]);
 
-      line.setVertices(a[X], a[Y], a[Z],
-                       b[X], b[Y], b[Z]);
+      line.setVertices(a[TX], a[TY], a[TZ],
+                       b[TX], b[TY], b[TZ]);
 
       if (raw != null) {
         if (raw instanceof PGraphics3D) {
@@ -1502,9 +1485,9 @@ public class PGraphics3D extends PGraphics {
           }
         } else {
           raw.stroke(a[SR], a[SG], a[SB], a[SA]);
-          raw.vertex(a[X], a[Y]);
+          raw.vertex(a[TX], a[TY]);
           raw.stroke(b[SR], b[SG], b[SB], b[SA]);
-          raw.vertex(b[X], b[Y]);
+          raw.vertex(b[TX], b[TY]);
         }
       }
 
@@ -1549,8 +1532,8 @@ public class PGraphics3D extends PGraphics {
     // zero, figure out whether x or y is empty, and calculate based on the
     // two dimensions that actually contain information.
     // http://dev.processing.org/bugs/show_bug.cgi?id=111
-    int d1 = MX;
-    int d2 = MY;
+    int d1 = X;
+    int d2 = Y;
     // this brings up the nastier point that there may be cases where
     // a polygon is irregular in space and will throw off the
     // clockwise/counterclockwise calculation. for instance, if clockwise
@@ -1588,18 +1571,18 @@ public class PGraphics3D extends PGraphics {
 
       for (int i = vertex_start; i < vertex_end; i++) {
         for (int j = i; j < vertex_end; j++){
-          if ( vertices[i][MX] != vertices[j][MX] ) foundValidX = true;
-          if ( vertices[i][MY] != vertices[j][MY] ) foundValidY = true;
+          if ( vertices[i][X] != vertices[j][X] ) foundValidX = true;
+          if ( vertices[i][Y] != vertices[j][Y] ) foundValidY = true;
         }
       }
 
       if (foundValidX) {
         //d1 = MX;  // already the case
-        d2 = MZ;
+        d2 = Z;
       } else if (foundValidY) {
         // ermm.. which is the proper order for cw/ccw here?
-        d1 = MY;
-        d2 = MZ;
+        d1 = Y;
+        d2 = Z;
       } else {
         // screw it, this polygon is just f-ed up
         return;
@@ -1617,9 +1600,9 @@ public class PGraphics3D extends PGraphics {
     // http://dev.processing.org/bugs/show_bug.cgi?id=97
     float vfirst[] = vertices[vertex_start];
     float vlast[] = vertices[vertex_end-1];
-    if ((abs(vfirst[MX] - vlast[MX]) < EPSILON) &&
-        (abs(vfirst[MY] - vlast[MY]) < EPSILON) &&
-        (abs(vfirst[MZ] - vlast[MZ]) < EPSILON)) {
+    if ((abs(vfirst[X] - vlast[X]) < EPSILON) &&
+        (abs(vfirst[Y] - vlast[Y]) < EPSILON) &&
+        (abs(vfirst[Z] - vlast[Z]) < EPSILON)) {
       vertex_end--;
     }
 
@@ -1767,9 +1750,9 @@ public class PGraphics3D extends PGraphics {
     float nz;
     if (!normalIsWorld) {
       toWorldNormal(v[NX], v[NY], v[NZ], worldNormal);
-      nx = worldNormal[X];
-      ny = worldNormal[Y];
-      nz = worldNormal[Z];
+      nx = worldNormal[TX];
+      ny = worldNormal[TY];
+      nz = worldNormal[TZ];
     }
     else {
       nx = v[NX];
@@ -2081,9 +2064,9 @@ public class PGraphics3D extends PGraphics {
             vertices[vIndex3][VY] - vertices[vIndex][VY],
             vertices[vIndex3][VZ] - vertices[vIndex][VZ], norm);
       
-      float nMag = mag(norm[X], norm[Y], norm[Z]);
-      if (nMag != 0 && nMag != 1) {
-        norm[X] /= nMag; norm[Y] /= nMag; norm[Z] /= nMag;
+      float nmag = mag(norm[X], norm[Y], norm[Z]);
+      if (nmag != 0 && nmag != 1) {
+        norm[X] /= nmag; norm[Y] /= nmag; norm[Z] /= nmag;
       }
       vertices[vIndex][NX] = norm[X];
       vertices[vIndex][NY] = norm[Y];
@@ -3833,9 +3816,13 @@ public class PGraphics3D extends PGraphics {
     Arrays.fill(pixels, backgroundColor);
     Arrays.fill(zbuffer, Float.MAX_VALUE);
     clearRaw();
-  }
+  } 
+   
 
-
+  /**
+   * Handled as separate function for OpenGL subclass that overrides clear()
+   * but still needs this to work properly.
+   */
   protected void clearRaw() {
     if (raw != null) {
       raw.colorMode(RGB, 1);
