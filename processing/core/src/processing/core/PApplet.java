@@ -1100,7 +1100,9 @@ public class PApplet extends Applet
       Class<?> rendererClass = 
         Thread.currentThread().getContextClassLoader().loadClass(irenderer);
       
-      Constructor<?> constructor = rendererClass.getConstructor();
+      //Class<?> params[] = null;
+      //PApplet.println(rendererClass.getConstructors());
+      Constructor<?> constructor = rendererClass.getConstructor(new Class[] { });
       PGraphics pg = (PGraphics) constructor.newInstance();
 
       pg.setParent(this);
@@ -1143,7 +1145,7 @@ public class PApplet extends Applet
       if ((e instanceof IllegalArgumentException) ||
           (e instanceof NoSuchMethodException) ||
           (e instanceof IllegalAccessException)) {
-
+        e.printStackTrace();
         /*
         String msg = "public " +
           irenderer.substring(irenderer.lastIndexOf('.') + 1) +
@@ -1151,7 +1153,7 @@ public class PApplet extends Applet
           ((ipath == null) ? "" : ", String filename") +
           ") does not exist.";
           */
-        String msg = "This renderer needs to be updated " +
+        String msg = irenderer + " needs to be updated " +
           "for the current release of Processing."; 
         throw new RuntimeException(msg);
 
@@ -6584,6 +6586,30 @@ public class PApplet extends Applet
   // public functions for processing.core
 
 
+  public void setParent(PApplet parent) {
+    if (recorder != null) recorder.setParent(parent);
+    g.setParent(parent);
+  }
+
+
+  public void setPrimary(boolean primary) {
+    if (recorder != null) recorder.setPrimary(primary);
+    g.setPrimary(primary);
+  }
+
+
+  public void setPath(String path) {
+    if (recorder != null) recorder.setPath(path);
+    g.setPath(path);
+  }
+
+
+  public void setSize(int iwidth, int iheight) {    
+    if (recorder != null) recorder.setSize(iwidth, iheight);
+    g.setSize(iwidth, iheight);
+  }
+
+
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
@@ -6684,7 +6710,7 @@ public class PApplet extends Applet
   }
 
 
-  public final void endShape() {
+  public void endShape() {
     if (recorder != null) recorder.endShape();
     g.endShape();
   }
