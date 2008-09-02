@@ -6340,6 +6340,15 @@ public class PApplet extends Applet
       applet.args = PApplet.subset(args, 1);
       applet.external = external;
 
+      if (present) {
+        frame.setUndecorated(true);
+        frame.setBackground(backgroundColor);
+        displayDevice.setFullScreenWindow(frame);
+      }
+      frame.setLayout(null);
+      frame.add(applet);
+      frame.pack();
+
       applet.init();
 
       // Wait until the applet has figured out its width.
@@ -6359,11 +6368,11 @@ public class PApplet extends Applet
       //println("  (g width/height is " + applet.g.width + "x" + applet.g.height + ")");
 
       if (present) {
-        frame.setUndecorated(true);
-        frame.setBackground(backgroundColor);
-        displayDevice.setFullScreenWindow(frame);
+//        frame.setUndecorated(true);
+//        frame.setBackground(backgroundColor);
+//        displayDevice.setFullScreenWindow(frame);
 
-        frame.add(applet);
+//        frame.add(applet);
         Dimension fullscreen = frame.getSize();
         applet.setBounds((fullscreen.width - applet.width) / 2,
                          (fullscreen.height - applet.height) / 2,
@@ -6395,7 +6404,7 @@ public class PApplet extends Applet
       } else {  // if not presenting
         // can't do pack earlier cuz present mode don't like it
         // (can't go full screen with a frame after calling pack)
-        frame.pack();  // get insets. get more.
+//        frame.pack();  // get insets. get more.
         Insets insets = frame.getInsets();
 
         int windowW = Math.max(applet.width, MIN_WINDOW_WIDTH) +
@@ -6438,8 +6447,8 @@ public class PApplet extends Applet
                             (applet.screen.height - applet.height) / 2);
         }
 
-        frame.setLayout(null);
-        frame.add(applet);
+//        frame.setLayout(null);
+//        frame.add(applet);
 
         if (backgroundColor == Color.black) {  //BLACK) {
           // this means no bg color unless specified
