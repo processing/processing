@@ -60,32 +60,7 @@ public class PGraphics2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
-  //protected PGraphics2D() { }
-
-
-  /*
-  public PGraphics2D(int iwidth, int iheight) {
-    this(iwidth, iheight, null);
-  }
-  */
-
-
-  public PGraphics2D(int iwidth, int iheight, PApplet applet) {
-    super(iwidth, iheight, applet);
-    /*
-    if (applet != null) {
-      this.parent = applet;
-      applet.addListeners();
-    }
-    resize(iwidth, iheight);
-    */
-  }
-
-
-  //resize handled by superclass
-
-
-  //requestDisplay handled by superclass
+  public PGraphics2D() { }
 
 
   protected void allocate() {
@@ -95,7 +70,7 @@ public class PGraphics2D extends PGraphics {
     // Not necessary because background will be called almost immediately
     //Arrays.fill(pixels, backgroundColor);
 
-    if (mainDrawingSurface) {
+    if (primarySurface) {
       cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
       mis = new MemoryImageSource(width, height, pixels, 0, width);
       mis.setFullBufferUpdates(true);
@@ -182,8 +157,8 @@ public class PGraphics2D extends PGraphics {
     float vertex[] = polygon.nextVertex();
     cvertexIndex = 0; // reset curves to start
 
-    vertex[MX] = x;
-    vertex[MY] = y;
+    vertex[X] = x;
+    vertex[Y] = y;
 
     if (fill) {
       vertex[R] = fillR;
@@ -234,13 +209,13 @@ public class PGraphics2D extends PGraphics {
 
     if (untransformed()) {
       for (int i = 0; i < polyVertexCount; i++) {
-        polyVertices[i][X] = polyVertices[i][MX];
-        polyVertices[i][Y] = polyVertices[i][MY];
+        polyVertices[i][TX] = polyVertices[i][X];
+        polyVertices[i][TY] = polyVertices[i][Y];
       }
     } else {
       for (int i = 0; i < polyVertexCount; i++) {
-        polyVertices[i][X] = m00*polyVertices[i][MX] + m01*polyVertices[i][MY] + m03;
-        polyVertices[i][Y] = m10*polyVertices[i][MX] + m11*polyVertices[i][MY] + m13;
+        polyVertices[i][TX] = m00*polyVertices[i][X] + m01*polyVertices[i][Y] + m03;
+        polyVertices[i][TY] = m10*polyVertices[i][X] + m11*polyVertices[i][Y] + m13;
       }
     }
 
@@ -273,12 +248,12 @@ public class PGraphics2D extends PGraphics {
       if (untransformed() && (strokeWeight == 1)) {
         if (!strokeChanged) {
           for (int i = 0; i < polyVertexCount; i++) {
-            thin_point((int) polyVertices[i][X], (int) polyVertices[i][Y],
+            thin_point((int) polyVertices[i][TX], (int) polyVertices[i][TY],
                 0, strokeColor);
           }
         } else {
           for (int i = 0; i < polyVertexCount; i++) {
-            thin_point((int) polyVertices[i][X], (int) polyVertices[i][Y],
+            thin_point((int) polyVertices[i][TX], (int) polyVertices[i][TY],
                 0, float_color(polyVertices[i][SR],
                     polyVertices[i][SG],
                     polyVertices[i][SB]));
@@ -298,14 +273,14 @@ public class PGraphics2D extends PGraphics {
           if ((i == 0) || strokeChanged) {
             // push calculated color into 'f' (this way, f is always valid)
             calc_lighting(v[SR], v[SG], v[SB],
-                v[X],  v[Y],  v[Z],
-                v[NX], v[NY], v[NZ],  f, R);
+                          v[TX], v[TY], v[TZ],
+                          v[NX], v[NY], v[NZ],  f, R);
           }
           // uses [SA], since stroke alpha isn't moved into [A] the
           // way that [SR] goes to [R] etc on the calc_lighting call
           // (there's no sense in copying it to [A], except consistency
           // in the code.. but why the extra slowness?)
-          thick_point(v[X], v[Y], v[Z],  f[R], f[G], f[B], f[SA]);
+          thick_point(v[TX], v[TY], v[TZ],  f[R], f[G], f[B], f[SA]);
         }
       }
       break;
@@ -322,7 +297,7 @@ public class PGraphics2D extends PGraphics {
         float v1[] = polygon.nextVertex();
         polyVertexCount++; // since it had already been read above
 
-        v1[X] = v0[X]; v1[Y] = v0[Y]; v1[Z] = v0[Z];
+        v1[TX] = v0[TX]; v1[TY] = v0[TY]; v1[TZ] = v0[TZ];
         v1[SR] = v0[SR]; v1[SG] = v0[SG]; v1[SB] = v0[SB];
       }
 
@@ -345,9 +320,9 @@ public class PGraphics2D extends PGraphics {
             fpolygon.vertices[j][B] = polyVertices[i+j][B];
             fpolygon.vertices[j][A] = polyVertices[i+j][A];
 
-            fpolygon.vertices[j][X] = polyVertices[i+j][X];
-            fpolygon.vertices[j][Y] = polyVertices[i+j][Y];
-            fpolygon.vertices[j][Z] = polyVertices[i+j][Z];
+            fpolygon.vertices[j][TX] = polyVertices[i+j][TX];
+            fpolygon.vertices[j][TY] = polyVertices[i+j][TY];
+            fpolygon.vertices[j][TZ] = polyVertices[i+j][TZ];
 
             if (polygon.interpUV) {
               fpolygon.vertices[j][U] = polyVertices[i+j][U];
@@ -385,9 +360,9 @@ public class PGraphics2D extends PGraphics {
             fpolygon.vertices[j][B] = polyVertices[i+j][B];
             fpolygon.vertices[j][A] = polyVertices[i+j][A];
 
-            fpolygon.vertices[j][X] = polyVertices[i+j][X];
-            fpolygon.vertices[j][Y] = polyVertices[i+j][Y];
-            fpolygon.vertices[j][Z] = polyVertices[i+j][Z];
+            fpolygon.vertices[j][TX] = polyVertices[i+j][TX];
+            fpolygon.vertices[j][TY] = polyVertices[i+j][TY];
+            fpolygon.vertices[j][TZ] = polyVertices[i+j][TZ];
 
             if (polygon.interpUV) {
               fpolygon.vertices[j][U] = polyVertices[i+j][U];
@@ -477,8 +452,8 @@ public class PGraphics2D extends PGraphics {
     for (int i=0;i<n;i++) {
       j = (i + 1) % n;
       k = (i + 2) % n;
-      z  = (v[j][X] - v[i][X]) * (v[k][Y] - v[j][Y]);
-      z -= (v[j][Y] - v[i][Y]) * (v[k][X] - v[j][X]);
+      z  = (v[j][TX] - v[i][TX]) * (v[k][TY] - v[j][TY]);
+      z -= (v[j][TY] - v[i][TY]) * (v[k][TX] - v[j][TX]);
       if (z < 0)
         flag |= 1;
       else if (z > 0)
@@ -534,19 +509,18 @@ public class PGraphics2D extends PGraphics {
 
     int n = polygon.vertexCount;
     int mm; // postion for LR vertex
-    float min[] = new float[2];
-
-    min[X] = polyVertices[0][X];
-    min[Y] = polyVertices[0][Y];
+    //float min[] = new float[2];
+    float minX = polyVertices[0][TX];
+    float minY = polyVertices[0][TY];
     mm = 0;
 
     for(int i = 0; i < n; i++ ) {
-      if( (polyVertices[i][Y] < min[Y]) ||
-          ( (polyVertices[i][Y] == min[Y]) && (polyVertices[i][X] > min[X]) )
+      if ((polyVertices[i][TY] < minY) ||
+          ((polyVertices[i][TY] == minY) && (polyVertices[i][TX] > minX) )
       ) {
         mm = i;
-        min[X] = polyVertices[mm][X];
-        min[Y] = polyVertices[mm][Y];
+        minX = polyVertices[mm][TX];
+        minY = polyVertices[mm][TY];
       }
     }
 
@@ -615,12 +589,12 @@ public class PGraphics2D extends PGraphics {
       // triangle A B C
       float Ax, Ay, Bx, By, Cx, Cy, Px, Py;
 
-      Ax =  -polyVertices[tpolygon_vertex_order[u]][X];
-      Ay =   polyVertices[tpolygon_vertex_order[u]][Y];
-      Bx =  -polyVertices[tpolygon_vertex_order[v]][X];
-      By =   polyVertices[tpolygon_vertex_order[v]][Y];
-      Cx =  -polyVertices[tpolygon_vertex_order[w]][X];
-      Cy =   polyVertices[tpolygon_vertex_order[w]][Y];
+      Ax =  -polyVertices[tpolygon_vertex_order[u]][TX];
+      Ay =   polyVertices[tpolygon_vertex_order[u]][TY];
+      Bx =  -polyVertices[tpolygon_vertex_order[v]][TX];
+      By =   polyVertices[tpolygon_vertex_order[v]][TY];
+      Cx =  -polyVertices[tpolygon_vertex_order[w]][TX];
+      Cy =   polyVertices[tpolygon_vertex_order[w]][TY];
 
       if ( EPSILON > (((Bx-Ax) * (Cy-Ay)) - ((By-Ay) * (Cx-Ax)))) {
         continue;
@@ -638,8 +612,8 @@ public class PGraphics2D extends PGraphics {
           continue;
         }
 
-        Px = -polyVertices[tpolygon_vertex_order[p]][X];
-        Py =  polyVertices[tpolygon_vertex_order[p]][Y];
+        Px = -polyVertices[tpolygon_vertex_order[p]][TX];
+        Py =  polyVertices[tpolygon_vertex_order[p]][TY];
 
         ax = Cx - Bx; ay = Cy - By;
         bx = Ax - Cx; by = Ay - Cy;
@@ -1188,9 +1162,9 @@ public class PGraphics2D extends PGraphics {
       float strokeWidth2 = strokeWeight/2.0f;
 
       float svertex[] = spolygon.vertices[0];
-      svertex[X] = x - strokeWidth2;
-      svertex[Y] = y - strokeWidth2;
-      svertex[Z] = z;
+      svertex[TX] = x - strokeWidth2;
+      svertex[TY] = y - strokeWidth2;
+      svertex[TZ] = z;
 
       svertex[R] = r;
       svertex[G] = g;
@@ -1198,19 +1172,19 @@ public class PGraphics2D extends PGraphics {
       svertex[A] = a;
 
       svertex = spolygon.vertices[1];
-      svertex[X] = x + strokeWidth2;
-      svertex[Y] = y - strokeWidth2;
-      svertex[Z] = z;
+      svertex[TX] = x + strokeWidth2;
+      svertex[TY] = y - strokeWidth2;
+      svertex[TZ] = z;
 
       svertex = spolygon.vertices[2];
-      svertex[X] = x + strokeWidth2;
-      svertex[Y] = y + strokeWidth2;
-      svertex[Z] = z;
+      svertex[TX] = x + strokeWidth2;
+      svertex[TY] = y + strokeWidth2;
+      svertex[TZ] = z;
 
       svertex = spolygon.vertices[3];
-      svertex[X] = x - strokeWidth2;
-      svertex[Y] = y + strokeWidth2;
-      svertex[Z] = z;
+      svertex[TX] = x - strokeWidth2;
+      svertex[TY] = y + strokeWidth2;
+      svertex[TZ] = z;
 
       spolygon.render();
     }
@@ -1526,8 +1500,8 @@ public class PGraphics2D extends PGraphics {
           line.reset();
           line.setIntensities(a[SR], a[SG], a[SB], a[SA],
                               b[SR], b[SG], b[SB], b[SA]);
-          line.setVertices(a[X], a[Y], a[Z],
-                           b[X], b[Y], b[Z]);
+          line.setVertices(a[TX], a[TY], a[TZ],
+                           b[TX], b[TY], b[TZ]);
           line.draw();
         }
 
@@ -1540,18 +1514,18 @@ public class PGraphics2D extends PGraphics {
 
             for (int i = 0; i < max; i += increment) {
               if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
-              thin_flat_line((int) vertices[i][X],
-                             (int) vertices[i][Y],
-                             (int) vertices[i+offset][X],
-                             (int) vertices[i+offset][Y]);
+              thin_flat_line((int) vertices[i][TX],
+                             (int) vertices[i][TY],
+                             (int) vertices[i+offset][TX],
+                             (int) vertices[i+offset][TY]);
             }
           } else {
             for (int i = 0; i < max; i += increment) {
               if ((skip != 0) && (((i+offset) % skip) == 0)) continue;
               float v1[] = vertices[i];
               float v2[] = vertices[i+offset];
-              thick_flat_line(v1[X], v1[Y],  v1[SR], v1[SG], v1[SB], v1[SA],
-                              v2[X], v2[Y],  v2[SR], v2[SG], v2[SB], v2[SA]);
+              thick_flat_line(v1[TX], v1[TY],  v1[SR], v1[SG], v1[SB], v1[SA],
+                              v2[TX], v2[TY],  v2[SR], v2[SG], v2[SB], v2[SA]);
             }
           }
       }

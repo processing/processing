@@ -33,27 +33,20 @@ import processing.core.*;
 public class PGraphicsPDF extends PGraphicsJava2D {
 
   File temp;
-  //int frameCount;
   File file;
   Document document;
   PdfWriter writer;
   PdfContentByte content;
-  //PdfTemplate tp;
   DefaultFontMapper mapper;
 
   // BaseFont baseFont = mapper.awtToPdf(java.awt.Font awtFont)
 
 
-  public PGraphicsPDF(int width, int height, PApplet applet) {
-    this(width, height, applet, null);  // will throw an error
-  }
-
-
-  public PGraphicsPDF(int width, int height, PApplet applet, String path) {
-    super(width, height, applet);
-
-    //System.out.println("trying " + path);
-
+  public PGraphicsPDF() { }
+  
+  
+  public void setPath(String path) {
+	this.path = path;
     if (path != null) {
       file = new File(path);
       if (!file.isAbsolute()) file = null;
@@ -62,6 +55,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       throw new RuntimeException("PGraphicsPDF requires an absolute path " +
                                  "for the location of the output file.");
     }
+  }
 
     //if (applet != null) {
     //  applet.registerDispose(this);
@@ -99,17 +93,16 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       System.out.println((String) i.next());
     }
     */
-  }
 
 
-  public void setMainDrawingSurface() {
-    // set as main drawing surface
-    mainDrawingSurface = true;
-    // this shouldn't actually affect anything
-    format = RGB;
-    // don't bother adding listeners for this guy
-    //parent.addListeners();
-  }
+//  public void setPrimarySurface() {
+//    // set as main drawing surface
+//    primarySurface = true;
+//    // this shouldn't actually affect anything
+//    format = RGB;
+//    // don't bother adding listeners for this guy
+//    //parent.addListeners();
+//  }
 
 
   // create a temporary file and put the graphics crap there

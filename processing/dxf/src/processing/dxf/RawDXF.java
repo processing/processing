@@ -28,11 +28,9 @@ import processing.core.*;
 
 
 /**
- * RawDXF - code to write DXF files with Processing and beginRaw().
- * Last revised 10 March 2006 by Ben Fry.
- * <p/>
- * Writes all current triangle-based graphics
- * (polygons, boxes, spheres, etc.) to a DXF file.
+ * A simple library to write DXF files with Processing.
+ * Because this is used with beginRaw() and endRaw(), only individual 
+ * triangles and (discontinuous) line segments will be written to the file. 
  * <P/>
  * Use something like a keyPressed() in PApplet to trigger it,
  * to avoid writing a bazillion .dxf files.
@@ -57,7 +55,7 @@ import processing.core.*;
  *
  * void draw() {
  *   if (record) {
- *     beginRaw(width, height, DXF, "output.dxf");
+ *     beginRaw(DXF, "output.dxf");
  *   }
  *
  *   // do all your drawing here
@@ -107,32 +105,25 @@ import processing.core.*;
  * Note that even though this class is a subclass of PGraphics, it only
  * implements the parts of the API that are necessary for beginRaw/endRaw.
  * <P/>
- * (c) Copyright 2004-06 Ben Fry and Simon Greenwold <BR>
  * Based on the original DXF writer from Simon Greenwold, February 2004.
  * Updated for Processing 0070 by Ben Fry in September 2004,
  * and again for Processing beta in April 2005.
  * Rewritten to support beginRaw/endRaw by Ben Fry in February 2006.
  * Updated again for inclusion as a core library in March 2006.
+ * Constructor modifications in September 2008 as we approach 1.0.
  */
 public class RawDXF extends PGraphics3D {
 
-  //static final int MAX_TRI_LAYERS = 500000;
-  //static final int NO_LAYER = -1;
-  int currentLayer = 0;
-  //int[] layerList = new int[MAX_TRI_LAYERS];
-
   File file;
   PrintWriter writer;
+  int currentLayer;
 
 
-  public RawDXF(int width, int height, PApplet applet) {
-    this(width, height, applet, null);  // will throw an error
-  }
-
-
-  public RawDXF(int width, int height, PApplet applet, String path) {
-    super(width, height, null);
-
+  public RawDXF() { }
+  
+  
+  public void setPath(String path) {
+    this.path = path;
     if (path != null) {
       file = new File(path);
       if (!file.isAbsolute()) file = null;
