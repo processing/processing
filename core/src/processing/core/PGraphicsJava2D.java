@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-07 Ben Fry and Casey Reas
+  Copyright (c) 2005-08 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -79,27 +79,7 @@ public class PGraphicsJava2D extends PGraphics2D {
   // INTERNAL
 
 
-  /**
-   * Constructor for the PGraphicsJava object.
-   * This prototype only exists because of annoying
-   * java compilers, and should not be used.
-   */
-  //public PGraphicsJava2D() { }
-
-
-  /**
-   * Constructor for the PGraphics object. Use this to ensure that
-   * the defaults get set properly. In a subclass, use this(w, h)
-   * as the first line of a subclass' constructor to properly set
-   * the internal fields and defaults.
-   *
-   * @param iwidth  viewport width
-   * @param iheight viewport height
-   */
-  public PGraphicsJava2D(int iwidth, int iheight, PApplet parent) {
-    super(iwidth, iheight, parent);
-    //resize(iwidth, iheight);
-  }
+  public PGraphicsJava2D() { }
 
 
   /**
@@ -109,16 +89,7 @@ public class PGraphicsJava2D extends PGraphics2D {
    *
    * Note that this will nuke any cameraMode() settings.
    */
-  public void resize(int iwidth, int iheight) {  // ignore
-//    String thr = Thread.currentThread().getName();
-//    System.out.println("resize " + thr);
-//    if (thr.indexOf("AWT-EventQueue") == -1) {
-//      new Exception().printStackTrace();
-//    }
-    //System.out.println("resize " + iwidth + " " + iheight);
-//    insideDrawWait();
-//    insideResize = true;
-
+  public void setSize(int iwidth, int iheight) {  // ignore
     width = iwidth;
     height = iheight;
     width1 = width - 1;
@@ -126,9 +97,6 @@ public class PGraphicsJava2D extends PGraphics2D {
 
     allocate();
     reapplySettings();
-
-    // ok to draw again
-//    insideResize = false;
   }
 
 
@@ -174,7 +142,7 @@ public class PGraphicsJava2D extends PGraphics2D {
     // copy of all the pixels to the surface.. so that's kind of a mess.
     //updatePixels();
 
-    if (!mainDrawingSurface) {
+    if (!primarySurface) {
       loadPixels();
     }
     modified = true;
@@ -225,8 +193,8 @@ public class PGraphicsJava2D extends PGraphics2D {
     }
     // not everyone needs this, but just easier to store rather
     // than adding another moving part to the code...
-    vertices[vertexCount][MX] = x;
-    vertices[vertexCount][MY] = y;
+    vertices[vertexCount][X] = x;
+    vertices[vertexCount][Y] = y;
     vertexCount++;
 
     switch (shape) {
@@ -237,8 +205,8 @@ public class PGraphicsJava2D extends PGraphics2D {
 
     case LINES:
       if ((vertexCount % 2) == 0) {
-        line(vertices[vertexCount-2][MX],
-             vertices[vertexCount-2][MY], x, y);
+        line(vertices[vertexCount-2][X],
+             vertices[vertexCount-2][Y], x, y);
       }
       break;
 
@@ -256,38 +224,38 @@ public class PGraphicsJava2D extends PGraphics2D {
 
     case TRIANGLES:
       if ((vertexCount % 3) == 0) {
-        triangle(vertices[vertexCount - 3][MX],
-                 vertices[vertexCount - 3][MY],
-                 vertices[vertexCount - 2][MX],
-                 vertices[vertexCount - 2][MY],
+        triangle(vertices[vertexCount - 3][X],
+                 vertices[vertexCount - 3][Y],
+                 vertices[vertexCount - 2][X],
+                 vertices[vertexCount - 2][Y],
                  x, y);
       }
       break;
 
     case TRIANGLE_STRIP:
       if (vertexCount >= 3) {
-        triangle(vertices[vertexCount - 2][MX],
-                 vertices[vertexCount - 2][MY],
-                 vertices[vertexCount - 1][MX],
-                 vertices[vertexCount - 1][MY],
-                 vertices[vertexCount - 3][MX],
-                 vertices[vertexCount - 3][MY]);
+        triangle(vertices[vertexCount - 2][X],
+                 vertices[vertexCount - 2][Y],
+                 vertices[vertexCount - 1][X],
+                 vertices[vertexCount - 1][Y],
+                 vertices[vertexCount - 3][X],
+                 vertices[vertexCount - 3][Y]);
       }
       break;
 
     case TRIANGLE_FAN:
       if (vertexCount == 3) {
-        triangle(vertices[0][MX], vertices[0][MY],
-                 vertices[1][MX], vertices[1][MY],
+        triangle(vertices[0][X], vertices[0][Y],
+                 vertices[1][X], vertices[1][Y],
                  x, y);
       } else if (vertexCount > 3) {
         gpath = new GeneralPath();
         // when vertexCount > 3, draw an un-closed triangle
         // for indices 0 (center), previous, current
-        gpath.moveTo(vertices[0][MX],
-                     vertices[0][MY]);
-        gpath.lineTo(vertices[vertexCount - 2][MX],
-                    vertices[vertexCount - 2][MY]);
+        gpath.moveTo(vertices[0][X],
+                     vertices[0][Y]);
+        gpath.lineTo(vertices[vertexCount - 2][X],
+                    vertices[vertexCount - 2][Y]);
         gpath.lineTo(x, y);
         draw_shape(gpath);
       }
@@ -295,12 +263,12 @@ public class PGraphicsJava2D extends PGraphics2D {
 
     case QUADS:
       if ((vertexCount % 4) == 0) {
-        quad(vertices[vertexCount - 4][MX],
-             vertices[vertexCount - 4][MY],
-             vertices[vertexCount - 3][MX],
-             vertices[vertexCount - 3][MY],
-             vertices[vertexCount - 2][MX],
-             vertices[vertexCount - 2][MY],
+        quad(vertices[vertexCount - 4][X],
+             vertices[vertexCount - 4][Y],
+             vertices[vertexCount - 3][X],
+             vertices[vertexCount - 3][Y],
+             vertices[vertexCount - 2][X],
+             vertices[vertexCount - 2][Y],
              x, y);
       }
       break;
@@ -310,13 +278,13 @@ public class PGraphicsJava2D extends PGraphics2D {
       // |   |   |
       // 1---3---5
       if ((vertexCount >= 4) && ((vertexCount % 2) == 0)) {
-        quad(vertices[vertexCount - 4][MX],
-             vertices[vertexCount - 4][MY],
-             vertices[vertexCount - 2][MX],
-             vertices[vertexCount - 2][MY],
+        quad(vertices[vertexCount - 4][X],
+             vertices[vertexCount - 4][Y],
+             vertices[vertexCount - 2][X],
+             vertices[vertexCount - 2][Y],
              x, y,
-             vertices[vertexCount - 3][MX],
-             vertices[vertexCount - 3][MY]);
+             vertices[vertexCount - 3][X],
+             vertices[vertexCount - 3][Y]);
       }
       break;
 
@@ -404,14 +372,14 @@ public class PGraphicsJava2D extends PGraphics2D {
     // this new guy will be the fourth point (or higher),
     // which means it's time to draw segments of the curve
     if (splineVertexCount >= 3) {
-      curveX[0] = splineVertices[splineVertexCount-3][MX];
-      curveY[0] = splineVertices[splineVertexCount-3][MY];
+      curveX[0] = splineVertices[splineVertexCount-3][X];
+      curveY[0] = splineVertices[splineVertexCount-3][Y];
 
-      curveX[1] = splineVertices[splineVertexCount-2][MX];
-      curveY[1] = splineVertices[splineVertexCount-2][MY];
+      curveX[1] = splineVertices[splineVertexCount-2][X];
+      curveY[1] = splineVertices[splineVertexCount-2][Y];
 
-      curveX[2] = splineVertices[splineVertexCount-1][MX];
-      curveY[2] = splineVertices[splineVertexCount-1][MY];
+      curveX[2] = splineVertices[splineVertexCount-1][X];
+      curveY[2] = splineVertices[splineVertexCount-1][Y];
 
       curveX[3] = x;
       curveY[3] = y;
@@ -432,8 +400,8 @@ public class PGraphicsJava2D extends PGraphics2D {
     }
 
     // add the current point to the list
-    splineVertices[splineVertexCount][MX] = x;
-    splineVertices[splineVertexCount][MY] = y;
+    splineVertices[splineVertexCount][X] = x;
+    splineVertices[splineVertexCount][Y] = y;
     splineVertexCount++;
   }
 

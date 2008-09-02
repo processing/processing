@@ -31,14 +31,12 @@ import java.awt.image.*;
 /**
  * Main graphics and rendering context, as well as
  * the base API implementation for processing "core".
- * <P>
- * As of beta, this class is semi-disabled.
  */
 public abstract class PGraphics extends PImage implements PConstants {
 
-  static public final int MX = 17;  // model coords xyz
-  static public final int MY = 18;
-  static public final int MZ = 19;
+  static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
+  static public final int Y = 1;
+  static public final int Z = 2;
 
   static public final int R = 3;  // actual rgb, after lighting
   static public final int G = 4;  // fill stored here, transform in place 
@@ -51,18 +49,14 @@ public abstract class PGraphics extends PImage implements PConstants {
   static public final int NX = 9; // normal
   static public final int NY = 10;
   static public final int NZ = 11;
-  
+
   static public final int EDGE = 30;
-
-  // incoming values, raw and untransformed
-  // (won't be used in rendering)
-
   
   //
   
-  static public final int X = 0; // transformed xyzw
-  static public final int Y = 1; // formerly SX SY SZ
-  static public final int Z = 2;
+  static public final int TX = 17; // transformed xyzw
+  static public final int TY = 18;
+  static public final int TZ = 19;
   
   /** stroke argb values */
   static public final int SR = 12;
@@ -134,13 +128,16 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  /** path to the file being saved for this renderer (if any) */
+  protected String path;
+
   /**
    * true if this is the main drawing surface for a particular sketch.
    * This would be set to false for an offscreen buffer or if it were
    * created any other way than size(). When this is set, the listeners
    * are also added to the sketch.
    */
-  protected boolean mainDrawingSurface;
+  protected boolean primarySurface;
 
   // ........................................................
 
@@ -152,7 +149,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   // used by recordRaw()
-  public PGraphics raw;
+  protected PGraphics raw;
 
   // ........................................................
 
@@ -168,7 +165,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * The hints[] array is allocated early on because it might
    * be used inside beginDraw(), allocate(), etc.
    */
-  protected boolean hints[] = new boolean[HINT_COUNT];
+  protected boolean[] hints = new boolean[HINT_COUNT];
 
   // ........................................................
 
@@ -258,7 +255,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   /** The last rgb value converted to HSB */
   int cacheHsbKey;
   /** Result of the last conversion to HSB */
-  float cacheHsbValue[] = new float[3]; // inits to zero
+  float[] cacheHsbValue = new float[3]; // inits to zero
 
   // ........................................................
 
@@ -497,41 +494,39 @@ public abstract class PGraphics extends PImage implements PConstants {
   public int lightCount = 0;
 
   /** Light types */
-  public int lightType[];
+  public int[] lightType;
 
   /** Light positions */
-  public float lightPosition[][];
-  //public float lightsX[], lightsY[], lightsZ[];
+  public float[][] lightPosition;
 
   /** Light direction (normalized vector) */
-  public float lightNormal[][];
-  //public float lightsNX[], lightsNY[], lightsNZ[];
+  public float[][] lightNormal;
 
   /** Light falloff */
-  public float lightFalloffConstant[];
-  public float lightFalloffLinear[];
-  public float lightFalloffQuadratic[];
+  public float[] lightFalloffConstant;
+  public float[] lightFalloffLinear;
+  public float[] lightFalloffQuadratic;
 
   /** Light spot angle */
-  public float lightSpotAngle[];
+  public float[] lightSpotAngle;
 
   /** Cosine of light spot angle */
-  public float lightSpotAngleCos[];
+  public float[] lightSpotAngleCos;
 
   /** Light spot concentration */
-  public float lightSpotConcentration[];
+  public float[] lightSpotConcentration;
 
   /** Diffuse colors for lights.
    *  For an ambient light, this will hold the ambient color.
    *  Internally these are stored as numbers between 0 and 1. */
-  public float lightDiffuse[][];
+  public float[][] lightDiffuse;
 
   /** Specular colors for lights.
       Internally these are stored as numbers between 0 and 1. */
-  public float lightSpecular[][];
+  public float[][] lightSpecular;
 
   /** Current specular color for lighting */
-  public float currentLightSpecular[];
+  public float[] currentLightSpecular;
 
   /** Current light falloff */
   public float currentLightFalloffConstant;
@@ -568,11 +563,6 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // [toxi 031031]
-  // new & faster sphere code w/ support flexibile resolutions
-  // will be set by sphereDetail() or 1st call to sphere()
-  // [davbol 080801]
-  // split into sphereDetailU and sphereDetailV
   /// Number of U steps (aka "theta") around longitudinally spanning 2*pi
   public int sphereDetailU = 0;
   /// Number of V steps (aka "phi") along latitudinally top-to-bottom spanning pi
@@ -586,15 +576,6 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Constructor for the PGraphics object. This prototype only exists
-   * because of annoying java compilers, and cannot be used.
-   */
-  /*
-  protected PGraphics() { }
-  */
-
-
-  /**
    * Constructor for the PGraphics object. Use this to ensure that
    * the defaults get set properly. In a subclass, use this(w, h)
    * as the first line of a subclass' constructor to properly set
@@ -602,42 +583,43 @@ public abstract class PGraphics extends PImage implements PConstants {
    *
    * @param iwidth  viewport width
    * @param iheight viewport height
+   * @param path path to filename or null if not relevant
    * @param parent null unless this is the main drawing surface
    */
-  public PGraphics(int iwidth, int iheight, PApplet parent) {
-    this.parent = parent;
-    if (parent != null) setMainDrawingSurface();
-/*
-    // if this is being created by createGraphics(), the parent applet
-    // will be set later via another method.
-    if (parent != null) {
-      mainDrawingSurface = true;
-      // base images must be opaque (for performance and general
-      // headache reasons.. argh, a semi-transparent opengl surface?)
-      // use createGraphics() if you want a transparent surface.
-      format = RGB;
-      parent.addListeners();
-    }
-*/
-    resize(iwidth, iheight);
+  public PGraphics() {
   }
-
-
+  
+  
+  public void setParent(PApplet parent) {
+    this.parent = parent;
+  }
+  
+  
   /**
-   * Set this as the main drawing surface. Meaning that it can safely be
-   * set to opaque (given a default gray background) and listeners for
-   * the mouse and keyboard added.
-   * <p/>
-   * This should only be called by subclasses of PGraphics.
+   * Set (or unset) this as the main drawing surface. Meaning that it can 
+   * safely be set to opaque (and given a default gray background), or anything
+   * else that goes along with that. 
    */
-  public void setMainDrawingSurface() {  // ignore
-    mainDrawingSurface = true;
+  public void setPrimary(boolean primary) {
+    this.primarySurface = primary;
+    
     // base images must be opaque (for performance and general
     // headache reasons.. argh, a semi-transparent opengl surface?)
     // use createGraphics() if you want a transparent surface.
-    format = RGB;
-    //parent.addListeners();
+    if (primarySurface) {
+      format = RGB;
+    }
   }
+  
+  
+  public void setPath(String path) {
+    this.path = path;
+  }
+  
+  
+  public void setSize(int iwidth, int iheight) {    
+    resizeSurface(iwidth, iheight);
+//  }
 
 
   /**
@@ -652,10 +634,8 @@ public abstract class PGraphics extends PImage implements PConstants {
    *
    * Note that this will nuke any camera settings.
    */
-  public void resize(int iwidth, int iheight) {  // ignore
+//  public void resizeSurface(int iwidth, int iheight) {  // ignore
     //System.out.println("PGraphics.resize() " + iwidth + " " + iheight);
-//    insideDrawWait();
-    //insideResize = true;
 
     width = iwidth;
     height = iheight;
@@ -664,19 +644,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
     allocate();
     reapplySettings();
-    //reapplySettings = true;
-//    insideResize = false;  // ok to draw again
   }
-
-
-  /**
-   * Parent thread has requested that visual action be taken.
-   * This is broken out like this because the OpenGL library
-   * handles updates in a very different way.
-   */
-//  public void requestDisplay(PApplet pa) {  // ignore
-//    pa.handleDisplay();
-//  }
 
 
   // broken out because of subclassing
@@ -689,42 +657,10 @@ public abstract class PGraphics extends PImage implements PConstants {
   // FRAME
 
 
-//  protected void insideResizeWait() {
-//    if (insideResize) {
-//      System.out.println("insideResizeWait " + Thread.currentThread().getName());
-//      //new Exception().printStackTrace();
-//    }
-//    /*
-//    while (insideResize) {
-//      //System.out.println("waiting");
-//      try {
-//        Thread.sleep(5);
-//      } catch (InterruptedException e) { }
-//    }
-//    */
-//  }
-
-
-//  protected void insideDrawWait() {
-//    if (insideDraw) {
-//      System.out.println("insideDrawWait " + Thread.currentThread().getName());
-//      //new Exception().printStackTrace();
-//    }
-//    /*
-//    while (insideDraw) {
-//      //System.out.println("waiting");
-//      try {
-//        Thread.sleep(5);
-//      } catch (InterruptedException e) { }
-//    }
-//    */
-//  }
-
-
   /**
    * Some renderers have requirements re: when they are ready to draw.
    */
-  public boolean canDraw() {
+  public boolean canDraw() {  // ignore
     return true;
   }
 
@@ -749,7 +685,6 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   protected void checkSettings() {
     if (!settingsInited) defaultSettings();
-    //if (reapplySettings) reapplySettings();
   }
 
 
@@ -759,6 +694,8 @@ public abstract class PGraphics extends PImage implements PConstants {
    * graphics buffer, meaning that for subclasses like OpenGL, there
    * needs to be a valid graphics context to mess with otherwise
    * you'll get some good crashing action.
+   * 
+   * This is currently called by checkSettings(), during beginDraw().
    */
   protected void defaultSettings() {  // ignore
 //    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
@@ -793,7 +730,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     // a gray background (when just a transparent surface or an empty pdf
     // is what's desired).
     // this background() call is for the Java 2D and OpenGL renderers.
-    if (mainDrawingSurface) {
+    if (primarySurface) {
       //System.out.println("main drawing surface bg " + getClass().getName());
       background(backgroundColor);
     }
@@ -1174,12 +1111,12 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
     if (splineVertexCount > 0) {
       float vertex[] = splineVertices[splineVertexCount-1];
-      splineVertex(vertex[MX], vertex[MY], vertex[MZ], true);
+      splineVertex(vertex[X], vertex[Y], vertex[Z], true);
 
     } else if (vertexCount > 0) {
       // make sure there's at least a call to vertex()
       float vertex[] = vertices[vertexCount-1];
-      splineVertex(vertex[MX], vertex[MY], vertex[MZ], true);
+      splineVertex(vertex[X], vertex[Y], vertex[Z], true);
 
     } else {
       throw new RuntimeException("A call to vertex() must be used " +
@@ -1235,8 +1172,8 @@ public abstract class PGraphics extends PImage implements PConstants {
 
     float vertex[] = splineVertices[splineVertexCount];
 
-    vertex[MX] = x;
-    vertex[MY] = y;
+    vertex[X] = x;
+    vertex[Y] = y;
 
     if (fill) {
       vertex[R] = fillR;
@@ -1262,7 +1199,7 @@ public abstract class PGraphics extends PImage implements PConstants {
     int dimensions = (z == Float.MAX_VALUE) ? 2 : 3;
 
     if (dimensions == 3) {
-      vertex[MZ] = z;
+      vertex[Z] = z;
 
       vertex[NX] = normalX;
       vertex[NY] = normalY;
@@ -1297,7 +1234,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  public final void endShape() {
+  public void endShape() {
     endShape(OPEN);
   }
 
@@ -2053,17 +1990,17 @@ public abstract class PGraphics extends PImage implements PConstants {
    */
   protected void splineSegment(int offset, int start, float m[][],
                                int dimensions, int segments) {
-    float x1 = splineVertices[offset+0][MX];
-    float x2 = splineVertices[offset+1][MX];
-    float x3 = splineVertices[offset+2][MX];
-    float x4 = splineVertices[offset+3][MX];
-    float x0 = splineVertices[start][MX];
+    float x1 = splineVertices[offset+0][X];
+    float x2 = splineVertices[offset+1][X];
+    float x3 = splineVertices[offset+2][X];
+    float x4 = splineVertices[offset+3][X];
+    float x0 = splineVertices[start][X];
 
-    float y1 = splineVertices[offset+0][MY];
-    float y2 = splineVertices[offset+1][MY];
-    float y3 = splineVertices[offset+2][MY];
-    float y4 = splineVertices[offset+3][MY];
-    float y0 = splineVertices[start][MY];
+    float y1 = splineVertices[offset+0][Y];
+    float y2 = splineVertices[offset+1][Y];
+    float y3 = splineVertices[offset+2][Y];
+    float y4 = splineVertices[offset+3][Y];
+    float y0 = splineVertices[start][Y];
 
     float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
     float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
@@ -2077,11 +2014,11 @@ public abstract class PGraphics extends PImage implements PConstants {
     int cvertexSaved = splineVertexCount;
 
     if (dimensions == 3) {
-      float z1 = splineVertices[offset+0][MZ];
-      float z2 = splineVertices[offset+1][MZ];
-      float z3 = splineVertices[offset+2][MZ];
-      float z4 = splineVertices[offset+3][MZ];
-      float z0 = splineVertices[start][MZ];
+      float z1 = splineVertices[offset+0][Z];
+      float z2 = splineVertices[offset+1][Z];
+      float z3 = splineVertices[offset+2][Z];
+      float z4 = splineVertices[offset+3][Z];
+      float z0 = splineVertices[start][Z];
 
       float zplot1 = m[1][0]*z1 + m[1][1]*z2 + m[1][2]*z3 + m[1][3]*z4;
       float zplot2 = m[2][0]*z1 + m[2][1]*z2 + m[2][2]*z3 + m[2][3]*z4;
@@ -3959,7 +3896,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       background((float) rgb);
 
     } else {
-      if (mainDrawingSurface) {
+      if (format == RGB) {
         rgb |= 0xff000000;  // ignore alpha for main drawing surface
       }
       colorCalcARGB(rgb, colorModeA);
@@ -3973,7 +3910,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * See notes about alpha in background(x, y, z, a).
    */
   public void background(int rgb, float alpha) {
-    if (mainDrawingSurface) {
+    if (format == RGB) {
       background(rgb);  // ignore alpha for main drawing surface
 
     } else {
@@ -4004,7 +3941,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * See notes about alpha in background(x, y, z, a).
    */
   public void background(float gray, float alpha) {
-    if (mainDrawingSurface) {
+    if (format == RGB) {
       background(gray);  // ignore alpha for main drawing surface
 
     } else {
@@ -4038,7 +3975,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * and draw a rectangle.
    */
   public void background(float x, float y, float z, float a) {
-    if (mainDrawingSurface) {
+    if (format == RGB) {
       background(x, y, z);  // don't allow people to set alpha
 
     } else {
@@ -4372,30 +4309,6 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // PATH
-
-  /*
-  class Path {
-
-    public void moveTo(float x, float y) {  // ignore
-    }
-
-    public void lineTo(float x, float y) {  // ignore
-    }
-
-    public void curveTo(float x1, float y1,  // ignore
-                        float x2, float y2,
-                        float x3, float y3) {
-    }
-
-    public void closePath() {  // ignore
-    }
-  }
-  */
-
-
-  //////////////////////////////////////////////////////////////
-
 
   /**
    * Use with caution on PGraphics. This should not be used with
@@ -4420,13 +4333,13 @@ public abstract class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  public void beginRaw(PGraphics rawGraphics) {
+  public void beginRaw(PGraphics rawGraphics) {  // ignore
     this.raw = rawGraphics;
     rawGraphics.beginDraw();
   }
 
 
-  public void endRaw() {
+  public void endRaw() {  // ignore
     if (raw != null) {
       // for 3D, need to flush any geometry that's been stored for sorting
       // (particularly if the ENABLE_DEPTH_SORT hint is set)
