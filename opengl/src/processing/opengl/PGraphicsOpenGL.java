@@ -146,7 +146,21 @@ public class PGraphicsOpenGL extends PGraphics3D {
         capabilities.setNumSamples(4);
       }
       // get a rendering surface and a context for this canvas
-      drawable = GLDrawableFactory.getFactory().getGLDrawable(parent, capabilities, null);
+      GLDrawableFactory factory = GLDrawableFactory.getFactory();
+      
+      GraphicsConfiguration pconfig = parent.getGraphicsConfiguration();
+      System.out.println("parent config is " + pconfig);
+      
+//      GraphicsDevice device = config.getDevice();
+      //AbstractGraphicsDevice agd = new AbstractGraphicsDevice(device); 
+      //AbstractGraphicsConfiguration agc = factory.chooseGraphicsConfiguration(capabilities, null, null);
+      
+      AWTGraphicsConfiguration agc = (AWTGraphicsConfiguration) 
+        factory.chooseGraphicsConfiguration(capabilities, null, null);
+      GraphicsConfiguration config = agc.getGraphicsConfiguration();
+      System.out.println("agc config is " + config);
+      
+      drawable = factory.getGLDrawable(parent, capabilities, null);
       context = drawable.createContext(null);
 
       /*
