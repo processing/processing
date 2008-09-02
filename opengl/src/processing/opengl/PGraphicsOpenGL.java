@@ -149,6 +149,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // get a rendering surface and a context for this canvas
       GLDrawableFactory factory = GLDrawableFactory.getFactory();
       
+      /*
       if (PApplet.platform == PConstants.LINUX) {
         GraphicsConfiguration pconfig = parent.getGraphicsConfiguration();
         System.out.println("parent config is " + pconfig);
@@ -162,58 +163,19 @@ public class PGraphicsOpenGL extends PGraphics3D {
         GraphicsConfiguration config = agc.getGraphicsConfiguration();
         System.out.println("agc config is " + config);
       }
+      */
 
       drawable = factory.getGLDrawable(parent, capabilities, null);
       context = drawable.createContext(null);
-
-      /*
-      //System.out.println("creating PGraphicsOpenGL 3");
-      canvas.addGLEventListener(new GLEventListener() {
-
-          public void display(GLAutoDrawable drawable) {
-            // need to get a fresh opengl object here
-            gl = drawable.getGL();
-            parent.handleDraw();  // this means it's time to go
-          }
-
-          public void init(GLAutoDrawable drawable) { }
-
-          public void displayChanged(GLAutoDrawable drawable,
-                                     boolean modeChanged,
-                                     boolean deviceChanged) { }
-
-          public void reshape(GLAutoDrawable drawable,
-                              int x, int y, int w, int h) { }
-        });
-       */
-
-      //System.out.println("creating PGraphicsOpenGL 4");
-
-      /*
-      if ((parent != null) && mainDrawingSurface) {
-        parent.setLayout(null);
-        parent.add(canvas);
-        canvas.setBounds(0, 0, width, height);
-
-        //System.out.println("creating PGraphicsOpenGL 5");
-        //System.out.println("adding canvas listeners");
-        canvas.addMouseListener(parent);
-        canvas.addMouseMotionListener(parent);
-        canvas.addKeyListener(parent);
-        canvas.addFocusListener(parent);
-      }
-      */
 
       // need to get proper opengl context since will be needed below
       gl = context.getGL();
       // Flag defaults to be reset on the next trip into beginDraw().
       settingsInited = false;
-//      System.out.println("allocated.");
 
     } else {
       // changing for 0100, need to resize rather than re-allocate
-      //canvas.setSize(width, height);
-      System.out.println("PGraphicsOpenGL.allocate() again for " + width + " " + height);
+      //System.out.println("PGraphicsOpenGL.allocate() again for " + width + " " + height);
       reapplySettings();
     }
   }
