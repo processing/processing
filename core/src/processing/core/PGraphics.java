@@ -39,7 +39,7 @@ public abstract class PGraphics extends PImage implements PConstants {
   static public final int Z = 2;
 
   static public final int R = 3;  // actual rgb, after lighting
-  static public final int G = 4;  // fill stored here, transform in place 
+  static public final int G = 4;  // fill stored here, transform in place
   static public final int B = 5;  // TODO don't do that anymore
   static public final int A = 6;
 
@@ -50,39 +50,36 @@ public abstract class PGraphics extends PImage implements PConstants {
   static public final int NY = 10;
   static public final int NZ = 11;
 
-  static public final int EDGE = 30;
-  
+  static public final int EDGE = 12;
+
   //
-  
-  static public final int TX = 17; // transformed xyzw
-  static public final int TY = 18;
-  static public final int TZ = 19;
-  
+
   /** stroke argb values */
-  static public final int SR = 12;
-  static public final int SG = 13;
-  static public final int SB = 14;
-  static public final int SA = 15;
+  static public final int SR = 13;
+  static public final int SG = 14;
+  static public final int SB = 15;
+  static public final int SA = 16;
 
   /** stroke weight */
-  static public final int SW = 16;
+  static public final int SW = 17;
 
-  // not used in rendering
-  // only used for calculating colors
+  static public final int TX = 18; // transformed xyzw
+  static public final int TY = 19;
+  static public final int TZ = 20;
 
-  static public final int VX = 20; // view space coords
-  static public final int VY = 21;
-  static public final int VZ = 22;
-  static public final int VW = 23;
+  static public final int VX = 21; // view space coords
+  static public final int VY = 22;
+  static public final int VZ = 23;
+  static public final int VW = 24;
 
   // Ambient color (usually to be kept the same as diffuse)
   // fill(_) sets both ambient and diffuse.
-  static public final int AR = 24;
-  static public final int AG = 25;
-  static public final int AB = 26;
+  static public final int AR = 25;
+  static public final int AG = 26;
+  static public final int AB = 27;
 
   // Diffuse is shared with fill.
-  static public final int DR = 3;
+  static public final int DR = 3;  // TODO needs to not be shared, this is a material property
   static public final int DG = 4;
   static public final int DB = 5;
   static public final int DA = 6;
@@ -302,10 +299,6 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  //Path path;
-
-  // ........................................................
-
   /**
    * Type of shape passed to beginShape(),
    * zero if no shape is currently being drawn.
@@ -323,22 +316,16 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   protected boolean bezierInited = false;
   public int bezierDetail = 20;
-  // msjvm complained when bezier_basis was final
-  protected float bezier_basis[][] = {
-    { -1,  3, -3,  1},
-    {  3, -6,  3,  0},
-    { -3,  3,  0,  0},
-    {  1,  0,  0,  0}
-  };
 
-  protected PMatrix3D bezierBasis =
+  // used by both curve and bezier, so just init here
+  protected PMatrix3D bezierBasisMatrix =
     new PMatrix3D(-1,  3, -3,  1,
                    3, -6,  3,  0,
                   -3,  3,  0,  0,
                    1,  0,  0,  0);
 
-  protected float bezierForwardMatrix[][]; // = new float[4][4];
-  protected float bezierDrawMatrix[][]; // = new float[4][4];
+  //protected PMatrix3D bezierForwardMatrix;
+  protected PMatrix3D bezierDrawMatrix;
 
   // ........................................................
 
@@ -346,9 +333,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   protected int curveDetail = 20;
   // catmull-rom basis matrix, perhaps with optional s parameter
   public float curveTightness = 0;
-  protected float curve_basis[][]; // = new float[4][4];
-  protected float curve_forward[][]; // = new float[4][4];
-  protected float curve_draw[][];
+  protected PMatrix3D curveBasisMatrix;
+  //protected PMatrix3D curveForwardMatrix;
+  protected PMatrix3D curveDrawMatrix;
 
   protected PMatrix3D bezierBasisInverse;
   protected PMatrix3D curveToBezierMatrix;
@@ -588,21 +575,21 @@ public abstract class PGraphics extends PImage implements PConstants {
    */
   public PGraphics() {
   }
-  
-  
-  public void setParent(PApplet parent) {
+
+
+  public void setParent(PApplet parent) {  // ignore
     this.parent = parent;
   }
-  
-  
+
+
   /**
-   * Set (or unset) this as the main drawing surface. Meaning that it can 
+   * Set (or unset) this as the main drawing surface. Meaning that it can
    * safely be set to opaque (and given a default gray background), or anything
-   * else that goes along with that. 
+   * else that goes along with that.
    */
-  public void setPrimary(boolean primary) {
+  public void setPrimary(boolean primary) {  // ignore
     this.primarySurface = primary;
-    
+
     // base images must be opaque (for performance and general
     // headache reasons.. argh, a semi-transparent opengl surface?)
     // use createGraphics() if you want a transparent surface.
@@ -610,44 +597,25 @@ public abstract class PGraphics extends PImage implements PConstants {
       format = RGB;
     }
   }
-  
-  
-  public void setPath(String path) {
+
+
+  public void setPath(String path) {  // ignore
     this.path = path;
   }
-  
-  
+
+
   /**
-   * The final step in setting up a renderer, set its size of this renderer. 
+   * The final step in setting up a renderer, set its size of this renderer.
    * This was formerly handled by the constructor, but instead it's been broken
-   * out so that setParent/setPrimary/setPath can be handled differently. 
-   * 
-   * Important that this is ignored by preproc.pl because otherwise it will 
+   * out so that setParent/setPrimary/setPath can be handled differently.
+   *
+   * Important that this is ignored by preproc.pl because otherwise it will
    * override setSize() in PApplet/Applet/Component, which will 1) not call
-   * super.setSize(), and 2) will cause the renderer to be resized from the 
-   * event thread (EDT), causing a nasty crash as it collides with the 
+   * super.setSize(), and 2) will cause the renderer to be resized from the
+   * event thread (EDT), causing a nasty crash as it collides with the
    * animation thread.
    */
-  public void setSize(int iwidth, int iheight) {  // ignore    
-    resizeSurface(iwidth, iheight);
-//  }
-
-
-  /**
-   * Called in response to a resize event, handles setting the
-   * new width and height internally, as well as re-allocating
-   * the pixel buffer for the new size.
-   *
-   * Unlike the inherited version of this function from PImage, calling
-   * resize() on a PGraphics will clear its contents. To resize an image
-   * taken from a PGraphics object, first all get(), and resize() that
-   * copy of the image.
-   *
-   * Note that this will nuke any camera settings.
-   */
-//  public void resizeSurface(int iwidth, int iheight) {  // ignore
-    //System.out.println("PGraphics.resize() " + iwidth + " " + iheight);
-
+  public void setSize(int iwidth, int iheight) {  // ignore
     width = iwidth;
     height = iheight;
     width1 = width - 1;
@@ -705,7 +673,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * graphics buffer, meaning that for subclasses like OpenGL, there
    * needs to be a valid graphics context to mess with otherwise
    * you'll get some good crashing action.
-   * 
+   *
    * This is currently called by checkSettings(), during beginDraw().
    */
   protected void defaultSettings() {  // ignore
@@ -1233,7 +1201,7 @@ public abstract class PGraphics extends PImage implements PConstants {
         if (!curve_inited) curve_init();
         splineSegment(splineVertexCount-4,
                       splineVertexCount-3,
-                      curve_draw, dimensions,
+                      curveDrawMatrix, dimensions,
                       curveDetail);
       }
     }
@@ -1722,19 +1690,22 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   public void bezierDetail(int detail) {
-    if (bezierForwardMatrix == null) {
-      bezierForwardMatrix = new float[4][4];
-      bezierDrawMatrix = new float[4][4];
+    if (bezierDrawMatrix == null) {
+      //bezierForwardMatrix = new PMatrix3D();
+      bezierDrawMatrix = new PMatrix3D();
     }
     bezierDetail = detail;
     bezierInited = true;
 
     // setup matrix for forward differencing to speed up drawing
-    setup_spline_forward(detail, bezierForwardMatrix);
+    //setup_spline_forward(detail, bezierForwardMatrix);
+    setup_spline_forward(detail, bezierDrawMatrix);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
-    mult_spline_matrix(bezierForwardMatrix, bezier_basis, bezierDrawMatrix, 4);
+    //mult_spline_matrix(bezierForwardMatrix, bezier_basis, bezierDrawMatrix, 4);
+    //bezierDrawMatrix.set(bezierForwardMatrix);
+    bezierDrawMatrix.apply(bezierBasisMatrix);
   }
 
 
@@ -1801,13 +1772,13 @@ public abstract class PGraphics extends PImage implements PConstants {
 
     float tt = t * t;
     float ttt = t * tt;
-    float m[][] = curve_basis;
+    PMatrix3D cb = curveBasisMatrix;
 
     // not optimized (and probably need not be)
-    return (a * (ttt*m[0][0] + tt*m[1][0] + t*m[2][0] + m[3][0]) +
-            b * (ttt*m[0][1] + tt*m[1][1] + t*m[2][1] + m[3][1]) +
-            c * (ttt*m[0][2] + tt*m[1][2] + t*m[2][2] + m[3][2]) +
-            d * (ttt*m[0][3] + tt*m[1][3] + t*m[2][3] + m[3][3]));
+    return (a * (ttt*cb.m00 + tt*cb.m10 + t*cb.m20 + cb.m30) +
+            b * (ttt*cb.m01 + tt*cb.m11 + t*cb.m21 + cb.m31) +
+            c * (ttt*cb.m02 + tt*cb.m12 + t*cb.m22 + cb.m32) +
+            d * (ttt*cb.m03 + tt*cb.m13 + t*cb.m23 + cb.m33));
   }
 
 
@@ -1821,13 +1792,14 @@ public abstract class PGraphics extends PImage implements PConstants {
 
     float tt3 = t * t * 3;
     float t2 = t * 2;
-    float m[][] = curve_basis;
+    //float m[][] = curve_basis;
+    PMatrix3D cb = curveBasisMatrix;
 
     // not optimized (and probably need not be)
-    return (a * (tt3*m[0][0] + t2*m[1][0] + m[2][0]) +
-            b * (tt3*m[0][1] + t2*m[1][1] + m[2][1]) +
-            c * (tt3*m[0][2] + t2*m[1][2] + m[2][2]) +
-            d * (tt3*m[0][3] + t2*m[1][3] + m[2][3]) );
+    return (a * (tt3*cb.m00 + t2*cb.m10 + cb.m20) +
+            b * (tt3*cb.m01 + t2*cb.m11 + cb.m21) +
+            c * (tt3*cb.m02 + t2*cb.m12 + cb.m22) +
+            d * (tt3*cb.m03 + t2*cb.m13 + cb.m23) );
   }
 
 
@@ -1860,16 +1832,16 @@ public abstract class PGraphics extends PImage implements PConstants {
   protected void curve_mode(int segments, float s) {
     curveDetail = segments;
 
-    if (curve_basis == null) {
-      // allocate these when used, to save startup time
-      curve_basis = new float[4][4];
-      curve_forward = new float[4][4];
-      curve_draw = new float[4][4];
+    if (curveDrawMatrix == null) {
+      // allocate only if/when used to save startup time
+      curveBasisMatrix = new PMatrix3D();
+      //curveForwardMatrix = new PMatrix3D();
+      curveDrawMatrix = new PMatrix3D();
       curve_inited = true;
     }
 
+    /*
     float c[][] = curve_basis;
-
     c[0][0] = s-1;     c[0][1] = s+3;  c[0][2] = -3-s;    c[0][3] = 1-s;
     c[1][0] = 2*(1-s); c[1][1] = -5-s; c[1][2] = 2*(s+2); c[1][3] = s-1;
     c[2][0] = s-1;     c[2][1] = 0;    c[2][2] = 1-s;     c[2][3] = 0;
@@ -1880,23 +1852,45 @@ public abstract class PGraphics extends PImage implements PConstants {
         c[i][j] /= 2f;
       }
     }
-    setup_spline_forward(segments, curve_forward);
+    */
+    
+    /*
+    curveBasisMatrix.set(s-1,      s+3, -3-s,     1-s,
+                         2*(1-s), -5-s,  2*(s+2), s-1,
+                         s-1,      0,    1-s,     0,
+                         0,        2,    0,       0);
+                         */
+
+    curveBasisMatrix.set((s-1)/2f, (s+3)/2f,  (-3-s)/2f, (1-s)/2f,
+                         (1-s),    (-5-s)/2f, (s+2),     (s-1)/2f,
+                         (s-1)/2f, 0,         (1-s)/2f,  0,
+                         0,        1,         0,         0);
+
+    //setup_spline_forward(segments, curveForwardMatrix);
+    setup_spline_forward(segments, curveDrawMatrix);
 
     if (bezierBasisInverse == null) {
-      bezierBasisInverse = bezierBasis.get();
+      bezierBasisInverse = bezierBasisMatrix.get();
       bezierBasisInverse.invert();
+      curveToBezierMatrix = new PMatrix3D();
     }
 
-    // hack here to get PGraphics2 working
+    /*
+    // hack here to get PGraphicsJava2D working
     curveToBezierMatrix = new PMatrix3D(c[0][0], c[0][1], c[0][2], c[0][3],
-                                      c[1][0], c[1][1], c[1][2], c[1][3],
-                                      c[2][0], c[2][1], c[2][2], c[2][3],
-                                      c[3][0], c[3][1], c[3][2], c[3][3]);
+                                        c[1][0], c[1][1], c[1][2], c[1][3],
+                                        c[2][0], c[2][1], c[2][2], c[2][3],
+                                        c[3][0], c[3][1], c[3][2], c[3][3]);
+    */
+    // TODO only needed for PGraphicsJava2D? if so, move it there
+    curveToBezierMatrix.set(curveBasisMatrix);
     curveToBezierMatrix.preApply(bezierBasisInverse);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
-    mult_spline_matrix(curve_forward, curve_basis, curve_draw, 4);
+    //mult_spline_matrix(curve_forward, curve_basis, curve_draw, 4);
+    //curveDrawMatrix.set(curveForwardMatrix);
+    curveDrawMatrix.apply(curveBasisMatrix);
   }
 
 
@@ -1956,21 +1950,28 @@ public abstract class PGraphics extends PImage implements PConstants {
    * expensive cubic equation.
    * @param segments number of curve segments to use when drawing
    */
-  protected void setup_spline_forward(int segments, float fwd[][]) {
+  protected void setup_spline_forward(int segments, PMatrix3D fwd) {
     float f  = 1.0f / segments;
     float ff = f * f;
     float fff = ff * f;
 
+    /*
     fwd[0][0] = 0;     fwd[0][1] = 0;    fwd[0][2] = 0; fwd[0][3] = 1;
     fwd[1][0] = fff;   fwd[1][1] = ff;   fwd[1][2] = f; fwd[1][3] = 0;
     fwd[2][0] = 6*fff; fwd[2][1] = 2*ff; fwd[2][2] = 0; fwd[2][3] = 0;
     fwd[3][0] = 6*fff; fwd[3][1] = 0;    fwd[3][2] = 0; fwd[3][3] = 0;
+    */
+
+    fwd.set(0,     0,    0, 1,
+            fff,   ff,   f, 0,
+            6*fff, 2*ff, 0, 0,
+            6*fff, 0,    0, 0);
   }
 
 
   // internal matrix multiplication routine used by the spline code
   // should these go to 4 instead of 3?
-  //void mult_curve_matrix(float m[4][4], float g[4][3], float mg[4][3]);
+  /*
   protected void mult_spline_matrix(float m[][], float g[][],
                                   float mg[][], int dimensions) {
     for (int i = 0; i < 4; i++) {
@@ -1986,6 +1987,7 @@ public abstract class PGraphics extends PImage implements PConstants {
       }
     }
   }
+  */
 
 
   /**
@@ -1999,7 +2001,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * for catmull-rom curves, the first control point (x2, y2, z2)
    * is the first drawn point, and is accumulated to.
    */
-  protected void splineSegment(int offset, int start, float m[][],
+  protected void splineSegment(int offset, int start, PMatrix3D basis,
                                int dimensions, int segments) {
     float x1 = splineVertices[offset+0][X];
     float x2 = splineVertices[offset+1][X];
@@ -2013,13 +2015,13 @@ public abstract class PGraphics extends PImage implements PConstants {
     float y4 = splineVertices[offset+3][Y];
     float y0 = splineVertices[start][Y];
 
-    float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
-    float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
-    float xplot3 = m[3][0]*x1 + m[3][1]*x2 + m[3][2]*x3 + m[3][3]*x4;
+    float xplot1 = basis.m10*x1 + basis.m11*x2 + basis.m12*x3 + basis.m13*x4;
+    float xplot2 = basis.m20*x1 + basis.m21*x2 + basis.m22*x3 + basis.m23*x4;
+    float xplot3 = basis.m30*x1 + basis.m31*x2 + basis.m32*x3 + basis.m33*x4;
 
-    float yplot1 = m[1][0]*y1 + m[1][1]*y2 + m[1][2]*y3 + m[1][3]*y4;
-    float yplot2 = m[2][0]*y1 + m[2][1]*y2 + m[2][2]*y3 + m[2][3]*y4;
-    float yplot3 = m[3][0]*y1 + m[3][1]*y2 + m[3][2]*y3 + m[3][3]*y4;
+    float yplot1 = basis.m10*y1 + basis.m11*y2 + basis.m12*y3 + basis.m13*y4;
+    float yplot2 = basis.m20*y1 + basis.m21*y2 + basis.m22*y3 + basis.m23*y4;
+    float yplot3 = basis.m30*y1 + basis.m31*y2 + basis.m32*y3 + basis.m33*y4;
 
     // vertex() will reset splineVertexCount, so save it
     int cvertexSaved = splineVertexCount;
@@ -2031,9 +2033,9 @@ public abstract class PGraphics extends PImage implements PConstants {
       float z4 = splineVertices[offset+3][Z];
       float z0 = splineVertices[start][Z];
 
-      float zplot1 = m[1][0]*z1 + m[1][1]*z2 + m[1][2]*z3 + m[1][3]*z4;
-      float zplot2 = m[2][0]*z1 + m[2][1]*z2 + m[2][2]*z3 + m[2][3]*z4;
-      float zplot3 = m[3][0]*z1 + m[3][1]*z2 + m[3][2]*z3 + m[3][3]*z4;
+      float zplot1 = m10*z1 + m11*z2 + m12*z3 + m13*z4;
+      float zplot2 = m20*z1 + m21*z2 + m22*z3 + m23*z4;
+      float zplot3 = m30*z1 + m31*z2 + m32*z3 + m33*z4;
 
       vertex(x0, y0, z0);
       for (int j = 0; j < segments; j++) {
