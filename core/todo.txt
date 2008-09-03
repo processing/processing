@@ -2,7 +2,9 @@
 X remove MACOS9 constant from processing.core.*
 X   because code no longer runs on os9 since dropping 1.1 support
 X specular() with alpha has been removed
-
+X GLDrawableFactory.chooseGraphicsConfiguration() error with OpenGL
+X   http://dev.processing.org/bugs/show_bug.cgi?id=891
+X   http://dev.processing.org/bugs/show_bug.cgi?id=908
 _ remove extra ~ files from core.jar (!)
 
 _ delay() is broken
