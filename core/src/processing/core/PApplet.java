@@ -879,7 +879,7 @@ public class PApplet extends Applet
 //    println("resizeRenderer request for " + iwidth + " " + iheight);
     if (width != iwidth || height != iheight) {
 //      println("  former size was " + width + " " + height);
-      g.resizeSurface(iwidth, iheight);
+      g.setSize(iwidth, iheight);
       width = iwidth;
       height = iheight;
     }
@@ -6147,6 +6147,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * GIF image of the Processing logo.
+   */
   static final byte[] ICON_IMAGE = {
     71, 73, 70, 56, 57, 97, 16, 0, 16, 0, -94, 0, 0, 99, 97, 99, 49, 48,
     49, -100, -98, -100, 99, 97, 49, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0,

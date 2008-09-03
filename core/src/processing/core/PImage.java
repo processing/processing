@@ -1297,7 +1297,7 @@ public class PImage implements PConstants, Cloneable {
    * Resize this image to a new width and height.
    * Use 0 for wide or high to make that dimension scale proportionally.
    */
-  public void resizeSurface(int wide, int high) {  // ignore
+  public void resize(int wide, int high) {  // ignore
     // Make sure that the pixels[] array is valid
     loadPixels();
 
