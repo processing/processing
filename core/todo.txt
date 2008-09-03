@@ -5,8 +5,10 @@ X specular() with alpha has been removed
 X GLDrawableFactory.chooseGraphicsConfiguration() error with OpenGL
 X   http://dev.processing.org/bugs/show_bug.cgi?id=891
 X   http://dev.processing.org/bugs/show_bug.cgi?id=908
-_ remove extra ~ files from core.jar (!)
+X fix problem with unregisterXxxx()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=910
 
+_ remove extra ~ files from core.jar (!)
 _ delay() is broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=894
 

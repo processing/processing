@@ -705,12 +705,14 @@ public class PApplet extends Applet
         methods = new Method[5];
       }
       if (count == objects.length) {
-        Object otemp[] = new Object[count << 1];
-        System.arraycopy(objects, 0, otemp, 0, count);
-        objects = otemp;
-        Method mtemp[] = new Method[count << 1];
-        System.arraycopy(methods, 0, mtemp, 0, count);
-        methods = mtemp;
+        objects = (Object[]) PApplet.expand(objects);
+        methods = (Method[]) PApplet.expand(methods);
+//        Object otemp[] = new Object[count << 1];
+//        System.arraycopy(objects, 0, otemp, 0, count);
+//        objects = otemp;
+//        Method mtemp[] = new Method[count << 1];
+//        System.arraycopy(methods, 0, mtemp, 0, count);
+//        methods = mtemp;
       }
       objects[count] = object;
       methods[count] = method;
@@ -724,21 +726,31 @@ public class PApplet extends Applet
      * Does not shrink array afterwards, silently returns if method not found.
      */
     public void remove(Object object, Method method) {
-      boolean foundMethod = false;
-      for (int i = 0; i < count; i++){
+      int index = findIndex(object, method);
+      if (index != -1) {
+        // shift remaining methods by one to preserve ordering
+        count--;
+        for (int i = index; i < count; i++) {
+          objects[i] = objects[i+1];
+          methods[i] = methods[i+1];
+        }
+        // clean things out for the gc's sake
+        objects[count] = null;
+        methods[count] = null;
+      }
+    }
+  
+    protected int findIndex(Object object, Method method) {
+      for (int i = 0; i < count; i++) {
         if (objects[i] == object && methods[i].equals(method)) {
           //objects[i].equals() might be overridden, so use == for safety
           // since here we do care about actual object identity
           //methods[i]==method is never true even for same method, so must use
           // equals(), this should be safe because of object identity
-          foundMethod = true;
-        }
-        // shift remaining methods by one to preserve ordering
-        if (foundMethod) {
-          objects[i] = objects[i+1];
+          return i;
         }
       }
-      if (foundMethod) count--;
+      return -1;
     }
   }
 
@@ -783,6 +795,10 @@ public class PApplet extends Applet
       Method method = c.getMethod(name, new Class[] {});
       meth.add(o, method);
 
+    } catch (NoSuchMethodException nsme) {
+      die("There is no " + name + "() method in the class " + 
+          o.getClass().getName());
+
     } catch (Exception e) {
       die("Could not register " + name + " + () for " + o, e);
     }
@@ -795,6 +811,10 @@ public class PApplet extends Applet
     try {
       Method method = c.getMethod(name, cargs);
       meth.add(o, method);
+
+    } catch (NoSuchMethodException nsme) {
+      die("There is no " + name + "() method in the class " + 
+          o.getClass().getName());
 
     } catch (Exception e) {
       die("Could not register " + name + " + () for " + o, e);
