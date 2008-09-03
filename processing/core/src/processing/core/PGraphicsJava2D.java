@@ -351,7 +351,7 @@ public class PGraphicsJava2D extends PGraphics2D {
                                  //"LINE_LOOP, LINE_STRIP, and POLYGON shapes");
     }
 
-    if (!curve_inited) curve_init();
+    curveInitCheck();
     vertexCount = 0;
 
     if (splineVertices == null) {
