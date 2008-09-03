@@ -329,7 +329,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  protected boolean curve_inited = false;
+  protected boolean curveInited = false;
   protected int curveDetail = 20;
   // catmull-rom basis matrix, perhaps with optional s parameter
   public float curveTightness = 0;
@@ -1191,14 +1191,14 @@ public abstract class PGraphics extends PImage implements PConstants {
     if (splineVertexCount > 3) {
       if (bezier) {
         if ((splineVertexCount % 4) == 0) {
-          if (!bezierInited) bezierInit();
+          bezierInitCheck();
           splineSegment(splineVertexCount-4,
                         splineVertexCount-4,
                         bezierDrawMatrix, dimensions,
                         bezierDetail);
         }
       } else {  // catmull-rom curve (!bezier)
-        if (!curve_inited) curve_init();
+        curveInitCheck();
         splineSegment(splineVertexCount-4,
                       splineVertexCount-3,
                       curveDrawMatrix, dimensions,
@@ -1684,28 +1684,30 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void bezierInit() {
-    bezierDetail(bezierDetail);
+  protected void bezierInitCheck() {
+    if (!bezierInited) {
+      bezierDetail(bezierDetail);
+    }
   }
 
 
   public void bezierDetail(int detail) {
+    bezierDetail = detail;
+
     if (bezierDrawMatrix == null) {
-      //bezierForwardMatrix = new PMatrix3D();
       bezierDrawMatrix = new PMatrix3D();
     }
-    bezierDetail = detail;
-    bezierInited = true;
 
     // setup matrix for forward differencing to speed up drawing
-    //setup_spline_forward(detail, bezierForwardMatrix);
-    setup_spline_forward(detail, bezierDrawMatrix);
+    splineForward(detail, bezierDrawMatrix);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
     //mult_spline_matrix(bezierForwardMatrix, bezier_basis, bezierDrawMatrix, 4);
     //bezierDrawMatrix.set(bezierForwardMatrix);
     bezierDrawMatrix.apply(bezierBasisMatrix);
+    
+    bezierInited = true;
   }
 
 
@@ -1768,7 +1770,7 @@ public abstract class PGraphics extends PImage implements PConstants {
    * @param t Value between zero and one for how far along the segment
    */
   public float curvePoint(float a, float b, float c, float d, float t) {
-    if (!curve_inited) curve_init();
+    curveInitCheck();
 
     float tt = t * t;
     float ttt = t * tt;
@@ -1786,13 +1788,11 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Calculate the tangent at a t value (0..1) on a Catmull-Rom curve.
    * Code thanks to Dave Bollinger (Bug #715)
    */
-  public float curveTangent(float a, float b, float c, float d,
-                            float t) {
-    if (!curve_inited) curve_init();
+  public float curveTangent(float a, float b, float c, float d, float t) {
+    curveInitCheck();
 
     float tt3 = t * t * 3;
     float t2 = t * 2;
-    //float m[][] = curve_basis;
     PMatrix3D cb = curveBasisMatrix;
 
     // not optimized (and probably need not be)
@@ -1804,17 +1804,19 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   public void curveDetail(int detail) {
-    curve_mode(detail, curveTightness);
+    curveInit(detail, curveTightness);
   }
 
 
   public void curveTightness(float tightness) {
-    curve_mode(curveDetail, tightness);
+    curveInit(curveDetail, tightness);
   }
 
 
-  protected void curve_init() {
-    curve_mode(curveDetail, curveTightness);
+  protected void curveInitCheck() {
+    if (!curveInited) {
+      curveInit(curveDetail, curveTightness);
+    }
   }
 
 
@@ -1829,37 +1831,16 @@ public abstract class PGraphics extends PImage implements PConstants {
    * opimizations in here, but it's probably better to keep the
    * code more readable)
    */
-  protected void curve_mode(int segments, float s) {
+  protected void curveInit(int segments, float s) {
     curveDetail = segments;
+    curveTightness = s;
 
+    // allocate only if/when used to save startup time
     if (curveDrawMatrix == null) {
-      // allocate only if/when used to save startup time
       curveBasisMatrix = new PMatrix3D();
-      //curveForwardMatrix = new PMatrix3D();
       curveDrawMatrix = new PMatrix3D();
-      curve_inited = true;
+      curveInited = true;
     }
-
-    /*
-    float c[][] = curve_basis;
-    c[0][0] = s-1;     c[0][1] = s+3;  c[0][2] = -3-s;    c[0][3] = 1-s;
-    c[1][0] = 2*(1-s); c[1][1] = -5-s; c[1][2] = 2*(s+2); c[1][3] = s-1;
-    c[2][0] = s-1;     c[2][1] = 0;    c[2][2] = 1-s;     c[2][3] = 0;
-    c[3][0] = 0;       c[3][1] = 2;    c[3][2] = 0;       c[3][3] = 0;
-
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) {
-        c[i][j] /= 2f;
-      }
-    }
-    */
-    
-    /*
-    curveBasisMatrix.set(s-1,      s+3, -3-s,     1-s,
-                         2*(1-s), -5-s,  2*(s+2), s-1,
-                         s-1,      0,    1-s,     0,
-                         0,        2,    0,       0);
-                         */
 
     curveBasisMatrix.set((s-1)/2f, (s+3)/2f,  (-3-s)/2f, (1-s)/2f,
                          (1-s),    (-5-s)/2f, (s+2),     (s-1)/2f,
@@ -1867,7 +1848,7 @@ public abstract class PGraphics extends PImage implements PConstants {
                          0,        1,         0,         0);
 
     //setup_spline_forward(segments, curveForwardMatrix);
-    setup_spline_forward(segments, curveDrawMatrix);
+    splineForward(segments, curveDrawMatrix);
 
     if (bezierBasisInverse == null) {
       bezierBasisInverse = bezierBasisMatrix.get();
@@ -1875,21 +1856,14 @@ public abstract class PGraphics extends PImage implements PConstants {
       curveToBezierMatrix = new PMatrix3D();
     }
 
-    /*
-    // hack here to get PGraphicsJava2D working
-    curveToBezierMatrix = new PMatrix3D(c[0][0], c[0][1], c[0][2], c[0][3],
-                                        c[1][0], c[1][1], c[1][2], c[1][3],
-                                        c[2][0], c[2][1], c[2][2], c[2][3],
-                                        c[3][0], c[3][1], c[3][2], c[3][3]);
-    */
     // TODO only needed for PGraphicsJava2D? if so, move it there
+    // actually, it's generally useful for other renderers, so keep it
+    // or hide the implementation elsewhere.
     curveToBezierMatrix.set(curveBasisMatrix);
     curveToBezierMatrix.preApply(bezierBasisInverse);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
-    //mult_spline_matrix(curve_forward, curve_basis, curve_draw, 4);
-    //curveDrawMatrix.set(curveForwardMatrix);
     curveDrawMatrix.apply(curveBasisMatrix);
   }
 
@@ -1914,7 +1888,7 @@ public abstract class PGraphics extends PImage implements PConstants {
                     float x2, float y2,
                     float x3, float y3,
                     float x4, float y4) {
-    beginShape(); //LINE_STRIP);
+    beginShape();
     curveVertex(x1, y1);
     curveVertex(x2, y2);
     curveVertex(x3, y3);
@@ -1927,7 +1901,7 @@ public abstract class PGraphics extends PImage implements PConstants {
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    beginShape(); //LINE_STRIP);
+    beginShape();
     curveVertex(x1, y1, z1);
     curveVertex(x2, y2, z2);
     curveVertex(x3, y3, z3);
@@ -1949,45 +1923,18 @@ public abstract class PGraphics extends PImage implements PConstants {
    * vertex of the segment, rather than running the mathematically
    * expensive cubic equation.
    * @param segments number of curve segments to use when drawing
+   * @param fwd target object for the new matrix 
    */
-  protected void setup_spline_forward(int segments, PMatrix3D fwd) {
+  protected void splineForward(int segments, PMatrix3D fwd) {
     float f  = 1.0f / segments;
     float ff = f * f;
     float fff = ff * f;
-
-    /*
-    fwd[0][0] = 0;     fwd[0][1] = 0;    fwd[0][2] = 0; fwd[0][3] = 1;
-    fwd[1][0] = fff;   fwd[1][1] = ff;   fwd[1][2] = f; fwd[1][3] = 0;
-    fwd[2][0] = 6*fff; fwd[2][1] = 2*ff; fwd[2][2] = 0; fwd[2][3] = 0;
-    fwd[3][0] = 6*fff; fwd[3][1] = 0;    fwd[3][2] = 0; fwd[3][3] = 0;
-    */
 
     fwd.set(0,     0,    0, 1,
             fff,   ff,   f, 0,
             6*fff, 2*ff, 0, 0,
             6*fff, 0,    0, 0);
   }
-
-
-  // internal matrix multiplication routine used by the spline code
-  // should these go to 4 instead of 3?
-  /*
-  protected void mult_spline_matrix(float m[][], float g[][],
-                                  float mg[][], int dimensions) {
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < dimensions; j++) {
-        mg[i][j] = 0;
-      }
-    }
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < dimensions; j++) {
-        for (int k = 0; k < 4; k++) {
-          mg[i][j] = mg[i][j] + (m[i][k] * g[k][j]);
-        }
-      }
-    }
-  }
-  */
 
 
   /**
@@ -2054,92 +2001,6 @@ public abstract class PGraphics extends PImage implements PConstants {
     }
     splineVertexCount = cvertexSaved;
   }
-
-
-  /*
-  protected void spline2_segment(int offset, int start,
-                                 float m[][], int segments) {
-    float x1 = splineVertices[offset][MX];
-    float y1 = splineVertices[offset][MY];
-
-    float x2 = splineVertices[offset+1][MX];
-    float y2 = splineVertices[offset+1][MY];
-
-    float x3 = splineVertices[offset+2][MX];
-    float y3 = splineVertices[offset+2][MY];
-
-    float x4 = splineVertices[offset+3][MX];
-    float y4 = splineVertices[offset+3][MY];
-
-    float x0 = splineVertices[start][MX];
-    float y0 = splineVertices[start][MY];
-
-    float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
-    float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
-    float xplot3 = m[3][0]*x1 + m[3][1]*x2 + m[3][2]*x3 + m[3][3]*x4;
-
-    float yplot1 = m[1][0]*y1 + m[1][1]*y2 + m[1][2]*y3 + m[1][3]*y4;
-    float yplot2 = m[2][0]*y1 + m[2][1]*y2 + m[2][2]*y3 + m[2][3]*y4;
-    float yplot3 = m[3][0]*y1 + m[3][1]*y2 + m[3][2]*y3 + m[3][3]*y4;
-
-    // vertex() will reset splineVertexCount, so save it
-    int splineVertexSaved = splineVertexCount;
-    vertex(x0, y0);
-    for (int j = 0; j < segments; j++) {
-      x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
-      y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
-      vertex(x0, y0);
-    }
-    splineVertexCount = splineVertexSaved;
-  }
-
-
-  protected void spline3_segment(int offset, int start,
-                                 float m[][], int segments) {
-    float x1 = splineVertices[offset+0][MX];
-    float y1 = splineVertices[offset+0][MY];
-    float z1 = splineVertices[offset+0][MZ];
-
-    float x2 = splineVertices[offset+1][MX];
-    float y2 = splineVertices[offset+1][MY];
-    float z2 = splineVertices[offset+1][MZ];
-
-    float x3 = splineVertices[offset+2][MX];
-    float y3 = splineVertices[offset+2][MY];
-    float z3 = splineVertices[offset+2][MZ];
-
-    float x4 = splineVertices[offset+3][MX];
-    float y4 = splineVertices[offset+3][MY];
-    float z4 = splineVertices[offset+3][MZ];
-
-    float x0 = splineVertices[start][MX];
-    float y0 = splineVertices[start][MY];
-    float z0 = splineVertices[start][MZ];
-
-    float xplot1 = m[1][0]*x1 + m[1][1]*x2 + m[1][2]*x3 + m[1][3]*x4;
-    float xplot2 = m[2][0]*x1 + m[2][1]*x2 + m[2][2]*x3 + m[2][3]*x4;
-    float xplot3 = m[3][0]*x1 + m[3][1]*x2 + m[3][2]*x3 + m[3][3]*x4;
-
-    float yplot1 = m[1][0]*y1 + m[1][1]*y2 + m[1][2]*y3 + m[1][3]*y4;
-    float yplot2 = m[2][0]*y1 + m[2][1]*y2 + m[2][2]*y3 + m[2][3]*y4;
-    float yplot3 = m[3][0]*y1 + m[3][1]*y2 + m[3][2]*y3 + m[3][3]*y4;
-
-    float zplot1 = m[1][0]*z1 + m[1][1]*z2 + m[1][2]*z3 + m[1][3]*z4;
-    float zplot2 = m[2][0]*z1 + m[2][1]*z2 + m[2][2]*z3 + m[2][3]*z4;
-    float zplot3 = m[3][0]*z1 + m[3][1]*z2 + m[3][2]*z3 + m[3][3]*z4;
-
-    // vertex() will reset splineVertexCount, so save it
-    int cvertexSaved = splineVertexCount;
-    vertex(x0, y0, z0);
-    for (int j = 0; j < segments; j++) {
-      x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
-      y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
-      z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
-      vertex(x0, y0, z0);
-    }
-    splineVertexCount = cvertexSaved;
-  }
-  */
 
 
 
