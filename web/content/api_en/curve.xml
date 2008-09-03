@@ -11,6 +11,7 @@
 <example>
 <image>curve_.gif</image>
 <code>
+noFill();
 stroke(255, 102, 0);
 curve(5, 26, 5, 26, 73, 24, 73, 61);
 stroke(0); 
