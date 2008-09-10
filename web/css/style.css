@@ -45,6 +45,7 @@ a:link:visited {
 	color: #3399CC;
 }
 
+
 /* ================ LAYOUT ================== */
 
 #container {
@@ -196,6 +197,12 @@ p { font-size			: 1em; 		}
 pre {  
 	font-family			: "Courier New", Courier, monospace; 
 	font-size			: 11px; 
+	line-height			: normal; color: #000000;
+}
+
+tt {  
+	font-family			: "Courier New", Courier, monospace; 
+	font-size			: 0.7em; 
 	line-height			: normal; color: #000000;
 }
 
