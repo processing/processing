@@ -36,7 +36,9 @@ Processing consists of:</p>
 
 
     <p>The Processing equivalent of a &quot;Hello World&quot; program is simply to draw a line:
-    <pre>     line(15, 25, 70, 90);</pre>    
+    <br />
+    <pre>     line(15, 25, 70, 90);</pre> 
+    <br />   
 Enter this example and press the Run button, which is an icon that looks like the Play button from any audio or video device. Your code will appear in a new window, with a gray background and a black line from coordinate (15, 25) to (70, 90). The (0, 0) coordinate is the upper left-hand corner of the display window. Building on this program to change the size of the display window and set the background color, type in the code below.<br />
     <br />
 <pre>     size(400, 400);
@@ -45,6 +47,7 @@ Enter this example and press the Run button, which is an icon that looks like th
      line(150, 25, 270, 350);</pre>
       <br />
       This version sets the window size to 400 x 400 pixels, sets the background to an orange-red, and draws the line in white, by setting the stroke color to 255. By default, colors are specified in the range 0 to 255. Other variations of the parameters to the <tt>stroke()</tt> function provide alternate results:<br />
+<br />
 <pre>     stroke(255);               // sets the stroke color to white
      stroke(255, 255, 255);     // identical to the line above
      stroke(255, 128, 0);       // bright orange (red 255, green 128, blue 0)
@@ -54,7 +57,7 @@ Enter this example and press the Run button, which is an icon that looks like th
 The same alternatives work for the <tt>fill()</tt> function, which sets the fill color, and the <tt>background()</tt> function, which clears the display window. Like all Processing functions that affect drawing properties, the fill and stroke colors affect all geometry drawn to the screen until the next fill and stroke functions.
 <br />
 <br />
-<table width="100%" border="0" cellpadding="20" bgcolor="#CCCCCC">
+<table width="100%" border="0" cellpadding="20" bgcolor="#DDDDDD">
   <tr><td><strong>External editor</strong><br />
   <br />It's also possible to use the editor of your choice instead of the built-in editor. Simply select &ldquo;Use External Editor&rdquo; in the Preferences window (Processing &rarr; Preferences on Mac OS X, or File &rarr; Preferences on Windows and Linux). When using an external editor, editing will be disabled in the PDE, but the text will reload whenever you press Run.</td></tr></table></p>
 
@@ -177,7 +180,7 @@ Each of the renderers has its own specific role. P2D and P3D are great for pixel
       
       
       <p>One of the unique aspects of the Processing API is the way files are handled. The <tt>loadImage()</tt> and <tt>loadStrings()</tt> functions each expect to find a file inside a folder named data, which is a subdirectory of the sketch folder. <br />
-<table width="100%" border="0" cellpadding="20" bgcolor="#CCCCCC">
+<table width="100%" border="0" cellpadding="20" bgcolor="#DDDDDD">
   <tr><td><strong>The <em>data</em> Folder</strong><br />
               <br />
           The <em>data</em> folder addresses a common frustration when dealing with code that is tested locally but deployed over the web. Like Java, software written with Processing is subject to security restrictions that determine how a program can access resources such as the local hard disk or other servers via the Internet. This prevents malicious developers from writing code that could harm your computer or compromise your data.<br />
