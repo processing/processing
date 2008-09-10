@@ -108,7 +108,7 @@ function navigation($section = '')
 
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
-    $learn = array('Learning', 'Overview', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
+    $learn = array('Learning', 'Overview', 'Getting Started', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
     #$exhib = array('Exhibition', 'Index', 'Collection', 'Network Links', 'Features');    
     $exhib = array('Exhibition', 'Index', 'Collection', 'Network Links');    
 
