@@ -22,7 +22,7 @@ Processing consists of:</p>
   
     <br />For this reason, references to &ldquo;Processing&rdquo; can be somewhat ambiguous. Are we talking about the API, the development environment, or the web site? We'll be careful in this text when referring to each.  </p>
 	
-<p><strong>Sketching with Processing</strong></p>
+<h5><strong>Sketching with Processing</strong></h5>
 	
     <p>A Processing program is called a <em>sketch</em>. The idea is to make Java-style programming feel more like scripting, and adopt the process of scripting to quickly write code. Sketches are stored in the <em>sketchbook</em>, a folder that's used as the default location for saving all of your projects. When you first run Processing, the sketch last used will automatically open. If this is the first time Processing is used (or if the sketch is no longer available), a new sketch will open.<br />
       <br />      
@@ -30,7 +30,9 @@ Processing consists of:</p>
       <br />
       Advanced programmers need not use the PDE, and may instead choose to use its libraries with the Java environment of choice. This is covered toward the end of the book. However, if you're just getting started, it's recommended that you use the PDE for your first few projects to gain familiarity with the way things are done. While Processing is based on Java, it was never meant to be a Java IDE with training wheels. To better address our target audience, the conceptual model (how programs work, how interfaces are built, and how files are handled) is somewhat different from Java. <br />
 </p>
-    <p><strong>Hello World</strong></p>
+
+
+<h5><strong>Hello World</strong></h5>
     <p>The Processing equivalent of a &quot;Hello World&quot; program is simply to draw a line:
     <pre>     line(15, 25, 70, 90);</pre>    
 Enter this example and press the Run button, which is an icon that looks like the Play button from any audio or video device. Your code will appear in a new window, with a gray background and a black line from coordinate (15, 25) to (70, 90). The (0, 0) coordinate is the upper left-hand corner of the display window. Building on this program to change the size of the display window and set the background color, type in the code below.<br />
@@ -130,7 +132,6 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
       </p>
 		<p>The <tt>size()</tt> function also sets the global variables width and height. For objects whose size is dependent on the screen, always use the width and height variables instead of a number. This prevents problems when the size() line is altered.
 		<pre>     size(400, 400);
-
 
      // The wrong way to specify the middle of the screen
      ellipse(200, 200, 50, 50); </p>
