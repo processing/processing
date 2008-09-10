@@ -166,7 +166,7 @@ function navigation($section = '')
         $html .= "\t\t\t\t" . '<div class="navBar learning" id="subNav">' . "\n";
 		
         $html .= "\t\t\t\t\t" . l('Overview', $section == 'Overview') . " \\\n";
-        $html .= "\t\t\t\t\t" . l('Getting Started', $section == 'Getting Started') . " \n";
+        $html .= "\t\t\t\t\t" . l('Getting Started', $section == 'Getting Started') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . " \\\n";
 		$html .= "\t\t\t\t\t" . l('3D & OpenGL', $section == '3D & OpenGL') . " \\\n";
