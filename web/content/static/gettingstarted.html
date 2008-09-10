@@ -42,14 +42,14 @@ Enter this example and press the Run button, which is an icon that looks like th
      stroke(255);
      line(150, 25, 270, 350);</pre>
       <br />
-      This version sets the window size to 400 x 400 pixels, sets the background to an orange-red, and draws the line in white, by setting the stroke color to 255. By default, colors are specified in the range 0 to 255. Other variations of the parameters to the <tt>stroke()</tt> function provide alternate results:<br />
+      This version sets the window size to 400 x 400 pixels, sets the background to an orange-red, and draws the line in white, by setting the stroke color to 255. By default, colors are specified in the range 0 to 255. Other variations of the parameters to the <pre>stroke()</pre> function provide alternate results:<br />
 <pre>     stroke(255);               // sets the stroke color to white
      stroke(255, 255, 255);     // identical to the line above
      stroke(255, 128, 0);       // bright orange (red 255, green 128, blue 0)
      stroke(#FF8000);           // bright orange as a web color
      stroke(255, 128, 0, 128);  // bright orange with 50% transparency</pre>
 	  <br />
-The same alternatives work for the <tt>fill()</tt> function, which sets the fill color, and the <tt>background()</tt> function, which clears the display window. Like all Processing functions that affect drawing properties, the fill and stroke colors affect all geometry drawn to the screen until the next fill and stroke functions.
+The same alternatives work for the <pre>fill()</pre> function, which sets the fill color, and the <pre>background()</pre> function, which clears the display window. Like all Processing functions that affect drawing properties, the fill and stroke colors affect all geometry drawn to the screen until the next fill and stroke functions.
 <br />
 <br />
 <table width="100%" border="0" cellpadding="20" bgcolor="#CCCCCC">
@@ -57,7 +57,7 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
 	  <p><strong><br />
       Hello Mouse<br />
       </strong></p>
-	  <p>A program written as a list of statements (like the previous examples) is called a <em>static</em> mode sketch. In static mode, a series of functions are used to perform tasks or create a single image without any animation or interaction. Interactive programs are drawn as a series of frames, which you can create by adding functions titled <tt>setup()</tt> and <tt>draw()</tt> as shown in the code below. These are built-in functions that are called automatically.</p>
+	  <p>A program written as a list of statements (like the previous examples) is called a <em>static</em> mode sketch. In static mode, a series of functions are used to perform tasks or create a single image without any animation or interaction. Interactive programs are drawn as a series of frames, which you can create by adding functions titled <pre>setup()</pre> and <pre>draw()</pre> as shown in the code below. These are built-in functions that are called automatically.</p>
 	  <pre>     void setup() {
        size(400, 400);
        stroke(255);
@@ -68,9 +68,9 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
        line(150, 25, mouseX, mouseY);
      }</pre>
 		<br />
- The <tt>setup()</tt> block runs once, and the <tt>draw()</tt> block runs repeatedly. As such, <tt>setup()</tt> can be used for any initialization; in this case, setting the screen size, making the background orange, and setting the stroke color to white. The <tt>draw()</tt> block is used to handle animation. The <tt>size()</tt> function must always be the first line inside setup().<br />
+ The <pre>setup()</pre> block runs once, and the <pre>draw()</pre> block runs repeatedly. As such, <pre>setup()</pre> can be used for any initialization; in this case, setting the screen size, making the background orange, and setting the stroke color to white. The <pre>draw()</pre> block is used to handle animation. The <pre>size()</pre> function must always be the first line inside setup().<br />
  <br />
-        Because the <tt>background()</tt> function is used only once, the screen will fill with lines as the mouse is moved. To draw just a single line that follows the mouse, move the <tt>background()</tt> function to the <tt>draw()</tt> function, which will clear the display window (filling it with orange) each time <tt>draw()</tt> runs.<br />
+        Because the <pre>background()</pre> function is used only once, the screen will fill with lines as the mouse is moved. To draw just a single line that follows the mouse, move the <pre>background()</pre> function to the <pre>draw()</pre> function, which will clear the display window (filling it with orange) each time <pre>draw()</pre> runs.<br />
 <pre>     void setup() {
        size(400, 400);
        stroke(255);
@@ -82,7 +82,7 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
      }</pre>
 		<p><br />
         Static mode programs are most commonly used for extremely simple examples, or for scripts that run in a linear fashion and then exit. For instance, a static mode program might start, draw a page to a PDF file, and exit.      </p>
-		<p>Most programs will employ active mode, which use the <tt>setup()</tt> and <tt>draw()</tt> blocks. More advanced mouse handling can also be introduced; for instance, the mousePressed() function will be called whenever the mouse is pressed. So in the following example, when the mouse is pressed, the screen is cleared via the background() function:
+		<p>Most programs will employ active mode, which use the <pre>setup()</pre> and <pre>draw()</pre> blocks. More advanced mouse handling can also be introduced; for instance, the mousePressed() function will be called whenever the mouse is pressed. So in the following example, when the mouse is pressed, the screen is cleared via the background() function:
 		<pre>     void setup() {
        size(400, 400);
 	    stroke(255);
@@ -111,12 +111,12 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
       </p>
 		<p><strong>Saving Your Work<br />
 	    </strong></p>
-		<p>If you don't want to distribute the actual project, you might want to create images of its output instead. Images are saved with the <tt>saveFrame()</tt> function. Adding <tt>saveFrame()</tt> at the end of draw() will produce a numbered sequence of TIFF-format images of the program's output, named <em>screen-0001.tif</em>, <em>screen-0002.tif</em>, and so on. A new file will be saved each time <tt>draw()</tt> runs&mdash;watch out, this can quickly fill your sketch folder with hundreds of files. You can also specify your own name and file type for the file to be saved with a function like:
+		<p>If you don't want to distribute the actual project, you might want to create images of its output instead. Images are saved with the <pre>saveFrame()</pre> function. Adding <pre>saveFrame()</pre> at the end of draw() will produce a numbered sequence of TIFF-format images of the program's output, named <em>screen-0001.tif</em>, <em>screen-0002.tif</em>, and so on. A new file will be saved each time <pre>draw()</pre> runs&mdash;watch out, this can quickly fill your sketch folder with hundreds of files. You can also specify your own name and file type for the file to be saved with a function like:
 		<pre>     saveFrame(&quot;output.png&quot;)</pre>
           To do the same for a numbered sequence, use # (hash marks) where the numbers should be placed:<br />
           <br />
           <pre>     saveFrame(&quot;output-####.png&quot;);</pre>
-          For high quality output, you can write geometry to PDF files instead of the screen, as described in the later section about the <tt>size()</tt> function.<br />
+          For high quality output, you can write geometry to PDF files instead of the screen, as described in the later section about the <pre>size()</pre> function.<br />
       </p>
 		<p><strong>Examples and Reference<br />
         </strong></p>
@@ -124,13 +124,13 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
 		  <br />
 		  The examples can be accessed from the File &rarr; Examples menu. They're grouped into categories based on their function (such as Motion, Typography, and Image) or the libraries they use (PDF, Network, and Video). <br />
           <br />
-          Find an interesting topic in the list and try an example. You'll see functions that are familiar, e.g. <tt>stroke()</tt>, <tt>line()</tt>, and <tt>background()</tt>, as well as others that have not yet been covered. To see how a function works, select its name, and then right-click and choose Find in Reference from the pop-up menu (Find in Reference can also be found beneath the Help menu). This will open the reference for that function in your default web browser.<br />
+          Find an interesting topic in the list and try an example. You'll see functions that are familiar, e.g. <pre>stroke()</pre>, <pre>line()</pre>, and <pre>background()</pre>, as well as others that have not yet been covered. To see how a function works, select its name, and then right-click and choose Find in Reference from the pop-up menu (Find in Reference can also be found beneath the Help menu). This will open the reference for that function in your default web browser.<br />
           <br />
           In addition to a description of the function's syntax, each reference page includes an example that uses the function. The reference examples are much shorter (usually four or five lines apiece) and easier to follow than the longer code examples. <br />
       </p>
-		<p><strong>More about <tt>size()</tt></strong><br />
+		<p><strong>More about <pre>size()</pre></strong><br />
       </p>
-		<p>The <tt>size()</tt> function also sets the global variables width and height. For objects whose size is dependent on the screen, always use the width and height variables instead of a number. This prevents problems when the size() line is altered.
+		<p>The <pre>size()</pre> function also sets the global variables width and height. For objects whose size is dependent on the screen, always use the width and height variables instead of a number. This prevents problems when the size() line is altered.
 		<pre>     size(400, 400);
 
      // The wrong way to specify the middle of the screen
@@ -139,7 +139,7 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
      // Always the middle, no matter how the size() line changes
      ellipse(width/2, height/2, 50, 50);</pre>
         <br />
-        In the earlier examples, the <tt>size()</tt> function specified only a width and height for the window to be created. An optional parameter to the <tt>size()</tt> function specifies how graphics are rendered. A renderer handles how the Processing API is implemented for a particular output function (whether the screen, or a screen driven by a high-end graphics card, or a PDF file). Several renderers are included with Processing, each having a unique function. At the risk of getting too far into the specifics, here's a description of the possible drawing modes to use with Processing. <br />
+        In the earlier examples, the <pre>size()</pre> function specified only a width and height for the window to be created. An optional parameter to the <pre>size()</pre> function specifies how graphics are rendered. A renderer handles how the Processing API is implemented for a particular output function (whether the screen, or a screen driven by a high-end graphics card, or a PDF file). Several renderers are included with Processing, each having a unique function. At the risk of getting too far into the specifics, here's a description of the possible drawing modes to use with Processing. <br />
         <br />
 <pre>     size(400, 400, JAVA2D);</pre>
         The Java2D renderer is used by default, so this statement is identical to size(400, 400). The Java2D renderer does an excellent job with high-quality 2D vector graphics, but at the expense of speed. In particular, working with pixels is slower compared to the P2D and P3D renderers.<br />
@@ -151,7 +151,7 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
         Similar to P2D, the Processing 3D renderer is intended for speed and pixel operations. It also produces 3D graphics inside a web browser, even without the use of a library like Java3D. Image quality is poorer (the smooth() function is disabled, and image accuracy is low) but you can draw thousands of triangles very quickly. <br />
         <br />
 <pre>     size(400, 400, OPENGL);</pre>
-        The OpenGL renderer uses Sun's JOGL (Java for OpenGL) library for faster rendering, while using Processing's simpler graphics APIs and the Processing development environment's easy applet and application export. To use OpenGL graphics, in addition to altering your <tt>size()</tt> function, you must select Import Library, then OpenGL from the Sketch menu. OpenGL applets also run within a web browser without additional modification, but a dialog box will appear asking the user whether they trust &ldquo;Sun Microsystems, Inc.&rdquo; to run Java for OpenGL on their computer. If this poses a problem, the P3D renderer is a simpler, if less full-featured, solution.<br />
+        The OpenGL renderer uses Sun's JOGL (Java for OpenGL) library for faster rendering, while using Processing's simpler graphics APIs and the Processing development environment's easy applet and application export. To use OpenGL graphics, in addition to altering your <pre>size()</pre> function, you must select Import Library, then OpenGL from the Sketch menu. OpenGL applets also run within a web browser without additional modification, but a dialog box will appear asking the user whether they trust &ldquo;Sun Microsystems, Inc.&rdquo; to run Java for OpenGL on their computer. If this poses a problem, the P3D renderer is a simpler, if less full-featured, solution.<br />
         <br />
 <pre>     size(400, 400, PDF, &quot;output.pdf&quot;);</pre>
         The PDF renderer draws all geometry to a file instead of the screen. Like the OpenGL library, you must import the PDF library before using it. This is a cousin of the Java2D renderer, but instead writes directly to PDF files. <br />
@@ -160,22 +160,22 @@ Each of the renderers has its own specific role. P2D and P3D are great for pixel
       </p>
       <p><strong>Loading and displaying data<br />
       </strong></p>
-      <p>One of the unique aspects of the Processing API is the way files are handled. The <tt>loadImage()</tt> and <tt>loadStrings()</tt> functions each expect to find a file inside a folder named data, which is a subdirectory of the sketch folder. <br />
+      <p>One of the unique aspects of the Processing API is the way files are handled. The <pre>loadImage()</pre> and <pre>loadStrings()</pre> functions each expect to find a file inside a folder named data, which is a subdirectory of the sketch folder. <br />
 <table width="100%" border="0" cellpadding="20" bgcolor="#CCCCCC">
   <tr><td><strong>The <em>data</em> Folder</strong><br />
               <br />
           The <em>data</em> folder addresses a common frustration when dealing with code that is tested locally but deployed over the web. Like Java, software written with Processing is subject to security restrictions that determine how a program can access resources such as the local hard disk or other servers via the Internet. This prevents malicious developers from writing code that could harm your computer or compromise your data.<br />
         <br />
-        The security restrictions can be tricky to work with during development. When running a program locally, data can be read directly from the disk, though it must be placed relative to the user's &ldquo;working directory,&rdquo; generally the location of the application. When running online, data must come from a location on the same server. It might be bundled with the code itself (in a JAR archive, discussed later; or from another URL on the same server). For a local file, Java's <tt>FileInputStream</tt> class can be used. If the file is bundled in a JAR archive, the <tt>getResource()</tt> function is used. For a file on the server, <tt>URL.openStream()</tt> might be employed. During the journey from development to deployment, it may be necessary to use all three of these functions.<br />
+        The security restrictions can be tricky to work with during development. When running a program locally, data can be read directly from the disk, though it must be placed relative to the user's &ldquo;working directory,&rdquo; generally the location of the application. When running online, data must come from a location on the same server. It might be bundled with the code itself (in a JAR archive, discussed later; or from another URL on the same server). For a local file, Java's <pre>FileInputStream</pre> class can be used. If the file is bundled in a JAR archive, the <pre>getResource()</pre> function is used. For a file on the server, <pre>URL.openStream()</pre> might be employed. During the journey from development to deployment, it may be necessary to use all three of these functions.<br />
         <br />
       With Processing, each of these scenarios (and some others) is handled  transparently by the file API functions. By placing resources in the data folder, Processing packages the files as necessary for online and offline use.</td>
         </tr></table><br />
 <br />
-        File handling functions include <tt>loadStrings()</tt>, which reads a text file into an array of String objects, and <tt>loadImage()</tt> which reads an image into a PImage object, the container for image data in Processing. <br />
+        File handling functions include <pre>loadStrings()</pre>, which reads a text file into an array of String objects, and <pre>loadImage()</pre> which reads an image into a PImage object, the container for image data in Processing. <br />
 <pre>     // Examples of loading a text file and a JPEG image<br />     // from the data folder of a sketch.<br />     String[] lines = loadStrings(&quot;something.txt&quot;);<br />     PImage image = loadImage(&quot;picture.jpg&quot;);</pre>
-        These examples may be a bit easier to read if you know the programming concepts of data types and classes. Each variable has to have a data type, such as <tt>String</tt> or <tt>PImage</tt>.<br />
+        These examples may be a bit easier to read if you know the programming concepts of data types and classes. Each variable has to have a data type, such as <pre>String</pre> or <pre>PImage</pre>.<br />
         <br />
-The <tt>String[]</tt> syntax means &ldquo;an array of data of the class <tt>String</tt>.&rdquo; This array is created by the <tt>loadStrings</tt> function and is given the name lines; it will presumably be used later in the program under this name. The reason <tt>loadStrings</tt> creates an array is that it splits the <em>something.txt</em> file into its individual lines. The following function creates a single variable of class <tt>PImage</tt>, with the name image.<br />
+The <pre>String[]</pre> syntax means &ldquo;an array of data of the class <pre>String</pre>.&rdquo; This array is created by the <pre>loadStrings</pre> function and is given the name lines; it will presumably be used later in the program under this name. The reason <pre>loadStrings</pre> creates an array is that it splits the <em>something.txt</em> file into its individual lines. The following function creates a single variable of class <pre>PImage</pre>, with the name image.<br />
         <br />
 To add a file to a Processing sketch, use the Sketch &rarr; Add File menu option, or drag the file into the editor window of the PDE. The data folder will be created if it does not exist already. <br />
 <br />
@@ -193,7 +193,7 @@ To add a file to a Processing sketch, use the Sketch &rarr; Add File menu option
         <br />
         To use the XML library in a project, choose Sketch &rarr; Import Library &rarr; xml. This will add the following line to the top of the sketch:
       <pre>     import processing.xml.*;</pre>
-      Java programmers will recognize the <tt>import</tt> command. In Processing, this line is also used to determine what code is packaged with a sketch when it is exported as an applet or application.<br />
+      Java programmers will recognize the <pre>import</pre> command. In Processing, this line is also used to determine what code is packaged with a sketch when it is exported as an applet or application.<br />
         <br />
         Now that the XML library is imported, you can issue commands from it. For instance, the following line loads an XML file named sites.xml into a variable named xml.<br />
         <br />
@@ -202,7 +202,7 @@ To add a file to a Processing sketch, use the Sketch &rarr; Add File menu option
         <br />
         <em>http://processing.org/reference/libraries/xml/XMLElement.html</em><br />
         <br />
-        The <tt>this</tt> variable is used frequently with library objects, because it lets the library make use of the core API functions to draw to the screen or load files. The latter case applies to the XML library, allowing XML files to be read from the data folder or other locations supported by the file API functions.<br />
+        The <pre>this</pre> variable is used frequently with library objects, because it lets the library make use of the core API functions to draw to the screen or load files. The latter case applies to the XML library, allowing XML files to be read from the data folder or other locations supported by the file API functions.<br />
         <br />
         Other libraries provide features such as writing QuickTime movie files, sending and receiving MIDI commands, sophisticated 3D camera control, or access to MySQL databases.<br />
       </p>
