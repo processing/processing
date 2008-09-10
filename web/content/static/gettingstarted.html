@@ -65,7 +65,8 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
 	  <h5>Hello Mouse</h5>
 
       
-	  <p>A program written as a list of statements (like the previous examples) is called a <em>static</em> mode sketch. In static mode, a series of functions are used to perform tasks or create a single image without any animation or interaction. Interactive programs are drawn as a series of frames, which you can create by adding functions titled <tt>setup()</tt> and <tt>draw()</tt> as shown in the code below. These are built-in functions that are called automatically.</p>
+	  <p>A program written as a list of statements (like the previous examples) is called a <em>static</em> mode sketch. In static mode, a series of functions are used to perform tasks or create a single image without any animation or interaction. Interactive programs are drawn as a series of frames, which you can create by adding functions titled <tt>setup()</tt> and <tt>draw()</tt> as shown in the code below. These are built-in functions that are called automatically.<br />
+<br />
 	  <pre>     void setup() {
        size(400, 400);
        stroke(255);
@@ -79,6 +80,7 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
  The <tt>setup()</tt> block runs once, and the <tt>draw()</tt> block runs repeatedly. As such, <tt>setup()</tt> can be used for any initialization; in this case, setting the screen size, making the background orange, and setting the stroke color to white. The <tt>draw()</tt> block is used to handle animation. The <tt>size()</tt> function must always be the first line inside setup().<br />
  <br />
         Because the <tt>background()</tt> function is used only once, the screen will fill with lines as the mouse is moved. To draw just a single line that follows the mouse, move the <tt>background()</tt> function to the <tt>draw()</tt> function, which will clear the display window (filling it with orange) each time <tt>draw()</tt> runs.<br />
+<br />
 <pre>     void setup() {
        size(400, 400);
        stroke(255);
@@ -88,9 +90,11 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
        background(192, 64, 0);
        line(150, 25, mouseX, mouseY);
      }</pre>
-		<p><br />
-        Static mode programs are most commonly used for extremely simple examples, or for scripts that run in a linear fashion and then exit. For instance, a static mode program might start, draw a page to a PDF file, and exit.      </p>
-		<p>Most programs will employ active mode, which use the <tt>setup()</tt> and <tt>draw()</tt> blocks. More advanced mouse handling can also be introduced; for instance, the mousePressed() function will be called whenever the mouse is pressed. So in the following example, when the mouse is pressed, the screen is cleared via the background() function:
+		<br />
+        Static mode programs are most commonly used for extremely simple examples, or for scripts that run in a linear fashion and then exit. For instance, a static mode program might start, draw a page to a PDF file, and exit.<br />
+        <br />
+Most programs will employ active mode, which use the <tt>setup()</tt> and <tt>draw()</tt> blocks. More advanced mouse handling can also be introduced; for instance, the mousePressed() function will be called whenever the mouse is pressed. So in the following example, when the mouse is pressed, the screen is cleared via the background() function:<br />
+<br />
 		<pre>     void setup() {
        size(400, 400);
 	    stroke(255);
@@ -103,8 +107,8 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
      void mousePressed() {
        background(192, 64, 0);
      }</pre>
-		<p><br />
-		  More about static versus active mode programs can be found in the Programming Modes section of the reference, which can be viewed from Help &rarr; Getting Started, or online:<br />
+<br />
+More about static versus active mode programs can be found in the Programming Modes section of the reference, which can be viewed from Help &rarr; Getting Started, or online:<br />
 		  <br />
           <em>http://processing.org/reference/environment/</em><br />
       </p>
