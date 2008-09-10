@@ -9,7 +9,7 @@
   Processing is based on Java, but because program elements in Processing are fairly simple, you can learn to use it from this book even if you don't know any Java. If you're familiar with Java, it's best to forget that Processing has anything to do with Java for a while, until you get the hang of how the API works. We'll cover how to integrate Java and Processing toward the end of the book.<br />
 The latest version of Processing can be downloaded here:<br />
 <br />
-<em>http://processing.org/download</em><br />
+<a href="http://processing.org/download"><em>http://processing.org/download</em></a><br />
 <br />
 </em>An important goal for the project was to make this type of programming accessible to a wider audience. For this reason, Processing is free to download, free to use, and open source. But projects developed using the Processing environment and core libraries can be used for any purpose. This model is identical to GCC, the GNU Compiler Collection. GCC and its associated libraries (e.g. libc) are open source under the GNU Public License (GPL), which stipulates that changes to the code must be made available. However, programs created with GCC (examples too numerous to mention) are not themselves required to be open source.<br />
 <br />
@@ -17,7 +17,7 @@ Processing consists of:</p>
 <ul><li>The Processing Development Environment (PDE). This is the software that runs when you double-click the Processing icon. The PDE is an Integrated Development Environment with a minimalist set of features designed as a simple introduction to programming or for testing one-off ideas.
     <li>A collection of functions (also referred to as functions or methods) that make up the &ldquo;core&rdquo; programming interface, or API, as well as several libraries that support more advanced features such as drawing with OpenGL, reading XML files, and saving complex imagery in PDF format.
     <li>A language syntax, identical to Java but with a few modifications. The changes are laid out in detail toward the end of the book.
-    <li>An active online community, hosted at <em>http://processing.org</em>.</ul>
+    <li>An active online community, hosted at <a href="http://processing.org"><em>http://processing.org</em></a>.</ul>
 
   
     <br />For this reason, references to &ldquo;Processing&rdquo; can be somewhat ambiguous. Are we talking about the API, the development environment, or the web site? We'll be careful in this text when referring to each.  </p>
@@ -67,7 +67,7 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
       
 	  <p>A program written as a list of statements (like the previous examples) is called a <em>static</em> mode sketch. In static mode, a series of functions are used to perform tasks or create a single image without any animation or interaction. Interactive programs are drawn as a series of frames, which you can create by adding functions titled <tt>setup()</tt> and <tt>draw()</tt> as shown in the code below. These are built-in functions that are called automatically.<br />
 <br />
-	  <pre>     void setup() {
+<pre>     void setup() {
        size(400, 400);
        stroke(255);
        background(192, 64, 0);
@@ -77,7 +77,7 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
        line(150, 25, mouseX, mouseY);
      }</pre>
 		<br />
- The <tt>setup()</tt> block runs once, and the <tt>draw()</tt> block runs repeatedly. As such, <tt>setup()</tt> can be used for any initialization; in this case, setting the screen size, making the background orange, and setting the stroke color to white. The <tt>draw()</tt> block is used to handle animation. The <tt>size()</tt> function must always be the first line inside setup().<br />
+ The <tt>setup()</tt> block runs once, and the <tt>draw()</tt> block runs repeatedly. As such, <tt>setup()</tt> can be used for any initialization; in this case, setting the screen size, making the background orange, and setting the stroke color to white. The <tt>draw()</tt> block is used to handle animation. The <tt>size()</tt> function must always be the first line inside <tt>setup()</tt>.<br />
  <br />
         Because the <tt>background()</tt> function is used only once, the screen will fill with lines as the mouse is moved. To draw just a single line that follows the mouse, move the <tt>background()</tt> function to the <tt>draw()</tt> function, which will clear the display window (filling it with orange) each time <tt>draw()</tt> runs.<br />
 <br />
@@ -93,11 +93,11 @@ The same alternatives work for the <tt>fill()</tt> function, which sets the fill
 		<br />
         Static mode programs are most commonly used for extremely simple examples, or for scripts that run in a linear fashion and then exit. For instance, a static mode program might start, draw a page to a PDF file, and exit.<br />
         <br />
-Most programs will employ active mode, which use the <tt>setup()</tt> and <tt>draw()</tt> blocks. More advanced mouse handling can also be introduced; for instance, the mousePressed() function will be called whenever the mouse is pressed. So in the following example, when the mouse is pressed, the screen is cleared via the background() function:<br />
+Most programs will employ active mode, which use the <tt>setup()</tt> and <tt>draw()</tt> blocks. More advanced mouse handling can also be introduced; for instance, the <tt>mousePressed()</tt> function will be called whenever the mouse is pressed. So in the following example, when the mouse is pressed, the screen is cleared via the <tt>background()</tt> function:<br />
 <br />
 		<pre>     void setup() {
        size(400, 400);
-	    stroke(255);
+       stroke(255);
      }
 		  
      void draw() {
@@ -110,7 +110,7 @@ Most programs will employ active mode, which use the <tt>setup()</tt> and <tt>dr
 <br />
 More about static versus active mode programs can be found in the Programming Modes section of the reference, which can be viewed from Help &rarr; Getting Started, or online:<br />
 		  <br />
-          <em>http://processing.org/reference/environment/</em><br />
+          <a href="http://processing.org/reference/environment/"><em>http://processing.org/reference/environment</em></a><br />
       </p>
 		
 		
@@ -122,16 +122,18 @@ More about static versus active mode programs can be found in the Programming Mo
 		  The applet and application folders are overwritten whenever you export&mdash;make a copy or remove them from the sketch folder before making changes to the <em>index.html</em> file or the contents of the folder. <br />
         More about the export features can be found in the reference:<br />
         <br />
-        <em>http://processing.org/reference/environment/export.html</em><br />
+        <a href="http://processing.org/reference/environment/export.html"><em>http://processing.org/reference/environment/export.html</em></a><br />
       </p>
       
 		<h5>Saving Your Work</h5>
 		
 		<p>If you don't want to distribute the actual project, you might want to create images of its output instead. Images are saved with the <tt>saveFrame()</tt> function. Adding <tt>saveFrame()</tt> at the end of draw() will produce a numbered sequence of TIFF-format images of the program's output, named <em>screen-0001.tif</em>, <em>screen-0002.tif</em>, and so on. A new file will be saved each time <tt>draw()</tt> runs&mdash;watch out, this can quickly fill your sketch folder with hundreds of files. You can also specify your own name and file type for the file to be saved with a function like:
 		<pre>     saveFrame(&quot;output.png&quot;)</pre>
+		<br />
           To do the same for a numbered sequence, use # (hash marks) where the numbers should be placed:<br />
           <br />
           <pre>     saveFrame(&quot;output-####.png&quot;);</pre>
+          <br />
           For high quality output, you can write geometry to PDF files instead of the screen, as described in the later section about the <tt>size()</tt> function.<br />
       </p>
       
@@ -147,7 +149,7 @@ More about static versus active mode programs can be found in the Programming Mo
       </p>
       
       
-		<h5>More about <tt>size()</tt></h5>
+		<h5>More about size()</h5>
 		
 		
 		<p>The <tt>size()</tt> function also sets the global variables width and height. For objects whose size is dependent on the screen, always use the width and height variables instead of a number. This prevents problems when the size() line is altered.
@@ -162,18 +164,23 @@ More about static versus active mode programs can be found in the Programming Mo
         In the earlier examples, the <tt>size()</tt> function specified only a width and height for the window to be created. An optional parameter to the <tt>size()</tt> function specifies how graphics are rendered. A renderer handles how the Processing API is implemented for a particular output function (whether the screen, or a screen driven by a high-end graphics card, or a PDF file). Several renderers are included with Processing, each having a unique function. At the risk of getting too far into the specifics, here's a description of the possible drawing modes to use with Processing. <br />
         <br />
 <pre>     size(400, 400, JAVA2D);</pre>
+<br />
         The Java2D renderer is used by default, so this statement is identical to size(400, 400). The Java2D renderer does an excellent job with high-quality 2D vector graphics, but at the expense of speed. In particular, working with pixels is slower compared to the P2D and P3D renderers.<br />
 <br />
         <pre>     size(400, 400, P2D);</pre>
+        <br />
         The Processing 2D renderer is intended for simpler graphics and fast pixel operations. It lacks niceties like stroke caps and joins on thick lines, but makes up for it when you need to draw thousands of simple shapes or directly manipulate pixels of an image or video.<br />
         <br />
 <pre>     size(400, 400, P3D);</pre>
+<br />
         Similar to P2D, the Processing 3D renderer is intended for speed and pixel operations. It also produces 3D graphics inside a web browser, even without the use of a library like Java3D. Image quality is poorer (the smooth() function is disabled, and image accuracy is low) but you can draw thousands of triangles very quickly. <br />
         <br />
 <pre>     size(400, 400, OPENGL);</pre>
+<br />
         The OpenGL renderer uses Sun's JOGL (Java for OpenGL) library for faster rendering, while using Processing's simpler graphics APIs and the Processing development environment's easy applet and application export. To use OpenGL graphics, in addition to altering your <tt>size()</tt> function, you must select Import Library, then OpenGL from the Sketch menu. OpenGL applets also run within a web browser without additional modification, but a dialog box will appear asking the user whether they trust &ldquo;Sun Microsystems, Inc.&rdquo; to run Java for OpenGL on their computer. If this poses a problem, the P3D renderer is a simpler, if less full-featured, solution.<br />
         <br />
 <pre>     size(400, 400, PDF, &quot;output.pdf&quot;);</pre>
+<br />
         The PDF renderer draws all geometry to a file instead of the screen. Like the OpenGL library, you must import the PDF library before using it. This is a cousin of the Java2D renderer, but instead writes directly to PDF files. <br />
         <br />
 Each of the renderers has its own specific role. P2D and P3D are great for pixel-based work, while the JAVA2D and PDF settings will give you the highest quality 2D graphics. When the Processing project first began, the P2D and P3D renderers were a single choice (and in fact, the only available renderer). This was an attempt to offer a unified mode of thinking about drawing, whether in two or three dimensions. However, this became too burdensome because of the number of tradeoffs that must be made between 2D and 3D. A very different expectation of quality exists for 2D and 3D, for instance, and trying to cover both sides meant doing both poorly.<br />
@@ -195,7 +202,12 @@ Each of the renderers has its own specific role. P2D and P3D are great for pixel
         </tr></table><br />
 <br />
         File handling functions include <tt>loadStrings()</tt>, which reads a text file into an array of String objects, and <tt>loadImage()</tt> which reads an image into a PImage object, the container for image data in Processing. <br />
-<pre>     // Examples of loading a text file and a JPEG image<br />     // from the data folder of a sketch.<br />     String[] lines = loadStrings(&quot;something.txt&quot;);<br />     PImage image = loadImage(&quot;picture.jpg&quot;);</pre>
+<br />
+<pre>     // Examples of loading a text file and a JPEG image
+     // from the data folder of a sketch.
+     String[] lines = loadStrings(&quot;something.txt&quot;);
+     PImage image = loadImage(&quot;picture.jpg&quot;);</pre>
+<br />
         These examples may be a bit easier to read if you know the programming concepts of data types and classes. Each variable has to have a data type, such as <tt>String</tt> or <tt>PImage</tt>.<br />
         <br />
 The <tt>String[]</tt> syntax means &ldquo;an array of data of the class <tt>String</tt>.&rdquo; This array is created by the <tt>loadStrings</tt> function and is given the name lines; it will presumably be used later in the program under this name. The reason <tt>loadStrings</tt> creates an array is that it splits the <em>something.txt</em> file into its individual lines. The following function creates a single variable of class <tt>PImage</tt>, with the name image.<br />
@@ -213,20 +225,22 @@ To add a file to a Processing sketch, use the Sketch &rarr; Add File menu option
         <br />
         Several core libraries come with Processing. These can be seen in the Libraries section of the online reference (also available from the Help menu from within the PDE):<br />
         <br />
-        <em>http://processing.org/reference/libraries/</em><br />
+        <a href="http://processing.org/reference/libraries/"><em>http://processing.org/reference/libraries/</em></a><br />
         <br />
         One example is the XML Import library. This is an extremely minimal XML parser (based on the open source project NanoXML) with a small download footprint (approximately 30k) that makes it ideal for online use.<br />
         <br />
         To use the XML library in a project, choose Sketch &rarr; Import Library &rarr; xml. This will add the following line to the top of the sketch:
       <pre>     import processing.xml.*;</pre>
+      <br />
       Java programmers will recognize the <tt>import</tt> command. In Processing, this line is also used to determine what code is packaged with a sketch when it is exported as an applet or application.<br />
         <br />
         Now that the XML library is imported, you can issue commands from it. For instance, the following line loads an XML file named sites.xml into a variable named xml.<br />
         <br />
         <pre>     XMLElement xml = new XMLElement(this, &quot;sites.xml&quot;);</pre>
+        </br />
         The xml variable can now be manipulated as necessary to read the contents. The full example can be seen in the reference for its class, XMLElement:<br />
         <br />
-        <em>http://processing.org/reference/libraries/xml/XMLElement.html</em><br />
+        <a href="http://processing.org/reference/libraries/xml/XMLElement.html"><em>http://processing.org/reference/libraries/xml/XMLElement.html</em></a><br />
         <br />
         The <tt>this</tt> variable is used frequently with library objects, because it lets the library make use of the core API functions to draw to the screen or load files. The latter case applies to the XML library, allowing XML files to be read from the data folder or other locations supported by the file API functions.<br />
         <br />
