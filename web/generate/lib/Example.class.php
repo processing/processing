@@ -128,20 +128,20 @@ class Example
 	}
 	
 	function make_nav(&$array) {
-		if ($this->cat == "Basics") {
+		if ($this->cat === "Basics") {
 		
 		$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"http://processing.org/learning/basics/\" class=\"activeSub\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\">Library</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 		
-		} else if ($this->cat == "Topics") {
+		} else if ($this->cat === "Topics") {
 			
 			$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"http://processing.org/learning/basics/\" class=\"activeSub\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\" class=\"activeSub\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\">Library</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 
 
-		} else if ($this->cat == "3D") {
+		} else if ($this->cat === "3D") {
 
 			$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"http://processing.org/learning/basics/\" class=\"activeSub\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\" class=\"activeSub\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\">Library</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 			
-		} else if ($this->cat == "Libraries") {
+		} else if ($this->cat === "Libraries") {
 
 			$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"http://processing.org/learning/basics/\" class=\"activeSub\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\" class=\"activeSub\">Library</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 			
