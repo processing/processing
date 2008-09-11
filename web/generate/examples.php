@@ -6,17 +6,17 @@ $benchmark_start = microtime_float();
 
 // Make the intro page
 $source = CONTENTDIR."static/";
-$page = new Page("Learning", "Learning Overview");
+$page = new Page("Learning Overview", "Learning Overview");
 $page->content(file_get_contents($source."learning.html"));
 writeFile('learning/index.html', $page->out());
 
 // Make the Books page
-$page = new Page("Learning", "Books");
+$page = new Page("Books", "Books");
 $page->content(file_get_contents($source."books.html"));
 writeFile('learning/books/index.html', $page->out());
 
 // Make the Getting Started
-$page = new Page("Learning", "Getting Started");
+$page = new Page("Getting Started", "Getting Started");
 $page->content(file_get_contents($source."gettingstarted.html"));
 writeFile('learning/gettingstarted/index.html', $page->out());
 
@@ -48,7 +48,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Learning', 'Examples');
+$page = new Page('Examples', 'Examples');
 $page->subtemplate('template.examples.html');
 
 $html = "<div class=\"ref-col\">\n";
@@ -95,7 +95,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Learning', 'Examples');
+$page = new Page('Examples', 'Examples');
 $page->subtemplate('template.examples-3d.html');
 
 $html = "<div class=\"ref-col\">\n";
@@ -141,7 +141,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Learning', 'Examples');
+$page = new Page('Examples', 'Examples');
 $page->subtemplate('template.examples-topics.html');
 
 $html = "<div class=\"ref-col\">\n";
@@ -188,7 +188,7 @@ foreach ($categories as $cat => $array) {
 	}
 }
 
-$page = new Page('Learning', 'Examples');
+$page = new Page('Examples', 'Examples');
 $page->subtemplate('template.examples-libraries.html');
 
 $html = "<div class=\"ref-col\">\n";
