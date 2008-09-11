@@ -416,13 +416,16 @@ div.ref-col { width: 30%;
 
 /************************************************************** Learning ***/
 
-#Learning h1 { margin-bottom: 0; margin-top: 0;}
+#Learning  h1 { margin-bottom: 0; margin-top: 0;}
 #Learning .message { margin-top: 0; margin-right: 40px; }
 #Learning .threecol { float: left; width: 200px; margin-right: 30px; margin-top: 0px;}
 #Learning .threecol p { margin-bottom: 2em; }
 
 #Learning .twocol { float: left; width: 310px; margin-right: 20px; margin-top: 0px;}
 #Learning .twocol p { margin-bottom: 2em; }
+
+#Learning Overview .twocol { float: left; width: 310px; margin-right: 20px; margin-top: 0px;}
+#Learning Overview .twocol p { margin-bottom: 2em; }
 
 #Learning td { vertical-align: top; }
 
