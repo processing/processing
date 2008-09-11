@@ -145,6 +145,10 @@ class Example
 
 			$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"http://processing.org/learning/basics/\" class=\"activeSub\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\" class=\"activeSub\">Library</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 			
+		} else {
+			
+			$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"http://processing.org/learning/basics/\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\" class=\"activeSub\">Library</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
+
 		}
 		
 		$store = array();
