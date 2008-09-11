@@ -336,7 +336,7 @@ p.exhibition-nav { margin-top: 20px; margin-bottom: 10px; }
 #reference-nav { position: relative; height: 2em; padding-top: .5em; }
 #reference-nav p { position: absolute; right: 10px; top: 0; margin: 0; }
 
-.ref-notice { margin: 2.5em 0 2.5em 0; color: #006699; clear: both; margin-right: 40px;}
+.ref-notice { margin: 1.5em 0 2.5em 0; color: #006699; clear: both; margin-right: 40px;}
 
 .ref-item { margin-bottom: 60px; }
 .ref-item th { width: 100px; font-weight: normal; text-align: left; vertical-align: top; }
