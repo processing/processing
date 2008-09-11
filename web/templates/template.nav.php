@@ -76,7 +76,7 @@ $pages = array(
     'Learning'      => array('/learning/index.html', 1),
     #'Examples'     => array('/learning/index.html', 2),
     #'Tutorials'    => array('/learning/tutorials/index.html', 2),
-    'Learning Overview'	    => array('/learning/index.html', 2),
+    'Overview'	    => array('/learning/index.html', 2),
     'Getting Started'	    => array('/learning/gettingstarted/index.html', 2),
     'Examples'	=> array('/learning/basics/index.html', 2),
     #'Basics'        => array('/learning/basics/index.html', 2),
@@ -110,7 +110,7 @@ function navigation($section = '')
     $ref = array('Reference', 'Language', 'Environment', 'Libraries', 'Compare', 'Troubleshooting');
     #$learn = array('Learning', 'Examples', 'Tutorials');
     #$learn = array('Learning', 'Overview', 'Getting Started', 'Basics', 'Topics', '3D & OpenGL', 'Library Examples', 'Books', 'Hacks');
-    $learn = array('Learning', 'Learning Overview', 'Getting Started', 'Examples', 'Books');
+    $learn = array('Learning', 'Overview', 'Getting Started', 'Examples', 'Books');
     #$exhib = array('Exhibition', 'Index', 'Collection', 'Network Links', 'Features');    
     $exhib = array('Exhibition', 'Index', 'Collection', 'Network Links');    
 
@@ -167,7 +167,7 @@ function navigation($section = '')
     } else if (in_array($section, $learn)) {
         $html .= "\t\t\t\t" . '<div class="navBar learning" id="subNav">' . "\n";
 		
-        $html .= "\t\t\t\t\t" . l('Learning Overview', $section == 'Learning Overview') . " \\\n";
+        $html .= "\t\t\t\t\t" . l('Overview', $section == 'Overview') . " \\\n";
         $html .= "\t\t\t\t\t" . l('Getting Started', $section == 'Getting Started') . " \\\n";
 		#$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
 		#$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . " \\\n";
