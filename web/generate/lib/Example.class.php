@@ -128,7 +128,7 @@ class Example
 	}
 	
 	function make_nav(&$array) {
-		$html = "\n<table id=\"examples-nav\">\n<tr>";
+		$html = "\n<table id=\"examples-nav\">\n<tr>Test</tr><tr>";
 		
 		$store = array();
 		$prev = array();
