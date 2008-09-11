@@ -6,7 +6,7 @@ $benchmark_start = microtime_float();
 
 // Make the intro page
 $source = CONTENTDIR."static/";
-$page = new Page("Learning", "Learning");
+$page = new Page("Learning Overview", "Learning Overview");
 $page->content(file_get_contents($source."learning.html"));
 writeFile('learning/index.html', $page->out());
 
