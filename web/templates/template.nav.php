@@ -167,7 +167,7 @@ function navigation($section = '')
     } else if (in_array($section, $learn)) {
         $html .= "\t\t\t\t" . '<div class="navBar learning" id="subNav">' . "\n";
 		
-        $html .= "\t\t\t\t\t" . l('Learning Overview', $section == 'Learning Overview') . " \\\n";
+        $html .= "\t\t\t\t\t" . l('Learning Overview', $section == 'Learning') . " \\\n";
         $html .= "\t\t\t\t\t" . l('Getting Started', $section == 'Getting Started') . " \\\n";
 		#$html .= "\t\t\t\t\t" . l('Basics', $section == 'Basics') . " \\\n";
 		#$html .= "\t\t\t\t\t" . l('Topics', $section == 'Topics') . " \\\n";
