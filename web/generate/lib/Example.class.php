@@ -128,7 +128,7 @@ class Example
 	}
 	
 	function make_nav(&$array) {
-		$html = "\n<table id=\"examples-nav\" border=\"1\">\n<tr><td>&nbsp;</td><td colspan=\"2\"><a href=\"http://processing.org/learning/basics/\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\">Library</a></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
+		$html = "\n<table id=\"examples-nav\" border=\"1\">\n<tr><td>&nbsp;</td><td><a href=\"http://processing.org/learning/basics/\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\">Library</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 		
 		$store = array();
 		$prev = array();
@@ -161,7 +161,7 @@ class Example
 			$html .= '<td><a href="'.strtolower($prev[0]) .'">
 				<img src="/img/back_off.gif" alt="'.$prev[1].'" /></a></td>';
 		} else {
-			$html .= '<td width="38">&nbsp;</td>';
+			$html .= '<td width="48">&nbsp;</td>';
 		}
 		
 		$html .= '<td>'.$select.'</td>';
