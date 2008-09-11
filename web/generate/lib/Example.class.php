@@ -128,7 +128,7 @@ class Example
 	}
 	
 	function make_nav(&$array) {
-		$html = "\n<table id=\"examples-nav\">\n<tr><a href=\"http://processing.org/learning/basics/\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\">Library</a></tr><tr>&nbsp;</tr><tr>";
+		$html = "\n<table id=\"examples-nav\">\n<tr><td><a href=\"http://processing.org/learning/basics/\">Basics</a> \ <a href=\"http://processing.org/learning/topics/\">Topics</a> \ <a href=\"http://processing.org/learning/3d/\">3D</a> \ <a href=\"http://processing.org/learning/libraries/\">Library</a><td></tr><tr><td>&nbsp;</td></tr><tr>";
 		
 		$store = array();
 		$prev = array();
