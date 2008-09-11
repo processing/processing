@@ -6,17 +6,17 @@ $benchmark_start = microtime_float();
 
 // Make the intro page
 $source = CONTENTDIR."static/";
-$page = new Page("Learning Overview", "Learning Overview");
+$page = new Page("Learning", "Learning Overview");
 $page->content(file_get_contents($source."learning.html"));
 writeFile('learning/index.html', $page->out());
 
 // Make the Books page
-$page = new Page("Books", "Books");
+$page = new Page("Learning", "Books");
 $page->content(file_get_contents($source."books.html"));
 writeFile('learning/books/index.html', $page->out());
 
 // Make the Getting Started
-$page = new Page("Getting Started", "Getting Started");
+$page = new Page("Learning", "Getting Started");
 $page->content(file_get_contents($source."gettingstarted.html"));
 writeFile('learning/gettingstarted/index.html', $page->out());
 
