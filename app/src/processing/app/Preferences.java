@@ -213,7 +213,8 @@ public class Preferences {
     // [ ] Use multiple .jar files when exporting applets
 
     exportSeparateBox =
-      new JCheckBox("Use multiple .jar files when exporting applets");
+      new JCheckBox("Use multiple .jar files when exporting applets\n" +
+                    "(ignored when using libraries)");
     pain.add(exportSeparateBox);
     d = exportSeparateBox.getPreferredSize();
     // adding +10 because ubuntu + jre 1.5 truncating items
@@ -625,10 +626,10 @@ public class Preferences {
   static protected void save() {
     try {
       // on startup, don't worry about it
-      // this is trying to update the prefs for who is open 
+      // this is trying to update the prefs for who is open
       // before Preferences.init() has been called.
-      if (preferencesFile == null) return;  
-      
+      if (preferencesFile == null) return;
+
       FileOutputStream output = new FileOutputStream(preferencesFile);
       PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
 
