@@ -46,7 +46,7 @@ public class Sketch {
 
   /** main pde file for this sketch. */
   private File primaryFile;
-  
+
   /**
    * Name of sketch, which is the name of main file
    * (without .pde or .java extension)
@@ -58,7 +58,7 @@ public class Sketch {
 
   /** folder that contains this sketch */
   private File folder;
-  
+
   /** data folder location for this sketch (may not exist yet) */
   private File dataFolder;
 
@@ -74,7 +74,7 @@ public class Sketch {
   private String appletClassName;
   /** Class path determined during build. */
   private String classPath;
-  
+
   /**
    * This is *not* the "Processing" libraries path, this is the Java libraries
    * path, as in java.library.path=BlahBlah, which identifies search paths for
@@ -152,24 +152,24 @@ public class Sketch {
     code = new SketchCode[list.length];
 
     String[] extensions = getExtensions();
-    
+
     for (String filename : list) {
-      // Ignoring the dot prefix files is especially important to avoid files 
-      // with the ._ prefix on Mac OS X. (You'll see this with Mac files on 
+      // Ignoring the dot prefix files is especially important to avoid files
+      // with the ._ prefix on Mac OS X. (You'll see this with Mac files on
       // non-HFS drives, i.e. a thumb drive formatted FAT32.)
-      if (filename.startsWith(".")) continue; 
-      
+      if (filename.startsWith(".")) continue;
+
       // Don't let some wacko name a directory blah.pde or bling.java.
       if (new File(folder, filename).isDirectory()) continue;
-      
+
       // figure out the name without any extension
       String base = filename;
       // now strip off the .pde and .java extensions
       for (String extension : extensions) {
         if (base.toLowerCase().endsWith("." + extension)) {
           base = base.substring(0, base.length() - (extension.length() + 1));
-          
-          // Don't allow people to use files with invalid names, since on load, 
+
+          // Don't allow people to use files with invalid names, since on load,
           // it would be otherwise possible to sneak in nasty filenames. [0116]
           if (Sketch.isSanitaryName(base)) {
             code[codeCount++] =
@@ -199,8 +199,8 @@ public class Sketch {
     // set the main file to be the current tab
     setCurrentCode(0);
   }
-  
-  
+
+
   protected void replaceCode(SketchCode newCode) {
     for (int i = 0; i < codeCount; i++) {
       if (code[i].getFileName().equals(newCode.getFileName())) {
@@ -245,7 +245,7 @@ public class Sketch {
   boolean renamingCode;
 
   /**
-   * Handler for the New Code menu option. 
+   * Handler for the New Code menu option.
    */
   public void handleNewCode() {
     // make sure the user didn't hide the sketch folder
@@ -267,7 +267,7 @@ public class Sketch {
 
 
   /**
-   * Handler for the Rename Code menu option. 
+   * Handler for the Rename Code menu option.
    */
   public void handleRenameCode() {
     // make sure the user didn't hide the sketch folder
@@ -295,7 +295,7 @@ public class Sketch {
     renamingCode = true;
     String prompt = (currentIndex == 0) ?
       "New name for sketch:" : "New name for file:";
-    String oldName = (current.isExtension("pde")) ? 
+    String oldName = (current.isExtension("pde")) ?
       current.getPrettyName() : current.getFileName();
     editor.status.edit(prompt, oldName);
   }
@@ -316,7 +316,7 @@ public class Sketch {
     if (newName.indexOf('.') == -1) {
       newName += "." + getDefaultExtension();
     }
-    
+
     // if renaming to the same thing as before, just ignore.
     // also ignoring case here, because i don't want to write
     // a bunch of special stuff for each platform
@@ -339,7 +339,7 @@ public class Sketch {
                        "The name cannot start with a period.", null);
       return;
     }
-    
+
     String newExtension = newName.substring(dot+1).toLowerCase();
     if (!validExtension(newExtension)) {
       Base.showWarning("Problem with rename",
@@ -350,7 +350,7 @@ public class Sketch {
 
     // Don't let the user create the main tab as a .java file instead of .pde
     if (!isDefaultExtension(newExtension)) {
-      if (renamingCode) {  // If creating a new tab, don't show this error 
+      if (renamingCode) {  // If creating a new tab, don't show this error
         if (current == code[0]) {  // If this is the main tab, disallow
           Base.showWarning("Problem with rename",
                            "The main .pde file cannot be .java file.\n" +
@@ -549,7 +549,7 @@ public class Sketch {
         // delete the file
         if (!current.deleteFile()) {
           Base.showMessage("Couldn't do it",
-                           "Could not delete \"" + 
+                           "Could not delete \"" +
                            current.getFileName() + "\".");
           return;
         }
@@ -582,7 +582,7 @@ public class Sketch {
     System.err.println("removeCode: internal error.. could not find code");
   }
 
-  
+
   /**
    * Move to the previous tab.
    */
@@ -965,7 +965,7 @@ public class Sketch {
 
     if (codeExtension != null) {
       SketchCode newCode = new SketchCode(destFile, codeExtension);
-      
+
       if (replacement) {
         replaceCode(newCode);
 
@@ -979,7 +979,7 @@ public class Sketch {
         // Mark the new code as modified so that the sketch is saved
         current.setModified(true);
       }
-      
+
     } else {
       if (editor.untitled) {  // TODO probably not necessary? problematic?
         // If a file has been added, mark the main code as modified so
@@ -1025,7 +1025,7 @@ public class Sketch {
 
 
   /**
-   * Change what file is currently being edited. Changes the current tab index. 
+   * Change what file is currently being edited. Changes the current tab index.
    * <OL>
    * <LI> store the String for the text of the current file.
    * <LI> retrieve the String for the text of the new file.
@@ -1040,9 +1040,9 @@ public class Sketch {
 
     // get the text currently being edited
     if (current != null) {
-      current.setState(editor.getText(), 
-                       editor.getSelectionStart(), 
-                       editor.getSelectionStop(), 
+      current.setState(editor.getText(),
+                       editor.getSelectionStart(),
+                       editor.getSelectionStop(),
                        editor.getScrollPosition());
     }
 
@@ -1085,8 +1085,8 @@ public class Sketch {
       }
     }
   }
-  
-  
+
+
   /**
    * Cleanup temporary files used during a build/run.
    */
@@ -1170,11 +1170,11 @@ public class Sketch {
    * In an advanced program, the returned class name could be different,
    * which is why the className is set based on the return value.
    * A compilation error will burp up a RunnerException.
-   * 
+   *
    * Setting purty to 'true' will cause exception line numbers to be incorrect.
-   * Unless you know the code compiles, you should first run the preprocessor 
-   * with purty set to false to make sure there are no errors, then once 
-   * successful, re-export with purty set to true. 
+   * Unless you know the code compiles, you should first run the preprocessor
+   * with purty set to false to make sure there are no errors, then once
+   * successful, re-export with purty set to true.
    *
    * @param buildPath Location to copy all the .java files
    * @param purty true if output should use indents and newlines
@@ -1209,10 +1209,10 @@ public class Sketch {
     // 1. concatenate all .pde files to the 'main' pde
     //    store line number for starting point of each code bit
 
-    // Unfortunately, the header has to be written on a single line, because 
-    // there's no way to determine how long it will be until the code has 
-    // already been preprocessed. The header will vary in length based on 
-    // the programming mode (STATIC, ACTIVE, or JAVA), which is determined 
+    // Unfortunately, the header has to be written on a single line, because
+    // there's no way to determine how long it will be until the code has
+    // already been preprocessed. The header will vary in length based on
+    // the programming mode (STATIC, ACTIVE, or JAVA), which is determined
     // by the preprocessor. So the preprocOffset for the primary class remains
     // zero, even though it'd be nice to have a legitimate offset, and be able
     // to remove the 'pretty' boolean for preproc.write().
@@ -1249,13 +1249,13 @@ public class Sketch {
     */
 
     // Note that the headerOffset isn't applied until compile and run, because
-    // it only applies to the code after it's been written to the .java file. 
+    // it only applies to the code after it's been written to the .java file.
     int headerOffset = 0;
     PdePreprocessor preprocessor = new PdePreprocessor();
     try {
-      headerOffset = preprocessor.writePrefix(bigCode.toString(), 
-                                              buildPath, 
-                                              name, 
+      headerOffset = preprocessor.writePrefix(bigCode.toString(),
+                                              buildPath,
+                                              name,
                                               codeFolderPackages);
     } catch (FileNotFoundException fnfe) {
       fnfe.printStackTrace();
@@ -1272,7 +1272,7 @@ public class Sketch {
       // if (i != 0) preproc will fail if a pde file is not
       // java mode, since that's required
       String className = preprocessor.write();
-      
+
       if (className == null) {
         throw new RunnerException("Could not find main class");
         // this situation might be perfectly fine,
@@ -1290,12 +1290,12 @@ public class Sketch {
 
     } catch (antlr.RecognitionException re) {
       // re also returns a column that we're not bothering with for now
-      
+
       // first assume that it's the main file
       int errorFile = 0;
       int errorLine = re.getLine() - 1;
 
-      // then search through for anyone else whose preprocName is null, 
+      // then search through for anyone else whose preprocName is null,
       // since they've also been combined into the main pde.
       for (int i = 1; i < codeCount; i++) {
         if (code[i].isExtension("pde") &&
@@ -1314,12 +1314,12 @@ public class Sketch {
 
       if (msg.equals("expecting RCURLY, found 'null'")) {
         // This can be a problem since the error is sometimes listed as a line
-        // that's actually past the number of lines. For instance, it might 
+        // that's actually past the number of lines. For instance, it might
         // report "line 15" of a 14 line program. Added code to highlightLine()
         // inside Editor to deal with this situation (since that code is also
         // useful for other similar situations).
         throw new RunnerException("Found one too many { characters " +
-                                  "without a } to match it.", 
+                                  "without a } to match it.",
                                   errorFile, errorLine, re.getColumn());
       }
 
@@ -1343,7 +1343,7 @@ public class Sketch {
                                   "maybe a missing right parenthesis?",
                                   errorFile, errorLine, re.getColumn());
       }
-      
+
       if (msg.indexOf("preproc.web_colors") != -1) {
         throw new RunnerException("A web color (such as #ffcc00) " +
                                   "must be six digits.",
@@ -1439,7 +1439,7 @@ public class Sketch {
                                     " to the build folder");
         }
 //        sc.setPreprocName(filename);
-        
+
       } else if (sc.isExtension("pde")) {
         // The compiler and runner will need this to have a proper offset
         sc.addPreprocOffset(headerOffset);
@@ -1447,8 +1447,8 @@ public class Sketch {
     }
     return primaryClassName;
   }
-  
-  
+
+
   /**
    * Preprocess and compile all the code for this sketch.
    *
@@ -1461,7 +1461,7 @@ public class Sketch {
   public String build(String buildPath) throws RunnerException {
     // run the preprocessor
     String primaryClassName = preprocess(buildPath);
-    
+
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
     Compiler compiler = new Compiler();
@@ -1476,7 +1476,7 @@ public class Sketch {
     return exportApplet(new File(folder, "applet").getAbsolutePath());
   }
 
-  
+
   /**
    * Handle export to applet.
    */
@@ -1519,13 +1519,18 @@ public class Sketch {
 
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
-    // actually used in the applet, which is the case especially for beginners
-    // that are cutting/pasting from the reference.
+    // actually used in the applet, which is the case especially for anyone
+    // who is cutting/pasting from the reference.
     String sizeRegex =
-      "[\\s\\;^]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
+      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
 
-    String scrubbed = scrubComments(code[0].getProgram());
+    // Adding the prefix space is a hack because of problems with matching the
+    // beginning of a line to get the size() command (either using ^ or \A). 
+    // If anyone is a regexp master and knows what the problem is, please post
+    // a fix to dev.processing.org/bugs.
+    String scrubbed = scrubComments(" " + code[0].getProgram());
     String[] matches = PApplet.match(scrubbed, sizeRegex);
+    //PApplet.println(matches);
 
     if (matches != null) {
       try {
@@ -1593,7 +1598,7 @@ public class Sketch {
         File exportedSource = new File(appletFolder, code[i].getFileName());
         //Base.copyFile(code[i].getFile(), exportedSource);
         code[i].copyTo(exportedSource);
-        
+
       } catch (IOException e) {
         e.printStackTrace();  // ho hum, just move on...
       }
@@ -1939,14 +1944,14 @@ public class Sketch {
     String windowsPath = new File(folder, "application.windows").getAbsolutePath();
     String macosxPath = new File(folder, "application.macosx").getAbsolutePath();
     String linuxPath = new File(folder, "application.linux").getAbsolutePath();
-    
+
     return (exportApplication(windowsPath, PConstants.WINDOWS) &&
             exportApplication(macosxPath, PConstants.MACOSX) &&
             exportApplication(linuxPath, PConstants.LINUX));
   }
 
 
-  public boolean exportApplication(String destPath, 
+  public boolean exportApplication(String destPath,
                                    int exportPlatform) throws IOException, RunnerException {
     // make sure the user didn't hide the sketch folder
     ensureExistence();
@@ -2406,7 +2411,7 @@ public class Sketch {
    * separated list of paths and adds them to a ZipOutputStream.
    */
   protected void packClassPathIntoZipFile(String path,
-                                          ZipOutputStream zos, 
+                                          ZipOutputStream zos,
                                           Hashtable zipFileContents)
     throws IOException {
     String pieces[] = PApplet.split(path, File.pathSeparatorChar);
@@ -2570,40 +2575,40 @@ public class Sketch {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   // Breaking out extension types in order to clean up the code, and make it
   // easier for other environments (like Arduino) to incorporate changes.
 
-  
+
   /**
    * True if the specified extension should be hidden when shown on a tab.
-   * For Processing, this is true for .pde files. (Broken out for subclasses.) 
+   * For Processing, this is true for .pde files. (Broken out for subclasses.)
    */
   public boolean hideExtension(String what) {
     return what.equals(getDefaultExtension());
   }
-  
-  
+
+
   /**
-   * True if the specified code has the default file extension. 
+   * True if the specified code has the default file extension.
    */
   public boolean hasDefaultExtension(SketchCode code) {
     return code.getExtension().equals(getDefaultExtension());
   }
-  
-  
+
+
   /**
-   * True if the specified extension is the default file extension. 
+   * True if the specified extension is the default file extension.
    */
   public boolean isDefaultExtension(String what) {
     return what.equals(getDefaultExtension());
   }
-  
+
 
   /**
-   * Check this extension (no dots, please) against the list of valid 
-   * extensions. 
+   * Check this extension (no dots, please) against the list of valid
+   * extensions.
    */
   public boolean validExtension(String what) {
     String[] ext = getExtensions();
@@ -2612,15 +2617,15 @@ public class Sketch {
     }
     return false;
   }
-  
-  
+
+
   /**
    * Returns the default extension for this editor setup.
    */
   public String getDefaultExtension() {
     return "pde";
   }
-  
+
 
   /**
    * Returns a String[] array of proper extensions.
@@ -2629,8 +2634,8 @@ public class Sketch {
     return new String[] { "pde", "java" };
   }
 
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   // Additional accessors added in 0136 because of package work.
   // These will also be helpful for tool developers.
@@ -2642,16 +2647,16 @@ public class Sketch {
   public String getName() {
     return name;
   }
-  
-  
+
+
   /**
    * Returns a file object for the primary .pde of this sketch.
    */
   public File getPrimaryFile() {
     return primaryFile;
   }
-  
-  
+
+
   /**
    * Returns path to the main .pde file for this sketch.
    */
@@ -2668,7 +2673,7 @@ public class Sketch {
     return folder;
   }
 
-  
+
   /**
    * Returns the location of the sketch's data folder. (It may not exist yet.)
    */
@@ -2676,9 +2681,9 @@ public class Sketch {
     return dataFolder;
   }
 
-  
-  /** 
-   * Create the data folder if it does not exist already. As a convenience, 
+
+  /**
+   * Create the data folder if it does not exist already. As a convenience,
    * it also returns the data folder, since it's likely about to be used.
    */
   public File prepareDataFolder() {
@@ -2687,18 +2692,18 @@ public class Sketch {
     }
     return dataFolder;
   }
-  
-  
+
+
   /**
    * Returns the location of the sketch's code folder. (It may not exist yet.)
    */
   public File getCodeFolder() {
     return codeFolder;
   }
-  
-  
-  /** 
-   * Create the code folder if it does not exist already. As a convenience, 
+
+
+  /**
+   * Create the code folder if it does not exist already. As a convenience,
    * it also returns the code folder, since it's likely about to be used.
    */
   public File prepareCodeFolder() {
@@ -2707,7 +2712,7 @@ public class Sketch {
     }
     return codeFolder;
   }
-  
+
 
   public String getClassPath() {
     return classPath;
@@ -2722,8 +2727,8 @@ public class Sketch {
   public SketchCode[] getCode() {
     return code;
   }
-  
-  
+
+
   public int getCodeCount() {
     return codeCount;
   }
@@ -2732,8 +2737,8 @@ public class Sketch {
   public SketchCode getCode(int index) {
     return code[index];
   }
-  
-  
+
+
   public int getCodeIndex(SketchCode who) {
     for (int i = 0; i < codeCount; i++) {
       if (who == code[i]) {
@@ -2742,12 +2747,12 @@ public class Sketch {
     }
     return -1;
   }
-  
-  
+
+
   public SketchCode getCurrentCode() {
     return current;
   }
-    
+
 
   public void setUntitled(boolean u) {
     editor.untitled = u;
@@ -2762,7 +2767,7 @@ public class Sketch {
   public String getAppletClassName2() {
     return appletClassName;
   }
-  
+
 
   // .................................................................
 
