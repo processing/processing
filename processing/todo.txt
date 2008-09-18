@@ -22,6 +22,8 @@ X add note to prefs dialog that multiple jar export only works w/o libs
 X   http://dev.processing.org/bugs/show_bug.cgi?id=907
 X transport error 202
 X   http://dev.processing.org/bugs/show_bug.cgi?id=895
+X renaming the main tab adds .pde to the sketch folder name 0148
+X   http://dev.processing.org/bugs/show_bug.cgi?id=922
 
 cleanup
 o how to grab the java2d object from PGraphics2D
@@ -43,11 +45,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=912
 _ expecting EOF, found 'void?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=905
 _   last fixed 5/30, maybe check the svn for those two days
+_   this might be the MULTILINE mess
 
 _ do some edits on the "getting started" text
 _   add getting started to help menu?
-
-_ renaming the main tab renames the sketch folder to include .pde (!)
 
 _ present mode "stop" button hops around
 
