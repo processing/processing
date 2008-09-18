@@ -739,7 +739,7 @@ public class PApplet extends Applet
         methods[count] = null;
       }
     }
-  
+
     protected int findIndex(Object object, Method method) {
       for (int i = 0; i < count; i++) {
         if (objects[i] == object && methods[i].equals(method)) {
@@ -796,7 +796,7 @@ public class PApplet extends Applet
       meth.add(o, method);
 
     } catch (NoSuchMethodException nsme) {
-      die("There is no " + name + "() method in the class " + 
+      die("There is no " + name + "() method in the class " +
           o.getClass().getName());
 
     } catch (Exception e) {
@@ -813,7 +813,7 @@ public class PApplet extends Applet
       meth.add(o, method);
 
     } catch (NoSuchMethodException nsme) {
-      die("There is no " + name + "() method in the class " + 
+      die("There is no " + name + "() method in the class " +
           o.getClass().getName());
 
     } catch (Exception e) {
@@ -1092,7 +1092,7 @@ public class PApplet extends Applet
     try {
       /*
       Class<?> rendererClass = Class.forName(irenderer);
-      
+
       Class<?> constructorParams[] = null;
       Object constructorValues[] = null;
 
@@ -1116,10 +1116,10 @@ public class PApplet extends Applet
         rendererClass.getConstructor(constructorParams);
       PGraphics pg = (PGraphics) constructor.newInstance(constructorValues);
       */
-      
-      Class<?> rendererClass = 
+
+      Class<?> rendererClass =
         Thread.currentThread().getContextClassLoader().loadClass(irenderer);
-      
+
       //Class<?> params[] = null;
       //PApplet.println(rendererClass.getConstructors());
       Constructor<?> constructor = rendererClass.getConstructor(new Class[] { });
@@ -1129,7 +1129,7 @@ public class PApplet extends Applet
       pg.setPrimary(iprimary);
       if (ipath != null) pg.setPath(ipath);
       pg.setSize(iwidth, iheight);
-      
+
       // everything worked, return it
       return pg;
 
@@ -1174,7 +1174,7 @@ public class PApplet extends Applet
           ") does not exist.";
           */
         String msg = irenderer + " needs to be updated " +
-          "for the current release of Processing."; 
+          "for the current release of Processing.";
         throw new RuntimeException(msg);
 
       } else {
@@ -5171,14 +5171,21 @@ public class PApplet extends Applet
   /**
    * Match a string with a regular expression, and return matching groups as
    * an array. If the sequence matches, but there are no groups, a zero length
-   * (non-null) String array will be returned. Groups are normally 1-indexed
-   * and group 0 is the matching sequence, but in this function the groups
-   * are 0-indexed. If you want matching sequence, just use the Java String
-   * methods for testing matches.
+   * (non-null) String array will be returned.
+   *
+   * In other regexp implementations, groups are often 1-indexed, and group 0
+   * is the entire matching sequence. But in this function the groups are
+   * 0-indexed. If you want the matching sequence, just use the Java String
+   * methods for testing matches. (Or use java.util.regex.Pattern directly.)
+   *
+   * This uses multiline matching (Pattern.MULTILINE) and dotall mode
+   * (Pattern.DOTALL) by default, so that ^ and $ match the beginning and
+   * end of any lines found in the source, and the . operator will also
+   * pick up newline characters. (Release 0149)
    */
   static public String[] match(String what, String regexp) {
-    Pattern p = Pattern.compile(regexp);
-    //Pattern p = Pattern.compile(regexp, Pattern.MULTILINE);
+    //Pattern p = Pattern.compile(regexp);
+    Pattern p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
     Matcher m = p.matcher(what);
     if (m.find()) {
       int count = m.groupCount();
@@ -5621,7 +5628,7 @@ public class PApplet extends Applet
   }
 
   static final public float[] parseFloat(String what[]) {
-    return parseFloat(what, 0);
+    return parseFloat(what, Float.NaN);
   }
 
   static final public float[] parseFloat(String what[], float missing) {
@@ -6363,10 +6370,10 @@ public class PApplet extends Applet
       applet.args = PApplet.subset(args, 1);
       applet.external = external;
 
-      // For 0149, moving this code (up to the pack() method) before init(). 
-      // For OpenGL (and perhaps other renderers in the future), a peer is 
-      // needed before a GLDrawable can be created. So pack() needs to be 
-      // called on the Frame before applet.init(), which itself calls size(), 
+      // For 0149, moving this code (up to the pack() method) before init().
+      // For OpenGL (and perhaps other renderers in the future), a peer is
+      // needed before a GLDrawable can be created. So pack() needs to be
+      // called on the Frame before applet.init(), which itself calls size(),
       // and launches the Thread that will kick off setup().
       // http://dev.processing.org/bugs/show_bug.cgi?id=891
       // http://dev.processing.org/bugs/show_bug.cgi?id=908
@@ -6527,7 +6534,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Begin recording to a new renderer of the specified type, using the width 
+   * Begin recording to a new renderer of the specified type, using the width
    * and height of the main drawing surface.
    */
   public PGraphics beginRecord(String renderer, String filename) {
@@ -6557,11 +6564,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Begin recording raw shape data to a renderer of the specified type, 
+   * Begin recording raw shape data to a renderer of the specified type,
    * using the width and height of the main drawing surface.
-   * 
-   * If hashmarks (###) are found in the filename, they'll be replaced 
-   * by the current frame number (frameCount). 
+   *
+   * If hashmarks (###) are found in the filename, they'll be replaced
+   * by the current frame number (frameCount).
    */
   public PGraphics beginRaw(String renderer, String filename) {
     filename = insertFrame(filename);
@@ -6570,12 +6577,12 @@ public class PApplet extends Applet
     return rec;
   }
 
-  
+
   /**
    * Begin recording raw shape data to the specified renderer.
-   *  
+   *
    * This simply echoes to g.beginRaw(), but since is placed here (rather than
-   * generated by preproc.pl) for clarity and so that it doesn't echo the 
+   * generated by preproc.pl) for clarity and so that it doesn't echo the
    * command should beginRecord() be in use.
    */
   public void beginRaw(PGraphics rawGraphics) {
@@ -6585,9 +6592,9 @@ public class PApplet extends Applet
 
   /**
    * Stop recording raw shape data to the specified renderer.
-   *  
+   *
    * This simply echoes to g.beginRaw(), but since is placed here (rather than
-   * generated by preproc.pl) for clarity and so that it doesn't echo the 
+   * generated by preproc.pl) for clarity and so that it doesn't echo the
    * command should beginRecord() be in use.
    */
   public void endRaw() {
@@ -6607,13 +6614,13 @@ public class PApplet extends Applet
     g.loadPixels();
     pixels = g.pixels;
   }
-  
-  
+
+
   public void updatePixels() {
     g.updatePixels();
   }
-  
-  
+
+
   public void updatePixels(int x1, int y1, int x2, int y2) {
     g.updatePixels(x1, y1, x2, y2);
   }
@@ -6623,24 +6630,6 @@ public class PApplet extends Applet
 
   // everything below this line is automatically generated. no touch.
   // public functions for processing.core
-
-
-  public void setParent(PApplet parent) {
-    if (recorder != null) recorder.setParent(parent);
-    g.setParent(parent);
-  }
-
-
-  public void setPrimary(boolean primary) {
-    if (recorder != null) recorder.setPrimary(primary);
-    g.setPrimary(primary);
-  }
-
-
-  public void setPath(String path) {
-    if (recorder != null) recorder.setPath(path);
-    g.setPath(path);
-  }
 
 
   public void hint(int which) {
@@ -6894,8 +6883,7 @@ public class PApplet extends Applet
   }
 
 
-  public float curveTangent(float a, float b, float c, float d,
-                            float t) {
+  public float curveTangent(float a, float b, float c, float d, float t) {
     return g.curveTangent(a, b, c, d, t);
   }
 
