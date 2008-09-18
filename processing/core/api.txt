@@ -1,0 +1,253 @@
+setMainDrawingSurface() -> setPrimarySurface()
+mainDrawingSurface = primarySurface;
+resize() -> setSize() (roughly)
+endShape() with no params is no longer 'final'
+X/Y/Z -> TX/TY/TZ
+MX/MY/MZ -> X/Y/Z (for sake of PShape)
+
+// 
+
+  setParent()
+  setPrimary()
+  setPath()
+  setSize(int w, int h)
+  allocate()
+
+  canDraw()
+  beginDraw()
+  endDraw()
+
+  flush() - flushDraw()?
+
+  checkSettings()
+  defaultSettings()
+  reapplySettings()
+
+  hint()
+  unhint()
+
+  public void beginShape()
+  public void beginShape(int kind)
+  public void normal(float nx, float ny, float nz)
+
+  public void textureMode(int mode)
+  public void texture(PImage image)
+  public void vertex(float x, float y)
+  public void vertex(float x, float y, float z)
+  public void vertex(float x, float y, float u, float v)
+  public void vertex(float x, float y, float z, float u, float v)
+  public void bezierVertex(float x2, float y2,
+  public void bezierVertex(float x2, float y2, float z2,
+  public void curveVertex(float x, float y)
+  public void curveVertex(float x, float y, float z)
+  public void breakShape()
+  public void endShape()
+  public void endShape(int mode)
+
+  public void point(float x, float y)
+  public void point(float x, float y, float z)
+  public void line(float x1, float y1, float x2, float y2)
+  public void line(float x1, float y1, float z1,
+  public void triangle(float x1, float y1, float x2, float y2,
+  public void quad(float x1, float y1, float x2, float y2,
+  public void rectMode(int mode)
+  public void rect(float x1, float y1, float x2, float y2)
+  public void ellipseMode(int mode)
+  public void ellipse(float a, float b, float c, float d)
+  public void arc(float a, float b, float c, float d,
+
+  public void box(float size)
+  public void box(float w, float h, float d)
+  public void sphereDetail(int res)
+  public void sphereDetail(int ures, int vres)
+  public void sphere(float r)
+
+  public float bezierPoint(float a, float b, float c, float d, float t)
+  public float bezierTangent(float a, float b, float c, float d, float t)
+  public void bezierDetail(int detail)
+  public void bezier(float x1, float y1,
+  public void bezier(float x1, float y1, float z1,
+
+  public float curvePoint(float a, float b, float c, float d, float t)
+  public float curveTangent(float a, float b, float c, float d,
+  public void curveDetail(int detail)
+  public void curveTightness(float tightness)
+  public void curve(float x1, float y1,
+  public void curve(float x1, float y1, float z1,
+
+  public void image(PImage image, float x, float y)
+  public void image(PImage image,
+  public void image(PImage image,
+
+  public void textAlign(int align)
+  public void textAlign(int alignX, int alignY)
+  public float textAscent()
+  public float textDescent()
+  public void textFont(PFont which)
+  public void textFont(PFont which, float size)
+  public void textLeading(float leading)
+  public void textMode(int mode)
+  public void textSize(float size)
+  public float textWidth(char c)
+  public float textWidth(String str)
+
+  public void text(char c)
+  public void text(char c, float x, float y)
+  public void text(char c, float x, float y, float z)
+  public void text(String str)
+  public void text(String str, float x, float y)
+  public void text(String str, float x, float y, float z)
+  public void text(String str, float x1, float y1, float x2, float y2)
+  public void text(String s, float x1, float y1, float x2, float y2, float z)
+  public void text(int num, float x, float y)
+  public void text(int num, float x, float y, float z)
+  public void text(float num, float x, float y)
+  public void text(float num, float x, float y, float z)
+
+  public void translate(float tx, float ty)
+  public void translate(float tx, float ty, float tz)
+  public void rotate(float angle)
+  public void rotateX(float angle)
+  public void rotateY(float angle)
+  public void rotateZ(float angle)
+  public void rotate(float angle, float vx, float vy, float vz)
+  public void scale(float s)
+  public void scale(float sx, float sy)
+  public void scale(float x, float y, float z)
+
+  public void pushMatrix()
+  public void popMatrix()
+  public void resetMatrix()
+  public void applyMatrix(float n00, float n01, float n02,
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+  public void loadMatrix()
+  public void printMatrix()
+
+  public void beginCamera()
+  public void endCamera()
+  public void camera()
+  public void camera(float eyeX, float eyeY, float eyeZ,
+  public void printCamera()
+
+  public void ortho()
+  public void ortho(float left, float right,
+  public void perspective()
+  public void perspective(float fovy, float aspect, float zNear, float zFar)
+  public void frustum(float left, float right, float bottom,
+  public void printProjection()
+
+  public float screenX(float x, float y)
+  public float screenY(float x, float y)
+  public float screenX(float x, float y, float z)
+  public float screenY(float x, float y, float z)
+  public float screenZ(float x, float y, float z)
+  public float modelX(float x, float y, float z)
+  public float modelY(float x, float y, float z)
+  public float modelZ(float x, float y, float z)
+
+  public void colorMode(int mode)
+  public void colorMode(int mode, float max)
+  public void colorMode(int mode,
+  public void colorMode(int mode,
+
+  public void noStroke()
+  public void stroke(int rgb)
+  public void stroke(int rgb, float alpha)
+  public void stroke(float gray)
+  public void stroke(float gray, float alpha)
+  public void stroke(float x, float y, float z)
+  public void stroke(float x, float y, float z, float a)
+
+  public void strokeCap(int cap)
+  public void strokeJoin(int join)
+  public void strokeWeight(float weight)
+
+  public void noTint()
+  public void tint(int rgb)
+  public void tint(int rgb, float alpha)
+  public void tint(float gray)
+  public void tint(float gray, float alpha)
+  public void tint(float x, float y, float z)
+  public void tint(float x, float y, float z, float a)
+
+  public void noFill()
+  public void fill(int rgb)
+  public void fill(int rgb, float alpha)
+  public void fill(float gray)
+  public void fill(float gray, float alpha)
+  public void fill(float x, float y, float z)
+  public void fill(float x, float y, float z, float a)
+
+  public void ambient(int rgb)
+  public void ambient(float gray)
+  public void ambient(float x, float y, float z)
+
+  public void specular(int rgb)
+  public void specular(float gray)
+  public void specular(float x, float y, float z)
+  public void shininess(float shine)
+
+  public void emissive(int rgb)
+  public void emissive(float gray)
+  public void emissive(float x, float y, float z )
+
+  public void lights()
+  public void noLights()
+  public void ambientLight(float red, float green, float blue)
+  public void ambientLight(float red, float green, float blue,
+  public void directionalLight(float red, float green, float blue,
+  public void pointLight(float red, float green, float blue,
+  public void spotLight(float red, float green, float blue,
+  public void lightFalloff(float constant, float linear, float quadratic)
+  public void lightSpecular(float x, float y, float z)
+
+  public void background(int rgb)
+  public void background(int rgb, float alpha)
+  public void background(float gray)
+  public void background(float gray, float alpha)
+  public void background(float x, float y, float z)
+  public void background(float x, float y, float z, float a)
+  public void background(PImage image)
+
+  public final float alpha(int what)
+  public final float red(int what)
+  public final float green(int what)
+  public final float blue(int what)
+  public final float hue(int what)
+  public final float saturation(int what)
+  public final float brightness(int what)
+
+  public int lerpColor(int c1, int c2, float amt)
+  static public int lerpColor(int c1, int c2, float amt, int mode)
+
+  public boolean displayable()
+
+//
+
+  public void smooth()
+  public void noSmooth()
+
+  public void imageMode(int mode)
+
+  public void loadPixels()
+  public void updatePixels()
+  public void updatePixels(int x1, int y1, int x2, int y2)
+
+  public int get(int x, int y)
+  public PImage get(int x, int y, int w, int h)
+  public PImage get()
+  public void set(int x, int y, int c)
+  public void set(int dx, int dy, PImage src)
+
+  public void mask(int alpha[])
+  public void mask(PImage alpha)
+
+  public void filter(int kind)
+  public void filter(int kind, float param)
+
+  public void copy(int sx1, int sy1, int sx2, int sy2,
+  public void copy(PImage src,
+
+  static public int blendColor(int c1, int c2, int mode)
+  public void blend(int sx1, int sy1, int sx2, int sy2,
+  public void blend(PImage src,
