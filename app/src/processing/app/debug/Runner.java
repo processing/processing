@@ -361,9 +361,13 @@ public class Runner implements MessageConsumer {
 
     Connector.Argument commandArg =
       (Connector.Argument)arguments.get("command");
+    // Using localhost instead of 127.0.0.1 sometimes causes a
+    // "Transport Error 202" error message when trying to run.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=895
     String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
-    //String addr = "" + (8000 + (int) (Math.random() * 1000));
     //String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
+    //String addr = "" + (8000 + (int) (Math.random() * 1000));
+
     String commandArgs = (PApplet.platform == PConstants.WINDOWS) ?
       "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y " :
       "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
