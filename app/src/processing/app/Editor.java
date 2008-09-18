@@ -1585,6 +1585,7 @@ public class Editor extends JFrame {
     internalCloseRunner();
     running = true;
     toolbar.activate(EditorToolbar.RUN);
+    statusEmpty();
 
     // do this to advance/clear the terminal window / dos prompt / etc
     for (int i = 0; i < 10; i++) System.out.println();
@@ -1929,7 +1930,7 @@ public class Editor extends JFrame {
       if (sketch.save()) {
         statusNotice("Done Saving.");
       } else {
-        statusNotice(EMPTY);
+        statusEmpty();
       }
       // rebuild sketch menu in case a save-as was forced
       // Disabling this for 0125, instead rebuild the menu inside
@@ -2204,6 +2205,14 @@ public class Editor extends JFrame {
   }
 
 
+  /**
+   * Clear the status area.
+   */
+  public void statusEmpty() {
+    statusNotice(EMPTY);
+  }
+  
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
