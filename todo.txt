@@ -24,6 +24,10 @@ X transport error 202
 X   http://dev.processing.org/bugs/show_bug.cgi?id=895
 X renaming the main tab adds .pde to the sketch folder name 0148
 X   http://dev.processing.org/bugs/show_bug.cgi?id=922
+X not always updating on rename (maybe a mac problem?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=56
+X error messages not clearing the message area
+X   http://dev.processing.org/bugs/show_bug.cgi?id=912
 
 cleanup
 o how to grab the java2d object from PGraphics2D
@@ -40,8 +44,6 @@ o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 
 regressions
-_ error messages not clearing the message area
-_   http://dev.processing.org/bugs/show_bug.cgi?id=912
 _ expecting EOF, found 'void?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=905
 _   last fixed 5/30, maybe check the svn for those two days
@@ -806,8 +808,6 @@ PDE / Editor Header
 _ make some fancy extendo things because the tabs get too big
 _   either condense or popdown menu thingy
 _   http://dev.processing.org/bugs/show_bug.cgi?id=54
-_ not always updating on rename (maybe a mac problem?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=56
 
 
 PDE / Editor Status
