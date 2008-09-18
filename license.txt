@@ -1,11 +1,7 @@
 this file includes licensing information for parts of processing.
 
-first, the gnu general public license, which covers the main body 
-of the processing code (in general, all the stuff inside the 'app'
-subfolder).
-
-following the gpl is the ibm public license, which covers the jikes
-compiler that we're distributing along with processing releases.
+the gnu general public license covers the main body of the processing code 
+(in general, all the stuff inside the 'app' subfolder).
 
 
 .....................................................................
@@ -505,36 +501,4 @@ of the date such litigation is filed. In addition, If Recipient
 institutes patent litigation against any entity (including a
 cross-claim or counterclaim in a lawsuit) alleging that the Program
 itself (excluding combinations of the Program with other software or
-hardware) infringes such Recipient's patent(s), then such Recipient's
-rights granted under Section 2(b) shall terminate as of the date such
-litigation is filed. 
-
-All Recipient's rights under this Agreement shall terminate if it
-fails to comply with any of the material terms or conditions of this
-Agreement and does not cure such failure in a reasonable period of
-time after becoming aware of such noncompliance. If all Recipient's
-rights under this Agreement terminate, Recipient agrees to cease use
-and distribution of the Program as soon as reasonably
-practicable. However, Recipient's obligations under this Agreement and
-any licenses granted by Recipient relating to the Program shall
-continue and survive. 
-
-IBM may publish new versions (including revisions) of this Agreement
-from time to time. Each new version of the Agreement will be given a
-distinguishing version number. The Program (including Contributions)
-may always be distributed subject to the version of the Agreement
-under which it was received. In addition, after a new version of the
-Agreement is published, Contributor may elect to distribute the
-Program (including its Contributions) under the new version. No one
-other than IBM has the right to modify this Agreement. Except as
-expressly stated in Sections 2(a) and 2(b) above, Recipient receives
-no rights or licenses to the intellectual property of any Contributor
-under this Agreement, whether expressly, by implication, estoppel or
-otherwise. All rights in the Program not expressly granted under this
-Agreement are reserved. 
-
-This Agreement is governed by the laws of the State of New York and
-the intellectual property laws of the United States of America. No
-party to this Agreement will bring a legal action under this Agreement
-more than one year after the cause of action arose. Each party waives
-its rights to a jury trial in any resulting litigation. 
+hardware
