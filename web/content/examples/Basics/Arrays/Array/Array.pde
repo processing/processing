@@ -14,22 +14,22 @@ size(200, 200);
 
 float[] coswave = new float[width];
 
-for(int i=0; i<width; i++) {
-  float ratio = (float)i/(float)width;
-  coswave[i] = abs( cos(ratio*PI) );
+for (int i = 0; i < width; i++) {
+  float amount = map(i, 0, width, 0, PI);
+  coswave[i] = abs(cos(amount));
 }
 
-for(int i=0; i<width; i++) {
+for (int i = 0; i < width; i++) {
   stroke(coswave[i]*255);
-  line(i, 0, i, width/3);
+  line(i, 0, i, height/3);
 }
 
-for(int i=0; i<width; i++) {
-  stroke(coswave[i]*255/4);
-  line(i, width/3, i, width/3*2);
+for (int i = 0; i < width; i++) {
+  stroke(coswave[i]*255 / 4);
+  line(i, height/3, i, height/3*2);
 }
 
-for(int i=0; i<width; i++) {
-  stroke(255-coswave[i]*255);
-  line(i, width/3*2, i, height);
+for (int i = 0; i < width; i++) {
+  stroke(255 - coswave[i]*255);
+  line(i, height/3*2, i, height);
 }
