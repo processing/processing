@@ -226,6 +226,7 @@ public class EditorHeader extends JComponent {
     //System.out.println("rebuilding editor header");
     rebuildMenu();
     repaint();
+    Toolkit.getDefaultToolkit().sync();
   }
 
 

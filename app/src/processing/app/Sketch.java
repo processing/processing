@@ -392,7 +392,8 @@ public class Sketch {
     if (renamingCode) {
       if (currentIndex == 0) {
         // get the new folder name/location
-        File newFolder = new File(folder.getParentFile(), newName);
+        String folderName = newName.substring(0, newName.indexOf('.'));
+        File newFolder = new File(folder.getParentFile(), folderName);
         if (newFolder.exists()) {
           Base.showWarning("Cannot Rename",
                            "Sorry, a sketch (or folder) named " +
@@ -426,7 +427,6 @@ public class Sketch {
         // save each of the other tabs because this is gonna be re-opened
         try {
           for (int i = 1; i < codeCount; i++) {
-            //if (code[i].modified) code[i].save();
             code[i].save();
           }
         } catch (Exception e) {
@@ -490,12 +490,7 @@ public class Sketch {
     setCurrentCode(newName);
 
     // update the tabs
-    //editor.header.repaint();
     editor.header.rebuild();
-
-    // force the update on the mac?
-    Toolkit.getDefaultToolkit().sync();
-    //editor.header.getToolkit().sync();
   }
 
 
