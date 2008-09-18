@@ -7,10 +7,22 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=891
 X   http://dev.processing.org/bugs/show_bug.cgi?id=908
 X fix problem with unregisterXxxx()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=910
+X make parseFloat() with String[] array return NaN for missing values
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1220880375
+X fix problems with text in a rectangle
+X   http://dev.processing.org/bugs/show_bug.cgi?id=893
+X   http://dev.processing.org/bugs/show_bug.cgi?id=899
 
+_ finish getImage() method inside PImage
+
+
+regressions
 _ remove extra ~ files from core.jar (!)
 _ delay() is broken
 _   http://dev.processing.org/bugs/show_bug.cgi?id=894
+
+_ clean up setMainDrawingSurface()
+_   should instead be inside size(), and init(), no?
 
 
 [ need problem sketch ] 
@@ -35,9 +47,6 @@ _   may be fixed, but not verified
 _ pdf sketches exiting before writing has finished
 _ writing image file (missing a flush() call?) on exit() fails
 _   lots of zero length files
-
-_ clean up setMainDrawingSurface()
-_   should instead be inside size(), and init(), no?
 
 _ should we do joins when alpha is turned off?
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
@@ -394,6 +403,7 @@ _       flat_line_retribution is a hack, can go away
 _ fix-up the curve_init() and the rest to use matrices
 _   and not have ugly names (i.e. just g.curveDetail is good)
 _ ellipse scaling method isn't great
+_   toxi ellipses don't adapt properly with transformations
 _   http://dev.processing.org/bugs/show_bug.cgi?id=695
 _   weird ellipse bug with an alpha line in same image
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
@@ -406,7 +416,6 @@ _   z values not set properly on ellipses?
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
 _   ellipses are just plain ugly
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
-_   toxi ellipses don't adapt properly with transformations
 
 
 CORE / PGraphics2D
@@ -539,6 +548,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=705
 _ odd-size height will make blue line across image in saveFrame()
 _   probably the pixel flipping code (and endian sorting) not happening
 _   because the blue comes from the byte order flip
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=post;num=1219196429
 _ first few frames of OpenGL sketches on Windows run slowly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ updatePixels wth OpenGL requires a lot of memory, need better texture update

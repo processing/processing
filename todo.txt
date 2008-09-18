@@ -18,7 +18,40 @@ X Toolmenu won't show until I compile Mangler
 X   http://dev.processing.org/bugs/show_bug.cgi?id=892
 X update quaqua to 4.4.7 on macosx (http://www.randelshofer.ch/quaqua/)
 X   now supports 10.5 an 64 bit jnilib
+X add note to prefs dialog that multiple jar export only works w/o libs
+X   http://dev.processing.org/bugs/show_bug.cgi?id=907
+X transport error 202
+X   http://dev.processing.org/bugs/show_bug.cgi?id=895
 
+cleanup
+o how to grab the java2d object from PGraphics2D
+o example for using mediatracker to load images 
+o   simple example for threaded image loading "load several" 
+o   (rather than blocking on each)
+o   maybe add a loadImages(String files[]) function?
+o   use a MediaTracker that's shared, so that while an image is still
+o   loading, other calls to loadImage might be able to add things to the
+o   queue. or maybe beginImage() and endImage()? or a mode that lets 
+o   you wait for the images to download (size is zero until they're ready)
+o   MediaTracker blocking is prolly making jar download really slow
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
+
+
+regressions
+_ error messages not clearing the message area
+_   http://dev.processing.org/bugs/show_bug.cgi?id=912
+_ expecting EOF, found 'void?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=905
+_   last fixed 5/30, maybe check the svn for those two days
+
+_ do some edits on the "getting started" text
+_   add getting started to help menu?
+
+_ renaming the main tab renames the sketch folder to include .pde (!)
+
+_ present mode "stop" button hops around
+
+thread hang problem
 _ video capture problems with opengl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _ serial.available() broken with video
@@ -59,8 +92,6 @@ _   but: open() is platform specific anyway, ppl can use exec()
 
 [ needs verification ] 
 
-_ transport error 202
-_   http://dev.processing.org/bugs/show_bug.cgi?id=895
 _ check to see whether this bug is fixed once 0140 is released
 _   properly handle non-ascii chars in p5 folder name
 _   http://dev.processing.org/bugs/show_bug.cgi?id=49
@@ -447,6 +478,8 @@ _   simple endshape handler
 
 DOC / Site
 
+_ also mention in keyPressed docs that ASCII key codes will not be coded
+_   it's just how java is (maybe this is already in there?)
 _ add note about adding libraries to the sketchbook to the reference
 _ add note in environment reference about how to add something to the sketch
 _   (code, .java files, etc)
@@ -466,54 +499,43 @@ _   descended from dbn, but not dbn, etc..
 _ remove the 'search' item from yabb.cgi
 
 
-DOC / Examples or Hacks
+DOC / Examples
 
 _ add to key reference a pointer to an example that tracks all keys
 _   write simple example that tracks all keys
-_ also mention in keyPressed docs that ASCII key codes will not be coded
-_   it's just how java is (maybe this is already in there?)
-_ how to grab the java2d object from PGraphics2D
-_ How do I move the mouse cursor to another location? (advanced.html)
-_   post a hack for this or a simple example
 _ making things fast with pixel operations
-_ jai handles setting image size
-_  PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
-_    png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
-_    JAI.create("filestore", bufImage, filename+".png", "PNG");
-_ also an example of setting the jpeg compression (included in bug report)
-_ add something about getting a bufferedimage from a PGraphics
-_   maybe this should be a method?
-_ how to upload an image to a server
 _ write a threading example
 _   show an example of how to handle callback into the app
 X   or handle this some more intelligent way, super.stop() is needed.
 X   registerDispose() does the trick
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083574943
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1067383998
-_ write a timer class/example library
+_   scripts: how to make a long setup() sleep so that things don't lock way up
 _ write an example that uses HashMap (or Hashtable)
 _ write an example that uses ArrayList properly
-_ get an xml library and example in there
-_   xquery and xpath (latter in particular) for dealing with xml
-_   jeff uses saxon for switchboard.. saxon also part of nux
-_   nanoxml problems with manifest
-_   appears to use 1.6.8 version since it's just two classes
+_ get xml library example in there
+_ simple method for having a clickable region or sprite with rollover
+
+
+DOC / Hacks
+
+_ How do I move the mouse cursor to another location? (java robot example)
+_   post a hack for this or a simple example
+_   http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Robot.html
+_   also need to get frame location:
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1221384557
+_ JAI handles setting image size for png (check javax.imageio?) 
+_   PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
+_   png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
+_   JAI.create("filestore", bufImage, filename+".png", "PNG");
+_ also an example of setting the jpeg compression (included in bug report)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=342
+_ write a timer class/example library
 _ post to web example 
 _   particularly for uploading image data
 _   along with php script to handle receive
+_   this is in hacks, but 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1117194066#7
-_ simple method for having a clickable region or sprite with rollover
-_ scripts: how to make a long setup() sleep so that things don't lock way up
-_ example for using mediatracker to load images 
-_   simple example for threaded image loading "load several" 
-_   (rather than blocking on each)
-o   maybe add a loadImages(String files[]) function?
-_   use a MediaTracker that's shared, so that while an image is still
-_   loading, other calls to loadImage might be able to add things to the
-_   queue. or maybe beginImage() and endImage()? or a mode that lets 
-_   you wait for the images to download (size is zero until they're ready)
-_   MediaTracker blocking is prolly making jar download really slow
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
 
 
 
