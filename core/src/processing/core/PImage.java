@@ -166,7 +166,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage(java.awt.Image img) {
     if (img instanceof BufferedImage) {
-      BufferedImage bi = (BufferedImage) img; 
+      BufferedImage bi = (BufferedImage) img;
       width = bi.getWidth();
       height = bi.getHeight();
       pixels = new int[width * height];
@@ -186,6 +186,14 @@ public class PImage implements PConstants, Cloneable {
 
     format = RGB;
     cache = null;
+  }
+
+
+  /**
+   * Returns a BufferedImage from this PImage.
+   */
+  public java.awt.Image getImage() {
+    return null;
   }
 
 
@@ -219,7 +227,7 @@ public class PImage implements PConstants, Cloneable {
     if ((mode == CORNER) || (mode == CORNERS) || (mode == CENTER)) {
       imageMode = mode;
     } else {
-      String msg = 
+      String msg =
         "imageMode() only works with CORNER, CORNERS, or CENTER";
       throw new RuntimeException(msg);
     }
@@ -262,7 +270,7 @@ public class PImage implements PConstants, Cloneable {
     if (imageMode == CORNER) {  // x2, y2 are w/h
       x2 += x1;
       y2 += y1;
-      
+
     } else if (imageMode == CENTER) {
       x1 -= x2 / 2;
       y1 -= y2 / 2;
@@ -271,8 +279,8 @@ public class PImage implements PConstants, Cloneable {
     }
     updatePixelsImpl(x1, y1, x2, y2);
   }
-  
-  
+
+
   protected void updatePixelsImpl(int x1, int y1, int x2, int y2) {
     if (!modified) {
       mx1 = x1;
@@ -1193,9 +1201,9 @@ public class PImage implements PConstants, Cloneable {
                     int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
     if (imageMode == CORNER) {  // if CORNERS, do nothing
-      sx2 += sx1; 
+      sx2 += sx1;
       sy2 += sy1;
-      dx2 += dx1; 
+      dx2 += dx1;
       dy2 += dy1;
 
     } else if (imageMode == CENTER) {
@@ -1208,7 +1216,7 @@ public class PImage implements PConstants, Cloneable {
       dx2 += dx1;
       dy2 += dy1;
     }
-    
+
     loadPixels();
     if (src == this) {
       if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
