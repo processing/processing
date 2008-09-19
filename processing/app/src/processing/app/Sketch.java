@@ -1517,15 +1517,10 @@ public class Sketch {
     // actually used in the applet, which is the case especially for anyone
     // who is cutting/pasting from the reference.
     String sizeRegex =
-      "[\\s\\;]size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
+      "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)";
 
-    // Adding the prefix space is a hack because of problems with matching the
-    // beginning of a line to get the size() command (either using ^ or \A). 
-    // If anyone is a regexp master and knows what the problem is, please post
-    // a fix to dev.processing.org/bugs.
-    String scrubbed = scrubComments(" " + code[0].getProgram());
+    String scrubbed = scrubComments(code[0].getProgram());
     String[] matches = PApplet.match(scrubbed, sizeRegex);
-    //PApplet.println(matches);
 
     if (matches != null) {
       try {
