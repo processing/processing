@@ -30,7 +30,7 @@ import java.util.*;
 
 
 /**
- * Subclass of PGraphics that handles 3D rendering for Java 1.1.
+ * Subclass of PGraphics that handles 3D rendering.
  * It can render 3D inside a browser window and requires no plug-ins.
  * <p/>
  * The renderer is mostly set up based on the structure of the OpenGL API,
@@ -368,15 +368,15 @@ public class PGraphics3D extends PGraphics {
   protected void flush() {
     if (triangleCount > 0) {
       if (hints[ENABLE_DEPTH_SORT]) {
-        depth_sort_triangles();
+        sortTriangles();
       }
-      render_triangles();
+      renderTriangles();
     }
     if (lineCount > 0) {
       if (hints[ENABLE_DEPTH_SORT]) {
-        depth_sort_lines();
+        sortLines();
       }
-      render_lines();
+      renderLines();
     }
     // Clear this out in case flush() is called again.
     // For instance, with hint(ENABLE_DEPTH_SORT), it will be called
@@ -971,8 +971,8 @@ public class PGraphics3D extends PGraphics {
 
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
-      if (fill) render_triangles();
-      if (stroke) render_lines();
+      if (fill) renderTriangles();
+      if (stroke) renderLines();
     }
 
     shape = 0;
@@ -1247,7 +1247,7 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  protected void depth_sort_triangles() {
+  protected void sortTriangles() {
     //System.out.println("sorting " + triangleCount + " triangles");
     depth_sort_triangles_internal(0, triangleCount-1);
   }
@@ -1305,7 +1305,7 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  protected void render_triangles() {
+  protected void renderTriangles() {
     if (raw != null) {
       raw.colorMode(RGB, 1);
       raw.noStroke();
@@ -1422,11 +1422,11 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  protected void depth_sort_lines() {
+  protected void sortLines() {
   }
 
 
-  protected void render_lines() {
+  protected void renderLines() {
     if (raw != null) {
       raw.colorMode(RGB, 1);
       raw.noFill();

@@ -221,6 +221,7 @@ public class PPolygon implements PConstants {
       r[i] = 0; dr[i] = 0; l[i] = 0; dl[i] = 0;
     }
 
+    /*
     // hack to not make polygons fly into the screen
     if (parent.hints[DISABLE_FLYING_POO]) {
       float nwidth2 = -width * 2;
@@ -236,6 +237,7 @@ public class PPolygon implements PConstants {
         }
       }
     }
+    */
 
     if (smooth) {
       for (int i = 0; i < vertexCount; i++) {
