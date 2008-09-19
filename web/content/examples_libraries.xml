@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <examples>
+	<cat label="OpenGL">
+		<ex file="Geometry.html">Geometry</ex>
+		<ex file="ExtrusionGL.html">ExtrusionGL</ex>
+		<ex file="LightsGL.html">LightsGL</ex>
+		<ex file="Esfera.html">Esfera</ex>
+		<ex file="Yellowtail.html">Yellowtail</ex>
+		<ex file="TexturedSphere.html">Textured Sphere</ex>
+		<ex file="SpaceJunk.html">Space Junk</ex>
+		<ex file="FullScreenApp.html">Full Screen Application</ex>
+	</cat>
+	<cat label="Network">
+		<ex file="SharedCanvasClient.html">Shared Canvas (Client)</ex>
+		<ex file="SharedCanvasServer.html">Shared Canvas (Server)</ex>
+		<ex file="HTTPClient.html">HTTP Client</ex>
+		<ex file="ChatServer.html">Chat Server</ex>
+		<ex file="YahooSearch.html">Yahoo! Search</ex>
+		<ex file="CarnivoreClient.html">Carnivore Client</ex>
+	</cat>
 	<cat label="Video (Capture)">
 		<ex file="GettingStartedCapture.html">Getting Started (Capture)</ex>
 		<ex file="FrameDifferencing.html">Frame Differencing</ex>
@@ -34,14 +52,6 @@
 		<ex file="ManyPDFs.html">Many PDFs</ex>
 		<ex file="RandomBook.html">Random Book</ex>
 		<ex file="Complex3D.html">Complex 3D</ex>
-	</cat>
-	<cat label="Network">
-		<ex file="SharedCanvasClient.html">Shared Canvas (Client)</ex>
-		<ex file="SharedCanvasServer.html">Shared Canvas (Server)</ex>
-		<ex file="HTTPClient.html">HTTP Client</ex>
-		<ex file="ChatServer.html">Chat Server</ex>
-		<ex file="YahooSearch.html">Yahoo! Search</ex>
-		<ex file="CarnivoreClient.html">Carnivore Client</ex>
 	</cat>
 	<cat label="Serial">
 		<ex file="SimpleRead.html">Simple Read</ex>

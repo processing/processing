@@ -53,6 +53,15 @@
 		<ex file="Reach2.html">Reach 2</ex>
 		<ex file="Reach3.html">Reach 3</ex>
 	</cat>
+	<cat label="Effects">
+		<ex file="FireCube.html">Fire Cube</ex>
+		<ex file="Lens.html">Lens</ex>
+		<ex file="Metaball.html">Metaball</ex>
+		<ex file="Plasma.html">Plasma</ex>
+		<ex file="Tunnel.html">Tunnel</ex>
+		<ex file="UnlimitedSprites.html">Unlimited Sprites</ex>
+		<ex file="Wormhole.html">Wormhole</ex>
+	</cat>
 	<cat label="Motion">
 		<ex file="Linear.html">Linear</ex>
 		<ex file="Bounce.html">Bounce</ex>

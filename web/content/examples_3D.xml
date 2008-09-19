@@ -10,7 +10,6 @@
 		<ex file="Toroid.html">Toroid</ex>
 	</cat>
 	<cat label="Transform">
-		<ex file="Translate.html">Translate</ex>
 		<ex file="Rotate1.html">Rotate 1</ex>
 		<ex file="Rotate2.html">Rotate 2</ex>
 		<ex file="PushPopCubes.html">PushPop Cubes</ex>
@@ -36,7 +35,6 @@
 		<ex file="Reflection.html">Reflection</ex>
 	</cat>
 	<cat label="Camera">
-		<ex file="Ortho.html">Ortho</ex>
 		<ex file="Perspective.html">Perspective</ex>
 		<ex file="OrthoVSPerspective.html">Ortho vs. Perpective</ex>
 		<ex file="MoveEye.html">Move Eye</ex>
@@ -46,15 +44,5 @@
 		<ex file="Texture2.html">Texture 2</ex>
 		<ex file="Texture3.html">Texture 3</ex>
 		<ex file="TextureCube.html">Texture Cube</ex>
-	</cat>
-	<cat label="OpenGL">
-		<ex file="Geometry.html">Geometry</ex>
-		<ex file="ExtrusionGL.html">ExtrusionGL</ex>
-		<ex file="LightsGL.html">LightsGL</ex>
-		<ex file="Esfera.html">Esfera</ex>
-		<ex file="Yellowtail.html">Yellowtail</ex>
-		<ex file="TexturedSphere.html">Textured Sphere</ex>
-		<ex file="SpaceJunk.html">Space Junk</ex>
-		<ex file="FullScreenApp.html">Full Screen Application</ex>
 	</cat>
 </examples>
