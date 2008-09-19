@@ -7239,10 +7239,11 @@ public class PApplet extends Applet
   }
 
 
-  public void frustum(float left, float right, float bottom,
-                      float top, float znear, float zfar) {
-    if (recorder != null) recorder.frustum(left, right, bottom, top, znear, zfar);
-    g.frustum(left, right, bottom, top, znear, zfar);
+  public void frustum(float left, float right, 
+                      float bottom, float top, 
+                      float near, float far) {
+    if (recorder != null) recorder.frustum(left, right, bottom, top, near, far);
+    g.frustum(left, right, bottom, top, near, far);
   }
 
 
@@ -7713,9 +7714,9 @@ public class PApplet extends Applet
   }
 
 
-  public void set(int dx, int dy, PImage src) {
-    if (recorder != null) recorder.set(dx, dy, src);
-    g.set(dx, dy, src);
+  public void set(int x, int y, PImage src) {
+    if (recorder != null) recorder.set(x, y, src);
+    g.set(x, y, src);
   }
 
 
