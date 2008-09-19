@@ -11,37 +11,31 @@
  * are the minimum and maximum x values, top and bottom are the 
  * minimum and maximum y values, and near and far are the minimum 
  * and maximum z values.
- * 
- * Created 28 April 2005
  */
 
 void setup() 
 {
-  size(200, 200, P3D);
+  size(640, 480, P3D);
   noStroke();
+  fill(102);
 }
 
 void draw() 
 {
   background(255);
   lights();
-  
+
   //ortho(0, width, 0, height, -10, 10);  // Default ortho settings
-  ortho(-width, mouseX, -height/2.0, mouseY/2.0, -10, 10); 
+  //ortho(-width, mouseX, -height/4.0, mouseY/4.0, -10, 10); 
+  ortho(-width/2, width/2, -height/2, height/2, -10, 10); 
+
+  translate(100, 200, -200);
+  rotateY(PI/18);
   
-  translate(0, 0, -100);
-  rotateX(PI/4);
-  rotateZ(PI/3);
-    
-  pushMatrix();
-  for(int i=0; i<width; i+=20) {
-    for(int j=0; j<height; j+=20) {
-      box(10, 10, (j+i) / 4.0);
-      translate(20, 0, 0);
-    }
-    translate(-200, 20, 0);
+  for (int i = 0; i < width; i += 100) {
+    box(20, 500, 100);
+    translate(80, 0, -40);
   }
-  popMatrix();
 
 }
 

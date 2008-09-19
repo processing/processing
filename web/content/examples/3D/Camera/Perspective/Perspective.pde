@@ -12,25 +12,21 @@
  * The version of perspective without parameters sets the default 
  * perspective and the version with four parameters allows the programmer 
  * to set the area precisely.
- * 
- * Created 28 April 2005
  */
 
-void setup() 
-{
-  size(200, 200, P3D);
+void setup() {
+  size(640, 360, P3D);
   noStroke();
 }
 
-void draw() 
-{
+void draw() {
   lights();
   background(204);
   float cameraY = height/2.0;
   float fov = mouseX/float(width) * PI/2;
   float cameraZ = cameraY / tan(fov / 2.0);
   float aspect = float(width)/float(height);
-  if(mousePressed) {
+  if (mousePressed) {
     aspect = aspect / 2.0;
   }
   perspective(fov, aspect, cameraZ/10.0, cameraZ*10.0);
