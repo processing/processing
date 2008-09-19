@@ -412,37 +412,37 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-  public void set(int dx, int dy, PImage src) {
+  public void set(int x, int y, PImage src) {
     int sx = 0;
     int sy = 0;
     int sw = src.width;
     int sh = src.height;
 
     if (imageMode == CENTER) {
-      dx -= src.width/2;
-      dy -= src.height/2;
+      x -= src.width/2;
+      y -= src.height/2;
     }
-    if (dx < 0) {  // off left edge
-      sx -= dx;
-      sw += dx;
-      dx = 0;
+    if (x < 0) {  // off left edge
+      sx -= x;
+      sw += x;
+      x = 0;
     }
-    if (dy < 0) {  // off top edge
-      sy -= dy;
-      sh += dy;
-      dy = 0;
+    if (y < 0) {  // off top edge
+      sy -= y;
+      sh += y;
+      y = 0;
     }
-    if (dx + sw > width) {  // off right edge
-      sw = width - dx;
+    if (x + sw > width) {  // off right edge
+      sw = width - x;
     }
-    if (dy + sh > height) {  // off bottom edge
-      sh = height - dy;
+    if (y + sh > height) {  // off bottom edge
+      sh = height - y;
     }
 
     // this could be nonexistant
     if ((sw <= 0) || (sh <= 0)) return;
 
-    setImpl(dx, dy, sx, sy, sw, sh, src);
+    setImpl(x, y, sx, sy, sw, sh, src);
   }
 
 

@@ -31,7 +31,6 @@ depth_sort_lines -> sortLines()
   public void beginShape()
   public void beginShape(int kind)
   public void normal(float nx, float ny, float nz)
-
   public void textureMode(int mode)
   public void texture(PImage image)
   public void vertex(float x, float y)
@@ -40,6 +39,8 @@ depth_sort_lines -> sortLines()
   public void vertex(float x, float y, float z, float u, float v)
   public void bezierVertex(float x2, float y2,
   public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3,
+                           float x4, float y4)
   public void curveVertex(float x, float y)
   public void curveVertex(float x, float y, float z)
   public void breakShape()
@@ -50,14 +51,18 @@ depth_sort_lines -> sortLines()
   public void point(float x, float y, float z)
   public void line(float x1, float y1, float x2, float y2)
   public void line(float x1, float y1, float z1,
-  public void triangle(float x1, float y1, float x2, float y2,
+                   float x2, float y2, float z2)
+  public void triangle(float x1, float y1, 
+                       float x2, float y2,
+                       float x3, float y3)
   public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4)
   public void rectMode(int mode)
   public void rect(float x1, float y1, float x2, float y2)
   public void ellipseMode(int mode)
   public void ellipse(float a, float b, float c, float d)
   public void arc(float a, float b, float c, float d,
-
+                  float start, float stop)
   public void box(float size)
   public void box(float w, float h, float d)
   public void sphereDetail(int res)
@@ -68,18 +73,35 @@ depth_sort_lines -> sortLines()
   public float bezierTangent(float a, float b, float c, float d, float t)
   public void bezierDetail(int detail)
   public void bezier(float x1, float y1,
+                     float x2, float y2,
+                     float x3, float y3,
+                     float x4, float y4)
   public void bezier(float x1, float y1, float z1,
+                     float x2, float y2, float z2,
+                     float x3, float y3, float z3,
+                     float x4, float y4, float z4)
 
   public float curvePoint(float a, float b, float c, float d, float t)
   public float curveTangent(float a, float b, float c, float d,
   public void curveDetail(int detail)
   public void curveTightness(float tightness)
   public void curve(float x1, float y1,
+                    float x2, float y2,
+                    float x3, float y3,
+                    float x4, float y4)
   public void curve(float x1, float y1, float z1,
+                    float x2, float y2, float z2,
+                    float x3, float y3, float z3,
+                    float x4, float y4, float z4)
 
   public void image(PImage image, float x, float y)
   public void image(PImage image,
   public void image(PImage image,
+                    float a, float b, float c, float d)
+  public void image(PImage image,
+  public void image(PImage image,
+                    float a, float b, float c, float d,
+                    int u1, int v1, int u2, int v2)
 
   public void textAlign(int align)
   public void textAlign(int alignX, int alignY)
@@ -121,7 +143,12 @@ depth_sort_lines -> sortLines()
   public void popMatrix()
   public void resetMatrix()
   public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12)
   public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33)
+
   public void loadMatrix()
   public void printMatrix()
 
@@ -129,13 +156,19 @@ depth_sort_lines -> sortLines()
   public void endCamera()
   public void camera()
   public void camera(float eyeX, float eyeY, float eyeZ,
+                     float centerX, float centerY, float centerZ,
+                     float upX, float upY, float upZ)
   public void printCamera()
 
   public void ortho()
   public void ortho(float left, float right,
+                    float bottom, float top,
+                    float near, float far)
   public void perspective()
-  public void perspective(float fovy, float aspect, float zNear, float zFar)
-  public void frustum(float left, float right, float bottom,
+  public void perspective(float fov, float aspect, float near, float far)
+  public void frustum(float left, float right, 
+                      float bottom, float top, 
+                      float near, float far)
   public void printProjection()
 
   public float screenX(float x, float y)
@@ -150,7 +183,9 @@ depth_sort_lines -> sortLines()
   public void colorMode(int mode)
   public void colorMode(int mode, float max)
   public void colorMode(int mode,
+                        float maxX, float maxY, float maxZ)
   public void colorMode(int mode,
+                        float maxX, float maxY, float maxZ, float maxA)
 
   public void noStroke()
   public void stroke(int rgb)
@@ -197,9 +232,15 @@ depth_sort_lines -> sortLines()
   public void noLights()
   public void ambientLight(float red, float green, float blue)
   public void ambientLight(float red, float green, float blue,
+                           float x, float y, float z)
   public void directionalLight(float red, float green, float blue,
+                               float nx, float ny, float nz)
   public void pointLight(float red, float green, float blue,
+                         float x, float y, float z)
   public void spotLight(float red, float green, float blue,
+                        float x, float y, float z,
+                        float nx, float ny, float nz,
+                        float angle, float concentration)
   public void lightFalloff(float constant, float linear, float quadratic)
   public void lightSpecular(float x, float y, float z)
 
@@ -239,7 +280,7 @@ depth_sort_lines -> sortLines()
   public PImage get(int x, int y, int w, int h)
   public PImage get()
   public void set(int x, int y, int c)
-  public void set(int dx, int dy, PImage src)
+  public void set(int x, int y, PImage src)
 
   public void mask(int alpha[])
   public void mask(PImage alpha)
@@ -248,8 +289,14 @@ depth_sort_lines -> sortLines()
   public void filter(int kind, float param)
 
   public void copy(int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2)
   public void copy(PImage src,
+                   int sx1, int sy1, int sx2, int sy2,
+                   int dx1, int dy1, int dx2, int dy2)
 
   static public int blendColor(int c1, int c2, int mode)
   public void blend(int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode)
   public void blend(PImage src,
+                    int sx1, int sy1, int sx2, int sy2,
+                    int dx1, int dy1, int dx2, int dy2, int mode)
