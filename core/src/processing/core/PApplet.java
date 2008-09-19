@@ -2150,15 +2150,6 @@ public class PApplet extends Applet
   public void die(String what) {
     stop();
     throw new RuntimeException(what);
-    /*
-    if (online) {
-      System.err.println("i'm dead.. " + what);
-
-    } else {
-      System.err.println(what);
-      System.exit(1);
-    }
-    */
   }
 
 
@@ -2179,12 +2170,6 @@ public class PApplet extends Applet
     if (thread == null) {
       // exit immediately, stop() has already been called,
       // meaning that the main thread has long since exited
-      //if ((leechErr == null) && !online) {
-//      if (!external && !online) {
-//        // don't want to call System.exit() when an applet,
-//        // or running inside the PDE (would kill the PDE)
-//        System.exit(0);
-//      }
       exit2();
 
     } else if (looping) {
@@ -2206,13 +2191,6 @@ public class PApplet extends Applet
 
 
   void exit2() {
-    //if ((leechErr == null) && !online) {
-
-//    if (!external && !online) {
-//      // don't want to call System.exit() when an applet,
-//      // or running inside the PDE (would kill the PDE)
-//      System.exit(0);
-//    }
     try {
       System.exit(0);
     } catch (SecurityException e) {
@@ -2245,11 +2223,12 @@ public class PApplet extends Applet
    * is specified it defaults to writing a tiff and adds a .tif suffix.
    */
   public void saveFrame() {
-    if (online) {
-      System.err.println("Can't use saveFrame() when running in a browser.");
-      return;
+    try {
+      g.save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
+    } catch (SecurityException se) {
+      System.err.println("Can't use saveFrame() when running in a browser, " + 
+                         "unless using a signed applet.");
     }
-    g.save(savePath("screen-" + nf(frameCount, 4) + ".tif"));
   }
 
 
@@ -2264,11 +2243,12 @@ public class PApplet extends Applet
    *      // #### signs with zeros and the frame number </PRE>
    */
   public void saveFrame(String what) {
-    if (online) {
-      System.err.println("Can't use saveFrame() when running in a browser.");
-      return;
+    try {
+      g.save(savePath(insertFrame(what)));
+    } catch (SecurityException se) {
+      System.err.println("Can't use saveFrame() when running in a browser, " + 
+                         "unless using a signed applet.");
     }
-    g.save(savePath(insertFrame(what)));
   }
 
 
@@ -3580,21 +3560,39 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Open a platform-specific file chooser dialog to select a file for input. 
+   * @return full path to the selected file, or null if no selection.
+   */
   public String selectInput() {
     return selectInput("Select a file...");
   }
 
 
-  public String selectInput(final String prompt) {
+  /**
+   * Open a platform-specific file chooser dialog to select a file for input.
+   * @param prompt Mesage to show the user when prompting for a file.
+   * @return full path to the selected file, or null if canceled.
+   */
+  public String selectInput(String prompt) {
     return selectFileImpl(prompt, FileDialog.LOAD);
   }
 
 
+  /**
+   * Open a platform-specific file save dialog to select a file for output. 
+   * @return full path to the file entered, or null if canceled.
+   */
   public String selectOutput() {
     return selectOutput("Save as...");
   }
 
 
+  /**
+   * Open a platform-specific file save dialog to select a file for output. 
+   * @param prompt Mesage to show the user when prompting for a file.
+   * @return full path to the file entered, or null if canceled.
+   */
   public String selectOutput(String prompt) {
     return selectFileImpl(prompt, FileDialog.SAVE);
   }
@@ -3624,11 +3622,20 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Open a platform-specific folder chooser dialog. 
+   * @return full path to the selected folder, or null if no selection.
+   */
   public String selectFolder() {
     return selectFolder("Select a folder...");
   }
 
 
+  /**
+   * Open a platform-specific folder chooser dialog. 
+   * @param prompt Mesage to show the user when prompting for a file.
+   * @return full path to the selected folder, or null if no selection.
+   */
   public String selectFolder(final String prompt) {
     checkParentFrame();
 
@@ -3875,46 +3882,45 @@ public class PApplet extends Applet
     // Moved this earlier than the getResourceAsStream() checks, because
     // calling getResourceAsStream() on a directory lists its contents.
     // http://dev.processing.org/bugs/show_bug.cgi?id=716
-    if (!online) {
-      try {
-        // first see if it's in a data folder
-        File file = new File(dataPath(filename));
-        if (!file.exists()) {
-          // next see if it's just in the sketch folder
-          file = new File(sketchPath, filename);
-        }
-        if (file.isDirectory()) {
-          return null;
-        }
-        if (file.exists()) {
-          try {
-            // handle case sensitivity check
-            String filePath = file.getCanonicalPath();
-            String filenameActual = new File(filePath).getName();
-            // make sure there isn't a subfolder prepended to the name
-            String filenameShort = new File(filename).getName();
-            // if the actual filename is the same, but capitalized
-            // differently, warn the user.
-            //if (filenameActual.equalsIgnoreCase(filenameShort) &&
-            //!filenameActual.equals(filenameShort)) {
-            if (!filenameActual.equals(filenameShort)) {
-              throw new RuntimeException("This file is named " +
-                                         filenameActual + " not " +
-                                         filename + ". Rename the file " +
-                                         "or change your code.");
-            }
-          } catch (IOException e) { }
-        }
+    try {
+      // First see if it's in a data folder. This may fail by throwing  
+      // a SecurityException. If so, this whole block will be skipped.
+      File file = new File(dataPath(filename));
+      if (!file.exists()) {
+        // next see if it's just in the sketch folder
+        file = new File(sketchPath, filename);
+      }
+      if (file.isDirectory()) {
+        return null;
+      }
+      if (file.exists()) {
+        try {
+          // handle case sensitivity check
+          String filePath = file.getCanonicalPath();
+          String filenameActual = new File(filePath).getName();
+          // make sure there isn't a subfolder prepended to the name
+          String filenameShort = new File(filename).getName();
+          // if the actual filename is the same, but capitalized
+          // differently, warn the user.
+          //if (filenameActual.equalsIgnoreCase(filenameShort) &&
+          //!filenameActual.equals(filenameShort)) {
+          if (!filenameActual.equals(filenameShort)) {
+            throw new RuntimeException("This file is named " +
+                                       filenameActual + " not " +
+                                       filename + ". Rename the file " +
+            "or change your code.");
+          }
+        } catch (IOException e) { }
+      }
 
-        // if this file is ok, may as well just load it
-        stream = new FileInputStream(file);
-        if (stream != null) return stream;
+      // if this file is ok, may as well just load it
+      stream = new FileInputStream(file);
+      if (stream != null) return stream;
 
-        // have to break these out because a general Exception might
-        // catch the RuntimeException being thrown above
-      } catch (IOException ioe) {
-      } catch (SecurityException se) { }
-    }
+      // have to break these out because a general Exception might
+      // catch the RuntimeException being thrown above
+    } catch (IOException ioe) {
+    } catch (SecurityException se) { }
 
     // Using getClassLoader() prevents java from converting dots
     // to slashes or requiring a slash at the beginning.
@@ -4296,9 +4302,10 @@ public class PApplet extends Applet
    */
   public String sketchPath(String where) {
     if (sketchPath == null) {
-      throw new RuntimeException("The applet was not inited properly, " +
-                                 "or security restrictions prevented " +
-                                 "it from determining its path.");
+      return where;
+//      throw new RuntimeException("The applet was not inited properly, " +
+//                                 "or security restrictions prevented " +
+//                                 "it from determining its path.");
     }
     // isAbsolute() could throw an access exception, but so will writing
     // to the local disk using the sketch path, so this is safe here.
@@ -4377,12 +4384,16 @@ public class PApplet extends Applet
    * already exist. Useful when trying to save to a subfolder that
    * may not actually exist.
    */
-  static public void createPath(String filename) {
-    File file = new File(filename);
-    String parent = file.getParent();
-    if (parent != null) {
-      File unit = new File(parent);
-      if (!unit.exists()) unit.mkdirs();
+  static public void createPath(String path) {
+    try {
+      File file = new File(path);
+      String parent = file.getParent();
+      if (parent != null) {
+        File unit = new File(parent);
+        if (!unit.exists()) unit.mkdirs();
+      }
+    } catch (SecurityException se) {
+      System.err.println("You don't have permissions to create " + path);
     }
   }
 
@@ -6632,12 +6643,6 @@ public class PApplet extends Applet
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
-  }
-
-
-  public void unhint(int which) {
-    if (recorder != null) recorder.unhint(which);
-    g.unhint(which);
   }
 
 
