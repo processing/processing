@@ -28,6 +28,11 @@ X not always updating on rename (maybe a mac problem?)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=56
 X error messages not clearing the message area
 X   http://dev.processing.org/bugs/show_bug.cgi?id=912
+o expecting EOF, found 'void?
+o   http://dev.processing.org/bugs/show_bug.cgi?id=905
+o   last fixed 5/30, maybe check the svn for those two days
+o   this might be the MULTILINE mess
+X   was a typo in the code
 
 cleanup
 o how to grab the java2d object from PGraphics2D
@@ -42,12 +47,6 @@ o   you wait for the images to download (size is zero until they're ready)
 o   MediaTracker blocking is prolly making jar download really slow
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
 
-
-regressions
-_ expecting EOF, found 'void?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=905
-_   last fixed 5/30, maybe check the svn for those two days
-_   this might be the MULTILINE mess
 
 _ do some edits on the "getting started" text
 _   add getting started to help menu?
