@@ -12,8 +12,7 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 X fix problems with text in a rectangle
 X   http://dev.processing.org/bugs/show_bug.cgi?id=893
 X   http://dev.processing.org/bugs/show_bug.cgi?id=899
-
-_ finish getImage() method inside PImage
+X finish getImage() method inside PImage
 
 
 regressions
@@ -23,6 +22,14 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=894
 
 _ clean up setMainDrawingSurface()
 _   should instead be inside size(), and init(), no?
+
+
+_ ortho() behaving differently in P3D vs OPENGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=100
+_   only happens on the first round
+_ ortho() is doing things strangely
+_   seems to be mapping to 0, 0 - width/2, height/2
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
 
 
 [ need problem sketch ] 
@@ -467,9 +474,6 @@ _     will need to split each based on the other
 _     sort issues will affect both
 _ images are losing pixels at the edges
 _   http://dev.processing.org/bugs/show_bug.cgi?id=102
-_ ortho() is doing things strangely
-_   seems to be mapping to 0, 0 - width/2, height/2
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
 _ odd error with some pixels from images not drawing properly
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
 _ clipping not yet completely implemented
@@ -554,9 +558,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ updatePixels wth OpenGL requires a lot of memory, need better texture update
 _   http://dev.processing.org/bugs/show_bug.cgi?id=610
 _ strokeWeight() doesn't work in opengl or p3d
-_ ortho() behaving differently in P3D vs OPENGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=100
-_   only happens on the first round
 _ in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
 _   this way we can also implement breakShape() for opengl
