@@ -865,6 +865,14 @@ public class Editor extends JFrame {
     item = new JMenuItem("Getting Started");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          Base.openURL("http://processing.org/learning/gettingstarted/");
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Environment");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
           Base.showEnvironment();
         }
       });

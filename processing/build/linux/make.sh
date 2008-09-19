@@ -78,7 +78,7 @@ mkdir -p bin
     -d bin -source 1.5 -target 1.5 src/processing/core/*.java
 find bin -name "*~" -exec rm -f {} ';'
 rm -f ../build/linux/work/lib/core.jar
-cd bin && zip -rq ../../build/linux/work/lib/core.jar processing && cd ..
+cd bin && zip -rq ../../build/linux/work/lib/core.jar processing/core/*.class && cd ..
 
 # back to base processing dir
 cd ..
@@ -123,7 +123,9 @@ cd ..
 
 cd app
 
-mkdir -p ../build/linux/work/classes
+rm -rf ../build/linux/work/classes
+mkdir ../build/linux/work/classes
+
 ../build/linux/work/java/bin/java \
     -cp ../build/linux/work/java/lib/tools.jar \
     com.sun.tools.javac.Main \
@@ -167,7 +169,7 @@ $JAVAC \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/serial.jar processing && cd ..
+cd bin && zip -r0q ../library/serial.jar processing/serial/*.class && cd ..
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
 

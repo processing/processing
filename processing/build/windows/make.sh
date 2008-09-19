@@ -80,7 +80,7 @@ rm -f ../build/windows/work/lib/core.jar
 find bin -name "*~" -exec rm -f {} ';'
 
 # package this folder into core.jar
-cd bin && zip -rq ../../build/windows/work/lib/core.jar processing && cd ..
+cd bin && zip -rq ../../build/windows/work/lib/core.jar processing/core/*.class && cd ..
 
 # back to base processing dir
 cd ..
@@ -135,7 +135,8 @@ fi
 cd app
 
 # has to be present, otherwise javac will complain of file writing errors
-mkdir -p ../build/windows/work/classes
+zip -r ../build/windows/work/classes
+mkdir ../build/windows/work/classes
 
 ../build/windows/work/java/bin/java \
     -classpath "..\\build\\windows\\work\\java\\lib\\tools.jar" \

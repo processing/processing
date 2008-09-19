@@ -64,7 +64,7 @@ perl preproc.pl
 mkdir -p bin
 javac -source 1.5 -target 1.5 -d bin src/processing/core/*.java
 rm -f ../build/macosx/work/lib/core.jar
-cd bin && zip -r0q ../../build/macosx/work/lib/core.jar processing && cd ..
+cd bin && zip -r0q ../../build/macosx/work/lib/core.jar processing/core/*.class && cd ..
 
 # head back to "processing/app"
 cd ../app
@@ -100,7 +100,8 @@ echo Building the PDE...
 #../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/syntax/*.java src/processing/app/preproc/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
 
 # For some reason, javac really wants this folder to exist beforehand.
-mkdir -p ../build/macosx/work/classes
+zip -r ../build/macosx/work/classes
+mkdir ../build/macosx/work/classes
 # Intentionally keeping this separate from the 'bin' folder
 # used by eclipse so that they don't cause conflicts.
 
@@ -149,7 +150,7 @@ $JAVAC \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/serial.jar processing && cd ..
+cd bin && zip -r0q ../library/serial.jar processing/serial/*.class && cd ..
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
 
