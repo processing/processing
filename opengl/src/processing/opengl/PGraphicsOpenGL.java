@@ -191,6 +191,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
     if (which == DISABLE_DEPTH_TEST) {
       gl.glDisable(GL.GL_DEPTH_TEST);
 
+    } else if (which == ENABLE_DEPTH_TEST) {
+      gl.glEnable(GL.GL_DEPTH_TEST);
+
     } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
       if (!opengl2X) {
         releaseContext();
@@ -207,15 +210,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
         allocate();
         throw new PApplet.RendererChangeException();
       }
-    }
-  }
-
-
-  public void unhint(int which) {
-    hints[which] = false;
-
-    if (which == DISABLE_DEPTH_TEST) {
-      gl.glEnable(GL.GL_DEPTH_TEST);
     }
   }
 
@@ -446,7 +440,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  protected void render_triangles() {
+  protected void renderTriangles() {
     report("render_triangles in");
     //System.out.println("rendering " + triangleCount + " triangles");
 
@@ -695,7 +689,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  public void render_lines() {
+  public void renderLines() {
     report("render_lines in");
 
     int i = 0;
@@ -2527,7 +2521,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * throw an GL_INVALID_OPERATION error.
    */
   public void report(String where) {
-    if (!hints[DISABLE_ERROR_REPORT]) {
+    if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
       int err = gl.glGetError();
       if (err != 0) {
         String errString = glu.gluErrorString(err);
