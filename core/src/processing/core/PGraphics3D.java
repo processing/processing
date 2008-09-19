@@ -1750,11 +1750,10 @@ public class PGraphics3D extends PGraphics {
     float nz;
     if (!normalIsWorld) {
       toWorldNormal(v[NX], v[NY], v[NZ], worldNormal);
-      nx = worldNormal[TX];
-      ny = worldNormal[TY];
-      nz = worldNormal[TZ];
-    }
-    else {
+      nx = worldNormal[X];
+      ny = worldNormal[Y];
+      nz = worldNormal[Z];
+    } else {
       nx = v[NX];
       ny = v[NY];
       nz = v[NZ];
