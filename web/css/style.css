@@ -545,4 +545,5 @@ pre.code { clear: both; margin-top: 10px; }
 #examples-nav { margin-left: -44px; display: relative; }
 #examples-nav img { display: absolute; top: 15px; left: 100px; }
 
+#Examples h1 { margin-bottom: 0; }
 
