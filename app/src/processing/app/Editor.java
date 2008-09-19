@@ -56,7 +56,7 @@ public class Editor extends JFrame {
 
   // otherwise, if the window is resized with the message label
   // set to blank, it's preferredSize() will be fukered
-  static protected final String EMPTY = 
+  static protected final String EMPTY =
     "                                                                     " +
     "                                                                     " +
     "                                                                     ";
@@ -151,7 +151,7 @@ public class Editor extends JFrame {
     addWindowListener(new WindowAdapter() {
         public void windowActivated(WindowEvent e) {
           base.handleActivated(Editor.this);
-          
+
           // re-add the sub-menus that are shared by all windows
           fileMenu.insert(sketchbookMenu, 2);
           fileMenu.insert(examplesMenu, 3);
@@ -356,7 +356,7 @@ public class Editor extends JFrame {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -406,7 +406,7 @@ public class Editor extends JFrame {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   protected void buildMenuBar() {
@@ -615,11 +615,11 @@ public class Editor extends JFrame {
     addInternalTools(menu);
     addTools(menu, Base.getToolsFolder());
     addTools(menu, base.getSketchbookFolder());
-    
+
     return menu;
   }
-  
-  
+
+
   protected void addTools(JMenu menu, File sourceFolder) {
     HashMap toolItems = new HashMap();
 
@@ -664,16 +664,16 @@ public class Editor extends JFrame {
           className = findClassInZipFile(folders[i].getName(), archives[j]);
           if (className != null) break;
         }
-        
+
         /*
         // Alternatively, could use manifest files with special attributes:
         // http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html
         // Example code for loading from a manifest file:
         // http://forums.sun.com/thread.jspa?messageID=3791501
         File infoFile = new File(toolDirectory, "tool.txt");
-        if (!infoFile.exists()) continue; 
-        
-        String[] info = PApplet.loadStrings(infoFile); 
+        if (!infoFile.exists()) continue;
+
+        String[] info = PApplet.loadStrings(infoFile);
         //Main-Class: org.poo.shoe.AwesomerTool
         //String className = folders[i].getName();
         String className = null;
@@ -705,14 +705,14 @@ public class Editor extends JFrame {
         });
         //menu.add(item);
         toolItems.put(title, item);
-        
+
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
     ArrayList<String> toolList = new ArrayList(toolItems.keySet());
     if (toolList.size() == 0) return;
-    
+
     menu.addSeparator();
     Collections.sort(toolList);
     for (String title : toolList) {
@@ -724,7 +724,7 @@ public class Editor extends JFrame {
   protected String findClassInZipFile(String base, File file) {
     // Class file to search for
     String classFileName = "/" + base + ".class";
-    
+
     try {
       ZipFile zipFile = new ZipFile(file);
       Enumeration entries = zipFile.entries();
@@ -733,7 +733,7 @@ public class Editor extends JFrame {
 
         if (!entry.isDirectory()) {
           String name = entry.getName();
-          System.out.println("entry: " + name);
+          //System.out.println("entry: " + name);
 
           if (name.endsWith(classFileName)) {
             //int slash = name.lastIndexOf('/');
@@ -749,8 +749,8 @@ public class Editor extends JFrame {
     }
     return null;
   }
-  
-  
+
+
   protected JMenu addInternalTools(JMenu menu) {
     JMenuItem item;
 
@@ -809,7 +809,7 @@ public class Editor extends JFrame {
         }
       });
     menu.add(item);
-    
+
     item = new JMenuItem("Fix Encoding & Reload");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -821,7 +821,7 @@ public class Editor extends JFrame {
       }
     });
     menu.add(item);
-  
+
     /*
     item = new JMenuItem("Export Folder...");
     item.addActionListener(new ActionListener() {
@@ -967,7 +967,7 @@ public class Editor extends JFrame {
         }
       });
     menu.add(item);
-    
+
     item = newJMenuItemShift("Copy for Discourse", 'C');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -1070,7 +1070,7 @@ public class Editor extends JFrame {
   }
 
 
-  /** 
+  /**
    * Like newJMenuItem() but adds shift as a modifier for the key command.
    */
   static public JMenuItem newJMenuItemShift(String title, int what) {
@@ -1083,7 +1083,7 @@ public class Editor extends JFrame {
 
 
   /**
-   * Same as newJMenuItem(), but adds the ALT (on Linux and Windows) 
+   * Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
    * or OPTION (on Mac OS X) key as a modifier.
    */
   static public JMenuItem newJMenuItemAlt(String title, int what) {
@@ -1095,7 +1095,7 @@ public class Editor extends JFrame {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   class UndoAction extends AbstractAction {
@@ -1169,45 +1169,45 @@ public class Editor extends JFrame {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   /**
    * Gets the current sketch object.
    */
   public Sketch getSketch() {
     return sketch;
   }
-  
-  
+
+
   /**
-   * Get the JEditTextArea object for use (not recommended). This should only 
-   * be used in obscure cases that really need to hack the internals of the 
-   * JEditTextArea. Most tools should only interface via the get/set functions 
-   * found in this class. This will maintain compatibility with future releases, 
-   * which will not use JEditTextArea. 
+   * Get the JEditTextArea object for use (not recommended). This should only
+   * be used in obscure cases that really need to hack the internals of the
+   * JEditTextArea. Most tools should only interface via the get/set functions
+   * found in this class. This will maintain compatibility with future releases,
+   * which will not use JEditTextArea.
    */
   public JEditTextArea getTextArea() {
     return textarea;
   }
-  
-  
+
+
   /**
    * Get the contents of the current buffer. Used by the Sketch class.
    */
   public String getText() {
     return textarea.getText();
   }
-  
-  
+
+
   /**
-   * Get a range of text from the current buffer. 
+   * Get a range of text from the current buffer.
    */
   public String getText(int start, int stop) {
     return textarea.getText(start, stop - start);
   }
-  
-  
+
+
   /**
    * Replace the entire contents of the front-most tab.
    */
@@ -1216,8 +1216,8 @@ public class Editor extends JFrame {
     textarea.setText(what);
     stopCompoundEdit();
   }
-  
-  
+
+
   public void insertText(String what) {
     startCompoundEdit();
     int caret = getCaretOffset();
@@ -1226,9 +1226,9 @@ public class Editor extends JFrame {
     stopCompoundEdit();
   }
 
-  
+
   /**
-   * Called to update the text but not switch to a different set of code 
+   * Called to update the text but not switch to a different set of code
    * (which would affect the undo manager).
    */
 //  public void setText2(String what, int start, int stop) {
@@ -1248,13 +1248,13 @@ public class Editor extends JFrame {
   public String getSelectedText() {
     return textarea.getSelectedText();
   }
-  
-  
+
+
   public void setSelectedText(String what) {
     textarea.setSelectedText(what);
   }
-  
-  
+
+
   public void setSelection(int start, int stop) {
     // make sure that a tool isn't asking for a bad location
     start = PApplet.constrain(start, 0, textarea.getDocumentLength());
@@ -1262,42 +1262,42 @@ public class Editor extends JFrame {
 
     textarea.select(start, stop);
   }
-  
-  
+
+
   /**
-   * Get the position (character offset) of the caret. With text selected, 
-   * this will be the last character actually selected, no matter the direction 
-   * of the selection. That is, if the user clicks and drags to select lines 
+   * Get the position (character offset) of the caret. With text selected,
+   * this will be the last character actually selected, no matter the direction
+   * of the selection. That is, if the user clicks and drags to select lines
    * 7 up to 4, then the caret position will be somewhere on line four.
    */
   public int getCaretOffset() {
     return textarea.getCaretPosition();
   }
-  
-  
+
+
   /**
    * True if some text is currently selected.
    */
   public boolean isSelectionActive() {
     return textarea.isSelectionActive();
   }
-  
-  
+
+
   /**
-   * Get the beginning point of the current selection. 
+   * Get the beginning point of the current selection.
    */
   public int getSelectionStart() {
     return textarea.getSelectionStart();
   }
-  
-  
+
+
   /**
-   * Get the end point of the current selection. 
+   * Get the end point of the current selection.
    */
   public int getSelectionStop() {
     return textarea.getSelectionStop();
   }
-  
+
 
   /**
    * Get text for a specified line.
@@ -1305,8 +1305,8 @@ public class Editor extends JFrame {
   public String getLineText(int line) {
     return textarea.getLineText(line);
   }
-  
-  
+
+
   /**
    * Replace the text on a specified line.
    */
@@ -1316,15 +1316,15 @@ public class Editor extends JFrame {
     textarea.setSelectedText(what);
     stopCompoundEdit();
   }
-  
-  
+
+
   /**
    * Get character offset for the start of a given line of text.
    */
   public int getLineStartOffset(int line) {
     return textarea.getLineStartOffset(line);
   }
-  
+
 
   /**
    * Get character offset for end of a given line of text.
@@ -1332,19 +1332,19 @@ public class Editor extends JFrame {
   public int getLineStopOffset(int line) {
     return textarea.getLineStopOffset(line);
   }
-  
-  
+
+
   /**
    * Get the number of lines in the currently displayed buffer.
    */
   public int getLineCount() {
     return textarea.getLineCount();
   }
-  
+
 
   /**
-   * Use before a manipulating text to group editing operations together as a 
-   * single undo. Use stopCompoundEdit() once finished. 
+   * Use before a manipulating text to group editing operations together as a
+   * single undo. Use stopCompoundEdit() once finished.
    */
   public void startCompoundEdit() {
     compoundEdit = new CompoundEdit();
@@ -1362,22 +1362,22 @@ public class Editor extends JFrame {
     compoundEdit = null;
   }
 
-  
+
   public int getScrollPosition() {
     return textarea.getScrollPosition();
   }
-  
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-  
-  
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Switch between tabs, this swaps out the Document object
    * that's currently being manipulated.
    */
   protected void setCode(SketchCode code) {
     SyntaxDocument document = (SyntaxDocument) code.getDocument();
-    
+
     if (document == null) {  // this document not yet inited
       document = new SyntaxDocument();
       code.setDocument(document);
@@ -1423,7 +1423,7 @@ public class Editor extends JFrame {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -1433,16 +1433,16 @@ public class Editor extends JFrame {
     textarea.cut();
     sketch.setModified(true);
   }
-  
-  
+
+
   /**
    * Implements Edit &rarr; Copy.
    */
   public void handleCopy() {
     textarea.copy();
   }
-  
-  
+
+
   protected void handleDiscourseCopy() {
     new DiscourseFormat(Editor.this).show();
   }
@@ -1455,8 +1455,8 @@ public class Editor extends JFrame {
     textarea.paste();
     sketch.setModified(true);
   }
-  
-  
+
+
   /**
    * Implements Edit &rarr; Select All.
    */
@@ -1464,7 +1464,7 @@ public class Editor extends JFrame {
     textarea.selectAll();
   }
 
-  
+
   protected void handleCommentUncomment() {
     startCompoundEdit();
 
@@ -1473,17 +1473,17 @@ public class Editor extends JFrame {
 
     int lastLineStart = textarea.getLineStartOffset(stopLine);
     int selectionStop = textarea.getSelectionStop();
-    // If the selection ends at the beginning of the last line, 
-    // then don't (un)comment that line. 
+    // If the selection ends at the beginning of the last line,
+    // then don't (un)comment that line.
     if (selectionStop == lastLineStart) {
-      // Though if there's no selection, don't do that 
+      // Though if there's no selection, don't do that
       if (textarea.isSelectionActive()) {
         stopLine--;
       }
     }
 
-    // If the text is empty, ignore the user. 
-    // Also ensure that all lines are commented (not just the first) 
+    // If the text is empty, ignore the user.
+    // Also ensure that all lines are commented (not just the first)
     // when determining whether to comment or uncomment.
     int length = textarea.getDocumentLength();
     boolean commented = true;
@@ -1519,8 +1519,8 @@ public class Editor extends JFrame {
                     textarea.getLineStopOffset(stopLine) - 1);
     stopCompoundEdit();
   }
-  
-  
+
+
   protected void handleIndentOutdent(boolean indent) {
     int tabSize = Preferences.getInteger("editor.tabs.size");
     String tabString = Editor.EMPTY.substring(0, tabSize);
@@ -1530,12 +1530,12 @@ public class Editor extends JFrame {
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
 
-    // If the selection ends at the beginning of the last line, 
-    // then don't (un)comment that line. 
+    // If the selection ends at the beginning of the last line,
+    // then don't (un)comment that line.
     int lastLineStart = textarea.getLineStartOffset(stopLine);
     int selectionStop = textarea.getSelectionStop();
     if (selectionStop == lastLineStart) {
-      // Though if there's no selection, don't do that 
+      // Though if there's no selection, don't do that
       if (textarea.isSelectionActive()) {
         stopLine--;
       }
@@ -1579,10 +1579,10 @@ public class Editor extends JFrame {
         Base.showReference(referenceFile + ".html");
       }
     }
-  }  
+  }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -1606,10 +1606,10 @@ public class Editor extends JFrame {
     presenting = present;
 
     try {
-      String appletClassName = sketch.compile(); 
+      String appletClassName = sketch.compile();
       if (appletClassName != null) {
         runtime = new Runner(Editor.this, appletClassName, presenting);
-        
+
         // Cannot use invokeLater() here, otherwise it gets
         // placed on the event thread and causes a hang--bad idea all around.
         Thread t = new Thread(new Runnable() {
@@ -1630,8 +1630,8 @@ public class Editor extends JFrame {
 
 
   /**
-   * Set the location of the sketch run window. Used by Runner to update the 
-   * Editor about window drag events while the sketch is running. 
+   * Set the location of the sketch run window. Used by Runner to update the
+   * Editor about window drag events while the sketch is running.
    */
   public void setSketchLocation(Point p) {
     sketchWindowLocation = p;
@@ -1648,13 +1648,13 @@ public class Editor extends JFrame {
 
 
   /**
-   * Implements Sketch &rarr; Stop, or pressing Stop on the toolbar. 
+   * Implements Sketch &rarr; Stop, or pressing Stop on the toolbar.
    */
   public void handleStop() {  // called by menu or buttons
     toolbar.activate(EditorToolbar.STOP);
-    
+
     internalCloseRunner();
-    
+
     toolbar.deactivate(EditorToolbar.RUN);
     toolbar.deactivate(EditorToolbar.STOP);
 
@@ -1663,18 +1663,18 @@ public class Editor extends JFrame {
   }
 
 
-  /** 
+  /**
    * Called by Runner to notify that the sketch has stopped running.
-   * Tools should not call this function, use handleStop() instead. 
+   * Tools should not call this function, use handleStop() instead.
    */
   public void internalRunnerClosed() {
-    running = false;    
+    running = false;
     toolbar.deactivate(EditorToolbar.RUN);
   }
 
 
   /**
-   * Handle internal shutdown of the runner. 
+   * Handle internal shutdown of the runner.
    */
   public void internalCloseRunner() {
     running = false;
@@ -1878,7 +1878,7 @@ public class Editor extends JFrame {
       Base.showWarning("Error", "Could not create the sketch.", e);
       return false;
     }
-    header.rebuild();      
+    header.rebuild();
     // Set the title of the window to "sketch_070752a - Processing 0126"
     setTitle(sketch.getName() + " | " + WINDOW_TITLE);
     // Disable untitled setting from previous document, if any
@@ -2141,7 +2141,7 @@ public class Editor extends JFrame {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -2173,11 +2173,11 @@ public class Editor extends JFrame {
         int line = re.getCodeLine();
         // subtract one from the end so that the \n ain't included
         if (line >= textarea.getLineCount()) {
-          // The error is at the end of this current chunk of code, 
-          // so the last line needs to be selected. 
+          // The error is at the end of this current chunk of code,
+          // so the last line needs to be selected.
           line = textarea.getLineCount() - 1;
           if (textarea.getLineText(line).length() == 0) {
-            // The last line may be zero length, meaning nothing to select. 
+            // The last line may be zero length, meaning nothing to select.
             // If so, back up one more line.
             line--;
           }
@@ -2187,7 +2187,7 @@ public class Editor extends JFrame {
       }
     }
 
-    // Since this will catch all Exception types, spend some time figuring 
+    // Since this will catch all Exception types, spend some time figuring
     // out which kind and try to give a better error message to the user.
     String mess = e.getMessage();
     if (mess != null) {
@@ -2219,9 +2219,9 @@ public class Editor extends JFrame {
   public void statusEmpty() {
     statusNotice(EMPTY);
   }
-  
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -2279,7 +2279,7 @@ public class Editor extends JFrame {
         }
       });
       this.add(item);
-      
+
       this.addSeparator();
 
       item = new JMenuItem("Comment/Uncomment");
