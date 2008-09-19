@@ -3103,8 +3103,9 @@ public abstract class PGraphics extends PImage implements PConstants {
     depthError("perspective");
   }
 
-  public void frustum(float left, float right, float bottom,
-                      float top, float znear, float zfar) {
+  public void frustum(float left, float right, 
+                      float bottom, float top, 
+                      float near, float far) {
     depthError("frustum");
   }
 
