@@ -3,103 +3,103 @@
  * by Peter Cho. 
  * 
  * Move the mouse across the screen to fold the "K". 
- * 
- * Created 16 December 2002
  */
  
-color bgc, fgc, fgc2;
+color backgroundColor, foregroundColor, foregroundColor2;
 
-float p_x, p_y;
-float p_fx, p_fy;
-float p_v2, p_vx, p_vy;
-float p_a2, p_ax, p_ay;
-float p_mass, p_drag;
+float px, py;
+float pfx, pfy;
+float pv2, pvx, pvy;
+float pa2, pax, pay;
+float pMass, pDrag;
 
-void setup()
-{
-  size(200, 200, P3D);
+void setup() {
+  size(640, 360, P3D);
   noStroke();
-  colorMode(RGB, 255);
-  bgc = color(134, 144, 154);
-  fgc = color(235, 235, 30);
-  fgc2 = color(240, 130, 20);
-  init_particle(.6, .9,  width/2, height/2);
+  backgroundColor = color(102);
+  foregroundColor = color(0);
+  foregroundColor2 = color(255);
+  initParticle(0.6, 0.9,  width/2, height/2);
 }
 
-void draw()
-{
-  background(bgc);
+void draw() {
+  background(backgroundColor);
   pushMatrix();
 
-  iterate_particle(.15*(-p_x+mouseX), .15*(-p_y+(height-mouseY)));
+  iterateParticle(0.15*(-px+mouseX), 0.15*(-py+(height-mouseY)));
 
   translate(width/2, height/2, 0);
-  fill(fgc);
+  fill(foregroundColor);
   drawK();
  
   pushMatrix();
   translate(0, 0, 1);
-  translate(.75*(p_x-width/2), -.75*(p_y-height/2), 0);
-  translate(.75*(p_x-width/2), -.75*(p_y-height/2), 0);
-  rotateZ(atan2(-(p_y-height/2),(p_x-width/2)) + PI/2);
+  translate(0.75 * (px-width/2), -0.75 * (py-height/2), 0);
+  translate(0.75 * (px-width/2), -0.75 * (py-height/2), 0);
+  rotateZ(atan2(-(py-height/2), (px-width/2)) + PI/2);
   rotateX(PI);
-  rotateZ(-(atan2(-(p_y-height/2),(p_x-width/2)) + PI/2));
+  rotateZ(-(atan2(-(py-height/2), (px-width/2)) + PI/2));
   
-  fill(fgc2);
+  fill(foregroundColor2);
   drawK();
   popMatrix();
 
   translate(0, 0, 2);
-  translate(.75*(p_x-width/2), -.75*(p_y-height/2), 0);
-  rotateZ(atan2(-(p_y-height/2),(p_x-width/2)) + PI/2);
-  fill(bgc);
+  translate(0.75 * (px-width/2), -0.75 * (py-height/2), 0);
+  rotateZ(atan2(-(py-height/2), (px-width/2)) + PI/2);
+  
+  
+  fill(backgroundColor);
   beginShape(QUADS);
-  vertex(-200, 0);
-  vertex(+200, 0);
-  vertex(+200, -200);
-  vertex(-200, -200);
+  vertex(-640, 0);
+  vertex( 640, 0);
+  vertex( 640, -360);
+  vertex(-640, -360);
   endShape();
   
   popMatrix();
 }
 
-void init_particle(float _mass, float _drag, float ox, float oy) 
-{
-  p_x = ox;
-  p_y = oy;
-  p_v2 = 0.0;
-  p_vx = 0.0;
-  p_vy = 0.0;
-  p_a2 = 0.0;
-  p_ax = 0.0;
-  p_ay = 0.0;
-  p_mass = _mass;
-  p_drag = _drag;
+void initParticle(float _mass, float _drag, float ox, float oy) {
+  px = ox;
+  py = oy;
+  pv2 = 0.0;
+  pvx = 0.0;
+  pvy = 0.0;
+  pa2 = 0.0;
+  pax = 0.0;
+  pay = 0.0;
+  pMass = _mass;
+  pDrag = _drag;
 }
 
-void iterate_particle(float fkx, float fky) 
-{
+void iterateParticle(float fkx, float fky) {
   // iterate for a single force acting on the particle
-  p_fx = fkx;
-  p_fy = fky;
-  p_a2 = p_fx*p_fx + p_fy*p_fy;
-  if (p_a2 < 0.0000001) return;
-  p_ax = p_fx/p_mass;
-  p_ay = p_fy/p_mass;
-  p_vx += p_ax;
-  p_vy += p_ay;
-  p_v2 = p_vx*p_vx + p_vy*p_vy;
-  if (p_v2 < 0.0000001) return;
-  p_vx *= (1.0 - p_drag);
-  p_vy *= (1.0 - p_drag);
-  p_x += p_vx;
-  p_y += p_vy;
+  pfx = fkx;
+  pfy = fky;
+  pa2 = pfx*pfx + pfy*pfy;
+  if (pa2 < 0.0000001) {
+    return;
+  }
+  pax = pfx/pMass;
+  pay = pfy/pMass;
+  pvx += pax;
+  pvy += pay;
+  pv2 = pvx*pvx + pvy*pvy;
+  if (pv2 < 0.0000001) {
+    return;
+  }
+  pvx *= (1.0 - pDrag);
+  pvy *= (1.0 - pDrag);
+  px += pvx;
+  py += pvy;
 }
 
-void drawK() 
-{
-  scale(1);
-  translate(-63, +71);
+void drawK() {
+  pushMatrix();
+  
+  scale(1.5);
+  translate(-63, 71);
   beginShape(QUADS);
   vertex(0, 0, 0);
   vertex(0, -142.7979, 0);
@@ -116,7 +116,8 @@ void drawK()
   vertex(90.7988, 0, 0);
   vertex(52.3994-.2, -59.999-.3, 0);
   endShape();
-  translate(+63, -71);
+  
+  popMatrix();
 }
 
 

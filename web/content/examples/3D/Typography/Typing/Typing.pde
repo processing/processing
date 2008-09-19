@@ -14,7 +14,7 @@ boolean didntTypeYet = true;
 
 void setup()
 {
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   f = loadFont("Univers45.vlw");
   textFont(f, 25);
 }

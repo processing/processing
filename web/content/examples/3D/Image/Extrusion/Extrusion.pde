@@ -9,10 +9,10 @@
 
 PImage extrude;
 int[][] values;
-float angle;
+float angle = 0;
 
 void setup() {
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   
   // Load the image into a new array
   extrude = loadImage("ystone08.jpg");
@@ -20,24 +20,23 @@ void setup() {
   values = new int[extrude.width][extrude.height];
   for (int y = 0; y < extrude.height; y++) {
     for (int x = 0; x < extrude.width; x++) {
-      int pixel = extrude.pixels[y*width + x];
+      color pixel = extrude.get(x, y);
       values[x][y] = int(brightness(pixel));
     }
   }
 }
 
-
 void draw() {
   background(0);
   
-  // Update and constrain the angle
+  // Update the angle
   angle += 0.005;
-  if (angle > TWO_PI) { angle = 0; }
+  //if (angle > TWO_PI) { angle = 0; }
   
   // Rotate around the center axis
   translate(width/2, 0, 128);
   rotateY(angle);  
-  translate(-width/2, 0, 128);
+  translate(-extrude.width/2, 100, 128);
   
   // Display the image mass
   for (int y = 0; y < extrude.height; y++) {
@@ -46,4 +45,5 @@ void draw() {
       point(x, y, -values[x][y]);
     }
   }
+
 }

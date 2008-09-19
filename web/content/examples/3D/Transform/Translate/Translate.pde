@@ -10,17 +10,15 @@
 float x, y;
 float size = 40.0;
 
-void setup() 
-{
-  size(200, 200, P3D);
+void setup() {
+  size(640, 360, P3D);
   noStroke();
 }
 
-void draw() 
-{
+void draw() {
   background(102);
   
-  x = x + 1.0;
+  x = x + 4.0;
   
   if (x > width) {
     x = -size;

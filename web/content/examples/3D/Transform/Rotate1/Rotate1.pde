@@ -10,19 +10,17 @@
 float a = 0.0;
 float rSize;  // rectangle size
 
-void setup() 
-{
-  size(200, 200, P3D);
-  rSize = width/4;  
+void setup() {
+  size(640, 360, P3D);
+  rSize = width / 6;  
   noStroke();
   fill(204, 204);
 }
 
-void draw() 
-{
+void draw() {
   background(0);
   
-  a += 0.01;
+  a += 0.005;
   if(a > TWO_PI) { 
     a = 0.0; 
   }
@@ -30,11 +28,11 @@ void draw()
   translate(width/2, height/2);
   
   rotateX(a);
-  rotateY(a*2);
+  rotateY(a * 2.0);
   rect(-rSize, -rSize, rSize*2, rSize*2);
   
-  rotateX(a*1.001);
-  rotateY(a*2.002);
+  rotateX(a * 1.001);
+  rotateY(a * 2.002);
   rect(-rSize, -rSize, rSize*2, rSize*2);
 
 }

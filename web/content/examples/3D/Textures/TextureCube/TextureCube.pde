@@ -14,7 +14,7 @@ float roty = PI/4;
 
 void setup() 
 {
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   tex = loadImage("berlin-1.jpg");
   textureMode(NORMALIZED);
   fill(255);
@@ -24,10 +24,11 @@ void setup()
 void draw() 
 {
   background(0);
+  noStroke();
   translate(width/2.0, height/2.0, -100);
   rotateX(rotx);
   rotateY(roty);
-  scale(70);
+  scale(90);
   TexturedCube(tex);
 }
 

@@ -7,7 +7,7 @@
 
 void setup() 
 {
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   noStroke();
 }
 
@@ -32,5 +32,5 @@ void draw()
   
   rotateY(map(mouseX, 0, width, 0, PI));
   rotateX(map(mouseY, 0, height, 0, PI));
-  box(80);
+  box(150);
 }

@@ -7,7 +7,7 @@
 PImage img;
 
 void setup() {
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   img = loadImage("berlin-1.jpg");
   noStroke();
 }
@@ -18,8 +18,8 @@ void draw() {
   rotateY(map(mouseX, 0, width, -PI, PI));
   beginShape();
   texture(img);
-  vertex(-50, -50, 0, 0, 0);
-  vertex(50, -20, 0, 400, 120);
-  vertex(0, 50, 0, 200, 400);
+  vertex(-100, -100, 0, 0, 0);
+  vertex(100, -40, 0, 400, 120);
+  vertex(0, 100, 0, 200, 400);
   endShape();
 }

@@ -9,7 +9,7 @@ float spin = 0.0;
 
 void setup() 
 {
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   noStroke();
 }
 
@@ -24,6 +24,6 @@ void draw()
   translate(width/2, height/2, 0);
   rotateX(PI/9);
   rotateY(PI/5 + spin);
-  box(90);
+  box(150);
   popMatrix();
 }

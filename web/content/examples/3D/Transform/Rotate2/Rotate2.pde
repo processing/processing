@@ -16,7 +16,7 @@ boolean pink = true;
 
 void setup() 
 { 
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   noStroke();  
   for(int i=0; i<num; i++) {
     colors[i] = color(255 * (i+1)/num);
@@ -29,13 +29,14 @@ void draw()
 {     
   background(0, 0, 26);
   translate(width/2, height/2);
-  a += 0.02;   
-  for(int i=0; i<num; i++) {
+  a += 0.01;   
+  
+  for(int i = 0; i < num; i++) {
     pushMatrix();
     fill(colors[i]);
     rotateY(a + offset*i);
     rotateX(a/2 + offset*i);
-    box(width * 0.45);
+    box(200);
     popMatrix();
   }
 } 
