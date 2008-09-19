@@ -169,7 +169,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_libraries.xml');
-$break_after = array('Video (Movie)', 'Candy (SVG Import)');
+$break_after = array('Network', 'Candy (SVG Import)');
 $subdir = 'Libraries';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
