@@ -30,7 +30,7 @@ writeFile('learning/gettingstarted/index.html', $page->out());
 # --------------------------------- Basics
 
 $categories = get_examples_list('examples.xml');
-$break_after = array('Control', 'Transform');
+$break_after = array('Control', 'Color');
 $subdir = 'Basics';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -76,7 +76,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_3D.xml');
-$break_after = array('Image', 'Textures');
+$break_after = array('Transform', 'Lights');
 $subdir = '3D';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -122,7 +122,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_topics.xml');
-$break_after = array('File IO', 'Interaction');
+$break_after = array('File IO', 'Effects');
 $subdir = 'Topics';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
@@ -169,7 +169,7 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 
 
 $categories = get_examples_list('examples_libraries.xml');
-$break_after = array('Video (Movie)', 'Network');
+$break_after = array('Video (Movie)', 'Candy (SVG Import)');
 $subdir = 'Libraries';
 $dir = CONTENTDIR.'examples/'.$subdir.'/';
 
