@@ -327,16 +327,26 @@ public interface PConstants {
   static final int WAIT  = Cursor.WAIT_CURSOR;
 
 
-  // hints
+  // hints - hint values are positive for the alternate version, 
+  // negative of the same value returns to the normal/default state 
 
-  static final int ENABLE_OPENGL_2X_SMOOTH  = 0;
-  static final int ENABLE_OPENGL_4X_SMOOTH  = 1;
-  static final int ENABLE_NATIVE_FONTS      = 2;
-  static final int DISABLE_DEPTH_TEST       = 5;
-  static final int DISABLE_FLYING_POO       = 6;
-  static final int ENABLE_DEPTH_SORT        = 7;
-  static final int DISABLE_ERROR_REPORT     = 8;
-  static final int ENABLE_ACCURATE_TEXTURES = 9;
+  static final int ENABLE_OPENGL_2X_SMOOTH     =  1;
+  static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
 
-  static final int HINT_COUNT              = 10;
+  static final int ENABLE_NATIVE_FONTS         =  3;
+  static final int DISABLE_NATIVE_FONTS        = -3;
+
+  static final int DISABLE_DEPTH_TEST          =  4;
+  static final int ENABLE_DEPTH_TEST           = -4;
+  
+  static final int ENABLE_DEPTH_SORT           =  5;
+  static final int DISABLE_DEPTH_SORT          = -5;
+  
+  static final int DISABLE_OPENGL_ERROR_REPORT =  6;
+  static final int ENABLE_OPENGL_ERROR_REPORT  = -6;
+  
+  static final int ENABLE_ACCURATE_TEXTURES    =  7;
+  static final int DISABLE_ACCURATE_TEXTURES   = -7;
+
+  static final int HINT_COUNT                  = 10;
 }
