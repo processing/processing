@@ -4,6 +4,10 @@ resize() -> setSize() (roughly)
 endShape() with no params is no longer 'final'
 X/Y/Z -> TX/TY/TZ
 MX/MY/MZ -> X/Y/Z (for sake of PShape)
+render_triangles -> renderTriangles()
+depth_sort_triangles -> sortTriangles()
+render_lines -> renderLines()
+depth_sort_lines -> sortLines()
 
 // 
 
@@ -16,15 +20,13 @@ MX/MY/MZ -> X/Y/Z (for sake of PShape)
   canDraw()
   beginDraw()
   endDraw()
-
-  flush() - flushDraw()?
+  flush()
 
   checkSettings()
   defaultSettings()
   reapplySettings()
 
   hint()
-  unhint()
 
   public void beginShape()
   public void beginShape(int kind)

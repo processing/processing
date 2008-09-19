@@ -233,6 +233,7 @@ public class PLine implements PConstants
       m_drawFlags &= ~R_SMOOTH;
     }
 
+    /*
     // line hack
     if (parent.hints[DISABLE_FLYING_POO]) {
       float nwidth2 = -SCREEN_WIDTH;
@@ -250,6 +251,7 @@ public class PLine implements PConstants
         return;  // this is a bad line
       }
     }
+    */
 
     ///////////////////////////////////////
     // line clipping
