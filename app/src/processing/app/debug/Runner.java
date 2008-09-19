@@ -621,7 +621,7 @@ public class Runner implements MessageConsumer {
 //      System.out.println("reporting ex");
       List<StackFrame> frames = thread.frames();
       for (StackFrame frame : frames) {
-      System.out.println("frame: " + frame);
+        //System.out.println("frame: " + frame);
         Location location = frame.location();
         String filename = null;
         try {
