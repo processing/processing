@@ -100,7 +100,7 @@ echo Building the PDE...
 #../build/macosx/work/jikes -target 1.3 +D -classpath ../build/macosx/work/classes:../build/macosx/work/lib/core.jar:../build/macosx/work/lib/antlr.jar:../build/macosx/work/lib/registry.jar:$CLASSPATH -d ../build/macosx/work/classes src/processing/app/*.java src/processing/app/debug/*.java src/processing/app/syntax/*.java src/processing/app/preproc/*.java src/processing/app/tools/*.java src/antlr/*.java src/antlr/java/*.java
 
 # For some reason, javac really wants this folder to exist beforehand.
-zip -r ../build/macosx/work/classes
+rm -rf ../build/macosx/work/classes
 mkdir ../build/macosx/work/classes
 # Intentionally keeping this separate from the 'bin' folder
 # used by eclipse so that they don't cause conflicts.
