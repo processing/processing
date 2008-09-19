@@ -78,15 +78,14 @@ writeFile('learning/'.strtolower($subdir).'/index.html', $page->out());
 $categories = get_examples_list('examples_3D.xml');
 $break_after = array('Image', 'Textures');
 $subdir = '3D';
-$subdir3D = '3D and OpenGL';
-$dir = CONTENTDIR.'examples/'.$subdir3D.'/';
+$dir = CONTENTDIR.'examples/'.$subdir.'/';
 
 $count = 0;
 foreach ($categories as $cat => $array) {
 	if ($dp = opendir($dir.$cat)) {
 		while ($fp = readdir($dp)) {
 			if (substr($fp, 0, 1) != '.') {
-				$ex = new Example($fp, $subdir3D."/".$cat, $subdir);
+				$ex = new Example($fp, $subdir."/".$cat, $subdir);
 				//$ex = new Example($fp, $cat);
 				$ex->output_file($categories);
 				$count++;
