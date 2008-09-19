@@ -10,14 +10,14 @@ float newXmag, newYmag = 0;
  
 void setup() 
 { 
-  size(200, 200, P3D); 
+  size(640, 360, P3D); 
   noStroke(); 
   colorMode(RGB, 1); 
 } 
  
 void draw() 
 { 
-  background(0.5, 0.5, 0.45);
+  background(0.5);
   
   pushMatrix(); 
  
@@ -35,7 +35,7 @@ void draw()
   rotateX(-ymag); 
   rotateY(-xmag); 
   
-  scale(50);
+  scale(90);
   beginShape(QUADS);
 
   fill(0, 1, 1); vertex(-1,  1,  1);

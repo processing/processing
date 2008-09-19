@@ -37,22 +37,22 @@ boolean isHelix = false;
 float helixOffset = 5.0;
 
 void setup(){
-  size(200, 200, P3D);
+  size(640, 360, P3D);
 }
 
 void draw(){
-  background(50, 64, 42);
+  background(51);
   // basic lighting setup
   lights();
   // 2 rendering styles
   // wireframe or solid
   if (isWireFrame){
-    stroke(255, 255, 150);
+    stroke(255);
     noFill();
   } 
   else {
     noStroke();
-    fill(150, 195, 125);
+    fill(204);
   }
   //center and spin toroid
   translate(width/2, height/2, -100);
@@ -179,16 +179,4 @@ void keyPressed(){
   }
 }
 
-class Point3D{
-  float x, y, z;
 
-  // constructors
-  Point3D(){
-  }
-
-  Point3D(float x, float y, float z){
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
-}
