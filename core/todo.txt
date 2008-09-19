@@ -17,7 +17,14 @@ X delay() is broken
 X   http://dev.processing.org/bugs/show_bug.cgi?id=894
 X remove extra ~ files from core.jar
 X   also fix for other libraries in the make scripts across platforms
+X fix problems in PApplet regarding signed code
+X   createInput() wasn't bothering to check files when not online
+X unhint() has been removed, see the reference for hint() for changes
 
+_ decisions on image smoothing vs. text smoothing vs. all
+
+_ make decisions about whether PGraphics is an abstract class or not
+_   method signature is a real problem
 _ clean up setMainDrawingSurface()
 _   should instead be inside size(), and init(), no?
 

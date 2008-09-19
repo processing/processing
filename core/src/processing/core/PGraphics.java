@@ -662,6 +662,11 @@ public abstract class PGraphics extends PImage implements PConstants {
   abstract public void endDraw();  // ignore
 
 
+  protected void flush() {
+    // no-op, mostly for P3D to write sorted stuff
+  }
+
+  
   protected void checkSettings() {
     if (!settingsInited) defaultSettings();
   }
@@ -782,11 +787,6 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void flush() {
-    // no-op, mostly for P3D to write sorted stuff
-  }
-
-
 
   //////////////////////////////////////////////////////////////
 
@@ -811,15 +811,11 @@ public abstract class PGraphics extends PImage implements PConstants {
    * </UL>
    */
   public void hint(int which) {
-    hints[which] = true;
-  }
-
-
-  /**
-   * Disable a hint() setting.
-   */
-  public void unhint(int which) {
-    hints[which] = false;
+    if (which > 0) {
+      hints[which] = true;
+    } else {
+      hints[-which] = false;
+    }
   }
 
 
