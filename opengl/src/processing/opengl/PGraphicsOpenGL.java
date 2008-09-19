@@ -99,7 +99,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
 
-  public PGraphicsOpenGL() { 
+  public PGraphicsOpenGL() {
     glu = new GLU();
 
     tobj = glu.gluNewTess();
@@ -124,7 +124,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     lightBuffer.put(3, 1.0f);
     lightBuffer.rewind();
   }
-  
+
 
   /**
    * Called by resize(), this handles creating the actual GLCanvas the
@@ -145,20 +145,20 @@ public class PGraphicsOpenGL extends PGraphics3D {
         capabilities.setSampleBuffers(true);
         capabilities.setNumSamples(4);
       }
-      
+
       // get a rendering surface and a context for this canvas
       GLDrawableFactory factory = GLDrawableFactory.getFactory();
-      
+
       /*
       if (PApplet.platform == PConstants.LINUX) {
         GraphicsConfiguration pconfig = parent.getGraphicsConfiguration();
         System.out.println("parent config is " + pconfig);
 
         //      GraphicsDevice device = config.getDevice();
-        //AbstractGraphicsDevice agd = new AbstractGraphicsDevice(device); 
+        //AbstractGraphicsDevice agd = new AbstractGraphicsDevice(device);
         //AbstractGraphicsConfiguration agc = factory.chooseGraphicsConfiguration(capabilities, null, null);
 
-        AWTGraphicsConfiguration agc = (AWTGraphicsConfiguration) 
+        AWTGraphicsConfiguration agc = (AWTGraphicsConfiguration)
         factory.chooseGraphicsConfiguration(capabilities, null, null);
         GraphicsConfiguration config = agc.getGraphicsConfiguration();
         System.out.println("agc config is " + config);
@@ -253,6 +253,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
+  /**
+   * OpenGL cannot draw until a proper native peer is available, so this
+   * returns the value of PApplet.isDisplayable() (inherited from Component).
+   */
   public boolean canDraw() {
     return parent.isDisplayable();
   }
@@ -300,7 +304,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
         projection.m02, projection.m12, projection.m22, projection.m32,
         projection.m03, projection.m13, projection.m23, projection.m33
       };
-
     } else {
       projectionFloats[0] = projection.m00;
       projectionFloats[1] = projection.m10;
@@ -322,6 +325,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       projectionFloats[14] = projection.m23;
       projectionFloats[15] = projection.m33;
     }
+    //projection.print();
     gl.glLoadMatrixf(projectionFloats, 0);
 
     gl.glMatrixMode(GL.GL_MODELVIEW);
@@ -456,7 +460,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
       //                 triangles[i][VERTEX2] + " " +
       //                 triangles[i][VERTEX3] + " " + vertexCount);
 
-      // This is only true when not textured. 
+      // This is only true when not textured.
       // We really should pass specular straight through to triangle rendering.
       float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
       float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
@@ -771,7 +775,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //protected void light_and_transform() {
   //}
 
-  
+
   //GL will do the clipping for us
   protected void add_line(int a, int b) {
     add_line_no_clip(a, b);
