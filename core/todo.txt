@@ -15,10 +15,8 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=899
 X finish getImage() method inside PImage
 X delay() is broken
 X   http://dev.processing.org/bugs/show_bug.cgi?id=894
-
-
-regressions
-_ remove extra ~ files from core.jar (!)
+X remove extra ~ files from core.jar
+X   also fix for other libraries in the make scripts across platforms
 
 _ clean up setMainDrawingSurface()
 _   should instead be inside size(), and init(), no?
@@ -26,10 +24,9 @@ _   should instead be inside size(), and init(), no?
 
 _ ortho() behaving differently in P3D vs OPENGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=100
-_   only happens on the first round
-_ ortho() is doing things strangely
+_   shows a blank canvas
+_   (was only happening once b/c was drawing first in perspective)
 _   seems to be mapping to 0, 0 - width/2, height/2
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115919744;start=0
 
 
 [ need problem sketch ] 
