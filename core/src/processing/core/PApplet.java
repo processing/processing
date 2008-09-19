@@ -525,7 +525,7 @@ public class PApplet extends Applet
   // but need to disable and go conservative with changes in order
   // to get pdf and audio working properly first.
   // for 0116, the CRUSTY_THREADS are being disabled to fix lots of bugs.
-  static final boolean CRUSTY_THREADS = false; //true;
+  //static final boolean CRUSTY_THREADS = false; //true;
 
 
   public void init() {
@@ -1928,15 +1928,12 @@ public class PApplet extends Applet
    * makes the app lock up temporarily.
    */
   public void delay(int napTime) {
-    if (frameCount == 0) return;
-    if (napTime > 0) {
-      try {
-        if (CRUSTY_THREADS) {
+    if (frameCount != 0) {
+      if (napTime > 0) {
+        try {
           Thread.sleep(napTime);
-        } else {
-          wait(napTime);
-        }
-      } catch (InterruptedException e) { }
+        } catch (InterruptedException e) { }
+      }
     }
   }
 

@@ -13,12 +13,12 @@ X fix problems with text in a rectangle
 X   http://dev.processing.org/bugs/show_bug.cgi?id=893
 X   http://dev.processing.org/bugs/show_bug.cgi?id=899
 X finish getImage() method inside PImage
+X delay() is broken
+X   http://dev.processing.org/bugs/show_bug.cgi?id=894
 
 
 regressions
 _ remove extra ~ files from core.jar (!)
-_ delay() is broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=894
 
 _ clean up setMainDrawingSurface()
 _   should instead be inside size(), and init(), no?
