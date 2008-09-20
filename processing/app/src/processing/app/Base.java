@@ -86,6 +86,7 @@ public class Base {
 
 
   static public void main(String args[]) {
+    /*
     commandLine = false;
     if (args.length >= 2) {
       if (args[0].startsWith("--")) {
@@ -100,7 +101,55 @@ public class Base {
                      "Java 1.5 or later to run properly.\n" +
                      "Please visit java.com to upgrade.", null);
     }
+    */
 
+    initPlatform();
+
+    // Set the look and feel before opening the window
+    try {
+      platform.setLookAndFeel();
+    } catch (Exception e) {
+      System.err.println("Non-fatal error while setting the Look & Feel.");
+      System.err.println("The error message follows, however Processing should run fine.");
+      System.err.println(e.getMessage());
+      //e.printStackTrace();
+    }
+
+    // Use native popups so they don't look so crappy on osx
+    JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+
+    // Don't put anything above this line that might make GUI, 
+    // because the platform has to be inited properly first.
+
+    // Make sure a full JDK is installed
+    initRequirements();
+
+    // run static initialization that grabs all the prefs
+//    try {
+    Preferences.init(null);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }    
+
+    // Create a location for untitled sketches
+    untitledFolder = createTempFolder("untitled");
+    untitledFolder.deleteOnExit();
+    
+    new Base(args);
+  }
+  
+  
+  static protected void setCommandLine() {
+    commandLine = true;
+  }
+  
+  
+  static protected boolean isCommandLine() {
+    return commandLine;
+  }
+  
+  
+  static protected void initPlatform() {
     try {
       Class platformClass = Class.forName("processing.app.Platform");
       if (Base.isMacOS()) {
@@ -114,50 +163,18 @@ public class Base {
                      "An unknown error occurred while trying to load\n" +
                      "platform-specific code for your machine.", e);
     }
-
-    if (!commandLine) {
-      // Set the look and feel before opening the window
-      try {
-        platform.setLookAndFeel();
-      } catch (Exception e) {
-        System.err.println("Non-fatal error while setting the Look & Feel.");
-        System.err.println("The error message follows, however Processing should run fine.");
-        System.err.println(e.getMessage());
-        //e.printStackTrace();
-      }
-
-      // Use native popups so they don't look so crappy on osx
-      JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-    }
-    
-    // Don't put anything above this line that might make GUI.
-
+  }
+  
+  
+  static protected void initRequirements() {
     try {
-      /*Class vmClass =*/ Class.forName("com.sun.jdi.VirtualMachine");
+      Class.forName("com.sun.jdi.VirtualMachine");
     } catch (ClassNotFoundException cnfe) {
       Base.showPlatforms();
       Base.showError("Please install JDK 1.5 or later",
                      "Processing requires a full JDK (not just a JRE)\n" +
                      "to run. Please install JDK 1.5 or later.\n" +
                      "More information can be found in the reference.", cnfe);
-    }
-
-    // run static initialization that grabs all the prefs
-    try {
-      Preferences.init();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    if (commandLine) {
-      new Commander(args);
-      
-    } else {
-      // Create a location for untitled sketches
-      untitledFolder = createTempFolder("untitled");
-      untitledFolder.deleteOnExit();
-
-      /*Base base =*/ new Base(args);
     }
   }
   
