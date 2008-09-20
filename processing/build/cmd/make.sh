@@ -7,23 +7,16 @@ if test -d work
 then
   BUILD_PREPROC=false
 else
-  echo Setting up directories to build for Linux...
+  echo Setting up directories to build Processing for the command line...
   BUILD_PREPROC=true
 
   mkdir work
   cp -r ../shared/lib work/
   cp -r ../shared/libraries work/
-  cp -r ../shared/tools work/
 
   cp ../../app/lib/antlr.jar work/lib/
   cp ../../app/lib/ecj.jar work/lib/
   cp ../../app/lib/jna.jar work/lib/
-
-  echo Extracting examples...
-  unzip -q -d work/ ../shared/examples.zip
-
-  echo Extracting reference...
-  unzip -q -d work/ ../shared/reference.zip
 
   cp -r ../../net work/libraries/
   cp -r ../../opengl work/libraries/
@@ -35,26 +28,6 @@ else
   cp -r ../../candy work/libraries/
 
   install -m 755 dist/processing work/processing
-
-  ARCH=`uname -m`
-  if [ $ARCH = "i686" ]
-  then
-    echo Extracting JRE...
-    tar --extract --file=jre.tgz --ungzip --directory=work
-  else 
-#    echo This is not my beautiful house.
-#    if [ $ARCH = "x86_64" ]
-#    then 
-#      echo You gots the 64.
-#    fi
-    echo "
-The Java bundle that is included with Processing supports only i686 by default.
-To build the code, you will need to install the Java 1.5.0_15 JDK (not a JRE,
-and not any other version), and create a symlink to the directory where it is
-installed. Create the symlink in the \"work\" directory, and named it \"java\":
-ln -s /path/to/jdk1.5.0_15 `pwd`/work/java"
-    exit
-  fi
 fi
 
 cd ../..
@@ -67,16 +40,9 @@ echo Building processing.core
 
 cd core
 
-#CLASSPATH="../build/linux/work/java/lib/rt.jar"
-#export CLASSPATH
-
 perl preproc.pl
 mkdir -p bin
-../build/linux/work/java/bin/java \
-    -cp ../build/linux/work/java/lib/tools.jar \
-    com.sun.tools.javac.Main \
-    -d bin -source 1.5 -target 1.5 src/processing/core/*.java
-find bin -name "*~" -exec rm -f {} ';'
+javac -d bin -source 1.5 -target 1.5 src/processing/core/*.java
 rm -f ../build/linux/work/lib/core.jar
 cd bin && zip -rq ../../build/linux/work/lib/core.jar processing/core/*.class && cd ..
 
@@ -94,7 +60,7 @@ cd app
   echo Building antlr grammar code...
 
   # first build the default java goop
-../build/linux/work/java/bin/java \
+java \
   -cp ../build/linux/work/lib/antlr.jar antlr.Tool \
   -o src/antlr/java \
   src/antlr/java/java.g
@@ -108,8 +74,8 @@ cd app
 # so it's necessary to cd into the antlr/java folder, otherwise
 # the JavaTokenTypes.txt file won't be found
 cd src/antlr/java
-../../../../build/linux/work/java/bin/java \
-  -cp ../../../../build/linux/work/lib/antlr.jar antlr.Tool \
+java \
+  -cp ../../../../build/cmd/work/lib/antlr.jar antlr.Tool \
   -o ../../processing/app/preproc \
   -glib java.g \
   ../../processing/app/preproc/pde.g
@@ -123,25 +89,22 @@ cd ..
 
 cd app
 
-rm -rf ../build/linux/work/classes
-mkdir ../build/linux/work/classes
+rm -rf ../build/cmd/work/classes
+mkdir ../build/cmd/work/classes
 
-../build/linux/work/java/bin/java \
-    -cp ../build/linux/work/java/lib/tools.jar \
-    com.sun.tools.javac.Main \
+javac \
     -source 1.5 -target 1.5 \
-    -classpath ../build/linux/work/lib/core.jar:../build/linux/work/lib/antlr.jar:../build/linux/work/lib/ecj.jar:../build/linux/work/lib/jna.jar:../build/linux/work/java/lib/tools.jar \
-    -d ../build/linux/work/classes \
+    -classpath ../build/cmd/work/lib/core.jar:../build/cmd/work/lib/antlr.jar:../build/cmd/work/lib/ecj.jar:../build/cmd/work/lib/jna.jar:../build/cmd/work/java/lib/tools.jar \
+    -d ../build/cmd/work/classes \
     src/processing/app/*.java \
     src/processing/app/debug/*.java \
-    src/processing/app/linux/*.java \
     src/processing/app/preproc/*.java \
     src/processing/app/syntax/*.java \
     src/processing/app/tools/*.java \
     src/antlr/*.java \
     src/antlr/java/*.java 
 
-cd ../build/linux/work/classes
+cd ../build/cmd/work/classes
 rm -f ../lib/pde.jar
 zip -0rq ../lib/pde.jar .
 cd ../../../..
@@ -149,11 +112,10 @@ cd ../../../..
 
 ### -- BUILD LIBRARIES ------------------------------------------------
 
-cd build/linux
+cd build/cmd
 
-PLATFORM=linux
-
-JAVAC="../build/linux/work/java/bin/java -cp ../build/linux/work/java/lib/tools.jar com.sun.tools.javac.Main -source 1.5 -target 1.5"
+PLATFORM=cmd
+JAVAC="javac -source 1.5 -target 1.5"
 CORE=../build/$PLATFORM/work/lib/core.jar
 LIBRARIES=../build/$PLATFORM/work/libraries
 
@@ -168,7 +130,6 @@ $JAVAC \
     -classpath "library/RXTXcomm.jar:$CORE" \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
-find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/serial.jar processing/serial/*.class && cd ..
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
@@ -182,7 +143,6 @@ $JAVAC \
     -classpath "$CORE" \
     -d bin src/processing/net/*.java 
 rm -f library/net.jar
-find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
 mkdir -p $LIBRARIES/net/library/
 cp library/net.jar $LIBRARIES/net/library/
@@ -196,7 +156,6 @@ $JAVAC \
     -classpath "library/jogl.jar:$CORE" \
     -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
-find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/opengl.jar processing/opengl/*.class && cd ..
 mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
@@ -210,7 +169,6 @@ $JAVAC \
     -classpath "library/itext.jar:$CORE" \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
-find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/pdf.jar processing/pdf/*.class && cd ..
 mkdir -p $LIBRARIES/pdf/library/
 cp library/pdf.jar $LIBRARIES/pdf/library/
@@ -224,7 +182,7 @@ $JAVAC \
     -classpath "$CORE" \
     -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
@@ -238,7 +196,7 @@ $JAVAC \
     -classpath "$CORE" \
     -d bin src/processing/xml/*.java 
 rm -f library/xml.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/xml.jar processing/xml/*.class && cd ..
 mkdir -p $LIBRARIES/xml/library/
 cp library/xml.jar $LIBRARIES/xml/library/
@@ -252,7 +210,7 @@ $JAVAC \
     -classpath "../xml/library/xml.jar:$CORE" \
     -d bin src/processing/candy/*.java 
 rm -f library/candy.jar
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 cd bin && zip -r0q ../library/candy.jar processing/candy/*.class && cd ..
 mkdir -p $LIBRARIES/candy/library/
 cp library/candy.jar $LIBRARIES/candy/library/
