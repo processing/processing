@@ -6,8 +6,6 @@
  * The box() and sphere() functions each have one parameter
  * which is used to specify their size. These shapes are
  * positioned using the translate() function.
- * 
- * Created 16 January 2003
  */
  
 size(640, 360, P3D); 

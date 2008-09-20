@@ -1,5 +1,5 @@
 /**
- * Firecube' demo effect
+ * Fire Cube demo effect
  * by luis2048.
  * 
  * A rotating wireframe cube with flames rising up the screen.
