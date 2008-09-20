@@ -166,7 +166,7 @@ class Example
 		$get_next = false;
 		
 		$html = "\n<div class=\"examples-nav-div\">";
-		$html .= "\n<table width=\"440\" border=\"1\"><tr><td align=\"right\"><table>\n<tr>";
+		$html .= "\n<table width=\"440\" border=\"0\"><tr><td align=\"right\"><table>\n<tr>";
 		//$html = "\n<table id=\"examples-nav\" width=\"640\">\n<tr><td align=\"right\">";
 		
 		$select = "\n<select name=\"nav\" size=\"1\" class=\"inputnav\" onChange=\"javascript:gogo(this)\">\n";
