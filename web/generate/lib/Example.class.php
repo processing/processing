@@ -5,6 +5,7 @@ class Example
 	var $name;
 	var $cat;
 	var $file;
+	var $filenames;
 	var $applet;
 	var $doc;
 	var $code;
@@ -15,11 +16,19 @@ class Example
 		$this->name = $name;
 		$this->cat = $cat;
 		$this->sub = $sub;
-		
-		#$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
-		#$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
+
 		$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
 		$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
+		
+		if ($handle = opendir(CONTENTDIR.'examples/'.$cat.'/'.$name.')) {
+          while (false !== ($file = readdir($handle))) {
+            if ($file != "." && $file != "..") {
+              echo "$file\n";
+            }
+          }
+          closedir($handle);
+        }
+		
 		#echo CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde';
 		
 		$this->split_file();
