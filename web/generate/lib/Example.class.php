@@ -132,6 +132,9 @@ class Example
 	}
 	
 	function make_nav(&$array) {
+		
+		/**
+		
 		if ($this->sub === "Basics") {
 	   	#if (strcmp($cat, "Basics") == 0) {
 		
@@ -155,11 +158,14 @@ class Example
 			$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Library</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 
 		}
+		*/
 		
 		$store = array();
 		$prev = array();
 		$next = array();
 		$get_next = false;
+		
+		$html = "\n<table id=\"examples-nav\">\n<tr><td>"
 		
 		$select = "\n<select name=\"nav\" size=\"1\" class=\"inputnav\" onChange=\"javascript:gogo(this)\">\n";
 		foreach ($array as $cat => $exs) {
