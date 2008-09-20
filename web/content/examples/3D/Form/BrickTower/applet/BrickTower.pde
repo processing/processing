@@ -6,8 +6,8 @@
  * Uses the Point3D and Cube classes. 
  */
 
-
-float bricksPerLayer = 16.0;  // This number must be even
+// Point3D and Cube classes required.
+float bricksPerLayer = 16.0; // Value must be even
 float brickLayers = 18.0;
 Cube brick;
 float brickWidth = 60, brickHeight = 25, brickDepth = 25;
@@ -23,6 +23,7 @@ void draw(){
   background(0);
   float tempX = 0, tempY = 0, tempZ = 0;
   fill(162, 82, 49);
+  //stroke(102);
   noStroke();
   // Add basic light setup
   lights();
