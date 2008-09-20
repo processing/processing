@@ -111,7 +111,7 @@ class Example
 		#$html .= $this->doc;
 		$html .= "</p>\n";
 		
-		$html .= "\n<pre class=\"code\">";
+		$html .= "\n<pre class=\"code\">\n";
 		$html .= $this->code;
 		$html .= "</pre>\n\n";
 		
