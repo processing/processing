@@ -5,7 +5,6 @@ class Example
 	var $name;
 	var $cat;
 	var $file;
-	var $filenames;
 	var $applet;
 	var $doc;
 	var $code;
@@ -21,10 +20,14 @@ class Example
 		$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
 		
 		if ($handle = opendir(CONTENTDIR.'examples/'.$cat.'/'.$name)) {
-          while (false !== ($file = readdir($handle))) {
+          while (false !== ($newfile = readdir($handle))) {
             //if ($file != "." && $file != "..") {
-            if (preg_match("/pde/", $file)) {
-              echo "$file\n";
+            if (preg_match("/pde/", $newfile)) {
+              //echo " $newfile\n";
+              if (strcmp($name.'.pde', $newfile) == 0) {
+              	$this->file .= "IAMSTARTINGANEWLINE"
+                $this->file .= $newfile; 
+              }
             }
           }
           closedir($handle);
