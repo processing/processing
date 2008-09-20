@@ -165,7 +165,7 @@ class Example
 		$next = array();
 		$get_next = false;
 		
-		$html = "\n<table id=\"examples-nav\" border=\"1\">\n<tr><td>";
+		$html = "\n<table id=\"examples-nav\" border=\"1\">\n<tr>";
 		//$html = "\n<table id=\"examples-nav\" width=\"640\">\n<tr><td align=\"right\">";
 		
 		$select = "\n<select name=\"nav\" size=\"1\" class=\"inputnav\" onChange=\"javascript:gogo(this)\">\n";
