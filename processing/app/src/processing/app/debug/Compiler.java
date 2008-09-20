@@ -143,19 +143,12 @@ public class Compiler {
           break;
         }
         
-        // pieces[2] will contain "error" or "warning" (others?)
-        // (but all warnings currently suppressed.)
-//        if (pieces[2].equals("warning")) {
-//          System.out.println("nah, nevermind: " + pieces[3]);
-//          continue;
-//        }
-        
         // translate the java filename and line number into a un-preprocessed 
         // location inside a source file or tab in the environment.
-        String dotJavaFilename = pieces[0];
+        String dotJavaFilename = pieces[1];
         // Line numbers are 1-indexed from javac
-        int dotJavaLineIndex = PApplet.parseInt(pieces[1]) - 1;
-        String errorMessage = pieces[3];
+        int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
+        String errorMessage = pieces[4];
 
         int codeIndex = 0; //-1;
         int codeLine = -1;
@@ -273,11 +266,11 @@ public class Compiler {
             "The method (\\S+\\(.*\\)) is undefined for the type (.*)";
           parts = PApplet.match(errorMessage, undefined);
           if (parts != null) {
-            if (parts[0].equals("framerate(int)") ||
-                parts[0].equals("push()")) {
+            if (parts[1].equals("framerate(int)") ||
+                parts[1].equals("push()")) {
               handleCrustyCode(exception);
             } else {
-              String mess = "The function " + parts[0] + " does not exist.";
+              String mess = "The function " + parts[1] + " does not exist.";
               exception.setMessage(mess);
             }
             break;
