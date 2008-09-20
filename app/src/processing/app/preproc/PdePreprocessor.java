@@ -240,26 +240,18 @@ public class PdePreprocessor {
     String prefsLine = Preferences.get("preproc.imports");
     defaultImports = PApplet.splitTokens(prefsLine, ", ");
 
-    // if this guy has his own imports, need to remove them
-    // just in case it's not an advanced mode sketch
-    // TODO not sure why [\\s\\A^] won't work for me, but if someone is a Java
-    // regexp guru, please fill me in. In the interim, using a hack by adding
-    // a space to the beginning of 'program' so that the matcher works.
-    //String importRegexp = "[\\s\\A](import\\s+)(\\S+)(\\s*;)";
-    //String importRegexp = "[\\s^](import\\s+)(\\S+)(\\s*;)";
-    String importRegexp = "\\s(import\\s+)(\\S+)(\\s*;)";
-    //java.util.Vector imports = new java.util.Vector();
+    String importRegexp = "(?:^|\\s|;)(import\\s+)(\\S+)(\\s*;)";
     programImports = new ArrayList<String>();
 
     do {
-      String[] pieces = PApplet.match(" " + program, importRegexp);
+      String[] pieces = PApplet.match(program, importRegexp);
       // Stop the loop if we've removed all the importy lines
       if (pieces == null) break;
 
-      String piece = pieces[0] + pieces[1] + pieces[2];
+      String piece = pieces[1] + pieces[2] + pieces[3];
       int len = piece.length();  // how much to trim out
 
-      programImports.add(pieces[1]);  // the package name
+      programImports.add(pieces[2]);  // the package name
       int idx = program.indexOf(piece);
       // just remove altogether?
       program = program.substring(0, idx) + program.substring(idx + len);

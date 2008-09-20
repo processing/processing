@@ -34,8 +34,9 @@ import processing.app.debug.RunnerException;
 
 public class Commander {
   static final String helpArg = "--help";
-  static final String buildArg = "--build";
   static final String preprocArg = "--preprocess";
+  static final String buildArg = "--build";
+  static final String runArg = "--run";
   static final String sketchArg = "--sketch=";
   static final String outputArg = "--output=";
   static final String exportAppletArg = "--export-applet";
@@ -46,8 +47,9 @@ public class Commander {
   static final int HELP = -1;
   static final int PREPROCESS = 0;
   static final int BUILD = 1;
-  static final int EXPORT_APPLET = 2;
-  static final int EXPORT_APPLICATION = 3;
+  static final int RUN = 2;
+  static final int EXPORT_APPLET = 3;
+  static final int EXPORT_APPLICATION = 4;
 
 
   static public void main(String[] args) {
@@ -63,7 +65,8 @@ public class Commander {
 
 
   public Commander(String[] args) {
-    String sketchPath = null;
+    String sketchFolder = null;
+    String pdePath = null;  // path to the .pde file
     String outputPath = null;
     String preferencesPath = null;
     int platformIndex = PApplet.platform; // default to this platform
@@ -91,13 +94,22 @@ public class Commander {
         if (platformIndex == -1) {
           complainAndQuit(platformStr + " should instead be " + 
                           "'windows', 'macosx', or 'linux'.");          
-        }        
+        }
       } else if (arg.startsWith(sketchArg)) {
-        sketchPath = arg.substring(sketchArg.length());
+        sketchFolder = arg.substring(sketchArg.length());
+        File sketchy = new File(sketchFolder);
+        File pdeFile = new File(sketchy, sketchy.getName() + ".pde");
+        pdePath = pdeFile.getAbsolutePath();
 
       } else if (arg.startsWith(outputArg)) {
         outputPath = arg.substring(outputArg.length());
       }
+    }
+
+    if ((outputPath == null) &&
+        (mode == PREPROCESS || mode == BUILD || mode == RUN)) {
+      complainAndQuit("Output path must be specified when using " + 
+                      preprocArg + ", " + buildArg + ", or " + runArg + ".");
     }
 
     // run static initialization that grabs all the prefs
@@ -108,13 +120,13 @@ public class Commander {
       printCommandLine(System.out);
       System.exit(0);
 
-    } else if (sketchPath == null) {
+    } else if (sketchFolder == null) {
       complainAndQuit("No sketch path specified.");
       
-    } else if (outputPath.equals(sketchPath)) {
+    } else if (outputPath.equals(pdePath)) {
       complainAndQuit("The sketch path and output path cannot be identical.");
       
-    } else if (!sketchPath.toLowerCase().endsWith(".pde")) {
+    } else if (!pdePath.toLowerCase().endsWith(".pde")) {
       complainAndQuit("Sketch path must point to the main .pde file.");
       
     } else {
@@ -122,7 +134,7 @@ public class Commander {
       boolean success = false;
 
       try {
-        sketch = new Sketch(null, sketchPath);
+        sketch = new Sketch(null, pdePath);
         if (mode == PREPROCESS) {
           success = sketch.preprocess(outputPath) != null;
 
@@ -133,18 +145,18 @@ public class Commander {
           if (outputPath != null) {
             success = sketch.exportApplet(outputPath);
           } else {
-            String sketchFolder = 
-              sketchPath.substring(0, sketchPath.lastIndexOf(File.separatorChar));
-            success = sketch.exportApplet(sketchFolder + "applet");
+            String target = sketchFolder + File.separatorChar + "applet";
+            success = sketch.exportApplet(target);
           }
         } else if (mode == EXPORT_APPLICATION) {
           if (outputPath != null) {
             success = sketch.exportApplication(outputPath, platformIndex);
           } else {
-            String sketchFolder = 
-              sketchPath.substring(0, sketchPath.lastIndexOf(File.separatorChar));
+            //String sketchFolder = 
+            //  pdePath.substring(0, pdePath.lastIndexOf(File.separatorChar));
             outputPath = 
-              sketchFolder + "application." + Base.getPlatformName(platformIndex);
+              sketchFolder + File.separatorChar + 
+              "application." + Base.getPlatformName(platformIndex);
             success = sketch.exportApplication(outputPath, platformIndex);
           }
         }
@@ -177,8 +189,23 @@ public class Commander {
 
 
   static void printCommandLine(PrintStream out) {
-    out.println("Processing rocks the console.");
+    out.println("Processing " + Base.VERSION_NAME + " rocks the console.");
     out.println();
-//  out.println("./processing )
+    out.println("--help               Show this help text.");
+    out.println();
+    out.println("--sketch=<name>      Specify the sketch folder (required)");
+    out.println("--output=<name>      Specify the output folder (required and");
+    out.println("                     cannot be the same as the sketch folder.)");
+    out.println();
+    out.println("--run                Preprocess, compile, and run a sketch.");
+    out.println("--build              Preprocess and compile a sketch into .class files.");
+    out.println("--preprocess         Preprocess a sketch into .java files.");
+    out.println();
+    out.println("--export-applet      Export an applet.");
+    out.println("--export-application Export an application.");
+    out.println("--platform           Specify the platform (export to application only).");
+    out.println("                     Should be one of 'windows', 'macosx', or 'linux'."); 
+    out.println();
+    out.println("--preferences=<file> Specify a preferences file to use (optional).");
   }
 }

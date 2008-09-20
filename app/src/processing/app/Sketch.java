@@ -118,7 +118,7 @@ public class Sketch {
     //Base.addBuildFolderToClassPath();
 
     folder = new File(new File(path).getParent());
-    //System.out.println("sketch dir is " + folder);
+    System.out.println("sketch dir is " + folder);
 
     load();
   }
@@ -1360,8 +1360,8 @@ public class Sketch {
 
       String[] matches = PApplet.match(tsre.toString(), mess);
       if (matches != null) {
-        int errorLine = Integer.parseInt(matches[0]) - 1;
-        int errorColumn = Integer.parseInt(matches[1]);
+        int errorLine = Integer.parseInt(matches[1]) - 1;
+        int errorColumn = Integer.parseInt(matches[2]);
 
         int errorFile = 0;
         for (int i = 1; i < codeCount; i++) {
@@ -1526,11 +1526,11 @@ public class Sketch {
 
     if (matches != null) {
       try {
-        wide = Integer.parseInt(matches[0]);
-        high = Integer.parseInt(matches[1]);
+        wide = Integer.parseInt(matches[1]);
+        high = Integer.parseInt(matches[2]);
 
         // Adding back the trim() for 0136 to handle Bug #769
-        if (matches.length == 3) renderer = matches[2].trim();
+        if (matches.length == 4) renderer = matches[3].trim();
 
       } catch (NumberFormatException e) {
         // found a reference to size, but it didn't
