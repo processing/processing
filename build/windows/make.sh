@@ -77,7 +77,6 @@ mkdir -p bin
     -d bin src/processing/core/*.java
 
 rm -f ../build/windows/work/lib/core.jar
-find bin -name "*~" -exec rm -f {} ';'
 
 # package this folder into core.jar
 cd bin && zip -rq ../../build/windows/work/lib/core.jar processing/core/*.class && cd ..

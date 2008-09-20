@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 
 import processing.app.debug.RunnerException;
 
@@ -67,8 +66,7 @@ public class Commander {
     String sketchPath = null;
     String outputPath = null;
     String preferencesPath = null;
-    //int[] platforms = null;
-    String[] platforms = null;
+    int platformIndex = PApplet.platform; // default to this platform
     int mode = HELP;
 
     for (String arg : args) {
@@ -89,21 +87,11 @@ public class Commander {
         
       } else if (arg.equals(platformArg)) {
         String platformStr = arg.substring(platformArg.length());
-//        String[] pieces = PApplet.splitTokens(platformStr, ", ");
-//        platforms = new int[pieces.length];
-//        for (int i = 0; i < platforms.length; i++) {
-//          if (pieces[i].equals("macosx")) {
-//            platforms[i] = PConstants.MACOSX;
-//          } else if (pieces[i].equals("windows")) {
-//            platforms[i] = PConstants.WINDOWS;
-//          } else if (pieces[i].equals("linux")) {
-//            platforms[i] = PConstants.LINUX;
-//          } else {
-//            complainAndQuit("Platform \"" + pieces[i] + "\" does not exist.");
-//          }
-//        }
-        platforms = PApplet.splitTokens(platformStr, ", ");
-        
+        platformIndex = Base.getPlatformIndex(platformStr);
+        if (platformIndex == -1) {
+          complainAndQuit(platformStr + " should instead be " + 
+                          "'windows', 'macosx', or 'linux'.");          
+        }        
       } else if (arg.startsWith(sketchArg)) {
         sketchPath = arg.substring(sketchArg.length());
 
@@ -116,10 +104,6 @@ public class Commander {
     // (also pass in a prefs path if that was specified)
     Preferences.init(preferencesPath);
 
-    if (platforms == null) {
-      platforms = new String[] { "macosx", "windows", "linux" };
-    }
-
     if (mode == HELP) {
       printCommandLine(System.out);
       System.exit(0);
@@ -127,9 +111,6 @@ public class Commander {
     } else if (sketchPath == null) {
       complainAndQuit("No sketch path specified.");
       
-    } else if (outputPath == null) {
-      complainAndQuit("No output path specified.");
-
     } else if (outputPath.equals(sketchPath)) {
       complainAndQuit("The sketch path and output path cannot be identical.");
       
@@ -149,34 +130,22 @@ public class Commander {
           success = sketch.build(outputPath) != null;
 
         } else if (mode == EXPORT_APPLET) {
-          success = sketch.exportApplet(outputPath);
-
-        } else if (mode == EXPORT_APPLICATION) {
-          if (platforms.length == 1) {
-            if (platforms[0].equals("macosx")) {
-              success = sketch.exportApplication(outputPath, PConstants.MACOSX);
-            } else if (platforms[0].equals("windows")) {
-              success = sketch.exportApplication(outputPath, PConstants.WINDOWS);
-            } else if (platforms[0].equals("linux")) {
-              success = sketch.exportApplication(outputPath, PConstants.LINUX);
-            } else {
-              complainAndQuit("Platform \"" + platforms[0] + "\" does not exist.");
-            }
+          if (outputPath != null) {
+            success = sketch.exportApplet(outputPath);
           } else {
-            for (String platform : platforms) {
-              File folder = new File(outputPath, "application." + platform);
-              String path = folder.getAbsolutePath();
-              if (platform.equals("macosx")) {
-                success = sketch.exportApplication(path, PConstants.MACOSX);
-              } else if (platform.equals("windows")) {
-                success = sketch.exportApplication(path, PConstants.WINDOWS);
-              } else if (platform.equals("linux")) {
-                success = sketch.exportApplication(path, PConstants.LINUX);
-              } else {
-                complainAndQuit("Platform \"" + platform + "\" does not exist.");
-              }
-              if (!success) break;
-            }
+            String sketchFolder = 
+              sketchPath.substring(0, sketchPath.lastIndexOf(File.separatorChar));
+            success = sketch.exportApplet(sketchFolder + "applet");
+          }
+        } else if (mode == EXPORT_APPLICATION) {
+          if (outputPath != null) {
+            success = sketch.exportApplication(outputPath, platformIndex);
+          } else {
+            String sketchFolder = 
+              sketchPath.substring(0, sketchPath.lastIndexOf(File.separatorChar));
+            outputPath = 
+              sketchFolder + "application." + Base.getPlatformName(platformIndex);
+            success = sketch.exportApplication(outputPath, platformIndex);
           }
         }
         System.exit(success ? 0 : 1);
@@ -192,7 +161,6 @@ public class Commander {
         System.err.println(filename + ":" + 
                            line + ":" + column + ":" + 
                            line + ":" + column + ":" + " " + re.getMessage());
-
       } catch (IOException e) {
         e.printStackTrace();
         System.exit(1);
