@@ -118,7 +118,7 @@ public class Sketch {
     //Base.addBuildFolderToClassPath();
 
     folder = new File(new File(path).getParent());
-    System.out.println("sketch dir is " + folder);
+    //System.out.println("sketch dir is " + folder);
 
     load();
   }
