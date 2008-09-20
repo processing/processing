@@ -1,5 +1,4 @@
-
-class Point3D{
+class Point3D {
   float x, y, z;
 
   // constructors

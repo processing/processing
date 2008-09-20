@@ -51,22 +51,22 @@ class Gesture {
   }
 
   void addPoint(float x, float y) {
-    //synchronized (path) {
-      if (nPoints >= capacity) {
-        // there are all sorts of possible solutions here,
-        // but for abject simplicity, I don't do anything.
-      } else {
-        float v = distToLast(x, y);
-        float p = getPressureFromVelocity(v);
-        path[nPoints++].set(x,y,p);
 
-        if (nPoints > 1) {
-          exists = true;
-          jumpDx = path[nPoints-1].x - path[0].x;
-          jumpDy = path[nPoints-1].y - path[0].y;
-        }
+    if (nPoints >= capacity) {
+      // there are all sorts of possible solutions here,
+      // but for abject simplicity, I don't do anything.
+    } 
+    else {
+      float v = distToLast(x, y);
+      float p = getPressureFromVelocity(v);
+      path[nPoints++].set(x,y,p);
+
+      if (nPoints > 1) {
+        exists = true;
+        jumpDx = path[nPoints-1].x - path[0].x;
+        jumpDy = path[nPoints-1].y - path[0].y;
       }
-    //}
+    }
 
   }
 
@@ -96,7 +96,8 @@ class Gesture {
       float dx = v.x - ix;
       float dy = v.y - iy;
       return mag(dx, dy);
-    } else {
+    } 
+    else {
       return 30;
     }
   }
@@ -118,9 +119,9 @@ class Gesture {
       float dx13, dy13, hp13, si13, co13;
       float taper = 1.0;
 
-      final int  nPathPoints = nPoints - 1;
-      final int  lastPolyIndex = nPathPoints - 1;
-      final float npm1finv =  1.0 / max(1, nPathPoints - 1);
+      int  nPathPoints = nPoints - 1;
+      int  lastPolyIndex = nPathPoints - 1;
+      float npm1finv =  1.0 / max(1, nPathPoints - 1);
 
       // handle the first point
       p0 = path[0];
@@ -134,18 +135,20 @@ class Gesture {
       }
       co01 = radius0 * dx01 / hp01;
       si01 = radius0 * dy01 / hp01;
-      ax = p0.x - si01; ay = p0.y + co01;
-      bx = p0.x + si01; by = p0.y - co01;
+      ax = p0.x - si01; 
+      ay = p0.y + co01;
+      bx = p0.x + si01; 
+      by = p0.y - co01;
 
       int xpts[];
       int ypts[];
 
-      final int LC = 20;
-      final int RC = w-LC;
-      final int TC = 20;
-      final int BC = h-TC;
-      final float mint = 0.618;
-      final float tapow = 0.4;
+      int LC = 20;
+      int RC = w-LC;
+      int TC = 20;
+      int BC = h-TC;
+      float mint = 0.618;
+      float tapow = 0.4;
 
       // handle the middle points
       int i = 1;
@@ -193,14 +196,24 @@ class Gesture {
 
         // keep a record of where we cross the edge of the screen
         crosses[i] = 0;
-      if ((axi<=LC)||(bxi<=LC)||(cxi<=LC)||(dxi<=LC)) { crosses[i]|=1; }
-      if ((axi>=RC)||(bxi>=RC)||(cxi>=RC)||(dxi>=RC)) { crosses[i]|=2; }
-      if ((ayi<=TC)||(byi<=TC)||(cyi<=TC)||(dyi<=TC)) { crosses[i]|=4; }
-      if ((ayi>=BC)||(byi>=BC)||(cyi>=BC)||(dyi>=BC)) { crosses[i]|=8; }
+        if ((axi<=LC)||(bxi<=LC)||(cxi<=LC)||(dxi<=LC)) { 
+          crosses[i]|=1; 
+        }
+        if ((axi>=RC)||(bxi>=RC)||(cxi>=RC)||(dxi>=RC)) { 
+          crosses[i]|=2; 
+        }
+        if ((ayi<=TC)||(byi<=TC)||(cyi<=TC)||(dyi<=TC)) { 
+          crosses[i]|=4; 
+        }
+        if ((ayi>=BC)||(byi>=BC)||(cyi>=BC)||(dyi>=BC)) { 
+          crosses[i]|=8; 
+        }
 
         //swap data for next time
-        ax = dx; ay = dy;
-        bx = cx; by = cy;
+        ax = dx; 
+        ay = dy;
+        bx = cx; 
+        by = cy;
       }
 
       // handle the last point
@@ -240,3 +253,4 @@ class Gesture {
     }
   }
 }
+

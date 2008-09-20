@@ -1,4 +1,4 @@
-class Cube{
+class Cube {
   Point3D[] vertices = new Point3D[24];
   float w, h, d;
 

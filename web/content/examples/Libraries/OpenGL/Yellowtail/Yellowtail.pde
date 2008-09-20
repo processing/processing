@@ -148,7 +148,6 @@ void renderGesture(Gesture gesture, int w, int h) {
   }
 }
 
-
 void updateGeometry() {
   Gesture J;
   for (int g=0; g<nGestures; g++) {
@@ -161,7 +160,6 @@ void updateGeometry() {
     }
   }
 }
-
 
 void advanceGesture(Gesture gesture) {
   // Move a Gesture one step
