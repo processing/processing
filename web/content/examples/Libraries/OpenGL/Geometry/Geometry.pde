@@ -1,5 +1,5 @@
 /**
- * Geometry
+ * Geometry 
  * by Marius Watz. 
  * 
  * Using sin/cos lookup tables, blends colors, and draws a series of 
@@ -9,7 +9,7 @@
 
 import processing.opengl.*;
  
-// Trig lookup tables borrowed from Toxi. Cryptic but effective
+// Trig lookup tables borrowed from Toxi; cryptic but effective.
 float sinLUT[];
 float cosLUT[];
 float SINCOS_PRECISION=1.0;
@@ -23,8 +23,7 @@ int style[];
 
  
 void setup() {
-  size(640, 480, OPENGL);
-  frameRate(24);
+  size(1024, 768, OPENGL);
   background(255);
   
   // Fill the tables
@@ -80,7 +79,7 @@ void draw() {
   rotateX(PI/6);
   rotateY(PI/6);
  
-  for (int i=0; i<num; i++) {
+  for (int i = 0; i < num; i++) {
     pushMatrix();
  
     rotateX(pt[index++]);
@@ -113,7 +112,7 @@ void draw() {
  
  
 // Get blend of two colors
-public int colorBlended(float fract,
+int colorBlended(float fract,
 float r, float g, float b,
 float r2, float g2, float b2, float a) {
  
@@ -125,7 +124,7 @@ float r2, float g2, float b2, float a) {
  
  
 // Draw arc line
-public void arcLine(float x,float y,float deg,float rad,float w) {
+void arcLine(float x,float y,float deg,float rad,float w) {
   int a=(int)(min (deg/SINCOS_PRECISION,SINCOS_LENGTH-1));
   int numlines=(int)(w/2);
  
@@ -140,7 +139,7 @@ public void arcLine(float x,float y,float deg,float rad,float w) {
 }
  
 // Draw arc line with bars
-public void arcLineBars(float x,float y,float deg,float rad,float w) {
+void arcLineBars(float x,float y,float deg,float rad,float w) {
   int a = int((min (deg/SINCOS_PRECISION,SINCOS_LENGTH-1)));
   a /= 4;
  
@@ -155,7 +154,7 @@ public void arcLineBars(float x,float y,float deg,float rad,float w) {
 }
  
 // Draw solid arc
-public void arc(float x,float y,float deg,float rad,float w) {
+void arc(float x,float y,float deg,float rad,float w) {
   int a = int(min (deg/SINCOS_PRECISION,SINCOS_LENGTH-1));
   beginShape(QUAD_STRIP);
   for (int i = 0; i < a; i++) {

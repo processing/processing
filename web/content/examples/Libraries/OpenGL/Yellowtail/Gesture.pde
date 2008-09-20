@@ -1,22 +1,23 @@
 class Gesture {
-  private static final float  damp = 5.0;
-  private static final float  dampInv = 1.0 / damp;
-  private static final float  damp1 = damp - 1;
 
-  private int w;
-  private int h;
-  private int capacity;
+  float  damp = 5.0;
+  float  dampInv = 1.0 / damp;
+  float  damp1 = damp - 1;
 
-  public Vec3f path[];
-  public int crosses[];
-  public Polygon polygons[];
-  public int nPoints;
-  public int nPolys;
+  int w;
+  int h;
+  int capacity;
 
-  public float   jumpDx, jumpDy;
-  public boolean exists;
-  private static final float INIT_TH = 14;
-  public float   thickness = INIT_TH;
+  Vec3f path[];
+  int crosses[];
+  Polygon polygons[];
+  int nPoints;
+  int nPolys;
+
+  float   jumpDx, jumpDy;
+  boolean exists;
+  float INIT_TH = 14;
+  float   thickness = INIT_TH;
 
   Gesture(int mw, int mh) {
     w = mw;
@@ -39,17 +40,17 @@ class Gesture {
     jumpDy = 0;
   }
 
-  public synchronized void clear() {
+  void clear() {
     nPoints = 0;
     exists = false;
     thickness = INIT_TH;
   }
 
-  public synchronized void clearPolys() {
+  void clearPolys() {
     nPolys = 0;
   }
 
-  public synchronized void addPoint(float x, float y) {
+  void addPoint(float x, float y) {
     //synchronized (path) {
       if (nPoints >= capacity) {
         // there are all sorts of possible solutions here,
@@ -69,14 +70,14 @@ class Gesture {
 
   }
 
-  private float getPressureFromVelocity(float v) {
+  float getPressureFromVelocity(float v) {
     final float scale = 18;
     final float minP = 0.02;
     final float oldP = (nPoints > 0) ? path[nPoints-1].p : 0;
     return ((minP + max(0, 1.0 - v/scale)) + (damp1*oldP))*dampInv;
   }
 
-  private void setPressures() {
+  void setPressures() {
     // pressures vary from 0...1
     float pressure;
     Vec3f tmp;
@@ -89,7 +90,7 @@ class Gesture {
     }
   }
 
-  public float distToLast(float ix, float iy) {
+  float distToLast(float ix, float iy) {
     if (nPoints > 0) {
       Vec3f v = path[nPoints-1];
       float dx = v.x - ix;
@@ -100,7 +101,7 @@ class Gesture {
     }
   }
 
-  public void compile() {
+  void compile() {
     // compute the polygons from the path of Vec3f's
     if (exists) {
       clearPolys();
@@ -221,7 +222,7 @@ class Gesture {
     }
   }
 
-  public synchronized void smooth() {
+  void smooth() {
     // average neighboring points
 
     final float weight = 18;

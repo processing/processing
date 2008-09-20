@@ -8,7 +8,6 @@
  * Use an "arc ball" to deal with this appropriately.
  */ 
 
-
 import processing.opengl.*;
 
 PImage bg;
@@ -19,7 +18,7 @@ float rotationX = 0;
 float rotationY = 0;
 float velocityX = 0;
 float velocityY = 0;
-float globeRadius = 300;
+float globeRadius = 450;
 float pushBack = 0;
 
 float[] cx, cz, sphereX, sphereY, sphereZ;
@@ -29,22 +28,18 @@ float SINCOS_PRECISION = 0.5;
 int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 
-void setup()
-{
-  size(640, 480, OPENGL);  
+void setup() {
+  size(1024, 768, OPENGL);  
   texmap = loadImage("world32k.jpg");    
   initializeSphere(sDetail);
 }
 
-void draw()
-{    
+void draw() {    
   background(0);            
   renderGlobe(); 
 }
 
-
-void renderGlobe() 
-{
+void renderGlobe() {
   pushMatrix();
   translate(width/2.0, height/2.0, pushBack);
   pushMatrix();

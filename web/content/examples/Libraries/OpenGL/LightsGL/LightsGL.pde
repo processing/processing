@@ -1,6 +1,6 @@
 /**
  * LightsGL. 
- * Modified by an example by Simon Greenwold. 
+ * Modified from an example by Simon Greenwold. 
  * 
  * Display a box with three different kinds of lights. 
  */
@@ -10,7 +10,7 @@ import processing.opengl.*;
 
 void setup() 
 {
-  size(800, 600, OPENGL);
+  size(1024, 768, OPENGL);
   noStroke();
 }
 

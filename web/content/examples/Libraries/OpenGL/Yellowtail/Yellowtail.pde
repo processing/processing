@@ -1,6 +1,6 @@
 /**
  * Yellowtail
- * by Golan Levin (www.flong.com)
+ * by Golan Levin (www.flong.com). 
  * 
  * Click, drag, and release to create a kinetic gesture.
  * 
@@ -12,6 +12,7 @@
  * worm-like textures.
  * 
  */
+
 
 import processing.opengl.*;
 
@@ -26,7 +27,7 @@ int tmpYp[];
 
 
 void setup() {
-  size(640, 480, OPENGL);
+  size(1024, 768, OPENGL);
   background(0, 0, 0);
   noStroke();
 
@@ -148,7 +149,7 @@ void renderGesture(Gesture gesture, int w, int h) {
 }
 
 
-private void updateGeometry() {
+void updateGeometry() {
   Gesture J;
   for (int g=0; g<nGestures; g++) {
     if ((J=gestureArray[g]).exists) {
@@ -163,7 +164,7 @@ private void updateGeometry() {
 
 
 void advanceGesture(Gesture gesture) {
-  // move a Gesture one step
+  // Move a Gesture one step
   if (gesture.exists) { // check
     int nPts = gesture.nPoints;
     int nPts1 = nPts-1;
@@ -173,7 +174,7 @@ void advanceGesture(Gesture gesture) {
 
     if (nPts > 0) {
       path = gesture.path;
-      for (int i=nPts1; i>0; i--) {
+      for (int i = nPts1; i > 0; i--) {
         path[i].x = path[i-1].x;
         path[i].y = path[i-1].y;
       }
@@ -185,7 +186,7 @@ void advanceGesture(Gesture gesture) {
 }
 
 void clearGestures() {
-  for (int i=0; i<nGestures; i++) {
+  for (int i = 0; i < nGestures; i++) {
     gestureArray[i].clear();
   }
 }

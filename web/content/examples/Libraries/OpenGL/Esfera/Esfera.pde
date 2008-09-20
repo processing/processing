@@ -1,10 +1,9 @@
 /**
- * Esfera. 
- * David Pena.  
+ * Esfera
+ * by David Pena.  
  * 
  * Distribucion aleatoria uniforme sobre la superficie de una esfera. 
  */
-
 
 import processing.opengl.*;
 
@@ -17,9 +16,8 @@ float radio = 200;
 float rx = 0;
 float ry =0;
 
-void setup()
-{
-  size(640, 480, OPENGL);
+void setup() {
+  size(1024, 768, OPENGL);
   radio = height/3.5;
   
   lista = new pelo[cuantos];
@@ -30,8 +28,7 @@ void setup()
 
 }
 
-void draw()
-{
+void draw() {
   background(0);
   translate(width/2,height/2);
 
