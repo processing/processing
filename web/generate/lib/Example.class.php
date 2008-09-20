@@ -93,7 +93,7 @@ class Example
 			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'.$this->width.'" height="'.$this->height.'"></applet>';
 			$html .= "\n</div>";
 			
-			if ($this.width > 200) {
+			if ($this->width > 200) {
 				
 			  $html .= "\n<p class=\"doc\">";
 			
