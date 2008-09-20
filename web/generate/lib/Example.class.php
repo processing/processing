@@ -138,24 +138,24 @@ class Example
 		if ($this->sub === "Basics") {
 	   	#if (strcmp($cat, "Basics") == 0) {
 		
-			$html = "\n<div id="reference-nav"><a href=\"/learning/basics/\" class=\"activeSub\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></div>";
+			$html = "\n<div id=\"reference-nav\"><a href=\"/learning/basics/\" class=\"activeSub\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></div>";
 		
 		} else if ($this->sub === "Topics") {
 			
-			$html = "\n<div id="reference-nav"><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\" class=\"activeSub\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></div>";
+			$html = "\n<div id=\"reference-nav\"><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\" class=\"activeSub\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></div>";
 
 
 		} else if ($this->sub === "3D") {
 
-			$html = "\n<div id="reference-nav"><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\" class=\"activeSub\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></div>";
+			$html = "\n<div id=\"reference-nav\"><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\" class=\"activeSub\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></div>";
 			
 		} else if ($this->sub === "Libraries") {
 
-			$html = "\n<div id="reference-nav"><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\" class=\"activeSub\">Libraries</a></div>";
+			$html = "\n<div id=\"reference-nav\"><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\" class=\"activeSub\">Libraries</a></div>";
 			
 		} else {
 			
-			$html = "\n<div id="reference-nav"><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></div>";
+			$html = "\n<div id=\"reference-nav\"><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></div>";
 
 		}
 		
