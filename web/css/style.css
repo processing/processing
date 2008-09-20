@@ -544,7 +544,7 @@ pre.code { clear: both; margin-top: 10px; }
 
 /* #examples-nav { margin-left: -44px; display: relative; } */
 //#examples-nav { margin-left: 0px; display: relative; }
-.examples-nav-div { margin-left: 50px; width: 640; display: relative; border: 1; style="border: 3px coral solid;"}
+.examples-nav-div { margin-left: 200px; width: 440; display: relative; border: 1; style="border: 3px coral solid;"}
 #examples-nav img { display: absolute; top: 15px; left: 100px; }
 
 #Examples h1 { margin-bottom: 0; }
