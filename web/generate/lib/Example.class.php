@@ -139,12 +139,12 @@ class Example
 		
 		} else if ($this->sub === "Topics") {
 			
-			$html = "\n<table id=\"examples-nav\" border=\"1\">\n<tr><td>&nbsp;</td><td><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\" class=\"activeSub\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
+			$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\" class=\"activeSub\">Topics</a> \ <a href=\"/learning/3d/\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 
 
 		} else if ($this->sub === "3D") {
 
-			$html = "\n<table id=\"examples-nav\">\n<tr><td>&nbsp;</td><td><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\" class=\"activeSub\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
+			$html = "\n<table id=\"examples-nav\" border=\"1\">\n<tr><td>&nbsp;</td><td><a href=\"/learning/basics/\">Basics</a> \ <a href=\"/learning/topics/\">Topics</a> \ <a href=\"/learning/3d/\" class=\"activeSub\">3D</a> \ <a href=\"/learning/libraries/\">Libraries</a></td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr>";
 			
 		} else if ($this->sub === "Libraries") {
 
