@@ -102,26 +102,26 @@ public class BaseObject extends PShape {
 		return PApplet.parseFloat(PApplet.splitTokens(content.trim()));
 		*/
 		String[] pieces = PApplet.match(matrixStr, "\\s*(\\w+)\\((.*)\\)");
-		if (pieces.length != 2) {
+		if (pieces == null) {
 			System.err.println("Could not parse transform " + matrixStr);
 			return null;
 		}
-		float[] m = PApplet.parseFloat(PApplet.splitTokens(pieces[1]));
+		float[] m = PApplet.parseFloat(PApplet.splitTokens(pieces[2]));
 		
-		if (pieces[0].equals("matrix")) {
+		if (pieces[1].equals("matrix")) {
 			return m;
 			
-		} else if (pieces[0].equals("translate")) {
+		} else if (pieces[1].equals("translate")) {
 			float tx = m[0];
 			float ty = (m.length == 2) ? m[1] : m[0];
 			return new float[] { 1, 0, tx,  0, 1, ty };
 			
-		} else if (pieces[0].equals("scale")) {
+		} else if (pieces[1].equals("scale")) {
 			float sx = m[0];
 			float sy = (m.length == 2) ? m[1] : m[0];
 			return new float[] { sx, 0, 0, 0, sy, 0 };
 
-		} else if (pieces[0].equals("rotate")) {
+		} else if (pieces[1].equals("rotate")) {
 			float angle = m[0];
 			
 			if (m.length == 1) {
@@ -136,10 +136,10 @@ public class BaseObject extends PShape {
 				return mat.get(null);
 			}
 			
-		} else if (pieces[0].equals("skewX")) {
+		} else if (pieces[1].equals("skewX")) {
 			return new float[] { 1, PApplet.tan(m[0]), 0,  0, 1, 0 };
 			
-		} else if (pieces[0].equals("skewY")) {
+		} else if (pieces[1].equals("skewY")) {
 			return new float[] { 1, 0, 0,  PApplet.tan(m[0]), 1, 0 };
 		}
 		return null;
