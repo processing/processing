@@ -38,8 +38,8 @@ class Example
 		#echo CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde';
 		 
 		# "(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)"
-		# preg_match("(?:^|\s|;)size\s*\(\s*(\S+)\s*,\s*(\d+),?\s*([^\)]*)\s*\)", $this->file, $matches);
-		preg_match('/size\(200,200\)/', $this->file, $matches);
+		preg_match("/(^|\s|;)size\s*\(\s*(\d+)\s*,\s*(\d+),?\s*([^\)]*)\s*\)/", $this->file, $matches);
+		//preg_match('/size\(200,200\)/', $this->file, $matches);
 		$this->width = $matches[0];
 		//$this->height = $matches[1];
 		echo " $this->width\n";
