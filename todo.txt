@@ -36,6 +36,7 @@ X   was a typo in the code
 X add getting started to help menu
 X   http://processing.org/learning/gettingstarted/
 X add "environment" to the help menu
+X fix other instances of match() using the wrong array indices
 
 cleanup
 o how to grab the java2d object from PGraphics2D
@@ -50,10 +51,14 @@ o   you wait for the images to download (size is zero until they're ready)
 o   MediaTracker blocking is prolly making jar download really slow
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
 
+
+reference
 _ do some edits on the "getting started" text
 _   change references to help > getting started
 _   add vida reference
 _   make sure visualization not mentioned
+_ update match(), write new reference for matchAll()
+
 
 _ command line for casey
 
