@@ -9,6 +9,8 @@ class Example
 	var $doc;
 	var $code;
 	var $sub;
+	var $width;
+	var $height;
 	
 	function Example($name, $cat, $sub)
 	{
@@ -34,6 +36,11 @@ class Example
         }
 		
 		#echo CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde';
+		
+		$widthheight = preg_match("(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*(\\d+),?\\s*([^\\)]*)\\s*\\)", $this->file);
+		$this->width = $widthheight[0];
+		$this->height = $widthheight[1];
+		echo " $width\n";
 		
 		$this->split_file();
 	}
