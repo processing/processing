@@ -2,16 +2,20 @@
 
 REVISION=`head -c 4 ../../todo.txt`
 
-ARCH=`uname -m`
-if [ $ARCH != "i686" ]
+ARCH=`uname`
+if [ $ARCH == "Darwin" ]
 then
-  echo At present, the Linux distribution can only be built on i686 \(32-bit\).
-  exit
+    PLATFORM=macosx
+elif [ $ARCH == "Cygwin" ]
+then
+    PLATFORM=windows
+else 
+    PLATFORM=linux
 fi
 
 ./make.sh
 
-echo Creating linux distribution for revision $REVISION...
+echo Creating command-line distribution for revision $REVISION...
 
 # remove any old boogers
 rm -rf processing
