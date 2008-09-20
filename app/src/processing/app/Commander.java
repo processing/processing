@@ -3,8 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2008 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,9 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import processing.app.debug.RunnerException;
 import processing.core.PApplet;
 import processing.core.PConstants;
+
+import processing.app.debug.RunnerException;
 
 
 public class Commander {
@@ -42,6 +42,7 @@ public class Commander {
   static final String exportAppletArg = "--export-applet";
   static final String exportApplicationArg = "--export-application";
   static final String platformArg = "--platform=";
+  static final String preferencesArg = "--preferences=";
 
   static final int HELP = -1;
   static final int PREPROCESS = 0;
@@ -50,9 +51,22 @@ public class Commander {
   static final int EXPORT_APPLICATION = 3;
 
 
+  static public void main(String[] args) {
+    // init the platform so that prefs and other native code is ready to go
+    Base.initPlatform();
+    // make sure a full JDK is installed
+    Base.initRequirements();
+    // run static initialization that grabs all the prefs
+    //Preferences.init(null);
+    // launch command line handler
+    new Commander(args);
+  }
+
+
   public Commander(String[] args) {
     String sketchPath = null;
     String outputPath = null;
+    String preferencesPath = null;
     //int[] platforms = null;
     String[] platforms = null;
     int mode = HELP;
@@ -97,7 +111,11 @@ public class Commander {
         outputPath = arg.substring(outputArg.length());
       }
     }
-    
+
+    // run static initialization that grabs all the prefs
+    // (also pass in a prefs path if that was specified)
+    Preferences.init(preferencesPath);
+
     if (platforms == null) {
       platforms = new String[] { "macosx", "windows", "linux" };
     }
@@ -119,10 +137,11 @@ public class Commander {
       complainAndQuit("Sketch path must point to the main .pde file.");
       
     } else {
+      Sketch sketch = null; 
+      boolean success = false;
+
       try {
-        Sketch sketch = new Sketch(null, sketchPath);
-        boolean success = false;
-        
+        sketch = new Sketch(null, sketchPath);
         if (mode == PREPROCESS) {
           success = sketch.preprocess(outputPath) != null;
 
@@ -161,9 +180,19 @@ public class Commander {
           }
         }
         System.exit(success ? 0 : 1);
-        
+
       } catch (RunnerException re) {
-        
+        // format the runner exception like emacs
+        //blah.java:2:10:2:13: Syntax Error: This is a big error message
+        String filename = sketch.getCode(re.getCodeIndex()).getFileName();
+        int line = re.getCodeLine();
+        int column = re.getCodeColumn();
+        if (column == -1) column = 0;
+        // TODO if column not specified, should just select the whole line. 
+        System.err.println(filename + ":" + 
+                           line + ":" + column + ":" + 
+                           line + ":" + column + ":" + " " + re.getMessage());
+
       } catch (IOException e) {
         e.printStackTrace();
         System.exit(1);

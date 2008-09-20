@@ -133,7 +133,7 @@ public class Preferences {
   static File preferencesFile;
 
 
-  static protected void init() {
+  static protected void init(String commandLinePrefs) {
 
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
@@ -164,25 +164,37 @@ public class Preferences {
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control);
 
-    // next load user preferences file
-    preferencesFile = Base.getSettingsFile(PREFS_FILE);
-    if (!preferencesFile.exists()) {
-      // create a new preferences file if none exists
-      // saves the defaults out to the file
-      save();
-
-    } else {
-      // load the previous preferences file
-
+    // Load a prefs file if specified on the command line
+    if (commandLinePrefs != null) {
       try {
-        load(new FileInputStream(preferencesFile));
+        load(new FileInputStream(commandLinePrefs));
 
-      } catch (Exception ex) {
-        Base.showError("Error reading preferences",
-                       "Error reading the preferences file. " +
-                       "Please delete (or move)\n" +
-                       preferencesFile.getAbsolutePath() +
-                       " and restart Processing.", ex);
+      } catch (Exception poe) {
+        Base.showError("Error",
+                       "Could not read preferences from " + 
+                       commandLinePrefs, poe);
+      }
+    } else if (!Base.isCommandLine()) {
+      // next load user preferences file
+      preferencesFile = Base.getSettingsFile(PREFS_FILE);
+      if (!preferencesFile.exists()) {
+        // create a new preferences file if none exists
+        // saves the defaults out to the file
+        save();
+
+      } else {
+        // load the previous preferences file
+
+        try {
+          load(new FileInputStream(preferencesFile));
+
+        } catch (Exception ex) {
+          Base.showError("Error reading preferences",
+                         "Error reading the preferences file. " +
+                         "Please delete (or move)\n" +
+                         preferencesFile.getAbsolutePath() +
+                         " and restart Processing.", ex);
+        }
       }
     }
   }
