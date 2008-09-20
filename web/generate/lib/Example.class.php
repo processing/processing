@@ -22,7 +22,8 @@ class Example
 		
 		if ($handle = opendir(CONTENTDIR.'examples/'.$cat.'/'.$name)) {
           while (false !== ($file = readdir($handle))) {
-            if ($file != "." && $file != "..") {
+            //if ($file != "." && $file != "..") {
+            if (preg_match("/pde/", $file)) {
               echo "$file\n";
             }
           }
