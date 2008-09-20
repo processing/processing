@@ -165,7 +165,8 @@ class Example
 		$next = array();
 		$get_next = false;
 		
-		$html = "\n<table id=\"examples-nav\" border=\"1\">\n<tr>";
+		$html = "\n<div class=\"examples-nav-dav\">";
+		$html .= "\n<table id=\"examples-nav\" border=\"1\">\n<tr>";
 		//$html = "\n<table id=\"examples-nav\" width=\"640\">\n<tr><td align=\"right\">";
 		
 		$select = "\n<select name=\"nav\" size=\"1\" class=\"inputnav\" onChange=\"javascript:gogo(this)\">\n";
@@ -203,7 +204,7 @@ class Example
 			$html .= '<td><a class="next" href="'.strtolower($next[0]) .'">
 				<img src="/img/next_off.gif" alt="'.$next[1].'" /></a></td>';
 		}
-		return $html . '</tr></table>';
+		return $html . '</tr></table></div>';
 	}
 	
 	function copy_media()
