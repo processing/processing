@@ -8,11 +8,11 @@
 int xspacing = 8;   // How far apart should each horizontal location be spaced
 int w;              // Width of entire wave
 
-float theta = 0.0;       // Start angle at 0
+float theta = 0.0;  // Start angle at 0
 float amplitude = 75.0;  // Height of wave
-float period = 500.0;    // How many pixels before the wave repeats
-float dx;                 // Value for incrementing X, to be calculated as a function of period and xspacing
-float[] yvalues;          // Using an array to store height values for the wave (not entirely necessary)
+float period = 500.0;  // How many pixels before the wave repeats
+float dx;  // Value for incrementing X, a function of period and xspacing
+float[] yvalues;  // Using an array to store height values for the wave
 
 void setup() {
   size(200,200);
