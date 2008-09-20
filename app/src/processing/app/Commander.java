@@ -88,7 +88,7 @@ public class Commander {
       } else if (arg.equals(exportApplicationArg)) {
         mode = EXPORT_APPLICATION;
         
-      } else if (arg.equals(platformArg)) {
+      } else if (arg.startsWith(platformArg)) {
         String platformStr = arg.substring(platformArg.length());
         platformIndex = Base.getPlatformIndex(platformStr);
         if (platformIndex == -1) {
@@ -103,6 +103,9 @@ public class Commander {
 
       } else if (arg.startsWith(outputArg)) {
         outputPath = arg.substring(outputArg.length());
+        
+      } else {
+        complainAndQuit("I don't know anything about " + arg + ".");
       }
     }
 
@@ -110,6 +113,13 @@ public class Commander {
         (mode == PREPROCESS || mode == BUILD || mode == RUN)) {
       complainAndQuit("Output path must be specified when using " + 
                       preprocArg + ", " + buildArg + ", or " + runArg + ".");
+    }
+    
+    File outputFolder = new File(outputPath);
+    if (!outputFolder.exists()) {
+      if (!outputFolder.mkdirs()) {
+        complainAndQuit("Could not create the output folder.");
+      }
     }
 
     // run static initialization that grabs all the prefs

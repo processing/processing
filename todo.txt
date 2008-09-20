@@ -51,6 +51,7 @@ o   you wait for the images to download (size is zero until they're ready)
 o   MediaTracker blocking is prolly making jar download really slow
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
 
+_ javadoc comment in a static mode app doesn't get moved to the top
 
 reference
 _ do some edits on the "getting started" text
