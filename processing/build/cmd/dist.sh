@@ -1,17 +1,18 @@
 #!/bin/sh
 
-REVISION=`head -c 4 ../../todo.txt`
-
 # only needed for core.jar and pde.jar, hmm
 ARCH=`uname`
 if [ $ARCH == "Darwin" ]
 then
-    BUILD=../build/macosx
+    BUILD=../macosx
+    REVISION=`head -1 ../../todo.txt | cut -c 1-4`
 elif [ $ARCH == "Cygwin" ]
 then
-    BUILD=../build/windows
+    BUILD=../windows
+    REVISION=`head -c 4 ../../todo.txt`
 else 
-    BUILD=../build/linux
+    BUILD=../linux
+    REVISION=`head -c 4 ../../todo.txt`
 fi
 
 echo Creating command-line distribution for revision $REVISION...
@@ -23,7 +24,6 @@ rm -rf processing-*
 mkdir processing
 cp -r ../shared/lib processing/
 cp -r ../shared/libraries processing/
-cp -r ../shared/tools processing/
 cp ../../app/lib/antlr.jar processing/lib/
 cp ../../app/lib/ecj.jar processing/lib/
 cp ../../app/lib/jna.jar processing/lib/
@@ -62,7 +62,8 @@ echo Creating tarball and finishing...
 P5=processing-cmd-$REVISION
 mv processing $P5
 
-tar cfz $P5.tgz $P5
+zip -rq $P5.zip $P5
+#tar cfz $P5.tgz $P5
 # nah, keep the new directory around
 #rm -rf $P5
 
