@@ -5177,33 +5177,54 @@ public class PApplet extends Applet
 
 
   /**
-   * Match a string with a regular expression, and return matching groups as
-   * an array. If the sequence matches, but there are no groups, a zero length
-   * (non-null) String array will be returned.
-   *
-   * In other regexp implementations, groups are often 1-indexed, and group 0
-   * is the entire matching sequence. But in this function the groups are
-   * 0-indexed. If you want the matching sequence, just use the Java String
-   * methods for testing matches. (Or use java.util.regex.Pattern directly.)
+   * Match a string with a regular expression, and returns the match as an 
+   * array. The first index is the matching expression, and array elements 
+   * [1] and higher represent each of the groups (sequences found in parens).
    *
    * This uses multiline matching (Pattern.MULTILINE) and dotall mode
    * (Pattern.DOTALL) by default, so that ^ and $ match the beginning and
    * end of any lines found in the source, and the . operator will also
-   * pick up newline characters. (Release 0149)
+   * pick up newline characters.
    */
   static public String[] match(String what, String regexp) {
-    //Pattern p = Pattern.compile(regexp);
     Pattern p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
     Matcher m = p.matcher(what);
     if (m.find()) {
-      int count = m.groupCount();
+      int count = m.groupCount() + 1;
       String[] groups = new String[count];
       for (int i = 0; i < count; i++) {
-        groups[i] = m.group(i+1);
+        groups[i] = m.group(i);
       }
       return groups;
     }
     return null;
+  }
+  
+  
+  /**
+   * Identical to match(), except that it returns an array of all matches in 
+   * the specified String, rather than just the first. 
+   */
+  static public String[][] matchAll(String what, String regexp) {
+    Pattern p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
+    Matcher m = p.matcher(what);
+    ArrayList<String[]> results = new ArrayList<String[]>();
+    int count = m.groupCount() + 1;
+    while (m.find()) {
+      String[] groups = new String[count];
+      for (int i = 0; i < count; i++) {
+        groups[i] = m.group(i);
+      }
+      results.add(groups);
+    }
+    if (results.isEmpty()) {
+      return null;
+    }
+    String[][] matches = new String[results.size()][count];
+    for (int i = 0; i < matches.length; i++) {
+      matches[i] = (String[]) results.get(i);
+    }
+    return matches;
   }
 
 
