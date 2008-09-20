@@ -165,7 +165,7 @@ class Example
 		$next = array();
 		$get_next = false;
 		
-		$html = "\n<div class=\"examples-nav-dav\">";
+		$html = "\n<div class=\"examples-nav-div\">";
 		$html .= "\n<table border=\"1\">\n<tr>";
 		//$html = "\n<table id=\"examples-nav\" width=\"640\">\n<tr><td align=\"right\">";
 		
