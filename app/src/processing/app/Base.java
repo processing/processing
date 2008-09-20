@@ -45,6 +45,23 @@ public class Base {
   static final int VERSION = 149;
   static final String VERSION_NAME = "0149 Beta";
 
+  static final int[] platforms = new int[] { 
+    PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX 
+  };
+
+  static HashMap<Integer, String> platformNames = new HashMap();
+  static {
+    platformNames.put(PConstants.WINDOWS, "windows");
+    platformNames.put(PConstants.MACOSX, "macosx");
+    platformNames.put(PConstants.LINUX, "linux");
+  }
+
+  static HashMap<String, Integer> platformIndices = new HashMap();
+  static {
+    platformIndices.put("windows", PConstants.WINDOWS);
+    platformIndices.put("macosx", PConstants.MACOSX);
+    platformIndices.put("linux", PConstants.LINUX);
+  }
   static Platform platform;
 
   static private boolean commandLine;
@@ -1022,6 +1039,30 @@ public class Base {
   // ...................................................................
 
 
+  /**
+   * Get list of platform constants.
+   */
+  static public int[] getPlatforms() {
+    return platforms;
+  }
+  
+  
+  /**
+   * Map a platform constant to its name.
+   * @param which PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX 
+   * @return one of "windows", "macosx", or "linux"
+   */
+  static public String getPlatformName(int which) {
+    return platformNames.get(which);
+  }
+  
+  
+  static public int getPlatformIndex(String what) {
+    Integer entry = platformIndices.get(what);
+    return (entry == null) ? -1 : entry.intValue();
+  }
+  
+  
   /**
    * returns true if Processing is running on a Mac OS X machine.
    */

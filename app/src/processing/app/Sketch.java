@@ -1487,7 +1487,9 @@ public class Sketch {
 
     File appletFolder = new File(appletPath);
     // Nuke the old applet folder because it can cause trouble
-    Base.removeDir(appletFolder);
+    if (Preferences.getBoolean("export.delete_target_folder")) {
+      Base.removeDir(appletFolder);
+    }
     // Create a fresh applet folder (needed before preproc is run below)
     appletFolder.mkdirs();
 
@@ -1977,7 +1979,9 @@ public class Sketch {
     File destFolder = new File(folder, folderName);
     */
     File destFolder = new File(destPath);
-    Base.removeDir(destFolder);
+    if (Preferences.getBoolean("export.delete_target_folder")) {
+      Base.removeDir(destFolder);
+    }
     destFolder.mkdirs();
 
     // build the sketch
