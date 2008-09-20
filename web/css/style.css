@@ -543,7 +543,7 @@ p.doc { margin-right: 40px; }
 pre.code { clear: both; margin-top: 10px; }
 
 /* #examples-nav { margin-left: -44px; display: relative; } */
-#examples-nav { margin-left: 0px; width: 640; display: relative; text-align: right;}
+#examples-nav { margin-left: 0px; width: 640; display: relative; text-align: right; border: 1; }
 #examples-nav img { display: absolute; top: 15px; left: 100px; }
 
 #Examples h1 { margin-bottom: 0; }
