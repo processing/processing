@@ -2,18 +2,17 @@
 
 REVISION=`head -c 4 ../../todo.txt`
 
+# only needed for core.jar and pde.jar, hmm
 ARCH=`uname`
 if [ $ARCH == "Darwin" ]
 then
-    PLATFORM=macosx
+    BUILD=../build/macosx
 elif [ $ARCH == "Cygwin" ]
 then
-    PLATFORM=windows
+    BUILD=../build/windows
 else 
-    PLATFORM=linux
+    BUILD=../build/linux
 fi
-
-./make.sh
 
 echo Creating command-line distribution for revision $REVISION...
 
@@ -30,12 +29,6 @@ cp ../../app/lib/ecj.jar processing/lib/
 cp ../../app/lib/jna.jar processing/lib/
 cp ../shared/revisions.txt processing/
 
-echo Extracting examples...
-unzip -q -d processing/ ../shared/examples.zip
-
-echo Extracting reference...
-unzip -q -d processing/ ../shared/reference.zip
-
 # add the libraries folder with source
 cp -r ../../net processing/libraries/
 cp -r ../../opengl processing/libraries/
@@ -44,21 +37,14 @@ cp -r ../../pdf processing/libraries/
 cp -r ../../dxf processing/libraries/
 cp -r ../../xml processing/libraries/
 cp -r ../../candy processing/libraries/
-
-# add java (jre) files
-tar --extract --file=jre.tgz --ungzip --directory=processing
+cp -r ../../video processing/libraries/
 
 # grab pde.jar and export from the working dir
-cp work/lib/pde.jar processing/lib/
-cp work/lib/core.jar processing/lib/
+cp $BUILD/work/lib/pde.jar processing/lib/
+cp $BUILD/work/lib/core.jar processing/lib/
 
 # get platform-specific goodies from the dist dir
 install -m 755 dist/processing processing/processing
-
-# make sure notes.txt is unix LFs
-# the 2> is because the app is a little chatty
-dos2unix processing/revisions.txt 2> /dev/null
-dos2unix processing/lib/preferences.txt 2> /dev/null
 
 # remove boogers
 find processing -name "*~" -exec rm -f {} ';'
@@ -73,7 +59,7 @@ find processing -name ".svn" -exec rm -rf {} 2> /dev/null ';'
 
 # zip it all up for release
 echo Creating tarball and finishing...
-P5=processing-$REVISION
+P5=processing-cmd-$REVISION
 mv processing $P5
 
 tar cfz $P5.tgz $P5
