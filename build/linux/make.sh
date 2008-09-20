@@ -76,7 +76,7 @@ mkdir -p bin
     -cp ../build/linux/work/java/lib/tools.jar \
     com.sun.tools.javac.Main \
     -d bin -source 1.5 -target 1.5 src/processing/core/*.java
-find bin -name "*~" -exec rm -f {} ';'
+#find bin -name "*~" -exec rm -f {} ';'
 rm -f ../build/linux/work/lib/core.jar
 cd bin && zip -rq ../../build/linux/work/lib/core.jar processing/core/*.class && cd ..
 

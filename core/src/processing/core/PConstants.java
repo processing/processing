@@ -50,10 +50,10 @@ public interface PConstants {
 
   // platform IDs for PApplet.platform
 
-  static final int WINDOWS = 1;
-  static final int MACOSX  = 3;
-  static final int LINUX   = 4;
   static final int OTHER   = 0;
+  static final int WINDOWS = 1;
+  static final int MACOSX  = 2;
+  static final int LINUX   = 3;
 
 
   // for better parity between c++ version (at no speed cost)
