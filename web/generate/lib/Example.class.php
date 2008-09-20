@@ -20,7 +20,7 @@ class Example
 		$this->file = file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde');
 		$this->applet = CONTENTDIR.'examples/'.$cat.'/'.$name.'/applet/'.$name.'.jar';
 		
-		if ($handle = opendir(CONTENTDIR.'examples/'.$cat.'/'.$name.')) {
+		if ($handle = opendir(CONTENTDIR.'examples/'.$cat.'/'.$name)) {
           while (false !== ($file = readdir($handle))) {
             if ($file != "." && $file != "..") {
               echo "$file\n";
