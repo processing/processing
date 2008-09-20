@@ -42,7 +42,7 @@ class Example
 		//preg_match('/size\(200,200\)/', $this->file, $matches);
 		$this->width = $matches[2];
 		$this->height = $matches[3];
-		echo "Special magic: $this->width  $this->height\n";
+		#echo "Special magic: $this->width  $this->height\n";
 		
 		$this->split_file();
 	}
@@ -116,7 +116,7 @@ class Example
 
 			} else {*/
 				$html .= "\n<div class=\"applet\">\n\t";
-				$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="200" height="200"></applet>';
+				$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="$this->width" height="$this->height"></applet>';
 				$html .= "\n</div>";
 				$html .= "\n<p class=\"doc-float\">";
 			//}
