@@ -197,7 +197,9 @@ public class Sketch {
     sortCode();
 
     // set the main file to be the current tab
-    setCurrentCode(0);
+    if (editor != null) {
+      setCurrentCode(0);
+    }
   }
 
 
@@ -1043,26 +1045,8 @@ public class Sketch {
 
     current = code[which];
     currentIndex = which;
+    
     editor.setCode(current);
-    //editor.setDocument(current.document,
-    //                 current.selectionStart, current.selectionStop,
-    //                 current.scrollPosition, current.undo);
-
-    // set to the text for this file
-    // 'true' means to wipe out the undo buffer
-    // (so they don't undo back to the other file.. whups!)
-    /*
-    editor.setText(current.program,
-                   current.selectionStart, current.selectionStop,
-                   current.undo);
-    */
-
-    // set stored caret and scroll positions
-    //editor.textarea.setScrollPosition(current.scrollPosition);
-    //editor.textarea.select(current.selectionStart, current.selectionStop);
-    //editor.textarea.setSelectionStart(current.selectionStart);
-    //editor.textarea.setSelectionEnd(current.selectionStop);
-
     editor.header.rebuild();
   }
 
