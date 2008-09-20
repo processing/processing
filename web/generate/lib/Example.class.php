@@ -92,7 +92,16 @@ class Example
 			$html .= "\n<div class=\"applet\">\n\t";
 			$html .= '<applet code="'.$this->name.'" archive="media/'.$this->name.'.jar" width="'.$this->width.'" height="'.$this->height.'"></applet>';
 			$html .= "\n</div>";
-			$html .= "\n<p class=\"doc-float\">";
+			
+			if ($this.width > 200) {
+				
+			  $html .= "\n<p class=\"doc\">";
+			
+			} else {
+		    
+		      $html .= "\n<p class=\"doc-float\">";
+			
+			}
 
 		} else {
 			$html .= "\n<p class=\"doc\">";
