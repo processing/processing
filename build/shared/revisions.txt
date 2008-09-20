@@ -7,7 +7,20 @@ releases will be super crusty.
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-ABOUT REV 0149 - XX August 2008
+ABOUT REV 0149 - XX September 2008
+
++ Changes to how match() works to bring back in line with other regexp
+  implementations. Instead of only returning matching groups, match 0
+  is the matching sequence, and array elements [1] and higher represent 
+  each of the groups (sequences found in parens). 
+  Also starting in this release, multiline matching (Pattern.MULTILINE) 
+  and dotall mode (Pattern.DOTALL) are used by default, so that ^ and $ 
+  match the beginning and end of any lines found in the source, 
+  and the . operator will also pick up newline characters.
+
++ Added matchAll() method, which is identical to match(), except that 
+  it returns an array of all matches in the specified String, rather 
+  than just the first. (Thanks to Dan Shiffman for the implementation.)
 
 + Removed some items from the default imports because they're 1) likely
   to cause naming collisions and 2) more likely to be used by advanced 
