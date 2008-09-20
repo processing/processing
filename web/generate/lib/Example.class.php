@@ -37,9 +37,9 @@ class Example
 		
 		#echo CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$name.'.pde';
 		
-		$widthheight = preg_match("(?:^|\s|;)size\s*\(\s*(\S+)\s*,\s*(\d+),?\s*([^\)]*)\s*\)", $this->file);
-		$this->width = $widthheight[0];
-		$this->height = $widthheight[1];
+		preg_match("(?:^|\s|;)size\s*\(\s*(\S+)\s*,\s*(\d+),?\s*([^\)]*)\s*\)", $this->file, $matches);
+		$this->width = $matches[0];
+		$this->height = $matches[1];
 		echo " $width\n";
 		
 		$this->split_file();
