@@ -165,7 +165,7 @@ class Example
 		$next = array();
 		$get_next = false;
 		
-		$html = "\n<table id=\"examples-nav\">\n<tr><td>"
+		$html = "\n<table id=\"examples-nav\">\n<tr><td>";
 		
 		$select = "\n<select name=\"nav\" size=\"1\" class=\"inputnav\" onChange=\"javascript:gogo(this)\">\n";
 		foreach ($array as $cat => $exs) {
