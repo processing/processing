@@ -25,7 +25,7 @@ class Example
             if (preg_match("/pde/", $newfile)) {
               //echo " $newfile\n";
               if (strcmp($name.'.pde', $newfile) != 0) {
-              	$this->file .= "IAMSTARTINGANEWLINE";
+              	$this->file .= "\n\n\n";
                 $this->file .= file_get_contents(CONTENTDIR.'examples/'.$cat.'/'.$name.'/'.$newfile); 
               }
             }
