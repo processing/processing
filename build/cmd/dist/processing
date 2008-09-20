@@ -1,7 +1,8 @@
  #!/bin/sh
  
 APPDIR="$(dirname -- "${0}")"
- 
+
+# includes java/* in case a Java install is available
 for LIB in \
     java/lib/rt.jar \
     java/lib/tools.jar \
@@ -14,4 +15,4 @@ export CLASSPATH
 
 export PATH="${APPDIR}/java/bin:${PATH}"
 
-java processing.app.Base
+java processing.app.Commander $*
