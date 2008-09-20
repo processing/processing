@@ -109,6 +109,7 @@ li { margin-bottom: 1em; }
     <a href="#" onclick="remote_link('cover.php');return false;">Cover</a> \ 
 	<a href="#" onclick="remote_link('exhibition.php'); return false;">Exhibition and archives</a> \ 
 	<a href="#" onclick="remote_link('examples.php'); return false;">Examples</a> \ 
+	<a href="#" onclick="remote_link('tutorials.php'); return false;">Tutorials</a> \ 
 	<a href="#" onclick="remote_link('libraries.php', 'lang=en'); return false;">Libraries</a> \ 
 	<a href="#" onclick="remote_link('environment.php'); return false;">Environment and Troubleshooting</a> \ 
 	<a href="#" onclick="remote_link('compare.php'); return false;">Compare</a> \ 
