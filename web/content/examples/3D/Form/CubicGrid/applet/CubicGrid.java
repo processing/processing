@@ -16,7 +16,7 @@ public class CubicGrid extends PApplet {
 /**
  * Cubic Grid. 
  * By Ira Greenberg
- *
+ * 
  * 3D translucent colored grid
  * uses nested pushMatrix()
  * and popMatrix() functions
@@ -28,7 +28,7 @@ float depth = 400;
 int boxFill;
 
 public void setup(){
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   noStroke();
 }
 

@@ -13,7 +13,7 @@ float depth = 400;
 color boxFill;
 
 void setup(){
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   noStroke();
 }
 
