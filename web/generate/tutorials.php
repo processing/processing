@@ -12,7 +12,7 @@ $page = new Page("Tutorials", "Tutorials");
 $page->content(file_get_contents($source."index.html"));
 writeFile('learning/tutorials/index.html', $page->out());
 
-$page = new Page("Processing in Eclipse", "Processing in Eclipse");
+$page = new Page("Processing in Eclipse", "Tutorials");
 $page->content(file_get_contents($source."eclipse/index.html"));
 writeFile('learning/tutorials/eclipse/index.html', $page->out());
 copydirr($source.'/eclipse/imgs', $path.'learning/tutorials/eclipse/imgs');
