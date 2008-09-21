@@ -363,7 +363,7 @@ hr.noShade { height: 0px; color: #ccc; background: #ccc; margin-bottom: 15px; cl
 /*** ref index ***/
 .abridged-notice { margin: 0 50px 30px 0; }
 
-.libraries-top { margin: 30px 50px 15px 0; }
+.libraries-top { margin: 20px 50px 15px 0; }
 .libraries-bottom { margin: 0 50px 0px 0; }
 
 div.ref-col { width: 30%; 
