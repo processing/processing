@@ -60,6 +60,8 @@ trim()
 
 <availability>1.0</availability>
 
+<level>Extended</level>
+
 <type>Function</type>
 
 <partof>Core</partof>
