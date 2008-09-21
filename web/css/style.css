@@ -293,12 +293,6 @@ td img { margin: 0; display: block; }
 #Tutorials .onecol { clear: both; }
 #Tutorials td { vertical-align: top; }
 
-#Tutorials .content {
-        margin-left    : 55px;
-        margin-right   : 0px;
-        position: relative;
-}
-
 #Index .colone { width: 224px; float: left; margin-right: 35px; }
 #Index .coltwo { width: 165px; float: left; margin-right: 25px; }
 #Index .colthree { width: 224px; float: left; margin-right: 20px; }
