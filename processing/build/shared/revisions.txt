@@ -9,6 +9,38 @@ releases will be super crusty.
 
 ABOUT REV 0149 - XX September 2008
 
+[ bug fixes ] 
+
++ Fix GLDrawableFactory.chooseGraphicsConfiguration() error with OpenGL
+  http://dev.processing.org/bugs/show_bug.cgi?id=891
+  http://dev.processing.org/bugs/show_bug.cgi?id=908
+
++ Fix problem with error line highlighting (wrong line being highlighted)
+  http://dev.processing.org/bugs/show_bug.cgi?id=888
+
++ "IllegalMonitorStateException: current thread not owner" with delay()
+  http://dev.processing.org/bugs/show_bug.cgi?id=894
+
++ Make parseFloat() with String[] array return NaN for missing values
+  http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1220880375
+
++ Fix problems with text in a rectangle
+  http://dev.processing.org/bugs/show_bug.cgi?id=893
+  http://dev.processing.org/bugs/show_bug.cgi?id=899
+
++ Remove extra files that were accidentally included inside core.jar.
+
+[ changes ] 
+
++ Change how PGraphics objects are created for better consistency. Sadly, 
+  this will require any libraries that subclass PGraphics to be rebuilt for
+  this release. (However, internally it's a great improvement.)
+
++ Alter how createInput(), save(), and saveFrame() work so that they
+  are more friendly to signed applets.
+
++ The unhint() method has been removed, see the hint() reference for changes.
+
 + Changes to how match() works to bring back in line with other regexp
   implementations. Instead of only returning matching groups, match 0
   is the matching sequence, and array elements [1] and higher represent 
@@ -18,9 +50,7 @@ ABOUT REV 0149 - XX September 2008
   match the beginning and end of any lines found in the source, 
   and the . operator will also pick up newline characters.
 
-+ Added matchAll() method, which is identical to match(), except that 
-  it returns an array of all matches in the specified String, rather 
-  than just the first. (Thanks to Dan Shiffman for the implementation.)
++ Removed MACOS9 constant from processing.core.PConstants.
 
 + Removed some items from the default imports because they're 1) likely
   to cause naming collisions and 2) more likely to be used by advanced 
@@ -34,6 +64,18 @@ ABOUT REV 0149 - XX September 2008
   the preproc.imports line. But keep in mind that this will make your 
   code incompatible with Processing on any machine that doesn't have 
   its preferences.txt mangled in the same manner.
+
+[ additions ] 
+
++ Implement command-line support. See the reference for Commander for 
+  details on how to use it.
+  http://dev.processing.org/bugs/show_bug.cgi?id=219
+
++ Added matchAll() method, which is identical to match(), except that 
+  it returns an array of all matches in the specified String, rather 
+  than just the first. (Thanks to Dan Shiffman for the implementation.)
+
++ Added getImage() method to PImage, which returns it as a java.awt.Image.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
