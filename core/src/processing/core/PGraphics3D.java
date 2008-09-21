@@ -402,6 +402,14 @@ public class PGraphics3D extends PGraphics {
     specular(0.5f);
     shininess(1.0f);
   }
+  
+  
+  public void hint(int which) {
+    if (which == DISABLE_DEPTH_SORT) {
+      flush();
+    }
+    super.hint(which);
+  }
 
 
   //////////////////////////////////////////////////////////////

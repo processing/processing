@@ -29,8 +29,28 @@ import java.awt.image.*;
 
 
 /**
- * Main graphics and rendering context, as well as
- * the base API implementation for processing "core".
+ * Main graphics and rendering context, as well as the base API implementation.
+ * <p>
+ * Starting in release 0149, subclasses of PGraphics are handled differently.
+ * The constructor for subclasses takes no parameters, instead a series of 
+ * functions are called by the hosting PApplet to specify its attributes. 
+ * 
+ * <ul>
+ * <li>setParent(PApplet) - is called to specify the parent PApplet. 
+ * <li>setPrimary(boolean) - called with true if this PGraphics will be the 
+ * primary drawing surface used by the sketch, or false if not.
+ * <li>setPath(String) - called when the renderer needs a filename or output
+ * path, such as with the PDF or DXF renderers.
+ * <li>setSize(int, int) - this is called last, at which point it's safe for
+ * the renderer to complete its initialization routine.
+ * </ul>
+ * 
+ * The functions were broken out because of the growing number of parameters
+ * such as these that might be used by a renderer, yet with the exception of 
+ * setSize(), it's not clear which will be necessary. So while the size could
+ * be passed in to the constructor instead of a setSize() function, a function
+ * would still be needed that would notify the renderer that it was time to 
+ * finish its initialization. Thus, setSize() simply does both.
  */
 public class PGraphics extends PImage implements PConstants {
 
@@ -428,10 +448,6 @@ public class PGraphics extends PImage implements PConstants {
 
   /** Inverse modelview matrix, used for lighting. */
   public PMatrix3D modelviewInv;
-
-//  protected float[][] modelviewStack;
-//  protected float[][] modelviewInvStack;
-//  protected int modelviewStackPointer;
 
   /**
    * The camera matrix, the modelview will be set to this on beginDraw.
@@ -922,142 +938,6 @@ public class PGraphics extends PImage implements PConstants {
   // eventually need to push a "default" setup down to this class
   public void vertex(float x, float y) {
   }
-    /*
-    splineVertexCount = 0;
-    //float vertex[];
-
-    if (vertexCount == vertices.length) {
-      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
-      System.arraycopy(vertices, 0, temp, 0, vertexCount);
-      vertices = temp;
-      //message(CHATTER, "allocating more vertices " + vertices.length);
-    }
-    // not everyone needs this, but just easier to store rather
-    // than adding another moving part to the code...
-    vertices[vertexCount][MX] = x;
-    vertices[vertexCount][MY] = y;
-    vertexCount++;
-
-    switch (shape) {
-
-    case POINTS:
-      point(x, y);
-      break;
-
-    case LINES:
-      if ((vertexCount % 2) == 0) {
-        line(vertices[vertexCount-2][MX],
-             vertices[vertexCount-2][MY], x, y);
-      }
-      break;
-
-    case LINE_STRIP:
-    case LINE_LOOP:
-      if (vertexCount == 1) {
-        path = new Path();
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-      break;
-
-    case TRIANGLES:
-      if ((vertexCount % 3) == 0) {
-        triangle(vertices[vertexCount - 3][MX],
-                 vertices[vertexCount - 3][MY],
-                 vertices[vertexCount - 2][MX],
-                 vertices[vertexCount - 2][MY],
-                 x, y);
-      }
-      break;
-
-    case TRIANGLE_STRIP:
-      if (vertexCount == 3) {
-        triangle(vertices[0][MX], vertices[0][MY],
-                 vertices[1][MX], vertices[1][MY],
-                 x, y);
-      } else if (vertexCount > 3) {
-        path = new Path();
-        // when vertexCount == 4, draw an un-closed triangle
-        // for indices 2, 3, 1
-        path.moveTo(vertices[vertexCount - 2][MX],
-                    vertices[vertexCount - 2][MY]);
-        path.lineTo(vertices[vertexCount - 1][MX],
-                    vertices[vertexCount - 1][MY]);
-        path.lineTo(vertices[vertexCount - 3][MX],
-                    vertices[vertexCount - 3][MY]);
-        draw_shape(path);
-      }
-      break;
-
-    case TRIANGLE_FAN:
-      if (vertexCount == 3) {
-        triangle(vertices[0][MX], vertices[0][MY],
-                 vertices[1][MX], vertices[1][MY],
-                 x, y);
-      } else if (vertexCount > 3) {
-        path = new Path();
-        // when vertexCount > 3, draw an un-closed triangle
-        // for indices 0 (center), previous, current
-        path.moveTo(vertices[0][MX],
-                    vertices[0][MY]);
-        path.lineTo(vertices[vertexCount - 2][MX],
-                    vertices[vertexCount - 2][MY]);
-        path.lineTo(x, y);
-        draw_shape(path);
-      }
-      break;
-
-    case QUADS:
-      if ((vertexCount % 4) == 0) {
-        quad(vertices[vertexCount - 4][MX],
-             vertices[vertexCount - 4][MY],
-             vertices[vertexCount - 3][MX],
-             vertices[vertexCount - 3][MY],
-             vertices[vertexCount - 2][MX],
-             vertices[vertexCount - 2][MY],
-             x, y);
-      }
-      break;
-
-    case QUAD_STRIP:
-      // 0---2---4
-      // |   |   |
-      // 1---3---5
-      if (vertexCount == 4) {
-        // note difference in winding order:
-        quad(vertices[0][MX], vertices[0][MY],
-             vertices[2][MX], vertices[2][MY],
-             x, y,
-             vertices[1][MX], vertices[1][MY]);
-
-      } else if (vertexCount > 4) {
-        path = new Path();
-        // when vertexCount == 5, draw an un-closed triangle
-        // for indices 2, 4, 5, 3
-        path.moveTo(vertices[vertexCount - 3][MX],
-                    vertices[vertexCount - 3][MY]);
-        path.lineTo(vertices[vertexCount - 1][MX],
-                    vertices[vertexCount - 1][MY]);
-        path.lineTo(x, y);
-        path.lineTo(vertices[vertexCount - 2][MX],
-                    vertices[vertexCount - 2][MY]);
-        draw_shape(path);
-      }
-      break;
-
-    case POLYGON:
-      //case CONCAVE_POLYGON:
-      //case CONVEX_POLYGON:
-      if (vertexCount == 1) {
-        path = new Path();
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-      break;
-    }
-    */
 
 
   public void vertex(float x, float y, float z) {
@@ -1224,48 +1104,6 @@ public class PGraphics extends PImage implements PConstants {
 
   public void endShape(int mode) {
   }
-
-
-
-  //////////////////////////////////////////////////////////////
-
-  // COMPOUND PATHS
-
-
-  /**
-   * Begin a new path. This can be used after beginShape() to draw
-   * a compound path (i.e. to draw shape with a hole on the interior)
-   * For instance, to draw a shape that has a hole in its interior,
-   * the format would be:
-   * <PRE>
-   * beginShape();
-   * beginPath();
-   * // multiple calls to vertex() that draw the exterior shape
-   * endPath();
-   * beginPath();
-   * // several calls to vertex() to draw the interior hole
-   * endPath();
-   * // more beginPath/endPath pairs can be used for additional holes
-   * endShape();
-   * </PRE>
-   * <P/>
-   * This will probably be available only with the OpenGL renderer,
-   * because it has a built-in tesselator from GLU.
-   */
-  //public void beginPath() {
-  //throw new RuntimeException("beginPath() is not available");
-  //}
-
-
-  /**
-   * End a path. Use this with beginPath() to close out a compound path.
-   * <P/>
-   * This will probably be available only with the OpenGL renderer,
-   * because it has a built-in tesselator from GLU.
-   */
-  //public void endPath() {
-  //throw new RuntimeException("endPath() is not available");
-  //}
 
 
 
@@ -1530,12 +1368,7 @@ public class PGraphics extends PImage implements PConstants {
       y = b - d/2f;
     }
 
-    //if (angleMode == DEGREES) {
-    //start = start * DEG_TO_RAD;
-    //stop = stop * DEG_TO_RAD;
-    //}
-    // before running a while loop like this,
-    // make sure it will exit at some point.
+    // make sure this loop will exit before starting while
     if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
     while (stop < start) stop += TWO_PI;
 
@@ -2115,8 +1948,6 @@ public class PGraphics extends PImage implements PConstants {
       fillB = 1;
       fillA = 1;
     }
-
-    //System.out.println(fill + " " + fillR + " " + fillG + " " + fillB);
 
     beginShape(QUADS);
     texture(image);
