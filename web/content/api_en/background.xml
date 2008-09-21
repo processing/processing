@@ -34,7 +34,9 @@ background(b);
 <description>
 The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to clear the display window at the beginning of each frame.
 <br/> <br/>
-An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window.
+An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window. To resize an image 'b' to the size of the sketch window, use b.resize(width, height).
+<br/> <br/>
+Images used as background will ignore the current tint() setting.
 <br/> <br/>
 It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics</b>.
 </description>
