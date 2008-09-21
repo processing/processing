@@ -326,6 +326,9 @@ _   catch OutOfMemoryError inside size() and let the user know
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
 _ loadBytes() needs optimization
 _   don't bother using a buffering stream, just handle internally. gah!
+_ placement of elements in present mode is messed up
+_   "stop" button hops around, window not centered on screen
+_   http://dev.processing.org/bugs/show_bug.cgi?id=923
 
 
 CORE / PApplet - main()
