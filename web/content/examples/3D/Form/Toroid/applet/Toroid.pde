@@ -20,32 +20,32 @@
  * 'h' key toggle sphere/helix
  */
 
-
+// Point3D class required
 int pts = 40; 
 float angle = 0;
 float radius = 40.0;
-// Lathe segments
+// lathe segments
 int segments = 60;
 float latheAngle = 0;
 float latheRadius = 100.0;
-// Vertices
+//vertices
 Point3D vertices[], vertices2[];
-// For shaded or wireframe rendering 
+// for shaded or wireframe rendering 
 boolean isWireFrame = false;
-// For optional helix
+// for optional helix
 boolean isHelix = false;
 float helixOffset = 5.0;
 
-void setup() {
+void setup(){
   size(640, 360, P3D);
 }
 
 void draw(){
   background(51);
-  // Basic lighting setup
+  // basic lighting setup
   lights();
-  // Two rendering styles
-  // Wireframe or solid
+  // 2 rendering styles
+  // wireframe or solid
   if (isWireFrame){
     stroke(255);
     noFill();
@@ -54,19 +54,19 @@ void draw(){
     noStroke();
     fill(204);
   }
-  // Center and spin toroid
+  //center and spin toroid
   translate(width/2, height/2, -100);
 
   rotateX(frameCount*PI/150);
   rotateY(frameCount*PI/170);
   rotateZ(frameCount*PI/90);
 
-  // Initialize point arrays
+  // initialize point arrays
   vertices = new Point3D[pts+1];
   vertices2 = new Point3D[pts+1];
 
-  // Fill arrays
-  for(int i = 0; i <= pts; i++){
+  // fill arrays
+  for(int i=0; i<=pts; i++){
     vertices[i] = new Point3D();
     vertices2[i] = new Point3D();
     vertices[i].x = latheRadius + sin(radians(angle))*radius;
@@ -80,29 +80,29 @@ void draw(){
     angle+=360.0/pts;
   }
 
-  // Draw toroid
+  // draw toroid
   latheAngle = 0;
-  for(int i = 0; i <= segments; i++){
+  for(int i=0; i<=segments; i++){
     beginShape(QUAD_STRIP);
-    for(int j = 0; j <= pts; j++){
-      if (i > 0){
+    for(int j=0; j<=pts; j++){
+      if (i>0){
         vertex(vertices2[j].x, vertices2[j].y, vertices2[j].z);
       }
       vertices2[j].x = cos(radians(latheAngle))*vertices[j].x;
       vertices2[j].y = sin(radians(latheAngle))*vertices[j].x;
       vertices2[j].z = vertices[j].z;
-      // Optional helix offset
+      // optional helix offset
       if (isHelix){
         vertices[j].z+=helixOffset;
       } 
       vertex(vertices2[j].x, vertices2[j].y, vertices2[j].z);
     }
-    // Create extra rotation for helix
+    // create extra rotation for helix
     if (isHelix){
-      latheAngle += 720.0/segments;
+      latheAngle+=720.0/segments;
     } 
     else {
-      latheAngle += 360.0/segments;
+      latheAngle+=360.0/segments;
     }
     endShape();
   }
@@ -120,47 +120,47 @@ void keyPressed(){
   if(key == CODED) { 
     // pts
     if (keyCode == UP) { 
-      if (pts < 40){
+      if (pts<40){
         pts++;
       } 
     } 
     else if (keyCode == DOWN) { 
-      if (pts > 3){
+      if (pts>3){
         pts--;
       }
     } 
-    // Extrusion length
+    // extrusion length
     if (keyCode == LEFT) { 
-      if (segments > 3){
+      if (segments>3){
         segments--; 
       }
     } 
     else if (keyCode == RIGHT) { 
-      if (segments < 80){
+      if (segments<80){
         segments++; 
       }
     } 
   }
-  // Lathe radius
+  // lathe radius
   if (key =='a'){
-    if (latheRadius > 0){
+    if (latheRadius>0){
       latheRadius--; 
     }
   } 
   else if (key == 's'){
     latheRadius++; 
   }
-  // Ellipse radius
+  // ellipse radius
   if (key =='z'){
-    if (radius > 10){
+    if (radius>10){
       radius--;
     }
   } 
   else if (key == 'x'){
     radius++;
   }
-  // Wireframe
-  if (key == 'w'){
+  // wireframe
+  if (key =='w'){
     if (isWireFrame){
       isWireFrame=false;
     } 
@@ -168,8 +168,8 @@ void keyPressed(){
       isWireFrame=true;
     }
   }
-  // Helix
-  if (key == 'h'){
+  // helix
+  if (key =='h'){
     if (isHelix){
       isHelix=false;
     } 

@@ -1,3 +1,18 @@
+import processing.core.*; 
+
+import java.applet.*; 
+import java.awt.*; 
+import java.awt.image.*; 
+import java.awt.event.*; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class ShapeTransform extends PApplet {
+
 /**
  * Shape Transform
  * by Ira Greenberg.  
@@ -12,28 +27,29 @@
  * 'p' key toggles between cube/pyramid
  */
 
+// requires Point3D class
 int pts = 7; 
 float angle = 0;
 float radius = 89;
 float cylinderLength = 85;
-
+//vertices
 Point3D vertices[][];
 boolean isPyramid = false;
 
-void setup(){
+public void setup(){
   size(640, 360, P3D);
   noStroke();
   fill(204);
 }
 
-void draw(){
+public void draw(){
   background(102);
   lights();
 
   translate(width/2, height/2, 0);
-  rotateX(frameCount * 0.006);
-  rotateY(frameCount * 0.006);
-  rotateZ(frameCount * 0.006);
+  rotateX(frameCount * 0.006f);
+  rotateY(frameCount * 0.006f);
+  rotateZ(frameCount * 0.006f);
 
   // initialize point arrays
   vertices = new Point3D[2][pts+1];
@@ -59,7 +75,7 @@ void draw(){
       }
       vertices[i][j].z = cylinderLength; 
       // the .0 after the 360 is critical
-      angle += 360.0/pts;
+      angle += 360.0f/pts;
     }
     cylinderLength*=-1;
   }
@@ -86,7 +102,7 @@ void draw(){
  up/down arrow keys control
  polygon detail.
  */
-void keyPressed(){
+public void keyPressed(){
   if(key == CODED) { 
     // pts
     if (keyCode == UP) { 
@@ -112,3 +128,21 @@ void keyPressed(){
 
 
 
+class Point3D{
+  float x, y, z;
+
+  // constructors
+  Point3D(){
+  }
+
+  Point3D(float x, float y, float z){
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+}
+
+  static public void main(String args[]) {
+    PApplet.main(new String[] { "ShapeTransform" });
+  }
+}

@@ -7,7 +7,7 @@
  */
 
 
-float bricksPerLayer = 16.0;  // This number must be even
+float bricksPerLayer = 16.0;
 float brickLayers = 18.0;
 Cube brick;
 float brickWidth = 60, brickHeight = 25, brickDepth = 25;
