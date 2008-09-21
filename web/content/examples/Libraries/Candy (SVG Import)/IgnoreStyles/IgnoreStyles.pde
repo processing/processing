@@ -23,7 +23,7 @@ void setup(){
 
 void draw(){
   background(102);
-  
+
   // Draw left bot
   bot.ignoreStyles();  // Ignore the colors in the SVG
   fill(0, 102, 153);   // Set the SVG fill to blue
@@ -34,3 +34,4 @@ void draw(){
   bot.ignoreStyles(false);
   bot.draw(110, 25, 150, 150);
 }
+
