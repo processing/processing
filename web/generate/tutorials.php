@@ -27,4 +27,4 @@ $execution_time = round($benchmark_end - $benchmark_start, 4);
 <p>Generated files in <?=$execution_time?> seconds.</p>
 <!--<p>Page put here: <?=$source."faq.html"?></p>-->
 <!--<p>Page put here: <?=$path.'faq.html'?></p>-->
-<p><?=$source.'/eclipse/imgs?></p>
+<p><?=$source.'/eclipse/imgs'?></p>
