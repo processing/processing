@@ -51,7 +51,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../processing/app/Editor.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/Commander.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/Base.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Base.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -176,6 +176,15 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#countLines(java.lang.String)">countLines</A></B>(java.lang.String&nbsp;what)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the number of lines in a file by counting the number of newline 
+ characters inside a String (and adding 1).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.io.File</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#createTempFolder(java.lang.String)">createTempFolder</A></B>(java.lang.String&nbsp;name)</CODE>
 
@@ -234,11 +243,35 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatformIndex(java.lang.String)">getPlatformIndex</A></B>(java.lang.String&nbsp;what)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatformName(int)">getPlatformName</A></B>(int&nbsp;which)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map a platform constant to its name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getPlatforms()">getPlatforms</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get list of platform constants.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.io.File</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getSettingsFile(java.lang.String)">getSettingsFile</A></B>(java.lang.String&nbsp;filename)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method to get a File object for the specified filename inside 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method to get a File object for the specified filename inside
  the settings folder.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -796,6 +829,44 @@ public void <B>handlePrefs</B>()</PRE>
 </DL>
 <HR>
 
+<A NAME="getPlatforms()"><!-- --></A><H3>
+getPlatforms</H3>
+<PRE>
+public static int[] <B>getPlatforms</B>()</PRE>
+<DL>
+<DD>Get list of platform constants.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPlatformName(int)"><!-- --></A><H3>
+getPlatformName</H3>
+<PRE>
+public static java.lang.String <B>getPlatformName</B>(int&nbsp;which)</PRE>
+<DL>
+<DD>Map a platform constant to its name.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>which</CODE> - PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
+<DT><B>Returns:</B><DD>one of "windows", "macosx", or "linux"</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPlatformIndex(java.lang.String)"><!-- --></A><H3>
+getPlatformIndex</H3>
+<PRE>
+public static int <B>getPlatformIndex</B>(java.lang.String&nbsp;what)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="isMacOS()"><!-- --></A><H3>
 isMacOS</H3>
 <PRE>
@@ -851,8 +922,8 @@ getSettingsFile</H3>
 <PRE>
 public static java.io.File <B>getSettingsFile</B>(java.lang.String&nbsp;filename)</PRE>
 <DL>
-<DD>Convenience method to get a File object for the specified filename inside 
- the settings folder. 
+<DD>Convenience method to get a File object for the specified filename inside
+ the settings folder.
  For now, only used by Preferences to get the preferences.txt file.
 <P>
 <DD><DL>
@@ -1185,6 +1256,20 @@ public static java.io.InputStream <B>getStream</B>(java.lang.String&nbsp;filenam
 </DL>
 <HR>
 
+<A NAME="countLines(java.lang.String)"><!-- --></A><H3>
+countLines</H3>
+<PRE>
+public static int <B>countLines</B>(java.lang.String&nbsp;what)</PRE>
+<DL>
+<DD>Get the number of lines in a file by counting the number of newline 
+ characters inside a String (and adding 1).
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="loadBytesRaw(java.io.File)"><!-- --></A><H3>
 loadBytesRaw</H3>
 <PRE>
@@ -1315,7 +1400,7 @@ public static java.lang.String[] <B>listFiles</B>(java.lang.String&nbsp;path,
                                            boolean&nbsp;relative)</PRE>
 <DL>
 <DD>Recursively creates a list of all files within the specified folder,
- and returns a list of their relative paths. 
+ and returns a list of their relative paths.
  Ignores any files/folders prefixed with a dot.
 <P>
 <DD><DL>
@@ -1365,7 +1450,7 @@ public static java.lang.String[] <B>listFiles</B>(java.io.File&nbsp;folder,
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../processing/app/Editor.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/Commander.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/Base.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Base.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

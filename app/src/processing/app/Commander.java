@@ -37,8 +37,8 @@ import processing.app.debug.*;
  * <PRE>
  * --help               Show the help text.
  * 
- * --sketch=<name>      Specify the sketch folder (required)
- * --output=<name>      Specify the output folder (required and
+ * --sketch=&lt;name&rt;      Specify the sketch folder (required)
+ * --output=&lt;name&rt;      Specify the output folder (required and
  *                      cannot be the same as the sketch folder.)
  * 
  * --preprocess         Preprocess a sketch into .java files.
@@ -51,7 +51,7 @@ import processing.app.debug.*;
  * --platform           Specify the platform (export to application only).
  *                      Should be one of 'windows', 'macosx', or 'linux'.
  * 
- * --preferences=<file> Specify a preferences file to use (optional).
+ * --preferences=&lt;file&rt; Specify a preferences file to use (optional).
  * </PRE>
  * 
  * To build the command line version, first build for your platform, 

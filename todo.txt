@@ -84,6 +84,10 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 shiffman
 _ update match(), write new reference for matchAll()
 
+_ get new version of examples and reference
+_ revisions.txt for x/y/z/ tx/ty/tz.. other changes in api.txt
+_ PMatrix now PMatrix3D (maybe not yet?)
+
 
 major windows launcher problem
 _ windows jdk sometimes not getting picked up, even if it's there

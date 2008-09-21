@@ -207,22 +207,6 @@ Class that orchestrates preprocessing p5 syntax into straight Java.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/preproc/PdePreprocessor.html#codeFolderImports">codeFolderImports</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/preproc/PdePreprocessor.html#extraImports">extraImports</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../antlr/TokenStreamCopyingHiddenTokenFilter.html" title="class in antlr">TokenStreamCopyingHiddenTokenFilter</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/preproc/PdePreprocessor.html#filter">filter</A></B></CODE>
 
@@ -275,8 +259,7 @@ Class that orchestrates preprocessing p5 syntax into straight Java.
 <TD><CODE><B><A HREF="../../../processing/app/preproc/PdePreprocessor.html#PdePreprocessor()">PdePreprocessor</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;These may change in-between (if the prefs panel adds this option)
- so grab them here on construction.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Setup a new preprocessor.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -290,15 +273,30 @@ Class that orchestrates preprocessing p5 syntax into straight Java.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.ArrayList&lt;java.lang.String&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/preproc/PdePreprocessor.html#getExtraImports()">getExtraImports</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/preproc/PdePreprocessor.html#write(java.lang.String, java.lang.String, java.lang.String, java.lang.String[], boolean)">write</A></B>(java.lang.String&nbsp;program,
-      java.lang.String&nbsp;buildPath,
-      java.lang.String&nbsp;name,
-      java.lang.String[]&nbsp;codeFolderPackages,
-      boolean&nbsp;pretty)</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/preproc/PdePreprocessor.html#write()">write</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;preprocesses a pde file and write out a java file</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/preproc/PdePreprocessor.html#writePrefix(java.lang.String, java.lang.String, java.lang.String, java.lang.String[])">writePrefix</A></B>(java.lang.String&nbsp;program,
+            java.lang.String&nbsp;buildPath,
+            java.lang.String&nbsp;name,
+            java.lang.String[]&nbsp;codeFolderPackages)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -322,26 +320,6 @@ Class that orchestrates preprocessing p5 syntax into straight Java.
 <B>Field Detail</B></FONT></TH>
 </TR>
 </TABLE>
-
-<A NAME="extraImports"><!-- --></A><H3>
-extraImports</H3>
-<PRE>
-public java.lang.String[] <B>extraImports</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="codeFolderImports"><!-- --></A><H3>
-codeFolderImports</H3>
-<PRE>
-public java.lang.String[] <B>codeFolderImports</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
 
 <A NAME="STATIC"><!-- --></A><H3>
 STATIC</H3>
@@ -419,8 +397,7 @@ PdePreprocessor</H3>
 <PRE>
 public <B>PdePreprocessor</B>()</PRE>
 <DL>
-<DD>These may change in-between (if the prefs panel adds this option)
- so grab them here on construction.
+<DD>Setup a new preprocessor.
 <P>
 </DL>
 
@@ -434,14 +411,27 @@ public <B>PdePreprocessor</B>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="write(java.lang.String, java.lang.String, java.lang.String, java.lang.String[], boolean)"><!-- --></A><H3>
+<A NAME="writePrefix(java.lang.String, java.lang.String, java.lang.String, java.lang.String[])"><!-- --></A><H3>
+writePrefix</H3>
+<PRE>
+public int <B>writePrefix</B>(java.lang.String&nbsp;program,
+                       java.lang.String&nbsp;buildPath,
+                       java.lang.String&nbsp;name,
+                       java.lang.String[]&nbsp;codeFolderPackages)
+                throws java.io.FileNotFoundException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.FileNotFoundException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write()"><!-- --></A><H3>
 write</H3>
 <PRE>
-public java.lang.String <B>write</B>(java.lang.String&nbsp;program,
-                              java.lang.String&nbsp;buildPath,
-                              java.lang.String&nbsp;name,
-                              java.lang.String[]&nbsp;codeFolderPackages,
-                              boolean&nbsp;pretty)
+public java.lang.String <B>write</B>()
                        throws java.lang.Exception</PRE>
 <DL>
 <DD>preprocesses a pde file and write out a java file
@@ -451,6 +441,17 @@ public java.lang.String <B>write</B>(java.lang.String&nbsp;program,
 <DT><B>Returns:</B><DD>the classname of the exported Java
 <DT><B>Throws:</B>
 <DD><CODE>java.lang.Exception</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getExtraImports()"><!-- --></A><H3>
+getExtraImports</H3>
+<PRE>
+public java.util.ArrayList&lt;java.lang.String&gt; <B>getExtraImports</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
