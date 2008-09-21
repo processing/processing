@@ -21,12 +21,14 @@ println("Found " + m[1] + " inside the tag.");
 <example>
 <image></image>
 <code>
-String s1 = "Have you ever heard of a thing called fluoridation. Fluoridation of water?";
+String s1 = "Have you ever heard of a thing called fluoridation. 
+             Fluoridation of water?";
 String s2 = "Uh? Yes, I-I have heard of that, Jack, yes. Yes.";
 
 String[] m1 = match(s1, "fluoridation");
 if (m1 != null) {
-  println("Found a match in '" + s1 + "'");  // This will print to the console.
+  // This will print to the console.
+  println("Found a match in '" + s1 + "'");  
 } else {
   println("No match found in '" + s1 + "'");
 }
@@ -35,7 +37,8 @@ String[] m2 = match(s2, "fluoridation");
 if (m2 != null) {
   println("Found a match in '" + s2 + "'");
 } else {
-  println("No match found in '" + s2 + "'");  // This will print to the console.
+  // This will print to the console.
+  println("No match found in '" + s2 + "'");  
 }
 </code>
 </example>
