@@ -4,17 +4,15 @@ class Line
   int xPosition;
   int yPosition;
   int highlightNum;
-  PFont f;
   float speed;
   float curlInX;
   Letter myLetters[];
   
-  Line(String s, int i, int j, PFont bagelfont) 
+  Line(String s, int i, int j) 
   {
     myString = s;
     xPosition = i;
     yPosition = j;
-    f = bagelfont;
     myLetters = new Letter[s.length()];
     float f1 = 0.0;
     for(int k = 0; k < s.length(); k++)

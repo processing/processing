@@ -7,7 +7,6 @@
  
 Line ln;
 Line lns[];
-PFont f;
 
 String words[] = {
   "sometimes it's like", "the lines of text", "are so happy", "that they want to dance",
@@ -19,24 +18,20 @@ void setup()
 {
   size(640, 360, P3D);
   
-  frameRate(30);
-  
   // Array of line objects
   lns = new Line[8];
 
   // Load the font from the sketch's data directory
-  f = loadFont("Univers66.vlw.gz");
-  textFont(f, 1f);
+  textFont(loadFont("Univers66.vlw.gz"), 1.0);
 
-  // White type, black background
+  // White type
   fill(255);
 
   // Creating the line objects
-  for(int i = 0; i < 8; i++)
-  {
+  for(int i = 0; i < 8; i++) {
     // For every line in the array, create a Line object to animate
     // i * 70 is the spacing
-    ln = new Line(words[i], 0, i * 70, f);
+    ln = new Line(words[i], 0, i * 70);
     lns[i] = ln;
   }
 }
@@ -57,11 +52,11 @@ void draw()
     translate(0.0, line.yPosition, 0.0);
     for(int j = 0; j < line.myLetters.length; j++) {
       if(j != 0) {
-        translate(textWidth(line.myLetters[j - 1].myChar)*75, 0.0, 0.0);
+        translate(textWidth(line.myLetters[j - 1].myChar) * 75, 0.0, 0.0);
       }
-      rotateY(f1 * 0.035 * f2);
+      rotateY(f1 * 0.005 * f2);
       pushMatrix();
-      scale(75.0, 75.0, 75.0);
+      scale(75.0);
       text(line.myLetters[j].myChar, 0.0, 0.0);
       popMatrix();
     }

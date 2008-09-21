@@ -4,13 +4,14 @@
  * Load an image and draw it onto a cylinder and a quad. 
  */
 
+
 int tubeRes = 32;
 float[] tubeX = new float[tubeRes];
 float[] tubeY = new float[tubeRes];
 PImage img;
 
 void setup() {
-  size(200, 200, P3D);
+  size(640, 360, P3D);
   img = loadImage("berlin-1.jpg");
   float angle = 270.0 / tubeRes;
   for (int i = 0; i < tubeRes; i++) {
@@ -28,18 +29,18 @@ void draw() {
   beginShape(QUAD_STRIP);
   texture(img);
   for (int i = 0; i < tubeRes; i++) {
-    float x = tubeX[i] * 50;
-    float z = tubeY[i] * 50;
+    float x = tubeX[i] * 100;
+    float z = tubeY[i] * 100;
     float u = img.width / tubeRes * i;
-    vertex(x, -50, z, u, 0);
-    vertex(x, 50, z, u, img.height);
+    vertex(x, -100, z, u, 0);
+    vertex(x, 100, z, u, img.height);
   }
   endShape();
   beginShape(QUADS);
   texture(img);
-  vertex(0, -50, 0, 0, 0);
-  vertex(50, -50, 0, 50, 0);
-  vertex(50, 50, 0, 50, 50);
-  vertex(0, 50, 0, 0, 50);
+  vertex(0, -100, 0, 0, 0);
+  vertex(100, -100, 0, 100, 0);
+  vertex(100, 100, 0, 100, 100);
+  vertex(0, 100, 0, 0, 100);
   endShape();
 }
