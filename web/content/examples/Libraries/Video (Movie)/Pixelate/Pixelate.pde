@@ -7,6 +7,7 @@
  * in the current video frame pixels array. 
  */
 
+
 import processing.video.*;
 
 int numPixels;

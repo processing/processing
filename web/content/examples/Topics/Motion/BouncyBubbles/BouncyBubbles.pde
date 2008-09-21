@@ -13,7 +13,7 @@ Ball[] balls = new Ball[numBalls];
 
 void setup() 
 {
-  size(640, 360);
+  size(640, 200);
   noStroke();
   smooth();
   for (int i = 0; i < numBalls; i++) {

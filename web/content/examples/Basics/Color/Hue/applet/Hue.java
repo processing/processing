@@ -26,7 +26,7 @@ int[] hue;
 
 public void setup() 
 {
-  size(400, 400);
+  size(200, 200);
   colorMode(HSB, 360, height, height);  
   hue = new int[width/barWidth];
   noStroke();

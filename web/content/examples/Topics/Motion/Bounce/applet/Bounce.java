@@ -31,7 +31,7 @@ int ydirection = 1;  // Top to Bottom
 
 public void setup() 
 {
-  size(640, 360);
+  size(640, 200);
   noStroke();
   frameRate(30);
   smooth();

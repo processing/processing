@@ -35,4 +35,6 @@ void draw(){
   background(102);
   bot.draw(10, 10, 100, 100);  // Draw at coordinate [10, 10] at size 100 x 100
   bot.draw(70, 60);            // Draw at coordinate [70, 60] at the default size
+  
+  shape(bot, 10, 10, 100, 100);
 }

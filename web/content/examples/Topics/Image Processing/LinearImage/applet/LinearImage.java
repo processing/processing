@@ -35,7 +35,6 @@ public void setup()
   for(int i=0; i<width*height; i++) {
     aPixels[i] = a.pixels[i];
   }
-  frameRate(30);
 }
 
 public void draw() 

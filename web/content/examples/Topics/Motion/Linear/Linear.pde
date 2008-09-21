@@ -11,7 +11,7 @@ float a = 100;
 
 void setup() 
 {
-  size(640, 360);
+  size(640, 200);
   stroke(255);
 }
 

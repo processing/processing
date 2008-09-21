@@ -5,8 +5,8 @@
  * Each pixel from the video source is drawn as a rectangle with rotation based on brightness.   
  */ 
  
+ 
 import processing.video.*;
-
 
 // Size of each cell in the grid
 int cellSize = 20;

@@ -1,3 +1,18 @@
+import processing.core.*; 
+
+import java.applet.*; 
+import java.awt.*; 
+import java.awt.image.*; 
+import java.awt.event.*; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class Tree extends PApplet {
+
 /**
  * Recursive Tree
  * by Daniel Shiffman.  
@@ -8,12 +23,12 @@
  
 float theta;   
 
-void setup() {
+public void setup() {
   size(640, 360);
   smooth();
 }
 
-void draw() {
+public void draw() {
   background(0);
   frameRate(30);
   stroke(255);
@@ -32,9 +47,9 @@ void draw() {
 
 }
 
-void branch(float h) {
+public void branch(float h) {
   // Each branch will be 2/3rds the size of the previous one
-  h *= 0.66;
+  h *= 0.66f;
   
   // All recursive functions must have an exit condition!!!!
   // Here, ours is when the length of the branch is 2 pixels or less
@@ -57,3 +72,8 @@ void branch(float h) {
 }
 
 
+
+  static public void main(String args[]) {
+    PApplet.main(new String[] { "Tree" });
+  }
+}

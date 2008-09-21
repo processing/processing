@@ -2,9 +2,6 @@
  * Words. 
  * 
  * The text() function is used for writing words to the screen. 
- * 
- * Created 15 January 2003
- * Updated 11 August 2008
  */
 
 

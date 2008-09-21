@@ -5,8 +5,8 @@
  * Unwrap each frame of live video into a single line of pixels along a circle
  */ 
   
+  
 import processing.video.*;
-
 
 Capture video;
 int videoCount;
@@ -17,13 +17,12 @@ int angleCount = 200;  // how many divisions
 int radii[];
 int angles[];
 
-
 void setup() {
   // size must be set to video.width*video.height*2 in both directions
-  size(600, 600); 
+  size(960, 540); 
 
   // Uses the default video input, see the reference if this causes an error
-  video = new Capture(this, 20, 15);
+  video = new Capture(this, 24, 16);
   videoCount = video.width * video.height;
 
   pixelCount = width*height;

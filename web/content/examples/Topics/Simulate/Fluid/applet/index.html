@@ -5,7 +5,7 @@
 	        <!-- charset must remain utf-8 to be handled properly by Processing -->
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		
-		<title>Bounce : Built with Processing</title>
+		<title>Fluid : Built with Processing</title>
 		
 		<style type="text/css">
 		/* <![CDATA[ */
@@ -32,16 +32,16 @@
 	</head>
 	<body>
 		<div id="content">
-			<div id="Bounce_container">
+			<div id="Fluid_container">
 			
 			<!--[if !IE]> -->
-				<object classid="java:Bounce.class" 
+				<object classid="java:Fluid.class" 
             			type="application/x-java-applet"
-            			archive="Bounce.jar"
-            			width="640" height="200"
+            			archive="Fluid.jar"
+            			width="200" height="200"
             			standby="Loading Processing software..." >
             			
-					<param name="archive" value="Bounce.jar" />
+					<param name="archive" value="Fluid.jar" />
 				
 					<param name="mayscript" value="true" />
 					<param name="scriptable" value="true" />
@@ -55,11 +55,11 @@
 				
 				<object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" 
 						codebase="http://java.sun.com/update/1.5.0/jinstall-1_5_0_15-windows-i586.cab"
-						width="640" height="200"
+						width="200" height="200"
 						standby="Loading Processing software..."  >
 						
-					<param name="code" value="Bounce" />
-					<param name="archive" value="Bounce.jar" />
+					<param name="code" value="Fluid" />
+					<param name="archive" value="Fluid.jar" />
 					
 					<param name="mayscript" value="true" />
 					<param name="scriptable" value="true" />
@@ -89,14 +89,17 @@
 			</div>
 			
 			<p>
-			Bounce. 
+			Fluid 
+by Glen Murphy. 
 
-When the shape hits the edge of the window, it reverses its direction. 
+Click and drag the mouse to move the simulated fluid.
+Adjust the "res" variable below to change resolution.
+Code has not been optimised, and will run fairly slowly.
 
 			</p>
 			
 			<p>
-			Source code: <a href="Bounce.pde">Bounce</a> 
+			Source code: <a href="Fluid.pde">Fluid</a> 
 			</p>
 			
 			<p>
