@@ -14,8 +14,8 @@ writeFile('learning/tutorials/index.html', $page->out());
 
 $page = new Page("Processing in Eclipse", "Processing in Eclipse");
 $page->content(file_get_contents($source."eclipse/index.html"));
-writeFile('learning/tutorials/eclispse/index.html', $page->out());
-copydirr($source.'/eclipse/imgs', $path.'learning/tutorials/eclipse/images');
+writeFile('learning/tutorials/eclipse/index.html', $page->out());
+copydirr($source.'/eclipse/imgs', $path.'learning/tutorials/eclipse/imgs');
 
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
