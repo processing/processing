@@ -25,11 +25,11 @@ And with color on the screen, you are mixing light, not paint, so the mixing rul
 <br />     
 This assumes that the colors are all as bright as possible, but of course, you have a range of color available, so some red plus some green plus some blue equals gray, and a bit of 
 red plus a bit of blue equals dark purple.  While this may take some getting used to, the more you program and experiment with RGB color, the more it will become instinctive, 
-much like swirling colors with your fi ngers. And of course you can’t say  “Mix some red with a bit of blue, ”  you have to provide an exact amount. As with grayscale, the individual color 
+much like swirling colors with your fi ngers. And of course you can't say  "Mix some red with a bit of blue," you have to provide an exact amount. As with grayscale, the individual color 
 elements are expressed as ranges from 0 (none of that color) to 255 (as much as possible), and they are listed in the order R, G, and B. You will get the hang of RGB color mixing 
 through experimentation, but next we will cover some code using some common colors. 
 <br /><br />
-<img src="imgs/example_1_3.jpg" border=1>
+<img src="imgs/example_1_3.jpg" border="1">
 <br /><br />
 <a href="http://www.learningprocessing.com/wp/examples/chapter-1/example-1-3/">Example: RGB color</a>
 <pre>
@@ -49,7 +49,7 @@ fill(255,200,200);
 ellipse(60,20,16,16);
 </pre>
 <br />
-Processing also has a color selector to aid in choosing colors. Access this via TOOLS (from the menu bar) --> COLOR SELECTOR. 
+Processing also has a color selector to aid in choosing colors. Access this via TOOLS (from the menu bar) &rarr; COLOR SELECTOR. 
 <br /><br />
 <img src="imgs/selector.jpg" border=1>
 </p>
@@ -57,7 +57,7 @@ Processing also has a color selector to aid in choosing colors. Access this via 
 <p>
 In addition to the red, green, and blue components of each color, there is an additional optional fourth component, referred to as the color's  "alpha."  Alpha means transparency and is particularly useful when you want to draw elements that appear partially see-through on top of one another. Th e alpha values for an image are sometimes referred to collectively as the "alpha channel" of an image. 
 <br /><br />
-It is important to realize that pixels are not literally transparent, this is simply a convenient illusion that is accomplished by blending colors. Behind the scenes,  Processing  takes the color numbers and adds a percentage of one to a percentage of another, creating the optical perception of blending. (If you are interested in programming  “ rose-colored ”  glasses, this is where you would begin.) 
+It is important to realize that pixels are not literally transparent, this is simply a convenient illusion that is accomplished by blending colors. Behind the scenes,  Processing  takes the color numbers and adds a percentage of one to a percentage of another, creating the optical perception of blending. (If you are interested in programming  "rose-colored" glasses, this is where you would begin.) 
 <br /><br />
 Alpha values also range from 0 to 255, with 0 being completely transparent (i.e., 0% opaque) and 255 completely opaque (i.e., 100% opaque).
 <br /><br />
@@ -94,7 +94,7 @@ rect(0,150,200,40);
 RGB color with ranges of 0 to 255 is not the only way you can handle color in Processing. Behind the scenes in the computer's memory, color is  always 
 talked about as a series of 24 bits (or 32 in the case of colors with an alpha). However, Processing  will let us think about color any way we like, and 
 translate our values into numbers the computer understands. For example, you might prefer to think of color as ranging from 0 to 100 (like a percentage). 
-You can do this by specifying a custom <a href="http://processing.org/reference/colorMode_.html">colorMode()</a>.
+You can do this by specifying a custom <a href="http://processing.org/reference/colorMode_.html"><strong>colorMode()</strong></a>.
 <br />
 <pre>
 colorMode(RGB,100);
@@ -116,12 +116,12 @@ Without getting into too much detail, HSB color works as follows:
 <img src="imgs/hsv.png" width=200>
 <br />
 <ul>
-<li><b>Hue</b> - The color type, ranges from 0 to 360 by default (think of 360 degrees on a color "wheel").</li>  
-<li><b>Saturation</b> - The vibrancy of the color, 0 to 100 by default.</li>
-<li><b>Brightness</b> - The, well, brightness of the color, 0 to 100 by default.</li>
+<li><strong>Hue</strong> - The color type, ranges from 0 to 360 by default (think of 360 degrees on a color "wheel").</li>  
+<li><strong>Saturation</strong> - The vibrancy of the color, 0 to 100 by default.</li>
+<li><strong>Brightness</strong> - The, well, brightness of the color, 0 to 100 by default.</li>
 </ul>
 <br />
-With <a href="http://processing.org/reference/colorMode_.html">colorMode()</a> you can set your own color range. 
+With <a href="http://processing.org/reference/colorMode_.html"><strong>colorMode()</strong></a> you can set your own color range. 
 </p>
 </td>
 	</tr>

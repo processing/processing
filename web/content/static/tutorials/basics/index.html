@@ -19,7 +19,7 @@ The above figure shows a line between point A (1,0) and point B (4,5). If you wa
 line(1,0,4,5);
 </pre>
 <br />
-Even without having studied the syntax of writing code, the above statement should make a fair amount of sense. We are providing a <i>command</i> (which we will refer to as a  "function") for the machine to follow entitled "line."  In addition, we are specifying some arguments for how that line should be drawn, from point A (1,0) to point B (4,5). If you think of that line of code as a sentence, the  function is a verb and the arguments are the objects of the sentence.  The code sentence also ends with a semicolon instead of a period.
+Even without having studied the syntax of writing code, the above statement should make a fair amount of sense. We are providing a <em>command</em> (which we will refer to as a  "function") for the machine to follow entitled "line."  In addition, we are specifying some arguments for how that line should be drawn, from point A (1,0) to point B (4,5). If you think of that line of code as a sentence, the  function is a verb and the arguments are the objects of the sentence.  The code sentence also ends with a semicolon instead of a period.
 <br /><br />
 <img src="imgs/1.2.jpg">
 <br /><br />
@@ -37,15 +37,15 @@ The vast majority of the programming examples you'll see with Processing are vis
 <br /><br />
 For each shape, we will ask ourselves what information is required to specify the location and size (and later color) of that shape and learn how  Processing  expects to receive that information. In each of the diagrams below, we'll assume a window with a width of 10 pixels and height of 10 pixels. This isn't particularly realistic since when you really start coding you will most likely work with much larger windows (10x10 pixels is barely a few millimeters of screen space). Nevertheless for demonstration purposes, it is nice to work with smaller numbers in order to present the pixels as they might appear on graph paper (for now) to better illustrate the inner workings of each line of code.  
 <br /><br />
- A <a href="http://www.processing.org/reference/point_.html">point</a> is the easiest of the shapes and a good place to start. To draw a point, we only need an x and y coordinate.
+ A <a href="http://www.processing.org/reference/point_.html"><strong>point()</strong></a> is the easiest of the shapes and a good place to start. To draw a point, we only need an x and y coordinate.
 <br /><br />
 <img src="imgs/1.5.jpg">
 <br /><br />
-A <a href="http://www.processing.org/reference/line_.html">line</a> isn't terribly difficult either and simply requires two points: (x1,y1) and (x2,y2):
+A <a href="http://www.processing.org/reference/line_.html"><strong>line()</strong></a> isn't terribly difficult either and simply requires two points: (x1,y1) and (x2,y2):
 <br /><br />
 <img src="imgs/1.6.jpg">
 <br /><br />
-Once we arrive at drawing a <a href="http://www.processing.org/reference/rect_.html">rectangle</a>, things become a bit more complicated. In Processing, a rectangle is specified by the coordinate for the top left corner of the rectangle, as well as its width and height.
+Once we arrive at drawing a <a href="http://www.processing.org/reference/rect_.html"><strong>rectangle()</strong></a>, things become a bit more complicated. In Processing, a rectangle is specified by the coordinate for the top left corner of the rectangle, as well as its width and height.
 <br /><br /> 
 <img src="imgs/1.7.jpg">
 <br /><br />
@@ -58,7 +58,7 @@ Finally, we can also draw a rectangle with two points (the top left corner and t
 <br /><br />
 <img src="imgs/1.9.jpg">
 <br /><br />
-Once we have become comfortable with the concept of drawing a rectangle, an <a href="http://www.processing.org/reference/ellipse_.html">ellipse</a> is a snap. In fact, it is identical to <i>rect()</i> with the difference being that an ellipse is drawn where the bounding box of the rectangle would be.  The default mode for <i>ellipse()</i> is  "CENTER", rather than "CORNER."
+Once we have become comfortable with the concept of drawing a rectangle, an <a href="http://www.processing.org/reference/ellipse_.html"><strong>ellipse()</strong></a> is a snap. In fact, it is identical to <strong>rect()</strong> with the difference being that an ellipse is drawn where the bounding box of the rectangle would be.  The default mode for <em>ellipse()</em> is  "CENTER", rather than "CORNER."
 <br /><br />
 <img src="imgs/1.10.jpg">
 <br /><br />
