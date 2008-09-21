@@ -20,6 +20,18 @@ writeFile('learning/tutorials/eclipse/index.html', $page->out());
 if (!is_dir($path.'learning/tutorials/eclipse/imgs')) { mkdir($path.'learning/tutorials/eclipse/imgs', '0757'); }
 copydirr($source.'eclipse/imgs', $path.'learning/tutorials/eclipse/imgs', null, 0757, true);
 
+$page = new Page("Basics", "Tutorials");
+$page->content(file_get_contents($source."basics/index.html"));
+writeFile('learning/tutorials/basics/index.html', $page->out());
+if (!is_dir($path.'learning/tutorials/basics/imgs')) { mkdir($path.'learning/tutorials/basics/imgs', '0757'); }
+copydirr($source.'basics/imgs', $path.'learning/tutorials/basics/imgs', null, 0757, true);
+
+$page = new Page("RGB Color", "Tutorials");
+$page->content(file_get_contents($source."color/index.html"));
+writeFile('learning/tutorials/color/index.html', $page->out());
+if (!is_dir($path.'learning/tutorials/color/imgs')) { mkdir($path.'learning/tutorials/color/imgs', '0757'); }
+copydirr($source.'color/imgs', $path.'learning/tutorials/color/imgs', null, 0757, true);
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
