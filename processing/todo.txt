@@ -42,6 +42,13 @@ X   http://processing.org/learning/gettingstarted/
 X add "environment" to the help menu
 X fix other instances of match() using the wrong array indices
 
+reference
+X do some edits on the "getting started" text
+X   make sure visualization not mentioned
+X   change references to help > getting started
+X   add vida reference
+X background() with an image ignores the tint.. it's basically like set()
+
 cleanup
 o how to grab the java2d object from PGraphics2D
 o example for using mediatracker to load images 
@@ -58,25 +65,40 @@ o if size() not found in export/compile, ask the user
 o   have size(myWidth, myHeight) set a static var in PGraphics
 o   for the last size that was used, use as default for fill-in field
 o   http://dev.processing.org/bugs/show_bug.cgi?id=64
-
-reference
-X do some edits on the "getting started" text
-X   make sure visualization not mentioned
-X   change references to help > getting started
-X   add vida reference
+X using beginGL().. also import javax.media.opengl.*;
+o   lighting will not work
+o move stuff about getting gl object and java2d stuff here
 o should we add processinghacks to main site? hacks.processing.org?
 o   this would enable site search across this as well?
-_ update match(), write new reference for matchAll() [shiffman]
+o on first OutOfMemoryError, offer to send to the docs
+o   again, a warning checkbox
+X   fixed up OutOfMemoryError issues to show better error message
 
+ira
+X How do I move the mouse cursor to another location? (java robot example)
+X   post a hack for this or a simple example
+X   http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Robot.html
+X   also need to get frame location:
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1221384557
+
+shiffman
+_ update match(), write new reference for matchAll()
+
+
+major windows launcher problem
+_ windows jdk sometimes not getting picked up, even if it's there
+_   notes somewhere about choosing the right jvm...
+_   http://dev.processing.org/bugs/show_bug.cgi?id=878
+_ finding older versions of java on windows
+_   http://dev.processing.org/bugs/show_bug.cgi?id=545
+_ eclipse launcher for windows
+_   http://dev.eclipse.org/viewcvs/index.cgi/platform-launcher/library/win32/eclipseWin.c?view=markup&content-type=text%2Fvnd.viewcvs-markup&revision=1.12
 
 thread hang/block problem
 _ video capture problems with opengl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _ serial.available() broken with video
 _   http://dev.processing.org/bugs/show_bug.cgi?id=829
-
-_ add local variables to PdeRecognizer
-_   remove static methods in PdePreprocessor, instead pull things from recog
 
 _ don't open more than one "create font" or "color selector"
 _   http://dev.processing.org/bugs/show_bug.cgi?id=830
@@ -93,14 +115,6 @@ _     http://msdn.microsoft.com/en-us/library/aa511273.aspx
 _     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
 _   scrollable stack trace
 _     http://www.javalobby.org/java/forums/t19012.html
-
-_ windows jdk sometimes not getting picked up, even if it's there
-_   notes somewhere about choosing the right jvm...
-_   http://dev.processing.org/bugs/show_bug.cgi?id=878
-_ finding older versions of java on windows
-_   http://dev.processing.org/bugs/show_bug.cgi?id=545
-_ eclipse launcher for windows
-_   http://dev.eclipse.org/viewcvs/index.cgi/platform-launcher/library/win32/eclipseWin.c?view=markup&content-type=text%2Fvnd.viewcvs-markup&revision=1.12
 
 _ should open() not return a Process object? (exec() instead?)
 _   pro: can write out error messages (or output)
@@ -151,13 +165,12 @@ _ update keywords generator script on the site
 _   perhaps move this closer to the dev process?
 _ move reference folder around so that it matches site organization
 _   otherwise several links break on the main faq page
-_ discuss i18n issues and proper system
+_ discuss i18n issues and proper system (?)
 _ look through 404 issues on the site
 _ TRIANGLE_STRIP not highlighted for "find in reference"
 _   nor is it listed on the reference page
 _   so students can't find the ref for it
 _   needs to link TRIANGLE_STRIP to the beginShape() reference
-_ selectInput(), selectOutput(), selectFolder()
 
 
 libraries and classpaths [1.0]
@@ -213,7 +226,6 @@ Installing Native library JSynV142
 Copy: http://www.softsynth.com/jsyn/plugins/archives/libJSynV142.jnilib
   to: /Users/fry/Library/Java/Extensions/libJSynV142.jnilib
 Native component JSynV142 downloaded successfully.
----
 Installing JAR file JSynClasses.jar
 Copy: http://www.softsynth.com/jsyn/plugins/archives/JSynClasses.jar
   to: /Users/fry/Library/Java/Extensions/JSynClasses.jar
@@ -297,6 +309,8 @@ _   using expand and arrays to move quickly
 
 DOC / Write Me
 
+_ selectInput(), selectOutput(), selectFolder()
+_ createInput() (nee openStream), createInputRaw(), createOutput()
 _ PDE locks up during setup() (since no window shown)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=687
 _   maybe better to do an example of running code on another thread
@@ -308,7 +322,6 @@ _ update the reference to cover parseXxxx() stuff
 _   also add notes about parseInt/Float(blah, otherwise)
 _ also parseInt and parseFloat, how they can return another number or NaN
 _   should the default be NaN or 0?
-_ background() with an image ignores the tint.. it's basically like set()
 _ get/set are faster way draw screen space images, but no tint, no translations
 _ make sure the docs include "beginShape() cannot be nested"
 _   also add error messages to the renderers
@@ -324,7 +337,6 @@ _   no longer oro matcher and jikes
 _   add: quaqua, jna, registry stuff, .. ?
 _ quicktime likes to crash (not just on windows)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=791
-_ createInput, createInputRaw, createOutput
 _ noLoop() isn't the same as "finished", though it's sometimes used that way
 _   to finish, use exit() (though that will make the window close)
 _   add this to ref once halt() is finished
@@ -399,29 +411,6 @@ _   3) use createFont() (which you already are)
 _   this will convert all the shape data from the fonts for writing. 
 _   it will be *extremely* slow, which is part of why it's not documented yet. 
 _   but it will work with beginRaw().
-
-
-DOC / Integration
-
-_ move stuff about getting gl object and java2d stuff here
-_ how do i add gui to a sketch?
-_   don't use awt components
-_   how to use swing and embed components inside p5
-_ using beginGL().. also import javax.media.opengl.*;
-_   lighting will not work
-_ explain how to integrate code with swing
-_   use a separate environment, call init(), use noLoop(), redraw()
-_   use JPopupMenu.setDefaultLightWeightPopupEnabled(false); for zorder
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1147670059
-_ write documentation on general use of processing.core
-_   note that applet is itself a Component
-_ eclipse
-_   document how to properly integrate with eclipse
-_   add runtime args to opengl library so that it sets path properly
-_   add explanation for using subclipse to get p5
-_     make a src folder, data folder location
-_   export to eclipse
-_     how to do this with subclipse instructions?
 
 
 DOC / Discourse Board
@@ -535,11 +524,8 @@ _ simple method for having a clickable region or sprite with rollover
 
 DOC / Hacks
 
-_ How do I move the mouse cursor to another location? (java robot example)
-_   post a hack for this or a simple example
-_   http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Robot.html
-_   also need to get frame location:
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1221384557
+_ clipboard implementation as example or as part of api
+_   http://dev.processing.org/bugs/show_bug.cgi?id=167
 _ JAI handles setting image size for png (check javax.imageio?) 
 _   PNGEncodeParam png = PNGEncodeParam.getDefaultEncodeParam(bufImage);
 _   png.setPhysicalDimension(round(dpi*39.370079), round(dpi*39.370079), 1);
@@ -552,6 +538,22 @@ _   particularly for uploading image data
 _   along with php script to handle receive
 _   this is in hacks, but 
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1117194066#7
+_ how do i add gui to a sketch?
+_   don't use awt components
+_   how to use swing and embed components inside p5
+_ explain how to integrate code with swing
+_   use a separate environment, call init(), use noLoop(), redraw()
+_   use JPopupMenu.setDefaultLightWeightPopupEnabled(false); for zorder
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1147670059
+_ write documentation on general use of processing.core
+_   note that applet is itself a Component
+_ eclipse
+_   document how to properly integrate with eclipse
+_   add runtime args to opengl library so that it sets path properly
+_   add explanation for using subclipse to get p5
+_     make a src folder, data folder location
+_   export to eclipse
+_     how to do this with subclipse instructions?
 
 
 
@@ -560,9 +562,6 @@ _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=
 ////////////////////////////////////////////////////////////////////
 
 PDE - Processing Development Environment
-
-
-PDE / Base
 
 
 PDE / Warnings
@@ -580,12 +579,12 @@ _   along with a "don't ask me later"
 _ include a note that 'applet' folder will get emptied/rewritten
 _   or rename the old applet folder to something else? (too messy)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=61
-_ on first OutOfMemoryError, offer to send to the docs
-_   again, a warning checkbox
 
 
 PDE / Compiler & Preprocessor
 
+_ add local variables to PdeRecognizer
+_   remove static methods in PdePreprocessor, instead pull things from recog
 _ need better error messages in general
 _   some means to link out to further documentation (e.g. AIOOBE, NPE)
 _ add support for multiple errors from the compiler
@@ -1145,6 +1144,9 @@ _   only supports tint() (to set alpha or color) and drawing? just drawing?
 _ stop button won't kill a video sketch (bug 150 example does this) 
 X   although ESC seems to work? (not sure, didn't test)
 _   or audio won't stop even after hitting stop
+_ when an exception comes through during cameraEvent, not printed
+_   need to show an actual stack trace (InvocationTargetEx) 
+_   because otherwise it's impossible to debug this stuff
 
 
 LIBRARIES / XML
