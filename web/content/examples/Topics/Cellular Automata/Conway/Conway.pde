@@ -17,7 +17,7 @@ int[][][] world;
  
 void setup() 
 { 
-  size(200, 200);
+  size(640, 200);
   frameRate(12);
   sx = width;
   sy = height;

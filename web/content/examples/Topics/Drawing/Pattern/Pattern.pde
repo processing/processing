@@ -7,7 +7,7 @@
  
 void setup()
 {
-  size(200, 200);
+  size(640, 360);
   background(102);
   smooth();
 }

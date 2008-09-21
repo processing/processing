@@ -1,22 +1,23 @@
 /**
  * Animator.
  * 
+ * Click and drag to draw and start the program.
+ * 
  * A simple animation tool that displays a continuous cycle of
- * twelve images. Each image is displayed for 100 milliseconds 
- * (one tenth of a second) to create animation. While each image 
- * is displayed, itÕs possible to draw directly into it by
- * pressing the mouse and moving the cursor. Start drawing to get
- * it started.
+ * twenty-four images. Each image is displayed for 30 milliseconds 
+ * to create animation. While each image is displayed, itâ€™s possible 
+ * to draw directly into it by pressing the mouse and moving the cursor. 
+ * 
  */
 
 int currentFrame = 0;
-PImage[] frames = new PImage[12];
+PImage[] frames = new PImage[24];
 int lastTime = 0;
 
 void setup() 
 {
-  size(200, 200);
-  strokeWeight(4);
+  size(640, 200);
+  strokeWeight(12);
   smooth();
   background(204);
   for (int i = 0; i < frames.length; i++) {
@@ -27,7 +28,7 @@ void setup()
 void draw() 
 {
   int currentTime = millis();
-  if (currentTime > lastTime+100) {
+  if (currentTime > lastTime+30) {
     nextFrame();
     lastTime = currentTime;
   }
@@ -45,3 +46,4 @@ void nextFrame()
   }
   image(frames[currentFrame], 0, 0);
 }
+

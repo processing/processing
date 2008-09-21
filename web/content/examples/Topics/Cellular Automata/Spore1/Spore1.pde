@@ -11,7 +11,7 @@
 
 World w;
 int numcells = 0;
-int maxcells = 4700;
+int maxcells = 6700;
 Cell[] cells = new Cell[maxcells];
 color spore_color;
 // set lower for smoother animation, higher for faster simulation
@@ -20,7 +20,7 @@ color black = color(0, 0, 0);
   
 void setup()
 {
-  size(200, 200);
+  size(640, 200);
   frameRate(24);
   clearscr();  
   w = new World();

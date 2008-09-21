@@ -10,7 +10,7 @@
  */
  
 World w;
-int maxcells = 4000;
+int maxcells = 8000;
 int numcells;
 Cell[] cells = new Cell[maxcells];
 color spore1, spore2, spore3, spore4;
@@ -20,7 +20,7 @@ int runs_per_loop = 10000;
 
 void setup()
 {
-  size(200, 200);
+  size(640, 200);
   frameRate(24);
   clearscr();
   w = new World();

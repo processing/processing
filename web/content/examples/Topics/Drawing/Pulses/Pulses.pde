@@ -8,17 +8,15 @@
 
 int angle = 0;
 
-void setup() 
-{
-  size(200, 200);
+void setup() {
+  size(640, 360);
   background(102);
   smooth();
   noStroke();
   fill(0, 102);
 }
 
-void draw() 
-{
+void draw() {
   // Draw only when mouse is pressed
   if (mousePressed == true) {
     angle += 10;
@@ -27,7 +25,7 @@ void draw()
       float xoff = cos(radians(a)) * val;
       float yoff = sin(radians(a)) * val;
       fill(0);
-      ellipse(mouseX + xoff, mouseY + yoff, val/2, val/2);
+      ellipse(mouseX + xoff, mouseY + yoff, val, val);
     }
     fill(255);
     ellipse(mouseX, mouseY, 2, 2);

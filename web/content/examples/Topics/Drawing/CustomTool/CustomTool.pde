@@ -5,7 +5,7 @@
  * In addition to creating software tools to simulate pens and pencils, 
  * it is possible to create unique tools to draw with. 
  */
- 
+
 int dots = 1000;
 float[] dX = new float[dots];
 float[] dY = new float[dots];
@@ -18,24 +18,21 @@ float legY = 0.0;
 float thighX = 0.0;
 float thighY = 0.0;
 
-float l = 30.0; // Length of the 'leg'
-float h = 60.0; // Height of the 'leg'
+float l = 60.0; // Length of the 'leg'
+float h = 90.0; // Height of the 'leg'
 
 float nmx, nmy = 0.0;
 float mx, my = 0.0;
-
-float offset;
 
 int currentValue = 0;
 int valdir = 1;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   noStroke();
-  fill(102);
-  rect(0, 0, width, height);
-  offset = width/2;
+  smooth();
+  background(102);
 }
 
 void draw() 
@@ -46,7 +43,7 @@ void draw()
   if((abs(mx - nmx) > 1.0) || (abs(my - nmy) > 1.0)) { 
     mx = mx - (mx-nmx)/20.0;
     my = my - (my-nmy)/20.0;
-    
+
     // Set the drawing value
     currentValue += 1* valdir;
     if(currentValue > 255 || currentValue <= 0) {
@@ -56,15 +53,15 @@ void draw()
 
   iKinematics();
   kinematics();
-  
+
   pushMatrix();
-  translate(offset, offset);
+  translate(width/2, height/2);
   stroke(currentValue); 
   line(thighX, thighY, legX, legY);
   popMatrix();
-  
+
   stroke(255);
-  point(legX+offset, legY+offset);
+  point(legX + width/2, legY + height/2);
 }
 
 void kinematics() 
@@ -84,3 +81,4 @@ void iKinematics()
   l_0 = -atan2(s2, c2);
   h_0 = atan2(ty, tx) - atan2(l*s2, h+l*c2);
 }
+
