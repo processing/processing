@@ -24,7 +24,7 @@ public class Vertices extends PApplet {
  */
 
 public void setup() {
-  size(640, 480, P3D);
+  size(640, 360, P3D);
 }
 
 public void draw() {

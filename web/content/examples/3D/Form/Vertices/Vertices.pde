@@ -9,7 +9,7 @@
  */
 
 void setup() {
-  size(640, 480, P3D);
+  size(640, 360, P3D);
 }
 
 void draw() {
