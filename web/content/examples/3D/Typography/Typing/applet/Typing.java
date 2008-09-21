@@ -1,3 +1,18 @@
+import processing.core.*; 
+
+import java.applet.*; 
+import java.awt.*; 
+import java.awt.image.*; 
+import java.awt.event.*; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class Typing extends PApplet {
+
 /**
  * Typing (Excerpt from the piece Textension) 
  * by Josh Nimoy.  
@@ -12,30 +27,30 @@ int rightmargin = 20;
 String buff = "";
 boolean didntTypeYet = true;
 
-void setup()
+public void setup()
 {
   size(640, 360, P3D);
   textFont(loadFont("Univers45.vlw"), 25);
 }
 
-void draw()
+public void draw()
 {
   background(176);
 
   if((millis() % 500) < 250){  // Only fill cursor half the time
     noFill();
   }
-  else {
+  else{
     fill(255);
     stroke(0);
   }
   float rPos;
   // Store the cursor rectangle's position
-  rPos = textWidth(buff) + leftmargin;
+  rPos = textWidth(buff)+leftmargin;
   rect(rPos+1, 19, 10, 21);
 
   // Some instructions at first
-  if(didntTypeYet) {
+  if(didntTypeYet){
     fill(0);
     //text("Use the keyboard.", 22, 40);
   }
@@ -44,18 +59,18 @@ void draw()
   pushMatrix();
   translate(rPos,10+25);
   char k;
-  for(int i = 0;i < buff.length(); i++) {
+  for(int i=0;i<buff.length();i++){
     k = buff.charAt(i);
     translate(-textWidth(k),0);
-    rotateY(-textWidth(k)/70.0); 
-    rotateX(textWidth(k)/70.0);
-    scale(1.1);
+    rotateY(-textWidth(k)/70.0f); 
+    rotateX(textWidth(k)/70.0f);
+    scale(1.1f);
     text(k,0,0);
   }
   popMatrix();
 }
 
-void keyPressed()
+public void keyPressed()
 {
   char k;
   k = (char)key;
@@ -80,3 +95,7 @@ void keyPressed()
   }
 }
 
+  static public void main(String args[]) {
+    PApplet.main(new String[] { "Typing" });
+  }
+}

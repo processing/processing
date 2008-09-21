@@ -15,6 +15,7 @@ float wh = 4;
 void setup() {
   size(200, 200);
   noLoop();
+  background(0);
 }
 
 void draw() {
@@ -51,7 +52,7 @@ void draw() {
         a = aa - bb + x;
         b = twoab + y;
         // Infinty in our finite world is simple, let's just consider it 16
-        if(aa + bb > 16.0f) {
+        if(aa + bb > 16.0) {
           break;  // Bail
         }
         n++;
@@ -59,8 +60,12 @@ void draw() {
       
       // We color each pixel based on how long it takes to get to infinity
       // If we never got there, let's pick the color black
-      if (n == maxiterations) pixels[i+j*width] = 0;
-      else pixels[i+j*width] = color(n*16 % 255);  // Gosh, we could make fancy colors here if we wanted
+      if (n == maxiterations) {
+        pixels[i+j*width] = 0;
+      } else {
+        // Gosh, we could make fancy colors here if we wanted
+        pixels[i+j*width] = color(n*16 % 255);  
+      }
       x += dx;
     }
     y += dy;

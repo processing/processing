@@ -25,17 +25,17 @@ void draw()
   if((millis() % 500) < 250){  // Only fill cursor half the time
     noFill();
   }
-  else {
+  else{
     fill(255);
     stroke(0);
   }
   float rPos;
   // Store the cursor rectangle's position
-  rPos = textWidth(buff) + leftmargin;
+  rPos = textWidth(buff)+leftmargin;
   rect(rPos+1, 19, 10, 21);
 
   // Some instructions at first
-  if(didntTypeYet) {
+  if(didntTypeYet){
     fill(0);
     //text("Use the keyboard.", 22, 40);
   }
@@ -44,7 +44,7 @@ void draw()
   pushMatrix();
   translate(rPos,10+25);
   char k;
-  for(int i = 0;i < buff.length(); i++) {
+  for(int i=0;i<buff.length();i++){
     k = buff.charAt(i);
     translate(-textWidth(k),0);
     rotateY(-textWidth(k)/70.0); 
@@ -79,4 +79,3 @@ void keyPressed()
     break;
   }
 }
-
