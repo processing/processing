@@ -22,13 +22,13 @@ FILE --&gt; IMPORT --&gt; GENERAL --&gt; FILE SYSTEM.
 <br /><br />
 Click next.  Click browse and find the "lib" directory inside the Processing application folder.  For example, it might be "/Applications/Processing 0125/lib"  Select the file "core.jar" inside the lib folder.
 <br /><br />
-<img src="imgs/import.jpg" />
+<img src="imgs/import.jpg" border="1" />
 <br /><br />
 Click "finish."
 <br /><br />
 You should now see "core.jar" listed under your project in the package explorer.
 <br /><br />
-<img src="imgs/core1.jpg" />
+<img src="imgs/core1.jpg" border="1"/>
 <br /><br />
 Right-click on the file and select
 <br /><br />
@@ -36,7 +36,7 @@ BUILD PATH --&gt; ADD TO BUILD PATH.
 <br /><br />
 The "core.jar" file should now appear with a jar icon.
 <br /><br />
-<img src="imgs/core2.jpg" />
+<img src="imgs/core2.jpg" border="1" />
 </p>
 <h5>Step 4. Create a class and write your code!</h5>
 <p>Go to: FILE --&gt; NEW --&gt; CLASS
@@ -131,7 +131,7 @@ FILE --&gt; NEW --&gt; CLASS.  Name it "Stripe."  Click "finish."
 <br /><br />
 If we add the Processing code, Eclipse will give us a bunch of errors.
 <br /><br />
-<img src="imgs/errors.jpg" />
+<img src="imgs/errors.jpg" border="1" />
 <br /><br />
 The errors are all on lines where we call a Processing function (such as rect()) or reference a Processing variable (such as width).  This is because a Stripe is not a PApplet and knows nothing about PApplets!  We might be tempted to have Stripe extend PApplet, but this would be a fatal error.  A Stripe is not a PApplet.  A Stripe is a rectangular object that we want to draw <em>onto a PApplet</em>. What PApplet do we want to draw onto?  The PApplet that is MyProcessingSketch.   Instead of extending PApplet, we simply want to tell a Stripe object about a MyProcessingSketch.
 <br />
