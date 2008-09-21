@@ -85,9 +85,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   static public final int DA = 6;
 
   //specular (by default kept white)
-  static public final int SPR = 27;
-  static public final int SPG = 28;
-  static public final int SPB = 29;
+  static public final int SPR = 28;
+  static public final int SPG = 29;
+  static public final int SPB = 30;
   //GL doesn't use a separate specular alpha, but we do (we're better)
   //static public final int SPA = 30;
 
