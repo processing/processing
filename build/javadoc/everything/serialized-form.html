@@ -1175,15 +1175,6 @@ javax.swing.JPopupMenu <B>popup</B></PRE>
 </DL>
 <HR>
 <H3>
-hideItem</H3>
-<PRE>
-javax.swing.JMenuItem <B>hideItem</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
 menuLeft</H3>
 <PRE>
 int <B>menuLeft</B></PRE>
@@ -1808,7 +1799,7 @@ boolean <B>found</B></PRE>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Class <A HREF="processing/app/debug/RunnerException.html" title="class in processing.app.debug">processing.app.debug.RunnerException</A> extends java.lang.RuntimeException implements Serializable</B></FONT></TH>
+<B>Class <A HREF="processing/app/debug/RunnerException.html" title="class in processing.app.debug">processing.app.debug.RunnerException</A> extends java.lang.Exception implements Serializable</B></FONT></TH>
 </TR>
 </TABLE>
 
@@ -3392,7 +3383,7 @@ requestImageMax</H3>
 <PRE>
 int <B>requestImageMax</B></PRE>
 <DL>
-<DD>By trial and error, four image loading threads seem to work best when 
+<DD>By trial and error, four image loading threads seem to work best when
  loading images from online. This is consistent with the number of open
  connections that web browsers will maintain. The variable is made public
  (however no accessor has been added since it's esoteric) if you really

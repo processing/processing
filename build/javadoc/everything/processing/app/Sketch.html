@@ -140,6 +140,14 @@ Stores information about files in the current sketch
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#build(java.lang.String)">build</A></B>(java.lang.String&nbsp;buildPath)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Preprocess and compile all the code for this sketch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Sketch.html#checkName(java.lang.String)">checkName</A></B>(java.lang.String&nbsp;origName)</CODE>
 
@@ -149,8 +157,25 @@ Stores information about files in the current sketch
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#exportApplet(java.lang.String)">exportApplet</A></B>(java.lang.String&nbsp;appletPath)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Handle export to applet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#exportApplication(java.lang.String, int)">exportApplication</A></B>(java.lang.String&nbsp;destPath,
+                  int&nbsp;exportPlatform)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Sketch.html#getAppletClassName()">getAppletClassName</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#getAppletClassName2()">getAppletClassName2</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -194,6 +219,14 @@ Stores information about files in the current sketch
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the location of the sketch's code folder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#getCodeIndex(processing.app.SketchCode)">getCodeIndex</A></B>(<A HREF="../../processing/app/SketchCode.html" title="class in processing.app">SketchCode</A>&nbsp;who)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -399,6 +432,14 @@ Stores information about files in the current sketch
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Sketch.html#preprocess(java.lang.String)">preprocess</A></B>(java.lang.String&nbsp;buildPath)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Build all the code for this sketch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Sketch.html#sanitizeName(java.lang.String)">sanitizeName</A></B>(java.lang.String&nbsp;origName)</CODE>
 
@@ -451,7 +492,7 @@ Stores information about files in the current sketch
 <TD><CODE><B><A HREF="../../processing/app/Sketch.html#validExtension(java.lang.String)">validExtension</A></B>(java.lang.String&nbsp;what)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check this extension (no dots, please) against the list of valid 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check this extension (no dots, please) against the list of valid
  extensions.</TD>
 </TR>
 </TABLE>
@@ -664,7 +705,7 @@ setCurrentCode</H3>
 <PRE>
 public void <B>setCurrentCode</B>(int&nbsp;which)</PRE>
 <DL>
-<DD>Change what file is currently being edited. Changes the current tab index. 
+<DD>Change what file is currently being edited. Changes the current tab index.
  <OL>
  <LI> store the String for the text of the current file.
  <LI> retrieve the String for the text of the new file.
@@ -673,6 +714,71 @@ public void <B>setCurrentCode</B>(int&nbsp;which)</PRE>
 <P>
 <DD><DL>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="preprocess(java.lang.String)"><!-- --></A><H3>
+preprocess</H3>
+<PRE>
+public java.lang.String <B>preprocess</B>(java.lang.String&nbsp;buildPath)
+                            throws <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
+<DL>
+<DD>Build all the code for this sketch.
+
+ In an advanced program, the returned class name could be different,
+ which is why the className is set based on the return value.
+ A compilation error will burp up a RunnerException.
+
+ Setting purty to 'true' will cause exception line numbers to be incorrect.
+ Unless you know the code compiles, you should first run the preprocessor
+ with purty set to false to make sure there are no errors, then once
+ successful, re-export with purty set to true.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>buildPath</CODE> - Location to copy all the .java files<DD><CODE>purty</CODE> - true if output should use indents and newlines
+<DT><B>Returns:</B><DD>null if compilation failed, main class name if not
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="build(java.lang.String)"><!-- --></A><H3>
+build</H3>
+<PRE>
+public java.lang.String <B>build</B>(java.lang.String&nbsp;buildPath)
+                       throws <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
+<DL>
+<DD>Preprocess and compile all the code for this sketch.
+
+ In an advanced program, the returned class name could be different,
+ which is why the className is set based on the return value.
+ A compilation error will burp up a RunnerException.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>null if compilation failed, main class name if not
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exportApplet(java.lang.String)"><!-- --></A><H3>
+exportApplet</H3>
+<PRE>
+public boolean <B>exportApplet</B>(java.lang.String&nbsp;appletPath)
+                     throws <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A>,
+                            java.io.IOException</PRE>
+<DL>
+<DD>Handle export to applet.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE>
+<DD><CODE>java.io.IOException</CODE></DL>
 </DD>
 </DL>
 <HR>
@@ -687,6 +793,23 @@ public static java.lang.String <B>scrubComments</B>(java.lang.String&nbsp;what)<
 <P>
 <DD><DL>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exportApplication(java.lang.String, int)"><!-- --></A><H3>
+exportApplication</H3>
+<PRE>
+public boolean <B>exportApplication</B>(java.lang.String&nbsp;destPath,
+                                 int&nbsp;exportPlatform)
+                          throws java.io.IOException,
+                                 <A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE><A HREF="../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></DL>
 </DD>
 </DL>
 <HR>
@@ -751,7 +874,7 @@ validExtension</H3>
 <PRE>
 public boolean <B>validExtension</B>(java.lang.String&nbsp;what)</PRE>
 <DL>
-<DD>Check this extension (no dots, please) against the list of valid 
+<DD>Check this extension (no dots, please) against the list of valid
  extensions.
 <P>
 <DD><DL>
@@ -856,7 +979,7 @@ prepareDataFolder</H3>
 <PRE>
 public java.io.File <B>prepareDataFolder</B>()</PRE>
 <DL>
-<DD>Create the data folder if it does not exist already. As a convenience, 
+<DD>Create the data folder if it does not exist already. As a convenience,
  it also returns the data folder, since it's likely about to be used.
 <P>
 <DD><DL>
@@ -883,7 +1006,7 @@ prepareCodeFolder</H3>
 <PRE>
 public java.io.File <B>prepareCodeFolder</B>()</PRE>
 <DL>
-<DD>Create the code folder if it does not exist already. As a convenience, 
+<DD>Create the code folder if it does not exist already. As a convenience,
  it also returns the code folder, since it's likely about to be used.
 <P>
 <DD><DL>
@@ -947,6 +1070,17 @@ public <A HREF="../../processing/app/SketchCode.html" title="class in processing
 </DL>
 <HR>
 
+<A NAME="getCodeIndex(processing.app.SketchCode)"><!-- --></A><H3>
+getCodeIndex</H3>
+<PRE>
+public int <B>getCodeIndex</B>(<A HREF="../../processing/app/SketchCode.html" title="class in processing.app">SketchCode</A>&nbsp;who)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getCurrentCode()"><!-- --></A><H3>
 getCurrentCode</H3>
 <PRE>
@@ -980,10 +1114,10 @@ public boolean <B>isUntitled</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="getAppletClassName()"><!-- --></A><H3>
-getAppletClassName</H3>
+<A NAME="getAppletClassName2()"><!-- --></A><H3>
+getAppletClassName2</H3>
 <PRE>
-public java.lang.String <B>getAppletClassName</B>()</PRE>
+public java.lang.String <B>getAppletClassName2</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>

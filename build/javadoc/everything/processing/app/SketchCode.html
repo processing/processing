@@ -131,6 +131,14 @@ Represents a single tab of a sketch.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/SketchCode.html#addPreprocOffset(int)">addPreprocOffset</A></B>(int&nbsp;extra)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;javax.swing.text.Document</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/SketchCode.html#getDocument()">getDocument</A></B>()</CODE>
 
@@ -163,8 +171,8 @@ Represents a single tab of a sketch.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/SketchCode.html#getPreprocName()">getPreprocName</A></B>()</CODE>
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/SketchCode.html#getLineCount()">getLineCount</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -278,14 +286,6 @@ Represents a single tab of a sketch.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/SketchCode.html#setModified(boolean)">setModified</A></B>(boolean&nbsp;modified)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/SketchCode.html#setPreprocName(java.lang.String)">setPreprocName</A></B>(java.lang.String&nbsp;preprocName)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -424,6 +424,17 @@ public void <B>setProgram</B>(java.lang.String&nbsp;replacement)</PRE>
 </DL>
 <HR>
 
+<A NAME="getLineCount()"><!-- --></A><H3>
+getLineCount</H3>
+<PRE>
+public int <B>getLineCount</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="setModified(boolean)"><!-- --></A><H3>
 setModified</H3>
 <PRE>
@@ -446,28 +457,6 @@ public boolean <B>isModified</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="setPreprocName(java.lang.String)"><!-- --></A><H3>
-setPreprocName</H3>
-<PRE>
-public void <B>setPreprocName</B>(java.lang.String&nbsp;preprocName)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getPreprocName()"><!-- --></A><H3>
-getPreprocName</H3>
-<PRE>
-public java.lang.String <B>getPreprocName</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="setPreprocOffset(int)"><!-- --></A><H3>
 setPreprocOffset</H3>
 <PRE>
@@ -483,6 +472,17 @@ public void <B>setPreprocOffset</B>(int&nbsp;preprocOffset)</PRE>
 getPreprocOffset</H3>
 <PRE>
 public int <B>getPreprocOffset</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addPreprocOffset(int)"><!-- --></A><H3>
+addPreprocOffset</H3>
+<PRE>
+public void <B>addPreprocOffset</B>(int&nbsp;extra)</PRE>
 <DL>
 <DD><DL>
 </DL>
