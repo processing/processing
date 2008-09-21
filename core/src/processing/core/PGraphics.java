@@ -32,7 +32,7 @@ import java.awt.image.*;
  * Main graphics and rendering context, as well as
  * the base API implementation for processing "core".
  */
-public abstract class PGraphics extends PImage implements PConstants {
+public class PGraphics extends PImage implements PConstants {
 
   static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
   static public final int Y = 1;
@@ -40,7 +40,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
   static public final int R = 3;  // actual rgb, after lighting
   static public final int G = 4;  // fill stored here, transform in place
-  static public final int B = 5;  // TODO don't do that anymore
+  static public final int B = 5;  // TODO don't do that anymore (?)
   static public final int A = 6;
 
   static public final int U = 7; // texture
@@ -429,9 +429,9 @@ public abstract class PGraphics extends PImage implements PConstants {
   /** Inverse modelview matrix, used for lighting. */
   public PMatrix3D modelviewInv;
 
-  protected float[][] modelviewStack;
-  protected float[][] modelviewInvStack;
-  protected int modelviewStackPointer;
+//  protected float[][] modelviewStack;
+//  protected float[][] modelviewInvStack;
+//  protected int modelviewStackPointer;
 
   /**
    * The camera matrix, the modelview will be set to this on beginDraw.
@@ -627,7 +627,7 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   // broken out because of subclassing
-  abstract protected void allocate();
+  protected void allocate() { }
 
 
 
@@ -650,7 +650,8 @@ public abstract class PGraphics extends PImage implements PConstants {
    * When creating your own PGraphics, you should call this before
    * drawing anything.
    */
-  abstract public void beginDraw();  // ignore
+  public void beginDraw() {  // ignore 
+  }
 
 
   /**
@@ -659,9 +660,10 @@ public abstract class PGraphics extends PImage implements PConstants {
    * When creating your own PGraphics, you should call this when
    * you're finished drawing.
    */
-  abstract public void endDraw();  // ignore
+  public void endDraw() {  // ignore
+  }
 
-
+  
   protected void flush() {
     // no-op, mostly for P3D to write sorted stuff
   }
@@ -854,7 +856,8 @@ public abstract class PGraphics extends PImage implements PConstants {
    * the code and maintain it. for beta, the latter is most important so
    * that's how things are implemented.
    */
-  abstract public void beginShape(int kind);
+  public void beginShape(int kind) {
+  }
 
 
   public void normal(float nx, float ny, float nz) {
@@ -917,7 +920,8 @@ public abstract class PGraphics extends PImage implements PConstants {
 
 
   // eventually need to push a "default" setup down to this class
-  abstract public void vertex(float x, float y);
+  public void vertex(float x, float y) {
+  }
     /*
     splineVertexCount = 0;
     //float vertex[];
@@ -1056,13 +1060,17 @@ public abstract class PGraphics extends PImage implements PConstants {
     */
 
 
-  abstract public void vertex(float x, float y, float z);
+  public void vertex(float x, float y, float z) {
+  }
 
 
-  abstract public void vertex(float x, float y, float u, float v);
+  public void vertex(float x, float y, float u, float v) {
+  }
 
+  
+  public void vertex(float x, float y, float z, float u, float v) {
+  }
 
-  abstract public void vertex(float x, float y, float z, float u, float v);
 
 
   public void bezierVertex(float x2, float y2,
@@ -1214,7 +1222,8 @@ public abstract class PGraphics extends PImage implements PConstants {
   }
 
 
-  abstract public void endShape(int mode);
+  public void endShape(int mode) {
+  }
 
 
 
@@ -2917,13 +2926,15 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * Translate in X and Y.
    */
-  abstract public void translate(float tx, float ty);
+  public void translate(float tx, float ty) {
+  }
 
 
   /**
    * Translate in X, Y, and Z.
    */
-  abstract public void translate(float tx, float ty, float tz);
+  public void translate(float tx, float ty, float tz) {
+  }
 
 
   /**
@@ -2935,19 +2946,22 @@ public abstract class PGraphics extends PImage implements PConstants {
    *
    * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
    */
-  abstract public void rotate(float angle);
+  public void rotate(float angle) {
+  }
 
 
   /**
    * Rotate around the X axis.
    */
-  abstract public void rotateX(float angle);
+  public void rotateX(float angle) {
+  }
 
 
   /**
    * Rotate around the Y axis.
    */
-  abstract public void rotateY(float angle);
+  public void rotateY(float angle) {
+  }
 
 
   /**
@@ -2958,19 +2972,22 @@ public abstract class PGraphics extends PImage implements PConstants {
    * nor does it make sense to use a function called rotateZ() if you're only
    * doing things in 2D. so we just decided to have them both be the same.
    */
-  abstract public void rotateZ(float angle);
+  public void rotateZ(float angle) {
+  }
 
 
   /**
    * Rotate about a vector in space. Same as the glRotatef() function.
    */
-  abstract public void rotate(float angle, float vx, float vy, float vz);
+  public void rotate(float angle, float vx, float vy, float vz) {
+  }
 
 
   /**
    * Scale in all dimensions.
    */
-  abstract public void scale(float s);
+  public void scale(float s) {
+  }
 
 
   /**
@@ -2979,13 +2996,15 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Not recommended for use in 3D, because the z-dimension is just
    * scaled by 1, since there's no way to know what else to scale it by.
    */
-  abstract public void scale(float sx, float sy);
+  public void scale(float sx, float sy) {
+  }
 
 
   /**
    * Scale in X, Y, and Z.
    */
-  abstract public void scale(float x, float y, float z);
+  public void scale(float x, float y, float z) {
+  }
 
 
 
@@ -3003,35 +3022,40 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * Push a copy of the current transformation matrix onto the stack.
    */
-  abstract public void pushMatrix();
+  public void pushMatrix() {
+  }
 
 
   /**
    * Replace the current transformation matrix with the top of the stack.
    */
-  abstract public void popMatrix();
+  public void popMatrix() {
+  }
 
 
   /**
    * Set the current transformation matrix to identity.
    */
-  abstract public void resetMatrix();
+  public void resetMatrix() {
+  }
 
 
   /**
    * Apply a 3x2 affine transformation matrix.
    */
-  abstract public void applyMatrix(float n00, float n01, float n02,
-                                   float n10, float n11, float n12);
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+  }
 
 
   /**
    * Apply a 4x4 transformation matrix.
    */
-  abstract public void applyMatrix(float n00, float n01, float n02, float n03,
-                                   float n10, float n11, float n12, float n13,
-                                   float n20, float n21, float n22, float n23,
-                                   float n30, float n31, float n32, float n33);
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
+  }
 
 
   /**
@@ -3041,13 +3065,15 @@ public abstract class PGraphics extends PImage implements PConstants {
    * Note that there is no "updateMatrix" because that gets too
    * complicated (unnecessary) when considering the 3D matrices.
    */
-  abstract public void loadMatrix();
+  public void loadMatrix() {
+  }
 
 
   /**
    * Print the current model (or "transformation") matrix.
    */
-  abstract public void printMatrix();
+  public void printMatrix() {
+  }
 
 
 
@@ -3665,17 +3691,9 @@ public abstract class PGraphics extends PImage implements PConstants {
     depthError("specular");
   }
 
-//  public void specular(float gray, float alpha) {
-//    depthError("specular");
-//  }
-
   public void specular(float x, float y, float z) {
     depthError("specular");
   }
-
-//  public void specular(float x, float y, float z, float a) {
-//    depthError("specular");
-//  }
 
   public void shininess(float shine) {
     depthError("shininess");
@@ -3903,7 +3921,8 @@ public abstract class PGraphics extends PImage implements PConstants {
   /**
    * Clear the pixel buffer.
    */
-  abstract protected void clear();
+  protected void clear() {
+  }
 
 
 
