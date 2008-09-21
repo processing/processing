@@ -57,7 +57,7 @@ match(<c>str</c>, <c>regexp</c>)
 
 <parameter>
 <label>str</label>
-<description>the String to be split</description>
+<description>the String to be searched</description>
 </parameter>
 
 <parameter>
@@ -68,6 +68,7 @@ match(<c>str</c>, <c>regexp</c>)
 <returns>String[]</returns>
 
 <related>
+matchAll()
 split()
 splitTokens()
 join()
