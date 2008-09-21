@@ -14,6 +14,10 @@ o   would still require awt, but would take a sketch on cmd line
 X   modify showError() et al to not use awt when running from command line
 X   build it and then exit
 X   notations have been added to the bug report that cover the plw changes
+X also an option to launch p5, load a sketch and run it
+X   command to launch p5, load sketch and run in present mode
+X   not that useful because users should just use export application
+X   http://dev.processing.org/bugs/show_bug.cgi?id=889
 X Toolmenu won't show until I compile Mangler
 X   http://dev.processing.org/bugs/show_bug.cgi?id=892
 X update quaqua to 4.4.7 on macosx (http://www.randelshofer.ch/quaqua/)
@@ -51,19 +55,16 @@ o   you wait for the images to download (size is zero until they're ready)
 o   MediaTracker blocking is prolly making jar download really slow
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
 
-_ javadoc comment in a static mode app doesn't get moved to the top
-
 reference
-_ do some edits on the "getting started" text
-_   change references to help > getting started
-_   add vida reference
-_   make sure visualization not mentioned
-_ update match(), write new reference for matchAll()
+X do some edits on the "getting started" text
+X   make sure visualization not mentioned
+X   change references to help > getting started
+X   add vida reference
+o should we add processinghacks to main site? hacks.processing.org?
+o   this would enable site search across this as well?
+_ update match(), write new reference for matchAll() [shiffman]
 
-
-_ command line for casey
-
-_ present mode "stop" button hops around
+_ javadoc comment in a static mode app doesn't get moved to the top
 
 
 thread hang problem
@@ -504,8 +505,6 @@ _   or at least explain how to navigate
 _ post releases on sourceforge so that international mirrors are better?
 _ start creating source tarball for each release?
 _ roll over the discourse board for 1.0?
-_ should we add processinghacks to main site? hacks.processing.org?
-_   this would enable site search across this as well?
 _ board stuff
 _   only allow moderators to delete posts
 _   set "no smileys" as the default (better for posting code)
@@ -562,11 +561,6 @@ PDE - Processing Development Environment
 
 
 PDE / Base
-
-_ also an option to launch p5, load a sketch and run it
-_   command to launch p5, load sketch and run in present mode
-_   not that useful because users should just use export application
-_   http://dev.processing.org/bugs/show_bug.cgi?id=889
 
 
 PDE / Warnings
