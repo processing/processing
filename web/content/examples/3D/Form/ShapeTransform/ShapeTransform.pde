@@ -6,10 +6,10 @@
  * between Cube, Pyramid, Cone and 
  * Cylinder 3D primitives.
  * 
- * Instructions:
- * Up Arrow - increases points
- * Down Arrow - decreases points
- * 'p' key toggles between cube/pyramid
+ * Instructions:<br />
+ * Up Arrow - increases points<br />
+ * Down Arrow - decreases points<br />
+ * 'p' key toggles between cube/pyramid<br />
  */
 
 int pts = 7; 
