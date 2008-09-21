@@ -35,7 +35,7 @@ int black = color(0, 0, 0);
   
 public void setup()
 {
-  size(640, 200);
+  size(640, 200, P2D);
   frameRate(24);
   clearscr();  
   w = new World();

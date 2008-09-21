@@ -35,7 +35,7 @@ int runs_per_loop = 10000;
 
 public void setup()
 {
-  size(640, 200);
+  size(640, 200, P2D);
   frameRate(24);
   clearscr();
   w = new World();
@@ -76,6 +76,8 @@ public void draw()
     int selected = min((int)random(numcells), numcells - 1);
     cells[selected].run();
   }
+  
+  println(frameRate);
 }
 
 public void clearscr()

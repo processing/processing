@@ -9,7 +9,7 @@
 KochFractal k;
 
 void setup() {
-  size(200,200);
+  size(640, 360);
   background(0);
   frameRate(1);  // Animate slowly
   k = new KochFractal();

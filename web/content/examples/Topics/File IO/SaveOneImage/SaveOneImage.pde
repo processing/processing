@@ -5,13 +5,11 @@
  * display window. In this example, save() is run when a mouse
  * button is pressed. The image "line.tif" is saved to the 
  * same folder as the sketch's program file.
- * 
- * Created 26 May 2007
  */
 
 void setup() 
 {
-  size(100, 100);
+  size(200, 200);
 }
 
 void draw() 

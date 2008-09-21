@@ -32,7 +32,7 @@ int[][][] world;
  
 public void setup() 
 { 
-  size(640, 200);
+  size(640, 200, P3D);
   frameRate(12);
   sx = width;
   sy = height;

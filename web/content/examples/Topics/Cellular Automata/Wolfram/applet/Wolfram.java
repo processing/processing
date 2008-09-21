@@ -25,7 +25,7 @@ public class Wolfram extends PApplet {
 CA ca;   // An instance object to describe the Wolfram basic Cellular Automata
 
 public void setup() {
-  size(640, 360);
+  size(640, 360, P2D);
   frameRate(30);
   background(0);
   int[] ruleset = {0,1,0,1,1,0,1,0};    // An initial rule system
