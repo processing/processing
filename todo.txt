@@ -54,6 +54,10 @@ o   queue. or maybe beginImage() and endImage()? or a mode that lets
 o   you wait for the images to download (size is zero until they're ready)
 o   MediaTracker blocking is prolly making jar download really slow
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
+o if size() not found in export/compile, ask the user
+o   have size(myWidth, myHeight) set a static var in PGraphics
+o   for the last size that was used, use as default for fill-in field
+o   http://dev.processing.org/bugs/show_bug.cgi?id=64
 
 reference
 X do some edits on the "getting started" text
@@ -64,10 +68,8 @@ o should we add processinghacks to main site? hacks.processing.org?
 o   this would enable site search across this as well?
 _ update match(), write new reference for matchAll() [shiffman]
 
-_ javadoc comment in a static mode app doesn't get moved to the top
 
-
-thread hang problem
+thread hang/block problem
 _ video capture problems with opengl
 _   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _ serial.available() broken with video
@@ -691,9 +693,6 @@ _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
 _   http://dev.processing.org/bugs/show_bug.cgi?id=821
 _ file-save stops running sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=810
-_ don't copy hidden files (.svn especially) on export/save as
-_   http://dev.processing.org/bugs/show_bug.cgi?id=761
-_ make .java files and friends go to correct locations on export (app)
 _ on mac, window opens to prevent quit on close
 _   but the window is not properly set as untitled
 _   http://dev.processing.org/bugs/show_bug.cgi?id=700
@@ -845,14 +844,15 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=63
 _   when running externally, people need to write their own stop function
 _   just get export to application working so this can be supported
 _   for now, they're stuck w/ running in the env and getting the ugliness
-_ if size() not found in export/compile, ask the user
-_   have size(myWidth, myHeight) set a static var in PGraphics
-_   for the last size that was used, use as default for fill-in field
-_   http://dev.processing.org/bugs/show_bug.cgi?id=64
 _ make export put a timestamp in the html code (hidden or visible)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=66
 _ exporting application copies .java files 
 _   .java files are copied to the root folder as well as the source folder
+_ javadoc comment in a static mode app doesn't get moved to the top
+_   http://dev.processing.org/bugs/show_bug.cgi?id=924
+_ don't copy hidden files (.svn especially) on export/save as
+_   http://dev.processing.org/bugs/show_bug.cgi?id=761
+_ make .java files and friends go to correct locations on export (app)
 
 
 PDE / Find & Replace
