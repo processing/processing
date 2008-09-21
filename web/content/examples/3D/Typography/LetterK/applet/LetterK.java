@@ -112,9 +112,9 @@ public void iterateParticle(float fkx, float fky) {
 }
 
 public void drawK() {
-  //pushMatrix();
+  pushMatrix();
   
-  //scale(1.5, 1.5, 1.0);
+  scale(1.5f);
   translate(-63, 71);
   beginShape(QUADS);
   vertex(0, 0, 0);
@@ -132,8 +132,8 @@ public void drawK() {
   vertex(90.7988f, 0, 0);
   vertex(52.3994f-.2f, -59.999f-.3f, 0);
   endShape();
-  translate(63, -71);
-  //popMatrix();
+  //translate(63, -71);
+  popMatrix();
 }
 
 
