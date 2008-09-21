@@ -29,14 +29,43 @@ import java.io.PrintStream;
 
 import processing.core.PApplet;
 
-import processing.app.debug.RunnerException;
+import processing.app.debug.*;
 
 
-public class Commander {
+/**
+ * Class to handle running Processing from the command line.
+ * <PRE>
+ * --help               Show the help text.
+ * 
+ * --sketch=<name>      Specify the sketch folder (required)
+ * --output=<name>      Specify the output folder (required and
+ *                      cannot be the same as the sketch folder.)
+ * 
+ * --preprocess         Preprocess a sketch into .java files.
+ * --build              Preprocess and compile a sketch into .class files.
+ * --run                Preprocess, compile, and run a sketch.
+ * --present            Preprocess, compile, and run a sketch full screen.
+ * 
+ * --export-applet      Export an applet.
+ * --export-application Export an application.
+ * --platform           Specify the platform (export to application only).
+ *                      Should be one of 'windows', 'macosx', or 'linux'.
+ * 
+ * --preferences=<file> Specify a preferences file to use (optional).
+ * </PRE>
+ * 
+ * To build the command line version, first build for your platform, 
+ * then cd to processing/build/cmd and type 'dist.sh'. This will create a 
+ * usable installation plus a zip file of the same. 
+ * 
+ * @author fry
+ */
+public class Commander implements RunnerListener {
   static final String helpArg = "--help";
   static final String preprocArg = "--preprocess";
   static final String buildArg = "--build";
   static final String runArg = "--run";
+  static final String presentArg = "--present";
   static final String sketchArg = "--sketch=";
   static final String outputArg = "--output=";
   static final String exportAppletArg = "--export-applet";
@@ -48,8 +77,11 @@ public class Commander {
   static final int PREPROCESS = 0;
   static final int BUILD = 1;
   static final int RUN = 2;
-  static final int EXPORT_APPLET = 3;
-  static final int EXPORT_APPLICATION = 4;
+  static final int PRESENT = 3;
+  static final int EXPORT_APPLET = 4;
+  static final int EXPORT_APPLICATION = 5;
+  
+  Sketch sketch;
 
 
   static public void main(String[] args) {
@@ -73,11 +105,20 @@ public class Commander {
     int mode = HELP;
 
     for (String arg : args) {
-      if (arg.equals(helpArg)) {
+      if (arg.length() == 0) {
+        // ignore it, just the crappy shell script
+        
+      } else if (arg.equals(helpArg)) {
         // mode already set to HELP
 
       } else if (arg.equals(buildArg)) {
         mode = BUILD;
+
+      } else if (arg.equals(runArg)) {
+        mode = RUN;
+
+      } else if (arg.equals(presentArg)) {
+        mode = PRESENT;
 
       } else if (arg.equals(preprocArg)) {
         mode = PREPROCESS;
@@ -110,10 +151,19 @@ public class Commander {
     }
 
     if ((outputPath == null) &&
-        (mode == PREPROCESS || mode == BUILD || mode == RUN)) {
-      complainAndQuit("Output path must be specified when using " + 
-                      preprocArg + ", " + buildArg + ", or " + runArg + ".");
+        (mode == PREPROCESS || mode == BUILD || 
+         mode == RUN || mode == PRESENT)) {
+      complainAndQuit("An output path must be specified when using " + 
+                      preprocArg + ", " + buildArg + ", " + 
+                      runArg + ", or " + presentArg + ".");
     }
+    
+    if (mode == HELP) {
+      printCommandLine(System.out);
+      System.exit(0);
+    }
+
+    // --present --platform=windows "--sketch=/Applications/Processing 0148/examples/Basics/Arrays/Array" --output=test-build
     
     File outputFolder = new File(outputPath);
     if (!outputFolder.exists()) {
@@ -126,11 +176,7 @@ public class Commander {
     // (also pass in a prefs path if that was specified)
     Preferences.init(preferencesPath);
 
-    if (mode == HELP) {
-      printCommandLine(System.out);
-      System.exit(0);
-
-    } else if (sketchFolder == null) {
+    if (sketchFolder == null) {
       complainAndQuit("No sketch path specified.");
       
     } else if (outputPath.equals(pdePath)) {
@@ -140,7 +186,7 @@ public class Commander {
       complainAndQuit("Sketch path must point to the main .pde file.");
       
     } else {
-      Sketch sketch = null; 
+      //Sketch sketch = null; 
       boolean success = false;
 
       try {
@@ -151,6 +197,18 @@ public class Commander {
         } else if (mode == BUILD) {
           success = sketch.build(outputPath) != null;
 
+        } else if (mode == RUN || mode == PRESENT) {
+          String className = sketch.build(outputPath);
+          if (className != null) {
+            success = true;
+            Runner runner = 
+              new Runner(sketch, className, mode == PRESENT, this);
+            runner.launch();
+
+          } else {
+            success = false;
+          }
+          
         } else if (mode == EXPORT_APPLET) {
           if (outputPath != null) {
             success = sketch.exportApplet(outputPath);
@@ -173,16 +231,8 @@ public class Commander {
         System.exit(success ? 0 : 1);
 
       } catch (RunnerException re) {
-        // format the runner exception like emacs
-        //blah.java:2:10:2:13: Syntax Error: This is a big error message
-        String filename = sketch.getCode(re.getCodeIndex()).getFileName();
-        int line = re.getCodeLine();
-        int column = re.getCodeColumn();
-        if (column == -1) column = 0;
-        // TODO if column not specified, should just select the whole line. 
-        System.err.println(filename + ":" + 
-                           line + ":" + column + ":" + 
-                           line + ":" + column + ":" + " " + re.getMessage());
+        statusError(re);
+        
       } catch (IOException e) {
         e.printStackTrace();
         System.exit(1);
@@ -191,6 +241,31 @@ public class Commander {
   }
 
 
+  public void statusError(String message) {
+    System.err.println(message);
+  }
+
+
+  public void statusError(Exception exception) {
+    if (exception instanceof RunnerException) {
+      RunnerException re = (RunnerException) exception;
+
+      // format the runner exception like emacs
+      //blah.java:2:10:2:13: Syntax Error: This is a big error message
+      String filename = sketch.getCode(re.getCodeIndex()).getFileName();
+      int line = re.getCodeLine();
+      int column = re.getCodeColumn();
+      if (column == -1) column = 0;
+      // TODO if column not specified, should just select the whole line. 
+      System.err.println(filename + ":" + 
+                         line + ":" + column + ":" + 
+                         line + ":" + column + ":" + " " + re.getMessage());
+    } else {
+      exception.printStackTrace();
+    }
+  }
+
+  
   static void complainAndQuit(String lastWords) {
     printCommandLine(System.err);
     System.err.println(lastWords);
@@ -207,9 +282,10 @@ public class Commander {
     out.println("--output=<name>      Specify the output folder (required and");
     out.println("                     cannot be the same as the sketch folder.)");
     out.println();
-    out.println("--run                Preprocess, compile, and run a sketch.");
-    out.println("--build              Preprocess and compile a sketch into .class files.");
     out.println("--preprocess         Preprocess a sketch into .java files.");
+    out.println("--build              Preprocess and compile a sketch into .class files.");
+    out.println("--run                Preprocess, compile, and run a sketch.");
+    out.println("--present            Preprocess, compile, and run a sketch full screen.");
     out.println();
     out.println("--export-applet      Export an applet.");
     out.println("--export-application Export an application.");

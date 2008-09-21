@@ -23,8 +23,7 @@
 
 package processing.app;
 
-import processing.app.debug.Runner;
-import processing.app.debug.RunnerException;
+import processing.app.debug.*;
 import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
@@ -47,7 +46,7 @@ import javax.swing.undo.*;
 /**
  * Main editor panel for the Processing Development Environment.
  */
-public class Editor extends JFrame {
+public class Editor extends JFrame implements RunnerListener {
 
   Base base;
 
@@ -1608,7 +1607,7 @@ public class Editor extends JFrame {
     try {
       String appletClassName = sketch.compile();
       if (appletClassName != null) {
-        runtime = new Runner(Editor.this, appletClassName, presenting);
+        runtime = new Runner(sketch, appletClassName, presenting, Editor.this);
 
         // Cannot use invokeLater() here, otherwise it gets
         // placed on the event thread and causes a hang--bad idea all around.
@@ -2159,10 +2158,10 @@ public class Editor extends JFrame {
    */
   public void statusError(Exception e) {
     e.printStackTrace();
-    if (e == null) {
-      System.err.println("Editor.statusError() was passed a null exception.");
-      return;
-    }
+//    if (e == null) {
+//      System.err.println("Editor.statusError() was passed a null exception.");
+//      return;
+//    }
 
     if (e instanceof RunnerException) {
       RunnerException re = (RunnerException) e;
