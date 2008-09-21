@@ -1,0 +1,50 @@
+import processing.core.*; 
+
+import java.applet.*; 
+import java.awt.*; 
+import java.awt.image.*; 
+import java.awt.event.*; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class BackgroundImage extends PApplet {
+
+/**
+ * Background Image. 
+ * 
+ * This example presents the fastest way to load a background image
+ * into Processing. To load an image as the background, it must be
+ * the same width and height as the program.
+ */
+ 
+PImage bg;
+int a; 
+
+public void setup() 
+{
+  size(200,200);
+  frameRate(30);
+  // The background image must be the same size as the parameters
+  // into the size() method. In this program, the size of "milan_rubbish.jpg"
+  // is 200 x 200 pixels.
+  bg = loadImage("milan_rubbish.jpg");
+}
+
+public void draw() 
+{
+  background(bg);
+
+  a = (a + 1)%(width+32);
+  stroke(226, 204, 0);
+  line(0, a, width, a-26);
+  line(0, a-6, width, a-32);
+}
+
+  static public void main(String args[]) {
+    PApplet.main(new String[] { "BackgroundImage" });
+  }
+}

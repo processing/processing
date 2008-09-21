@@ -21,7 +21,7 @@ int mouseYvel = 0;
 
 void setup() 
 {
-  size(200,200);
+  size(200, 200);
   noStroke();
   frameRate(30);
   lwidth = width/res;

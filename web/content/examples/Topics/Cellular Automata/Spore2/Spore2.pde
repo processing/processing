@@ -61,8 +61,6 @@ void draw()
     int selected = min((int)random(numcells), numcells - 1);
     cells[selected].run();
   }
-  
-  println(frameRate);
 }
 
 void clearscr()

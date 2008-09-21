@@ -1,6 +1,6 @@
 /**
  * TRIANGLE_STRIP Mode
- * By Ira Greenberg 
+ * by Ira Greenberg. 
  * 
  * Generate a closed ring using vertex() 
  * function and beginShape(TRIANGLE_STRIP)
@@ -22,15 +22,15 @@ float pts = 36;
 float rot = 360.0/pts;
 
 beginShape(TRIANGLE_STRIP); 
-for (int i=0; i<pts; i++) {
-  px = x+cos(radians(angle))*outerRad;
-  py = y+sin(radians(angle))*outerRad;
-  angle+=rot;
+for (int i = 0; i < pts; i++) {
+  px = x + cos(radians(angle))*outerRad;
+  py = y + sin(radians(angle))*outerRad;
+  angle += rot;
   vertex(px, py);
-  px = x+cos(radians(angle))*innerRad;
-  py = y+sin(radians(angle))*innerRad;
+  px = x + cos(radians(angle))*innerRad;
+  py = y + sin(radians(angle))*innerRad;
   vertex(px, py); 
-  angle+=rot;
+  angle += rot;
 }
 endShape();
 
