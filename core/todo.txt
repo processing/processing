@@ -21,7 +21,16 @@ X fix problems in PApplet regarding signed code
 X   createInput() wasn't bothering to check files when not online
 X unhint() has been removed, see the reference for hint() for changes
 
-_ decisions on image smoothing vs. text smoothing vs. all
+cleaning
+o chooseFile() and chooseFolder() with named fxn callbacks
+o   the function must take a File object as a parameter
+o add better error messages for all built-in renderers
+o   i.e. "import library -> pdf" when pdf is missing
+o cameraXYZ doesn't seem to actually be used for anything
+o   since camera functions don't even look at it or set it
+o registerSize() in arcball is causing trouble
+o   some sort of infinite loop issue
+
 
 _ make decisions about whether PGraphics is an abstract class or not
 _   method signature is a real problem
@@ -29,11 +38,7 @@ _ clean up setMainDrawingSurface()
 _   should instead be inside size(), and init(), no?
 
 
-_ ortho() behaving differently in P3D vs OPENGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=100
-_   shows a blank canvas
-_   (was only happening once b/c was drawing first in perspective)
-_   seems to be mapping to 0, 0 - width/2, height/2
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
 [ need problem sketch ] 
@@ -44,29 +49,11 @@ _   seen especially on old mac laptops (slow ppc garbage)
 _   can this be confirmed properly?
 _   * this may just be an OutOfMemoryError happening
 
-
 [ needs verification ] 
 
 _ Frame skipping with processor intensive applets using 1.6
 _   http://dev.processing.org/bugs/show_bug.cgi?id=766
 _   may be fixed, but not verified
-
-
-. . . 
-
-
-_ pdf sketches exiting before writing has finished
-_ writing image file (missing a flush() call?) on exit() fails
-_   lots of zero length files
-
-_ should we do joins when alpha is turned off?
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
-
-_ for begin/endRecord, use a piggyback mechanism
-_   that way won't have to pass a PApplet around
-_   this has a big impact on the SVG library
-_   in fact, this maybe should be a library that does it
-_     so that the file size can be much smaller
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -77,9 +64,9 @@ _ option to have renderer errors show up
 _   1) as text warnings 2) as runtime exceptions 3) never
 _ add warning system for pgraphics, rather than runtime exceptions
 _   keep array of warning strings, and booleans for whether they've called
-_ enable() and disable() instead of hint()/unhint()
-_   should these use text strings? how will that be compiled?
-_ remove unhint(), add opposite hints for those that need to be disabled
+o enable() and disable() instead of hint()/unhint()
+o   should these use text strings? how will that be compiled?
+X remove unhint(), add opposite hints for those that need to be disabled
 o   maybe update hint() ref to be more clear about screen not accumulating
 X   no, it's explicitly stated as such
 _ ENABLE_DEPTH_SORT not really working for GL
@@ -98,6 +85,7 @@ _   Java2D and P3D and OpenGL are all inconsistent
 _   need to be able to do hint() to do nearest neighbor filtering
 _   http://dev.processing.org/bugs/show_bug.cgi?id=685
 _   imageDetail(), textDetail(), etc?
+_   decisions on image smoothing vs. text smoothing vs. all
 
 
 createGraphics() and load/updatePixels() mess [1.0]
@@ -191,6 +179,8 @@ _   this may be specific to lines
 _   http://dev.processing.org/bugs/show_bug.cgi?id=827
 _   though it also seems to be a problem with opengl
 _   also make a note of disabling as a way to help font appearance
+_ PPolygon no longer in use and PLine is a mess
+_   make a version of PGraphics3 that uses it for more accurate rendering?
 
 
 point() [1.0]
@@ -220,13 +210,16 @@ for(int i=0; i<100; i++) {
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-_ key and mouse events delivered out of order
-_   http://dev.processing.org/bugs/show_bug.cgi?id=638
-_ method of threading but queue an event to be run when safe
-_   e.g. queueing items like mouse/keybd, but generic fxns
+_ pdf sketches exiting before writing has finished
+_ writing image file (missing a flush() call?) on exit() fails
+_   lots of zero length files
+_ saveFrame() at the end of a draw mode program is problematic
+_   app might exit before the file has finished writing to disk
+_   need to block other activity inside screenGrab until finished
+_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
 
-_ chooseFile() and chooseFolder() with named fxn callbacks
-_   the function must take a File object as a parameter
+_ should we do joins when alpha is turned off?
+_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1210007450
 
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
@@ -239,20 +232,16 @@ _ should beginRecord inherit settings from its parent renderer?
 _   textFont() is null on beginRecord
 _   same would be the case for strokeWeight, background, etc.
 _   http://dev.processing.org/bugs/show_bug.cgi?id=346
-
-_ add better error messages for all built-in renderers
-_   i.e. "import library -> pdf" when pdf is missing
+_ add texture support to begin/endRaw
+_ for begin/endRecord, use a piggyback mechanism
+_   that way won't have to pass a PApplet around
+_   this has a big impact on the SVG library
+_   in fact, this maybe should be a library that does it
+_     so that the file size can be much smaller
 
 _ when closing a sketch via the close box, make sure stop() getting called
 X   found a problem for release 0133
 _   test to see if it's working
-
-_ when an exception comes through during cameraEvent, not printed
-_   need to show an actual stack trace (InvocationTargetEx) 
-_   because otherwise it's impossible to debug this stuff
-
-_ registerSize() in arcball is causing trouble
-_   some sort of infinite loop issue
 
 _ updatePixels() is slow to create a BufferedImage
 _   therefore the incomplete rendering
@@ -266,8 +255,6 @@ _ dataFolder() might be flawed b/c it's referring to contents of jar file
 _   for input, better to use openStream
 _   clear up the documentation on this
 
-_ add texture support to begin/endRaw
-
 _ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
 _   use the SW from vertex instead.. why set stroke in triangle vars at all?
 _   currently truncating to an int inside add_line_no_clip
@@ -280,13 +267,8 @@ _   and start() is supposedly called by the applet viewer
 _   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
 _   need to track this stuff down a bit
 
-_ clipboard implementation as example or as part of api
-_   http://dev.processing.org/bugs/show_bug.cgi?id=167
-
-_ PApplet.main(new String[] { "classname" }) won't pass in args
-_   this means that no args are after passed to the class
-_   the fix would be to use the following as the call to main()
-_   PApplet.main(append(new String[] { "classname }, args));
+_ method of threading but queue an event to be run when safe
+_   e.g. queueing items like mouse/keybd, but generic fxns
 
 
 ////////////////////////////////////////////////////////////////////
@@ -296,6 +278,12 @@ _   PApplet.main(append(new String[] { "classname }, args));
 
 CORE / PApplet
 
+_ PApplet.main(new String[] { "classname" }) won't pass in args
+_   this means that no args are after passed to the class
+_   the fix would be to use the following as the call to main()
+_   PApplet.main(append(new String[] { "classname }, args));
+_ key and mouse events delivered out of order
+_   http://dev.processing.org/bugs/show_bug.cgi?id=638
 _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
@@ -309,13 +297,9 @@ _ check for what else inside PApplet should be static
 _   maybe catch RuntimeExceptions in the called sub-functions
 _   that way more stuff can be static w/o losing useful error handling
 _   (emitting errors when closest to source.. i.e. w/ the filename)
-_ size() inside draw is missing a new call to cameraMode, etc
+o size() inside draw is missing a new call to cameraMode, etc
 _ fix param() to use a sketch.properties file when run as an app
 _   make this also be used in generating the html file
-_ saveFrame() at the end of a draw mode program is problematic
-_   app might exit before the file has finished writing to disk
-_   need to block other activity inside screenGrab until finished
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
 _ test winding polygons in different directions
 _ test P3D lighting to see how it compares with native OpenGL
 _ ed's thread re: fullscreen strategies
@@ -329,6 +313,9 @@ _   don't bother using a buffering stream, just handle internally. gah!
 _ placement of elements in present mode is messed up
 _   "stop" button hops around, window not centered on screen
 _   http://dev.processing.org/bugs/show_bug.cgi?id=923
+_ remove some of the bloat, how can we make things more compact?
+_   i.e. if not using 3D, can leave out PGraphics3, PTriangle, PLine
+_   http://dev.processing.org/bugs/show_bug.cgi?id=127
 
 
 CORE / PApplet - main()
@@ -469,6 +456,11 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=104
 
 CORE / PGraphics3D
 
+_ ortho() behaving differently in P3D vs OPENGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=100
+_   shows a blank canvas
+_   (was only happening once b/c was drawing first in perspective)
+_   seems to be mapping to 0, 0 - width/2, height/2
 _ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _   polygon z-order depth sorting with alpha in opengl
@@ -485,8 +477,6 @@ _ odd error with some pixels from images not drawing properly
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
 _ clipping not yet completely implemented
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
-_ PPolygon no longer in use and PLine is a mess
-_   make a version of PGraphics3 that uses it for more accurate rendering?
 _ Stroking a rect() leaves off the upper right pixel
 _   http://dev.processing.org/bugs/show_bug.cgi?id=501
 _ clipping planes
@@ -501,8 +491,6 @@ _     or at least that things get ridiculously slow
 _     clipping issues here.. but also something in scan converter
 _     not clipping areas from offscreen
 _       huge geometry slows things way down
-_ cameraXYZ doesn't seem to actually be used for anything
-_   since camera functions don't even look at it or set it
 
 
 CORE / PImage
@@ -539,17 +527,11 @@ _   or is it a java 1.4 versus java 1.3 problem?
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
 
 
-CORE / General 
-
-_ remove some of the bloat, how can we make things more compact?
-_   i.e. if not using 3D, can leave out PGraphics3, PTriangle, PLine
-_   PPolygon isn't currently used for anything, should remove it
-_   http://dev.processing.org/bugs/show_bug.cgi?id=127
-
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
+
 
 
 LIBRARIES / PGraphicsOpenGL

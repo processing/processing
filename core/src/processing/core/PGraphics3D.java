@@ -225,9 +225,9 @@ public class PGraphics3D extends PGraphics {
     modelview = new PMatrix3D();
     modelviewInv = new PMatrix3D();
 
-    modelviewStack = new float[MATRIX_STACK_DEPTH][16];
-    modelviewInvStack = new float[MATRIX_STACK_DEPTH][16];
-    modelviewStackPointer = 0;
+//    modelviewStack = new float[MATRIX_STACK_DEPTH][16];
+//    modelviewInvStack = new float[MATRIX_STACK_DEPTH][16];
+//    modelviewStackPointer = 0;
 
     forwardTransform = modelview;
     reverseTransform = modelviewInv;
@@ -2657,8 +2657,8 @@ public class PGraphics3D extends PGraphics {
     if (matrixStackDepth == MATRIX_STACK_DEPTH) {
       throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
     }
-    modelview.get(modelviewStack[modelviewStackPointer]);
-    modelviewInv.get(modelviewInvStack[modelviewStackPointer]);
+    modelview.get(matrixStack[matrixStackDepth]);
+    modelviewInv.get(matrixInvStack[matrixStackDepth]);
     matrixStackDepth++;
   }
 
@@ -2668,8 +2668,8 @@ public class PGraphics3D extends PGraphics {
       throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
     }
     matrixStackDepth--;
-    modelview.set(modelviewStack[modelviewStackPointer]);
-    modelviewInv.set(modelviewInvStack[modelviewStackPointer]);
+    modelview.set(matrixStack[matrixStackDepth]);
+    modelviewInv.set(matrixInvStack[matrixStackDepth]);
   }
 
 
