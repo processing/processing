@@ -390,213 +390,6 @@ public class PFont implements PConstants {
   }
 
 
-  /**
-   * Draw a character at an x, y position.
-   */
-  /*
-  public void text(char c, float x, float y, PGraphics parent) {
-    text(c, x, y, 0, parent);
-  }
-  */
-
-  /**
-   * Draw a character at an x, y, z position.
-   */
-  /*
-  public void text(char c, float x, float y, float z, PGraphics parent) {
-    if (parent.textAlign == CENTER) {
-      x -= parent.textSize * width(c) / 2f;
-
-    } else if (parent.textAlign == RIGHT) {
-      x -= parent.textSize * width(c);
-    }
-
-    //textImpl(c, x, y, z, parent);
-    if (z != 0) parent.translate(0, 0, z);  // TEMPORARY HACK! SLOW!
-    parent.textImpl(c, x, y, z);
-    if (z != 0) parent.translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
-  }
-  */
-
-
-  /*
-  public void text(String str, float x, float y, PGraphics parent) {
-    text(str, x, y, 0, parent);
-  }
-
-
-  public void text(String str, float x, float y, float z, PGraphics parent) {
-    if (z != 0) parent.translate(0, 0, z);  // TEMPORARY HACK! SLOW!
-
-    int length = str.length();
-    if (length > textBuffer.length) {
-      textBuffer = new char[length + 10];
-    }
-    str.getChars(0, length, textBuffer, 0);
-
-    int start = 0;
-    int index = 0;
-    while (index < length) {
-      if (textBuffer[index] == '\n') {
-        textLine(start, index, x, y, z, parent);
-        start = index + 1;
-        y += parent.textLeading;
-      }
-      index++;
-    }
-    if (start < length) {
-      textLine(start, index, x, y, z, parent);
-    }
-    if (z != 0) parent.translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
-  }
-
-
-  protected void textLine(int start, int stop,
-                          float x, float y, float z,
-                          PGraphics parent) {
-    if (parent.textAlign == CENTER) {
-      x -= parent.textSize * calcWidth(textBuffer, start, stop) / 2f;
-
-    } else if (parent.textAlign == RIGHT) {
-      x -= parent.textSize * calcWidth(textBuffer, start, stop);
-    }
-
-    for (int index = start; index < stop; index++) {
-      //textImpl(textBuffer[index], x, y, z, parent);
-      //parent.textImpl(textBuffer[index], x, y, z);
-      // HACK FOR Z COORDINATES.. FIX ME SOON
-      parent.textImpl(textBuffer[index], x, y, 0); //z);
-      x += parent.textSize *width(textBuffer[index]);
-    }
-  }
-  */
-
-
-  /**
-   * Same as below, just without a z coordinate.
-   */
-  /*
-  public void text(String str, float x, float y,
-                   float c, float d, PGraphics parent) {
-    text(str, x, y, c, d, 0, parent);
-  }
-  */
-
-  /**
-   * Draw text in a box that is constrained to a particular size.
-   * <P>
-   * The parent PApplet will have converted the coords based on
-   * the current rectMode().
-   * <P>
-   * Note that the x,y coords of the start of the box
-   * will align with the *ascent* of the text, not the baseline,
-   * as is the case for the other text() functions.
-   */
-  /*
-  public void text(String str, float boxX1, float boxY1,
-                   float boxX2, float boxY2, float boxZ, PGraphics parent) {
-    if (boxZ != 0) parent.translate(0, 0, boxZ);  // TEMPORARY HACK! SLOW!
-
-    float spaceWidth = width(' ') * parent.textSize;
-    float runningX = boxX1;
-    float currentY = boxY1;
-    float boxWidth = boxX2 - boxX1;
-
-    float lineX = boxX1;
-    if (parent.textAlign == CENTER) {
-      lineX = lineX + boxWidth/2f;
-    } else if (parent.textAlign == RIGHT) {
-      lineX = boxX2;
-    }
-
-    // ala illustrator, the text itself must fit inside the box
-    currentY += ascent() * parent.textSize;
-    // if the box is already too small, tell em to f off
-    if (currentY > boxY2) return;
-
-    int length = str.length();
-    if (length > textBuffer.length) {
-      textBuffer = new char[length + 10];
-    }
-    str.getChars(0, length, textBuffer, 0);
-
-    int wordStart = 0;
-    int wordStop = 0;
-    int lineStart = 0;
-    int index = 0;
-    while (index < length) {
-      if ((textBuffer[index] == ' ') || (index == length-1)) {
-        // boundary of a word
-        float wordWidth = parent.textSize *
-          calcWidth(textBuffer, wordStart, index);
-
-        if (runningX + wordWidth > boxX2) {
-          if (runningX == boxX1) {
-            // if this is the first word, and its width is
-            // greater than the width of the text box,
-            // then break the word where at the max width,
-            // and send the rest of the word to the next line.
-            do {
-              index--;
-              if (index == wordStart) {
-                // not a single char will fit on this line. screw 'em.
-                //System.out.println("screw you");
-                return;
-              }
-              wordWidth = parent.textSize *
-                calcWidth(textBuffer, wordStart, index);
-            } while (wordWidth > boxWidth);
-            textLine(lineStart, index, lineX, currentY, boxZ, parent);
-
-          } else {
-            // next word is too big, output current line
-            // and advance to the next line
-            textLine(lineStart, wordStop, lineX, currentY, boxZ, parent);
-            // only increment index if a word wasn't broken inside the
-            // do/while loop above.. also, this is a while() loop too,
-            // because multiple spaces don't count for shit when they're
-            // at the end of a line like this.
-
-            index = wordStop;  // back that ass up
-            while ((index < length) &&
-                   (textBuffer[index] == ' ')) {
-              index++;
-            }
-          }
-          lineStart = index;
-          wordStart = index;
-          wordStop = index;
-          runningX = boxX1;
-          currentY += parent.textLeading;
-          if (currentY > boxY2) return;  // box is now full
-
-        } else {
-          runningX += wordWidth + spaceWidth;
-          // on to the next word
-          wordStop = index;
-          wordStart = index + 1;
-        }
-
-      } else if (textBuffer[index] == '\n') {
-        if (lineStart != index) {  // if line is not empty
-          textLine(lineStart, index, lineX, currentY, boxZ, parent);
-        }
-        lineStart = index + 1;
-        wordStart = lineStart;
-        currentY += parent.textLeading;
-        if (currentY > boxY2) return;  // box is now full
-      }
-      index++;
-    }
-    if ((lineStart < length) && (lineStart != index)) {
-      textLine(lineStart, index, lineX, currentY, boxZ, parent);
-    }
-
-    if (boxZ != 0) parent.translate(0, 0, -boxZ);  // TEMPORARY HACK! SLOW!
-  }
-  */
-
-
   //////////////////////////////////////////////////////////////
 
 
@@ -667,11 +460,6 @@ public class PFont implements PConstants {
    * @param smooth true to enable smoothing/anti-aliasing
    */
   public PFont(Font font, boolean smooth, char charset[]) {
-//    if (PApplet.javaVersion < 1.3f) {
-//      throw new RuntimeException("Can only create fonts with " +
-//                                 "Java 1.3 or higher");
-//    }
-
     // save this so that we can use the native version
     this.font = font;
     this.smooth = smooth;
@@ -679,16 +467,11 @@ public class PFont implements PConstants {
     name = font.getName();
     psname = font.getPSName();
 
-    //try {
     // fix regression from sorting (bug #564)
     if (charset != null) {
       // charset needs to be sorted to make index lookup run more quickly
       // http://dev.processing.org/bugs/show_bug.cgi?id=494
       Arrays.sort(charset);
-//    Class arraysClass = Class.forName("java.util.Arrays");
-//    Method sortMethod =
-//    arraysClass.getMethod("sort", new Class[] { charset.getClass() });
-//    sortMethod.invoke(null, new Object[] { charset });
     }
 
     // the count gets reset later based on how many of
@@ -721,88 +504,11 @@ public class PFont implements PConstants {
                        smooth ?
                        RenderingHints.VALUE_ANTIALIAS_ON :
                        RenderingHints.VALUE_ANTIALIAS_OFF);
-      /*
-      Class bufferedImageClass =
-        Class.forName("java.awt.image.BufferedImage");
-      Constructor bufferedImageConstructor =
-        bufferedImageClass.getConstructor(new Class[] {
-          Integer.TYPE,
-          Integer.TYPE,
-          Integer.TYPE });
-      Field typeIntRgbField = bufferedImageClass.getField("TYPE_INT_RGB");
-      int typeIntRgb = typeIntRgbField.getInt(typeIntRgbField);
-      Object playground =
-        bufferedImageConstructor.newInstance(new Object[] {
-          new Integer(mbox3),
-          new Integer(mbox3),
-          new Integer(typeIntRgb) });
-
-      Class graphicsClass =
-        Class.forName("java.awt.Graphics2D");
-      Method getGraphicsMethod =
-        bufferedImageClass.getMethod("getGraphics", new Class[] { });
-      //Object g = getGraphicsMethod.invoke(playground, new Object[] { });
-      Graphics g = (Graphics)
-        getGraphicsMethod.invoke(playground, new Object[] { });
-
-      Class renderingHintsClass =
-        Class.forName("java.awt.RenderingHints");
-      Class renderingHintsKeyClass =
-        Class.forName("java.awt.RenderingHints$Key");
-      //PApplet.printarr(renderingHintsClass.getFields());
-
-      Field antialiasingKeyField =
-        renderingHintsClass.getField("KEY_TEXT_ANTIALIASING");
-      Object antialiasingKey =
-        antialiasingKeyField.get(renderingHintsClass);
-
-      Field antialiasField = smooth ?
-        renderingHintsClass.getField("VALUE_TEXT_ANTIALIAS_ON") :
-        renderingHintsClass.getField("VALUE_TEXT_ANTIALIAS_OFF");
-      Object antialiasState =
-        antialiasField.get(renderingHintsClass);
-
-      Method setRenderingHintMethod =
-        graphicsClass.getMethod("setRenderingHint",
-                                new Class[] { renderingHintsKeyClass,
-                                              Object.class });
-      setRenderingHintMethod.invoke(g, new Object[] {
-        antialiasingKey,
-        antialiasState
-      });
-      */
 
     g.setFont(font);
     FontMetrics metrics = g.getFontMetrics();
 
     int samples[] = new int[mbox3 * mbox3];
-
-      /*
-      Method canDisplayMethod = null;
-      Method getDataMethod = null;
-      Method getSamplesMethod = null;
-
-      canDisplayMethod =
-        Font.class.getMethod("canDisplay", new Class[] { Character.TYPE });
-      getDataMethod =
-        bufferedImageClass.getMethod("getData", new Class[] { });
-      Class rasterClass = Class.forName("java.awt.image.Raster");
-      getSamplesMethod = rasterClass.getMethod("getSamples", new Class[] {
-        Integer.TYPE,
-        Integer.TYPE,
-        Integer.TYPE,
-        Integer.TYPE,
-        Integer.TYPE,
-        // integer array type?
-        //Array.class
-        samples.getClass()
-      });
-
-      //} catch (Exception e) {
-      //e.printStackTrace();
-      //return;
-      //}
-      */
 
     int maxWidthHeight = 0;
     int index = 0;
@@ -812,17 +518,6 @@ public class PFont implements PConstants {
       if (!font.canDisplay(c)) {  // skip chars not in the font
         continue;
       }
-//      try {
-//        Character ch = new Character(c);
-//        Boolean canDisplay = (Boolean)
-//          canDisplayMethod.invoke(font, new Object[] { ch });
-//        if (canDisplay.booleanValue() == false) {
-//          continue;
-//        }
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//        return;
-//      }
 
       g.setColor(Color.white);
       g.fillRect(0, 0, mbox3, mbox3);
@@ -832,18 +527,6 @@ public class PFont implements PConstants {
       // grabs copy of the current data.. so no updates (do each time)
       Raster raster = playground.getData();
       raster.getSamples(0, 0, mbox3, mbox3, 0, samples);
-
-      /*
-      Object raster = getDataMethod.invoke(playground, new Object[] {});
-      getSamplesMethod.invoke(raster, new Object[] {
-        new Integer(0),
-        new Integer(0),
-        new Integer(mbox3),
-        new Integer(mbox3),
-        new Integer(0),
-        samples
-      });
-      */
 
       int minX = 1000, maxX = 0;
       int minY = 1000, maxY = 0;
@@ -947,11 +630,6 @@ public class PFont implements PConstants {
       }
       bitmaps[i] = null;
     }
-
-//    } catch (Exception e) {  // catch-all for reflection stuff
-//      e.printStackTrace();
-//      throw new RuntimeException(e.getMessage());
-//    }
   }
 
 
@@ -990,9 +668,9 @@ public class PFont implements PConstants {
 
   /** 
    * Starting with Java 1.5, Apple broke the ability to specify most fonts.
-   * This has been filed as bug #4769141 at bugreporter.apple.com.
-   * More information at <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>
-  */   
+   * This has been filed as bug #4769141 at bugreporter.apple.com. More info at
+   * <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>.
+  */
   static public Font findFont(String name) {
     loadFonts();
     if (PApplet.platform == PConstants.MACOSX) {
