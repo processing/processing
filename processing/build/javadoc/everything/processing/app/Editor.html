@@ -50,7 +50,7 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../processing/app/Base.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/Commander.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../processing/app/EditorConsole.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/Editor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -96,11 +96,11 @@ java.lang.Object
                       <IMG SRC="../../resources/inherit.gif" ALT="extended by "><B>processing.app.Editor</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, javax.accessibility.Accessible, javax.swing.RootPaneContainer, javax.swing.WindowConstants</DD>
+<DT><B>All Implemented Interfaces:</B> <DD>java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, javax.accessibility.Accessible, javax.swing.RootPaneContainer, javax.swing.WindowConstants, <A HREF="../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>Editor</B><DT>extends javax.swing.JFrame</DL>
+<DT><PRE>public class <B>Editor</B><DT>extends javax.swing.JFrame<DT>implements <A HREF="../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A></DL>
 </PRE>
 
 <P>
@@ -256,7 +256,7 @@ Main editor panel for the Processing Development Environment.
 <TD><CODE><B><A HREF="../../processing/app/Editor.html#getSelectedText()">getSelectedText</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called to update the text but not switch to a different set of code 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called to update the text but not switch to a different set of code
  (which would affect the undo manager).</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -461,7 +461,7 @@ Main editor panel for the Processing Development Environment.
                 int&nbsp;what)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as newJMenuItem(), but adds the ALT (on Linux and Windows) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
  or OPTION (on Mac OS X) key as a modifier.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -521,8 +521,16 @@ Main editor panel for the Processing Development Environment.
 <TD><CODE><B><A HREF="../../processing/app/Editor.html#startCompoundEdit()">startCompoundEdit</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use before a manipulating text to group editing operations together as a 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use before a manipulating text to group editing operations together as a
  single undo.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Editor.html#statusEmpty()">statusEmpty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clear the status area.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -685,6 +693,9 @@ public static javax.swing.JMenuItem <B>newJMenuItem</B>(java.lang.String&nbsp;ti
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -699,6 +710,9 @@ public static javax.swing.JMenuItem <B>newJMenuItemShift</B>(java.lang.String&nb
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -708,9 +722,12 @@ newJMenuItemAlt</H3>
 public static javax.swing.JMenuItem <B>newJMenuItemAlt</B>(java.lang.String&nbsp;title,
                                                     int&nbsp;what)</PRE>
 <DL>
-<DD>Same as newJMenuItem(), but adds the ALT (on Linux and Windows) 
+<DD>Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
  or OPTION (on Mac OS X) key as a modifier.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -727,6 +744,9 @@ public <A HREF="../../processing/app/Sketch.html" title="class in processing.app
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -735,12 +755,15 @@ getTextArea</H3>
 <PRE>
 public <A HREF="../../processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</A> <B>getTextArea</B>()</PRE>
 <DL>
-<DD>Get the JEditTextArea object for use (not recommended). This should only 
- be used in obscure cases that really need to hack the internals of the 
- JEditTextArea. Most tools should only interface via the get/set functions 
- found in this class. This will maintain compatibility with future releases, 
+<DD>Get the JEditTextArea object for use (not recommended). This should only
+ be used in obscure cases that really need to hack the internals of the
+ JEditTextArea. Most tools should only interface via the get/set functions
+ found in this class. This will maintain compatibility with future releases,
  which will not use JEditTextArea.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -754,6 +777,9 @@ public java.lang.String <B>getText</B>()</PRE>
 <DL>
 <DD>Get the contents of the current buffer. Used by the Sketch class.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -771,6 +797,9 @@ public java.lang.String <B>getText</B>(int&nbsp;start,
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -781,6 +810,9 @@ public void <B>setText</B>(java.lang.String&nbsp;what)</PRE>
 <DL>
 <DD>Replace the entire contents of the front-most tab.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -795,6 +827,9 @@ public void <B>insertText</B>(java.lang.String&nbsp;what)</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -803,9 +838,12 @@ getSelectedText</H3>
 <PRE>
 public java.lang.String <B>getSelectedText</B>()</PRE>
 <DL>
-<DD>Called to update the text but not switch to a different set of code 
+<DD>Called to update the text but not switch to a different set of code
  (which would affect the undo manager).
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -817,6 +855,9 @@ setSelectedText</H3>
 <PRE>
 public void <B>setSelectedText</B>(java.lang.String&nbsp;what)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -832,6 +873,9 @@ public void <B>setSelection</B>(int&nbsp;start,
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -840,11 +884,14 @@ getCaretOffset</H3>
 <PRE>
 public int <B>getCaretOffset</B>()</PRE>
 <DL>
-<DD>Get the position (character offset) of the caret. With text selected, 
- this will be the last character actually selected, no matter the direction 
- of the selection. That is, if the user clicks and drags to select lines 
+<DD>Get the position (character offset) of the caret. With text selected,
+ this will be the last character actually selected, no matter the direction
+ of the selection. That is, if the user clicks and drags to select lines
  7 up to 4, then the caret position will be somewhere on line four.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -861,6 +908,9 @@ public boolean <B>isSelectionActive</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -871,6 +921,9 @@ public int <B>getSelectionStart</B>()</PRE>
 <DL>
 <DD>Get the beginning point of the current selection.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -887,6 +940,9 @@ public int <B>getSelectionStop</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -897,6 +953,9 @@ public java.lang.String <B>getLineText</B>(int&nbsp;line)</PRE>
 <DL>
 <DD>Get text for a specified line.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -914,6 +973,9 @@ public void <B>setLineText</B>(int&nbsp;line,
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -924,6 +986,9 @@ public int <B>getLineStartOffset</B>(int&nbsp;line)</PRE>
 <DL>
 <DD>Get character offset for the start of a given line of text.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -940,6 +1005,9 @@ public int <B>getLineStopOffset</B>(int&nbsp;line)</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -953,6 +1021,9 @@ public int <B>getLineCount</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -961,9 +1032,12 @@ startCompoundEdit</H3>
 <PRE>
 public void <B>startCompoundEdit</B>()</PRE>
 <DL>
-<DD>Use before a manipulating text to group editing operations together as a 
+<DD>Use before a manipulating text to group editing operations together as a
  single undo. Use stopCompoundEdit() once finished.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -980,6 +1054,9 @@ public void <B>stopCompoundEdit</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -988,6 +1065,9 @@ getScrollPosition</H3>
 <PRE>
 public int <B>getScrollPosition</B>()</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1004,6 +1084,9 @@ public void <B>handleCut</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1014,6 +1097,9 @@ public void <B>handleCopy</B>()</PRE>
 <DL>
 <DD>Implements Edit &rarr; Copy.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1030,6 +1116,9 @@ public void <B>handlePaste</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1040,6 +1129,9 @@ public void <B>handleSelectAll</B>()</PRE>
 <DL>
 <DD>Implements Edit &rarr; Select All.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1054,6 +1146,9 @@ public void <B>handleRun</B>(boolean&nbsp;present)</PRE>
 <DD>Implements Sketch &rarr; Run.
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 <DT><B>Parameters:</B><DD><CODE>present</CODE> - Set true to run in full screen (present mode).</DL>
 </DD>
 </DL>
@@ -1064,9 +1159,12 @@ setSketchLocation</H3>
 <PRE>
 public void <B>setSketchLocation</B>(java.awt.Point&nbsp;p)</PRE>
 <DL>
-<DD>Set the location of the sketch run window. Used by Runner to update the 
+<DD>Set the location of the sketch run window. Used by Runner to update the
  Editor about window drag events while the sketch is running.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1084,6 +1182,9 @@ public java.awt.Point <B>getSketchLocation</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1094,6 +1195,9 @@ public void <B>handleStop</B>()</PRE>
 <DL>
 <DD>Implements Sketch &rarr; Stop, or pressing Stop on the toolbar.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1111,6 +1215,9 @@ public void <B>internalRunnerClosed</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1121,6 +1228,9 @@ public void <B>internalCloseRunner</B>()</PRE>
 <DL>
 <DD>Handle internal shutdown of the runner.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1143,6 +1253,9 @@ public boolean <B>handleSave</B>(boolean&nbsp;immediately)</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1151,6 +1264,9 @@ handleSaveAs</H3>
 <PRE>
 public boolean <B>handleSaveAs</B>()</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1172,6 +1288,9 @@ public void <B>handleExport</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1182,6 +1301,9 @@ public void <B>handleExportApplication</B>()</PRE>
 <DL>
 <DD>Handler for Sketch &rarr; Export Application
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1198,6 +1320,9 @@ public void <B>handlePageSetup</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -1208,6 +1333,9 @@ public void <B>handlePrint</B>()</PRE>
 <DL>
 <DD>Handler for File &rarr; Print.
 <P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1222,6 +1350,9 @@ public void <B>statusError</B>(java.lang.String&nbsp;what)</PRE>
 <DD>Show an error int the status bar.
 <P>
 <DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../processing/app/debug/RunnerListener.html#statusError(java.lang.String)">statusError</A></CODE> in interface <CODE><A HREF="../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A></CODE></DL>
+</DD>
+<DD><DL>
 </DL>
 </DD>
 </DL>
@@ -1235,6 +1366,9 @@ public void <B>statusError</B>(java.lang.Exception&nbsp;e)</PRE>
 <DD>Show an exception in the editor status bar.
 <P>
 <DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../processing/app/debug/RunnerListener.html#statusError(java.lang.Exception)">statusError</A></CODE> in interface <CODE><A HREF="../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A></CODE></DL>
+</DD>
+<DD><DL>
 </DL>
 </DD>
 </DL>
@@ -1247,6 +1381,25 @@ public void <B>statusNotice</B>(java.lang.String&nbsp;msg)</PRE>
 <DL>
 <DD>Show a notice message in the editor status bar.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="statusEmpty()"><!-- --></A><H3>
+statusEmpty</H3>
+<PRE>
+public void <B>statusEmpty</B>()</PRE>
+<DL>
+<DD>Clear the status area.
+<P>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -1281,7 +1434,7 @@ public void <B>statusNotice</B>(java.lang.String&nbsp;msg)</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../processing/app/Base.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/Commander.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../processing/app/EditorConsole.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/Editor.html" target="_top"><B>FRAMES</B></A>  &nbsp;

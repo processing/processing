@@ -122,8 +122,10 @@ Runs a compiled sketch. As of release 0136, all sketches are run externally
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../processing/app/debug/Runner.html#Runner(processing.app.Editor, boolean)">Runner</A></B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
-       boolean&nbsp;presenting)</CODE>
+<TD><CODE><B><A HREF="../../../processing/app/debug/Runner.html#Runner(processing.app.Sketch, java.lang.String, boolean, processing.app.debug.RunnerListener)">Runner</A></B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch,
+       java.lang.String&nbsp;appletClassName,
+       boolean&nbsp;presenting,
+       <A HREF="../../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>&nbsp;listener)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -193,17 +195,14 @@ Runs a compiled sketch. As of release 0136, all sketches are run externally
 </TR>
 </TABLE>
 
-<A NAME="Runner(processing.app.Editor, boolean)"><!-- --></A><H3>
+<A NAME="Runner(processing.app.Sketch, java.lang.String, boolean, processing.app.debug.RunnerListener)"><!-- --></A><H3>
 Runner</H3>
 <PRE>
-public <B>Runner</B>(<A HREF="../../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
-              boolean&nbsp;presenting)
-       throws <A HREF="../../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></PRE>
+public <B>Runner</B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch,
+              java.lang.String&nbsp;appletClassName,
+              boolean&nbsp;presenting,
+              <A HREF="../../../processing/app/debug/RunnerListener.html" title="interface in processing.app.debug">RunnerListener</A>&nbsp;listener)</PRE>
 <DL>
-<DL>
-
-<DT><B>Throws:</B>
-<DD><CODE><A HREF="../../../processing/app/debug/RunnerException.html" title="class in processing.app.debug">RunnerException</A></CODE></DL>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->

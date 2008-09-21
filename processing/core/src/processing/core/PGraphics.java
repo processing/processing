@@ -583,11 +583,6 @@ public class PGraphics extends PImage implements PConstants {
    * the defaults get set properly. In a subclass, use this(w, h)
    * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
-   *
-   * @param iwidth  viewport width
-   * @param iheight viewport height
-   * @param path path to filename or null if not relevant
-   * @param parent null unless this is the main drawing surface
    */
   public PGraphics() {
   }

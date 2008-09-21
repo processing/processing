@@ -9,6 +9,17 @@ releases will be super crusty.
 
 ABOUT REV 0149 - XX September 2008
 
+Very large number of bug fixes and changes. Renderers that use PGraphics
+will need to be updated for this release.
+
+This release also adds command-line support, which means that Processing
+can be integrated into all manner of environments. More info below.
+
+Also many updates to the examples in this release.
+
+* RELEASES SINCE 0135 CONTAIN MANY SIGNIFICANT CHANGES, PLEASE READ *
+*  THE NOTES IN THIS FILE FOR ANY RELEASE THAT YOU'VE NOT YET USED. *
+
 [ bug fixes ] 
 
 + Fix GLDrawableFactory.chooseGraphicsConfiguration() error with OpenGL
@@ -18,11 +29,17 @@ ABOUT REV 0149 - XX September 2008
 + Fix problem with error line highlighting (wrong line being highlighted)
   http://dev.processing.org/bugs/show_bug.cgi?id=888
 
++ Make error messages clear the message area.
+  http://dev.processing.org/bugs/show_bug.cgi?id=912
+
 + "IllegalMonitorStateException: current thread not owner" with delay()
   http://dev.processing.org/bugs/show_bug.cgi?id=894
 
 + Make parseFloat() with String[] array return NaN for missing values
   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1220880375
+
++ Renaming the main tab adds .pde to the sketch folder name
+  http://dev.processing.org/bugs/show_bug.cgi?id=922
 
 + Fix problems with text in a rectangle
   http://dev.processing.org/bugs/show_bug.cgi?id=893
@@ -30,11 +47,23 @@ ABOUT REV 0149 - XX September 2008
 
 + Remove extra files that were accidentally included inside core.jar.
 
++ Tool menu not showing until the example (Mangler) was compiled.
+  http://dev.processing.org/bugs/show_bug.cgi?id=892
+
++ Hopefully fix a "transport error 202" error.
+  http://dev.processing.org/bugs/show_bug.cgi?id=895
+
++ Header not always updating on rename... this was an old bug that hasn't
+  been seen or confirmed recently, closing it.
+  http://dev.processing.org/bugs/show_bug.cgi?id=56
+
 [ changes ] 
 
 + Change how PGraphics objects are created for better consistency. Sadly, 
-  this will require any libraries that subclass PGraphics to be rebuilt for
-  this release. (However, internally it's a great improvement.)
+  this will require any libraries that subclass PGraphics to be rebuilt 
+  for this release. (However, internally it's a great improvement.) 
+  Renderer library authors please read the reference for PGraphics:
+  http://dev.processing.org/reference/core/javadoc/processing/core/PGraphics.html
 
 + Alter how createInput(), save(), and saveFrame() work so that they
   are more friendly to signed applets.
@@ -65,17 +94,28 @@ ABOUT REV 0149 - XX September 2008
   code incompatible with Processing on any machine that doesn't have 
   its preferences.txt mangled in the same manner.
 
++ Update Quaqua to 4.4.7 on Mac OS X (http://www.randelshofer.ch/quaqua/)
+
 [ additions ] 
 
 + Implement command-line support. See the reference for Commander for 
-  details on how to use it.
+  details on how to use it: 
+  http://dev.processing.org/reference/everything/javadoc/processing/app/Commander.html
   http://dev.processing.org/bugs/show_bug.cgi?id=219
+  http://dev.processing.org/bugs/show_bug.cgi?id=889
 
 + Added matchAll() method, which is identical to match(), except that 
   it returns an array of all matches in the specified String, rather 
   than just the first. (Thanks to Dan Shiffman for the implementation.)
 
++ Add new "Getting Started" to the help menu
+  http://processing.org/learning/gettingstarted/
+  The old Getting Started item has been renamed to "Environment".
+
 + Added getImage() method to PImage, which returns it as a java.awt.Image.
+
++ Add note to prefs dialog that multiple jar export only works w/o libs
+  http://dev.processing.org/bugs/show_bug.cgi?id=907
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
