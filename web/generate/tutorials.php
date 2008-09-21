@@ -32,6 +32,12 @@ writeFile('learning/tutorials/color/index.html', $page->out());
 if (!is_dir($path.'learning/tutorials/color/imgs')) { mkdir($path.'learning/tutorials/color/imgs', '0757'); }
 copydirr($source.'color/imgs', $path.'learning/tutorials/color/imgs', null, 0757, true);
 
+$page = new Page("Regular Polygon", "Tutorials");
+$page->content(file_get_contents($source."regular_polygon/index.html"));
+writeFile('learning/tutorials/regular_polygon/index.html', $page->out());
+if (!is_dir($path.'learning/tutorials/regular_polygon/imgs')) { mkdir($path.'learning/tutorials/regular_polygon/imgs', '0757'); }
+copydirr($source.'regular_polygon/imgs', $path.'learning/tutorials/regular_polygon/imgs', null, 0757, true);
+
 $benchmark_end = microtime_float();
 $execution_time = round($benchmark_end - $benchmark_start, 4);
 
