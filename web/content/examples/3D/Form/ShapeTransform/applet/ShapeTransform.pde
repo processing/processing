@@ -12,12 +12,11 @@
  * 'p' key toggles between cube/pyramid
  */
 
-// requires Point3D class
 int pts = 7; 
 float angle = 0;
 float radius = 89;
 float cylinderLength = 85;
-//vertices
+
 Point3D vertices[][];
 boolean isPyramid = false;
 

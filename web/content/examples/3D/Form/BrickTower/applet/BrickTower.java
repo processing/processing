@@ -22,7 +22,7 @@ public class BrickTower extends PApplet {
  */
 
 
-float bricksPerLayer = 16.0f;  // This number must be even
+float bricksPerLayer = 16.0f;
 float brickLayers = 18.0f;
 Cube brick;
 float brickWidth = 60, brickHeight = 25, brickDepth = 25;
@@ -37,7 +37,7 @@ public void setup(){
 public void draw(){
   background(0);
   float tempX = 0, tempY = 0, tempZ = 0;
-  fill(162, 82, 49);
+  fill(182, 62, 29);
   noStroke();
   // Add basic light setup
   lights();

@@ -22,7 +22,7 @@ void setup(){
 void draw(){
   background(0);
   float tempX = 0, tempY = 0, tempZ = 0;
-  fill(162, 82, 49);
+  fill(182, 62, 29);
   noStroke();
   // Add basic light setup
   lights();
