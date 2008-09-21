@@ -47,7 +47,10 @@ import com.sun.jdi.event.ExceptionEvent;
 public class Runner implements MessageConsumer {
 
   private boolean presenting;
-
+  
+  // Object that listens for error messages or exceptions. 
+  private RunnerListener listener;
+  
   // Running remote VM
   private VirtualMachine vm;
 
@@ -86,16 +89,19 @@ public class Runner implements MessageConsumer {
 //  private MessageSiphon processError;
 
 
-  public Runner(Editor editor, String appletClassName, boolean presenting) throws RunnerException {
-    this.editor = editor;
-    this.sketch = editor.getSketch();
+  public Runner(Sketch sketch, String appletClassName, 
+                boolean presenting, RunnerListener listener) {
+    this.sketch = sketch;
     this.appletClassName = appletClassName;
     this.presenting = presenting;
-    //EditorConsole.systemOut.println("clear");
-    //System.out.println("clear");
+    this.listener = listener;
+    
+    if (listener instanceof Editor) {
+      this.editor = (Editor) listener;
+    }
   }
 
-
+  
   public void launch() {
     // TODO entire class is a total mess as of release 0136.
     // This will be cleaned up significantly over the next couple months.
@@ -206,17 +212,19 @@ public class Runner implements MessageConsumer {
     // Otherwise, the editor location will be passed, and the applet will
     // figure out where to place itself based on the editor location.
     // --editor-location=150,20
-    Point windowLocation = editor.getSketchLocation();
-    if (windowLocation != null) {
-      params.add(PApplet.ARGS_LOCATION + "=" +
-                 windowLocation.x + "," + windowLocation.y);
-    } else {
-      Point editorLocation = editor.getLocation();
-      params.add(PApplet.ARGS_EDITOR_LOCATION + "=" +
-                 editorLocation.x + "," + editorLocation.y);
+    if (editor != null) {  // if running processing-cmd, don't do placement
+      Point windowLocation = editor.getSketchLocation();
+      if (windowLocation != null) {
+        params.add(PApplet.ARGS_LOCATION + "=" +
+                   windowLocation.x + "," + windowLocation.y);
+      } else {
+        Point editorLocation = editor.getLocation();
+        params.add(PApplet.ARGS_EDITOR_LOCATION + "=" +
+                   editorLocation.x + "," + editorLocation.y);
+      }
+      params.add(PApplet.ARGS_EXTERNAL);
     }
 
-    params.add(PApplet.ARGS_EXTERNAL);
     params.add(PApplet.ARGS_DISPLAY + "=" +
                Preferences.get("run.display"));
     params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
@@ -425,7 +433,9 @@ public class Runner implements MessageConsumer {
         }
         System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
       }
-      editor.statusError("Could not run the sketch.");
+      if (editor != null) {
+        listener.statusError("Could not run the sketch.");
+      }
       return null;
     }
   }
@@ -516,7 +526,9 @@ public class Runner implements MessageConsumer {
       // This happens when the sketch is exited by hitting ESC,
       // or the user manually closes the sketch window.
       // TODO this should be handled better, should it not?
-      editor.internalRunnerClosed();
+      if (editor != null) {
+        editor.internalRunnerClosed();
+      }
 
     } catch (InterruptedException exc) {
       // we don't interrupt
@@ -583,7 +595,7 @@ public class Runner implements MessageConsumer {
 //    if (name.startsWith("java.lang.")) {
 //      name = name.substring(10);
     if (exceptionName.equals("java.lang.OutOfMemoryError")) {
-      editor.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
+      listener.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
       System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
       System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
       System.err.println("loading thousands of images), or that your sketch may need more memory to run.");
@@ -591,20 +603,20 @@ public class Runner implements MessageConsumer {
       System.err.println("you can increase the memory available to your sketch using the Preferences window.");
 
     } else if (exceptionName.equals("java.lang.StackOverflowError")) {
-      editor.statusError("StackOverflowError: This sketch is attempting too much recursion.");
+      listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
       System.err.println("A StackOverflowError means that you have a bug that's causing a function");
       System.err.println("to be called recursively (it's calling itself and going in circles),");
       System.err.println("or you're intentionally calling a recursive function too much,");
       System.err.println("and your code should be rewritten in a more efficient manner.");
 
     } else if (exceptionName.equals("java.lang.UnsupportedClassVersionError")) {
-      editor.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
+      listener.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
       System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.5.");
       System.err.println("A library used by this sketch was compiled for Java 1.6 or later, ");
       System.err.println("and needs to be recompiled to be compatible with Java 1.5.");
 
     } else if (exceptionName.equals("java.lang.NoSuchMethodError") || exceptionName.equals("java.lang.NoSuchFieldError")) {
-      editor.statusError(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
+      listener.statusError(exceptionName.substring(10) + ": You're probably using a library that's incompatible with this version of Processing.");
 
     } else {
       reportException(message, event.thread());
@@ -661,7 +673,7 @@ public class Runner implements MessageConsumer {
             // getMessage() will be what's shown in the editor
             exception = new RunnerException(message, codeIndex, lineNumber, -1);
             exception.hideStackTrace();
-            editor.statusError(exception);
+            listener.statusError(exception);
             return;
           }
         } catch (AbsentInformationException e) {
