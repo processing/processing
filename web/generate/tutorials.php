@@ -3,10 +3,20 @@
 require('../config.php');
 $benchmark_start = microtime_float();
 
-
 // make troubleshooting page
 $source = CONTENTDIR."static/tutorials/";
 $path = BASEDIR;
+
+
+// update the files on the server via SVN
+
+// look for the .subversion folder somewhere else
+// otherwise will go looking for /home/root/.subversion or some other user
+putenv('HOME=' . CONTENTDIR);
+
+$where = CONTENTDIR . 'static/tutorials';
+`cd $where && /usr/local/bin/svn update`;
+
 
 $page = new Page("Tutorials", "Tutorials");
 $page->content(file_get_contents($source."index.html"));
@@ -15,8 +25,6 @@ writeFile('learning/tutorials/index.html', $page->out());
 $page = new Page("Processing in Eclipse", "Tutorials");
 $page->content(file_get_contents($source."eclipse/index.html"));
 writeFile('learning/tutorials/eclipse/index.html', $page->out());
-// copydirr($source.'/eclipse/imgs', $path.'learning/tutorials/eclipse/imgs');
-// copydirr($source.'eclipse/imgs', $path.'learning/tutorials/eclipse/imgs');
 if (!is_dir($path.'learning/tutorials/eclipse/imgs')) { mkdir($path.'learning/tutorials/eclipse/imgs', '0757'); }
 copydirr($source.'eclipse/imgs', $path.'learning/tutorials/eclipse/imgs', null, 0757, true);
 
