@@ -9,7 +9,7 @@ X   use accurate line numbering internally rather than mashing lines in preproc
 X   remove preprocName
 X   remove appletClassName
 X command line support
-_   http://dev.processing.org/bugs/show_bug.cgi?id=219
+X   http://dev.processing.org/bugs/show_bug.cgi?id=219
 o   would still require awt, but would take a sketch on cmd line
 X   modify showError() et al to not use awt when running from command line
 X   build it and then exit
