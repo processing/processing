@@ -12,9 +12,8 @@ $path = BASEDIR;
 
 // look for the .subversion folder somewhere else
 // otherwise will go looking for /home/root/.subversion or some other user
-putenv('HOME=' . CONTENTDIR);
-
 $where = CONTENTDIR . 'static/tutorials';
+putenv('HOME=' . CONTENTDIR);
 `cd $where && /usr/local/bin/svn update`;
 
 
