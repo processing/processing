@@ -460,6 +460,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=100
 _   shows a blank canvas
 _   (was only happening once b/c was drawing first in perspective)
 _   seems to be mapping to 0, 0 - width/2, height/2
+_   fix 3D > OrthoVsPerspective example once ortho works properly
+_     there's a depth problem in addition to the ortho weirdness
 _ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
 _   http://dev.processing.org/bugs/show_bug.cgi?id=176
 _   polygon z-order depth sorting with alpha in opengl

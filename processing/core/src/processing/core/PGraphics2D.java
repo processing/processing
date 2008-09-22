@@ -41,10 +41,12 @@ public class PGraphics2D extends PGraphics {
   PPolygon spolygon;    // stroke/line polygon
   float svertices[][];  // temp vertices used for stroking end of poly
 
+  /*
   // polygon that handles tesselation
   private PPolygon tpolygon;
   private int TPOLYGON_MAX_VERTICES = 512;
   private int tpolygon_vertex_order[]; // = new int[MAX_VERTICES];
+  */
 
   PLine line;
 
@@ -436,42 +438,49 @@ public class PGraphics2D extends PGraphics {
 
 
   private boolean isConvex() {
-    float v[][] = polygon.vertices;
-    int n = polygon.vertexCount;
-    int j,k;
-    int flag = 0;
-    float z;
+    //float v[][] = polygon.vertices;
+    //int n = polygon.vertexCount;
+    //int j,k;
     //float tol = 0.001f;
 
-    if (n < 3)
+    if (polygon.vertexCount < 3) {
       // ERROR: this is a line or a point, render with CONVEX
       return true;
+    }
 
+    int flag = 0;
     // iterate along border doing dot product.
     // if the sign of the result changes, then is concave
-    for (int i=0;i<n;i++) {
-      j = (i + 1) % n;
-      k = (i + 2) % n;
-      z  = (v[j][TX] - v[i][TX]) * (v[k][TY] - v[j][TY]);
-      z -= (v[j][TY] - v[i][TY]) * (v[k][TX] - v[j][TX]);
-      if (z < 0)
+    for (int i = 0; i < polygon.vertexCount; i++) {
+      float[] vi = polygon.vertices[i];
+      float[] vj = polygon.vertices[(i + 1) % polygon.vertexCount];
+      float[] vk = polygon.vertices[(i + 2) % polygon.vertexCount];
+      float z = ((vj[TX] - vi[TX]) * (vk[TY] - vj[TY]) -
+                 (vj[TY] - vi[TY]) * (vk[TX] - vj[TX]));
+      if (z < 0) {
         flag |= 1;
-      else if (z > 0)
+      } else if (z > 0) {
         flag |= 2;
-      if (flag == 3)
+      }
+      if (flag == 3) {
         return false;  // CONCAVE
+      }
     }
-    if (flag != 0)
+    if (flag != 0) {
       return true;    // CONVEX
-    else
+    } else {
       // ERROR: colinear points, self intersection
       // treat as CONVEX
       return true;
+    }
   }
 
 
   // triangulate the current polygon
   private void concaveRender() {
+  }
+  
+  /*
     // WARNING: code is not in optimum form
     // local initiations of some variables are made to
     // keep the code modular and easy to integrate
@@ -671,6 +680,7 @@ public class PGraphics2D extends PGraphics {
       }
     }
   }
+  */
 
 
 
