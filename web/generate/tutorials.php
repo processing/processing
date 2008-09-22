@@ -12,14 +12,17 @@ $path = BASEDIR;
 
 // look for the .subversion folder somewhere else
 // otherwise will go looking for /home/root/.subversion or some other user
-$where = CONTENTDIR . 'static/tutorials/';
+$where = CONTENTDIR . 'static/tutorials';
 putenv('HOME=' . CONTENTDIR);
 
 // do the initial checkout
-`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
+//`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
 
-//`cd $where && /usr/local/bin/svn update`;
+`cd $where && /usr/local/bin/svn update`;
 
+// Copy over the images for the tutorials index
+if (!is_dir($path.'learning/tutorials/imgs')) { mkdir($path.'learning/tutorials/imgs', '0757'); }
+copydirr($source.'imgs', $path.'learning/tutorials/imgs', null, 0757, true);
 
 $page = new Page("Tutorials", "Tutorials");
 $page->content(file_get_contents($source."index.html"));
