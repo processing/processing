@@ -12,7 +12,7 @@ $path = BASEDIR;
 
 // look for the .subversion folder somewhere else
 // otherwise will go looking for /home/root/.subversion or some other user
-$where = CONTENTDIR . 'static/tutorials';
+$where = CONTENTDIR . 'static/tutorials/';
 putenv('HOME=' . CONTENTDIR);
 
 // do the initial checkout
