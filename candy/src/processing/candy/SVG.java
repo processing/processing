@@ -190,6 +190,7 @@ public class SVG extends BaseObject {
         }
 
         //root = new Group(null, svg);
+        parseGroup(svg);  // ?
     }
 
 
