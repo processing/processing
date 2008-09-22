@@ -65,7 +65,7 @@ Keyword used to indicate the value to return from a function. The value being re
 </description>
 
 <syntax>
-<c>type</c>  <c>function</c> {
+<c>type</c>&nbsp;<c>function</c> {
   <c>statements</c>
   return <c>value</c>
 }
