@@ -82,11 +82,14 @@ X   also need to get frame location:
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1221384557
 
 shiffman
-_ update match(), write new reference for matchAll()
+X update match(), write new reference for matchAll()
 
-_ get new version of examples and reference
+_ working on pshape
+_   add shape() methods to PGraphics/PApplet
+_   test and fix svg examples
 _ revisions.txt for x/y/z/ tx/ty/tz.. other changes in api.txt
 _ PMatrix now PMatrix3D (maybe not yet?)
+_ get new version of examples and reference
 
 
 major windows launcher problem

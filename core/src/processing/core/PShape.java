@@ -37,7 +37,7 @@ abstract public class PShape implements PConstants {
   protected String name;
 
   protected int kind;
-  protected int drawMode;
+  //protected int drawMode;
   protected PMatrix3D matrix;
 
   // setAxis -> .x and .y to move x and y coords of origin
@@ -45,9 +45,9 @@ abstract public class PShape implements PConstants {
   protected float y;
   protected float width;
   protected float height;
-
+  
   // set to false if the object is hidden in the layers palette
-  protected boolean visible;
+  protected boolean visible = true;
 
   protected boolean stroke;
   protected int strokeColor;
@@ -58,7 +58,7 @@ abstract public class PShape implements PConstants {
   protected boolean fill;
   protected int fillColor;
   
-  protected boolean styles;
+  protected boolean styles = true;
 
   //public boolean hasTransform;
   //protected float[] transformation;
@@ -75,7 +75,7 @@ abstract public class PShape implements PConstants {
   protected PShape parent;
   protected int childCount;
   protected PShape[] children;
-  protected HashMap<String,PShape> table;
+  protected HashMap<String,PShape> table2;
 
   // POINTS, LINES, xLINE_STRIP, xLINE_LOOP
   // TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN
@@ -166,15 +166,6 @@ abstract public class PShape implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
-  /**
-   * Set the orientation for drawn objects, similar to PImage.imageMode().
-   * @param which Either CORNER, CORNERS, or CENTER.
-   */
-  public void drawMode(int which) {
-      drawMode = which;
-  }
-
-
   boolean strokeSaved;
   int strokeColorSaved;
   float strokeWeightSaved;
@@ -189,12 +180,15 @@ abstract public class PShape implements PConstants {
 
   protected void pre(PGraphics g) {
     if (matrix != null) {
-      boolean flat = g instanceof PGraphics3D;
+      matrix.print();
+      boolean flat = g instanceof PGraphics2D;
 
       g.pushMatrix();
       if (flat) {
-        g.applyMatrix(matrix.m00, matrix.m01, matrix.m02,
-                      matrix.m10, matrix.m11, matrix.m12);
+        g.applyMatrix(matrix.m00, matrix.m01, matrix.m03,
+                      matrix.m10, matrix.m11, matrix.m13);
+//        g.applyMatrix(matrix.m00, matrix.m01, matrix.m02,
+//                      matrix.m10, matrix.m11, matrix.m12);
       } else {
         g.applyMatrix(matrix.m00, matrix.m01, matrix.m02, matrix.m03,
                       matrix.m10, matrix.m11, matrix.m12, matrix.m13,
@@ -264,88 +258,26 @@ abstract public class PShape implements PConstants {
     }
   }
   
-  
+
   /**
    * Called by the following (the shape() command adds the g)
    * PShape s = loadShapes("blah.svg");
    * shape(s);
    */
   public void draw(PGraphics g) {
-    if (!visible) return;
-    
-    if (drawMode == PConstants.CENTER) {
-      g.pushMatrix();
-      g.translate(-width/2, -height/2);
-    }
-    
-    pre(g);
-    drawImpl(g);
-    post(g);
-    
-    if (drawMode == PConstants.CENTER) {
-      g.popMatrix();
-    }
-  }
-
-
-  /**
-   * Convenience method to draw at a particular location.
-   */
-  public void draw(PGraphics g, float x, float y) {
-    if (!visible) return;
-    
-    g.pushMatrix();
-
-    if (drawMode == PConstants.CENTER) {
-      g.translate(x - width/2, y - height/2);
-
-    } else if ((drawMode == PConstants.CORNER) ||
-        (drawMode == PConstants.CORNERS)) {
-      g.translate(x, y);
-    }
-    pre(g);
-    drawImpl(g);
-    post(g);
-
-    g.popMatrix();
-  }
-
-
-  public void draw(PGraphics g, float x, float y, float c, float d) {
-    if (!visible) return;
-    
-      g.pushMatrix();
-
-      if (drawMode == PConstants.CENTER) {
-          // x and y are center, c and d refer to a diameter
-          g.translate(x - c/2f, y - d/2f);
-          g.scale(c / width, d / height);
-
-      } else if (drawMode == PConstants.CORNER) {
-          g.translate(x, y);
-          g.scale(c / width, d / height);
-
-      } else if (drawMode == PConstants.CORNERS) {
-          // c and d are x2/y2, make them into width/height
-          c -= x;
-          d -= y;
-          // then same as above
-          g.translate(x, y);
-          g.scale(c / width, d / height);
-      }
+    if (visible) {
       pre(g);
       drawImpl(g);
       post(g);
-
-      g.popMatrix();
+    }
   }
-
+  
 
   /**
    * Draws the SVG document.
    */
   abstract public void drawImpl(PGraphics g);
-
+  
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -400,11 +332,14 @@ abstract public class PShape implements PConstants {
     }
     children[childCount++] = who;
     who.parent = this;
-    
-    if (table == null) {
-      table = new HashMap<String,PShape>();
+
+    String childName = who.getName();
+    if (childName != null) {
+      if (table == null) {
+        table = new HashMap<String,PShape>();
+      }
+      table.put(childName, who);
     }
-    table.put(who.getName(), who);
   }
 
 
@@ -540,7 +475,5 @@ abstract public class PShape implements PConstants {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
 
 }

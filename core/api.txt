@@ -12,6 +12,13 @@ no longer any abstract methods in PGraphics itself
 
 // 
 
+shapeStyle(null)
+noStyle()
+s.noStyle?
+style(PStyle s) 
+
+// 
+
   setParent()
   setPrimary()
   setPath()
@@ -103,6 +110,11 @@ no longer any abstract methods in PGraphics itself
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2)
+
+  public void shapeMode(int mode)
+  public void shape(PShape shape)
+  public void shape(PShape shape, float x, float y)
+  public void shape(PShape shape, float x, float y, float w, float h)
 
   public void textAlign(int align)
   public void textAlign(int alignX, int alignY)

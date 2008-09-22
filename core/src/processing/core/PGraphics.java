@@ -398,6 +398,9 @@ public class PGraphics extends PImage implements PConstants {
 
   /** The current ellipse mode (read-only) */
   public int ellipseMode;
+  
+  /** The current shape alignment mode (read-only) */
+  public int shapeMode;
 
   /** The current text font (read-only) */
   public PFont textFont;
@@ -1964,6 +1967,85 @@ public class PGraphics extends PImage implements PConstants {
 
 
 
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE OBJECTS
+
+
+  /**
+   * Set the orientation for the shape() command (like imageMode() or rectMode()).
+   * @param which Either CORNER, CORNERS, or CENTER.
+   */
+  public void shapeMode(int mode) {
+    this.shapeMode = mode;
+  }
+  
+  
+  public void shape(PShape shape) {
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      if (shapeMode == CENTER) {
+        pushMatrix();
+        translate(-shape.getWidth()/2, -shape.getHeight()/2);
+      }
+
+      shape.draw(this); // needs to handle recorder too
+
+      if (shapeMode == CENTER) {
+        popMatrix();
+      }
+    }
+  }
+
+
+  /**
+   * Convenience method to draw at a particular location.
+   */
+  public void shape(PShape shape, float x, float y) {
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        translate(x - shape.getWidth()/2, y - shape.getHeight()/2);
+
+      } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
+        translate(x, y);
+      }
+      shape.draw(this);
+
+      popMatrix();
+    }
+  }
+
+
+  public void shape(PShape shape, float x, float y, float c, float d) {
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible    
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        // x and y are center, c and d refer to a diameter
+        translate(x - c/2f, y - d/2f);
+        scale(c / shape.getWidth(), d / shape.getHeight());
+
+      } else if (shapeMode == CORNER) {
+        translate(x, y);
+        scale(c / shape.getWidth(), d / shape.getHeight());
+
+      } else if (shapeMode == CORNERS) {
+        // c and d are x2/y2, make them into width/height
+        c -= x;
+        d -= y;
+        // then same as above
+        translate(x, y);
+        scale(c / shape.getWidth(), d / shape.getHeight());
+      }
+      shape.draw(this);
+
+      popMatrix();
+    }
+  }
+  
+  
+  
   //////////////////////////////////////////////////////////////
 
   // TEXT/FONTS
