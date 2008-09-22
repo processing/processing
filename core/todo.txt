@@ -41,6 +41,8 @@ o   since camera functions don't even look at it or set it
 o registerSize() in arcball is causing trouble
 o   some sort of infinite loop issue
 
+_ need to straighten out 'table' object for quick object lookup
+_   maybe add to all parent tables?
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

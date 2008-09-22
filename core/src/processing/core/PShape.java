@@ -75,7 +75,7 @@ abstract public class PShape implements PConstants {
   protected PShape parent;
   protected int childCount;
   protected PShape[] children;
-  protected HashMap<String,PShape> table2;
+  protected HashMap<String,PShape> table;
 
   // POINTS, LINES, xLINE_STRIP, xLINE_LOOP
   // TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN
@@ -180,15 +180,12 @@ abstract public class PShape implements PConstants {
 
   protected void pre(PGraphics g) {
     if (matrix != null) {
-      matrix.print();
       boolean flat = g instanceof PGraphics2D;
 
       g.pushMatrix();
       if (flat) {
-        g.applyMatrix(matrix.m00, matrix.m01, matrix.m03,
+        g.applyMatrix(matrix.m00, matrix.m01, matrix.m03,  // PMatrix3D
                       matrix.m10, matrix.m11, matrix.m13);
-//        g.applyMatrix(matrix.m00, matrix.m01, matrix.m02,
-//                      matrix.m10, matrix.m11, matrix.m12);
       } else {
         g.applyMatrix(matrix.m00, matrix.m01, matrix.m02, matrix.m03,
                       matrix.m10, matrix.m11, matrix.m12, matrix.m13,
@@ -265,6 +262,7 @@ abstract public class PShape implements PConstants {
    * shape(s);
    */
   public void draw(PGraphics g) {
+    //System.out.println("drawing " + getClass().getName());
     if (visible) {
       pre(g);
       drawImpl(g);
@@ -292,7 +290,10 @@ abstract public class PShape implements PConstants {
   }
   
   
-  public PShape getChild(String name) {
+  public PShape getChild(String who) {
+    if (name != null && name.equals(who)) {
+      return this;
+    }
     if (table != null) {
       for (String n : table.keySet()) {
         if (n.equals(name)) {
@@ -333,6 +334,7 @@ abstract public class PShape implements PConstants {
     children[childCount++] = who;
     who.parent = this;
 
+    /*
     String childName = who.getName();
     if (childName != null) {
       if (table == null) {
@@ -340,6 +342,7 @@ abstract public class PShape implements PConstants {
       }
       table.put(childName, who);
     }
+    */
   }
 
 
