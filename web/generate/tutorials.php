@@ -55,6 +55,7 @@ $execution_time = round($benchmark_end - $benchmark_start, 4);
 ?>
 
 <h2>Static page generation Successful</h2>
+<h2>Updated <?=$where?> </h2>
 <p>Generated files in <?=$execution_time?> seconds.</p>
 <!--<p>Page put here: <?=$source."faq.html"?></p>-->
 <!--<p>Page put here: <?=$path.'faq.html'?></p>-->
