@@ -6962,6 +6962,30 @@ public class PApplet extends Applet
   }
 
 
+  public void shapeMode(int mode) {
+    if (recorder != null) recorder.shapeMode(mode);
+    g.shapeMode(mode);
+  }
+
+
+  public void shape(PShape shape) {
+    if (recorder != null) recorder.shape(shape);
+    g.shape(shape);
+  }
+
+
+  public void shape(PShape shape, float x, float y) {
+    if (recorder != null) recorder.shape(shape, x, y);
+    g.shape(shape, x, y);
+  }
+
+
+  public void shape(PShape shape, float x, float y, float c, float d) {
+    if (recorder != null) recorder.shape(shape, x, y, c, d);
+    g.shape(shape, x, y, c, d);
+  }
+
+
   public void textAlign(int align) {
     if (recorder != null) recorder.textAlign(align);
     g.textAlign(align);
