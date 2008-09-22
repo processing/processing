@@ -72,10 +72,10 @@ public class BaseObject extends PShape {
 		element = properties;
 
 		name = properties.getStringAttribute("id");
-		if (name != null) {
-			table.put(name, this);
-			//System.out.println("now parsing " + id);
-		}
+//		if (name != null) {
+//			table.put(name, this);
+//			//System.out.println("now parsing " + id);
+//		}
 
 		String displayStr = properties.getStringAttribute("display", "inline");
 		visible = !displayStr.equals("none");
@@ -83,7 +83,7 @@ public class BaseObject extends PShape {
 		String transformStr = properties.getStringAttribute("transform");
 		if (transformStr != null) {
 			float[] t = parseMatrix(transformStr);
-			//matrix = new PMatrix2D(t[0], t[1], t[2], t[3], t[4], t[5]);
+			//matrix = new PMatrix2D(t[0], t[2], t[4], t[1], t[3], t[5]);
 			matrix = new PMatrix3D(t[0], t[2], 0, t[4], 
 					               t[1], t[3], 0, t[5],
 					               0, 0, 1, 0,
@@ -91,6 +91,8 @@ public class BaseObject extends PShape {
 		}
 		
 		parseColors(properties);
+		
+		parseChildren(properties);
 	}
 
 
@@ -198,7 +200,7 @@ public class BaseObject extends PShape {
 				strokeColor = opacityMask | parseRGB(strokeText);
 			} else if (strokeText.startsWith("url(#")) {
 				strokeName = strokeText.substring(5, strokeText.length() - 1);
-				Object strokeObject = table.get(strokeName);
+				Object strokeObject = findChild(strokeName);
 				if (strokeObject instanceof Gradient) {
 					strokeGradient = (Gradient) strokeObject;
 					strokeGradientPaint = calcGradientPaint(strokeGradient); //, opacity);
@@ -262,7 +264,7 @@ public class BaseObject extends PShape {
 			} else if (fillText.startsWith("url(#")) {
 				fillName = fillText.substring(5, fillText.length() - 1);
 				//PApplet.println("looking for " + fillName);
-				Object fillObject = table.get(fillName);
+				Object fillObject = findChild(fillName);
 				//PApplet.println("found " + fillObject);
 				if (fillObject instanceof Gradient) {
 					fill = true;
@@ -530,14 +532,17 @@ public class BaseObject extends PShape {
 	}
 	
 	
-	protected void parseGroup(XMLElement graphics) {
+	protected void parseChildren(XMLElement graphics) {
 		XMLElement[] elements = graphics.getChildren();
 		//objects = new BaseObject[elements.length];
 		children = new PShape[elements.length];
 		childCount = 0;
 
 		for (XMLElement elem : elements) {
-			addChild(parseGroupChild(elem));
+			PShape kid = parseChild(elem);
+			if (kid != null) {
+				addChild(kid);
+			}
 		}
 
 		//		for (int i = 0; i < elements.length; i++) {
@@ -549,7 +554,7 @@ public class BaseObject extends PShape {
 	}
 
 
-	protected PShape parseGroupChild(XMLElement elem) {
+	protected PShape parseChild(XMLElement elem) {
 		String name = elem.getName();
 
 		if (name.equals("g")) {

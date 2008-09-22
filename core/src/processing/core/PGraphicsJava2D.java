@@ -1040,7 +1040,10 @@ public class PGraphicsJava2D extends PGraphics2D {
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
+    //System.out.println("PGraphicsJava2D.applyMatrix()");
+    //System.out.println(new AffineTransform(n00, n10, n01, n11, n02, n12));
     g2.transform(new AffineTransform(n00, n10, n01, n11, n02, n12));
+    //g2.transform(new AffineTransform(n00, n01, n02, n10, n11, n12));
   }
 
 
