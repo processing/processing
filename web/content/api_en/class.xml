@@ -32,7 +32,7 @@ class HLine {
   } 
   void update() { 
     ypos += speed; 
-    if (ypos &gt; width) { 
+    if (ypos &gt; height) { 
       ypos = 0; 
     } 
     line(0, ypos, width, ypos); 
