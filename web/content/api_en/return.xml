@@ -65,7 +65,7 @@ Keyword used to indicate the value to return from a function. The value being re
 </description>
 
 <syntax>
-<c>type</c> <c>function</c> {
+<c>type</c>  <c>function</c> {
   <c>statements</c>
   return <c>value</c>
 }
@@ -78,7 +78,7 @@ Keyword used to indicate the value to return from a function. The value being re
 
 <parameter>
 <label>function</label>
-<description>any function that is being defined</description>
+<description>a function that is being defined</description>
 </parameter>
 
 <parameter>
