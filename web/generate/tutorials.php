@@ -14,7 +14,11 @@ $path = BASEDIR;
 // otherwise will go looking for /home/root/.subversion or some other user
 $where = CONTENTDIR . 'static/tutorials';
 putenv('HOME=' . CONTENTDIR);
-`cd $where && /usr/local/bin/svn update`;
+
+// do the initial checkout
+`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/static/tutorials/`;
+
+//`cd $where && /usr/local/bin/svn update`;
 
 
 $page = new Page("Tutorials", "Tutorials");
