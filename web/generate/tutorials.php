@@ -16,9 +16,9 @@ $where = CONTENTDIR . 'static/tutorials/';
 putenv('HOME=' . CONTENTDIR);
 
 // do the initial checkout
-//`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
+`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
 
-`cd $where && /usr/local/bin/svn update`;
+//`cd $where && /usr/local/bin/svn update`;
 
 
 $page = new Page("Tutorials", "Tutorials");
