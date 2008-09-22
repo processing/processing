@@ -11,8 +11,8 @@ public class Circle extends BaseObject {
 		super(parent, properties);
 		this.x = properties.getFloatAttribute("cx");
 		this.y = properties.getFloatAttribute("cy");
-		float radius = properties.getFloatAttribute("r") * 2;
-		width = height = radius;
+		float radius = properties.getFloatAttribute("r");
+		width = height = radius * 2;
 	}
 
 

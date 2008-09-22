@@ -83,7 +83,11 @@ public class BaseObject extends PShape {
 		String transformStr = properties.getStringAttribute("transform");
 		if (transformStr != null) {
 			float[] t = parseMatrix(transformStr);
-			matrix = new PMatrix3D(t[0], t[1], t[2], t[3], t[4], t[5]);
+			//matrix = new PMatrix2D(t[0], t[1], t[2], t[3], t[4], t[5]);
+			matrix = new PMatrix3D(t[0], t[2], 0, t[4], 
+					               t[1], t[3], 0, t[5],
+					               0, 0, 1, 0,
+					               0, 0, 0, 1);
 		}
 		
 		parseColors(properties);
