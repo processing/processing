@@ -24,7 +24,7 @@ String sc = str(c);
 String sf = str(f);
 String si = str(i);
 
-sb = sb + sy + sc + sf + si + sh;
+sb = sb + sy + sc + sf + si;
 
 println(sb);  // Prints 'false-28R-32.61024'
 </code>
