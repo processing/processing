@@ -989,12 +989,14 @@ public class PGraphics3D extends PGraphics {
 
   protected final void add_path() {
     if (pathCount == pathOffset.length) {
-      int temp1[] = new int[pathCount << 1];
-      System.arraycopy(pathOffset, 0, temp1, 0, pathCount);
-      pathOffset = temp1;
-      int temp2[] = new int[pathCount << 1];
-      System.arraycopy(pathLength, 0, temp2, 0, pathCount);
-      pathLength = temp2;
+//      int temp1[] = new int[pathCount << 1];
+//      System.arraycopy(pathOffset, 0, temp1, 0, pathCount);
+//      pathOffset = temp1;
+//      int temp2[] = new int[pathCount << 1];
+//      System.arraycopy(pathLength, 0, temp2, 0, pathCount);
+//      pathLength = temp2;
+      pathOffset = PApplet.expand(pathOffset);
+      pathLength = PApplet.expand(pathLength);
     }
     pathOffset[pathCount] = lineCount;
     pathLength[pathCount] = 0;
