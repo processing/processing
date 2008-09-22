@@ -1,6 +1,102 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <courses>
     <course>
+        <date>1st August, 2008</date>
+        <institution>Bioinformatics Centre, Pune University</institution>
+        <title>Computer Graphics and Visualization for Computational Biologists</title>
+        <description>This is a 6 months long regular module for Masters students (Masters in Bioinformatics@Pune University) intended to expertise students ability for data modeling using computer graphics concepts. This course uses Processing and R (statistical software) for the practical sessions.&lt;br /&gt;&lt;br /&gt;*Introduction to computer graphics. &lt;br /&gt;*Data interpretation through visualization. *Object Oriented programming in Java. &lt;br /&gt;*Image processing and interactive visualization through processing. &lt;br /&gt;*Advance plotting using R.&lt;br /&gt;* Application of computer graphics and visualization in Bioinformatics.</description>
+        <contact>
+            <name>Ranjib Dey</name>
+            <email>ranjib_dey at persistent dot co dot in</email>
+        </contact>
+        <links>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+            <link>
+                <title></title>
+                <url></url>
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>21,28 y 5 de julio</date>
+        <institution>Museo Nacional de Artes Visuales, Montevideo-Uruguay</institution>
+        <title>Taller Introducción a Processing</title>
+        <description>Ciclo arte+código. &lt;br /&gt;Taller Introducción a Processing&lt;br /&gt;Enrique Aguerre y Tomás Laurenzo&lt;br /&gt;&lt;br /&gt;El taller está dirigido a artistas visuales, diseñadores, músicos, arquitectos y a todas aquellas personas interesadas en la programación como medio creativo.&lt;br /&gt;&lt;br /&gt;El objetivo del taller consiste en brindar a los asistentes conocimientos básicos de programación orientada al desarrollo de proyectos audiovisuales.&lt;br /&gt;&lt;br /&gt;Museo Nacional de Artes Visuales&lt;br /&gt;Montevideo, Uruguay&lt;br /&gt;</description>
+        <contact>
+            <name>Enrique Aguerre</name>
+            <email>enriqueaguerre at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title>Museo Nacional de Artes Visuales</title>
+                <url>http://www.manv.gub.uy/</url>
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
+        <date>21, 28 de junio y 5 de julio</date>
+        <institution>Museo Nacional de Artes Visuales</institution>
+        <title>Ciclo arte+código. Taller Introducción a Processing</title>
+        <description>El taller está dirigido a artistas visuales, diseñadores, músicos, arquitectos y a todas aquellas personas interesadas en la programación como medio creativo.&lt;br /&gt;&lt;br /&gt;Processing es un lenguaje y entorno de programación de código libre basado en Java, que fue desarrollado por Casey Reas y Ben Fry en el Grupo de Investigación de Computación Estética del MIT Media Lab (Massachusetts Institute of Technology).&lt;br /&gt;www.processing.org&lt;br /&gt;&lt;br /&gt;El objetivo del taller consiste en brindar a los asistentes conocimientos básicos de programación orientada al desarrollo de proyectos audiovisuales.&lt;br /&gt;&lt;br /&gt;Contenidos&lt;br /&gt;&lt;br /&gt;[primer día]&lt;br /&gt;Definición arte+código &lt;br /&gt;Cronología de arte y tecnología. &lt;br /&gt;Programación cero. &lt;br /&gt;Proyectos realizados en Processing &lt;br /&gt;&lt;br /&gt;[segundo día]&lt;br /&gt;Processing [sitio web &amp; comunidad] &lt;br /&gt;Instalación del programa. &lt;br /&gt;Primeras líneas e instrucciones. &lt;br /&gt;&lt;br /&gt;[tercer día] Conceptos de programación:&lt;br /&gt;Métodos | Variables &lt;br /&gt;If | Bucles &lt;br /&gt;Arrays | Funciones | Clases &lt;br /&gt;Tipografía | Sonido | Video &lt;br /&gt;Bibliotecas externas &lt;br /&gt;Exportar la aplicación &lt;br /&gt;&lt;br /&gt;Las inscripciones son libres y gratuitas y el cupo es limitado. Inscripciones previas: educativamnav@gmail.com&lt;br /&gt;&lt;br /&gt;Se recomienda la asistencia al taller con computadora portátil en caso de poseerla. Se entregará certificado por el 100% de asistencia</description>
+        <contact>
+            <name>Museo Nacional de Artes Visuales</name>
+            <email>educativamnav at gmail dot com</email>
+        </contact>
+        <links>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+            <link>
+                <title />
+                <url />
+            </link>
+        </links>
+    </course>
+    <course>
         <date>Monday, June 9th 2008</date>
         <institution>Flashbelt Conference - Minneapolis, MN</institution>
         <title>Learning Processing</title>
@@ -19,16 +115,16 @@
                 <url>http://p365.armatodesign.com/</url>
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
             <link>
-                <title></title>
-                <url></url>
+                <title />
+                <url />
             </link>
         </links>
     </course>

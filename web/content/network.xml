@@ -1,5 +1,337 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="virtual plant" by="Richard Schaffranek">
+        <location>http://herdeundarchitektur.blogspot.com/</location>
+        <date>16 Sep &apos;08</date>
+    </software>
+    <software name="Courbes" by="PolEtTique">
+        <location>http://phpbb.sans.entraves.free.fr/forum/jeux/applet/index.html</location>
+        <date>12 Sep &apos;08</date>
+    </software>
+    <software name="2008 Presidential Candidate Donations Data Vis" by="Wes Grubbs">
+        <location>http://www.pitchinteractive.com/election2008/</location>
+        <date>11 Sep &apos;08</date>
+    </software>
+    <software name="XY Ray" by="Rhys Turner">
+        <location>http://www.xyray.rtek.com.au/</location>
+        <date>10 Sep &apos;08</date>
+    </software>
+    <software name="Realtime Stats" by="stefan">
+        <location>http://travel.workmatrix.de/blog/2008/09/why-we-like-realtime-website-stats/</location>
+        <date>09 Sep &apos;08</date>
+    </software>
+    <software name="Analog clock" by="tom3k">
+        <location>http://tom3k.info/processing/analog_clock/</location>
+        <date>04 Sep &apos;08</date>
+    </software>
+    <software name="chromosome 20" by="Leonard C. Lee">
+        <location>http://www.flickr.com/photos/thirteen/2738353101/</location>
+        <date>30 Aug &apos;08</date>
+    </software>
+    <software name="recursive circulation" by="jeremy awon">
+        <location>http://jeremyawon.info/ex/rc/</location>
+        <date>26 Aug &apos;08</date>
+    </software>
+    <software name="SeRII &amp; Tardis" by="Frederik Vanhoutte">
+        <location>http://www.wblut.com/</location>
+        <date>25 Aug &apos;08</date>
+    </software>
+    <software name="randomly squares in a 4d-space" by="4d_face_p3d">
+        <location>http://www.flickr.com/photos/28120841@N03/2786888550/</location>
+        <date>24 Aug &apos;08</date>
+    </software>
+    <software name="Txt-Me-1st" by="Hamlet + Justin + Evsc">
+        <location>http://evsc.net/proj/txtme1st/index.htm</location>
+        <date>22 Aug &apos;08</date>
+    </software>
+    <software name="Dipole Spin System" by="evsc">
+        <location>http://evsc.net/v6/applets/dipole/index.html</location>
+        <date>22 Aug &apos;08</date>
+    </software>
+    <software name="2DCoupledLogisticMap" by="dmarec">
+        <location>http://www.imagedesmaths.fr/index.php?option=com_content&amp;task=blogcategory&amp;id=39&amp;Itemid=48</location>
+        <date>22 Aug &apos;08</date>
+    </software>
+    <software name="Last.fm Spring Graph" by="Andrew P. E. Collins">
+        <location>http://www.swcp.com/~atomboy/lastfmgraph/</location>
+        <date>20 Aug &apos;08</date>
+    </software>
+    <software name="digitalkilt" by="sung wook cho (nick : Lako)">
+        <location>http://digitalkilt.com/</location>
+        <date>16 Aug &apos;08</date>
+    </software>
+    <software name="Binary Stacks" by="Kyle McDonald">
+        <location>http://www.flickr.com/photos/kylemcdonald/sets/72157606736038755/</location>
+        <date>14 Aug &apos;08</date>
+    </software>
+    <software name="tictag" by="giannis panagiotou &amp; christina papakonstantinou">
+        <location>http://tictag.cc/</location>
+        <date>10 Aug &apos;08</date>
+    </software>
+    <software name="the GoM, the God of Music" by="salvatore iaconesi">
+        <location>http://www.artisopensource.net/GoM/</location>
+        <date>09 Aug &apos;08</date>
+    </software>
+    <software name="ChakraPuter" by="xdxd.vs.xdxd">
+        <location>http://www.artisopensource.net/Chakraputer/index.html</location>
+        <date>08 Aug &apos;08</date>
+    </software>
+    <software name="Buffon&apos;s Needle" by="David Brunton">
+        <location>http://davidbrunton.com/buffon</location>
+        <date>08 Aug &apos;08</date>
+    </software>
+    <software name="walk" by="richard Schaffranek">
+        <location>http://sheep.stylebar.de/walk/walk.html</location>
+        <date>07 Aug &apos;08</date>
+    </software>
+    <software name="False Binaries (Black &amp; White)" by="Chris Basmajian">
+        <location>http://basmajian.net/work/false_binaries_black_and_white/</location>
+        <date>06 Aug &apos;08</date>
+    </software>
+    <software name="False Binaries (Rhetoric)" by="Chris Basmajian">
+        <location>http://basmajian.net/work/false_binaries_rhetoric/</location>
+        <date>06 Aug &apos;08</date>
+    </software>
+    <software name="Repulsion" by="TM">
+        <location>http://sosobering.free.fr/art/?p=158</location>
+        <date>05 Aug &apos;08</date>
+    </software>
+    <software name="Perspectives on infinity" by="Ben Calder">
+        <location>http://myweb.tiscali.co.uk/blindfish2/perspective/</location>
+        <date>04 Aug &apos;08</date>
+    </software>
+    <software name="Shooting with the burdening game" by="Alexander Sorokin">
+        <location>http://gromina.googlepages.com/shootingwiththeburdeninggame</location>
+        <date>02 Aug &apos;08</date>
+    </software>
+    <software name="Digital clock with morphing numbers" by="hengying@gmail.com">
+        <location>http://enjoyna.com/applet/number_morph/index.html</location>
+        <date>01 Aug &apos;08</date>
+    </software>
+    <software name="the.blob.track." by="movope prod.">
+        <location>http://movope.de/en/theblobtrack.html</location>
+        <date>31 Jul &apos;08</date>
+    </software>
+    <software name="dancing.recursives." by="movope prod.">
+        <location>http://www.movope.de/en/dancingrec.html</location>
+        <date>31 Jul &apos;08</date>
+    </software>
+    <software name="HEXIC" by="JAMES Kong">
+        <location>http://fishkingsin.com/</location>
+        <date>31 Jul &apos;08</date>
+    </software>
+    <software name="wfMap - wifi visualization" by="Thiago Avancini">
+        <location>http://thiagoavancini.com/experiments/view/7201551204716241028</location>
+        <date>30 Jul &apos;08</date>
+    </software>
+    <software name="Flywire" by="Wit Pimkanchanapong">
+        <location>http://www.vimeo.com/1316670</location>
+        <date>29 Jul &apos;08</date>
+    </software>
+    <software name="Void" by="Leonardo Solaas">
+        <location>http://solaas.com.ar/node/13</location>
+        <date>26 Jul &apos;08</date>
+    </software>
+    <software name="Face Recognition" by="Thiago Avancini">
+        <location>http://thiagoavancini.com/portfolio/view/4804591144248417809</location>
+        <date>25 Jul &apos;08</date>
+    </software>
+    <software name="Color Reactive" by="Thiago Avancini">
+        <location>http://thiagoavancini.com/experiments/view/6910138238501475283</location>
+        <date>24 Jul &apos;08</date>
+    </software>
+    <software name="Stroem" by="F. Gruber, N. Hartmann, T. Lorenz, C.Simmel">
+        <location>http://213.47.55.208/ambientartlab/?page_id=21</location>
+        <date>21 Jul &apos;08</date>
+    </software>
+    <software name="Snake Charmer" by="Fergus Ray Murray">
+        <location>http://oolong.co.uk/sc</location>
+        <date>19 Jul &apos;08</date>
+    </software>
+    <software name="Twitter StreamGraphs" by="Jeff Clark">
+        <location>http://www.neoformix.com/Projects/TwitterStreamGraphs/view.php?q=coffee</location>
+        <date>15 Jul &apos;08</date>
+    </software>
+    <software name="3dots" by="Nikolas Grigoriou">
+        <location>http://threedots.gr/</location>
+        <date>12 Jul &apos;08</date>
+    </software>
+    <software name="Painting on the Silence" by="Jonathan McCullough">
+        <location>http://www.youtube.com/watch?v=4YceZOSBVIY</location>
+        <date>11 Jul &apos;08</date>
+    </software>
+    <software name="Floors at the Getty Villa" by="David Frerichs">
+        <location>http://www.frerichs.net/floorpattern.html</location>
+        <date>11 Jul &apos;08</date>
+    </software>
+    <software name="GeoSketches" by="Walter Rafelsberger">
+        <location>http://www.metaportaldermedienpolemik.net/blog/Blog/2008-07-02/Geosketches</location>
+        <date>09 Jul &apos;08</date>
+    </software>
+    <software name="Arduino to 3D Studio Max" by="melka">
+        <location>http://play-collective.net/blog/archives/61</location>
+        <date>08 Jul &apos;08</date>
+    </software>
+    <software name="Frame Differencing Tricks" by="beckel">
+        <location>http://www.vimeo.com/1282940</location>
+        <date>06 Jul &apos;08</date>
+    </software>
+    <software name="Parabola focus" by="Alexander Sorokin">
+        <location>http://gromoblog.blogspot.com/2008/07/parabola-focus-animation.html</location>
+        <date>03 Jul &apos;08</date>
+    </software>
+    <software name="Curvature" by="Frederik Vanhoutte">
+        <location>http://www.wblut.com/</location>
+        <date>01 Jul &apos;08</date>
+    </software>
+    <software name="Space Filling" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/tutorial-9-filling-space/</location>
+        <date>30 Jun &apos;08</date>
+    </software>
+    <software name="Mathemes" by="Chris Basmajian">
+        <location>http://basmajian.net/work/mathemes/</location>
+        <date>30 Jun &apos;08</date>
+    </software>
+    <software name="Graphemes" by="Chris Basmajian">
+        <location>http://basmajian.net/work/graphemes/</location>
+        <date>30 Jun &apos;08</date>
+    </software>
+    <software name="City World Map" by="Walter Rafelsberger">
+        <location>http://www.flickr.com/photos/walterra/2625156432/</location>
+        <date>30 Jun &apos;08</date>
+    </software>
+    <software name="Chromatic frequency in Spanish written press" by="Daniel Jacoby">
+        <location>http://www.danieljacoby.com/?p=59</location>
+        <date>27 Jun &apos;08</date>
+    </software>
+    <software name="Caffeine Viewer" by="colmeia">
+        <location>http://colmeia.tv/caffeine</location>
+        <date>26 Jun &apos;08</date>
+    </software>
+    <software name="Processing.as" by="Tim Ryan">
+        <location>http://code.google.com/p/processingas/</location>
+        <date>26 Jun &apos;08</date>
+    </software>
+    <software name="Simple Galaxy" by="JohnG">
+        <location>http://www.hardcorepawn.com/galaxy/</location>
+        <date>24 Jun &apos;08</date>
+    </software>
+    <software name="Generative evolution: Aurora" by="Simone Chiaretta">
+        <location>http://www.vimeo.com/1063627</location>
+        <date>24 Jun &apos;08</date>
+    </software>
+    <software name="A* Search" by="binarymillenium">
+        <location>http://binarymillenium.googlecode.com/svn/trunk/processing/astar/svnapplet/index.html</location>
+        <date>24 Jun &apos;08</date>
+    </software>
+    <software name="unfolding - folding polyhedron (source code)" by="dmarec">
+        <location>http://www.imagedesmaths.fr/atelierPerso/unfoldingPolyhedron</location>
+        <date>24 Jun &apos;08</date>
+    </software>
+    <software name="Moscow Olympics: Second Trace video" by="Eduardo Omine">
+        <location>http://blog.omine.net/2008/06/22/moscow-olympics-second-trace/</location>
+        <date>23 Jun &apos;08</date>
+    </software>
+    <software name="cyclic" by="Frederik Vanhoutte">
+        <location>http://www.wblut.com/</location>
+        <date>21 Jun &apos;08</date>
+    </software>
+    <software name="5d-Hypercube" by="the projection  onto 3 dimension">
+        <location>http://vimeo.com/1157313</location>
+        <date>18 Jun &apos;08</date>
+    </software>
+    <software name="CabBoots - Shoes with integrated guidance system" by="Martin Frey">
+        <location>http://www.freymartin.de/en/projects/cabboots</location>
+        <date>18 Jun &apos;08</date>
+    </software>
+    <software name="self.detach" by="Tim Horntrich and Jens Wunderling">
+        <location>http://www.selfdetach.net/</location>
+        <date>18 Jun &apos;08</date>
+    </software>
+    <software name="ROC and Cost Curve Duality" by="Mark Reid">
+        <location>http://conflate.net/inductio/2008/04/visualising-roc-and-cost-curve-duality/</location>
+        <date>17 Jun &apos;08</date>
+    </software>
+    <software name="Visualising 19th Century Reading Data" by="Mark Reid">
+        <location>http://conflate.net/inductio/wp-content/public/acrp/</location>
+        <date>17 Jun &apos;08</date>
+    </software>
+    <software name="The error site" by="Christos Mousas">
+        <location>http://www.ionio.gr/~av200420/theerrorsite</location>
+        <date>17 Jun &apos;08</date>
+    </software>
+    <software name="4 elements 1 intruder" by="glyph.">
+        <location>http://www.glyphisabox.net/intruder</location>
+        <date>15 Jun &apos;08</date>
+    </software>
+    <software name="4 elements 1 intruder" by="glyph.">
+        <location>http://www.glyphisabox.net/intruder</location>
+        <date>15 Jun &apos;08</date>
+    </software>
+    <software name="particleflow" by="binarymillenium">
+        <location>http://openprocessing.org/visuals/?visualID=281</location>
+        <date>14 Jun &apos;08</date>
+    </software>
+    <software name="line of elegance" by="kitdashit">
+        <location>http://kitdashit.com/processing/lineOfElegance</location>
+        <date>13 Jun &apos;08</date>
+    </software>
+    <software name="Real-Time Chronotopic Anamorphosis" by="André Mintz">
+        <location>http://www.vimeo.com/1163538</location>
+        <date>13 Jun &apos;08</date>
+    </software>
+    <software name="Wii Remote -  modeling experiment." by="Jens Lembke">
+        <location>http://www.contentismissing.net/?p=42</location>
+        <date>09 Jun &apos;08</date>
+    </software>
+    <software name="unfolding Polyedron" by="dmarec">
+        <location>http://www.imagedesmaths.fr/</location>
+        <date>08 Jun &apos;08</date>
+    </software>
+    <software name="Marginalia 1.0 BETA" by="André Mintz and Pedro Veneroso">
+        <location>http://marginalia-project.blogspot.com/</location>
+        <date>07 Jun &apos;08</date>
+    </software>
+    <software name="Design aplication" by="capo">
+        <location>http://www.flickr.com/photos/capoluiz/2555976189/</location>
+        <date>07 Jun &apos;08</date>
+    </software>
+    <software name="Aplications in design" by="Capo">
+        <location>http://www.flickr.com/photos/capoluiz/2360333577/</location>
+        <date>07 Jun &apos;08</date>
+    </software>
+    <software name="Code_font" by="Capo">
+        <location>http://www.flickr.com/photos/capoluiz/2360333577/</location>
+        <date>07 Jun &apos;08</date>
+    </software>
+    <software name="Video Scissors + Tutorial" by="Don Havey">
+        <location>http://www.donhavey.com/blog/tutorials/tutorial-8-video-scissors/</location>
+        <date>06 Jun &apos;08</date>
+    </software>
+    <software name="The Special Player" by="TSP WG">
+        <location>http://www.thespecialplayer.com/</location>
+        <date>04 Jun &apos;08</date>
+    </software>
+    <software name="Odio Terz video clip all built with processing" by="abscondorium laboratory">
+        <location>http://www.abscondorium.com/?p=91</location>
+        <date>03 Jun &apos;08</date>
+    </software>
+    <software name="Rotating 4-7D Hypercube ..." by="... with the mouse button held down.">
+        <location>http://www.4d-screen.de/related-space/</location>
+        <date>01 Jun &apos;08</date>
+    </software>
+    <software name="bursting attractor" by="rce12">
+        <location>http://openprocessing.org/visuals/?visualID=272</location>
+        <date>31 May &apos;08</date>
+    </software>
+    <software name="love" by="Alexander Sorokin">
+        <location>http://gromoblog.blogspot.com/2008/06/love-with-processing.html</location>
+        <date>31 May &apos;08</date>
+    </software>
+    <software name="Geometrical wavelets - beamlets" by="tom3k">
+        <location>http://tom3k.info/processing/en/</location>
+        <date>29 May &apos;08</date>
+    </software>
     <software name="Colour Economy Vimeo Channel" by="blprnt">
         <location>http://www.vimeo.com/coloureconomy</location>
         <date>28 May &apos;08</date>

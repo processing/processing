@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+ <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <updates>
 	<item>
 		<date>2 August 2002</date>
@@ -741,7 +741,7 @@ ibition/">exhibition</a>. Two new <a href="http://processing.org/reference\
        </item>
 	<item>
                 <date>20 April 2008</date>
-                <description>Thanks to the hard work of Florian Jenett, Tom Carden, and Karsten Schmidt, <a href="http://processing.org/hacks/">Processing Hacks</a> is now a part of the Proessing website.</description>     \
+                <description>Thanks to the hard work of Florian Jenett, Tom Carden, and Karsten Schmidt, <a href="http://processing.org/hacks/">Processing Hacks</a> is now a part of the Processing website.</description>     \
        </item>
        <item>
                 <date>20 April 2008</date>
@@ -763,6 +763,89 @@ ition">exhibition</a>.</description>     \
 org/exhib\                                                                                                 
 ition">exhibition</a>.</description>     \
        </item>
+       <item>
+                <date>29 May 2008</date>
+                <description>Processing version 136 is ready. Be sure to read the release notes, there are a number of significant internal changes. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+       <item>
+                <date>30 May 2008</date>
+                <description>Processing version 137 is released! <a href="http://processing.org/download/">Download here</a>. Expect more on the way as the debugging continues.</description>
+        </item>
+	<item>
+                <date>31 May 2008</date>
+                <description>Processing version 138 is now available. <a href="http://processing.org/download/">Download here</a>. It's on the road to stability again.</description>
+        </item>
+	<item>
+                <date>4 June 2008</date>
+                <description>Processing version 139 is ready. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+	<item>
+                <date>10 June 2008</date>
+                <description>Processing version 140 removes Jikes and replaces it with Javac and more. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+	<item>
+                <date>11 June 2008</date>
+                <description>Processing version 141 adds UTF-8 encoding to the text editor and more. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+<item>
+                <date>11 June 2008</date>
+                <description>Software from Dan Shiffman's students at NYU's ITP added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
+       </item>
+       <item>
+                <date>16 June 2008</date>
+                <description>Processing version 142 released to fix compiler error messages. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+        <item>
+                <date>26 June 2008</date>
+                <description>Software from John Houck added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
+       </item>
+       <item>
+                <date>17 July 2008</date>
+                <description>Software from lia added to the <a href="http://processing.org/exhibition">exhibition</a>.</description>
+       </item>
+       <item>
+                <date>28 July 2008</date>
+                <description>Processing version 143 released. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+	<item>
+                <date>31 July 2008</date>
+                <description>Software from David Muth added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+	<item>
+                <date>9 August 2008</date>
+                <description>Processing version 144 released. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+	<item>
+                <date>15 August 2008</date>
+                <description>Processing version 145 released. This release contains several changes to fix issues related to timing
+in sketches. The animation loop has been tuned and several bugs have been ironed out. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+	<item>
+                <date>16 August 2008</date>
+                <description>Processing version 146 released. It's one better than 145. <a href="http://processing.org/download/">Download here</a>.</description>
+        </item>
+	<item>
+                <date>16 August 2008</date>
+                <description>Software from Peter Cho added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+<item>
+                <date>18 August 2008</date>
+                <description>Processing version 147 released. Support for the Tools menu. <a href="http://processing.org/download/">\
+Download here</a>.</description>
+        </item>
+<item>
+                <date>19 August 2008</date>
+                <description>Processing version 148 released. <a href="http://processing.org/download/">\
+Download here</a>.</description>
+        </item>
+<item>
+                <date>2 September 2008</date>
+                <description>Software from Ebru Kurbak & Mahir M. Yavuz added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
+	<item>
+                <date>18 September 2008</date>
+                <description>Software from Jonas Jongejan and Ole Kristensen added to the <a href="http://processing.org/exhibition/">exhibition</a>.</description>
+        </item>
 </updates>
 
 

@@ -58,6 +58,7 @@
 		<ex file="SimpleWrite.html">Simple Write</ex>
 		<ex file="SerialCallResponse.html">Call / Response</ex>
 		<ex file="SerialDuplex.html">Duplex</ex>
+		<ex file="SerialMultiple.html">Multiple Ports</ex>
 	</cat>
 	<cat label="Ess (Sound)">
 		<ex file="SamplePlayback.html">Sample Playback</ex>

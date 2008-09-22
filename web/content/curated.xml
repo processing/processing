@@ -2,6 +2,76 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+
+<software name="Body Navigation" by="Jonas Jongejan and Ole Kristensen for Recoil Performance Group" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/bodynavigation.jpg</image>
+          <description>
+             Infrared motion tracking and floor projection installation for a Danish Dance Theatre production with choreographer Tina Tarpgaard.
+          </description>
+          <location>http://3xw.ole.kristensen.name/works/body-navigation/</location>
+          <link href="http://ole.kristensen.name/">Ole Kristensen</link>
+          <link href="http://halfdanj.dk/">HalfdanJ</link>
+          <link href="http://recoil-performance.org/">Recoil Performance Group</link>
+        </software>
+
+<software name="News Knitter" by="Ebru Kurbak & Mahir M. Yavuz" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/newsknitter.jpg</image>
+          <description>
+             Visualization of news feeds as knitted garments.
+          </description>
+          <location>http://casualdata.com/newsknitter</location>
+	  <link href="http://mahirmyavuz.com/">Mahir M. Yavuz</link>
+        </software>
+
+<software name="Wordscapes" by="Peter Cho" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/cho.jpg</image>
+          <description>
+             A collection of reactive one-word poem landscapes.
+          </description>
+          <location>http://www.typotopo.com/wordscapes/</location>
+          <link href="http://www.typotopo.com/">Typotopo.com</link>
+          <link href="http://www.pcho.net/">Pcho.net</link>
+        </software>
+
+<software name="Counterclockwise" by="David Muth" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/muth.jpg</image>
+          <description>
+             A generative video piece with music by Hiaz. 
+          </description>
+          <location>http://www.davidmuth.net/videos/counterclockwise/</location>
+          <link href="http://www.davidmuth.net/">DavidMuth.net</link>
+        </software>
+
+<software name="proximityOfNeeds" by="Lia" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/proximity.gif</image>
+          <description>
+             Generative, parameterized images and sound. 
+          </description>
+          <location>http://www.proximityofneeds.org/</location>
+          <link href="http://www.strangethingshappen.org/">strangethingshappen.org</link>
+        </software>
+
+
+<software name="Volume of Emptiness" by="John Houck" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/houck.jpg</image>
+          <description>
+             Volume of Emptiness is an installation that continually unfolds architectural spaces. Virtual volumes are created by a field of motors in the ceiling that each have a number of threads attached to them.
+          </description>
+          <location>http://www.johnhouck.com/p/</location>
+          <link href="http://www.johnhouck.com">JohnHouck.com</link>
+        </software>
+
+<software name="Big Screens" by="NYU ITP" scroll="yes" resize="yes" width="1024" height="700">
+        <image>images/itp.jpg</image>
+          <description>
+             Dan Shiffman's NYU students write software for a 120 by 12 foot video wall
+             at IAC's world headquarters designed by Frank Gehry.          
+          </description>
+          <location>http://itp.nyu.edu/bigscreens/</location>
+          <link href="http://www.flickr.com/photos/shiffman/sets/72157601572932676/">Flickr Gallery</link>
+          <link href="http://www.shiffman.net/">Shiffman.net</link>
+        </software>
+
 <software name="Nervous System, Play + Learn" by="Jessica Rosenkrantz and Jesse Louis-Rosenberg" scroll="yes" resize="yes" width="1024" height="700">
         <image>images/nervous.jpg</image>
           <description>
