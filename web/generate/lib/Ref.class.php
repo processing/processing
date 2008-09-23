@@ -112,6 +112,7 @@ class Ref
         $examples = '';
 		$count = 0;
         foreach ($this->examples as $ex) {
+        	$ex[code] = chars($ex[code]); // Adding this line to try to fix problems with match() and matchAll()
             $examples .= '<div class="example">';
             $path = ($lang != 'en' ? '../media' : 'media');
             $examples .= !empty($ex['image']) ? "<img src=\"$path/$ex[image]\" alt=\"example pic\" />" : '';
