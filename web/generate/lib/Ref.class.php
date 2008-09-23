@@ -112,6 +112,7 @@ class Ref
         $examples = '';
 		$count = 0;
         foreach ($this->examples as $ex) {
+        	echo $ex[code];
         	$ex[code] = chars($ex[code]); // Adding this line to try to fix problems with match() and matchAll()
         	echo $ex[code];
             $examples .= '<div class="example">';
