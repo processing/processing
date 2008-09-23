@@ -15,7 +15,7 @@ String s = "Inside tags, you will find :tag:multiple:/tag: :tag:
             pieces:/tag: of :tag:content:/tag:.";
 
 String[][] m = matchAll(s, ":tag:(.*?):/tag:");
-for (int i = 0; i < m.length; i++) {
+for (int i = 0; i &lt; m.length; i++) {
   println("Found " + m[i][1] + " inside a tag.");
 }
 // Prints "Found multiple inside a tag. Found pieces inside a tag. Found 
