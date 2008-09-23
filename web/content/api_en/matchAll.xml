@@ -11,7 +11,7 @@
 <example>
 <image></image>
 <code>
-String s = "Inside tags, you will find :tag:multiple:/tag: :tag:
+String s = "Inside tags, you will find &lt;tag:multiple:/tag: :tag:
             pieces:/tag: of :tag:content:/tag:.";
 
 String[][] m = matchAll(s, ":tag:(.*?):/tag:");
