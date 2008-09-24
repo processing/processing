@@ -7,17 +7,17 @@
  * 3D primitives, as well as lathing
  * principal.
  * 
- * Instructions:
- * UP arrow key pts++;
- * DOWN arrow key pts--;
- * LEFT arrow key segments--; 
- * RIGHT arrow key segments++;
- * 'a' key toroid radius--; 
- * 's' key toroid radius++; 
- * 'z' key initial polygon radius--;
- * 'x' key initial polygon radius++;
- * 'w' key toggle wireframe/solid shading
- * 'h' key toggle sphere/helix
+ * Instructions: <br />
+ * UP arrow key pts++; <br />
+ * DOWN arrow key pts--; <br />
+ * LEFT arrow key segments--; <br />
+ * RIGHT arrow key segments++; <br />
+ * 'a' key toroid radius--; <br />
+ * 's' key toroid radius++; <br />
+ * 'z' key initial polygon radius--; <br />
+ * 'x' key initial polygon radius++; <br />
+ * 'w' key toggle wireframe/solid shading <br />
+ * 'h' key toggle sphere/helix <br />
  */
 
 
