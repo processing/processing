@@ -114,7 +114,7 @@ class Ref
         foreach ($this->examples as $ex) {
         	echo $ex[code];
         	echo 'BBBBBBBBRERRRRRRRREEEEEEEEEAAAAAAAAAKKKKKKKKK';
-        	$ex[code] = chars($ex[code]); // Adding this line to try to fix problems with match() and matchAll()
+        	$ex[code] = codeExampleConvert($ex[code]); // Adding this line to try to fix problems with match() and matchAll()
         	echo $ex[code];
             $examples .= '<div class="example">';
             $path = ($lang != 'en' ? '../media' : 'media');

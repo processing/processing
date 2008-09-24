@@ -212,6 +212,16 @@ function chars($string)
     return $string;
 }
 
+function exampleCodeConvert($string)
+{
+	//$string = str_replace('& ', '&amp; ', $string);
+    $string = str_replace('>', ' &gt; ', $string);
+    $string = str_replace('<', ' &lt; ', $string);
+    //$string = str_replace('<<', '&lt;&lt;', $string);
+    //$string = str_replace('>>', '&gt;&gt;', $string);
+    return $string;
+}
+
 /****************************************************************
 Returns array of xml files for a language
 *****************************************************************/ 
