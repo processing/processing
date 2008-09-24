@@ -41,8 +41,15 @@ o   since camera functions don't even look at it or set it
 o registerSize() in arcball is causing trouble
 o   some sort of infinite loop issue
 
+_ handle cap/join stuff by
+_   if it's setting the default, no error message
+_   if it's not the default, then show an error msg once
+_   have a list Strings for errors called, rather than constants for all
+_     that way, no need to have an error message for every friggin function
+
 svg high priority
 _ ignoreStyles is broken - how to handle
+_   need a whole "styles" handler
 _ maybe finish off the svg crap for this release
 _ working on pshape
 _   add shape() methods to PGraphics/PApplet
@@ -149,6 +156,8 @@ _   same will go for blend()
 
 
 rework some text/font code [1.0]
+_ Font width calculation fails when using vectorfonts and PDF
+_   http://dev.processing.org/bugs/show_bug.cgi?id=920
 _ text placement is ugly, seems like fractional metrics problem
 _   http://dev.processing.org/bugs/show_bug.cgi?id=866
 _ textMode(SHAPE) and textMode(IMAGE)?
