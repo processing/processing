@@ -212,7 +212,7 @@ function chars($string)
     return $string;
 }
 
-function exampleCodeConvert($string)
+function codeExampleConvert($string)
 {
 	//$string = str_replace('& ', '&amp; ', $string);
     $string = str_replace('>', ' &gt; ', $string);
