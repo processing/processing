@@ -541,6 +541,9 @@ public class BaseObject extends PShape {
 		for (XMLElement elem : elements) {
 			PShape kid = parseChild(elem);
 			if (kid != null) {
+//				System.out.println("adding child " + 
+//						kid.getClass().getName() + 
+//						" to " + getClass().getName());
 				addChild(kid);
 			}
 		}
