@@ -85,11 +85,9 @@ shiffman
 X update match(), write new reference for matchAll()
 
 
-_ working on pshape
-_   add shape() methods to PGraphics/PApplet
-_   test and fix svg examples
-_ revisions.txt for x/y/z/ tx/ty/tz.. other changes in api.txt
-_ PMatrix now PMatrix3D (maybe not yet?)
+_ sketch must be saved to use a constructor
+_   http://dev.processing.org/bugs/show_bug.cgi?id=929
+
 _ get new version of examples and reference
 
 
@@ -795,6 +793,8 @@ _ implement emacs keybindings (list is at the bug report)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=401
 _ implement better method of showing curly brace closure
 _   http://dev.processing.org/bugs/show_bug.cgi?id=295
+_ sketches should only write to the console of their editor window
+_   http://dev.processing.org/bugs/show_bug.cgi?id=921
 
 
 PDE / Editor Buttons
