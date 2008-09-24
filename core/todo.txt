@@ -41,8 +41,23 @@ o   since camera functions don't even look at it or set it
 o registerSize() in arcball is causing trouble
 o   some sort of infinite loop issue
 
+svg high priority
+_ ignoreStyles is broken - how to handle
+_ maybe finish off the svg crap for this release
+_ working on pshape
+_   add shape() methods to PGraphics/PApplet
+_   test and fix svg examples
+_ revisions.txt for x/y/z/ tx/ty/tz.. other changes in api.txt
+_ bring svg into main lib 
 _ need to straighten out 'table' object for quick object lookup
 _   maybe add to all parent tables?
+_ fix svg caps/joins for opengl with svg library
+_   http://dev.processing.org/bugs/show_bug.cgi?id=628
+_ save/restore more of the p5 graphics drawing state
+_   not setting colorMode(), strokeCap, etc.
+
+_ PMatrix now PMatrix3D (maybe not yet?)
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
@@ -617,15 +632,11 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=727
 
 LIBRARIES / Candy 
 
-_ fix svg caps/joins for opengl with svg library
-_   http://dev.processing.org/bugs/show_bug.cgi?id=628
 _ breaking up classes / figure out how to handle fonts subclass
 _ Add support style attribute for path tag to Candy SVG (ricard)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=771
 _ when using get(), reset the bounds for the objects
 _   otherwise it's always relative to the original document
-_ save/restore more of the p5 graphics drawing state
-_   not setting colorMode(), strokeCap, etc.
 _ support for text (shouldn't be too bad, use createFont)
 _   implement text spans for svg output
 _ get entity tags working in xml library

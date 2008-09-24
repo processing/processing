@@ -12,7 +12,10 @@ public class Ellipse extends BaseObject {
 		
 		x = properties.getFloatAttribute("cx");
 		y = properties.getFloatAttribute("cy");
-		
+
+//		rx = properties.getFloatAttribute("rx");
+//		ry = properties.getFloatAttribute("ry");
+
 		float rx = properties.getFloatAttribute("rx");
 		float ry = properties.getFloatAttribute("ry");
 		
@@ -24,9 +27,9 @@ public class Ellipse extends BaseObject {
 	}
 
 	public void drawImpl(PGraphics g) {
-		//g.ellipseMode(PConstants.CENTER);
-		//g.ellipse(x, y, rx, ry);
-		g.ellipseMode(PConstants.CORNERS);
+//		g.ellipseMode(PConstants.CENTER);
+//		g.ellipse(x, y, rx, ry);
+		g.ellipseMode(PConstants.CORNER);
 		g.ellipse(x, y, width, height);
 	}
 }
