@@ -32,8 +32,8 @@ Dynamically converts a font to the format used by Processing from either a font 
 Use the <b>PFont.list()</b> method to first determine the names for the fonts recognized by the computer and are compatible with this function. Because of limitations in Java, not all fonts can be used and some might work with one operating system and not others. When sharing a sketch with other people or posting it on the web, you may need to include a .ttf or .otf version of your font in the data directory of the sketch because other people might not have the font installed on their computer. Only fonts that can legally be distributed should be included with a sketch. 
 <br /><br />
 The <b>size</b> parameter states the font size you want to generate. The <b>smooth</b> parameter specifies if the font should be antialiased or not, and the <b>charset</b> parameter is an array of chars that specifies the characters to generate. 
-<br /><br /> 
-There is a bug in Apple's Java 1.5 implementation on Mac OS X that prevents some fonts from being specified by their name, particularly those that have a style suffix (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</A>).
+<br /><br />
+This function creates a bitmapped version of a font in the same manner as the Create Font tool. It loads a font by name, and converts it to a series of images based on the size of the font. When possible, the text() function will use a native font rather than the bitmapped version created behind the scenes with createFont(). For instance, when using the default renderer setting (JAVA2D), the actual native version of the font will be employed by the sketch, improving drawing quality and performance. With the P2D, P3D, and OPENGL renderer settings, the bitmapped version will be used. While this can drastically improve speed and appearance, results are poor when exporting if the sketch does not include the .otf or .ttf file, and the requested font is not available on the machine running the sketch. 
 </description>
 
 <syntax>
