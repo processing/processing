@@ -215,8 +215,8 @@ function chars($string)
 function codeExampleConvert($string)
 {
 	//$string = str_replace('& ', '&amp; ', $string);
-    $string = str_replace('>', ' &gt; ', $string);
-    $string = str_replace('<', ' &lt; ', $string);
+    $string = str_replace('>', ' &gt;', $string);
+    $string = str_replace('<', ' &lt;', $string);
     //$string = str_replace('<<', '&lt;&lt;', $string);
     //$string = str_replace('>>', '&gt;&gt;', $string);
     return $string;
