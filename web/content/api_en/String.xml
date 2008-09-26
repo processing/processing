@@ -22,6 +22,21 @@ println(str2);  // Prints "CCCP" to the console
 <example>
 <image></image>
 <code>
+// Comparing String objects, see reference below.
+String p = "potato";
+if (p == "potato") {
+  println("p == potato, yep.");  // this will not print
+} 
+// The correct way to compare two Strings
+if (p.equals("potato")) {
+  println("Yes, the contents of p and potato are the same.");
+}
+</code>
+</example>
+
+<example>
+<image></image>
+<code>
 // Use a backslash to include quotes in a String
 String quoted = "This one has \"quotes\"";
 println(quoted);  // This one has "quotes"
@@ -29,8 +44,12 @@ println(quoted);  // This one has "quotes"
 </example>
 
 
+
+
 <description>
 A string is a sequence of characters. The class <b>String</b> includes methods for examining individual characters, comparing strings, searching strings, extracting parts of strings, and for converting an entire string uppercase and lowercase. Strings are always defined inside double quotes ("Abc") and characters are always defined inside single quotes('A'). 
+<br /> <br />
+To compare the contents of two Strings, use the equals() method, as in "if (a.equals(b))", instead of "if (a == b)". A String is an Object, so comparing them with the == operator only compares whether both Strings are stored in the same memory location. Using the equals() method will ensure that the actual contents are compared. (The <a href="http://processing.org/reference/troubleshooting/index.html#strings">troubleshooting</a> reference has a longer explanation.)
 <br /> <br />
 Because a String is defined within quotes, including quotes in a String requires the \ (backslash) character to be used (see the second example above). This is known as an <em>escape sequence</em>. Other escape sequences include \t for the tab character, and \n for new line. A single backslash is indicated by \\.
 <br /> <br />

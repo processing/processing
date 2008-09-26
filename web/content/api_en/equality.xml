@@ -21,6 +21,8 @@ if(a == b) {
 
 <description>
 Determines if two values are equivalent. The equality operator is different from the assignment operator.
+<br /> <br />
+Note that when comparing String objects, you must use the equals() method instead of == to compare their contents. See the reference for String or the <a href="http://processing.org/reference/troubleshooting/index.html#strings">troubleshooting</a> note for more explanation
 </description>
 
 <syntax>
@@ -29,12 +31,12 @@ Determines if two values are equivalent. The equality operator is different from
 
 <parameter>
 <label>value1</label>
-<description>int, float, char, byte, boolean, String</description>
+<description>int, float, char, byte, boolean</description>
 </parameter>
 
 <parameter>
 <label>value2</label>
-<description>int, float, char, byte, boolean, String</description>
+<description>int, float, char, byte, boolean</description>
 </parameter>
 
 <returns></returns>
