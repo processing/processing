@@ -3,7 +3,7 @@ abstract class Shape3D {
   float x, y, z;
   float w, h, d;
 
-  Shape3D(){ }
+  Shape3D() { }
 
   Shape3D(float x, float y, float z) {
     this.x = x;

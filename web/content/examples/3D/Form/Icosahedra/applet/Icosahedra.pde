@@ -1,5 +1,5 @@
 /**
- * I Like Icosahedra
+ * I Like Icosahedra 
  * by Ira Greenberg.
  * 
  * This example plots icosahedra. The Icosahdron is a regular
@@ -12,14 +12,14 @@ Icosahedron ico1;
 Icosahedron ico2;
 Icosahedron ico3;
 
-void setup(){
+void setup() {
   size(640, 360, P3D);
   ico1 = new Icosahedron(75);
   ico2 = new Icosahedron(75);
   ico3 = new Icosahedron(75);
 }
 
-void draw(){
+void draw() {
   background(0);
   lights();
   translate(width/2, height/2);

@@ -14,7 +14,7 @@ import java.util.regex.*;
 public class Icosahedra extends PApplet {
 
 /**
- * I Like Icosahedra
+ * I Like Icosahedra 
  * by Ira Greenberg.
  * 
  * This example plots icosahedra. The Icosahdron is a regular
@@ -27,14 +27,14 @@ Icosahedron ico1;
 Icosahedron ico2;
 Icosahedron ico3;
 
-public void setup(){
+public void setup() {
   size(640, 360, P3D);
   ico1 = new Icosahedron(75);
   ico2 = new Icosahedron(75);
   ico3 = new Icosahedron(75);
 }
 
-public void draw(){
+public void draw() {
   background(0);
   lights();
   translate(width/2, height/2);
@@ -241,7 +241,7 @@ abstract class Shape3D {
   float x, y, z;
   float w, h, d;
 
-  Shape3D(){ }
+  Shape3D() { }
 
   Shape3D(float x, float y, float z) {
     this.x = x;
@@ -322,7 +322,7 @@ class Vector3D {
   float x, y, z;
   float[]origVals;
 
-  Vector3D(){ }
+  Vector3D() { }
 
   Vector3D(float x, float y, float z) {
     this.x = x;

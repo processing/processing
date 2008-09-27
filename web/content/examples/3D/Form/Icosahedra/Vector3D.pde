@@ -3,7 +3,7 @@ class Vector3D {
   float x, y, z;
   float[]origVals;
 
-  Vector3D(){ }
+  Vector3D() { }
 
   Vector3D(float x, float y, float z) {
     this.x = x;
