@@ -9,9 +9,9 @@ $benchmark_start = microtime_float();
 
 // look for the .subversion folder somewhere else
 // otherwise will go looking for /home/root/.subversion or some other user
-$source = CONTENTDIR."static/tutorials/";
+$source = CONTENTDIR."examples";
 $path = BASEDIR;
-$where = CONTENTDIR . 'static/examples';
+$where = CONTENTDIR . 'examples';
 putenv('HOME=' . CONTENTDIR);
 
 // do the initial checkout
