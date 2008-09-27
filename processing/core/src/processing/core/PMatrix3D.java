@@ -683,10 +683,10 @@ public final class PMatrix3D implements PConstants {
   }
 
   private final float sin(float angle) {
-    return (float)Math.sin(angle);
+    return (float) Math.sin(angle);
   }
 
   private final float cos(float angle) {
-    return (float)Math.cos(angle);
+    return (float) Math.cos(angle);
   }
 }

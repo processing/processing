@@ -172,12 +172,12 @@ public class PGraphicsJava2D extends PGraphics2D {
 
 
   public void textureMode(int mode) {
-    unavailableError("textureMode(mode)");
+    methodError("textureMode");
   }
 
 
   public void texture(PImage image) {
-    unavailableError("texture(image)");
+    methodError("texture");
   }
 
 
@@ -304,7 +304,7 @@ public class PGraphicsJava2D extends PGraphics2D {
 
 
   public void vertex(float x, float y, float u, float v) {
-    unavailableError("vertex(x, y, u, v");
+    variationError("vertex(x, y, u, v)");
   }
 
 
