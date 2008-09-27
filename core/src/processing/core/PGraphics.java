@@ -26,6 +26,7 @@ package processing.core;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.HashMap;
 
 
 /**
@@ -108,8 +109,6 @@ public class PGraphics extends PImage implements PConstants {
   static public final int SPR = 28;
   static public final int SPG = 29;
   static public final int SPB = 30;
-  //GL doesn't use a separate specular alpha, but we do (we're better)
-  //static public final int SPA = 30;
 
   static public final int SHINE = 31;
 
@@ -123,6 +122,11 @@ public class PGraphics extends PImage implements PConstants {
 
   static final int VERTEX_FIELD_COUNT = 36;
 
+  // ........................................................
+  
+  // width and height are already inherited from PImage
+  
+  
   /// width minus one (useful for many calculations)
   public int width1;
 
@@ -131,20 +135,17 @@ public class PGraphics extends PImage implements PConstants {
 
   /// width * height (useful for many calculations)
   public int pixelCount;
-
+  
+  // ........................................................
+  
   /// true if defaults() has been called a first time
-  public boolean settingsInited;
-  /// true if defaults need to be reapplied
-  //public boolean reapplySettings;
+  protected boolean settingsInited;
 
-  /// true if in-between beginDraw() and endDraw()
-//  protected boolean insideDraw;
-
-  /// true if in the midst of resize (no drawing can take place)
-//  boolean insideResize;
+  /// set to a PGraphics object being used inside a beginRaw/endRaw() block
+  protected PGraphics raw;
 
   // ........................................................
-
+  
   /** path to the file being saved for this renderer (if any) */
   protected String path;
 
@@ -155,19 +156,7 @@ public class PGraphics extends PImage implements PConstants {
    * are also added to the sketch.
    */
   protected boolean primarySurface;
-
-  // ........................................................
-
-  // specifics for java memoryimagesource
-  DirectColorModel cm;
-  MemoryImageSource mis;
-  public Image image;
-
-  // ........................................................
-
-  // used by recordRaw()
-  protected PGraphics raw;
-
+  
   // ........................................................
 
   /**
@@ -184,10 +173,13 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected boolean[] hints = new boolean[HINT_COUNT];
 
-  // ........................................................
+  
+  ////////////////////////////////////////////////////////////
 
-  // underscored_names are used for private functions or variables
-
+  // STYLE PROPERTIES
+  
+  // Also inherits imageMode() and smooth() (among others) from PImage. 
+  
   /** The current colorMode */
   public int colorMode; // = RGB;
 
@@ -204,20 +196,23 @@ public class PGraphics extends PImage implements PConstants {
   public float colorModeA; // = 255;
 
   /** True if colors are not in the range 0..1 */
-  boolean colorScale; // = true;
+  boolean colorModeScale; // = true;
 
   /** True if colorMode(RGB, 255) */
-  boolean colorRgb255; // = true;
+  boolean colorModeDefault; // = true;
 
   // ........................................................
 
+  // Tint color for images
+  
   /**
-   * true if tint() is enabled (read-only).
+   * True if tint() is enabled (read-only).
+   * 
    * Using tint/tintColor seems a better option for naming than
    * tintEnabled/tint because the latter seems ugly, even though
    * g.tint as the actual color seems a little more intuitive,
    * it's just that g.tintEnabled is even more unintuitive.
-   * Same goes for fill and stroke et al.
+   * Same goes for fill and stroke, et al.
    */
   public boolean tint;
 
@@ -230,6 +225,8 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  // Fill color
+  
   /** true if fill() is enabled, (read-only) */
   public boolean fill;
 
@@ -242,6 +239,8 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  // Stroke color
+  
   /** true if stroke() is enabled, (read-only) */
   public boolean stroke;
 
@@ -254,28 +253,8 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  /** Last background color that was set, zero if an image */
-  public int backgroundColor = 0xffCCCCCC;
-
-  protected boolean backgroundAlpha;
-  protected float backgroundR, backgroundG, backgroundB, backgroundA;
-  protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
-
-  // ........................................................
-
-  // internal color for setting/calculating
-  protected float calcR, calcG, calcB, calcA;
-  int calcRi, calcGi, calcBi, calcAi;
-  int calcColor;
-  boolean calcAlpha;
-
-  /** The last rgb value converted to HSB */
-  int cacheHsbKey;
-  /** Result of the last conversion to HSB */
-  float[] cacheHsbValue = new float[3]; // inits to zero
-
-  // ........................................................
-
+  // Additional stroke properties 
+  
   static final float DEFAULT_STROKE_WEIGHT = 1;
   static final int DEFAULT_STROKE_JOIN = MITER;
   static final int DEFAULT_STROKE_CAP = ROUND;
@@ -303,8 +282,77 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  // Shape placement properties
+  
+  // imageMode() is inherited from PImage
+  
+  /** The current rect mode (read-only) */
+  public int rectMode;
+
+  /** The current ellipse mode (read-only) */
+  public int ellipseMode;
+  
+  /** The current shape alignment mode (read-only) */
+  public int shapeMode;
+  
+  // ........................................................
+
+  // Text and font properties
+  
+  /** The current text font (read-only) */
+  public PFont textFont;
+
+  /** The current text align (read-only) */
+  public int textAlign;
+
+  /** The current vertical text alignment (read-only) */
+  public int textAlignY;
+
+  /** The current text mode (read-only) */
+  public int textMode;
+
+  /** The current text size (read-only) */
+  public float textSize;
+
+  /** The current text leading (read-only) */
+  public float textLeading;
+ 
+  // ........................................................
+
+  // Material properties
+
+//  PMaterial material;
+//  PMaterial[] materialStack;
+//  int materialStackPointer;
+
+  public float ambientR, ambientG, ambientB;
+  public float specularR, specularG, specularB;
+  public float emissiveR, emissiveG, emissiveB;
+  public float shininess;
+
+  // ........................................................
+
+  // Style stack
+  
+  static final int STYLE_STACK_DEPTH = 64;
+  Style[] styleStack = new Style[STYLE_STACK_DEPTH];
+  int styleStackDepth;
+
+
+  ////////////////////////////////////////////////////////////
+
+  
+  /** Last background color that was set, zero if an image */
+  public int backgroundColor = 0xffCCCCCC;
+
+  protected boolean backgroundAlpha;
+  protected float backgroundR, backgroundG, backgroundB, backgroundA;
+  protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
+
+  // ........................................................
+  
   /**
-   * Model transformation of the form m[row][column],
+   * Current model-view matrix transformation of the form m[row][column],
    * which is a "column vector" (as opposed to "row vector") matrix.
    */
   public float m00, m01, m02, m03;
@@ -313,12 +361,32 @@ public class PGraphics extends PImage implements PConstants {
   public float m30, m31, m32, m33;
 
   static final int MATRIX_STACK_DEPTH = 32;
-  float matrixStack[][] = new float[MATRIX_STACK_DEPTH][16];
-  float matrixInvStack[][] = new float[MATRIX_STACK_DEPTH][16];
+  float[][] matrixStack = new float[MATRIX_STACK_DEPTH][16];
+  float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
   int matrixStackDepth;
 
   // ........................................................
 
+  // specifics for java memoryimagesource
+  DirectColorModel cm;
+  MemoryImageSource mis;
+  public Image image;
+
+  // ........................................................
+
+  // internal color for setting/calculating
+  protected float calcR, calcG, calcB, calcA;
+  protected int calcRi, calcGi, calcBi, calcAi;
+  protected int calcColor;
+  protected boolean calcAlpha;
+
+  /** The last RGB value converted to HSB */
+  int cacheHsbKey;
+  /** Result of the last conversion to HSB */
+  float[] cacheHsbValue = new float[3];
+
+  // ........................................................
+  
   /**
    * Type of shape passed to beginShape(),
    * zero if no shape is currently being drawn.
@@ -330,7 +398,6 @@ public class PGraphics extends PImage implements PConstants {
   protected float vertices[][] =
     new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   protected int vertexCount; // total number of vertices
-
 
   // ........................................................
 
@@ -351,10 +418,9 @@ public class PGraphics extends PImage implements PConstants {
 
   protected boolean curveInited = false;
   protected int curveDetail = 20;
-  // catmull-rom basis matrix, perhaps with optional s parameter
   public float curveTightness = 0;
+  // catmull-rom basis matrix, perhaps with optional s parameter
   protected PMatrix3D curveBasisMatrix;
-  //protected PMatrix3D curveForwardMatrix;
   protected PMatrix3D curveDrawMatrix;
 
   protected PMatrix3D bezierBasisInverse;
@@ -392,42 +458,15 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   // ........................................................
-
-  /** The current rect mode (read-only) */
-  public int rectMode;
-
-  /** The current ellipse mode (read-only) */
-  public int ellipseMode;
   
-  /** The current shape alignment mode (read-only) */
-  public int shapeMode;
-
-  /** The current text font (read-only) */
-  public PFont textFont;
-
   /** The current font if a Java version of it is installed */
-  public Font textFontNative;
+  protected Font textFontNative;
 
   /** Metrics for the current native Java font */
-  public FontMetrics textFontNativeMetrics;
-
-  /** The current text align (read-only) */
-  public int textAlign;
-
-  /** The current vertical text alignment (read-only) */
-  public int textAlignY;
-
-  /** The current text mode (read-only) */
-  public int textMode;
-
-  /** The current text size (read-only) */
-  public float textSize;
-
-  /** The current text leading (read-only) */
-  public float textLeading;
+  protected FontMetrics textFontNativeMetrics;
 
   /** Last text position, because text often mixed on lines together */
-  public float textX, textY, textZ;
+  protected float textX, textY, textZ;
 
   /**
    * Internal buffer used by the text() functions
@@ -462,15 +501,6 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // Material properties
-
-  public float ambientR, ambientG, ambientB;
-  public float specularR, specularG, specularB; /*, specularA;*/
-  public float emissiveR, emissiveG, emissiveB;
-  public float shininess;
-
-  // ........................................................
-
   /** Camera field of view (in radians, as of rev 86) */
   public float cameraFOV;
 
@@ -481,7 +511,7 @@ public class PGraphics extends PImage implements PConstants {
   public float cameraAspect;
 
   // projection matrix
-  public PMatrix3D projection; // = new PMatrix();
+  public PMatrix3D projection;
 
   // ........................................................
 
@@ -802,8 +832,7 @@ public class PGraphics extends PImage implements PConstants {
     //reapplySettings = false;
   }
 
-
-
+  
   //////////////////////////////////////////////////////////////
 
   // HINTS
@@ -1103,6 +1132,87 @@ public class PGraphics extends PImage implements PConstants {
   public void endShape(int mode) {
   }
 
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // STYLE
+  
+  
+  public void style(Style s) {
+    if (s.smooth) {
+      smooth();
+    } else {
+      noSmooth();
+    }
+    
+    imageMode(s.imageMode);
+    rectMode(s.rectMode);
+    ellipseMode(s.ellipseMode);
+    shapeMode(s.shapeMode);
+    
+    if (s.tint) {
+      tint(s.tintColor);
+    } else {
+      noTint();
+    }
+    if (s.fill) {
+      fill(s.fillColor);
+    } else {
+      noFill();
+    }
+    if (s.stroke) {
+      stroke(s.strokeColor);
+    } else {
+      noStroke();
+    }
+    strokeWeight(s.strokeWeight);
+    strokeCap(s.strokeCap);
+    strokeJoin(s.strokeJoin);
+
+    // Set the colorMode() for the material properties. 
+    // TODO this is really inefficient, need to just have a material() method, 
+    // but this has the least impact to the API.
+    colorMode(RGB, 1);
+    ambient(s.ambientR, s.ambientG, s.ambientB);
+    emissive(s.emissiveR, s.emissiveG, s.emissiveB);
+    specular(s.specularR, s.specularG, s.specularB);
+    shininess(s.shininess);
+    
+    /*
+    s.ambientR = ambientR;
+    s.ambientG = ambientG;
+    s.ambientB = ambientB;
+    s.specularR = specularR;
+    s.specularG = specularG;
+    s.specularB = specularB;
+    s.emissiveR = emissiveR;
+    s.emissiveG = emissiveG;
+    s.emissiveB = emissiveB;
+    s.shininess = shininess;
+    */
+//    material(s.ambientR, s.ambientG, s.ambientB,
+//             s.emissiveR, s.emissiveG, s.emissiveB,
+//             s.specularR, s.specularG, s.specularB, 
+//             s.shininess);
+
+    // Set this after the material properties.
+    colorMode(s.colorMode, 
+              s.colorModeX, s.colorModeY, s.colorModeZ, s.colorModeA);
+    
+    // This is a bit assymetric, since there's no way to do "noFont()",
+    // and a null textFont will produce an error (since usually that means that
+    // the font couldn't load properly). So in some cases, the font won't be
+    // 'cleared' to null, even though that's technically correct. 
+    if (s.textFont != null) {
+      textFont(s.textFont, s.textSize);
+      textLeading(s.textLeading);
+    }
+    // These don't requre a font to be set.
+    textAlign(s.textAlign, s.textAlignY);
+    textMode(s.textMode);
+  }
+  
 
 
   //////////////////////////////////////////////////////////////
@@ -3153,6 +3263,123 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // STYLE
+  
+  
+  protected class Style {
+    public boolean smooth;
+
+    public int imageMode;
+    public int rectMode;
+    public int ellipseMode;
+    public int shapeMode;
+
+    public int colorMode;
+    public float colorModeX;
+    public float colorModeY;
+    public float colorModeZ;
+    public float colorModeA;
+
+    public boolean tint;
+    public int tintColor;
+    public boolean fill;
+    public int fillColor;
+    public boolean stroke;
+    public int strokeColor;
+    public float strokeWeight;
+    public int strokeCap;
+    public int strokeJoin;
+
+    // TODO these fellas are inconsistent, and may need to go elsewhere
+    public float ambientR, ambientG, ambientB;
+    public float specularR, specularG, specularB;
+    public float emissiveR, emissiveG, emissiveB;
+    public float shininess;
+
+    public PFont textFont;
+    public int textAlign;
+    public int textAlignY;
+    public int textMode;
+    public float textSize;
+    public float textLeading;
+  }
+
+
+  public void pushStyle() {
+    if (styleStackDepth == styleStack.length) {
+      styleStack = (Style[]) PApplet.expand(styleStack);
+    }
+    if (styleStack[styleStackDepth] == null) {
+      styleStack[styleStackDepth] = new Style();
+    }
+    Style s = styleStack[styleStackDepth++];
+    getStyle(s);
+  }
+
+
+  public void popStyle() {
+    if (styleStackDepth == 0) {
+      throw new RuntimeException("Too many popStyle() without enough pushStyle()");
+    }
+    styleStackDepth--;
+    style(styleStack[styleStackDepth]);
+  }
+
+
+  public Style getStyle() {
+    Style s = new Style();
+    getStyle(s);
+    return s;
+  }
+  
+  
+  public void getStyle(Style s) { 
+    s.smooth = smooth;
+    
+    s.imageMode = imageMode;
+    s.rectMode = rectMode;
+    s.ellipseMode = ellipseMode;
+    s.shapeMode = shapeMode;
+    
+    s.colorMode = colorMode;
+    s.colorModeX = colorModeX;
+    s.colorModeY = colorModeY;
+    s.colorModeZ = colorModeZ;
+    s.colorModeA = colorModeA;
+
+    s.tint = tint;
+    s.tintColor = tintColor;
+    s.fill = fill;
+    s.fillColor = fillColor;
+    s.stroke = stroke;
+    s.strokeColor = strokeColor;
+    s.strokeWeight = strokeWeight;
+    s.strokeCap = strokeCap;
+    s.strokeJoin = strokeJoin;
+    
+    s.ambientR = ambientR;
+    s.ambientG = ambientG;
+    s.ambientB = ambientB;
+    s.specularR = specularR;
+    s.specularG = specularG;
+    s.specularB = specularB;
+    s.emissiveR = emissiveR;
+    s.emissiveG = emissiveG;
+    s.emissiveB = emissiveB;
+    s.shininess = shininess;
+    
+    s.textFont = textFont;
+    s.textAlign = textAlign;
+    s.textAlignY = textAlignY;
+    s.textMode = textMode;
+    s.textSize = textSize;
+    s.textLeading = textLeading;
+  }
+    
+  
+
+  //////////////////////////////////////////////////////////////
+
   // COLOR
 
 
@@ -3191,12 +3418,12 @@ public class PGraphics extends PImage implements PConstants {
     colorModeA = maxA;
 
     // if color max values are all 1, then no need to scale
-    colorScale = ((maxA != 1) || (maxX != maxY) ||
+    colorModeScale = ((maxA != 1) || (maxX != maxY) ||
                   (maxY != maxZ) || (maxZ != maxA));
 
     // if color is rgb/0..255 this will make it easier for the
     // red() green() etc functions
-    colorRgb255 = (colorMode == RGB) &&
+    colorModeDefault = (colorMode == RGB) &&
       (colorModeA == 255) && (colorModeX == 255) &&
       (colorModeY == 255) && (colorModeZ == 255);
   }
@@ -3217,10 +3444,10 @@ public class PGraphics extends PImage implements PConstants {
     if (gray < 0) gray = 0;
     if (alpha < 0) alpha = 0;
 
-    calcR = colorScale ? (gray / colorModeX) : gray;
+    calcR = colorModeScale ? (gray / colorModeX) : gray;
     calcG = calcR;
     calcB = calcR;
-    calcA = colorScale ? (alpha / colorModeA) : alpha;
+    calcA = colorModeScale ? (alpha / colorModeA) : alpha;
 
     calcRi = (int)(calcR*255); calcGi = (int)(calcG*255);
     calcBi = (int)(calcB*255); calcAi = (int)(calcA*255);
@@ -3247,7 +3474,7 @@ public class PGraphics extends PImage implements PConstants {
 
     switch (colorMode) {
     case RGB:
-      if (colorScale) {
+      if (colorModeScale) {
         calcR = x / colorModeX;
         calcG = y / colorModeY;
         calcB = z / colorModeZ;
@@ -3262,7 +3489,7 @@ public class PGraphics extends PImage implements PConstants {
       y /= colorModeY; // s
       z /= colorModeZ; // b
 
-      calcA = colorScale ? (a/colorModeA) : a;
+      calcA = colorModeScale ? (a/colorModeA) : a;
 
       if (y == 0) {  // saturation == 0
         calcR = calcG = calcB = z;
@@ -3329,8 +3556,8 @@ public class PGraphics extends PImage implements PConstants {
   public void strokeWeight(float weight) {
     strokeWeight = weight;
   }
-
-
+  
+  
   public void strokeJoin(int join) {
     strokeJoin = join;
   }
@@ -3584,12 +3811,13 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   public void ambient(float x, float y, float z) {
-    depthError("ambient");
+    // This doesn't take 
+    if ((x != PMaterial.DEFAULT_AMBIENT) || 
+        (y != PMaterial.DEFAULT_AMBIENT) ||
+        (z != PMaterial.DEFAULT_AMBIENT)) {
+      depthError("ambient");
+    }
   }
-
-
-  //////////////////////////////////////////////////////////////
-
 
   public void specular(int rgb) {
     depthError("specular");
@@ -3608,9 +3836,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-
   public void emissive(int rgb) {
     depthError("emissive");
   }
@@ -3623,8 +3848,7 @@ public class PGraphics extends PImage implements PConstants {
     depthError("emissive");
   }
 
-
-
+  
   //////////////////////////////////////////////////////////////
 
   // LIGHTS
@@ -3839,23 +4063,41 @@ public class PGraphics extends PImage implements PConstants {
   // MESSAGES / ERRORS / LOGGING
 
 
+  HashMap<String, Object> errors;
+  
+
+  protected void showError(String msg) {
+    if (errors == null) {
+      errors = new HashMap<String, Object>();
+    }
+    if (!errors.containsKey(msg)) {
+      System.err.println(msg);
+      errors.put(msg, new Object());
+    }
+  }
+
+  
   protected void depthError(String method) {
-    throw new RuntimeException(method + "() can only be used " +
-                               "with P3D or OPENGL.");
+    showError(method + "() can only be used with a renderer that " + 
+              "supports 3D, such as P3D or OPENGL.");
   }
 
 
   protected void depthErrorXYZ(String method) {
-    throw new RuntimeException(method + "(x, y, z) can only be used with " +
-                               "OPENGL or P3D, use " +
-                               method + "(x, y) instead.");
+    showError(method + "(x, y, z) can only be used with " +
+              "OPENGL or P3D, use " + method + "(x, y) instead.");
   }
 
 
-  protected void unavailableError(String methodStr) {
-    throw new RuntimeException(methodStr +
-                               " is not available with this renderer");
+  protected void methodError(String method) {
+    showError(method + "() is not available with this renderer.");
   }
+  
+  
+  protected void variationError(String str) {
+    showError(str + " is not available with this renderer.");
+  }
+  
 
 
 
@@ -3870,7 +4112,7 @@ public class PGraphics extends PImage implements PConstants {
 
   public final int color(int gray) {  // ignore
     if (((gray & 0xff000000) == 0) && (gray <= colorModeX)) {
-      if (colorRgb255) {
+      if (colorModeDefault) {
         // bounds checking to make sure the numbers aren't to high or low
         if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
         return 0xff000000 | (gray << 16) | (gray << 8) | gray;
@@ -3893,7 +4135,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param gray can be packed ARGB or a gray in this case
    */
   public final int color(int gray, int alpha) {  // ignore
-    if (colorRgb255) {
+    if (colorModeDefault) {
       // bounds checking to make sure the numbers aren't to high or low
       if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
@@ -3923,7 +4165,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public final int color(int x, int y, int z) {  // ignore
-    if (colorRgb255) {
+    if (colorModeDefault) {
       // bounds checking to make sure the numbers aren't to high or low
       if (x > 255) x = 255; else if (x < 0) x = 0;
       if (y > 255) y = 255; else if (y < 0) y = 0;
@@ -3942,7 +4184,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public final int color(int x, int y, int z, int a) {  // ignore
-    if (colorRgb255) {
+    if (colorModeDefault) {
       // bounds checking to make sure the numbers aren't to high or low
       if (a > 255) a = 255; else if (a < 0) a = 0;
       if (x > 255) x = 255; else if (x < 0) x = 0;
@@ -3969,19 +4211,19 @@ public class PGraphics extends PImage implements PConstants {
 
   public final float red(int what) {
     float c = (what >> 16) & 0xff;
-    if (colorRgb255) return c;
+    if (colorModeDefault) return c;
     return (c / 255.0f) * colorModeX;
   }
 
   public final float green(int what) {
     float c = (what >> 8) & 0xff;
-    if (colorRgb255) return c;
+    if (colorModeDefault) return c;
     return (c / 255.0f) * colorModeY;
   }
 
   public final float blue(int what) {
     float c = (what) & 0xff;
-    if (colorRgb255) return c;
+    if (colorModeDefault) return c;
     return (c / 255.0f) * colorModeZ;
   }
 

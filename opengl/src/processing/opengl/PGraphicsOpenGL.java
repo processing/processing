@@ -671,17 +671,17 @@ public class PGraphicsOpenGL extends PGraphics3D {
     if (cash == null) {
       cash = new ImageCache();
       texture.cache = cash;
-      texture.modified = true;
+      texture.setModified(true);
     }
 
-    if (texture.modified) {
+    if (texture.isModified()) {
       //System.out.println("texture modified");
       // TODO make this more efficient and just update a sub-part
       // based on mx1 et al, also use gl function to update
       // only a sub-portion of the image.
       cash.rebind(texture);
       // clear the modified flag
-      texture.modified = false;
+      texture.setModified(false);
 
     } else {
       gl.glBindTexture(GL.GL_TEXTURE_2D, cash.tindex);

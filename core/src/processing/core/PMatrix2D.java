@@ -62,7 +62,7 @@ public final class PMatrix2D implements PConstants {
   
   
   /**
-   * Copies the matrix contents into a 16 entry float array.
+   * Copies the matrix contents into a 6 entry float array.
    * If target is null (or not the correct size), a new array will be created.
    */
   public float[] get(float[] target) {
