@@ -8,6 +8,7 @@
 		<ex file="BrickTower.html">Brick Tower</ex>
 		<ex file="ShapeTransform.html">Shape Transform</ex>
 		<ex file="Toroid.html">Toroid</ex>
+		<ex file="Icosahedra.html">Icosahedra</ex>
 	</cat>
 	<cat label="Transform">
 		<ex file="Rotate1.html">Rotate 1</ex>

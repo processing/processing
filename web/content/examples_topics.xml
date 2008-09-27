@@ -18,6 +18,11 @@
 		<ex file="Animator.html">Animator</ex>
 		<ex file="ScribblePlotter.html">Scribble Plotter</ex>
 	</cat>
+	<cat label="Advanced Data">
+		<ex file="ArrayListClass.html">ArrayList</ex>
+		<ex file="HashTableClass.html">HashTable</ex>
+		<ex file="DirectoryList.html">Directory List</ex>
+	</cat>
 	<cat label="File IO">
 		<ex file="SaveOneImage.html">Save One Image</ex>
 		<ex file="SaveManyImages.html">Save Many Images</ex>
