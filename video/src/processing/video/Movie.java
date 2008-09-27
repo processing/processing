@@ -511,7 +511,8 @@ public class Movie extends PImage implements PConstants, Runnable {
    */
   public void stop() {
     play = false;
-    //System.out.println("stop");
+    runner = null;
+
     try {
       movie.setTimeValue(0);
 
@@ -697,7 +698,7 @@ public class Movie extends PImage implements PConstants, Runnable {
   public void dispose() {
     //System.out.println("disposing");
     stop();
-    runner = null;
+    //runner = null;
     QTSession.close();
   }
 
