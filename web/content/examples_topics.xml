@@ -20,7 +20,7 @@
 	</cat>
 	<cat label="Advanced Data">
 		<ex file="ArrayListClass.html">ArrayList</ex>
-		<ex file="HashTableClass.html">HashTable</ex>
+		<ex file="HashMapClass.html">HashMap</ex>
 		<ex file="DirectoryList.html">Directory List</ex>
 	</cat>
 	<cat label="File IO">
