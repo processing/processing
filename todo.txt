@@ -41,6 +41,7 @@ X add getting started to help menu
 X   http://processing.org/learning/gettingstarted/
 X add "environment" to the help menu
 X fix other instances of match() using the wrong array indices
+X add additional newline hack so that autoformat complains less
 
 reference
 X do some edits on the "getting started" text
@@ -84,6 +85,10 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 shiffman
 X update match(), write new reference for matchAll()
 
+osx java update
+X video capture problems with opengl
+X   http://dev.processing.org/bugs/show_bug.cgi?id=882
+
 
 _ sketch must be saved to use a constructor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=929
@@ -101,8 +106,6 @@ _ eclipse launcher for windows
 _   http://dev.eclipse.org/viewcvs/index.cgi/platform-launcher/library/win32/eclipseWin.c?view=markup&content-type=text%2Fvnd.viewcvs-markup&revision=1.12
 
 thread hang/block problem
-_ video capture problems with opengl
-_   http://dev.processing.org/bugs/show_bug.cgi?id=882
 _ serial.available() broken with video
 _   http://dev.processing.org/bugs/show_bug.cgi?id=829
 

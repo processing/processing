@@ -46,9 +46,8 @@ public class PImage implements PConstants, Cloneable {
    */
   public int format;
 
-  public int pixels[];
+  public int[] pixels;
   public int width, height;
-  // would scan line be useful? maybe for pow of 2 gl textures
 
   /**
    * Path to parent object that will be used with save().
@@ -56,20 +55,24 @@ public class PImage implements PConstants, Cloneable {
    */
   public PApplet parent;
 
-  // note! inherited by PGraphics
   public int imageMode = CORNER;
   public boolean smooth = false;
 
-  /** Native Java image object */
-  //public Image image;
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
+  
   /** for subclasses that need to store info about the image */
   public Object cache;
 
   /** modified portion of the image */
-  public boolean modified;
-  public int mx1, my1, mx2, my2;
+  protected boolean modified;
+  protected int mx1, my1, mx2, my2;
 
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+  
   // private fields
   private int fracU, ifU, fracV, ifV, u1, u2, v1, v2, sX, sY, iw, iw1, ih1;
   private int ul, ll, ur, lr, cUL, cLL, cUR, cLR;
@@ -244,6 +247,21 @@ public class PImage implements PConstants, Cloneable {
   // MARKING IMAGE AS MODIFIED / FOR USE w/ GET/SET
 
 
+  public boolean isModified() {
+    return modified;
+  }
+  
+  
+  public void setModified() {
+    modified = true;
+  }
+  
+  
+  public void setModified(boolean m) {
+    modified = m;
+  }
+  
+  
   /**
    * Call this when you want to mess with the pixels[] array.
    * <p/>

@@ -64,7 +64,7 @@ public class PFont implements PConstants {
    * PGraphics subclass to just use Java's font rendering stuff
    * in situations where that's faster.
    */
-  public Font font;
+  protected Font font;
 
   /**
    * Name of the font as seen by Java when it was created.
@@ -236,6 +236,14 @@ public class PFont implements PConstants {
   }
 
 
+  /**
+   * Return the native java.awt.Font associated with this PFont (if any).
+   */
+  public Font getFont() {
+    return font;
+  }
+  
+  
   /**
    * Try to find the native version of this font.
    */

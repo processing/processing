@@ -25,32 +25,80 @@ package processing.core;
 
 
 public class PMaterial {
+  
+  static final float DEFAULT_AMBIENT = 0.2f;
+  static final float DEFAULT_DIFFUSE = 0.8f;  
+  static final float DEFAULT_EMISSIVE = 0;
+  static final float DEFAULT_SPECULAR = 0;
+  static final float DEFAULT_SHININESS = 0;
+  
   /** Ka parameters of the material. */ 
   public float ambientR, ambientG, ambientB;
   
   /** Kd parameters of the material */
   public float diffuseR, diffuseG, diffuseB;
   
-  /** Ks parameters of the material */
-  public float specularR, specularG, specularB;
-  
   /** Ke parameters of the material */
   public float emissiveR, emissiveG, emissiveB;
 
+  /** Ks parameters of the material */
+  public float specularR, specularG, specularB;
+  
   /** Se parameter of the material */
   public float shininess; // Se
 
+  //
+  
+  //boolean ambient, diffuse, specular, emissive, shine;
+  static final int AMBIENT_FLAG = 1 << 0;
+  static final int DIFFUSE_FLAG = 1 << 1;
+  // flags &= ~THE_FLAG
+  
 
+  public PMaterial() {
+    ambientR = DEFAULT_AMBIENT;
+    ambientG = DEFAULT_AMBIENT;
+    ambientB = DEFAULT_AMBIENT;
+    
+    diffuseR = DEFAULT_DIFFUSE;
+    diffuseG = DEFAULT_DIFFUSE;
+    diffuseB = DEFAULT_DIFFUSE;
+    
+    emissiveR = DEFAULT_EMISSIVE;
+    emissiveG = DEFAULT_EMISSIVE;
+    emissiveB = DEFAULT_EMISSIVE;
+    
+    specularR = DEFAULT_SPECULAR;
+    specularG = DEFAULT_SPECULAR;
+    specularB = DEFAULT_SPECULAR;
+    
+    shininess = DEFAULT_SHININESS;
+  }
+  
+  
+  /** 
+   * Set the material properties. All colors use the range 0..1, meaning that
+   * the current colorMode() is ignored.
+   */
   public PMaterial(float ambientR, float ambientG, float ambientB,
                    float diffuseR, float diffuseG, float diffuseB,
-                   float specularR, float specularG, float specularB,
                    float emissiveR, float emissiveG, float emissiveB,
+                   float specularR, float specularG, float specularB,
                    float shininess) {
     ambient(ambientR, ambientG, ambientB);
     diffuse(diffuseR, diffuseG, diffuseB);
-    specular(specularR, specularG, specularB);
     emissive(emissiveR, emissiveG, emissiveB);
+    specular(specularR, specularG, specularB);
     shininess(shininess);
+  }
+  
+  
+  public PMaterial get() {
+    return new PMaterial(ambientR, ambientG, ambientB,
+                         diffuseR, diffuseG, diffuseB,
+                         emissiveR, emissiveG, emissiveB,
+                         specularR, specularG, specularB,
+                         shininess);
   }
 
 
@@ -59,7 +107,7 @@ public class PMaterial {
     ambientG = g;
     ambientB = b;
   }
-
+  
   
   public void diffuse(float r, float g, float b) {
     diffuseR = r;
@@ -68,17 +116,17 @@ public class PMaterial {
   }
 
 
-  public void specular(float r, float g, float b) {
-    specularR = r;
-    specularG = g;
-    specularB = b;
-  }
-  
-  
   public void emissive(float r, float g, float b) {
     emissiveR = r;
     emissiveG = g;
     emissiveB = b;
+  }
+  
+  
+  public void specular(float r, float g, float b) {
+    specularR = r;
+    specularG = g;
+    specularB = b;
   }
   
   
