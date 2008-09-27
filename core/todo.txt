@@ -41,15 +41,10 @@ o   since camera functions don't even look at it or set it
 o registerSize() in arcball is causing trouble
 o   some sort of infinite loop issue
 
-_ handle cap/join stuff by
-_   if it's setting the default, no error message
-_   if it's not the default, then show an error msg once
-_   have a list Strings for errors called, rather than constants for all
-_     that way, no need to have an error message for every friggin function
+_ may need to add to PApplet.main() for 10.5
+_   System.setProperty("apple.awt.graphics.UseQuartz","true");
 
-svg high priority
-_ ignoreStyles is broken - how to handle
-_   need a whole "styles" handler
+svg/pshape/pgraphics priority before 0149
 _ maybe finish off the svg crap for this release
 _ working on pshape
 _   add shape() methods to PGraphics/PApplet
@@ -57,13 +52,20 @@ _   test and fix svg examples
 _ revisions.txt for x/y/z/ tx/ty/tz.. other changes in api.txt
 _ bring svg into main lib 
 _ need to straighten out 'table' object for quick object lookup
-_   maybe add to all parent tables?
+_   maybe add to all parent tables? (no, this gets enormous quickly)
 _ fix svg caps/joins for opengl with svg library
 _   http://dev.processing.org/bugs/show_bug.cgi?id=628
 _ save/restore more of the p5 graphics drawing state
 _   not setting colorMode(), strokeCap, etc.
-
+_ ignoreStyles is broken - how to handle
+_   need a whole "styles" handler
+_ handle cap/join stuff by
+_   if it's setting the default, no error message
+_   if it's not the default, then show an error msg once
+_   have a list Strings for errors called, rather than constants for all
+_     that way, no need to have an error message for every friggin function
 _ PMatrix now PMatrix3D (maybe not yet?)
+_ change svg library reference
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

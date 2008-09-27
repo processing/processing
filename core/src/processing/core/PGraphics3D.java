@@ -28,6 +28,8 @@ import java.awt.Toolkit;
 import java.awt.image.*;
 import java.util.*;
 
+import processing.core.PGraphics.Style;
+
 
 /**
  * Subclass of PGraphics that handles 3D rendering.
@@ -986,7 +988,34 @@ public class PGraphics3D extends PGraphics {
     shape = 0;
   }
 
+  
+  //////////////////////////////////////////////////////////////
 
+  // STYLE
+  
+  
+//  public void style(Style s) {
+//    super.style(s);
+//
+//    // Set the colorMode() for the material properties. 
+//    // TODO this is really inefficient, need to just have a material() method, 
+//    // but this has the least impact to the API.
+//    colorMode(RGB, 1);
+//    ambient(s.ambientR, s.ambientG, s.ambientB);
+//    emissive(s.emissiveR, s.emissiveG, s.emissiveB);
+//    specular(s.specularR, s.specularG, s.specularB);
+//    shininess(s.shininess);
+//    
+//    // Reset the colorMode again.
+//    colorMode(s.colorMode, 
+//              s.colorModeX, s.colorModeY, s.colorModeZ, s.colorModeA);
+//  }
+
+  
+
+  //////////////////////////////////////////////////////////////
+
+  
   protected final void add_path() {
     if (pathCount == pathOffset.length) {
 //      int temp1[] = new int[pathCount << 1];
@@ -3316,14 +3345,12 @@ public class PGraphics3D extends PGraphics {
 
 
   public void strokeJoin(int join) {
-    String msg = "strokeJoin() not available with P3D";
-    throw new RuntimeException(msg);
+    methodError("strokeJoin");
   }
 
 
   public void strokeCap(int cap) {
-    String msg = "strokeCap() not available with P3D";
-    throw new RuntimeException(msg);
+    methodError("strokeCap");
   }
 
 
@@ -3367,6 +3394,7 @@ public class PGraphics3D extends PGraphics {
     ambientR = calcR;
     ambientG = calcG;
     ambientB = calcB;
+//    material.ambient(calcR, calcG, calcB);
   }
 
 
@@ -3853,7 +3881,6 @@ public class PGraphics3D extends PGraphics {
 
 
 
-
   //////////////////////////////////////////////////////////////
 
   // SMOOTH (not available, throws error)
@@ -3863,14 +3890,12 @@ public class PGraphics3D extends PGraphics {
 
 
   public void smooth() {
-    String msg = "smooth() not available with P3D";
-    throw new RuntimeException(msg);
+    methodError("smooth");
   }
 
 
   public void noSmooth() {
-    String msg = "noSmooth() not available with P3D";
-    throw new RuntimeException(msg);
+    // no need to do an error here, really...
   }
 
 

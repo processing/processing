@@ -175,7 +175,9 @@ abstract public class PShape implements PConstants {
   boolean fillSaved;
   int fillColorSaved;
 
+  int rectModeSaved;
   int ellipseModeSaved;
+  int shapeModeSaved;
   
 
   protected void pre(PGraphics g) {
@@ -203,7 +205,9 @@ abstract public class PShape implements PConstants {
     fillSaved = g.fill;
     fillColorSaved = g.fillColor;
 
+    rectModeSaved = g.rectMode;
     ellipseModeSaved = g.ellipseMode;
+    shapeModeSaved = g.shapeMode;
 
     if (styles) {
       styles(g);
