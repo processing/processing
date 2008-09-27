@@ -435,7 +435,8 @@ public class AutoFormat {
   public void show() {
     StringBuffer onechar;
 
-    String originalText = editor.getText();
+    // Adding an additional newline as a hack around other errors
+    String originalText = editor.getText() + "\n";
     strOut = new StringBuffer();
     indentValue = Preferences.getInteger("editor.tabs.size");
     indentChar = new String(" ");
