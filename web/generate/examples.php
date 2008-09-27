@@ -9,6 +9,8 @@ $benchmark_start = microtime_float();
 
 // look for the .subversion folder somewhere else
 // otherwise will go looking for /home/root/.subversion or some other user
+$source = CONTENTDIR."static/tutorials/";
+$path = BASEDIR;
 $where = CONTENTDIR . 'static/examples';
 putenv('HOME=' . CONTENTDIR);
 
@@ -234,6 +236,8 @@ $execution_time = round($benchmark_end - $benchmark_start, 4);
 
 <h2>Examples pages generation Successful</h2>
 <p>Generated <?= $count+1 ?> files in <?=$execution_time?> seconds.</p>
+<h2>Updated <?=$where?> </h2>
+
 
 <?
 
