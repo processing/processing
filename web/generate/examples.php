@@ -4,6 +4,20 @@ require('../config.php');
 require('lib/Example.class.php');
 $benchmark_start = microtime_float();
 
+
+// update the files on the server via SVN
+
+// look for the .subversion folder somewhere else
+// otherwise will go looking for /home/root/.subversion or some other user
+$where = CONTENTDIR . 'static/examples';
+putenv('HOME=' . CONTENTDIR);
+
+// do the initial checkout
+//`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
+
+`cd $where && /usr/local/bin/svn update`;
+
+
 // Make the intro page
 $source = CONTENTDIR."static/";
 $page = new Page("Learning", "Learning");
