@@ -12,15 +12,16 @@ $benchmark_start = microtime_float();
 $source = CONTENTDIR."examples";
 $path = BASEDIR;
 $where = CONTENTDIR . 'examples';
+$there = CONTENTDIR;
 putenv('HOME=' . CONTENTDIR);
 
 // do the initial checkout
 //`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
 
-`cd $where && /usr/local/bin/svn update examples.xml`;
-`cd $where && /usr/local/bin/svn update examples_3D.xml`;
-`cd $where && /usr/local/bin/svn update examples_libraries.xml`;
-`cd $where && /usr/local/bin/svn update examples_topics.xml`;
+`cd $there && /usr/local/bin/svn update examples.xml`;
+`cd $there && /usr/local/bin/svn update examples_3D*.xml`;
+`cd $there && /usr/local/bin/svn update examples_libraries.xml`;
+`cd $there && /usr/local/bin/svn update examples_topics.xml`;
 `cd $where && /usr/local/bin/svn update`;
 
 // Make the intro page
