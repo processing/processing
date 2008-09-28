@@ -13,7 +13,7 @@ body {
 	margin				: 0;
 	padding				: 0;
 	
-	background-color	: #E2E2CC;  /* #FFFFFF; */  /* #333322 */
+	background-color	: #E2E2E2;  /* #FFFFFF; */  /* #333322 */
 	
 	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
 	font-size			: 100%; 
@@ -91,7 +91,7 @@ a:link:visited {
 
 #navigation {
 	font-size: 0.7em;
-	color: #CCCCBE;
+	color: #CCCCCC;
 }
 
 .navBar { font-size: 11px; 
@@ -102,9 +102,9 @@ a:link:visited {
 .navBar a { color: #fff; }
 .navBar a:visited {color: #fff; }
 
-#mainnav { background: #333323; }
-#mainnav_noSub { background: #5a5a46; margin-bottom: 40px; }
-#mainnav, #mainnav_noSub { position: relative; color: #ccccbe !important; }
+#mainnav { background: #333333; }
+#mainnav_noSub { background: #5a5a5a; margin-bottom: 40px; }
+#mainnav, #mainnav_noSub { position: relative; color: #cccccc !important; }
 
 #subNav { margin-left: 220px; 
 	background: #5a5a46 url(../img/nav_bottomarrow.gif) no-repeat; 
@@ -112,13 +112,13 @@ a:link:visited {
 	margin-bottom: 30px;
 }
 #subNav.learning { margin-left: 157px; }
-.active { color: #ccccbe !important; }
+.active { color: #cccccc !important; }
 .activeSub { color: #000000 !important; }
-.faq { position: absolute; right: 10px; color: #ccccbe }
+.faq { position: absolute; right: 10px; color: #cccccc }
 
 #subNav.exhib { margin-left: 92px; }
-.active { color: #ccccbe !important; }
-.faq { position: absolute; right: 10px; color: #ccccbe }
+.active { color: #cccccc !important; }
+.faq { position: absolute; right: 10px; color: #cccccc }
 
 /* ================ CONTENT ================== */
 
@@ -147,7 +147,7 @@ a:link:visited {
 	}
 
 #footer #copyright {
-	background-color: #5A5A4E;
+	background-color: #5A5A5A;
 }
 
 #footer #colophon {
@@ -167,7 +167,7 @@ h1, h2, h3, h4, h5, h6
 	{
 	/*margin-bottom 		: 5px;*/
 
-	color				: #5A5A46; 
+	color				: #5A5A5A; 
 	font-family			: Verdana, Geneva, Arial, Helvetica, sans-serif; 
 	font-weight			: normal;
 
@@ -317,10 +317,10 @@ td img { margin: 0; display: block; }
 
 dl.network dt { font-style: normal; }
 dl.network dd { margin: 0; }
-dl.network dd.date { color: #999966; margin-bottom: 1em; }
+dl.network dd.date { color: #999999; margin-bottom: 1em; }
 
 p.network { margin: 0 23px 1em 0; width:200px; }
-p.network span.date { color: #999966; }
+p.network span.date { color: #999999; }
 
 p.exhibition-nav { margin-top: 20px; margin-bottom: 10px; }
 
