@@ -107,7 +107,7 @@ a:link:visited {
 #mainnav, #mainnav_noSub { position: relative; color: #cccccc !important; }
 
 #subNav { margin-left: 220px; 
-	background: #5a5a46 url(../img/nav_bottomarrow.gif) no-repeat; 
+	background: #5a5a5a url(../img/nav_bottomarrow.gif) no-repeat; 
 	padding-left: 33px;
 	margin-bottom: 30px;
 }
