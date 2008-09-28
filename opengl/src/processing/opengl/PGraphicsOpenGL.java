@@ -1869,12 +1869,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public void background(PImage bgimage) {
-    clear();
+    backgroundImpl();
     set(0, 0, bgimage);
   }
 
 
-  public void clear() {
+  public void backgroundImpl() {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 

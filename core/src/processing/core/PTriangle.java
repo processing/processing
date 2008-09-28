@@ -258,7 +258,7 @@ public class PTriangle implements PConstants
     //SCREEN_HEIGHT1 = SCREEN_HEIGHT-1;
 
     m_pixels = parent.pixels;
-    m_stencil = parent.stencil;
+//    m_stencil = parent.stencil;
     m_zbuffer = parent.zbuffer;
 
     noDepthTest = parent.hints[DISABLE_DEPTH_TEST];

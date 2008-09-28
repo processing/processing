@@ -756,120 +756,6 @@ public class PGraphicsJava2D extends PGraphics2D {
     }
   }
 
-    /*
-    // for rev 0124, passing the tintColor in here. the problem is that
-    // the 'parent' PGraphics object of this inner class may not be
-    // the same one that's used when drawing. for instance, if this
-    // is a font used by the main drawing surface, then it's later
-    // used in an offscreen PGraphics, the tintColor value from the
-    // original PGraphics will be used.
-    public void update(boolean tint, int tintColor) {
-      if (tintedPixels == null) {
-        //System.out.println("tinted pixels null");
-        tintedPixels = new int[source.width * source.height];
-      }
-
-      if ((source.format == ARGB) || (source.format == RGB)) {
-        if (tint) {
-          // create tintedPixels[] if necessary
-          //if (tintedPixels == null) {
-          //  tintedPixels = new int[source.width * source.height];
-          //}
-
-          int a2 = (tintColor >> 24) & 0xff;
-          int r2 = (tintColor >> 16) & 0xff;
-          int g2 = (tintColor >> 8) & 0xff;
-          int b2 = (tintColor) & 0xff;
-
-          // multiply each of the color components into tintedPixels
-          // if straight RGB image, don't bother multiplying
-          // (also avoids problems if high bits not set)
-          if (source.format == RGB) {
-            int alpha = a2 << 24;
-
-            for (int i = 0; i < tintedPixels.length; i++) {
-              int argb1 = source.pixels[i];
-              int r1 = (argb1 >> 16) & 0xff;
-              int g1 = (argb1 >> 8) & 0xff;
-              int b1 = (argb1) & 0xff;
-
-              tintedPixels[i] = alpha |
-                (((r2 * r1) & 0xff00) << 8) |
-                ((g2 * g1) & 0xff00) |
-                (((b2 * b1) & 0xff00) >> 8);
-            }
-
-          } else {
-            for (int i = 0; i < tintedPixels.length; i++) {
-              int argb1 = source.pixels[i];
-              int a1 = (argb1 >> 24) & 0xff;
-              int r1 = (argb1 >> 16) & 0xff;
-              int g1 = (argb1 >> 8) & 0xff;
-              int b1 = (argb1) & 0xff;
-
-              tintedPixels[i] =
-                (((a2 * a1) & 0xff00) << 16) |
-                (((r2 * r1) & 0xff00) << 8) |
-                ((g2 * g1) & 0xff00) |
-                (((b2 * b1) & 0xff00) >> 8);
-            }
-          }
-
-          tinted = true;
-          tintedColor = tintColor;
-
-          // finally, do a setRGB based on tintedPixels
-          //image.setRGB(0, 0, source.width, source.height,
-          //             tintedPixels, 0, source.width);
-          WritableRaster raster = ((BufferedImage) image).getRaster();
-          raster.setDataElements(0, 0, source.width, source.height,
-                                 tintedPixels);
-
-        } else {  // no tint
-          // just do a setRGB like before
-          // (and we'll just hope that the high bits are set)
-          //image.setRGB(0, 0, source.width, source.height,
-          //             source.pixels, 0, source.width);
-          WritableRaster raster = ((BufferedImage) image).getRaster();
-          raster.setDataElements(0, 0, source.width, source.height,
-                                 source.pixels);
-        }
-
-      } else if (source.format == ALPHA) {
-        int lowbits = tintColor & 0x00ffffff;
-        if (((tintColor >> 24) & 0xff) >= 254) {
-          //PApplet.println("  no alfa " + PApplet.hex(tintColor));
-          // no actual alpha to the tint, set the image's alpha
-          // as the high 8 bits, and use the color as the low 24 bits
-          for (int i = 0; i < tintedPixels.length; i++) {
-            // don't bother with the math if value is zero
-            tintedPixels[i] = (source.pixels[i] == 0) ?
-              0 : (source.pixels[i] << 24) | lowbits;
-          }
-
-        } else {
-          //PApplet.println("  yes alfa " + PApplet.hex(tintColor));
-          // multiply each image alpha by the tint alpha
-          int alphabits = (tintColor >> 24) & 0xff;
-          for (int i = 0; i < tintedPixels.length; i++) {
-            tintedPixels[i] = (source.pixels[i] == 0) ?
-              0 : (((alphabits * source.pixels[i]) & 0xFF00) << 16) | lowbits;
-          }
-        }
-
-        // mark the pixels for next time
-        tinted = true;
-        tintedColor = tintColor;
-
-        // finally, do a setRGB based on tintedPixels
-        //image.setRGB(0, 0, source.width, source.height,
-        //             tintedPixels, 0, source.width);
-        WritableRaster raster = ((BufferedImage) image).getRaster();
-        raster.setDataElements(0, 0, source.width, source.height, tintedPixels);
-      }
-    }
-  */
-
 
   //////////////////////////////////////////////////////////////
 
@@ -1144,7 +1030,7 @@ public class PGraphicsJava2D extends PGraphics2D {
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
       throw new RuntimeException("background image must be " +
-                                 "the same size as your application");
+                                 "the same size as the sketch.");
     }
     if ((image.format != RGB) && (image.format != ARGB)) {
       throw new RuntimeException("background images should be RGB or ARGB");
@@ -1156,21 +1042,14 @@ public class PGraphicsJava2D extends PGraphics2D {
 
   int[] clearPixels;
 
-  public void clear() {
-    // the only way to properly clear the screen is to re-allocate
+  public void backgroundImpl() {
     if (backgroundAlpha) {
-      // clearRect() doesn't work because it just makes everything black.
-      // instead, just wipe out the canvas to its transparent original
-      //allocate();
-
-      // allocate also won't work, because all the settings
-      // (like smooth) will be completely reset.
-      // Instead, create a small array that can be used to set the pixels
-      // several times. Using a single-pixel line of length 'width' is a
-      // tradeoff between speed (setting each pixel individually is too slow)
-      // and memory (an array for width*height would waste lots of memory
-      // if it stayed resident, and would terrify the gc if it were
-      // re-created on each trip to background().
+      // Create a small array that can be used to set the pixels several times. 
+      // Using a single-pixel line of length 'width' is a tradeoff between 
+      // speed (setting each pixel individually is too slow) and memory 
+      // (an array for width*height would waste lots of memory if it stayed 
+      // resident, and would terrify the gc if it were re-created on each trip 
+      // to background().
       WritableRaster raster = ((BufferedImage) image).getRaster();
       if ((clearPixels == null) || (clearPixels.length < width)) {
         clearPixels = new int[width];
@@ -1221,7 +1100,7 @@ public class PGraphicsJava2D extends PGraphics2D {
 
 
   public void beginRaw(PGraphics recorderRaw) {
-    throw new RuntimeException("beginRaw() not available with this renderer");
+    methodError("beginRaw");
   }
 
 
@@ -1262,22 +1141,12 @@ public class PGraphicsJava2D extends PGraphics2D {
    * update happens, in PGraphicsJava2D, this will happen immediately.
    */
   public void updatePixels(int x, int y, int c, int d) {
-    if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
-      updatePixels();
-    } else {
-      throw new RuntimeException("updatePixels(x, y, c, d) not implemented");
+    //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
+    if ((x != 0) || (y != 0) || (c != width) || (d != height)) {
+      // Show a warning message, but continue anyway.
+      variationError("updatePixels(x, y, w, h)");
     }
-    /*
-    ((BufferedImage) image).setRGB(x, y,
-                                   (imageMode == CORNER) ? c : (c - x),
-                                   (imageMode == CORNER) ? d : (d - y),
-                                   pixels, 0, width);
-    WritableRaster raster = ((BufferedImage) image).getRaster();
-    raster.setDataElements(x, y,
-                           (imageMode == CORNER) ? c : (c - x),
-                           (imageMode == CORNER) ? d : (d - y),
-                           pixels);
-  */
+    updatePixels();
   }
 
 
@@ -1380,12 +1249,12 @@ public class PGraphicsJava2D extends PGraphics2D {
 
 
   public void mask(int alpha[]) {
-    throw new RuntimeException("mask() cannot be used with JAVA2D");
+    methodError("mask");
   }
 
 
   public void mask(PImage alpha) {
-    throw new RuntimeException("mask() cannot be used with JAVA2D");
+    methodError("mask");
   }
 
 

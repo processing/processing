@@ -1774,7 +1774,7 @@ public class PGraphics2D extends PGraphics {
     /**
      * Clear the pixel buffer.
      */
-    protected void clear() {
+    protected void backgroundImpl() {
       Arrays.fill(pixels, backgroundColor);
     }
 
