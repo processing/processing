@@ -303,13 +303,13 @@ public class PGraphics extends PImage implements PConstants {
   public PFont textFont;
 
   /** The current text align (read-only) */
-  public int textAlign;
+  public int textAlign = LEFT;
 
   /** The current vertical text alignment (read-only) */
-  public int textAlignY;
+  public int textAlignY = BASELINE;
 
   /** The current text mode (read-only) */
-  public int textMode;
+  public int textMode = MODEL;
 
   /** The current text size (read-only) */
   public float textSize;
@@ -489,7 +489,7 @@ public class PGraphics extends PImage implements PConstants {
   public PMatrix3D modelview;
 
   /** Inverse modelview matrix, used for lighting. */
-  public PMatrix3D modelviewInv;
+  protected PMatrix3D modelviewInv;
 
   /**
    * The camera matrix, the modelview will be set to this on beginDraw.
@@ -497,34 +497,33 @@ public class PGraphics extends PImage implements PConstants {
   public PMatrix3D camera;
 
   /** Inverse camera matrix */
-  public PMatrix3D cameraInv;
+  protected PMatrix3D cameraInv;
 
   // ........................................................
 
-  /** Camera field of view (in radians, as of rev 86) */
+  /** Camera field of view. */
   public float cameraFOV;
 
-  /** Position of the camera */
+  /** Position of the camera. */
   public float cameraX, cameraY, cameraZ;
-
   public float cameraNear, cameraFar;
+  /** Aspect ratio of camera's view. */
   public float cameraAspect;
 
-  // projection matrix
+  /** Current projection matrix. */
   public PMatrix3D projection;
 
   // ........................................................
 
-  /// the stencil buffer
-  public int stencil[];
-
-  /// depth buffer
-  public float zbuffer[];
+  /** The depth buffer. */
+  public float[] zbuffer;
 
   // ........................................................
 
-  /** Maximum lights by default is 8, which is arbitrary,
-      but is the minimum defined by OpenGL */
+  /** 
+   * Maximum lights by default is 8, which is arbitrary for this renderer,
+   * but is the minimum defined by OpenGL 
+   */
   public static final int MAX_LIGHTS = 8;
 
   public int lightCount = 0;
@@ -592,9 +591,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  /**
-   * Normals
-   */
+  /** Current normal vector. */
   public float normalX, normalY, normalZ;
 
   // ........................................................
@@ -797,15 +794,18 @@ public class PGraphics extends PImage implements PConstants {
     }
     if (stroke) {
       stroke(strokeColor);
-      if (strokeWeight != DEFAULT_STROKE_WEIGHT) {
-        strokeWeight(strokeWeight);
-      }
-      if (strokeCap != DEFAULT_STROKE_CAP) {
-        strokeCap(strokeCap);
-      }
-      if (strokeJoin != DEFAULT_STROKE_JOIN) {
-        strokeJoin(strokeJoin);
-      }
+      
+      // The if() statements should be handled inside the functions, 
+      // otherwise an actual reset/revert won't work properly.
+      //if (strokeWeight != DEFAULT_STROKE_WEIGHT) {
+      strokeWeight(strokeWeight);
+      //}
+//      if (strokeCap != DEFAULT_STROKE_CAP) {
+      strokeCap(strokeCap);
+//      }
+//      if (strokeJoin != DEFAULT_STROKE_JOIN) {
+      strokeJoin(strokeJoin);
+//      }
     } else {
       noStroke();
     }
@@ -827,6 +827,8 @@ public class PGraphics extends PImage implements PConstants {
       textFont(textFont, textSize);
       textLeading(saveLeading);
     }
+    textMode(textMode);
+    textAlign(textAlign, textAlignY);
     background(backgroundColor);
 
     //reapplySettings = false;
@@ -3546,25 +3548,41 @@ public class PGraphics extends PImage implements PConstants {
     calcG = (float)calcGi / 255.0f;
     calcB = (float)calcBi / 255.0f;
     calcAlpha = (calcAi != 255);
-
   }
 
 
   //////////////////////////////////////////////////////////////
 
-
   public void strokeWeight(float weight) {
     strokeWeight = weight;
+    //if (strokeWeight != DEFAULT_STROKE_WEIGHT) {
+    strokeWeightImpl();
   }
   
   
+  /** Renderer-specific handling after the strokeJoin has been set. */
+  protected void strokeWeightImpl() {
+  }
+
+
   public void strokeJoin(int join) {
     strokeJoin = join;
+    strokeJoinImpl();
+  }
+  
+  
+  /** Renderer-specific handling after the strokeJoin has been set. */
+  protected void strokeJoinImpl() {
   }
 
 
   public void strokeCap(int cap) {
     strokeCap = cap;
+  }
+  
+  
+  /** Renderer-specific handling after the strokeCap has been set. */
+  protected void strokeCapImpl() {
   }
 
 
@@ -3922,7 +3940,7 @@ public class PGraphics extends PImage implements PConstants {
       }
       colorCalcARGB(rgb, colorModeA);
       backgroundFromCalc();
-      clear();
+      backgroundImpl();
     }
   }
 
@@ -3941,7 +3959,7 @@ public class PGraphics extends PImage implements PConstants {
       } else {
         colorCalcARGB(rgb, alpha);
         backgroundFromCalc();
-        clear();
+        backgroundImpl();
       }
     }
   }
@@ -3954,7 +3972,7 @@ public class PGraphics extends PImage implements PConstants {
   public void background(float gray) {
     colorCalc(gray);
     backgroundFromCalc();
-    clear();
+    backgroundImpl();
   }
 
 
@@ -3968,7 +3986,7 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       colorCalc(gray, alpha);
       backgroundFromCalc();
-      clear();
+      backgroundImpl();
     }
   }
 
@@ -3980,7 +3998,7 @@ public class PGraphics extends PImage implements PConstants {
   public void background(float x, float y, float z) {
     colorCalc(x, y, z);
     backgroundFromCalc();
-    clear();
+    backgroundImpl();
   }
 
 
@@ -4002,7 +4020,7 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       colorCalc(x, y, z, a);
       backgroundFromCalc();
-      clear();
+      backgroundImpl();
     }
   }
 
@@ -4053,7 +4071,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Clear the pixel buffer.
    */
-  protected void clear() {
+  protected void backgroundImpl() {
   }
 
 
@@ -4066,6 +4084,10 @@ public class PGraphics extends PImage implements PConstants {
   HashMap<String, Object> errors;
   
 
+  /**
+   * Show a renderer error, and keep track of it so that it's only shown once.
+   * @param msg the error message (which will be stored for later comparison) 
+   */
   protected void showError(String msg) {
     if (errors == null) {
       errors = new HashMap<String, Object>();
@@ -4084,8 +4106,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void depthErrorXYZ(String method) {
-    showError(method + "(x, y, z) can only be used with " +
-              "OPENGL or P3D, use " + method + "(x, y) instead.");
+    showError(method + "(x, y, z) can only be used with a renderer that " + 
+              "supports 3D, such as P3D or OPENGL. " +
+              "Use " + method + "(x, y) instead.");
   }
 
 
@@ -4094,6 +4117,11 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   
+  /**
+   * Error that a particular variation of a method is unavailable (even though
+   * other variations are). For instance, if vertex(x, y, u, v) is unavailable, 
+   * but vertex(x, y) is just fine, it doesn't make sense to use methodError().
+   */
   protected void variationError(String str) {
     showError(str + " is not available with this renderer.");
   }

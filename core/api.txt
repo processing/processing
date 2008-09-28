@@ -51,6 +51,7 @@ render_lines -> renderLines()
 depth_sort_lines -> sortLines()
 no longer any abstract methods in PGraphics itself
 removed support for specular alpha (and its 'SPA' constant)
+clear() -> backgroundImpl()
 
 // 
 
@@ -109,10 +110,12 @@ style(PStyle s)
                    float x3, float y3, float x4, float y4)
   public void rectMode(int mode)
   public void rect(float x1, float y1, float x2, float y2)
+
   public void ellipseMode(int mode)
   public void ellipse(float a, float b, float c, float d)
   public void arc(float a, float b, float c, float d,
                   float start, float stop)
+
   public void box(float size)
   public void box(float w, float h, float d)
   public void sphereDetail(int res)
@@ -194,8 +197,6 @@ style(PStyle s)
   public void scale(float sx, float sy)
   public void scale(float x, float y, float z)
 
-  public void pushMatrix()
-  public void popMatrix()
   public void resetMatrix()
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12)
@@ -203,6 +204,9 @@ style(PStyle s)
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33)
+
+  public void pushMatrix()
+  public void popMatrix()
 
   public void loadMatrix()
   public void printMatrix()
@@ -214,7 +218,6 @@ style(PStyle s)
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ)
   public void printCamera()
-
   public void ortho()
   public void ortho(float left, float right,
                     float bottom, float top,
@@ -306,6 +309,7 @@ style(PStyle s)
   public void background(float x, float y, float z)
   public void background(float x, float y, float z, float a)
   public void background(PImage image)
+  protected void backgroundImpl()
 
   public final float alpha(int what)
   public final float red(int what)
