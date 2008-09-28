@@ -59,8 +59,19 @@ class Curated
     
     function display_piece()
     {
-        $link = sprintf("<a href=\"%s\" onclick=\"javascript:MM_openBrWindow(this.href,'%s','menubar=yes,location=yes,status=yes,scrollbars=%s,resizable=%s,width=%d,height=%d');return false;\">",
-                        $this->location, $this->name, $this->scroll, $this->resize, $this->width, $this->height);
+        //$link = sprintf("<a href=\"%s\" onclick=\"javascript:MM_openBrWindow(this.href,'%s','menubar=yes,location=yes,
+        //                 status=yes,scrollbars=%s,resizable=%s,width=%d,height=%d');return false;\">",
+        //                $this->location, $this->name, $this->scroll, $this->resize, $this->width, $this->height);
+        $link = sprintf("<a href=\"%s\" onclick=\"javascript:MM_openBrWindow(this.href,'%s',''toolbar=yes,
+        				 status=yes,
+        				 scrollbars=yes,
+        				 menubar=yes,
+        				 location=yes,
+                         status=yes,
+                         resizable=yes,
+                         width=%d,height=%d');return false;\">",
+                         $this->location, $this->name, $this->width, $this->height);
+                         
         $html  = "<div class=\"curated-item\">\n";
         $html .= "\t$link<img src=\"/exhibition/{$this->image}\" width=\"223\" height=\"72\" alt=\"preview image\" title=\"{$this->name} by {$this->by}\" /></a>\n";
         $html .= "\t<p><br />$link{$this->name}</a><br />\n";

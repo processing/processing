@@ -177,6 +177,10 @@ class Ref
             $html .= refTableRow('<!--*-->Parameters<!--*-->', $cparameters);
         }
         
+        if (!empty($this->returns)) {
+            $html .= refTableRow('<!--*-->Returns<!--*-->', $this->returns);
+        }
+        
         $html .= refTableRow('<!--*-->Usage<!--*-->', $this->usage);
         
         if (!empty($this->related)) {
