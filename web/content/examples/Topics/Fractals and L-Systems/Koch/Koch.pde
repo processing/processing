@@ -3,9 +3,10 @@
  * by Daniel Shiffman.
  * 
  * Renders a simple fractal, the Koch snowflake. 
- * Each recursive level drawn in sequence. 
+ * Each recursive level is drawn in sequence. 
  */
  
+
 KochFractal k;
 
 void setup() {

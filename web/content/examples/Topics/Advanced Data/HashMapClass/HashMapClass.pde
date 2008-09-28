@@ -14,11 +14,9 @@
  */
 
 
-// HashMap object
-HashMap words;
+HashMap words;  // HashMap object
 
-// Array of all words from input file
-String[] tokens;
+String[] tokens;  // Array of all words from input file
 int counter;
 
 PFont f;
@@ -31,7 +29,7 @@ void setup() {
   String[] lines = loadStrings("dracula.txt");
   String allText = join(lines," ");
   tokens = splitTokens(allText," ,.?!:;[]-");
-  f = createFont("Georgia",36,true);  
+  f = createFont("Georgia", 36, true);  
 }
 
 void draw() {
@@ -54,7 +52,7 @@ void draw() {
     // And add to the HashMap
     // put() takes two arguments, "key" and "value"
     // The key for us is the String and the value is the Word object
-    words.put(s,w);    
+    words.put(s, w);    
   }
 
   // Make an iterator to look at all the things in the HashMap
@@ -71,11 +69,11 @@ void draw() {
     // Only display words that appear 3 times
     if (w.count > 3) {
       // The size is the count
-      int fsize = constrain(w.count,0,100);
-      textFont(f,fsize);
-      text(w.word,x,y);
+      int fsize = constrain(w.count, 0, 100);
+      textFont(f, fsize);
+      text(w.word, x, y);
       // Move along the x-axis
-      x+=textWidth(w.word+" ");
+      x += textWidth(w.word + " ");
     }
     
     // If x gets to the end, move Y

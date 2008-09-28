@@ -15,7 +15,7 @@ float wh = 4;
 void setup() {
   size(200, 200);
   noLoop();
-  background(0);
+  background(255);
 }
 
 void draw() {
