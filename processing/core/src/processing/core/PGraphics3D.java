@@ -28,8 +28,6 @@ import java.awt.Toolkit;
 import java.awt.image.*;
 import java.util.*;
 
-import processing.core.PGraphics.Style;
-
 
 /**
  * Subclass of PGraphics that handles 3D rendering.
@@ -284,7 +282,7 @@ public class PGraphics3D extends PGraphics {
       Arrays.fill(zbuffer, Float.MAX_VALUE);
     }
 
-    stencil = new int[pixelCount];
+//    stencil = new int[pixelCount];
 
     line = new PLine(this);
     triangle = new PTriangle(this);
@@ -769,14 +767,14 @@ public class PGraphics3D extends PGraphics {
           add_path();
           for (int i = vertex_start; i < stop; i++) {
             //counter = i - vertex_start;
-            add_line(i,i+1);
+            add_line(i, i+1);
           }
 
           // then draw from vertex (n) to (n+2)
           stop = vertex_end-2;
           for (int i = vertex_start; i < stop; i++) {
             add_path();
-            add_line(i,i+2);
+            add_line(i, i+2);
           }
         }
         break;
@@ -945,7 +943,6 @@ public class PGraphics3D extends PGraphics {
     }
 
 
-
     // ------------------------------------------------------------------
     // POINTS FROM CAMERA SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
     // this appears to be wasted time with the opengl renderer
@@ -1016,6 +1013,7 @@ public class PGraphics3D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   
+  // begin a new section of stroked geometry
   protected final void add_path() {
     if (pathCount == pathOffset.length) {
 //      int temp1[] = new int[pathCount << 1];
@@ -1179,6 +1177,7 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
+  
   private final int interpolate_clip_vertex(int a, int b) {
     float[] va;
     float[] vb;
@@ -2205,7 +2204,6 @@ public class PGraphics3D extends PGraphics {
 
 
   protected void handle_lighting() {
-
     // If the lighting does not depend on vertex position and there is a single
     // normal specified for this shape, go ahead and apply the same lighting
     // contribution to every vertex in this shape (one lighting calc!)
@@ -2663,7 +2661,7 @@ public class PGraphics3D extends PGraphics {
 
 
   /**
-   * Same as scale(s, s, s);
+   * Same as scale(s, s, s).
    */
   public void scale(float s) {
     scale(s, s, s);
@@ -2671,6 +2669,7 @@ public class PGraphics3D extends PGraphics {
 
 
   /**
+   * Same as scale(sx, sy, 1).
    */
   public void scale(float sx, float sy) {
     scale(sx, sy, 1);
@@ -3847,13 +3846,12 @@ public class PGraphics3D extends PGraphics {
 
   /**
    * Clear pixel buffer. With P3D and OPENGL, this also clears the zbuffer.
-   * Stencil buffer should also be cleared, but for now is ignored in P3D.
    */
-  protected void clear() {
+  protected void clear3() {
     Arrays.fill(pixels, backgroundColor);
     Arrays.fill(zbuffer, Float.MAX_VALUE);
     clearRaw();
-  } 
+  }
    
 
   /**
