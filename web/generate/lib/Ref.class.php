@@ -112,8 +112,8 @@ class Ref
         $examples = '';
 		$count = 0;
         foreach ($this->examples as $ex) {
-        	echo $ex[code];
-        	echo 'BBBBBBBBRERRRRRRRREEEEEEEEEAAAAAAAAAKKKKKKKKK';
+        	//echo $ex[code];
+        	//echo 'BBBBBBBBRERRRRRRRREEEEEEEEEAAAAAAAAAKKKKKKKKK';
         	$ex[code] = codeExampleConvert($ex[code]); // Adding this line to try to fix problems with match() and matchAll()
         	echo $ex[code];
             $examples .= '<div class="example">';

@@ -51,10 +51,6 @@ foreach ($files as $file) {
     }
 }
 
-// sort alphabetically
-ksort($abridged_alpha);
-ksort($complete_alpha);
-
 
 $path = 'reference/' . ($lang != 'en' ? "$lang/" : '');
 
@@ -75,16 +71,6 @@ $page->set_array($translation->meta);
 $page->language($lang);
 writeFile($path.'index.html', $page->out());
 
-// abridged alphaphabetical
-$page = new Page($alphaTitle, 'Language');
-$page->subtemplate('template.ref.index.html');
-$page->content(alpha_index($abridged_alpha));
-$page->set('reference_nav', reference_nav());
-$page->set('language_nav', language_nav($lang));
-$page->set_array($translation->meta);
-$page->language($lang);
-writeFile($path.'index_alpha.html', $page->out());
-
 // complete reference
 $page = new Page($completeTitle, 'Language');
 $page->subtemplate('template.ref.index.ext.html');
@@ -95,6 +81,20 @@ $page->set_array($translation->meta);
 //$page->set('abridged_notice', $page->extended_notice);
 $page->language($lang);
 writeFile($path.'index_ext.html', $page->out());
+
+// sort alphabetically
+ksort($abridged_alpha);
+ksort($complete_alpha);
+
+// abridged alphaphabetical
+$page = new Page($alphaTitle, 'Language');
+$page->subtemplate('template.ref.index.html');
+$page->content(alpha_index($abridged_alpha));
+$page->set('reference_nav', reference_nav());
+$page->set('language_nav', language_nav($lang));
+$page->set_array($translation->meta);
+$page->language($lang);
+writeFile($path.'index_alpha.html', $page->out());
 
 // complete alphabetical
 $page = new Page($alphaCompleteTitle, 'Language');
