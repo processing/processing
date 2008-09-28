@@ -861,6 +861,20 @@ public class Editor extends JFrame implements RunnerListener {
     JMenu menu = new JMenu("Help");
     JMenuItem item;
 
+    /*
+    item = new JMenuItem("Browser Test");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          //Base.openURL("http://processing.org/learning/gettingstarted/");
+          //JFrame browserFrame = new JFrame("Browser");
+          BrowserStartup bs = new BrowserStartup("jar:file:/Users/fry/coconut/processing/build/shared/reference.zip!/reference/setup_.html");
+          bs.initUI();
+          bs.launch();
+        }
+      });
+    menu.add(item);
+    */
+
     item = new JMenuItem("Getting Started");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
