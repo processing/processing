@@ -6767,6 +6767,12 @@ public class PApplet extends Applet
   }
 
 
+  public void style(PStyle s) {
+    if (recorder != null) recorder.style(s);
+    g.style(s);
+  }
+
+
   public void point(float x, float y) {
     if (recorder != null) recorder.point(x, y);
     g.point(x, y);
@@ -7335,6 +7341,18 @@ public class PApplet extends Applet
 
   public float modelZ(float x, float y, float z) {
     return g.modelZ(x, y, z);
+  }
+
+
+  public void pushStyle() {
+    if (recorder != null) recorder.pushStyle();
+    g.pushStyle();
+  }
+
+
+  public void popStyle() {
+    if (recorder != null) recorder.popStyle();
+    g.popStyle();
   }
 
 

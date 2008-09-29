@@ -58,7 +58,7 @@ abstract public class PShape implements PConstants {
   protected boolean fill;
   protected int fillColor;
   
-  protected boolean styles = true;
+  protected boolean style = true;
 
   //public boolean hasTransform;
   //protected float[] transformation;
@@ -139,6 +139,23 @@ abstract public class PShape implements PConstants {
   }
 
   
+  /**
+   * Overrides SVG-set styles and uses PGraphics styles and colors.
+   * Identical to ignoreStyles(true).
+   */
+  public void disableStyle() {
+    style = false;
+  }
+
+
+  /**
+   * Enabless style information (fill and stroke) set in the shape.
+   */
+  public void enableStyle() {
+    style = true;
+  }
+
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -209,7 +226,7 @@ abstract public class PShape implements PConstants {
     ellipseModeSaved = g.ellipseMode;
     shapeModeSaved = g.shapeMode;
 
-    if (styles) {
+    if (style) {
       styles(g);
     }
   }
@@ -327,10 +344,10 @@ abstract public class PShape implements PConstants {
   }
 
   
-  // can't be 'add' because that suggests additive geometry
+  // can't be just 'add' because that suggests additive geometry
   public void addChild(PShape who) {
     if (children == null) {
-      children = new PShape[2];
+      children = new PShape[1];
     }
     if (childCount == children.length) {
       children = (PShape[]) PApplet.expand(children);
@@ -338,15 +355,24 @@ abstract public class PShape implements PConstants {
     children[childCount++] = who;
     who.parent = this;
 
-    /*
-    String childName = who.getName();
-    if (childName != null) {
+    if (who.getName() != null) {
+      addName(who.getName(), who);
+    }
+  }
+
+
+  /**
+   * Add a shape to the name lookup table.
+   */
+  protected void addName(String nom, PShape shape) {
+    if (parent != null) {
+      parent.addName(nom, shape);
+    } else {
       if (table == null) {
         table = new HashMap<String,PShape>();
       }
-      table.put(childName, who);
+      table.put(nom, shape);
     }
-    */
   }
 
 
