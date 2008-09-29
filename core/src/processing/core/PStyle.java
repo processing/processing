@@ -24,9 +24,7 @@
 package processing.core;
 
 
-public class PStyle {
-  public boolean smooth;
-
+public class PStyle implements PConstants {
   public int imageMode;
   public int rectMode;
   public int ellipseMode;

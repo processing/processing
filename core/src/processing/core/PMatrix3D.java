@@ -27,7 +27,7 @@ package processing.core;
 /**
  * 4x4 matrix implementation.
  */
-public final class PMatrix3D implements PConstants {
+public final class PMatrix3D implements PMatrix /*, PConstants*/ {
 
   public float m00, m01, m02, m03;
   public float m10, m11, m12, m13;
@@ -237,11 +237,30 @@ public final class PMatrix3D implements PConstants {
   /** 
    * Multiply this matrix by another.
    */
-  public void apply(PMatrix3D source) {
-    apply(source.m00, source.m01, source.m02, source.m03,
-          source.m10, source.m11, source.m12, source.m13,
-          source.m20, source.m21, source.m22, source.m23,
-          source.m30, source.m31, source.m32, source.m33);
+  public void apply(PMatrix matrix) {
+    if (matrix instanceof PMatrix2D) {
+      PMatrix2D source = (PMatrix2D) matrix;
+      apply(source.m00, source.m01, 0, source.m02, 
+            source.m10, source.m11, 0, source.m12,
+            0, 0, 1, 0,
+            0, 0, 0, 1);
+      
+    } else if (matrix instanceof PMatrix3D) {
+      PMatrix3D source = (PMatrix3D) matrix;
+      apply(source.m00, source.m01, source.m02, source.m03,
+            source.m10, source.m11, source.m12, source.m13,
+            source.m20, source.m21, source.m22, source.m23,
+            source.m30, source.m31, source.m32, source.m33);
+    }
+  }
+
+
+  public void apply(float n00, float n01, float n02, 
+                    float n10, float n11, float n12) {
+    apply(n00, n01, 0, n02,
+          n10, n11, 0, n12,
+          0, 0, 1, 0,
+          0, 0, 0, 1);
   }
 
 
@@ -249,7 +268,7 @@ public final class PMatrix3D implements PConstants {
                     float n10, float n11, float n12, float n13,
                     float n20, float n21, float n22, float n23,
                     float n30, float n31, float n32, float n33) {
-    
+
     float r00 = m00*n00 + m01*n10 + m02*n20 + m03*n30;
     float r01 = m00*n01 + m01*n11 + m02*n21 + m03*n31;
     float r02 = m00*n02 + m01*n12 + m02*n22 + m03*n32;
@@ -323,36 +342,87 @@ public final class PMatrix3D implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
+  public PVector mult(PVector source, PVector target) {
+    if (target == null) {
+      target = new PVector();
+    }
+    target.x = m00*source.x + m01*source.y + m02*source.z + m03;
+    target.y = m10*source.x + m11*source.y + m12*source.z + m13;
+    target.z = m20*source.x + m21*source.y + m22*source.z + m23;
+    return target;
+  }
+  
+  
   /** 
-   * Multiply a four element vector against this matrix. 
+   * Multiply a three or four element vector against this matrix. 
    * If out is null or not length four, a new float array will be returned.
    * The values for vec and out can be the same (though that's less efficient). 
    */
-  public float[] multiply(float vec[], float out[]) {
-    if (out == null || out.length != 4) {
-      out = new float[4];
+  public float[] mult(float[] source, float[] target) {
+    if (target == null || target.length < 3) {
+      target = new float[3];
     }
-    
-    if (vec == out) {
-      float tmpx = m00*vec[0] + m01*vec[1] + m02*vec[2] + m03*vec[3];
-      float tmpy = m10*vec[0] + m11*vec[1] + m12*vec[2] + m13*vec[3];
-      float tmpz = m20*vec[0] + m21*vec[1] + m22*vec[2] + m23*vec[3];
-      float tmpw = m30*vec[0] + m31*vec[1] + m32*vec[2] + m33*vec[3];
+    if (target.length == 3) {
+      if (source == target) {
+        float tmpx = m00*source[0] + m01*source[1] + m02*source[2] + m03;
+        float tmpy = m10*source[0] + m11*source[1] + m12*source[2] + m13;
+        float tmpz = m20*source[0] + m21*source[1] + m22*source[2] + m23;
 
-      out[0] = tmpx;
-      out[1] = tmpy;
-      out[2] = tmpz;
-      out[3] = tmpw;
+        target[0] = tmpx;
+        target[1] = tmpy;
+        target[2] = tmpz;
 
-    } else {
-      out[0] = m00*vec[0] + m01*vec[1] + m02*vec[2] + m03*vec[3];
-      out[1] = m10*vec[0] + m11*vec[1] + m12*vec[2] + m13*vec[3];
-      out[2] = m20*vec[0] + m21*vec[1] + m22*vec[2] + m23*vec[3];
-      out[3] = m30*vec[0] + m31*vec[1] + m32*vec[2] + m33*vec[3];      
+      } else {
+        target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03;
+        target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13;
+        target[2] = m20*source[0] + m21*source[1] + m22*source[2] + m23;
+      }
+    } else if (target.length > 3) {
+      if (source == target) {
+        float tmpx = m00*source[0] + m01*source[1] + m02*source[2] + m03*source[3];
+        float tmpy = m10*source[0] + m11*source[1] + m12*source[2] + m13*source[3];
+        float tmpz = m20*source[0] + m21*source[1] + m22*source[2] + m23*source[3];
+        float tmpw = m30*source[0] + m31*source[1] + m32*source[2] + m33*source[3];
+
+        target[0] = tmpx;
+        target[1] = tmpy;
+        target[2] = tmpz;
+        target[3] = tmpw;
+
+      } else {
+        target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03*source[3];
+        target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13*source[3];
+        target[2] = m20*source[0] + m21*source[1] + m22*source[2] + m23*source[3];
+        target[3] = m30*source[0] + m31*source[1] + m32*source[2] + m33*source[3];      
+      }
     }
-    
-    return out;
+    return target;
   }
+
+  
+  public float multX(float x, float y) {
+    return m00*x + m01*y + m03;
+  }
+  
+  
+  public float multY(float x, float y) {
+    return m10*x + m11*y + m13;
+  }
+  
+  
+  public float multX(float x, float y, float z) {
+    return m00*x + m01*y + m02*z + m03;
+  }
+  
+  
+  public float multY(float x, float y, float z) {
+    return m10*x + m11*y + m12*z + m13;
+  }
+  
+  
+  public float multZ(float x, float y, float z) {
+    return m20*x + m21*y + m22*z + m23;
+  }  
 
 
   /**
