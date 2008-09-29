@@ -740,9 +740,7 @@ public class PGraphics extends PImage implements PConstants {
     matrixStackDepth = 0;
 
     rectMode(CORNER);
-    ellipseMode(CENTER);
-    //arcMode(CENTER);
-    //angleMode(RADIANS);
+    ellipseMode(DIAMETER);
 
     // no current font
     textFont = null;

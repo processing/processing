@@ -25,7 +25,7 @@ package processing.core;
 
 
 /**
- * 4x4 matrix implementation.
+ * 3x2 affine matrix implementation.
  */
 public final class PMatrix2D implements PConstants {
 
@@ -110,9 +110,20 @@ public final class PMatrix2D implements PConstants {
     m12 = tx*m10 + ty*m11 + m12;
   }
 
-
+  
+  // Implementation roughly based on AffineTransform.
   public void rotate(float angle) {
-    // TODO fixme
+    float s = sin(angle);
+    float c = cos(angle);
+
+    float temp1 = m00;
+    float temp2 = m01;
+    m00 =  c * temp1 + s * temp2;
+    m01 = -s * temp1 + c * temp2;
+    temp1 = m10;
+    temp2 = m11;
+    m10 =  c * temp1 + s * temp2;
+    m11 = -s * temp1 + c * temp2;
   }
 
 
@@ -199,14 +210,15 @@ public final class PMatrix2D implements PConstants {
     t0 = m01;
     t1 = m11;
     m01 = t0 * n00 + t1 * n01;
-    m11 = t0 * n10 + t1 * n11;  }
+    m11 = t0 * n10 + t1 * n11;  
+  }
 
 
   //////////////////////////////////////////////////////////////
 
 
   /** 
-   * Multiply a four element vector against this matrix. 
+   * Multiply a two element vector against this matrix. 
    * If out is null or not length four, a new float array will be returned.
    * The values for vec and out can be the same (though that's less efficient). 
    */
