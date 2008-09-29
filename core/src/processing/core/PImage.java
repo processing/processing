@@ -247,17 +247,17 @@ public class PImage implements PConstants, Cloneable {
   // MARKING IMAGE AS MODIFIED / FOR USE w/ GET/SET
 
 
-  public boolean isModified() {
+  public boolean isModified() {  // ignore
     return modified;
   }
   
   
-  public void setModified() {
+  public void setModified() {  // ignore
     modified = true;
   }
   
   
-  public void setModified(boolean m) {
+  public void setModified(boolean m) {  // ignore
     modified = m;
   }
   

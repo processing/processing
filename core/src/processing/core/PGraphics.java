@@ -335,7 +335,7 @@ public class PGraphics extends PImage implements PConstants {
   // Style stack
   
   static final int STYLE_STACK_DEPTH = 64;
-  Style[] styleStack = new Style[STYLE_STACK_DEPTH];
+  PStyle[] styleStack = new PStyle[STYLE_STACK_DEPTH];
   int styleStackDepth;
 
 
@@ -1141,7 +1141,7 @@ public class PGraphics extends PImage implements PConstants {
   // STYLE
   
   
-  public void style(Style s) {
+  public void style(PStyle s) {
     if (s.smooth) {
       smooth();
     } else {
@@ -3268,53 +3268,14 @@ public class PGraphics extends PImage implements PConstants {
   // STYLE
   
   
-  protected class Style {
-    public boolean smooth;
-
-    public int imageMode;
-    public int rectMode;
-    public int ellipseMode;
-    public int shapeMode;
-
-    public int colorMode;
-    public float colorModeX;
-    public float colorModeY;
-    public float colorModeZ;
-    public float colorModeA;
-
-    public boolean tint;
-    public int tintColor;
-    public boolean fill;
-    public int fillColor;
-    public boolean stroke;
-    public int strokeColor;
-    public float strokeWeight;
-    public int strokeCap;
-    public int strokeJoin;
-
-    // TODO these fellas are inconsistent, and may need to go elsewhere
-    public float ambientR, ambientG, ambientB;
-    public float specularR, specularG, specularB;
-    public float emissiveR, emissiveG, emissiveB;
-    public float shininess;
-
-    public PFont textFont;
-    public int textAlign;
-    public int textAlignY;
-    public int textMode;
-    public float textSize;
-    public float textLeading;
-  }
-
-
   public void pushStyle() {
     if (styleStackDepth == styleStack.length) {
-      styleStack = (Style[]) PApplet.expand(styleStack);
+      styleStack = (PStyle[]) PApplet.expand(styleStack);
     }
     if (styleStack[styleStackDepth] == null) {
-      styleStack[styleStackDepth] = new Style();
+      styleStack[styleStackDepth] = new PStyle();
     }
-    Style s = styleStack[styleStackDepth++];
+    PStyle s = styleStack[styleStackDepth++];
     getStyle(s);
   }
 
@@ -3328,14 +3289,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public Style getStyle() {
-    Style s = new Style();
+  public PStyle getStyle() {  // ignore
+    PStyle s = new PStyle();
     getStyle(s);
     return s;
   }
   
   
-  public void getStyle(Style s) { 
+  public void getStyle(PStyle s) {  // ignore
     s.smooth = smooth;
     
     s.imageMode = imageMode;
