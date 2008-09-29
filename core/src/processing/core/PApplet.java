@@ -7220,12 +7220,6 @@ public class PApplet extends Applet
   }
 
 
-  public void loadMatrix() {
-    if (recorder != null) recorder.loadMatrix();
-    g.loadMatrix();
-  }
-
-
   public void printMatrix() {
     if (recorder != null) recorder.printMatrix();
     g.printMatrix();
