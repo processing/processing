@@ -21,7 +21,6 @@ public class BaseObject extends PShape {
 	String fillName;  // id of another object
 
 
-
 	public BaseObject(BaseObject parent, XMLElement properties) {
 		//super(GROUP);
 		
@@ -480,26 +479,6 @@ public class BaseObject extends PShape {
 			}
 		}
 	}
-
-
-    /**
-     * Overrides SVG-set styles and uses PGraphics styles and colors.
-     * Identical to ignoreStyles(true).
-     */
-    public void ignoreStyles() {
-        //ignoreStyles(true);
-    	styles = false;
-    }
-
-
-    /**
-     * Enables or disables style information (fill and stroke) set in the file.
-     * @param state true to use user-specified stroke/fill, false for svg version
-     */
-    public void ignoreStyles(boolean state) {
-        //ignoreStyles = state;
-    	styles = !state;
-    }
 
 
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
