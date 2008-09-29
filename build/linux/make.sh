@@ -169,7 +169,7 @@ $JAVAC \
     -d bin src/processing/serial/*.java 
 rm -f library/serial.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/serial.jar processing/serial/*.class && cd ..
+cd bin && zip -rq ../library/serial.jar processing/serial/*.class && cd ..
 mkdir -p $LIBRARIES/serial/library/
 cp library/serial.jar $LIBRARIES/serial/library/
 
@@ -183,7 +183,7 @@ $JAVAC \
     -d bin src/processing/net/*.java 
 rm -f library/net.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/net.jar processing/net/*.class && cd ..
+cd bin && zip -rq ../library/net.jar processing/net/*.class && cd ..
 mkdir -p $LIBRARIES/net/library/
 cp library/net.jar $LIBRARIES/net/library/
 
@@ -197,7 +197,7 @@ $JAVAC \
     -d bin src/processing/opengl/*.java 
 rm -f library/opengl.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/opengl.jar processing/opengl/*.class && cd ..
+cd bin && zip -rq ../library/opengl.jar processing/opengl/*.class && cd ..
 mkdir -p $LIBRARIES/opengl/library/
 cp library/opengl.jar $LIBRARIES/opengl/library/
 
@@ -211,7 +211,7 @@ $JAVAC \
     -d bin src/processing/pdf/*.java 
 rm -f library/pdf.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/pdf.jar processing/pdf/*.class && cd ..
+cd bin && zip -rq ../library/pdf.jar processing/pdf/*.class && cd ..
 mkdir -p $LIBRARIES/pdf/library/
 cp library/pdf.jar $LIBRARIES/pdf/library/
 
@@ -225,7 +225,7 @@ $JAVAC \
     -d bin src/processing/dxf/*.java 
 rm -f library/dxf.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/dxf.jar processing/dxf/*.class && cd ..
+cd bin && zip -rq ../library/dxf.jar processing/dxf/*.class && cd ..
 mkdir -p $LIBRARIES/dxf/library/
 cp library/dxf.jar $LIBRARIES/dxf/library/
 
@@ -239,7 +239,7 @@ $JAVAC \
     -d bin src/processing/xml/*.java 
 rm -f library/xml.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/xml.jar processing/xml/*.class && cd ..
+cd bin && zip -rq ../library/xml.jar processing/xml/*.class && cd ..
 mkdir -p $LIBRARIES/xml/library/
 cp library/xml.jar $LIBRARIES/xml/library/
 
@@ -253,7 +253,7 @@ $JAVAC \
     -d bin src/processing/candy/*.java 
 rm -f library/candy.jar
 find bin -name "*~" -exec rm -f {} ';'
-cd bin && zip -r0q ../library/candy.jar processing/candy/*.class && cd ..
+cd bin && zip -rq ../library/candy.jar processing/candy/*.class && cd ..
 mkdir -p $LIBRARIES/candy/library/
 cp library/candy.jar $LIBRARIES/candy/library/
 
