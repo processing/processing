@@ -809,8 +809,8 @@ public class PGraphics2D extends PGraphics {
 
   private void flat_circle(int centerX, int centerY, int radius) {
     if (unwarped()) {
-      float x = matrix.multX(centerX, centerY);  //m00*centerX + m01*centerY + m02;
-      float y = matrix.multY(centerX, centerY);  //m10*centerX + m11*centerY + m12;
+      float x = ctm.multX(centerX, centerY);  //m00*centerX + m01*centerY + m02;
+      float y = ctm.multY(centerX, centerY);  //m10*centerX + m11*centerY + m12;
       centerX = (int)x;
       centerY = (int)y;
     }
@@ -982,8 +982,8 @@ public class PGraphics2D extends PGraphics {
 
   private void flat_ellipse(int centerX, int centerY, int a, int b) {
     if (unwarped()) {
-      float x = matrix.multX(centerX, centerY);  //m00*centerX + m01*centerY + m02;
-      float y = matrix.multY(centerX, centerY);  //m10*centerX + m11*centerY + m12;
+      float x = ctm.multX(centerX, centerY);  //m00*centerX + m01*centerY + m02;
+      float y = ctm.multY(centerX, centerY);  //m10*centerX + m11*centerY + m12;
       centerX = (int)x;
       centerY = (int)y;
     }
@@ -1670,9 +1670,7 @@ public class PGraphics2D extends PGraphics {
       if (matrixStackDepth == MATRIX_STACK_DEPTH) {
         throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
       }
-      float mat[] = matrixStack[matrixStackDepth];
-      mat[0] = m00; mat[1] = m01; mat[2] = m02;
-      mat[3] = m10; mat[4] = m11; mat[5] = m12;
+      ctm.get(matrixStack[matrixStackDepth]);
       matrixStackDepth++;
     }
 
@@ -1682,9 +1680,7 @@ public class PGraphics2D extends PGraphics {
         throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
       }
       matrixStackDepth--;
-      float mat[] = matrixStack[matrixStackDepth];
-      m00 = mat[0]; m01 = mat[1]; m02 = mat[2];
-      m10 = mat[3]; m11 = mat[4]; m12 = mat[5];
+      ctm.set(matrixStack[matrixStackDepth]);
     }
 
 
@@ -1796,15 +1792,18 @@ public class PGraphics2D extends PGraphics {
     // INTERNAL SCHIZZLE
 
 
-//    private boolean untransformed() {
-//      return ((m00 == 1) && (m01 == 0) && (m02 == 0) &&
-//              (m10 == 0) && (m11 == 1) && (m12 == 0));
-//    }
-//
-//
-//    private boolean unwarped() {
-//      return ((m00 == 1) && (m01 == 0) && (m10 == 0) && (m11 == 1));
-//    }
+    // TODO make this more efficient, or move into PMatrix2D
+    private boolean untransformed() {
+      return ((ctm.m00 == 1) && (ctm.m01 == 0) && (ctm.m02 == 0) &&
+              (ctm.m10 == 0) && (ctm.m11 == 1) && (ctm.m12 == 0));
+    }
+
+
+    // TODO make this more efficient, or move into PMatrix2D
+    private boolean unwarped() {
+      return ((ctm.m00 == 1) && (ctm.m01 == 0) && 
+              (ctm.m10 == 0) && (ctm.m11 == 1));
+    }
 
 
 
