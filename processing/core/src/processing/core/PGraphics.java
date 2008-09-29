@@ -174,6 +174,10 @@ public class PGraphics extends PImage implements PConstants {
   protected boolean[] hints = new boolean[HINT_COUNT];
 
   
+  // ........................................................
+
+  
+  
   ////////////////////////////////////////////////////////////
 
   // STYLE PROPERTIES
@@ -283,9 +287,9 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   // Shape placement properties
-  
+
   // imageMode() is inherited from PImage
-  
+
   /** The current rect mode (read-only) */
   public int rectMode;
 
@@ -329,11 +333,10 @@ public class PGraphics extends PImage implements PConstants {
   public float specularR, specularG, specularB;
   public float emissiveR, emissiveG, emissiveB;
   public float shininess;
-
-  // ........................................................
-
-  // Style stack
   
+  
+  // Style stack
+
   static final int STYLE_STACK_DEPTH = 64;
   PStyle[] styleStack = new PStyle[STYLE_STACK_DEPTH];
   int styleStackDepth;
@@ -355,15 +358,16 @@ public class PGraphics extends PImage implements PConstants {
    * Current model-view matrix transformation of the form m[row][column],
    * which is a "column vector" (as opposed to "row vector") matrix.
    */
-  public float m00, m01, m02, m03;
-  public float m10, m11, m12, m13;
-  public float m20, m21, m22, m23;
-  public float m30, m31, m32, m33;
+//  PMatrix matrix;
+//  public float m00, m01, m02, m03;
+//  public float m10, m11, m12, m13;
+//  public float m20, m21, m22, m23;
+//  public float m30, m31, m32, m33;
 
-  static final int MATRIX_STACK_DEPTH = 32;
-  float[][] matrixStack = new float[MATRIX_STACK_DEPTH][16];
-  float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
-  int matrixStackDepth;
+//  static final int MATRIX_STACK_DEPTH = 32;
+//  float[][] matrixStack = new float[MATRIX_STACK_DEPTH][16];
+//  float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
+//  int matrixStackDepth;
 
   // ........................................................
 
@@ -737,7 +741,7 @@ public class PGraphics extends PImage implements PConstants {
     shape = 0;
 
     // init matrices (must do before lights)
-    matrixStackDepth = 0;
+    //matrixStackDepth = 0;
 
     rectMode(CORNER);
     ellipseMode(DIAMETER);
@@ -1137,14 +1141,14 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // STYLE
-  
-  
+
+
   public void style(PStyle s) {
-    if (s.smooth) {
-      smooth();
-    } else {
-      noSmooth();
-    }
+//    if (s.smooth) {
+//      smooth();
+//    } else {
+//      noSmooth();
+//    }
     
     imageMode(s.imageMode);
     rectMode(s.rectMode);
@@ -1200,7 +1204,7 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(s.colorMode, 
               s.colorModeX, s.colorModeY, s.colorModeZ, s.colorModeA);
     
-    // This is a bit assymetric, since there's no way to do "noFont()",
+    // This is a bit asymmetric, since there's no way to do "noFont()",
     // and a null textFont will produce an error (since usually that means that
     // the font couldn't load properly). So in some cases, the font won't be
     // 'cleared' to null, even though that's technically correct. 
@@ -1208,7 +1212,7 @@ public class PGraphics extends PImage implements PConstants {
       textFont(s.textFont, s.textSize);
       textLeading(s.textLeading);
     }
-    // These don't requre a font to be set.
+    // These don't require a font to be set.
     textAlign(s.textAlign, s.textAlignY);
     textMode(s.textMode);
   }
@@ -1926,9 +1930,9 @@ public class PGraphics extends PImage implements PConstants {
       float z4 = splineVertices[offset+3][Z];
       float z0 = splineVertices[start][Z];
 
-      float zplot1 = m10*z1 + m11*z2 + m12*z3 + m13*z4;
-      float zplot2 = m20*z1 + m21*z2 + m22*z3 + m23*z4;
-      float zplot3 = m30*z1 + m31*z2 + m32*z3 + m33*z4;
+      float zplot1 = basis.m10*z1 + basis.m11*z2 + basis.m12*z3 + basis.m13*z4;
+      float zplot2 = basis.m20*z1 + basis.m21*z2 + basis.m22*z3 + basis.m23*z4;
+      float zplot3 = basis.m30*z1 + basis.m31*z2 + basis.m32*z3 + basis.m33*z4;
 
       vertex(x0, y0, z0);
       for (int j = 0; j < segments; j++) {
@@ -3032,7 +3036,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   static final String ERROR_PUSHMATRIX_OVERFLOW =
-    "Too many calls to pushMatrix(), the maximum is " + MATRIX_STACK_DEPTH + ".";
+    "Too many calls to pushMatrix().";
   static final String ERROR_PUSHMATRIX_UNDERFLOW =
     "Too many calls to popMatrix(), and not enough to pushMatrix().";
 
@@ -3077,14 +3081,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Loads the current matrix into m00, m01 etc (or modelview and
-   * projection when using 3D) so that the values can be read.
+   * Loads the current matrix into the local 'matrix' object so that the values
+   * can be used for other purposes. 
    * <P/>
    * Note that there is no "updateMatrix" because that gets too
    * complicated (unnecessary) when considering the 3D matrices.
    */
-  public void loadMatrix() {
-  }
+//  public void loadMatrix() {
+//  }
 
 
   /**
@@ -3170,7 +3174,8 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenX(float x, float y) {
-    return m00*x + m01*y + m02;
+    methodError("screenX");
+    return 0;
   }
 
 
@@ -3180,7 +3185,8 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenY(float x, float y) {
-    return m10*x + m11*y + m12;
+    methodError("screenY");
+    return 0;
   }
 
 
@@ -3295,7 +3301,7 @@ public class PGraphics extends PImage implements PConstants {
   
   
   public void getStyle(PStyle s) {  // ignore
-    s.smooth = smooth;
+//    s.smooth = smooth;
     
     s.imageMode = imageMode;
     s.rectMode = rectMode;
@@ -4040,14 +4046,14 @@ public class PGraphics extends PImage implements PConstants {
   // MESSAGES / ERRORS / LOGGING
 
 
-  HashMap<String, Object> errors;
+  static protected HashMap<String, Object> errors;
   
 
   /**
    * Show a renderer error, and keep track of it so that it's only shown once.
    * @param msg the error message (which will be stored for later comparison) 
    */
-  protected void showError(String msg) {
+  static protected void showError(String msg) {
     if (errors == null) {
       errors = new HashMap<String, Object>();
     }
@@ -4058,20 +4064,20 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   
-  protected void depthError(String method) {
+  static protected void depthError(String method) {
     showError(method + "() can only be used with a renderer that " + 
               "supports 3D, such as P3D or OPENGL.");
   }
 
 
-  protected void depthErrorXYZ(String method) {
+  static protected void depthErrorXYZ(String method) {
     showError(method + "(x, y, z) can only be used with a renderer that " + 
               "supports 3D, such as P3D or OPENGL. " +
               "Use " + method + "(x, y) instead.");
   }
 
 
-  protected void methodError(String method) {
+  static protected void methodError(String method) {
     showError(method + "() is not available with this renderer.");
   }
   
@@ -4081,7 +4087,7 @@ public class PGraphics extends PImage implements PConstants {
    * other variations are). For instance, if vertex(x, y, u, v) is unavailable, 
    * but vertex(x, y) is just fine, it doesn't make sense to use methodError().
    */
-  protected void variationError(String str) {
+  static protected void variationError(String str) {
     showError(str + " is not available with this renderer.");
   }
   
