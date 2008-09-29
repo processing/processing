@@ -26,8 +26,7 @@ $complete = $translation->categories;
 // get reference files for the language
 $files = getRefFiles($lang);
 
-// sort alphabetically  // TEST TEST TEST
-ksort($files);
+sort($files);
 
 // populate index arrays with reference items
 $abridged = $complete;
