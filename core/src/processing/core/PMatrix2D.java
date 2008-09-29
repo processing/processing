@@ -27,7 +27,7 @@ package processing.core;
 /**
  * 3x2 affine matrix implementation.
  */
-public final class PMatrix2D implements PConstants {
+public final class PMatrix2D implements PMatrix {
 
   public float m00, m01, m02;
   public float m10, m11, m12;
@@ -81,7 +81,9 @@ public final class PMatrix2D implements PConstants {
   }
   
 
-  public void set(PMatrix2D src) {
+  public void set(PMatrix matrix) {
+    PMatrix2D src = (PMatrix2D) matrix;
+    
     set(src.m00, src.m01, src.m02,
         src.m10, src.m11, src.m12);
   }
@@ -102,6 +104,14 @@ public final class PMatrix2D implements PConstants {
                   float m10, float m11, float m12) {
     this.m00 = m00; this.m01 = m01; this.m02 = m02; 
     this.m10 = m10; this.m11 = m11; this.m12 = m12;
+  }
+  
+  
+  public void set(float m00, float m01, float m02, float m03,
+                  float m10, float m11, float m12, float m13,
+                  float m20, float m21, float m22, float m23,
+                  float m30, float m31, float m32, float m33) {
+    
   }
 
 
@@ -161,12 +171,17 @@ public final class PMatrix2D implements PConstants {
   /** 
    * Multiply this matrix by another.
    */
-  public void apply(PMatrix2D source) {
-    apply(source.m00, source.m01, source.m02, 
-          source.m10, source.m11, source.m12);
+  public void apply(PMatrix m) {
+    if (m instanceof PMatrix2D) {
+      PMatrix2D source = (PMatrix2D) m;
+      apply(source.m00, source.m01, source.m02, 
+            source.m10, source.m11, source.m12);
+    } else if (m instanceof PMatrix3D) {
+      PGraphics.showError("Cannot use apply(PMatrix3D) on a PMatrix2D.");
+    }
   }
-
-
+  
+  
   public void apply(float n00, float n01, float n02, 
                     float n10, float n11, float n12) {
     float t0 = m00;
@@ -180,6 +195,14 @@ public final class PMatrix2D implements PConstants {
     m10  = n00 * t0 + n10 * t1;
     m11  = n01 * t0 + n11 * t1;
     m12 += n02 * t0 + n12 * t1;    
+  }
+
+
+  public void apply(float n00, float n01, float n02, float n03,
+                    float n10, float n11, float n12, float n13,
+                    float n20, float n21, float n22, float n23,
+                    float n30, float n31, float n32, float n33) {
+    
   }
 
 
@@ -217,12 +240,25 @@ public final class PMatrix2D implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Multiply the x and y coordinates of a PVector against this matrix.
+   */
+  public PVector mult(PVector source, PVector target) {
+    if (target == null) {
+      target = new PVector();
+    }
+    target.x = m00*source.x + m01*source.y + m02;
+    target.y = m10*source.x + m11*source.y + m12;
+    return target;
+  }
+
+  
   /** 
    * Multiply a two element vector against this matrix. 
    * If out is null or not length four, a new float array will be returned.
    * The values for vec and out can be the same (though that's less efficient). 
    */
-  public float[] multiply(float vec[], float out[]) {
+  public float[] mult(float vec[], float out[]) {
     if (out == null || out.length != 2) {
       out = new float[2];
     }
@@ -241,7 +277,32 @@ public final class PMatrix2D implements PConstants {
     
     return out;
   }
-
+  
+  
+  public float multX(float x, float y) {
+    return m00*x + m01*y + m02;
+  }
+  
+  
+  public float multY(float x, float y) {
+    return m10*x + m11*y + m12;
+  }
+  
+  
+  public float multX(float x, float y, float z) {
+    return 0;
+  }
+  
+  
+  public float multY(float x, float y, float z) {
+    return 0;
+  }
+  
+  
+  public float multZ(float x, float y, float z) {
+    return 0;
+  }  
+  
 
   /**
    * Transpose this matrix.

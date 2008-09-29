@@ -36,17 +36,14 @@ import java.util.Arrays;
  */
 public class PGraphics2D extends PGraphics {
 
+  //public float m00, m01, m02;
+  //public float m10, m11, m12;
+  PMatrix2D ctm;
+
   PPolygon polygon;     // general polygon to use for shape
   PPolygon fpolygon;    // used to fill polys for tri or quad strips
   PPolygon spolygon;    // stroke/line polygon
   float svertices[][];  // temp vertices used for stroking end of poly
-
-  /*
-  // polygon that handles tesselation
-  private PPolygon tpolygon;
-  private int TPOLYGON_MAX_VERTICES = 512;
-  private int tpolygon_vertex_order[]; // = new int[MAX_VERTICES];
-  */
 
   PLine line;
 
@@ -57,6 +54,11 @@ public class PGraphics2D extends PGraphics {
   static final int CVERTEX_ALLOC = 128;
   float cvertex[][] = new float[CVERTEX_ALLOC][VERTEX_FIELD_COUNT];
   int cvertexIndex;
+  
+  static final int MATRIX_STACK_DEPTH = 32;
+  float[][] matrixStack = new float[MATRIX_STACK_DEPTH][6];
+  int matrixStackDepth;
+
 
 
   //////////////////////////////////////////////////////////////
@@ -128,6 +130,9 @@ public class PGraphics2D extends PGraphics {
 
 //    insideDraw = false;
   }
+  
+  
+  // public void flush() -> inherited from PGraphics 
 
 
   //////////////////////////////////////////////////////////////
@@ -216,8 +221,10 @@ public class PGraphics2D extends PGraphics {
       }
     } else {
       for (int i = 0; i < polyVertexCount; i++) {
-        polyVertices[i][TX] = m00*polyVertices[i][X] + m01*polyVertices[i][Y] + m03;
-        polyVertices[i][TY] = m10*polyVertices[i][X] + m11*polyVertices[i][Y] + m13;
+        polyVertices[i][TX] = ctm.multX(polyVertices[i][X], polyVertices[i][Y]);
+        polyVertices[i][TX] = ctm.multY(polyVertices[i][X], polyVertices[i][Y]);
+//        polyVertices[i][TX] = m00*polyVertices[i][X] + m01*polyVertices[i][Y] + m02;
+//        polyVertices[i][TY] = m10*polyVertices[i][X] + m11*polyVertices[i][Y] + m12;
       }
     }
 
@@ -802,8 +809,8 @@ public class PGraphics2D extends PGraphics {
 
   private void flat_circle(int centerX, int centerY, int radius) {
     if (unwarped()) {
-      float x = m00*centerX + m01*centerY + m02;
-      float y = m10*centerX + m11*centerY + m12;
+      float x = matrix.multX(centerX, centerY);  //m00*centerX + m01*centerY + m02;
+      float y = matrix.multY(centerX, centerY);  //m10*centerX + m11*centerY + m12;
       centerX = (int)x;
       centerY = (int)y;
     }
@@ -975,8 +982,8 @@ public class PGraphics2D extends PGraphics {
 
   private void flat_ellipse(int centerX, int centerY, int a, int b) {
     if (unwarped()) {
-      float x = m00*centerX + m01*centerY + m02;
-      float y = m10*centerX + m11*centerY + m12;
+      float x = matrix.multX(centerX, centerY);  //m00*centerX + m01*centerY + m02;
+      float y = matrix.multY(centerX, centerY);  //m10*centerX + m11*centerY + m12;
       centerX = (int)x;
       centerY = (int)y;
     }
@@ -1034,7 +1041,7 @@ public class PGraphics2D extends PGraphics {
     if ((x2 - x1 == image.width) &&
         (y2 - y1 == image.height) &&
         !tint && unwarped()) {
-      flat_image(image, (int) (x1 + m02), (int) (y1 + m12), u1, v1, u2, v2);
+      flat_image(image, (int) (x1 + ctm.m02), (int) (y1 + ctm.m12), u1, v1, u2, v2);
 
     } else {
       super.imageImpl(image, x1, y1, x2, y2, u1, v1, u2, v2);
@@ -1598,8 +1605,7 @@ public class PGraphics2D extends PGraphics {
 
 
     public void translate(float tx, float ty) {
-      m02 += tx*m00 + ty*m01 + m02;
-      m12 += tx*m10 + ty*m11 + m12;
+      ctm.translate(tx, ty);
     }
 
 
@@ -1609,10 +1615,10 @@ public class PGraphics2D extends PGraphics {
 
 
     public void rotate(float angle) {
-      float c = (float) Math.cos(angle);
-      float s = (float) Math.sin(angle);
-
-      applyMatrix(c, -s, 0,  s, c, 0);
+      ctm.rotate(angle);
+//      float c = (float) Math.cos(angle);
+//      float s = (float) Math.sin(angle);
+//      applyMatrix(c, -s, 0,  s, c, 0);
     }
 
 
@@ -1631,20 +1637,21 @@ public class PGraphics2D extends PGraphics {
 
 
     public void rotate(float angle, float vx, float vy, float vz) {
-      throw new RuntimeException("rotate(angle, x, y, z) " +
-                                 "can only be used with a 3D renderer");
+      variationError("rotate(angle, x, y, z)");
     }
 
 
     public void scale(float s) {
-      applyMatrix(s, 0, 0,
-                  0, s, 0);
+      ctm.scale(s);
+//      applyMatrix(s, 0, 0,
+//                  0, s, 0);
     }
 
 
     public void scale(float sx, float sy) {
-      applyMatrix(sx, 0, 0,
-                  0, sy, 0);
+      ctm.scale(sx, sy);
+//      applyMatrix(sx, 0, 0,
+//                  0, sy, 0);
     }
 
 
@@ -1686,8 +1693,9 @@ public class PGraphics2D extends PGraphics {
      * Same as glLoadIdentity().
      */
     public void resetMatrix() {
-      m00 = 1; m01 = 0; m02 = 0;
-      m10 = 0; m11 = 1; m12 = 0;
+      ctm.reset();
+//      m00 = 1; m01 = 0; m02 = 0;
+//      m10 = 0; m11 = 1; m12 = 0;
     }
 
 
@@ -1696,17 +1704,19 @@ public class PGraphics2D extends PGraphics {
      */
     public void applyMatrix(float n00, float n01, float n02,
                             float n10, float n11, float n12) {
-
-      float r00 = m00*n00 + m01*n10;
-      float r01 = m00*n01 + m01*n11;
-      float r02 = m00*n02 + m01*n12 + m02;
-
-      float r10 = m10*n00 + m11*n10;
-      float r11 = m10*n01 + m11*n11;
-      float r12 = m10*n02 + m11*n12 + m12;
-
-      m00 = r00; m01 = r01; m02 = r02;
-      m10 = r10; m11 = r11; m12 = r12;
+      ctm.apply(n00, n01, n02, 
+                n10, n11, n12);
+//
+//      float r00 = m00*n00 + m01*n10;
+//      float r01 = m00*n01 + m01*n11;
+//      float r02 = m00*n02 + m01*n12 + m02;
+//
+//      float r10 = m10*n00 + m11*n10;
+//      float r11 = m10*n01 + m11*n11;
+//      float r12 = m10*n02 + m11*n12 + m12;
+//
+//      m00 = r00; m01 = r01; m02 = r02;
+//      m10 = r10; m11 = r11; m12 = r12;
     }
 
 
@@ -1714,8 +1724,7 @@ public class PGraphics2D extends PGraphics {
                             float n10, float n11, float n12, float n13,
                             float n20, float n21, float n22, float n23,
                             float n30, float n31, float n32, float n33) {
-      throw new RuntimeException("applyMatrix() with a 4x4 matrix " +
-                                 "can only be used with OPENGL or P3D");
+      depthErrorXYZ("applyMatrix");
     }
 
 
@@ -1726,42 +1735,44 @@ public class PGraphics2D extends PGraphics {
      * Note that there is no "updateMatrix" because that gets too
      * complicated (unnecessary) when considering the 3D matrices.
      */
-    public void loadMatrix() {
+//    public void loadMatrix() {
       // no-op on base PGraphics because they're used directly
-    }
+//    }
 
 
     /**
      * Print the current model (or "transformation") matrix.
      */
     public void printMatrix() {
-      loadMatrix();  // just to make sure
+      ctm.print();
 
-      float big = Math.abs(m00);
-      if (Math.abs(m01) > big) big = Math.abs(m01);
-      if (Math.abs(m02) > big) big = Math.abs(m02);
-      if (Math.abs(m10) > big) big = Math.abs(m10);
-      if (Math.abs(m11) > big) big = Math.abs(m11);
-      if (Math.abs(m12) > big) big = Math.abs(m12);
-
-      // avoid infinite loop
-      if (Float.isNaN(big) || Float.isInfinite(big)) {
-        big = 1000000; // set to something arbitrary
-      }
-
-      int d = 1;
-      int bigi = (int) big;
-      while ((bigi /= 10) != 0) d++;  // cheap log()
-
-      System.out.println(PApplet.nfs(m00, d, 4) + " " +
-                         PApplet.nfs(m01, d, 4) + " " +
-                         PApplet.nfs(m02, d, 4));
-
-      System.out.println(PApplet.nfs(m10, d, 4) + " " +
-                         PApplet.nfs(m11, d, 4) + " " +
-                         PApplet.nfs(m12, d, 4));
-
-      System.out.println();
+//      loadMatrix();  // just to make sure
+//
+//      float big = Math.abs(m00);
+//      if (Math.abs(m01) > big) big = Math.abs(m01);
+//      if (Math.abs(m02) > big) big = Math.abs(m02);
+//      if (Math.abs(m10) > big) big = Math.abs(m10);
+//      if (Math.abs(m11) > big) big = Math.abs(m11);
+//      if (Math.abs(m12) > big) big = Math.abs(m12);
+//
+//      // avoid infinite loop
+//      if (Float.isNaN(big) || Float.isInfinite(big)) {
+//        big = 1000000; // set to something arbitrary
+//      }
+//
+//      int d = 1;
+//      int bigi = (int) big;
+//      while ((bigi /= 10) != 0) d++;  // cheap log()
+//
+//      System.out.println(PApplet.nfs(m00, d, 4) + " " +
+//                         PApplet.nfs(m01, d, 4) + " " +
+//                         PApplet.nfs(m02, d, 4));
+//
+//      System.out.println(PApplet.nfs(m10, d, 4) + " " +
+//                         PApplet.nfs(m11, d, 4) + " " +
+//                         PApplet.nfs(m12, d, 4));
+//
+//      System.out.println();
     }
 
 
@@ -1785,15 +1796,15 @@ public class PGraphics2D extends PGraphics {
     // INTERNAL SCHIZZLE
 
 
-    private boolean untransformed() {
-      return ((m00 == 1) && (m01 == 0) && (m02 == 0) &&
-              (m10 == 0) && (m11 == 1) && (m12 == 0));
-    }
-
-
-    private boolean unwarped() {
-      return ((m00 == 1) && (m01 == 0) && (m10 == 0) && (m11 == 1));
-    }
+//    private boolean untransformed() {
+//      return ((m00 == 1) && (m01 == 0) && (m02 == 0) &&
+//              (m10 == 0) && (m11 == 1) && (m12 == 0));
+//    }
+//
+//
+//    private boolean unwarped() {
+//      return ((m00 == 1) && (m01 == 0) && (m10 == 0) && (m11 == 1));
+//    }
 
 
 

@@ -384,8 +384,8 @@ public class PGraphicsJava2D extends PGraphics2D {
       curveX[3] = x;
       curveY[3] = y;
 
-      curveToBezierMatrix.multiply(curveX, curveX);
-      curveToBezierMatrix.multiply(curveY, curveY);
+      curveToBezierMatrix.mult(curveX, curveX);
+      curveToBezierMatrix.mult(curveY, curveY);
 
       // since the paths are continuous,
       // only the first point needs the actual moveto
@@ -933,32 +933,42 @@ public class PGraphicsJava2D extends PGraphics2D {
   }
 
 
-  public void loadMatrix() {
-    g2.getTransform().getMatrix(transform);
+//  public void loadMatrix() {
+//    g2.getTransform().getMatrix(transform);
+//    matrix.set((float) transform[0], (float) transform[2], (float) transform[4], 
+//               (float) transform[1], (float) transform[3], (float) transform[5]);
+///*
+//    m00 = (float) transform[0];
+//    m01 = (float) transform[2];
+//    m02 = (float) transform[4];
+//
+//    m10 = (float) transform[1];
+//    m11 = (float) transform[3];
+//    m12 = (float) transform[5];
+//*/
+//  }
 
-    m00 = (float) transform[0];
-    m01 = (float) transform[2];
-    m02 = (float) transform[4];
 
-    m10 = (float) transform[1];
-    m11 = (float) transform[3];
-    m12 = (float) transform[5];
-  }
+//  protected void loadMatrix() {
+//    g2.getTransform().getMatrix(transform);
+//    ctm.set((float) transform[0], (float) transform[2], (float) transform[4], 
+//            (float) transform[1], (float) transform[3], (float) transform[5]);
+//  }
 
 
   public float screenX(float x, float y) {
-    loadMatrix();
-    return super.screenX(x, y);
-    //g2.getTransform().getMatrix(transform);
-    //return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
+//    loadMatrix();
+//    return super.screenX(x, y);
+    g2.getTransform().getMatrix(transform);
+    return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
   }
 
 
   public float screenY(float x, float y) {
-    loadMatrix();
-    return super.screenY(x, y);
-    //g2.getTransform().getMatrix(transform);
-    //return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
+//    loadMatrix();
+//    return super.screenY(x, y);
+    g2.getTransform().getMatrix(transform);
+    return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
   }
 
 
