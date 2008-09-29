@@ -81,11 +81,15 @@ public final class PMatrix2D implements PMatrix {
   }
   
 
-  public void set(PMatrix matrix) {
-    PMatrix2D src = (PMatrix2D) matrix;
-    
+  public void set(PMatrix2D src) {
     set(src.m00, src.m01, src.m02,
         src.m10, src.m11, src.m12);
+  }
+  
+  
+  public void set(PMatrix3D src) {
+    //PGraphics.showError("Cannot use set(PMatrix3D) on a PMatrix2D.");
+    throw new IllegalArgumentException("Cannot use set(PMatrix3D) on a PMatrix2D.");
   }
 
 
@@ -118,6 +122,11 @@ public final class PMatrix2D implements PMatrix {
   public void translate(float tx, float ty) {    
     m02 = tx*m00 + ty*m01 + m02;
     m12 = tx*m10 + ty*m11 + m12;
+  }
+  
+  
+  public void translate(float x, float y, float z) {
+    throw new IllegalArgumentException("Cannot use translate(x, y, z) on a PMatrix2D.");
   }
 
   
@@ -171,14 +180,14 @@ public final class PMatrix2D implements PMatrix {
   /** 
    * Multiply this matrix by another.
    */
-  public void apply(PMatrix m) {
-    if (m instanceof PMatrix2D) {
-      PMatrix2D source = (PMatrix2D) m;
-      apply(source.m00, source.m01, source.m02, 
-            source.m10, source.m11, source.m12);
-    } else if (m instanceof PMatrix3D) {
-      PGraphics.showError("Cannot use apply(PMatrix3D) on a PMatrix2D.");
-    }
+  public void apply(PMatrix2D source) {
+    apply(source.m00, source.m01, source.m02, 
+          source.m10, source.m11, source.m12);
+  }
+  
+  
+  public void apply(PMatrix3D source) {
+    throw new IllegalArgumentException("Cannot use apply(PMatrix3D) on a PMatrix2D.");
   }
   
   
@@ -202,7 +211,7 @@ public final class PMatrix2D implements PMatrix {
                     float n10, float n11, float n12, float n13,
                     float n20, float n21, float n22, float n23,
                     float n30, float n31, float n32, float n33) {
-    
+    throw new IllegalArgumentException("Cannot use this version of apply() on a PMatrix2D.");
   }
 
 
@@ -212,6 +221,11 @@ public final class PMatrix2D implements PMatrix {
   public void preApply(PMatrix2D left) {
     preApply(left.m00, left.m01, left.m02,
              left.m10, left.m11, left.m12);
+  }
+  
+  
+  public void preApply(PMatrix3D left) {
+    throw new IllegalArgumentException("Cannot use preApply(PMatrix3D) on a PMatrix2D.");
   }
 
 
@@ -234,6 +248,14 @@ public final class PMatrix2D implements PMatrix {
     t1 = m11;
     m01 = t0 * n00 + t1 * n01;
     m11 = t0 * n10 + t1 * n11;  
+  }
+
+
+  public void preApply(float n00, float n01, float n02, float n03,
+                       float n10, float n11, float n12, float n13,
+                       float n20, float n21, float n22, float n23,
+                       float n30, float n31, float n32, float n33) {
+    throw new IllegalArgumentException("Cannot use this version of preApply() on a PMatrix2D.");
   }
 
 

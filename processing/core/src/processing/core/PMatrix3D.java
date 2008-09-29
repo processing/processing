@@ -114,6 +114,14 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   }
   
 
+  public void set(PMatrix2D src) {
+    set(src.m00, src.m01, 0, src.m02, 
+        src.m10, src.m11, 0, src.m12,
+        0, 0, 1, 0,
+        0, 0, 0, 1);
+  }
+  
+  
   public void set(PMatrix3D src) {
     set(src.m00, src.m01, src.m02, src.m03,
         src.m10, src.m11, src.m12, src.m13,
@@ -123,28 +131,43 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
 
 
   public void set(float[] source) {
-    m00 = source[0];
-    m01 = source[1];
-    m02 = source[2];
-    m03 = source[3];
+    if (source.length == 6) {
+      set(source[0], source[1], source[2], 
+          source[3], source[4], source[5]);
 
-    m10 = source[4];
-    m11 = source[5];
-    m12 = source[6];
-    m13 = source[7];
+    } else if (source.length == 16) {
+      m00 = source[0];
+      m01 = source[1];
+      m02 = source[2];
+      m03 = source[3];
 
-    m20 = source[8];
-    m21 = source[9];
-    m22 = source[10];
-    m23 = source[11];
+      m10 = source[4];
+      m11 = source[5];
+      m12 = source[6];
+      m13 = source[7];
 
-    m30 = source[12];
-    m31 = source[13];
-    m32 = source[14];
-    m33 = source[15];
+      m20 = source[8];
+      m21 = source[9];
+      m22 = source[10];
+      m23 = source[11];
+
+      m30 = source[12];
+      m31 = source[13];
+      m32 = source[14];
+      m33 = source[15];
+    }
   }
   
+
+  public void set(float m00, float m01, float m02, 
+                  float m10, float m11, float m12) {
+    set(m00, m01, 0, m02, 
+        m10, m11, 0, m12, 
+        0, 0, 1, 0,
+        0, 0, 0, 1);
+  }
   
+
   public void set(float m00, float m01, float m02, float m03,
                   float m10, float m11, float m12, float m13,
                   float m20, float m21, float m22, float m23,
@@ -234,24 +257,19 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   }
 
 
-  /** 
-   * Multiply this matrix by another.
-   */
-  public void apply(PMatrix matrix) {
-    if (matrix instanceof PMatrix2D) {
-      PMatrix2D source = (PMatrix2D) matrix;
-      apply(source.m00, source.m01, 0, source.m02, 
-            source.m10, source.m11, 0, source.m12,
-            0, 0, 1, 0,
-            0, 0, 0, 1);
-      
-    } else if (matrix instanceof PMatrix3D) {
-      PMatrix3D source = (PMatrix3D) matrix;
-      apply(source.m00, source.m01, source.m02, source.m03,
-            source.m10, source.m11, source.m12, source.m13,
-            source.m20, source.m21, source.m22, source.m23,
-            source.m30, source.m31, source.m32, source.m33);
-    }
+  public void apply(PMatrix2D source) {
+    apply(source.m00, source.m01, 0, source.m02, 
+          source.m10, source.m11, 0, source.m12,
+          0, 0, 1, 0,
+          0, 0, 0, 1);
+  }
+
+  
+  public void apply(PMatrix3D source) {
+    apply(source.m00, source.m01, source.m02, source.m03,
+          source.m10, source.m11, source.m12, source.m13,
+          source.m20, source.m21, source.m22, source.m23,
+          source.m30, source.m31, source.m32, source.m33);
   }
 
 
@@ -296,6 +314,14 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   }
 
 
+  public void preApply(PMatrix2D left) {
+    preApply(left.m00, left.m01, 0, left.m02, 
+             left.m10, left.m11, 0, left.m12,
+             0, 0, 1, 0,
+             0, 0, 0, 1);
+  }
+  
+  
   /**
    * Apply another matrix to the left of this one.
    */
@@ -306,7 +332,16 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
              left.m30, left.m31, left.m32, left.m33);
   }
 
+  
+  public void preApply(float n00, float n01, float n02, 
+                       float n10, float n11, float n12) {
+    preApply(n00, n01, 0, n02, 
+             n10, n11, 0, n12,
+             0, 0, 1, 0,
+             0, 0, 0, 1);
+  }
 
+  
   public void preApply(float n00, float n01, float n02, float n03,
                        float n10, float n11, float n12, float n13,
                        float n20, float n21, float n22, float n23,
