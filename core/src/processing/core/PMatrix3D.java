@@ -34,11 +34,6 @@ public final class PMatrix3D implements PConstants {
   public float m20, m21, m22, m23;
   public float m30, m31, m32, m33;
 
-//  final static int DEFAULT_STACK_DEPTH = 0;
-//  int maxStackDepth;
-//  int stackPointer = 0;
-//  float stack[][];
-
 
   // locally allocated version to avoid creating new memory
   protected PMatrix3D inverseCopy;
@@ -49,20 +44,12 @@ public final class PMatrix3D implements PConstants {
   }
 
 
-//  public PMatrix(int stackDepth) {
-//    set(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-//    stack = new float[stackDepth][16];
-//    maxStackDepth = stackDepth;
-//  }
-
-
   public PMatrix3D(float m00, float m01, float m02, 
                    float m10, float m11, float m12) {
     set(m00, m01, m02, 0,
         m10, m11, m12, 0,
         0,   0,   1,   0,
         0,   0,   0,   1);
-//    maxStackDepth = DEFAULT_STACK_DEPTH;
   }
   
   
@@ -74,17 +61,7 @@ public final class PMatrix3D implements PConstants {
         m10, m11, m12, m13,
         m20, m21, m22, m23,
         m30, m31, m32, m33);
-//    maxStackDepth = DEFAULT_STACK_DEPTH;
   }
-
-
-  // Make a copy of a matrix. We copy the stack depth,
-  // but we don't make a copy of the stack or the stack pointer.
-//  public PMatrix(PMatrix src) {
-//    set(src);
-////    maxStackDepth = src.maxStackDepth;
-////    stack = new float[maxStackDepth][16];
-//  }
 
 
   public void reset() {
@@ -93,68 +70,8 @@ public final class PMatrix3D implements PConstants {
         0, 0, 1, 0,
         0, 0, 0, 1);
   }
-
-
-//  public void clearStack() {
-//    stackPointer = 0;
-//  }
-
-
-//  public boolean push() {
-//    if (stackPointer == maxStackDepth) return false;
-//
-//    stack[stackPointer][0] = m00;
-//    stack[stackPointer][1] = m01;
-//    stack[stackPointer][2] = m02;
-//    stack[stackPointer][3] = m03;
-//
-//    stack[stackPointer][4] = m10;
-//    stack[stackPointer][5] = m11;
-//    stack[stackPointer][6] = m12;
-//    stack[stackPointer][7] = m13;
-//
-//    stack[stackPointer][8] = m20;
-//    stack[stackPointer][9] = m21;
-//    stack[stackPointer][10] = m22;
-//    stack[stackPointer][11] = m23;
-//
-//    stack[stackPointer][12] = m30;
-//    stack[stackPointer][13] = m31;
-//    stack[stackPointer][14] = m32;
-//    stack[stackPointer][15] = m33;
-//
-//    stackPointer++;
-//    return true;
-//  }
-
-
-//  public boolean pop() {
-//    if (stackPointer == 0) return false;
-//    stackPointer--;
-//
-//    m00 = stack[stackPointer][0];
-//    m01 = stack[stackPointer][1];
-//    m02 = stack[stackPointer][2];
-//    m03 = stack[stackPointer][3];
-//
-//    m10 = stack[stackPointer][4];
-//    m11 = stack[stackPointer][5];
-//    m12 = stack[stackPointer][6];
-//    m13 = stack[stackPointer][7];
-//
-//    m20 = stack[stackPointer][8];
-//    m21 = stack[stackPointer][9];
-//    m22 = stack[stackPointer][10];
-//    m23 = stack[stackPointer][11];
-//
-//    m30 = stack[stackPointer][12];
-//    m31 = stack[stackPointer][13];
-//    m32 = stack[stackPointer][14];
-//    m33 = stack[stackPointer][15];
-//
-//    return true;
-//  }
-
+  
+  
   /**
    * Returns a copy of this PMatrix.
    */
