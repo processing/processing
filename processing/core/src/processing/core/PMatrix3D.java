@@ -389,47 +389,27 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   
   
   /** 
-   * Multiply a three or four element vector against this matrix. 
-   * If out is null or not length four, a new float array will be returned.
-   * The values for vec and out can be the same (though that's less efficient). 
+   * Multiply a three or four element vector against this matrix. If out is 
+   * null or not length 3 or 4, a new float array (length 3) will be returned.
    */
   public float[] mult(float[] source, float[] target) {
     if (target == null || target.length < 3) {
       target = new float[3];
     }
+    if (source == target) {
+      throw new RuntimeException("The source and target vectors used in " +
+                                 "PMatrix3D.mult() cannot be identical.");
+    }
     if (target.length == 3) {
-      if (source == target) {
-        float tmpx = m00*source[0] + m01*source[1] + m02*source[2] + m03;
-        float tmpy = m10*source[0] + m11*source[1] + m12*source[2] + m13;
-        float tmpz = m20*source[0] + m21*source[1] + m22*source[2] + m23;
-
-        target[0] = tmpx;
-        target[1] = tmpy;
-        target[2] = tmpz;
-
-      } else {
-        target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03;
-        target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13;
-        target[2] = m20*source[0] + m21*source[1] + m22*source[2] + m23;
-      }
+      target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03;
+      target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13;
+      target[2] = m20*source[0] + m21*source[1] + m22*source[2] + m23;
+      
     } else if (target.length > 3) {
-      if (source == target) {
-        float tmpx = m00*source[0] + m01*source[1] + m02*source[2] + m03*source[3];
-        float tmpy = m10*source[0] + m11*source[1] + m12*source[2] + m13*source[3];
-        float tmpz = m20*source[0] + m21*source[1] + m22*source[2] + m23*source[3];
-        float tmpw = m30*source[0] + m31*source[1] + m32*source[2] + m33*source[3];
-
-        target[0] = tmpx;
-        target[1] = tmpy;
-        target[2] = tmpz;
-        target[3] = tmpw;
-
-      } else {
-        target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03*source[3];
-        target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13*source[3];
-        target[2] = m20*source[0] + m21*source[1] + m22*source[2] + m23*source[3];
-        target[3] = m30*source[0] + m31*source[1] + m32*source[2] + m33*source[3];      
-      }
+      target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03*source[3];
+      target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13*source[3];
+      target[2] = m20*source[0] + m21*source[1] + m22*source[2] + m23*source[3];
+      target[3] = m30*source[0] + m31*source[1] + m32*source[2] + m33*source[3];      
     }
     return target;
   }

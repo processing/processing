@@ -41,6 +41,93 @@ import java.util.*;
  */
 public class PGraphics3D extends PGraphics {
 
+  /** The depth buffer. */
+  public float[] zbuffer;
+
+  /** The modelview matrix. */
+  public PMatrix3D modelview;
+
+  /** Inverse modelview matrix, used for lighting. */
+  protected PMatrix3D modelviewInv;
+
+  /**
+   * The camera matrix, the modelview will be set to this on beginDraw.
+   */
+  public PMatrix3D camera;
+
+  /** Inverse camera matrix */
+  protected PMatrix3D cameraInv;
+
+  // ........................................................
+
+  /** Camera field of view. */
+  public float cameraFOV;
+
+  /** Position of the camera. */
+  public float cameraX, cameraY, cameraZ;
+  public float cameraNear, cameraFar;
+  /** Aspect ratio of camera's view. */
+  public float cameraAspect;
+
+  /** Current projection matrix. */
+  public PMatrix3D projection;
+
+  
+  //////////////////////////////////////////////////////////////
+
+  
+  /** 
+   * Maximum lights by default is 8, which is arbitrary for this renderer,
+   * but is the minimum defined by OpenGL 
+   */
+  public static final int MAX_LIGHTS = 8;
+
+  public int lightCount = 0;
+
+  /** Light types */
+  public int[] lightType;
+
+  /** Light positions */
+  public float[][] lightPosition;
+
+  /** Light direction (normalized vector) */
+  public float[][] lightNormal;
+
+  /** Light falloff */
+  public float[] lightFalloffConstant;
+  public float[] lightFalloffLinear;
+  public float[] lightFalloffQuadratic;
+
+  /** Light spot angle */
+  public float[] lightSpotAngle;
+
+  /** Cosine of light spot angle */
+  public float[] lightSpotAngleCos;
+
+  /** Light spot concentration */
+  public float[] lightSpotConcentration;
+
+  /** Diffuse colors for lights.
+   *  For an ambient light, this will hold the ambient color.
+   *  Internally these are stored as numbers between 0 and 1. */
+  public float[][] lightDiffuse;
+
+  /** Specular colors for lights.
+      Internally these are stored as numbers between 0 and 1. */
+  public float[][] lightSpecular;
+
+  /** Current specular color for lighting */
+  public float[] currentLightSpecular;
+
+  /** Current light falloff */
+  public float currentLightFalloffConstant;
+  public float currentLightFalloffLinear;
+  public float currentLightFalloffQuadratic;
+
+  
+  //////////////////////////////////////////////////////////////
+
+  
   static public final int TRI_DIFFUSE_R = 0;
   static public final int TRI_DIFFUSE_G = 1;
   static public final int TRI_DIFFUSE_B = 2;
@@ -71,8 +158,8 @@ public class PGraphics3D extends PGraphics {
   protected float[] tempLightingContribution = new float[LIGHT_COLOR_COUNT];
   protected float[] worldNormal = new float[4];
 
-  /// Used in light_triangle(). Allocated here once to avoid re-allocating
-  protected float[] norm = new float[3];
+  /// Used in lightTriangle(). Allocated here once to avoid re-allocating
+  protected PVector lightTriangleNorm = new PVector();
 
   // ........................................................
 
@@ -108,15 +195,15 @@ public class PGraphics3D extends PGraphics {
   // ........................................................
 
   // pos of first vertex of current shape in vertices array
-  protected int vertex_start;
+  protected int shapeFirst;
 
   // i think vertex_end is actually the last vertex in the current shape
   // and is separate from vertexCount for occasions where drawing happens
   // on endDraw() with all the triangles being depth sorted
-  protected int vertex_end;
+  protected int shapeLast;
 
   // vertices may be added during clipping against the near plane.
-  protected int vertex_end_including_clip_verts;
+  protected int shapeLastPlusClipped;
 
   // used for sorting points when triangulating a polygon
   // warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
@@ -124,6 +211,9 @@ public class PGraphics3D extends PGraphics {
 
   // ........................................................
 
+  // this is done to keep track of start/stop information for lines in the 
+  // line array, so that lines can be shown as a single path, rather than just
+  // individual segments. (currently not in use)
   protected int pathCount;
   protected int pathOffset[] = new int[64];
   protected int pathLength[] = new int[64];
@@ -131,16 +221,16 @@ public class PGraphics3D extends PGraphics {
   // ........................................................
 
   // line & triangle fields (note that these overlap)
-  static protected final int INDEX = 0;          // shape index
-  static protected final int VERTEX1 = 1;
-  static protected final int VERTEX2 = 2;
-  static protected final int VERTEX3 = 3;        // (triangles only)
-  static protected final int TEXTURE_INDEX = 4;  // (triangles only)
-  static protected final int STROKE_MODE = 3;    // (lines only)
-  static protected final int STROKE_WEIGHT = 4;  // (lines only)
+//  static protected final int INDEX = 0;          // shape index
+  static protected final int VERTEX1 = 0;
+  static protected final int VERTEX2 = 1;
+  static protected final int VERTEX3 = 2;        // (triangles only)
+  static protected final int TEXTURE_INDEX = 3;  // (triangles only)
+  static protected final int STROKE_MODE = 2;    // (lines only)
+  static protected final int STROKE_WEIGHT = 3;  // (lines only)
 
-  static protected final int LINE_FIELD_COUNT = 5;
-  static protected final int TRIANGLE_FIELD_COUNT = 5;
+  static protected final int LINE_FIELD_COUNT = 4;
+  static protected final int TRIANGLE_FIELD_COUNT = 4;
 
   // lines
   static final int DEFAULT_LINES = 512;
@@ -158,7 +248,7 @@ public class PGraphics3D extends PGraphics {
   protected int triangleCount;   // total number of triangles
 
   // cheap picking someday
-  public int shape_index;
+  //public int shape_index;
 
   // ........................................................
 
@@ -178,6 +268,15 @@ public class PGraphics3D extends PGraphics {
   public PGraphics3D() { }
 
 
+  //public void setParent(PApplet parent)
+  
+  
+  //public void setPrimary(boolean primary)
+  
+  
+  //public void setPath(String path)
+
+  
   /**
    * Called in repsonse to a resize event, handles setting the
    * new width and height internally, as well as re-allocating
@@ -282,6 +381,9 @@ public class PGraphics3D extends PGraphics {
   }
 
 
+  //public boolean canDraw()
+
+
   public void beginDraw() {
 //    insideResizeWait();
 //    insideDraw = true;
@@ -314,7 +416,7 @@ public class PGraphics3D extends PGraphics {
     triangleCount = 0;
     if (triangle != null) triangle.reset();  // necessary?
 
-    vertex_start = 0;
+    shapeFirst = 0;
     //vertex_end = 0;
 
     // reset textures
@@ -354,7 +456,7 @@ public class PGraphics3D extends PGraphics {
   /**
    * Emit any sorted geometry that's been collected on this frame.
    */
-  protected void flush() {
+  public void flush() {
     if (triangleCount > 0) {
       if (hints[ENABLE_DEPTH_SORT]) {
         sortTriangles();
@@ -375,7 +477,10 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  public void defaultSettings() {
+  //protected void checkSettings()
+
+
+  protected void defaultSettings() {
     super.defaultSettings();
 
     manipulatingCamera = false;
@@ -393,6 +498,9 @@ public class PGraphics3D extends PGraphics {
   }
   
   
+  //protected void reapplySettings()
+  
+  
   public void hint(int which) {
     if (which == DISABLE_DEPTH_SORT) {
       flush();
@@ -404,19 +512,22 @@ public class PGraphics3D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
 
+  //public void beginShape()
+  
+  
   public void beginShape(int kind) {
     shape = kind;
 
-    shape_index = shape_index + 1;
-    if (shape_index == -1) {
-      shape_index = 0;
-    }
+//    shape_index = shape_index + 1;
+//    if (shape_index == -1) {
+//      shape_index = 0;
+//    }
 
     if (hints[ENABLE_DEPTH_SORT]) {
       // continue with previous vertex, line and triangle count
       // all shapes are rendered at endDraw();
-      vertex_start = vertexCount;
-      vertex_end = 0;
+      shapeFirst = vertexCount;
+      shapeLast = 0;
 
     } else {
       // reset vertex, line and triangle information
@@ -430,56 +541,18 @@ public class PGraphics3D extends PGraphics {
     }
     textureImage = null;
 
-    splineVertexCount = 0;
+    curveVertexCount = 0;
     normalMode = NORMAL_MODE_AUTO;
     normalCount = 0;
   }
 
 
-  /**
-   * Sets the current normal vector.
-   * <P/>
-   * This is for drawing three dimensional shapes and surfaces,
-   * allowing you to specify a vector perpendicular to the surface
-   * of the shape, which determines how lighting affects it.
-   * <P/>
-   * For the most part, PGraphics3D will attempt to automatically
-   * assign normals to shapes, but since that's imperfect,
-   * this is a better option when you want more control.
-   * <P/>
-   * For people familiar with OpenGL, this function is basically
-   * identical to glNormal3f().
-   * <P/>
-   * Only applies inside a beginShape/endShape block.
-   */
-  public void normal(float nx, float ny, float nz) {
-    normalX = nx;
-    normalY = ny;
-    normalZ = nz;
-
-    // if drawing a shape and the normal hasn't been set yet,
-    // then we need to set the normals for each vertex so far
-    if (shape != 0) {
-      if (normalCount == 0) {
-        for (int i = vertex_start; i < vertexCount; i++) {
-          vertices[i][NX] = normalX;
-          vertices[i][NY] = normalY;
-          vertices[i][NZ] = normalZ;
-        }
-      }
-
-      normalCount++;
-      if (normalCount == 1) {
-        // One normal per begin/end shape
-        normalMode = NORMAL_MODE_SHAPE;
-      } else {
-        // a separate normal for each vertex
-        normalMode = NORMAL_MODE_VERTEX;
-      }
-    }
-  }
-
-
+  //public void normal(float nx, float ny, float nz)
+  
+  
+  //public void textureMode(int mode)
+  
+  
   public void texture(PImage image) {
     textureImage = image;
 
@@ -494,128 +567,29 @@ public class PGraphics3D extends PGraphics {
 
 
   public void vertex(float x, float y) {
-    setup_vertex(x, y, 0);
+    // override to properly pick up all 3D settings
+    vertex(x, y, 0);
   }
 
 
+  //public void vertex(float x, float y, float z)
+  
+  
   public void vertex(float x, float y, float u, float v) {
-    textureVertex(u, v);
-    setup_vertex(x, y, 0);
+    // override to properly pick up all 3D settings
+    vertex(x, y, 0, u, v);
   }
 
 
-  public void vertex(float x, float y, float z) {
-    setup_vertex(x, y, z);
-  }
+  //public void vertex(float x, float y, float z, float u, float v)
 
-
-  public void vertex(float x, float y, float z,
-                     float u, float v) {
-    textureVertex(u, v);
-    setup_vertex(x, y, z);
-  }
-
-
-  protected void setup_vertex(float x, float y, float z) {
-    if (vertexCount == vertices.length) {
-      float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
-      System.arraycopy(vertices, 0, temp, 0, vertexCount);
-      vertices = temp;
-      int temp2[] = new int[vertexCount << 1];
-      System.arraycopy(vertex_order, 0, temp2, 0, vertexCount);
-      vertex_order = temp2;
-      //System.out.println("allocating more vertices " + vertices.length);
-    }
-    float vertex[] = vertices[vertexCount];
-
-    // only do this if we're using an irregular (POLYGON) shape that
-    // will go through the triangulator. otherwise it'll do thinks like
-    // disappear in mathematically odd ways
-    // http://dev.processing.org/bugs/show_bug.cgi?id=444
-    if (shape == POLYGON) {
-      if (vertexCount > 0) {
-        float pvertex[] = vertices[vertexCount-1];
-        if ((abs(pvertex[X] - x) < EPSILON) &&
-            (abs(pvertex[Y] - y) < EPSILON) &&
-            (abs(pvertex[Z] - z) < EPSILON)) {
-          // this vertex is identical, don't add it,
-          // because it will anger the triangulator
-          return;
-        }
-      }
-    }
-
-    // user called vertex(), so that invalidates anything queued
-    // up for curve vertices. if this is internally called by
-    // spline_segment, then splineVertexCount will be saved and restored.
-    splineVertexCount = 0;
-
-    vertex[X] = x;
-    vertex[Y] = y;
-    vertex[Z] = z;
-
-    if (fill) {
-      if (textureImage != null) {
-        if (tint) {
-          vertex[R] = tintR;
-          vertex[G] = tintG;
-          vertex[B] = tintB;
-          vertex[A] = tintA;
-        } else {
-          vertex[R] = 1;
-          vertex[G] = 1;
-          vertex[B] = 1;
-          vertex[A] = 1;
-        }
-      } else {
-        vertex[R] = fillR;
-        vertex[G] = fillG;
-        vertex[B] = fillB;
-        vertex[A] = fillA;
-      }
-
-      vertex[AR] = ambientR;
-      vertex[AG] = ambientG;
-      vertex[AB] = ambientB;
-
-      vertex[SPR] = specularR;
-      vertex[SPG] = specularG;
-      vertex[SPB] = specularB;
-      //vertex[SPA] = specularA;
-
-      vertex[SHINE] = shininess;
-
-      vertex[ER] = emissiveR;
-      vertex[EG] = emissiveG;
-      vertex[EB] = emissiveB;
-    }
-
-    if (stroke) {
-      vertex[SR] = strokeR;
-      vertex[SG] = strokeG;
-      vertex[SB] = strokeB;
-      vertex[SA] = strokeA;
-      vertex[SW] = strokeWeight;
-    }
-
-    if (textureImage != null) {
-      vertex[U] = textureU;
-      vertex[V] = textureV;
-    }
-
-    vertex[NX] = normalX;
-    vertex[NY] = normalY;
-    vertex[NZ] = normalZ;
-
-    vertex[BEEN_LIT] = 0;
-
-    vertexCount++;
-  }
-
-
+  
+  //public void endShape()
+  
+  
   public void endShape(int mode) {
-    vertex_end = vertexCount;
-    vertex_end_including_clip_verts = vertex_end;
+    shapeLast = vertexCount;
+    shapeLastPlusClipped = shapeLast;
 
     // don't try to draw if there are no vertices
     // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
@@ -630,7 +604,7 @@ public class PGraphics3D extends PGraphics {
     // It is necessary to do this now because we will be clipping them on
     // add_triangle.
 
-    for (int i = vertex_start; i < vertex_end; i++) {
+    for (int i = shapeFirst; i < shapeLast; i++) {
       float vertex[] = vertices[i];
 
       vertex[VX] =
@@ -667,8 +641,8 @@ public class PGraphics3D extends PGraphics {
 
         case POINTS:
         {
-          stop = vertex_end;
-          for (int i = vertex_start; i < stop; i++) {
+          stop = shapeLast;
+          for (int i = shapeFirst; i < stop; i++) {
             add_path();  // total overkill for points
             add_line(i, i);
           }
@@ -681,13 +655,13 @@ public class PGraphics3D extends PGraphics {
         {
           // store index of first vertex
           int first = lineCount;
-          stop = vertex_end - 1;
+          stop = shapeLast - 1;
           increment = (shape == LINES) ? 2 : 1;
 
           // for LINE_STRIP and LINE_LOOP, make this all one path
           if (shape != LINES) add_path();
 
-          for (int i = vertex_start; i < stop; i+=increment) {
+          for (int i = shapeFirst; i < stop; i+=increment) {
             // for LINES, make a new path for each segment
             if (shape == LINES) add_path();
             add_line(i, i+1);
@@ -703,7 +677,7 @@ public class PGraphics3D extends PGraphics {
 
         case TRIANGLES:
         {
-          for (int i = vertex_start; i < vertex_end-2; i += 3) {
+          for (int i = shapeFirst; i < shapeLast-2; i += 3) {
             add_path();
             //counter = i - vertex_start;
             add_line(i+0, i+1);
@@ -716,17 +690,17 @@ public class PGraphics3D extends PGraphics {
         case TRIANGLE_STRIP:
         {
           // first draw all vertices as a line strip
-          stop = vertex_end-1;
+          stop = shapeLast-1;
 
           add_path();
-          for (int i = vertex_start; i < stop; i++) {
+          for (int i = shapeFirst; i < stop; i++) {
             //counter = i - vertex_start;
             add_line(i, i+1);
           }
 
           // then draw from vertex (n) to (n+2)
-          stop = vertex_end-2;
-          for (int i = vertex_start; i < stop; i++) {
+          stop = shapeLast-2;
+          for (int i = shapeFirst; i < stop; i++) {
             add_path();
             add_line(i, i+2);
           }
@@ -737,24 +711,24 @@ public class PGraphics3D extends PGraphics {
         {
           // this just draws a series of line segments
           // from the center to each exterior point
-          for (int i = vertex_start + 1; i < vertex_end; i++) {
+          for (int i = shapeFirst + 1; i < shapeLast; i++) {
             add_path();
-            add_line(vertex_start, i);
+            add_line(shapeFirst, i);
           }
 
           // then a single line loop around the outside.
           add_path();
-          for (int i = vertex_start + 1; i < vertex_end-1; i++) {
+          for (int i = shapeFirst + 1; i < shapeLast-1; i++) {
             add_line(i, i+1);
           }
           // closing the loop
-          add_line(vertex_end-1, vertex_start + 1);
+          add_line(shapeLast-1, shapeFirst + 1);
         }
         break;
 
         case QUADS:
         {
-          for (int i = vertex_start; i < vertex_end; i += 4) {
+          for (int i = shapeFirst; i < shapeLast; i += 4) {
             add_path();
             //counter = i - vertex_start;
             add_line(i+0, i+1);
@@ -767,7 +741,7 @@ public class PGraphics3D extends PGraphics {
 
         case QUAD_STRIP:
         {
-          for (int i = vertex_start; i < vertex_end - 3; i += 2) {
+          for (int i = shapeFirst; i < shapeLast - 3; i += 2) {
             add_path();
             add_line(i+0, i+2);
             add_line(i+2, i+3);
@@ -802,16 +776,16 @@ public class PGraphics3D extends PGraphics {
         {
           // store index of first vertex
           //int first = lineCount;
-          stop = vertex_end - 1;
+          stop = shapeLast - 1;
 
           add_path();
-          for (int i = vertex_start; i < stop; i++) {
+          for (int i = shapeFirst; i < stop; i++) {
             add_line(i, i+1);
             //System.out.println("adding line " + i);
           }
           if (mode == CLOSE) {
             // draw the last line connecting back to the first point in poly
-            add_line(stop, vertex_start); //lines[first][VERTEX1]);
+            add_line(stop, shapeFirst); //lines[first][VERTEX1]);
           }
         }
         break;
@@ -825,9 +799,9 @@ public class PGraphics3D extends PGraphics {
       switch (shape) {
         case TRIANGLE_FAN:
         {
-          stop = vertex_end - 1;
-          for (int i = vertex_start + 1; i < stop; i++) {
-            add_triangle(vertex_start, i, i+1);
+          stop = shapeLast - 1;
+          for (int i = shapeFirst + 1; i < stop; i++) {
+            add_triangle(shapeFirst, i, i+1);
           }
         }
         break;
@@ -835,9 +809,9 @@ public class PGraphics3D extends PGraphics {
         case TRIANGLES:
         case TRIANGLE_STRIP:
         {
-          stop = vertex_end - 2;
+          stop = shapeLast - 2;
           increment = (shape == TRIANGLES) ? 3 : 1;
-          for (int i = vertex_start; i < stop; i += increment) {
+          for (int i = shapeFirst; i < stop; i += increment) {
             // have to switch between clockwise/counter-clockwise
             // otherwise the feller is backwards and renderer won't draw
             if ((i % 2) == 0) {
@@ -853,7 +827,7 @@ public class PGraphics3D extends PGraphics {
         {
           stop = vertexCount-3;
 
-          for (int i = vertex_start; i < stop; i += 4) {
+          for (int i = shapeFirst; i < stop; i += 4) {
             // first triangle
             add_triangle(i, i+1, i+2);
             // second triangle
@@ -866,7 +840,7 @@ public class PGraphics3D extends PGraphics {
         {
           stop = vertexCount-3;
 
-          for (int i = vertex_start; i < stop; i += 2) {
+          for (int i = shapeFirst; i < stop; i += 2) {
             // first triangle
             add_triangle(i+0, i+2, i+1);
             // second triangle
@@ -901,7 +875,7 @@ public class PGraphics3D extends PGraphics {
     // POINTS FROM CAMERA SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
     // this appears to be wasted time with the opengl renderer
 
-    for (int i = vertex_start; i < vertex_end_including_clip_verts; i++) {
+    for (int i = shapeFirst; i < shapeLastPlusClipped; i++) {
       float vx[] = vertices[i];
 
       float ox =
@@ -1020,7 +994,7 @@ public class PGraphics3D extends PGraphics {
     }
     lines[lineCount][VERTEX1] = a;
     lines[lineCount][VERTEX2] = b;
-    lines[lineCount][INDEX] = -1;
+//    lines[lineCount][INDEX] = -1;
 
     lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
     lines[lineCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
@@ -1161,7 +1135,7 @@ public class PGraphics3D extends PGraphics {
            pa * va[Y] + pb * vb[Y],
            pa * va[Z] + pb * vb[Z]);
     int irv = vertexCount - 1;
-    vertex_end_including_clip_verts++;
+    shapeLastPlusClipped++;
     
     float[] rv = vertices[irv];
 
@@ -1234,7 +1208,7 @@ public class PGraphics3D extends PGraphics {
       triangles[triangleCount][TEXTURE_INDEX] = textureIndex;
     }
 
-    triangles[triangleCount][INDEX] = shape_index;
+//    triangles[triangleCount][INDEX] = shape_index;
     triangleCount++;
   }
 
@@ -1309,7 +1283,7 @@ public class PGraphics3D extends PGraphics {
       float b[] = vertices[triangles[i][VERTEX2]];
       float c[] = vertices[triangles[i][VERTEX3]];
       int tex = triangles[i][TEXTURE_INDEX];
-      int index = triangles[i][INDEX];
+//      int index = triangles[i][INDEX];
 
       // ewjordan: hack to 'fix' accuracy issues when drawing in 2d
       // see also render_lines() where similar hack is employed
@@ -1366,7 +1340,7 @@ public class PGraphics3D extends PGraphics {
                                 c[VX], c[VY], c[VZ]);
       }
 
-      triangle.setIndex(index);
+//      triangle.setIndex(index);
       triangle.render();
 
       //System.out.println(i + " " + a[Z] + " " + b[Z] + " " + c[Z]);
@@ -1428,7 +1402,7 @@ public class PGraphics3D extends PGraphics {
     for (int i = 0; i < lineCount; i ++) {
       float a[] = vertices[lines[i][VERTEX1]];
       float b[] = vertices[lines[i][VERTEX2]];
-      int index = lines[i][INDEX];
+//      int index = lines[i][INDEX];
 
       // 2D hack added by ewjordan 6/13/07
       // Offset coordinates by a little bit if drawing 2D graphics.
@@ -1499,7 +1473,7 @@ public class PGraphics3D extends PGraphics {
       }
       */
 
-      line.setIndex(index);
+//      line.setIndex(index);
       line.draw();
     }
 
@@ -1518,6 +1492,13 @@ public class PGraphics3D extends PGraphics {
    * bit of code from the web.
    */
   private void triangulate_polygon() {
+    if (vertex_order.length != vertices.length) {
+      int[] temp = new int[vertices.length];
+      // since vertex_start may not be zero, might need to keep old stuff around
+      PApplet.arraycopy(vertex_order, temp, vertexCount);
+      vertex_order = temp;
+    }
+
     // this clipping algorithm only works in 2D, so in cases where a
     // polygon is drawn perpendicular to the z-axis, the area will be zero,
     // and triangulation will fail. as such, when the area calculates to
@@ -1549,7 +1530,7 @@ public class PGraphics3D extends PGraphics {
 
     // first we check if the polygon goes clockwise or counterclockwise
     float area = 0;
-    for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
+    for (int p = shapeLast - 1, q = shapeFirst; q < shapeLast; p = q++) {
       area += (vertices[q][d1] * vertices[p][d2] -
                vertices[p][d1] * vertices[q][d2]);
     }
@@ -1561,8 +1542,8 @@ public class PGraphics3D extends PGraphics {
       boolean foundValidX = false;
       boolean foundValidY = false;
 
-      for (int i = vertex_start; i < vertex_end; i++) {
-        for (int j = i; j < vertex_end; j++){
+      for (int i = shapeFirst; i < shapeLast; i++) {
+        for (int j = i; j < shapeLast; j++){
           if ( vertices[i][X] != vertices[j][X] ) foundValidX = true;
           if ( vertices[i][Y] != vertices[j][Y] ) foundValidY = true;
         }
@@ -1581,7 +1562,7 @@ public class PGraphics3D extends PGraphics {
       }
 
       // re-calculate the area, with what should be good values
-      for (int p = vertex_end - 1, q = vertex_start; q < vertex_end; p = q++) {
+      for (int p = shapeLast - 1, q = shapeFirst; q < shapeLast; p = q++) {
         area += (vertices[q][d1] * vertices[p][d2] -
                  vertices[p][d1] * vertices[q][d2]);
       }
@@ -1590,30 +1571,30 @@ public class PGraphics3D extends PGraphics {
     // don't allow polygons to come back and meet themselves,
     // otherwise it will anger the triangulator
     // http://dev.processing.org/bugs/show_bug.cgi?id=97
-    float vfirst[] = vertices[vertex_start];
-    float vlast[] = vertices[vertex_end-1];
+    float vfirst[] = vertices[shapeFirst];
+    float vlast[] = vertices[shapeLast-1];
     if ((abs(vfirst[X] - vlast[X]) < EPSILON) &&
         (abs(vfirst[Y] - vlast[Y]) < EPSILON) &&
         (abs(vfirst[Z] - vlast[Z]) < EPSILON)) {
-      vertex_end--;
+      shapeLast--;
     }
 
     // then sort the vertices so they are always in a counterclockwise order
     int j = 0;
     if (area > 0) {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        j = i - vertex_start;
+      for (int i = shapeFirst; i < shapeLast; i++) {
+        j = i - shapeFirst;
         vertex_order[j] = i;
       }
     } else {
-      for (int i = vertex_start; i < vertex_end; i++) {
-        j = i - vertex_start;
-        vertex_order[j] = (vertex_end - 1) - j;
+      for (int i = shapeFirst; i < shapeLast; i++) {
+        j = i - shapeFirst;
+        vertex_order[j] = (shapeLast - 1) - j;
       }
     }
 
     // remove vc-2 Vertices, creating 1 triangle every time
-    int vc = vertex_end - vertex_start;
+    int vc = shapeLast - shapeFirst;
     int count = 2*vc;  // complex polygon detection
 
     for (int m = 0, v = vc - 1; vc > 2; ) {
@@ -2053,15 +2034,12 @@ public class PGraphics3D extends PGraphics {
             vertices[vIndex2][VZ] - vertices[vIndex][VZ],
             vertices[vIndex3][VX] - vertices[vIndex][VX],
             vertices[vIndex3][VY] - vertices[vIndex][VY],
-            vertices[vIndex3][VZ] - vertices[vIndex][VZ], norm);
-      
-      float nmag = mag(norm[X], norm[Y], norm[Z]);
-      if (nmag != 0 && nmag != 1) {
-        norm[X] /= nmag; norm[Y] /= nmag; norm[Z] /= nmag;
-      }
-      vertices[vIndex][NX] = norm[X];
-      vertices[vIndex][NY] = norm[Y];
-      vertices[vIndex][NZ] = norm[Z];
+            vertices[vIndex3][VZ] - vertices[vIndex][VZ], lightTriangleNorm);
+
+      lightTriangleNorm.normalize();
+      vertices[vIndex][NX] = lightTriangleNorm.x;
+      vertices[vIndex][NY] = lightTriangleNorm.y;
+      vertices[vIndex][NZ] = lightTriangleNorm.z;
 
       // The true at the end says the normal is already in world coordinates
       calc_lighting_contribution(vIndex, tempLightingContribution, true);
@@ -2077,25 +2055,25 @@ public class PGraphics3D extends PGraphics {
     else {
       if (normalMode == NORMAL_MODE_SHAPE) {
         vIndex = triangles[triIndex][VERTEX1];
-        vertices[vIndex][NX] = vertices[vertex_start][NX];
-        vertices[vIndex][NY] = vertices[vertex_start][NY];
-        vertices[vIndex][NZ] = vertices[vertex_start][NZ];
+        vertices[vIndex][NX] = vertices[shapeFirst][NX];
+        vertices[vIndex][NY] = vertices[shapeFirst][NY];
+        vertices[vIndex][NZ] = vertices[shapeFirst][NZ];
         calc_lighting_contribution(vIndex, tempLightingContribution);
         copy_vertex_color_to_triangle(triIndex, vIndex, 0,
                                       tempLightingContribution);
 
         vIndex = triangles[triIndex][VERTEX2];
-        vertices[vIndex][NX] = vertices[vertex_start][NX];
-        vertices[vIndex][NY] = vertices[vertex_start][NY];
-        vertices[vIndex][NZ] = vertices[vertex_start][NZ];
+        vertices[vIndex][NX] = vertices[shapeFirst][NX];
+        vertices[vIndex][NY] = vertices[shapeFirst][NY];
+        vertices[vIndex][NZ] = vertices[shapeFirst][NZ];
         calc_lighting_contribution(vIndex, tempLightingContribution);
         copy_vertex_color_to_triangle(triIndex, vIndex, 1,
                                       tempLightingContribution);
 
         vIndex = triangles[triIndex][VERTEX3];
-        vertices[vIndex][NX] = vertices[vertex_start][NX];
-        vertices[vIndex][NY] = vertices[vertex_start][NY];
-        vertices[vIndex][NZ] = vertices[vertex_start][NZ];
+        vertices[vIndex][NX] = vertices[shapeFirst][NX];
+        vertices[vIndex][NY] = vertices[shapeFirst][NY];
+        vertices[vIndex][NZ] = vertices[shapeFirst][NZ];
         calc_lighting_contribution(vIndex, tempLightingContribution);
         copy_vertex_color_to_triangle(triIndex, vIndex, 2,
                                       tempLightingContribution);
@@ -2124,30 +2102,31 @@ public class PGraphics3D extends PGraphics {
               vertices[vIndex2][VZ] - vertices[vIndex][VZ],
               vertices[vIndex3][VX] - vertices[vIndex][VX],
               vertices[vIndex3][VY] - vertices[vIndex][VY],
-              vertices[vIndex3][VZ] - vertices[vIndex][VZ], norm);
-        float nmag = mag(norm[X], norm[Y], norm[Z]);
-        if (nmag != 0 && nmag != 1) {
-          norm[X] /= nmag; norm[Y] /= nmag; norm[Z] /= nmag;
-        }
-        vertices[vIndex][NX] = norm[X];
-        vertices[vIndex][NY] = norm[Y];
-        vertices[vIndex][NZ] = norm[Z];
+              vertices[vIndex3][VZ] - vertices[vIndex][VZ], lightTriangleNorm);
+//        float nmag = mag(norm[X], norm[Y], norm[Z]);
+//        if (nmag != 0 && nmag != 1) {
+//          norm[X] /= nmag; norm[Y] /= nmag; norm[Z] /= nmag;
+//        }
+        lightTriangleNorm.normalize();
+        vertices[vIndex][NX] = lightTriangleNorm.x;
+        vertices[vIndex][NY] = lightTriangleNorm.y;
+        vertices[vIndex][NZ] = lightTriangleNorm.z;
         // The true at the end says the normal is already in world coordinates
         calc_lighting_contribution(vIndex, tempLightingContribution, true);
         copy_vertex_color_to_triangle(triIndex, vIndex, 0,
                                       tempLightingContribution);
 
-        vertices[vIndex2][NX] = norm[X];
-        vertices[vIndex2][NY] = norm[Y];
-        vertices[vIndex2][NZ] = norm[Z];
+        vertices[vIndex2][NX] = lightTriangleNorm.x;
+        vertices[vIndex2][NY] = lightTriangleNorm.y;
+        vertices[vIndex2][NZ] = lightTriangleNorm.z;
         // The true at the end says the normal is already in world coordinates
         calc_lighting_contribution(vIndex2, tempLightingContribution, true);
         copy_vertex_color_to_triangle(triIndex, vIndex2, 1,
                                       tempLightingContribution);
 
-        vertices[vIndex3][NX] = norm[X];
-        vertices[vIndex3][NY] = norm[Y];
-        vertices[vIndex3][NZ] = norm[Z];
+        vertices[vIndex3][NX] = lightTriangleNorm.x;
+        vertices[vIndex3][NY] = lightTriangleNorm.y;
+        vertices[vIndex3][NZ] = lightTriangleNorm.z;
         // The true at the end says the normal is already in world coordinates
         calc_lighting_contribution(vIndex3, tempLightingContribution, true);
         copy_vertex_color_to_triangle(triIndex, vIndex3, 2,
@@ -2162,7 +2141,7 @@ public class PGraphics3D extends PGraphics {
     // normal specified for this shape, go ahead and apply the same lighting
     // contribution to every vertex in this shape (one lighting calc!)
     if (!lightingDependsOnVertexPosition && normalMode == NORMAL_MODE_SHAPE) {
-      calc_lighting_contribution(vertex_start, tempLightingContribution);
+      calc_lighting_contribution(shapeFirst, tempLightingContribution);
       for (int tri = 0; tri < triangleCount; tri++) {
         light_triangle(tri, tempLightingContribution);
       }
@@ -3878,12 +3857,23 @@ public class PGraphics3D extends PGraphics {
   }
 
   
+  /*
   private final void cross(float a0, float a1, float a2,
                            float b0, float b1, float b2, 
                            float[] out) {
     out[0] = a1*b2 - a2*b1;
     out[1] = a2*b0 - a0*b2;
     out[2] = a0*b1 - a1*b0;
+  }
+  */
+  
+
+  private final void cross(float a0, float a1, float a2,
+                           float b0, float b1, float b2, 
+                           PVector out) {
+    out.x = a1*b2 - a2*b1;
+    out.y = a2*b0 - a0*b2;
+    out.z = a0*b1 - a1*b0;
   }
   
 

@@ -6661,6 +6661,12 @@ public class PApplet extends Applet
   // public functions for processing.core
 
 
+  public void flush() {
+    if (recorder != null) recorder.flush();
+    g.flush();
+  }
+
+
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
@@ -6676,6 +6682,12 @@ public class PApplet extends Applet
   public void beginShape(int kind) {
     if (recorder != null) recorder.beginShape(kind);
     g.beginShape(kind);
+  }
+
+
+  public void edge(boolean e) {
+    if (recorder != null) recorder.edge(e);
+    g.edge(e);
   }
 
 
@@ -6721,6 +6733,24 @@ public class PApplet extends Applet
   }
 
 
+  public void breakShape() {
+    if (recorder != null) recorder.breakShape();
+    g.breakShape();
+  }
+
+
+  public void endShape() {
+    if (recorder != null) recorder.endShape();
+    g.endShape();
+  }
+
+
+  public void endShape(int mode) {
+    if (recorder != null) recorder.endShape(mode);
+    g.endShape(mode);
+  }
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
@@ -6746,24 +6776,6 @@ public class PApplet extends Applet
   public void curveVertex(float x, float y, float z) {
     if (recorder != null) recorder.curveVertex(x, y, z);
     g.curveVertex(x, y, z);
-  }
-
-
-  public void breakShape() {
-    if (recorder != null) recorder.breakShape();
-    g.breakShape();
-  }
-
-
-  public void endShape() {
-    if (recorder != null) recorder.endShape();
-    g.endShape();
-  }
-
-
-  public void endShape(int mode) {
-    if (recorder != null) recorder.endShape(mode);
-    g.endShape(mode);
   }
 
 
