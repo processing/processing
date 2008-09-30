@@ -30,9 +30,10 @@ import java.util.Arrays;
 
 
 /**
- * Subclass of PGraphics that handles fast 2D rendering,
- * more commonly referred to as P2D. This class uses no Java2D
- * and will run with Java 1.1.
+ * Subclass of PGraphics that handles fast 2D rendering using a 
+ * MemoryImageSource. The renderer found in this class is not as accurate as 
+ * PGraphicsJava2D, but offers certain speed tradeoffs, particular when 
+ * messing with the pixels array, or displaying image or video data.
  */
 public class PGraphics2D extends PGraphics {
 
@@ -51,9 +52,9 @@ public class PGraphics2D extends PGraphics {
   boolean strokeChanged = true;
   boolean fillChanged = true;
 
-  static final int CVERTEX_ALLOC = 128;
-  float cvertex[][] = new float[CVERTEX_ALLOC][VERTEX_FIELD_COUNT];
-  int cvertexIndex;
+//  static final int CVERTEX_ALLOC = 128;
+//  float cvertex[][] = new float[CVERTEX_ALLOC][VERTEX_FIELD_COUNT];
+//  int cvertexIndex;
   
   float[][] matrixStack = new float[MATRIX_STACK_DEPTH][6];
   int matrixStackDepth;
@@ -142,7 +143,7 @@ public class PGraphics2D extends PGraphics {
   public void beginShape(int kind) {
     shape = kind;
     vertexCount = 0;
-    splineVertexCount = 0;
+    curveVertexCount = 0;
 
     polygon.reset(0);
     fpolygon.reset(4);
@@ -152,46 +153,8 @@ public class PGraphics2D extends PGraphics {
   }
 
 
-  // PGraphics will throw a depthError
-  //public void normal(float nx, float ny, float nz)
-
-  // PGraphics will handle setting these
-  //public void textureMode(int mode)
-  //public void texture(PImage image)
-  //protected void textureVertex(float u, float v)
-
-
-  public void vertex(float x, float y) {
-    float vertex[] = polygon.nextVertex();
-    cvertexIndex = 0; // reset curves to start
-
-    vertex[X] = x;
-    vertex[Y] = y;
-
-    if (fill) {
-      vertex[R] = fillR;
-      vertex[G] = fillG;
-      vertex[B] = fillB;
-      vertex[A] = fillA;
-    }
-
-    if (stroke) {
-      vertex[SR] = strokeR;
-      vertex[SG] = strokeG;
-      vertex[SB] = strokeB;
-      vertex[SA] = strokeA;
-      vertex[SW] = strokeWeight;
-    }
-
-    if (textureImage != null) {
-      vertex[U] = textureU;
-      vertex[V] = textureV;
-    }
-  }
-
-
   public void vertex(float x, float y, float u, float v) {
-    textureVertex(u, v);
+    vertexTexture(u, v);
     vertex(x, y);
   }
 
@@ -1185,14 +1148,12 @@ public class PGraphics2D extends PGraphics {
     private void thin_pointAt(int x, int y, float z, int color) {
       int index = y*width+x; // offset values are pre-calced in constructor
       pixels[index] = color;
-      zbuffer[index] = z;
     }
 
     // expects offset/index in pixelbuffer array instead of x/y coords
     // used by optimized parts of thin_flat_line() [toxi]
     private void thin_pointAtIndex(int offset, float z, int color) {
       pixels[offset] = color;
-      zbuffer[offset] = z;
     }
 
     // points are inherently flat, but always tangent
@@ -1621,7 +1582,6 @@ public class PGraphics2D extends PGraphics {
              a2 * ( color                & 0xff)) >> 8));
         */
       }
-      zbuffer[index] = z;
     }
 
 

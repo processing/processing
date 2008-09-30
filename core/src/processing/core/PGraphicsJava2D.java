@@ -52,6 +52,15 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public Graphics2D g2;
   GeneralPath gpath;
 
+  /// break the shape at the next vertex (next vertex() call is a moveto())
+  boolean breakShape;
+
+  /// coordinates for internal curve calculation
+  float[] curveCoordX = new float[4];
+  float[] curveCoordY = new float[4];
+  float[] curveDrawX = new float[4];
+  float[] curveDrawY = new float[4];
+
   int transformCount;
   AffineTransform transformStack[] =
     new AffineTransform[MATRIX_STACK_DEPTH];
@@ -160,7 +169,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     //super.beginShape(kind);
     shape = kind;
     vertexCount = 0;
-    splineVertexCount = 0;
+    curveVertexCount = 0;
 
     // set gpath to null, because when mixing curves and straight
     // lines, vertexCount will be set back to zero, so vertexCount == 1
@@ -182,7 +191,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void vertex(float x, float y) {
-    splineVertexCount = 0;
+    curveVertexCount = 0;
     //float vertex[];
 
     if (vertexCount == vertices.length) {
@@ -303,13 +312,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
-  public void vertex(float x, float y, float u, float v) {
-    variationError("vertex(x, y, u, v)");
+  public void vertex(float x, float y, float z) {
+    depthErrorXYZ("vertex");
   }
 
 
-  public void vertex(float x, float y, float z) {
-    depthErrorXYZ("vertex");
+  public void vertex(float x, float y, float u, float v) {
+    variationError("vertex(x, y, u, v)");
   }
 
 
@@ -321,26 +330,60 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3) {
-    if (gpath == null) {
-      throw new RuntimeException("Must call vertex() at least once " +
-                                 "before using bezierVertex()");
-    }
-
-    if (shape == POLYGON) {
-        gpath.curveTo(x1, y1, x2, y2, x3, y3);
-
-    } else {
-      throw new RuntimeException("bezierVertex() can only be used with " +
-                                 "LINE_STRIP, LINE_LOOP, or POLYGON");
-    }
+    bezierVertexCheck();    
+    gpath.curveTo(x1, y1, x2, y2, x3, y3);
   }
 
 
-  float curveCoordX[] = new float[4];
-  float curveCoordY[] = new float[4];
-  float curveDrawX[] = new float[4];
-  float curveDrawY[] = new float[4];
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+    depthErrorXYZ("bezierVertex");
+  }
 
+
+  protected void curveVertexCheck() {
+    super.curveVertexCheck();
+
+    curveCoordX = new float[4];
+    curveCoordY = new float[4];
+    curveDrawX = new float[4];
+    curveDrawY = new float[4];
+  }
+
+
+  protected void curveVertexSegment(float x1, float y1,  
+                                    float x2, float y2, 
+                                    float x3, float y3, 
+                                    float x4, float y4) {
+    curveCoordX[0] = x1;
+    curveCoordY[0] = y1;
+
+    curveCoordX[1] = x2;
+    curveCoordY[1] = y2;
+
+    curveCoordX[2] = x3;
+    curveCoordY[2] = y3;
+
+    curveCoordX[3] = x4;
+    curveCoordY[3] = y4;
+
+    curveToBezierMatrix.mult(curveCoordX, curveDrawX);
+    curveToBezierMatrix.mult(curveCoordY, curveDrawY);
+
+    // since the paths are continuous,
+    // only the first point needs the actual moveto
+    if (gpath == null) {
+      gpath = new GeneralPath();
+      gpath.moveTo(curveDrawX[0], curveDrawY[0]);
+    }
+
+    gpath.curveTo(curveDrawX[1], curveDrawY[1],
+                  curveDrawX[2], curveDrawY[2],
+                  curveDrawX[3], curveDrawY[3]);
+  }
+  
+  /*
   public void curveVertex(float x, float y) {
     if (shape != POLYGON) {
       throw new RuntimeException("curveVertex() can only be used with " +
@@ -350,32 +393,32 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     curveInitCheck();
     vertexCount = 0;
 
-    if (splineVertices == null) {
-      splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
+    if (curveVertices == null) {
+      curveVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
     }
 
     // if more than 128 points, shift everything back to the beginning
-    if (splineVertexCount == DEFAULT_SPLINE_VERTICES) {
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 3], 0,
-                       splineVertices[0], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 2], 0,
-                       splineVertices[1], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES - 1], 0,
-                       splineVertices[2], 0, VERTEX_FIELD_COUNT);
-      splineVertexCount = 3;
+    if (curveVertexCount == DEFAULT_SPLINE_VERTICES) {
+      System.arraycopy(curveVertices[DEFAULT_SPLINE_VERTICES - 3], 0,
+                       curveVertices[0], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(curveVertices[DEFAULT_SPLINE_VERTICES - 2], 0,
+                       curveVertices[1], 0, VERTEX_FIELD_COUNT);
+      System.arraycopy(curveVertices[DEFAULT_SPLINE_VERTICES - 1], 0,
+                       curveVertices[2], 0, VERTEX_FIELD_COUNT);
+      curveVertexCount = 3;
     }
 
     // this new guy will be the fourth point (or higher),
     // which means it's time to draw segments of the curve
-    if (splineVertexCount >= 3) {
-      curveCoordX[0] = splineVertices[splineVertexCount-3][X];
-      curveCoordY[0] = splineVertices[splineVertexCount-3][Y];
+    if (curveVertexCount >= 3) {
+      curveCoordX[0] = curveVertices[curveVertexCount-3][X];
+      curveCoordY[0] = curveVertices[curveVertexCount-3][Y];
 
-      curveCoordX[1] = splineVertices[splineVertexCount-2][X];
-      curveCoordY[1] = splineVertices[splineVertexCount-2][Y];
+      curveCoordX[1] = curveVertices[curveVertexCount-2][X];
+      curveCoordY[1] = curveVertices[curveVertexCount-2][Y];
 
-      curveCoordX[2] = splineVertices[splineVertexCount-1][X];
-      curveCoordY[2] = splineVertices[splineVertexCount-1][Y];
+      curveCoordX[2] = curveVertices[curveVertexCount-1][X];
+      curveCoordY[2] = curveVertices[curveVertexCount-1][Y];
 
       curveCoordX[3] = x;
       curveCoordY[3] = y;
@@ -396,10 +439,11 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     }
 
     // add the current point to the list
-    splineVertices[splineVertexCount][X] = x;
-    splineVertices[splineVertexCount][Y] = y;
-    splineVertexCount++;
+    curveVertices[curveVertexCount][X] = x;
+    curveVertices[curveVertexCount][Y] = y;
+    curveVertexCount++;
   }
+  */
   
   
   public void curveVertex(float x, float y, float z) {
@@ -407,7 +451,6 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
-  boolean breakShape;
   public void breakShape() {
     breakShape = true;
   }

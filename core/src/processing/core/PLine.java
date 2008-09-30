@@ -125,7 +125,9 @@ public class PLine implements PConstants
 
     m_pixels = parent.pixels;
     //m_stencil = parent.stencil;
-    m_zbuffer = parent.zbuffer;
+    if (parent instanceof PGraphics3D) {
+      m_zbuffer = ((PGraphics3D) parent).zbuffer;
+    }
 
     // other things to reset
 
