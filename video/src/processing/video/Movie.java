@@ -28,6 +28,8 @@ import processing.core.*;
 import java.io.*;
 import java.lang.reflect.*;
 
+import javax.swing.SwingUtilities;
+
 import quicktime.*;
 import quicktime.io.QTFile;
 import quicktime.qd.*;
@@ -90,12 +92,23 @@ public class Movie extends PImage implements PConstants, Runnable {
   }
 
 
-  public Movie(PApplet parent, String filename, int ifps) {
+  public Movie(final PApplet parent, final String filename, final int ifps) {
     // this creates a fake image so that the first time this
     // attempts to draw, something happens that's not an exception
     super(1, 1, RGB);
 
+    // http://dev.processing.org/bugs/show_bug.cgi?id=882
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        init(parent, filename, ifps);
+      }
+    });
+  }
+  
+  
+  public void init(PApplet parent, String filename, int fps) {
     this.parent = parent;
+    this.fps = fps;
 
     try {
       QTSession.open();
@@ -258,7 +271,7 @@ public class Movie extends PImage implements PConstants, Runnable {
         //} catch (InterruptedException e) { }
       }
       movie.setRate(1);
-      fps = ifps;
+      //fps = ifps;
 
       // register methods
       parent.registerDispose(this);
@@ -467,7 +480,7 @@ public class Movie extends PImage implements PConstants, Runnable {
 
     } catch (QTException qte) {
       qte.printStackTrace();
-      QTSession.close();
+      //QTSession.close();  // let dispose() handle it
     }
   }
 
@@ -476,7 +489,12 @@ public class Movie extends PImage implements PConstants, Runnable {
    * Begin playing the movie, with no repeat.
    */
   public void play() {
+//    if (runner != null) {
+//      stop();
+//    }
     play = true;
+//    runner = new Thread(this);
+//    runner.start();
   }
 
 
@@ -484,7 +502,7 @@ public class Movie extends PImage implements PConstants, Runnable {
    * Begin playing the movie, with repeat.
    */
   public void loop() {
-    play = true;
+    play();
     repeat = true;
   }
 
@@ -511,7 +529,7 @@ public class Movie extends PImage implements PConstants, Runnable {
    */
   public void stop() {
     play = false;
-    runner = null;
+//    runner = null;
 
     try {
       movie.setTimeValue(0);
@@ -659,7 +677,11 @@ public class Movie extends PImage implements PConstants, Runnable {
         //System.out.println("play");
         available = true;
 
-        if (movieEventMethod != null) {
+        if (movieEventMethod == null) {
+          // If no special handling, then automatically read from the movie.
+          read();
+            
+        } else {
           try {
             movieEventMethod.invoke(parent, new Object[] { this });
           } catch (Exception e) {
@@ -695,14 +717,16 @@ public class Movie extends PImage implements PConstants, Runnable {
   }
 
 
+  /**
+   * Call this to halt the movie from running, and stop its thread.
+   */
   public void dispose() {
-    //System.out.println("disposing");
     stop();
-    //runner = null;
+    runner = null;
     QTSession.close();
   }
-
-
+  
+  
   /**
    * General error reporting, all corraled here just in case
    * I think of something slightly more intelligent to do.
