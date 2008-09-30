@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-07 Ben Fry and Casey Reas
+  Copyright (c) 2004-08 Ben Fry and Casey Reas
   The previous version of this code was developed by Hernando Barragan
 
   This library is free software; you can redistribute it and/or
@@ -26,6 +26,8 @@ package processing.video;
 import processing.core.*;
 
 import java.lang.reflect.*;
+
+import javax.swing.SwingUtilities;
 
 import quicktime.*;
 import quicktime.qd.*;
@@ -135,8 +137,28 @@ public class Capture extends PImage implements Runnable {
    * is defined in the host PApplet, then it will be called every
    * time a new frame is available from the capture device.
    */
-  public Capture(PApplet parent, int requestWidth, int requestHeight,
-                 String name, int frameRate) {
+  public Capture(final PApplet parent, 
+                 final int requestWidth, final int requestHeight,
+                 final String name, final int frameRate) {
+      // Running on EDT because of weird hang on OS X
+      // http://dev.processing.org/bugs/show_bug.cgi?id=882
+      // QTSession.open() is hanging, not sure why, but it seems to prefer
+      // being run from the EDT. Not sure if that's a mistaken expectation in
+      // QTJava (we hadn't had trouble in the past because we did everything
+      // on the EDT) or if something broken in more recent QTJ. Or (maybe most
+      // likely) we're simply hitting some other threading strangeness, and 
+      // using invokeLater() isolates us from that. Which is a nice way of
+      // saying that it's a hack.
+      SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+              init(parent, requestWidth, requestHeight, name, frameRate);
+          }
+      });
+  }
+
+
+  public void init(PApplet parent, int requestWidth, int requestHeight,
+                   String name, int frameRate) {
     this.parent = parent;
     this.name = name;
     this.frameRate = frameRate;
@@ -144,7 +166,7 @@ public class Capture extends PImage implements Runnable {
     try {
       QTSession.open();
     } catch (QTException e) {
-      e.printStackTrace();
+      e.printStackTrace(System.out);
       return;
     }
 
@@ -195,9 +217,6 @@ public class Capture extends PImage implements Runnable {
       // initialize my PImage self
       super.init(requestWidth, requestHeight, RGB);
 
-      runner = new Thread(this);
-      runner.start();
-
       parent.registerDispose(this);
 
       try {
@@ -207,6 +226,9 @@ public class Capture extends PImage implements Runnable {
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
       }
+
+      runner = new Thread(this);
+      runner.start();
 
     } catch (QTException qte) {
       //} catch (StdQTException qte) {
