@@ -55,10 +55,11 @@ public class PGraphics2D extends PGraphics {
   float cvertex[][] = new float[CVERTEX_ALLOC][VERTEX_FIELD_COUNT];
   int cvertexIndex;
   
-  static final int MATRIX_STACK_DEPTH = 32;
   float[][] matrixStack = new float[MATRIX_STACK_DEPTH][6];
   int matrixStackDepth;
-
+  
+  DirectColorModel cm;
+  MemoryImageSource mis;
 
 
   //////////////////////////////////////////////////////////////
@@ -182,7 +183,6 @@ public class PGraphics2D extends PGraphics {
       vertex[SW] = strokeWeight;
     }
 
-    // this complicated if construct may defeat the purpose
     if (textureImage != null) {
       vertex[U] = textureU;
       vertex[V] = textureV;
@@ -435,6 +435,33 @@ public class PGraphics2D extends PGraphics {
 
     // to signify no shape being drawn
     shape = 0;
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BOX & SPHERE
+
+
+  public void box(float size) {
+    depthError("box");
+  }
+
+  public void box(float w, float h, float d) {
+    depthError("box");
+  }
+
+  public void sphereDetail(int res) {
+    depthError("sphereDetail");
+  }
+
+  public void sphereDetail(int ures, int vres) {
+    depthError("sphereDetail");
+  }
+
+  public void sphere(float r) {
+    depthError("sphere");
   }
 
 
