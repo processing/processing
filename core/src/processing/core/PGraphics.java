@@ -374,7 +374,6 @@ public class PGraphics extends PImage implements PConstants {
 
   static final int MATRIX_STACK_DEPTH = 32;
 
-
   // ........................................................
 
   /** 
@@ -442,9 +441,8 @@ public class PGraphics extends PImage implements PConstants {
 
   // spline vertices
 
-  static final int DEFAULT_SPLINE_VERTICES = 128;
-  protected float splineVertices[][];
-  protected int splineVertexCount;
+  protected float curveVertices[][];
+  protected int curveVertexCount;
 
   // ........................................................
 
@@ -492,92 +490,32 @@ public class PGraphics extends PImage implements PConstants {
   protected int[] textBreakStop;
 
 
-  //////////////////////////////////////////////////////////////
-
-  // VARIABLES FOR 3D (used to prevent the need for a subclass)
-
-  /** The modelview matrix. */
-  public PMatrix3D modelview;
-
-  /** Inverse modelview matrix, used for lighting. */
-  protected PMatrix3D modelviewInv;
-
-  /**
-   * The camera matrix, the modelview will be set to this on beginDraw.
-   */
-  public PMatrix3D camera;
-
-  /** Inverse camera matrix */
-  protected PMatrix3D cameraInv;
+  static final String ERROR_PUSHMATRIX_OVERFLOW =
+    "Too many calls to pushMatrix().";
+  static final String ERROR_PUSHMATRIX_UNDERFLOW =
+    "Too many calls to popMatrix(), and not enough to pushMatrix().";
 
   // ........................................................
 
-  /** Camera field of view. */
-  public float cameraFOV;
-
-  /** Position of the camera. */
-  public float cameraX, cameraY, cameraZ;
-  public float cameraNear, cameraFar;
-  /** Aspect ratio of camera's view. */
-  public float cameraAspect;
-
-  /** Current projection matrix. */
-  public PMatrix3D projection;
-
+  public boolean edge;
+  
   // ........................................................
 
-  /** The depth buffer. */
-  public float[] zbuffer;
+  /// normal calculated per triangle
+  static protected final int NORMAL_MODE_AUTO = 0;
+  /// one normal manually specified per shape
+  static protected final int NORMAL_MODE_SHAPE = 1;
+  /// normals specified for each shape vertex
+  static protected final int NORMAL_MODE_VERTEX = 2;
 
-  // ........................................................
+  /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
+  protected int normalMode;
 
-  /** 
-   * Maximum lights by default is 8, which is arbitrary for this renderer,
-   * but is the minimum defined by OpenGL 
-   */
-  public static final int MAX_LIGHTS = 8;
+  /// Keep track of how many calls to normal, to determine the mode. 
+  protected int normalCount;
 
-  public int lightCount = 0;
-
-  /** Light types */
-  public int[] lightType;
-
-  /** Light positions */
-  public float[][] lightPosition;
-
-  /** Light direction (normalized vector) */
-  public float[][] lightNormal;
-
-  /** Light falloff */
-  public float[] lightFalloffConstant;
-  public float[] lightFalloffLinear;
-  public float[] lightFalloffQuadratic;
-
-  /** Light spot angle */
-  public float[] lightSpotAngle;
-
-  /** Cosine of light spot angle */
-  public float[] lightSpotAngleCos;
-
-  /** Light spot concentration */
-  public float[] lightSpotConcentration;
-
-  /** Diffuse colors for lights.
-   *  For an ambient light, this will hold the ambient color.
-   *  Internally these are stored as numbers between 0 and 1. */
-  public float[][] lightDiffuse;
-
-  /** Specular colors for lights.
-      Internally these are stored as numbers between 0 and 1. */
-  public float[][] lightSpecular;
-
-  /** Current specular color for lighting */
-  public float[] currentLightSpecular;
-
-  /** Current light falloff */
-  public float currentLightFalloffConstant;
-  public float currentLightFalloffLinear;
-  public float currentLightFalloffQuadratic;
+  /** Current normal vector. */
+  public float normalX, normalY, normalZ;
 
   // ........................................................
 
@@ -599,25 +537,6 @@ public class PGraphics extends PImage implements PConstants {
 
   /** Current image being used as a texture */
   public PImage textureImage;
-
-  // ........................................................
-
-  /// normal calculated per triangle
-  static protected final int NORMAL_MODE_AUTO = 0;
-  /// one normal manually specified per shape
-  static protected final int NORMAL_MODE_SHAPE = 1;
-  /// normals specified for each shape vertex
-  static protected final int NORMAL_MODE_VERTEX = 2;
-
-  /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
-  protected int normalMode;
-
-  /// Keep track of how many calls to normal, to determine the mode. 
-  protected int normalCount;
-
-  /** Current normal vector. */
-  public float normalX, normalY, normalZ;
-
 
   // ........................................................
 
@@ -684,9 +603,9 @@ public class PGraphics extends PImage implements PConstants {
    * event thread (EDT), causing a nasty crash as it collides with the
    * animation thread.
    */
-  public void setSize(int iwidth, int iheight) {  // ignore
-    width = iwidth;
-    height = iheight;
+  public void setSize(int w, int h) {  // ignore
+    width = w;
+    height = h;
     width1 = width - 1;
     height1 = height - 1;
 
@@ -705,22 +624,6 @@ public class PGraphics extends PImage implements PConstants {
   // FRAME
 
 
-  /** 
-   * Returns true if this is a 2D renderer.
-   */
-  public boolean is2D() {
-    return false;
-  }
-  
-  
-  /**
-   * Returns true if this is a 3D renderer (rather than using instanceof).
-   */
-  public boolean is3D() {
-    return false;
-  }
-  
-  
   /**
    * Some renderers have requirements re: when they are ready to draw.
    */
@@ -749,7 +652,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   
-  protected void flush() {
+  public void flush() {
     // no-op, mostly for P3D to write sorted stuff
   }
 
@@ -944,10 +847,53 @@ public class PGraphics extends PImage implements PConstants {
    * that's how things are implemented.
    */
   public void beginShape(int kind) {
+    shape = kind;
   }
 
 
+  public void edge(boolean e) {
+   this.edge = edge; 
+  }
+  
+  
+  /**
+   * Sets the current normal vector. Only applies with 3D rendering 
+   * and inside a beginShape/endShape block.
+   * <P/>
+   * This is for drawing three dimensional shapes and surfaces,
+   * allowing you to specify a vector perpendicular to the surface
+   * of the shape, which determines how lighting affects it.
+   * <P/>
+   * For the most part, PGraphics3D will attempt to automatically
+   * assign normals to shapes, but since that's imperfect,
+   * this is a better option when you want more control.
+   * <P/>
+   * For people familiar with OpenGL, this function is basically
+   * identical to glNormal3f().
+   */
   public void normal(float nx, float ny, float nz) {
+    normalX = nx;
+    normalY = ny;
+    normalZ = nz;
+
+    // if drawing a shape and the normal hasn't been set yet,
+    // then we need to set the normals for each vertex so far
+    if (shape != 0) {
+      if (normalMode == NORMAL_MODE_AUTO) {
+        // either they set the normals, or they don't [0149]
+//        for (int i = vertex_start; i < vertexCount; i++) {
+//          vertices[i][NX] = normalX;
+//          vertices[i][NY] = normalY;
+//          vertices[i][NZ] = normalZ;
+//        }
+        // One normal per begin/end shape
+        normalMode = NORMAL_MODE_SHAPE;
+
+      } else if (normalMode == NORMAL_MODE_SHAPE) {
+        // a separate normal for each vertex
+        normalMode = NORMAL_MODE_VERTEX;
+      }
+    }
   }
 
 
@@ -970,149 +916,25 @@ public class PGraphics extends PImage implements PConstants {
     textureImage = image;
   }
 
-
-  /**
-   * Set (U, V) coords for the next vertex in the current shape.
-   * This is ugly as its own function, and will (almost?) always be
-   * coincident with a call to vertex. As of beta, this was moved to
-   * the protected method you see here, and called from an optional
-   * param of and overloaded vertex().
-   * <p/>
-   * The parameters depend on the current textureMode. When using
-   * textureMode(IMAGE), the coordinates will be relative to the size
-   * of the image texture, when used with textureMode(NORMAL),
-   * they'll be in the range 0..1.
-   * <p/>
-   * Used by both PGraphics2D (for images) and PGraphics3D.
-   */
-  protected void textureVertex(float u, float v) {
-    if (textureImage == null) {
-      throw new RuntimeException("need to set an image with texture() " +
-                                 "before using u and v coordinates");
+  
+  protected void vertexCheck() {
+    if (vertexCount == vertices.length) {
+      float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
+      System.arraycopy(vertices, 0, temp, 0, vertexCount);
+      vertices = temp;
     }
-    if (textureMode == IMAGE) {
-      u /= (float) textureImage.width;
-      v /= (float) textureImage.height;
-    }
-
-    textureU = u;
-    textureV = v;
-
-    if (textureU < 0) textureU = 0;
-    else if (textureU > 1) textureU = 1;
-
-    if (textureV < 0) textureV = 0;
-    else if (textureV > 1) textureV = 1;
   }
 
 
-  // eventually need to push a "default" setup down to this class
   public void vertex(float x, float y) {
-  }
+    float[] vertex = vertices[vertexCount];
 
-
-  public void vertex(float x, float y, float z) {
-  }
-
-
-  public void vertex(float x, float y, float u, float v) {
-  }
-
-  
-  public void vertex(float x, float y, float z, float u, float v) {
-  }
-
-
-  public void bezierVertex(float x2, float y2,
-                           float x3, float y3,
-                           float x4, float y4) {
-    if (shape != POLYGON || vertexCount == 0) {
-      throw new RuntimeException("beginShape() and vertex() " +
-                                 "must be used before bezierVertex()");
-    }
-
-    PMatrix3D dm = bezierDrawMatrix;
-
-    float[] prev = vertices[vertexCount-1];
-    float x1 = prev[X];
-    float y1 = prev[Y];
-
-    float xplot1 = dm.m10*x1 + dm.m11*x2 + dm.m12*x3 + dm.m13*x4;
-    float xplot2 = dm.m20*x1 + dm.m21*x2 + dm.m22*x3 + dm.m23*x4;
-    float xplot3 = dm.m30*x1 + dm.m31*x2 + dm.m32*x3 + dm.m33*x4;
-
-    float yplot1 = dm.m10*y1 + dm.m11*y2 + dm.m12*y3 + dm.m13*y4;
-    float yplot2 = dm.m20*y1 + dm.m21*y2 + dm.m22*y3 + dm.m23*y4;
-    float yplot3 = dm.m30*y1 + dm.m31*y2 + dm.m32*y3 + dm.m33*y4;
-
-    for (int j = 0; j < bezierDetail; j++) {
-      x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
-      y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
-      vertex(x1, y1);
-    }
-  }
-
-
-  public void bezierVertex(float x2, float y2, float z2,
-                           float x3, float y3, float z3,
-                           float x4, float y4, float z4) {  
-    if (shape != POLYGON || vertexCount == 0) {
-      throw new RuntimeException("beginShape() and vertex() " +
-                                 "must be used before bezierVertex()");
-    }
-
-    PMatrix3D dm = bezierDrawMatrix;
-  
-    float[] prev = vertices[vertexCount-1];
-    float x1 = prev[X];
-    float y1 = prev[Y];
-    float z1 = prev[Z];
-
-    float xplot1 = dm.m10*x1 + dm.m11*x2 + dm.m12*x3 + dm.m13*x4;
-    float xplot2 = dm.m20*x1 + dm.m21*x2 + dm.m22*x3 + dm.m23*x4;
-    float xplot3 = dm.m30*x1 + dm.m31*x2 + dm.m32*x3 + dm.m33*x4;
-
-    float yplot1 = dm.m10*y1 + dm.m11*y2 + dm.m12*y3 + dm.m13*y4;
-    float yplot2 = dm.m20*y1 + dm.m21*y2 + dm.m22*y3 + dm.m23*y4;
-    float yplot3 = dm.m30*y1 + dm.m31*y2 + dm.m32*y3 + dm.m33*y4;
-
-    float zplot1 = dm.m10*z1 + dm.m11*z2 + dm.m12*z3 + dm.m13*z4;
-    float zplot2 = dm.m20*z1 + dm.m21*z2 + dm.m22*z3 + dm.m23*z4;
-    float zplot3 = dm.m30*z1 + dm.m31*z2 + dm.m32*z3 + dm.m33*z4;
-
-    for (int j = 0; j < bezierDetail; j++) {
-      x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
-      y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
-      z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
-      vertex(x1, y1, z1);
-    }
-  }
-
-
-  protected void curveVertexCheck() {
-    if (shape != POLYGON) {
-      throw new RuntimeException("You must use beginShape() or " + 
-                                 "beginShape(POLYGON) before curveVertex()");
-    }
-    // to improve processing applet load times, don't allocate
-    // space for the vertex data until actual use
-    if (splineVertices == null) {
-      splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
-    }
-
-    if (splineVertexCount == splineVertices.length) {
-      splineVertices = (float[][]) PApplet.expand(splineVertices);
-    }
-    curveInitCheck();
-  }  
-  
-
-  public void curveVertex(float x, float y) {
-    curveVertexCheck();
-    float[] vertex = splineVertices[splineVertexCount];
+    curveVertexCount = 0;
 
     vertex[X] = x;
     vertex[Y] = y;
+
+    vertex[EDGE] = edge ? 1 : 0;
 
     if (fill) {
       vertex[R] = fillR;
@@ -1133,36 +955,76 @@ public class PGraphics extends PImage implements PConstants {
       vertex[U] = textureU;
       vertex[V] = textureV;
     }
-
-    splineVertexCount++;
-
-    // draw a segment if there are enough points
-    if (splineVertexCount > 3) {
-      curveVertexSegment(splineVertices[splineVertexCount-4][X],
-                         splineVertices[splineVertexCount-4][Y],
-                         splineVertices[splineVertexCount-3][X],
-                         splineVertices[splineVertexCount-3][Y],
-                         splineVertices[splineVertexCount-2][X],
-                         splineVertices[splineVertexCount-2][Y],
-                         splineVertices[splineVertexCount-1][X],
-                         splineVertices[splineVertexCount-1][Y]);
-    }
+    
+    vertexCount++;
   }
-  
-  
-  public void curveVertex(float x, float y, float z) {
-    curveVertexCheck();
-    float[] vertex = splineVertices[splineVertexCount];
+
+
+  public void vertex(float x, float y, float z) {
+    float[] vertex = vertices[vertexCount];
+
+    // only do this if we're using an irregular (POLYGON) shape that
+    // will go through the triangulator. otherwise it'll do thinks like
+    // disappear in mathematically odd ways
+    // http://dev.processing.org/bugs/show_bug.cgi?id=444
+    if (shape == POLYGON) {
+      if (vertexCount > 0) {
+        float pvertex[] = vertices[vertexCount-1];
+        if ((Math.abs(pvertex[X] - x) < EPSILON) &&
+            (Math.abs(pvertex[Y] - y) < EPSILON) &&
+            (Math.abs(pvertex[Z] - z) < EPSILON)) {
+          // this vertex is identical, don't add it,
+          // because it will anger the triangulator
+          return;
+        }
+      }
+    }
+
+    // User called vertex(), so that invalidates anything queued up for curve 
+    // vertices. If this is internally called by curveVertexSegment, 
+    // then curveVertexCount will be saved and restored.
+    curveVertexCount = 0;
 
     vertex[X] = x;
     vertex[Y] = y;
     vertex[Z] = z;
 
+    vertex[EDGE] = edge ? 1 : 0;
+
     if (fill) {
-      vertex[R] = fillR;
-      vertex[G] = fillG;
-      vertex[B] = fillB;
-      vertex[A] = fillA;
+      if (textureImage != null) {
+        if (tint) {
+          vertex[R] = tintR;
+          vertex[G] = tintG;
+          vertex[B] = tintB;
+          vertex[A] = tintA;
+        } else {
+          vertex[R] = 1;
+          vertex[G] = 1;
+          vertex[B] = 1;
+          vertex[A] = 1;
+        }
+      } else {
+        vertex[R] = fillR;
+        vertex[G] = fillG;
+        vertex[B] = fillB;
+        vertex[A] = fillA;
+      }
+
+      vertex[AR] = ambientR;
+      vertex[AG] = ambientG;
+      vertex[AB] = ambientB;
+
+      vertex[SPR] = specularR;
+      vertex[SPG] = specularG;
+      vertex[SPB] = specularB;
+      //vertex[SPA] = specularA;
+
+      vertex[SHINE] = shininess;
+
+      vertex[ER] = emissiveR;
+      vertex[EG] = emissiveG;
+      vertex[EB] = emissiveB;
     }
 
     if (stroke) {
@@ -1182,26 +1044,230 @@ public class PGraphics extends PImage implements PConstants {
     vertex[NY] = normalY;
     vertex[NZ] = normalZ;
 
-    splineVertexCount++;
+    vertex[BEEN_LIT] = 0;
+    
+    vertexCount++;
+  }
 
-    // draw a segment if there are enough points
-    if (splineVertexCount > 3) {
-      curveVertexSegment(splineVertices[splineVertexCount-4][X],
-                         splineVertices[splineVertexCount-4][Y],
-                         splineVertices[splineVertexCount-4][Z],
-                         splineVertices[splineVertexCount-3][X],
-                         splineVertices[splineVertexCount-3][Y],
-                         splineVertices[splineVertexCount-3][Z],
-                         splineVertices[splineVertexCount-2][X],
-                         splineVertices[splineVertexCount-2][Y],
-                         splineVertices[splineVertexCount-2][Z],
-                         splineVertices[splineVertexCount-1][X],
-                         splineVertices[splineVertexCount-1][Y],
-                         splineVertices[splineVertexCount-1][Z]);
+
+  public void vertex(float x, float y, float u, float v) {
+    vertexTexture(u, v);
+    vertex(x, y);
+  }
+
+  
+  public void vertex(float x, float y, float z, float u, float v) {
+    vertexTexture(u, v);
+    vertex(x, y, z);
+  }
+  
+
+  /**
+   * Internal method to copy all style information for the given vertex.
+   * Can be overridden by subclasses to handle only properties pertinent to
+   * that renderer. (e.g. no need to copy the emissive color in P2D)
+   */
+//  protected void vertexStyle() {    
+//  }
+  
+  
+  /**
+   * Set (U, V) coords for the next vertex in the current shape.
+   * This is ugly as its own function, and will (almost?) always be
+   * coincident with a call to vertex. As of beta, this was moved to
+   * the protected method you see here, and called from an optional
+   * param of and overloaded vertex().
+   * <p/>
+   * The parameters depend on the current textureMode. When using
+   * textureMode(IMAGE), the coordinates will be relative to the size
+   * of the image texture, when used with textureMode(NORMAL),
+   * they'll be in the range 0..1.
+   * <p/>
+   * Used by both PGraphics2D (for images) and PGraphics3D.
+   */
+  protected void vertexTexture(float u, float v) {
+    if (textureImage == null) {
+      throw new RuntimeException("need to set an image with texture() " +
+                                 "before using u and v coordinates");
+    }
+    if (textureMode == IMAGE) {
+      u /= (float) textureImage.width;
+      v /= (float) textureImage.height;
+    }
+
+    textureU = u;
+    textureV = v;
+
+    if (textureU < 0) textureU = 0;
+    else if (textureU > 1) textureU = 1;
+
+    if (textureV < 0) textureV = 0;
+    else if (textureV > 1) textureV = 1;
+  }
+
+  
+  /** This feature is in testing, do not use or rely upon its implementation */
+  public void breakShape() {
+  }
+
+
+  public void endShape() {
+    endShape(OPEN);
+  }
+
+
+  public void endShape(int mode) {
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // CURVE/BEZIER VERTEX HANDLING
+  
+  
+  protected void bezierVertexCheck() {
+    if (shape == 0 || shape != POLYGON) {
+      throw new RuntimeException("beginShape() or beginShape(POLYGON) " +
+                                 "must be used before bezierVertex()");
+    }
+    if (vertexCount == 0) {
+      throw new RuntimeException("vertex() must be used at least once" +
+                                 "before bezierVertex()");
     }
   }
   
   
+  public void bezierVertex(float x2, float y2,
+                           float x3, float y3,
+                           float x4, float y4) {
+    bezierVertexCheck();
+    PMatrix3D draw = bezierDrawMatrix;
+
+    float[] prev = vertices[vertexCount-1];
+    float x1 = prev[X];
+    float y1 = prev[Y];
+
+    float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
+    float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
+    float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
+
+    float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
+    float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
+    float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
+
+    for (int j = 0; j < bezierDetail; j++) {
+      x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      vertex(x1, y1);
+    }
+  }
+
+
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+    bezierVertexCheck();
+    PMatrix3D draw = bezierDrawMatrix;
+
+    float[] prev = vertices[vertexCount-1];
+    float x1 = prev[X];
+    float y1 = prev[Y];
+    float z1 = prev[Z];
+
+    float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
+    float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
+    float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
+
+    float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
+    float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
+    float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
+
+    float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
+    float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
+    float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
+
+    for (int j = 0; j < bezierDetail; j++) {
+      x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
+      vertex(x1, y1, z1);
+    }
+  }
+
+
+  /**
+   * Perform initialization specific to curveVertex(), and handle standard
+   * error modes. Can be overridden by subclasses that need the flexibility.
+   */
+  protected void curveVertexCheck() {
+    if (shape != POLYGON) {
+      throw new RuntimeException("You must use beginShape() or " + 
+                                 "beginShape(POLYGON) before curveVertex()");
+    }
+    // to improve code init time, allocate on first use.
+    if (curveVertices == null) {
+      curveVertices = new float[128][3];
+    }
+
+    if (curveVertexCount == curveVertices.length) {
+      curveVertices = (float[][]) PApplet.expand(curveVertices);
+    }
+    curveInitCheck();
+  }  
+  
+
+  public void curveVertex(float x, float y) {
+    curveVertexCheck();
+    float[] vertex = curveVertices[curveVertexCount];
+    vertex[X] = x;
+    vertex[Y] = y;
+    curveVertexCount++;
+
+    // draw a segment if there are enough points
+    if (curveVertexCount > 3) {
+      curveVertexSegment(curveVertices[curveVertexCount-4][X],
+                         curveVertices[curveVertexCount-4][Y],
+                         curveVertices[curveVertexCount-3][X],
+                         curveVertices[curveVertexCount-3][Y],
+                         curveVertices[curveVertexCount-2][X],
+                         curveVertices[curveVertexCount-2][Y],
+                         curveVertices[curveVertexCount-1][X],
+                         curveVertices[curveVertexCount-1][Y]);
+    }
+  }
+  
+  
+  public void curveVertex(float x, float y, float z) {
+    curveVertexCheck();
+    float[] vertex = curveVertices[curveVertexCount];
+    vertex[X] = x;
+    vertex[Y] = y;
+    vertex[Z] = z;
+    curveVertexCount++;
+
+    // draw a segment if there are enough points
+    if (curveVertexCount > 3) {
+      curveVertexSegment(curveVertices[curveVertexCount-4][X],
+                         curveVertices[curveVertexCount-4][Y],
+                         curveVertices[curveVertexCount-4][Z],
+                         curveVertices[curveVertexCount-3][X],
+                         curveVertices[curveVertexCount-3][Y],
+                         curveVertices[curveVertexCount-3][Z],
+                         curveVertices[curveVertexCount-2][X],
+                         curveVertices[curveVertexCount-2][Y],
+                         curveVertices[curveVertexCount-2][Z],
+                         curveVertices[curveVertexCount-1][X],
+                         curveVertices[curveVertexCount-1][Y],
+                         curveVertices[curveVertexCount-1][Z]);
+    }
+  }
+  
+  
+  /**
+   * Handle emitting a specific segment of Catmull-Rom curve. This can be 
+   * overridden by subclasses that need more efficient rendering options.
+   */
   protected void curveVertexSegment(float x1, float y1,  
                                     float x2, float y2, 
                                     float x3, float y3, 
@@ -1220,7 +1286,7 @@ public class PGraphics extends PImage implements PConstants {
     float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
 
     // vertex() will reset splineVertexCount, so save it
-    int savedCount = splineVertexCount;
+    int savedCount = curveVertexCount;
 
     vertex(x0, y0);
     for (int j = 0; j < curveDetail; j++) {
@@ -1228,10 +1294,14 @@ public class PGraphics extends PImage implements PConstants {
       y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
       vertex(x0, y0);
     }
-    splineVertexCount = savedCount;  
+    curveVertexCount = savedCount;  
   }
 
 
+  /**
+   * Handle emitting a specific segment of Catmull-Rom curve. This can be 
+   * overridden by subclasses that need more efficient rendering options.
+   */
   protected void curveVertexSegment(float x1, float y1, float z1, 
                                     float x2, float y2, float z2,
                                     float x3, float y3, float z3,
@@ -1251,7 +1321,7 @@ public class PGraphics extends PImage implements PConstants {
     float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
 
     // vertex() will reset splineVertexCount, so save it
-    int savedCount = splineVertexCount;
+    int savedCount = curveVertexCount;
 
     float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
     float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
@@ -1264,21 +1334,7 @@ public class PGraphics extends PImage implements PConstants {
       z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
       vertex(x0, y0, z0);
     }
-    splineVertexCount = savedCount;  
-  }
-
-
-  /** This feature is in testing, do not use or rely upon its implementation */
-  public void breakShape() {
-  }
-
-
-  public void endShape() {
-    endShape(OPEN);
-  }
-
-
-  public void endShape(int mode) {
+    curveVertexCount = savedCount;  
   }
 
   
@@ -3112,12 +3168,6 @@ public class PGraphics extends PImage implements PConstants {
   // TRANSFORMATION MATRIX
 
 
-  static final String ERROR_PUSHMATRIX_OVERFLOW =
-    "Too many calls to pushMatrix().";
-  static final String ERROR_PUSHMATRIX_UNDERFLOW =
-    "Too many calls to popMatrix(), and not enough to pushMatrix().";
-
-
   /**
    * Push a copy of the current transformation matrix onto the stack.
    */
@@ -4148,9 +4198,10 @@ public class PGraphics extends PImage implements PConstants {
 
 
   static protected void depthErrorXYZ(String method) {
-    showError(method + "(x, y, z) can only be used with a renderer that " + 
+    showError(method + "() with x, y, and z coordinates " +
+              "can only be used with a renderer that " + 
               "supports 3D, such as P3D or OPENGL. " +
-              "Use " + method + "(x, y) instead.");
+              "Use a version without a z-coordinate instead.");
   }
 
 
