@@ -47,7 +47,7 @@ import java.awt.image.*;
  * any way shape or form. Which just means "have fun, but don't complain
  * if it breaks."</p>
  */
-public class PGraphicsJava2D extends PGraphics2D {
+public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   public Graphics2D g2;
   GeneralPath gpath;
@@ -55,7 +55,7 @@ public class PGraphicsJava2D extends PGraphics2D {
   int transformCount;
   AffineTransform transformStack[] =
     new AffineTransform[MATRIX_STACK_DEPTH];
-  double transform[] = new double[6];
+  double[] transform = new double[6];
 
   Line2D.Float line = new Line2D.Float();
   Ellipse2D.Float ellipse = new Ellipse2D.Float();
@@ -326,29 +326,25 @@ public class PGraphicsJava2D extends PGraphics2D {
                                  "before using bezierVertex()");
     }
 
-    switch (shape) {
-      //case LINE_LOOP:
-      //case LINE_STRIP:
-      case POLYGON:
+    if (shape == POLYGON) {
         gpath.curveTo(x1, y1, x2, y2, x3, y3);
-        break;
 
-    default:
+    } else {
       throw new RuntimeException("bezierVertex() can only be used with " +
                                  "LINE_STRIP, LINE_LOOP, or POLYGON");
     }
   }
 
 
-  float curveX[] = new float[4];
-  float curveY[] = new float[4];
+  float curveCoordX[] = new float[4];
+  float curveCoordY[] = new float[4];
+  float curveDrawX[] = new float[4];
+  float curveDrawY[] = new float[4];
 
   public void curveVertex(float x, float y) {
-    //if ((shape != LINE_LOOP) && (shape != LINE_STRIP) && (shape != POLYGON)) {
     if (shape != POLYGON) {
       throw new RuntimeException("curveVertex() can only be used with " +
                                  "POLYGON shapes");
-                                 //"LINE_LOOP, LINE_STRIP, and POLYGON shapes");
     }
 
     curveInitCheck();
@@ -372,37 +368,42 @@ public class PGraphicsJava2D extends PGraphics2D {
     // this new guy will be the fourth point (or higher),
     // which means it's time to draw segments of the curve
     if (splineVertexCount >= 3) {
-      curveX[0] = splineVertices[splineVertexCount-3][X];
-      curveY[0] = splineVertices[splineVertexCount-3][Y];
+      curveCoordX[0] = splineVertices[splineVertexCount-3][X];
+      curveCoordY[0] = splineVertices[splineVertexCount-3][Y];
 
-      curveX[1] = splineVertices[splineVertexCount-2][X];
-      curveY[1] = splineVertices[splineVertexCount-2][Y];
+      curveCoordX[1] = splineVertices[splineVertexCount-2][X];
+      curveCoordY[1] = splineVertices[splineVertexCount-2][Y];
 
-      curveX[2] = splineVertices[splineVertexCount-1][X];
-      curveY[2] = splineVertices[splineVertexCount-1][Y];
+      curveCoordX[2] = splineVertices[splineVertexCount-1][X];
+      curveCoordY[2] = splineVertices[splineVertexCount-1][Y];
 
-      curveX[3] = x;
-      curveY[3] = y;
+      curveCoordX[3] = x;
+      curveCoordY[3] = y;
 
-      curveToBezierMatrix.mult(curveX, curveX);
-      curveToBezierMatrix.mult(curveY, curveY);
+      curveToBezierMatrix.mult(curveCoordX, curveDrawX);
+      curveToBezierMatrix.mult(curveCoordY, curveDrawY);
 
       // since the paths are continuous,
       // only the first point needs the actual moveto
       if (gpath == null) {
         gpath = new GeneralPath();
-        gpath.moveTo(curveX[0], curveY[0]);
+        gpath.moveTo(curveDrawX[0], curveDrawY[0]);
       }
 
-      gpath.curveTo(curveX[1], curveY[1],
-                    curveX[2], curveY[2],
-                    curveX[3], curveY[3]);
+      gpath.curveTo(curveDrawX[1], curveDrawY[1],
+                    curveDrawX[2], curveDrawY[2],
+                    curveDrawX[3], curveDrawY[3]);
     }
 
     // add the current point to the list
     splineVertices[splineVertexCount][X] = x;
     splineVertices[splineVertexCount][Y] = y;
     splineVertexCount++;
+  }
+  
+  
+  public void curveVertex(float x, float y, float z) {
+    depthErrorXYZ("curveVertex");
   }
 
 

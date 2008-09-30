@@ -565,6 +565,8 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 LIBRARIES / PGraphicsOpenGL
 
+_ copy() does not update the screen with OpenGL
+_   http://dev.processing.org/bugs/show_bug.cgi?id=933
 _ set() requires updatePixels() with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=705
 _ odd-size height will make blue line across image in saveFrame()

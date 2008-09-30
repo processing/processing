@@ -83,7 +83,6 @@ public class PGraphics3D extends PGraphics {
    */
   protected boolean manipulatingCamera;
 
-  static final int MATRIX_STACK_DEPTH = 32;
   float[][] matrixStack = new float[MATRIX_STACK_DEPTH][16];
   float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
   int matrixStackDepth;
@@ -163,32 +162,17 @@ public class PGraphics3D extends PGraphics {
 
   // ........................................................
 
-  /// normal calculated per triangle
-  static protected final int NORMAL_MODE_AUTO = 0;
-  /// one normal manually specified per shape
-  static protected final int NORMAL_MODE_SHAPE = 1;
-  /// normals specified for each shape vertex
-  static protected final int NORMAL_MODE_VERTEX = 2;
-
-  /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
-  protected int normalMode;
-
-  /// Keep track of how many calls to normal, to determine the mode. 
-  protected int normalCount;
-
-  // ........................................................
-
   static final int DEFAULT_TEXTURES = 3;
-  protected PImage textures[] = new PImage[DEFAULT_TEXTURES];
-  int texture_index;
+  protected PImage[] textures = new PImage[DEFAULT_TEXTURES];
+  int textureIndex;
 
   // ........................................................
+  
+  DirectColorModel cm;
+  MemoryImageSource mis;
 
-  // [toxi031031] new & faster sphere code w/ support flexibile resolutions
-  // will be set by sphereDetail() or 1st call to sphere()
-  float sphereX[], sphereY[], sphereZ[];
 
-  // ........................................................
+  //////////////////////////////////////////////////////////////
 
 
   public PGraphics3D() { }
@@ -334,7 +318,7 @@ public class PGraphics3D extends PGraphics {
     //vertex_end = 0;
 
     // reset textures
-    texture_index = 0;
+    textureIndex = 0;
 
     normal(0, 0, 1);
   }
@@ -499,13 +483,13 @@ public class PGraphics3D extends PGraphics {
   public void texture(PImage image) {
     textureImage = image;
 
-    if (texture_index == textures.length - 1) {
+    if (textureIndex == textures.length - 1) {
       textures = (PImage[]) PApplet.expand(textures);
     }
-    if (textures[texture_index] != null) {  // ???
-      texture_index++;
+    if (textures[textureIndex] != null) {  // ???
+      textureIndex++;
     }
-    textures[texture_index] = image;
+    textures[textureIndex] = image;
   }
 
 
@@ -626,41 +610,6 @@ public class PGraphics3D extends PGraphics {
     vertex[BEEN_LIT] = 0;
 
     vertexCount++;
-  }
-
-
-  /**
-   * See notes with the bezier() function.
-   */
-  public void bezierVertex(float x2, float y2,
-                           float x3, float y3,
-                           float x4, float y4) {
-    bezierVertex(x2, y2, 0, x3, y3, 0, x4, y4, 0);
-  }
-
-
-  /**
-   * See notes with the bezier() function.
-   */
-  public void bezierVertex(float x2, float y2, float z2,
-                           float x3, float y3, float z3,
-                           float x4, float y4, float z4) {
-    if (splineVertexCount > 0) {
-      float vertex[] = splineVertices[splineVertexCount-1];
-      splineVertex(vertex[X], vertex[Y], vertex[Z], true);
-
-    } else if (vertexCount > 0) {
-      // make sure there's at least a call to vertex()
-      float vertex[] = vertices[vertexCount-1];
-      splineVertex(vertex[X], vertex[Y], vertex[Z], true);
-
-    } else {
-      throw new RuntimeException("A call to vertex() must be used " +
-                                 "before bezierVertex()");
-    }
-    splineVertex(x2, y2, z2, true);
-    splineVertex(x3, y3, z3, true);
-    splineVertex(x4, y4, z4, true);
   }
 
 
@@ -1282,7 +1231,7 @@ public class PGraphics3D extends PGraphics {
     if (textureImage == null) {
       triangles[triangleCount][TEXTURE_INDEX] = -1;
     } else {
-      triangles[triangleCount][TEXTURE_INDEX] = texture_index;
+      triangles[triangleCount][TEXTURE_INDEX] = textureIndex;
     }
 
     triangles[triangleCount][INDEX] = shape_index;
