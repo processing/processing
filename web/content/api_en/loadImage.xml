@@ -54,7 +54,7 @@ void draw() {
 <description>
 Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program. 
 <br/> <br/>
-The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
+The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
 <br/> <br/>
 The extension of the filename parameter is used to determine the image type. In cases where the image filename does not end with a proper extension, specify the extension as the second parameter to loadImage(), as shown in the third example on this page.
 <br/> <br/>
