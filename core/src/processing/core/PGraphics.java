@@ -25,7 +25,6 @@
 package processing.core;
 
 import java.awt.*;
-import java.awt.image.*;
 import java.util.HashMap;
 
 
@@ -73,7 +72,8 @@ public class PGraphics extends PImage implements PConstants {
 
   static public final int EDGE = 12;
 
-  //
+
+  // stroke
 
   /** stroke argb values */
   static public final int SR = 13;
@@ -84,6 +84,9 @@ public class PGraphics extends PImage implements PConstants {
   /** stroke weight */
   static public final int SW = 17;
 
+  
+  // transformations (2D and 3D) 
+  
   static public final int TX = 18; // transformed xyzw
   static public final int TY = 19;
   static public final int TZ = 20;
@@ -93,6 +96,9 @@ public class PGraphics extends PImage implements PConstants {
   static public final int VZ = 23;
   static public final int VW = 24;
 
+  
+  // material properties 
+  
   // Ambient color (usually to be kept the same as diffuse)
   // fill(_) sets both ambient and diffuse.
   static public final int AR = 25;
@@ -105,14 +111,14 @@ public class PGraphics extends PImage implements PConstants {
   static public final int DB = 5;
   static public final int DA = 6;
 
-  //specular (by default kept white)
+  // specular (by default kept white)
   static public final int SPR = 28;
   static public final int SPG = 29;
   static public final int SPB = 30;
 
   static public final int SHINE = 31;
 
-  //emissive (by default kept black)
+  // emissive (by default kept black)
   static public final int ER = 32;
   static public final int EG = 33;
   static public final int EB = 34;
@@ -128,10 +134,10 @@ public class PGraphics extends PImage implements PConstants {
   
   
   /// width minus one (useful for many calculations)
-  public int width1;
+  protected int width1;
 
   /// height minus one (useful for many calculations)
-  public int height1;
+  protected int height1;
 
   /// width * height (useful for many calculations)
   public int pixelCount;
@@ -172,11 +178,8 @@ public class PGraphics extends PImage implements PConstants {
    * be used inside beginDraw(), allocate(), etc.
    */
   protected boolean[] hints = new boolean[HINT_COUNT];
-
   
-  // ........................................................
-
-  
+ 
   
   ////////////////////////////////////////////////////////////
 
@@ -369,11 +372,16 @@ public class PGraphics extends PImage implements PConstants {
 //  float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
 //  int matrixStackDepth;
 
+  static final int MATRIX_STACK_DEPTH = 32;
+
+
   // ........................................................
 
-  // specifics for java memoryimagesource
-  DirectColorModel cm;
-  MemoryImageSource mis;
+  /** 
+   * Java AWT Image object associated with this renderer. For P2D and P3D, 
+   * this will be associated with their MemoryImageSource. For PGraphicsJava2D, 
+   * it will be the offscreen drawing buffer. 
+   */
   public Image image;
 
   // ........................................................
@@ -488,7 +496,6 @@ public class PGraphics extends PImage implements PConstants {
 
   // VARIABLES FOR 3D (used to prevent the need for a subclass)
 
-
   /** The modelview matrix. */
   public PMatrix3D modelview;
 
@@ -595,16 +602,33 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  /// normal calculated per triangle
+  static protected final int NORMAL_MODE_AUTO = 0;
+  /// one normal manually specified per shape
+  static protected final int NORMAL_MODE_SHAPE = 1;
+  /// normals specified for each shape vertex
+  static protected final int NORMAL_MODE_VERTEX = 2;
+
+  /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
+  protected int normalMode;
+
+  /// Keep track of how many calls to normal, to determine the mode. 
+  protected int normalCount;
+
   /** Current normal vector. */
   public float normalX, normalY, normalZ;
 
+
   // ........................................................
+
+  // [toxi031031] new & faster sphere code w/ support flexibile resolutions
+  // will be set by sphereDetail() or 1st call to sphere()
+  float sphereX[], sphereY[], sphereZ[];
 
   /// Number of U steps (aka "theta") around longitudinally spanning 2*pi
   public int sphereDetailU = 0;
   /// Number of V steps (aka "phi") along latitudinally top-to-bottom spanning pi
   public int sphereDetailV = 0;
-
 
 
   //////////////////////////////////////////////////////////////
@@ -681,6 +705,22 @@ public class PGraphics extends PImage implements PConstants {
   // FRAME
 
 
+  /** 
+   * Returns true if this is a 2D renderer.
+   */
+  public boolean is2D() {
+    return false;
+  }
+  
+  
+  /**
+   * Returns true if this is a 3D renderer (rather than using instanceof).
+   */
+  public boolean is3D() {
+    return false;
+  }
+  
+  
   /**
    * Some renderers have requirements re: when they are ready to draw.
    */
@@ -983,88 +1023,93 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
-    bezierVertex(x2, y2, Float.MAX_VALUE,
-                 x3, y3, Float.MAX_VALUE,
-                 x4, y4, Float.MAX_VALUE);
-  }
-
-
-  /**
-   * See notes with the bezier() function.
-   */
-  public void bezierVertex(float x2, float y2, float z2,
-                           float x3, float y3, float z3,
-                           float x4, float y4, float z4) {
-    if (shape != POLYGON) {
+    if (shape != POLYGON || vertexCount == 0) {
       throw new RuntimeException("beginShape() and vertex() " +
                                  "must be used before bezierVertex()");
     }
-    if (splineVertexCount > 0) {
-      float vertex[] = splineVertices[splineVertexCount-1];
-      splineVertex(vertex[X], vertex[Y], vertex[Z], true);
 
-    } else if (vertexCount > 0) {
-      // make sure there's at least a call to vertex()
-      float vertex[] = vertices[vertexCount-1];
-      splineVertex(vertex[X], vertex[Y], vertex[Z], true);
+    PMatrix3D dm = bezierDrawMatrix;
 
-    } else {
-      throw new RuntimeException("A call to vertex() must be used " +
-                                 "before bezierVertex()");
+    float[] prev = vertices[vertexCount-1];
+    float x1 = prev[X];
+    float y1 = prev[Y];
+
+    float xplot1 = dm.m10*x1 + dm.m11*x2 + dm.m12*x3 + dm.m13*x4;
+    float xplot2 = dm.m20*x1 + dm.m21*x2 + dm.m22*x3 + dm.m23*x4;
+    float xplot3 = dm.m30*x1 + dm.m31*x2 + dm.m32*x3 + dm.m33*x4;
+
+    float yplot1 = dm.m10*y1 + dm.m11*y2 + dm.m12*y3 + dm.m13*y4;
+    float yplot2 = dm.m20*y1 + dm.m21*y2 + dm.m22*y3 + dm.m23*y4;
+    float yplot3 = dm.m30*y1 + dm.m31*y2 + dm.m32*y3 + dm.m33*y4;
+
+    for (int j = 0; j < bezierDetail; j++) {
+      x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      vertex(x1, y1);
     }
-    splineVertex(x2, y2, z2, true);
-    splineVertex(x3, y3, z3, true);
-    splineVertex(x4, y4, z4, true);
   }
 
 
-  /**
-   * See notes with the curve() function.
-   */
-  public void curveVertex(float x, float y) {
-    splineVertex(x, y, Float.MAX_VALUE, false);
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {  
+    if (shape != POLYGON || vertexCount == 0) {
+      throw new RuntimeException("beginShape() and vertex() " +
+                                 "must be used before bezierVertex()");
+    }
+
+    PMatrix3D dm = bezierDrawMatrix;
+  
+    float[] prev = vertices[vertexCount-1];
+    float x1 = prev[X];
+    float y1 = prev[Y];
+    float z1 = prev[Z];
+
+    float xplot1 = dm.m10*x1 + dm.m11*x2 + dm.m12*x3 + dm.m13*x4;
+    float xplot2 = dm.m20*x1 + dm.m21*x2 + dm.m22*x3 + dm.m23*x4;
+    float xplot3 = dm.m30*x1 + dm.m31*x2 + dm.m32*x3 + dm.m33*x4;
+
+    float yplot1 = dm.m10*y1 + dm.m11*y2 + dm.m12*y3 + dm.m13*y4;
+    float yplot2 = dm.m20*y1 + dm.m21*y2 + dm.m22*y3 + dm.m23*y4;
+    float yplot3 = dm.m30*y1 + dm.m31*y2 + dm.m32*y3 + dm.m33*y4;
+
+    float zplot1 = dm.m10*z1 + dm.m11*z2 + dm.m12*z3 + dm.m13*z4;
+    float zplot2 = dm.m20*z1 + dm.m21*z2 + dm.m22*z3 + dm.m23*z4;
+    float zplot3 = dm.m30*z1 + dm.m31*z2 + dm.m32*z3 + dm.m33*z4;
+
+    for (int j = 0; j < bezierDetail; j++) {
+      x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
+      vertex(x1, y1, z1);
+    }
   }
 
 
-  /**
-   * See notes with the curve() function.
-   */
-  public void curveVertex(float x, float y, float z) {
-    splineVertex(x, y, z, false);
-  }
-
-
-  /**
-   * Implementation of generic spline vertex, will add coords to
-   * the splineVertices[] array and emit calls to draw segments
-   * as needed (every fourth point for bezier or every point starting
-   * with the fourth for catmull-rom).
-   * @param z z-coordinate, set to MAX_VALUE if it's 2D
-   * @param bezier true if it's a bezier instead of catmull-rom
-   */
-  protected void splineVertex(float x, float y, float z, boolean bezier) {
+  protected void curveVertexCheck() {
+    if (shape != POLYGON) {
+      throw new RuntimeException("You must use beginShape() or " + 
+                                 "beginShape(POLYGON) before curveVertex()");
+    }
     // to improve processing applet load times, don't allocate
     // space for the vertex data until actual use
     if (splineVertices == null) {
       splineVertices = new float[DEFAULT_SPLINE_VERTICES][VERTEX_FIELD_COUNT];
     }
 
-    // if more than 128 points, shift everything back to the beginning
-    if (splineVertexCount == DEFAULT_SPLINE_VERTICES) {
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-3], 0,
-                       splineVertices[0], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-2], 0,
-                       splineVertices[1], 0, VERTEX_FIELD_COUNT);
-      System.arraycopy(splineVertices[DEFAULT_SPLINE_VERTICES-1], 0,
-                       splineVertices[2], 0, VERTEX_FIELD_COUNT);
-      splineVertexCount = 3;
+    if (splineVertexCount == splineVertices.length) {
+      splineVertices = (float[][]) PApplet.expand(splineVertices);
     }
+    curveInitCheck();
+  }  
+  
 
-    float vertex[] = splineVertices[splineVertexCount];
+  public void curveVertex(float x, float y) {
+    curveVertexCheck();
+    float[] vertex = splineVertices[splineVertexCount];
 
     vertex[X] = x;
     vertex[Y] = y;
@@ -1089,37 +1134,137 @@ public class PGraphics extends PImage implements PConstants {
       vertex[V] = textureV;
     }
 
-    // when the coords are Float.MAX_VALUE, then treat as a 2D curve
-    int dimensions = (z == Float.MAX_VALUE) ? 2 : 3;
+    splineVertexCount++;
 
-    if (dimensions == 3) {
-      vertex[Z] = z;
-
-      vertex[NX] = normalX;
-      vertex[NY] = normalY;
-      vertex[NZ] = normalZ;
+    // draw a segment if there are enough points
+    if (splineVertexCount > 3) {
+      curveVertexSegment(splineVertices[splineVertexCount-4][X],
+                         splineVertices[splineVertexCount-4][Y],
+                         splineVertices[splineVertexCount-3][X],
+                         splineVertices[splineVertexCount-3][Y],
+                         splineVertices[splineVertexCount-2][X],
+                         splineVertices[splineVertexCount-2][Y],
+                         splineVertices[splineVertexCount-1][X],
+                         splineVertices[splineVertexCount-1][Y]);
     }
+  }
+  
+  
+  public void curveVertex(float x, float y, float z) {
+    curveVertexCheck();
+    float[] vertex = splineVertices[splineVertexCount];
+
+    vertex[X] = x;
+    vertex[Y] = y;
+    vertex[Z] = z;
+
+    if (fill) {
+      vertex[R] = fillR;
+      vertex[G] = fillG;
+      vertex[B] = fillB;
+      vertex[A] = fillA;
+    }
+
+    if (stroke) {
+      vertex[SR] = strokeR;
+      vertex[SG] = strokeG;
+      vertex[SB] = strokeB;
+      vertex[SA] = strokeA;
+      vertex[SW] = strokeWeight;
+    }
+
+    if (textureImage != null) {
+      vertex[U] = textureU;
+      vertex[V] = textureV;
+    }
+
+    vertex[NX] = normalX;
+    vertex[NY] = normalY;
+    vertex[NZ] = normalZ;
 
     splineVertexCount++;
 
     // draw a segment if there are enough points
     if (splineVertexCount > 3) {
-      if (bezier) {
-        if ((splineVertexCount % 4) == 0) {
-          bezierInitCheck();
-          splineSegment(splineVertexCount-4,
-                        splineVertexCount-4,
-                        bezierDrawMatrix, dimensions,
-                        bezierDetail);
-        }
-      } else {  // catmull-rom curve (!bezier)
-        curveInitCheck();
-        splineSegment(splineVertexCount-4,
-                      splineVertexCount-3,
-                      curveDrawMatrix, dimensions,
-                      curveDetail);
-      }
+      curveVertexSegment(splineVertices[splineVertexCount-4][X],
+                         splineVertices[splineVertexCount-4][Y],
+                         splineVertices[splineVertexCount-4][Z],
+                         splineVertices[splineVertexCount-3][X],
+                         splineVertices[splineVertexCount-3][Y],
+                         splineVertices[splineVertexCount-3][Z],
+                         splineVertices[splineVertexCount-2][X],
+                         splineVertices[splineVertexCount-2][Y],
+                         splineVertices[splineVertexCount-2][Z],
+                         splineVertices[splineVertexCount-1][X],
+                         splineVertices[splineVertexCount-1][Y],
+                         splineVertices[splineVertexCount-1][Z]);
     }
+  }
+  
+  
+  protected void curveVertexSegment(float x1, float y1,  
+                                    float x2, float y2, 
+                                    float x3, float y3, 
+                                    float x4, float y4) {
+    float x0 = x2; 
+    float y0 = y2;
+
+    PMatrix3D draw = curveDrawMatrix;
+    
+    float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
+    float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
+    float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
+
+    float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
+    float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
+    float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
+
+    // vertex() will reset splineVertexCount, so save it
+    int savedCount = splineVertexCount;
+
+    vertex(x0, y0);
+    for (int j = 0; j < curveDetail; j++) {
+      x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      vertex(x0, y0);
+    }
+    splineVertexCount = savedCount;  
+  }
+
+
+  protected void curveVertexSegment(float x1, float y1, float z1, 
+                                    float x2, float y2, float z2,
+                                    float x3, float y3, float z3,
+                                    float x4, float y4, float z4) {
+    float x0 = x2; 
+    float y0 = y2;
+    float z0 = z2;
+
+    PMatrix3D draw = curveDrawMatrix;
+
+    float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
+    float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
+    float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
+
+    float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
+    float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
+    float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
+
+    // vertex() will reset splineVertexCount, so save it
+    int savedCount = splineVertexCount;
+
+    float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
+    float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
+    float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
+
+    vertex(x0, y0, z0);
+    for (int j = 0; j < curveDetail; j++) {
+      x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
+      vertex(x0, y0, z0);
+    }
+    splineVertexCount = savedCount;  
   }
 
 
@@ -1574,7 +1719,6 @@ public class PGraphics extends PImage implements PConstants {
     depthError("sphereDetail");
   }
 
-  // [davbol 2008-08-01]
   public void sphereDetail(int ures, int vres) {
     depthError("sphereDetail");
   }
@@ -1688,7 +1832,7 @@ public class PGraphics extends PImage implements PConstants {
                      float x2, float y2,
                      float x3, float y3,
                      float x4, float y4) {
-    beginShape(); //LINE_STRIP);
+    beginShape();
     vertex(x1, y1);
     bezierVertex(x2, y2, x3, y3, x4, y4);
     endShape();
@@ -1699,7 +1843,7 @@ public class PGraphics extends PImage implements PConstants {
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    beginShape(); //LINE_STRIP);
+    beginShape();
     vertex(x1, y1, z1);
     bezierVertex(x2, y2, z2,
                  x3, y3, z3,
@@ -1885,73 +2029,6 @@ public class PGraphics extends PImage implements PConstants {
             6*fff, 2*ff, 0, 0,
             6*fff, 0,    0, 0);
   }
-
-
-  /**
-   * Draw a segment of spline (bezier or catmull-rom curve)
-   * using the matrix m, which is the basis matrix already
-   * multiplied with the forward differencing matrix.
-   * <P>
-   * the x0, y0, z0 points are the point that's being used as
-   * the start, and also as the accumulator. for bezier curves,
-   * the x1, y1, z1 are the first point drawn, and added to.
-   * for catmull-rom curves, the first control point (x2, y2, z2)
-   * is the first drawn point, and is accumulated to.
-   */
-  protected void splineSegment(int offset, int start, PMatrix3D basis,
-                               int dimensions, int segments) {
-    float x1 = splineVertices[offset+0][X];
-    float x2 = splineVertices[offset+1][X];
-    float x3 = splineVertices[offset+2][X];
-    float x4 = splineVertices[offset+3][X];
-    float x0 = splineVertices[start][X];
-
-    float y1 = splineVertices[offset+0][Y];
-    float y2 = splineVertices[offset+1][Y];
-    float y3 = splineVertices[offset+2][Y];
-    float y4 = splineVertices[offset+3][Y];
-    float y0 = splineVertices[start][Y];
-
-    float xplot1 = basis.m10*x1 + basis.m11*x2 + basis.m12*x3 + basis.m13*x4;
-    float xplot2 = basis.m20*x1 + basis.m21*x2 + basis.m22*x3 + basis.m23*x4;
-    float xplot3 = basis.m30*x1 + basis.m31*x2 + basis.m32*x3 + basis.m33*x4;
-
-    float yplot1 = basis.m10*y1 + basis.m11*y2 + basis.m12*y3 + basis.m13*y4;
-    float yplot2 = basis.m20*y1 + basis.m21*y2 + basis.m22*y3 + basis.m23*y4;
-    float yplot3 = basis.m30*y1 + basis.m31*y2 + basis.m32*y3 + basis.m33*y4;
-
-    // vertex() will reset splineVertexCount, so save it
-    int cvertexSaved = splineVertexCount;
-
-    if (dimensions == 3) {
-      float z1 = splineVertices[offset+0][Z];
-      float z2 = splineVertices[offset+1][Z];
-      float z3 = splineVertices[offset+2][Z];
-      float z4 = splineVertices[offset+3][Z];
-      float z0 = splineVertices[start][Z];
-
-      float zplot1 = basis.m10*z1 + basis.m11*z2 + basis.m12*z3 + basis.m13*z4;
-      float zplot2 = basis.m20*z1 + basis.m21*z2 + basis.m22*z3 + basis.m23*z4;
-      float zplot3 = basis.m30*z1 + basis.m31*z2 + basis.m32*z3 + basis.m33*z4;
-
-      vertex(x0, y0, z0);
-      for (int j = 0; j < segments; j++) {
-        x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
-        y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
-        z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
-        vertex(x0, y0, z0);
-      }
-    } else {
-      vertex(x0, y0);
-      for (int j = 0; j < segments; j++) {
-        x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
-        y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
-        vertex(x0, y0);
-      }
-    }
-    splineVertexCount = cvertexSaved;
-  }
-
 
 
   //////////////////////////////////////////////////////////////
