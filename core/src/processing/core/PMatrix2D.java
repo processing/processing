@@ -27,7 +27,7 @@ package processing.core;
 /**
  * 3x2 affine matrix implementation.
  */
-public final class PMatrix2D implements PMatrix {
+public final class PMatrix2D /*implements PMatrix*/ {
 
   public float m00, m01, m02;
   public float m10, m11, m12;
