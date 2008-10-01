@@ -23,7 +23,14 @@ text(lines, 3, 70);
 </example>
 
 <description>
-Sets the way text draws to the screen. In the default configuration (the MODEL mode), it's possible to rotate, scale, and place letters in three dimensional space. Changing to SCREEN mode draws letters directly to the front of the window and increases the rendering quality. The letters draw at the actual size of the font (in pixels) and therefore calls to <b>textSize()</b> will not affect the size of the letters. To create a font at the size you desire, use the "Create font..." option in the Tools menu. <br /><br />The SHAPE mode draws text using the the glyph outlines of individual characters rather than as textures. If the outlines are not available, then <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will be used instead. For this reason, be sure to call <b>textMode()</b> after calling <b>textFont()</b>. Currently, textMode(SHAPE) is only supported by OPENGL rendering mode.</description>
+Sets the way text draws to the screen. In the default configuration (the MODEL mode), it's possible to rotate, scale, and place letters in two and three dimensional space. 
+<br /><br />
+Changing to SCREEN mode draws letters directly to the front of the window and greatly increases rendering quality and speed when used with the P2D and P3D renderers. textMode(SCREEN) with OPENGL and JAVA2D (the default) renderers will generally be slower, though pixel accurate with P2D and P3D. With textMode(SCREEN), the letters draw at the actual size of the font (in pixels) and therefore calls to <b>textSize()</b> will not affect the size of the letters. To create a font at the size you desire, use the "Create font..." option in the Tools menu, or use the createFont() function.
+<br /><br />
+The SHAPE mode draws text using the the glyph outlines of individual characters rather than as textures. This mode is only only supported with the PDF and OPENGL renderer settings. With the PDF renderer, you must call textMode(SHAPE) before any other drawing occurs. If the outlines are not available, then <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will be used instead.
+<br /><br />
+The textMode(SHAPE) option in OPENGL mode can be combined with beginRaw() to write vector-accurate text to 2D and 3D output files, for instance DXF or PDF. textMode(SHAPE) is not currently optimized for OPENGL, so if recording shape data, use textMode(MODEL) until you're ready to capture the geometry with beginRaw().
+</description>
 
 <syntax>
 textMode(<c>MODE</c>)
@@ -41,6 +48,7 @@ loadFont()
 PFont 
 text()
 textFont() 
+createFont()
 </related>
 
 <availability>1.0</availability>
