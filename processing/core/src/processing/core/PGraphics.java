@@ -497,7 +497,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  public boolean edge;
+  public boolean edge = true;
   
   // ........................................................
 
@@ -851,7 +851,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void edge(boolean e) {
+  /**
+   * Sets whether the upcoming vertex is part of an edge.
+   * Equivalent to glEdgeFlag(), for people familiar with OpenGL.
+   */
+  public void edge(boolean edge) {
    this.edge = edge; 
   }
   
@@ -1341,87 +1345,6 @@ public class PGraphics extends PImage implements PConstants {
   
   //////////////////////////////////////////////////////////////
 
-  // STYLE
-
-
-  public void style(PStyle s) {
-//    if (s.smooth) {
-//      smooth();
-//    } else {
-//      noSmooth();
-//    }
-    
-    imageMode(s.imageMode);
-    rectMode(s.rectMode);
-    ellipseMode(s.ellipseMode);
-    shapeMode(s.shapeMode);
-    
-    if (s.tint) {
-      tint(s.tintColor);
-    } else {
-      noTint();
-    }
-    if (s.fill) {
-      fill(s.fillColor);
-    } else {
-      noFill();
-    }
-    if (s.stroke) {
-      stroke(s.strokeColor);
-    } else {
-      noStroke();
-    }
-    strokeWeight(s.strokeWeight);
-    strokeCap(s.strokeCap);
-    strokeJoin(s.strokeJoin);
-
-    // Set the colorMode() for the material properties. 
-    // TODO this is really inefficient, need to just have a material() method, 
-    // but this has the least impact to the API.
-    colorMode(RGB, 1);
-    ambient(s.ambientR, s.ambientG, s.ambientB);
-    emissive(s.emissiveR, s.emissiveG, s.emissiveB);
-    specular(s.specularR, s.specularG, s.specularB);
-    shininess(s.shininess);
-    
-    /*
-    s.ambientR = ambientR;
-    s.ambientG = ambientG;
-    s.ambientB = ambientB;
-    s.specularR = specularR;
-    s.specularG = specularG;
-    s.specularB = specularB;
-    s.emissiveR = emissiveR;
-    s.emissiveG = emissiveG;
-    s.emissiveB = emissiveB;
-    s.shininess = shininess;
-    */
-//    material(s.ambientR, s.ambientG, s.ambientB,
-//             s.emissiveR, s.emissiveG, s.emissiveB,
-//             s.specularR, s.specularG, s.specularB, 
-//             s.shininess);
-
-    // Set this after the material properties.
-    colorMode(s.colorMode, 
-              s.colorModeX, s.colorModeY, s.colorModeZ, s.colorModeA);
-    
-    // This is a bit asymmetric, since there's no way to do "noFont()",
-    // and a null textFont will produce an error (since usually that means that
-    // the font couldn't load properly). So in some cases, the font won't be
-    // 'cleared' to null, even though that's technically correct. 
-    if (s.textFont != null) {
-      textFont(s.textFont, s.textSize);
-      textLeading(s.textLeading);
-    }
-    // These don't require a font to be set.
-    textAlign(s.textAlign, s.textAlignY);
-    textMode(s.textMode);
-  }
-  
-
-
-  //////////////////////////////////////////////////////////////
-
   // SIMPLE SHAPES WITH ANALOGUES IN beginShape()
 
 
@@ -1488,40 +1411,40 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void rect(float x1, float y1, float x2, float y2) {
+  public void rect(float a, float b, float c, float d) {
     float hradius, vradius;
     switch (rectMode) {
     case CORNERS:
       break;
     case CORNER:
-      x2 += x1; y2 += y1;
+      c += a; d += b;
       break;
     case RADIUS:
-      hradius = x2;
-      vradius = y2;
-      x2 = x1 + hradius;
-      y2 = y1 + vradius;
-      x1 -= hradius;
-      y1 -= vradius;
+      hradius = c;
+      vradius = d;
+      c = a + hradius;
+      d = b + vradius;
+      a -= hradius;
+      b -= vradius;
       break;
     case CENTER:
-      hradius = x2 / 2.0f;
-      vradius = y2 / 2.0f;
-      x2 = x1 + hradius;
-      y2 = y1 + vradius;
-      x1 -= hradius;
-      y1 -= vradius;
+      hradius = c / 2.0f;
+      vradius = d / 2.0f;
+      c = a + hradius;
+      d = b + vradius;
+      a -= hradius;
+      b -= vradius;
     }
 
-    if (x1 > x2) {
-      float temp = x1; x1 = x2; x2 = temp;
+    if (a > c) {
+      float temp = a; a = c; c = temp;
     }
 
-    if (y1 > y2) {
-      float temp = y1; y1 = y2; y2 = temp;
+    if (b > d) {
+      float temp = b; b = d; d = temp;
     }
 
-    rectImpl(x1, y1, x2, y2);
+    rectImpl(a, b, c, d);
   }
 
 
@@ -1557,7 +1480,7 @@ public class PGraphics extends PImage implements PConstants {
       w = c * 2;
       h = d * 2;
 
-    } else if (ellipseMode == CENTER) {
+    } else if (ellipseMode == DIAMETER) {
       x = a - c/2f;
       y = b - d/2f;
     }
@@ -1576,12 +1499,12 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void ellipseImpl(float x1, float y1, float w, float h) {
-    float hradius = w / 2f;
-    float vradius = h / 2f;
+  protected void ellipseImpl(float x, float y, float w, float h) {
+    float radiusH = w / 2;
+    float radiusV = h / 2;
 
-    float centerX = x1 + hradius;
-    float centerY = y1 + vradius;
+    float centerX = x + radiusH;
+    float centerY = y + radiusV;
 
     // adapt accuracy to radii used w/ a minimum of 4 segments [toxi]
     // now uses current scale factors to determine "real" transformed radius
@@ -1595,7 +1518,7 @@ public class PGraphics extends PImage implements PConstants {
     // also removed the m00 and m11 because those were causing weirdness
     // need an actual measure of magnitude in there [fry]
 
-    int accuracy = (int)(4+Math.sqrt(hradius+vradius)*3);
+    int accuracy = (int)(4+Math.sqrt(radiusH+radiusV)*3);
     //System.out.println("accuracy is " + accuracy);
 
     // [toxi031031] adapted to use new lookup tables
@@ -1620,13 +1543,13 @@ public class PGraphics extends PImage implements PConstants {
       normal(0, 0, 1);
       vertex(centerX, centerY);
       for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * hradius,
-               centerY + sinLUT[(int) val] * vradius);
+        vertex(centerX + cosLUT[(int) val] * radiusH,
+               centerY + sinLUT[(int) val] * radiusV);
         val += inc;
       }
       // back to the beginning
-      vertex(centerX + cosLUT[0] * hradius,
-             centerY + sinLUT[0] * vradius);
+      vertex(centerX + cosLUT[0] * radiusH,
+             centerY + sinLUT[0] * radiusV);
       endShape();
 
       stroke = savedStroke;
@@ -1639,8 +1562,8 @@ public class PGraphics extends PImage implements PConstants {
       val = 0;
       beginShape(); //LINE_LOOP);
       for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * hradius,
-               centerY + sinLUT[(int) val] * vradius);
+        vertex(centerX + cosLUT[(int) val] * radiusH,
+               centerY + sinLUT[(int) val] * radiusV);
         val += inc;
       }
       endShape(CLOSE);
@@ -1695,13 +1618,13 @@ public class PGraphics extends PImage implements PConstants {
    * This is so that an arc can be drawn that crosses zero mark,
    * and the user will still collect $200.
    */
-  protected void arcImpl(float x1, float y1, float w, float h,
+  protected void arcImpl(float x, float y, float w, float h,
                          float start, float stop) {
     float hr = w / 2f;
     float vr = h / 2f;
 
-    float centerX = x1 + hr;
-    float centerY = y1 + vr;
+    float centerX = x + hr;
+    float centerY = y + vr;
 
     if (fill) {
       // shut off stroke for a minute
@@ -1760,27 +1683,214 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // BOX & SPHERE
+  // BOX
 
 
   public void box(float size) {
-    depthError("box");
+    box(size, size, size);
   }
 
+
+  // TODO not the least bit efficient, it even redraws lines  
+  // along the vertices. ugly ugly ugly!
   public void box(float w, float h, float d) {
-    depthError("box");
+    float x1 = -w/2f; float x2 = w/2f;
+    float y1 = -h/2f; float y2 = h/2f;
+    float z1 = -d/2f; float z2 = d/2f;
+
+    beginShape(QUADS);
+
+    // front
+    normal(0, 0, 1);
+    vertex(x1, y1, z1);
+    vertex(x2, y1, z1);
+    vertex(x2, y2, z1);
+    vertex(x1, y2, z1);
+
+    // right
+    normal(1, 0, 0);
+    vertex(x2, y1, z1);
+    vertex(x2, y1, z2);
+    vertex(x2, y2, z2);
+    vertex(x2, y2, z1);
+
+    // back
+    normal(0, 0, -1);
+    vertex(x2, y1, z2);
+    vertex(x1, y1, z2);
+    vertex(x1, y2, z2);
+    vertex(x2, y2, z2);
+
+    // left
+    normal(-1, 0, 0);
+    vertex(x1, y1, z2);
+    vertex(x1, y1, z1);
+    vertex(x1, y2, z1);
+    vertex(x1, y2, z2);
+
+    // top
+    normal(0, 1, 0);
+    vertex(x1, y1, z2);
+    vertex(x2, y1, z2);
+    vertex(x2, y1, z1);
+    vertex(x1, y1, z1);
+
+    // bottom
+    normal(0, -1, 0);
+    vertex(x1, y2, z1);
+    vertex(x2, y2, z1);
+    vertex(x2, y2, z2);
+    vertex(x1, y2, z2);
+
+    endShape();
   }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SPHERE
+
 
   public void sphereDetail(int res) {
-    depthError("sphereDetail");
+    sphereDetail(res, res);
   }
 
+
+  /**
+   * Set the detail level for approximating a sphere. The ures and vres params
+   * control the horizontal and vertical resolution.
+   *
+   * Code for sphereDetail() submitted by toxi [031031].
+   * Code for enhanced u/v version from davbol [080801].
+   */
   public void sphereDetail(int ures, int vres) {
-    depthError("sphereDetail");
+    if (ures < 3) ures = 3; // force a minimum res
+    if (vres < 2) vres = 2; // force a minimum res
+    if ((ures == sphereDetailU) && (vres == sphereDetailV)) return;
+
+    float delta = (float)SINCOS_LENGTH/ures;
+    float[] cx = new float[ures];
+    float[] cz = new float[ures];
+    // calc unit circle in XZ plane
+    for (int i = 0; i < ures; i++) {
+      cx[i] = cosLUT[(int) (i*delta) % SINCOS_LENGTH];
+      cz[i] = sinLUT[(int) (i*delta) % SINCOS_LENGTH];
+    }
+    // computing vertexlist
+    // vertexlist starts at south pole
+    int vertCount = ures * (vres-1) + 2;
+    int currVert = 0;
+
+    // re-init arrays to store vertices
+    sphereX = new float[vertCount];
+    sphereY = new float[vertCount];
+    sphereZ = new float[vertCount];
+
+    float angle_step = (SINCOS_LENGTH*0.5f)/vres;
+    float angle = angle_step;
+
+    // step along Y axis
+    for (int i = 1; i < vres; i++) {
+      float curradius = sinLUT[(int) angle % SINCOS_LENGTH];
+      float currY = -cosLUT[(int) angle % SINCOS_LENGTH];
+      for (int j = 0; j < ures; j++) {
+        sphereX[currVert] = cx[j] * curradius;
+        sphereY[currVert] = currY;
+        sphereZ[currVert++] = cz[j] * curradius;
+      }
+      angle += angle_step;
+    }
+    sphereDetailU = ures;
+    sphereDetailV = vres;
   }
 
+
+  /**
+   * Draw a sphere with radius r centered at coordinate 0, 0, 0.
+   * <P>
+   * Implementation notes:
+   * <P>
+   * cache all the points of the sphere in a static array
+   * top and bottom are just a bunch of triangles that land
+   * in the center point
+   * <P>
+   * sphere is a series of concentric circles who radii vary
+   * along the shape, based on, er.. cos or something
+   * <PRE>
+   * [toxi 031031] new sphere code. removed all multiplies with
+   * radius, as scale() will take care of that anyway
+   *
+   * [toxi 031223] updated sphere code (removed modulos)
+   * and introduced sphereAt(x,y,z,r)
+   * to avoid additional translate()'s on the user/sketch side
+   *
+   * [davbol 080801] now using separate sphereDetailU/V
+   * </PRE>
+   */
   public void sphere(float r) {
-    depthError("sphere");
+    if ((sphereDetailU < 3) || (sphereDetailV < 2)) {
+      sphereDetail(30);
+    }
+
+    pushMatrix();
+    scale(r);
+
+    // 1st ring from south pole
+    beginShape(TRIANGLE_STRIP);
+    for (int i = 0; i < sphereDetailU; i++) {
+      normal(0, -1, 0);
+      vertex(0, -1, 0);
+      normal(sphereX[i], sphereY[i], sphereZ[i]);
+      vertex(sphereX[i], sphereY[i], sphereZ[i]);
+    }
+    //normal(0, -1, 0);
+    vertex(0, -1, 0);
+    normal(sphereX[0], sphereY[0], sphereZ[0]);
+    vertex(sphereX[0], sphereY[0], sphereZ[0]);
+    endShape();
+
+    int v1,v11,v2;
+    
+    // middle rings
+    int voff = 0;
+    for (int i = 2; i < sphereDetailV; i++) {
+      v1 = v11 = voff;
+      voff += sphereDetailU;
+      v2 = voff;
+      beginShape(TRIANGLE_STRIP);
+      for (int j = 0; j < sphereDetailU; j++) {
+        normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
+        vertex(sphereX[v1], sphereY[v1], sphereZ[v1++]);
+        normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
+        vertex(sphereX[v2], sphereY[v2], sphereZ[v2++]);
+      }
+      // close each ring
+      v1 = v11;
+      v2 = voff;
+      normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
+      vertex(sphereX[v1], sphereY[v1], sphereZ[v1]);
+      normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
+      vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
+      endShape();
+    }
+
+    // add the northern cap
+    beginShape(TRIANGLE_STRIP);
+    for (int i = 0; i < sphereDetailU; i++) {
+      v2 = voff + i;
+      normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
+      vertex(sphereX[v2], sphereY[v2], sphereZ[v2]);
+      normal(0, 1, 0);
+      vertex(0, 1, 0);
+    }
+    normal(sphereX[voff], sphereY[voff], sphereZ[voff]);
+    vertex(sphereX[voff], sphereY[voff], sphereZ[voff]);
+    normal(0, 1, 0);
+    vertex(0, 1, 0);
+    endShape();
+    
+    popMatrix();
   }
 
 
@@ -1836,11 +1946,17 @@ public class PGraphics extends PImage implements PConstants {
 
   protected void bezierInitCheck() {
     if (!bezierInited) {
-      bezierDetail(bezierDetail);
+      bezierInit();
     }
   }
 
+  
+  protected void bezierInit() {
+    // overkill to be broken out, but better parity with the curve stuff below
+    bezierDetail(bezierDetail);
+  }
 
+  
   public void bezierDetail(int detail) {
     bezierDetail = detail;
 
@@ -1954,18 +2070,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void curveDetail(int detail) {
-    curveInit(detail, curveTightness);
+    curveDetail = detail;
+    curveInit();
   }
 
 
   public void curveTightness(float tightness) {
-    curveInit(curveDetail, tightness);
+    curveTightness = tightness;
+    curveInit();
   }
 
 
   protected void curveInitCheck() {
     if (!curveInited) {
-      curveInit(curveDetail, curveTightness);
+      curveInit();
     }
   }
 
@@ -1981,10 +2099,7 @@ public class PGraphics extends PImage implements PConstants {
    * opimizations in here, but it's probably better to keep the
    * code more readable)
    */
-  protected void curveInit(int segments, float s) {
-    curveDetail = segments;
-    curveTightness = s;
-
+  protected void curveInit() {
     // allocate only if/when used to save startup time
     if (curveDrawMatrix == null) {
       curveBasisMatrix = new PMatrix3D();
@@ -1992,13 +2107,14 @@ public class PGraphics extends PImage implements PConstants {
       curveInited = true;
     }
 
+    float s = curveTightness;
     curveBasisMatrix.set((s-1)/2f, (s+3)/2f,  (-3-s)/2f, (1-s)/2f,
                          (1-s),    (-5-s)/2f, (s+2),     (s-1)/2f,
                          (s-1)/2f, 0,         (1-s)/2f,  0,
                          0,        1,         0,         0);
 
     //setup_spline_forward(segments, curveForwardMatrix);
-    splineForward(segments, curveDrawMatrix);
+    splineForward(curveDetail, curveDrawMatrix);
 
     if (bezierBasisInverse == null) {
       bezierBasisInverse = bezierBasisMatrix.get();
@@ -2073,20 +2189,21 @@ public class PGraphics extends PImage implements PConstants {
    * vertex of the segment, rather than running the mathematically
    * expensive cubic equation.
    * @param segments number of curve segments to use when drawing
-   * @param fwd target object for the new matrix 
+   * @param matrix target object for the new matrix 
    */
-  protected void splineForward(int segments, PMatrix3D fwd) {
+  protected void splineForward(int segments, PMatrix3D matrix) {
     float f  = 1.0f / segments;
     float ff = f * f;
     float fff = ff * f;
 
-    fwd.set(0,     0,    0, 1,
-            fff,   ff,   f, 0,
-            6*fff, 2*ff, 0, 0,
-            6*fff, 0,    0, 0);
+    matrix.set(0,     0,    0, 1,
+               fff,   ff,   f, 0,
+               6*fff, 2*ff, 0, 0,
+               6*fff, 0,    0, 0);
   }
 
 
+  
   //////////////////////////////////////////////////////////////
 
   // IMAGE
@@ -2103,8 +2220,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void image(PImage image,
-                    float x, float y, float c, float d) {
+  public void image(PImage image, float x, float y, float c, float d) {
     image(image, x, y, c, d, 0, 0, image.width, image.height);
   }
 
@@ -2216,7 +2332,7 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
-  // SHAPE OBJECTS
+  // SHAPE
 
 
   /**
@@ -3189,6 +3305,40 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+//  public PMatrix getMatrix() {
+//    return null;
+//  }
+
+  
+//  public PMatrix2D getMatrix2D() {
+//    return null;
+//  }
+  
+  
+  public void getMatrix(PMatrix2D target) {
+  }
+  
+  
+  public void getMatrix(PMatrix3D target) {
+  }
+  
+  
+  public void setMatrix(PMatrix2D source) {  
+  }
+  
+  
+  public void setMatrix(PMatrix3D source) {  
+  }
+  
+  
+  public void applyMatrix(PMatrix2D source) {
+  }
+  
+  
+  public void applyMatrix(PMatrix3D source) {
+  }
+  
+  
   /**
    * Apply a 3x2 affine transformation matrix.
    */
@@ -3397,8 +3547,8 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // STYLE
-  
-  
+
+
   public void pushStyle() {
     if (styleStackDepth == styleStack.length) {
       styleStack = (PStyle[]) PApplet.expand(styleStack);
@@ -3417,6 +3567,81 @@ public class PGraphics extends PImage implements PConstants {
     }
     styleStackDepth--;
     style(styleStack[styleStackDepth]);
+  }
+
+
+  public void style(PStyle s) {
+    //  if (s.smooth) {
+    //    smooth();
+    //  } else {
+    //    noSmooth();
+    //  }
+
+    imageMode(s.imageMode);
+    rectMode(s.rectMode);
+    ellipseMode(s.ellipseMode);
+    shapeMode(s.shapeMode);
+
+    if (s.tint) {
+      tint(s.tintColor);
+    } else {
+      noTint();
+    }
+    if (s.fill) {
+      fill(s.fillColor);
+    } else {
+      noFill();
+    }
+    if (s.stroke) {
+      stroke(s.strokeColor);
+    } else {
+      noStroke();
+    }
+    strokeWeight(s.strokeWeight);
+    strokeCap(s.strokeCap);
+    strokeJoin(s.strokeJoin);
+
+    // Set the colorMode() for the material properties. 
+    // TODO this is really inefficient, need to just have a material() method, 
+    // but this has the least impact to the API.
+    colorMode(RGB, 1);
+    ambient(s.ambientR, s.ambientG, s.ambientB);
+    emissive(s.emissiveR, s.emissiveG, s.emissiveB);
+    specular(s.specularR, s.specularG, s.specularB);
+    shininess(s.shininess);
+
+    /*
+  s.ambientR = ambientR;
+  s.ambientG = ambientG;
+  s.ambientB = ambientB;
+  s.specularR = specularR;
+  s.specularG = specularG;
+  s.specularB = specularB;
+  s.emissiveR = emissiveR;
+  s.emissiveG = emissiveG;
+  s.emissiveB = emissiveB;
+  s.shininess = shininess;
+     */
+    //  material(s.ambientR, s.ambientG, s.ambientB,
+    //           s.emissiveR, s.emissiveG, s.emissiveB,
+    //           s.specularR, s.specularG, s.specularB, 
+    //           s.shininess);
+
+    // Set this after the material properties.
+    colorMode(s.colorMode, 
+              s.colorModeX, s.colorModeY, s.colorModeZ, s.colorModeA);
+
+    // This is a bit asymmetric, since there's no way to do "noFont()",
+    // and a null textFont will produce an error (since usually that means that
+    // the font couldn't load properly). So in some cases, the font won't be
+    // 'cleared' to null, even though that's technically correct. 
+    if (s.textFont != null) {
+      textFont(s.textFont, s.textSize);
+      textLeading(s.textLeading);
+    }
+    // These don't require a font to be set.
+    textAlign(s.textAlign, s.textAlignY);
+    textMode(s.textMode);
   }
 
 
@@ -4533,7 +4758,15 @@ public class PGraphics extends PImage implements PConstants {
    * showFrame, displayable, isVisible, visible, shouldDisplay,
    * what to call this?
    */
-  public boolean displayable() {
+  public boolean displayable() {  // ignore
     return true;
+  }
+
+
+  /**
+   * Return true if this renderer supports 3D drawing.
+   */
+  public boolean dimensional() {  // ignore
+    return false;
   }
 }
