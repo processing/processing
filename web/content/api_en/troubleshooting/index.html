@@ -530,17 +530,12 @@ A complete description can be found in the reference for the
 <li>PSound has been removed as of release 0112. Getting sound to work 
 with Java is a total headache, and therefore something better left to 
 a <A HREF="../libraries/index.html">library</A>. 
-The Sonia and Ess libraries will both provide better audio support. 
-We had hoped to provide a simple means to play audio clips and whatnot, 
-but Sun's audio classes are too buggy across different platforms and different 
-versions of Java. A buggy mess like that requires lots of code (and lots 
-of testing across all our platforms), and we didn't want to muck up the 
-core with that business.</li>
+We recommend using the Minim library.</li>
 
 <li>Unless you know what you're doing, you should not have a method 
 in your sketch that's called run() (with no parameters, at least). 
 This will break your sketch. Unfortunately, we can't explicitly disallow it, 
-because some advanced programmers need to write their own run().</li>
+because some advanced programmers may need to write their own run().</li>
 
 <li><EM>Why doesn't saveFrame (or saveStrings or saveBytes) 
 write things to the data folder?</EM>
@@ -601,31 +596,6 @@ issue, add a delay(5) or delay(10) to your code, which will give five
 or ten milliseconds to other applications so they can breathe. For other
 applications, you may have to set the frameRate() lower, or use a longer
 delay().</li>
-
-<li>mouseX and mouseY always even (or always odd) numbers? By default,
-Windows 2000 (and XP?) seems to skip every other pixel on the screen,
-causing weirdness for some drawing applications done with Processing.
-If you're seeing this, you can fix it by visiting Control Panels
-&rarr; Mouse &rarr; Pointer Options &rarr; Enhance pointer precision.
-(This was actually tracked down by someone else in the community,
-whose name I have misplaced. If it was you, please drop me a line so
-you can be properly cited. This kind of help is huge for us, since
-we're such a small group!)</li>
-
-<li>You may find that pmouseX and pmouseY have different values 
-inside draw() and inside events like mousePressed() and mouseMoved().
-This is because they're used for different roles, so don't mix them!
-Inside draw(), pmouseX and pmouseY update only once per frame (once per trip
-through your draw() method). 
-Inside mouse events, they update each time the event is called. 
-If they weren't separated, then the mouse would be read only once 
-per frame, making response choppy. 
-If the mouse variables were always updated multiple times per frame, 
-using <NOBR><TT>line(pmouseX, pmouseY, mouseX, mouseY)</TT></NOBR> inside 
-draw() would have lots of gaps, because pmouseX may have changed 
-several times in between the calls to line(). Use pmouseX/Y inside draw()
-if you want values relative to the previous frame. Use pmouseX/Y inside the
-mouse functions if you want continuous response.</li>
 
 <li>If your sketch is based on "Java mode", where you explicitly say
 that the class extends PApplet, then the preprocessor assumes that you
@@ -730,10 +700,6 @@ Automatically updated <A HREF="http://dev.processing.org/bugs/buglist.cgi?bug_st
 And of course, if these and others give you a burr in the
 saddle, <A HREF="http://dev.processing.org">join us</A> and help!
 <UL>
-<LI>2D graphics might be a bit flickery sometimes, try setting the
-frameRate() to get things under control
-(<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=122">Bug 122</A> and 
-<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=511">Bug 511</A>)
 <LI>strokeWeight() is disabled in P3D and OPENGL. Not really a bug
 per se (how do you define a stroke in 3D?), but something we'd like to
 fix someday. 
@@ -741,12 +707,6 @@ fix someday.
 <LI>int() and float() don't always work, use ((int) blah) or ((float)
 blah) instead for the time being. or toInt(blah) and toFloat(blah). (<A
 HREF="http://as.processing.org/bugs/show_bug.cgi?id=4">Bug 4</A>)
-<LI>The beloved(?) "History" function from previous versions is
-missing. In the meantime, "Archive Sketch" might be useful. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=71">Bug 71</A>)
-<LI>Need to complete the "Tools" menu, which will be a way for people
-to develop their own editor plug-ins. (<A
-HREF="http://dev.processing.org/bugs/show_bug.cgi?id=124">Bug 124</A>)
 <LI>When you have too many tabs, things get ugly (<A
 HREF="http://processing.org/bugs/show_bug.cgi?id=54">Bug 54</A>)
 <LI>Error messages after you hit Run are often too long to read or too

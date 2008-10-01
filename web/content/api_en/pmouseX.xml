@@ -23,6 +23,15 @@ void draw()
 
 <description>
  The system variable pmouseX always contains the previous horizontal coordinate of the mouse. This is the horizontal position of the mouse in the frame previous to the current frame.
+<br /><br />
+You may find that pmouseX and pmouseY have different values inside draw() and inside events like mousePressed() and mouseMoved(). This is because they're used for different roles, so don't mix them! Inside draw(), pmouseX and pmouseY update only once per frame (once per trip through your draw() method). Inside mouse events, they update each time the event is called. If they weren't separated, then the mouse would be read only once per frame, making response choppy. 
+If the mouse variables were always updated multiple times per frame, 
+using <NOBR><TT>line(pmouseX, pmouseY, mouseX, mouseY)</TT></NOBR> inside 
+draw() would have lots of gaps, because pmouseX may have changed 
+several times in between the calls to line(). Use pmouseX/Y inside draw()
+if you want values relative to the previous frame. Use pmouseX/Y inside the
+mouse functions if you want continuous response.
+
 </description>
 
 <syntax>
