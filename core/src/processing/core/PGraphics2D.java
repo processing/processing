@@ -404,33 +404,6 @@ public class PGraphics2D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // BOX & SPHERE
-
-
-  public void box(float size) {
-    depthError("box");
-  }
-
-  public void box(float w, float h, float d) {
-    depthError("box");
-  }
-
-  public void sphereDetail(int res) {
-    depthError("sphereDetail");
-  }
-
-  public void sphereDetail(int ures, int vres) {
-    depthError("sphereDetail");
-  }
-
-  public void sphere(float r) {
-    depthError("sphere");
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
   // CONCAVE/CONVEX POLYGONS
 
 
@@ -991,12 +964,37 @@ public class PGraphics2D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // BOX & SPHERE
+  // BOX 
 
 
-  // The PGraphics superclass will throw errors for these fellas
+  public void box(float size) {
+    depthError("box");
+  }
+
+  public void box(float w, float h, float d) {
+    depthError("box");
+  }
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SPHERE 
 
 
+  public void sphereDetail(int res) {
+    depthError("sphereDetail");
+  }
+
+  public void sphereDetail(int ures, int vres) {
+    depthError("sphereDetail");
+  }
+
+  public void sphere(float r) {
+    depthError("sphere");
+  }
+
+  
 
   //////////////////////////////////////////////////////////////
 
