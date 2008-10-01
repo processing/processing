@@ -118,12 +118,12 @@ public interface PMatrix {
   public float[] mult(float[] source, float[] target);
   
   
-  public float multX(float x, float y);
-  public float multY(float x, float y);
+//  public float multX(float x, float y);
+//  public float multY(float x, float y);
   
-  public float multX(float x, float y, float z);
-  public float multY(float x, float y, float z);
-  public float multZ(float x, float y, float z);  
+//  public float multX(float x, float y, float z);
+//  public float multY(float x, float y, float z);
+//  public float multZ(float x, float y, float z);  
   
   
   /**
