@@ -384,6 +384,10 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
     target.x = m00*source.x + m01*source.y + m02*source.z + m03;
     target.y = m10*source.x + m11*source.y + m12*source.z + m13;
     target.z = m20*source.x + m21*source.y + m22*source.z + m23;
+    float tw = m30*source.x + m31*source.y + m32*source.z + m33;
+    if (tw != 0 && tw != 1) {
+      target.div(tw);
+    }
     return target;
   }
   
@@ -404,7 +408,10 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
       target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03;
       target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13;
       target[2] = m20*source[0] + m21*source[1] + m22*source[2] + m23;
-      
+      float w = m30*source[0] + m31*source[1] + m32*source[2] + m33;
+      if (w != 0 && w != 1) {
+        target[0] /= w; target[1] /= w; target[2] /= w;
+      }
     } else if (target.length > 3) {
       target[0] = m00*source[0] + m01*source[1] + m02*source[2] + m03*source[3];
       target[1] = m10*source[0] + m11*source[1] + m12*source[2] + m13*source[3];
@@ -437,6 +444,31 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   
   public float multZ(float x, float y, float z) {
     return m20*x + m21*y + m22*z + m23;
+  }  
+
+
+  public float multW(float x, float y, float z) {
+    return m30*x + m31*y + m32*z + m33;
+  }  
+
+
+  public float multX(float x, float y, float z, float w) {
+    return m00*x + m01*y + m02*z + m03*w;
+  }
+  
+  
+  public float multY(float x, float y, float z, float w) {
+    return m10*x + m11*y + m12*z + m13*w;
+  }
+  
+  
+  public float multZ(float x, float y, float z, float w) {
+    return m20*x + m21*y + m22*z + m23*w;
+  }  
+
+
+  public float multW(float x, float y, float z, float w) {
+    return m30*x + m31*y + m32*z + m33*w;
   }  
 
 
