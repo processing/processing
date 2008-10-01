@@ -48,6 +48,9 @@ public class PVector {
   
   /** The z component of the vector. */
   public float z;
+  
+  /** Array so that this can be temporarily used in an array context */
+  protected float[] array;
 
   
   /**
@@ -443,7 +446,7 @@ public class PVector {
    */
   public void normalize() {
     float m = mag();
-    if (m > 0) {
+    if (m != 0 && m != 1) {
       div(m);
     }
   }
@@ -500,6 +503,26 @@ public class PVector {
     float dot = v1.dot(v2);
     float theta = (float) Math.acos(dot / (v1.mag() * v2.mag()));
     return theta;
+  }
+  
+  
+  public String toString() {
+    return "[ " + x + ", " + y + ", " + z + " ]";
+  }
+  
+  
+  /** 
+   * Return a representation of this vector as an array. This is only for
+   * temporary use. If used in any other fashion, the contents should be copied.
+   */
+  public float[] array() {
+    if (array == null) {
+      array = new float[3];
+    }
+    array[0] = x;
+    array[1] = y;
+    array[2] = z;
+    return array;
   }
 }
 

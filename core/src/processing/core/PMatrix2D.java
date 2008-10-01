@@ -311,21 +311,6 @@ public final class PMatrix2D implements PMatrix {
   }
   
   
-  public float multX(float x, float y, float z) {
-    return 0;
-  }
-  
-  
-  public float multY(float x, float y, float z) {
-    return 0;
-  }
-  
-  
-  public float multZ(float x, float y, float z) {
-    return 0;
-  }  
-  
-
   /**
    * Transpose this matrix.
    */
