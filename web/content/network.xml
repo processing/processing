@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <networked>
+    <software name="dadode_plus - exploring dodecahedrons" by="pikappa">
+        <location>http://pikappa.ch/dadode/processing/dadode2/applet/</location>
+        <date>01 Oct &apos;08</date>
+    </software>
+    <software name="NightBeyondNight" by="Jason Corace">
+        <location>http://www.doubletriple.net/our_projects/NightBeyondNight/about/</location>
+        <date>01 Oct &apos;08</date>
+    </software>
+    <software name="Data_Scape" by="Andrew Buckland">
+        <location>http://andrewbuckland.com/datascape/index.html</location>
+        <date>01 Oct &apos;08</date>
+    </software>
+    <software name="Interpolated Subdivision Processes" by="select &apos;2D subdivision&apos;">
+        <location>http://www.michael-hansmeyer.com/indexflash.html</location>
+        <date>01 Oct &apos;08</date>
+    </software>
+    <software name="4d- structure" by="with moving points">
+        <location>http://www.flickr.com/photos/28120841@N03/2882300950/in/photostream/</location>
+        <date>29 Sep &apos;08</date>
+    </software>
+    <software name="4d- structure" by="with moving points">
+        <location>http://www.flickr.com/photos/28120841@N03/2882300950/in/photostream/</location>
+        <date>29 Sep &apos;08</date>
+    </software>
+    <software name="Perspectives 02" by="PolEtTique">
+        <location>http://www.dailymotion.com/PolEtTique/video/x5891w_perspectives-002_creation</location>
+        <date>27 Sep &apos;08</date>
+    </software>
+    <software name="Perspective 01" by="PolEtTique">
+        <location>http://www.dailymotion.com/PolEtTique/video/x57m4a_perspectives-001_creation</location>
+        <date>27 Sep &apos;08</date>
+    </software>
     <software name="virtual plant" by="Richard Schaffranek">
         <location>http://herdeundarchitektur.blogspot.com/</location>
         <date>16 Sep &apos;08</date>
