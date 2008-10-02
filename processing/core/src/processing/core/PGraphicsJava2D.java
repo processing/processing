@@ -181,12 +181,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void textureMode(int mode) {
-    showMethodError("textureMode");
+    showMethodWarning("textureMode");
   }
 
 
   public void texture(PImage image) {
-    showMethodError("texture");
+    showMethodWarning("texture");
   }
 
 
@@ -313,17 +313,17 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void vertex(float x, float y, float z) {
-    showDepthErrorXYZ("vertex");
+    showDepthWarningXYZ("vertex");
   }
 
 
   public void vertex(float x, float y, float u, float v) {
-    showVariationError("vertex(x, y, u, v)");
+    showVariationWarning("vertex(x, y, u, v)");
   }
 
 
   public void vertex(float x, float y, float z, float u, float v) {
-    showDepthErrorXYZ("vertex");
+    showDepthWarningXYZ("vertex");
   }
 
 
@@ -338,7 +338,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
-    showDepthErrorXYZ("bezierVertex");
+    showDepthWarningXYZ("bezierVertex");
   }
 
 
@@ -447,7 +447,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   
   
   public void curveVertex(float x, float y, float z) {
-    showDepthErrorXYZ("curveVertex");
+    showDepthWarningXYZ("curveVertex");
   }
 
 
@@ -1166,7 +1166,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void beginRaw(PGraphics recorderRaw) {
-    showMethodError("beginRaw");
+    showMethodWarning("beginRaw");
   }
 
 
@@ -1210,7 +1210,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
     if ((x != 0) || (y != 0) || (c != width) || (d != height)) {
       // Show a warning message, but continue anyway.
-      showVariationError("updatePixels(x, y, w, h)");
+      showVariationWarning("updatePixels(x, y, w, h)");
     }
     updatePixels();
   }
@@ -1315,12 +1315,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void mask(int alpha[]) {
-    showMethodError("mask");
+    showMethodWarning("mask");
   }
 
 
   public void mask(PImage alpha) {
-    showMethodError("mask");
+    showMethodWarning("mask");
   }
 
 

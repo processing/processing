@@ -160,12 +160,12 @@ public class PGraphics2D extends PGraphics {
 
 
   public void vertex(float x, float y, float z) {
-    showDepthErrorXYZ("vertex");
+    showDepthWarningXYZ("vertex");
   }
 
 
   public void vertex(float x, float y, float z, float u, float v) {
-    showDepthErrorXYZ("vertex");
+    showDepthWarningXYZ("vertex");
   }
 
 
@@ -968,11 +968,11 @@ public class PGraphics2D extends PGraphics {
 
 
   public void box(float size) {
-    showDepthError("box");
+    showDepthWarning("box");
   }
 
   public void box(float w, float h, float d) {
-    showDepthError("box");
+    showDepthWarning("box");
   }
 
   
@@ -983,15 +983,15 @@ public class PGraphics2D extends PGraphics {
 
 
   public void sphereDetail(int res) {
-    showDepthError("sphereDetail");
+    showDepthWarning("sphereDetail");
   }
 
   public void sphereDetail(int ures, int vres) {
-    showDepthError("sphereDetail");
+    showDepthWarning("sphereDetail");
   }
 
   public void sphere(float r) {
-    showDepthError("sphere");
+    showDepthWarning("sphere");
   }
 
   
@@ -1005,7 +1005,7 @@ public class PGraphics2D extends PGraphics {
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    showDepthErrorXYZ("bezier");
+    showDepthWarningXYZ("bezier");
   }
 
 
@@ -1013,7 +1013,7 @@ public class PGraphics2D extends PGraphics {
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    showDepthErrorXYZ("curve");
+    showDepthWarningXYZ("curve");
   }
 
 
@@ -1595,7 +1595,7 @@ public class PGraphics2D extends PGraphics {
 
 
     public void translate(float tx, float ty, float tz) {
-      showDepthErrorXYZ("translate");
+      showDepthWarningXYZ("translate");
     }
 
 
@@ -1608,21 +1608,21 @@ public class PGraphics2D extends PGraphics {
 
 
     public void rotateX(float angle) {
-      showDepthError("rotateX");
+      showDepthWarning("rotateX");
     }
 
     public void rotateY(float angle) {
-      showDepthError("rotateY");
+      showDepthWarning("rotateY");
     }
 
 
     public void rotateZ(float angle) {
-      showDepthError("rotateZ");
+      showDepthWarning("rotateZ");
     }
 
 
     public void rotate(float angle, float vx, float vy, float vz) {
-      showVariationError("rotate(angle, x, y, z)");
+      showVariationWarning("rotate(angle, x, y, z)");
     }
 
 
@@ -1641,7 +1641,7 @@ public class PGraphics2D extends PGraphics {
 
 
     public void scale(float x, float y, float z) {
-      showDepthErrorXYZ("scale");
+      showDepthWarningXYZ("scale");
     }
 
 
@@ -1705,7 +1705,7 @@ public class PGraphics2D extends PGraphics {
                             float n10, float n11, float n12, float n13,
                             float n20, float n21, float n22, float n23,
                             float n30, float n31, float n32, float n33) {
-      showDepthErrorXYZ("applyMatrix");
+      showDepthWarningXYZ("applyMatrix");
     }
 
 
@@ -1772,6 +1772,56 @@ public class PGraphics2D extends PGraphics {
 
 
 
+    /*
+    public void ambient(int rgb) {
+      showDepthError("ambient");
+    }
+
+    public void ambient(float gray) {
+      showDepthError("ambient");
+    }
+
+    public void ambient(float x, float y, float z) {
+      // This doesn't take 
+      if ((x != PMaterial.DEFAULT_AMBIENT) || 
+          (y != PMaterial.DEFAULT_AMBIENT) ||
+          (z != PMaterial.DEFAULT_AMBIENT)) {
+        showDepthError("ambient");
+      }
+    }
+
+    public void specular(int rgb) {
+      showDepthError("specular");
+    }
+
+    public void specular(float gray) {
+      showDepthError("specular");
+    }
+
+    public void specular(float x, float y, float z) {
+      showDepthError("specular");
+    }
+
+    public void shininess(float shine) {
+      showDepthError("shininess");
+    }
+
+
+    public void emissive(int rgb) {
+      showDepthError("emissive");
+    }
+
+    public void emissive(float gray) {
+      showDepthError("emissive");
+    }
+
+    public void emissive(float x, float y, float z ) {
+      showDepthError("emissive");
+    }
+    */
+
+    
+    
     //////////////////////////////////////////////////////////////
 
     // INTERNAL SCHIZZLE
