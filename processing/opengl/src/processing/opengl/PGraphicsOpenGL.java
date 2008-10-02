@@ -24,6 +24,7 @@
 package processing.opengl;
 
 import processing.core.*;
+
 import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
@@ -80,7 +81,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
   protected TessCallback tessCallback;
 
   /// Buffer to hold light values before they're sent to OpenGL
-  protected FloatBuffer lightBuffer;
+  //protected FloatBuffer lightBuffer;
+  protected float[] lightArray = new float[] { 1, 1, 1 };
 
   /// Used to hold color values to be sent to OpenGL
   protected FloatBuffer colorBuffer;
@@ -120,9 +122,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
     glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
     glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
 
-    lightBuffer = BufferUtil.newFloatBuffer(4);
-    lightBuffer.put(3, 1.0f);
-    lightBuffer.rewind();
+//    lightBuffer = BufferUtil.newFloatBuffer(4);
+//    lightBuffer.put(3, 1.0f);
+//    lightBuffer.rewind();
   }
 
 
@@ -427,15 +429,17 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  // For now we do our own lighting (so sum the specular
-  // and diffuse light colors...)
-  protected void handle_lighting() {
-    super.handle_lighting();
-    for (int i = vertex_start; i < vertex_end; i++) {
-      float v[] = vertices[i];
-      v[R] = clamp(v[R] + v[SPR]);
-      v[G] = clamp(v[G] + v[SPG]);
-      v[B] = clamp(v[B] + v[SPB]);
+  protected void endShapeLighting(boolean lights) {
+    super.endShapeLighting(lights);
+    
+    // For now do our own lighting--sum the specular and diffuse light colors
+    if (lights) {
+      for (int i = shapeFirst; i < shapeLast; i++) {
+        float v[] = vertices[i];
+        v[R] = clamp(v[R] + v[SPR]);
+        v[G] = clamp(v[G] + v[SPG]);
+        v[B] = clamp(v[B] + v[SPB]);
+      }
     }
   }
 
@@ -1011,18 +1015,34 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   public float textAscent() {
-    if ((textMode != SHAPE) || (textFontNative == null)) {
+    Font font = textFont.getFont();    
+    if ((textMode != SHAPE) || (font == null)) {
       return super.textAscent();
     }
-    return textFontNativeMetrics.getAscent();
+    FontMetrics metrics = parent.getFontMetrics(font);
+    return metrics.getAscent();
   }
 
 
   public float textDescent() {
-    if ((textMode != SHAPE) || (textFontNative == null)) {
+    Font font = textFont.getFont();    
+    if ((textMode != SHAPE) || (font == null)) {
       return super.textDescent();
     }
-    return textFontNativeMetrics.getDescent();
+    FontMetrics metrics = parent.getFontMetrics(font);
+    return metrics.getDescent();
+  }
+
+
+  public void textFont(PFont which) {
+    super.textFont(which);
+
+    if (textMode == SHAPE) {
+      if (textFont.findFont() == null) {
+        showError("Cannot use " + which.name + " as with textMode(SHAPE) " +
+                  "because its native equivalent cannot be found.");
+      }
+    }
   }
 
 
@@ -1041,6 +1061,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     // where textMode(SHAPE) will not be used
     super.textSize(size);
 
+    /*
     // derive the font just in case the user is gonna call
     // textMode(SHAPE) afterwards
     if (textFontNative != null) {
@@ -1051,11 +1072,13 @@ public class PGraphicsOpenGL extends PGraphics3D {
       // get the metrics info
       textFontNativeMetrics = graphics.getFontMetrics(textFontNative);
     }
+    */
   }
 
 
   protected float textWidthImpl(char buffer[], int start, int stop) {
-    if ((textMode != SHAPE) || (textFontNative == null)) {
+    Font font = textFont.getFont();
+    if ((textMode != SHAPE) || (font == null)) {
       return super.textWidthImpl(buffer, start, stop);
     }
 
@@ -1069,7 +1092,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     // seems to need to be before the getFRC, but after the canvas.getGraphics
     // (placing this inside textSize(), even though it was called, wasn't working)
     graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-            RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                              RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
     FontRenderContext frc = graphics.getFontRenderContext();
     GlyphVector gv;
@@ -1082,7 +1105,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         gv = textFontNative.createGlyphVector(frc, fellas);
     }
     */
-    gv = textFontNative.createGlyphVector(frc, buffer);
+    gv = font.createGlyphVector(frc, buffer);
     float sum = 0;
     for (int i = start; i < stop; i++) {
         GlyphMetrics gm = gv.getGlyphMetrics(i);
@@ -1097,10 +1120,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
    */
   protected void textCharImpl(char ch, float x, float y) {
     if (textMode == SHAPE) {
-      if (textFontNative == null) {
-        throw new RuntimeException("textMode(SHAPE) is disabled " +
-                                   "because the font \"" + textFont.name +
-                                   "\" is not available.");
+      if (textFont.getFont() == null) {
+        PGraphics.showError("textMode(SHAPE) is disabled because the font " +
+                            "\"" + textFont.name + "\" is not available.");
       } else {
         textCharImplShape(ch, x, y);
       }
@@ -1147,7 +1169,8 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     Graphics2D graphics = (Graphics2D) parent.getGraphics();
     FontRenderContext frc = graphics.getFontRenderContext();
-    GlyphVector gv = textFontNative.createGlyphVector(frc, textArray);
+    Font font = textFont.getFont();
+    GlyphVector gv = font.createGlyphVector(frc, textArray);
     Shape shp = gv.getOutline();
     //PathIterator iter = shp.getPathIterator(null, 0.05);
     PathIterator iter = shp.getPathIterator(null);
@@ -1632,10 +1655,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   protected void glLightAmbient(int num) {
-    lightBuffer.put(lightDiffuse[num]);
-    lightBuffer.rewind();
+//    lightBuffer.put(lightDiffuse[num]);
+//    lightBuffer.rewind();
+//    gl.glLightfv(GL.GL_LIGHT0 + num,
+//                 GL.GL_AMBIENT, lightBuffer);
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_AMBIENT, lightBuffer);
+                 GL.GL_AMBIENT, lightDiffuse[num], 0);
   }
 
 
@@ -1650,16 +1675,18 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   protected void glLightDiffuse(int num) {
-    lightBuffer.put(lightDiffuse[num]);
-    lightBuffer.rewind();
+//    lightBuffer.put(lightDiffuse[num]);
+//    lightBuffer.rewind();
+//    gl.glLightfv(GL.GL_LIGHT0 + num,
+//                 GL.GL_DIFFUSE, lightBuffer);
     gl.glLightfv(GL.GL_LIGHT0 + num,
-                 GL.GL_DIFFUSE, lightBuffer);
+                 GL.GL_DIFFUSE, lightDiffuse[num], 0);
   }
 
 
   protected void glLightDirection(int num) {
-    lightBuffer.put(lightNormal[num]);
-    lightBuffer.rewind();
+//    lightBuffer.put(lightNormal[num]);
+//    lightBuffer.rewind();
 
     if (lightType[num] == DIRECTIONAL) {
       // TODO this expects a fourth arg that will be set to 1
@@ -1667,10 +1694,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
       //      and the [3] element set to 1 in the constructor.
       //      however this may be a source of problems since
       //      it seems a bit "hack"
-      gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightBuffer);
+      gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, 
+                   lightNormal[num].array(), 0);
     } else {  // spotlight
       // this one only needs the 3 arg version
-      gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPOT_DIRECTION, lightBuffer);
+      gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPOT_DIRECTION, 
+                   lightNormal[num].array(), 0);
     }
   }
 
@@ -1691,20 +1720,18 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   protected void glLightPosition(int num) {
-    lightBuffer.put(lightPosition[num]);
-    lightBuffer.rewind();
-    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightBuffer);
-                 //new float[] { lightsX[num], lightsY[num], lightsZ[num] });
+//    lightBuffer.put(lightPosition[num]);
+//    lightBuffer.rewind();
+//    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightBuffer);
+    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_POSITION, lightPosition[num].array(), 0);
   }
 
 
   protected void glLightSpecular(int num) {
-    lightBuffer.put(lightSpecular[num]);
-    lightBuffer.rewind();
-    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPECULAR, lightBuffer);
-                 //GL.GL_SPECULAR, new float[] { lightsSpecularR[num],
-                 //                            lightsSpecularG[num],
-                 //                            lightsSpecularB[num] });
+//    lightBuffer.put(lightSpecular[num]);
+//    lightBuffer.rewind();
+//    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPECULAR, lightBuffer);
+    gl.glLightfv(GL.GL_LIGHT0 + num, GL.GL_SPECULAR, lightSpecular[num], 0);
   }
 
 

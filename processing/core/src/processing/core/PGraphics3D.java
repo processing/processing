@@ -3126,12 +3126,12 @@ public class PGraphics3D extends PGraphics {
 
 
   public void strokeJoin(int join) {
-    methodError("strokeJoin");
+    showMethodError("strokeJoin");
   }
 
 
   public void strokeCap(int cap) {
-    methodError("strokeCap");
+    showMethodError("strokeCap");
   }
 
 
@@ -3683,7 +3683,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void smooth() {
-    methodError("smooth");
+    showMethodError("smooth");
   }
 
 
