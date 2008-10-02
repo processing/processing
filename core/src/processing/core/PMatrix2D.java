@@ -27,7 +27,7 @@ package processing.core;
 /**
  * 3x2 affine matrix implementation.
  */
-public final class PMatrix2D /*implements PMatrix*/ {
+public class PMatrix2D implements PMatrix {
 
   public float m00, m01, m02;
   public float m10, m11, m12;
@@ -81,15 +81,18 @@ public final class PMatrix2D /*implements PMatrix*/ {
   }
   
 
-  public void set(PMatrix2D src) {
-    set(src.m00, src.m01, src.m02,
-        src.m10, src.m11, src.m12);
+  public void set(PMatrix matrix) {
+    if (matrix instanceof PMatrix2D) {
+      PMatrix2D src = (PMatrix2D) matrix;
+      set(src.m00, src.m01, src.m02,
+          src.m10, src.m11, src.m12);
+    } else {
+      throw new IllegalArgumentException("PMatrix2D.set() only accepts PMatrix2D objects.");
+    }
   }
   
   
   public void set(PMatrix3D src) {
-    //PGraphics.showError("Cannot use set(PMatrix3D) on a PMatrix2D.");
-    throw new IllegalArgumentException("Cannot use set(PMatrix3D) on a PMatrix2D.");
   }
 
 
