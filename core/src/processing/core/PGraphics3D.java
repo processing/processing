@@ -3126,12 +3126,12 @@ public class PGraphics3D extends PGraphics {
 
 
   public void strokeJoin(int join) {
-    showMethodError("strokeJoin");
+    showMethodWarning("strokeJoin");
   }
 
 
   public void strokeCap(int cap) {
-    showMethodError("strokeCap");
+    showMethodWarning("strokeCap");
   }
 
 
@@ -3144,130 +3144,6 @@ public class PGraphics3D extends PGraphics {
     ambientFromCalc();
   }
 
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void ambient(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      ambient((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      ambientFromCalc();
-    }
-  }
-
-
-  public void ambient(float gray) {
-    colorCalc(gray);
-    ambientFromCalc();
-  }
-
-
-  public void ambient(float x, float y, float z) {
-    colorCalc(x, y, z);
-    ambientFromCalc();
-  }
-
-
-  protected void ambientFromCalc() {
-    ambientR = calcR;
-    ambientG = calcG;
-    ambientB = calcB;
-//    material.ambient(calcR, calcG, calcB);
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void specular(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      specular((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      specularFromCalc();
-    }
-  }
-
-
-  public void specular(float gray) {
-    colorCalc(gray);
-    specularFromCalc();
-  }
-
-
-//  public void specular(float gray, float alpha) {
-//    colorCalc(gray, alpha);
-//    specularFromCalc();
-//  }
-
-
-  public void specular(float x, float y, float z) {
-    colorCalc(x, y, z);
-    specularFromCalc();
-  }
-
-
-//  public void specular(float x, float y, float z, float a) {
-//    colorCalc(x, y, z, a);
-//    specularFromCalc();
-//  }
-
-
-  protected void specularFromCalc() {
-    specularR = calcR;
-    specularG = calcG;
-    specularB = calcB;
-    //specularA = calcA;
-    //specularRi = calcRi;
-    //specularGi = calcGi;
-    //specularBi = calcBi;
-    //specularAi = calcAi;
-  }
-
-
-  public void shininess(float shine) {
-    shininess = shine;
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  public void emissive(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      emissive((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      emissiveFromCalc();
-    }
-  }
-
-
-  public void emissive(float gray) {
-    colorCalc(gray);
-    emissiveFromCalc();
-  }
-
-
-  public void emissive(float x, float y, float z) {
-    colorCalc(x, y, z);
-    emissiveFromCalc();
-  }
-
-
-  protected void emissiveFromCalc() {
-    emissiveR = calcR;
-    emissiveG = calcG;
-    emissiveB = calcB;
-    //emissiveRi = calcRi;
-    //emissiveGi = calcGi;
-    //emissiveBi = calcBi;
-  }
 
 
   //////////////////////////////////////////////////////////////
@@ -3624,17 +3500,8 @@ public class PGraphics3D extends PGraphics {
   // BACKGROUND
 
 
-  /**
-   * Takes an RGB or RGBA image and sets it as the background.
-   * <P>
-   * Note that even if the image is set as RGB, the high 8 bits of
-   * each pixel must be set (0xFF000000), because the image data will
-   * be copied directly to the screen.
-   * <P>
-   * Also clears out the zbuffer and stencil buffer if they exist.
-   */
-  public void background(PImage image) {
-    super.background(image);
+  protected void backgroundImpl(PImage image) {
+    System.arraycopy(image.pixels, 0, pixels, 0, pixels.length);
     Arrays.fill(zbuffer, Float.MAX_VALUE);
   }
 
@@ -3642,37 +3509,12 @@ public class PGraphics3D extends PGraphics {
   /**
    * Clear pixel buffer. With P3D and OPENGL, this also clears the zbuffer.
    */
-  protected void clear3() {
+  protected void backgroundImpl() {
     Arrays.fill(pixels, backgroundColor);
     Arrays.fill(zbuffer, Float.MAX_VALUE);
-    clearRaw();
-  }
-   
-
-  /**
-   * Handled as separate function for OpenGL subclass that overrides clear()
-   * but still needs this to work properly.
-   */
-  protected void clearRaw() {
-    if (raw != null) {
-      raw.colorMode(RGB, 1);
-      raw.noStroke();
-      raw.fill(backgroundR, backgroundG, backgroundB);
-      raw.beginShape(TRIANGLES);
-
-      raw.vertex(0, 0);
-      raw.vertex(width, 0);
-      raw.vertex(0, height);
-
-      raw.vertex(width, 0);
-      raw.vertex(width, height);
-      raw.vertex(0, height);
-
-      raw.endShape();
-    }
   }
 
-
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -3683,7 +3525,7 @@ public class PGraphics3D extends PGraphics {
 
 
   public void smooth() {
-    showMethodError("smooth");
+    showMethodWarning("smooth");
   }
 
 
