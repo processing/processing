@@ -181,12 +181,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void textureMode(int mode) {
-    methodError("textureMode");
+    showMethodError("textureMode");
   }
 
 
   public void texture(PImage image) {
-    methodError("texture");
+    showMethodError("texture");
   }
 
 
@@ -313,17 +313,17 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void vertex(float x, float y, float z) {
-    depthErrorXYZ("vertex");
+    showDepthErrorXYZ("vertex");
   }
 
 
   public void vertex(float x, float y, float u, float v) {
-    variationError("vertex(x, y, u, v)");
+    showVariationError("vertex(x, y, u, v)");
   }
 
 
   public void vertex(float x, float y, float z, float u, float v) {
-    depthErrorXYZ("vertex");
+    showDepthErrorXYZ("vertex");
   }
 
 
@@ -338,7 +338,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
-    depthErrorXYZ("bezierVertex");
+    showDepthErrorXYZ("bezierVertex");
   }
 
 
@@ -447,7 +447,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   
   
   public void curveVertex(float x, float y, float z) {
-    depthErrorXYZ("curveVertex");
+    showDepthErrorXYZ("curveVertex");
   }
 
 
@@ -805,18 +805,22 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public float textAscent() {
-    if (textFontNative == null) {
+    Font font = textFont.getFont();    
+    if (font == null) {
       return super.textAscent();
     }
-    return textFontNativeMetrics.getAscent();
+    FontMetrics metrics = parent.getFontMetrics(font);
+    return metrics.getAscent();
   }
 
 
   public float textDescent() {
-    if (textFontNative == null) {
+    Font font = textFont.getFont();    
+    if (font == null) {
       return super.textDescent();
     }
-    return textFontNativeMetrics.getDescent();
+    FontMetrics metrics = parent.getFontMetrics(font);
+    return metrics.getDescent();
   }
 
 
@@ -828,10 +832,16 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    */
   public void textSize(float size) {
     // if a native version available, derive this font
-    if (textFontNative != null) {
-      textFontNative = textFontNative.deriveFont(size);
-      g2.setFont(textFontNative);
-      textFontNativeMetrics = g2.getFontMetrics(textFontNative);
+//    if (textFontNative != null) {
+//      textFontNative = textFontNative.deriveFont(size);
+//      g2.setFont(textFontNative);
+//      textFontNativeMetrics = g2.getFontMetrics(textFontNative);
+//    }
+    Font font = textFont.getFont();
+    if (font != null) {
+      Font dfont = font.deriveFont(size);
+      g2.setFont(dfont);
+      textFont.setFont(dfont);
     }
 
     // take care of setting the textSize and textLeading vars
@@ -842,20 +852,22 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   protected float textWidthImpl(char buffer[], int start, int stop) {
-    if (textFontNative == null) {
-      //System.out.println("native is null");
+    Font font = textFont.getFont();
+    if (font == null) {
       return super.textWidthImpl(buffer, start, stop);
     }
     // maybe should use one of the newer/fancier functions for this?
     int length = stop - start;
-    return textFontNativeMetrics.charsWidth(buffer, start, length);
+    FontMetrics metrics = g2.getFontMetrics(font);
+    return metrics.charsWidth(buffer, start, length);
   }
 
 
-  protected void textLinePlacedImpl(char buffer[], int start, int stop,
+  protected void textLineImpl(char buffer[], int start, int stop,
                                     float x, float y) {
-    if (textFontNative == null) {
-      super.textLinePlacedImpl(buffer, start, stop, x, y);
+    Font font = textFont.getFont();
+    if (font == null) {
+      super.textLineImpl(buffer, start, stop, x, y);
       return;
     }
 
@@ -1154,7 +1166,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void beginRaw(PGraphics recorderRaw) {
-    methodError("beginRaw");
+    showMethodError("beginRaw");
   }
 
 
@@ -1198,7 +1210,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
     if ((x != 0) || (y != 0) || (c != width) || (d != height)) {
       // Show a warning message, but continue anyway.
-      variationError("updatePixels(x, y, w, h)");
+      showVariationError("updatePixels(x, y, w, h)");
     }
     updatePixels();
   }
@@ -1303,12 +1315,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   public void mask(int alpha[]) {
-    methodError("mask");
+    showMethodError("mask");
   }
 
 
   public void mask(PImage alpha) {
-    methodError("mask");
+    showMethodError("mask");
   }
 
 

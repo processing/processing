@@ -17,6 +17,13 @@ no longer any abstract methods in PGraphics itself
 removed support for specular alpha (and its 'SPA' constant)
 clear() -> backgroundImpl()
 CENTER -> DIAMETER for ellipseMode and friends
+textFontNative and textFontNativeMetrics have been removed
+  they require a font rendering context on which to draw
+  and were a weird sort of hack
+  see how the classes implement them now
+hint(ENABLE_NATIVE_FONTS) goes away
+  need to mention in createFont() reference
+  also maybe cover in the loadFont() reference? (maybe problem...)
 
 // 
 
@@ -161,9 +168,11 @@ style(PStyle s)
   public void textFont(PFont which, float size)
   public void textLeading(float leading)
   public void textMode(int mode)
+  protected boolean textModeCheck(int mode)
   public void textSize(float size)
   public float textWidth(char c)
   public float textWidth(String str)
+  protected float textWidthImpl(char buffer[], int start, int stop)
 
   public void text(char c)
   public void text(char c, float x, float y)
@@ -177,6 +186,19 @@ style(PStyle s)
   public void text(int num, float x, float y, float z)
   public void text(float num, float x, float y)
   public void text(float num, float x, float y, float z)
+
+  protected void textLineAlignImpl(char buffer[], int start, int stop,
+                                   float x, float y)
+  protected void textLineImpl(char buffer[], int start, int stop,
+                              float x, float y)
+  protected void textCharImpl(char ch, float x, float y)
+  protected void textCharModelImpl(PImage glyph,
+                                   float x1, float y1, //float z1,
+                                   float x2, float y2, //float z2,
+                                   int u2, int v2)
+  protected void textCharScreenImpl(PImage glyph,
+                                    int xx, int yy,
+                                    int w0, int h0)
 
   public void translate(float tx, float ty)
   public void translate(float tx, float ty, float tz)
@@ -192,7 +214,8 @@ style(PStyle s)
   public void resetMatrix()
 
   public PMatrix getMatrix()
-  public getMatrix(PMatrix target)
+  public getMatrix(PMatrix2D target)
+  public getMatrix(PMatrix3D target)
   public void setMatrix(PMatrix source)
 
   public void applyMatrix(PMatrix source)
