@@ -349,6 +349,11 @@ style(PStyle s)
   protected void backgroundFromCalc()
   protected void backgroundImpl()
 
+  public final int color(int gray)
+  public final int color(int gray, int alpha)
+  public final int color(int rgb, float alpha)
+  public final int color(int x, int y, int z)
+
   public final float alpha(int what)
   public final float red(int what)
   public final float green(int what)
@@ -359,6 +364,12 @@ style(PStyle s)
 
   public int lerpColor(int c1, int c2, float amt)
   static public int lerpColor(int c1, int c2, float amt, int mode)
+
+  public void beginRaw(PGraphics rawGraphics)
+  public void endRaw()
+
+  static public void showWarning(String msg)
+  static public void showException(String msg)
 
   public boolean displayable()
   public boolean dimensional()  // better name for this?
