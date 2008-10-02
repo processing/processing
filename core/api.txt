@@ -39,6 +39,7 @@ style(PStyle s)
   public void setPath(String path)
   public void setSize(int iwidth, int iheight)
   protected void allocate()
+  public void dispose()
 
   public boolean canDraw()
   public void beginDraw()
@@ -203,7 +204,6 @@ style(PStyle s)
   public void pushMatrix()
   public void popMatrix()
 
-  public void resetMatrix()
   public void translate(float tx, float ty)
   public void translate(float tx, float ty, float tz)
   public void rotate(float angle)
@@ -214,6 +214,8 @@ style(PStyle s)
   public void scale(float s)
   public void scale(float sx, float sy)
   public void scale(float x, float y, float z)
+
+  public void resetMatrix()
   public void applyMatrix(PMatrix2D source)
   public void applyMatrix(PMatrix3D source)
   public void applyMatrix(float n00, float n01, float n02,
@@ -223,11 +225,11 @@ style(PStyle s)
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33)
 
-  public void printMatrix()
   public getMatrix(PMatrix2D target)
   public getMatrix(PMatrix3D target)
   public void setMatrix(PMatrix2D source)
   public void setMatrix(PMatrix3D source)
+  public void printMatrix()
 
   public void beginCamera()
   public void endCamera()
@@ -236,6 +238,7 @@ style(PStyle s)
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ)
   public void printCamera()
+
   public void ortho()
   public void ortho(float left, float right,
                     float bottom, float top,
@@ -264,10 +267,20 @@ style(PStyle s)
 
   public void colorMode(int mode)
   public void colorMode(int mode, float max)
-  public void colorMode(int mode,
-                        float maxX, float maxY, float maxZ)
-  public void colorMode(int mode,
-                        float maxX, float maxY, float maxZ, float maxA)
+  public void colorMode(int mode, float mx, float my, float mz);
+  public void colorMode(int mode, float mx, float my, float mz, float ma);
+
+  protected void colorCalc(int rgb)
+  protected void colorCalc(int rgb, float alpha)
+  protected void colorCalc(float gray)
+  protected void colorCalc(float gray, float alpha)
+  protected void colorCalc(float x, float y, float z)
+  protected void colorCalc(float x, float y, float z, float a)
+  protected void colorCalcARGB(int argb, float alpha)
+
+  public void strokeCap(int cap)
+  public void strokeJoin(int join)
+  public void strokeWeight(float weight)
 
   public void noStroke()
   public void stroke(int rgb)
@@ -276,10 +289,7 @@ style(PStyle s)
   public void stroke(float gray, float alpha)
   public void stroke(float x, float y, float z)
   public void stroke(float x, float y, float z, float a)
-
-  public void strokeCap(int cap)
-  public void strokeJoin(int join)
-  public void strokeWeight(float weight)
+  protected void strokeFromCalc()
 
   public void noTint()
   public void tint(int rgb)
@@ -288,6 +298,7 @@ style(PStyle s)
   public void tint(float gray, float alpha)
   public void tint(float x, float y, float z)
   public void tint(float x, float y, float z, float a)
+  protected void tintFromCalc()
 
   public void noFill()
   public void fill(int rgb)
@@ -296,19 +307,21 @@ style(PStyle s)
   public void fill(float gray, float alpha)
   public void fill(float x, float y, float z)
   public void fill(float x, float y, float z, float a)
+  protected void fillFromCalc()
 
   public void ambient(int rgb)
   public void ambient(float gray)
   public void ambient(float x, float y, float z)
-
+  protected void ambientFromCalc()
   public void specular(int rgb)
   public void specular(float gray)
   public void specular(float x, float y, float z)
+  protected void specularFromCalc()
   public void shininess(float shine)
-
   public void emissive(int rgb)
   public void emissive(float gray)
   public void emissive(float x, float y, float z )
+  protected void emissiveFromCalc()
 
   public void lights()
   public void noLights()
@@ -333,6 +346,7 @@ style(PStyle s)
   public void background(float x, float y, float z)
   public void background(float x, float y, float z, float a)
   public void background(PImage image)
+  protected void backgroundFromCalc()
   protected void backgroundImpl()
 
   public final float alpha(int what)
