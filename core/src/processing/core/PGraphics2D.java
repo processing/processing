@@ -160,12 +160,12 @@ public class PGraphics2D extends PGraphics {
 
 
   public void vertex(float x, float y, float z) {
-    depthErrorXYZ("vertex");
+    showDepthErrorXYZ("vertex");
   }
 
 
   public void vertex(float x, float y, float z, float u, float v) {
-    depthErrorXYZ("vertex");
+    showDepthErrorXYZ("vertex");
   }
 
 
@@ -968,11 +968,11 @@ public class PGraphics2D extends PGraphics {
 
 
   public void box(float size) {
-    depthError("box");
+    showDepthError("box");
   }
 
   public void box(float w, float h, float d) {
-    depthError("box");
+    showDepthError("box");
   }
 
   
@@ -983,15 +983,15 @@ public class PGraphics2D extends PGraphics {
 
 
   public void sphereDetail(int res) {
-    depthError("sphereDetail");
+    showDepthError("sphereDetail");
   }
 
   public void sphereDetail(int ures, int vres) {
-    depthError("sphereDetail");
+    showDepthError("sphereDetail");
   }
 
   public void sphere(float r) {
-    depthError("sphere");
+    showDepthError("sphere");
   }
 
   
@@ -1005,7 +1005,7 @@ public class PGraphics2D extends PGraphics {
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
                      float x4, float y4, float z4) {
-    depthErrorXYZ("bezier");
+    showDepthErrorXYZ("bezier");
   }
 
 
@@ -1013,7 +1013,7 @@ public class PGraphics2D extends PGraphics {
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4) {
-    depthErrorXYZ("curve");
+    showDepthErrorXYZ("curve");
   }
 
 
@@ -1595,7 +1595,7 @@ public class PGraphics2D extends PGraphics {
 
 
     public void translate(float tx, float ty, float tz) {
-      depthErrorXYZ("translate");
+      showDepthErrorXYZ("translate");
     }
 
 
@@ -1608,21 +1608,21 @@ public class PGraphics2D extends PGraphics {
 
 
     public void rotateX(float angle) {
-      depthError("rotateX");
+      showDepthError("rotateX");
     }
 
     public void rotateY(float angle) {
-      depthError("rotateY");
+      showDepthError("rotateY");
     }
 
 
     public void rotateZ(float angle) {
-      depthError("rotateZ");
+      showDepthError("rotateZ");
     }
 
 
     public void rotate(float angle, float vx, float vy, float vz) {
-      variationError("rotate(angle, x, y, z)");
+      showVariationError("rotate(angle, x, y, z)");
     }
 
 
@@ -1641,7 +1641,7 @@ public class PGraphics2D extends PGraphics {
 
 
     public void scale(float x, float y, float z) {
-      depthErrorXYZ("scale");
+      showDepthErrorXYZ("scale");
     }
 
 
@@ -1705,7 +1705,7 @@ public class PGraphics2D extends PGraphics {
                             float n10, float n11, float n12, float n13,
                             float n20, float n21, float n22, float n23,
                             float n30, float n31, float n32, float n33) {
-      depthErrorXYZ("applyMatrix");
+      showDepthErrorXYZ("applyMatrix");
     }
 
 
