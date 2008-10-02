@@ -3698,6 +3698,11 @@ public class PGraphics3D extends PGraphics {
   // MATH (internal use only)
 
 
+  private final float sqrt(float a) {
+    return (float) Math.sqrt(a);
+  }
+
+
   private final float mag(float a, float b, float c) {
     return (float) Math.sqrt(a*a + b*b + c*c);
   }

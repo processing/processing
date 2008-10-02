@@ -40,9 +40,7 @@ public interface PMatrix {
   public float[] get(float[] target);
   
   
-  public void set(PMatrix2D src);
-
-  public void set(PMatrix3D src);
+  public void set(PMatrix src);
 
   public void set(float[] source);
 

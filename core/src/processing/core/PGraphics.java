@@ -3198,11 +3198,38 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX STACK
+
+
+  /**
+   * Push a copy of the current transformation matrix onto the stack.
+   */
+  public void pushMatrix() {
+  }
+
+
+  /**
+   * Replace the current transformation matrix with the top of the stack.
+   */
+  public void popMatrix() {
+  }
+
 
 
   //////////////////////////////////////////////////////////////
 
   // MATRIX TRANSFORMATIONS
+
+
+  /**
+   * Set the current transformation matrix to identity.
+   */
+  public void resetMatrix() {
+  }
 
 
   /**
@@ -3289,59 +3316,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // TRANSFORMATION MATRIX
-
-
-  /**
-   * Push a copy of the current transformation matrix onto the stack.
-   */
-  public void pushMatrix() {
-  }
-
-
-  /**
-   * Replace the current transformation matrix with the top of the stack.
-   */
-  public void popMatrix() {
-  }
-
-
-  /**
-   * Set the current transformation matrix to identity.
-   */
-  public void resetMatrix() {
-  }
-
-
-//  public PMatrix getMatrix() {
-//    return null;
-//  }
-
-  
-//  public PMatrix2D getMatrix2D() {
-//    return null;
-//  }
-
-
-  public void getMatrix(PMatrix2D target) {
-  }
-
-
-  public void getMatrix(PMatrix3D target) {
-  }
-  
-  
-  public void setMatrix(PMatrix2D source) {  
-  }
-  
-  
-  public void setMatrix(PMatrix3D source) {  
-  }
-  
-  
   public void applyMatrix(PMatrix2D source) {
     applyMatrix(source.m00, source.m01, source.m02, 
                 source.m10, source.m11, source.m12);
@@ -3373,26 +3347,49 @@ public class PGraphics extends PImage implements PConstants {
                           float n30, float n31, float n32, float n33) {
   }
 
+  
+  
+  //////////////////////////////////////////////////////////////
 
-  /**
-   * Loads the current matrix into the local 'matrix' object so that the values
-   * can be used for other purposes. 
-   * <P/>
-   * Note that there is no "updateMatrix" because that gets too
-   * complicated (unnecessary) when considering the 3D matrices.
-   */
-//  public void loadMatrix() {
-//  }
+  // MATRIX GET/SET/PRINT
 
-
+  
   /**
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
   }
 
+  
+  /**
+   * Copy the current transformation matrix into the specified target.
+   */
+  public void getMatrix(PMatrix2D target) {
+  }
 
 
+  /**
+   * Copy the current transformation matrix into the specified target.
+   */
+  public void getMatrix(PMatrix3D target) {
+  }
+  
+  
+  /**
+   * Set the current transformation to the contents of the specified source.
+   */
+  public void setMatrix(PMatrix2D source) {  
+  }
+  
+  
+  /**
+   * Set the current transformation to the contents of the specified source.
+   */
+  public void setMatrix(PMatrix3D source) {  
+  }
+
+
+  
   //////////////////////////////////////////////////////////////
 
   // CAMERA (none are supported in 2D)
@@ -4150,10 +4147,124 @@ public class PGraphics extends PImage implements PConstants {
     fillAlpha = calcAlpha;
   }
 
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // MATERIAL PROPERTIES
+
+  
+  public void ambient(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      ambient((float) rgb);
+
+    } else {
+      colorCalcARGB(rgb, colorModeA);
+      ambientFromCalc();
+    }
+  }
+
+
+  public void ambient(float gray) {
+    colorCalc(gray);
+    ambientFromCalc();
+  }
+
+
+  public void ambient(float x, float y, float z) {
+    colorCalc(x, y, z);
+    ambientFromCalc();
+  }
+
+
+  protected void ambientFromCalc() {
+    ambientR = calcR;
+    ambientG = calcG;
+    ambientB = calcB;
+//    material.ambient(calcR, calcG, calcB);
+  }
+
 
   //////////////////////////////////////////////////////////////
 
 
+  public void specular(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      specular((float) rgb);
+
+    } else {
+      colorCalcARGB(rgb, colorModeA);
+      specularFromCalc();
+    }
+  }
+
+
+  public void specular(float gray) {
+    colorCalc(gray);
+    specularFromCalc();
+  }
+
+
+  public void specular(float x, float y, float z) {
+    colorCalc(x, y, z);
+    specularFromCalc();
+  }
+
+
+  protected void specularFromCalc() {
+    specularR = calcR;
+    specularG = calcG;
+    specularB = calcB;
+    //specularA = calcA;
+    //specularRi = calcRi;
+    //specularGi = calcGi;
+    //specularBi = calcBi;
+    //specularAi = calcAi;
+  }
+
+
+  public void shininess(float shine) {
+    shininess = shine;
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  public void emissive(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      emissive((float) rgb);
+
+    } else {
+      colorCalcARGB(rgb, colorModeA);
+      emissiveFromCalc();
+    }
+  }
+
+
+  public void emissive(float gray) {
+    colorCalc(gray);
+    emissiveFromCalc();
+  }
+
+
+  public void emissive(float x, float y, float z) {
+    colorCalc(x, y, z);
+    emissiveFromCalc();
+  }
+
+
+  protected void emissiveFromCalc() {
+    emissiveR = calcR;
+    emissiveG = calcG;
+    emissiveB = calcB;
+    //emissiveRi = calcRi;
+    //emissiveGi = calcGi;
+    //emissiveBi = calcBi;
+  }
+
+  
+  /*
   public void ambient(int rgb) {
     showDepthError("ambient");
   }
@@ -4199,7 +4310,9 @@ public class PGraphics extends PImage implements PConstants {
   public void emissive(float x, float y, float z ) {
     showDepthError("emissive");
   }
+  */
 
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -4468,7 +4581,6 @@ public class PGraphics extends PImage implements PConstants {
   
 
 
-
   //////////////////////////////////////////////////////////////
 
   // COLOR MANIPULATION
@@ -4702,17 +4814,6 @@ public class PGraphics extends PImage implements PConstants {
     }
     return 0;
   }
-
-
-  //////////////////////////////////////////////////////////////
-
-  // MATH
-
-
-  static final float sqrt(float a) {
-    return (float)Math.sqrt(a);
-  }
-
 
 
   //////////////////////////////////////////////////////////////
