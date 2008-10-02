@@ -200,6 +200,10 @@ style(PStyle s)
                                     int xx, int yy,
                                     int w0, int h0)
 
+  public void pushMatrix()
+  public void popMatrix()
+
+  public void resetMatrix()
   public void translate(float tx, float ty)
   public void translate(float tx, float ty, float tz)
   public void rotate(float angle)
@@ -210,15 +214,8 @@ style(PStyle s)
   public void scale(float s)
   public void scale(float sx, float sy)
   public void scale(float x, float y, float z)
-
-  public void resetMatrix()
-
-  public PMatrix getMatrix()
-  public getMatrix(PMatrix2D target)
-  public getMatrix(PMatrix3D target)
-  public void setMatrix(PMatrix source)
-
-  public void applyMatrix(PMatrix source)
+  public void applyMatrix(PMatrix2D source)
+  public void applyMatrix(PMatrix3D source)
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12)
   public void applyMatrix(float n00, float n01, float n02, float n03,
@@ -226,11 +223,11 @@ style(PStyle s)
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33)
 
-  public void pushMatrix()
-  public void popMatrix()
-
-  public void loadMatrix()
   public void printMatrix()
+  public getMatrix(PMatrix2D target)
+  public getMatrix(PMatrix3D target)
+  public void setMatrix(PMatrix2D source)
+  public void setMatrix(PMatrix3D source)
 
   public void beginCamera()
   public void endCamera()
