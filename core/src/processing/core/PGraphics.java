@@ -470,10 +470,10 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
   
   /** The current font if a Java version of it is installed */
-  protected Font textFontNative;
+  //protected Font textFontNative;
 
   /** Metrics for the current native Java font */
-  protected FontMetrics textFontNativeMetrics;
+  //protected FontMetrics textFontNativeMetrics;
 
   /** Last text position, because text often mixed on lines together */
   protected float textX, textY, textZ;
@@ -489,6 +489,10 @@ public class PGraphics extends PImage implements PConstants {
   protected int[] textBreakStart;
   protected int[] textBreakStop;
 
+  // ........................................................
+
+  static final String ERROR_TEXTFONT_NULL_PFONT = 
+    "A null PFont was passed to textFont()";
 
   static final String ERROR_PUSHMATRIX_OVERFLOW =
     "Too many calls to pushMatrix().";
@@ -1091,8 +1095,8 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void vertexTexture(float u, float v) {
     if (textureImage == null) {
-      throw new RuntimeException("need to set an image with texture() " +
-                                 "before using u and v coordinates");
+      throw new RuntimeException("You must first call texture() before " +
+                                 "using u and v coordinates with vertex()");
     }
     if (textureMode == IMAGE) {
       u /= (float) textureImage.width;
@@ -2441,11 +2445,9 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textAscent() {
     if (textFont == null) {
-      throw new RuntimeException("use textFont() before textAscent()");
+      throwTextFontError("textAscent");
     }
-
-    return textFont.ascent() *
-      ((textMode == SCREEN) ? textFont.size : textSize);
+    return textFont.ascent() * ((textMode == SCREEN) ? textFont.size : textSize);
   }
 
 
@@ -2455,13 +2457,10 @@ public class PGraphics extends PImage implements PConstants {
    * because it requires calculation.
    */
   public float textDescent() {
-    if (textFont != null) {
-      return textFont.descent() *
-        ((textMode == SCREEN) ? textFont.size : textSize);
-
-    } else {
-      throw new RuntimeException("use textFont() before textDescent()");
-    }
+    if (textFont == null) {
+      throwTextFontError("textDescent");
+    }      
+    return textFont.descent() * ((textMode == SCREEN) ? textFont.size : textSize);
   }
 
 
@@ -2474,10 +2473,11 @@ public class PGraphics extends PImage implements PConstants {
     if (which != null) {
       textFont = which;
       if (hints[ENABLE_NATIVE_FONTS]) {
-        if (which.font == null) {
-          which.findFont();
-        }
+        //if (which.font == null) {
+        which.findFont();
+        //}
       }
+      /*
       textFontNative = which.font;
 
       //textFontNativeMetrics = null;
@@ -2499,10 +2499,11 @@ public class PGraphics extends PImage implements PConstants {
 
         // float w = font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
       }
+      */
       textSize(which.size);
 
     } else {
-      throw new RuntimeException("a null PFont was passed to textFont()");
+      throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
     }
   }
 
@@ -2536,16 +2537,25 @@ public class PGraphics extends PImage implements PConstants {
   public void textMode(int mode) {
     // CENTER and MODEL overlap (they're both 3)
     if ((mode == LEFT) || (mode == RIGHT)) {
-      throw new RuntimeException("textMode() is now textAlign() " +
-                                 "in Processing beta");
+      showError("Since Processing beta, textMode() is now textAlign().");
+      return;
     }
-    if ((mode != SCREEN) && (mode != MODEL)) {
-      throw new RuntimeException("Only textMode(SCREEN) and textMode(MODEL) " +
-                                 "are available with this renderer.");
-    }
+//    if ((mode != SCREEN) && (mode != MODEL)) {
+//      showError("Only textMode(SCREEN) and textMode(MODEL) " +
+//      "are available with this renderer.");
+//    }
 
-    //if (textFont != null) {
-    textMode = mode;
+    if (textModeCheck(mode)) {
+      textMode = mode;
+    } else {
+      String modeStr = String.valueOf(mode);
+      switch (mode) {
+        case SCREEN: modeStr = "SCREEN"; break;
+        case MODEL: modeStr = "MODEL"; break;
+        case SHAPE: modeStr = "SHAPE"; break;
+      }
+      showError("textMode(" + modeStr + ") is not supported by this renderer."); 
+    }
 
     // reset the font to its natural size
     // (helps with width calculations and all that)
@@ -2557,6 +2567,11 @@ public class PGraphics extends PImage implements PConstants {
     //throw new RuntimeException("use textFont() before textMode()");
     //}
   }
+  
+  
+  protected boolean textModeCheck(int mode) {
+    return true;
+  }
 
 
   /**
@@ -2564,15 +2579,15 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void textSize(float size) {
     if (textFont != null) {
-      if ((textMode == SCREEN) && (size != textFont.size)) {
-        throw new RuntimeException("textSize() cannot be used with " +
-                                   "textMode(SCREEN)");
-      }
+//      if ((textMode == SCREEN) && (size != textFont.size)) {
+//        throw new RuntimeException("textSize() is ignored with " +
+//                                   "textMode(SCREEN)");
+//      }
       textSize = size;
       textLeading = (textAscent() + textDescent()) * 1.275f;
 
     } else {
-      throw new RuntimeException("Use textFont() before textSize()");
+      throwTextFontError("textSize");
     }
   }
 
@@ -2592,7 +2607,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textWidth(String str) {
     if (textFont == null) {
-      throw new RuntimeException("use textFont() before textWidth()");
+      throwTextFontError("textWidth");
     }
 
     int length = str.length();
@@ -2653,13 +2668,13 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(char c, float x, float y) {
     if (textFont == null) {
-      throw new RuntimeException("use textFont() before text()");
+      throwTextFontError("text");
     }
 
     if (textMode == SCREEN) loadPixels();
 
     textBuffer[0] = c;
-    textLineImpl(textBuffer, 0, 1, x, y);
+    textLineAlignImpl(textBuffer, 0, 1, x, y);
 
     if (textMode == SCREEN) updatePixels();
   }
@@ -2669,10 +2684,10 @@ public class PGraphics extends PImage implements PConstants {
    * Draw a single character on screen (with a z coordinate)
    */
   public void text(char c, float x, float y, float z) {
-    if ((z != 0) && (textMode == SCREEN)) {
-      String msg = "textMode(SCREEN) cannot have a z coordinate";
-      throw new RuntimeException(msg);
-    }
+//    if ((z != 0) && (textMode == SCREEN)) {
+//      String msg = "textMode(SCREEN) cannot have a z coordinate";
+//      throw new RuntimeException(msg);
+//    }
 
     if (z != 0) translate(0, 0, z);  // slowness, badness
 
@@ -2699,7 +2714,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(String str, float x, float y) {
     if (textFont == null) {
-      throw new RuntimeException("use textFont() before text()");
+      throwTextFontError("text");
     }
 
     if (textMode == SCREEN) loadPixels();
@@ -2738,14 +2753,14 @@ public class PGraphics extends PImage implements PConstants {
     int index = 0;
     while (index < length) {
       if (textBuffer[index] == '\n') {
-        textLineImpl(textBuffer, start, index, x, y);
+        textLineAlignImpl(textBuffer, start, index, x, y);
         start = index + 1;
         y += textLeading;
       }
       index++;
     }
     if (start < length) {
-      textLineImpl(textBuffer, start, index, x, y);
+      textLineAlignImpl(textBuffer, start, index, x, y);
     }
     if (textMode == SCREEN) updatePixels();
   }
@@ -2755,10 +2770,10 @@ public class PGraphics extends PImage implements PConstants {
    * Same as above but with a z coordinate.
    */
   public void text(String str, float x, float y, float z) {
-    if ((z != 0) && (textMode == SCREEN)) {
-      String msg = "textMode(SCREEN) cannot have a z coordinate";
-      throw new RuntimeException(msg);
-    }
+//    if ((z != 0) && (textMode == SCREEN)) {
+//      String msg = "textMode(SCREEN) cannot have a z coordinate";
+//      throw new RuntimeException(msg);
+//    }
 
     if (z != 0) translate(0, 0, z);  // slow!
 
@@ -2766,37 +2781,6 @@ public class PGraphics extends PImage implements PConstants {
     textZ = z;
 
     if (z != 0) translate(0, 0, -z);
-  }
-
-
-  /**
-   * Handles placement of a text line, then calls textLinePlaced
-   * to actually render at the specific point.
-   */
-  protected void textLineImpl(char buffer[], int start, int stop,
-                              float x, float y) {
-    if (textAlign == CENTER) {
-      x -= textWidthImpl(buffer, start, stop) / 2f;
-
-    } else if (textAlign == RIGHT) {
-      x -= textWidthImpl(buffer, start, stop);
-    }
-
-    textLinePlacedImpl(buffer, start, stop, x, y);
-  }
-
-
-  protected void textLinePlacedImpl(char buffer[], int start, int stop,
-                                    float x, float y) {
-    for (int index = start; index < stop; index++) {
-      textCharImpl(buffer[index], x, y);
-
-      // this doesn't account for kerning
-      x += textWidth(buffer[index]);
-    }
-    textX = x;
-    textY = y;
-    textZ = 0;  // this will get set by the caller if non-zero
   }
 
 
@@ -2815,7 +2799,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(String str, float x1, float y1, float x2, float y2) {
     if (textFont == null) {
-      throw new RuntimeException("use textFont() before text()");
+      throwTextFontError("text");
     }
 
     if (textMode == SCREEN) loadPixels();
@@ -2903,21 +2887,21 @@ public class PGraphics extends PImage implements PConstants {
       float lineHigh = textAscent() + textLeading * (lineCount - 1);
       float y = y1 + textAscent() + (boxHeight - lineHigh) / 2;
       for (int i = 0; i < lineCount; i++) {
-        textLineImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
+        textLineAlignImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
         y += textLeading;
       }
 
     } else if (textAlignY == BOTTOM) {
       float y = y2 - textDescent() - textLeading * (lineCount - 1);
       for (int i = 0; i < lineCount; i++) {
-        textLineImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
+        textLineAlignImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
         y += textLeading;
       }
 
     } else {  // TOP or BASELINE just go to the default
       float y = y1 + textAscent();
       for (int i = 0; i < lineCount; i++) {
-        textLineImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
+        textLineAlignImpl(textBuffer, textBreakStart[i], textBreakStop[i], lineX, y);
         y += textLeading;
       }
     }
@@ -2930,8 +2914,8 @@ public class PGraphics extends PImage implements PConstants {
    * Emit a sentence of text, defined as a chunk of text without any newlines.
    * @param stop non-inclusive, the end of the text in question
    */
-  protected boolean textSentence(char[] buffer, int start, int stop,
-                                 float boxWidth, float spaceWidth) {
+  private boolean textSentence(char[] buffer, int start, int stop,
+                               float boxWidth, float spaceWidth) {
     float runningX = 0;
 
     // Keep track of this separately from index, since we'll need to back up
@@ -3002,7 +2986,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void textSentenceBreak(int start, int stop) {
+  private void textSentenceBreak(int start, int stop) {
     if (textBreakCount == textBreakStart.length) {
       textBreakStart = PApplet.expand(textBreakStart);
       textBreakStop = PApplet.expand(textBreakStop);
@@ -3014,10 +2998,10 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void text(String s, float x1, float y1, float x2, float y2, float z) {
-    if ((z != 0) && (textMode == SCREEN)) {
-      String msg = "textMode(SCREEN) cannot have a z coordinate";
-      throw new RuntimeException(msg);
-    }
+//    if ((z != 0) && (textMode == SCREEN)) {
+//      String msg = "textMode(SCREEN) cannot have a z coordinate";
+//      throw new RuntimeException(msg);
+//    }
 
     if (z != 0) translate(0, 0, z);  // slowness, badness
 
@@ -3055,11 +3039,47 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  //////////////////////////////////////////////////////////////
+
+  // TEXT IMPL
+  
+  // These are most likely to be overridden by subclasses, since the other 
+  // (public) functions handle generic features like setting alignment.  
 
 
-  // what was this for?
-  //font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
+  /**
+   * Handles placement of a text line, then calls textLineImpl
+   * to actually render at the specific point.
+   */
+  protected void textLineAlignImpl(char buffer[], int start, int stop,
+                                   float x, float y) {
+    if (textAlign == CENTER) {
+      x -= textWidthImpl(buffer, start, stop) / 2f;
+
+    } else if (textAlign == RIGHT) {
+      x -= textWidthImpl(buffer, start, stop);
+    }
+
+    textLineImpl(buffer, start, stop, x, y);
+  }
+
+
+  /** 
+   * Implementation of actual drawing for a line of text.
+   */
+  protected void textLineImpl(char buffer[], int start, int stop,
+                              float x, float y) {
+    for (int index = start; index < stop; index++) {
+      textCharImpl(buffer[index], x, y);
+
+      // this doesn't account for kerning
+      x += textWidth(buffer[index]);
+    }
+    textX = x;
+    textY = y;
+    textZ = 0;  // this will get set by the caller if non-zero
+  }
 
 
   protected void textCharImpl(char ch, float x, float y) { //, float z) {
@@ -3128,18 +3148,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // should take image, int x1, int y1, and x2, y2
-
   protected void textCharScreenImpl(PImage glyph,
-                                    int xx, int yy, //int x2, int y2,
+                                    int xx, int yy,
                                     int w0, int h0) {
-    /*
-    System.out.println("textimplscreen");
-    rectMode(CORNER);
-    stroke(255);
-    rect(xx, yy, w0, h0);
-    */
-
     int x0 = 0;
     int y0 = 0;
 
@@ -3313,12 +3324,12 @@ public class PGraphics extends PImage implements PConstants {
 //  public PMatrix2D getMatrix2D() {
 //    return null;
 //  }
-  
-  
+
+
   public void getMatrix(PMatrix2D target) {
   }
-  
-  
+
+
   public void getMatrix(PMatrix3D target) {
   }
   
@@ -3332,10 +3343,16 @@ public class PGraphics extends PImage implements PConstants {
   
   
   public void applyMatrix(PMatrix2D source) {
+    applyMatrix(source.m00, source.m01, source.m02, 
+                source.m10, source.m11, source.m12);
   }
   
   
   public void applyMatrix(PMatrix3D source) {
+    applyMatrix(source.m00, source.m01, source.m02, source.m03,
+                source.m10, source.m11, source.m12, source.m13,
+                source.m20, source.m21, source.m22, source.m23,
+                source.m30, source.m31, source.m32, source.m33);
   }
   
   
@@ -3382,25 +3399,25 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void beginCamera() {
-    depthError("beginCamera");
+    showDepthError("beginCamera");
   }
 
   public void endCamera() {
-    depthError("endCamera");
+    showDepthError("endCamera");
   }
 
   public void camera() {
-    depthError("camera");
+    showDepthError("camera");
   }
 
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
-    depthError("camera");
+    showDepthError("camera");
   }
 
   public void printCamera() {
-    depthError("printCamera");
+    showDepthError("printCamera");
   }
 
 
@@ -3411,31 +3428,31 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void ortho() {
-    depthError("ortho");
+    showDepthError("ortho");
   }
 
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
-    depthError("ortho");
+    showDepthError("ortho");
   }
 
   public void perspective() {
-    depthError("perspective");
+    showDepthError("perspective");
   }
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
-    depthError("perspective");
+    showDepthError("perspective");
   }
 
   public void frustum(float left, float right, 
                       float bottom, float top, 
                       float near, float far) {
-    depthError("frustum");
+    showDepthError("frustum");
   }
 
   public void printProjection() {
-    depthError("printCamera");
+    showDepthError("printCamera");
   }
 
 
@@ -3451,7 +3468,7 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenX(float x, float y) {
-    methodError("screenX");
+    showMethodError("screenX");
     return 0;
   }
 
@@ -3462,7 +3479,7 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenY(float x, float y) {
-    methodError("screenY");
+    showMethodError("screenY");
     return 0;
   }
 
@@ -3475,7 +3492,7 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenX(float x, float y, float z) {
-    depthErrorXYZ("screenX");
+    showDepthErrorXYZ("screenX");
     return 0;
   }
 
@@ -3488,7 +3505,7 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenY(float x, float y, float z) {
-    depthErrorXYZ("screenY");
+    showDepthErrorXYZ("screenY");
     return 0;
   }
 
@@ -3505,7 +3522,7 @@ public class PGraphics extends PImage implements PConstants {
    * or directly out of the zbuffer[].
    */
   public float screenZ(float x, float y, float z) {
-    depthErrorXYZ("screenZ");
+    showDepthErrorXYZ("screenZ");
     return 0;
   }
 
@@ -3520,7 +3537,7 @@ public class PGraphics extends PImage implements PConstants {
    * coordinates of a shape.
    */
   public float modelX(float x, float y, float z) {
-    depthError("modelX");
+    showDepthError("modelX");
     return 0;
   }
 
@@ -3529,7 +3546,7 @@ public class PGraphics extends PImage implements PConstants {
    * Returns the model space y value for an x, y, z coordinate.
    */
   public float modelY(float x, float y, float z) {
-    depthError("modelY");
+    showDepthError("modelY");
     return 0;
   }
 
@@ -3538,7 +3555,7 @@ public class PGraphics extends PImage implements PConstants {
    * Returns the model space z value for an x, y, z coordinate.
    */
   public float modelZ(float x, float y, float z) {
-    depthError("modelZ");
+    showDepthError("modelZ");
     return 0;
   }
 
@@ -4138,11 +4155,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void ambient(int rgb) {
-    depthError("ambient");
+    showDepthError("ambient");
   }
 
   public void ambient(float gray) {
-    depthError("ambient");
+    showDepthError("ambient");
   }
 
   public void ambient(float x, float y, float z) {
@@ -4150,37 +4167,37 @@ public class PGraphics extends PImage implements PConstants {
     if ((x != PMaterial.DEFAULT_AMBIENT) || 
         (y != PMaterial.DEFAULT_AMBIENT) ||
         (z != PMaterial.DEFAULT_AMBIENT)) {
-      depthError("ambient");
+      showDepthError("ambient");
     }
   }
 
   public void specular(int rgb) {
-    depthError("specular");
+    showDepthError("specular");
   }
 
   public void specular(float gray) {
-    depthError("specular");
+    showDepthError("specular");
   }
 
   public void specular(float x, float y, float z) {
-    depthError("specular");
+    showDepthError("specular");
   }
 
   public void shininess(float shine) {
-    depthError("shininess");
+    showDepthError("shininess");
   }
 
 
   public void emissive(int rgb) {
-    depthError("emissive");
+    showDepthError("emissive");
   }
 
   public void emissive(float gray) {
-    depthError("emissive");
+    showDepthError("emissive");
   }
 
   public void emissive(float x, float y, float z ) {
-    depthError("emissive");
+    showDepthError("emissive");
   }
 
   
@@ -4190,45 +4207,45 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public void lights() {
-    depthError("lights");
+    showDepthError("lights");
   }
 
   public void noLights() {
-    depthError("noLights");
+    showDepthError("noLights");
   }
 
   public void ambientLight(float red, float green, float blue) {
-    depthError("ambientLight");
+    showDepthError("ambientLight");
   }
 
   public void ambientLight(float red, float green, float blue,
                            float x, float y, float z) {
-    depthError("ambientLight");
+    showDepthError("ambientLight");
   }
 
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
-    depthError("directionalLight");
+    showDepthError("directionalLight");
   }
 
   public void pointLight(float red, float green, float blue,
                          float x, float y, float z) {
-    depthError("pointLight");
+    showDepthError("pointLight");
   }
 
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
                         float nx, float ny, float nz,
                         float angle, float concentration) {
-    depthError("spotLight");
+    showDepthError("spotLight");
   }
 
   public void lightFalloff(float constant, float linear, float quadratic) {
-    depthError("lightFalloff");
+    showDepthError("lightFalloff");
   }
 
   public void lightSpecular(float x, float y, float z) {
-    depthError("lightSpecular");
+    showDepthError("lightSpecular");
   }
 
 
@@ -4416,13 +4433,13 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   
-  static protected void depthError(String method) {
+  static protected void showDepthError(String method) {
     showError(method + "() can only be used with a renderer that " + 
               "supports 3D, such as P3D or OPENGL.");
   }
 
 
-  static protected void depthErrorXYZ(String method) {
+  static protected void showDepthErrorXYZ(String method) {
     showError(method + "() with x, y, and z coordinates " +
               "can only be used with a renderer that " + 
               "supports 3D, such as P3D or OPENGL. " +
@@ -4430,7 +4447,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  static protected void methodError(String method) {
+  static protected void showMethodError(String method) {
     showError(method + "() is not available with this renderer.");
   }
   
@@ -4440,8 +4457,13 @@ public class PGraphics extends PImage implements PConstants {
    * other variations are). For instance, if vertex(x, y, u, v) is unavailable, 
    * but vertex(x, y) is just fine, it doesn't make sense to use methodError().
    */
-  static protected void variationError(String str) {
+  static protected void showVariationError(String str) {
     showError(str + " is not available with this renderer.");
+  }
+  
+  
+  static protected void throwTextFontError(String method) {
+    throw new RuntimeException("Use textFont() before " + method + "()");
   }
   
 

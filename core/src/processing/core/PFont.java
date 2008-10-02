@@ -65,6 +65,7 @@ public class PFont implements PConstants {
    * in situations where that's faster.
    */
   protected Font font;
+  protected boolean fontSearched;
 
   /**
    * Name of the font as seen by Java when it was created.
@@ -114,7 +115,7 @@ public class PFont implements PConstants {
   //protected char textBuffer[] = new char[8 * 1024];
   //protected char widthBuffer[] = new char[8 * 1024];
   
-  static public Font[] fonts;
+  static protected Font[] fonts;
 
 
   public PFont() { }  // for subclasses
@@ -237,30 +238,45 @@ public class PFont implements PConstants {
 
 
   /**
-   * Return the native java.awt.Font associated with this PFont (if any).
+   * Set the native complement of this font.
    */
-  public Font getFont() {
-    return font;
+  public void setFont(Font font) {
+    this.font = font;
   }
   
   
   /**
-   * Try to find the native version of this font.
+   * Return the native java.awt.Font associated with this PFont (if any).
    */
-  protected Font findFont() {
-    // this font may or may not be installed
-    font = new Font(name, Font.PLAIN, size);
-    // if the ps name matches, then we're in fine shape
-    if (!font.getPSName().equals(psname)) {
-      // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
-      // of the font, so try that in case this .vlw font was created on pc
-      // and the name is different, but the ps name is found on the
-      // java 1.4 mac that's currently running this sketch.
-      font = new Font(psname, Font.PLAIN, size);
-    }
-    // check again, and if still bad, screw em
-    if (!font.getPSName().equals(psname)) {
-      font = null;
+  public Font getFont() {
+//    if (font == null && !fontSearched) {
+//      font = findFont();
+//    }
+    return font;
+  }
+
+
+  /**
+   * Attempt to find the native version of this font.
+   * (Public so that it can be used by OpenGL or other renderers.)
+   */
+  public Font findFont() {
+    if (!fontSearched) {
+      // this font may or may not be installed
+      font = new Font(name, Font.PLAIN, size);
+      // if the ps name matches, then we're in fine shape
+      if (!font.getPSName().equals(psname)) {
+        // on osx java 1.4 (not 1.3.. ugh), you can specify the ps name
+        // of the font, so try that in case this .vlw font was created on pc
+        // and the name is different, but the ps name is found on the
+        // java 1.4 mac that's currently running this sketch.
+        font = new Font(psname, Font.PLAIN, size);
+      }
+      // check again, and if still bad, screw em
+      if (!font.getPSName().equals(psname)) {
+        font = null;
+      }
+      fontSearched = true;
     }
     return font;
   }

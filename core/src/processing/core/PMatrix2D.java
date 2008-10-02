@@ -147,18 +147,22 @@ public final class PMatrix2D /*implements PMatrix*/ {
 
 
   public void rotateX(float angle) {
+    throw new IllegalArgumentException("Cannot use rotateX() on a PMatrix2D.");
   }
 
 
   public void rotateY(float angle) {
+    throw new IllegalArgumentException("Cannot use rotateY() on a PMatrix2D.");
   }
 
 
   public void rotateZ(float angle) {
+    rotate(angle);
   }
 
 
   public void rotate(float angle, float v0, float v1, float v2) {
+    throw new IllegalArgumentException("Cannot use this version of rotate() on a PMatrix2D.");
   }
 
 
@@ -174,6 +178,7 @@ public final class PMatrix2D /*implements PMatrix*/ {
 
 
   public void scale(float x, float y, float z) {
+    throw new IllegalArgumentException("Cannot use this version of scale() on a PMatrix2D.");
   }
 
 
