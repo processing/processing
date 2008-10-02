@@ -2,6 +2,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <curated>
 
+<software name="YMYI" by="Joao Martinho Moura and Jorge Sousa" scroll="yes" resize="yes" width="1024" height="800">
+        <image>images/ymyi.jpg</image>
+          <description>
+             Space where the user interacts with a living image through his body movements.
+          </description>
+          <location>http://www.ymyi.org</location>
+          <link href="http://www.jmartinho.org">Joao Martinho Moura</link>
+          <link href="http://mtad.dsi.uminho.pt/en/">Master in Technology and Digital Art</link>
+        </software>
 
 <software name="Body Navigation" by="Jonas Jongejan and Ole Kristensen for Recoil Performance Group" scroll="yes" resize="yes" width="1024" height="800">
         <image>images/bodynavigation.jpg</image>
