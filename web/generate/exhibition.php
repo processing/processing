@@ -10,6 +10,22 @@ if (!defined('SUBMIT')) {
 require(GENERATEDIR.'lib/Curated.class.php');
 require(GENERATEDIR.'lib/Network.class.php');
 
+// update the files on the server via SVN
+
+// look for the .subversion folder somewhere else
+// otherwise will go looking for /home/root/.subversion or some other user
+$source = CONTENTDIR;
+$path = BASEDIR;
+$where = CONTENTDIR;
+$there = CONTENTDIR;
+putenv('HOME=' . CONTENTDIR);
+
+// do the initial checkout
+//`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
+
+`cd $there && /usr/local/bin/svn update curated.xml`;
+
+
 /******************************************** CURATED ***/
 
 function get_curated($curated, $start = 0, $num = 12)
