@@ -27,7 +27,7 @@ package processing.core;
 /**
  * 4x4 matrix implementation.
  */
-public final class PMatrix3D /*implements PMatrix*/ /*, PConstants*/ {
+public final class PMatrix3D implements PMatrix /*, PConstants*/ {
 
   public float m00, m01, m02, m03;
   public float m10, m11, m12, m13;
@@ -114,22 +114,23 @@ public final class PMatrix3D /*implements PMatrix*/ /*, PConstants*/ {
   }
   
 
-  public void set(PMatrix2D src) {
-    set(src.m00, src.m01, 0, src.m02, 
-        src.m10, src.m11, 0, src.m12,
-        0, 0, 1, 0,
-        0, 0, 0, 1);
+  public void set(PMatrix matrix) {
+    if (matrix instanceof PMatrix3D) {
+      PMatrix3D src = (PMatrix3D) matrix;
+      set(src.m00, src.m01, src.m02, src.m03,
+          src.m10, src.m11, src.m12, src.m13,
+          src.m20, src.m21, src.m22, src.m23,
+          src.m30, src.m31, src.m32, src.m33);      
+    } else {
+      PMatrix2D src = (PMatrix2D) matrix;
+      set(src.m00, src.m01, 0, src.m02, 
+          src.m10, src.m11, 0, src.m12,
+          0, 0, 1, 0,
+          0, 0, 0, 1);
+    }
   }
   
   
-  public void set(PMatrix3D src) {
-    set(src.m00, src.m01, src.m02, src.m03,
-        src.m10, src.m11, src.m12, src.m13,
-        src.m20, src.m21, src.m22, src.m23,
-        src.m30, src.m31, src.m32, src.m33);
-  }
-
-
   public void set(float[] source) {
     if (source.length == 6) {
       set(source[0], source[1], source[2], 

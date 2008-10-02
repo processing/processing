@@ -1356,7 +1356,7 @@ public class PGraphics2D extends PGraphics {
 
       float dX = ox2-ox1 + EPSILON;
       float dY = oy2-oy1 + EPSILON;
-      float len = sqrt(dX*dX + dY*dY);
+      float len = (float) Math.sqrt(dX*dX + dY*dY);
 
       // TODO strokeWidth should be transformed!
       float rh = strokeWeight / len;
