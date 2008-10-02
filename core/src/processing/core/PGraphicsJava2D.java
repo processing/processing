@@ -645,22 +645,14 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   protected void imageImpl(PImage who,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
-    if (who.cache != null) {
-      if (!(who.cache instanceof ImageCache)) {
-        // this cache belongs to another renderer.. fix me later,
-        // because this is gonna make drawing *really* inefficient
-        //who.cache = null;
-      }
-    }
-
-    if (who.cache == null) {
+    if (who.getCache(this) == null) {
       //System.out.println("making new image cache");
-      who.cache = new ImageCache(who);
+      who.setCache(this, new ImageCache(who));
       who.updatePixels();  // mark the whole thing for update
       who.modified = true;
     }
 
-    ImageCache cash = (ImageCache) who.cache;
+    ImageCache cash = (ImageCache) who.getCache(this);
     // if image previously was tinted, or the color changed
     // or the image was tinted, and tint is now disabled
     if ((tint && !cash.tinted) ||
@@ -675,7 +667,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       who.modified = false;
     }
 
-    g2.drawImage(((ImageCache) who.cache).image,
+    g2.drawImage(((ImageCache) who.getCache(this)).image,
                  (int) x1, (int) y1, (int) x2, (int) y2,
                  u1, v1, u2, v2, null);
   }
@@ -1292,20 +1284,20 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
-    if (imageMode == CENTER) {
-      dx -= src.width/2;  // not sw, since it's already cropped
-      dy -= src.height/2;
-    }
+//    if (imageMode == CENTER) {
+//      dx -= src.width/2;  // not sw, since it's already cropped
+//      dy -= src.height/2;
+//    }
 
     WritableRaster raster = ((BufferedImage) image).getRaster();
     if ((sx == 0) && (sy == 0) && (sw == src.width) && (sh == src.height)) {
       raster.setDataElements(dx, dy, src.width, src.height, src.pixels);
     } else {
-      int mode = src.imageMode;
-      src.imageMode = CORNER;
+//      int mode = src.imageMode;
+//      src.imageMode = CORNER;
       // TODO Optimize, incredibly inefficient to reallocate this much memory
       PImage temp = src.get(sx, sy, sw, sh);
-      src.imageMode = mode;
+//      src.imageMode = mode;
       raster.setDataElements(dx, dy, temp.width, temp.height, temp.pixels);
     }
   }
@@ -1327,18 +1319,18 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   //////////////////////////////////////////////////////////////
 
 
-  public void filter(int kind) {
-    loadPixels();
-    super.filter(kind);
-    updatePixels();
-  }
-
-
-  public void filter(int kind, float param) {
-    loadPixels();
-    super.filter(kind, param);
-    updatePixels();
-  }
+//  public void filter(int kind) {
+//    loadPixels();
+//    super.filter(kind);
+//    updatePixels();
+//  }
+//
+//
+//  public void filter(int kind, float param) {
+//    loadPixels();
+//    super.filter(kind, param);
+//    updatePixels();
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1366,13 +1358,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
-  public void copy(PImage src,
-                   int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    loadPixels();
-    super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    updatePixels();
-  }
+//  public void copy(PImage src,
+//                   int sx1, int sy1, int sx2, int sy2,
+//                   int dx1, int dy1, int dx2, int dy2) {
+//    loadPixels();
+//    super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
+//    updatePixels();
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1394,32 +1386,32 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   */
 
 
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    loadPixels();
-    super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    updatePixels();
-  }
-
-
-  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    loadPixels();
-    super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
-    updatePixels();
-  }
+//  public void blend(int sx1, int sy1, int sx2, int sy2,
+//                    int dx1, int dy1, int dx2, int dy2, int mode) {
+//    loadPixels();
+//    super.blend(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+//    updatePixels();
+//  }
+//
+//
+//  public void blend(PImage src, int sx1, int sy1, int sx2, int sy2,
+//                    int dx1, int dy1, int dx2, int dy2, int mode) {
+//    loadPixels();
+//    super.blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+//    updatePixels();
+//  }
 
 
   //////////////////////////////////////////////////////////////
 
 
-  public void save(String filename) {
-    //System.out.println("start load");
-    loadPixels();
-    //System.out.println("end load, start save");
-    super.save(filename);
-    //System.out.println("done with save");
-  }
+//  public void save(String filename) {
+//    //System.out.println("start load");
+//    loadPixels();
+//    //System.out.println("end load, start save");
+//    super.save(filename);
+//    //System.out.println("done with save");
+//  }
 }
 
 

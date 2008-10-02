@@ -1,39 +1,3 @@
-remove textFontNative and textFontNativeMetrics carp
-accessors inside PFont need a lot of work
-
-//
-
-setMainDrawingSurface() -> setPrimarySurface()
-mainDrawingSurface = primarySurface;
-resize() -> setSize() (roughly)
-endShape() with no params is no longer 'final'
-X/Y/Z -> TX/TY/TZ
-MX/MY/MZ -> X/Y/Z (for sake of PShape)
-render_triangles -> renderTriangles()
-depth_sort_triangles -> sortTriangles()
-render_lines -> renderLines()
-depth_sort_lines -> sortLines()
-no longer any abstract methods in PGraphics itself
-removed support for specular alpha (and its 'SPA' constant)
-clear() -> backgroundImpl()
-CENTER -> DIAMETER for ellipseMode and friends
-textFontNative and textFontNativeMetrics have been removed
-  they require a font rendering context on which to draw
-  and were a weird sort of hack
-  see how the classes implement them now
-hint(ENABLE_NATIVE_FONTS) goes away
-  need to mention in createFont() reference
-  also maybe cover in the loadFont() reference? (maybe problem...)
-
-// 
-
-shapeStyle(null)
-noStyle()
-s.noStyle?
-style(PStyle s) 
-
-// 
-
   public void setParent(PApplet parent)
   public void setPrimary(boolean primary)
   public void setPath(String path)
@@ -147,6 +111,10 @@ style(PStyle s)
 
   protected void splineForward(int segments, PMatrix3D matrix)
 
+  public void smooth() [inside PImage]
+  public void noSmooth() [inside PImage]
+
+  public void imageMode(int mode) [inside PImage]
   public void image(PImage image, float x, float y)
   public void image(PImage image, float x, float y, float c, float d)
   public void image(PImage image,
@@ -376,20 +344,31 @@ style(PStyle s)
 
 //
 
-  public void smooth()
-  public void noSmooth()
+  public PImage(Image)
+  public Image getImage()
 
-  public void imageMode(int mode)
+  public void setCache(Object parent, Object storage)
+  public void getCache(Object parent)
+  public void removeCache(Object parent)
+
+  public boolean isModified();
+  public void setModified();
+  public void setModified(boolean state);
 
   public void loadPixels()
   public void updatePixels()
-  public void updatePixels(int x1, int y1, int x2, int y2)
+  public void updatePixels(int x, int y, int w, int h)
+
+  public void resize(int wide, int high)
 
   public int get(int x, int y)
   public PImage get(int x, int y, int w, int h)
   public PImage get()
+  protected PImage getImpl(int x, int y, int w, int h)
   public void set(int x, int y, int c)
   public void set(int x, int y, PImage src)
+  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
+                         PImage src)
 
   public void mask(int alpha[])
   public void mask(PImage alpha)
@@ -397,15 +376,17 @@ style(PStyle s)
   public void filter(int kind)
   public void filter(int kind, float param)
 
-  public void copy(int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2)
+  public void copy(int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh)
   public void copy(PImage src,
-                   int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2)
+                   int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh)
 
   static public int blendColor(int c1, int c2, int mode)
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode)
+  public void blend(int sx, int sy, int sw, int sh,
+                    int dx, int dy, int dw, int dh, int mode)
   public void blend(PImage src,
-                    int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode)
+                    int sx, int sy, int sw, int sh,
+                    int dx, int dy, int dw, int dh, int mode)
+
+  
