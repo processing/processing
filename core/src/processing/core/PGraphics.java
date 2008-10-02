@@ -491,6 +491,11 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  static final String ERROR_BACKGROUND_IMAGE_SIZE = 
+    "background image must be the same size as your application";
+  static final String ERROR_BACKGROUND_IMAGE_FORMAT =
+    "background images should be RGB or ARGB";
+
   static final String ERROR_TEXTFONT_NULL_PFONT = 
     "A null PFont was passed to textFont()";
 
@@ -618,8 +623,22 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  // broken out because of subclassing
+  /**
+   * Allocate memory for this renderer. Generally will need to be implemented
+   * for all renderers.
+   */
   protected void allocate() { }
+
+
+  /**
+   * Handle any takedown for this graphics context.
+   * <p>
+   * This is called when a sketch is shut down and this renderer was
+   * specified using the size() command, or inside endRecord() and
+   * endRaw(), in order to shut things off.
+   */
+  public void dispose() {  // ignore
+  }
 
 
 
@@ -2445,7 +2464,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textAscent() {
     if (textFont == null) {
-      throwTextFontError("textAscent");
+      showTextFontException("textAscent");
     }
     return textFont.ascent() * ((textMode == SCREEN) ? textFont.size : textSize);
   }
@@ -2458,7 +2477,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textDescent() {
     if (textFont == null) {
-      throwTextFontError("textDescent");
+      showTextFontException("textDescent");
     }      
     return textFont.descent() * ((textMode == SCREEN) ? textFont.size : textSize);
   }
@@ -2537,7 +2556,7 @@ public class PGraphics extends PImage implements PConstants {
   public void textMode(int mode) {
     // CENTER and MODEL overlap (they're both 3)
     if ((mode == LEFT) || (mode == RIGHT)) {
-      showError("Since Processing beta, textMode() is now textAlign().");
+      showWarning("Since Processing beta, textMode() is now textAlign().");
       return;
     }
 //    if ((mode != SCREEN) && (mode != MODEL)) {
@@ -2554,7 +2573,7 @@ public class PGraphics extends PImage implements PConstants {
         case MODEL: modeStr = "MODEL"; break;
         case SHAPE: modeStr = "SHAPE"; break;
       }
-      showError("textMode(" + modeStr + ") is not supported by this renderer."); 
+      showWarning("textMode(" + modeStr + ") is not supported by this renderer."); 
     }
 
     // reset the font to its natural size
@@ -2587,7 +2606,7 @@ public class PGraphics extends PImage implements PConstants {
       textLeading = (textAscent() + textDescent()) * 1.275f;
 
     } else {
-      throwTextFontError("textSize");
+      showTextFontException("textSize");
     }
   }
 
@@ -2607,7 +2626,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float textWidth(String str) {
     if (textFont == null) {
-      throwTextFontError("textWidth");
+      showTextFontException("textWidth");
     }
 
     int length = str.length();
@@ -2668,7 +2687,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(char c, float x, float y) {
     if (textFont == null) {
-      throwTextFontError("text");
+      showTextFontException("text");
     }
 
     if (textMode == SCREEN) loadPixels();
@@ -2714,7 +2733,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(String str, float x, float y) {
     if (textFont == null) {
-      throwTextFontError("text");
+      showTextFontException("text");
     }
 
     if (textMode == SCREEN) loadPixels();
@@ -2799,7 +2818,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void text(String str, float x1, float y1, float x2, float y2) {
     if (textFont == null) {
-      throwTextFontError("text");
+      showTextFontException("text");
     }
 
     if (textMode == SCREEN) loadPixels();
@@ -3209,6 +3228,7 @@ public class PGraphics extends PImage implements PConstants {
    * Push a copy of the current transformation matrix onto the stack.
    */
   public void pushMatrix() {
+    showMethodWarning("pushMatrix");
   }
 
 
@@ -3216,6 +3236,7 @@ public class PGraphics extends PImage implements PConstants {
    * Replace the current transformation matrix with the top of the stack.
    */
   public void popMatrix() {
+    showMethodWarning("popMatrix");
   }
 
 
@@ -3226,16 +3247,10 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the current transformation matrix to identity.
-   */
-  public void resetMatrix() {
-  }
-
-
-  /**
    * Translate in X and Y.
    */
   public void translate(float tx, float ty) {
+    showMissingWarning("translate");
   }
 
 
@@ -3243,6 +3258,7 @@ public class PGraphics extends PImage implements PConstants {
    * Translate in X, Y, and Z.
    */
   public void translate(float tx, float ty, float tz) {
+    showMissingWarning("translate");
   }
 
 
@@ -3256,6 +3272,7 @@ public class PGraphics extends PImage implements PConstants {
    * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
    */
   public void rotate(float angle) {
+    showMissingWarning("rotate");
   }
 
 
@@ -3263,6 +3280,7 @@ public class PGraphics extends PImage implements PConstants {
    * Rotate around the X axis.
    */
   public void rotateX(float angle) {
+    showMethodWarning("rotateX");
   }
 
 
@@ -3270,6 +3288,7 @@ public class PGraphics extends PImage implements PConstants {
    * Rotate around the Y axis.
    */
   public void rotateY(float angle) {
+    showMethodWarning("rotateY");
   }
 
 
@@ -3282,6 +3301,7 @@ public class PGraphics extends PImage implements PConstants {
    * doing things in 2D. so we just decided to have them both be the same.
    */
   public void rotateZ(float angle) {
+    showMethodWarning("rotateZ");
   }
 
 
@@ -3289,6 +3309,7 @@ public class PGraphics extends PImage implements PConstants {
    * Rotate about a vector in space. Same as the glRotatef() function.
    */
   public void rotate(float angle, float vx, float vy, float vz) {
+    showMissingWarning("rotate");
   }
 
 
@@ -3296,6 +3317,7 @@ public class PGraphics extends PImage implements PConstants {
    * Scale in all dimensions.
    */
   public void scale(float s) {
+    showMissingWarning("scale");
   }
 
 
@@ -3306,6 +3328,7 @@ public class PGraphics extends PImage implements PConstants {
    * scaled by 1, since there's no way to know what else to scale it by.
    */
   public void scale(float sx, float sy) {
+    showMissingWarning("scale");
   }
 
 
@@ -3313,6 +3336,20 @@ public class PGraphics extends PImage implements PConstants {
    * Scale in X, Y, and Z.
    */
   public void scale(float x, float y, float z) {
+    showMissingWarning("scale");
+  }
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX FULL MONTY
+
+  
+  /**
+   * Set the current transformation matrix to identity.
+   */
+  public void resetMatrix() {
+    showMethodWarning("resetMatrix");
   }
 
 
@@ -3335,6 +3372,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
+    showMissingWarning("applyMatrix");
   }
 
 
@@ -3345,6 +3383,7 @@ public class PGraphics extends PImage implements PConstants {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
+    showMissingWarning("applyMatrix");
   }
 
   
@@ -3355,16 +3394,10 @@ public class PGraphics extends PImage implements PConstants {
 
   
   /**
-   * Print the current model (or "transformation") matrix.
-   */
-  public void printMatrix() {
-  }
-
-  
-  /**
    * Copy the current transformation matrix into the specified target.
    */
   public void getMatrix(PMatrix2D target) {
+    showMissingWarning("getMatrix");
   }
 
 
@@ -3372,6 +3405,7 @@ public class PGraphics extends PImage implements PConstants {
    * Copy the current transformation matrix into the specified target.
    */
   public void getMatrix(PMatrix3D target) {
+    showMissingWarning("getMatrix");
   }
   
   
@@ -3379,77 +3413,96 @@ public class PGraphics extends PImage implements PConstants {
    * Set the current transformation to the contents of the specified source.
    */
   public void setMatrix(PMatrix2D source) {  
+    showMissingWarning("setMatrix");
   }
   
   
   /**
    * Set the current transformation to the contents of the specified source.
    */
-  public void setMatrix(PMatrix3D source) {  
+  public void setMatrix(PMatrix3D source) {
+    showMissingWarning("setMatrix");
+  }
+  
+  
+  /**
+   * Print the current model (or "transformation") matrix.
+   */
+  public void printMatrix() {
+    showMethodWarning("printMatrix");
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
-  // CAMERA (none are supported in 2D)
-
+  // CAMERA
+  
 
   public void beginCamera() {
-    showDepthError("beginCamera");
+    showMethodWarning("beginCamera");
   }
+  
 
   public void endCamera() {
-    showDepthError("endCamera");
+    showMethodWarning("endCamera");
   }
 
+  
   public void camera() {
-    showDepthError("camera");
+    showMissingWarning("camera");
   }
 
+  
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
-    showDepthError("camera");
+    showMissingWarning("camera");
   }
 
+  
   public void printCamera() {
-    showDepthError("printCamera");
+    showMethodWarning("printCamera");
   }
 
 
 
   //////////////////////////////////////////////////////////////
 
-  // PROJECTION (none are supported in 2D)
+  // PROJECTION
 
 
   public void ortho() {
-    showDepthError("ortho");
+    showMissingWarning("ortho");
   }
 
+  
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
-    showDepthError("ortho");
+    showMissingWarning("ortho");
   }
 
+  
   public void perspective() {
-    showDepthError("perspective");
+    showMissingWarning("perspective");
   }
+  
 
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
-    showDepthError("perspective");
+    showMissingWarning("perspective");
   }
 
+  
   public void frustum(float left, float right, 
                       float bottom, float top, 
                       float near, float far) {
-    showDepthError("frustum");
+    showMethodWarning("frustum");
   }
 
+  
   public void printProjection() {
-    showDepthError("printCamera");
+    showMethodWarning("printCamera");
   }
 
 
@@ -3465,7 +3518,7 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenX(float x, float y) {
-    showMethodError("screenX");
+    showMissingWarning("screenX");
     return 0;
   }
 
@@ -3476,7 +3529,7 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenY(float x, float y) {
-    showMethodError("screenY");
+    showMissingWarning("screenY");
     return 0;
   }
 
@@ -3489,7 +3542,7 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenX(float x, float y, float z) {
-    showDepthErrorXYZ("screenX");
+    showMissingWarning("screenX");
     return 0;
   }
 
@@ -3502,7 +3555,7 @@ public class PGraphics extends PImage implements PConstants {
    * scale(), or any other transformations.
    */
   public float screenY(float x, float y, float z) {
-    showDepthErrorXYZ("screenY");
+    showMissingWarning("screenY");
     return 0;
   }
 
@@ -3519,7 +3572,7 @@ public class PGraphics extends PImage implements PConstants {
    * or directly out of the zbuffer[].
    */
   public float screenZ(float x, float y, float z) {
-    showDepthErrorXYZ("screenZ");
+    showMissingWarning("screenZ");
     return 0;
   }
 
@@ -3534,7 +3587,7 @@ public class PGraphics extends PImage implements PConstants {
    * coordinates of a shape.
    */
   public float modelX(float x, float y, float z) {
-    showDepthError("modelX");
+    showMissingWarning("modelX");
     return 0;
   }
 
@@ -3543,7 +3596,7 @@ public class PGraphics extends PImage implements PConstants {
    * Returns the model space y value for an x, y, z coordinate.
    */
   public float modelY(float x, float y, float z) {
-    showDepthError("modelY");
+    showMissingWarning("modelY");
     return 0;
   }
 
@@ -3552,7 +3605,7 @@ public class PGraphics extends PImage implements PConstants {
    * Returns the model space z value for an x, y, z coordinate.
    */
   public float modelZ(float x, float y, float z) {
-    showDepthError("modelZ");
+    showMissingWarning("modelZ");
     return 0;
   }
 
@@ -3708,12 +3761,12 @@ public class PGraphics extends PImage implements PConstants {
     s.textSize = textSize;
     s.textLeading = textLeading;
   }
-    
-  
+
+
 
   //////////////////////////////////////////////////////////////
 
-  // COLOR
+  // COLOR MODE
 
 
   public void colorMode(int mode) {
@@ -3735,8 +3788,7 @@ public class PGraphics extends PImage implements PConstants {
    * <PRE>colorMode(HSB, 360, 100, 100);</PRE>
    * because the alpha values were still between 0 and 255.
    */
-  public void colorMode(int mode,
-                        float maxX, float maxY, float maxZ) {
+  public void colorMode(int mode, float maxX, float maxY, float maxZ) {
     colorMode(mode, maxX, maxY, maxZ, colorModeA);
   }
 
@@ -3751,8 +3803,8 @@ public class PGraphics extends PImage implements PConstants {
     colorModeA = maxA;
 
     // if color max values are all 1, then no need to scale
-    colorModeScale = ((maxA != 1) || (maxX != maxY) ||
-                  (maxY != maxZ) || (maxZ != maxA));
+    colorModeScale = 
+      ((maxA != 1) || (maxX != maxY) || (maxY != maxZ) || (maxZ != maxA));
 
     // if color is rgb/0..255 this will make it easier for the
     // red() green() etc functions
@@ -3761,10 +3813,63 @@ public class PGraphics extends PImage implements PConstants {
       (colorModeY == 255) && (colorModeZ == 255);
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
+  // COLOR CALCULATIONS
 
+  // Given input values for coloring, these functions will fill the calcXxxx
+  // variables with values that have been properly filtered through the
+  // current colorMode settings.  
+  
+  // Renderers that need to subclass any drawing properties such as fill or
+  // stroke will usally want to override methods like fillFromCalc (or the
+  // same for stroke, ambient, etc.) That way the color calcuations are 
+  // covered by this based PGraphics class, leaving only a single function
+  // to override/implement in the subclass.
+
+  
+  /**
+   * Set the fill to either a grayscale value or an ARGB int.
+   * <P>
+   * The problem with this code is that it has to detect between these two 
+   * situations automatically. This is done by checking to see if the high bits
+   * (the alpha for 0xAA000000) is set, and if not, whether the color value 
+   * that follows is less than colorModeX (first param passed to colorMode).
+   * <P>
+   * This auto-detect would break in the following situation:
+   * <PRE>size(256, 256);
+   * for (int i = 0; i < 256; i++) {
+   *   color c = color(0, 0, 0, i);
+   *   stroke(c);
+   *   line(i, 0, i, 256);
+   * }</PRE>
+   * ...on the first time through the loop, where (i == 0), since the color 
+   * itself is zero (black) then it would appear indistinguishable from code 
+   * that reads "fill(0)". The solution is to use the four parameter versions
+   * of stroke or fill to more directly specify the desired result.
+   */
+  protected void colorCalc(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+      colorCalc((float) rgb);
+
+    } else {
+      colorCalcARGB(rgb, colorModeA);
+    }
+  }
+
+
+  protected void colorCalc(int rgb, float alpha) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      colorCalc((float) rgb, alpha);
+
+    } else {
+      colorCalcARGB(rgb, alpha);
+    }
+  }
+
+    
   protected void colorCalc(float gray) {
     colorCalc(gray, colorModeA);
   }
@@ -3881,30 +3986,33 @@ public class PGraphics extends PImage implements PConstants {
     calcAlpha = (calcAi != 255);
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
+  // STROKE CAP/JOIN/WEIGHT
+  
+  
   public void strokeWeight(float weight) {
     strokeWeight = weight;
-    //if (strokeWeight != DEFAULT_STROKE_WEIGHT) {
-    strokeWeightImpl();
+//    strokeWeightImpl();
   }
   
   
   /** Renderer-specific handling after the strokeJoin has been set. */
-  protected void strokeWeightImpl() {
-  }
+//  protected void strokeWeightImpl() {
+//  }
 
 
   public void strokeJoin(int join) {
     strokeJoin = join;
-    strokeJoinImpl();
+//    strokeJoinImpl();
   }
   
   
   /** Renderer-specific handling after the strokeJoin has been set. */
-  protected void strokeJoinImpl() {
-  }
+//  protected void strokeJoinImpl() {
+//  }
 
 
   public void strokeCap(int cap) {
@@ -3913,10 +4021,16 @@ public class PGraphics extends PImage implements PConstants {
   
   
   /** Renderer-specific handling after the strokeCap has been set. */
-  protected void strokeCapImpl() {
-  }
+//  protected void strokeCapImpl() {
+//  }
 
 
+  
+  //////////////////////////////////////////////////////////////
+
+  // STROKE COLOR 
+  
+  
   public void noStroke() {
     stroke = false;
   }
@@ -3927,24 +4041,28 @@ public class PGraphics extends PImage implements PConstants {
    * See notes attached to the fill() function.
    */
   public void stroke(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      stroke((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      strokeFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+//      stroke((float) rgb);
+//
+//    } else {
+//      colorCalcARGB(rgb, colorModeA);
+//      strokeFromCalc();
+//    }
+    colorCalc(rgb);
+    strokeFromCalc();
   }
 
 
   public void stroke(int rgb, float alpha) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-      stroke((float) rgb, alpha);
-
-    } else {
-      colorCalcARGB(rgb, alpha);
-      strokeFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+//      stroke((float) rgb, alpha);
+//
+//    } else {
+//      colorCalcARGB(rgb, alpha);
+//      strokeFromCalc();
+//    }
+    colorCalc(rgb, alpha);
+    strokeFromCalc();
   }
 
 
@@ -3974,7 +4092,6 @@ public class PGraphics extends PImage implements PConstants {
 
   protected void strokeFromCalc() {
     stroke = true;
-    //strokeChanged = true;
     strokeR = calcR;
     strokeG = calcG;
     strokeB = calcB;
@@ -3990,6 +4107,8 @@ public class PGraphics extends PImage implements PConstants {
 
   //////////////////////////////////////////////////////////////
 
+  // TINT COLOR
+  
 
   public void noTint() {
     tint = false;
@@ -3997,27 +4116,30 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the tint to either a grayscale or ARGB value. See notes
-   * attached to the fill() function.
+   * Set the tint to either a grayscale or ARGB value. 
    */
   public void tint(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-      tint((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      tintFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+//      tint((float) rgb);
+//
+//    } else {
+//      colorCalcARGB(rgb, colorModeA);
+//      tintFromCalc();
+//    }
+    colorCalc(rgb);
+    tintFromCalc();
   }
 
   public void tint(int rgb, float alpha) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-      tint((float) rgb, alpha);
-
-    } else {
-      colorCalcARGB(rgb, alpha);
-      tintFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+//      tint((float) rgb, alpha);
+//
+//    } else {
+//      colorCalcARGB(rgb, alpha);
+//      tintFromCalc();
+//    }
+    colorCalc(rgb, alpha);
+    tintFromCalc();
   }
 
   public void tint(float gray) {
@@ -4058,9 +4180,12 @@ public class PGraphics extends PImage implements PConstants {
     tintAlpha = calcAlpha;
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
+  // FILL COLOR
+  
 
   public void noFill() {
     fill = false;
@@ -4069,43 +4194,30 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Set the fill to either a grayscale value or an ARGB int.
-   * <P>
-   * The problem with this code is that it has to detect between
-   * these two situations automatically. This is done by checking
-   * to see if the high bits (the alpha for 0xAA000000) is set,
-   * and if not, whether the color value that follows is less than
-   * colorModeX (the first param passed to colorMode).
-   * <P>
-   * This auto-detect would break in the following situation:
-   * <PRE>size(256, 256);
-   * for (int i = 0; i < 256; i++) {
-   *   color c = color(0, 0, 0, i);
-   *   stroke(c);
-   *   line(i, 0, i, 256);
-   * }</PRE>
-   * ...on the first time through the loop, where (i == 0),
-   * since the color itself is zero (black) then it would appear
-   * indistinguishable from someone having written fill(0).
    */
   public void fill(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      fill((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      fillFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+//      fill((float) rgb);
+//
+//    } else {
+//      colorCalcARGB(rgb, colorModeA);
+//      fillFromCalc();
+//    }
+    colorCalc(rgb);
+    fillFromCalc();
   }
 
 
   public void fill(int rgb, float alpha) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      fill((float) rgb, alpha);
-
-    } else {
-      colorCalcARGB(rgb, alpha);
-      fillFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+//      fill((float) rgb, alpha);
+//
+//    } else {
+//      colorCalcARGB(rgb, alpha);
+//      fillFromCalc();
+//    }
+    colorCalc(rgb, alpha);
+    fillFromCalc();
   }
 
 
@@ -4155,13 +4267,15 @@ public class PGraphics extends PImage implements PConstants {
 
   
   public void ambient(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      ambient((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      ambientFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+//      ambient((float) rgb);
+//
+//    } else {
+//      colorCalcARGB(rgb, colorModeA);
+//      ambientFromCalc();
+//    }
+    colorCalc(rgb);
+    ambientFromCalc();
   }
 
 
@@ -4181,21 +4295,19 @@ public class PGraphics extends PImage implements PConstants {
     ambientR = calcR;
     ambientG = calcG;
     ambientB = calcB;
-//    material.ambient(calcR, calcG, calcB);
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-
   public void specular(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      specular((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      specularFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+//      specular((float) rgb);
+//
+//    } else {
+//      colorCalcARGB(rgb, colorModeA);
+//      specularFromCalc();
+//    }
+    colorCalc(rgb);
+    specularFromCalc();
   }
 
 
@@ -4215,11 +4327,6 @@ public class PGraphics extends PImage implements PConstants {
     specularR = calcR;
     specularG = calcG;
     specularB = calcB;
-    //specularA = calcA;
-    //specularRi = calcRi;
-    //specularGi = calcGi;
-    //specularBi = calcBi;
-    //specularAi = calcAi;
   }
 
 
@@ -4228,17 +4335,16 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  //////////////////////////////////////////////////////////////
-
-
   public void emissive(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      emissive((float) rgb);
-
-    } else {
-      colorCalcARGB(rgb, colorModeA);
-      emissiveFromCalc();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+//      emissive((float) rgb);
+//
+//    } else {
+//      colorCalcARGB(rgb, colorModeA);
+//      emissiveFromCalc();
+//    }
+    colorCalc(rgb);
+    emissiveFromCalc();
   }
 
 
@@ -4258,113 +4364,66 @@ public class PGraphics extends PImage implements PConstants {
     emissiveR = calcR;
     emissiveG = calcG;
     emissiveB = calcB;
-    //emissiveRi = calcRi;
-    //emissiveGi = calcGi;
-    //emissiveBi = calcBi;
-  }
-
-  
-  /*
-  public void ambient(int rgb) {
-    showDepthError("ambient");
-  }
-
-  public void ambient(float gray) {
-    showDepthError("ambient");
-  }
-
-  public void ambient(float x, float y, float z) {
-    // This doesn't take 
-    if ((x != PMaterial.DEFAULT_AMBIENT) || 
-        (y != PMaterial.DEFAULT_AMBIENT) ||
-        (z != PMaterial.DEFAULT_AMBIENT)) {
-      showDepthError("ambient");
-    }
-  }
-
-  public void specular(int rgb) {
-    showDepthError("specular");
-  }
-
-  public void specular(float gray) {
-    showDepthError("specular");
-  }
-
-  public void specular(float x, float y, float z) {
-    showDepthError("specular");
-  }
-
-  public void shininess(float shine) {
-    showDepthError("shininess");
   }
 
 
-  public void emissive(int rgb) {
-    showDepthError("emissive");
-  }
 
-  public void emissive(float gray) {
-    showDepthError("emissive");
-  }
-
-  public void emissive(float x, float y, float z ) {
-    showDepthError("emissive");
-  }
-  */
-
-  
-  
   //////////////////////////////////////////////////////////////
 
   // LIGHTS
 
+  // The details of lighting are very implementation-specific, so this base 
+  // class does not handle any details of settings lights. It does however 
+  // display warning messages that the functions are not available. 
+  
 
   public void lights() {
-    showDepthError("lights");
+    showMethodWarning("lights");
   }
 
   public void noLights() {
-    showDepthError("noLights");
+    showMethodWarning("noLights");
   }
 
   public void ambientLight(float red, float green, float blue) {
-    showDepthError("ambientLight");
+    showMethodWarning("ambientLight");
   }
 
   public void ambientLight(float red, float green, float blue,
                            float x, float y, float z) {
-    showDepthError("ambientLight");
+    showMethodWarning("ambientLight");
   }
 
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
-    showDepthError("directionalLight");
+    showMethodWarning("directionalLight");
   }
 
   public void pointLight(float red, float green, float blue,
                          float x, float y, float z) {
-    showDepthError("pointLight");
+    showMethodWarning("pointLight");
   }
 
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
                         float nx, float ny, float nz,
                         float angle, float concentration) {
-    showDepthError("spotLight");
+    showMethodWarning("spotLight");
   }
 
   public void lightFalloff(float constant, float linear, float quadratic) {
-    showDepthError("lightFalloff");
+    showMethodWarning("lightFalloff");
   }
 
   public void lightSpecular(float x, float y, float z) {
-    showDepthError("lightSpecular");
+    showMethodWarning("lightSpecular");
   }
 
 
 
   //////////////////////////////////////////////////////////////
 
+  // BACKGROUND
 
   /**
    * Set the background to a gray or ARGB color.
@@ -4378,17 +4437,19 @@ public class PGraphics extends PImage implements PConstants {
    * to be identity before drawing.
    */
   public void background(int rgb) {
-    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-      background((float) rgb);
-
-    } else {
-      if (format == RGB) {
-        rgb |= 0xff000000;  // ignore alpha for main drawing surface
-      }
-      colorCalcARGB(rgb, colorModeA);
-      backgroundFromCalc();
-      backgroundImpl();
-    }
+//    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+//      background((float) rgb);
+//
+//    } else {
+//      if (format == RGB) {
+//        rgb |= 0xff000000;  // ignore alpha for main drawing surface
+//      }
+//      colorCalcARGB(rgb, colorModeA);
+//      backgroundFromCalc();
+//      backgroundImpl();
+//    }
+    colorCalc(rgb);
+    backgroundFromCalc();
   }
 
 
@@ -4396,19 +4457,21 @@ public class PGraphics extends PImage implements PConstants {
    * See notes about alpha in background(x, y, z, a).
    */
   public void background(int rgb, float alpha) {
-    if (format == RGB) {
-      background(rgb);  // ignore alpha for main drawing surface
-
-    } else {
-      if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-        background((float) rgb, alpha);
-
-      } else {
-        colorCalcARGB(rgb, alpha);
-        backgroundFromCalc();
-        backgroundImpl();
-      }
-    }
+//    if (format == RGB) {
+//      background(rgb);  // ignore alpha for main drawing surface
+//
+//    } else {
+//      if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+//        background((float) rgb, alpha);
+//
+//      } else {
+//        colorCalcARGB(rgb, alpha);
+//        backgroundFromCalc();
+//        backgroundImpl();
+//      }
+//    }
+    colorCalc(rgb, alpha);
+    backgroundFromCalc();
   }
 
 
@@ -4419,7 +4482,7 @@ public class PGraphics extends PImage implements PConstants {
   public void background(float gray) {
     colorCalc(gray);
     backgroundFromCalc();
-    backgroundImpl();
+//    backgroundImpl();
   }
 
 
@@ -4433,7 +4496,7 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       colorCalc(gray, alpha);
       backgroundFromCalc();
-      backgroundImpl();
+//      backgroundImpl();
     }
   }
 
@@ -4445,7 +4508,7 @@ public class PGraphics extends PImage implements PConstants {
   public void background(float x, float y, float z) {
     colorCalc(x, y, z);
     backgroundFromCalc();
-    backgroundImpl();
+//    backgroundImpl();
   }
 
 
@@ -4461,14 +4524,16 @@ public class PGraphics extends PImage implements PConstants {
    * and draw a rectangle.
    */
   public void background(float x, float y, float z, float a) {
-    if (format == RGB) {
-      background(x, y, z);  // don't allow people to set alpha
-
-    } else {
-      colorCalc(x, y, z, a);
-      backgroundFromCalc();
-      backgroundImpl();
-    }
+//    if (format == RGB) {
+//      background(x, y, z);  // don't allow people to set alpha
+//
+//    } else {
+//      colorCalc(x, y, z, a);
+//      backgroundFromCalc();
+//      backgroundImpl();
+//    }
+    colorCalc(x, y, z, a);
+    backgroundFromCalc();
   }
 
 
@@ -4476,109 +4541,93 @@ public class PGraphics extends PImage implements PConstants {
     backgroundR = calcR;
     backgroundG = calcG;
     backgroundB = calcB;
-    backgroundA = calcA;
+    backgroundA = (format == RGB) ? colorModeA : calcA;
     backgroundRi = calcRi;
     backgroundGi = calcGi;
     backgroundBi = calcBi;
-    backgroundAi = calcAi;
-    backgroundAlpha = calcAlpha;
+    backgroundAi = (format == RGB) ? 255 : calcAi;
+    backgroundAlpha = (format == RGB) ? false : calcAlpha;
     backgroundColor = calcColor;
+    
+    backgroundImpl();
   }
 
 
   /**
-   * Takes an RGB or ARGB image and sets it as the background.
+   * Takes an RGB or ARGB image and sets it as the background. 
+   * The width and height of the image must be the same size as the sketch. 
+   * Use image.resize(width, height) to make short work of such a task.
    * <P>
-   * Note that even if the image is set as RGB, the high 8 bits of
-   * each pixel should be set opaque (0xFF000000), because the image data
-   * will be copied directly to the screen, and non-opaque background
-   * images may have strange behavior. Using image.filter(OPAQUE)
-   * will handle this easily.
+   * Note that even if the image is set as RGB, the high 8 bits of each pixel 
+   * should be set opaque (0xFF000000), because the image data will be copied 
+   * directly to the screen, and non-opaque background images may have strange
+   * behavior. Using image.filter(OPAQUE) will handle this easily.
    * <P>
-   * When using 3D, this will also clear out the zbuffer and
-   * stencil buffer if they exist.
+   * When using 3D, this will also clear the zbuffer (if it exists).
    */
   public void background(PImage image) {
     if ((image.width != width) || (image.height != height)) {
-      throw new RuntimeException("background image must be " +
-                                 "the same size as your application");
+      throw new RuntimeException(ERROR_BACKGROUND_IMAGE_SIZE);
     }
     if ((image.format != RGB) && (image.format != ARGB)) {
-      throw new RuntimeException("background images should be RGB or ARGB");
+      throw new RuntimeException(ERROR_BACKGROUND_IMAGE_FORMAT);
     }
-
-    // zero this out since it's an image
-    backgroundColor = 0;
-
+    backgroundColor = 0;  // just zero it out for images
+    backgroundImpl(image);
+  }
+  
+  
+  /**
+   * Actually set the background image. This is separated from the error 
+   * handling and other semantic goofiness that is shared across renderers.
+   */
+  protected void backgroundImpl(PImage image) {
     // blit image to the screen
-    System.arraycopy(image.pixels, 0, pixels, 0, pixels.length);
+    set(0, 0, image);
   }
 
 
   /**
-   * Clear the pixel buffer.
+   * Actual implementation of clearing the background, now that the 
+   * internal variables for background color have been set. Called by the 
+   * backgroundFromCalc() method, which is what all the other background() 
+   * methods call once the work is done.
    */
   protected void backgroundImpl() {
+    pushStyle();
+    pushMatrix();
+    resetMatrix();
+    fill(backgroundColor);
+    rect(0, 0, width, height);
+    popMatrix();
+    popStyle();
   }
 
-
-
-  //////////////////////////////////////////////////////////////
-
-  // MESSAGES / ERRORS / LOGGING
-
-
-  static protected HashMap<String, Object> errors;
-  
 
   /**
-   * Show a renderer error, and keep track of it so that it's only shown once.
-   * @param msg the error message (which will be stored for later comparison) 
+   * Callback to handle clearing the background when begin/endRaw is in use.
+   * Handled as separate function for OpenGL (or other) subclasses that 
+   * override backgroundImpl() but still needs this to work properly.
    */
-  static protected void showError(String msg) {
-    if (errors == null) {
-      errors = new HashMap<String, Object>();
-    }
-    if (!errors.containsKey(msg)) {
-      System.err.println(msg);
-      errors.put(msg, new Object());
-    }
-  }
+//  protected void backgroundRawImpl() {
+//    if (raw != null) {
+//      raw.colorMode(RGB, 1);
+//      raw.noStroke();
+//      raw.fill(backgroundR, backgroundG, backgroundB);
+//      raw.beginShape(TRIANGLES);
+//
+//      raw.vertex(0, 0);
+//      raw.vertex(width, 0);
+//      raw.vertex(0, height);
+//
+//      raw.vertex(width, 0);
+//      raw.vertex(width, height);
+//      raw.vertex(0, height);
+//
+//      raw.endShape();
+//    }
+//  }
 
-  
-  static protected void showDepthError(String method) {
-    showError(method + "() can only be used with a renderer that " + 
-              "supports 3D, such as P3D or OPENGL.");
-  }
-
-
-  static protected void showDepthErrorXYZ(String method) {
-    showError(method + "() with x, y, and z coordinates " +
-              "can only be used with a renderer that " + 
-              "supports 3D, such as P3D or OPENGL. " +
-              "Use a version without a z-coordinate instead.");
-  }
-
-
-  static protected void showMethodError(String method) {
-    showError(method + "() is not available with this renderer.");
-  }
-  
-  
-  /**
-   * Error that a particular variation of a method is unavailable (even though
-   * other variations are). For instance, if vertex(x, y, u, v) is unavailable, 
-   * but vertex(x, y) is just fine, it doesn't make sense to use methodError().
-   */
-  static protected void showVariationError(String str) {
-    showError(str + " is not available with this renderer.");
-  }
-  
-  
-  static protected void throwTextFontError(String method) {
-    throw new RuntimeException("Use textFont() before " + method + "()");
-  }
-  
 
 
   //////////////////////////////////////////////////////////////
@@ -4842,6 +4891,9 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Record individual lines and triangles by echoing them to another renderer. 
+   */
   public void beginRaw(PGraphics rawGraphics) {  // ignore
     this.raw = rawGraphics;
     rawGraphics.beginDraw();
@@ -4863,16 +4915,106 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // WARNINGS and EXCEPTIONS
+
+
+  static protected HashMap<String, Object> warnings;
+  
+
   /**
-   * Handle any takedown for this graphics context.
-   * <p>
-   * This is called when a sketch is shut down and this renderer was
-   * specified using the size() command, or inside endRecord() and
-   * endRaw(), in order to shut things off.
+   * Show a renderer error, and keep track of it so that it's only shown once.
+   * @param msg the error message (which will be stored for later comparison) 
    */
-  public void dispose() {  // ignore
+  static public void showWarning(String msg) {  // ignore
+    if (warnings == null) {
+      warnings = new HashMap<String, Object>();
+    }
+    if (!warnings.containsKey(msg)) {
+      System.err.println(msg);
+      warnings.put(msg, new Object());
+    }
   }
 
+  
+  /**
+   * Display a warning that the specified method is only available with 3D.
+   * @param method The method name (no parentheses)
+   */
+  static protected void showDepthWarning(String method) {
+    showWarning(method + "() can only be used with a renderer that " + 
+                "supports 3D, such as P3D or OPENGL.");
+  }
+
+
+  /**
+   * Display a warning that the specified method that takes x, y, z parameters
+   * can only be used with x and y parameters in this renderer.
+   * @param method The method name (no parentheses)
+   */
+  static protected void showDepthWarningXYZ(String method) {
+    showWarning(method + "() with x, y, and z coordinates " +
+                "can only be used with a renderer that " + 
+                "supports 3D, such as P3D or OPENGL. " +
+                "Use a version without a z-coordinate instead.");
+  }
+
+
+  /**
+   * Display a warning that the specified method is simply unavailable.
+   */
+  static protected void showMethodWarning(String method) {
+    showWarning(method + "() is not available with this renderer.");
+  }
+  
+  
+  /**
+   * Error that a particular variation of a method is unavailable (even though
+   * other variations are). For instance, if vertex(x, y, u, v) is not 
+   * available, but vertex(x, y) is just fine.
+   */
+  static protected void showVariationWarning(String str) {
+    showWarning(str + " is not available with this renderer.");
+  }
+  
+
+  /**
+   * Display a warning that the specified method is not implemented, meaning
+   * that it could be either a completely missing function, although other
+   * variations of it may still work properly.
+   */
+  static protected void showMissingWarning(String method) {
+    showWarning(method + "(), or this particular variation of it, " +
+                "is not available with this renderer.");
+  }
+  
+  
+  /**
+   * Show an renderer-related exception that halts the program. Currently just
+   * wraps the message as a RuntimeException and throws it, but might do 
+   * something more specific might be used in the future.
+   */
+  static public void showException(String msg) {  // ignore
+    throw new RuntimeException(msg);
+  }
+
+  
+  /**
+   * Throw an exeption that halts the program because textFont() has not been
+   * used prior to the specified method.
+   */
+  static protected void showTextFontException(String method) {
+    throw new RuntimeException("Use textFont() before " + method + "()");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // RENDERER SUPPORT QUERIES
+  
 
   /**
    * Return true if this renderer should be drawn to the screen.
