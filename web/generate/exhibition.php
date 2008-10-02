@@ -24,6 +24,7 @@ putenv('HOME=' . CONTENTDIR);
 //`cd /var/www/processing && /usr/local/bin/svn co svn://processing.org/trunk/web/content/`;
 
 `cd $there && /usr/local/bin/svn update curated.xml`;
+`cd $there && /usr/local/bin/svn update updates.xml`;
 
 
 /******************************************** CURATED ***/
