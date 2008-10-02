@@ -141,6 +141,9 @@ public class PGraphics extends PImage implements PConstants {
 
   /// width * height (useful for many calculations)
   public int pixelCount;
+
+  /// true if smoothing is enabled (read-only)
+  public boolean smooth = false;
   
   // ........................................................
   
@@ -177,9 +180,8 @@ public class PGraphics extends PImage implements PConstants {
    * The hints[] array is allocated early on because it might
    * be used inside beginDraw(), allocate(), etc.
    */
-  protected boolean[] hints = new boolean[HINT_COUNT];
-  
- 
+  protected boolean[] hints = new boolean[HINT_COUNT]; 
+
   
   ////////////////////////////////////////////////////////////
 
@@ -301,6 +303,9 @@ public class PGraphics extends PImage implements PConstants {
   
   /** The current shape alignment mode (read-only) */
   public int shapeMode;
+
+  /** The current image alignment (read-only) */
+  public int imageMode = CORNER;
   
   // ........................................................
 
@@ -488,21 +493,6 @@ public class PGraphics extends PImage implements PConstants {
   protected int textBreakCount;
   protected int[] textBreakStart;
   protected int[] textBreakStop;
-
-  // ........................................................
-
-  static final String ERROR_BACKGROUND_IMAGE_SIZE = 
-    "background image must be the same size as your application";
-  static final String ERROR_BACKGROUND_IMAGE_FORMAT =
-    "background images should be RGB or ARGB";
-
-  static final String ERROR_TEXTFONT_NULL_PFONT = 
-    "A null PFont was passed to textFont()";
-
-  static final String ERROR_PUSHMATRIX_OVERFLOW =
-    "Too many calls to pushMatrix().";
-  static final String ERROR_PUSHMATRIX_UNDERFLOW =
-    "Too many calls to popMatrix(), and not enough to pushMatrix().";
 
   // ........................................................
 
@@ -2226,10 +2216,49 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // SMOOTHING
   
+
+  /**
+   * If true in PImage, use bilinear interpolation for copy()
+   * operations. When inherited by PGraphics, also controls shapes.
+   */
+  public void smooth() {
+    smooth = true;
+  }
+
+
+  /**
+   * Disable smoothing. See smooth().
+   */
+  public void noSmooth() {
+    smooth = false;
+  }
+
+  
+
   //////////////////////////////////////////////////////////////
 
   // IMAGE
+
+
+  /**
+   * The mode can only be set to CORNERS, CORNER, and CENTER.
+   * <p/>
+   * Support for CENTER was added in release 0146.
+   */
+  public void imageMode(int mode) {
+    if ((mode == CORNER) || (mode == CORNERS) || (mode == CENTER)) {
+      imageMode = mode;
+    } else {
+      String msg =
+        "imageMode() only works with CORNER, CORNERS, or CENTER";
+      throw new RuntimeException(msg);
+    }
+  }
 
 
   public void image(PImage image, float x, float y) {

@@ -26,6 +26,8 @@ package processing.core;
 
 import java.awt.image.*;
 import java.io.*;
+import java.util.HashMap;
+
 import javax.imageio.ImageIO;
 
 
@@ -55,15 +57,13 @@ public class PImage implements PConstants, Cloneable {
    */
   public PApplet parent;
 
-  public int imageMode = CORNER;
-  public boolean smooth = false;
-
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
-  
+
   /** for subclasses that need to store info about the image */
-  public Object cache;
+  protected HashMap<Object,Object> cacheMap; 
+
 
   /** modified portion of the image */
   protected boolean modified;
@@ -88,10 +88,10 @@ public class PImage implements PConstants, Cloneable {
   static final int PREC_RED_SHIFT = 16-PRECISIONB;
 
   // internal kernel stuff for the gaussian blur filter
-  int blurRadius;
-  int blurKernelSize;
-  int[] blurKernel;
-  int[][] blurMult;
+  private int blurRadius;
+  private int blurKernelSize;
+  private int[] blurKernel;
+  private int[][] blurMult;
 
 
   //////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage() {
     format = ARGB;  // default to ARGB images for release 0116
-    cache = null;
+//    cache = null;
   }
 
 
@@ -136,12 +136,12 @@ public class PImage implements PConstants, Cloneable {
    * Used by Capture and Movie classes (and perhaps others),
    * because the width/height will not be known when super() is called.
    */
-  public void init(int width, int height, int format) {  // ignore
+  protected void init(int width, int height, int format) {  // ignore
     this.width = width;
     this.height = height;
     this.pixels = new int[width*height];
     this.format = format;
-    this.cache = null;
+//    this.cache = null;
   }
 
 
@@ -162,6 +162,9 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  //////////////////////////////////////////////////////////////
+  
+  
   /**
    * Construct a new PImage from a java.awt.Image. This constructor assumes
    * that you've done the work of making sure a MediaTracker has been used
@@ -188,7 +191,7 @@ public class PImage implements PConstants, Cloneable {
     }
 
     format = RGB;
-    cache = null;
+//    cache = null;
   }
 
 
@@ -196,6 +199,7 @@ public class PImage implements PConstants, Cloneable {
    * Returns a BufferedImage from this PImage.
    */
   public java.awt.Image getImage() {
+    loadPixels();
     int type = (format == RGB) ? 
       BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB; 
     BufferedImage image = new BufferedImage(width, height, type);
@@ -207,41 +211,42 @@ public class PImage implements PConstants, Cloneable {
 
   //////////////////////////////////////////////////////////////
 
+  
+  /**
+   * Store data of some kind for a renderer that requires extra metadata of
+   * some kind. Usually this is a renderer-specific representation of the 
+   * image data, for instance a BufferedImage with tint() settings applied for 
+   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
+   * PGraphicsOpenGL. 
+   */
+  public void setCache(Object parent, Object storage) {
+    cacheMap.put(parent, storage);
+  }
+  
+  
+  /**
+   * Get cache storage data for the specified renderer. Because each renderer
+   * will cache data in different formats, it's necessary to store cache data
+   * keyed by the renderer object. Otherwise, attempting to draw the same 
+   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
+   * @param parent The PGraphics object (or any object, really) associated
+   * @return data stored for the specified parent
+   */
+  public Object getCache(Object parent) {
+    return cacheMap.get(parent);
+  }
+  
 
   /**
-   * If true in PImage, use bilinear interpolation for copy()
-   * operations. When inherited by PGraphics, also controls shapes.
+   * Remove information associated with this renderer from the cache, if any.
+   * @param parent The PGraphics object whose cache data should be removed
    */
-  public void smooth() {
-    smooth = true;
+  public void removeCache(Object parent) {
+    cacheMap.remove(parent);
   }
-
-
-  /**
-   * Disable smoothing. See smooth().
-   */
-  public void noSmooth() {
-    smooth = false;
-  }
-
-
-
-  /**
-   * The mode can only be set to CORNERS, CORNER, and CENTER.
-   * <p/>
-   * Support for CENTER was added in release 0146.
-   */
-  public void imageMode(int mode) {
-    if ((mode == CORNER) || (mode == CORNERS) || (mode == CENTER)) {
-      imageMode = mode;
-    } else {
-      String msg =
-        "imageMode() only works with CORNER, CORNERS, or CENTER";
-      throw new RuntimeException(msg);
-    }
-  }
-
-
+  
+  
+  
   //////////////////////////////////////////////////////////////
 
   // MARKING IMAGE AS MODIFIED / FOR USE w/ GET/SET
@@ -289,40 +294,102 @@ public class PImage implements PConstants, Cloneable {
    * is structured this way in the hope of being able to use this to
    * speed things up in the future.
    */
-  public void updatePixels(int x1, int y1, int x2, int y2) {  // ignore
-    if (imageMode == CORNER) {  // x2, y2 are w/h
-      x2 += x1;
-      y2 += y1;
-
-    } else if (imageMode == CENTER) {
-      x1 -= x2 / 2;
-      y1 -= y2 / 2;
-      x2 += x1;
-      y2 += y1;
-    }
-    updatePixelsImpl(x1, y1, x2, y2);
+  public void updatePixels(int x, int y, int w, int h) {  // ignore
+//    if (imageMode == CORNER) {  // x2, y2 are w/h
+//      x2 += x1;
+//      y2 += y1;
+//
+//    } else if (imageMode == CENTER) {
+//      x1 -= x2 / 2;
+//      y1 -= y2 / 2;
+//      x2 += x1;
+//      y2 += y1;
+//    }
+    updatePixelsImpl(x, y, w, h);
   }
 
 
-  protected void updatePixelsImpl(int x1, int y1, int x2, int y2) {
+  protected void updatePixelsImpl(int x, int y, int w, int h) {
+    int x2 = x + w;
+    int y2 = y + h;
+    
     if (!modified) {
-      mx1 = x1;
+      mx1 = x;
       mx2 = x2;
-      my1 = y1;
+      my1 = y;
       my2 = y2;
       modified = true;
 
     } else {
-      if (x1 < mx1) mx1 = x1;
-      if (x1 > mx2) mx2 = x1;
-      if (y1 < my1) my1 = y1;
-      if (y1 > my2) my2 = y1;
+      if (x < mx1) mx1 = x;
+      if (x > mx2) mx2 = x;
+      if (y < my1) my1 = y;
+      if (y > my2) my2 = y;
 
       if (x2 < mx1) mx1 = x2;
       if (x2 > mx2) mx2 = x2;
       if (y2 < my1) my1 = y2;
       if (y2 > my2) my2 = y2;
     }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // COPYING IMAGE DATA
+
+
+  /**
+   * Duplicate an image, returns new PImage object.
+   * The pixels[] array for the new object will be unique
+   * and recopied from the source image. This is implemented as an
+   * override of Object.clone(). We recommend using get() instead,
+   * because it prevents you from needing to catch the
+   * CloneNotSupportedException, and from doing a cast from the result.
+   */
+  public Object clone() throws CloneNotSupportedException {  // ignore
+    PImage c = (PImage) super.clone();
+
+    // super.clone() will only copy the reference to the pixels
+    // array, so this will do a proper duplication of it instead.
+    c.pixels = new int[width * height];
+    System.arraycopy(pixels, 0, c.pixels, 0, pixels.length);
+
+    // return the goods
+    return c;
+  }
+
+
+  /**
+   * Resize this image to a new width and height.
+   * Use 0 for wide or high to make that dimension scale proportionally.
+   */
+  public void resize(int wide, int high) {  // ignore
+    // Make sure that the pixels[] array is valid
+    loadPixels();
+
+    if (wide <= 0 && high <= 0) {
+      width = 0;  // Gimme a break, don't waste my time
+      height = 0;
+      pixels = new int[0];
+
+    } else {
+      if (wide == 0) {  // Use height to determine relative size
+        float diff = (float) high / (float) height;
+        wide = (int) (width * diff);
+      } else if (high == 0) {  // Use the width to determine relative size
+        float diff = (float) wide / (float) width;
+        high = (int) (height * diff);
+      }
+      PImage temp = new PImage(wide, high, this.format);
+      temp.copy(this, 0, 0, width, height, 0, 0, wide, high);
+      this.width = wide;
+      this.height = high;
+      this.pixels = temp.pixels;
+    }
+    // Mark the pixels array as altered
+    updatePixels();
   }
 
 
@@ -369,9 +436,10 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Grab a subsection of a PImage, and copy it into a fresh PImage.
-   * This honors imageMode() for the coordinates.
+   * As of release 0149, no longer honors imageMode() for the coordinates.
    */
   public PImage get(int x, int y, int w, int h) {
+    /*
     if (imageMode == CORNERS) {  // if CORNER, do nothing
       //x2 += x1; y2 += y1;
       // w/h are x2/y2 in this case, bring em down to size
@@ -381,6 +449,7 @@ public class PImage implements PConstants, Cloneable {
       x -= w/2;
       y -= h/2;
     }
+    */
 
     if (x < 0) {
       w += x; // clip off the left edge
@@ -393,7 +462,18 @@ public class PImage implements PConstants, Cloneable {
 
     if (x + w > width) w = width - x;
     if (y + h > height) h = height - y;
+    
+    return getImpl(x, y, w, h);
+  }
 
+
+  /**
+   * Internal function to actually handle getting a block of pixels that
+   * has already been properly cropped to a valid region. That is, x/y/w/h
+   * are guaranteed to be inside the image space, so the implementation can
+   * use the fastest possible pixel copying method.
+   */
+  protected PImage getImpl(int x, int y, int w, int h) {
     PImage newbie = new PImage(w, h, format);
     newbie.parent = parent;
 
@@ -421,7 +501,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * Silently ignores if the coordinate is outside the image.
+   * Set a single pixel to the specified color.
    */
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
@@ -430,16 +510,21 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  /**
+   * Efficient method of drawing an image's pixels directly to this surface.
+   * No variations are employed, meaning that any scale, tint, or imageMode 
+   * settings will be ignored.
+   */
   public void set(int x, int y, PImage src) {
     int sx = 0;
     int sy = 0;
     int sw = src.width;
     int sh = src.height;
 
-    if (imageMode == CENTER) {
-      x -= src.width/2;
-      y -= src.height/2;
-    }
+//    if (imageMode == CENTER) {
+//      x -= src.width/2;
+//      y -= src.height/2;
+//    }
     if (x < 0) {  // off left edge
       sx -= x;
       sw += x;
@@ -524,6 +609,12 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  
+  //////////////////////////////////////////////////////////////
+  
+  // IMAGE FILTERS
+  
+  
   /**
    * Method to apply a variety of basic filters to this image.
    * <P>
@@ -686,7 +777,7 @@ public class PImage implements PConstants, Cloneable {
         }
         break;
 
-            // [toxi20050728] added new filters
+        // [toxi20050728] added new filters
         case ERODE:
           throw new RuntimeException("Use filter(ERODE) instead of " +
                                      "filter(ERODE, param)");
@@ -731,9 +822,10 @@ public class PImage implements PConstants, Cloneable {
     }
   }
 
+
   protected void blurAlpha(float r) {
-    int sum, /*cr, cg,*/ cb; //, k;
-    int /*pixel,*/ read, ri, /*roff,*/ ym, ymi, /*riw,*/ bk0;
+    int sum, cb;
+    int read, ri, ym, ymi, bk0;
     int b2[] = new int[pixels.length];
     int yi = 0;
 
@@ -801,6 +893,7 @@ public class PImage implements PConstants, Cloneable {
       ym++;
     }
   }
+
 
   protected void blurRGB(float r) {
     int sum, cr, cg, cb; //, k;
@@ -878,6 +971,7 @@ public class PImage implements PConstants, Cloneable {
       ym++;
     }
   }
+
 
   protected void blurARGB(float r) {
     int sum, cr, cg, cb, ca;
@@ -960,6 +1054,7 @@ public class PImage implements PConstants, Cloneable {
       ym++;
     }
   }
+
 
   /**
    * Generic dilate/erode filter using luminance values
@@ -1089,18 +1184,19 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
+  
   //////////////////////////////////////////////////////////////
 
-  // REPLICATING & BLENDING (AREAS) OF PIXELS
+  // COPY 
 
 
   /**
    * Copy things from one area of this image
    * to another area in the same image.
    */
-  public void copy(int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    blend(this, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, REPLACE);
+  public void copy(int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    blend(this, sx, sy, sw, sh, dx, dy, dw, dh, REPLACE);
   }
 
 
@@ -1108,10 +1204,16 @@ public class PImage implements PConstants, Cloneable {
    * Copies area of one image into another PImage object.
    */
   public void copy(PImage src,
-                   int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    blend(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, REPLACE);
+                   int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    blend(src, sx, sy, sw, sh, dx, dy, dw, dh, REPLACE);
   }
+
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // BLEND 
 
 
   /**
@@ -1210,9 +1312,9 @@ public class PImage implements PConstants, Cloneable {
    * Blends one area of this image to another area.
    * @see processing.core.PImage#blendColor(int,int,int)
    */
-  public void blend(int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
-    blend(this, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, mode);
+  public void blend(int sx, int sy, int sw, int sh,
+                    int dx, int dy, int dw, int dh, int mode) {
+    blend(this, sx, sy, sw, sh, dx, dy, dw, dh, mode);
   }
 
 
@@ -1221,8 +1323,9 @@ public class PImage implements PConstants, Cloneable {
    * @see processing.core.PImage#blendColor(int,int,int)
    */
   public void blend(PImage src,
-                    int sx1, int sy1, int sx2, int sy2,
-                    int dx1, int dy1, int dx2, int dy2, int mode) {
+                    int sx, int sy, int sw, int sh,
+                    int dx, int dy, int dw, int dh, int mode) {
+    /*
     if (imageMode == CORNER) {  // if CORNERS, do nothing
       sx2 += sx1;
       sy2 += sy1;
@@ -1239,22 +1342,27 @@ public class PImage implements PConstants, Cloneable {
       dx2 += dx1;
       dy2 += dy1;
     }
+    */
+    int sx2 = sx + sw;
+    int sy2 = sy + sh;
+    int dx2 = dx + dw;
+    int dy2 = dy + dh;
 
     loadPixels();
     if (src == this) {
-      if (intersect(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2)) {
-        blit_resize(get(sx1, sy1, sx2 - sx1, sy2 - sy1),
-                    0, 0, sx2 - sx1 - 1, sy2 - sy1 - 1,
-                    pixels, width, height, dx1, dy1, dx2, dy2, mode);
+      if (intersect(sx, sy, sx2, sy2, dx, dy, dx2, dy2)) {
+        blit_resize(get(sx, sy, sx2 - sx, sy2 - sy),
+                    0, 0, sx2 - sx - 1, sy2 - sy - 1,
+                    pixels, width, height, dx, dy, dx2, dy2, mode);
       } else {
         // same as below, except skip the loadPixels() because it'd be redundant
-        blit_resize(src, sx1, sy1, sx2, sy2,
-                    pixels, width, height, dx1, dy1, dx2, dy2, mode);
+        blit_resize(src, sx, sy, sx2, sy2,
+                    pixels, width, height, dx, dy, dx2, dy2, mode);
       }
     } else {
       src.loadPixels();
-      blit_resize(src, sx1, sy1, sx2, sy2,
-                  pixels, width, height, dx1, dy1, dx2, dy2, mode);
+      blit_resize(src, sx, sy, sx2, sy2,
+                  pixels, width, height, dx, dy, dx2, dy2, mode);
       //src.updatePixels();
     }
     updatePixels();
@@ -1264,8 +1372,8 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Check to see if two rectangles intersect one another
    */
-  protected boolean intersect(int sx1, int sy1, int sx2, int sy2,
-                              int dx1, int dy1, int dx2, int dy2) {
+  private boolean intersect(int sx1, int sy1, int sx2, int sy2,
+                            int dx1, int dy1, int dx2, int dy2) {
     int sw = sx2 - sx1 + 1;
     int sh = sy2 - sy1 + 1;
     int dw = dx2 - dx1 + 1;
@@ -1297,68 +1405,9 @@ public class PImage implements PConstants, Cloneable {
   }
 
 
-
   //////////////////////////////////////////////////////////////
 
-  // COPYING IMAGE DATA
-
-
-  /**
-   * Duplicate an image, returns new PImage object.
-   * The pixels[] array for the new object will be unique
-   * and recopied from the source image. This is implemented as an
-   * override of Object.clone(). We recommend using get() instead,
-   * because it prevents you from needing to catch the
-   * CloneNotSupportedException, and from doing a cast from the result.
-   */
-  public Object clone() throws CloneNotSupportedException {  // ignore
-    PImage c = (PImage) super.clone();
-
-    // super.clone() will only copy the reference to the pixels
-    // array, so this will do a proper duplication of it instead.
-    c.pixels = new int[width * height];
-    System.arraycopy(pixels, 0, c.pixels, 0, pixels.length);
-
-    // return the goods
-    return c;
-  }
-
-
-  /**
-   * Resize this image to a new width and height.
-   * Use 0 for wide or high to make that dimension scale proportionally.
-   */
-  public void resize(int wide, int high) {  // ignore
-    // Make sure that the pixels[] array is valid
-    loadPixels();
-
-    if (wide <= 0 && high <= 0) {
-      width = 0;  // Gimme a break, don't waste my time
-      height = 0;
-      pixels = new int[0];
-
-    } else {
-      if (wide == 0) {  // Use height to determine relative size
-        float diff = (float) high / (float) height;
-        wide = (int) (width * diff);
-      } else if (high == 0) {  // Use the width to determine relative size
-        float diff = (float) wide / (float) width;
-        high = (int) (height * diff);
-      }
-      PImage temp = new PImage(wide, high, this.format);
-      temp.copy(this, 0, 0, width, height, 0, 0, wide, high);
-      this.width = wide;
-      this.height = high;
-      this.pixels = temp.pixels;
-    }
-    // Mark the pixels array as altered
-    updatePixels();
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
+  
   /**
    * Internal blitter/resizer/copier from toxi.
    * Uses bilinear filtering if smooth() has been enabled
@@ -1379,6 +1428,8 @@ public class PImage implements PConstants, Cloneable {
     int destW = destX2 - destX1;
     int destH = destY2 - destY1;
 
+    boolean smooth = true;  // may as well go with the smoothing these days
+    
     if (!smooth) {
       srcW++; srcH++;
     }
@@ -2599,27 +2650,21 @@ public class PImage implements PConstants, Cloneable {
         //file = new File(parent.savePath(filename));
         path = parent.savePath(path);
       } else {
-        String re = "PImage.save() requires an absolute path. " +
+        String msg = "PImage.save() requires an absolute path. " +
           "Use createImage(), or pass savePath() to save().";
-        throw new RuntimeException(re);
+        PGraphics.showException(msg);
       }
     }
 
+    // Make sure the pixel data is ready to go
+    loadPixels();
+    
     try {
       OutputStream os = null;
 
       if (PApplet.javaVersion >= 1.4f) {
         if (saveImageFormats == null) {
           saveImageFormats = javax.imageio.ImageIO.getWriterFormatNames();
-//          try {
-//            Class ioClass = Class.forName("javax.imageio.ImageIO");
-//            Method getFormatNamesMethod =
-//              ioClass.getMethod("getWriterFormatNames", (Class[]) null);
-//            saveImageFormats = (String[])
-//              getFormatNamesMethod.invoke((Class[]) null, (Object[]) null);
-//          } catch (Exception e) {
-//            e.printStackTrace();
-//          }
         }
         if (saveImageFormats != null) {
           for (int i = 0; i < saveImageFormats.length; i++) {

@@ -41,7 +41,38 @@ o   since camera functions don't even look at it or set it
 o registerSize() in arcball is causing trouble
 o   some sort of infinite loop issue
 
-_ may need to add to PApplet.main() for 10.5
+api changes
+setMainDrawingSurface() -> setPrimarySurface()
+mainDrawingSurface = primarySurface;
+resize() -> setSize() (roughly)
+endShape() with no params is no longer 'final'
+X/Y/Z -> TX/TY/TZ
+MX/MY/MZ -> X/Y/Z (for sake of PShape)
+render_triangles -> renderTriangles()
+depth_sort_triangles -> sortTriangles()
+render_lines -> renderLines()
+depth_sort_lines -> sortLines()
+no longer any abstract methods in PGraphics itself
+removed support for specular alpha (and its 'SPA' constant)
+clear() -> backgroundImpl()
+CENTER -> DIAMETER for ellipseMode and friends
+textFontNative and textFontNativeMetrics have been removed
+  they require a font rendering context on which to draw
+  and were a weird sort of hack
+  see how the classes implement them now
+hint(ENABLE_NATIVE_FONTS) goes away
+  need to mention in createFont() reference
+  also maybe cover in the loadFont() reference? (maybe problem...)
+image.cache has been removed, replaced with get/set/removeCache()
+  this allows per-renderer image cache data to be stored
+removed textFontNative and textFontNativeMetrics carp
+imageMode ignored for get(), set(), blend() and copy()
+smooth is now part of PGraphics, moved out of PImage
+imageMode has been removed from PImage, too awkward
+
+_ accessors inside PFont need a lot of work
+
+_ may need to add to PApplet.main() for OS X 10.5
 _   System.setProperty("apple.awt.graphics.UseQuartz","true");
 
 svg/pshape/pgraphics priority before 0149
