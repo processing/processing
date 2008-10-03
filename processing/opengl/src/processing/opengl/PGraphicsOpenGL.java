@@ -537,7 +537,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
         }
         */
 
-        ImageCache cash = (ImageCache) texture.cache;
+        ImageCache cash = (ImageCache) texture.getCache(this);
         float uscale = (float) texture.width / (float) cash.twidth;
         float vscale = (float) texture.height / (float) cash.theight;
 
@@ -659,22 +659,22 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   // TODO need to remove this
   public float uscale(PImage texture) {
-    ImageCache cash = (ImageCache) texture.cache;
+    ImageCache cash = (ImageCache) texture.getCache(this);
     return (float) texture.width / (float) cash.twidth;
   }
 
   // TODO need to remove this
   public float vscale(PImage texture) {
-    ImageCache cash = (ImageCache) texture.cache;
+    ImageCache cash = (ImageCache) texture.getCache(this);
     return (float) texture.height / (float) cash.theight;
   }
 
   // TODO need to remove this
   public void bindTexture(PImage texture) {
-    ImageCache cash = (ImageCache) texture.cache;  // as in johnny
+    ImageCache cash = (ImageCache) texture.getCache(this);  // as in johnny
     if (cash == null) {
       cash = new ImageCache();
-      texture.cache = cash;
+      texture.setCache(this, cash);
       texture.setModified(true);
     }
 
@@ -1039,7 +1039,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
     if (textMode == SHAPE) {
       if (textFont.findFont() == null) {
-        showError("Cannot use " + which.name + " as with textMode(SHAPE) " +
+        showWarning("Cannot use " + which.name + " as with textMode(SHAPE) " +
                   "because its native equivalent cannot be found.");
       }
     }
@@ -1121,7 +1121,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
   protected void textCharImpl(char ch, float x, float y) {
     if (textMode == SHAPE) {
       if (textFont.getFont() == null) {
-        PGraphics.showError("textMode(SHAPE) is disabled because the font " +
+        PGraphics.showWarning("textMode(SHAPE) is disabled because the font " +
                             "\"" + textFont.name + "\" is not available.");
       } else {
         textCharImplShape(ch, x, y);
@@ -1852,13 +1852,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-//  public void specular(float x, float y, float z, float a) {
-//    super.specular(x, y, z, a);
-//    calcColorBuffer();
-//    gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer);
-//  }
-
-
   //////////////////////////////////////////////////////////////
 
 
@@ -1895,17 +1888,16 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //////////////////////////////////////////////////////////////
 
 
-  public void background(PImage bgimage) {
-    backgroundImpl();
-    set(0, 0, bgimage);
+  public void backgroundImpl(PImage image) {
+    gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    set(0, 0, image);
   }
 
 
   public void backgroundImpl() {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
-    clearRaw();
   }
 
 
