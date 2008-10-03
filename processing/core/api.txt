@@ -121,10 +121,10 @@
 
   protected void splineForward(int segments, PMatrix3D matrix)
 
-  public void smooth() [inside PImage]
-  public void noSmooth() [inside PImage]
+  public void smooth()
+  public void noSmooth() 
 
-  public void imageMode(int mode) [inside PImage]
+  public void imageMode(int mode)
   public void image(PImage image, float x, float y)
   public void image(PImage image, float x, float y, float c, float d)
   public void image(PImage image,
@@ -195,9 +195,9 @@
 
   public void resetMatrix()
   public void applyMatrix(PMatrix2D source)
-  public void applyMatrix(PMatrix3D source)
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12)
+  public void applyMatrix(PMatrix3D source)
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,

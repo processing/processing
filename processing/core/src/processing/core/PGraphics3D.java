@@ -2362,7 +2362,7 @@ public class PGraphics3D extends PGraphics {
   
   //////////////////////////////////////////////////////////////
 
-  // BASIC SHAPES
+  // POINT, LINE, TRIANGLE, QUAD
 
   // Because vertex(x, y) is mapped to vertex(x, y, 0), none of these commands
   // need to be overridden from their default implementation in PGraphics.
@@ -2390,6 +2390,41 @@ public class PGraphics3D extends PGraphics {
 
 
 
+  //////////////////////////////////////////////////////////////
+
+  // RECT
+  
+  
+  //public void rectMode(int mode)
+  
+  
+  //public void rect(float a, float b, float c, float d)
+  
+  
+  //protected void rectImpl(float x1, float y1, float x2, float y2)
+
+  
+  
+  //////////////////////////////////////////////////////////////
+  
+  // ELLIPSE
+  
+  
+  //public void ellipseMode(int mode)
+  
+  
+  //public void ellipse(float a, float b, float c, float d)
+  
+  
+  //public void arc(float a, float b, float c, float d,
+  //                float start, float stop)
+  
+  
+  //protected void arcImpl(float x, float y, float w, float h,
+  //                       float start, float stop)
+
+  
+  
   //////////////////////////////////////////////////////////////
 
   // BOX
@@ -2439,58 +2474,159 @@ public class PGraphics3D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // CURVES
+  // BEZIER
 
-  /*
+  
+  //public float bezierPoint(float a, float b, float c, float d, float t)
+  
+  
+  //public float bezierTangent(float a, float b, float c, float d, float t)
+  
+  
+  //public void bezierDetail(int detail)
+  
+  
+  //public void bezier(float x1, float y1,
+  //                   float x2, float y2,
+  //                   float x3, float y3,
+  //                   float x4, float y4)
+  
+  
+  //public void bezier(float x1, float y1, float z1,
+  //                   float x2, float y2, float z2,
+  //                   float x3, float y3, float z3,
+  //                   float x4, float y4, float z4)
 
-  public void bezier(float x1, float y1,
-                     float x2, float y2,
-                     float x3, float y3,
-                     float x4, float y4) {
-    bezier(x1, y1, 0,
-           x2, y2, 0,
-           x3, y3, 0,
-           x4, y4, 0);
+
+
+  //////////////////////////////////////////////////////////////
+
+  // CATMULL-ROM CURVES
+
+  
+  //public float curvePoint(float a, float b, float c, float d, float t)
+  
+  
+  //public float curveTangent(float a, float b, float c, float d, float t)
+  
+  
+  //public void curveDetail(int detail)
+  
+  
+  //public void curveTightness(float tightness)
+
+
+  //public void curve(float x1, float y1,
+  //                  float x2, float y2,
+  //                  float x3, float y3,
+  //                  float x4, float y4)
+  
+  
+  //public void curve(float x1, float y1, float z1,
+  //                  float x2, float y2, float z2,
+  //                  float x3, float y3, float z3,
+  //                  float x4, float y4, float z4)
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SMOOTH
+  
+  
+  public void smooth() {
+    showMethodWarning("smooth");
   }
 
 
-  public void bezier(float x1, float y1, float z1,
-                     float x2, float y2, float z2,
-                     float x3, float y3, float z3,
-                     float x4, float y4, float z4) {
-    beginShape(LINE_STRIP);
-    vertex(x1, y1, z1);
-    bezierVertex(x2, y2, z2,
-                 x3, y3, z3,
-                 x4, y4, z4);
-    endShape();
+  public void noSmooth() {
+    // no need to do an error here, really...
   }
 
 
-  public void curve(float x1, float y1,
-                    float x2, float y2,
-                    float x3, float y3,
-                    float x4, float y4) {
-    curve(x1, y1, 0,
-          x2, y2, 0,
-          x3, y3, 0,
-          x4, y4, 0);
+
+  //////////////////////////////////////////////////////////////
+
+  // IMAGES
+  
+  
+  //public void imageMode(int mode)
+  
+  
+  //public void image(PImage image, float x, float y)
+  
+  
+  //public void image(PImage image, float x, float y, float c, float d)
+  
+  
+  //public void image(PImage image,
+  //                  float a, float b, float c, float d,
+  //                  int u1, int v1, int u2, int v2)
+
+
+  //protected void imageImpl(PImage image,
+  //                         float x1, float y1, float x2, float y2,
+  //                         int u1, int v1, int u2, int v2)
+
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE
+  
+  
+  //public void shapeMode(int mode)
+  
+  
+  //public void shape(PShape shape)
+
+  
+  //public void shape(PShape shape, float x, float y)
+  
+  
+  //public void shape(PShape shape, float x, float y, float c, float d)
+  
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // TEXT
+  
+  // None of the text functions are overridden from PGraphics.
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // TEXT IMPL
+  
+  // Not even the text drawing implementation stuff is overridden.
+  
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX STACK
+
+
+  public void pushMatrix() {
+    if (matrixStackDepth == MATRIX_STACK_DEPTH) {
+      throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
+    }
+    modelview.get(matrixStack[matrixStackDepth]);
+    modelviewInv.get(matrixInvStack[matrixStackDepth]);
+    matrixStackDepth++;
   }
 
 
-  public void curve(float x1, float y1, float z1,
-                    float x2, float y2, float z2,
-                    float x3, float y3, float z3,
-                    float x4, float y4, float z4) {
-    beginShape(LINE_STRIP);
-    curveVertex(x1, y1, z1);
-    curveVertex(x2, y2, z2);
-    curveVertex(x3, y3, z3);
-    curveVertex(x4, y4, z4);
-    endShape();
+  public void popMatrix() {
+    if (matrixStackDepth == 0) {
+      throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
+    }
+    matrixStackDepth--;
+    modelview.set(matrixStack[matrixStackDepth]);
+    modelviewInv.set(matrixInvStack[matrixStackDepth]);
   }
-
-  */
 
 
 
@@ -2577,27 +2713,7 @@ public class PGraphics3D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // TRANSFORMATION MATRIX
-
-
-  public void pushMatrix() {
-    if (matrixStackDepth == MATRIX_STACK_DEPTH) {
-      throw new RuntimeException(ERROR_PUSHMATRIX_OVERFLOW);
-    }
-    modelview.get(matrixStack[matrixStackDepth]);
-    modelviewInv.get(matrixInvStack[matrixStackDepth]);
-    matrixStackDepth++;
-  }
-
-
-  public void popMatrix() {
-    if (matrixStackDepth == 0) {
-      throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
-    }
-    matrixStackDepth--;
-    modelview.set(matrixStack[matrixStackDepth]);
-    modelviewInv.set(matrixInvStack[matrixStackDepth]);
-  }
+  // MATRIX MORE!
 
 
   public void resetMatrix() {
@@ -2606,6 +2722,12 @@ public class PGraphics3D extends PGraphics {
   }
 
 
+  public void applyMatrix(PMatrix2D source) {
+    applyMatrix(source.m00, source.m01, source.m02,
+                source.m10, source.m11, source.m12); 
+  }
+  
+  
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     applyMatrix(n00, n01, n02, 0,
@@ -2613,6 +2735,14 @@ public class PGraphics3D extends PGraphics {
                 0,   0,   1,   0,
                 0,   0,   0,   1);
   }
+
+
+  public void applyMatrix(PMatrix3D source) {
+    applyMatrix(source.m00, source.m01, source.m02, source.m03,
+                source.m10, source.m11, source.m12, source.m13,
+                source.m20, source.m21, source.m22, source.m23,
+                source.m30, source.m31, source.m32, source.m33);
+  }  
 
 
   /**
@@ -2637,32 +2767,40 @@ public class PGraphics3D extends PGraphics {
   }
 
 
+
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX GET/SET/PRINT
+
+
+  //public void getMatrix(PMatrix2D target)
+
+
   /**
-   * Load the modelview into m00, m01, et al so that it can be used.
+   * Copy the current transformation matrix into the specified target.
    */
-//  public void loadMatrix() {
-//    m00 = modelview.m00;
-//    m01 = modelview.m01;
-//    m02 = modelview.m02;
-//    m03 = modelview.m03;
-//
-//    m10 = modelview.m10;
-//    m11 = modelview.m11;
-//    m12 = modelview.m12;
-//    m13 = modelview.m13;
-//
-//    m20 = modelview.m20;
-//    m21 = modelview.m21;
-//    m22 = modelview.m22;
-//    m23 = modelview.m23;
-//
-//    m30 = modelview.m30;
-//    m31 = modelview.m31;
-//    m32 = modelview.m32;
-//    m33 = modelview.m33;
-//  }
+  public void getMatrix(PMatrix3D target) {
+    target.set(modelview);
+  }
 
 
+  public void setMatrix(PMatrix2D source) {
+    // not efficient, but at least handles the inverse stuff.
+    resetMatrix();
+    applyMatrix(source);
+  }
+  
+  
+  /**
+   * Set the current transformation to the contents of the specified source.
+   */
+  public void setMatrix(PMatrix3D source) {
+    // not efficient, but at least handles the inverse stuff.
+    resetMatrix();
+    applyMatrix(source);
+  }
+  
+  
   /**
    * Print the current model (or "transformation") matrix.
    */
@@ -3624,25 +3762,6 @@ public class PGraphics3D extends PGraphics {
   }
 
   
-
-  //////////////////////////////////////////////////////////////
-
-  // SMOOTH (not available, throws error)
-
-  // although should this bother throwing an error?
-  // could be a pain in the ass when trying to debug with opengl
-
-
-  public void smooth() {
-    showMethodWarning("smooth");
-  }
-
-
-  public void noSmooth() {
-    // no need to do an error here, really...
-  }
-
-
 
   //////////////////////////////////////////////////////////////
 
