@@ -280,10 +280,12 @@ public class Capture extends PImage implements Runnable {
    * more often than not.
    */
   public void crop(int x, int y, int w, int h) {
+    /*
     if (imageMode == CORNERS) {
       w -= x;  // w was actually x2
       h -= y;  // h was actually y2
     }
+    */
 
     crop = true;
     cropX = Math.max(0, x);
