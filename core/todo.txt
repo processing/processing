@@ -69,6 +69,7 @@ removed textFontNative and textFontNativeMetrics carp
 imageMode ignored for get(), set(), blend() and copy()
 smooth is now part of PGraphics, moved out of PImage
 imageMode has been removed from PImage, too awkward
+raw must handle points, lines, triangles, and textures
 
 _ accessors inside PFont need a lot of work
 

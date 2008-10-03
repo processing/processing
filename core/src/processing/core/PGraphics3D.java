@@ -44,6 +44,8 @@ public class PGraphics3D extends PGraphics {
   /** The depth buffer. */
   public float[] zbuffer;
 
+  // ........................................................
+
   /** The modelview matrix. */
   public PMatrix3D modelview;
 
@@ -57,8 +59,6 @@ public class PGraphics3D extends PGraphics {
 
   /** Inverse camera matrix */
   protected PMatrix3D cameraInv;
-
-  // ........................................................
 
   /** Camera field of view. */
   public float cameraFOV;
@@ -213,12 +213,12 @@ public class PGraphics3D extends PGraphics {
 
   // ........................................................
 
-  // this is done to keep track of start/stop information for lines in the 
+  // This is done to keep track of start/stop information for lines in the 
   // line array, so that lines can be shown as a single path, rather than just
-  // individual segments. (currently not in use)
+  // individual segments. Currently only in use inside PGraphicsOpenGL.
   protected int pathCount;
-  protected int pathOffset[] = new int[64];
-  protected int pathLength[] = new int[64];
+  protected int[] pathOffset = new int[64];
+  protected int[] pathLength = new int[64];
 
   // ........................................................
 
@@ -227,6 +227,7 @@ public class PGraphics3D extends PGraphics {
   static protected final int VERTEX1 = 0;
   static protected final int VERTEX2 = 1;
   static protected final int VERTEX3 = 2;        // (triangles only)
+  static protected final int STROKE_COLOR = 2;   // (points only)
   static protected final int TEXTURE_INDEX = 3;  // (triangles only)
   static protected final int STROKE_MODE = 2;    // (lines only)
   static protected final int STROKE_WEIGHT = 3;  // (lines only)
@@ -234,6 +235,11 @@ public class PGraphics3D extends PGraphics {
   static protected final int LINE_FIELD_COUNT = 4;
   static protected final int TRIANGLE_FIELD_COUNT = 4;
 
+  // points
+  static final int DEFAULT_POINTS = 512;
+  protected int[][] points = new int[DEFAULT_POINTS][LINE_FIELD_COUNT];
+  protected int pointCount;
+  
   // lines
   static final int DEFAULT_LINES = 512;
   public PLine line;  // used for drawing
@@ -287,8 +293,6 @@ public class PGraphics3D extends PGraphics {
    * Note that this will nuke any cameraMode() settings.
    */
   public void setSize(int iwidth, int iheight) {  // ignore
-//    System.out.println("PGraphics3D.resize() " + iwidth + " " + iheight);
-
     width = iwidth;
     height = iheight;
     width1 = width - 1;
@@ -355,12 +359,6 @@ public class PGraphics3D extends PGraphics {
     zbuffer = new float[pixelCount];
 
     if (primarySurface) {
-      //for (int i = 0; i < pixelCount; i++) pixels[i] = backgroundColor;
-      // Not necessary because background() will be called w/ defaults(),
-      // and we're no longer subject to the Java 1.1 bug for transparent
-      // pixels in MemoryImageSource.
-      //Arrays.fill(pixels, backgroundColor);
-
       cm = new DirectColorModel(32, 0x00ff0000, 0x0000ff00, 0x000000ff);;
       mis = new MemoryImageSource(width, height, pixels, 0, width);
       mis.setFullBufferUpdates(true);
@@ -370,21 +368,20 @@ public class PGraphics3D extends PGraphics {
     } else {
       // when not the main drawing surface, need to set the zbuffer,
       // because there's a possibility that background() will not be called
-      //for (int i = 0; i < pixelCount; i++) zbuffer[i] = Float.MAX_VALUE;
       Arrays.fill(zbuffer, Float.MAX_VALUE);
     }
 
-//    stencil = new int[pixelCount];
-
     line = new PLine(this);
     triangle = new PTriangle(this);
-
-    // can't un-set this because this may be only a resize (Bug #463)
-    //settingsInited = false;
-    //System.out.println(this + " done allocating");
   }
 
+  
+  //public void dispose()
 
+
+  ////////////////////////////////////////////////////////////
+
+  
   //public boolean canDraw()
 
 
@@ -408,6 +405,7 @@ public class PGraphics3D extends PGraphics {
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
 
+    /*
     // reset lines
     lineCount = 0;
     if (line != null) line.reset();  // is this necessary?
@@ -416,6 +414,7 @@ public class PGraphics3D extends PGraphics {
     // reset triangles
     triangleCount = 0;
     if (triangle != null) triangle.reset();  // necessary?
+    */
 
     shapeFirst = 0;
 
@@ -448,30 +447,9 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  /**
-   * Emit any sorted geometry that's been collected on this frame.
-   */
-  public void flush() {
-    if (triangleCount > 0) {
-      if (hints[ENABLE_DEPTH_SORT]) {
-        sortTriangles();
-      }
-      renderTriangles();
-    }
-    if (lineCount > 0) {
-      if (hints[ENABLE_DEPTH_SORT]) {
-        sortLines();
-      }
-      renderLines();
-    }
-    // Clear this out in case flush() is called again.
-    // For instance, with hint(ENABLE_DEPTH_SORT), it will be called
-    // once on endRaw(), and once again at endDraw().
-    triangleCount = 0;
-    lineCount = 0;
-  }
+  ////////////////////////////////////////////////////////////
 
-
+  
   //protected void checkSettings()
 
 
@@ -496,6 +474,9 @@ public class PGraphics3D extends PGraphics {
   //protected void reapplySettings()
   
   
+  ////////////////////////////////////////////////////////////
+  
+  
   public void hint(int which) {
     if (which == DISABLE_DEPTH_SORT) {
       flush();
@@ -503,7 +484,7 @@ public class PGraphics3D extends PGraphics {
     super.hint(which);
   }
 
-
+  
   //////////////////////////////////////////////////////////////
 
 
@@ -530,7 +511,7 @@ public class PGraphics3D extends PGraphics {
       vertexCount = 0;
       if (line != null) line.reset();  // necessary?
       lineCount = 0;
-      pathCount = 0;
+//      pathCount = 0;
       if (triangle != null) triangle.reset();  // necessary?
       triangleCount = 0;
     }
@@ -562,7 +543,8 @@ public class PGraphics3D extends PGraphics {
 
 
   public void vertex(float x, float y) {
-    // override to properly pick up all 3D settings
+    // override so that the default 3D implementation will be used, 
+    // which will pick up all 3D settings (e.g. emissive, ambient)
     vertex(x, y, 0);
   }
 
@@ -571,13 +553,16 @@ public class PGraphics3D extends PGraphics {
   
   
   public void vertex(float x, float y, float u, float v) {
-    // override to properly pick up all 3D settings
+    // see vertex(x, y) for note
     vertex(x, y, 0, u, v);
   }
 
 
   //public void vertex(float x, float y, float z, float u, float v)
 
+
+  //public void breakShape()
+  
   
   //public void endShape()
   
@@ -593,51 +578,30 @@ public class PGraphics3D extends PGraphics {
       return;
     }
 
-
-    // ------------------------------------------------------------------
-    // 2D or 3D POINTS FROM MODEL (X, Y, Z) TO CAMERA SPACE (VX, VY, VZ)
-    // It is necessary to do this now because we will be clipping them on
-    // add_triangle.
-
+    // convert points from model (X/Y/Z) to camera space (VX/VY/VZ). 
+    // Do this now because we will be clipping them on add_triangle.
     endShapeModelToCamera(shapeFirst, shapeLast);
-
-    
-    // ------------------------------------------------------------------
-    // CREATE LINES
 
     if (stroke) {
       endShapeStroke(mode);
     }
 
-
-    // ------------------------------------------------------------------
-    // CREATE TRIANGLES
-
     if (fill) {
       endShapeFill();
     }
 
-
-    // ------------------------------------------------------------------
-    // TRANSFORM / LIGHT / CLIP
-
+    // transform, light, and clip
     endShapeLighting(lightCount > 0 && fill);
 
-
-    // ------------------------------------------------------------------
-    // POINTS FROM CAMERA SPACE (VX, VY, VZ) TO SCREEN SPACE (X, Y, Z)
-    // this appears to be wasted time with the opengl renderer
-
+    // convert points from camera space (VX, VY, VZ) to screen space (X, Y, Z)
+    // (this appears to be wasted time with the OpenGL renderer)
     endShapeCameraToScreen(shapeFirst, shapeLastPlusClipped);
 
-
-    // ------------------------------------------------------------------
-    // RENDER SHAPES FILLS HERE WHEN NOT DEPTH SORTING
-
+    // render shape and fill here if not saving the shapes for later 
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
-      if (fill) renderTriangles();
-      if (stroke) renderLines();
+      if (fill) renderTriangles(0, triangleCount);
+      if (stroke) renderLines(0, lineCount);
     }
 
     shape = 0;
@@ -678,8 +642,8 @@ public class PGraphics3D extends PGraphics {
     {
       int stop = shapeLast;
       for (int i = shapeFirst; i < stop; i++) {
-        startStroke();  // total overkill for points
-        add_line(i, i);
+        addLineBreak();  // total overkill for points
+        addLine(i, i);
       }
     }
     break;
@@ -692,18 +656,18 @@ public class PGraphics3D extends PGraphics {
       //increment = (shape == LINES) ? 2 : 1;
 
       // for LINE_STRIP and LINE_LOOP, make this all one path
-      if (shape != LINES) startStroke();
+      if (shape != LINES) addLineBreak();
 
       for (int i = shapeFirst; i < stop; i += 2) {
         // for LINES, make a new path for each segment
-        if (shape == LINES) startStroke();
-        add_line(i, i+1);
+        if (shape == LINES) addLineBreak();
+        addLine(i, i+1);
       }
 
       // for LINE_LOOP, close the loop with a final segment
       //if (shape == LINE_LOOP) {
       if (mode == CLOSE) {
-        add_line(stop, lines[first][VERTEX1]);
+        addLine(stop, lines[first][VERTEX1]);
       }
     }
     break;
@@ -711,11 +675,11 @@ public class PGraphics3D extends PGraphics {
     case TRIANGLES:
     {
       for (int i = shapeFirst; i < shapeLast-2; i += 3) {
-        startStroke();
+        addLineBreak();
         //counter = i - vertex_start;
-        add_line(i+0, i+1);
-        add_line(i+1, i+2);
-        add_line(i+2, i+0);
+        addLine(i+0, i+1);
+        addLine(i+1, i+2);
+        addLine(i+2, i+0);
       }
     }
     break;
@@ -725,17 +689,17 @@ public class PGraphics3D extends PGraphics {
       // first draw all vertices as a line strip
       int stop = shapeLast-1;
 
-      startStroke();
+      addLineBreak();
       for (int i = shapeFirst; i < stop; i++) {
         //counter = i - vertex_start;
-        add_line(i, i+1);
+        addLine(i, i+1);
       }
 
       // then draw from vertex (n) to (n+2)
       stop = shapeLast-2;
       for (int i = shapeFirst; i < stop; i++) {
-        startStroke();
-        add_line(i, i+2);
+        addLineBreak();
+        addLine(i, i+2);
       }
     }
     break;
@@ -745,29 +709,29 @@ public class PGraphics3D extends PGraphics {
       // this just draws a series of line segments
       // from the center to each exterior point
       for (int i = shapeFirst + 1; i < shapeLast; i++) {
-        startStroke();
-        add_line(shapeFirst, i);
+        addLineBreak();
+        addLine(shapeFirst, i);
       }
 
       // then a single line loop around the outside.
-      startStroke();
+      addLineBreak();
       for (int i = shapeFirst + 1; i < shapeLast-1; i++) {
-        add_line(i, i+1);
+        addLine(i, i+1);
       }
       // closing the loop
-      add_line(shapeLast-1, shapeFirst + 1);
+      addLine(shapeLast-1, shapeFirst + 1);
     }
     break;
 
     case QUADS:
     {
       for (int i = shapeFirst; i < shapeLast; i += 4) {
-        startStroke();
+        addLineBreak();
         //counter = i - vertex_start;
-        add_line(i+0, i+1);
-        add_line(i+1, i+2);
-        add_line(i+2, i+3);
-        add_line(i+3, i+0);
+        addLine(i+0, i+1);
+        addLine(i+1, i+2);
+        addLine(i+2, i+3);
+        addLine(i+3, i+0);
       }
     }
     break;
@@ -775,11 +739,11 @@ public class PGraphics3D extends PGraphics {
     case QUAD_STRIP:
     {
       for (int i = shapeFirst; i < shapeLast - 3; i += 2) {
-        startStroke();
-        add_line(i+0, i+2);
-        add_line(i+2, i+3);
-        add_line(i+3, i+1);
-        add_line(i+1, i+0);
+        addLineBreak();
+        addLine(i+0, i+2);
+        addLine(i+2, i+3);
+        addLine(i+3, i+1);
+        addLine(i+1, i+0);
       }
     }
     break;
@@ -789,13 +753,13 @@ public class PGraphics3D extends PGraphics {
       // store index of first vertex
       int stop = shapeLast - 1;
 
-      startStroke();
+      addLineBreak();
       for (int i = shapeFirst; i < stop; i++) {
-        add_line(i, i+1);
+        addLine(i, i+1);
       }
       if (mode == CLOSE) {
         // draw the last line connecting back to the first point in poly
-        add_line(stop, shapeFirst); //lines[first][VERTEX1]);
+        addLine(stop, shapeFirst); //lines[first][VERTEX1]);
       }
     }
     break;
@@ -809,7 +773,7 @@ public class PGraphics3D extends PGraphics {
     {
       int stop = shapeLast - 1;
       for (int i = shapeFirst + 1; i < stop; i++) {
-        add_triangle(shapeFirst, i, i+1);
+        addTriangle(shapeFirst, i, i+1);
       }
     }
     break;
@@ -821,9 +785,9 @@ public class PGraphics3D extends PGraphics {
         // have to switch between clockwise/counter-clockwise
         // otherwise the feller is backwards and renderer won't draw
         if ((i % 2) == 0) {
-          add_triangle(i, i+2, i+1);
+          addTriangle(i, i+2, i+1);
         } else {
-          add_triangle(i, i+1, i+2);
+          addTriangle(i, i+1, i+2);
         }
       }
     }
@@ -836,9 +800,9 @@ public class PGraphics3D extends PGraphics {
         // have to switch between clockwise/counter-clockwise
         // otherwise the feller is backwards and renderer won't draw
         if ((i % 2) == 0) {
-          add_triangle(i, i+2, i+1);
+          addTriangle(i, i+2, i+1);
         } else {
-          add_triangle(i, i+1, i+2);
+          addTriangle(i, i+1, i+2);
         }
       }
     }
@@ -849,9 +813,9 @@ public class PGraphics3D extends PGraphics {
       int stop = vertexCount-3;
       for (int i = shapeFirst; i < stop; i += 4) {
         // first triangle
-        add_triangle(i, i+1, i+2);
+        addTriangle(i, i+1, i+2);
         // second triangle
-        add_triangle(i, i+2, i+3);
+        addTriangle(i, i+2, i+3);
       }
     }
     break;
@@ -861,18 +825,46 @@ public class PGraphics3D extends PGraphics {
       int stop = vertexCount-3;
       for (int i = shapeFirst; i < stop; i += 2) {
         // first triangle
-        add_triangle(i+0, i+2, i+1);
+        addTriangle(i+0, i+2, i+1);
         // second triangle
-        add_triangle(i+2, i+3, i+1);
+        addTriangle(i+2, i+3, i+1);
       }
     }
     break;
 
     case POLYGON:
     {
-      triangulate_polygon();
+      addPolygonTriangles();
     }
     break;
+    }
+  }
+
+
+  protected void endShapeLighting(boolean lights) {
+    if (lights) {
+      // If the lighting does not depend on vertex position and there is a single
+      // normal specified for this shape, go ahead and apply the same lighting
+      // contribution to every vertex in this shape (one lighting calc!)
+      if (!lightingDependsOnVertexPosition && normalMode == NORMAL_MODE_SHAPE) {
+        calcLightingContribution(shapeFirst, tempLightingContribution);
+        for (int tri = 0; tri < triangleCount; tri++) {
+          lightTriangle(tri, tempLightingContribution);
+        }
+      } else {  // Otherwise light each triangle individually...
+        for (int tri = 0; tri < triangleCount; tri++) {
+          lightTriangle(tri);
+        }
+      }
+    } else {
+      for (int tri = 0; tri < triangleCount; tri++) {
+        int index = triangles[tri][VERTEX1];
+        copyPrelitVertexColor(tri, index, 0);
+        index = triangles[tri][VERTEX2];
+        copyPrelitVertexColor(tri, index, 1);
+        index = triangles[tri][VERTEX3];
+        copyPrelitVertexColor(tri, index, 2);
+      }
     }
   }
 
@@ -904,60 +896,127 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
+  
+  
+  /////////////////////////////////////////////////////////////////////////////
+  
+  // POINTS
+  
+  
+  protected void addPoint(int a) {
+    if (pointCount == points.length) {
+      int[][] temp = new int[pointCount << 1][LINE_FIELD_COUNT];
+      System.arraycopy(lines, 0, temp, 0, lineCount);
+      lines = temp;
+    }
+    points[pointCount][VERTEX1] = a;
+    points[pointCount][STROKE_MODE] = strokeCap | strokeJoin;
+    points[pointCount][STROKE_COLOR] = strokeColor;
+    points[pointCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
+    pointCount++;
+  }  
 
   
-  //////////////////////////////////////////////////////////////
-
-  // CURVE/BEZIER VERTEX
-  
-  
-  //protected void bezierVertexCheck();
-  
-  
-  //public void bezierVertex(float x2, float y2,
-  //                         float x3, float y3,
-  //                         float x4, float y4)
-  
-  
-  //public void bezierVertex(float x2, float y2, float z2,
-  //                         float x3, float y3, float z3,
-  //                         float x4, float y4, float z4)
+  protected void renderPoints(int start, int stop) {
+    for (int i = start; i < stop; i++) {
+      float[] a = vertices[points[i][VERTEX1]];
+      int sx = (int) (a[TX] + 0.4999f);
+      int sy = (int) (a[TY] + 0.4999f);
+      int index = sy*width + sx;
+      pixels[index] = points[i][STROKE_COLOR];
+      zbuffer[index] = a[TZ];
+    }
+  }
 
   
-  //protected void curveVertexCheck();
+  // alternative implementations of point rendering code...
   
-  
-  //public void curveVertex(float x, float y)
-  
-  
-  //public void curveVertex(float x, float y, float z)
-  
-  
-  //protected void curveVertexSegment(float x1, float y1,  
-  //                                  float x2, float y2, 
-  //                                  float x3, float y3, 
-  //                                  float x4, float y4)
-  
-  
-  //protected void curveVertexSegment(float x1, float y1, float z1, 
-  //                                  float x2, float y2, float z2,
-  //                                  float x3, float y3, float z3,
-  //                                  float x4, float y4, float z4)
+  /*
+      int sx = (int) (screenX(x, y, z) + 0.5f);
+      int sy = (int) (screenY(x, y, z) + 0.5f);
 
-  
-  
-  //////////////////////////////////////////////////////////////
+      int index = sy*width + sx;
+      pixels[index] = strokeColor;
+      zbuffer[index] = screenZ(x, y, z);
 
+   */
   
-  // begin a new section of stroked geometry
-  protected final void startStroke() {
+  /*
+  protected void renderPoints(int start, int stop) {
+    for (int i = start; i < stop; i++) {
+      float a[] = vertices[points[i][VERTEX1]];
+
+      line.reset();
+
+      line.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                          a[SR], a[SG], a[SB], a[SA]);
+
+      line.setVertices(a[TX], a[TY], a[TZ],
+                       a[TX] + 0.5f, a[TY] + 0.5f, a[TZ] + 0.5f);
+
+      line.draw();
+    }  
+  }
+  */
+
+  /*
+  // handle points with an actual stroke weight (or scaled by renderer)
+  private void point3(float x, float y, float z, int color) {
+    // need to get scaled version of the stroke
+    float x1 = screenX(x - 0.5f, y - 0.5f, z);
+    float y1 = screenY(x - 0.5f, y - 0.5f, z);
+    float x2 = screenX(x + 0.5f, y + 0.5f, z);
+    float y2 = screenY(x + 0.5f, y + 0.5f, z);
+
+    float weight = (abs(x2 - x1) + abs(y2 - y1)) / 2f;
+    if (weight < 1.5f) {
+      int xx = (int) ((x1 + x2) / 2f);
+      int yy = (int) ((y1 + y2) / 2f);
+      //point0(xx, yy, z, color);
+      zbuffer[yy*width + xx] = screenZ(x, y, z);
+      //stencil?
+
+    } else {
+      // actually has some weight, need to draw shapes instead
+      // these will be
+    }
+  }
+  */
+
+
+  protected void rawPoints(int start, int stop) {
+    raw.colorMode(RGB, 1);
+    raw.noFill();
+    raw.beginShape(POINTS);
+
+    for (int i = start; i < stop; i++) {
+      float a[] = vertices[lines[i][VERTEX1]];
+
+      if (raw.dimensional()) {
+        if (a[VW] != 0) {
+          raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+          raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
+        }
+      } else {
+        raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+        raw.vertex(a[TX], a[TY]);
+      }
+    }
+    raw.endShape();
+  }
+
+
+
+  /////////////////////////////////////////////////////////////////////////////
+  
+  // LINES
+  
+  
+  /**
+   * Begin a new section of stroked geometry.
+   */
+  protected final void addLineBreak() {
     if (pathCount == pathOffset.length) {
-//      int temp1[] = new int[pathCount << 1];
-//      System.arraycopy(pathOffset, 0, temp1, 0, pathCount);
-//      pathOffset = temp1;
-//      int temp2[] = new int[pathCount << 1];
-//      System.arraycopy(pathLength, 0, temp2, 0, pathCount);
-//      pathLength = temp2;
       pathOffset = PApplet.expand(pathOffset);
       pathLength = PApplet.expand(pathLength);
     }
@@ -967,42 +1026,42 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  protected void add_line(int a, int b) {
-    add_line_with_clip(a, b);
+  protected void addLine(int a, int b) {
+    addLineWithClip(a, b);
   }
 
-  protected final void add_line_with_clip(int a, int b) {
+
+  protected final void addLineWithClip(int a, int b) {
     float az = vertices[a][VZ];
     float bz = vertices[b][VZ];
     if (az > cameraNear) {
       if (bz > cameraNear) {
         return;
       }
-      int cb = interpolate_clip_vertex(a, b);
-      add_line_no_clip(cb, b);
+      int cb = interpolateClipVertex(a, b);
+      addLineWithoutClip(cb, b);
       return;
     }
     else {
       if (bz <= cameraNear) {
-        add_line_no_clip(a, b);
+        addLineWithoutClip(a, b);
         return;
       }
-      int cb = interpolate_clip_vertex(a, b);
-      add_line_no_clip(a, cb);
+      int cb = interpolateClipVertex(a, b);
+      addLineWithoutClip(a, cb);
       return;
     }
   }
 
-  protected final void add_line_no_clip(int a, int b) {
+
+  protected final void addLineWithoutClip(int a, int b) {
     if (lineCount == lines.length) {
       int temp[][] = new int[lineCount<<1][LINE_FIELD_COUNT];
       System.arraycopy(lines, 0, temp, 0, lineCount);
       lines = temp;
-      //message(CHATTER, "allocating more lines " + lines.length);
     }
     lines[lineCount][VERTEX1] = a;
     lines[lineCount][VERTEX2] = b;
-//    lines[lineCount][INDEX] = -1;
 
     lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
     lines[lineCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
@@ -1012,17 +1071,130 @@ public class PGraphics3D extends PGraphics {
     pathLength[pathCount-1]++;
   }
 
+  
+  protected void renderLines(int start, int stop) {
+    //for (int i = 0; i < lineCount; i ++) {
+    for (int i = start; i < stop; i++) {
+      float a[] = vertices[lines[i][VERTEX1]];
+      float b[] = vertices[lines[i][VERTEX2]];
 
-  protected void add_triangle(int a, int b, int c) {
-    add_triangle_with_clip(a, b, c);
-    //add_triangle_no_clip(a, b, c);
+      // 2D hack added by ewjordan 6/13/07
+      // Offset coordinates by a little bit if drawing 2D graphics.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=95
+
+      // This hack fixes a bug caused by numerical precision issues when
+      // applying the 3D transformations to coordinates in the screen plane
+      // that should actually not be altered under said transformations.
+      // It will not be applied if any transformations other than translations
+      // are active, nor should it apply in OpenGL mode (PGraphicsOpenGL
+      // overrides render_lines(), so this should be fine).
+      // This fix exposes a last-pixel bug in the lineClipCode() function
+      // of PLine.java, so that fix must remain in place if this one is used.
+
+      // Note: the "true" fix for this bug is to change the pixel coverage
+      // model so that the threshold for display does not lie on an integer
+      // boundary. Search "diamond exit rule" for info the OpenGL approach.
+
+      /*
+      // removing for 0149 with the return of P2D
+      if (drawing2D() && a[Z] == 0) {
+        a[TX] += 0.01;
+        a[TY] += 0.01;
+        a[VX] += 0.01*a[VW];
+        a[VY] += 0.01*a[VW];
+        b[TX] += 0.01;
+        b[TY] += 0.01;
+        b[VX] += 0.01*b[VW];
+        b[VY] += 0.01*b[VW];
+      }
+      */
+      // end 2d-hack
+
+      line.reset();
+
+      line.setIntensities(a[SR], a[SG], a[SB], a[SA],
+                          b[SR], b[SG], b[SB], b[SA]);
+
+      line.setVertices(a[TX], a[TY], a[TZ],
+                       b[TX], b[TY], b[TZ]);
+
+      /*
+      // Seems okay to remove this because these vertices are not used again,
+      // but if problems arise, this needs to be uncommented because the above
+      // change is destructive and may need to be undone before proceeding.
+      if (drawing2D() && a[MZ] == 0) {
+        a[X] -= 0.01;
+        a[Y] -= 0.01;
+        a[VX] -= 0.01*a[VW];
+        a[VY] -= 0.01*a[VW];
+        b[X] -= 0.01;
+        b[Y] -= 0.01;
+        b[VX] -= 0.01*b[VW];
+        b[VY] -= 0.01*b[VW];
+      }
+      */
+
+      line.draw();
+    }
+  }
+  
+
+  /**
+   * Handle echoing line data to a raw shape recording renderer. This has been 
+   * broken out of the renderLines() procedure so that renderLines() can be
+   * optimized per-renderer without having to deal with this code. This code,
+   * for instance, will stay the same when OpenGL is in use, but renderLines()
+   * can be optimized significantly.
+   * <br/> <br/>
+   * Values for start and stop are specified, so that in the future, sorted 
+   * rendering can be implemented, which will require sequences of lines, 
+   * triangles, or points to be rendered in the neighborhood of one another. 
+   * That is, if we're gonna depth sort, we can't just draw all the triangles
+   * and then draw all the lines, cuz that defeats the purpose.
+   */
+  protected void rawLines(int start, int stop) {
+    raw.colorMode(RGB, 1);
+    raw.noFill();
+    raw.beginShape(LINES);
+
+    //for (int i = 0; i < lineCount; i ++) {
+    for (int i = start; i < stop; i++) {
+      float a[] = vertices[lines[i][VERTEX1]];
+      float b[] = vertices[lines[i][VERTEX2]];
+
+      if (raw.dimensional()) {
+        if ((a[VW] != 0) && (b[VW] != 0)) {
+          raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+          raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
+          raw.stroke(b[SR], b[SG], b[SB], b[SA]);
+          raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
+        }
+      } else {
+        raw.stroke(a[SR], a[SG], a[SB], a[SA]);
+        raw.vertex(a[TX], a[TY]);
+        raw.stroke(b[SR], b[SG], b[SB], b[SA]);
+        raw.vertex(b[TX], b[TY]);
+      }
+    }
+    raw.endShape();
+  }
+  
+
+  
+  /////////////////////////////////////////////////////////////////////////////
+
+  // TRIANGLES
+
+
+  protected void addTriangle(int a, int b, int c) {
+    addTriangleWithClip(a, b, c);
   }
 
-  protected final void add_triangle_with_clip(int a, int b, int c) {
+  
+  protected final void addTriangleWithClip(int a, int b, int c) {
     boolean aClipped = false;
     boolean bClipped = false;
-    //boolean cClipped = false;
-    int     clippedCount = 0;
+    int clippedCount = 0;
 
     cameraNear = -8;
     if (vertices[a][VZ] > cameraNear) {
@@ -1038,7 +1210,7 @@ public class PGraphics3D extends PGraphics {
       clippedCount++;
     }
     if (clippedCount == 0) {
-      add_triangle_no_clip(a, b, c);
+      addTriangleWithoutClip(a, b, c);
       return;
     }
     else if (clippedCount == 3) {
@@ -1069,9 +1241,9 @@ public class PGraphics3D extends PGraphics {
         cc = a;
       }
 
-      cd = interpolate_clip_vertex(ca, cb);
-      ce = interpolate_clip_vertex(ca, cc);
-      add_triangle_no_clip(ca, cd, ce);
+      cd = interpolateClipVertex(ca, cb);
+      ce = interpolateClipVertex(ca, cc);
+      addTriangleWithoutClip(ca, cd, ce);
       return;
     }
 
@@ -1102,19 +1274,19 @@ public class PGraphics3D extends PGraphics {
         cc = c;
       }
 
-      cd = interpolate_clip_vertex(ca, cc);
-      ce = interpolate_clip_vertex(cb, cc);
-      add_triangle_no_clip(ca, cd, cb);
+      cd = interpolateClipVertex(ca, cc);
+      ce = interpolateClipVertex(cb, cc);
+      addTriangleWithoutClip(ca, cd, cb);
       //System.out.println("ca: " + ca + ", " + vertices[ca][VX] + ", " + vertices[ca][VY] + ", " + vertices[ca][VZ]);
       //System.out.println("cd: " + cd + ", " + vertices[cd][VX] + ", " + vertices[cd][VY] + ", " + vertices[cd][VZ]);
       //System.out.println("cb: " + cb + ", " + vertices[cb][VX] + ", " + vertices[cb][VY] + ", " + vertices[cb][VZ]);
-      add_triangle_no_clip(cb, cd, ce);
+      addTriangleWithoutClip(cb, cd, ce);
       return;
     }
   }
 
-  
-  private final int interpolate_clip_vertex(int a, int b) {
+
+  protected final int interpolateClipVertex(int a, int b) {
     float[] va;
     float[] vb;
     // Set up va, vb such that va[VZ] >= vb[VZ]
@@ -1196,7 +1368,7 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  protected final void add_triangle_no_clip(int a, int b, int c) {
+  protected final void addTriangleWithoutClip(int a, int b, int c) {
     if (triangleCount == triangles.length) {
       int temp[][] = new int[triangleCount<<1][TRIANGLE_FIELD_COUNT];
       System.arraycopy(triangles, 0, temp, 0, triangleCount);
@@ -1220,277 +1392,7 @@ public class PGraphics3D extends PGraphics {
     triangleCount++;
   }
 
-
-  protected void sortTriangles() {
-    //System.out.println("sorting " + triangleCount + " triangles");
-    depth_sort_triangles_internal(0, triangleCount-1);
-  }
-
-
-  protected void depth_sort_triangles_internal(int i, int j) {
-    int pivotIndex = (i+j)/2;
-    depth_sort_triangles_swap(pivotIndex, j);
-    int k = depth_sort_triangles_partition(i-1, j);
-    depth_sort_triangles_swap(k, j);
-    if ((k-i) > 1) depth_sort_triangles_internal(i, k-1);
-    if ((j-k) > 1) depth_sort_triangles_internal(k+1, j);
-  }
-
-
-  protected int depth_sort_triangles_partition(int left, int right) {
-    int pivot = right;
-    do {
-      while (depth_sort_triangles_compare(++left, pivot) < 0) { }
-      while ((right != 0) &&
-             (depth_sort_triangles_compare(--right, pivot) > 0)) { }
-      depth_sort_triangles_swap(left, right);
-    } while (left < right);
-    depth_sort_triangles_swap(left, right);
-    return left;
-  }
-
-
-  protected void depth_sort_triangles_swap(int a, int b) {
-    int tempi[] = triangles[a];
-    triangles[a] = triangles[b];
-    triangles[b] = tempi;
-    float tempf[][] = triangleColors[a];
-    triangleColors[a] = triangleColors[b];
-    triangleColors[b] = tempf;
-  }
-
-
-  protected float depth_sort_triangles_compare(int a, int b) {
-    if (Float.isNaN(vertices[triangles[a][VERTEX1]][TZ]) ||
-        Float.isNaN(vertices[triangles[a][VERTEX2]][TZ]) ||
-        Float.isNaN(vertices[triangles[a][VERTEX3]][TZ]) ||
-        Float.isNaN(vertices[triangles[b][VERTEX1]][TZ]) ||
-        Float.isNaN(vertices[triangles[b][VERTEX2]][TZ]) ||
-        Float.isNaN(vertices[triangles[b][VERTEX3]][TZ])) {
-      System.err.println("NaN values in triangle");
-    }
-    return
-      (vertices[triangles[b][VERTEX1]][TZ] +
-       vertices[triangles[b][VERTEX2]][TZ] +
-       vertices[triangles[b][VERTEX3]][TZ]) -
-      (vertices[triangles[a][VERTEX1]][TZ] +
-       vertices[triangles[a][VERTEX2]][TZ] +
-       vertices[triangles[a][VERTEX3]][TZ]);
-  }
-
-
-  protected void renderTriangles() {
-    if (raw != null) {
-      raw.colorMode(RGB, 1);
-      raw.noStroke();
-      raw.beginShape(TRIANGLES);
-    }
-
-    for (int i = 0; i < triangleCount; i ++) {
-      float a[] = vertices[triangles[i][VERTEX1]];
-      float b[] = vertices[triangles[i][VERTEX2]];
-      float c[] = vertices[triangles[i][VERTEX3]];
-      int tex = triangles[i][TEXTURE_INDEX];
-//      int index = triangles[i][INDEX];
-
-      // ewjordan: hack to 'fix' accuracy issues when drawing in 2d
-      // see also render_lines() where similar hack is employed
-      float shift = 0.15f;//was 0.49f
-      boolean shifted = false;
-      if (drawing2D() && (a[Z] == 0)) {
-        shifted = true;
-        a[TX] += shift;
-        a[TY] += shift;
-        a[VX] += shift*a[VW];
-        a[VY] += shift*a[VW];
-        b[TX] += shift;
-        b[TY] += shift;
-        b[VX] += shift*b[VW];
-        b[VY] += shift*b[VW];
-        c[TX] += shift;
-        c[TY] += shift;
-        c[VX] += shift*c[VW];
-        c[VY] += shift*c[VW];
-      }
-
-      triangle.reset();
-
-      // This is only true when not textured. 
-      // We really should pass specular straight through to triangle rendering.
-      float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
-      float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
-      float ab = clamp(triangleColors[i][0][TRI_DIFFUSE_B] + triangleColors[i][0][TRI_SPECULAR_B]);
-      float br = clamp(triangleColors[i][1][TRI_DIFFUSE_R] + triangleColors[i][1][TRI_SPECULAR_R]);
-      float bg = clamp(triangleColors[i][1][TRI_DIFFUSE_G] + triangleColors[i][1][TRI_SPECULAR_G]);
-      float bb = clamp(triangleColors[i][1][TRI_DIFFUSE_B] + triangleColors[i][1][TRI_SPECULAR_B]);
-      float cr = clamp(triangleColors[i][2][TRI_DIFFUSE_R] + triangleColors[i][2][TRI_SPECULAR_R]);
-      float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
-      float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
-
-      if (tex > -1 && textures[tex] != null) {
-        triangle.setTexture(textures[tex]);
-        triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
-      }
-
-      triangle.setIntensities(ar, ag, ab, a[A],
-                              br, bg, bb, b[A],
-                              cr, cg, cb, c[A]);
-
-      triangle.setVertices(a[TX], a[TY], a[TZ],
-                           b[TX], b[TY], b[TZ],
-                           c[TX], c[TY], c[TZ]);
-
-      // Need to pass camera-space coordinates to triangle renderer
-      // in order to compute true texture coordinates, else skip it
-      if (hints[ENABLE_ACCURATE_TEXTURES]){
-        triangle.setCamVertices(a[VX], a[VY], a[VZ],
-                                b[VX], b[VY], b[VZ],
-                                c[VX], c[VY], c[VZ]);
-      }
-
-//      triangle.setIndex(index);
-      triangle.render();
-
-      //System.out.println(i + " " + a[Z] + " " + b[Z] + " " + c[Z]);
-
-      if (raw != null) {
-        if (raw instanceof PGraphics3D) {
-          if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
-            raw.fill(ar, ag, ab, a[A]);
-            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
-            raw.fill(br, bg, bb, b[A]);
-            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
-            raw.fill(cr, cg, cb, c[A]);
-            raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
-          }
-        } else {  // raw instanceof PGraphics2D
-          raw.fill(ar, ag, ab, a[A]);
-          raw.vertex(a[TX], a[TY]);
-          raw.fill(br, bg, bb, b[A]);
-          raw.vertex(b[TX], b[TY]);
-          raw.fill(cr, cg, cb, c[A]);
-          raw.vertex(c[TX], c[TY]);
-        }
-      }
-
-      if (drawing2D() && shifted){
-        a[TX] -= shift;
-        a[TY] -= shift;
-        a[VX] -= shift*a[VW];
-        a[VY] -= shift*a[VW];
-        b[TX] -= shift;
-        b[TY] -= shift;
-        b[VX] -= shift*b[VW];
-        b[VY] -= shift*b[VW];
-        c[TX] -= shift;
-        c[TY] -= shift;
-        c[VX] -= shift*c[VW];
-        c[VY] -= shift*c[VW];
-      }
-    }
-    triangleCount = 0;
-
-    if (raw != null) {
-      raw.endShape();
-    }
-  }
-
-
-  protected void sortLines() {
-  }
-
-
-  protected void renderLines() {
-    if (raw != null) {
-      raw.colorMode(RGB, 1);
-      raw.noFill();
-      raw.beginShape(LINES);
-    }
-
-    for (int i = 0; i < lineCount; i ++) {
-      float a[] = vertices[lines[i][VERTEX1]];
-      float b[] = vertices[lines[i][VERTEX2]];
-//      int index = lines[i][INDEX];
-
-      // 2D hack added by ewjordan 6/13/07
-      // Offset coordinates by a little bit if drawing 2D graphics.
-      // http://dev.processing.org/bugs/show_bug.cgi?id=95
-
-      // This hack fixes a bug caused by numerical precision issues when
-      // applying the 3D transformations to coordinates in the screen plane
-      // that should actually not be altered under said transformations.
-      // It will not be applied if any transformations other than translations
-      // are active, nor should it apply in OpenGL mode (PGraphicsOpenGL
-      // overrides render_lines(), so this should be fine).
-      // This fix exposes a last-pixel bug in the lineClipCode() function
-      // of PLine.java, so that fix must remain in place if this one is used.
-
-      // Note: the "true" fix for this bug is to change the pixel coverage
-      // model so that the threshold for display does not lie on an integer
-      // boundary. Search "diamond exit rule" for info the OpenGL approach.
-
-      if (drawing2D() && a[Z] == 0) {
-        a[TX] += 0.01;
-        a[TY] += 0.01;
-        a[VX] += 0.01*a[VW];
-        a[VY] += 0.01*a[VW];
-        b[TX] += 0.01;
-        b[TY] += 0.01;
-        b[VX] += 0.01*b[VW];
-        b[VY] += 0.01*b[VW];
-      }
-      // end 2d-hack
-
-      line.reset();
-
-      line.setIntensities(a[SR], a[SG], a[SB], a[SA],
-                          b[SR], b[SG], b[SB], b[SA]);
-
-      line.setVertices(a[TX], a[TY], a[TZ],
-                       b[TX], b[TY], b[TZ]);
-
-      if (raw != null) {
-        if (raw instanceof PGraphics3D) {
-          if ((a[VW] != 0) && (b[VW] != 0)) {
-            raw.stroke(a[SR], a[SG], a[SB], a[SA]);
-            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
-            raw.stroke(b[SR], b[SG], b[SB], b[SA]);
-            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
-          }
-        } else {
-          raw.stroke(a[SR], a[SG], a[SB], a[SA]);
-          raw.vertex(a[TX], a[TY]);
-          raw.stroke(b[SR], b[SG], b[SB], b[SA]);
-          raw.vertex(b[TX], b[TY]);
-        }
-      }
-
-      /*
-      // Seems okay to remove this because these vertices are not used again,
-      // but if problems arise, this needs to be uncommented because the above
-      // change is destructive and may need to be undone before proceeding.
-      if (drawing2D() && a[MZ] == 0) {
-        a[X] -= 0.01;
-        a[Y] -= 0.01;
-        a[VX] -= 0.01*a[VW];
-        a[VY] -= 0.01*a[VW];
-        b[X] -= 0.01;
-        b[Y] -= 0.01;
-        b[VX] -= 0.01*b[VW];
-        b[VY] -= 0.01*b[VW];
-      }
-      */
-
-//      line.setIndex(index);
-      line.draw();
-    }
-
-    if (raw != null) {
-      raw.endShape();
-    }
-  }
-
-
+  
   /**
    * Triangulate the current polygon.
    * <BR> <BR>
@@ -1499,7 +1401,7 @@ public class PGraphics3D extends PGraphics {
    * <A HREF="http://www.flipcode.org/cgi-bin/fcarticles.cgi?show=63943">this</A>
    * bit of code from the web.
    */
-  private void triangulate_polygon() {
+  protected void addPolygonTriangles() {
     if (vertex_order.length != vertices.length) {
       int[] temp = new int[vertices.length];
       // since vertex_start may not be zero, might need to keep old stuff around
@@ -1663,7 +1565,7 @@ public class PGraphics3D extends PGraphics {
       }
 
       if (snip) {
-        add_triangle(vertex_order[u], vertex_order[v], vertex_order[w]);
+        addTriangle(vertex_order[u], vertex_order[v], vertex_order[w]);
 
         m++;
 
@@ -1679,7 +1581,7 @@ public class PGraphics3D extends PGraphics {
     }
   }
 
-
+  
   /*
   private void toWorldNormal(float nx, float ny, float nz, float[] out) {
     out[0] =
@@ -1707,7 +1609,6 @@ public class PGraphics3D extends PGraphics {
     }
   }
   */
-
 
   PVector calcLightingNorm = new PVector();
   PVector calcLightingWorldNorm = new PVector();
@@ -1927,7 +1828,7 @@ public class PGraphics3D extends PGraphics {
   // Multiply the lighting contribution into the vertex's colors.
   // Only do this when there is ONE lighting per vertex
   // (MANUAL_VERTEX_NORMAL or SHAPE_NORMAL mode).
-  private void apply_lighting_contribution(int vIndex, float[] contribution) {
+  private void applyLightingContribution(int vIndex, float[] contribution) {
     float[] v = vertices[vIndex];
 
     v[R] = clamp(v[ER] + v[AR] * contribution[LIGHT_AMBIENT_R] + v[DR] * contribution[LIGHT_DIFFUSE_R]);
@@ -1944,24 +1845,22 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  private void light_vertex_always(int vIndex, float[] contribution) {
+  private void lightVertex(int vIndex, float[] contribution) {
     calcLightingContribution(vIndex, contribution);
-    apply_lighting_contribution(vIndex, contribution);
+    applyLightingContribution(vIndex, contribution);
   }
 
 
-  private void light_vertex_if_not_already_lit(int vIndex,
-                                               float[] contribution) {
+  private void lightUnlitVertex(int vIndex, float[] contribution) {
     if (vertices[vIndex][BEEN_LIT] == 0) {
-      light_vertex_always(vIndex, contribution);
+      lightVertex(vIndex, contribution);
     }
   }
 
 
-  private void copy_prelit_vertex_color_to_triangle(int triIndex, int vIndex,
-                                                    int colorIndex) {
+  private void copyPrelitVertexColor(int triIndex, int index, int colorIndex) {
     float[] triColor = triangleColors[triIndex][colorIndex];
-    float[] v = vertices[vIndex];
+    float[] v = vertices[index];
 
     triColor[TRI_DIFFUSE_R] = v[R];
     triColor[TRI_DIFFUSE_G] = v[G];
@@ -1974,40 +1873,36 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  private void copy_vertex_color_to_triangle(int triIndex,
-                                             int vIndex, int colorIndex,
-                                             float[] lightContribution) {
+  private void copyVertexColor(int triIndex, int index, int colorIndex,
+                               float[] contrib) {
     float[] triColor = triangleColors[triIndex][colorIndex];
-    float[] v = vertices[vIndex];
+    float[] v = vertices[index];
 
     triColor[TRI_DIFFUSE_R] =
-      clamp(v[ER] + v[AR] * lightContribution[LIGHT_AMBIENT_R] +
-             v[DR] * lightContribution[LIGHT_DIFFUSE_R]);
+      clamp(v[ER] + v[AR] * contrib[LIGHT_AMBIENT_R] + v[DR] * contrib[LIGHT_DIFFUSE_R]);
     triColor[TRI_DIFFUSE_G] =
-      clamp(v[EG] + v[AG] * lightContribution[LIGHT_AMBIENT_G] +
-             v[DG] * lightContribution[LIGHT_DIFFUSE_G]);
+      clamp(v[EG] + v[AG] * contrib[LIGHT_AMBIENT_G] + v[DG] * contrib[LIGHT_DIFFUSE_G]);
     triColor[TRI_DIFFUSE_B] =
-      clamp(v[EB] + v[AB] * lightContribution[LIGHT_AMBIENT_B] +
-             v[DB] * lightContribution[LIGHT_DIFFUSE_B]);
+      clamp(v[EB] + v[AB] * contrib[LIGHT_AMBIENT_B] + v[DB] * contrib[LIGHT_DIFFUSE_B]);
     triColor[TRI_DIFFUSE_A] = clamp(v[DA]);
 
-    triColor[TRI_SPECULAR_R] = clamp(v[SPR] * lightContribution[LIGHT_SPECULAR_R]);
-    triColor[TRI_SPECULAR_G] = clamp(v[SPG] * lightContribution[LIGHT_SPECULAR_G]);
-    triColor[TRI_SPECULAR_B] = clamp(v[SPB] * lightContribution[LIGHT_SPECULAR_B]);
+    triColor[TRI_SPECULAR_R] = clamp(v[SPR] * contrib[LIGHT_SPECULAR_R]);
+    triColor[TRI_SPECULAR_G] = clamp(v[SPG] * contrib[LIGHT_SPECULAR_G]);
+    triColor[TRI_SPECULAR_B] = clamp(v[SPB] * contrib[LIGHT_SPECULAR_B]);
   }
 
 
-  private void light_triangle(int triIndex, float[] lightContribution) {
+  private void lightTriangle(int triIndex, float[] lightContribution) {
     int vIndex = triangles[triIndex][VERTEX1];
-    copy_vertex_color_to_triangle(triIndex, vIndex, 0, lightContribution);
+    copyVertexColor(triIndex, vIndex, 0, lightContribution);
     vIndex = triangles[triIndex][VERTEX2];
-    copy_vertex_color_to_triangle(triIndex, vIndex, 1, lightContribution);
+    copyVertexColor(triIndex, vIndex, 1, lightContribution);
     vIndex = triangles[triIndex][VERTEX3];
-    copy_vertex_color_to_triangle(triIndex, vIndex, 2, lightContribution);
+    copyVertexColor(triIndex, vIndex, 2, lightContribution);
   }
 
 
-  private void light_triangle(int triIndex) {
+  private void lightTriangle(int triIndex) {
     int vIndex;
 
     // Handle lighting on, but no lights (in this case, just use emissive)
@@ -2031,16 +1926,16 @@ public class PGraphics3D extends PGraphics {
     // into the triangle.
     if (normalMode == NORMAL_MODE_VERTEX) {
       vIndex = triangles[triIndex][VERTEX1];
-      light_vertex_if_not_already_lit(vIndex, tempLightingContribution);
-      copy_prelit_vertex_color_to_triangle(triIndex, vIndex, 0);
+      lightUnlitVertex(vIndex, tempLightingContribution);
+      copyPrelitVertexColor(triIndex, vIndex, 0);
 
       vIndex = triangles[triIndex][VERTEX2];
-      light_vertex_if_not_already_lit(vIndex, tempLightingContribution);
-      copy_prelit_vertex_color_to_triangle(triIndex, vIndex, 1);
+      lightUnlitVertex(vIndex, tempLightingContribution);
+      copyPrelitVertexColor(triIndex, vIndex, 1);
 
       vIndex = triangles[triIndex][VERTEX3];
-      light_vertex_if_not_already_lit(vIndex, tempLightingContribution);
-      copy_prelit_vertex_color_to_triangle(triIndex, vIndex, 2);
+      lightUnlitVertex(vIndex, tempLightingContribution);
+      copyPrelitVertexColor(triIndex, vIndex, 2);
 
     }
 
@@ -2080,12 +1975,9 @@ public class PGraphics3D extends PGraphics {
 
       // The true at the end says the normal is already in world coordinates
       calcLightingContribution(vIndex, tempLightingContribution, true);
-      copy_vertex_color_to_triangle(triIndex, vIndex, 0,
-                                    tempLightingContribution);
-      copy_vertex_color_to_triangle(triIndex, vIndex2, 1,
-                                    tempLightingContribution);
-      copy_vertex_color_to_triangle(triIndex, vIndex3, 2,
-                                    tempLightingContribution);
+      copyVertexColor(triIndex, vIndex, 0, tempLightingContribution);
+      copyVertexColor(triIndex, vIndex2, 1, tempLightingContribution);
+      copyVertexColor(triIndex, vIndex3, 2, tempLightingContribution);
     }
 
     // If lighting is position-dependent
@@ -2096,24 +1988,21 @@ public class PGraphics3D extends PGraphics {
         vertices[vIndex][NY] = vertices[shapeFirst][NY];
         vertices[vIndex][NZ] = vertices[shapeFirst][NZ];
         calcLightingContribution(vIndex, tempLightingContribution);
-        copy_vertex_color_to_triangle(triIndex, vIndex, 0,
-                                      tempLightingContribution);
+        copyVertexColor(triIndex, vIndex, 0, tempLightingContribution);
 
         vIndex = triangles[triIndex][VERTEX2];
         vertices[vIndex][NX] = vertices[shapeFirst][NX];
         vertices[vIndex][NY] = vertices[shapeFirst][NY];
         vertices[vIndex][NZ] = vertices[shapeFirst][NZ];
         calcLightingContribution(vIndex, tempLightingContribution);
-        copy_vertex_color_to_triangle(triIndex, vIndex, 1,
-                                      tempLightingContribution);
+        copyVertexColor(triIndex, vIndex, 1, tempLightingContribution);
 
         vIndex = triangles[triIndex][VERTEX3];
         vertices[vIndex][NX] = vertices[shapeFirst][NX];
         vertices[vIndex][NY] = vertices[shapeFirst][NY];
         vertices[vIndex][NZ] = vertices[shapeFirst][NZ];
         calcLightingContribution(vIndex, tempLightingContribution);
-        copy_vertex_color_to_triangle(triIndex, vIndex, 2,
-                                      tempLightingContribution);
+        copyVertexColor(triIndex, vIndex, 2, tempLightingContribution);
       }
 
       // lighting mode is AUTO_NORMAL
@@ -2150,136 +2039,354 @@ public class PGraphics3D extends PGraphics {
         vertices[vIndex][NZ] = lightTriangleNorm.z;
         // The true at the end says the normal is already in world coordinates
         calcLightingContribution(vIndex, tempLightingContribution, true);
-        copy_vertex_color_to_triangle(triIndex, vIndex, 0,
-                                      tempLightingContribution);
+        copyVertexColor(triIndex, vIndex, 0, tempLightingContribution);
 
         vertices[vIndex2][NX] = lightTriangleNorm.x;
         vertices[vIndex2][NY] = lightTriangleNorm.y;
         vertices[vIndex2][NZ] = lightTriangleNorm.z;
         // The true at the end says the normal is already in world coordinates
         calcLightingContribution(vIndex2, tempLightingContribution, true);
-        copy_vertex_color_to_triangle(triIndex, vIndex2, 1,
-                                      tempLightingContribution);
+        copyVertexColor(triIndex, vIndex2, 1, tempLightingContribution);
 
         vertices[vIndex3][NX] = lightTriangleNorm.x;
         vertices[vIndex3][NY] = lightTriangleNorm.y;
         vertices[vIndex3][NZ] = lightTriangleNorm.z;
         // The true at the end says the normal is already in world coordinates
         calcLightingContribution(vIndex3, tempLightingContribution, true);
-        copy_vertex_color_to_triangle(triIndex, vIndex3, 2,
-                                      tempLightingContribution);
+        copyVertexColor(triIndex, vIndex3, 2, tempLightingContribution);
       }
     }
   }
 
+  
+  protected void renderTriangles(int start, int stop) {
+    for (int i = start; i < stop; i++) {
+      float a[] = vertices[triangles[i][VERTEX1]];
+      float b[] = vertices[triangles[i][VERTEX2]];
+      float c[] = vertices[triangles[i][VERTEX3]];
+      int tex = triangles[i][TEXTURE_INDEX];
 
-  protected void endShapeLighting(boolean lights) {
-    if (lights) {
-      // If the lighting does not depend on vertex position and there is a single
-      // normal specified for this shape, go ahead and apply the same lighting
-      // contribution to every vertex in this shape (one lighting calc!)
-      if (!lightingDependsOnVertexPosition && normalMode == NORMAL_MODE_SHAPE) {
-        calcLightingContribution(shapeFirst, tempLightingContribution);
-        for (int tri = 0; tri < triangleCount; tri++) {
-          light_triangle(tri, tempLightingContribution);
-        }
+      /*
+      // removing for 0149 with the return of P2D
+      // ewjordan: hack to 'fix' accuracy issues when drawing in 2d
+      // see also render_lines() where similar hack is employed
+      float shift = 0.15f;//was 0.49f
+      boolean shifted = false;
+      if (drawing2D() && (a[Z] == 0)) {
+        shifted = true;
+        a[TX] += shift;
+        a[TY] += shift;
+        a[VX] += shift*a[VW];
+        a[VY] += shift*a[VW];
+        b[TX] += shift;
+        b[TY] += shift;
+        b[VX] += shift*b[VW];
+        b[VY] += shift*b[VW];
+        c[TX] += shift;
+        c[TY] += shift;
+        c[VX] += shift*c[VW];
+        c[VY] += shift*c[VW];
       }
-      // Otherwise light each triangle individually...
-      else {
-        for (int tri = 0; tri < triangleCount; tri++) {
-          light_triangle(tri);
-        }
+      */
+
+      triangle.reset();
+
+      // This is only true when not textured. 
+      // We really should pass specular straight through to triangle rendering.
+      float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
+      float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
+      float ab = clamp(triangleColors[i][0][TRI_DIFFUSE_B] + triangleColors[i][0][TRI_SPECULAR_B]);
+      float br = clamp(triangleColors[i][1][TRI_DIFFUSE_R] + triangleColors[i][1][TRI_SPECULAR_R]);
+      float bg = clamp(triangleColors[i][1][TRI_DIFFUSE_G] + triangleColors[i][1][TRI_SPECULAR_G]);
+      float bb = clamp(triangleColors[i][1][TRI_DIFFUSE_B] + triangleColors[i][1][TRI_SPECULAR_B]);
+      float cr = clamp(triangleColors[i][2][TRI_DIFFUSE_R] + triangleColors[i][2][TRI_SPECULAR_R]);
+      float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
+      float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
+
+      if (tex > -1 && textures[tex] != null) {
+        triangle.setTexture(textures[tex]);
+        triangle.setUV(a[U], a[V], b[U], b[V], c[U], c[V]);
       }
-    } else {
-      int vIndex;
-      for (int tri = 0; tri < triangleCount; tri++) {
-        vIndex = triangles[tri][VERTEX1];
-        copy_prelit_vertex_color_to_triangle(tri, vIndex, 0);
-        vIndex = triangles[tri][VERTEX2];
-        copy_prelit_vertex_color_to_triangle(tri, vIndex, 1);
-        vIndex = triangles[tri][VERTEX3];
-        copy_prelit_vertex_color_to_triangle(tri, vIndex, 2);
+
+      triangle.setIntensities(ar, ag, ab, a[A],
+                              br, bg, bb, b[A],
+                              cr, cg, cb, c[A]);
+
+      triangle.setVertices(a[TX], a[TY], a[TZ],
+                           b[TX], b[TY], b[TZ],
+                           c[TX], c[TY], c[TZ]);
+
+      // Need to pass camera-space coordinates to triangle renderer
+      // in order to compute true texture coordinates, else skip it
+      if (hints[ENABLE_ACCURATE_TEXTURES]){
+        triangle.setCamVertices(a[VX], a[VY], a[VZ],
+                                b[VX], b[VY], b[VZ],
+                                c[VX], c[VY], c[VZ]);
       }
+
+      triangle.render();
+
+      /*
+      // removing for 0149 with the return of P2D
+      if (drawing2D() && shifted){
+        a[TX] -= shift;
+        a[TY] -= shift;
+        a[VX] -= shift*a[VW];
+        a[VY] -= shift*a[VW];
+        b[TX] -= shift;
+        b[TY] -= shift;
+        b[VX] -= shift*b[VW];
+        b[VY] -= shift*b[VW];
+        c[TX] -= shift;
+        c[TY] -= shift;
+        c[VX] -= shift*c[VW];
+        c[VY] -= shift*c[VW];
+      }
+      */
     }
   }
 
+
+  protected void rawTriangles(int start, int stop) {
+    raw.colorMode(RGB, 1);
+    raw.noStroke();
+    raw.beginShape(TRIANGLES);
+
+    //for (int i = 0; i < triangleCount; i ++) {
+    for (int i = start; i < stop; i++) {
+      float a[] = vertices[triangles[i][VERTEX1]];
+      float b[] = vertices[triangles[i][VERTEX2]];
+      float c[] = vertices[triangles[i][VERTEX3]];
+
+      float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
+      float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
+      float ab = clamp(triangleColors[i][0][TRI_DIFFUSE_B] + triangleColors[i][0][TRI_SPECULAR_B]);
+      float br = clamp(triangleColors[i][1][TRI_DIFFUSE_R] + triangleColors[i][1][TRI_SPECULAR_R]);
+      float bg = clamp(triangleColors[i][1][TRI_DIFFUSE_G] + triangleColors[i][1][TRI_SPECULAR_G]);
+      float bb = clamp(triangleColors[i][1][TRI_DIFFUSE_B] + triangleColors[i][1][TRI_SPECULAR_B]);
+      float cr = clamp(triangleColors[i][2][TRI_DIFFUSE_R] + triangleColors[i][2][TRI_SPECULAR_R]);
+      float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
+      float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
+
+      int tex = triangles[i][TEXTURE_INDEX];
+      PImage texImage = (tex > -1) ? textures[tex] : null;
+      if (texImage != null) {
+        if (raw.dimensional()) {  // drawing to a 3D renderer
+          if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
+            raw.fill(ar, ag, ab, a[A]);
+            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW], a[U], a[V]);
+            raw.fill(br, bg, bb, b[A]);
+            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW], b[U], b[V]);
+            raw.fill(cr, cg, cb, c[A]);
+            raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW], c[U], c[V]);
+          }
+        } else {  // drawing to a 2D renderer
+          raw.fill(ar, ag, ab, a[A]);
+          raw.vertex(a[TX], a[TY], a[U], a[V]);
+          raw.fill(br, bg, bb, b[A]);
+          raw.vertex(b[TX], b[TY], b[U], b[V]);
+          raw.fill(cr, cg, cb, c[A]);
+          raw.vertex(c[TX], c[TY], c[U], c[V]);
+        }
+      } else {  // no texture
+        if (raw.dimensional()) {
+          if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
+            raw.fill(ar, ag, ab, a[A]);
+            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
+            raw.fill(br, bg, bb, b[A]);
+            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
+            raw.fill(cr, cg, cb, c[A]);
+            raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
+          }
+        } else {  // raw instanceof PGraphics2D
+          raw.fill(ar, ag, ab, a[A]);
+          raw.vertex(a[TX], a[TY]);
+          raw.fill(br, bg, bb, b[A]);
+          raw.vertex(b[TX], b[TY]);
+          raw.fill(cr, cg, cb, c[A]);
+          raw.vertex(c[TX], c[TY]);
+        }
+      }
+    }
+    
+    raw.endShape();
+  }
 
 
   //////////////////////////////////////////////////////////////
 
-  // BASIC SHAPES
+  
+  //public void bezierVertex(float x2, float y2,
+  //                         float x3, float y3,
+  //                         float x4, float y4)
+  
+  
+  //public void bezierVertex(float x2, float y2, float z2,
+  //                         float x3, float y3, float z3,
+  //                         float x4, float y4, float z4)
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  
+  //public void curveVertex(float x, float y)
+  
+  
+  //public void curveVertex(float x, float y, float z)
 
 
-  public void point(float x, float y) {
-    point(x, y, 0);
-  }
+  
+  ////////////////////////////////////////////////////////////
 
-
-  public void point(float x, float y, float z) {
+  
+  /**
+   * Emit any sorted geometry that's been collected on this frame.
+   */
+  public void flush() {
+    if (hints[ENABLE_DEPTH_SORT]) {
+      sort();
+    }
+    render();
+    
     /*
-    beginShape(POINTS);
-    vertex(x, y, z);
-    endShape();
+    if (triangleCount > 0) {
+      if (hints[ENABLE_DEPTH_SORT]) {
+        sortTriangles();
+      }
+      renderTriangles();
+    }
+    if (lineCount > 0) {
+      if (hints[ENABLE_DEPTH_SORT]) {
+        sortLines();
+      }
+      renderLines();
+    }
+    // Clear this out in case flush() is called again.
+    // For instance, with hint(ENABLE_DEPTH_SORT), it will be called
+    // once on endRaw(), and once again at endDraw().
+    triangleCount = 0;
+    lineCount = 0;
     */
-
-    // hacked workaround for carlos line bug
-    beginShape(LINES);
-    vertex(x, y, z);
-    vertex(x + EPSILON, y + EPSILON, z);
-    endShape();
   }
-
-  /*
-  private void point3(float x, float y, float z, int color) {
-    // need to get scaled version of the stroke
-    float x1 = screenX(x - 0.5f, y - 0.5f, z);
-    float y1 = screenY(x - 0.5f, y - 0.5f, z);
-    float x2 = screenX(x + 0.5f, y + 0.5f, z);
-    float y2 = screenY(x + 0.5f, y + 0.5f, z);
-
-    float weight = (abs(x2 - x1) + abs(y2 - y1)) / 2f;
-    if (weight < 1.5f) {
-      int xx = (int) ((x1 + x2) / 2f);
-      int yy = (int) ((y1 + y2) / 2f);
-      //point0(xx, yy, z, color);
-      zbuffer[yy*width + xx] = screenZ(x, y, z);
-      //stencil?
-
-    } else {
-      // actually has some weight, need to draw shapes instead
-      // these will be
+  
+  
+  protected void render() {
+    if (pointCount > 0) {
+      renderPoints(0, pointCount);
+      rawPoints(0, pointCount);
+      pointCount = 0;
+    }
+    if (lineCount > 0) {
+      renderLines(0, lineCount);
+      rawLines(0, lineCount);
+      lineCount = 0;
+      pathCount = 0;
+    }
+    if (triangleCount > 0) {
+      renderTriangles(0, triangleCount);
+      rawTriangles(0, triangleCount);
+      triangleCount = 0;
     }
   }
-  */
+  
+  
 
+  /////////////////////////////////////////////////////////////////////////////
 
+  // DEPTH SORTING
+  
   /**
-   * Compared to the implementation in PGraphics, this adds normal().
+   * Handle depth sorting of geometry. Currently this only handles triangles, 
+   * however in the future it will be expanded for points and lines, which 
+   * will also need to be interspersed with one another while rendering.
    */
-  public void triangle(float x1, float y1, float x2, float y2,
-                       float x3, float y3) {
-    beginShape(TRIANGLES);
-    normal(0, 0, 1);
-    vertex(x1, y1);
-    vertex(x2, y2);
-    vertex(x3, y3);
-    endShape();
+  protected void sort() {
+    sortTrianglesInternal(0, triangleCount-1);
   }
 
 
-  /**
-   * Compared to the implementation in PGraphics, this adds normal().
-   */
-  public void quad(float x1, float y1, float x2, float y2,
-                   float x3, float y3, float x4, float y4) {
-    beginShape(QUADS);
-    normal(0, 0, 1);
-    vertex(x1, y1);
-    vertex(x2, y2);
-    vertex(x3, y3);
-    vertex(x4, y4);
-    endShape();
+  private void sortTrianglesInternal(int i, int j) {
+    int pivotIndex = (i+j)/2;
+    sortTrianglesSwap(pivotIndex, j);
+    int k = sortTrianglesPartition(i-1, j);
+    sortTrianglesSwap(k, j);
+    if ((k-i) > 1) sortTrianglesInternal(i, k-1);
+    if ((j-k) > 1) sortTrianglesInternal(k+1, j);
   }
+
+
+  private int sortTrianglesPartition(int left, int right) {
+    int pivot = right;
+    do {
+      while (sortTrianglesCompare(++left, pivot) < 0) { }
+      while ((right != 0) &&
+             (sortTrianglesCompare(--right, pivot) > 0)) { }
+      sortTrianglesSwap(left, right);
+    } while (left < right);
+    sortTrianglesSwap(left, right);
+    return left;
+  }
+
+
+  private void sortTrianglesSwap(int a, int b) {
+    int tempi[] = triangles[a];
+    triangles[a] = triangles[b];
+    triangles[b] = tempi;
+    float tempf[][] = triangleColors[a];
+    triangleColors[a] = triangleColors[b];
+    triangleColors[b] = tempf;
+  }
+
+
+  private float sortTrianglesCompare(int a, int b) {
+    /*
+    if (Float.isNaN(vertices[triangles[a][VERTEX1]][TZ]) ||
+        Float.isNaN(vertices[triangles[a][VERTEX2]][TZ]) ||
+        Float.isNaN(vertices[triangles[a][VERTEX3]][TZ]) ||
+        Float.isNaN(vertices[triangles[b][VERTEX1]][TZ]) ||
+        Float.isNaN(vertices[triangles[b][VERTEX2]][TZ]) ||
+        Float.isNaN(vertices[triangles[b][VERTEX3]][TZ])) {
+      System.err.println("NaN values in triangle");
+    }
+    */
+    return ((vertices[triangles[b][VERTEX1]][TZ] +
+             vertices[triangles[b][VERTEX2]][TZ] +
+             vertices[triangles[b][VERTEX3]][TZ]) -
+            (vertices[triangles[a][VERTEX1]][TZ] +
+             vertices[triangles[a][VERTEX2]][TZ] +
+             vertices[triangles[a][VERTEX3]][TZ]));
+  }
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // BASIC SHAPES
+
+  // Because vertex(x, y) is mapped to vertex(x, y, 0), none of these commands
+  // need to be overridden from their default implementation in PGraphics.
+  
+  
+  //public void point(float x, float y)
+
+
+  //public void point(float x, float y, float z)
+
+  
+  //public void line(float x1, float y1, float x2, float y2)
+  
+  
+  //public void line(float x1, float y1, float z1,
+  //                 float x2, float y2, float z2)
+
+
+  //public void triangle(float x1, float y1, float x2, float y2,
+  //                     float x3, float y3)
+
+
+  //public void quad(float x1, float y1, float x2, float y2,
+  //                 float x3, float y3, float x4, float y4)
 
 
 
@@ -2950,6 +3057,7 @@ public class PGraphics3D extends PGraphics {
    * TODO need to invert the logic here so that we can simply return
    * the value, rather than calculating true/false and returning it.
    */
+  /*
   private boolean drawing2D() {
     if (modelview.m00 != 1.0f ||
         modelview.m11 != 1.0f ||
@@ -2971,6 +3079,7 @@ public class PGraphics3D extends PGraphics {
       return true;
     }
   }
+  */
 
 
 
