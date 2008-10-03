@@ -1347,7 +1347,7 @@ public class PGraphics2D extends PGraphics {
                                  float ox2, float oy2,
                                  float r2, float g2, float b2, float a2) {
       spolygon.interpARGB = (r1 != r2) || (g1 != g2) || (b1 != b2) || (a1 != a2);
-      spolygon.interpZ = false;
+//      spolygon.interpZ = false;
 
       if (!spolygon.interpARGB &&
           flat_line_retribution(ox1, oy1, ox2, oy2, r1, g1, b1)) {
