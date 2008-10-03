@@ -775,14 +775,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   //GL will do the clipping for us
-  protected void add_line(int a, int b) {
-    add_line_no_clip(a, b);
+  protected void addLine(int a, int b) {
+    addLineWithoutClip(a, b);
   }
 
 
   // GL will do the clipping for us
-  protected void add_triangle(int a, int b, int c) {
-    add_triangle_no_clip(a, b, c);
+  protected void addTriangle(int a, int b, int c) {
+    addTriangleWithoutClip(a, b, c);
   }
 
 
