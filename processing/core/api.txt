@@ -8,7 +8,6 @@
   public boolean canDraw()
   public void beginDraw()
   public void endDraw()
-  public void flush()
 
   protected void checkSettings()
   protected void defaultSettings()
@@ -50,6 +49,17 @@
                                     float x2, float y2, float z2,
                                     float x3, float y3, float z3,
                                     float x4, float y4, float z4)
+
+  // P3D adds the protected methods that can be overridden 
+  protected void renderPoints(int start, int stop)
+  protected void rawPoints(int start, int stop)
+  protected void renderLines(int start, int stop)
+  protected void rawLines(int start, int stop)
+  protected void renderTriangles(int start, int stop)
+  protected void rawTriangles(int start, int stop)
+  public void flush()
+  protected void render()
+  proected void sort()
 
   public void point(float x, float y)
   public void point(float x, float y, float z)

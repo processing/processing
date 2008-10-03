@@ -76,6 +76,7 @@ o   this would enable site search across this as well?
 o on first OutOfMemoryError, offer to send to the docs
 o   again, a warning checkbox
 X   fixed up OutOfMemoryError issues to show better error message
+X write docs for begin/endRaw
 
 ira
 X How do I move the mouse cursor to another location? (java robot example)
@@ -86,6 +87,9 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=displ
 
 shiffman
 X update match(), write new reference for matchAll()
+
+this release: start specifically supporting libraries in the sketchbook folder via a 'libraries' subfolder
+next release: osx inside .app, sketchbook/libraries and sketchbook/tools folders, improved native support for libraries with better export.txt
 
 
 _ sketch must be saved to use a constructor
