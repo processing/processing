@@ -325,7 +325,21 @@
   public void background(float x, float y, float z, float a)
   public void background(PImage image)
   protected void backgroundFromCalc()
+  protected void backgroundImpl(PImage image)
   protected void backgroundImpl()
+
+  public void colorMode(int mode)
+  public void colorMode(int mode, float max)
+  public void colorMode(int mode, float maxX, float maxY, float maxZ)
+  public void colorMode(int mode, float maxX, float maxY, float maxZ, float maxA)
+
+  protected void colorCalc(int rgb)
+  protected void colorCalc(int rgb, float alpha)
+  protected void colorCalc(float gray)
+  protected void colorCalc(float gray, float alpha)
+  protected void colorCalc(float x, float y, float z)
+  protected void colorCalc(float x, float y, float z, float a)
+  protected void colorCalcARGB(int argb, float alpha)
 
   public final int color(int gray)
   public final int color(int gray, int alpha)

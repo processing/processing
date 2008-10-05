@@ -3424,17 +3424,21 @@ public class PGraphics extends PImage implements PConstants {
   
   /**
    * Copy the current transformation matrix into the specified target.
+   * Pass in null to create a new matrix. 
    */
-  public void getMatrix(PMatrix2D target) {
+  public PMatrix2D getMatrix(PMatrix2D target) {
     showMissingWarning("getMatrix");
+    return null;
   }
 
 
   /**
    * Copy the current transformation matrix into the specified target.
+   * Pass in null to create a new matrix. 
    */
-  public void getMatrix(PMatrix3D target) {
+  public PMatrix3D getMatrix(PMatrix3D target) {
     showMissingWarning("getMatrix");
+    return null;
   }
   
   
