@@ -71,6 +71,11 @@ smooth is now part of PGraphics, moved out of PImage
 imageMode has been removed from PImage, too awkward
 raw must handle points, lines, triangles, and textures
 
+_ add to hint(DISABLE_DEPTH_TEST)
+_   gl.glClear(GL.GL_DEPTH_BUFFER_BIT); 
+_   or clearing the zbuffer for P3D
+_   also add a note to the hint() reference
+
 _ accessors inside PFont need a lot of work
 
 _ may need to add to PApplet.main() for OS X 10.5
