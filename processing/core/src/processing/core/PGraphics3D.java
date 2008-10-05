@@ -2773,14 +2773,15 @@ public class PGraphics3D extends PGraphics {
   // MATRIX GET/SET/PRINT
 
 
-  //public void getMatrix(PMatrix2D target)
+  //public PMatrix2D getMatrix(PMatrix2D target)
 
 
-  /**
-   * Copy the current transformation matrix into the specified target.
-   */
-  public void getMatrix(PMatrix3D target) {
+  public PMatrix3D getMatrix(PMatrix3D target) {
+    if (target == null) {
+      target = new PMatrix3D();
+    }
     target.set(modelview);
+    return target;
   }
 
 
@@ -2809,10 +2810,47 @@ public class PGraphics3D extends PGraphics {
   }
 
 
+  /*
+   * This function checks if the modelview matrix is set up to likely be
+   * drawing in 2D. It merely checks if the non-translational piece of the
+   * matrix is unity. If this is to be used, it should be coupled with a
+   * check that the raw vertex coordinates lie in the z=0 plane.
+   * Mainly useful for applying sub-pixel shifts to avoid 2d artifacts
+   * in the screen plane.
+   * Added by ewjordan 6/13/07
+   *
+   * TODO need to invert the logic here so that we can simply return
+   * the value, rather than calculating true/false and returning it.
+   */
+  /*
+  private boolean drawing2D() {
+    if (modelview.m00 != 1.0f ||
+        modelview.m11 != 1.0f ||
+        modelview.m22 != 1.0f || // check scale
+        modelview.m01 != 0.0f ||
+        modelview.m02 != 0.0f || // check rotational pieces
+        modelview.m10 != 0.0f ||
+        modelview.m12 != 0.0f ||
+        modelview.m20 != 0.0f ||
+        modelview.m21 != 0.0f ||
+        !((camera.m23-modelview.m23) <= EPSILON &&
+          (camera.m23-modelview.m23) >= -EPSILON)) { // check for z-translation
+      // Something about the modelview matrix indicates 3d drawing
+      // (or rotated 2d, in which case 2d subpixel fixes probably aren't needed)
+      return false;
+    } else {
+      //The matrix is mapping z=0 vertices to the screen plane,
+      // which means it's likely that 2D drawing is happening.
+      return true;
+    }
+  }
+  */
 
+  
+  
   //////////////////////////////////////////////////////////////
 
-  // CAMERA and PERSPECTIVE
+  // CAMERA 
 
 
   /**
@@ -3073,6 +3111,11 @@ public class PGraphics3D extends PGraphics {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+  // PROJECTION 
+
+
   /**
    * Calls ortho() with the proper parameters for Processing's
    * standard orthographic projection.
@@ -3183,47 +3226,10 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  /*
-   * This function checks if the modelview matrix is set up to likely be
-   * drawing in 2D. It merely checks if the non-translational piece of the
-   * matrix is unity. If this is to be used, it should be coupled with a
-   * check that the raw vertex coordinates lie in the z=0 plane.
-   * Mainly useful for applying sub-pixel shifts to avoid 2d artifacts
-   * in the screen plane.
-   * Added by ewjordan 6/13/07
-   *
-   * TODO need to invert the logic here so that we can simply return
-   * the value, rather than calculating true/false and returning it.
-   */
-  /*
-  private boolean drawing2D() {
-    if (modelview.m00 != 1.0f ||
-        modelview.m11 != 1.0f ||
-        modelview.m22 != 1.0f || // check scale
-        modelview.m01 != 0.0f ||
-        modelview.m02 != 0.0f || // check rotational pieces
-        modelview.m10 != 0.0f ||
-        modelview.m12 != 0.0f ||
-        modelview.m20 != 0.0f ||
-        modelview.m21 != 0.0f ||
-        !((camera.m23-modelview.m23) <= EPSILON &&
-          (camera.m23-modelview.m23) >= -EPSILON)) { // check for z-translation
-      // Something about the modelview matrix indicates 3d drawing
-      // (or rotated 2d, in which case 2d subpixel fixes probably aren't needed)
-      return false;
-    } else {
-      //The matrix is mapping z=0 vertices to the screen plane,
-      // which means it's likely that 2D drawing is happening.
-      return true;
-    }
-  }
-  */
-
-
 
   //////////////////////////////////////////////////////////////
 
-  // SCREEN AND OBJECT COORDINATES
+  // SCREEN AND MODEL COORDS
 
 
   public float screenX(float x, float y) {
@@ -3364,26 +3370,78 @@ public class PGraphics3D extends PGraphics {
     return (ow != 0) ? oz / ow : oz;
   }
 
+  
 
   //////////////////////////////////////////////////////////////
+  
+  // STYLE
+  
+  // All methods are inherited from PGraphics.
 
 
-  // strokeWeight() doesn't really work properly either,
-  // but that will be dealt with in some other way.
+  
+  //////////////////////////////////////////////////////////////
+  
+  // COLOR MODE
+  
+  // All methods are inherited from PGraphics.
+
+  
+
+  //////////////////////////////////////////////////////////////
+  
+  // COLOR CALC
+  
+  // All methods are inherited from PGraphics.
+
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // STROKE CAP/JOIN/WEIGHT
+  
+  
+  public void strokeWeight(float weight) {
+    if (weight != DEFAULT_STROKE_WEIGHT) {
+      showMethodWarning("strokeWeight");
+    }
+  }
 
 
   public void strokeJoin(int join) {
-    showMethodWarning("strokeJoin");
+    if (join != DEFAULT_STROKE_JOIN) {
+      showMethodWarning("strokeJoin");
+    }
   }
 
 
   public void strokeCap(int cap) {
-    showMethodWarning("strokeCap");
+    if (cap != DEFAULT_STROKE_CAP) {
+      showMethodWarning("strokeCap");
+    }
   }
 
 
 
   //////////////////////////////////////////////////////////////
+
+  // STROKE COLOR 
+
+  // All methods inherited from PGraphics.
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // TINT COLOR 
+
+  // All methods inherited from PGraphics.
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // FILL COLOR 
 
 
   protected void fillFromCalc() {
@@ -3392,9 +3450,22 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-
+  
   //////////////////////////////////////////////////////////////
 
+  // MATERIAL PROPERTIES 
+
+  // ambient, specular, shininess, and emissive all inherited.  
+  
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // LIGHTS
+
+  
+  PVector lightPositionVec = new PVector();
+  PVector lightDirectionVec = new PVector();
 
   /**
    * Sets up an ambient and directional light.
@@ -3707,9 +3778,6 @@ public class PGraphics3D extends PGraphics {
   }
 
 
-  PVector lightPositionVec = new PVector();
-  PVector lightDirectionVec = new PVector();
-  
   /**
    * internal function to set the light direction
    * based on the current modelview matrix.
@@ -3760,6 +3828,100 @@ public class PGraphics3D extends PGraphics {
     Arrays.fill(pixels, backgroundColor);
     Arrays.fill(zbuffer, Float.MAX_VALUE);
   }
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // COLOR MODE
+
+  // all colorMode() variations inherited from PGraphics.
+
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // COLOR CALCULATIONS
+
+  // protected colorCalc and colorCalcARGB inherited.
+
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // COLOR DATATYPE STUFFING
+  
+  // final color() variations inherited.
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // COLOR DATATYPE EXTRACTION
+  
+  // final methods alpha, red, green, blue,  
+  // hue, saturation, and brightness all inherited.
+
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // COLOR DATATYPE INTERPOLATION
+  
+  // both lerpColor variants inherited.
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // BEGINRAW/ENDRAW
+
+  // beginRaw, endRaw() both inherited.
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // WARNINGS and EXCEPTIONS
+  
+  // showWarning and showException inherited.
+  
+
+
+  //////////////////////////////////////////////////////////////
+
+  // RENDERER SUPPORT QUERIES
+  
+  
+  //public boolean displayable()
+  
+  
+  /**
+   * Returns true because this renderer supports 3D drawing.
+   */
+  public boolean dimensional() {
+    return true;
+  }
+  
+  
+
+  //////////////////////////////////////////////////////////////
+  
+  // PIMAGE METHODS
+  
+  // All these methods are inherited, because this render has a 
+  // pixels[] array that can be accessed directly. 
+  
+  // getImage
+  // setCache, getCache, removeCache
+  // isModified, setModified
+  // loadPixels, updatePixels
+  // resize
+  // get, getImpl, set, setImpl
+  // mask
+  // filter
+  // copy
+  // blendColor, blend  
 
   
 
