@@ -30,6 +30,16 @@ X   method signature is a real problem
 X figure out how to handle constructor mess
 X   clean up setMainDrawingSurface()
 X   should instead be inside size(), and init(), no?
+X add to hint(DISABLE_DEPTH_TEST)
+X   gl.glClear(GL.GL_DEPTH_BUFFER_BIT); 
+X   or clearing the zbuffer for P3D
+X   also add a note to the hint() reference
+X DISABLE_DEPTH_TEST bad results
+X   have to clear the zbuffer to make it work
+X   this may be specific to lines
+X   http://dev.processing.org/bugs/show_bug.cgi?id=827
+X   though it also seems to be a problem with opengl
+X   also make a note of disabling as a way to help font appearance
 
 cleaning
 o chooseFile() and chooseFolder() with named fxn callbacks
@@ -71,10 +81,11 @@ smooth is now part of PGraphics, moved out of PImage
 imageMode has been removed from PImage, too awkward
 raw must handle points, lines, triangles, and textures
 
-_ add to hint(DISABLE_DEPTH_TEST)
-_   gl.glClear(GL.GL_DEPTH_BUFFER_BIT); 
-_   or clearing the zbuffer for P3D
-_   also add a note to the hint() reference
+_ no changing point sizes when using beginShape(POINTS)
+_   this is an opengl restriction, should we stick with it elsewhere?
+_   and changing stroke weight in general (with lines/shapes)
+_   no renderer does this, we should probably disable it
+
 
 _ accessors inside PFont need a lot of work
 
@@ -135,6 +146,7 @@ _ ENABLE_DEPTH_SORT not really working for GL
 _   because the zbuffer is still there, it's still calculating
 _   actually, this is probably because it happens after the frame
 _   so really, flush is required whenever the depth sort is called
+_   need to check this--isn't this referring to DISABLE_DEPTH_TEST?
 _ ENABLE_DEPTH_SORT causing trouble with MovieMaker
 _   need to make the flush() api accessible
 _   http://dev.processing.org/bugs/show_bug.cgi?id=692
@@ -237,12 +249,6 @@ _ gl smoothing.. how to disable polygon but keep line enabled
 _   or at least make a note of this?
 _   leave smooth off, get the gl object, then enable line smooth
 _ repeating texture support
-_ DISABLE_DEPTH_TEST bad results
-_   have to clear the zbuffer to make it work
-_   this may be specific to lines
-_   http://dev.processing.org/bugs/show_bug.cgi?id=827
-_   though it also seems to be a problem with opengl
-_   also make a note of disabling as a way to help font appearance
 _ PPolygon no longer in use and PLine is a mess
 _   make a version of PGraphics3 that uses it for more accurate rendering?
 
