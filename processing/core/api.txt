@@ -393,8 +393,8 @@
 
   public int get(int x, int y)
   public PImage get(int x, int y, int w, int h)
-  public PImage get()
   protected PImage getImpl(int x, int y, int w, int h)
+  public PImage get()
   public void set(int x, int y, int c)
   public void set(int x, int y, PImage src)
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
@@ -419,4 +419,4 @@
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode)
 
-  
+  public void save(String path)

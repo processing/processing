@@ -2296,8 +2296,64 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   //////////////////////////////////////////////////////////////
 
+  // BEGINRAW/ENDRAW
+
+  // beginRaw, endRaw() both inherited.
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // WARNINGS and EXCEPTIONS
+  
+  // showWarning() and showException() available from PGraphics.
+
+  
+  /**
+   * Report on anything from glError().
+   * Don't use this inside glBegin/glEnd otherwise it'll
+   * throw an GL_INVALID_OPERATION error.
+   */
+  public void report(String where) {
+    if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
+      int err = gl.glGetError();
+      if (err != 0) {
+        String errString = glu.gluErrorString(err);
+        String msg = "OpenGL error " + err + " at " + where + ": " + errString;
+        PGraphics.showWarning(msg);
+      }
+    }
+  }
   
 
+
+  //////////////////////////////////////////////////////////////
+
+  // RENDERER SUPPORT QUERIES
+  
+  
+  //public boolean displayable()
+  
+  
+  //public boolean dimensional()  // from P3D
+  
+  
+
+  //////////////////////////////////////////////////////////////
+  
+  // PIMAGE METHODS
+  
+  // getImage
+  // setCache, getCache, removeCache
+  // isModified, setModified
+  
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // LOAD/UPDATE PIXELS  
+
+  
   public void loadPixels() {
     if ((pixels == null) || (pixels.length != width*height)) {
       pixels = new int[width * height];
@@ -2642,15 +2698,29 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-
+  
   //////////////////////////////////////////////////////////////
+  
+  // RESIZE
+  
+  
+  public void resize(int wide, int high) {
+    PGraphics.showMethodWarning("resize");  
+  }
 
-
+  
+  
+  //////////////////////////////////////////////////////////////
+  
+  // GET/SET
+  
+  
   IntBuffer getsetBuffer = BufferUtil.newIntBuffer(1);
-  //int getset[] = new int[1];
+//  int getset[] = new int[1];
 
   public int get(int x, int y) {
     gl.glReadPixels(x, y, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
+//    gl.glReadPixels(x, y, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getset, 0);
     int getset = getsetBuffer.get(0);
 
     if (BIG_ENDIAN) {
@@ -2665,27 +2735,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  public PImage get(int x, int y, int w, int h) {
-    if (imageMode == CORNERS) {  // if CORNER, do nothing
-      w = (w - x);
-      h = (h - x);
-    } else if (imageMode == CENTER) {
-      x -= w/2;
-      y -= h/2;
-    }
+  //public PImage get(int x, int y, int w, int h)
 
-    if (x < 0) {
-      w += x; // clip off the left edge
-      x = 0;
-    }
-    if (y < 0) {
-      h += y; // clip off some of the height
-      y = 0;
-    }
 
-    if (x + w > width) w = width - x;
-    if (y + h > height) h = height - y;
-
+  protected PImage getImpl(int x, int y, int w, int h) {
     PImage newbie = new PImage(w, h); //new int[w*h], w, h, ARGB);
 
     IntBuffer newbieBuffer = BufferUtil.newIntBuffer(w*h);
@@ -2696,7 +2749,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     return newbie;
   }
 
-
+  
   public PImage get() {
     return get(0, 0, width, height);
   }
@@ -2734,11 +2787,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * vertically. Both have their components all swapped to native.
    */
   public void set(int x, int y, PImage source) {
-    if (imageMode == CENTER) {
-      x -= source.width / 2;
-      y -= source.height / 2;
-    }
-    int backup[] = new int[source.pixels.length];
+    int[] backup = new int[source.pixels.length];
     System.arraycopy(source.pixels, 0, backup, 0, source.pixels.length);
     javaToNativeARGB(source);
 
@@ -2754,6 +2803,13 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
+  // TODO remove the implementation above and use setImpl instead, 
+  // since it'll be more efficient
+  // http://dev.processing.org/bugs/show_bug.cgi?id=943
+  //protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
+  //                       PImage src)
+
+  
   /**
    * Definitive method for setting raster pos, including offscreen locations.
    * The raster position is tricky because it's affected by the modelview and
@@ -2795,10 +2851,29 @@ public class PGraphicsOpenGL extends PGraphics3D {
     gl.glPopAttrib();
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
+  // MASK
+  
+  
+  public void mask(int alpha[]) {
+    PGraphics.showMethodWarning("mask");
+  }
+  
+  
+  public void mask(PImage alpha) {
+    PGraphics.showMethodWarning("mask");
+  }
 
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // FILTER
+
+  
   /**
    * This is really inefficient and not a good idea in OpenGL.
    * Use get() and set() with a smaller image area, or call the
@@ -2827,17 +2902,12 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   /**
-   * Extremely slow and not optimized, should use glCopyPixels instead.
+   * Extremely slow and not optimized, should use GL methods instead.
    * Currently calls a beginPixels() on the whole canvas, then does the copy,
-   * then it calls endPixels().
+   * then it calls endPixels(). 
    */
-  public void copy(int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    //throw new RuntimeException("copy() not available with OpenGL");
-    loadPixels();
-    super.copy(sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    updatePixels();
-  }
+  //public void copy(int sx1, int sy1, int sx2, int sy2,
+  //                 int dx1, int dy1, int dx2, int dy2)
 
 
   /**
@@ -2845,22 +2915,19 @@ public class PGraphicsOpenGL extends PGraphics3D {
    * Currently calls a beginPixels() on the whole canvas,
    * then does the copy, then it calls endPixels().
    */
-  public void copy(PImage src,
-                   int sx1, int sy1, int sx2, int sy2,
-                   int dx1, int dy1, int dx2, int dy2) {
-    loadPixels();
-    super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-    updatePixels();
-  }
+  //public void copy(PImage src,
+  //                 int sx1, int sy1, int sx2, int sy2,
+  //                 int dx1, int dy1, int dx2, int dy2)
 
+  
 
   //////////////////////////////////////////////////////////////
 
-
-  public void blend(int sx, int sy, int dx, int dy, int mode) {
-    set(dx, dy, PImage.blendColor(get(sx, sy), get(dx, dy), mode));
-  }
-
+  // BLEND
+  
+  
+  //static public int blendColor(int c1, int c2, int mode)
+  
 
   public void blend(PImage src,
                     int sx, int sy, int dx, int dy, int mode) {
@@ -2869,9 +2936,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
 
   /**
-   * TODO - extremely slow and not optimized.
-   * Currently calls a beginPixels() on the whole canvas,
-   * then does the blend, then it calls endPixels().
+   * Extremely slow and not optimized, should use GL methods instead.
+   * Currently calls a beginPixels() on the whole canvas, then does the copy,
+   * then it calls endPixels(). Please help fix:
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=941">Bug 941</A>,
+   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=942">Bug 942</A>.  
    */
   public void blend(int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
@@ -2881,11 +2950,6 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
 
 
-  /**
-   * TODO - extremely slow and not optimized.
-   * Currently calls a beginPixels() on the whole canvas,
-   * then does the blend, then it calls endPixels().
-   */
   public void blend(PImage src,
                     int sx1, int sy1, int sx2, int sy2,
                     int dx1, int dy1, int dx2, int dy2, int mode) {
@@ -2894,58 +2958,25 @@ public class PGraphicsOpenGL extends PGraphics3D {
     updatePixels();
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
-
+  // SAVE
+  
+  
   public void save(String filename) {
     loadPixels();
     super.save(filename);
   }
 
+  
 
   //////////////////////////////////////////////////////////////
 
+  // INTERNAL MATH
+  
 
-  /**
-   * Report on anything from glError().
-   * Don't use this inside glBegin/glEnd otherwise it'll
-   * throw an GL_INVALID_OPERATION error.
-   */
-  public void report(String where) {
-    if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
-      int err = gl.glGetError();
-      if (err != 0) {
-        String errString = glu.gluErrorString(err);
-        System.err.println("OpenGL error " + err +
-                           " at " + where +
-                           ": " + errString);
-      /*
-        System.out.print("GL_ERROR at " + where + ": ");
-        System.out.print(PApplet.hex(err, 4) + "  ");
-        switch (err) {
-        case 0x0500: System.out.print("GL_INVALID_ENUM"); break;
-        case 0x0501: System.out.print("GL_INVALID_VALUE"); break;
-        case 0x0502: System.out.print("GL_INVALID_OPERATION"); break;
-        case 0x0503: System.out.print("GL_STACK_OVERFLOW"); break;
-        case 0x0504: System.out.print("GL_STACK_UNDERFLOW"); break;
-        case 0x0505: System.out.print("GL_OUT_OF_MEMORY"); break;
-        default: System.out.print("UNKNOWN");
-        }
-        System.out.println();
-      }
-      */
-      }
-    }
-  }
-
-
-  //////////////////////////////////////////////////////////////
-
-
-  //protected final float min(float a, float b) {
-  //  return (a < b) ? a : b;
-  //}
   private final float clamp(float a) {
     return (a < 1) ? a : 1;
   }
